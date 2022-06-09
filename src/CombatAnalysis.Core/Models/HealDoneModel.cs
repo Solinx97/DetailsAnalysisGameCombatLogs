@@ -2,7 +2,7 @@
 
 namespace CombatAnalysis.Core.Models
 {
-    public class HealDoneInformationModel
+    public class HealDoneModel
     {
         public int ValueWithOverheal { get; set; }
 

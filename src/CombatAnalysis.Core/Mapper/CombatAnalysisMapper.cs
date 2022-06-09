@@ -10,9 +10,9 @@ namespace CombatAnalysis.Core.Mapper
         {
             CreateMap<CombatModel, Combat>().ReverseMap();
             CreateMap<PlayerCombatModel, PlayerCombat>().ReverseMap();
-            CreateMap<DamageDoneInformationModel, DamageDoneInformation>().ReverseMap();
-            CreateMap<HealDoneInformationModel, HealDoneInformation>().ReverseMap();
-            CreateMap<DamageTakenInformationModel, DamageTakenInformation>().ReverseMap();
+            CreateMap<DamageDoneModel, DamageDone>().ReverseMap();
+            CreateMap<HealDoneModel, HealDone>().ReverseMap();
+            CreateMap<DamageTakenModel, DamageTaken>().ReverseMap();
         }
     }
 }

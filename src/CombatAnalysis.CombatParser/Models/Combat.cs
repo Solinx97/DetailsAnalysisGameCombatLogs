@@ -5,6 +5,8 @@ namespace CombatAnalysis.CombatParser.Models
 {
     public class Combat
     {
+        public string DungeonName { get; set; }
+
         public string Name { get; set; }
 
         public List<string> Data { get; set; }
@@ -28,8 +30,6 @@ namespace CombatAnalysis.CombatParser.Models
         public DateTimeOffset FinishDate { get; set; }
 
         public List<PlayerCombat> Players { get; set; }
-
-        public string SelectedPlayer { get; set; }
 
         public string Duration
         {

@@ -1,16 +1,16 @@
 ﻿using System;
 
-namespace CombatAnalysis.CombatParser.Models
+namespace CombatAnalysis.Core.Models
 {
-    public class DamageDoneInformation
+    public class DamageTakenModel
     {
         public int Value { get; set; }
 
         public TimeSpan Time { get; set; }
 
-        public string FromPlayer { get; set; }
+        public string From { get; set; }
 
-        public string ToEnemy { get; set; }
+        public string To { get; set; }
 
         public string SpellOrItem { get; set; }
 
@@ -24,6 +24,6 @@ namespace CombatAnalysis.CombatParser.Models
 
         public bool IsImmune { get; set; }
 
-        public bool IsCrit { get; set; }
+        public bool IsCrushing { get; set; }
     }
 }

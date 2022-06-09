@@ -13,16 +13,16 @@ namespace CombatAnalysis.CombatParser
         public CombatInformation()
         {
             _combat = new Combat();
-            DamageDoneInformations = new List<DamageDoneInformation>();
-            HealDoneInformations = new List<HealDoneInformation>();
-            DamageTakenInformations = new List<DamageTakenInformation>();
+            DamageDoneInformations = new List<DamageDone>();
+            HealDoneInformations = new List<HealDone>();
+            DamageTakenInformations = new List<DamageTaken>();
         }
 
-        public List<DamageDoneInformation> DamageDoneInformations { get; private set; }
+        public List<DamageDone> DamageDoneInformations { get; private set; }
 
-        public List<HealDoneInformation> HealDoneInformations { get; private set; }
+        public List<HealDone> HealDoneInformations { get; private set; }
 
-        public List<DamageTakenInformation> DamageTakenInformations { get; private set; }
+        public List<DamageTaken> DamageTakenInformations { get; private set; }
 
         public void SetCombat(Combat combat, string player)
         {
@@ -151,7 +151,7 @@ namespace CombatAnalysis.CombatParser
             return data;
         }
 
-        private DamageDoneInformation GetDamageDoneInformation(string[] combatData)
+        private DamageDone GetDamageDoneInformation(string[] combatData)
         {
             if (!combatData[3].Contains(_player) 
                 || combatData[1] == "SWING_DAMAGE_LANDED")
@@ -194,7 +194,7 @@ namespace CombatAnalysis.CombatParser
 
             var isCrit = combatData[^3] == "1" ? true : false;
 
-            var damageDone = new DamageDoneInformation
+            var damageDone = new DamageDone
             {
                 Value = value1,
                 Time = TimeSpan.Parse(combatData[0]),
@@ -212,14 +212,14 @@ namespace CombatAnalysis.CombatParser
             return damageDone;
         }
 
-        private EnergyRecoveryInformation GetEnergyInformation(string[] combatData)
+        private EnergyRecovery GetEnergyInformation(string[] combatData)
         {
             int.TryParse(combatData[21], out var value1);
             int.TryParse(combatData[22], out var value2);
             int.TryParse(combatData[^1], out var value3);
             double.TryParse(combatData[29], NumberStyles.Number, CultureInfo.InvariantCulture, out var value4);
 
-            var energyRecovery = new EnergyRecoveryInformation
+            var energyRecovery = new EnergyRecovery
             {
                 Time = TimeSpan.Parse(combatData[0]),
                 CurrentEnergy = value1,
@@ -231,7 +231,7 @@ namespace CombatAnalysis.CombatParser
             return energyRecovery;
         }
 
-        private HealDoneInformation GetHealDoneInformation(string[] combatData)
+        private HealDone GetHealDoneInformation(string[] combatData)
         {
             if (!combatData[3].Contains(_player))
             {
@@ -245,7 +245,7 @@ namespace CombatAnalysis.CombatParser
 
             var isCrit = combatData[^1] == "1" ? true : false;
 
-            var healDone = new HealDoneInformation
+            var healDone = new HealDone
             {
                 CurrentHealth = value1,
                 Time = TimeSpan.Parse(combatData[0]),
@@ -262,7 +262,7 @@ namespace CombatAnalysis.CombatParser
             return healDone;
         }
 
-        private DamageTakenInformation GetDamageTakenInformation(string[] combatData)
+        private DamageTaken GetDamageTakenInformation(string[] combatData)
         {
             if (!combatData[2].Contains("Creature")
                 || combatData[1] == "SWING_DAMAGE_LANDED")
@@ -284,7 +284,7 @@ namespace CombatAnalysis.CombatParser
 
             var isCrushing = combatData[^1] == "1" ? true : false;
 
-            var damageTaken = new DamageTakenInformation
+            var damageTaken = new DamageTaken
             {
                 Value = value1,
                 Time = TimeSpan.Parse(combatData[0]),

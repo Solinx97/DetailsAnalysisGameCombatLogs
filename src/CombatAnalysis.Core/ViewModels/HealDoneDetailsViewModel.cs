@@ -17,11 +17,11 @@ namespace CombatAnalysis.Core.ViewModels
         private readonly IMvxNavigationService _mvvmNavigation;
         private readonly IViewModelConnect _handler;
         private readonly IMapper _mapper;
-        private readonly PowerUpInCombat<HealDoneInformationModel> _powerUpInCombat;
+        private readonly PowerUpInCombat<HealDoneModel> _powerUpInCombat;
 
         private MvxViewModel _basicTemplate;
-        private ObservableCollection<HealDoneInformationModel> _healDoneInformations;
-        private ObservableCollection<HealDoneInformationModel> _healDoneInformationsWithOverheal;
+        private ObservableCollection<HealDoneModel> _healDoneInformations;
+        private ObservableCollection<HealDoneModel> _healDoneInformationsWithOverheal;
 
         private bool _isShowOverheal = true;
         private bool _isShowCrit = true;
@@ -38,7 +38,7 @@ namespace CombatAnalysis.Core.ViewModels
 
             _handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, "Step", 4);
 
-            _powerUpInCombat = new PowerUpInCombat<HealDoneInformationModel>(_healDoneInformationsWithOverheal);
+            _powerUpInCombat = new PowerUpInCombat<HealDoneModel>(_healDoneInformationsWithOverheal);
         }
 
         public MvxViewModel BasicTemplate
@@ -50,7 +50,7 @@ namespace CombatAnalysis.Core.ViewModels
             }
         }
 
-        public ObservableCollection<HealDoneInformationModel> HealDoneInformations
+        public ObservableCollection<HealDoneModel> HealDoneInformations
         {
             get { return _healDoneInformations; }
             set
@@ -132,10 +132,10 @@ namespace CombatAnalysis.Core.ViewModels
             combatInformation.SetCombat(map, combatInformationData.Item1);
             combatInformation.GetHealDone();
 
-            var map1 = _mapper.Map<ObservableCollection<HealDoneInformationModel>>(combatInformation.HealDoneInformations);
+            var map1 = _mapper.Map<ObservableCollection<HealDoneModel>>(combatInformation.HealDoneInformations);
 
             HealDoneInformations = map1;
-            _healDoneInformationsWithOverheal = new ObservableCollection<HealDoneInformationModel>(map1);
+            _healDoneInformationsWithOverheal = new ObservableCollection<HealDoneModel>(map1);
         }
     }
 }

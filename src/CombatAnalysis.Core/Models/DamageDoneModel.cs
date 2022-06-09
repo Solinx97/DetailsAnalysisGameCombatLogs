@@ -2,15 +2,15 @@
 
 namespace CombatAnalysis.Core.Models
 {
-    public class DamageTakenInformationModel
+    public class DamageDoneModel
     {
         public int Value { get; set; }
 
         public TimeSpan Time { get; set; }
 
-        public string From { get; set; }
+        public string FromPlayer { get; set; }
 
-        public string To { get; set; }
+        public string ToEnemy { get; set; }
 
         public string SpellOrItem { get; set; }
 
@@ -24,6 +24,6 @@ namespace CombatAnalysis.Core.Models
 
         public bool IsImmune { get; set; }
 
-        public bool IsCrushing { get; set; }
+        public bool IsCrit { get; set; }
     }
 }

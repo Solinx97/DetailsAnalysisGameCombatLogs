@@ -19,8 +19,8 @@ namespace CombatAnalysis.Core.ViewModels
         private readonly IMapper _mapper;
 
         private MvxViewModel _basicTemplate;
-        private ObservableCollection<DamageTakenInformationModel> _damageTakenInformations;
-        private ObservableCollection<DamageTakenInformationModel> _damageTakenInformationsWithSkipDamage;
+        private ObservableCollection<DamageTakenModel> _damageTakenInformations;
+        private ObservableCollection<DamageTakenModel> _damageTakenInformationsWithSkipDamage;
         private bool _isShowDodge = true;
         private bool _isShowParry = true;
         private bool _isShowMiss = true;
@@ -47,7 +47,7 @@ namespace CombatAnalysis.Core.ViewModels
             }
         }
 
-        public ObservableCollection<DamageTakenInformationModel> DamageTakenInformations
+        public ObservableCollection<DamageTakenModel> DamageTakenInformations
         {
             get { return _damageTakenInformations; }
             set
@@ -129,10 +129,10 @@ namespace CombatAnalysis.Core.ViewModels
             combatInformation.SetCombat(map, combatInformationData.Item1);
             combatInformation.GetDamageTaken();
 
-            var map1 = _mapper.Map<ObservableCollection<DamageTakenInformationModel>>(combatInformation.DamageTakenInformations);
+            var map1 = _mapper.Map<ObservableCollection<DamageTakenModel>>(combatInformation.DamageTakenInformations);
 
             DamageTakenInformations = map1;
-            _damageTakenInformationsWithSkipDamage = new ObservableCollection<DamageTakenInformationModel>(map1);
+            _damageTakenInformationsWithSkipDamage = new ObservableCollection<DamageTakenModel>(map1);
         }
 
         private void ShowDodge(bool isShowDodge)
@@ -157,7 +157,7 @@ namespace CombatAnalysis.Core.ViewModels
                     }
                 }
 
-                DamageTakenInformations = Sorts<DamageTakenInformationModel>.BubbleSort(DamageTakenInformations);
+                DamageTakenInformations = Sorts<DamageTakenModel>.BubbleSort(DamageTakenInformations);
             }
         }
 
@@ -183,7 +183,7 @@ namespace CombatAnalysis.Core.ViewModels
                     }
                 }
 
-                DamageTakenInformations = Sorts<DamageTakenInformationModel>.BubbleSort(DamageTakenInformations);
+                DamageTakenInformations = Sorts<DamageTakenModel>.BubbleSort(DamageTakenInformations);
             }
         }
 
@@ -209,7 +209,7 @@ namespace CombatAnalysis.Core.ViewModels
                     }
                 }
 
-                DamageTakenInformations = Sorts<DamageTakenInformationModel>.BubbleSort(DamageTakenInformations);
+                DamageTakenInformations = Sorts<DamageTakenModel>.BubbleSort(DamageTakenInformations);
             }
         }
 
@@ -235,7 +235,7 @@ namespace CombatAnalysis.Core.ViewModels
                     }
                 }
 
-                DamageTakenInformations = Sorts<DamageTakenInformationModel>.BubbleSort(DamageTakenInformations);
+                DamageTakenInformations = Sorts<DamageTakenModel>.BubbleSort(DamageTakenInformations);
             }
         }
 
@@ -261,7 +261,7 @@ namespace CombatAnalysis.Core.ViewModels
                     }
                 }
 
-                DamageTakenInformations = Sorts<DamageTakenInformationModel>.BubbleSort(DamageTakenInformations);
+                DamageTakenInformations = Sorts<DamageTakenModel>.BubbleSort(DamageTakenInformations);
             }
         }
     }

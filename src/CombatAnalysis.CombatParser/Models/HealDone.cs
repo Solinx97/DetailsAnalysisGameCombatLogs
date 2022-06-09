@@ -2,7 +2,7 @@
 
 namespace CombatAnalysis.CombatParser.Models
 {
-    public class HealDoneInformation
+    public class HealDone
     {
         public int ValueWithOverheal { get; set; }
 

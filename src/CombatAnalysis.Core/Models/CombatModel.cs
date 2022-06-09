@@ -5,6 +5,8 @@ namespace CombatAnalysis.Core.Models
 {
     public class CombatModel
     {
+        public string DungeonName { get; set; }
+
         public string Name { get; set; }
 
         public List<string> Data { get; set; }
