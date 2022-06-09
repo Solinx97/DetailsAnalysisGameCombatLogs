@@ -2,7 +2,7 @@
 
 namespace CombatAnalysis.CombatParser.Models
 {
-    public class EnergyRecoveryInformation
+    public class EnergyRecovery
     {
         public double Value { get; set; }
 

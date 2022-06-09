@@ -8,7 +8,9 @@ using CombatAnalysis.Core.Models;
 using MvvmCross.Navigation;
 using MvvmCross.ViewModels;
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 
 namespace CombatAnalysis.Core.ViewModels
 {
@@ -17,11 +19,12 @@ namespace CombatAnalysis.Core.ViewModels
         private readonly IMvxNavigationService _mvvmNavigation;
         private readonly IViewModelConnect _handler;
         private readonly IMapper _mapper;
-        private readonly PowerUpInCombat<DamageDoneInformationModel> _powerUpInCombat;
+        private readonly PowerUpInCombat<DamageDoneModel> _powerUpInCombat;
 
         private MvxViewModel _basicTemplate;
-        private ObservableCollection<DamageDoneInformationModel> _damageDoneInformations;
-        private ObservableCollection<DamageDoneInformationModel> _damageDoneInformationsWithSkipDamage;
+        private ObservableCollection<DamageDoneModel> _damageDoneInformations;
+        private ObservableCollection<DamageDoneModel> _damageDoneInformationsWithSkipDamage;
+        private ObservableCollection<DamageDoneModel> _damageDoneGroupBySpellOrItem;
         private bool _isShowCrit = true;
         private bool _isShowDodge = true;
         private bool _isShowParry = true;
@@ -34,6 +37,7 @@ namespace CombatAnalysis.Core.ViewModels
         private bool _isShowOnlyMiss;
         private bool _isShowOnlyResist;
         private bool _isShowOnlyImmune;
+        private int _selectedDetailsType;
 
         public DamageDoneDetailsViewModel(IMapper mapper, IMvxNavigationService mvvmNavigation)
         {
@@ -45,7 +49,7 @@ namespace CombatAnalysis.Core.ViewModels
 
             _handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, "Step", 3);
 
-            _powerUpInCombat = new PowerUpInCombat<DamageDoneInformationModel>(_damageDoneInformationsWithSkipDamage);
+            _powerUpInCombat = new PowerUpInCombat<DamageDoneModel>(_damageDoneInformationsWithSkipDamage);
         }
 
         public MvxViewModel BasicTemplate
@@ -57,7 +61,7 @@ namespace CombatAnalysis.Core.ViewModels
             }
         }
 
-        public ObservableCollection<DamageDoneInformationModel> DamageDoneInformations
+        public ObservableCollection<DamageDoneModel> DamageDoneInformations
         {
             get { return _damageDoneInformations; }
             set
@@ -246,9 +250,23 @@ namespace CombatAnalysis.Core.ViewModels
             }
         }
 
+        public int SelectedDetailsType
+        {
+            get { return _selectedDetailsType; }
+            set
+            {
+                SetProperty(ref _selectedDetailsType, value);
+
+                SwitchBetweenDetailsType(value);
+
+                RaisePropertyChanged(() => DamageDoneInformations);
+            }
+        }
+
         public override void Prepare(Tuple<string, CombatModel> parameter)
         {
             GetDamageDoneDetails(parameter);
+            GroupBySpellOrItem();
         }
 
         private void GetDamageDoneDetails(Tuple<string, CombatModel> combatInformationData)
@@ -259,10 +277,49 @@ namespace CombatAnalysis.Core.ViewModels
             combatInformation.SetCombat(map, combatInformationData.Item1);
             combatInformation.GetDamageDone();
 
-            var map1 = _mapper.Map<ObservableCollection<DamageDoneInformationModel>>(combatInformation.DamageDoneInformations);
+            var map1 = _mapper.Map<ObservableCollection<DamageDoneModel>>(combatInformation.DamageDoneInformations);
 
             DamageDoneInformations = map1;
-            _damageDoneInformationsWithSkipDamage = new ObservableCollection<DamageDoneInformationModel>(map1);
+            _damageDoneInformationsWithSkipDamage = new ObservableCollection<DamageDoneModel>(map1);
+        }
+
+        private void SwitchBetweenDetailsType(int type)
+        {
+            switch (type)
+            {
+                case 0:
+                    DamageDoneInformations = new ObservableCollection<DamageDoneModel>(_damageDoneInformationsWithSkipDamage);
+                    break;
+                case 1:
+                    DamageDoneInformations = new ObservableCollection<DamageDoneModel>(_damageDoneGroupBySpellOrItem);
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        private void GroupBySpellOrItem()
+        {
+            var spells = DamageDoneInformations
+                .GroupBy(group => group.SpellOrItem)
+                .Select(select => select.ToList())
+                .ToList();
+
+            var lessDetails = new List<DamageDoneModel>();
+            foreach (var item in spells)
+            {
+                var damageDone = new DamageDoneModel
+                {
+                    Value = item.Sum(x => x.Value),
+                    SpellOrItem = item[0].SpellOrItem,
+                };
+
+                lessDetails.Add(damageDone);
+            }
+
+            lessDetails = lessDetails.OrderByDescending(x => x.Value).ToList();
+
+            _damageDoneGroupBySpellOrItem = new ObservableCollection<DamageDoneModel>(lessDetails);
         }
     }
 }

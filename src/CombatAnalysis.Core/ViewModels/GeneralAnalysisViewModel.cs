@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using CombatAnalysis.CombatParser;
 using CombatAnalysis.Core.Commands;
 using CombatAnalysis.Core.Interfaces;
 using CombatAnalysis.Core.Models;
@@ -11,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace CombatAnalysis.Core.ViewModels
 {
-    public class GeneralAnalysisViewModel : MvxViewModel<string>
+    public class GeneralAnalysisViewModel : MvxViewModel<List<CombatModel>>
     {
         private readonly IMvxNavigationService _mvvmNavigation;
         private readonly IMapper _mapper;
@@ -65,41 +64,14 @@ namespace CombatAnalysis.Core.ViewModels
             }
         }
 
-        public override void Prepare(string parameter)
+        public override void Prepare(List<CombatModel> parameter)
         {
-            var task = Task.Run(() => GetData(parameter));
-            task.Wait();
+            Combats = parameter;
         }
 
         public void ShowDetails()
         {
             Task.Run(() => _mvvmNavigation.Navigate<TargetCombatDetailsViewModel, CombatModel>(Combats[CombatIndex]));
-        }
-
-        private async Task GetData(string combatLog)
-        {
-            var parser = new CombatInformationParser();
-            await parser.Parse(combatLog);
-
-            var combats = parser.GetCombats();
-            var combatsMapper = _mapper.Map<List<CombatModel>>(combats);
-            Combats.AddRange(combatsMapper);
-
-            GetDetails();
-        }
-
-        private void GetDetails()
-        {
-            for (int i = 0; i < Combats.Count; i++)
-            {
-                foreach (var item in Combats[i].Players)
-                {
-                    Combats[i].DamageDone += item.DamageDone;
-                    Combats[i].HealDone += item.HealDone;
-                    Combats[i].EnergyRecovery += item.EnergyRecovery;
-                    Combats[i].DamageTaken += item.DamageTaken;
-                }
-            }
         }
     }
 }

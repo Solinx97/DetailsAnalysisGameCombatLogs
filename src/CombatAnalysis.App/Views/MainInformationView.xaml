@@ -73,8 +73,11 @@
             <Button Height="35" Content="Показать" Width="100"
                     IsEnabled="{Binding CombatLog, Converter={StaticResource ToXAMLBool}}" FontSize="16" Margin="10"
                     mvx:Bi.nd="Command OpenPlayerAnalysisCommand" Style="{StaticResource showButton}" />
-            <TextBlock Width="150" Text="Загрузка данных..." FontSize="16"
+            <TextBlock Width="150" Text="Загрузка данных..." FontSize="16" Foreground="BlueViolet"
                        Margin="10" HorizontalAlignment="Center" VerticalAlignment="Center"
+                       Visibility="{Binding IsLoading, Converter={StaticResource BoolToVisibility}}" />
+            <TextBlock Text="{Binding FoundCombat}" FontSize="16" TextAlignment="Center" TextWrapping="Wrap"
+                       Margin="10" VerticalAlignment="Center" Height="50" MaxWidth="650"
                        Visibility="{Binding IsLoading, Converter={StaticResource BoolToVisibility}}" />
         </StackPanel>
     </Grid>

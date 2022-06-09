@@ -1,4 +1,5 @@
-﻿using CombatAnalysis.CombatParser.Models;
+﻿using CombatAnalysis.CombatParser.Interfaces;
+using CombatAnalysis.CombatParser.Models;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -6,14 +7,19 @@ using System.Threading.Tasks;
 
 namespace CombatAnalysis.CombatParser
 {
-    public class CombatInformationParser
+    public class CombatInformationParser : IObservable
     {
-        private readonly List<Combat> _combats;
+        private IList<IObserver> _observers;
+        private IList<ZoneInformation> _zones;
 
         public CombatInformationParser()
         {
-            _combats = new List<Combat>();
+            Combats = new List<Combat>();
+            _observers = new List<IObserver>();
+            _zones = new List<ZoneInformation>();
         }
+
+        public List<Combat> Combats { get; private set; }
 
         public async Task Parse(string combatLog)
         {
@@ -38,14 +44,28 @@ namespace CombatAnalysis.CombatParser
                     GetCombatPlayersData(combat);
                     GetCombatDeaths(combat);
 
-                    _combats.Add(combat);
+                    AddNewCombat(combat);
+                }
+                else if (line.Contains("ZONE_CHANGE"))
+                {
+                    GetDungeonName(line);
                 }
             }
         }
 
-        public List<Combat> GetCombats()
+        private void AddNewCombat(Combat combat)
         {
-            return _combats;
+            foreach (var item in _zones)
+            {
+                if (item.ChangeDate < combat.StartDate)
+                {
+                    combat.DungeonName = item.Name;
+                }
+            }
+
+            Combats.Add(combat);
+
+            NotifyObservers();
         }
 
         private void GetCombatPlayersData(Combat combat)
@@ -114,12 +134,12 @@ namespace CombatAnalysis.CombatParser
 
         private DateTimeOffset GetTime(string combatStart)
         {
-            var data = combatStart.Split("  ")[0];
-            var combatDate = data.Split(' ');
+            var parse = combatStart.Split("  ")[0];
+            var combatDate = parse.Split(' ');
             var dateWithoutTime = combatDate[0].Split('/');
-            var correctDate = $"{dateWithoutTime[0]}/{dateWithoutTime[1]}/{DateTimeOffset.UtcNow.Year} {combatDate[1]}";
+            var clearDate = $"{dateWithoutTime[0]}/{dateWithoutTime[1]}/{DateTimeOffset.UtcNow.Year} {combatDate[1]}";
 
-            DateTimeOffset.TryParse(correctDate, out var date);
+            DateTimeOffset.TryParse(clearDate, out var date);
             return date.UtcDateTime;
         }
 
@@ -130,6 +150,23 @@ namespace CombatAnalysis.CombatParser
             var clearName = name.Trim('"');
 
             return clearName;
+        }
+
+        private void GetDungeonName(string combatLog)
+        {
+            var parse = combatLog.Split("  ")[1];
+            var name = parse.Split(',')[2];
+            var clearName = name.Trim('"');
+
+            var date = GetTime(combatLog);
+
+            var zone = new ZoneInformation
+            {
+                Name = clearName,
+                ChangeDate = date
+            };
+
+            _zones.Add(zone);
         }
 
         private bool GetCombatResult(string combatFinish)
@@ -169,6 +206,27 @@ namespace CombatAnalysis.CombatParser
             combatInform.SetCombat(combat);
 
             combat.DeathNumber = combatInform.GetDeathsNumber();
+        }
+
+        public void AddObserver(IObserver o)
+        {
+            _observers.Add(o);
+        }
+
+        public void RemoveObserver(IObserver o)
+        {
+            _observers.Remove(o);
+        }
+
+        public void NotifyObservers()
+        {
+            foreach (IObserver observer in _observers)
+            {
+                var isWin = Combats[^1].IsWin ? "Победа" : "Поражение";
+                var combatInformation = $"Подземелье: {Combats[^1].DungeonName}, Бой: {Combats[^1].Name}, Время: {Combats[^1].Duration}, Статус: {isWin}";
+
+                observer.Update(combatInformation);
+            }
         }
     }
 }
