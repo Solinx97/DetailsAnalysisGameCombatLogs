@@ -1,11 +1,11 @@
-﻿using CombatAnalysis.CombatParser.Models;
+﻿using CombatAnalysis.CombatParser.Entities;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
 
 namespace CombatAnalysis.CombatParser
 {
-    public  class CombatInformation
+    public class CombatInformation
     {
         private Combat _combat;
         private string _player;

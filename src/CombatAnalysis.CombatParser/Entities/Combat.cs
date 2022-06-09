@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace CombatAnalysis.CombatParser.Models
+namespace CombatAnalysis.CombatParser.Entities
 {
     public class Combat
     {

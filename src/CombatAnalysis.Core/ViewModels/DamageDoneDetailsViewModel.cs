@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using CombatAnalysis.CombatParser;
-using CombatAnalysis.CombatParser.Models;
+using CombatAnalysis.CombatParser.Entities;
+using CombatAnalysis.CombatParser.Extensions;
 using CombatAnalysis.Core.Commands;
 using CombatAnalysis.Core.Core;
 using CombatAnalysis.Core.Interfaces;
@@ -24,7 +25,7 @@ namespace CombatAnalysis.Core.ViewModels
         private MvxViewModel _basicTemplate;
         private ObservableCollection<DamageDoneModel> _damageDoneInformations;
         private ObservableCollection<DamageDoneModel> _damageDoneInformationsWithSkipDamage;
-        private ObservableCollection<DamageDoneModel> _damageDoneGroupBySpellOrItem;
+        private ObservableCollection<DamageDoneGeneralModel> _damageDoneGeneralInformations;
         private bool _isShowCrit = true;
         private bool _isShowDodge = true;
         private bool _isShowParry = true;
@@ -38,6 +39,7 @@ namespace CombatAnalysis.Core.ViewModels
         private bool _isShowOnlyResist;
         private bool _isShowOnlyImmune;
         private int _selectedDetailsType;
+        private string _selectedPlayer;
 
         public DamageDoneDetailsViewModel(IMapper mapper, IMvxNavigationService mvvmNavigation)
         {
@@ -67,6 +69,15 @@ namespace CombatAnalysis.Core.ViewModels
             set
             {
                 SetProperty(ref _damageDoneInformations, value);
+            }
+        }
+
+        public ObservableCollection<DamageDoneGeneralModel> DamageDoneGeneralInformations
+        {
+            get { return _damageDoneGeneralInformations; }
+            set
+            {
+                SetProperty(ref _damageDoneGeneralInformations, value);
             }
         }
 
@@ -257,16 +268,24 @@ namespace CombatAnalysis.Core.ViewModels
             {
                 SetProperty(ref _selectedDetailsType, value);
 
-                SwitchBetweenDetailsType(value);
-
                 RaisePropertyChanged(() => DamageDoneInformations);
+            }
+        }
+
+        public string SelectedPlayer
+        {
+            get { return _selectedPlayer; }
+            set
+            {
+                SetProperty(ref _selectedPlayer, value);
             }
         }
 
         public override void Prepare(Tuple<string, CombatModel> parameter)
         {
+            SelectedPlayer = parameter.Item1;
+
             GetDamageDoneDetails(parameter);
-            GroupBySpellOrItem();
         }
 
         private void GetDamageDoneDetails(Tuple<string, CombatModel> combatInformationData)
@@ -281,45 +300,10 @@ namespace CombatAnalysis.Core.ViewModels
 
             DamageDoneInformations = map1;
             _damageDoneInformationsWithSkipDamage = new ObservableCollection<DamageDoneModel>(map1);
-        }
 
-        private void SwitchBetweenDetailsType(int type)
-        {
-            switch (type)
-            {
-                case 0:
-                    DamageDoneInformations = new ObservableCollection<DamageDoneModel>(_damageDoneInformationsWithSkipDamage);
-                    break;
-                case 1:
-                    DamageDoneInformations = new ObservableCollection<DamageDoneModel>(_damageDoneGroupBySpellOrItem);
-                    break;
-                default:
-                    break;
-            }
-        }
-
-        private void GroupBySpellOrItem()
-        {
-            var spells = DamageDoneInformations
-                .GroupBy(group => group.SpellOrItem)
-                .Select(select => select.ToList())
-                .ToList();
-
-            var lessDetails = new List<DamageDoneModel>();
-            foreach (var item in spells)
-            {
-                var damageDone = new DamageDoneModel
-                {
-                    Value = item.Sum(x => x.Value),
-                    SpellOrItem = item[0].SpellOrItem,
-                };
-
-                lessDetails.Add(damageDone);
-            }
-
-            lessDetails = lessDetails.OrderByDescending(x => x.Value).ToList();
-
-            _damageDoneGroupBySpellOrItem = new ObservableCollection<DamageDoneModel>(lessDetails);
+            var damageDoneGeneralInformations = combatInformation.GetDamageDoneGeneral(combatInformation.DamageDoneInformations, map);
+            var map2 = _mapper.Map<ObservableCollection<DamageDoneGeneralModel>>(damageDoneGeneralInformations);
+            DamageDoneGeneralInformations = map2;
         }
     }
 }

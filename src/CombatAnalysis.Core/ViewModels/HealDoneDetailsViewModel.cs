@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using CombatAnalysis.CombatParser;
-using CombatAnalysis.CombatParser.Models;
+using CombatAnalysis.CombatParser.Entities;
 using CombatAnalysis.Core.Commands;
 using CombatAnalysis.Core.Core;
 using CombatAnalysis.Core.Interfaces;
