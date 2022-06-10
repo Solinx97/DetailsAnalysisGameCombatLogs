@@ -16,9 +16,10 @@ namespace CombatAnalysis.Core.ViewModels
         private readonly IMapper _mapper;
         private readonly IViewModelConnect _handler;
 
-        private int _combatIndex;
         private MvxViewModel _basicTemplate;
         private List<CombatModel> _combats;
+        private int _combatIndex;
+        private string _combatStatus = "Победа";
 
         public GeneralAnalysisViewModel(IMapper mapper, IMvxNavigationService mvvmNavigation)
         {
@@ -61,6 +62,15 @@ namespace CombatAnalysis.Core.ViewModels
             set
             {
                 SetProperty(ref _combatIndex, value);
+            }
+        }
+
+        public string CombatStatus
+        {
+            get { return _combatStatus; }
+            set
+            {
+                SetProperty(ref _combatStatus, value);
             }
         }
 

@@ -15,6 +15,7 @@ namespace CombatAnalysis.Core.Mapper
             CreateMap<HealDoneModel, HealDone>().ReverseMap();
             CreateMap<HealDoneGeneralModel, HealDoneGeneral>().ReverseMap();
             CreateMap<DamageTakenModel, DamageTaken>().ReverseMap();
+            CreateMap<DamageTakenGeneralModel, DamageTakenGeneral>().ReverseMap();
         }
     }
 }

@@ -105,6 +105,7 @@ namespace CombatAnalysis.CombatParser
             {
                 if ((item.Contains("SPELL_DAMAGE") || item.Contains("SWING_DAMAGE")
                     || item.Contains("SPELL_PERIODIC_DAMAGE") || item.Contains("SWING_MISSED")
+                    || item.Contains("DAMAGE_SHIELD_MISSED") || item.Contains("RANGE_DAMAGE")
                     || item.Contains("SPELL_MISSED")) && item.Contains(_player))
                 {
                     var combatData = CombatDataParse(item);
@@ -160,9 +161,17 @@ namespace CombatAnalysis.CombatParser
             }
 
             int.TryParse(combatData[^10], out var value1);
+            string spellOrItem;
 
-            var spellOrItem = (combatData[11].Contains("0000000000000000") || combatData[11].Contains("nil"))
-                ? "Ближ. бой" : combatData[11].Trim('"');
+            if (combatData[1] == "SWING_MISSED")
+            {
+                spellOrItem = "Ближ. бой";
+            }
+            else
+            {
+                spellOrItem = (combatData[11].Contains("0000000000000000") || combatData[11].Contains("nil"))
+                    ? "Ближ. бой" : combatData[11].Trim('"');
+            }
 
             var isResist = false;
             var isImmune = false;
@@ -264,42 +273,49 @@ namespace CombatAnalysis.CombatParser
 
         private DamageTaken GetDamageTakenInformation(string[] combatData)
         {
-            if (!combatData[2].Contains("Creature")
-                || combatData[1] == "SWING_DAMAGE_LANDED")
+            if (combatData[1] == "SWING_DAMAGE_LANDED")
             {
                 return null;
             }
 
-            int.TryParse(combatData[^10], out var value1);
-            var spellOrItem = (combatData[11].Contains("0000000000000000") || combatData[11].Contains("nil"))
-                ? "Ближ. бой" : combatData[11].Trim('"');
-
-            var isResist = false;
-            var isImmune = false;
-            if (combatData[1] == "DAMAGE_SHIELD_MISSED")
+            if (combatData[2].Contains("0000000000000000")
+                || combatData[2].Contains("Creature"))
             {
-                isResist = combatData[13] == "RESIST" ? true : false;
-                isImmune = combatData[13] == "IMMUNE" ? true : false;
+                int.TryParse(combatData[^10], out var value1);
+                var spellOrItem = (combatData[11].Contains("0000000000000000") || combatData[11].Contains("nil"))
+                    ? "Ближ. бой" : combatData[11].Trim('"');
+
+                var isResist = false;
+                var isImmune = false;
+                if (combatData[1] == "DAMAGE_SHIELD_MISSED")
+                {
+                    isResist = combatData[13] == "RESIST" ? true : false;
+                    isImmune = combatData[13] == "IMMUNE" ? true : false;
+                }
+
+                var isCrushing = combatData[^1] == "1" ? true : false;
+
+                var damageTaken = new DamageTaken
+                {
+                    Value = value1,
+                    Time = TimeSpan.Parse(combatData[0]),
+                    From = combatData[3].Trim('"'),
+                    To = combatData[7].Trim('"'),
+                    SpellOrItem = spellOrItem,
+                    IsDodge = combatData[10] == "DODGE",
+                    IsParry = combatData[10] == "PARRY",
+                    IsMiss = combatData[10] == "MISS",
+                    IsResist = isResist,
+                    IsImmune = isImmune,
+                    IsCrushing = isCrushing,
+                };
+
+                return damageTaken;
             }
-
-            var isCrushing = combatData[^1] == "1" ? true : false;
-
-            var damageTaken = new DamageTaken
+            else
             {
-                Value = value1,
-                Time = TimeSpan.Parse(combatData[0]),
-                From = combatData[3].Trim('"'),
-                To = combatData[7].Trim('"'),
-                SpellOrItem = spellOrItem,
-                IsDodge = combatData[10] == "DODGE",
-                IsParry = combatData[10] == "PARRY",
-                IsMiss = combatData[10] == "MISS",
-                IsResist = isResist,
-                IsImmune = isImmune,
-                IsCrushing = isCrushing,
-            };
-
-            return damageTaken;
+                return null;
+            }
         }
 
         private int CheckPlayer(string combatData)

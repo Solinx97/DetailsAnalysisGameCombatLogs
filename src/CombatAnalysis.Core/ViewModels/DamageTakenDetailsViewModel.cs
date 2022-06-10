@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using CombatAnalysis.CombatParser;
 using CombatAnalysis.CombatParser.Entities;
+using CombatAnalysis.CombatParser.Extensions;
 using CombatAnalysis.Core.Commands;
 using CombatAnalysis.Core.Core;
 using CombatAnalysis.Core.Interfaces;
@@ -17,15 +18,19 @@ namespace CombatAnalysis.Core.ViewModels
         private readonly IMvxNavigationService _mvvmNavigation;
         private readonly IViewModelConnect _handler;
         private readonly IMapper _mapper;
+        private readonly PowerUpInCombat<DamageTakenModel> _powerUpInCombat;
 
         private MvxViewModel _basicTemplate;
         private ObservableCollection<DamageTakenModel> _damageTakenInformations;
         private ObservableCollection<DamageTakenModel> _damageTakenInformationsWithSkipDamage;
+        private ObservableCollection<DamageTakenGeneralModel> _damageTakenGeneralInformations;
+
         private bool _isShowDodge = true;
         private bool _isShowParry = true;
         private bool _isShowMiss = true;
         private bool _isShowResist = true;
         private bool _isShowImmune = true;
+        private string _selectedPlayer;
 
         public DamageTakenDetailsViewModel(IMapper mapper, IMvxNavigationService mvvmNavigation)
         {
@@ -36,6 +41,8 @@ namespace CombatAnalysis.Core.ViewModels
             BasicTemplate = new BasicTemplateViewModel(this, _handler, _mvvmNavigation);
 
             _handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, "Step", 5);
+
+            _powerUpInCombat = new PowerUpInCombat<DamageTakenModel>(_damageTakenInformationsWithSkipDamage);
         }
 
         public MvxViewModel BasicTemplate
@@ -56,13 +63,25 @@ namespace CombatAnalysis.Core.ViewModels
             }
         }
 
+        public ObservableCollection<DamageTakenGeneralModel> DamageTakenGeneralInformations
+        {
+            get { return _damageTakenGeneralInformations; }
+            set
+            {
+                SetProperty(ref _damageTakenGeneralInformations, value);
+            }
+        }
+
         public bool IsShowDodge
         {
             get { return _isShowDodge; }
             set
             {
                 SetProperty(ref _isShowDodge, value);
-                ShowDodge(value);
+
+                _powerUpInCombat.UpdateProperty("IsDodge");
+                _powerUpInCombat.UpdateCollection(_damageTakenInformationsWithSkipDamage);
+                DamageTakenInformations = _powerUpInCombat.ShowSpecificalValue("Time", DamageTakenInformations, value);
 
                 RaisePropertyChanged(() => DamageTakenInformations);
             }
@@ -74,7 +93,10 @@ namespace CombatAnalysis.Core.ViewModels
             set
             {
                 SetProperty(ref _isShowParry, value);
-                ShowParry(value);
+
+                _powerUpInCombat.UpdateProperty("IsParry");
+                _powerUpInCombat.UpdateCollection(_damageTakenInformationsWithSkipDamage);
+                DamageTakenInformations = _powerUpInCombat.ShowSpecificalValue("Time", DamageTakenInformations, value);
 
                 RaisePropertyChanged(() => DamageTakenInformations);
             }
@@ -86,7 +108,10 @@ namespace CombatAnalysis.Core.ViewModels
             set
             {
                 SetProperty(ref _isShowMiss, value);
-                ShowMiss(value);
+
+                _powerUpInCombat.UpdateProperty("IsMiss");
+                _powerUpInCombat.UpdateCollection(_damageTakenInformationsWithSkipDamage);
+                DamageTakenInformations = _powerUpInCombat.ShowSpecificalValue("Time", DamageTakenInformations, value);
 
                 RaisePropertyChanged(() => DamageTakenInformations);
             }
@@ -98,7 +123,10 @@ namespace CombatAnalysis.Core.ViewModels
             set
             {
                 SetProperty(ref _isShowResist, value);
-                ShowResist(value);
+
+                _powerUpInCombat.UpdateProperty("IsResist");
+                _powerUpInCombat.UpdateCollection(_damageTakenInformationsWithSkipDamage);
+                DamageTakenInformations = _powerUpInCombat.ShowSpecificalValue("Time", DamageTakenInformations, value);
 
                 RaisePropertyChanged(() => DamageTakenInformations);
             }
@@ -110,9 +138,21 @@ namespace CombatAnalysis.Core.ViewModels
             set
             {
                 SetProperty(ref _isShowImmune, value);
-                ShowImmune(value);
+
+                _powerUpInCombat.UpdateProperty("IsImmune");
+                _powerUpInCombat.UpdateCollection(_damageTakenInformationsWithSkipDamage);
+                DamageTakenInformations = _powerUpInCombat.ShowSpecificalValue("Time", DamageTakenInformations, value);
 
                 RaisePropertyChanged(() => DamageTakenInformations);
+            }
+        }
+
+        public string SelectedPlayer
+        {
+            get { return _selectedPlayer; }
+            set
+            {
+                SetProperty(ref _selectedPlayer, value);
             }
         }
 
@@ -133,136 +173,10 @@ namespace CombatAnalysis.Core.ViewModels
 
             DamageTakenInformations = map1;
             _damageTakenInformationsWithSkipDamage = new ObservableCollection<DamageTakenModel>(map1);
-        }
 
-        private void ShowDodge(bool isShowDodge)
-        {
-            if (!isShowDodge)
-            {
-                foreach (var item in _damageTakenInformationsWithSkipDamage)
-                {
-                    if (item.IsDodge)
-                    {
-                        DamageTakenInformations.Remove(item);
-                    }
-                }
-            }
-            else
-            {
-                foreach (var item in _damageTakenInformationsWithSkipDamage)
-                {
-                    if (item.IsDodge)
-                    {
-                        DamageTakenInformations.Add(item);
-                    }
-                }
-
-                DamageTakenInformations = Sorts<DamageTakenModel>.BubbleSort(DamageTakenInformations);
-            }
-        }
-
-        private void ShowParry(bool isShowParry)
-        {
-            if (!isShowParry)
-            {
-                foreach (var item in _damageTakenInformationsWithSkipDamage)
-                {
-                    if (item.IsParry)
-                    {
-                        DamageTakenInformations.Remove(item);
-                    }
-                }
-            }
-            else
-            {
-                foreach (var item in _damageTakenInformationsWithSkipDamage)
-                {
-                    if (item.IsParry)
-                    {
-                        DamageTakenInformations.Add(item);
-                    }
-                }
-
-                DamageTakenInformations = Sorts<DamageTakenModel>.BubbleSort(DamageTakenInformations);
-            }
-        }
-
-        private void ShowMiss(bool isShowMiss)
-        {
-            if (!isShowMiss)
-            {
-                foreach (var item in _damageTakenInformationsWithSkipDamage)
-                {
-                    if (item.IsMiss)
-                    {
-                        DamageTakenInformations.Remove(item);
-                    }
-                }
-            }
-            else
-            {
-                foreach (var item in _damageTakenInformationsWithSkipDamage)
-                {
-                    if (item.IsMiss)
-                    {
-                        DamageTakenInformations.Add(item);
-                    }
-                }
-
-                DamageTakenInformations = Sorts<DamageTakenModel>.BubbleSort(DamageTakenInformations);
-            }
-        }
-
-        private void ShowResist(bool isShowResist)
-        {
-            if (!isShowResist)
-            {
-                foreach (var item in _damageTakenInformationsWithSkipDamage)
-                {
-                    if (item.IsResist)
-                    {
-                        DamageTakenInformations.Remove(item);
-                    }
-                }
-            }
-            else
-            {
-                foreach (var item in _damageTakenInformationsWithSkipDamage)
-                {
-                    if (item.IsResist)
-                    {
-                        DamageTakenInformations.Add(item);
-                    }
-                }
-
-                DamageTakenInformations = Sorts<DamageTakenModel>.BubbleSort(DamageTakenInformations);
-            }
-        }
-
-        private void ShowImmune(bool isShowImmune)
-        {
-            if (!isShowImmune)
-            {
-                foreach (var item in _damageTakenInformationsWithSkipDamage)
-                {
-                    if (item.IsImmune)
-                    {
-                        DamageTakenInformations.Remove(item);
-                    }
-                }
-            }
-            else
-            {
-                foreach (var item in _damageTakenInformationsWithSkipDamage)
-                {
-                    if (item.IsImmune)
-                    {
-                        DamageTakenInformations.Add(item);
-                    }
-                }
-
-                DamageTakenInformations = Sorts<DamageTakenModel>.BubbleSort(DamageTakenInformations);
-            }
+            var damageDoneGeneralInformations = combatInformation.GetDamageTakenGeneral(combatInformation.DamageTakenInformations, map);
+            var map2 = _mapper.Map<ObservableCollection<DamageTakenGeneralModel>>(damageDoneGeneralInformations);
+            DamageTakenGeneralInformations = map2;
         }
     }
 }

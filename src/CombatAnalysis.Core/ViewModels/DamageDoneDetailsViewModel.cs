@@ -9,9 +9,7 @@ using CombatAnalysis.Core.Models;
 using MvvmCross.Navigation;
 using MvvmCross.ViewModels;
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
 
 namespace CombatAnalysis.Core.ViewModels
 {
