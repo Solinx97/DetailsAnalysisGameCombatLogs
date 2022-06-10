@@ -26,6 +26,7 @@ namespace CombatAnalysis.Core.ViewModels
         private ObservableCollection<DamageDoneModel> _damageDoneInformations;
         private ObservableCollection<DamageDoneModel> _damageDoneInformationsWithSkipDamage;
         private ObservableCollection<DamageDoneGeneralModel> _damageDoneGeneralInformations;
+
         private bool _isShowCrit = true;
         private bool _isShowDodge = true;
         private bool _isShowParry = true;
@@ -38,7 +39,6 @@ namespace CombatAnalysis.Core.ViewModels
         private bool _isShowOnlyMiss;
         private bool _isShowOnlyResist;
         private bool _isShowOnlyImmune;
-        private int _selectedDetailsType;
         private string _selectedPlayer;
 
         public DamageDoneDetailsViewModel(IMapper mapper, IMvxNavigationService mvvmNavigation)
@@ -256,17 +256,6 @@ namespace CombatAnalysis.Core.ViewModels
                 _powerUpInCombat.UpdateProperty("IsImmune");
                 _powerUpInCombat.UpdateCollection(_damageDoneInformationsWithSkipDamage);
                 DamageDoneInformations = _powerUpInCombat.ShowSpecificalValueInversion("Time", DamageDoneInformations, value);
-
-                RaisePropertyChanged(() => DamageDoneInformations);
-            }
-        }
-
-        public int SelectedDetailsType
-        {
-            get { return _selectedDetailsType; }
-            set
-            {
-                SetProperty(ref _selectedDetailsType, value);
 
                 RaisePropertyChanged(() => DamageDoneInformations);
             }

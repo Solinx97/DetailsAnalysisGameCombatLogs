@@ -39,5 +39,37 @@ namespace CombatAnalysis.CombatParser.Extensions
 
             return damageDoneGroupBySpellOrItem;
         }
+
+        public static ObservableCollection<HealDoneGeneral> GetHealDoneGeneral(this CombatInformation extension, List<HealDone> collection, Combat combat)
+        {
+            var spells = collection
+                .GroupBy(group => group.SpellOrItem)
+                .Select(select => select.ToList())
+                .ToList();
+
+            TimeSpan.TryParse(combat.Duration, out var durationTime);
+
+            var lessDetails = new List<HealDoneGeneral>();
+            foreach (var item in spells)
+            {
+                var damageDone = new HealDoneGeneral
+                {
+                    Value = item.Sum(x => x.Value),
+                    HealPerSecond = item.Sum(x => x.Value) / durationTime.TotalSeconds,
+                    AverageValue = item.Average(x => x.Value),
+                    MinValue = item.Min(x => x.Value),
+                    MaxValue = item.Max(x => x.Value),
+                    SpellOrItem = item[0].SpellOrItem,
+                    CastNumber = item.Count,
+                };
+
+                lessDetails.Add(damageDone);
+            }
+
+            lessDetails = lessDetails.OrderByDescending(x => x.Value).ToList();
+            var damageDoneGroupBySpellOrItem = new ObservableCollection<HealDoneGeneral>(lessDetails);
+
+            return damageDoneGroupBySpellOrItem;
+        }
     }
 }

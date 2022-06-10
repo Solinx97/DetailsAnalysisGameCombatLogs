@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using CombatAnalysis.CombatParser;
 using CombatAnalysis.CombatParser.Entities;
+using CombatAnalysis.CombatParser.Extensions;
 using CombatAnalysis.Core.Commands;
 using CombatAnalysis.Core.Core;
 using CombatAnalysis.Core.Interfaces;
@@ -22,11 +23,13 @@ namespace CombatAnalysis.Core.ViewModels
         private MvxViewModel _basicTemplate;
         private ObservableCollection<HealDoneModel> _healDoneInformations;
         private ObservableCollection<HealDoneModel> _healDoneInformationsWithOverheal;
+        private ObservableCollection<HealDoneGeneralModel> _healDoneGeneralInformations;
 
         private bool _isShowOverheal = true;
         private bool _isShowCrit = true;
         private bool _isShowOnlyOverheal;
         private bool _isShowOnlyCrit;
+        private string _selectedPlayer;
 
         public HealDoneDetailsViewModel(IMapper mapper, IMvxNavigationService mvvmNavigation)
         {
@@ -56,6 +59,15 @@ namespace CombatAnalysis.Core.ViewModels
             set
             {
                 SetProperty(ref _healDoneInformations, value);
+            }
+        }
+
+        public ObservableCollection<HealDoneGeneralModel> HealDoneGeneralInformations
+        {
+            get { return _healDoneGeneralInformations; }
+            set
+            {
+                SetProperty(ref _healDoneGeneralInformations, value);
             }
         }
 
@@ -119,8 +131,19 @@ namespace CombatAnalysis.Core.ViewModels
             }
         }
 
+        public string SelectedPlayer
+        {
+            get { return _selectedPlayer; }
+            set
+            {
+                SetProperty(ref _selectedPlayer, value);
+            }
+        }
+
         public override void Prepare(Tuple<string, CombatModel> parameter)
         {
+            SelectedPlayer = parameter.Item1;
+
             GetHealDoneDetails(parameter);
         }
 
@@ -136,6 +159,10 @@ namespace CombatAnalysis.Core.ViewModels
 
             HealDoneInformations = map1;
             _healDoneInformationsWithOverheal = new ObservableCollection<HealDoneModel>(map1);
+
+            var damageDoneGeneralInformations = combatInformation.GetHealDoneGeneral(combatInformation.HealDoneInformations, map);
+            var map2 = _mapper.Map<ObservableCollection<HealDoneGeneralModel>>(damageDoneGeneralInformations);
+            HealDoneGeneralInformations = map2;
         }
     }
 }
