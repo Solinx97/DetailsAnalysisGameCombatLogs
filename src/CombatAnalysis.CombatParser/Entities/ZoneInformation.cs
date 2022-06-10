@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace CombatAnalysis.CombatParser.Models
+namespace CombatAnalysis.CombatParser.Entities
 {
     public class ZoneInformation
     {

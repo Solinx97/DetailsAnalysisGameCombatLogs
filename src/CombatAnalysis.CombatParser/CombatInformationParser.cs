@@ -1,5 +1,5 @@
 ﻿using CombatAnalysis.CombatParser.Interfaces;
-using CombatAnalysis.CombatParser.Models;
+using CombatAnalysis.CombatParser.Entities;
 using System;
 using System.Collections.Generic;
 using System.IO;

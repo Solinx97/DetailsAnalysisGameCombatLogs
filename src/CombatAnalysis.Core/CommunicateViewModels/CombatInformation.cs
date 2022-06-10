@@ -1,4 +1,4 @@
-﻿using CombatAnalysis.CombatParser.Models;
+﻿using CombatAnalysis.CombatParser.Entities;
 
 namespace CombatAnalysis.Core.CommunicateViewModels
 {

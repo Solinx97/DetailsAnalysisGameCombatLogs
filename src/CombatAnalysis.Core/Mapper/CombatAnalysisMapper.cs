@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using CombatAnalysis.CombatParser.Models;
+using CombatAnalysis.CombatParser.Entities;
 using CombatAnalysis.Core.Models;
 
 namespace CombatAnalysis.Core.Mapper
@@ -11,6 +11,7 @@ namespace CombatAnalysis.Core.Mapper
             CreateMap<CombatModel, Combat>().ReverseMap();
             CreateMap<PlayerCombatModel, PlayerCombat>().ReverseMap();
             CreateMap<DamageDoneModel, DamageDone>().ReverseMap();
+            CreateMap<DamageDoneGeneralModel, DamageDoneGeneral>().ReverseMap();
             CreateMap<HealDoneModel, HealDone>().ReverseMap();
             CreateMap<DamageTakenModel, DamageTaken>().ReverseMap();
         }
