@@ -20,6 +20,7 @@ namespace CombatAnalysis.Core.ViewModels
         private List<CombatModel> _combats;
         private int _combatIndex;
         private string _combatStatus = "Победа";
+        private string _selectedCombat;
 
         public GeneralAnalysisViewModel(IMapper mapper, IMvxNavigationService mvvmNavigation)
         {

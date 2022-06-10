@@ -16,10 +16,11 @@ namespace CombatAnalysis.Core.ViewModels
         private CombatModel _combat;
         private MvxViewModel _basicTemplate;
         private List<PlayerCombatModel> _playersCombatData;
-        private PlayerCombatModel _selectedPlayer;
         private long _maxDamageDone;
         private long _maxHealDone;
         private double _maxEnergyRecovery;
+        private int _selectedIndex;
+        private string _selectedCombat;
 
         public TargetCombatDetailsViewModel(IMvxNavigationService mvvmNavigation)
         {
@@ -51,13 +52,14 @@ namespace CombatAnalysis.Core.ViewModels
             }
         }
 
-        public PlayerCombatModel SelectedPlayer
+        public int SelectedIndex
         {
-            get { return _selectedPlayer; }
+            get { return _selectedIndex; }
             set
             {
-                SetProperty(ref _selectedPlayer, value);
-                _handler.Data = Tuple.Create(_selectedPlayer.UserName, _combat);
+                SetProperty(ref _selectedIndex, value);
+
+                _handler.Data = Tuple.Create(PlayersCombatData[_selectedIndex].UserName, _combat);
             }
         }
 
@@ -88,6 +90,15 @@ namespace CombatAnalysis.Core.ViewModels
             }
         }
 
+        public string SelectedCombat
+        {
+            get { return _selectedCombat; }
+            set
+            {
+                SetProperty(ref _selectedCombat, value);
+            }
+        }
+
         public override void Prepare(CombatModel parameter)
         {
             _combat = parameter;
@@ -96,6 +107,9 @@ namespace CombatAnalysis.Core.ViewModels
             MaxDamageDone = _combat.DamageDone;
             MaxHealDone = _combat.HealDone;
             MaxEnergyRecovery = _combat.EnergyRecovery;
+
+            SelectedIndex = 0;
+            SelectedCombat = parameter.Name;
         }
     }
 }
