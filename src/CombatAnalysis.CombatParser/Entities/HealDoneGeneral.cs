@@ -1,16 +1,14 @@
-﻿namespace CombatAnalysis.Core.Models
+﻿namespace CombatAnalysis.CombatParser.Entities
 {
-    public class DamageDoneGeneralModel
+    public class HealDoneGeneral
     {
         public int Value { get; set; }
 
-        public double DamagePerSecond { get; set; }
+        public double HealPerSecond { get; set; }
 
         public string SpellOrItem { get; set; }
 
         public int CritNumber { get; set; }
-
-        public int MissNumber { get; set; }
 
         public int CastNumber { get; set; }
 
