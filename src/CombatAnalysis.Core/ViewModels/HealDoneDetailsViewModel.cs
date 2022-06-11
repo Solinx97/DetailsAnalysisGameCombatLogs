@@ -10,6 +10,7 @@ using MvvmCross.Navigation;
 using MvvmCross.ViewModels;
 using System;
 using System.Collections.ObjectModel;
+using System.Linq;
 
 namespace CombatAnalysis.Core.ViewModels
 {
@@ -30,6 +31,8 @@ namespace CombatAnalysis.Core.ViewModels
         private bool _isShowOnlyOverheal;
         private bool _isShowOnlyCrit;
         private string _selectedPlayer;
+        private int _selectedIndexSorting;
+        private bool _isCollectionReversed;
 
         public HealDoneDetailsViewModel(IMapper mapper, IMvxNavigationService mvvmNavigation)
         {
@@ -140,6 +143,32 @@ namespace CombatAnalysis.Core.ViewModels
             }
         }
 
+        public int SelectedIndexSorting
+        {
+            get { return _selectedIndexSorting; }
+            set
+            {
+                SetProperty(ref _selectedIndexSorting, value);
+
+                Sorting(value);
+
+                RaisePropertyChanged(() => HealDoneGeneralInformations);
+            }
+        }
+
+        public bool IsCollectionReversed
+        {
+            get { return _isCollectionReversed; }
+            set
+            {
+                SetProperty(ref _isCollectionReversed, value);
+
+                Reverse();
+
+                RaisePropertyChanged(() => HealDoneGeneralInformations);
+            }
+        }
+
         public override void Prepare(Tuple<string, CombatModel> parameter)
         {
             SelectedPlayer = parameter.Item1;
@@ -163,6 +192,47 @@ namespace CombatAnalysis.Core.ViewModels
             var damageDoneGeneralInformations = combatInformation.GetHealDoneGeneral(combatInformation.HealDoneInformations, map);
             var map2 = _mapper.Map<ObservableCollection<HealDoneGeneralModel>>(damageDoneGeneralInformations);
             HealDoneGeneralInformations = map2;
+        }
+
+        private void Sorting(int index)
+        {
+            IOrderedEnumerable<HealDoneGeneralModel> sortedCollection;
+
+            switch (index)
+            {
+                case 0:
+                    sortedCollection = HealDoneGeneralInformations.OrderBy(x => x.SpellOrItem);
+                    break;
+                case 1:
+                    sortedCollection = HealDoneGeneralInformations.OrderBy(x => x.Value);
+                    break;
+                case 2:
+                    sortedCollection = HealDoneGeneralInformations.OrderBy(x => x.CastNumber);
+                    break;
+                case 3:
+                    sortedCollection = HealDoneGeneralInformations.OrderBy(x => x.MinValue);
+                    break;
+                case 4:
+                    sortedCollection = HealDoneGeneralInformations.OrderBy(x => x.MaxValue);
+                    break;
+                case 5:
+                    sortedCollection = HealDoneGeneralInformations.OrderBy(x => x.AverageValue);
+                    break;
+                case 6:
+                    sortedCollection = HealDoneGeneralInformations.OrderBy(x => x.HealPerSecond);
+                    break;
+                default:
+                    sortedCollection = HealDoneGeneralInformations.OrderBy(x => x.Value);
+                    break;
+            }
+
+            HealDoneGeneralInformations = new ObservableCollection<HealDoneGeneralModel>(sortedCollection.ToList());
+            IsCollectionReversed = false;
+        }
+
+        private void Reverse()
+        {
+            HealDoneGeneralInformations = new ObservableCollection<HealDoneGeneralModel>(HealDoneGeneralInformations.Reverse().ToList());
         }
     }
 }

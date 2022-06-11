@@ -10,6 +10,7 @@ using MvvmCross.Navigation;
 using MvvmCross.ViewModels;
 using System;
 using System.Collections.ObjectModel;
+using System.Linq;
 
 namespace CombatAnalysis.Core.ViewModels
 {
@@ -31,6 +32,8 @@ namespace CombatAnalysis.Core.ViewModels
         private bool _isShowResist = true;
         private bool _isShowImmune = true;
         private string _selectedPlayer;
+        private int _selectedIndexSorting;
+        private bool _isCollectionReversed;
 
         public DamageTakenDetailsViewModel(IMapper mapper, IMvxNavigationService mvvmNavigation)
         {
@@ -156,6 +159,32 @@ namespace CombatAnalysis.Core.ViewModels
             }
         }
 
+        public int SelectedIndexSorting
+        {
+            get { return _selectedIndexSorting; }
+            set
+            {
+                SetProperty(ref _selectedIndexSorting, value);
+
+                Sorting(value);
+
+                RaisePropertyChanged(() => DamageTakenGeneralInformations);
+            }
+        }
+
+        public bool IsCollectionReversed
+        {
+            get { return _isCollectionReversed; }
+            set
+            {
+                SetProperty(ref _isCollectionReversed, value);
+
+                Reverse();
+
+                RaisePropertyChanged(() => DamageTakenGeneralInformations);
+            }
+        }
+
         public override void Prepare(Tuple<string, CombatModel> parameter)
         {
             GetHealDoneDetails(parameter);
@@ -177,6 +206,47 @@ namespace CombatAnalysis.Core.ViewModels
             var damageDoneGeneralInformations = combatInformation.GetDamageTakenGeneral(combatInformation.DamageTakenInformations, map);
             var map2 = _mapper.Map<ObservableCollection<DamageTakenGeneralModel>>(damageDoneGeneralInformations);
             DamageTakenGeneralInformations = map2;
+        }
+
+        private void Sorting(int index)
+        {
+            IOrderedEnumerable<DamageTakenGeneralModel> sortedCollection;
+
+            switch (index)
+            {
+                case 0:
+                    sortedCollection = DamageTakenGeneralInformations.OrderBy(x => x.SpellOrItem);
+                    break;
+                case 1:
+                    sortedCollection = DamageTakenGeneralInformations.OrderBy(x => x.Value);
+                    break;
+                case 2:
+                    sortedCollection = DamageTakenGeneralInformations.OrderBy(x => x.CastNumber);
+                    break;
+                case 3:
+                    sortedCollection = DamageTakenGeneralInformations.OrderBy(x => x.MinValue);
+                    break;
+                case 4:
+                    sortedCollection = DamageTakenGeneralInformations.OrderBy(x => x.MaxValue);
+                    break;
+                case 5:
+                    sortedCollection = DamageTakenGeneralInformations.OrderBy(x => x.AverageValue);
+                    break;
+                case 6:
+                    sortedCollection = DamageTakenGeneralInformations.OrderBy(x => x.DamageTakenPerSecond);
+                    break;
+                default:
+                    sortedCollection = DamageTakenGeneralInformations.OrderBy(x => x.Value);
+                    break;
+            }
+
+            DamageTakenGeneralInformations = new ObservableCollection<DamageTakenGeneralModel>(sortedCollection.ToList());
+            IsCollectionReversed = false;
+        }
+
+        private void Reverse()
+        {
+            DamageTakenGeneralInformations = new ObservableCollection<DamageTakenGeneralModel>(DamageTakenGeneralInformations.Reverse().ToList());
         }
     }
 }

@@ -14,8 +14,10 @@
 
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="0.25*" />
-            <RowDefinition Height="*" />
+            <RowDefinition Height="0.15*"/>
+            <RowDefinition Height="0.1*"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="0.15*"/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="55"/>
@@ -27,7 +29,8 @@
             <converters:TheNativeBoolToVisibilityConverter x:Key="BoolToVisibility" />
             <converters:TheNativeIntToVisibilityConverter x:Key="IntToVisibility" />
         </Grid.Resources>
-        <ContentControl Grid.RowSpan="2" Grid.ColumnSpan="3" Content="{Binding BasicTemplate}">
+        
+        <ContentControl Grid.RowSpan="4" Grid.ColumnSpan="3" Content="{Binding BasicTemplate}">
             <ContentControl.Resources>
                 <DataTemplate DataType="{x:Type viewModels:BasicTemplateViewModel}">
                     <local:BasicTemplateView />
@@ -35,17 +38,17 @@
             </ContentControl.Resources>
         </ContentControl>
         
-        <StackPanel Grid.Column="3" Grid.Row="0" Orientation="Horizontal"
-                    HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="0 25"
-                    MaxWidth="750">
+        <StackPanel Grid.Column="3" Grid.Row="1" Orientation="Horizontal"
+                    HorizontalAlignment="Center" VerticalAlignment="Center" MaxWidth="750">
             <Button Content="Подробнее" Height="45" Width="125" FontSize="16"
                     mvx:Bi.nd="Command ShowDetailsCommand" Foreground="ForestGreen" Style="{StaticResource showButton}"/>
             <TextBlock Name="tes11" HorizontalAlignment="Center" VerticalAlignment="Center" Width="75" 
                        Text="Анализ" FontSize="18" FontWeight="Bold"
                        Margin="100 0" Style="{StaticResource titleText}"/>
         </StackPanel>
-        <ListBox Grid.Row="1" Grid.Column="2" ItemsSource="{Binding Combats}"
-                 Margin="50" SelectedIndex="{Binding CombatIndex}">
+        
+        <ListBox Grid.Row="2" Grid.Column="2" ItemsSource="{Binding Combats}"
+                 Margin="20" SelectedIndex="{Binding CombatIndex}">
             <ListBox.ItemTemplate>
                 <DataTemplate>
                     <Grid>
