@@ -37,20 +37,56 @@
             </ContentControl.Resources>
         </ContentControl>
 
-        <StackPanel Grid.Column="3" Grid.Row="1" Orientation="Horizontal" VerticalAlignment="Center" 
+        <Grid Grid.Column="2" Grid.ColumnSpan="2" Margin="40 30">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
+                <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center"
+                   Text="Игрок:" FontSize="16" TextAlignment="Center" 
+                           Foreground="Gray" Margin="10 0" FontWeight="Medium" />
+                <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center"
+                   Text="{Binding SelectedPlayer}" FontSize="18"
+                   FontWeight="Bold" TextAlignment="Center" />
+            </StackPanel>
+        </Grid>
+        
+        <StackPanel Grid.Column="3" Grid.Row="1" Orientation="Horizontal" VerticalAlignment="Center"
                     HorizontalAlignment="Center" Panel.ZIndex="1">
-            <ComboBox Style="{DynamicResource ComboBoxStyle1}" Name="detailsType" SelectedIndex="0">
-                <ComboBoxItem Content="Общее" IsSelected="True"/>
-                <ComboBoxItem Content="Подробнее" />
-            </ComboBox>
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="Тип" FontSize="15" TextAlignment="Center" Padding="10" FontWeight="SemiBold"
+                           VerticalAlignment="Center" Margin="0" Width="100" Foreground="Gray"/>
+                <ComboBox Style="{DynamicResource ComboBoxStyle1}" VerticalAlignment="Center" Name="detailsType"
+                          Width="125" SelectedIndex="0">
+                    <ComboBoxItem Content="Общий" IsSelected="True"/>
+                    <ComboBoxItem Content="Подробнее" />
+                </ComboBox>
+            </StackPanel>
             <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Text="Анализ исцеления"
-                       Width="450" TextAlignment="Center" Style="{StaticResource titleText}"
+                       Width="350" TextAlignment="Center" Style="{StaticResource titleText}"
                        Margin="25 0"/>
-            <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Text="{Binding SelectedPlayer}" FontSize="15"
-                       FontWeight="Bold" Width="200" TextAlignment="Center" Margin="25 0"/>
+            <StackPanel Orientation="Horizontal" Visibility="{Binding ElementName=detailsType, Path=SelectedIndex, Converter={StaticResource IntToVisibility}, ConverterParameter=false:0}">
+                <TextBlock Text="Порядок" FontSize="15" TextAlignment="Center" Padding="10" FontWeight="SemiBold"
+                           Margin="0" Width="100" Foreground="Gray"/>
+                <ComboBox Name="sortingProperty" Style="{DynamicResource ComboBoxStyle1}" 
+                          VerticalAlignment="Center" Width="210" SelectedIndex="{Binding SelectedIndexSorting}">
+                    <ComboBoxItem Content="Название закл." IsSelected="True"/>
+                    <ComboBoxItem Content="Исцеление" />
+                    <ComboBoxItem Content="Кол-во прим." />
+                    <ComboBoxItem Content="Мин. исцеление" />
+                    <ComboBoxItem Content="Макс. исцеление" />
+                    <ComboBoxItem Content="Среднее знач. исц."/>
+                    <ComboBoxItem Content="Исцеление в секунду" />
+                </ComboBox>
+            </StackPanel>
         </StackPanel>
 
-        <ListBox Margin="20" Grid.Row="2" Grid.Column="2" 
+        <Grid Grid.Column="2" Grid.ColumnSpan="2" Grid.Row="1" VerticalAlignment="Bottom" Margin="0 -20">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="70 0">
+                <CheckBox HorizontalAlignment="Center" VerticalAlignment="Center"
+                   Content="Обратный порядок" FontSize="16" VerticalContentAlignment="Center" 
+                          FontWeight="SemiBold" IsChecked="{Binding IsCollectionReversed}"/>
+            </StackPanel>
+        </Grid>
+        
+        <ListBox Margin="20 30" Grid.Row="2" Grid.Column="2" 
                  Background="Transparent" ItemsSource="{Binding HealDoneGeneralInformations}"
                  Visibility="{Binding ElementName=detailsType, Path=SelectedIndex, Converter={StaticResource IntToVisibility}, ConverterParameter=true:0}">
             <ListBox.ItemTemplate>
@@ -68,8 +104,8 @@
             </ListBox.ItemTemplate>
         </ListBox>
 
-        <ListBox Background="Transparent" Grid.Row="2" Grid.Column="3" 
-                 Grid.ColumnSpan="2" Margin="20" ItemsSource="{Binding HealDoneInformations}"
+        <ListBox Margin="20 30" Background="Transparent" Grid.Row="2" Grid.Column="3" 
+                 Grid.ColumnSpan="2" ItemsSource="{Binding HealDoneInformations}"
                  Visibility="{Binding ElementName=detailsType, Path=SelectedIndex, Converter={StaticResource IntToVisibility}, ConverterParameter=true:1}">
             <ListBox.ItemTemplate>
                 <DataTemplate>
