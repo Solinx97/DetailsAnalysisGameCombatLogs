@@ -33,6 +33,7 @@ namespace CombatAnalysis.Core.ViewModels
         private string _selectedPlayer;
         private int _selectedIndexSorting;
         private bool _isCollectionReversed;
+        private long _totalValue;
 
         public HealDoneDetailsViewModel(IMapper mapper, IMvxNavigationService mvvmNavigation)
         {
@@ -169,9 +170,19 @@ namespace CombatAnalysis.Core.ViewModels
             }
         }
 
+        public long TotalValue
+        {
+            get { return _totalValue; }
+            set
+            {
+                SetProperty(ref _totalValue, value);
+            }
+        }
+
         public override void Prepare(Tuple<string, CombatModel> parameter)
         {
             SelectedPlayer = parameter.Item1;
+            TotalValue = parameter.Item2.Players.Find(x => x.UserName == parameter.Item1).HealDone;
 
             GetHealDoneDetails(parameter);
         }

@@ -26,6 +26,7 @@ namespace CombatAnalysis.Core.ViewModels
         private string _selectedPlayer;
         private int _selectedIndexSorting;
         private bool _isCollectionReversed;
+        private double _totalValue;
 
         public ResourceRecoveryDetailsViewModel(IMapper mapper, IMvxNavigationService mvvmNavigation)
         {
@@ -100,9 +101,19 @@ namespace CombatAnalysis.Core.ViewModels
             }
         }
 
+        public double TotalValue
+        {
+            get { return _totalValue; }
+            set
+            {
+                SetProperty(ref _totalValue, value);
+            }
+        }
+
         public override void Prepare(Tuple<string, CombatModel> parameter)
         {
             SelectedPlayer = parameter.Item1;
+            TotalValue = parameter.Item2.Players.Find(x => x.UserName == parameter.Item1).EnergyRecovery;
 
             GetResourceRecoveryDetails(parameter);
         }
