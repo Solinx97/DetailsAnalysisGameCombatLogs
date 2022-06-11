@@ -94,7 +94,9 @@ namespace CombatAnalysis.Core.ViewModels
 
         public void ResourceDetails()
         {
-            Task.Run(() => _mvvmNavigation.Navigate<ResourceDetailsViewModel>());
+            _combatInformtaion = (Tuple<string, CombatModel>)_handler.Data;
+
+            Task.Run(() => _mvvmNavigation.Navigate<ResourceRecoveryDetailsViewModel, Tuple<string, CombatModel>>(_combatInformtaion));
         }
     }
 }

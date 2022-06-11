@@ -2,9 +2,9 @@
 
 namespace CombatAnalysis.App.Views
 {
-    public partial class ResourceDetailsView : MvxWpfView
+    public partial class ResourceRecoveryDetailsView : MvxWpfView
     {
-        public ResourceDetailsView()
+        public ResourceRecoveryDetailsView()
         {
             InitializeComponent();
         }

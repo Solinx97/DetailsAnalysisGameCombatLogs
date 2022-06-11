@@ -16,6 +16,7 @@ namespace CombatAnalysis.CombatParser
             DamageDoneInformations = new List<DamageDone>();
             HealDoneInformations = new List<HealDone>();
             DamageTakenInformations = new List<DamageTaken>();
+            ResourceRecoveryInformations = new List<ResourceRecovery>();
         }
 
         public List<DamageDone> DamageDoneInformations { get; private set; }
@@ -23,6 +24,8 @@ namespace CombatAnalysis.CombatParser
         public List<HealDone> HealDoneInformations { get; private set; }
 
         public List<DamageTaken> DamageTakenInformations { get; private set; }
+
+        public List<ResourceRecovery> ResourceRecoveryInformations { get; private set; }
 
         public void SetCombat(Combat combat, string player)
         {
@@ -33,23 +36,6 @@ namespace CombatAnalysis.CombatParser
         public void SetCombat(Combat combat)
         {
             _combat = combat;
-        }
-
-        public double GetEnergyRecovery()
-        {
-            double energyRecovery = 0;
-            foreach (var item in _combat.Data)
-            {
-                if ((item.Contains("SPELL_PERIODIC_ENERGIZE") || item.Contains("SPELL_ENERGIZE"))
-                    && item.Contains(_player))
-                {
-                    var combatData = CombatDataParse(item);
-                    var energyRecoveryInformation = GetEnergyInformation(combatData.ToArray());
-                    energyRecovery += energyRecoveryInformation.Value;
-                }
-            }
-
-            return energyRecovery;
         }
 
         public int GetDamageDone()
@@ -120,6 +106,25 @@ namespace CombatAnalysis.CombatParser
             }
 
             return damageTaken;
+        }
+
+        public double GetEnergyRecovery()
+        {
+            double energyRecovery = 0;
+            foreach (var item in _combat.Data)
+            {
+                if ((item.Contains("SPELL_PERIODIC_ENERGIZE") || item.Contains("SPELL_ENERGIZE"))
+                    && item.Contains(_player))
+                {
+                    var combatData = CombatDataParse(item);
+                    var energyRecoveryInformation = GetEnergyInformation(combatData.ToArray());
+                    energyRecovery += energyRecoveryInformation.Value;
+
+                    ResourceRecoveryInformations.Add(energyRecoveryInformation);
+                }
+            }
+
+            return energyRecovery;
         }
 
         public int GetDeathsNumber()
@@ -221,20 +226,17 @@ namespace CombatAnalysis.CombatParser
             return damageDone;
         }
 
-        private EnergyRecovery GetEnergyInformation(string[] combatData)
+        private ResourceRecovery GetEnergyInformation(string[] combatData)
         {
-            int.TryParse(combatData[21], out var value1);
-            int.TryParse(combatData[22], out var value2);
-            int.TryParse(combatData[^1], out var value3);
-            double.TryParse(combatData[29], NumberStyles.Number, CultureInfo.InvariantCulture, out var value4);
+            double.TryParse(combatData[^4], NumberStyles.Number, CultureInfo.InvariantCulture, out var value4);
 
-            var energyRecovery = new EnergyRecovery
+            var spellOrItem = combatData[1].Contains("SPELL_ENERGIZE") ? combatData[11] : combatData[3];
+
+            var energyRecovery = new ResourceRecovery
             {
                 Time = TimeSpan.Parse(combatData[0]),
-                CurrentEnergy = value1,
-                NowMaxEnergy = value2,
-                MaxEnergy = value3,
                 Value = value4,
+                SpellOrItem = spellOrItem.Trim('"')
             };
 
             return energyRecovery;
