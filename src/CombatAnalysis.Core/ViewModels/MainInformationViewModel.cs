@@ -17,6 +17,7 @@ namespace CombatAnalysis.Core.ViewModels
     {
         private readonly IMvxNavigationService _mvvmNavigation;
         private readonly IMapper _mapper;
+        private readonly IHttpClientHelper _httpClient;
 
         private string _combatLog;
         private bool _isLoading;
@@ -27,10 +28,11 @@ namespace CombatAnalysis.Core.ViewModels
         private IViewModelConnect _handler;
         private List<CombatModel> _combats;
 
-        public MainInformationViewModel(IMapper mapper, IMvxNavigationService mvvmNavigation)
+        public MainInformationViewModel(IMapper mapper, IMvxNavigationService mvvmNavigation, IHttpClientHelper httpClient)
         {
             _mapper = mapper;
             _mvvmNavigation = mvvmNavigation;
+            _httpClient = httpClient;
 
             GetCombatLogCommand = new MvxCommand(GetCombatLog);
             OpenPlayerAnalysisCommand = new MvxCommand(OpenPlayerAnalysis);

@@ -2,7 +2,7 @@
 using CombatAnalysis.CombatParser.Entities;
 using CombatAnalysis.Core.Models;
 
-namespace CombatAnalysis.Core.Mapper
+namespace CombatAnalysis.Core.Mapping
 {
     public class CombatAnalysisMapper : Profile
     {

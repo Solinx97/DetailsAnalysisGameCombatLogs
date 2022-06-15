@@ -8,8 +8,11 @@ namespace CombatAnalysis.DAL.Data
         public CombatAnalysisContext(
             DbContextOptions<CombatAnalysisContext> options) : base(options)
         {
+            Database.EnsureCreated();
         }
 
         public DbSet<Combat> Combat { get; set; }
+
+        public DbSet<CombatPlayerData> CombatPlayerData { get; set; }
     }
 }
