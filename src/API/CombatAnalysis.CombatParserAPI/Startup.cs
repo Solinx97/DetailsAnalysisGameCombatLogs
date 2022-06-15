@@ -1,3 +1,6 @@
+using AutoMapper;
+using CombatAnalysis.BL.Extensions;
+using CombatAnalysis.CombatParserAPI.Mapping;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -18,6 +21,8 @@ namespace CombatAnalysis.CombatParserAPI
 
         public void ConfigureServices(IServiceCollection services)
         {
+            RegisteringDependencies(services);
+
             services.AddControllers();
 
             services.AddSwaggerGen(options =>
@@ -28,6 +33,14 @@ namespace CombatAnalysis.CombatParserAPI
                     Version = "v1",
                 });
             });
+
+            var mappingConfig = new MapperConfiguration(mc =>
+            {
+                mc.AddProfile(new ApiMapper());
+            });
+
+            var mapper = mappingConfig.CreateMapper();
+            services.AddSingleton(mapper);
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -53,6 +66,11 @@ namespace CombatAnalysis.CombatParserAPI
             {
                 endpoints.MapDefaultControllerRoute();
             });
+        }
+
+        private void RegisteringDependencies(IServiceCollection services)
+        {
+            services.RegisterDependenciesBL(Configuration, "DefaultConnection");
         }
     }
 }

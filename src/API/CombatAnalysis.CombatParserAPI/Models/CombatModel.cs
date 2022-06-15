@@ -1,8 +1,8 @@
 ﻿using System;
 
-namespace CombatAnalysis.BL.DTO
+namespace CombatAnalysis.CombatParserAPI.Models
 {
-    public class CombatDto
+    public class CombatModel
     {
         public int Id { get; set; }
 
