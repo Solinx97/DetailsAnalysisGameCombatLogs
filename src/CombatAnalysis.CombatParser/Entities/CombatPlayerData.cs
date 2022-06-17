@@ -1,6 +1,6 @@
 ﻿namespace CombatAnalysis.CombatParser.Entities
 {
-    public class PlayerCombat
+    public class CombatPlayerData
     {
         public string UserName { get; set; }
 

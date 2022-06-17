@@ -29,7 +29,7 @@ namespace CombatAnalysis.CombatParser.Entities
 
         public DateTimeOffset FinishDate { get; set; }
 
-        public List<PlayerCombat> Players { get; set; }
+        public List<CombatPlayerData> Players { get; set; }
 
         public string Duration
         {

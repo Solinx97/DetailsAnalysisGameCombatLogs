@@ -18,10 +18,12 @@ namespace CombatAnalysis.DAL.Repositories
 
         async Task<int> IGenericRepository<TModel>.CreateAsync(TModel item)
         {
-            await _context.Set<TModel>().AddAsync(item);
+            var entityEntry = await _context.Set<TModel>().AddAsync(item);
             var numberEntries = await _context.SaveChangesAsync();
 
-            return numberEntries;
+            var entityId = (int)entityEntry.Property("Id").CurrentValue;
+
+            return entityId;
         }
 
         async Task<int> IGenericRepository<TModel>.DeleteAsync(TModel item)

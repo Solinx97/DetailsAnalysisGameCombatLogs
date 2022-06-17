@@ -70,14 +70,14 @@ namespace CombatAnalysis.CombatParser
 
         private void GetCombatPlayersData(Combat combat)
         {
-            var playersData = new List<PlayerCombat>();
+            var playersData = new List<CombatPlayerData>();
             var combatInformation = new CombatInformation();
 
             var players = GetPlayers(combat.Data);
             foreach (var item in players)
             {
                 combatInformation.SetCombat(combat, item);
-                var playerCombatData = new PlayerCombat
+                var playerCombatData = new CombatPlayerData
                 {
                     UserName = item,
                     EnergyRecovery = combatInformation.GetEnergyRecovery(),

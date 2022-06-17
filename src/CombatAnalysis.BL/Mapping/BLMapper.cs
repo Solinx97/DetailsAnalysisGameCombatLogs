@@ -4,11 +4,12 @@ using CombatAnalysis.DAL.Entities;
 
 namespace CombatAnalysis.BL.Mapping
 {
-    public class MappingProfile : Profile
+    public class BLMapper : Profile
     {
-        public MappingProfile()
+        public BLMapper()
         {
             CreateMap<CombatDto, Combat>().ReverseMap();
+            CreateMap<CombatPlayerDataDto, CombatPlayerData>().ReverseMap();
         }
     }
 }

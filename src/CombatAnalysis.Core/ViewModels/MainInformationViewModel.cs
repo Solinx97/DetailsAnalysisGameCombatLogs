@@ -9,6 +9,7 @@ using MvvmCross.Commands;
 using MvvmCross.Navigation;
 using MvvmCross.ViewModels;
 using System.Collections.Generic;
+using System.Net.Http.Json;
 using System.Threading.Tasks;
 
 namespace CombatAnalysis.Core.ViewModels
@@ -126,10 +127,10 @@ namespace CombatAnalysis.Core.ViewModels
             var combatsMapper = _mapper.Map<List<CombatModel>>(combats);
             _combats = combatsMapper;
 
-            GetDetails();
+            await GetDetails();
         }
 
-        private void GetDetails()
+        private async Task GetDetails()
         {
             for (int i = 0; i < _combats.Count; i++)
             {
@@ -140,9 +141,24 @@ namespace CombatAnalysis.Core.ViewModels
                     _combats[i].EnergyRecovery += item.EnergyRecovery;
                     _combats[i].DamageTaken += item.DamageTaken;
                 }
+
+                var response = await _httpClient.PostAsync("Combat", JsonContent.Create(_combats[i]));
+                var createdCombatId = response.Content.ReadFromJsonAsync<int>().Result;
+
+                await SavePlayersData(_combats[i], createdCombatId);
             }
 
-            Task.Run(() => _mvvmNavigation.Navigate<GeneralAnalysisViewModel, List<CombatModel>>(_combats));
+            await _mvvmNavigation.Navigate<GeneralAnalysisViewModel, List<CombatModel>>(_combats);
+        }
+
+        private async Task SavePlayersData(CombatModel combat, int combatId)
+        {
+            for (int i = 0; i < combat.Players.Count; i++)
+            {
+                combat.Players[i].CombatId = combatId;
+
+                await _httpClient.PostAsync("CombatPlayer", JsonContent.Create(combat.Players[i]));
+            }
         }
     }
 }
