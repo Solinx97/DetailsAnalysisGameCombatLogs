@@ -2,8 +2,6 @@
 {
     public class CombatPlayerDataModel
     {
-        public int Id { get; set; }
-
         public string UserName { get; set; }
 
         public double EnergyRecovery { get; set; }

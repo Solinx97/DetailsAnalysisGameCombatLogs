@@ -17,6 +17,7 @@ namespace CombatAnalysis.DAL.Extensions
 
             services.AddScoped<IGenericRepository<Combat>, GenericRepository<Combat>>();
             services.AddScoped<IGenericRepository<CombatPlayerData>, GenericRepository<CombatPlayerData>>();
+            services.AddScoped<IGenericRepository<DamageDone>, GenericRepository<DamageDone>>();
         }
     }
 }

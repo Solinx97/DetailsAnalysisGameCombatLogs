@@ -5,37 +5,42 @@ using System.Globalization;
 
 namespace CombatAnalysis.CombatParser
 {
-    public class CombatInformation
+    public class CombatDetailsInformation
     {
         private Combat _combat;
         private string _player;
 
-        public CombatInformation()
+        public CombatDetailsInformation()
         {
             _combat = new Combat();
-            DamageDoneInformations = new List<DamageDone>();
-            HealDoneInformations = new List<HealDone>();
-            DamageTakenInformations = new List<DamageTaken>();
-            ResourceRecoveryInformations = new List<ResourceRecovery>();
+            DamageDone = new List<DamageDone>();
+            HealDone = new List<HealDone>();
+            DamageTaken = new List<DamageTaken>();
+            ResourceRecovery = new List<ResourceRecovery>();
         }
 
-        public List<DamageDone> DamageDoneInformations { get; private set; }
+        public List<DamageDone> DamageDone { get; private set; }
 
-        public List<HealDone> HealDoneInformations { get; private set; }
+        public List<HealDone> HealDone { get; private set; }
 
-        public List<DamageTaken> DamageTakenInformations { get; private set; }
+        public List<DamageTaken> DamageTaken { get; private set; }
 
-        public List<ResourceRecovery> ResourceRecoveryInformations { get; private set; }
+        public List<ResourceRecovery> ResourceRecovery { get; private set; }
 
-        public void SetCombat(Combat combat, string player)
+        public void SetData(Combat combat, string player)
         {
             _combat = combat;
             _player = player;
         }
 
-        public void SetCombat(Combat combat)
+        public void SetData(Combat combat)
         {
             _combat = combat;
+        }
+
+        public void SetData(string player)
+        {
+            _player = player;
         }
 
         public int GetDamageDone()
@@ -54,7 +59,7 @@ namespace CombatAnalysis.CombatParser
                     if (damageDoneInformation != null)
                     {
                         damageDone += damageDoneInformation.Value;
-                        DamageDoneInformations.Add(damageDoneInformation);
+                        DamageDone.Add(damageDoneInformation);
                     }
                 }
             }
@@ -76,7 +81,7 @@ namespace CombatAnalysis.CombatParser
                     if (healDoneInformation != null)
                     {
                         healthDone += healDoneInformation.Value;
-                        HealDoneInformations.Add(healDoneInformation);
+                        HealDone.Add(healDoneInformation);
                     }
                 }
             }
@@ -100,7 +105,7 @@ namespace CombatAnalysis.CombatParser
                     if (damageTakenInformation != null)
                     {
                         damageTaken += damageTakenInformation.Value;
-                        DamageTakenInformations.Add(damageTakenInformation);
+                        DamageTaken.Add(damageTakenInformation);
                     }
                 }
             }
@@ -108,7 +113,7 @@ namespace CombatAnalysis.CombatParser
             return damageTaken;
         }
 
-        public double GetEnergyRecovery()
+        public double GetResourceRecovery()
         {
             double energyRecovery = 0;
             foreach (var item in _combat.Data)
@@ -120,7 +125,7 @@ namespace CombatAnalysis.CombatParser
                     var energyRecoveryInformation = GetEnergyInformation(combatData.ToArray());
                     energyRecovery += energyRecoveryInformation.Value;
 
-                    ResourceRecoveryInformations.Add(energyRecoveryInformation);
+                    ResourceRecovery.Add(energyRecoveryInformation);
                 }
             }
 

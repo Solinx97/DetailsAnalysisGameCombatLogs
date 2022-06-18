@@ -317,22 +317,20 @@ namespace CombatAnalysis.Core.ViewModels
 
         private void GetDamageDoneDetails(Tuple<string, CombatModel> combatInformationData)
         {
-            var combatInformation = new CombatInformation();
+            var combatInformation = new CombatDetailsInformation();
 
             var map = _mapper.Map<Combat>(combatInformationData.Item2);
-            combatInformation.SetCombat(map, combatInformationData.Item1);
+            combatInformation.SetData(map, combatInformationData.Item1);
             combatInformation.GetDamageDone();
 
-            var map1 = _mapper.Map<ObservableCollection<DamageDoneModel>>(combatInformation.DamageDoneInformations);
+            var map1 = _mapper.Map<ObservableCollection<DamageDoneModel>>(combatInformation.DamageDone);
 
             DamageDoneInformations = map1;
             _damageDoneInformationsWithSkipDamage = new ObservableCollection<DamageDoneModel>(map1);
 
-            var damageDoneGeneralInformations = combatInformation.GetDamageDoneGeneral(combatInformation.DamageDoneInformations, map);
+            var damageDoneGeneralInformations = combatInformation.GetDamageDoneGeneral(combatInformation.DamageDone, map);
             var map2 = _mapper.Map<ObservableCollection<DamageDoneGeneralModel>>(damageDoneGeneralInformations);
             DamageDoneGeneralInformations = map2;
-
-
         }
 
         private void Sorting(int index)

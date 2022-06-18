@@ -4,8 +4,6 @@ namespace CombatAnalysis.CombatParserAPI.Models
 {
     public class CombatModel
     {
-        public int Id { get; set; }
-
         public string DungeonName { get; set; }
 
         public string Name { get; set; }

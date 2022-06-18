@@ -1,12 +1,12 @@
-﻿using System;
-
-namespace CombatAnalysis.Core.Models
+﻿namespace CombatAnalysis.BL.DTO
 {
-    public class DamageDoneModel
+    public class DamageDoneDto
     {
+        public int Id { get; set; }
+
         public int Value { get; set; }
 
-        public TimeSpan Time { get; set; }
+        public string Time { get; set; }
 
         public string FromPlayer { get; set; }
 

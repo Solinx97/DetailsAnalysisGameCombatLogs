@@ -7,12 +7,12 @@ using System.Threading.Tasks;
 
 namespace CombatAnalysis.CombatParser
 {
-    public class CombatInformationParser : IObservable
+    public class CombaInformationtParser : IObservable
     {
         private IList<IObserver> _observers;
         private IList<ZoneInformation> _zones;
 
-        public CombatInformationParser()
+        public CombaInformationtParser()
         {
             Combats = new List<Combat>();
             _observers = new List<IObserver>();
@@ -71,16 +71,16 @@ namespace CombatAnalysis.CombatParser
         private void GetCombatPlayersData(Combat combat)
         {
             var playersData = new List<CombatPlayerData>();
-            var combatInformation = new CombatInformation();
+            var combatInformation = new CombatDetailsInformation();
 
             var players = GetPlayers(combat.Data);
             foreach (var item in players)
             {
-                combatInformation.SetCombat(combat, item);
+                combatInformation.SetData(combat, item);
                 var playerCombatData = new CombatPlayerData
                 {
                     UserName = item,
-                    EnergyRecovery = combatInformation.GetEnergyRecovery(),
+                    EnergyRecovery = combatInformation.GetResourceRecovery(),
                     DamageDone = combatInformation.GetDamageDone(),
                     HealDone = combatInformation.GetHealDone(),
                     DamageTaken = combatInformation.GetDamageTaken(),
@@ -202,8 +202,8 @@ namespace CombatAnalysis.CombatParser
 
         private void GetCombatDeaths(Combat combat)
         {
-            var combatInform = new CombatInformation();
-            combatInform.SetCombat(combat);
+            var combatInform = new CombatDetailsInformation();
+            combatInform.SetData(combat);
 
             combat.DeathNumber = combatInform.GetDeathsNumber();
         }

@@ -120,18 +120,18 @@ namespace CombatAnalysis.Core.ViewModels
 
         private void GetResourceRecoveryDetails(Tuple<string, CombatModel> combatInformationData)
         {
-            var combatInformation = new CombatInformation();
+            var combatInformation = new CombatDetailsInformation();
 
             var map = _mapper.Map<Combat>(combatInformationData.Item2);
-            combatInformation.SetCombat(map, combatInformationData.Item1);
-            combatInformation.GetEnergyRecovery();
+            combatInformation.SetData(map, combatInformationData.Item1);
+            combatInformation.GetResourceRecovery();
 
-            var map1 = _mapper.Map<ObservableCollection<ResourceRecoveryModel>>(combatInformation.ResourceRecoveryInformations);
+            var map1 = _mapper.Map<ObservableCollection<ResourceRecoveryModel>>(combatInformation.ResourceRecovery);
 
             ResourceRecoveryInformations = map1;
             _resourceRecoveryInformations = new ObservableCollection<ResourceRecoveryModel>(map1);
 
-            var damageDoneGeneralInformations = combatInformation.GetResourceRecoveryGeneral(combatInformation.ResourceRecoveryInformations, map);
+            var damageDoneGeneralInformations = combatInformation.GetResourceRecoveryGeneral(combatInformation.ResourceRecovery, map);
             var map2 = _mapper.Map<ObservableCollection<ResourceRecoveryGeneralModel>>(damageDoneGeneralInformations);
             ResourceRecoveryGeneralInformations = map2;
         }

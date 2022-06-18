@@ -8,7 +8,7 @@ namespace CombatAnalysis.CombatParser.Extensions
 {
     public static class CombatInformationExtension
     {
-        public static ObservableCollection<DamageDoneGeneral> GetDamageDoneGeneral(this CombatInformation extension, List<DamageDone> collection, Combat combat)
+        public static ObservableCollection<DamageDoneGeneral> GetDamageDoneGeneral(this CombatDetailsInformation extension, List<DamageDone> collection, Combat combat)
         {
             var spells = collection
                 .GroupBy(group => group.SpellOrItem)
@@ -40,7 +40,7 @@ namespace CombatAnalysis.CombatParser.Extensions
             return damageDoneGroupBySpellOrItem;
         }
 
-        public static ObservableCollection<HealDoneGeneral> GetHealDoneGeneral(this CombatInformation extension, List<HealDone> collection, Combat combat)
+        public static ObservableCollection<HealDoneGeneral> GetHealDoneGeneral(this CombatDetailsInformation extension, List<HealDone> collection, Combat combat)
         {
             var spells = collection
                 .GroupBy(group => group.SpellOrItem)
@@ -72,7 +72,7 @@ namespace CombatAnalysis.CombatParser.Extensions
             return damageDoneGroupBySpellOrItem;
         }
 
-        public static ObservableCollection<DamageTakenGeneral> GetDamageTakenGeneral(this CombatInformation extension, List<DamageTaken> collection, Combat combat)
+        public static ObservableCollection<DamageTakenGeneral> GetDamageTakenGeneral(this CombatDetailsInformation extension, List<DamageTaken> collection, Combat combat)
         {
             var spells = collection
                 .GroupBy(group => group.SpellOrItem)
@@ -104,7 +104,7 @@ namespace CombatAnalysis.CombatParser.Extensions
             return damageDoneGroupBySpellOrItem;
         }
 
-        public static ObservableCollection<ResourceRecoveryGeneral> GetResourceRecoveryGeneral(this CombatInformation extension, List<ResourceRecovery> collection, Combat combat)
+        public static ObservableCollection<ResourceRecoveryGeneral> GetResourceRecoveryGeneral(this CombatDetailsInformation extension, List<ResourceRecovery> collection, Combat combat)
         {
             var spells = collection
                 .GroupBy(group => group.SpellOrItem)
