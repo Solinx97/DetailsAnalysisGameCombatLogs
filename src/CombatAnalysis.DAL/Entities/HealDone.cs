@@ -1,12 +1,12 @@
-﻿using System;
-
-namespace CombatAnalysis.Core.Models
+﻿namespace CombatAnalysis.DAL.Entities
 {
-    public class HealDoneModel
+    public class HealDone
     {
+        public int Id { get; set; }
+
         public int ValueWithOverheal { get; set; }
 
-        public TimeSpan Time { get; set; }
+        public string Time { get; set; }
 
         public int Overheal { get; set; }
 

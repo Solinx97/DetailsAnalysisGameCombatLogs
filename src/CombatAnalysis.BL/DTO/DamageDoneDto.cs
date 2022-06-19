@@ -1,4 +1,6 @@
-﻿namespace CombatAnalysis.BL.DTO
+﻿using System;
+
+namespace CombatAnalysis.BL.DTO
 {
     public class DamageDoneDto
     {
@@ -6,7 +8,7 @@
 
         public int Value { get; set; }
 
-        public string Time { get; set; }
+        public TimeSpan Time { get; set; }
 
         public string FromPlayer { get; set; }
 

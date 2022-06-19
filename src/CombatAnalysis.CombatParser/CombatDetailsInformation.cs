@@ -31,16 +31,22 @@ namespace CombatAnalysis.CombatParser
         {
             _combat = combat;
             _player = player;
+
+            Clear();
         }
 
         public void SetData(Combat combat)
         {
             _combat = combat;
+
+            Clear();
         }
 
         public void SetData(string player)
         {
             _player = player;
+
+            Clear();
         }
 
         public int GetDamageDone()
@@ -338,6 +344,14 @@ namespace CombatAnalysis.CombatParser
             }
 
             return isFound ? 1 : 0;
+        }
+
+        private void Clear()
+        {
+            DamageDone.Clear();
+            HealDone.Clear();
+            DamageTaken.Clear();
+            ResourceRecovery.Clear();
         }
     }
 }

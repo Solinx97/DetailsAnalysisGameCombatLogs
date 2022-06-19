@@ -1,9 +1,11 @@
 ﻿using System;
 
-namespace CombatAnalysis.Core.Models
+namespace CombatAnalysis.BL.DTO
 {
-    public class HealDoneModel
+    public class HealDoneDto
     {
+        public int Id { get; set; }
+
         public int ValueWithOverheal { get; set; }
 
         public TimeSpan Time { get; set; }
