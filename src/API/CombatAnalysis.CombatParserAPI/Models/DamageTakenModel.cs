@@ -1,12 +1,10 @@
-﻿using System;
-
-namespace CombatAnalysis.CombatParser.Entities
+﻿namespace CombatAnalysis.CombatParserAPI.Models
 {
-    public class DamageTaken
+    public class DamageTakenModel
     {
         public int Value { get; set; }
 
-        public TimeSpan Time { get; set; }
+        public string Time { get; set; }
 
         public string From { get; set; }
 

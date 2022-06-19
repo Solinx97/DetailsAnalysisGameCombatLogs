@@ -4,8 +4,6 @@ namespace CombatAnalysis.BL.DTO
 {
     public class HealDoneDto
     {
-        public int Id { get; set; }
-
         public int ValueWithOverheal { get; set; }
 
         public TimeSpan Time { get; set; }

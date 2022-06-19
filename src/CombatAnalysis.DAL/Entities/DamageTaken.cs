@@ -1,12 +1,12 @@
-﻿using System;
-
-namespace CombatAnalysis.CombatParser.Entities
+﻿namespace CombatAnalysis.DAL.Entities
 {
     public class DamageTaken
     {
+        public int Id { get; set; }
+
         public int Value { get; set; }
 
-        public TimeSpan Time { get; set; }
+        public string Time { get; set; }
 
         public string From { get; set; }
 
