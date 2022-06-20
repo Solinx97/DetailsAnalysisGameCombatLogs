@@ -10,7 +10,9 @@ using MvvmCross.Commands;
 using MvvmCross.Navigation;
 using MvvmCross.ViewModels;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http.Json;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace CombatAnalysis.Core.ViewModels
@@ -155,6 +157,8 @@ namespace CombatAnalysis.Core.ViewModels
 
         private async Task GetDetails()
         {
+            var createdCombatLogId = await SaveCombatLogData();
+
             for (int i = 0; i < _combats.Count; i++)
             {
                 foreach (var item in _combats[i].Players)
@@ -167,14 +171,14 @@ namespace CombatAnalysis.Core.ViewModels
 
                 if (IsNeedSave)
                 {
-                    await SaveCombatData(_combats[i]);
+                    await SaveCombatData(_combats[i], createdCombatLogId);
                 }
             }
 
             await _mvvmNavigation.Navigate<GeneralAnalysisViewModel, List<CombatModel>>(_combats);
         }
 
-        private async Task SaveCombatData(CombatModel combat)
+        private async Task SaveCombatData(CombatModel combat, int createdCombatLogId)
         {
             IsSaving = true;
 
@@ -182,6 +186,7 @@ namespace CombatAnalysis.Core.ViewModels
             var map = _mapper.Map<Combat>(combat);
             combatInformation.SetData(map);
 
+            combat.CombatLogId = createdCombatLogId;
             var combatResponse = await _httpClient.PostAsync("Combat", JsonContent.Create(combat));
             var createdCombatId = combatResponse.Content.ReadFromJsonAsync<int>().Result;
 
@@ -194,6 +199,34 @@ namespace CombatAnalysis.Core.ViewModels
             }
 
             Task.WaitAll(tasks.ToArray());
+        }
+
+        private async Task<int> SaveCombatLogData()
+        {
+            var dungeonNames = _combats
+                .GroupBy(group => group.DungeonName)
+                .Select(select => select.ToList())
+                .ToList();
+
+            var combatLogDungeonName = new StringBuilder();
+            foreach (var item in dungeonNames)
+            {
+                var dungeonName = item.First().DungeonName.Trim('"');
+                combatLogDungeonName.Append($"{dungeonName}/");
+            }
+
+            combatLogDungeonName.Remove(combatLogDungeonName.Length - 1, 1);
+
+            var combatLog = new CombatLogModel
+            {
+                Name = combatLogDungeonName.ToString(),
+                Date = System.DateTimeOffset.Now
+            };
+
+            var combatLogResponse = await _httpClient.PostAsync("CombatLog", JsonContent.Create(combatLog));
+            var createdCombatLogId = combatLogResponse.Content.ReadFromJsonAsync<int>().Result;
+
+            return createdCombatLogId;
         }
 
         private async Task SaveCombatPlayerData(CombatDetailsInformation combatInformation, CombatModel combat, int createdCombatId, List<Task> tasks)

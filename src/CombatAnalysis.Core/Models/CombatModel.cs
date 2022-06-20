@@ -35,5 +35,7 @@ namespace CombatAnalysis.Core.Models
         {
             get { return (FinishDate - StartDate).ToString(@"hh\:mm\:ss"); }
         }
+
+        public int CombatLogId { get; set; }
     }
 }

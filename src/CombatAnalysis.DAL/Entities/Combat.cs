@@ -32,5 +32,7 @@ namespace CombatAnalysis.DAL.Entities
         {
             get { return (FinishDate - StartDate).ToString(@"hh\:mm\:ss"); }
         }
+
+        public int CombatLogId { get; set; }
     }
 }

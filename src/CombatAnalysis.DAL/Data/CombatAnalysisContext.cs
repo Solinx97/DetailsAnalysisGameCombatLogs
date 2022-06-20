@@ -11,6 +11,8 @@ namespace CombatAnalysis.DAL.Data
             Database.EnsureCreated();
         }
 
+        public DbSet<CombatLog> CombatLog { get; set; }
+
         public DbSet<Combat> Combat { get; set; }
 
         public DbSet<CombatPlayerData> CombatPlayerData { get; set; }
