@@ -1,12 +1,10 @@
-﻿using System;
-
-namespace CombatAnalysis.Core.Models
+﻿namespace CombatAnalysis.CombatParserAPI.Models
 {
     public class ResourceRecoveryModel
     {
         public double Value { get; set; }
 
-        public TimeSpan Time { get; set; }
+        public string Time { get; set; }
 
         public string SpellOrItem { get; set; }
 

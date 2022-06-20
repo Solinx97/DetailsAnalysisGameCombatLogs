@@ -13,6 +13,7 @@ namespace CombatAnalysis.BL.Mapping
             CreateMap<DamageDoneDto, DamageDone>().ReverseMap();
             CreateMap<HealDoneDto, HealDone>().ReverseMap();
             CreateMap<DamageTakenDto, DamageTaken>().ReverseMap();
+            CreateMap<ResourceRecoveryDto, ResourceRecovery>().ReverseMap();
         }
     }
 }

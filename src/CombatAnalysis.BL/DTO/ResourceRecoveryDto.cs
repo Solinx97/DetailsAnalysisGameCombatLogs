@@ -1,12 +1,10 @@
-﻿using System;
-
-namespace CombatAnalysis.Core.Models
+﻿namespace CombatAnalysis.BL.DTO
 {
-    public class ResourceRecoveryModel
+    public class ResourceRecoveryDto
     {
         public double Value { get; set; }
 
-        public TimeSpan Time { get; set; }
+        public string Time { get; set; }
 
         public string SpellOrItem { get; set; }
 
