@@ -1,8 +1,8 @@
 ﻿using System;
 
-namespace CombatAnalysis.Core.Models
+namespace CombatAnalysis.BL.DTO
 {
-    public class HealDoneModel
+    public class HealDoneDto
     {
         public int ValueWithOverheal { get; set; }
 

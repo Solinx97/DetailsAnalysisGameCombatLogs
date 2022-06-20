@@ -1,16 +1,14 @@
-﻿using System;
-
-namespace CombatAnalysis.CombatParser.Entities
+﻿namespace CombatAnalysis.CombatParserAPI.Models
 {
-    public class DamageTaken
+    public class DamageDoneModel
     {
         public int Value { get; set; }
 
-        public TimeSpan Time { get; set; }
+        public string Time { get; set; }
 
-        public string From { get; set; }
+        public string FromPlayer { get; set; }
 
-        public string To { get; set; }
+        public string ToEnemy { get; set; }
 
         public string SpellOrItem { get; set; }
 
@@ -24,7 +22,7 @@ namespace CombatAnalysis.CombatParser.Entities
 
         public bool IsImmune { get; set; }
 
-        public bool IsCrushing { get; set; }
+        public bool IsCrit { get; set; }
 
         public int CombatPlayerDataId { get; set; }
     }

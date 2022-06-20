@@ -1,5 +1,6 @@
 using AutoMapper;
 using CombatAnalysis.BL.Extensions;
+using CombatAnalysis.BL.Mapping;
 using CombatAnalysis.CombatParserAPI.Mapping;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -37,6 +38,7 @@ namespace CombatAnalysis.CombatParserAPI
             var mappingConfig = new MapperConfiguration(mc =>
             {
                 mc.AddProfile(new ApiMapper());
+                mc.AddProfile(new BLMapper());
             });
 
             var mapper = mappingConfig.CreateMapper();

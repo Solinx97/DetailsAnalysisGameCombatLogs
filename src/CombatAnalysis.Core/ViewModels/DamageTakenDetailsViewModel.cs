@@ -204,18 +204,18 @@ namespace CombatAnalysis.Core.ViewModels
 
         private void GetHealDoneDetails(Tuple<string, CombatModel> combatInformationData)
         {
-            var combatInformation = new CombatInformation();
+            var combatInformation = new CombatDetailsInformation();
 
             var map = _mapper.Map<Combat>(combatInformationData.Item2);
-            combatInformation.SetCombat(map, combatInformationData.Item1);
+            combatInformation.SetData(map, combatInformationData.Item1);
             combatInformation.GetDamageTaken();
 
-            var map1 = _mapper.Map<ObservableCollection<DamageTakenModel>>(combatInformation.DamageTakenInformations);
+            var map1 = _mapper.Map<ObservableCollection<DamageTakenModel>>(combatInformation.DamageTaken);
 
             DamageTakenInformations = map1;
             _damageTakenInformationsWithSkipDamage = new ObservableCollection<DamageTakenModel>(map1);
 
-            var damageDoneGeneralInformations = combatInformation.GetDamageTakenGeneral(combatInformation.DamageTakenInformations, map);
+            var damageDoneGeneralInformations = combatInformation.GetDamageTakenGeneral(combatInformation.DamageTaken, map);
             var map2 = _mapper.Map<ObservableCollection<DamageTakenGeneralModel>>(damageDoneGeneralInformations);
             DamageTakenGeneralInformations = map2;
         }

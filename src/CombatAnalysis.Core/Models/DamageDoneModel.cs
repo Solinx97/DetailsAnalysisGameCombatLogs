@@ -25,5 +25,7 @@ namespace CombatAnalysis.Core.Models
         public bool IsImmune { get; set; }
 
         public bool IsCrit { get; set; }
+
+        public int CombatPlayerDataId { get; set; }
     }
 }

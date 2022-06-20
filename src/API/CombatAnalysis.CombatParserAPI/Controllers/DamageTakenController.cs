@@ -10,24 +10,21 @@ namespace CombatAnalysis.CombatParserAPI.Controllers
 {
     [Route("[controller]")]
     [ApiController]
-    public class CombatController : ControllerBase
+    public class DamageTakenController : ControllerBase
     {
-        private readonly IService<CombatDto> _service;
+        private readonly IService<DamageTakenDto> _service;
         private readonly IMapper _mapper;
 
-        public CombatController(IService<CombatDto> service, IMapper mapper)
+        public DamageTakenController(IService<DamageTakenDto> service, IMapper mapper)
         {
             _service = service;
             _mapper = mapper;
         }
 
         [HttpGet]
-        public async Task<IEnumerable<CombatModel>> Get()
+        public IEnumerable<string> Get()
         {
-            var combats = await _service.GetAllAsync();
-            var map = _mapper.Map<IEnumerable<CombatModel>>(combats);
-
-            return map;
+            return new string[] { "value1", "value2" };
         }
 
         [HttpGet("{id}")]
@@ -37,12 +34,10 @@ namespace CombatAnalysis.CombatParserAPI.Controllers
         }
 
         [HttpPost]
-        public async Task<int> Post(CombatDto value)
+        public async Task Post(DamageTakenModel value)
         {
-            var map = _mapper.Map<CombatDto>(value);
-            var createdCombatId = await _service.CreateAsync(map);
-
-            return createdCombatId;
+            var map = _mapper.Map<DamageTakenDto>(value);
+            await _service.CreateAsync(map);
         }
 
         [HttpPut("{id}")]

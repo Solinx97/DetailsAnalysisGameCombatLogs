@@ -15,7 +15,7 @@ namespace CombatAnalysis.Core.ViewModels
 
         private CombatModel _combat;
         private MvxViewModel _basicTemplate;
-        private List<PlayerCombatModel> _playersCombatData;
+        private List<CombatPlayerDataModel> _playersCombatData;
         private long _maxDamageDone;
         private long _maxHealDone;
         private double _maxEnergyRecovery;
@@ -26,7 +26,7 @@ namespace CombatAnalysis.Core.ViewModels
         {
             _mvvmNavigation = mvvmNavigation;
 
-            _playersCombatData = new List<PlayerCombatModel>();
+            _playersCombatData = new List<CombatPlayerDataModel>();
 
             _handler = new ViewModelMConnect();
             BasicTemplate = new BasicTemplateViewModel(this, _handler, _mvvmNavigation);
@@ -43,7 +43,7 @@ namespace CombatAnalysis.Core.ViewModels
             }
         }
 
-        public List<PlayerCombatModel> PlayersCombatData
+        public List<CombatPlayerDataModel> PlayersCombatData
         {
             get { return _playersCombatData; }
             set

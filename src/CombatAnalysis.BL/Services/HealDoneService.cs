@@ -9,18 +9,18 @@ using System.Threading.Tasks;
 
 namespace CombatAnalysis.BL.Services
 {
-    internal class CombatService : IService<CombatDto>
+    internal class HealDoneService : IService<HealDoneDto>
     {
-        private readonly IGenericRepository<Combat> _repository;
+        private readonly IGenericRepository<HealDone> _repository;
         private readonly IMapper _mapper;
 
-        public CombatService(IGenericRepository<Combat> userRepository, IMapper mapper)
+        public HealDoneService(IGenericRepository<HealDone> userRepository, IMapper mapper)
         {
             _repository = userRepository;
             _mapper = mapper;
         }
 
-        Task<int> IService<CombatDto>.CreateAsync(CombatDto item)
+        Task<int> IService<HealDoneDto>.CreateAsync(HealDoneDto item)
         {
             if (item == null)
             {
@@ -30,7 +30,7 @@ namespace CombatAnalysis.BL.Services
             return CreateInternalAsync(item);
         }
 
-        Task<int> IService<CombatDto>.DeleteAsync(CombatDto item)
+        Task<int> IService<HealDoneDto>.DeleteAsync(HealDoneDto item)
         {
             if (item == null)
             {
@@ -40,23 +40,23 @@ namespace CombatAnalysis.BL.Services
             return DeleteInternalAsync(item);
         }
 
-        async Task<IEnumerable<CombatDto>> IService<CombatDto>.GetAllAsync()
+        async Task<IEnumerable<HealDoneDto>> IService<HealDoneDto>.GetAllAsync()
         {
             var allData = await _repository.GetAllAsync();
-            var result = _mapper.Map<List<CombatDto>>(allData);
+            var result = _mapper.Map<List<HealDoneDto>>(allData);
 
             return result;
         }
 
-        async Task<CombatDto> IService<CombatDto>.GetByIdAsync(int id)
+        async Task<HealDoneDto> IService<HealDoneDto>.GetByIdAsync(int id)
         {
             var executeLoad = await _repository.GetByIdAsync(id);
-            var result = _mapper.Map<CombatDto>(executeLoad);
+            var result = _mapper.Map<HealDoneDto>(executeLoad);
 
             return result;
         }
 
-        Task<int> IService<CombatDto>.UpdateAsync(CombatDto item)
+        Task<int> IService<HealDoneDto>.UpdateAsync(HealDoneDto item)
         {
             if (item == null)
             {
@@ -66,20 +66,20 @@ namespace CombatAnalysis.BL.Services
             return UpdateInternalAsync(item);
         }
 
-        private async Task<int> CreateInternalAsync(CombatDto item)
+        private async Task<int> CreateInternalAsync(HealDoneDto item)
         {
-            if (string.IsNullOrEmpty(item.Name))
-            {
-                throw new ArgumentNullException(nameof(item.Name));
-            }
+            //if (string.IsNullOrEmpty(item.Name))
+            //{
+            //    throw new ArgumentNullException(nameof(item.Name));
+            //}
 
-            var map = _mapper.Map<Combat>(item);
+            var map = _mapper.Map<HealDone>(item);
             var createdCombatId = await _repository.CreateAsync(map);
 
             return createdCombatId;
         }
 
-        private async Task<int> DeleteInternalAsync(CombatDto item)
+        private async Task<int> DeleteInternalAsync(HealDoneDto item)
         {
             var allData = await _repository.GetAllAsync();
             //if (!allData.Any())
@@ -87,11 +87,11 @@ namespace CombatAnalysis.BL.Services
             //    throw new NotFoundException($"Collection entity {nameof(CombatDto)} not found", nameof(allData));
             //}
 
-            var numberEntries = await _repository.DeleteAsync(_mapper.Map<Combat>(item));
+            var numberEntries = await _repository.DeleteAsync(_mapper.Map<HealDone>(item));
             return numberEntries;
         }
 
-        private async Task<int> UpdateInternalAsync(CombatDto item)
+        private async Task<int> UpdateInternalAsync(HealDoneDto item)
         {
             var allData = await _repository.GetAllAsync();
             //if (!allData.Any())
@@ -99,12 +99,12 @@ namespace CombatAnalysis.BL.Services
             //    throw new NotFoundException($"Collection entity {nameof(CombatDto)} not found", nameof(allData));
             //}
 
-            if (string.IsNullOrEmpty(item.Name))
-            {
-                throw new ArgumentNullException(nameof(item.Name));
-            }
+            //if (string.IsNullOrEmpty(item.Name))
+            //{
+            //    throw new ArgumentNullException(nameof(item.Name));
+            //}
 
-            var numberEntries = await _repository.UpdateAsync(_mapper.Map<Combat>(item));
+            var numberEntries = await _repository.UpdateAsync(_mapper.Map<HealDone>(item));
             return numberEntries;
         }
     }

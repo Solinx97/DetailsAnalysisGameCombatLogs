@@ -1,12 +1,10 @@
-﻿using System;
-
-namespace CombatAnalysis.Core.Models
+﻿namespace CombatAnalysis.CombatParserAPI.Models
 {
     public class HealDoneModel
     {
         public int ValueWithOverheal { get; set; }
 
-        public TimeSpan Time { get; set; }
+        public string Time { get; set; }
 
         public int Overheal { get; set; }
 

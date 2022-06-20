@@ -14,5 +14,13 @@ namespace CombatAnalysis.DAL.Data
         public DbSet<Combat> Combat { get; set; }
 
         public DbSet<CombatPlayerData> CombatPlayerData { get; set; }
+
+        public DbSet<DamageDone> DamageDone { get; set; }
+
+        public DbSet<HealDone> HealDone { get; set; }
+
+        public DbSet<DamageTaken> DamageTaken { get; set; }
+
+        public DbSet<ResourceRecovery> ResourceRecovery { get; set; }
     }
 }
