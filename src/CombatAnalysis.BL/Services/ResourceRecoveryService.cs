@@ -1,10 +1,12 @@
 ﻿using AutoMapper;
 using CombatAnalysis.BL.DTO;
+using CombatAnalysis.BL.Exceptions;
 using CombatAnalysis.BL.Interfaces;
 using CombatAnalysis.DAL.Entities;
 using CombatAnalysis.DAL.Interfaces;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace CombatAnalysis.BL.Services
@@ -68,11 +70,6 @@ namespace CombatAnalysis.BL.Services
 
         private async Task<int> CreateInternalAsync(ResourceRecoveryDto item)
         {
-            //if (string.IsNullOrEmpty(item.Name))
-            //{
-            //    throw new ArgumentNullException(nameof(item.Name));
-            //}
-
             var map = _mapper.Map<ResourceRecovery>(item);
             var createdCombatId = await _repository.CreateAsync(map);
 
@@ -82,10 +79,10 @@ namespace CombatAnalysis.BL.Services
         private async Task<int> DeleteInternalAsync(ResourceRecoveryDto item)
         {
             var allData = await _repository.GetAllAsync();
-            //if (!allData.Any())
-            //{
-            //    throw new NotFoundException($"Collection entity {nameof(CombatDto)} not found", nameof(allData));
-            //}
+            if (!allData.Any())
+            {
+                throw new NotFoundException($"Collection entity {nameof(ResourceRecoveryDto)} not found", nameof(allData));
+            }
 
             var numberEntries = await _repository.DeleteAsync(_mapper.Map<ResourceRecovery>(item));
             return numberEntries;
@@ -94,15 +91,10 @@ namespace CombatAnalysis.BL.Services
         private async Task<int> UpdateInternalAsync(ResourceRecoveryDto item)
         {
             var allData = await _repository.GetAllAsync();
-            //if (!allData.Any())
-            //{
-            //    throw new NotFoundException($"Collection entity {nameof(CombatDto)} not found", nameof(allData));
-            //}
-
-            //if (string.IsNullOrEmpty(item.Name))
-            //{
-            //    throw new ArgumentNullException(nameof(item.Name));
-            //}
+            if (!allData.Any())
+            {
+                throw new NotFoundException($"Collection entity {nameof(ResourceRecoveryDto)} not found", nameof(allData));
+            }
 
             var numberEntries = await _repository.UpdateAsync(_mapper.Map<ResourceRecovery>(item));
             return numberEntries;
