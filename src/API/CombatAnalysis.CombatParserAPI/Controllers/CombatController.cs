@@ -1,5 +1,10 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using AutoMapper;
+using CombatAnalysis.BL.DTO;
+using CombatAnalysis.BL.Interfaces;
+using CombatAnalysis.CombatParserAPI.Models;
+using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace CombatAnalysis.CombatParserAPI.Controllers
 {
@@ -7,10 +12,22 @@ namespace CombatAnalysis.CombatParserAPI.Controllers
     [ApiController]
     public class CombatController : ControllerBase
     {
-        [HttpGet]
-        public IEnumerable<string> Get()
+        private readonly IService<CombatDto> _service;
+        private readonly IMapper _mapper;
+
+        public CombatController(IService<CombatDto> service, IMapper mapper)
         {
-            return new string[] { "value1", "value2" };
+            _service = service;
+            _mapper = mapper;
+        }
+
+        [HttpGet]
+        public async Task<IEnumerable<CombatModel>> Get()
+        {
+            var combats = await _service.GetAllAsync();
+            var map = _mapper.Map<IEnumerable<CombatModel>>(combats);
+
+            return map;
         }
 
         [HttpGet("{id}")]
@@ -20,12 +37,16 @@ namespace CombatAnalysis.CombatParserAPI.Controllers
         }
 
         [HttpPost]
-        public void Post([FromBody] string value)
+        public async Task<int> Post(CombatDto value)
         {
+            var map = _mapper.Map<CombatDto>(value);
+            var createdCombatId = await _service.CreateAsync(map);
+
+            return createdCombatId;
         }
 
         [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        public void Put(int id, string value)
         {
         }
 

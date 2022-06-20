@@ -29,7 +29,7 @@ namespace CombatAnalysis.Core.Models
 
         public DateTimeOffset FinishDate { get; set; }
 
-        public List<PlayerCombatModel> Players { get; set; }
+        public List<CombatPlayerDataModel> Players { get; set; }
 
         public string Duration
         {

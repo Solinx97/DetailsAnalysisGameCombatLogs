@@ -1,6 +1,6 @@
-﻿namespace CombatAnalysis.CombatParser.Entities
+﻿namespace CombatAnalysis.CombatParserAPI.Models
 {
-    public class PlayerCombat
+    public class CombatPlayerDataModel
     {
         public string UserName { get; set; }
 
@@ -13,5 +13,7 @@
         public int DamageTaken { get; set; }
 
         public int UsedBuffs { get; set; }
+
+        public int CombatId { get; set; }
     }
 }

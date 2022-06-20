@@ -25,5 +25,7 @@ namespace CombatAnalysis.CombatParser.Entities
         public bool IsImmune { get; set; }
 
         public bool IsCrushing { get; set; }
+
+        public int CombatPlayerDataId { get; set; }
     }
 }

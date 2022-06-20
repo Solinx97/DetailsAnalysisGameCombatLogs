@@ -2,14 +2,14 @@
 using CombatAnalysis.CombatParser.Entities;
 using CombatAnalysis.Core.Models;
 
-namespace CombatAnalysis.Core.Mapper
+namespace CombatAnalysis.Core.Mapping
 {
     public class CombatAnalysisMapper : Profile
     {
         public CombatAnalysisMapper()
         {
             CreateMap<CombatModel, Combat>().ReverseMap();
-            CreateMap<PlayerCombatModel, PlayerCombat>().ReverseMap();
+            CreateMap<CombatPlayerDataModel, CombatPlayerData>().ReverseMap();
             CreateMap<DamageDoneModel, DamageDone>().ReverseMap();
             CreateMap<DamageDoneGeneralModel, DamageDoneGeneral>().ReverseMap();
             CreateMap<HealDoneModel, HealDone>().ReverseMap();

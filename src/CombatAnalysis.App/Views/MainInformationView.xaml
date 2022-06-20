@@ -8,6 +8,7 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:converters="clr-namespace:CombatAnalysis.App.Converters"
       xmlns:local="clr-namespace:CombatAnalysis.App.Views"
+      xmlns:Icon="http://metro.mahapps.com/winfx/xaml/iconpacks"
       xmlns:viewModels="clr-namespace:CombatAnalysis.Core.ViewModels;assembly=CombatAnalysis.Core"
       mc:Ignorable="d" d:DesignHeight="850" d:DesignWidth="1250">
 
@@ -22,10 +23,11 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="0.25*"/>
             <RowDefinition Height="*"/>
-            <RowDefinition Height="0.4*"/>
+            <RowDefinition Height="0.6*"/>
+            <RowDefinition Height="0.05*"/>
         </Grid.RowDefinitions>
 
-        <ContentControl Grid.RowSpan="3" Content="{Binding BasicTemplate}">
+        <ContentControl Grid.RowSpan="4" Content="{Binding BasicTemplate}">
             <ContentControl.Resources>
                 <DataTemplate DataType="{x:Type viewModels:BasicTemplateViewModel}">
                     <local:BasicTemplateView />
@@ -58,7 +60,7 @@
 
         <TextBlock Grid.Row="0" HorizontalAlignment="Center" VerticalAlignment="Center"
                    Text="Получение информации о бое" FontSize="16" Margin="0 30" Style="{StaticResource titleText}"/>
-        <StackPanel IsEnabled="{Binding IsLoading, Converter={StaticResource BoolToXAMLBool}}" Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="3"
+        <StackPanel IsEnabled="{Binding IsParsing, Converter={StaticResource BoolToXAMLBool}}" Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="3"
                     HorizontalAlignment="Center" VerticalAlignment="Center" Width="375" Margin="20">
             <TextBlock HorizontalAlignment="Center" Text="Загрузить файл с данными о бое" Margin="0 20" FontSize="16" />
             <Button mvx:Bi.nd="Command GetCombatLogCommand" Content="Загрузить" Width="100" FontSize="16"
@@ -68,17 +70,32 @@
                 <TextBlock Text="{Binding CombatLog, Mode=TwoWay}" FontWeight="Bold" Margin="20 0" FontSize="14" />
             </StackPanel>
         </StackPanel>
-        <StackPanel IsEnabled="{Binding IsLoading, Converter={StaticResource BoolToXAMLBool}}" Grid.Row="2"
+        <StackPanel IsEnabled="{Binding IsParsing, Converter={StaticResource BoolToXAMLBool}}" Grid.Row="2"
                     VerticalAlignment="Center" HorizontalAlignment="Center">
-            <Button Height="35" Content="Показать" Width="100"
-                    IsEnabled="{Binding CombatLog, Converter={StaticResource ToXAMLBool}}" FontSize="16" Margin="10"
+            <StackPanel IsEnabled="{Binding CombatLog, Converter={StaticResource ToXAMLBool}}" Margin="20">
+                <Button Height="35" Content="Анализ" Width="100" FontSize="16" Margin="0 20"
                     mvx:Bi.nd="Command OpenPlayerAnalysisCommand" Style="{StaticResource showButton}" />
-            <TextBlock Width="150" Text="Загрузка данных..." FontSize="16" Foreground="BlueViolet"
+                <StackPanel Orientation="Horizontal" Width="200">
+                    <CheckBox Name="IsSave" VerticalAlignment="Center" VerticalContentAlignment="Center" Content="Сохранить данные" 
+                           HorizontalContentAlignment="Center" IsChecked="{Binding IsNeedSave}" FontSize="16"/>
+                    <Icon:PackIconMaterial Kind="ChatQuestion"  Foreground="Gray" Style="{StaticResource menuButtonIcon}">
+                        <Icon:PackIconMaterial.ToolTip>
+                            <ToolTip>
+                                Сохранение данных позволяет просматривать данные в будущем и делиться с другими пользователями.
+                            </ToolTip>
+                        </Icon:PackIconMaterial.ToolTip>
+                    </Icon:PackIconMaterial>
+                </StackPanel>
+            </StackPanel>
+            <TextBlock Width="175" Text="Разбор данных..." FontSize="16" TextAlignment="Center" Foreground="BlueViolet"
                        Margin="10" HorizontalAlignment="Center" VerticalAlignment="Center"
-                       Visibility="{Binding IsLoading, Converter={StaticResource BoolToVisibility}}" />
+                       Visibility="{Binding IsParsing, Converter={StaticResource BoolToVisibility}}" />
             <TextBlock Text="{Binding FoundCombat}" FontSize="16" TextAlignment="Center" TextWrapping="Wrap"
                        Margin="10" VerticalAlignment="Center" Height="50" MaxWidth="650"
-                       Visibility="{Binding IsLoading, Converter={StaticResource BoolToVisibility}}" />
+                       Visibility="{Binding IsParsing, Converter={StaticResource BoolToVisibility}}" />
+            <TextBlock Width="175" Text="Сохранение данных..." FontSize="16" TextAlignment="Center" Foreground="ForestGreen"
+                       Margin="10" HorizontalAlignment="Center" VerticalAlignment="Center"
+                       Visibility="{Binding IsSaving, Converter={StaticResource BoolToVisibility}}" />
         </StackPanel>
     </Grid>
 </views:MvxWpfView>

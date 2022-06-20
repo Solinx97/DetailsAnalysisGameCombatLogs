@@ -25,5 +25,7 @@ namespace CombatAnalysis.Core.Models
         public bool IsCrit { get; set; }
 
         public bool IsFullOverheal { get; set; }
+
+        public int CombatPlayerDataId { get; set; }
     }
 }

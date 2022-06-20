@@ -9,5 +9,7 @@ namespace CombatAnalysis.Core.Models
         public TimeSpan Time { get; set; }
 
         public string SpellOrItem { get; set; }
+
+        public int CombatPlayerDataId { get; set; }
     }
 }

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 
 namespace CombatAnalysis.BL.DTO
 {
@@ -8,8 +7,6 @@ namespace CombatAnalysis.BL.DTO
         public string DungeonName { get; set; }
 
         public string Name { get; set; }
-
-        public List<string> Data { get; set; }
 
         public double EnergyRecovery { get; set; }
 
@@ -28,8 +25,6 @@ namespace CombatAnalysis.BL.DTO
         public DateTimeOffset StartDate { get; set; }
 
         public DateTimeOffset FinishDate { get; set; }
-
-        //public List<PlayerCombat> Players { get; set; }
 
         public string Duration
         {

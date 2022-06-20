@@ -73,9 +73,10 @@ namespace CombatAnalysis.BL.Services
                 throw new ArgumentNullException(nameof(item.Name));
             }
 
-            var numberEntries = await _repository.CreateAsync(_mapper.Map<Combat>(item));
+            var map = _mapper.Map<Combat>(item);
+            var createdCombatId = await _repository.CreateAsync(map);
 
-            return numberEntries;
+            return createdCombatId;
         }
 
         private async Task<int> DeleteInternalAsync(CombatDto item)
