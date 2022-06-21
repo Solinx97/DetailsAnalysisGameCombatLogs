@@ -30,5 +30,7 @@ namespace CombatAnalysis.BL.DTO
         {
             get { return (FinishDate - StartDate).ToString(@"hh\:mm\:ss"); }
         }
+
+        public int CombatLogId { get; set; }
     }
 }

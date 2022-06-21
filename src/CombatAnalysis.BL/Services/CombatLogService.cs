@@ -11,18 +11,18 @@ using System.Threading.Tasks;
 
 namespace CombatAnalysis.BL.Services
 {
-    internal class DamageDoneService : IService<DamageDoneDto>
+    internal class CombatLogService : IService<CombatLogDto>
     {
-        private readonly IGenericRepository<DamageDone> _repository;
+        private readonly IGenericRepository<CombatLog> _repository;
         private readonly IMapper _mapper;
 
-        public DamageDoneService(IGenericRepository<DamageDone> userRepository, IMapper mapper)
+        public CombatLogService(IGenericRepository<CombatLog> userRepository, IMapper mapper)
         {
             _repository = userRepository;
             _mapper = mapper;
         }
 
-        Task<int> IService<DamageDoneDto>.CreateAsync(DamageDoneDto item)
+        Task<int> IService<CombatLogDto>.CreateAsync(CombatLogDto item)
         {
             if (item == null)
             {
@@ -32,7 +32,7 @@ namespace CombatAnalysis.BL.Services
             return CreateInternalAsync(item);
         }
 
-        Task<int> IService<DamageDoneDto>.DeleteAsync(DamageDoneDto item)
+        Task<int> IService<CombatLogDto>.DeleteAsync(CombatLogDto item)
         {
             if (item == null)
             {
@@ -42,23 +42,23 @@ namespace CombatAnalysis.BL.Services
             return DeleteInternalAsync(item);
         }
 
-        async Task<IEnumerable<DamageDoneDto>> IService<DamageDoneDto>.GetAllAsync()
+        async Task<IEnumerable<CombatLogDto>> IService<CombatLogDto>.GetAllAsync()
         {
             var allData = await _repository.GetAllAsync();
-            var result = _mapper.Map<List<DamageDoneDto>>(allData);
+            var result = _mapper.Map<List<CombatLogDto>>(allData);
 
             return result;
         }
 
-        async Task<DamageDoneDto> IService<DamageDoneDto>.GetByIdAsync(int id)
+        async Task<CombatLogDto> IService<CombatLogDto>.GetByIdAsync(int id)
         {
             var executeLoad = await _repository.GetByIdAsync(id);
-            var result = _mapper.Map<DamageDoneDto>(executeLoad);
+            var result = _mapper.Map<CombatLogDto>(executeLoad);
 
             return result;
         }
 
-        Task<int> IService<DamageDoneDto>.UpdateAsync(DamageDoneDto item)
+        Task<int> IService<CombatLogDto>.UpdateAsync(CombatLogDto item)
         {
             if (item == null)
             {
@@ -68,35 +68,45 @@ namespace CombatAnalysis.BL.Services
             return UpdateInternalAsync(item);
         }
 
-        private async Task<int> CreateInternalAsync(DamageDoneDto item)
+        private async Task<int> CreateInternalAsync(CombatLogDto item)
         {
-            var map = _mapper.Map<DamageDone>(item);
+            if (string.IsNullOrEmpty(item.Name))
+            {
+                throw new ArgumentNullException(nameof(item.Name));
+            }
+
+            var map = _mapper.Map<CombatLog>(item);
             var createdCombatId = await _repository.CreateAsync(map);
 
             return createdCombatId;
         }
 
-        private async Task<int> DeleteInternalAsync(DamageDoneDto item)
+        private async Task<int> DeleteInternalAsync(CombatLogDto item)
         {
             var allData = await _repository.GetAllAsync();
             if (!allData.Any())
             {
-                throw new NotFoundException($"Collection entity {nameof(DamageDoneDto)} not found", nameof(allData));
+                throw new NotFoundException($"Collection entity {nameof(CombatLogDto)} not found", nameof(allData));
             }
 
-            var numberEntries = await _repository.DeleteAsync(_mapper.Map<DamageDone>(item));
+            var numberEntries = await _repository.DeleteAsync(_mapper.Map<CombatLog>(item));
             return numberEntries;
         }
 
-        private async Task<int> UpdateInternalAsync(DamageDoneDto item)
+        private async Task<int> UpdateInternalAsync(CombatLogDto item)
         {
             var allData = await _repository.GetAllAsync();
             if (!allData.Any())
             {
-                throw new NotFoundException($"Collection entity {nameof(DamageDoneDto)} not found", nameof(allData));
+                throw new NotFoundException($"Collection entity {nameof(CombatLogDto)} not found", nameof(allData));
             }
 
-            var numberEntries = await _repository.UpdateAsync(_mapper.Map<DamageDone>(item));
+            if (string.IsNullOrEmpty(item.Name))
+            {
+                throw new ArgumentNullException(nameof(item.Name));
+            }
+
+            var numberEntries = await _repository.UpdateAsync(_mapper.Map<CombatLog>(item));
             return numberEntries;
         }
     }

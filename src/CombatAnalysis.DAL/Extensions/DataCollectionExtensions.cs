@@ -15,6 +15,7 @@ namespace CombatAnalysis.DAL.Extensions
             string connection = configuration.GetConnectionString(connectionName);
             services.AddDbContext<CombatAnalysisContext>(options => options.UseSqlServer(connection));
 
+            services.AddScoped<IGenericRepository<CombatLog>, GenericRepository<CombatLog>>();
             services.AddScoped<IGenericRepository<Combat>, GenericRepository<Combat>>();
             services.AddScoped<IGenericRepository<CombatPlayerData>, GenericRepository<CombatPlayerData>>();
             services.AddScoped<IGenericRepository<DamageDone>, GenericRepository<DamageDone>>();

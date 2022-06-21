@@ -1,10 +1,12 @@
 ﻿using AutoMapper;
 using CombatAnalysis.BL.DTO;
+using CombatAnalysis.BL.Exceptions;
 using CombatAnalysis.BL.Interfaces;
 using CombatAnalysis.DAL.Entities;
 using CombatAnalysis.DAL.Interfaces;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace CombatAnalysis.BL.Services
@@ -82,10 +84,10 @@ namespace CombatAnalysis.BL.Services
         private async Task<int> DeleteInternalAsync(CombatDto item)
         {
             var allData = await _repository.GetAllAsync();
-            //if (!allData.Any())
-            //{
-            //    throw new NotFoundException($"Collection entity {nameof(CombatDto)} not found", nameof(allData));
-            //}
+            if (!allData.Any())
+            {
+                throw new NotFoundException($"Collection entity {nameof(CombatDto)} not found", nameof(allData));
+            }
 
             var numberEntries = await _repository.DeleteAsync(_mapper.Map<Combat>(item));
             return numberEntries;
@@ -94,10 +96,10 @@ namespace CombatAnalysis.BL.Services
         private async Task<int> UpdateInternalAsync(CombatDto item)
         {
             var allData = await _repository.GetAllAsync();
-            //if (!allData.Any())
-            //{
-            //    throw new NotFoundException($"Collection entity {nameof(CombatDto)} not found", nameof(allData));
-            //}
+            if (!allData.Any())
+            {
+                throw new NotFoundException($"Collection entity {nameof(CombatDto)} not found", nameof(allData));
+            }
 
             if (string.IsNullOrEmpty(item.Name))
             {
