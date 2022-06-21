@@ -1,7 +1,9 @@
-﻿namespace CombatAnalysis.Core.Models
+﻿namespace CombatAnalysis.DAL.Entities
 {
-    public class DamageDoneGeneralModel
+    public class DamageDoneGeneral
     {
+        public int Id { get; set; }
+
         public int Value { get; set; }
 
         public double DamagePerSecond { get; set; }

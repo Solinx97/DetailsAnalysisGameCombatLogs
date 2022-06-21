@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using CombatAnalysis.CombatParser;
 using CombatAnalysis.CombatParser.Entities;
+using CombatAnalysis.CombatParser.Extensions;
 using CombatAnalysis.CombatParser.Interfaces;
 using CombatAnalysis.Core.Commands;
 using CombatAnalysis.Core.Interfaces;
@@ -245,9 +246,15 @@ namespace CombatAnalysis.Core.ViewModels
                 combatInformation.GetResourceRecovery();
                 combatInformation.GetDamageTaken();
 
+                var map = _mapper.Map<Combat>(combat);
+
                 var damageDoneData = new List<DamageDone>(combatInformation.DamageDone);
                 var damageDoneTask = new Task(async () => await SaveDamageDoneDetails(damageDoneData, createdCombatPlayerId));
                 tasks.Add(damageDoneTask);
+
+                var damageDoneGeneralData = combatInformation.GetDamageDoneGeneral(damageDoneData, map);
+                var damageDoneGeneralTask = new Task(async () => await SaveDamageDoneGeneral(damageDoneGeneralData.ToList(), createdCombatPlayerId));
+                tasks.Add(damageDoneGeneralTask);
 
                 var healDoneData = new List<HealDone>(combatInformation.HealDone);
                 var healDoneTask = new Task(async () => await SaveHealDoneDetails(healDoneData, createdCombatPlayerId));
@@ -271,6 +278,17 @@ namespace CombatAnalysis.Core.ViewModels
                 map1.CombatPlayerDataId = combatPlayerId;
 
                 await _httpClient.PostAsync("DamageDone", JsonContent.Create(map1));
+            }
+        }
+
+        private async Task SaveDamageDoneGeneral(List<DamageDoneGeneral> damageDoneGeneral, int combatPlayerId)
+        {
+            foreach (var item in damageDoneGeneral)
+            {
+                var map1 = _mapper.Map<DamageDoneGeneralModel>(item);
+                map1.CombatPlayerDataId = combatPlayerId;
+
+                await _httpClient.PostAsync("DamageDoneGeneral", JsonContent.Create(map1));
             }
         }
 

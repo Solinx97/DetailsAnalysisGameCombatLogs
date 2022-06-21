@@ -1,6 +1,6 @@
-﻿namespace CombatAnalysis.Core.Models
+﻿namespace CombatAnalysis.BL.DTO
 {
-    public class DamageDoneGeneralModel
+    public class DamageDoneGeneralDto
     {
         public int Value { get; set; }
 
