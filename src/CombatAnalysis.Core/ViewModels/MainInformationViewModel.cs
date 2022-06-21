@@ -1,19 +1,15 @@
 ﻿using AutoMapper;
 using CombatAnalysis.CombatParser;
-using CombatAnalysis.CombatParser.Entities;
-using CombatAnalysis.CombatParser.Extensions;
 using CombatAnalysis.CombatParser.Interfaces;
 using CombatAnalysis.Core.Commands;
 using CombatAnalysis.Core.Interfaces;
 using CombatAnalysis.Core.Models;
+using CombatAnalysis.Core.Services;
 using CombatAnalysis.WinCore;
 using MvvmCross.Commands;
 using MvvmCross.Navigation;
 using MvvmCross.ViewModels;
 using System.Collections.Generic;
-using System.Linq;
-using System.Net.Http.Json;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace CombatAnalysis.Core.ViewModels
@@ -22,7 +18,7 @@ namespace CombatAnalysis.Core.ViewModels
     {
         private readonly IMvxNavigationService _mvvmNavigation;
         private readonly IMapper _mapper;
-        private readonly IHttpClientHelper _httpClient;
+        private readonly CombatParserAPIService _combatParserAPIService;
 
         private string _combatLog;
         private bool _isParsing;
@@ -39,7 +35,6 @@ namespace CombatAnalysis.Core.ViewModels
         {
             _mapper = mapper;
             _mvvmNavigation = mvvmNavigation;
-            _httpClient = httpClient;
 
             IsNeedSave = true;
 
@@ -47,6 +42,7 @@ namespace CombatAnalysis.Core.ViewModels
             OpenPlayerAnalysisCommand = new MvxCommand(OpenPlayerAnalysis);
 
             _combats = new List<CombatModel>();
+            _combatParserAPIService = new CombatParserAPIService(mapper, httpClient);
 
             _handler = new ViewModelMConnect();
             BasicTemplate = new BasicTemplateViewModel(this, _handler, _mvvmNavigation);
@@ -141,6 +137,7 @@ namespace CombatAnalysis.Core.ViewModels
         public override void ViewAppeared()
         {
             IsParsing = false;
+            IsSaving = false;
         }
 
         private async Task GetData(string combatLog)
@@ -158,7 +155,15 @@ namespace CombatAnalysis.Core.ViewModels
 
         private async Task GetDetails()
         {
-            var createdCombatLogId = await SaveCombatLogData();
+            var createdCombatLogId = 0;
+
+            if (IsNeedSave)
+            {
+                IsSaving = true;
+
+                _combatParserAPIService.SetCombats(_combats);
+                createdCombatLogId = await _combatParserAPIService.SaveCombatLogData();
+            }
 
             for (int i = 0; i < _combats.Count; i++)
             {
@@ -172,157 +177,11 @@ namespace CombatAnalysis.Core.ViewModels
 
                 if (IsNeedSave)
                 {
-                    await SaveCombatData(_combats[i], createdCombatLogId);
+                    await _combatParserAPIService.SaveCombatData(_combats[i], createdCombatLogId);
                 }
             }
 
             await _mvvmNavigation.Navigate<GeneralAnalysisViewModel, List<CombatModel>>(_combats);
-        }
-
-        private async Task SaveCombatData(CombatModel combat, int createdCombatLogId)
-        {
-            IsSaving = true;
-
-            var combatInformation = new CombatDetailsInformation();
-            var map = _mapper.Map<Combat>(combat);
-            combatInformation.SetData(map);
-
-            combat.CombatLogId = createdCombatLogId;
-            var combatResponse = await _httpClient.PostAsync("Combat", JsonContent.Create(combat));
-            var createdCombatId = combatResponse.Content.ReadFromJsonAsync<int>().Result;
-
-            var tasks = new List<Task>();
-            await SaveCombatPlayerData(combatInformation, combat, createdCombatId, tasks);
-
-            foreach (var item in tasks)
-            {
-                item.Start();
-            }
-
-            Task.WaitAll(tasks.ToArray());
-        }
-
-        private async Task<int> SaveCombatLogData()
-        {
-            var dungeonNames = _combats
-                .GroupBy(group => group.DungeonName)
-                .Select(select => select.ToList())
-                .ToList();
-
-            var combatLogDungeonName = new StringBuilder();
-            foreach (var item in dungeonNames)
-            {
-                var dungeonName = item.First().DungeonName.Trim('"');
-                combatLogDungeonName.Append($"{dungeonName}/");
-            }
-
-            combatLogDungeonName.Remove(combatLogDungeonName.Length - 1, 1);
-
-            var combatLog = new CombatLogModel
-            {
-                Name = combatLogDungeonName.ToString(),
-                Date = System.DateTimeOffset.Now
-            };
-
-            var combatLogResponse = await _httpClient.PostAsync("CombatLog", JsonContent.Create(combatLog));
-            var createdCombatLogId = combatLogResponse.Content.ReadFromJsonAsync<int>().Result;
-
-            return createdCombatLogId;
-        }
-
-        private async Task SaveCombatPlayerData(CombatDetailsInformation combatInformation, CombatModel combat, int createdCombatId, List<Task> tasks)
-        {
-            for (int i = 0; i < combat.Players.Count; i++)
-            {
-                combat.Players[i].CombatId = createdCombatId;
-
-                var combatPlayerResponse = await _httpClient.PostAsync("CombatPlayer", JsonContent.Create(combat.Players[i]));
-                var createdCombatPlayerId = combatPlayerResponse.Content.ReadFromJsonAsync<int>().Result;
-
-                combatInformation.SetData(combat.Players[i].UserName);
-
-                combatInformation.GetDamageDone();
-                combatInformation.GetHealDone();
-                combatInformation.GetResourceRecovery();
-                combatInformation.GetDamageTaken();
-
-                var map = _mapper.Map<Combat>(combat);
-
-                var damageDoneData = new List<DamageDone>(combatInformation.DamageDone);
-                var damageDoneTask = new Task(async () => await SaveDamageDoneDetails(damageDoneData, createdCombatPlayerId));
-                tasks.Add(damageDoneTask);
-
-                var damageDoneGeneralData = combatInformation.GetDamageDoneGeneral(damageDoneData, map);
-                var damageDoneGeneralTask = new Task(async () => await SaveDamageDoneGeneral(damageDoneGeneralData.ToList(), createdCombatPlayerId));
-                tasks.Add(damageDoneGeneralTask);
-
-                var healDoneData = new List<HealDone>(combatInformation.HealDone);
-                var healDoneTask = new Task(async () => await SaveHealDoneDetails(healDoneData, createdCombatPlayerId));
-                tasks.Add(healDoneTask);
-
-                var damageTakenData = new List<DamageTaken>(combatInformation.DamageTaken);
-                var damageTakenTask = new Task(async () => await SaveDamageTakenDetails(damageTakenData, createdCombatPlayerId));
-                tasks.Add(damageTakenTask);
-
-                var resourceRecoveryData = new List<ResourceRecovery>(combatInformation.ResourceRecovery);
-                var resourceRecoveryTask = new Task(async () => await SaveResourceRecoveryDetails(resourceRecoveryData, createdCombatPlayerId));
-                tasks.Add(resourceRecoveryTask);
-            }
-        }
-
-        private async Task SaveDamageDoneDetails(List<DamageDone> damageDone, int combatPlayerId)
-        {
-            foreach (var item in damageDone)
-            {
-                var map1 = _mapper.Map<DamageDoneModel>(item);
-                map1.CombatPlayerDataId = combatPlayerId;
-
-                await _httpClient.PostAsync("DamageDone", JsonContent.Create(map1));
-            }
-        }
-
-        private async Task SaveDamageDoneGeneral(List<DamageDoneGeneral> damageDoneGeneral, int combatPlayerId)
-        {
-            foreach (var item in damageDoneGeneral)
-            {
-                var map1 = _mapper.Map<DamageDoneGeneralModel>(item);
-                map1.CombatPlayerDataId = combatPlayerId;
-
-                await _httpClient.PostAsync("DamageDoneGeneral", JsonContent.Create(map1));
-            }
-        }
-
-        private async Task SaveHealDoneDetails(List<HealDone> healDone, int combatPlayerId)
-        {
-            foreach (var item in healDone)
-            {
-                var map1 = _mapper.Map<HealDoneModel>(item);
-                map1.CombatPlayerDataId = combatPlayerId;
-
-                await _httpClient.PostAsync("HealDone", JsonContent.Create(map1));
-            }
-        }
-
-        private async Task SaveDamageTakenDetails(List<DamageTaken> damageTaken, int combatPlayerId)
-        {
-            foreach (var item in damageTaken)
-            {
-                var map1 = _mapper.Map<DamageTakenModel>(item);
-                map1.CombatPlayerDataId = combatPlayerId;
-
-                await _httpClient.PostAsync("DamageTaken", JsonContent.Create(map1));
-            }
-        }
-
-        private async Task SaveResourceRecoveryDetails(List<ResourceRecovery> resourceRecovery, int combatPlayerId)
-        {
-            foreach (var item in resourceRecovery)
-            {
-                var map1 = _mapper.Map<ResourceRecoveryModel>(item);
-                map1.CombatPlayerDataId = combatPlayerId;
-
-                await _httpClient.PostAsync("ResourceRecovery", JsonContent.Create(map1));
-            }
         }
     }
 }
