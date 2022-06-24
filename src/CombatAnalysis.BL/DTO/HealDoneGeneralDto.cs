@@ -1,6 +1,6 @@
-﻿namespace CombatAnalysis.Core.Models
+﻿namespace CombatAnalysis.BL.DTO
 {
-    public class HealDoneGeneralModel
+    public class HealDoneGeneralDto
     {
         public int Value { get; set; }
 

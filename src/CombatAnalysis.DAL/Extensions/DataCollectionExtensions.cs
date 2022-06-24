@@ -21,6 +21,7 @@ namespace CombatAnalysis.DAL.Extensions
             services.AddScoped<IGenericRepository<DamageDone>, GenericRepository<DamageDone>>();
             services.AddScoped<IGenericRepository<DamageDoneGeneral>, GenericRepository<DamageDoneGeneral>>();
             services.AddScoped<IGenericRepository<HealDone>, GenericRepository<HealDone>>();
+            services.AddScoped<IGenericRepository<HealDoneGeneral>, GenericRepository<HealDoneGeneral>>();
             services.AddScoped<IGenericRepository<DamageTaken>, GenericRepository<DamageTaken>>();
             services.AddScoped<IGenericRepository<ResourceRecovery>, GenericRepository<ResourceRecovery>>();
         }

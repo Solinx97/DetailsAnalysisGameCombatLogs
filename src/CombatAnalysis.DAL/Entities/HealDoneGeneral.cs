@@ -1,7 +1,9 @@
-﻿namespace CombatAnalysis.Core.Models
+﻿namespace CombatAnalysis.DAL.Entities
 {
-    public class HealDoneGeneralModel
+    public class HealDoneGeneral
     {
+        public int Id { get; set; }
+
         public int Value { get; set; }
 
         public double HealPerSecond { get; set; }

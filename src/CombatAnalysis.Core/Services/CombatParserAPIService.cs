@@ -110,6 +110,10 @@ namespace CombatAnalysis.Core.Services
                 var healDoneTask = new Task(async () => await SaveHealDoneDetails(healDoneData, createdCombatPlayerId));
                 tasks.Add(healDoneTask);
 
+                var healDoneGeneralData = combatInformation.GetHealDoneGeneral(healDoneData, map);
+                var healDoneGeneralTask = new Task(async () => await SaveHealDoneGeneral(healDoneGeneralData.ToList(), createdCombatPlayerId));
+                tasks.Add(healDoneGeneralTask);
+
                 var damageTakenData = new List<DamageTaken>(combatInformation.DamageTaken);
                 var damageTakenTask = new Task(async () => await SaveDamageTakenDetails(damageTakenData, createdCombatPlayerId));
                 tasks.Add(damageTakenTask);
@@ -150,6 +154,17 @@ namespace CombatAnalysis.Core.Services
                 map1.CombatPlayerDataId = combatPlayerId;
 
                 await _httpClient.PostAsync("HealDone", JsonContent.Create(map1));
+            }
+        }
+
+        private async Task SaveHealDoneGeneral(List<HealDoneGeneral> healDoneGeneral, int combatPlayerId)
+        {
+            foreach (var item in healDoneGeneral)
+            {
+                var map1 = _mapper.Map<HealDoneGeneralModel>(item);
+                map1.CombatPlayerDataId = combatPlayerId;
+
+                await _httpClient.PostAsync("HealDoneGeneral", JsonContent.Create(map1));
             }
         }
 

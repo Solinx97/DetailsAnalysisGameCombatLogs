@@ -14,6 +14,7 @@ namespace CombatAnalysis.CombatParserAPI.Mapping
             CreateMap<DamageDoneDto, DamageDoneModel>().ReverseMap();
             CreateMap<DamageDoneGeneralDto, DamageDoneGeneralModel>().ReverseMap();
             CreateMap<HealDoneDto, HealDoneModel>().ReverseMap();
+            CreateMap<HealDoneGeneralDto, HealDoneGeneralModel>().ReverseMap();
             CreateMap<DamageTakenDto, DamageTakenModel>().ReverseMap();
             CreateMap<ResourceRecoveryDto, ResourceRecoveryModel>().ReverseMap();
         }
