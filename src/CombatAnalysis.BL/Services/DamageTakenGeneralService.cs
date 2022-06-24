@@ -11,18 +11,18 @@ using System.Threading.Tasks;
 
 namespace CombatAnalysis.BL.Services
 {
-    internal class HealDoneGeneralService : IService<HealDoneGeneralDto>
+    internal class DamageTakenGeneralService : IService<DamageTakenGeneralDto>
     {
-        private readonly IGenericRepository<HealDoneGeneral> _repository;
+        private readonly IGenericRepository<DamageTakenGeneral> _repository;
         private readonly IMapper _mapper;
 
-        public HealDoneGeneralService(IGenericRepository<HealDoneGeneral> userRepository, IMapper mapper)
+        public DamageTakenGeneralService(IGenericRepository<DamageTakenGeneral> userRepository, IMapper mapper)
         {
             _repository = userRepository;
             _mapper = mapper;
         }
 
-        Task<int> IService<HealDoneGeneralDto>.CreateAsync(HealDoneGeneralDto item)
+        Task<int> IService<DamageTakenGeneralDto>.CreateAsync(DamageTakenGeneralDto item)
         {
             if (item == null)
             {
@@ -32,7 +32,7 @@ namespace CombatAnalysis.BL.Services
             return CreateInternalAsync(item);
         }
 
-        Task<int> IService<HealDoneGeneralDto>.DeleteAsync(HealDoneGeneralDto item)
+        Task<int> IService<DamageTakenGeneralDto>.DeleteAsync(DamageTakenGeneralDto item)
         {
             if (item == null)
             {
@@ -42,23 +42,23 @@ namespace CombatAnalysis.BL.Services
             return DeleteInternalAsync(item);
         }
 
-        async Task<IEnumerable<HealDoneGeneralDto>> IService<HealDoneGeneralDto>.GetAllAsync()
+        async Task<IEnumerable<DamageTakenGeneralDto>> IService<DamageTakenGeneralDto>.GetAllAsync()
         {
             var allData = await _repository.GetAllAsync();
-            var result = _mapper.Map<List<HealDoneGeneralDto>>(allData);
+            var result = _mapper.Map<List<DamageTakenGeneralDto>>(allData);
 
             return result;
         }
 
-        async Task<HealDoneGeneralDto> IService<HealDoneGeneralDto>.GetByIdAsync(int id)
+        async Task<DamageTakenGeneralDto> IService<DamageTakenGeneralDto>.GetByIdAsync(int id)
         {
             var executeLoad = await _repository.GetByIdAsync(id);
-            var result = _mapper.Map<HealDoneGeneralDto>(executeLoad);
+            var result = _mapper.Map<DamageTakenGeneralDto>(executeLoad);
 
             return result;
         }
 
-        Task<int> IService<HealDoneGeneralDto>.UpdateAsync(HealDoneGeneralDto item)
+        Task<int> IService<DamageTakenGeneralDto>.UpdateAsync(DamageTakenGeneralDto item)
         {
             if (item == null)
             {
@@ -68,35 +68,35 @@ namespace CombatAnalysis.BL.Services
             return UpdateInternalAsync(item);
         }
 
-        private async Task<int> CreateInternalAsync(HealDoneGeneralDto item)
+        private async Task<int> CreateInternalAsync(DamageTakenGeneralDto item)
         {
-            var map = _mapper.Map<HealDoneGeneral>(item);
+            var map = _mapper.Map<DamageTakenGeneral>(item);
             var createdCombatId = await _repository.CreateAsync(map);
 
             return createdCombatId;
         }
 
-        private async Task<int> DeleteInternalAsync(HealDoneGeneralDto item)
+        private async Task<int> DeleteInternalAsync(DamageTakenGeneralDto item)
         {
             var allData = await _repository.GetAllAsync();
             if (!allData.Any())
             {
-                throw new NotFoundException($"Collection entity {nameof(HealDoneGeneralDto)} not found", nameof(allData));
+                throw new NotFoundException($"Collection entity {nameof(DamageTakenGeneralDto)} not found", nameof(allData));
             }
 
-            var numberEntries = await _repository.DeleteAsync(_mapper.Map<HealDoneGeneral>(item));
+            var numberEntries = await _repository.DeleteAsync(_mapper.Map<DamageTakenGeneral>(item));
             return numberEntries;
         }
 
-        private async Task<int> UpdateInternalAsync(HealDoneGeneralDto item)
+        private async Task<int> UpdateInternalAsync(DamageTakenGeneralDto item)
         {
             var allData = await _repository.GetAllAsync();
             if (!allData.Any())
             {
-                throw new NotFoundException($"Collection entity {nameof(HealDoneGeneralDto)} not found", nameof(allData));
+                throw new NotFoundException($"Collection entity {nameof(DamageTakenGeneralDto)} not found", nameof(allData));
             }
 
-            var numberEntries = await _repository.UpdateAsync(_mapper.Map<HealDoneGeneral>(item));
+            var numberEntries = await _repository.UpdateAsync(_mapper.Map<DamageTakenGeneral>(item));
             return numberEntries;
         }
     }

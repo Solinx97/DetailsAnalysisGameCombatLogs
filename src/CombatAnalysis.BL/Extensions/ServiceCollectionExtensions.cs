@@ -21,6 +21,7 @@ namespace CombatAnalysis.BL.Extensions
             services.AddScoped<IService<HealDoneDto>, HealDoneService>();
             services.AddScoped<IService<HealDoneGeneralDto>, HealDoneGeneralService>();
             services.AddScoped<IService<DamageTakenDto>, DamageTakenService>();
+            services.AddScoped<IService<DamageTakenGeneralDto>, DamageTakenGeneralService>();
             services.AddScoped<IService<ResourceRecoveryDto>, ResourceRecoveryService>();
         }
     }

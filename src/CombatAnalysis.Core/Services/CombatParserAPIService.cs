@@ -118,6 +118,10 @@ namespace CombatAnalysis.Core.Services
                 var damageTakenTask = new Task(async () => await SaveDamageTakenDetails(damageTakenData, createdCombatPlayerId));
                 tasks.Add(damageTakenTask);
 
+                var damageTakenGeneralData = combatInformation.GetDamageTakenGeneral(damageTakenData, map);
+                var damageTakenGeneralTask = new Task(async () => await SaveDamageTakenGeneral(damageTakenGeneralData.ToList(), createdCombatPlayerId));
+                tasks.Add(damageTakenGeneralTask);
+
                 var resourceRecoveryData = new List<ResourceRecovery>(combatInformation.ResourceRecovery);
                 var resourceRecoveryTask = new Task(async () => await SaveResourceRecoveryDetails(resourceRecoveryData, createdCombatPlayerId));
                 tasks.Add(resourceRecoveryTask);
@@ -176,6 +180,17 @@ namespace CombatAnalysis.Core.Services
                 map1.CombatPlayerDataId = combatPlayerId;
 
                 await _httpClient.PostAsync("DamageTaken", JsonContent.Create(map1));
+            }
+        }
+
+        private async Task SaveDamageTakenGeneral(List<DamageTakenGeneral> damageTaken, int combatPlayerId)
+        {
+            foreach (var item in damageTaken)
+            {
+                var map1 = _mapper.Map<DamageTakenGeneralModel>(item);
+                map1.CombatPlayerDataId = combatPlayerId;
+
+                await _httpClient.PostAsync("DamageTakenGeneral", JsonContent.Create(map1));
             }
         }
 

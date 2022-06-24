@@ -1,4 +1,4 @@
-﻿namespace CombatAnalysis.Core.Models
+﻿namespace CombatAnalysis.CombatParserAPI.Models
 {
     public class DamageTakenGeneralModel
     {
