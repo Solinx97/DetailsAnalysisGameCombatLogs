@@ -30,5 +30,7 @@ namespace CombatAnalysis.DAL.Data
         public DbSet<DamageTakenGeneral> DamageTakenGeneral { get; set; }
 
         public DbSet<ResourceRecovery> ResourceRecovery { get; set; }
+
+        public DbSet<ResourceRecoveryGeneral> ResourceRecoveryGeneral { get; set; }
     }
 }

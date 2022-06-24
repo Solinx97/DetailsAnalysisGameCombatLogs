@@ -125,6 +125,10 @@ namespace CombatAnalysis.Core.Services
                 var resourceRecoveryData = new List<ResourceRecovery>(combatInformation.ResourceRecovery);
                 var resourceRecoveryTask = new Task(async () => await SaveResourceRecoveryDetails(resourceRecoveryData, createdCombatPlayerId));
                 tasks.Add(resourceRecoveryTask);
+
+                var resourceRecoveryGeneralData = combatInformation.GetResourceRecoveryGeneral(resourceRecoveryData, map);
+                var resourceRecoveryGeneralTask = new Task(async () => await SaveResourceRecoveryGeneral(resourceRecoveryGeneralData.ToList(), createdCombatPlayerId));
+                tasks.Add(resourceRecoveryGeneralTask);
             }
         }
 
@@ -202,6 +206,17 @@ namespace CombatAnalysis.Core.Services
                 map1.CombatPlayerDataId = combatPlayerId;
 
                 await _httpClient.PostAsync("ResourceRecovery", JsonContent.Create(map1));
+            }
+        }
+
+        private async Task SaveResourceRecoveryGeneral(List<ResourceRecoveryGeneral> resourceRecoveryGeneral, int combatPlayerId)
+        {
+            foreach (var item in resourceRecoveryGeneral)
+            {
+                var map1 = _mapper.Map<ResourceRecoveryGeneralModel>(item);
+                map1.CombatPlayerDataId = combatPlayerId;
+
+                await _httpClient.PostAsync("ResourceRecoveryGeneral", JsonContent.Create(map1));
             }
         }
     }

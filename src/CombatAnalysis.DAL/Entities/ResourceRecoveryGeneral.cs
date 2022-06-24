@@ -1,7 +1,9 @@
-﻿namespace CombatAnalysis.Core.Models
+﻿namespace CombatAnalysis.DAL.Entities
 {
-    public class ResourceRecoveryGeneralModel
+    public class ResourceRecoveryGeneral
     {
+        public int Id { get; set; }
+
         public int Value { get; set; }
 
         public double ResourcePerSecond { get; set; }

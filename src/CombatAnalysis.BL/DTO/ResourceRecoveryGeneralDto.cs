@@ -1,6 +1,6 @@
-﻿namespace CombatAnalysis.Core.Models
+﻿namespace CombatAnalysis.BL.DTO
 {
-    public class ResourceRecoveryGeneralModel
+    public class ResourceRecoveryGeneralDto
     {
         public int Value { get; set; }
 

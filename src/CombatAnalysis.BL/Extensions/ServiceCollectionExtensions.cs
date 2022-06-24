@@ -23,6 +23,7 @@ namespace CombatAnalysis.BL.Extensions
             services.AddScoped<IService<DamageTakenDto>, DamageTakenService>();
             services.AddScoped<IService<DamageTakenGeneralDto>, DamageTakenGeneralService>();
             services.AddScoped<IService<ResourceRecoveryDto>, ResourceRecoveryService>();
+            services.AddScoped<IService<ResourceRecoveryGeneralDto>, ResourceRecoveryGeneralService>();
         }
     }
 }
