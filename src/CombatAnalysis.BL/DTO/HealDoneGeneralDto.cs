@@ -1,12 +1,14 @@
-﻿namespace CombatAnalysis.Core.Models
+﻿namespace CombatAnalysis.BL.DTO
 {
-    public class ResourceRecoveryGeneralModel
+    public class HealDoneGeneralDto
     {
         public int Value { get; set; }
 
-        public double ResourcePerSecond { get; set; }
+        public double HealPerSecond { get; set; }
 
         public string SpellOrItem { get; set; }
+
+        public int CritNumber { get; set; }
 
         public int CastNumber { get; set; }
 

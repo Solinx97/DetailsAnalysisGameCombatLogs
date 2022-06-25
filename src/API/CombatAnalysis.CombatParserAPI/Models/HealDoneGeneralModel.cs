@@ -1,12 +1,14 @@
-﻿namespace CombatAnalysis.Core.Models
+﻿namespace CombatAnalysis.CombatParserAPI.Models
 {
-    public class ResourceRecoveryGeneralModel
+    public class HealDoneGeneralModel
     {
         public int Value { get; set; }
 
-        public double ResourcePerSecond { get; set; }
+        public double HealPerSecond { get; set; }
 
         public string SpellOrItem { get; set; }
+
+        public int CritNumber { get; set; }
 
         public int CastNumber { get; set; }
 

@@ -17,5 +17,7 @@
         public int MaxValue { get; set; }
 
         public double AverageValue { get; set; }
+
+        public int CombatPlayerDataId { get; set; }
     }
 }

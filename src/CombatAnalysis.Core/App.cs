@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using CombatAnalysis.Core.Consts;
-using CombatAnalysis.Core.Core;
+using CombatAnalysis.Core.Helpers;
 using CombatAnalysis.Core.Interfaces;
 using CombatAnalysis.Core.Mapping;
 using CombatAnalysis.Core.ViewModels;

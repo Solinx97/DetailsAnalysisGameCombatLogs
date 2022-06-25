@@ -5,7 +5,7 @@ using System.Net.Http;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
 
-namespace CombatAnalysis.Core.Core
+namespace CombatAnalysis.Core.Helpers
 {
     internal class HttpClientHelper : IHttpClientHelper
     {
