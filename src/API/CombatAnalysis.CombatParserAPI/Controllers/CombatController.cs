@@ -12,10 +12,10 @@ namespace CombatAnalysis.CombatParserAPI.Controllers
     [ApiController]
     public class CombatController : ControllerBase
     {
-        private readonly IService<CombatDto> _service;
+        private readonly ICombatService<CombatDto> _service;
         private readonly IMapper _mapper;
 
-        public CombatController(IService<CombatDto> service, IMapper mapper)
+        public CombatController(ICombatService<CombatDto> service, IMapper mapper)
         {
             _service = service;
             _mapper = mapper;
@@ -30,10 +30,13 @@ namespace CombatAnalysis.CombatParserAPI.Controllers
             return map;
         }
 
-        [HttpGet("{id}")]
-        public string Get(int id)
+        [HttpGet("FindByCombatLogId/{combatLogId}")]
+        public async Task<IEnumerable<CombatModel>> Get(int combatLogId)
         {
-            return "value";
+            var combats = await _service.FindAllAsync(combatLogId);
+            var map = _mapper.Map<IEnumerable<CombatModel>>(combats);
+
+            return map;
         }
 
         [HttpPost]

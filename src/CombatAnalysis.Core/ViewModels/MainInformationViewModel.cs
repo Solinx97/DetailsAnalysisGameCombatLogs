@@ -10,6 +10,7 @@ using MvvmCross.Commands;
 using MvvmCross.Navigation;
 using MvvmCross.ViewModels;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 
 namespace CombatAnalysis.Core.ViewModels
@@ -23,23 +24,24 @@ namespace CombatAnalysis.Core.ViewModels
         private string _combatLog;
         private bool _isParsing;
         private bool _isSaving;
-        private bool _isNeedSave;
+        private bool _isNeedSave = true;
         private bool _isShowSteps;
         private string _foundCombat;
         private string _combatLogPath;
+        private int _selectedCombatLogId;
         private MvxViewModel _basicTemplate;
         private IViewModelConnect _handler;
         private List<CombatModel> _combats;
+        private ObservableCollection<CombatLogModel> _combatLogs;
 
         public MainInformationViewModel(IMapper mapper, IMvxNavigationService mvvmNavigation, IHttpClientHelper httpClient)
         {
             _mapper = mapper;
             _mvvmNavigation = mvvmNavigation;
 
-            IsNeedSave = true;
-
             GetCombatLogCommand = new MvxCommand(GetCombatLog);
             OpenPlayerAnalysisCommand = new MvxCommand(OpenPlayerAnalysis);
+            LoadCombatsCommand = new MvxCommand(LoadCombats);
 
             _combats = new List<CombatModel>();
             _combatParserAPIService = new CombatParserAPIService(mapper, httpClient);
@@ -50,6 +52,8 @@ namespace CombatAnalysis.Core.ViewModels
 
         public IMvxCommand GetCombatLogCommand { get; set; }
 
+        public IMvxCommand LoadCombatsCommand { get; set; }
+
         public IMvxCommand OpenPlayerAnalysisCommand { get; set; }
 
         public MvxViewModel BasicTemplate
@@ -58,6 +62,15 @@ namespace CombatAnalysis.Core.ViewModels
             set
             {
                 SetProperty(ref _basicTemplate, value);
+            }
+        }
+
+        public ObservableCollection<CombatLogModel> CombatLogs
+        {
+            get { return _combatLogs; }
+            set
+            {
+                SetProperty(ref _combatLogs, value);
             }
         }
 
@@ -115,11 +128,30 @@ namespace CombatAnalysis.Core.ViewModels
             }
         }
 
+        public int SelectedCombatLogId
+        {
+            get { return _selectedCombatLogId; }
+            set
+            {
+                SetProperty(ref _selectedCombatLogId, value);
+            }
+        }
+
         public void GetCombatLog()
         {
             _combatLogPath = WinHandler.FileOpen();
             var split = _combatLogPath.Split(@"\");
             CombatLog = split[split.Length - 1];
+        }
+
+        public void LoadCombatLogs()
+        {
+            var combatLog = Task.Run(() => LoadCombatLogsAsync());
+        }
+
+        public void LoadCombats()
+        {
+            var combatLog = Task.Run(() => LoadCombatsAsync());
         }
 
         public void OpenPlayerAnalysis()
@@ -138,6 +170,8 @@ namespace CombatAnalysis.Core.ViewModels
         {
             IsParsing = false;
             IsSaving = false;
+
+            LoadCombatLogs();
         }
 
         private async Task GetData(string combatLog)
@@ -162,7 +196,7 @@ namespace CombatAnalysis.Core.ViewModels
                 IsSaving = true;
 
                 _combatParserAPIService.SetCombats(_combats);
-                createdCombatLogId = await _combatParserAPIService.SaveCombatLogData();
+                createdCombatLogId = await _combatParserAPIService.SaveCombatLog();
             }
 
             for (int i = 0; i < _combats.Count; i++)
@@ -182,6 +216,17 @@ namespace CombatAnalysis.Core.ViewModels
             }
 
             await _mvvmNavigation.Navigate<GeneralAnalysisViewModel, List<CombatModel>>(_combats);
+        }
+
+        private async Task LoadCombatLogsAsync()
+        {
+            var combatLogsData = await _combatParserAPIService.LoadCombatLogs();
+            CombatLogs = new ObservableCollection<CombatLogModel>(combatLogsData);
+        }
+
+        private async Task LoadCombatsAsync()
+        {
+            var combatsData = await _combatParserAPIService.LoadCombats(SelectedCombatLogId + 1);
         }
     }
 }

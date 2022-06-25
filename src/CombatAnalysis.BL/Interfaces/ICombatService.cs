@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace CombatAnalysis.DAL.Interfaces
+namespace CombatAnalysis.BL.Interfaces
 {
-    public interface IGenericRepository<TModel>
+    public interface ICombatService<TModel>
         where TModel : class
     {
         Task<int> CreateAsync(TModel item);
@@ -12,10 +12,10 @@ namespace CombatAnalysis.DAL.Interfaces
 
         Task<int> DeleteAsync(TModel item);
 
-        Task<TModel> GetByIdAsync(int id);
-
         Task<IEnumerable<TModel>> GetAllAsync();
 
-        Task<IEnumerable<TModel>> FindAllAsync(string procedureName, string[] paramNames, object[] paramValuee);
+        Task<IEnumerable<TModel>> FindAllAsync(int combatLogId);
+
+        Task<TModel> GetByIdAsync(int id);
     }
 }

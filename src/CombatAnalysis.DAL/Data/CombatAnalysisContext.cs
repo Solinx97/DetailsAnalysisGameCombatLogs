@@ -8,7 +8,17 @@ namespace CombatAnalysis.DAL.Data
         public CombatAnalysisContext(
             DbContextOptions<CombatAnalysisContext> options) : base(options)
         {
-            Database.EnsureCreated();
+            var isExists = Database.EnsureCreated();
+
+            if (isExists)
+            {
+                var query = @"CREATE PROCEDURE GetCombatByCombatLogId (@combatLogId INT)
+                                    AS SELECT Id, DungeonName, Name, EnergyRecovery, DamageDone, HealDone, DamageTaken, DeathNumber, UsedBuffs, IsWin, StartDate, FinishDate, CombatLogId
+                                    FROM Combat
+                                    WHERE CombatLogId = @combatLogId";
+
+                Database.ExecuteSqlRaw(query);
+            }
         }
 
         public DbSet<CombatLog> CombatLog { get; set; }

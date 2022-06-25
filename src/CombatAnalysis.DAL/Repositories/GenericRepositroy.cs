@@ -1,7 +1,9 @@
 ﻿using CombatAnalysis.DAL.Data;
 using CombatAnalysis.DAL.Interfaces;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace CombatAnalysis.DAL.Repositories
@@ -54,6 +56,25 @@ namespace CombatAnalysis.DAL.Repositories
             var numberEntries = await _context.SaveChangesAsync();
 
             return numberEntries;
+        }
+
+        async Task<IEnumerable<TModel>> IGenericRepository<TModel>.FindAllAsync(string procedureName, string[] paramNames, object[] paramValuee)
+        {
+            var procedureParams = new List<SqlParameter>();
+            var procedureParamNames = new StringBuilder();
+            for (int i = 0; i < paramValuee.Length; i++)
+            {
+                var paramValue = (int)paramValuee[i];
+                procedureParams.Add(new SqlParameter(paramNames[i], paramValue));
+                procedureParamNames.Append($"@{paramNames[i]},");
+            }
+            procedureParamNames.Remove(procedureParamNames.Length - 1, 1);
+
+            var data = await _context.Set<TModel>()
+                                .FromSqlRaw($"{procedureName} {procedureParamNames}", procedureParams.ToArray())
+                                .ToListAsync();
+
+            return data;
         }
     }
 }
