@@ -21,19 +21,13 @@ namespace CombatAnalysis.CombatParserAPI.Controllers
             _mapper = mapper;
         }
 
-        [HttpGet]
-        public async Task<IEnumerable<CombatModel>> Get()
+        [HttpGet("FindByCombatLogId/{combatLogId}")]
+        public async Task<IEnumerable<CombatDto>> Find(int combatLogId)
         {
-            var combats = await _service.GetAllAsync();
-            var map = _mapper.Map<IEnumerable<CombatModel>>(combats);
+            var combats = await _service.FindAllAsync(combatLogId);
+            var map = _mapper.Map<IEnumerable<CombatDto>>(combats);
 
             return map;
-        }
-
-        [HttpGet("{id}")]
-        public string Get(int id)
-        {
-            return "value";
         }
 
         [HttpPost]
@@ -43,16 +37,6 @@ namespace CombatAnalysis.CombatParserAPI.Controllers
             var createdCombatId = await _service.CreateAsync(map);
 
             return createdCombatId;
-        }
-
-        [HttpPut("{id}")]
-        public void Put(int id, string value)
-        {
-        }
-
-        [HttpDelete("{id}")]
-        public void Delete(int id)
-        {
         }
     }
 }

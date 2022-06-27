@@ -22,9 +22,12 @@ namespace CombatAnalysis.CombatParserAPI.Controllers
         }
 
         [HttpGet]
-        public IEnumerable<string> Get()
+        public async Task<IEnumerable<CombatLogModel>> Get()
         {
-            return new string[] { "value1", "value2" };
+            var combatLogs = await _service.GetAllAsync();
+            var map = _mapper.Map<IEnumerable<CombatLogModel>>(combatLogs);
+
+            return map;
         }
 
         [HttpGet("{id}")]

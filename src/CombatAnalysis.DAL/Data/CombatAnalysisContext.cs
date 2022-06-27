@@ -1,5 +1,7 @@
 ﻿using CombatAnalysis.DAL.Entities;
+using CombatAnalysis.DAL.Helpers;
 using Microsoft.EntityFrameworkCore;
+using System.Threading.Tasks;
 
 namespace CombatAnalysis.DAL.Data
 {
@@ -8,7 +10,12 @@ namespace CombatAnalysis.DAL.Data
         public CombatAnalysisContext(
             DbContextOptions<CombatAnalysisContext> options) : base(options)
         {
-            Database.EnsureCreated();
+            var isExists = Database.EnsureCreated();
+
+            if (isExists)
+            {
+                Task.Run(async () => await DbProcedureHelper.CreateProceduresAsync(this));
+            }
         }
 
         public DbSet<CombatLog> CombatLog { get; set; }

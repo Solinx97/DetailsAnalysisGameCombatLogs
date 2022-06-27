@@ -3,6 +3,7 @@ using CombatAnalysis.BL.DTO;
 using CombatAnalysis.BL.Exceptions;
 using CombatAnalysis.BL.Interfaces;
 using CombatAnalysis.DAL.Entities;
+using CombatAnalysis.DAL.Helpers;
 using CombatAnalysis.DAL.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -46,6 +47,17 @@ namespace CombatAnalysis.BL.Services
         {
             var allData = await _repository.GetAllAsync();
             var result = _mapper.Map<List<CombatPlayerDataDto>>(allData);
+
+            return result;
+        }
+
+        async Task<IEnumerable<CombatPlayerDataDto>> IService<CombatPlayerDataDto>.FindAllAsync(int combatId)
+        {
+            var paramNames = new string[] { nameof(combatId) };
+            var paramValues = new object[] { combatId };
+
+            var data = await _repository.FindAllAsync(DbProcedureHelper.GetCombatPlayer, paramNames, paramValues);
+            var result = _mapper.Map<IEnumerable<CombatPlayerDataDto>>(data);
 
             return result;
         }

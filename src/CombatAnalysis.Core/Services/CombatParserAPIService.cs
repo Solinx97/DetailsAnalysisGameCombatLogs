@@ -31,32 +31,37 @@ namespace CombatAnalysis.Core.Services
             _combats = combats;
         }
 
-        public async Task<int> SaveCombatLogData()
+        public async Task<int> SaveCombatLog()
         {
-            var dungeonNames = _combats
-                .GroupBy(group => group.DungeonName)
-                .Select(select => select.ToList())
-                .ToList();
-
-            var combatLogDungeonName = new StringBuilder();
-            foreach (var item in dungeonNames)
-            {
-                var dungeonName = item.First().DungeonName.Trim('"');
-                combatLogDungeonName.Append($"{dungeonName}/");
-            }
-
-            combatLogDungeonName.Remove(combatLogDungeonName.Length - 1, 1);
-
-            var combatLog = new CombatLogModel
-            {
-                Name = combatLogDungeonName.ToString(),
-                Date = DateTimeOffset.Now
-            };
-
+            var combatLog = CreateCombatLog();
             var combatLogResponse = await _httpClient.PostAsync("CombatLog", JsonContent.Create(combatLog));
             var createdCombatLogId = combatLogResponse.Content.ReadFromJsonAsync<int>().Result;
 
             return createdCombatLogId;
+        }
+
+        public async Task<IEnumerable<CombatLogModel>> LoadCombatLogs()
+        {
+            var responseMessage = await _httpClient.GetAsync("CombatLog");
+            var combatLogs = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<CombatLogModel>>();
+
+            return combatLogs;
+        }
+
+        public async Task<IEnumerable<CombatModel>> LoadCombats(int combatLogId)
+        {
+            var responseMessage = await _httpClient.GetAsync($"Combat/FindByCombatLogId/{combatLogId}");
+            var combats = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<CombatModel>>();
+
+            return combats;
+        }
+
+        public async Task<IEnumerable<CombatPlayerDataModel>> LoadCombatPlayers(int combatId)
+        {
+            var responseMessage = await _httpClient.GetAsync($"CombatPlayer/FindByCombatId/{combatId}");
+            var combatPlayers = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<CombatPlayerDataModel>>();
+
+            return combatPlayers;
         }
 
         public async Task SaveCombatData(CombatModel combat, int createdCombatLogId)
@@ -78,6 +83,31 @@ namespace CombatAnalysis.Core.Services
             }
 
             Task.WaitAll(tasks.ToArray());
+        }
+
+        private CombatLogModel CreateCombatLog()
+        {
+            var dungeonNames = _combats
+                .GroupBy(group => group.DungeonName)
+                .Select(select => select.ToList())
+                .ToList();
+
+            var combatLogDungeonName = new StringBuilder();
+            foreach (var item in dungeonNames)
+            {
+                var dungeonName = item.First().DungeonName.Trim('"');
+                combatLogDungeonName.Append($"{dungeonName}/");
+            }
+
+            combatLogDungeonName.Remove(combatLogDungeonName.Length - 1, 1);
+
+            var combatLog = new CombatLogModel
+            {
+                Name = combatLogDungeonName.ToString(),
+                Date = DateTimeOffset.Now
+            };
+
+            return combatLog;
         }
 
         private async Task SaveCombatPlayerData(CombatDetailsInformation combatInformation, CombatModel combat, int createdCombatId, List<Task> tasks)

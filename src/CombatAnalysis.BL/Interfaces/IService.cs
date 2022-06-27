@@ -14,6 +14,8 @@ namespace CombatAnalysis.BL.Interfaces
 
         Task<IEnumerable<TModel>> GetAllAsync();
 
+        Task<IEnumerable<TModel>> FindAllAsync(int id);
+
         Task<TModel> GetByIdAsync(int id);
     }
 }
