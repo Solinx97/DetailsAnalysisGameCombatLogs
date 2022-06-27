@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+﻿    using AutoMapper;
 using CombatAnalysis.BL.DTO;
 using CombatAnalysis.BL.Exceptions;
 using CombatAnalysis.BL.Interfaces;
@@ -46,6 +46,17 @@ namespace CombatAnalysis.BL.Services
         {
             var allData = await _repository.GetAllAsync();
             var result = _mapper.Map<List<ResourceRecoveryDto>>(allData);
+
+            return result;
+        }
+
+        async Task<IEnumerable<ResourceRecoveryDto>> IService<ResourceRecoveryDto>.FindAllAsync(int combatLogId)
+        {
+            var paramNames = new string[] { nameof( combatLogId) };
+            var paramValues = new object[] { combatLogId };
+
+            var data = await _repository.FindAllAsync("GetCombatByCombatLogId", paramNames, paramValues);
+            var result = _mapper.Map<IEnumerable<ResourceRecoveryDto>>(data);
 
             return result;
         }

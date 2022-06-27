@@ -11,6 +11,7 @@ using MvvmCross.Navigation;
 using MvvmCross.ViewModels;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace CombatAnalysis.Core.ViewModels
@@ -226,7 +227,16 @@ namespace CombatAnalysis.Core.ViewModels
 
         private async Task LoadCombatsAsync()
         {
-            var combatsData = await _combatParserAPIService.LoadCombats(SelectedCombatLogId + 1);
+            var id = CombatLogs[SelectedCombatLogId].Id;
+            var loadedCombats = await _combatParserAPIService.LoadCombats(id);
+
+            foreach (var item in loadedCombats)
+            {
+                var players = await _combatParserAPIService.LoadCombatPlayers(item.Id);
+                item.Players = players.ToList();
+            }
+
+            await _mvvmNavigation.Navigate<GeneralAnalysisViewModel, List<CombatModel>>(loadedCombats.ToList());
         }
     }
 }

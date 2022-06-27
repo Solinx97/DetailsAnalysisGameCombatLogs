@@ -43,9 +43,9 @@ namespace CombatAnalysis.Core.Services
         public async Task<IEnumerable<CombatLogModel>> LoadCombatLogs()
         {
             var responseMessage = await _httpClient.GetAsync("CombatLog");
-            var combatLog = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<CombatLogModel>>();
+            var combatLogs = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<CombatLogModel>>();
 
-            return combatLog;
+            return combatLogs;
         }
 
         public async Task<IEnumerable<CombatModel>> LoadCombats(int combatLogId)
@@ -54,6 +54,14 @@ namespace CombatAnalysis.Core.Services
             var combats = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<CombatModel>>();
 
             return combats;
+        }
+
+        public async Task<IEnumerable<CombatPlayerDataModel>> LoadCombatPlayers(int combatId)
+        {
+            var responseMessage = await _httpClient.GetAsync($"CombatPlayer/FindByCombatId/{combatId}");
+            var combatPlayers = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<CombatPlayerDataModel>>();
+
+            return combatPlayers;
         }
 
         public async Task SaveCombatData(CombatModel combat, int createdCombatLogId)

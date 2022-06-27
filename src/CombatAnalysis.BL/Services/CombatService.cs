@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace CombatAnalysis.BL.Services
 {
-    internal class CombatService : ICombatService<CombatDto>
+    internal class CombatService : IService<CombatDto>
     {
         private readonly IGenericRepository<Combat> _repository;
         private readonly IMapper _mapper;
@@ -22,7 +22,7 @@ namespace CombatAnalysis.BL.Services
             _mapper = mapper;
         }
 
-        Task<int> ICombatService<CombatDto>.CreateAsync(CombatDto item)
+        Task<int> IService<CombatDto>.CreateAsync(CombatDto item)
         {
             if (item == null)
             {
@@ -32,7 +32,7 @@ namespace CombatAnalysis.BL.Services
             return CreateInternalAsync(item);
         }
 
-        Task<int> ICombatService<CombatDto>.DeleteAsync(CombatDto item)
+        Task<int> IService<CombatDto>.DeleteAsync(CombatDto item)
         {
             if (item == null)
             {
@@ -42,7 +42,7 @@ namespace CombatAnalysis.BL.Services
             return DeleteInternalAsync(item);
         }
 
-        async Task<IEnumerable<CombatDto>> ICombatService<CombatDto>.GetAllAsync()
+        async Task<IEnumerable<CombatDto>> IService<CombatDto>.GetAllAsync()
         {
             var allData = await _repository.GetAllAsync();
             var result = _mapper.Map<List<CombatDto>>(allData);
@@ -50,18 +50,18 @@ namespace CombatAnalysis.BL.Services
             return result;
         }
 
-        async Task<IEnumerable<CombatDto>> ICombatService<CombatDto>.FindAllAsync(int combatLogId)
+        async Task<IEnumerable<CombatDto>> IService<CombatDto>.FindAllAsync(int combatLogId)
         {
             var paramNames = new string[] { nameof(combatLogId) };
             var paramValues = new object[] { combatLogId };
 
             var data = await _repository.FindAllAsync("GetCombatByCombatLogId", paramNames, paramValues);
-            var result = _mapper.Map<List<CombatDto>>(data);
+            var result = _mapper.Map<IEnumerable<CombatDto>>(data);
 
             return result;
         }
 
-        async Task<CombatDto> ICombatService<CombatDto>.GetByIdAsync(int id)
+        async Task<CombatDto> IService<CombatDto>.GetByIdAsync(int id)
         {
             var executeLoad = await _repository.GetByIdAsync(id);
             var result = _mapper.Map<CombatDto>(executeLoad);
@@ -69,7 +69,7 @@ namespace CombatAnalysis.BL.Services
             return result;
         }
 
-        Task<int> ICombatService<CombatDto>.UpdateAsync(CombatDto item)
+        Task<int> IService<CombatDto>.UpdateAsync(CombatDto item)
         {
             if (item == null)
             {

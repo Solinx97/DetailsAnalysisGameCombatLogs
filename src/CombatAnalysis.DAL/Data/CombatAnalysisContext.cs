@@ -1,5 +1,7 @@
 ﻿using CombatAnalysis.DAL.Entities;
+using CombatAnalysis.DAL.Helpers;
 using Microsoft.EntityFrameworkCore;
+using System.Threading.Tasks;
 
 namespace CombatAnalysis.DAL.Data
 {
@@ -12,12 +14,7 @@ namespace CombatAnalysis.DAL.Data
 
             if (isExists)
             {
-                var query = @"CREATE PROCEDURE GetCombatByCombatLogId (@combatLogId INT)
-                                    AS SELECT Id, DungeonName, Name, EnergyRecovery, DamageDone, HealDone, DamageTaken, DeathNumber, UsedBuffs, IsWin, StartDate, FinishDate, CombatLogId
-                                    FROM Combat
-                                    WHERE CombatLogId = @combatLogId";
-
-                Database.ExecuteSqlRaw(query);
+                Task.Run(async () => await DbProcedureHelper.CreateProceduresAsync(this));
             }
         }
 

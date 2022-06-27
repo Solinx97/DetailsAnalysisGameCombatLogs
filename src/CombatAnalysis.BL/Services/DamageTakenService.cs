@@ -50,6 +50,17 @@ namespace CombatAnalysis.BL.Services
             return result;
         }
 
+        async Task<IEnumerable<DamageTakenDto>> IService<DamageTakenDto>.FindAllAsync(int combatLogId)
+        {
+            var paramNames = new string[] { nameof(combatLogId) };
+            var paramValues = new object[] { combatLogId };
+
+            var data = await _repository.FindAllAsync("GetCombatByCombatLogId", paramNames, paramValues);
+            var result = _mapper.Map<IEnumerable<DamageTakenDto>>(data);
+
+            return result;
+        }
+
         async Task<DamageTakenDto> IService<DamageTakenDto>.GetByIdAsync(int id)
         {
             var executeLoad = await _repository.GetByIdAsync(id);
