@@ -4,6 +4,7 @@ namespace CombatAnalysis.Core.Models
 {
     public class HealDoneModel
     {
+
         public int ValueWithOverheal { get; set; }
 
         public TimeSpan Time { get; set; }

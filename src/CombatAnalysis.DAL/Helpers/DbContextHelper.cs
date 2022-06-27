@@ -8,13 +8,13 @@ namespace CombatAnalysis.DAL.Helpers
         public static string GetCombat = "GetCombatByCombatLogId";
         public static string GetCombatPlayer = "GetCombatPlayerByCombatId";
         public static string GetDamageDone = "GetDamageDoneByCombatPlayerId";
-        public static string GetDamageDoneGeneric = "GetDamageDoneGenericByCombatPlayerId";
+        public static string GetDamageDoneGeneral = "GetDamageDoneGeneralByCombatPlayerId";
         public static string GetHealDone = "GetHealDoneByCombatPlayerId";
-        public static string GetHealDoneGeneric = "GetHealDoneGenericByCombatPlayerId";
+        public static string GetHealDoneGeneral = "GetHealDoneGeneralByCombatPlayerId";
         public static string GetDamageTaken = "GetDamageTakenByCombatPlayerId";
-        public static string GetDamageTakenGeneric = "GetDamageTakenGenericByCombatPlayerId";
+        public static string GetDamageTakenGeneral = "GetDamageTakenGeneralByCombatPlayerId";
         public static string GetResourceRecovery = "GetResourceRecoveryByCombatPlayerId";
-        public static string GetResourceRecoveryGeneric = "GetResourceRecoveryGenericByCombatPlayerId";
+        public static string GetResourceRecoveryGeneral = "GetResourceRecoveryGeneralByCombatPlayerId";
 
         public static async Task CreateProceduresAsync(DbContext dbContext)
         {
@@ -36,9 +36,9 @@ namespace CombatAnalysis.DAL.Helpers
                           WHERE CombatPlayerDataId = @combatPlayerDataId";
             await dbContext.Database.ExecuteSqlRawAsync(query);
 
-            query = @"CREATE PROCEDURE GetDamageDoneGenericByCombatPlayerId (@combatPlayerDataId INT)
+            query = @"CREATE PROCEDURE GetDamageDoneGeneralByCombatPlayerId (@combatPlayerDataId INT)
                           AS SELECT *
-                          FROM DamageDoneGeneric
+                          FROM DamageDoneGeneral
                           WHERE CombatPlayerDataId = @combatPlayerDataId";
             await dbContext.Database.ExecuteSqlRawAsync(query);
 
@@ -48,9 +48,9 @@ namespace CombatAnalysis.DAL.Helpers
                           WHERE CombatPlayerDataId = @combatPlayerDataId";
             await dbContext.Database.ExecuteSqlRawAsync(query);
 
-            query = @"CREATE PROCEDURE GetHealDoneGenericByCombatPlayerId (@combatPlayerDataId INT)
+            query = @"CREATE PROCEDURE GetHealDoneGeneralByCombatPlayerId (@combatPlayerDataId INT)
                           AS SELECT *
-                          FROM HealDoneGeneric
+                          FROM HealDoneGeneral
                           WHERE CombatPlayerDataId = @combatPlayerDataId";
             await dbContext.Database.ExecuteSqlRawAsync(query);
 
@@ -60,9 +60,9 @@ namespace CombatAnalysis.DAL.Helpers
                           WHERE CombatPlayerDataId = @combatPlayerDataId";
             await dbContext.Database.ExecuteSqlRawAsync(query);
 
-            query = @"CREATE PROCEDURE GetDamageTakenGenericByCombatPlayerId (@combatPlayerDataId INT)
+            query = @"CREATE PROCEDURE GetDamageTakenGeneralByCombatPlayerId (@combatPlayerDataId INT)
                           AS SELECT *
-                          FROM DamageTakenGeneric
+                          FROM DamageTakenGeneral
                           WHERE CombatPlayerDataId = @combatPlayerDataId";
             await dbContext.Database.ExecuteSqlRawAsync(query);
 
@@ -72,9 +72,9 @@ namespace CombatAnalysis.DAL.Helpers
                           WHERE CombatPlayerDataId = @combatPlayerDataId";
             await dbContext.Database.ExecuteSqlRawAsync(query);
 
-            query = @"CREATE PROCEDURE GetResourceRecoveryGenericByCombatPlayerId (@combatPlayerDataId INT)
+            query = @"CREATE PROCEDURE GetResourceRecoveryGeneralByCombatPlayerId (@combatPlayerDataId INT)
                           AS SELECT *
-                          FROM ResourceRecoveryGeneric
+                          FROM ResourceRecoveryGeneral
                           WHERE CombatPlayerDataId = @combatPlayerDataId";
             await dbContext.Database.ExecuteSqlRawAsync(query);
         }

@@ -64,6 +64,22 @@ namespace CombatAnalysis.Core.Services
             return combatPlayers;
         }
 
+        public async Task<IEnumerable<HealDoneModel>> LoadHealDoneDetails(int combatPlayerId)
+        {
+            var responseMessage = await _httpClient.GetAsync($"HealDone/FindByCombatPlayerId/{combatPlayerId}");
+            var healDones = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<HealDoneModel>>();
+
+            return healDones;
+        }
+
+        public async Task<IEnumerable<HealDoneGeneralModel>> LoadHealDoneGeneral(int combatPlayerId)
+        {
+            var responseMessage = await _httpClient.GetAsync($"HealDoneGeneral/FindByCombatPlayerId/{combatPlayerId}");
+            var healDoneGenerics = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<HealDoneGeneralModel>>();
+
+            return healDoneGenerics;
+        }
+
         public async Task SaveCombatData(CombatModel combat, int createdCombatLogId)
         {
             var combatInformation = new CombatDetailsInformation();

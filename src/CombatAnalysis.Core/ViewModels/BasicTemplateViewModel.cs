@@ -15,7 +15,7 @@ namespace CombatAnalysis.Core.ViewModels
 
         private int _step;
         private IViewModelConnect _handler;
-        private Tuple<string, CombatModel> _combatInformtaion;
+        private Tuple<int, CombatModel> _combatInformtaion;
 
         public BasicTemplateViewModel(MvxViewModel parent, IViewModelConnect handler, IMvxNavigationService mvvmNavigation)
         {
@@ -73,30 +73,30 @@ namespace CombatAnalysis.Core.ViewModels
 
         public void DamageDoneDetails()
         {
-            _combatInformtaion = (Tuple<string, CombatModel>)_handler.Data;
+            _combatInformtaion = (Tuple<int, CombatModel>)_handler.Data;
 
-            Task.Run(() => _mvvmNavigation.Navigate<DamageDoneDetailsViewModel, Tuple<string, CombatModel>>(_combatInformtaion));
+            //Task.Run(() => _mvvmNavigation.Navigate<DamageDoneDetailsViewModel, Tuple<int, CombatModel>>(_combatInformtaion));
         }
 
         public void HealDoneDetails()
         {
-            _combatInformtaion = (Tuple<string, CombatModel>)_handler.Data;
+            _combatInformtaion = (Tuple<int, CombatModel>)_handler.Data;
 
-            Task.Run(() => _mvvmNavigation.Navigate<HealDoneDetailsViewModel, Tuple<string, CombatModel>>(_combatInformtaion));
+            Task.Run(() => _mvvmNavigation.Navigate<HealDoneDetailsViewModel, Tuple<int, CombatModel>>(_combatInformtaion));
         }
 
         public void DamageTakenDetails()
         {
-            _combatInformtaion = (Tuple<string, CombatModel>)_handler.Data;
+            _combatInformtaion = (Tuple<int, CombatModel>)_handler.Data;
 
-            Task.Run(() => _mvvmNavigation.Navigate<DamageTakenDetailsViewModel, Tuple<string, CombatModel>>(_combatInformtaion));
+            //Task.Run(() => _mvvmNavigation.Navigate<DamageTakenDetailsViewModel, Tuple<int, CombatModel>>(_combatInformtaion));
         }
 
         public void ResourceDetails()
         {
-            _combatInformtaion = (Tuple<string, CombatModel>)_handler.Data;
+            _combatInformtaion = (Tuple<int, CombatModel>)_handler.Data;
 
-            Task.Run(() => _mvvmNavigation.Navigate<ResourceRecoveryDetailsViewModel, Tuple<string, CombatModel>>(_combatInformtaion));
+            //Task.Run(() => _mvvmNavigation.Navigate<ResourceRecoveryDetailsViewModel, Tuple<int, CombatModel>>(_combatInformtaion));
         }
     }
 }

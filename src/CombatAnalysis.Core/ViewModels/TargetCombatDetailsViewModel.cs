@@ -26,8 +26,6 @@ namespace CombatAnalysis.Core.ViewModels
         {
             _mvvmNavigation = mvvmNavigation;
 
-            _playersCombatData = new List<CombatPlayerDataModel>();
-
             _handler = new ViewModelMConnect();
             BasicTemplate = new BasicTemplateViewModel(this, _handler, _mvvmNavigation);
 
@@ -59,7 +57,7 @@ namespace CombatAnalysis.Core.ViewModels
             {
                 SetProperty(ref _selectedIndex, value);
 
-                _handler.Data = Tuple.Create(PlayersCombatData[_selectedIndex].UserName, _combat);
+                _handler.Data = Tuple.Create(_selectedIndex, _combat);
             }
         }
 
