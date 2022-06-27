@@ -84,8 +84,8 @@
                    FontWeight="SemiBold" IsChecked="{Binding IsCollectionReversed}"/>
         </StackPanel>
 
-        <ListBox Margin="20 30 20 45" Grid.Row="2" Grid.Column="2" 
-                 Background="Transparent" ItemsSource="{Binding HealDoneGeneralInformations}"
+        <ListBox Margin="20 30 20 45" Grid.Row="2" Grid.Column="2" Height="450"
+                 VerticalAlignment="Top" Background="Transparent" ItemsSource="{Binding HealDoneGeneralInformations}"
                  Visibility="{Binding ElementName=detailsType, Path=SelectedIndex, Converter={StaticResource IntToVisibility}, ConverterParameter=true:0}">
             <ListBox.ItemTemplate>
                 <DataTemplate>
@@ -102,8 +102,8 @@
             </ListBox.ItemTemplate>
         </ListBox>
 
-        <ListBox Margin="20 30 20 45" Background="Transparent" Grid.Row="2" Grid.Column="3" 
-                 Grid.ColumnSpan="2" ItemsSource="{Binding HealDoneInformations}"
+        <ListBox Margin="20 30 20 45" Background="Transparent" Grid.Row="2" Grid.Column="3" Height="450" 
+                 VerticalAlignment="Top" Grid.ColumnSpan="2" ItemsSource="{Binding HealDoneInformations}"
                  Visibility="{Binding ElementName=detailsType, Path=SelectedIndex, Converter={StaticResource IntToVisibility}, ConverterParameter=true:1}">
             <ListBox.ItemTemplate>
                 <DataTemplate>
@@ -126,7 +126,7 @@
             </ListBox.ItemTemplate>
         </ListBox>
 
-        <StackPanel Grid.Column="2" Grid.Row="2" VerticalAlignment="Bottom" HorizontalAlignment="Left" Margin="20 10"
+        <StackPanel Grid.Column="2" Grid.Row="2" VerticalAlignment="Bottom" HorizontalAlignment="Left" Margin="0 75"
                     Orientation="Horizontal">
             <TextBlock Margin="50 0" HorizontalAlignment="Center" VerticalAlignment="Center"
                    Text="Всего:" FontSize="16" TextAlignment="Center"/>
@@ -134,25 +134,23 @@
                    Text="{Binding TotalValue}" FontSize="18" TextAlignment="Center" FontWeight="Bold"/>
         </StackPanel>
         
-        <StackPanel Margin="25 0" Grid.Row="3" Grid.Column="3" Orientation="Horizontal"
+        <StackPanel Margin="20 -60" Grid.Row="3" Grid.Column="3" Orientation="Horizontal"
                     Visibility="{Binding ElementName=detailsType, Path=SelectedIndex, Converter={StaticResource IntToVisibility}, ConverterParameter=true:1}">
-            <StackPanel Margin="20 0" MinWidth="400">
-                <StackPanel>
-                    <CheckBox Name="dependency" Margin="5" VerticalContentAlignment="Center" 
-                              Content="Показать крит. урон" IsChecked="{Binding IsShowCrit}" FontSize="18"
-                              Height="30" VerticalAlignment="Center" FontWeight="SemiBold" />
-                    <CheckBox Margin="25 5" VerticalContentAlignment="Center" Content="Показать только крит. урон" FontSize="18" Height="30" 
+            <StackPanel>
+                <CheckBox Name="dependency" Margin="25 5" VerticalContentAlignment="Center" 
+                              Content="Показать крит. урон" IsChecked="{Binding IsShowCrit}" FontSize="14"
+                              VerticalAlignment="Center" FontWeight="SemiBold" />
+                <CheckBox Margin="50 0" VerticalContentAlignment="Center" Content="Показать только крит. урон" FontSize="14" 
                               VerticalAlignment="Center" FontWeight="SemiBold" Visibility="{Binding ElementName=dependency, Path=IsChecked, Converter={StaticResource BoolToVisibility}, ConverterParameter=true}"
                               IsChecked="{Binding IsShowOnlyCrit}"/>
-                </StackPanel>
-                <StackPanel>
-                    <CheckBox Name="dependency1" Margin="5" VerticalContentAlignment="Center" 
-                              Content="Показать оверхил" IsChecked="{Binding IsShowOverheal}" FontSize="18"
-                              Height="30" VerticalAlignment="Center" FontWeight="SemiBold" />
-                    <CheckBox Margin="25 5" VerticalContentAlignment="Center" Content="Показать только оверхил" FontSize="18" Height="30" 
+            </StackPanel>
+            <StackPanel>
+                <CheckBox Name="dependency1" Margin="25 5" VerticalContentAlignment="Center" 
+                              Content="Показать оверхил" IsChecked="{Binding IsShowOverheal}" FontSize="14"
+                              VerticalAlignment="Center" FontWeight="SemiBold" />
+                <CheckBox Margin="50 0" VerticalContentAlignment="Center" Content="Показать только оверхил" FontSize="14"
                               VerticalAlignment="Center" FontWeight="SemiBold" Visibility="{Binding ElementName=dependency1, Path=IsChecked, Converter={StaticResource BoolToVisibility}, ConverterParameter=true}"
                               IsChecked="{Binding IsShowOnlyOverheal}"/>
-                </StackPanel>
             </StackPanel>
         </StackPanel>
     </Grid>
