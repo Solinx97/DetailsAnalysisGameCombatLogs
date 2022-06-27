@@ -5,19 +5,22 @@ using CombatAnalysis.CombatParser.Extensions;
 using CombatAnalysis.Core.Commands;
 using CombatAnalysis.Core.Interfaces;
 using CombatAnalysis.Core.Models;
+using CombatAnalysis.Core.Services;
 using MvvmCross.Navigation;
 using MvvmCross.ViewModels;
 using System;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace CombatAnalysis.Core.ViewModels
 {
-    public class ResourceRecoveryDetailsViewModel : MvxViewModel<Tuple<string, CombatModel>>
+    public class ResourceRecoveryDetailsViewModel : MvxViewModel<Tuple<int, CombatModel>>
     {
         private readonly IMvxNavigationService _mvvmNavigation;
         private readonly IViewModelConnect _handler;
         private readonly IMapper _mapper;
+        private readonly CombatParserAPIService _combatParserAPIService;
 
         private MvxViewModel _basicTemplate;
         private ObservableCollection<ResourceRecoveryModel> _resourceRecoveryInformations;
@@ -28,10 +31,12 @@ namespace CombatAnalysis.Core.ViewModels
         private bool _isCollectionReversed;
         private double _totalValue;
 
-        public ResourceRecoveryDetailsViewModel(IMapper mapper, IMvxNavigationService mvvmNavigation)
+        public ResourceRecoveryDetailsViewModel(IMapper mapper, IMvxNavigationService mvvmNavigation, IHttpClientHelper httpClient)
         {
             _mapper = mapper;
             _mvvmNavigation = mvvmNavigation;
+
+            _combatParserAPIService = new CombatParserAPIService(mapper, httpClient);
 
             _handler = new ViewModelMConnect();
             BasicTemplate = new BasicTemplateViewModel(this, _handler, _mvvmNavigation);
@@ -110,30 +115,57 @@ namespace CombatAnalysis.Core.ViewModels
             }
         }
 
-        public override void Prepare(Tuple<string, CombatModel> parameter)
+        public override void Prepare(Tuple<int, CombatModel> parameter)
         {
-            SelectedPlayer = parameter.Item1;
-            TotalValue = parameter.Item2.Players.Find(x => x.UserName == parameter.Item1).EnergyRecovery;
+            var combat = parameter.Item2;
+            var player = combat.Players[parameter.Item1];
+            SelectedPlayer = player.UserName;
+            TotalValue = player.HealDone;
 
-            GetResourceRecoveryDetails(parameter);
+            if (player.Id > 0)
+            {
+                Task.Run(async () => await LoadResourceRecoveryDetails(player.Id));
+                Task.Run(async () => await LoadResourceRecoveryGeneral(player.Id));
+            }
+            else
+            {
+                var combatInformation = new CombatDetailsInformation();
+                var map = _mapper.Map<Combat>(combat);
+
+                GetResourceRecoveryDetails(combatInformation, SelectedPlayer, map);
+                GetResourceRecoveryGeneral(combatInformation, map);
+            }
         }
 
-        private void GetResourceRecoveryDetails(Tuple<string, CombatModel> combatInformationData)
+        private void GetResourceRecoveryDetails(CombatDetailsInformation combatInformation, string player, Combat combat)
         {
-            var combatInformation = new CombatDetailsInformation();
-
-            var map = _mapper.Map<Combat>(combatInformationData.Item2);
-            combatInformation.SetData(map, combatInformationData.Item1);
+            combatInformation.SetData(combat, player);
             combatInformation.GetResourceRecovery();
 
             var map1 = _mapper.Map<ObservableCollection<ResourceRecoveryModel>>(combatInformation.ResourceRecovery);
 
             ResourceRecoveryInformations = map1;
             _resourceRecoveryInformations = new ObservableCollection<ResourceRecoveryModel>(map1);
+        }
 
-            var damageDoneGeneralInformations = combatInformation.GetResourceRecoveryGeneral(combatInformation.ResourceRecovery, map);
+        private void GetResourceRecoveryGeneral(CombatDetailsInformation combatInformation, Combat combat)
+        {
+            var damageDoneGeneralInformations = combatInformation.GetDamageTakenGeneral(combatInformation.DamageTaken, combat);
             var map2 = _mapper.Map<ObservableCollection<ResourceRecoveryGeneralModel>>(damageDoneGeneralInformations);
             ResourceRecoveryGeneralInformations = map2;
+        }
+
+        private async Task LoadResourceRecoveryDetails(int combatPlayerId)
+        {
+            var healDones = await _combatParserAPIService.LoadResourceRecoveryDetails(combatPlayerId);
+            ResourceRecoveryInformations = new ObservableCollection<ResourceRecoveryModel>(healDones.ToList());
+            _resourceRecoveryInformations = new ObservableCollection<ResourceRecoveryModel>(healDones.ToList());
+        }
+
+        private async Task LoadResourceRecoveryGeneral(int combatPlayerId)
+        {
+            var healDoneGenerals = await _combatParserAPIService.LoadResourceRecoveryGeneral(combatPlayerId);
+            ResourceRecoveryGeneralInformations = new ObservableCollection<ResourceRecoveryGeneralModel>(healDoneGenerals.ToList());
         }
 
         private void Sorting(int index)

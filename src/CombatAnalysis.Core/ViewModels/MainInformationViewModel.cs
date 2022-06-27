@@ -30,6 +30,7 @@ namespace CombatAnalysis.Core.ViewModels
         private string _foundCombat;
         private string _combatLogPath;
         private int _selectedCombatLogId;
+        private int _combatLogsNumber;
         private MvxViewModel _basicTemplate;
         private IViewModelConnect _handler;
         private List<CombatModel> _combats;
@@ -138,6 +139,15 @@ namespace CombatAnalysis.Core.ViewModels
             }
         }
 
+        public int CombatLogsNumber
+        {
+            get { return _combatLogsNumber; }
+            set
+            {
+                SetProperty(ref _combatLogsNumber, value);
+            }
+        }
+
         public void GetCombatLog()
         {
             _combatLogPath = WinHandler.FileOpen();
@@ -223,6 +233,7 @@ namespace CombatAnalysis.Core.ViewModels
         {
             var combatLogsData = await _combatParserAPIService.LoadCombatLogs();
             CombatLogs = new ObservableCollection<CombatLogModel>(combatLogsData);
+            CombatLogsNumber = CombatLogs.Count;
         }
 
         private async Task LoadCombatsAsync()

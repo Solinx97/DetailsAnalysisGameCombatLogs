@@ -3,6 +3,7 @@ using CombatAnalysis.BL.DTO;
 using CombatAnalysis.BL.Exceptions;
 using CombatAnalysis.BL.Interfaces;
 using CombatAnalysis.DAL.Entities;
+using CombatAnalysis.DAL.Helpers;
 using CombatAnalysis.DAL.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -50,12 +51,12 @@ namespace CombatAnalysis.BL.Services
             return result;
         }
 
-        async Task<IEnumerable<DamageDoneGeneralDto>> IService<DamageDoneGeneralDto>.FindAllAsync(int combatLogId)
+        async Task<IEnumerable<DamageDoneGeneralDto>> IService<DamageDoneGeneralDto>.FindAllAsync(int combatPlayerId)
         {
-            var paramNames = new string[] { nameof(combatLogId) };
-            var paramValues = new object[] { combatLogId };
+            var paramNames = new string[] { nameof(combatPlayerId) };
+            var paramValues = new object[] { combatPlayerId };
 
-            var data = await _repository.FindAllAsync("GetCombatByCombatLogId", paramNames, paramValues);
+            var data = await _repository.FindAllAsync(DbProcedureHelper.GetDamageDoneGeneral, paramNames, paramValues);
             var result = _mapper.Map<IEnumerable<DamageDoneGeneralDto>>(data);
 
             return result;

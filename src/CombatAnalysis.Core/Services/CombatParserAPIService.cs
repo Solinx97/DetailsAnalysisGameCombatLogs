@@ -80,6 +80,54 @@ namespace CombatAnalysis.Core.Services
             return healDoneGenerics;
         }
 
+        public async Task<IEnumerable<DamageDoneModel>> LoadDamageDoneDetails(int combatPlayerId)
+        {
+            var responseMessage = await _httpClient.GetAsync($"DamageDone/FindByCombatPlayerId/{combatPlayerId}");
+            var damageDones = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<DamageDoneModel>>();
+
+            return damageDones;
+        }
+
+        public async Task<IEnumerable<DamageDoneGeneralModel>> LoadDamageDoneGeneral(int combatPlayerId)
+        {
+            var responseMessage = await _httpClient.GetAsync($"DamageDoneGeneral/FindByCombatPlayerId/{combatPlayerId}");
+            var damageDoneGenerics = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<DamageDoneGeneralModel>>();
+
+            return damageDoneGenerics;
+        }
+
+        public async Task<IEnumerable<DamageTakenModel>> LoadDamageTakenDetails(int combatPlayerId)
+        {
+            var responseMessage = await _httpClient.GetAsync($"DamageTaken/FindByCombatPlayerId/{combatPlayerId}");
+            var damageTakens = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<DamageTakenModel>>();
+
+            return damageTakens;
+        }
+
+        public async Task<IEnumerable<DamageTakenGeneralModel>> LoadDamageTakenGeneral(int combatPlayerId)
+        {
+            var responseMessage = await _httpClient.GetAsync($"DamageTakenGeneral/FindByCombatPlayerId/{combatPlayerId}");
+            var damageTakenGenerals = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<DamageTakenGeneralModel>>();
+
+            return damageTakenGenerals;
+        }
+
+        public async Task<IEnumerable<ResourceRecoveryModel>> LoadResourceRecoveryDetails(int combatPlayerId)
+        {
+            var responseMessage = await _httpClient.GetAsync($"ResourceRecovery/FindByCombatPlayerId/{combatPlayerId}");
+            var resourceRecoveryes = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<ResourceRecoveryModel>>();
+
+            return resourceRecoveryes;
+        }
+
+        public async Task<IEnumerable<ResourceRecoveryGeneralModel>> LoadResourceRecoveryGeneral(int combatPlayerId)
+        {
+            var responseMessage = await _httpClient.GetAsync($"ResourceRecoveryGeneral/FindByCombatPlayerId/{combatPlayerId}");
+            var ResourceRecoveryGenerals = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<ResourceRecoveryGeneralModel>>();
+
+            return ResourceRecoveryGenerals;
+        }
+
         public async Task SaveCombatData(CombatModel combat, int createdCombatLogId)
         {
             var combatInformation = new CombatDetailsInformation();

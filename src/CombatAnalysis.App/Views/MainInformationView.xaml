@@ -18,6 +18,7 @@
             <converters:TheNativeStringToXAMLBoolConverter x:Key="ToXAMLBool" />
             <converters:TheNativeBoolToXAMLBoolConverter x:Key="BoolToXAMLBool" />
             <converters:TheNativeBoolToVisibilityConverter x:Key="BoolToVisibility" />
+            <converters:TheNativeIntToVisibilityConverter x:Key="IntToVisibility" />
         </Grid.Resources>
 
         <Grid.ColumnDefinitions>
@@ -54,10 +55,11 @@
             </StackPanel>
         </StackPanel>
         <StackPanel IsEnabled="{Binding IsParsing, Converter={StaticResource BoolToXAMLBool}}" Grid.Row="1" Grid.Column="2"
-                    HorizontalAlignment="Center" VerticalAlignment="Center" Margin="20">
+                    HorizontalAlignment="Center" VerticalAlignment="Center" Margin="20"
+                    Visibility="{Binding CombatLogsNumber, Converter={StaticResource IntToVisibility}, ConverterParameter='0:true:>'}">
             <TextBlock HorizontalAlignment="Center" Text="Логи" Margin="0" FontSize="16" />
             <Button mvx:Bi.nd="Command LoadCombatsCommand" Content="Загрузить" Width="100" FontSize="16"
-                    Margin="10" Style="{StaticResource showButton}" Foreground="Blue" />
+                    Margin="10" Style="{StaticResource showButton}" Foreground="Blue"/>
             <ListBox Background="Transparent" ItemsSource="{Binding CombatLogs}" SelectedIndex="{Binding SelectedCombatLogId}">
                 <ListBox.ItemTemplate>
                     <DataTemplate>

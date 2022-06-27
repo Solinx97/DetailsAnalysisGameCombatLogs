@@ -75,7 +75,7 @@ namespace CombatAnalysis.Core.ViewModels
         {
             _combatInformtaion = (Tuple<int, CombatModel>)_handler.Data;
 
-            //Task.Run(() => _mvvmNavigation.Navigate<DamageDoneDetailsViewModel, Tuple<int, CombatModel>>(_combatInformtaion));
+            Task.Run(() => _mvvmNavigation.Navigate<DamageDoneDetailsViewModel, Tuple<int, CombatModel>>(_combatInformtaion));
         }
 
         public void HealDoneDetails()
@@ -89,14 +89,14 @@ namespace CombatAnalysis.Core.ViewModels
         {
             _combatInformtaion = (Tuple<int, CombatModel>)_handler.Data;
 
-            //Task.Run(() => _mvvmNavigation.Navigate<DamageTakenDetailsViewModel, Tuple<int, CombatModel>>(_combatInformtaion));
+            Task.Run(() => _mvvmNavigation.Navigate<DamageTakenDetailsViewModel, Tuple<int, CombatModel>>(_combatInformtaion));
         }
 
         public void ResourceDetails()
         {
             _combatInformtaion = (Tuple<int, CombatModel>)_handler.Data;
 
-            //Task.Run(() => _mvvmNavigation.Navigate<ResourceRecoveryDetailsViewModel, Tuple<int, CombatModel>>(_combatInformtaion));
+            Task.Run(() => _mvvmNavigation.Navigate<ResourceRecoveryDetailsViewModel, Tuple<int, CombatModel>>(_combatInformtaion));
         }
     }
 }
