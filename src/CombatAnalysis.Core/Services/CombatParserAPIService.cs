@@ -145,8 +145,6 @@ namespace CombatAnalysis.Core.Services
             {
                 item.Start();
             }
-
-            Task.WaitAll(tasks.ToArray());
         }
 
         private CombatLogModel CreateCombatLog()
