@@ -44,6 +44,7 @@ namespace CombatAnalysis.Core.ViewModels
             GetCombatLogCommand = new MvxCommand(GetCombatLog);
             OpenPlayerAnalysisCommand = new MvxCommand(OpenPlayerAnalysis);
             LoadCombatsCommand = new MvxCommand(LoadCombats);
+            DeleteCombatCommand = new MvxCommand(DeleteCombat);
 
             _combats = new List<CombatModel>();
             _combatParserAPIService = new CombatParserAPIService(mapper, httpClient);
@@ -55,6 +56,8 @@ namespace CombatAnalysis.Core.ViewModels
         public IMvxCommand GetCombatLogCommand { get; set; }
 
         public IMvxCommand LoadCombatsCommand { get; set; }
+
+        public IMvxCommand DeleteCombatCommand { get; set; }
 
         public IMvxCommand OpenPlayerAnalysisCommand { get; set; }
 
@@ -163,6 +166,11 @@ namespace CombatAnalysis.Core.ViewModels
         public void LoadCombats()
         {
             var combatLog = Task.Run(() => LoadCombatsAsync());
+        }
+
+        public void DeleteCombat()
+        {
+            var a = 5;
         }
 
         public void OpenPlayerAnalysis()
