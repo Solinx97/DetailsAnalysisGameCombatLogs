@@ -2,6 +2,8 @@
 {
     public class DamageTakenModel
     {
+        public int Id { get; set; }
+
         public int Value { get; set; }
 
         public string Time { get; set; }

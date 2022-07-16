@@ -2,6 +2,8 @@
 {
     public class DamageDoneGeneralModel
     {
+        public int Id { get; set; }
+
         public int Value { get; set; }
 
         public double DamagePerSecond { get; set; }

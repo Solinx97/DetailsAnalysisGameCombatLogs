@@ -2,6 +2,8 @@
 {
     public class HealDoneGeneralModel
     {
+        public int Id { get; set; }
+
         public int Value { get; set; }
 
         public double HealPerSecond { get; set; }

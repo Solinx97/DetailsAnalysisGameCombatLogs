@@ -2,6 +2,8 @@
 {
     public class ResourceRecoveryGeneralDto
     {
+        public int Id { get; set; }
+
         public int Value { get; set; }
 
         public double ResourcePerSecond { get; set; }

@@ -40,6 +40,71 @@ namespace CombatAnalysis.Core.Services
             return createdCombatLogId;
         }
 
+        public async Task DeleteCombatLog(int id)
+        {
+            var combats = await LoadCombats(id);
+            foreach (var item in combats)
+            {
+                var players = await LoadCombatPlayers(item.Id);
+                foreach (var item1 in players)
+                {
+                    var healDones = await LoadHealDoneDetails(item1.Id);
+                    foreach (var item2 in healDones)
+                    {
+                        await _httpClient.DeletAsync($"HealDone/{item2.Id}");
+                    }
+
+                    var healDoneGenerals = await LoadHealDoneGeneral(item1.Id);
+                    foreach (var item2 in healDoneGenerals)
+                    {
+                        await _httpClient.DeletAsync($"HealDoneGeneral/{item2.Id}");
+                    }
+
+                    var damageDones = await LoadDamageDoneDetails(item1.Id);
+                    foreach (var item2 in damageDones)
+                    {
+                        await _httpClient.DeletAsync($"DamageDone/{item2.Id}");
+                    }
+
+                    var damageDoneGenerals = await LoadDamageDoneGeneral(item1.Id);
+                    foreach (var item2 in damageDoneGenerals)
+                    {
+                        await _httpClient.DeletAsync($"DamageDoneGeneral/{item2.Id}");
+                    }
+
+                    var damageTakens = await LoadDamageTakenDetails(item1.Id);
+                    foreach (var item2 in damageTakens)
+                    {
+                        await _httpClient.DeletAsync($"DamageTaken/{item2.Id}");
+                    }
+
+                    var damageTakenGenerals = await LoadDamageTakenGeneral(item1.Id);
+                    foreach (var item2 in damageTakenGenerals)
+                    {
+                        await _httpClient.DeletAsync($"DamageTakenGeneral/{item2.Id}");
+                    }
+
+                    var resourceRecoveryes = await LoadResourceRecoveryDetails(item1.Id);
+                    foreach (var item2 in resourceRecoveryes)
+                    {
+                        await _httpClient.DeletAsync($"ResourceRecovery/{item2.Id}");
+                    }
+
+                    var resourceRecoveryGenerals = await LoadResourceRecoveryGeneral(item1.Id);
+                    foreach (var item2 in resourceRecoveryGenerals)
+                    {
+                        await _httpClient.DeletAsync($"ResourceRecoveryGeneral/{item2.Id}");
+                    }
+
+                    await _httpClient.DeletAsync($"CombatPlayer/{item1.Id}");
+                }
+
+                await _httpClient.DeletAsync($"Combat/{item.Id}");
+            }
+
+            await _httpClient.DeletAsync($"CombatLog/{id}");
+        }
+
         public async Task<IEnumerable<CombatLogModel>> LoadCombatLogs()
         {
             var responseMessage = await _httpClient.GetAsync("CombatLog");

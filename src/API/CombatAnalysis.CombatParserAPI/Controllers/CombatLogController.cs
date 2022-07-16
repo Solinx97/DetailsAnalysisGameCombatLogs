@@ -30,12 +30,6 @@ namespace CombatAnalysis.CombatParserAPI.Controllers
             return map;
         }
 
-        [HttpGet("{id}")]
-        public string Get(int id)
-        {
-            return "value";
-        }
-
         [HttpPost]
         public async Task<int> Post(CombatLogModel value)
         {
@@ -45,14 +39,13 @@ namespace CombatAnalysis.CombatParserAPI.Controllers
             return createdCombatId;
         }
 
-        [HttpPut("{id}")]
-        public void Put(int id, string value)
-        {
-        }
-
         [HttpDelete("{id}")]
-        public void Delete(int id)
+        public async Task<int> Delete(int id)
         {
+            var combatLog = await _service.GetByIdAsync(id);
+            var deletedId = await _service.DeleteAsync(combatLog);
+
+            return deletedId;
         }
     }
 }

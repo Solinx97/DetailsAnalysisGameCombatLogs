@@ -4,6 +4,8 @@ namespace CombatAnalysis.BL.DTO
 {
     public class DamageDoneDto
     {
+        public int Id { get; set; }
+
         public int Value { get; set; }
 
         public TimeSpan Time { get; set; }

@@ -90,11 +90,11 @@ namespace CombatAnalysis.BL.Services
 
         private async Task<int> DeleteInternalAsync(DamageDoneDto item)
         {
-            var allData = await _repository.GetAllAsync();
-            if (!allData.Any())
-            {
-                throw new NotFoundException($"Collection entity {nameof(DamageDoneDto)} not found", nameof(allData));
-            }
+            //var allData = await _repository.GetAllAsync();
+            //if (!allData.Any())
+            //{
+            //    throw new NotFoundException($"Collection entity {nameof(DamageDoneDto)} not found", nameof(allData));
+            //}
 
             var numberEntries = await _repository.DeleteAsync(_mapper.Map<DamageDone>(item));
             return numberEntries;

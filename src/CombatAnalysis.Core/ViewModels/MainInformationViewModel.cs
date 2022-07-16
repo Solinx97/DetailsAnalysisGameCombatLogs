@@ -170,7 +170,7 @@ namespace CombatAnalysis.Core.ViewModels
 
         public void DeleteCombat()
         {
-            var a = 5;
+            Task.Run(() => _combatParserAPIService.DeleteCombatLog(CombatLogs[SelectedCombatLogId].Id));
         }
 
         public void OpenPlayerAnalysis()

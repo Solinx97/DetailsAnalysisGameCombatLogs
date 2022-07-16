@@ -38,5 +38,14 @@ namespace CombatAnalysis.CombatParserAPI.Controllers
 
             return createdCombatId;
         }
+
+        [HttpDelete("{id}")]
+        public async Task<int> Delete(int id)
+        {
+            var damageDoneGeneral = await _service.GetByIdAsync(id);
+            var deletedId = await _service.DeleteAsync(damageDoneGeneral);
+
+            return deletedId;
+        }
     }
 }

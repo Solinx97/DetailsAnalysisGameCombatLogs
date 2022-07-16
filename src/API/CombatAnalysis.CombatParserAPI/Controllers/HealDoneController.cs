@@ -36,5 +36,14 @@ namespace CombatAnalysis.CombatParserAPI.Controllers
             var map = _mapper.Map<HealDoneDto>(value);
             await _service.CreateAsync(map);
         }
+
+        [HttpDelete("{id}")]
+        public async Task<int> Delete(int id)
+        {
+            var healDone = await _service.GetByIdAsync(id);
+            var deletedId = await _service.DeleteAsync(healDone);
+
+            return deletedId;
+        }
     }
 }
