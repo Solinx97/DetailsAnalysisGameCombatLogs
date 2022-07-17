@@ -18,6 +18,9 @@ namespace CombatAnalysis.Core.ViewModels
 {
     public class MainInformationViewModel : MvxViewModel, IObserver
     {
+        public delegate void Temporary(int number);
+        event Temporary MyTemporary;
+
         private readonly IMvxNavigationService _mvvmNavigation;
         private readonly IMapper _mapper;
         private readonly CombatParserAPIService _combatParserAPIService;
@@ -31,6 +34,7 @@ namespace CombatAnalysis.Core.ViewModels
         private string _combatLogPath;
         private int _selectedCombatLogId;
         private int _combatLogsNumber;
+        private int _deletedRows;
         private MvxViewModel _basicTemplate;
         private IViewModelConnect _handler;
         private List<CombatModel> _combats;
@@ -51,6 +55,8 @@ namespace CombatAnalysis.Core.ViewModels
 
             _handler = new ViewModelMConnect();
             BasicTemplate = new BasicTemplateViewModel(this, _handler, _mvvmNavigation);
+
+            MyTemporary += Check;
         }
 
         public IMvxCommand GetCombatLogCommand { get; set; }
@@ -151,6 +157,15 @@ namespace CombatAnalysis.Core.ViewModels
             }
         }
 
+        public int DeletedRows
+        {
+            get { return _deletedRows; }
+            set
+            {
+                SetProperty(ref _deletedRows, value);
+            }
+        }
+
         public void GetCombatLog()
         {
             _combatLogPath = WinHandler.FileOpen();
@@ -170,7 +185,7 @@ namespace CombatAnalysis.Core.ViewModels
 
         public void DeleteCombat()
         {
-            Task.Run(() => _combatParserAPIService.DeleteCombatLog(CombatLogs[SelectedCombatLogId].Id));
+            Task.Run(() => _combatParserAPIService.DeleteCombatLog(CombatLogs[SelectedCombatLogId].Id, MyTemporary));
         }
 
         public void OpenPlayerAnalysis()
@@ -256,6 +271,11 @@ namespace CombatAnalysis.Core.ViewModels
             }
 
             await _mvvmNavigation.Navigate<GeneralAnalysisViewModel, List<CombatModel>>(loadedCombats.ToList());
+        }
+
+        private void Check(int number)
+        {
+            DeletedRows += number;
         }
     }
 }

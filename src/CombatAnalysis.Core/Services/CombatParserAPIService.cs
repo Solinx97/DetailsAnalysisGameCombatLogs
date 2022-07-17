@@ -10,6 +10,7 @@ using System.Linq;
 using System.Net.Http.Json;
 using System.Text;
 using System.Threading.Tasks;
+using static CombatAnalysis.Core.ViewModels.MainInformationViewModel;
 
 namespace CombatAnalysis.Core.Services
 {
@@ -40,67 +41,17 @@ namespace CombatAnalysis.Core.Services
             return createdCombatLogId;
         }
 
-        public async Task DeleteCombatLog(int id)
+        public async Task DeleteCombatLog(int id, Temporary temp)
         {
+            var tasks = new List<Task>();
             var combats = await LoadCombats(id);
             foreach (var item in combats)
             {
-                var players = await LoadCombatPlayers(item.Id);
-                foreach (var item1 in players)
-                {
-                    var healDones = await LoadHealDoneDetails(item1.Id);
-                    foreach (var item2 in healDones)
-                    {
-                        await _httpClient.DeletAsync($"HealDone/{item2.Id}");
-                    }
-
-                    var healDoneGenerals = await LoadHealDoneGeneral(item1.Id);
-                    foreach (var item2 in healDoneGenerals)
-                    {
-                        await _httpClient.DeletAsync($"HealDoneGeneral/{item2.Id}");
-                    }
-
-                    var damageDones = await LoadDamageDoneDetails(item1.Id);
-                    foreach (var item2 in damageDones)
-                    {
-                        await _httpClient.DeletAsync($"DamageDone/{item2.Id}");
-                    }
-
-                    var damageDoneGenerals = await LoadDamageDoneGeneral(item1.Id);
-                    foreach (var item2 in damageDoneGenerals)
-                    {
-                        await _httpClient.DeletAsync($"DamageDoneGeneral/{item2.Id}");
-                    }
-
-                    var damageTakens = await LoadDamageTakenDetails(item1.Id);
-                    foreach (var item2 in damageTakens)
-                    {
-                        await _httpClient.DeletAsync($"DamageTaken/{item2.Id}");
-                    }
-
-                    var damageTakenGenerals = await LoadDamageTakenGeneral(item1.Id);
-                    foreach (var item2 in damageTakenGenerals)
-                    {
-                        await _httpClient.DeletAsync($"DamageTakenGeneral/{item2.Id}");
-                    }
-
-                    var resourceRecoveryes = await LoadResourceRecoveryDetails(item1.Id);
-                    foreach (var item2 in resourceRecoveryes)
-                    {
-                        await _httpClient.DeletAsync($"ResourceRecovery/{item2.Id}");
-                    }
-
-                    var resourceRecoveryGenerals = await LoadResourceRecoveryGeneral(item1.Id);
-                    foreach (var item2 in resourceRecoveryGenerals)
-                    {
-                        await _httpClient.DeletAsync($"ResourceRecoveryGeneral/{item2.Id}");
-                    }
-
-                    await _httpClient.DeletAsync($"CombatPlayer/{item1.Id}");
-                }
-
-                await _httpClient.DeletAsync($"Combat/{item.Id}");
+                tasks.Add(DeleteCombatPlayersData(item.Id, temp));
+                tasks.Add(_httpClient.DeletAsync($"Combat/{item.Id}"));
             }
+
+            await Task.WhenAll(tasks);
 
             await _httpClient.DeletAsync($"CombatLog/{id}");
         }
@@ -209,6 +160,112 @@ namespace CombatAnalysis.Core.Services
             foreach (var item in tasks)
             {
                 item.Start();
+            }
+        }
+
+        private async Task DeleteCombatPlayersData(int combatId, Temporary temp)
+        {
+            var players = await LoadCombatPlayers(combatId);
+            foreach (var item in players)
+            {
+                await DeleteHealDoneData(item.Id, temp);
+                await DeleteHealDoneGeneralData(item.Id, temp);
+                await DeleteDamageDoneData(item.Id, temp);
+                await DeleteDamageDoneGeneralData(item.Id, temp);
+                await DeleteDamageTakenData(item.Id, temp);
+                await DeleteDamageTakenGeneralData(item.Id, temp);
+                await DeleteResourceRecoveryData(item.Id, temp);
+                await DeleteResourceRecoveryGeneralData(item.Id, temp);
+
+                await _httpClient.DeletAsync($"CombatPlayer/{item.Id}");
+            }
+        }
+
+        private async Task DeleteHealDoneData(int combatPlayerId, Temporary temp)
+        {
+            var healDones = await LoadHealDoneDetails(combatPlayerId);
+            foreach (var item2 in healDones)
+            {
+                var response = await _httpClient.DeletAsync($"HealDone/{item2.Id}");
+                int count = await response.Content.ReadFromJsonAsync<int>();
+                temp?.Invoke(count);
+            }
+        }
+
+        private async Task DeleteHealDoneGeneralData(int combatPlayerId, Temporary temp)
+        {
+            var healDoneGenerals = await LoadHealDoneGeneral(combatPlayerId);
+            foreach (var item2 in healDoneGenerals)
+            {
+                var response = await _httpClient.DeletAsync($"HealDoneGeneral/{item2.Id}");
+                int count = await response.Content.ReadFromJsonAsync<int>();
+                temp?.Invoke(count);
+            }
+        }
+
+        private async Task DeleteDamageDoneData(int combatPlayerId, Temporary temp)
+        {
+            var damageDones = await LoadDamageDoneDetails(combatPlayerId);
+            foreach (var item2 in damageDones)
+            {
+                var response = await _httpClient.DeletAsync($"DamageDone/{item2.Id}");
+                int count = await response.Content.ReadFromJsonAsync<int>();
+                temp?.Invoke(count);
+            }
+        }
+
+        private async Task DeleteDamageDoneGeneralData(int combatPlayerId, Temporary temp)
+        {
+            var damageDoneGenerals = await LoadDamageDoneGeneral(combatPlayerId);
+            foreach (var item2 in damageDoneGenerals)
+            {
+                var response = await _httpClient.DeletAsync($"DamageDoneGeneral/{item2.Id}");
+                int count = await response.Content.ReadFromJsonAsync<int>();
+                temp?.Invoke(count);
+            }
+        }
+
+        private async Task DeleteDamageTakenData(int combatPlayerId, Temporary temp)
+        {
+            var damageTakens = await LoadDamageTakenDetails(combatPlayerId);
+            foreach (var item2 in damageTakens)
+            {
+                var response = await _httpClient.DeletAsync($"DamageTaken/{item2.Id}");
+                int count = await response.Content.ReadFromJsonAsync<int>();
+                temp?.Invoke(count);
+            }
+        }
+
+        private async Task DeleteDamageTakenGeneralData(int combatPlayerId, Temporary temp)
+        {
+            var damageTakenGenerals = await LoadDamageTakenGeneral(combatPlayerId);
+            foreach (var item2 in damageTakenGenerals)
+            {
+                var response = await _httpClient.DeletAsync($"DamageTakenGeneral/{item2.Id}");
+                int count = await response.Content.ReadFromJsonAsync<int>();
+                temp?.Invoke(count);
+            }
+        }
+
+        private async Task DeleteResourceRecoveryData(int combatPlayerId, Temporary temp)
+        {
+            var resourceRecoveryes = await LoadResourceRecoveryDetails(combatPlayerId);
+            foreach (var item2 in resourceRecoveryes)
+            {
+                var response = await _httpClient.DeletAsync($"ResourceRecovery/{item2.Id}");
+                int count = await response.Content.ReadFromJsonAsync<int>();
+                temp?.Invoke(count);
+            }
+        }
+
+        private async Task DeleteResourceRecoveryGeneralData(int combatPlayerId, Temporary temp)
+        {
+            var resourceRecoveryGenerals = await LoadResourceRecoveryGeneral(combatPlayerId);
+            foreach (var item2 in resourceRecoveryGenerals)
+            {
+                var response = await _httpClient.DeletAsync($"ResourceRecoveryGeneral/{item2.Id}");
+                int count = await response.Content.ReadFromJsonAsync<int>();
+                temp?.Invoke(count);
             }
         }
 
