@@ -1,5 +1,4 @@
-﻿using AutoMapper;
-using CombatAnalysis.Core.Commands;
+﻿using CombatAnalysis.Core.Commands;
 using CombatAnalysis.Core.Interfaces;
 using CombatAnalysis.Core.Models;
 using MvvmCross.Commands;
@@ -13,18 +12,15 @@ namespace CombatAnalysis.Core.ViewModels
     public class GeneralAnalysisViewModel : MvxViewModel<List<CombatModel>>
     {
         private readonly IMvxNavigationService _mvvmNavigation;
-        private readonly IMapper _mapper;
         private readonly IViewModelConnect _handler;
 
         private MvxViewModel _basicTemplate;
         private List<CombatModel> _combats;
         private int _combatIndex;
         private string _combatStatus = "Победа";
-        private string _selectedCombat;
 
-        public GeneralAnalysisViewModel(IMapper mapper, IMvxNavigationService mvvmNavigation)
+        public GeneralAnalysisViewModel(IMvxNavigationService mvvmNavigation)
         {
-            _mapper = mapper;
             _mvvmNavigation = mvvmNavigation;
 
             _combats = new List<CombatModel>();

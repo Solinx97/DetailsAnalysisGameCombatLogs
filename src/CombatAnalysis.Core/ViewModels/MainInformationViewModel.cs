@@ -175,17 +175,17 @@ namespace CombatAnalysis.Core.ViewModels
 
         public void LoadCombatLogs()
         {
-            var combatLog = Task.Run(() => LoadCombatLogsAsync());
+            Task.Run(() => LoadCombatLogsAsync());
         }
 
         public void LoadCombats()
         {
-            var combatLog = Task.Run(() => LoadCombatsAsync());
+            Task.Run(() => LoadCombatsAsync());
         }
 
         public void DeleteCombat()
         {
-            Task.Run(() => _combatParserAPIService.DeleteCombatLog(CombatLogs[SelectedCombatLogId].Id, MyTemporary));
+            Task.Run(() => DeleteAsync());
         }
 
         public void OpenPlayerAnalysis()
@@ -205,6 +205,7 @@ namespace CombatAnalysis.Core.ViewModels
             IsParsing = false;
             IsSaving = false;
 
+            CombatLogs?.Clear();
             LoadCombatLogs();
         }
 
@@ -215,8 +216,7 @@ namespace CombatAnalysis.Core.ViewModels
             await parser.Parse(combatLog);
 
             var combats = parser.Combats;
-            var combatsMapper = _mapper.Map<List<CombatModel>>(combats);
-            _combats = combatsMapper;
+            _combats = _mapper.Map<List<CombatModel>>(combats);
 
             await GetDetails();
         }
@@ -230,7 +230,7 @@ namespace CombatAnalysis.Core.ViewModels
                 IsSaving = true;
 
                 _combatParserAPIService.SetCombats(_combats);
-                createdCombatLogId = await _combatParserAPIService.SaveCombatLog();
+                createdCombatLogId = _combatParserAPIService.SaveCombatLog().Result;
             }
 
             for (int i = 0; i < _combats.Count; i++)
@@ -245,7 +245,7 @@ namespace CombatAnalysis.Core.ViewModels
 
                 if (IsNeedSave)
                 {
-                    await _combatParserAPIService.SaveCombatData(_combats[i], createdCombatLogId);
+                    _combatParserAPIService.SaveCombatData(_combats[i], createdCombatLogId).GetAwaiter().GetResult();
                 }
             }
 
@@ -271,6 +271,12 @@ namespace CombatAnalysis.Core.ViewModels
             }
 
             await _mvvmNavigation.Navigate<GeneralAnalysisViewModel, List<CombatModel>>(loadedCombats.ToList());
+        }
+
+        private async Task DeleteAsync()
+        {
+            await _combatParserAPIService.DeleteCombatLog(CombatLogs[SelectedCombatLogId].Id, MyTemporary);
+            //await LoadCombatLogsAsync();
         }
 
         private void Check(int number)

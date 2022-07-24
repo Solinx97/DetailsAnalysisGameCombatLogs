@@ -54,8 +54,8 @@
                 <TextBlock Text="{Binding CombatLog, Mode=TwoWay}" FontWeight="Bold" Margin="20 0" FontSize="14" />
             </StackPanel>
         </StackPanel>
-        <StackPanel Grid.Row="1" Grid.Column="2" Margin="20 90">
-            <ScrollViewer MaxHeight="300" Visibility="{Binding CombatLogsNumber, Converter={StaticResource IntToVisibility}, ConverterParameter='0:true:>'}">
+        <StackPanel Grid.Row="1" Grid.Column="2" Margin="20 90" Visibility="{Binding CombatLogsNumber, Converter={StaticResource IntToVisibility}, ConverterParameter='0:true:>'}">
+            <ScrollViewer MaxHeight="300">
                 <StackPanel IsEnabled="{Binding IsParsing, Converter={StaticResource BoolToXAMLBool}}" 
                     HorizontalAlignment="Center" VerticalAlignment="Top" Margin="20">
                     <TextBlock HorizontalAlignment="Center" Text="Ранее добавленные Логи" Margin="0" FontSize="16" />
@@ -86,7 +86,7 @@
                     </ListBox>
                 </StackPanel>
             </ScrollViewer>
-            <StackPanel Orientation="Horizontal">
+            <StackPanel Orientation="Horizontal" Visibility="Visible">
                 <TextBlock Text="Удаление" FontSize="18"/>
                 <TextBlock Text="{Binding DeletedRows}" FontSize="16" Margin="25 0"/>
             </StackPanel>

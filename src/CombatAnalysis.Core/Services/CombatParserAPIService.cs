@@ -154,13 +154,7 @@ namespace CombatAnalysis.Core.Services
             var combatResponse = await _httpClient.PostAsync("Combat", JsonContent.Create(combat));
             var createdCombatId = combatResponse.Content.ReadFromJsonAsync<int>().Result;
 
-            var tasks = new List<Task>();
-            await SaveCombatPlayerData(combatInformation, combat, createdCombatId, tasks);
-
-            foreach (var item in tasks)
-            {
-                item.Start();
-            }
+            await SaveCombatPlayerData(combatInformation, combat, createdCombatId);
         }
 
         private async Task DeleteCombatPlayersData(int combatId, Temporary temp)
@@ -294,7 +288,7 @@ namespace CombatAnalysis.Core.Services
             return combatLog;
         }
 
-        private async Task SaveCombatPlayerData(CombatDetailsInformation combatInformation, CombatModel combat, int createdCombatId, List<Task> tasks)
+        private async Task SaveCombatPlayerData(CombatDetailsInformation combatInformation, CombatModel combat, int createdCombatId)
         {
             for (int i = 0; i < combat.Players.Count; i++)
             {
@@ -313,36 +307,28 @@ namespace CombatAnalysis.Core.Services
                 var map = _mapper.Map<Combat>(combat);
 
                 var damageDoneData = new List<DamageDone>(combatInformation.DamageDone);
-                var damageDoneTask = new Task(async () => await SaveDamageDoneDetails(damageDoneData, createdCombatPlayerId));
-                tasks.Add(damageDoneTask);
+                await Task.Run(() => SaveDamageDoneDetails(damageDoneData, createdCombatPlayerId));
 
                 var damageDoneGeneralData = combatInformation.GetDamageDoneGeneral(damageDoneData, map);
-                var damageDoneGeneralTask = new Task(async () => await SaveDamageDoneGeneral(damageDoneGeneralData.ToList(), createdCombatPlayerId));
-                tasks.Add(damageDoneGeneralTask);
+                await Task.Run(() => SaveDamageDoneGeneral(damageDoneGeneralData.ToList(), createdCombatPlayerId));
 
                 var healDoneData = new List<HealDone>(combatInformation.HealDone);
-                var healDoneTask = new Task(async () => await SaveHealDoneDetails(healDoneData, createdCombatPlayerId));
-                tasks.Add(healDoneTask);
+                await Task.Run(() => SaveHealDoneDetails(healDoneData, createdCombatPlayerId));
 
                 var healDoneGeneralData = combatInformation.GetHealDoneGeneral(healDoneData, map);
-                var healDoneGeneralTask = new Task(async () => await SaveHealDoneGeneral(healDoneGeneralData.ToList(), createdCombatPlayerId));
-                tasks.Add(healDoneGeneralTask);
+                await Task.Run(() => SaveHealDoneGeneral(healDoneGeneralData.ToList(), createdCombatPlayerId));
 
                 var damageTakenData = new List<DamageTaken>(combatInformation.DamageTaken);
-                var damageTakenTask = new Task(async () => await SaveDamageTakenDetails(damageTakenData, createdCombatPlayerId));
-                tasks.Add(damageTakenTask);
+                await Task.Run(() => SaveDamageTakenDetails(damageTakenData, createdCombatPlayerId));
 
                 var damageTakenGeneralData = combatInformation.GetDamageTakenGeneral(damageTakenData, map);
-                var damageTakenGeneralTask = new Task(async () => await SaveDamageTakenGeneral(damageTakenGeneralData.ToList(), createdCombatPlayerId));
-                tasks.Add(damageTakenGeneralTask);
+                await Task.Run(() => SaveDamageTakenGeneral(damageTakenGeneralData.ToList(), createdCombatPlayerId));
 
                 var resourceRecoveryData = new List<ResourceRecovery>(combatInformation.ResourceRecovery);
-                var resourceRecoveryTask = new Task(async () => await SaveResourceRecoveryDetails(resourceRecoveryData, createdCombatPlayerId));
-                tasks.Add(resourceRecoveryTask);
+                await Task.Run(() => SaveResourceRecoveryDetails(resourceRecoveryData, createdCombatPlayerId));
 
                 var resourceRecoveryGeneralData = combatInformation.GetResourceRecoveryGeneral(resourceRecoveryData, map);
-                var resourceRecoveryGeneralTask = new Task(async () => await SaveResourceRecoveryGeneral(resourceRecoveryGeneralData.ToList(), createdCombatPlayerId));
-                tasks.Add(resourceRecoveryGeneralTask);
+                await Task.Run(() => SaveResourceRecoveryGeneral(resourceRecoveryGeneralData.ToList(), createdCombatPlayerId));
             }
         }
 
