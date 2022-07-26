@@ -43,6 +43,15 @@ namespace CombatAnalysis.BL.Services
             return DeleteInternalAsync(item);
         }
 
+        async Task<int> IService<DamageDoneGeneralDto>.DeleteByProcedureAsync(int combatPlayerId)
+        {
+            var paramNames = new string[] { nameof(combatPlayerId) };
+            var paramValues = new object[] { combatPlayerId };
+
+            var response = await _repository.DeleteByProcedureAsync(DbProcedureHelper.DeleteDamageDoneGeneral, paramNames, paramValues);
+            return response;
+        }
+
         async Task<IEnumerable<DamageDoneGeneralDto>> IService<DamageDoneGeneralDto>.GetAllAsync()
         {
             var allData = await _repository.GetAllAsync();
@@ -110,11 +119,6 @@ namespace CombatAnalysis.BL.Services
 
             var numberEntries = await _repository.UpdateAsync(_mapper.Map<DamageDoneGeneral>(item));
             return numberEntries;
-        }
-
-        public Task<int> DeleteByProcedureAsync(int combatPlayerId)
-        {
-            throw new NotImplementedException();
         }
     }
 }

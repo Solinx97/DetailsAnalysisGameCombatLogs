@@ -40,8 +40,6 @@ namespace CombatAnalysis.CombatParserAPI.Controllers
         [HttpDelete("DeleteByCombatPlayerId/{combatPlayerId}")]
         public async Task<int> Delete(int combatPlayerId)
         {
-            //var healDone = await _service.GetByIdAsync(id);
-            //var deletedId = await _service.DeleteAsync(healDone);
             var deletedId = await _service.DeleteByProcedureAsync(combatPlayerId);
 
             return deletedId;

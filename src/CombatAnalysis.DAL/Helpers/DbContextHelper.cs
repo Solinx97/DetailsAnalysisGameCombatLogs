@@ -16,8 +16,21 @@ namespace CombatAnalysis.DAL.Helpers
         public static string GetResourceRecovery = "GetResourceRecoveryByCombatPlayerId";
         public static string GetResourceRecoveryGeneral = "GetResourceRecoveryGeneralByCombatPlayerId";
         public static string DeleteHealDone = "DeleteHealDoneByCombatPlayerId";
+        public static string DeleteHealDoneGeneral = "DeleteHealDoneGeneralByCombatPlayerId";
+        public static string DeleteDamageDone = "DeleteDamageDoneByCombatPlayerId";
+        public static string DeleteDamageDoneGeneral = "DeleteDamageDoneGeneralByCombatPlayerId";
+        public static string DeleteDamageTaken = "DeleteDamageTakenByCombatPlayerId";
+        public static string DeleteDamageTakenGeneral = "DeleteDamageTakenGeneralByCombatPlayerId";
+        public static string DeleteResourceRecovery = "DeleteResourceRecoveryByCombatPlayerId";
+        public static string DeleteResourceRecoveryGeneral = "DeleteResourceRecoveryGeneralByCombatPlayerId";
 
         public static async Task CreateProceduresAsync(DbContext dbContext)
+        {
+            await CreateSelectStoredProcedures(dbContext);
+            await CreateDeleteStoredProcedures(dbContext);
+        }
+
+        private static async Task CreateSelectStoredProcedures(DbContext dbContext)
         {
             var query = @"CREATE PROCEDURE GetCombatByCombatLogId (@combatLogId INT)
                           AS SELECT *
@@ -78,9 +91,47 @@ namespace CombatAnalysis.DAL.Helpers
                           FROM ResourceRecoveryGeneral
                           WHERE CombatPlayerDataId = @combatPlayerDataId";
             await dbContext.Database.ExecuteSqlRawAsync(query);
+        }
 
-            query = @"CREATE PROCEDURE DeleteHealDoneByCombatPlayerId (@combatPlayerDataId INT)
+        private static async Task CreateDeleteStoredProcedures(DbContext dbContext)
+        {
+            var query = @"CREATE PROCEDURE DeleteHealDoneByCombatPlayerId (@combatPlayerDataId INT)
                           AS DELETE FROM HealDone 
+                          WHERE CombatPlayerDataId = @combatPlayerDataId";
+            await dbContext.Database.ExecuteSqlRawAsync(query);
+
+            query = @"CREATE PROCEDURE DeleteHealDoneGeneralByCombatPlayerId (@combatPlayerDataId INT)
+                          AS DELETE FROM HealDoneGeneral
+                          WHERE CombatPlayerDataId = @combatPlayerDataId";
+            await dbContext.Database.ExecuteSqlRawAsync(query);
+
+            query = @"CREATE PROCEDURE DeleteDamageDoneByCombatPlayerId (@combatPlayerDataId INT)
+                          AS DELETE FROM DamageDone 
+                          WHERE CombatPlayerDataId = @combatPlayerDataId";
+            await dbContext.Database.ExecuteSqlRawAsync(query);
+
+            query = @"CREATE PROCEDURE DeleteDamageDoneGeneralByCombatPlayerId (@combatPlayerDataId INT)
+                          AS DELETE FROM DamageDoneGeneral 
+                          WHERE CombatPlayerDataId = @combatPlayerDataId";
+            await dbContext.Database.ExecuteSqlRawAsync(query);
+
+            query = @"CREATE PROCEDURE DeleteDamageTakenByCombatPlayerId (@combatPlayerDataId INT)
+                          AS DELETE FROM DamageTaken 
+                          WHERE CombatPlayerDataId = @combatPlayerDataId";
+            await dbContext.Database.ExecuteSqlRawAsync(query);
+
+            query = @"CREATE PROCEDURE DeleteDamageTakenGeneralByCombatPlayerId (@combatPlayerDataId INT)
+                          AS DELETE FROM DamageTakenGeneral 
+                          WHERE CombatPlayerDataId = @combatPlayerDataId";
+            await dbContext.Database.ExecuteSqlRawAsync(query);
+
+            query = @"CREATE PROCEDURE DeleteResourceRecoveryByCombatPlayerId (@combatPlayerDataId INT)
+                          AS DELETE FROM ResourceRecovery 
+                          WHERE CombatPlayerDataId = @combatPlayerDataId";
+            await dbContext.Database.ExecuteSqlRawAsync(query);
+
+            query = @"CREATE PROCEDURE DeleteResourceRecoveryGeneralByCombatPlayerId (@combatPlayerDataId INT)
+                          AS DELETE FROM ResourceRecoveryGeneral 
                           WHERE CombatPlayerDataId = @combatPlayerDataId";
             await dbContext.Database.ExecuteSqlRawAsync(query);
         }

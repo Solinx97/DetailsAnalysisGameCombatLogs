@@ -43,9 +43,13 @@ namespace CombatAnalysis.BL.Services
             return DeleteInternalAsync(item);
         }
 
-        Task<int> IService<HealDoneDto>.DeleteByProcedureAsync(int combatPlayerId)
+        async Task<int> IService<HealDoneDto>.DeleteByProcedureAsync(int combatPlayerId)
         {
-            return DeleteByProcedureInternalAsync(combatPlayerId);
+            var paramNames = new string[] { nameof(combatPlayerId) };
+            var paramValues = new object[] { combatPlayerId };
+
+            var response = await _repository.DeleteByProcedureAsync(DbProcedureHelper.DeleteHealDone, paramNames, paramValues);
+            return response;
         }
 
         async Task<IEnumerable<HealDoneDto>> IService<HealDoneDto>.GetAllAsync()
@@ -103,21 +107,6 @@ namespace CombatAnalysis.BL.Services
 
             var numberEntries = await _repository.DeleteAsync(_mapper.Map<HealDone>(item));
             return numberEntries;
-        }
-
-        private async Task<int> DeleteByProcedureInternalAsync(int combatPlayerId)
-        {
-            //var allData = await _repository.GetAllAsync();
-            //if (!allData.Any())
-            //{
-            //    throw new NotFoundException($"Collection entity {nameof(HealDoneDto)} not found", nameof(allData));
-            //}
-
-            var paramNames = new string[] { nameof(combatPlayerId) };
-            var paramValues = new object[] { combatPlayerId };
-
-            var response = await _repository.DeleteByProcedureAsync(DbProcedureHelper.DeleteHealDone, paramNames, paramValues);
-            return response;
         }
 
         private async Task<int> UpdateInternalAsync(HealDoneDto item)

@@ -1,4 +1,4 @@
-﻿    using AutoMapper;
+﻿using AutoMapper;
 using CombatAnalysis.BL.DTO;
 using CombatAnalysis.BL.Exceptions;
 using CombatAnalysis.BL.Interfaces;
@@ -41,6 +41,15 @@ namespace CombatAnalysis.BL.Services
             }
 
             return DeleteInternalAsync(item);
+        }
+
+        async Task<int> IService<ResourceRecoveryDto>.DeleteByProcedureAsync(int combatPlayerId)
+        {
+            var paramNames = new string[] { nameof(combatPlayerId) };
+            var paramValues = new object[] { combatPlayerId };
+
+            var response = await _repository.DeleteByProcedureAsync(DbProcedureHelper.DeleteResourceRecovery, paramNames, paramValues);
+            return response;
         }
 
         async Task<IEnumerable<ResourceRecoveryDto>> IService<ResourceRecoveryDto>.GetAllAsync()
@@ -110,11 +119,6 @@ namespace CombatAnalysis.BL.Services
 
             var numberEntries = await _repository.UpdateAsync(_mapper.Map<ResourceRecovery>(item));
             return numberEntries;
-        }
-
-        public Task<int> DeleteByProcedureAsync(int combatPlayerId)
-        {
-            throw new NotImplementedException();
         }
     }
 }

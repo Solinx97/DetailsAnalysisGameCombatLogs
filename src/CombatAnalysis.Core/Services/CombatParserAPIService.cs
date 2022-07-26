@@ -161,84 +161,16 @@ namespace CombatAnalysis.Core.Services
             var players = await LoadCombatPlayers(combatId);
             foreach (var item in players)
             {
-                await DeleteHealDoneData(item.Id);
-                await DeleteHealDoneGeneralData(item.Id);
-                await DeleteDamageDoneData(item.Id);
-                await DeleteDamageDoneGeneralData(item.Id);
-                await DeleteDamageTakenData(item.Id);
-                await DeleteDamageTakenGeneralData(item.Id);
-                await DeleteResourceRecoveryData(item.Id);
-                await DeleteResourceRecoveryGeneralData(item.Id);
+                await _httpClient.DeletAsync($"HealDone/DeleteByCombatPlayerId/{item.Id}");
+                await _httpClient.DeletAsync($"HealDoneGeneral/DeleteByCombatPlayerId/{item.Id}");
+                await _httpClient.DeletAsync($"DamageDone/DeleteByCombatPlayerId/{item.Id}");
+                await _httpClient.DeletAsync($"DamageDoneGeneral/DeleteByCombatPlayerId/{item.Id}");
+                await _httpClient.DeletAsync($"DamageTaken/DeleteByCombatPlayerId/{item.Id}");
+                await _httpClient.DeletAsync($"DamageTakenGeneral/DeleteByCombatPlayerId/{item.Id}");
+                await _httpClient.DeletAsync($"ResourceRecovery/DeleteByCombatPlayerId/{item.Id}");
+                await _httpClient.DeletAsync($"ResourceRecoveryGeneral/DeleteByCombatPlayerId/{item.Id}");
 
                 await _httpClient.DeletAsync($"CombatPlayer/{item.Id}");
-            }
-        }
-
-        private async Task DeleteHealDoneData(int combatPlayerId)
-        {
-            await _httpClient.DeletAsync($"HealDone/DeleteByCombatPlayerId/{combatPlayerId}");
-        }
-
-        private async Task DeleteHealDoneGeneralData(int combatPlayerId)
-        {
-            var healDoneGenerals = await LoadHealDoneGeneral(combatPlayerId);
-            foreach (var item2 in healDoneGenerals)
-            {
-                await _httpClient.DeletAsync($"HealDoneGeneral/{item2.Id}");
-            }
-        }
-
-        private async Task DeleteDamageDoneData(int combatPlayerId)
-        {
-            var damageDones = await LoadDamageDoneDetails(combatPlayerId);
-            foreach (var item2 in damageDones)
-            {
-                await _httpClient.DeletAsync($"DamageDone/{item2.Id}");
-            }
-        }
-
-        private async Task DeleteDamageDoneGeneralData(int combatPlayerId)
-        {
-            var damageDoneGenerals = await LoadDamageDoneGeneral(combatPlayerId);
-            foreach (var item2 in damageDoneGenerals)
-            {
-                await _httpClient.DeletAsync($"DamageDoneGeneral/{item2.Id}");
-            }
-        }
-
-        private async Task DeleteDamageTakenData(int combatPlayerId)
-        {
-            var damageTakens = await LoadDamageTakenDetails(combatPlayerId);
-            foreach (var item2 in damageTakens)
-            {
-                await _httpClient.DeletAsync($"DamageTaken/{item2.Id}");
-            }
-        }
-
-        private async Task DeleteDamageTakenGeneralData(int combatPlayerId)
-        {
-            var damageTakenGenerals = await LoadDamageTakenGeneral(combatPlayerId);
-            foreach (var item2 in damageTakenGenerals)
-            {
-                await _httpClient.DeletAsync($"DamageTakenGeneral/{item2.Id}");
-            }
-        }
-
-        private async Task DeleteResourceRecoveryData(int combatPlayerId)
-        {
-            var resourceRecoveryes = await LoadResourceRecoveryDetails(combatPlayerId);
-            foreach (var item2 in resourceRecoveryes)
-            {
-                await _httpClient.DeletAsync($"ResourceRecovery/{item2.Id}");
-            }
-        }
-
-        private async Task DeleteResourceRecoveryGeneralData(int combatPlayerId)
-        {
-            var resourceRecoveryGenerals = await LoadResourceRecoveryGeneral(combatPlayerId);
-            foreach (var item2 in resourceRecoveryGenerals)
-            {
-                await _httpClient.DeletAsync($"ResourceRecoveryGeneral/{item2.Id}");
             }
         }
 
