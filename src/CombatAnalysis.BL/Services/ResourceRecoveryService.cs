@@ -33,6 +33,15 @@ namespace CombatAnalysis.BL.Services
             return CreateInternalAsync(item);
         }
 
+        async Task<int> IService<ResourceRecoveryDto>.CreateByProcedureAsync(ResourceRecoveryDto item)
+        {
+            var paramNames = new string[] { nameof(item.Value), nameof(item.Time), nameof(item.SpellOrItem), nameof(item.CombatPlayerDataId) };
+            var paramValues = new object[] { item.Value, item.Time, item.SpellOrItem, item.CombatPlayerDataId };
+
+            var response = await _repository.ExecuteStoredProcedureAsync(DbProcedureHelper.InsertIntoResourceRecovery, paramNames, paramValues);
+            return response;
+        }
+
         Task<int> IService<ResourceRecoveryDto>.DeleteAsync(ResourceRecoveryDto item)
         {
             if (item == null)
@@ -48,7 +57,7 @@ namespace CombatAnalysis.BL.Services
             var paramNames = new string[] { nameof(combatPlayerId) };
             var paramValues = new object[] { combatPlayerId };
 
-            var response = await _repository.DeleteByProcedureAsync(DbProcedureHelper.DeleteResourceRecovery, paramNames, paramValues);
+            var response = await _repository.ExecuteStoredProcedureAsync(DbProcedureHelper.DeleteResourceRecovery, paramNames, paramValues);
             return response;
         }
 
@@ -65,7 +74,7 @@ namespace CombatAnalysis.BL.Services
             var paramNames = new string[] { nameof( combatPlayerId) };
             var paramValues = new object[] { combatPlayerId };
 
-            var data = await _repository.GetByProcedureAsync(DbProcedureHelper.GetResourceRecovery, paramNames, paramValues);
+            var data = await _repository.ExecuteStoredProcedureUseModelAsync(DbProcedureHelper.GetResourceRecovery, paramNames, paramValues);
             var result = _mapper.Map<IEnumerable<ResourceRecoveryDto>>(data);
 
             return result;

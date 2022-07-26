@@ -34,7 +34,7 @@ namespace CombatAnalysis.CombatParserAPI.Controllers
         public async Task<int> Post(ResourceRecoveryGeneralModel value)
         {
             var map = _mapper.Map<ResourceRecoveryGeneralDto>(value);
-            var createdCombatId = await _service.CreateAsync(map);
+            var createdCombatId = await _service.CreateByProcedureAsync(map);
 
             return createdCombatId;
         }

@@ -8,6 +8,8 @@ namespace CombatAnalysis.BL.Interfaces
     {
         Task<int> CreateAsync(TModel item);
 
+        Task<int> CreateByProcedureAsync(TModel item);
+
         Task<int> UpdateAsync(TModel item);
 
         Task<int> DeleteAsync(TModel item);

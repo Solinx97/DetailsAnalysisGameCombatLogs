@@ -33,6 +33,19 @@ namespace CombatAnalysis.BL.Services
             return CreateInternalAsync(item);
         }
 
+        async Task<int> IService<DamageTakenDto>.CreateByProcedureAsync(DamageTakenDto item)
+        {
+            var paramNames = new string[] { nameof(item.Value), nameof(item.Time), nameof(item.From),
+                nameof(item.To), nameof(item.SpellOrItem), nameof(item.IsDodge), nameof(item.IsParry), nameof(item.IsMiss),
+                nameof(item.IsResist), nameof(item.IsImmune), nameof(item.IsCrushing), nameof(item.CombatPlayerDataId) };
+            var paramValues = new object[] { item.Value, item.Time, item.From,
+                item.To, item.SpellOrItem, item.IsDodge, item.IsParry, item.IsMiss,
+                item.IsResist, item.IsImmune, item.IsCrushing, item.CombatPlayerDataId };
+
+            var response = await _repository.ExecuteStoredProcedureAsync(DbProcedureHelper.InsertIntoDamageTaken, paramNames, paramValues);
+            return response;
+        }
+
         Task<int> IService<DamageTakenDto>.DeleteAsync(DamageTakenDto item)
         {
             if (item == null)
@@ -48,7 +61,7 @@ namespace CombatAnalysis.BL.Services
             var paramNames = new string[] { nameof(combatPlayerId) };
             var paramValues = new object[] { combatPlayerId };
 
-            var response = await _repository.DeleteByProcedureAsync(DbProcedureHelper.DeleteDamageTaken, paramNames, paramValues);
+            var response = await _repository.ExecuteStoredProcedureAsync(DbProcedureHelper.DeleteDamageTaken, paramNames, paramValues);
             return response;
         }
 
@@ -65,7 +78,7 @@ namespace CombatAnalysis.BL.Services
             var paramNames = new string[] { nameof(combatPlayerId) };
             var paramValues = new object[] { combatPlayerId };
 
-            var data = await _repository.GetByProcedureAsync(DbProcedureHelper.GetDamageTaken, paramNames, paramValues);
+            var data = await _repository.ExecuteStoredProcedureUseModelAsync(DbProcedureHelper.GetDamageTaken, paramNames, paramValues);
             var result = _mapper.Map<IEnumerable<DamageTakenDto>>(data);
 
             return result;

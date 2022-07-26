@@ -55,7 +55,7 @@ namespace CombatAnalysis.BL.Services
             var paramNames = new string[] { nameof(combatLogId) };
             var paramValues = new object[] { combatLogId };
 
-            var data = await _repository.GetByProcedureAsync("GetCombatByCombatLogId", paramNames, paramValues);
+            var data = await _repository.ExecuteStoredProcedureUseModelAsync("GetCombatByCombatLogId", paramNames, paramValues);
             var result = _mapper.Map<IEnumerable<CombatDto>>(data);
 
             return result;
@@ -122,6 +122,11 @@ namespace CombatAnalysis.BL.Services
         }
 
         public Task<int> DeleteByProcedureAsync(int combatPlayerId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<int> CreateByProcedureAsync(CombatDto item)
         {
             throw new NotImplementedException();
         }

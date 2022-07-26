@@ -34,7 +34,7 @@ namespace CombatAnalysis.CombatParserAPI.Controllers
         public async Task<int> Post(DamageTakenGeneralModel value)
         {
             var map = _mapper.Map<DamageTakenGeneralDto>(value);
-            var createdCombatId = await _service.CreateAsync(map);
+            var createdCombatId = await _service.CreateByProcedureAsync(map);
 
             return createdCombatId;
         }

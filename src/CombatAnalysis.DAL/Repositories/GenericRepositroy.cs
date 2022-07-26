@@ -58,14 +58,13 @@ namespace CombatAnalysis.DAL.Repositories
             return numberEntries;
         }
 
-        async Task<IEnumerable<TModel>> IGenericRepository<TModel>.GetByProcedureAsync(string procedureName, string[] paramNames, object[] paramValuee)
+        async Task<IEnumerable<TModel>> IGenericRepository<TModel>.ExecuteStoredProcedureUseModelAsync(string procedureName, string[] paramNames, object[] paramValues)
         {
             var procedureParams = new List<SqlParameter>();
             var procedureParamNames = new StringBuilder();
-            for (int i = 0; i < paramValuee.Length; i++)
+            for (int i = 0; i < paramValues.Length; i++)
             {
-                var paramValue = (int)paramValuee[i];
-                procedureParams.Add(new SqlParameter(paramNames[i], paramValue));
+                procedureParams.Add(new SqlParameter(paramNames[i], paramValues[i]));
                 procedureParamNames.Append($"@{paramNames[i]},");
             }
             procedureParamNames.Remove(procedureParamNames.Length - 1, 1);
@@ -77,20 +76,19 @@ namespace CombatAnalysis.DAL.Repositories
             return data;
         }
 
-        async Task<int> IGenericRepository<TModel>.DeleteByProcedureAsync(string procedureName, string[] paramNames, object[] paramValuee)
+        async Task<int> IGenericRepository<TModel>.ExecuteStoredProcedureAsync(string procedureName, string[] paramNames, object[] paramValues)
         {
             var procedureParams = new List<SqlParameter>();
             var procedureParamNames = new StringBuilder();
-            for (int i = 0; i < paramValuee.Length; i++)
+            for (int i = 0; i < paramValues.Length; i++)
             {
-                var paramValue = (int)paramValuee[i];
-                procedureParams.Add(new SqlParameter(paramNames[i], paramValue));
+                procedureParams.Add(new SqlParameter(paramNames[i], paramValues[i]));
                 procedureParamNames.Append($"@{paramNames[i]},");
             }
             procedureParamNames.Remove(procedureParamNames.Length - 1, 1);
 
             var data = await _context.Database
-                                .ExecuteSqlRawAsync($"{procedureName} {procedureParamNames}", procedureParams.ToArray());
+                                .ExecuteSqlRawAsync($"{procedureName} {procedureParamNames}", procedureParams);
 
             return data;
         }

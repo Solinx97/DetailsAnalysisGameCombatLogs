@@ -34,7 +34,7 @@ namespace CombatAnalysis.CombatParserAPI.Controllers
         public async Task Post(DamageTakenModel value)
         {
             var map = _mapper.Map<DamageTakenDto>(value);
-            await _service.CreateAsync(map);
+            await _service.CreateByProcedureAsync(map);
         }
 
         [HttpDelete("DeleteByCombatPlayerId/{combatPlayerId}")]
