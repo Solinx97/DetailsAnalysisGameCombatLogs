@@ -58,7 +58,7 @@ namespace CombatAnalysis.DAL.Repositories
             return numberEntries;
         }
 
-        async Task<IEnumerable<TModel>> IGenericRepository<TModel>.FindAllAsync(string procedureName, string[] paramNames, object[] paramValuee)
+        async Task<IEnumerable<TModel>> IGenericRepository<TModel>.GetByProcedureAsync(string procedureName, string[] paramNames, object[] paramValuee)
         {
             var procedureParams = new List<SqlParameter>();
             var procedureParamNames = new StringBuilder();
@@ -73,6 +73,24 @@ namespace CombatAnalysis.DAL.Repositories
             var data = await _context.Set<TModel>()
                                 .FromSqlRaw($"{procedureName} {procedureParamNames}", procedureParams.ToArray())
                                 .ToListAsync();
+
+            return data;
+        }
+
+        async Task<int> IGenericRepository<TModel>.DeleteByProcedureAsync(string procedureName, string[] paramNames, object[] paramValuee)
+        {
+            var procedureParams = new List<SqlParameter>();
+            var procedureParamNames = new StringBuilder();
+            for (int i = 0; i < paramValuee.Length; i++)
+            {
+                var paramValue = (int)paramValuee[i];
+                procedureParams.Add(new SqlParameter(paramNames[i], paramValue));
+                procedureParamNames.Append($"@{paramNames[i]},");
+            }
+            procedureParamNames.Remove(procedureParamNames.Length - 1, 1);
+
+            var data = await _context.Database
+                                .ExecuteSqlRawAsync($"{procedureName} {procedureParamNames}", procedureParams.ToArray());
 
             return data;
         }

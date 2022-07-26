@@ -18,9 +18,6 @@ namespace CombatAnalysis.Core.ViewModels
 {
     public class MainInformationViewModel : MvxViewModel, IObserver
     {
-        public delegate void Temporary(int number);
-        event Temporary MyTemporary;
-
         private readonly IMvxNavigationService _mvvmNavigation;
         private readonly IMapper _mapper;
         private readonly CombatParserAPIService _combatParserAPIService;
@@ -55,8 +52,6 @@ namespace CombatAnalysis.Core.ViewModels
 
             _handler = new ViewModelMConnect();
             BasicTemplate = new BasicTemplateViewModel(this, _handler, _mvvmNavigation);
-
-            MyTemporary += Check;
         }
 
         public IMvxCommand GetCombatLogCommand { get; set; }
@@ -154,15 +149,6 @@ namespace CombatAnalysis.Core.ViewModels
             set
             {
                 SetProperty(ref _combatLogsNumber, value);
-            }
-        }
-
-        public int DeletedRows
-        {
-            get { return _deletedRows; }
-            set
-            {
-                SetProperty(ref _deletedRows, value);
             }
         }
 
@@ -275,13 +261,8 @@ namespace CombatAnalysis.Core.ViewModels
 
         private async Task DeleteAsync()
         {
-            await _combatParserAPIService.DeleteCombatLog(CombatLogs[SelectedCombatLogId].Id, MyTemporary);
-            //await LoadCombatLogsAsync();
-        }
-
-        private void Check(int number)
-        {
-            DeletedRows += number;
+            await _combatParserAPIService.DeleteCombatLog(CombatLogs[SelectedCombatLogId].Id);
+            await LoadCombatLogsAsync();
         }
     }
 }

@@ -15,6 +15,7 @@ namespace CombatAnalysis.DAL.Helpers
         public static string GetDamageTakenGeneral = "GetDamageTakenGeneralByCombatPlayerId";
         public static string GetResourceRecovery = "GetResourceRecoveryByCombatPlayerId";
         public static string GetResourceRecoveryGeneral = "GetResourceRecoveryGeneralByCombatPlayerId";
+        public static string DeleteHealDone = "DeleteHealDoneByCombatPlayerId";
 
         public static async Task CreateProceduresAsync(DbContext dbContext)
         {
@@ -75,6 +76,11 @@ namespace CombatAnalysis.DAL.Helpers
             query = @"CREATE PROCEDURE GetResourceRecoveryGeneralByCombatPlayerId (@combatPlayerDataId INT)
                           AS SELECT *
                           FROM ResourceRecoveryGeneral
+                          WHERE CombatPlayerDataId = @combatPlayerDataId";
+            await dbContext.Database.ExecuteSqlRawAsync(query);
+
+            query = @"CREATE PROCEDURE DeleteHealDoneByCombatPlayerId (@combatPlayerDataId INT)
+                          AS DELETE FROM HealDone 
                           WHERE CombatPlayerDataId = @combatPlayerDataId";
             await dbContext.Database.ExecuteSqlRawAsync(query);
         }

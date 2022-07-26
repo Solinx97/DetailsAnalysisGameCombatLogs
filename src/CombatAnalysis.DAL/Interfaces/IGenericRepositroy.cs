@@ -16,6 +16,8 @@ namespace CombatAnalysis.DAL.Interfaces
 
         Task<IEnumerable<TModel>> GetAllAsync();
 
-        Task<IEnumerable<TModel>> FindAllAsync(string procedureName, string[] paramNames, object[] paramValuee);
+        Task<IEnumerable<TModel>> GetByProcedureAsync(string procedureName, string[] paramNames, object[] paramValuee);
+
+        Task<int> DeleteByProcedureAsync(string procedureName, string[] paramNames, object[] paramValuee);
     }
 }

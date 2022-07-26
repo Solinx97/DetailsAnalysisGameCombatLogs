@@ -24,7 +24,7 @@ namespace CombatAnalysis.CombatParserAPI.Controllers
         [HttpGet("FindByCombatPlayerId/{combatPlayerId}")]
         public async Task<IEnumerable<DamageDoneModel>> Find(int combatPlayerId)
         {
-            var damageDones = await _service.FindAllAsync(combatPlayerId);
+            var damageDones = await _service.GetByProcedureAsync(combatPlayerId);
             var map = _mapper.Map<IEnumerable<DamageDoneModel>>(damageDones);
 
             return map;

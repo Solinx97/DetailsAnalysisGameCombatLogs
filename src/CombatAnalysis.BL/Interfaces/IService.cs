@@ -12,9 +12,11 @@ namespace CombatAnalysis.BL.Interfaces
 
         Task<int> DeleteAsync(TModel item);
 
+        Task<int> DeleteByProcedureAsync(int combatPlayerId);
+
         Task<IEnumerable<TModel>> GetAllAsync();
 
-        Task<IEnumerable<TModel>> FindAllAsync(int id);
+        Task<IEnumerable<TModel>> GetByProcedureAsync(int id);
 
         Task<TModel> GetByIdAsync(int id);
     }

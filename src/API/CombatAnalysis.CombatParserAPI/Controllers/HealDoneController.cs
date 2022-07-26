@@ -24,7 +24,7 @@ namespace CombatAnalysis.CombatParserAPI.Controllers
         [HttpGet("FindByCombatPlayerId/{combatPlayerId}")]
         public async Task<IEnumerable<HealDoneModel>> Find(int combatPlayerId)
         {
-            var healDones = await _service.FindAllAsync(combatPlayerId);
+            var healDones = await _service.GetByProcedureAsync(combatPlayerId);
             var map = _mapper.Map<IEnumerable<HealDoneModel>>(healDones);
 
             return map;
@@ -37,11 +37,12 @@ namespace CombatAnalysis.CombatParserAPI.Controllers
             await _service.CreateAsync(map);
         }
 
-        [HttpDelete("{id}")]
-        public async Task<int> Delete(int id)
+        [HttpDelete("DeleteByCombatPlayerId/{combatPlayerId}")]
+        public async Task<int> Delete(int combatPlayerId)
         {
-            var healDone = await _service.GetByIdAsync(id);
-            var deletedId = await _service.DeleteAsync(healDone);
+            //var healDone = await _service.GetByIdAsync(id);
+            //var deletedId = await _service.DeleteAsync(healDone);
+            var deletedId = await _service.DeleteByProcedureAsync(combatPlayerId);
 
             return deletedId;
         }

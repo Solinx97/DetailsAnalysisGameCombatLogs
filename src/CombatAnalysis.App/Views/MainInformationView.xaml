@@ -86,10 +86,6 @@
                     </ListBox>
                 </StackPanel>
             </ScrollViewer>
-            <StackPanel Orientation="Horizontal" Visibility="Visible">
-                <TextBlock Text="Удаление" FontSize="18"/>
-                <TextBlock Text="{Binding DeletedRows}" FontSize="16" Margin="25 0"/>
-            </StackPanel>
         </StackPanel>
         <StackPanel IsEnabled="{Binding IsParsing, Converter={StaticResource BoolToXAMLBool}}" Grid.Row="2" Grid.Column="2"
                     Grid.ColumnSpan="2" VerticalAlignment="Center" HorizontalAlignment="Center">
