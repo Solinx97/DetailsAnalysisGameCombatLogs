@@ -1,8 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
-
-namespace CombatAnalysis.DAL.Entities
+﻿namespace CombatAnalysis.DAL.Entities
 {
-    [Index(nameof(CombatPlayerDataId))]
     public class DamageDone
     {
         public int Id { get; set; }
