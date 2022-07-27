@@ -171,6 +171,8 @@ namespace CombatAnalysis.Core.ViewModels
 
         public void DeleteCombat()
         {
+            IsParsing = true;
+
             Task.Run(() => DeleteAsync());
         }
 
@@ -263,6 +265,8 @@ namespace CombatAnalysis.Core.ViewModels
         {
             await _combatParserAPIService.DeleteCombatLog(CombatLogs[SelectedCombatLogId].Id);
             await LoadCombatLogsAsync();
+
+            IsParsing = false;
         }
     }
 }
