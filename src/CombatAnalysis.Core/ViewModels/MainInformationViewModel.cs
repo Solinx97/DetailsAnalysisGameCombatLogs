@@ -31,7 +31,6 @@ namespace CombatAnalysis.Core.ViewModels
         private string _combatLogPath;
         private int _selectedCombatLogId;
         private int _combatLogsNumber;
-        private int _deletedRows;
         private MvxViewModel _basicTemplate;
         private IViewModelConnect _handler;
         private List<CombatModel> _combats;
@@ -171,6 +170,7 @@ namespace CombatAnalysis.Core.ViewModels
 
         public void DeleteCombat()
         {
+            FoundCombat = string.Empty;
             IsParsing = true;
 
             Task.Run(() => DeleteAsync());
