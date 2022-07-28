@@ -83,9 +83,9 @@
                    Content="Обратный порядок" FontSize="16" VerticalContentAlignment="Center" 
                    FontWeight="SemiBold" IsChecked="{Binding IsCollectionReversed}"/>
         </StackPanel>
-        
-        <ListBox Margin="20 30 20 45" Grid.Row="2" Grid.Column="2" 
-                 Background="Transparent" ItemsSource="{Binding DamageDoneGeneralInformations}"
+
+        <ListBox Margin="20 30 20 45" Grid.Row="2" Grid.Column="2" Height="450"
+                 VerticalAlignment="Top" Background="Transparent" ItemsSource="{Binding DamageDoneGeneralInformations}"
                  Visibility="{Binding ElementName=detailsType, Path=SelectedIndex, Converter={StaticResource IntToVisibility}, ConverterParameter=true:0}">
             <ListBox.ItemTemplate>
                 <DataTemplate>
@@ -102,8 +102,8 @@
             </ListBox.ItemTemplate>
         </ListBox>
 
-        <ListBox Margin="20 30 20 45" Grid.Row="2" Grid.Column="2" 
-                 Background="Transparent" ItemsSource="{Binding DamageDoneInformations}" 
+        <ListBox Margin="20 30 20 45" Grid.Row="2" Grid.Column="2" Height="450"
+                 VerticalAlignment="Top" Background="Transparent" ItemsSource="{Binding DamageDoneInformations}" 
                  Visibility="{Binding ElementName=detailsType, Path=SelectedIndex, Converter={StaticResource IntToVisibility}, ConverterParameter=true:1}">
             <ListBox.ItemTemplate>
                 <DataTemplate>
@@ -134,7 +134,7 @@
             </ListBox.ItemTemplate>
         </ListBox>
 
-        <StackPanel Grid.Column="2" Grid.Row="2" VerticalAlignment="Bottom" HorizontalAlignment="Left" Margin="20 10"
+        <StackPanel Grid.Column="2" Grid.Row="2" VerticalAlignment="Bottom" HorizontalAlignment="Left" Margin="0 75"
                     Orientation="Horizontal">
             <TextBlock Margin="50 0" HorizontalAlignment="Center" VerticalAlignment="Center"
                    Text="Всего:" FontSize="16" TextAlignment="Center"/>
@@ -142,56 +142,56 @@
                    Text="{Binding TotalValue}" FontSize="18" TextAlignment="Center" FontWeight="Bold"/>
         </StackPanel>
 
-        <StackPanel Margin="20 30" Grid.Row="3" Grid.Column="3" Orientation="Horizontal"
+        <StackPanel Margin="20 -60" Grid.Row="3" Grid.Column="3" Orientation="Horizontal"
                     Visibility="{Binding ElementName=detailsType, Path=SelectedIndex, Converter={StaticResource IntToVisibility}, ConverterParameter=true:1}">
-            <StackPanel Margin="20 0" MinWidth="400">
+            <StackPanel Margin="0" MinWidth="400">
                 <StackPanel>
-                    <CheckBox Name="dependency" Margin="5" VerticalContentAlignment="Center" 
-                              Content="Показать крит. урон" IsChecked="{Binding IsShowCrit}" FontSize="18"
-                              Height="30" VerticalAlignment="Center" FontWeight="SemiBold" />
-                    <CheckBox Margin="25 5" VerticalContentAlignment="Center" Content="Показать только крит. урон" FontSize="18" Height="30" 
+                    <CheckBox Name="dependency" Margin="25 5" VerticalContentAlignment="Center" 
+                              Content="Показать крит. урон" IsChecked="{Binding IsShowCrit}" FontSize="14"
+                              VerticalAlignment="Center" FontWeight="SemiBold" />
+                    <CheckBox Margin="50 0" VerticalContentAlignment="Center" Content="Показать только крит. урон" FontSize="14" 
                               VerticalAlignment="Center" FontWeight="SemiBold" Visibility="{Binding ElementName=dependency, Path=IsChecked, Converter={StaticResource BoolToVisibility}, ConverterParameter=true}"
                               IsChecked="{Binding IsShowOnlyCrit}"/>
                 </StackPanel>
                 <StackPanel>
-                    <CheckBox Name="dependency1" Margin="5" VerticalContentAlignment="Center" 
-                              Content="Показать уклонения" IsChecked="{Binding IsShowDodge}" FontSize="18"
-                              Height="30" VerticalAlignment="Center" FontWeight="SemiBold" />
-                    <CheckBox Margin="25 5" VerticalContentAlignment="Center" Content="Показать только уклонения" FontSize="18" Height="30" 
+                    <CheckBox Name="dependency1" Margin="25 5" VerticalContentAlignment="Center" 
+                              Content="Показать уклонения" IsChecked="{Binding IsShowDodge}" FontSize="14"
+                              VerticalAlignment="Center" FontWeight="SemiBold" />
+                    <CheckBox Margin="50 0" VerticalContentAlignment="Center" Content="Показать только уклонения" FontSize="14" 
                               VerticalAlignment="Center" FontWeight="SemiBold" Visibility="{Binding ElementName=dependency1, Path=IsChecked, Converter={StaticResource BoolToVisibility}, ConverterParameter=true}"
                               IsChecked="{Binding IsShowOnlyDodge}"/>
                 </StackPanel>
                 <StackPanel>
-                    <CheckBox Name="dependency2" Margin="5" VerticalContentAlignment="Center" 
-                              Content="Показать паррирования" IsChecked="{Binding IsShowParry}" FontSize="18"
-                              Height="30" VerticalAlignment="Center" FontWeight="SemiBold" />
-                    <CheckBox Margin="25 5" VerticalContentAlignment="Center" Content="Показать только паррирования" FontSize="18" Height="30" 
+                    <CheckBox Name="dependency2" Margin="25 5" VerticalContentAlignment="Center" 
+                              Content="Показать паррирования" IsChecked="{Binding IsShowParry}" FontSize="14"
+                              VerticalAlignment="Center" FontWeight="SemiBold" />
+                    <CheckBox Margin="50 0" VerticalContentAlignment="Center" Content="Показать только паррирования" FontSize="14" 
                               VerticalAlignment="Center" FontWeight="SemiBold" Visibility="{Binding ElementName=dependency2, Path=IsChecked, Converter={StaticResource BoolToVisibility}, ConverterParameter=true}"
                               IsChecked="{Binding IsShowOnlyParry}"/>
                 </StackPanel>
             </StackPanel>
-            <StackPanel Margin="20 0" MinWidth="400">
+            <StackPanel Margin="0" MinWidth="400">
                 <StackPanel>
-                    <CheckBox Name="dependency3" Margin="5" VerticalContentAlignment="Center" 
-                              Content="Показать промахи" IsChecked="{Binding IsShowMiss}" FontSize="18"
-                              Height="30" VerticalAlignment="Center" FontWeight="SemiBold" />
-                    <CheckBox Margin="25 5" VerticalContentAlignment="Center" Content="Показать только промахи" FontSize="18" Height="30" 
+                    <CheckBox Name="dependency3" Margin="25 5" VerticalContentAlignment="Center" 
+                              Content="Показать промахи" IsChecked="{Binding IsShowMiss}" FontSize="14"
+                              VerticalAlignment="Center" FontWeight="SemiBold" />
+                    <CheckBox Margin="50 0" VerticalContentAlignment="Center" Content="Показать только промахи" FontSize="14" 
                               VerticalAlignment="Center" FontWeight="SemiBold" Visibility="{Binding ElementName=dependency3, Path=IsChecked, Converter={StaticResource BoolToVisibility}, ConverterParameter=true}"
                               IsChecked="{Binding IsShowOnlyMiss}"/>
                 </StackPanel>
                 <StackPanel>
-                    <CheckBox Name="dependency4" Margin="5" VerticalContentAlignment="Center" 
-                              Content="Показать сопротивления" IsChecked="{Binding IsShowResist}" FontSize="18"
-                              Height="30" VerticalAlignment="Center" FontWeight="SemiBold" />
-                    <CheckBox Margin="25 5" VerticalContentAlignment="Center" Content="Показать только сопротивления" FontSize="18" Height="30" 
+                    <CheckBox Name="dependency4" Margin="25 5" VerticalContentAlignment="Center" 
+                              Content="Показать сопротивления" IsChecked="{Binding IsShowResist}" FontSize="14"
+                              VerticalAlignment="Center" FontWeight="SemiBold" />
+                    <CheckBox Margin="50 0" VerticalContentAlignment="Center" Content="Показать только сопротивления" FontSize="14" 
                               VerticalAlignment="Center" FontWeight="SemiBold" Visibility="{Binding ElementName=dependency4, Path=IsChecked, Converter={StaticResource BoolToVisibility}, ConverterParameter=true}"
                               IsChecked="{Binding IsShowOnlyResist}"/>
                 </StackPanel>
                 <StackPanel>
-                    <CheckBox Name="dependency5" Margin="5" VerticalContentAlignment="Center" 
-                              Content="Показать иммунитет" IsChecked="{Binding IsShowImmune}" FontSize="18"
-                              Height="30" VerticalAlignment="Center" FontWeight="SemiBold" />
-                    <CheckBox Margin="25 5" VerticalContentAlignment="Center" Content="Показать иммунитет" FontSize="18" Height="30" 
+                    <CheckBox Name="dependency5" Margin="25 5" VerticalContentAlignment="Center" 
+                              Content="Показать иммунитет" IsChecked="{Binding IsShowImmune}" FontSize="14"
+                              VerticalAlignment="Center" FontWeight="SemiBold" />
+                    <CheckBox Margin="50 0" VerticalContentAlignment="Center" Content="Показать иммунитет" FontSize="14"
                               VerticalAlignment="Center" FontWeight="SemiBold" Visibility="{Binding ElementName=dependency5, Path=IsChecked, Converter={StaticResource BoolToVisibility}, ConverterParameter=true}"
                               IsChecked="{Binding IsShowOnlyImmune}"/>
                 </StackPanel>

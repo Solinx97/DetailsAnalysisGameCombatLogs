@@ -1,5 +1,8 @@
-﻿namespace CombatAnalysis.DAL.Entities
+﻿using Microsoft.EntityFrameworkCore;
+
+namespace CombatAnalysis.DAL.Entities
 {
+    [Index(nameof(CombatPlayerDataId))]
     public class HealDone
     {
         public int Id { get; set; }

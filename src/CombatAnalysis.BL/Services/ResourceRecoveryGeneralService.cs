@@ -3,6 +3,7 @@ using CombatAnalysis.BL.DTO;
 using CombatAnalysis.BL.Exceptions;
 using CombatAnalysis.BL.Interfaces;
 using CombatAnalysis.DAL.Entities;
+using CombatAnalysis.DAL.Helpers;
 using CombatAnalysis.DAL.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -32,6 +33,17 @@ namespace CombatAnalysis.BL.Services
             return CreateInternalAsync(item);
         }
 
+        async Task<int> IService<ResourceRecoveryGeneralDto>.CreateByProcedureAsync(ResourceRecoveryGeneralDto item)
+        {
+            var paramNames = new string[] { nameof(item.Value), nameof(item.ResourcePerSecond), nameof(item.SpellOrItem), nameof(item.CastNumber),
+                nameof(item.MinValue), nameof(item.MaxValue), nameof(item.AverageValue), nameof(item.CombatPlayerDataId) };
+            var paramValues = new object[] { item.Value, item.ResourcePerSecond, item.SpellOrItem, item.CastNumber,
+                item.MinValue, item.MaxValue, item.AverageValue, item.CombatPlayerDataId };
+
+            var response = await _repository.ExecuteStoredProcedureAsync(DbProcedureHelper.InsertIntoResourceRecoveryGeneral, paramNames, paramValues);
+            return response;
+        }
+
         Task<int> IService<ResourceRecoveryGeneralDto>.DeleteAsync(ResourceRecoveryGeneralDto item)
         {
             if (item == null)
@@ -42,6 +54,15 @@ namespace CombatAnalysis.BL.Services
             return DeleteInternalAsync(item);
         }
 
+        async Task<int> IService<ResourceRecoveryGeneralDto>.DeleteByProcedureAsync(int combatPlayerId)
+        {
+            var paramNames = new string[] { nameof(combatPlayerId) };
+            var paramValues = new object[] { combatPlayerId };
+
+            var response = await _repository.ExecuteStoredProcedureAsync(DbProcedureHelper.DeleteResourceRecoveryGeneral, paramNames, paramValues);
+            return response;
+        }
+
         async Task<IEnumerable<ResourceRecoveryGeneralDto>> IService<ResourceRecoveryGeneralDto>.GetAllAsync()
         {
             var allData = await _repository.GetAllAsync();
@@ -50,12 +71,12 @@ namespace CombatAnalysis.BL.Services
             return result;
         }
 
-        async Task<IEnumerable<ResourceRecoveryGeneralDto>> IService<ResourceRecoveryGeneralDto>.FindAllAsync(int combatLogId)
+        async Task<IEnumerable<ResourceRecoveryGeneralDto>> IService<ResourceRecoveryGeneralDto>.GetByProcedureAsync(int combatPlayerId)
         {
-            var paramNames = new string[] { nameof(combatLogId) };
-            var paramValues = new object[] { combatLogId };
+            var paramNames = new string[] { nameof(combatPlayerId) };
+            var paramValues = new object[] { combatPlayerId };
 
-            var data = await _repository.FindAllAsync("GetCombatByCombatLogId", paramNames, paramValues);
+            var data = await _repository.ExecuteStoredProcedureUseModelAsync(DbProcedureHelper.GetResourceRecoveryGeneral, paramNames, paramValues);
             var result = _mapper.Map<IEnumerable<ResourceRecoveryGeneralDto>>(data);
 
             return result;

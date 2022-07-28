@@ -30,19 +30,25 @@ namespace CombatAnalysis.Core.ViewModels
         private string _foundCombat;
         private string _combatLogPath;
         private int _selectedCombatLogId;
+        private int _combatLogsNumber;
         private MvxViewModel _basicTemplate;
         private IViewModelConnect _handler;
         private List<CombatModel> _combats;
         private ObservableCollection<CombatLogModel> _combatLogs;
+        private double _screenWidth;
+        private double _screenHeight;
 
         public MainInformationViewModel(IMapper mapper, IMvxNavigationService mvvmNavigation, IHttpClientHelper httpClient)
         {
+            var a = System.Windows.SystemParameters.PrimaryScreenWidth;
+
             _mapper = mapper;
             _mvvmNavigation = mvvmNavigation;
 
             GetCombatLogCommand = new MvxCommand(GetCombatLog);
             OpenPlayerAnalysisCommand = new MvxCommand(OpenPlayerAnalysis);
             LoadCombatsCommand = new MvxCommand(LoadCombats);
+            DeleteCombatCommand = new MvxCommand(DeleteCombat);
 
             _combats = new List<CombatModel>();
             _combatParserAPIService = new CombatParserAPIService(mapper, httpClient);
@@ -54,6 +60,8 @@ namespace CombatAnalysis.Core.ViewModels
         public IMvxCommand GetCombatLogCommand { get; set; }
 
         public IMvxCommand LoadCombatsCommand { get; set; }
+
+        public IMvxCommand DeleteCombatCommand { get; set; }
 
         public IMvxCommand OpenPlayerAnalysisCommand { get; set; }
 
@@ -138,6 +146,33 @@ namespace CombatAnalysis.Core.ViewModels
             }
         }
 
+        public int CombatLogsNumber
+        {
+            get { return _combatLogsNumber; }
+            set
+            {
+                SetProperty(ref _combatLogsNumber, value);
+            }
+        }
+
+        public double ScreenWidth
+        {
+            get { return _screenWidth; }
+            set
+            {
+                SetProperty(ref _screenWidth, value);
+            }
+        }
+
+        public double ScreenHeight
+        {
+            get { return _screenHeight; }
+            set
+            {
+                SetProperty(ref _screenHeight, value);
+            }
+        }
+
         public void GetCombatLog()
         {
             _combatLogPath = WinHandler.FileOpen();
@@ -147,12 +182,20 @@ namespace CombatAnalysis.Core.ViewModels
 
         public void LoadCombatLogs()
         {
-            var combatLog = Task.Run(() => LoadCombatLogsAsync());
+            Task.Run(() => LoadCombatLogsAsync());
         }
 
         public void LoadCombats()
         {
-            var combatLog = Task.Run(() => LoadCombatsAsync());
+            Task.Run(() => LoadCombatsAsync());
+        }
+
+        public void DeleteCombat()
+        {
+            FoundCombat = string.Empty;
+            IsParsing = true;
+
+            Task.Run(() => DeleteAsync());
         }
 
         public void OpenPlayerAnalysis()
@@ -172,7 +215,11 @@ namespace CombatAnalysis.Core.ViewModels
             IsParsing = false;
             IsSaving = false;
 
+            CombatLogs?.Clear();
             LoadCombatLogs();
+
+            ScreenWidth = System.Windows.SystemParameters.PrimaryScreenWidth * 0.75;
+            ScreenHeight = System.Windows.SystemParameters.PrimaryScreenHeight * 0.75;
         }
 
         private async Task GetData(string combatLog)
@@ -182,8 +229,7 @@ namespace CombatAnalysis.Core.ViewModels
             await parser.Parse(combatLog);
 
             var combats = parser.Combats;
-            var combatsMapper = _mapper.Map<List<CombatModel>>(combats);
-            _combats = combatsMapper;
+            _combats = _mapper.Map<List<CombatModel>>(combats);
 
             await GetDetails();
         }
@@ -197,7 +243,7 @@ namespace CombatAnalysis.Core.ViewModels
                 IsSaving = true;
 
                 _combatParserAPIService.SetCombats(_combats);
-                createdCombatLogId = await _combatParserAPIService.SaveCombatLog();
+                createdCombatLogId = _combatParserAPIService.SaveCombatLog().Result;
             }
 
             for (int i = 0; i < _combats.Count; i++)
@@ -212,7 +258,7 @@ namespace CombatAnalysis.Core.ViewModels
 
                 if (IsNeedSave)
                 {
-                    await _combatParserAPIService.SaveCombatData(_combats[i], createdCombatLogId);
+                    _combatParserAPIService.SaveCombatData(_combats[i], createdCombatLogId).GetAwaiter().GetResult();
                 }
             }
 
@@ -223,6 +269,7 @@ namespace CombatAnalysis.Core.ViewModels
         {
             var combatLogsData = await _combatParserAPIService.LoadCombatLogs();
             CombatLogs = new ObservableCollection<CombatLogModel>(combatLogsData);
+            CombatLogsNumber = CombatLogs.Count;
         }
 
         private async Task LoadCombatsAsync()
@@ -237,6 +284,14 @@ namespace CombatAnalysis.Core.ViewModels
             }
 
             await _mvvmNavigation.Navigate<GeneralAnalysisViewModel, List<CombatModel>>(loadedCombats.ToList());
+        }
+
+        private async Task DeleteAsync()
+        {
+            await _combatParserAPIService.DeleteCombatLog(CombatLogs[SelectedCombatLogId].Id);
+            await LoadCombatLogsAsync();
+
+            IsParsing = false;
         }
     }
 }

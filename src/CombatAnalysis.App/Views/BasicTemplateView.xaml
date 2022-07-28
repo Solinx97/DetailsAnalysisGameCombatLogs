@@ -9,7 +9,7 @@
       xmlns:uc="clr-namespace:CombatAnalysis.App.UserControls"
       xmlns:Icon="http://metro.mahapps.com/winfx/xaml/iconpacks"
       xmlns:converters="clr-namespace:CombatAnalysis.App.Converters"
-      mc:Ignorable="d" d:DesignHeight="850" d:DesignWidth="1250">
+      mc:Ignorable="d">
 
     <Grid>
         <Grid.RowDefinitions>

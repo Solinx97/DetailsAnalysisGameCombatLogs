@@ -40,6 +40,21 @@ namespace CombatAnalysis.Core.Services
             return createdCombatLogId;
         }
 
+        public async Task DeleteCombatLog(int id)
+        {
+            var tasks = new List<Task>();
+            var combats = await LoadCombats(id);
+            foreach (var item in combats)
+            {
+                tasks.Add(DeleteCombatPlayersData(item.Id));
+                tasks.Add(_httpClient.DeletAsync($"Combat/{item.Id}"));
+            }
+
+            await Task.WhenAll(tasks);
+
+            await _httpClient.DeletAsync($"CombatLog/{id}");
+        }
+
         public async Task<IEnumerable<CombatLogModel>> LoadCombatLogs()
         {
             var responseMessage = await _httpClient.GetAsync("CombatLog");
@@ -64,6 +79,70 @@ namespace CombatAnalysis.Core.Services
             return combatPlayers;
         }
 
+        public async Task<IEnumerable<HealDoneModel>> LoadHealDoneDetails(int combatPlayerId)
+        {
+            var responseMessage = await _httpClient.GetAsync($"HealDone/FindByCombatPlayerId/{combatPlayerId}");
+            var healDones = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<HealDoneModel>>();
+
+            return healDones;
+        }
+
+        public async Task<IEnumerable<HealDoneGeneralModel>> LoadHealDoneGeneral(int combatPlayerId)
+        {
+            var responseMessage = await _httpClient.GetAsync($"HealDoneGeneral/FindByCombatPlayerId/{combatPlayerId}");
+            var healDoneGenerics = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<HealDoneGeneralModel>>();
+
+            return healDoneGenerics;
+        }
+
+        public async Task<IEnumerable<DamageDoneModel>> LoadDamageDoneDetails(int combatPlayerId)
+        {
+            var responseMessage = await _httpClient.GetAsync($"DamageDone/FindByCombatPlayerId/{combatPlayerId}");
+            var damageDones = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<DamageDoneModel>>();
+
+            return damageDones;
+        }
+
+        public async Task<IEnumerable<DamageDoneGeneralModel>> LoadDamageDoneGeneral(int combatPlayerId)
+        {
+            var responseMessage = await _httpClient.GetAsync($"DamageDoneGeneral/FindByCombatPlayerId/{combatPlayerId}");
+            var damageDoneGenerics = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<DamageDoneGeneralModel>>();
+
+            return damageDoneGenerics;
+        }
+
+        public async Task<IEnumerable<DamageTakenModel>> LoadDamageTakenDetails(int combatPlayerId)
+        {
+            var responseMessage = await _httpClient.GetAsync($"DamageTaken/FindByCombatPlayerId/{combatPlayerId}");
+            var damageTakens = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<DamageTakenModel>>();
+
+            return damageTakens;
+        }
+
+        public async Task<IEnumerable<DamageTakenGeneralModel>> LoadDamageTakenGeneral(int combatPlayerId)
+        {
+            var responseMessage = await _httpClient.GetAsync($"DamageTakenGeneral/FindByCombatPlayerId/{combatPlayerId}");
+            var damageTakenGenerals = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<DamageTakenGeneralModel>>();
+
+            return damageTakenGenerals;
+        }
+
+        public async Task<IEnumerable<ResourceRecoveryModel>> LoadResourceRecoveryDetails(int combatPlayerId)
+        {
+            var responseMessage = await _httpClient.GetAsync($"ResourceRecovery/FindByCombatPlayerId/{combatPlayerId}");
+            var resourceRecoveryes = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<ResourceRecoveryModel>>();
+
+            return resourceRecoveryes;
+        }
+
+        public async Task<IEnumerable<ResourceRecoveryGeneralModel>> LoadResourceRecoveryGeneral(int combatPlayerId)
+        {
+            var responseMessage = await _httpClient.GetAsync($"ResourceRecoveryGeneral/FindByCombatPlayerId/{combatPlayerId}");
+            var ResourceRecoveryGenerals = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<ResourceRecoveryGeneralModel>>();
+
+            return ResourceRecoveryGenerals;
+        }
+
         public async Task SaveCombatData(CombatModel combat, int createdCombatLogId)
         {
             var combatInformation = new CombatDetailsInformation();
@@ -74,15 +153,25 @@ namespace CombatAnalysis.Core.Services
             var combatResponse = await _httpClient.PostAsync("Combat", JsonContent.Create(combat));
             var createdCombatId = combatResponse.Content.ReadFromJsonAsync<int>().Result;
 
-            var tasks = new List<Task>();
-            await SaveCombatPlayerData(combatInformation, combat, createdCombatId, tasks);
+            await SaveCombatPlayerData(combatInformation, combat, createdCombatId);
+        }
 
-            foreach (var item in tasks)
+        private async Task DeleteCombatPlayersData(int combatId)
+        {
+            var players = await LoadCombatPlayers(combatId);
+            foreach (var item in players)
             {
-                item.Start();
-            }
+                await _httpClient.DeletAsync($"HealDone/DeleteByCombatPlayerId/{item.Id}");
+                await _httpClient.DeletAsync($"HealDoneGeneral/DeleteByCombatPlayerId/{item.Id}");
+                await _httpClient.DeletAsync($"DamageDone/DeleteByCombatPlayerId/{item.Id}");
+                await _httpClient.DeletAsync($"DamageDoneGeneral/DeleteByCombatPlayerId/{item.Id}");
+                await _httpClient.DeletAsync($"DamageTaken/DeleteByCombatPlayerId/{item.Id}");
+                await _httpClient.DeletAsync($"DamageTakenGeneral/DeleteByCombatPlayerId/{item.Id}");
+                await _httpClient.DeletAsync($"ResourceRecovery/DeleteByCombatPlayerId/{item.Id}");
+                await _httpClient.DeletAsync($"ResourceRecoveryGeneral/DeleteByCombatPlayerId/{item.Id}");
 
-            Task.WaitAll(tasks.ToArray());
+                await _httpClient.DeletAsync($"CombatPlayer/{item.Id}");
+            }
         }
 
         private CombatLogModel CreateCombatLog()
@@ -110,7 +199,7 @@ namespace CombatAnalysis.Core.Services
             return combatLog;
         }
 
-        private async Task SaveCombatPlayerData(CombatDetailsInformation combatInformation, CombatModel combat, int createdCombatId, List<Task> tasks)
+        private async Task SaveCombatPlayerData(CombatDetailsInformation combatInformation, CombatModel combat, int createdCombatId)
         {
             for (int i = 0; i < combat.Players.Count; i++)
             {
@@ -129,36 +218,28 @@ namespace CombatAnalysis.Core.Services
                 var map = _mapper.Map<Combat>(combat);
 
                 var damageDoneData = new List<DamageDone>(combatInformation.DamageDone);
-                var damageDoneTask = new Task(async () => await SaveDamageDoneDetails(damageDoneData, createdCombatPlayerId));
-                tasks.Add(damageDoneTask);
+                await Task.Run(() => SaveDamageDoneDetails(damageDoneData, createdCombatPlayerId));
 
                 var damageDoneGeneralData = combatInformation.GetDamageDoneGeneral(damageDoneData, map);
-                var damageDoneGeneralTask = new Task(async () => await SaveDamageDoneGeneral(damageDoneGeneralData.ToList(), createdCombatPlayerId));
-                tasks.Add(damageDoneGeneralTask);
+                await Task.Run(() => SaveDamageDoneGeneral(damageDoneGeneralData.ToList(), createdCombatPlayerId));
 
                 var healDoneData = new List<HealDone>(combatInformation.HealDone);
-                var healDoneTask = new Task(async () => await SaveHealDoneDetails(healDoneData, createdCombatPlayerId));
-                tasks.Add(healDoneTask);
+                await Task.Run(() => SaveHealDoneDetails(healDoneData, createdCombatPlayerId));
 
                 var healDoneGeneralData = combatInformation.GetHealDoneGeneral(healDoneData, map);
-                var healDoneGeneralTask = new Task(async () => await SaveHealDoneGeneral(healDoneGeneralData.ToList(), createdCombatPlayerId));
-                tasks.Add(healDoneGeneralTask);
+                await Task.Run(() => SaveHealDoneGeneral(healDoneGeneralData.ToList(), createdCombatPlayerId));
 
                 var damageTakenData = new List<DamageTaken>(combatInformation.DamageTaken);
-                var damageTakenTask = new Task(async () => await SaveDamageTakenDetails(damageTakenData, createdCombatPlayerId));
-                tasks.Add(damageTakenTask);
+                await Task.Run(() => SaveDamageTakenDetails(damageTakenData, createdCombatPlayerId));
 
                 var damageTakenGeneralData = combatInformation.GetDamageTakenGeneral(damageTakenData, map);
-                var damageTakenGeneralTask = new Task(async () => await SaveDamageTakenGeneral(damageTakenGeneralData.ToList(), createdCombatPlayerId));
-                tasks.Add(damageTakenGeneralTask);
+                await Task.Run(() => SaveDamageTakenGeneral(damageTakenGeneralData.ToList(), createdCombatPlayerId));
 
                 var resourceRecoveryData = new List<ResourceRecovery>(combatInformation.ResourceRecovery);
-                var resourceRecoveryTask = new Task(async () => await SaveResourceRecoveryDetails(resourceRecoveryData, createdCombatPlayerId));
-                tasks.Add(resourceRecoveryTask);
+                await Task.Run(() => SaveResourceRecoveryDetails(resourceRecoveryData, createdCombatPlayerId));
 
                 var resourceRecoveryGeneralData = combatInformation.GetResourceRecoveryGeneral(resourceRecoveryData, map);
-                var resourceRecoveryGeneralTask = new Task(async () => await SaveResourceRecoveryGeneral(resourceRecoveryGeneralData.ToList(), createdCombatPlayerId));
-                tasks.Add(resourceRecoveryGeneralTask);
+                await Task.Run(() => SaveResourceRecoveryGeneral(resourceRecoveryGeneralData.ToList(), createdCombatPlayerId));
             }
         }
 

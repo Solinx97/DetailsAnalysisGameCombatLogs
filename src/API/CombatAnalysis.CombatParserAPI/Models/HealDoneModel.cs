@@ -2,6 +2,8 @@
 {
     public class HealDoneModel
     {
+        public int Id { get; set; }
+
         public int ValueWithOverheal { get; set; }
 
         public string Time { get; set; }

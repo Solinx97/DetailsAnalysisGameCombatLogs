@@ -24,7 +24,7 @@ namespace CombatAnalysis.CombatParserAPI.Controllers
         [HttpGet("FindByCombatId/{combatId}")]
         public async Task<IEnumerable<CombatPlayerDataDto>> Find(int combatId)
         {
-            var players = await _service.FindAllAsync(combatId);
+            var players = await _service.GetByProcedureAsync(combatId);
             var map = _mapper.Map<IEnumerable<CombatPlayerDataDto>>(players);
 
             return map;
@@ -37,6 +37,15 @@ namespace CombatAnalysis.CombatParserAPI.Controllers
             var createdCombatId = await _service.CreateAsync(map);
 
             return createdCombatId;
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<int> Delete(int id)
+        {
+            var player = await _service.GetByIdAsync(id);
+            var deletedId = await _service.DeleteAsync(player);
+
+            return deletedId;
         }
     }
 }

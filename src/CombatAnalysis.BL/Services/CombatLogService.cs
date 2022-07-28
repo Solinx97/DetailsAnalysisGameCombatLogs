@@ -51,12 +51,12 @@ namespace CombatAnalysis.BL.Services
             return result;
         }
 
-        async Task<IEnumerable<CombatLogDto>> IService<CombatLogDto>.FindAllAsync(int combatLogId)
+        async Task<IEnumerable<CombatLogDto>> IService<CombatLogDto>.GetByProcedureAsync(int combatLogId)
         {
             var paramNames = new string[] { nameof(combatLogId) };
             var paramValues = new object[] { combatLogId };
 
-            var data = await _repository.FindAllAsync(DbProcedureHelper.GetCombat, paramNames, paramValues);
+            var data = await _repository.ExecuteStoredProcedureUseModelAsync(DbProcedureHelper.GetCombat, paramNames, paramValues);
             var result = _mapper.Map<IEnumerable<CombatLogDto>>(data);
 
             return result;
@@ -120,6 +120,16 @@ namespace CombatAnalysis.BL.Services
 
             var numberEntries = await _repository.UpdateAsync(_mapper.Map<CombatLog>(item));
             return numberEntries;
+        }
+
+        public Task<int> DeleteByProcedureAsync(int combatPlayerId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<int> CreateByProcedureAsync(CombatLogDto item)
+        {
+            throw new NotImplementedException();
         }
     }
 }

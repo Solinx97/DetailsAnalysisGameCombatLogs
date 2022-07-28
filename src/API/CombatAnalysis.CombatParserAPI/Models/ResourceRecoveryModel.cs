@@ -2,6 +2,8 @@
 {
     public class ResourceRecoveryModel
     {
+        public int Id { get; set; }
+
         public double Value { get; set; }
 
         public string Time { get; set; }

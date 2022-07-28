@@ -10,7 +10,7 @@
       xmlns:local="clr-namespace:CombatAnalysis.App.Views"
       xmlns:Icon="http://metro.mahapps.com/winfx/xaml/iconpacks"
       xmlns:viewModels="clr-namespace:CombatAnalysis.Core.ViewModels;assembly=CombatAnalysis.Core"
-      mc:Ignorable="d" d:DesignHeight="850" d:DesignWidth="1250">
+      mc:Ignorable="d">
 
     <Grid>
         <Grid.Resources>
@@ -18,6 +18,7 @@
             <converters:TheNativeStringToXAMLBoolConverter x:Key="ToXAMLBool" />
             <converters:TheNativeBoolToXAMLBoolConverter x:Key="BoolToXAMLBool" />
             <converters:TheNativeBoolToVisibilityConverter x:Key="BoolToVisibility" />
+            <converters:TheNativeIntToVisibilityConverter x:Key="IntToVisibility" />
         </Grid.Resources>
 
         <Grid.ColumnDefinitions>
@@ -29,7 +30,7 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="0.25*"/>
             <RowDefinition Height="*"/>
-            <RowDefinition Height="0.6*"/>
+            <RowDefinition Height="0.7*"/>
             <RowDefinition Height="0.05*"/>
         </Grid.RowDefinitions>
 
@@ -44,7 +45,7 @@
         <TextBlock Grid.Row="0" Grid.Column="2" Grid.ColumnSpan="2" HorizontalAlignment="Center" VerticalAlignment="Center"
                    Text="Получение информации о бое" FontSize="16" Margin="0 30" Style="{StaticResource titleText}"/>
         <StackPanel IsEnabled="{Binding IsParsing, Converter={StaticResource BoolToXAMLBool}}" Grid.Row="1" Grid.Column="3"
-                    HorizontalAlignment="Center" VerticalAlignment="Center" MinWidth="375" Margin="20">
+                    HorizontalAlignment="Center" VerticalAlignment="Top" MinWidth="375" Margin="0 75">
             <TextBlock HorizontalAlignment="Center" Text="Загрузить файл с данными о бое" Margin="0 20" FontSize="16" />
             <Button mvx:Bi.nd="Command GetCombatLogCommand" Content="Загрузить" Width="100" FontSize="16"
                     Margin="15 0" Style="{StaticResource showButton}" />
@@ -53,24 +54,41 @@
                 <TextBlock Text="{Binding CombatLog, Mode=TwoWay}" FontWeight="Bold" Margin="20 0" FontSize="14" />
             </StackPanel>
         </StackPanel>
-        <StackPanel IsEnabled="{Binding IsParsing, Converter={StaticResource BoolToXAMLBool}}" Grid.Row="1" Grid.Column="2"
-                    HorizontalAlignment="Center" VerticalAlignment="Center" Margin="20">
-            <TextBlock HorizontalAlignment="Center" Text="Логи" Margin="0" FontSize="16" />
-            <Button mvx:Bi.nd="Command LoadCombatsCommand" Content="Загрузить" Width="100" FontSize="16"
-                    Margin="10" Style="{StaticResource showButton}" Foreground="Blue" />
-            <ListBox Background="Transparent" ItemsSource="{Binding CombatLogs}" SelectedIndex="{Binding SelectedCombatLogId}">
-                <ListBox.ItemTemplate>
-                    <DataTemplate>
-                        <StackPanel Margin="10" Orientation="Horizontal" HorizontalAlignment="Center">
-                            <TextBlock FontSize="14" Text="{Binding Path=Name}" Margin="15" />
-                            <TextBlock FontSize="14" Text="{Binding Path=Date}" Margin="15" />
-                        </StackPanel>
-                    </DataTemplate>
-                </ListBox.ItemTemplate>
-            </ListBox>
+        <StackPanel Grid.Row="1" Grid.Column="2" Margin="20 70" Visibility="{Binding CombatLogsNumber, Converter={StaticResource IntToVisibility}, ConverterParameter='0:true:>'}">
+            <ScrollViewer MaxHeight="210">
+                <StackPanel IsEnabled="{Binding IsParsing, Converter={StaticResource BoolToXAMLBool}}" 
+                    HorizontalAlignment="Center" VerticalAlignment="Top" Margin="20">
+                    <TextBlock HorizontalAlignment="Center" Text="Ранее добавленные Логи" Margin="0" FontSize="16" />
+                    <Grid>
+                        <Button mvx:Bi.nd="Command LoadCombatsCommand" Content="Загрузить" Width="100" FontSize="16"
+                            Margin="0 10" Style="{StaticResource showButton}" Foreground="Blue"/>
+                        <Icon:PackIconMaterial Kind="Delete" Foreground="Orange" Style="{StaticResource menuButtonIcon}"
+                                           HorizontalAlignment="Right" mvx:Bi.nd="Command DeleteCombatCommand">
+                            <Icon:PackIconMaterial.ToolTip>
+                                <ToolTip>
+                                    Удалить выбранный Лог без возможности восстановить.
+                                </ToolTip>
+                            </Icon:PackIconMaterial.ToolTip>
+                            <Icon:PackIconMaterial.InputBindings>
+                                <MouseBinding Command="{Binding DeleteCombatCommand}" Gesture="LeftClick"/>
+                            </Icon:PackIconMaterial.InputBindings>
+                        </Icon:PackIconMaterial>
+                    </Grid>
+                    <ListBox Background="Transparent" ItemsSource="{Binding CombatLogs}" SelectedIndex="{Binding SelectedCombatLogId}">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel Margin="10" Orientation="Horizontal" HorizontalAlignment="Center">
+                                    <TextBlock FontSize="14" Text="{Binding Path=Name}" Margin="15" />
+                                    <TextBlock FontSize="14" Text="{Binding Path=Date}" Margin="15" />
+                                </StackPanel>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                </StackPanel>
+            </ScrollViewer>
         </StackPanel>
         <StackPanel IsEnabled="{Binding IsParsing, Converter={StaticResource BoolToXAMLBool}}" Grid.Row="2" Grid.Column="2"
-                    Grid.ColumnSpan="2" VerticalAlignment="Center" HorizontalAlignment="Center">
+                    Grid.ColumnSpan="2" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="-10">
             <StackPanel IsEnabled="{Binding CombatLog, Converter={StaticResource ToXAMLBool}}" Margin="20">
                 <Button Height="35" Content="Анализ" Width="100" FontSize="16" Margin="0 20"
                     mvx:Bi.nd="Command OpenPlayerAnalysisCommand" Style="{StaticResource showButton}" />
@@ -86,11 +104,11 @@
                     </Icon:PackIconMaterial>
                 </StackPanel>
             </StackPanel>
-            <TextBlock Width="175" Text="Разбор данных..." FontSize="16" TextAlignment="Center" Foreground="BlueViolet"
+            <TextBlock Width="175" Text="Работа с данными..." FontSize="16" TextAlignment="Center" Foreground="BlueViolet"
                        Margin="10" HorizontalAlignment="Center" VerticalAlignment="Center"
                        Visibility="{Binding IsParsing, Converter={StaticResource BoolToVisibility}}" />
             <TextBlock Text="{Binding FoundCombat}" FontSize="16" TextAlignment="Center" TextWrapping="Wrap"
-                       Margin="10" VerticalAlignment="Center" Height="50" MaxWidth="650"
+                       Margin="0" VerticalAlignment="Center" Height="50" MaxWidth="650"
                        Visibility="{Binding IsParsing, Converter={StaticResource BoolToVisibility}}" />
             <TextBlock Width="175" Text="Сохранение данных..." FontSize="16" TextAlignment="Center" Foreground="ForestGreen"
                        Margin="10" HorizontalAlignment="Center" VerticalAlignment="Center"

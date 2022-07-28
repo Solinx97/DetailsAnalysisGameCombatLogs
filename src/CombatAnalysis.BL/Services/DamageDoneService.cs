@@ -3,6 +3,7 @@ using CombatAnalysis.BL.DTO;
 using CombatAnalysis.BL.Exceptions;
 using CombatAnalysis.BL.Interfaces;
 using CombatAnalysis.DAL.Entities;
+using CombatAnalysis.DAL.Helpers;
 using CombatAnalysis.DAL.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -32,6 +33,19 @@ namespace CombatAnalysis.BL.Services
             return CreateInternalAsync(item);
         }
 
+        async Task<int> IService<DamageDoneDto>.CreateByProcedureAsync(DamageDoneDto item)
+        {
+            var paramNames = new string[] { nameof(item.Value), nameof(item.Time), nameof(item.FromPlayer),
+                nameof(item.ToEnemy), nameof(item.SpellOrItem), nameof(item.IsDodge), nameof(item.IsParry),  nameof(item.IsMiss),
+                nameof(item.IsResist), nameof(item.IsImmune), nameof(item.IsCrit), nameof(item.CombatPlayerDataId) };
+            var paramValues = new object[] { item.Value, item.Time.ToString(), item.FromPlayer,
+                item.ToEnemy, item.SpellOrItem, item.IsDodge, item.IsParry, item.IsMiss,
+                item.IsResist, item.IsImmune, item.IsCrit, item.CombatPlayerDataId };
+
+            var response = await _repository.ExecuteStoredProcedureAsync(DbProcedureHelper.InsertIntoDamageDone, paramNames, paramValues);
+            return response;
+        }
+
         Task<int> IService<DamageDoneDto>.DeleteAsync(DamageDoneDto item)
         {
             if (item == null)
@@ -42,6 +56,15 @@ namespace CombatAnalysis.BL.Services
             return DeleteInternalAsync(item);
         }
 
+        async Task<int> IService<DamageDoneDto>.DeleteByProcedureAsync(int combatPlayerId)
+        {
+            var paramNames = new string[] { nameof(combatPlayerId) };
+            var paramValues = new object[] { combatPlayerId };
+
+            var response = await _repository.ExecuteStoredProcedureAsync(DbProcedureHelper.DeleteDamageDone, paramNames, paramValues);
+            return response;
+        }
+
         async Task<IEnumerable<DamageDoneDto>> IService<DamageDoneDto>.GetAllAsync()
         {
             var allData = await _repository.GetAllAsync();
@@ -50,12 +73,12 @@ namespace CombatAnalysis.BL.Services
             return result;
         }
 
-        async Task<IEnumerable<DamageDoneDto>> IService<DamageDoneDto>.FindAllAsync(int combatLogId)
+        async Task<IEnumerable<DamageDoneDto>> IService<DamageDoneDto>.GetByProcedureAsync(int combatPlayerId)
         {
-            var paramNames = new string[] { nameof(combatLogId) };
-            var paramValues = new object[] { combatLogId };
+            var paramNames = new string[] { nameof(combatPlayerId) };
+            var paramValues = new object[] { combatPlayerId };
 
-            var data = await _repository.FindAllAsync("GetCombatByCombatLogId", paramNames, paramValues);
+            var data = await _repository.ExecuteStoredProcedureUseModelAsync(DbProcedureHelper.GetDamageDone, paramNames, paramValues);
             var result = _mapper.Map<IEnumerable<DamageDoneDto>>(data);
 
             return result;

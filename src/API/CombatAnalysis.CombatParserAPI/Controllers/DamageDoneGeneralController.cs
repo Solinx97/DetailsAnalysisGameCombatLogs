@@ -21,35 +21,30 @@ namespace CombatAnalysis.CombatParserAPI.Controllers
             _mapper = mapper;
         }
 
-        [HttpGet]
-        public IEnumerable<string> Get()
+        [HttpGet("FindByCombatPlayerId/{combatPlayerId}")]
+        public async Task<IEnumerable<DamageDoneGeneralModel>> Find(int combatPlayerId)
         {
-            return new string[] { "value1", "value2" };
-        }
+            var damageDoneGenerals = await _service.GetByProcedureAsync(combatPlayerId);
+            var map = _mapper.Map<IEnumerable<DamageDoneGeneralModel>>(damageDoneGenerals);
 
-        [HttpGet("{id}")]
-        public string Get(int id)
-        {
-            return "value";
+            return map;
         }
 
         [HttpPost]
         public async Task<int> Post(DamageDoneGeneralModel value)
         {
             var map = _mapper.Map<DamageDoneGeneralDto>(value);
-            var createdCombatId = await _service.CreateAsync(map);
+            var createdCombatId = await _service.CreateByProcedureAsync(map);
 
             return createdCombatId;
         }
 
-        [HttpPut("{id}")]
-        public void Put(int id, string value)
+        [HttpDelete("DeleteByCombatPlayerId/{combatPlayerId}")]
+        public async Task<int> Delete(int combatPlayerId)
         {
-        }
+            var deletedId = await _service.DeleteByProcedureAsync(combatPlayerId);
 
-        [HttpDelete("{id}")]
-        public void Delete(int id)
-        {
+            return deletedId;
         }
     }
 }
