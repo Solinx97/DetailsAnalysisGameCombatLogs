@@ -1,0 +1,109 @@
+﻿<views:MvxWpfView
+      xmlns:views="clr-namespace:MvvmCross.Platforms.Wpf.Views;assembly=MvvmCross.Platforms.Wpf"
+      xmlns:mvx="clr-namespace:MvvmCross.Platforms.Wpf.Binding;assembly=MvvmCross.Platforms.Wpf"
+      x:Class="CombatAnalysis.App.Views.BasicTemplateView"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:uc="clr-namespace:CombatAnalysis.App.UserControls"
+      xmlns:Icon="http://metro.mahapps.com/winfx/xaml/iconpacks"
+      xmlns:converters="clr-namespace:CombatAnalysis.App.Converters"
+      mc:Ignorable="d">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="55"/>
+            <ColumnDefinition Width="220"/>
+            <ColumnDefinition Width="350"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <Grid.Resources>
+            <converters:TheNativeIntToXAMLBoolConverter x:Key="IntToXAMLBool" />
+            <converters:TheNativeIntToXAMLExpressConverter x:Key="IntToXAMLBoolExpress" />
+        </Grid.Resources>
+        
+        <Border CornerRadius="0 20 20 0" Background="white" Grid.Column="2" Grid.ColumnSpan="2" Margin="-25 0 0 0 " Grid.RowSpan="2"/>
+
+        <Border CornerRadius="20" Grid.RowSpan="2" Panel.ZIndex="2" Background="#6145e3">
+            <Grid>
+                <TextBlock Text="WoW Analysis" Foreground="white" FontSize="16"
+                           VerticalAlignment="Top" HorizontalAlignment="Center" FontWeight="SemiBold"
+                           Margin="0 30 0 0">
+                    <TextBlock.LayoutTransform>
+                        <RotateTransform Angle="90"/>
+                    </TextBlock.LayoutTransform>
+                </TextBlock>
+                <StackPanel Margin="0 170 0 0">
+                    <uc:AccountMenuButton Title="A" GradientColor1="#d1abff" GradientColor2="#b07bff" />
+                    <uc:AccountMenuButton Title="B" GradientColor1="#fba0cb" GradientColor2="#fe7094" />
+                    <uc:AccountMenuButton Title="C" GradientColor1="#e5db6f" GradientColor2="#e2c649" />
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <Border Grid.Column="1" Grid.RowSpan="2" CornerRadius="0 20 20 0"
+                Background="#6f50ff" Panel.ZIndex="1" Margin="-25 0 0 0">
+            <Grid>
+                <!--<ComboBox VerticalAlignment="Top" Margin="34 25">
+                    <ComboBoxItem Content="Oleg"/>
+                    <ComboBoxItem Content="Dima"/>
+                    <ComboBoxItem Content="Kiril" IsSelected="True"/>
+                    <ComboBoxItem Content="Lera"/>
+                </ComboBox>-->
+
+                <StackPanel Margin="25 160 0 0">
+                    <uc:MenuButton Title="Загрузка" Icon="HomeOutline" IsEnabled="{Binding Step, Converter={StaticResource IntToXAMLBoolExpress}, ConverterParameter='>,0'}" 
+                                   IsActive="{Binding Step, Converter={StaticResource IntToXAMLBool}, ConverterParameter=0}" OnClick="{Binding UploadCombatsCommand}"/>
+                    <uc:MenuButton Title="Все бои" Icon="ChartTimelineVariantShimmer" IsEnabled="{Binding Step, Converter={StaticResource IntToXAMLBoolExpress}, ConverterParameter='>,1'}"
+                                   IsActive="{Binding Step, Converter={StaticResource IntToXAMLBool}, ConverterParameter=1}" OnClick="{Binding CombatsCommand}"/>
+                    <uc:MenuButton Title="Бой" Icon="Details" IsEnabled="{Binding Step, Converter={StaticResource IntToXAMLBoolExpress}, ConverterParameter='>,2'}"
+                                   IsActive="{Binding Step, Converter={StaticResource IntToXAMLBool}, ConverterParameter=2}" OnClick="{Binding CombatCommand}"/>
+                    <uc:MenuButton Title="Урон" Icon="Sword" IsEnabled="{Binding Step, Converter={StaticResource IntToXAMLBool}, ConverterParameter=2}"
+                                   IsActive="{Binding Step, Converter={StaticResource IntToXAMLBool}, ConverterParameter=3}" OnClick="{Binding DamageDoneDetailsCommand}"/>
+                    <uc:MenuButton Title="Исцеление" Icon="Plus" IsEnabled="{Binding Step, Converter={StaticResource IntToXAMLBool}, ConverterParameter=2}"
+                                   IsActive="{Binding Step, Converter={StaticResource IntToXAMLBool}, ConverterParameter=4}" OnClick="{Binding HealDoneDetailsCommand}"/>
+                    <uc:MenuButton Title="Полученный урон" Icon="Shield" IsEnabled="{Binding Step, Converter={StaticResource IntToXAMLBool}, ConverterParameter=2}"
+                                   IsActive="{Binding Step, Converter={StaticResource IntToXAMLBool}, ConverterParameter=5}" OnClick="{Binding DamageTakenDetailsCommand}"/>
+                    <uc:MenuButton Title="Ресурсы" Icon="Resistor" IsEnabled="{Binding Step, Converter={StaticResource IntToXAMLBool}, ConverterParameter=2}"
+                                   IsActive="{Binding Step, Converter={StaticResource IntToXAMLBool}, ConverterParameter=6}" OnClick="{Binding ResourceDetailsCommand}"/>
+                </StackPanel>
+
+                <StackPanel Margin="25 0 0 0" VerticalAlignment="Bottom">
+                    <uc:MenuButton Title="Настройки" Icon="CogOutline"/>
+                    <uc:MenuButton Title="Выход" Icon="Logout"/>
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <Grid Grid.Column="2" Grid.ColumnSpan="2" Margin="40 30">
+            <!--<Grid Width="500" HorizontalAlignment="Left">
+                <ComboBox HorizontalAlignment="Left" Margin="3 0 0 0" Panel.ZIndex="2">
+                    <ComboBoxItem Content="All category" IsSelected="True"/>
+                    <ComboBoxItem Content="Cars"/>
+                    <ComboBoxItem Content="Books"/>
+                    <ComboBoxItem Content="Homes"/>
+                </ComboBox>
+            </Grid>-->
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                <Button Style="{StaticResource textBoxButton}">
+                    <Icon:PackIconMaterial Kind="BellOutline" Foreground="#88878e"/>
+                </Button>
+                <Button Style="{StaticResource textBoxButton}" Background="White">
+                    <Icon:PackIconMaterial Kind="AccountArrowLeftOutline" Foreground="#88878e"/>
+                </Button>
+                <Button Style="{StaticResource textBoxButton}">
+                    <Icon:PackIconMaterial Kind="DotsVertical" Foreground="#88878e"/>
+                </Button>
+                <Button Style="{StaticResource textBoxButton}" mvx:Bi.nd="Command CloseCommand">
+                    <Icon:PackIconMaterial Kind="Close" Foreground="Red" Width="25" Height="25"/>
+                </Button>
+            </StackPanel>
+        </Grid>
+    </Grid>
+</views:MvxWpfView>
