@@ -10,7 +10,7 @@
       xmlns:local="clr-namespace:CombatAnalysis.App.Views"
       xmlns:Icon="http://metro.mahapps.com/winfx/xaml/iconpacks"
       xmlns:viewModels="clr-namespace:CombatAnalysis.Core.ViewModels;assembly=CombatAnalysis.Core"
-      mc:Ignorable="d" d:DesignHeight="850" d:DesignWidth="1250">
+      mc:Ignorable="d">
 
     <Grid>
         <Grid.Resources>
@@ -30,7 +30,7 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="0.25*"/>
             <RowDefinition Height="*"/>
-            <RowDefinition Height="0.6*"/>
+            <RowDefinition Height="0.7*"/>
             <RowDefinition Height="0.05*"/>
         </Grid.RowDefinitions>
 
@@ -54,8 +54,8 @@
                 <TextBlock Text="{Binding CombatLog, Mode=TwoWay}" FontWeight="Bold" Margin="20 0" FontSize="14" />
             </StackPanel>
         </StackPanel>
-        <StackPanel Grid.Row="1" Grid.Column="2" Margin="20 90" Visibility="{Binding CombatLogsNumber, Converter={StaticResource IntToVisibility}, ConverterParameter='0:true:>'}">
-            <ScrollViewer MaxHeight="300">
+        <StackPanel Grid.Row="1" Grid.Column="2" Margin="20 70" Visibility="{Binding CombatLogsNumber, Converter={StaticResource IntToVisibility}, ConverterParameter='0:true:>'}">
+            <ScrollViewer MaxHeight="210">
                 <StackPanel IsEnabled="{Binding IsParsing, Converter={StaticResource BoolToXAMLBool}}" 
                     HorizontalAlignment="Center" VerticalAlignment="Top" Margin="20">
                     <TextBlock HorizontalAlignment="Center" Text="Ранее добавленные Логи" Margin="0" FontSize="16" />
@@ -88,7 +88,7 @@
             </ScrollViewer>
         </StackPanel>
         <StackPanel IsEnabled="{Binding IsParsing, Converter={StaticResource BoolToXAMLBool}}" Grid.Row="2" Grid.Column="2"
-                    Grid.ColumnSpan="2" VerticalAlignment="Center" HorizontalAlignment="Center">
+                    Grid.ColumnSpan="2" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="-10">
             <StackPanel IsEnabled="{Binding CombatLog, Converter={StaticResource ToXAMLBool}}" Margin="20">
                 <Button Height="35" Content="Анализ" Width="100" FontSize="16" Margin="0 20"
                     mvx:Bi.nd="Command OpenPlayerAnalysisCommand" Style="{StaticResource showButton}" />
@@ -108,7 +108,7 @@
                        Margin="10" HorizontalAlignment="Center" VerticalAlignment="Center"
                        Visibility="{Binding IsParsing, Converter={StaticResource BoolToVisibility}}" />
             <TextBlock Text="{Binding FoundCombat}" FontSize="16" TextAlignment="Center" TextWrapping="Wrap"
-                       Margin="10" VerticalAlignment="Center" Height="50" MaxWidth="650"
+                       Margin="0" VerticalAlignment="Center" Height="50" MaxWidth="650"
                        Visibility="{Binding IsParsing, Converter={StaticResource BoolToVisibility}}" />
             <TextBlock Width="175" Text="Сохранение данных..." FontSize="16" TextAlignment="Center" Foreground="ForestGreen"
                        Margin="10" HorizontalAlignment="Center" VerticalAlignment="Center"

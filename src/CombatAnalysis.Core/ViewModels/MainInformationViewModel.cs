@@ -35,9 +35,13 @@ namespace CombatAnalysis.Core.ViewModels
         private IViewModelConnect _handler;
         private List<CombatModel> _combats;
         private ObservableCollection<CombatLogModel> _combatLogs;
+        private double _screenWidth;
+        private double _screenHeight;
 
         public MainInformationViewModel(IMapper mapper, IMvxNavigationService mvvmNavigation, IHttpClientHelper httpClient)
         {
+            var a = System.Windows.SystemParameters.PrimaryScreenWidth;
+
             _mapper = mapper;
             _mvvmNavigation = mvvmNavigation;
 
@@ -151,6 +155,24 @@ namespace CombatAnalysis.Core.ViewModels
             }
         }
 
+        public double ScreenWidth
+        {
+            get { return _screenWidth; }
+            set
+            {
+                SetProperty(ref _screenWidth, value);
+            }
+        }
+
+        public double ScreenHeight
+        {
+            get { return _screenHeight; }
+            set
+            {
+                SetProperty(ref _screenHeight, value);
+            }
+        }
+
         public void GetCombatLog()
         {
             _combatLogPath = WinHandler.FileOpen();
@@ -195,6 +217,9 @@ namespace CombatAnalysis.Core.ViewModels
 
             CombatLogs?.Clear();
             LoadCombatLogs();
+
+            ScreenWidth = System.Windows.SystemParameters.PrimaryScreenWidth * 0.75;
+            ScreenHeight = System.Windows.SystemParameters.PrimaryScreenHeight * 0.75;
         }
 
         private async Task GetData(string combatLog)
