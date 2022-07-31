@@ -23,7 +23,7 @@ const GeneralAnalysis = () => {
             );
         }
         else {
-            setCoursesRender(<div>Необходимо добавить хотя бы 1 элемент</div>);
+            setCombatsRender(<div>Необходимо добавить хотя бы 1 элемент</div>);
         }
     }
 
@@ -47,7 +47,7 @@ const GeneralAnalysis = () => {
                     <li className="list-group-item">Продолжительность боя: {element.duration}</li>
                 </ul>
                 <div className="card-body">
-                    <NavLink className="card-link" to={"/target-course?id=" + element.id}>Подробнее</NavLink>
+                    <NavLink className="card-link" to={"/details-specifical-combat?id=" + element.id}>Подробнее</NavLink>
                 </div>
             </div>
         </li>;
