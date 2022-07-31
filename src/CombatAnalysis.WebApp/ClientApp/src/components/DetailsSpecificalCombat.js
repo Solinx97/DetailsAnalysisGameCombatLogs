@@ -2,13 +2,14 @@
 import { NavLink, useNavigate } from 'react-router-dom';
 
 const DetailsSpecificalCombat = () => {
+    const navigate = useNavigate();
+
     const [combatId, setCombatId] = useState(0);
     const [combatPlayersRender, setCombatPlayersRender] = useState(null);
 
     useEffect(() => {
         const queryParams = new URLSearchParams(window.location.search);
         setCombatId(+queryParams.get("id"));
-        console.log(combatId);
     }, []);
 
     useEffect(() => {
@@ -43,16 +44,21 @@ const DetailsSpecificalCombat = () => {
                     <h5 className="card-title">{element.userName}</h5>
                 </div>
                 <ul className="list-group list-group-flush">
-                    <li className="list-group-item">Затрачено энергии: {element.energyRecovery}</li>
-                    <li className="list-group-item">Всего урона: {element.damageDone}</li>
-                    <li className="list-group-item">Всего исцеления: {element.healDone}</li>
-                    <li className="list-group-item">Всего полученно урона: {element.damageTaken}</li>
+                    <li className="list-group-item">
+                        <NavLink className="card-link" to={`/resource-recovery-details?id=` + element.id}>Всего затрачено энергии: {element.energyRecovery}</NavLink>
+                    </li>
+                    <li className="list-group-item">
+                        <NavLink className="card-link" to={"/damage-done-details?id=" + element.id}>Всего урона: {element.damageDone}</NavLink>
+                    </li>
+                    <li className="list-group-item">
+                        <NavLink className="card-link" to={"/heal-done-details?id=" + element.id}>Всего исцеления: {element.healDone}</NavLink>
+                    </li>
+                    <li className="list-group-item">
+                        <NavLink className="card-link" to={"/damage-taken-details?id=" + element.id}>Всего полученно урона: {element.damageTaken}</NavLink>
+                    </li>
                     <li className="list-group-item">Всего смертей {element.deathNumber}</li>
                     <li className="list-group-item">Всего бафов: {element.usedBuffs}</li>
                 </ul>
-                <div className="card-body">
-                    <NavLink className="card-link" to={"/target-course?id=" + element.id}>Подробнее</NavLink>
-                </div>
             </div>
         </li>;
     }
@@ -67,6 +73,7 @@ const DetailsSpecificalCombat = () => {
     const render = () => {
         return <div>
             <h2>Игроки боя</h2>
+            <button type="button" className="btn btn-success" onClick={() => navigate("/")}>Назад</button>
             {combatPlayersRender}
         </div>
     }

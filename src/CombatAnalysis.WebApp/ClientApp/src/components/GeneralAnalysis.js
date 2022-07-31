@@ -62,7 +62,6 @@ const GeneralAnalysis = () => {
 
     const render = () => {
         return <div>
-            <button type="button" className="btn btn-success" onClick={() => navigate("/create-course")}>Загрузить лог</button>
             <h2>Бои</h2>
             {combatsRender}
         </div>
