@@ -8,7 +8,7 @@ using System.Collections.Generic;
 
 namespace CombatAnalysis.Core.ViewModels
 {
-    public class TargetCombatDetailsViewModel : MvxViewModel<CombatModel>
+    public class DetailsSpecificalCombatVewModel : MvxViewModel<CombatModel>
     {
         private readonly IMvxNavigationService _mvvmNavigation;
         private readonly IViewModelConnect _handler;
@@ -22,7 +22,7 @@ namespace CombatAnalysis.Core.ViewModels
         private int _selectedIndex;
         private string _selectedCombat;
 
-        public TargetCombatDetailsViewModel(IMvxNavigationService mvvmNavigation)
+        public DetailsSpecificalCombatVewModel(IMvxNavigationService mvvmNavigation)
         {
             _mvvmNavigation = mvvmNavigation;
 
