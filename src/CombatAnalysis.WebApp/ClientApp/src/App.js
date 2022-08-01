@@ -3,7 +3,7 @@ import {
     Routes,
     Route
 } from 'react-router-dom';
-import { Layout } from './components/Layout';
+import Layout from './components/Layout';
 import GeneralAnalysis from './components/GeneralAnalysis';
 import DetailsSpecificalCombat from './components/DetailsSpecificalCombat';
 import DamageDoneDetails from './components/DamageDoneDetails';
@@ -14,8 +14,7 @@ import ResourceRecoveryDetails from './components/ResourceRecoveryDetails';
 import './custom.css'
 
 const App = () => {
-    return (
-        <Layout>
+    return <Layout>
             <Routes>
                 <Route path='/' element={<GeneralAnalysis />} />
                 <Route path='/details-specifical-combat' element={<DetailsSpecificalCombat />} />
@@ -24,8 +23,7 @@ const App = () => {
                 <Route path='/heal-done-details' element={<HealDoneDetails />} />
                 <Route path='/resource-recovery-details' element={<ResourceRecoveryDetails />} />
             </Routes>
-        </Layout>
-    );
+        </Layout>;
 }
 
 export default App;
