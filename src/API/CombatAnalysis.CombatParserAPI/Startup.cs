@@ -1,6 +1,8 @@
 using AutoMapper;
 using CombatAnalysis.BL.Extensions;
 using CombatAnalysis.BL.Mapping;
+using CombatAnalysis.CombatParserAPI.Helpers;
+using CombatAnalysis.CombatParserAPI.Interfaces;
 using CombatAnalysis.CombatParserAPI.Mapping;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -23,6 +25,9 @@ namespace CombatAnalysis.CombatParserAPI
         public void ConfigureServices(IServiceCollection services)
         {
             RegisteringDependencies(services);
+
+            IHttpClientHelper httpClient = new HttpClientHelper();
+            services.AddSingleton(httpClient);
 
             services.AddControllers();
 

@@ -23,7 +23,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CombatAnalysis.DAL", "src\C
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CombatAnalysis.BL", "src\CombatAnalysis.BL\CombatAnalysis.BL.csproj", "{F5CFB3FC-808A-414D-8CEE-FB346472EE58}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CombatAnalysis.WebApp", "src\CombatAnalysis.WebApp\CombatAnalysis.WebApp.csproj", "{11416CFA-3C47-494B-9909-69E78936637E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CombatAnalysis.WebApp", "src\CombatAnalysis.WebApp\CombatAnalysis.WebApp.csproj", "{11416CFA-3C47-494B-9909-69E78936637E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

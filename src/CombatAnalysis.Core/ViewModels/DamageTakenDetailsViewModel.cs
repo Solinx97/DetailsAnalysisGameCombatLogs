@@ -44,7 +44,7 @@ namespace CombatAnalysis.Core.ViewModels
             _mapper = mapper;
             _mvvmNavigation = mvvmNavigation;
 
-            _combatParserAPIService = new CombatParserAPIService(mapper, httpClient);
+            _combatParserAPIService = new CombatParserAPIService(httpClient);
 
             _handler = new ViewModelMConnect();
             BasicTemplate = new BasicTemplateViewModel(this, _handler, _mvvmNavigation);
@@ -242,14 +242,14 @@ namespace CombatAnalysis.Core.ViewModels
 
         private async Task LoadDamageTakenDetails(int combatPlayerId)
         {
-            var healDones = await _combatParserAPIService.LoadDamageTakenDetails(combatPlayerId);
+            var healDones = await _combatParserAPIService.LoadDamageTakenDetailsAsync(combatPlayerId);
             DamageTakenInformations = new ObservableCollection<DamageTakenModel>(healDones.ToList());
             _damageTakenInformationsWithSkipDamage = new ObservableCollection<DamageTakenModel>(healDones.ToList());
         }
 
         private async Task LoadDamageTakenGeneral(int combatPlayerId)
         {
-            var healDoneGenerals = await _combatParserAPIService.LoadDamageTakenGeneral(combatPlayerId);
+            var healDoneGenerals = await _combatParserAPIService.LoadDamageTakenGeneralAsync(combatPlayerId);
             DamageTakenGeneralInformations = new ObservableCollection<DamageTakenGeneralModel>(healDoneGenerals.ToList());
         }
 

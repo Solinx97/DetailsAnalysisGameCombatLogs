@@ -36,7 +36,7 @@ namespace CombatAnalysis.Core.ViewModels
             _mapper = mapper;
             _mvvmNavigation = mvvmNavigation;
 
-            _combatParserAPIService = new CombatParserAPIService(mapper, httpClient);
+            _combatParserAPIService = new CombatParserAPIService(httpClient);
 
             _handler = new ViewModelMConnect();
             BasicTemplate = new BasicTemplateViewModel(this, _handler, _mvvmNavigation);
@@ -157,14 +157,14 @@ namespace CombatAnalysis.Core.ViewModels
 
         private async Task LoadResourceRecoveryDetails(int combatPlayerId)
         {
-            var healDones = await _combatParserAPIService.LoadResourceRecoveryDetails(combatPlayerId);
+            var healDones = await _combatParserAPIService.LoadResourceRecoveryDetailsAsync(combatPlayerId);
             ResourceRecoveryInformations = new ObservableCollection<ResourceRecoveryModel>(healDones.ToList());
             _resourceRecoveryInformations = new ObservableCollection<ResourceRecoveryModel>(healDones.ToList());
         }
 
         private async Task LoadResourceRecoveryGeneral(int combatPlayerId)
         {
-            var healDoneGenerals = await _combatParserAPIService.LoadResourceRecoveryGeneral(combatPlayerId);
+            var healDoneGenerals = await _combatParserAPIService.LoadResourceRecoveryGeneralAsync(combatPlayerId);
             ResourceRecoveryGeneralInformations = new ObservableCollection<ResourceRecoveryGeneralModel>(healDoneGenerals.ToList());
         }
 

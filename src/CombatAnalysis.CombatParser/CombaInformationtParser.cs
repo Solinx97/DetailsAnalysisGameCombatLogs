@@ -41,10 +41,10 @@ namespace CombatAnalysis.CombatParser
                         IsWin = GetCombatResult(combatData[^1]),
                         StartDate = GetTime(combatData[0]),
                         FinishDate = GetTime(combatData[^1]),
-                        DeathNumber = _combatInformation.GetDeathsNumber(),
                     };
 
                     GetCombatPlayersData(combat);
+                    combat.DeathNumber = _combatInformation.GetDeathsNumber();
 
                     AddNewCombat(combat);
                 }
