@@ -9,14 +9,16 @@ namespace CombatAnalysis.CombatParser
 {
     public class CombaInformationtParser : IObservable
     {
-        private IList<IObserver> _observers;
-        private IList<ZoneInformation> _zones;
+        private readonly IList<IObserver> _observers;
+        private readonly IList<PlaceInformation> _zones;
+        private readonly CombatDetailsInformation _combatInformation;
 
         public CombaInformationtParser()
         {
             Combats = new List<Combat>();
             _observers = new List<IObserver>();
-            _zones = new List<ZoneInformation>();
+            _zones = new List<PlaceInformation>();
+            _combatInformation = new CombatDetailsInformation();
         }
 
         public List<Combat> Combats { get; private set; }
@@ -39,10 +41,10 @@ namespace CombatAnalysis.CombatParser
                         IsWin = GetCombatResult(combatData[^1]),
                         StartDate = GetTime(combatData[0]),
                         FinishDate = GetTime(combatData[^1]),
+                        DeathNumber = _combatInformation.GetDeathsNumber(),
                     };
 
                     GetCombatPlayersData(combat);
-                    GetCombatDeaths(combat);
 
                     AddNewCombat(combat);
                 }
@@ -57,7 +59,7 @@ namespace CombatAnalysis.CombatParser
         {
             foreach (var item in _zones)
             {
-                if (item.ChangeDate < combat.StartDate)
+                if (item.EntryDate < combat.StartDate)
                 {
                     combat.DungeonName = item.Name;
                 }
@@ -71,19 +73,18 @@ namespace CombatAnalysis.CombatParser
         private void GetCombatPlayersData(Combat combat)
         {
             var playersData = new List<CombatPlayerData>();
-            var combatInformation = new CombatDetailsInformation();
 
             var players = GetPlayers(combat.Data);
             foreach (var item in players)
             {
-                combatInformation.SetData(combat, item);
+                _combatInformation.SetData(combat, item);
                 var playerCombatData = new CombatPlayerData
                 {
                     UserName = item,
-                    EnergyRecovery = combatInformation.GetResourceRecovery(),
-                    DamageDone = combatInformation.GetDamageDone(),
-                    HealDone = combatInformation.GetHealDone(),
-                    DamageTaken = combatInformation.GetDamageTaken(),
+                    EnergyRecovery = _combatInformation.GetResourceRecovery(),
+                    DamageDone = _combatInformation.GetDamageDone(),
+                    HealDone = _combatInformation.GetHealDone(),
+                    DamageTaken = _combatInformation.GetDamageTaken(),
                 };
 
                 playersData.Add(playerCombatData);
@@ -109,7 +110,7 @@ namespace CombatAnalysis.CombatParser
             var players = new List<string>();
             foreach (var item in playersId)
             {
-                var player = PlayerSearch(combat, item);
+                var player = GetCombatPlayers(combat, item);
                 players.Add(player);
             }
 
@@ -160,10 +161,10 @@ namespace CombatAnalysis.CombatParser
 
             var date = GetTime(combatLog);
 
-            var zone = new ZoneInformation
+            var zone = new PlaceInformation
             {
                 Name = clearName,
-                ChangeDate = date
+                EntryDate = date
             };
 
             _zones.Add(zone);
@@ -174,12 +175,12 @@ namespace CombatAnalysis.CombatParser
             var data = combatFinish.Split("  ");
             var split = data[1].Split(',');
             var combatResult = int.Parse(split[split.Length - 1]);
-            var isWin = combatResult == 1 ? true : false;
+            var isWin = combatResult == 1;
 
             return isWin;
         }
 
-        private string PlayerSearch(List<string> combat, string playerId)
+        private string GetCombatPlayers(List<string> combat, string playerId)
         {
             var player = string.Empty;
             for (int i = 1; i < combat.Count; i++)
@@ -200,14 +201,6 @@ namespace CombatAnalysis.CombatParser
             return player;
         }
 
-        private void GetCombatDeaths(Combat combat)
-        {
-            var combatInform = new CombatDetailsInformation();
-            combatInform.SetData(combat);
-
-            combat.DeathNumber = combatInform.GetDeathsNumber();
-        }
-
         public void AddObserver(IObserver o)
         {
             _observers.Add(o);
@@ -220,10 +213,10 @@ namespace CombatAnalysis.CombatParser
 
         public void NotifyObservers()
         {
-            foreach (IObserver observer in _observers)
+            foreach (var observer in _observers)
             {
                 var isWin = Combats[^1].IsWin ? "Победа" : "Поражение";
-                var combatInformation = $"Подземелье: {Combats[^1].DungeonName}, Бой: {Combats[^1].Name}, Время: {Combats[^1].Duration}, Статус: {isWin}";
+                var combatInformation = $"Подземелье: {Combats[^1].DungeonName}, Бой: {Combats[^1].Name}, Время: {Combats[^1].Duration}, Результат: {isWin}";
 
                 observer.Update(combatInformation);
             }
