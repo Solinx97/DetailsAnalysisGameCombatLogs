@@ -277,6 +277,7 @@ namespace CombatAnalysis.CombatParser
                 MaxHealth = value2,
                 ValueWithOverheal = value3,
                 Overheal = value4,
+                Value = value3 - value4,
                 IsFullOverheal = value3 - value4 == 0,
                 IsCrit = isCrit
             };

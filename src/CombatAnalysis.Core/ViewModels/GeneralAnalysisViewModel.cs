@@ -78,7 +78,7 @@ namespace CombatAnalysis.Core.ViewModels
 
         public void ShowDetails()
         {
-            Task.Run(() => _mvvmNavigation.Navigate<DetailsSpecificalCombatVewModel, CombatModel>(Combats[CombatIndex]));
+            Task.Run(() => _mvvmNavigation.Navigate<DetailsSpecificalCombatViewModel, CombatModel>(Combats[CombatIndex]));
         }
     }
 }

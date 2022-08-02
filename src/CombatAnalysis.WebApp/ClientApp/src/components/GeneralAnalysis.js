@@ -1,6 +1,8 @@
 ﻿import React, { useState, useEffect } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 
+import "../styles/generalAnalysis.sass";
+
 const GeneralAnalysis = () => {
     const [combatsRender, setCombatsRender] = useState(null);
 
@@ -23,7 +25,7 @@ const GeneralAnalysis = () => {
             );
         }
         else {
-            setCoursesRender(<div>Необходимо добавить хотя бы 1 элемент</div>);
+            setCombatsRender(<div>Необходимо добавить хотя бы 1 элемент</div>);
         }
     }
 
@@ -41,13 +43,13 @@ const GeneralAnalysis = () => {
                     <li className="list-group-item">Всего полученно урона: {element.damageTaken}</li>
                     <li className="list-group-item">Всего смертей {element.deathNumber}</li>
                     <li className="list-group-item">Всего бафов: {element.usedBuffs}</li>
-                    <li className="list-group-item">Статус боя: {element.isWin}</li>
+                    <li className="list-group-item">Статус боя: {getCombatStatus(element.isWin)}</li>
                     <li className="list-group-item">Дата начало боя: {element.startDate}</li>
                     <li className="list-group-item">Дата окончания боя: {element.finishDate}</li>
                     <li className="list-group-item">Продолжительность боя: {element.duration}</li>
                 </ul>
                 <div className="card-body">
-                    <NavLink className="card-link" to={"/target-course?id=" + element.id}>Подробнее</NavLink>
+                    <NavLink className="card-link" to={"/details-specifical-combat?id=" + element.id}>Подробнее</NavLink>
                 </div>
             </div>
         </li>;
@@ -60,9 +62,12 @@ const GeneralAnalysis = () => {
         fillingCombatList(data);
     }
 
+    const getCombatStatus = (status) => {
+        return status ? "Победа" : "Поражение";
+    }
+
     const render = () => {
         return <div>
-            <button type="button" className="btn btn-success" onClick={() => navigate("/create-course")}>Загрузить лог</button>
             <h2>Бои</h2>
             {combatsRender}
         </div>
