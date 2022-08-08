@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using CombatAnalysis.CombatParser;
 using CombatAnalysis.CombatParser.Interfaces;
 using CombatAnalysis.Core.Commands;
 using CombatAnalysis.Core.Interfaces;
@@ -20,6 +19,7 @@ namespace CombatAnalysis.Core.ViewModels
     {
         private readonly IMvxNavigationService _mvvmNavigation;
         private readonly IMapper _mapper;
+        private readonly IParser _parser;
         private readonly CombatParserAPIService _combatParserAPIService;
 
         private string _combatLog;
@@ -37,12 +37,11 @@ namespace CombatAnalysis.Core.ViewModels
         private double _screenWidth;
         private double _screenHeight;
 
-        public MainInformationViewModel(IMapper mapper, IMvxNavigationService mvvmNavigation, IHttpClientHelper httpClient)
+        public MainInformationViewModel(IMapper mapper, IMvxNavigationService mvvmNavigation, IHttpClientHelper httpClient, IParser parser)
         {
-            var a = System.Windows.SystemParameters.PrimaryScreenWidth;
-
             _mapper = mapper;
             _mvvmNavigation = mvvmNavigation;
+            _parser = parser;
 
             GetCombatLogCommand = new MvxCommand(GetCombatLog);
             OpenPlayerAnalysisCommand = new MvxCommand(OpenPlayerAnalysis);
@@ -225,11 +224,10 @@ namespace CombatAnalysis.Core.ViewModels
 
         private async Task GetCombatDataDetails(string combatLog)
         {
-            var parser = new CombaInformationtParser();
-            parser.AddObserver(this);
-            await parser.Parse(combatLog);
+            _parser.AddObserver(this);
+            await _parser.Parse(combatLog);
 
-            var map = parser.Combats;
+            var map = _parser.Combats;
             var combats = _mapper.Map<List<CombatModel>>(map);
 
             for (int i = 0; i < combats.Count; i++)

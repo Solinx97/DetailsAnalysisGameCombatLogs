@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
-using CombatAnalysis.CombatParser;
 using CombatAnalysis.CombatParser.Entities;
 using CombatAnalysis.CombatParser.Extensions;
+using CombatAnalysis.CombatParser.Services;
 using CombatAnalysis.Core.Commands;
 using CombatAnalysis.Core.Core;
 using CombatAnalysis.Core.Interfaces;
@@ -214,7 +214,7 @@ namespace CombatAnalysis.Core.ViewModels
             }
             else
             {
-                var combatInformation = new CombatDetailsInformation();
+                var combatInformation = new CombatDetailsService();
                 var map = _mapper.Map<Combat>(combat);
 
                 GetDamageTakenDetails(combatInformation, SelectedPlayer, map);
@@ -222,7 +222,7 @@ namespace CombatAnalysis.Core.ViewModels
             }
         }
 
-        private void GetDamageTakenDetails(CombatDetailsInformation combatInformation, string player, Combat combat)
+        private void GetDamageTakenDetails(CombatDetailsService combatInformation, string player, Combat combat)
         {
             combatInformation.SetData(combat, player);
             combatInformation.GetDamageTaken();
@@ -233,7 +233,7 @@ namespace CombatAnalysis.Core.ViewModels
             _damageTakenInformationsWithSkipDamage = new ObservableCollection<DamageTakenModel>(map1);
         }
 
-        private void GetDamageTakenGeneral(CombatDetailsInformation combatInformation, Combat combat)
+        private void GetDamageTakenGeneral(CombatDetailsService combatInformation, Combat combat)
         {
             var damageDoneGeneralInformations = combatInformation.GetDamageTakenGeneral(combatInformation.DamageTaken, combat);
             var map2 = _mapper.Map<ObservableCollection<DamageTakenGeneralModel>>(damageDoneGeneralInformations);

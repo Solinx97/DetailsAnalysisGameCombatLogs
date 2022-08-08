@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using CombatAnalysis.BL.DTO;
 using CombatAnalysis.BL.Interfaces;
+using CombatAnalysis.CombatParser.Interfaces;
 using CombatAnalysis.CombatParserAPI.Helpers;
 using CombatAnalysis.CombatParserAPI.Interfaces;
 using CombatAnalysis.CombatParserAPI.Models;
@@ -18,11 +19,11 @@ namespace CombatAnalysis.CombatParserAPI.Controllers
         private readonly IMapper _mapper;
         private readonly SaveCombatDataHelper _saveCombatDataHelper;
 
-        public CombatLogController(IService<CombatLogDto> service, IMapper mapper, IHttpClientHelper httpClient)
+        public CombatLogController(IService<CombatLogDto> service, IMapper mapper, IHttpClientHelper httpClient, ICombatDetails combatDetails)
         {
             _service = service;
             _mapper = mapper;
-            _saveCombatDataHelper = new SaveCombatDataHelper(mapper, httpClient);
+            _saveCombatDataHelper = new SaveCombatDataHelper(mapper, httpClient, combatDetails);
         }
 
         [HttpGet]

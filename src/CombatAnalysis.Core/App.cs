@@ -1,4 +1,6 @@
 ﻿using AutoMapper;
+using CombatAnalysis.CombatParser.Interfaces;
+using CombatAnalysis.CombatParser.Services;
 using CombatAnalysis.Core.Consts;
 using CombatAnalysis.Core.Helpers;
 using CombatAnalysis.Core.Interfaces;
@@ -23,9 +25,13 @@ namespace CombatAnalysis.Core
 
             var mapper = mappingConfig.CreateMapper();
             IHttpClientHelper httpClient = new HttpClientHelper();
+            ICombatDetails combatDetails = new CombatDetailsService();
+            IParser parser = new CombatParserService(combatDetails);
 
             Mvx.IoCProvider.RegisterSingleton(mapper);
+            Mvx.IoCProvider.RegisterSingleton(mapper);
             Mvx.IoCProvider.RegisterSingleton(httpClient);
+            Mvx.IoCProvider.RegisterSingleton(parser);
 
             RegisterAppStart<MainInformationViewModel>();
         }

@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
-using CombatAnalysis.CombatParser;
 using CombatAnalysis.CombatParser.Entities;
 using CombatAnalysis.CombatParser.Extensions;
+using CombatAnalysis.CombatParser.Services;
 using CombatAnalysis.Core.Commands;
 using CombatAnalysis.Core.Core;
 using CombatAnalysis.Core.Interfaces;
@@ -198,7 +198,7 @@ namespace CombatAnalysis.Core.ViewModels
             }
             else
             {
-                var combatInformation = new CombatDetailsInformation();
+                var combatInformation = new CombatDetailsService();
                 var map = _mapper.Map<Combat>(combat);
 
                 GetHealDoneDetails(combatInformation, SelectedPlayer, map);
@@ -206,7 +206,7 @@ namespace CombatAnalysis.Core.ViewModels
             }
         }
 
-        private void GetHealDoneDetails(CombatDetailsInformation combatInformation, string player, Combat combat)
+        private void GetHealDoneDetails(CombatDetailsService combatInformation, string player, Combat combat)
         {
             combatInformation.SetData(combat, player);
             combatInformation.GetHealDone();
@@ -217,7 +217,7 @@ namespace CombatAnalysis.Core.ViewModels
             _healDoneInformationsWithOverheal = new ObservableCollection<HealDoneModel>(map1);
         }
 
-        private void GetHealDoneGeneral(CombatDetailsInformation combatInformation, Combat combat)
+        private void GetHealDoneGeneral(CombatDetailsService combatInformation, Combat combat)
         {
             var damageDoneGeneralInformations = combatInformation.GetHealDoneGeneral(combatInformation.HealDone, combat);
             var map2 = _mapper.Map<ObservableCollection<HealDoneGeneralModel>>(damageDoneGeneralInformations);

@@ -1,32 +1,33 @@
-﻿using CombatAnalysis.CombatParser.Interfaces;
-using CombatAnalysis.CombatParser.Entities;
+﻿using CombatAnalysis.CombatParser.Entities;
+using CombatAnalysis.CombatParser.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 
-namespace CombatAnalysis.CombatParser
+namespace CombatAnalysis.CombatParser.Services
 {
-    public class CombaInformationtParser : IObservable
+    public class CombatParserService : IParser
     {
         private readonly IList<IObserver> _observers;
         private readonly IList<PlaceInformation> _zones;
-        private readonly CombatDetailsInformation _combatInformation;
+        private readonly ICombatDetails _combatDetails;
 
-        public CombaInformationtParser()
+        public CombatParserService(ICombatDetails combatDetails)
         {
+            _combatDetails = combatDetails;
+
             Combats = new List<Combat>();
             _observers = new List<IObserver>();
             _zones = new List<PlaceInformation>();
-            _combatInformation = new CombatDetailsInformation();
         }
 
-        public List<Combat> Combats { get; private set; }
+        public List<Combat> Combats { get; }
 
         public async Task Parse(string combatLog)
         {
             using var reader = new StreamReader(combatLog);
-            string? line;
+            string line;
             while ((line = await reader.ReadLineAsync()) != null)
             {
                 if (line.Contains("ENCOUNTER_START"))
@@ -44,7 +45,7 @@ namespace CombatAnalysis.CombatParser
                     };
 
                     GetCombatPlayersData(combat);
-                    combat.DeathNumber = _combatInformation.GetDeathsNumber();
+                    combat.DeathNumber = _combatDetails.GetDeathsNumber();
 
                     AddNewCombat(combat);
                 }
@@ -77,14 +78,14 @@ namespace CombatAnalysis.CombatParser
             var players = GetPlayers(combat.Data);
             foreach (var item in players)
             {
-                _combatInformation.SetData(combat, item);
+                _combatDetails.SetData(combat, item);
                 var playerCombatData = new CombatPlayerData
                 {
                     UserName = item,
-                    EnergyRecovery = _combatInformation.GetResourceRecovery(),
-                    DamageDone = _combatInformation.GetDamageDone(),
-                    HealDone = _combatInformation.GetHealDone(),
-                    DamageTaken = _combatInformation.GetDamageTaken(),
+                    EnergyRecovery = _combatDetails.GetResourceRecovery(),
+                    DamageDone = _combatDetails.GetDamageDone(),
+                    HealDone = _combatDetails.GetHealDone(),
+                    DamageTaken = _combatDetails.GetDamageTaken(),
                 };
 
                 playersData.Add(playerCombatData);
@@ -119,7 +120,7 @@ namespace CombatAnalysis.CombatParser
 
         private async Task<List<string>> GetCombatData(StreamReader reader)
         {
-            string? line;
+            string line;
             var combatElements = new List<string>();
             while ((line = await reader.ReadLineAsync()) != null)
             {

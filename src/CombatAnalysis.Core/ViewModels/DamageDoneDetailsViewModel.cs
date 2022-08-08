@@ -1,7 +1,8 @@
 ﻿using AutoMapper;
-using CombatAnalysis.CombatParser;
 using CombatAnalysis.CombatParser.Entities;
 using CombatAnalysis.CombatParser.Extensions;
+using CombatAnalysis.CombatParser.Interfaces;
+using CombatAnalysis.CombatParser.Services;
 using CombatAnalysis.Core.Commands;
 using CombatAnalysis.Core.Core;
 using CombatAnalysis.Core.Interfaces;
@@ -326,7 +327,7 @@ namespace CombatAnalysis.Core.ViewModels
             }
             else
             {
-                var combatInformation = new CombatDetailsInformation();
+                var combatInformation = new CombatDetailsService();
                 var map = _mapper.Map<Combat>(combat);
 
                 GetDamageDoneDetails(combatInformation, SelectedPlayer, map);
@@ -334,20 +335,20 @@ namespace CombatAnalysis.Core.ViewModels
             }
         }
 
-        private void GetDamageDoneDetails(CombatDetailsInformation combatInformation, string player, Combat combat)
+        private void GetDamageDoneDetails(ICombatDetails combatDetails, string player, Combat combat)
         {
-            combatInformation.SetData(combat, player);
-            combatInformation.GetDamageDone();
+            combatDetails.SetData(combat, player);
+            combatDetails.GetDamageDone();
 
-            var map1 = _mapper.Map<ObservableCollection<DamageDoneModel>>(combatInformation.DamageDone);
+            var map1 = _mapper.Map<ObservableCollection<DamageDoneModel>>(combatDetails.DamageDone);
 
             DamageDoneInformations = map1;
             _damageDoneInformationsWithSkipDamage = new ObservableCollection<DamageDoneModel>(map1);
         }
 
-        private void GetDamageDoneGeneral(CombatDetailsInformation combatInformation, Combat combat)
+        private void GetDamageDoneGeneral(ICombatDetails combatDetails, Combat combat)
         {
-            var damageDoneGeneralInformations = combatInformation.GetDamageDoneGeneral(combatInformation.DamageDone, combat);
+            var damageDoneGeneralInformations = combatDetails.GetDamageDoneGeneral(combatDetails.DamageDone, combat);
             var map2 = _mapper.Map<ObservableCollection<DamageDoneGeneralModel>>(damageDoneGeneralInformations);
             DamageDoneGeneralInformations = map2;
         }
