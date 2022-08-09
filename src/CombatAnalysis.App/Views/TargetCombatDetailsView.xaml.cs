@@ -2,9 +2,9 @@
 
 namespace CombatAnalysis.App.Views
 {
-    public partial class DetailsSpecificalCombatView : MvxWpfView
+    public partial class TargetCombatDetailsView : MvxWpfView
     {
-        public DetailsSpecificalCombatView()
+        public TargetCombatDetailsView()
         {
             InitializeComponent();
         }

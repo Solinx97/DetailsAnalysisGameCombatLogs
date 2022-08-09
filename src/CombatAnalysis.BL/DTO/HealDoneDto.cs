@@ -12,7 +12,7 @@ namespace CombatAnalysis.BL.DTO
 
         public int Overheal { get; set; }
 
-        public int Value { get; set; }
+        public int Value { get { return ValueWithOverheal - Overheal; } }
 
         public string FromPlayer { get; set; }
 
