@@ -61,7 +61,7 @@ jobs:
     env:
       Solution_Name: CombatAnalysis.sln                        # Replace with your solution name, i.e. MyWpfApp.sln.
       Test_Project_Path: tests\CombatAnalysis.Parser.Tests\CombatAnalysis.Parser.Tests.csproj             # Replace with the path to your test project, i.e. MyWpfApp.Tests\MyWpfApp.Tests.csproj.
-      Wap_Project_Directory: CombatAnalysis.App
+      Wap_Project_Directory: src\CombatAnalysis.App
       Wap_Project_Path: src\CombatAnalysis.App\CombatAnalysis.App.csproj
 
     steps:
