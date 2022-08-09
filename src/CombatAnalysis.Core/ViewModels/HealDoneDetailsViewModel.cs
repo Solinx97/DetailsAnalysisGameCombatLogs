@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
-using CombatAnalysis.CombatParser;
 using CombatAnalysis.CombatParser.Entities;
 using CombatAnalysis.CombatParser.Extensions;
+using CombatAnalysis.CombatParser.Services;
 using CombatAnalysis.Core.Commands;
 using CombatAnalysis.Core.Core;
 using CombatAnalysis.Core.Interfaces;
@@ -43,7 +43,7 @@ namespace CombatAnalysis.Core.ViewModels
             _mapper = mapper;
             _mvvmNavigation = mvvmNavigation;
 
-            _combatParserAPIService = new CombatParserAPIService(mapper, httpClient);
+            _combatParserAPIService = new CombatParserAPIService(httpClient);
 
             _handler = new ViewModelMConnect();
             BasicTemplate = new BasicTemplateViewModel(this, _handler, _mvvmNavigation);
@@ -198,7 +198,7 @@ namespace CombatAnalysis.Core.ViewModels
             }
             else
             {
-                var combatInformation = new CombatDetailsInformation();
+                var combatInformation = new CombatDetailsService();
                 var map = _mapper.Map<Combat>(combat);
 
                 GetHealDoneDetails(combatInformation, SelectedPlayer, map);
@@ -206,7 +206,7 @@ namespace CombatAnalysis.Core.ViewModels
             }
         }
 
-        private void GetHealDoneDetails(CombatDetailsInformation combatInformation, string player, Combat combat)
+        private void GetHealDoneDetails(CombatDetailsService combatInformation, string player, Combat combat)
         {
             combatInformation.SetData(combat, player);
             combatInformation.GetHealDone();
@@ -217,7 +217,7 @@ namespace CombatAnalysis.Core.ViewModels
             _healDoneInformationsWithOverheal = new ObservableCollection<HealDoneModel>(map1);
         }
 
-        private void GetHealDoneGeneral(CombatDetailsInformation combatInformation, Combat combat)
+        private void GetHealDoneGeneral(CombatDetailsService combatInformation, Combat combat)
         {
             var damageDoneGeneralInformations = combatInformation.GetHealDoneGeneral(combatInformation.HealDone, combat);
             var map2 = _mapper.Map<ObservableCollection<HealDoneGeneralModel>>(damageDoneGeneralInformations);
@@ -226,14 +226,14 @@ namespace CombatAnalysis.Core.ViewModels
 
         private async Task LoadHealDoneDetails(int combatPlayerId)
         {
-            var healDones = await _combatParserAPIService.LoadHealDoneDetails(combatPlayerId);
+            var healDones = await _combatParserAPIService.LoadHealDoneDetailsAsync(combatPlayerId);
             HealDoneInformations = new ObservableCollection<HealDoneModel>(healDones.ToList());
             _healDoneInformationsWithOverheal = new ObservableCollection<HealDoneModel>(healDones.ToList());
         }
 
         private async Task LoadHealDoneGeneral(int combatPlayerId)
         {
-            var healDoneGenerals = await _combatParserAPIService.LoadHealDoneGeneral(combatPlayerId);
+            var healDoneGenerals = await _combatParserAPIService.LoadHealDoneGeneralAsync(combatPlayerId);
             HealDoneGeneralInformations = new ObservableCollection<HealDoneGeneralModel>(healDoneGenerals.ToList());
         }
 
