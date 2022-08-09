@@ -230,14 +230,14 @@ namespace CombatAnalysis.CombatParser.Services
             return player;
         }
 
-        public void AddObserver(IObserver o)
+        public void AddObserver(IObserver observer)
         {
-            _observers.Add(o);
+            _observers.Add(observer);
         }
 
-        public void RemoveObserver(IObserver o)
+        public void RemoveObserver(IObserver observer)
         {
-            _observers.Remove(o);
+            _observers.Remove(observer);
         }
 
         public void NotifyObservers()
