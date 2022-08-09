@@ -35,10 +35,10 @@ namespace CombatAnalysis.BL.Services
 
         async Task<int> IService<HealDoneDto>.CreateByProcedureAsync(HealDoneDto item)
         {
-            var paramNames = new string[] { nameof(item.ValueWithOverheal), nameof(item.Time), nameof(item.Overheal),
+            var paramNames = new string[] { nameof(item.ValueWithOverheal), nameof(item.Time), nameof(item.Overheal), nameof(item.Value),
                 nameof(item.FromPlayer), nameof(item.ToPlayer), nameof(item.SpellOrItem),  nameof(item.CurrentHealth),
                 nameof(item.MaxHealth), nameof(item.IsCrit), nameof(item.IsFullOverheal), nameof(item.CombatPlayerDataId) };
-            var paramValues = new object[] { item.ValueWithOverheal, item.Time, item.Overheal,
+            var paramValues = new object[] { item.ValueWithOverheal, item.Time, item.Overheal, item.Value,
                 item.FromPlayer, item.ToPlayer, item.SpellOrItem, item.CurrentHealth,
                 item.MaxHealth, item.IsCrit, item.IsFullOverheal, item.CombatPlayerDataId };
 
