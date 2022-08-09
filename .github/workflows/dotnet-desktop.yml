@@ -60,7 +60,7 @@ jobs:
 
     env:
       Solution_Name: CombatAnalysis.sln                        # Replace with your solution name, i.e. MyWpfApp.sln.
-      Test_Project_Path: tests\CombatAnalysis.Parser.Tests.csproj             # Replace with the path to your test project, i.e. MyWpfApp.Tests\MyWpfApp.Tests.csproj.
+      Test_Project_Path: tests\CombatAnalysis.Parser.Tests\CombatAnalysis.Parser.Tests.csproj             # Replace with the path to your test project, i.e. MyWpfApp.Tests\MyWpfApp.Tests.csproj.
 
     steps:
     - name: Checkout
