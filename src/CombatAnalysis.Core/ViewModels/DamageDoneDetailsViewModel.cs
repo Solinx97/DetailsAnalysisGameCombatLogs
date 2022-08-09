@@ -1,8 +1,7 @@
 ﻿using AutoMapper;
+using CombatAnalysis.CombatParser;
 using CombatAnalysis.CombatParser.Entities;
 using CombatAnalysis.CombatParser.Extensions;
-using CombatAnalysis.CombatParser.Interfaces;
-using CombatAnalysis.CombatParser.Services;
 using CombatAnalysis.Core.Commands;
 using CombatAnalysis.Core.Core;
 using CombatAnalysis.Core.Interfaces;
@@ -52,7 +51,7 @@ namespace CombatAnalysis.Core.ViewModels
             _mvvmNavigation = mvvmNavigation;
             _mapper = mapper;
 
-            _combatParserAPIService = new CombatParserAPIService(httpClient);
+            _combatParserAPIService = new CombatParserAPIService(mapper, httpClient);
 
             _handler = new ViewModelMConnect();
             BasicTemplate = new BasicTemplateViewModel(this, _handler, _mvvmNavigation);
@@ -327,7 +326,7 @@ namespace CombatAnalysis.Core.ViewModels
             }
             else
             {
-                var combatInformation = new CombatDetailsService();
+                var combatInformation = new CombatDetailsInformation();
                 var map = _mapper.Map<Combat>(combat);
 
                 GetDamageDoneDetails(combatInformation, SelectedPlayer, map);
@@ -335,34 +334,34 @@ namespace CombatAnalysis.Core.ViewModels
             }
         }
 
-        private void GetDamageDoneDetails(ICombatDetails combatDetails, string player, Combat combat)
+        private void GetDamageDoneDetails(CombatDetailsInformation combatInformation, string player, Combat combat)
         {
-            combatDetails.SetData(combat, player);
-            combatDetails.GetDamageDone();
+            combatInformation.SetData(combat, player);
+            combatInformation.GetDamageDone();
 
-            var map1 = _mapper.Map<ObservableCollection<DamageDoneModel>>(combatDetails.DamageDone);
+            var map1 = _mapper.Map<ObservableCollection<DamageDoneModel>>(combatInformation.DamageDone);
 
             DamageDoneInformations = map1;
             _damageDoneInformationsWithSkipDamage = new ObservableCollection<DamageDoneModel>(map1);
         }
 
-        private void GetDamageDoneGeneral(ICombatDetails combatDetails, Combat combat)
+        private void GetDamageDoneGeneral(CombatDetailsInformation combatInformation, Combat combat)
         {
-            var damageDoneGeneralInformations = combatDetails.GetDamageDoneGeneral(combatDetails.DamageDone, combat);
+            var damageDoneGeneralInformations = combatInformation.GetDamageDoneGeneral(combatInformation.DamageDone, combat);
             var map2 = _mapper.Map<ObservableCollection<DamageDoneGeneralModel>>(damageDoneGeneralInformations);
             DamageDoneGeneralInformations = map2;
         }
 
         private async Task LoadDamageDoneDetails(int combatPlayerId)
         {
-            var healDones = await _combatParserAPIService.LoadDamageDoneDetailsAsync(combatPlayerId);
+            var healDones = await _combatParserAPIService.LoadDamageDoneDetails(combatPlayerId);
             DamageDoneInformations = new ObservableCollection<DamageDoneModel>(healDones.ToList());
             _damageDoneInformationsWithSkipDamage = new ObservableCollection<DamageDoneModel>(healDones.ToList());
         }
 
         private async Task LoadDamageDoneGeneral(int combatPlayerId)
         {
-            var healDoneGenerals = await _combatParserAPIService.LoadDamageDoneGeneralAsync(combatPlayerId);
+            var healDoneGenerals = await _combatParserAPIService.LoadDamageDoneGeneral(combatPlayerId);
             DamageDoneGeneralInformations = new ObservableCollection<DamageDoneGeneralModel>(healDoneGenerals.ToList());
         }
 

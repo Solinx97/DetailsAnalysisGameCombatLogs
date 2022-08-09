@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
+using CombatAnalysis.CombatParser;
 using CombatAnalysis.CombatParser.Entities;
 using CombatAnalysis.CombatParser.Extensions;
-using CombatAnalysis.CombatParser.Services;
 using CombatAnalysis.Core.Commands;
 using CombatAnalysis.Core.Core;
 using CombatAnalysis.Core.Interfaces;
@@ -44,7 +44,7 @@ namespace CombatAnalysis.Core.ViewModels
             _mapper = mapper;
             _mvvmNavigation = mvvmNavigation;
 
-            _combatParserAPIService = new CombatParserAPIService(httpClient);
+            _combatParserAPIService = new CombatParserAPIService(mapper, httpClient);
 
             _handler = new ViewModelMConnect();
             BasicTemplate = new BasicTemplateViewModel(this, _handler, _mvvmNavigation);
@@ -214,7 +214,7 @@ namespace CombatAnalysis.Core.ViewModels
             }
             else
             {
-                var combatInformation = new CombatDetailsService();
+                var combatInformation = new CombatDetailsInformation();
                 var map = _mapper.Map<Combat>(combat);
 
                 GetDamageTakenDetails(combatInformation, SelectedPlayer, map);
@@ -222,7 +222,7 @@ namespace CombatAnalysis.Core.ViewModels
             }
         }
 
-        private void GetDamageTakenDetails(CombatDetailsService combatInformation, string player, Combat combat)
+        private void GetDamageTakenDetails(CombatDetailsInformation combatInformation, string player, Combat combat)
         {
             combatInformation.SetData(combat, player);
             combatInformation.GetDamageTaken();
@@ -233,7 +233,7 @@ namespace CombatAnalysis.Core.ViewModels
             _damageTakenInformationsWithSkipDamage = new ObservableCollection<DamageTakenModel>(map1);
         }
 
-        private void GetDamageTakenGeneral(CombatDetailsService combatInformation, Combat combat)
+        private void GetDamageTakenGeneral(CombatDetailsInformation combatInformation, Combat combat)
         {
             var damageDoneGeneralInformations = combatInformation.GetDamageTakenGeneral(combatInformation.DamageTaken, combat);
             var map2 = _mapper.Map<ObservableCollection<DamageTakenGeneralModel>>(damageDoneGeneralInformations);
@@ -242,14 +242,14 @@ namespace CombatAnalysis.Core.ViewModels
 
         private async Task LoadDamageTakenDetails(int combatPlayerId)
         {
-            var healDones = await _combatParserAPIService.LoadDamageTakenDetailsAsync(combatPlayerId);
+            var healDones = await _combatParserAPIService.LoadDamageTakenDetails(combatPlayerId);
             DamageTakenInformations = new ObservableCollection<DamageTakenModel>(healDones.ToList());
             _damageTakenInformationsWithSkipDamage = new ObservableCollection<DamageTakenModel>(healDones.ToList());
         }
 
         private async Task LoadDamageTakenGeneral(int combatPlayerId)
         {
-            var healDoneGenerals = await _combatParserAPIService.LoadDamageTakenGeneralAsync(combatPlayerId);
+            var healDoneGenerals = await _combatParserAPIService.LoadDamageTakenGeneral(combatPlayerId);
             DamageTakenGeneralInformations = new ObservableCollection<DamageTakenGeneralModel>(healDoneGenerals.ToList());
         }
 

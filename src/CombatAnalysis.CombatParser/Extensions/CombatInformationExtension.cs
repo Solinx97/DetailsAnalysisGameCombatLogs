@@ -1,5 +1,4 @@
 ﻿using CombatAnalysis.CombatParser.Entities;
-using CombatAnalysis.CombatParser.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -7,9 +6,9 @@ using System.Linq;
 
 namespace CombatAnalysis.CombatParser.Extensions
 {
-    public static class CombatDetailsExtension
+    public static class CombatInformationExtension
     {
-        public static ObservableCollection<DamageDoneGeneral> GetDamageDoneGeneral(this ICombatDetails extension, List<DamageDone> collection, Combat combat)
+        public static ObservableCollection<DamageDoneGeneral> GetDamageDoneGeneral(this CombatDetailsInformation extension, List<DamageDone> collection, Combat combat)
         {
             var spells = collection
                 .GroupBy(group => group.SpellOrItem)
@@ -41,7 +40,7 @@ namespace CombatAnalysis.CombatParser.Extensions
             return damageDoneGroupBySpellOrItem;
         }
 
-        public static ObservableCollection<HealDoneGeneral> GetHealDoneGeneral(this ICombatDetails extension, List<HealDone> collection, Combat combat)
+        public static ObservableCollection<HealDoneGeneral> GetHealDoneGeneral(this CombatDetailsInformation extension, List<HealDone> collection, Combat combat)
         {
             var spells = collection
                 .GroupBy(group => group.SpellOrItem)
@@ -73,7 +72,7 @@ namespace CombatAnalysis.CombatParser.Extensions
             return damageDoneGroupBySpellOrItem;
         }
 
-        public static ObservableCollection<DamageTakenGeneral> GetDamageTakenGeneral(this ICombatDetails extension, List<DamageTaken> collection, Combat combat)
+        public static ObservableCollection<DamageTakenGeneral> GetDamageTakenGeneral(this CombatDetailsInformation extension, List<DamageTaken> collection, Combat combat)
         {
             var spells = collection
                 .GroupBy(group => group.SpellOrItem)
@@ -105,7 +104,7 @@ namespace CombatAnalysis.CombatParser.Extensions
             return damageDoneGroupBySpellOrItem;
         }
 
-        public static ObservableCollection<ResourceRecoveryGeneral> GetResourceRecoveryGeneral(this ICombatDetails extension, List<ResourceRecovery> collection, Combat combat)
+        public static ObservableCollection<ResourceRecoveryGeneral> GetResourceRecoveryGeneral(this CombatDetailsInformation extension, List<ResourceRecovery> collection, Combat combat)
         {
             var spells = collection
                 .GroupBy(group => group.SpellOrItem)

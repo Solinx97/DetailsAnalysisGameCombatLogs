@@ -41,7 +41,7 @@
                 </DataTemplate>
             </ContentControl.Resources>
         </ContentControl>
-
+        
         <TextBlock Grid.Row="0" Grid.Column="2" Grid.ColumnSpan="2" HorizontalAlignment="Center" VerticalAlignment="Center"
                    Text="Получение информации о бое" FontSize="16" Margin="0 30" Style="{StaticResource titleText}"/>
         <StackPanel IsEnabled="{Binding IsParsing, Converter={StaticResource BoolToXAMLBool}}" Grid.Row="1" Grid.Column="3"
@@ -54,29 +54,16 @@
                 <TextBlock Text="{Binding CombatLog, Mode=TwoWay}" FontWeight="Bold" Margin="20 0" FontSize="14" />
             </StackPanel>
         </StackPanel>
-        <StackPanel Grid.Row="1" Grid.Column="2" Margin="20 70">
+        <StackPanel Grid.Row="1" Grid.Column="2" Margin="20 70" Visibility="{Binding CombatLogsNumber, Converter={StaticResource IntToVisibility}, ConverterParameter='0:true:>'}">
             <ScrollViewer MaxHeight="210">
                 <StackPanel IsEnabled="{Binding IsParsing, Converter={StaticResource BoolToXAMLBool}}" 
                     HorizontalAlignment="Center" VerticalAlignment="Top" Margin="20">
-                    <StackPanel Orientation="Horizontal">
-                        <TextBlock HorizontalAlignment="Center" Text="Ранее добавленные Логи" Margin="0" FontSize="16" />
-                        <Icon:PackIconMaterial Kind="Reload" Foreground="Gray" Style="{StaticResource menuButtonIcon}">
-                            <Icon:PackIconMaterial.ToolTip>
-                                <ToolTip>
-                                    Перезагрузка списка загруженных логов.
-                                </ToolTip>
-                            </Icon:PackIconMaterial.ToolTip>
-                            <Icon:PackIconMaterial.InputBindings>
-                                <MouseBinding Command="{Binding ReloadCombatsCommand}" Gesture="LeftClick"/>
-                            </Icon:PackIconMaterial.InputBindings>
-                        </Icon:PackIconMaterial>
-                    </StackPanel>
-                    <StackPanel Orientation="Horizontal" Width="250"
-                                Visibility="{Binding CombatLogsNumber, Converter={StaticResource IntToVisibility}, ConverterParameter='0:true:>'}">
+                    <TextBlock HorizontalAlignment="Center" Text="Ранее добавленные Логи" Margin="0" FontSize="16" />
+                    <Grid>
                         <Button mvx:Bi.nd="Command LoadCombatsCommand" Content="Загрузить" Width="100" FontSize="16"
-                            Margin="10,10" Style="{StaticResource showButton}" Foreground="Blue" HorizontalAlignment="Center"/>
-                        <Icon:PackIconMaterial Kind="Delete" Foreground="Orange" Style="{StaticResource menuButtonIcon}" mvx:Bi.nd="Command DeleteCombatCommand"
-                                               HorizontalAlignment="Center">
+                            Margin="0 10" Style="{StaticResource showButton}" Foreground="Blue"/>
+                        <Icon:PackIconMaterial Kind="Delete" Foreground="Orange" Style="{StaticResource menuButtonIcon}"
+                                           HorizontalAlignment="Right" mvx:Bi.nd="Command DeleteCombatCommand">
                             <Icon:PackIconMaterial.ToolTip>
                                 <ToolTip>
                                     Удалить выбранный Лог без возможности восстановить.
@@ -86,9 +73,8 @@
                                 <MouseBinding Command="{Binding DeleteCombatCommand}" Gesture="LeftClick"/>
                             </Icon:PackIconMaterial.InputBindings>
                         </Icon:PackIconMaterial>
-                    </StackPanel>
-                    <ListBox Background="Transparent" ItemsSource="{Binding CombatLogs}" SelectedIndex="{Binding SelectedCombatLogId}"
-                             Visibility="{Binding CombatLogsNumber, Converter={StaticResource IntToVisibility}, ConverterParameter='0:true:>'}">
+                    </Grid>
+                    <ListBox Background="Transparent" ItemsSource="{Binding CombatLogs}" SelectedIndex="{Binding SelectedCombatLogId}">
                         <ListBox.ItemTemplate>
                             <DataTemplate>
                                 <StackPanel Margin="10" Orientation="Horizontal" HorizontalAlignment="Center">
