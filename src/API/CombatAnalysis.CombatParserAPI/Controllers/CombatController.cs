@@ -1,9 +1,6 @@
 ﻿using AutoMapper;
 using CombatAnalysis.BL.DTO;
 using CombatAnalysis.BL.Interfaces;
-using CombatAnalysis.CombatParser.Interfaces;
-using CombatAnalysis.CombatParserAPI.Helpers;
-using CombatAnalysis.CombatParserAPI.Interfaces;
 using CombatAnalysis.CombatParserAPI.Models;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
@@ -17,22 +14,11 @@ namespace CombatAnalysis.CombatParserAPI.Controllers
     {
         private readonly IService<CombatDto> _service;
         private readonly IMapper _mapper;
-        private readonly SaveCombatDataHelper _saveCombatDataHelper;
 
-        public CombatController(IService<CombatDto> service, IMapper mapper, IHttpClientHelper httpClient, ICombatDetails combatDetails)
+        public CombatController(IService<CombatDto> service, IMapper mapper)
         {
             _service = service;
             _mapper = mapper;
-            _saveCombatDataHelper = new SaveCombatDataHelper(mapper, httpClient, combatDetails);
-        }
-
-        [HttpGet("{id}")]
-        public async Task<CombatModel> GetById(int id)
-        {
-            var combatLog = await _service.GetByIdAsync(id);
-            var map = _mapper.Map<CombatModel>(combatLog);
-
-            return map;
         }
 
         [HttpGet("FindByCombatLogId/{combatLogId}")]
@@ -45,23 +31,12 @@ namespace CombatAnalysis.CombatParserAPI.Controllers
         }
 
         [HttpPost]
-        public async Task<int> Post(CombatModel combat)
+        public async Task<int> Post(CombatModel value)
         {
-            SaveCombatDataHelper.CombatData = combat.Data;
-
-            var map = _mapper.Map<CombatDto>(combat);
+            var map = _mapper.Map<CombatDto>(value);
             var createdCombatId = await _service.CreateAsync(map);
 
             return createdCombatId;
-        }
-
-        [HttpPost("SaveCombatPlayers")]
-        public async Task SaveCombatPlayers(List<CombatPlayerDataModel> combatPlayers)
-        {
-            var combat = await GetById(combatPlayers[0].CombatId);
-            combat.Data = SaveCombatDataHelper.CombatData;
-
-            await _saveCombatDataHelper.SaveCombatPlayerData(combat, combatPlayers);
         }
 
         [HttpDelete("{id}")]

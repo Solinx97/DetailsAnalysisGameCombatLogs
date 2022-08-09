@@ -1,17 +1,16 @@
 ﻿using CombatAnalysis.CombatParser.Entities;
-using CombatAnalysis.CombatParser.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
 
-namespace CombatAnalysis.CombatParser.Services
+namespace CombatAnalysis.CombatParser
 {
-    public class CombatDetailsService : ICombatDetails
+    public class CombatDetailsInformation
     {
         private Combat _combat;
         private string _player;
 
-        public CombatDetailsService()
+        public CombatDetailsInformation()
         {
             _combat = new Combat();
             DamageDone = new List<DamageDone>();
@@ -20,28 +19,34 @@ namespace CombatAnalysis.CombatParser.Services
             ResourceRecovery = new List<ResourceRecovery>();
         }
 
-        public List<DamageDone> DamageDone { get; }
+        public List<DamageDone> DamageDone { get; private set; }
 
-        public List<HealDone> HealDone { get; }
+        public List<HealDone> HealDone { get; private set; }
 
-        public List<DamageTaken> DamageTaken { get; }
+        public List<DamageTaken> DamageTaken { get; private set; }
 
-        public List<ResourceRecovery> ResourceRecovery { get; }
+        public List<ResourceRecovery> ResourceRecovery { get; private set; }
 
         public void SetData(Combat combat, string player)
         {
             _combat = combat;
             _player = player;
+
+            Clear();
         }
 
         public void SetData(Combat combat)
         {
             _combat = combat;
+
+            Clear();
         }
 
         public void SetData(string player)
         {
             _player = player;
+
+            Clear();
         }
 
         public int GetDamageDone()
@@ -165,7 +170,7 @@ namespace CombatAnalysis.CombatParser.Services
 
         private DamageDone GetDamageDoneInformation(string[] combatData)
         {
-            if (!combatData[3].Contains(_player)
+            if (!combatData[3].Contains(_player) 
                 || combatData[1] == "SWING_DAMAGE_LANDED")
             {
                 return null;
@@ -180,7 +185,7 @@ namespace CombatAnalysis.CombatParser.Services
             }
             else
             {
-                spellOrItem = combatData[11].Contains("0000000000000000") || combatData[11].Contains("nil")
+                spellOrItem = (combatData[11].Contains("0000000000000000") || combatData[11].Contains("nil"))
                     ? "Ближ. бой" : combatData[11].Trim('"');
             }
 
@@ -272,7 +277,6 @@ namespace CombatAnalysis.CombatParser.Services
                 MaxHealth = value2,
                 ValueWithOverheal = value3,
                 Overheal = value4,
-                Value = value3 - value4,
                 IsFullOverheal = value3 - value4 == 0,
                 IsCrit = isCrit
             };
@@ -291,7 +295,7 @@ namespace CombatAnalysis.CombatParser.Services
                 || combatData[2].Contains("Creature"))
             {
                 int.TryParse(combatData[^10], out var value1);
-                var spellOrItem = combatData[11].Contains("0000000000000000") || combatData[11].Contains("nil")
+                var spellOrItem = (combatData[11].Contains("0000000000000000") || combatData[11].Contains("nil"))
                     ? "Ближ. бой" : combatData[11].Trim('"');
 
                 var isResist = false;
@@ -340,6 +344,14 @@ namespace CombatAnalysis.CombatParser.Services
             }
 
             return isFound ? 1 : 0;
+        }
+
+        private void Clear()
+        {
+            DamageDone.Clear();
+            HealDone.Clear();
+            DamageTaken.Clear();
+            ResourceRecovery.Clear();
         }
     }
 }

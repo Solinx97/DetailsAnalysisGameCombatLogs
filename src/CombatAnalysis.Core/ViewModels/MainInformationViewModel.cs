@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using CombatAnalysis.CombatParser;
 using CombatAnalysis.CombatParser.Interfaces;
 using CombatAnalysis.Core.Commands;
 using CombatAnalysis.Core.Interfaces;
@@ -19,7 +20,6 @@ namespace CombatAnalysis.Core.ViewModels
     {
         private readonly IMvxNavigationService _mvvmNavigation;
         private readonly IMapper _mapper;
-        private readonly IParser _parser;
         private readonly CombatParserAPIService _combatParserAPIService;
 
         private string _combatLog;
@@ -33,23 +33,25 @@ namespace CombatAnalysis.Core.ViewModels
         private int _combatLogsNumber;
         private MvxViewModel _basicTemplate;
         private IViewModelConnect _handler;
+        private List<CombatModel> _combats;
         private ObservableCollection<CombatLogModel> _combatLogs;
         private double _screenWidth;
         private double _screenHeight;
 
-        public MainInformationViewModel(IMapper mapper, IMvxNavigationService mvvmNavigation, IHttpClientHelper httpClient, IParser parser)
+        public MainInformationViewModel(IMapper mapper, IMvxNavigationService mvvmNavigation, IHttpClientHelper httpClient)
         {
+            var a = System.Windows.SystemParameters.PrimaryScreenWidth;
+
             _mapper = mapper;
             _mvvmNavigation = mvvmNavigation;
-            _parser = parser;
 
             GetCombatLogCommand = new MvxCommand(GetCombatLog);
             OpenPlayerAnalysisCommand = new MvxCommand(OpenPlayerAnalysis);
             LoadCombatsCommand = new MvxCommand(LoadCombats);
-            ReloadCombatsCommand = new MvxCommand(LoadCombatLogs);
             DeleteCombatCommand = new MvxCommand(DeleteCombat);
 
-            _combatParserAPIService = new CombatParserAPIService(httpClient);
+            _combats = new List<CombatModel>();
+            _combatParserAPIService = new CombatParserAPIService(mapper, httpClient);
 
             _handler = new ViewModelMConnect();
             BasicTemplate = new BasicTemplateViewModel(this, _handler, _mvvmNavigation);
@@ -58,8 +60,6 @@ namespace CombatAnalysis.Core.ViewModels
         public IMvxCommand GetCombatLogCommand { get; set; }
 
         public IMvxCommand LoadCombatsCommand { get; set; }
-
-        public IMvxCommand ReloadCombatsCommand { get; set; }
 
         public IMvxCommand DeleteCombatCommand { get; set; }
 
@@ -202,7 +202,7 @@ namespace CombatAnalysis.Core.ViewModels
         {
             IsParsing = true;
 
-            Task.Run(() => GetCombatDataDetails(_combatLogPath));
+            Task.Run(() => GetData(_combatLogPath));
         }
 
         public void Update(string combatInformation)
@@ -222,64 +222,64 @@ namespace CombatAnalysis.Core.ViewModels
             ScreenHeight = System.Windows.SystemParameters.PrimaryScreenHeight * 0.75;
         }
 
-        private async Task GetCombatDataDetails(string combatLog)
+        private async Task GetData(string combatLog)
         {
-            _parser.AddObserver(this);
-            await _parser.Parse(combatLog);
+            var parser = new CombaInformationtParser();
+            parser.AddObserver(this);
+            await parser.Parse(combatLog);
 
-            var map = _parser.Combats;
-            var combats = _mapper.Map<List<CombatModel>>(map);
+            var combats = parser.Combats;
+            _combats = _mapper.Map<List<CombatModel>>(combats);
 
-            await _mvvmNavigation.Navigate<GeneralAnalysisViewModel, List<CombatModel>>(combats);
+            await GetDetails();
+        }
+
+        private async Task GetDetails()
+        {
+            var createdCombatLogId = 0;
 
             if (IsNeedSave)
             {
                 IsSaving = true;
 
-                await SaveCombatDataDetails(combats);
+                _combatParserAPIService.SetCombats(_combats);
+                createdCombatLogId = _combatParserAPIService.SaveCombatLog().Result;
             }
-        }
 
-        private async Task SaveCombatDataDetails(List<CombatModel> combats)
-        {
-            _combatParserAPIService.SetCombats(combats);
-            var createdCombatLogId = await _combatParserAPIService.SaveCombatLogAsync();
-            var tasks = new List<Task>();
-
-            foreach (var item in combats)
+            for (int i = 0; i < _combats.Count; i++)
             {
-                tasks.Add(_combatParserAPIService.SaveCombatDataAsync(item, createdCombatLogId));
+                foreach (var item in _combats[i].Players)
+                {
+                    _combats[i].DamageDone += item.DamageDone;
+                    _combats[i].HealDone += item.HealDone;
+                    _combats[i].EnergyRecovery += item.EnergyRecovery;
+                    _combats[i].DamageTaken += item.DamageTaken;
+                }
+
+                if (IsNeedSave)
+                {
+                    _combatParserAPIService.SaveCombatData(_combats[i], createdCombatLogId).GetAwaiter().GetResult();
+                }
             }
 
-            await Task.WhenAny(tasks);
-            await _combatParserAPIService.SetReadyForCombatLog(createdCombatLogId);
+            await _mvvmNavigation.Navigate<GeneralAnalysisViewModel, List<CombatModel>>(_combats);
         }
 
         private async Task LoadCombatLogsAsync()
         {
-            var combatLogsData = await _combatParserAPIService.LoadCombatLogsAsync();
-            var readyCombatLogData = new List<CombatLogModel>();
-
-            foreach (var item in combatLogsData)
-            {
-                if (item.IsReady)
-                {
-                    readyCombatLogData.Add(item);
-                }
-            }
-
-            CombatLogs = new ObservableCollection<CombatLogModel>(readyCombatLogData);
+            var combatLogsData = await _combatParserAPIService.LoadCombatLogs();
+            CombatLogs = new ObservableCollection<CombatLogModel>(combatLogsData);
             CombatLogsNumber = CombatLogs.Count;
         }
 
         private async Task LoadCombatsAsync()
         {
             var id = CombatLogs[SelectedCombatLogId].Id;
-            var loadedCombats = await _combatParserAPIService.LoadCombatsAsync(id);
+            var loadedCombats = await _combatParserAPIService.LoadCombats(id);
 
             foreach (var item in loadedCombats)
             {
-                var players = await _combatParserAPIService.LoadCombatPlayersAsync(item.Id);
+                var players = await _combatParserAPIService.LoadCombatPlayers(item.Id);
                 item.Players = players.ToList();
             }
 
@@ -288,7 +288,7 @@ namespace CombatAnalysis.Core.ViewModels
 
         private async Task DeleteAsync()
         {
-            await _combatParserAPIService.DeleteCombatLogAsync(CombatLogs[SelectedCombatLogId].Id);
+            await _combatParserAPIService.DeleteCombatLog(CombatLogs[SelectedCombatLogId].Id);
             await LoadCombatLogsAsync();
 
             IsParsing = false;
