@@ -230,17 +230,6 @@ namespace CombatAnalysis.Core.ViewModels
             var map = _parser.Combats;
             var combats = _mapper.Map<List<CombatModel>>(map);
 
-            for (int i = 0; i < combats.Count; i++)
-            {
-                foreach (var item in combats[i].Players)
-                {
-                    combats[i].DamageDone += item.DamageDone;
-                    combats[i].HealDone += item.HealDone;
-                    combats[i].EnergyRecovery += item.EnergyRecovery;
-                    combats[i].DamageTaken += item.DamageTaken;
-                }
-            }
-
             await _mvvmNavigation.Navigate<GeneralAnalysisViewModel, List<CombatModel>>(combats);
 
             if (IsNeedSave)
