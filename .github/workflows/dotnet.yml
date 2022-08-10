@@ -7,23 +7,6 @@ on:
     branches: [ "main", "development" ]
 
 jobs:
-  build:
-
-    runs-on: windows-latest
-
-    steps:
-    - uses: actions/checkout@v3
-    - name: Install .NET Core
-      uses: actions/setup-dotnet@v2
-      with:
-        dotnet-version: 3.1.x
-    - name: Restore dependencies
-      run: dotnet restore
-    - name: Build
-      run: dotnet build --no-restore
-    - name: Execute unit tests
-      run: dotnet test --no-build --verbosity normal
-      working-directory: tests\CombatAnalysis.Parser.Tests\CombatAnalysis.Parser.Tests.csproj
   
   build_desktop:
 
@@ -48,9 +31,14 @@ jobs:
     - name: Setup MSBuild.exe
       uses: microsoft/setup-msbuild@v1.0.2
       
-    # Execute all unit tests in the solution
+    - name: Restore dependencies
+      run: dotnet restore
+      
+    - name: Build
+      run: dotnet build --no-restore
+      
     - name: Execute unit tests
-      run: dotnet test
+      run: dotnet test --no-build --verbosity normal
 
     # Restore the application to populate the obj folder with RuntimeIdentifiers
     - name: Restore the application
