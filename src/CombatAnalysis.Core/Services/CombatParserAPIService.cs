@@ -1,5 +1,4 @@
-﻿using AutoMapper;
-using CombatAnalysis.Core.Interfaces;
+﻿using CombatAnalysis.Core.Interfaces;
 using CombatAnalysis.Core.Models;
 using System.Collections.Generic;
 using System.Linq;
