@@ -21,6 +21,9 @@ jobs:
       run: dotnet restore
     - name: Build
       run: dotnet build --no-restore
+    - name: Execute unit tests
+      run: dotnet test --no-build --verbosity normal
+      working-directory: tests\CombatAnalysis.Parser.Tests\CombatAnalysis.Parser.Tests.csproj
   
   build_desktop:
 
@@ -53,14 +56,3 @@ jobs:
       run: msbuild $env:Solution_Name /t:Restore /p:Configuration=$env:Configuration
       env:
         Configuration: ${{ matrix.configuration }}
-  
-  run_tests:
-
-    runs-on: ubuntu-latest
-    
-    env:
-      Test_Project_Path: tests\CombatAnalysis.Parser.Tests\CombatAnalysis.Parser.Tests.csproj
-      
-    steps:
-    - name: Execute unit tests
-      run: dotnet test
