@@ -58,6 +58,9 @@ jobs:
 
     runs-on: ubuntu-latest
     
+    env:
+      Test_Project_Path: tests\CombatAnalysis.Parser.Tests\CombatAnalysis.Parser.Tests.csproj
+      
     steps:
     - name: Execute unit tests
       run: dotnet test
