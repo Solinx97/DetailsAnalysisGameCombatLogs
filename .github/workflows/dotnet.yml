@@ -22,7 +22,7 @@ jobs:
     - name: Build
       run: dotnet build --no-restore
   
-  build desktop:
+  build_desktop:
 
     strategy:
       matrix:
@@ -54,7 +54,7 @@ jobs:
       env:
         Configuration: ${{ matrix.configuration }}
   
-  run tests:
+  run_tests:
 
     runs-on: ubuntu-latest
     
