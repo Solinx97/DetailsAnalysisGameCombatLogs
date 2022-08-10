@@ -1,4 +1,4 @@
-name: .NET
+name: .NET Core
 
 on:
   push:
@@ -13,7 +13,7 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
-    - name: Setup .NET
+    - name: Install .NET Core
       uses: actions/setup-dotnet@v2
       with:
         dotnet-version: 3.1.x
@@ -21,5 +21,41 @@ jobs:
       run: dotnet restore
     - name: Build
       run: dotnet build --no-restore
-    - name: Test
-      run: dotnet test --no-build --verbosity normal
+  
+  build desktop:
+
+    strategy:
+      matrix:
+        include:
+        - dotnet-version: '3.1.x'
+          tfm: 'netcoreapp3.1'
+        configuration: [Release]
+
+    runs-on: windows-latest  # For a list of available runner types, refer to
+                             # https://help.github.com/en/actions/reference/workflow-syntax-for-github-actions#jobsjob_idruns-on
+
+    env:
+      Solution_Name: CombatAnalysis.sln                        # Replace with your solution name, i.e. MyWpfApp.sln.
+      Test_Project_Path: tests\CombatAnalysis.Parser.Tests\CombatAnalysis.Parser.Tests.csproj             # Replace with the path to your test project, i.e. MyWpfApp.Tests\MyWpfApp.Tests.csproj.
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+      with:
+        fetch-depth: 0
+
+    # Add  MSBuild to the PATH: https://github.com/microsoft/setup-msbuild
+    - name: Setup MSBuild.exe
+      uses: microsoft/setup-msbuild@v1.0.2
+
+    # Restore the application to populate the obj folder with RuntimeIdentifiers
+    - name: Restore the application
+      run: msbuild $env:Solution_Name /t:Restore /p:Configuration=$env:Configuration
+      env:
+        Configuration: ${{ matrix.configuration }}
+  
+  run tests:
+
+    steps:
+    - name: Execute unit tests
+      run: dotnet test
