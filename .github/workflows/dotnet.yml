@@ -14,12 +14,11 @@ jobs:
       matrix:
         configuration: [Debug, Release]
 
-    runs-on: windows-latest  # For a list of available runner types, refer to
-                             # https://help.github.com/en/actions/reference/workflow-syntax-for-github-actions#jobsjob_idruns-on
+    runs-on: windows-latest
 
     env:
-      Solution_Name: CombatAnalysis.sln                        # Replace with your solution name, i.e. MyWpfApp.sln.
-      Test_Project_Path: tests\CombatAnalysis.Parser.Tests\CombatAnalysis.Parser.Tests.csproj             # Replace with the path to your test project, i.e. MyWpfApp.Tests\MyWpfApp.Tests.csproj.
+      Solution_Name: CombatAnalysis.sln
+      Test_Project_Path: tests\CombatAnalysis.Parser.Tests\CombatAnalysis.Parser.Tests.csproj
 
     steps:
     - name: Checkout
@@ -27,7 +26,6 @@ jobs:
       with:
         fetch-depth: 0
 
-    # Add  MSBuild to the PATH: https://github.com/microsoft/setup-msbuild
     - name: Setup MSBuild.exe
       uses: microsoft/setup-msbuild@v1.0.2
       
@@ -43,8 +41,7 @@ jobs:
     - name: Upload a Build Artifact
       uses: actions/upload-artifact@v3.1.0
       with:
-        # A file, directory or wildcard pattern that describes what to upload
-        path: src\CombatAnalysis.App\bin\Debug\netcoreapp3.1
+        path: src\CombatAnalysis.App\bin\${{ matrix.configuration }}\netcoreapp3.1$
     
     - name: Download a Build Artifact
       uses: actions/download-artifact@v3.0.0
