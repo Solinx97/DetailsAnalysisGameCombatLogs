@@ -33,7 +33,7 @@ jobs:
       run: dotnet restore
       
     - name: Build
-      run: dotnet build
+      run: dotnet build --configuration ${{ matrix.configuration }}
       
     - name: Execute unit tests
       run: dotnet test
