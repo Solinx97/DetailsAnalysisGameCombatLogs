@@ -23,24 +23,27 @@ concurrency:
 jobs:
   # Single deploy job since we're just deploying
   deploy:
+  
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
+      
     runs-on: windows-latest
+    
     steps:
+    
       - name: Checkout
         uses: actions/checkout@v3
+        
       - name: Restore dependencies
         run: dotnet restore
+        
       - name: Build
         run: dotnet build
+        
       - name: Setup Pages
         uses: actions/configure-pages@v1
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v1
-        with:
-          # Upload entire repository
-          path: 'src\CombatAnalysis.WebApp\bin\Debug\netcoreapp3.1'
+          
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@main
