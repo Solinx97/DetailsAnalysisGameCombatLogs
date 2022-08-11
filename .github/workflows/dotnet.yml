@@ -35,16 +35,10 @@ jobs:
       run: dotnet restore
       
     - name: Build
-      run: dotnet build --no-restore
+      run: dotnet build
       
     - name: Execute unit tests
-      run: dotnet test --no-build --verbosity normal
-
-    # Restore the application to populate the obj folder with RuntimeIdentifiers
-    - name: Restore the application
-      run: msbuild $env:Solution_Name /t:Restore /p:Configuration=$env:Configuration
-      env:
-        Configuration: ${{ matrix.configuration }}
+      run: dotnet test
         
     - name: Download a Build Artifact
       uses: actions/download-artifact@v3.0.0
