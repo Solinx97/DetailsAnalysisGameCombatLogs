@@ -43,11 +43,14 @@ jobs:
         
       - name: Setup Pages
         uses: actions/configure-pages@v1
-          
+      
+      - name: Publish .NET Core Project
+        run: dotnet publish src\CombatAnalysis.WebApp\CombatAnalysis.WebApp.csproj -c Release -o release --nologo
+      
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v1
         with:
-          path: 'src\CombatAnalysis.WebApp\bin\Debug\netcoreapp3.1'
+          path: 'src\CombatAnalysis.WebApp\release\wwwroot'
           
       - name: Deploy to GitHub Pages
         id: deployment
