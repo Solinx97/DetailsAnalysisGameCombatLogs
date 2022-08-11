@@ -33,7 +33,7 @@ jobs:
       - name: Restore dependencies
         run: dotnet restore
       - name: Build
-        run: dotnet build --configuration ${{ matrix.configuration }}
+        run: dotnet build
       - name: Setup Pages
         uses: actions/configure-pages@v1
       - name: Upload artifact
