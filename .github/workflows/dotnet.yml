@@ -13,14 +13,16 @@ jobs:
     strategy:
       matrix:
         configuration: [Debug, Release]
-        build_path: [src\CombatAnalysis.App\bin\Debug\netcoreapp3.1, src\CombatAnalysis.App\bin\Release\netcoreapp3.1\win-x86\msixpublish]
+        include:
+            - build_path_debug: src\CombatAnalysis.App\bin\Debug\netcoreapp3.1
+            - build_path_release: src\CombatAnalysis.App\bin\Release\netcoreapp3.1\win-x86\msixpublish
 
     runs-on: windows-latest
 
     env:
       Solution_Name: CombatAnalysis.sln
       Test_Project_Path: tests\CombatAnalysis.Parser.Tests\CombatAnalysis.Parser.Tests.csproj
-
+      
     steps:
     - name: Checkout
       uses: actions/checkout@v3
