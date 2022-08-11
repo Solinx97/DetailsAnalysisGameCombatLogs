@@ -13,6 +13,7 @@ jobs:
     strategy:
       matrix:
         configuration: [Debug, Release]
+        build_path: [src\CombatAnalysis.App\bin\Debug\netcoreapp3.1, src\CombatAnalysis.App\bin\Release\netcoreapp3.1\win-x86\msixpublish]
 
     runs-on: windows-latest
 
@@ -41,7 +42,7 @@ jobs:
     - name: Upload a Build Artifact
       uses: actions/upload-artifact@v3.1.0
       with:
-        path: src\CombatAnalysis.App\bin\${{ matrix.configuration }}\netcoreapp3.1
+        path: ${{ matrix.build_path }}
     
     - name: Download a Build Artifact
       uses: actions/download-artifact@v3.0.0
