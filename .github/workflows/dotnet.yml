@@ -41,7 +41,7 @@ jobs:
     - name: Upload a Build Artifact
       uses: actions/upload-artifact@v3.1.0
       with:
-        path: src\CombatAnalysis.App\bin\${{ matrix.configuration }}\netcoreapp3.1$
+        path: src\CombatAnalysis.App\bin\${{ matrix.configuration }}\netcoreapp3.1
     
     - name: Download a Build Artifact
       uses: actions/download-artifact@v3.0.0
