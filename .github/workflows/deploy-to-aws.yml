@@ -11,11 +11,6 @@ jobs:
     - name: Checkout source code
       uses: actions/checkout@v2
 
-    - name: Upload artifact
-      uses: actions/upload-artifact@v3.1.0
-      with:
-        path: 'businessCard/'
-
     - name: Deploy to EB
       uses: einaregilsson/beanstalk-deploy@v20
       with:
@@ -24,5 +19,5 @@ jobs:
         application_name: details-analysis
         environment_name: Detailsanalysis-env
         version_label: 1236
-        region: us-west-2
+        region: us-east-1
         deployment_package: src/CombatAnalysis.WebApp/CombatAnalysis.WebApp.csproj
