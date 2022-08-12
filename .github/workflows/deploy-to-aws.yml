@@ -31,4 +31,4 @@ jobs:
         environment_name: Detailsanalysis-env
         version_label: 163
         region: us-east-1
-        deployment_package: artifact
+        deployment_package: ./
