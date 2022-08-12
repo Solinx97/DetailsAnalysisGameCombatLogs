@@ -25,4 +25,4 @@ jobs:
         environment_name: DetailsAnalysis
         version_label: 12345
         region: us-west-2
-        deployment_package: artifact
+        deployment_package: github-pages
