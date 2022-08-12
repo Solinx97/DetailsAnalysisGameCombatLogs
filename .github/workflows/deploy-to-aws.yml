@@ -10,7 +10,18 @@ jobs:
 
     - name: Checkout source code
       uses: actions/checkout@v2
-        
+      
+    - name: Upload JAR
+      uses: actions/upload-artifact@v2
+      with:
+        name: artifact
+        path: src\CombatAnalysis.WebApp
+    
+    - name: Download JAR
+      uses: actions/download-artifact@v2
+      with:
+        name: artifact
+          
     - name: Deploy to EB
       uses: einaregilsson/beanstalk-deploy@v20
       with:
@@ -20,4 +31,4 @@ jobs:
         environment_name: Detailsanalysis-env
         version_label: 163
         region: us-east-1
-        deployment_package: src\CombatAnalysis.WebApp
+        deployment_package: artifact
