@@ -1,0 +1,9 @@
+    - name: Deploy to EB
+      uses: einaregilsson/beanstalk-deploy@v20
+      with:
+        aws_access_key: AKIAVGQFZJBSR3RRZXMU
+        aws_secret_key: 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
+        application_name: details-analysis
+        environment_name: DetailsAnalysis
+        version_label: 12345
+        region: us-west-2
