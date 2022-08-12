@@ -22,7 +22,7 @@ jobs:
         aws_access_key: AKIAVGQFZJBSR3RRZXMU
         aws_secret_key: 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
         application_name: details-analysis
-        environment_name: DetailsAnalysis
+        environment_name: Detailsanalysis-env
         version_label: 1236
         region: us-west-2
         deployment_package: src/CombatAnalysis.WebApp/CombatAnalysis.WebApp.csproj
