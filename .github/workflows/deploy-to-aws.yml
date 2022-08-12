@@ -10,7 +10,7 @@ jobs:
 
     - name: Checkout source code
       uses: actions/checkout@v2
-
+        
     - name: Deploy to EB
       uses: einaregilsson/beanstalk-deploy@v20
       with:
@@ -20,4 +20,4 @@ jobs:
         environment_name: Detailsanalysis-env
         version_label: 1236
         region: us-east-1
-        deployment_package: src/CombatAnalysis.WebApp/CombatAnalysis.WebApp.csproj
+        deployment_package: src\CombatAnalysis.WebApp
