@@ -1,3 +1,20 @@
+name: Deploy master
+on:
+  pull_request:
+    branches:
+    - master
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+
+    - name: Checkout source code
+      uses: actions/checkout@v2
+
+    - name: Generate deployment package
+      run: zip -r deploy.zip . -x '*.git*'
+
     - name: Deploy to EB
       uses: einaregilsson/beanstalk-deploy@v20
       with:
@@ -7,3 +24,4 @@
         environment_name: DetailsAnalysis
         version_label: 12345
         region: us-west-2
+        deployment_package: deploy.zip
