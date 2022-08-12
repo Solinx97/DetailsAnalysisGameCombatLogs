@@ -11,8 +11,10 @@ jobs:
     - name: Checkout source code
       uses: actions/checkout@v2
 
-    - name: Generate deployment package
-      run: zip -r deploy.zip . -x '*.git*'
+    - name: Upload artifact
+      uses: actions/upload-pages-artifact@v1
+      with:
+        path: 'businessCard/'
 
     - name: Deploy to EB
       uses: einaregilsson/beanstalk-deploy@v20
@@ -23,4 +25,4 @@ jobs:
         environment_name: DetailsAnalysis
         version_label: 12345
         region: us-west-2
-        deployment_package: deploy.zip
+        deployment_package: artifact
