@@ -18,12 +18,9 @@ jobs:
       uses: actions/setup-dotnet@v2
       with:
         dotnet-version: 3.1.x
-        
-    - name: Restore dependencies
-      run: dotnet restore
       
     - name: Publish
-      run: dotnet publish src\CombatAnalysis.WebApp\ --no-restore /p:WebPublishMethod=Package /p:PackageLocation="publish"
+      run: dotnet publish src\CombatAnalysis.WebApp\ /p:WebPublishMethod=Package /p:PackageLocation="publish"
       
     - name: Deploy to EB
       uses: einaregilsson/beanstalk-deploy@v20
@@ -32,5 +29,6 @@ jobs:
         aws_secret_key: RKSqYA98T1awkKO7f219Smqq3wqNQ17Ubb7rObnu
         application_name: details-analysis
         environment_name: Detailsanalysis-env
+        version_label: 0.0.11
         region: us-east-1
         deployment_package: src\CombatAnalysis.WebApp\publish\CombatAnalysis.WebApp.zip
