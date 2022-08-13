@@ -38,12 +38,6 @@ jobs:
       with:
         name: webAppArtifact
         path: src\CombatAnalysis.WebApp\bin\Release\netcoreapp3.1\publish\
-    
-    - name: Download a Build Artifact
-      uses: actions/download-artifact@v3.0.0
-      with:
-        name: webAppArtifact
-        path: artifacts\webAppArtifact.zip
         
     - name: Deploy to EB
       uses: einaregilsson/beanstalk-deploy@v20
@@ -55,5 +49,5 @@ jobs:
         version_label: ${{ github.sha }}
         region: ${{ env.region }}
         # deployment_package: src\CombatAnalysis.WebApp\publish\CombatAnalysis.WebApp.zip
-        deployment_package: artifacts\webAppArtifact.zip
+        deployment_package: webAppArtifact.zip
         use_existing_version_if_available: true
