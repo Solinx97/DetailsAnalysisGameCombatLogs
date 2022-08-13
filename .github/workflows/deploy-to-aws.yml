@@ -25,10 +25,10 @@ jobs:
     - name: Deploy to EB
       uses: einaregilsson/beanstalk-deploy@v20
       with:
-        aws_access_key: AKIAVGQFZJBSR3RRZXMU
-        aws_secret_key: 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
-        application_name: details-analysis
-        environment_name: Detailsanalysis-env
-        version_label: 0.0.11
+        aws_access_key: AKIAVGQFZJBSZQAR6F7E
+        aws_secret_key: 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
+        application_name: details-anslysis
+        environment_name: Detailsanslysis-env
+        version_label: 0.0.12
         region: us-east-1
         deployment_package: src\CombatAnalysis.WebApp\publish\CombatAnalysis.WebApp.zip
