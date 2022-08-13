@@ -44,10 +44,22 @@ jobs:
       uses: actions/setup-dotnet@v2
       with:
         dotnet-version: 3.1.x
-        
+    
     - name: Publish
-      run: dotnet publish src\CombatAnalysis.WebApp\ /p:WebPublishMethod=Package /p:PackageLocation="publish"
-      
+      run: dotnet publish src\CombatAnalysis.WebApp -c Release
+    
+    - name: Upload a Build Artifact
+      uses: actions/upload-artifact@v3.1.0
+      with:
+        name: webAppArtifact
+        path: src\CombatAnalysis.WebApp\bin\Release\netcoreapp3.1\publish\
+    
+    - name: Download a Build Artifact
+      uses: actions/download-artifact@v3.0.0
+      with:
+        name: webAppArtifact
+        path: artifacts\
+        
     - name: Deploy to EB
       uses: einaregilsson/beanstalk-deploy@v20
       with:
@@ -57,4 +69,4 @@ jobs:
         environment_name: ${{ env.applicationEnv }}
         version_label: ${{ github.sha }}
         region: ${{ env.region }}
-        deployment_package: src\CombatAnalysis.WebApp\publish\CombatAnalysis.WebApp.zip
+        deployment_package: artifacts\webAppArtifact.zip
