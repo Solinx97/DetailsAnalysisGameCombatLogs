@@ -31,6 +31,6 @@ jobs:
         aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         application_name: details-anslysis
         environment_name: Detailsanslysis-env
-        version_label: 0.0.13
+        version_label: ${{ github.sha }}
         region: us-east-1
         deployment_package: src\CombatAnalysis.WebApp\publish\CombatAnalysis.WebApp.zip
