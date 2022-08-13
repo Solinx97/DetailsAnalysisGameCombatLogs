@@ -11,17 +11,12 @@ jobs:
     - name: Checkout source code
       uses: actions/checkout@v2
       
-    - name: Upload JAR
-      uses: actions/upload-artifact@v2
-      with:
-        name: artifact
-        path: src\CombatAnalysis.WebApp
-    
-    - name: Download JAR
-      uses: actions/download-artifact@v2
-      with:
-        name: artifact
-          
+    - name: Build
+      run: dotnet build
+      
+    - name: Publish
+      run: dotnet publish src\CombatAnalysis.WebApp -c Release /p:WebPublishMethod=Package /p:PackageLocation="publish"
+      
     - name: Deploy to EB
       uses: einaregilsson/beanstalk-deploy@v20
       with:
@@ -29,6 +24,5 @@ jobs:
         aws_secret_key: RKSqYA98T1awkKO7f219Smqq3wqNQ17Ubb7rObnu
         application_name: details-analysis
         environment_name: Detailsanalysis-env
-        version_label: 163
         region: us-east-1
-        deployment_package: D:\a\DetalsAnalysisGamesCombatLogs\DetalsAnalysisGamesCombatLogs\
+        deployment_package: src\CombatAnalysis.WebApp\publish\CombatAnalysis.WebApp.zip
