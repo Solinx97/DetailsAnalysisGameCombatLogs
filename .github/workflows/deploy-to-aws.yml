@@ -12,26 +12,10 @@ env:
   region: us-east-1
 
 jobs:
-
-  build:
-  
-    runs-on: windows-latest
-    
-    steps:
-    - name: Checkout source code
-      uses: actions/checkout@v2
-      
-    - name: Setup .NET
-      uses: actions/setup-dotnet@v2
-      with:
-        dotnet-version: 3.1.x
-      
-    - name: Build
-      run: dotnet build src\CombatAnalysis.WebApp\CombatAnalysis.WebApp.csproj
       
   deploy:
   
-    needs: build
+    # needs: build
     environment:
       name: aws
     runs-on: windows-latest
@@ -46,8 +30,9 @@ jobs:
         dotnet-version: 3.1.x
     
     - name: Publish
-      run: dotnet publish src\CombatAnalysis.WebApp -c Release
-    
+      # run: dotnet publish src\CombatAnalysis.WebApp\ /p:WebPublishMethod=Package /p:PackageLocation="publish"
+      run: dotnet publish src\CombatAnalysis.WebApp\ -c Release
+      
     - name: Upload a Build Artifact
       uses: actions/upload-artifact@v3.1.0
       with:
@@ -58,7 +43,7 @@ jobs:
       uses: actions/download-artifact@v3.0.0
       with:
         name: webAppArtifact
-        path: artifacts\
+        path: artifacts\webAppArtifact.zip
         
     - name: Deploy to EB
       uses: einaregilsson/beanstalk-deploy@v20
@@ -69,4 +54,6 @@ jobs:
         environment_name: ${{ env.applicationEnv }}
         version_label: ${{ github.sha }}
         region: ${{ env.region }}
+        # deployment_package: src\CombatAnalysis.WebApp\publish\CombatAnalysis.WebApp.zip
         deployment_package: artifacts\webAppArtifact.zip
+        use_existing_version_if_available: true
