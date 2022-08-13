@@ -17,7 +17,7 @@ jobs:
         dotnet-version: 3.1.x
         
     - name: Publish
-      run: dotnet publish src\CombatAnalysis.WebApp\ -c Release /p:WebPublishMethod=Package /p:PackageLocation="publish"
+      run: dotnet publish src\CombatAnalysis.WebApp
       
     - name: Deploy to EB
       uses: einaregilsson/beanstalk-deploy@v20
