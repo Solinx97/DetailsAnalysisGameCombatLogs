@@ -11,11 +11,8 @@ jobs:
     - name: Checkout source code
       uses: actions/checkout@v2
       
-    - name: Build
-      run: dotnet build
-      
     - name: Publish
-      run: dotnet publish src\CombatAnalysis.WebApp -c Release /p:WebPublishMethod=Package /p:PackageLocation="publish"
+      run: dotnet publish src\CombatAnalysis.WebApp\ -c Release /p:WebPublishMethod=Package /p:PackageLocation="publish"
       
     - name: Deploy to EB
       uses: einaregilsson/beanstalk-deploy@v20
