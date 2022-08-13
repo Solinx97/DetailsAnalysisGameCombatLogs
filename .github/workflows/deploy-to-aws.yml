@@ -3,11 +3,13 @@ on:
   pull_request:
     branches: [ "main" ]
 
-env: 
+env:
   CI: false
   
 jobs:
   build:
+    environment:
+      name: aws
     runs-on: windows-latest
     steps:
 
