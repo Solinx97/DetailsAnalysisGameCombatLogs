@@ -1,13 +1,10 @@
 ﻿using CombatAnalysis.CombatParser.Entities;
-using CombatAnalysis.CombatParser.Interfaces;
 using CombatAnalysis.CombatParser.Services;
+using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CombatAnalysis.Parser.Tests.CombatParser
 {
@@ -15,92 +12,95 @@ namespace CombatAnalysis.Parser.Tests.CombatParser
     internal class CombatDetailsServiceTests
     {
         [Test]
-        public async Task CombatDetailsService_Parse_Must_Fill_Combats_Collection()
+        public void CombatDetailsService_GetDamageDone_Must_Return_Correct_Value_By_Spell_Damage()
         {
-            var testCombatLog = "combatLog.txt";
-
-            var combatPlayerData = new CombatPlayerData
-            {
-                UserName = "Oleg - Chrome",
-                DamageDone = 10,
-                DamageTaken = 15,
-                HealDone = 20,
-                EnergyRecovery = 25,
-                UsedBuffs = 2,
-            };
+            var data = "6/3 21:10:39.957  SPELL_DAMAGE,,\"Волако\",,,,\"Страж племени Амани\",0xa48,0x0,26862,\"Коварный удар\",,,,84842,86172,0,0,0,-1,0,0,0,131.84,1590.25,333,2.0246,71,1330,889,-1,1,0,0,0,1,nil,nil";
             var combat = new Combat
             {
-                Name = "Test",
-                Data = new List<string> { "data" },
+                Name = "Test combat",
+                Data = new List<string> { data },
                 IsWin = true,
-                StartDate = new DateTimeOffset(2022, 06, 03, 21, 15, 05, TimeSpan.Zero),
-                FinishDate = new DateTimeOffset(2022, 06, 03, 21, 17, 58, TimeSpan.Zero),
-                Players = new List<CombatPlayerData> { combatPlayerData },
+                StartDate = new DateTimeOffset(2022, 06, 05, 20, 15, 05, TimeSpan.Zero),
+                FinishDate = new DateTimeOffset(2022, 06, 05, 20, 17, 58, TimeSpan.Zero),
             };
 
-            var mockCombatDetails = new Mock<ICombatDetails>();
-            mockCombatDetails.Setup(x => x.GetDamageDone()).Returns(10);
-            mockCombatDetails.Setup(x => x.GetHealDone()).Returns(20);
-            mockCombatDetails.Setup(x => x.GetDamageTaken()).Returns(15);
-            mockCombatDetails.Setup(x => x.GetResourceRecovery()).Returns(25);
-            mockCombatDetails.Setup(x => x.GetDeathsNumber()).Returns(2);
+            var mockLogger = new Mock<ILogger>();
+            var combatDetails = new CombatDetailsService(mockLogger.Object);
+            combatDetails.Initialization(combat, "Волако");
+            var damageDone = combatDetails.GetDamageDone();
 
-            var mockFileManager = new Mock<IFileManager>();
+            var expectedDamageDone = 1330;
 
-            var fakeFileContents = CreateFakeCombatLog();
-            byte[] fakeFileBytes = Encoding.UTF8.GetBytes(fakeFileContents);
-            var fakeMemoryStream = new MemoryStream(fakeFileBytes);
-
-            mockFileManager.Setup(fileManager => fileManager.StreamReader(testCombatLog))
-                           .Returns(() => new StreamReader(fakeMemoryStream));
-
-            var parser = new CombatParserService(mockCombatDetails.Object, mockFileManager.Object);
-            await parser.Parse(testCombatLog);
-
-            var combats = parser.Combats;
-
-            Assert.IsNotEmpty(combats);
-
-            var expectedCombat = combats[0];
-
-            Assert.AreEqual(expectedCombat.Name, combat.Name, "Combat name isn't correct.");
-
-            var expectedCombatHealDone = combats[0].HealDone;
-            var expectedCombatDamageDone = combats[0].DamageDone;
-            var expectedCombatDamageTaken = combats[0].DamageTaken;
-            var expectedCombatEnergyRecovery = combats[0].EnergyRecovery;
-
-            Assert.AreEqual(expectedCombatHealDone, combatPlayerData.HealDone, "Combat heald one has not expected elements.");
-            Assert.AreEqual(expectedCombatDamageDone, combatPlayerData.DamageDone, "Combat damage done has not expected elements.");
-            Assert.AreEqual(expectedCombatDamageTaken, combatPlayerData.DamageTaken, "Combat damage taken has not expected elements.");
-            Assert.AreEqual(expectedCombatEnergyRecovery, combatPlayerData.EnergyRecovery, "Combat energy recovery has not expected elements.");
-
-            Assert.IsNotEmpty(combats[0].Players);
-
-            var expectedCombatPlayerData = combats[0].Players[0];
-
-            Assert.AreEqual(expectedCombatPlayerData.UserName, combatPlayerData.UserName, "Combat players username isn't correct.");
-
-            var expectedCombatPlayerDataHealDone = expectedCombatPlayerData.HealDone;
-            var expectedCombatPlayerDataDamageDone = expectedCombatPlayerData.DamageDone;
-            var expectedCombatPlayerDataDamageTaken = expectedCombatPlayerData.DamageTaken;
-            var expectedCombatPlayerDataEnergyRecovery = expectedCombatPlayerData.EnergyRecovery;
-
-            Assert.AreEqual(expectedCombatPlayerDataHealDone, combatPlayerData.HealDone, "Combat heald one has not expected elements.");
-            Assert.AreEqual(expectedCombatPlayerDataDamageDone, combatPlayerData.DamageDone, "Combat damage done has not expected elements.");
-            Assert.AreEqual(expectedCombatPlayerDataDamageTaken, combatPlayerData.DamageTaken, "Combat damage taken has not expected elements.");
-            Assert.AreEqual(expectedCombatPlayerDataEnergyRecovery, combatPlayerData.EnergyRecovery, "Combat energy recovery has not expected elements.");
+            Assert.AreEqual(expectedDamageDone, damageDone);
         }
 
-        private string CreateFakeCombatLog()
+        [Test]
+        public void CombatDetailsService_GetHealDone_Must_Return_Correct_Value_By_Spell_Heal()
         {
-            var fakeFileContents = new StringBuilder();
-            fakeFileContents.AppendLine("6/3 21:15:05  ENCOUNTER_START,,\"Test\"");
-            fakeFileContents.AppendLine("1  COMBATANT_INFO,Player-4452-02FE19CD");
-            fakeFileContents.AppendLine("1  1,Player-4452-02FE19CD,\"Oleg - Chrome\"");
-            fakeFileContents.AppendLine("6/3 21:17:58  ENCOUNTER_END,,,,,1");
+            var data = "6/3 21:07:10.139  SPELL_HEAL,Player-4452-033980F6,\"Шопи\",0x511,0x0,Player-4452-034E2A70,\"Азула - Хроми\",0x514,0x0,25423,\"Цепное исцеление\",0x8,Player-4452-034E2A70,0000000000000000,100,100,55,966,1854,0,9234,10616,0,115.89,1662.72,333,4.4495,120,1405,1405,544,0,1";
+            var combat = new Combat
+            {
+                Name = "Test combat2",
+                Data = new List<string> { data },
+                IsWin = true,
+                StartDate = new DateTimeOffset(2022, 06, 05, 20, 15, 05, TimeSpan.Zero),
+                FinishDate = new DateTimeOffset(2022, 06, 05, 20, 17, 58, TimeSpan.Zero),
+            };
 
-            return fakeFileContents.ToString();
+            var mockLogger = new Mock<ILogger>();
+            var combatDetails = new CombatDetailsService(mockLogger.Object);
+            combatDetails.Initialization(combat, "Шопи");
+            var healDone = combatDetails.GetHealDone();
+
+            var expectedHealDone = 861;
+
+            Assert.AreEqual(expectedHealDone, healDone);
+        }
+
+        [Test]
+        public void CombatDetailsService_GetDamageTaken_Must_Return_Correct_Value_By_Spell_Damage()
+        {
+            var data = "6/3 21:10:49.399  SPELL_DAMAGE,Creature-0-4460-568-19650-23889-00019A4C8C,\"Варвар из племени Амани\",0xa48,0x0,Player-4452-0352CBDA,\"Протоппе\",0x40512,0x0,9080,\"Подрезать сухожилия\",0x1,Player-4452-0352CBDA,0000000000000000,99,100,472,722,24548,0,6945,8118,0,122.71,1574.54,333,0.6668,140,19,66,-1,1,0,0,0,nil,nil,nil";
+            var combat = new Combat
+            {
+                Name = "Test combat2",
+                Data = new List<string> { data },
+                IsWin = true,
+                StartDate = new DateTimeOffset(2022, 06, 05, 20, 15, 05, TimeSpan.Zero),
+                FinishDate = new DateTimeOffset(2022, 06, 05, 20, 17, 58, TimeSpan.Zero),
+            };
+
+            var mockLogger = new Mock<ILogger>();
+            var combatDetails = new CombatDetailsService(mockLogger.Object);
+            combatDetails.Initialization(combat, "Протоппе");
+            var damageTaken = combatDetails.GetDamageTaken();
+
+            var expectedDamageTaken = 19;
+
+            Assert.AreEqual(expectedDamageTaken, damageTaken);
+        }
+
+        [Test]
+        public void CombatDetailsService_ResourceRecovery_Must_Return_Correct_Value_By_Spell_Periodic_Energize()
+        {
+            var data = "6/3 21:10:49.499  SPELL_PERIODIC_ENERGIZE,Player-4452-0352CBDA,\"Пратоапуы\",0x40512,0x0,Player-4452-0352CBDA,\"Протопалище - Хроми\",0x40512,0x0,31786,\"Духовное созвучие\",0x1,Player-4452-0352CBDA,0000000000000000,100,100,472,722,24548,0,6973,8118,0,122.39,1574.29,333,0.6668,140,28.0000,0.0000,0,8118";
+            var combat = new Combat
+            {
+                Name = "Test combat2",
+                Data = new List<string> { data },
+                IsWin = true,
+                StartDate = new DateTimeOffset(2022, 06, 05, 20, 15, 05, TimeSpan.Zero),
+                FinishDate = new DateTimeOffset(2022, 06, 05, 20, 17, 58, TimeSpan.Zero),
+            };
+
+            var mockLogger = new Mock<ILogger>();
+            var combatDetails = new CombatDetailsService(mockLogger.Object);
+            combatDetails.Initialization(combat, "Пратоапуы");
+            var resourceRecovery = combatDetails.GetResourceRecovery();
+
+            var expectedResourceRecovery = 28;
+
+            Assert.AreEqual(expectedResourceRecovery, resourceRecovery);
         }
     }
 }

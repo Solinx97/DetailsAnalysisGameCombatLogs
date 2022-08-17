@@ -139,7 +139,7 @@ namespace CombatAnalysis.CombatParser.Services
             var players = GetCombatPlayers(combat.Data);
             foreach (var item in players)
             {
-                _combatDetails.SetData(combat, item);
+                _combatDetails.Initialization(combat, item);
                 var playerCombatData = new CombatPlayerData
                 {
                     UserName = item,

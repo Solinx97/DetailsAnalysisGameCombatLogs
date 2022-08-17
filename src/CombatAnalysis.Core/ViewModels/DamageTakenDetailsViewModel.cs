@@ -7,6 +7,7 @@ using CombatAnalysis.Core.Core;
 using CombatAnalysis.Core.Interfaces;
 using CombatAnalysis.Core.Models;
 using CombatAnalysis.Core.Services;
+using Microsoft.Extensions.Logging;
 using MvvmCross.Navigation;
 using MvvmCross.ViewModels;
 using System;
@@ -21,6 +22,7 @@ namespace CombatAnalysis.Core.ViewModels
         private readonly IMvxNavigationService _mvvmNavigation;
         private readonly IViewModelConnect _handler;
         private readonly IMapper _mapper;
+        private readonly ILogger _logger;
         private readonly PowerUpInCombat<DamageTakenModel> _powerUpInCombat;
         private readonly CombatParserAPIService _combatParserAPIService;
 
@@ -39,10 +41,11 @@ namespace CombatAnalysis.Core.ViewModels
         private bool _isCollectionReversed;
         private long _totalValue;
 
-        public DamageTakenDetailsViewModel(IMapper mapper, IMvxNavigationService mvvmNavigation, IHttpClientHelper httpClient)
+        public DamageTakenDetailsViewModel(IMapper mapper, IMvxNavigationService mvvmNavigation, IHttpClientHelper httpClient, ILogger logger)
         {
             _mapper = mapper;
             _mvvmNavigation = mvvmNavigation;
+            _logger = logger;
 
             _combatParserAPIService = new CombatParserAPIService(httpClient);
 
@@ -214,7 +217,7 @@ namespace CombatAnalysis.Core.ViewModels
             }
             else
             {
-                var combatInformation = new CombatDetailsService();
+                var combatInformation = new CombatDetailsService(_logger);
                 var map = _mapper.Map<Combat>(combat);
 
                 GetDamageTakenDetails(combatInformation, SelectedPlayer, map);
@@ -224,7 +227,7 @@ namespace CombatAnalysis.Core.ViewModels
 
         private void GetDamageTakenDetails(CombatDetailsService combatInformation, string player, Combat combat)
         {
-            combatInformation.SetData(combat, player);
+            combatInformation.Initialization(combat, player);
             combatInformation.GetDamageTaken();
 
             var map1 = _mapper.Map<ObservableCollection<DamageTakenModel>>(combatInformation.DamageTaken);

@@ -1,5 +1,6 @@
 ﻿using CombatAnalysis.CombatParser.Entities;
 using CombatAnalysis.CombatParser.Interfaces;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -8,11 +9,15 @@ namespace CombatAnalysis.CombatParser.Services
 {
     public class CombatDetailsService : ICombatDetails
     {
+        private readonly ILogger _logger;
+
         private Combat _combat;
         private string _player;
 
-        public CombatDetailsService()
+        public CombatDetailsService(ILogger logger)
         {
+            _logger = logger;
+
             _combat = new Combat();
             DamageDone = new List<DamageDone>();
             HealDone = new List<HealDone>();
@@ -28,18 +33,18 @@ namespace CombatAnalysis.CombatParser.Services
 
         public List<ResourceRecovery> ResourceRecovery { get; }
 
-        public void SetData(Combat combat, string player)
+        public void Initialization(Combat combat, string player)
         {
             _combat = combat;
             _player = player;
         }
 
-        public void SetData(Combat combat)
+        public void Initialization(Combat combat)
         {
             _combat = combat;
         }
 
-        public void SetData(string player)
+        public void Initialization(string player)
         {
             _player = player;
         }
@@ -47,22 +52,30 @@ namespace CombatAnalysis.CombatParser.Services
         public int GetDamageDone()
         {
             int damageDone = 0;
-            foreach (var item in _combat.Data)
-            {
-                if ((item.Contains("SPELL_DAMAGE") || item.Contains("SWING_DAMAGE")
-                    || item.Contains("SPELL_PERIODIC_DAMAGE") || item.Contains("SWING_MISSED")
-                    || item.Contains("DAMAGE_SHIELD_MISSED") || item.Contains("RANGE_DAMAGE")
-                    || item.Contains("SPELL_MISSED")) && item.Contains(_player))
-                {
-                    var combatData = CombatDataParse(item);
-                    var damageDoneInformation = GetDamageDoneInformation(combatData.ToArray());
 
-                    if (damageDoneInformation != null)
+            try
+            {
+                foreach (var item in _combat.Data)
+                {
+                    if ((item.Contains("SPELL_DAMAGE") || item.Contains("SWING_DAMAGE")
+                        || item.Contains("SPELL_PERIODIC_DAMAGE") || item.Contains("SWING_MISSED")
+                        || item.Contains("DAMAGE_SHIELD_MISSED") || item.Contains("RANGE_DAMAGE")
+                        || item.Contains("SPELL_MISSED")) && item.Contains(_player))
                     {
-                        damageDone += damageDoneInformation.Value;
-                        DamageDone.Add(damageDoneInformation);
+                        var succesfullCombatDataInformation = GetSuccesfullInformation(item);
+                        var damageDoneInformation = GetDamageDoneInformation(succesfullCombatDataInformation.ToArray());
+
+                        if (damageDoneInformation != null)
+                        {
+                            damageDone += damageDoneInformation.Value;
+                            DamageDone.Add(damageDoneInformation);
+                        }
                     }
                 }
+            }
+            catch (ArgumentNullException ex)
+            {
+                _logger.LogError(ex, ex.Message, _player);
             }
 
             return damageDone;
@@ -71,20 +84,28 @@ namespace CombatAnalysis.CombatParser.Services
         public int GetHealDone()
         {
             int healthDone = 0;
-            foreach (var item in _combat.Data)
-            {
-                if ((item.Contains("SPELL_HEAL") || item.Contains("SPELL_PERIODIC_HEAL"))
-                    && item.Contains(_player))
-                {
-                    var combatData = CombatDataParse(item);
-                    var healDoneInformation = GetHealDoneInformation(combatData.ToArray());
 
-                    if (healDoneInformation != null)
+            try
+            {
+                foreach (var item in _combat.Data)
+                {
+                    if ((item.Contains("SPELL_HEAL") || item.Contains("SPELL_PERIODIC_HEAL"))
+                        && item.Contains(_player))
                     {
-                        healthDone += healDoneInformation.Value;
-                        HealDone.Add(healDoneInformation);
+                        var combatData = GetSuccesfullInformation(item);
+                        var healDoneInformation = GetHealDoneInformation(combatData.ToArray());
+
+                        if (healDoneInformation != null)
+                        {
+                            healthDone += healDoneInformation.Value;
+                            HealDone.Add(healDoneInformation);
+                        }
                     }
                 }
+            }
+            catch (ArgumentNullException ex)
+            {
+                _logger.LogError(ex, ex.Message, _player);
             }
 
             return healthDone;
@@ -93,22 +114,30 @@ namespace CombatAnalysis.CombatParser.Services
         public int GetDamageTaken()
         {
             int damageTaken = 0;
-            foreach (var item in _combat.Data)
-            {
-                if ((item.Contains("SPELL_DAMAGE") || item.Contains("SWING_DAMAGE")
-                    || item.Contains("SPELL_PERIODIC_DAMAGE") || item.Contains("SWING_MISSED")
-                    || item.Contains("DAMAGE_SHIELD_MISSED") || item.Contains("RANGE_DAMAGE")
-                    || item.Contains("SPELL_MISSED")) && item.Contains(_player))
-                {
-                    var combatData = CombatDataParse(item);
-                    var damageTakenInformation = GetDamageTakenInformation(combatData.ToArray());
 
-                    if (damageTakenInformation != null)
+            try
+            {
+                foreach (var item in _combat.Data)
+                {
+                    if ((item.Contains("SPELL_DAMAGE") || item.Contains("SWING_DAMAGE")
+                        || item.Contains("SPELL_PERIODIC_DAMAGE") || item.Contains("SWING_MISSED")
+                        || item.Contains("DAMAGE_SHIELD_MISSED") || item.Contains("RANGE_DAMAGE")
+                        || item.Contains("SPELL_MISSED")) && item.Contains(_player))
                     {
-                        damageTaken += damageTakenInformation.Value;
-                        DamageTaken.Add(damageTakenInformation);
+                        var combatData = GetSuccesfullInformation(item);
+                        var damageTakenInformation = GetDamageTakenInformation(combatData.ToArray());
+
+                        if (damageTakenInformation != null)
+                        {
+                            damageTaken += damageTakenInformation.Value;
+                            DamageTaken.Add(damageTakenInformation);
+                        }
                     }
                 }
+            }
+            catch (ArgumentNullException ex)
+            {
+                _logger.LogError(ex, ex.Message, _player);
             }
 
             return damageTaken;
@@ -117,17 +146,25 @@ namespace CombatAnalysis.CombatParser.Services
         public double GetResourceRecovery()
         {
             double energyRecovery = 0;
-            foreach (var item in _combat.Data)
-            {
-                if ((item.Contains("SPELL_PERIODIC_ENERGIZE") || item.Contains("SPELL_ENERGIZE"))
-                    && item.Contains(_player))
-                {
-                    var combatData = CombatDataParse(item);
-                    var energyRecoveryInformation = GetEnergyInformation(combatData.ToArray());
-                    energyRecovery += energyRecoveryInformation.Value;
 
-                    ResourceRecovery.Add(energyRecoveryInformation);
+            try
+            {
+                foreach (var item in _combat.Data)
+                {
+                    if ((item.Contains("SPELL_PERIODIC_ENERGIZE") || item.Contains("SPELL_ENERGIZE"))
+                        && item.Contains(_player))
+                    {
+                        var combatData = GetSuccesfullInformation(item);
+                        var energyRecoveryInformation = GetEnergyInformation(combatData.ToArray());
+                        energyRecovery += energyRecoveryInformation.Value;
+
+                        ResourceRecovery.Add(energyRecoveryInformation);
+                    }
                 }
+            }
+            catch (ArgumentNullException ex)
+            {
+                _logger.LogError(ex, ex.Message, _player);
             }
 
             return energyRecovery;
@@ -136,6 +173,7 @@ namespace CombatAnalysis.CombatParser.Services
         public int GetDeathsNumber()
         {
             int deaths = 0;
+
             foreach (var item in _combat.Data)
             {
                 if (item.Contains("UNIT_DIED"))
@@ -147,7 +185,7 @@ namespace CombatAnalysis.CombatParser.Services
             return deaths;
         }
 
-        private List<string> CombatDataParse(string combatData)
+        private List<string> GetSuccesfullInformation(string combatData)
         {
             var log = combatData.Split("  ");
             var parse = log[1].Split(',');

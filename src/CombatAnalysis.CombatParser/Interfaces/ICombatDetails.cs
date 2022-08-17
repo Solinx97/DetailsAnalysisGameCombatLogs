@@ -13,11 +13,11 @@ namespace CombatAnalysis.CombatParser.Interfaces
 
         List<ResourceRecovery> ResourceRecovery { get; }
 
-        void SetData(Combat combat, string player);
+        void Initialization(Combat combat, string player);
 
-        void SetData(Combat combat);
+        void Initialization(Combat combat);
 
-        void SetData(string player);
+        void Initialization(string player);
 
         int GetDamageDone();
 
