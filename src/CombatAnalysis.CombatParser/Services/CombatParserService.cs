@@ -26,6 +26,19 @@ namespace CombatAnalysis.CombatParser.Services
 
         public List<Combat> Combats { get; }
 
+        public async Task<bool> FileCheck(string combatLog)
+        {
+            using var reader = _fileManager.StreamReader(combatLog);
+            var fileIsCorrect = true;
+            var line = await reader.ReadLineAsync();
+            if (!line.Contains("COMBAT_LOG_VERSION"))
+            {
+                fileIsCorrect = false;
+            }
+
+            return fileIsCorrect;
+        }
+
         public async Task Parse(string combatLog)
         {
             using var reader = _fileManager.StreamReader(combatLog);

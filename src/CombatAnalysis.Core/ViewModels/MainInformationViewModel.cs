@@ -23,8 +23,8 @@ namespace CombatAnalysis.Core.ViewModels
         private readonly CombatParserAPIService _combatParserAPIService;
 
         private string _combatLog;
+        private bool _fileIsNotCorrect;
         private bool _isParsing;
-        private bool _isSaving;
         private bool _isNeedSave = true;
         private bool _isShowSteps;
         private string _foundCombat;
@@ -101,12 +101,12 @@ namespace CombatAnalysis.Core.ViewModels
             }
         }
 
-        public bool IsSaving
+        public bool FileIsNotCorrect
         {
-            get { return _isSaving; }
+            get { return _fileIsNotCorrect; }
             set
             {
-                SetProperty(ref _isSaving, value);
+                SetProperty(ref _fileIsNotCorrect, value);
             }
         }
 
@@ -200,8 +200,6 @@ namespace CombatAnalysis.Core.ViewModels
 
         public void OpenPlayerAnalysis()
         {
-            IsParsing = true;
-
             Task.Run(() => GetCombatDataDetails(_combatLogPath));
         }
 
@@ -213,7 +211,6 @@ namespace CombatAnalysis.Core.ViewModels
         public override void ViewAppeared()
         {
             IsParsing = false;
-            IsSaving = false;
 
             CombatLogs?.Clear();
             LoadCombatLogs();
@@ -225,18 +222,23 @@ namespace CombatAnalysis.Core.ViewModels
         private async Task GetCombatDataDetails(string combatLog)
         {
             _parser.AddObserver(this);
-            await _parser.Parse(combatLog);
-
-            var map = _parser.Combats;
-            var combats = _mapper.Map<List<CombatModel>>(map);
-
-            await _mvvmNavigation.Navigate<GeneralAnalysisViewModel, List<CombatModel>>(combats);
-
-            if (IsNeedSave)
+            FileIsNotCorrect = !await _parser.FileCheck(combatLog);
+            
+            if (!FileIsNotCorrect)
             {
-                IsSaving = true;
+                IsParsing = true;
 
-                await SaveCombatDataDetails(combats);
+                await _parser.Parse(combatLog);
+
+                var map = _parser.Combats;
+                var combats = _mapper.Map<List<CombatModel>>(map);
+
+                await _mvvmNavigation.Navigate<GeneralAnalysisViewModel, List<CombatModel>>(combats);
+
+                if (IsNeedSave)
+                {
+                    await SaveCombatDataDetails(combats);
+                }
             }
         }
 
