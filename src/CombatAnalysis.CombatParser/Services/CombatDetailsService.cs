@@ -62,7 +62,7 @@ namespace CombatAnalysis.CombatParser.Services
                         || item.Contains("DAMAGE_SHIELD_MISSED") || item.Contains("RANGE_DAMAGE")
                         || item.Contains("SPELL_MISSED")) && item.Contains(_player))
                     {
-                        var succesfullCombatDataInformation = GetSuccesfullInformation(item);
+                        var succesfullCombatDataInformation = GetUsefulInformation(item);
                         var damageDoneInformation = GetDamageDoneInformation(succesfullCombatDataInformation.ToArray());
 
                         if (damageDoneInformation != null)
@@ -92,7 +92,7 @@ namespace CombatAnalysis.CombatParser.Services
                     if ((item.Contains("SPELL_HEAL") || item.Contains("SPELL_PERIODIC_HEAL"))
                         && item.Contains(_player))
                     {
-                        var combatData = GetSuccesfullInformation(item);
+                        var combatData = GetUsefulInformation(item);
                         var healDoneInformation = GetHealDoneInformation(combatData.ToArray());
 
                         if (healDoneInformation != null)
@@ -124,7 +124,7 @@ namespace CombatAnalysis.CombatParser.Services
                         || item.Contains("DAMAGE_SHIELD_MISSED") || item.Contains("RANGE_DAMAGE")
                         || item.Contains("SPELL_MISSED")) && item.Contains(_player))
                     {
-                        var combatData = GetSuccesfullInformation(item);
+                        var combatData = GetUsefulInformation(item);
                         var damageTakenInformation = GetDamageTakenInformation(combatData.ToArray());
 
                         if (damageTakenInformation != null)
@@ -154,7 +154,7 @@ namespace CombatAnalysis.CombatParser.Services
                     if ((item.Contains("SPELL_PERIODIC_ENERGIZE") || item.Contains("SPELL_ENERGIZE"))
                         && item.Contains(_player))
                     {
-                        var combatData = GetSuccesfullInformation(item);
+                        var combatData = GetUsefulInformation(item);
                         var energyRecoveryInformation = GetEnergyInformation(combatData.ToArray());
                         energyRecovery += energyRecoveryInformation.Value;
 
@@ -178,14 +178,14 @@ namespace CombatAnalysis.CombatParser.Services
             {
                 if (item.Contains("UNIT_DIED"))
                 {
-                    deaths += CheckPlayer(item);
+                    deaths += GetPlayersStatus(item);
                 }
             }
 
             return deaths;
         }
 
-        private List<string> GetSuccesfullInformation(string combatData)
+        private List<string> GetUsefulInformation(string combatData)
         {
             var log = combatData.Split("  ");
             var parse = log[1].Split(',');
@@ -365,16 +365,24 @@ namespace CombatAnalysis.CombatParser.Services
             }
         }
 
-        private int CheckPlayer(string combatData)
+        private int GetPlayersStatus(string combatData)
         {
             var isFound = false;
-            foreach (var item in _combat.Players)
+
+            try
             {
-                if (combatData.Contains(item.UserName))
+                foreach (var item in _combat.Players)
                 {
-                    isFound = true;
-                    break;
+                    if (combatData.Contains(item.UserName))
+                    {
+                        isFound = true;
+                        break;
+                    }
                 }
+            }
+            catch (ArgumentNullException ex)
+            {
+                _logger.LogError(ex, ex.Message, _combat.Players);
             }
 
             return isFound ? 1 : 0;
