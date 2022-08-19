@@ -21,7 +21,7 @@ namespace CombatAnalysis.CombatParser.Extensions
             var lessDetails = new List<DamageDoneGeneral>();
             foreach (var item in spells)
             {
-                var damageDone = new DamageDoneGeneral
+                var damageDoneGeneral = new DamageDoneGeneral
                 {
                     Value = item.Sum(x => x.Value),
                     DamagePerSecond = item.Sum(x => x.Value) / durationTime.TotalSeconds,
@@ -32,7 +32,7 @@ namespace CombatAnalysis.CombatParser.Extensions
                     CastNumber = item.Count,
                 };
 
-                lessDetails.Add(damageDone);
+                lessDetails.Add(damageDoneGeneral);
             }
 
             lessDetails = lessDetails.OrderByDescending(x => x.Value).ToList();

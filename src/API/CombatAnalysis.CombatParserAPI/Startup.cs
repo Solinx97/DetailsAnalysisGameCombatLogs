@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 
 namespace CombatAnalysis.CombatParserAPI
@@ -28,10 +29,11 @@ namespace CombatAnalysis.CombatParserAPI
         {
             RegisteringDependencies(services);
 
-            IHttpClientHelper httpClient = new HttpClientHelper();
-            services.AddSingleton(httpClient);
+            services.AddSingleton<IHttpClientHelper, HttpClientHelper>();
 
-            ICombatDetails combatDetails = new CombatDetailsService();
+            var loggerFactory = new LoggerFactory();
+            var logger = new Logger<ILogger>(loggerFactory);
+            ICombatDetails combatDetails = new CombatDetailsService(logger);
             services.AddSingleton(combatDetails);
 
             services.AddControllers();
