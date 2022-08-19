@@ -55,6 +55,11 @@ namespace CombatAnalysis.CombatParser.Services
 
             try
             {
+                if (_player == null)
+                {
+                    throw new ArgumentNullException(_player);
+                }
+
                 foreach (var item in _combat.Data)
                 {
                     if ((item.Contains("SPELL_DAMAGE") || item.Contains("SWING_DAMAGE")
@@ -72,13 +77,15 @@ namespace CombatAnalysis.CombatParser.Services
                         }
                     }
                 }
+
+                return damageDone;
             }
             catch (ArgumentNullException ex)
             {
                 _logger.LogError(ex, ex.Message, _player);
-            }
 
-            return damageDone;
+                return damageDone;
+            }
         }
 
         public int GetHealDone()
@@ -87,6 +94,11 @@ namespace CombatAnalysis.CombatParser.Services
 
             try
             {
+                if (_player == null)
+                {
+                    throw new ArgumentNullException(_player);
+                }
+
                 foreach (var item in _combat.Data)
                 {
                     if ((item.Contains("SPELL_HEAL") || item.Contains("SPELL_PERIODIC_HEAL"))
@@ -117,6 +129,11 @@ namespace CombatAnalysis.CombatParser.Services
 
             try
             {
+                if (_player == null)
+                {
+                    throw new ArgumentNullException(_player);
+                }
+
                 foreach (var item in _combat.Data)
                 {
                     if ((item.Contains("SPELL_DAMAGE") || item.Contains("SWING_DAMAGE")
@@ -149,6 +166,11 @@ namespace CombatAnalysis.CombatParser.Services
 
             try
             {
+                if (_player == null)
+                {
+                    throw new ArgumentNullException(_player);
+                }
+
                 foreach (var item in _combat.Data)
                 {
                     if ((item.Contains("SPELL_PERIODIC_ENERGIZE") || item.Contains("SPELL_ENERGIZE"))

@@ -134,13 +134,13 @@ namespace CombatAnalysis.CombatParser.Services
 
         private void GetCombatPlayersData(Combat combat)
         {
-            var playersData = new List<CombatPlayerData>();
+            var combatPlayerDataCollection = new List<CombatPlayerData>();
 
             var players = GetCombatPlayers(combat.Data);
             foreach (var item in players)
             {
                 _combatDetails.Initialization(combat, item);
-                var playerCombatData = new CombatPlayerData
+                var combatPlayerData = new CombatPlayerData
                 {
                     UserName = item,
                     EnergyRecovery = _combatDetails.GetResourceRecovery(),
@@ -149,10 +149,10 @@ namespace CombatAnalysis.CombatParser.Services
                     DamageTaken = _combatDetails.GetDamageTaken(),
                 };
 
-                playersData.Add(playerCombatData);
+                combatPlayerDataCollection.Add(combatPlayerData);
             }
 
-            combat.Players = playersData;
+            combat.Players = combatPlayerDataCollection;
         }
 
         private void CalculatingCommonCombatDetails(Combat combat)

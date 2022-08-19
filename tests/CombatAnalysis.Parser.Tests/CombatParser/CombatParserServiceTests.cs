@@ -26,18 +26,16 @@ namespace CombatAnalysis.Parser.Tests.CombatParser
             mockCombatDetails.Setup(x => x.GetResourceRecovery()).Returns(25);
             mockCombatDetails.Setup(x => x.GetDeathsNumber()).Returns(2);
 
-            var mockFileManager = new Mock<IFileManager>();
-
             var correctCombatLogFile = "6/8 20:42:39.739  COMBAT_LOG_VERSION,9,ADVANCED_LOG_ENABLED,1,BUILD_VERSION,2.5.4,PROJECT_ID,5";
-            byte[] fakeFileBytes = Encoding.UTF8.GetBytes(correctCombatLogFile);
+            var fakeFileBytes = Encoding.UTF8.GetBytes(correctCombatLogFile);
             var fakeMemoryStream = new MemoryStream(fakeFileBytes);
 
+            var mockFileManager = new Mock<IFileManager>();
             mockFileManager.Setup(fileManager => fileManager.StreamReader(testCombatLog))
                            .Returns(() => new StreamReader(fakeMemoryStream));
 
             var parser = new CombatParserService(mockCombatDetails.Object, mockFileManager.Object);
             var fileIsCorrect = await parser.FileCheck(testCombatLog);
-
             Assert.IsTrue(fileIsCorrect);
         }
 
@@ -53,18 +51,16 @@ namespace CombatAnalysis.Parser.Tests.CombatParser
             mockCombatDetails.Setup(x => x.GetResourceRecovery()).Returns(25);
             mockCombatDetails.Setup(x => x.GetDeathsNumber()).Returns(2);
 
-            var mockFileManager = new Mock<IFileManager>();
-
             var correctCombatLogFile = "6/8 20:42:39.739  COMBAT_LOG_,9,ADVANCED_LOG_ENABLED,1,BUILD_VERSION,2.5.4,PROJECT_ID,5";
-            byte[] fakeFileBytes = Encoding.UTF8.GetBytes(correctCombatLogFile);
+            var fakeFileBytes = Encoding.UTF8.GetBytes(correctCombatLogFile);
             var fakeMemoryStream = new MemoryStream(fakeFileBytes);
 
+            var mockFileManager = new Mock<IFileManager>();
             mockFileManager.Setup(fileManager => fileManager.StreamReader(testCombatLog))
                            .Returns(() => new StreamReader(fakeMemoryStream));
 
             var parser = new CombatParserService(mockCombatDetails.Object, mockFileManager.Object);
             var fileIsCorrect = await parser.FileCheck(testCombatLog);
-
             Assert.IsFalse(fileIsCorrect);
         }
 
@@ -73,38 +69,18 @@ namespace CombatAnalysis.Parser.Tests.CombatParser
         {
             var testCombatLog = "combatLog.txt";
 
-            var combatPlayerData = new CombatPlayerData
-            {
-                UserName = "Oleg - Chrome",
-                DamageDone = 10,
-                DamageTaken = 15,
-                HealDone = 20,
-                EnergyRecovery = 25,
-                UsedBuffs = 2,
-            };
-            var combat = new Combat
-            {
-                Name = "Test",
-                Data = new List<string> { "data" },
-                IsWin = true,
-                StartDate = new DateTimeOffset(2022, 06, 03, 21, 15, 05, TimeSpan.Zero),
-                FinishDate = new DateTimeOffset(2022, 06, 03, 21, 17, 58, TimeSpan.Zero),
-                Players = new List<CombatPlayerData> { combatPlayerData },
-            };
-
             var mockCombatDetails = new Mock<ICombatDetails>();
-            mockCombatDetails.Setup(x => x.GetDamageDone()).Returns(10);
-            mockCombatDetails.Setup(x => x.GetHealDone()).Returns(20);
-            mockCombatDetails.Setup(x => x.GetDamageTaken()).Returns(15);
-            mockCombatDetails.Setup(x => x.GetResourceRecovery()).Returns(25);
+            mockCombatDetails.Setup(x => x.GetDamageDone()).Returns(36);
+            mockCombatDetails.Setup(x => x.GetHealDone()).Returns(39);
+            mockCombatDetails.Setup(x => x.GetDamageTaken()).Returns(77);
+            mockCombatDetails.Setup(x => x.GetResourceRecovery()).Returns(45);
             mockCombatDetails.Setup(x => x.GetDeathsNumber()).Returns(2);
 
-            var mockFileManager = new Mock<IFileManager>();
-
             var fakeFileContents = CreateCorrectlyCombatLog();
-            byte[] fakeFileBytes = Encoding.UTF8.GetBytes(fakeFileContents);
+            var fakeFileBytes = Encoding.UTF8.GetBytes(fakeFileContents);
             var fakeMemoryStream = new MemoryStream(fakeFileBytes);
 
+            var mockFileManager = new Mock<IFileManager>();
             mockFileManager.Setup(fileManager => fileManager.StreamReader(testCombatLog))
                            .Returns(() => new StreamReader(fakeMemoryStream));
 
@@ -112,38 +88,55 @@ namespace CombatAnalysis.Parser.Tests.CombatParser
             await parser.Parse(testCombatLog);
 
             var combats = parser.Combats;
-
             Assert.IsNotEmpty(combats);
 
-            var expectedCombat = combats[0];
+            var firstCombat = combats[0];
 
-            Assert.AreEqual(expectedCombat.Name, combat.Name, "Combat name isn't correct.");
+            var expectedCombatPlayerData = new CombatPlayerData
+            {
+                UserName = "Oleg",
+                DamageDone = 36,
+                DamageTaken = 77,
+                HealDone = 39,
+                EnergyRecovery = 45,
+            };
+            var expectedCombatPlayerData1 = new CombatPlayerData
+            {
+                UserName = "Kiril",
+                DamageDone = 36,
+                DamageTaken = 77,
+                HealDone = 39,
+                EnergyRecovery = 45,
+            };
+            var expectedCombat = new Combat
+            {
+                Name = "Test",
+                Data = new List<string> { "data" },
+                IsWin = true,
+                StartDate = new DateTimeOffset(2022, 06, 03, 21, 15, 05, TimeSpan.Zero),
+                FinishDate = new DateTimeOffset(2022, 06, 03, 21, 17, 58, TimeSpan.Zero),
+                Players = new List<CombatPlayerData> { expectedCombatPlayerData, expectedCombatPlayerData1 },
+                HealDone = 78,
+                DamageDone = 72,
+                DamageTaken = 154,
+                EnergyRecovery = 90
+            };
+            Assert.AreEqual(expectedCombat.Name, firstCombat.Name, "Combat name isn't correct.");
 
-            var expectedCombatHealDone = combats[0].HealDone;
-            var expectedCombatDamageDone = combats[0].DamageDone;
-            var expectedCombatDamageTaken = combats[0].DamageTaken;
-            var expectedCombatEnergyRecovery = combats[0].EnergyRecovery;
+            Assert.IsNotEmpty(firstCombat.Players);
 
-            Assert.AreEqual(expectedCombatHealDone, combatPlayerData.HealDone, "Combat heald one has not expected elements.");
-            Assert.AreEqual(expectedCombatDamageDone, combatPlayerData.DamageDone, "Combat damage done has not expected elements.");
-            Assert.AreEqual(expectedCombatDamageTaken, combatPlayerData.DamageTaken, "Combat damage taken has not expected elements.");
-            Assert.AreEqual(expectedCombatEnergyRecovery, combatPlayerData.EnergyRecovery, "Combat energy recovery has not expected elements.");
+            var firstCombatPlayerData = firstCombat.Players[0];
+            Assert.AreEqual(expectedCombatPlayerData.UserName, firstCombatPlayerData.UserName, "Combat players username isn't correct.");
 
-            Assert.IsNotEmpty(combats[0].Players);
+            Assert.AreEqual(expectedCombat.HealDone, firstCombat.HealDone, "Combat heal done has not expected elements.");
+            Assert.AreEqual(expectedCombat.DamageDone, firstCombat.DamageDone, "Combat damage done has not expected elements.");
+            Assert.AreEqual(expectedCombat.DamageTaken, firstCombat.DamageTaken, "Combat damage taken has not expected elements.");
+            Assert.AreEqual(expectedCombat.EnergyRecovery, firstCombat.EnergyRecovery, "Combat energy recovery has not expected elements.");
 
-            var expectedCombatPlayerData = combats[0].Players[0];
-
-            Assert.AreEqual(expectedCombatPlayerData.UserName, combatPlayerData.UserName, "Combat players username isn't correct.");
-
-            var expectedCombatPlayerDataHealDone = expectedCombatPlayerData.HealDone;
-            var expectedCombatPlayerDataDamageDone = expectedCombatPlayerData.DamageDone;
-            var expectedCombatPlayerDataDamageTaken = expectedCombatPlayerData.DamageTaken;
-            var expectedCombatPlayerDataEnergyRecovery = expectedCombatPlayerData.EnergyRecovery;
-
-            Assert.AreEqual(expectedCombatPlayerDataHealDone, combatPlayerData.HealDone, "Combat heald one has not expected elements.");
-            Assert.AreEqual(expectedCombatPlayerDataDamageDone, combatPlayerData.DamageDone, "Combat damage done has not expected elements.");
-            Assert.AreEqual(expectedCombatPlayerDataDamageTaken, combatPlayerData.DamageTaken, "Combat damage taken has not expected elements.");
-            Assert.AreEqual(expectedCombatPlayerDataEnergyRecovery, combatPlayerData.EnergyRecovery, "Combat energy recovery has not expected elements.");
+            Assert.AreEqual(expectedCombatPlayerData.HealDone, firstCombatPlayerData.HealDone, "Combat player heal done has not expected elements.");
+            Assert.AreEqual(expectedCombatPlayerData.DamageDone, firstCombatPlayerData.DamageDone, "Combat player damage done has not expected elements.");
+            Assert.AreEqual(expectedCombatPlayerData.DamageTaken, firstCombatPlayerData.DamageTaken, "Combat player damage taken has not expected elements.");
+            Assert.AreEqual(expectedCombatPlayerData.EnergyRecovery, firstCombatPlayerData.EnergyRecovery, "Combat player energy recovery has not expected elements.");
         }
 
         [Test]
@@ -151,25 +144,6 @@ namespace CombatAnalysis.Parser.Tests.CombatParser
         {
             var testCombatLog = "combatLog.txt";
 
-            var combatPlayerData = new CombatPlayerData
-            {
-                UserName = "Oleg - Chrome",
-                DamageDone = 10,
-                DamageTaken = 15,
-                HealDone = 20,
-                EnergyRecovery = 25,
-                UsedBuffs = 2,
-            };
-            var combat = new Combat
-            {
-                Name = "Test",
-                Data = new List<string> { "data" },
-                IsWin = true,
-                StartDate = new DateTimeOffset(2022, 06, 03, 21, 15, 05, TimeSpan.Zero),
-                FinishDate = new DateTimeOffset(2022, 06, 03, 21, 17, 58, TimeSpan.Zero),
-                Players = new List<CombatPlayerData> { combatPlayerData },
-            };
-
             var mockCombatDetails = new Mock<ICombatDetails>();
             mockCombatDetails.Setup(x => x.GetDamageDone()).Returns(10);
             mockCombatDetails.Setup(x => x.GetHealDone()).Returns(20);
@@ -177,12 +151,11 @@ namespace CombatAnalysis.Parser.Tests.CombatParser
             mockCombatDetails.Setup(x => x.GetResourceRecovery()).Returns(25);
             mockCombatDetails.Setup(x => x.GetDeathsNumber()).Returns(2);
 
-            var mockFileManager = new Mock<IFileManager>();
-
             var fakeFileContents = CreateCorrectlyCombatLogWithIncorrectCombatName();
-            byte[] fakeFileBytes = Encoding.UTF8.GetBytes(fakeFileContents);
+            var fakeFileBytes = Encoding.UTF8.GetBytes(fakeFileContents);
             var fakeMemoryStream = new MemoryStream(fakeFileBytes);
 
+            var mockFileManager = new Mock<IFileManager>();
             mockFileManager.Setup(fileManager => fileManager.StreamReader(testCombatLog))
                            .Returns(() => new StreamReader(fakeMemoryStream));
 
@@ -190,47 +163,50 @@ namespace CombatAnalysis.Parser.Tests.CombatParser
             await parser.Parse(testCombatLog);
 
             var combats = parser.Combats;
-
             Assert.IsNotEmpty(combats);
 
-            var expectedCombat = combats[0];
+            var firstCombat = combats[0];
 
-            Assert.AreNotEqual(expectedCombat.Name, combat.Name, "Combat name isn't correct.");
-
-            var expectedCombatHealDone = combats[0].HealDone;
-            var expectedCombatDamageDone = combats[0].DamageDone;
-            var expectedCombatDamageTaken = combats[0].DamageTaken;
-            var expectedCombatEnergyRecovery = combats[0].EnergyRecovery;
-
-            Assert.AreEqual(expectedCombatHealDone, combatPlayerData.HealDone, "Combat heald one has not expected elements.");
-            Assert.AreEqual(expectedCombatDamageDone, combatPlayerData.DamageDone, "Combat damage done has not expected elements.");
-            Assert.AreEqual(expectedCombatDamageTaken, combatPlayerData.DamageTaken, "Combat damage taken has not expected elements.");
-            Assert.AreEqual(expectedCombatEnergyRecovery, combatPlayerData.EnergyRecovery, "Combat energy recovery has not expected elements.");
-
-            Assert.IsNotEmpty(combats[0].Players);
-
-            var expectedCombatPlayerData = combats[0].Players[0];
-
-            Assert.AreEqual(expectedCombatPlayerData.UserName, combatPlayerData.UserName, "Combat players username isn't correct.");
-
-            var expectedCombatPlayerDataHealDone = expectedCombatPlayerData.HealDone;
-            var expectedCombatPlayerDataDamageDone = expectedCombatPlayerData.DamageDone;
-            var expectedCombatPlayerDataDamageTaken = expectedCombatPlayerData.DamageTaken;
-            var expectedCombatPlayerDataEnergyRecovery = expectedCombatPlayerData.EnergyRecovery;
-
-            Assert.AreEqual(expectedCombatPlayerDataHealDone, combatPlayerData.HealDone, "Combat heald one has not expected elements.");
-            Assert.AreEqual(expectedCombatPlayerDataDamageDone, combatPlayerData.DamageDone, "Combat damage done has not expected elements.");
-            Assert.AreEqual(expectedCombatPlayerDataDamageTaken, combatPlayerData.DamageTaken, "Combat damage taken has not expected elements.");
-            Assert.AreEqual(expectedCombatPlayerDataEnergyRecovery, combatPlayerData.EnergyRecovery, "Combat energy recovery has not expected elements.");
+            var expectedCombat = new Combat
+            {
+                Name = "Test",
+                Data = new List<string> { "data" },
+                IsWin = true,
+                StartDate = new DateTimeOffset(2022, 06, 03, 21, 15, 05, TimeSpan.Zero),
+                FinishDate = new DateTimeOffset(2022, 06, 03, 21, 17, 58, TimeSpan.Zero),
+            };
+            Assert.AreNotEqual(expectedCombat.Name, firstCombat.Name, "Combat name isn't correct.");
         }
-
 
         [Test]
         public async Task CombatParserService_Parse_Must_Fill_Combats_Collection_With_Incorrect_Player_Name()
         {
             var testCombatLog = "combatLog.txt";
 
-            var combatPlayerData = new CombatPlayerData
+            var mockCombatDetails = new Mock<ICombatDetails>();
+            mockCombatDetails.Setup(x => x.GetDamageDone()).Returns(10);
+            mockCombatDetails.Setup(x => x.GetHealDone()).Returns(20);
+            mockCombatDetails.Setup(x => x.GetDamageTaken()).Returns(15);
+            mockCombatDetails.Setup(x => x.GetResourceRecovery()).Returns(25);
+            mockCombatDetails.Setup(x => x.GetDeathsNumber()).Returns(2);
+
+            var fakeFileContents = CreateCorrectlyCombatLogWithIncorrectPlayerName();
+            var fakeFileBytes = Encoding.UTF8.GetBytes(fakeFileContents);
+            var fakeMemoryStream = new MemoryStream(fakeFileBytes);
+
+            var mockFileManager = new Mock<IFileManager>();
+            mockFileManager.Setup(fileManager => fileManager.StreamReader(testCombatLog))
+                           .Returns(() => new StreamReader(fakeMemoryStream));
+
+            var parser = new CombatParserService(mockCombatDetails.Object, mockFileManager.Object);
+            await parser.Parse(testCombatLog);
+
+            var combats = parser.Combats;
+            Assert.IsNotEmpty(combats);
+
+            var firstCombat = combats[0];
+
+            var expectedCombatPlayerData = new CombatPlayerData
             {
                 UserName = "Oleg - Chrome",
                 DamageDone = 10,
@@ -239,68 +215,22 @@ namespace CombatAnalysis.Parser.Tests.CombatParser
                 EnergyRecovery = 25,
                 UsedBuffs = 2,
             };
-            var combat = new Combat
+            var expectedCombat = new Combat
             {
                 Name = "Test",
                 Data = new List<string> { "data" },
                 IsWin = true,
                 StartDate = new DateTimeOffset(2022, 06, 03, 21, 15, 05, TimeSpan.Zero),
                 FinishDate = new DateTimeOffset(2022, 06, 03, 21, 17, 58, TimeSpan.Zero),
-                Players = new List<CombatPlayerData> { combatPlayerData },
+                Players = new List<CombatPlayerData> { expectedCombatPlayerData },
             };
 
-            var mockCombatDetails = new Mock<ICombatDetails>();
-            mockCombatDetails.Setup(x => x.GetDamageDone()).Returns(10);
-            mockCombatDetails.Setup(x => x.GetHealDone()).Returns(20);
-            mockCombatDetails.Setup(x => x.GetDamageTaken()).Returns(15);
-            mockCombatDetails.Setup(x => x.GetResourceRecovery()).Returns(25);
-            mockCombatDetails.Setup(x => x.GetDeathsNumber()).Returns(2);
+            Assert.AreEqual(expectedCombat.Name, firstCombat.Name, "Combat name isn't correct.");
 
-            var mockFileManager = new Mock<IFileManager>();
+            Assert.IsNotEmpty(firstCombat.Players);
 
-            var fakeFileContents = CreateCorrectlyCombatLogWithIncorrectPlayerName();
-            byte[] fakeFileBytes = Encoding.UTF8.GetBytes(fakeFileContents);
-            var fakeMemoryStream = new MemoryStream(fakeFileBytes);
-
-            mockFileManager.Setup(fileManager => fileManager.StreamReader(testCombatLog))
-                           .Returns(() => new StreamReader(fakeMemoryStream));
-
-            var parser = new CombatParserService(mockCombatDetails.Object, mockFileManager.Object);
-            await parser.Parse(testCombatLog);
-
-            var combats = parser.Combats;
-
-            Assert.IsNotEmpty(combats);
-
-            var expectedCombat = combats[0];
-
-            Assert.AreEqual(expectedCombat.Name, combat.Name, "Combat name isn't correct.");
-
-            var expectedCombatHealDone = combats[0].HealDone;
-            var expectedCombatDamageDone = combats[0].DamageDone;
-            var expectedCombatDamageTaken = combats[0].DamageTaken;
-            var expectedCombatEnergyRecovery = combats[0].EnergyRecovery;
-
-            Assert.AreEqual(expectedCombatHealDone, combatPlayerData.HealDone, "Combat heald one has not expected elements.");
-            Assert.AreEqual(expectedCombatDamageDone, combatPlayerData.DamageDone, "Combat damage done has not expected elements.");
-            Assert.AreEqual(expectedCombatDamageTaken, combatPlayerData.DamageTaken, "Combat damage taken has not expected elements.");
-            Assert.AreEqual(expectedCombatEnergyRecovery, combatPlayerData.EnergyRecovery, "Combat energy recovery has not expected elements.");
-
-            Assert.IsNotEmpty(combats[0].Players);
-
-            var expectedCombatPlayerData = combats[0].Players[0];
-
-            Assert.AreNotEqual(expectedCombatPlayerData.UserName, combatPlayerData.UserName, "Combat players username isn't correct.");
-
-            var expectedCombatPlayerDataHealDone = expectedCombatPlayerData.HealDone;
-            var expectedCombatPlayerDataDamageDone = expectedCombatPlayerData.DamageDone;
-            var expectedCombatPlayerDataDamageTaken = expectedCombatPlayerData.DamageTaken;
-            var expectedCombatPlayerDataEnergyRecovery = expectedCombatPlayerData.EnergyRecovery;
-
-            Assert.AreEqual(expectedCombatPlayerDataHealDone, combatPlayerData.HealDone, "Combat heald one has not expected elements.");
-            Assert.AreEqual(expectedCombatPlayerDataDamageDone, combatPlayerData.DamageDone, "Combat damage done has not expected elements.");
-            Assert.AreEqual(expectedCombatPlayerDataDamageTaken, combatPlayerData.DamageTaken, "Combat damage taken has not expected elements.");
-            Assert.AreEqual(expectedCombatPlayerDataEnergyRecovery, combatPlayerData.EnergyRecovery, "Combat energy recovery has not expected elements.");
+            var firstCombatPlayerData = firstCombat.Players[0];
+            Assert.AreNotEqual(expectedCombatPlayerData.UserName, firstCombatPlayerData.UserName, "Combat players username isn't correct.");
         }
 
         [Test]
@@ -308,25 +238,6 @@ namespace CombatAnalysis.Parser.Tests.CombatParser
         {
             var testCombatLog = "combatLog.txt";
 
-            var combatPlayerData = new CombatPlayerData
-            {
-                UserName = "Oleg - Chrome",
-                DamageDone = 10,
-                DamageTaken = 15,
-                HealDone = 20,
-                EnergyRecovery = 25,
-                UsedBuffs = 2,
-            };
-            var combat = new Combat
-            {
-                Name = "Test",
-                Data = new List<string> { "data" },
-                IsWin = true,
-                StartDate = new DateTimeOffset(2022, 06, 03, 21, 15, 05, TimeSpan.Zero),
-                FinishDate = new DateTimeOffset(2022, 06, 03, 21, 17, 58, TimeSpan.Zero),
-                Players = new List<CombatPlayerData> { combatPlayerData },
-            };
-
             var mockCombatDetails = new Mock<ICombatDetails>();
             mockCombatDetails.Setup(x => x.GetDamageDone()).Returns(10);
             mockCombatDetails.Setup(x => x.GetHealDone()).Returns(20);
@@ -334,12 +245,11 @@ namespace CombatAnalysis.Parser.Tests.CombatParser
             mockCombatDetails.Setup(x => x.GetResourceRecovery()).Returns(25);
             mockCombatDetails.Setup(x => x.GetDeathsNumber()).Returns(2);
 
-            var mockFileManager = new Mock<IFileManager>();
-
             var fakeFileContents = CreateIncorrectlyCombatLog();
             byte[] fakeFileBytes = Encoding.UTF8.GetBytes(fakeFileContents);
             var fakeMemoryStream = new MemoryStream(fakeFileBytes);
 
+            var mockFileManager = new Mock<IFileManager>();
             mockFileManager.Setup(fileManager => fileManager.StreamReader(testCombatLog))
                            .Returns(() => new StreamReader(fakeMemoryStream));
 
@@ -347,7 +257,6 @@ namespace CombatAnalysis.Parser.Tests.CombatParser
             await parser.Parse(testCombatLog);
 
             var combats = parser.Combats;
-
             Assert.IsEmpty(combats);
         }
 
@@ -355,15 +264,6 @@ namespace CombatAnalysis.Parser.Tests.CombatParser
         public async Task CombatParserService_Parse_Must_Fill_Combats_Collection_Without_Players()
         {
             var testCombatLog = "combatLog.txt";
-
-            var combat = new Combat
-            {
-                Name = "Test",
-                Data = new List<string> { "data" },
-                IsWin = true,
-                StartDate = new DateTimeOffset(2022, 06, 03, 21, 15, 05, TimeSpan.Zero),
-                FinishDate = new DateTimeOffset(2022, 06, 03, 21, 17, 58, TimeSpan.Zero),
-            };
 
             var mockCombatDetails = new Mock<ICombatDetails>();
             mockCombatDetails.Setup(x => x.GetDamageDone()).Returns(10);
@@ -385,12 +285,20 @@ namespace CombatAnalysis.Parser.Tests.CombatParser
             await parser.Parse(testCombatLog);
 
             var combats = parser.Combats;
-
             Assert.IsNotEmpty(combats);
 
-            var expectedCombat = combats[0];
+            var firstCombat = combats[0];
 
-            Assert.AreEqual(expectedCombat.Name, combat.Name, "Combat name isn't correct.");
+            var expectedCombat = new Combat
+            {
+                Name = "Test",
+                Data = new List<string> { "data" },
+                IsWin = true,
+                StartDate = new DateTimeOffset(2022, 06, 03, 21, 15, 05, TimeSpan.Zero),
+                FinishDate = new DateTimeOffset(2022, 06, 03, 21, 17, 58, TimeSpan.Zero),
+            };
+
+            Assert.AreEqual(expectedCombat.Name, firstCombat.Name, "Combat name isn't correct.");
 
             Assert.IsEmpty(combats[0].Players);
         }
@@ -400,7 +308,9 @@ namespace CombatAnalysis.Parser.Tests.CombatParser
             var fakeFileContents = new StringBuilder();
             fakeFileContents.AppendLine("6/3 21:15:05  ENCOUNTER_START,,\"Test\"");
             fakeFileContents.AppendLine("1  COMBATANT_INFO,Player-4452-02FE19CD");
-            fakeFileContents.AppendLine("1  1,Player-4452-02FE19CD,\"Oleg - Chrome\"");
+            fakeFileContents.AppendLine("1  COMBATANT_INFO,Player-4452-02FE19TY");
+            fakeFileContents.AppendLine("1  1,Player-4452-02FE19CD,\"Oleg\"");
+            fakeFileContents.AppendLine("1  1,Player-4452-02FE19TY,\"Kiril\"");
             fakeFileContents.AppendLine("6/3 21:17:58  ENCOUNTER_END,,,,,1");
 
             return fakeFileContents.ToString();
