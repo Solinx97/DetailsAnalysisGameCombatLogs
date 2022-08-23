@@ -95,13 +95,8 @@ namespace CombatAnalysis.App.Smoke.Tests
             var modalWindow = window.ModalWindows[0];
             var directoryTextBox = _automationTestBase.WaitForElement(() => modalWindow.FindFirstDescendant(x => x.ByAutomationId("1001")))?.AsTextBox();
             directoryTextBox.Click();
-            directoryTextBox.Enter(@"Адрес: Этот компьютер");
 
-            Keyboard.Press(VirtualKeyShort.ENTER);
-
-            directoryTextBox.Click();
-
-            var baseDirectory = AppDomain.CurrentDomain.BaseDirectory + @"testData\";
+            var baseDirectory = AppDomain.CurrentDomain.BaseDirectory + @"testsData\";
             directoryTextBox.Enter($"Адрес: {baseDirectory}");
 
             Keyboard.Press(VirtualKeyShort.ENTER);
