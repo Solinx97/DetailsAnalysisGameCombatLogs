@@ -6,7 +6,7 @@ using FlaUI.UIA3;
 using NUnit.Framework;
 using System;
 using System.Diagnostics;
-using System.IO;
+using System.Threading;
 
 namespace CombatAnalysis.App.Smoke.Tests
 {
@@ -65,6 +65,7 @@ namespace CombatAnalysis.App.Smoke.Tests
             }
 
             logUploadButton?.Invoke();
+            Thread.Sleep(500);
 
             OpenFileDialog();
 
@@ -93,8 +94,10 @@ namespace CombatAnalysis.App.Smoke.Tests
             }
 
             var modalWindow = window.ModalWindows[0];
-            var directoryTextBox = _automationTestBase.WaitForElement(() => modalWindow.FindFirstDescendant(x => x.ByAutomationId("1001")))?.AsTextBox();
+            var directoryTextBox = _automationTestBase.WaitForElement(() => modalWindow.FindFirstDescendant(x => x.ByName("Все папки")))?.AsTextBox();
             directoryTextBox.Click();
+
+            Thread.Sleep(250);
 
             var baseDirectory = AppDomain.CurrentDomain.BaseDirectory + @"testsData\";
             directoryTextBox.Enter($"Адрес: {baseDirectory}");
