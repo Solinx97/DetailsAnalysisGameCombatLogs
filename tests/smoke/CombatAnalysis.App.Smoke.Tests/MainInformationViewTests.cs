@@ -6,6 +6,7 @@ using FlaUI.UIA3;
 using NUnit.Framework;
 using System;
 using System.Diagnostics;
+using System.IO;
 
 namespace CombatAnalysis.App.Smoke.Tests
 {
@@ -99,7 +100,9 @@ namespace CombatAnalysis.App.Smoke.Tests
             Keyboard.Press(VirtualKeyShort.ENTER);
 
             directoryTextBox.Click();
-            directoryTextBox.Enter(@"Адрес: D:\Devs\DetalsAnalysisGamesCombatLogs\tests\smoke\CombatAnalysis.App.Smoke.Tests\testsData");
+
+            var baseDirectory = AppDomain.CurrentDomain.BaseDirectory + @"testData\";
+            directoryTextBox.Enter($"Адрес: {baseDirectory}");
 
             Keyboard.Press(VirtualKeyShort.ENTER);
 
