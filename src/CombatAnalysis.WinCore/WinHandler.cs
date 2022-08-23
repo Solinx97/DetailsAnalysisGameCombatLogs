@@ -6,10 +6,10 @@ namespace CombatAnalysis.WinCore
     {
         public static string FileOpen()
         {
-            var file = new OpenFileDialog();
-            file.ShowDialog();
+            var fileDialog = new OpenFileDialog();
+            fileDialog.ShowDialog();
 
-            return file.FileName;
+            return fileDialog.FileName;
         }
     }
 }

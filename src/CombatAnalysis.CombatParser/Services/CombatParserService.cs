@@ -26,6 +26,19 @@ namespace CombatAnalysis.CombatParser.Services
 
         public List<Combat> Combats { get; }
 
+        public async Task<bool> FileCheck(string combatLog)
+        {
+            using var reader = _fileManager.StreamReader(combatLog);
+            var fileIsCorrect = true;
+            var line = await reader.ReadLineAsync();
+            if (!line.Contains("COMBAT_LOG_VERSION"))
+            {
+                fileIsCorrect = false;
+            }
+
+            return fileIsCorrect;
+        }
+
         public async Task Parse(string combatLog)
         {
             using var reader = _fileManager.StreamReader(combatLog);
@@ -121,13 +134,13 @@ namespace CombatAnalysis.CombatParser.Services
 
         private void GetCombatPlayersData(Combat combat)
         {
-            var playersData = new List<CombatPlayerData>();
+            var combatPlayerDataCollection = new List<CombatPlayerData>();
 
             var players = GetCombatPlayers(combat.Data);
             foreach (var item in players)
             {
-                _combatDetails.SetData(combat, item);
-                var playerCombatData = new CombatPlayerData
+                _combatDetails.Initialization(combat, item);
+                var combatPlayerData = new CombatPlayerData
                 {
                     UserName = item,
                     EnergyRecovery = _combatDetails.GetResourceRecovery(),
@@ -136,10 +149,10 @@ namespace CombatAnalysis.CombatParser.Services
                     DamageTaken = _combatDetails.GetDamageTaken(),
                 };
 
-                playersData.Add(playerCombatData);
+                combatPlayerDataCollection.Add(combatPlayerData);
             }
 
-            combat.Players = playersData;
+            combat.Players = combatPlayerDataCollection;
         }
 
         private void CalculatingCommonCombatDetails(Combat combat)

@@ -121,12 +121,12 @@
             <TextBlock Width="175" Text="Работа с данными..." FontSize="16" TextAlignment="Center" Foreground="BlueViolet"
                        Margin="10" HorizontalAlignment="Center" VerticalAlignment="Center"
                        Visibility="{Binding IsParsing, Converter={StaticResource BoolToVisibility}}" />
+            <TextBlock Width="210" TextWrapping="Wrap" Text="Ошибка: файл поврежден или не поддерживается" FontSize="16" TextAlignment="Center" Foreground="Orange"
+                       Margin="10" HorizontalAlignment="Center" VerticalAlignment="Center"
+                       Visibility="{Binding FileIsNotCorrect, Converter={StaticResource BoolToVisibility}}" />
             <TextBlock Text="{Binding FoundCombat}" FontSize="16" TextAlignment="Center" TextWrapping="Wrap"
                        Margin="0" VerticalAlignment="Center" Height="50" MaxWidth="650"
                        Visibility="{Binding IsParsing, Converter={StaticResource BoolToVisibility}}" />
-            <TextBlock Width="175" Text="Сохранение данных..." FontSize="16" TextAlignment="Center" Foreground="ForestGreen"
-                       Margin="10" HorizontalAlignment="Center" VerticalAlignment="Center"
-                       Visibility="{Binding IsSaving, Converter={StaticResource BoolToVisibility}}" />
         </StackPanel>
     </Grid>
 </views:MvxWpfView>

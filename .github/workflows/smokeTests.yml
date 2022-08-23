@@ -1,0 +1,32 @@
+name: .NET Core
+
+on:
+  push:
+    branches: [ "main" ]
+  # pull_request:
+    # branches: [ "main", "development" ]
+  workflow_dispatch:
+  
+jobs:
+  
+  build:
+
+    runs-on: windows-latest
+      
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+      with:
+        fetch-depth: 0
+
+    - name: Setup MSBuild.exe
+      uses: microsoft/setup-msbuild@v1.0.2
+      
+    - name: Restore dependencies
+      run: dotnet restore
+      
+    - name: Build
+      run: dotnet build
+
+    - name: Execute smoke tests
+      run: dotnet test tests\smoke\CombatAnalysis.App.Smoke.Tests\CombatAnalysis.App.Smoke.Tests.csproj

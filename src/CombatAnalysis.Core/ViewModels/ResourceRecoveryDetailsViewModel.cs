@@ -6,6 +6,7 @@ using CombatAnalysis.Core.Commands;
 using CombatAnalysis.Core.Interfaces;
 using CombatAnalysis.Core.Models;
 using CombatAnalysis.Core.Services;
+using Microsoft.Extensions.Logging;
 using MvvmCross.Navigation;
 using MvvmCross.ViewModels;
 using System;
@@ -20,6 +21,7 @@ namespace CombatAnalysis.Core.ViewModels
         private readonly IMvxNavigationService _mvvmNavigation;
         private readonly IViewModelConnect _handler;
         private readonly IMapper _mapper;
+        private readonly ILogger _logger;
         private readonly CombatParserAPIService _combatParserAPIService;
 
         private MvxViewModel _basicTemplate;
@@ -31,10 +33,11 @@ namespace CombatAnalysis.Core.ViewModels
         private bool _isCollectionReversed;
         private double _totalValue;
 
-        public ResourceRecoveryDetailsViewModel(IMapper mapper, IMvxNavigationService mvvmNavigation, IHttpClientHelper httpClient)
+        public ResourceRecoveryDetailsViewModel(IMapper mapper, IMvxNavigationService mvvmNavigation, IHttpClientHelper httpClient, ILogger logger)
         {
             _mapper = mapper;
             _mvvmNavigation = mvvmNavigation;
+            _logger = logger;
 
             _combatParserAPIService = new CombatParserAPIService(httpClient);
 
@@ -129,7 +132,7 @@ namespace CombatAnalysis.Core.ViewModels
             }
             else
             {
-                var combatInformation = new CombatDetailsService();
+                var combatInformation = new CombatDetailsService(_logger);
                 var map = _mapper.Map<Combat>(combat);
 
                 GetResourceRecoveryDetails(combatInformation, SelectedPlayer, map);
@@ -139,7 +142,7 @@ namespace CombatAnalysis.Core.ViewModels
 
         private void GetResourceRecoveryDetails(CombatDetailsService combatInformation, string player, Combat combat)
         {
-            combatInformation.SetData(combat, player);
+            combatInformation.Initialization(combat, player);
             combatInformation.GetResourceRecovery();
 
             var map1 = _mapper.Map<ObservableCollection<ResourceRecoveryModel>>(combatInformation.ResourceRecovery);

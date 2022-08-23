@@ -51,14 +51,14 @@ namespace CombatAnalysis.CombatParserAPI.Helpers
         public async Task SaveCombatPlayerData(CombatModel combat, List<CombatPlayerDataModel> combatPlayers)
         {
             var map = _mapper.Map<Combat>(combat);
-            _details.SetData(map);
+            _details.Initialization(map);
 
             for (int i = 0; i < combatPlayers.Count; i++)
             {
                 var combatPlayerResponse = await _httpClient.PostAsync("CombatPlayer", JsonContent.Create(combatPlayers[i]));
                 var createdCombatPlayerId = await combatPlayerResponse.Content.ReadFromJsonAsync<int>();
 
-                _details.SetData(combatPlayers[i].UserName);
+                _details.Initialization(combatPlayers[i].UserName);
 
                 _details.GetDamageDone();
                 _details.GetHealDone();

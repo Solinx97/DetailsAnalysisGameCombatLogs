@@ -8,6 +8,8 @@ namespace CombatAnalysis.CombatParser.Interfaces
     {
         List<Combat> Combats { get; }
 
+        Task<bool> FileCheck(string combatLog);
+
         Task Parse(string combatLog);
     }
 }
