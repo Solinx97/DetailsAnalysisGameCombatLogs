@@ -94,18 +94,22 @@ namespace CombatAnalysis.App.Smoke.Tests
             }
 
             var modalWindow = window.ModalWindows[0];
-            var directoryTextBox = _automationTestBase.WaitForElement(() => modalWindow.FindFirstDescendant(x => x.ByName("Все папки")))?.AsTextBox();
+            var directoryTextBox = _automationTestBase.WaitForElement(() => modalWindow.FindFirstDescendant(x => x.ByAutomationId("1001")))?.AsTextBox();
             directoryTextBox.Click();
 
-            Thread.Sleep(250);
+            Thread.Sleep(500);
 
             var baseDirectory = AppDomain.CurrentDomain.BaseDirectory + @"testsData\";
             directoryTextBox.Enter($"Адрес: {baseDirectory}");
 
             Keyboard.Press(VirtualKeyShort.ENTER);
 
-            var fileNameTextBox = _automationTestBase.WaitForElement(() => modalWindow.FindFirstDescendant(x => x.ByName("WoWCombatLog")))?.AsTextBox();
+            Thread.Sleep(500);
+
+            var fileNameTextBox = _automationTestBase.WaitForElement(() => modalWindow.FindFirstDescendant(x => x.ByAutomationId("0")))?.AsTextBox();
             fileNameTextBox.Click();
+
+            Thread.Sleep(500);
 
             var openButton = _automationTestBase.WaitForElement(() => modalWindow.FindFirstDescendant(x => x.ByAutomationId("1")))?.AsButton();
             openButton?.Invoke();
