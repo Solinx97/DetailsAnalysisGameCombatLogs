@@ -16,10 +16,6 @@ jobs:
         configuration: [Debug, Release]
 
     runs-on: windows-latest
-
-    env:
-      Solution_Name: CombatAnalysis.sln
-      Test_Project_Path: tests\CombatAnalysis.Parser.Tests\CombatAnalysis.Parser.Tests.csproj
       
     steps:
     - name: Checkout
@@ -37,4 +33,4 @@ jobs:
       run: dotnet build --configuration ${{ matrix.configuration }}
       
     - name: Execute unit tests
-      run: dotnet test
+      run: dotnet test tests\CombatAnalysis.Parser.Tests\CombatAnalysis.Parser.Tests.csproj
