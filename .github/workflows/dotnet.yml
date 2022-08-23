@@ -37,4 +37,7 @@ jobs:
       run: dotnet build --configuration ${{ matrix.configuration }}
       
     - name: Execute unit tests
-      run: dotnet test
+      run: dotnet test tests\CombatAnalysis.Parser.Tests\CombatAnalysis.Parser.Tests.csproj
+
+    - name: Execute smoke tests
+      run: dotnet test tests\smoke\CombatAnalysis.App.Smoke.Tests\CombatAnalysis.App.Smoke.Tests.csproj
