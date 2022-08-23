@@ -11,10 +11,6 @@ jobs:
   
   build:
 
-    strategy:
-      matrix:
-        configuration: [Debug, Release]
-
     runs-on: windows-latest
       
     steps:
@@ -30,7 +26,7 @@ jobs:
       run: dotnet restore
       
     - name: Build
-      run: dotnet build --configuration ${{ matrix.configuration }}
-      
-    - name: Execute unit tests
-      run: dotnet test tests\CombatAnalysis.Parser.Tests\CombatAnalysis.Parser.Tests.csproj
+      run: dotnet build
+
+    - name: Execute smoke tests
+      run: dotnet test tests\smoke\CombatAnalysis.App.Smoke.Tests\CombatAnalysis.App.Smoke.Tests.csproj
