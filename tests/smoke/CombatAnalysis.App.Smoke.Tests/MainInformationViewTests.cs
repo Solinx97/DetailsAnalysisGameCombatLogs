@@ -38,8 +38,6 @@ namespace CombatAnalysis.App.Smoke.Tests
         {
             _stopwatch = Stopwatch.StartNew();
             _automationTestBase = new AutomationTestBase();
-
-            Mouse.Position = new System.Drawing.Point(0, 0);
         }
 
         [TearDown]
