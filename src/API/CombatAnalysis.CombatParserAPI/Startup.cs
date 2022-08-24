@@ -1,12 +1,17 @@
 using AutoMapper;
 using CombatAnalysis.BL.Extensions;
 using CombatAnalysis.BL.Mapping;
+using CombatAnalysis.CombatParser.Interfaces;
+using CombatAnalysis.CombatParser.Services;
+using CombatAnalysis.CombatParserAPI.Helpers;
+using CombatAnalysis.CombatParserAPI.Interfaces;
 using CombatAnalysis.CombatParserAPI.Mapping;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 
 namespace CombatAnalysis.CombatParserAPI
@@ -23,6 +28,13 @@ namespace CombatAnalysis.CombatParserAPI
         public void ConfigureServices(IServiceCollection services)
         {
             RegisteringDependencies(services);
+
+            services.AddSingleton<IHttpClientHelper, HttpClientHelper>();
+
+            var loggerFactory = new LoggerFactory();
+            var logger = new Logger<ILogger>(loggerFactory);
+            ICombatDetails combatDetails = new CombatDetailsService(logger);
+            services.AddSingleton(combatDetails);
 
             services.AddControllers();
 

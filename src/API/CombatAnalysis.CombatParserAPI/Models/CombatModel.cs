@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace CombatAnalysis.CombatParserAPI.Models
 {
@@ -9,6 +10,8 @@ namespace CombatAnalysis.CombatParserAPI.Models
         public string DungeonName { get; set; }
 
         public string Name { get; set; }
+
+        public List<string> Data { get; set; }
 
         public double EnergyRecovery { get; set; }
 
