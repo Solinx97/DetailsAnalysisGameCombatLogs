@@ -13,7 +13,7 @@ namespace CombatAnalysis.App
         protected override void OnStartup(StartupEventArgs e)
         {
             base.OnStartup(e);
-            AppCenter.Start("1752e65c-dec2-4f55-971c-28ef864a77c1",
+            AppCenter.Start("f55e7c1e-17d9-4bf3-b2a8-cdb2d43128e7",
                 typeof(Analytics), typeof(Crashes));
         }
 
