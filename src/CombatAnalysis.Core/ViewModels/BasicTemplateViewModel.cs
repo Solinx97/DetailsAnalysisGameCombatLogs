@@ -4,6 +4,7 @@ using MvvmCross.Commands;
 using MvvmCross.Navigation;
 using MvvmCross.ViewModels;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace CombatAnalysis.Core.ViewModels
@@ -17,6 +18,9 @@ namespace CombatAnalysis.Core.ViewModels
         private IViewModelConnect _handler;
         private Tuple<int, CombatModel> _combatInformtaion;
 
+        private static List<CombatModel> Combats = new List<CombatModel>();
+        private static int _allowStep;
+
         public BasicTemplateViewModel(MvxViewModel parent, IViewModelConnect handler, IMvxNavigationService mvvmNavigation)
         {
             _parent = parent;
@@ -24,9 +28,9 @@ namespace CombatAnalysis.Core.ViewModels
             _mvvmNavigation = mvvmNavigation;
 
             CloseCommand = new MvxCommand(CloseWindow);
-            UploadCombatsCommand = new MvxCommand(CloseCurrentTab);
-            CombatsCommand = new MvxCommand(CloseCurrentTab);
-            CombatCommand = new MvxCommand(CloseCurrentTab);
+            UploadCombatsCommand = new MvxCommand(UploadCombats);
+            CombatsCommand = new MvxCommand(GeneralAnalysis);
+            CombatCommand = new MvxCommand(UploadCombats);
 
             DamageDoneDetailsCommand = new MvxCommand(DamageDoneDetails);
             HealDoneDetailsCommand = new MvxCommand(HealDoneDetails);
@@ -61,14 +65,29 @@ namespace CombatAnalysis.Core.ViewModels
             }
         }
 
+        public int AllowStep
+        {
+            get { return _allowStep; }
+            set
+            {
+                SetProperty(ref _allowStep, value);
+            }
+        }
+
         public void CloseWindow()
         {
             WindowCloser.MainWindow.Close();
         }
 
-        public void CloseCurrentTab()
+        public void UploadCombats()
         {
+            Task.Run(() => _mvvmNavigation.BeforeClose += MvvmNavigationBeforeClose);
             Task.Run(() => _mvvmNavigation.Close(_parent));
+        }
+
+        public void GeneralAnalysis()
+        {
+            Task.Run(() => _mvvmNavigation.Navigate<GeneralAnalysisViewModel, List<CombatModel>>(Combats));
         }
 
         public void DamageDoneDetails()
@@ -97,6 +116,21 @@ namespace CombatAnalysis.Core.ViewModels
             _combatInformtaion = (Tuple<int, CombatModel>)_handler.Data;
 
             Task.Run(() => _mvvmNavigation.Navigate<ResourceRecoveryDetailsViewModel, Tuple<int, CombatModel>>(_combatInformtaion));
+        }
+
+        public override void ViewDestroy(bool viewFinishing = true)
+        {
+            Task.Run(() => _mvvmNavigation.BeforeClose -= MvvmNavigationBeforeClose);
+
+            base.ViewDestroy(viewFinishing);
+        }
+
+        private void MvvmNavigationBeforeClose(object sender, MvvmCross.Navigation.EventArguments.IMvxNavigateEventArgs e)
+        {
+            if (e.ViewModel is GeneralAnalysisViewModel vm)
+            {
+                Combats = vm.Combats;
+            }
         }
     }
 }

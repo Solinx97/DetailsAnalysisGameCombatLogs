@@ -73,7 +73,10 @@ namespace CombatAnalysis.Core.ViewModels
 
         public override void Prepare(List<CombatModel> parameter)
         {
-            Combats = parameter;
+            if (parameter.Count > 0)
+            {
+                Combats = parameter;
+            }
         }
 
         public void ShowDetails()
