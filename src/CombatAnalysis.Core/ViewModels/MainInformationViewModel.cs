@@ -233,6 +233,7 @@ namespace CombatAnalysis.Core.ViewModels
                 var map = _parser.Combats;
                 var combats = _mapper.Map<List<CombatModel>>(map);
 
+                _handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, "AllowStep", 1);
                 await _mvvmNavigation.Navigate<GeneralAnalysisViewModel, List<CombatModel>>(combats);
 
                 if (IsNeedSave)
@@ -253,7 +254,7 @@ namespace CombatAnalysis.Core.ViewModels
                 tasks.Add(_combatParserAPIService.SaveCombatDataAsync(item, createdCombatLogId));
             }
 
-            await Task.WhenAny(tasks);
+            await Task.WhenAll(tasks);
             await _combatParserAPIService.SetReadyForCombatLog(createdCombatLogId);
         }
 
@@ -285,6 +286,7 @@ namespace CombatAnalysis.Core.ViewModels
                 item.Players = players.ToList();
             }
 
+            _handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, "AllowStep", 1);
             await _mvvmNavigation.Navigate<GeneralAnalysisViewModel, List<CombatModel>>(loadedCombats.ToList());
         }
 
