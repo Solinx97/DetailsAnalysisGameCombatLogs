@@ -22,8 +22,9 @@
             <ColumnDefinition Width="350"/>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
-
+        
         <Grid.Resources>
+            <converters:TheNativeBoolToVisibilityConverter x:Key="BoolToVisibility" />
             <converters:TheNativeIntToXAMLBoolConverter x:Key="IntToXAMLBool" />
             <converters:TheNativeIntToXAMLExpressConverter x:Key="IntToXAMLBoolExpress" />
         </Grid.Resources>
@@ -105,5 +106,12 @@
                 </Button>
             </StackPanel>
         </Grid>
+        <StackPanel Grid.Column="2" Grid.Row="1" VerticalAlignment="Bottom" Orientation="Horizontal">
+            <TextBlock Margin="5" FontSize="12" Text="Статус загрузки: "/>
+            <TextBlock Margin="5" FontSize="13" FontWeight="Bold" Foreground="Red" Text="Ошибка"
+                       Visibility="{Binding ServerStatusIsFailed, Converter={StaticResource BoolToVisibility}, ConverterParameter=true:false}"/>
+            <TextBlock Margin="5" FontSize="13" FontWeight="Bold" Foreground="Green" Text="Успешно"
+                       Visibility="{Binding ServerStatusIsFailed, Converter={StaticResource BoolToVisibility}, ConverterParameter=true:true}"/>
+        </StackPanel>
     </Grid>
 </views:MvxWpfView>

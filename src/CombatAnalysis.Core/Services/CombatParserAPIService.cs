@@ -26,9 +26,9 @@ namespace CombatAnalysis.Core.Services
         public async Task<int> SaveCombatLogAsync()
         {
             var dungeonNames = _combats
-                .GroupBy(group => group.DungeonName)
-                .Select(select => select.Key)
-                .ToList();
+                 .GroupBy(group => group.DungeonName)
+                 .Select(select => select.Key)
+                 .ToList();
 
             var combatLogResponse = await _httpClient.PostAsync("CombatLog", JsonContent.Create(dungeonNames));
             var createdCombatLogId = await combatLogResponse.Content.ReadFromJsonAsync<int>();

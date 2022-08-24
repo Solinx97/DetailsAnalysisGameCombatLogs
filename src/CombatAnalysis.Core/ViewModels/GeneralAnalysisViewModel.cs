@@ -1,4 +1,5 @@
 ﻿using CombatAnalysis.Core.Commands;
+using CombatAnalysis.Core.Consts;
 using CombatAnalysis.Core.Interfaces;
 using CombatAnalysis.Core.Models;
 using MvvmCross.Commands;
@@ -24,13 +25,12 @@ namespace CombatAnalysis.Core.ViewModels
             _mvvmNavigation = mvvmNavigation;
 
             _combats = new List<CombatModel>();
+            _handler = new ViewModelMConnect();
 
             ShowDetailsCommand = new MvxCommand(ShowDetails);
 
-            _handler = new ViewModelMConnect();
-            BasicTemplate = new BasicTemplateViewModel(this, _handler, mvvmNavigation);
-
-            _handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, "Step", 1);
+            BasicTemplate = Templates.Basic;
+            _handler.PropertyUpdate<BasicTemplateViewModel>(Templates.Basic, "Step", 1);
         }
 
         public IMvxCommand ShowDetailsCommand { get; set; }
@@ -73,7 +73,17 @@ namespace CombatAnalysis.Core.ViewModels
 
         public override void Prepare(List<CombatModel> parameter)
         {
-            Combats = parameter;
+            if (parameter != null && parameter.Count > 0)
+            {
+                Combats = parameter;
+            }
+        }
+
+        public override void ViewDestroy(bool viewFinishing = true)
+        {
+            ((BasicTemplateViewModel)Templates.Basic).Combats = Combats;
+
+            base.ViewDestroy(viewFinishing);
         }
 
         public void ShowDetails()

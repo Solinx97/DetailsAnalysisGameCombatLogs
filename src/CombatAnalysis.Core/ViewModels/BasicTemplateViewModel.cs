@@ -4,18 +4,22 @@ using MvvmCross.Commands;
 using MvvmCross.Navigation;
 using MvvmCross.ViewModels;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace CombatAnalysis.Core.ViewModels
 {
     public class BasicTemplateViewModel : MvxViewModel
     {
-        private readonly IMvxNavigationService _mvvmNavigation;
-        private readonly MvxViewModel _parent;
-
         private int _step;
-        private IViewModelConnect _handler;
         private Tuple<int, CombatModel> _combatInformtaion;
+        private List<CombatModel> _combats;
+        private IViewModelConnect _handler;
+        private IMvxNavigationService _mvvmNavigation;
+        private MvxViewModel _parent;
+
+        private static bool _serverStatusIsFailed;
+        private static int _allowStep;
 
         public BasicTemplateViewModel(MvxViewModel parent, IViewModelConnect handler, IMvxNavigationService mvvmNavigation)
         {
@@ -24,9 +28,9 @@ namespace CombatAnalysis.Core.ViewModels
             _mvvmNavigation = mvvmNavigation;
 
             CloseCommand = new MvxCommand(CloseWindow);
-            UploadCombatsCommand = new MvxCommand(CloseCurrentTab);
-            CombatsCommand = new MvxCommand(CloseCurrentTab);
-            CombatCommand = new MvxCommand(CloseCurrentTab);
+            UploadCombatsCommand = new MvxCommand(UploadCombatLogs);
+            CombatsCommand = new MvxCommand(UploadCombatLogs);
+            CombatCommand = new MvxCommand(UploadCombatLogs);
 
             DamageDoneDetailsCommand = new MvxCommand(DamageDoneDetails);
             HealDoneDetailsCommand = new MvxCommand(HealDoneDetails);
@@ -61,14 +65,41 @@ namespace CombatAnalysis.Core.ViewModels
             }
         }
 
+        public int AllowStep
+        {
+            get { return _allowStep; }
+            set
+            {
+                SetProperty(ref _allowStep, value);
+            }
+        }
+
+        public bool ServerStatusIsFailed
+        {
+            get { return _serverStatusIsFailed; }
+            set
+            {
+                SetProperty(ref _serverStatusIsFailed, value);
+            }
+        }
+
+        public List<CombatModel> Combats
+        {
+            get { return _combats; }
+            set
+            {
+                SetProperty(ref _combats, value);
+            }
+        }
+
         public void CloseWindow()
         {
             WindowCloser.MainWindow.Close();
         }
 
-        public void CloseCurrentTab()
+        public void UploadCombatLogs()
         {
-            Task.Run(() => _mvvmNavigation.Close(_parent));
+            Task.Run(() => _mvvmNavigation.Navigate<MainInformationViewModel>());
         }
 
         public void DamageDoneDetails()

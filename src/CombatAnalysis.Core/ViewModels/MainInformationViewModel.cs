@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using CombatAnalysis.CombatParser.Interfaces;
 using CombatAnalysis.Core.Commands;
+using CombatAnalysis.Core.Consts;
 using CombatAnalysis.Core.Interfaces;
 using CombatAnalysis.Core.Models;
 using CombatAnalysis.Core.Services;
@@ -11,6 +12,7 @@ using MvvmCross.ViewModels;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Net.Http;
 using System.Threading.Tasks;
 
 namespace CombatAnalysis.Core.ViewModels
@@ -52,7 +54,9 @@ namespace CombatAnalysis.Core.ViewModels
             _combatParserAPIService = new CombatParserAPIService(httpClient);
 
             _handler = new ViewModelMConnect();
-            BasicTemplate = new BasicTemplateViewModel(this, _handler, _mvvmNavigation);
+
+            BasicTemplate = new BasicTemplateViewModel(this, _handler, mvvmNavigation);
+            Templates.Basic = BasicTemplate;
         }
 
         public IMvxCommand GetCombatLogCommand { get; set; }
@@ -233,7 +237,11 @@ namespace CombatAnalysis.Core.ViewModels
                 var map = _parser.Combats;
                 var combats = _mapper.Map<List<CombatModel>>(map);
 
+                _handler.PropertyUpdate<BasicTemplateViewModel>(Templates.Basic, "AllowStep", 1);
+
                 await _mvvmNavigation.Navigate<GeneralAnalysisViewModel, List<CombatModel>>(combats);
+
+                _handler.PropertyUpdate<BasicTemplateViewModel>(Templates.Basic, "Combats", combats);
 
                 if (IsNeedSave)
                 {
@@ -244,17 +252,25 @@ namespace CombatAnalysis.Core.ViewModels
 
         private async Task SaveCombatDataDetails(List<CombatModel> combats)
         {
-            _combatParserAPIService.SetCombats(combats);
-            var createdCombatLogId = await _combatParserAPIService.SaveCombatLogAsync();
-            var tasks = new List<Task>();
-
-            foreach (var item in combats)
+            try
             {
-                tasks.Add(_combatParserAPIService.SaveCombatDataAsync(item, createdCombatLogId));
-            }
+                _combatParserAPIService.SetCombats(combats);
+                var createdCombatLogId = await _combatParserAPIService.SaveCombatLogAsync();
+                var tasks = new List<Task>();
 
-            await Task.WhenAny(tasks);
-            await _combatParserAPIService.SetReadyForCombatLog(createdCombatLogId);
+                foreach (var item in combats)
+                {
+                    tasks.Add(_combatParserAPIService.SaveCombatDataAsync(item, createdCombatLogId));
+                }
+
+                await Task.WhenAll(tasks);
+                await _combatParserAPIService.SetReadyForCombatLog(createdCombatLogId);
+            }
+            catch (HttpRequestException ex)
+            {
+                ServerLoadStatus.IsFailed = true;
+                _handler.PropertyUpdate<BasicTemplateViewModel>(Templates.Basic, "ServerStatusIsFailed", ServerLoadStatus.IsFailed);
+            }
         }
 
         private async Task LoadCombatLogsAsync()
@@ -285,7 +301,11 @@ namespace CombatAnalysis.Core.ViewModels
                 item.Players = players.ToList();
             }
 
+            _handler.PropertyUpdate<BasicTemplateViewModel>(Templates.Basic, "AllowStep", 1);
+            
             await _mvvmNavigation.Navigate<GeneralAnalysisViewModel, List<CombatModel>>(loadedCombats.ToList());
+
+            _handler.PropertyUpdate<BasicTemplateViewModel>(Templates.Basic, "Combats", loadedCombats.ToList());
         }
 
         private async Task DeleteAsync()
