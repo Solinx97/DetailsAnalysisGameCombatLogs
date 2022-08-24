@@ -1,11 +1,12 @@
 name: .NET Core
 
 on:
-  push:
-    branches: [ "main" ]
+  # push:
+    # branches: [ "main" ]
   # pull_request:
     # branches: [ "main", "development" ]
-
+  workflow_dispatch:
+  
 jobs:
   
   build:
@@ -15,10 +16,6 @@ jobs:
         configuration: [Debug, Release]
 
     runs-on: windows-latest
-
-    env:
-      Solution_Name: CombatAnalysis.sln
-      Test_Project_Path: tests\CombatAnalysis.Parser.Tests\CombatAnalysis.Parser.Tests.csproj
       
     steps:
     - name: Checkout
@@ -36,12 +33,4 @@ jobs:
       run: dotnet build --configuration ${{ matrix.configuration }}
       
     - name: Execute unit tests
-      run: dotnet test
-        
-    - name: Upload a Build Artifact
-      uses: actions/upload-artifact@v3.1.0
-      with:
-        path: src\CombatAnalysis.App\bin\Release\netcoreapp3.1\win-x86\msixpublish
-    
-    - name: Download a Build Artifact
-      uses: actions/download-artifact@v3.0.0
+      run: dotnet test tests\CombatAnalysis.Parser.Tests\CombatAnalysis.Parser.Tests.csproj
