@@ -2,9 +2,9 @@
 {
     public enum ResponseStatus
     {
-        None,
-        Pending,
-        Successful,
-        Failed,
+        None = 0,
+        Pending = 1,
+        Successful = 2,
+        Failed = 3,
     }
 }

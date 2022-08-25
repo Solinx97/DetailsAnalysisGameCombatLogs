@@ -7,13 +7,13 @@ using CombatAnalysis.Core.Interfaces;
 using CombatAnalysis.Core.Models;
 using CombatAnalysis.Core.Services;
 using CombatAnalysis.WinCore;
+using Microsoft.Extensions.Logging;
 using MvvmCross.Commands;
 using MvvmCross.Navigation;
 using MvvmCross.ViewModels;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Net.Http;
 using System.Threading.Tasks;
 
 namespace CombatAnalysis.Core.ViewModels
@@ -40,7 +40,7 @@ namespace CombatAnalysis.Core.ViewModels
         private double _screenWidth;
         private double _screenHeight;
 
-        public MainInformationViewModel(IMapper mapper, IMvxNavigationService mvvmNavigation, IHttpClientHelper httpClient, IParser parser)
+        public MainInformationViewModel(IMapper mapper, IMvxNavigationService mvvmNavigation, IHttpClientHelper httpClient, IParser parser, ILogger logger)
         {
             _mapper = mapper;
             _mvvmNavigation = mvvmNavigation;
@@ -52,7 +52,7 @@ namespace CombatAnalysis.Core.ViewModels
             ReloadCombatsCommand = new MvxCommand(LoadCombatLogs);
             DeleteCombatCommand = new MvxCommand(DeleteCombat);
 
-            _combatParserAPIService = new CombatParserAPIService(httpClient);
+            _combatParserAPIService = new CombatParserAPIService(httpClient, logger);
             _handler = new ViewModelMConnect();
 
             BasicTemplate = new BasicTemplateViewModel(_handler, mvvmNavigation);
@@ -247,32 +247,10 @@ namespace CombatAnalysis.Core.ViewModels
                 {
                     BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, "ResponseStatus", ResponseStatus.Pending);
 
-                    await SaveCombatDataDetails(combats);
+                    var responseStatus = await _combatParserAPIService.Save(combats) ? ResponseStatus.Successful : ResponseStatus.Failed;
+
+                    BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, "ResponseStatus", responseStatus);
                 }
-            }
-        }
-
-        private async Task SaveCombatDataDetails(List<CombatModel> combats)
-        {
-            try
-            {
-                _combatParserAPIService.SetCombats(combats);
-                var createdCombatLogId = await _combatParserAPIService.SaveCombatLogAsync();
-                var tasks = new List<Task>();
-
-                foreach (var item in combats)
-                {
-                    tasks.Add(_combatParserAPIService.SaveCombatDataAsync(item, createdCombatLogId));
-                }
-
-                await Task.WhenAll(tasks);
-                await _combatParserAPIService.SetReadyForCombatLog(createdCombatLogId);
-
-                BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, "ResponseStatus", ResponseStatus.Successful);
-            }
-            catch (HttpRequestException)
-            {
-                BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, "ResponseStatus", ResponseStatus.Failed);
             }
         }
 

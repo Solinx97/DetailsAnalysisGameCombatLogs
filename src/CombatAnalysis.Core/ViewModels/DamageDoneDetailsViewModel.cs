@@ -51,7 +51,7 @@ namespace CombatAnalysis.Core.ViewModels
             _mapper = mapper;
             _logger = loger;
 
-            _combatParserAPIService = new CombatParserAPIService(httpClient);
+            _combatParserAPIService = new CombatParserAPIService(httpClient, loger);
             _powerUpInCombat = new PowerUpInCombat<DamageDoneModel>(_damageDoneInformationsWithSkipDamage);
 
             BasicTemplate = Templates.Basic;

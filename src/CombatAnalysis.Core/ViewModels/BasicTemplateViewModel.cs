@@ -10,16 +10,15 @@ using System.Threading.Tasks;
 
 namespace CombatAnalysis.Core.ViewModels
 {
-    public class BasicTemplateViewModel : MvxViewModel, IImprovedMvxViewModel
+    public class BasicTemplateViewModel : MvxViewModel, IImprovedMvxViewModel, IResponseStatusObservable
     {
+        private readonly List<IResponseStatusObserver> _observers;
+
         private int _step;
         private Tuple<int, CombatModel> _combatInformtaion;
         private List<CombatModel> _combats;
         private IMvxNavigationService _mvvmNavigation;
 
-        private static bool _serverStatusIsFailed;
-        private static bool _pendingResponse;
-        private static bool _responseReceived;
         private static ResponseStatus _responseStatus;
         private static int _allowStep;
 
@@ -27,6 +26,8 @@ namespace CombatAnalysis.Core.ViewModels
         {
             Handler = handler;
             _mvvmNavigation = mvvmNavigation;
+
+            _observers = new List<IResponseStatusObserver>();
 
             CloseCommand = new MvxCommand(CloseWindow);
             UploadCombatsCommand = new MvxCommand(UploadCombatLogs);
@@ -85,6 +86,8 @@ namespace CombatAnalysis.Core.ViewModels
             set
             {
                 SetProperty(ref _responseStatus, value);
+
+                NotifyObservers();
             }
         }
 
@@ -143,6 +146,24 @@ namespace CombatAnalysis.Core.ViewModels
             _combatInformtaion = (Tuple<int, CombatModel>)Handler.Data;
 
             Task.Run(() => _mvvmNavigation.Navigate<ResourceRecoveryDetailsViewModel, Tuple<int, CombatModel>>(_combatInformtaion));
+        }
+
+        public void AddObserver(IResponseStatusObserver o)
+        {
+            _observers.Add(o);
+        }
+
+        public void RemoveObserver(IResponseStatusObserver o)
+        {
+            _observers.Remove(o);
+        }
+
+        public void NotifyObservers()
+        {
+            foreach (var item in _observers)
+            {
+                item.Update(ResponseStatus);
+            }
         }
     }
 }
