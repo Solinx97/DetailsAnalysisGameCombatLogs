@@ -1,4 +1,5 @@
-﻿using CombatAnalysis.Core.Interfaces;
+﻿using CombatAnalysis.Core.Core;
+using CombatAnalysis.Core.Interfaces;
 using CombatAnalysis.Core.Models;
 using MvvmCross.Commands;
 using MvvmCross.Navigation;
@@ -9,28 +10,28 @@ using System.Threading.Tasks;
 
 namespace CombatAnalysis.Core.ViewModels
 {
-    public class BasicTemplateViewModel : MvxViewModel
+    public class BasicTemplateViewModel : MvxViewModel, IImprovedMvxViewModel
     {
         private int _step;
         private Tuple<int, CombatModel> _combatInformtaion;
         private List<CombatModel> _combats;
-        private IViewModelConnect _handler;
         private IMvxNavigationService _mvvmNavigation;
-        private MvxViewModel _parent;
 
         private static bool _serverStatusIsFailed;
+        private static bool _pendingResponse;
+        private static bool _responseReceived;
+        private static ResponseStatus _responseStatus;
         private static int _allowStep;
 
-        public BasicTemplateViewModel(MvxViewModel parent, IViewModelConnect handler, IMvxNavigationService mvvmNavigation)
+        public BasicTemplateViewModel(IViewModelConnect handler, IMvxNavigationService mvvmNavigation)
         {
-            _parent = parent;
-            _handler = handler;
+            Handler = handler;
             _mvvmNavigation = mvvmNavigation;
 
             CloseCommand = new MvxCommand(CloseWindow);
             UploadCombatsCommand = new MvxCommand(UploadCombatLogs);
-            CombatsCommand = new MvxCommand(UploadCombatLogs);
-            CombatCommand = new MvxCommand(UploadCombatLogs);
+            GeneralAnalysisCommand = new MvxCommand(GeneralAnalysis);
+            CombatCommand = new MvxCommand(DetailsSpecificalCombat);
 
             DamageDoneDetailsCommand = new MvxCommand(DamageDoneDetails);
             HealDoneDetailsCommand = new MvxCommand(HealDoneDetails);
@@ -44,7 +45,7 @@ namespace CombatAnalysis.Core.ViewModels
 
         public IMvxCommand UploadCombatsCommand { get; set; }
 
-        public IMvxCommand CombatsCommand { get; set; }
+        public IMvxCommand GeneralAnalysisCommand { get; set; }
 
         public IMvxCommand CombatCommand { get; set; }
 
@@ -55,6 +56,10 @@ namespace CombatAnalysis.Core.ViewModels
         public IMvxCommand DamageTakenDetailsCommand { get; set; }
 
         public IMvxCommand ResourceDetailsCommand { get; set; }
+
+        public CombatModel TargetCombat { get; set; }
+
+        public IViewModelConnect Handler { get; set; }
 
         public int Step
         {
@@ -74,12 +79,12 @@ namespace CombatAnalysis.Core.ViewModels
             }
         }
 
-        public bool ServerStatusIsFailed
+        public ResponseStatus ResponseStatus
         {
-            get { return _serverStatusIsFailed; }
+            get { return _responseStatus; }
             set
             {
-                SetProperty(ref _serverStatusIsFailed, value);
+                SetProperty(ref _responseStatus, value);
             }
         }
 
@@ -102,30 +107,40 @@ namespace CombatAnalysis.Core.ViewModels
             Task.Run(() => _mvvmNavigation.Navigate<MainInformationViewModel>());
         }
 
+        public void GeneralAnalysis()
+        {
+            Task.Run(() => _mvvmNavigation.Navigate<GeneralAnalysisViewModel, List<CombatModel>>(Combats));
+        }
+
+        public void DetailsSpecificalCombat()
+        {
+            Task.Run(() => _mvvmNavigation.Navigate<DetailsSpecificalCombatViewModel, CombatModel>(TargetCombat));
+        }
+
         public void DamageDoneDetails()
         {
-            _combatInformtaion = (Tuple<int, CombatModel>)_handler.Data;
+            _combatInformtaion = (Tuple<int, CombatModel>)Handler.Data;
 
             Task.Run(() => _mvvmNavigation.Navigate<DamageDoneDetailsViewModel, Tuple<int, CombatModel>>(_combatInformtaion));
         }
 
         public void HealDoneDetails()
         {
-            _combatInformtaion = (Tuple<int, CombatModel>)_handler.Data;
+            _combatInformtaion = (Tuple<int, CombatModel>)Handler.Data;
 
             Task.Run(() => _mvvmNavigation.Navigate<HealDoneDetailsViewModel, Tuple<int, CombatModel>>(_combatInformtaion));
         }
 
         public void DamageTakenDetails()
         {
-            _combatInformtaion = (Tuple<int, CombatModel>)_handler.Data;
+            _combatInformtaion = (Tuple<int, CombatModel>)Handler.Data;
 
             Task.Run(() => _mvvmNavigation.Navigate<DamageTakenDetailsViewModel, Tuple<int, CombatModel>>(_combatInformtaion));
         }
 
         public void ResourceDetails()
         {
-            _combatInformtaion = (Tuple<int, CombatModel>)_handler.Data;
+            _combatInformtaion = (Tuple<int, CombatModel>)Handler.Data;
 
             Task.Run(() => _mvvmNavigation.Navigate<ResourceRecoveryDetailsViewModel, Tuple<int, CombatModel>>(_combatInformtaion));
         }

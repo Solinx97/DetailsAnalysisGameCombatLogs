@@ -3,13 +3,12 @@ using CombatAnalysis.CombatParser.Entities;
 using CombatAnalysis.CombatParser.Extensions;
 using CombatAnalysis.CombatParser.Interfaces;
 using CombatAnalysis.CombatParser.Services;
-using CombatAnalysis.Core.Commands;
+using CombatAnalysis.Core.Consts;
 using CombatAnalysis.Core.Core;
 using CombatAnalysis.Core.Interfaces;
 using CombatAnalysis.Core.Models;
 using CombatAnalysis.Core.Services;
 using Microsoft.Extensions.Logging;
-using MvvmCross.Navigation;
 using MvvmCross.ViewModels;
 using System;
 using System.Collections.ObjectModel;
@@ -20,14 +19,12 @@ namespace CombatAnalysis.Core.ViewModels
 {
     public class DamageDoneDetailsViewModel : MvxViewModel<Tuple<int, CombatModel>>
     {
-        private readonly IMvxNavigationService _mvvmNavigation;
-        private readonly IViewModelConnect _handler;
         private readonly IMapper _mapper;
         private readonly ILogger _logger;
         private readonly PowerUpInCombat<DamageDoneModel> _powerUpInCombat;
         private readonly CombatParserAPIService _combatParserAPIService;
 
-        private MvxViewModel _basicTemplate;
+        private IImprovedMvxViewModel _basicTemplate;
         private ObservableCollection<DamageDoneModel> _damageDoneInformations;
         private ObservableCollection<DamageDoneModel> _damageDoneInformationsWithSkipDamage;
         private ObservableCollection<DamageDoneGeneralModel> _damageDoneGeneralInformations;
@@ -49,23 +46,19 @@ namespace CombatAnalysis.Core.ViewModels
         private bool _isCollectionReversed;
         private long _totalValue;
 
-        public DamageDoneDetailsViewModel(IMapper mapper, IMvxNavigationService mvvmNavigation, IHttpClientHelper httpClient, ILogger loger)
+        public DamageDoneDetailsViewModel(IMapper mapper, IHttpClientHelper httpClient, ILogger loger)
         {
-            _mvvmNavigation = mvvmNavigation;
             _mapper = mapper;
             _logger = loger;
 
             _combatParserAPIService = new CombatParserAPIService(httpClient);
-
-            _handler = new ViewModelMConnect();
-            BasicTemplate = new BasicTemplateViewModel(this, _handler, _mvvmNavigation);
-
-            _handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, "Step", 3);
-
             _powerUpInCombat = new PowerUpInCombat<DamageDoneModel>(_damageDoneInformationsWithSkipDamage);
+
+            BasicTemplate = Templates.Basic;
+            BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, "Step", 3);
         }
 
-        public MvxViewModel BasicTemplate
+        public IImprovedMvxViewModel BasicTemplate
         {
             get { return _basicTemplate; }
             set
@@ -321,7 +314,7 @@ namespace CombatAnalysis.Core.ViewModels
             var combat = parameter.Item2;
             var player = combat.Players[parameter.Item1];
             SelectedPlayer = player.UserName;
-            TotalValue = player.HealDone;
+            TotalValue = player.DamageDone;
 
             if (player.Id > 0)
             {

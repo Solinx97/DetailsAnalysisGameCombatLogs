@@ -1,5 +1,4 @@
-﻿using CombatAnalysis.Core.Commands;
-using CombatAnalysis.Core.Consts;
+﻿using CombatAnalysis.Core.Consts;
 using CombatAnalysis.Core.Interfaces;
 using CombatAnalysis.Core.Models;
 using MvvmCross.Commands;
@@ -13,9 +12,8 @@ namespace CombatAnalysis.Core.ViewModels
     public class GeneralAnalysisViewModel : MvxViewModel<List<CombatModel>>
     {
         private readonly IMvxNavigationService _mvvmNavigation;
-        private readonly IViewModelConnect _handler;
 
-        private MvxViewModel _basicTemplate;
+        private IImprovedMvxViewModel _basicTemplate;
         private List<CombatModel> _combats;
         private int _combatIndex;
         private string _combatStatus = "Победа";
@@ -25,17 +23,16 @@ namespace CombatAnalysis.Core.ViewModels
             _mvvmNavigation = mvvmNavigation;
 
             _combats = new List<CombatModel>();
-            _handler = new ViewModelMConnect();
 
             ShowDetailsCommand = new MvxCommand(ShowDetails);
 
             BasicTemplate = Templates.Basic;
-            _handler.PropertyUpdate<BasicTemplateViewModel>(Templates.Basic, "Step", 1);
+            BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, "Step", 1);
         }
 
         public IMvxCommand ShowDetailsCommand { get; set; }
 
-        public MvxViewModel BasicTemplate
+        public IImprovedMvxViewModel BasicTemplate
         {
             get { return _basicTemplate; }
             set
@@ -88,6 +85,8 @@ namespace CombatAnalysis.Core.ViewModels
 
         public void ShowDetails()
         {
+            BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, "TargetCombat", Combats[CombatIndex]);
+
             Task.Run(() => _mvvmNavigation.Navigate<DetailsSpecificalCombatViewModel, CombatModel>(Combats[CombatIndex]));
         }
     }

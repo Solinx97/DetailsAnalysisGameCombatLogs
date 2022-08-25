@@ -1,9 +1,10 @@
-﻿using MvvmCross.ViewModels;
+﻿using CombatAnalysis.Core.Interfaces;
+using MvvmCross.ViewModels;
 
 namespace CombatAnalysis.Core.Consts
 {
     internal static class Templates
     {
-        public static MvxViewModel Basic { get; set; }
+        public static IImprovedMvxViewModel Basic { get; set; }
     }
 }

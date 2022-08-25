@@ -2,6 +2,7 @@
 using CombatAnalysis.CombatParser.Interfaces;
 using CombatAnalysis.Core.Commands;
 using CombatAnalysis.Core.Consts;
+using CombatAnalysis.Core.Core;
 using CombatAnalysis.Core.Interfaces;
 using CombatAnalysis.Core.Models;
 using CombatAnalysis.Core.Services;
@@ -33,7 +34,7 @@ namespace CombatAnalysis.Core.ViewModels
         private string _combatLogPath;
         private int _selectedCombatLogId;
         private int _combatLogsNumber;
-        private MvxViewModel _basicTemplate;
+        private IImprovedMvxViewModel _basicTemplate;
         private IViewModelConnect _handler;
         private ObservableCollection<CombatLogModel> _combatLogs;
         private double _screenWidth;
@@ -52,10 +53,9 @@ namespace CombatAnalysis.Core.ViewModels
             DeleteCombatCommand = new MvxCommand(DeleteCombat);
 
             _combatParserAPIService = new CombatParserAPIService(httpClient);
-
             _handler = new ViewModelMConnect();
 
-            BasicTemplate = new BasicTemplateViewModel(this, _handler, mvvmNavigation);
+            BasicTemplate = new BasicTemplateViewModel(_handler, mvvmNavigation);
             Templates.Basic = BasicTemplate;
         }
 
@@ -69,7 +69,7 @@ namespace CombatAnalysis.Core.ViewModels
 
         public IMvxCommand OpenPlayerAnalysisCommand { get; set; }
 
-        public MvxViewModel BasicTemplate
+        public IImprovedMvxViewModel BasicTemplate
         {
             get { return _basicTemplate; }
             set
@@ -237,14 +237,16 @@ namespace CombatAnalysis.Core.ViewModels
                 var map = _parser.Combats;
                 var combats = _mapper.Map<List<CombatModel>>(map);
 
-                _handler.PropertyUpdate<BasicTemplateViewModel>(Templates.Basic, "AllowStep", 1);
+                BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(Templates.Basic, "AllowStep", 1);
 
                 await _mvvmNavigation.Navigate<GeneralAnalysisViewModel, List<CombatModel>>(combats);
 
-                _handler.PropertyUpdate<BasicTemplateViewModel>(Templates.Basic, "Combats", combats);
+                BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, "Combats", combats);
 
                 if (IsNeedSave)
                 {
+                    BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, "ResponseStatus", ResponseStatus.Pending);
+
                     await SaveCombatDataDetails(combats);
                 }
             }
@@ -265,11 +267,12 @@ namespace CombatAnalysis.Core.ViewModels
 
                 await Task.WhenAll(tasks);
                 await _combatParserAPIService.SetReadyForCombatLog(createdCombatLogId);
+
+                BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, "ResponseStatus", ResponseStatus.Successful);
             }
-            catch (HttpRequestException ex)
+            catch (HttpRequestException)
             {
-                ServerLoadStatus.IsFailed = true;
-                _handler.PropertyUpdate<BasicTemplateViewModel>(Templates.Basic, "ServerStatusIsFailed", ServerLoadStatus.IsFailed);
+                BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, "ResponseStatus", ResponseStatus.Failed);
             }
         }
 
@@ -301,11 +304,11 @@ namespace CombatAnalysis.Core.ViewModels
                 item.Players = players.ToList();
             }
 
-            _handler.PropertyUpdate<BasicTemplateViewModel>(Templates.Basic, "AllowStep", 1);
+            BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, "AllowStep", 1);
             
             await _mvvmNavigation.Navigate<GeneralAnalysisViewModel, List<CombatModel>>(loadedCombats.ToList());
 
-            _handler.PropertyUpdate<BasicTemplateViewModel>(Templates.Basic, "Combats", loadedCombats.ToList());
+            BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, "Combats", loadedCombats.ToList());
         }
 
         private async Task DeleteAsync()
