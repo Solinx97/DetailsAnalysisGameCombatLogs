@@ -2,13 +2,12 @@
 using CombatAnalysis.CombatParser.Entities;
 using CombatAnalysis.CombatParser.Extensions;
 using CombatAnalysis.CombatParser.Services;
-using CombatAnalysis.Core.Commands;
+using CombatAnalysis.Core.Consts;
 using CombatAnalysis.Core.Core;
 using CombatAnalysis.Core.Interfaces;
 using CombatAnalysis.Core.Models;
 using CombatAnalysis.Core.Services;
 using Microsoft.Extensions.Logging;
-using MvvmCross.Navigation;
 using MvvmCross.ViewModels;
 using System;
 using System.Collections.ObjectModel;
@@ -19,14 +18,12 @@ namespace CombatAnalysis.Core.ViewModels
 {
     public class HealDoneDetailsViewModel : MvxViewModel<Tuple<int, CombatModel>>
     {
-        private readonly IMvxNavigationService _mvvmNavigation;
-        private readonly IViewModelConnect _handler;
         private readonly IMapper _mapper;
         private readonly ILogger _logger;
         private readonly CombatParserAPIService _combatParserAPIService;
         private readonly PowerUpInCombat<HealDoneModel> _powerUpInCombat;
 
-        private MvxViewModel _basicTemplate;
+        private IImprovedMvxViewModel _basicTemplate;
         private ObservableCollection<HealDoneModel> _healDoneInformations;
         private ObservableCollection<HealDoneModel> _healDoneInformationsWithOverheal;
         private ObservableCollection<HealDoneGeneralModel> _healDoneGeneralInformations;
@@ -40,23 +37,19 @@ namespace CombatAnalysis.Core.ViewModels
         private bool _isCollectionReversed;
         private long _totalValue;
 
-        public HealDoneDetailsViewModel(IMapper mapper, IMvxNavigationService mvvmNavigation, IHttpClientHelper httpClient, ILogger logger)
+        public HealDoneDetailsViewModel(IMapper mapper, IHttpClientHelper httpClient, ILogger logger)
         {
             _mapper = mapper;
-            _mvvmNavigation = mvvmNavigation;
             _logger = logger;
 
-            _combatParserAPIService = new CombatParserAPIService(httpClient);
-
-            _handler = new ViewModelMConnect();
-            BasicTemplate = new BasicTemplateViewModel(this, _handler, _mvvmNavigation);
-
-            _handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, "Step", 4);
-
+            _combatParserAPIService = new CombatParserAPIService(httpClient, logger);
             _powerUpInCombat = new PowerUpInCombat<HealDoneModel>(_healDoneInformationsWithOverheal);
+
+            BasicTemplate = Templates.Basic;
+            BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, "Step", 4);
         }
 
-        public MvxViewModel BasicTemplate
+        public IImprovedMvxViewModel BasicTemplate
         {
             get { return _basicTemplate; }
             set

@@ -1,7 +1,6 @@
-﻿using CombatAnalysis.Core.Commands;
+﻿using CombatAnalysis.Core.Consts;
 using CombatAnalysis.Core.Interfaces;
 using CombatAnalysis.Core.Models;
-using MvvmCross.Navigation;
 using MvvmCross.ViewModels;
 using System;
 using System.Collections.Generic;
@@ -10,11 +9,8 @@ namespace CombatAnalysis.Core.ViewModels
 {
     public class DetailsSpecificalCombatViewModel : MvxViewModel<CombatModel>
     {
-        private readonly IMvxNavigationService _mvvmNavigation;
-        private readonly IViewModelConnect _handler;
-
         private CombatModel _combat;
-        private MvxViewModel _basicTemplate;
+        private IImprovedMvxViewModel _basicTemplate;
         private List<CombatPlayerDataModel> _playersCombatData;
         private long _maxDamageDone;
         private long _maxHealDone;
@@ -22,17 +18,13 @@ namespace CombatAnalysis.Core.ViewModels
         private int _selectedIndex;
         private string _selectedCombat;
 
-        public DetailsSpecificalCombatViewModel(IMvxNavigationService mvvmNavigation)
+        public DetailsSpecificalCombatViewModel()
         {
-            _mvvmNavigation = mvvmNavigation;
-
-            _handler = new ViewModelMConnect();
-            BasicTemplate = new BasicTemplateViewModel(this, _handler, _mvvmNavigation);
-
-            _handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, "Step", 2);
+            BasicTemplate = Templates.Basic;
+            BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, "Step", 2);
         }
 
-        public MvxViewModel BasicTemplate
+        public IImprovedMvxViewModel BasicTemplate
         {
             get { return _basicTemplate; }
             set
@@ -55,9 +47,9 @@ namespace CombatAnalysis.Core.ViewModels
             get { return _selectedIndex; }
             set
             {
-                SetProperty(ref _selectedIndex, value);
+                BasicTemplate.Handler.Data = Tuple.Create(value, _combat);
 
-                _handler.Data = Tuple.Create(_selectedIndex, _combat);
+                SetProperty(ref _selectedIndex, value);
             }
         }
 

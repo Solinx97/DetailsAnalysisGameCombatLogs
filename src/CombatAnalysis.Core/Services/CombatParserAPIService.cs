@@ -1,7 +1,9 @@
 ﻿using CombatAnalysis.Core.Interfaces;
 using CombatAnalysis.Core.Models;
+using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
 
@@ -10,12 +12,14 @@ namespace CombatAnalysis.Core.Services
     internal class CombatParserAPIService
     {
         private readonly IHttpClientHelper _httpClient;
+        private readonly ILogger _logger;
 
         private List<CombatModel> _combats;
 
-        public CombatParserAPIService(IHttpClientHelper httpClient)
+        public CombatParserAPIService(IHttpClientHelper httpClient, ILogger logger)
         {
             _httpClient = httpClient;
+            _logger = logger;
         }
 
         public void SetCombats(List<CombatModel> combats)
@@ -23,12 +27,38 @@ namespace CombatAnalysis.Core.Services
             _combats = combats;
         }
 
+        public async Task<bool> Save(List<CombatModel> combats)
+        {
+            try
+            {
+                SetCombats(combats);
+                var createdCombatLogId = await SaveCombatLogAsync();
+                var tasks = new List<Task>();
+
+                foreach (var item in combats)
+                {
+                    tasks.Add(SaveCombatDataAsync(item, createdCombatLogId));
+                }
+
+                await Task.WhenAny(tasks);
+                await SetReadyForCombatLog(createdCombatLogId);
+
+                return true;
+            }
+            catch (HttpRequestException ex)
+            {
+                _logger.LogError(ex, ex.Message);
+
+                return false;
+            }
+        }
+
         public async Task<int> SaveCombatLogAsync()
         {
             var dungeonNames = _combats
-                .GroupBy(group => group.DungeonName)
-                .Select(select => select.Key)
-                .ToList();
+                 .GroupBy(group => group.DungeonName)
+                 .Select(select => select.Key)
+                 .ToList();
 
             var combatLogResponse = await _httpClient.PostAsync("CombatLog", JsonContent.Create(dungeonNames));
             var createdCombatLogId = await combatLogResponse.Content.ReadFromJsonAsync<int>();

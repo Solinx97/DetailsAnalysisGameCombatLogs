@@ -30,7 +30,7 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="0.25*"/>
             <RowDefinition Height="*"/>
-            <RowDefinition Height="0.7*"/>
+            <RowDefinition Height="0.75*"/>
             <RowDefinition Height="0.05*"/>
         </Grid.RowDefinitions>
 
@@ -93,7 +93,7 @@
                             <DataTemplate>
                                 <StackPanel Margin="10" Orientation="Horizontal" HorizontalAlignment="Center">
                                     <TextBlock FontSize="14" Text="{Binding Path=Name}" Margin="15" />
-                                    <TextBlock FontSize="14" Text="{Binding Path=Date}" Margin="15" />
+                                    <TextBlock FontSize="14" Text="{Binding Path=Date, StringFormat=MM.dd.yyyy hh:mm}" Margin="15" />
                                 </StackPanel>
                             </DataTemplate>
                         </ListBox.ItemTemplate>
@@ -102,7 +102,7 @@
             </ScrollViewer>
         </StackPanel>
         <StackPanel IsEnabled="{Binding IsParsing, Converter={StaticResource BoolToXAMLBool}}" Grid.Row="2" Grid.Column="2"
-                    Grid.ColumnSpan="2" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="-10">
+                    Grid.ColumnSpan="2" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0 -25 0 0">
             <StackPanel IsEnabled="{Binding CombatLog, Converter={StaticResource ToXAMLBool}}" Margin="20">
                 <Button Height="35" Content="Анализ" Width="100" FontSize="16" Margin="0 20"
                     mvx:Bi.nd="Command OpenPlayerAnalysisCommand" Style="{StaticResource showButton}" />
@@ -125,7 +125,7 @@
                        Margin="10" HorizontalAlignment="Center" VerticalAlignment="Center"
                        Visibility="{Binding FileIsNotCorrect, Converter={StaticResource BoolToVisibility}}" />
             <TextBlock Text="{Binding FoundCombat}" FontSize="16" TextAlignment="Center" TextWrapping="Wrap"
-                       Margin="0" VerticalAlignment="Center" Height="50" MaxWidth="650"
+                       Margin="0" VerticalAlignment="Center" Height="60" MaxWidth="650"
                        Visibility="{Binding IsParsing, Converter={StaticResource BoolToVisibility}}" />
         </StackPanel>
     </Grid>
