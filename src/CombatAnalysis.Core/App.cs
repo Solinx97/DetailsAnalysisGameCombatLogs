@@ -35,6 +35,7 @@ namespace CombatAnalysis.Core
             Mvx.IoCProvider.RegisterSingleton(mapper);
             Mvx.IoCProvider.RegisterSingleton(httpClient);
             Mvx.IoCProvider.RegisterSingleton(parser);
+            Mvx.IoCProvider.RegisterSingleton<ILogger>(logger);
 
             RegisterAppStart<MainInformationViewModel>();
         }
