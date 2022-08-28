@@ -93,7 +93,7 @@
                             <DataTemplate>
                                 <StackPanel Margin="10" Orientation="Horizontal" HorizontalAlignment="Center">
                                     <TextBlock FontSize="14" Text="{Binding Path=Name}" Margin="15" />
-                                    <TextBlock FontSize="14" Text="{Binding Path=Date}" Margin="15" />
+                                    <TextBlock FontSize="14" Text="{Binding Path=Date, StringFormat=MM.dd.yyyy hh:mm}" Margin="15" />
                                 </StackPanel>
                             </DataTemplate>
                         </ListBox.ItemTemplate>
