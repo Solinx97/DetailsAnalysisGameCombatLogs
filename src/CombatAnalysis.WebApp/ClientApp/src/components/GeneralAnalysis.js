@@ -1,9 +1,15 @@
 ﻿import React, { useState, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { updateCombatId } from '../features/CombatReducer';
 import { NavLink, useNavigate } from 'react-router-dom';
 
 import "../styles/generalAnalysis.sass";
 
 const GeneralAnalysis = () => {
+    const navigate = useNavigate();
+    const dispatch = useDispatch();
+
+    const combatLogId = useSelector((state) => state.combatLog.value);
     const [combatsRender, setCombatsRender] = useState(null);
 
     useEffect(() => {
@@ -49,14 +55,14 @@ const GeneralAnalysis = () => {
                     <li className="list-group-item">Продолжительность боя: {element.duration}</li>
                 </ul>
                 <div className="card-body">
-                    <NavLink className="card-link" to={"/details-specifical-combat?id=" + element.id}>Подробнее</NavLink>
+                    <NavLink className="card-link" to={"/details-specifical-combat"} onClick={() => dispatch(updateCombatId(element.id))}>Подробнее</NavLink>
                 </div>
             </div>
         </li>;
     }
 
     const getCombatsAsync = async () => {
-        const response = await fetch('generalAnalysis');
+        const response = await fetch(`generalAnalysis/${combatLogId}`);
         const data = await response.json();
 
         fillingCombatList(data);
@@ -69,6 +75,7 @@ const GeneralAnalysis = () => {
     const render = () => {
         return <div>
             <h2>Бои</h2>
+            <button type="button" className="btn btn-success" onClick={() => navigate("/")}>Главная</button>
             {combatsRender}
         </div>
     }

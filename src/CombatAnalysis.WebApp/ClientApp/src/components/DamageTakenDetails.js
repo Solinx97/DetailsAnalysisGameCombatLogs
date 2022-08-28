@@ -1,26 +1,20 @@
 ﻿import React, { useState, useEffect } from 'react';
+import { useSelector } from 'react-redux';
 import { NavLink, useNavigate } from 'react-router-dom';
 
 const DamageTakenDetails = () => {
     const navigate = useNavigate();
 
-    const [combatPlayerId, setCombatPlayerId] = useState(0);
+    const combatPlayerId = useSelector((state) => state.combatPlayer.value);
     const [damageTakenRender, setTakenTakenRender] = useState(null);
 
     useEffect(() => {
-        const queryParams = new URLSearchParams(window.location.search);
-        setCombatPlayerId(+queryParams.get("id"));
+        const getDamageTaken = async () => {
+            await getDamageTakenAsync();
+        };
+
+        getDamageTaken();
     }, []);
-
-    useEffect(() => {
-        if (combatPlayerId > 0) {
-            const getDamageTaken = async () => {
-                await getDamageTakenAsync();
-            };
-
-            getDamageTaken();
-        }
-    }, [combatPlayerId]);
 
     const fillingDamageTakenList = (damageTakens) => {
         if (damageTakens.length > 0) {
@@ -61,7 +55,7 @@ const DamageTakenDetails = () => {
     }
 
     const getDamageTakenAsync = async () => {
-        const response = await fetch('damageTaken/' + combatPlayerId);
+        const response = await fetch(`damageTaken/${combatPlayerId}`);
         const data = await response.json();
 
         fillingDamageTakenList(data);
@@ -70,7 +64,7 @@ const DamageTakenDetails = () => {
     const render = () => {
         return <div>
             <h2>Получено урона</h2>
-            <button type="button" className="btn btn-success" onClick={() => navigate("/details-specifical-combat?id=" + combatPlayerId)}>Назад</button>
+            <button type="button" className="btn btn-success" onClick={() => navigate("/details-specifical-combat")}>Выбор игрока</button>
             {damageTakenRender}
         </div>
     }
