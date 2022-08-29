@@ -13,8 +13,7 @@ namespace CombatAnalysis.CombatParser.Extensions
         {
             var spells = collection
                 .GroupBy(group => group.SpellOrItem)
-                .Select(select => select.ToList())
-                .ToList();
+                .Select(select => select.ToList());
 
             TimeSpan.TryParse(combat.Duration, out var durationTime);
 
@@ -45,8 +44,7 @@ namespace CombatAnalysis.CombatParser.Extensions
         {
             var spells = collection
                 .GroupBy(group => group.SpellOrItem)
-                .Select(select => select.ToList())
-                .ToList();
+                .Select(select => select.ToList());
 
             TimeSpan.TryParse(combat.Duration, out var durationTime);
 
@@ -77,8 +75,7 @@ namespace CombatAnalysis.CombatParser.Extensions
         {
             var spells = collection
                 .GroupBy(group => group.SpellOrItem)
-                .Select(select => select.ToList())
-                .ToList();
+                .Select(select => select.ToList());
 
             TimeSpan.TryParse(combat.Duration, out var durationTime);
 
@@ -109,8 +106,7 @@ namespace CombatAnalysis.CombatParser.Extensions
         {
             var spells = collection
                 .GroupBy(group => group.SpellOrItem)
-                .Select(select => select.ToList())
-                .ToList();
+                .Select(select => select.ToList());
 
             TimeSpan.TryParse(combat.Duration, out var durationTime);
 

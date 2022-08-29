@@ -49,6 +49,14 @@ namespace CombatAnalysis.CombatParser.Services
             _player = player;
         }
 
+        public void Clear()
+        {
+            DamageDone.Clear();
+            HealDone.Clear();
+            DamageTaken.Clear();
+            ResourceRecovery.Clear();
+        }
+
         public int GetDamageDone()
         {
             int damageDone = 0;
