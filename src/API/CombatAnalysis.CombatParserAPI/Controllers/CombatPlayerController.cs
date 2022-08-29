@@ -30,6 +30,15 @@ namespace CombatAnalysis.CombatParserAPI.Controllers
             return map;
         }
 
+        [HttpGet("{id}")]
+        public async Task<CombatPlayerDataDto> GetById(int id)
+        {
+            var combatLog = await _service.GetByIdAsync(id);
+            var map = _mapper.Map<CombatPlayerDataDto>(combatLog);
+
+            return map;
+        }
+
         [HttpPost]
         public async Task<int> Post(CombatPlayerDataModel value)
         {

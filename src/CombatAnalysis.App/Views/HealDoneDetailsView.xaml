@@ -37,15 +37,10 @@
             </ContentControl.Resources>
         </ContentControl>
 
-        <Grid Grid.Column="2" Grid.ColumnSpan="2" Margin="40 30">
-            <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
-                <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center"
-                   Text="Игрок:" FontSize="16" TextAlignment="Center" 
-                           Foreground="Gray" Margin="10 0" FontWeight="Medium" />
-                <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center"
+        <Grid Grid.Column="2" Grid.ColumnSpan="2" Margin="20" VerticalAlignment="Bottom" HorizontalAlignment="Center">
+            <TextBlock HorizontalAlignment="Left" VerticalAlignment="Top"
                    Text="{Binding SelectedPlayer}" FontSize="18"
-                   FontWeight="Bold" TextAlignment="Center" />
-            </StackPanel>
+                   FontWeight="Bold" FontFamily="Comic Sans MS" FontStyle="Italic" TextAlignment="Center" />
         </Grid>
         
         <StackPanel Grid.Column="3" Grid.Row="1" Orientation="Horizontal" VerticalAlignment="Center"

@@ -53,40 +53,38 @@ namespace CombatAnalysis.CombatParserAPI.Helpers
             var map = _mapper.Map<Combat>(combat);
             _details.Initialization(map);
 
-            for (int i = 0; i < combatPlayers.Count; i++)
+            foreach (var item in combatPlayers)
             {
-                var combatPlayerResponse = await _httpClient.PostAsync("CombatPlayer", JsonContent.Create(combatPlayers[i]));
+                var combatPlayerResponse = await _httpClient.PostAsync("CombatPlayer", JsonContent.Create(item));
                 var createdCombatPlayerId = await combatPlayerResponse.Content.ReadFromJsonAsync<int>();
 
-                _details.Initialization(combatPlayers[i].UserName);
+                _details.Initialization(item.UserName);
+
+                _details.Clear();
 
                 _details.GetDamageDone();
                 _details.GetHealDone();
                 _details.GetResourceRecovery();
                 _details.GetDamageTaken();
 
-                var damageDoneData = new List<DamageDone>(_details.DamageDone);
-                await SaveDamageDoneDetails(damageDoneData, createdCombatPlayerId);
+                await SaveDamageDoneDetails(_details.DamageDone, createdCombatPlayerId);
 
-                var damageDoneGeneralData = _details.GetDamageDoneGeneral(damageDoneData, map);
+                var damageDoneGeneralData = _details.GetDamageDoneGeneral(_details.DamageDone, map);
                 await SaveDamageDoneGeneral(damageDoneGeneralData.ToList(), createdCombatPlayerId);
 
-                var healDoneData = new List<HealDone>(_details.HealDone);
-                await SaveHealDoneDetails(healDoneData, createdCombatPlayerId);
+                await SaveHealDoneDetails(_details.HealDone, createdCombatPlayerId);
 
-                var healDoneGeneralData = _details.GetHealDoneGeneral(healDoneData, map);
+                var healDoneGeneralData = _details.GetHealDoneGeneral(_details.HealDone, map);
                 await SaveHealDoneGeneral(healDoneGeneralData.ToList(), createdCombatPlayerId);
 
-                var damageTakenData = new List<DamageTaken>(_details.DamageTaken);
-                await SaveDamageTakenDetails(damageTakenData, createdCombatPlayerId);
+                await SaveDamageTakenDetails(_details.DamageTaken, createdCombatPlayerId);
 
-                var damageTakenGeneralData = _details.GetDamageTakenGeneral(damageTakenData, map);
+                var damageTakenGeneralData = _details.GetDamageTakenGeneral(_details.DamageTaken, map);
                 await SaveDamageTakenGeneral(damageTakenGeneralData.ToList(), createdCombatPlayerId);
 
-                var resourceRecoveryData = new List<ResourceRecovery>(_details.ResourceRecovery);
-                await SaveResourceRecoveryDetails(resourceRecoveryData, createdCombatPlayerId);
+                await SaveResourceRecoveryDetails(_details.ResourceRecovery, createdCombatPlayerId);
 
-                var resourceRecoveryGeneralData = _details.GetResourceRecoveryGeneral(resourceRecoveryData, map);
+                var resourceRecoveryGeneralData = _details.GetResourceRecoveryGeneral(_details.ResourceRecovery, map);
                 await SaveResourceRecoveryGeneral(resourceRecoveryGeneralData.ToList(), createdCombatPlayerId);
             }
         }

@@ -32,16 +32,14 @@ namespace CombatAnalysis.Core.Services
             try
             {
                 SetCombats(combats);
-                var createdCombatLogId = await SaveCombatLogAsync();
-                var tasks = new List<Task>();
+                var createdCombatLogId = await SaveCombatLogAsync().ConfigureAwait(false);
 
                 foreach (var item in combats)
                 {
-                    tasks.Add(SaveCombatDataAsync(item, createdCombatLogId));
+                    await SaveCombatDataAsync(item, createdCombatLogId).ConfigureAwait(false);
                 }
 
-                await Task.WhenAny(tasks);
-                await SetReadyForCombatLog(createdCombatLogId);
+                await SetReadyForCombatLog(createdCombatLogId).ConfigureAwait(false);
 
                 return true;
             }
@@ -91,17 +89,14 @@ namespace CombatAnalysis.Core.Services
 
         public async Task DeleteCombatLogAsync(int id)
         {
-            var tasks = new List<Task>();
-            var combats = await LoadCombatsAsync(id);
+            var combats = await LoadCombatsAsync(id).ConfigureAwait(false);
             foreach (var item in combats)
             {
-                tasks.Add(DeleteCombatPlayersData(item.Id));
-                tasks.Add(_httpClient.DeletAsync($"Combat/{item.Id}"));
+                await DeleteCombatPlayersData(item.Id).ConfigureAwait(false);
+                await _httpClient.DeletAsync($"Combat/{item.Id}").ConfigureAwait(false);
             }
 
-            await Task.WhenAll(tasks);
-
-            await _httpClient.DeletAsync($"CombatLog/{id}");
+            await _httpClient.DeletAsync($"CombatLog/{id}").ConfigureAwait(false);
         }
 
         public async Task<IEnumerable<CombatLogModel>> LoadCombatLogsAsync()
