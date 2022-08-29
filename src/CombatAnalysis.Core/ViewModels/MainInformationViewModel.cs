@@ -247,7 +247,7 @@ namespace CombatAnalysis.Core.ViewModels
                 {
                     BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, "ResponseStatus", ResponseStatus.Pending);
 
-                    var responseStatus = await _combatParserAPIService.Save(combats) ? ResponseStatus.Successful : ResponseStatus.Failed;
+                    var responseStatus = await _combatParserAPIService.Save(combats).ConfigureAwait(false) ? ResponseStatus.Successful : ResponseStatus.Failed;
 
                     BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, "ResponseStatus", responseStatus);
                 }

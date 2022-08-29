@@ -19,6 +19,8 @@ namespace CombatAnalysis.CombatParser.Interfaces
 
         void Initialization(string player);
 
+        void Clear();
+
         int GetDamageDone();
 
         int GetHealDone();
