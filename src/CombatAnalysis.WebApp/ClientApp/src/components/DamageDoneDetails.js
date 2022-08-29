@@ -1,20 +1,50 @@
 ﻿import React, { useState, useEffect } from 'react';
-import { useSelector } from 'react-redux';
 import { NavLink, useNavigate } from 'react-router-dom';
 
 const DamageDoneDetails = () => {
     const navigate = useNavigate();
 
-    const combatPlayerId = useSelector((state) => state.combatPlayer.value);
+    const [combatPlayerId, setCombatPlayerId] = useState(0);
+    const [combatId, setCombatId] = useState(0);
     const [damageDoneRender, setDamageDoneRender] = useState(null);
 
     useEffect(() => {
-        const getDamageDone = async () => {
-            await getDamageDoneAsync();
-        };
-
-        getDamageDone();
+        const queryParams = new URLSearchParams(window.location.search);
+        setCombatPlayerId(+queryParams.get("id"));
     }, []);
+
+    useEffect(() => {
+        if (combatPlayerId > 0) {
+            const getDamageDones = async () => {
+                await getDamageDonesAsync();
+            };
+
+            getDamageDones();
+        }
+    }, [combatPlayerId]);
+
+    const getDamageDonesAsync = async () => {
+        const response = await fetch(`damageDone/${combatPlayerId}`);
+        const damageDones = await response.json();
+
+        await getCombatPlayerAsync();
+
+        fillingDamageDoneList(damageDones);
+    }
+
+    const getCombatPlayerAsync = async () => {
+        const response = await fetch(`detailsSpecificalCombat/combatPlayerById/${combatPlayerId}`);
+        const combatPlayer = await response.json();
+
+        await getCombatsAsync(combatPlayer.combatId);
+    }
+
+    const getCombatsAsync = async (id) => {
+        const response = await fetch(`detailsSpecificalCombat/combatById/${id}`);
+        const combat = await response.json();
+
+        setCombatId(combat.id);
+    }
 
     const fillingDamageDoneList = (damageDones) => {
         if (damageDones.length > 0) {
@@ -54,19 +84,12 @@ const DamageDoneDetails = () => {
         </li>;
     }
 
-    const getDamageDoneAsync = async () => {
-        const response = await fetch(`damageDone/${combatPlayerId}`);
-        const data = await response.json();
-
-        fillingDamageDoneList(data);
-    }
-
     const render = () => {
         return <div>
             <h2>Урон</h2>
-            <button type="button" className="btn btn-success" onClick={() => navigate("/details-specifical-combat")}>Выбор игрока</button>
+            <button type="button" className="btn btn-success" onClick={() => navigate(`/details-specifical-combat?id=${combatId}`)}>Выбор игрока</button>
             {damageDoneRender}
-        </div>
+        </div>;
     }
 
     return render();

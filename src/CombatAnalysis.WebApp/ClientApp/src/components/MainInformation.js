@@ -1,21 +1,25 @@
 ﻿import React, { useState, useEffect } from 'react';
-import { useDispatch } from 'react-redux'
-import { updateCombatLogId } from '../features/CombatLogReducer'
 import { NavLink } from 'react-router-dom';
 
 import "../styles/generalAnalysis.sass";
 
 const MainInformation = () => {
     const [combatsRender, setCombatsRender] = useState(null);
-    const dispatch = useDispatch();
 
     useEffect(() => {
-        const getCombats = async () => {
-            await getCombatsAsync();
+        const getCombatLogs = async () => {
+            await getCombatLogsAsync();
         };
 
-        getCombats();
+        getCombatLogs();
     }, []);
+
+    const getCombatLogsAsync = async () => {
+        const response = await fetch('mainInformation');
+        const combatLogs = await response.json();
+
+        fillingCombatLogList(combatLogs);
+    }
 
     const fillingCombatLogList = (combats) => {
         if (combats.length > 0) {
@@ -40,24 +44,17 @@ const MainInformation = () => {
                     <li className="list-group-item">{element.date}</li>
                 </ul>
                 <div className="card-body">
-                    <NavLink className="card-link" to={"/general-analysis"} onClick={() => dispatch(updateCombatLogId(element.id))}>Разбор</NavLink>
+                    <NavLink className="card-link" to={`/general-analysis?id=${element.id}`}>Разбор</NavLink>
                 </div>
             </div>
         </li>;
-    }
-
-    const getCombatsAsync = async () => {
-        const response = await fetch('mainInformation');
-        const data = await response.json();
-
-        fillingCombatLogList(data);
     }
 
     const render = () => {
         return <div>
             <h2>Логи боев</h2>
             {combatsRender}
-        </div>
+        </div>;
     }
 
     return render();

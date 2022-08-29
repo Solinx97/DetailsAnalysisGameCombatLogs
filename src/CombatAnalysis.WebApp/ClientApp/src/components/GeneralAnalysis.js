@@ -1,16 +1,18 @@
 ﻿import React, { useState, useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { updateCombatId } from '../features/CombatReducer';
 import { NavLink, useNavigate } from 'react-router-dom';
 
 import "../styles/generalAnalysis.sass";
 
 const GeneralAnalysis = () => {
     const navigate = useNavigate();
-    const dispatch = useDispatch();
 
-    const combatLogId = useSelector((state) => state.combatLog.value);
+    const [combatLogId, setCombatLogId] = useState(0);
     const [combatsRender, setCombatsRender] = useState(null);
+
+    useEffect(() => {
+        const queryParams = new URLSearchParams(window.location.search);
+        setCombatLogId(+queryParams.get("id"));
+    }, []);
 
     useEffect(() => {
         const getCombats = async () => {
@@ -18,7 +20,14 @@ const GeneralAnalysis = () => {
         };
 
         getCombats();
-    }, []);
+    }, [combatLogId]);
+
+    const getCombatsAsync = async () => {
+        const response = await fetch(`generalAnalysis/${combatLogId}`);
+        const combats = await response.json();
+
+        fillingCombatList(combats);
+    }
 
     const fillingCombatList = (combats) => {
         if (combats.length > 0) {
@@ -33,6 +42,10 @@ const GeneralAnalysis = () => {
         else {
             setCombatsRender(<div>Необходимо добавить хотя бы 1 элемент</div>);
         }
+    }
+
+    const getCombatStatus = (status) => {
+        return status ? "Победа" : "Поражение";
     }
 
     const combatList = (element) => {
@@ -55,29 +68,18 @@ const GeneralAnalysis = () => {
                     <li className="list-group-item">Продолжительность боя: {element.duration}</li>
                 </ul>
                 <div className="card-body">
-                    <NavLink className="card-link" to={"/details-specifical-combat"} onClick={() => dispatch(updateCombatId(element.id))}>Подробнее</NavLink>
+                    <NavLink className="card-link" to={`/details-specifical-combat?id=${element.id}`}>Подробнее</NavLink>
                 </div>
             </div>
         </li>;
     }
 
-    const getCombatsAsync = async () => {
-        const response = await fetch(`generalAnalysis/${combatLogId}`);
-        const data = await response.json();
-
-        fillingCombatList(data);
-    }
-
-    const getCombatStatus = (status) => {
-        return status ? "Победа" : "Поражение";
-    }
-
     const render = () => {
         return <div>
             <h2>Бои</h2>
-            <button type="button" className="btn btn-success" onClick={() => navigate("/")}>Главная</button>
+            <button type="button" className="btn btn-success" onClick={() => navigate("/")}>Главная страница</button>
             {combatsRender}
-        </div>
+        </div>;
     }
 
     return render();

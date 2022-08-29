@@ -1,20 +1,50 @@
 ﻿import React, { useState, useEffect } from 'react';
-import { useSelector } from 'react-redux';
 import { NavLink, useNavigate } from 'react-router-dom';
 
 const ResourceRecoveryDetails = () => {
     const navigate = useNavigate();
 
-    const combatPlayerId = useSelector((state) => state.combatPlayer.value);
+    const [combatPlayerId, setCombatPlayerId] = useState(0);
+    const [combatId, setCombatId] = useState(0);
     const [resourceRecoveryRender, setResourceRecoveryRender] = useState(null);
 
     useEffect(() => {
-        const getResourceRecovery = async () => {
-            await getResourceRecoveryAsync();
-        };
-
-        getResourceRecovery();
+        const queryParams = new URLSearchParams(window.location.search);
+        setCombatPlayerId(+queryParams.get("id"));
     }, []);
+
+    useEffect(() => {
+        if (combatPlayerId > 0) {
+            const getResourceRecovery = async () => {
+                await getResourceRecoveryAsync();
+            };
+
+            getResourceRecovery();
+        }
+    }, [combatPlayerId]);
+
+    const getResourceRecoveryAsync = async () => {
+        const response = await fetch(`resourceRecovery/${combatPlayerId}`);
+        const data = await response.json();
+
+        await getCombatPlayerAsync();
+
+        fillingResourceRecoveryList(data);
+    }
+
+    const getCombatPlayerAsync = async () => {
+        const response = await fetch(`detailsSpecificalCombat/combatPlayerById/${combatPlayerId}`);
+        const combatPlayer = await response.json();
+
+        await getCombatsAsync(combatPlayer.combatId);
+    }
+
+    const getCombatsAsync = async (id) => {
+        const response = await fetch(`detailsSpecificalCombat/combatById/${id}`);
+        const combat = await response.json();
+
+        setCombatId(combat.id);
+    }
 
     const fillingResourceRecoveryList = (resourceRecoveries) => {
         if (resourceRecoveries.length > 0) {
@@ -52,19 +82,12 @@ const ResourceRecoveryDetails = () => {
         </li>;
     }
 
-    const getResourceRecoveryAsync = async () => {
-        const response = await fetch(`resourceRecovery/${combatPlayerId}`);
-        const data = await response.json();
-
-        fillingResourceRecoveryList(data);
-    }
-
     const render = () => {
         return <div>
-            <h2>Ресурсы игркоа</h2>
-            <button type="button" className="btn btn-success" onClick={() => navigate("/details-specifical-combat")}>Назад</button>
+            <h2>Ресурсы игрока</h2>
+            <button type="button" className="btn btn-success" onClick={() => navigate(`/details-specifical-combat?id=${combatId}`)}>Выбор игрока</button>
             {resourceRecoveryRender}
-        </div>
+        </div>;
     }
 
     return render();
