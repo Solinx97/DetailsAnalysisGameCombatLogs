@@ -1,8 +1,6 @@
 ﻿import React, { useState, useEffect } from 'react';
 import { NavLink } from 'react-router-dom';
 
-import "../styles/generalAnalysis.sass";
-
 const MainInformation = () => {
     const [combatsRender, setCombatsRender] = useState(null);
 
