@@ -7,10 +7,11 @@ import Layout from './components/Layout';
 import MainInformation from './components/MainInformation';
 import GeneralAnalysis from './components/GeneralAnalysis';
 import DetailsSpecificalCombat from './components/DetailsSpecificalCombat';
+import DamageDoneGeneralDetails from './components/DamageDoneGeneralDetails';
 import DamageDoneDetails from './components/DamageDoneDetails';
-import DamageTakenDetails from './components/DamageTakenDetails';
-import HealDoneDetails from './components/HealDoneDetails';
-import ResourceRecoveryDetails from './components/ResourceRecoveryDetails';
+import DamageTakenGeneralDetails from './components/DamageTakenGeneralDetails';
+import HealDoneGeneralDetails from './components/HealDoneGeneralDetails';
+import ResourceRecoveryGeneralDetails from './components/ResourceRecoveryGeneralDetails';
 
 import './custom.css'
 
@@ -20,10 +21,11 @@ const App = () => {
                 <Route path='/' element={<MainInformation />} />
                 <Route path='/general-analysis' element={<GeneralAnalysis />} />
                 <Route path='/details-specifical-combat' element={<DetailsSpecificalCombat />} />
+                <Route path='/damage-done-general-details' element={<DamageDoneGeneralDetails />} />
                 <Route path='/damage-done-details' element={<DamageDoneDetails />} />
-                <Route path='/damage-taken-details' element={<DamageTakenDetails />} />
-                <Route path='/heal-done-details' element={<HealDoneDetails />} />
-                <Route path='/resource-recovery-details' element={<ResourceRecoveryDetails />} />
+                <Route path='/damage-taken-general-details' element={<DamageTakenGeneralDetails />} />
+                <Route path='/heal-done-general-details' element={<HealDoneGeneralDetails />} />
+                <Route path='/resource-recovery-general-details' element={<ResourceRecoveryGeneralDetails />} />
             </Routes>
         </Layout>;
 }

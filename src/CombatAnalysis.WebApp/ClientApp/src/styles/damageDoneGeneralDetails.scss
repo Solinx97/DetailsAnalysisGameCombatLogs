@@ -1,0 +1,13 @@
+﻿.damage-done-general-details__container {
+    &_navigate {
+        display: flex;
+
+        div, h3 {
+            margin: 5px;
+        }
+    }
+
+    .form-check {
+        margin: 20px;
+    }
+}

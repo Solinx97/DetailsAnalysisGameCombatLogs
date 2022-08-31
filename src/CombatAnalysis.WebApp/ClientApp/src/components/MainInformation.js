@@ -1,5 +1,8 @@
 ﻿import React, { useState, useEffect } from 'react';
 import { NavLink } from 'react-router-dom';
+import { format } from 'date-fns';
+
+import "../styles/mainInformation.scss";
 
 const MainInformation = () => {
     const [combatsRender, setCombatsRender] = useState(null);
@@ -39,7 +42,7 @@ const MainInformation = () => {
             <div className="card">
                 <ul className="list-group list-group-flush">
                     <li className="list-group-item">{element.name}</li>
-                    <li className="list-group-item">{element.date}</li>
+                    <li className="list-group-item">{format(new Date(element.date), 'MM/dd/yyyy HH:mm')}</li>
                 </ul>
                 <div className="card-body">
                     <NavLink className="card-link" to={`/general-analysis?id=${element.id}`}>Разбор</NavLink>
@@ -49,7 +52,7 @@ const MainInformation = () => {
     }
 
     const render = () => {
-        return <div>
+        return <div className="main-information__container">
             <h2>Логи боев</h2>
             {combatsRender}
         </div>;

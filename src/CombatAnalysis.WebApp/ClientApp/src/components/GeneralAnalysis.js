@@ -51,14 +51,8 @@ const GeneralAnalysis = () => {
         return status ? "Победа" : "Поражение";
     }
 
-    const getDateFormat = (date) => {
-        var newDate = new Date(date);
-        let dateDay = newDate.getDate();
-        let dateMonth = newDate.getMonth();
-    }
-
     const combatList = (element) => {
-        return <li key={element.id} className="general-analysis__container">
+        return <li key={element.id}>
             <div className="card">
                 <div className="card-body">
                     <h5 className="card-title">{element.name}</h5>
@@ -120,9 +114,11 @@ const GeneralAnalysis = () => {
     }
 
     const render = () => {
-        return <div>
-            <h2>Бои</h2>
-            <button type="button" className="btn btn-success" onClick={() => navigate("/")}>Главная страница</button>
+        return <div className="general-analysis__container">
+            <div className="general-analysis__container_navigate">
+                <h3>Бои</h3>
+                <button type="button" className="btn btn-primary" onClick={() => navigate("/")}>Главная страница</button>
+            </div>
             {combatsRender}
         </div>;
     }

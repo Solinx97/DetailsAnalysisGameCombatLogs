@@ -59,6 +59,18 @@
         }
     }
 
+    .form-check {
+        margin: 20px;
+    }
+
+    &_navigate {
+        display: flex;
+
+        div, h3 {
+            margin: 5px;
+        }
+    }
+
     &_general-details-charts {
         display: flex;
         margin-left: -200px;

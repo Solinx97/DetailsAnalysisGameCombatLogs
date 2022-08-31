@@ -1,7 +1,7 @@
 ﻿import React, { useState, useEffect } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 
-const ResourceRecoveryDetails = () => {
+const ResourceRecoveryGeneralDetails = () => {
     const navigate = useNavigate();
 
     const [combatPlayerId, setCombatPlayerId] = useState(0);
@@ -93,4 +93,4 @@ const ResourceRecoveryDetails = () => {
     return render();
 }
 
-export default ResourceRecoveryDetails;
+export default ResourceRecoveryGeneralDetails;

@@ -21,6 +21,7 @@ const DetailsSpecificalCombat = () => {
     const [activeUserIndex, setActiveUserIndex] = useState(0);
     const [combatPlayers, setCombatPlayers] = useState({});
     const [showRadarChart, setShowRadarChart] = useState(false);
+    const [showGeneralDetails, setShowGeneralDetails] = useState(true);
     const [combatPlayersRender, setCombatPlayersRender] = useState(null);
 
     const [damageDonePieChart, setDamageDonePieChart] = usePieChart({});
@@ -182,8 +183,8 @@ const DetailsSpecificalCombat = () => {
                     <h5 className="card-title">{element.userName}</h5>
                 </div>
                 <div className="form-check form-switch">
-                    <input className="form-check-input" type="checkbox" id="flexSwitchCheckChecked" onChange={() => switchRadarChart(index)} />
-                    <label className="form-check-label" htmlFor="flexSwitchCheckChecked">Показать график</label>
+                    <input className="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckChecked" onChange={() => switchRadarChart(index)} />
+                    <label className="form-check-label" htmlFor="flexSwitchCheckChecked">Показать статистику</label>
                 </div>
                 {(showRadarChart && activeUserIndex == index) &&
                     <RadarChart
@@ -211,35 +212,35 @@ const DetailsSpecificalCombat = () => {
                         <FontAwesomeIcon icon={faHandFist} className="list-group-item__damage-done" title="Нанесенный урон" />
                         <div>{element.damageDone}</div>
                         {element.damageDone > 0 &&
-                            <FontAwesomeIcon icon={faBoxOpen} className="list-group-item__details" onClick={() => navigate(`/damage-done-details?id=${element.id}`)} title="Открыть подробный анализ урон" />
+                            <FontAwesomeIcon icon={faBoxOpen} className="list-group-item__details" onClick={() => navigate(`/damage-done-general-details?id=${element.id}`)} title="Открыть подробный анализ урон" />
                         }
                     </li>
                     <li className="list-group-item">
                         <FontAwesomeIcon icon={faPlusCircle} className="list-group-item__heal-done" title="Исцеление" />
                         <div>{element.healDone}</div>
                         {element.healDone > 0 &&
-                            <FontAwesomeIcon icon={faBoxOpen} className="list-group-item__details" onClick={() => navigate(`/heal-done-details?id=${element.id}`)} title="Открыть подробный анализ исцеления" />
+                            <FontAwesomeIcon icon={faBoxOpen} className="list-group-item__details" onClick={() => navigate(`/heal-done-general-details?id=${element.id}`)} title="Открыть подробный анализ исцеления" />
                         }
                     </li>
                     <li className="list-group-item">
                         <FontAwesomeIcon icon={faShieldHalved} className="list-group-item__damage-taken" title="Полученный урон" />
                         <div>{element.damageTaken}</div>
                         {element.damageTaken > 0 &&
-                            <FontAwesomeIcon icon={faBoxOpen} className="list-group-item__details" onClick={() => navigate(`/damage-taken-details?id=${element.id}`)} title="Открыть подробный анализ полученного урона" />
+                            <FontAwesomeIcon icon={faBoxOpen} className="list-group-item__details" onClick={() => navigate(`/damage-taken-general-details?id=${element.id}`)} title="Открыть подробный анализ полученного урона" />
                         }
                     </li>
                     <li className="list-group-item">
                         <FontAwesomeIcon icon={faBolt} className="list-group-item__energy-recovery" title="Затрачено ресусрво" />
                         <div>{element.energyRecovery}</div>
                         {element.energyRecovery > 0 &&
-                            <FontAwesomeIcon icon={faBoxOpen} className="list-group-item__details" onClick={() => navigate(`/resource-recovery-details?id=${element.id}`)} title="Открыть подробный анализ затраченных ресурсов" />
+                            <FontAwesomeIcon icon={faBoxOpen} className="list-group-item__details" onClick={() => navigate(`/resource-recovery-general-details?id=${element.id}`)} title="Открыть подробный анализ затраченных ресурсов" />
                         }
                     </li>
                     <li className="list-group-item">
                         <FontAwesomeIcon icon={faCircleNodes} className="list-group-item__used-buffs" title="Бафы" />
                         <div>{element.usedBuffs}</div>
                         {element.usedBuffs > 0 &&
-                            <FontAwesomeIcon icon={faBoxOpen} className="list-group-item__details" onClick={() => navigate(`/buffs-details-details?id=${element.id}`)} title="Открыть подробный анализ бафов" />
+                            <FontAwesomeIcon icon={faBoxOpen} className="list-group-item__details" onClick={() => navigate(`/buffs-general-details?id=${element.id}`)} title="Открыть подробный анализ бафов" />
                         }
                     </li>
                 </ul>
@@ -249,13 +250,23 @@ const DetailsSpecificalCombat = () => {
 
     const render = () => {
         return <div className="details-specifical-combat__container">
-            <h2>Игроки, участвующие в бою</h2>
-            <button type="button" className="btn btn-success" onClick={() => navigate(`/general-analysis?id=${combatLogId}`)}>Выбор боя</button>
-            <div className="details-specifical-combat__container_general-details-charts">
-                {damageDonePieChart}
-                {healDonePieChart}
-                {damageTakenPieChart}
+            <div className="details-specifical-combat__container_navigate">
+                <h3>Игроки, участвующие в бою</h3>
+                <div className="btn-group" role="group">
+                    <button type="button" className="btn btn-primary" onClick={() => navigate(`/general-analysis?id=${combatLogId}`)}>Выбор боя</button>
+                </div>
             </div>
+            <div className="form-check form-switch">
+                <input className="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckChecked" onChange={() => setShowGeneralDetails(!showGeneralDetails)} defaultChecked="true" />
+                <label className="form-check-label" htmlFor="flexSwitchCheckChecked">Показать общую статистику</label>
+            </div>
+            {showGeneralDetails &&
+                <div className="details-specifical-combat__container_general-details-charts">
+                    {damageDonePieChart}
+                    {healDonePieChart}
+                    {damageTakenPieChart}
+                </div>
+            }
             {combatPlayersRender}
         </div>;
     }

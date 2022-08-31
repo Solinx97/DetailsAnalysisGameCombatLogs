@@ -1,11 +1,10 @@
 ﻿import React, { useState, useEffect } from 'react';
-import { NavLink, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 const DamageDoneDetails = () => {
     const navigate = useNavigate();
 
     const [combatPlayerId, setCombatPlayerId] = useState(0);
-    const [combatId, setCombatId] = useState(0);
     const [damageDoneRender, setDamageDoneRender] = useState(null);
 
     useEffect(() => {
@@ -27,23 +26,7 @@ const DamageDoneDetails = () => {
         const response = await fetch(`damageDone/${combatPlayerId}`);
         const damageDones = await response.json();
 
-        await getCombatPlayerAsync();
-
         fillingDamageDoneList(damageDones);
-    }
-
-    const getCombatPlayerAsync = async () => {
-        const response = await fetch(`detailsSpecificalCombat/combatPlayerById/${combatPlayerId}`);
-        const combatPlayer = await response.json();
-
-        await getCombatsAsync(combatPlayer.combatId);
-    }
-
-    const getCombatsAsync = async (id) => {
-        const response = await fetch(`detailsSpecificalCombat/combatById/${id}`);
-        const combat = await response.json();
-
-        setCombatId(combat.id);
     }
 
     const fillingDamageDoneList = (damageDones) => {
@@ -68,26 +51,20 @@ const DamageDoneDetails = () => {
                     <h5 className="card-title">{element.spellOrItem}</h5>
                 </div>
                 <ul className="list-group list-group-flush">
-                    <li className="list-group-item">Всего урона: {element.value}</li>
-                    <li className="list-group-item">Урон в секунду: {element.damagePerSecond}</li>
-                    <li className="list-group-item">Количество кастов: {element.castNumber}</li>
-                    <li className="list-group-item">Среднее значение: {element.averageValue}</li>
-                    <li className="list-group-item">Количество критов: {element.critNumber}</li>
-                    <li className="list-group-item">Количество промахов: {element.missNumber}</li>
-                    <li className="list-group-item">Максимальное значение: {element.maxValue}</li>
-                    <li className="list-group-item">Минимальное значение: {element.minValue}</li>
+                    <li className="list-group-item">Время: {element.time}</li>
+                    <li className="list-group-item">Урон: {element.value}</li>
+                    <li className="list-group-item">От игрока: {element.fromPlayer}</li>
+                    <li className="list-group-item">Цель: {element.toEnemy}</li>
+                    <li className="list-group-item">Заклинание: {element.spellOrItem}</li>
                 </ul>
-                <div className="card-body">
-                    <NavLink className="card-link" to={"/target-course?id=" + element.id}>Подробнее</NavLink>
-                </div>
             </div>
         </li>;
     }
 
     const render = () => {
         return <div>
-            <h2>Урон</h2>
-            <button type="button" className="btn btn-success" onClick={() => navigate(`/details-specifical-combat?id=${combatId}`)}>Выбор игрока</button>
+            <h2>Подробная информация об уроне</h2>
+            <button type="button" className="btn btn-success" onClick={() => navigate(`/damage-done-general-details?id=${combatPlayerId}`)}>Общая информация</button>
             {damageDoneRender}
         </div>;
     }
