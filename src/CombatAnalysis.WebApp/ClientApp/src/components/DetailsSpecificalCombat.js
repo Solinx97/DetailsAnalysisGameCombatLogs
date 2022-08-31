@@ -51,20 +51,22 @@ const DetailsSpecificalCombat = () => {
 
     useEffect(() => {
         if (combatPlayers.length > 0) {
+            var data = createPieChardData();
+
             setDamageDonePieChart({
                 title: "Урон",
                 color: "blue",
-                data: createDamageDonePieChardData()
+                data: data.damageDone
             });
             setHealDonePieChart({
                 title: "Исцеление",
                 color: "green",
-                data: createHealDonePieChardData()
+                data: data.healDone
             });
             setDamageTakenPieChart({
                 title: "Полученный урон",
                 color: "orange",
-                data: createDamageTakenPieChardData()
+                data: data.damageTaken
             });
         }
     }, [combatPlayers]);
@@ -126,49 +128,36 @@ const DetailsSpecificalCombat = () => {
         ];
     }
 
-    const createDamageDonePieChardData = () => {
-        let data = [];
+    const createPieChardData = () => {
+        let damageDone = [];
+        let healDone = [];
+        let damageTaken = [];
+
         if (combatPlayers != null) {
-            data = new Array(combatPlayers.length);
+            damageDone = new Array(combatPlayers.length);
             for (var i = 0; i < combatPlayers.length; i++) {
                 let realmNameIndex = combatPlayers[i].userName.indexOf('-');
-                data[i] = {};
-                data[i].name = combatPlayers[i].userName.substr(0, realmNameIndex);
-                data[i].value = combatPlayers[i].damageDone;
+                let userName = combatPlayers[i].userName.substr(0, realmNameIndex);
+
+                damageDone[i] = {};
+                damageDone[i].name = userName
+                damageDone[i].value = combatPlayers[i].damageDone;
+
+                healDone[i] = {};
+                healDone[i].name = userName
+                healDone[i].value = combatPlayers[i].healDone;
+
+                damageTaken[i] = {};
+                damageTaken[i].name = userName
+                damageTaken[i].value = combatPlayers[i].damageTaken;
             }
         }
 
-        return data;
-    }
-
-    const createHealDonePieChardData = () => {
-        let data = [];
-        if (combatPlayers != null) {
-            data = new Array(combatPlayers.length);
-            for (var i = 0; i < combatPlayers.length; i++) {
-                let realmNameIndex = combatPlayers[i].userName.indexOf('-');
-                data[i] = {};
-                data[i].name = combatPlayers[i].userName.substr(0, realmNameIndex);
-                data[i].value = combatPlayers[i].healDone;
-            }
-        }
-
-        return data;
-    }
-
-    const createDamageTakenPieChardData = () => {
-        let data = [];
-        if (combatPlayers != null) {
-            data = new Array(combatPlayers.length);
-            for (var i = 0; i < combatPlayers.length; i++) {
-                let realmNameIndex = combatPlayers[i].userName.indexOf('-');
-                data[i] = {};
-                data[i].name = combatPlayers[i].userName.substr(0, realmNameIndex);
-                data[i].value = combatPlayers[i].damageTaken;
-            }
-        }
-
-        return data;
+        return {
+            damageDone: damageDone,
+            healDone: healDone,
+            damageTaken: damageTaken
+        };
     }
 
     const switchRadarChart = (index) => {

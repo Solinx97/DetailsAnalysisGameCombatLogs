@@ -1,6 +1,9 @@
 ﻿import React, { useState, useEffect } from 'react';
-import { NavLink, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { RadialBarChart, RadialBar, Legend } from 'recharts';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import DamageDoneDetails from './DamageDoneDetails';
+import { faHandFist, faGauge, faStopwatch20, faLocationCrosshairs, faMeteor, faShare, faCircleUp, faCircleDown } from '@fortawesome/free-solid-svg-icons';
 
 import "../styles/damageDoneGeneralDetails.scss";
 
@@ -10,8 +13,9 @@ const DamageDoneGeneralDetails = () => {
     const [combatPlayerId, setCombatPlayerId] = useState(0);
     const [combatId, setCombatId] = useState(0);
     const [damageDoneRenderGeneral, setDamageDoneGeneralRender] = useState(null);
-    const [showGeneralDetails, setShowGeneralDetails] = useState(true);
-    const [initialData, setiInitialData] = useState([]);
+    const [showGeneralDetails, setShowGeneralDetails] = useState(false);
+    const [spells, setSpells] = useState([]);
+    const [tabIndex, setTabIndex] = useState(0);
 
     const style = {
         top: '50%',
@@ -61,18 +65,20 @@ const DamageDoneGeneralDetails = () => {
     }
 
     const createBarChartData = (damageDoneGenerals) => {
-        let damageDoneGeneralBarChartData = new Array(damageDoneGenerals.length); 
+        let spellsRadialChartData = new Array(damageDoneGenerals.length);
+
         for (var i = 0; i < damageDoneGenerals.length; i++) {
             let color = '#' + (Math.random().toString(16) + '000000').substring(2, 8).toUpperCase();
-            let data = {
+            let spellsData = {
                 name: damageDoneGenerals[i].spellOrItem,
                 value: damageDoneGenerals[i].value,
-                fill: color == "#fff" ? '#' + (Math.random().toString(16) + '000000').substring(2, 8).toUpperCase() : color
+                fill: color == "#fff" ? '#' + (Math.random().toString(16) + '00000  0').substring(2, 8).toUpperCase() : color
             };
-            damageDoneGeneralBarChartData[i] = data;
+
+            spellsRadialChartData[i] = spellsData;
         }
 
-        setiInitialData(damageDoneGeneralBarChartData);
+        setSpells(spellsRadialChartData);
     }
 
     const fillingDamageDoneGeneralList = (damageDoneGenerals) => {
@@ -97,45 +103,63 @@ const DamageDoneGeneralDetails = () => {
                     <h5 className="card-title">{element.spellOrItem}</h5>
                 </div>
                 <ul className="list-group list-group-flush">
-                    <li className="list-group-item">Всего урона: {element.value}</li>
-                    <li className="list-group-item">Урон в секунду: {element.damagePerSecond}</li>
-                    <li className="list-group-item">Количество кастов: {element.castNumber}</li>
-                    <li className="list-group-item">Среднее значение: {element.averageValue}</li>
-                    <li className="list-group-item">Количество критов: {element.critNumber}</li>
-                    <li className="list-group-item">Количество промахов: {element.missNumber}</li>
-                    <li className="list-group-item">Максимальное значение: {element.maxValue}</li>
-                    <li className="list-group-item">Минимальное значение: {element.minValue}</li>
+                    <li className="list-group-item">
+                        <FontAwesomeIcon icon={faHandFist} className="list-group-item__value" title="Всего урона" />
+                        <div>{element.value}</div>
+                    </li>
+                    <li className="list-group-item">
+                        <FontAwesomeIcon icon={faGauge} className="list-group-item__average-value" title="Среднее значение" />
+                        <div>{element.averageValue.toFixed(2)}</div>
+                    </li>
+                    <li className="list-group-item">
+                        <FontAwesomeIcon icon={faStopwatch20} className="list-group-item__damage-per-second" title="Урон в секунду" />
+                        <div>{element.damagePerSecond.toFixed(2)}</div>
+                    </li>
+                    <li className="list-group-item">
+                        <FontAwesomeIcon icon={faLocationCrosshairs} className="list-group-item__cast-number" title="Кол-во кастов" />
+                        <div>{element.castNumber}</div>
+                    </li>
+                    <li className="list-group-item">
+                        <FontAwesomeIcon icon={faMeteor} className="list-group-item__crit-number" title="Кол-во критов" />
+                        <div>{element.critNumber}</div>
+                    </li>
+                    <li className="list-group-item">
+                        <FontAwesomeIcon icon={faShare} className="list-group-item__miss-number" title="Кол-во промахов" />
+                        <div>{element.missNumber}</div>
+                    </li>
+                    <li className="list-group-item">
+                        <FontAwesomeIcon icon={faCircleUp} className="list-group-item__max-value" title="Макс. значение" />
+                        <div>{element.maxValue}</div>
+                    </li>
+                    <li className="list-group-item">
+                        <FontAwesomeIcon icon={faCircleDown} className="list-group-item__min-value" title="Мин. значение" />
+                        <div>{element.minValue}</div>
+                    </li>
                 </ul>
-                <div className="card-body">
-                    <NavLink className="card-link" to={`/damage-done-details?id=${combatPlayerId}`}>Подробнее</NavLink>
-                </div>
             </div>
         </li>;
     }
 
-    const render = () => {
-        return <div className="damage-done-general-details__container">
-            <div className="damage-done-general-details__container_navigate">
+    const damageDoneGeneralDetailsDOM = () => {
+        return <div>
+            <div>
                 <h3>Общая информаця об уроне</h3>
-                <div className="btn-group" role="group">
-                    <button type="button" className="btn btn-primary" onClick={() => navigate(`/details-specifical-combat?id=${combatId}`)}>Выбор игрока</button>
-                </div>
             </div>
             <div className="form-check form-switch">
-                <input className="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckChecked" onChange={() => setShowGeneralDetails(!showGeneralDetails)} defaultChecked="true" />
-                <label className="form-check-label" htmlFor="flexSwitchCheckChecked">Показать общую статистику</label>
+                <input className="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckChecked" onChange={() => setShowGeneralDetails(!showGeneralDetails)} />
+                <label className="form-check-label" htmlFor="flexSwitchCheckChecked">Показать диаграмму</label>
             </div>
             {showGeneralDetails &&
-                <div>
+                <div className="damage-done-general-details__container_radial-chart">
                     <RadialBarChart
                         width={500}
-                        height={500}
+                        height={450}
                         cx={150}
                         cy={200}
                         innerRadius={20}
                         outerRadius={160}
                         barSize={20}
-                        data={initialData}
+                        data={spells}
                     >
                         <RadialBar
                             minAngle={15}
@@ -153,9 +177,32 @@ const DamageDoneGeneralDetails = () => {
                             wrapperStyle={style}
                         />
                     </RadialBarChart>
+                    <div className="title">Урон от заклинаний</div>
                 </div>
             }
             {damageDoneRenderGeneral}
+        </div>;
+    }
+
+    const render = () => {
+        return <div className="damage-done-general-details__container">
+            <div className="damage-done-general-details__container_navigate">
+                <div className="btn-group" role="group">
+                    <button type="button" className="btn btn-primary" onClick={() => navigate(`/details-specifical-combat?id=${combatId}`)}>Выбор игрока</button>
+                </div>
+                <ul className="nav nav-tabs">
+                    <li className="nav-item">
+                        <a className={tabIndex == 0 ? "nav-link active" : "nav-link"} aria-current="page" onClick={() => setTabIndex(0)}>Общая информация</a>
+                    </li>
+                    <li className="nav-item">
+                        <a className={tabIndex == 1 ? "nav-link active" : "nav-link"} onClick={() => setTabIndex(1)}>Подробная информация</a>
+                    </li>
+                </ul>
+            </div>
+            {tabIndex == 0
+                ? damageDoneGeneralDetailsDOM()
+                : <DamageDoneDetails />
+            }
         </div>;
     }
 

@@ -1,13 +1,102 @@
 ﻿.damage-done-general-details__container {
+    .card {
+        width: 75%;
+        box-shadow: 10px 10px gray;
+        margin: 25px;
+
+        .list-group {
+            display: flex;
+            flex-direction: row;
+        }
+
+        .list-group-item {
+            display: flex;
+            align-items: center;
+            flex-direction: column;
+            width: 20%;
+            margin: 5px;
+
+            div {
+                display: flex;
+                align-items: center;
+                width: auto;
+                height: 40px;
+            }
+
+            svg {
+                height: 20px;
+            }
+
+
+            &__details {
+                width: 25px;
+                color: gray;
+
+                :hover {
+                    cursor: pointer;
+                    transform: scale(1.25);
+                }
+            }
+
+            &__damage-done {
+                color: saddlebrown;
+            }
+
+            &__heal-done {
+                color: green;
+            }
+
+            &__damage-taken {
+                color: darkorange;
+            }
+
+            &__energy-recovery {
+                color: yellowgreen;
+            }
+        }
+
+        .form-check {
+            margin: 15px;
+        }
+    }
+
+
     &_navigate {
         display: flex;
 
         div, h3 {
             margin: 5px;
         }
+
+        button {
+            margin: 0 0 10px 15px;
+            box-shadow: 5px 5px 5px 5px grey;
+        }
+    }
+
+    &_radial-chart {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin: 10px;
+
+        div {
+            font-family: 'Comic Sans MS';
+        }
+
+        .title {
+            font-size: 1.5em;
+            margin-left: -200px;
+        }
     }
 
     .form-check {
         margin: 20px;
+    }
+
+    .nav-tabs {
+        &:hover {
+            cursor: pointer;
+        }
     }
 }
