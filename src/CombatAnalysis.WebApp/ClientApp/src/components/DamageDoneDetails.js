@@ -1,7 +1,7 @@
 ﻿import React, { useState, useEffect } from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faHandFist, faClock, faUserTie, faRightToBracket, faFire } from '@fortawesome/free-solid-svg-icons';
+import { faHandFist, faClock, faUserTie, faRightToBracket, faPen, faFire, faFlask, faCopy, faHands, faCompas, faPooStorm } from '@fortawesome/free-solid-svg-icons';
 
 const DamageDoneDetails = () => {
     const [combatPlayerId, setCombatPlayerId] = useState(0);
@@ -10,7 +10,10 @@ const DamageDoneDetails = () => {
     const [damageDones, setDamageDones] = useState(null);
     const [showGeneralDetails, setShowGeneralDetails] = useState(false);
     const [selectedTime, setSelectedTime] = useState("");
-    const [usedFilter, setUsedFilter] = useState(false);
+    const [startTime, setStartTime] = useState("");
+    const [finishTime, setFinishTime] = useState("");
+    const [usedSingleFilter, setUsedSingleFilter] = useState(false);
+    const [usedMultiplyFilter, setUsedMultiplyFilter] = useState(false);
 
     useEffect(() => {
         const queryParams = new URLSearchParams(window.location.search);
@@ -60,16 +63,18 @@ const DamageDoneDetails = () => {
         return timeWithoutMs;
     }
 
-    const getDuration = (time1, time2) => {
-        let timeElementsByTime1 = time1.split(':');
-        let hoursByTime1 = +timeElementsByTime1[0];
-        let minutesByTime1 = (hoursByTime1 * 60) + +timeElementsByTime1[1];
-        let secondsByTime1 = (minutesByTime1 * 60) + +timeElementsByTime1[2];
+    const getSeconds = (time) => {
+        let timeElementsByTime = time.split(':');
+        let hoursByTime = +timeElementsByTime[0];
+        let minutesByTime = (hoursByTime * 60) + +timeElementsByTime[1];
+        let secondsByTime = (minutesByTime * 60) + +timeElementsByTime[2];
 
-        let timeElementsByTime2 = time2.split(':');
-        let hoursByTime2 = +timeElementsByTime2[0];
-        let minutesByTime2 = (hoursByTime2 * 60) + +timeElementsByTime2[1];
-        let secondsByTime2 = (minutesByTime2 * 60) + +timeElementsByTime2[2];
+        return secondsByTime;
+    }
+
+    const getDuration = (time1, time2) => {
+        let secondsByTime1 = getSeconds(time1);
+        let secondsByTime2 = getSeconds(time2);
 
         let durationToMinutes = "00";
         let durationToHours = "00";
@@ -117,6 +122,26 @@ const DamageDoneDetails = () => {
             <div className="card">
                 <div className="card-body">
                     <h5 className="card-title">{element.spellOrItem}</h5>
+                    <div className="card-body__extra-damage">
+                        {element.isCrit &&
+                            <FontAwesomeIcon icon={faFire} title="Критический урон" />
+                        }
+                        {element.isDodge &&
+                            <FontAwesomeIcon icon={faCopy} title="Уклонение" />
+                        }
+                        {element.isMiss &&
+                            <FontAwesomeIcon icon={faHands} title="Промах" />
+                        }
+                        {element.isParry &&
+                            <FontAwesomeIcon icon={faCompas} title="Паррирование" />
+                        }
+                        {element.isImmune &&
+                            <FontAwesomeIcon icon={faPooStorm} title="Иммунитет к урону" />
+                        }
+                        {element.isResist &&
+                            <FontAwesomeIcon icon={faFlask} title="Сопротивление" />
+                        }
+                    </div>
                 </div>
                 <ul className="list-group list-group-flush">
                     <li className="list-group-item">
@@ -142,26 +167,67 @@ const DamageDoneDetails = () => {
 
     const getSpellsByTime = (e) => {
         let spellsByTime = [];
-        let activePayloadTime = e == null ? "" : e.activePayload[0].payload.time;
+        let activePayloadTime = e.activePayload[0].payload.time;
+        setSelectedTime(e.activeLabel);
+        setUsedSingleFilter(true);
 
-        if (activePayloadTime != "") {
-            setSelectedTime(e.activeLabel);
-            setUsedFilter(true);
+        for (var i = 0; i < damageDones.length; i++) {
+            if (damageDones[i].time.includes(activePayloadTime)) {
+                spellsByTime.push(damageDones[i]);
+            }
+        }
+
+        fillingDamageDoneList(spellsByTime);
+    }
+
+    const getStartTimeInterval = (e) => {
+        if (e != null) {
+            if (usedMultiplyFilter) {
+                setStartTime(e.activeLabel);
+            }
+            else {
+                getSpellsByTime(e);
+            }
+        }
+    }
+
+    const getFinishTimeInterval = (e) => {
+        if (usedMultiplyFilter && e != null) {
+            let spellsByTime = [];
+            let damageDonesByFilter = [];
+            setFinishTime(e.activeLabel);
 
             for (var i = 0; i < damageDones.length; i++) {
-                if (damageDones[i].time.includes(activePayloadTime)) {
-                    spellsByTime.push(damageDones[i]);
+                let getDurationAsSeconds = getSeconds(damageDoneChartData[i].duration);
+                let startTimeAsSeconds = getSeconds(startTime);
+                let finishTimeAsSeconds = getSeconds(e.activeLabel);
+
+                if (getDurationAsSeconds >= startTimeAsSeconds
+                    && getDurationAsSeconds <= finishTimeAsSeconds) {
+                    if (damageDones[i].time.includes(damageDoneChartData[i].time)) {
+                        spellsByTime.push(damageDones[i]);
+                        damageDonesByFilter.push(damageDones[i]);
+                    }
                 }
             }
 
+            createChartData(damageDonesByFilter);
             fillingDamageDoneList(spellsByTime);
         }
     }
 
-    const cancelSelectedSpellsByTime = () => {
+    const cancelSingleFilter = () => {
         fillingDamageDoneList(damageDones);
         setSelectedTime("");
-        setUsedFilter(false);
+        setUsedSingleFilter(false);
+    }
+
+    const cancelMultiplyFilter = () => {
+        fillingDamageDoneList(damageDones);
+        createChartData(damageDones);
+        setStartTime("");
+        setFinishTime("");
+        setUsedMultiplyFilter(false);
     }
 
     const render = () => {
@@ -174,29 +240,38 @@ const DamageDoneDetails = () => {
                 <label className="form-check-label" htmlFor="flexSwitchCheckChecked">Показать диаграмму</label>
             </div>
             {showGeneralDetails &&
-                <LineChart
-                    width={1250}
-                    height={300}
-                    data={damageDoneChartData}
-                    margin={{
-                        top: 5,
-                        right: 30,
-                        left: 20,
-                        bottom: 5,
-                    }}
-                    onClick={getSpellsByTime}
-                >
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="duration" />
-                    <YAxis />
-                    <Tooltip />
-                    <Legend />
-                    <Line type="monotone" dataKey="value" name="Урон" stroke="#8884d8" activeDot={{ r: 8 }} />
-                </LineChart>
-            }
-            {usedFilter &&
                 <div>
-                    <div onClick={cancelSelectedSpellsByTime}>Время: {selectedTime}</div>
+                    <FontAwesomeIcon icon={faPen} className={usedMultiplyFilter ? "chart-editor active" : "chart-editor"} title="Выделить интервал" onClick={() => setUsedMultiplyFilter(!usedMultiplyFilter)} />
+                    <LineChart
+                        width={1250}
+                        height={300}
+                        data={damageDoneChartData}
+                        margin={{
+                            top: 5,
+                            right: 30,
+                            left: 20,
+                            bottom: 5,
+                        }}
+                        onMouseDown={getStartTimeInterval}
+                        onMouseUp={getFinishTimeInterval}
+                    >
+                        <CartesianGrid strokeDasharray="3 3" />
+                        <XAxis dataKey="duration" />
+                        <YAxis />
+                        <Tooltip />
+                        <Legend />
+                        <Line type="monotone" dataKey="value" name="Урон" stroke="#8884d8" activeDot={{ r: 8 }} />
+                    </LineChart>
+                </div>
+            }
+            {usedSingleFilter &&
+                <div>
+                    <div onClick={cancelSingleFilter}>Время: {selectedTime}</div>
+                </div>
+            }
+            {(usedMultiplyFilter && finishTime != "") &&
+                <div>
+                    <div onClick={cancelMultiplyFilter}>Начало интервала: {startTime}, Конец интервала: {finishTime}</div>
                 </div>
             }
             {damageDoneRender}

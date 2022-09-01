@@ -21,7 +21,7 @@ const DetailsSpecificalCombat = () => {
     const [activeUserIndex, setActiveUserIndex] = useState(0);
     const [combatPlayers, setCombatPlayers] = useState({});
     const [showRadarChart, setShowRadarChart] = useState(false);
-    const [showGeneralDetails, setShowGeneralDetails] = useState(true);
+    const [showGeneralDetails, setShowGeneralDetails] = useState(false);
     const [combatPlayersRender, setCombatPlayersRender] = useState(null);
 
     const [damageDonePieChart, setDamageDonePieChart] = usePieChart({});
@@ -246,7 +246,7 @@ const DetailsSpecificalCombat = () => {
                 </div>
             </div>
             <div className="form-check form-switch">
-                <input className="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckChecked" onChange={() => setShowGeneralDetails(!showGeneralDetails)} defaultChecked="true" />
+                <input className="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckChecked" onChange={() => setShowGeneralDetails(!showGeneralDetails)} />
                 <label className="form-check-label" htmlFor="flexSwitchCheckChecked">Показать общую статистику</label>
             </div>
             {showGeneralDetails &&

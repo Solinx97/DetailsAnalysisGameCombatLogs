@@ -13,7 +13,7 @@ const DamageDoneGeneralDetails = () => {
     const [combatPlayerId, setCombatPlayerId] = useState(0);
     const [combatId, setCombatId] = useState(0);
     const [damageDoneRenderGeneral, setDamageDoneGeneralRender] = useState(null);
-    const [showGeneralDetails, setShowGeneralDetails] = useState(false);
+    const [showGeneralChart, setShowGeneralChart] = useState(false);
     const [spells, setSpells] = useState([]);
     const [tabIndex, setTabIndex] = useState(0);
 
@@ -146,10 +146,10 @@ const DamageDoneGeneralDetails = () => {
                 <h3>Общая информаця об уроне</h3>
             </div>
             <div className="form-check form-switch">
-                <input className="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckChecked" onChange={() => setShowGeneralDetails(!showGeneralDetails)} />
+                <input className="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckChecked" onChange={() => setShowGeneralChart(!showGeneralChart)} defaultChecked={showGeneralChart} />
                 <label className="form-check-label" htmlFor="flexSwitchCheckChecked">Показать диаграмму</label>
             </div>
-            {showGeneralDetails &&
+            {showGeneralChart &&
                 <div className="damage-done-general-details__container_radial-chart">
                     <RadialBarChart
                         width={500}

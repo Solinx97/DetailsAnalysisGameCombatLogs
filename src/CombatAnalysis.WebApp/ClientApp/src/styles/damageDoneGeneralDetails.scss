@@ -100,3 +100,25 @@
         }
     }
 }
+
+.damage-done-details__container {
+    .chart-editor.active {
+        color: green;
+        transform: scale(1.25);
+    }
+
+    .card-body {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+
+        &__extra-damage {
+            display: flex;
+
+            svg {
+                margin: 5px;
+                transform: scale(1.25);
+            }
+        }
+    }
+}
