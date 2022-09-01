@@ -18,10 +18,10 @@ namespace CombatAnalysis.WebApp.Controllers
             _httpClient = httpClient;
         }
 
-        [HttpGet]
-        public async Task<IEnumerable<CombatModel>> Get()
+        [HttpGet("{id}")]
+        public async Task<IEnumerable<CombatModel>> GetById(int id)
         {
-            var responseMessage = await _httpClient.GetAsync("Combat/FindByCombatLogId/1");
+            var responseMessage = await _httpClient.GetAsync($"Combat/FindByCombatLogId/{id}");
             var combats = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<CombatModel>>();
 
             return combats;

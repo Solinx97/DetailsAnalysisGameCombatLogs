@@ -9,22 +9,22 @@ namespace CombatAnalysis.WebApp.Controllers
 {
     [Route("[controller]")]
     [ApiController]
-    public class HealDoneController : ControllerBase
+    public class HealDoneGeneralController : ControllerBase
     {
         private readonly IHttpClientHelper _httpClient;
 
-        public HealDoneController(IHttpClientHelper httpClient)
+        public HealDoneGeneralController(IHttpClientHelper httpClient)
         {
             _httpClient = httpClient;
         }
 
         [HttpGet("{id}")]
-        public async Task<IEnumerable<HealDoneModel>> GetById(int id)
+        public async Task<IEnumerable<HealDoneGeneralModel>> GetById(int id)
         {
-            var responseMessage = await _httpClient.GetAsync($"HealDone/FindByCombatPlayerId/{id}");
-            var healDones = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<HealDoneModel>>();
+            var responseMessage = await _httpClient.GetAsync($"HealDoneGeneral/FindByCombatPlayerId/{id}");
+            var healDoneGenerals = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<HealDoneGeneralModel>>();
 
-            return healDones;
+            return healDoneGenerals;
         }
     }
 }

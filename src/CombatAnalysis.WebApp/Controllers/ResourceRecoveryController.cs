@@ -19,12 +19,12 @@ namespace CombatAnalysis.WebApp.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<IEnumerable<ResourceRecoveryGeneralModel>> GetById(int id)
+        public async Task<IEnumerable<ResourceRecoveryModel>> GetById(int id)
         {
-            var responseMessage = await _httpClient.GetAsync($"ResourceRecoveryGeneral/FindByCombatPlayerId/{id}");
-            var resourceRecoveryGenerals = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<ResourceRecoveryGeneralModel>>();
+            var responseMessage = await _httpClient.GetAsync($"ResourceRecovery/FindByCombatPlayerId/{id}");
+            var resourceRecoveries = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<ResourceRecoveryModel>>();
 
-            return resourceRecoveryGenerals;
+            return resourceRecoveries;
         }
     }
 }

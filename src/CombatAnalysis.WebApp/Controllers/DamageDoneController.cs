@@ -19,12 +19,12 @@ namespace CombatAnalysis.WebApp.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<IEnumerable<DamageDoneGeneralModel>> GetById(int id)
+        public async Task<IEnumerable<DamageDoneModel>> GetById(int id)
         {
-            var responseMessage = await _httpClient.GetAsync($"DamageDoneGeneral/FindByCombatPlayerId/{id}");
-            var damageDoneGenerals = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<DamageDoneGeneralModel>>();
+            var responseMessage = await _httpClient.GetAsync($"DamageDone/FindByCombatPlayerId/{id}");
+            var damageDones = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<DamageDoneModel>>();
 
-            return damageDoneGenerals;
+            return damageDones;
         }
     }
 }
