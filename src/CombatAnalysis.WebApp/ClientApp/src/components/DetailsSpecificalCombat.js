@@ -201,35 +201,40 @@ const DetailsSpecificalCombat = () => {
                         <FontAwesomeIcon icon={faHandFist} className="list-group-item__damage-done" title="Нанесенный урон" />
                         <div>{element.damageDone}</div>
                         {element.damageDone > 0 &&
-                            <FontAwesomeIcon icon={faBoxOpen} className="list-group-item__details" onClick={() => navigate(`/damage-done-general-details?id=${element.id}`)} title="Открыть подробный анализ урон" />
+                            <FontAwesomeIcon icon={faBoxOpen} className="list-group-item__details"
+                            onClick={() => navigate(`/combat-general-details?id=${element.id}&detailsType=DamageDone`)} title="Открыть анализ урон" />
                         }
                     </li>
                     <li className="list-group-item">
                         <FontAwesomeIcon icon={faPlusCircle} className="list-group-item__heal-done" title="Исцеление" />
                         <div>{element.healDone}</div>
                         {element.healDone > 0 &&
-                            <FontAwesomeIcon icon={faBoxOpen} className="list-group-item__details" onClick={() => navigate(`/heal-done-general-details?id=${element.id}`)} title="Открыть подробный анализ исцеления" />
+                            <FontAwesomeIcon icon={faBoxOpen} className="list-group-item__details"
+                                onClick={() => navigate(`/combat-general-details?id=${element.id}&detailsType=HealDone`)} title="Открыть анализ исцеления" />
                         }
                     </li>
                     <li className="list-group-item">
                         <FontAwesomeIcon icon={faShieldHalved} className="list-group-item__damage-taken" title="Полученный урон" />
                         <div>{element.damageTaken}</div>
                         {element.damageTaken > 0 &&
-                            <FontAwesomeIcon icon={faBoxOpen} className="list-group-item__details" onClick={() => navigate(`/damage-taken-general-details?id=${element.id}`)} title="Открыть подробный анализ полученного урона" />
+                            <FontAwesomeIcon icon={faBoxOpen} className="list-group-item__details"
+                                onClick={() => navigate(`/combat-general-details?id=${element.id}&detailsType=DamageTaken`)} title="Открыть анализ полученного урона" />
                         }
                     </li>
                     <li className="list-group-item">
-                        <FontAwesomeIcon icon={faBolt} className="list-group-item__energy-recovery" title="Затрачено ресусрво" />
+                        <FontAwesomeIcon icon={faBolt} className="list-group-item__energy-recovery" title="Затрачено ресурсов" />
                         <div>{element.energyRecovery}</div>
                         {element.energyRecovery > 0 &&
-                            <FontAwesomeIcon icon={faBoxOpen} className="list-group-item__details" onClick={() => navigate(`/resource-recovery-general-details?id=${element.id}`)} title="Открыть подробный анализ затраченных ресурсов" />
+                            <FontAwesomeIcon icon={faBoxOpen} className="list-group-item__details"
+                                onClick={() => navigate(`/combat-general-details?id=${element.id}&detailsType=ResourceRecovery`)} title="Открыть анализ затраченных ресурсов" />
                         }
                     </li>
                     <li className="list-group-item">
                         <FontAwesomeIcon icon={faCircleNodes} className="list-group-item__used-buffs" title="Бафы" />
                         <div>{element.usedBuffs}</div>
                         {element.usedBuffs > 0 &&
-                            <FontAwesomeIcon icon={faBoxOpen} className="list-group-item__details" onClick={() => navigate(`/buffs-general-details?id=${element.id}`)} title="Открыть подробный анализ бафов" />
+                            <FontAwesomeIcon icon={faBoxOpen} className="list-group-item__details"
+                            onClick={() => navigate(`/combat-general-details?id=${element.id}`)} title="Открыть анализ бафов" />
                         }
                     </li>
                 </ul>

@@ -1,4 +1,4 @@
-﻿.damage-done-general-details__container {
+﻿.general-details__container {
     .card {
         width: 75%;
         box-shadow: 10px 10px gray;
@@ -101,7 +101,7 @@
     }
 }
 
-.damage-done-details__container {
+.details__container {
     .chart-editor.active {
         color: green;
         transform: scale(1.25);
@@ -120,5 +120,9 @@
                 transform: scale(1.25);
             }
         }
+    }
+
+    .card {
+        width: 40%;
     }
 }
