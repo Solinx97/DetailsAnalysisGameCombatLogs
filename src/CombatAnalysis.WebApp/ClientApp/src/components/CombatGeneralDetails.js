@@ -1,9 +1,8 @@
 ﻿import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { RadialBarChart, RadialBar, Legend } from 'recharts';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import DamageDoneDetails from './CombatDetails';
-import { faHandFist, faGauge, faStopwatch20, faLocationCrosshairs, faMeteor, faShare, faCircleUp, faCircleDown } from '@fortawesome/free-solid-svg-icons';
+import useCombatDetailsHelper from './hooks/useCombatDetailsHelper';
 
 import "../styles/combatGeneralDetails.scss";
 
@@ -18,6 +17,8 @@ const CombatGeneralDetails = () => {
     const [showGeneralChart, setShowGeneralChart] = useState(false);
     const [spells, setSpells] = useState([]);
     const [tabIndex, setTabIndex] = useState(0);
+
+    const combatDetailsHelperPayload = useCombatDetailsHelper(combatPlayerId);
 
     const style = {
         top: '50%',
@@ -35,7 +36,8 @@ const CombatGeneralDetails = () => {
     useEffect(() => {
         if (combatPlayerId > 0) {
             const getGeneralDetails = async () => {
-                await getGeneralDetailsAsync();
+                await getCombatPlayerAsync();
+                await fillingGeneralDetailsList();
             };
 
             getGeneralDetails();
@@ -63,17 +65,6 @@ const CombatGeneralDetails = () => {
         return name;
     }
 
-    const getGeneralDetailsAsync = async () => {
-        const response = await fetch(`${detailsType}General/${combatPlayerId}`);
-        const generalDetailsData = await response.json();
-
-        createBarChartData(generalDetailsData);
-
-        await getCombatPlayerAsync();
-
-        fillingGeneralDetailsList(generalDetailsData);
-    }
-
     const getCombatPlayerAsync = async () => {
         const response = await fetch(`detailsSpecificalCombat/combatPlayerById/${combatPlayerId}`);
         const combatPlayer = await response.json();
@@ -90,41 +81,28 @@ const CombatGeneralDetails = () => {
         setCombatId(combat.id);
     }
 
-    const createBarChartData = (generalDetailsData) => {
-        let spellsRadialChartData = new Array(generalDetailsData.length);
+    const fillingGeneralDetailsList = async () => {
+        const combatGeneralDetailsData = await combatDetailsHelperPayload.generalData(detailsType);
 
-        for (var i = 0; i < generalDetailsData.length; i++) {
-            let color = '#' + (Math.random().toString(16) + '000000').substring(2, 8).toUpperCase();
-            let spellsData = {
-                name: generalDetailsData[i].spellOrItem,
-                value: generalDetailsData[i].value,
-                fill: color == "#fff" ? '#' + (Math.random().toString(16) + '00000  0').substring(2, 8).toUpperCase() : color
-            };
-
-            spellsRadialChartData[i] = spellsData;
-        }
-
-        setSpells(spellsRadialChartData);
-    }
-
-    const fillingGeneralDetailsList = (generalDetailsData) => {
-        if (generalDetailsData.length > 0) {
+        if (combatGeneralDetailsData.length > 0) {
             let list = <div></div>;
 
             switch (detailsType) {
                 case "DamageDone":
-                    list = generalDetailsData.map((element) => damageDoneList(element));
+                    list = combatGeneralDetailsData.map((element) => combatDetailsHelperPayload.damageDone.generalList(element));
                     break;
                 case "HealDone":
-                    list = generalDetailsData.map((element) => healDoneList(element));
+                    list = combatGeneralDetailsData.map((element) => combatDetailsHelperPayload.healDone.generalList(element));
                     break;
                 case "DamageTaken":
-                    list = generalDetailsData.map((element) => damageTakenList(element));
+                    list = combatGeneralDetailsData.map((element) => combatDetailsHelperPayload.damageTaken.generalList(element));
                     break;
                 case "ResourceRecovery":
-                    list = generalDetailsData.map((element) => resourceRecoveryList(element));
+                    list = combatGeneralDetailsData.map((element) => combatDetailsHelperPayload.resourceRecovery.generalList(element));
                     break;
             }
+
+            await createBarChartData(combatGeneralDetailsData);
 
             setDamageDoneGeneralRender(
                 <ul>
@@ -137,168 +115,21 @@ const CombatGeneralDetails = () => {
         }
     }
 
-    const damageDoneList = (element) => {
-        return <li key={element.id}>
-            <div className="card">
-                <div className="card-body">
-                    <h5 className="card-title">{element.spellOrItem}</h5>
-                </div>
-                <ul className="list-group list-group-flush">
-                    <li className="list-group-item">
-                        <FontAwesomeIcon icon={faHandFist} className="list-group-item__value" title="Всего урона" />
-                        <div>{element.value}</div>
-                    </li>
-                    <li className="list-group-item">
-                        <FontAwesomeIcon icon={faGauge} className="list-group-item__average-value" title="Среднее значение" />
-                        <div>{element.averageValue.toFixed(2)}</div>
-                    </li>
-                    <li className="list-group-item">
-                        <FontAwesomeIcon icon={faStopwatch20} className="list-group-item__damage-per-second" title="Урон в секунду" />
-                        <div>{element.damagePerSecond.toFixed(2)}</div>
-                    </li>
-                    <li className="list-group-item">
-                        <FontAwesomeIcon icon={faLocationCrosshairs} className="list-group-item__cast-number" title="Кол-во кастов" />
-                        <div>{element.castNumber}</div>
-                    </li>
-                    <li className="list-group-item">
-                        <FontAwesomeIcon icon={faMeteor} className="list-group-item__crit-number" title="Кол-во критов" />
-                        <div>{element.critNumber}</div>
-                    </li>
-                    <li className="list-group-item">
-                        <FontAwesomeIcon icon={faShare} className="list-group-item__miss-number" title="Кол-во промахов" />
-                        <div>{element.missNumber}</div>
-                    </li>
-                    <li className="list-group-item">
-                        <FontAwesomeIcon icon={faCircleUp} className="list-group-item__max-value" title="Макс. значение" />
-                        <div>{element.maxValue}</div>
-                    </li>
-                    <li className="list-group-item">
-                        <FontAwesomeIcon icon={faCircleDown} className="list-group-item__min-value" title="Мин. значение" />
-                        <div>{element.minValue}</div>
-                    </li>
-                </ul>
-            </div>
-        </li>;
-    }
+    const createBarChartData = (combatGeneralDetailsData) => {
+        let spellsRadialChartData = new Array(combatGeneralDetailsData.length);
 
-    const healDoneList = (element) => {
-        return <li key={element.id}>
-            <div className="card">
-                <div className="card-body">
-                    <h5 className="card-title">{element.spellOrItem}</h5>
-                </div>
-                <ul className="list-group list-group-flush">
-                    <li className="list-group-item">
-                        <FontAwesomeIcon icon={faHandFist} className="list-group-item__value" title="Всего исцеления" />
-                        <div>{element.value}</div>
-                    </li>
-                    <li className="list-group-item">
-                        <FontAwesomeIcon icon={faGauge} className="list-group-item__average-value" title="Среднее значение" />
-                        <div>{element.averageValue.toFixed(2)}</div>
-                    </li>
-                    <li className="list-group-item">
-                        <FontAwesomeIcon icon={faStopwatch20} className="list-group-item__damage-per-second" title="Урон в секунду" />
-                        <div>{element.healPerSecond.toFixed(2)}</div>
-                    </li>
-                    <li className="list-group-item">
-                        <FontAwesomeIcon icon={faLocationCrosshairs} className="list-group-item__cast-number" title="Кол-во кастов" />
-                        <div>{element.castNumber}</div>
-                    </li>
-                    <li className="list-group-item">
-                        <FontAwesomeIcon icon={faMeteor} className="list-group-item__crit-number" title="Кол-во критов" />
-                        <div>{element.critNumber}</div>
-                    </li>
-                    <li className="list-group-item">
-                        <FontAwesomeIcon icon={faCircleUp} className="list-group-item__max-value" title="Макс. значение" />
-                        <div>{element.maxValue}</div>
-                    </li>
-                    <li className="list-group-item">
-                        <FontAwesomeIcon icon={faCircleDown} className="list-group-item__min-value" title="Мин. значение" />
-                        <div>{element.minValue}</div>
-                    </li>
-                </ul>
-            </div>
-        </li>;
-    }
+        for (var i = 0; i < combatGeneralDetailsData.length; i++) {
+            let color = '#' + (Math.random().toString(16) + '000000').substring(2, 8).toUpperCase();
+            let spellsData = {
+                name: combatGeneralDetailsData[i].spellOrItem,
+                value: combatGeneralDetailsData[i].value,
+                fill: color == "#fff" ? '#' + (Math.random().toString(16) + '00000  0').substring(2, 8).toUpperCase() : color
+            };
 
-    const damageTakenList = (element) => {
-        return <li key={element.id}>
-            <div className="card">
-                <div className="card-body">
-                    <h5 className="card-title">{element.spellOrItem}</h5>
-                </div>
-                <ul className="list-group list-group-flush">
-                    <li className="list-group-item">
-                        <FontAwesomeIcon icon={faHandFist} className="list-group-item__value" title="Всего урона" />
-                        <div>{element.value}</div>
-                    </li>
-                    <li className="list-group-item">
-                        <FontAwesomeIcon icon={faGauge} className="list-group-item__average-value" title="Среднее значение" />
-                        <div>{element.averageValue.toFixed(2)}</div>
-                    </li>
-                    <li className="list-group-item">
-                        <FontAwesomeIcon icon={faStopwatch20} className="list-group-item__damage-per-second" title="Урон в секунду" />
-                        <div>{element.damageTakenPerSecond.toFixed(2)}</div>
-                    </li>
-                    <li className="list-group-item">
-                        <FontAwesomeIcon icon={faLocationCrosshairs} className="list-group-item__cast-number" title="Кол-во кастов" />
-                        <div>{element.castNumber}</div>
-                    </li>
-                    <li className="list-group-item">
-                        <FontAwesomeIcon icon={faMeteor} className="list-group-item__crit-number" title="Кол-во критов" />
-                        <div>{element.critNumber}</div>
-                    </li>
-                    <li className="list-group-item">
-                        <FontAwesomeIcon icon={faShare} className="list-group-item__miss-number" title="Кол-во промахов" />
-                        <div>{element.missNumber}</div>
-                    </li>
-                    <li className="list-group-item">
-                        <FontAwesomeIcon icon={faCircleUp} className="list-group-item__max-value" title="Макс. значение" />
-                        <div>{element.maxValue}</div>
-                    </li>
-                    <li className="list-group-item">
-                        <FontAwesomeIcon icon={faCircleDown} className="list-group-item__min-value" title="Мин. значение" />
-                        <div>{element.minValue}</div>
-                    </li>
-                </ul>
-            </div>
-        </li>;
-    }
+            spellsRadialChartData[i] = spellsData;
+        }
 
-    const resourceRecoveryList = (element) => {
-        return <li key={element.id}>
-            <div className="card">
-                <div className="card-body">
-                    <h5 className="card-title">{element.spellOrItem}</h5>
-                </div>
-                <ul className="list-group list-group-flush">
-                    <li className="list-group-item">
-                        <FontAwesomeIcon icon={faHandFist} className="list-group-item__value" title="Всего урона" />
-                        <div>{element.value}</div>
-                    </li>
-                    <li className="list-group-item">
-                        <FontAwesomeIcon icon={faGauge} className="list-group-item__average-value" title="Среднее значение" />
-                        <div>{element.averageValue.toFixed(2)}</div>
-                    </li>
-                    <li className="list-group-item">
-                        <FontAwesomeIcon icon={faStopwatch20} className="list-group-item__damage-per-second" title="Урон в секунду" />
-                        <div>{element.resourcePerSecond.toFixed(2)}</div>
-                    </li>
-                    <li className="list-group-item">
-                        <FontAwesomeIcon icon={faLocationCrosshairs} className="list-group-item__cast-number" title="Кол-во кастов" />
-                        <div>{element.castNumber}</div>
-                    </li>
-                    <li className="list-group-item">
-                        <FontAwesomeIcon icon={faCircleUp} className="list-group-item__max-value" title="Макс. значение" />
-                        <div>{element.maxValue}</div>
-                    </li>
-                    <li className="list-group-item">
-                        <FontAwesomeIcon icon={faCircleDown} className="list-group-item__min-value" title="Мин. значение" />
-                        <div>{element.minValue}</div>
-                    </li>
-                </ul>
-            </div>
-        </li>;
+        setSpells(spellsRadialChartData);
     }
 
     const generalDetailsDOM = () => {
@@ -363,7 +194,7 @@ const CombatGeneralDetails = () => {
             </div>
             {tabIndex == 0
                 ? generalDetailsDOM()
-                : <DamageDoneDetails detailsTypeName={getDetailsTypeName()}/>
+                : <DamageDoneDetails detailsTypeName={getDetailsTypeName()} userName={userName} />
             }
         </div>;
     }

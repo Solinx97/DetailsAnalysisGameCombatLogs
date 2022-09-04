@@ -96,7 +96,7 @@ const usePieChart = (payload) => {
         </div>;
     }
 
-    return [render(), setPayloadData];
+    return [render, setPayloadData];
 }
 
 export default usePieChart;

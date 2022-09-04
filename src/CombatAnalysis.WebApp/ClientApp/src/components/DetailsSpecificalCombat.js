@@ -18,11 +18,11 @@ const DetailsSpecificalCombat = () => {
 
     const [combatId, setCombatId] = useState(0);
     const [combatLogId, setCombatLogId] = useState(0);
-    const [activeUserIndex, setActiveUserIndex] = useState(0);
-    const [combatPlayers, setCombatPlayers] = useState({});
-    const [showRadarChart, setShowRadarChart] = useState(false);
+    const [activeUserIndex, setActiveUserIndex] = useState(-1);
+    const [combatPlayers, setCombatPlayers] = useState([]);
     const [showGeneralDetails, setShowGeneralDetails] = useState(false);
     const [combatPlayersRender, setCombatPlayersRender] = useState(null);
+    const [selectedCharts, setSelectedCharts] = useState([]);
 
     const [damageDonePieChart, setDamageDonePieChart] = usePieChart({});
     const [healDonePieChart, setHealDonePieChart] = usePieChart({});
@@ -44,10 +44,10 @@ const DetailsSpecificalCombat = () => {
     }, [combatId]);
 
     useEffect(() => {
-        if (combatPlayers != null) {
+        if (combatPlayers.length > 0) {
             fillingCombatPlayerList(combatPlayers);
         }
-    }, [showRadarChart]);
+    }, [activeUserIndex]);
 
     useEffect(() => {
         if (combatPlayers.length > 0) {
@@ -160,9 +160,21 @@ const DetailsSpecificalCombat = () => {
         };
     }
 
-    const switchRadarChart = (index) => {
-        setActiveUserIndex(index);
-        setShowRadarChart(!showRadarChart);
+    const switchRadarChart = (index, event) => {
+        for (var i = 0; i < selectedCharts.length; i++) {
+            selectedCharts[i].checked = false;
+            selectedCharts.pop();
+
+            setActiveUserIndex(-1);
+        }
+
+        if (event.target.checked) {
+            let charts = selectedCharts;
+            charts.push(event.target);
+            setSelectedCharts(charts);
+
+            setActiveUserIndex(index);
+        }
     }
 
     const combatPlayerList = (element, index) => {
@@ -172,10 +184,10 @@ const DetailsSpecificalCombat = () => {
                     <h5 className="card-title">{element.userName}</h5>
                 </div>
                 <div className="form-check form-switch">
-                    <input className="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckChecked" onChange={() => switchRadarChart(index)} />
+                    <input className="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckChecked" onChange={() => switchRadarChart(index, event)} />
                     <label className="form-check-label" htmlFor="flexSwitchCheckChecked">Показать статистику</label>
                 </div>
-                {(showRadarChart && activeUserIndex == index) &&
+                {activeUserIndex == index &&
                     <RadarChart
                         cx={350}
                         cy={250}
@@ -256,9 +268,9 @@ const DetailsSpecificalCombat = () => {
             </div>
             {showGeneralDetails &&
                 <div className="details-specifical-combat__container_general-details-charts">
-                    {damageDonePieChart}
-                    {healDonePieChart}
-                    {damageTakenPieChart}
+                    {damageDonePieChart()}
+                    {healDonePieChart()}
+                    {damageTakenPieChart()}
                 </div>
             }
             {combatPlayersRender}
