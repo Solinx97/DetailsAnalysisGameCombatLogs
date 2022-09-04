@@ -22,6 +22,7 @@ namespace CombatAnalysis.WebApp
         public void ConfigureServices(IServiceCollection services)
         {
             Port.CombatParserApi = Configuration.GetValue<string>("CombatParserApiPort");
+            Port.UserApi = Configuration.GetValue<string>("UserApiPort");
 
             services.AddControllersWithViews();
 
@@ -51,6 +52,9 @@ namespace CombatAnalysis.WebApp
             app.UseSpaStaticFiles();
 
             app.UseRouting();
+
+            app.UseAuthentication();
+            app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
             {

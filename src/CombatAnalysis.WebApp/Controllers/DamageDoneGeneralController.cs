@@ -1,4 +1,5 @@
-﻿using CombatAnalysis.WebApp.Interfaces;
+﻿using CombatAnalysis.WebApp.Consts;
+using CombatAnalysis.WebApp.Interfaces;
 using CombatAnalysis.WebApp.Models;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
@@ -16,6 +17,7 @@ namespace CombatAnalysis.WebApp.Controllers
         public DamageDoneGeneralController(IHttpClientHelper httpClient)
         {
             _httpClient = httpClient;
+            _httpClient.BaseAddress = Port.CombatParserApi;
         }
 
         [HttpGet("{id}")]

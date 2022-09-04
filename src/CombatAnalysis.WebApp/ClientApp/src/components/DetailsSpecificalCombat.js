@@ -1,6 +1,6 @@
 ﻿import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import usePieChart from './hooks/usePieChart';
+import usePieChart from '../hooks/usePieChart';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBoxOpen, faPlusCircle, faShieldHalved, faHandFist, faBolt, faCircleNodes } from '@fortawesome/free-solid-svg-icons';
 import {

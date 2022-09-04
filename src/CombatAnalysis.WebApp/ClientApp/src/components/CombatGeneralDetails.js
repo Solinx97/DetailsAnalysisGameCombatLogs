@@ -2,7 +2,7 @@
 import { useNavigate } from 'react-router-dom';
 import { RadialBarChart, RadialBar, Legend } from 'recharts';
 import DamageDoneDetails from './CombatDetails';
-import useCombatDetailsHelper from './hooks/useCombatDetailsHelper';
+import useCombatDetailsHelper from '../hooks/useCombatDetailsHelper';
 
 import "../styles/combatGeneralDetails.scss";
 

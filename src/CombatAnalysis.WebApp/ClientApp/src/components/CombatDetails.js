@@ -2,7 +2,7 @@
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPen } from '@fortawesome/free-solid-svg-icons';
-import useCombatDetailsHelper from './hooks/useCombatDetailsHelper';
+import useCombatDetailsHelper from '../hooks/useCombatDetailsHelper';
 
 const CombatDetails = ({ detailsTypeName, userName }) => {
     const [combatPlayerId, setCombatPlayerId] = useState(0);
