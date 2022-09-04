@@ -1,9 +1,10 @@
 ﻿import React, { useState, useEffect } from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faHandFist, faClock, faUserTie, faRightToBracket, faPen, faFire, faFlask, faCopy, faHands, faCompas, faPooStorm } from '@fortawesome/free-solid-svg-icons';
+import { faPen } from '@fortawesome/free-solid-svg-icons';
+import useCombatDetailsHelper from './hooks/useCombatDetailsHelper';
 
-const CombatDetails = ({ detailsTypeName }) => {
+const CombatDetails = ({ detailsTypeName, userName }) => {
     const [combatPlayerId, setCombatPlayerId] = useState(0);
     const [detailsType, setDetailsType] = useState("");
     const [damageDoneRender, setDamageDoneRender] = useState(null);
@@ -16,6 +17,8 @@ const CombatDetails = ({ detailsTypeName }) => {
     const [usedSingleFilter, setUsedSingleFilter] = useState(false);
     const [usedMultiplyFilter, setUsedMultiplyFilter] = useState(false);
 
+    const combatDetailsHelperPayload = useCombatDetailsHelper(combatPlayerId);
+
     useEffect(() => {
         const queryParams = new URLSearchParams(window.location.search);
         setCombatPlayerId(+queryParams.get("id"));
@@ -25,38 +28,12 @@ const CombatDetails = ({ detailsTypeName }) => {
     useEffect(() => {
         if (combatPlayerId > 0) {
             const getDetails = async () => {
-                await getDetailsAsync();
+                await fillingDetailsDataList();
             };
 
             getDetails();
         }
     }, [combatPlayerId]);
-
-    const getDetailsAsync = async () => {
-        const response = await fetch(`${detailsType}/${combatPlayerId}`);
-        const detailsData = await response.json();
-
-        setDetailsData(detailsData);
-        createChartData(detailsData);
-
-        fillingDetailsDataList(detailsData);
-    }
-
-    const createChartData = (detailsData) => {
-        let chartData = new Array(detailsData.length);
-
-        for (var i = 0; i < detailsData.length; i++) {
-            let spellsData = {
-                time: getTimeWithoutMs(detailsData[i].time),
-                value: detailsData[i].value,
-                duration: getDuration(getTimeWithoutMs(detailsData[i].time), getTimeWithoutMs(detailsData[0].time))
-            };
-
-            chartData[i] = spellsData;
-        }
-
-        setDetailsChartData(chartData);
-    }
 
     const getTimeWithoutMs = (time) => {
         let ms = time.indexOf('.');
@@ -97,24 +74,36 @@ const CombatDetails = ({ detailsTypeName }) => {
         return duration;
     }
 
-    const fillingDetailsDataList = (detailsData) => {
-        if (detailsData.length > 0) {
+    const fillingDetailsDataList = async (spellsByTime) => {
+        let combatDetailsData = [];
+        if (spellsByTime == undefined) {
+            combatDetailsData = await combatDetailsHelperPayload.data(detailsType);
+        }
+        else {
+            combatDetailsData = spellsByTime;
+        }
+
+        setDetailsData(combatDetailsData);
+
+        if (combatDetailsData.length > 0) {
             let list = <div></div>;
 
             switch (detailsType) {
                 case "DamageDone":
-                    list = detailsData.map((element) => damageDoneList(element));
+                    list = combatDetailsData.map((element) => combatDetailsHelperPayload.damageDone.list(element));
                     break;
                 case "HealDone":
-                    list = detailsData.map((element) => healDoneList(element));
+                    list = combatDetailsData.map((element) => combatDetailsHelperPayload.healDone.list(element));
                     break;
                 case "DamageTaken":
-                    list = detailsData.map((element) => damageTakenList(element));
+                    list = combatDetailsData.map((element) => combatDetailsHelperPayload.damageTaken.list(element));
                     break;
                 case "ResourceRecovery":
-                    list = detailsData.map((element) => resourceRecoveryList(element));
+                    list = combatDetailsData.map((element) => combatDetailsHelperPayload.resourceRecovery.list(element));
                     break;
             }
+
+            createChartData(combatDetailsData);
 
             setDamageDoneRender(
                 <ul className="damage-done__container">
@@ -127,191 +116,20 @@ const CombatDetails = ({ detailsTypeName }) => {
         }
     }
 
-    const getUserNameWithoutRealm = (userName) => {
-        let realmNameIndex = userName.indexOf('-');
-        let userNameWithOutRealm = userName.substr(0, realmNameIndex);
+    const createChartData = (combatDetailsData) => {
+        let chartData = new Array(combatDetailsData.length);
 
-        return userNameWithOutRealm;
-    }
+        for (var i = 0; i < combatDetailsData.length; i++) {
+            let spellsData = {
+                time: getTimeWithoutMs(combatDetailsData[i].time),
+                value: combatDetailsData[i].value,
+                duration: getDuration(getTimeWithoutMs(combatDetailsData[i].time), getTimeWithoutMs(combatDetailsData[0].time))
+            };
 
-    const damageDoneList = (element) => {
-        return <li key={element.id}>
-            <div className="card">
-                <div className="card-body">
-                    <h5 className="card-title">{element.spellOrItem}</h5>
-                    <div className="card-body__extra-damage">
-                        {element.isCrit &&
-                            <FontAwesomeIcon icon={faFire} title="Критический урон" />
-                        }
-                        {element.isDodge &&
-                            <FontAwesomeIcon icon={faCopy} title="Уклонение" />
-                        }
-                        {element.isMiss &&
-                            <FontAwesomeIcon icon={faHands} title="Промах" />
-                        }
-                        {element.isParry &&
-                            <FontAwesomeIcon icon={faCompas} title="Паррирование" />
-                        }
-                        {element.isImmune &&
-                            <FontAwesomeIcon icon={faPooStorm} title="Иммунитет к урону" />
-                        }
-                        {element.isResist &&
-                            <FontAwesomeIcon icon={faFlask} title="Сопротивление" />
-                        }
-                    </div>
-                </div>
-                <ul className="list-group list-group-flush">
-                    <li className="list-group-item">
-                        <FontAwesomeIcon icon={faClock} className="list-group-item__value" title="Время" />
-                        <div>{getTimeWithoutMs(element.time)}</div>
-                    </li>
-                    <li className="list-group-item">
-                        <FontAwesomeIcon icon={faHandFist} className="list-group-item__value" title="Значение" />
-                        <div>{element.value}</div>
-                    </li>
-                    {/*<li className="list-group-item">*/}
-                    {/*    <FontAwesomeIcon icon={faUserTie} className="list-group-item__value" title="От кого" />*/}
-                    {/*    <div>{getUserNameWithoutRealm(element.fromPlayer)}</div>*/}
-                    {/*</li>*/}
-                    <li className="list-group-item">
-                        <FontAwesomeIcon icon={faRightToBracket} className="list-group-item__value" title="К цели" />
-                        <div>{element.toEnemy}</div>
-                    </li>
-                </ul>
-            </div>
-        </li>;
-    }
+            chartData[i] = spellsData;
+        }
 
-    const healDoneList = (element) => {
-        return <li key={element.id}>
-            <div className="card">
-                <div className="card-body">
-                    <h5 className="card-title">{element.spellOrItem}</h5>
-                    <div className="card-body__extra-damage">
-                        {element.isCrit &&
-                            <FontAwesomeIcon icon={faFire} title="Критическое исцеление" />
-                        }
-                        {element.isFullOverheal &&
-                            <FontAwesomeIcon icon={faFlask} title="Все исцеление в оверхил" />
-                        }
-                    </div>
-                </div>
-                <ul className="list-group list-group-flush">
-                    <li className="list-group-item">
-                        <FontAwesomeIcon icon={faClock} className="list-group-item__value" title="Время" />
-                        <div>{getTimeWithoutMs(element.time)}</div>
-                    </li>
-                    <li className="list-group-item">
-                        <FontAwesomeIcon icon={faHandFist} className="list-group-item__value" title="Значение" />
-                        <div>{element.value}</div>
-                    </li>
-                    {/*<li className="list-group-item">*/}
-                    {/*    <FontAwesomeIcon icon={faUserTie} className="list-group-item__value" title="От кого" />*/}
-                    {/*    <div>{getUserNameWithoutRealm(element.fromPlayer)}</div>*/}
-                    {/*</li>*/}
-                    <li className="list-group-item">
-                        <FontAwesomeIcon icon={faRightToBracket} className="list-group-item__value" title="К цели" />
-                        <div>{element.toPlayer}</div>
-                    </li>
-                </ul>
-            </div>
-        </li>;
-    }
-
-    const damageTakenList = (element) => {
-        return <li key={element.id}>
-            <div className="card">
-                <div className="card-body">
-                    <h5 className="card-title">{element.spellOrItem}</h5>
-                    <div className="card-body__extra-damage">
-                        {element.isCrushing &&
-                            <FontAwesomeIcon icon={faFire} title="Сокрушающий удар" />
-                        }
-                        {element.isDodge &&
-                            <FontAwesomeIcon icon={faCopy} title="Уклонение" />
-                        }
-                        {element.isMiss &&
-                            <FontAwesomeIcon icon={faHands} title="Промах" />
-                        }
-                        {element.isParry &&
-                            <FontAwesomeIcon icon={faCompas} title="Паррирование" />
-                        }
-                        {element.isImmune &&
-                            <FontAwesomeIcon icon={faPooStorm} title="Иммунитет к урону" />
-                        }
-                        {element.isResist &&
-                            <FontAwesomeIcon icon={faFlask} title="Сопротивление" />
-                        }
-                    </div>
-                </div>
-                <ul className="list-group list-group-flush">
-                    <li className="list-group-item">
-                        <FontAwesomeIcon icon={faClock} className="list-group-item__value" title="Время" />
-                        <div>{getTimeWithoutMs(element.time)}</div>
-                    </li>
-                    <li className="list-group-item">
-                        <FontAwesomeIcon icon={faHandFist} className="list-group-item__value" title="Значение" />
-                        <div>{element.value}</div>
-                    </li>
-                    {/*<li className="list-group-item">*/}
-                    {/*    <FontAwesomeIcon icon={faUserTie} className="list-group-item__value" title="От кого" />*/}
-                    {/*    <div>{getUserNameWithoutRealm(element.fromPlayer)}</div>*/}
-                    {/*</li>*/}
-                    <li className="list-group-item">
-                        <FontAwesomeIcon icon={faRightToBracket} className="list-group-item__value" title="К цели" />
-                        <div>{element.toEnemy}</div>
-                    </li>
-                </ul>
-            </div>
-        </li>;
-    }
-
-    const resourceRecoveryList = (element) => {
-        return <li key={element.id}>
-            <div className="card">
-                <div className="card-body">
-                    <h5 className="card-title">{element.spellOrItem}</h5>
-                    <div className="card-body__extra-damage">
-                        {element.isCrit &&
-                            <FontAwesomeIcon icon={faFire} title="Критический урон" />
-                        }
-                        {element.isDodge &&
-                            <FontAwesomeIcon icon={faCopy} title="Уклонение" />
-                        }
-                        {element.isMiss &&
-                            <FontAwesomeIcon icon={faHands} title="Промах" />
-                        }
-                        {element.isParry &&
-                            <FontAwesomeIcon icon={faCompas} title="Паррирование" />
-                        }
-                        {element.isImmune &&
-                            <FontAwesomeIcon icon={faPooStorm} title="Иммунитет к урону" />
-                        }
-                        {element.isResist &&
-                            <FontAwesomeIcon icon={faFlask} title="Сопротивление" />
-                        }
-                    </div>
-                </div>
-                <ul className="list-group list-group-flush">
-                    <li className="list-group-item">
-                        <FontAwesomeIcon icon={faClock} className="list-group-item__value" title="Время" />
-                        <div>{getTimeWithoutMs(element.time)}</div>
-                    </li>
-                    <li className="list-group-item">
-                        <FontAwesomeIcon icon={faHandFist} className="list-group-item__value" title="Значение" />
-                        <div>{element.value}</div>
-                    </li>
-                    {/*<li className="list-group-item">*/}
-                    {/*    <FontAwesomeIcon icon={faUserTie} className="list-group-item__value" title="От кого" />*/}
-                    {/*    <div>{getUserNameWithoutRealm(element.fromPlayer)}</div>*/}
-                    {/*</li>*/}
-                    <li className="list-group-item">
-                        <FontAwesomeIcon icon={faRightToBracket} className="list-group-item__value" title="К цели" />
-                        <div>{element.toEnemy}</div>
-                    </li>
-                </ul>
-            </div>
-        </li>;
+        setDetailsChartData(chartData);
     }
 
     const getSpellsByTime = (e) => {
@@ -366,23 +184,30 @@ const CombatDetails = ({ detailsTypeName }) => {
     }
 
     const cancelSingleFilter = () => {
-        fillingDetailsDataList(detailsData);
+        fillingDetailsDataList();
         setSelectedTime("");
         setUsedSingleFilter(false);
     }
 
     const cancelMultiplyFilter = () => {
-        fillingDetailsDataList(detailsData);
-        createChartData(detailsData);
+        fillingDetailsDataList();
         setStartTime("");
         setFinishTime("");
         setUsedMultiplyFilter(false);
+    }
+
+    const switchSelectInterval = () => {
+        setUsedMultiplyFilter(!usedMultiplyFilter);
+        if (usedMultiplyFilter) {
+            cancelMultiplyFilter();
+        }
     }
 
     const render = () => {
         return <div className="details__container">
             <div>
                 <h3>Подробная информация [{detailsTypeName}]</h3>
+                <h4>Игрок: {userName}</h4>
             </div>
             <div className="form-check form-switch">
                 <input className="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckChecked" onChange={() => setShowGeneralDetails(!showGeneralDetails)} />
@@ -390,7 +215,7 @@ const CombatDetails = ({ detailsTypeName }) => {
             </div>
             {showGeneralDetails &&
                 <div>
-                    <FontAwesomeIcon icon={faPen} className={usedMultiplyFilter ? "chart-editor active" : "chart-editor"} title="Выделить интервал" onClick={() => setUsedMultiplyFilter(!usedMultiplyFilter)} />
+                    <FontAwesomeIcon icon={faPen} className={usedMultiplyFilter ? "chart-editor active" : "chart-editor"} title="Выделить интервал" onClick={switchSelectInterval} />
                     <LineChart
                         width={1250}
                         height={300}
@@ -409,7 +234,7 @@ const CombatDetails = ({ detailsTypeName }) => {
                         <YAxis />
                         <Tooltip />
                         <Legend />
-                        <Line type="monotone" dataKey="value" name="Урон" stroke="#8884d8" activeDot={{ r: 8 }} />
+                        <Line type="monotone" dataKey="value" name={detailsTypeName} stroke="#8884d8" activeDot={{ r: 8 }} />
                     </LineChart>
                 </div>
             }
