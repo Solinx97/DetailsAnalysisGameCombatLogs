@@ -1,3 +1,8 @@
+using AutoMapper;
+using CombatAnalysis.DAL.Extensions;
+using CombatAnalysis.Identity.Extensions;
+using CombatAnalysis.Identity.Mapping;
+using CombatAnalysis.Identity.Settings;
 using CombatAnalysis.WebApp.Consts;
 using CombatAnalysis.WebApp.Helpers;
 using CombatAnalysis.WebApp.Interfaces;
@@ -21,6 +26,13 @@ namespace CombatAnalysis.WebApp
 
         public void ConfigureServices(IServiceCollection services)
         {
+            RegisteringDependencies(services);
+
+            var settings = Configuration.GetSection(nameof(TokenSettings));
+            var scheme = settings.GetValue<string>(nameof(TokenSettings.AuthScheme));
+
+            services.Configure<TokenSettings>(settings);
+
             Port.CombatParserApi = Configuration.GetValue<string>("CombatParserApiPort");
             Port.UserApi = Configuration.GetValue<string>("UserApiPort");
 
@@ -28,6 +40,14 @@ namespace CombatAnalysis.WebApp
 
             IHttpClientHelper httpClient = new HttpClientHelper();
             services.AddSingleton(httpClient);
+
+            var mappingConfig = new MapperConfiguration(mc =>
+            {
+                mc.AddProfile(new IdentityMappingProfile());
+            });
+
+            var mapper = mappingConfig.CreateMapper();
+            services.AddSingleton(mapper);
 
             services.AddSpaStaticFiles(configuration =>
             {
@@ -72,6 +92,12 @@ namespace CombatAnalysis.WebApp
                     spa.UseReactDevelopmentServer(npmScript: "start");
                 }
             });
+        }
+
+        private void RegisteringDependencies(IServiceCollection services)
+        {
+            services.RegisterDependenciesDAL(Configuration, "DefaultConnection");
+            services.RegisterIdentityDependencies();
         }
     }
 }

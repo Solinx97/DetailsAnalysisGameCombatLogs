@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from 'react';
+﻿import React, { useState, } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 const Registration = () => {
@@ -23,7 +23,7 @@ const Registration = () => {
 
         const status = await response.status;
         if (status == 200) {
-            navigate('/authorization');
+            navigate('/');
         }
     }
 

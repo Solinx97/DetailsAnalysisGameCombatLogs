@@ -3,15 +3,15 @@
 export const userSlice = createSlice({
     name: 'user',
     initialState: {
-        value: false
+        value: null
     },
     reducers: {
-        updateAuthorizationState: (state, action) => {
+        userUpdate: (state, action) => {
             state.value = action.payload;
         },
     },
 });
 
-export const { updateAuthorizationState } = userSlice.actions;
+export const { userUpdate } = userSlice.actions;
 
 export default userSlice.reducer;

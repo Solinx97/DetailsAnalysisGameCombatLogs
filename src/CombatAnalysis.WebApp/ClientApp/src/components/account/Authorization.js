@@ -1,16 +1,13 @@
-﻿import React, { useState, useEffect } from 'react';
+﻿import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { updateAuthorizationState } from '../../features/UserReducer'
-import { useDispatch } from 'react-redux'
 
 const Authorization = () => {
     const navigate = useNavigate();
-    const dispatch = useDispatch();
 
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
 
-    const registration = async () => {
+    const login = async () => {
         const data = {
             email: email,
             password: password
@@ -24,10 +21,9 @@ const Authorization = () => {
             body: JSON.stringify(data)
         });
 
-        const status = await response.status;
-        if (status == 200) {
+        const result = await response;
+        if (result.status == 200) {
             navigate('/');
-            dispatch(updateAuthorizationState(true));
         }
     }
 
@@ -42,7 +38,7 @@ const Authorization = () => {
     const handleSubmit = async (event) => {
         event.preventDefault();
 
-        await registration();
+        await login();
     }
 
     const render = () => {
