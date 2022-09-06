@@ -1,13 +1,14 @@
-﻿using CombatAnalysis.DAL.Data;
-using CombatAnalysis.DAL.Entities.User;
-using CombatAnalysis.Identity.Interfaces;
+﻿using CombatAnalysis.WebApp.Consts;
+using CombatAnalysis.WebApp.Interfaces;
+using CombatAnalysis.WebApp.Models.Response;
 using CombatAnalysis.WebApp.Models.User;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Net.Http.Json;
 using System.Security.Claims;
 using System.Threading.Tasks;
 
@@ -17,25 +18,36 @@ namespace CombatAnalysis.WebApp.Controllers
     [ApiController]
     public class AccountController : ControllerBase
     {
-        private readonly CombatAnalysisContext _dbContext;
-        private readonly IIdentityTokenService _tokenService;
+        private readonly IHttpClientHelper _httpClient;
 
-        public AccountController(CombatAnalysisContext dbContext, IIdentityTokenService tokenService)
+        public AccountController(IHttpClientHelper httpClient)
         {
-            _dbContext = dbContext;
-            _tokenService = tokenService;
+            _httpClient = httpClient;
+            _httpClient.BaseAddress = Port.UserApi;
         }
 
         [HttpPost]
         public async Task<IActionResult> Login(LoginModel model)
         {
-            var user = await _dbContext.User.FirstOrDefaultAsync(u => u.Email == model.Email && u.Password == model.Password);
-            if (user != null)
+            var responseMessage = await _httpClient.PostAsync("Account", JsonContent.Create(model));
+            if (responseMessage.StatusCode == System.Net.HttpStatusCode.OK)
             {
-                await Authenticate(user.Email);
-                await _tokenService.GenerateTokensAsync(HttpContext.Response.Cookies, user.Id);
 
-                return Ok(user);
+                var response = await responseMessage.Content.ReadFromJsonAsync<ResponseFromAccount>();
+                HttpContext.Response.Cookies.Append("accessToken", response.AccessToken, new CookieOptions
+                {
+                    HttpOnly = true,
+                    Expires = DateTimeOffset.UtcNow.AddMinutes(TokenExpires.AccessExpiresTimeInMinutes),
+                });
+                HttpContext.Response.Cookies.Append("refreshToken", response.RefreshToken, new CookieOptions
+                {
+                    HttpOnly = true,
+                    Expires = DateTimeOffset.UtcNow.AddHours(TokenExpires.RefreshExpiresTimeInHours),
+                });
+
+                await Authenticate(response.User.Email);
+
+                return Ok(response.User);
             }
             else
             {
@@ -46,17 +58,25 @@ namespace CombatAnalysis.WebApp.Controllers
         [HttpPost("registration")]
         public async Task<IActionResult> Register(RegisterModel model)
         {
-            var user = await _dbContext.User.FirstOrDefaultAsync(u => u.Email == model.Email);
-            if (user == null)
+            var responseMessage = await _httpClient.PostAsync("Account/registration", JsonContent.Create(model));
+            if (responseMessage.StatusCode == System.Net.HttpStatusCode.OK)
             {
-                var newUser = new User { Id = Guid.NewGuid().ToString(), Email = model.Email, Password = model.Password };
-                _dbContext.User.Add(newUser);
-                await _dbContext.SaveChangesAsync();
 
-                await Authenticate(model.Email);
-                await _tokenService.GenerateTokensAsync(HttpContext.Response.Cookies, newUser.Id);
+                var response = await responseMessage.Content.ReadFromJsonAsync<ResponseFromAccount>();
+                HttpContext.Response.Cookies.Append("accessToken", response.AccessToken, new CookieOptions
+                {
+                    HttpOnly = true,
+                    Expires = DateTimeOffset.UtcNow.AddMinutes(TokenExpires.AccessExpiresTimeInMinutes),
+                });
+                HttpContext.Response.Cookies.Append("refreshToken", response.RefreshToken, new CookieOptions
+                {
+                    HttpOnly = true,
+                    Expires = DateTimeOffset.UtcNow.AddHours(TokenExpires.RefreshExpiresTimeInHours),
+                });
 
-                return Ok(user);
+                await Authenticate(response.User.Email);
+
+                return Ok(response.User);
             }
             else
             {
@@ -68,20 +88,17 @@ namespace CombatAnalysis.WebApp.Controllers
         [HttpPost("logout")]
         public async Task<IActionResult> Logout()
         {
+            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+
+            HttpContext.Response.Cookies.Delete("accessToken");
+            HttpContext.Response.Cookies.Delete("refreshToken");
+
             if (Request.Cookies.TryGetValue("refreshToken", out var refreshToken))
             {
-                await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-
-                HttpContext.Response.Cookies.Delete("accessToken");
-                HttpContext.Response.Cookies.Delete("refreshToken");
-
-                var refreshTokenModel = await _tokenService.FindRefreshTokenAsync(refreshToken);
-                await _tokenService.RemoveRefreshTokenAsync(refreshTokenModel);
-
-                return Ok();
+                await _httpClient.GetAsync($"Account/logout/{refreshToken}");
             }
 
-            return Unauthorized();
+            return Ok();
         }
 
         private async Task Authenticate(string email)

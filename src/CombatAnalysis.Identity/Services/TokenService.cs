@@ -24,8 +24,9 @@ namespace CombatAnalysis.Identity.Services
         private readonly ILogger<TokenService> _logger;
         private readonly IMapper _mapper;
         private readonly TokenSettings _tokenSettings;
+
         private const int AccessExpiresTimeInMinutes = 30;
-        private const int RefreshExpiresTimeInHours = 24;
+        private const int RefreshExpiresTimeInHours = 12;
 
         public TokenService(IOptions<TokenSettings> settings, ITokenRepository repository,
             IMapper mapper, ILogger<TokenService> logger)
@@ -36,22 +37,14 @@ namespace CombatAnalysis.Identity.Services
             _logger = logger;
         }
 
-        async Task IIdentityTokenService.GenerateTokensAsync(IResponseCookies cookies, string userId)
+        async Task<Tuple<string, string>> IIdentityTokenService.GenerateTokensAsync(IResponseCookies cookies, string userId)
         {
             var accessToken = GenerateToken(JWTSecret.AccessSecretKey);
             var refreshToken = GenerateToken(JWTSecret.RefreshSecretKey);
 
-            cookies.Append("accessToken", accessToken, new CookieOptions
-            {
-                SameSite = SameSiteMode.Strict,
-            });
-            cookies.Append("refreshToken", refreshToken, new CookieOptions
-            {
-                HttpOnly = true,
-                SameSite = SameSiteMode.Strict,
-            });
+            await SaveRefreshTokenAsync(refreshToken, userId);
 
-            await CreateRefreshTokenAsync(refreshToken, userId);
+            return new Tuple<string, string>(accessToken, refreshToken);
         }
 
         IEnumerable<Claim> IIdentityTokenService.ValidateToken(string token, string secretKey, out SecurityToken validatedToken)
@@ -119,7 +112,7 @@ namespace CombatAnalysis.Identity.Services
             {
                 Issuer = _tokenSettings.Issuer,
                 Audience = _tokenSettings.Audience,
-                Expires = DateTime.Now.AddMinutes(AccessExpiresTimeInMinutes),
+                Expires = DateTime.UtcNow.AddMinutes(AccessExpiresTimeInMinutes),
                 SigningCredentials = new SigningCredentials(
                     new SymmetricSecurityKey(Encoding.UTF8.GetBytes(accessKey)),
                     SecurityAlgorithms.HmacSha256),
@@ -133,13 +126,13 @@ namespace CombatAnalysis.Identity.Services
             return token;
         }
 
-        private async Task CreateRefreshTokenAsync(string refreshToken, string userId)
+        private async Task SaveRefreshTokenAsync(string refreshToken, string userId)
         {
             var refreshTokenModel = new RefreshToken
             {   
                 Id = Guid.NewGuid().ToString(),
                 Token = refreshToken,
-                Expires = DateTimeOffset.Now.AddMinutes(10).UtcDateTime,
+                Expires = DateTimeOffset.UtcNow.AddHours(RefreshExpiresTimeInHours).UtcDateTime,
                 UserId = userId
             };
 

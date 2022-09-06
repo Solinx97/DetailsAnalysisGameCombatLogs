@@ -1,11 +1,11 @@
 ﻿using CombatAnalysis.DAL.Data;
-using CombatAnalysis.Identity.Interfaces;
-using CombatAnalysis.Identity.Security;
+using CombatAnalysis.DAL.Entities.User;
+using CombatAnalysis.WebApp.Consts;
+using CombatAnalysis.WebApp.Interfaces;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace CombatAnalysis.WebApp.Controllers
@@ -14,13 +14,14 @@ namespace CombatAnalysis.WebApp.Controllers
     [ApiController]
     public class AuthenticationController : ControllerBase
     {
-        private readonly IIdentityTokenService _tokenService;
         private readonly CombatAnalysisContext _dbContext;
+        private readonly IHttpClientHelper _httpClient;
 
-        public AuthenticationController(IIdentityTokenService tokenService, CombatAnalysisContext dbContext)
+        public AuthenticationController(CombatAnalysisContext dbContext, IHttpClientHelper httpClient)
         {
-            _tokenService = tokenService;
             _dbContext = dbContext;
+            _httpClient = httpClient;
+            _httpClient.BaseAddress = Port.UserApi;
         }
 
         [AllowAnonymous]
@@ -32,14 +33,8 @@ namespace CombatAnalysis.WebApp.Controllers
                 return Unauthorized();
             }
 
-            var claims = _tokenService.ValidateToken(refreshToken, JWTSecret.RefreshSecretKey, out var validateToken);
-            if (!claims.Any())
-            {
-                return Unauthorized();
-            }
-
-            var foundToken = await _tokenService.FindRefreshTokenAsync(refreshToken);
-            if (foundToken == null)
+            var response = await _httpClient.GetAsync($"authentication/validateRefreshToken/{refreshToken}");
+            if (response.StatusCode == System.Net.HttpStatusCode.BadRequest)
             {
                 Response.Cookies.Delete("accessToken");
                 Response.Cookies.Delete("refreshToken");
@@ -47,30 +42,41 @@ namespace CombatAnalysis.WebApp.Controllers
                 return Unauthorized();
             }
 
-            var isExpiresed = DateTimeOffset.Now.UtcDateTime > validateToken.ValidTo;
-            if (isExpiresed)
+            response = await _httpClient.GetAsync($"authentication/find/{refreshToken}");
+            if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
             {
                 Response.Cookies.Delete("accessToken");
                 Response.Cookies.Delete("refreshToken");
-                await _tokenService.RemoveRefreshTokenAsync(foundToken);
 
-                return Unauthorized();
-            }
-
-            var isAuthenticated = HttpContext.User.Identity.IsAuthenticated;
-            if (!isAuthenticated)
-            {
                 return Unauthorized();
             }
 
             var email = HttpContext.User.Identity.Name;
             var user = await _dbContext.User.FirstOrDefaultAsync(u => u.Email == email);
+            if (user == null)
+            {
+                await _httpClient.GetAsync($"authentication/check/{user.Id}");
+            }
 
-            await _tokenService.CheckRefreshTokensByUserAsync(user.Id);
+            return await CheckAccessToken(user);
+        }
 
+        private async Task<IActionResult> CheckAccessToken(User user)
+        {
             if (!HttpContext.Request.Cookies.TryGetValue("accessToken", out var accessToken))
             {
-                await _tokenService.GenerateTokensAsync(HttpContext.Response.Cookies, user.Id);
+                Response.Cookies.Delete("refreshToken");
+
+                return Unauthorized();
+            }
+
+            var response = await _httpClient.GetAsync($"authentication/validateAccessToken/{accessToken}");
+            if (response.StatusCode == System.Net.HttpStatusCode.BadRequest)
+            {
+                Response.Cookies.Delete("accessToken");
+                Response.Cookies.Delete("refreshToken");
+
+                return Unauthorized();
             }
 
             return Ok(user);
