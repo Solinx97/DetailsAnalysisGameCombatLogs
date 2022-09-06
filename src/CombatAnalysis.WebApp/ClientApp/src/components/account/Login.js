@@ -1,7 +1,7 @@
 ﻿import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-const Authorization = () => {
+const Login = () => {
     const navigate = useNavigate();
 
     const [email, setEmail] = useState("");
@@ -56,11 +56,11 @@ const Authorization = () => {
                 <input type="checkbox" className="form-check-input" id="exampleCheck1" />
                 <label className="form-check-label" htmlFor="exampleCheck1">Check me out</label>
             </div>
-            <input type="submit" className="btn btn-primary" value="Authorization" />
+            <input type="submit" className="btn btn-primary" value="Login" />
         </form>;
     }
 
     return render();
 }
 
-export default Authorization;
+export default Login;

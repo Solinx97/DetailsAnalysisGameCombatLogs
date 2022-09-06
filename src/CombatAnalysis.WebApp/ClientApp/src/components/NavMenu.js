@@ -68,7 +68,7 @@ const NavMenu = (props) => {
                     {!isAuth
                         ? <div>
                             <button type="button" className="btn btn-primary" onClick={() => navigate('/registration')}>Registration</button>
-                            <button type="button" className="btn btn-primary" onClick={() => navigate('/authorization')}>Authorization</button>
+                            <button type="button" className="btn btn-primary" onClick={() => navigate('/login')}>Login</button>
                         </div>
                         : <div>
                             <div>Welcome, <strong>{user.email}</strong></div>

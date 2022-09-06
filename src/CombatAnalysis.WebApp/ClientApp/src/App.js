@@ -9,7 +9,7 @@ import GeneralAnalysis from './components/GeneralAnalysis';
 import DetailsSpecificalCombat from './components/DetailsSpecificalCombat';
 import CombatGeneralDetails from './components/CombatGeneralDetails';
 import Registration from './components/account/Registration';
-import Authorization from './components/account/Authorization';
+import Login from './components/account/Login';
 
 import './custom.css'
 
@@ -21,7 +21,7 @@ const App = () => {
                 <Route path='/details-specifical-combat' element={<DetailsSpecificalCombat />} />
                 <Route path='/combat-general-details' element={<CombatGeneralDetails />} />
                 <Route path='/registration' element={<Registration />} />
-                <Route path='/authorization' element={<Authorization />} />
+                <Route path='/login' element={<Login />} />
             </Routes>
         </Layout>;
 }
