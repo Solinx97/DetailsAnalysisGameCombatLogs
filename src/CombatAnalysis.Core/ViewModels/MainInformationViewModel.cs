@@ -7,6 +7,7 @@ using CombatAnalysis.Core.Interfaces;
 using CombatAnalysis.Core.Models;
 using CombatAnalysis.Core.Services;
 using CombatAnalysis.WinCore;
+using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
 using MvvmCross.Commands;
 using MvvmCross.Navigation;
@@ -40,7 +41,7 @@ namespace CombatAnalysis.Core.ViewModels
         private double _screenWidth;
         private double _screenHeight;
 
-        public MainInformationViewModel(IMapper mapper, IMvxNavigationService mvvmNavigation, IHttpClientHelper httpClient, IParser parser, ILogger logger)
+        public MainInformationViewModel(IMapper mapper, IMvxNavigationService mvvmNavigation, IHttpClientHelper httpClient, IParser parser, ILogger logger, IMemoryCache memoryCache)
         {
             _mapper = mapper;
             _mvvmNavigation = mvvmNavigation;
@@ -55,7 +56,7 @@ namespace CombatAnalysis.Core.ViewModels
             _combatParserAPIService = new CombatParserAPIService(httpClient, logger);
             _handler = new ViewModelMConnect();
 
-            BasicTemplate = new BasicTemplateViewModel(_handler, mvvmNavigation);
+            BasicTemplate = new BasicTemplateViewModel(_handler, mvvmNavigation, memoryCache, httpClient);
             Templates.Basic = BasicTemplate;
         }
 
