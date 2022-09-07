@@ -1,7 +1,7 @@
 ﻿using CombatAnalysis.Core.Core;
 using CombatAnalysis.Core.Interfaces;
+using CombatAnalysis.Core.Interfaces.Observers;
 using CombatAnalysis.Core.Models;
-using CombatAnalysis.Core.Models.User;
 using Microsoft.Extensions.Caching.Memory;
 using MvvmCross.Commands;
 using MvvmCross.Navigation;
@@ -12,9 +12,10 @@ using System.Threading.Tasks;
 
 namespace CombatAnalysis.Core.ViewModels
 {
-    public class BasicTemplateViewModel : MvxViewModel, IImprovedMvxViewModel, IResponseStatusObservable
+    public class BasicTemplateViewModel : MvxViewModel, IImprovedMvxViewModel, IResponseStatusObservable, IAuthObservable
     {
-        private readonly List<IResponseStatusObserver> _observers;
+        private readonly List<IResponseStatusObserver> _responseStatusObservers;
+        private readonly List<IAuthObserver> _authObservers;
         private readonly IMvxNavigationService _mvvmNavigation;
         private readonly IMemoryCache _memoryCache;
         private readonly IHttpClientHelper _httpClient;
@@ -35,7 +36,8 @@ namespace CombatAnalysis.Core.ViewModels
             _memoryCache = memoryCache;
             _httpClient = httpClient;
 
-            _observers = new List<IResponseStatusObserver>();
+            _responseStatusObservers = new List<IResponseStatusObserver>();
+            _authObservers = new List<IAuthObserver>();
 
             CloseCommand = new MvxCommand(CloseWindow);
             LoginCommand = new MvxCommand(Login);
@@ -48,8 +50,6 @@ namespace CombatAnalysis.Core.ViewModels
             HealDoneDetailsCommand = new MvxCommand(HealDoneDetails);
             DamageTakenDetailsCommand = new MvxCommand(DamageTakenDetails);
             ResourceDetailsCommand = new MvxCommand(ResourceDetails);
-
-            CheckAuth();
         }
 
         public Action Close { get; set; }
@@ -104,7 +104,7 @@ namespace CombatAnalysis.Core.ViewModels
             set
             {
                 SetProperty(ref _responseStatus, value);
-                NotifyObservers();
+                NotifyResponseStatusObservers();
             }
         }
 
@@ -123,6 +123,7 @@ namespace CombatAnalysis.Core.ViewModels
             set
             {
                 SetProperty(ref _isAuth, value);
+                NotifyAuthObservers();
             }
         }
 
@@ -148,7 +149,7 @@ namespace CombatAnalysis.Core.ViewModels
         public void Logout()
         {
             var refreshToken = _memoryCache.Get<string>("refreshToken");
-            Task.Run(async () => await _httpClient.GetAsync($"Account/logout/{refreshToken}"));
+            Task.Run(() => _httpClient.GetAsync($"Account/logout/{refreshToken}"));
 
             _memoryCache.Remove("refreshToken");
             _memoryCache.Remove("accessToken");
@@ -203,30 +204,37 @@ namespace CombatAnalysis.Core.ViewModels
 
         public void AddObserver(IResponseStatusObserver o)
         {
-            _observers.Add(o);
+            _responseStatusObservers.Add(o);
         }
 
         public void RemoveObserver(IResponseStatusObserver o)
         {
-            _observers.Remove(o);
+            _responseStatusObservers.Remove(o);
         }
 
-        public void NotifyObservers()
+        public void NotifyResponseStatusObservers()
         {
-            foreach (var item in _observers)
+            foreach (var item in _responseStatusObservers)
             {
                 item.Update(ResponseStatus);
             }
         }
 
-        private void CheckAuth()
+        public void AddObserver(IAuthObserver o)
         {
-            var accessToken = _memoryCache.Get<string>("accessToken");
-            if (!string.IsNullOrWhiteSpace(accessToken))
+            _authObservers.Add(o);
+        }
+
+        public void RemoveObserver(IAuthObserver o)
+        {
+            _authObservers.Remove(o);
+        }
+
+        public void NotifyAuthObservers()
+        {
+            foreach (var item in _authObservers)
             {
-                var user = _memoryCache.Get<UserModel>("user");
-                IsAuth = true;
-                Email = user.Email;
+                item.AuthUpdate(IsAuth);
             }
         }
     }

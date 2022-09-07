@@ -14,7 +14,7 @@ namespace CombatAnalysis.App.Converters
             var isInversion = false;
             var stringParam = (string)parameter;
 
-            if (stringParam != null)
+            if (!string.IsNullOrWhiteSpace(stringParam))
             {
                 var parse = stringParam.Split(':');
                 if (parse.Length > 1)

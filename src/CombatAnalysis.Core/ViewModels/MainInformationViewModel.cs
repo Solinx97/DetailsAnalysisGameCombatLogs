@@ -4,6 +4,7 @@ using CombatAnalysis.Core.Commands;
 using CombatAnalysis.Core.Consts;
 using CombatAnalysis.Core.Core;
 using CombatAnalysis.Core.Interfaces;
+using CombatAnalysis.Core.Interfaces.Observers;
 using CombatAnalysis.Core.Models;
 using CombatAnalysis.Core.Services;
 using CombatAnalysis.WinCore;
@@ -19,12 +20,13 @@ using System.Threading.Tasks;
 
 namespace CombatAnalysis.Core.ViewModels
 {
-    public class MainInformationViewModel : MvxViewModel, IObserver
+    public class MainInformationViewModel : MvxViewModel, IObserver, IAuthObserver
     {
         private readonly IMvxNavigationService _mvvmNavigation;
         private readonly IMapper _mapper;
         private readonly IParser _parser;
         private readonly CombatParserAPIService _combatParserAPIService;
+        private readonly IMemoryCache _memoryCache;
 
         private string _combatLog;
         private bool _fileIsNotCorrect;
@@ -40,12 +42,14 @@ namespace CombatAnalysis.Core.ViewModels
         private ObservableCollection<CombatLogModel> _combatLogs;
         private double _screenWidth;
         private double _screenHeight;
+        private bool _isAuth;
 
         public MainInformationViewModel(IMapper mapper, IMvxNavigationService mvvmNavigation, IHttpClientHelper httpClient, IParser parser, ILogger logger, IMemoryCache memoryCache)
         {
             _mapper = mapper;
             _mvvmNavigation = mvvmNavigation;
             _parser = parser;
+            _memoryCache = memoryCache;
 
             GetCombatLogCommand = new MvxCommand(GetCombatLog);
             OpenPlayerAnalysisCommand = new MvxCommand(OpenPlayerAnalysis);
@@ -58,6 +62,9 @@ namespace CombatAnalysis.Core.ViewModels
 
             BasicTemplate = new BasicTemplateViewModel(_handler, mvvmNavigation, memoryCache, httpClient);
             Templates.Basic = BasicTemplate;
+
+            var authObservable = (IAuthObservable)BasicTemplate;
+            authObservable.AddObserver(this);
         }
 
         public IMvxCommand GetCombatLogCommand { get; set; }
@@ -175,6 +182,15 @@ namespace CombatAnalysis.Core.ViewModels
             set
             {
                 SetProperty(ref _screenHeight, value);
+            }
+        }
+
+        public bool IsAuth
+        {
+            get { return _isAuth; }
+            set
+            {
+                SetProperty(ref _isAuth, value);
             }
         }
 
@@ -296,6 +312,11 @@ namespace CombatAnalysis.Core.ViewModels
             await LoadCombatLogsAsync();
 
             IsParsing = false;
+        }
+
+        public void AuthUpdate(bool isAuth)
+        {
+            IsAuth = isAuth;
         }
     }
 }
