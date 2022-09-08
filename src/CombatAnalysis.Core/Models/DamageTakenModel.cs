@@ -4,6 +4,8 @@ namespace CombatAnalysis.Core.Models
 {
     public class DamageTakenModel
     {
+        public int Id { get; set; }
+
         public int Value { get; set; }
 
         public TimeSpan Time { get; set; }
@@ -25,5 +27,7 @@ namespace CombatAnalysis.Core.Models
         public bool IsImmune { get; set; }
 
         public bool IsCrushing { get; set; }
+
+        public int CombatPlayerDataId { get; set; }
     }
 }

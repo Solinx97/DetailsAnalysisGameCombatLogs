@@ -1,27 +1,29 @@
 ﻿using AutoMapper;
-using CombatAnalysis.CombatParser;
 using CombatAnalysis.CombatParser.Entities;
 using CombatAnalysis.CombatParser.Extensions;
-using CombatAnalysis.Core.Commands;
+using CombatAnalysis.CombatParser.Services;
+using CombatAnalysis.Core.Consts;
 using CombatAnalysis.Core.Core;
 using CombatAnalysis.Core.Interfaces;
 using CombatAnalysis.Core.Models;
-using MvvmCross.Navigation;
+using CombatAnalysis.Core.Services;
+using Microsoft.Extensions.Logging;
 using MvvmCross.ViewModels;
 using System;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace CombatAnalysis.Core.ViewModels
 {
-    public class HealDoneDetailsViewModel : MvxViewModel<Tuple<string, CombatModel>>
+    public class HealDoneDetailsViewModel : MvxViewModel<Tuple<int, CombatModel>>
     {
-        private readonly IMvxNavigationService _mvvmNavigation;
-        private readonly IViewModelConnect _handler;
         private readonly IMapper _mapper;
+        private readonly ILogger _logger;
+        private readonly CombatParserAPIService _combatParserAPIService;
         private readonly PowerUpInCombat<HealDoneModel> _powerUpInCombat;
 
-        private MvxViewModel _basicTemplate;
+        private IImprovedMvxViewModel _basicTemplate;
         private ObservableCollection<HealDoneModel> _healDoneInformations;
         private ObservableCollection<HealDoneModel> _healDoneInformationsWithOverheal;
         private ObservableCollection<HealDoneGeneralModel> _healDoneGeneralInformations;
@@ -35,20 +37,19 @@ namespace CombatAnalysis.Core.ViewModels
         private bool _isCollectionReversed;
         private long _totalValue;
 
-        public HealDoneDetailsViewModel(IMapper mapper, IMvxNavigationService mvvmNavigation)
+        public HealDoneDetailsViewModel(IMapper mapper, IHttpClientHelper httpClient, ILogger logger)
         {
             _mapper = mapper;
-            _mvvmNavigation = mvvmNavigation;
+            _logger = logger;
 
-            _handler = new ViewModelMConnect();
-            BasicTemplate = new BasicTemplateViewModel(this, _handler, _mvvmNavigation);
-
-            _handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, "Step", 4);
-
+            _combatParserAPIService = new CombatParserAPIService(httpClient, logger);
             _powerUpInCombat = new PowerUpInCombat<HealDoneModel>(_healDoneInformationsWithOverheal);
+
+            BasicTemplate = Templates.Basic;
+            BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, "Step", 4);
         }
 
-        public MvxViewModel BasicTemplate
+        public IImprovedMvxViewModel BasicTemplate
         {
             get { return _basicTemplate; }
             set
@@ -179,30 +180,57 @@ namespace CombatAnalysis.Core.ViewModels
             }
         }
 
-        public override void Prepare(Tuple<string, CombatModel> parameter)
+        public override void Prepare(Tuple<int, CombatModel> parameter)
         {
-            SelectedPlayer = parameter.Item1;
-            TotalValue = parameter.Item2.Players.Find(x => x.UserName == parameter.Item1).HealDone;
+            var combat = parameter.Item2;
+            var player = combat.Players[parameter.Item1];
+            SelectedPlayer = player.UserName;
+            TotalValue = player.HealDone;
 
-            GetHealDoneDetails(parameter);
+            if (player.Id > 0)
+            {
+                Task.Run(async () => await LoadHealDoneDetails(player.Id));
+                Task.Run(async () => await LoadHealDoneGeneral(player.Id));
+            }
+            else
+            {
+                var combatInformation = new CombatDetailsService(_logger);
+                var map = _mapper.Map<Combat>(combat);
+
+                GetHealDoneDetails(combatInformation, SelectedPlayer, map);
+                GetHealDoneGeneral(combatInformation, map);
+            }
         }
 
-        private void GetHealDoneDetails(Tuple<string, CombatModel> combatInformationData)
+        private void GetHealDoneDetails(CombatDetailsService combatInformation, string player, Combat combat)
         {
-            var combatInformation = new CombatInformation();
-
-            var map = _mapper.Map<Combat>(combatInformationData.Item2);
-            combatInformation.SetCombat(map, combatInformationData.Item1);
+            combatInformation.Initialization(combat, player);
             combatInformation.GetHealDone();
 
-            var map1 = _mapper.Map<ObservableCollection<HealDoneModel>>(combatInformation.HealDoneInformations);
+            var map1 = _mapper.Map<ObservableCollection<HealDoneModel>>(combatInformation.HealDone);
 
             HealDoneInformations = map1;
             _healDoneInformationsWithOverheal = new ObservableCollection<HealDoneModel>(map1);
+        }
 
-            var damageDoneGeneralInformations = combatInformation.GetHealDoneGeneral(combatInformation.HealDoneInformations, map);
+        private void GetHealDoneGeneral(CombatDetailsService combatInformation, Combat combat)
+        {
+            var damageDoneGeneralInformations = combatInformation.GetHealDoneGeneral(combatInformation.HealDone, combat);
             var map2 = _mapper.Map<ObservableCollection<HealDoneGeneralModel>>(damageDoneGeneralInformations);
             HealDoneGeneralInformations = map2;
+        }
+
+        private async Task LoadHealDoneDetails(int combatPlayerId)
+        {
+            var healDones = await _combatParserAPIService.LoadHealDoneDetailsAsync(combatPlayerId);
+            HealDoneInformations = new ObservableCollection<HealDoneModel>(healDones.ToList());
+            _healDoneInformationsWithOverheal = new ObservableCollection<HealDoneModel>(healDones.ToList());
+        }
+
+        private async Task LoadHealDoneGeneral(int combatPlayerId)
+        {
+            var healDoneGenerals = await _combatParserAPIService.LoadHealDoneGeneralAsync(combatPlayerId);
+            HealDoneGeneralInformations = new ObservableCollection<HealDoneGeneralModel>(healDoneGenerals.ToList());
         }
 
         private void Sorting(int index)

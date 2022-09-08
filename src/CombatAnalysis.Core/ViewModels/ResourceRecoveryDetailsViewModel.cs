@@ -1,25 +1,27 @@
 ﻿using AutoMapper;
-using CombatAnalysis.CombatParser;
 using CombatAnalysis.CombatParser.Entities;
 using CombatAnalysis.CombatParser.Extensions;
-using CombatAnalysis.Core.Commands;
+using CombatAnalysis.CombatParser.Services;
+using CombatAnalysis.Core.Consts;
 using CombatAnalysis.Core.Interfaces;
 using CombatAnalysis.Core.Models;
-using MvvmCross.Navigation;
+using CombatAnalysis.Core.Services;
+using Microsoft.Extensions.Logging;
 using MvvmCross.ViewModels;
 using System;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace CombatAnalysis.Core.ViewModels
 {
-    public class ResourceRecoveryDetailsViewModel : MvxViewModel<Tuple<string, CombatModel>>
+    public class ResourceRecoveryDetailsViewModel : MvxViewModel<Tuple<int, CombatModel>>
     {
-        private readonly IMvxNavigationService _mvvmNavigation;
-        private readonly IViewModelConnect _handler;
         private readonly IMapper _mapper;
+        private readonly ILogger _logger;
+        private readonly CombatParserAPIService _combatParserAPIService;
 
-        private MvxViewModel _basicTemplate;
+        private IImprovedMvxViewModel _basicTemplate;
         private ObservableCollection<ResourceRecoveryModel> _resourceRecoveryInformations;
         private ObservableCollection<ResourceRecoveryGeneralModel> _resourceRecoveryGeneralInformations;
 
@@ -28,18 +30,18 @@ namespace CombatAnalysis.Core.ViewModels
         private bool _isCollectionReversed;
         private double _totalValue;
 
-        public ResourceRecoveryDetailsViewModel(IMapper mapper, IMvxNavigationService mvvmNavigation)
+        public ResourceRecoveryDetailsViewModel(IMapper mapper, IHttpClientHelper httpClient, ILogger logger)
         {
             _mapper = mapper;
-            _mvvmNavigation = mvvmNavigation;
+            _logger = logger;
 
-            _handler = new ViewModelMConnect();
-            BasicTemplate = new BasicTemplateViewModel(this, _handler, _mvvmNavigation);
+            _combatParserAPIService = new CombatParserAPIService(httpClient, logger);
 
-            _handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, "Step", 6);
+            BasicTemplate = Templates.Basic;
+            BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, "Step", 6);
         }
 
-        public MvxViewModel BasicTemplate
+        public IImprovedMvxViewModel BasicTemplate
         {
             get { return _basicTemplate; }
             set
@@ -110,30 +112,57 @@ namespace CombatAnalysis.Core.ViewModels
             }
         }
 
-        public override void Prepare(Tuple<string, CombatModel> parameter)
+        public override void Prepare(Tuple<int, CombatModel> parameter)
         {
-            SelectedPlayer = parameter.Item1;
-            TotalValue = parameter.Item2.Players.Find(x => x.UserName == parameter.Item1).EnergyRecovery;
+            var combat = parameter.Item2;
+            var player = combat.Players[parameter.Item1];
+            SelectedPlayer = player.UserName;
+            TotalValue = player.EnergyRecovery;
 
-            GetResourceRecoveryDetails(parameter);
+            if (player.Id > 0)
+            {
+                Task.Run(async () => await LoadResourceRecoveryDetails(player.Id));
+                Task.Run(async () => await LoadResourceRecoveryGeneral(player.Id));
+            }
+            else
+            {
+                var combatInformation = new CombatDetailsService(_logger);
+                var map = _mapper.Map<Combat>(combat);
+
+                GetResourceRecoveryDetails(combatInformation, SelectedPlayer, map);
+                GetResourceRecoveryGeneral(combatInformation, map);
+            }
         }
 
-        private void GetResourceRecoveryDetails(Tuple<string, CombatModel> combatInformationData)
+        private void GetResourceRecoveryDetails(CombatDetailsService combatInformation, string player, Combat combat)
         {
-            var combatInformation = new CombatInformation();
+            combatInformation.Initialization(combat, player);
+            combatInformation.GetResourceRecovery();
 
-            var map = _mapper.Map<Combat>(combatInformationData.Item2);
-            combatInformation.SetCombat(map, combatInformationData.Item1);
-            combatInformation.GetEnergyRecovery();
-
-            var map1 = _mapper.Map<ObservableCollection<ResourceRecoveryModel>>(combatInformation.ResourceRecoveryInformations);
+            var map1 = _mapper.Map<ObservableCollection<ResourceRecoveryModel>>(combatInformation.ResourceRecovery);
 
             ResourceRecoveryInformations = map1;
             _resourceRecoveryInformations = new ObservableCollection<ResourceRecoveryModel>(map1);
+        }
 
-            var damageDoneGeneralInformations = combatInformation.GetResourceRecoveryGeneral(combatInformation.ResourceRecoveryInformations, map);
+        private void GetResourceRecoveryGeneral(CombatDetailsService combatInformation, Combat combat)
+        {
+            var damageDoneGeneralInformations = combatInformation.GetDamageTakenGeneral(combatInformation.DamageTaken, combat);
             var map2 = _mapper.Map<ObservableCollection<ResourceRecoveryGeneralModel>>(damageDoneGeneralInformations);
             ResourceRecoveryGeneralInformations = map2;
+        }
+
+        private async Task LoadResourceRecoveryDetails(int combatPlayerId)
+        {
+            var healDones = await _combatParserAPIService.LoadResourceRecoveryDetailsAsync(combatPlayerId);
+            ResourceRecoveryInformations = new ObservableCollection<ResourceRecoveryModel>(healDones.ToList());
+            _resourceRecoveryInformations = new ObservableCollection<ResourceRecoveryModel>(healDones.ToList());
+        }
+
+        private async Task LoadResourceRecoveryGeneral(int combatPlayerId)
+        {
+            var healDoneGenerals = await _combatParserAPIService.LoadResourceRecoveryGeneralAsync(combatPlayerId);
+            ResourceRecoveryGeneralInformations = new ObservableCollection<ResourceRecoveryGeneralModel>(healDoneGenerals.ToList());
         }
 
         private void Sorting(int index)

@@ -1,15 +1,14 @@
 ﻿using System;
-using System.Collections.Generic;
 
 namespace CombatAnalysis.DAL.Entities
 {
     public class Combat
     {
+        public int Id { get; set; }
+
         public string DungeonName { get; set; }
 
         public string Name { get; set; }
-
-        public List<string> Data { get; set; }
 
         public double EnergyRecovery { get; set; }
 
@@ -29,11 +28,11 @@ namespace CombatAnalysis.DAL.Entities
 
         public DateTimeOffset FinishDate { get; set; }
 
-        //public List<PlayerCombat> Players { get; set; }
-
         public string Duration
         {
             get { return (FinishDate - StartDate).ToString(@"hh\:mm\:ss"); }
         }
+
+        public int CombatLogId { get; set; }
     }
 }

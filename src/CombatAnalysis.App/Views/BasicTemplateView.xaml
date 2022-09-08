@@ -9,7 +9,7 @@
       xmlns:uc="clr-namespace:CombatAnalysis.App.UserControls"
       xmlns:Icon="http://metro.mahapps.com/winfx/xaml/iconpacks"
       xmlns:converters="clr-namespace:CombatAnalysis.App.Converters"
-      mc:Ignorable="d" d:DesignHeight="850" d:DesignWidth="1250">
+      mc:Ignorable="d">
 
     <Grid>
         <Grid.RowDefinitions>
@@ -24,10 +24,12 @@
         </Grid.ColumnDefinitions>
 
         <Grid.Resources>
+            <converters:TheNativeBoolToVisibilityConverter x:Key="BoolToVisibility" />
             <converters:TheNativeIntToXAMLBoolConverter x:Key="IntToXAMLBool" />
             <converters:TheNativeIntToXAMLExpressConverter x:Key="IntToXAMLBoolExpress" />
+            <converters:TheNativeIntToVisibilityConverter x:Key="IntToVisibility" />
         </Grid.Resources>
-        
+
         <Border CornerRadius="0 20 20 0" Background="white" Grid.Column="2" Grid.ColumnSpan="2" Margin="-25 0 0 0 " Grid.RowSpan="2"/>
 
         <Border CornerRadius="20" Grid.RowSpan="2" Panel.ZIndex="2" Background="#6145e3">
@@ -50,18 +52,11 @@
         <Border Grid.Column="1" Grid.RowSpan="2" CornerRadius="0 20 20 0"
                 Background="#6f50ff" Panel.ZIndex="1" Margin="-25 0 0 0">
             <Grid>
-                <!--<ComboBox VerticalAlignment="Top" Margin="34 25">
-                    <ComboBoxItem Content="Oleg"/>
-                    <ComboBoxItem Content="Dima"/>
-                    <ComboBoxItem Content="Kiril" IsSelected="True"/>
-                    <ComboBoxItem Content="Lera"/>
-                </ComboBox>-->
-
                 <StackPanel Margin="25 160 0 0">
                     <uc:MenuButton Title="Загрузка" Icon="HomeOutline" IsEnabled="{Binding Step, Converter={StaticResource IntToXAMLBoolExpress}, ConverterParameter='>,0'}" 
                                    IsActive="{Binding Step, Converter={StaticResource IntToXAMLBool}, ConverterParameter=0}" OnClick="{Binding UploadCombatsCommand}"/>
-                    <uc:MenuButton Title="Все бои" Icon="ChartTimelineVariantShimmer" IsEnabled="{Binding Step, Converter={StaticResource IntToXAMLBoolExpress}, ConverterParameter='>,1'}"
-                                   IsActive="{Binding Step, Converter={StaticResource IntToXAMLBool}, ConverterParameter=1}" OnClick="{Binding CombatsCommand}"/>
+                    <uc:MenuButton Title="Все бои" Icon="ChartTimelineVariantShimmer" IsEnabled="{Binding AllowStep, Converter={StaticResource IntToXAMLBoolExpress}, ConverterParameter='>,0'}"
+                                   IsActive="{Binding Step, Converter={StaticResource IntToXAMLBool}, ConverterParameter=1}" OnClick="{Binding GeneralAnalysisCommand}"/>
                     <uc:MenuButton Title="Бой" Icon="Details" IsEnabled="{Binding Step, Converter={StaticResource IntToXAMLBoolExpress}, ConverterParameter='>,2'}"
                                    IsActive="{Binding Step, Converter={StaticResource IntToXAMLBool}, ConverterParameter=2}" OnClick="{Binding CombatCommand}"/>
                     <uc:MenuButton Title="Урон" Icon="Sword" IsEnabled="{Binding Step, Converter={StaticResource IntToXAMLBool}, ConverterParameter=2}"
@@ -76,34 +71,97 @@
 
                 <StackPanel Margin="25 0 0 0" VerticalAlignment="Bottom">
                     <uc:MenuButton Title="Настройки" Icon="CogOutline"/>
-                    <uc:MenuButton Title="Выход" Icon="Logout"/>
+                    <uc:MenuButton OnClick="{Binding CloseCommand}" Title="Выход" Icon="Logout"/>
                 </StackPanel>
             </Grid>
         </Border>
 
         <Grid Grid.Column="2" Grid.ColumnSpan="2" Margin="40 30">
-            <!--<Grid Width="500" HorizontalAlignment="Left">
-                <ComboBox HorizontalAlignment="Left" Margin="3 0 0 0" Panel.ZIndex="2">
-                    <ComboBoxItem Content="All category" IsSelected="True"/>
-                    <ComboBoxItem Content="Cars"/>
-                    <ComboBoxItem Content="Books"/>
-                    <ComboBoxItem Content="Homes"/>
-                </ComboBox>
-            </Grid>-->
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                <StackPanel Margin="20 0">
+                    <StackPanel Orientation="Horizontal" Visibility="{Binding IsAuth, Converter={StaticResource BoolToVisibility}, ConverterParameter=true:true}">
+                        <Button Style="{StaticResource userButton}" Margin="5">
+                            <Icon:PackIconMaterial Height="25" Width="25" Kind="AccountArrowLeftOutline" Foreground="#88878e">
+                                <Icon:PackIconMaterial.ToolTip>
+                                    <ToolTip>
+                                        Регистрация
+                                    </ToolTip>
+                                </Icon:PackIconMaterial.ToolTip>
+                            </Icon:PackIconMaterial>
+                        </Button>
+                        <Button Style="{StaticResource userButton}" Margin="5" mvx:Bi.nd="Command LoginCommand">
+                            <Icon:PackIconMaterial Height="25" Width="25" Kind="AccountReactivateOutline" Foreground="#88878e">
+                                <Icon:PackIconMaterial.ToolTip>
+                                    <ToolTip>
+                                        Авторизация
+                                    </ToolTip>
+                                </Icon:PackIconMaterial.ToolTip>
+                            </Icon:PackIconMaterial>
+                        </Button>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" Visibility="{Binding IsAuth, Converter={StaticResource BoolToVisibility}, ConverterParameter=true:false}">
+                        <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Margin="5"
+                               FontFamily="Comic Sans MS" FontSize="16" Text="Привет, " />
+                        <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Margin="5"
+                               FontFamily="Comic Sans MS" FontSize="16" Text="{Binding Email}" Foreground="CadetBlue" />
+                    </StackPanel>
+                    <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Margin="5"
+                               FontFamily="Comic Sans MS"  Opacity="0.5" Text="Не авторизован"
+                               Visibility="{Binding IsAuth, Converter={StaticResource BoolToVisibility}, ConverterParameter=true:true}"/>
+                    <Button Content="Выйти" Width="100" Height="30" Margin="10" mvx:Bi.nd="Command LogoutCommand"
+                            Visibility="{Binding IsAuth, Converter={StaticResource BoolToVisibility}, ConverterParameter=true:false}"/>
+                </StackPanel>
                 <Button Style="{StaticResource textBoxButton}">
-                    <Icon:PackIconMaterial Kind="BellOutline" Foreground="#88878e"/>
-                </Button>
-                <Button Style="{StaticResource textBoxButton}" Background="White">
-                    <Icon:PackIconMaterial Kind="AccountArrowLeftOutline" Foreground="#88878e"/>
+                    <Icon:PackIconMaterial Kind="BellOutline" Foreground="#88878e">
+                        <Icon:PackIconMaterial.ToolTip>
+                            <ToolTip>
+                                Уведомления
+                            </ToolTip>
+                        </Icon:PackIconMaterial.ToolTip>
+                    </Icon:PackIconMaterial>
                 </Button>
                 <Button Style="{StaticResource textBoxButton}">
-                    <Icon:PackIconMaterial Kind="DotsVertical" Foreground="#88878e"/>
+                    <Icon:PackIconMaterial Kind="DotsVertical" Foreground="#88878e">
+                        <Icon:PackIconMaterial.ToolTip>
+                            <ToolTip>
+                                Меню
+                            </ToolTip>
+                        </Icon:PackIconMaterial.ToolTip>
+                    </Icon:PackIconMaterial>
                 </Button>
                 <Button Style="{StaticResource textBoxButton}" mvx:Bi.nd="Command CloseCommand">
                     <Icon:PackIconMaterial Kind="Close" Foreground="Red" Width="25" Height="25"/>
                 </Button>
             </StackPanel>
         </Grid>
+        <StackPanel Grid.Column="2" Grid.Row="0" VerticalAlignment="Top" Orientation="Horizontal" Margin="25">
+            <TextBlock Margin="5" FontSize="12" Text="Статус загрузки: "/>
+            <TextBlock Margin="5" FontSize="13" FontWeight="Bold" Foreground="Gray" Text="Загрузка..."
+                       Visibility="{Binding ResponseStatus, Converter={StaticResource IntToVisibility}, ConverterParameter=true:1}">
+                <TextBlock.ToolTip>
+                    <ToolTip>
+                        Загрузка данных. Это может занять некоторое время. Вы можете продолжить работу с приложением. Статус загрузки будет отображаться в данной панели.
+                    </ToolTip>
+                </TextBlock.ToolTip>
+            </TextBlock>
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Margin="5" FontSize="13" FontWeight="Bold" Foreground="Red" Text="Ошибка"
+                       Visibility="{Binding ResponseStatus, Converter={StaticResource IntToVisibility}, ConverterParameter=true:3}">
+                    <TextBlock.ToolTip>
+                        <ToolTip>
+                            Загрузка была завершена с ошибкой. Возможно проблемы с соединением или сервер временно не доступен. Вы можете продолжить работать с текущими данными, но они не будут сохранены.
+                        </ToolTip>
+                    </TextBlock.ToolTip>
+                </TextBlock>
+                <TextBlock Margin="5" FontSize="13" FontWeight="Bold" Foreground="Green" Text="Успешно"
+                       Visibility="{Binding ResponseStatus, Converter={StaticResource IntToVisibility}, ConverterParameter=true:2}">
+                    <TextBlock.ToolTip>
+                        <ToolTip>
+                            Все данные загружены успешно. Загруженные данные можно будет просмотреть повторно в люБое время.
+                        </ToolTip>
+                    </TextBlock.ToolTip>
+                </TextBlock>
+            </StackPanel>
+        </StackPanel>
     </Grid>
 </views:MvxWpfView>

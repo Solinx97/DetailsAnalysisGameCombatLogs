@@ -2,6 +2,8 @@
 {
     public class DamageTakenGeneralModel
     {
+        public int Id { get; set; }
+
         public int Value { get; set; }
 
         public double DamageTakenPerSecond { get; set; }
@@ -19,5 +21,7 @@
         public int MaxValue { get; set; }
 
         public double AverageValue { get; set; }
+
+        public int CombatPlayerDataId { get; set; }
     }
 }
