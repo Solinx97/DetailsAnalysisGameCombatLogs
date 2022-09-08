@@ -7,6 +7,7 @@ using CombatAnalysis.Core.Core;
 using CombatAnalysis.Core.Interfaces;
 using CombatAnalysis.Core.Models;
 using CombatAnalysis.Core.Services;
+using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
 using MvvmCross.ViewModels;
 using System;
@@ -45,12 +46,12 @@ namespace CombatAnalysis.Core.ViewModels
         private bool _isCollectionReversed;
         private long _totalValue;
 
-        public DamageDoneDetailsViewModel(IMapper mapper, IHttpClientHelper httpClient, ILogger loger)
+        public DamageDoneDetailsViewModel(IMapper mapper, IHttpClientHelper httpClient, ILogger loger, IMemoryCache memoryCache)
         {
             _mapper = mapper;
             _logger = loger;
 
-            _combatParserAPIService = new CombatParserAPIService(httpClient, loger);
+            _combatParserAPIService = new CombatParserAPIService(httpClient, loger, memoryCache);
             _powerUpInCombat = new PowerUpInCombat<DamageDoneModel>(_damageDoneInformationsWithSkipDamage);
 
             BasicTemplate = Templates.Basic;

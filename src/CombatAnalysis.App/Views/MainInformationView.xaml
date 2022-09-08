@@ -77,53 +77,91 @@
             </StackPanel>
         </Grid>
 
-        <StackPanel Grid.Row="1" Grid.Column="2" Margin="20 70">
-            <ScrollViewer MaxHeight="210">
-                <StackPanel IsEnabled="{Binding IsParsing, Converter={StaticResource BoolToXAMLBool}}" 
-                    HorizontalAlignment="Center" VerticalAlignment="Top" Margin="20">
-                    <StackPanel Orientation="Horizontal">
-                        <TextBlock HorizontalAlignment="Center" Text="Ранее добавленные Логи" Margin="0" FontSize="16" />
-                        <Icon:PackIconMaterial Kind="Reload" Foreground="Gray" Style="{StaticResource menuButtonIcon}">
-                            <Icon:PackIconMaterial.ToolTip>
-                                <ToolTip>
-                                    Перезагрузка списка загруженных логов.
-                                </ToolTip>
-                            </Icon:PackIconMaterial.ToolTip>
-                            <Icon:PackIconMaterial.InputBindings>
-                                <MouseBinding Command="{Binding ReloadCombatsCommand}" Gesture="LeftClick"/>
-                            </Icon:PackIconMaterial.InputBindings>
-                        </Icon:PackIconMaterial>
-                    </StackPanel>
-                    <StackPanel Orientation="Horizontal" Width="250"
+        <TabControl Grid.Row="1" Grid.Column="2" Background="Transparent">
+            <TabItem Header="Общедоступные логи" FontSize="16">
+                <StackPanel Margin="20 70">
+                    <ScrollViewer MaxHeight="210">
+                        <StackPanel IsEnabled="{Binding IsParsing, Converter={StaticResource BoolToXAMLBool}}" 
+                                    HorizontalAlignment="Center" VerticalAlignment="Top" Margin="20">
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock HorizontalAlignment="Center" Text="Общедоступные логи" Margin="0" FontSize="16" />
+                                <Button Style="{StaticResource userButton}" Margin="5 -10" mvx:Bi.nd="Command ReloadCombatsCommand">
+                                    <Button.ToolTip>
+                                        <ToolTip>
+                                            Перезагрузка списка загруженных логов.
+                                        </ToolTip>
+                                    </Button.ToolTip>
+                                    <Icon:PackIconMaterial Kind="Reload" Foreground="Gray"/>
+                                </Button>
+                            </StackPanel>
+                            <StackPanel Width="250"
                                 Visibility="{Binding CombatLogsNumber, Converter={StaticResource IntToVisibility}, ConverterParameter='0:true:>'}">
-                        <Button mvx:Bi.nd="Command LoadCombatsCommand" Content="Загрузить" Width="100" FontSize="16"
-                            Margin="10,10" Style="{StaticResource showButton}" Foreground="Blue" HorizontalAlignment="Center"/>
-                        <Icon:PackIconMaterial Kind="Delete" Foreground="Orange" Style="{StaticResource menuButtonIcon}" mvx:Bi.nd="Command DeleteCombatCommand"
-                                               HorizontalAlignment="Center">
-                            <Icon:PackIconMaterial.ToolTip>
-                                <ToolTip>
-                                    Удалить выбранный Лог без возможности восстановить.
-                                </ToolTip>
-                            </Icon:PackIconMaterial.ToolTip>
-                            <Icon:PackIconMaterial.InputBindings>
-                                <MouseBinding Command="{Binding DeleteCombatCommand}" Gesture="LeftClick"/>
-                            </Icon:PackIconMaterial.InputBindings>
-                        </Icon:PackIconMaterial>
-                    </StackPanel>
-                    <ListBox Background="Transparent" ItemsSource="{Binding CombatLogs}" SelectedIndex="{Binding SelectedCombatLogId}"
+                                <Button mvx:Bi.nd="Command LoadCombatsCommand" Content="Загрузить" Width="100" FontSize="16"
+                                    Margin="10,10" Style="{StaticResource showButton}" Foreground="Blue"/>
+                            </StackPanel>
+                            <ListBox Background="Transparent" ItemsSource="{Binding CombatLogs}" SelectedIndex="{Binding SelectedCombatLogId}"
                              Visibility="{Binding CombatLogsNumber, Converter={StaticResource IntToVisibility}, ConverterParameter='0:true:>'}">
-                        <ListBox.ItemTemplate>
-                            <DataTemplate>
-                                <StackPanel Margin="10" Orientation="Horizontal" HorizontalAlignment="Center">
-                                    <TextBlock FontSize="14" Text="{Binding Path=Name}" Margin="15" />
-                                    <TextBlock FontSize="14" Text="{Binding Path=Date, StringFormat=MM.dd.yyyy hh:mm}" Margin="15" />
-                                </StackPanel>
-                            </DataTemplate>
-                        </ListBox.ItemTemplate>
-                    </ListBox>
+                                <ListBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <StackPanel Margin="10" Orientation="Horizontal" HorizontalAlignment="Center">
+                                            <TextBlock FontSize="14" Text="{Binding Path=Name}" Margin="15" />
+                                            <TextBlock FontSize="14" Text="{Binding Path=Date, StringFormat=MM.dd.yyyy hh:mm}" Margin="15" />
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </ListBox.ItemTemplate>
+                            </ListBox>
+                        </StackPanel>
+                    </ScrollViewer>
                 </StackPanel>
-            </ScrollViewer>
-        </StackPanel>
+            </TabItem>
+            <TabItem Header="Мои логи" FontSize="16" IsEnabled="{Binding IsAuth, Converter={StaticResource BoolToXAMLBool}, ConverterParameter=true}">
+                <StackPanel Margin="20 70">
+                    <ScrollViewer MaxHeight="210">
+                        <StackPanel IsEnabled="{Binding IsParsing, Converter={StaticResource BoolToXAMLBool}}" 
+                                    HorizontalAlignment="Center" VerticalAlignment="Top" Margin="20">
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock HorizontalAlignment="Center" Text="Мои логи" Margin="0" FontSize="16" />
+                                <Button Style="{StaticResource userButton}" Margin="5 -10" mvx:Bi.nd="Command ReloadCombatsCommand">
+                                    <Button.ToolTip>
+                                        <ToolTip>
+                                            Перезагрузка списка загруженных логов.
+                                        </ToolTip>
+                                    </Button.ToolTip>
+                                    <Icon:PackIconMaterial Kind="Reload" Foreground="Gray"/>
+                                </Button>
+                            </StackPanel>
+                            <StackPanel Orientation="Horizontal" Width="250"
+                                Visibility="{Binding CombatLogsNumber, Converter={StaticResource IntToVisibility}, ConverterParameter='0:true:>'}">
+                                <Button mvx:Bi.nd="Command LoadCombatsCommand" Content="Загрузить" Width="100" FontSize="16"
+                            Margin="10,10" Style="{StaticResource showButton}" Foreground="Blue" HorizontalAlignment="Center"/>
+                                <Icon:PackIconMaterial Kind="Delete" Foreground="Orange" Style="{StaticResource menuButtonIcon}" mvx:Bi.nd="Command DeleteCombatCommand"
+                                               HorizontalAlignment="Center">
+                                    <Icon:PackIconMaterial.ToolTip>
+                                        <ToolTip>
+                                            Удалить выбранный Лог без возможности восстановить.
+                                        </ToolTip>
+                                    </Icon:PackIconMaterial.ToolTip>
+                                    <Icon:PackIconMaterial.InputBindings>
+                                        <MouseBinding Command="{Binding DeleteCombatCommand}" Gesture="LeftClick"/>
+                                    </Icon:PackIconMaterial.InputBindings>
+                                </Icon:PackIconMaterial>
+                            </StackPanel>
+                            <ListBox Background="Transparent" ItemsSource="{Binding CombatLogsByUser}" SelectedIndex="{Binding SelectedCombatLogId}"
+                             Visibility="{Binding CombatLogsNumber, Converter={StaticResource IntToVisibility}, ConverterParameter='0:true:>'}">
+                                <ListBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <StackPanel Margin="10" Orientation="Horizontal" HorizontalAlignment="Center">
+                                            <TextBlock FontSize="14" Text="{Binding Path=Name}" Margin="15" />
+                                            <TextBlock FontSize="14" Text="{Binding Path=Date, StringFormat=MM.dd.yyyy hh:mm}" Margin="15" />
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </ListBox.ItemTemplate>
+                            </ListBox>
+                        </StackPanel>
+                    </ScrollViewer>
+                </StackPanel>
+            </TabItem>
+        </TabControl>
         <StackPanel IsEnabled="{Binding IsParsing, Converter={StaticResource BoolToXAMLBool}}" Grid.Row="2" Grid.Column="2"
                     Grid.ColumnSpan="2" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0 -25 0 0">
             <StackPanel IsEnabled="{Binding CombatLog, Converter={StaticResource ToXAMLBool}}" Margin="20">

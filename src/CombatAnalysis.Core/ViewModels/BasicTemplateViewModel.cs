@@ -1,7 +1,9 @@
 ﻿using CombatAnalysis.Core.Core;
+using CombatAnalysis.Core.Enums;
 using CombatAnalysis.Core.Interfaces;
 using CombatAnalysis.Core.Interfaces.Observers;
 using CombatAnalysis.Core.Models;
+using CombatAnalysis.Core.Models.User;
 using Microsoft.Extensions.Caching.Memory;
 using MvvmCross.Commands;
 using MvvmCross.Navigation;
@@ -25,6 +27,7 @@ namespace CombatAnalysis.Core.ViewModels
         private List<CombatModel> _combats;
         private bool _isAuth;
         private string _email;
+        private LogType _logType;
 
         private static ResponseStatus _responseStatus;
         private static int _allowStep;
@@ -136,6 +139,15 @@ namespace CombatAnalysis.Core.ViewModels
             }
         }
 
+        public LogType LogType
+        {
+            get { return _logType; }
+            set
+            {
+                SetProperty(ref _logType, value);
+            }
+        }
+
         public void CloseWindow()
         {
             WindowCloser.MainWindow.Close();
@@ -166,7 +178,8 @@ namespace CombatAnalysis.Core.ViewModels
 
         public void GeneralAnalysis()
         {
-            Task.Run(() => _mvvmNavigation.Navigate<GeneralAnalysisViewModel, List<CombatModel>>(Combats));
+            var dataForGeneralAnalysis = Tuple.Create(Combats, LogType);
+            Task.Run(() => _mvvmNavigation.Navigate<GeneralAnalysisViewModel, Tuple<List<CombatModel>, LogType>>(dataForGeneralAnalysis));
         }
 
         public void DetailsSpecificalCombat()
@@ -235,6 +248,16 @@ namespace CombatAnalysis.Core.ViewModels
             foreach (var item in _authObservers)
             {
                 item.AuthUpdate(IsAuth);
+            }
+        }
+
+        public void CheckAuth()
+        {
+            var user = _memoryCache.Get<UserModel>("user");
+            if (user != null)
+            {
+                IsAuth = true;
+                Email = user.Email;
             }
         }
     }

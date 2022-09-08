@@ -1,6 +1,5 @@
 ﻿using CombatAnalysis.Core.Consts;
 using CombatAnalysis.Core.Interfaces;
-using CombatAnalysis.Core.Interfaces.Observers;
 using CombatAnalysis.Core.Models.Response;
 using CombatAnalysis.Core.Models.User;
 using Microsoft.Extensions.Caching.Memory;
@@ -108,6 +107,7 @@ namespace CombatAnalysis.Core.ViewModels
                         _memoryCache.Set("user", result.User, new MemoryCacheEntryOptions { Size = 50 });
 
                         BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, "IsAuth", true);
+                        BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, "Email", result.User.Email);
 
                         await _mvvmNavigation.Close(this);
                     }
@@ -129,11 +129,6 @@ namespace CombatAnalysis.Core.ViewModels
         public void Cancel()
         {
             Task.Run(() => _mvvmNavigation.Close(this));
-        }
-
-        public void Update(bool isAuth)
-        {
-            throw new NotImplementedException();
         }
     }
 }
