@@ -1,6 +1,7 @@
 ﻿using CombatAnalysis.CombatParser.Entities;
 using CombatAnalysis.CombatParser.Interfaces;
 using CombatAnalysis.CombatParser.Services;
+using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
 using System;
@@ -19,13 +20,6 @@ namespace CombatAnalysis.Parser.Tests.CombatParser
         {
             var testCombatLog = "combatLog.txt";
 
-            var mockCombatDetails = new Mock<ICombatDetails>();
-            mockCombatDetails.Setup(x => x.GetDamageDone()).Returns(10);
-            mockCombatDetails.Setup(x => x.GetHealDone()).Returns(20);
-            mockCombatDetails.Setup(x => x.GetDamageTaken()).Returns(15);
-            mockCombatDetails.Setup(x => x.GetResourceRecovery()).Returns(25);
-            mockCombatDetails.Setup(x => x.GetDeathsNumber()).Returns(2);
-
             var correctCombatLogFile = "6/8 20:42:39.739  COMBAT_LOG_VERSION,9,ADVANCED_LOG_ENABLED,1,BUILD_VERSION,2.5.4,PROJECT_ID,5";
             var fakeFileBytes = Encoding.UTF8.GetBytes(correctCombatLogFile);
             var fakeMemoryStream = new MemoryStream(fakeFileBytes);
@@ -33,8 +27,9 @@ namespace CombatAnalysis.Parser.Tests.CombatParser
             var mockFileManager = new Mock<IFileManager>();
             mockFileManager.Setup(fileManager => fileManager.StreamReader(testCombatLog))
                            .Returns(() => new StreamReader(fakeMemoryStream));
+            var mockLogger = new Mock<ILogger>();
 
-            var parser = new CombatParserService(mockCombatDetails.Object, mockFileManager.Object);
+            var parser = new CombatParserService(mockFileManager.Object, mockLogger.Object);
             var fileIsCorrect = await parser.FileCheck(testCombatLog);
             Assert.IsTrue(fileIsCorrect);
         }
@@ -44,13 +39,6 @@ namespace CombatAnalysis.Parser.Tests.CombatParser
         {
             var testCombatLog = "combatLog.txt";
 
-            var mockCombatDetails = new Mock<ICombatDetails>();
-            mockCombatDetails.Setup(x => x.GetDamageDone()).Returns(10);
-            mockCombatDetails.Setup(x => x.GetHealDone()).Returns(20);
-            mockCombatDetails.Setup(x => x.GetDamageTaken()).Returns(15);
-            mockCombatDetails.Setup(x => x.GetResourceRecovery()).Returns(25);
-            mockCombatDetails.Setup(x => x.GetDeathsNumber()).Returns(2);
-
             var correctCombatLogFile = "6/8 20:42:39.739  COMBAT_LOG_,9,ADVANCED_LOG_ENABLED,1,BUILD_VERSION,2.5.4,PROJECT_ID,5";
             var fakeFileBytes = Encoding.UTF8.GetBytes(correctCombatLogFile);
             var fakeMemoryStream = new MemoryStream(fakeFileBytes);
@@ -58,98 +46,17 @@ namespace CombatAnalysis.Parser.Tests.CombatParser
             var mockFileManager = new Mock<IFileManager>();
             mockFileManager.Setup(fileManager => fileManager.StreamReader(testCombatLog))
                            .Returns(() => new StreamReader(fakeMemoryStream));
+            var mockLogger = new Mock<ILogger>();
 
-            var parser = new CombatParserService(mockCombatDetails.Object, mockFileManager.Object);
+            var parser = new CombatParserService(mockFileManager.Object, mockLogger.Object);
             var fileIsCorrect = await parser.FileCheck(testCombatLog);
             Assert.IsFalse(fileIsCorrect);
-        }
-
-        [Test]
-        public async Task CombatParserService_Parse_Must_Fill_Combats_Collection()
-        {
-            var testCombatLog = "combatLog.txt";
-
-            var mockCombatDetails = new Mock<ICombatDetails>();
-            mockCombatDetails.Setup(x => x.GetDamageDone()).Returns(36);
-            mockCombatDetails.Setup(x => x.GetHealDone()).Returns(39);
-            mockCombatDetails.Setup(x => x.GetDamageTaken()).Returns(77);
-            mockCombatDetails.Setup(x => x.GetResourceRecovery()).Returns(45);
-            mockCombatDetails.Setup(x => x.GetDeathsNumber()).Returns(2);
-
-            var fakeFileContents = CreateCorrectlyCombatLog();
-            var fakeFileBytes = Encoding.UTF8.GetBytes(fakeFileContents);
-            var fakeMemoryStream = new MemoryStream(fakeFileBytes);
-
-            var mockFileManager = new Mock<IFileManager>();
-            mockFileManager.Setup(fileManager => fileManager.StreamReader(testCombatLog))
-                           .Returns(() => new StreamReader(fakeMemoryStream));
-
-            var parser = new CombatParserService(mockCombatDetails.Object, mockFileManager.Object);
-            await parser.Parse(testCombatLog);
-
-            var combats = parser.Combats;
-            Assert.IsNotEmpty(combats);
-
-            var firstCombat = combats[0];
-
-            var expectedCombatPlayerData = new CombatPlayerData
-            {
-                UserName = "Oleg",
-                DamageDone = 36,
-                DamageTaken = 77,
-                HealDone = 39,
-                EnergyRecovery = 45,
-            };
-            var expectedCombatPlayerData1 = new CombatPlayerData
-            {
-                UserName = "Kiril",
-                DamageDone = 36,
-                DamageTaken = 77,
-                HealDone = 39,
-                EnergyRecovery = 45,
-            };
-            var expectedCombat = new Combat
-            {
-                Name = "Test",
-                Data = new List<string> { "data" },
-                IsWin = true,
-                StartDate = new DateTimeOffset(2022, 06, 03, 21, 15, 05, TimeSpan.Zero),
-                FinishDate = new DateTimeOffset(2022, 06, 03, 21, 17, 58, TimeSpan.Zero),
-                Players = new List<CombatPlayerData> { expectedCombatPlayerData, expectedCombatPlayerData1 },
-                HealDone = 78,
-                DamageDone = 72,
-                DamageTaken = 154,
-                EnergyRecovery = 90
-            };
-            Assert.AreEqual(expectedCombat.Name, firstCombat.Name, "Combat name isn't correct.");
-
-            Assert.IsNotEmpty(firstCombat.Players);
-
-            var firstCombatPlayerData = firstCombat.Players[0];
-            Assert.AreEqual(expectedCombatPlayerData.UserName, firstCombatPlayerData.UserName, "Combat players username isn't correct.");
-
-            Assert.AreEqual(expectedCombat.HealDone, firstCombat.HealDone, "Combat heal done has not expected elements.");
-            Assert.AreEqual(expectedCombat.DamageDone, firstCombat.DamageDone, "Combat damage done has not expected elements.");
-            Assert.AreEqual(expectedCombat.DamageTaken, firstCombat.DamageTaken, "Combat damage taken has not expected elements.");
-            Assert.AreEqual(expectedCombat.EnergyRecovery, firstCombat.EnergyRecovery, "Combat energy recovery has not expected elements.");
-
-            Assert.AreEqual(expectedCombatPlayerData.HealDone, firstCombatPlayerData.HealDone, "Combat player heal done has not expected elements.");
-            Assert.AreEqual(expectedCombatPlayerData.DamageDone, firstCombatPlayerData.DamageDone, "Combat player damage done has not expected elements.");
-            Assert.AreEqual(expectedCombatPlayerData.DamageTaken, firstCombatPlayerData.DamageTaken, "Combat player damage taken has not expected elements.");
-            Assert.AreEqual(expectedCombatPlayerData.EnergyRecovery, firstCombatPlayerData.EnergyRecovery, "Combat player energy recovery has not expected elements.");
         }
 
         [Test]
         public async Task CombatParserService_Parse_Must_Fill_Combats_Collection_With_Incorrect_Combat_Name()
         {
             var testCombatLog = "combatLog.txt";
-
-            var mockCombatDetails = new Mock<ICombatDetails>();
-            mockCombatDetails.Setup(x => x.GetDamageDone()).Returns(10);
-            mockCombatDetails.Setup(x => x.GetHealDone()).Returns(20);
-            mockCombatDetails.Setup(x => x.GetDamageTaken()).Returns(15);
-            mockCombatDetails.Setup(x => x.GetResourceRecovery()).Returns(25);
-            mockCombatDetails.Setup(x => x.GetDeathsNumber()).Returns(2);
 
             var fakeFileContents = CreateCorrectlyCombatLogWithIncorrectCombatName();
             var fakeFileBytes = Encoding.UTF8.GetBytes(fakeFileContents);
@@ -158,8 +65,9 @@ namespace CombatAnalysis.Parser.Tests.CombatParser
             var mockFileManager = new Mock<IFileManager>();
             mockFileManager.Setup(fileManager => fileManager.StreamReader(testCombatLog))
                            .Returns(() => new StreamReader(fakeMemoryStream));
+            var mockLogger = new Mock<ILogger>();
 
-            var parser = new CombatParserService(mockCombatDetails.Object, mockFileManager.Object);
+            var parser = new CombatParserService(mockFileManager.Object, mockLogger.Object);
             await parser.Parse(testCombatLog);
 
             var combats = parser.Combats;
@@ -183,13 +91,6 @@ namespace CombatAnalysis.Parser.Tests.CombatParser
         {
             var testCombatLog = "combatLog.txt";
 
-            var mockCombatDetails = new Mock<ICombatDetails>();
-            mockCombatDetails.Setup(x => x.GetDamageDone()).Returns(10);
-            mockCombatDetails.Setup(x => x.GetHealDone()).Returns(20);
-            mockCombatDetails.Setup(x => x.GetDamageTaken()).Returns(15);
-            mockCombatDetails.Setup(x => x.GetResourceRecovery()).Returns(25);
-            mockCombatDetails.Setup(x => x.GetDeathsNumber()).Returns(2);
-
             var fakeFileContents = CreateCorrectlyCombatLogWithIncorrectPlayerName();
             var fakeFileBytes = Encoding.UTF8.GetBytes(fakeFileContents);
             var fakeMemoryStream = new MemoryStream(fakeFileBytes);
@@ -197,8 +98,9 @@ namespace CombatAnalysis.Parser.Tests.CombatParser
             var mockFileManager = new Mock<IFileManager>();
             mockFileManager.Setup(fileManager => fileManager.StreamReader(testCombatLog))
                            .Returns(() => new StreamReader(fakeMemoryStream));
+            var mockLogger = new Mock<ILogger>();
 
-            var parser = new CombatParserService(mockCombatDetails.Object, mockFileManager.Object);
+            var parser = new CombatParserService(mockFileManager.Object, mockLogger.Object);
             await parser.Parse(testCombatLog);
 
             var combats = parser.Combats;
@@ -238,13 +140,6 @@ namespace CombatAnalysis.Parser.Tests.CombatParser
         {
             var testCombatLog = "combatLog.txt";
 
-            var mockCombatDetails = new Mock<ICombatDetails>();
-            mockCombatDetails.Setup(x => x.GetDamageDone()).Returns(10);
-            mockCombatDetails.Setup(x => x.GetHealDone()).Returns(20);
-            mockCombatDetails.Setup(x => x.GetDamageTaken()).Returns(15);
-            mockCombatDetails.Setup(x => x.GetResourceRecovery()).Returns(25);
-            mockCombatDetails.Setup(x => x.GetDeathsNumber()).Returns(2);
-
             var fakeFileContents = CreateIncorrectlyCombatLog();
             byte[] fakeFileBytes = Encoding.UTF8.GetBytes(fakeFileContents);
             var fakeMemoryStream = new MemoryStream(fakeFileBytes);
@@ -252,8 +147,9 @@ namespace CombatAnalysis.Parser.Tests.CombatParser
             var mockFileManager = new Mock<IFileManager>();
             mockFileManager.Setup(fileManager => fileManager.StreamReader(testCombatLog))
                            .Returns(() => new StreamReader(fakeMemoryStream));
+            var mockLogger = new Mock<ILogger>();
 
-            var parser = new CombatParserService(mockCombatDetails.Object, mockFileManager.Object);
+            var parser = new CombatParserService(mockFileManager.Object, mockLogger.Object);
             await parser.Parse(testCombatLog);
 
             var combats = parser.Combats;
@@ -265,13 +161,6 @@ namespace CombatAnalysis.Parser.Tests.CombatParser
         {
             var testCombatLog = "combatLog.txt";
 
-            var mockCombatDetails = new Mock<ICombatDetails>();
-            mockCombatDetails.Setup(x => x.GetDamageDone()).Returns(10);
-            mockCombatDetails.Setup(x => x.GetHealDone()).Returns(20);
-            mockCombatDetails.Setup(x => x.GetDamageTaken()).Returns(15);
-            mockCombatDetails.Setup(x => x.GetResourceRecovery()).Returns(25);
-            mockCombatDetails.Setup(x => x.GetDeathsNumber()).Returns(2);
-
             var mockFileManager = new Mock<IFileManager>();
 
             var fakeFileContents = CreateCorrectlyCombatLogWithoutPlayers();
@@ -280,8 +169,9 @@ namespace CombatAnalysis.Parser.Tests.CombatParser
 
             mockFileManager.Setup(fileManager => fileManager.StreamReader(testCombatLog))
                            .Returns(() => new StreamReader(fakeMemoryStream));
+            var mockLogger = new Mock<ILogger>();
 
-            var parser = new CombatParserService(mockCombatDetails.Object, mockFileManager.Object);
+            var parser = new CombatParserService(mockFileManager.Object, mockLogger.Object);
             await parser.Parse(testCombatLog);
 
             var combats = parser.Combats;

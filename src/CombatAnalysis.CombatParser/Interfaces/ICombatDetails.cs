@@ -21,7 +21,7 @@ namespace CombatAnalysis.CombatParser.Interfaces
 
         void Clear();
 
-        int GetDamageDone();
+        //int GetDamageDone();
 
         int GetHealDone();
 

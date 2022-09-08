@@ -26,6 +26,8 @@ namespace CombatAnalysis.DAL.Data
 
         public DbSet<CombatLog> CombatLog { get; set; }
 
+        public DbSet<CombatLogByUser> CombatLogByUser { get; set; }
+
         public DbSet<Combat> Combat { get; set; }
 
         public DbSet<CombatPlayerData> CombatPlayerData { get; set; }

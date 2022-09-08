@@ -33,8 +33,6 @@ namespace CombatAnalysis.CombatParserAPI
 
             var loggerFactory = new LoggerFactory();
             var logger = new Logger<ILogger>(loggerFactory);
-            ICombatDetails combatDetails = new CombatDetailsService(logger);
-            services.AddSingleton(combatDetails);
 
             services.AddControllers();
 

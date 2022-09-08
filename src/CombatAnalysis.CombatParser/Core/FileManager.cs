@@ -1,7 +1,7 @@
 ﻿using CombatAnalysis.CombatParser.Interfaces;
 using System.IO;
 
-namespace CombatAnalysis.CombatParser.Services
+namespace CombatAnalysis.CombatParser.Core
 {
     public class FileManager : IFileManager
     {
