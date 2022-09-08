@@ -19,8 +19,9 @@
             <converters:TheNativeBoolToXAMLBoolConverter x:Key="BoolToXAMLBool" />
             <converters:TheNativeBoolToVisibilityConverter x:Key="BoolToVisibility" />
             <converters:TheNativeIntToVisibilityConverter x:Key="IntToVisibility" />
+            <converters:TheNativeIntToXAMLBoolConverter x:Key="IntToXAMLBool" />
         </Grid.Resources>
-
+        
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="55"/>
             <ColumnDefinition Width="220"/>
@@ -63,9 +64,12 @@
             <StackPanel Grid.Row="1" IsEnabled="{Binding IsAuth, Converter={StaticResource BoolToXAMLBool}, ConverterParameter=true}" MaxWidth="500">
                 <TextBlock Text="Тип логов" FontSize="16" VerticalAlignment="Center" HorizontalAlignment="Center"/>
                 <StackPanel Margin="10">
-                    <RadioButton Content="Без привязки к игроку" IsChecked="True" Margin="5"/>
-                    <RadioButton Content="Открытыте" Margin="5"/>
-                    <RadioButton Content="Закрытые" Margin="5" />
+                    <RadioButton Content="Без привязки к игроку" mvx:Bi.nd="Command GetLogTypeCommand, CommandParameter=0"
+                                 IsChecked="{Binding LogType, Converter={StaticResource IntToXAMLBool}, ConverterParameter=0}" Margin="5" />
+                    <RadioButton Content="Открытыте" mvx:Bi.nd="Command GetLogTypeCommand, CommandParameter=1"
+                                 IsChecked="{Binding LogType, Converter={StaticResource IntToXAMLBool}, ConverterParameter=1}" Margin="5" />
+                    <RadioButton Content="Закрытые" mvx:Bi.nd="Command GetLogTypeCommand, CommandParameter=2"
+                                 IsChecked="{Binding LogType, Converter={StaticResource IntToXAMLBool}, ConverterParameter=2}" Margin="5" />
                 </StackPanel>
                 <TextBlock Text="Для сохранения 'Открытые' или 'Закрытые' логов необходимо авторизоваться" TextWrapping="Wrap" Height="50"
                            VerticalAlignment="Center" HorizontalAlignment="Center" Opacity="0.5"
