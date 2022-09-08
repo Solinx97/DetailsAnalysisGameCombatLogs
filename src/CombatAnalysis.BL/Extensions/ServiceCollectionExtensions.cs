@@ -14,6 +14,7 @@ namespace CombatAnalysis.BL.Extensions
             services.RegisterDependenciesDAL(configuration, connectionName);
 
             services.AddScoped<IService<CombatLogDto>, CombatLogService>();
+            services.AddScoped<IService<CombatLogByUserDto>, CombatLogByUserService>();
             services.AddScoped<IService<CombatDto>, CombatService>();
             services.AddScoped<IService<CombatPlayerDataDto>, CombatPlayerService>();
             services.AddScoped<IService<DamageDoneDto>, DamageDoneService>();
