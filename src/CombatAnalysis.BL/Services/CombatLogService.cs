@@ -122,12 +122,12 @@ namespace CombatAnalysis.BL.Services
             return numberEntries;
         }
 
-        public Task<int> DeleteByProcedureAsync(int combatPlayerId)
+        Task<int> IService<CombatLogDto>.DeleteByProcedureAsync(int combatPlayerId)
         {
             throw new NotImplementedException();
         }
 
-        public Task<int> CreateByProcedureAsync(CombatLogDto item)
+        Task<int> IService<CombatLogDto>.CreateByProcedureAsync(CombatLogDto item)
         {
             throw new NotImplementedException();
         }

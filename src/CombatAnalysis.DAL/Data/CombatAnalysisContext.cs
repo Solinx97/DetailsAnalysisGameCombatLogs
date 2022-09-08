@@ -1,4 +1,6 @@
 ﻿using CombatAnalysis.DAL.Entities;
+using CombatAnalysis.DAL.Entities.Authentication;
+using CombatAnalysis.DAL.Entities.User;
 using CombatAnalysis.DAL.Helpers;
 using Microsoft.EntityFrameworkCore;
 using System.Threading.Tasks;
@@ -17,6 +19,10 @@ namespace CombatAnalysis.DAL.Data
                 Task.Run(async () => await DbProcedureHelper.CreateProceduresAsync(this));
             }
         }
+
+        public DbSet<User> User { get; set; }
+
+        public DbSet<RefreshToken> RefreshToken { get; set; }
 
         public DbSet<CombatLog> CombatLog { get; set; }
 

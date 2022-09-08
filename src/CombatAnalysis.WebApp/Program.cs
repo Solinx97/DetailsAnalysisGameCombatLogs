@@ -1,11 +1,6 @@
+using CombatAnalysis.Identity.Security;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace CombatAnalysis.WebApp
 {
@@ -13,6 +8,9 @@ namespace CombatAnalysis.WebApp
     {
         public static void Main(string[] args)
         {
+            JWTSecret.GenerateAccessSecretKey();
+            JWTSecret.GenerateRefreshSecretKey();
+
             CreateHostBuilder(args).Build().Run();
         }
 

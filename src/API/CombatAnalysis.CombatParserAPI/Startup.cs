@@ -42,7 +42,7 @@ namespace CombatAnalysis.CombatParserAPI
             {
                 options.SwaggerDoc("v1", new OpenApiInfo
                 {
-                    Title = "User API",
+                    Title = "Combat parser API",
                     Version = "v1",
                 });
             });
@@ -62,7 +62,7 @@ namespace CombatAnalysis.CombatParserAPI
             app.UseSwagger();
             app.UseSwaggerUI(options =>
             {
-                options.SwaggerEndpoint("/swagger/v1/swagger.json", "User API v1");
+                options.SwaggerEndpoint("/swagger/v1/swagger.json", "Combat parser API v1");
             });
 
             if (env.IsDevelopment())

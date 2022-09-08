@@ -6,6 +6,7 @@ using CombatAnalysis.Core.Helpers;
 using CombatAnalysis.Core.Interfaces;
 using CombatAnalysis.Core.Mapping;
 using CombatAnalysis.Core.ViewModels;
+using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
 using MvvmCross;
 using MvvmCross.ViewModels;
@@ -18,6 +19,7 @@ namespace CombatAnalysis.Core
         public override void Initialize()
         {
             Port.CombatParserApi = ConfigurationManager.AppSettings.Get("combatParserApiPort");
+            Port.UserApi = ConfigurationManager.AppSettings.Get("userApiPort");
             
             var mappingConfig = new MapperConfiguration(mc =>
             {
@@ -32,9 +34,14 @@ namespace CombatAnalysis.Core
             IFileManager fileManager = new FileManager();
             IParser parser = new CombatParserService(combatDetails, fileManager);
 
+            var memoryCacheOptions = new MemoryCacheOptions { SizeLimit = 1024 };
+            var memoryCache = new MemoryCache(memoryCacheOptions);
+
             Mvx.IoCProvider.RegisterSingleton(mapper);
             Mvx.IoCProvider.RegisterSingleton(httpClient);
             Mvx.IoCProvider.RegisterSingleton(parser);
+            Mvx.IoCProvider.RegisterSingleton<ILogger>(logger);
+            Mvx.IoCProvider.RegisterSingleton<IMemoryCache>(memoryCache);
 
             RegisterAppStart<MainInformationViewModel>();
         }

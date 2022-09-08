@@ -2,6 +2,7 @@
 using CombatAnalysis.DAL.Entities;
 using CombatAnalysis.DAL.Interfaces;
 using CombatAnalysis.DAL.Repositories;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -14,6 +15,11 @@ namespace CombatAnalysis.DAL.Extensions
         {
             string connection = configuration.GetConnectionString(connectionName);
             services.AddDbContext<CombatAnalysisContext>(options => options.UseSqlServer(connection));
+            services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+                    .AddCookie(options =>
+                    {
+                        options.LoginPath = new Microsoft.AspNetCore.Http.PathString("/Account/Login");
+                    });
 
             services.AddScoped<IGenericRepository<CombatLog>, GenericRepository<CombatLog>>();
             services.AddScoped<IGenericRepository<Combat>, GenericRepository<Combat>>();
@@ -26,6 +32,7 @@ namespace CombatAnalysis.DAL.Extensions
             services.AddScoped<IGenericRepository<DamageTakenGeneral>, GenericRepository<DamageTakenGeneral>>();
             services.AddScoped<IGenericRepository<ResourceRecovery>, GenericRepository<ResourceRecovery>>();
             services.AddScoped<IGenericRepository<ResourceRecoveryGeneral>, GenericRepository<ResourceRecoveryGeneral>>();
+            services.AddScoped<ITokenRepository, TokenRepository>();
         }
     }
 }
