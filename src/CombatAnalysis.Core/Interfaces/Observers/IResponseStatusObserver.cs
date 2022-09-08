@@ -1,6 +1,6 @@
 ﻿using CombatAnalysis.Core.Core;
 
-namespace CombatAnalysis.Core.Interfaces
+namespace CombatAnalysis.Core.Interfaces.Observers
 {
     public interface IResponseStatusObserver
     {

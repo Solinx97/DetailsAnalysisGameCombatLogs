@@ -9,6 +9,19 @@ namespace CombatAnalysis.App.Converters
     {
         protected override string Convert(bool value, Type targetType, object parameter, CultureInfo culture)
         {
+            var isInversion = false;
+            var stringParam = (string)parameter;
+            
+            if (!string.IsNullOrWhiteSpace(stringParam))
+            {
+                bool.TryParse(stringParam, out isInversion);
+            }
+
+            if (isInversion)
+            {
+                value = !value;
+            }
+
             var result = value ? "False" : "True";
 
             return result;

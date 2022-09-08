@@ -8,6 +8,8 @@ import MainInformation from './components/MainInformation';
 import GeneralAnalysis from './components/GeneralAnalysis';
 import DetailsSpecificalCombat from './components/DetailsSpecificalCombat';
 import CombatGeneralDetails from './components/CombatGeneralDetails';
+import Registration from './components/account/Registration';
+import Login from './components/account/Login';
 
 import './custom.css'
 
@@ -18,6 +20,8 @@ const App = () => {
                 <Route path='/general-analysis' element={<GeneralAnalysis />} />
                 <Route path='/details-specifical-combat' element={<DetailsSpecificalCombat />} />
                 <Route path='/combat-general-details' element={<CombatGeneralDetails />} />
+                <Route path='/registration' element={<Registration />} />
+                <Route path='/login' element={<Login />} />
             </Routes>
         </Layout>;
 }

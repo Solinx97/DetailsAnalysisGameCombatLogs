@@ -3,10 +3,13 @@ using CombatAnalysis.CombatParser.Interfaces;
 using CombatAnalysis.Core.Commands;
 using CombatAnalysis.Core.Consts;
 using CombatAnalysis.Core.Core;
+using CombatAnalysis.Core.Enums;
 using CombatAnalysis.Core.Interfaces;
+using CombatAnalysis.Core.Interfaces.Observers;
 using CombatAnalysis.Core.Models;
 using CombatAnalysis.Core.Services;
 using CombatAnalysis.WinCore;
+using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
 using MvvmCross.Commands;
 using MvvmCross.Navigation;
@@ -18,7 +21,7 @@ using System.Threading.Tasks;
 
 namespace CombatAnalysis.Core.ViewModels
 {
-    public class MainInformationViewModel : MvxViewModel, IObserver
+    public class MainInformationViewModel : MvxViewModel, IObserver, IAuthObserver
     {
         private readonly IMvxNavigationService _mvvmNavigation;
         private readonly IMapper _mapper;
@@ -39,8 +42,10 @@ namespace CombatAnalysis.Core.ViewModels
         private ObservableCollection<CombatLogModel> _combatLogs;
         private double _screenWidth;
         private double _screenHeight;
+        private bool _isAuth;
+        private LogType _logType;
 
-        public MainInformationViewModel(IMapper mapper, IMvxNavigationService mvvmNavigation, IHttpClientHelper httpClient, IParser parser, ILogger logger)
+        public MainInformationViewModel(IMapper mapper, IMvxNavigationService mvvmNavigation, IHttpClientHelper httpClient, IParser parser, ILogger logger, IMemoryCache memoryCache)
         {
             _mapper = mapper;
             _mvvmNavigation = mvvmNavigation;
@@ -52,12 +57,19 @@ namespace CombatAnalysis.Core.ViewModels
             ReloadCombatsCommand = new MvxCommand(LoadCombatLogs);
             DeleteCombatCommand = new MvxCommand(DeleteCombat);
 
+            GetLogTypeCommand = new MvxCommand<int>(GetLogType);
+
             _combatParserAPIService = new CombatParserAPIService(httpClient, logger);
             _handler = new ViewModelMConnect();
 
-            BasicTemplate = new BasicTemplateViewModel(_handler, mvvmNavigation);
+            BasicTemplate = new BasicTemplateViewModel(_handler, mvvmNavigation, memoryCache, httpClient);
             Templates.Basic = BasicTemplate;
+
+            var authObservable = (IAuthObservable)BasicTemplate;
+            authObservable.AddObserver(this);
         }
+
+
 
         public IMvxCommand GetCombatLogCommand { get; set; }
 
@@ -68,6 +80,8 @@ namespace CombatAnalysis.Core.ViewModels
         public IMvxCommand DeleteCombatCommand { get; set; }
 
         public IMvxCommand OpenPlayerAnalysisCommand { get; set; }
+
+        public IMvxCommand<int> GetLogTypeCommand { get; set; }
 
         public IImprovedMvxViewModel BasicTemplate
         {
@@ -177,6 +191,24 @@ namespace CombatAnalysis.Core.ViewModels
             }
         }
 
+        public bool IsAuth
+        {
+            get { return _isAuth; }
+            set
+            {
+                SetProperty(ref _isAuth, value);
+            }
+        }
+
+        public LogType LogType
+        {
+            get { return _logType; }
+            set
+            {
+                SetProperty(ref _logType, value);
+            }
+        }
+
         public void GetCombatLog()
         {
             _combatLogPath = WinHandler.FileOpen();
@@ -210,6 +242,11 @@ namespace CombatAnalysis.Core.ViewModels
         public void Update(string combatInformation)
         {
             FoundCombat = combatInformation;
+        }
+
+        public void GetLogType(int logType)
+        {
+            LogType = (LogType)logType;
         }
 
         public override void ViewAppeared()
@@ -295,6 +332,15 @@ namespace CombatAnalysis.Core.ViewModels
             await LoadCombatLogsAsync();
 
             IsParsing = false;
+        }
+
+        public void AuthUpdate(bool isAuth)
+        {
+            IsAuth = isAuth;
+            if (!isAuth)
+            {
+                LogType = LogType.NotIncludePlayer;
+            }
         }
     }
 }

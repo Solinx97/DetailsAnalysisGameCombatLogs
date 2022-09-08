@@ -1,4 +1,5 @@
-﻿using CombatAnalysis.Core.Interfaces;
+﻿using CombatAnalysis.Core.Consts;
+using CombatAnalysis.Core.Interfaces;
 using CombatAnalysis.Core.Models;
 using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
@@ -20,6 +21,8 @@ namespace CombatAnalysis.Core.Services
         {
             _httpClient = httpClient;
             _logger = logger;
+
+            _httpClient.BaseAddress = Port.CombatParserApi;
         }
 
         public void SetCombats(List<CombatModel> combats)
