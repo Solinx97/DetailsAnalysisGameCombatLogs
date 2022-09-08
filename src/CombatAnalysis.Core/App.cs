@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using CombatAnalysis.CombatParser.Core;
 using CombatAnalysis.CombatParser.Interfaces;
 using CombatAnalysis.CombatParser.Services;
 using CombatAnalysis.Core.Consts;
@@ -30,9 +31,8 @@ namespace CombatAnalysis.Core
             var logger = new Logger<ILogger>(loggerFactory);
             var mapper = mappingConfig.CreateMapper();
             IHttpClientHelper httpClient = new HttpClientHelper();
-            ICombatDetails combatDetails = new CombatDetailsService(logger);
             IFileManager fileManager = new FileManager();
-            IParser parser = new CombatParserService(combatDetails, fileManager);
+            IParser parser = new CombatParserService(fileManager, logger);
 
             var memoryCacheOptions = new MemoryCacheOptions { SizeLimit = 1024 };
             var memoryCache = new MemoryCache(memoryCacheOptions);

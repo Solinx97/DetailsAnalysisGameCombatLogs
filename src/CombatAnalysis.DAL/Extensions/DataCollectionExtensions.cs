@@ -16,12 +16,10 @@ namespace CombatAnalysis.DAL.Extensions
             string connection = configuration.GetConnectionString(connectionName);
             services.AddDbContext<CombatAnalysisContext>(options => options.UseSqlServer(connection));
             services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-                    .AddCookie(options =>
-                    {
-                        options.LoginPath = new Microsoft.AspNetCore.Http.PathString("/Account/Login");
-                    });
+                    .AddCookie();
 
             services.AddScoped<IGenericRepository<CombatLog>, GenericRepository<CombatLog>>();
+            services.AddScoped<IGenericRepository<CombatLogByUser>, GenericRepository<CombatLogByUser>>();
             services.AddScoped<IGenericRepository<Combat>, GenericRepository<Combat>>();
             services.AddScoped<IGenericRepository<CombatPlayerData>, GenericRepository<CombatPlayerData>>();
             services.AddScoped<IGenericRepository<DamageDone>, GenericRepository<DamageDone>>();

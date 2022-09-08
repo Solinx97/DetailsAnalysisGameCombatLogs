@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace CombatAnalysis.CombatParser.Patterns
 {
-    public abstract class CombatDetailsPattern
+    public abstract class CombatDetailsTemplate
     {
         public List<DamageDone> DamageDone { get; protected set; }
 
