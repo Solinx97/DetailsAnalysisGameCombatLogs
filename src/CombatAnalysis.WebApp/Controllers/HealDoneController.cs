@@ -1,4 +1,5 @@
-﻿using CombatAnalysis.WebApp.Interfaces;
+﻿using CombatAnalysis.WebApp.Consts;
+using CombatAnalysis.WebApp.Interfaces;
 using CombatAnalysis.WebApp.Models;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
@@ -16,15 +17,16 @@ namespace CombatAnalysis.WebApp.Controllers
         public HealDoneController(IHttpClientHelper httpClient)
         {
             _httpClient = httpClient;
+            _httpClient.BaseAddress = Port.CombatParserApi;
         }
 
         [HttpGet("{id}")]
-        public async Task<IEnumerable<HealDoneGeneralModel>> GetById(int id)
+        public async Task<IEnumerable<HealDoneModel>> GetById(int id)
         {
-            var responseMessage = await _httpClient.GetAsync($"HealDoneGeneral/FindByCombatPlayerId/{id}");
-            var healDoneGenerals = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<HealDoneGeneralModel>>();
+            var responseMessage = await _httpClient.GetAsync($"HealDone/FindByCombatPlayerId/{id}");
+            var healDones = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<HealDoneModel>>();
 
-            return healDoneGenerals;
+            return healDones;
         }
     }
 }

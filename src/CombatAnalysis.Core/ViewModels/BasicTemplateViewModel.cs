@@ -1,6 +1,8 @@
 ﻿using CombatAnalysis.Core.Core;
 using CombatAnalysis.Core.Interfaces;
+using CombatAnalysis.Core.Interfaces.Observers;
 using CombatAnalysis.Core.Models;
+using Microsoft.Extensions.Caching.Memory;
 using MvvmCross.Commands;
 using MvvmCross.Navigation;
 using MvvmCross.ViewModels;
@@ -10,26 +12,36 @@ using System.Threading.Tasks;
 
 namespace CombatAnalysis.Core.ViewModels
 {
-    public class BasicTemplateViewModel : MvxViewModel, IImprovedMvxViewModel, IResponseStatusObservable
+    public class BasicTemplateViewModel : MvxViewModel, IImprovedMvxViewModel, IResponseStatusObservable, IAuthObservable
     {
-        private readonly List<IResponseStatusObserver> _observers;
+        private readonly List<IResponseStatusObserver> _responseStatusObservers;
+        private readonly List<IAuthObserver> _authObservers;
+        private readonly IMvxNavigationService _mvvmNavigation;
+        private readonly IMemoryCache _memoryCache;
+        private readonly IHttpClientHelper _httpClient;
 
         private int _step;
         private Tuple<int, CombatModel> _combatInformtaion;
         private List<CombatModel> _combats;
-        private IMvxNavigationService _mvvmNavigation;
+        private bool _isAuth;
+        private string _email;
 
         private static ResponseStatus _responseStatus;
         private static int _allowStep;
 
-        public BasicTemplateViewModel(IViewModelConnect handler, IMvxNavigationService mvvmNavigation)
+        public BasicTemplateViewModel(IViewModelConnect handler, IMvxNavigationService mvvmNavigation, IMemoryCache memoryCache, IHttpClientHelper httpClient)
         {
             Handler = handler;
             _mvvmNavigation = mvvmNavigation;
+            _memoryCache = memoryCache;
+            _httpClient = httpClient;
 
-            _observers = new List<IResponseStatusObserver>();
+            _responseStatusObservers = new List<IResponseStatusObserver>();
+            _authObservers = new List<IAuthObserver>();
 
             CloseCommand = new MvxCommand(CloseWindow);
+            LoginCommand = new MvxCommand(Login);
+            LogoutCommand = new MvxCommand(Logout);
             UploadCombatsCommand = new MvxCommand(UploadCombatLogs);
             GeneralAnalysisCommand = new MvxCommand(GeneralAnalysis);
             CombatCommand = new MvxCommand(DetailsSpecificalCombat);
@@ -43,6 +55,12 @@ namespace CombatAnalysis.Core.ViewModels
         public Action Close { get; set; }
 
         public IMvxCommand CloseCommand { get; set; }
+
+        public IMvxCommand LoginCommand { get; set; }
+
+        public IMvxCommand LogoutCommand { get; set; }
+
+        public IMvxCommand RegistrationCommand { get; set; }
 
         public IMvxCommand UploadCombatsCommand { get; set; }
 
@@ -86,8 +104,7 @@ namespace CombatAnalysis.Core.ViewModels
             set
             {
                 SetProperty(ref _responseStatus, value);
-
-                NotifyObservers();
+                NotifyResponseStatusObservers();
             }
         }
 
@@ -100,9 +117,46 @@ namespace CombatAnalysis.Core.ViewModels
             }
         }
 
+        public bool IsAuth
+        {
+            get { return _isAuth; }
+            set
+            {
+                SetProperty(ref _isAuth, value);
+                NotifyAuthObservers();
+            }
+        }
+
+        public string Email
+        {
+            get { return _email; }
+            set
+            {
+                SetProperty(ref _email, value);
+            }
+        }
+
         public void CloseWindow()
         {
             WindowCloser.MainWindow.Close();
+        }
+
+        public void Login()
+        {
+            Task.Run(() => _mvvmNavigation.Navigate<LoginViewModel>());
+        }
+
+        public void Logout()
+        {
+            var refreshToken = _memoryCache.Get<string>("refreshToken");
+            Task.Run(() => _httpClient.GetAsync($"Account/logout/{refreshToken}"));
+
+            _memoryCache.Remove("refreshToken");
+            _memoryCache.Remove("accessToken");
+            _memoryCache.Remove("user");
+
+            IsAuth = false;
+            Email = string.Empty;
         }
 
         public void UploadCombatLogs()
@@ -150,19 +204,37 @@ namespace CombatAnalysis.Core.ViewModels
 
         public void AddObserver(IResponseStatusObserver o)
         {
-            _observers.Add(o);
+            _responseStatusObservers.Add(o);
         }
 
         public void RemoveObserver(IResponseStatusObserver o)
         {
-            _observers.Remove(o);
+            _responseStatusObservers.Remove(o);
         }
 
-        public void NotifyObservers()
+        public void NotifyResponseStatusObservers()
         {
-            foreach (var item in _observers)
+            foreach (var item in _responseStatusObservers)
             {
                 item.Update(ResponseStatus);
+            }
+        }
+
+        public void AddObserver(IAuthObserver o)
+        {
+            _authObservers.Add(o);
+        }
+
+        public void RemoveObserver(IAuthObserver o)
+        {
+            _authObservers.Remove(o);
+        }
+
+        public void NotifyAuthObservers()
+        {
+            foreach (var item in _authObservers)
+            {
+                item.AuthUpdate(IsAuth);
             }
         }
     }
