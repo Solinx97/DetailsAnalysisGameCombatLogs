@@ -38,6 +38,7 @@ namespace CombatAnalysis.Core.ViewModels
             RepeatSaveCommand = new MvxCommand(RepeatSaveCombatDataDetails);
 
             BasicTemplate = Templates.Basic;
+            BasicTemplate.Parent = this;
             BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, "Step", 1);
 
             var responseStatusObservable = (IResponseStatusObservable)BasicTemplate;
@@ -104,6 +105,7 @@ namespace CombatAnalysis.Core.ViewModels
         {
             BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, "TargetCombat", Combats[CombatIndex]);
 
+            Task.Run(() => _mvvmNavigation.Close(this));
             Task.Run(() => _mvvmNavigation.Navigate<DetailsSpecificalCombatViewModel, CombatModel>(Combats[CombatIndex]));
         }
 

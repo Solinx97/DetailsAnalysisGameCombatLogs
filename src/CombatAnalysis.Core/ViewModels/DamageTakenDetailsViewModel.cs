@@ -48,6 +48,7 @@ namespace CombatAnalysis.Core.ViewModels
             _powerUpInCombat = new PowerUpInCombat<DamageTakenModel>(_damageTakenInformationsWithSkipDamage);
 
             BasicTemplate = Templates.Basic;
+            BasicTemplate.Parent = this;
             BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, "Step", 5);
         }
 

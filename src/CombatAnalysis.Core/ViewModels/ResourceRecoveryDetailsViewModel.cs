@@ -39,6 +39,7 @@ namespace CombatAnalysis.Core.ViewModels
             _combatParserAPIService = new CombatParserAPIService(httpClient, logger, memoryCache);
 
             BasicTemplate = Templates.Basic;
+            BasicTemplate.Parent = this;
             BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, "Step", 6);
         }
 

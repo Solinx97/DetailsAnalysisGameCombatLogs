@@ -47,6 +47,7 @@ namespace CombatAnalysis.Core.ViewModels
             _powerUpInCombat = new PowerUpInCombat<HealDoneModel>(_healDoneInformationsWithOverheal);
 
             BasicTemplate = Templates.Basic;
+            BasicTemplate.Parent = this;
             BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, "Step", 4);
         }
 

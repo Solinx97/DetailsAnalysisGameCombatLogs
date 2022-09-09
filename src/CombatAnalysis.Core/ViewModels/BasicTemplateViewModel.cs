@@ -83,6 +83,8 @@ namespace CombatAnalysis.Core.ViewModels
 
         public IViewModelConnect Handler { get; set; }
 
+        public IMvxViewModel Parent { get; set; }
+
         public int Step
         {
             get { return _step; }
@@ -173,7 +175,8 @@ namespace CombatAnalysis.Core.ViewModels
 
         public void UploadCombatLogs()
         {
-            Task.Run(() => _mvvmNavigation.Navigate<MainInformationViewModel>());
+            Step = 0;
+            Task.Run(() => _mvvmNavigation.Close(Parent));
         }
 
         public void GeneralAnalysis()
@@ -191,6 +194,7 @@ namespace CombatAnalysis.Core.ViewModels
         {
             _combatInformtaion = (Tuple<int, CombatModel>)Handler.Data;
 
+            Task.Run(() => _mvvmNavigation.Close(Parent));
             Task.Run(() => _mvvmNavigation.Navigate<DamageDoneDetailsViewModel, Tuple<int, CombatModel>>(_combatInformtaion));
         }
 
@@ -198,6 +202,7 @@ namespace CombatAnalysis.Core.ViewModels
         {
             _combatInformtaion = (Tuple<int, CombatModel>)Handler.Data;
 
+            Task.Run(() => _mvvmNavigation.Close(Parent));
             Task.Run(() => _mvvmNavigation.Navigate<HealDoneDetailsViewModel, Tuple<int, CombatModel>>(_combatInformtaion));
         }
 
@@ -205,6 +210,7 @@ namespace CombatAnalysis.Core.ViewModels
         {
             _combatInformtaion = (Tuple<int, CombatModel>)Handler.Data;
 
+            Task.Run(() => _mvvmNavigation.Close(Parent));
             Task.Run(() => _mvvmNavigation.Navigate<DamageTakenDetailsViewModel, Tuple<int, CombatModel>>(_combatInformtaion));
         }
 
@@ -212,6 +218,7 @@ namespace CombatAnalysis.Core.ViewModels
         {
             _combatInformtaion = (Tuple<int, CombatModel>)Handler.Data;
 
+            Task.Run(() => _mvvmNavigation.Close(Parent));
             Task.Run(() => _mvvmNavigation.Navigate<ResourceRecoveryDetailsViewModel, Tuple<int, CombatModel>>(_combatInformtaion));
         }
 
