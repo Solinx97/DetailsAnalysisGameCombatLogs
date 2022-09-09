@@ -44,6 +44,7 @@ namespace CombatAnalysis.Core.ViewModels
 
             CloseCommand = new MvxCommand(CloseWindow);
             LoginCommand = new MvxCommand(Login);
+            RegistrationCommand = new MvxCommand(Registration);
             LogoutCommand = new MvxCommand(Logout);
             UploadCombatsCommand = new MvxCommand(UploadCombatLogs);
             GeneralAnalysisCommand = new MvxCommand(GeneralAnalysis);
@@ -61,9 +62,9 @@ namespace CombatAnalysis.Core.ViewModels
 
         public IMvxCommand LoginCommand { get; set; }
 
-        public IMvxCommand LogoutCommand { get; set; }
-
         public IMvxCommand RegistrationCommand { get; set; }
+
+        public IMvxCommand LogoutCommand { get; set; }
 
         public IMvxCommand UploadCombatsCommand { get; set; }
 
@@ -158,6 +159,11 @@ namespace CombatAnalysis.Core.ViewModels
         public void Login()
         {
             Task.Run(() => _mvvmNavigation.Navigate<LoginViewModel>());
+        }
+
+        public void Registration()
+        {
+            Task.Run(() => _mvvmNavigation.Navigate<RegistrationViewModel>());
         }
 
         public void Logout()

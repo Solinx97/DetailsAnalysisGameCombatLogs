@@ -76,11 +76,11 @@
             </Grid>
         </Border>
 
-        <Grid Grid.Column="2" Grid.ColumnSpan="2" Margin="40 30">
+        <Grid Grid.Column="2" Grid.ColumnSpan="2" Margin="25 5">
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
                 <StackPanel Margin="20 0">
                     <StackPanel Orientation="Horizontal" Visibility="{Binding IsAuth, Converter={StaticResource BoolToVisibility}, ConverterParameter=true:true}">
-                        <Button Style="{StaticResource userButton}" Margin="5">
+                        <Button Style="{StaticResource userButton}" Margin="5" mvx:Bi.nd="Command RegistrationCommand">
                             <Button.ToolTip>
                                 <ToolTip>
                                     Регистрация

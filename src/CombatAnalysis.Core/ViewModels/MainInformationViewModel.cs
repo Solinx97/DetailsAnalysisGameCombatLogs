@@ -28,7 +28,6 @@ namespace CombatAnalysis.Core.ViewModels
         private readonly IMapper _mapper;
         private readonly IParser _parser;
         private readonly CombatParserAPIService _combatParserAPIService;
-        private readonly IMemoryCache _memoryCache;
 
         private string _combatLog;
         private bool _fileIsNotCorrect;
@@ -38,6 +37,7 @@ namespace CombatAnalysis.Core.ViewModels
         private string _foundCombat;
         private string _combatLogPath;
         private int _selectedCombatLogId;
+        private int _selectedCombatLogTypeTabItem;
         private int _combatLogsNumber;
         private int _combatLogsByUserNumber;
         private IImprovedMvxViewModel _basicTemplate;
@@ -48,13 +48,13 @@ namespace CombatAnalysis.Core.ViewModels
         private double _screenHeight;
         private bool _isAuth;
         private LogType _logType;
+        private ObservableCollection<CombatLogModel>[] _combatLogLists = new ObservableCollection<CombatLogModel>[2];
 
         public MainInformationViewModel(IMapper mapper, IMvxNavigationService mvvmNavigation, IHttpClientHelper httpClient, IParser parser, ILogger logger, IMemoryCache memoryCache)
         {
             _mapper = mapper;
             _mvvmNavigation = mvvmNavigation;
             _parser = parser;
-            _memoryCache = memoryCache;
 
             GetCombatLogCommand = new MvxCommand(GetCombatLog);
             OpenPlayerAnalysisCommand = new MvxCommand(OpenPlayerAnalysis);
@@ -178,6 +178,15 @@ namespace CombatAnalysis.Core.ViewModels
             }
         }
 
+        public int SelectedCombatLogTypeTabItem
+        {
+            get { return _selectedCombatLogTypeTabItem; }
+            set
+            {
+                SetProperty(ref _selectedCombatLogTypeTabItem, value);
+            }
+        }
+
         public int CombatLogsNumber
         {
             get { return _combatLogsNumber; }
@@ -291,6 +300,7 @@ namespace CombatAnalysis.Core.ViewModels
             if (!isAuth)
             {
                 LogType = LogType.NotIncludePlayer;
+                SelectedCombatLogTypeTabItem = 0;
             }
         }
 
@@ -348,6 +358,8 @@ namespace CombatAnalysis.Core.ViewModels
 
             CombatLogs = new ObservableCollection<CombatLogModel>(readyCombatLogData);
             CombatLogsNumber = CombatLogs.Count;
+
+            _combatLogLists[0] = CombatLogs;
         }
 
         private async Task LoadCombatLogsByUserAsync()
@@ -367,11 +379,13 @@ namespace CombatAnalysis.Core.ViewModels
 
             CombatLogsByUser = new ObservableCollection<CombatLogModel>(readyCombatLogData);
             CombatLogsByUserNumber = CombatLogsByUser.Count;
+
+            _combatLogLists[1] = CombatLogsByUser;
         }
 
         private async Task LoadCombatsAsync()
         {
-            var id = CombatLogs[SelectedCombatLogId].Id;
+            var id = _combatLogLists[SelectedCombatLogTypeTabItem][SelectedCombatLogId].Id;
             var loadedCombats = await _combatParserAPIService.LoadCombatsAsync(id);
 
             foreach (var item in loadedCombats)
