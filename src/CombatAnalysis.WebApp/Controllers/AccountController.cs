@@ -23,12 +23,13 @@ namespace CombatAnalysis.WebApp.Controllers
         public AccountController(IHttpClientHelper httpClient)
         {
             _httpClient = httpClient;
-            _httpClient.BaseAddress = Port.UserApi;
         }
 
         [HttpPost]
         public async Task<IActionResult> Login(LoginModel model)
         {
+            _httpClient.BaseAddress = Port.UserApi;
+
             var responseMessage = await _httpClient.PostAsync("Account", JsonContent.Create(model));
             if (responseMessage.StatusCode == System.Net.HttpStatusCode.OK)
             {
@@ -58,7 +59,9 @@ namespace CombatAnalysis.WebApp.Controllers
         [HttpPost("registration")]
         public async Task<IActionResult> Register(RegisterModel model)
         {
-            var responseMessage = await _httpClient.PostAsync("Account/registration", JsonContent.Create(model));
+            _httpClient.BaseAddress = Port.UserApi;
+
+            var responseMessage = await _httpClient.PostAsync("Account/registration", JsonContent.Create(model.Email));
             if (responseMessage.StatusCode == System.Net.HttpStatusCode.OK)
             {
 
@@ -88,6 +91,8 @@ namespace CombatAnalysis.WebApp.Controllers
         [HttpPost("logout")]
         public async Task<IActionResult> Logout()
         {
+            _httpClient.BaseAddress = Port.UserApi;
+
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
 
             HttpContext.Response.Cookies.Delete("accessToken");

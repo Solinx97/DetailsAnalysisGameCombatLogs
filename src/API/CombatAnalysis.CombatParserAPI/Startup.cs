@@ -47,7 +47,7 @@ namespace CombatAnalysis.CombatParserAPI
 
             var mappingConfig = new MapperConfiguration(mc =>
             {
-                mc.AddProfile(new ApiMapper());
+                mc.AddProfile(new CombatParserApiMapper());
                 mc.AddProfile(new BLMapper());
             });
 

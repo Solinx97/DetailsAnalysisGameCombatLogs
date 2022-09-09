@@ -12,18 +12,18 @@ using System.Threading.Tasks;
 
 namespace CombatAnalysis.BL.Services
 {
-    internal class DamageTakenGeneralService : IService<DamageTakenGeneralDto>
+    internal class DamageTakenGeneralService : ISPService<DamageTakenGeneralDto, int>
     {
-        private readonly IGenericRepository<DamageTakenGeneral> _repository;
+        private readonly ISPGenericRepository<DamageTakenGeneral> _repository;
         private readonly IMapper _mapper;
 
-        public DamageTakenGeneralService(IGenericRepository<DamageTakenGeneral> userRepository, IMapper mapper)
+        public DamageTakenGeneralService(ISPGenericRepository<DamageTakenGeneral> userRepository, IMapper mapper)
         {
             _repository = userRepository;
             _mapper = mapper;
         }
 
-        Task<int> IService<DamageTakenGeneralDto>.CreateAsync(DamageTakenGeneralDto item)
+        Task<int> IService<DamageTakenGeneralDto, int>.CreateAsync(DamageTakenGeneralDto item)
         {
             if (item == null)
             {
@@ -33,7 +33,7 @@ namespace CombatAnalysis.BL.Services
             return CreateInternalAsync(item);
         }
 
-        async Task<int> IService<DamageTakenGeneralDto>.CreateByProcedureAsync(DamageTakenGeneralDto item)
+        async Task<int> ISPService<DamageTakenGeneralDto, int>.CreateByProcedureAsync(DamageTakenGeneralDto item)
         {
             var paramNames = new string[] { nameof(item.Value), nameof(item.DamageTakenPerSecond), nameof(item.SpellOrItem),
                 nameof(item.CritNumber), nameof(item.MissNumber), nameof(item.CastNumber), nameof(item.MinValue),
@@ -46,7 +46,7 @@ namespace CombatAnalysis.BL.Services
             return response;
         }
 
-        Task<int> IService<DamageTakenGeneralDto>.DeleteAsync(DamageTakenGeneralDto item)
+        Task<int> IService<DamageTakenGeneralDto, int>.DeleteAsync(DamageTakenGeneralDto item)
         {
             if (item == null)
             {
@@ -56,7 +56,7 @@ namespace CombatAnalysis.BL.Services
             return DeleteInternalAsync(item);
         }
 
-        async Task<int> IService<DamageTakenGeneralDto>.DeleteByProcedureAsync(int combatPlayerId)
+        async Task<int> ISPService<DamageTakenGeneralDto, int>.DeleteByProcedureAsync(int combatPlayerId)
         {
             var paramNames = new string[] { nameof(combatPlayerId) };
             var paramValues = new object[] { combatPlayerId };
@@ -65,7 +65,7 @@ namespace CombatAnalysis.BL.Services
             return response;
         }
 
-        async Task<IEnumerable<DamageTakenGeneralDto>> IService<DamageTakenGeneralDto>.GetAllAsync()
+        async Task<IEnumerable<DamageTakenGeneralDto>> IService<DamageTakenGeneralDto, int>.GetAllAsync()
         {
             var allData = await _repository.GetAllAsync();
             var result = _mapper.Map<List<DamageTakenGeneralDto>>(allData);
@@ -73,7 +73,7 @@ namespace CombatAnalysis.BL.Services
             return result;
         }
 
-        async Task<IEnumerable<DamageTakenGeneralDto>> IService<DamageTakenGeneralDto>.GetByProcedureAsync(int combatPlayerId)
+        async Task<IEnumerable<DamageTakenGeneralDto>> ISPService<DamageTakenGeneralDto, int>.GetByProcedureAsync(int combatPlayerId)
         {
             var paramNames = new string[] { nameof(combatPlayerId) };
             var paramValues = new object[] { combatPlayerId };
@@ -84,7 +84,7 @@ namespace CombatAnalysis.BL.Services
             return result;
         }
 
-        async Task<DamageTakenGeneralDto> IService<DamageTakenGeneralDto>.GetByIdAsync(int id)
+        async Task<DamageTakenGeneralDto> IService<DamageTakenGeneralDto, int>.GetByIdAsync(int id)
         {
             var executeLoad = await _repository.GetByIdAsync(id);
             var result = _mapper.Map<DamageTakenGeneralDto>(executeLoad);
@@ -92,7 +92,7 @@ namespace CombatAnalysis.BL.Services
             return result;
         }
 
-        Task<int> IService<DamageTakenGeneralDto>.UpdateAsync(DamageTakenGeneralDto item)
+        Task<int> IService<DamageTakenGeneralDto, int>.UpdateAsync(DamageTakenGeneralDto item)
         {
             if (item == null)
             {

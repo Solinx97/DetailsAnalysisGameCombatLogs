@@ -1,4 +1,5 @@
 ﻿using CombatAnalysis.BL.DTO;
+using CombatAnalysis.BL.DTO.User;
 using CombatAnalysis.BL.Interfaces;
 using CombatAnalysis.BL.Services;
 using CombatAnalysis.DAL.Extensions;
@@ -13,18 +14,19 @@ namespace CombatAnalysis.BL.Extensions
         {
             services.RegisterDependenciesDAL(configuration, connectionName);
 
-            services.AddScoped<IService<CombatLogDto>, CombatLogService>();
-            services.AddScoped<IService<CombatLogByUserDto>, CombatLogByUserService>();
-            services.AddScoped<IService<CombatDto>, CombatService>();
-            services.AddScoped<IService<CombatPlayerDataDto>, CombatPlayerService>();
-            services.AddScoped<IService<DamageDoneDto>, DamageDoneService>();
-            services.AddScoped<IService<DamageDoneGeneralDto>, DamageDoneGeneralService>();
-            services.AddScoped<IService<HealDoneDto>, HealDoneService>();
-            services.AddScoped<IService<HealDoneGeneralDto>, HealDoneGeneralService>();
-            services.AddScoped<IService<DamageTakenDto>, DamageTakenService>();
-            services.AddScoped<IService<DamageTakenGeneralDto>, DamageTakenGeneralService>();
-            services.AddScoped<IService<ResourceRecoveryDto>, ResourceRecoveryService>();
-            services.AddScoped<IService<ResourceRecoveryGeneralDto>, ResourceRecoveryGeneralService>();
+            services.AddScoped<IUserService<UserDto>, UserService>();
+            services.AddScoped<IService<CombatLogDto, int>, CombatLogService>();
+            services.AddScoped<IService<CombatLogByUserDto, int>, CombatLogByUserService>();
+            services.AddScoped<ISPService<CombatDto, int>, CombatService>();
+            services.AddScoped<ISPService<CombatPlayerDataDto, int>, CombatPlayerService>();
+            services.AddScoped<ISPService<DamageDoneDto, int>, DamageDoneService>();
+            services.AddScoped<ISPService<DamageDoneGeneralDto, int>, DamageDoneGeneralService>();
+            services.AddScoped<ISPService<HealDoneDto, int>, HealDoneService>();
+            services.AddScoped<ISPService<HealDoneGeneralDto, int>, HealDoneGeneralService>();
+            services.AddScoped<ISPService<DamageTakenDto, int>, DamageTakenService>();
+            services.AddScoped<ISPService<DamageTakenGeneralDto, int>, DamageTakenGeneralService>();
+            services.AddScoped<ISPService<ResourceRecoveryDto, int>, ResourceRecoveryService>();
+            services.AddScoped<ISPService<ResourceRecoveryGeneralDto, int>, ResourceRecoveryGeneralService>();
         }
     }
 }

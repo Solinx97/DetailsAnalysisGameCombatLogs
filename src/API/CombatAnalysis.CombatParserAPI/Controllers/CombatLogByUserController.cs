@@ -12,10 +12,10 @@ namespace CombatAnalysis.CombatParserAPI.Controllers
     [ApiController]
     public class CombatLogByUserController : ControllerBase
     {
-        private readonly IService<CombatLogByUserDto> _service;
+        private readonly IService<CombatLogByUserDto, int> _service;
         private readonly IMapper _mapper;
 
-        public CombatLogByUserController(IService<CombatLogByUserDto> service, IMapper mapper)
+        public CombatLogByUserController(IService<CombatLogByUserDto, int> service, IMapper mapper)
         {
             _service = service;
             _mapper = mapper;

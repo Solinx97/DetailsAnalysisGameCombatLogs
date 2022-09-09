@@ -12,18 +12,18 @@ using System.Threading.Tasks;
 
 namespace CombatAnalysis.BL.Services
 {
-    internal class DamageDoneGeneralService : IService<DamageDoneGeneralDto>
+    internal class DamageDoneGeneralService : ISPService<DamageDoneGeneralDto, int>
     {
-        private readonly IGenericRepository<DamageDoneGeneral> _repository;
+        private readonly ISPGenericRepository<DamageDoneGeneral> _repository;
         private readonly IMapper _mapper;
 
-        public DamageDoneGeneralService(IGenericRepository<DamageDoneGeneral> userRepository, IMapper mapper)
+        public DamageDoneGeneralService(ISPGenericRepository<DamageDoneGeneral> userRepository, IMapper mapper)
         {
             _repository = userRepository;
             _mapper = mapper;
         }
 
-        Task<int> IService<DamageDoneGeneralDto>.CreateAsync(DamageDoneGeneralDto item)
+        Task<int> IService<DamageDoneGeneralDto, int>.CreateAsync(DamageDoneGeneralDto item)
         {
             if (item == null)
             {
@@ -33,7 +33,7 @@ namespace CombatAnalysis.BL.Services
             return CreateInternalAsync(item);
         }
 
-        async Task<int> IService<DamageDoneGeneralDto>.CreateByProcedureAsync(DamageDoneGeneralDto item)
+        async Task<int> ISPService<DamageDoneGeneralDto, int>.CreateByProcedureAsync(DamageDoneGeneralDto item)
         {
             var paramNames = new string[] { nameof(item.Value), nameof(item.DamagePerSecond), nameof(item.SpellOrItem),
                 nameof(item.CritNumber), nameof(item.MissNumber), nameof(item.CastNumber), nameof(item.MinValue),  nameof(item.MaxValue),
@@ -46,7 +46,7 @@ namespace CombatAnalysis.BL.Services
             return response;
         }
 
-        Task<int> IService<DamageDoneGeneralDto>.DeleteAsync(DamageDoneGeneralDto item)
+        Task<int> IService<DamageDoneGeneralDto, int>.DeleteAsync(DamageDoneGeneralDto item)
         {
             if (item == null)
             {
@@ -56,7 +56,7 @@ namespace CombatAnalysis.BL.Services
             return DeleteInternalAsync(item);
         }
 
-        async Task<int> IService<DamageDoneGeneralDto>.DeleteByProcedureAsync(int combatPlayerId)
+        async Task<int> ISPService<DamageDoneGeneralDto, int>.DeleteByProcedureAsync(int combatPlayerId)
         {
             var paramNames = new string[] { nameof(combatPlayerId) };
             var paramValues = new object[] { combatPlayerId };
@@ -65,7 +65,7 @@ namespace CombatAnalysis.BL.Services
             return response;
         }
 
-        async Task<IEnumerable<DamageDoneGeneralDto>> IService<DamageDoneGeneralDto>.GetAllAsync()
+        async Task<IEnumerable<DamageDoneGeneralDto>> IService<DamageDoneGeneralDto, int>.GetAllAsync()
         {
             var allData = await _repository.GetAllAsync();
             var result = _mapper.Map<List<DamageDoneGeneralDto>>(allData);
@@ -73,7 +73,7 @@ namespace CombatAnalysis.BL.Services
             return result;
         }
 
-        async Task<IEnumerable<DamageDoneGeneralDto>> IService<DamageDoneGeneralDto>.GetByProcedureAsync(int combatPlayerId)
+        async Task<IEnumerable<DamageDoneGeneralDto>> ISPService<DamageDoneGeneralDto, int>.GetByProcedureAsync(int combatPlayerId)
         {
             var paramNames = new string[] { nameof(combatPlayerId) };
             var paramValues = new object[] { combatPlayerId };
@@ -84,7 +84,7 @@ namespace CombatAnalysis.BL.Services
             return result;
         }
 
-        async Task<DamageDoneGeneralDto> IService<DamageDoneGeneralDto>.GetByIdAsync(int id)
+        async Task<DamageDoneGeneralDto> IService<DamageDoneGeneralDto, int>.GetByIdAsync(int id)
         {
             var executeLoad = await _repository.GetByIdAsync(id);
             var result = _mapper.Map<DamageDoneGeneralDto>(executeLoad);
@@ -92,7 +92,7 @@ namespace CombatAnalysis.BL.Services
             return result;
         }
 
-        Task<int> IService<DamageDoneGeneralDto>.UpdateAsync(DamageDoneGeneralDto item)
+        Task<int> IService<DamageDoneGeneralDto, int>.UpdateAsync(DamageDoneGeneralDto item)
         {
             if (item == null)
             {

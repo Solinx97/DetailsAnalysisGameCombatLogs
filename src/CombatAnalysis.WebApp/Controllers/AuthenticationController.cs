@@ -1,11 +1,11 @@
-﻿using CombatAnalysis.DAL.Data;
-using CombatAnalysis.DAL.Entities.User;
-using CombatAnalysis.WebApp.Consts;
+﻿using CombatAnalysis.WebApp.Consts;
 using CombatAnalysis.WebApp.Interfaces;
+using CombatAnalysis.WebApp.Models.Response;
+using CombatAnalysis.WebApp.Models.User;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+using System.Net.Http.Json;
 using System.Threading.Tasks;
 
 namespace CombatAnalysis.WebApp.Controllers
@@ -14,14 +14,11 @@ namespace CombatAnalysis.WebApp.Controllers
     [ApiController]
     public class AuthenticationController : ControllerBase
     {
-        private readonly CombatAnalysisContext _dbContext;
         private readonly IHttpClientHelper _httpClient;
 
-        public AuthenticationController(CombatAnalysisContext dbContext, IHttpClientHelper httpClient)
+        public AuthenticationController(IHttpClientHelper httpClient)
         {
-            _dbContext = dbContext;
             _httpClient = httpClient;
-            _httpClient.BaseAddress = Port.UserApi;
         }
 
         [AllowAnonymous]
@@ -33,6 +30,7 @@ namespace CombatAnalysis.WebApp.Controllers
                 return Unauthorized();
             }
 
+            _httpClient.BaseAddress = Port.UserApi;
             var response = await _httpClient.GetAsync($"authentication/validateRefreshToken/{refreshToken}");
             if (response.StatusCode == System.Net.HttpStatusCode.BadRequest)
             {
@@ -52,16 +50,24 @@ namespace CombatAnalysis.WebApp.Controllers
             }
 
             var email = HttpContext.User.Identity.Name;
-            var user = await _dbContext.User.FirstOrDefaultAsync(u => u.Email == email);
-            if (user == null)
+
+            var responseMessage = await _httpClient.GetAsync($"account/find/{email}");
+            if (responseMessage.StatusCode == System.Net.HttpStatusCode.OK)
             {
-                await _httpClient.GetAsync($"authentication/check/{user.Id}");
+                var user = await responseMessage.Content.ReadFromJsonAsync<UserModel>();
+                if (user == null)
+                {
+                    await _httpClient.GetAsync($"authentication/check/{user.Id}");
+                }
+
+                return await CheckAccessToken(user);
             }
 
-            return await CheckAccessToken(user);
+
+            return BadRequest();
         }
 
-        private async Task<IActionResult> CheckAccessToken(User user)
+        private async Task<IActionResult> CheckAccessToken(UserModel user)
         {
             if (!HttpContext.Request.Cookies.TryGetValue("accessToken", out var accessToken))
             {

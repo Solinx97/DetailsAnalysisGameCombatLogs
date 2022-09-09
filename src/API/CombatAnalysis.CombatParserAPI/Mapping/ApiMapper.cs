@@ -1,14 +1,17 @@
 ﻿using AutoMapper;
 using CombatAnalysis.BL.DTO;
+using CombatAnalysis.BL.DTO.User;
 using CombatAnalysis.CombatParser.Entities;
 using CombatAnalysis.CombatParserAPI.Models;
+using CombatAnalysis.Core.Models.User;
 
 namespace CombatAnalysis.CombatParserAPI.Mapping
 {
-    public class ApiMapper : Profile
+    public class CombatParserApiMapper : Profile
     {
-        public ApiMapper()
+        public CombatParserApiMapper()
         {
+            CreateMap<UserDto, UserModel>().ReverseMap();
             CreateMap<CombatLogDto, CombatLogModel>().ReverseMap();
             CreateMap<CombatLogByUserDto, CombatLogByUserModel>().ReverseMap();
             CreateMap<CombatDto, CombatModel>().ReverseMap();

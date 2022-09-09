@@ -12,18 +12,18 @@ using System.Threading.Tasks;
 
 namespace CombatAnalysis.BL.Services
 {
-    internal class ResourceRecoveryService : IService<ResourceRecoveryDto>
+    internal class ResourceRecoveryService : ISPService<ResourceRecoveryDto, int>
     {
-        private readonly IGenericRepository<ResourceRecovery> _repository;
+        private readonly ISPGenericRepository<ResourceRecovery> _repository;
         private readonly IMapper _mapper;
 
-        public ResourceRecoveryService(IGenericRepository<ResourceRecovery> userRepository, IMapper mapper)
+        public ResourceRecoveryService(ISPGenericRepository<ResourceRecovery> userRepository, IMapper mapper)
         {
             _repository = userRepository;
             _mapper = mapper;
         }
 
-        Task<int> IService<ResourceRecoveryDto>.CreateAsync(ResourceRecoveryDto item)
+        Task<int> IService<ResourceRecoveryDto, int>.CreateAsync(ResourceRecoveryDto item)
         {
             if (item == null)
             {
@@ -33,7 +33,7 @@ namespace CombatAnalysis.BL.Services
             return CreateInternalAsync(item);
         }
 
-        async Task<int> IService<ResourceRecoveryDto>.CreateByProcedureAsync(ResourceRecoveryDto item)
+        async Task<int> ISPService<ResourceRecoveryDto, int>.CreateByProcedureAsync(ResourceRecoveryDto item)
         {
             var paramNames = new string[] { nameof(item.Value), nameof(item.Time), nameof(item.SpellOrItem), nameof(item.CombatPlayerDataId) };
             var paramValues = new object[] { item.Value, item.Time, item.SpellOrItem, item.CombatPlayerDataId };
@@ -42,7 +42,7 @@ namespace CombatAnalysis.BL.Services
             return response;
         }
 
-        Task<int> IService<ResourceRecoveryDto>.DeleteAsync(ResourceRecoveryDto item)
+        Task<int> IService<ResourceRecoveryDto, int>.DeleteAsync(ResourceRecoveryDto item)
         {
             if (item == null)
             {
@@ -52,7 +52,7 @@ namespace CombatAnalysis.BL.Services
             return DeleteInternalAsync(item);
         }
 
-        async Task<int> IService<ResourceRecoveryDto>.DeleteByProcedureAsync(int combatPlayerId)
+        async Task<int> ISPService<ResourceRecoveryDto, int>.DeleteByProcedureAsync(int combatPlayerId)
         {
             var paramNames = new string[] { nameof(combatPlayerId) };
             var paramValues = new object[] { combatPlayerId };
@@ -61,7 +61,7 @@ namespace CombatAnalysis.BL.Services
             return response;
         }
 
-        async Task<IEnumerable<ResourceRecoveryDto>> IService<ResourceRecoveryDto>.GetAllAsync()
+        async Task<IEnumerable<ResourceRecoveryDto>> IService<ResourceRecoveryDto, int>.GetAllAsync()
         {
             var allData = await _repository.GetAllAsync();
             var result = _mapper.Map<List<ResourceRecoveryDto>>(allData);
@@ -69,7 +69,7 @@ namespace CombatAnalysis.BL.Services
             return result;
         }
 
-        async Task<IEnumerable<ResourceRecoveryDto>> IService<ResourceRecoveryDto>.GetByProcedureAsync(int combatPlayerId)
+        async Task<IEnumerable<ResourceRecoveryDto>> ISPService<ResourceRecoveryDto, int>.GetByProcedureAsync(int combatPlayerId)
         {
             var paramNames = new string[] { nameof( combatPlayerId) };
             var paramValues = new object[] { combatPlayerId };
@@ -80,7 +80,7 @@ namespace CombatAnalysis.BL.Services
             return result;
         }
 
-        async Task<ResourceRecoveryDto> IService<ResourceRecoveryDto>.GetByIdAsync(int id)
+        async Task<ResourceRecoveryDto> IService<ResourceRecoveryDto, int>.GetByIdAsync(int id)
         {
             var executeLoad = await _repository.GetByIdAsync(id);
             var result = _mapper.Map<ResourceRecoveryDto>(executeLoad);
@@ -88,7 +88,7 @@ namespace CombatAnalysis.BL.Services
             return result;
         }
 
-        Task<int> IService<ResourceRecoveryDto>.UpdateAsync(ResourceRecoveryDto item)
+        Task<int> IService<ResourceRecoveryDto, int>.UpdateAsync(ResourceRecoveryDto item)
         {
             if (item == null)
             {

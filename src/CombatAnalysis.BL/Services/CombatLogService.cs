@@ -3,7 +3,6 @@ using CombatAnalysis.BL.DTO;
 using CombatAnalysis.BL.Exceptions;
 using CombatAnalysis.BL.Interfaces;
 using CombatAnalysis.DAL.Entities;
-using CombatAnalysis.DAL.Helpers;
 using CombatAnalysis.DAL.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -12,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace CombatAnalysis.BL.Services
 {
-    internal class CombatLogService : IService<CombatLogDto>
+    internal class CombatLogService : IService<CombatLogDto, int>
     {
         private readonly IGenericRepository<CombatLog> _repository;
         private readonly IMapper _mapper;
@@ -23,7 +22,7 @@ namespace CombatAnalysis.BL.Services
             _mapper = mapper;
         }
 
-        Task<int> IService<CombatLogDto>.CreateAsync(CombatLogDto item)
+        Task<int> IService<CombatLogDto, int>.CreateAsync(CombatLogDto item)
         {
             if (item == null)
             {
@@ -33,7 +32,7 @@ namespace CombatAnalysis.BL.Services
             return CreateInternalAsync(item);
         }
 
-        Task<int> IService<CombatLogDto>.DeleteAsync(CombatLogDto item)
+        Task<int> IService<CombatLogDto, int>.DeleteAsync(CombatLogDto item)
         {
             if (item == null)
             {
@@ -43,7 +42,7 @@ namespace CombatAnalysis.BL.Services
             return DeleteInternalAsync(item);
         }
 
-        async Task<IEnumerable<CombatLogDto>> IService<CombatLogDto>.GetAllAsync()
+        async Task<IEnumerable<CombatLogDto>> IService<CombatLogDto, int>.GetAllAsync()
         {
             var allData = await _repository.GetAllAsync();
             var result = _mapper.Map<List<CombatLogDto>>(allData);
@@ -51,18 +50,7 @@ namespace CombatAnalysis.BL.Services
             return result;
         }
 
-        async Task<IEnumerable<CombatLogDto>> IService<CombatLogDto>.GetByProcedureAsync(int combatLogId)
-        {
-            var paramNames = new string[] { nameof(combatLogId) };
-            var paramValues = new object[] { combatLogId };
-
-            var data = await _repository.ExecuteStoredProcedureUseModelAsync(DbProcedureHelper.GetCombat, paramNames, paramValues);
-            var result = _mapper.Map<IEnumerable<CombatLogDto>>(data);
-
-            return result;
-        }
-
-        async Task<CombatLogDto> IService<CombatLogDto>.GetByIdAsync(int id)
+        async Task<CombatLogDto> IService<CombatLogDto, int>.GetByIdAsync(int id)
         {
             var executeLoad = await _repository.GetByIdAsync(id);
             var result = _mapper.Map<CombatLogDto>(executeLoad);
@@ -70,7 +58,7 @@ namespace CombatAnalysis.BL.Services
             return result;
         }
 
-        Task<int> IService<CombatLogDto>.UpdateAsync(CombatLogDto item)
+        Task<int> IService<CombatLogDto, int>.UpdateAsync(CombatLogDto item)
         {
             if (item == null)
             {
@@ -120,16 +108,6 @@ namespace CombatAnalysis.BL.Services
 
             var numberEntries = await _repository.UpdateAsync(_mapper.Map<CombatLog>(item));
             return numberEntries;
-        }
-
-        Task<int> IService<CombatLogDto>.DeleteByProcedureAsync(int combatPlayerId)
-        {
-            throw new NotImplementedException();
-        }
-
-        Task<int> IService<CombatLogDto>.CreateByProcedureAsync(CombatLogDto item)
-        {
-            throw new NotImplementedException();
         }
     }
 }

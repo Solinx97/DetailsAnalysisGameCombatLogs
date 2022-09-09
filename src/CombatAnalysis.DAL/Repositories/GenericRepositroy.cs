@@ -1,9 +1,7 @@
 ﻿using CombatAnalysis.DAL.Data;
 using CombatAnalysis.DAL.Interfaces;
-using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace CombatAnalysis.DAL.Repositories
@@ -56,41 +54,6 @@ namespace CombatAnalysis.DAL.Repositories
             var numberEntries = await _context.SaveChangesAsync();
 
             return numberEntries;
-        }
-
-        async Task<IEnumerable<TModel>> IGenericRepository<TModel>.ExecuteStoredProcedureUseModelAsync(string procedureName, string[] paramNames, object[] paramValues)
-        {
-            var procedureParams = new List<SqlParameter>();
-            var procedureParamNames = new StringBuilder();
-            for (int i = 0; i < paramValues.Length; i++)
-            {
-                procedureParams.Add(new SqlParameter(paramNames[i], paramValues[i]));
-                procedureParamNames.Append($"@{paramNames[i]},");
-            }
-            procedureParamNames.Remove(procedureParamNames.Length - 1, 1);
-
-            var data = await _context.Set<TModel>()
-                                .FromSqlRaw($"{procedureName} {procedureParamNames}", procedureParams.ToArray())
-                                .ToListAsync();
-
-            return data;
-        }
-
-        async Task<int> IGenericRepository<TModel>.ExecuteStoredProcedureAsync(string procedureName, string[] paramNames, object[] paramValues)
-        {
-            var procedureParams = new List<SqlParameter>();
-            var procedureParamNames = new StringBuilder();
-            for (int i = 0; i < paramValues.Length; i++)
-            {
-                procedureParams.Add(new SqlParameter(paramNames[i], paramValues[i]));
-                procedureParamNames.Append($"@{paramNames[i]},");
-            }
-            procedureParamNames.Remove(procedureParamNames.Length - 1, 1);
-
-            var data = await _context.Database
-                                .ExecuteSqlRawAsync($"{procedureName} {procedureParamNames}", procedureParams);
-
-            return data;
         }
     }
 }
