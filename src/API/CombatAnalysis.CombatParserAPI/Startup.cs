@@ -53,6 +53,7 @@ namespace CombatAnalysis.CombatParserAPI
 
             var mapper = mappingConfig.CreateMapper();
             services.AddSingleton(mapper);
+            services.AddSingleton<ILogger>(logger);
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

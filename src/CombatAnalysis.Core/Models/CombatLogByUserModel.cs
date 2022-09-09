@@ -1,6 +1,6 @@
-﻿namespace CombatAnalysis.BL.DTO
+﻿namespace CombatAnalysis.Core.Models
 {
-    public class CombatLogByUserDto
+    public class CombatLogByUserModel
     {
         public int Id { get; set; }
 

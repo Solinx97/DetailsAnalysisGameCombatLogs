@@ -1,6 +1,11 @@
 ﻿using CombatAnalysis.Core.Consts;
+using CombatAnalysis.Core.Enums;
 using CombatAnalysis.Core.Interfaces;
 using CombatAnalysis.Core.Models;
+using CombatAnalysis.Core.Models.User;
+using CombatAnalysis.DAL.Entities;
+using CombatAnalysis.DAL.Entities.User;
+using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,28 +19,33 @@ namespace CombatAnalysis.Core.Services
     {
         private readonly IHttpClientHelper _httpClient;
         private readonly ILogger _logger;
+        private readonly IMemoryCache _memoryCache;
 
         private List<CombatModel> _combats;
 
-        public CombatParserAPIService(IHttpClientHelper httpClient, ILogger logger)
+        public CombatParserAPIService(IHttpClientHelper httpClient, ILogger logger, IMemoryCache memoryCache)
         {
             _httpClient = httpClient;
             _logger = logger;
+            _memoryCache = memoryCache;
+        }
 
+        public void SetUpPort()
+        {
             _httpClient.BaseAddress = Port.CombatParserApi;
         }
 
-        public void SetCombats(List<CombatModel> combats)
+        public async Task<bool> Save(List<CombatModel> combats, LogType logType)
         {
             _combats = combats;
-        }
 
-        public async Task<bool> Save(List<CombatModel> combats)
-        {
             try
             {
-                SetCombats(combats);
                 var createdCombatLogId = await SaveCombatLogAsync().ConfigureAwait(false);
+                if (logType != LogType.NotIncludePlayer)
+                {
+                    await SaveCombatLogByUser(createdCombatLogId, logType);
+                }
 
                 foreach (var item in combats)
                 {
@@ -52,42 +62,6 @@ namespace CombatAnalysis.Core.Services
 
                 return false;
             }
-        }
-
-        public async Task<int> SaveCombatLogAsync()
-        {
-            var dungeonNames = _combats
-                 .GroupBy(group => group.DungeonName)
-                 .Select(select => select.Key)
-                 .ToList();
-
-            var combatLogResponse = await _httpClient.PostAsync("CombatLog", JsonContent.Create(dungeonNames));
-            var createdCombatLogId = await combatLogResponse.Content.ReadFromJsonAsync<int>();
-
-            return createdCombatLogId;
-        }
-
-        public async Task SaveCombatDataAsync(CombatModel combat, int createdCombatLogId)
-        {
-            combat.CombatLogId = createdCombatLogId;
-            var combatDataResponse = await _httpClient.PostAsync("Combat", JsonContent.Create(combat));
-            var createdCombatId = await combatDataResponse.Content.ReadFromJsonAsync<int>();
-
-            foreach (var item in combat.Players)
-            {
-                item.CombatId = createdCombatId;
-            }
-
-            await _httpClient.PostAsync("Combat/SaveCombatPlayers", JsonContent.Create(combat.Players));
-        }   
-
-        public async Task SetReadyForCombatLog(int createdCombatLogId)
-        {
-            var combatLogResponse = await _httpClient.GetAsync($"CombatLog/{createdCombatLogId}");
-            var combatLog = await combatLogResponse.Content.ReadFromJsonAsync<CombatLogModel>();
-            combatLog.IsReady = true;
-
-            await _httpClient.PutAsync("CombatLog", JsonContent.Create(combatLog));
         }
 
         public async Task DeleteCombatLogAsync(int id)
@@ -108,6 +82,29 @@ namespace CombatAnalysis.Core.Services
             var combatLogs = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<CombatLogModel>>();
 
             return combatLogs;
+        }
+
+        public async Task<IEnumerable<CombatLogModel>> LoadCombatLogsByUserAsync()
+        {
+            var user = _memoryCache.Get<UserModel>("user");
+            if (user != null)
+            {
+                var combatLogs = new List<CombatLogModel>();
+                var responseMessage = await _httpClient.GetAsync($"CombatLogByUser/byUserId/{user.Id}");
+                var combatLogsByUser = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<CombatLogByUserModel>>();
+
+                foreach (var item in combatLogsByUser)
+                {
+                    responseMessage = await _httpClient.GetAsync($"CombatLog/{item.CombatLogId}");
+                    var combatLog = await responseMessage.Content.ReadFromJsonAsync<CombatLogModel>();
+
+                    combatLogs.Add(combatLog);
+                }
+
+                return combatLogs;
+            }
+
+            return new List<CombatLogModel>();
         }
 
         public async Task<IEnumerable<CombatModel>> LoadCombatsAsync(int combatLogId)
@@ -188,6 +185,58 @@ namespace CombatAnalysis.Core.Services
             var ResourceRecoveryGenerals = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<ResourceRecoveryGeneralModel>>();
 
             return ResourceRecoveryGenerals;
+        }
+
+        private async Task<int> SaveCombatLogAsync()
+        {
+            var dungeonNames = _combats
+                 .GroupBy(group => group.DungeonName)
+                 .Select(select => select.Key)
+                 .ToList();
+
+            var combatLogResponse = await _httpClient.PostAsync("CombatLog", JsonContent.Create(dungeonNames));
+            var createdCombatLogId = await combatLogResponse.Content.ReadFromJsonAsync<int>();
+
+            return createdCombatLogId;
+        }
+
+        private async Task SaveCombatLogByUser(int combatLogId, LogType logType)
+        {
+            var user = _memoryCache.Get<UserModel>("user");
+            if (user != null)
+            {
+                var combatLogByUser = new CombatLogByUser
+                {
+                    UserId = user.Id,
+                    CombatLogId = combatLogId,
+                    PersonalLogType = (int)logType
+                };
+
+                await _httpClient.PostAsync("CombatLogByUser", JsonContent.Create(combatLogByUser));
+            }
+        }
+
+        private async Task SaveCombatDataAsync(CombatModel combat, int createdCombatLogId)
+        {
+            combat.CombatLogId = createdCombatLogId;
+            var combatDataResponse = await _httpClient.PostAsync("Combat", JsonContent.Create(combat));
+            var createdCombatId = await combatDataResponse.Content.ReadFromJsonAsync<int>();
+
+            foreach (var item in combat.Players)
+            {
+                item.CombatId = createdCombatId;
+            }
+
+            await _httpClient.PostAsync("Combat/SaveCombatPlayers", JsonContent.Create(combat.Players));
+        }
+
+        private async Task SetReadyForCombatLog(int createdCombatLogId)
+        {
+            var combatLogResponse = await _httpClient.GetAsync($"CombatLog/{createdCombatLogId}");
+            var combatLog = await combatLogResponse.Content.ReadFromJsonAsync<CombatLogModel>();
+            combatLog.IsReady = true;
+
+            await _httpClient.PutAsync("CombatLog", JsonContent.Create(combatLog));
         }
 
         private async Task DeleteCombatPlayersData(int combatId)

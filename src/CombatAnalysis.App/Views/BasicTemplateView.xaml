@@ -41,7 +41,7 @@
                         <RotateTransform Angle="90"/>
                     </TextBlock.LayoutTransform>
                 </TextBlock>
-                <StackPanel Margin="0 170 0 0">
+                <StackPanel Margin="0 170 0 0" IsEnabled="False">
                     <uc:AccountMenuButton Title="A" GradientColor1="#d1abff" GradientColor2="#b07bff" />
                     <uc:AccountMenuButton Title="B" GradientColor1="#fba0cb" GradientColor2="#fe7094" />
                     <uc:AccountMenuButton Title="C" GradientColor1="#e5db6f" GradientColor2="#e2c649" />
@@ -70,33 +70,31 @@
                 </StackPanel>
 
                 <StackPanel Margin="25 0 0 0" VerticalAlignment="Bottom">
-                    <uc:MenuButton Title="Настройки" Icon="CogOutline"/>
+                    <uc:MenuButton Title="Настройки" Icon="CogOutline" IsEnabled="False"/>
                     <uc:MenuButton OnClick="{Binding CloseCommand}" Title="Выход" Icon="Logout"/>
                 </StackPanel>
             </Grid>
         </Border>
 
-        <Grid Grid.Column="2" Grid.ColumnSpan="2" Margin="40 30">
+        <Grid Grid.Column="2" Grid.ColumnSpan="2" Margin="25 5">
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
                 <StackPanel Margin="20 0">
                     <StackPanel Orientation="Horizontal" Visibility="{Binding IsAuth, Converter={StaticResource BoolToVisibility}, ConverterParameter=true:true}">
-                        <Button Style="{StaticResource userButton}" Margin="5">
-                            <Icon:PackIconMaterial Height="25" Width="25" Kind="AccountArrowLeftOutline" Foreground="#88878e">
-                                <Icon:PackIconMaterial.ToolTip>
-                                    <ToolTip>
-                                        Регистрация
-                                    </ToolTip>
-                                </Icon:PackIconMaterial.ToolTip>
-                            </Icon:PackIconMaterial>
+                        <Button Style="{StaticResource userButton}" Margin="5" mvx:Bi.nd="Command RegistrationCommand">
+                            <Button.ToolTip>
+                                <ToolTip>
+                                    Регистрация
+                                </ToolTip>
+                            </Button.ToolTip>
+                            <Icon:PackIconMaterial Height="25" Width="25" Kind="AccountArrowLeftOutline" Foreground="#88878e"/>
                         </Button>
                         <Button Style="{StaticResource userButton}" Margin="5" mvx:Bi.nd="Command LoginCommand">
-                            <Icon:PackIconMaterial Height="25" Width="25" Kind="AccountReactivateOutline" Foreground="#88878e">
-                                <Icon:PackIconMaterial.ToolTip>
-                                    <ToolTip>
-                                        Авторизация
-                                    </ToolTip>
-                                </Icon:PackIconMaterial.ToolTip>
-                            </Icon:PackIconMaterial>
+                            <Button.ToolTip>
+                                <ToolTip>
+                                    Авторизация
+                                </ToolTip>
+                            </Button.ToolTip>
+                            <Icon:PackIconMaterial Height="25" Width="25" Kind="AccountReactivateOutline" Foreground="#88878e"/>
                         </Button>
                     </StackPanel>
                     <StackPanel Orientation="Horizontal" Visibility="{Binding IsAuth, Converter={StaticResource BoolToVisibility}, ConverterParameter=true:false}">
@@ -112,22 +110,20 @@
                             Visibility="{Binding IsAuth, Converter={StaticResource BoolToVisibility}, ConverterParameter=true:false}"/>
                 </StackPanel>
                 <Button Style="{StaticResource textBoxButton}">
-                    <Icon:PackIconMaterial Kind="BellOutline" Foreground="#88878e">
-                        <Icon:PackIconMaterial.ToolTip>
-                            <ToolTip>
-                                Уведомления
-                            </ToolTip>
-                        </Icon:PackIconMaterial.ToolTip>
-                    </Icon:PackIconMaterial>
+                    <Button.ToolTip>
+                        <ToolTip>
+                            Уведомления
+                        </ToolTip>
+                    </Button.ToolTip>
+                    <Icon:PackIconMaterial Kind="BellOutline" Foreground="#88878e"/>
                 </Button>
                 <Button Style="{StaticResource textBoxButton}">
-                    <Icon:PackIconMaterial Kind="DotsVertical" Foreground="#88878e">
-                        <Icon:PackIconMaterial.ToolTip>
-                            <ToolTip>
-                                Меню
-                            </ToolTip>
-                        </Icon:PackIconMaterial.ToolTip>
-                    </Icon:PackIconMaterial>
+                    <Button.ToolTip>
+                        <ToolTip>
+                            Меню
+                        </ToolTip>
+                    </Button.ToolTip>
+                    <Icon:PackIconMaterial Kind="DotsVertical" Foreground="#88878e"/>
                 </Button>
                 <Button Style="{StaticResource textBoxButton}" mvx:Bi.nd="Command CloseCommand">
                     <Icon:PackIconMaterial Kind="Close" Foreground="Red" Width="25" Height="25"/>
