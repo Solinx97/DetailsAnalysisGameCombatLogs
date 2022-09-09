@@ -41,7 +41,7 @@
                         <RotateTransform Angle="90"/>
                     </TextBlock.LayoutTransform>
                 </TextBlock>
-                <StackPanel Margin="0 170 0 0">
+                <StackPanel Margin="0 170 0 0" IsEnabled="False">
                     <uc:AccountMenuButton Title="A" GradientColor1="#d1abff" GradientColor2="#b07bff" />
                     <uc:AccountMenuButton Title="B" GradientColor1="#fba0cb" GradientColor2="#fe7094" />
                     <uc:AccountMenuButton Title="C" GradientColor1="#e5db6f" GradientColor2="#e2c649" />
@@ -70,7 +70,7 @@
                 </StackPanel>
 
                 <StackPanel Margin="25 0 0 0" VerticalAlignment="Bottom">
-                    <uc:MenuButton Title="Настройки" Icon="CogOutline"/>
+                    <uc:MenuButton Title="Настройки" Icon="CogOutline" IsEnabled="False"/>
                     <uc:MenuButton OnClick="{Binding CloseCommand}" Title="Выход" Icon="Logout"/>
                 </StackPanel>
             </Grid>
