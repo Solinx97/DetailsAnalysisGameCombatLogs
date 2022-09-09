@@ -15,9 +15,5 @@ namespace CombatAnalysis.DAL.Interfaces
         Task<TModel> GetByIdAsync(int id);
 
         Task<IEnumerable<TModel>> GetAllAsync();
-
-        Task<IEnumerable<TModel>> ExecuteStoredProcedureUseModelAsync(string procedureName, string[] paramNames, object[] paramValuee);
-
-        Task<int> ExecuteStoredProcedureAsync(string procedureName, string[] paramNames, object[] paramValuee);
     }
 }

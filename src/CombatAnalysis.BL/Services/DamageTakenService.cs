@@ -12,18 +12,18 @@ using System.Threading.Tasks;
 
 namespace CombatAnalysis.BL.Services
 {
-    internal class DamageTakenService : IService<DamageTakenDto>
+    internal class DamageTakenService : ISPService<DamageTakenDto, int>
     {
-        private readonly IGenericRepository<DamageTaken> _repository;
+        private readonly ISPGenericRepository<DamageTaken> _repository;
         private readonly IMapper _mapper;
 
-        public DamageTakenService(IGenericRepository<DamageTaken> userRepository, IMapper mapper)
+        public DamageTakenService(ISPGenericRepository<DamageTaken> userRepository, IMapper mapper)
         {
             _repository = userRepository;
             _mapper = mapper;
         }
 
-        Task<int> IService<DamageTakenDto>.CreateAsync(DamageTakenDto item)
+        Task<int> IService<DamageTakenDto, int>.CreateAsync(DamageTakenDto item)
         {
             if (item == null)
             {
@@ -33,7 +33,7 @@ namespace CombatAnalysis.BL.Services
             return CreateInternalAsync(item);
         }
 
-        async Task<int> IService<DamageTakenDto>.CreateByProcedureAsync(DamageTakenDto item)
+        async Task<int> ISPService<DamageTakenDto, int>.CreateByProcedureAsync(DamageTakenDto item)
         {
             var paramNames = new string[] { nameof(item.Value), nameof(item.Time), nameof(item.From),
                 nameof(item.To), nameof(item.SpellOrItem), nameof(item.IsDodge), nameof(item.IsParry), nameof(item.IsMiss),
@@ -46,7 +46,7 @@ namespace CombatAnalysis.BL.Services
             return response;
         }
 
-        Task<int> IService<DamageTakenDto>.DeleteAsync(DamageTakenDto item)
+        Task<int> IService<DamageTakenDto, int>.DeleteAsync(DamageTakenDto item)
         {
             if (item == null)
             {
@@ -56,7 +56,7 @@ namespace CombatAnalysis.BL.Services
             return DeleteInternalAsync(item);
         }
 
-        async Task<int> IService<DamageTakenDto>.DeleteByProcedureAsync(int combatPlayerId)
+        async Task<int> ISPService<DamageTakenDto, int>.DeleteByProcedureAsync(int combatPlayerId)
         {
             var paramNames = new string[] { nameof(combatPlayerId) };
             var paramValues = new object[] { combatPlayerId };
@@ -65,7 +65,7 @@ namespace CombatAnalysis.BL.Services
             return response;
         }
 
-        async Task<IEnumerable<DamageTakenDto>> IService<DamageTakenDto>.GetAllAsync()
+        async Task<IEnumerable<DamageTakenDto>> IService<DamageTakenDto, int>.GetAllAsync()
         {
             var allData = await _repository.GetAllAsync();
             var result = _mapper.Map<List<DamageTakenDto>>(allData);
@@ -73,7 +73,7 @@ namespace CombatAnalysis.BL.Services
             return result;
         }
 
-        async Task<IEnumerable<DamageTakenDto>> IService<DamageTakenDto>.GetByProcedureAsync(int combatPlayerId)
+        async Task<IEnumerable<DamageTakenDto>> ISPService<DamageTakenDto, int>.GetByProcedureAsync(int combatPlayerId)
         {
             var paramNames = new string[] { nameof(combatPlayerId) };
             var paramValues = new object[] { combatPlayerId };
@@ -84,7 +84,7 @@ namespace CombatAnalysis.BL.Services
             return result;
         }
 
-        async Task<DamageTakenDto> IService<DamageTakenDto>.GetByIdAsync(int id)
+        async Task<DamageTakenDto> IService<DamageTakenDto, int>.GetByIdAsync(int id)
         {
             var executeLoad = await _repository.GetByIdAsync(id);
             var result = _mapper.Map<DamageTakenDto>(executeLoad);
@@ -92,7 +92,7 @@ namespace CombatAnalysis.BL.Services
             return result;
         }
 
-        Task<int> IService<DamageTakenDto>.UpdateAsync(DamageTakenDto item)
+        Task<int> IService<DamageTakenDto, int>.UpdateAsync(DamageTakenDto item)
         {
             if (item == null)
             {

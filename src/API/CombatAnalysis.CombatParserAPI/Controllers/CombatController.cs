@@ -15,11 +15,11 @@ namespace CombatAnalysis.CombatParserAPI.Controllers
     [ApiController]
     public class CombatController : ControllerBase
     {
-        private readonly IService<CombatDto> _service;
+        private readonly ISPService<CombatDto, int> _service;
         private readonly IMapper _mapper;
         private readonly SaveCombatDataHelper _saveCombatDataHelper;
 
-        public CombatController(IService<CombatDto> service, IMapper mapper, IHttpClientHelper httpClient, ILogger logger)
+        public CombatController(ISPService<CombatDto, int> service, IMapper mapper, IHttpClientHelper httpClient, ILogger logger)
         {
             _service = service;
             _mapper = mapper;

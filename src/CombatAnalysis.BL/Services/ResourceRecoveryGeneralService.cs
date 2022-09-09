@@ -12,18 +12,18 @@ using System.Threading.Tasks;
 
 namespace CombatAnalysis.BL.Services
 {
-    internal class ResourceRecoveryGeneralService : IService<ResourceRecoveryGeneralDto>
+    internal class ResourceRecoveryGeneralService : ISPService<ResourceRecoveryGeneralDto, int>
     {
-        private readonly IGenericRepository<ResourceRecoveryGeneral> _repository;
+        private readonly ISPGenericRepository<ResourceRecoveryGeneral> _repository;
         private readonly IMapper _mapper;
 
-        public ResourceRecoveryGeneralService(IGenericRepository<ResourceRecoveryGeneral> userRepository, IMapper mapper)
+        public ResourceRecoveryGeneralService(ISPGenericRepository<ResourceRecoveryGeneral> userRepository, IMapper mapper)
         {
             _repository = userRepository;
             _mapper = mapper;
         }
 
-        Task<int> IService<ResourceRecoveryGeneralDto>.CreateAsync(ResourceRecoveryGeneralDto item)
+        Task<int> IService<ResourceRecoveryGeneralDto, int>.CreateAsync(ResourceRecoveryGeneralDto item)
         {
             if (item == null)
             {
@@ -33,7 +33,7 @@ namespace CombatAnalysis.BL.Services
             return CreateInternalAsync(item);
         }
 
-        async Task<int> IService<ResourceRecoveryGeneralDto>.CreateByProcedureAsync(ResourceRecoveryGeneralDto item)
+        async Task<int> ISPService<ResourceRecoveryGeneralDto, int>.CreateByProcedureAsync(ResourceRecoveryGeneralDto item)
         {
             var paramNames = new string[] { nameof(item.Value), nameof(item.ResourcePerSecond), nameof(item.SpellOrItem), nameof(item.CastNumber),
                 nameof(item.MinValue), nameof(item.MaxValue), nameof(item.AverageValue), nameof(item.CombatPlayerDataId) };
@@ -44,7 +44,7 @@ namespace CombatAnalysis.BL.Services
             return response;
         }
 
-        Task<int> IService<ResourceRecoveryGeneralDto>.DeleteAsync(ResourceRecoveryGeneralDto item)
+        Task<int> IService<ResourceRecoveryGeneralDto, int>.DeleteAsync(ResourceRecoveryGeneralDto item)
         {
             if (item == null)
             {
@@ -54,7 +54,7 @@ namespace CombatAnalysis.BL.Services
             return DeleteInternalAsync(item);
         }
 
-        async Task<int> IService<ResourceRecoveryGeneralDto>.DeleteByProcedureAsync(int combatPlayerId)
+        async Task<int> ISPService<ResourceRecoveryGeneralDto, int>.DeleteByProcedureAsync(int combatPlayerId)
         {
             var paramNames = new string[] { nameof(combatPlayerId) };
             var paramValues = new object[] { combatPlayerId };
@@ -63,7 +63,7 @@ namespace CombatAnalysis.BL.Services
             return response;
         }
 
-        async Task<IEnumerable<ResourceRecoveryGeneralDto>> IService<ResourceRecoveryGeneralDto>.GetAllAsync()
+        async Task<IEnumerable<ResourceRecoveryGeneralDto>> IService<ResourceRecoveryGeneralDto, int>.GetAllAsync()
         {
             var allData = await _repository.GetAllAsync();
             var result = _mapper.Map<List<ResourceRecoveryGeneralDto>>(allData);
@@ -71,7 +71,7 @@ namespace CombatAnalysis.BL.Services
             return result;
         }
 
-        async Task<IEnumerable<ResourceRecoveryGeneralDto>> IService<ResourceRecoveryGeneralDto>.GetByProcedureAsync(int combatPlayerId)
+        async Task<IEnumerable<ResourceRecoveryGeneralDto>> ISPService<ResourceRecoveryGeneralDto, int>.GetByProcedureAsync(int combatPlayerId)
         {
             var paramNames = new string[] { nameof(combatPlayerId) };
             var paramValues = new object[] { combatPlayerId };
@@ -82,7 +82,7 @@ namespace CombatAnalysis.BL.Services
             return result;
         }
 
-        async Task<ResourceRecoveryGeneralDto> IService<ResourceRecoveryGeneralDto>.GetByIdAsync(int id)
+        async Task<ResourceRecoveryGeneralDto> IService<ResourceRecoveryGeneralDto, int>.GetByIdAsync(int id)
         {
             var executeLoad = await _repository.GetByIdAsync(id);
             var result = _mapper.Map<ResourceRecoveryGeneralDto>(executeLoad);
@@ -90,7 +90,7 @@ namespace CombatAnalysis.BL.Services
             return result;
         }
 
-        Task<int> IService<ResourceRecoveryGeneralDto>.UpdateAsync(ResourceRecoveryGeneralDto item)
+        Task<int> IService<ResourceRecoveryGeneralDto, int>.UpdateAsync(ResourceRecoveryGeneralDto item)
         {
             if (item == null)
             {

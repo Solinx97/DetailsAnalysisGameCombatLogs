@@ -12,10 +12,10 @@ namespace CombatAnalysis.CombatParserAPI.Controllers
     [ApiController]
     public class ResourceRecoveryController : ControllerBase
     {
-        private readonly IService<ResourceRecoveryDto> _service;
+        private readonly ISPService<ResourceRecoveryDto, int> _service;
         private readonly IMapper _mapper;
 
-        public ResourceRecoveryController(IService<ResourceRecoveryDto> service, IMapper mapper)
+        public ResourceRecoveryController(ISPService<ResourceRecoveryDto, int> service, IMapper mapper)
         {
             _service = service;
             _mapper = mapper;

@@ -12,10 +12,10 @@ namespace CombatAnalysis.CombatParserAPI.Controllers
     [ApiController]
     public class DamageDoneController : ControllerBase
     {
-        private readonly IService<DamageDoneDto> _service;
+        private readonly ISPService<DamageDoneDto, int> _service;
         private readonly IMapper _mapper;
 
-        public DamageDoneController(IService<DamageDoneDto> service, IMapper mapper)
+        public DamageDoneController(ISPService<DamageDoneDto, int> service, IMapper mapper)
         {
             _service = service;
             _mapper = mapper;

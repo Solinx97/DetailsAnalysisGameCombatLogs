@@ -3,11 +3,10 @@ using System.Threading.Tasks;
 
 namespace CombatAnalysis.BL.Interfaces
 {
-    public interface IService<TModel, TIdType>
+    public interface IUserService<TModel>
         where TModel : class
-        where TIdType : notnull
     {
-        Task<int> CreateAsync(TModel item);
+        Task<string> CreateAsync(TModel item);
 
         Task<int> UpdateAsync(TModel item);
 
@@ -15,6 +14,10 @@ namespace CombatAnalysis.BL.Interfaces
 
         Task<IEnumerable<TModel>> GetAllAsync();
 
-        Task<TModel> GetByIdAsync(TIdType id);
+        Task<TModel> GetByIdAsync(string id);
+
+        Task<TModel> GetAsync(string emil, string password);
+
+        Task<TModel> GetAsync(string emil);
     }
 }
