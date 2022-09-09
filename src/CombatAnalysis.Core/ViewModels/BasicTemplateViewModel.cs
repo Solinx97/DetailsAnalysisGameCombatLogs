@@ -1,7 +1,9 @@
 ﻿using CombatAnalysis.Core.Core;
+using CombatAnalysis.Core.Enums;
 using CombatAnalysis.Core.Interfaces;
 using CombatAnalysis.Core.Interfaces.Observers;
 using CombatAnalysis.Core.Models;
+using CombatAnalysis.Core.Models.User;
 using Microsoft.Extensions.Caching.Memory;
 using MvvmCross.Commands;
 using MvvmCross.Navigation;
@@ -25,6 +27,7 @@ namespace CombatAnalysis.Core.ViewModels
         private List<CombatModel> _combats;
         private bool _isAuth;
         private string _email;
+        private LogType _logType;
 
         private static ResponseStatus _responseStatus;
         private static int _allowStep;
@@ -41,6 +44,7 @@ namespace CombatAnalysis.Core.ViewModels
 
             CloseCommand = new MvxCommand(CloseWindow);
             LoginCommand = new MvxCommand(Login);
+            RegistrationCommand = new MvxCommand(Registration);
             LogoutCommand = new MvxCommand(Logout);
             UploadCombatsCommand = new MvxCommand(UploadCombatLogs);
             GeneralAnalysisCommand = new MvxCommand(GeneralAnalysis);
@@ -58,9 +62,9 @@ namespace CombatAnalysis.Core.ViewModels
 
         public IMvxCommand LoginCommand { get; set; }
 
-        public IMvxCommand LogoutCommand { get; set; }
-
         public IMvxCommand RegistrationCommand { get; set; }
+
+        public IMvxCommand LogoutCommand { get; set; }
 
         public IMvxCommand UploadCombatsCommand { get; set; }
 
@@ -79,6 +83,8 @@ namespace CombatAnalysis.Core.ViewModels
         public CombatModel TargetCombat { get; set; }
 
         public IViewModelConnect Handler { get; set; }
+
+        public IMvxViewModel Parent { get; set; }
 
         public int Step
         {
@@ -136,6 +142,15 @@ namespace CombatAnalysis.Core.ViewModels
             }
         }
 
+        public LogType LogType
+        {
+            get { return _logType; }
+            set
+            {
+                SetProperty(ref _logType, value);
+            }
+        }
+
         public void CloseWindow()
         {
             WindowCloser.MainWindow.Close();
@@ -144,6 +159,11 @@ namespace CombatAnalysis.Core.ViewModels
         public void Login()
         {
             Task.Run(() => _mvvmNavigation.Navigate<LoginViewModel>());
+        }
+
+        public void Registration()
+        {
+            Task.Run(() => _mvvmNavigation.Navigate<RegistrationViewModel>());
         }
 
         public void Logout()
@@ -161,12 +181,14 @@ namespace CombatAnalysis.Core.ViewModels
 
         public void UploadCombatLogs()
         {
-            Task.Run(() => _mvvmNavigation.Navigate<MainInformationViewModel>());
+            Step = 0;
+            Task.Run(() => _mvvmNavigation.Close(Parent));
         }
 
         public void GeneralAnalysis()
         {
-            Task.Run(() => _mvvmNavigation.Navigate<GeneralAnalysisViewModel, List<CombatModel>>(Combats));
+            var dataForGeneralAnalysis = Tuple.Create(Combats, LogType);
+            Task.Run(() => _mvvmNavigation.Navigate<GeneralAnalysisViewModel, Tuple<List<CombatModel>, LogType>>(dataForGeneralAnalysis));
         }
 
         public void DetailsSpecificalCombat()
@@ -178,6 +200,7 @@ namespace CombatAnalysis.Core.ViewModels
         {
             _combatInformtaion = (Tuple<int, CombatModel>)Handler.Data;
 
+            Task.Run(() => _mvvmNavigation.Close(Parent));
             Task.Run(() => _mvvmNavigation.Navigate<DamageDoneDetailsViewModel, Tuple<int, CombatModel>>(_combatInformtaion));
         }
 
@@ -185,6 +208,7 @@ namespace CombatAnalysis.Core.ViewModels
         {
             _combatInformtaion = (Tuple<int, CombatModel>)Handler.Data;
 
+            Task.Run(() => _mvvmNavigation.Close(Parent));
             Task.Run(() => _mvvmNavigation.Navigate<HealDoneDetailsViewModel, Tuple<int, CombatModel>>(_combatInformtaion));
         }
 
@@ -192,6 +216,7 @@ namespace CombatAnalysis.Core.ViewModels
         {
             _combatInformtaion = (Tuple<int, CombatModel>)Handler.Data;
 
+            Task.Run(() => _mvvmNavigation.Close(Parent));
             Task.Run(() => _mvvmNavigation.Navigate<DamageTakenDetailsViewModel, Tuple<int, CombatModel>>(_combatInformtaion));
         }
 
@@ -199,6 +224,7 @@ namespace CombatAnalysis.Core.ViewModels
         {
             _combatInformtaion = (Tuple<int, CombatModel>)Handler.Data;
 
+            Task.Run(() => _mvvmNavigation.Close(Parent));
             Task.Run(() => _mvvmNavigation.Navigate<ResourceRecoveryDetailsViewModel, Tuple<int, CombatModel>>(_combatInformtaion));
         }
 
@@ -235,6 +261,16 @@ namespace CombatAnalysis.Core.ViewModels
             foreach (var item in _authObservers)
             {
                 item.AuthUpdate(IsAuth);
+            }
+        }
+
+        public void CheckAuth()
+        {
+            var user = _memoryCache.Get<UserModel>("user");
+            if (user != null)
+            {
+                IsAuth = true;
+                Email = user.Email;
             }
         }
     }

@@ -21,6 +21,7 @@ namespace CombatAnalysis.Core.ViewModels
         public DetailsSpecificalCombatViewModel()
         {
             BasicTemplate = Templates.Basic;
+            BasicTemplate.Parent = this;
             BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, "Step", 2);
         }
 

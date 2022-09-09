@@ -14,6 +14,7 @@ using Microsoft.Extensions.Logging;
 using MvvmCross.Commands;
 using MvvmCross.Navigation;
 using MvvmCross.ViewModels;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -36,14 +37,18 @@ namespace CombatAnalysis.Core.ViewModels
         private string _foundCombat;
         private string _combatLogPath;
         private int _selectedCombatLogId;
+        private int _selectedCombatLogTypeTabItem;
         private int _combatLogsNumber;
+        private int _combatLogsByUserNumber;
         private IImprovedMvxViewModel _basicTemplate;
         private IViewModelConnect _handler;
         private ObservableCollection<CombatLogModel> _combatLogs;
+        private ObservableCollection<CombatLogModel> _combatLogsByUser;
         private double _screenWidth;
         private double _screenHeight;
         private bool _isAuth;
         private LogType _logType;
+        private ObservableCollection<CombatLogModel>[] _combatLogLists = new ObservableCollection<CombatLogModel>[2];
 
         public MainInformationViewModel(IMapper mapper, IMvxNavigationService mvvmNavigation, IHttpClientHelper httpClient, IParser parser, ILogger logger, IMemoryCache memoryCache)
         {
@@ -59,7 +64,7 @@ namespace CombatAnalysis.Core.ViewModels
 
             GetLogTypeCommand = new MvxCommand<int>(GetLogType);
 
-            _combatParserAPIService = new CombatParserAPIService(httpClient, logger);
+            _combatParserAPIService = new CombatParserAPIService(httpClient, logger, memoryCache);
             _handler = new ViewModelMConnect();
 
             BasicTemplate = new BasicTemplateViewModel(_handler, mvvmNavigation, memoryCache, httpClient);
@@ -67,9 +72,9 @@ namespace CombatAnalysis.Core.ViewModels
 
             var authObservable = (IAuthObservable)BasicTemplate;
             authObservable.AddObserver(this);
+
+            ((BasicTemplateViewModel)BasicTemplate).CheckAuth();
         }
-
-
 
         public IMvxCommand GetCombatLogCommand { get; set; }
 
@@ -98,6 +103,15 @@ namespace CombatAnalysis.Core.ViewModels
             set
             {
                 SetProperty(ref _combatLogs, value);
+            }
+        }
+
+        public ObservableCollection<CombatLogModel> CombatLogsByUser
+        {
+            get { return _combatLogsByUser; }
+            set
+            {
+                SetProperty(ref _combatLogsByUser, value);
             }
         }
 
@@ -164,12 +178,30 @@ namespace CombatAnalysis.Core.ViewModels
             }
         }
 
+        public int SelectedCombatLogTypeTabItem
+        {
+            get { return _selectedCombatLogTypeTabItem; }
+            set
+            {
+                SetProperty(ref _selectedCombatLogTypeTabItem, value);
+            }
+        }
+
         public int CombatLogsNumber
         {
             get { return _combatLogsNumber; }
             set
             {
                 SetProperty(ref _combatLogsNumber, value);
+            }
+        }
+
+        public int CombatLogsByUserNumber
+        {
+            get { return _combatLogsByUserNumber; }
+            set
+            {
+                SetProperty(ref _combatLogsByUserNumber, value);
             }
         }
 
@@ -206,6 +238,7 @@ namespace CombatAnalysis.Core.ViewModels
             set
             {
                 SetProperty(ref _logType, value);
+                BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, "LogType", value);
             }
         }
 
@@ -219,6 +252,7 @@ namespace CombatAnalysis.Core.ViewModels
         public void LoadCombatLogs()
         {
             Task.Run(() => LoadCombatLogsAsync());
+            Task.Run(() => LoadCombatLogsByUserAsync());
         }
 
         public void LoadCombats()
@@ -236,7 +270,7 @@ namespace CombatAnalysis.Core.ViewModels
 
         public void OpenPlayerAnalysis()
         {
-            Task.Run(() => GetCombatDataDetails(_combatLogPath));
+            Task.Run(() => CombatLogFileValidate(_combatLogPath));
         }
 
         public void Update(string combatInformation)
@@ -260,39 +294,57 @@ namespace CombatAnalysis.Core.ViewModels
             ScreenHeight = System.Windows.SystemParameters.PrimaryScreenHeight * 0.75;
         }
 
-        private async Task GetCombatDataDetails(string combatLog)
+        public void AuthUpdate(bool isAuth)
+        {
+            IsAuth = isAuth;
+            if (!isAuth)
+            {
+                LogType = LogType.NotIncludePlayer;
+                SelectedCombatLogTypeTabItem = 0;
+            }
+        }
+
+        private async Task CombatLogFileValidate(string combatLog)
         {
             _parser.AddObserver(this);
             FileIsNotCorrect = !await _parser.FileCheck(combatLog);
-            
+
             if (!FileIsNotCorrect)
             {
-                IsParsing = true;
+                await GetCombatDataDetails(combatLog);
+            }
+        }
 
-                await _parser.Parse(combatLog);
+        private async Task GetCombatDataDetails(string combatLog)
+        {
+            IsParsing = true;
 
-                var map = _parser.Combats;
-                var combats = _mapper.Map<List<CombatModel>>(map);
+            await _parser.Parse(combatLog);
 
-                BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(Templates.Basic, "AllowStep", 1);
+            var map = _parser.Combats;
+            var combats = _mapper.Map<List<CombatModel>>(map);
 
-                await _mvvmNavigation.Navigate<GeneralAnalysisViewModel, List<CombatModel>>(combats);
+            BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(Templates.Basic, "AllowStep", 1);
 
-                BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, "Combats", combats);
+            var dataForGeneralAnalysis = Tuple.Create(combats, LogType);
+            await _mvvmNavigation.Navigate<GeneralAnalysisViewModel, Tuple<List<CombatModel>, LogType>>(dataForGeneralAnalysis);
 
-                if (IsNeedSave)
-                {
-                    BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, "ResponseStatus", ResponseStatus.Pending);
+            BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, "Combats", combats);
 
-                    var responseStatus = await _combatParserAPIService.Save(combats).ConfigureAwait(false) ? ResponseStatus.Successful : ResponseStatus.Failed;
+            if (IsNeedSave)
+            {
+                BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, "ResponseStatus", ResponseStatus.Pending);
 
-                    BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, "ResponseStatus", responseStatus);
-                }
+                var responseStatus = await _combatParserAPIService.Save(combats, LogType).ConfigureAwait(false) ? ResponseStatus.Successful : ResponseStatus.Failed;
+
+                BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, "ResponseStatus", responseStatus);
             }
         }
 
         private async Task LoadCombatLogsAsync()
         {
+            _combatParserAPIService.SetUpPort();
+
             var combatLogsData = await _combatParserAPIService.LoadCombatLogsAsync();
             var readyCombatLogData = new List<CombatLogModel>();
 
@@ -306,11 +358,34 @@ namespace CombatAnalysis.Core.ViewModels
 
             CombatLogs = new ObservableCollection<CombatLogModel>(readyCombatLogData);
             CombatLogsNumber = CombatLogs.Count;
+
+            _combatLogLists[0] = CombatLogs;
+        }
+
+        private async Task LoadCombatLogsByUserAsync()
+        {
+            _combatParserAPIService.SetUpPort();
+
+            var combatLogsData = await _combatParserAPIService.LoadCombatLogsByUserAsync();
+            var readyCombatLogData = new List<CombatLogModel>();
+
+            foreach (var item in combatLogsData)
+            {
+                if (item.IsReady)
+                {
+                    readyCombatLogData.Add(item);
+                }
+            }
+
+            CombatLogsByUser = new ObservableCollection<CombatLogModel>(readyCombatLogData);
+            CombatLogsByUserNumber = CombatLogsByUser.Count;
+
+            _combatLogLists[1] = CombatLogsByUser;
         }
 
         private async Task LoadCombatsAsync()
         {
-            var id = CombatLogs[SelectedCombatLogId].Id;
+            var id = _combatLogLists[SelectedCombatLogTypeTabItem][SelectedCombatLogId].Id;
             var loadedCombats = await _combatParserAPIService.LoadCombatsAsync(id);
 
             foreach (var item in loadedCombats)
@@ -320,8 +395,9 @@ namespace CombatAnalysis.Core.ViewModels
             }
 
             BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, "AllowStep", 1);
-            
-            await _mvvmNavigation.Navigate<GeneralAnalysisViewModel, List<CombatModel>>(loadedCombats.ToList());
+
+            var dataForGeneralAnalysis = Tuple.Create(loadedCombats.ToList(), LogType);
+            await _mvvmNavigation.Navigate<GeneralAnalysisViewModel, Tuple<List<CombatModel>, LogType>>(dataForGeneralAnalysis);
 
             BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, "Combats", loadedCombats.ToList());
         }
@@ -330,17 +406,9 @@ namespace CombatAnalysis.Core.ViewModels
         {
             await _combatParserAPIService.DeleteCombatLogAsync(CombatLogs[SelectedCombatLogId].Id);
             await LoadCombatLogsAsync();
+            await LoadCombatLogsByUserAsync();
 
             IsParsing = false;
-        }
-
-        public void AuthUpdate(bool isAuth)
-        {
-            IsAuth = isAuth;
-            if (!isAuth)
-            {
-                LogType = LogType.NotIncludePlayer;
-            }
         }
     }
 }

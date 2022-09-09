@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 
 namespace CombatAnalysis.Core.ViewModels
 {
-    public class LoginViewModel : MvxViewModel
+    public class RegistrationViewModel : MvxViewModel
     {
         private readonly IMemoryCache _memoryCache;
         private readonly IHttpClientHelper _httpClient;
@@ -22,21 +22,28 @@ namespace CombatAnalysis.Core.ViewModels
         private IImprovedMvxViewModel _basicTemplate;
         private string _email;
         private string _password;
-        private bool _authIsFailed;
+        private string _confirmPassword;
+        private bool _confirmPasswordIsNotCorrect;
+        private bool _inputDataIsEmpty;
+        private bool _accountIsReady;
         private bool _serverIsNotAvailable;
 
-        public LoginViewModel(IMemoryCache memoryCache, IHttpClientHelper httpClient, IMvxNavigationService mvvmNavigation)
+        public RegistrationViewModel(IMemoryCache memoryCache, IHttpClientHelper httpClient, IMvxNavigationService mvvmNavigation)
         {
             _memoryCache = memoryCache;
             _httpClient = httpClient;
             _mvvmNavigation = mvvmNavigation;
             _httpClient.BaseAddress = Port.UserApi;
 
-            LoginCommand = new MvxCommand(Login);
+            RegistrationCommand = new MvxCommand(Validate);
             CancelCommand = new MvxCommand(Cancel);
 
             BasicTemplate = Templates.Basic;
         }
+
+        public IMvxCommand RegistrationCommand { get; set; }
+
+        public IMvxCommand CancelCommand { get; set; }
 
         public IImprovedMvxViewModel BasicTemplate
         {
@@ -65,12 +72,39 @@ namespace CombatAnalysis.Core.ViewModels
             }
         }
 
-        public bool AuthIsFailed
+        public string ConfirmPassword
         {
-            get { return _authIsFailed; }
+            get { return _confirmPassword; }
             set
             {
-                SetProperty(ref _authIsFailed, value);
+                SetProperty(ref _confirmPassword, value);
+            }
+        }
+
+        public bool InputDataIsEmpty
+        {
+            get { return _inputDataIsEmpty; }
+            set
+            {
+                SetProperty(ref _inputDataIsEmpty, value);
+            }
+        }
+
+        public bool AccountIsReady
+        {
+            get { return _accountIsReady; }
+            set
+            {
+                SetProperty(ref _accountIsReady, value);
+            }
+        }
+
+        public bool ConfirmPasswordIsNotCorrect
+        {
+            get { return _confirmPasswordIsNotCorrect; }
+            set
+            {
+                SetProperty(ref _confirmPasswordIsNotCorrect, value);
             }
         }
 
@@ -83,22 +117,48 @@ namespace CombatAnalysis.Core.ViewModels
             }
         }
 
-        public IMvxCommand LoginCommand { get; set; }
-
-        public IMvxCommand CancelCommand { get; set; }
-
-        public void Login()
+        public void Validate()
         {
-            AuthIsFailed = false;
-            ServerIsNotAvailable = false;
+            if (string.IsNullOrWhiteSpace(Email)
+                || string.IsNullOrWhiteSpace(Password)
+                || string.IsNullOrWhiteSpace(ConfirmPassword))
+            {
+                InputDataIsEmpty = true;
+            }
+            else
+            {
+                InputDataIsEmpty = false;
+                CheckConfirmPassword();
+            }
+        }
 
-            var loginModel = new LoginModel { Email = Email, Password = Password };
+        public void CheckConfirmPassword()
+        {
+            if (Password.Equals(ConfirmPassword))
+            {
+                ConfirmPasswordIsNotCorrect = false;
+                Registration();
+            }
+            else
+            {
+                ConfirmPasswordIsNotCorrect = true;
+            }
+        }
+
+        public void Registration()
+        {
+            ServerIsNotAvailable = false;
+            AccountIsReady = false;
+            ConfirmPasswordIsNotCorrect = false;
+            InputDataIsEmpty = false;
+
+            var registrationModel = new RegistrationModel { Id = Guid.NewGuid().ToString(), Email = Email, Password = Password };
 
             Action action = async () =>
             {
                 try
                 {
-                    var responseMessage = await _httpClient.PostAsync("Account", JsonContent.Create(loginModel));
+                    var responseMessage = await _httpClient.PostAsync("Account/registration", JsonContent.Create(registrationModel));
                     if (responseMessage.StatusCode == System.Net.HttpStatusCode.OK)
                     {
                         var result = await responseMessage.Content.ReadFromJsonAsync<ResponseFromAccount>();
@@ -114,7 +174,7 @@ namespace CombatAnalysis.Core.ViewModels
                     }
                     else
                     {
-                        AuthIsFailed = true;
+                        AccountIsReady = true;
                     }
                 }
                 catch (HttpRequestException)
