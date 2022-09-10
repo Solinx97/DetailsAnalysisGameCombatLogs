@@ -1,6 +1,5 @@
 ﻿using CombatAnalysis.DAL.Data;
 using CombatAnalysis.DAL.Entities;
-using CombatAnalysis.DAL.Entities.User;
 using CombatAnalysis.DAL.Interfaces;
 using CombatAnalysis.DAL.Repositories;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -22,8 +21,20 @@ namespace CombatAnalysis.DAL.Extensions
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IGenericRepository<CombatLog>, GenericRepository<CombatLog>>();
             services.AddScoped<IGenericRepository<CombatLogByUser>, GenericRepository<CombatLogByUser>>();
+
+            services.AddScoped<IGenericRepository<Combat>, SPGenericRepository<Combat>>();
+            services.AddScoped<IGenericRepository<CombatPlayer>, SPGenericRepository<CombatPlayer>>();
+            services.AddScoped<IGenericRepository<DamageDone>, SPGenericRepository<DamageDone>>();
+            services.AddScoped<IGenericRepository<DamageDoneGeneral>, SPGenericRepository<DamageDoneGeneral>>();
+            services.AddScoped<IGenericRepository<HealDone>, SPGenericRepository<HealDone>>();
+            services.AddScoped<IGenericRepository<HealDoneGeneral>, SPGenericRepository<HealDoneGeneral>>();
+            services.AddScoped<IGenericRepository<DamageTaken>, SPGenericRepository<DamageTaken>>();
+            services.AddScoped<IGenericRepository<DamageTakenGeneral>, SPGenericRepository<DamageTakenGeneral>>();
+            services.AddScoped<IGenericRepository<ResourceRecovery>, SPGenericRepository<ResourceRecovery>>();
+            services.AddScoped<IGenericRepository<ResourceRecoveryGeneral>, SPGenericRepository<ResourceRecoveryGeneral>>();
+
             services.AddScoped<ISPGenericRepository<Combat>, SPGenericRepository<Combat>>();
-            services.AddScoped<ISPGenericRepository<CombatPlayerData>, SPGenericRepository<CombatPlayerData>>();
+            services.AddScoped<ISPGenericRepository<CombatPlayer>, SPGenericRepository<CombatPlayer>>();
             services.AddScoped<ISPGenericRepository<DamageDone>, SPGenericRepository<DamageDone>>();
             services.AddScoped<ISPGenericRepository<DamageDoneGeneral>, SPGenericRepository<DamageDoneGeneral>>();
             services.AddScoped<ISPGenericRepository<HealDone>, SPGenericRepository<HealDone>>();

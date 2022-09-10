@@ -10,13 +10,13 @@ namespace CombatAnalysis.DAL.Entities
 
         public string Name { get; set; }
 
-        public double EnergyRecovery { get; set; }
-
         public int DamageDone { get; set; }
 
         public int HealDone { get; set; }
 
         public int DamageTaken { get; set; }
+
+        public int EnergyRecovery { get; set; }
 
         public int DeathNumber { get; set; }
 

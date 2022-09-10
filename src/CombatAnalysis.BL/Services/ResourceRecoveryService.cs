@@ -12,14 +12,16 @@ using System.Threading.Tasks;
 
 namespace CombatAnalysis.BL.Services
 {
-    internal class ResourceRecoveryService : ISPService<ResourceRecoveryDto, int>
+    internal class ResourceRecoveryService : ISPService<ResourceRecoveryDto, int>, IService<ResourceRecoveryDto, int>
     {
-        private readonly ISPGenericRepository<ResourceRecovery> _repository;
+        private readonly ISPGenericRepository<ResourceRecovery> _spRepository;
+        private readonly IGenericRepository<ResourceRecovery> _repository;
         private readonly IMapper _mapper;
 
-        public ResourceRecoveryService(ISPGenericRepository<ResourceRecovery> userRepository, IMapper mapper)
+        public ResourceRecoveryService(ISPGenericRepository<ResourceRecovery> spRepository, IGenericRepository<ResourceRecovery> repository, IMapper mapper)
         {
-            _repository = userRepository;
+            _spRepository = spRepository;
+            _repository = repository;
             _mapper = mapper;
         }
 
@@ -38,7 +40,7 @@ namespace CombatAnalysis.BL.Services
             var paramNames = new string[] { nameof(item.Value), nameof(item.Time), nameof(item.SpellOrItem), nameof(item.CombatPlayerDataId) };
             var paramValues = new object[] { item.Value, item.Time, item.SpellOrItem, item.CombatPlayerDataId };
 
-            var response = await _repository.ExecuteStoredProcedureAsync(DbProcedureHelper.InsertIntoResourceRecovery, paramNames, paramValues);
+            var response = await _spRepository.ExecuteStoredProcedureAsync(DbProcedureHelper.InsertIntoResourceRecovery, paramNames, paramValues);
             return response;
         }
 
@@ -57,7 +59,7 @@ namespace CombatAnalysis.BL.Services
             var paramNames = new string[] { nameof(combatPlayerId) };
             var paramValues = new object[] { combatPlayerId };
 
-            var response = await _repository.ExecuteStoredProcedureAsync(DbProcedureHelper.DeleteResourceRecovery, paramNames, paramValues);
+            var response = await _spRepository.ExecuteStoredProcedureAsync(DbProcedureHelper.DeleteResourceRecovery, paramNames, paramValues);
             return response;
         }
 
@@ -74,7 +76,7 @@ namespace CombatAnalysis.BL.Services
             var paramNames = new string[] { nameof( combatPlayerId) };
             var paramValues = new object[] { combatPlayerId };
 
-            var data = await _repository.ExecuteStoredProcedureUseModelAsync(DbProcedureHelper.GetResourceRecovery, paramNames, paramValues);
+            var data = await _spRepository.ExecuteStoredProcedureUseModelAsync(DbProcedureHelper.GetResourceRecovery, paramNames, paramValues);
             var result = _mapper.Map<IEnumerable<ResourceRecoveryDto>>(data);
 
             return result;

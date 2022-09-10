@@ -12,14 +12,16 @@ using System.Threading.Tasks;
 
 namespace CombatAnalysis.BL.Services
 {
-    internal class HealDoneGeneralService : ISPService<HealDoneGeneralDto, int>
+    internal class HealDoneGeneralService : ISPService<HealDoneGeneralDto, int>, IService<HealDoneGeneralDto, int>
     {
-        private readonly ISPGenericRepository<HealDoneGeneral> _repository;
+        private readonly ISPGenericRepository<HealDoneGeneral> _spRepository;
+        private readonly IGenericRepository<HealDoneGeneral> _repository;
         private readonly IMapper _mapper;
 
-        public HealDoneGeneralService(ISPGenericRepository<HealDoneGeneral> userRepository, IMapper mapper)
+        public HealDoneGeneralService(ISPGenericRepository<HealDoneGeneral> spRepository, IGenericRepository<HealDoneGeneral> repository, IMapper mapper)
         {
-            _repository = userRepository;
+            _spRepository = spRepository;
+            _repository = repository;
             _mapper = mapper;
         }
 
@@ -42,7 +44,7 @@ namespace CombatAnalysis.BL.Services
                 item.CritNumber, item.CastNumber, item.MinValue, item.MaxValue,
                 item.AverageValue, item.CombatPlayerDataId };
 
-            var response = await _repository.ExecuteStoredProcedureAsync(DbProcedureHelper.InsertIntoHealDoneGeneral, paramNames, paramValues);
+            var response = await _spRepository.ExecuteStoredProcedureAsync(DbProcedureHelper.InsertIntoHealDoneGeneral, paramNames, paramValues);
             return response;
         }
 
@@ -61,7 +63,7 @@ namespace CombatAnalysis.BL.Services
             var paramNames = new string[] { nameof(combatPlayerId) };
             var paramValues = new object[] { combatPlayerId };
 
-            var response = await _repository.ExecuteStoredProcedureAsync(DbProcedureHelper.DeleteHealDoneGeneral, paramNames, paramValues);
+            var response = await _spRepository.ExecuteStoredProcedureAsync(DbProcedureHelper.DeleteHealDoneGeneral, paramNames, paramValues);
             return response;
         }
 
@@ -78,7 +80,7 @@ namespace CombatAnalysis.BL.Services
             var paramNames = new string[] { nameof(combatPlayerId) };
             var paramValues = new object[] { combatPlayerId };
 
-            var data = await _repository.ExecuteStoredProcedureUseModelAsync(DbProcedureHelper.GetHealDoneGeneral, paramNames, paramValues);
+            var data = await _spRepository.ExecuteStoredProcedureUseModelAsync(DbProcedureHelper.GetHealDoneGeneral, paramNames, paramValues);
             var result = _mapper.Map<IEnumerable<HealDoneGeneralDto>>(data);
 
             return result;

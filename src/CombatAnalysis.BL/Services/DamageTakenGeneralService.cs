@@ -12,14 +12,16 @@ using System.Threading.Tasks;
 
 namespace CombatAnalysis.BL.Services
 {
-    internal class DamageTakenGeneralService : ISPService<DamageTakenGeneralDto, int>
+    internal class DamageTakenGeneralService : ISPService<DamageTakenGeneralDto, int>, IService<DamageTakenGeneralDto, int>
     {
-        private readonly ISPGenericRepository<DamageTakenGeneral> _repository;
+        private readonly ISPGenericRepository<DamageTakenGeneral> _spRepository;
+        private readonly IGenericRepository<DamageTakenGeneral> _repository;
         private readonly IMapper _mapper;
 
-        public DamageTakenGeneralService(ISPGenericRepository<DamageTakenGeneral> userRepository, IMapper mapper)
+        public DamageTakenGeneralService(ISPGenericRepository<DamageTakenGeneral> spRepository, IGenericRepository<DamageTakenGeneral> repository, IMapper mapper)
         {
-            _repository = userRepository;
+            _spRepository = spRepository;
+            _repository = repository;
             _mapper = mapper;
         }
 
@@ -42,7 +44,7 @@ namespace CombatAnalysis.BL.Services
                 item.CritNumber, item.MissNumber, item.CastNumber, item.MinValue,
                 item.MaxValue, item.AverageValue, item.CombatPlayerDataId };
 
-            var response = await _repository.ExecuteStoredProcedureAsync(DbProcedureHelper.InsertIntoDamageTakenGeneral, paramNames, paramValues);
+            var response = await _spRepository.ExecuteStoredProcedureAsync(DbProcedureHelper.InsertIntoDamageTakenGeneral, paramNames, paramValues);
             return response;
         }
 
@@ -61,7 +63,7 @@ namespace CombatAnalysis.BL.Services
             var paramNames = new string[] { nameof(combatPlayerId) };
             var paramValues = new object[] { combatPlayerId };
 
-            var response = await _repository.ExecuteStoredProcedureAsync(DbProcedureHelper.DeleteDamageTakenGeneral, paramNames, paramValues);
+            var response = await _spRepository.ExecuteStoredProcedureAsync(DbProcedureHelper.DeleteDamageTakenGeneral, paramNames, paramValues);
             return response;
         }
 
@@ -78,7 +80,7 @@ namespace CombatAnalysis.BL.Services
             var paramNames = new string[] { nameof(combatPlayerId) };
             var paramValues = new object[] { combatPlayerId };
 
-            var data = await _repository.ExecuteStoredProcedureUseModelAsync(DbProcedureHelper.GetDamageTakenGeneral, paramNames, paramValues);
+            var data = await _spRepository.ExecuteStoredProcedureUseModelAsync(DbProcedureHelper.GetDamageTakenGeneral, paramNames, paramValues);
             var result = _mapper.Map<IEnumerable<DamageTakenGeneralDto>>(data);
 
             return result;

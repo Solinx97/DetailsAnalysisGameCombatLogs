@@ -11,7 +11,7 @@ namespace CombatAnalysis.CombatParser.Entities
 
         public List<string> Data { get; set; }
 
-        public double EnergyRecovery { get; set; }
+        public int EnergyRecovery { get; set; }
 
         public int DamageDone { get; set; }
 
@@ -29,7 +29,7 @@ namespace CombatAnalysis.CombatParser.Entities
 
         public DateTimeOffset FinishDate { get; set; }
 
-        public List<CombatPlayerData> Players { get; set; }
+        public List<CombatPlayer> Players { get; set; }
 
         public string Duration
         {

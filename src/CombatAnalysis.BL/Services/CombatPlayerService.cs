@@ -12,18 +12,20 @@ using System.Threading.Tasks;
 
 namespace CombatAnalysis.BL.Services
 {
-    internal class CombatPlayerService : ISPService<CombatPlayerDataDto, int>
+    internal class CombatPlayerService : ISPService<CombatPlayerDto, int>, IService<CombatPlayerDto, int>
     {
-        private readonly ISPGenericRepository<CombatPlayerData> _repository;
+        private readonly ISPGenericRepository<CombatPlayer> _spRepository;
+        private readonly IGenericRepository<CombatPlayer> _repository;
         private readonly IMapper _mapper;
 
-        public CombatPlayerService(ISPGenericRepository<CombatPlayerData> userRepository, IMapper mapper)
+        public CombatPlayerService(ISPGenericRepository<CombatPlayer> spRepository, IGenericRepository<CombatPlayer> repository, IMapper mapper)
         {
-            _repository = userRepository;
+            _spRepository = spRepository;
+            _repository = repository;
             _mapper = mapper;
         }
 
-        Task<int> IService<CombatPlayerDataDto, int>.CreateAsync(CombatPlayerDataDto item)
+        Task<int> IService<CombatPlayerDto, int>.CreateAsync(CombatPlayerDto item)
         {
             if (item == null)
             {
@@ -33,7 +35,18 @@ namespace CombatAnalysis.BL.Services
             return CreateInternalAsync(item);
         }
 
-        Task<int> IService<CombatPlayerDataDto, int>.DeleteAsync(CombatPlayerDataDto item)
+        async Task<int> ISPService<CombatPlayerDto, int>.CreateByProcedureAsync(CombatPlayerDto item)
+        {
+            var paramNames = new string[] { nameof(item.UserName), nameof(item.DamageDone), nameof(item.HealDone),
+                nameof(item.DamageTaken), nameof(item.EnergyRecovery), nameof(item.UsedBuffs), nameof(item.CombatId) };
+            var paramValues = new object[] { item.UserName, item.DamageDone, item.HealDone,
+                item.DamageTaken, item.EnergyRecovery, item.UsedBuffs, item.CombatId };
+
+            var response = await _spRepository.ExecuteStoredProcedureAsync(DbProcedureHelper.InsertIntoCombatPlayer, paramNames, paramValues);
+            return response;
+        }
+
+        Task<int> IService<CombatPlayerDto, int>.DeleteAsync(CombatPlayerDto item)
         {
             if (item == null)
             {
@@ -43,34 +56,43 @@ namespace CombatAnalysis.BL.Services
             return DeleteInternalAsync(item);
         }
 
-        async Task<IEnumerable<CombatPlayerDataDto>> IService<CombatPlayerDataDto, int>.GetAllAsync()
-        {
-            var allData = await _repository.GetAllAsync();
-            var result = _mapper.Map<List<CombatPlayerDataDto>>(allData);
-
-            return result;
-        }
-
-        async Task<IEnumerable<CombatPlayerDataDto>> ISPService<CombatPlayerDataDto, int>.GetByProcedureAsync(int combatId)
+        async Task<int> ISPService<CombatPlayerDto, int>.DeleteByProcedureAsync(int combatId)
         {
             var paramNames = new string[] { nameof(combatId) };
             var paramValues = new object[] { combatId };
 
-            var data = await _repository.ExecuteStoredProcedureUseModelAsync(DbProcedureHelper.GetCombatPlayer, paramNames, paramValues);
-            var result = _mapper.Map<IEnumerable<CombatPlayerDataDto>>(data);
+            var response = await _spRepository.ExecuteStoredProcedureAsync(DbProcedureHelper.DeleteCombatPlayer, paramNames, paramValues);
+            return response;
+        }
+
+        async Task<IEnumerable<CombatPlayerDto>> IService<CombatPlayerDto, int>.GetAllAsync()
+        {
+            var allData = await _repository.GetAllAsync();
+            var result = _mapper.Map<List<CombatPlayerDto>>(allData);
 
             return result;
         }
 
-        async Task<CombatPlayerDataDto> IService<CombatPlayerDataDto, int>.GetByIdAsync(int id)
+        async Task<IEnumerable<CombatPlayerDto>> ISPService<CombatPlayerDto, int>.GetByProcedureAsync(int combatId)
+        {
+            var paramNames = new string[] { nameof(combatId) };
+            var paramValues = new object[] { combatId };
+
+            var data = await _spRepository.ExecuteStoredProcedureUseModelAsync(DbProcedureHelper.GetCombatPlayer, paramNames, paramValues);
+            var result = _mapper.Map<IEnumerable<CombatPlayerDto>>(data);
+
+            return result;
+        }
+
+        async Task<CombatPlayerDto> IService<CombatPlayerDto, int>.GetByIdAsync(int id)
         {
             var executeLoad = await _repository.GetByIdAsync(id);
-            var result = _mapper.Map<CombatPlayerDataDto>(executeLoad);
+            var result = _mapper.Map<CombatPlayerDto>(executeLoad);
 
             return result;
         }
 
-        Task<int> IService<CombatPlayerDataDto, int>.UpdateAsync(CombatPlayerDataDto item)
+        Task<int> IService<CombatPlayerDto, int>.UpdateAsync(CombatPlayerDto item)
         {
             if (item == null)
             {
@@ -80,37 +102,37 @@ namespace CombatAnalysis.BL.Services
             return UpdateInternalAsync(item);
         }
 
-        private async Task<int> CreateInternalAsync(CombatPlayerDataDto item)
+        private async Task<int> CreateInternalAsync(CombatPlayerDto item)
         {
             if (string.IsNullOrEmpty(item.UserName))
             {
                 throw new ArgumentNullException(nameof(item.UserName));
             }
 
-            var map = _mapper.Map<CombatPlayerData>(item);
+            var map = _mapper.Map<CombatPlayer>(item);
             var createdCombatId = await _repository.CreateAsync(map);
 
             return createdCombatId;
         }
 
-        private async Task<int> DeleteInternalAsync(CombatPlayerDataDto item)
+        private async Task<int> DeleteInternalAsync(CombatPlayerDto item)
         {
             var allData = await _repository.GetAllAsync();
             if (!allData.Any())
             {
-                throw new NotFoundException($"Collection entity {nameof(CombatPlayerDataDto)} not found", nameof(allData));
+                throw new NotFoundException($"Collection entity {nameof(CombatPlayerDto)} not found", nameof(allData));
             }
 
-            var numberEntries = await _repository.DeleteAsync(_mapper.Map<CombatPlayerData>(item));
+            var numberEntries = await _repository.DeleteAsync(_mapper.Map<CombatPlayer>(item));
             return numberEntries;
         }
 
-        private async Task<int> UpdateInternalAsync(CombatPlayerDataDto item)
+        private async Task<int> UpdateInternalAsync(CombatPlayerDto item)
         {
             var allData = await _repository.GetAllAsync();
             if (!allData.Any())
             {
-                throw new NotFoundException($"Collection entity {nameof(CombatPlayerDataDto)} not found", nameof(allData));
+                throw new NotFoundException($"Collection entity {nameof(CombatPlayerDto)} not found", nameof(allData));
             }
 
             if (string.IsNullOrEmpty(item.UserName))
@@ -118,18 +140,8 @@ namespace CombatAnalysis.BL.Services
                 throw new ArgumentNullException(nameof(item.UserName));
             }
 
-            var numberEntries = await _repository.UpdateAsync(_mapper.Map<CombatPlayerData>(item));
+            var numberEntries = await _repository.UpdateAsync(_mapper.Map<CombatPlayer>(item));
             return numberEntries;
-        }
-
-        public Task<int> DeleteByProcedureAsync(int combatPlayerId)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<int> CreateByProcedureAsync(CombatPlayerDataDto item)
-        {
-            throw new NotImplementedException();
         }
     }
 }

@@ -49,7 +49,7 @@ namespace CombatAnalysis.CombatParserAPI.Helpers
             return combatLog;
         }
 
-        public async Task SaveCombatPlayerData(CombatModel combat, List<CombatPlayerDataModel> combatPlayers)
+        public async Task SaveCombatPlayerData(CombatModel combat, List<CombatPlayerModel> combatPlayers)
         {
             var map = _mapper.Map<Combat>(combat);
 

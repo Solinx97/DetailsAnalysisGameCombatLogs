@@ -15,6 +15,8 @@ namespace CombatAnalysis.DAL.Helpers
         public static string GetDamageTakenGeneral = "GetDamageTakenGeneralByCombatPlayerId";
         public static string GetResourceRecovery = "GetResourceRecoveryByCombatPlayerId";
         public static string GetResourceRecoveryGeneral = "GetResourceRecoveryGeneralByCombatPlayerId";
+        public static string InsertIntoCombat = "InsertIntoCombat";
+        public static string InsertIntoCombatPlayer = "InsertIntoCombatPlayer";
         public static string InsertIntoDamageDone = "InsertIntoDamageDone";
         public static string InsertIntoDamageDoneGeneral = "InsertIntoDamageDoneGeneral";
         public static string InsertIntoHealDone = "InsertIntoHealDone";
@@ -23,6 +25,8 @@ namespace CombatAnalysis.DAL.Helpers
         public static string InsertIntoDamageTakenGeneral = "InsertIntoDamageTakenGeneral";
         public static string InsertIntoResourceRecovery = "InsertIntoResourceRecovery";
         public static string InsertIntoResourceRecoveryGeneral = "InsertIntoResourceRecoveryGeneral";
+        public static string DeleteCombat = "DeleteCombatByCombatLogId";
+        public static string DeleteCombatPlayer = "DeleteCombatPlayerByCombatId";
         public static string DeleteHealDone = "DeleteHealDoneByCombatPlayerId";
         public static string DeleteHealDoneGeneral = "DeleteHealDoneGeneralByCombatPlayerId";
         public static string DeleteDamageDone = "DeleteDamageDoneByCombatPlayerId";
@@ -49,7 +53,7 @@ namespace CombatAnalysis.DAL.Helpers
 
             query = @"CREATE PROCEDURE GetCombatPlayerByCombatId (@combatId INT)
                           AS SELECT *
-                          FROM CombatPlayerData
+                          FROM CombatPlayer
                           WHERE CombatId = @combatId";
             await dbContext.Database.ExecuteSqlRawAsync(query);
 
@@ -104,7 +108,18 @@ namespace CombatAnalysis.DAL.Helpers
 
         private static async Task InsertIntoStoredProcedures(DbContext dbContext)
         {
-            var query = @"CREATE PROCEDURE InsertIntoDamageDone (@Value INT, @Time NVARCHAR (MAX), @FromPlayer NVARCHAR (MAX), @ToEnemy NVARCHAR (MAX), @SpellOrItem NVARCHAR (MAX),
+            var query = @"CREATE PROCEDURE InsertIntoCombat (@DungeonName NVARCHAR (MAX), @Name NVARCHAR (MAX), @DamageDone INT, @HealDone INT, @DamageTaken INT,
+                                           @EnergyRecovery INT, @DeathNumber INT, @UsedBuffs INT, @IsWin BIT, @StartDate DATETIMEOFFSET (7), @FinishDate DATETIMEOFFSET (7), @CombatLogId INT)
+                          AS INSERT INTO Combat
+                          VALUES (@DungeonName, @Name, @DamageDone, @HealDone, @DamageTaken, @EnergyRecovery, @DeathNumber, @UsedBuffs, @IsWin, @StartDate, @FinishDate, @CombatLogId)";
+            await dbContext.Database.ExecuteSqlRawAsync(query);
+
+            query = @"CREATE PROCEDURE InsertIntoCombatPlayer (@UserName NVARCHAR (MAX), @DamageDone INT, @HealDone INT, @DamageTaken INT, @EnergyRecovery INT, @UsedBuffs INT, @CombatId INT)
+                          AS INSERT INTO CombatPlayer
+                          VALUES (@UserName, @DamageDone, @HealDone, @DamageTaken, @EnergyRecovery, @UsedBuffs, @CombatId)";
+            await dbContext.Database.ExecuteSqlRawAsync(query);
+
+            query = @"CREATE PROCEDURE InsertIntoDamageDone (@Value INT, @Time NVARCHAR (MAX), @FromPlayer NVARCHAR (MAX), @ToEnemy NVARCHAR (MAX), @SpellOrItem NVARCHAR (MAX),
                                            @IsDodge BIT, @IsParry BIT, @IsMiss BIT, @IsResist BIT, @IsImmune BIT, @IsCrit BIT, @CombatPlayerDataId INT)
                           AS INSERT INTO DamageDone
                           VALUES (@Value, @Time, @FromPlayer, @ToEnemy, @SpellOrItem, @IsDodge, @IsParry, @IsMiss, @IsResist, @IsImmune, @IsCrit, @CombatPlayerDataId)";
@@ -153,7 +168,17 @@ namespace CombatAnalysis.DAL.Helpers
 
         private static async Task DeleteStoredProcedures(DbContext dbContext)
         {
-            var query = @"CREATE PROCEDURE DeleteHealDoneByCombatPlayerId (@combatPlayerDataId INT)
+            var query = @"CREATE PROCEDURE DeleteCombatByCombatLogId (@combatLogId INT)
+                          AS DELETE FROM Combat 
+                          WHERE CombatLogId = @combatLogId";
+            await dbContext.Database.ExecuteSqlRawAsync(query);
+
+            query = @"CREATE PROCEDURE DeleteCombatPlayerByCombatId (@combatId INT)
+                          AS DELETE FROM CombatPlayer 
+                          WHERE CombatId = @combatId";
+            await dbContext.Database.ExecuteSqlRawAsync(query);
+
+            query = @"CREATE PROCEDURE DeleteHealDoneByCombatPlayerId (@combatPlayerDataId INT)
                           AS DELETE FROM HealDone 
                           WHERE CombatPlayerDataId = @combatPlayerDataId";
             await dbContext.Database.ExecuteSqlRawAsync(query);

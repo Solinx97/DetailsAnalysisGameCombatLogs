@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace CombatAnalysis.DAL.Repositories
 {
-    public class SPGenericRepository<TModel> : ISPGenericRepository<TModel>
+    public class SPGenericRepository<TModel> : ISPGenericRepository<TModel>, IGenericRepository<TModel>
         where TModel : class
     {
         private readonly CombatAnalysisContext _context;

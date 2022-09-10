@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 
 namespace CombatAnalysis.DAL.Interfaces
 {
-    public interface ISPGenericRepository<TModel> : IGenericRepository<TModel>
+    public interface ISPGenericRepository<TModel>
         where TModel : class
     {
         Task<IEnumerable<TModel>> ExecuteStoredProcedureUseModelAsync(string procedureName, string[] paramNames, object[] paramValuee);

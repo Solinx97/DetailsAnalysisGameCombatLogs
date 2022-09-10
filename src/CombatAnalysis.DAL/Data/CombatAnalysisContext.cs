@@ -16,7 +16,7 @@ namespace CombatAnalysis.DAL.Data
 
             if (isExists)
             {
-                Task.Run(async () => await DbProcedureHelper.CreateProceduresAsync(this));
+                Task.Run(() => DbProcedureHelper.CreateProceduresAsync(this));
             }
         }
 
@@ -30,7 +30,7 @@ namespace CombatAnalysis.DAL.Data
 
         public DbSet<Combat> Combat { get; set; }
 
-        public DbSet<CombatPlayerData> CombatPlayerData { get; set; }
+        public DbSet<CombatPlayer> CombatPlayer { get; set; }
 
         public DbSet<DamageDone> DamageDone { get; set; }
 

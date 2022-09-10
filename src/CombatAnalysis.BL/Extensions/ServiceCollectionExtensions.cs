@@ -17,8 +17,10 @@ namespace CombatAnalysis.BL.Extensions
             services.AddScoped<IUserService<UserDto>, UserService>();
             services.AddScoped<IService<CombatLogDto, int>, CombatLogService>();
             services.AddScoped<IService<CombatLogByUserDto, int>, CombatLogByUserService>();
+            services.AddScoped<IService<CombatDto, int>, CombatService>();
             services.AddScoped<ISPService<CombatDto, int>, CombatService>();
-            services.AddScoped<ISPService<CombatPlayerDataDto, int>, CombatPlayerService>();
+            services.AddScoped<IService<CombatPlayerDto, int>, CombatPlayerService>();
+            services.AddScoped<ISPService<CombatPlayerDto, int>, CombatPlayerService>();
             services.AddScoped<ISPService<DamageDoneDto, int>, DamageDoneService>();
             services.AddScoped<ISPService<DamageDoneGeneralDto, int>, DamageDoneGeneralService>();
             services.AddScoped<ISPService<HealDoneDto, int>, HealDoneService>();

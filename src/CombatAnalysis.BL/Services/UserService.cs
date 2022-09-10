@@ -16,9 +16,9 @@ namespace CombatAnalysis.BL.Services
         private readonly IUserRepository _repository;
         private readonly IMapper _mapper;
 
-        public UserService(IUserRepository userRepository, IMapper mapper)
+        public UserService(IUserRepository repository, IMapper mapper)
         {
-            _repository = userRepository;
+            _repository = repository;
             _mapper = mapper;
         }
 

@@ -4,7 +4,6 @@ using CombatAnalysis.Core.Interfaces;
 using CombatAnalysis.Core.Models;
 using CombatAnalysis.Core.Models.User;
 using CombatAnalysis.DAL.Entities;
-using CombatAnalysis.DAL.Entities.User;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
@@ -69,11 +68,11 @@ namespace CombatAnalysis.Core.Services
             var combats = await LoadCombatsAsync(id).ConfigureAwait(false);
             foreach (var item in combats)
             {
-                await DeleteCombatPlayersData(item.Id).ConfigureAwait(false);
-                await _httpClient.DeletAsync($"Combat/{item.Id}").ConfigureAwait(false);
+                await DeleteCombatPlayersData(item.Id);
             }
 
-            await _httpClient.DeletAsync($"CombatLog/{id}").ConfigureAwait(false);
+            await _httpClient.DeletAsync($"Combat/DeleteByCombatLogId/{id}");
+            await _httpClient.DeletAsync($"CombatLog/{id}");
         }
 
         public async Task<IEnumerable<CombatLogModel>> LoadCombatLogsAsync()
@@ -115,10 +114,10 @@ namespace CombatAnalysis.Core.Services
             return combats;
         }
 
-        public async Task<IEnumerable<CombatPlayerDataModel>> LoadCombatPlayersAsync(int combatId)
+        public async Task<IEnumerable<CombatPlayerModel>> LoadCombatPlayersAsync(int combatId)
         {
             var responseMessage = await _httpClient.GetAsync($"CombatPlayer/FindByCombatId/{combatId}");
-            var combatPlayers = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<CombatPlayerDataModel>>();
+            var combatPlayers = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<CombatPlayerModel>>();
 
             return combatPlayers;
         }
@@ -252,9 +251,9 @@ namespace CombatAnalysis.Core.Services
                 await _httpClient.DeletAsync($"DamageTakenGeneral/DeleteByCombatPlayerId/{item.Id}");
                 await _httpClient.DeletAsync($"ResourceRecovery/DeleteByCombatPlayerId/{item.Id}");
                 await _httpClient.DeletAsync($"ResourceRecoveryGeneral/DeleteByCombatPlayerId/{item.Id}");
-
-                await _httpClient.DeletAsync($"CombatPlayer/{item.Id}");
             }
+
+            await _httpClient.DeletAsync($"CombatPlayer/DeleteByCombatId/{combatId}");
         }
     }
 }
