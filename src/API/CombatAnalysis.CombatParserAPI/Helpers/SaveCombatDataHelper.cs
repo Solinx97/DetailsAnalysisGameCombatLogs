@@ -93,7 +93,7 @@ namespace CombatAnalysis.CombatParserAPI.Helpers
             foreach (var item in damageDone)
             {
                 var map = _mapper.Map<DamageDoneModel>(item);
-                map.CombatPlayerDataId = combatPlayerId;
+                map.CombatPlayerId = combatPlayerId;
 
                 await _httpClient.PostAsync("DamageDone", JsonContent.Create(map));
             }
@@ -104,7 +104,7 @@ namespace CombatAnalysis.CombatParserAPI.Helpers
             foreach (var item in damageDoneGeneral)
             {
                 var map = _mapper.Map<DamageDoneGeneralModel>(item);
-                map.CombatPlayerDataId = combatPlayerId;
+                map.CombatPlayerId = combatPlayerId;
 
                 await _httpClient.PostAsync("DamageDoneGeneral", JsonContent.Create(map));
             }
@@ -115,7 +115,7 @@ namespace CombatAnalysis.CombatParserAPI.Helpers
             foreach (var item in healDone)
             {
                 var map = _mapper.Map<HealDoneModel>(item);
-                map.CombatPlayerDataId = combatPlayerId;
+                map.CombatPlayerId = combatPlayerId;
 
                 await _httpClient.PostAsync("HealDone", JsonContent.Create(map));
             }
@@ -126,7 +126,7 @@ namespace CombatAnalysis.CombatParserAPI.Helpers
             foreach (var item in healDoneGeneral)
             {
                 var map = _mapper.Map<HealDoneGeneralModel>(item);
-                map.CombatPlayerDataId = combatPlayerId;
+                map.CombatPlayerId = combatPlayerId;
 
                 await _httpClient.PostAsync("HealDoneGeneral", JsonContent.Create(map));
             }
@@ -137,7 +137,7 @@ namespace CombatAnalysis.CombatParserAPI.Helpers
             foreach (var item in damageTaken)
             {
                 var map = _mapper.Map<DamageTakenModel>(item);
-                map.CombatPlayerDataId = combatPlayerId;
+                map.CombatPlayerId = combatPlayerId;
 
                 await _httpClient.PostAsync("DamageTaken", JsonContent.Create(map));
             }
@@ -148,7 +148,7 @@ namespace CombatAnalysis.CombatParserAPI.Helpers
             foreach (var item in damageTaken)
             {
                 var map = _mapper.Map<DamageTakenGeneralModel>(item);
-                map.CombatPlayerDataId = combatPlayerId;
+                map.CombatPlayerId = combatPlayerId;
 
                 await _httpClient.PostAsync("DamageTakenGeneral", JsonContent.Create(map));
             }
@@ -159,7 +159,7 @@ namespace CombatAnalysis.CombatParserAPI.Helpers
             foreach (var item in resourceRecovery)
             {
                 var map = _mapper.Map<ResourceRecoveryModel>(item);
-                map.CombatPlayerDataId = combatPlayerId;
+                map.CombatPlayerId = combatPlayerId;
 
                 await _httpClient.PostAsync("ResourceRecovery", JsonContent.Create(map));
             }
@@ -170,7 +170,7 @@ namespace CombatAnalysis.CombatParserAPI.Helpers
             foreach (var item in resourceRecoveryGeneral)
             {
                 var map = _mapper.Map<ResourceRecoveryGeneralModel>(item);
-                map.CombatPlayerDataId = combatPlayerId;
+                map.CombatPlayerId = combatPlayerId;
 
                 await _httpClient.PostAsync("ResourceRecoveryGeneral", JsonContent.Create(map));
             }

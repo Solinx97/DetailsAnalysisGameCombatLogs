@@ -2,6 +2,7 @@
 using CombatAnalysis.DAL.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace CombatAnalysis.DAL.Repositories
@@ -46,6 +47,14 @@ namespace CombatAnalysis.DAL.Repositories
             }
 
             return entity;
+        }
+
+        IEnumerable<TModel> IGenericRepository<TModel>.GetByParam(string paramName, object value)
+        {
+            var collection = _context.Set<TModel>().AsEnumerable();
+            var data = collection.Where(x => x.GetType().GetProperty(paramName).GetValue(x).Equals(value));
+
+            return data;
         }
 
         async Task<int> IGenericRepository<TModel>.UpdateAsync(TModel item)

@@ -3,6 +3,7 @@ using CombatAnalysis.BL.DTO;
 using CombatAnalysis.BL.Interfaces;
 using CombatAnalysis.CombatParserAPI.Models;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json.Linq;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -12,10 +13,10 @@ namespace CombatAnalysis.CombatParserAPI.Controllers
     [ApiController]
     public class HealDoneGeneralController : ControllerBase
     {
-        private readonly ISPService<HealDoneGeneralDto, int> _service;
+        private readonly IService<HealDoneGeneralDto, int> _service;
         private readonly IMapper _mapper;
 
-        public HealDoneGeneralController(ISPService<HealDoneGeneralDto, int> service, IMapper mapper)
+        public HealDoneGeneralController(IService<HealDoneGeneralDto, int> service, IMapper mapper)
         {
             _service = service;
             _mapper = mapper;
@@ -24,7 +25,7 @@ namespace CombatAnalysis.CombatParserAPI.Controllers
         [HttpGet("FindByCombatPlayerId/{combatPlayerId}")]
         public async Task<IEnumerable<HealDoneGeneralModel>> Find(int combatPlayerId)
         {
-            var healDoneGenerals = await _service.GetByProcedureAsync(combatPlayerId);
+            var healDoneGenerals = await _service.GetByParamAsync("CombatPlayerId", combatPlayerId);
             var map = _mapper.Map<IEnumerable<HealDoneGeneralModel>>(healDoneGenerals);
 
             return map;
@@ -34,15 +35,16 @@ namespace CombatAnalysis.CombatParserAPI.Controllers
         public async Task<int> Post(HealDoneGeneralModel value)
         {
             var map = _mapper.Map<HealDoneGeneralDto>(value);
-            var createdCombatId = await _service.CreateByProcedureAsync(map);
+            var createdCombatId = await _service.CreateAsync(map);
 
             return createdCombatId;
         }
 
-        [HttpDelete("DeleteByCombatPlayerId/{combatPlayerId}")]
-        public async Task<int> Delete(int combatPlayerId)
+        [HttpDelete]
+        public async Task<int> Delete(HealDoneGeneralModel value)
         {
-            var deletedId = await _service.DeleteByProcedureAsync(combatPlayerId);
+            var map = _mapper.Map<HealDoneGeneralDto>(value);
+            var deletedId = await _service.DeleteAsync(map);
 
             return deletedId;
         }

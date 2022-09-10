@@ -58,6 +58,14 @@ namespace CombatAnalysis.BL.Services
             return result;
         }
 
+        async Task<IEnumerable<CombatLogDto>> IService<CombatLogDto, int>.GetByParamAsync(string paramName, object value)
+        {
+            var executeLoad = await Task.Run(() => _repository.GetByParam(paramName, value));
+            var result = _mapper.Map<IEnumerable<CombatLogDto>>(executeLoad);
+
+            return result;
+        }
+
         Task<int> IService<CombatLogDto, int>.UpdateAsync(CombatLogDto item)
         {
             if (item == null)

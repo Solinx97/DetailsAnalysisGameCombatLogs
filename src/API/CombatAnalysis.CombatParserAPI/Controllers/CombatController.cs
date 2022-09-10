@@ -15,14 +15,12 @@ namespace CombatAnalysis.CombatParserAPI.Controllers
     [ApiController]
     public class CombatController : ControllerBase
     {
-        private readonly ISPService<CombatDto, int> _spService;
         private readonly IService<CombatDto, int> _service;
         private readonly IMapper _mapper;
         private readonly SaveCombatDataHelper _saveCombatDataHelper;
 
-        public CombatController(ISPService<CombatDto, int> spService, IService<CombatDto, int> service, IMapper mapper, IHttpClientHelper httpClient, ILogger logger)
+        public CombatController(IService<CombatDto, int> service, IMapper mapper, IHttpClientHelper httpClient, ILogger logger)
         {
-            _spService = spService;
             _service = service;
             _mapper = mapper;
             _saveCombatDataHelper = new SaveCombatDataHelper(mapper, httpClient, logger);
@@ -40,7 +38,7 @@ namespace CombatAnalysis.CombatParserAPI.Controllers
         [HttpGet("FindByCombatLogId/{combatLogId}")]
         public async Task<IEnumerable<CombatModel>> Find(int combatLogId)
         {
-            var combats = await _spService.GetByProcedureAsync(combatLogId);
+            var combats = await _service.GetByParamAsync("CombatLogId", combatLogId);
             var map = _mapper.Map<IEnumerable<CombatModel>>(combats);
 
             return map;
@@ -52,7 +50,7 @@ namespace CombatAnalysis.CombatParserAPI.Controllers
             SaveCombatDataHelper.CombatData = combat.Data;
 
             var map = _mapper.Map<CombatDto>(combat);
-            var createdCombatId = await _spService.CreateByProcedureAsync(map);
+            var createdCombatId = await _service.CreateAsync(map);
 
             return createdCombatId;
         }
@@ -66,10 +64,11 @@ namespace CombatAnalysis.CombatParserAPI.Controllers
             await _saveCombatDataHelper.SaveCombatPlayerData(combat, combatPlayers);
         }
 
-        [HttpDelete("DeleteByCombatLogId/{combatLogId}")]
-        public async Task<int> Delete(int combatLogId)
+        [HttpDelete]
+        public async Task<int> Delete(CombatModel combat)
         {
-            var deletedId = await _spService.DeleteByProcedureAsync(combatLogId);
+            var map = _mapper.Map<CombatDto>(combat);
+            var deletedId = await _service.DeleteAsync(map);
 
             return deletedId;
         }

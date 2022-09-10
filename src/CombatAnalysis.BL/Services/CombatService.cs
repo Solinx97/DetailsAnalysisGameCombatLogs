@@ -3,7 +3,6 @@ using CombatAnalysis.BL.DTO;
 using CombatAnalysis.BL.Exceptions;
 using CombatAnalysis.BL.Interfaces;
 using CombatAnalysis.DAL.Entities;
-using CombatAnalysis.DAL.Helpers;
 using CombatAnalysis.DAL.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -12,15 +11,13 @@ using System.Threading.Tasks;
 
 namespace CombatAnalysis.BL.Services
 {
-    internal class CombatService : ISPService<CombatDto, int>, IService<CombatDto, int>
+    internal class CombatService : IService<CombatDto, int>
     {
-        private readonly ISPGenericRepository<Combat> _spRepository;
         private readonly IGenericRepository<Combat> _repository;
         private readonly IMapper _mapper;
 
-        public CombatService(ISPGenericRepository<Combat> spRepository, IGenericRepository<Combat> repository, IMapper mapper)
+        public CombatService(IGenericRepository<Combat> repository, IMapper mapper)
         {
-            _spRepository = spRepository;
             _repository = repository;
             _mapper = mapper;
         }
@@ -35,19 +32,6 @@ namespace CombatAnalysis.BL.Services
             return CreateInternalAsync(item);
         }
 
-        async Task<int> ISPService<CombatDto, int>.CreateByProcedureAsync(CombatDto item)
-        {
-            var paramNames = new string[] { nameof(item.DungeonName), nameof(item.Name), nameof(item.DamageDone),
-                nameof(item.HealDone), nameof(item.DamageTaken), nameof(item.EnergyRecovery), nameof(item.DeathNumber),  nameof(item.UsedBuffs),
-                nameof(item.IsWin), nameof(item.StartDate), nameof(item.FinishDate), nameof(item.CombatLogId) };
-            var paramValues = new object[] { item.DungeonName, item.Name, item.DamageDone,
-                item.HealDone, item.DamageTaken, item.EnergyRecovery, item.DeathNumber, item.UsedBuffs,
-                item.IsWin, item.StartDate, item.FinishDate, item.CombatLogId };
-
-            var response = await _spRepository.ExecuteStoredProcedureAsync(DbProcedureHelper.InsertIntoCombat, paramNames, paramValues);
-            return response;
-        }
-
         Task<int> IService<CombatDto, int>.DeleteAsync(CombatDto item)
         {
             if (item == null)
@@ -56,15 +40,6 @@ namespace CombatAnalysis.BL.Services
             }
 
             return DeleteInternalAsync(item);
-        }
-
-        async Task<int> ISPService<CombatDto, int>.DeleteByProcedureAsync(int combatLogId)
-        {
-            var paramNames = new string[] { nameof(combatLogId) };
-            var paramValues = new object[] { combatLogId };
-
-            var response = await _spRepository.ExecuteStoredProcedureAsync(DbProcedureHelper.DeleteCombat, paramNames, paramValues);
-            return response;
         }
 
         async Task<IEnumerable<CombatDto>> IService<CombatDto, int>.GetAllAsync()
@@ -79,6 +54,14 @@ namespace CombatAnalysis.BL.Services
         {
             var executeLoad = await _repository.GetByIdAsync(id);
             var result = _mapper.Map<CombatDto>(executeLoad);
+
+            return result;
+        }
+
+        async Task<IEnumerable<CombatDto>> IService<CombatDto, int>.GetByParamAsync(string paramName, object value)
+        {
+            var executeLoad = await Task.Run(() =>_repository.GetByParam(paramName, value));
+            var result = _mapper.Map<IEnumerable<CombatDto>>(executeLoad);
 
             return result;
         }
@@ -133,17 +116,6 @@ namespace CombatAnalysis.BL.Services
 
             var numberEntries = await _repository.UpdateAsync(_mapper.Map<Combat>(item));
             return numberEntries;
-        }
-
-        async Task<IEnumerable<CombatDto>> ISPService<CombatDto, int>.GetByProcedureAsync(int combatLogId)
-        {
-            var paramNames = new string[] { nameof(combatLogId) };
-            var paramValues = new object[] { combatLogId };
-
-            var data = await _spRepository.ExecuteStoredProcedureUseModelAsync("GetCombatByCombatLogId", paramNames, paramValues);
-            var result = _mapper.Map<IEnumerable<CombatDto>>(data);
-
-            return result;
         }
     }
 }

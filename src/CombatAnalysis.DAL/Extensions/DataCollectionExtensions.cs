@@ -21,28 +21,16 @@ namespace CombatAnalysis.DAL.Extensions
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IGenericRepository<CombatLog>, GenericRepository<CombatLog>>();
             services.AddScoped<IGenericRepository<CombatLogByUser>, GenericRepository<CombatLogByUser>>();
-
-            services.AddScoped<IGenericRepository<Combat>, SPGenericRepository<Combat>>();
-            services.AddScoped<IGenericRepository<CombatPlayer>, SPGenericRepository<CombatPlayer>>();
-            services.AddScoped<IGenericRepository<DamageDone>, SPGenericRepository<DamageDone>>();
-            services.AddScoped<IGenericRepository<DamageDoneGeneral>, SPGenericRepository<DamageDoneGeneral>>();
-            services.AddScoped<IGenericRepository<HealDone>, SPGenericRepository<HealDone>>();
-            services.AddScoped<IGenericRepository<HealDoneGeneral>, SPGenericRepository<HealDoneGeneral>>();
-            services.AddScoped<IGenericRepository<DamageTaken>, SPGenericRepository<DamageTaken>>();
-            services.AddScoped<IGenericRepository<DamageTakenGeneral>, SPGenericRepository<DamageTakenGeneral>>();
-            services.AddScoped<IGenericRepository<ResourceRecovery>, SPGenericRepository<ResourceRecovery>>();
-            services.AddScoped<IGenericRepository<ResourceRecoveryGeneral>, SPGenericRepository<ResourceRecoveryGeneral>>();
-
-            services.AddScoped<ISPGenericRepository<Combat>, SPGenericRepository<Combat>>();
-            services.AddScoped<ISPGenericRepository<CombatPlayer>, SPGenericRepository<CombatPlayer>>();
-            services.AddScoped<ISPGenericRepository<DamageDone>, SPGenericRepository<DamageDone>>();
-            services.AddScoped<ISPGenericRepository<DamageDoneGeneral>, SPGenericRepository<DamageDoneGeneral>>();
-            services.AddScoped<ISPGenericRepository<HealDone>, SPGenericRepository<HealDone>>();
-            services.AddScoped<ISPGenericRepository<HealDoneGeneral>, SPGenericRepository<HealDoneGeneral>>();
-            services.AddScoped<ISPGenericRepository<DamageTaken>, SPGenericRepository<DamageTaken>>();
-            services.AddScoped<ISPGenericRepository<DamageTakenGeneral>, SPGenericRepository<DamageTakenGeneral>>();
-            services.AddScoped<ISPGenericRepository<ResourceRecovery>, SPGenericRepository<ResourceRecovery>>();
-            services.AddScoped<ISPGenericRepository<ResourceRecoveryGeneral>, SPGenericRepository<ResourceRecoveryGeneral>>();
+            services.AddScoped<IGenericRepository<Combat>, GenericRepository<Combat>>();
+            services.AddScoped<IGenericRepository<CombatPlayer>, GenericRepository<CombatPlayer>>();
+            services.AddScoped<IGenericRepository<DamageDone>, GenericRepository<DamageDone>>();
+            services.AddScoped<IGenericRepository<DamageDoneGeneral>, GenericRepository<DamageDoneGeneral>>();
+            services.AddScoped<IGenericRepository<HealDone>, GenericRepository<HealDone>>();
+            services.AddScoped<IGenericRepository<HealDoneGeneral>, GenericRepository<HealDoneGeneral>>();
+            services.AddScoped<IGenericRepository<DamageTaken>, GenericRepository<DamageTaken>>();
+            services.AddScoped<IGenericRepository<DamageTakenGeneral>, GenericRepository<DamageTakenGeneral>>();
+            services.AddScoped<IGenericRepository<ResourceRecovery>, GenericRepository<ResourceRecovery>>();
+            services.AddScoped<IGenericRepository<ResourceRecoveryGeneral>, GenericRepository<ResourceRecoveryGeneral>>();
             services.AddScoped<ITokenRepository, TokenRepository>();
         }
     }

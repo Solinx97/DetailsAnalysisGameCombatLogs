@@ -3,7 +3,6 @@ using CombatAnalysis.BL.DTO;
 using CombatAnalysis.BL.Exceptions;
 using CombatAnalysis.BL.Interfaces;
 using CombatAnalysis.DAL.Entities;
-using CombatAnalysis.DAL.Helpers;
 using CombatAnalysis.DAL.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -12,15 +11,13 @@ using System.Threading.Tasks;
 
 namespace CombatAnalysis.BL.Services
 {
-    internal class HealDoneService : ISPService<HealDoneDto, int>, IService<HealDoneDto, int>
+    internal class HealDoneService : IService<HealDoneDto, int>
     {
-        private readonly ISPGenericRepository<HealDone> _spRepository;
         private readonly IGenericRepository<HealDone> _repository;
         private readonly IMapper _mapper;
 
-        public HealDoneService(ISPGenericRepository<HealDone> spRepository, IGenericRepository<HealDone> repository, IMapper mapper)
+        public HealDoneService(IGenericRepository<HealDone> repository, IMapper mapper)
         {
-            _spRepository = spRepository;
             _repository = repository;
             _mapper = mapper;
         }
@@ -35,19 +32,6 @@ namespace CombatAnalysis.BL.Services
             return CreateInternalAsync(item);
         }
 
-        async Task<int> ISPService<HealDoneDto, int>.CreateByProcedureAsync(HealDoneDto item)
-        {
-            var paramNames = new string[] { nameof(item.ValueWithOverheal), nameof(item.Time), nameof(item.Overheal), nameof(item.Value),
-                nameof(item.FromPlayer), nameof(item.ToPlayer), nameof(item.SpellOrItem),  nameof(item.CurrentHealth),
-                nameof(item.MaxHealth), nameof(item.IsCrit), nameof(item.IsFullOverheal), nameof(item.CombatPlayerDataId) };
-            var paramValues = new object[] { item.ValueWithOverheal, item.Time, item.Overheal, item.Value,
-                item.FromPlayer, item.ToPlayer, item.SpellOrItem, item.CurrentHealth,
-                item.MaxHealth, item.IsCrit, item.IsFullOverheal, item.CombatPlayerDataId };
-
-            var response = await _spRepository.ExecuteStoredProcedureAsync(DbProcedureHelper.InsertIntoHealDone, paramNames, paramValues);
-            return response;
-        }
-
         Task<int> IService<HealDoneDto, int>.DeleteAsync(HealDoneDto item)
         {
             if (item == null)
@@ -58,15 +42,6 @@ namespace CombatAnalysis.BL.Services
             return DeleteInternalAsync(item);
         }
 
-        async Task<int> ISPService<HealDoneDto, int>.DeleteByProcedureAsync(int combatPlayerId)
-        {
-            var paramNames = new string[] { nameof(combatPlayerId) };
-            var paramValues = new object[] { combatPlayerId };
-
-            var response = await _spRepository.ExecuteStoredProcedureAsync(DbProcedureHelper.DeleteHealDone, paramNames, paramValues);
-            return response;
-        }
-
         async Task<IEnumerable<HealDoneDto>> IService<HealDoneDto, int>.GetAllAsync()
         {
             var allData = await _repository.GetAllAsync();
@@ -75,21 +50,18 @@ namespace CombatAnalysis.BL.Services
             return result;
         }
 
-        async Task<IEnumerable<HealDoneDto>> ISPService<HealDoneDto, int>.GetByProcedureAsync(int combatPlayerId)
-        {
-            var paramNames = new string[] { nameof(combatPlayerId) };
-            var paramValues = new object[] { combatPlayerId };
-
-            var data = await _spRepository.ExecuteStoredProcedureUseModelAsync(DbProcedureHelper.GetHealDone, paramNames, paramValues);
-            var result = _mapper.Map<IEnumerable<HealDoneDto>>(data);
-
-            return result;
-        }
-
         async Task<HealDoneDto> IService<HealDoneDto, int>.GetByIdAsync(int id)
         {
             var executeLoad = await _repository.GetByIdAsync(id);
             var result = _mapper.Map<HealDoneDto>(executeLoad);
+
+            return result;
+        }
+
+        async Task<IEnumerable<HealDoneDto>> IService<HealDoneDto, int>.GetByParamAsync(string paramName, object value)
+        {
+            var executeLoad = await Task.Run(() => _repository.GetByParam(paramName, value));
+            var result = _mapper.Map<IEnumerable<HealDoneDto>>(executeLoad);
 
             return result;
         }

@@ -26,6 +26,6 @@
 
         public bool IsFullOverheal { get; set; }
 
-        public int CombatPlayerDataId { get; set; }
+        public int CombatPlayerId { get; set; }
     }
 }

@@ -18,17 +18,15 @@ namespace CombatAnalysis.BL.Extensions
             services.AddScoped<IService<CombatLogDto, int>, CombatLogService>();
             services.AddScoped<IService<CombatLogByUserDto, int>, CombatLogByUserService>();
             services.AddScoped<IService<CombatDto, int>, CombatService>();
-            services.AddScoped<ISPService<CombatDto, int>, CombatService>();
             services.AddScoped<IService<CombatPlayerDto, int>, CombatPlayerService>();
-            services.AddScoped<ISPService<CombatPlayerDto, int>, CombatPlayerService>();
-            services.AddScoped<ISPService<DamageDoneDto, int>, DamageDoneService>();
-            services.AddScoped<ISPService<DamageDoneGeneralDto, int>, DamageDoneGeneralService>();
-            services.AddScoped<ISPService<HealDoneDto, int>, HealDoneService>();
-            services.AddScoped<ISPService<HealDoneGeneralDto, int>, HealDoneGeneralService>();
-            services.AddScoped<ISPService<DamageTakenDto, int>, DamageTakenService>();
-            services.AddScoped<ISPService<DamageTakenGeneralDto, int>, DamageTakenGeneralService>();
-            services.AddScoped<ISPService<ResourceRecoveryDto, int>, ResourceRecoveryService>();
-            services.AddScoped<ISPService<ResourceRecoveryGeneralDto, int>, ResourceRecoveryGeneralService>();
+            services.AddScoped<IService<DamageDoneDto, int>, DamageDoneService>();
+            services.AddScoped<IService<DamageDoneGeneralDto, int>, DamageDoneGeneralService>();
+            services.AddScoped<IService<HealDoneDto, int>, HealDoneService>();
+            services.AddScoped<IService<HealDoneGeneralDto, int>, HealDoneGeneralService>();
+            services.AddScoped<IService<DamageTakenDto, int>, DamageTakenService>();
+            services.AddScoped<IService<DamageTakenGeneralDto, int>, DamageTakenGeneralService>();
+            services.AddScoped<IService<ResourceRecoveryDto, int>, ResourceRecoveryService>();
+            services.AddScoped<IService<ResourceRecoveryGeneralDto, int>, ResourceRecoveryGeneralService>();
         }
     }
 }

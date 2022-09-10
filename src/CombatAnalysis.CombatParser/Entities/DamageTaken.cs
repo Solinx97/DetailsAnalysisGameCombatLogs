@@ -26,6 +26,6 @@ namespace CombatAnalysis.CombatParser.Entities
 
         public bool IsCrushing { get; set; }
 
-        public int CombatPlayerDataId { get; set; }
+        public int CombatPlayerId { get; set; }
     }
 }
