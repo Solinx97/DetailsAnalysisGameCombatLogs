@@ -16,9 +16,9 @@ namespace CombatAnalysis.DAL.Repositories
             _context = context;
         }
 
-        async Task<string> IUserRepository.CreateAsync(User item)
+        async Task<string> IUserRepository.CreateAsync(AppUser item)
         {
-            var entityEntry = await _context.Set<User>().AddAsync(item);
+            var entityEntry = await _context.Set<AppUser>().AddAsync(item);
             await _context.SaveChangesAsync();
 
             var entityId = (string)entityEntry.Property("Id").CurrentValue;
@@ -26,19 +26,19 @@ namespace CombatAnalysis.DAL.Repositories
             return entityId;
         }
 
-        async Task<int> IUserRepository.DeleteAsync(User item)
+        async Task<int> IUserRepository.DeleteAsync(AppUser item)
         {
-            _context.Set<User>().Remove(item);
+            _context.Set<AppUser>().Remove(item);
             var numberEntries = await _context.SaveChangesAsync();
 
             return numberEntries;
         }
 
-        async Task<IEnumerable<User>> IUserRepository.GetAllAsync() => await _context.Set<User>().AsNoTracking().ToListAsync();
+        async Task<IEnumerable<AppUser>> IUserRepository.GetAllAsync() => await _context.Set<AppUser>().AsNoTracking().ToListAsync();
 
-        async Task<User> IUserRepository.GetByIdAsync(string id)
+        async Task<AppUser> IUserRepository.GetByIdAsync(string id)
         {
-            var entity = await _context.Set<User>().FindAsync(id);
+            var entity = await _context.Set<AppUser>().FindAsync(id);
 
             if (entity != null)
             {
@@ -48,9 +48,9 @@ namespace CombatAnalysis.DAL.Repositories
             return entity;
         }
 
-        async Task<User> IUserRepository.GetAsync(string email, string password)
+        async Task<AppUser> IUserRepository.GetAsync(string email, string password)
         {
-            var entity = await _context.Set<User>().FirstOrDefaultAsync(x => x.Email == email && x.Password == password);
+            var entity = await _context.Set<AppUser>().FirstOrDefaultAsync(x => x.Email == email && x.Password == password);
 
             if (entity != null)
             {
@@ -60,9 +60,9 @@ namespace CombatAnalysis.DAL.Repositories
             return entity;
         }
 
-        async Task<User> IUserRepository.GetAsync(string email)
+        async Task<AppUser> IUserRepository.GetAsync(string email)
         {
-            var entity = await _context.Set<User>().FirstOrDefaultAsync(x => x.Email == email);
+            var entity = await _context.Set<AppUser>().FirstOrDefaultAsync(x => x.Email == email);
 
             if (entity != null)
             {
@@ -72,7 +72,7 @@ namespace CombatAnalysis.DAL.Repositories
             return entity;
         }
 
-        async Task<int> IUserRepository.UpdateAsync(User item)
+        async Task<int> IUserRepository.UpdateAsync(AppUser item)
         {
             _context.Entry(item).State = EntityState.Modified;
             var numberEntries = await _context.SaveChangesAsync();

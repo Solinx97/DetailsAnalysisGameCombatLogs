@@ -389,7 +389,7 @@ namespace CombatAnalysis.Parser.Tests.CombatParser
         public void CombatDetailsService_GetDeathsNumber_Must_Return_Correct_Value_By_Unit_Died()
         {
             var data = "6/3 21:16:34.927  UNIT_DIED,0000000000000000,nil,0x80000000,0x80000000,Player-4452-03684D5F,\"Никуапа\",0x512,0x0";
-            var combatPlayerData = new CombatPlayerData
+            var combatPlayerData = new CombatPlayer
             {
                 UserName = "Никуапа",
                 DamageDone = 1,
@@ -405,7 +405,7 @@ namespace CombatAnalysis.Parser.Tests.CombatParser
                 IsWin = true,
                 StartDate = new DateTimeOffset(2022, 06, 05, 16, 22, 05, TimeSpan.Zero),
                 FinishDate = new DateTimeOffset(2022, 06, 05, 16, 24, 58, TimeSpan.Zero),
-                Players = new List<CombatPlayerData> { combatPlayerData }
+                Players = new List<CombatPlayer> { combatPlayerData }
             };
 
             var mockLogger = new Mock<ILogger>();

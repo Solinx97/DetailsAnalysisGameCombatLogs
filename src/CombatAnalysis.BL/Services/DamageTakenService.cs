@@ -3,7 +3,6 @@ using CombatAnalysis.BL.DTO;
 using CombatAnalysis.BL.Exceptions;
 using CombatAnalysis.BL.Interfaces;
 using CombatAnalysis.DAL.Entities;
-using CombatAnalysis.DAL.Helpers;
 using CombatAnalysis.DAL.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -12,14 +11,14 @@ using System.Threading.Tasks;
 
 namespace CombatAnalysis.BL.Services
 {
-    internal class DamageTakenService : ISPService<DamageTakenDto, int>
+    internal class DamageTakenService : IService<DamageTakenDto, int>
     {
-        private readonly ISPGenericRepository<DamageTaken> _repository;
+        private readonly IGenericRepository<DamageTaken, int> _repository;
         private readonly IMapper _mapper;
 
-        public DamageTakenService(ISPGenericRepository<DamageTaken> userRepository, IMapper mapper)
+        public DamageTakenService(IGenericRepository<DamageTaken, int> repository, IMapper mapper)
         {
-            _repository = userRepository;
+            _repository = repository;
             _mapper = mapper;
         }
 
@@ -33,19 +32,6 @@ namespace CombatAnalysis.BL.Services
             return CreateInternalAsync(item);
         }
 
-        async Task<int> ISPService<DamageTakenDto, int>.CreateByProcedureAsync(DamageTakenDto item)
-        {
-            var paramNames = new string[] { nameof(item.Value), nameof(item.Time), nameof(item.From),
-                nameof(item.To), nameof(item.SpellOrItem), nameof(item.IsDodge), nameof(item.IsParry), nameof(item.IsMiss),
-                nameof(item.IsResist), nameof(item.IsImmune), nameof(item.IsCrushing), nameof(item.CombatPlayerDataId) };
-            var paramValues = new object[] { item.Value, item.Time, item.From,
-                item.To, item.SpellOrItem, item.IsDodge, item.IsParry, item.IsMiss,
-                item.IsResist, item.IsImmune, item.IsCrushing, item.CombatPlayerDataId };
-
-            var response = await _repository.ExecuteStoredProcedureAsync(DbProcedureHelper.InsertIntoDamageTaken, paramNames, paramValues);
-            return response;
-        }
-
         Task<int> IService<DamageTakenDto, int>.DeleteAsync(DamageTakenDto item)
         {
             if (item == null)
@@ -56,15 +42,6 @@ namespace CombatAnalysis.BL.Services
             return DeleteInternalAsync(item);
         }
 
-        async Task<int> ISPService<DamageTakenDto, int>.DeleteByProcedureAsync(int combatPlayerId)
-        {
-            var paramNames = new string[] { nameof(combatPlayerId) };
-            var paramValues = new object[] { combatPlayerId };
-
-            var response = await _repository.ExecuteStoredProcedureAsync(DbProcedureHelper.DeleteDamageTaken, paramNames, paramValues);
-            return response;
-        }
-
         async Task<IEnumerable<DamageTakenDto>> IService<DamageTakenDto, int>.GetAllAsync()
         {
             var allData = await _repository.GetAllAsync();
@@ -73,21 +50,18 @@ namespace CombatAnalysis.BL.Services
             return result;
         }
 
-        async Task<IEnumerable<DamageTakenDto>> ISPService<DamageTakenDto, int>.GetByProcedureAsync(int combatPlayerId)
-        {
-            var paramNames = new string[] { nameof(combatPlayerId) };
-            var paramValues = new object[] { combatPlayerId };
-
-            var data = await _repository.ExecuteStoredProcedureUseModelAsync(DbProcedureHelper.GetDamageTaken, paramNames, paramValues);
-            var result = _mapper.Map<IEnumerable<DamageTakenDto>>(data);
-
-            return result;
-        }
-
         async Task<DamageTakenDto> IService<DamageTakenDto, int>.GetByIdAsync(int id)
         {
             var executeLoad = await _repository.GetByIdAsync(id);
             var result = _mapper.Map<DamageTakenDto>(executeLoad);
+
+            return result;
+        }
+
+        async Task<IEnumerable<DamageTakenDto>> IService<DamageTakenDto, int>.GetByParamAsync(string paramName, object value)
+        {
+            var executeLoad = await Task.Run(() => _repository.GetByParam(paramName, value));
+            var result = _mapper.Map<IEnumerable<DamageTakenDto>>(executeLoad);
 
             return result;
         }

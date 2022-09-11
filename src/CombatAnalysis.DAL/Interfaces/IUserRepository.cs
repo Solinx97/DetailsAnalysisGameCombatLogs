@@ -6,18 +6,18 @@ namespace CombatAnalysis.DAL.Interfaces
 {
     public interface IUserRepository
     {
-        Task<string> CreateAsync(User item);
+        Task<string> CreateAsync(AppUser item);
 
-        Task<int> UpdateAsync(User item);
+        Task<int> UpdateAsync(AppUser item);
 
-        Task<int> DeleteAsync(User item);
+        Task<int> DeleteAsync(AppUser item);
 
-        Task<User> GetByIdAsync(string id);
+        Task<AppUser> GetByIdAsync(string id);
 
-        Task<User> GetAsync(string email, string password);
+        Task<AppUser> GetAsync(string email, string password);
 
-        Task<User> GetAsync(string email);
+        Task<AppUser> GetAsync(string email);
 
-        Task<IEnumerable<User>> GetAllAsync();
+        Task<IEnumerable<AppUser>> GetAllAsync();
     }
 }

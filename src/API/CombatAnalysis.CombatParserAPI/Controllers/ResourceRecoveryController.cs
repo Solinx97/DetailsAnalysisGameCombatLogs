@@ -12,10 +12,10 @@ namespace CombatAnalysis.CombatParserAPI.Controllers
     [ApiController]
     public class ResourceRecoveryController : ControllerBase
     {
-        private readonly ISPService<ResourceRecoveryDto, int> _service;
+        private readonly IService<ResourceRecoveryDto, int> _service;
         private readonly IMapper _mapper;
 
-        public ResourceRecoveryController(ISPService<ResourceRecoveryDto, int> service, IMapper mapper)
+        public ResourceRecoveryController(IService<ResourceRecoveryDto, int> service, IMapper mapper)
         {
             _service = service;
             _mapper = mapper;
@@ -24,7 +24,7 @@ namespace CombatAnalysis.CombatParserAPI.Controllers
         [HttpGet("FindByCombatPlayerId/{combatPlayerId}")]
         public async Task<IEnumerable<ResourceRecoveryModel>> Find(int combatPlayerId)
         {
-            var resourceRecoveryes = await _service.GetByProcedureAsync(combatPlayerId);
+            var resourceRecoveryes = await _service.GetByParamAsync("CombatPlayerId", combatPlayerId);
             var map = _mapper.Map<IEnumerable<ResourceRecoveryModel>>(resourceRecoveryes);
 
             return map;
@@ -34,13 +34,14 @@ namespace CombatAnalysis.CombatParserAPI.Controllers
         public async Task Post(ResourceRecoveryModel value)
         {
             var map = _mapper.Map<ResourceRecoveryDto>(value);
-            await _service.CreateByProcedureAsync(map);
+            await _service.CreateAsync(map);
         }
 
-        [HttpDelete("DeleteByCombatPlayerId/{combatPlayerId}")]
-        public async Task<int> Delete(int combatPlayerId)
+        [HttpDelete]
+        public async Task<int> Delete(ResourceRecoveryModel value)
         {
-            var deletedId = await _service.DeleteByProcedureAsync(combatPlayerId);
+            var map = _mapper.Map<ResourceRecoveryDto>(value);
+            var deletedId = await _service.DeleteAsync(map);
 
             return deletedId;
         }

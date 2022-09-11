@@ -12,10 +12,10 @@ namespace CombatAnalysis.CombatParserAPI.Controllers
     [ApiController]
     public class ResourceRecoveryGeneralController : ControllerBase
     {
-        private readonly ISPService<ResourceRecoveryGeneralDto, int> _service;
+        private readonly IService<ResourceRecoveryGeneralDto, int> _service;
         private readonly IMapper _mapper;
 
-        public ResourceRecoveryGeneralController(ISPService<ResourceRecoveryGeneralDto, int> service, IMapper mapper)
+        public ResourceRecoveryGeneralController(IService<ResourceRecoveryGeneralDto, int> service, IMapper mapper)
         {
             _service = service;
             _mapper = mapper;
@@ -24,7 +24,7 @@ namespace CombatAnalysis.CombatParserAPI.Controllers
         [HttpGet("FindByCombatPlayerId/{combatPlayerId}")]
         public async Task<IEnumerable<ResourceRecoveryGeneralModel>> Find(int combatPlayerId)
         {
-            var resourceRecoveryGenerals = await _service.GetByProcedureAsync(combatPlayerId);
+            var resourceRecoveryGenerals = await _service.GetByParamAsync("CombatPlayerId", combatPlayerId);
             var map = _mapper.Map<IEnumerable<ResourceRecoveryGeneralModel>>(resourceRecoveryGenerals);
 
             return map;
@@ -34,15 +34,16 @@ namespace CombatAnalysis.CombatParserAPI.Controllers
         public async Task<int> Post(ResourceRecoveryGeneralModel value)
         {
             var map = _mapper.Map<ResourceRecoveryGeneralDto>(value);
-            var createdCombatId = await _service.CreateByProcedureAsync(map);
+            var createdCombatId = await _service.CreateAsync(map);
 
             return createdCombatId;
         }
 
-        [HttpDelete("DeleteByCombatPlayerId/{combatPlayerId}")]
-        public async Task<int> Delete(int combatPlayerId)
+        [HttpDelete]
+        public async Task<int> Delete(ResourceRecoveryGeneralModel value)
         {
-            var deletedId = await _service.DeleteByProcedureAsync(combatPlayerId);
+            var map = _mapper.Map<ResourceRecoveryGeneralDto>(value);
+            var deletedId = await _service.DeleteAsync(map);
 
             return deletedId;
         }

@@ -8,9 +8,9 @@ namespace CombatAnalysis.CombatParser.Patterns
     public class CombatDetailsDeaths : CombatDetailsTemplate
     {
         private readonly ILogger _logger;
-        private readonly List<CombatPlayerData> _players;
+        private readonly List<CombatPlayer> _players;
 
-        public CombatDetailsDeaths(ILogger logger, List<CombatPlayerData> players) : base()
+        public CombatDetailsDeaths(ILogger logger, List<CombatPlayer> players) : base()
         {
             _logger = logger;
             _players = players;

@@ -61,11 +61,11 @@ namespace CombatAnalysis.CombatParserAPI.Controllers
             await _service.UpdateAsync(map);
         }
 
-        [HttpDelete("{id}")]
-        public async Task<int> Delete(int id)
+        [HttpDelete]
+        public async Task<int> Delete(CombatLogModel value)
         {
-            var combatLog = await _service.GetByIdAsync(id);
-            var deletedId = await _service.DeleteAsync(combatLog);
+            var map = _mapper.Map<CombatLogDto>(value);
+            var deletedId = await _service.DeleteAsync(map);
 
             return deletedId;
         }

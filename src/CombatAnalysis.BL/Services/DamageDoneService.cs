@@ -3,7 +3,6 @@ using CombatAnalysis.BL.DTO;
 using CombatAnalysis.BL.Exceptions;
 using CombatAnalysis.BL.Interfaces;
 using CombatAnalysis.DAL.Entities;
-using CombatAnalysis.DAL.Helpers;
 using CombatAnalysis.DAL.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -12,14 +11,14 @@ using System.Threading.Tasks;
 
 namespace CombatAnalysis.BL.Services
 {
-    internal class DamageDoneService : ISPService<DamageDoneDto, int>
+    internal class DamageDoneService : IService<DamageDoneDto, int>
     {
-        private readonly ISPGenericRepository<DamageDone> _repository;
+        private readonly IGenericRepository<DamageDone, int> _repository;
         private readonly IMapper _mapper;
 
-        public DamageDoneService(ISPGenericRepository<DamageDone> userRepository, IMapper mapper)
+        public DamageDoneService(IGenericRepository<DamageDone, int> repository, IMapper mapper)
         {
-            _repository = userRepository;
+            _repository = repository;
             _mapper = mapper;
         }
 
@@ -33,19 +32,6 @@ namespace CombatAnalysis.BL.Services
             return CreateInternalAsync(item);
         }
 
-        async Task<int> ISPService<DamageDoneDto, int>.CreateByProcedureAsync(DamageDoneDto item)
-        {
-            var paramNames = new string[] { nameof(item.Value), nameof(item.Time), nameof(item.FromPlayer),
-                nameof(item.ToEnemy), nameof(item.SpellOrItem), nameof(item.IsDodge), nameof(item.IsParry),  nameof(item.IsMiss),
-                nameof(item.IsResist), nameof(item.IsImmune), nameof(item.IsCrit), nameof(item.CombatPlayerDataId) };
-            var paramValues = new object[] { item.Value, item.Time.ToString(), item.FromPlayer,
-                item.ToEnemy, item.SpellOrItem, item.IsDodge, item.IsParry, item.IsMiss,
-                item.IsResist, item.IsImmune, item.IsCrit, item.CombatPlayerDataId };
-
-            var response = await _repository.ExecuteStoredProcedureAsync(DbProcedureHelper.InsertIntoDamageDone, paramNames, paramValues);
-            return response;
-        }
-
         Task<int> IService<DamageDoneDto, int>.DeleteAsync(DamageDoneDto item)
         {
             if (item == null)
@@ -56,15 +42,6 @@ namespace CombatAnalysis.BL.Services
             return DeleteInternalAsync(item);
         }
 
-        async Task<int> ISPService<DamageDoneDto, int>.DeleteByProcedureAsync(int combatPlayerId)
-        {
-            var paramNames = new string[] { nameof(combatPlayerId) };
-            var paramValues = new object[] { combatPlayerId };
-
-            var response = await _repository.ExecuteStoredProcedureAsync(DbProcedureHelper.DeleteDamageDone, paramNames, paramValues);
-            return response;
-        }
-
         async Task<IEnumerable<DamageDoneDto>> IService<DamageDoneDto, int>.GetAllAsync()
         {
             var allData = await _repository.GetAllAsync();
@@ -73,21 +50,18 @@ namespace CombatAnalysis.BL.Services
             return result;
         }
 
-        async Task<IEnumerable<DamageDoneDto>> ISPService<DamageDoneDto, int>.GetByProcedureAsync(int combatPlayerId)
-        {
-            var paramNames = new string[] { nameof(combatPlayerId) };
-            var paramValues = new object[] { combatPlayerId };
-
-            var data = await _repository.ExecuteStoredProcedureUseModelAsync(DbProcedureHelper.GetDamageDone, paramNames, paramValues);
-            var result = _mapper.Map<IEnumerable<DamageDoneDto>>(data);
-
-            return result;
-        }
-
         async Task<DamageDoneDto> IService<DamageDoneDto, int>.GetByIdAsync(int id)
         {
             var executeLoad = await _repository.GetByIdAsync(id);
             var result = _mapper.Map<DamageDoneDto>(executeLoad);
+
+            return result;
+        }
+
+        async Task<IEnumerable<DamageDoneDto>> IService<DamageDoneDto, int>.GetByParamAsync(string paramName, object value)
+        {
+            var executeLoad = await Task.Run(() => _repository.GetByParam(paramName, value));
+            var result = _mapper.Map<IEnumerable<DamageDoneDto>>(executeLoad);
 
             return result;
         }

@@ -11,14 +11,14 @@ using System.Threading.Tasks;
 
 namespace CombatAnalysis.BL.Services
 {
-    internal class CombatService : ISPService<CombatDto, int>
+    internal class CombatService : IService<CombatDto, int>
     {
-        private readonly ISPGenericRepository<Combat> _repository;
+        private readonly IGenericRepository<Combat, int> _repository;
         private readonly IMapper _mapper;
 
-        public CombatService(ISPGenericRepository<Combat> userRepository, IMapper mapper)
+        public CombatService(IGenericRepository<Combat, int> repository, IMapper mapper)
         {
-            _repository = userRepository;
+            _repository = repository;
             _mapper = mapper;
         }
 
@@ -54,6 +54,14 @@ namespace CombatAnalysis.BL.Services
         {
             var executeLoad = await _repository.GetByIdAsync(id);
             var result = _mapper.Map<CombatDto>(executeLoad);
+
+            return result;
+        }
+
+        async Task<IEnumerable<CombatDto>> IService<CombatDto, int>.GetByParamAsync(string paramName, object value)
+        {
+            var executeLoad = await Task.Run(() =>_repository.GetByParam(paramName, value));
+            var result = _mapper.Map<IEnumerable<CombatDto>>(executeLoad);
 
             return result;
         }
@@ -108,27 +116,6 @@ namespace CombatAnalysis.BL.Services
 
             var numberEntries = await _repository.UpdateAsync(_mapper.Map<Combat>(item));
             return numberEntries;
-        }
-
-        async Task<IEnumerable<CombatDto>> ISPService<CombatDto, int>.GetByProcedureAsync(int combatLogId)
-        {
-            var paramNames = new string[] { nameof(combatLogId) };
-            var paramValues = new object[] { combatLogId };
-
-            var data = await _repository.ExecuteStoredProcedureUseModelAsync("GetCombatByCombatLogId", paramNames, paramValues);
-            var result = _mapper.Map<IEnumerable<CombatDto>>(data);
-
-            return result;
-        }
-
-        Task<int> ISPService<CombatDto, int>.DeleteByProcedureAsync(int combatPlayerId)
-        {
-            throw new NotImplementedException();
-        }
-
-        Task<int> ISPService<CombatDto, int>.CreateByProcedureAsync(CombatDto item)
-        {
-            throw new NotImplementedException();
         }
     }
 }

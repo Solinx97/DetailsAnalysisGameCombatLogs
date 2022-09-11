@@ -79,8 +79,8 @@ namespace CombatAnalysis.CombatParser.Patterns
                 {
                     Value = value1,
                     Time = TimeSpan.Parse(combatData[0]),
-                    From = combatData[3].Trim('"'),
-                    To = combatData[7].Trim('"'),
+                    FromEnemy = combatData[3].Trim('"'),
+                    ToPlayer = combatData[7].Trim('"'),
                     SpellOrItem = spellOrItem,
                     IsDodge = combatData[10] == "DODGE",
                     IsParry = combatData[10] == "PARRY",

@@ -8,7 +8,7 @@ namespace CombatAnalysis.UserApi.Mapping
     {
         public UserApiMapper()
         {
-            CreateMap<UserDto, UserModel>().ReverseMap();
+            CreateMap<AppUserDto, AppUserModel>().ReverseMap();
         }
     }
 }
