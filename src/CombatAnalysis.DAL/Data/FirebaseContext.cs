@@ -1,15 +1,17 @@
 ﻿using Firebase.Database;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 
 namespace CombatAnalysis.DAL.Data
 {
     public class FirebaseContext : DbContext
     {
-        private const string FirebaseDatabaseUrl = "https://detailsanalysisgamecombatlogs-default-rtdb.firebaseio.com/";
-
-        public FirebaseContext()
+        public FirebaseContext(DbContextOptions<FirebaseContext> options, IConfiguration configuration) : base(options)
         {
-            FirebaseClient = new FirebaseClient(FirebaseDatabaseUrl);
+            var databaseName = configuration.GetSection("Database:Name").Value;
+            var connection = configuration.GetConnectionString(databaseName);
+
+            FirebaseClient = new FirebaseClient(connection);
         }
 
         public FirebaseClient FirebaseClient { get; private set; }
