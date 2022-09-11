@@ -31,8 +31,8 @@ namespace CombatAnalysis.DAL.Helpers
             foreach (var item in types)
             {
                 var query = $"CREATE PROCEDURE GetAll{item.Name}\n" +
-                                  "\tAS SELECT * \n" +
-                                  $"\tFROM {item.Name}";
+                              "\tAS SELECT * \n" +
+                              $"\tFROM {item.Name}";
                 await dbContext.Database.ExecuteSqlRawAsync(query);
 
                 var property = item.GetProperty("Id");
@@ -66,7 +66,13 @@ namespace CombatAnalysis.DAL.Helpers
             var properties = type.GetProperties();
             var procedureParamNames = new StringBuilder();
             var procedureParamNamesWithPropertyTypes = new StringBuilder();
-            for (int i = 1; i < properties.Length; i++)
+            var startIndex = 0;
+            if (type.GetProperty("Id").PropertyType == typeof(int))
+            {
+                startIndex = 1;
+            }
+
+            for (int i = startIndex; i < properties.Length; i++)
             {
                 if (properties[i].CanWrite)
                 {

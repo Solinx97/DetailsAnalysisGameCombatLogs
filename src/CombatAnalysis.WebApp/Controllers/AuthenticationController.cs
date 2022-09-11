@@ -1,6 +1,5 @@
 ﻿using CombatAnalysis.WebApp.Consts;
 using CombatAnalysis.WebApp.Interfaces;
-using CombatAnalysis.WebApp.Models.Response;
 using CombatAnalysis.WebApp.Models.User;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -40,6 +39,7 @@ namespace CombatAnalysis.WebApp.Controllers
                 return Unauthorized();
             }
 
+            _httpClient.BaseAddress = Port.UserApi;
             response = await _httpClient.GetAsync($"authentication/find/{refreshToken}");
             if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
             {
@@ -51,6 +51,7 @@ namespace CombatAnalysis.WebApp.Controllers
 
             var email = HttpContext.User.Identity.Name;
 
+            _httpClient.BaseAddress = Port.UserApi;
             var responseMessage = await _httpClient.GetAsync($"account/find/{email}");
             if (responseMessage.StatusCode == System.Net.HttpStatusCode.OK)
             {
