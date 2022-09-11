@@ -1,5 +1,6 @@
 ﻿using CombatAnalysis.DAL.Data;
 using CombatAnalysis.DAL.Entities;
+using CombatAnalysis.DAL.Enums;
 using CombatAnalysis.DAL.Interfaces;
 using CombatAnalysis.DAL.Repositories;
 using CombatAnalysis.DAL.Repositories.SQL;
@@ -14,11 +15,50 @@ namespace CombatAnalysis.DAL.Extensions
     {
         public static void RegisterDependenciesDAL(this IServiceCollection services, IConfiguration configuration, string connectionName)
         {
-            string connection = configuration.GetConnectionString(connectionName);
+            var databaseName = configuration.GetSection("Database:Name").Value;
+            switch (databaseName)
+            {
+                case nameof(DatabaseType.MSSQL):
+                    MSSQLDatabase(services, configuration, connectionName);
+                    break;
+                case nameof(DatabaseType.Firebase):
+                    FirebaseDatabase(services, configuration, connectionName);
+                    break;
+                default:
+                    MSSQLDatabase(services, configuration, connectionName);
+                    break;
+            }
+        }
+
+        private static void MSSQLDatabase(IServiceCollection services, IConfiguration configuration, string connectionName)
+        {
+            var connection = configuration.GetConnectionString(connectionName);
+
             services.AddDbContext<CombatAnalysisContext>(options => options.UseSqlServer(connection));
             services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
                     .AddCookie();
 
+            var dataProcessingType = configuration.GetSection("Database:DataProcessingType").Value;
+            switch (dataProcessingType)
+            {
+                case nameof(DataProcessingType.Default):
+                    MSSQLDAL(services);
+                    break;
+                case nameof(DataProcessingType.StoredProcedure):
+                    MSSQLStoredProcedureDAL(services);
+                    break;
+                default:
+                    MSSQLDAL(services);
+                    break;
+            }
+        }
+
+        private static void FirebaseDatabase(IServiceCollection services, IConfiguration configuration, string connectionName)
+        {
+        }
+
+        public static void MSSQLDAL(IServiceCollection services)
+        {
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IGenericRepository<CombatLog, int>, GenericRepository<CombatLog, int>>();
             services.AddScoped<IGenericRepository<CombatLogByUser, int>, GenericRepository<CombatLogByUser, int>>();
@@ -35,13 +75,8 @@ namespace CombatAnalysis.DAL.Extensions
             services.AddScoped<ITokenRepository, TokenRepository>();
         }
 
-        public static void RegisterDependenciesStoredProcedureDAL(this IServiceCollection services, IConfiguration configuration, string connectionName)
+        public static void MSSQLStoredProcedureDAL(this IServiceCollection services)
         {
-            string connection = configuration.GetConnectionString(connectionName);
-            services.AddDbContext<CombatAnalysisContext>(options => options.UseSqlServer(connection));
-            services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-                    .AddCookie();
-
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IGenericRepository<CombatLog, int>, SPGenericRepository<CombatLog, int>>();
             services.AddScoped<IGenericRepository<CombatLogByUser, int>, SPGenericRepository<CombatLogByUser, int>>();
