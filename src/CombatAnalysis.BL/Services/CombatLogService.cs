@@ -13,10 +13,10 @@ namespace CombatAnalysis.BL.Services
 {
     internal class CombatLogService : IService<CombatLogDto, int>
     {
-        private readonly IGenericRepository<CombatLog> _repository;
+        private readonly IGenericRepository<CombatLog, int> _repository;
         private readonly IMapper _mapper;
 
-        public CombatLogService(IGenericRepository<CombatLog> userRepository, IMapper mapper)
+        public CombatLogService(IGenericRepository<CombatLog, int> userRepository, IMapper mapper)
         {
             _repository = userRepository;
             _mapper = mapper;

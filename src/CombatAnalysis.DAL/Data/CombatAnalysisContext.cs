@@ -20,7 +20,7 @@ namespace CombatAnalysis.DAL.Data
             }
         }
 
-        public DbSet<User> User { get; set; }
+        public DbSet<AppUser> AppUser { get; set; }
 
         public DbSet<RefreshToken> RefreshToken { get; set; }
 

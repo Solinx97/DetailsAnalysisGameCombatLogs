@@ -7,8 +7,9 @@ using System.Threading.Tasks;
 
 namespace CombatAnalysis.DAL.Repositories
 {
-    public class GenericRepository<TModel> : IGenericRepository<TModel>
+    public class GenericRepository<TModel, TIdType> : IGenericRepository<TModel, TIdType>
         where TModel : class
+        where TIdType : notnull
     {
         private readonly CombatAnalysisContext _context;
 
@@ -17,7 +18,7 @@ namespace CombatAnalysis.DAL.Repositories
             _context = context;
         }
 
-        async Task<int> IGenericRepository<TModel>.CreateAsync(TModel item)
+        async Task<int> IGenericRepository<TModel, TIdType>.CreateAsync(TModel item)
         {
             var entityEntry = await _context.Set<TModel>().AddAsync(item);
             await _context.SaveChangesAsync();
@@ -27,7 +28,7 @@ namespace CombatAnalysis.DAL.Repositories
             return entityId;
         }
 
-        async Task<int> IGenericRepository<TModel>.DeleteAsync(TModel item)
+        async Task<int> IGenericRepository<TModel, TIdType>.DeleteAsync(TModel item)
         {
             _context.Set<TModel>().Remove(item);
             var numberEntries = await _context.SaveChangesAsync();
@@ -35,9 +36,9 @@ namespace CombatAnalysis.DAL.Repositories
             return numberEntries;
         }
 
-        async Task<IEnumerable<TModel>> IGenericRepository<TModel>.GetAllAsync() => await _context.Set<TModel>().AsNoTracking().ToListAsync();
+        async Task<IEnumerable<TModel>> IGenericRepository<TModel, TIdType>.GetAllAsync() => await _context.Set<TModel>().AsNoTracking().ToListAsync();
 
-        async Task<TModel> IGenericRepository<TModel>.GetByIdAsync(int id)
+        async Task<TModel> IGenericRepository<TModel, TIdType>.GetByIdAsync(TIdType id)
         {
             var entity = await _context.Set<TModel>().FindAsync(id);
 
@@ -49,7 +50,7 @@ namespace CombatAnalysis.DAL.Repositories
             return entity;
         }
 
-        IEnumerable<TModel> IGenericRepository<TModel>.GetByParam(string paramName, object value)
+        IEnumerable<TModel> IGenericRepository<TModel, TIdType>.GetByParam(string paramName, object value)
         {
             var collection = _context.Set<TModel>().AsEnumerable();
             var data = collection.Where(x => x.GetType().GetProperty(paramName).GetValue(x).Equals(value));
@@ -57,7 +58,7 @@ namespace CombatAnalysis.DAL.Repositories
             return data;
         }
 
-        async Task<int> IGenericRepository<TModel>.UpdateAsync(TModel item)
+        async Task<int> IGenericRepository<TModel, TIdType>.UpdateAsync(TModel item)
         {
             _context.Entry(item).State = EntityState.Modified;
             var numberEntries = await _context.SaveChangesAsync();

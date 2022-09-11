@@ -16,11 +16,11 @@ namespace CombatAnalysis.UserApi.Controllers
     [ApiController]
     public class AccountController : ControllerBase
     {
-        private readonly IUserService<UserDto> _service;
+        private readonly IUserService<AppUserDto> _service;
         private readonly IIdentityTokenService _tokenService;
         private readonly IMapper _mapper;
 
-        public AccountController(IUserService<UserDto> service, IIdentityTokenService tokenService, IMapper mapper)
+        public AccountController(IUserService<AppUserDto> service, IIdentityTokenService tokenService, IMapper mapper)
         {
             _service = service;
             _tokenService = tokenService;
@@ -34,7 +34,7 @@ namespace CombatAnalysis.UserApi.Controllers
             if (user != null)
             {
                 var tokens = await _tokenService.GenerateTokensAsync(HttpContext.Response.Cookies, user.Id);
-                var map = _mapper.Map<UserModel>(user);
+                var map = _mapper.Map<AppUserModel>(user);
                 var response = new ResponseFromAccount(map, tokens.Item1, tokens.Item2);
 
                 return Ok(response);
@@ -51,8 +51,8 @@ namespace CombatAnalysis.UserApi.Controllers
             var user = await _service.GetAsync(model.Email);
             if (user == null)
             {
-                var newUser = new UserModel { Id = Guid.NewGuid().ToString(), Email = model.Email, Password = model.Password };
-                var map = _mapper.Map<UserDto>(newUser);
+                var newUser = new AppUserModel { Id = Guid.NewGuid().ToString(), Email = model.Email, Password = model.Password };
+                var map = _mapper.Map<AppUserDto>(newUser);
                 await _service.CreateAsync(map);
 
                 var tokens = await _tokenService.GenerateTokensAsync(HttpContext.Response.Cookies, newUser.Id);

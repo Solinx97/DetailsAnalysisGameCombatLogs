@@ -19,18 +19,41 @@ namespace CombatAnalysis.DAL.Extensions
                     .AddCookie();
 
             services.AddScoped<IUserRepository, UserRepository>();
-            services.AddScoped<IGenericRepository<CombatLog>, GenericRepository<CombatLog>>();
-            services.AddScoped<IGenericRepository<CombatLogByUser>, GenericRepository<CombatLogByUser>>();
-            services.AddScoped<IGenericRepository<Combat>, GenericRepository<Combat>>();
-            services.AddScoped<IGenericRepository<CombatPlayer>, GenericRepository<CombatPlayer>>();
-            services.AddScoped<IGenericRepository<DamageDone>, GenericRepository<DamageDone>>();
-            services.AddScoped<IGenericRepository<DamageDoneGeneral>, GenericRepository<DamageDoneGeneral>>();
-            services.AddScoped<IGenericRepository<HealDone>, GenericRepository<HealDone>>();
-            services.AddScoped<IGenericRepository<HealDoneGeneral>, GenericRepository<HealDoneGeneral>>();
-            services.AddScoped<IGenericRepository<DamageTaken>, GenericRepository<DamageTaken>>();
-            services.AddScoped<IGenericRepository<DamageTakenGeneral>, GenericRepository<DamageTakenGeneral>>();
-            services.AddScoped<IGenericRepository<ResourceRecovery>, GenericRepository<ResourceRecovery>>();
-            services.AddScoped<IGenericRepository<ResourceRecoveryGeneral>, GenericRepository<ResourceRecoveryGeneral>>();
+            services.AddScoped<IGenericRepository<CombatLog, int>, GenericRepository<CombatLog, int>>();
+            services.AddScoped<IGenericRepository<CombatLogByUser, int>, GenericRepository<CombatLogByUser, int>>();
+            services.AddScoped<IGenericRepository<Combat, int>, GenericRepository<Combat, int>>();
+            services.AddScoped<IGenericRepository<CombatPlayer, int>, GenericRepository<CombatPlayer, int>>();
+            services.AddScoped<IGenericRepository<DamageDone, int>, GenericRepository<DamageDone, int>>();
+            services.AddScoped<IGenericRepository<DamageDoneGeneral, int>, GenericRepository<DamageDoneGeneral, int>>();
+            services.AddScoped<IGenericRepository<HealDone, int>, GenericRepository<HealDone, int>>();
+            services.AddScoped<IGenericRepository<HealDoneGeneral, int>, GenericRepository<HealDoneGeneral, int>>();
+            services.AddScoped<IGenericRepository<DamageTaken, int>, GenericRepository<DamageTaken, int>>();
+            services.AddScoped<IGenericRepository<DamageTakenGeneral, int>, GenericRepository<DamageTakenGeneral, int>>();
+            services.AddScoped<IGenericRepository<ResourceRecovery, int>, GenericRepository<ResourceRecovery, int>>();
+            services.AddScoped<IGenericRepository<ResourceRecoveryGeneral, int>, GenericRepository<ResourceRecoveryGeneral, int>>();
+            services.AddScoped<ITokenRepository, TokenRepository>();
+        }
+
+        public static void RegisterDependenciesStoredProcedureDAL(this IServiceCollection services, IConfiguration configuration, string connectionName)
+        {
+            string connection = configuration.GetConnectionString(connectionName);
+            services.AddDbContext<CombatAnalysisContext>(options => options.UseSqlServer(connection));
+            services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+                    .AddCookie();
+
+            services.AddScoped<IUserRepository, UserRepository>();
+            services.AddScoped<IGenericRepository<CombatLog, int>, SPGenericRepository<CombatLog, int>>();
+            services.AddScoped<IGenericRepository<CombatLogByUser, int>, SPGenericRepository<CombatLogByUser, int>>();
+            services.AddScoped<IGenericRepository<Combat, int>, SPGenericRepository<Combat, int>>();
+            services.AddScoped<IGenericRepository<CombatPlayer, int>, SPGenericRepository<CombatPlayer, int>>();
+            services.AddScoped<IGenericRepository<DamageDone, int>, SPGenericRepository<DamageDone, int>>();
+            services.AddScoped<IGenericRepository<DamageDoneGeneral, int>, SPGenericRepository<DamageDoneGeneral, int>>();
+            services.AddScoped<IGenericRepository<HealDone, int>, SPGenericRepository<HealDone, int>>();
+            services.AddScoped<IGenericRepository<HealDoneGeneral, int>, SPGenericRepository<HealDoneGeneral, int>>();
+            services.AddScoped<IGenericRepository<DamageTaken, int>, SPGenericRepository<DamageTaken, int>>();
+            services.AddScoped<IGenericRepository<DamageTakenGeneral, int>, SPGenericRepository<DamageTakenGeneral, int>>();
+            services.AddScoped<IGenericRepository<ResourceRecovery, int>, SPGenericRepository<ResourceRecovery, int>>();
+            services.AddScoped<IGenericRepository<ResourceRecoveryGeneral, int>, SPGenericRepository<ResourceRecoveryGeneral, int>>();
             services.AddScoped<ITokenRepository, TokenRepository>();
         }
     }

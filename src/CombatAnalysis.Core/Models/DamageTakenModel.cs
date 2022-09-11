@@ -10,9 +10,9 @@ namespace CombatAnalysis.Core.Models
 
         public TimeSpan Time { get; set; }
 
-        public string From { get; set; }
+        public string FromEnemy { get; set; }
 
-        public string To { get; set; }
+        public string ToPlayer { get; set; }
 
         public string SpellOrItem { get; set; }
 

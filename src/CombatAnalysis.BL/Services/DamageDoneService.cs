@@ -13,10 +13,10 @@ namespace CombatAnalysis.BL.Services
 {
     internal class DamageDoneService : IService<DamageDoneDto, int>
     {
-        private readonly IGenericRepository<DamageDone> _repository;
+        private readonly IGenericRepository<DamageDone, int> _repository;
         private readonly IMapper _mapper;
 
-        public DamageDoneService(IGenericRepository<DamageDone> repository, IMapper mapper)
+        public DamageDoneService(IGenericRepository<DamageDone, int> repository, IMapper mapper)
         {
             _repository = repository;
             _mapper = mapper;

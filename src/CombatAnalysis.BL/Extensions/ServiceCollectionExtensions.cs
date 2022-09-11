@@ -12,9 +12,9 @@ namespace CombatAnalysis.BL.Extensions
     {
         public static void RegisterDependenciesBL(this IServiceCollection services, IConfiguration configuration, string connectionName)
         {
-            services.RegisterDependenciesDAL(configuration, connectionName);
+            services.RegisterDependenciesStoredProcedureDAL(configuration, connectionName);
 
-            services.AddScoped<IUserService<UserDto>, UserService>();
+            services.AddScoped<IUserService<AppUserDto>, UserService>();
             services.AddScoped<IService<CombatLogDto, int>, CombatLogService>();
             services.AddScoped<IService<CombatLogByUserDto, int>, CombatLogByUserService>();
             services.AddScoped<IService<CombatDto, int>, CombatService>();

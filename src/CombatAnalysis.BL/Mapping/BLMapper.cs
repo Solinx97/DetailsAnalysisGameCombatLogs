@@ -10,7 +10,7 @@ namespace CombatAnalysis.BL.Mapping
     {
         public BLMapper()
         {
-            CreateMap<UserDto, User>().ReverseMap();
+            CreateMap<AppUserDto, AppUser>().ReverseMap();
             CreateMap<CombatLogDto, CombatLog>().ReverseMap();
             CreateMap<CombatLogByUserDto, CombatLogByUser>().ReverseMap();
             CreateMap<CombatDto, Combat>().ReverseMap();

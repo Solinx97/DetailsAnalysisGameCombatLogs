@@ -13,10 +13,10 @@ namespace CombatAnalysis.BL.Services
 {
     internal class HealDoneService : IService<HealDoneDto, int>
     {
-        private readonly IGenericRepository<HealDone> _repository;
+        private readonly IGenericRepository<HealDone, int> _repository;
         private readonly IMapper _mapper;
 
-        public HealDoneService(IGenericRepository<HealDone> repository, IMapper mapper)
+        public HealDoneService(IGenericRepository<HealDone, int> repository, IMapper mapper)
         {
             _repository = repository;
             _mapper = mapper;

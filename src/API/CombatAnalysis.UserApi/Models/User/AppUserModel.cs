@@ -1,6 +1,6 @@
-﻿namespace CombatAnalysis.StoredProcedureDAL.Entities.User
+﻿namespace CombatAnalysis.UserApi.Models.User
 {
-    public class User
+    public class AppUserModel
     {
         public string Id { get; set; }
 

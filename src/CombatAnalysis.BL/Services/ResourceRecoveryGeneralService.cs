@@ -13,10 +13,10 @@ namespace CombatAnalysis.BL.Services
 {
     internal class ResourceRecoveryGeneralService : IService<ResourceRecoveryGeneralDto, int>
     {
-        private readonly IGenericRepository<ResourceRecoveryGeneral> _repository;
+        private readonly IGenericRepository<ResourceRecoveryGeneral, int> _repository;
         private readonly IMapper _mapper;
 
-        public ResourceRecoveryGeneralService(IGenericRepository<ResourceRecoveryGeneral> repository, IMapper mapper)
+        public ResourceRecoveryGeneralService(IGenericRepository<ResourceRecoveryGeneral, int> repository, IMapper mapper)
         {
             _repository = repository;
             _mapper = mapper;

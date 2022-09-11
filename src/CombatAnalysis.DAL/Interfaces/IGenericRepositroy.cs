@@ -3,8 +3,9 @@ using System.Threading.Tasks;
 
 namespace CombatAnalysis.DAL.Interfaces
 {
-    public interface IGenericRepository<TModel>
+    public interface IGenericRepository<TModel, TIdType>
         where TModel : class
+        where TIdType : notnull
     {
         Task<int> CreateAsync(TModel item);
 
@@ -12,7 +13,7 @@ namespace CombatAnalysis.DAL.Interfaces
 
         Task<int> DeleteAsync(TModel item);
 
-        Task<TModel> GetByIdAsync(int id);
+        Task<TModel> GetByIdAsync(TIdType id);
 
         IEnumerable<TModel> GetByParam(string paramName, object value);
 
