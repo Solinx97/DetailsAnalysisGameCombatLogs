@@ -31,10 +31,13 @@ namespace CombatAnalysis.CombatParserAPI.Controllers
         }
 
         [HttpPost]
-        public async Task Post(HealDoneModel value)
+        public async Task<HealDoneModel> Post(HealDoneModel model)
         {
-            var map = _mapper.Map<HealDoneDto>(value);
-            await _service.CreateAsync(map);
+            var map = _mapper.Map<HealDoneDto>(model);
+            var createdItem = await _service.CreateAsync(map);
+            var resultMap = _mapper.Map<HealDoneModel>(createdItem);
+
+            return resultMap;
         }
 
         [HttpDelete]

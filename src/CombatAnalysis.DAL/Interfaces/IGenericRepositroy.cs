@@ -7,7 +7,7 @@ namespace CombatAnalysis.DAL.Interfaces
         where TModel : class
         where TIdType : notnull
     {
-        Task<int> CreateAsync(TModel item);
+        Task<TModel> CreateAsync(TModel item);
 
         Task<int> UpdateAsync(TModel item);
 

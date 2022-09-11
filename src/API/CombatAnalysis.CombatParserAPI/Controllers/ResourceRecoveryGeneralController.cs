@@ -31,18 +31,19 @@ namespace CombatAnalysis.CombatParserAPI.Controllers
         }
 
         [HttpPost]
-        public async Task<int> Post(ResourceRecoveryGeneralModel value)
+        public async Task<ResourceRecoveryGeneralModel> Post(ResourceRecoveryGeneralModel model)
         {
-            var map = _mapper.Map<ResourceRecoveryGeneralDto>(value);
-            var createdCombatId = await _service.CreateAsync(map);
+            var map = _mapper.Map<ResourceRecoveryGeneralDto>(model);
+            var createdItem = await _service.CreateAsync(map);
+            var resultMap = _mapper.Map<ResourceRecoveryGeneralModel>(createdItem);
 
-            return createdCombatId;
+            return resultMap;
         }
 
         [HttpDelete]
-        public async Task<int> Delete(ResourceRecoveryGeneralModel value)
+        public async Task<int> Delete(ResourceRecoveryGeneralModel model)
         {
-            var map = _mapper.Map<ResourceRecoveryGeneralDto>(value);
+            var map = _mapper.Map<ResourceRecoveryGeneralDto>(model);
             var deletedId = await _service.DeleteAsync(map);
 
             return deletedId;
