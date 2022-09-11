@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CombatAnalysis.DAL.Repositories
+namespace CombatAnalysis.DAL.Repositories.SQL
 {
     public class SPGenericRepository<TModel, TIdType> : IGenericRepository<TModel, TIdType>
         where TModel : class
