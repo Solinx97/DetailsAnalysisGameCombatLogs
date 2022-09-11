@@ -13,10 +13,10 @@ namespace CombatAnalysis.BL.Services
 {
     internal class CombatLogByUserService : IService<CombatLogByUserDto, int>
     {
-        private readonly IGenericRepository<CombatLogByUser> _repository;
+        private readonly IGenericRepository<CombatLogByUser, int> _repository;
         private readonly IMapper _mapper;
 
-        public CombatLogByUserService(IGenericRepository<CombatLogByUser> userRepository, IMapper mapper)
+        public CombatLogByUserService(IGenericRepository<CombatLogByUser, int> userRepository, IMapper mapper)
         {
             _repository = userRepository;
             _mapper = mapper;
@@ -54,6 +54,14 @@ namespace CombatAnalysis.BL.Services
         {
             var executeLoad = await _repository.GetByIdAsync(id);
             var result = _mapper.Map<CombatLogByUserDto>(executeLoad);
+
+            return result;
+        }
+
+        async Task<IEnumerable<CombatLogByUserDto>> IService<CombatLogByUserDto, int>.GetByParamAsync(string paramName, object value)
+        {
+            var executeLoad = await Task.Run(() => _repository.GetByParam(paramName, value));
+            var result = _mapper.Map<IEnumerable<CombatLogByUserDto>>(executeLoad);
 
             return result;
         }

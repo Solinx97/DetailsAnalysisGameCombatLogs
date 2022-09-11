@@ -2,7 +2,7 @@
 
 namespace CombatAnalysis.DAL.Entities
 {
-    [Index(nameof(CombatPlayerDataId))]
+    [Index(nameof(CombatPlayerId))]
     public class HealDone
     {
         public int Id { get; set; }
@@ -29,6 +29,6 @@ namespace CombatAnalysis.DAL.Entities
 
         public bool IsFullOverheal { get; set; }
 
-        public int CombatPlayerDataId { get; set; }
+        public int CombatPlayerId { get; set; }
     }
 }

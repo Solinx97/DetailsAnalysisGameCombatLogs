@@ -15,6 +15,8 @@ namespace CombatAnalysis.BL.Interfaces
 
         Task<IEnumerable<TModel>> GetAllAsync();
 
+        Task<IEnumerable<TModel>> GetByParamAsync(string paramName, object value);
+
         Task<TModel> GetByIdAsync(TIdType id);
     }
 }

@@ -1,12 +1,12 @@
 ﻿namespace CombatAnalysis.DAL.Entities
 {
-    public class CombatPlayerData
+    public class CombatPlayer
     {
         public int Id { get; set; }
 
         public string UserName { get; set; }
 
-        public double EnergyRecovery { get; set; }
+        public int EnergyRecovery { get; set; }
 
         public int DamageDone { get; set; }
 

@@ -3,6 +3,7 @@ using CombatAnalysis.BL.DTO;
 using CombatAnalysis.BL.Interfaces;
 using CombatAnalysis.CombatParserAPI.Models;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json.Linq;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -12,10 +13,10 @@ namespace CombatAnalysis.CombatParserAPI.Controllers
     [ApiController]
     public class DamageDoneController : ControllerBase
     {
-        private readonly ISPService<DamageDoneDto, int> _service;
+        private readonly IService<DamageDoneDto, int> _service;
         private readonly IMapper _mapper;
 
-        public DamageDoneController(ISPService<DamageDoneDto, int> service, IMapper mapper)
+        public DamageDoneController(IService<DamageDoneDto, int> service, IMapper mapper)
         {
             _service = service;
             _mapper = mapper;
@@ -24,7 +25,7 @@ namespace CombatAnalysis.CombatParserAPI.Controllers
         [HttpGet("FindByCombatPlayerId/{combatPlayerId}")]
         public async Task<IEnumerable<DamageDoneModel>> Find(int combatPlayerId)
         {
-            var damageDones = await _service.GetByProcedureAsync(combatPlayerId);
+            var damageDones = await _service.GetByParamAsync("CombatPlayerId", combatPlayerId);
             var map = _mapper.Map<IEnumerable<DamageDoneModel>>(damageDones);
 
             return map;
@@ -34,13 +35,14 @@ namespace CombatAnalysis.CombatParserAPI.Controllers
         public async Task Post(DamageDoneModel value)
         {
             var map = _mapper.Map<DamageDoneDto>(value);
-            await _service.CreateByProcedureAsync(map);
+            await _service.CreateAsync(map);
         }
 
-        [HttpDelete("DeleteByCombatPlayerId/{combatPlayerId}")]
-        public async Task<int> Delete(int combatPlayerId)
+        [HttpDelete]
+        public async Task<int> Delete(DamageDoneModel value)
         {
-            var deletedId = await _service.DeleteByProcedureAsync(combatPlayerId);
+            var map = _mapper.Map<DamageDoneDto>(value);
+            var deletedId = await _service.DeleteAsync(map);
 
             return deletedId;
         }

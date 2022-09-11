@@ -1,6 +1,6 @@
-﻿namespace CombatAnalysis.DAL.Entities.User
+﻿namespace CombatAnalysis.BL.DTO.User
 {
-    public class User
+    public class AppUserDto
     {
         public string Id { get; set; }
 

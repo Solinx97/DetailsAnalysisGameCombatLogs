@@ -108,7 +108,7 @@ namespace CombatAnalysis.Parser.Tests.CombatParser
 
             var firstCombat = combats[0];
 
-            var expectedCombatPlayerData = new CombatPlayerData
+            var expectedCombatPlayerData = new CombatPlayer
             {
                 UserName = "Oleg - Chrome",
                 DamageDone = 10,
@@ -124,7 +124,7 @@ namespace CombatAnalysis.Parser.Tests.CombatParser
                 IsWin = true,
                 StartDate = new DateTimeOffset(2022, 06, 03, 21, 15, 05, TimeSpan.Zero),
                 FinishDate = new DateTimeOffset(2022, 06, 03, 21, 17, 58, TimeSpan.Zero),
-                Players = new List<CombatPlayerData> { expectedCombatPlayerData },
+                Players = new List<CombatPlayer> { expectedCombatPlayerData },
             };
 
             Assert.AreEqual(expectedCombat.Name, firstCombat.Name, "Combat name isn't correct.");

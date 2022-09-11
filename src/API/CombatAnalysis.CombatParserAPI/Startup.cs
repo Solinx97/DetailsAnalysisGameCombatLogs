@@ -1,8 +1,6 @@
 using AutoMapper;
 using CombatAnalysis.BL.Extensions;
 using CombatAnalysis.BL.Mapping;
-using CombatAnalysis.CombatParser.Interfaces;
-using CombatAnalysis.CombatParser.Services;
 using CombatAnalysis.CombatParserAPI.Helpers;
 using CombatAnalysis.CombatParserAPI.Interfaces;
 using CombatAnalysis.CombatParserAPI.Mapping;
