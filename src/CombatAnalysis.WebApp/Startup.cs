@@ -1,5 +1,5 @@
 using AutoMapper;
-using CombatAnalysis.DAL.Extensions;
+using CombatAnalysis.BL.Extensions;
 using CombatAnalysis.Identity.Extensions;
 using CombatAnalysis.Identity.Mapping;
 using CombatAnalysis.Identity.Settings;
@@ -43,7 +43,7 @@ namespace CombatAnalysis.WebApp
 
             var mappingConfig = new MapperConfiguration(mc =>
             {
-                mc.AddProfile(new IdentityMappingProfile());
+                mc.AddProfile(new IdentityMappingMapper());
             });
 
             var mapper = mappingConfig.CreateMapper();
@@ -96,7 +96,7 @@ namespace CombatAnalysis.WebApp
 
         private void RegisteringDependencies(IServiceCollection services)
         {
-            services.RegisterDependenciesDAL(Configuration, "DefaultConnection");
+            services.RegisterDependenciesBL(Configuration, "DefaultConnection");
             services.RegisterIdentityDependencies();
         }
     }

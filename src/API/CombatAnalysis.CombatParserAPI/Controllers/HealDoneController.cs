@@ -12,35 +12,39 @@ namespace CombatAnalysis.CombatParserAPI.Controllers
     [ApiController]
     public class HealDoneController : ControllerBase
     {
-        private readonly IService<HealDoneDto> _service;
+        private readonly IService<HealDoneDto, int> _service;
         private readonly IMapper _mapper;
 
-        public HealDoneController(IService<HealDoneDto> service, IMapper mapper)
+        public HealDoneController(IService<HealDoneDto, int> service, IMapper mapper)
         {
             _service = service;
             _mapper = mapper;
         }
 
-        [HttpGet("FindByCombatPlayerId/{combatPlayerId}")]
+        [HttpGet("findByCombatPlayerId/{combatPlayerId:int:min(1)}")]
         public async Task<IEnumerable<HealDoneModel>> Find(int combatPlayerId)
         {
-            var healDones = await _service.GetByProcedureAsync(combatPlayerId);
+            var healDones = await _service.GetByParamAsync("CombatPlayerId", combatPlayerId);
             var map = _mapper.Map<IEnumerable<HealDoneModel>>(healDones);
 
             return map;
         }
 
         [HttpPost]
-        public async Task Post(HealDoneModel value)
+        public async Task<HealDoneModel> Post(HealDoneModel model)
         {
-            var map = _mapper.Map<HealDoneDto>(value);
-            await _service.CreateByProcedureAsync(map);
+            var map = _mapper.Map<HealDoneDto>(model);
+            var createdItem = await _service.CreateAsync(map);
+            var resultMap = _mapper.Map<HealDoneModel>(createdItem);
+
+            return resultMap;
         }
 
-        [HttpDelete("DeleteByCombatPlayerId/{combatPlayerId}")]
-        public async Task<int> Delete(int combatPlayerId)
+        [HttpDelete]
+        public async Task<int> Delete(HealDoneModel value)
         {
-            var deletedId = await _service.DeleteByProcedureAsync(combatPlayerId);
+            var map = _mapper.Map<HealDoneDto>(value);
+            var deletedId = await _service.DeleteAsync(map);
 
             return deletedId;
         }

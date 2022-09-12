@@ -1,12 +1,13 @@
 ﻿using AutoMapper;
 using CombatAnalysis.CombatParser.Entities;
 using CombatAnalysis.CombatParser.Extensions;
-using CombatAnalysis.CombatParser.Services;
+using CombatAnalysis.CombatParser.Patterns;
 using CombatAnalysis.Core.Consts;
 using CombatAnalysis.Core.Core;
 using CombatAnalysis.Core.Interfaces;
 using CombatAnalysis.Core.Models;
 using CombatAnalysis.Core.Services;
+using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
 using MvvmCross.ViewModels;
 using System;
@@ -38,15 +39,16 @@ namespace CombatAnalysis.Core.ViewModels
         private bool _isCollectionReversed;
         private long _totalValue;
 
-        public DamageTakenDetailsViewModel(IMapper mapper, IHttpClientHelper httpClient, ILogger logger)
+        public DamageTakenDetailsViewModel(IMapper mapper, IHttpClientHelper httpClient, ILogger logger, IMemoryCache memoryCache)
         {
             _mapper = mapper;
             _logger = logger;
 
-            _combatParserAPIService = new CombatParserAPIService(httpClient, logger);
+            _combatParserAPIService = new CombatParserAPIService(httpClient, logger, memoryCache);
             _powerUpInCombat = new PowerUpInCombat<DamageTakenModel>(_damageTakenInformationsWithSkipDamage);
 
             BasicTemplate = Templates.Basic;
+            BasicTemplate.Parent = this;
             BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, "Step", 5);
         }
 
@@ -210,7 +212,7 @@ namespace CombatAnalysis.Core.ViewModels
             }
             else
             {
-                var combatInformation = new CombatDetailsService(_logger);
+                CombatDetailsTemplate combatInformation = new CombatDetailsDamageTaken(_logger);
                 var map = _mapper.Map<Combat>(combat);
 
                 GetDamageTakenDetails(combatInformation, SelectedPlayer, map);
@@ -218,10 +220,9 @@ namespace CombatAnalysis.Core.ViewModels
             }
         }
 
-        private void GetDamageTakenDetails(CombatDetailsService combatInformation, string player, Combat combat)
+        private void GetDamageTakenDetails(CombatDetailsTemplate combatInformation, string player, Combat combat)
         {
-            combatInformation.Initialization(combat, player);
-            combatInformation.GetDamageTaken();
+            combatInformation.GetData(player, combat.Data);
 
             var map1 = _mapper.Map<ObservableCollection<DamageTakenModel>>(combatInformation.DamageTaken);
 
@@ -229,7 +230,7 @@ namespace CombatAnalysis.Core.ViewModels
             _damageTakenInformationsWithSkipDamage = new ObservableCollection<DamageTakenModel>(map1);
         }
 
-        private void GetDamageTakenGeneral(CombatDetailsService combatInformation, Combat combat)
+        private void GetDamageTakenGeneral(CombatDetailsTemplate combatInformation, Combat combat)
         {
             var damageDoneGeneralInformations = combatInformation.GetDamageTakenGeneral(combatInformation.DamageTaken, combat);
             var map2 = _mapper.Map<ObservableCollection<DamageTakenGeneralModel>>(damageDoneGeneralInformations);

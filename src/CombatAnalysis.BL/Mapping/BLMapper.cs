@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
 using CombatAnalysis.BL.DTO;
+using CombatAnalysis.BL.DTO.User;
 using CombatAnalysis.DAL.Entities;
+using CombatAnalysis.DAL.Entities.User;
 
 namespace CombatAnalysis.BL.Mapping
 {
@@ -8,9 +10,11 @@ namespace CombatAnalysis.BL.Mapping
     {
         public BLMapper()
         {
+            CreateMap<AppUserDto, AppUser>().ReverseMap();
             CreateMap<CombatLogDto, CombatLog>().ReverseMap();
+            CreateMap<CombatLogByUserDto, CombatLogByUser>().ReverseMap();
             CreateMap<CombatDto, Combat>().ReverseMap();
-            CreateMap<CombatPlayerDataDto, CombatPlayerData>().ReverseMap();
+            CreateMap<CombatPlayerDto, CombatPlayer>().ReverseMap();
             CreateMap<DamageDoneDto, DamageDone>().ReverseMap();
             CreateMap<DamageDoneGeneralDto, DamageDoneGeneral>().ReverseMap();
             CreateMap<HealDoneDto, HealDone>().ReverseMap();

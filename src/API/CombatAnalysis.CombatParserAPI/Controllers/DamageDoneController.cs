@@ -12,35 +12,39 @@ namespace CombatAnalysis.CombatParserAPI.Controllers
     [ApiController]
     public class DamageDoneController : ControllerBase
     {
-        private readonly IService<DamageDoneDto> _service;
+        private readonly IService<DamageDoneDto, int> _service;
         private readonly IMapper _mapper;
 
-        public DamageDoneController(IService<DamageDoneDto> service, IMapper mapper)
+        public DamageDoneController(IService<DamageDoneDto, int> service, IMapper mapper)
         {
             _service = service;
             _mapper = mapper;
         }
 
-        [HttpGet("FindByCombatPlayerId/{combatPlayerId}")]
+        [HttpGet("findByCombatPlayerId/{combatPlayerId:int:min(1)}")]
         public async Task<IEnumerable<DamageDoneModel>> Find(int combatPlayerId)
         {
-            var damageDones = await _service.GetByProcedureAsync(combatPlayerId);
+            var damageDones = await _service.GetByParamAsync("CombatPlayerId", combatPlayerId);
             var map = _mapper.Map<IEnumerable<DamageDoneModel>>(damageDones);
 
             return map;
         }
 
         [HttpPost]
-        public async Task Post(DamageDoneModel value)
+        public async Task<DamageDoneModel> Post(DamageDoneModel model)
         {
-            var map = _mapper.Map<DamageDoneDto>(value);
-            await _service.CreateByProcedureAsync(map);
+            var map = _mapper.Map<DamageDoneDto>(model);
+            var createdItem = await _service.CreateAsync(map);
+            var resultMap = _mapper.Map<DamageDoneModel>(createdItem);
+
+            return resultMap;
         }
 
-        [HttpDelete("DeleteByCombatPlayerId/{combatPlayerId}")]
-        public async Task<int> Delete(int combatPlayerId)
+        [HttpDelete]
+        public async Task<int> Delete(DamageDoneModel model)
         {
-            var deletedId = await _service.DeleteByProcedureAsync(combatPlayerId);
+            var map = _mapper.Map<DamageDoneDto>(model);
+            var deletedId = await _service.DeleteAsync(map);
 
             return deletedId;
         }

@@ -21,19 +21,19 @@ namespace CombatAnalysis.WebApp.Controllers
         }
 
         [HttpGet("combatPlayersByCombatId/{id}")]
-        public async Task<IEnumerable<CombatPlayerDataModel>> GetCombatPlayersByCombatId(int id)
+        public async Task<IEnumerable<CombatPlayerModel>> GetCombatPlayersByCombatId(int id)
         {
             var responseMessage = await _httpClient.GetAsync($"CombatPlayer/FindByCombatId/{id}");
-            var combatPlayers = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<CombatPlayerDataModel>>();
+            var combatPlayers = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<CombatPlayerModel>>();
 
             return combatPlayers;
         }
 
         [HttpGet("combatPlayerById/{id}")]
-        public async Task<CombatPlayerDataModel> GetCombatPlayerById(int id)
+        public async Task<CombatPlayerModel> GetCombatPlayerById(int id)
         {
             var responseMessage = await _httpClient.GetAsync($"CombatPlayer/{id}");
-            var combatPlayer = await responseMessage.Content.ReadFromJsonAsync<CombatPlayerDataModel>();
+            var combatPlayer = await responseMessage.Content.ReadFromJsonAsync<CombatPlayerModel>();
 
             return combatPlayer;
         }

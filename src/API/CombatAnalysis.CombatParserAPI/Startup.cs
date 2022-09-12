@@ -1,8 +1,6 @@
 using AutoMapper;
 using CombatAnalysis.BL.Extensions;
 using CombatAnalysis.BL.Mapping;
-using CombatAnalysis.CombatParser.Interfaces;
-using CombatAnalysis.CombatParser.Services;
 using CombatAnalysis.CombatParserAPI.Helpers;
 using CombatAnalysis.CombatParserAPI.Interfaces;
 using CombatAnalysis.CombatParserAPI.Mapping;
@@ -33,8 +31,6 @@ namespace CombatAnalysis.CombatParserAPI
 
             var loggerFactory = new LoggerFactory();
             var logger = new Logger<ILogger>(loggerFactory);
-            ICombatDetails combatDetails = new CombatDetailsService(logger);
-            services.AddSingleton(combatDetails);
 
             services.AddControllers();
 
@@ -49,12 +45,13 @@ namespace CombatAnalysis.CombatParserAPI
 
             var mappingConfig = new MapperConfiguration(mc =>
             {
-                mc.AddProfile(new ApiMapper());
+                mc.AddProfile(new CombatParserApiMapper());
                 mc.AddProfile(new BLMapper());
             });
 
             var mapper = mappingConfig.CreateMapper();
             services.AddSingleton(mapper);
+            services.AddSingleton<ILogger>(logger);
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -78,7 +75,7 @@ namespace CombatAnalysis.CombatParserAPI
 
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapDefaultControllerRoute();
+                endpoints.MapControllers();
             });
         }
 

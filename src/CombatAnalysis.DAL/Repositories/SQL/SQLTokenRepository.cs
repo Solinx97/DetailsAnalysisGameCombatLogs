@@ -6,13 +6,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace CombatAnalysis.DAL.Repositories
+namespace CombatAnalysis.DAL.Repositories.SQL
 {
-    public class TokenRepository : ITokenRepository
+    public class SQLTokenRepository : ITokenRepository
     {
-        private readonly CombatAnalysisContext _context;
+        private readonly SQLContext _context;
 
-        public TokenRepository(CombatAnalysisContext context)
+        public SQLTokenRepository(SQLContext context)
         {
             _context = context;
         }

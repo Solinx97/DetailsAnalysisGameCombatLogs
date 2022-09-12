@@ -1,11 +1,12 @@
 ﻿using AutoMapper;
 using CombatAnalysis.CombatParser.Entities;
 using CombatAnalysis.CombatParser.Extensions;
-using CombatAnalysis.CombatParser.Services;
+using CombatAnalysis.CombatParser.Patterns;
 using CombatAnalysis.Core.Consts;
 using CombatAnalysis.Core.Interfaces;
 using CombatAnalysis.Core.Models;
 using CombatAnalysis.Core.Services;
+using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
 using MvvmCross.ViewModels;
 using System;
@@ -30,14 +31,15 @@ namespace CombatAnalysis.Core.ViewModels
         private bool _isCollectionReversed;
         private double _totalValue;
 
-        public ResourceRecoveryDetailsViewModel(IMapper mapper, IHttpClientHelper httpClient, ILogger logger)
+        public ResourceRecoveryDetailsViewModel(IMapper mapper, IHttpClientHelper httpClient, ILogger logger, IMemoryCache memoryCache)
         {
             _mapper = mapper;
             _logger = logger;
 
-            _combatParserAPIService = new CombatParserAPIService(httpClient, logger);
+            _combatParserAPIService = new CombatParserAPIService(httpClient, logger, memoryCache);
 
             BasicTemplate = Templates.Basic;
+            BasicTemplate.Parent = this;
             BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, "Step", 6);
         }
 
@@ -126,7 +128,7 @@ namespace CombatAnalysis.Core.ViewModels
             }
             else
             {
-                var combatInformation = new CombatDetailsService(_logger);
+                CombatDetailsTemplate combatInformation = new CombatDetailsResourceRecovery(_logger);
                 var map = _mapper.Map<Combat>(combat);
 
                 GetResourceRecoveryDetails(combatInformation, SelectedPlayer, map);
@@ -134,10 +136,9 @@ namespace CombatAnalysis.Core.ViewModels
             }
         }
 
-        private void GetResourceRecoveryDetails(CombatDetailsService combatInformation, string player, Combat combat)
+        private void GetResourceRecoveryDetails(CombatDetailsTemplate combatInformation, string player, Combat combat)
         {
-            combatInformation.Initialization(combat, player);
-            combatInformation.GetResourceRecovery();
+            combatInformation.GetData(player, combat.Data);
 
             var map1 = _mapper.Map<ObservableCollection<ResourceRecoveryModel>>(combatInformation.ResourceRecovery);
 
@@ -145,9 +146,9 @@ namespace CombatAnalysis.Core.ViewModels
             _resourceRecoveryInformations = new ObservableCollection<ResourceRecoveryModel>(map1);
         }
 
-        private void GetResourceRecoveryGeneral(CombatDetailsService combatInformation, Combat combat)
+        private void GetResourceRecoveryGeneral(CombatDetailsTemplate combatInformation, Combat combat)
         {
-            var damageDoneGeneralInformations = combatInformation.GetDamageTakenGeneral(combatInformation.DamageTaken, combat);
+            var damageDoneGeneralInformations = combatInformation.GetResourceRecoveryGeneral(combatInformation.ResourceRecovery, combat);
             var map2 = _mapper.Map<ObservableCollection<ResourceRecoveryGeneralModel>>(damageDoneGeneralInformations);
             ResourceRecoveryGeneralInformations = map2;
         }

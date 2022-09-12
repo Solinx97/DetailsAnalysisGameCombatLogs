@@ -1,18 +1,21 @@
 ﻿using AutoMapper;
 using CombatAnalysis.BL.DTO;
+using CombatAnalysis.BL.DTO.User;
 using CombatAnalysis.CombatParser.Entities;
 using CombatAnalysis.CombatParserAPI.Models;
+using CombatAnalysis.Core.Models.User;
 
 namespace CombatAnalysis.CombatParserAPI.Mapping
 {
-    public class ApiMapper : Profile
+    public class CombatParserApiMapper : Profile
     {
-        public ApiMapper()
+        public CombatParserApiMapper()
         {
+            CreateMap<AppUserDto, UserModel>().ReverseMap();
             CreateMap<CombatLogDto, CombatLogModel>().ReverseMap();
+            CreateMap<CombatLogByUserDto, CombatLogByUserModel>().ReverseMap();
             CreateMap<CombatDto, CombatModel>().ReverseMap();
-            CreateMap<CombatModel, Combat>().ReverseMap();
-            CreateMap<CombatPlayerDataDto, CombatPlayerDataModel>().ReverseMap();
+            CreateMap<CombatPlayerDto, CombatPlayerModel>().ReverseMap();
             CreateMap<DamageDoneDto, DamageDoneModel>().ReverseMap();
             CreateMap<DamageDoneGeneralDto, DamageDoneGeneralModel>().ReverseMap();
             CreateMap<HealDoneDto, HealDoneModel>().ReverseMap();
@@ -21,6 +24,8 @@ namespace CombatAnalysis.CombatParserAPI.Mapping
             CreateMap<DamageTakenGeneralDto, DamageTakenGeneralModel>().ReverseMap();
             CreateMap<ResourceRecoveryDto, ResourceRecoveryModel>().ReverseMap();
             CreateMap<ResourceRecoveryGeneralDto, ResourceRecoveryGeneralModel>().ReverseMap();
+
+            CreateMap<Combat, CombatModel>().ReverseMap();
             CreateMap<DamageDone, DamageDoneModel>().ReverseMap();
             CreateMap<DamageDoneGeneral, DamageDoneGeneralModel>().ReverseMap();
             CreateMap<HealDone, HealDoneModel>().ReverseMap();

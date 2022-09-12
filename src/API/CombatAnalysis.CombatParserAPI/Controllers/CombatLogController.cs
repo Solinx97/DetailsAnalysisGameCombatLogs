@@ -1,11 +1,11 @@
 ﻿using AutoMapper;
 using CombatAnalysis.BL.DTO;
 using CombatAnalysis.BL.Interfaces;
-using CombatAnalysis.CombatParser.Interfaces;
 using CombatAnalysis.CombatParserAPI.Helpers;
 using CombatAnalysis.CombatParserAPI.Interfaces;
 using CombatAnalysis.CombatParserAPI.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -15,15 +15,15 @@ namespace CombatAnalysis.CombatParserAPI.Controllers
     [ApiController]
     public class CombatLogController : ControllerBase
     {
-        private readonly IService<CombatLogDto> _service;
+        private readonly IService<CombatLogDto, int> _service;
         private readonly IMapper _mapper;
         private readonly SaveCombatDataHelper _saveCombatDataHelper;
 
-        public CombatLogController(IService<CombatLogDto> service, IMapper mapper, IHttpClientHelper httpClient, ICombatDetails combatDetails)
+        public CombatLogController(IService<CombatLogDto, int> service, IMapper mapper, IHttpClientHelper httpClient, ILogger logger)
         {
             _service = service;
             _mapper = mapper;
-            _saveCombatDataHelper = new SaveCombatDataHelper(mapper, httpClient, combatDetails);
+            _saveCombatDataHelper = new SaveCombatDataHelper(mapper, httpClient, logger);
         }
 
         [HttpGet]
@@ -35,7 +35,7 @@ namespace CombatAnalysis.CombatParserAPI.Controllers
             return map;
         }
 
-        [HttpGet("{id}")]
+        [HttpGet("{id:int:min(1)}")]
         public async Task<CombatLogModel> GetById(int id)
         {
             var combatLog = await _service.GetByIdAsync(id);
@@ -45,27 +45,29 @@ namespace CombatAnalysis.CombatParserAPI.Controllers
         }
 
         [HttpPost]
-        public async Task<int> Post(List<string> dungeonNames)
+        public async Task<CombatLogModel> Create(List<string> dungeonNames)
         {
             var combatLog = _saveCombatDataHelper.CreateCombatLog(dungeonNames);
-            var map = _mapper.Map<CombatLogDto>(combatLog);
-            var createdCombatId = await _service.CreateAsync(map);
 
-            return createdCombatId;
+            var map = _mapper.Map<CombatLogDto>(combatLog);
+            var createdItem = await _service.CreateAsync(map);
+            var resultMap = _mapper.Map<CombatLogModel>(createdItem);
+
+            return resultMap;
         }
 
         [HttpPut]
-        public async Task Put(CombatLogModel value)
+        public async Task Update(CombatLogModel value)
         {
             var map = _mapper.Map<CombatLogDto>(value);
             await _service.UpdateAsync(map);
         }
 
-        [HttpDelete("{id}")]
-        public async Task<int> Delete(int id)
+        [HttpDelete]
+        public async Task<int> Delete(CombatLogModel value)
         {
-            var combatLog = await _service.GetByIdAsync(id);
-            var deletedId = await _service.DeleteAsync(combatLog);
+            var map = _mapper.Map<CombatLogDto>(value);
+            var deletedId = await _service.DeleteAsync(map);
 
             return deletedId;
         }

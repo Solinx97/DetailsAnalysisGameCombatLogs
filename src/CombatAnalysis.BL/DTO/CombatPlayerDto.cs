@@ -1,12 +1,12 @@
-﻿namespace CombatAnalysis.WebApp.Models
+﻿namespace CombatAnalysis.BL.DTO
 {
-    public class CombatPlayerDataModel
+    public class CombatPlayerDto
     {
         public int Id { get; set; }
 
         public string UserName { get; set; }
 
-        public double EnergyRecovery { get; set; }
+        public int EnergyRecovery { get; set; }
 
         public int DamageDone { get; set; }
 

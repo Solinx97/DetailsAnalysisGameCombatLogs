@@ -1,6 +1,6 @@
 ﻿using CombatAnalysis.CombatParser.Entities;
 using CombatAnalysis.CombatParser.Extensions;
-using CombatAnalysis.CombatParser.Services;
+using CombatAnalysis.CombatParser.Patterns;
 using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
@@ -54,7 +54,7 @@ namespace CombatAnalysis.Parser.Tests.CombatParser
             };
 
             var mockLogger = new Mock<ILogger>();
-            var combatDetails = new CombatDetailsService(mockLogger.Object);
+            CombatDetailsTemplate combatDetails = new CombatDetailsDamageDone(mockLogger.Object);
             var damageDoneGenerals = combatDetails.GetDamageDoneGeneral(damageDones, combat);
             Assert.IsNotNull(damageDoneGenerals);
 

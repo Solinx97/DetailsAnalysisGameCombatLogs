@@ -12,37 +12,39 @@ namespace CombatAnalysis.CombatParserAPI.Controllers
     [ApiController]
     public class DamageTakenGeneralController : ControllerBase
     {
-        private readonly IService<DamageTakenGeneralDto> _service;
+        private readonly IService<DamageTakenGeneralDto, int> _service;
         private readonly IMapper _mapper;
 
-        public DamageTakenGeneralController(IService<DamageTakenGeneralDto> service, IMapper mapper)
+        public DamageTakenGeneralController(IService<DamageTakenGeneralDto, int> service, IMapper mapper)
         {
             _service = service;
             _mapper = mapper;
         }
 
-        [HttpGet("FindByCombatPlayerId/{combatPlayerId}")]
+        [HttpGet("findByCombatPlayerId/{combatPlayerId:int:min(1)}")]
         public async Task<IEnumerable<DamageTakenGeneralModel>> Find(int combatPlayerId)
         {
-            var damageTakenGenerals = await _service.GetByProcedureAsync(combatPlayerId);
+            var damageTakenGenerals = await _service.GetByParamAsync("CombatPlayerId", combatPlayerId);
             var map = _mapper.Map<IEnumerable<DamageTakenGeneralModel>>(damageTakenGenerals);
 
             return map;
         }
 
         [HttpPost]
-        public async Task<int> Post(DamageTakenGeneralModel value)
+        public async Task<DamageTakenGeneralModel> Post(DamageTakenGeneralModel model)
         {
-            var map = _mapper.Map<DamageTakenGeneralDto>(value);
-            var createdCombatId = await _service.CreateByProcedureAsync(map);
+            var map = _mapper.Map<DamageTakenGeneralDto>(model);
+            var createdItem = await _service.CreateAsync(map);
+            var resultMap = _mapper.Map<DamageTakenGeneralModel>(createdItem);
 
-            return createdCombatId;
+            return resultMap;
         }
 
-        [HttpDelete("DeleteByCombatPlayerId/{combatPlayerId}")]
-        public async Task<int> Delete(int combatPlayerId)
+        [HttpDelete]
+        public async Task<int> Delete(DamageTakenGeneralModel model)
         {
-            var deletedId = await _service.DeleteByProcedureAsync(combatPlayerId);
+            var map = _mapper.Map<DamageTakenGeneralDto>(model);
+            var deletedId = await _service.DeleteAsync(map);
 
             return deletedId;
         }
