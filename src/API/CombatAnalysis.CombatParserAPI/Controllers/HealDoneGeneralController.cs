@@ -32,18 +32,19 @@ namespace CombatAnalysis.CombatParserAPI.Controllers
         }
 
         [HttpPost]
-        public async Task<int> Post(HealDoneGeneralModel value)
+        public async Task<HealDoneGeneralModel> Post(HealDoneGeneralModel model)
         {
-            var map = _mapper.Map<HealDoneGeneralDto>(value);
-            var createdCombatId = await _service.CreateAsync(map);
+            var map = _mapper.Map<HealDoneGeneralDto>(model);
+            var createdItem = await _service.CreateAsync(map);
+            var resultMap = _mapper.Map<HealDoneGeneralModel>(createdItem);
 
-            return createdCombatId;
+            return resultMap;
         }
 
         [HttpDelete]
-        public async Task<int> Delete(HealDoneGeneralModel value)
+        public async Task<int> Delete(HealDoneGeneralModel model)
         {
-            var map = _mapper.Map<HealDoneGeneralDto>(value);
+            var map = _mapper.Map<HealDoneGeneralDto>(model);
             var deletedId = await _service.DeleteAsync(map);
 
             return deletedId;

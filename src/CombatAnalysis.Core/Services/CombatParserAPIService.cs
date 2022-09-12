@@ -194,9 +194,9 @@ namespace CombatAnalysis.Core.Services
                  .ToList();
 
             var combatLogResponse = await _httpClient.PostAsync("CombatLog", JsonContent.Create(dungeonNames));
-            var createdCombatLogId = await combatLogResponse.Content.ReadFromJsonAsync<int>();
+            var createdCombatLog = await combatLogResponse.Content.ReadFromJsonAsync<CombatLogModel>();
 
-            return createdCombatLogId;
+            return createdCombatLog.Id;
         }
 
         private async Task SaveCombatLogByUser(int combatLogId, LogType logType)
@@ -219,11 +219,11 @@ namespace CombatAnalysis.Core.Services
         {
             combat.CombatLogId = createdCombatLogId;
             var combatDataResponse = await _httpClient.PostAsync("Combat", JsonContent.Create(combat));
-            var createdCombatId = await combatDataResponse.Content.ReadFromJsonAsync<int>();
+            var createdCombat = await combatDataResponse.Content.ReadFromJsonAsync<CombatModel>();
 
             foreach (var item in combat.Players)
             {
-                item.CombatId = createdCombatId;
+                item.CombatId = createdCombat.Id;
             }
 
             await _httpClient.PostAsync("Combat/SaveCombatPlayers", JsonContent.Create(combat.Players));

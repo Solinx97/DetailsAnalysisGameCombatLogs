@@ -40,18 +40,19 @@ namespace CombatAnalysis.CombatParserAPI.Controllers
         }
 
         [HttpPost]
-        public async Task<int> Post(CombatPlayerModel value)
+        public async Task<CombatPlayerModel> Post(CombatPlayerModel model)
         {
-            var map = _mapper.Map<CombatPlayerDto>(value);
-            var createdCombatId = await _service.CreateAsync(map);
+            var map = _mapper.Map<CombatPlayerDto>(model);
+            var createdItem = await _service.CreateAsync(map);
+            var resultMap = _mapper.Map<CombatPlayerModel>(createdItem);
 
-            return createdCombatId;
+            return resultMap;
         }
 
         [HttpDelete]
-        public async Task<int> Delete(CombatPlayerModel value)
+        public async Task<int> Delete(CombatPlayerModel model)
         {
-            var map = _mapper.Map<CombatPlayerDto>(value);
+            var map = _mapper.Map<CombatPlayerDto>(model);
             var deletedId = await _service.DeleteAsync(map);
 
             return deletedId;

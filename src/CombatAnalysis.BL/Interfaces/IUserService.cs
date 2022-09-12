@@ -6,7 +6,7 @@ namespace CombatAnalysis.BL.Interfaces
     public interface IUserService<TModel>
         where TModel : class
     {
-        Task<string> CreateAsync(TModel item);
+        Task<TModel> CreateAsync(TModel item);
 
         Task<int> UpdateAsync(TModel item);
 

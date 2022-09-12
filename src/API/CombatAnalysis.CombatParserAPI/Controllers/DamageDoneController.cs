@@ -3,7 +3,6 @@ using CombatAnalysis.BL.DTO;
 using CombatAnalysis.BL.Interfaces;
 using CombatAnalysis.CombatParserAPI.Models;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json.Linq;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -32,16 +31,19 @@ namespace CombatAnalysis.CombatParserAPI.Controllers
         }
 
         [HttpPost]
-        public async Task Post(DamageDoneModel value)
+        public async Task<DamageDoneModel> Post(DamageDoneModel model)
         {
-            var map = _mapper.Map<DamageDoneDto>(value);
-            await _service.CreateAsync(map);
+            var map = _mapper.Map<DamageDoneDto>(model);
+            var createdItem = await _service.CreateAsync(map);
+            var resultMap = _mapper.Map<DamageDoneModel>(createdItem);
+
+            return resultMap;
         }
 
         [HttpDelete]
-        public async Task<int> Delete(DamageDoneModel value)
+        public async Task<int> Delete(DamageDoneModel model)
         {
-            var map = _mapper.Map<DamageDoneDto>(value);
+            var map = _mapper.Map<DamageDoneDto>(model);
             var deletedId = await _service.DeleteAsync(map);
 
             return deletedId;

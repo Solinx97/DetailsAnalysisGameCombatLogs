@@ -29,8 +29,17 @@ namespace CombatAnalysis.CombatParserAPI.Controllers
         [HttpGet("{id}")]
         public async Task<CombatModel> GetById(int id)
         {
-            var combatLog = await _service.GetByIdAsync(id);
-            var map = _mapper.Map<CombatModel>(combatLog);
+            var combat = await _service.GetByIdAsync(id);
+            var map = _mapper.Map<CombatModel>(combat);
+
+            return map;
+        }
+
+        [HttpGet]
+        public async Task<IEnumerable<CombatModel>> GetAll()
+        {
+            var combat = await _service.GetAllAsync();
+            var map = _mapper.Map<IEnumerable<CombatModel>>(combat);
 
             return map;
         }
@@ -45,14 +54,15 @@ namespace CombatAnalysis.CombatParserAPI.Controllers
         }
 
         [HttpPost]
-        public async Task<int> Post(CombatModel combat)
+        public async Task<CombatModel> Post(CombatModel model)
         {
-            SaveCombatDataHelper.CombatData = combat.Data;
+            SaveCombatDataHelper.CombatData = model.Data;
 
-            var map = _mapper.Map<CombatDto>(combat);
-            var createdCombatId = await _service.CreateAsync(map);
+            var map = _mapper.Map<CombatDto>(model);
+            var createdItem = await _service.CreateAsync(map);
+            var resultMap = _mapper.Map<CombatModel>(createdItem);
 
-            return createdCombatId;
+            return resultMap;
         }
 
         [HttpPost("SaveCombatPlayers")]

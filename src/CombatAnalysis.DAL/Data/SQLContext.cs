@@ -7,10 +7,9 @@ using System.Threading.Tasks;
 
 namespace CombatAnalysis.DAL.Data
 {
-    public class CombatAnalysisContext : DbContext
+    public class SQLContext : DbContext
     {
-        public CombatAnalysisContext(
-            DbContextOptions<CombatAnalysisContext> options) : base(options)
+        public SQLContext(DbContextOptions<SQLContext> options) : base(options)
         {
             var isExists = Database.EnsureCreated();
 

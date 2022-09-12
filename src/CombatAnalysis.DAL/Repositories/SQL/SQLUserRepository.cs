@@ -5,13 +5,13 @@ using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace CombatAnalysis.DAL.Repositories
+namespace CombatAnalysis.DAL.Repositories.SQL
 {
-    public class UserRepository : IUserRepository
+    public class SQLUserRepository : IUserRepository
     {
-        private readonly CombatAnalysisContext _context;
+        private readonly SQLContext _context;
 
-        public UserRepository(CombatAnalysisContext context)
+        public SQLUserRepository(SQLContext context)
         {
             _context = context;
         }
