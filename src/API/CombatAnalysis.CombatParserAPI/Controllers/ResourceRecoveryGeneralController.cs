@@ -21,7 +21,7 @@ namespace CombatAnalysis.CombatParserAPI.Controllers
             _mapper = mapper;
         }
 
-        [HttpGet("FindByCombatPlayerId/{combatPlayerId}")]
+        [HttpGet("findByCombatPlayerId/{combatPlayerId:int:min(1)}")]
         public async Task<IEnumerable<ResourceRecoveryGeneralModel>> Find(int combatPlayerId)
         {
             var resourceRecoveryGenerals = await _service.GetByParamAsync("CombatPlayerId", combatPlayerId);

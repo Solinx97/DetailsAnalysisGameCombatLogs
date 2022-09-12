@@ -26,7 +26,7 @@ namespace CombatAnalysis.CombatParserAPI.Controllers
             _saveCombatDataHelper = new SaveCombatDataHelper(mapper, httpClient, logger);
         }
 
-        [HttpGet("{id}")]
+        [HttpGet("{id:int:min(1)}")]
         public async Task<CombatModel> GetById(int id)
         {
             var combat = await _service.GetByIdAsync(id);
@@ -44,7 +44,7 @@ namespace CombatAnalysis.CombatParserAPI.Controllers
             return map;
         }
 
-        [HttpGet("FindByCombatLogId/{combatLogId}")]
+        [HttpGet("findByCombatLogId/{combatLogId:int:min(1)}")]
         public async Task<IEnumerable<CombatModel>> Find(int combatLogId)
         {
             //var combats = await _service.GetByParamAsync("CombatLogId", combatLogId);
@@ -65,7 +65,7 @@ namespace CombatAnalysis.CombatParserAPI.Controllers
             return resultMap;
         }
 
-        [HttpPost("SaveCombatPlayers")]
+        [HttpPost("saveCombatPlayers")]
         public async Task SaveCombatPlayers(List<CombatPlayerModel> combatPlayers)
         {
             var combat = await GetById(combatPlayers[0].CombatId);

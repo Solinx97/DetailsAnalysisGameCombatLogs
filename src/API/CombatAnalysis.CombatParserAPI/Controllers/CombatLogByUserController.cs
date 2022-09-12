@@ -30,7 +30,7 @@ namespace CombatAnalysis.CombatParserAPI.Controllers
             return map;
         }
 
-        [HttpGet("{id}")]
+        [HttpGet("{id:int:min(1)}")]
         public async Task<CombatLogByUserModel> GetById(int id)
         {
             var combatLogByUser = await _service.GetByIdAsync(id);

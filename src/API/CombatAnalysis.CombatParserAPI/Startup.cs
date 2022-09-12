@@ -75,7 +75,7 @@ namespace CombatAnalysis.CombatParserAPI
 
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapDefaultControllerRoute();
+                endpoints.MapControllers();
             });
         }
 

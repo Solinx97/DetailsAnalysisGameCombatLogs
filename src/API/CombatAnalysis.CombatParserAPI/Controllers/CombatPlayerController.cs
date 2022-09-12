@@ -21,7 +21,7 @@ namespace CombatAnalysis.CombatParserAPI.Controllers
             _mapper = mapper;
         }
 
-        [HttpGet("FindByCombatId/{combatId}")]
+        [HttpGet("findByCombatId/{combatId:int:min(1)}")]
         public async Task<IEnumerable<CombatPlayerDto>> Find(int combatId)
         {
             var players = await _service.GetByParamAsync("CombatId", combatId);
@@ -30,7 +30,7 @@ namespace CombatAnalysis.CombatParserAPI.Controllers
             return map;
         }
 
-        [HttpGet("{id}")]
+        [HttpGet("{id:int:min(1)}")]
         public async Task<CombatPlayerDto> GetById(int id)
         {
             var combatLog = await _service.GetByIdAsync(id);

@@ -22,7 +22,7 @@ namespace CombatAnalysis.CombatParserAPI.Controllers
             _mapper = mapper;
         }
 
-        [HttpGet("FindByCombatPlayerId/{combatPlayerId}")]
+        [HttpGet("findByCombatPlayerId/{combatPlayerId:int:min(1)}")]
         public async Task<IEnumerable<HealDoneGeneralModel>> Find(int combatPlayerId)
         {
             var healDoneGenerals = await _service.GetByParamAsync("CombatPlayerId", combatPlayerId);
