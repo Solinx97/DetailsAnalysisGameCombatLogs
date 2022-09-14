@@ -159,51 +159,49 @@ namespace CombatAnalysis.Core.ViewModels
             ConfirmPasswordIsNotCorrect = false;
             InputDataIsEmpty = false;
 
-            var registrationModel = new RegistrationModel { Id = Guid.NewGuid().ToString(), Email = Email, Password = Password };
-
-            Action action = async () =>
-            {
-                try
-                {
-                    var responseMessage = await _httpClient.PostAsync("Account/registration", JsonContent.Create(registrationModel));
-                    if (responseMessage.StatusCode == System.Net.HttpStatusCode.OK)
-                    {
-                        var result = await responseMessage.Content.ReadFromJsonAsync<ResponseFromAccount>();
-
-                        _memoryCache.Set("accessToken", result.AccessToken, new MemoryCacheEntryOptions { Size = 10 });
-                        _memoryCache.Set("refreshToken", result.RefreshToken, new MemoryCacheEntryOptions { Size = 10 });
-                        _memoryCache.Set("user", result.User, new MemoryCacheEntryOptions { Size = 50 });
-
-                        BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, "IsAuth", true);
-                        BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, "Email", result.User.Email);
-
-                        BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, "IsRegistrationNotActivated", true);
-                        if (BasicTemplate.Parent is LoginViewModel)
-                        {
-                            await _mvvmNavigation.Close(BasicTemplate.Parent);
-                        }
-
-                        await _mvvmNavigation.Close(this);
-                    }
-                    else
-                    {
-                        AccountIsReady = true;
-                    }
-                }
-                catch (HttpRequestException)
-                {
-                    ServerIsNotAvailable = true;
-                }
-
-            };
-
-            Task.Run(action);
+            Task.Run(async () => await RegistrationAsync());
         }
 
         public void Cancel()
         {
             BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, "IsRegistrationNotActivated", true);
             Task.Run(() => _mvvmNavigation.Close(this));
+        }
+
+        private async Task RegistrationAsync()
+        {
+            try
+            {
+                var registrationModel = new RegistrationModel { Id = Guid.NewGuid().ToString(), Email = Email, Password = Password };
+                var responseMessage = await _httpClient.PostAsync("Account/registration", JsonContent.Create(registrationModel));
+                if (responseMessage.StatusCode == System.Net.HttpStatusCode.OK)
+                {
+                    var result = await responseMessage.Content.ReadFromJsonAsync<ResponseFromAccount>();
+
+                    _memoryCache.Set("accessToken", result.AccessToken, new MemoryCacheEntryOptions { Size = 10 });
+                    _memoryCache.Set("refreshToken", result.RefreshToken, new MemoryCacheEntryOptions { Size = 10 });
+                    _memoryCache.Set("user", result.User, new MemoryCacheEntryOptions { Size = 50 });
+
+                    BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, "IsAuth", true);
+                    BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, "Email", result.User.Email);
+
+                    BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, "IsRegistrationNotActivated", true);
+                    if (BasicTemplate.Parent is LoginViewModel)
+                    {
+                        await _mvvmNavigation.Close(BasicTemplate.Parent);
+                    }
+
+                    await _mvvmNavigation.Close(this);
+                }
+                else
+                {
+                    AccountIsReady = true;
+                }
+            }
+            catch (HttpRequestException)
+            {
+                ServerIsNotAvailable = true;
+            }
         }
     }
 }

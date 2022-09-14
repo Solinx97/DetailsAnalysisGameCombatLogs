@@ -42,25 +42,25 @@
                         <RotateTransform Angle="90"/>
                     </TextBlock.LayoutTransform>
                 </TextBlock>
-                <StackPanel Margin="0 170 0 0" IsEnabled="False">
+                <!--<StackPanel Margin="0 170 0 0" IsEnabled="False">
                     <uc:AccountMenuButton Title="A" GradientColor1="#d1abff" GradientColor2="#b07bff" />
                     <uc:AccountMenuButton Title="B" GradientColor1="#fba0cb" GradientColor2="#fe7094" />
                     <uc:AccountMenuButton Title="C" GradientColor1="#e5db6f" GradientColor2="#e2c649" />
-                </StackPanel>
+                </StackPanel>-->
             </Grid>
         </Border>
 
         <Border Grid.Column="1" Grid.RowSpan="2" CornerRadius="0 20 20 0"
                 Background="#6f50ff" Panel.ZIndex="1" Margin="-25 0 0 0">
-            <Grid>
-                <StackPanel Margin="25" Visibility="{Binding IsAuth, Converter={StaticResource BoolToVisibility}, ConverterParameter=true:true}">
+            <StackPanel>
+                <StackPanel Margin="25 10" Visibility="{Binding IsAuth, Converter={StaticResource BoolToVisibility}, ConverterParameter=true:true}">
                     <Button Style="{StaticResource accountButton}" Margin="15 10" Content="Авторизация"
                             IsEnabled="{Binding IsLoginNotActivated}" mvx:Bi.nd="Command LoginCommand" TabIndex="10"/>
                     <Button Style="{StaticResource accountButton}" Margin="15 10" Content="Регистрация"
                             IsEnabled="{Binding IsRegistrationNotActivated}" mvx:Bi.nd="Command RegistrationCommand"/>
                 </StackPanel>
 
-                <StackPanel Margin="25" Visibility="{Binding IsAuth, Converter={StaticResource BoolToVisibility}, ConverterParameter=true:false}">
+                <StackPanel Margin="25 10" Visibility="{Binding IsAuth, Converter={StaticResource BoolToVisibility}, ConverterParameter=true:false}">
                     <StackPanel>
                         <Button Style="{StaticResource textBoxButton}" IsEnabled="False" Opacity="0.5">
                             <Button.ToolTip>
@@ -70,13 +70,18 @@
                             </Button.ToolTip>
                             <Icon:PackIconMaterial Kind="NaturePeople" Foreground="White"/>
                         </Button>
-                        <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Margin="10"
+                        <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Margin="15"
                                FontFamily="Comic Sans MS" FontSize="16" Text="{Binding Email}" Foreground="White" />
                     </StackPanel>
                     <Button Style="{StaticResource accountButton}" Content="Выйти" Width="100" Height="30" mvx:Bi.nd="Command LogoutCommand"/>
                 </StackPanel>
 
-                <StackPanel Margin="25 160 0 0">
+                <StackPanel Margin="10 0 0 0">
+                    <uc:MenuButton Title="Логи" Icon="HomeOutline" IsEnabled="True" 
+                                   OnClick="{Binding LogPanelStatusCommand}"/>
+                </StackPanel>
+
+                <StackPanel Margin="30 0 0 0" Visibility="{Binding LogPanelStatus}">
                     <uc:MenuButton Title="Загрузка" Icon="HomeOutline" IsEnabled="{Binding Step, Converter={StaticResource IntToXAMLBoolExpress}, ConverterParameter='>,0'}" 
                                    IsActive="{Binding Step, Converter={StaticResource IntToXAMLBool}, ConverterParameter=0}" OnClick="{Binding UploadCombatsCommand}"/>
                     <uc:MenuButton Title="Все бои" Icon="ChartTimelineVariantShimmer" IsEnabled="{Binding AllowStep, Converter={StaticResource IntToXAMLBoolExpress}, ConverterParameter='>,0'}"
@@ -93,69 +98,80 @@
                                    IsActive="{Binding Step, Converter={StaticResource IntToXAMLBool}, ConverterParameter=6}" OnClick="{Binding ResourceDetailsCommand}"/>
                 </StackPanel>
 
-                <StackPanel Margin="25 0 0 0" VerticalAlignment="Bottom">
+                <StackPanel Margin="10 0 0 0">
+                    <uc:MenuButton Title="Чат" Icon="Chat" IsEnabled="True" 
+                                   OnClick="{Binding ChatCommand}"/>
+                </StackPanel>
+                
+                <StackPanel Margin="10 75 0 0" VerticalAlignment="Bottom">
                     <uc:MenuButton Title="Настройки" Icon="CogOutline" IsEnabled="False"/>
                     <uc:MenuButton OnClick="{Binding CloseCommand}" Title="Выход" Icon="Logout"/>
                 </StackPanel>
-            </Grid>
+            </StackPanel>
         </Border>
 
-        <Border Grid.Column="2" Grid.ColumnSpan="2" Background="Transparent" Margin="10 0" MouseDown="Border_MouseDown">
-            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                <Button Style="{StaticResource textBoxButton}">
-                    <Button.ToolTip>
-                        <ToolTip>
-                            Уведомления
-                        </ToolTip>
-                    </Button.ToolTip>
-                    <Icon:PackIconMaterial Kind="BellOutline" Foreground="#88878e"/>
-                </Button>
-                <Button Style="{StaticResource textBoxButton}">
-                    <Button.ToolTip>
-                        <ToolTip>
-                            Меню
-                        </ToolTip>
-                    </Button.ToolTip>
-                    <Icon:PackIconMaterial Kind="DotsVertical" Foreground="#88878e"/>
-                </Button>
-                <Button Style="{StaticResource textBoxButton}" mvx:Bi.nd="Command MinimazeCommand">
-                    <Icon:PackIconMaterial Kind="WindowMinimize" Foreground="Gray" Width="25" Height="25"/>
-                </Button>
-                <Button Style="{StaticResource textBoxButton}" mvx:Bi.nd="Command MaximazeCommand">
-                    <Icon:PackIconMaterial Kind="WindowMaximize" Foreground="Gray" Width="25" Height="25"/>
-                </Button>
-                <Button Style="{StaticResource textBoxButton}" mvx:Bi.nd="Command CloseCommand">
-                    <Icon:PackIconMaterial Kind="WindowClose" Foreground="Red" Width="25" Height="25"/>
-                </Button>
+        <Border Grid.Column="2" Grid.ColumnSpan="2" Background="Transparent" Margin="10 10" MouseDown="Border_MouseDown">
+            <StackPanel HorizontalAlignment="Right">
+                <StackPanel Orientation="Horizontal">
+                    <Button Style="{StaticResource textBoxButton}" mvx:Bi.nd="Command MinimazeCommand">
+                        <Icon:PackIconMaterial Kind="WindowMinimize" Foreground="Gray" Width="15" Height="15"/>
+                    </Button>
+                    <Button Style="{StaticResource textBoxButton}" mvx:Bi.nd="Command MaximazeCommand">
+                        <Icon:PackIconMaterial Kind="WindowMaximize" Foreground="Gray" Width="15" Height="15"/>
+                    </Button>
+                    <Button Style="{StaticResource textBoxButton}" mvx:Bi.nd="Command CloseCommand">
+                        <Icon:PackIconMaterial Kind="WindowClose" Foreground="Red" Width="15" Height="15"/>
+                    </Button>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                    <Button Style="{StaticResource textBoxButton}">
+                        <Button.ToolTip>
+                            <ToolTip>
+                                Уведомления
+                            </ToolTip>
+                        </Button.ToolTip>
+                        <Icon:PackIconMaterial Kind="BellOutline" Foreground="#88878e"/>
+                    </Button>
+                    <Button Style="{StaticResource textBoxButton}">
+                        <Button.ToolTip>
+                            <ToolTip>
+                                Меню
+                            </ToolTip>
+                        </Button.ToolTip>
+                        <Icon:PackIconMaterial Kind="DotsVertical" Foreground="#88878e"/>
+                    </Button>
+                </StackPanel>
             </StackPanel>
         </Border>
         <StackPanel Grid.Column="2" Grid.Row="0" VerticalAlignment="Top" Orientation="Horizontal" Margin="25">
-            <TextBlock Margin="5" FontSize="12" Text="Статус загрузки: "/>
-            <TextBlock Margin="5" FontSize="13" FontWeight="Bold" Foreground="Gray" Text="Загрузка..."
-                       Visibility="{Binding ResponseStatus, Converter={StaticResource IntToVisibility}, ConverterParameter=true:1}">
-                <TextBlock.ToolTip>
-                    <ToolTip>
-                        Загрузка данных. Это может занять некоторое время. Вы можете продолжить работу с приложением. Статус загрузки будет отображаться в данной панели.
-                    </ToolTip>
-                </TextBlock.ToolTip>
-            </TextBlock>
-            <StackPanel Orientation="Horizontal">
-                <TextBlock Margin="5" FontSize="13" FontWeight="Bold" Foreground="Red" Text="Ошибка"
+            <TextBlock Margin="5" FontSize="12" Text="Статус загрузки: " Visibility="{Binding ElementName=responseStatus, Path=Visibility}"/>
+            <StackPanel Name="responseStatus" Visibility="{Binding ResponseStatus, Converter={StaticResource IntToVisibility}, ConverterParameter='true:1:>='}">
+                <TextBlock Margin="5" FontSize="13" FontWeight="Bold" Foreground="Gray" Text="Загрузка..."
+                           Visibility="{Binding ResponseStatus, Converter={StaticResource IntToVisibility}, ConverterParameter=true:1}">
+                    <TextBlock.ToolTip>
+                        <ToolTip>
+                            Загрузка данных. Это может занять некоторое время. Вы можете продолжить работу с приложением. Статус загрузки будет отображаться в данной панели.
+                        </ToolTip>
+                    </TextBlock.ToolTip>
+                </TextBlock>
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Margin="5" FontSize="13" FontWeight="Bold" Foreground="Red" Text="Ошибка"
                        Visibility="{Binding ResponseStatus, Converter={StaticResource IntToVisibility}, ConverterParameter=true:3}">
-                    <TextBlock.ToolTip>
-                        <ToolTip>
-                            Загрузка была завершена с ошибкой. Возможно проблемы с соединением или сервер временно не доступен. Вы можете продолжить работать с текущими данными, но они не будут сохранены.
-                        </ToolTip>
-                    </TextBlock.ToolTip>
-                </TextBlock>
-                <TextBlock Margin="5" FontSize="13" FontWeight="Bold" Foreground="Green" Text="Успешно"
+                        <TextBlock.ToolTip>
+                            <ToolTip>
+                                Загрузка была завершена с ошибкой. Возможно проблемы с соединением или сервер временно не доступен. Вы можете продолжить работать с текущими данными, но они не будут сохранены.
+                            </ToolTip>
+                        </TextBlock.ToolTip>
+                    </TextBlock>
+                    <TextBlock Margin="5" FontSize="13" FontWeight="Bold" Foreground="Green" Text="Успешно"
                        Visibility="{Binding ResponseStatus, Converter={StaticResource IntToVisibility}, ConverterParameter=true:2}">
-                    <TextBlock.ToolTip>
-                        <ToolTip>
-                            Все данные загружены успешно. Загруженные данные можно будет просмотреть повторно в люБое время.
-                        </ToolTip>
-                    </TextBlock.ToolTip>
-                </TextBlock>
+                        <TextBlock.ToolTip>
+                            <ToolTip>
+                                Все данные загружены успешно. Загруженные данные можно будет просмотреть повторно в люБое время.
+                            </ToolTip>
+                        </TextBlock.ToolTip>
+                    </TextBlock>
+                </StackPanel>
             </StackPanel>
         </StackPanel>
     </Grid>

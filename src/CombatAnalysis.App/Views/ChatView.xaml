@@ -1,0 +1,177 @@
+﻿<views:MvxWpfView
+    x:Class="CombatAnalysis.App.Views.ChatView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:Icon="http://metro.mahapps.com/winfx/xaml/iconpacks"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:converters="clr-namespace:CombatAnalysis.App.Converters"
+    xmlns:uc="clr-namespace:CombatAnalysis.App.UserControls"
+    xmlns:local="clr-namespace:CombatAnalysis.App.Views"
+    xmlns:viewModels="clr-namespace:CombatAnalysis.Core.ViewModels;assembly=CombatAnalysis.Core"
+    xmlns:views="clr-namespace:MvvmCross.Platforms.Wpf.Views;assembly=MvvmCross.Platforms.Wpf"
+    mc:Ignorable="d">
+
+    <Grid>
+        <Grid.Resources>
+            <converters:TheNativeStringToVisibilityConverter x:Key="ToVisibility" />
+            <converters:TheNativeStringToXAMLBoolConverter x:Key="ToXAMLBool" />
+            <converters:TheNativeBoolToXAMLBoolConverter x:Key="BoolToXAMLBool" />
+            <converters:TheNativeBoolToVisibilityConverter x:Key="BoolToVisibility" />
+            <converters:TheNativeIntToVisibilityConverter x:Key="IntToVisibility" />
+            <converters:TheNativeIntToXAMLBoolConverter x:Key="IntToXAMLBool" />
+            <converters:TheNativeWhenTypeToStringConverter x:Key="WhenTypeToString" />
+        </Grid.Resources>
+
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="55"/>
+            <ColumnDefinition Width="220"/>
+            <ColumnDefinition Width="0.7*"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="0.25*"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="0.75*"/>
+            <RowDefinition Height="0.05*"/>
+        </Grid.RowDefinitions>
+
+        <ContentControl Grid.RowSpan="4" Grid.ColumnSpan="4" Content="{Binding BasicTemplate}">
+            <ContentControl.Resources>
+                <DataTemplate DataType="{x:Type viewModels:BasicTemplateViewModel}">
+                    <local:BasicTemplateView />
+                </DataTemplate>
+            </ContentControl.Resources>
+        </ContentControl>
+
+        <Border Grid.Column="2" Grid.Row="1" Grid.RowSpan="3">
+            <Grid>
+                <StackPanel Orientation="Horizontal" Margin="30 0 0 30">
+                    <Rectangle Width="0.8" Stroke="#dadada" VerticalAlignment="Stretch"/>
+                </StackPanel>
+
+                <StackPanel Margin="30 0 15 0">
+                    <TextBlock Text="Группы" Margin="25 0 0 5" Style="{StaticResource titleText}"/>
+
+                    <uc:Item Title="Oleg" Message="Ok, good job" Color="#73afff" TagName="PH" MessageCount="2" />
+                    <uc:Item Title="Oleg" Message="Ok, good job" Color="#73afff" TagName="PH" MessageCount="2" />
+                    <uc:Item Title="Oleg" Message="Ok, good job" Color="#73afff" TagName="PH" MessageCount="2" />
+
+                    <Button Content="Показать все" Style="{StaticResource showButton}"/>
+
+                    <TextBlock Text="Участники" Margin="25 0 0 5" Style="{StaticResource titleText}"/>
+
+                    <uc:Item Title="Oleg" Message="Ok, good job" Color="#73afff" TagName="PH" MessageCount="2" />
+
+                    <Button Content="Показать все" Style="{StaticResource showButton}"/>
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <Border Name="test" CornerRadius="15" Background="WhiteSmoke" Grid.Column="3" Grid.Row="1" Grid.RowSpan="3" Margin="0 0 30 30" ClipToBounds="True">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="auto"/>
+                </Grid.RowDefinitions>
+
+                <Grid Background="WhiteSmoke">
+                    <Grid.Effect>
+                        <DropShadowEffect BlurRadius="20" ShadowDepth="1" Direction="-90" Opacity="0.1"/>
+                    </Grid.Effect>
+
+                    <TextBlock Text="Moon" FontSize="16" Margin="20 15" HorizontalAlignment="Left"/>
+
+                    <StackPanel Orientation="Horizontal" Margin="0 0 10 0" HorizontalAlignment="Right">
+                        <TextBlock Text="and 3 others" VerticalAlignment="Center" Margin="7 0" Foreground="#8b8a8f" FontSize="11" />
+
+                        <Button Style="{StaticResource textBoxButton}">
+                            <Icon:PackIconMaterial Kind="DotsVertical" Width="14" Height="14" Foreground="#88878e"/>
+                        </Button>
+                    </StackPanel>
+                </Grid>
+
+                <ListBox HorizontalContentAlignment="Stretch" Grid.Row="1" Margin="10 10 10 30" ItemsSource="{Binding Messages}" Background="Transparent" IsEnabled="False">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel>
+                                <uc:ChatSeparator Title="{Binding Path=DayTimeType, Converter={StaticResource WhenTypeToString}}"/>
+
+                                <StackPanel Visibility="{Binding Path=IsMyMessage, Converter={StaticResource BoolToVisibility}, ConverterParameter=true:true}">
+                                    <uc:UserChat UserName="{Binding Path=Username}"/>
+                                    <uc:MessageChat Color="#ff82a3" Message="{Binding Path=Message}"/>
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBlock Text="{Binding Path=Time, StringFormat=hh\\:mm}" Style="{StaticResource timeText}"/>
+                                        <!--<TextBlock Text="PM" Style="{StaticResource timeText}"/>-->
+                                    </StackPanel>
+                                </StackPanel>
+
+                                <StackPanel Visibility="{Binding Path=IsMyMessage, Converter={StaticResource BoolToVisibility}, ConverterParameter=true}">
+                                    <uc:MyMessageChat Message="{Binding Path=Message}"/>
+                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                                        <TextBlock Text="{Binding Path=Time, StringFormat=hh\\:mm}" Style="{StaticResource timeTextRight}"/>
+                                        <!--<TextBlock Text="PM" Style="{StaticResource timeTextRight}"/>-->
+                                    </StackPanel>
+                                </StackPanel>
+                            </StackPanel>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+
+                <Grid Grid.Row="2" Margin="10 0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="auto"/>
+                    </Grid.ColumnDefinitions>
+
+                    <Grid>
+                        <TextBlock Margin="15 0 120 0" VerticalAlignment="Center" Foreground="#868686" Panel.ZIndex="1"
+                                   IsHitTestVisible="False" Text="Type your message..." Visibility="{Binding ElementName=txtMessgae, Path=Text.IsEmpty, Converter={StaticResource BoolToVisibility}}"/>
+                        <TextBox x:Name="txtMessgae" Style="{StaticResource messageTextBox}"/>
+
+                        <StackPanel Orientation="Horizontal" Margin="0 0 8 0" HorizontalAlignment="Right" VerticalAlignment="Center">
+                            <Button Style="{StaticResource textBoxButton}">
+                                <Button.ToolTip>
+                                    <ToolTip>
+                                        Копировать
+                                    </ToolTip>
+                                </Button.ToolTip>
+                                <Icon:PackIconMaterial Kind="BookmarkCheckOutline" Foreground="#a6a6a6"/>
+                            </Button>
+                            <Button Style="{StaticResource textBoxButton}">
+                                <Button.ToolTip>
+                                    <ToolTip>
+                                        Прикрепить документ
+                                    </ToolTip>
+                                </Button.ToolTip>
+                                <Icon:PackIconMaterial Kind="Paperclip" Foreground="#a6a6a6"/>
+                            </Button>
+                            <Button Style="{StaticResource textBoxButton}">
+                                <Button.ToolTip>
+                                    <ToolTip>
+                                        Записать сообщение голосом
+                                    </ToolTip>
+                                </Button.ToolTip>
+                                <Icon:PackIconMaterial Kind="Microphone" Foreground="#a6a6a6"/>
+                            </Button>
+                        </StackPanel>
+                    </Grid>
+
+                    <Button Grid.Column="1" Margin="5 0 0 0" Style="{StaticResource textBoxButton}">
+                        <Button.ToolTip>
+                            <ToolTip>
+                                Отправить сообщение
+                            </ToolTip>
+                        </Button.ToolTip>
+                        <Icon:PackIconMaterial Kind="Send" Margin="3 0 0 2" Width="16" Foreground="#6f59d4">
+                            <Icon:PackIconMaterial.LayoutTransform>
+                                <RotateTransform Angle="-45"/>
+                            </Icon:PackIconMaterial.LayoutTransform>
+                        </Icon:PackIconMaterial>
+                    </Button>
+                </Grid>
+            </Grid>
+        </Border>
+    </Grid>
+</views:MvxWpfView>

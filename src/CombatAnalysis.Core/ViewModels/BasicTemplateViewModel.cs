@@ -11,6 +11,7 @@ using MvvmCross.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using System.Windows;
 
 namespace CombatAnalysis.Core.ViewModels
 {
@@ -30,6 +31,7 @@ namespace CombatAnalysis.Core.ViewModels
         private bool _isRegistrationNotActivated = true;
         private string _email;
         private LogType _logType;
+        private Visibility _logPanelStatus;
 
         private static ResponseStatus _responseStatus;
         private static int _allowStep;
@@ -53,6 +55,8 @@ namespace CombatAnalysis.Core.ViewModels
             UploadCombatsCommand = new MvxCommand(UploadCombatLogs);
             GeneralAnalysisCommand = new MvxCommand(GeneralAnalysis);
             CombatCommand = new MvxCommand(DetailsSpecificalCombat);
+            LogPanelStatusCommand = new MvxCommand(() => LogPanelStatus = LogPanelStatus == Visibility.Visible ? Visibility.Collapsed : Visibility.Visible);
+            ChatCommand = new MvxCommand(Chat);
 
             DamageDoneDetailsCommand = new MvxCommand(DamageDoneDetails);
             HealDoneDetailsCommand = new MvxCommand(HealDoneDetails);
@@ -87,6 +91,10 @@ namespace CombatAnalysis.Core.ViewModels
         public IMvxCommand DamageTakenDetailsCommand { get; set; }
 
         public IMvxCommand ResourceDetailsCommand { get; set; }
+
+        public IMvxCommand LogPanelStatusCommand { get; set; }
+
+        public IMvxCommand ChatCommand { get; set; }
 
         public CombatModel TargetCombat { get; set; }
 
@@ -179,6 +187,15 @@ namespace CombatAnalysis.Core.ViewModels
             }
         }
 
+        public Visibility LogPanelStatus
+        {
+            get { return _logPanelStatus; }
+            set
+            {
+                SetProperty(ref _logPanelStatus, value);
+            }
+        }
+
         public void CloseWindow()
         {
             Windows.MainWindow.Close();
@@ -187,19 +204,19 @@ namespace CombatAnalysis.Core.ViewModels
 
         public void MaximazeWindow()
         {
-            if (Windows.MainWindow.WindowState != System.Windows.WindowState.Maximized)
+            if (Windows.MainWindow.WindowState != WindowState.Maximized)
             {
-                Windows.MainWindow.WindowState = System.Windows.WindowState.Maximized;
+                Windows.MainWindow.WindowState = WindowState.Maximized;
             }
             else
             {
-                Windows.MainWindow.WindowState = System.Windows.WindowState.Normal;
+                Windows.MainWindow.WindowState = WindowState.Normal;
             }
         }
 
         public void MinimazeWindow()
         {
-            Windows.MainWindow.WindowState = System.Windows.WindowState.Minimized;
+            Windows.MainWindow.WindowState = WindowState.Minimized;
         }
 
         public void Login()
@@ -274,6 +291,11 @@ namespace CombatAnalysis.Core.ViewModels
 
             Task.Run(() => _mvvmNavigation.Close(Parent));
             Task.Run(() => _mvvmNavigation.Navigate<ResourceRecoveryDetailsViewModel, Tuple<int, CombatModel>>(_combatInformtaion));
+        }
+
+        public void Chat()
+        {
+            Task.Run(() => _mvvmNavigation.Navigate<ChatViewModel>());
         }
 
         public void AddObserver(IResponseStatusObserver o)
