@@ -17,7 +17,8 @@ namespace CombatAnalysis.UserApi.Controllers
             _tokenService = tokenService;
         }
 
-        [HttpGet("validateRefreshToken/{refreshToken}")]
+        [HttpGet]
+        [Route("validateRefreshToken/{refreshToken}")]
         public IActionResult ValidateToken(string refreshToken)
         {
             var claimsByRefreshToken = _tokenService.ValidateToken(refreshToken, JWTSecret.RefreshSecretKey, out var _);
@@ -31,7 +32,8 @@ namespace CombatAnalysis.UserApi.Controllers
             }
         }
 
-        [HttpGet("validateAccessToken/{accessToken}")]
+        [HttpGet]
+        [Route("validateAccessToken/{accessToken}")]
         public IActionResult ValidateAccessToken(string accessToken)
         {
             var claimsByRefreshToken = _tokenService.ValidateToken(accessToken, JWTSecret.AccessSecretKey, out var _);
@@ -45,7 +47,8 @@ namespace CombatAnalysis.UserApi.Controllers
             }
         }
 
-        [HttpGet("find/{refreshToken}")]
+        [HttpGet]
+        [Route("find/{refreshToken}")]
         public async Task<IActionResult> FindRefreshTokenAsync(string refreshToken)
         {
             var foundToken = await _tokenService.FindRefreshTokenAsync(refreshToken);
@@ -59,7 +62,8 @@ namespace CombatAnalysis.UserApi.Controllers
             }
         }
 
-        [HttpGet("check/{userId}")]
+        [HttpGet]
+        [Route("check/{userId}")]
         public async Task Check(string userId)
         {
             await _tokenService.CheckRefreshTokensByUserAsync(userId);

@@ -3,7 +3,6 @@ using CombatAnalysis.BL.DTO;
 using CombatAnalysis.BL.Exceptions;
 using CombatAnalysis.BL.Interfaces;
 using CombatAnalysis.DAL.Entities;
-using CombatAnalysis.DAL.Helpers;
 using CombatAnalysis.DAL.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -12,18 +11,18 @@ using System.Threading.Tasks;
 
 namespace CombatAnalysis.BL.Services
 {
-    internal class DamageDoneService : IService<DamageDoneDto>
+    internal class DamageDoneService : IService<DamageDoneDto, int>
     {
-        private readonly IGenericRepository<DamageDone> _repository;
+        private readonly IGenericRepository<DamageDone, int> _repository;
         private readonly IMapper _mapper;
 
-        public DamageDoneService(IGenericRepository<DamageDone> userRepository, IMapper mapper)
+        public DamageDoneService(IGenericRepository<DamageDone, int> repository, IMapper mapper)
         {
-            _repository = userRepository;
+            _repository = repository;
             _mapper = mapper;
         }
 
-        Task<int> IService<DamageDoneDto>.CreateAsync(DamageDoneDto item)
+        Task<DamageDoneDto> IService<DamageDoneDto, int>.CreateAsync(DamageDoneDto item)
         {
             if (item == null)
             {
@@ -33,20 +32,7 @@ namespace CombatAnalysis.BL.Services
             return CreateInternalAsync(item);
         }
 
-        async Task<int> IService<DamageDoneDto>.CreateByProcedureAsync(DamageDoneDto item)
-        {
-            var paramNames = new string[] { nameof(item.Value), nameof(item.Time), nameof(item.FromPlayer),
-                nameof(item.ToEnemy), nameof(item.SpellOrItem), nameof(item.IsDodge), nameof(item.IsParry),  nameof(item.IsMiss),
-                nameof(item.IsResist), nameof(item.IsImmune), nameof(item.IsCrit), nameof(item.CombatPlayerDataId) };
-            var paramValues = new object[] { item.Value, item.Time.ToString(), item.FromPlayer,
-                item.ToEnemy, item.SpellOrItem, item.IsDodge, item.IsParry, item.IsMiss,
-                item.IsResist, item.IsImmune, item.IsCrit, item.CombatPlayerDataId };
-
-            var response = await _repository.ExecuteStoredProcedureAsync(DbProcedureHelper.InsertIntoDamageDone, paramNames, paramValues);
-            return response;
-        }
-
-        Task<int> IService<DamageDoneDto>.DeleteAsync(DamageDoneDto item)
+        Task<int> IService<DamageDoneDto, int>.DeleteAsync(DamageDoneDto item)
         {
             if (item == null)
             {
@@ -56,16 +42,7 @@ namespace CombatAnalysis.BL.Services
             return DeleteInternalAsync(item);
         }
 
-        async Task<int> IService<DamageDoneDto>.DeleteByProcedureAsync(int combatPlayerId)
-        {
-            var paramNames = new string[] { nameof(combatPlayerId) };
-            var paramValues = new object[] { combatPlayerId };
-
-            var response = await _repository.ExecuteStoredProcedureAsync(DbProcedureHelper.DeleteDamageDone, paramNames, paramValues);
-            return response;
-        }
-
-        async Task<IEnumerable<DamageDoneDto>> IService<DamageDoneDto>.GetAllAsync()
+        async Task<IEnumerable<DamageDoneDto>> IService<DamageDoneDto, int>.GetAllAsync()
         {
             var allData = await _repository.GetAllAsync();
             var result = _mapper.Map<List<DamageDoneDto>>(allData);
@@ -73,26 +50,23 @@ namespace CombatAnalysis.BL.Services
             return result;
         }
 
-        async Task<IEnumerable<DamageDoneDto>> IService<DamageDoneDto>.GetByProcedureAsync(int combatPlayerId)
+        async Task<DamageDoneDto> IService<DamageDoneDto, int>.GetByIdAsync(int id)
         {
-            var paramNames = new string[] { nameof(combatPlayerId) };
-            var paramValues = new object[] { combatPlayerId };
+            var result = await _repository.GetByIdAsync(id);
+            var resultMap = _mapper.Map<DamageDoneDto>(result);
 
-            var data = await _repository.ExecuteStoredProcedureUseModelAsync(DbProcedureHelper.GetDamageDone, paramNames, paramValues);
-            var result = _mapper.Map<IEnumerable<DamageDoneDto>>(data);
-
-            return result;
+            return resultMap;
         }
 
-        async Task<DamageDoneDto> IService<DamageDoneDto>.GetByIdAsync(int id)
+        async Task<IEnumerable<DamageDoneDto>> IService<DamageDoneDto, int>.GetByParamAsync(string paramName, object value)
         {
-            var executeLoad = await _repository.GetByIdAsync(id);
-            var result = _mapper.Map<DamageDoneDto>(executeLoad);
+            var result = await Task.Run(() => _repository.GetByParam(paramName, value));
+            var resultMap = _mapper.Map<IEnumerable<DamageDoneDto>>(result);
 
-            return result;
+            return resultMap;
         }
 
-        Task<int> IService<DamageDoneDto>.UpdateAsync(DamageDoneDto item)
+        Task<int> IService<DamageDoneDto, int>.UpdateAsync(DamageDoneDto item)
         {
             if (item == null)
             {
@@ -102,12 +76,13 @@ namespace CombatAnalysis.BL.Services
             return UpdateInternalAsync(item);
         }
 
-        private async Task<int> CreateInternalAsync(DamageDoneDto item)
+        private async Task<DamageDoneDto> CreateInternalAsync(DamageDoneDto item)
         {
             var map = _mapper.Map<DamageDone>(item);
-            var createdCombatId = await _repository.CreateAsync(map);
+            var createdItem = await _repository.CreateAsync(map);
+            var resultMap = _mapper.Map<DamageDoneDto>(createdItem);
 
-            return createdCombatId;
+            return resultMap;
         }
 
         private async Task<int> DeleteInternalAsync(DamageDoneDto item)
@@ -118,8 +93,8 @@ namespace CombatAnalysis.BL.Services
                 throw new NotFoundException($"Collection entity {nameof(DamageDoneDto)} not found", nameof(allData));
             }
 
-            var numberEntries = await _repository.DeleteAsync(_mapper.Map<DamageDone>(item));
-            return numberEntries;
+            var numberEntriesAffected = await _repository.DeleteAsync(_mapper.Map<DamageDone>(item));
+            return numberEntriesAffected;
         }
 
         private async Task<int> UpdateInternalAsync(DamageDoneDto item)
@@ -130,8 +105,8 @@ namespace CombatAnalysis.BL.Services
                 throw new NotFoundException($"Collection entity {nameof(DamageDoneDto)} not found", nameof(allData));
             }
 
-            var numberEntries = await _repository.UpdateAsync(_mapper.Map<DamageDone>(item));
-            return numberEntries;
+            var numberEntriesAffected = await _repository.UpdateAsync(_mapper.Map<DamageDone>(item));
+            return numberEntriesAffected;
         }
     }
 }

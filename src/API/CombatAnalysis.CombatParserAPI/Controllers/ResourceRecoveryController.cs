@@ -12,35 +12,39 @@ namespace CombatAnalysis.CombatParserAPI.Controllers
     [ApiController]
     public class ResourceRecoveryController : ControllerBase
     {
-        private readonly IService<ResourceRecoveryDto> _service;
+        private readonly IService<ResourceRecoveryDto, int> _service;
         private readonly IMapper _mapper;
 
-        public ResourceRecoveryController(IService<ResourceRecoveryDto> service, IMapper mapper)
+        public ResourceRecoveryController(IService<ResourceRecoveryDto, int> service, IMapper mapper)
         {
             _service = service;
             _mapper = mapper;
         }
 
-        [HttpGet("FindByCombatPlayerId/{combatPlayerId}")]
+        [HttpGet("findByCombatPlayerId/{combatPlayerId:int:min(1)}")]
         public async Task<IEnumerable<ResourceRecoveryModel>> Find(int combatPlayerId)
         {
-            var resourceRecoveryes = await _service.GetByProcedureAsync(combatPlayerId);
+            var resourceRecoveryes = await _service.GetByParamAsync("CombatPlayerId", combatPlayerId);
             var map = _mapper.Map<IEnumerable<ResourceRecoveryModel>>(resourceRecoveryes);
 
             return map;
         }
 
         [HttpPost]
-        public async Task Post(ResourceRecoveryModel value)
+        public async Task<ResourceRecoveryModel> Post(ResourceRecoveryModel model)
         {
-            var map = _mapper.Map<ResourceRecoveryDto>(value);
-            await _service.CreateByProcedureAsync(map);
+            var map = _mapper.Map<ResourceRecoveryDto>(model);
+            var createdItem = await _service.CreateAsync(map);
+            var resultMap = _mapper.Map<ResourceRecoveryModel>(createdItem);
+
+            return resultMap;
         }
 
-        [HttpDelete("DeleteByCombatPlayerId/{combatPlayerId}")]
-        public async Task<int> Delete(int combatPlayerId)
+        [HttpDelete]
+        public async Task<int> Delete(ResourceRecoveryModel model)
         {
-            var deletedId = await _service.DeleteByProcedureAsync(combatPlayerId);
+            var map = _mapper.Map<ResourceRecoveryDto>(model);
+            var deletedId = await _service.DeleteAsync(map);
 
             return deletedId;
         }

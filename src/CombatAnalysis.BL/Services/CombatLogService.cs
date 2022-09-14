@@ -3,7 +3,6 @@ using CombatAnalysis.BL.DTO;
 using CombatAnalysis.BL.Exceptions;
 using CombatAnalysis.BL.Interfaces;
 using CombatAnalysis.DAL.Entities;
-using CombatAnalysis.DAL.Helpers;
 using CombatAnalysis.DAL.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -12,18 +11,18 @@ using System.Threading.Tasks;
 
 namespace CombatAnalysis.BL.Services
 {
-    internal class CombatLogService : IService<CombatLogDto>
+    internal class CombatLogService : IService<CombatLogDto, int>
     {
-        private readonly IGenericRepository<CombatLog> _repository;
+        private readonly IGenericRepository<CombatLog, int> _repository;
         private readonly IMapper _mapper;
 
-        public CombatLogService(IGenericRepository<CombatLog> userRepository, IMapper mapper)
+        public CombatLogService(IGenericRepository<CombatLog, int> userRepository, IMapper mapper)
         {
             _repository = userRepository;
             _mapper = mapper;
         }
 
-        Task<int> IService<CombatLogDto>.CreateAsync(CombatLogDto item)
+        Task<CombatLogDto> IService<CombatLogDto, int>.CreateAsync(CombatLogDto item)
         {
             if (item == null)
             {
@@ -33,7 +32,7 @@ namespace CombatAnalysis.BL.Services
             return CreateInternalAsync(item);
         }
 
-        Task<int> IService<CombatLogDto>.DeleteAsync(CombatLogDto item)
+        Task<int> IService<CombatLogDto, int>.DeleteAsync(CombatLogDto item)
         {
             if (item == null)
             {
@@ -43,7 +42,7 @@ namespace CombatAnalysis.BL.Services
             return DeleteInternalAsync(item);
         }
 
-        async Task<IEnumerable<CombatLogDto>> IService<CombatLogDto>.GetAllAsync()
+        async Task<IEnumerable<CombatLogDto>> IService<CombatLogDto, int>.GetAllAsync()
         {
             var allData = await _repository.GetAllAsync();
             var result = _mapper.Map<List<CombatLogDto>>(allData);
@@ -51,26 +50,23 @@ namespace CombatAnalysis.BL.Services
             return result;
         }
 
-        async Task<IEnumerable<CombatLogDto>> IService<CombatLogDto>.GetByProcedureAsync(int combatLogId)
+        async Task<CombatLogDto> IService<CombatLogDto, int>.GetByIdAsync(int id)
         {
-            var paramNames = new string[] { nameof(combatLogId) };
-            var paramValues = new object[] { combatLogId };
+            var result = await _repository.GetByIdAsync(id);
+            var resultMap = _mapper.Map<CombatLogDto>(result);
 
-            var data = await _repository.ExecuteStoredProcedureUseModelAsync(DbProcedureHelper.GetCombat, paramNames, paramValues);
-            var result = _mapper.Map<IEnumerable<CombatLogDto>>(data);
-
-            return result;
+            return resultMap;
         }
 
-        async Task<CombatLogDto> IService<CombatLogDto>.GetByIdAsync(int id)
+        async Task<IEnumerable<CombatLogDto>> IService<CombatLogDto, int>.GetByParamAsync(string paramName, object value)
         {
-            var executeLoad = await _repository.GetByIdAsync(id);
-            var result = _mapper.Map<CombatLogDto>(executeLoad);
+            var result = await Task.Run(() => _repository.GetByParam(paramName, value));
+            var resultMap = _mapper.Map<IEnumerable<CombatLogDto>>(result);
 
-            return result;
+            return resultMap;
         }
 
-        Task<int> IService<CombatLogDto>.UpdateAsync(CombatLogDto item)
+        Task<int> IService<CombatLogDto, int>.UpdateAsync(CombatLogDto item)
         {
             if (item == null)
             {
@@ -80,7 +76,7 @@ namespace CombatAnalysis.BL.Services
             return UpdateInternalAsync(item);
         }
 
-        private async Task<int> CreateInternalAsync(CombatLogDto item)
+        private async Task<CombatLogDto> CreateInternalAsync(CombatLogDto item)
         {
             if (string.IsNullOrEmpty(item.Name))
             {
@@ -88,9 +84,10 @@ namespace CombatAnalysis.BL.Services
             }
 
             var map = _mapper.Map<CombatLog>(item);
-            var createdCombatId = await _repository.CreateAsync(map);
+            var createdItem = await _repository.CreateAsync(map);
+            var resultMap = _mapper.Map<CombatLogDto>(createdItem);
 
-            return createdCombatId;
+            return resultMap;
         }
 
         private async Task<int> DeleteInternalAsync(CombatLogDto item)
@@ -101,8 +98,8 @@ namespace CombatAnalysis.BL.Services
                 throw new NotFoundException($"Collection entity {nameof(CombatLogDto)} not found", nameof(allData));
             }
 
-            var numberEntries = await _repository.DeleteAsync(_mapper.Map<CombatLog>(item));
-            return numberEntries;
+            var numberEntriesAffected = await _repository.DeleteAsync(_mapper.Map<CombatLog>(item));
+            return numberEntriesAffected;
         }
 
         private async Task<int> UpdateInternalAsync(CombatLogDto item)
@@ -118,18 +115,8 @@ namespace CombatAnalysis.BL.Services
                 throw new ArgumentNullException(nameof(item.Name));
             }
 
-            var numberEntries = await _repository.UpdateAsync(_mapper.Map<CombatLog>(item));
-            return numberEntries;
-        }
-
-        Task<int> IService<CombatLogDto>.DeleteByProcedureAsync(int combatPlayerId)
-        {
-            throw new NotImplementedException();
-        }
-
-        Task<int> IService<CombatLogDto>.CreateByProcedureAsync(CombatLogDto item)
-        {
-            throw new NotImplementedException();
+            var numberEntriesAffected = await _repository.UpdateAsync(_mapper.Map<CombatLog>(item));
+            return numberEntriesAffected;
         }
     }
 }

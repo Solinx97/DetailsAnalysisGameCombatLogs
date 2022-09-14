@@ -138,7 +138,7 @@ namespace CombatAnalysis.CombatParser.Services
 
         private void GetCombatPlayersData(Combat combat)
         {
-            var combatPlayerDataCollection = new List<CombatPlayerData>();
+            var combatPlayerDataCollection = new List<CombatPlayer>();
 
             var players = GetCombatPlayers(combat.Data);
             foreach (var item in players)
@@ -149,7 +149,7 @@ namespace CombatAnalysis.CombatParser.Services
                 CombatDetailsTemplate combatDetailsResourceRecovery = new CombatDetailsResourceRecovery(_logger);
                 var test = combatDetailsResourceRecovery.GetData(item, combat.Data);
 
-                var combatPlayerData = new CombatPlayerData
+                var combatPlayerData = new CombatPlayer
                 {
                     UserName = item,
                     EnergyRecovery = combatDetailsResourceRecovery.GetData(item, combat.Data),

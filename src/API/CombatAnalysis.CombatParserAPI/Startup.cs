@@ -1,8 +1,6 @@
 using AutoMapper;
 using CombatAnalysis.BL.Extensions;
 using CombatAnalysis.BL.Mapping;
-using CombatAnalysis.CombatParser.Interfaces;
-using CombatAnalysis.CombatParser.Services;
 using CombatAnalysis.CombatParserAPI.Helpers;
 using CombatAnalysis.CombatParserAPI.Interfaces;
 using CombatAnalysis.CombatParserAPI.Mapping;
@@ -47,7 +45,7 @@ namespace CombatAnalysis.CombatParserAPI
 
             var mappingConfig = new MapperConfiguration(mc =>
             {
-                mc.AddProfile(new ApiMapper());
+                mc.AddProfile(new CombatParserApiMapper());
                 mc.AddProfile(new BLMapper());
             });
 
@@ -77,7 +75,7 @@ namespace CombatAnalysis.CombatParserAPI
 
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapDefaultControllerRoute();
+                endpoints.MapControllers();
             });
         }
 

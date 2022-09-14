@@ -115,11 +115,11 @@ namespace CombatAnalysis.CombatParser.Extensions
             {
                 var damageDone = new ResourceRecoveryGeneral
                 {
-                    Value = item.Sum(x => (int)x.Value),
+                    Value = item.Sum(x => x.Value),
                     ResourcePerSecond = item.Sum(x => x.Value) / durationTime.TotalSeconds,
                     AverageValue = item.Average(x => x.Value),
-                    MinValue = item.Min(x => (int)x.Value),
-                    MaxValue = item.Max(x => (int)x.Value),
+                    MinValue = item.Min(x => x.Value),
+                    MaxValue = item.Max(x => x.Value),
                     SpellOrItem = item[0].SpellOrItem,
                     CastNumber = item.Count,
                 };

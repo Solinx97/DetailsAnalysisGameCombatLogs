@@ -41,7 +41,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CombatAnalysis.App.Smoke.Te
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CombatAnalysis.Identity", "src\CombatAnalysis.Identity\CombatAnalysis.Identity.csproj", "{FC239A0B-1883-429D-BD14-9171D5207137}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CombatAnalysis.UserApi", "src\API\CombatAnalysis.UserApi\CombatAnalysis.UserApi.csproj", "{914CCE00-92B4-4375-B5A4-CBC6239972DA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CombatAnalysis.UserApi", "src\API\CombatAnalysis.UserApi\CombatAnalysis.UserApi.csproj", "{914CCE00-92B4-4375-B5A4-CBC6239972DA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

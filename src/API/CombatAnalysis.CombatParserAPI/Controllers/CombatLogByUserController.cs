@@ -12,10 +12,10 @@ namespace CombatAnalysis.CombatParserAPI.Controllers
     [ApiController]
     public class CombatLogByUserController : ControllerBase
     {
-        private readonly IService<CombatLogByUserDto> _service;
+        private readonly IService<CombatLogByUserDto, int> _service;
         private readonly IMapper _mapper;
 
-        public CombatLogByUserController(IService<CombatLogByUserDto> service, IMapper mapper)
+        public CombatLogByUserController(IService<CombatLogByUserDto, int> service, IMapper mapper)
         {
             _service = service;
             _mapper = mapper;
@@ -30,7 +30,7 @@ namespace CombatAnalysis.CombatParserAPI.Controllers
             return map;
         }
 
-        [HttpGet("{id}")]
+        [HttpGet("{id:int:min(1)}")]
         public async Task<CombatLogByUserModel> GetById(int id)
         {
             var combatLogByUser = await _service.GetByIdAsync(id);
@@ -57,12 +57,13 @@ namespace CombatAnalysis.CombatParserAPI.Controllers
         }
 
         [HttpPost]
-        public async Task<int> Post(CombatLogByUserModel model)
+        public async Task<CombatLogByUserModel> Post(CombatLogByUserModel model)
         {
             var map = _mapper.Map<CombatLogByUserDto>(model);
-            var createdCombaLogByUsertId = await _service.CreateAsync(map);
+            var createdItem = await _service.CreateAsync(map);
+            var resultMap = _mapper.Map<CombatLogByUserModel>(createdItem);
 
-            return createdCombaLogByUsertId;
+            return resultMap;
         }
 
         [HttpPut]
@@ -72,11 +73,11 @@ namespace CombatAnalysis.CombatParserAPI.Controllers
             await _service.UpdateAsync(map);
         }
 
-        [HttpDelete("{id}")]
-        public async Task<int> Delete(int id)
+        [HttpDelete]
+        public async Task<int> Delete(CombatLogByUserModel value)
         {
-            var combatLogByUser = await _service.GetByIdAsync(id);
-            var deletedId = await _service.DeleteAsync(combatLogByUser);
+            var map = _mapper.Map<CombatLogByUserDto>(value);
+            var deletedId = await _service.DeleteAsync(map);
 
             return deletedId;
         }

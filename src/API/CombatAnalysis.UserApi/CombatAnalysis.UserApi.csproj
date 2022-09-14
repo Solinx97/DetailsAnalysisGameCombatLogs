@@ -11,6 +11,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\CombatAnalysis.BL\CombatAnalysis.BL.csproj" />
     <ProjectReference Include="..\..\CombatAnalysis.DAL\CombatAnalysis.DAL.csproj" />
     <ProjectReference Include="..\..\CombatAnalysis.Identity\CombatAnalysis.Identity.csproj" />
   </ItemGroup>

@@ -13,7 +13,7 @@ namespace CombatAnalysis.CombatParserAPI.Models
 
         public List<string> Data { get; set; }
 
-        public double EnergyRecovery { get; set; }
+        public int EnergyRecovery { get; set; }
 
         public int DamageDone { get; set; }
 

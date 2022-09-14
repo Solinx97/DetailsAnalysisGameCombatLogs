@@ -4,9 +4,9 @@ using CombatAnalysis.Identity.DTO;
 
 namespace CombatAnalysis.Identity.Mapping
 {
-    public class IdentityMappingProfile : Profile
+    public class IdentityMappingMapper : Profile
     {
-        public IdentityMappingProfile()
+        public IdentityMappingMapper()
         {
             CreateMap<RefreshTokenDto, RefreshToken>().ReverseMap();
         }

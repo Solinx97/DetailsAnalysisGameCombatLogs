@@ -7,20 +7,19 @@ using System.Threading.Tasks;
 
 namespace CombatAnalysis.DAL.Data
 {
-    public class CombatAnalysisContext : DbContext
+    public class SQLContext : DbContext
     {
-        public CombatAnalysisContext(
-            DbContextOptions<CombatAnalysisContext> options) : base(options)
+        public SQLContext(DbContextOptions<SQLContext> options) : base(options)
         {
             var isExists = Database.EnsureCreated();
 
             if (isExists)
             {
-                Task.Run(async () => await DbProcedureHelper.CreateProceduresAsync(this));
+                Task.Run(() => DbProcedureHelper.CreateProceduresAsync(this));
             }
         }
 
-        public DbSet<User> User { get; set; }
+        public DbSet<AppUser> AppUser { get; set; }
 
         public DbSet<RefreshToken> RefreshToken { get; set; }
 
@@ -30,7 +29,7 @@ namespace CombatAnalysis.DAL.Data
 
         public DbSet<Combat> Combat { get; set; }
 
-        public DbSet<CombatPlayerData> CombatPlayerData { get; set; }
+        public DbSet<CombatPlayer> CombatPlayer { get; set; }
 
         public DbSet<DamageDone> DamageDone { get; set; }
 
