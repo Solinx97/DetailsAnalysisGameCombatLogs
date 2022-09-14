@@ -1,4 +1,5 @@
 ﻿using CombatAnalysis.DAL.Entities;
+using CombatAnalysis.DAL.Entities.Chat;
 using CombatAnalysis.DAL.Entities.User;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -14,6 +15,8 @@ namespace CombatAnalysis.DAL.Helpers
             var types = new Type[]
             {
                 typeof(AppUser),
+                typeof(PersonalChat),
+                typeof(MessageData),
                 typeof(CombatLog),
                 typeof(CombatLogByUser),
                 typeof(CombatPlayer),

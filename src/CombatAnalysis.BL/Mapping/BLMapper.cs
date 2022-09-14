@@ -1,7 +1,9 @@
 ﻿using AutoMapper;
 using CombatAnalysis.BL.DTO;
+using CombatAnalysis.BL.DTO.Chat;
 using CombatAnalysis.BL.DTO.User;
 using CombatAnalysis.DAL.Entities;
+using CombatAnalysis.DAL.Entities.Chat;
 using CombatAnalysis.DAL.Entities.User;
 
 namespace CombatAnalysis.BL.Mapping
@@ -11,6 +13,8 @@ namespace CombatAnalysis.BL.Mapping
         public BLMapper()
         {
             CreateMap<AppUserDto, AppUser>().ReverseMap();
+            CreateMap<PersonalChatDto, PersonalChat>().ReverseMap();
+            CreateMap<MessageDataDto, MessageData>().ReverseMap();
             CreateMap<CombatLogDto, CombatLog>().ReverseMap();
             CreateMap<CombatLogByUserDto, CombatLogByUser>().ReverseMap();
             CreateMap<CombatDto, Combat>().ReverseMap();

@@ -21,7 +21,7 @@ namespace CombatAnalysis.App.Converters
                 case WhenType.Yesterday:
                     return "Вчера";
                 case WhenType.Today:
-                    return "Вчера";
+                    return "Сегодня";
                 default:
                     return "Неизвестно";
             }
@@ -31,15 +31,13 @@ namespace CombatAnalysis.App.Converters
         {
             switch (value)
             {
-                case "YearAgo":
+                case nameof(WhenType.Yesterday):
                     return WhenType.Yesterday;
-                case "MonthAgo":
+                case nameof(WhenType.MonthAgo):
                     return WhenType.MonthAgo;
-                case "WeekAgo":
+                case nameof(WhenType.WeekAgo):
                     return WhenType.WeekAgo;
-                case "Yesterday":
-                    return WhenType.Yesterday;
-                case "Today":
+                case nameof(WhenType.Today):
                     return WhenType.Today;
                 default:
                     return WhenType.Today;

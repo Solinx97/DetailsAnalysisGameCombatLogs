@@ -1,5 +1,6 @@
 ﻿using CombatAnalysis.DAL.Entities;
 using CombatAnalysis.DAL.Entities.Authentication;
+using CombatAnalysis.DAL.Entities.Chat;
 using CombatAnalysis.DAL.Entities.User;
 using CombatAnalysis.DAL.Helpers;
 using Microsoft.EntityFrameworkCore;
@@ -20,6 +21,10 @@ namespace CombatAnalysis.DAL.Data
         }
 
         public DbSet<AppUser> AppUser { get; set; }
+
+        public DbSet<PersonalChat> PersonalChat { get; set; }
+
+        public DbSet<MessageData> MessageData { get; set; }
 
         public DbSet<RefreshToken> RefreshToken { get; set; }
 

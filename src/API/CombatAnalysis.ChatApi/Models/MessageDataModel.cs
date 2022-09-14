@@ -1,9 +1,8 @@
-﻿using CombatAnalysis.Core.Enums;
-using System;
+﻿using System;
 
-namespace CombatAnalysis.Core.Models.Chat
+namespace CombatAnalysis.ChatApi.Models
 {
-    public class MessageModel
+    public class MessageDataModel
     {
         public int Id { get; set; }
 
@@ -15,7 +14,7 @@ namespace CombatAnalysis.Core.Models.Chat
 
         public TimeSpan Time { get; set; }
 
-        public WhenType DayTimeType { get; set; }
+        public int DayTimeType { get; set; }
 
         public int ChatMessageId { get; set; }
     }

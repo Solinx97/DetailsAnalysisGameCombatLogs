@@ -1,5 +1,6 @@
 ﻿using CombatAnalysis.DAL.Data;
 using CombatAnalysis.DAL.Entities;
+using CombatAnalysis.DAL.Entities.Chat;
 using CombatAnalysis.DAL.Enums;
 using CombatAnalysis.DAL.Interfaces;
 using CombatAnalysis.DAL.Repositories.Firebase;
@@ -22,7 +23,7 @@ namespace CombatAnalysis.DAL.Extensions
                     MSSQLDatabase(services, configuration, connectionName);
                     break;
                 case nameof(DatabaseType.Firebase):
-                    FirebaseDatabase(services, configuration, connectionName);
+                    FirebaseDatabase(services);
                     break;
                 default:
                     MSSQLDatabase(services, configuration, connectionName);
@@ -53,11 +54,16 @@ namespace CombatAnalysis.DAL.Extensions
             }
         }
 
-        private static void FirebaseDatabase(IServiceCollection services, IConfiguration configuration, string connectionName)
+        private static void FirebaseDatabase(IServiceCollection services)
         {
             services.AddDbContext<FirebaseContext>();
 
             services.AddScoped<IUserRepository, FIrebaseUserRepository>();
+
+            services.AddScoped<IGenericRepository<PersonalChat, int>, FirebaseRepositroy<PersonalChat, int>>();
+            services.AddScoped<IGenericRepository<MessageData, int>, FirebaseRepositroy<MessageData, int>>();
+
+            services.AddScoped<IGenericRepository<CombatLog, int>, FirebaseRepositroy<CombatLog, int>>();
             services.AddScoped<IGenericRepository<CombatLog, int>, FirebaseRepositroy<CombatLog, int>>();
             services.AddScoped<IGenericRepository<CombatLogByUser, int>, FirebaseRepositroy<CombatLogByUser, int>>();
             services.AddScoped<IGenericRepository<Combat, int>, FirebaseRepositroy<Combat, int>>();
@@ -76,6 +82,10 @@ namespace CombatAnalysis.DAL.Extensions
         public static void MSSQLDAL(IServiceCollection services)
         {
             services.AddScoped<IUserRepository, SQLUserRepository>();
+
+            services.AddScoped<IGenericRepository<PersonalChat, int>, SQLRepository<PersonalChat, int>>();
+            services.AddScoped<IGenericRepository<MessageData, int>, SQLRepository<MessageData, int>>();
+
             services.AddScoped<IGenericRepository<CombatLog, int>, SQLRepository<CombatLog, int>>();
             services.AddScoped<IGenericRepository<CombatLogByUser, int>, SQLRepository<CombatLogByUser, int>>();
             services.AddScoped<IGenericRepository<Combat, int>, SQLRepository<Combat, int>>();
@@ -94,6 +104,10 @@ namespace CombatAnalysis.DAL.Extensions
         public static void MSSQLStoredProcedureDAL(this IServiceCollection services)
         {
             services.AddScoped<IUserRepository, SQLUserRepository>();
+
+            services.AddScoped<IGenericRepository<PersonalChat, int>, SQLSPRepository<PersonalChat, int>>();
+            services.AddScoped<IGenericRepository<MessageData, int>, SQLSPRepository<MessageData, int>>();
+
             services.AddScoped<IGenericRepository<CombatLog, int>, SQLSPRepository<CombatLog, int>>();
             services.AddScoped<IGenericRepository<CombatLogByUser, int>, SQLSPRepository<CombatLogByUser, int>>();
             services.AddScoped<IGenericRepository<Combat, int>, SQLSPRepository<Combat, int>>();

@@ -127,8 +127,8 @@
 
                     <Grid>
                         <TextBlock Margin="15 0 120 0" VerticalAlignment="Center" Foreground="#868686" Panel.ZIndex="1"
-                                   IsHitTestVisible="False" Text="Type your message..." Visibility="{Binding ElementName=txtMessgae, Path=Text.IsEmpty, Converter={StaticResource BoolToVisibility}}"/>
-                        <TextBox x:Name="txtMessgae" Style="{StaticResource messageTextBox}"/>
+                                   IsHitTestVisible="False" Text="Type message..." Visibility="{Binding ElementName=txtMessage, Path=Text.IsEmpty, Converter={StaticResource BoolToVisibility}}"/>
+                        <TextBox x:Name="txtMessage" Style="{StaticResource messageTextBox}" Text="{Binding Message}"/>
 
                         <StackPanel Orientation="Horizontal" Margin="0 0 8 0" HorizontalAlignment="Right" VerticalAlignment="Center">
                             <Button Style="{StaticResource textBoxButton}">
@@ -158,7 +158,7 @@
                         </StackPanel>
                     </Grid>
 
-                    <Button Grid.Column="1" Margin="5 0 0 0" Style="{StaticResource textBoxButton}">
+                    <Button Grid.Column="1" Margin="5 0 0 0" Style="{StaticResource textBoxButton}" Command="{Binding SendMessageCommand}">
                         <Button.ToolTip>
                             <ToolTip>
                                 Отправить сообщение

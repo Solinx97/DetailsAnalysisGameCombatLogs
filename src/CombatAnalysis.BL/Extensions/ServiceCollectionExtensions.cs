@@ -1,7 +1,10 @@
 ﻿using CombatAnalysis.BL.DTO;
+using CombatAnalysis.BL.DTO.Chat;
 using CombatAnalysis.BL.DTO.User;
 using CombatAnalysis.BL.Interfaces;
 using CombatAnalysis.BL.Services;
+using CombatAnalysis.BL.Services.Chat;
+using CombatAnalysis.BL.Services.User;
 using CombatAnalysis.DAL.Extensions;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -15,6 +18,10 @@ namespace CombatAnalysis.BL.Extensions
             services.RegisterDependenciesDAL(configuration, connectionName);
 
             services.AddScoped<IUserService<AppUserDto>, UserService>();
+
+            services.AddScoped<IService<PersonalChatDto, int>, PersonalChatService>();
+            services.AddScoped<IService<MessageDataDto, int>, MessageDataService>();
+
             services.AddScoped<IService<CombatLogDto, int>, CombatLogService>();
             services.AddScoped<IService<CombatLogByUserDto, int>, CombatLogByUserService>();
             services.AddScoped<IService<CombatDto, int>, CombatService>();
