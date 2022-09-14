@@ -26,6 +26,8 @@ namespace CombatAnalysis.Core.ViewModels
         private Tuple<int, CombatModel> _combatInformtaion;
         private List<CombatModel> _combats;
         private bool _isAuth;
+        private bool _isLoginNotActivated = true;
+        private bool _isRegistrationNotActivated = true;
         private string _email;
         private LogType _logType;
 
@@ -43,6 +45,8 @@ namespace CombatAnalysis.Core.ViewModels
             _authObservers = new List<IAuthObserver>();
 
             CloseCommand = new MvxCommand(CloseWindow);
+            MaximazeCommand = new MvxCommand(MaximazeWindow);
+            MinimazeCommand = new MvxCommand(MinimazeWindow);
             LoginCommand = new MvxCommand(Login);
             RegistrationCommand = new MvxCommand(Registration);
             LogoutCommand = new MvxCommand(Logout);
@@ -59,6 +63,10 @@ namespace CombatAnalysis.Core.ViewModels
         public Action Close { get; set; }
 
         public IMvxCommand CloseCommand { get; set; }
+
+        public IMvxCommand MaximazeCommand { get; set; }
+
+        public IMvxCommand MinimazeCommand { get; set; }
 
         public IMvxCommand LoginCommand { get; set; }
 
@@ -133,6 +141,26 @@ namespace CombatAnalysis.Core.ViewModels
             }
         }
 
+        public bool IsLoginNotActivated
+        {
+            get { return _isLoginNotActivated; }
+            set
+            {
+                SetProperty(ref _isLoginNotActivated, value);
+                NotifyAuthObservers();
+            }
+        }
+
+        public bool IsRegistrationNotActivated
+        {
+            get { return _isRegistrationNotActivated; }
+            set
+            {
+                SetProperty(ref _isRegistrationNotActivated, value);
+                NotifyAuthObservers();
+            }
+        }
+
         public string Email
         {
             get { return _email; }
@@ -153,16 +181,36 @@ namespace CombatAnalysis.Core.ViewModels
 
         public void CloseWindow()
         {
-            WindowCloser.MainWindow.Close();
+            Windows.MainWindow.Close();
+            Windows.MainWindow.DragMove();
+        }
+
+        public void MaximazeWindow()
+        {
+            if (Windows.MainWindow.WindowState != System.Windows.WindowState.Maximized)
+            {
+                Windows.MainWindow.WindowState = System.Windows.WindowState.Maximized;
+            }
+            else
+            {
+                Windows.MainWindow.WindowState = System.Windows.WindowState.Normal;
+            }
+        }
+
+        public void MinimazeWindow()
+        {
+            Windows.MainWindow.WindowState = System.Windows.WindowState.Minimized;
         }
 
         public void Login()
         {
+            IsLoginNotActivated = false;
             Task.Run(() => _mvvmNavigation.Navigate<LoginViewModel>());
         }
 
         public void Registration()
         {
+            IsRegistrationNotActivated = false;
             Task.Run(() => _mvvmNavigation.Navigate<RegistrationViewModel>());
         }
 

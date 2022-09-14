@@ -30,7 +30,8 @@
             <converters:TheNativeIntToVisibilityConverter x:Key="IntToVisibility" />
         </Grid.Resources>
 
-        <Border CornerRadius="0 20 20 0" Background="white" Grid.Column="2" Grid.ColumnSpan="2" Margin="-25 0 0 0 " Grid.RowSpan="2"/>
+        <Border CornerRadius="0 20 20 0" Background="white" Grid.Column="2" Grid.ColumnSpan="2"
+                Margin="-25 0 0 0 " Grid.RowSpan="2"/>
 
         <Border CornerRadius="20" Grid.RowSpan="2" Panel.ZIndex="2" Background="#6145e3">
             <Grid>
@@ -52,6 +53,29 @@
         <Border Grid.Column="1" Grid.RowSpan="2" CornerRadius="0 20 20 0"
                 Background="#6f50ff" Panel.ZIndex="1" Margin="-25 0 0 0">
             <Grid>
+                <StackPanel Margin="25" Visibility="{Binding IsAuth, Converter={StaticResource BoolToVisibility}, ConverterParameter=true:true}">
+                    <Button Style="{StaticResource accountButton}" Margin="15 10" Content="Авторизация"
+                            IsEnabled="{Binding IsLoginNotActivated}" mvx:Bi.nd="Command LoginCommand" TabIndex="10"/>
+                    <Button Style="{StaticResource accountButton}" Margin="15 10" Content="Регистрация"
+                            IsEnabled="{Binding IsRegistrationNotActivated}" mvx:Bi.nd="Command RegistrationCommand"/>
+                </StackPanel>
+
+                <StackPanel Margin="25" Visibility="{Binding IsAuth, Converter={StaticResource BoolToVisibility}, ConverterParameter=true:false}">
+                    <StackPanel>
+                        <Button Style="{StaticResource textBoxButton}" IsEnabled="False" Opacity="0.5">
+                            <Button.ToolTip>
+                                <ToolTip>
+                                    Профиль
+                                </ToolTip>
+                            </Button.ToolTip>
+                            <Icon:PackIconMaterial Kind="NaturePeople" Foreground="White"/>
+                        </Button>
+                        <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Margin="10"
+                               FontFamily="Comic Sans MS" FontSize="16" Text="{Binding Email}" Foreground="White" />
+                    </StackPanel>
+                    <Button Style="{StaticResource accountButton}" Content="Выйти" Width="100" Height="30" mvx:Bi.nd="Command LogoutCommand"/>
+                </StackPanel>
+
                 <StackPanel Margin="25 160 0 0">
                     <uc:MenuButton Title="Загрузка" Icon="HomeOutline" IsEnabled="{Binding Step, Converter={StaticResource IntToXAMLBoolExpress}, ConverterParameter='>,0'}" 
                                    IsActive="{Binding Step, Converter={StaticResource IntToXAMLBool}, ConverterParameter=0}" OnClick="{Binding UploadCombatsCommand}"/>
@@ -76,39 +100,8 @@
             </Grid>
         </Border>
 
-        <Grid Grid.Column="2" Grid.ColumnSpan="2" Margin="25 5">
+        <Border Grid.Column="2" Grid.ColumnSpan="2" Background="Transparent" Margin="10 0" MouseDown="Border_MouseDown">
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                <StackPanel Margin="20 0">
-                    <StackPanel Orientation="Horizontal" Visibility="{Binding IsAuth, Converter={StaticResource BoolToVisibility}, ConverterParameter=true:true}">
-                        <Button Style="{StaticResource userButton}" Margin="5" mvx:Bi.nd="Command RegistrationCommand">
-                            <Button.ToolTip>
-                                <ToolTip>
-                                    Регистрация
-                                </ToolTip>
-                            </Button.ToolTip>
-                            <Icon:PackIconMaterial Height="25" Width="25" Kind="AccountArrowLeftOutline" Foreground="#88878e"/>
-                        </Button>
-                        <Button Style="{StaticResource userButton}" Margin="5" mvx:Bi.nd="Command LoginCommand">
-                            <Button.ToolTip>
-                                <ToolTip>
-                                    Авторизация
-                                </ToolTip>
-                            </Button.ToolTip>
-                            <Icon:PackIconMaterial Height="25" Width="25" Kind="AccountReactivateOutline" Foreground="#88878e"/>
-                        </Button>
-                    </StackPanel>
-                    <StackPanel Orientation="Horizontal" Visibility="{Binding IsAuth, Converter={StaticResource BoolToVisibility}, ConverterParameter=true:false}">
-                        <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Margin="5"
-                               FontFamily="Comic Sans MS" FontSize="16" Text="Привет, " />
-                        <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Margin="5"
-                               FontFamily="Comic Sans MS" FontSize="16" Text="{Binding Email}" Foreground="CadetBlue" />
-                    </StackPanel>
-                    <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Margin="5"
-                               FontFamily="Comic Sans MS"  Opacity="0.5" Text="Не авторизован"
-                               Visibility="{Binding IsAuth, Converter={StaticResource BoolToVisibility}, ConverterParameter=true:true}"/>
-                    <Button Content="Выйти" Width="100" Height="30" Margin="10" mvx:Bi.nd="Command LogoutCommand"
-                            Visibility="{Binding IsAuth, Converter={StaticResource BoolToVisibility}, ConverterParameter=true:false}"/>
-                </StackPanel>
                 <Button Style="{StaticResource textBoxButton}">
                     <Button.ToolTip>
                         <ToolTip>
@@ -125,11 +118,17 @@
                     </Button.ToolTip>
                     <Icon:PackIconMaterial Kind="DotsVertical" Foreground="#88878e"/>
                 </Button>
+                <Button Style="{StaticResource textBoxButton}" mvx:Bi.nd="Command MinimazeCommand">
+                    <Icon:PackIconMaterial Kind="WindowMinimize" Foreground="Gray" Width="25" Height="25"/>
+                </Button>
+                <Button Style="{StaticResource textBoxButton}" mvx:Bi.nd="Command MaximazeCommand">
+                    <Icon:PackIconMaterial Kind="WindowMaximize" Foreground="Gray" Width="25" Height="25"/>
+                </Button>
                 <Button Style="{StaticResource textBoxButton}" mvx:Bi.nd="Command CloseCommand">
-                    <Icon:PackIconMaterial Kind="Close" Foreground="Red" Width="25" Height="25"/>
+                    <Icon:PackIconMaterial Kind="WindowClose" Foreground="Red" Width="25" Height="25"/>
                 </Button>
             </StackPanel>
-        </Grid>
+        </Border>
         <StackPanel Grid.Column="2" Grid.Row="0" VerticalAlignment="Top" Orientation="Horizontal" Margin="25">
             <TextBlock Margin="5" FontSize="12" Text="Статус загрузки: "/>
             <TextBlock Margin="5" FontSize="13" FontWeight="Bold" Foreground="Gray" Text="Загрузка..."

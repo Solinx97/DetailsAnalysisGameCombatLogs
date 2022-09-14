@@ -36,6 +36,13 @@ namespace CombatAnalysis.Core.ViewModels
             CancelCommand = new MvxCommand(Cancel);
 
             BasicTemplate = Templates.Basic;
+            if (BasicTemplate.Parent is RegistrationViewModel)
+            {
+                Task.Run(() => _mvvmNavigation.Close(BasicTemplate.Parent));
+            }
+
+            BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, "IsRegistrationNotActivated", true);
+            BasicTemplate.Parent = this;
         }
 
         public IImprovedMvxViewModel BasicTemplate
@@ -110,6 +117,12 @@ namespace CombatAnalysis.Core.ViewModels
                         BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, "IsAuth", true);
                         BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, "Email", result.User.Email);
 
+                        BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, "IsLoginNotActivated", true);
+                        if (BasicTemplate.Parent is RegistrationViewModel)
+                        {
+                            await _mvvmNavigation.Close(BasicTemplate.Parent);
+                        }
+
                         await _mvvmNavigation.Close(this);
                     }
                     else
@@ -129,6 +142,7 @@ namespace CombatAnalysis.Core.ViewModels
 
         public void Cancel()
         {
+            BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, "IsLoginNotActivated", true);
             Task.Run(() => _mvvmNavigation.Close(this));
         }
     }

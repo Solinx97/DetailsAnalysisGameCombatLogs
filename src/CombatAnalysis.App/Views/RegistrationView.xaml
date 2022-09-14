@@ -70,10 +70,10 @@
                 <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" TextAlignment="Center" Width="250" Height="80" TextWrapping="Wrap" Text="Не удалось получить ответ от сервера. Возможно проблемы с подключением или сервер временно не доступен"
                            FontSize="12" Foreground="Brown" Visibility="{Binding ServerIsNotAvailable, Converter={StaticResource BoolToVisibility}, ConverterParameter=true:false}"/>
             </StackPanel>
-            <Button Grid.Column="1" Grid.Row="4" Height="30" Width="125" Content="Регистрация"
+            <Button Grid.Column="1" Grid.Row="4" Height="30" Width="125" Content="Регистрация" Style="{StaticResource showButton}"
                     Command="{Binding RegistrationCommand}" />
         </Grid>
-        <Button VerticalAlignment="Center" HorizontalAlignment="Center" Grid.Column="1" Grid.Row="2" Height="30" Width="125" Content="Назад"
+        <Button VerticalAlignment="Center" HorizontalAlignment="Center" Grid.Column="1" Grid.Row="2" Height="30" Width="125" Content="Назад" Style="{StaticResource showButton}"
                     Command="{Binding CancelCommand}" />
     </Grid>
 </views:MvxWpfView>

@@ -6,7 +6,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
         Title="MainWindow" Height="Auto" Width="Auto"
-        ResizeMode="NoResize" Background="Transparent"
+        ResizeMode="CanResizeWithGrip" Background="Transparent"
         AllowsTransparency="True" WindowStyle="None" WindowStartupLocation="CenterScreen">
 
     <Grid />

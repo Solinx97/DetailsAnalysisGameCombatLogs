@@ -2,7 +2,7 @@
 
 namespace CombatAnalysis.Core
 {
-    public static class WindowCloser
+    public static class Windows
     {
         public static Window MainWindow { get; set; }
     }

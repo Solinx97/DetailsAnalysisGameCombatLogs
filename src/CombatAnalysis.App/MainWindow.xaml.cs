@@ -10,7 +10,7 @@ namespace CombatAnalysis.App
         {
             InitializeComponent();
 
-            WindowCloser.MainWindow = this;
+            Windows.MainWindow = this;
 
             Application.Current.MainWindow.Height = SystemParameters.PrimaryScreenHeight * 0.925;
             Application.Current.MainWindow.Width = SystemParameters.PrimaryScreenWidth * 0.925;
