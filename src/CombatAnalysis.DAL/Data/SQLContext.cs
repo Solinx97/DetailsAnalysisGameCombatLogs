@@ -24,7 +24,17 @@ namespace CombatAnalysis.DAL.Data
 
         public DbSet<PersonalChat> PersonalChat { get; set; }
 
-        public DbSet<PersonalChatMessage> MessageData { get; set; }
+        public DbSet<PersonalChatMessage> PersonalChatMessage { get; set; }
+
+        public DbSet<InviteToGroupChat> InviteToGroupChat { get; set; }
+
+        public DbSet<GroupChat> GroupChat { get; set; }
+
+        public DbSet<GroupChatMessage> GroupChatMessage { get; set; }
+
+        public DbSet<GroupChatUser> GroupChatUser { get; set; }
+
+        public DbSet<BannedUser> BannedUser { get; set; }
 
         public DbSet<RefreshToken> RefreshToken { get; set; }
 
