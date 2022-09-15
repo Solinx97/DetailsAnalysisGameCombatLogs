@@ -61,7 +61,12 @@ namespace CombatAnalysis.DAL.Extensions
             services.AddScoped<IUserRepository, FIrebaseUserRepository>();
 
             services.AddScoped<IGenericRepository<PersonalChat, int>, FirebaseRepositroy<PersonalChat, int>>();
-            services.AddScoped<IGenericRepository<MessageData, int>, FirebaseRepositroy<MessageData, int>>();
+            services.AddScoped<IGenericRepository<PersonalChatMessage, int>, FirebaseRepositroy<PersonalChatMessage, int>>();
+            services.AddScoped<IGenericRepository<InviteToGroupChat, int>, FirebaseRepositroy<InviteToGroupChat, int>>();
+            services.AddScoped<IGenericRepository<GroupChat, int>, FirebaseRepositroy<GroupChat, int>>();
+            services.AddScoped<IGenericRepository<GroupChatMessage, int>, FirebaseRepositroy<GroupChatMessage, int>>();
+            services.AddScoped<IGenericRepository<GroupChatUser, int>, FirebaseRepositroy<GroupChatUser, int>>();
+            services.AddScoped<IGenericRepository<BannedUser, int>, FirebaseRepositroy<BannedUser, int>>();
 
             services.AddScoped<IGenericRepository<CombatLog, int>, FirebaseRepositroy<CombatLog, int>>();
             services.AddScoped<IGenericRepository<CombatLog, int>, FirebaseRepositroy<CombatLog, int>>();
@@ -84,7 +89,12 @@ namespace CombatAnalysis.DAL.Extensions
             services.AddScoped<IUserRepository, SQLUserRepository>();
 
             services.AddScoped<IGenericRepository<PersonalChat, int>, SQLRepository<PersonalChat, int>>();
-            services.AddScoped<IGenericRepository<MessageData, int>, SQLRepository<MessageData, int>>();
+            services.AddScoped<IGenericRepository<PersonalChatMessage, int>, SQLRepository<PersonalChatMessage, int>>();
+            services.AddScoped<IGenericRepository<InviteToGroupChat, int>, SQLRepository<InviteToGroupChat, int>>();
+            services.AddScoped<IGenericRepository<GroupChat, int>, SQLRepository<GroupChat, int>>();
+            services.AddScoped<IGenericRepository<GroupChatMessage, int>, SQLRepository<GroupChatMessage, int>>();
+            services.AddScoped<IGenericRepository<GroupChatUser, int>, SQLRepository<GroupChatUser, int>>();
+            services.AddScoped<IGenericRepository<BannedUser, int>, SQLRepository<BannedUser, int>>();
 
             services.AddScoped<IGenericRepository<CombatLog, int>, SQLRepository<CombatLog, int>>();
             services.AddScoped<IGenericRepository<CombatLogByUser, int>, SQLRepository<CombatLogByUser, int>>();
@@ -106,7 +116,12 @@ namespace CombatAnalysis.DAL.Extensions
             services.AddScoped<IUserRepository, SQLUserRepository>();
 
             services.AddScoped<IGenericRepository<PersonalChat, int>, SQLSPRepository<PersonalChat, int>>();
-            services.AddScoped<IGenericRepository<MessageData, int>, SQLSPRepository<MessageData, int>>();
+            services.AddScoped<IGenericRepository<PersonalChatMessage, int>, SQLSPRepository<PersonalChatMessage, int>>();
+            services.AddScoped<IGenericRepository<InviteToGroupChat, int>, SQLSPRepository<InviteToGroupChat, int>>();
+            services.AddScoped<IGenericRepository<GroupChat, int>, SQLSPRepository<GroupChat, int>>();
+            services.AddScoped<IGenericRepository<GroupChatMessage, int>, SQLSPRepository<GroupChatMessage, int>>();
+            services.AddScoped<IGenericRepository<GroupChatUser, int>, SQLSPRepository<GroupChatUser, int>>();
+            services.AddScoped<IGenericRepository<BannedUser, int>, SQLSPRepository<BannedUser, int>>();
 
             services.AddScoped<IGenericRepository<CombatLog, int>, SQLSPRepository<CombatLog, int>>();
             services.AddScoped<IGenericRepository<CombatLogByUser, int>, SQLSPRepository<CombatLogByUser, int>>();

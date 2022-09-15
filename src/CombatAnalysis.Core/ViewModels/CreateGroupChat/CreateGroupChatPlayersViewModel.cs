@@ -8,39 +8,32 @@ using System.Threading.Tasks;
 
 namespace CombatAnalysis.Core.ViewModels.CreateGroupChat
 {
-    public class CreateGroupChatViewModel : MvxViewModel
+    public class CreateGroupChatPlayersViewModel : MvxViewModel
     {
         private readonly IHttpClientHelper _httpClientHelper;
 
         private IImprovedMvxViewModel _basicTemplate;
-        private string _name;
-        private int _policyType;
         private GroupChatModel _chatModel;
 
-        public CreateGroupChatViewModel()
+        public CreateGroupChatPlayersViewModel()
         {
             _httpClientHelper = Mvx.IoCProvider.GetSingleton<IHttpClientHelper>();
 
-            AddUsersCommand = new MvxCommand(AddUsers);
+            CallbackCommand = new MvxCommand(Callback);
             CreateCommand = new MvxCommand(Create);
             CancelCommand = new MvxCommand(Cancel);
-
-            _chatModel = new GroupChatModel();
-            GetPolicyTypeCommand = new MvxCommand<int>(GetChatType);
         }
 
-        public CreateGroupChatViewModel(GroupChatModel chatModel) : this()
+        public CreateGroupChatPlayersViewModel(GroupChatModel chatModel) : this()
         {
             _chatModel = chatModel;
         }
 
-        public IMvxCommand AddUsersCommand { get; set; }
+        public IMvxCommand CallbackCommand { get; set; }
 
         public IMvxCommand CreateCommand { get; set; }
 
         public IMvxCommand CancelCommand { get; set; }
-
-        public IMvxCommand<int> GetPolicyTypeCommand { get; set; }
 
         public IImprovedMvxViewModel BasicTemplate
         {
@@ -51,20 +44,9 @@ namespace CombatAnalysis.Core.ViewModels.CreateGroupChat
             }
         }
 
-        public string Name
+        public void Callback()
         {
-            get { return _name; }
-            set
-            {
-                SetProperty(ref _name, value);
-            }
-        }
-
-        public void AddUsers()
-        {
-            _chatModel.Name = Name;
-            _chatModel.ChatPolicyType = _policyType;
-            WindowManager.CreateGroupChat.DataContext = new CreateGroupChatPlayersViewModel(_chatModel);
+            WindowManager.CreateGroupChat.DataContext = new CreateGroupChatViewModel(_chatModel);
         }
 
         public void Create()
@@ -75,11 +57,6 @@ namespace CombatAnalysis.Core.ViewModels.CreateGroupChat
         public void Cancel()
         {
             WindowManager.CreateGroupChat.Close();
-        }
-
-        public void GetChatType(int policyType)
-        {
-            _policyType = policyType;
         }
     }
 }

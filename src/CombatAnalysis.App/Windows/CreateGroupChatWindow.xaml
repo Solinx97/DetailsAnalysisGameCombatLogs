@@ -7,15 +7,16 @@
     xmlns:local="clr-namespace:CombatAnalysis.App.Views.CreateGroupChat"
     xmlns:viewModels="clr-namespace:CombatAnalysis.Core.ViewModels.CreateGroupChat;assembly=CombatAnalysis.Core"
     xmlns:views="clr-namespace:MvvmCross.Platforms.Wpf.Views;assembly=MvvmCross.Platforms.Wpf"
-    mc:Ignorable="d" Title="CreateGroupChat" Height="300" Width="600" WindowStartupLocation="CenterScreen">
+    mc:Ignorable="d" Title="CreateGroupChat" Height="550" Width="600" WindowStartupLocation="CenterScreen">
 
-    <Grid>
-        <ContentControl Content="{Binding BasicTemplate}">
-            <ContentControl.Resources>
-                <DataTemplate DataType="{x:Type viewModels:CreateGroupChatViewModel}">
-                    <local:CreateGroupChatView />
-                </DataTemplate>
-            </ContentControl.Resources>
-        </ContentControl>
-    </Grid>
+    <Window.Resources>
+        <DataTemplate DataType="{x:Type viewModels:CreateGroupChatViewModel}">
+            <local:CreateGroupChatView />
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type viewModels:CreateGroupChatPlayersViewModel}">
+            <local:CreateGroupChatPlayersView />
+        </DataTemplate>
+    </Window.Resources>
+
+    <ContentPresenter Content="{Binding}"/>
 </views:MvxWindow>

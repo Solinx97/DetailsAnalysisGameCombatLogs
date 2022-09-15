@@ -9,7 +9,7 @@ namespace CombatAnalysis.ChatApi.Mapping
         public ChatMapper()
         {
             CreateMap<PersonalChatDto, PersonalChatModel>().ReverseMap();
-            CreateMap<MessageDataDto, MessageDataModel>().ReverseMap();
+            CreateMap<PersonalChatMessageDto, PersonalChatMessageModel>().ReverseMap();
         }
     }
 }

@@ -14,7 +14,7 @@ namespace CombatAnalysis.BL.Mapping
         {
             CreateMap<AppUserDto, AppUser>().ReverseMap();
             CreateMap<PersonalChatDto, PersonalChat>().ReverseMap();
-            CreateMap<MessageDataDto, MessageData>().ReverseMap();
+            CreateMap<PersonalChatMessageDto, PersonalChatMessage>().ReverseMap();
             CreateMap<CombatLogDto, CombatLog>().ReverseMap();
             CreateMap<CombatLogByUserDto, CombatLogByUser>().ReverseMap();
             CreateMap<CombatDto, Combat>().ReverseMap();

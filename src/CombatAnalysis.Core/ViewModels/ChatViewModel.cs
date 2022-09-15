@@ -7,7 +7,6 @@ using System;
 using System.Collections.ObjectModel;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
-using System.Windows;
 
 namespace CombatAnalysis.Core.ViewModels
 {
@@ -16,7 +15,7 @@ namespace CombatAnalysis.Core.ViewModels
         private readonly IHttpClientHelper _httpClientHelper;
 
         private IImprovedMvxViewModel _basicTemplate;
-        private ObservableCollection<MessageDataModel> _messages;
+        private ObservableCollection<PersonalChatMessageModel> _messages;
         private bool _isMyMessage = true;
         private string _message;
 
@@ -24,7 +23,7 @@ namespace CombatAnalysis.Core.ViewModels
         {
             _httpClientHelper = httpClientHelper;
 
-            Messages = new ObservableCollection<MessageDataModel>();
+            Messages = new ObservableCollection<PersonalChatMessageModel>();
             SendMessageCommand = new MvxCommand(Send);
             CreateGroupChatCommand = new MvxCommand(CreateGroupChat);
 
@@ -50,7 +49,7 @@ namespace CombatAnalysis.Core.ViewModels
 
         public IMvxViewModel Parent { get; set; }
 
-        public ObservableCollection<MessageDataModel> Messages
+        public ObservableCollection<PersonalChatMessageModel> Messages
         {
             get { return _messages; }
             set
@@ -79,10 +78,8 @@ namespace CombatAnalysis.Core.ViewModels
 
         public void Send()
         {
-            var newMessage = new MessageDataModel
+            var newMessage = new PersonalChatMessageModel
             {
-                IsMyMessage = true,
-                DayTimeType = (int)Enums.WhenType.Today,
                 Message = Message,
                 Time = TimeSpan.Parse($"{DateTimeOffset.UtcNow.Hour}:{DateTimeOffset.UtcNow.Minute}"),
                 Username = "Dima"

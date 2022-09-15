@@ -1,6 +1,6 @@
-﻿namespace CombatAnalysis.Core.Models.Chat
+﻿namespace CombatAnalysis.DAL.Entities.Chat
 {
-    public class GroupChatModel
+    public class GroupChat
     {
         public int Id { get; set; }
 

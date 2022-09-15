@@ -11,18 +11,18 @@ using System.Threading.Tasks;
 
 namespace CombatAnalysis.BL.Services.Chat
 {
-    internal class MessageDataService : IService<MessageDataDto, int>
+    internal class BannedUserService : IService<BannedUserDto, int>
     {
-        private readonly IGenericRepository<MessageData, int> _repository;
+        private readonly IGenericRepository<BannedUser, int> _repository;
         private readonly IMapper _mapper;
 
-        public MessageDataService(IGenericRepository<MessageData, int> repository, IMapper mapper)
+        public BannedUserService(IGenericRepository<BannedUser, int> repository, IMapper mapper)
         {
             _repository = repository;
             _mapper = mapper;
         }
 
-        Task<MessageDataDto> IService<MessageDataDto, int>.CreateAsync(MessageDataDto item)
+        Task<BannedUserDto> IService<BannedUserDto, int>.CreateAsync(BannedUserDto item)
         {
             if (item == null)
             {
@@ -32,7 +32,7 @@ namespace CombatAnalysis.BL.Services.Chat
             return CreateInternalAsync(item);
         }
 
-        Task<int> IService<MessageDataDto, int>.DeleteAsync(MessageDataDto item)
+        Task<int> IService<BannedUserDto, int>.DeleteAsync(BannedUserDto item)
         {
             if (item == null)
             {
@@ -42,31 +42,31 @@ namespace CombatAnalysis.BL.Services.Chat
             return DeleteInternalAsync(item);
         }
 
-        async Task<IEnumerable<MessageDataDto>> IService<MessageDataDto, int>.GetAllAsync()
+        async Task<IEnumerable<BannedUserDto>> IService<BannedUserDto, int>.GetAllAsync()
         {
             var allData = await _repository.GetAllAsync();
-            var result = _mapper.Map<List<MessageDataDto>>(allData);
+            var result = _mapper.Map<List<BannedUserDto>>(allData);
 
             return result;
         }
 
-        async Task<MessageDataDto> IService<MessageDataDto, int>.GetByIdAsync(int id)
+        async Task<BannedUserDto> IService<BannedUserDto, int>.GetByIdAsync(int id)
         {
             var result = await _repository.GetByIdAsync(id);
-            var resultMap = _mapper.Map<MessageDataDto>(result);
+            var resultMap = _mapper.Map<BannedUserDto>(result);
 
             return resultMap;
         }
 
-        async Task<IEnumerable<MessageDataDto>> IService<MessageDataDto, int>.GetByParamAsync(string paramName, object value)
+        async Task<IEnumerable<BannedUserDto>> IService<BannedUserDto, int>.GetByParamAsync(string paramName, object value)
         {
             var result = await Task.Run(() => _repository.GetByParam(paramName, value));
-            var resultMap = _mapper.Map<IEnumerable<MessageDataDto>>(result);
+            var resultMap = _mapper.Map<IEnumerable<BannedUserDto>>(result);
 
             return resultMap;
         }
 
-        Task<int> IService<MessageDataDto, int>.UpdateAsync(MessageDataDto item)
+        Task<int> IService<BannedUserDto, int>.UpdateAsync(BannedUserDto item)
         {
             if (item == null)
             {
@@ -76,36 +76,36 @@ namespace CombatAnalysis.BL.Services.Chat
             return UpdateInternalAsync(item);
         }
 
-        private async Task<MessageDataDto> CreateInternalAsync(MessageDataDto item)
+        private async Task<BannedUserDto> CreateInternalAsync(BannedUserDto item)
         {
-            var map = _mapper.Map<MessageData>(item);
+            var map = _mapper.Map<BannedUser>(item);
             var createdItem = await _repository.CreateAsync(map);
-            var resultMap = _mapper.Map<MessageDataDto>(createdItem);
+            var resultMap = _mapper.Map<BannedUserDto>(createdItem);
 
             return resultMap;
         }
 
-        private async Task<int> DeleteInternalAsync(MessageDataDto item)
+        private async Task<int> DeleteInternalAsync(BannedUserDto item)
         {
             var allData = await _repository.GetAllAsync();
             if (!allData.Any())
             {
-                throw new NotFoundException($"Collection entity {nameof(MessageDataDto)} not found", nameof(allData));
+                throw new NotFoundException($"Collection entity {nameof(BannedUserDto)} not found", nameof(allData));
             }
 
-            var numberEntriesAffected = await _repository.DeleteAsync(_mapper.Map<MessageData>(item));
+            var numberEntriesAffected = await _repository.DeleteAsync(_mapper.Map<BannedUser>(item));
             return numberEntriesAffected;
         }
 
-        private async Task<int> UpdateInternalAsync(MessageDataDto item)
+        private async Task<int> UpdateInternalAsync(BannedUserDto item)
         {
             var allData = await _repository.GetAllAsync();
             if (!allData.Any())
             {
-                throw new NotFoundException($"Collection entity {nameof(MessageDataDto)} not found", nameof(allData));
+                throw new NotFoundException($"Collection entity {nameof(BannedUserDto)} not found", nameof(allData));
             }
 
-            var numberEntriesAffected = await _repository.UpdateAsync(_mapper.Map<MessageData>(item));
+            var numberEntriesAffected = await _repository.UpdateAsync(_mapper.Map<BannedUser>(item));
             return numberEntriesAffected;
         }
     }

@@ -20,7 +20,12 @@ namespace CombatAnalysis.BL.Extensions
             services.AddScoped<IUserService<AppUserDto>, UserService>();
 
             services.AddScoped<IService<PersonalChatDto, int>, PersonalChatService>();
-            services.AddScoped<IService<MessageDataDto, int>, MessageDataService>();
+            services.AddScoped<IService<PersonalChatMessageDto, int>, PersonalChatMessageService>();
+            services.AddScoped<IService<InviteToGroupChatDto, int>, InviteToGroupChatService>();
+            services.AddScoped<IService<GroupChatDto, int>, GroupChatService>();
+            services.AddScoped<IService<GroupChatMessageDto, int>, GroupChatMessageService>();
+            services.AddScoped<IService<GroupChatUserDto, int>, GroupChatUserService>();
+            services.AddScoped<IService<BannedUserDto, int>, BannedUserService>();
 
             services.AddScoped<IService<CombatLogDto, int>, CombatLogService>();
             services.AddScoped<IService<CombatLogByUserDto, int>, CombatLogByUserService>();

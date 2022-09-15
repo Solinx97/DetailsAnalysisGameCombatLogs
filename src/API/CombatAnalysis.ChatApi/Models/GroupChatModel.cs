@@ -1,4 +1,4 @@
-﻿namespace CombatAnalysis.Core.Models.Chat
+﻿namespace CombatAnalysis.ChatApi.Models
 {
     public class GroupChatModel
     {

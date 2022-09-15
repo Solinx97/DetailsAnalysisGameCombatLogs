@@ -1,6 +1,6 @@
 ﻿namespace CombatAnalysis.ChatApi.Models
 {
-    public class PersonalChatModel
+    public class PersonalChatMessageModel
     {
         public int Id { get; set; }
 

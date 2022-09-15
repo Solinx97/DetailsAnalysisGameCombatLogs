@@ -1,6 +1,8 @@
-﻿namespace CombatAnalysis.ChatApi.Models
+﻿using System;
+
+namespace CombatAnalysis.Core.Models.Chat
 {
-    public class PersonalChatModel
+    public class PersonalChatMessageModel
     {
         public int Id { get; set; }
 
@@ -8,7 +10,7 @@
 
         public string Message { get; set; }
 
-        public string Time { get; set; }
+        public TimeSpan Time { get; set; }
 
         public int PersonalChatId { get; set; }
     }

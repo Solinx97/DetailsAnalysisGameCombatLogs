@@ -10,58 +10,58 @@ namespace CombatAnalysis.ChatApi.Controllers
 {
     [Route("[controller]")]
     [ApiController]
-    public class MessageDataController : ControllerBase
+    public class PesronalChatMessageController : ControllerBase
     {
-        private readonly IService<MessageDataDto, int> _service;
+        private readonly IService<PersonalChatMessageDto, int> _service;
         private readonly IMapper _mapper;
 
-        public MessageDataController(IService<MessageDataDto, int> service, IMapper mapper)
+        public PesronalChatMessageController(IService<PersonalChatMessageDto, int> service, IMapper mapper)
         {
             _service = service;
             _mapper = mapper;
         }
 
         [HttpGet]
-        public async Task<IEnumerable<MessageDataModel>> Get()
+        public async Task<IEnumerable<PersonalChatMessageModel>> Get()
         {
             var result = await _service.GetAllAsync();
-            var map = _mapper.Map<IEnumerable<MessageDataModel>>(result);
+            var map = _mapper.Map<IEnumerable<PersonalChatMessageModel>>(result);
 
             return map;
         }
 
         [HttpGet("{id:int:min(1)}")]
-        public async Task<MessageDataModel> GetById(int id)
+        public async Task<PersonalChatMessageModel> GetById(int id)
         {
             var result = await _service.GetByIdAsync(id);
-            var map = _mapper.Map<MessageDataModel>(result);
+            var map = _mapper.Map<PersonalChatMessageModel>(result);
 
             return map;
         }
 
         [HttpPost]
-        public async Task<MessageDataModel> Create(MessageDataModel model)
+        public async Task<PersonalChatMessageModel> Create(PersonalChatMessageModel model)
         {
-            var map = _mapper.Map<MessageDataDto>(model);
+            var map = _mapper.Map<PersonalChatMessageDto>(model);
             var result = await _service.CreateAsync(map);
-            var resultMap = _mapper.Map<MessageDataModel>(result);
+            var resultMap = _mapper.Map<PersonalChatMessageModel>(result);
 
             return resultMap;
         }
 
         [HttpPut]
-        public async Task<int> Update(MessageDataModel model)
+        public async Task<int> Update(PersonalChatMessageModel model)
         {
-            var map = _mapper.Map<MessageDataDto>(model);
+            var map = _mapper.Map<PersonalChatMessageDto>(model);
             var result = await _service.UpdateAsync(map);
 
             return result;
         }
 
         [HttpDelete]
-        public async Task<int> Delete(MessageDataModel model)
+        public async Task<int> Delete(PersonalChatMessageModel model)
         {
-            var map = _mapper.Map<MessageDataDto>(model);
+            var map = _mapper.Map<PersonalChatMessageDto>(model);
             var result = await _service.DeleteAsync(map);
 
             return result;

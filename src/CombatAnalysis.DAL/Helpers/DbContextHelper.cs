@@ -16,7 +16,12 @@ namespace CombatAnalysis.DAL.Helpers
             {
                 typeof(AppUser),
                 typeof(PersonalChat),
-                typeof(MessageData),
+                typeof(PersonalChatMessage),
+                typeof(InviteToGroupChat),
+                typeof(GroupChat),
+                typeof(GroupChatMessage),
+                typeof(GroupChatUser),
+                typeof(BannedUser),
                 typeof(CombatLog),
                 typeof(CombatLogByUser),
                 typeof(CombatPlayer),

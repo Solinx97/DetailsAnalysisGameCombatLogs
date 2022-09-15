@@ -2,7 +2,7 @@
 
 namespace CombatAnalysis.BL.DTO.Chat
 {
-    public class MessageDataDto
+    public class PersonalChatMessageDto
     {
         public int Id { get; set; }
 
@@ -10,12 +10,8 @@ namespace CombatAnalysis.BL.DTO.Chat
 
         public string Message { get; set; }
 
-        public bool IsMyMessage { get; set; }
-
         public TimeSpan Time { get; set; }
 
-        public int DayTimeType { get; set; }
-
-        public int ChatMessageId { get; set; }
+        public int PersonalChatId { get; set; }
     }
 }

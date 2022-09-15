@@ -1,6 +1,6 @@
-﻿namespace CombatAnalysis.Core.Models.Chat
+﻿namespace CombatAnalysis.BL.DTO.Chat
 {
-    public class GroupChatModel
+    public class GroupChatDto
     {
         public int Id { get; set; }
 
