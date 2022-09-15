@@ -167,6 +167,8 @@ namespace CombatAnalysis.DAL.Helpers
                     return "DATETIMEOFFSET (7)";
                 case "Double":
                     return "FLOAT (53)";
+                case "TimeSpan":
+                    return "TIME (7)";
                 default:
                     return "NVARCHAR (MAX)";
             }

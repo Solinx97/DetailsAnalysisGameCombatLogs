@@ -12,7 +12,7 @@ namespace CombatAnalysis.ChatApi.Models
 
         public bool IsMyMessage { get; set; }
 
-        public TimeSpan Time { get; set; }
+        public string Time { get; set; }
 
         public int DayTimeType { get; set; }
 

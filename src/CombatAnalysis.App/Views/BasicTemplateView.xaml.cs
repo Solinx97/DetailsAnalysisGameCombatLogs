@@ -1,5 +1,4 @@
-﻿using CombatAnalysis.Core;
-using MvvmCross.Platforms.Wpf.Views;
+﻿using MvvmCross.Platforms.Wpf.Views;
 
 namespace CombatAnalysis.App.Views
 {
@@ -14,7 +13,7 @@ namespace CombatAnalysis.App.Views
         {
             if (e.LeftButton == System.Windows.Input.MouseButtonState.Pressed)
             {
-                Windows.MainWindow.DragMove();
+                Core.WindowManager.MainWindow.DragMove();
             }
         }
     }

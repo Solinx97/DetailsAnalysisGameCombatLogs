@@ -198,25 +198,24 @@ namespace CombatAnalysis.Core.ViewModels
 
         public void CloseWindow()
         {
-            Windows.MainWindow.Close();
-            Windows.MainWindow.DragMove();
+            WindowManager.MainWindow.Close();
         }
 
         public void MaximazeWindow()
         {
-            if (Windows.MainWindow.WindowState != WindowState.Maximized)
+            if (WindowManager.MainWindow.WindowState != WindowState.Maximized)
             {
-                Windows.MainWindow.WindowState = WindowState.Maximized;
+                WindowManager.MainWindow.WindowState = WindowState.Maximized;
             }
             else
             {
-                Windows.MainWindow.WindowState = WindowState.Normal;
+                WindowManager.MainWindow.WindowState = WindowState.Normal;
             }
         }
 
         public void MinimazeWindow()
         {
-            Windows.MainWindow.WindowState = WindowState.Minimized;
+            WindowManager.MainWindow.WindowState = WindowState.Minimized;
         }
 
         public void Login()
