@@ -65,28 +65,55 @@
                 </StackPanel>
 
                 <StackPanel Margin="30 0 15 0">
-                    <TextBlock Text="Групповые чаты" Margin="25 0 0 5" Style="{StaticResource titleText}"/>
-                    
-                    <ListBox HorizontalContentAlignment="Stretch" Grid.Row="1" Margin="10 10 10 30" 
-                             ItemsSource="{Binding GroupChats}" SelectedIndex="{Binding SelectedGroupChatIndex}" Background="Transparent">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="Групповые чаты" VerticalAlignment="Center" Margin="25 0 0 5" Style="{StaticResource titleText}"/>
+                        <Button Style="{StaticResource textBoxButton}" VerticalAlignment="Center" mvx:Bi.nd="Command RefreshGroupChatCommand">
+                            <Button.ToolTip>
+                                <ToolTip>
+                                    Создать
+                                </ToolTip>
+                            </Button.ToolTip>
+                            <Icon:PackIconMaterial Kind="Recycle" Margin="0" Foreground="#a6a6a6" Width="20" Height="20"/>
+                        </Button>
+                    </StackPanel>
+
+                    <TextBlock Text="Загрузка..." VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="16"
+                               Visibility="{Binding GroupChatLoadingResponse, Converter={StaticResource IntToVisibility}, ConverterParameter='true:1:='}"/>
+                    <ListBox HorizontalContentAlignment="Stretch" Grid.Row="1" Margin="10 10 10 30"
+                             ItemsSource="{Binding GroupChats}" SelectedIndex="{Binding SelectedGroupChatIndex}" 
+                             SelectedItem="{Binding SelectedGroupChat}" Background="Transparent"
+                             Visibility="{Binding GroupChatLoadingResponse, Converter={StaticResource IntToVisibility}, ConverterParameter='true:1:>'}">
                         <ListBox.ItemTemplate>
                             <DataTemplate>
-                                <uc:Item Title="{Binding Path=Name}" Message="Ok, good job" Color="#73afff" TagName="PH" MessageCount="2" />
+                                <uc:Item Title="{Binding Path=Name}" Message="{Binding Path=LastMessage}" Color="#73afff" TagName="{Binding Path=ShortName}" MessageCount="0" />
                             </DataTemplate>
                         </ListBox.ItemTemplate>
                     </ListBox>
 
-                    <Button Content="Показать все" Style="{StaticResource showButton}"/>
+                    <Button Content="Показать все" Style="{StaticResource showButton}" IsEnabled="False"/>
 
-                    <TextBlock Text="Участники" Margin="25 0 0 5" Style="{StaticResource titleText}"/>
+                    <TextBlock Text="Личные сообщения" Margin="25 0 0 5" Style="{StaticResource titleText}"/>
 
-                    <uc:Item Title="Oleg" Message="Ok, good job" Color="#73afff" TagName="PH" MessageCount="2" />
-
-                    <Button Content="Показать все" Style="{StaticResource showButton}"/>
+                    <TextBlock Text="Загрузка..." VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="16"
+                               Visibility="{Binding PersonalChatLoadingResponse, Converter={StaticResource IntToVisibility}, ConverterParameter='true:1:='}"/>
+                    <uc:Item Title="Oleg" Message="Ok, good job" Color="#73afff" TagName="PH" MessageCount="0" 
+                             Visibility="{Binding PersonalChatLoadingResponse, Converter={StaticResource IntToVisibility}, ConverterParameter='true:1:>'}"/>
+ 
+                    <Button Content="Показать все" Style="{StaticResource showButton}" IsEnabled="False"/>
                 </StackPanel>
             </Grid>
         </Border>
 
+        <Border Grid.Column="3" Grid.Row="1" VerticalAlignment="Top" HorizontalAlignment="Right" Panel.ZIndex="1" 
+                Background="LightGray" Width="175" Height="100" Margin="0 15 75 0" Padding="10" CornerRadius="10"
+                Visibility="{Binding ShowGroupChatMenu}">
+            <StackPanel>
+                <TextBlock Margin="5" Text="Добавить пользователя"/>
+                <TextBlock Margin="5" Text="Настройки"/>
+                <TextBlock Margin="5" Text="Удалить пользователя"/>
+            </StackPanel>
+        </Border>
+        
         <Border Name="test" CornerRadius="15" Background="WhiteSmoke" Grid.Column="3" Grid.Row="1" Grid.RowSpan="3" 
                 Margin="0 0 30 30" ClipToBounds="True">
             <Grid>
@@ -98,7 +125,7 @@
                         <RowDefinition Height="*"/>
                         <RowDefinition Height="auto"/>
                     </Grid.RowDefinitions>
-                    <Grid Background="WhiteSmoke">
+                    <Grid>
                         <Grid.Effect>
                             <DropShadowEffect BlurRadius="20" ShadowDepth="1" Direction="-90" Opacity="0.1"/>
                         </Grid.Effect>
@@ -106,53 +133,55 @@
                         <TextBlock Text="{Binding SelectedChatName}" FontSize="16" Margin="20 15" HorizontalAlignment="Left"/>
 
                         <StackPanel Orientation="Horizontal" Margin="0 0 10 0" HorizontalAlignment="Right">
-                            <TextBlock Text="and 3 others" VerticalAlignment="Center" Margin="7 0" Foreground="#8b8a8f" FontSize="11" />
+                            <!--<TextBlock Text="and 3 others" VerticalAlignment="Center" Margin="7 0" Foreground="#8b8a8f" FontSize="11" />-->
 
-                            <Button Style="{StaticResource textBoxButton}">
+                            <Button Style="{StaticResource textBoxButton}" mvx:Bi.nd="Command ShowGroupChatMenuComand">
                                 <Icon:PackIconMaterial Kind="DotsVertical" Width="14" Height="14" Foreground="#88878e"/>
                             </Button>
                         </StackPanel>
                     </Grid>
 
                     <TextBlock Name="myUsername" Text="{Binding MyUsername}" Visibility="Collapsed"/>
-                    <ListBox HorizontalContentAlignment="Stretch" Grid.Row="1" Margin="10 10 10 30" ItemsSource="{Binding Messages}" Background="Transparent" IsEnabled="False">
-                        <ListBox.ItemTemplate>
-                            <DataTemplate>
-                                <StackPanel>
-                                    <!--<uc:ChatSeparator Title="{Binding Path=DayTimeType, Converter={StaticResource WhenTypeToString}}"/>-->
-                                    
-                                    <StackPanel Name="anotherMessage">
-                                        <StackPanel.Visibility>
-                                            <MultiBinding Converter="{StaticResource MultiplyToVisibility}" ConverterParameter="true">
-                                                <Binding Path="Username" />
-                                                <Binding ElementName="myUsername" Path="Text" />
-                                            </MultiBinding>
-                                        </StackPanel.Visibility>
+                    <ScrollViewer Grid.Row="1">
+                        <ListBox HorizontalContentAlignment="Stretch" Margin="0" ItemsSource="{Binding Messages}" IsEnabled="False" Background="Transparent">
+                            <ListBox.ItemTemplate>
+                                <DataTemplate>
+                                    <Grid>
+                                        <!--<uc:ChatSeparator Title="{Binding Path=DayTimeType, Converter={StaticResource WhenTypeToString}}"/>-->
+                                        <StackPanel>
+                                            <StackPanel.Visibility>
+                                                <MultiBinding Converter="{StaticResource MultiplyToVisibility}" ConverterParameter="true">
+                                                    <Binding Path="Username" />
+                                                    <Binding ElementName="myUsername" Path="Text" />
+                                                </MultiBinding>
+                                            </StackPanel.Visibility>
 
-                                        <uc:UserChat UserName="{Binding Path=Username}"/>
-                                        <uc:MessageChat Color="#ff82a3" Message="{Binding Path=Message}"/>
-                                        <StackPanel Orientation="Horizontal">
-                                            <TextBlock Text="{Binding Path=Time, StringFormat=hh\\:mm}" Style="{StaticResource timeText}"/>
+                                            <uc:UserChat UserName="{Binding Path=Username}"/>
+                                            <uc:MessageChat Color="#ff82a3" Message="{Binding Path=Message}"/>
+                                            <StackPanel Orientation="Horizontal">
+                                                <TextBlock Text="{Binding Path=Time, StringFormat=hh\\:mm}" Style="{StaticResource timeText}"/>
+                                            </StackPanel>
                                         </StackPanel>
-                                    </StackPanel>
 
-                                    <StackPanel>
-                                        <StackPanel.Visibility>
-                                            <MultiBinding Converter="{StaticResource MultiplyToVisibility}">
-                                                <Binding Path="Username" />
-                                                <Binding ElementName="myUsername" Path="Text" />
-                                            </MultiBinding>
-                                        </StackPanel.Visibility>
-                                        
-                                        <uc:MyMessageChat Message="{Binding Path=Message}"/>
-                                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                                            <TextBlock Text="{Binding Path=Time, StringFormat=hh\\:mm}" Style="{StaticResource timeTextRight}"/>
+                                        <StackPanel>
+                                            <StackPanel.Visibility>
+                                                <MultiBinding Converter="{StaticResource MultiplyToVisibility}">
+                                                    <Binding Path="Username" />
+                                                    <Binding ElementName="myUsername" Path="Text" />
+                                                </MultiBinding>
+                                            </StackPanel.Visibility>
+
+                                            <uc:MyMessageChat Message="{Binding Path=Message}"/>
+                                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                                                <TextBlock Text="{Binding Path=Time, StringFormat=hh\\:mm}" Style="{StaticResource timeTextRight}"/>
+                                            </StackPanel>
                                         </StackPanel>
-                                    </StackPanel>
-                                </StackPanel>
-                            </DataTemplate>
-                        </ListBox.ItemTemplate>
-                    </ListBox>
+                                    </Grid>
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                        </ListBox>
+                    </ScrollViewer>
+
 
                     <Grid Grid.Row="2" Margin="10 0">
                         <Grid.ColumnDefinitions>

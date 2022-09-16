@@ -1,4 +1,5 @@
 ﻿using CombatAnalysis.Core.Consts;
+using CombatAnalysis.Core.Enums;
 using CombatAnalysis.Core.Interfaces;
 using CombatAnalysis.Core.Models.Chat;
 using CombatAnalysis.Core.Models.User;
@@ -11,12 +12,13 @@ using System.Collections.ObjectModel;
 using System.Net.Http.Json;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows;
 
 namespace CombatAnalysis.Core.ViewModels
 {
     public class ChatViewModel : MvxViewModel, IImprovedMvxViewModel
     {
-        private const int ChatUpdateTimeIsMs = 500;
+        private const int GroupChatMessagesUpdateTimeIsMs = 500;
 
         private readonly IHttpClientHelper _httpClientHelper;
 
@@ -24,12 +26,17 @@ namespace CombatAnalysis.Core.ViewModels
         private IMemoryCache _memoryCache;
         private ObservableCollection<GroupChatMessageModel> _messages;
         private ObservableCollection<GroupChatModel> _groupChats;
+        private ObservableCollection<PersonalChatModel> _personalChats;
         private bool _isMyMessage = true;
         private string _selectedChatName;
+        private GroupChatModel _selectedGroupChat;
         private int _selectedGroupChatIndex = -1;
         private string _message;
-        private string _myUsername;
-        private Timer _timer;
+        private Visibility _showGroupChatMenu = Visibility.Collapsed;
+        private ResponseStatus _groupChatLoadingResponse = ResponseStatus.None;
+        private ResponseStatus _personalChatLoadingResponse = ResponseStatus.Pending;
+        private string _myUsername = string.Empty;
+        private Timer _groupChatMessagesUpdateTimer;
 
         public ChatViewModel(IHttpClientHelper httpClientHelper, IMemoryCache memoryCache)
         {
@@ -39,6 +46,8 @@ namespace CombatAnalysis.Core.ViewModels
             Messages = new ObservableCollection<GroupChatMessageModel>();
             SendMessageCommand = new MvxAsyncCommand(SendAsync);
             CreateGroupChatCommand = new MvxCommand(CreateGroupChat);
+            RefreshGroupChatCommand = new MvxAsyncCommand(LoadGroupChats);
+            ShowGroupChatMenuComand = new MvxCommand(ShowGCMenu);
 
             BasicTemplate = Templates.Basic;
             BasicTemplate.Parent = this;
@@ -50,6 +59,14 @@ namespace CombatAnalysis.Core.ViewModels
 
         public IMvxCommand CreateGroupChatCommand { get; set; }
 
+        public IMvxAsyncCommand RefreshGroupChatCommand { get; set; }
+
+        public IMvxCommand ShowGroupChatMenuComand { get; set; }
+
+        public IViewModelConnect Handler { get; set; }
+
+        public IMvxViewModel Parent { get; set; }
+
         public IImprovedMvxViewModel BasicTemplate
         {
             get { return _basicTemplate; }
@@ -59,10 +76,6 @@ namespace CombatAnalysis.Core.ViewModels
                 SetProperty(ref _basicTemplate, value);
             }
         }
-
-        public IViewModelConnect Handler { get; set; }
-
-        public IMvxViewModel Parent { get; set; }
 
         public ObservableCollection<GroupChatMessageModel> Messages
         {
@@ -82,15 +95,36 @@ namespace CombatAnalysis.Core.ViewModels
             }
         }
 
+        public ObservableCollection<PersonalChatModel> PersonalChats
+        {
+            get { return _personalChats; }
+            set
+            {
+                SetProperty(ref _personalChats, value);
+            }
+        }
+
         public int SelectedGroupChatIndex
         {
             get { return _selectedGroupChatIndex; }
             set
             {
                 SetProperty(ref _selectedGroupChatIndex, value);
+            }
+        }
 
-                SelectedChatName = GroupChats[value].Name;
-                _timer = new Timer(InitLoadGroupChatMessages, null, ChatUpdateTimeIsMs, Timeout.Infinite);
+        public GroupChatModel SelectedGroupChat
+        {
+            get { return _selectedGroupChat; }
+            set
+            {
+                SetProperty(ref _selectedGroupChat, value);
+
+                if (value != null)
+                {
+                    SelectedChatName = value.Name;
+                    _groupChatMessagesUpdateTimer = new Timer(InitLoadGroupChatMessages, null, GroupChatMessagesUpdateTimeIsMs, Timeout.Infinite);
+                }
             }
         }
 
@@ -129,12 +163,39 @@ namespace CombatAnalysis.Core.ViewModels
                 SetProperty(ref _myUsername, value);
             }
         }
+        
+        public Visibility ShowGroupChatMenu
+        {
+            get { return _showGroupChatMenu; }
+            set
+            {
+                SetProperty(ref _showGroupChatMenu, value);
+            }
+        }
+
+        public ResponseStatus GroupChatLoadingResponse
+        {
+            get { return _groupChatLoadingResponse; }
+            set
+            {
+                SetProperty(ref _groupChatLoadingResponse, value);
+            }
+        }
+
+        public ResponseStatus PersonalChatLoadingResponse
+        {
+            get { return _personalChatLoadingResponse; }
+            set
+            {
+                SetProperty(ref _personalChatLoadingResponse, value);
+            }
+        }
 
         public override void Prepare()
         {
             base.Prepare();
 
-            Task.Run(GetGroupChats);
+            Task.Run(LoadGroupChats);
         }
 
         public async Task SendAsync()
@@ -144,40 +205,65 @@ namespace CombatAnalysis.Core.ViewModels
                 Message = Message,
                 Time = TimeSpan.Parse($"{DateTimeOffset.UtcNow.Hour}:{DateTimeOffset.UtcNow.Minute}"),
                 Username = MyUsername,
-                GroupChatId = GroupChats[SelectedGroupChatIndex].Id
+                GroupChatId = SelectedGroupChat.Id
             };
 
             Message = string.Empty;
 
             _httpClientHelper.BaseAddress = Port.ChatApi;
             await _httpClientHelper.PostAsync("GroupChatMessage", JsonContent.Create(newGroupChatMessage));
+
+            SelectedGroupChat.LastMessage = newGroupChatMessage.Message;
+
+            await _httpClientHelper.PutAsync("GroupChat", JsonContent.Create(SelectedGroupChat));
         }
 
         public void CreateGroupChat()
         {
-            WindowManager.CreateGroupChat.Closed += CreateGroupChatClosed;
             WindowManager.CreateGroupChat.Show();
         }
 
-        private void CreateGroupChatClosed(object sender, EventArgs e)
+        public void ShowGCMenu()
         {
-            Task.Run(GetGroupChats);
-        }
-
-        private async Task GetGroupChats()
-        {
-            _httpClientHelper.BaseAddress = Port.ChatApi;
-
-            var response = await _httpClientHelper.GetAsync("GroupChat");
-            var groupChats = await response.Content.ReadFromJsonAsync<IEnumerable<GroupChatModel>>();
-            GroupChats = new ObservableCollection<GroupChatModel>(groupChats);
+            if (ShowGroupChatMenu == Visibility.Visible)
+            {
+                ShowGroupChatMenu = Visibility.Collapsed;
+            }
+            else
+            {
+                ShowGroupChatMenu = Visibility.Visible;
+            }
         }
 
         private void InitLoadGroupChatMessages(object obj)
         {
             Task.Run(LoadGroupChatMessages);
 
-            _timer.Change(ChatUpdateTimeIsMs, Timeout.Infinite);
+            if (SelectedGroupChat != null)
+            {
+                _groupChatMessagesUpdateTimer.Change(GroupChatMessagesUpdateTimeIsMs, Timeout.Infinite);
+            }
+        }
+
+        private async Task LoadGroupChats()
+        {
+            GroupChatLoadingResponse = ResponseStatus.Pending;
+
+            _httpClientHelper.BaseAddress = Port.ChatApi;
+
+            var response = await _httpClientHelper.GetAsync("GroupChat");
+            if (response.StatusCode == System.Net.HttpStatusCode.OK)
+            {
+                var groupChats = await response.Content.ReadFromJsonAsync<IEnumerable<GroupChatModel>>();
+
+                GroupChats = new ObservableCollection<GroupChatModel>(groupChats);
+
+                GroupChatLoadingResponse = ResponseStatus.Successful;
+            }
+            else
+            {
+                GroupChatLoadingResponse = ResponseStatus.Failed;
+            }
         }
 
         private async Task LoadGroupChatMessages()
@@ -189,7 +275,7 @@ namespace CombatAnalysis.Core.ViewModels
             var selectedGroupChatMessages = new List<GroupChatMessageModel>();
             foreach (var item in groupChatMessages)
             {
-                if (item.GroupChatId == GroupChats[SelectedGroupChatIndex].Id)
+                if (SelectedGroupChat != null && item.GroupChatId == SelectedGroupChat.Id)
                 {
                     selectedGroupChatMessages.Add(item);
                 }

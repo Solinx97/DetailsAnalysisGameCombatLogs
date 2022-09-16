@@ -1,5 +1,4 @@
 ﻿using CombatAnalysis.Core.Consts;
-using CombatAnalysis.Core.Core;
 using CombatAnalysis.Core.Enums;
 using CombatAnalysis.Core.Interfaces;
 using CombatAnalysis.Core.Interfaces.Observers;
