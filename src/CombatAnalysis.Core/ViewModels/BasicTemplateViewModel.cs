@@ -335,7 +335,7 @@ namespace CombatAnalysis.Core.ViewModels
 
         public void CheckAuth()
         {
-            var user = _memoryCache.Get<UserModel>("user");
+            var user = _memoryCache.Get<AppUserModel>("user");
             if (user != null)
             {
                 IsAuth = true;

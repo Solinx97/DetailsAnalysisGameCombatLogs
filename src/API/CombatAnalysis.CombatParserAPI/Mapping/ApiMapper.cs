@@ -11,7 +11,7 @@ namespace CombatAnalysis.CombatParserAPI.Mapping
     {
         public CombatParserApiMapper()
         {
-            CreateMap<AppUserDto, UserModel>().ReverseMap();
+            CreateMap<AppUserDto, AppUserModel>().ReverseMap();
             CreateMap<CombatLogDto, CombatLogModel>().ReverseMap();
             CreateMap<CombatLogByUserDto, CombatLogByUserModel>().ReverseMap();
             CreateMap<CombatDto, CombatModel>().ReverseMap();

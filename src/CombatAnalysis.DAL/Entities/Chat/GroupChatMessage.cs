@@ -12,6 +12,6 @@ namespace CombatAnalysis.DAL.Entities.Chat
 
         public TimeSpan Time { get; set; }
 
-        public int PersonalChatId { get; set; }
+        public int GroupChatId { get; set; }
     }
 }

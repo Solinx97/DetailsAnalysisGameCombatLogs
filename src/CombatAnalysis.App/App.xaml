@@ -519,5 +519,15 @@
                 </Setter.Value>
             </Setter>
         </Style>
+
+        <Style x:Key="passwordTextBox" TargetType="PasswordBox">
+            <Setter Property="Background" Value="#f5f7f9"/>
+            <Setter Property="Foreground" Value="#767676"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="BorderBrush" Value="#e1e0e3"/>
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="Margin" Value="0 10"/>
+        </Style>
     </Application.Resources>
 </views:MvxApplication>

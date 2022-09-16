@@ -11,7 +11,7 @@ namespace CombatAnalysis.App.Converters
         {
             var isInversion = false;
             var stringParam = (string)parameter;
-            
+
             if (!string.IsNullOrWhiteSpace(stringParam))
             {
                 bool.TryParse(stringParam, out isInversion);

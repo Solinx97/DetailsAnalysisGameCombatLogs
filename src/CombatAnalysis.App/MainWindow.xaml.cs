@@ -15,6 +15,13 @@ namespace CombatAnalysis.App
 
             Application.Current.MainWindow.Height = SystemParameters.PrimaryScreenHeight * 0.925;
             Application.Current.MainWindow.Width = SystemParameters.PrimaryScreenWidth * 0.925;
+
+            Closed += MainWindow_Closed;
+        }
+
+        private void MainWindow_Closed(object sender, System.EventArgs e)
+        {
+            Dispose();
         }
     }
 }

@@ -85,7 +85,7 @@ namespace CombatAnalysis.Core.Services
 
         public async Task<IEnumerable<CombatLogModel>> LoadCombatLogsByUserAsync()
         {
-            var user = _memoryCache.Get<UserModel>("user");
+            var user = _memoryCache.Get<AppUserModel>("user");
             if (user != null)
             {
                 var combatLogs = new List<CombatLogModel>();
@@ -201,7 +201,7 @@ namespace CombatAnalysis.Core.Services
 
         private async Task SaveCombatLogByUser(int combatLogId, LogType logType)
         {
-            var user = _memoryCache.Get<UserModel>("user");
+            var user = _memoryCache.Get<AppUserModel>("user");
             if (user != null)
             {
                 var combatLogByUser = new CombatLogByUser

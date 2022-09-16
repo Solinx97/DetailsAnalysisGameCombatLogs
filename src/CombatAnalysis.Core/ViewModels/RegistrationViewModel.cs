@@ -35,8 +35,8 @@ namespace CombatAnalysis.Core.ViewModels
             _mvvmNavigation = mvvmNavigation;
             _httpClient.BaseAddress = Port.UserApi;
 
-            RegistrationCommand = new MvxCommand(Validate);
-            CancelCommand = new MvxCommand(Cancel);
+            RegistrationCommand = new MvxAsyncCommand(ValidateAsync);
+            CancelCommand = new MvxAsyncCommand(CancelAsync);
 
             BasicTemplate = Templates.Basic;
             if (BasicTemplate.Parent is LoginViewModel)
@@ -48,9 +48,9 @@ namespace CombatAnalysis.Core.ViewModels
             BasicTemplate.Parent = this;
         }
 
-        public IMvxCommand RegistrationCommand { get; set; }
+        public IMvxAsyncCommand RegistrationCommand { get; set; }
 
-        public IMvxCommand CancelCommand { get; set; }
+        public IMvxAsyncCommand CancelCommand { get; set; }
 
         public IImprovedMvxViewModel BasicTemplate
         {
@@ -124,7 +124,7 @@ namespace CombatAnalysis.Core.ViewModels
             }
         }
 
-        public void Validate()
+        public async Task ValidateAsync()
         {
             if (string.IsNullOrWhiteSpace(Email)
                 || string.IsNullOrWhiteSpace(Password)
@@ -135,16 +135,26 @@ namespace CombatAnalysis.Core.ViewModels
             else
             {
                 InputDataIsEmpty = false;
-                CheckConfirmPassword();
+                await CheckConfirmPassword();
             }
         }
 
-        public void CheckConfirmPassword()
+        public async Task CancelAsync()
+        {
+            BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, "IsRegistrationNotActivated", true);
+            await _mvvmNavigation.Close(this);
+        }
+
+        private async Task CheckConfirmPassword()
         {
             if (Password.Equals(ConfirmPassword))
             {
                 ConfirmPasswordIsNotCorrect = false;
-                Registration();
+                ServerIsNotAvailable = false;
+                AccountIsReady = false;
+                InputDataIsEmpty = false;
+
+                await Registration();
             }
             else
             {
@@ -152,23 +162,7 @@ namespace CombatAnalysis.Core.ViewModels
             }
         }
 
-        public void Registration()
-        {
-            ServerIsNotAvailable = false;
-            AccountIsReady = false;
-            ConfirmPasswordIsNotCorrect = false;
-            InputDataIsEmpty = false;
-
-            Task.Run(async () => await RegistrationAsync());
-        }
-
-        public void Cancel()
-        {
-            BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, "IsRegistrationNotActivated", true);
-            Task.Run(() => _mvvmNavigation.Close(this));
-        }
-
-        private async Task RegistrationAsync()
+        private async Task Registration()
         {
             try
             {

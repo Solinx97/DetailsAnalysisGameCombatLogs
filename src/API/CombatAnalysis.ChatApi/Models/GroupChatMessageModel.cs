@@ -10,6 +10,6 @@
 
         public string Time { get; set; }
 
-        public int PersonalChatId { get; set; }
+        public int GroupChatId { get; set; }
     }
 }

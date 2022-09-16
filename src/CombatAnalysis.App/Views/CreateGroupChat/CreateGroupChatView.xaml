@@ -52,7 +52,7 @@
             <Button mvx:Bi.nd="Command CreateCommand" Content="Создать" Width="100" Height="50" FontSize="16"
                     Margin="0" Style="{StaticResource showButton}" />
             <Button mvx:Bi.nd="Command AddUsersCommand" Content="Добавить пользователей" Width="225" Height="50" FontSize="16"
-                    Margin="0" Style="{StaticResource showButton}" />
+                    Margin="0" Style="{StaticResource showButton}" IsEnabled="False" />
             <Button mvx:Bi.nd="Command CancelCommand" Content="Отмена" Width="100" Height="50" FontSize="16"
                     Margin="0" Style="{StaticResource showButton}" />
         </StackPanel>
