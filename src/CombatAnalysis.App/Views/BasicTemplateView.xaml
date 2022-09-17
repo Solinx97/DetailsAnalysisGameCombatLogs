@@ -77,13 +77,13 @@
                 </StackPanel>
 
                 <StackPanel Margin="10 0 0 0">
-                    <uc:MenuButton Title="Логи" Icon="HomeOutline" IsEnabled="True" 
+                    <uc:MenuButton Title="Логи" Icon="HomeOutline" IsActive="{Binding Step, Converter={StaticResource IntToXAMLBool}, ConverterParameter=0}"
                                    OnClick="{Binding LogPanelStatusCommand}"/>
                 </StackPanel>
 
                 <StackPanel Margin="30 0 0 0" Visibility="{Binding LogPanelStatus}">
-                    <uc:MenuButton Title="Загрузка" Icon="HomeOutline" IsEnabled="{Binding Step, Converter={StaticResource IntToXAMLBoolExpress}, ConverterParameter='>,0'}" 
-                                   IsActive="{Binding Step, Converter={StaticResource IntToXAMLBool}, ConverterParameter=0}" OnClick="{Binding UploadCombatsCommand}"/>
+                    <uc:MenuButton Title="Загрузка" Icon="HomeOutline" IsEnabled="{Binding Step, Converter={StaticResource IntToXAMLBoolExpress}, ConverterParameter='>=,-1'}" 
+                                   IsActive="{Binding Step, Converter={StaticResource IntToXAMLBool}, ConverterParameter= 0}" OnClick="{Binding UploadCombatsCommand}"/>
                     <uc:MenuButton Title="Все бои" Icon="ChartTimelineVariantShimmer" IsEnabled="{Binding AllowStep, Converter={StaticResource IntToXAMLBoolExpress}, ConverterParameter='>,0'}"
                                    IsActive="{Binding Step, Converter={StaticResource IntToXAMLBool}, ConverterParameter=1}" OnClick="{Binding GeneralAnalysisCommand}"/>
                     <uc:MenuButton Title="Бой" Icon="Details" IsEnabled="{Binding Step, Converter={StaticResource IntToXAMLBoolExpress}, ConverterParameter='>,2'}"
@@ -99,7 +99,7 @@
                 </StackPanel>
 
                 <StackPanel Margin="10 0 0 0">
-                    <uc:MenuButton Title="Чат" Icon="Chat" IsEnabled="True" 
+                    <uc:MenuButton Title="Чат" Icon="Chat" IsEnabled="True" IsActive="{Binding Step, Converter={StaticResource IntToXAMLBool}, ConverterParameter=-1}"
                                    OnClick="{Binding ChatCommand}"/>
                 </StackPanel>
                 

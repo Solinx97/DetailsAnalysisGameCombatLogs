@@ -1,20 +1,21 @@
 ﻿using CombatAnalysis.DAL.Entities;
+using CombatAnalysis.DAL.Entities.Authentication;
 using CombatAnalysis.DAL.Entities.Chat;
 using CombatAnalysis.DAL.Entities.User;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace CombatAnalysis.DAL.Helpers
 {
     public static class DbProcedureHelper
     {
-        public static async Task CreateProceduresAsync(DbContext dbContext)
+        public static void CreateProcedures(DbContext dbContext)
         {
             var types = new Type[]
             {
                 typeof(AppUser),
+                typeof(RefreshToken),
                 typeof(PersonalChat),
                 typeof(PersonalChatMessage),
                 typeof(InviteToGroupChat),
@@ -36,49 +37,42 @@ namespace CombatAnalysis.DAL.Helpers
                 typeof(ResourceRecoveryGeneral),
             };
 
-            try
+            foreach (var item in types)
             {
-                foreach (var item in types)
-                {
-                    var query = $"CREATE PROCEDURE GetAll{item.Name}\n" +
-                                  "\tAS SELECT * \n" +
-                                  $"\tFROM {item.Name}";
-                    await dbContext.Database.ExecuteSqlRawAsync(query);
+                var query = $"CREATE PROCEDURE GetAll{item.Name}\n" +
+                              "\tAS SELECT * \n" +
+                              $"\tFROM {item.Name}";
+                dbContext.Database.ExecuteSqlRaw(query);
 
-                    var property = item.GetProperty("Id");
-                    query = $"CREATE PROCEDURE Get{item.Name}ById (@id {Converter(property.PropertyType.Name)})\n" +
-                                  "\tAS SELECT * \n" +
-                                  $"\tFROM {item.Name}\n" +
-                                  "\tWHERE Id = @id";
-                    await dbContext.Database.ExecuteSqlRawAsync(query);
+                var property = item.GetProperty("Id");
+                query = $"CREATE PROCEDURE Get{item.Name}ById (@id {Converter(property.PropertyType.Name)})\n" +
+                              "\tAS SELECT * \n" +
+                              $"\tFROM {item.Name}\n" +
+                              "\tWHERE Id = @id";
+                dbContext.Database.ExecuteSqlRaw(query);
 
-                    var data = InsertIntoParamsAndValues(item);
-                    var data1 = InsertIntoParamsAndValues1(item);
-                    query = $"CREATE PROCEDURE InsertInto{item.Name} ({data.Item1})\n" +
-                                  $"\tAS\n" +
-                                  $"\tDECLARE @OutputTbl TABLE ({data1})\n" +
-                                  $"\tINSERT INTO {item.Name}\n" +
-                                  $"\tOUTPUT INSERTED.* INTO @OutputTbl\n" +
-                                  $"\tVALUES ({data.Item2})\n" +
-                                  "\tSELECT * FROM @OutputTbl";
-                    await dbContext.Database.ExecuteSqlRawAsync(query);
+                var data = InsertIntoParamsAndValues(item);
+                var data1 = InsertIntoParamsAndValues1(item);
+                query = $"CREATE PROCEDURE InsertInto{item.Name} ({data.Item1})\n" +
+                              $"\tAS\n" +
+                              $"\tDECLARE @OutputTbl TABLE ({data1})\n" +
+                              $"\tINSERT INTO {item.Name}\n" +
+                              $"\tOUTPUT INSERTED.* INTO @OutputTbl\n" +
+                              $"\tVALUES ({data.Item2})\n" +
+                              "\tSELECT * FROM @OutputTbl";
+                dbContext.Database.ExecuteSqlRaw(query);
 
-                    data = UpdateParamsAndValues(item);
-                    query = $"CREATE PROCEDURE Update{item.Name} ({data.Item1})\n" +
-                                  $"\tAS UPDATE {item.Name}\n" +
-                                  $"\tSET {data.Item2}\n" +
-                                  "\tWHERE Id = @Id";
-                    await dbContext.Database.ExecuteSqlRawAsync(query);
+                data = UpdateParamsAndValues(item);
+                query = $"CREATE PROCEDURE Update{item.Name} ({data.Item1})\n" +
+                              $"\tAS UPDATE {item.Name}\n" +
+                              $"\tSET {data.Item2}\n" +
+                              "\tWHERE Id = @Id";
+                dbContext.Database.ExecuteSqlRaw(query);
 
-                    query = $"CREATE PROCEDURE Delete{item.Name}ById (@id {Converter(property.PropertyType.Name)})\n" +
-                                  $"\tAS DELETE FROM {item.Name}\n" +
-                                  "\tWHERE Id = @id";
-                    await dbContext.Database.ExecuteSqlRawAsync(query);
-                }
-            }
-            catch (Exception ex)
-            {
-                var exMessage = ex.Message;
+                query = $"CREATE PROCEDURE Delete{item.Name}ById (@id {Converter(property.PropertyType.Name)})\n" +
+                              $"\tAS DELETE FROM {item.Name}\n" +
+                              "\tWHERE Id = @id";
+                dbContext.Database.ExecuteSqlRaw(query);
             }
         }
 

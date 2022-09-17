@@ -1,4 +1,4 @@
-﻿using CombatAnalysis.DAL.Data;
+﻿using CombatAnalysis.DAL.Data.SQL;
 using CombatAnalysis.DAL.Interfaces;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CombatAnalysis.DAL.Repositories.SQL
+namespace CombatAnalysis.DAL.Repositories.SQL.StoredProcedure
 {
     public class SQLSPRepository<TModel, TIdType> : IGenericRepository<TModel, TIdType>
         where TModel : class
@@ -56,6 +56,7 @@ namespace CombatAnalysis.DAL.Repositories.SQL
             var data = await _context.Set<TModel>()
                                 .FromSqlRaw($"GetAll{typeof(TModel).Name}")
                                 .ToListAsync();
+            await _context.SaveChangesAsync();
 
             return data;
         }
@@ -70,7 +71,7 @@ namespace CombatAnalysis.DAL.Repositories.SQL
             return data;
         }
 
-        public IEnumerable<TModel> GetByParam(string paramName, object value)
+        IEnumerable<TModel> IGenericRepository<TModel, TIdType>.GetByParam(string paramName, object value)
         {
             var result = new List<TModel>();
             var data = _context.Set<TModel>()
