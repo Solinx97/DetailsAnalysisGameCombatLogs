@@ -4,12 +4,14 @@
     {
         public int Id { get; set; }
 
-        public string Username { get; set; }
+        public string InitiatorUsername { get; set; }
 
-        public string Message { get; set; }
+        public string CompanionUsername { get; set; }
 
-        public string Time { get; set; }
+        public string LastMessage { get; set; }
 
-        public int PersonalChatId { get; set; }
+        public string InitiatorId { get; set; }
+
+        public string CompanionId { get; set; }
     }
 }

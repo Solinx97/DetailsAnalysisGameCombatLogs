@@ -56,10 +56,10 @@ namespace CombatAnalysis.Core.ViewModels
             _parser = parser;
 
             GetCombatLogCommand = new MvxCommand(GetCombatLog);
-            OpenPlayerAnalysisCommand = new MvxCommand(OpenPlayerAnalysis);
-            LoadCombatsCommand = new MvxCommand(LoadCombats);
+            OpenPlayerAnalysisCommand = new MvxAsyncCommand(OpenPlayerAnalysisAsync);
+            LoadCombatsCommand = new MvxAsyncCommand(LoadCombatsAsync);
             ReloadCombatsCommand = new MvxCommand(LoadCombatLogs);
-            DeleteCombatCommand = new MvxCommand(DeleteCombat);
+            DeleteCombatCommand = new MvxAsyncCommand(DeleteAsync);
 
             GetLogTypeCommand = new MvxCommand<int>(GetLogType);
 
@@ -77,13 +77,13 @@ namespace CombatAnalysis.Core.ViewModels
 
         public IMvxCommand GetCombatLogCommand { get; set; }
 
-        public IMvxCommand LoadCombatsCommand { get; set; }
+        public IMvxAsyncCommand LoadCombatsCommand { get; set; }
 
         public IMvxCommand ReloadCombatsCommand { get; set; }
 
-        public IMvxCommand DeleteCombatCommand { get; set; }
+        public IMvxAsyncCommand DeleteCombatCommand { get; set; }
 
-        public IMvxCommand OpenPlayerAnalysisCommand { get; set; }
+        public IMvxAsyncCommand OpenPlayerAnalysisCommand { get; set; }
 
         public IMvxCommand<int> GetLogTypeCommand { get; set; }
 
@@ -254,22 +254,9 @@ namespace CombatAnalysis.Core.ViewModels
             Task.Run(() => LoadCombatLogsByUserAsync());
         }
 
-        public void LoadCombats()
+        public async Task OpenPlayerAnalysisAsync()
         {
-            Task.Run(() => LoadCombatsAsync());
-        }
-
-        public void DeleteCombat()
-        {
-            FoundCombat = string.Empty;
-            IsParsing = true;
-
-            Task.Run(() => DeleteAsync());
-        }
-
-        public void OpenPlayerAnalysis()
-        {
-            Task.Run(() => CombatLogFileValidate(_combatLogPath));
+            await CombatLogFileValidate(_combatLogPath);
         }
 
         public void Update(string combatInformation)
@@ -301,6 +288,37 @@ namespace CombatAnalysis.Core.ViewModels
                 LogType = LogType.NotIncludePlayer;
                 SelectedCombatLogTypeTabItem = 0;
             }
+        }
+
+        public async Task LoadCombatsAsync()
+        {
+            var id = _combatLogLists[SelectedCombatLogTypeTabItem][SelectedCombatLogId].Id;
+            var loadedCombats = await _combatParserAPIService.LoadCombatsAsync(id);
+
+            foreach (var item in loadedCombats)
+            {
+                var players = await _combatParserAPIService.LoadCombatPlayersAsync(item.Id);
+                item.Players = players.ToList();
+            }
+
+            BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, "AllowStep", 1);
+
+            var dataForGeneralAnalysis = Tuple.Create(loadedCombats.ToList(), LogType);
+            await _mvvmNavigation.Navigate<GeneralAnalysisViewModel, Tuple<List<CombatModel>, LogType>>(dataForGeneralAnalysis);
+
+            BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, "Combats", loadedCombats.ToList());
+        }
+
+        public async Task DeleteAsync()
+        {
+            FoundCombat = string.Empty;
+            IsParsing = true;
+
+            await _combatParserAPIService.DeleteCombatLogAsync(CombatLogs[SelectedCombatLogId].Id);
+            await LoadCombatLogsAsync();
+            await LoadCombatLogsByUserAsync();
+
+            IsParsing = false;
         }
 
         private async Task CombatLogFileValidate(string combatLog)
@@ -380,34 +398,6 @@ namespace CombatAnalysis.Core.ViewModels
             CombatLogsByUserNumber = CombatLogsByUser.Count;
 
             _combatLogLists[1] = CombatLogsByUser;
-        }
-
-        private async Task LoadCombatsAsync()
-        {
-            var id = _combatLogLists[SelectedCombatLogTypeTabItem][SelectedCombatLogId].Id;
-            var loadedCombats = await _combatParserAPIService.LoadCombatsAsync(id);
-
-            foreach (var item in loadedCombats)
-            {
-                var players = await _combatParserAPIService.LoadCombatPlayersAsync(item.Id);
-                item.Players = players.ToList();
-            }
-
-            BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, "AllowStep", 1);
-
-            var dataForGeneralAnalysis = Tuple.Create(loadedCombats.ToList(), LogType);
-            await _mvvmNavigation.Navigate<GeneralAnalysisViewModel, Tuple<List<CombatModel>, LogType>>(dataForGeneralAnalysis);
-
-            BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, "Combats", loadedCombats.ToList());
-        }
-
-        private async Task DeleteAsync()
-        {
-            await _combatParserAPIService.DeleteCombatLogAsync(CombatLogs[SelectedCombatLogId].Id);
-            await LoadCombatLogsAsync();
-            await LoadCombatLogsByUserAsync();
-
-            IsParsing = false;
         }
     }
 }

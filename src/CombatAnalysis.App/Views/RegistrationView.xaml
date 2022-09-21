@@ -46,16 +46,16 @@
 
             <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Column="1" Grid.Row="0">
                 <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" Text="Email" FontSize="18" Margin="0 20"/>
-                <TextBox Style="{StaticResource messageTextBox}" Height="30" Padding="5" Width="250" Text="{Binding Email}" />
+                <TextBox Style="{StaticResource messageTextBox}" VerticalContentAlignment="Center" Height="35" Padding="5" Width="300" FontSize="16" Text="{Binding Email}" />
             </StackPanel>
             <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Column="1" Grid.Row="1">
                 <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" Text="Пароль" FontSize="18" Margin="0 20"/>
-                <PasswordBox Style="{StaticResource passwordTextBox}" Height="25" Width="250"
+                <PasswordBox Style="{StaticResource passwordTextBox}" VerticalContentAlignment="Center" Height="35" Width="300" FontSize="16"
                              PasswordChanged="PasswordBox_PasswordChanged"/>
             </StackPanel>
             <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Column="1" Grid.Row="2">
                 <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" Text="Повторный пароль" FontSize="18" Margin="0 20"/>
-                <PasswordBox Style="{StaticResource passwordTextBox}" Height="25" Width="250"
+                <PasswordBox Style="{StaticResource passwordTextBox}" VerticalContentAlignment="Center" Height="35" Width="300" FontSize="16"
                              PasswordChanged="ConfirmPasswordBox_PasswordChanged"/>
             </StackPanel>
             <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Column="1" Grid.Row="3">

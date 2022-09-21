@@ -16,7 +16,7 @@ namespace CombatAnalysis.Core.ViewModels
     public class RegistrationViewModel : MvxViewModel
     {
         private readonly IMemoryCache _memoryCache;
-        private readonly IHttpClientHelper _httpClient;
+        private readonly IHttpClientHelper _httpClientHelper;
         private readonly IMvxNavigationService _mvvmNavigation;
 
         private IImprovedMvxViewModel _basicTemplate;
@@ -31,9 +31,8 @@ namespace CombatAnalysis.Core.ViewModels
         public RegistrationViewModel(IMemoryCache memoryCache, IHttpClientHelper httpClient, IMvxNavigationService mvvmNavigation)
         {
             _memoryCache = memoryCache;
-            _httpClient = httpClient;
+            _httpClientHelper = httpClient;
             _mvvmNavigation = mvvmNavigation;
-            _httpClient.BaseAddress = Port.UserApi;
 
             RegistrationCommand = new MvxAsyncCommand(ValidateAsync);
             CancelCommand = new MvxAsyncCommand(CancelAsync);
@@ -41,7 +40,7 @@ namespace CombatAnalysis.Core.ViewModels
             BasicTemplate = Templates.Basic;
             if (BasicTemplate.Parent is LoginViewModel)
             {
-                Task.Run(() => _mvvmNavigation.Close(BasicTemplate.Parent));
+                _mvvmNavigation.Close(BasicTemplate.Parent).GetAwaiter().GetResult();
             }
 
             BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, "IsLoginNotActivated", true);
@@ -142,6 +141,7 @@ namespace CombatAnalysis.Core.ViewModels
         public async Task CancelAsync()
         {
             BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, "IsRegistrationNotActivated", true);
+            BasicTemplate.Parent = null;
             await _mvvmNavigation.Close(this);
         }
 
@@ -167,7 +167,9 @@ namespace CombatAnalysis.Core.ViewModels
             try
             {
                 var registrationModel = new RegistrationModel { Id = Guid.NewGuid().ToString(), Email = Email, Password = Password };
-                var responseMessage = await _httpClient.PostAsync("Account/registration", JsonContent.Create(registrationModel));
+
+                _httpClientHelper.BaseAddress = Port.UserApi;
+                var responseMessage = await _httpClientHelper.PostAsync("Account/registration", JsonContent.Create(registrationModel));
                 if (responseMessage.StatusCode == System.Net.HttpStatusCode.OK)
                 {
                     var result = await responseMessage.Content.ReadFromJsonAsync<ResponseFromAccount>();

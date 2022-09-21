@@ -28,6 +28,7 @@
             <converters:TheNativeIntToXAMLBoolConverter x:Key="IntToXAMLBool" />
             <converters:TheNativeIntToXAMLExpressConverter x:Key="IntToXAMLBoolExpress" />
             <converters:TheNativeIntToVisibilityConverter x:Key="IntToVisibility" />
+            <converters:TheNativeBoolToXAMLBoolConverter x:Key="BoolToXAMLBool" />
         </Grid.Resources>
 
         <Border CornerRadius="0 20 20 0" Background="white" Grid.Column="2" Grid.ColumnSpan="2"
@@ -99,7 +100,19 @@
                 </StackPanel>
 
                 <StackPanel Margin="10 0 0 0">
-                    <uc:MenuButton Title="Чат" Icon="Chat" IsEnabled="True" IsActive="{Binding Step, Converter={StaticResource IntToXAMLBool}, ConverterParameter=-1}"
+                    <StackPanel Orientation="Horizontal" Margin="10 -20" HorizontalAlignment="Right"  Opacity="0.5"
+                                Visibility="{Binding IsAuth, Converter={StaticResource BoolToVisibility}, ConverterParameter='true:true'}">
+                        <Button Style="{StaticResource textBoxButton}" Cursor="Help">
+                            <Button.ToolTip>
+                                <ToolTip>
+                                    Для открытия 'Чат' необходимо авторизоваться
+                                </ToolTip>
+                            </Button.ToolTip>
+                            <Icon:PackIconMaterial Kind="CloudQuestion" Foreground="White"/>
+                        </Button>
+                    </StackPanel>
+                    <uc:MenuButton Title="Чат" Icon="Chat" IsEnabled="{Binding IsAuth, Converter={StaticResource BoolToXAMLBool}}"
+                                   IsActive="{Binding Step, Converter={StaticResource IntToXAMLBool}, ConverterParameter=-1}"
                                    OnClick="{Binding ChatCommand}"/>
                 </StackPanel>
                 

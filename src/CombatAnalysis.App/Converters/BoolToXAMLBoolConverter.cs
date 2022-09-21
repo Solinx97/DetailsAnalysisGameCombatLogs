@@ -22,7 +22,7 @@ namespace CombatAnalysis.App.Converters
                 value = !value;
             }
 
-            var result = value ? "False" : "True";
+            var result = value ? "True" : "False";
 
             return result;
         }

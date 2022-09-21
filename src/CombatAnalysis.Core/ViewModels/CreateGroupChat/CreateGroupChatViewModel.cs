@@ -68,7 +68,7 @@ namespace CombatAnalysis.Core.ViewModels.CreateGroupChat
 
         public void AddUsers()
         {
-            var user = _memoryCache.Get<AppUserModel>("user");
+            var user = _memoryCache.Get<AppUserModel>("account");
             if (user != null)
             {
                 UpdateGroupChatModel(user);
@@ -79,7 +79,7 @@ namespace CombatAnalysis.Core.ViewModels.CreateGroupChat
 
         public async Task CreateAsync()
         {
-            var user = _memoryCache.Get<AppUserModel>("user");
+            var user = _memoryCache.Get<AppUserModel>("account");
             if (user != null)
             {
                 UpdateGroupChatModel(user);

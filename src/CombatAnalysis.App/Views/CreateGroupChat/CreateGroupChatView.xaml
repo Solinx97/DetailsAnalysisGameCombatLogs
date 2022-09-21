@@ -10,10 +10,6 @@
     mc:Ignorable="d">
 
     <Grid>
-        <Grid.Resources>
-            <converters:TheNativeIntToXAMLBoolConverter x:Key="IntToXAMLBool" />
-        </Grid.Resources>
-        
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="0.2*"/>
             <ColumnDefinition Width="*"/>

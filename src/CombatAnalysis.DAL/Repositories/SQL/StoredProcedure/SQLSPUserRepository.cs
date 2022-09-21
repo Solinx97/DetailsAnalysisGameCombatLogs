@@ -25,7 +25,7 @@ namespace CombatAnalysis.DAL.Repositories.SQL.StoredProcedure
             var procedureParams = new List<SqlParameter>();
             var procedureParamNames = new StringBuilder();
 
-            for (int i = 1; i < properties.Length; i++)
+            for (int i = 0; i < properties.Length; i++)
             {
                 if (properties[i].CanWrite)
                 {
@@ -61,13 +61,14 @@ namespace CombatAnalysis.DAL.Repositories.SQL.StoredProcedure
 
         async Task<AppUser> IUserRepository.GetAsync(string email, string password)
         {
-            var result = new AppUser();
-            var data = _context.Set<AppUser>()
-                                .FromSqlRaw($"GetAll{nameof(AppUser)}");
+            AppUser result = null;
+            var data = await _context.Set<AppUser>()
+                                .FromSqlRaw($"GetAll{nameof(AppUser)}")
+                                .ToListAsync();
             foreach (var item in data)
             {
-                if (item.GetType().GetProperty("Email").Equals(email)
-                    && item.GetType().GetProperty("Password").Equals(password))
+                if (item.Email == email
+                    && item.Password == password)
                 {
                     result = item;
                     break;
@@ -79,12 +80,13 @@ namespace CombatAnalysis.DAL.Repositories.SQL.StoredProcedure
 
         async Task<AppUser> IUserRepository.GetAsync(string email)
         {
-            var result = new AppUser();
-            var data = _context.Set<AppUser>()
-                                .FromSqlRaw($"GetAll{nameof(AppUser)}");
+            AppUser result = null;
+            var data = await _context.Set<AppUser>()
+                                .FromSqlRaw($"GetAll{nameof(AppUser)}")
+                                .ToListAsync();
             foreach (var item in data)
             {
-                if (item.GetType().GetProperty("Email").Equals(email))
+                if (item.Email == email)
                 {
                     result = item;
                     break;

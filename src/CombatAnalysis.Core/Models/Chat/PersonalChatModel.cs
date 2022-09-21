@@ -1,19 +1,17 @@
-﻿using System;
-
-namespace CombatAnalysis.Core.Models.Chat
+﻿namespace CombatAnalysis.Core.Models.Chat
 {
     public class PersonalChatModel
     {
         public int Id { get; set; }
 
+        public string InitiatorUsername { get; set; }
+
+        public string CompanionUsername { get; set; }
+
         public string LastMessage { get; set; }
 
-        public int MessageContentType { get; set; }
+        public string InitiatorId { get; set; }
 
-        public TimeSpan Time { get; set; }
-
-        public string FirstCompanionId { get; set; }
-
-        public string SecondCompanionId { get; set; }
+        public string CompanionId { get; set; }
     }
 }

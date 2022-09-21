@@ -16,7 +16,7 @@ namespace CombatAnalysis.Core.ViewModels
     public class LoginViewModel : MvxViewModel
     {
         private readonly IMemoryCache _memoryCache;
-        private readonly IHttpClientHelper _httpClient;
+        private readonly IHttpClientHelper _httpClientHelper;
         private readonly IMvxNavigationService _mvvmNavigation;
 
         private IImprovedMvxViewModel _basicTemplate;
@@ -28,17 +28,16 @@ namespace CombatAnalysis.Core.ViewModels
         public LoginViewModel(IMemoryCache memoryCache, IHttpClientHelper httpClient, IMvxNavigationService mvvmNavigation)
         {
             _memoryCache = memoryCache;
-            _httpClient = httpClient;
+            _httpClientHelper = httpClient;
             _mvvmNavigation = mvvmNavigation;
-            _httpClient.BaseAddress = Port.UserApi;
 
             LoginCommand = new MvxCommand(Login);
-            CancelCommand = new MvxCommand(Cancel);
+            CancelCommand = new MvxAsyncCommand(CancelAsync);
 
             BasicTemplate = Templates.Basic;
             if (BasicTemplate.Parent is RegistrationViewModel)
             {
-                Task.Run(() => _mvvmNavigation.Close(BasicTemplate.Parent));
+                _mvvmNavigation.Close(BasicTemplate.Parent).GetAwaiter().GetResult();
             }
 
             BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, "IsRegistrationNotActivated", true);
@@ -92,7 +91,7 @@ namespace CombatAnalysis.Core.ViewModels
 
         public IMvxCommand LoginCommand { get; set; }
 
-        public IMvxCommand CancelCommand { get; set; }
+        public IMvxAsyncCommand CancelCommand { get; set; }
 
         public void Login()
         {
@@ -105,23 +104,18 @@ namespace CombatAnalysis.Core.ViewModels
             {
                 try
                 {
-                    var responseMessage = await _httpClient.PostAsync("Account", JsonContent.Create(loginModel));
+                    _httpClientHelper.BaseAddress = Port.UserApi;
+                    var responseMessage = await _httpClientHelper.PostAsync("Account", JsonContent.Create(loginModel));
                     if (responseMessage.StatusCode == System.Net.HttpStatusCode.OK)
                     {
-                        var result = await responseMessage.Content.ReadFromJsonAsync<ResponseFromAccount>();
+                        var response = await responseMessage.Content.ReadFromJsonAsync<ResponseFromAccount>();
 
-                        _memoryCache.Set("accessToken", result.AccessToken, new MemoryCacheEntryOptions { Size = 10 });
-                        _memoryCache.Set("refreshToken", result.RefreshToken, new MemoryCacheEntryOptions { Size = 10 });
-                        _memoryCache.Set("user", result.User, new MemoryCacheEntryOptions { Size = 50 });
+                        SetMemoryCache(response);
 
                         BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, "IsAuth", true);
-                        BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, "Email", result.User.Email);
+                        BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, "Email", response.User.Email);
 
                         BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, "IsLoginNotActivated", true);
-                        if (BasicTemplate.Parent is RegistrationViewModel)
-                        {
-                            await _mvvmNavigation.Close(BasicTemplate.Parent);
-                        }
 
                         await _mvvmNavigation.Close(this);
                     }
@@ -140,10 +134,18 @@ namespace CombatAnalysis.Core.ViewModels
             Task.Run(action);
         }
 
-        public void Cancel()
+        public async Task CancelAsync()
         {
             BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, "IsLoginNotActivated", true);
-            Task.Run(() => _mvvmNavigation.Close(this));
+            BasicTemplate.Parent = null;
+            await _mvvmNavigation.Close(this);
+        }
+
+        private void SetMemoryCache(ResponseFromAccount response)
+        {
+            _memoryCache.Set("accessToken", response.AccessToken, new MemoryCacheEntryOptions { Size = 10 });
+            _memoryCache.Set("refreshToken", response.RefreshToken, new MemoryCacheEntryOptions { Size = 10 });
+            _memoryCache.Set("account", response.User, new MemoryCacheEntryOptions { Size = 50 });
         }
     }
 }

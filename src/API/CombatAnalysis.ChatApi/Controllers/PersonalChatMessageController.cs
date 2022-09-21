@@ -10,12 +10,12 @@ namespace CombatAnalysis.ChatApi.Controllers
 {
     [Route("[controller]")]
     [ApiController]
-    public class PesronalChatMessageController : ControllerBase
+    public class PersonalChatMessageController : ControllerBase
     {
         private readonly IService<PersonalChatMessageDto, int> _service;
         private readonly IMapper _mapper;
 
-        public PesronalChatMessageController(IService<PersonalChatMessageDto, int> service, IMapper mapper)
+        public PersonalChatMessageController(IService<PersonalChatMessageDto, int> service, IMapper mapper)
         {
             _service = service;
             _mapper = mapper;

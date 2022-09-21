@@ -25,7 +25,7 @@ namespace CombatAnalysis.DAL.Repositories.SQL.StoredProcedure
             var procedureParams = new List<SqlParameter>();
             var procedureParamNames = new StringBuilder();
 
-            for (int i = 1; i < properties.Length; i++)
+            for (int i = 0; i < properties.Length; i++)
             {
                 if (properties[i].CanWrite)
                 {

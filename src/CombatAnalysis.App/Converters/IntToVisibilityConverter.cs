@@ -11,7 +11,7 @@ namespace CombatAnalysis.App.Converters
         protected override Visibility Convert(int value, Type targetType, object parameter, CultureInfo culture)
         {
             var isCollapsed = false;
-            var targetNumber = 0;
+            var compareValue = 0;
             var stringParam = (string)parameter;
             var sign = string.Empty;
 
@@ -21,13 +21,13 @@ namespace CombatAnalysis.App.Converters
                 if (parse.Length > 2)
                 {
                     bool.TryParse(parse[0], out isCollapsed);
-                    int.TryParse(parse[1], out targetNumber);
+                    int.TryParse(parse[1], out compareValue);
                     sign = parse[2];
                 }
                 else if (parse.Length > 1)
                 {
                     bool.TryParse(parse[0], out isCollapsed);
-                    int.TryParse(parse[1], out targetNumber);
+                    int.TryParse(parse[1], out compareValue);
                 }
                 else if (parse.Length > 0)
                 {
@@ -38,11 +38,11 @@ namespace CombatAnalysis.App.Converters
             Visibility result;
             if (!string.IsNullOrEmpty(sign))
             {
-                result = Compare(sign, value, targetNumber, isCollapsed);
+                result = Compare(sign, value, compareValue, isCollapsed);
             }
             else
             {
-                result = value == targetNumber ? Visibility.Visible : isCollapsed ? Visibility.Collapsed : Visibility.Hidden;
+                result = value == compareValue ? Visibility.Visible : isCollapsed ? Visibility.Collapsed : Visibility.Hidden;
             }
 
             return result;
@@ -53,26 +53,29 @@ namespace CombatAnalysis.App.Converters
             return value == Visibility.Visible ? 1 : 0;
         }
 
-        private Visibility Compare(string sign, int value, int targetNumber, bool isCollapsed)
+        private Visibility Compare(string sign, int value, int compareValue, bool isCollapsed)
         {
             var result = Visibility.Hidden;
 
             switch (sign)
             {
                 case ">":
-                    result = value > targetNumber ? Visibility.Visible : isCollapsed ? Visibility.Collapsed : Visibility.Hidden;
+                    result = value > compareValue ? Visibility.Visible : isCollapsed ? Visibility.Collapsed : Visibility.Hidden;
                     break;
                 case "<":
-                    result = value < targetNumber ? Visibility.Visible : isCollapsed ? Visibility.Collapsed : Visibility.Hidden;
+                    result = value < compareValue ? Visibility.Visible : isCollapsed ? Visibility.Collapsed : Visibility.Hidden;
                     break;
                 case ">=":
-                    result = value >= targetNumber ? Visibility.Visible : isCollapsed ? Visibility.Collapsed : Visibility.Hidden;
+                    result = value >= compareValue ? Visibility.Visible : isCollapsed ? Visibility.Collapsed : Visibility.Hidden;
                     break;
                 case "<=":
-                    result = value <= targetNumber ? Visibility.Visible : isCollapsed ? Visibility.Collapsed : Visibility.Hidden;
+                    result = value <= compareValue ? Visibility.Visible : isCollapsed ? Visibility.Collapsed : Visibility.Hidden;
                     break;
                 case "=":
-                    result = value == targetNumber ? Visibility.Visible : isCollapsed ? Visibility.Collapsed : Visibility.Hidden;
+                    result = value == compareValue ? Visibility.Visible : isCollapsed ? Visibility.Collapsed : Visibility.Hidden;
+                    break;
+                case "!=":
+                    result = value != compareValue ? Visibility.Visible : isCollapsed ? Visibility.Collapsed : Visibility.Hidden;
                     break;
                 default:
                     break;
