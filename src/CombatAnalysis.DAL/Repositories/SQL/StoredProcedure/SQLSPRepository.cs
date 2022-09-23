@@ -1,4 +1,4 @@
-﻿using CombatAnalysis.DAL.Data;
+﻿using CombatAnalysis.DAL.Data.SQL;
 using CombatAnalysis.DAL.Interfaces;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
@@ -7,24 +7,25 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CombatAnalysis.DAL.Repositories.SQL
+namespace CombatAnalysis.DAL.Repositories.SQL.StoredProcedure
 {
-    public class SPGenericRepository<TModel, TIdType> : IGenericRepository<TModel, TIdType>
+    public class SQLSPRepository<TModel, TIdType> : IGenericRepository<TModel, TIdType>
         where TModel : class
         where TIdType : notnull
     {
-        private readonly CombatAnalysisContext _context;
+        private readonly SQLContext _context;
 
-        public SPGenericRepository(CombatAnalysisContext context)
+        public SQLSPRepository(SQLContext context)
         {
             _context = context;
         }
 
-        async Task<int> IGenericRepository<TModel, TIdType>.CreateAsync(TModel item)
+        async Task<TModel> IGenericRepository<TModel, TIdType>.CreateAsync(TModel item)
         {
             var properties = item.GetType().GetProperties();
             var procedureParams = new List<SqlParameter>();
             var procedureParamNames = new StringBuilder();
+
             for (int i = 1; i < properties.Length; i++)
             {
                 if (properties[i].CanWrite)
@@ -35,10 +36,10 @@ namespace CombatAnalysis.DAL.Repositories.SQL
             }
             procedureParamNames.Remove(procedureParamNames.Length - 1, 1);
 
-            var data = await _context.Database
-                                .ExecuteSqlRawAsync($"InsertInto{item.GetType().Name} {procedureParamNames}", procedureParams);
+            var res = await Task.Run(() => _context.Set<TModel>().FromSqlRaw($"InsertInto{item.GetType().Name} {procedureParamNames}", procedureParams.ToArray())
+                                                .AsEnumerable().FirstOrDefault());
 
-            return data;
+            return res;
         }
 
         async Task<int> IGenericRepository<TModel, TIdType>.DeleteAsync(TModel item)
@@ -55,6 +56,7 @@ namespace CombatAnalysis.DAL.Repositories.SQL
             var data = await _context.Set<TModel>()
                                 .FromSqlRaw($"GetAll{typeof(TModel).Name}")
                                 .ToListAsync();
+            await _context.SaveChangesAsync();
 
             return data;
         }
@@ -69,7 +71,7 @@ namespace CombatAnalysis.DAL.Repositories.SQL
             return data;
         }
 
-        public IEnumerable<TModel> GetByParam(string paramName, object value)
+        IEnumerable<TModel> IGenericRepository<TModel, TIdType>.GetByParam(string paramName, object value)
         {
             var result = new List<TModel>();
             var data = _context.Set<TModel>()

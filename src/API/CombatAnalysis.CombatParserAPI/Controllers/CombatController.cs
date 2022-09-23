@@ -26,16 +26,25 @@ namespace CombatAnalysis.CombatParserAPI.Controllers
             _saveCombatDataHelper = new SaveCombatDataHelper(mapper, httpClient, logger);
         }
 
-        [HttpGet("{id}")]
+        [HttpGet("{id:int:min(1)}")]
         public async Task<CombatModel> GetById(int id)
         {
-            var combatLog = await _service.GetByIdAsync(id);
-            var map = _mapper.Map<CombatModel>(combatLog);
+            var combat = await _service.GetByIdAsync(id);
+            var map = _mapper.Map<CombatModel>(combat);
 
             return map;
         }
 
-        [HttpGet("FindByCombatLogId/{combatLogId}")]
+        [HttpGet]
+        public async Task<IEnumerable<CombatModel>> GetAll()
+        {
+            var combat = await _service.GetAllAsync();
+            var map = _mapper.Map<IEnumerable<CombatModel>>(combat);
+
+            return map;
+        }
+
+        [HttpGet("findByCombatLogId/{combatLogId:int:min(1)}")]
         public async Task<IEnumerable<CombatModel>> Find(int combatLogId)
         {
             //var combats = await _service.GetByParamAsync("CombatLogId", combatLogId);
@@ -45,17 +54,18 @@ namespace CombatAnalysis.CombatParserAPI.Controllers
         }
 
         [HttpPost]
-        public async Task<int> Post(CombatModel combat)
+        public async Task<CombatModel> Post(CombatModel model)
         {
-            SaveCombatDataHelper.CombatData = combat.Data;
+            SaveCombatDataHelper.CombatData = model.Data;
 
-            var map = _mapper.Map<CombatDto>(combat);
-            var createdCombatId = await _service.CreateAsync(map);
+            var map = _mapper.Map<CombatDto>(model);
+            var createdItem = await _service.CreateAsync(map);
+            var resultMap = _mapper.Map<CombatModel>(createdItem);
 
-            return createdCombatId;
+            return resultMap;
         }
 
-        [HttpPost("SaveCombatPlayers")]
+        [HttpPost("saveCombatPlayers")]
         public async Task SaveCombatPlayers(List<CombatPlayerModel> combatPlayers)
         {
             var combat = await GetById(combatPlayers[0].CombatId);

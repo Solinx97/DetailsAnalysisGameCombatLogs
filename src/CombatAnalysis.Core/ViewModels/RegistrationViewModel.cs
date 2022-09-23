@@ -16,7 +16,7 @@ namespace CombatAnalysis.Core.ViewModels
     public class RegistrationViewModel : MvxViewModel
     {
         private readonly IMemoryCache _memoryCache;
-        private readonly IHttpClientHelper _httpClient;
+        private readonly IHttpClientHelper _httpClientHelper;
         private readonly IMvxNavigationService _mvvmNavigation;
 
         private IImprovedMvxViewModel _basicTemplate;
@@ -31,19 +31,25 @@ namespace CombatAnalysis.Core.ViewModels
         public RegistrationViewModel(IMemoryCache memoryCache, IHttpClientHelper httpClient, IMvxNavigationService mvvmNavigation)
         {
             _memoryCache = memoryCache;
-            _httpClient = httpClient;
+            _httpClientHelper = httpClient;
             _mvvmNavigation = mvvmNavigation;
-            _httpClient.BaseAddress = Port.UserApi;
 
-            RegistrationCommand = new MvxCommand(Validate);
-            CancelCommand = new MvxCommand(Cancel);
+            RegistrationCommand = new MvxAsyncCommand(ValidateAsync);
+            CancelCommand = new MvxAsyncCommand(CancelAsync);
 
             BasicTemplate = Templates.Basic;
+            if (BasicTemplate.Parent is LoginViewModel)
+            {
+                _mvvmNavigation.Close(BasicTemplate.Parent).GetAwaiter().GetResult();
+            }
+
+            BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, "IsLoginNotActivated", true);
+            BasicTemplate.Parent = this;
         }
 
-        public IMvxCommand RegistrationCommand { get; set; }
+        public IMvxAsyncCommand RegistrationCommand { get; set; }
 
-        public IMvxCommand CancelCommand { get; set; }
+        public IMvxAsyncCommand CancelCommand { get; set; }
 
         public IImprovedMvxViewModel BasicTemplate
         {
@@ -117,7 +123,7 @@ namespace CombatAnalysis.Core.ViewModels
             }
         }
 
-        public void Validate()
+        public async Task ValidateAsync()
         {
             if (string.IsNullOrWhiteSpace(Email)
                 || string.IsNullOrWhiteSpace(Password)
@@ -128,16 +134,27 @@ namespace CombatAnalysis.Core.ViewModels
             else
             {
                 InputDataIsEmpty = false;
-                CheckConfirmPassword();
+                await CheckConfirmPassword();
             }
         }
 
-        public void CheckConfirmPassword()
+        public async Task CancelAsync()
+        {
+            BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, "IsRegistrationNotActivated", true);
+            BasicTemplate.Parent = null;
+            await _mvvmNavigation.Close(this);
+        }
+
+        private async Task CheckConfirmPassword()
         {
             if (Password.Equals(ConfirmPassword))
             {
                 ConfirmPasswordIsNotCorrect = false;
-                Registration();
+                ServerIsNotAvailable = false;
+                AccountIsReady = false;
+                InputDataIsEmpty = false;
+
+                await Registration();
             }
             else
             {
@@ -145,51 +162,42 @@ namespace CombatAnalysis.Core.ViewModels
             }
         }
 
-        public void Registration()
+        private async Task Registration()
         {
-            ServerIsNotAvailable = false;
-            AccountIsReady = false;
-            ConfirmPasswordIsNotCorrect = false;
-            InputDataIsEmpty = false;
-
-            var registrationModel = new RegistrationModel { Id = Guid.NewGuid().ToString(), Email = Email, Password = Password };
-
-            Action action = async () =>
+            try
             {
-                try
+                var registrationModel = new RegistrationModel { Id = Guid.NewGuid().ToString(), Email = Email, Password = Password };
+
+                _httpClientHelper.BaseAddress = Port.UserApi;
+                var responseMessage = await _httpClientHelper.PostAsync("Account/registration", JsonContent.Create(registrationModel));
+                if (responseMessage.StatusCode == System.Net.HttpStatusCode.OK)
                 {
-                    var responseMessage = await _httpClient.PostAsync("Account/registration", JsonContent.Create(registrationModel));
-                    if (responseMessage.StatusCode == System.Net.HttpStatusCode.OK)
+                    var result = await responseMessage.Content.ReadFromJsonAsync<ResponseFromAccount>();
+
+                    _memoryCache.Set("accessToken", result.AccessToken, new MemoryCacheEntryOptions { Size = 10 });
+                    _memoryCache.Set("refreshToken", result.RefreshToken, new MemoryCacheEntryOptions { Size = 10 });
+                    _memoryCache.Set("user", result.User, new MemoryCacheEntryOptions { Size = 50 });
+
+                    BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, "IsAuth", true);
+                    BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, "Email", result.User.Email);
+
+                    BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, "IsRegistrationNotActivated", true);
+                    if (BasicTemplate.Parent is LoginViewModel)
                     {
-                        var result = await responseMessage.Content.ReadFromJsonAsync<ResponseFromAccount>();
-
-                        _memoryCache.Set("accessToken", result.AccessToken, new MemoryCacheEntryOptions { Size = 10 });
-                        _memoryCache.Set("refreshToken", result.RefreshToken, new MemoryCacheEntryOptions { Size = 10 });
-                        _memoryCache.Set("user", result.User, new MemoryCacheEntryOptions { Size = 50 });
-
-                        BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, "IsAuth", true);
-                        BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, "Email", result.User.Email);
-
-                        await _mvvmNavigation.Close(this);
+                        await _mvvmNavigation.Close(BasicTemplate.Parent);
                     }
-                    else
-                    {
-                        AccountIsReady = true;
-                    }
+
+                    await _mvvmNavigation.Close(this);
                 }
-                catch (HttpRequestException)
+                else
                 {
-                    ServerIsNotAvailable = true;
+                    AccountIsReady = true;
                 }
-
-            };
-
-            Task.Run(action);
-        }
-
-        public void Cancel()
-        {
-            Task.Run(() => _mvvmNavigation.Close(this));
+            }
+            catch (HttpRequestException)
+            {
+                ServerIsNotAvailable = true;
+            }
         }
     }
 }

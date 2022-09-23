@@ -21,7 +21,7 @@ namespace CombatAnalysis.CombatParserAPI.Controllers
             _mapper = mapper;
         }
 
-        [HttpGet("FindByCombatPlayerId/{combatPlayerId}")]
+        [HttpGet("findByCombatPlayerId/{combatPlayerId:int:min(1)}")]
         public async Task<IEnumerable<DamageDoneGeneralModel>> Find(int combatPlayerId)
         {
             var damageDoneGenerals = await _service.GetByParamAsync("CombatPlayerId", combatPlayerId);
@@ -31,18 +31,19 @@ namespace CombatAnalysis.CombatParserAPI.Controllers
         }
 
         [HttpPost]
-        public async Task<int> Post(DamageDoneGeneralModel value)
+        public async Task<DamageDoneGeneralModel> Post(DamageDoneGeneralModel model)
         {
-            var map = _mapper.Map<DamageDoneGeneralDto>(value);
-            var createdCombatId = await _service.CreateAsync(map);
+            var map = _mapper.Map<DamageDoneGeneralDto>(model);
+            var createdItem = await _service.CreateAsync(map);
+            var resultMap = _mapper.Map<DamageDoneGeneralModel>(createdItem);
 
-            return createdCombatId;
+            return resultMap;
         }
 
         [HttpDelete]
-        public async Task<int> Delete(DamageDoneGeneralModel value)
+        public async Task<int> Delete(DamageDoneGeneralModel model)
         {
-            var map = _mapper.Map<DamageDoneGeneralDto>(value);
+            var map = _mapper.Map<DamageDoneGeneralDto>(model);
             var deletedId = await _service.DeleteAsync(map);
 
             return deletedId;

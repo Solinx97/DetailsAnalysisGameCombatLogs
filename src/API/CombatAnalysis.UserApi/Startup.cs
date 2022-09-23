@@ -80,7 +80,7 @@ namespace CombatAnalysis.UserApi
 
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapDefaultControllerRoute();
+                endpoints.MapControllers();
             });
         }
 

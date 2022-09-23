@@ -6,7 +6,7 @@ namespace CombatAnalysis.DAL.Interfaces
 {
     public interface IUserRepository
     {
-        Task<string> CreateAsync(AppUser item);
+        Task<AppUser> CreateAsync(AppUser item);
 
         Task<int> UpdateAsync(AppUser item);
 

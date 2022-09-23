@@ -1,29 +1,27 @@
-﻿using CombatAnalysis.DAL.Data;
+﻿using CombatAnalysis.DAL.Data.SQL;
 using CombatAnalysis.DAL.Entities.User;
 using CombatAnalysis.DAL.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace CombatAnalysis.DAL.Repositories
+namespace CombatAnalysis.DAL.Repositories.SQL
 {
-    public class UserRepository : IUserRepository
+    public class SQLUserRepository : IUserRepository
     {
-        private readonly CombatAnalysisContext _context;
+        private readonly SQLContext _context;
 
-        public UserRepository(CombatAnalysisContext context)
+        public SQLUserRepository(SQLContext context)
         {
             _context = context;
         }
 
-        async Task<string> IUserRepository.CreateAsync(AppUser item)
+        async Task<AppUser> IUserRepository.CreateAsync(AppUser item)
         {
             var entityEntry = await _context.Set<AppUser>().AddAsync(item);
             await _context.SaveChangesAsync();
 
-            var entityId = (string)entityEntry.Property("Id").CurrentValue;
-
-            return entityId;
+            return entityEntry.Entity;
         }
 
         async Task<int> IUserRepository.DeleteAsync(AppUser item)

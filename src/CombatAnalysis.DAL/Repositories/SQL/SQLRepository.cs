@@ -1,4 +1,4 @@
-﻿using CombatAnalysis.DAL.Data;
+﻿using CombatAnalysis.DAL.Data.SQL;
 using CombatAnalysis.DAL.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
@@ -7,25 +7,23 @@ using System.Threading.Tasks;
 
 namespace CombatAnalysis.DAL.Repositories.SQL
 {
-    public class GenericRepository<TModel, TIdType> : IGenericRepository<TModel, TIdType>
+    public class SQLRepository<TModel, TIdType> : IGenericRepository<TModel, TIdType>
         where TModel : class
         where TIdType : notnull
     {
-        private readonly CombatAnalysisContext _context;
+        private readonly SQLContext _context;
 
-        public GenericRepository(CombatAnalysisContext context)
+        public SQLRepository(SQLContext context)
         {
             _context = context;
         }
 
-        async Task<int> IGenericRepository<TModel, TIdType>.CreateAsync(TModel item)
+        async Task<TModel> IGenericRepository<TModel, TIdType>.CreateAsync(TModel item)
         {
             var entityEntry = await _context.Set<TModel>().AddAsync(item);
             await _context.SaveChangesAsync();
 
-            var entityId = (int)entityEntry.Property("Id").CurrentValue;
-
-            return entityId;
+            return entityEntry.Entity;
         }
 
         async Task<int> IGenericRepository<TModel, TIdType>.DeleteAsync(TModel item)
@@ -41,7 +39,6 @@ namespace CombatAnalysis.DAL.Repositories.SQL
         async Task<TModel> IGenericRepository<TModel, TIdType>.GetByIdAsync(TIdType id)
         {
             var entity = await _context.Set<TModel>().FindAsync(id);
-
             if (entity != null)
             {
                 _context.Entry(entity).State = EntityState.Detached;

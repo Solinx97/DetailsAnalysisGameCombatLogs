@@ -30,7 +30,7 @@ namespace CombatAnalysis.CombatParserAPI.Controllers
             return map;
         }
 
-        [HttpGet("{id}")]
+        [HttpGet("{id:int:min(1)}")]
         public async Task<CombatLogByUserModel> GetById(int id)
         {
             var combatLogByUser = await _service.GetByIdAsync(id);
@@ -57,12 +57,13 @@ namespace CombatAnalysis.CombatParserAPI.Controllers
         }
 
         [HttpPost]
-        public async Task<int> Post(CombatLogByUserModel model)
+        public async Task<CombatLogByUserModel> Post(CombatLogByUserModel model)
         {
             var map = _mapper.Map<CombatLogByUserDto>(model);
-            var createdCombaLogByUsertId = await _service.CreateAsync(map);
+            var createdItem = await _service.CreateAsync(map);
+            var resultMap = _mapper.Map<CombatLogByUserModel>(createdItem);
 
-            return createdCombaLogByUsertId;
+            return resultMap;
         }
 
         [HttpPut]

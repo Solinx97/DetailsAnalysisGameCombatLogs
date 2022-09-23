@@ -21,6 +21,7 @@ namespace CombatAnalysis.Core
         {
             Port.CombatParserApi = ConfigurationManager.AppSettings.Get("combatParserApiPort");
             Port.UserApi = ConfigurationManager.AppSettings.Get("userApiPort");
+            Port.ChatApi = ConfigurationManager.AppSettings.Get("chatApiPort");
             
             var mappingConfig = new MapperConfiguration(mc =>
             {

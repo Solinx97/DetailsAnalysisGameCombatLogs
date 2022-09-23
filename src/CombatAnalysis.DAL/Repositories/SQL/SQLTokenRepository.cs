@@ -1,4 +1,4 @@
-﻿using CombatAnalysis.DAL.Data;
+﻿using CombatAnalysis.DAL.Data.SQL;
 using CombatAnalysis.DAL.Entities.Authentication;
 using CombatAnalysis.DAL.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -6,23 +6,23 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace CombatAnalysis.DAL.Repositories
+namespace CombatAnalysis.DAL.Repositories.SQL
 {
-    public class TokenRepository : ITokenRepository
+    public class SQLTokenRepository : ITokenRepository
     {
-        private readonly CombatAnalysisContext _context;
+        private readonly SQLContext _context;
 
-        public TokenRepository(CombatAnalysisContext context)
+        public SQLTokenRepository(SQLContext context)
         {
             _context = context;
         }
 
-        async Task<int> ITokenRepository.CreateAsync(RefreshToken item)
+        async Task<RefreshToken> ITokenRepository.CreateAsync(RefreshToken item)
         {
-            await _context.Set<RefreshToken>().AddAsync(item);
-            var numberEntries = await _context.SaveChangesAsync();
+            var entityEntry = await _context.Set<RefreshToken>().AddAsync(item);
+            await _context.SaveChangesAsync();
 
-            return numberEntries;
+            return entityEntry.Entity;
         }
 
         async Task<int> ITokenRepository.DeleteAsync(RefreshToken item)
@@ -33,7 +33,7 @@ namespace CombatAnalysis.DAL.Repositories
             return numberEntries;
         }
 
-        async Task<RefreshToken> ITokenRepository.Get(string token)
+        async Task<RefreshToken> ITokenRepository.GetByTokenAsync(string token)
         {
             var allTokens = await _context.Set<RefreshToken>().AsNoTracking().ToListAsync();
             if (!allTokens.Any())
@@ -45,7 +45,7 @@ namespace CombatAnalysis.DAL.Repositories
             return foundToken;
         }
 
-        async Task<List<RefreshToken>> ITokenRepository.GetByUser(string userId)
+        async Task<IEnumerable<RefreshToken>> ITokenRepository.GetAllByUserAsync(string userId)
         {
             var allTokens = await _context.Set<RefreshToken>().AsNoTracking().ToListAsync();
             if (!allTokens.Any())

@@ -1,5 +1,4 @@
-﻿using CombatAnalysis.Core.Interfaces;
-using MvvmCross.Platforms.Wpf.Views;
+﻿using MvvmCross.Platforms.Wpf.Views;
 
 namespace CombatAnalysis.App.Views
 {

@@ -2,8 +2,10 @@
 
 namespace CombatAnalysis.Core
 {
-    public static class WindowCloser
+    public static class WindowManager
     {
         public static Window MainWindow { get; set; }
+
+        public static Window CreateGroupChat { get; set; }
     }
 }

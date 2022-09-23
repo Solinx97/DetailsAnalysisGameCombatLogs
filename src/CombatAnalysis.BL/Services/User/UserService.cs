@@ -9,7 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace CombatAnalysis.BL.Services
+namespace CombatAnalysis.BL.Services.User
 {
     internal class UserService : IUserService<AppUserDto>
     {
@@ -22,7 +22,7 @@ namespace CombatAnalysis.BL.Services
             _mapper = mapper;
         }
 
-        Task<string> IUserService<AppUserDto>.CreateAsync(AppUserDto item)
+        Task<AppUserDto> IUserService<AppUserDto>.CreateAsync(AppUserDto item)
         {
             if (item == null)
             {
@@ -52,26 +52,26 @@ namespace CombatAnalysis.BL.Services
 
         async Task<AppUserDto> IUserService<AppUserDto>.GetByIdAsync(string id)
         {
-            var user = await _repository.GetByIdAsync(id);
-            var result = _mapper.Map<AppUserDto>(user);
+            var result = await _repository.GetByIdAsync(id);
+            var resultMap = _mapper.Map<AppUserDto>(result);
 
-            return result;
+            return resultMap;
         }
 
         async Task<AppUserDto> IUserService<AppUserDto>.GetAsync(string emil, string password)
         {
-            var user = await _repository.GetAsync(emil, password);
-            var result = _mapper.Map<AppUserDto>(user);
+            var result = await _repository.GetAsync(emil, password);
+            var resultMap = _mapper.Map<AppUserDto>(result);
 
-            return result;
+            return resultMap;
         }
 
         async Task<AppUserDto> IUserService<AppUserDto>.GetAsync(string emil)
         {
-            var user = await _repository.GetAsync(emil);
-            var result = _mapper.Map<AppUserDto>(user);
+            var result = await _repository.GetAsync(emil);
+            var resultMap = _mapper.Map<AppUserDto>(result);
 
-            return result;
+            return resultMap;
         }
 
         Task<int> IUserService<AppUserDto>.UpdateAsync(AppUserDto item)
@@ -85,12 +85,13 @@ namespace CombatAnalysis.BL.Services
         }
 
 
-        private async Task<string> CreateInternalAsync(AppUserDto item)
+        private async Task<AppUserDto> CreateInternalAsync(AppUserDto item)
         {
             var map = _mapper.Map<AppUser>(item);
-            var createdUserId = await _repository.CreateAsync(map);
+            var createdItem = await _repository.CreateAsync(map);
+            var resultMap = _mapper.Map<AppUserDto>(createdItem);
 
-            return createdUserId;
+            return resultMap;
         }
 
         private async Task<int> DeleteInternalAsync(AppUserDto item)
@@ -101,8 +102,8 @@ namespace CombatAnalysis.BL.Services
                 throw new NotFoundException($"Collection entity {nameof(AppUserDto)} not found", nameof(allData));
             }
 
-            var numberEntries = await _repository.DeleteAsync(_mapper.Map<AppUser>(item));
-            return numberEntries;
+            var numberEntriesAffected = await _repository.DeleteAsync(_mapper.Map<AppUser>(item));
+            return numberEntriesAffected;
         }
 
         private async Task<int> UpdateInternalAsync(AppUserDto item)
@@ -113,8 +114,8 @@ namespace CombatAnalysis.BL.Services
                 throw new NotFoundException($"Collection entity {nameof(AppUserDto)} not found", nameof(allData));
             }
 
-            var numberEntries = await _repository.UpdateAsync(_mapper.Map<AppUser>(item));
-            return numberEntries;
+            var numberEntriesAffected = await _repository.UpdateAsync(_mapper.Map<AppUser>(item));
+            return numberEntriesAffected;
         }
     }
 }

@@ -1,28 +1,40 @@
 ﻿using CombatAnalysis.DAL.Entities;
 using CombatAnalysis.DAL.Entities.Authentication;
+using CombatAnalysis.DAL.Entities.Chat;
 using CombatAnalysis.DAL.Entities.User;
 using CombatAnalysis.DAL.Helpers;
 using Microsoft.EntityFrameworkCore;
-using System.Threading.Tasks;
 
-namespace CombatAnalysis.DAL.Data
+namespace CombatAnalysis.DAL.Data.SQL
 {
-    public class CombatAnalysisContext : DbContext
+    public class SQLContext : DbContext
     {
-        public CombatAnalysisContext(
-            DbContextOptions<CombatAnalysisContext> options) : base(options)
+        public SQLContext(DbContextOptions<SQLContext> options) : base(options)
         {
             var isExists = Database.EnsureCreated();
-
             if (isExists)
             {
-                Task.Run(() => DbProcedureHelper.CreateProceduresAsync(this));
+                DbProcedureHelper.CreateProcedures(this);
             }
         }
 
         public DbSet<AppUser> AppUser { get; set; }
 
         public DbSet<RefreshToken> RefreshToken { get; set; }
+
+        public DbSet<PersonalChat> PersonalChat { get; set; }
+
+        public DbSet<PersonalChatMessage> PersonalChatMessage { get; set; }
+
+        public DbSet<InviteToGroupChat> InviteToGroupChat { get; set; }
+
+        public DbSet<GroupChat> GroupChat { get; set; }
+
+        public DbSet<GroupChatMessage> GroupChatMessage { get; set; }
+
+        public DbSet<GroupChatUser> GroupChatUser { get; set; }
+
+        public DbSet<BannedUser> BannedUser { get; set; }
 
         public DbSet<CombatLog> CombatLog { get; set; }
 

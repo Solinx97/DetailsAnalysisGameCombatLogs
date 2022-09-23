@@ -10,7 +10,18 @@ namespace CombatAnalysis.App.Converters
     {
         protected override Visibility Convert(string value, Type targetType, object parameter, CultureInfo culture)
         {
-            var result = !string.IsNullOrWhiteSpace(value) ? Visibility.Visible : Visibility.Hidden;
+            Visibility result = Visibility.Visible;
+            if (parameter != null)
+            {
+                var isEqual = value.Equals(parameter);
+                result = !string.IsNullOrWhiteSpace(value)
+                    ? (isEqual ? Visibility.Visible : Visibility.Hidden)
+                    : Visibility.Hidden;
+            }
+            else
+            {
+                result = !string.IsNullOrWhiteSpace(value) ? Visibility.Visible : Visibility.Hidden;
+            }
 
             return result;
         }

@@ -1,6 +1,6 @@
 ﻿namespace CombatAnalysis.Core.Models.User
 {
-    public class UserModel
+    public class AppUserModel
     {
         public string Id { get; set; }
 

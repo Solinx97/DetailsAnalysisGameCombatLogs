@@ -8,5 +8,13 @@ namespace CombatAnalysis.App.Views
         {
             InitializeComponent();
         }
+
+        private void Border_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            if (e.LeftButton == System.Windows.Input.MouseButtonState.Pressed)
+            {
+                Core.WindowManager.MainWindow.DragMove();
+            }
+        }
     }
 }

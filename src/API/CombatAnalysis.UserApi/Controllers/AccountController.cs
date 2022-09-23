@@ -8,6 +8,7 @@ using CombatAnalysis.UserApi.Models.User;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace CombatAnalysis.UserApi.Controllers
@@ -66,6 +67,19 @@ namespace CombatAnalysis.UserApi.Controllers
             }
         }
 
+        [HttpGet]
+        public async Task<IActionResult> GetAll()
+        {
+            var users = await _service.GetAllAsync();
+            if (users.Any())
+            {
+                return Ok(users);
+            }
+            else
+            {
+                return BadRequest();
+            }
+        }
 
         [HttpGet("logout/{refreshToken}")]
         public async Task<IActionResult> Logout(string refreshToken)

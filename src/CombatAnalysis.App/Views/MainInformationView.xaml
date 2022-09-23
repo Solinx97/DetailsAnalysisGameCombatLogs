@@ -134,7 +134,7 @@
                                 <StackPanel Orientation="Horizontal" Width="250"
                                 Visibility="{Binding CombatLogsNumber, Converter={StaticResource IntToVisibility}, ConverterParameter='0:true:>'}">
                                     <Button mvx:Bi.nd="Command LoadCombatsCommand" Content="Загрузить" Width="100" FontSize="16"
-                            Margin="10,10" Style="{StaticResource showButton}" Foreground="Blue" HorizontalAlignment="Center"/>
+                                            Margin="10,10" Style="{StaticResource showButton}" Foreground="Blue" HorizontalAlignment="Center"/>
                                     <Icon:PackIconMaterial Kind="Delete" Foreground="Orange" Style="{StaticResource menuButtonIcon}" mvx:Bi.nd="Command DeleteCombatCommand"
                                                HorizontalAlignment="Center">
                                         <Icon:PackIconMaterial.ToolTip>
@@ -148,7 +148,7 @@
                                     </Icon:PackIconMaterial>
                                 </StackPanel>
                                 <ListBox Background="Transparent" ItemsSource="{Binding CombatLogsByUser}" SelectedIndex="{Binding SelectedCombatLogId}"
-                             Visibility="{Binding CombatLogsNumber, Converter={StaticResource IntToVisibility}, ConverterParameter='0:true:>'}">
+                                        Visibility="{Binding CombatLogsNumber, Converter={StaticResource IntToVisibility}, ConverterParameter='0:true:>'}">
                                     <ListBox.ItemTemplate>
                                         <DataTemplate>
                                             <StackPanel Margin="10" Orientation="Horizontal" HorizontalAlignment="Center">
