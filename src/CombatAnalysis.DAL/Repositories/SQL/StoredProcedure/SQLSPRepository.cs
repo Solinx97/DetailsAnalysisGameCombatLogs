@@ -36,19 +36,20 @@ namespace CombatAnalysis.DAL.Repositories.SQL.StoredProcedure
             }
             procedureParamNames.Remove(procedureParamNames.Length - 1, 1);
 
-            var res = await Task.Run(() => _context.Set<TModel>().FromSqlRaw($"InsertInto{item.GetType().Name} {procedureParamNames}", procedureParams.ToArray())
-                                                .AsEnumerable().FirstOrDefault());
+            var data = await Task.Run(() => _context.Set<TModel>().FromSqlRaw($"InsertInto{item.GetType().Name} {procedureParamNames}", procedureParams.ToArray())
+                                                .AsEnumerable()
+                                                .FirstOrDefault());
 
-            return res;
+            return data;
         }
 
         async Task<int> IGenericRepository<TModel, TIdType>.DeleteAsync(TModel item)
         {
             var property = item.GetType().GetProperty("Id");
-            var data = await _context.Database
+            var rowsAffected = await _context.Database
                                 .ExecuteSqlRawAsync($"Delete{item.GetType().Name}ById {property.Name}", property.GetValue(item));
 
-            return data;
+            return rowsAffected;
         }
 
         async Task<IEnumerable<TModel>> IGenericRepository<TModel, TIdType>.GetAllAsync()
@@ -56,7 +57,6 @@ namespace CombatAnalysis.DAL.Repositories.SQL.StoredProcedure
             var data = await _context.Set<TModel>()
                                 .FromSqlRaw($"GetAll{typeof(TModel).Name}")
                                 .ToListAsync();
-            await _context.SaveChangesAsync();
 
             return data;
         }
@@ -75,10 +75,11 @@ namespace CombatAnalysis.DAL.Repositories.SQL.StoredProcedure
         {
             var result = new List<TModel>();
             var data = _context.Set<TModel>()
-                                .FromSqlRaw($"GetAll{typeof(TModel).Name}");
+                                .FromSqlRaw($"GetAll{typeof(TModel).Name}")
+                                .AsEnumerable();
             foreach (var item in data)
             {
-                if (item.GetType().GetProperty(paramName).Equals(value))
+                if (item.GetType().GetProperty(paramName).GetValue(item).Equals(value))
                 {
                     result.Add(item);
                 }
@@ -102,10 +103,10 @@ namespace CombatAnalysis.DAL.Repositories.SQL.StoredProcedure
             }
             procedureParamNames.Remove(procedureParamNames.Length - 1, 1);
 
-            var data = await _context.Database
+            var rowsAffected = await _context.Database
                                 .ExecuteSqlRawAsync($"Update{item.GetType().Name} {procedureParamNames}", procedureParams);
 
-            return data;
+            return rowsAffected;
         }
     }
 }

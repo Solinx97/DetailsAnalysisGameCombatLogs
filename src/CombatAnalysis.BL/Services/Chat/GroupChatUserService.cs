@@ -1,12 +1,10 @@
 ﻿using AutoMapper;
 using CombatAnalysis.BL.DTO.Chat;
-using CombatAnalysis.BL.Exceptions;
 using CombatAnalysis.BL.Interfaces;
 using CombatAnalysis.DAL.Entities.Chat;
 using CombatAnalysis.DAL.Interfaces;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace CombatAnalysis.BL.Services.Chat
@@ -26,7 +24,7 @@ namespace CombatAnalysis.BL.Services.Chat
         {
             if (item == null)
             {
-                throw new ArgumentNullException(nameof(item));
+                throw new ArgumentNullException(nameof(GroupChatUserDto), $"The {nameof(GroupChatUserDto)} can't be null");
             }
 
             return CreateInternalAsync(item);
@@ -36,7 +34,7 @@ namespace CombatAnalysis.BL.Services.Chat
         {
             if (item == null)
             {
-                throw new ArgumentNullException(nameof(item));
+                throw new ArgumentNullException(nameof(GroupChatUserDto), $"The {nameof(GroupChatUserDto)} can't be null");
             }
 
             return DeleteInternalAsync(item);
@@ -45,7 +43,7 @@ namespace CombatAnalysis.BL.Services.Chat
         async Task<IEnumerable<GroupChatUserDto>> IService<GroupChatUserDto, int>.GetAllAsync()
         {
             var allData = await _repository.GetAllAsync();
-            var result = _mapper.Map<List<GroupChatUserDto>>(allData);
+            var result = _mapper.Map<IEnumerable<GroupChatUserDto>>(allData);
 
             return result;
         }
@@ -70,7 +68,7 @@ namespace CombatAnalysis.BL.Services.Chat
         {
             if (item == null)
             {
-                throw new ArgumentNullException(nameof(item));
+                throw new ArgumentNullException(nameof(GroupChatUserDto), $"The {nameof(GroupChatUserDto)} can't be null");
             }
 
             return UpdateInternalAsync(item);
@@ -87,26 +85,18 @@ namespace CombatAnalysis.BL.Services.Chat
 
         private async Task<int> DeleteInternalAsync(GroupChatUserDto item)
         {
-            var allData = await _repository.GetAllAsync();
-            if (!allData.Any())
-            {
-                throw new NotFoundException($"Collection entity {nameof(GroupChatUserDto)} not found", nameof(allData));
-            }
+            var map = _mapper.Map<GroupChatUser>(item);
+            var rowsAffected = await _repository.DeleteAsync(map);
 
-            var numberEntriesAffected = await _repository.DeleteAsync(_mapper.Map<GroupChatUser>(item));
-            return numberEntriesAffected;
+            return rowsAffected;
         }
 
         private async Task<int> UpdateInternalAsync(GroupChatUserDto item)
         {
-            var allData = await _repository.GetAllAsync();
-            if (!allData.Any())
-            {
-                throw new NotFoundException($"Collection entity {nameof(GroupChatUserDto)} not found", nameof(allData));
-            }
+            var map = _mapper.Map<GroupChatUser>(item);
+            var rowsAffected = await _repository.UpdateAsync(map);
 
-            var numberEntriesAffected = await _repository.UpdateAsync(_mapper.Map<GroupChatUser>(item));
-            return numberEntriesAffected;
+            return rowsAffected;
         }
     }
 }

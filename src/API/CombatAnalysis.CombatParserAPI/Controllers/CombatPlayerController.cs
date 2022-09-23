@@ -3,6 +3,8 @@ using CombatAnalysis.BL.DTO;
 using CombatAnalysis.BL.Interfaces;
 using CombatAnalysis.CombatParserAPI.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -14,48 +16,68 @@ namespace CombatAnalysis.CombatParserAPI.Controllers
     {
         private readonly IService<CombatPlayerDto, int> _service;
         private readonly IMapper _mapper;
+        private readonly ILogger _logger;
 
-        public CombatPlayerController(IService<CombatPlayerDto, int> service, IMapper mapper)
+        public CombatPlayerController(IService<CombatPlayerDto, int> service, IMapper mapper, ILogger logger)
         {
             _service = service;
             _mapper = mapper;
+            _logger = logger;
         }
 
         [HttpGet("findByCombatId/{combatId:int:min(1)}")]
-        public async Task<IEnumerable<CombatPlayerDto>> Find(int combatId)
+        public async Task<IActionResult> Find(int combatId)
         {
             var players = await _service.GetByParamAsync("CombatId", combatId);
             var map = _mapper.Map<IEnumerable<CombatPlayerDto>>(players);
 
-            return map;
+            return Ok(map);
         }
 
         [HttpGet("{id:int:min(1)}")]
-        public async Task<CombatPlayerDto> GetById(int id)
+        public async Task<IActionResult> GetById(int id)
         {
             var combatLog = await _service.GetByIdAsync(id);
             var map = _mapper.Map<CombatPlayerDto>(combatLog);
 
-            return map;
+            return Ok(map);
         }
 
         [HttpPost]
-        public async Task<CombatPlayerModel> Post(CombatPlayerModel model)
+        public async Task<IActionResult> Create(CombatPlayerModel model)
         {
-            var map = _mapper.Map<CombatPlayerDto>(model);
-            var createdItem = await _service.CreateAsync(map);
-            var resultMap = _mapper.Map<CombatPlayerModel>(createdItem);
+            try
+            {
+                var map = _mapper.Map<CombatPlayerDto>(model);
+                var createdItem = await _service.CreateAsync(map);
+                var resultMap = _mapper.Map<CombatPlayerModel>(createdItem);
 
-            return resultMap;
+                return Ok(resultMap);
+            }
+            catch (ArgumentNullException ex)
+            {
+                _logger.LogError(ex, ex.Message);
+
+                return BadRequest();
+            }
         }
 
         [HttpDelete]
-        public async Task<int> Delete(CombatPlayerModel model)
+        public async Task<IActionResult> Delete(CombatPlayerModel model)
         {
-            var map = _mapper.Map<CombatPlayerDto>(model);
-            var deletedId = await _service.DeleteAsync(map);
+            try
+            {
+                var map = _mapper.Map<CombatPlayerDto>(model);
+                var deletedId = await _service.DeleteAsync(map);
 
-            return deletedId;
+                return Ok(deletedId);
+            }
+            catch (ArgumentNullException ex)
+            {
+                _logger.LogError(ex, ex.Message);
+
+                return BadRequest();
+            }
         }
     }
 }

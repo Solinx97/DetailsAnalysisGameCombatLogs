@@ -3,6 +3,8 @@ using CombatAnalysis.BL.DTO.Chat;
 using CombatAnalysis.BL.Interfaces;
 using CombatAnalysis.ChatApi.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -14,57 +16,99 @@ namespace CombatAnalysis.ChatApi.Controllers
     {
         private readonly IService<PersonalChatDto, int> _service;
         private readonly IMapper _mapper;
+        private readonly ILogger _logger;
 
-        public PersonalChatController(IService<PersonalChatDto, int> service, IMapper mapper)
+        public PersonalChatController(IService<PersonalChatDto, int> service, IMapper mapper, ILogger logger)
         {
             _service = service;
             _mapper = mapper;
+            _logger = logger;
         }
 
         [HttpGet]
-        public async Task<IEnumerable<PersonalChatModel>> Get()
+        public async Task<IActionResult> GetAll()
         {
             var result = await _service.GetAllAsync();
-            var map = _mapper.Map<IEnumerable<PersonalChatModel>>(result);
 
-            return map;
+            return Ok(result);
         }
 
         [HttpGet("{id:int:min(1)}")]
-        public async Task<PersonalChatModel> GetById(int id)
+        public async Task<IActionResult> GetById(int id)
         {
             var result = await _service.GetByIdAsync(id);
-            var map = _mapper.Map<PersonalChatModel>(result);
 
-            return map;
+            return Ok(result);
         }
 
         [HttpPost]
-        public async Task<PersonalChatModel> Create(PersonalChatModel model)
+        public async Task<IActionResult> Create(PersonalChatModel model)
         {
-            var map = _mapper.Map<PersonalChatDto>(model);
-            var result = await _service.CreateAsync(map);
-            var resultMap = _mapper.Map<PersonalChatModel>(result);
+            try
+            {
+                var map = _mapper.Map<PersonalChatDto>(model);
+                var result = await _service.CreateAsync(map);
 
-            return resultMap;
+                return Ok(result);
+            }
+            catch (ArgumentNullException ex)
+            {
+                _logger.LogError(ex, ex.Message);
+
+                return BadRequest();
+            }
+        }
+
+        [HttpPost("personalChatIsAlreadyExists")]
+        public async Task<IActionResult> PersonalChatCheck(PersonalChatModel model)
+        {
+            var allData = await _service.GetAllAsync();
+            foreach (var item in allData)
+            {
+                if ((item.InitiatorId == model.InitiatorId || item.InitiatorId == model.CompanionId)
+                    || (item.CompanionId == model.InitiatorId || item.CompanionId == model.CompanionId))
+                {
+                    return Ok(item.Id);
+                }
+            }
+
+            return Ok(0);
         }
 
         [HttpPut]
-        public async Task<int> Update(PersonalChatModel model)
+        public async Task<IActionResult> Update(PersonalChatModel model)
         {
-            var map = _mapper.Map<PersonalChatDto>(model);
-            var result = await _service.UpdateAsync(map);
+            try
+            {
+                var map = _mapper.Map<PersonalChatDto>(model);
+                var result = await _service.UpdateAsync(map);
 
-            return result;
+                return Ok(result);
+            }
+            catch (ArgumentNullException ex)
+            {
+                _logger.LogError(ex, ex.Message);
+
+                return BadRequest();
+            }
         }
 
         [HttpDelete]
-        public async Task<int> Delete(PersonalChatModel model)
+        public async Task<IActionResult> Delete(PersonalChatModel model)
         {
-            var map = _mapper.Map<PersonalChatDto>(model);
-            var result = await _service.DeleteAsync(map);
+            try
+            {
+                var map = _mapper.Map<PersonalChatDto>(model);
+                var result = await _service.DeleteAsync(map);
 
-            return result;
+                return Ok(result);
+            }
+            catch (ArgumentNullException ex)
+            {
+                _logger.LogError(ex, ex.Message);
+
+                return BadRequest();
+            }
         }
     }
 }

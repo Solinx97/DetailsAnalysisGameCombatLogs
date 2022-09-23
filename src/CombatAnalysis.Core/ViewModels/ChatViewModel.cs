@@ -392,14 +392,27 @@ namespace CombatAnalysis.Core.ViewModels
                 InitiatorUsername = MyAccount.Email,
                 CompanionId = _users[SelectedUserEmailsIndex].Id,
                 CompanionUsername = _users[SelectedUserEmailsIndex].Email,
-                LastMessage = string.Empty,
+                LastMessage = " ",
             };
-
 
             InputedUserEmail = string.Empty;
 
             _httpClientHelper.BaseAddress = Port.ChatApi;
-            await _httpClientHelper.PostAsync("PersonalChat", JsonContent.Create(personalChat));
+            var response = await _httpClientHelper.PostAsync("PersonalChat/personalChatIsAlreadyExists", JsonContent.Create(personalChat));
+            var personalChatId = await response.Content.ReadFromJsonAsync<int>();
+
+            if (personalChatId > 0)
+            {
+                var existPersonChat = PersonalChats?.FirstOrDefault(x => x.Id == personalChatId);
+                if (existPersonChat != null)
+                {
+                    SelectedPersonalChatIndex = PersonalChats.IndexOf(existPersonChat);
+                }
+            }
+            else
+            {
+                await _httpClientHelper.PostAsync("PersonalChat", JsonContent.Create(personalChat));
+            }
         }
 
         private void InitLoadGroupChatMessages(object obj)
@@ -429,7 +442,7 @@ namespace CombatAnalysis.Core.ViewModels
             try
             {
                 _httpClientHelper.BaseAddress = Port.ChatApi;
-                var response = await _httpClientHelper.GetAsync("GroupChat");
+                var response = await _httpClientHelper.GetAsync("GroupChat").ConfigureAwait(false);
                 if (response.StatusCode == System.Net.HttpStatusCode.OK)
                 {
                     var groupChats = await response.Content.ReadFromJsonAsync<IEnumerable<GroupChatModel>>();
@@ -458,7 +471,7 @@ namespace CombatAnalysis.Core.ViewModels
             try
             {
                 _httpClientHelper.BaseAddress = Port.ChatApi;
-                var response = await _httpClientHelper.GetAsync("PersonalChat");
+                var response = await _httpClientHelper.GetAsync("PersonalChat").ConfigureAwait(false);
                 if (response.StatusCode == System.Net.HttpStatusCode.OK)
                 {
                     var personalChats = await response.Content.ReadFromJsonAsync<IEnumerable<PersonalChatModel>>();
@@ -503,18 +516,21 @@ namespace CombatAnalysis.Core.ViewModels
         {
             _httpClientHelper.BaseAddress = Port.ChatApi;
 
-            var response = await _httpClientHelper.GetAsync("PersonalChatMessage").ConfigureAwait(false);
-            var personalChatMessages = await response.Content.ReadFromJsonAsync<IEnumerable<PersonalChatMessageModel>>();
-            var selectedPersonalChatMessages = new List<PersonalChatMessageModel>();
-            foreach (var item in personalChatMessages)
+            var response = await _httpClientHelper.GetAsync("PersonalChatMessage");
+            if (response.StatusCode == System.Net.HttpStatusCode.OK)
             {
-                if (item.PersonalChatId == SelectedPersonalChat?.Id)
+                var personalChatMessages = await response.Content.ReadFromJsonAsync<IEnumerable<PersonalChatMessageModel>>();
+                var selectedPersonalChatMessages = new List<PersonalChatMessageModel>();
+                foreach (var item in personalChatMessages)
                 {
-                    selectedPersonalChatMessages.Add(item);
+                    if (item.PersonalChatId == SelectedPersonalChat?.Id)
+                    {
+                        selectedPersonalChatMessages.Add(item);
+                    }
                 }
-            }
 
-            PersonalChatMessages = new ObservableCollection<PersonalChatMessageModel>(selectedPersonalChatMessages);
+                PersonalChatMessages = new ObservableCollection<PersonalChatMessageModel>(selectedPersonalChatMessages);
+            }
         }
 
         private async Task LoadUsers()
@@ -539,10 +555,16 @@ namespace CombatAnalysis.Core.ViewModels
 
         private void LoadUsersByStartChars(string startChars)
         {
-            var usersByStartChars = _users.Where(x => x.Email.StartsWith(startChars));
+            if (string.IsNullOrEmpty(startChars))
+            {
+                UserEmails = new ObservableCollection<string>(_users.Select(x => x.Email));
+            }
+            else
+            {
+                var usersByStartChars = _users.Where(x => x.Email.StartsWith(startChars));
 
-            _users = usersByStartChars.ToList();
-            UserEmails = new ObservableCollection<string>(usersByStartChars.Select(x => x.Email));
+                UserEmails = new ObservableCollection<string>(usersByStartChars.Select(x => x.Email));
+            }
         }
 
         private void GetMyAccount()
