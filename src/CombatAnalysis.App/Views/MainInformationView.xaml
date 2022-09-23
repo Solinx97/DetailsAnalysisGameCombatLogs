@@ -51,10 +51,10 @@
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
             
-            <StackPanel IsEnabled="{Binding IsParsing, Converter={StaticResource BoolToXAMLBool}}" Grid.Row="0"
+            <StackPanel IsEnabled="{Binding IsParsing, Converter={StaticResource BoolToXAMLBool}, ConverterParameter=true}" Grid.Row="0"
                     HorizontalAlignment="Center" VerticalAlignment="Top" MinWidth="375">
                 <TextBlock HorizontalAlignment="Center" Text="Загрузить файл с данными о бое" Margin="0 20" FontSize="16" />
-                <Button mvx:Bi.nd="Command GetCombatLogCommand" Content="Загрузить" Width="100" FontSize="16"
+                <Button mvx:Bi.nd="Command GetCombatLogCommand" Content="Выбрать файл" Width="125" FontSize="16"
                     Margin="15 0" Style="{StaticResource showButton}" />
                 <StackPanel Orientation="Horizontal" Margin="20">
                     <TextBlock Text="Файл:" FontSize="16" />
@@ -82,7 +82,7 @@
                 <TabItem Header="Общедоступные логи" FontSize="15">
                     <StackPanel Margin="20 70">
                         <ScrollViewer MaxHeight="200">
-                            <StackPanel IsEnabled="{Binding IsParsing, Converter={StaticResource BoolToXAMLBool}}" 
+                            <StackPanel IsEnabled="{Binding IsParsing, Converter={StaticResource BoolToXAMLBool},ConverterParameter=true}" 
                                     HorizontalAlignment="Center" VerticalAlignment="Top" Margin="20">
                                 <StackPanel Orientation="Horizontal">
                                     <TextBlock HorizontalAlignment="Center" Text="Общедоступные логи" Margin="0" FontSize="16" />
@@ -95,13 +95,12 @@
                                         <Icon:PackIconMaterial Kind="Reload" Foreground="Gray"/>
                                     </Button>
                                 </StackPanel>
-                                <StackPanel Width="250"
-                                Visibility="{Binding CombatLogsNumber, Converter={StaticResource IntToVisibility}, ConverterParameter='0:true:>'}">
-                                    <Button mvx:Bi.nd="Command LoadCombatsCommand" Content="Загрузить" Width="100" FontSize="16"
-                                    Margin="10,10" Style="{StaticResource showButton}" Foreground="Blue"/>
-                                </StackPanel>
+                                <Button mvx:Bi.nd="Command LoadCombatsCommand" Content="Загрузить" Width="100" FontSize="16"
+                                        Margin="10,10" Style="{StaticResource showButton}" Foreground="Blue"
+                                        Visibility="{Binding CombatLogsNumber, Converter={StaticResource IntToVisibility}, ConverterParameter='0:true:>'}"
+                                        IsEnabled="{Binding SelectedCombatLogId, Converter={StaticResource IntToXAMLBool}, ConverterParameter='-1:>'}"/>
                                 <ListBox Background="Transparent" ItemsSource="{Binding CombatLogs}" SelectedIndex="{Binding SelectedCombatLogId}"
-                             Visibility="{Binding CombatLogsNumber, Converter={StaticResource IntToVisibility}, ConverterParameter='0:true:>'}">
+                                    Visibility="{Binding CombatLogsNumber, Converter={StaticResource IntToVisibility}, ConverterParameter='0:true:>'}">
                                     <ListBox.ItemTemplate>
                                         <DataTemplate>
                                             <StackPanel Margin="10" Orientation="Horizontal" HorizontalAlignment="Center">
@@ -115,24 +114,24 @@
                         </ScrollViewer>
                     </StackPanel>
                 </TabItem>
-                <TabItem Header="Мои логи" FontSize="15" IsEnabled="{Binding IsAuth, Converter={StaticResource BoolToXAMLBool}, ConverterParameter=true}">
+                <TabItem Header="Личные логи" FontSize="15" IsEnabled="{Binding IsAuth, Converter={StaticResource BoolToXAMLBool}, ConverterParameter=false}">
                     <StackPanel Margin="20 70">
                         <ScrollViewer MaxHeight="210">
                             <StackPanel IsEnabled="{Binding IsParsing, Converter={StaticResource BoolToXAMLBool}}" 
                                     HorizontalAlignment="Center" VerticalAlignment="Top" Margin="20">
                                 <StackPanel Orientation="Horizontal">
-                                    <TextBlock HorizontalAlignment="Center" Text="Мои логи" Margin="0" FontSize="16" />
+                                    <TextBlock HorizontalAlignment="Center" Text="Личные логи" Margin="0" FontSize="16" />
                                     <Button Style="{StaticResource userButton}" Margin="5 -10" mvx:Bi.nd="Command ReloadCombatsCommand">
                                         <Button.ToolTip>
                                             <ToolTip>
-                                                Перезагрузка списка загруженных логов.
+                                                Обновление списка загруженных логов.
                                             </ToolTip>
                                         </Button.ToolTip>
                                         <Icon:PackIconMaterial Kind="Reload" Foreground="Gray"/>
                                     </Button>
                                 </StackPanel>
                                 <StackPanel Orientation="Horizontal" Width="250"
-                                Visibility="{Binding CombatLogsNumber, Converter={StaticResource IntToVisibility}, ConverterParameter='0:true:>'}">
+                                        Visibility="{Binding CombatLogsNumber, Converter={StaticResource IntToVisibility}, ConverterParameter='0:true:>'}">
                                     <Button mvx:Bi.nd="Command LoadCombatsCommand" Content="Загрузить" Width="100" FontSize="16"
                                             Margin="10,10" Style="{StaticResource showButton}" Foreground="Blue" HorizontalAlignment="Center"/>
                                     <Icon:PackIconMaterial Kind="Delete" Foreground="Orange" Style="{StaticResource menuButtonIcon}" mvx:Bi.nd="Command DeleteCombatCommand"
@@ -167,7 +166,7 @@
                        Visibility="{Binding IsAuth, Converter={StaticResource BoolToVisibility}, ConverterParameter=true:true}"/>
         </StackPanel>
 
-        <StackPanel IsEnabled="{Binding IsParsing, Converter={StaticResource BoolToXAMLBool}}" Grid.Row="2" Grid.Column="2"
+        <StackPanel IsEnabled="{Binding IsParsing, Converter={StaticResource BoolToXAMLBool}, ConverterParameter=true}" Grid.Row="2" Grid.Column="2"
                     Grid.ColumnSpan="2" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0 -25 0 0">
             <StackPanel IsEnabled="{Binding CombatLog, Converter={StaticResource ToXAMLBool}}" Margin="20">
                 <Button Height="35" Content="Анализ" Width="100" FontSize="16" Margin="0 20"

@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 
 namespace CombatAnalysis.ChatApi
@@ -24,6 +25,9 @@ namespace CombatAnalysis.ChatApi
         {
             RegisteringDependencies(services);
 
+            var loggerFactory = new LoggerFactory();
+            var logger = new Logger<ILogger>(loggerFactory);
+
             services.AddSwaggerGen(options =>
             {
                 options.SwaggerDoc("v1", new OpenApiInfo
@@ -33,8 +37,6 @@ namespace CombatAnalysis.ChatApi
                 });
             });
 
-            services.AddControllers();
-
             var mappingConfig = new MapperConfiguration(mc =>
             {
                 mc.AddProfile(new ChatMapper());
@@ -43,6 +45,9 @@ namespace CombatAnalysis.ChatApi
 
             var mapper = mappingConfig.CreateMapper();
             services.AddSingleton(mapper);
+            services.AddSingleton<ILogger>(logger);
+
+            services.AddControllers();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

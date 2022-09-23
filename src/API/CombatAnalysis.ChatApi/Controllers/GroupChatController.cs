@@ -3,7 +3,8 @@ using CombatAnalysis.BL.DTO.Chat;
 using CombatAnalysis.BL.Interfaces;
 using CombatAnalysis.ChatApi.Models;
 using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
+using Microsoft.Extensions.Logging;
+using System;
 using System.Threading.Tasks;
 
 namespace CombatAnalysis.ChatApi.Controllers
@@ -14,57 +15,83 @@ namespace CombatAnalysis.ChatApi.Controllers
     {
         private readonly IService<GroupChatDto, int> _service;
         private readonly IMapper _mapper;
+        private readonly ILogger _logger;
 
-        public GroupChatController(IService<GroupChatDto, int> service, IMapper mapper)
+        public GroupChatController(IService<GroupChatDto, int> service, IMapper mapper, ILogger logger)
         {
             _service = service;
             _mapper = mapper;
+            _logger = logger;
         }
 
         [HttpGet]
-        public async Task<IEnumerable<GroupChatModel>> Get()
+        public async Task<IActionResult> GetAll()
         {
             var result = await _service.GetAllAsync();
-            var map = _mapper.Map<IEnumerable<GroupChatModel>>(result);
 
-            return map;
+            return Ok(result);
         }
 
         [HttpGet("{id:int:min(1)}")]
-        public async Task<GroupChatModel> GetById(int id)
+        public async Task<IActionResult> GetById(int id)
         {
             var result = await _service.GetByIdAsync(id);
-            var map = _mapper.Map<GroupChatModel>(result);
 
-            return map;
+            return Ok(result);
         }
 
         [HttpPost]
-        public async Task<GroupChatModel> Create(GroupChatModel model)
+        public async Task<IActionResult> Create(GroupChatModel model)
         {
-            var map = _mapper.Map<GroupChatDto>(model);
-            var result = await _service.CreateAsync(map);
-            var resultMap = _mapper.Map<GroupChatModel>(result);
+            try
+            {
+                var map = _mapper.Map<GroupChatDto>(model);
+                var result = await _service.CreateAsync(map);
 
-            return resultMap;
+                return Ok(result);
+            }
+            catch (ArgumentNullException ex)
+            {
+                _logger.LogError(ex, ex.Message);
+
+                return BadRequest();
+            }
         }
 
         [HttpPut]
-        public async Task<int> Update(GroupChatModel model)
+        public async Task<IActionResult> Update(GroupChatModel model)
         {
-            var map = _mapper.Map<GroupChatDto>(model);
-            var result = await _service.UpdateAsync(map);
+            try
+            {
+                var map = _mapper.Map<GroupChatDto>(model);
+                var result = await _service.UpdateAsync(map);
 
-            return result;
+                return Ok(result);
+            }
+            catch (ArgumentNullException ex)
+            {
+                _logger.LogError(ex, ex.Message);
+
+                return BadRequest();
+            }
         }
 
         [HttpDelete]
-        public async Task<int> Delete(GroupChatModel model)
+        public async Task<IActionResult> Delete(GroupChatModel model)
         {
-            var map = _mapper.Map<GroupChatDto>(model);
-            var result = await _service.DeleteAsync(map);
+            try
+            {
+                var map = _mapper.Map<GroupChatDto>(model);
+                var result = await _service.DeleteAsync(map);
 
-            return result;
+                return Ok(result);
+            }
+            catch (ArgumentNullException ex)
+            {
+                _logger.LogError(ex, ex.Message);
+
+                return BadRequest();
+            }
         }
     }
 }

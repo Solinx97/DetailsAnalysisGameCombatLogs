@@ -123,20 +123,37 @@
             </StackPanel>
         </Border>
 
-        <Border Grid.Column="2" Grid.ColumnSpan="2" Background="Transparent" Margin="10 10" MouseDown="Border_MouseDown">
-            <StackPanel HorizontalAlignment="Right">
-                <StackPanel Orientation="Horizontal">
-                    <Button Style="{StaticResource textBoxButton}" mvx:Bi.nd="Command MinimazeCommand">
-                        <Icon:PackIconMaterial Kind="WindowMinimize" Foreground="Gray" Width="15" Height="15"/>
-                    </Button>
-                    <Button Style="{StaticResource textBoxButton}" mvx:Bi.nd="Command MaximazeCommand">
-                        <Icon:PackIconMaterial Kind="WindowMaximize" Foreground="Gray" Width="15" Height="15"/>
-                    </Button>
-                    <Button Style="{StaticResource textBoxButton}" mvx:Bi.nd="Command CloseCommand">
-                        <Icon:PackIconMaterial Kind="WindowClose" Foreground="Red" Width="15" Height="15"/>
-                    </Button>
+        <Border Grid.Column="2" Grid.ColumnSpan="2" Background="Transparent" Margin="10 10" Height="40" VerticalAlignment="Center" MouseDown="Border_MouseDown">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                <StackPanel VerticalAlignment="Center" Visibility="{Binding ResponseStatus, Converter={StaticResource IntToVisibility}, ConverterParameter='true:1:>='}">
+                    <TextBlock Margin="5" FontSize="13" FontWeight="Bold" Foreground="Gray" Text="Загрузка..."
+                           Visibility="Visible">
+                        <TextBlock.ToolTip>
+                            <ToolTip>
+                                Загрузка данных. Это может занять некоторое время. Вы можете продолжить работу с приложением.
+                            </ToolTip>
+                        </TextBlock.ToolTip>
+                    </TextBlock>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Margin="5" FontSize="13" FontWeight="Bold" Foreground="Red" Text="Ошибка"
+                                    Visibility="{Binding ResponseStatus, Converter={StaticResource IntToVisibility}, ConverterParameter=true:3}">
+                            <TextBlock.ToolTip>
+                                <ToolTip>
+                                    Загрузка была завершена с ошибкой. Возможно проблемы с соединением или сервер временно не доступен. Вы можете продолжить работать с текущими данными, но они не будут сохранены.
+                                </ToolTip>
+                            </TextBlock.ToolTip>
+                        </TextBlock>
+                        <TextBlock Margin="5" FontSize="13" FontWeight="Bold" Foreground="Green" Text="Успешно"
+                                    Visibility="{Binding ResponseStatus, Converter={StaticResource IntToVisibility}, ConverterParameter=true:2}">
+                            <TextBlock.ToolTip>
+                                <ToolTip>
+                                    Все данные загружены успешно. Загруженные данные можно будет просмотреть повторно в люБое время.
+                                </ToolTip>
+                            </TextBlock.ToolTip>
+                        </TextBlock>
+                    </StackPanel>
                 </StackPanel>
-                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                <StackPanel Orientation="Horizontal" Margin="30 0">
                     <Button Style="{StaticResource textBoxButton}">
                         <Button.ToolTip>
                             <ToolTip>
@@ -154,38 +171,33 @@
                         <Icon:PackIconMaterial Kind="DotsVertical" Foreground="#88878e"/>
                     </Button>
                 </StackPanel>
-            </StackPanel>
-        </Border>
-        <StackPanel Grid.Column="2" Grid.Row="0" VerticalAlignment="Top" Orientation="Horizontal" Margin="25">
-            <TextBlock Margin="5" FontSize="12" Text="Статус загрузки: " Visibility="{Binding ElementName=responseStatus, Path=Visibility}"/>
-            <StackPanel Name="responseStatus" Visibility="{Binding ResponseStatus, Converter={StaticResource IntToVisibility}, ConverterParameter='true:1:>='}">
-                <TextBlock Margin="5" FontSize="13" FontWeight="Bold" Foreground="Gray" Text="Загрузка..."
-                           Visibility="{Binding ResponseStatus, Converter={StaticResource IntToVisibility}, ConverterParameter=true:1}">
-                    <TextBlock.ToolTip>
-                        <ToolTip>
-                            Загрузка данных. Это может занять некоторое время. Вы можете продолжить работу с приложением. Статус загрузки будет отображаться в данной панели.
-                        </ToolTip>
-                    </TextBlock.ToolTip>
-                </TextBlock>
                 <StackPanel Orientation="Horizontal">
-                    <TextBlock Margin="5" FontSize="13" FontWeight="Bold" Foreground="Red" Text="Ошибка"
-                       Visibility="{Binding ResponseStatus, Converter={StaticResource IntToVisibility}, ConverterParameter=true:3}">
-                        <TextBlock.ToolTip>
+                    <Button Style="{StaticResource textBoxButton}" mvx:Bi.nd="Command MinimazeCommand">
+                        <Button.ToolTip>
                             <ToolTip>
-                                Загрузка была завершена с ошибкой. Возможно проблемы с соединением или сервер временно не доступен. Вы можете продолжить работать с текущими данными, но они не будут сохранены.
+                                Свернуть
                             </ToolTip>
-                        </TextBlock.ToolTip>
-                    </TextBlock>
-                    <TextBlock Margin="5" FontSize="13" FontWeight="Bold" Foreground="Green" Text="Успешно"
-                       Visibility="{Binding ResponseStatus, Converter={StaticResource IntToVisibility}, ConverterParameter=true:2}">
-                        <TextBlock.ToolTip>
+                        </Button.ToolTip>
+                        <Icon:PackIconMaterial Kind="WindowMinimize" Foreground="Gray" Width="15" Height="15"/>
+                    </Button>
+                    <Button Style="{StaticResource textBoxButton}" mvx:Bi.nd="Command MaximazeCommand">
+                        <Button.ToolTip>
                             <ToolTip>
-                                Все данные загружены успешно. Загруженные данные можно будет просмотреть повторно в люБое время.
+                                На весь экран
                             </ToolTip>
-                        </TextBlock.ToolTip>
-                    </TextBlock>
+                        </Button.ToolTip>
+                        <Icon:PackIconMaterial Kind="WindowMaximize" Foreground="Gray" Width="15" Height="15"/>
+                    </Button>
+                    <Button Style="{StaticResource textBoxButton}" mvx:Bi.nd="Command CloseCommand">
+                        <Button.ToolTip>
+                            <ToolTip>
+                                Закрыть приложение
+                            </ToolTip>
+                        </Button.ToolTip>
+                        <Icon:PackIconMaterial Kind="WindowClose" Foreground="Red" Width="15" Height="15"/>
+                    </Button>
                 </StackPanel>
             </StackPanel>
-        </StackPanel>
+        </Border>
     </Grid>
 </views:MvxWpfView>

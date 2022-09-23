@@ -104,9 +104,9 @@ namespace CombatAnalysis.Core.ViewModels.CreateGroupChat
 
         private void UpdateGroupChatModel(AppUserModel user)
         {
-            _chatModel.Name = Name;
-            _chatModel.ShortName = string.Empty;
-            _chatModel.LastMessage = string.Empty;
+            _chatModel.Name = string.IsNullOrEmpty(Name) ? " " : Name;
+            _chatModel.ShortName = " ";
+            _chatModel.LastMessage = " ";
             _chatModel.ChatPolicyType = _policyType;
             _chatModel.MemberNumber = ChatConsts.ChatMemberNumber;
             _chatModel.OwnerId = user.Id;

@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 
 namespace CombatAnalysis.UserApi
@@ -32,6 +33,9 @@ namespace CombatAnalysis.UserApi
 
             services.Configure<TokenSettings>(settings);
 
+            var loggerFactory = new LoggerFactory();
+            var logger = new Logger<ILogger>(loggerFactory);
+
             services.AddSwaggerGen(options =>
             {
                 options.SwaggerDoc("v1", new OpenApiInfo
@@ -50,6 +54,7 @@ namespace CombatAnalysis.UserApi
 
             var mapper = mappingConfig.CreateMapper();
             services.AddSingleton(mapper);
+            services.AddSingleton<ILogger>(logger);
 
             services.AddControllers();
         }
