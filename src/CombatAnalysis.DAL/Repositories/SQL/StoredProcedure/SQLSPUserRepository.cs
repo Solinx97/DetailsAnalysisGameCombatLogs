@@ -1,4 +1,5 @@
-﻿using CombatAnalysis.DAL.Data;
+﻿using CombatAnalysis.DAL.Data.SQL;
+using CombatAnalysis.DAL.Entities.User;
 using CombatAnalysis.DAL.Interfaces;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
@@ -7,26 +8,24 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CombatAnalysis.DAL.Repositories.SQL
+namespace CombatAnalysis.DAL.Repositories.SQL.StoredProcedure
 {
-    public class SQLSPRepository<TModel, TIdType> : IGenericRepository<TModel, TIdType>
-        where TModel : class
-        where TIdType : notnull
+    public class SQLSPUserRepository : IUserRepository
     {
         private readonly SQLContext _context;
 
-        public SQLSPRepository(SQLContext context)
+        public SQLSPUserRepository(SQLContext context)
         {
             _context = context;
         }
 
-        async Task<TModel> IGenericRepository<TModel, TIdType>.CreateAsync(TModel item)
+        async Task<AppUser> IUserRepository.CreateAsync(AppUser item)
         {
             var properties = item.GetType().GetProperties();
             var procedureParams = new List<SqlParameter>();
             var procedureParamNames = new StringBuilder();
 
-            for (int i = 1; i < properties.Length; i++)
+            for (int i = 0; i < properties.Length; i++)
             {
                 if (properties[i].CanWrite)
                 {
@@ -36,13 +35,13 @@ namespace CombatAnalysis.DAL.Repositories.SQL
             }
             procedureParamNames.Remove(procedureParamNames.Length - 1, 1);
 
-            var res = await Task.Run(() => _context.Set<TModel>().FromSqlRaw($"InsertInto{item.GetType().Name} {procedureParamNames}", procedureParams.ToArray())
+            var res = await Task.Run(() => _context.Set<AppUser>().FromSqlRaw($"InsertInto{item.GetType().Name} {procedureParamNames}", procedureParams.ToArray())
                                                 .AsEnumerable().FirstOrDefault());
 
             return res;
         }
 
-        async Task<int> IGenericRepository<TModel, TIdType>.DeleteAsync(TModel item)
+        async Task<int> IUserRepository.DeleteAsync(AppUser item)
         {
             var property = item.GetType().GetProperty("Id");
             var data = await _context.Database
@@ -51,42 +50,63 @@ namespace CombatAnalysis.DAL.Repositories.SQL
             return data;
         }
 
-        async Task<IEnumerable<TModel>> IGenericRepository<TModel, TIdType>.GetAllAsync()
+        async Task<IEnumerable<AppUser>> IUserRepository.GetAllAsync()
         {
-            var data = await _context.Set<TModel>()
-                                .FromSqlRaw($"GetAll{typeof(TModel).Name}")
+            var data = await _context.Set<AppUser>()
+                                .FromSqlRaw($"GetAll{nameof(AppUser)}")
                                 .ToListAsync();
 
             return data;
         }
 
-        async Task<TModel> IGenericRepository<TModel, TIdType>.GetByIdAsync(TIdType id)
+        async Task<AppUser> IUserRepository.GetAsync(string email, string password)
         {
-            var data = await Task.Run(() => _context.Set<TModel>()
-                                .FromSqlRaw($"Get{typeof(TModel).Name}ById @Id", new SqlParameter("Id", id))
-                                .AsEnumerable()
-                                .FirstOrDefault());
-
-            return data;
-        }
-
-        public IEnumerable<TModel> GetByParam(string paramName, object value)
-        {
-            var result = new List<TModel>();
-            var data = _context.Set<TModel>()
-                                .FromSqlRaw($"GetAll{typeof(TModel).Name}");
+            AppUser result = null;
+            var data = await _context.Set<AppUser>()
+                                .FromSqlRaw($"GetAll{nameof(AppUser)}")
+                                .ToListAsync();
             foreach (var item in data)
             {
-                if (item.GetType().GetProperty(paramName).Equals(value))
+                if (item.Email == email
+                    && item.Password == password)
                 {
-                    result.Add(item);
+                    result = item;
+                    break;
                 }
             }
 
             return result;
         }
 
-        async Task<int> IGenericRepository<TModel, TIdType>.UpdateAsync(TModel item)
+        async Task<AppUser> IUserRepository.GetAsync(string email)
+        {
+            AppUser result = null;
+            var data = await _context.Set<AppUser>()
+                                .FromSqlRaw($"GetAll{nameof(AppUser)}")
+                                .ToListAsync();
+            foreach (var item in data)
+            {
+                if (item.Email == email)
+                {
+                    result = item;
+                    break;
+                }
+            }
+
+            return result;
+        }
+
+        async Task<AppUser> IUserRepository.GetByIdAsync(string id)
+        {
+            var data = await Task.Run(() => _context.Set<AppUser>()
+                                .FromSqlRaw($"Get{nameof(AppUser)}ById @Id", new SqlParameter("Id", id))
+                                .AsEnumerable()
+                                .FirstOrDefault());
+
+            return data;
+        }
+
+        async Task<int> IUserRepository.UpdateAsync(AppUser item)
         {
             var properties = item.GetType().GetProperties();
             var procedureParams = new List<SqlParameter>();

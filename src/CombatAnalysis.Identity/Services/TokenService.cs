@@ -79,7 +79,7 @@ namespace CombatAnalysis.Identity.Services
 
         async Task<RefreshTokenDto> IIdentityTokenService.FindRefreshTokenAsync(string refreshToken)
         {
-            var token = await _repository.Get(refreshToken);
+            var token = await _repository.GetByTokenAsync(refreshToken);
             var map = _mapper.Map<RefreshTokenDto>(token);
 
             return map;
@@ -87,7 +87,7 @@ namespace CombatAnalysis.Identity.Services
 
         async Task IIdentityTokenService.CheckRefreshTokensByUserAsync(string userId)
         {
-            var tokens = await _repository.GetByUser(userId);
+            var tokens = await _repository.GetAllByUserAsync(userId);
             foreach (var token in tokens)
             {
                 var map = _mapper.Map<RefreshTokenDto>(token);

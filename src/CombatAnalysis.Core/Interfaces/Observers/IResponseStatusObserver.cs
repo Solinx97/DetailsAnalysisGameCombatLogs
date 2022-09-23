@@ -1,4 +1,4 @@
-﻿using CombatAnalysis.Core.Core;
+﻿using CombatAnalysis.Core.Enums;
 
 namespace CombatAnalysis.Core.Interfaces.Observers
 {

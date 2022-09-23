@@ -1,4 +1,4 @@
-﻿namespace CombatAnalysis.Core.Core
+﻿namespace CombatAnalysis.Core.Enums
 {
     public enum ResponseStatus
     {
