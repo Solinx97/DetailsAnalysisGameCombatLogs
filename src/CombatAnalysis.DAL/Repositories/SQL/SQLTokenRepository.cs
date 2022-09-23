@@ -28,9 +28,9 @@ namespace CombatAnalysis.DAL.Repositories.SQL
         async Task<int> ITokenRepository.DeleteAsync(RefreshToken item)
         {
             _context.Set<RefreshToken>().Remove(item);
-            var numberEntries = await _context.SaveChangesAsync();
+            var rowsAffected = await _context.SaveChangesAsync();
 
-            return numberEntries;
+            return rowsAffected;
         }
 
         async Task<RefreshToken> ITokenRepository.GetByTokenAsync(string token)
@@ -60,9 +60,9 @@ namespace CombatAnalysis.DAL.Repositories.SQL
         async Task<int> ITokenRepository.UpdateAsync(RefreshToken item)
         {
             _context.Entry(item).State = EntityState.Modified;
-            var numberEntries = await _context.SaveChangesAsync();
+            var rowsAffected = await _context.SaveChangesAsync();
 
-            return numberEntries;
+            return rowsAffected;
         }
     }
 }

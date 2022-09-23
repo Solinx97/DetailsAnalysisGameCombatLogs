@@ -1,12 +1,10 @@
 ﻿using AutoMapper;
 using CombatAnalysis.BL.DTO.Chat;
-using CombatAnalysis.BL.Exceptions;
 using CombatAnalysis.BL.Interfaces;
 using CombatAnalysis.DAL.Entities.Chat;
 using CombatAnalysis.DAL.Interfaces;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace CombatAnalysis.BL.Services.Chat
@@ -26,7 +24,7 @@ namespace CombatAnalysis.BL.Services.Chat
         {
             if (item == null)
             {
-                throw new ArgumentNullException(nameof(item));
+                throw new ArgumentNullException(nameof(PersonalChatDto), $"The {nameof(PersonalChatDto)} can't be null");
             }
 
             return CreateInternalAsync(item);
@@ -36,7 +34,7 @@ namespace CombatAnalysis.BL.Services.Chat
         {
             if (item == null)
             {
-                throw new ArgumentNullException(nameof(item));
+                throw new ArgumentNullException(nameof(PersonalChatDto), $"The {nameof(PersonalChatDto)} can't be null");
             }
 
             return DeleteInternalAsync(item);
@@ -45,7 +43,7 @@ namespace CombatAnalysis.BL.Services.Chat
         async Task<IEnumerable<PersonalChatDto>> IService<PersonalChatDto, int>.GetAllAsync()
         {
             var allData = await _repository.GetAllAsync();
-            var result = _mapper.Map<List<PersonalChatDto>>(allData);
+            var result = _mapper.Map<IEnumerable<PersonalChatDto>>(allData);
 
             return result;
         }
@@ -70,7 +68,7 @@ namespace CombatAnalysis.BL.Services.Chat
         {
             if (item == null)
             {
-                throw new ArgumentNullException(nameof(item));
+                throw new ArgumentNullException(nameof(PersonalChatDto), $"The {nameof(PersonalChatDto)} can't be null");
             }
 
             return UpdateInternalAsync(item);
@@ -78,6 +76,22 @@ namespace CombatAnalysis.BL.Services.Chat
 
         private async Task<PersonalChatDto> CreateInternalAsync(PersonalChatDto item)
         {
+            if (string.IsNullOrEmpty(item.LastMessage))
+            {
+                throw new ArgumentNullException(nameof(PersonalChatDto), 
+                    $"The property {nameof(PersonalChatDto.LastMessage)} of the {nameof(PersonalChatDto)} object can't be null or empty");
+            }
+            if (string.IsNullOrEmpty(item.InitiatorUsername))
+            {
+                throw new ArgumentNullException(nameof(PersonalChatDto), 
+                    $"The property {nameof(PersonalChatDto.InitiatorUsername)} of the {nameof(PersonalChatDto)} object can't be null or empty");
+            }
+            if (string.IsNullOrEmpty(item.CompanionUsername))
+            {
+                throw new ArgumentNullException(nameof(PersonalChatDto), 
+                    $"The property {nameof(PersonalChatDto.CompanionUsername)} of the {nameof(PersonalChatDto)} object can't be null or empty");
+            }
+
             var map = _mapper.Map<PersonalChat>(item);
             var createdItem = await _repository.CreateAsync(map);
             var resultMap = _mapper.Map<PersonalChatDto>(createdItem);
@@ -87,26 +101,50 @@ namespace CombatAnalysis.BL.Services.Chat
 
         private async Task<int> DeleteInternalAsync(PersonalChatDto item)
         {
-            var allData = await _repository.GetAllAsync();
-            if (!allData.Any())
+            if (string.IsNullOrEmpty(item.LastMessage))
             {
-                throw new NotFoundException($"Collection entity {nameof(PersonalChatDto)} not found", nameof(allData));
+                throw new ArgumentNullException(nameof(PersonalChatDto), 
+                    $"The property {nameof(PersonalChatDto.LastMessage)} of the {nameof(PersonalChatDto)} object can't be null or empty");
+            }
+            if (string.IsNullOrEmpty(item.InitiatorUsername))
+            {
+                throw new ArgumentNullException(nameof(PersonalChatDto), 
+                    $"The property {nameof(PersonalChatDto.InitiatorUsername)} of the {nameof(PersonalChatDto)} object can't be null or empty");
+            }
+            if (string.IsNullOrEmpty(item.CompanionUsername))
+            {
+                throw new ArgumentNullException(nameof(PersonalChatDto), 
+                    $"The property {nameof(PersonalChatDto.CompanionUsername)} of the {nameof(PersonalChatDto)} object can't be null or empty");
             }
 
-            var numberEntriesAffected = await _repository.DeleteAsync(_mapper.Map<PersonalChat>(item));
-            return numberEntriesAffected;
+            var map = _mapper.Map<PersonalChat>(item);
+            var rowsAffected = await _repository.DeleteAsync(map);
+
+            return rowsAffected;
         }
 
         private async Task<int> UpdateInternalAsync(PersonalChatDto item)
         {
-            var allData = await _repository.GetAllAsync();
-            if (!allData.Any())
+            if (string.IsNullOrEmpty(item.LastMessage))
             {
-                throw new NotFoundException($"Collection entity {nameof(PersonalChatDto)} not found", nameof(allData));
+                throw new ArgumentNullException(nameof(PersonalChatDto), 
+                    $"The property {nameof(PersonalChatDto.LastMessage)} of the {nameof(PersonalChatDto)} object can't be null or empty");
+            }
+            if (string.IsNullOrEmpty(item.InitiatorUsername))
+            {
+                throw new ArgumentNullException(nameof(PersonalChatDto), 
+                    $"The property {nameof(PersonalChatDto.InitiatorUsername)} of the {nameof(PersonalChatDto)} object can't be null or empty");
+            }
+            if (string.IsNullOrEmpty(item.CompanionUsername))
+            {
+                throw new ArgumentNullException(nameof(PersonalChatDto), 
+                    $"The property {nameof(PersonalChatDto.CompanionUsername)} of the {nameof(PersonalChatDto)} object can't be null or empty");
             }
 
-            var numberEntriesAffected = await _repository.UpdateAsync(_mapper.Map<PersonalChat>(item));
-            return numberEntriesAffected;
+            var map = _mapper.Map<PersonalChat>(item);
+            var rowsAffected = await _repository.UpdateAsync(map);
+
+            return rowsAffected;
         }
     }
 }

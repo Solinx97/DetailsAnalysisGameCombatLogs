@@ -27,9 +27,9 @@ namespace CombatAnalysis.DAL.Repositories.SQL
         async Task<int> IUserRepository.DeleteAsync(AppUser item)
         {
             _context.Set<AppUser>().Remove(item);
-            var numberEntries = await _context.SaveChangesAsync();
+            var rowsAffected = await _context.SaveChangesAsync();
 
-            return numberEntries;
+            return rowsAffected;
         }
 
         async Task<IEnumerable<AppUser>> IUserRepository.GetAllAsync() => await _context.Set<AppUser>().AsNoTracking().ToListAsync();
@@ -73,9 +73,9 @@ namespace CombatAnalysis.DAL.Repositories.SQL
         async Task<int> IUserRepository.UpdateAsync(AppUser item)
         {
             _context.Entry(item).State = EntityState.Modified;
-            var numberEntries = await _context.SaveChangesAsync();
+            var rowsAffected = await _context.SaveChangesAsync();
 
-            return numberEntries;
+            return rowsAffected;
         }
     }
 }

@@ -27,12 +27,8 @@ namespace CombatAnalysis.CombatParserAPI
         {
             RegisteringDependencies(services);
 
-            services.AddSingleton<IHttpClientHelper, HttpClientHelper>();
-
             var loggerFactory = new LoggerFactory();
             var logger = new Logger<ILogger>(loggerFactory);
-
-            services.AddControllers();
 
             services.AddSwaggerGen(options =>
             {
@@ -52,6 +48,10 @@ namespace CombatAnalysis.CombatParserAPI
             var mapper = mappingConfig.CreateMapper();
             services.AddSingleton(mapper);
             services.AddSingleton<ILogger>(logger);
+
+            services.AddTransient<IHttpClientHelper, HttpClientHelper>();
+
+            services.AddControllers();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

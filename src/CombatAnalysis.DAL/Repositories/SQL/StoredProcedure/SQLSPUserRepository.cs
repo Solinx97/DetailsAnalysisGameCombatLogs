@@ -35,19 +35,20 @@ namespace CombatAnalysis.DAL.Repositories.SQL.StoredProcedure
             }
             procedureParamNames.Remove(procedureParamNames.Length - 1, 1);
 
-            var res = await Task.Run(() => _context.Set<AppUser>().FromSqlRaw($"InsertInto{item.GetType().Name} {procedureParamNames}", procedureParams.ToArray())
-                                                .AsEnumerable().FirstOrDefault());
+            var data = await Task.Run(() => _context.Set<AppUser>().FromSqlRaw($"InsertInto{item.GetType().Name} {procedureParamNames}", procedureParams.ToArray())
+                                                .AsEnumerable()
+                                                .FirstOrDefault());
 
-            return res;
+            return data;
         }
 
         async Task<int> IUserRepository.DeleteAsync(AppUser item)
         {
             var property = item.GetType().GetProperty("Id");
-            var data = await _context.Database
+            var rowsAffected = await _context.Database
                                 .ExecuteSqlRawAsync($"Delete{item.GetType().Name}ById {property.Name}", property.GetValue(item));
 
-            return data;
+            return rowsAffected;
         }
 
         async Task<IEnumerable<AppUser>> IUserRepository.GetAllAsync()
@@ -121,10 +122,10 @@ namespace CombatAnalysis.DAL.Repositories.SQL.StoredProcedure
             }
             procedureParamNames.Remove(procedureParamNames.Length - 1, 1);
 
-            var data = await _context.Database
+            var rowsAffected = await _context.Database
                                 .ExecuteSqlRawAsync($"Update{item.GetType().Name} {procedureParamNames}", procedureParams);
 
-            return data;
+            return rowsAffected;
         }
     }
 }
