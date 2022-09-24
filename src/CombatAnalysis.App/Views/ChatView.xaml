@@ -49,15 +49,20 @@
         <StackPanel Grid.Row="0" Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="50 0">
             <StackPanel>
                 <TextBlock VerticalAlignment="Center" Text="Поиск группового чата" FontSize="18"/>
-                <ComboBox Height="30" Padding="5" Width="250" IsEditable="True" ItemsSource="{Binding Users}" Margin="0 5" />
+                <ComboBox Height="30" Padding="5" Width="250" IsEditable="True" ItemsSource="{Binding GroupChats}" Margin="0 5"
+                          SelectedIndex="{Binding SelectedGroupChatsNameIndex}"
+                          StaysOpenOnEdit="True" Text="{Binding InputedGroupChatName}"
+                          DisplayMemberPath="Name"/>
             </StackPanel>
-            <Button Style="{StaticResource textBoxButton}" Margin="10 -5" VerticalAlignment="Bottom" HorizontalAlignment="Center" mvx:Bi.nd="Command CreateGroupChatCommand">
+            <Button IsEnabled="{Binding SelectedGroupChatsNameIndex, Converter={StaticResource IntToXAMLBool}, ConverterParameter='0:>='}"
+                    Style="{StaticResource textBoxButton}" Margin="10 -2" VerticalAlignment="Bottom" HorizontalAlignment="Center"
+                    mvx:Bi.nd="Command JoinToGroupChatCommand">
                 <Button.ToolTip>
                     <ToolTip>
-                        Поиск группового чата
+                        Присоединиться
                     </ToolTip>
                 </Button.ToolTip>
-                <Icon:PackIconMaterial Kind="SearchWeb" Foreground="DarkSlateGray" Width="20" Height="20"/>
+                <Icon:PackIconMaterial Kind="PlusBox" Foreground="GreenYellow" Width="20" Height="20"/>
             </Button>
         </StackPanel>
         
@@ -165,22 +170,22 @@
             </Grid>
         </Border>
 
-        <StackPanel Grid.Row="0" Grid.Column="3" Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Left">
+        <StackPanel Grid.Row="0" Grid.Column="3" VerticalAlignment="Center" HorizontalAlignment="Left">
             <StackPanel>
                 <TextBlock VerticalAlignment="Center" Text="Поиск пользователя" FontSize="18"/>
                 <StackPanel Orientation="Horizontal">
-                    <ComboBox Height="30" Padding="5" Width="250" IsEditable="True" ItemsSource="{Binding UserEmails}" SelectedIndex="{Binding SelectedUserEmailsIndex}"
-                          StaysOpenOnEdit="True" Text="{Binding InputedUserEmail}"/>
-                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center"
-                                IsEnabled="{Binding SelectedUserEmailsIndex, Converter={StaticResource IntToXAMLBool}, ConverterParameter='0:>='}"
+                    <ComboBox Height="30" Padding="5" Width="250" IsEditable="True" ItemsSource="{Binding Users}" SelectedIndex="{Binding SelectedUsersEmailIndex}"
+                          StaysOpenOnEdit="True" Text="{Binding InputedUserEmail}" DisplayMemberPath="Email"/>
+                    <StackPanel x:Name="usersEmail" Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center"
+                                IsEnabled="{Binding SelectedUsersEmailIndex, Converter={StaticResource IntToXAMLBool}, ConverterParameter='0:>='}"
                                 Margin="25 0">
-                        <Button Style="{StaticResource textBoxButton}">
+                        <Button Style="{StaticResource textBoxButton}" mvx:Bi.nd="Command LoadMyGroupChatsCommand">
                             <Button.ToolTip>
-                                <ToolTip>
+                                <ToolTip>bv 
                                     Пригласить в групповой чат
                                 </ToolTip>
                             </Button.ToolTip>
-                            <Icon:PackIconMaterial Kind="Plus" Foreground="Green"/>
+                            <Icon:PackIconMaterial Style="{StaticResource openInviteToGroupChatStyle}" Kind="Plus"/>
                         </Button>
                         <Button Style="{StaticResource textBoxButton}" mvx:Bi.nd="Command CreatePersonalChatCommand">
                             <Button.ToolTip>
@@ -188,7 +193,36 @@
                                     Начать диалог
                                 </ToolTip>
                             </Button.ToolTip>
-                            <Icon:PackIconMaterial Kind="Message" Foreground="Blue"/>
+                            <Icon:PackIconMaterial Style="{StaticResource startDialogStyle}" Kind="Message"/>
+                        </Button>
+                    </StackPanel>
+                </StackPanel>
+            </StackPanel>
+            <StackPanel Visibility="{Binding OpenInviteToGroupChat}">
+                <TextBlock VerticalAlignment="Center" Text="Групповые чаты" FontSize="18"/>
+                <StackPanel Orientation="Horizontal">
+                    <ComboBox Height="30" Padding="5" Width="250" IsEditable="True" ItemsSource="{Binding SearchMyGroupChats}" SelectedIndex="{Binding SelectedMyGroupChatsNameIndex}"
+                          StaysOpenOnEdit="True" Text="{Binding InputedMyGroupChatName}" DisplayMemberPath="Name"/>
+                    <StackPanel x:Name="inviteToGroupChat" Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center"
+                                IsEnabled="{Binding SelectedMyGroupChatsNameIndex, Converter={StaticResource IntToXAMLBool}, ConverterParameter='0:>='}"
+                                Margin="25 0">
+                        <Button Style="{StaticResource textBoxButton}" mvx:Bi.nd="Command InviteToGroupChatCommand">
+                            <Button.ToolTip>
+                                <ToolTip>
+                                    Добавить
+                                </ToolTip>
+                            </Button.ToolTip>
+                            <Icon:PackIconMaterial Style="{StaticResource inviteToGroupChatStyle}" Kind="GamepadDown"/>
+                        </Button>
+                    </StackPanel>
+                    <StackPanel>
+                        <Button Style="{StaticResource textBoxButton}" mvx:Bi.nd="Command CloseInviteToGroupChatCommand">
+                            <Button.ToolTip>
+                                <ToolTip>
+                                    Отмена
+                                </ToolTip>
+                            </Button.ToolTip>
+                            <Icon:PackIconMaterial Kind="Close" Foreground="Red"/>
                         </Button>
                     </StackPanel>
                 </StackPanel>
@@ -206,7 +240,7 @@
         </Border>
         
         <Border CornerRadius="15" Background="WhiteSmoke" Grid.Column="3" Grid.Row="1" Grid.RowSpan="3" 
-                Margin="0 -20 30 30" ClipToBounds="True">
+                Margin="0 -10 30 30" ClipToBounds="True">
             <Grid>
                 <TextBlock Name="choiceChat" VerticalAlignment="Center" HorizontalAlignment="Center" Text="Выберите чат для общения"
                            FontSize="18" FontStyle="Italic" Visibility="{Binding SelectedMyGroupChatIndex, Converter={StaticResource IntToVisibility}, ConverterParameter='true:-1:='}"/>
@@ -227,7 +261,7 @@
                         <StackPanel Orientation="Horizontal" Margin="0 0 10 0" HorizontalAlignment="Right">
                             <!--<TextBlock Text="and 3 others" VerticalAlignment="Center" Margin="7 0" Foreground="#8b8a8f" FontSize="11" />-->
 
-                            <Button Style="{StaticResource textBoxButton}" mvx:Bi.nd="Command ShowGroupChatMenuComand">
+                            <Button Style="{StaticResource textBoxButton}" mvx:Bi.nd="Command ShowGroupChatMenuCommand">
                                 <Icon:PackIconMaterial Kind="DotsVertical" Width="14" Height="14" Foreground="#88878e"/>
                             </Button>
                         </StackPanel>

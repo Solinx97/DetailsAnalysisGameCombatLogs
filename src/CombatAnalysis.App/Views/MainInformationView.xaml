@@ -61,7 +61,7 @@
                     <TextBlock Text="{Binding CombatLog, Mode=TwoWay}" FontWeight="Bold" Margin="20 0" FontSize="14" />
                 </StackPanel>
             </StackPanel>
-            <StackPanel Grid.Row="1" IsEnabled="{Binding IsAuth, Converter={StaticResource BoolToXAMLBool}, ConverterParameter=true}" MaxWidth="500">
+            <StackPanel Grid.Row="1" IsEnabled="{Binding IsAuth, Converter={StaticResource BoolToXAMLBool}}" MaxWidth="500">
                 <TextBlock Text="Тип логов" FontSize="16" VerticalAlignment="Center" HorizontalAlignment="Center"/>
                 <StackPanel Margin="10">
                     <RadioButton Content="Без привязки к игроку" mvx:Bi.nd="Command GetLogTypeCommand, CommandParameter=0"
