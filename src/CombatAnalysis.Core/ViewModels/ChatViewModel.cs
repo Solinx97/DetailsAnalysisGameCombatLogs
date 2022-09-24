@@ -32,18 +32,18 @@ namespace CombatAnalysis.Core.ViewModels
         private ObservableCollection<GroupChatMessageModel> _groupChatMessages;
         private ObservableCollection<PersonalChatMessageModel> _personalChatMessages;
         private ObservableCollection<GroupChatModel> _myGroupChats;
-        private ObservableCollection<GroupChatModel> _searchMyGroupChats;
         private ObservableCollection<GroupChatModel> _groupChats;
         private ObservableCollection<PersonalChatModel> _personalChats;
         private ObservableCollection<AppUserModel> _users;
+        private ObservableCollection<AppUserModel> _usersForInviteToGroupChat;
         private List<AppUserModel> _allUsers;
         private List<GroupChatModel> _allGroupChats;
         private string _inputedUserEmail;
+        private string _inputedUserEmailForInviteToGroupChat;
         private string _inputedGroupChatName;
-        private string _inputedMyGroupChatName;
-        private int _selectedUsersEmailIndex = -1;
-        private int _selectedGroupChatsNameIndex = -1;
-        private int _selectedMyGroupChatsNameIndex = -1;
+        private int _selectedUsersIndex = -1;
+        private int _selectedUsersForInviteToGroupChatIndex = -1;
+        private int _selectedGroupChatsIndex = -1;
         private bool _isMyMessage = true;
         private string _selectedChatName;
         private GroupChatModel _selectedMyGroupChat;
@@ -54,10 +54,11 @@ namespace CombatAnalysis.Core.ViewModels
         private Visibility _showGroupChatMenu = Visibility.Collapsed;
         private ResponseStatus _groupChatLoadingResponse;
         private ResponseStatus _personalChatLoadingResponse;
+        private ResponseStatus _addUserToGroupChatResponse;
         private Timer _groupChatMessagesUpdateTimer;
         private Timer _personalChatMessagesUpdateTimer;
         private AppUserModel _myAccount;
-        private Visibility _openInviteToGroupChat = Visibility.Collapsed;
+        private Visibility _showInviteToGroupChat = Visibility.Collapsed;
 
         public ChatViewModel(IHttpClientHelper httpClientHelper, IMemoryCache memoryCache, ILogger logger)
         {
@@ -73,7 +74,7 @@ namespace CombatAnalysis.Core.ViewModels
             RefreshPersonalChatsCommand = new MvxAsyncCommand(LoadPersonalChats);
             ShowGroupChatMenuCommand = new MvxCommand(ShowGCMenu);
             CreatePersonalChatCommand = new MvxAsyncCommand(CreatePersonalChat);
-            LoadMyGroupChatsCommand = new MvxAsyncCommand(LoadMyGroupChatsBySelectedUser);
+            OpenInviteToGroupChatCommand = new MvxAsyncCommand(OpenInviteToGroupChat);
             CloseInviteToGroupChatCommand = new MvxCommand(SwitchInviteToGroupChat);
             InviteToGroupChatCommand = new MvxAsyncCommand(InviteToGroupChatAsync);
             JoinToGroupChatCommand = new MvxAsyncCommand(JoinToGroupChatAsync);
@@ -95,13 +96,13 @@ namespace CombatAnalysis.Core.ViewModels
 
         public IMvxAsyncCommand RefreshGroupChatsCommand { get; set; }
 
-        public IMvxAsyncCommand RefreshPersonalChatsCommand { get; set; }
-
         public IMvxAsyncCommand CreatePersonalChatCommand { get; set; }
+
+        public IMvxAsyncCommand RefreshPersonalChatsCommand { get; set; }
 
         public IMvxCommand ShowGroupChatMenuCommand { get; set; }
 
-        public IMvxAsyncCommand LoadMyGroupChatsCommand { get; set; }
+        public IMvxAsyncCommand OpenInviteToGroupChatCommand { get; set; }
 
         public IMvxCommand CloseInviteToGroupChatCommand { get; set; }
 
@@ -111,7 +112,8 @@ namespace CombatAnalysis.Core.ViewModels
 
         #endregion
 
-        #region Properties 
+        #region Properties
+
         public IViewModelConnect Handler { get; set; }
 
         public IMvxViewModel Parent { get; set; }
@@ -153,6 +155,15 @@ namespace CombatAnalysis.Core.ViewModels
             }
         }
 
+        public ObservableCollection<AppUserModel> UsersForInviteToGroupChat
+        {
+            get { return _usersForInviteToGroupChat; }
+            set
+            {
+                SetProperty(ref _usersForInviteToGroupChat, value);
+            }
+        }
+
         public ObservableCollection<GroupChatModel> GroupChats
         {
             get { return _groupChats; }
@@ -170,14 +181,6 @@ namespace CombatAnalysis.Core.ViewModels
                 SetProperty(ref _myGroupChats, value);
             }
         }
-        public ObservableCollection<GroupChatModel> SearchMyGroupChats
-        {
-            get { return _searchMyGroupChats; }
-            set
-            {
-                SetProperty(ref _searchMyGroupChats, value);
-            }
-        }
 
         public ObservableCollection<PersonalChatModel> PersonalChats
         {
@@ -188,30 +191,30 @@ namespace CombatAnalysis.Core.ViewModels
             }
         }
 
-        public int SelectedUsersEmailIndex
+        public int SelectedUsersIndex
         {
-            get { return _selectedUsersEmailIndex; }
+            get { return _selectedUsersIndex; }
             set
             {
-                SetProperty(ref _selectedUsersEmailIndex, value);
+                SetProperty(ref _selectedUsersIndex, value);
             }
         }
 
-        public int SelectedGroupChatsNameIndex
+        public int SelectedUsersForInviteToGroupChatIndex
         {
-            get { return _selectedGroupChatsNameIndex; }
+            get { return _selectedUsersForInviteToGroupChatIndex; }
             set
             {
-                SetProperty(ref _selectedGroupChatsNameIndex, value);
+                SetProperty(ref _selectedUsersForInviteToGroupChatIndex, value);
             }
         }
 
-        public int SelectedMyGroupChatsNameIndex
+        public int SelectedGroupChatsIndex
         {
-            get { return _selectedMyGroupChatsNameIndex; }
+            get { return _selectedGroupChatsIndex; }
             set
             {
-                SetProperty(ref _selectedMyGroupChatsNameIndex, value);
+                SetProperty(ref _selectedGroupChatsIndex, value);
             }
         }
 
@@ -225,6 +228,16 @@ namespace CombatAnalysis.Core.ViewModels
             }
         }
 
+        public string InputedUserEmailForInviteToGroupChat
+        {
+            get { return _inputedUserEmailForInviteToGroupChat; }
+            set
+            {
+                SetProperty(ref _inputedUserEmailForInviteToGroupChat, value);
+                LoadUsersEmailForInviteByStartChars(value);
+            }
+        }
+
         public string InputedGroupChatName
         {
             get { return _inputedGroupChatName; }
@@ -232,16 +245,6 @@ namespace CombatAnalysis.Core.ViewModels
             {
                 SetProperty(ref _inputedGroupChatName, value);
                 LoadGroupChatsNameByStartChars(value);
-            }
-        }
-
-        public string InputedMyGroupChatName
-        {
-            get { return _inputedMyGroupChatName; }
-            set
-            {
-                SetProperty(ref _inputedMyGroupChatName, value);
-                LoadMyGroupChatsNameByStartChars(value);
             }
         }
 
@@ -345,7 +348,7 @@ namespace CombatAnalysis.Core.ViewModels
             {
                 SetProperty(ref _groupChatLoadingResponse, value);
 
-                RaisePropertyChanged(() => IsShowNotificationEmptyMyGroupChat);
+                RaisePropertyChanged(() => IsShowEmptyMyGroupChat);
                 RaisePropertyChanged(() => IsLoadMyGroupChatList);
             }
         }
@@ -357,26 +360,35 @@ namespace CombatAnalysis.Core.ViewModels
             {
                 SetProperty(ref _personalChatLoadingResponse, value);
 
-                RaisePropertyChanged(() => IsShowNotificationEmptyPersonalChat);
+                RaisePropertyChanged(() => IsShowEmptyPersonalChat);
                 RaisePropertyChanged(() => IsLoadPersonalChatList);
             }
         }
 
-        public Visibility OpenInviteToGroupChat
+        public ResponseStatus AddUserToGroupChatResponse
         {
-            get { return _openInviteToGroupChat; }
+            get { return _addUserToGroupChatResponse; }
             set
             {
-                SetProperty(ref _openInviteToGroupChat, value);
+                SetProperty(ref _addUserToGroupChatResponse, value);
             }
         }
 
-        public bool IsShowNotificationEmptyMyGroupChat
+        public Visibility ShowInviteToGroupChat
+        {
+            get { return _showInviteToGroupChat; }
+            set
+            {
+                SetProperty(ref _showInviteToGroupChat, value);
+            }
+        }
+
+        public bool IsShowEmptyMyGroupChat
         {
             get
             {
-                return (int)_groupChatLoadingResponse > 0 && (int)_groupChatLoadingResponse < 3
-                            && (_myGroupChats?.Count == 0);
+                return (int)GroupChatLoadingResponse > 0 && (int)GroupChatLoadingResponse < 3
+                            && (MyGroupChats?.Count == 0);
             }
         }
 
@@ -384,17 +396,17 @@ namespace CombatAnalysis.Core.ViewModels
         {
             get 
             { 
-                return (int)_groupChatLoadingResponse > 0 && (int)_groupChatLoadingResponse < 3
-                            && (_myGroupChats?.Count > 0);
+                return (int)GroupChatLoadingResponse > 0 && (int)GroupChatLoadingResponse < 3
+                            && (MyGroupChats?.Count > 0);
             }
         }
 
-        public bool IsShowNotificationEmptyPersonalChat
+        public bool IsShowEmptyPersonalChat
         {
             get
             {
-                return (int)_personalChatLoadingResponse > 0 && (int)_personalChatLoadingResponse < 3
-                            && (_personalChats?.Count == 0);
+                return (int)PersonalChatLoadingResponse > 0 && (int)PersonalChatLoadingResponse < 3
+                            && (PersonalChats?.Count == 0);
             }
         }
 
@@ -402,8 +414,8 @@ namespace CombatAnalysis.Core.ViewModels
         {
             get
             {
-                return (int)_personalChatLoadingResponse > 0 && (int)_personalChatLoadingResponse < 3
-                            && (_personalChats?.Count > 0);
+                return (int)PersonalChatLoadingResponse > 0 && (int)PersonalChatLoadingResponse < 3
+                            && (PersonalChats?.Count > 0);
             }
         }
 
@@ -477,13 +489,13 @@ namespace CombatAnalysis.Core.ViewModels
 
         public async Task CreatePersonalChat()
         {
-            var userId = _users.FirstOrDefault(x => x.Email == Users[SelectedUsersEmailIndex].Email).Id;
+            var userId = Users[SelectedUsersIndex].Id;
             var personalChat = new PersonalChatModel
             {
                 InitiatorId = MyAccount.Id,
                 InitiatorUsername = MyAccount.Email,
                 CompanionId = userId,
-                CompanionUsername = Users[SelectedUsersEmailIndex].Email,
+                CompanionUsername = Users[SelectedUsersIndex].Email,
                 LastMessage = " ",
             };
 
@@ -509,20 +521,20 @@ namespace CombatAnalysis.Core.ViewModels
 
         public void SwitchInviteToGroupChat()
         {
-            if (OpenInviteToGroupChat == Visibility.Visible)
+            if (ShowInviteToGroupChat == Visibility.Visible)
             {
-                OpenInviteToGroupChat = Visibility.Collapsed;
+                ShowInviteToGroupChat = Visibility.Collapsed;
             }
             else
             {
-                OpenInviteToGroupChat = Visibility.Visible;
+                ShowInviteToGroupChat = Visibility.Visible;
             }
         }
 
         public async Task InviteToGroupChatAsync()
         {
-            var myGroupChatId = MyGroupChats[SelectedMyGroupChatsNameIndex].Id;
-            var userId = Users.FirstOrDefault(x => x.Id == Users[SelectedUsersEmailIndex].Id).Id;
+            var myGroupChatId = MyGroupChats[SelectedMyGroupChatIndex].Id;
+            var userId = UsersForInviteToGroupChat[SelectedUsersForInviteToGroupChatIndex].Id;
 
             var groupChatUser = new GroupChatUserModel
             {
@@ -530,17 +542,36 @@ namespace CombatAnalysis.Core.ViewModels
                 UserId = userId,
             };
 
-            InputedMyGroupChatName = string.Empty;
-            InputedUserEmail = string.Empty;
+            InputedUserEmailForInviteToGroupChat = string.Empty;
 
-            await _httpClientHelper.PostAsync("GroupChatUser", JsonContent.Create(groupChatUser));
+            try
+            {
+                AddUserToGroupChatResponse = ResponseStatus.Pending;
 
-            SwitchInviteToGroupChat();
+                var response = await _httpClientHelper.PostAsync("GroupChatUser", JsonContent.Create(groupChatUser));
+                if (response.StatusCode == System.Net.HttpStatusCode.OK)
+                {
+                    SwitchInviteToGroupChat();
+                    await OpenInviteToGroupChat();
+
+                    AddUserToGroupChatResponse = ResponseStatus.Successful;
+                }
+                else
+                {
+                    AddUserToGroupChatResponse = ResponseStatus.Failed;
+                }
+            }
+            catch (HttpRequestException ex)
+            {
+                _logger.LogError(ex, ex.Message);
+
+                AddUserToGroupChatResponse = ResponseStatus.Failed;
+            }
         }
 
         public async Task JoinToGroupChatAsync()
         {
-            var groupChatId = GroupChats[SelectedGroupChatsNameIndex].Id;
+            var groupChatId = GroupChats[SelectedGroupChatsIndex].Id;
 
             var groupChatUser = new GroupChatUserModel
             {
@@ -555,17 +586,18 @@ namespace CombatAnalysis.Core.ViewModels
             await LoadGroupChats();
         }
 
-        public async Task LoadMyGroupChatsBySelectedUser()
+        public async Task OpenInviteToGroupChat()
         {
-            var response = await _httpClientHelper.GetAsync("GroupChatUser").ConfigureAwait(false);
+            AddUserToGroupChatResponse = ResponseStatus.None;
+            UsersForInviteToGroupChat = null;
+
+            var response = await _httpClientHelper.GetAsync("GroupChatUser");
             if (response.StatusCode == System.Net.HttpStatusCode.OK)
             {
                 var groupChatUsers = await response.Content.ReadFromJsonAsync<IEnumerable<GroupChatUserModel>>();
+                var usersForInviteToGroupChat = Users.Where(x => !groupChatUsers.Any(y => x.Id == y.UserId)).ToList();
 
-                var selectedGroupChatUsers = groupChatUsers.Where(x => x.UserId == Users[SelectedUsersEmailIndex].Id);
-                var myGroupChatsBySelectedUser = MyGroupChats.Where(x => !selectedGroupChatUsers.Any(y => x.Id == y.GroupChatId));
-
-                SearchMyGroupChats = new ObservableCollection<GroupChatModel>(myGroupChatsBySelectedUser);
+                UsersForInviteToGroupChat = new ObservableCollection<AppUserModel>(usersForInviteToGroupChat);
             }
 
             SwitchInviteToGroupChat();
@@ -753,6 +785,20 @@ namespace CombatAnalysis.Core.ViewModels
             }
         }
 
+        private void LoadUsersEmailForInviteByStartChars(string startChars)
+        {
+            if (!string.IsNullOrEmpty(startChars))
+            {
+                var usersEmailByStartChars = _allUsers.Where(x => x.Email.StartsWith(startChars));
+
+                UsersForInviteToGroupChat = new ObservableCollection<AppUserModel>(usersEmailByStartChars);
+            }
+            else
+            {
+                UsersForInviteToGroupChat = new ObservableCollection<AppUserModel>(_allUsers);
+            }
+        }
+
         private void LoadGroupChatsNameByStartChars(string startChars)
         {
             if (!string.IsNullOrEmpty(startChars))
@@ -764,20 +810,6 @@ namespace CombatAnalysis.Core.ViewModels
             else
             {
                 GroupChats = new ObservableCollection<GroupChatModel>(_allGroupChats);
-            }
-        }
-
-        private void LoadMyGroupChatsNameByStartChars(string startChars)
-        {
-            if (!string.IsNullOrEmpty(startChars))
-            {
-                var myGroupChatsNameByStartChars = MyGroupChats.Where(x => x.Name.StartsWith(startChars));
-
-                SearchMyGroupChats = new ObservableCollection<GroupChatModel>(myGroupChatsNameByStartChars);
-            }
-            else
-            {
-                SearchMyGroupChats = new ObservableCollection<GroupChatModel>(MyGroupChats);
             }
         }
 

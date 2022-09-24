@@ -7,6 +7,17 @@
     StartupUri="MainWindow.xaml">
     
     <Application.Resources>
+        <Style x:Key="joinToGroupChatStyle" TargetType="Icon:PackIconMaterial">
+            <Style.Triggers>
+                <Trigger Property="IsEnabled" Value="False">
+                    <Setter Property="Foreground" Value="Gray"/>
+                </Trigger>
+                <Trigger Property="IsEnabled" Value="True">
+                    <Setter Property="Foreground" Value="GreenYellow"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+        
         <Style x:Key="openInviteToGroupChatStyle" TargetType="Icon:PackIconMaterial">
             <Style.Triggers>
                 <DataTrigger Binding="{Binding ElementName=usersEmail, Path=IsEnabled}" Value="False">

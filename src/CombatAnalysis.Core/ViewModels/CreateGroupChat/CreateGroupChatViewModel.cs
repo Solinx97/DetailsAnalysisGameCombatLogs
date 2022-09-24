@@ -27,7 +27,6 @@ namespace CombatAnalysis.Core.ViewModels.CreateGroupChat
             _httpClientHelper = Mvx.IoCProvider.GetSingleton<IHttpClientHelper>();
             _memoryCache = Mvx.IoCProvider.GetSingleton<IMemoryCache>();
 
-            AddUsersCommand = new MvxCommand(AddUsers);
             CreateCommand = new MvxAsyncCommand(CreateAsync);
             CancelCommand = new MvxCommand(Cancel);
 
@@ -39,8 +38,6 @@ namespace CombatAnalysis.Core.ViewModels.CreateGroupChat
         {
             _groupChat = chatModel;
         }
-
-        public IMvxCommand AddUsersCommand { get; set; }
 
         public IMvxAsyncCommand CreateCommand { get; set; }
 
@@ -63,17 +60,6 @@ namespace CombatAnalysis.Core.ViewModels.CreateGroupChat
             set
             {
                 SetProperty(ref _name, value);
-            }
-        }
-
-        public void AddUsers()
-        {
-            var user = _memoryCache.Get<AppUserModel>("account");
-            if (user != null)
-            {
-                UpdateGroupChatModel(user);
-
-                WindowManager.CreateGroupChat.DataContext = new CreateGroupChatPlayersViewModel(_groupChat);
             }
         }
 

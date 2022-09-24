@@ -13,9 +13,6 @@
         <DataTemplate DataType="{x:Type viewModels:CreateGroupChatViewModel}">
             <local:CreateGroupChatView />
         </DataTemplate>
-        <DataTemplate DataType="{x:Type viewModels:CreateGroupChatPlayersViewModel}">
-            <local:CreateGroupChatPlayersView />
-        </DataTemplate>
     </Window.Resources>
 
     <ContentPresenter Content="{Binding}"/>
