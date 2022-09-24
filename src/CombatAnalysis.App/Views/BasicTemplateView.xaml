@@ -36,7 +36,7 @@
 
         <Border CornerRadius="20" Grid.RowSpan="2" Panel.ZIndex="2" Background="#6145e3">
             <Grid>
-                <TextBlock Text="WoW Analysis" Foreground="white" FontSize="16"
+                <TextBlock Text="Details Analysis GCL" Foreground="White" FontSize="16"
                            VerticalAlignment="Top" HorizontalAlignment="Center" FontWeight="SemiBold"
                            Margin="0 30 0 0">
                     <TextBlock.LayoutTransform>
@@ -52,7 +52,14 @@
         </Border>
 
         <Border Grid.Column="1" Grid.RowSpan="2" CornerRadius="0 20 20 0"
-                Background="#6f50ff" Panel.ZIndex="1" Margin="-25 0 0 0">
+                Panel.ZIndex="1" Margin="-25 0 0 0">
+            <Border.Background>
+                <LinearGradientBrush>
+                    <GradientStop Color="#7AD5F5" Offset="0.1" />
+                    <GradientStop Color="#DB5577" Offset="0.35" />
+                    <GradientStop Color="#6f50ff" Offset="0.65" />
+                </LinearGradientBrush>
+            </Border.Background>
             <StackPanel>
                 <StackPanel Margin="25 10" Visibility="{Binding IsAuth, Converter={StaticResource BoolToVisibility}, ConverterParameter=true:true}">
                     <Button Style="{StaticResource accountButton}" Margin="15 10" Content="Авторизация"
@@ -77,13 +84,18 @@
                     <Button Style="{StaticResource accountButton}" Content="Выйти" Width="100" Height="30" mvx:Bi.nd="Command LogoutCommand"/>
                 </StackPanel>
 
-                <StackPanel Margin="10 0 0 0">
-                    <uc:MenuButton Title="Логи" Icon="HomeOutline" IsActive="{Binding Step, Converter={StaticResource IntToXAMLBool}, ConverterParameter=0}"
+                <StackPanel Margin="10 5 0 0">
+                    <uc:MenuButton Title="Домой" Icon="HomeOutline" IsActive="{Binding Step, Converter={StaticResource IntToXAMLBool}, ConverterParameter=-1}"
+                                   OnClick="{Binding ToHomeCommand}"/>
+                </StackPanel>
+                
+                <StackPanel Margin="10 10 0 0">
+                    <uc:MenuButton Title="Логи" Icon="MathLog" IsActive="{Binding Step, Converter={StaticResource IntToXAMLBool}, ConverterParameter=0}"
                                    OnClick="{Binding LogPanelStatusCommand}"/>
                 </StackPanel>
 
                 <StackPanel Margin="30 0 0 0" Visibility="{Binding LogPanelStatus}">
-                    <uc:MenuButton Title="Загрузка" Icon="HomeOutline" IsEnabled="{Binding Step, Converter={StaticResource IntToXAMLBoolExpress}, ConverterParameter='>=,-1'}" 
+                    <uc:MenuButton Title="Загрузка" Icon="Upload" IsEnabled="{Binding Step, Converter={StaticResource IntToXAMLBoolExpress}, ConverterParameter='>=,-1'}" 
                                    IsActive="{Binding Step, Converter={StaticResource IntToXAMLBool}, ConverterParameter= 0}" OnClick="{Binding UploadCombatsCommand}"/>
                     <uc:MenuButton Title="Все бои" Icon="ChartTimelineVariantShimmer" IsEnabled="{Binding AllowStep, Converter={StaticResource IntToXAMLBoolExpress}, ConverterParameter='>,0'}"
                                    IsActive="{Binding Step, Converter={StaticResource IntToXAMLBool}, ConverterParameter=1}" OnClick="{Binding GeneralAnalysisCommand}"/>
@@ -99,7 +111,7 @@
                                    IsActive="{Binding Step, Converter={StaticResource IntToXAMLBool}, ConverterParameter=6}" OnClick="{Binding ResourceDetailsCommand}"/>
                 </StackPanel>
 
-                <StackPanel Margin="10 0 0 0">
+                <StackPanel Margin="10 10 0 0">
                     <StackPanel Orientation="Horizontal" Margin="10 -20" HorizontalAlignment="Right"  Opacity="0.5"
                                 Visibility="{Binding IsAuth, Converter={StaticResource BoolToVisibility}, ConverterParameter='true:true'}">
                         <Button Style="{StaticResource textBoxButton}" Cursor="Help">
@@ -112,18 +124,19 @@
                         </Button>
                     </StackPanel>
                     <uc:MenuButton Title="Чат" Icon="Chat" IsEnabled="{Binding IsAuth, Converter={StaticResource BoolToXAMLBool}}"
-                                   IsActive="{Binding Step, Converter={StaticResource IntToXAMLBool}, ConverterParameter=-1}"
+                                   IsActive="{Binding Step, Converter={StaticResource IntToXAMLBool}, ConverterParameter=-2}"
                                    OnClick="{Binding ChatCommand}"/>
                 </StackPanel>
                 
-                <StackPanel Margin="10 75 0 0" VerticalAlignment="Bottom">
+                <StackPanel Margin="10 15 0 0" VerticalAlignment="Bottom">
                     <uc:MenuButton Title="Настройки" Icon="CogOutline" IsEnabled="False"/>
                     <uc:MenuButton OnClick="{Binding CloseCommand}" Title="Выход" Icon="Logout"/>
                 </StackPanel>
             </StackPanel>
         </Border>
 
-        <Border Grid.Column="2" Grid.ColumnSpan="2" Background="Transparent" Margin="10 10" Height="40" VerticalAlignment="Center" MouseDown="Border_MouseDown">
+        <Border Grid.Column="2" Grid.ColumnSpan="2" Background="Transparent" Margin="10 10" Height="40"
+                VerticalAlignment="Center" MouseDown="Border_MouseDown" Panel.ZIndex="2">
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
                 <StackPanel VerticalAlignment="Center" Visibility="{Binding ResponseStatus, Converter={StaticResource IntToVisibility}, ConverterParameter='true:1:>='}">
                     <TextBlock Margin="5" FontSize="13" FontWeight="Bold" Foreground="Gray" Text="Загрузка..."

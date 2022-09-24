@@ -18,6 +18,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Windows;
 
 namespace CombatAnalysis.Core.ViewModels
 {
@@ -40,7 +41,6 @@ namespace CombatAnalysis.Core.ViewModels
         private int _combatLogsNumber;
         private int _combatLogsByUserNumber;
         private IImprovedMvxViewModel _basicTemplate;
-        private IViewModelConnect _handler;
         private ObservableCollection<CombatLogModel> _combatLogs;
         private ObservableCollection<CombatLogModel> _combatLogsByUser;
         private double _screenWidth;
@@ -64,10 +64,11 @@ namespace CombatAnalysis.Core.ViewModels
             GetLogTypeCommand = new MvxCommand<int>(GetLogType);
 
             _combatParserAPIService = new CombatParserAPIService(httpClient, logger, memoryCache);
-            _handler = new ViewModelMConnect();
 
-            BasicTemplate = new BasicTemplateViewModel(_handler, mvvmNavigation, memoryCache, httpClient);
-            Templates.Basic = BasicTemplate;
+            BasicTemplate = Templates.Basic;
+            BasicTemplate.Parent = this;
+            BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, "Step", 0);
+            BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, "LogPanelStatus", Visibility.Visible);
 
             var authObservable = (IAuthObservable)BasicTemplate;
             authObservable.AddObserver(this);

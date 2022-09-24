@@ -81,7 +81,7 @@ namespace CombatAnalysis.Core.ViewModels
 
             BasicTemplate = Templates.Basic;
             BasicTemplate.Parent = this;
-            BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, "Step", -1);
+            BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, "Step", -2);
 
             GetMyAccount();
         }
