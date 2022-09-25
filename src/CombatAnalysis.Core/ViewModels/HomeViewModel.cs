@@ -50,7 +50,7 @@ namespace CombatAnalysis.Core.ViewModels
 
         public async Task OpenCombatAnalysisAsync()
         {
-            await _mvvmNavigation.Navigate<MainInformationViewModel>();
+            await _mvvmNavigation.Navigate<CombatLogInformationViewModel>();
         }
     }
 }

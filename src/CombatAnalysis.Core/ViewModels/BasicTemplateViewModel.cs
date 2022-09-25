@@ -265,7 +265,7 @@ namespace CombatAnalysis.Core.ViewModels
         public async Task UploadCombatLogsAsync()
         {
             Step = 0;
-            await _mvvmNavigation.Navigate<MainInformationViewModel>();
+            await _mvvmNavigation.Navigate<CombatLogInformationViewModel>();
         }
 
         public async Task GeneralAnalysisAsync()

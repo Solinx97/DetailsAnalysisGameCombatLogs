@@ -22,7 +22,7 @@ using System.Windows;
 
 namespace CombatAnalysis.Core.ViewModels
 {
-    public class MainInformationViewModel : MvxViewModel, IObserver, IAuthObserver
+    public class CombatLogInformationViewModel : MvxViewModel, IObserver, IAuthObserver
     {
         private readonly IMvxNavigationService _mvvmNavigation;
         private readonly IMapper _mapper;
@@ -49,7 +49,7 @@ namespace CombatAnalysis.Core.ViewModels
         private LogType _logType;
         private ObservableCollection<CombatLogModel>[] _combatLogLists = new ObservableCollection<CombatLogModel>[2];
 
-        public MainInformationViewModel(IMapper mapper, IMvxNavigationService mvvmNavigation, IHttpClientHelper httpClient, IParser parser, ILogger logger, IMemoryCache memoryCache)
+        public CombatLogInformationViewModel(IMapper mapper, IMvxNavigationService mvvmNavigation, IHttpClientHelper httpClient, IParser parser, ILogger logger, IMemoryCache memoryCache)
         {
             _mapper = mapper;
             _mvvmNavigation = mvvmNavigation;
