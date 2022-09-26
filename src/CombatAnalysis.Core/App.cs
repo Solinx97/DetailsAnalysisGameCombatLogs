@@ -44,7 +44,7 @@ namespace CombatAnalysis.Core
             Mvx.IoCProvider.RegisterSingleton<ILogger>(logger);
             Mvx.IoCProvider.RegisterSingleton<IMemoryCache>(memoryCache);
 
-            RegisterAppStart<MainInformationViewModel>();
+            RegisterAppStart<HomeViewModel>();
         }
     }
 }

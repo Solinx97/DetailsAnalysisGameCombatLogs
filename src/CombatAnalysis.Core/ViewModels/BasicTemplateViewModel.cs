@@ -24,7 +24,7 @@ namespace CombatAnalysis.Core.ViewModels
         private readonly IMemoryCache _memoryCache;
         private readonly IHttpClientHelper _httpClient;
 
-        private int _step;
+        private int _step = -1;
         private Tuple<int, CombatModel> _combatInformtaion;
         private List<CombatModel> _combats;
         private bool _isAuth;
@@ -32,7 +32,7 @@ namespace CombatAnalysis.Core.ViewModels
         private bool _isRegistrationNotActivated = true;
         private string _email;
         private LogType _logType;
-        private Visibility _logPanelStatus;
+        private Visibility _logPanelStatus = Visibility.Collapsed;
 
         private static ResponseStatus _responseStatus;
         private static int _allowStep;
@@ -53,6 +53,7 @@ namespace CombatAnalysis.Core.ViewModels
             LoginCommand = new MvxAsyncCommand(LoginAsync);
             RegistrationCommand = new MvxAsyncCommand(RegistrationAsync);
             LogoutCommand = new MvxAsyncCommand(LogoutAsync);
+            ToHomeCommand = new MvxAsyncCommand(ToHomeAsync);
             UploadCombatsCommand = new MvxAsyncCommand(UploadCombatLogsAsync);
             GeneralAnalysisCommand = new MvxAsyncCommand(GeneralAnalysisAsync);
             CombatCommand = new MvxAsyncCommand(DetailsSpecificalCombatAsync);
@@ -78,6 +79,8 @@ namespace CombatAnalysis.Core.ViewModels
         public IMvxAsyncCommand RegistrationCommand { get; set; }
 
         public IMvxAsyncCommand LogoutCommand { get; set; }
+
+        public IMvxAsyncCommand ToHomeCommand { get; set; }
 
         public IMvxAsyncCommand UploadCombatsCommand { get; set; }
 
@@ -252,10 +255,17 @@ namespace CombatAnalysis.Core.ViewModels
             }
         }
 
+        public async Task ToHomeAsync()
+        {
+            Step = -1;
+            LogPanelStatus = Visibility.Collapsed;
+            await _mvvmNavigation.Close(Parent);
+        }
+
         public async Task UploadCombatLogsAsync()
         {
             Step = 0;
-            await _mvvmNavigation.Close(Parent);
+            await _mvvmNavigation.Navigate<CombatLogInformationViewModel>();
         }
 
         public async Task GeneralAnalysisAsync()

@@ -2,9 +2,9 @@
 
 namespace CombatAnalysis.App.Views
 {
-    public partial class MainInformationView : MvxWpfView
+    public partial class HomeView : MvxWpfView
     {
-        public MainInformationView()
+        public HomeView()
         {
             InitializeComponent();
         }

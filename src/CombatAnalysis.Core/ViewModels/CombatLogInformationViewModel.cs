@@ -18,10 +18,11 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Windows;
 
 namespace CombatAnalysis.Core.ViewModels
 {
-    public class MainInformationViewModel : MvxViewModel, IObserver, IAuthObserver
+    public class CombatLogInformationViewModel : MvxViewModel, IObserver, IAuthObserver
     {
         private readonly IMvxNavigationService _mvvmNavigation;
         private readonly IMapper _mapper;
@@ -40,7 +41,6 @@ namespace CombatAnalysis.Core.ViewModels
         private int _combatLogsNumber;
         private int _combatLogsByUserNumber;
         private IImprovedMvxViewModel _basicTemplate;
-        private IViewModelConnect _handler;
         private ObservableCollection<CombatLogModel> _combatLogs;
         private ObservableCollection<CombatLogModel> _combatLogsByUser;
         private double _screenWidth;
@@ -49,7 +49,7 @@ namespace CombatAnalysis.Core.ViewModels
         private LogType _logType;
         private ObservableCollection<CombatLogModel>[] _combatLogLists = new ObservableCollection<CombatLogModel>[2];
 
-        public MainInformationViewModel(IMapper mapper, IMvxNavigationService mvvmNavigation, IHttpClientHelper httpClient, IParser parser, ILogger logger, IMemoryCache memoryCache)
+        public CombatLogInformationViewModel(IMapper mapper, IMvxNavigationService mvvmNavigation, IHttpClientHelper httpClient, IParser parser, ILogger logger, IMemoryCache memoryCache)
         {
             _mapper = mapper;
             _mvvmNavigation = mvvmNavigation;
@@ -64,10 +64,11 @@ namespace CombatAnalysis.Core.ViewModels
             GetLogTypeCommand = new MvxCommand<int>(GetLogType);
 
             _combatParserAPIService = new CombatParserAPIService(httpClient, logger, memoryCache);
-            _handler = new ViewModelMConnect();
 
-            BasicTemplate = new BasicTemplateViewModel(_handler, mvvmNavigation, memoryCache, httpClient);
-            Templates.Basic = BasicTemplate;
+            BasicTemplate = Templates.Basic;
+            BasicTemplate.Parent = this;
+            BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, "Step", 0);
+            BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, "LogPanelStatus", Visibility.Visible);
 
             var authObservable = (IAuthObservable)BasicTemplate;
             authObservable.AddObserver(this);

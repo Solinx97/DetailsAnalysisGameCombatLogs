@@ -7,6 +7,95 @@
     StartupUri="MainWindow.xaml">
     
     <Application.Resources>
+        <!-- region Home View -->
+
+        <Style x:Key="homeItems" TargetType="Image">
+            <Style.Triggers>
+                <EventTrigger RoutedEvent="MouseEnter">
+                    <EventTrigger.Actions>
+                        <BeginStoryboard>
+                            <Storyboard>
+                                <DoubleAnimation Storyboard.TargetProperty="Height" From="275" To="300"
+                                            AutoReverse="False"
+                                            RepeatBehavior="1x"
+                                            Duration="0:0:0.5"/>
+                                <DoubleAnimation Storyboard.TargetProperty="Opacity" From="1" To="0.25"
+                                            AutoReverse="False"
+                                            RepeatBehavior="1x"
+                                            Duration="0:0:0.5"/>
+                            </Storyboard>
+                        </BeginStoryboard>
+                    </EventTrigger.Actions>
+                </EventTrigger>
+                <EventTrigger RoutedEvent="MouseLeave">
+                    <EventTrigger.Actions>
+                        <BeginStoryboard>
+                            <Storyboard>
+                                <DoubleAnimation Storyboard.TargetProperty="Height"  From="300" To="275"
+                                            AutoReverse="False"
+                                            RepeatBehavior="1x"
+                                            Duration="0:0:0.5"/>
+                                <DoubleAnimation Storyboard.TargetProperty="Opacity" From="0.25" To="1"
+                                            AutoReverse="False"
+                                            RepeatBehavior="1x"
+                                            Duration="0:0:0.5"/>
+                            </Storyboard>
+                        </BeginStoryboard>
+                    </EventTrigger.Actions>
+                </EventTrigger>
+            </Style.Triggers>
+        </Style>
+        
+        <!-- endregion -->
+        
+        <!-- region Chat View -->
+        
+        <Style x:Key="joinToGroupChatStyle" TargetType="Icon:PackIconMaterial">
+            <Style.Triggers>
+                <Trigger Property="IsEnabled" Value="False">
+                    <Setter Property="Foreground" Value="Gray"/>
+                </Trigger>
+                <Trigger Property="IsEnabled" Value="True">
+                    <Setter Property="Foreground" Value="GreenYellow"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+        
+        <Style x:Key="openInviteToGroupChatStyle" TargetType="Icon:PackIconMaterial">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding ElementName=usersEmail, Path=IsEnabled}" Value="False">
+                    <Setter Property="Foreground" Value="Gray"/>
+                </DataTrigger>
+                <DataTrigger Binding="{Binding ElementName=usersEmail, Path=IsEnabled}" Value="True">
+                    <Setter Property="Foreground" Value="Orange"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="startDialogStyle" TargetType="Icon:PackIconMaterial">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding ElementName=usersEmail, Path=IsEnabled}" Value="False">
+                    <Setter Property="Foreground" Value="Gray"/>
+                </DataTrigger>
+                <DataTrigger Binding="{Binding ElementName=usersEmail, Path=IsEnabled}" Value="True">
+                    <Setter Property="Foreground" Value="Blue"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="inviteToGroupChatStyle" TargetType="Icon:PackIconMaterial">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding ElementName=inviteToGroupChat, Path=IsEnabled}" Value="False">
+                    <Setter Property="Foreground" Value="Gray"/>
+                </DataTrigger>
+                <DataTrigger Binding="{Binding ElementName=inviteToGroupChat, Path=IsEnabled}" Value="True">
+                    <Setter Property="Foreground" Value="Green"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+
+        <!-- endregion -->
+        
         <Style x:Key="leftSideButton" TargetType="Button">
             <Setter Property="Background" Value="Transparent"/>
             <Setter Property="Foreground" Value="White"/>
@@ -35,6 +124,7 @@
         </Style>
 
         <!-- region ComboBox Style -->
+            
         <SolidColorBrush x:Key="TextBox.Static.Background" Color="#FFFFFFFF"/>
         
         <LinearGradientBrush x:Key="ComboBox.Static.Background" EndPoint="0,1" StartPoint="0,0">
