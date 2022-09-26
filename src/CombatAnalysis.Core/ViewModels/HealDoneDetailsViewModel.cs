@@ -1,14 +1,14 @@
 ﻿using AutoMapper;
 using CombatAnalysis.CombatParser.Entities;
 using CombatAnalysis.CombatParser.Extensions;
-using CombatAnalysis.CombatParser.Services;
-using CombatAnalysis.Core.Commands;
+using CombatAnalysis.CombatParser.Patterns;
+using CombatAnalysis.Core.Consts;
 using CombatAnalysis.Core.Core;
 using CombatAnalysis.Core.Interfaces;
 using CombatAnalysis.Core.Models;
 using CombatAnalysis.Core.Services;
+using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
-using MvvmCross.Navigation;
 using MvvmCross.ViewModels;
 using System;
 using System.Collections.ObjectModel;
@@ -19,14 +19,12 @@ namespace CombatAnalysis.Core.ViewModels
 {
     public class HealDoneDetailsViewModel : MvxViewModel<Tuple<int, CombatModel>>
     {
-        private readonly IMvxNavigationService _mvvmNavigation;
-        private readonly IViewModelConnect _handler;
         private readonly IMapper _mapper;
         private readonly ILogger _logger;
         private readonly CombatParserAPIService _combatParserAPIService;
         private readonly PowerUpInCombat<HealDoneModel> _powerUpInCombat;
 
-        private MvxViewModel _basicTemplate;
+        private IImprovedMvxViewModel _basicTemplate;
         private ObservableCollection<HealDoneModel> _healDoneInformations;
         private ObservableCollection<HealDoneModel> _healDoneInformationsWithOverheal;
         private ObservableCollection<HealDoneGeneralModel> _healDoneGeneralInformations;
@@ -40,23 +38,20 @@ namespace CombatAnalysis.Core.ViewModels
         private bool _isCollectionReversed;
         private long _totalValue;
 
-        public HealDoneDetailsViewModel(IMapper mapper, IMvxNavigationService mvvmNavigation, IHttpClientHelper httpClient, ILogger logger)
+        public HealDoneDetailsViewModel(IMapper mapper, IHttpClientHelper httpClient, ILogger logger, IMemoryCache memoryCache)
         {
             _mapper = mapper;
-            _mvvmNavigation = mvvmNavigation;
             _logger = logger;
 
-            _combatParserAPIService = new CombatParserAPIService(httpClient);
-
-            _handler = new ViewModelMConnect();
-            BasicTemplate = new BasicTemplateViewModel(this, _handler, _mvvmNavigation);
-
-            _handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, "Step", 4);
-
+            _combatParserAPIService = new CombatParserAPIService(httpClient, logger, memoryCache);
             _powerUpInCombat = new PowerUpInCombat<HealDoneModel>(_healDoneInformationsWithOverheal);
+
+            BasicTemplate = Templates.Basic;
+            BasicTemplate.Parent = this;
+            BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, "Step", 4);
         }
 
-        public MvxViewModel BasicTemplate
+        public IImprovedMvxViewModel BasicTemplate
         {
             get { return _basicTemplate; }
             set
@@ -201,7 +196,7 @@ namespace CombatAnalysis.Core.ViewModels
             }
             else
             {
-                var combatInformation = new CombatDetailsService(_logger);
+                CombatDetailsTemplate combatInformation = new CombatDetailsHealDone(_logger);
                 var map = _mapper.Map<Combat>(combat);
 
                 GetHealDoneDetails(combatInformation, SelectedPlayer, map);
@@ -209,10 +204,9 @@ namespace CombatAnalysis.Core.ViewModels
             }
         }
 
-        private void GetHealDoneDetails(CombatDetailsService combatInformation, string player, Combat combat)
+        private void GetHealDoneDetails(CombatDetailsTemplate combatInformation, string player, Combat combat)
         {
-            combatInformation.Initialization(combat, player);
-            combatInformation.GetHealDone();
+            combatInformation.GetData(player, combat.Data);
 
             var map1 = _mapper.Map<ObservableCollection<HealDoneModel>>(combatInformation.HealDone);
 
@@ -220,7 +214,7 @@ namespace CombatAnalysis.Core.ViewModels
             _healDoneInformationsWithOverheal = new ObservableCollection<HealDoneModel>(map1);
         }
 
-        private void GetHealDoneGeneral(CombatDetailsService combatInformation, Combat combat)
+        private void GetHealDoneGeneral(CombatDetailsTemplate combatInformation, Combat combat)
         {
             var damageDoneGeneralInformations = combatInformation.GetHealDoneGeneral(combatInformation.HealDone, combat);
             var map2 = _mapper.Map<ObservableCollection<HealDoneGeneralModel>>(damageDoneGeneralInformations);

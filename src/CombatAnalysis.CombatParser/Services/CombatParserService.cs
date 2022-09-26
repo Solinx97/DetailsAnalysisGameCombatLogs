@@ -1,5 +1,7 @@
 ﻿using CombatAnalysis.CombatParser.Entities;
 using CombatAnalysis.CombatParser.Interfaces;
+using CombatAnalysis.CombatParser.Patterns;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -11,13 +13,13 @@ namespace CombatAnalysis.CombatParser.Services
     {
         private readonly IList<IObserver> _observers;
         private readonly IList<PlaceInformation> _zones;
-        private readonly ICombatDetails _combatDetails;
         private readonly IFileManager _fileManager;
+        private readonly ILogger _logger;
 
-        public CombatParserService(ICombatDetails combatDetails, IFileManager fileManager)
+        public CombatParserService(IFileManager fileManager, ILogger logger)
         {
-            _combatDetails = combatDetails;
             _fileManager = fileManager;
+            _logger = logger;
 
             Combats = new List<Combat>();
             _observers = new List<IObserver>();
@@ -73,7 +75,9 @@ namespace CombatAnalysis.CombatParser.Services
                 };
 
                 GetCombatPlayersData(combat);
-                combat.DeathNumber = _combatDetails.GetDeathsNumber();
+
+                CombatDetailsTemplate combatDetailsDeaths = new CombatDetailsDeaths(_logger, combat.Players);
+                combat.DeathNumber = combatDetailsDeaths.GetData(string.Empty, combat.Data);
 
                 CalculatingCommonCombatDetails(combat);
 
@@ -134,19 +138,24 @@ namespace CombatAnalysis.CombatParser.Services
 
         private void GetCombatPlayersData(Combat combat)
         {
-            var combatPlayerDataCollection = new List<CombatPlayerData>();
+            var combatPlayerDataCollection = new List<CombatPlayer>();
 
             var players = GetCombatPlayers(combat.Data);
             foreach (var item in players)
             {
-                _combatDetails.Initialization(combat, item);
-                var combatPlayerData = new CombatPlayerData
+                CombatDetailsTemplate combatDetailsDamageDone = new CombatDetailsDamageDone(_logger);
+                CombatDetailsTemplate combatDetailsHealDone = new CombatDetailsHealDone(_logger);
+                CombatDetailsTemplate combatDetailsDamageTaken = new CombatDetailsDamageTaken(_logger);
+                CombatDetailsTemplate combatDetailsResourceRecovery = new CombatDetailsResourceRecovery(_logger);
+                var test = combatDetailsResourceRecovery.GetData(item, combat.Data);
+
+                var combatPlayerData = new CombatPlayer
                 {
                     UserName = item,
-                    EnergyRecovery = _combatDetails.GetResourceRecovery(),
-                    DamageDone = _combatDetails.GetDamageDone(),
-                    HealDone = _combatDetails.GetHealDone(),
-                    DamageTaken = _combatDetails.GetDamageTaken(),
+                    EnergyRecovery = combatDetailsResourceRecovery.GetData(item, combat.Data),
+                    DamageDone = combatDetailsDamageDone.GetData(item, combat.Data),
+                    HealDone = combatDetailsHealDone.GetData(item, combat.Data),
+                    DamageTaken = combatDetailsDamageTaken.GetData(item, combat.Data),
                 };
 
                 combatPlayerDataCollection.Add(combatPlayerData);

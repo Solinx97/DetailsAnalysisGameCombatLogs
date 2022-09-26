@@ -1,71 +1,46 @@
 ﻿using AutoMapper;
 using CombatAnalysis.BL.DTO;
-using CombatAnalysis.BL.Exceptions;
 using CombatAnalysis.BL.Interfaces;
 using CombatAnalysis.DAL.Entities;
-using CombatAnalysis.DAL.Helpers;
 using CombatAnalysis.DAL.Interfaces;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace CombatAnalysis.BL.Services
 {
-    internal class DamageTakenGeneralService : IService<DamageTakenGeneralDto>
+    internal class DamageTakenGeneralService : IService<DamageTakenGeneralDto, int>
     {
-        private readonly IGenericRepository<DamageTakenGeneral> _repository;
+        private readonly IGenericRepository<DamageTakenGeneral, int> _repository;
         private readonly IMapper _mapper;
 
-        public DamageTakenGeneralService(IGenericRepository<DamageTakenGeneral> userRepository, IMapper mapper)
+        public DamageTakenGeneralService(IGenericRepository<DamageTakenGeneral, int> repository, IMapper mapper)
         {
-            _repository = userRepository;
+            _repository = repository;
             _mapper = mapper;
         }
 
-        Task<int> IService<DamageTakenGeneralDto>.CreateAsync(DamageTakenGeneralDto item)
+        Task<DamageTakenGeneralDto> IService<DamageTakenGeneralDto, int>.CreateAsync(DamageTakenGeneralDto item)
         {
             if (item == null)
             {
-                throw new ArgumentNullException(nameof(item));
+                throw new ArgumentNullException(nameof(DamageTakenGeneralDto), $"The {nameof(DamageTakenGeneralDto)} can't be null");
             }
 
             return CreateInternalAsync(item);
         }
 
-        async Task<int> IService<DamageTakenGeneralDto>.CreateByProcedureAsync(DamageTakenGeneralDto item)
-        {
-            var paramNames = new string[] { nameof(item.Value), nameof(item.DamageTakenPerSecond), nameof(item.SpellOrItem),
-                nameof(item.CritNumber), nameof(item.MissNumber), nameof(item.CastNumber), nameof(item.MinValue),
-                nameof(item.MaxValue), nameof(item.AverageValue), nameof(item.CombatPlayerDataId) };
-            var paramValues = new object[] { item.Value, item.DamageTakenPerSecond, item.SpellOrItem,
-                item.CritNumber, item.MissNumber, item.CastNumber, item.MinValue,
-                item.MaxValue, item.AverageValue, item.CombatPlayerDataId };
-
-            var response = await _repository.ExecuteStoredProcedureAsync(DbProcedureHelper.InsertIntoDamageTakenGeneral, paramNames, paramValues);
-            return response;
-        }
-
-        Task<int> IService<DamageTakenGeneralDto>.DeleteAsync(DamageTakenGeneralDto item)
+        Task<int> IService<DamageTakenGeneralDto, int>.DeleteAsync(DamageTakenGeneralDto item)
         {
             if (item == null)
             {
-                throw new ArgumentNullException(nameof(item));
+                throw new ArgumentNullException(nameof(DamageTakenGeneralDto), $"The {nameof(DamageTakenGeneralDto)} can't be null");
             }
 
             return DeleteInternalAsync(item);
         }
 
-        async Task<int> IService<DamageTakenGeneralDto>.DeleteByProcedureAsync(int combatPlayerId)
-        {
-            var paramNames = new string[] { nameof(combatPlayerId) };
-            var paramValues = new object[] { combatPlayerId };
-
-            var response = await _repository.ExecuteStoredProcedureAsync(DbProcedureHelper.DeleteDamageTakenGeneral, paramNames, paramValues);
-            return response;
-        }
-
-        async Task<IEnumerable<DamageTakenGeneralDto>> IService<DamageTakenGeneralDto>.GetAllAsync()
+        async Task<IEnumerable<DamageTakenGeneralDto>> IService<DamageTakenGeneralDto, int>.GetAllAsync()
         {
             var allData = await _repository.GetAllAsync();
             var result = _mapper.Map<List<DamageTakenGeneralDto>>(allData);
@@ -73,65 +48,73 @@ namespace CombatAnalysis.BL.Services
             return result;
         }
 
-        async Task<IEnumerable<DamageTakenGeneralDto>> IService<DamageTakenGeneralDto>.GetByProcedureAsync(int combatPlayerId)
+        async Task<DamageTakenGeneralDto> IService<DamageTakenGeneralDto, int>.GetByIdAsync(int id)
         {
-            var paramNames = new string[] { nameof(combatPlayerId) };
-            var paramValues = new object[] { combatPlayerId };
+            var result = await _repository.GetByIdAsync(id);
+            var resultMap = _mapper.Map<DamageTakenGeneralDto>(result);
 
-            var data = await _repository.ExecuteStoredProcedureUseModelAsync(DbProcedureHelper.GetDamageTakenGeneral, paramNames, paramValues);
-            var result = _mapper.Map<IEnumerable<DamageTakenGeneralDto>>(data);
-
-            return result;
+            return resultMap;
         }
 
-        async Task<DamageTakenGeneralDto> IService<DamageTakenGeneralDto>.GetByIdAsync(int id)
+        async Task<IEnumerable<DamageTakenGeneralDto>> IService<DamageTakenGeneralDto, int>.GetByParamAsync(string paramName, object value)
         {
-            var executeLoad = await _repository.GetByIdAsync(id);
-            var result = _mapper.Map<DamageTakenGeneralDto>(executeLoad);
+            var result = await Task.Run(() => _repository.GetByParam(paramName, value));
+            var resultMap = _mapper.Map<IEnumerable<DamageTakenGeneralDto>>(result);
 
-            return result;
+            return resultMap;
         }
 
-        Task<int> IService<DamageTakenGeneralDto>.UpdateAsync(DamageTakenGeneralDto item)
+        Task<int> IService<DamageTakenGeneralDto, int>.UpdateAsync(DamageTakenGeneralDto item)
         {
             if (item == null)
             {
-                throw new ArgumentNullException(nameof(item));
+                throw new ArgumentNullException(nameof(DamageTakenGeneralDto), $"The {nameof(DamageTakenGeneralDto)} can't be null");
             }
 
             return UpdateInternalAsync(item);
         }
 
-        private async Task<int> CreateInternalAsync(DamageTakenGeneralDto item)
+        private async Task<DamageTakenGeneralDto> CreateInternalAsync(DamageTakenGeneralDto item)
         {
-            var map = _mapper.Map<DamageTakenGeneral>(item);
-            var createdCombatId = await _repository.CreateAsync(map);
+            if (string.IsNullOrEmpty(item.SpellOrItem))
+            {
+                throw new ArgumentNullException(nameof(DamageTakenGeneralDto), 
+                    $"The property {nameof(DamageTakenGeneralDto.SpellOrItem)} of the {nameof(DamageTakenGeneralDto)} object can't be null or empty");
+            }
 
-            return createdCombatId;
+            var map = _mapper.Map<DamageTakenGeneral>(item);
+            var createdItem = await _repository.CreateAsync(map);
+            var resultMap = _mapper.Map<DamageTakenGeneralDto>(createdItem);
+
+            return resultMap;
         }
 
         private async Task<int> DeleteInternalAsync(DamageTakenGeneralDto item)
         {
-            var allData = await _repository.GetAllAsync();
-            if (!allData.Any())
+            if (string.IsNullOrEmpty(item.SpellOrItem))
             {
-                throw new NotFoundException($"Collection entity {nameof(DamageTakenGeneralDto)} not found", nameof(allData));
+                throw new ArgumentNullException(nameof(DamageTakenGeneralDto), 
+                    $"The property {nameof(DamageTakenGeneralDto.SpellOrItem)} of the {nameof(DamageTakenGeneralDto)} object can't be null or empty");
             }
 
-            var numberEntries = await _repository.DeleteAsync(_mapper.Map<DamageTakenGeneral>(item));
-            return numberEntries;
+            var map = _mapper.Map<DamageTakenGeneral>(item);
+            var rowsAffected = await _repository.DeleteAsync(map);
+
+            return rowsAffected;
         }
 
         private async Task<int> UpdateInternalAsync(DamageTakenGeneralDto item)
         {
-            var allData = await _repository.GetAllAsync();
-            if (!allData.Any())
+            if (string.IsNullOrEmpty(item.SpellOrItem))
             {
-                throw new NotFoundException($"Collection entity {nameof(DamageTakenGeneralDto)} not found", nameof(allData));
+                throw new ArgumentNullException(nameof(DamageTakenGeneralDto),
+                    $"The property {nameof(DamageTakenGeneralDto.SpellOrItem)} of the {nameof(DamageTakenGeneralDto)} object can't be null or empty");
             }
 
-            var numberEntries = await _repository.UpdateAsync(_mapper.Map<DamageTakenGeneral>(item));
-            return numberEntries;
+            var map = _mapper.Map<DamageTakenGeneral>(item);
+            var rowsAffected = await _repository.UpdateAsync(map);
+
+            return rowsAffected;
         }
     }
 }

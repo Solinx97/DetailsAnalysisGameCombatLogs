@@ -10,7 +10,7 @@ namespace CombatAnalysis.BL.DTO
 
         public string Name { get; set; }
 
-        public double EnergyRecovery { get; set; }
+        public int EnergyRecovery { get; set; }
 
         public int DamageDone { get; set; }
 

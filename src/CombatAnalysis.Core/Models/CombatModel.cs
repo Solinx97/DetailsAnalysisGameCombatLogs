@@ -13,7 +13,7 @@ namespace CombatAnalysis.Core.Models
 
         public List<string> Data { get; set; }
 
-        public double EnergyRecovery { get; set; }
+        public int EnergyRecovery { get; set; }
 
         public long DamageDone { get; set; }
 
@@ -31,7 +31,7 @@ namespace CombatAnalysis.Core.Models
 
         public DateTimeOffset FinishDate { get; set; }
 
-        public List<CombatPlayerDataModel> Players { get; set; }
+        public List<CombatPlayerModel> Players { get; set; }
 
         public string Duration
         {

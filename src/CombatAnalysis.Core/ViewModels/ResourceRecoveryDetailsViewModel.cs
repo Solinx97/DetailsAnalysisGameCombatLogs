@@ -1,13 +1,13 @@
 ﻿using AutoMapper;
 using CombatAnalysis.CombatParser.Entities;
 using CombatAnalysis.CombatParser.Extensions;
-using CombatAnalysis.CombatParser.Services;
-using CombatAnalysis.Core.Commands;
+using CombatAnalysis.CombatParser.Patterns;
+using CombatAnalysis.Core.Consts;
 using CombatAnalysis.Core.Interfaces;
 using CombatAnalysis.Core.Models;
 using CombatAnalysis.Core.Services;
+using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
-using MvvmCross.Navigation;
 using MvvmCross.ViewModels;
 using System;
 using System.Collections.ObjectModel;
@@ -18,13 +18,11 @@ namespace CombatAnalysis.Core.ViewModels
 {
     public class ResourceRecoveryDetailsViewModel : MvxViewModel<Tuple<int, CombatModel>>
     {
-        private readonly IMvxNavigationService _mvvmNavigation;
-        private readonly IViewModelConnect _handler;
         private readonly IMapper _mapper;
         private readonly ILogger _logger;
         private readonly CombatParserAPIService _combatParserAPIService;
 
-        private MvxViewModel _basicTemplate;
+        private IImprovedMvxViewModel _basicTemplate;
         private ObservableCollection<ResourceRecoveryModel> _resourceRecoveryInformations;
         private ObservableCollection<ResourceRecoveryGeneralModel> _resourceRecoveryGeneralInformations;
 
@@ -33,21 +31,19 @@ namespace CombatAnalysis.Core.ViewModels
         private bool _isCollectionReversed;
         private double _totalValue;
 
-        public ResourceRecoveryDetailsViewModel(IMapper mapper, IMvxNavigationService mvvmNavigation, IHttpClientHelper httpClient, ILogger logger)
+        public ResourceRecoveryDetailsViewModel(IMapper mapper, IHttpClientHelper httpClient, ILogger logger, IMemoryCache memoryCache)
         {
             _mapper = mapper;
-            _mvvmNavigation = mvvmNavigation;
             _logger = logger;
 
-            _combatParserAPIService = new CombatParserAPIService(httpClient);
+            _combatParserAPIService = new CombatParserAPIService(httpClient, logger, memoryCache);
 
-            _handler = new ViewModelMConnect();
-            BasicTemplate = new BasicTemplateViewModel(this, _handler, _mvvmNavigation);
-
-            _handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, "Step", 6);
+            BasicTemplate = Templates.Basic;
+            BasicTemplate.Parent = this;
+            BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, "Step", 6);
         }
 
-        public MvxViewModel BasicTemplate
+        public IImprovedMvxViewModel BasicTemplate
         {
             get { return _basicTemplate; }
             set
@@ -123,7 +119,7 @@ namespace CombatAnalysis.Core.ViewModels
             var combat = parameter.Item2;
             var player = combat.Players[parameter.Item1];
             SelectedPlayer = player.UserName;
-            TotalValue = player.HealDone;
+            TotalValue = player.EnergyRecovery;
 
             if (player.Id > 0)
             {
@@ -132,7 +128,7 @@ namespace CombatAnalysis.Core.ViewModels
             }
             else
             {
-                var combatInformation = new CombatDetailsService(_logger);
+                CombatDetailsTemplate combatInformation = new CombatDetailsResourceRecovery(_logger);
                 var map = _mapper.Map<Combat>(combat);
 
                 GetResourceRecoveryDetails(combatInformation, SelectedPlayer, map);
@@ -140,10 +136,9 @@ namespace CombatAnalysis.Core.ViewModels
             }
         }
 
-        private void GetResourceRecoveryDetails(CombatDetailsService combatInformation, string player, Combat combat)
+        private void GetResourceRecoveryDetails(CombatDetailsTemplate combatInformation, string player, Combat combat)
         {
-            combatInformation.Initialization(combat, player);
-            combatInformation.GetResourceRecovery();
+            combatInformation.GetData(player, combat.Data);
 
             var map1 = _mapper.Map<ObservableCollection<ResourceRecoveryModel>>(combatInformation.ResourceRecovery);
 
@@ -151,9 +146,9 @@ namespace CombatAnalysis.Core.ViewModels
             _resourceRecoveryInformations = new ObservableCollection<ResourceRecoveryModel>(map1);
         }
 
-        private void GetResourceRecoveryGeneral(CombatDetailsService combatInformation, Combat combat)
+        private void GetResourceRecoveryGeneral(CombatDetailsTemplate combatInformation, Combat combat)
         {
-            var damageDoneGeneralInformations = combatInformation.GetDamageTakenGeneral(combatInformation.DamageTaken, combat);
+            var damageDoneGeneralInformations = combatInformation.GetResourceRecoveryGeneral(combatInformation.ResourceRecovery, combat);
             var map2 = _mapper.Map<ObservableCollection<ResourceRecoveryGeneralModel>>(damageDoneGeneralInformations);
             ResourceRecoveryGeneralInformations = map2;
         }

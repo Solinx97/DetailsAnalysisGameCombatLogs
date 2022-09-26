@@ -1,41 +1,54 @@
-﻿using CombatAnalysis.Core.Commands;
+﻿using CombatAnalysis.Core.Consts;
+using CombatAnalysis.Core.Enums;
 using CombatAnalysis.Core.Interfaces;
+using CombatAnalysis.Core.Interfaces.Observers;
 using CombatAnalysis.Core.Models;
+using CombatAnalysis.Core.Services;
+using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Logging;
 using MvvmCross.Commands;
 using MvvmCross.Navigation;
 using MvvmCross.ViewModels;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace CombatAnalysis.Core.ViewModels
 {
-    public class GeneralAnalysisViewModel : MvxViewModel<List<CombatModel>>
+    public class GeneralAnalysisViewModel : MvxViewModel<Tuple<List<CombatModel>, LogType>>, IResponseStatusObserver
     {
         private readonly IMvxNavigationService _mvvmNavigation;
-        private readonly IViewModelConnect _handler;
+        private readonly CombatParserAPIService _combatParserAPIService;
 
-        private MvxViewModel _basicTemplate;
+        private IImprovedMvxViewModel _basicTemplate;
         private List<CombatModel> _combats;
         private int _combatIndex;
-        private string _combatStatus = "Победа";
+        private ResponseStatus _status;
+        private LogType _logType;
 
-        public GeneralAnalysisViewModel(IMvxNavigationService mvvmNavigation)
+        public GeneralAnalysisViewModel(IMvxNavigationService mvvmNavigation, IHttpClientHelper httpClient, ILogger logger, IMemoryCache memoryCache)
         {
             _mvvmNavigation = mvvmNavigation;
 
             _combats = new List<CombatModel>();
+            _combatParserAPIService = new CombatParserAPIService(httpClient, logger, memoryCache);
 
             ShowDetailsCommand = new MvxCommand(ShowDetails);
+            RepeatSaveCommand = new MvxCommand(RepeatSaveCombatDataDetails);
 
-            _handler = new ViewModelMConnect();
-            BasicTemplate = new BasicTemplateViewModel(this, _handler, mvvmNavigation);
+            BasicTemplate = Templates.Basic;
+            BasicTemplate.Parent = this;
+            BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, "Step", 1);
 
-            _handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, "Step", 1);
+            var responseStatusObservable = (IResponseStatusObservable)BasicTemplate;
+            responseStatusObservable.AddObserver(this);
         }
 
         public IMvxCommand ShowDetailsCommand { get; set; }
 
-        public MvxViewModel BasicTemplate
+        public IMvxCommand RepeatSaveCommand { get; set; }
+
+        public IImprovedMvxViewModel BasicTemplate
         {
             get { return _basicTemplate; }
             set
@@ -62,23 +75,54 @@ namespace CombatAnalysis.Core.ViewModels
             }
         }
 
-        public string CombatStatus
+        public ResponseStatus ResponseStatus
         {
-            get { return _combatStatus; }
+            get { return _status; }
             set
             {
-                SetProperty(ref _combatStatus, value);
+                SetProperty(ref _status, value);
             }
         }
 
-        public override void Prepare(List<CombatModel> parameter)
+        public override void Prepare(Tuple<List<CombatModel>, LogType> parameter)
         {
-            Combats = parameter;
+            if (parameter != null)
+            {
+                Combats = parameter.Item1;
+                _logType = parameter.Item2;
+            }
+        }
+
+        public override void ViewDestroy(bool viewFinishing = true)
+        {
+            ((BasicTemplateViewModel)Templates.Basic).Combats = Combats;
+
+            base.ViewDestroy(viewFinishing);
         }
 
         public void ShowDetails()
         {
+            BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, "TargetCombat", Combats[CombatIndex]);
+
+            Task.Run(() => _mvvmNavigation.Close(this));
             Task.Run(() => _mvvmNavigation.Navigate<DetailsSpecificalCombatViewModel, CombatModel>(Combats[CombatIndex]));
+        }
+
+        public void RepeatSaveCombatDataDetails()
+        {
+            BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, "ResponseStatus", ResponseStatus.Pending);
+
+            Task.Run(async () =>
+            {
+                var responseStatus = await _combatParserAPIService.Save(Combats, _logType) ? ResponseStatus.Successful : ResponseStatus.Failed;
+
+                BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, "ResponseStatus", responseStatus);
+            });
+        }
+
+        public void Update(ResponseStatus status)
+        {
+            ResponseStatus = status;
         }
     }
 }

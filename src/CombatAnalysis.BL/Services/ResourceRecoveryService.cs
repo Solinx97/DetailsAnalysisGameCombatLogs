@@ -1,67 +1,46 @@
 ﻿using AutoMapper;
 using CombatAnalysis.BL.DTO;
-using CombatAnalysis.BL.Exceptions;
 using CombatAnalysis.BL.Interfaces;
 using CombatAnalysis.DAL.Entities;
-using CombatAnalysis.DAL.Helpers;
 using CombatAnalysis.DAL.Interfaces;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace CombatAnalysis.BL.Services
 {
-    internal class ResourceRecoveryService : IService<ResourceRecoveryDto>
+    internal class ResourceRecoveryService : IService<ResourceRecoveryDto, int>
     {
-        private readonly IGenericRepository<ResourceRecovery> _repository;
+        private readonly IGenericRepository<ResourceRecovery, int> _repository;
         private readonly IMapper _mapper;
 
-        public ResourceRecoveryService(IGenericRepository<ResourceRecovery> userRepository, IMapper mapper)
+        public ResourceRecoveryService(IGenericRepository<ResourceRecovery, int> repository, IMapper mapper)
         {
-            _repository = userRepository;
+            _repository = repository;
             _mapper = mapper;
         }
 
-        Task<int> IService<ResourceRecoveryDto>.CreateAsync(ResourceRecoveryDto item)
+        Task<ResourceRecoveryDto> IService<ResourceRecoveryDto, int>.CreateAsync(ResourceRecoveryDto item)
         {
             if (item == null)
             {
-                throw new ArgumentNullException(nameof(item));
+                throw new ArgumentNullException(nameof(ResourceRecoveryDto), $"The {nameof(ResourceRecoveryDto)} can't be null");
             }
 
             return CreateInternalAsync(item);
         }
 
-        async Task<int> IService<ResourceRecoveryDto>.CreateByProcedureAsync(ResourceRecoveryDto item)
-        {
-            var paramNames = new string[] { nameof(item.Value), nameof(item.Time), nameof(item.SpellOrItem), nameof(item.CombatPlayerDataId) };
-            var paramValues = new object[] { item.Value, item.Time, item.SpellOrItem, item.CombatPlayerDataId };
-
-            var response = await _repository.ExecuteStoredProcedureAsync(DbProcedureHelper.InsertIntoResourceRecovery, paramNames, paramValues);
-            return response;
-        }
-
-        Task<int> IService<ResourceRecoveryDto>.DeleteAsync(ResourceRecoveryDto item)
+        Task<int> IService<ResourceRecoveryDto, int>.DeleteAsync(ResourceRecoveryDto item)
         {
             if (item == null)
             {
-                throw new ArgumentNullException(nameof(item));
+                throw new ArgumentNullException(nameof(ResourceRecoveryDto), $"The {nameof(ResourceRecoveryDto)} can't be null");
             }
 
             return DeleteInternalAsync(item);
         }
 
-        async Task<int> IService<ResourceRecoveryDto>.DeleteByProcedureAsync(int combatPlayerId)
-        {
-            var paramNames = new string[] { nameof(combatPlayerId) };
-            var paramValues = new object[] { combatPlayerId };
-
-            var response = await _repository.ExecuteStoredProcedureAsync(DbProcedureHelper.DeleteResourceRecovery, paramNames, paramValues);
-            return response;
-        }
-
-        async Task<IEnumerable<ResourceRecoveryDto>> IService<ResourceRecoveryDto>.GetAllAsync()
+        async Task<IEnumerable<ResourceRecoveryDto>> IService<ResourceRecoveryDto, int>.GetAllAsync()
         {
             var allData = await _repository.GetAllAsync();
             var result = _mapper.Map<List<ResourceRecoveryDto>>(allData);
@@ -69,65 +48,73 @@ namespace CombatAnalysis.BL.Services
             return result;
         }
 
-        async Task<IEnumerable<ResourceRecoveryDto>> IService<ResourceRecoveryDto>.GetByProcedureAsync(int combatPlayerId)
+        async Task<ResourceRecoveryDto> IService<ResourceRecoveryDto, int>.GetByIdAsync(int id)
         {
-            var paramNames = new string[] { nameof( combatPlayerId) };
-            var paramValues = new object[] { combatPlayerId };
+            var result = await _repository.GetByIdAsync(id);
+            var resultMap = _mapper.Map<ResourceRecoveryDto>(result);
 
-            var data = await _repository.ExecuteStoredProcedureUseModelAsync(DbProcedureHelper.GetResourceRecovery, paramNames, paramValues);
-            var result = _mapper.Map<IEnumerable<ResourceRecoveryDto>>(data);
-
-            return result;
+            return resultMap;
         }
 
-        async Task<ResourceRecoveryDto> IService<ResourceRecoveryDto>.GetByIdAsync(int id)
+        async Task<IEnumerable<ResourceRecoveryDto>> IService<ResourceRecoveryDto, int>.GetByParamAsync(string paramName, object value)
         {
-            var executeLoad = await _repository.GetByIdAsync(id);
-            var result = _mapper.Map<ResourceRecoveryDto>(executeLoad);
+            var result = await Task.Run(() => _repository.GetByParam(paramName, value));
+            var resultMap = _mapper.Map<IEnumerable<ResourceRecoveryDto>>(result);
 
-            return result;
+            return resultMap;
         }
 
-        Task<int> IService<ResourceRecoveryDto>.UpdateAsync(ResourceRecoveryDto item)
+        Task<int> IService<ResourceRecoveryDto, int>.UpdateAsync(ResourceRecoveryDto item)
         {
             if (item == null)
             {
-                throw new ArgumentNullException(nameof(item));
+                throw new ArgumentNullException(nameof(ResourceRecoveryDto), $"The {nameof(ResourceRecoveryDto)} can't be null");
             }
 
             return UpdateInternalAsync(item);
         }
 
-        private async Task<int> CreateInternalAsync(ResourceRecoveryDto item)
+        private async Task<ResourceRecoveryDto> CreateInternalAsync(ResourceRecoveryDto item)
         {
-            var map = _mapper.Map<ResourceRecovery>(item);
-            var createdCombatId = await _repository.CreateAsync(map);
+            if (string.IsNullOrEmpty(item.SpellOrItem))
+            {
+                throw new ArgumentNullException(nameof(ResourceRecoveryDto), 
+                    $"The property {nameof(ResourceRecoveryDto.SpellOrItem)} of the {nameof(ResourceRecoveryDto)} object can't be null or empty");
+            }
 
-            return createdCombatId;
+            var map = _mapper.Map<ResourceRecovery>(item);
+            var createdItem = await _repository.CreateAsync(map);
+            var resultMap = _mapper.Map<ResourceRecoveryDto>(createdItem);
+
+            return resultMap;
         }
 
         private async Task<int> DeleteInternalAsync(ResourceRecoveryDto item)
         {
-            var allData = await _repository.GetAllAsync();
-            if (!allData.Any())
+            if (string.IsNullOrEmpty(item.SpellOrItem))
             {
-                throw new NotFoundException($"Collection entity {nameof(ResourceRecoveryDto)} not found", nameof(allData));
+                throw new ArgumentNullException(nameof(ResourceRecoveryDto), 
+                    $"The property {nameof(ResourceRecoveryDto.SpellOrItem)} of the {nameof(ResourceRecoveryDto)} object can't be null or empty");
             }
 
-            var numberEntries = await _repository.DeleteAsync(_mapper.Map<ResourceRecovery>(item));
-            return numberEntries;
+            var map = _mapper.Map<ResourceRecovery>(item);
+            var rowsAffected = await _repository.DeleteAsync(map);
+
+            return rowsAffected;
         }
 
         private async Task<int> UpdateInternalAsync(ResourceRecoveryDto item)
         {
-            var allData = await _repository.GetAllAsync();
-            if (!allData.Any())
+            if (string.IsNullOrEmpty(item.SpellOrItem))
             {
-                throw new NotFoundException($"Collection entity {nameof(ResourceRecoveryDto)} not found", nameof(allData));
+                throw new ArgumentNullException(nameof(ResourceRecoveryDto), 
+                    $"The property {nameof(ResourceRecoveryDto.SpellOrItem)} of the {nameof(ResourceRecoveryDto)} object can't be null or empty");
             }
 
-            var numberEntries = await _repository.UpdateAsync(_mapper.Map<ResourceRecovery>(item));
-            return numberEntries;
+            var map = _mapper.Map<ResourceRecovery>(item);
+            var rowsAffected = await _repository.UpdateAsync(map);
+
+            return rowsAffected;
         }
     }
 }

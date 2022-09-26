@@ -1,6 +1,10 @@
 ﻿using CombatAnalysis.BL.DTO;
+using CombatAnalysis.BL.DTO.Chat;
+using CombatAnalysis.BL.DTO.User;
 using CombatAnalysis.BL.Interfaces;
 using CombatAnalysis.BL.Services;
+using CombatAnalysis.BL.Services.Chat;
+using CombatAnalysis.BL.Services.User;
 using CombatAnalysis.DAL.Extensions;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -13,17 +17,28 @@ namespace CombatAnalysis.BL.Extensions
         {
             services.RegisterDependenciesDAL(configuration, connectionName);
 
-            services.AddScoped<IService<CombatLogDto>, CombatLogService>();
-            services.AddScoped<IService<CombatDto>, CombatService>();
-            services.AddScoped<IService<CombatPlayerDataDto>, CombatPlayerService>();
-            services.AddScoped<IService<DamageDoneDto>, DamageDoneService>();
-            services.AddScoped<IService<DamageDoneGeneralDto>, DamageDoneGeneralService>();
-            services.AddScoped<IService<HealDoneDto>, HealDoneService>();
-            services.AddScoped<IService<HealDoneGeneralDto>, HealDoneGeneralService>();
-            services.AddScoped<IService<DamageTakenDto>, DamageTakenService>();
-            services.AddScoped<IService<DamageTakenGeneralDto>, DamageTakenGeneralService>();
-            services.AddScoped<IService<ResourceRecoveryDto>, ResourceRecoveryService>();
-            services.AddScoped<IService<ResourceRecoveryGeneralDto>, ResourceRecoveryGeneralService>();
+            services.AddScoped<IUserService<AppUserDto>, UserService>();
+
+            services.AddScoped<IService<PersonalChatDto, int>, PersonalChatService>();
+            services.AddScoped<IService<PersonalChatMessageDto, int>, PersonalChatMessageService>();
+            services.AddScoped<IService<InviteToGroupChatDto, int>, InviteToGroupChatService>();
+            services.AddScoped<IService<GroupChatDto, int>, GroupChatService>();
+            services.AddScoped<IService<GroupChatMessageDto, int>, GroupChatMessageService>();
+            services.AddScoped<IService<GroupChatUserDto, int>, GroupChatUserService>();
+            services.AddScoped<IService<BannedUserDto, int>, BannedUserService>();
+
+            services.AddScoped<IService<CombatLogDto, int>, CombatLogService>();
+            services.AddScoped<IService<CombatLogByUserDto, int>, CombatLogByUserService>();
+            services.AddScoped<IService<CombatDto, int>, CombatService>();
+            services.AddScoped<IService<CombatPlayerDto, int>, CombatPlayerService>();
+            services.AddScoped<IService<DamageDoneDto, int>, DamageDoneService>();
+            services.AddScoped<IService<DamageDoneGeneralDto, int>, DamageDoneGeneralService>();
+            services.AddScoped<IService<HealDoneDto, int>, HealDoneService>();
+            services.AddScoped<IService<HealDoneGeneralDto, int>, HealDoneGeneralService>();
+            services.AddScoped<IService<DamageTakenDto, int>, DamageTakenService>();
+            services.AddScoped<IService<DamageTakenGeneralDto, int>, DamageTakenGeneralService>();
+            services.AddScoped<IService<ResourceRecoveryDto, int>, ResourceRecoveryService>();
+            services.AddScoped<IService<ResourceRecoveryGeneralDto, int>, ResourceRecoveryGeneralService>();
         }
     }
 }

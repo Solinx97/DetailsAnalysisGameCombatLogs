@@ -1,135 +1,120 @@
 ﻿using AutoMapper;
 using CombatAnalysis.BL.DTO;
-using CombatAnalysis.BL.Exceptions;
 using CombatAnalysis.BL.Interfaces;
 using CombatAnalysis.DAL.Entities;
-using CombatAnalysis.DAL.Helpers;
 using CombatAnalysis.DAL.Interfaces;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace CombatAnalysis.BL.Services
 {
-    internal class CombatPlayerService : IService<CombatPlayerDataDto>
+    internal class CombatPlayerService : IService<CombatPlayerDto, int>
     {
-        private readonly IGenericRepository<CombatPlayerData> _repository;
+        private readonly IGenericRepository<CombatPlayer, int> _repository;
         private readonly IMapper _mapper;
 
-        public CombatPlayerService(IGenericRepository<CombatPlayerData> userRepository, IMapper mapper)
+        public CombatPlayerService(IGenericRepository<CombatPlayer, int> repository, IMapper mapper)
         {
-            _repository = userRepository;
+            _repository = repository;
             _mapper = mapper;
         }
 
-        Task<int> IService<CombatPlayerDataDto>.CreateAsync(CombatPlayerDataDto item)
+        Task<CombatPlayerDto> IService<CombatPlayerDto, int>.CreateAsync(CombatPlayerDto item)
         {
             if (item == null)
             {
-                throw new ArgumentNullException(nameof(item));
+                throw new ArgumentNullException(nameof(CombatPlayerDto), $"The {nameof(CombatPlayerDto)} can't be null");
             }
 
             return CreateInternalAsync(item);
         }
 
-        Task<int> IService<CombatPlayerDataDto>.DeleteAsync(CombatPlayerDataDto item)
+        Task<int> IService<CombatPlayerDto, int>.DeleteAsync(CombatPlayerDto item)
         {
             if (item == null)
             {
-                throw new ArgumentNullException(nameof(item));
+                throw new ArgumentNullException(nameof(CombatPlayerDto), $"The {nameof(CombatPlayerDto)} can't be null");
             }
 
             return DeleteInternalAsync(item);
         }
 
-        async Task<IEnumerable<CombatPlayerDataDto>> IService<CombatPlayerDataDto>.GetAllAsync()
+        async Task<IEnumerable<CombatPlayerDto>> IService<CombatPlayerDto, int>.GetAllAsync()
         {
             var allData = await _repository.GetAllAsync();
-            var result = _mapper.Map<List<CombatPlayerDataDto>>(allData);
+            var result = _mapper.Map<List<CombatPlayerDto>>(allData);
 
             return result;
         }
 
-        async Task<IEnumerable<CombatPlayerDataDto>> IService<CombatPlayerDataDto>.GetByProcedureAsync(int combatId)
+        async Task<CombatPlayerDto> IService<CombatPlayerDto, int>.GetByIdAsync(int id)
         {
-            var paramNames = new string[] { nameof(combatId) };
-            var paramValues = new object[] { combatId };
+            var result = await _repository.GetByIdAsync(id);
+            var resultMap = _mapper.Map<CombatPlayerDto>(result);
 
-            var data = await _repository.ExecuteStoredProcedureUseModelAsync(DbProcedureHelper.GetCombatPlayer, paramNames, paramValues);
-            var result = _mapper.Map<IEnumerable<CombatPlayerDataDto>>(data);
-
-            return result;
+            return resultMap;
         }
 
-        async Task<CombatPlayerDataDto> IService<CombatPlayerDataDto>.GetByIdAsync(int id)
+        async Task<IEnumerable<CombatPlayerDto>> IService<CombatPlayerDto, int>.GetByParamAsync(string paramName, object value)
         {
-            var executeLoad = await _repository.GetByIdAsync(id);
-            var result = _mapper.Map<CombatPlayerDataDto>(executeLoad);
+            var result = await Task.Run(() => _repository.GetByParam(paramName, value));
+            var resultMap = _mapper.Map<IEnumerable<CombatPlayerDto>>(result);
 
-            return result;
+            return resultMap;
         }
 
-        Task<int> IService<CombatPlayerDataDto>.UpdateAsync(CombatPlayerDataDto item)
+        Task<int> IService<CombatPlayerDto, int>.UpdateAsync(CombatPlayerDto item)
         {
             if (item == null)
             {
-                throw new ArgumentNullException(nameof(item));
+                throw new ArgumentNullException(nameof(CombatPlayerDto), $"The {nameof(CombatPlayerDto)} can't be null");
             }
 
             return UpdateInternalAsync(item);
         }
 
-        private async Task<int> CreateInternalAsync(CombatPlayerDataDto item)
+        private async Task<CombatPlayerDto> CreateInternalAsync(CombatPlayerDto item)
         {
             if (string.IsNullOrEmpty(item.UserName))
             {
-                throw new ArgumentNullException(nameof(item.UserName));
+                throw new ArgumentNullException(nameof(CombatPlayerDto),
+                    $"The property {nameof(CombatPlayerDto.UserName)} of the {nameof(CombatPlayerDto)} object can't be null or empty");
             }
 
-            var map = _mapper.Map<CombatPlayerData>(item);
-            var createdCombatId = await _repository.CreateAsync(map);
+            var map = _mapper.Map<CombatPlayer>(item);
+            var createdItem = await _repository.CreateAsync(map);
+            var resultMap = _mapper.Map<CombatPlayerDto>(createdItem);
 
-            return createdCombatId;
+            return resultMap;
         }
 
-        private async Task<int> DeleteInternalAsync(CombatPlayerDataDto item)
+        private async Task<int> DeleteInternalAsync(CombatPlayerDto item)
         {
-            var allData = await _repository.GetAllAsync();
-            if (!allData.Any())
-            {
-                throw new NotFoundException($"Collection entity {nameof(CombatPlayerDataDto)} not found", nameof(allData));
-            }
-
-            var numberEntries = await _repository.DeleteAsync(_mapper.Map<CombatPlayerData>(item));
-            return numberEntries;
-        }
-
-        private async Task<int> UpdateInternalAsync(CombatPlayerDataDto item)
-        {
-            var allData = await _repository.GetAllAsync();
-            if (!allData.Any())
-            {
-                throw new NotFoundException($"Collection entity {nameof(CombatPlayerDataDto)} not found", nameof(allData));
-            }
-
             if (string.IsNullOrEmpty(item.UserName))
             {
-                throw new ArgumentNullException(nameof(item.UserName));
+                throw new ArgumentNullException(nameof(CombatPlayerDto),
+                    $"The property {nameof(CombatPlayerDto.UserName)} of the {nameof(CombatPlayerDto)} object can't be null or empty");
             }
 
-            var numberEntries = await _repository.UpdateAsync(_mapper.Map<CombatPlayerData>(item));
-            return numberEntries;
+            var map = _mapper.Map<CombatPlayer>(item);
+            var rowsAffected = await _repository.DeleteAsync(map);
+
+            return rowsAffected;
         }
 
-        public Task<int> DeleteByProcedureAsync(int combatPlayerId)
+        private async Task<int> UpdateInternalAsync(CombatPlayerDto item)
         {
-            throw new NotImplementedException();
-        }
+            if (string.IsNullOrEmpty(item.UserName))
+            {
+                throw new ArgumentNullException(nameof(CombatPlayerDto),
+                    $"The property {nameof(CombatPlayerDto.UserName)} of the {nameof(CombatPlayerDto)} object can't be null or empty");
+            }
 
-        public Task<int> CreateByProcedureAsync(CombatPlayerDataDto item)
-        {
-            throw new NotImplementedException();
+            var map = _mapper.Map<CombatPlayer>(item);
+            var rowsAffected = await _repository.UpdateAsync(map);
+
+            return rowsAffected;
         }
     }
 }

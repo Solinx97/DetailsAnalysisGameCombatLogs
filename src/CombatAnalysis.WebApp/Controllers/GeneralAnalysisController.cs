@@ -1,4 +1,5 @@
-﻿using CombatAnalysis.WebApp.Interfaces;
+﻿using CombatAnalysis.WebApp.Consts;
+using CombatAnalysis.WebApp.Interfaces;
 using CombatAnalysis.WebApp.Models;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
@@ -16,12 +17,13 @@ namespace CombatAnalysis.WebApp.Controllers
         public GeneralAnalysisController(IHttpClientHelper httpClient)
         {
             _httpClient = httpClient;
+            _httpClient.BaseAddress = Port.CombatParserApi;
         }
 
-        [HttpGet]
-        public async Task<IEnumerable<CombatModel>> Get()
+        [HttpGet("{id}")]
+        public async Task<IEnumerable<CombatModel>> GetById(int id)
         {
-            var responseMessage = await _httpClient.GetAsync("Combat/FindByCombatLogId/1");
+            var responseMessage = await _httpClient.GetAsync($"Combat/FindByCombatLogId/{id}");
             var combats = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<CombatModel>>();
 
             return combats;

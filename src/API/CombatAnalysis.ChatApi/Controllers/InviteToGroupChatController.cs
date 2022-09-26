@@ -1,0 +1,97 @@
+﻿using AutoMapper;
+using CombatAnalysis.BL.DTO.Chat;
+using CombatAnalysis.BL.Interfaces;
+using CombatAnalysis.ChatApi.Models;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
+using System;
+using System.Threading.Tasks;
+
+namespace CombatAnalysis.ChatApi.Controllers
+{
+    [Route("[controller]")]
+    [ApiController]
+    public class InviteToGroupChatController : ControllerBase
+    {
+        private readonly IService<InviteToGroupChatDto, int> _service;
+        private readonly IMapper _mapper;
+        private readonly ILogger _logger;
+
+        public InviteToGroupChatController(IService<InviteToGroupChatDto, int> service, IMapper mapper, ILogger logger)
+        {
+            _service = service;
+            _mapper = mapper;
+            _logger = logger;
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetAll()
+        {
+            var result = await _service.GetAllAsync();
+
+            return Ok(result);
+        }
+
+        [HttpGet("{id:int:min(1)}")]
+        public async Task<IActionResult> GetById(int id)
+        {
+            var result = await _service.GetByIdAsync(id);
+
+            return Ok(result);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Create(InviteToGroupChatModel model)
+        {
+            try
+            {
+                var map = _mapper.Map<InviteToGroupChatDto>(model);
+                var result = await _service.CreateAsync(map);
+
+                return Ok(result);
+            }
+            catch (ArgumentNullException ex)
+            {
+                _logger.LogError(ex, ex.Message);
+
+                return BadRequest();
+            }
+        }
+
+        [HttpPut]
+        public async Task<IActionResult> Update(InviteToGroupChatModel model)
+        {
+            try
+            {
+                var map = _mapper.Map<InviteToGroupChatDto>(model);
+                var result = await _service.UpdateAsync(map);
+
+                return Ok(result);
+            }
+            catch (ArgumentNullException ex)
+            {
+                _logger.LogError(ex, ex.Message);
+
+                return BadRequest();
+            }
+        }
+
+        [HttpDelete]
+        public async Task<IActionResult> Delete(InviteToGroupChatModel model)
+        {
+            try
+            {
+                var map = _mapper.Map<InviteToGroupChatDto>(model);
+                var result = await _service.DeleteAsync(map);
+
+                return Ok(result);
+            }
+            catch (ArgumentNullException ex)
+            {
+                _logger.LogError(ex, ex.Message);
+
+                return BadRequest();
+            }
+        }
+    }
+}

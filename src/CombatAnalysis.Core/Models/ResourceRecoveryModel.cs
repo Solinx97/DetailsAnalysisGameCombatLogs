@@ -6,12 +6,12 @@ namespace CombatAnalysis.Core.Models
     {
         public int Id { get; set; }
 
-        public double Value { get; set; }
+        public int Value { get; set; }
 
         public TimeSpan Time { get; set; }
 
         public string SpellOrItem { get; set; }
 
-        public int CombatPlayerDataId { get; set; }
+        public int CombatPlayerId { get; set; }
     }
 }

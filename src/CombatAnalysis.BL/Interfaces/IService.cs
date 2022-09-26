@@ -3,23 +3,20 @@ using System.Threading.Tasks;
 
 namespace CombatAnalysis.BL.Interfaces
 {
-    public interface IService<TModel>
+    public interface IService<TModel, TIdType>
         where TModel : class
+        where TIdType : notnull
     {
-        Task<int> CreateAsync(TModel item);
-
-        Task<int> CreateByProcedureAsync(TModel item);
+        Task<TModel> CreateAsync(TModel item);
 
         Task<int> UpdateAsync(TModel item);
 
         Task<int> DeleteAsync(TModel item);
 
-        Task<int> DeleteByProcedureAsync(int combatPlayerId);
-
         Task<IEnumerable<TModel>> GetAllAsync();
 
-        Task<IEnumerable<TModel>> GetByProcedureAsync(int id);
+        Task<IEnumerable<TModel>> GetByParamAsync(string paramName, object value);
 
-        Task<TModel> GetByIdAsync(int id);
+        Task<TModel> GetByIdAsync(TIdType id);
     }
 }

@@ -3,21 +3,20 @@ using System.Threading.Tasks;
 
 namespace CombatAnalysis.DAL.Interfaces
 {
-    public interface IGenericRepository<TModel>
+    public interface IGenericRepository<TModel, TIdType>
         where TModel : class
+        where TIdType : notnull
     {
-        Task<int> CreateAsync(TModel item);
+        Task<TModel> CreateAsync(TModel item);
 
         Task<int> UpdateAsync(TModel item);
 
         Task<int> DeleteAsync(TModel item);
 
-        Task<TModel> GetByIdAsync(int id);
+        Task<TModel> GetByIdAsync(TIdType id);
+
+        IEnumerable<TModel> GetByParam(string paramName, object value);
 
         Task<IEnumerable<TModel>> GetAllAsync();
-
-        Task<IEnumerable<TModel>> ExecuteStoredProcedureUseModelAsync(string procedureName, string[] paramNames, object[] paramValuee);
-
-        Task<int> ExecuteStoredProcedureAsync(string procedureName, string[] paramNames, object[] paramValuee);
     }
 }
