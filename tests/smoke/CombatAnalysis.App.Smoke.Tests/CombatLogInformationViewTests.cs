@@ -25,6 +25,8 @@ namespace CombatAnalysis.App.Smoke.Tests
         [OneTimeSetUp]
         public void FixtureSetup()
         {
+            Deploy.Run();
+
             var baseDirectory = Directory.GetParent($"{AppContext.BaseDirectory.Split("tests")[0]}");
 
             var proc = new ProcessStartInfo

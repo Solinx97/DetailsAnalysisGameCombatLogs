@@ -1,0 +1,205 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <Name>CombatAnalysis.DataBase</Name>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectVersion>4.1</ProjectVersion>
+    <ProjectGuid>{50d032cb-db84-483d-bf4f-7b18eb8afe03}</ProjectGuid>
+    <DSP>Microsoft.Data.Tools.Schema.Sql.Sql130DatabaseSchemaProvider</DSP>
+    <OutputType>Database</OutputType>
+    <RootPath />
+    <RootNamespace>CombatAnalysis.DataBase</RootNamespace>
+    <AssemblyName>CombatAnalysis.DataBase</AssemblyName>
+    <ModelCollation>1033, CI</ModelCollation>
+    <DefaultFileStructure>BySchemaAndSchemaType</DefaultFileStructure>
+    <DeployToDatabase>True</DeployToDatabase>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <TargetLanguage>CS</TargetLanguage>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <SqlServerVerification>False</SqlServerVerification>
+    <IncludeCompositeObjects>True</IncludeCompositeObjects>
+    <TargetDatabaseSet>True</TargetDatabaseSet>
+    <GenerateCreateScript>False</GenerateCreateScript>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <OutputPath>bin\Release\</OutputPath>
+    <BuildScriptName>$(MSBuildProjectName).sql</BuildScriptName>
+    <TreatWarningsAsErrors>False</TreatWarningsAsErrors>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <DefineDebug>false</DefineDebug>
+    <DefineTrace>true</DefineTrace>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <OutputPath>.\DacpacData</OutputPath>
+    <BuildScriptName>$(MSBuildProjectName).sql</BuildScriptName>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <DefineDebug>true</DefineDebug>
+    <DefineTrace>true</DefineTrace>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup>
+    <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">11.0</VisualStudioVersion>
+    <SSDTExists Condition="Exists('$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v$(VisualStudioVersion)\SSDT\Microsoft.Data.Tools.Schema.SqlTasks.targets')">True</SSDTExists>
+    <VisualStudioVersion Condition="'$(SSDTExists)' == ''">11.0</VisualStudioVersion>
+  </PropertyGroup>
+  <Import Condition="'$(SQLDBExtensionsRefPath)' != ''" Project="$(SQLDBExtensionsRefPath)\Microsoft.Data.Tools.Schema.SqlTasks.targets" />
+  <Import Condition="'$(SQLDBExtensionsRefPath)' == ''" Project="$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v$(VisualStudioVersion)\SSDT\Microsoft.Data.Tools.Schema.SqlTasks.targets" />
+  <ItemGroup>
+    <Folder Include="Properties" />
+    <Folder Include="Tables" />
+    <Folder Include="Tables\Chat" />
+    <Folder Include="Tables\User" />
+    <Folder Include="StartData" />
+    <Folder Include="Scripts" />
+    <Folder Include="Procedures" />
+    <Folder Include="Procedures\Delete" />
+    <Folder Include="Procedures\GetAll" />
+    <Folder Include="Procedures\GetById" />
+    <Folder Include="Procedures\Insert" />
+    <Folder Include="Procedures\Update" />
+    <Folder Include="DacpacData" />
+  </ItemGroup>
+  <ItemGroup>
+    <Build Include="Tables\Chat\BannedUser.sql" />
+    <Build Include="Tables\Chat\GroupChat.sql" />
+    <Build Include="Tables\Chat\GroupChatMessage.sql" />
+    <Build Include="Tables\Chat\GroupChatUser.sql" />
+    <Build Include="Tables\Chat\InviteToGroupChat.sql" />
+    <Build Include="Tables\Chat\PersonalChat.sql" />
+    <Build Include="Tables\Chat\PersonalChatMessage.sql" />
+    <Build Include="Tables\User\AppUser.sql" />
+    <Build Include="Tables\User\RefreshToken.sql" />
+    <Build Include="Tables\Combat.sql" />
+    <Build Include="Tables\CombatLog.sql" />
+    <Build Include="Tables\CombatLogByUser.sql" />
+    <Build Include="Tables\CombatPlayer.sql" />
+    <Build Include="Tables\DamageDone.sql" />
+    <Build Include="Tables\DamageDoneGeneral.sql" />
+    <Build Include="Tables\DamageTaken.sql" />
+    <Build Include="Tables\DamageTakenGeneral.sql" />
+    <Build Include="Tables\HealDone.sql" />
+    <Build Include="Tables\HealDoneGeneral.sql" />
+    <Build Include="Tables\ResourceRecovery.sql" />
+    <Build Include="Tables\ResourceRecoveryGeneral.sql" />
+    <Build Include="Procedures\Delete\DeleteAppUserById.sql" />
+    <Build Include="Procedures\Delete\DeleteBannedUserById.sql" />
+    <Build Include="Procedures\Delete\DeleteCombatById.sql" />
+    <Build Include="Procedures\Delete\DeleteCombatLogById.sql" />
+    <Build Include="Procedures\Delete\DeleteCombatLogByUserById.sql" />
+    <Build Include="Procedures\Delete\DeleteCombatPlayerById.sql" />
+    <Build Include="Procedures\Delete\DeleteDamageDoneById.sql" />
+    <Build Include="Procedures\Delete\DeleteDamageDoneGeneralById.sql" />
+    <Build Include="Procedures\Delete\DeleteDamageTakenById.sql" />
+    <Build Include="Procedures\Delete\DeleteDamageTakenGeneralById.sql" />
+    <Build Include="Procedures\Delete\DeleteGroupChatById.sql" />
+    <Build Include="Procedures\Delete\DeleteGroupChatMessageById.sql" />
+    <Build Include="Procedures\Delete\DeleteGroupChatUserById.sql" />
+    <Build Include="Procedures\Delete\DeleteHealDoneById.sql" />
+    <Build Include="Procedures\Delete\DeleteHealDoneGeneralById.sql" />
+    <Build Include="Procedures\Delete\DeleteInviteToGroupChatById.sql" />
+    <Build Include="Procedures\Delete\DeletePersonalChatById.sql" />
+    <Build Include="Procedures\Delete\DeletePersonalChatMessageById.sql" />
+    <Build Include="Procedures\Delete\DeleteRefreshTokenById.sql" />
+    <Build Include="Procedures\Delete\DeleteResourceRecoveryById.sql" />
+    <Build Include="Procedures\Delete\DeleteResourceRecoveryGeneralById.sql" />
+    <Build Include="Procedures\GetAll\GetAllAppUser.sql" />
+    <Build Include="Procedures\GetAll\GetAllBannedUser.sql" />
+    <Build Include="Procedures\GetAll\GetAllCombat.sql" />
+    <Build Include="Procedures\GetAll\GetAllCombatLog.sql" />
+    <Build Include="Procedures\GetAll\GetAllCombatLogByUser.sql" />
+    <Build Include="Procedures\GetAll\GetAllCombatPlayer.sql" />
+    <Build Include="Procedures\GetAll\GetAllDamageDone.sql" />
+    <Build Include="Procedures\GetAll\GetAllDamageDoneGeneral.sql" />
+    <Build Include="Procedures\GetAll\GetAllDamageTaken.sql" />
+    <Build Include="Procedures\GetAll\GetAllDamageTakenGeneral.sql" />
+    <Build Include="Procedures\GetAll\GetAllGroupChat.sql" />
+    <Build Include="Procedures\GetAll\GetAllGroupChatMessage.sql" />
+    <Build Include="Procedures\GetAll\GetAllGroupChatUser.sql" />
+    <Build Include="Procedures\GetAll\GetAllHealDone.sql" />
+    <Build Include="Procedures\GetAll\GetAllHealDoneGeneral.sql" />
+    <Build Include="Procedures\GetAll\GetAllInviteToGroupChat.sql" />
+    <Build Include="Procedures\GetAll\GetAllPersonalChat.sql" />
+    <Build Include="Procedures\GetAll\GetAllPersonalChatMessage.sql" />
+    <Build Include="Procedures\GetAll\GetAllRefreshToken.sql" />
+    <Build Include="Procedures\GetAll\GetAllResourceRecovery.sql" />
+    <Build Include="Procedures\GetAll\GetAllResourceRecoveryGeneral.sql" />
+    <Build Include="Procedures\GetById\GetAppUserById.sql" />
+    <Build Include="Procedures\GetById\GetBannedUserById.sql" />
+    <Build Include="Procedures\GetById\GetCombatById.sql" />
+    <Build Include="Procedures\GetById\GetCombatLogById.sql" />
+    <Build Include="Procedures\GetById\GetCombatLogByUserById.sql" />
+    <Build Include="Procedures\GetById\GetCombatPlayerById.sql" />
+    <Build Include="Procedures\GetById\GetDamageDoneById.sql" />
+    <Build Include="Procedures\GetById\GetDamageDoneGeneralById.sql" />
+    <Build Include="Procedures\GetById\GetDamageTakenById.sql" />
+    <Build Include="Procedures\GetById\GetDamageTakenGeneralById.sql" />
+    <Build Include="Procedures\GetById\GetGroupChatById.sql" />
+    <Build Include="Procedures\GetById\GetGroupChatMessageById.sql" />
+    <Build Include="Procedures\GetById\GetGroupChatUserById.sql" />
+    <Build Include="Procedures\GetById\GetHealDoneById.sql" />
+    <Build Include="Procedures\GetById\GetHealDoneGeneralById.sql" />
+    <Build Include="Procedures\GetById\GetInviteToGroupChatById.sql" />
+    <Build Include="Procedures\GetById\GetPersonalChatById.sql" />
+    <Build Include="Procedures\GetById\GetPersonalChatMessageById.sql" />
+    <Build Include="Procedures\GetById\GetRefreshTokenById.sql" />
+    <Build Include="Procedures\GetById\GetResourceRecoveryById.sql" />
+    <Build Include="Procedures\GetById\GetResourceRecoveryGeneralById.sql" />
+    <Build Include="Procedures\Insert\InsertIntoAppUser.sql" />
+    <Build Include="Procedures\Insert\InsertIntoBannedUser.sql" />
+    <Build Include="Procedures\Insert\InsertIntoCombat.sql" />
+    <Build Include="Procedures\Insert\InsertIntoCombatLog.sql" />
+    <Build Include="Procedures\Insert\InsertIntoCombatLogByUser.sql" />
+    <Build Include="Procedures\Insert\InsertIntoCombatPlayer.sql" />
+    <Build Include="Procedures\Insert\InsertIntoDamageDone.sql" />
+    <Build Include="Procedures\Insert\InsertIntoDamageDoneGeneral.sql" />
+    <Build Include="Procedures\Insert\InsertIntoDamageTaken.sql" />
+    <Build Include="Procedures\Insert\InsertIntoDamageTakenGeneral.sql" />
+    <Build Include="Procedures\Insert\InsertIntoGroupChat.sql" />
+    <Build Include="Procedures\Insert\InsertIntoGroupChatMessage.sql" />
+    <Build Include="Procedures\Insert\InsertIntoGroupChatUser.sql" />
+    <Build Include="Procedures\Insert\InsertIntoHealDone.sql" />
+    <Build Include="Procedures\Insert\InsertIntoHealDoneGeneral.sql" />
+    <Build Include="Procedures\Insert\InsertIntoInviteToGroupChat.sql" />
+    <Build Include="Procedures\Insert\InsertIntoPersonalChat.sql" />
+    <Build Include="Procedures\Insert\InsertIntoPersonalChatMessage.sql" />
+    <Build Include="Procedures\Insert\InsertIntoRefreshToken.sql" />
+    <Build Include="Procedures\Insert\InsertIntoResourceRecovery.sql" />
+    <Build Include="Procedures\Insert\InsertIntoResourceRecoveryGeneral.sql" />
+    <Build Include="Procedures\Update\UpdateAppUser.sql" />
+    <Build Include="Procedures\Update\UpdateBannedUser.sql" />
+    <Build Include="Procedures\Update\UpdateCombat.sql" />
+    <Build Include="Procedures\Update\UpdateCombatLog.sql" />
+    <Build Include="Procedures\Update\UpdateCombatLogByUser.sql" />
+    <Build Include="Procedures\Update\UpdateCombatPlayer.sql" />
+    <Build Include="Procedures\Update\UpdateDamageDone.sql" />
+    <Build Include="Procedures\Update\UpdateDamageDoneGeneral.sql" />
+    <Build Include="Procedures\Update\UpdateDamageTaken.sql" />
+    <Build Include="Procedures\Update\UpdateDamageTakenGeneral.sql" />
+    <Build Include="Procedures\Update\UpdateGroupChat.sql" />
+    <Build Include="Procedures\Update\UpdateGroupChatMessage.sql" />
+    <Build Include="Procedures\Update\UpdateGroupChatUser.sql" />
+    <Build Include="Procedures\Update\UpdateHealDone.sql" />
+    <Build Include="Procedures\Update\UpdateHealDoneGeneral.sql" />
+    <Build Include="Procedures\Update\UpdateInviteToGroupChat.sql" />
+    <Build Include="Procedures\Update\UpdatePersonalChat.sql" />
+    <Build Include="Procedures\Update\UpdatePersonalChatMessage.sql" />
+    <Build Include="Procedures\Update\UpdateRefreshToken.sql" />
+    <Build Include="Procedures\Update\UpdateResourceRecovery.sql" />
+    <Build Include="Procedures\Update\UpdateResourceRecoveryGeneral.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Scripts\DropDatabase.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <PostDeploy Include="StartData\Script.PostDeployment1.sql" />
+  </ItemGroup>
+</Project>
