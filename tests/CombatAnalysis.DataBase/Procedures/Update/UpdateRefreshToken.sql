@@ -1,6 +1,10 @@
 ﻿CREATE PROCEDURE [dbo].[UpdateRefreshToken]
-	@param1 int = 0,
-	@param2 int
+	@Id NVARCHAR (MAX),
+	@UserId NVARCHAR (MAX),
+	@Token NVARCHAR (MAX),
+	@Expires DATETIMEOFFSET (7)
 AS
-	SELECT @param1, @param2
+	UPDATE RefreshToken
+	SET UserId = @UserId,Token = @Token,Expires = @Expires
+	WHERE Id = @Id
 RETURN 0

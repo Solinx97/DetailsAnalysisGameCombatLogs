@@ -1,6 +1,11 @@
 ﻿CREATE PROCEDURE [dbo].[InsertIntoCombatLogByUser]
-	@param1 int = 0,
-	@param2 int
+	@CombatLogId INT,
+	@UserId NVARCHAR (MAX),
+	@PersonalLogType INT
 AS
-	SELECT @param1, @param2
+	DECLARE @OutputTbl TABLE (Id INT,CombatLogId INT,UserId NVARCHAR (MAX),PersonalLogType INT)
+	INSERT INTO CombatLogByUser
+	OUTPUT INSERTED.* INTO @OutputTbl
+	VALUES (@CombatLogId,@UserId,@PersonalLogType)
+	SELECT * FROM @OutputTbl
 RETURN 0

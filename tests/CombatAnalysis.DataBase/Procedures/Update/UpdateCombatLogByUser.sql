@@ -1,6 +1,10 @@
 ﻿CREATE PROCEDURE [dbo].[UpdateCombatLogByUser]
-	@param1 int = 0,
-	@param2 int
+	@Id INT,
+	@CombatLogId INT,
+	@UserId NVARCHAR (MAX),
+	@PersonalLogType INT
 AS
-	SELECT @param1, @param2
+	UPDATE CombatLogByUser
+	SET CombatLogId = @CombatLogId,UserId = @UserId,PersonalLogType = @PersonalLogType
+	WHERE Id = @Id
 RETURN 0

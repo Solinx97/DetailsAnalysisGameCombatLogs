@@ -1,6 +1,9 @@
 ﻿CREATE PROCEDURE [dbo].[UpdateAppUser]
-	@param1 int = 0,
-	@param2 int
-AS
-	SELECT @param1, @param2
+	@Id NVARCHAR (MAX),
+	@Email NVARCHAR (MAX),
+	@Password NVARCHAR (MAX)
+AS 
+	UPDATE AppUser
+	SET Email = @Email,Password = @Password
+	WHERE Id = @Id
 RETURN 0

@@ -1,6 +1,14 @@
 ﻿CREATE PROCEDURE [dbo].[UpdateCombatPlayer]
-	@param1 int = 0,
-	@param2 int
+	@Id INT,
+	@UserName NVARCHAR (MAX),
+	@EnergyRecovery INT,
+	@DamageDone INT,
+	@HealDone INT,
+	@DamageTaken INT,
+	@UsedBuffs INT,
+	@CombatId INT
 AS
-	SELECT @param1, @param2
+	UPDATE CombatPlayer
+	SET UserName = @UserName,EnergyRecovery = @EnergyRecovery,DamageDone = @DamageDone,HealDone = @HealDone,DamageTaken = @DamageTaken,UsedBuffs = @UsedBuffs,CombatId = @CombatId
+	WHERE Id = @Id
 RETURN 0

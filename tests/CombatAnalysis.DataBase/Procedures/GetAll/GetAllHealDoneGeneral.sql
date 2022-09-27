@@ -1,6 +1,5 @@
 ﻿CREATE PROCEDURE [dbo].[GetAllHealDoneGeneral]
-	@param1 int = 0,
-	@param2 int
 AS
-	SELECT @param1, @param2
+	SELECT *
+	FROM HealDoneGeneral
 RETURN 0

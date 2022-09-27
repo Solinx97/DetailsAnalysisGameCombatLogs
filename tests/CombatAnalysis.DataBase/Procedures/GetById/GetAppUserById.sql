@@ -1,6 +1,7 @@
 ﻿CREATE PROCEDURE [dbo].[GetAppUserById]
-	@param1 int = 0,
-	@param2 int
+	@id NVARCHAR (MAX)
 AS
-	SELECT @param1, @param2
+	SELECT *
+	FROM AppUser
+	WHERE Id = @id
 RETURN 0

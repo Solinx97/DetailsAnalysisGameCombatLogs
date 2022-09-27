@@ -1,6 +1,11 @@
 ﻿CREATE PROCEDURE [dbo].[InsertIntoCombatLog]
-	@param1 int = 0,
-	@param2 int
+	@Name NVARCHAR (MAX),
+	@Date DATETIMEOFFSET (7),
+	@IsReady BIT
 AS
-	SELECT @param1, @param2
+	DECLARE @OutputTbl TABLE (Id INT,Name NVARCHAR (MAX),Date DATETIMEOFFSET (7),IsReady BIT)
+	INSERT INTO CombatLog
+	OUTPUT INSERTED.* INTO @OutputTbl
+	VALUES (@Name,@Date,@IsReady)
+	SELECT * FROM @OutputTbl
 RETURN 0

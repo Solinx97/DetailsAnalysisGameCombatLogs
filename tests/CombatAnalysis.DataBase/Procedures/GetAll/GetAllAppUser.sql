@@ -1,6 +1,5 @@
 ﻿CREATE PROCEDURE [dbo].[GetAllAppUser]
-	@param1 int = 0,
-	@param2 int
 AS
-	SELECT @param1, @param2
+	SELECT *
+	FROM AppUser
 RETURN 0

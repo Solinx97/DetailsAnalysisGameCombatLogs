@@ -1,6 +1,20 @@
 ﻿CREATE PROCEDURE [dbo].[InsertIntoHealDone]
-	@param1 int = 0,
-	@param2 int
+	@ValueWithOverheal INT,
+	@Time NVARCHAR (MAX),
+	@Overheal INT,
+	@Value INT,
+	@FromPlayer NVARCHAR (MAX),
+	@ToPlayer NVARCHAR (MAX),
+	@SpellOrItem NVARCHAR (MAX),
+	@CurrentHealth INT,
+	@MaxHealth INT,
+	@IsCrit BIT,
+	@IsFullOverheal BIT,
+	@CombatPlayerId INT
 AS
-	SELECT @param1, @param2
+	DECLARE @OutputTbl TABLE (Id INT,ValueWithOverheal INT,Time NVARCHAR (MAX),Overheal INT,Value INT,FromPlayer NVARCHAR (MAX),ToPlayer NVARCHAR (MAX),SpellOrItem NVARCHAR (MAX),CurrentHealth INT,MaxHealth INT,IsCrit BIT,IsFullOverheal BIT,CombatPlayerId INT)
+	INSERT INTO HealDone
+	OUTPUT INSERTED.* INTO @OutputTbl
+	VALUES (@ValueWithOverheal,@Time,@Overheal,@Value,@FromPlayer,@ToPlayer,@SpellOrItem,@CurrentHealth,@MaxHealth,@IsCrit,@IsFullOverheal,@CombatPlayerId)
+	SELECT * FROM @OutputTbl
 RETURN 0

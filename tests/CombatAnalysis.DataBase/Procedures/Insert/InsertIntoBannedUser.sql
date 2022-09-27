@@ -1,6 +1,10 @@
 ﻿CREATE PROCEDURE [dbo].[InsertIntoBannedUser]
-	@param1 int = 0,
-	@param2 int
+	@WhomBannedId NVARCHAR (MAX),
+	@BannedUserId NVARCHAR (MAX)
 AS
-	SELECT @param1, @param2
+	DECLARE @OutputTbl TABLE (Id INT,WhomBannedId NVARCHAR (MAX),BannedUserId NVARCHAR (MAX))
+	INSERT INTO BannedUser
+	OUTPUT INSERTED.* INTO @OutputTbl
+	VALUES (@WhomBannedId,@BannedUserId)
+	SELECT * FROM @OutputTbl
 RETURN 0

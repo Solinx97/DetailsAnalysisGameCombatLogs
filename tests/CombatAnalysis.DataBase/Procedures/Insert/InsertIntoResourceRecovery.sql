@@ -1,6 +1,12 @@
 ﻿CREATE PROCEDURE [dbo].[InsertIntoResourceRecovery]
-	@param1 int = 0,
-	@param2 int
+	@Value INT,
+	@Time NVARCHAR (MAX),
+	@SpellOrItem NVARCHAR (MAX),
+	@CombatPlayerId INT
 AS
-	SELECT @param1, @param2
+	DECLARE @OutputTbl TABLE (Id INT,Value INT,Time NVARCHAR (MAX),SpellOrItem NVARCHAR (MAX),CombatPlayerId INT)
+	INSERT INTO ResourceRecovery
+	OUTPUT INSERTED.* INTO @OutputTbl
+	VALUES (@Value,@Time,@SpellOrItem,@CombatPlayerId)
+	SELECT * FROM @OutputTbl
 RETURN 0

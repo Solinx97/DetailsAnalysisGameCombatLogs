@@ -1,6 +1,15 @@
 ﻿CREATE PROCEDURE [dbo].[InsertIntoCombatPlayer]
-	@param1 int = 0,
-	@param2 int
+	@UserName NVARCHAR (MAX),
+	@EnergyRecovery INT,
+	@DamageDone INT,
+	@HealDone INT,
+	@DamageTaken INT,
+	@UsedBuffs INT,
+	@CombatId INT
 AS
-	SELECT @param1, @param2
+	DECLARE @OutputTbl TABLE (Id INT,UserName NVARCHAR (MAX),EnergyRecovery INT,DamageDone INT,HealDone INT,DamageTaken INT,UsedBuffs INT,CombatId INT)
+	INSERT INTO CombatPlayer
+	OUTPUT INSERTED.* INTO @OutputTbl
+	VALUES (@UserName,@EnergyRecovery,@DamageDone,@HealDone,@DamageTaken,@UsedBuffs,@CombatId)
+	SELECT * FROM @OutputTbl
 RETURN 0

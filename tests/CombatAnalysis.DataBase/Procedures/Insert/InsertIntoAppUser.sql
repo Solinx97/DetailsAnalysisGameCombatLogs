@@ -1,6 +1,11 @@
 ﻿CREATE PROCEDURE [dbo].[InsertIntoAppUser]
-	@param1 int = 0,
-	@param2 int
+	@Id NVARCHAR (MAX),
+	@Email NVARCHAR (MAX),
+	@Password NVARCHAR (MAX)
 AS
-	SELECT @param1, @param2
+	DECLARE @OutputTbl TABLE (Id NVARCHAR (MAX),Email NVARCHAR (MAX),Password NVARCHAR (MAX))
+	INSERT INTO AppUser
+	OUTPUT INSERTED.* INTO @OutputTbl
+	VALUES (@Id,@Email,@Password)
+	SELECT * FROM @OutputTbl
 RETURN 0

@@ -60,13 +60,13 @@
     <Folder Include="Tables\User" />
     <Folder Include="StartData" />
     <Folder Include="Scripts" />
+    <Folder Include="DacpacData" />
     <Folder Include="Procedures" />
     <Folder Include="Procedures\Delete" />
     <Folder Include="Procedures\GetAll" />
     <Folder Include="Procedures\GetById" />
     <Folder Include="Procedures\Insert" />
     <Folder Include="Procedures\Update" />
-    <Folder Include="DacpacData" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="Tables\Chat\BannedUser.sql" />

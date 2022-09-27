@@ -1,6 +1,13 @@
 ﻿CREATE PROCEDURE [dbo].[InsertIntoPersonalChat]
-	@param1 int = 0,
-	@param2 int
+	@InitiatorUsername NVARCHAR (MAX),
+	@CompanionUsername NVARCHAR (MAX),
+	@LastMessage NVARCHAR (MAX),
+	@InitiatorId NVARCHAR (MAX),
+	@CompanionId NVARCHAR (MAX)
 AS
-	SELECT @param1, @param2
+	DECLARE @OutputTbl TABLE (Id INT,InitiatorUsername NVARCHAR (MAX),CompanionUsername NVARCHAR (MAX),LastMessage NVARCHAR (MAX),InitiatorId NVARCHAR (MAX),CompanionId NVARCHAR (MAX))
+	INSERT INTO PersonalChat
+	OUTPUT INSERTED.* INTO @OutputTbl
+	VALUES (@InitiatorUsername,@CompanionUsername,@LastMessage,@InitiatorId,@CompanionId)
+	SELECT * FROM @OutputTbl
 RETURN 0

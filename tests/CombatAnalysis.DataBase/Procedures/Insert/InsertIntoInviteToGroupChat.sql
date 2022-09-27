@@ -1,6 +1,11 @@
 ﻿CREATE PROCEDURE [dbo].[InsertIntoInviteToGroupChat]
-	@param1 int = 0,
-	@param2 int
+	@UserId NVARCHAR (MAX),
+	@Response INT,
+	@GroupChatId INT
 AS
-	SELECT @param1, @param2
+	DECLARE @OutputTbl TABLE (Id INT,UserId NVARCHAR (MAX),Response INT,GroupChatId INT)
+	INSERT INTO InviteToGroupChat
+	OUTPUT INSERTED.* INTO @OutputTbl
+	VALUES (@UserId,@Response,@GroupChatId)
+	SELECT * FROM @OutputTbl
 RETURN 0

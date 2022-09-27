@@ -1,6 +1,9 @@
 ﻿CREATE PROCEDURE [dbo].[UpdateGroupChatUser]
-	@param1 int = 0,
-	@param2 int
+	@Id INT,
+	@UserId NVARCHAR (MAX),
+	@GroupChatId INT
 AS
-	SELECT @param1, @param2
+	UPDATE GroupChatUser
+	SET UserId = @UserId,GroupChatId = @GroupChatId
+	WHERE Id = @Id
 RETURN 0

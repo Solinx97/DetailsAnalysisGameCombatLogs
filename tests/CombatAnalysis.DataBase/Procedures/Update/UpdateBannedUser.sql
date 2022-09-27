@@ -1,6 +1,9 @@
 ﻿CREATE PROCEDURE [dbo].[UpdateBannedUser]
-	@param1 int = 0,
-	@param2 int
-AS
-	SELECT @param1, @param2
+	@Id INT,
+	@WhomBannedId NVARCHAR (MAX),
+	@BannedUserId NVARCHAR (MAX)
+AS 
+	UPDATE BannedUser
+	SET WhomBannedId = @WhomBannedId,BannedUserId = @BannedUserId
+	WHERE Id = @Id
 RETURN 0

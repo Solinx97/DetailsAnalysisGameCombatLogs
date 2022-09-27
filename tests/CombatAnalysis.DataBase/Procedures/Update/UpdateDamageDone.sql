@@ -1,6 +1,19 @@
 ﻿CREATE PROCEDURE [dbo].[UpdateDamageDone]
-	@param1 int = 0,
-	@param2 int
+	@Id INT,
+	@Value INT,
+	@Time NVARCHAR (MAX),
+	@FromPlayer NVARCHAR (MAX),
+	@ToEnemy NVARCHAR (MAX),
+	@SpellOrItem NVARCHAR (MAX),
+	@IsDodge BIT,
+	@IsParry BIT,
+	@IsMiss BIT,
+	@IsResist BIT,
+	@IsImmune BIT,
+	@IsCrit BIT,
+	@CombatPlayerId INT
 AS
-	SELECT @param1, @param2
+	UPDATE DamageDone
+	SET Value = @Value,Time = @Time,FromPlayer = @FromPlayer,ToEnemy = @ToEnemy,SpellOrItem = @SpellOrItem,IsDodge = @IsDodge,IsParry = @IsParry,IsMiss = @IsMiss,IsResist = @IsResist,IsImmune = @IsImmune,IsCrit = @IsCrit,CombatPlayerId = @CombatPlayerId
+	WHERE Id = @Id
 RETURN 0

@@ -1,6 +1,5 @@
 ﻿CREATE PROCEDURE [dbo].[GetAllCombatLog]
-	@param1 int = 0,
-	@param2 int
 AS
-	SELECT @param1, @param2
+	SELECT *
+	FROM CombatLog
 RETURN 0

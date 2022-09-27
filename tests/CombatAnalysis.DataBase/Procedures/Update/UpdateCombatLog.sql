@@ -1,6 +1,10 @@
 ﻿CREATE PROCEDURE [dbo].[UpdateCombatLog]
-	@param1 int = 0,
-	@param2 int
-AS
-	SELECT @param1, @param2
+	@Id INT,
+	@Name NVARCHAR (MAX),
+	@Date DATETIMEOFFSET (7),
+	@IsReady BIT
+AS 
+	UPDATE CombatLog
+	SET Name = @Name,Date = @Date,IsReady = @IsReady
+	WHERE Id = @Id
 RETURN 0

@@ -1,6 +1,7 @@
 ﻿CREATE PROCEDURE [dbo].[GetCombatById]
-	@param1 int = 0,
-	@param2 int
+	@id int
 AS
-	SELECT @param1, @param2
+	SELECT *
+	FROM Combat
+	WHERE Id = @id
 RETURN 0

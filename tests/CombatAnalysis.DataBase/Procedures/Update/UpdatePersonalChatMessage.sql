@@ -1,6 +1,11 @@
 ﻿CREATE PROCEDURE [dbo].[UpdatePersonalChatMessage]
-	@param1 int = 0,
-	@param2 int
-AS
-	SELECT @param1, @param2
+	@Id INT,
+	@Username NVARCHAR (MAX),
+	@Message NVARCHAR (MAX),
+	@Time TIME (7),
+	@PersonalChatId INT
+AS 
+	UPDATE PersonalChatMessage
+	SET Username = @Username,Message = @Message,Time = @Time,PersonalChatId = @PersonalChatId
+	WHERE Id = @Id
 RETURN 0

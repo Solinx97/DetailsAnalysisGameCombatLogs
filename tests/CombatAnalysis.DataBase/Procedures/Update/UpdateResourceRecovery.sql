@@ -1,6 +1,11 @@
 ﻿CREATE PROCEDURE [dbo].[UpdateResourceRecovery]
-	@param1 int = 0,
-	@param2 int
-AS
-	SELECT @param1, @param2
+	@Id INT,
+	@Value INT,
+	@Time NVARCHAR (MAX),
+	@SpellOrItem NVARCHAR (MAX),
+	@CombatPlayerId INT
+AS 
+	UPDATE ResourceRecovery
+	SET Value = @Value,Time = @Time,SpellOrItem = @SpellOrItem,CombatPlayerId = @CombatPlayerId
+	WHERE Id = @Id
 RETURN 0
