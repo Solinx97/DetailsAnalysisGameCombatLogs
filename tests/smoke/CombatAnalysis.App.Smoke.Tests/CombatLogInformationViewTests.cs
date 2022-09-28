@@ -1,4 +1,5 @@
-﻿using FlaUI.Core;
+﻿using CombatAnalysis.App.Smoke.Tests.Core;
+using FlaUI.Core;
 using FlaUI.Core.AutomationElements;
 using FlaUI.Core.Input;
 using FlaUI.Core.WindowsAPI;
@@ -7,6 +8,7 @@ using NUnit.Framework;
 using System;
 using System.Diagnostics;
 using System.Drawing;
+using System.IO;
 using System.Threading;
 
 namespace CombatAnalysis.App.Smoke.Tests
@@ -18,10 +20,22 @@ namespace CombatAnalysis.App.Smoke.Tests
         private UIA3Automation _automation;
         private Stopwatch _stopwatch;
         private AutomationTestBase _automationTestBase;
+        private Process _process;
 
         [OneTimeSetUp]
         public void FixtureSetup()
         {
+            Deploy.Run();
+
+            var baseDirectory = Directory.GetParent($"{AppContext.BaseDirectory.Split("tests")[0]}");
+
+            var proc = new ProcessStartInfo
+            {
+                FileName = "dotnet.exe",
+                Arguments = $"run --project {baseDirectory}\\src\\API\\CombatAnalysis.CombatParserAPI {nameof(CommandLineArgs.Tests)}",
+            };
+            _process = Process.Start(proc);
+
             var processStartInfo = new ProcessStartInfo("CombatAnalysis.App.exe");
             _app = Application.Launch(processStartInfo);
             _automation = new UIA3Automation();
@@ -32,6 +46,14 @@ namespace CombatAnalysis.App.Smoke.Tests
         {
             _automation.Dispose();
             _app.Close();
+
+            var processesByName = Process.GetProcessesByName(_process.ProcessName);
+            foreach (var item in processesByName)
+            {
+                item.Kill();
+            }
+
+            _process.Dispose();
         }
 
         [SetUp]
@@ -54,6 +76,8 @@ namespace CombatAnalysis.App.Smoke.Tests
         {
             var window = _app.GetMainWindow(_automation);
 
+            #region HomePage
+
             var openCombatLogInformGetter = window.FindFirstDescendant(x => x.ByAutomationId("openCombatLogInform"));
             Assert.IsNotNull(openCombatLogInformGetter, "Can't be find element by AutomayionId 'openCombatLogInform'");
 
@@ -61,6 +85,10 @@ namespace CombatAnalysis.App.Smoke.Tests
 
             openCombatLogInform.DrawHighlight(true, Color.Red, TimeSpan.FromMilliseconds(500));
             openCombatLogInform.Click();
+
+            #endregion
+
+            #region CombatLogInformationView
 
             var selectCmbatLogFileGetter = window.FindFirstDescendant(x => x.ByAutomationId("selectCmbatLogFile"));
             Assert.IsNotNull(selectCmbatLogFileGetter, "Can't be find element by AutomayionId 'selectCmbatLogFile'");
@@ -95,6 +123,10 @@ namespace CombatAnalysis.App.Smoke.Tests
             combatLogFileAnalysis.DrawHighlight(true, Color.Red, TimeSpan.FromMilliseconds(500));
             combatLogFileAnalysis.Invoke();
 
+            #endregion
+
+            #region DetailsSpecificalCombatPage
+
             var workWithDataTitleGetter = window.FindFirstDescendant(x => x.ByAutomationId("workWithDataTitle"));
             Assert.IsNotNull(workWithDataTitleGetter, "Can't be find element by AutomayionId 'workWithDataTitle'");
 
@@ -111,6 +143,8 @@ namespace CombatAnalysis.App.Smoke.Tests
 
             detailsText.DrawHighlight(true, Color.Red, TimeSpan.FromMilliseconds(500));
 
+            #endregion
+
             CallbackToMainPage();
         }
 
@@ -125,7 +159,7 @@ namespace CombatAnalysis.App.Smoke.Tests
             directoryTextBox.DrawHighlight(true, Color.Red, TimeSpan.FromMilliseconds(500));
             directoryTextBox.Click();
 
-            var baseDirectory = AppDomain.CurrentDomain.BaseDirectory + @"testsData\";
+            var baseDirectory = AppDomain.CurrentDomain.BaseDirectory + @"TestsData\";
             directoryTextBox.Enter($"Адрес: {baseDirectory}");
 
             Keyboard.Press(VirtualKeyShort.ENTER);
