@@ -1,0 +1,5 @@
+﻿CREATE PROCEDURE [dbo].[GetAllAppUser]
+AS
+	SELECT *
+	FROM AppUser
+RETURN 0

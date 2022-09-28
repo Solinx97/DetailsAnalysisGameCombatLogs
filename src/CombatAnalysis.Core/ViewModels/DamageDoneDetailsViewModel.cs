@@ -1,30 +1,34 @@
 ﻿using AutoMapper;
-using CombatAnalysis.CombatParser;
-using CombatAnalysis.CombatParser.Models;
-using CombatAnalysis.Core.Commands;
+using CombatAnalysis.CombatParser.Entities;
+using CombatAnalysis.CombatParser.Extensions;
+using CombatAnalysis.CombatParser.Patterns;
+using CombatAnalysis.Core.Consts;
 using CombatAnalysis.Core.Core;
 using CombatAnalysis.Core.Interfaces;
 using CombatAnalysis.Core.Models;
-using MvvmCross.Navigation;
+using CombatAnalysis.Core.Services;
+using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Logging;
 using MvvmCross.ViewModels;
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace CombatAnalysis.Core.ViewModels
 {
-    public class DamageDoneDetailsViewModel : MvxViewModel<Tuple<string, CombatModel>>
+    public class DamageDoneDetailsViewModel : MvxViewModel<Tuple<int, CombatModel>>
     {
-        private readonly IMvxNavigationService _mvvmNavigation;
-        private readonly IViewModelConnect _handler;
         private readonly IMapper _mapper;
+        private readonly ILogger _logger;
         private readonly PowerUpInCombat<DamageDoneModel> _powerUpInCombat;
+        private readonly CombatParserAPIService _combatParserAPIService;
 
-        private MvxViewModel _basicTemplate;
+        private IImprovedMvxViewModel _basicTemplate;
         private ObservableCollection<DamageDoneModel> _damageDoneInformations;
         private ObservableCollection<DamageDoneModel> _damageDoneInformationsWithSkipDamage;
-        private ObservableCollection<DamageDoneModel> _damageDoneGroupBySpellOrItem;
+        private ObservableCollection<DamageDoneGeneralModel> _damageDoneGeneralInformations;
+
         private bool _isShowCrit = true;
         private bool _isShowDodge = true;
         private bool _isShowParry = true;
@@ -37,22 +41,25 @@ namespace CombatAnalysis.Core.ViewModels
         private bool _isShowOnlyMiss;
         private bool _isShowOnlyResist;
         private bool _isShowOnlyImmune;
-        private int _selectedDetailsType;
+        private string _selectedPlayer;
+        private int _selectedIndexSorting;
+        private bool _isCollectionReversed;
+        private long _totalValue;
 
-        public DamageDoneDetailsViewModel(IMapper mapper, IMvxNavigationService mvvmNavigation)
+        public DamageDoneDetailsViewModel(IMapper mapper, IHttpClientHelper httpClient, ILogger loger, IMemoryCache memoryCache)
         {
-            _mvvmNavigation = mvvmNavigation;
             _mapper = mapper;
+            _logger = loger;
 
-            _handler = new ViewModelMConnect();
-            BasicTemplate = new BasicTemplateViewModel(this, _handler, _mvvmNavigation);
-
-            _handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, "Step", 3);
-
+            _combatParserAPIService = new CombatParserAPIService(httpClient, loger, memoryCache);
             _powerUpInCombat = new PowerUpInCombat<DamageDoneModel>(_damageDoneInformationsWithSkipDamage);
+
+            BasicTemplate = Templates.Basic;
+            BasicTemplate.Parent = this;
+            BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, "Step", 3);
         }
 
-        public MvxViewModel BasicTemplate
+        public IImprovedMvxViewModel BasicTemplate
         {
             get { return _basicTemplate; }
             set
@@ -67,6 +74,15 @@ namespace CombatAnalysis.Core.ViewModels
             set
             {
                 SetProperty(ref _damageDoneInformations, value);
+            }
+        }
+
+        public ObservableCollection<DamageDoneGeneralModel> DamageDoneGeneralInformations
+        {
+            get { return _damageDoneGeneralInformations; }
+            set
+            {
+                SetProperty(ref _damageDoneGeneralInformations, value);
             }
         }
 
@@ -250,76 +266,141 @@ namespace CombatAnalysis.Core.ViewModels
             }
         }
 
-        public int SelectedDetailsType
+        public string SelectedPlayer
         {
-            get { return _selectedDetailsType; }
+            get { return _selectedPlayer; }
             set
             {
-                SetProperty(ref _selectedDetailsType, value);
-
-                SwitchBetweenDetailsType(value);
-
-                RaisePropertyChanged(() => DamageDoneInformations);
+                SetProperty(ref _selectedPlayer, value);
             }
         }
 
-        public override void Prepare(Tuple<string, CombatModel> parameter)
+        public int SelectedIndexSorting
         {
-            GetDamageDoneDetails(parameter);
-            GroupBySpellOrItem();
+            get { return _selectedIndexSorting; }
+            set
+            {
+                SetProperty(ref _selectedIndexSorting, value);
+
+                Sorting(value);
+
+                RaisePropertyChanged(() => DamageDoneGeneralInformations);
+            }
         }
 
-        private void GetDamageDoneDetails(Tuple<string, CombatModel> combatInformationData)
+        public bool IsCollectionReversed
         {
-            var combatInformation = new CombatInformation();
+            get { return _isCollectionReversed; }
+            set
+            {
+                SetProperty(ref _isCollectionReversed, value);
 
-            var map = _mapper.Map<Combat>(combatInformationData.Item2);
-            combatInformation.SetCombat(map, combatInformationData.Item1);
-            combatInformation.GetDamageDone();
+                Reverse();
 
-            var map1 = _mapper.Map<ObservableCollection<DamageDoneModel>>(combatInformation.DamageDoneInformations);
+                RaisePropertyChanged(() => DamageDoneGeneralInformations);
+            }
+        }
+
+        public long TotalValue
+        {
+            get { return _totalValue; }
+            set
+            {
+                SetProperty(ref _totalValue, value);
+            }
+        }
+
+        public override void Prepare(Tuple<int, CombatModel> parameter)
+        {
+            var combat = parameter.Item2;
+            var player = combat.Players[parameter.Item1];
+            SelectedPlayer = player.UserName;
+            TotalValue = player.DamageDone;
+
+            if (player.Id > 0)
+            {
+                Task.Run(async () => await LoadDamageDoneDetails(player.Id));
+                Task.Run(async () => await LoadDamageDoneGeneral(player.Id));
+            }
+            else
+            {
+                CombatDetailsTemplate combatInformation = new CombatDetailsDamageDone(_logger);
+                var map = _mapper.Map<Combat>(combat);
+
+                GetDamageDoneDetails(combatInformation, SelectedPlayer, map);
+                GetDamageDoneGeneral(combatInformation, map);
+            }
+        }
+
+        private void GetDamageDoneDetails(CombatDetailsTemplate combatDetails, string player, Combat combat)
+        {
+            combatDetails.GetData(player, combat.Data);
+
+            var map1 = _mapper.Map<ObservableCollection<DamageDoneModel>>(combatDetails.DamageDone);
 
             DamageDoneInformations = map1;
             _damageDoneInformationsWithSkipDamage = new ObservableCollection<DamageDoneModel>(map1);
         }
 
-        private void SwitchBetweenDetailsType(int type)
+        private void GetDamageDoneGeneral(CombatDetailsTemplate combatDetails, Combat combat)
         {
-            switch (type)
-            {
-                case 0:
-                    DamageDoneInformations = new ObservableCollection<DamageDoneModel>(_damageDoneInformationsWithSkipDamage);
-                    break;
-                case 1:
-                    DamageDoneInformations = new ObservableCollection<DamageDoneModel>(_damageDoneGroupBySpellOrItem);
-                    break;
-                default:
-                    break;
-            }
+            var damageDoneGeneralInformations = combatDetails.GetDamageDoneGeneral(combatDetails.DamageDone, combat);
+            var map2 = _mapper.Map<ObservableCollection<DamageDoneGeneralModel>>(damageDoneGeneralInformations);
+            DamageDoneGeneralInformations = map2;
         }
 
-        private void GroupBySpellOrItem()
+        private async Task LoadDamageDoneDetails(int combatPlayerId)
         {
-            var spells = DamageDoneInformations
-                .GroupBy(group => group.SpellOrItem)
-                .Select(select => select.ToList())
-                .ToList();
+            var healDones = await _combatParserAPIService.LoadDamageDoneDetailsAsync(combatPlayerId);
+            DamageDoneInformations = new ObservableCollection<DamageDoneModel>(healDones.ToList());
+            _damageDoneInformationsWithSkipDamage = new ObservableCollection<DamageDoneModel>(healDones.ToList());
+        }
 
-            var lessDetails = new List<DamageDoneModel>();
-            foreach (var item in spells)
+        private async Task LoadDamageDoneGeneral(int combatPlayerId)
+        {
+            var healDoneGenerals = await _combatParserAPIService.LoadDamageDoneGeneralAsync(combatPlayerId);
+            DamageDoneGeneralInformations = new ObservableCollection<DamageDoneGeneralModel>(healDoneGenerals.ToList());
+        }
+
+        private void Sorting(int index)
+        {
+            IOrderedEnumerable<DamageDoneGeneralModel> sortedCollection;
+
+            switch (index)
             {
-                var damageDone = new DamageDoneModel
-                {
-                    Value = item.Sum(x => x.Value),
-                    SpellOrItem = item[0].SpellOrItem,
-                };
-
-                lessDetails.Add(damageDone);
+                case 0:
+                    sortedCollection = DamageDoneGeneralInformations.OrderBy(x => x.SpellOrItem);
+                    break;
+                case 1:
+                    sortedCollection = DamageDoneGeneralInformations.OrderBy(x => x.Value);
+                    break;
+                case 2:
+                    sortedCollection = DamageDoneGeneralInformations.OrderBy(x => x.CastNumber);
+                    break;
+                case 3:
+                    sortedCollection = DamageDoneGeneralInformations.OrderBy(x => x.MinValue);
+                    break;
+                case 4:
+                    sortedCollection = DamageDoneGeneralInformations.OrderBy(x => x.MaxValue);
+                    break;
+                case 5:
+                    sortedCollection = DamageDoneGeneralInformations.OrderBy(x => x.AverageValue);
+                    break;
+                case 6: 
+                    sortedCollection = DamageDoneGeneralInformations.OrderBy(x => x.DamagePerSecond);
+                    break;
+                default:
+                    sortedCollection = DamageDoneGeneralInformations.OrderBy(x => x.Value);
+                    break;
             }
 
-            lessDetails = lessDetails.OrderByDescending(x => x.Value).ToList();
+            DamageDoneGeneralInformations = new ObservableCollection<DamageDoneGeneralModel>(sortedCollection.ToList());
+            IsCollectionReversed = false;
+        }
 
-            _damageDoneGroupBySpellOrItem = new ObservableCollection<DamageDoneModel>(lessDetails);
+        private void Reverse()
+        {
+            DamageDoneGeneralInformations = new ObservableCollection<DamageDoneGeneralModel>(DamageDoneGeneralInformations.Reverse().ToList());
         }
     }
 }

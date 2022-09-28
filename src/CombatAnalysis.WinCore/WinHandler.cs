@@ -1,4 +1,5 @@
 ﻿using Microsoft.Win32;
+using System;
 
 namespace CombatAnalysis.WinCore
 {
@@ -6,10 +7,11 @@ namespace CombatAnalysis.WinCore
     {
         public static string FileOpen()
         {
-            var file = new OpenFileDialog();
-            file.ShowDialog();
+            var fileDialog = new OpenFileDialog();
+            fileDialog.InitialDirectory = AppDomain.CurrentDomain.BaseDirectory;
+            fileDialog.ShowDialog();
 
-            return file.FileName;
+            return fileDialog.FileName;
         }
     }
 }

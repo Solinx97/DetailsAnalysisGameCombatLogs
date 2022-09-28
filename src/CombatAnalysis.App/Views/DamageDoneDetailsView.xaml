@@ -14,9 +14,9 @@
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="0.15*"/>
-            <RowDefinition Height="0.17*"/>
+            <RowDefinition Height="0.1*"/>
             <RowDefinition Height="*"/>
-            <RowDefinition Height="0.575*"/>
+            <RowDefinition Height="0.15*"/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="55"/>
@@ -37,21 +37,70 @@
             </ContentControl.Resources>
         </ContentControl>
 
-        <StackPanel Grid.Column="3" Grid.Row="1" Margin="25" Height="45"
-                    Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">
-            <ComboBox FontSize="18" Width="125" Height="45" VerticalContentAlignment="Center"
-                          SelectedIndex="{Binding SelectedDetailsType}">
-                <ComboBoxItem Content="Общее" IsSelected="True"/>
-                <ComboBoxItem Content="События" />
-            </ComboBox>
+        <Grid Grid.Column="2" Grid.ColumnSpan="2" Margin="20" VerticalAlignment="Bottom" HorizontalAlignment="Center">
+            <TextBlock HorizontalAlignment="Left" VerticalAlignment="Top"
+                   Text="{Binding SelectedPlayer}" FontSize="18"
+                   FontWeight="Bold" FontFamily="Comic Sans MS" FontStyle="Italic" TextAlignment="Center" />
+        </Grid>
+        
+        <StackPanel Grid.Column="3" Grid.Row="1" Orientation="Horizontal" VerticalAlignment="Center"
+                    HorizontalAlignment="Center" Panel.ZIndex="1">
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="Тип" FontSize="15" TextAlignment="Center" Padding="10" FontWeight="SemiBold"
+                           VerticalAlignment="Center" Margin="0" Width="100" Foreground="Gray"/>
+                <ComboBox Style="{DynamicResource ComboBoxStyle1}" VerticalAlignment="Center" Name="detailsType"
+                          Width="135" SelectedIndex="0">
+                    <ComboBoxItem Content="Общий" IsSelected="True"/>
+                    <ComboBoxItem Content="Подробнее" />
+                </ComboBox>
+            </StackPanel>
             <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Text="Анализ нанесенного урона"
-                       Width="500" TextAlignment="Center" Style="{StaticResource titleText}"
+                       Width="350" TextAlignment="Center" Style="{StaticResource titleText}"
                        Margin="25 0"/>
+            <StackPanel Orientation="Horizontal" Visibility="{Binding ElementName=detailsType, Path=SelectedIndex, Converter={StaticResource IntToVisibility}, ConverterParameter=false:0}">
+                <TextBlock Text="Порядок" FontSize="15" TextAlignment="Center" Padding="10" FontWeight="SemiBold"
+                           Margin="0" Width="100" Foreground="Gray"/>
+                <ComboBox Name="sortingProperty" Style="{DynamicResource ComboBoxStyle1}" 
+                          VerticalAlignment="Center" Width="210" SelectedIndex="{Binding SelectedIndexSorting}">
+                    <ComboBoxItem Content="Название закл." IsSelected="True"/>
+                    <ComboBoxItem Content="Урон" />
+                    <ComboBoxItem Content="Кол-во прим." />
+                    <ComboBoxItem Content="Мин. урон" />
+                    <ComboBoxItem Content="Макс. урон" />
+                    <ComboBoxItem Content="Среднее знач. урона"/>
+                    <ComboBoxItem Content="Урон в секунду" />
+                </ComboBox>
+            </StackPanel>
         </StackPanel>
 
-        <ListBox Margin="25" Grid.Row="2" Grid.Column="2" 
-                 Background="Transparent" ItemsSource="{Binding DamageDoneInformations}" 
-                 Visibility="{Binding Path=SelectedDetailsType, Converter={StaticResource IntToVisibility}, ConverterParameter=true:0}">
+        <StackPanel Grid.Column="2" Grid.Row="1" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="0 -20">
+            <CheckBox Margin="20 0" HorizontalAlignment="Center" VerticalAlignment="Center"
+                   Content="Обратный порядок" FontSize="16" VerticalContentAlignment="Center" 
+                   FontWeight="SemiBold" IsChecked="{Binding IsCollectionReversed}"
+                   Visibility="{Binding ElementName=detailsType, Path=SelectedIndex, Converter={StaticResource IntToVisibility}, ConverterParameter=false:0}"/>
+        </StackPanel>
+
+        <ListBox Margin="20 30 20 45" Grid.Row="2" Grid.Column="2" Height="450"
+                 VerticalAlignment="Top" Background="Transparent" ItemsSource="{Binding DamageDoneGeneralInformations}"
+                 Visibility="{Binding ElementName=detailsType, Path=SelectedIndex, Converter={StaticResource IntToVisibility}, ConverterParameter=true:0}">
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <StackPanel Margin="10" Orientation="Horizontal" HorizontalAlignment="Center">
+                        <TextBlock FontSize="14" Text="{Binding Path=SpellOrItem}" MinWidth="200" Margin="15" />
+                        <TextBlock FontSize="14" Text="{Binding Path=Value}" MinWidth="75" Margin="15" />
+                        <TextBlock FontSize="14" Text="{Binding Path=CastNumber}" MinWidth="75" Margin="15" />
+                        <TextBlock FontSize="14" Text="{Binding Path=MinValue}" MinWidth="75" Margin="15" />
+                        <TextBlock FontSize="14" Text="{Binding Path=MaxValue}" MinWidth="75" Margin="15" />
+                        <TextBlock FontSize="14" Text="{Binding Path=AverageValue, StringFormat=00.00}" MinWidth="75" Margin="15" />
+                        <TextBlock FontSize="14" Text="{Binding Path=DamagePerSecond, StringFormat=00.00}" MinWidth="75" Margin="15" />
+                    </StackPanel>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+
+        <ListBox Margin="20 30 20 45" Grid.Row="2" Grid.Column="2" Height="450"
+                 VerticalAlignment="Top" Background="Transparent" ItemsSource="{Binding DamageDoneInformations}" 
+                 Visibility="{Binding ElementName=detailsType, Path=SelectedIndex, Converter={StaticResource IntToVisibility}, ConverterParameter=true:1}">
             <ListBox.ItemTemplate>
                 <DataTemplate>
                     <StackPanel Margin="10" Orientation="Horizontal" HorizontalAlignment="Center">
@@ -81,69 +130,66 @@
             </ListBox.ItemTemplate>
         </ListBox>
 
-        <ListBox Margin="25" Grid.Row="2" Grid.Column="2" 
-                 Background="Transparent" ItemsSource="{Binding DamageDoneInformations}"
-                 Visibility="{Binding Path=SelectedDetailsType, Converter={StaticResource IntToVisibility}, ConverterParameter=true:1}">
-            <ListBox.ItemTemplate>
-                <DataTemplate>
-                    <StackPanel Margin="10" Orientation="Horizontal" HorizontalAlignment="Center">
-                        <TextBlock FontSize="14" Text="{Binding Path=Value}" MinWidth="75" Margin="15" />
-                        <TextBlock FontSize="14" Text="{Binding Path=SpellOrItem}" MinWidth="200" Margin="15" />
-                    </StackPanel>
-                </DataTemplate>
-            </ListBox.ItemTemplate>
-        </ListBox>
-        
-        <StackPanel Margin="25 0" Grid.Row="3" Grid.Column="3" Orientation="Horizontal"
-                    Visibility="{Binding Path=SelectedDetailsType, Converter={StaticResource IntToVisibility}, ConverterParameter=true:0}">
-            <StackPanel Margin="20 0" MinWidth="400">
+        <StackPanel Grid.Column="2" Grid.Row="2" VerticalAlignment="Bottom" HorizontalAlignment="Left" Margin="0 60"
+                    Orientation="Horizontal">
+            <TextBlock Margin="50 0" HorizontalAlignment="Center" VerticalAlignment="Center"
+                   Text="Всего:" FontSize="16" TextAlignment="Center"/>
+            <TextBlock Margin="50 0" HorizontalAlignment="Center" VerticalAlignment="Center"
+                   Text="{Binding TotalValue}" FontSize="18" TextAlignment="Center" FontWeight="Bold"/>
+        </StackPanel>
+
+        <StackPanel Margin="20 -50" Grid.Row="3" Grid.Column="3" Orientation="Horizontal"
+                    Visibility="{Binding ElementName=detailsType, Path=SelectedIndex, Converter={StaticResource IntToVisibility}, ConverterParameter=true:1}">
+            <StackPanel MinWidth="400">
                 <StackPanel>
-                    <CheckBox Name="dependency" Margin="5" VerticalContentAlignment="Center" 
-                              Content="Показать крит. урон" IsChecked="{Binding IsShowCrit}" FontSize="18"
-                              Height="30" VerticalAlignment="Center" FontWeight="SemiBold" />
-                    <CheckBox Margin="25 5" VerticalContentAlignment="Center" Content="Показать только крит. урон" FontSize="18" Height="30" 
+                    <CheckBox Name="dependency" Margin="0 5" VerticalContentAlignment="Center" 
+                              Content="Показать крит. урон" IsChecked="{Binding IsShowCrit}" FontSize="14"
+                              VerticalAlignment="Center" FontWeight="SemiBold" />
+                    <CheckBox Margin="20 0" VerticalContentAlignment="Center" Content="Показать только крит. урон" FontSize="14" 
                               VerticalAlignment="Center" FontWeight="SemiBold" Visibility="{Binding ElementName=dependency, Path=IsChecked, Converter={StaticResource BoolToVisibility}, ConverterParameter=true}"
                               IsChecked="{Binding IsShowOnlyCrit}"/>
                 </StackPanel>
                 <StackPanel>
-                    <CheckBox Name="dependency1" Margin="5" VerticalContentAlignment="Center" 
-                              Content="Показать уклонения" IsChecked="{Binding IsShowDodge}" FontSize="18"
-                              Height="30" VerticalAlignment="Center" FontWeight="SemiBold" />
-                    <CheckBox Margin="25 5" VerticalContentAlignment="Center" Content="Показать только уклонения" FontSize="18" Height="30" 
+                    <CheckBox Name="dependency1" Margin="0 5" VerticalContentAlignment="Center" 
+                              Content="Показать уклонения" IsChecked="{Binding IsShowDodge}" FontSize="14"
+                              VerticalAlignment="Center" FontWeight="SemiBold" />
+                    <CheckBox Margin="20 0" VerticalContentAlignment="Center" Content="Показать только уклонения" FontSize="14" 
                               VerticalAlignment="Center" FontWeight="SemiBold" Visibility="{Binding ElementName=dependency1, Path=IsChecked, Converter={StaticResource BoolToVisibility}, ConverterParameter=true}"
                               IsChecked="{Binding IsShowOnlyDodge}"/>
                 </StackPanel>
+            </StackPanel>
+            <StackPanel Margin="-50 0" MinWidth="400">
                 <StackPanel>
-                    <CheckBox Name="dependency2" Margin="5" VerticalContentAlignment="Center" 
-                              Content="Показать паррирования" IsChecked="{Binding IsShowParry}" FontSize="18"
-                              Height="30" VerticalAlignment="Center" FontWeight="SemiBold" />
-                    <CheckBox Margin="25 5" VerticalContentAlignment="Center" Content="Показать только паррирования" FontSize="18" Height="30" 
+                    <CheckBox Name="dependency2" Margin="0 5" VerticalContentAlignment="Center" 
+                              Content="Показать паррирования" IsChecked="{Binding IsShowParry}" FontSize="14"
+                              VerticalAlignment="Center" FontWeight="SemiBold" />
+                    <CheckBox Margin="20 0" VerticalContentAlignment="Center" Content="Показать только паррирования" FontSize="14" 
                               VerticalAlignment="Center" FontWeight="SemiBold" Visibility="{Binding ElementName=dependency2, Path=IsChecked, Converter={StaticResource BoolToVisibility}, ConverterParameter=true}"
                               IsChecked="{Binding IsShowOnlyParry}"/>
                 </StackPanel>
-            </StackPanel>
-            <StackPanel Margin="20 0" MinWidth="400">
                 <StackPanel>
-                    <CheckBox Name="dependency3" Margin="5" VerticalContentAlignment="Center" 
-                              Content="Показать промахи" IsChecked="{Binding IsShowMiss}" FontSize="18"
-                              Height="30" VerticalAlignment="Center" FontWeight="SemiBold" />
-                    <CheckBox Margin="25 5" VerticalContentAlignment="Center" Content="Показать только промахи" FontSize="18" Height="30" 
+                    <CheckBox Name="dependency3" Margin="0 5" VerticalContentAlignment="Center" 
+                              Content="Показать промахи" IsChecked="{Binding IsShowMiss}" FontSize="14"
+                              VerticalAlignment="Center" FontWeight="SemiBold" />
+                    <CheckBox Margin="20 0" VerticalContentAlignment="Center" Content="Показать только промахи" FontSize="14" 
                               VerticalAlignment="Center" FontWeight="SemiBold" Visibility="{Binding ElementName=dependency3, Path=IsChecked, Converter={StaticResource BoolToVisibility}, ConverterParameter=true}"
                               IsChecked="{Binding IsShowOnlyMiss}"/>
                 </StackPanel>
+            </StackPanel>
+            <StackPanel Margin="-25 5" MinWidth="400">
                 <StackPanel>
-                    <CheckBox Name="dependency4" Margin="5" VerticalContentAlignment="Center" 
-                              Content="Показать сопротивления" IsChecked="{Binding IsShowResist}" FontSize="18"
-                              Height="30" VerticalAlignment="Center" FontWeight="SemiBold" />
-                    <CheckBox Margin="25 5" VerticalContentAlignment="Center" Content="Показать только сопротивления" FontSize="18" Height="30" 
+                    <CheckBox Name="dependency4" Margin="0 5" VerticalContentAlignment="Center" 
+                              Content="Показать сопротивления" IsChecked="{Binding IsShowResist}" FontSize="14"
+                              VerticalAlignment="Center" FontWeight="SemiBold" />
+                    <CheckBox Margin="20 0" VerticalContentAlignment="Center" Content="Показать только сопротивления" FontSize="14" 
                               VerticalAlignment="Center" FontWeight="SemiBold" Visibility="{Binding ElementName=dependency4, Path=IsChecked, Converter={StaticResource BoolToVisibility}, ConverterParameter=true}"
                               IsChecked="{Binding IsShowOnlyResist}"/>
                 </StackPanel>
                 <StackPanel>
-                    <CheckBox Name="dependency5" Margin="5" VerticalContentAlignment="Center" 
-                              Content="Показать иммунитет" IsChecked="{Binding IsShowImmune}" FontSize="18"
-                              Height="30" VerticalAlignment="Center" FontWeight="SemiBold" />
-                    <CheckBox Margin="25 5" VerticalContentAlignment="Center" Content="Показать иммунитет" FontSize="18" Height="30" 
+                    <CheckBox Name="dependency5" Margin="0 5" VerticalContentAlignment="Center" 
+                              Content="Показать иммунитет" IsChecked="{Binding IsShowImmune}" FontSize="14"
+                              VerticalAlignment="Center" FontWeight="SemiBold" />
+                    <CheckBox Margin="20 0" VerticalContentAlignment="Center" Content="Показать иммунитет" FontSize="14"
                               VerticalAlignment="Center" FontWeight="SemiBold" Visibility="{Binding ElementName=dependency5, Path=IsChecked, Converter={StaticResource BoolToVisibility}, ConverterParameter=true}"
                               IsChecked="{Binding IsShowOnlyImmune}"/>
                 </StackPanel>

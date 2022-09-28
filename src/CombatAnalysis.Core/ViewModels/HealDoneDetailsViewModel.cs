@@ -1,47 +1,57 @@
 ﻿using AutoMapper;
-using CombatAnalysis.CombatParser;
-using CombatAnalysis.CombatParser.Models;
-using CombatAnalysis.Core.Commands;
+using CombatAnalysis.CombatParser.Entities;
+using CombatAnalysis.CombatParser.Extensions;
+using CombatAnalysis.CombatParser.Patterns;
+using CombatAnalysis.Core.Consts;
 using CombatAnalysis.Core.Core;
 using CombatAnalysis.Core.Interfaces;
 using CombatAnalysis.Core.Models;
-using MvvmCross.Navigation;
+using CombatAnalysis.Core.Services;
+using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Logging;
 using MvvmCross.ViewModels;
 using System;
 using System.Collections.ObjectModel;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace CombatAnalysis.Core.ViewModels
 {
-    public class HealDoneDetailsViewModel : MvxViewModel<Tuple<string, CombatModel>>
+    public class HealDoneDetailsViewModel : MvxViewModel<Tuple<int, CombatModel>>
     {
-        private readonly IMvxNavigationService _mvvmNavigation;
-        private readonly IViewModelConnect _handler;
         private readonly IMapper _mapper;
+        private readonly ILogger _logger;
+        private readonly CombatParserAPIService _combatParserAPIService;
         private readonly PowerUpInCombat<HealDoneModel> _powerUpInCombat;
 
-        private MvxViewModel _basicTemplate;
+        private IImprovedMvxViewModel _basicTemplate;
         private ObservableCollection<HealDoneModel> _healDoneInformations;
         private ObservableCollection<HealDoneModel> _healDoneInformationsWithOverheal;
+        private ObservableCollection<HealDoneGeneralModel> _healDoneGeneralInformations;
 
         private bool _isShowOverheal = true;
         private bool _isShowCrit = true;
         private bool _isShowOnlyOverheal;
         private bool _isShowOnlyCrit;
+        private string _selectedPlayer;
+        private int _selectedIndexSorting;
+        private bool _isCollectionReversed;
+        private long _totalValue;
 
-        public HealDoneDetailsViewModel(IMapper mapper, IMvxNavigationService mvvmNavigation)
+        public HealDoneDetailsViewModel(IMapper mapper, IHttpClientHelper httpClient, ILogger logger, IMemoryCache memoryCache)
         {
             _mapper = mapper;
-            _mvvmNavigation = mvvmNavigation;
+            _logger = logger;
 
-            _handler = new ViewModelMConnect();
-            BasicTemplate = new BasicTemplateViewModel(this, _handler, _mvvmNavigation);
-
-            _handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, "Step", 4);
-
+            _combatParserAPIService = new CombatParserAPIService(httpClient, logger, memoryCache);
             _powerUpInCombat = new PowerUpInCombat<HealDoneModel>(_healDoneInformationsWithOverheal);
+
+            BasicTemplate = Templates.Basic;
+            BasicTemplate.Parent = this;
+            BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, "Step", 4);
         }
 
-        public MvxViewModel BasicTemplate
+        public IImprovedMvxViewModel BasicTemplate
         {
             get { return _basicTemplate; }
             set
@@ -56,6 +66,15 @@ namespace CombatAnalysis.Core.ViewModels
             set
             {
                 SetProperty(ref _healDoneInformations, value);
+            }
+        }
+
+        public ObservableCollection<HealDoneGeneralModel> HealDoneGeneralInformations
+        {
+            get { return _healDoneGeneralInformations; }
+            set
+            {
+                SetProperty(ref _healDoneGeneralInformations, value);
             }
         }
 
@@ -119,23 +138,141 @@ namespace CombatAnalysis.Core.ViewModels
             }
         }
 
-        public override void Prepare(Tuple<string, CombatModel> parameter)
+        public string SelectedPlayer
         {
-            GetHealDoneDetails(parameter);
+            get { return _selectedPlayer; }
+            set
+            {
+                SetProperty(ref _selectedPlayer, value);
+            }
         }
 
-        private void GetHealDoneDetails(Tuple<string, CombatModel> combatInformationData)
+        public int SelectedIndexSorting
         {
-            var combatInformation = new CombatInformation();
+            get { return _selectedIndexSorting; }
+            set
+            {
+                SetProperty(ref _selectedIndexSorting, value);
 
-            var map = _mapper.Map<Combat>(combatInformationData.Item2);
-            combatInformation.SetCombat(map, combatInformationData.Item1);
-            combatInformation.GetHealDone();
+                Sorting(value);
 
-            var map1 = _mapper.Map<ObservableCollection<HealDoneModel>>(combatInformation.HealDoneInformations);
+                RaisePropertyChanged(() => HealDoneGeneralInformations);
+            }
+        }
+
+        public bool IsCollectionReversed
+        {
+            get { return _isCollectionReversed; }
+            set
+            {
+                SetProperty(ref _isCollectionReversed, value);
+
+                Reverse();
+
+                RaisePropertyChanged(() => HealDoneGeneralInformations);
+            }
+        }
+
+        public long TotalValue
+        {
+            get { return _totalValue; }
+            set
+            {
+                SetProperty(ref _totalValue, value);
+            }
+        }
+
+        public override void Prepare(Tuple<int, CombatModel> parameter)
+        {
+            var combat = parameter.Item2;
+            var player = combat.Players[parameter.Item1];
+            SelectedPlayer = player.UserName;
+            TotalValue = player.HealDone;
+
+            if (player.Id > 0)
+            {
+                Task.Run(async () => await LoadHealDoneDetails(player.Id));
+                Task.Run(async () => await LoadHealDoneGeneral(player.Id));
+            }
+            else
+            {
+                CombatDetailsTemplate combatInformation = new CombatDetailsHealDone(_logger);
+                var map = _mapper.Map<Combat>(combat);
+
+                GetHealDoneDetails(combatInformation, SelectedPlayer, map);
+                GetHealDoneGeneral(combatInformation, map);
+            }
+        }
+
+        private void GetHealDoneDetails(CombatDetailsTemplate combatInformation, string player, Combat combat)
+        {
+            combatInformation.GetData(player, combat.Data);
+
+            var map1 = _mapper.Map<ObservableCollection<HealDoneModel>>(combatInformation.HealDone);
 
             HealDoneInformations = map1;
             _healDoneInformationsWithOverheal = new ObservableCollection<HealDoneModel>(map1);
+        }
+
+        private void GetHealDoneGeneral(CombatDetailsTemplate combatInformation, Combat combat)
+        {
+            var damageDoneGeneralInformations = combatInformation.GetHealDoneGeneral(combatInformation.HealDone, combat);
+            var map2 = _mapper.Map<ObservableCollection<HealDoneGeneralModel>>(damageDoneGeneralInformations);
+            HealDoneGeneralInformations = map2;
+        }
+
+        private async Task LoadHealDoneDetails(int combatPlayerId)
+        {
+            var healDones = await _combatParserAPIService.LoadHealDoneDetailsAsync(combatPlayerId);
+            HealDoneInformations = new ObservableCollection<HealDoneModel>(healDones.ToList());
+            _healDoneInformationsWithOverheal = new ObservableCollection<HealDoneModel>(healDones.ToList());
+        }
+
+        private async Task LoadHealDoneGeneral(int combatPlayerId)
+        {
+            var healDoneGenerals = await _combatParserAPIService.LoadHealDoneGeneralAsync(combatPlayerId);
+            HealDoneGeneralInformations = new ObservableCollection<HealDoneGeneralModel>(healDoneGenerals.ToList());
+        }
+
+        private void Sorting(int index)
+        {
+            IOrderedEnumerable<HealDoneGeneralModel> sortedCollection;
+
+            switch (index)
+            {
+                case 0:
+                    sortedCollection = HealDoneGeneralInformations.OrderBy(x => x.SpellOrItem);
+                    break;
+                case 1:
+                    sortedCollection = HealDoneGeneralInformations.OrderBy(x => x.Value);
+                    break;
+                case 2:
+                    sortedCollection = HealDoneGeneralInformations.OrderBy(x => x.CastNumber);
+                    break;
+                case 3:
+                    sortedCollection = HealDoneGeneralInformations.OrderBy(x => x.MinValue);
+                    break;
+                case 4:
+                    sortedCollection = HealDoneGeneralInformations.OrderBy(x => x.MaxValue);
+                    break;
+                case 5:
+                    sortedCollection = HealDoneGeneralInformations.OrderBy(x => x.AverageValue);
+                    break;
+                case 6:
+                    sortedCollection = HealDoneGeneralInformations.OrderBy(x => x.HealPerSecond);
+                    break;
+                default:
+                    sortedCollection = HealDoneGeneralInformations.OrderBy(x => x.Value);
+                    break;
+            }
+
+            HealDoneGeneralInformations = new ObservableCollection<HealDoneGeneralModel>(sortedCollection.ToList());
+            IsCollectionReversed = false;
+        }
+
+        private void Reverse()
+        {
+            HealDoneGeneralInformations = new ObservableCollection<HealDoneGeneralModel>(HealDoneGeneralInformations.Reverse().ToList());
         }
     }
 }

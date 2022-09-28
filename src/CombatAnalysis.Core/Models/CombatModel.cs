@@ -5,13 +5,15 @@ namespace CombatAnalysis.Core.Models
 {
     public class CombatModel
     {
+        public int Id { get; set; }
+
         public string DungeonName { get; set; }
 
         public string Name { get; set; }
 
         public List<string> Data { get; set; }
 
-        public double EnergyRecovery { get; set; }
+        public int EnergyRecovery { get; set; }
 
         public long DamageDone { get; set; }
 
@@ -29,11 +31,13 @@ namespace CombatAnalysis.Core.Models
 
         public DateTimeOffset FinishDate { get; set; }
 
-        public List<PlayerCombatModel> Players { get; set; }
+        public List<CombatPlayerModel> Players { get; set; }
 
         public string Duration
         {
             get { return (FinishDate - StartDate).ToString(@"hh\:mm\:ss"); }
         }
+
+        public int CombatLogId { get; set; }
     }
 }
