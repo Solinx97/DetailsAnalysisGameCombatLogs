@@ -9,6 +9,7 @@ using CombatAnalysis.Core.Models;
 using CombatAnalysis.Core.Services;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
+using MvvmCross.Commands;
 using MvvmCross.ViewModels;
 using System;
 using System.Collections.ObjectModel;
@@ -34,6 +35,9 @@ namespace CombatAnalysis.Core.ViewModels
         private bool _isShowMiss = true;
         private bool _isShowResist = true;
         private bool _isShowImmune = true;
+        private bool _isShowCrushing = true;
+        private bool _isShowAbsorb = true;
+        private bool _isShowDamageInform;
         private string _selectedPlayer;
         private int _selectedIndexSorting;
         private bool _isCollectionReversed;
@@ -47,10 +51,14 @@ namespace CombatAnalysis.Core.ViewModels
             _combatParserAPIService = new CombatParserAPIService(httpClient, logger, memoryCache);
             _powerUpInCombat = new PowerUpInCombat<DamageTakenModel>(_damageTakenInformationsWithSkipDamage);
 
+            ShowDamageInformCommand = new MvxCommand(() => IsShowDamageInfrom = !IsShowDamageInfrom);
+
             BasicTemplate = Templates.Basic;
             BasicTemplate.Parent = this;
             BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, "Step", 5);
         }
+
+        public IMvxCommand ShowDamageInformCommand { get; set; }
 
         public IImprovedMvxViewModel BasicTemplate
         {
@@ -151,6 +159,45 @@ namespace CombatAnalysis.Core.ViewModels
                 DamageTakenInformations = _powerUpInCombat.ShowSpecificalValue("Time", DamageTakenInformations, value);
 
                 RaisePropertyChanged(() => DamageTakenInformations);
+            }
+        }
+
+        public bool IsShowCrushing
+        {
+            get { return _isShowCrushing; }
+            set
+            {
+                SetProperty(ref _isShowCrushing, value);
+
+                _powerUpInCombat.UpdateProperty("IsCrushing");
+                _powerUpInCombat.UpdateCollection(_damageTakenInformationsWithSkipDamage);
+                DamageTakenInformations = _powerUpInCombat.ShowSpecificalValue("Time", DamageTakenInformations, value);
+
+                RaisePropertyChanged(() => DamageTakenInformations);
+            }
+        }
+
+        public bool IsShowAbsorb
+        {
+            get { return _isShowAbsorb; }
+            set
+            {
+                SetProperty(ref _isShowAbsorb, value);
+
+                _powerUpInCombat.UpdateProperty("IsAbsorb");
+                _powerUpInCombat.UpdateCollection(_damageTakenInformationsWithSkipDamage);
+                DamageTakenInformations = _powerUpInCombat.ShowSpecificalValue("Time", DamageTakenInformations, value);
+
+                RaisePropertyChanged(() => DamageTakenInformations);
+            }
+        }
+
+        public bool IsShowDamageInfrom
+        {
+            get { return _isShowDamageInform; }
+            set
+            {
+                SetProperty(ref _isShowDamageInform, value);
             }
         }
 

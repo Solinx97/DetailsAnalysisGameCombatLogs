@@ -16,9 +16,9 @@ namespace CombatAnalysis.DAL.Entities
 
         public string SpellOrItem { get; set; }
 
-        public int Resist { get; set; }
+        public int Resisted { get; set; }
 
-        public int Absorb { get; set; }
+        public int Absorbed { get; set; }
 
         public int Blocked { get; set; }
 
