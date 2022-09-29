@@ -37,7 +37,7 @@ namespace CombatAnalysis.Core.ViewModels
         private bool _isShowImmune = true;
         private bool _isShowCrushing = true;
         private bool _isShowAbsorb = true;
-        private bool _isShowDamageInform;
+        private bool _isShowDamageInform = true;
         private string _selectedPlayer;
         private int _selectedIndexSorting;
         private bool _isCollectionReversed;
@@ -198,6 +198,8 @@ namespace CombatAnalysis.Core.ViewModels
             set
             {
                 SetProperty(ref _isShowDamageInform, value);
+
+                RaisePropertyChanged(() => DamageTakenInformations);
             }
         }
 
