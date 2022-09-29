@@ -1,0 +1,7 @@
+﻿CREATE PROCEDURE [dbo].[GetAppUserById]
+	@id NVARCHAR (MAX)
+AS
+	SELECT *
+	FROM AppUser
+	WHERE Id = @id
+RETURN 0

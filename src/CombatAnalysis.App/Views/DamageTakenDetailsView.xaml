@@ -8,6 +8,7 @@
     xmlns:converters="clr-namespace:CombatAnalysis.App.Converters"
     xmlns:local="clr-namespace:CombatAnalysis.App.Views"
     xmlns:viewModels="clr-namespace:CombatAnalysis.Core.ViewModels;assembly=CombatAnalysis.Core"
+    xmlns:mvx="clr-namespace:MvvmCross.Platforms.Wpf.Binding;assembly=MvvmCross.Platforms.Wpf"
     xmlns:views="clr-namespace:MvvmCross.Platforms.Wpf.Views;assembly=MvvmCross.Platforms.Wpf"
     mc:Ignorable="d" d:DesignHeight="850" d:DesignWidth="1250">
 
@@ -40,7 +41,7 @@
         <Grid Grid.Column="2" Grid.ColumnSpan="2" Margin="20" VerticalAlignment="Bottom" HorizontalAlignment="Center">
             <TextBlock HorizontalAlignment="Left" VerticalAlignment="Top"
                    Text="{Binding SelectedPlayer}" FontSize="18"
-                   FontWeight="Bold" FontFamily="Comic Sans MS" FontStyle="Italic" TextAlignment="Center" />
+                   FontWeight="Bold" FontStyle="Italic" TextAlignment="Center" />
         </Grid>
 
         <StackPanel Grid.Column="3" Grid.Row="1" Orientation="Horizontal" VerticalAlignment="Center"
@@ -80,43 +81,132 @@
                    Visibility="{Binding ElementName=detailsType, Path=SelectedIndex, Converter={StaticResource IntToVisibility}, ConverterParameter=false:0}"/>
         </StackPanel>
 
-        <ListBox Margin="20 30 20 45" Grid.Row="2" Grid.Column="2" Height="450"
-                 VerticalAlignment="Top" Background="Transparent" ItemsSource="{Binding DamageTakenGeneralInformations}"
-                 Visibility="{Binding ElementName=detailsType, Path=SelectedIndex, Converter={StaticResource IntToVisibility}, ConverterParameter=true:0}">
-            <ListBox.ItemTemplate>
-                <DataTemplate>
-                    <StackPanel Margin="10" Orientation="Horizontal" HorizontalAlignment="Center">
-                        <TextBlock FontSize="14" Text="{Binding Path=SpellOrItem}" MinWidth="200" Margin="15" />
-                        <TextBlock FontSize="14" Text="{Binding Path=Value}" MinWidth="75" Margin="15" />
-                        <TextBlock FontSize="14" Text="{Binding Path=CastNumber}" MinWidth="75" Margin="15" />
-                        <TextBlock FontSize="14" Text="{Binding Path=MinValue}" MinWidth="75" Margin="15" />
-                        <TextBlock FontSize="14" Text="{Binding Path=MaxValue}" MinWidth="75" Margin="15" />
-                        <TextBlock FontSize="14" Text="{Binding Path=AverageValue, StringFormat=00.00}" MinWidth="75" Margin="15" />
-                        <TextBlock FontSize="14" Text="{Binding Path=DamageTakenPerSecond, StringFormat=00.00}" MinWidth="75" Margin="15" />
-                    </StackPanel>
-                </DataTemplate>
-            </ListBox.ItemTemplate>
-        </ListBox>
-
-        <ListBox Margin="20 30 20 45" Background="Transparent" Grid.Row="2" Grid.Column="3" Grid.ColumnSpan="2" Height="450"
-                 VerticalAlignment="Top" ItemsSource="{Binding DamageTakenInformations}"
-                 Visibility="{Binding ElementName=detailsType, Path=SelectedIndex, Converter={StaticResource IntToVisibility}, ConverterParameter=true:1}">
-            <ListBox.ItemTemplate>
-                <DataTemplate>
-                    <StackPanel Margin="10" Orientation="Horizontal" HorizontalAlignment="Center">
-                        <TextBlock FontSize="14" Text="{Binding Path=Time}" MinWidth="75" Margin="15" />
-                        <StackPanel Orientation="Horizontal">
-                            <Icon:PackIconMaterial Visibility="{Binding Path=IsCrushing, Converter={StaticResource BoolToVisibility}}"
-                                                   Grid.Column="0" Kind="StarCheck" Foreground="PaleVioletRed" Style="{StaticResource menuButtonIcon}"/>
+        <StackPanel Grid.Row="2" Grid.Column="2" 
+                    Visibility="{Binding ElementName=detailsType, Path=SelectedIndex, Converter={StaticResource IntToVisibility}, ConverterParameter=true:0}">
+            <ListBox Margin="20 30 20 45" Height="450" VerticalAlignment="Top" Background="Transparent" ItemsSource="{Binding DamageTakenGeneralInformations}">
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel Margin="10" Orientation="Horizontal" HorizontalAlignment="Center">
+                            <TextBlock FontSize="14" Text="{Binding Path=SpellOrItem}" MinWidth="200" Margin="15" />
                             <TextBlock FontSize="14" Text="{Binding Path=Value}" MinWidth="75" Margin="15" />
+                            <TextBlock FontSize="14" Text="{Binding Path=CastNumber}" MinWidth="75" Margin="15" />
+                            <TextBlock FontSize="14" Text="{Binding Path=MinValue}" MinWidth="75" Margin="15" />
+                            <TextBlock FontSize="14" Text="{Binding Path=MaxValue}" MinWidth="75" Margin="15" />
+                            <TextBlock FontSize="14" Text="{Binding Path=AverageValue, StringFormat=00.00}" MinWidth="75" Margin="15" />
+                            <TextBlock FontSize="14" Text="{Binding Path=DamageTakenPerSecond, StringFormat=00.00}" MinWidth="75" Margin="15" />
                         </StackPanel>
-                        <TextBlock FontSize="14" Text="{Binding Path=From}" MinWidth="175" Margin="15" />
-                        <TextBlock FontSize="14" Text="{Binding Path=To}" MinWidth="150" Margin="15" />
-                        <TextBlock FontSize="14" Text="{Binding Path=SpellOrItem}" MinWidth="200" Margin="15" />
-                    </StackPanel>
-                </DataTemplate>
-            </ListBox.ItemTemplate>
-        </ListBox>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+        </StackPanel>
+
+        <StackPanel Grid.Row="2" Grid.Column="3" Grid.ColumnSpan="2"
+                    Visibility="{Binding ElementName=detailsType, Path=SelectedIndex, Converter={StaticResource IntToVisibility}, ConverterParameter=true:1}">
+            <TextBlock Margin="25 0" HorizontalAlignment="Left"
+                   Text="A - Absorbed, B - Blocked, R - Resisted, RD - Real damage, M - Mitigated"
+                   Visibility="{Binding IsShowDamageInfrom, Converter={StaticResource BoolToVisibility}, ConverterParameter=false}"/>
+            <Button Margin="15 -30" VerticalAlignment="Top" HorizontalAlignment="Right" Style="{StaticResource textBoxButton}" 
+                Command="{Binding ShowDamageInformCommand}">
+                <Button.ToolTip>
+                    <ToolTip>
+                        Подробнее
+                    </ToolTip>
+                </Button.ToolTip>
+                <Icon:PackIconMaterial Kind="HeadQuestion" Foreground="Gray" HorizontalAlignment="Center"/>
+            </Button>
+            <ListBox Margin="20 20 20 45" Background="Transparent" Height="450"
+                 VerticalAlignment="Top" ItemsSource="{Binding DamageTakenInformations}">
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                            <TextBlock FontSize="14" Text="{Binding Path=Time}" MinWidth="75" Margin="5 15" VerticalAlignment="Center" TextAlignment="Center"/>
+                            <StackPanel Width="125" VerticalAlignment="Center">
+                                <Icon:PackIconMaterial Visibility="{Binding Path=IsCrushing, Converter={StaticResource BoolToVisibility}, ConverterParameter=true}"
+                                                   Grid.Column="0" Kind="ShieldAirplane" Foreground="ForestGreen" Style="{StaticResource menuButtonIcon}"
+                                                   HorizontalAlignment="Center">
+                                    <Icon:PackIconMaterial.ToolTip>
+                                        Сокрушительный урон
+                                    </Icon:PackIconMaterial.ToolTip>
+                                </Icon:PackIconMaterial>
+                                <Icon:PackIconMaterial Visibility="{Binding Path=IsParry, Converter={StaticResource BoolToVisibility}, ConverterParameter=true}"
+                                                   Grid.Column="0" Kind="SwordCross" Foreground="ForestGreen" Style="{StaticResource menuButtonIcon}"
+                                                   HorizontalAlignment="Center">
+                                    <Icon:PackIconMaterial.ToolTip>
+                                        Парирование
+                                    </Icon:PackIconMaterial.ToolTip>
+                                </Icon:PackIconMaterial>
+                                <Icon:PackIconMaterial Visibility="{Binding Path=IsDodge, Converter={StaticResource BoolToVisibility}, ConverterParameter=true}"
+                                                   Grid.Column="0" Kind="StarCheck" Foreground="ForestGreen" Style="{StaticResource menuButtonIcon}"
+                                                   HorizontalAlignment="Center">
+                                    <Icon:PackIconMaterial.ToolTip>
+                                        Уклонение
+                                    </Icon:PackIconMaterial.ToolTip>
+                                </Icon:PackIconMaterial>
+                                <Icon:PackIconMaterial Visibility="{Binding Path=IsMiss, Converter={StaticResource BoolToVisibility}, ConverterParameter=true}"
+                                                   Grid.Column="0" Kind="CallMissed" Foreground="ForestGreen" Style="{StaticResource menuButtonIcon}"
+                                                   HorizontalAlignment="Center">
+                                    <Icon:PackIconMaterial.ToolTip>
+                                        Промах
+                                    </Icon:PackIconMaterial.ToolTip>
+                                </Icon:PackIconMaterial>
+                                <Icon:PackIconMaterial Visibility="{Binding Path=IsImmune, Converter={StaticResource BoolToVisibility}, ConverterParameter=true}"
+                                                   Grid.Column="0" Kind="CarLightDimmed" Foreground="ForestGreen" Style="{StaticResource menuButtonIcon}"
+                                                   HorizontalAlignment="Center">
+                                    <Icon:PackIconMaterial.ToolTip>
+                                        Иммунитет
+                                    </Icon:PackIconMaterial.ToolTip>
+                                </Icon:PackIconMaterial>
+                                <Icon:PackIconMaterial Visibility="{Binding Path=IsResist, Converter={StaticResource BoolToVisibility}, ConverterParameter=true}"
+                                                   Grid.Column="0" Kind="Resistor" Foreground="ForestGreen" Style="{StaticResource menuButtonIcon}"
+                                                   HorizontalAlignment="Center">
+                                    <Icon:PackIconMaterial.ToolTip>
+                                        Сопротивления урону
+                                    </Icon:PackIconMaterial.ToolTip>
+                                </Icon:PackIconMaterial>
+                                <Icon:PackIconMaterial Visibility="{Binding Path=IsAbsorb, Converter={StaticResource BoolToVisibility}, ConverterParameter=true}"
+                                                   Grid.Column="0" Kind="Shield" Foreground="ForestGreen" Style="{StaticResource menuButtonIcon}"
+                                                   HorizontalAlignment="Center">
+                                    <Icon:PackIconMaterial.ToolTip>
+                                        Поглащение всего урона
+                                    </Icon:PackIconMaterial.ToolTip>
+                                </Icon:PackIconMaterial>
+                            </StackPanel>
+                            <StackPanel Orientation="Horizontal" Margin="0 15">
+                                <TextBlock FontSize="14" Text="{Binding Path=Value}" MinWidth="100" TextAlignment="Center" VerticalAlignment="Center" />
+                                <StackPanel Visibility="{Binding DataContext.IsShowDamageInfrom, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ListBox}}, Converter={StaticResource BoolToVisibility}, ConverterParameter=true}" MinWidth="100">
+                                    <StackPanel>
+                                        <StackPanel Orientation="Horizontal" Visibility="{Binding Path=Absorbed, Converter={StaticResource IntToVisibility}, ConverterParameter='true:0:>'}">
+                                            <TextBlock FontSize="15" Text="A: " Foreground="CadetBlue" FontWeight="Bold" Width="25" TextAlignment="Center" />
+                                            <TextBlock FontSize="15" Text="{Binding Path=Absorbed}" TextAlignment="Center" />
+                                        </StackPanel>
+                                        <StackPanel Orientation="Horizontal" Visibility="{Binding Path=Resisted, Converter={StaticResource IntToVisibility}, ConverterParameter='true:0:>'}">
+                                            <TextBlock FontSize="15" Text="R: " Foreground="CadetBlue" FontWeight="Bold" Width="25" TextAlignment="Center" />
+                                            <TextBlock FontSize="15" Text="{Binding Path=Resisted}" TextAlignment="Center" />
+                                        </StackPanel>
+                                        <StackPanel Orientation="Horizontal" Visibility="{Binding Path=Blocked, Converter={StaticResource IntToVisibility}, ConverterParameter='true:0:>'}">
+                                            <TextBlock FontSize="15" Text="B: " Foreground="CadetBlue" FontWeight="Bold" Width="25" TextAlignment="Center" />
+                                            <TextBlock FontSize="15" Text="{Binding Path=Blocked}" TextAlignment="Center" />
+                                        </StackPanel>
+                                    </StackPanel>
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBlock FontSize="13" Text="RD: " Foreground="DimGray" Width="30" TextAlignment="Center" />
+                                        <TextBlock FontSize="13" Text="{Binding Path=RealDamage}" TextAlignment="Center" />
+                                    </StackPanel>
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBlock FontSize="13" Text="M: " Foreground="DimGray" Width="25" TextAlignment="Center" />
+                                        <TextBlock FontSize="13" Text="{Binding Path=Mitigated}" TextAlignment="Center" />
+                                    </StackPanel>
+                                </StackPanel>
+                            </StackPanel>
+                            <TextBlock FontSize="14" Text="{Binding Path=FromEnemy}" MinWidth="125" TextAlignment="Center" Margin="15" VerticalAlignment="Center" />
+                            <TextBlock FontSize="14" Text="{Binding Path=ToPlayer}" MinWidth="150" TextAlignment="Center" Margin="15" VerticalAlignment="Center" />
+                            <TextBlock FontSize="14" Text="{Binding Path=SpellOrItem}" MinWidth="200" TextAlignment="Center" Margin="15" VerticalAlignment="Center" />
+                        </StackPanel>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+        </StackPanel>
+
 
         <StackPanel Grid.Column="2" Grid.Row="2" VerticalAlignment="Bottom" HorizontalAlignment="Left" Margin="0 60"
                     Orientation="Horizontal">
@@ -126,7 +216,7 @@
                    Text="{Binding TotalValue}" FontSize="18" TextAlignment="Center" FontWeight="Bold"/>
         </StackPanel>
         
-        <StackPanel Margin="20 -60" Grid.Row="3" Grid.Column="3" Orientation="Horizontal"
+        <StackPanel Margin="5 -60" Grid.Row="3" Grid.Column="3" Orientation="Horizontal"
                     Visibility="{Binding ElementName=detailsType, Path=SelectedIndex, Converter={StaticResource IntToVisibility}, ConverterParameter=true:1}">
             <StackPanel Margin="20" MinWidth="400">
                 <CheckBox Margin="25 5" VerticalContentAlignment="Center" Content="Показать уклонения" IsChecked="{Binding IsShowDodge}"
@@ -136,10 +226,16 @@
                 <CheckBox Margin="25 5" VerticalContentAlignment="Center" Content="Показать промахи" IsChecked="{Binding IsShowMiss}"
                   FontSize="14" VerticalAlignment="Center" FontWeight="SemiBold" />
             </StackPanel>
-            <StackPanel Margin="20" MinWidth="400">
+            <StackPanel Margin="-50 20" MinWidth="400">
                 <CheckBox Margin="25 5" VerticalContentAlignment="Center" Content="Показать сопротивления" IsChecked="{Binding IsShowResist}"
                   FontSize="14" VerticalAlignment="Center" FontWeight="SemiBold" />
                 <CheckBox Margin="25 5" VerticalContentAlignment="Center" Content="Показать иммунитет" IsChecked="{Binding IsShowImmune}"
+                  FontSize="14" VerticalAlignment="Center" FontWeight="SemiBold" />
+                <CheckBox Margin="25 5" VerticalContentAlignment="Center" Content="Показать сокр. урон" IsChecked="{Binding IsShowCrushing}"
+                  FontSize="14" VerticalAlignment="Center" FontWeight="SemiBold" />
+            </StackPanel>
+            <StackPanel Margin="-10 20" MinWidth="400">
+                <CheckBox Margin="25 5" VerticalContentAlignment="Center" Content="Показать погл. урон" IsChecked="{Binding IsShowAbsorb}"
                   FontSize="14" VerticalAlignment="Center" FontWeight="SemiBold" />
             </StackPanel>
         </StackPanel>
