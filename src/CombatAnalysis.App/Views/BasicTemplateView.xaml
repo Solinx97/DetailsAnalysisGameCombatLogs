@@ -138,9 +138,9 @@
         <Border Grid.Column="2" Grid.ColumnSpan="2" Background="Transparent" Margin="10 10" Height="40"
                 VerticalAlignment="Center" MouseDown="Border_MouseDown" Panel.ZIndex="2">
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                <StackPanel VerticalAlignment="Center" Visibility="{Binding ResponseStatus, Converter={StaticResource IntToVisibility}, ConverterParameter='true:1:>='}">
+                <StackPanel VerticalAlignment="Center">
                     <TextBlock Margin="5" FontSize="13" FontWeight="Bold" Foreground="Gray" Text="Загрузка..."
-                           Visibility="Visible">
+                           Visibility="{Binding ResponseStatus, Converter={StaticResource IntToVisibility}, ConverterParameter='true:1:>='}">
                         <TextBlock.ToolTip>
                             <ToolTip>
                                 Загрузка данных. Это может занять некоторое время. Вы можете продолжить работу с приложением.

@@ -14,6 +14,16 @@ namespace CombatAnalysis.CombatParser.Entities
 
         public string SpellOrItem { get; set; }
 
+        public int Resist { get; set; }
+
+        public int Absorb { get; set; }
+
+        public int Blocked { get; set; }
+
+        public int RealDamage { get; set; }
+
+        public int Mitigated { get; set; }
+
         public bool IsDodge { get; set; }
 
         public bool IsParry { get; set; }
@@ -23,6 +33,8 @@ namespace CombatAnalysis.CombatParser.Entities
         public bool IsResist { get; set; }
 
         public bool IsImmune { get; set; }
+
+        public bool IsAbsorb { get; set; }
 
         public bool IsCrushing { get; set; }
 
