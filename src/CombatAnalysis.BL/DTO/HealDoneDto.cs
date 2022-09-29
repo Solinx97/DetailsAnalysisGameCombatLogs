@@ -20,10 +20,6 @@ namespace CombatAnalysis.BL.DTO
 
         public string SpellOrItem { get; set; }
 
-        public int CurrentHealth { get; set; }
-
-        public int MaxHealth { get; set; }
-
         public bool IsCrit { get; set; }
 
         public bool IsFullOverheal { get; set; }

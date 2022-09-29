@@ -97,10 +97,10 @@
                                 </StackPanel>
                                 <Button mvx:Bi.nd="Command LoadCombatsCommand" Content="Загрузить" Width="100" FontSize="16"
                                         Margin="10,10" Style="{StaticResource showButton}" Foreground="Blue"
-                                        Visibility="{Binding CombatLogsNumber, Converter={StaticResource IntToVisibility}, ConverterParameter='0:true:>'}"
+                                        Visibility="{Binding CombatLogsNumber, Converter={StaticResource IntToVisibility}, ConverterParameter='true:0:>'}"
                                         IsEnabled="{Binding SelectedCombatLogId, Converter={StaticResource IntToXAMLBool}, ConverterParameter='-1:>'}"/>
                                 <ListBox Background="Transparent" ItemsSource="{Binding CombatLogs}" SelectedIndex="{Binding SelectedCombatLogId}"
-                                    Visibility="{Binding CombatLogsNumber, Converter={StaticResource IntToVisibility}, ConverterParameter='0:true:>'}">
+                                    Visibility="{Binding CombatLogsNumber, Converter={StaticResource IntToVisibility}, ConverterParameter='true:0:>'}">
                                     <ListBox.ItemTemplate>
                                         <DataTemplate>
                                             <StackPanel Margin="10" Orientation="Horizontal" HorizontalAlignment="Center">
@@ -131,7 +131,7 @@
                                     </Button>
                                 </StackPanel>
                                 <StackPanel Orientation="Horizontal" Width="250"
-                                        Visibility="{Binding CombatLogsNumber, Converter={StaticResource IntToVisibility}, ConverterParameter='0:true:>'}">
+                                        Visibility="{Binding CombatLogsNumber, Converter={StaticResource IntToVisibility}, ConverterParameter='true:0:>'}">
                                     <Button mvx:Bi.nd="Command LoadCombatsCommand" Content="Загрузить" Width="100" FontSize="16"
                                             Margin="10,10" Style="{StaticResource showButton}" Foreground="Blue" HorizontalAlignment="Center"/>
                                     <Icon:PackIconMaterial Kind="Delete" Foreground="Orange" Style="{StaticResource menuButtonIcon}" mvx:Bi.nd="Command DeleteCombatCommand"
@@ -147,7 +147,7 @@
                                     </Icon:PackIconMaterial>
                                 </StackPanel>
                                 <ListBox Background="Transparent" ItemsSource="{Binding CombatLogsByUser}" SelectedIndex="{Binding SelectedCombatLogId}"
-                                        Visibility="{Binding CombatLogsNumber, Converter={StaticResource IntToVisibility}, ConverterParameter='0:true:>'}">
+                                        Visibility="{Binding CombatLogsNumber, Converter={StaticResource IntToVisibility}, ConverterParameter='true:0:>'}">
                                     <ListBox.ItemTemplate>
                                         <DataTemplate>
                                             <StackPanel Margin="10" Orientation="Horizontal" HorizontalAlignment="Center">

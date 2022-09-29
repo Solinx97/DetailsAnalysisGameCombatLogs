@@ -7,8 +7,6 @@
     [FromPlayer]        NVARCHAR (MAX) NULL,
     [ToPlayer]          NVARCHAR (MAX) NULL,
     [SpellOrItem]       NVARCHAR (MAX) NULL,
-    [CurrentHealth]     INT            NOT NULL,
-    [MaxHealth]         INT            NOT NULL,
     [IsCrit]            BIT            NOT NULL,
     [IsFullOverheal]    BIT            NOT NULL,
     [CombatPlayerId]    INT            NOT NULL,

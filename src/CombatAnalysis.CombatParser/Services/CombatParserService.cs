@@ -16,6 +16,8 @@ namespace CombatAnalysis.CombatParser.Services
         private readonly IFileManager _fileManager;
         private readonly ILogger _logger;
 
+        private TimeSpan _minCombatDuration = TimeSpan.Parse("00:00:20");
+
         public CombatParserService(IFileManager fileManager, ILogger logger)
         {
             _fileManager = fileManager;
@@ -74,14 +76,18 @@ namespace CombatAnalysis.CombatParser.Services
                     FinishDate = GetTime(combatData[^1]),
                 };
 
-                GetCombatPlayersData(combat);
+                var duration = combat.FinishDate - combat.StartDate;
+                if (duration >= _minCombatDuration)
+                {
+                    GetCombatPlayersData(combat);
 
-                CombatDetailsTemplate combatDetailsDeaths = new CombatDetailsDeaths(_logger, combat.Players);
-                combat.DeathNumber = combatDetailsDeaths.GetData(string.Empty, combat.Data);
+                    CombatDetailsTemplate combatDetailsDeaths = new CombatDetailsDeaths(_logger, combat.Players);
+                    combat.DeathNumber = combatDetailsDeaths.GetData(string.Empty, combat.Data);
 
-                CalculatingCommonCombatDetails(combat);
+                    CalculatingCommonCombatDetails(combat);
 
-                AddNewCombat(combat);
+                    AddNewCombat(combat);
+                }
             }
             catch (IndexOutOfRangeException)
             {
@@ -130,7 +136,8 @@ namespace CombatAnalysis.CombatParser.Services
             var parse = combatStart.Split("  ")[0];
             var combatDate = parse.Split(' ');
             var dateWithoutTime = combatDate[0].Split('/');
-            var clearDate = $"{dateWithoutTime[0]}/{dateWithoutTime[1]}/{DateTimeOffset.UtcNow.Year} {combatDate[1]}";
+            var time = combatDate[1].Split('.')[0];
+            var clearDate = $"{dateWithoutTime[1]}/{dateWithoutTime[0]}/{DateTimeOffset.Now.Year} {time}";
 
             DateTimeOffset.TryParse(clearDate, out var date);
             return date.UtcDateTime;
@@ -190,15 +197,15 @@ namespace CombatAnalysis.CombatParser.Services
             NotifyObservers();
         }
 
-        private List<string> GetCombatPlayers(List<string> combat)
+        private List<string> GetCombatPlayers(List<string> combatInformation)
         {
             var playersId = new List<string>();
 
-            for (int i = 1; i < combat.Count; i++)
+            for (int i = 1; i < combatInformation.Count; i++)
             {
-                if (combat[i].Contains("COMBATANT_INFO"))
+                if (combatInformation[i].Contains("COMBATANT_INFO"))
                 {
-                    var data = combat[i].Split("  ")[1];
+                    var data = combatInformation[i].Split("  ")[1];
                     playersId.Add(data.Split(',')[1]);
                 }
                 else break;
@@ -207,7 +214,7 @@ namespace CombatAnalysis.CombatParser.Services
             var players = new List<string>();
             foreach (var item in playersId)
             {
-                var player = GetCombatPlayersById(combat, item);
+                var player = GetCombatPlayersById(combatInformation, item);
                 players.Add(player);
             }
 
@@ -231,21 +238,18 @@ namespace CombatAnalysis.CombatParser.Services
             _zones.Add(zone);
         }
 
-        private string GetCombatPlayersById(List<string> combat, string playerId)
+        private string GetCombatPlayersById(List<string> combatInformation, string playerId)
         {
             var player = string.Empty;
-            for (int i = 1; i < combat.Count; i++)
+            for (int i = 1; i < combatInformation.Count; i++)
             {
-                if (!combat[i].Contains("COMBATANT_INFO"))
+                var data = combatInformation[i].Split(',');
+                if (!combatInformation[i].Contains("COMBATANT_INFO")
+                    && playerId == data[1])
                 {
-                    var data = combat[i].Split(',');
-                    var indexPlayerId = Array.IndexOf(data, playerId);
-                    if (indexPlayerId > 0)
-                    {
-                        var userName = data[indexPlayerId + 1];
-                        player = userName.Trim('"');
-                        break;
-                    }
+                    var userName = data[2];
+                    player = userName.Trim('"');
+                    break;
                 }
             }
 

@@ -1,21 +1,30 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using System;
 
 namespace CombatAnalysis.DAL.Entities
 {
     [Index(nameof(CombatPlayerId))]
     public class DamageTaken
     {
-        public int Id { get; set; }
-
         public int Value { get; set; }
 
-        public string Time { get; set; }
+        public TimeSpan Time { get; set; }
 
         public string FromEnemy { get; set; }
 
         public string ToPlayer { get; set; }
 
         public string SpellOrItem { get; set; }
+
+        public int Resisted { get; set; }
+
+        public int Absorbed { get; set; }
+
+        public int Blocked { get; set; }
+
+        public int RealDamage { get; set; }
+
+        public int Mitigated { get; set; }
 
         public bool IsDodge { get; set; }
 
@@ -26,6 +35,8 @@ namespace CombatAnalysis.DAL.Entities
         public bool IsResist { get; set; }
 
         public bool IsImmune { get; set; }
+
+        public bool IsAbsorb { get; set; }
 
         public bool IsCrushing { get; set; }
 
