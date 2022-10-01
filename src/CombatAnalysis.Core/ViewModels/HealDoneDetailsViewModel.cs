@@ -26,16 +26,16 @@ namespace CombatAnalysis.Core.ViewModels
 
         private IImprovedMvxViewModel _basicTemplate;
         private ObservableCollection<HealDoneModel> _healDoneInformations;
+        private ObservableCollection<HealDoneModel> _healDoneInformationsWithoutFilter;
         private ObservableCollection<HealDoneModel> _healDoneInformationsWithOverheal;
+        private ObservableCollection<string> _healDoneSources;
         private ObservableCollection<HealDoneGeneralModel> _healDoneGeneralInformations;
 
         private bool _isShowOverheal = true;
         private bool _isShowCrit = true;
-        private bool _isShowOnlyOverheal;
-        private bool _isShowOnlyCrit;
+        private bool _isShowFilters;
         private string _selectedPlayer;
-        private int _selectedIndexSorting;
-        private bool _isCollectionReversed;
+        private string _selectedHealDoneSource = "Все";
         private long _totalValue;
 
         public HealDoneDetailsViewModel(IMapper mapper, IHttpClientHelper httpClient, ILogger logger, IMemoryCache memoryCache)
@@ -69,6 +69,15 @@ namespace CombatAnalysis.Core.ViewModels
             }
         }
 
+        public ObservableCollection<string> HealDoneSources
+        {
+            get { return _healDoneSources; }
+            set
+            {
+                SetProperty(ref _healDoneSources, value);
+            }
+        }
+
         public ObservableCollection<HealDoneGeneralModel> HealDoneGeneralInformations
         {
             get { return _healDoneGeneralInformations; }
@@ -93,21 +102,6 @@ namespace CombatAnalysis.Core.ViewModels
             }
         }
 
-        public bool IsShowOnlyOverheal
-        {
-            get { return _isShowOnlyOverheal; }
-            set
-            {
-                SetProperty(ref _isShowOnlyOverheal, value);
-
-                _powerUpInCombat.UpdateProperty("IsFullOverheal");
-                _powerUpInCombat.UpdateCollection(_healDoneInformationsWithOverheal);
-                HealDoneInformations = _powerUpInCombat.ShowSpecificalValueInversion("Time", HealDoneInformations, value);
-
-                RaisePropertyChanged(() => HealDoneInformations);
-            }
-        }
-
         public bool IsShowCrit
         {
             get { return _isShowCrit; }
@@ -123,18 +117,12 @@ namespace CombatAnalysis.Core.ViewModels
             }
         }
 
-        public bool IsShowOnlyCrit
+        public bool IsShowFilters
         {
-            get { return _isShowOnlyCrit; }
+            get { return _isShowFilters; }
             set
             {
-                SetProperty(ref _isShowOnlyCrit, value);
-
-                _powerUpInCombat.UpdateProperty("IsCrit");
-                _powerUpInCombat.UpdateCollection(_healDoneInformationsWithOverheal);
-                HealDoneInformations = _powerUpInCombat.ShowSpecificalValueInversion("Time", HealDoneInformations, value);
-
-                RaisePropertyChanged(() => HealDoneInformations);
+                SetProperty(ref _isShowFilters, value);
             }
         }
 
@@ -147,29 +135,14 @@ namespace CombatAnalysis.Core.ViewModels
             }
         }
 
-        public int SelectedIndexSorting
+        public string SelectedHealDoneSource
         {
-            get { return _selectedIndexSorting; }
+            get { return _selectedHealDoneSource; }
             set
             {
-                SetProperty(ref _selectedIndexSorting, value);
+                SetProperty(ref _selectedHealDoneSource, value);
 
-                Sorting(value);
-
-                RaisePropertyChanged(() => HealDoneGeneralInformations);
-            }
-        }
-
-        public bool IsCollectionReversed
-        {
-            get { return _isCollectionReversed; }
-            set
-            {
-                SetProperty(ref _isCollectionReversed, value);
-
-                Reverse();
-
-                RaisePropertyChanged(() => HealDoneGeneralInformations);
+                HealDoneInformationFilter();
             }
         }
 
@@ -211,7 +184,12 @@ namespace CombatAnalysis.Core.ViewModels
             var map1 = _mapper.Map<ObservableCollection<HealDoneModel>>(combatInformation.HealDone);
 
             HealDoneInformations = map1;
+            _healDoneInformationsWithoutFilter = new ObservableCollection<HealDoneModel>(map1);
             _healDoneInformationsWithOverheal = new ObservableCollection<HealDoneModel>(map1);
+
+            var healDOneSources = HealDoneInformations.Select(x => x.SpellOrItem).Distinct().ToList();
+            healDOneSources.Insert(0, "Все");
+            HealDoneSources = new ObservableCollection<string>(healDOneSources);
         }
 
         private void GetHealDoneGeneral(CombatDetailsTemplate combatInformation, Combat combat)
@@ -234,45 +212,16 @@ namespace CombatAnalysis.Core.ViewModels
             HealDoneGeneralInformations = new ObservableCollection<HealDoneGeneralModel>(healDoneGenerals.ToList());
         }
 
-        private void Sorting(int index)
+        private void HealDoneInformationFilter()
         {
-            IOrderedEnumerable<HealDoneGeneralModel> sortedCollection;
-
-            switch (index)
+            if (_healDoneInformationsWithoutFilter.Any(x => x.SpellOrItem == SelectedHealDoneSource))
             {
-                case 0:
-                    sortedCollection = HealDoneGeneralInformations.OrderBy(x => x.SpellOrItem);
-                    break;
-                case 1:
-                    sortedCollection = HealDoneGeneralInformations.OrderBy(x => x.Value);
-                    break;
-                case 2:
-                    sortedCollection = HealDoneGeneralInformations.OrderBy(x => x.CastNumber);
-                    break;
-                case 3:
-                    sortedCollection = HealDoneGeneralInformations.OrderBy(x => x.MinValue);
-                    break;
-                case 4:
-                    sortedCollection = HealDoneGeneralInformations.OrderBy(x => x.MaxValue);
-                    break;
-                case 5:
-                    sortedCollection = HealDoneGeneralInformations.OrderBy(x => x.AverageValue);
-                    break;
-                case 6:
-                    sortedCollection = HealDoneGeneralInformations.OrderBy(x => x.HealPerSecond);
-                    break;
-                default:
-                    sortedCollection = HealDoneGeneralInformations.OrderBy(x => x.Value);
-                    break;
+                HealDoneInformations = new ObservableCollection<HealDoneModel>(_healDoneInformationsWithoutFilter.Where(x => x.SpellOrItem == SelectedHealDoneSource));
             }
-
-            HealDoneGeneralInformations = new ObservableCollection<HealDoneGeneralModel>(sortedCollection.ToList());
-            IsCollectionReversed = false;
-        }
-
-        private void Reverse()
-        {
-            HealDoneGeneralInformations = new ObservableCollection<HealDoneGeneralModel>(HealDoneGeneralInformations.Reverse().ToList());
+            else
+            {
+                HealDoneInformations = _healDoneInformationsWithoutFilter;
+            }
         }
     }
 }

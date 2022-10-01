@@ -24,11 +24,11 @@ namespace CombatAnalysis.Core.ViewModels
 
         private IImprovedMvxViewModel _basicTemplate;
         private ObservableCollection<ResourceRecoveryModel> _resourceRecoveryInformations;
+        private ObservableCollection<ResourceRecoveryModel> _resourceRecoveryInformationsWithoutFilter;
+        private ObservableCollection<string> _resourceRecoverySources;
         private ObservableCollection<ResourceRecoveryGeneralModel> _resourceRecoveryGeneralInformations;
-
+        private string _selectedResourceRecoverySource = "Все";
         private string _selectedPlayer;
-        private int _selectedIndexSorting;
-        private bool _isCollectionReversed;
         private double _totalValue;
 
         public ResourceRecoveryDetailsViewModel(IMapper mapper, IHttpClientHelper httpClient, ILogger logger, IMemoryCache memoryCache)
@@ -61,6 +61,15 @@ namespace CombatAnalysis.Core.ViewModels
             }
         }
 
+        public ObservableCollection<string> ResourceRecoverySources
+        {
+            get { return _resourceRecoverySources; }
+            set
+            {
+                SetProperty(ref _resourceRecoverySources, value);
+            }
+        }
+
         public ObservableCollection<ResourceRecoveryGeneralModel> ResourceRecoveryGeneralInformations
         {
             get { return _resourceRecoveryGeneralInformations; }
@@ -79,29 +88,14 @@ namespace CombatAnalysis.Core.ViewModels
             }
         }
 
-        public int SelectedIndexSorting
+        public string SelectedResourceRecoverySource
         {
-            get { return _selectedIndexSorting; }
+            get { return _selectedResourceRecoverySource; }
             set
             {
-                SetProperty(ref _selectedIndexSorting, value);
+                SetProperty(ref _selectedResourceRecoverySource, value);
 
-                Sorting(value);
-
-                RaisePropertyChanged(() => ResourceRecoveryGeneralInformations);
-            }
-        }
-
-        public bool IsCollectionReversed
-        {
-            get { return _isCollectionReversed; }
-            set
-            {
-                SetProperty(ref _isCollectionReversed, value);
-
-                Reverse();
-
-                RaisePropertyChanged(() => ResourceRecoveryGeneralInformations);
+                ResourceRecoveryInformationFilter();
             }
         }
 
@@ -144,67 +138,43 @@ namespace CombatAnalysis.Core.ViewModels
 
             ResourceRecoveryInformations = map1;
             _resourceRecoveryInformations = new ObservableCollection<ResourceRecoveryModel>(map1);
+            _resourceRecoveryInformationsWithoutFilter = new ObservableCollection<ResourceRecoveryModel>(map1);
+
+            var resourceRecoverySources = ResourceRecoveryInformations.Select(x => x.SpellOrItem).Distinct().ToList();
+            resourceRecoverySources.Insert(0, "Все");
+            ResourceRecoverySources = new ObservableCollection<string>(resourceRecoverySources);
         }
 
         private void GetResourceRecoveryGeneral(CombatDetailsTemplate combatInformation, Combat combat)
         {
-            var damageDoneGeneralInformations = combatInformation.GetResourceRecoveryGeneral(combatInformation.ResourceRecovery, combat);
-            var map2 = _mapper.Map<ObservableCollection<ResourceRecoveryGeneralModel>>(damageDoneGeneralInformations);
+            var resourceRecoveryGeneralInformations = combatInformation.GetResourceRecoveryGeneral(combatInformation.ResourceRecovery, combat);
+            var map2 = _mapper.Map<ObservableCollection<ResourceRecoveryGeneralModel>>(resourceRecoveryGeneralInformations);
             ResourceRecoveryGeneralInformations = map2;
         }
 
         private async Task LoadResourceRecoveryDetails(int combatPlayerId)
         {
-            var healDones = await _combatParserAPIService.LoadResourceRecoveryDetailsAsync(combatPlayerId);
-            ResourceRecoveryInformations = new ObservableCollection<ResourceRecoveryModel>(healDones.ToList());
-            _resourceRecoveryInformations = new ObservableCollection<ResourceRecoveryModel>(healDones.ToList());
+            var resourceRecoveries = await _combatParserAPIService.LoadResourceRecoveryDetailsAsync(combatPlayerId);
+            ResourceRecoveryInformations = new ObservableCollection<ResourceRecoveryModel>(resourceRecoveries.ToList());
+            _resourceRecoveryInformations = new ObservableCollection<ResourceRecoveryModel>(resourceRecoveries.ToList());
         }
 
         private async Task LoadResourceRecoveryGeneral(int combatPlayerId)
         {
-            var healDoneGenerals = await _combatParserAPIService.LoadResourceRecoveryGeneralAsync(combatPlayerId);
-            ResourceRecoveryGeneralInformations = new ObservableCollection<ResourceRecoveryGeneralModel>(healDoneGenerals.ToList());
+            var resourceRecoveries = await _combatParserAPIService.LoadResourceRecoveryGeneralAsync(combatPlayerId);
+            ResourceRecoveryGeneralInformations = new ObservableCollection<ResourceRecoveryGeneralModel>(resourceRecoveries.ToList());
         }
 
-        private void Sorting(int index)
+        private void ResourceRecoveryInformationFilter()
         {
-            IOrderedEnumerable<ResourceRecoveryGeneralModel> sortedCollection;
-
-            switch (index)
+            if (_resourceRecoveryInformationsWithoutFilter.Any(x => x.SpellOrItem == SelectedResourceRecoverySource))
             {
-                case 0:
-                    sortedCollection = ResourceRecoveryGeneralInformations.OrderBy(x => x.SpellOrItem);
-                    break;
-                case 1:
-                    sortedCollection = ResourceRecoveryGeneralInformations.OrderBy(x => x.Value);
-                    break;
-                case 2:
-                    sortedCollection = ResourceRecoveryGeneralInformations.OrderBy(x => x.CastNumber);
-                    break;
-                case 3:
-                    sortedCollection = ResourceRecoveryGeneralInformations.OrderBy(x => x.MinValue);
-                    break;
-                case 4:
-                    sortedCollection = ResourceRecoveryGeneralInformations.OrderBy(x => x.MaxValue);
-                    break;
-                case 5:
-                    sortedCollection = ResourceRecoveryGeneralInformations.OrderBy(x => x.AverageValue);
-                    break;
-                case 6:
-                    sortedCollection = ResourceRecoveryGeneralInformations.OrderBy(x => x.ResourcePerSecond);
-                    break;
-                default:
-                    sortedCollection = ResourceRecoveryGeneralInformations.OrderBy(x => x.Value);
-                    break;
+                ResourceRecoveryInformations = new ObservableCollection<ResourceRecoveryModel>(_resourceRecoveryInformationsWithoutFilter.Where(x => x.SpellOrItem == SelectedResourceRecoverySource));
             }
-
-            ResourceRecoveryGeneralInformations = new ObservableCollection<ResourceRecoveryGeneralModel>(sortedCollection.ToList());
-            IsCollectionReversed = false;
-        }
-
-        private void Reverse()
-        {
-            ResourceRecoveryGeneralInformations = new ObservableCollection<ResourceRecoveryGeneralModel>(ResourceRecoveryGeneralInformations.Reverse().ToList());
+            else
+            {
+                ResourceRecoveryInformations = _resourceRecoveryInformationsWithoutFilter;
+            }
         }
     }
 }

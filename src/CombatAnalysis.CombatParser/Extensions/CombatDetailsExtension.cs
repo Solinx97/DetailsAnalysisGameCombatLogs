@@ -51,7 +51,7 @@ namespace CombatAnalysis.CombatParser.Extensions
             var lessDetails = new List<HealDoneGeneral>();
             foreach (var item in spells)
             {
-                var damageDone = new HealDoneGeneral
+                var healDoneGeneral = new HealDoneGeneral
                 {
                     Value = item.Sum(x => x.Value),
                     HealPerSecond = item.Sum(x => x.Value) / durationTime.TotalSeconds,
@@ -62,13 +62,13 @@ namespace CombatAnalysis.CombatParser.Extensions
                     CastNumber = item.Count,
                 };
 
-                lessDetails.Add(damageDone);
+                lessDetails.Add(healDoneGeneral);
             }
 
             lessDetails = lessDetails.OrderByDescending(x => x.Value).ToList();
-            var damageDoneGroupBySpellOrItem = new ObservableCollection<HealDoneGeneral>(lessDetails);
+            var healDoneGroupBySpellOrItem = new ObservableCollection<HealDoneGeneral>(lessDetails);
 
-            return damageDoneGroupBySpellOrItem;
+            return healDoneGroupBySpellOrItem;
         }
 
         public static ObservableCollection<DamageTakenGeneral> GetDamageTakenGeneral(this CombatDetailsTemplate extension, List<DamageTaken> collection, Combat combat)
@@ -82,7 +82,7 @@ namespace CombatAnalysis.CombatParser.Extensions
             var lessDetails = new List<DamageTakenGeneral>();
             foreach (var item in spells)
             {
-                var damageDone = new DamageTakenGeneral
+                var damageTakenGeneral = new DamageTakenGeneral
                 {
                     Value = item.Sum(x => x.Value),
                     DamageTakenPerSecond = item.Sum(x => x.Value) / durationTime.TotalSeconds,
@@ -93,13 +93,13 @@ namespace CombatAnalysis.CombatParser.Extensions
                     CastNumber = item.Count,
                 };
 
-                lessDetails.Add(damageDone);
+                lessDetails.Add(damageTakenGeneral);
             }
 
             lessDetails = lessDetails.OrderByDescending(x => x.Value).ToList();
-            var damageDoneGroupBySpellOrItem = new ObservableCollection<DamageTakenGeneral>(lessDetails);
+            var damageTakenGroupBySpellOrItem = new ObservableCollection<DamageTakenGeneral>(lessDetails);
 
-            return damageDoneGroupBySpellOrItem;
+            return damageTakenGroupBySpellOrItem;
         }
 
         public static ObservableCollection<ResourceRecoveryGeneral> GetResourceRecoveryGeneral(this CombatDetailsTemplate extension, List<ResourceRecovery> collection, Combat combat)
@@ -113,7 +113,7 @@ namespace CombatAnalysis.CombatParser.Extensions
             var lessDetails = new List<ResourceRecoveryGeneral>();
             foreach (var item in spells)
             {
-                var damageDone = new ResourceRecoveryGeneral
+                var resourceRecoveryGeneral = new ResourceRecoveryGeneral
                 {
                     Value = item.Sum(x => x.Value),
                     ResourcePerSecond = item.Sum(x => x.Value) / durationTime.TotalSeconds,
@@ -124,13 +124,13 @@ namespace CombatAnalysis.CombatParser.Extensions
                     CastNumber = item.Count,
                 };
 
-                lessDetails.Add(damageDone);
+                lessDetails.Add(resourceRecoveryGeneral);
             }
 
             lessDetails = lessDetails.OrderByDescending(x => x.Value).ToList();
-            var damageDoneGroupBySpellOrItem = new ObservableCollection<ResourceRecoveryGeneral>(lessDetails);
+            var resourceRecoveryGroupBySpellOrItem = new ObservableCollection<ResourceRecoveryGeneral>(lessDetails);
 
-            return damageDoneGroupBySpellOrItem;
+            return resourceRecoveryGroupBySpellOrItem;
         }
     }
 }
