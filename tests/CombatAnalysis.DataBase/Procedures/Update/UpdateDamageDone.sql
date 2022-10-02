@@ -5,6 +5,7 @@
 	@FromPlayer NVARCHAR (MAX),
 	@ToEnemy NVARCHAR (MAX),
 	@SpellOrItem NVARCHAR (MAX),
+	@IsPeriodicDamage BIT,
 	@IsDodge BIT,
 	@IsParry BIT,
 	@IsMiss BIT,
@@ -14,6 +15,6 @@
 	@CombatPlayerId INT
 AS
 	UPDATE DamageDone
-	SET Value = @Value,Time = @Time,FromPlayer = @FromPlayer,ToEnemy = @ToEnemy,SpellOrItem = @SpellOrItem,IsDodge = @IsDodge,IsParry = @IsParry,IsMiss = @IsMiss,IsResist = @IsResist,IsImmune = @IsImmune,IsCrit = @IsCrit,CombatPlayerId = @CombatPlayerId
+	SET Value = @Value,Time = @Time,FromPlayer = @FromPlayer,ToEnemy = @ToEnemy,SpellOrItem = @SpellOrItem,IsPeriodicDamage = @IsPeriodicDamage,IsDodge = @IsDodge,IsParry = @IsParry,IsMiss = @IsMiss,IsResist = @IsResist,IsImmune = @IsImmune,IsCrit = @IsCrit,CombatPlayerId = @CombatPlayerId
 	WHERE Id = @Id
 RETURN 0

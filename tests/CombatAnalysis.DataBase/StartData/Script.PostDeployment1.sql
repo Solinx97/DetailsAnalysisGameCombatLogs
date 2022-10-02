@@ -28,7 +28,7 @@ values ('Player #1', 650, 2750, 4255, 3210, 0, 1)
 
 -- DamageDone
 insert into dbo.DamageDone
-values (275, '00:35', 'Player #1', 'Enemy #1', 'Spell #1', 'FALSE', 'FALSE', 'FALSE', 'FALSE', 'FALSE', 'FALSE', 1)
+values (275, '00:35', 'Player #1', 'Enemy #1', 'Spell #1', 'FALSE', 'FALSE', 'FALSE', 'FALSE', 'FALSE', 'FALSE', 'FALSE', 1)
 
 -- DamageDoneGeneral
 insert into dbo.DamageDoneGeneral
@@ -36,7 +36,7 @@ values (2750, 943, 'Spell #1', 2, 0, 18, 275, 650, 462, 1)
 
 -- DamageTaken
 insert into dbo.DamageTaken
-values (148, '00:29', 'Enemy #1', 'Player #1', 'Spell #1', 0, 0, 24, 192, 20, 'FALSE', 'FALSE', 'FALSE', 'FALSE', 'FALSE', 'TRUE', 1)
+values (148, '00:29', 'Enemy #1', 'Player #1', 'Spell #1', 'FALSE', 0, 0, 24, 192, 20, 'FALSE', 'FALSE', 'FALSE', 'FALSE', 'FALSE', 'TRUE', 1)
 
 -- DamageTakenGeneral
 insert into dbo.DamageTakenGeneral
