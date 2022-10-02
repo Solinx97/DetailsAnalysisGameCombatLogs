@@ -16,6 +16,8 @@ namespace CombatAnalysis.BL.DTO
 
         public string SpellOrItem { get; set; }
 
+        public bool IsPeriodicDamage { get; set; }
+
         public bool IsDodge { get; set; }
 
         public bool IsParry { get; set; }

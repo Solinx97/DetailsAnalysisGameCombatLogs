@@ -112,18 +112,27 @@ namespace CombatAnalysis.CombatParser.Patterns
                 mitigated = realDamage - value;
             }
 
+            var isPeriodicDamage = false;
+            var enemy = combatData[3];
+            if (combatData[3] == "nil")
+            {
+                isPeriodicDamage = true;
+                enemy = combatData[11];
+            }
+
             var damageTaken = new DamageTaken
             {
                 Value = value,
                 Time = TimeSpan.Parse(combatData[0]),
-                FromEnemy = combatData[3].Trim('"'),
+                FromEnemy = enemy.Trim('"'),
                 ToPlayer = combatData[7].Trim('"'),
                 SpellOrItem = spellOrItem,
+                IsPeriodicDamage = isPeriodicDamage,
                 Resisted = resist,
                 Absorbed = absorb,
                 Blocked = blocked,
                 RealDamage = realDamage,
-                Mitigated = mitigated,
+                Mitigated = mitigated < 0 ? 0 : mitigated,
                 IsDodge = combatData[^2] == "DODGE",
                 IsParry = combatData[^2] == "PARRY",
                 IsMiss = combatData[^2] == "MISS",

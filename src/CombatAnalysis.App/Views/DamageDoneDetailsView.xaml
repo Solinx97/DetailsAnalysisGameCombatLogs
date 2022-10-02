@@ -191,7 +191,16 @@
                     <DataGridTemplateColumn SortMemberPath="Value" IsReadOnly="True" MinWidth="200">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
-                                <TextBlock Text="{Binding Path=Value}" Margin="10" FontSize="14" TextAlignment="Center" FontFamily="Comic Sans MS"/>
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                    <Icon:PackIconMaterial Visibility="{Binding Path=IsPeriodicDamage, Converter={StaticResource BoolToVisibility}, ConverterParameter=true}"
+                                                   Kind="Delta" Foreground="Orange" Style="{StaticResource menuButtonIcon}" Width="10" Height="10" Margin="0"
+                                                   HorizontalAlignment="Center">
+                                        <Icon:PackIconMaterial.ToolTip>
+                                            Периодически урон
+                                        </Icon:PackIconMaterial.ToolTip>
+                                    </Icon:PackIconMaterial>
+                                    <TextBlock Text="{Binding Path=Value}" Margin="10" FontSize="14" TextAlignment="Center" FontFamily="Comic Sans MS"/>
+                                </StackPanel>
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                         <DataGridTemplateColumn.HeaderTemplate>
@@ -206,35 +215,35 @@
                             <DataTemplate>
                                 <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
                                     <Icon:PackIconMaterial Visibility="{Binding Path=IsParry, Converter={StaticResource BoolToVisibility}, ConverterParameter=true}"
-                                                   Grid.Column="0" Kind="SwordCross" Foreground="Black" Style="{StaticResource menuButtonIcon}"
+                                                  Kind="SwordCross" Foreground="Black" Style="{StaticResource menuButtonIcon}"
                                                    HorizontalAlignment="Center">
                                         <Icon:PackIconMaterial.ToolTip>
                                             Парирование
                                         </Icon:PackIconMaterial.ToolTip>
                                     </Icon:PackIconMaterial>
                                     <Icon:PackIconMaterial Visibility="{Binding Path=IsDodge, Converter={StaticResource BoolToVisibility}, ConverterParameter=true}"
-                                                   Grid.Column="0" Kind="StarCheck" Foreground="Black" Style="{StaticResource menuButtonIcon}"
+                                                   Kind="StarCheck" Foreground="Black" Style="{StaticResource menuButtonIcon}"
                                                    HorizontalAlignment="Center">
                                         <Icon:PackIconMaterial.ToolTip>
                                             Уклонение
                                         </Icon:PackIconMaterial.ToolTip>
                                     </Icon:PackIconMaterial>
                                     <Icon:PackIconMaterial Visibility="{Binding Path=IsMiss, Converter={StaticResource BoolToVisibility}, ConverterParameter=true}"
-                                                   Grid.Column="0" Kind="CallMissed" Foreground="Black" Style="{StaticResource menuButtonIcon}"
+                                                   Kind="CallMissed" Foreground="Black" Style="{StaticResource menuButtonIcon}"
                                                    HorizontalAlignment="Center">
                                         <Icon:PackIconMaterial.ToolTip>
                                             Промах
                                         </Icon:PackIconMaterial.ToolTip>
                                     </Icon:PackIconMaterial>
                                     <Icon:PackIconMaterial Visibility="{Binding Path=IsImmune, Converter={StaticResource BoolToVisibility}, ConverterParameter=true}"
-                                                   Grid.Column="0" Kind="CarLightDimmed" Foreground="Black" Style="{StaticResource menuButtonIcon}"
+                                                   Kind="CarLightDimmed" Foreground="Black" Style="{StaticResource menuButtonIcon}"
                                                    HorizontalAlignment="Center">
                                         <Icon:PackIconMaterial.ToolTip>
                                             Иммунитет
                                         </Icon:PackIconMaterial.ToolTip>
                                     </Icon:PackIconMaterial>
                                     <Icon:PackIconMaterial Visibility="{Binding Path=IsResist, Converter={StaticResource BoolToVisibility}, ConverterParameter=true}"
-                                                   Grid.Column="0" Kind="Resistor" Foreground="Black" Style="{StaticResource menuButtonIcon}"
+                                                   Kind="Resistor" Foreground="Black" Style="{StaticResource menuButtonIcon}"
                                                    HorizontalAlignment="Center">
                                         <Icon:PackIconMaterial.ToolTip>
                                             Сопротивления урону

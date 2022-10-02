@@ -16,6 +16,8 @@ namespace CombatAnalysis.WebApp.Models
 
         public string SpellOrItem { get; set; }
 
+        public bool IsPeriodicDamage { get; set; }
+
         public bool IsDodge { get; set; }
 
         public bool IsParry { get; set; }

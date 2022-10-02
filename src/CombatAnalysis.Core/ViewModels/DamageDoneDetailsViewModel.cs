@@ -11,9 +11,11 @@ using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
 using MvvmCross.ViewModels;
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Windows.Documents;
 
 namespace CombatAnalysis.Core.ViewModels
 {
@@ -37,6 +39,7 @@ namespace CombatAnalysis.Core.ViewModels
         private bool _isShowMiss = true;
         private bool _isShowResist = true;
         private bool _isShowImmune = true;
+        private bool _isShowDirectDamage;
         private bool _isShowFilters;
         private string _selectedPlayer;
         private string _selectedDamageDoneSource = "Все";
@@ -178,6 +181,15 @@ namespace CombatAnalysis.Core.ViewModels
                 DamageDoneInformations = _powerUpInCombat.ShowSpecificalValue("Time", DamageDoneInformations, value);
 
                 RaisePropertyChanged(() => DamageDoneInformations);
+            }
+        }
+
+        public bool IsShowDirectDamage
+        {
+            get { return _isShowDirectDamage; }
+            set
+            {
+                SetProperty(ref _isShowDirectDamage, value);
             }
         }
 

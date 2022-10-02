@@ -14,6 +14,8 @@ namespace CombatAnalysis.CombatParser.Entities
 
         public string SpellOrItem { get; set; }
 
+        public bool IsPeriodicDamage { get; set; }
+
         public int Resisted { get; set; }
 
         public int Absorbed { get; set; }
