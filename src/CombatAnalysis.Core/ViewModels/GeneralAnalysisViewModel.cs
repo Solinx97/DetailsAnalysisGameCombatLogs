@@ -22,7 +22,7 @@ namespace CombatAnalysis.Core.ViewModels
 
         private IImprovedMvxViewModel _basicTemplate;
         private List<CombatModel> _combats;
-        private int _combatIndex;
+        private CombatModel _selectedCombat;
         private ResponseStatus _status;
         private LogType _logType;
 
@@ -33,7 +33,6 @@ namespace CombatAnalysis.Core.ViewModels
             _combats = new List<CombatModel>();
             _combatParserAPIService = new CombatParserAPIService(httpClient, logger, memoryCache);
 
-            ShowDetailsCommand = new MvxCommand(ShowDetails);
             RepeatSaveCommand = new MvxCommand(RepeatSaveCombatDataDetails);
 
             BasicTemplate = Templates.Basic;
@@ -43,8 +42,6 @@ namespace CombatAnalysis.Core.ViewModels
             var responseStatusObservable = (IResponseStatusObservable)BasicTemplate;
             responseStatusObservable.AddObserver(this);
         }
-
-        public IMvxCommand ShowDetailsCommand { get; set; }
 
         public IMvxCommand RepeatSaveCommand { get; set; }
 
@@ -66,12 +63,14 @@ namespace CombatAnalysis.Core.ViewModels
             }
         }
 
-        public int CombatIndex
+        public CombatModel SelectedCombat
         {
-            get { return _combatIndex; }
+            get { return _selectedCombat; }
             set
             {
-                SetProperty(ref _combatIndex, value);
+                SetProperty(ref _selectedCombat, value);
+
+                ShowDetails();
             }
         }
 
@@ -102,10 +101,10 @@ namespace CombatAnalysis.Core.ViewModels
 
         public void ShowDetails()
         {
-            BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, "TargetCombat", Combats[CombatIndex]);
+            BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, "TargetCombat", SelectedCombat);
 
             Task.Run(() => _mvvmNavigation.Close(this));
-            Task.Run(() => _mvvmNavigation.Navigate<DetailsSpecificalCombatViewModel, CombatModel>(Combats[CombatIndex]));
+            Task.Run(() => _mvvmNavigation.Navigate<DetailsSpecificalCombatViewModel, CombatModel>(SelectedCombat));
         }
 
         public void RepeatSaveCombatDataDetails()

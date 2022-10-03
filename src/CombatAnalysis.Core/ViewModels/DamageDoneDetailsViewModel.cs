@@ -19,7 +19,7 @@ using System.Windows.Documents;
 
 namespace CombatAnalysis.Core.ViewModels
 {
-    public class DamageDoneDetailsViewModel : MvxViewModel<Tuple<int, CombatModel>>
+    public class DamageDoneDetailsViewModel : MvxViewModel<Tuple<CombatPlayerModel, CombatModel>>
     {
         private readonly IMapper _mapper;
         private readonly ILogger _logger;
@@ -231,10 +231,10 @@ namespace CombatAnalysis.Core.ViewModels
             }
         }
 
-        public override void Prepare(Tuple<int, CombatModel> parameter)
+        public override void Prepare(Tuple<CombatPlayerModel, CombatModel> parameter)
         {
             var combat = parameter.Item2;
-            var player = combat.Players[parameter.Item1];
+            var player = parameter.Item1;
             SelectedPlayer = player.UserName;
             TotalValue = player.DamageDone;
 
