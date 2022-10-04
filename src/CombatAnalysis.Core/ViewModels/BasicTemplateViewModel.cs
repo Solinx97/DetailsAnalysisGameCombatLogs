@@ -25,7 +25,7 @@ namespace CombatAnalysis.Core.ViewModels
         private readonly IHttpClientHelper _httpClient;
 
         private int _step = -1;
-        private Tuple<int, CombatModel> _combatInformtaion;
+        private Tuple<CombatPlayerModel, CombatModel> _combatInformtaion;
         private List<CombatModel> _combats;
         private bool _isAuth;
         private bool _isLoginNotActivated = true;
@@ -276,39 +276,36 @@ namespace CombatAnalysis.Core.ViewModels
 
         public async Task DetailsSpecificalCombatAsync()
         {
-            await _mvvmNavigation.Navigate<DetailsSpecificalCombatViewModel, CombatModel>(TargetCombat);
+            Step = 2;
+            await _mvvmNavigation.Close(Parent);
         }
 
         public async Task DamageDoneDetailsAsync()
         {
-            _combatInformtaion = (Tuple<int, CombatModel>)Handler.Data;
+            _combatInformtaion = (Tuple<CombatPlayerModel, CombatModel>)Handler.Data;
 
-            await _mvvmNavigation.Close(Parent);
-            await _mvvmNavigation.Navigate<DamageDoneDetailsViewModel, Tuple<int, CombatModel>>(_combatInformtaion);
+            await _mvvmNavigation.Navigate<DamageDoneDetailsViewModel, Tuple<CombatPlayerModel, CombatModel>>(_combatInformtaion);
         }
 
         public async Task HealDoneDetailsAsync()
         {
-            _combatInformtaion = (Tuple<int, CombatModel>)Handler.Data;
+            _combatInformtaion = (Tuple<CombatPlayerModel, CombatModel>)Handler.Data;
 
-            await _mvvmNavigation.Close(Parent);
-            await _mvvmNavigation.Navigate<HealDoneDetailsViewModel, Tuple<int, CombatModel>>(_combatInformtaion);
+            await _mvvmNavigation.Navigate<HealDoneDetailsViewModel, Tuple<CombatPlayerModel, CombatModel>>(_combatInformtaion);
         }
 
         public async Task DamageTakenDetailsAsync()
         {
-            _combatInformtaion = (Tuple<int, CombatModel>)Handler.Data;
+            _combatInformtaion = (Tuple<CombatPlayerModel, CombatModel>)Handler.Data;
 
-            await _mvvmNavigation.Close(Parent);
-            await _mvvmNavigation.Navigate<DamageTakenDetailsViewModel, Tuple<int, CombatModel>>(_combatInformtaion);
+            await _mvvmNavigation.Navigate<DamageTakenDetailsViewModel, Tuple<CombatPlayerModel, CombatModel>>(_combatInformtaion);
         }
 
         public async Task ResourceDetailsAsync()
         {
-            _combatInformtaion = (Tuple<int, CombatModel>)Handler.Data;
+            _combatInformtaion = (Tuple<CombatPlayerModel, CombatModel>)Handler.Data;
 
-            await _mvvmNavigation.Close(Parent);
-            await _mvvmNavigation.Navigate<ResourceRecoveryDetailsViewModel, Tuple<int, CombatModel>>(_combatInformtaion);
+            await _mvvmNavigation.Navigate<ResourceRecoveryDetailsViewModel, Tuple<CombatPlayerModel, CombatModel>>(_combatInformtaion);
         }
 
         public async Task ChatAsync()

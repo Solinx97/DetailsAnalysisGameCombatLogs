@@ -5,6 +5,7 @@
     [FromEnemy]      NVARCHAR (MAX) NULL,
     [ToPlayer]       NVARCHAR (MAX) NULL,
     [SpellOrItem]    NVARCHAR (MAX) NULL,
+    [IsPeriodicDamage]        BIT            NOT NULL,
     [Resisted]         INT            NOT NULL,
     [Absorbed]         INT            NOT NULL,
     [Blocked]        INT            NOT NULL,

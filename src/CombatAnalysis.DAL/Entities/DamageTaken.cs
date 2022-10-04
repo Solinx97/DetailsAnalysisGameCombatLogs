@@ -6,6 +6,8 @@ namespace CombatAnalysis.DAL.Entities
     [Index(nameof(CombatPlayerId))]
     public class DamageTaken
     {
+        public int Id { get; set; }
+
         public int Value { get; set; }
 
         public TimeSpan Time { get; set; }
@@ -15,6 +17,8 @@ namespace CombatAnalysis.DAL.Entities
         public string ToPlayer { get; set; }
 
         public string SpellOrItem { get; set; }
+
+        public bool IsPeriodicDamage { get; set; }
 
         public int Resisted { get; set; }
 

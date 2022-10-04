@@ -15,7 +15,7 @@ namespace CombatAnalysis.Core.ViewModels
         private long _maxDamageDone;
         private long _maxHealDone;
         private double _maxEnergyRecovery;
-        private int _selectedIndex;
+        private CombatPlayerModel _selectedPlayer;
         private string _selectedCombat;
 
         public DetailsSpecificalCombatViewModel()
@@ -40,17 +40,19 @@ namespace CombatAnalysis.Core.ViewModels
             set
             {
                 SetProperty(ref _playersCombatData, value);
+
+                SelectedPlayer = value[0];
             }
         }
 
-        public int SelectedIndex
+        public CombatPlayerModel SelectedPlayer
         {
-            get { return _selectedIndex; }
+            get { return _selectedPlayer; }
             set
             {
-                BasicTemplate.Handler.Data = Tuple.Create(value, _combat);
+                SetProperty(ref _selectedPlayer, value);
 
-                SetProperty(ref _selectedIndex, value);
+                BasicTemplate.Handler.Data = Tuple.Create(value, _combat);
             }
         }
 
@@ -99,7 +101,6 @@ namespace CombatAnalysis.Core.ViewModels
             MaxHealDone = _combat.HealDone;
             MaxEnergyRecovery = _combat.EnergyRecovery;
 
-            SelectedIndex = 0;
             SelectedCombat = parameter.Name;
         }
     }

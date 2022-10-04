@@ -45,6 +45,8 @@ namespace CombatAnalysis.CombatParser.Services
 
         public async Task Parse(string combatLog)
         {
+            Combats.Clear();
+
             using var reader = _fileManager.StreamReader(combatLog);
             string line;
             while ((line = await reader.ReadLineAsync()) != null)

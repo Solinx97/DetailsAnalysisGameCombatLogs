@@ -43,11 +43,6 @@
                         <RotateTransform Angle="90"/>
                     </TextBlock.LayoutTransform>
                 </TextBlock>
-                <!--<StackPanel Margin="0 170 0 0" IsEnabled="False">
-                    <uc:AccountMenuButton Title="A" GradientColor1="#d1abff" GradientColor2="#b07bff" />
-                    <uc:AccountMenuButton Title="B" GradientColor1="#fba0cb" GradientColor2="#fe7094" />
-                    <uc:AccountMenuButton Title="C" GradientColor1="#e5db6f" GradientColor2="#e2c649" />
-                </StackPanel>-->
             </Grid>
         </Border>
 
@@ -140,7 +135,7 @@
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
                 <StackPanel VerticalAlignment="Center">
                     <TextBlock Margin="5" FontSize="13" FontWeight="Bold" Foreground="Gray" Text="Загрузка..."
-                           Visibility="{Binding ResponseStatus, Converter={StaticResource IntToVisibility}, ConverterParameter='true:1:>='}">
+                           Visibility="{Binding ResponseStatus, Converter={StaticResource IntToVisibility}, ConverterParameter='true:1:='}">
                         <TextBlock.ToolTip>
                             <ToolTip>
                                 Загрузка данных. Это может занять некоторое время. Вы можете продолжить работу с приложением.
@@ -149,7 +144,7 @@
                     </TextBlock>
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Margin="5" FontSize="13" FontWeight="Bold" Foreground="Red" Text="Ошибка"
-                                    Visibility="{Binding ResponseStatus, Converter={StaticResource IntToVisibility}, ConverterParameter=true:3}">
+                                    Visibility="{Binding ResponseStatus, Converter={StaticResource IntToVisibility}, ConverterParameter='true:3:='}">
                             <TextBlock.ToolTip>
                                 <ToolTip>
                                     Загрузка была завершена с ошибкой. Возможно проблемы с соединением или сервер временно не доступен. Вы можете продолжить работать с текущими данными, но они не будут сохранены.
@@ -157,7 +152,7 @@
                             </TextBlock.ToolTip>
                         </TextBlock>
                         <TextBlock Margin="5" FontSize="13" FontWeight="Bold" Foreground="Green" Text="Успешно"
-                                    Visibility="{Binding ResponseStatus, Converter={StaticResource IntToVisibility}, ConverterParameter=true:2}">
+                                    Visibility="{Binding ResponseStatus, Converter={StaticResource IntToVisibility}, ConverterParameter='true:2:='}">
                             <TextBlock.ToolTip>
                                 <ToolTip>
                                     Все данные загружены успешно. Загруженные данные можно будет просмотреть повторно в люБое время.

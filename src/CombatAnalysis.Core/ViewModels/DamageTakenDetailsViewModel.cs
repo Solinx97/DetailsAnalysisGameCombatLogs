@@ -18,7 +18,7 @@ using System.Threading.Tasks;
 
 namespace CombatAnalysis.Core.ViewModels
 {
-    public class DamageTakenDetailsViewModel : MvxViewModel<Tuple<int, CombatModel>>
+    public class DamageTakenDetailsViewModel : MvxViewModel<Tuple<CombatPlayerModel, CombatModel>>
     {
         private readonly IMapper _mapper;
         private readonly ILogger _logger;
@@ -27,7 +27,9 @@ namespace CombatAnalysis.Core.ViewModels
 
         private IImprovedMvxViewModel _basicTemplate;
         private ObservableCollection<DamageTakenModel> _damageTakenInformations;
+        private ObservableCollection<DamageTakenModel> _damageTakenInformationsWithoutFilter;
         private ObservableCollection<DamageTakenModel> _damageTakenInformationsWithSkipDamage;
+        private ObservableCollection<string> _damageTakenSources;
         private ObservableCollection<DamageTakenGeneralModel> _damageTakenGeneralInformations;
 
         private bool _isShowDodge = true;
@@ -37,10 +39,10 @@ namespace CombatAnalysis.Core.ViewModels
         private bool _isShowImmune = true;
         private bool _isShowCrushing = true;
         private bool _isShowAbsorb = true;
-        private bool _isShowDamageInform;
+        private bool _isShowDamageInform = true;
+        private bool _isShowFilters;
         private string _selectedPlayer;
-        private int _selectedIndexSorting;
-        private bool _isCollectionReversed;
+        private string _selectedDamageTakenSource = "Все";
         private long _totalValue;
 
         public DamageTakenDetailsViewModel(IMapper mapper, IHttpClientHelper httpClient, ILogger logger, IMemoryCache memoryCache)
@@ -75,6 +77,15 @@ namespace CombatAnalysis.Core.ViewModels
             set
             {
                 SetProperty(ref _damageTakenInformations, value);
+            }
+        }
+
+        public ObservableCollection<string> DamageTakenSources
+        {
+            get { return _damageTakenSources; }
+            set
+            {
+                SetProperty(ref _damageTakenSources, value);
             }
         }
 
@@ -198,6 +209,17 @@ namespace CombatAnalysis.Core.ViewModels
             set
             {
                 SetProperty(ref _isShowDamageInform, value);
+
+                RaisePropertyChanged(() => DamageTakenInformations);
+            }
+        }
+
+        public bool IsShowFilters
+        {
+            get { return _isShowFilters; }
+            set
+            {
+                SetProperty(ref _isShowFilters, value);
             }
         }
 
@@ -210,29 +232,14 @@ namespace CombatAnalysis.Core.ViewModels
             }
         }
 
-        public int SelectedIndexSorting
+        public string SelectedDamageTakenSource
         {
-            get { return _selectedIndexSorting; }
+            get { return _selectedDamageTakenSource; }
             set
             {
-                SetProperty(ref _selectedIndexSorting, value);
+                SetProperty(ref _selectedDamageTakenSource, value);
 
-                Sorting(value);
-
-                RaisePropertyChanged(() => DamageTakenGeneralInformations);
-            }
-        }
-
-        public bool IsCollectionReversed
-        {
-            get { return _isCollectionReversed; }
-            set
-            {
-                SetProperty(ref _isCollectionReversed, value);
-
-                Reverse();
-
-                RaisePropertyChanged(() => DamageTakenGeneralInformations);
+                DamageTakenInformationFilter();
             }
         }
 
@@ -245,10 +252,10 @@ namespace CombatAnalysis.Core.ViewModels
             }
         }
 
-        public override void Prepare(Tuple<int, CombatModel> parameter)
+        public override void Prepare(Tuple<CombatPlayerModel, CombatModel> parameter)
         {
             var combat = parameter.Item2;
-            var player = combat.Players[parameter.Item1];
+            var player = parameter.Item1;
             SelectedPlayer = player.UserName;
             TotalValue = player.DamageTaken;
 
@@ -275,6 +282,11 @@ namespace CombatAnalysis.Core.ViewModels
 
             DamageTakenInformations = map1;
             _damageTakenInformationsWithSkipDamage = new ObservableCollection<DamageTakenModel>(map1);
+            _damageTakenInformationsWithoutFilter = new ObservableCollection<DamageTakenModel>(map1);
+
+            var damageTakenSources = DamageTakenInformations.Select(x => x.SpellOrItem).Distinct().ToList();
+            damageTakenSources.Insert(0, "Все");
+            DamageTakenSources = new ObservableCollection<string>(damageTakenSources);
         }
 
         private void GetDamageTakenGeneral(CombatDetailsTemplate combatInformation, Combat combat)
@@ -286,9 +298,9 @@ namespace CombatAnalysis.Core.ViewModels
 
         private async Task LoadDamageTakenDetails(int combatPlayerId)
         {
-            var healDones = await _combatParserAPIService.LoadDamageTakenDetailsAsync(combatPlayerId);
-            DamageTakenInformations = new ObservableCollection<DamageTakenModel>(healDones.ToList());
-            _damageTakenInformationsWithSkipDamage = new ObservableCollection<DamageTakenModel>(healDones.ToList());
+            var damageTakens = await _combatParserAPIService.LoadDamageTakenDetailsAsync(combatPlayerId);
+            DamageTakenInformations = new ObservableCollection<DamageTakenModel>(damageTakens.ToList());
+            _damageTakenInformationsWithSkipDamage = new ObservableCollection<DamageTakenModel>(damageTakens.ToList());
         }
 
         private async Task LoadDamageTakenGeneral(int combatPlayerId)
@@ -297,45 +309,16 @@ namespace CombatAnalysis.Core.ViewModels
             DamageTakenGeneralInformations = new ObservableCollection<DamageTakenGeneralModel>(healDoneGenerals.ToList());
         }
 
-        private void Sorting(int index)
+        private void DamageTakenInformationFilter()
         {
-            IOrderedEnumerable<DamageTakenGeneralModel> sortedCollection;
-
-            switch (index)
+            if (_damageTakenInformationsWithoutFilter.Any(x => x.SpellOrItem == SelectedDamageTakenSource))
             {
-                case 0:
-                    sortedCollection = DamageTakenGeneralInformations.OrderBy(x => x.SpellOrItem);
-                    break;
-                case 1:
-                    sortedCollection = DamageTakenGeneralInformations.OrderBy(x => x.Value);
-                    break;
-                case 2:
-                    sortedCollection = DamageTakenGeneralInformations.OrderBy(x => x.CastNumber);
-                    break;
-                case 3:
-                    sortedCollection = DamageTakenGeneralInformations.OrderBy(x => x.MinValue);
-                    break;
-                case 4:
-                    sortedCollection = DamageTakenGeneralInformations.OrderBy(x => x.MaxValue);
-                    break;
-                case 5:
-                    sortedCollection = DamageTakenGeneralInformations.OrderBy(x => x.AverageValue);
-                    break;
-                case 6:
-                    sortedCollection = DamageTakenGeneralInformations.OrderBy(x => x.DamageTakenPerSecond);
-                    break;
-                default:
-                    sortedCollection = DamageTakenGeneralInformations.OrderBy(x => x.Value);
-                    break;
+                DamageTakenInformations = new ObservableCollection<DamageTakenModel>(_damageTakenInformationsWithoutFilter.Where(x => x.SpellOrItem == SelectedDamageTakenSource));
             }
-
-            DamageTakenGeneralInformations = new ObservableCollection<DamageTakenGeneralModel>(sortedCollection.ToList());
-            IsCollectionReversed = false;
-        }
-
-        private void Reverse()
-        {
-            DamageTakenGeneralInformations = new ObservableCollection<DamageTakenGeneralModel>(DamageTakenGeneralInformations.Reverse().ToList());
+            else
+            {
+                DamageTakenInformations = _damageTakenInformationsWithoutFilter;
+            }
         }
     }
 }

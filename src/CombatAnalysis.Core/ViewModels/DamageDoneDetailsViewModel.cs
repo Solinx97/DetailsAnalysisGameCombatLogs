@@ -11,13 +11,15 @@ using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
 using MvvmCross.ViewModels;
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Windows.Documents;
 
 namespace CombatAnalysis.Core.ViewModels
 {
-    public class DamageDoneDetailsViewModel : MvxViewModel<Tuple<int, CombatModel>>
+    public class DamageDoneDetailsViewModel : MvxViewModel<Tuple<CombatPlayerModel, CombatModel>>
     {
         private readonly IMapper _mapper;
         private readonly ILogger _logger;
@@ -26,7 +28,9 @@ namespace CombatAnalysis.Core.ViewModels
 
         private IImprovedMvxViewModel _basicTemplate;
         private ObservableCollection<DamageDoneModel> _damageDoneInformations;
+        private ObservableCollection<DamageDoneModel> _damageDoneInformationsWithoutFilter;
         private ObservableCollection<DamageDoneModel> _damageDoneInformationsWithSkipDamage;
+        private ObservableCollection<string> _damageDoneSources;
         private ObservableCollection<DamageDoneGeneralModel> _damageDoneGeneralInformations;
 
         private bool _isShowCrit = true;
@@ -35,15 +39,10 @@ namespace CombatAnalysis.Core.ViewModels
         private bool _isShowMiss = true;
         private bool _isShowResist = true;
         private bool _isShowImmune = true;
-        private bool _isShowOnlyCrit;
-        private bool _isShowOnlyDodge;
-        private bool _isShowOnlyParry;
-        private bool _isShowOnlyMiss;
-        private bool _isShowOnlyResist;
-        private bool _isShowOnlyImmune;
+        private bool _isShowDirectDamage;
+        private bool _isShowFilters;
         private string _selectedPlayer;
-        private int _selectedIndexSorting;
-        private bool _isCollectionReversed;
+        private string _selectedDamageDoneSource = "Все";
         private long _totalValue;
 
         public DamageDoneDetailsViewModel(IMapper mapper, IHttpClientHelper httpClient, ILogger loger, IMemoryCache memoryCache)
@@ -77,6 +76,15 @@ namespace CombatAnalysis.Core.ViewModels
             }
         }
 
+        public ObservableCollection<string> DamageDoneSources
+        {
+            get { return _damageDoneSources; }
+            set
+            {
+                SetProperty(ref _damageDoneSources, value);
+            }
+        }
+
         public ObservableCollection<DamageDoneGeneralModel> DamageDoneGeneralInformations
         {
             get { return _damageDoneGeneralInformations; }
@@ -101,21 +109,6 @@ namespace CombatAnalysis.Core.ViewModels
             }
         }
 
-        public bool IsShowOnlyCrit
-        {
-            get { return _isShowOnlyCrit; }
-            set
-            {
-                SetProperty(ref _isShowOnlyCrit, value);
-
-                _powerUpInCombat.UpdateProperty("IsCrit");
-                _powerUpInCombat.UpdateCollection(_damageDoneInformationsWithSkipDamage);
-                DamageDoneInformations = _powerUpInCombat.ShowSpecificalValueInversion("Time", DamageDoneInformations, value);
-
-                RaisePropertyChanged(() => DamageDoneInformations);
-            }
-        }
-
         public bool IsShowDodge
         {
             get { return _isShowDodge; }
@@ -126,21 +119,6 @@ namespace CombatAnalysis.Core.ViewModels
                 _powerUpInCombat.UpdateProperty("IsDodge");
                 _powerUpInCombat.UpdateCollection(_damageDoneInformationsWithSkipDamage);
                 DamageDoneInformations = _powerUpInCombat.ShowSpecificalValue("Time", DamageDoneInformations, value);
-
-                RaisePropertyChanged(() => DamageDoneInformations);
-            }
-        }
-
-        public bool IsShowOnlyDodge
-        {
-            get { return _isShowOnlyDodge; }
-            set
-            {
-                SetProperty(ref _isShowOnlyDodge, value);
-
-                _powerUpInCombat.UpdateProperty("IsDodge");
-                _powerUpInCombat.UpdateCollection(_damageDoneInformationsWithSkipDamage);
-                DamageDoneInformations = _powerUpInCombat.ShowSpecificalValueInversion("Time", DamageDoneInformations, value);
 
                 RaisePropertyChanged(() => DamageDoneInformations);
             }
@@ -161,21 +139,6 @@ namespace CombatAnalysis.Core.ViewModels
             }
         }
 
-        public bool IsShowOnlyParry
-        {
-            get { return _isShowOnlyParry; }
-            set
-            {
-                SetProperty(ref _isShowOnlyParry, value);
-
-                _powerUpInCombat.UpdateProperty("IsParry");
-                _powerUpInCombat.UpdateCollection(_damageDoneInformationsWithSkipDamage);
-                DamageDoneInformations = _powerUpInCombat.ShowSpecificalValueInversion("Time", DamageDoneInformations, value);
-
-                RaisePropertyChanged(() => DamageDoneInformations);
-            }
-        }
-
         public bool IsShowMiss
         {
             get { return _isShowMiss; }
@@ -186,21 +149,6 @@ namespace CombatAnalysis.Core.ViewModels
                 _powerUpInCombat.UpdateProperty("IsMiss");
                 _powerUpInCombat.UpdateCollection(_damageDoneInformationsWithSkipDamage);
                 DamageDoneInformations = _powerUpInCombat.ShowSpecificalValue("Time", DamageDoneInformations, value);
-
-                RaisePropertyChanged(() => DamageDoneInformations);
-            }
-        }
-
-        public bool IsShowOnlyMiss
-        {
-            get { return _isShowOnlyMiss; }
-            set
-            {
-                SetProperty(ref _isShowOnlyMiss, value);
-
-                _powerUpInCombat.UpdateProperty("IsMiss");
-                _powerUpInCombat.UpdateCollection(_damageDoneInformationsWithSkipDamage);
-                DamageDoneInformations = _powerUpInCombat.ShowSpecificalValueInversion("Time", DamageDoneInformations, value);
 
                 RaisePropertyChanged(() => DamageDoneInformations);
             }
@@ -221,21 +169,6 @@ namespace CombatAnalysis.Core.ViewModels
             }
         }
 
-        public bool IsShowOnlyResist
-        {
-            get { return _isShowOnlyResist; }
-            set
-            {
-                SetProperty(ref _isShowOnlyResist, value);
-
-                _powerUpInCombat.UpdateProperty("IsResist");
-                _powerUpInCombat.UpdateCollection(_damageDoneInformationsWithSkipDamage);
-                DamageDoneInformations = _powerUpInCombat.ShowSpecificalValueInversion("Time", DamageDoneInformations, value);
-
-                RaisePropertyChanged(() => DamageDoneInformations);
-            }
-        }
-
         public bool IsShowImmune
         {
             get { return _isShowImmune; }
@@ -251,18 +184,21 @@ namespace CombatAnalysis.Core.ViewModels
             }
         }
 
-        public bool IsShowOnlyImmune
+        public bool IsShowDirectDamage
         {
-            get { return _isShowOnlyImmune; }
+            get { return _isShowDirectDamage; }
             set
             {
-                SetProperty(ref _isShowOnlyImmune, value);
+                SetProperty(ref _isShowDirectDamage, value);
+            }
+        }
 
-                _powerUpInCombat.UpdateProperty("IsImmune");
-                _powerUpInCombat.UpdateCollection(_damageDoneInformationsWithSkipDamage);
-                DamageDoneInformations = _powerUpInCombat.ShowSpecificalValueInversion("Time", DamageDoneInformations, value);
-
-                RaisePropertyChanged(() => DamageDoneInformations);
+        public bool IsShowFilters
+        {
+            get { return _isShowFilters; }
+            set
+            {
+                SetProperty(ref _isShowFilters, value);
             }
         }
 
@@ -275,29 +211,14 @@ namespace CombatAnalysis.Core.ViewModels
             }
         }
 
-        public int SelectedIndexSorting
+        public string SelectedDamageDoneSource
         {
-            get { return _selectedIndexSorting; }
+            get { return _selectedDamageDoneSource; }
             set
             {
-                SetProperty(ref _selectedIndexSorting, value);
+                SetProperty(ref _selectedDamageDoneSource, value);
 
-                Sorting(value);
-
-                RaisePropertyChanged(() => DamageDoneGeneralInformations);
-            }
-        }
-
-        public bool IsCollectionReversed
-        {
-            get { return _isCollectionReversed; }
-            set
-            {
-                SetProperty(ref _isCollectionReversed, value);
-
-                Reverse();
-
-                RaisePropertyChanged(() => DamageDoneGeneralInformations);
+                DamageDoneInformationFilter();
             }
         }
 
@@ -310,10 +231,10 @@ namespace CombatAnalysis.Core.ViewModels
             }
         }
 
-        public override void Prepare(Tuple<int, CombatModel> parameter)
+        public override void Prepare(Tuple<CombatPlayerModel, CombatModel> parameter)
         {
             var combat = parameter.Item2;
-            var player = combat.Players[parameter.Item1];
+            var player = parameter.Item1;
             SelectedPlayer = player.UserName;
             TotalValue = player.DamageDone;
 
@@ -339,7 +260,12 @@ namespace CombatAnalysis.Core.ViewModels
             var map1 = _mapper.Map<ObservableCollection<DamageDoneModel>>(combatDetails.DamageDone);
 
             DamageDoneInformations = map1;
+            _damageDoneInformationsWithoutFilter = new ObservableCollection<DamageDoneModel>(map1);
             _damageDoneInformationsWithSkipDamage = new ObservableCollection<DamageDoneModel>(map1);
+
+            var damageDoneSources = DamageDoneInformations.Select(x => x.SpellOrItem).Distinct().ToList();
+            damageDoneSources.Insert(0, "Все");
+            DamageDoneSources = new ObservableCollection<string>(damageDoneSources);
         }
 
         private void GetDamageDoneGeneral(CombatDetailsTemplate combatDetails, Combat combat)
@@ -362,45 +288,16 @@ namespace CombatAnalysis.Core.ViewModels
             DamageDoneGeneralInformations = new ObservableCollection<DamageDoneGeneralModel>(healDoneGenerals.ToList());
         }
 
-        private void Sorting(int index)
+        private void DamageDoneInformationFilter()
         {
-            IOrderedEnumerable<DamageDoneGeneralModel> sortedCollection;
-
-            switch (index)
+            if (_damageDoneInformationsWithoutFilter.Any(x => x.SpellOrItem == SelectedDamageDoneSource))
             {
-                case 0:
-                    sortedCollection = DamageDoneGeneralInformations.OrderBy(x => x.SpellOrItem);
-                    break;
-                case 1:
-                    sortedCollection = DamageDoneGeneralInformations.OrderBy(x => x.Value);
-                    break;
-                case 2:
-                    sortedCollection = DamageDoneGeneralInformations.OrderBy(x => x.CastNumber);
-                    break;
-                case 3:
-                    sortedCollection = DamageDoneGeneralInformations.OrderBy(x => x.MinValue);
-                    break;
-                case 4:
-                    sortedCollection = DamageDoneGeneralInformations.OrderBy(x => x.MaxValue);
-                    break;
-                case 5:
-                    sortedCollection = DamageDoneGeneralInformations.OrderBy(x => x.AverageValue);
-                    break;
-                case 6: 
-                    sortedCollection = DamageDoneGeneralInformations.OrderBy(x => x.DamagePerSecond);
-                    break;
-                default:
-                    sortedCollection = DamageDoneGeneralInformations.OrderBy(x => x.Value);
-                    break;
+                DamageDoneInformations = new ObservableCollection<DamageDoneModel>(_damageDoneInformationsWithoutFilter.Where(x => x.SpellOrItem == SelectedDamageDoneSource));
             }
-
-            DamageDoneGeneralInformations = new ObservableCollection<DamageDoneGeneralModel>(sortedCollection.ToList());
-            IsCollectionReversed = false;
-        }
-
-        private void Reverse()
-        {
-            DamageDoneGeneralInformations = new ObservableCollection<DamageDoneGeneralModel>(DamageDoneGeneralInformations.Reverse().ToList());
+            else
+            {
+                DamageDoneInformations = _damageDoneInformationsWithoutFilter;
+            }
         }
     }
 }
