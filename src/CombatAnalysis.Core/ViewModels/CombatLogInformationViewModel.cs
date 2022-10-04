@@ -277,8 +277,8 @@ namespace CombatAnalysis.Core.ViewModels
             CombatLogs?.Clear();
             LoadCombatLogs();
 
-            ScreenWidth = System.Windows.SystemParameters.PrimaryScreenWidth * 0.75;
-            ScreenHeight = System.Windows.SystemParameters.PrimaryScreenHeight * 0.75;
+            ScreenWidth = SystemParameters.PrimaryScreenWidth * 0.75;
+            ScreenHeight = SystemParameters.PrimaryScreenHeight * 0.75;
         }
 
         public void AuthUpdate(bool isAuth)
