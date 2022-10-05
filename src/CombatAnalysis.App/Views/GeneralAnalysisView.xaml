@@ -10,6 +10,7 @@
     xmlns:viewModels="clr-namespace:CombatAnalysis.Core.ViewModels;assembly=CombatAnalysis.Core"
     xmlns:mvx="clr-namespace:MvvmCross.Platforms.Wpf.Binding;assembly=MvvmCross.Platforms.Wpf"
     xmlns:views="clr-namespace:MvvmCross.Platforms.Wpf.Views;assembly=MvvmCross.Platforms.Wpf"
+    xmlns:Icon="http://metro.mahapps.com/winfx/xaml/iconpacks"
     mc:Ignorable="d" d:DesignHeight="850" d:DesignWidth="1250">
 
     <Grid>
@@ -37,11 +38,9 @@
                 </DataTemplate>
             </ContentControl.Resources>
         </ContentControl>
-        
+
         <StackPanel Grid.Column="3" Grid.Row="1" Orientation="Horizontal"
                     HorizontalAlignment="Center" VerticalAlignment="Center">
-            <Button Content="Подробнее" Height="45" Width="125" FontSize="16"
-                    mvx:Bi.nd="Command ShowDetailsCommand" Foreground="ForestGreen" Style="{StaticResource showButton}"/>
             <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Width="75" 
                        Text="Анализ" FontSize="18" FontWeight="Bold"
                        Margin="100 0" Style="{StaticResource titleText}"/>
@@ -53,35 +52,120 @@
                         mvx:Bi.nd="Command RepeatSaveCommand" Foreground="BlueViolet" Style="{StaticResource showButton}"/>
             </StackPanel>
         </StackPanel>
-        
-        <ListBox Grid.Row="2" Grid.Column="2" ItemsSource="{Binding Combats}"
-                 Margin="20" SelectedIndex="{Binding CombatIndex}">
-            <ListBox.ItemTemplate>
-                <DataTemplate>
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="350"/>
-                            <ColumnDefinition Width="*"/>
-                        </Grid.ColumnDefinitions>
-                        
-                        <StackPanel Grid.Column="0" Margin="5"  HorizontalAlignment="Center">
-                            <uc:CombatDataItem Title="{Binding Path=Name}" Icon="Information" Color1="Blue" />
-                            <uc:CombatDataItem Title="{Binding Path=DamageDone}" Icon="Sword" Color1="Gray" />
-                            <uc:CombatDataItem Title="{Binding Path=HealDone}" Icon="Plus" Color1="Orange" />
-                            <uc:CombatDataItem Title="Победа" Icon="CalendarWeek" 
-                                               Visibility="{Binding Path=IsWin, Converter={StaticResource BoolToVisibility}, ConverterParameter=true}" Color1="Green" />
-                            <uc:CombatDataItem Title="Поражение" Icon="CalendarWeek" 
-                                               Visibility="{Binding Path=IsWin, Converter={StaticResource BoolToVisibility}, ConverterParameter=true:true}" Color1="Red" />
-                        </StackPanel>
-                        <StackPanel Grid.Column="1" Margin="5"  HorizontalAlignment="Center">
-                            <uc:CombatDataItem Title="{Binding Path=DamageTaken}" Icon="Shield" Color1="Black" />
-                            <uc:CombatDataItem Title="{Binding Path=DeathNumber}" Icon="DeathlyHallows" Color1="Red" />
-                            <uc:CombatDataItem Title="{Binding Path=EnergyRecovery}" Icon="Resistor" Color1="Purple" />
-                            <uc:CombatDataItem Title="{Binding Path=UsedBuffs}" Icon="MaterialDesign" Color1="Brown" />
-                        </StackPanel>
-                    </Grid>
-                </DataTemplate>
-            </ListBox.ItemTemplate>
-        </ListBox>
+
+        <DataGrid Grid.Row="2" Grid.Column="2" GridLinesVisibility="None"
+                      CanUserAddRows="False" CanUserDeleteRows="False" AutoGenerateColumns="False" ItemsSource="{Binding Combats}"
+                 Margin="20" SelectedItem="{Binding SelectedCombat}">
+            <DataGrid.Columns>
+                <DataGridTemplateColumn SortMemberPath="Name" IsReadOnly="True" MinWidth="175">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding Path=Name}" TextAlignment="Center" Margin="10" FontSize="14" FontFamily="Comic Sans MS"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                    <DataGridTemplateColumn.HeaderTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="Противник" Margin="5" TextAlignment="Center" FontSize="14" FontStyle="Oblique"  FontWeight="Bold"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.HeaderTemplate>
+                </DataGridTemplateColumn>
+
+                <DataGridTemplateColumn SortMemberPath="DamageDone" IsReadOnly="True" MinWidth="140">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding Path=DamageDone}" TextAlignment="Center" Margin="10" FontSize="14" FontFamily="Comic Sans MS"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                    <DataGridTemplateColumn.HeaderTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="Урон" Margin="5" TextAlignment="Center" FontSize="14" FontStyle="Oblique"  FontWeight="Bold"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.HeaderTemplate>
+                </DataGridTemplateColumn>
+
+                <DataGridTemplateColumn SortMemberPath="HealDone" IsReadOnly="True" MinWidth="140">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding Path=HealDone}" TextAlignment="Center" Margin="10" FontSize="14" FontFamily="Comic Sans MS"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                    <DataGridTemplateColumn.HeaderTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="Исцеление" Margin="5" TextAlignment="Center" FontSize="14" FontStyle="Oblique"  FontWeight="Bold"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.HeaderTemplate>
+                </DataGridTemplateColumn>
+
+                <DataGridTemplateColumn SortMemberPath="DamageTaken" IsReadOnly="True" MinWidth="140">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding Path=DamageTaken}" TextAlignment="Center" Margin="10" FontSize="14" FontFamily="Comic Sans MS"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                    <DataGridTemplateColumn.HeaderTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="Получ. урон" Margin="5" TextAlignment="Center" FontSize="14" FontStyle="Oblique"  FontWeight="Bold"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.HeaderTemplate>
+                </DataGridTemplateColumn>
+
+                <DataGridTemplateColumn SortMemberPath="EnergyRecovery" IsReadOnly="True" MinWidth="125">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding Path=EnergyRecovery}" TextAlignment="Center" Margin="10" FontSize="14" FontFamily="Comic Sans MS"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                    <DataGridTemplateColumn.HeaderTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="Ресурсы" Margin="5" TextAlignment="Center" FontSize="14" FontStyle="Oblique"  FontWeight="Bold"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.HeaderTemplate>
+                </DataGridTemplateColumn>
+
+                <DataGridTemplateColumn SortMemberPath="DeathNumber" IsReadOnly="True" MinWidth="50">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding Path=DeathNumber}" TextAlignment="Center" Margin="10" FontSize="14" FontFamily="Comic Sans MS"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                    <DataGridTemplateColumn.HeaderTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="Смертей" Margin="5" TextAlignment="Center" FontSize="14" FontStyle="Oblique"  FontWeight="Bold"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.HeaderTemplate>
+                </DataGridTemplateColumn>
+
+                <DataGridTemplateColumn SortMemberPath="UsedBuffs" IsReadOnly="True" MinWidth="50">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding Path=UsedBuffs}" TextAlignment="Center" Margin="10" FontSize="14" FontFamily="Comic Sans MS"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                    <DataGridTemplateColumn.HeaderTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="Усиления" Margin="5" TextAlignment="Center" FontSize="14" FontStyle="Oblique"  FontWeight="Bold"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.HeaderTemplate>
+                </DataGridTemplateColumn>
+
+                <DataGridTemplateColumn SortMemberPath="IsWin" IsReadOnly="True" MinWidth="110">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <StackPanel>
+                                <TextBlock Text="Победа" TextAlignment="Center" Margin="10" FontSize="14" FontFamily="Comic Sans MS" Foreground="Green"
+                                           Visibility="{Binding Path=IsWin, Converter={StaticResource BoolToVisibility}, ConverterParameter=true}"/>
+                                <TextBlock Text="Поражение" TextAlignment="Center" Margin="10" FontSize="14" FontFamily="Comic Sans MS" Foreground="Orange"
+                                           Visibility="{Binding Path=IsWin, Converter={StaticResource BoolToVisibility}, ConverterParameter=true:true}"/>
+                            </StackPanel>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                    <DataGridTemplateColumn.HeaderTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="Статус" Margin="5" TextAlignment="Center" FontSize="14" FontStyle="Oblique"  FontWeight="Bold"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.HeaderTemplate>
+                </DataGridTemplateColumn>
+            </DataGrid.Columns>
+        </DataGrid>
     </Grid>
 </views:MvxWpfView>

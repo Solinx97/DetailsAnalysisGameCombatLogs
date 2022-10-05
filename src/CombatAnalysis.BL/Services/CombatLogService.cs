@@ -1,12 +1,10 @@
 ﻿using AutoMapper;
 using CombatAnalysis.BL.DTO;
-using CombatAnalysis.BL.Exceptions;
 using CombatAnalysis.BL.Interfaces;
 using CombatAnalysis.DAL.Entities;
 using CombatAnalysis.DAL.Interfaces;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace CombatAnalysis.BL.Services
@@ -26,7 +24,7 @@ namespace CombatAnalysis.BL.Services
         {
             if (item == null)
             {
-                throw new ArgumentNullException(nameof(item));
+                throw new ArgumentNullException(nameof(CombatLogDto), $"The {nameof(CombatLogDto)} can't be null");
             }
 
             return CreateInternalAsync(item);
@@ -36,7 +34,7 @@ namespace CombatAnalysis.BL.Services
         {
             if (item == null)
             {
-                throw new ArgumentNullException(nameof(item));
+                throw new ArgumentNullException(nameof(CombatLogDto), $"The {nameof(CombatLogDto)} can't be null");
             }
 
             return DeleteInternalAsync(item);
@@ -70,7 +68,7 @@ namespace CombatAnalysis.BL.Services
         {
             if (item == null)
             {
-                throw new ArgumentNullException(nameof(item));
+                throw new ArgumentNullException(nameof(CombatLogDto), $"The {nameof(CombatLogDto)} can't be null");
             }
 
             return UpdateInternalAsync(item);
@@ -80,7 +78,8 @@ namespace CombatAnalysis.BL.Services
         {
             if (string.IsNullOrEmpty(item.Name))
             {
-                throw new ArgumentNullException(nameof(item.Name));
+                throw new ArgumentNullException(nameof(CombatLogDto),
+                    $"The property {nameof(CombatLogDto.Name)} of the {nameof(CombatLogDto)} object can't be null or empty");
             }
 
             var map = _mapper.Map<CombatLog>(item);
@@ -92,31 +91,30 @@ namespace CombatAnalysis.BL.Services
 
         private async Task<int> DeleteInternalAsync(CombatLogDto item)
         {
-            var allData = await _repository.GetAllAsync();
-            if (!allData.Any())
+            if (string.IsNullOrEmpty(item.Name))
             {
-                throw new NotFoundException($"Collection entity {nameof(CombatLogDto)} not found", nameof(allData));
+                throw new ArgumentNullException(nameof(CombatLogDto),
+                    $"The property {nameof(CombatLogDto.Name)} of the {nameof(CombatLogDto)} object can't be null or empty");
             }
 
-            var numberEntriesAffected = await _repository.DeleteAsync(_mapper.Map<CombatLog>(item));
-            return numberEntriesAffected;
+            var map = _mapper.Map<CombatLog>(item);
+            var rowsAffected = await _repository.DeleteAsync(map);
+
+            return rowsAffected;
         }
 
         private async Task<int> UpdateInternalAsync(CombatLogDto item)
         {
-            var allData = await _repository.GetAllAsync();
-            if (!allData.Any())
-            {
-                throw new NotFoundException($"Collection entity {nameof(CombatLogDto)} not found", nameof(allData));
-            }
-
             if (string.IsNullOrEmpty(item.Name))
             {
-                throw new ArgumentNullException(nameof(item.Name));
+                throw new ArgumentNullException(nameof(CombatLogDto),
+                    $"The property {nameof(CombatLogDto.Name)} of the {nameof(CombatLogDto)} object can't be null or empty");
             }
 
-            var numberEntriesAffected = await _repository.UpdateAsync(_mapper.Map<CombatLog>(item));
-            return numberEntriesAffected;
+            var map = _mapper.Map<CombatLog>(item);
+            var rowsAffected = await _repository.UpdateAsync(map);
+
+            return rowsAffected;
         }
     }
 }

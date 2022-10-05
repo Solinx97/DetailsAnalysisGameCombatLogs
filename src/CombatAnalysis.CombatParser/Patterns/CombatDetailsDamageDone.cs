@@ -74,12 +74,17 @@ namespace CombatAnalysis.CombatParser.Patterns
                     ? "Ближ. бой" : combatData[11].Trim('"');
             }
 
+            var isPeriodicDamage = false;
+            if (combatData[1] == "SPELL_PERIODIC_DAMAGE")
+            {
+                isPeriodicDamage = true;
+            }
+
             var isResist = false;
             var isImmune = false;
             var isParry = false;
             var isDodge = false;
             var isMiss = false;
-
             if (combatData[1] == "DAMAGE_SHIELD_MISSED")
             {
                 isResist = combatData[13] == "RESIST" ? true : false;
@@ -111,6 +116,7 @@ namespace CombatAnalysis.CombatParser.Patterns
                 FromPlayer = combatData[3].Trim('"'),
                 ToEnemy = combatData[7].Trim('"'),
                 SpellOrItem = spellOrItem,
+                IsPeriodicDamage = isPeriodicDamage,
                 IsDodge = isDodge,
                 IsMiss = isMiss,
                 IsParry = isParry,

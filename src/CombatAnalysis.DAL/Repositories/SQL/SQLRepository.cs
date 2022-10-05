@@ -1,4 +1,4 @@
-﻿using CombatAnalysis.DAL.Data;
+﻿using CombatAnalysis.DAL.Data.SQL;
 using CombatAnalysis.DAL.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
@@ -29,9 +29,9 @@ namespace CombatAnalysis.DAL.Repositories.SQL
         async Task<int> IGenericRepository<TModel, TIdType>.DeleteAsync(TModel item)
         {
             _context.Set<TModel>().Remove(item);
-            var numberEntries = await _context.SaveChangesAsync();
+            var rowsAffected = await _context.SaveChangesAsync();
 
-            return numberEntries;
+            return rowsAffected;
         }
 
         async Task<IEnumerable<TModel>> IGenericRepository<TModel, TIdType>.GetAllAsync() => await _context.Set<TModel>().AsNoTracking().ToListAsync();
@@ -58,9 +58,9 @@ namespace CombatAnalysis.DAL.Repositories.SQL
         async Task<int> IGenericRepository<TModel, TIdType>.UpdateAsync(TModel item)
         {
             _context.Entry(item).State = EntityState.Modified;
-            var numberEntries = await _context.SaveChangesAsync();
+            var rowsAffected = await _context.SaveChangesAsync();
 
-            return numberEntries;
+            return rowsAffected;
         }
     }
 }

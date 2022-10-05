@@ -1,0 +1,115 @@
+.about-me {
+    display: flex;
+    flex-direction: column;
+    align-items:  center;
+}
+
+.about-me img {
+    width: 450px;
+}
+
+.about-me__description {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+}
+
+.about-me__description_expirience-stack {
+    width: 60%;
+    margin: 20px;
+}
+
+.about-me .open-personal-project, .about-me .close-personal-project {
+    display: none;
+}
+
+.about-me .open-personal-project.active, .about-me .close-personal-project.active {
+    display: flex;
+}
+
+.personal-project {
+    display: none;
+}
+
+.personal-project.active {
+    display: flex;
+}
+
+.applications {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.how-it-is-work {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.how-it-is-work div {
+    width: 85%;
+    display: flex;
+    flex-direction: column;
+}
+
+.applications__desktop-application, .applications__web-application {
+    display: none;
+    margin-top: 20px;
+}
+
+.applications__desktop-application.active, .applications__web-application.active {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.applications__desktop-application.active img, .applications__web-application.active img {
+    margin: 10px 0;
+    width: 55%;
+}
+
+.applications__desktop-application_download {
+    margin: 10px 0 65px 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.applications__desktop-application_download button {
+    width: 200px;
+}
+
+.application-switcher {
+    width: 100%;
+    margin: 20px 0;
+    position: fixed;
+    bottom: 0;
+    z-index: 1;
+}
+
+.application-switcher__shell {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+}
+
+.application-switcher__container {
+    padding: 5px 10px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 3px 3px 3px 3px gray;
+    border-radius: 10px;
+    background: white;
+
+}
+
+.application-switcher .form-check {
+    margin: 10px 20px;
+}

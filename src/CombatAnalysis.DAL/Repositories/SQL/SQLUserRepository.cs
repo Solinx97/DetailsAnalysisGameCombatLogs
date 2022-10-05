@@ -1,4 +1,4 @@
-﻿using CombatAnalysis.DAL.Data;
+﻿using CombatAnalysis.DAL.Data.SQL;
 using CombatAnalysis.DAL.Entities.User;
 using CombatAnalysis.DAL.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -16,22 +16,20 @@ namespace CombatAnalysis.DAL.Repositories.SQL
             _context = context;
         }
 
-        async Task<string> IUserRepository.CreateAsync(AppUser item)
+        async Task<AppUser> IUserRepository.CreateAsync(AppUser item)
         {
             var entityEntry = await _context.Set<AppUser>().AddAsync(item);
             await _context.SaveChangesAsync();
 
-            var entityId = (string)entityEntry.Property("Id").CurrentValue;
-
-            return entityId;
+            return entityEntry.Entity;
         }
 
         async Task<int> IUserRepository.DeleteAsync(AppUser item)
         {
             _context.Set<AppUser>().Remove(item);
-            var numberEntries = await _context.SaveChangesAsync();
+            var rowsAffected = await _context.SaveChangesAsync();
 
-            return numberEntries;
+            return rowsAffected;
         }
 
         async Task<IEnumerable<AppUser>> IUserRepository.GetAllAsync() => await _context.Set<AppUser>().AsNoTracking().ToListAsync();
@@ -75,9 +73,9 @@ namespace CombatAnalysis.DAL.Repositories.SQL
         async Task<int> IUserRepository.UpdateAsync(AppUser item)
         {
             _context.Entry(item).State = EntityState.Modified;
-            var numberEntries = await _context.SaveChangesAsync();
+            var rowsAffected = await _context.SaveChangesAsync();
 
-            return numberEntries;
+            return rowsAffected;
         }
     }
 }

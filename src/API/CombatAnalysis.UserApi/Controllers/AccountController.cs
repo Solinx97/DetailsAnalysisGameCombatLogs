@@ -7,7 +7,9 @@ using CombatAnalysis.UserApi.Models.Response;
 using CombatAnalysis.UserApi.Models.User;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace CombatAnalysis.UserApi.Controllers
@@ -19,12 +21,14 @@ namespace CombatAnalysis.UserApi.Controllers
         private readonly IUserService<AppUserDto> _service;
         private readonly IIdentityTokenService _tokenService;
         private readonly IMapper _mapper;
+        private readonly ILogger _logger;
 
-        public AccountController(IUserService<AppUserDto> service, IIdentityTokenService tokenService, IMapper mapper)
+        public AccountController(IUserService<AppUserDto> service, IIdentityTokenService tokenService, IMapper mapper, ILogger logger)
         {
             _service = service;
             _tokenService = tokenService;
             _mapper = mapper;
+            _logger = logger;
         }
 
         [HttpPost]
@@ -48,24 +52,46 @@ namespace CombatAnalysis.UserApi.Controllers
         [HttpPost("registration")]
         public async Task<IActionResult> Register(RegisterModel model)
         {
-            var user = await _service.GetAsync(model.Email);
-            if (user == null)
+            try
             {
-                var newUser = new AppUserModel { Id = Guid.NewGuid().ToString(), Email = model.Email, Password = model.Password };
-                var map = _mapper.Map<AppUserDto>(newUser);
-                await _service.CreateAsync(map);
+                var user = await _service.GetAsync(model.Email);
+                if (user == null)
+                {
+                    var newUser = new AppUserModel { Id = Guid.NewGuid().ToString(), Email = model.Email, Password = model.Password };
+                    var map = _mapper.Map<AppUserDto>(newUser);
+                    await _service.CreateAsync(map);
 
-                var tokens = await _tokenService.GenerateTokensAsync(HttpContext.Response.Cookies, newUser.Id);
-                var response = new ResponseFromAccount(newUser, tokens.Item1, tokens.Item2);
+                    var tokens = await _tokenService.GenerateTokensAsync(HttpContext.Response.Cookies, newUser.Id);
+                    var response = new ResponseFromAccount(newUser, tokens.Item1, tokens.Item2);
 
-                return Ok(response);
+                    return Ok(response);
+                }
+                else
+                {
+                    return BadRequest();
+                }
+            }
+            catch (ArgumentNullException ex)
+            {
+                _logger.LogError(ex, ex.Message);
+
+                return BadRequest();
+            }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetAll()
+        {
+            var users = await _service.GetAllAsync();
+            if (users.Any())
+            {
+                return Ok(users);
             }
             else
             {
                 return BadRequest();
             }
         }
-
 
         [HttpGet("logout/{refreshToken}")]
         public async Task<IActionResult> Logout(string refreshToken)

@@ -1,12 +1,10 @@
 ﻿using AutoMapper;
 using CombatAnalysis.BL.DTO;
-using CombatAnalysis.BL.Exceptions;
 using CombatAnalysis.BL.Interfaces;
 using CombatAnalysis.DAL.Entities;
 using CombatAnalysis.DAL.Interfaces;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace CombatAnalysis.BL.Services
@@ -26,7 +24,7 @@ namespace CombatAnalysis.BL.Services
         {
             if (item == null)
             {
-                throw new ArgumentNullException(nameof(item));
+                throw new ArgumentNullException(nameof(DamageDoneDto), $"The {nameof(DamageDoneDto)} can't be null");
             }
 
             return CreateInternalAsync(item);
@@ -36,7 +34,7 @@ namespace CombatAnalysis.BL.Services
         {
             if (item == null)
             {
-                throw new ArgumentNullException(nameof(item));
+                throw new ArgumentNullException(nameof(DamageDoneDto), $"The {nameof(DamageDoneDto)} can't be null");
             }
 
             return DeleteInternalAsync(item);
@@ -70,7 +68,7 @@ namespace CombatAnalysis.BL.Services
         {
             if (item == null)
             {
-                throw new ArgumentNullException(nameof(item));
+                throw new ArgumentNullException(nameof(DamageDoneDto), $"The {nameof(DamageDoneDto)} can't be null");
             }
 
             return UpdateInternalAsync(item);
@@ -78,6 +76,22 @@ namespace CombatAnalysis.BL.Services
 
         private async Task<DamageDoneDto> CreateInternalAsync(DamageDoneDto item)
         {
+            if (string.IsNullOrEmpty(item.FromPlayer))
+            {
+                throw new ArgumentNullException(nameof(DamageDoneDto),
+                    $"The property {nameof(DamageDoneDto.FromPlayer)} of the {nameof(DamageDoneDto)} object can't be null or empty");
+            }
+            if (string.IsNullOrEmpty(item.ToEnemy))
+            {
+                throw new ArgumentNullException(nameof(DamageDoneDto), 
+                    $"The property {nameof(DamageDoneDto.ToEnemy)} of the {nameof(DamageDoneDto)} object can't be null or empty");
+            }
+            if (string.IsNullOrEmpty(item.SpellOrItem))
+            {
+                throw new ArgumentNullException(nameof(DamageDoneDto), 
+                    $"The property {nameof(DamageDoneDto.SpellOrItem)} of the {nameof(DamageDoneDto)} object can't be null or empty");
+            }
+
             var map = _mapper.Map<DamageDone>(item);
             var createdItem = await _repository.CreateAsync(map);
             var resultMap = _mapper.Map<DamageDoneDto>(createdItem);
@@ -87,26 +101,50 @@ namespace CombatAnalysis.BL.Services
 
         private async Task<int> DeleteInternalAsync(DamageDoneDto item)
         {
-            var allData = await _repository.GetAllAsync();
-            if (!allData.Any())
+            if (string.IsNullOrEmpty(item.FromPlayer))
             {
-                throw new NotFoundException($"Collection entity {nameof(DamageDoneDto)} not found", nameof(allData));
+                throw new ArgumentNullException(nameof(DamageDoneDto), 
+                    $"The property {nameof(DamageDoneDto.FromPlayer)} of the {nameof(DamageDoneDto)} object can't be null or empty");
+            }
+            if (string.IsNullOrEmpty(item.ToEnemy))
+            {
+                throw new ArgumentNullException(nameof(DamageDoneDto),
+                    $"The property {nameof(DamageDoneDto.ToEnemy)} of the {nameof(DamageDoneDto)} object can't be null or empty");
+            }
+            if (string.IsNullOrEmpty(item.SpellOrItem))
+            {
+                throw new ArgumentNullException(nameof(DamageDoneDto),
+                    $"The property {nameof(DamageDoneDto.SpellOrItem)} of the {nameof(DamageDoneDto)} object can't be null or empty");
             }
 
-            var numberEntriesAffected = await _repository.DeleteAsync(_mapper.Map<DamageDone>(item));
-            return numberEntriesAffected;
+            var map = _mapper.Map<DamageDone>(item);
+            var rowsAffected = await _repository.DeleteAsync(map);
+
+            return rowsAffected;
         }
 
         private async Task<int> UpdateInternalAsync(DamageDoneDto item)
         {
-            var allData = await _repository.GetAllAsync();
-            if (!allData.Any())
+            if (string.IsNullOrEmpty(item.FromPlayer))
             {
-                throw new NotFoundException($"Collection entity {nameof(DamageDoneDto)} not found", nameof(allData));
+                throw new ArgumentNullException(nameof(DamageDoneDto), 
+                    $"The property {nameof(DamageDoneDto.FromPlayer)} of the {nameof(DamageDoneDto)} object can't be null or empty");
+            }
+            if (string.IsNullOrEmpty(item.ToEnemy))
+            {
+                throw new ArgumentNullException(nameof(DamageDoneDto), 
+                    $"The property {nameof(DamageDoneDto.ToEnemy)} of the {nameof(DamageDoneDto)} object can't be null or empty");
+            }
+            if (string.IsNullOrEmpty(item.SpellOrItem))
+            {
+                throw new ArgumentNullException(nameof(DamageDoneDto), 
+                    $"The property {nameof(DamageDoneDto.SpellOrItem)} of the {nameof(DamageDoneDto)} object can't be null or empty");
             }
 
-            var numberEntriesAffected = await _repository.UpdateAsync(_mapper.Map<DamageDone>(item));
-            return numberEntriesAffected;
+            var map = _mapper.Map<DamageDone>(item);
+            var rowsAffected = await _repository.UpdateAsync(map);
+
+            return rowsAffected;
         }
     }
 }

@@ -1,12 +1,10 @@
 ﻿using AutoMapper;
 using CombatAnalysis.BL.DTO;
-using CombatAnalysis.BL.Exceptions;
 using CombatAnalysis.BL.Interfaces;
 using CombatAnalysis.DAL.Entities;
 using CombatAnalysis.DAL.Interfaces;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace CombatAnalysis.BL.Services
@@ -26,7 +24,7 @@ namespace CombatAnalysis.BL.Services
         {
             if (item == null)
             {
-                throw new ArgumentNullException(nameof(item));
+                throw new ArgumentNullException(nameof(CombatLogByUserDto), $"The {nameof(CombatLogByUserDto)} can't be null");
             }
 
             return CreateInternalAsync(item);
@@ -36,7 +34,7 @@ namespace CombatAnalysis.BL.Services
         {
             if (item == null)
             {
-                throw new ArgumentNullException(nameof(item));
+                throw new ArgumentNullException(nameof(CombatLogByUserDto), $"The {nameof(CombatLogByUserDto)} can't be null");
             }
 
             return DeleteInternalAsync(item);
@@ -70,7 +68,7 @@ namespace CombatAnalysis.BL.Services
         {
             if (item == null)
             {
-                throw new ArgumentNullException(nameof(item));
+                throw new ArgumentNullException(nameof(CombatLogByUserDto), $"The {nameof(CombatLogByUserDto)} can't be null");
             }
 
             return UpdateInternalAsync(item);
@@ -87,26 +85,18 @@ namespace CombatAnalysis.BL.Services
 
         private async Task<int> DeleteInternalAsync(CombatLogByUserDto item)
         {
-            var allData = await _repository.GetAllAsync();
-            if (!allData.Any())
-            {
-                throw new NotFoundException($"Collection entity {nameof(CombatLogByUserDto)} not found", nameof(allData));
-            }
+            var map = _mapper.Map<CombatLogByUser>(item);
+            var rowsAffected = await _repository.DeleteAsync(map);
 
-            var numberEntriesAffected = await _repository.DeleteAsync(_mapper.Map<CombatLogByUser>(item));
-            return numberEntriesAffected;
+            return rowsAffected;
         }
 
         private async Task<int> UpdateInternalAsync(CombatLogByUserDto item)
         {
-            var allData = await _repository.GetAllAsync();
-            if (!allData.Any())
-            {
-                throw new NotFoundException($"Collection entity {nameof(CombatLogByUserDto)} not found", nameof(allData));
-            }
+            var map = _mapper.Map<CombatLogByUser>(item);
+            var rowsAffected = await _repository.UpdateAsync(map);
 
-            var numberEntriesAffected = await _repository.UpdateAsync(_mapper.Map<CombatLogByUser>(item));
-            return numberEntriesAffected;
+            return rowsAffected;
         }
     }
 }

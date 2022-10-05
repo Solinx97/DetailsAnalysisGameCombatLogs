@@ -1,5 +1,4 @@
 ﻿using CombatAnalysis.Core.Consts;
-using CombatAnalysis.Core.Core;
 using CombatAnalysis.Core.Enums;
 using CombatAnalysis.Core.Interfaces;
 using CombatAnalysis.Core.Interfaces.Observers;
@@ -12,6 +11,8 @@ using MvvmCross.Navigation;
 using MvvmCross.ViewModels;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace CombatAnalysis.Core.ViewModels
@@ -22,8 +23,8 @@ namespace CombatAnalysis.Core.ViewModels
         private readonly CombatParserAPIService _combatParserAPIService;
 
         private IImprovedMvxViewModel _basicTemplate;
-        private List<CombatModel> _combats;
-        private int _combatIndex;
+        private ObservableCollection<CombatModel> _combats;
+        private CombatModel _selectedCombat;
         private ResponseStatus _status;
         private LogType _logType;
 
@@ -31,10 +32,8 @@ namespace CombatAnalysis.Core.ViewModels
         {
             _mvvmNavigation = mvvmNavigation;
 
-            _combats = new List<CombatModel>();
             _combatParserAPIService = new CombatParserAPIService(httpClient, logger, memoryCache);
 
-            ShowDetailsCommand = new MvxCommand(ShowDetails);
             RepeatSaveCommand = new MvxCommand(RepeatSaveCombatDataDetails);
 
             BasicTemplate = Templates.Basic;
@@ -44,8 +43,6 @@ namespace CombatAnalysis.Core.ViewModels
             var responseStatusObservable = (IResponseStatusObservable)BasicTemplate;
             responseStatusObservable.AddObserver(this);
         }
-
-        public IMvxCommand ShowDetailsCommand { get; set; }
 
         public IMvxCommand RepeatSaveCommand { get; set; }
 
@@ -58,7 +55,7 @@ namespace CombatAnalysis.Core.ViewModels
             }
         }
 
-        public List<CombatModel> Combats
+        public ObservableCollection<CombatModel> Combats
         {
             get { return _combats; }
             set
@@ -67,12 +64,14 @@ namespace CombatAnalysis.Core.ViewModels
             }
         }
 
-        public int CombatIndex
+        public CombatModel SelectedCombat
         {
-            get { return _combatIndex; }
+            get { return _selectedCombat; }
             set
             {
-                SetProperty(ref _combatIndex, value);
+                SetProperty(ref _selectedCombat, value);
+
+                ShowDetails();
             }
         }
 
@@ -89,24 +88,24 @@ namespace CombatAnalysis.Core.ViewModels
         {
             if (parameter != null)
             {
-                Combats = parameter.Item1;
+                Combats = new ObservableCollection<CombatModel>(parameter.Item1);
                 _logType = parameter.Item2;
             }
         }
 
         public override void ViewDestroy(bool viewFinishing = true)
         {
-            ((BasicTemplateViewModel)Templates.Basic).Combats = Combats;
+            ((BasicTemplateViewModel)Templates.Basic).Combats = Combats.ToList();
 
             base.ViewDestroy(viewFinishing);
         }
 
         public void ShowDetails()
         {
-            BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, "TargetCombat", Combats[CombatIndex]);
+            BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, "TargetCombat", SelectedCombat);
 
             Task.Run(() => _mvvmNavigation.Close(this));
-            Task.Run(() => _mvvmNavigation.Navigate<DetailsSpecificalCombatViewModel, CombatModel>(Combats[CombatIndex]));
+            Task.Run(() => _mvvmNavigation.Navigate<DetailsSpecificalCombatViewModel, CombatModel>(SelectedCombat));
         }
 
         public void RepeatSaveCombatDataDetails()
@@ -115,7 +114,7 @@ namespace CombatAnalysis.Core.ViewModels
 
             Task.Run(async () =>
             {
-                var responseStatus = await _combatParserAPIService.Save(Combats, _logType) ? ResponseStatus.Successful : ResponseStatus.Failed;
+                var responseStatus = await _combatParserAPIService.Save(Combats.ToList(), _logType) ? ResponseStatus.Successful : ResponseStatus.Failed;
 
                 BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, "ResponseStatus", responseStatus);
             });
