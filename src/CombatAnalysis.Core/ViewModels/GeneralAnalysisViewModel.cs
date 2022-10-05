@@ -32,7 +32,6 @@ namespace CombatAnalysis.Core.ViewModels
         {
             _mvvmNavigation = mvvmNavigation;
 
-            //_combats = new List<CombatModel>();
             _combatParserAPIService = new CombatParserAPIService(httpClient, logger, memoryCache);
 
             RepeatSaveCommand = new MvxCommand(RepeatSaveCombatDataDetails);

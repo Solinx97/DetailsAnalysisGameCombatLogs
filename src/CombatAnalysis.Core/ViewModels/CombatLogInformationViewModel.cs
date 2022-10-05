@@ -32,7 +32,7 @@ namespace CombatAnalysis.Core.ViewModels
         private string _combatLog;
         private bool _fileIsNotCorrect;
         private bool _isParsing;
-        private bool _isNeedSave = true;
+        private bool _isNeedSave;
         private bool _isShowSteps;
         private string _foundCombat;
         private string _combatLogPath;
@@ -46,6 +46,7 @@ namespace CombatAnalysis.Core.ViewModels
         private double _screenWidth;
         private double _screenHeight;
         private bool _isAuth;
+        private bool _isAllowSaveLogs;
         private LogType _logType;
         private ObservableCollection<CombatLogModel>[] _combatLogLists = new ObservableCollection<CombatLogModel>[2];
 
@@ -220,6 +221,15 @@ namespace CombatAnalysis.Core.ViewModels
             set
             {
                 SetProperty(ref _screenHeight, value);
+            }
+        }
+
+        public bool IsAllowSaveLogs
+        {
+            get { return _isAllowSaveLogs; }
+            set
+            {
+                SetProperty(ref _isAllowSaveLogs, value);
             }
         }
 

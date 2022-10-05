@@ -3,6 +3,8 @@ using CombatAnalysis.CombatParser.Core;
 using CombatAnalysis.CombatParser.Interfaces;
 using CombatAnalysis.CombatParser.Services;
 using CombatAnalysis.Core.Consts;
+using CombatAnalysis.Core.Core;
+using CombatAnalysis.Core.Enums;
 using CombatAnalysis.Core.Helpers;
 using CombatAnalysis.Core.Interfaces;
 using CombatAnalysis.Core.Mapping;
@@ -22,7 +24,11 @@ namespace CombatAnalysis.Core
             Port.CombatParserApi = ConfigurationManager.AppSettings.Get("combatParserApiPort");
             Port.UserApi = ConfigurationManager.AppSettings.Get("userApiPort");
             Port.ChatApi = ConfigurationManager.AppSettings.Get("chatApiPort");
-            
+
+            AppInformation.Version = ConfigurationManager.AppSettings.Get("appVersion");
+            System.Enum.TryParse(ConfigurationManager.AppSettings.Get("appVersionType"), out AppVersionType appVersionType);
+            AppInformation.VersionType = appVersionType;
+
             var mappingConfig = new MapperConfiguration(mc =>
             {
                 mc.AddProfile(new CombatAnalysisMapper());

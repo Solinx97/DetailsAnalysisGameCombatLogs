@@ -171,7 +171,7 @@
             <StackPanel IsEnabled="{Binding CombatLog, Converter={StaticResource ToXAMLBool}}" Margin="20">
                 <Button Name="combatLogFileAnalysis" Height="35" Content="Анализ" Width="100" FontSize="16" Margin="0 20"
                     mvx:Bi.nd="Command OpenPlayerAnalysisCommand" Style="{StaticResource showButton}" />
-                <StackPanel Orientation="Horizontal" Width="200">
+                <StackPanel Orientation="Horizontal" Width="200" IsEnabled="{Binding IsAllowSaveLogs, Converter={StaticResource BoolToXAMLBool}, ConverterParameter=false}">
                     <CheckBox Name="isSaveCombatLog" VerticalAlignment="Center" VerticalContentAlignment="Center" Content="Сохранить данные" 
                            HorizontalContentAlignment="Center" IsChecked="{Binding IsNeedSave}" FontSize="16"/>
                     <Icon:PackIconMaterial Kind="ChatQuestion"  Foreground="Gray" Style="{StaticResource menuButtonIcon}">
