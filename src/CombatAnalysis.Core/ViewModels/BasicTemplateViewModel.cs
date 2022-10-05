@@ -1,4 +1,5 @@
 ﻿using CombatAnalysis.Core.Consts;
+using CombatAnalysis.Core.Core;
 using CombatAnalysis.Core.Enums;
 using CombatAnalysis.Core.Interfaces;
 using CombatAnalysis.Core.Interfaces.Observers;
@@ -10,7 +11,6 @@ using MvvmCross.Navigation;
 using MvvmCross.ViewModels;
 using System;
 using System.Collections.Generic;
-using System.Net.Http;
 using System.Threading.Tasks;
 using System.Windows;
 
@@ -66,8 +66,6 @@ namespace CombatAnalysis.Core.ViewModels
             ResourceDetailsCommand = new MvxAsyncCommand(ResourceDetailsAsync);
         }
 
-        public Action Close { get; set; }
-
         public IMvxCommand CloseCommand { get; set; }
 
         public IMvxCommand MaximazeCommand { get; set; }
@@ -105,6 +103,16 @@ namespace CombatAnalysis.Core.ViewModels
         public IViewModelConnect Handler { get; set; }
 
         public IMvxViewModel Parent { get; set; }
+
+        public string AppVersion
+        {
+            get { return AppInformation.Version; }
+        }
+
+        public string AppVersionType
+        {
+            get { return AppInformation.VersionType.ToString(); }
+        }
 
         public int Step
         {
@@ -202,7 +210,7 @@ namespace CombatAnalysis.Core.ViewModels
 
         public void CloseWindow()
         {
-            WindowManager.MainWindow.Close();
+            Environment.Exit(0);
         }
 
         public void MaximazeWindow()
@@ -357,6 +365,11 @@ namespace CombatAnalysis.Core.ViewModels
                 IsAuth = true;
                 Email = user.Email;
             }
+        }
+
+        private void GetAppVersion()
+        {
+
         }
     }
 }

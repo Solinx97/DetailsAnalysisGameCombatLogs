@@ -35,5 +35,14 @@ function projectSwitch() {
     });
 }
 
+function desktopAppDownload() {
+    let openPersonalProject = document.querySelector(".desktop-app-download");
+
+    openPersonalProject.addEventListener("click", () => {
+        window.open("https://install.appcenter.ms/users/Aleh_Fiadosau-epam.com/apps/DetalsAnalysisGamesCombatLogs-1/releases/2");
+    });
+}
+
 appSwitch();
 projectSwitch();
+desktopAppDownload();
