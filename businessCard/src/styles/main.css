@@ -7,8 +7,8 @@
 }
 
 body {
-    background: rgb(0,0,0);
-    background: linear-gradient(90deg, rgba(0,0,0,1) 5%, rgba(109,227,255,1) 20%, rgba(164,164,164,1) 35%, rgba(185,185,185,1) 65%, rgba(109,227,255,1) 78%, rgba(0,0,0,1) 95%);
+    background: rgb(11,11,11);
+background: linear-gradient(90deg, rgba(11,11,11,1) 10%, rgba(209,209,209,1) 50%, rgba(0,0,0,1) 90%);
 }
 
 button {
