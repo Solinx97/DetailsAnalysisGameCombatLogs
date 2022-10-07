@@ -5,6 +5,8 @@
     align-items: center;
     width: 100vw;
     color: white;
+    background: rgb(33,190,169);
+    background: radial-gradient(circle, rgba(33,190,169,1) 0%, rgba(148,153,233,1) 100%);
 }
 
 .about-me__qualification h4 {

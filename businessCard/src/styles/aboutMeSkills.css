@@ -10,6 +10,8 @@
     justify-content: flex-start;
     align-items: flex-start;
     width: 100vw;
+    background: rgb(108,190,124);
+    background: radial-gradient(circle, rgba(108,190,124,1) 0%, rgba(148,153,233,1) 100%);
 }
 
 .about-me .title {
@@ -59,6 +61,8 @@
     justify-content: center;
     align-items: center;
     padding: 10px;
+    background: rgb(195,143,88);
+    background: radial-gradient(circle, rgba(195,143,88,1) 0%, rgba(148,153,233,1) 100%);
 }
 
 .about-me__skills h4 {
@@ -131,7 +135,7 @@
 
 .about-me .open-personal-project, .about-me .close-personal-project {
     display: none;
-    margin: 10px 0 60px 0;
+    margin: 20px 0;
 }
 
 .about-me .open-personal-project.active, .about-me .close-personal-project.active {
@@ -140,7 +144,14 @@
 
 .what-is-project {
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
     width: 100vw;
+    background: rgb(185,98,168);
+    background: radial-gradient(circle, rgba(185,98,168,1) 0%, rgba(148,153,233,1) 100%);
+}
+
+.what-is-project button {
+    margin: 0;
 }
