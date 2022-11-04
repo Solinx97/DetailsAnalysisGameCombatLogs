@@ -43,6 +43,8 @@ namespace CombatAnalysis.Core.ViewModels
             BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, "Step", 6);
         }
 
+        #region Properties
+
         public IImprovedMvxViewModel BasicTemplate
         {
             get { return _basicTemplate; }
@@ -108,6 +110,8 @@ namespace CombatAnalysis.Core.ViewModels
             }
         }
 
+        #endregion
+
         public override void Prepare(Tuple<CombatPlayerModel, CombatModel> parameter)
         {
             var combat = parameter.Item2;
@@ -117,8 +121,8 @@ namespace CombatAnalysis.Core.ViewModels
 
             if (player.Id > 0)
             {
-                Task.Run(async () => await LoadResourceRecoveryDetails(player.Id));
-                Task.Run(async () => await LoadResourceRecoveryGeneral(player.Id));
+                Task.Run(async () => await LoadResourceRecoveryDetailsAsync(player.Id));
+                Task.Run(async () => await LoadResourceRecoveryGeneralAsync(player.Id));
             }
             else
             {
@@ -152,14 +156,14 @@ namespace CombatAnalysis.Core.ViewModels
             ResourceRecoveryGeneralInformations = map2;
         }
 
-        private async Task LoadResourceRecoveryDetails(int combatPlayerId)
+        private async Task LoadResourceRecoveryDetailsAsync(int combatPlayerId)
         {
             var resourceRecoveries = await _combatParserAPIService.LoadResourceRecoveryDetailsAsync(combatPlayerId);
             ResourceRecoveryInformations = new ObservableCollection<ResourceRecoveryModel>(resourceRecoveries.ToList());
             _resourceRecoveryInformations = new ObservableCollection<ResourceRecoveryModel>(resourceRecoveries.ToList());
         }
 
-        private async Task LoadResourceRecoveryGeneral(int combatPlayerId)
+        private async Task LoadResourceRecoveryGeneralAsync(int combatPlayerId)
         {
             var resourceRecoveries = await _combatParserAPIService.LoadResourceRecoveryGeneralAsync(combatPlayerId);
             ResourceRecoveryGeneralInformations = new ObservableCollection<ResourceRecoveryGeneralModel>(resourceRecoveries.ToList());

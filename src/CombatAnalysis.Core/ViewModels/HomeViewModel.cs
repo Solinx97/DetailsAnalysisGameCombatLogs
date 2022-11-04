@@ -30,9 +30,15 @@ namespace CombatAnalysis.Core.ViewModels
             Templates.Basic = BasicTemplate;
         }
 
+        #region Command
+
         public IMvxAsyncCommand OpenChatCommand { get; set; }
 
         public IMvxAsyncCommand OpenCombatAnalysisCommand { get; set; }
+
+        #endregion
+
+        #region Properties
 
         public IImprovedMvxViewModel BasicTemplate
         {
@@ -42,6 +48,8 @@ namespace CombatAnalysis.Core.ViewModels
                 SetProperty(ref _basicTemplate, value);
             }
         }
+
+        #endregion
 
         public async Task OpenChatAsync()
         {

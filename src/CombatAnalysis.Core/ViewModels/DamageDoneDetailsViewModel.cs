@@ -58,6 +58,8 @@ namespace CombatAnalysis.Core.ViewModels
             BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, "Step", 3);
         }
 
+        #region Properties
+
         public IImprovedMvxViewModel BasicTemplate
         {
             get { return _basicTemplate; }
@@ -231,6 +233,8 @@ namespace CombatAnalysis.Core.ViewModels
             }
         }
 
+        #endregion
+
         public override void Prepare(Tuple<CombatPlayerModel, CombatModel> parameter)
         {
             var combat = parameter.Item2;
@@ -240,8 +244,8 @@ namespace CombatAnalysis.Core.ViewModels
 
             if (player.Id > 0)
             {
-                Task.Run(async () => await LoadDamageDoneDetails(player.Id));
-                Task.Run(async () => await LoadDamageDoneGeneral(player.Id));
+                Task.Run(async () => await LoadDamageDoneDetailsAsync(player.Id));
+                Task.Run(async () => await LoadDamageDoneGeneralAsync(player.Id));
             }
             else
             {
@@ -275,14 +279,14 @@ namespace CombatAnalysis.Core.ViewModels
             DamageDoneGeneralInformations = map2;
         }
 
-        private async Task LoadDamageDoneDetails(int combatPlayerId)
+        private async Task LoadDamageDoneDetailsAsync(int combatPlayerId)
         {
             var healDones = await _combatParserAPIService.LoadDamageDoneDetailsAsync(combatPlayerId);
             DamageDoneInformations = new ObservableCollection<DamageDoneModel>(healDones.ToList());
             _damageDoneInformationsWithSkipDamage = new ObservableCollection<DamageDoneModel>(healDones.ToList());
         }
 
-        private async Task LoadDamageDoneGeneral(int combatPlayerId)
+        private async Task LoadDamageDoneGeneralAsync(int combatPlayerId)
         {
             var healDoneGenerals = await _combatParserAPIService.LoadDamageDoneGeneralAsync(combatPlayerId);
             DamageDoneGeneralInformations = new ObservableCollection<DamageDoneGeneralModel>(healDoneGenerals.ToList());

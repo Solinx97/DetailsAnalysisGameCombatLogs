@@ -39,11 +39,17 @@ namespace CombatAnalysis.Core.ViewModels.CreateGroupChat
             _groupChat = chatModel;
         }
 
+        #region Commands
+
         public IMvxAsyncCommand CreateCommand { get; set; }
 
         public IMvxCommand CancelCommand { get; set; }
 
         public IMvxCommand<int> GetPolicyTypeCommand { get; set; }
+
+        #endregion
+
+        #region Properties
 
         public IImprovedMvxViewModel BasicTemplate
         {
@@ -63,6 +69,8 @@ namespace CombatAnalysis.Core.ViewModels.CreateGroupChat
             }
         }
 
+        #endregion
+
         public async Task CreateAsync()
         {
             var user = _memoryCache.Get<AppUserModel>("account");
@@ -70,11 +78,11 @@ namespace CombatAnalysis.Core.ViewModels.CreateGroupChat
             {
                 UpdateGroupChatModel(user);
 
-                var response = await CreateGroupChat();
+                var response = await CreateGroupChatAsync();
                 if (response.StatusCode == System.Net.HttpStatusCode.OK)
                 {
                     var groupChat = await response.Content.ReadFromJsonAsync<GroupChatModel>();
-                    await CreateGroupChatUser(groupChat.Id, user.Id);
+                    await CreateGroupChatUserAsync(groupChat.Id, user.Id);
 
                     CancelCommand.Execute();
                 }
@@ -101,7 +109,7 @@ namespace CombatAnalysis.Core.ViewModels.CreateGroupChat
             _groupChat.OwnerId = user.Id;
         }
 
-        private async Task<HttpResponseMessage> CreateGroupChat()
+        private async Task<HttpResponseMessage> CreateGroupChatAsync()
         {
             _httpClientHelper.BaseAddress = Port.ChatApi;
 
@@ -109,7 +117,7 @@ namespace CombatAnalysis.Core.ViewModels.CreateGroupChat
             return response;
         }
 
-        private async Task CreateGroupChatUser(int groupChatId, string userId)
+        private async Task CreateGroupChatUserAsync(int groupChatId, string userId)
         {
             var groupChatUser = new GroupChatUserModel
             {

@@ -47,9 +47,15 @@ namespace CombatAnalysis.Core.ViewModels
             BasicTemplate.Parent = this;
         }
 
+        #region Commands
+
         public IMvxAsyncCommand RegistrationCommand { get; set; }
 
         public IMvxAsyncCommand CancelCommand { get; set; }
+
+        #endregion
+
+        #region Properties
 
         public IImprovedMvxViewModel BasicTemplate
         {
@@ -123,6 +129,8 @@ namespace CombatAnalysis.Core.ViewModels
             }
         }
 
+        #endregion
+
         public async Task ValidateAsync()
         {
             if (string.IsNullOrWhiteSpace(Email)
@@ -134,7 +142,7 @@ namespace CombatAnalysis.Core.ViewModels
             else
             {
                 InputDataIsEmpty = false;
-                await CheckConfirmPassword();
+                await CheckConfirmPasswordAsync();
             }
         }
 
@@ -145,7 +153,7 @@ namespace CombatAnalysis.Core.ViewModels
             await _mvvmNavigation.Close(this);
         }
 
-        private async Task CheckConfirmPassword()
+        private async Task CheckConfirmPasswordAsync()
         {
             if (Password.Equals(ConfirmPassword))
             {
@@ -154,7 +162,7 @@ namespace CombatAnalysis.Core.ViewModels
                 AccountIsReady = false;
                 InputDataIsEmpty = false;
 
-                await Registration();
+                await RegistrationAsync();
             }
             else
             {
@@ -162,7 +170,7 @@ namespace CombatAnalysis.Core.ViewModels
             }
         }
 
-        private async Task Registration()
+        private async Task RegistrationAsync()
         {
             try
             {

@@ -60,7 +60,13 @@ namespace CombatAnalysis.Core.ViewModels
             BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, "Step", 5);
         }
 
+        #region Commands
+
         public IMvxCommand ShowDamageInformCommand { get; set; }
+
+        #endregion
+
+        #region Properties
 
         public IImprovedMvxViewModel BasicTemplate
         {
@@ -251,6 +257,8 @@ namespace CombatAnalysis.Core.ViewModels
                 SetProperty(ref _totalValue, value);
             }
         }
+
+        #endregion
 
         public override void Prepare(Tuple<CombatPlayerModel, CombatModel> parameter)
         {
