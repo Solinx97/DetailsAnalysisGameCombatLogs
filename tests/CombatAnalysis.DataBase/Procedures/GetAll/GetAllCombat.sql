@@ -1,0 +1,5 @@
+﻿CREATE PROCEDURE [dbo].[GetAllCombat]
+AS
+	SELECT *
+	FROM Combat
+RETURN 0

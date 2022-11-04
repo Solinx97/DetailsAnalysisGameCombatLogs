@@ -56,8 +56,6 @@ namespace CombatAnalysis.CombatParser.Patterns
                 return null;
             }
 
-            int.TryParse(combatData[21], out var value1);
-            int.TryParse(combatData[^1], out var value2);
             int.TryParse(combatData[^4], out var value3);
             int.TryParse(combatData[^3], out var value4);
 
@@ -65,12 +63,10 @@ namespace CombatAnalysis.CombatParser.Patterns
 
             var healDone = new HealDone
             {
-                CurrentHealth = value1,
                 Time = TimeSpan.Parse(combatData[0]),
                 FromPlayer = combatData[3].Trim('"'),
                 ToPlayer = combatData[7].Trim('"'),
                 SpellOrItem = combatData[11].Trim('"'),
-                MaxHealth = value2,
                 ValueWithOverheal = value3,
                 Overheal = value4,
                 Value = value3 - value4,

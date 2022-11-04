@@ -1,4 +1,5 @@
 ﻿using CombatAnalysis.Core.Consts;
+using CombatAnalysis.Core.Core;
 using CombatAnalysis.Core.Enums;
 using CombatAnalysis.Core.Interfaces;
 using CombatAnalysis.Core.Interfaces.Observers;
@@ -10,7 +11,6 @@ using MvvmCross.Navigation;
 using MvvmCross.ViewModels;
 using System;
 using System.Collections.Generic;
-using System.Net.Http;
 using System.Threading.Tasks;
 using System.Windows;
 
@@ -24,15 +24,15 @@ namespace CombatAnalysis.Core.ViewModels
         private readonly IMemoryCache _memoryCache;
         private readonly IHttpClientHelper _httpClient;
 
-        private int _step;
-        private Tuple<int, CombatModel> _combatInformtaion;
+        private int _step = -1;
+        private Tuple<CombatPlayerModel, CombatModel> _combatInformtaion;
         private List<CombatModel> _combats;
         private bool _isAuth;
         private bool _isLoginNotActivated = true;
         private bool _isRegistrationNotActivated = true;
         private string _email;
         private LogType _logType;
-        private Visibility _logPanelStatus;
+        private Visibility _logPanelStatus = Visibility.Collapsed;
 
         private static ResponseStatus _responseStatus;
         private static int _allowStep;
@@ -53,6 +53,7 @@ namespace CombatAnalysis.Core.ViewModels
             LoginCommand = new MvxAsyncCommand(LoginAsync);
             RegistrationCommand = new MvxAsyncCommand(RegistrationAsync);
             LogoutCommand = new MvxAsyncCommand(LogoutAsync);
+            ToHomeCommand = new MvxAsyncCommand(ToHomeAsync);
             UploadCombatsCommand = new MvxAsyncCommand(UploadCombatLogsAsync);
             GeneralAnalysisCommand = new MvxAsyncCommand(GeneralAnalysisAsync);
             CombatCommand = new MvxAsyncCommand(DetailsSpecificalCombatAsync);
@@ -65,8 +66,6 @@ namespace CombatAnalysis.Core.ViewModels
             ResourceDetailsCommand = new MvxAsyncCommand(ResourceDetailsAsync);
         }
 
-        public Action Close { get; set; }
-
         public IMvxCommand CloseCommand { get; set; }
 
         public IMvxCommand MaximazeCommand { get; set; }
@@ -78,6 +77,8 @@ namespace CombatAnalysis.Core.ViewModels
         public IMvxAsyncCommand RegistrationCommand { get; set; }
 
         public IMvxAsyncCommand LogoutCommand { get; set; }
+
+        public IMvxAsyncCommand ToHomeCommand { get; set; }
 
         public IMvxAsyncCommand UploadCombatsCommand { get; set; }
 
@@ -102,6 +103,16 @@ namespace CombatAnalysis.Core.ViewModels
         public IViewModelConnect Handler { get; set; }
 
         public IMvxViewModel Parent { get; set; }
+
+        public string AppVersion
+        {
+            get { return AppInformation.Version; }
+        }
+
+        public string AppVersionType
+        {
+            get { return AppInformation.VersionType.ToString(); }
+        }
 
         public int Step
         {
@@ -199,7 +210,7 @@ namespace CombatAnalysis.Core.ViewModels
 
         public void CloseWindow()
         {
-            WindowManager.MainWindow.Close();
+            Environment.Exit(0);
         }
 
         public void MaximazeWindow()
@@ -252,10 +263,17 @@ namespace CombatAnalysis.Core.ViewModels
             }
         }
 
+        public async Task ToHomeAsync()
+        {
+            Step = -1;
+            LogPanelStatus = Visibility.Collapsed;
+            await _mvvmNavigation.Close(Parent);
+        }
+
         public async Task UploadCombatLogsAsync()
         {
             Step = 0;
-            await _mvvmNavigation.Close(Parent);
+            await _mvvmNavigation.Navigate<CombatLogInformationViewModel>();
         }
 
         public async Task GeneralAnalysisAsync()
@@ -266,39 +284,36 @@ namespace CombatAnalysis.Core.ViewModels
 
         public async Task DetailsSpecificalCombatAsync()
         {
-            await _mvvmNavigation.Navigate<DetailsSpecificalCombatViewModel, CombatModel>(TargetCombat);
+            Step = 2;
+            await _mvvmNavigation.Close(Parent);
         }
 
         public async Task DamageDoneDetailsAsync()
         {
-            _combatInformtaion = (Tuple<int, CombatModel>)Handler.Data;
+            _combatInformtaion = (Tuple<CombatPlayerModel, CombatModel>)Handler.Data;
 
-            await _mvvmNavigation.Close(Parent);
-            await _mvvmNavigation.Navigate<DamageDoneDetailsViewModel, Tuple<int, CombatModel>>(_combatInformtaion);
+            await _mvvmNavigation.Navigate<DamageDoneDetailsViewModel, Tuple<CombatPlayerModel, CombatModel>>(_combatInformtaion);
         }
 
         public async Task HealDoneDetailsAsync()
         {
-            _combatInformtaion = (Tuple<int, CombatModel>)Handler.Data;
+            _combatInformtaion = (Tuple<CombatPlayerModel, CombatModel>)Handler.Data;
 
-            await _mvvmNavigation.Close(Parent);
-            await _mvvmNavigation.Navigate<HealDoneDetailsViewModel, Tuple<int, CombatModel>>(_combatInformtaion);
+            await _mvvmNavigation.Navigate<HealDoneDetailsViewModel, Tuple<CombatPlayerModel, CombatModel>>(_combatInformtaion);
         }
 
         public async Task DamageTakenDetailsAsync()
         {
-            _combatInformtaion = (Tuple<int, CombatModel>)Handler.Data;
+            _combatInformtaion = (Tuple<CombatPlayerModel, CombatModel>)Handler.Data;
 
-            await _mvvmNavigation.Close(Parent);
-            await _mvvmNavigation.Navigate<DamageTakenDetailsViewModel, Tuple<int, CombatModel>>(_combatInformtaion);
+            await _mvvmNavigation.Navigate<DamageTakenDetailsViewModel, Tuple<CombatPlayerModel, CombatModel>>(_combatInformtaion);
         }
 
         public async Task ResourceDetailsAsync()
         {
-            _combatInformtaion = (Tuple<int, CombatModel>)Handler.Data;
+            _combatInformtaion = (Tuple<CombatPlayerModel, CombatModel>)Handler.Data;
 
-            await _mvvmNavigation.Close(Parent);
-            await _mvvmNavigation.Navigate<ResourceRecoveryDetailsViewModel, Tuple<int, CombatModel>>(_combatInformtaion);
+            await _mvvmNavigation.Navigate<ResourceRecoveryDetailsViewModel, Tuple<CombatPlayerModel, CombatModel>>(_combatInformtaion);
         }
 
         public async Task ChatAsync()
@@ -350,6 +365,11 @@ namespace CombatAnalysis.Core.ViewModels
                 IsAuth = true;
                 Email = user.Email;
             }
+        }
+
+        private void GetAppVersion()
+        {
+
         }
     }
 }

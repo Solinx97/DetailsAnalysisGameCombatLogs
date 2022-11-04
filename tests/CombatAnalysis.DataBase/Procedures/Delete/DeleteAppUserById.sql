@@ -1,0 +1,7 @@
+﻿CREATE PROCEDURE [dbo].[DeleteAppUserById]
+	@id NVARCHAR (MAX)
+AS
+	DELETE
+	FROM AppUser
+	WHERE Id = @id
+RETURN 0

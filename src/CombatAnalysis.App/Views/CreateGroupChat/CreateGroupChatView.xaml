@@ -28,7 +28,7 @@
                 <TextBlock Text="Название чата" VerticalAlignment="Center" Margin="10"/>
                 <TextBox VerticalAlignment="Center" Style="{StaticResource messageTextBox}" Text="{Binding Name}" Padding="5" VerticalContentAlignment="Center" Height="45" Width="200"/>
             </StackPanel>
-            <StackPanel VerticalAlignment="Top" HorizontalAlignment="Left">
+            <StackPanel IsEnabled="False" VerticalAlignment="Top" HorizontalAlignment="Left">
                 <TextBlock Text="Приватность чата" VerticalAlignment="Center" Margin="10"/>
                 <RadioButton Margin="50 5" Content="Открытый чат" FontSize="12" IsChecked="True" mvx:Bi.nd="Command GetPolicyTypeCommand, CommandParameter=0"/>
                 <RadioButton Margin="50 5" Content="Закрытый чат" FontSize="12" mvx:Bi.nd="Command GetPolicyTypeCommand, CommandParameter=1"/>
@@ -44,11 +44,9 @@
             </StackPanel>
         </StackPanel>
 
-        <StackPanel Grid.Column="1" Grid.Row="2" Orientation="Horizontal">
+        <StackPanel Grid.Column="1" Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Center">
             <Button mvx:Bi.nd="Command CreateCommand" Content="Создать" Width="100" Height="50" FontSize="16"
                     Margin="0" Style="{StaticResource showButton}" />
-            <Button mvx:Bi.nd="Command AddUsersCommand" Content="Добавить пользователей" Width="225" Height="50" FontSize="16"
-                    Margin="0" Style="{StaticResource showButton}" IsEnabled="False" />
             <Button mvx:Bi.nd="Command CancelCommand" Content="Отмена" Width="100" Height="50" FontSize="16"
                     Margin="0" Style="{StaticResource showButton}" />
         </StackPanel>

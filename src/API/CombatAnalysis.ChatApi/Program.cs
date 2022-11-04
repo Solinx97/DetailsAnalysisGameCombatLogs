@@ -1,3 +1,4 @@
+using CombatAnalysis.ChatApi.Core;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
 
@@ -14,7 +15,14 @@ namespace CombatAnalysis.ChatApi
             Host.CreateDefaultBuilder(args)
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
-                    webBuilder.UseStartup<Startup>();
+                    if (args.Length > 0 && args[0] == nameof(CommandLineArgs.Tests))
+                    {
+                        webBuilder.UseStartup<TestStartup>();
+                    }
+                    else
+                    {
+                        webBuilder.UseStartup<Startup>();
+                    }
                 });
     }
 }
