@@ -46,7 +46,7 @@ namespace CombatAnalysis.Core.ViewModels
         private double _screenWidth;
         private double _screenHeight;
         private bool _isAuth;
-        private bool _isAllowSaveLogs;
+        private bool _isAllowSaveLogs = true;
         private LogType _logType;
         private ObservableCollection<CombatLogModel>[] _combatLogLists = new ObservableCollection<CombatLogModel>[2];
 
@@ -371,7 +371,7 @@ namespace CombatAnalysis.Core.ViewModels
             {
                 BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, "ResponseStatus", ResponseStatus.Pending);
 
-                var responseStatus = await _combatParserAPIService.Save(combats, LogType).ConfigureAwait(false) ? ResponseStatus.Successful : ResponseStatus.Failed;
+                var responseStatus = await _combatParserAPIService.SaveAsync(combats, LogType).ConfigureAwait(false) ? ResponseStatus.Successful : ResponseStatus.Failed;
 
                 BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, "ResponseStatus", responseStatus);
             }

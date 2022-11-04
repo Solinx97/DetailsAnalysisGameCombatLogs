@@ -122,7 +122,7 @@ namespace CombatAnalysis.Core.ViewModels
 
             Task.Run(async () =>
             {
-                var responseStatus = await _combatParserAPIService.Save(Combats.ToList(), _logType) ? ResponseStatus.Successful : ResponseStatus.Failed;
+                var responseStatus = await _combatParserAPIService.SaveAsync(Combats.ToList(), _logType) ? ResponseStatus.Successful : ResponseStatus.Failed;
 
                 BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, "ResponseStatus", responseStatus);
             });

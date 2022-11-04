@@ -34,7 +34,7 @@ namespace CombatAnalysis.Core.Services
             _httpClient.BaseAddress = Port.CombatParserApi;
         }
 
-        public async Task<bool> Save(List<CombatModel> combats, LogType logType)
+        public async Task<bool> SaveAsync(List<CombatModel> combats, LogType logType)
         {
             _combats = combats;
 

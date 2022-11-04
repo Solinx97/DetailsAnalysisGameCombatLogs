@@ -84,7 +84,7 @@ namespace CombatAnalysis.CombatParserAPI.Controllers
             var map = _mapper.Map<CombatModel>(combat);
             map.Data = SaveCombatDataHelper.CombatData;
 
-            await _saveCombatDataHelper.SaveCombatPlayerData(map, combatPlayers);
+            await _saveCombatDataHelper.SaveCombatPlayerDataAsync(map, combatPlayers);
 
             return Ok();
         }
