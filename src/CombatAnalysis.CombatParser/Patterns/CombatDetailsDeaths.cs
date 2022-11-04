@@ -1,4 +1,5 @@
-﻿using CombatAnalysis.CombatParser.Entities;
+﻿using CombatAnalysis.CombatParser.Core;
+using CombatAnalysis.CombatParser.Entities;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -21,7 +22,7 @@ namespace CombatAnalysis.CombatParser.Patterns
             int deaths = 0;
             foreach (var item in combatData)
             {
-                if (item.Contains("UNIT_DIED"))
+                if (item.Contains(CombatLogConsts.UnitDied))
                 {
                     deaths += GetPlayersStatus(item);
                 }
