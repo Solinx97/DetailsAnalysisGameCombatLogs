@@ -51,6 +51,8 @@ namespace CombatAnalysis.Core.ViewModels
             BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, "Step", 4);
         }
 
+        #region Properties
+
         public IImprovedMvxViewModel BasicTemplate
         {
             get { return _basicTemplate; }
@@ -155,6 +157,8 @@ namespace CombatAnalysis.Core.ViewModels
             }
         }
 
+        #endregion
+
         public override void Prepare(Tuple<CombatPlayerModel, CombatModel> parameter)
         {
             var combat = parameter.Item2;
@@ -164,8 +168,8 @@ namespace CombatAnalysis.Core.ViewModels
 
             if (player.Id > 0)
             {
-                Task.Run(async () => await LoadHealDoneDetails(player.Id));
-                Task.Run(async () => await LoadHealDoneGeneral(player.Id));
+                Task.Run(async () => await LoadHealDoneDetailsAsync(player.Id));
+                Task.Run(async () => await LoadHealDoneGeneralAsync(player.Id));
             }
             else
             {
@@ -199,14 +203,14 @@ namespace CombatAnalysis.Core.ViewModels
             HealDoneGeneralInformations = map2;
         }
 
-        private async Task LoadHealDoneDetails(int combatPlayerId)
+        private async Task LoadHealDoneDetailsAsync(int combatPlayerId)
         {
             var healDones = await _combatParserAPIService.LoadHealDoneDetailsAsync(combatPlayerId);
             HealDoneInformations = new ObservableCollection<HealDoneModel>(healDones.ToList());
             _healDoneInformationsWithOverheal = new ObservableCollection<HealDoneModel>(healDones.ToList());
         }
 
-        private async Task LoadHealDoneGeneral(int combatPlayerId)
+        private async Task LoadHealDoneGeneralAsync(int combatPlayerId)
         {
             var healDoneGenerals = await _combatParserAPIService.LoadHealDoneGeneralAsync(combatPlayerId);
             HealDoneGeneralInformations = new ObservableCollection<HealDoneGeneralModel>(healDoneGenerals.ToList());

@@ -25,6 +25,8 @@ namespace CombatAnalysis.Core.ViewModels
             BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, "Step", 2);
         }
 
+        #region Properties
+
         public IImprovedMvxViewModel BasicTemplate
         {
             get { return _basicTemplate; }
@@ -91,6 +93,8 @@ namespace CombatAnalysis.Core.ViewModels
                 SetProperty(ref _selectedCombat, value);
             }
         }
+
+        #endregion
 
         public override void Prepare(CombatModel parameter)
         {

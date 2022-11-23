@@ -44,6 +44,16 @@ namespace CombatAnalysis.Core.ViewModels
             BasicTemplate.Parent = this;
         }
 
+        #region Commands
+
+        public IMvxCommand LoginCommand { get; set; }
+
+        public IMvxAsyncCommand CancelCommand { get; set; }
+
+        #endregion
+
+        #region Properties
+
         public IImprovedMvxViewModel BasicTemplate
         {
             get { return _basicTemplate; }
@@ -89,9 +99,7 @@ namespace CombatAnalysis.Core.ViewModels
             }
         }
 
-        public IMvxCommand LoginCommand { get; set; }
-
-        public IMvxAsyncCommand CancelCommand { get; set; }
+        #endregion
 
         public void Login()
         {

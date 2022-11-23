@@ -1,12 +1,19 @@
-﻿using CombatAnalysis.CombatParser.Entities;
+﻿using CombatAnalysis.CombatParser.Core;
+using CombatAnalysis.CombatParser.Entities;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace CombatAnalysis.CombatParser.Patterns
 {
     public class CombatDetailsHealDone : CombatDetailsTemplate
     {
+        private readonly string[] _healVariations = new string[]
+        {
+            CombatLogConsts.SpellHeal,
+            CombatLogConsts.SpellPeriodicHeal,
+        };
         private readonly ILogger _logger;
 
         public CombatDetailsHealDone(ILogger logger) : base()
@@ -27,8 +34,8 @@ namespace CombatAnalysis.CombatParser.Patterns
 
                 foreach (var item in combatData)
                 {
-                    if ((item.Contains("SPELL_HEAL") || item.Contains("SPELL_PERIODIC_HEAL"))
-                        && item.Contains(player))
+                    var itemHasHealVariation = _healVariations.Any(healVariation => item.Contains(healVariation));
+                    if (itemHasHealVariation && item.Contains(player))
                     {
                         var usefulInformation = GetUsefulInformation(item);
                         var healDoneInformation = GetHealDoneInformation(player, usefulInformation);
@@ -59,7 +66,7 @@ namespace CombatAnalysis.CombatParser.Patterns
             int.TryParse(combatData[^4], out var value3);
             int.TryParse(combatData[^3], out var value4);
 
-            var isCrit = combatData[^1] == "1" ? true : false;
+            var isCrit = string.Equals(combatData[^1], "1", StringComparison.OrdinalIgnoreCase);
 
             var healDone = new HealDone
             {

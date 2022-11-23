@@ -1,4 +1,5 @@
-﻿using CombatAnalysis.CombatParser.Entities;
+﻿using CombatAnalysis.CombatParser.Core;
+using CombatAnalysis.CombatParser.Entities;
 using CombatAnalysis.CombatParser.Interfaces;
 using CombatAnalysis.CombatParser.Patterns;
 using Microsoft.Extensions.Logging;
@@ -35,7 +36,7 @@ namespace CombatAnalysis.CombatParser.Services
             using var reader = _fileManager.StreamReader(combatLog);
             var fileIsCorrect = true;
             var line = await reader.ReadLineAsync();
-            if (!line.Contains("COMBAT_LOG_VERSION"))
+            if (!line.Contains(CombatLogConsts.CombatLogVersion))
             {
                 fileIsCorrect = false;
             }
@@ -51,11 +52,11 @@ namespace CombatAnalysis.CombatParser.Services
             string line;
             while ((line = await reader.ReadLineAsync()) != null)
             {
-                if (line.Contains("ENCOUNTER_START"))
+                if (line.Contains(CombatLogConsts.EncounterStart))
                 {
                     await GetCombatInformation(line, reader);
                 }
-                else if (line.Contains("ZONE_CHANGE"))
+                else if (line.Contains(CombatLogConsts.ZoneChange))
                 {
                     GetDungeonName(line);
                 }
@@ -105,7 +106,7 @@ namespace CombatAnalysis.CombatParser.Services
             while ((line = await reader.ReadLineAsync()) != null)
             {
                 combatElements.Add(line);
-                if (line.Contains("ENCOUNTER_END"))
+                if (line.Contains(CombatLogConsts.EncounterEnd))
                 {
                     break;
                 }
@@ -152,11 +153,10 @@ namespace CombatAnalysis.CombatParser.Services
             var players = GetCombatPlayers(combat.Data);
             foreach (var item in players)
             {
-                CombatDetailsTemplate combatDetailsDamageDone = new CombatDetailsDamageDone(_logger);
-                CombatDetailsTemplate combatDetailsHealDone = new CombatDetailsHealDone(_logger);
-                CombatDetailsTemplate combatDetailsDamageTaken = new CombatDetailsDamageTaken(_logger);
-                CombatDetailsTemplate combatDetailsResourceRecovery = new CombatDetailsResourceRecovery(_logger);
-                var test = combatDetailsResourceRecovery.GetData(item, combat.Data);
+                var combatDetailsDamageDone = new CombatDetailsDamageDone(_logger);
+                var combatDetailsHealDone = new CombatDetailsHealDone(_logger);
+                var combatDetailsDamageTaken = new CombatDetailsDamageTaken(_logger);
+                var combatDetailsResourceRecovery = new CombatDetailsResourceRecovery(_logger);
 
                 var combatPlayerData = new CombatPlayer
                 {
@@ -205,7 +205,7 @@ namespace CombatAnalysis.CombatParser.Services
 
             for (int i = 1; i < combatInformation.Count; i++)
             {
-                if (combatInformation[i].Contains("COMBATANT_INFO"))
+                if (combatInformation[i].Contains(CombatLogConsts.CombatantInfo))
                 {
                     var data = combatInformation[i].Split("  ")[1];
                     playersId.Add(data.Split(',')[1]);
@@ -246,7 +246,7 @@ namespace CombatAnalysis.CombatParser.Services
             for (int i = 1; i < combatInformation.Count; i++)
             {
                 var data = combatInformation[i].Split(',');
-                if (!combatInformation[i].Contains("COMBATANT_INFO")
+                if (!combatInformation[i].Contains(CombatLogConsts.CombatantInfo)
                     && playerId == data[1])
                 {
                     var userName = data[2];

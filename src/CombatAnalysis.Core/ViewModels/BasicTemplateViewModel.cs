@@ -66,6 +66,8 @@ namespace CombatAnalysis.Core.ViewModels
             ResourceDetailsCommand = new MvxAsyncCommand(ResourceDetailsAsync);
         }
 
+        #region Commands
+
         public IMvxCommand CloseCommand { get; set; }
 
         public IMvxCommand MaximazeCommand { get; set; }
@@ -97,6 +99,10 @@ namespace CombatAnalysis.Core.ViewModels
         public IMvxCommand LogPanelStatusCommand { get; set; }
 
         public IMvxAsyncCommand ChatCommand { get; set; }
+
+        #endregion
+
+        #region Properties
 
         public CombatModel TargetCombat { get; set; }
 
@@ -207,6 +213,8 @@ namespace CombatAnalysis.Core.ViewModels
                 SetProperty(ref _logPanelStatus, value);
             }
         }
+
+        #endregion
 
         public void CloseWindow()
         {
@@ -365,11 +373,6 @@ namespace CombatAnalysis.Core.ViewModels
                 IsAuth = true;
                 Email = user.Email;
             }
-        }
-
-        private void GetAppVersion()
-        {
-
         }
     }
 }

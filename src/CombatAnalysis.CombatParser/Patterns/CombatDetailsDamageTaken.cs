@@ -1,12 +1,24 @@
-﻿using CombatAnalysis.CombatParser.Entities;
+﻿using CombatAnalysis.CombatParser.Core;
+using CombatAnalysis.CombatParser.Entities;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace CombatAnalysis.CombatParser.Patterns
 {
     public class CombatDetailsDamageTaken : CombatDetailsTemplate
     {
+        private readonly string[] _damageVariations = new string[]
+        {   
+            CombatLogConsts.SpellDamage,
+            CombatLogConsts.SwingDamage,
+            CombatLogConsts.SpellPeriodicDamage,
+            CombatLogConsts.SwingMissed,
+            CombatLogConsts.DamageShieldMissed,
+            CombatLogConsts.RangeDamage,
+            CombatLogConsts.SpellMissed,
+        };
         private readonly ILogger _logger;
 
         public CombatDetailsDamageTaken(ILogger logger) : base()
@@ -27,10 +39,8 @@ namespace CombatAnalysis.CombatParser.Patterns
 
                 foreach (var item in combatData)
                 {
-                    if ((item.Contains("SPELL_DAMAGE") || item.Contains("SWING_DAMAGE")
-                        || item.Contains("SPELL_PERIODIC_DAMAGE") || item.Contains("SWING_MISSED")
-                        || item.Contains("DAMAGE_SHIELD_MISSED") || item.Contains("RANGE_DAMAGE")
-                        || item.Contains("SPELL_MISSED")) && item.Contains(player))
+                    var itemHasDamageVariation = _damageVariations.Any(damagVariation => item.Contains(damagVariation));
+                    if (itemHasDamageVariation && item.Contains(player))
                     {
                         var usefulInformation = GetUsefulInformation(item);
                         var damageTakenInformation = GetDamageTakenInformation(usefulInformation);
@@ -53,7 +63,7 @@ namespace CombatAnalysis.CombatParser.Patterns
 
         private DamageTaken GetDamageTakenInformation(List<string> combatData)
         {
-            if (combatData[1] == "SWING_DAMAGE_LANDED")
+            if (string.Equals(combatData[1], CombatLogConsts.SwingDamageLanded, StringComparison.OrdinalIgnoreCase))
             {
                 return null;
             }
@@ -82,7 +92,7 @@ namespace CombatAnalysis.CombatParser.Patterns
             var isImmune = false;
             var isAbsorb = false;
 
-            var isCrushing = combatData[^1] == "1" ? true : false;
+            var isCrushing = string.Equals(combatData[^1], "1", StringComparison.OrdinalIgnoreCase);
 
             int realDamage = 0;
             int mitigated = 0;
@@ -90,19 +100,19 @@ namespace CombatAnalysis.CombatParser.Patterns
             int blocked = 0;
             int resist = 0;
 
-            if (combatData[1] == "DAMAGE_SHIELD_MISSED"
-                || combatData[1] == "SPELL_MISSED")
+            if (string.Equals(combatData[1], CombatLogConsts.DamageShieldMissed, StringComparison.OrdinalIgnoreCase)
+                || string.Equals(combatData[1], CombatLogConsts.SpellMissed, StringComparison.OrdinalIgnoreCase))
             {
-                isResist = combatData[13] == "RESIST" ? true : false;
-                isImmune = combatData[13] == "IMMUNE" ? true : false;
-                isAbsorb = combatData[13] == "ABSORB" ? true : false;
+                isResist = string.Equals(combatData[13], "RESIST", StringComparison.OrdinalIgnoreCase);
+                isImmune = string.Equals(combatData[13], "IMMUNE", StringComparison.OrdinalIgnoreCase);
+                isAbsorb = string.Equals(combatData[13], "ABSORB", StringComparison.OrdinalIgnoreCase);
 
                 int.TryParse(combatData[^1], out realDamage);
                 int.TryParse(combatData[^2], out absorb);
             }
-            else if (combatData[1] != "SWING_MISSED"
-                && combatData[1] != "SPELL_MISSED"
-                && combatData[1] != "DAMAGE_SHIELD_MISSED")
+            else if (!string.Equals(combatData[1], CombatLogConsts.SwingMissed, StringComparison.OrdinalIgnoreCase) 
+                && !string.Equals(combatData[1], CombatLogConsts.SpellMissed, StringComparison.OrdinalIgnoreCase) 
+                && !string.Equals(combatData[1], CombatLogConsts.DamageShieldMissed, StringComparison.OrdinalIgnoreCase))
             {
                 int.TryParse(combatData[^9], out realDamage);
                 int.TryParse(combatData[^4], out absorb);
@@ -114,7 +124,7 @@ namespace CombatAnalysis.CombatParser.Patterns
 
             var isPeriodicDamage = false;
             var enemy = combatData[3];
-            if (combatData[3] == "nil")
+            if (string.Equals(combatData[3], "nil", StringComparison.OrdinalIgnoreCase))
             {
                 isPeriodicDamage = true;
                 enemy = combatData[11];
@@ -133,9 +143,9 @@ namespace CombatAnalysis.CombatParser.Patterns
                 Blocked = blocked,
                 RealDamage = realDamage,
                 Mitigated = mitigated < 0 ? 0 : mitigated,
-                IsDodge = combatData[^2] == "DODGE",
-                IsParry = combatData[^2] == "PARRY",
-                IsMiss = combatData[^2] == "MISS",
+                IsDodge = string.Equals(combatData[^2], "DODGE", StringComparison.OrdinalIgnoreCase),
+                IsParry = string.Equals(combatData[^2], "PARRY", StringComparison.OrdinalIgnoreCase),
+                IsMiss = string.Equals(combatData[^2], "MISS", StringComparison.OrdinalIgnoreCase),
                 IsResist = isResist,
                 IsImmune = isImmune,
                 IsAbsorb = isAbsorb,

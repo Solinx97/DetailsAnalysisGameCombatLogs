@@ -49,7 +49,7 @@ namespace CombatAnalysis.CombatParserAPI.Helpers
             return combatLog;
         }
 
-        public async Task SaveCombatPlayerData(CombatModel combat, List<CombatPlayerModel> combatPlayers)
+        public async Task SaveCombatPlayerDataAsync(CombatModel combat, List<CombatPlayerModel> combatPlayers)
         {
             var map = _mapper.Map<Combat>(combat);
 
@@ -60,10 +60,10 @@ namespace CombatAnalysis.CombatParserAPI.Helpers
 
                 var damageDoneDetails = new CombatDetailsDamageDone(_logger);
                 damageDoneDetails.GetData(item.UserName, combat.Data);
-                await SaveDamageDoneDetails(damageDoneDetails.DamageDone, createdCombatPlayer.Id);
+                await SaveDamageDoneDetailsAsync(damageDoneDetails.DamageDone, createdCombatPlayer.Id);
 
                 var damageDoneGeneralData = damageDoneDetails.GetDamageDoneGeneral(damageDoneDetails.DamageDone, map);
-                await SaveDamageDoneGeneral(damageDoneGeneralData.ToList(), createdCombatPlayer.Id);
+                await SaveDamageDoneGeneralAsync(damageDoneGeneralData.ToList(), createdCombatPlayer.Id);
 
                 var healDoneDetails = new CombatDetailsHealDone(_logger);
                 healDoneDetails.GetData(item.UserName, combat.Data);
@@ -88,92 +88,124 @@ namespace CombatAnalysis.CombatParserAPI.Helpers
             }
         }
 
-        private async Task SaveDamageDoneDetails(List<DamageDone> damageDone, int combatPlayerId)
+        private async Task SaveDamageDoneDetailsAsync(List<DamageDone> damageDone, int combatPlayerId)
         {
+            var tasks = new List<Task>();
             foreach (var item in damageDone)
             {
                 var map = _mapper.Map<DamageDoneModel>(item);
                 map.CombatPlayerId = combatPlayerId;
 
-                await _httpClient.PostAsync("DamageDone", JsonContent.Create(map));
+                var task = _httpClient.PostAsync("DamageDone", JsonContent.Create(map));
+                tasks.Add(task);
             }
+
+            await Task.WhenAll(tasks);
         }
 
-        private async Task SaveDamageDoneGeneral(List<DamageDoneGeneral> damageDoneGeneral, int combatPlayerId)
+        private async Task SaveDamageDoneGeneralAsync(List<DamageDoneGeneral> damageDoneGeneral, int combatPlayerId)
         {
+            var tasks = new List<Task>();
             foreach (var item in damageDoneGeneral)
             {
                 var map = _mapper.Map<DamageDoneGeneralModel>(item);
                 map.CombatPlayerId = combatPlayerId;
 
-                await _httpClient.PostAsync("DamageDoneGeneral", JsonContent.Create(map));
+                var task = _httpClient.PostAsync("DamageDoneGeneral", JsonContent.Create(map));
+                tasks.Add(task);
             }
+
+            await Task.WhenAll(tasks);
         }
 
         private async Task SaveHealDoneDetails(List<HealDone> healDone, int combatPlayerId)
         {
+            var tasks = new List<Task>();
             foreach (var item in healDone)
             {
                 var map = _mapper.Map<HealDoneModel>(item);
                 map.CombatPlayerId = combatPlayerId;
 
-                await _httpClient.PostAsync("HealDone", JsonContent.Create(map));
+                var task = _httpClient.PostAsync("HealDone", JsonContent.Create(map));
+                tasks.Add(task);
             }
+
+            await Task.WhenAll(tasks);
         }
 
         private async Task SaveHealDoneGeneral(List<HealDoneGeneral> healDoneGeneral, int combatPlayerId)
         {
+            var tasks = new List<Task>();
             foreach (var item in healDoneGeneral)
             {
                 var map = _mapper.Map<HealDoneGeneralModel>(item);
                 map.CombatPlayerId = combatPlayerId;
 
-                await _httpClient.PostAsync("HealDoneGeneral", JsonContent.Create(map));
+                var task = _httpClient.PostAsync("HealDoneGeneral", JsonContent.Create(map));
+                tasks.Add(task);
             }
+
+            await Task.WhenAll(tasks);
         }
 
         private async Task SaveDamageTakenDetails(List<DamageTaken> damageTaken, int combatPlayerId)
         {
+            var tasks = new List<Task>();
             foreach (var item in damageTaken)
             {
                 var map = _mapper.Map<DamageTakenModel>(item);
                 map.CombatPlayerId = combatPlayerId;
 
-                await _httpClient.PostAsync("DamageTaken", JsonContent.Create(map));
+                var task = _httpClient.PostAsync("DamageTaken", JsonContent.Create(map));
+                tasks.Add(task);
             }
+
+            await Task.WhenAll(tasks);
         }
 
         private async Task SaveDamageTakenGeneral(List<DamageTakenGeneral> damageTaken, int combatPlayerId)
         {
+            var tasks = new List<Task>();
             foreach (var item in damageTaken)
             {
                 var map = _mapper.Map<DamageTakenGeneralModel>(item);
                 map.CombatPlayerId = combatPlayerId;
 
-                await _httpClient.PostAsync("DamageTakenGeneral", JsonContent.Create(map));
+                var task = _httpClient.PostAsync("DamageTakenGeneral", JsonContent.Create(map));
+                tasks.Add(task);
             }
+
+            await Task.WhenAll(tasks);
         }
 
         private async Task SaveResourceRecoveryDetails(List<ResourceRecovery> resourceRecovery, int combatPlayerId)
         {
+            var tasks = new List<Task>();
             foreach (var item in resourceRecovery)
             {
                 var map = _mapper.Map<ResourceRecoveryModel>(item);
                 map.CombatPlayerId = combatPlayerId;
 
-                await _httpClient.PostAsync("ResourceRecovery", JsonContent.Create(map));
+                var task = _httpClient.PostAsync("ResourceRecovery", JsonContent.Create(map));
+                tasks.Add(task);
             }
+
+            await Task.WhenAll(tasks);
         }
 
         private async Task SaveResourceRecoveryGeneral(List<ResourceRecoveryGeneral> resourceRecoveryGeneral, int combatPlayerId)
         {
+            var tasks = new List<Task>();
             foreach (var item in resourceRecoveryGeneral)
             {
                 var map = _mapper.Map<ResourceRecoveryGeneralModel>(item);
                 map.CombatPlayerId = combatPlayerId;
 
-                await _httpClient.PostAsync("ResourceRecoveryGeneral", JsonContent.Create(map));
+                var task = _httpClient.PostAsync("ResourceRecoveryGeneral", JsonContent.Create(map));
+                tasks.Add(task);
             }
+
+            await Task.WhenAll(tasks);
         }
     }
 }

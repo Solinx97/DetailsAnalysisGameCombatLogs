@@ -70,11 +70,11 @@ namespace CombatAnalysis.Core.ViewModels
             SendGroupMessageCommand = new MvxAsyncCommand(SendGroupMessageAsync);
             SendPersonalMessageCommand = new MvxAsyncCommand(SendPersonalMessageAsync);
             CreateGroupChatCommand = new MvxCommand(CreateGroupChat);
-            RefreshGroupChatsCommand = new MvxAsyncCommand(LoadGroupChats);
-            RefreshPersonalChatsCommand = new MvxAsyncCommand(LoadPersonalChats);
+            RefreshGroupChatsCommand = new MvxAsyncCommand(LoadGroupChatsAsync);
+            RefreshPersonalChatsCommand = new MvxAsyncCommand(LoadPersonalChatsAsync);
             ShowGroupChatMenuCommand = new MvxCommand(ShowGCMenu);
-            CreatePersonalChatCommand = new MvxAsyncCommand(CreatePersonalChat);
-            OpenInviteToGroupChatCommand = new MvxAsyncCommand(OpenInviteToGroupChat);
+            CreatePersonalChatCommand = new MvxAsyncCommand(CreatePersonalChatAsync);
+            OpenInviteToGroupChatCommand = new MvxAsyncCommand(OpenInviteToGroupChatAsync);
             CloseInviteToGroupChatCommand = new MvxCommand(SwitchInviteToGroupChat);
             InviteToGroupChatCommand = new MvxAsyncCommand(InviteToGroupChatAsync);
             JoinToGroupChatCommand = new MvxAsyncCommand(JoinToGroupChatAsync);
@@ -425,9 +425,9 @@ namespace CombatAnalysis.Core.ViewModels
         {
             base.Prepare();
 
-            Task.Run(LoadGroupChats);
-            Task.Run(LoadPersonalChats);
-            Task.Run(LoadUsers);
+            Task.Run(async () => await LoadGroupChatsAsync());
+            Task.Run(async () => await LoadPersonalChatsAsync());
+            Task.Run(async () => await LoadUsersAsync());
         }
 
         public async Task SendGroupMessageAsync()
@@ -487,7 +487,7 @@ namespace CombatAnalysis.Core.ViewModels
             }
         }
 
-        public async Task CreatePersonalChat()
+        public async Task CreatePersonalChatAsync()
         {
             var userId = Users[SelectedUsersIndex].Id;
             var personalChat = new PersonalChatModel
@@ -552,7 +552,7 @@ namespace CombatAnalysis.Core.ViewModels
                 if (response.StatusCode == System.Net.HttpStatusCode.OK)
                 {
                     SwitchInviteToGroupChat();
-                    await OpenInviteToGroupChat();
+                    await OpenInviteToGroupChatAsync();
 
                     AddUserToGroupChatResponse = ResponseStatus.Successful;
                 }
@@ -583,10 +583,10 @@ namespace CombatAnalysis.Core.ViewModels
 
             await _httpClientHelper.PostAsync("GroupChatUser", JsonContent.Create(groupChatUser));
 
-            await LoadGroupChats();
+            await LoadGroupChatsAsync();
         }
 
-        public async Task OpenInviteToGroupChat()
+        public async Task OpenInviteToGroupChatAsync()
         {
             AddUserToGroupChatResponse = ResponseStatus.None;
             UsersForInviteToGroupChat = null;
@@ -605,7 +605,7 @@ namespace CombatAnalysis.Core.ViewModels
 
         private void InitLoadGroupChatMessages(object obj)
         {
-            Task.Run(LoadGroupChatMessages);
+            Task.Run(async () => await LoadGroupChatMessagesAsync());
 
             if (SelectedMyGroupChat != null)
             {
@@ -615,7 +615,7 @@ namespace CombatAnalysis.Core.ViewModels
 
         private void InitLoadPersonalChatMessages(object obj)
         {
-            Task.Run(LoadPersonalChatMessages);
+            Task.Run(async () => await LoadPersonalChatMessagesAsync());
 
             if (SelectedPersonalChat != null)
             {
@@ -623,7 +623,7 @@ namespace CombatAnalysis.Core.ViewModels
             }
         }
 
-        private async Task LoadGroupChats()
+        private async Task LoadGroupChatsAsync()
         {
             GroupChatLoadingResponse = ResponseStatus.Pending;
 
@@ -633,8 +633,8 @@ namespace CombatAnalysis.Core.ViewModels
                 var response = await _httpClientHelper.GetAsync("GroupChatUser").ConfigureAwait(false);
                 if (response.StatusCode == System.Net.HttpStatusCode.OK)
                 {
-                    await GetMyGroupChats(response);
-                    await GetGroupChats();
+                    await GetMyGroupChatsAsync(response);
+                    await GetGroupChatsAsync();
                     
                     GroupChatLoadingResponse = ResponseStatus.Successful;
                 }
@@ -651,7 +651,7 @@ namespace CombatAnalysis.Core.ViewModels
             }
         }
 
-        private async Task GetMyGroupChats(HttpResponseMessage response)
+        private async Task GetMyGroupChatsAsync(HttpResponseMessage response)
         {
             var groupChatUsers = await response.Content.ReadFromJsonAsync<IEnumerable<GroupChatUserModel>>();
             var myGroupChatUsers = groupChatUsers.Where(x => x.UserId == MyAccount.Id);
@@ -669,7 +669,7 @@ namespace CombatAnalysis.Core.ViewModels
             MyGroupChats = new ObservableCollection<GroupChatModel>(myGroupChats);
         }
 
-        private async Task GetGroupChats()
+        private async Task GetGroupChatsAsync()
         {
             var response = await _httpClientHelper.GetAsync("GroupChat");
             if (response.StatusCode == System.Net.HttpStatusCode.OK)
@@ -682,7 +682,7 @@ namespace CombatAnalysis.Core.ViewModels
             }
         }
 
-        private async Task LoadPersonalChats()
+        private async Task LoadPersonalChatsAsync()
         {
             PersonalChatLoadingResponse = ResponseStatus.Pending;
 
@@ -712,7 +712,7 @@ namespace CombatAnalysis.Core.ViewModels
             }
         }
 
-        private async Task LoadGroupChatMessages()
+        private async Task LoadGroupChatMessagesAsync()
         {
             _httpClientHelper.BaseAddress = Port.ChatApi;
 
@@ -730,7 +730,7 @@ namespace CombatAnalysis.Core.ViewModels
             GroupChatMessages = new ObservableCollection<GroupChatMessageModel>(selectedGroupChatMessages);
         }
 
-        private async Task LoadPersonalChatMessages()
+        private async Task LoadPersonalChatMessagesAsync()
         {
             _httpClientHelper.BaseAddress = Port.ChatApi;
 
@@ -751,7 +751,7 @@ namespace CombatAnalysis.Core.ViewModels
             }
         }
 
-        private async Task LoadUsers()
+        private async Task LoadUsersAsync()
         {
             _httpClientHelper.BaseAddress = Port.UserApi;
 

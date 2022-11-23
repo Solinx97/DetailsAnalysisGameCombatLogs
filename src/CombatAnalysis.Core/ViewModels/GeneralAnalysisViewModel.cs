@@ -44,7 +44,13 @@ namespace CombatAnalysis.Core.ViewModels
             responseStatusObservable.AddObserver(this);
         }
 
+        #region Commands
+
         public IMvxCommand RepeatSaveCommand { get; set; }
+
+        #endregion
+
+        #region Properties
 
         public IImprovedMvxViewModel BasicTemplate
         {
@@ -84,6 +90,8 @@ namespace CombatAnalysis.Core.ViewModels
             }
         }
 
+        #endregion
+
         public override void Prepare(Tuple<List<CombatModel>, LogType> parameter)
         {
             if (parameter != null)
@@ -104,8 +112,8 @@ namespace CombatAnalysis.Core.ViewModels
         {
             BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, "TargetCombat", SelectedCombat);
 
-            Task.Run(() => _mvvmNavigation.Close(this));
-            Task.Run(() => _mvvmNavigation.Navigate<DetailsSpecificalCombatViewModel, CombatModel>(SelectedCombat));
+            Task.Run(async () => await _mvvmNavigation.Close(this));
+            Task.Run(async () => await _mvvmNavigation.Navigate<DetailsSpecificalCombatViewModel, CombatModel>(SelectedCombat));
         }
 
         public void RepeatSaveCombatDataDetails()
@@ -114,7 +122,7 @@ namespace CombatAnalysis.Core.ViewModels
 
             Task.Run(async () =>
             {
-                var responseStatus = await _combatParserAPIService.Save(Combats.ToList(), _logType) ? ResponseStatus.Successful : ResponseStatus.Failed;
+                var responseStatus = await _combatParserAPIService.SaveAsync(Combats.ToList(), _logType) ? ResponseStatus.Successful : ResponseStatus.Failed;
 
                 BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, "ResponseStatus", responseStatus);
             });

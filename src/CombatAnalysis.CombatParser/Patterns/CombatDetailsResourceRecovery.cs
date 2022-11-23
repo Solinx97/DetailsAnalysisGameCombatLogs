@@ -1,13 +1,20 @@
-﻿using CombatAnalysis.CombatParser.Entities;
+﻿using CombatAnalysis.CombatParser.Core;
+using CombatAnalysis.CombatParser.Entities;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
 
 namespace CombatAnalysis.CombatParser.Patterns
 {
     public class CombatDetailsResourceRecovery : CombatDetailsTemplate
     {
+        private readonly string[] _resourceVariations = new string[]
+        {
+            CombatLogConsts.SpellPeriodicEnergize,
+            CombatLogConsts.SpellEnergize,
+        };
         private readonly ILogger _logger;
 
         public CombatDetailsResourceRecovery(ILogger logger) : base()
@@ -28,8 +35,8 @@ namespace CombatAnalysis.CombatParser.Patterns
 
                 foreach (var item in combatData)
                 {
-                    if ((item.Contains("SPELL_PERIODIC_ENERGIZE") || item.Contains("SPELL_ENERGIZE"))
-                        && item.Contains(player))
+                    var itemHasResourceVariation = _resourceVariations.Any(resourceVariation => item.Contains(resourceVariation));
+                    if (itemHasResourceVariation && item.Contains(player))
                     {
                         var usefulInformation = GetUsefulInformation(item);
                         var energyRecoveryInformation = GetEnergyInformation(usefulInformation);
