@@ -9,370 +9,342 @@ using Microsoft.Extensions.Caching.Memory;
 using MvvmCross.Commands;
 using MvvmCross.Navigation;
 using MvvmCross.ViewModels;
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using System.Windows;
 
-namespace CombatAnalysis.Core.ViewModels
+namespace CombatAnalysis.Core.ViewModels;
+
+public class BasicTemplateViewModel : MvxViewModel, IImprovedMvxViewModel, IResponseStatusObservable, IAuthObservable
 {
-    public class BasicTemplateViewModel : MvxViewModel, IImprovedMvxViewModel, IResponseStatusObservable, IAuthObservable
+    private readonly List<IResponseStatusObserver> _responseStatusObservers;
+    private readonly List<IAuthObserver> _authObservers;
+    private readonly IMvxNavigationService _mvvmNavigation;
+    private readonly IMemoryCache _memoryCache;
+    private readonly IHttpClientHelper _httpClient;
+
+    private int _step = -1;
+    private Tuple<CombatPlayerModel, CombatModel> _combatInformtaion;
+    private List<CombatModel> _combats;
+    private bool _isAuth;
+    private bool _isLoginNotActivated = true;
+    private bool _isRegistrationNotActivated = true;
+    private string _email;
+    private LogType _logType;
+    private bool _logPanelStatusIsVisibly;
+
+    private static ResponseStatus _responseStatus;
+    private static int _allowStep;
+
+    public BasicTemplateViewModel(IViewModelConnect handler, IMvxNavigationService mvvmNavigation, IMemoryCache memoryCache, IHttpClientHelper httpClient)
     {
-        private readonly List<IResponseStatusObserver> _responseStatusObservers;
-        private readonly List<IAuthObserver> _authObservers;
-        private readonly IMvxNavigationService _mvvmNavigation;
-        private readonly IMemoryCache _memoryCache;
-        private readonly IHttpClientHelper _httpClient;
+        Handler = handler;
+        _mvvmNavigation = mvvmNavigation;
+        _memoryCache = memoryCache;
+        _httpClient = httpClient;
 
-        private int _step = -1;
-        private Tuple<CombatPlayerModel, CombatModel> _combatInformtaion;
-        private List<CombatModel> _combats;
-        private bool _isAuth;
-        private bool _isLoginNotActivated = true;
-        private bool _isRegistrationNotActivated = true;
-        private string _email;
-        private LogType _logType;
-        private Visibility _logPanelStatus = Visibility.Collapsed;
+        _responseStatusObservers = new List<IResponseStatusObserver>();
+        _authObservers = new List<IAuthObserver>();
 
-        private static ResponseStatus _responseStatus;
-        private static int _allowStep;
+        CloseCommand = new MvxCommand(CloseWindow);
+        LoginCommand = new MvxAsyncCommand(LoginAsync);
+        RegistrationCommand = new MvxAsyncCommand(RegistrationAsync);
+        LogoutCommand = new MvxAsyncCommand(LogoutAsync);
+        ToHomeCommand = new MvxAsyncCommand(ToHomeAsync);
+        UploadCombatsCommand = new MvxAsyncCommand(UploadCombatLogsAsync);
+        GeneralAnalysisCommand = new MvxAsyncCommand(GeneralAnalysisAsync);
+        CombatCommand = new MvxAsyncCommand(DetailsSpecificalCombatAsync);
+        LogPanelStatusCommand = new MvxCommand(() => LogPanelStatusIsVisibly = !LogPanelStatusIsVisibly);
+        ChatCommand = new MvxAsyncCommand(ChatAsync);
 
-        public BasicTemplateViewModel(IViewModelConnect handler, IMvxNavigationService mvvmNavigation, IMemoryCache memoryCache, IHttpClientHelper httpClient)
+        DamageDoneDetailsCommand = new MvxAsyncCommand(DamageDoneDetailsAsync);
+        HealDoneDetailsCommand = new MvxAsyncCommand(HealDoneDetailsAsync);
+        DamageTakenDetailsCommand = new MvxAsyncCommand(DamageTakenDetailsAsync);
+        ResourceDetailsCommand = new MvxAsyncCommand(ResourceDetailsAsync);
+    }
+
+    #region Commands
+
+    public IMvxCommand CloseCommand { get; set; }
+
+    public IMvxAsyncCommand LoginCommand { get; set; }
+
+    public IMvxAsyncCommand RegistrationCommand { get; set; }
+
+    public IMvxAsyncCommand LogoutCommand { get; set; }
+
+    public IMvxAsyncCommand ToHomeCommand { get; set; }
+
+    public IMvxAsyncCommand UploadCombatsCommand { get; set; }
+
+    public IMvxAsyncCommand GeneralAnalysisCommand { get; set; }
+
+    public IMvxAsyncCommand CombatCommand { get; set; }
+
+    public IMvxAsyncCommand DamageDoneDetailsCommand { get; set; }
+
+    public IMvxAsyncCommand HealDoneDetailsCommand { get; set; }
+
+    public IMvxAsyncCommand DamageTakenDetailsCommand { get; set; }
+
+    public IMvxAsyncCommand ResourceDetailsCommand { get; set; }
+
+    public IMvxCommand LogPanelStatusCommand { get; set; }
+
+    public IMvxAsyncCommand ChatCommand { get; set; }
+
+    #endregion
+
+    #region Properties
+
+    public CombatModel TargetCombat { get; set; }
+
+    public IViewModelConnect Handler { get; set; }
+
+    public IMvxViewModel Parent { get; set; }
+
+    public string AppVersion
+    {
+        get { return AppInformation.Version; }
+    }
+
+    public string AppVersionType
+    {
+        get { return AppInformation.VersionType.ToString(); }
+    }
+
+    public int Step
+    {
+        get { return _step; }
+        set
         {
-            Handler = handler;
-            _mvvmNavigation = mvvmNavigation;
-            _memoryCache = memoryCache;
-            _httpClient = httpClient;
-
-            _responseStatusObservers = new List<IResponseStatusObserver>();
-            _authObservers = new List<IAuthObserver>();
-
-            CloseCommand = new MvxCommand(CloseWindow);
-            MaximazeCommand = new MvxCommand(MaximazeWindow);
-            MinimazeCommand = new MvxCommand(MinimazeWindow);
-            LoginCommand = new MvxAsyncCommand(LoginAsync);
-            RegistrationCommand = new MvxAsyncCommand(RegistrationAsync);
-            LogoutCommand = new MvxAsyncCommand(LogoutAsync);
-            ToHomeCommand = new MvxAsyncCommand(ToHomeAsync);
-            UploadCombatsCommand = new MvxAsyncCommand(UploadCombatLogsAsync);
-            GeneralAnalysisCommand = new MvxAsyncCommand(GeneralAnalysisAsync);
-            CombatCommand = new MvxAsyncCommand(DetailsSpecificalCombatAsync);
-            LogPanelStatusCommand = new MvxCommand(() => LogPanelStatus = LogPanelStatus == Visibility.Visible ? Visibility.Collapsed : Visibility.Visible);
-            ChatCommand = new MvxAsyncCommand(ChatAsync);
-
-            DamageDoneDetailsCommand = new MvxAsyncCommand(DamageDoneDetailsAsync);
-            HealDoneDetailsCommand = new MvxAsyncCommand(HealDoneDetailsAsync);
-            DamageTakenDetailsCommand = new MvxAsyncCommand(DamageTakenDetailsAsync);
-            ResourceDetailsCommand = new MvxAsyncCommand(ResourceDetailsAsync);
+            SetProperty(ref _step, value);
         }
+    }
 
-        #region Commands
-
-        public IMvxCommand CloseCommand { get; set; }
-
-        public IMvxCommand MaximazeCommand { get; set; }
-
-        public IMvxCommand MinimazeCommand { get; set; }
-
-        public IMvxAsyncCommand LoginCommand { get; set; }
-
-        public IMvxAsyncCommand RegistrationCommand { get; set; }
-
-        public IMvxAsyncCommand LogoutCommand { get; set; }
-
-        public IMvxAsyncCommand ToHomeCommand { get; set; }
-
-        public IMvxAsyncCommand UploadCombatsCommand { get; set; }
-
-        public IMvxAsyncCommand GeneralAnalysisCommand { get; set; }
-
-        public IMvxAsyncCommand CombatCommand { get; set; }
-
-        public IMvxAsyncCommand DamageDoneDetailsCommand { get; set; }
-
-        public IMvxAsyncCommand HealDoneDetailsCommand { get; set; }
-
-        public IMvxAsyncCommand DamageTakenDetailsCommand { get; set; }
-
-        public IMvxAsyncCommand ResourceDetailsCommand { get; set; }
-
-        public IMvxCommand LogPanelStatusCommand { get; set; }
-
-        public IMvxAsyncCommand ChatCommand { get; set; }
-
-        #endregion
-
-        #region Properties
-
-        public CombatModel TargetCombat { get; set; }
-
-        public IViewModelConnect Handler { get; set; }
-
-        public IMvxViewModel Parent { get; set; }
-
-        public string AppVersion
+    public int AllowStep
+    {
+        get { return _allowStep; }
+        set
         {
-            get { return AppInformation.Version; }
+            SetProperty(ref _allowStep, value);
         }
+    }
 
-        public string AppVersionType
+    public ResponseStatus ResponseStatus
+    {
+        get { return _responseStatus; }
+        set
         {
-            get { return AppInformation.VersionType.ToString(); }
+            SetProperty(ref _responseStatus, value);
+            NotifyResponseStatusObservers();
         }
+    }
 
-        public int Step
+    public List<CombatModel> Combats
+    {
+        get { return _combats; }
+        set
         {
-            get { return _step; }
-            set
-            {
-                SetProperty(ref _step, value);
-            }
+            SetProperty(ref _combats, value);
         }
+    }
 
-        public int AllowStep
+    public bool IsAuth
+    {
+        get { return _isAuth; }
+        set
         {
-            get { return _allowStep; }
-            set
-            {
-                SetProperty(ref _allowStep, value);
-            }
+            SetProperty(ref _isAuth, value);
+            NotifyAuthObservers();
         }
+    }
 
-        public ResponseStatus ResponseStatus
+    public bool IsLoginNotActivated
+    {
+        get { return _isLoginNotActivated; }
+        set
         {
-            get { return _responseStatus; }
-            set
-            {
-                SetProperty(ref _responseStatus, value);
-                NotifyResponseStatusObservers();
-            }
+            SetProperty(ref _isLoginNotActivated, value);
+            NotifyAuthObservers();
         }
+    }
 
-        public List<CombatModel> Combats
+    public bool IsRegistrationNotActivated
+    {
+        get { return _isRegistrationNotActivated; }
+        set
         {
-            get { return _combats; }
-            set
-            {
-                SetProperty(ref _combats, value);
-            }
+            SetProperty(ref _isRegistrationNotActivated, value);
+            NotifyAuthObservers();
         }
+    }
 
-        public bool IsAuth
+    public string Email
+    {
+        get { return _email; }
+        set
         {
-            get { return _isAuth; }
-            set
-            {
-                SetProperty(ref _isAuth, value);
-                NotifyAuthObservers();
-            }
+            SetProperty(ref _email, value);
         }
+    }
 
-        public bool IsLoginNotActivated
+    public LogType LogType
+    {
+        get { return _logType; }
+        set
         {
-            get { return _isLoginNotActivated; }
-            set
-            {
-                SetProperty(ref _isLoginNotActivated, value);
-                NotifyAuthObservers();
-            }
+            SetProperty(ref _logType, value);
         }
+    }
 
-        public bool IsRegistrationNotActivated
+    public bool LogPanelStatusIsVisibly
+    {
+        get { return _logPanelStatusIsVisibly; }
+        set
         {
-            get { return _isRegistrationNotActivated; }
-            set
-            {
-                SetProperty(ref _isRegistrationNotActivated, value);
-                NotifyAuthObservers();
-            }
+            SetProperty(ref _logPanelStatusIsVisibly, value);
         }
+    }
 
-        public string Email
-        {
-            get { return _email; }
-            set
-            {
-                SetProperty(ref _email, value);
-            }
-        }
+    #endregion
 
-        public LogType LogType
-        {
-            get { return _logType; }
-            set
-            {
-                SetProperty(ref _logType, value);
-            }
-        }
+    public void CloseWindow()
+    {
+        Environment.Exit(0);
+    }
 
-        public Visibility LogPanelStatus
-        {
-            get { return _logPanelStatus; }
-            set
-            {
-                SetProperty(ref _logPanelStatus, value);
-            }
-        }
+    public async Task LoginAsync()
+    {
+        IsLoginNotActivated = false;
+        await _mvvmNavigation.Navigate<LoginViewModel>();
+    }
 
-        #endregion
+    public async Task RegistrationAsync()
+    {
+        IsRegistrationNotActivated = false;
+        await _mvvmNavigation.Navigate<RegistrationViewModel>();
+    }
 
-        public void CloseWindow()
-        {
-            Environment.Exit(0);
-        }
+    public async Task LogoutAsync()
+    {
+        var refreshToken = _memoryCache.Get<string>("refreshToken");
 
-        public void MaximazeWindow()
-        {
-            if (WindowManager.MainWindow.WindowState != WindowState.Maximized)
-            {
-                WindowManager.MainWindow.WindowState = WindowState.Maximized;
-            }
-            else
-            {
-                WindowManager.MainWindow.WindowState = WindowState.Normal;
-            }
-        }
+        _httpClient.BaseAddress = Port.UserApi;
+        await _httpClient.GetAsync($"Account/logout/{refreshToken}");
 
-        public void MinimazeWindow()
-        {
-            WindowManager.MainWindow.WindowState = WindowState.Minimized;
-        }
+        _memoryCache.Remove("refreshToken");
+        _memoryCache.Remove("accessToken");
+        _memoryCache.Remove("account");
 
-        public async Task LoginAsync()
-        {
-            IsLoginNotActivated = false;
-            await _mvvmNavigation.Navigate<LoginViewModel>();
-        }
+        IsAuth = false;
+        Email = string.Empty;
 
-        public async Task RegistrationAsync()
-        {
-            IsRegistrationNotActivated = false;
-            await _mvvmNavigation.Navigate<RegistrationViewModel>();
-        }
-
-        public async Task LogoutAsync()
-        {
-            var refreshToken = _memoryCache.Get<string>("refreshToken");
-
-            _httpClient.BaseAddress = Port.UserApi;
-            await _httpClient.GetAsync($"Account/logout/{refreshToken}");
-
-            _memoryCache.Remove("refreshToken");
-            _memoryCache.Remove("accessToken");
-            _memoryCache.Remove("account");
-
-            IsAuth = false;
-            Email = string.Empty;
-
-            if (Parent is ChatViewModel)
-            {
-                Step = 0;
-                await _mvvmNavigation.Close(Parent);
-            }
-        }
-
-        public async Task ToHomeAsync()
-        {
-            Step = -1;
-            LogPanelStatus = Visibility.Collapsed;
-            await _mvvmNavigation.Close(Parent);
-        }
-
-        public async Task UploadCombatLogsAsync()
+        if (Parent is ChatViewModel)
         {
             Step = 0;
-            await _mvvmNavigation.Navigate<CombatLogInformationViewModel>();
-        }
-
-        public async Task GeneralAnalysisAsync()
-        {
-            var dataForGeneralAnalysis = Tuple.Create(Combats, LogType);
-            await _mvvmNavigation.Navigate<GeneralAnalysisViewModel, Tuple<List<CombatModel>, LogType>>(dataForGeneralAnalysis);
-        }
-
-        public async Task DetailsSpecificalCombatAsync()
-        {
-            Step = 2;
             await _mvvmNavigation.Close(Parent);
         }
+    }
 
-        public async Task DamageDoneDetailsAsync()
+    public async Task ToHomeAsync()
+    {
+        Step = -1;
+        LogPanelStatusIsVisibly = false;
+        await _mvvmNavigation.Close(Parent);
+    }
+
+    public async Task UploadCombatLogsAsync()
+    {
+        Step = 0;
+        await _mvvmNavigation.Navigate<CombatLogInformationViewModel>();
+    }
+
+    public async Task GeneralAnalysisAsync()
+    {
+        var dataForGeneralAnalysis = Tuple.Create(Combats, LogType);
+        await _mvvmNavigation.Navigate<GeneralAnalysisViewModel, Tuple<List<CombatModel>, LogType>>(dataForGeneralAnalysis);
+    }
+
+    public async Task DetailsSpecificalCombatAsync()
+    {
+        Step = 2;
+        await _mvvmNavigation.Close(Parent);
+    }
+
+    public async Task DamageDoneDetailsAsync()
+    {
+        _combatInformtaion = (Tuple<CombatPlayerModel, CombatModel>)Handler.Data;
+
+        await _mvvmNavigation.Navigate<DamageDoneDetailsViewModel, Tuple<CombatPlayerModel, CombatModel>>(_combatInformtaion);
+    }
+
+    public async Task HealDoneDetailsAsync()
+    {
+        _combatInformtaion = (Tuple<CombatPlayerModel, CombatModel>)Handler.Data;
+
+        await _mvvmNavigation.Navigate<HealDoneDetailsViewModel, Tuple<CombatPlayerModel, CombatModel>>(_combatInformtaion);
+    }
+
+    public async Task DamageTakenDetailsAsync()
+    {
+        _combatInformtaion = (Tuple<CombatPlayerModel, CombatModel>)Handler.Data;
+
+        await _mvvmNavigation.Navigate<DamageTakenDetailsViewModel, Tuple<CombatPlayerModel, CombatModel>>(_combatInformtaion);
+    }
+
+    public async Task ResourceDetailsAsync()
+    {
+        _combatInformtaion = (Tuple<CombatPlayerModel, CombatModel>)Handler.Data;
+
+        await _mvvmNavigation.Navigate<ResourceRecoveryDetailsViewModel, Tuple<CombatPlayerModel, CombatModel>>(_combatInformtaion);
+    }
+
+    public async Task ChatAsync()
+    {
+        await _mvvmNavigation.Navigate<ChatViewModel>();
+    }
+
+    public void AddObserver(IResponseStatusObserver o)
+    {
+        _responseStatusObservers.Add(o);
+    }
+
+    public void RemoveObserver(IResponseStatusObserver o)
+    {
+        _responseStatusObservers.Remove(o);
+    }
+
+    public void NotifyResponseStatusObservers()
+    {
+        foreach (var item in _responseStatusObservers)
         {
-            _combatInformtaion = (Tuple<CombatPlayerModel, CombatModel>)Handler.Data;
-
-            await _mvvmNavigation.Navigate<DamageDoneDetailsViewModel, Tuple<CombatPlayerModel, CombatModel>>(_combatInformtaion);
+            item.Update(ResponseStatus);
         }
+    }
 
-        public async Task HealDoneDetailsAsync()
+    public void AddObserver(IAuthObserver o)
+    {
+        _authObservers.Add(o);
+    }
+
+    public void RemoveObserver(IAuthObserver o)
+    {
+        _authObservers.Remove(o);
+    }
+
+    public void NotifyAuthObservers()
+    {
+        foreach (var item in _authObservers)
         {
-            _combatInformtaion = (Tuple<CombatPlayerModel, CombatModel>)Handler.Data;
-
-            await _mvvmNavigation.Navigate<HealDoneDetailsViewModel, Tuple<CombatPlayerModel, CombatModel>>(_combatInformtaion);
+            item.AuthUpdate(IsAuth);
         }
+    }
 
-        public async Task DamageTakenDetailsAsync()
+    public void CheckAuth()
+    {
+        var user = _memoryCache.Get<AppUserModel>("account");
+        if (user != null)
         {
-            _combatInformtaion = (Tuple<CombatPlayerModel, CombatModel>)Handler.Data;
-
-            await _mvvmNavigation.Navigate<DamageTakenDetailsViewModel, Tuple<CombatPlayerModel, CombatModel>>(_combatInformtaion);
-        }
-
-        public async Task ResourceDetailsAsync()
-        {
-            _combatInformtaion = (Tuple<CombatPlayerModel, CombatModel>)Handler.Data;
-
-            await _mvvmNavigation.Navigate<ResourceRecoveryDetailsViewModel, Tuple<CombatPlayerModel, CombatModel>>(_combatInformtaion);
-        }
-
-        public async Task ChatAsync()
-        {
-            await _mvvmNavigation.Navigate<ChatViewModel>();
-        }
-
-        public void AddObserver(IResponseStatusObserver o)
-        {
-            _responseStatusObservers.Add(o);
-        }
-
-        public void RemoveObserver(IResponseStatusObserver o)
-        {
-            _responseStatusObservers.Remove(o);
-        }
-
-        public void NotifyResponseStatusObservers()
-        {
-            foreach (var item in _responseStatusObservers)
-            {
-                item.Update(ResponseStatus);
-            }
-        }
-
-        public void AddObserver(IAuthObserver o)
-        {
-            _authObservers.Add(o);
-        }
-
-        public void RemoveObserver(IAuthObserver o)
-        {
-            _authObservers.Remove(o);
-        }
-
-        public void NotifyAuthObservers()
-        {
-            foreach (var item in _authObservers)
-            {
-                item.AuthUpdate(IsAuth);
-            }
-        }
-
-        public void CheckAuth()
-        {
-            var user = _memoryCache.Get<AppUserModel>("account");
-            if (user != null)
-            {
-                IsAuth = true;
-                Email = user.Email;
-            }
+            IsAuth = true;
+            Email = user.Email;
         }
     }
 }

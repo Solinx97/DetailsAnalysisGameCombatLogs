@@ -2,22 +2,18 @@
 using System.Windows;
 using System.Windows.Controls;
 
-namespace CombatAnalysis.App.Views
-{
-    /// <summary>
-    /// Логика взаимодействия для LoginView.xaml
-    /// </summary>
-    public partial class LoginView : MvxWpfView
-    {
-        public LoginView()
-        {
-            InitializeComponent();
-        }
+namespace CombatAnalysis.App.Views;
 
-        private void PasswordBox_PasswordChanged(object sender, RoutedEventArgs e)
-        {
-            if (DataContext != null)
-            { ((dynamic)DataContext).Password = ((PasswordBox)sender).Password; }
-        }
+public partial class LoginView : MvxWpfView
+{
+    public LoginView()
+    {
+        InitializeComponent();
+    }
+
+    private void PasswordBox_PasswordChanged(object sender, RoutedEventArgs e)
+    {
+        if (DataContext != null)
+        { ((dynamic)DataContext).Password = ((PasswordBox)sender).Password; }
     }
 }

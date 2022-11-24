@@ -1,11 +1,10 @@
-﻿namespace CombatAnalysis.Core.Interfaces.Observers
+﻿namespace CombatAnalysis.Core.Interfaces.Observers;
+
+public interface IAuthObservable
 {
-    public interface IAuthObservable
-    {
-        void AddObserver(IAuthObserver o);
+    void AddObserver(IAuthObserver o);
 
-        void RemoveObserver(IAuthObserver o);
+    void RemoveObserver(IAuthObserver o);
 
-        void NotifyAuthObservers();
-    }
+    void NotifyAuthObservers();
 }

@@ -6,7 +6,7 @@ const Layout = (props) => {
   const render = () => {
     return <div>
         <NavMenu />
-        <Container>
+        <Container tag="main">
           {props.children}
         </Container>
       </div>;

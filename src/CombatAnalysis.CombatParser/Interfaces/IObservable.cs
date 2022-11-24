@@ -1,11 +1,10 @@
-﻿namespace CombatAnalysis.CombatParser.Interfaces
+﻿namespace CombatAnalysis.CombatParser.Interfaces;
+
+public interface IObservable
 {
-    public interface IObservable
-    {
-        void AddObserver(IObserver o);
+    void AddObserver(IObserver o);
 
-        void RemoveObserver(IObserver o);
+    void RemoveObserver(IObserver o);
 
-        void NotifyObservers();
-    }
+    void NotifyObservers();
 }

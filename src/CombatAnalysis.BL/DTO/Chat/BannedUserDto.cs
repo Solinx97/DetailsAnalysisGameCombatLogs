@@ -1,11 +1,10 @@
-﻿namespace CombatAnalysis.BL.DTO.Chat
+﻿namespace CombatAnalysis.BL.DTO.Chat;
+
+public class BannedUserDto
 {
-    public class BannedUserDto
-    {
-        public int Id { get; set; }
+    public int Id { get; set; }
 
-        public string WhomBannedId { get; set; }
+    public string WhomBannedId { get; set; }
 
-        public string BannedUserId { get; set; }
-    }
+    public string BannedUserId { get; set; }
 }

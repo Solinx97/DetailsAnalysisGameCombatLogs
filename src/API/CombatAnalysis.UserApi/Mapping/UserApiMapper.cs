@@ -2,13 +2,12 @@
 using CombatAnalysis.BL.DTO.User;
 using CombatAnalysis.UserApi.Models.User;
 
-namespace CombatAnalysis.UserApi.Mapping
+namespace CombatAnalysis.UserApi.Mapping;
+
+public class UserApiMapper : Profile
 {
-    public class UserApiMapper : Profile
+    public UserApiMapper()
     {
-        public UserApiMapper()
-        {
-            CreateMap<AppUserDto, AppUserModel>().ReverseMap();
-        }
+        CreateMap<AppUserDto, AppUserModel>().ReverseMap();
     }
 }

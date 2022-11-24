@@ -1,12 +1,11 @@
 ﻿using MvvmCross.Platforms.Wpf.Views;
 
-namespace CombatAnalysis.App.Views
+namespace CombatAnalysis.App.Views;
+
+public partial class HomeView : MvxWpfView
 {
-    public partial class HomeView : MvxWpfView
+    public HomeView()
     {
-        public HomeView()
-        {
-            InitializeComponent();
-        }
+        InitializeComponent();
     }
 }

@@ -4,49 +4,48 @@ using MvvmCross.Platforms.Wpf.Converters;
 using System;
 using System.Globalization;
 
-namespace CombatAnalysis.App.Converters
+namespace CombatAnalysis.App.Converters;
+
+public class WhenTypeToStringConverter : MvxValueConverter<WhenType, string>
 {
-    public class WhenTypeToStringConverter : MvxValueConverter<WhenType, string>
+    protected override string Convert(WhenType value, Type targetType, object parameter, CultureInfo culture)
     {
-        protected override string Convert(WhenType value, Type targetType, object parameter, CultureInfo culture)
+        switch (value)
         {
-            switch (value)
-            {
-                case WhenType.YearAgo:
-                    return "Вчера";
-                case WhenType.MonthAgo:
-                    return "Вчера";
-                case WhenType.WeekAgo:
-                    return "Вчера";
-                case WhenType.Yesterday:
-                    return "Вчера";
-                case WhenType.Today:
-                    return "Сегодня";
-                default:
-                    return "Неизвестно";
-            }
-        }
-
-        protected override WhenType ConvertBack(string value, Type targetType, object parameter, CultureInfo culture)
-        {
-            switch (value)
-            {
-                case nameof(WhenType.Yesterday):
-                    return WhenType.Yesterday;
-                case nameof(WhenType.MonthAgo):
-                    return WhenType.MonthAgo;
-                case nameof(WhenType.WeekAgo):
-                    return WhenType.WeekAgo;
-                case nameof(WhenType.Today):
-                    return WhenType.Today;
-                default:
-                    return WhenType.Today;
-            }
+            case WhenType.YearAgo:
+                return "Вчера";
+            case WhenType.MonthAgo:
+                return "Вчера";
+            case WhenType.WeekAgo:
+                return "Вчера";
+            case WhenType.Yesterday:
+                return "Вчера";
+            case WhenType.Today:
+                return "Сегодня";
+            default:
+                return "Неизвестно";
         }
     }
 
-    public class TheNativeWhenTypeToStringConverter
-    : MvxNativeValueConverter<WhenTypeToStringConverter>
+    protected override WhenType ConvertBack(string value, Type targetType, object parameter, CultureInfo culture)
     {
+        switch (value)
+        {
+            case nameof(WhenType.Yesterday):
+                return WhenType.Yesterday;
+            case nameof(WhenType.MonthAgo):
+                return WhenType.MonthAgo;
+            case nameof(WhenType.WeekAgo):
+                return WhenType.WeekAgo;
+            case nameof(WhenType.Today):
+                return WhenType.Today;
+            default:
+                return WhenType.Today;
+        }
     }
+}
+
+public class TheNativeWhenTypeToStringConverter
+: MvxNativeValueConverter<WhenTypeToStringConverter>
+{
 }

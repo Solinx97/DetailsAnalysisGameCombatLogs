@@ -2,134 +2,129 @@
 using CombatAnalysis.DAL.Entities.User;
 using CombatAnalysis.DAL.Interfaces;
 using Firebase.Database.Query;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
-namespace CombatAnalysis.DAL.Repositories.Firebase
+namespace CombatAnalysis.DAL.Repositories.Firebase;
+
+public class FIrebaseUserRepository : IUserRepository
 {
-    public class FIrebaseUserRepository : IUserRepository
+    private readonly FirebaseContext _context;
+
+    public FIrebaseUserRepository(FirebaseContext context)
     {
-        private readonly FirebaseContext _context;
+        _context = context;
+    }
 
-        public FIrebaseUserRepository(FirebaseContext context)
+    public async Task<AppUser> CreateAsync(AppUser item)
+    {
+        var itemPropertyId = item.GetType().GetProperty(nameof(AppUser.Id));
+        if (itemPropertyId.PropertyType == typeof(int))
         {
-            _context = context;
+            var hashCodeToId = int.Parse(Guid.NewGuid().GetHashCode().ToString());
+            var newId = hashCodeToId >= 0 ? hashCodeToId : -hashCodeToId;
+            itemPropertyId.SetValue(item, newId);
         }
 
-        async Task<AppUser> IUserRepository.CreateAsync(AppUser item)
-        {
-            var itemPropertyId = item.GetType().GetProperty(nameof(AppUser.Id));
-            if (itemPropertyId.PropertyType == typeof(int))
-            {
-                var hashCodeToId = int.Parse(Guid.NewGuid().GetHashCode().ToString());
-                var newId = hashCodeToId >= 0 ? hashCodeToId : -hashCodeToId;
-                itemPropertyId.SetValue(item, newId);
-            }
+        var result = await _context.FirebaseClient
+                     .Child(nameof(AppUser))
+                     .PostAsync(item);
+        return result.Object;
+    }
 
-            var result = await _context.FirebaseClient
-                         .Child(nameof(AppUser))
-                         .PostAsync(item);
-            return result.Object;
-        }
-
-        async Task<int> IUserRepository.DeleteAsync(AppUser item)
-        {
-            var data = await _context.FirebaseClient
-                  .Child(nameof(AppUser))
-                  .OnceAsync<AppUser>();
-
-            var id = item.GetType().GetProperty(nameof(AppUser.Id)).GetValue(item);
-            var result = data.Select(x => new KeyValuePair<string, AppUser>(x.Key, x.Object))
-                            .AsEnumerable()
-                            .FirstOrDefault(x => x.Value.GetType().GetProperty(nameof(AppUser.Id)).GetValue(x.Value).Equals(id));
-
-            await _context.FirebaseClient
-                         .Child(item.GetType().Name)
-                         .Child(result.Key)
-                         .DeleteAsync();
-
-            var checkResult = await _context.FirebaseClient
-                  .Child(nameof(AppUser))
-                  .Child(result.Key)
-                  .OnceSingleAsync<AppUser>();
-
-            return checkResult == null ? 1 : 0;
-        }
-
-        async Task<IEnumerable<AppUser>> IUserRepository.GetAllAsync()
-        {
-            var data = await _context.FirebaseClient
+    public async Task<int> DeleteAsync(AppUser item)
+    {
+        var data = await _context.FirebaseClient
               .Child(nameof(AppUser))
               .OnceAsync<AppUser>();
 
-            var result = data.Select(x => x.Object).AsEnumerable();
-            return result;
-        }
+        var id = item.GetType().GetProperty(nameof(AppUser.Id)).GetValue(item);
+        var result = data.Select(x => new KeyValuePair<string, AppUser>(x.Key, x.Object))
+                        .AsEnumerable()
+                        .FirstOrDefault(x => x.Value.GetType().GetProperty(nameof(AppUser.Id)).GetValue(x.Value).Equals(id));
 
-        async Task<AppUser> IUserRepository.GetAsync(string email, string password)
-        {
-            var data = await _context.FirebaseClient
-                  .Child(nameof(AppUser))
-                  .OnceAsync<AppUser>();
+        await _context.FirebaseClient
+                     .Child(item.GetType().Name)
+                     .Child(result.Key)
+                     .DeleteAsync();
 
-            var result = data.Select(x => x.Object)
-                .AsEnumerable()
-                .FirstOrDefault(x => x.GetType().GetProperty(nameof(AppUser.Email)).GetValue(x).Equals(email)
-                        && x.GetType().GetProperty(nameof(AppUser.Password)).GetValue(x).Equals(password));
+        var checkResult = await _context.FirebaseClient
+              .Child(nameof(AppUser))
+              .Child(result.Key)
+              .OnceSingleAsync<AppUser>();
 
-            return result;
-        }
+        return checkResult == null ? 1 : 0;
+    }
 
-        async Task<AppUser> IUserRepository.GetAsync(string email)
-        {
-            var data = await _context.FirebaseClient
-                  .Child(nameof(AppUser))
-                  .OnceAsync<AppUser>();
+    public async Task<IEnumerable<AppUser>> GetAllAsync()
+    {
+        var data = await _context.FirebaseClient
+          .Child(nameof(AppUser))
+          .OnceAsync<AppUser>();
 
-            var result = data.Select(x => x.Object)
-                .AsEnumerable()
-                .FirstOrDefault(x => x.GetType().GetProperty(nameof(AppUser.Email)).GetValue(x).Equals(email));
+        var result = data.Select(x => x.Object).AsEnumerable();
+        return result;
+    }
 
-            return result;
-        }
+    public async Task<AppUser> GetAsync(string email, string password)
+    {
+        var data = await _context.FirebaseClient
+              .Child(nameof(AppUser))
+              .OnceAsync<AppUser>();
 
-        async Task<AppUser> IUserRepository.GetByIdAsync(string id)
-        {
-            var data = await _context.FirebaseClient
-                  .Child(nameof(AppUser))
-                  .OnceAsync<AppUser>();
+        var result = data.Select(x => x.Object)
+            .AsEnumerable()
+            .FirstOrDefault(x => x.GetType().GetProperty(nameof(AppUser.Email)).GetValue(x).Equals(email)
+                    && x.GetType().GetProperty(nameof(AppUser.Password)).GetValue(x).Equals(password));
 
-            var result = data.Select(x => x.Object)
-                .AsEnumerable()
-                .FirstOrDefault(x => x.GetType().GetProperty(nameof(AppUser.Id)).GetValue(x).Equals(id));
+        return result;
+    }
 
-            return result;
-        }
+    public async Task<AppUser> GetAsync(string email)
+    {
+        var data = await _context.FirebaseClient
+              .Child(nameof(AppUser))
+              .OnceAsync<AppUser>();
 
-        async Task<int> IUserRepository.UpdateAsync(AppUser item)
-        {
-            var data = await _context.FirebaseClient
-                  .Child(nameof(AppUser))
-                  .OnceAsync<AppUser>();
+        var result = data.Select(x => x.Object)
+            .AsEnumerable()
+            .FirstOrDefault(x => x.GetType().GetProperty(nameof(AppUser.Email)).GetValue(x).Equals(email));
 
-            var id = item.GetType().GetProperty(nameof(AppUser.Id)).GetValue(item);
-            var result = data.Select(x => new KeyValuePair<string, AppUser>(x.Key, x.Object))
-                .AsEnumerable()
-                .FirstOrDefault(x => x.Value.GetType().GetProperty(nameof(AppUser.Id)).GetValue(x.Value).Equals(id));
+        return result;
+    }
 
-            await _context.FirebaseClient
-                         .Child(item.GetType().Name)
-                         .Child(result.Key)
-                         .PutAsync(item);
+    public async Task<AppUser> GetByIdAsync(string id)
+    {
+        var data = await _context.FirebaseClient
+              .Child(nameof(AppUser))
+              .OnceAsync<AppUser>();
 
-            var checkResult = await _context.FirebaseClient
-                  .Child(nameof(AppUser))
-                  .Child(result.Key)
-                  .OnceSingleAsync<AppUser>();
+        var result = data.Select(x => x.Object)
+            .AsEnumerable()
+            .FirstOrDefault(x => x.GetType().GetProperty(nameof(AppUser.Id)).GetValue(x).Equals(id));
 
-            return checkResult != null ? 1 : 0;
-        }
+        return result;
+    }
+
+    public async Task<int> UpdateAsync(AppUser item)
+    {
+        var data = await _context.FirebaseClient
+              .Child(nameof(AppUser))
+              .OnceAsync<AppUser>();
+
+        var id = item.GetType().GetProperty(nameof(AppUser.Id)).GetValue(item);
+        var result = data.Select(x => new KeyValuePair<string, AppUser>(x.Key, x.Object))
+            .AsEnumerable()
+            .FirstOrDefault(x => x.Value.GetType().GetProperty(nameof(AppUser.Id)).GetValue(x.Value).Equals(id));
+
+        await _context.FirebaseClient
+                     .Child(item.GetType().Name)
+                     .Child(result.Key)
+                     .PutAsync(item);
+
+        var checkResult = await _context.FirebaseClient
+              .Child(nameof(AppUser))
+              .Child(result.Key)
+              .OnceSingleAsync<AppUser>();
+
+        return checkResult != null ? 1 : 0;
     }
 }

@@ -9,176 +9,172 @@ using CombatAnalysis.Core.Services;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
 using MvvmCross.ViewModels;
-using System;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Threading.Tasks;
 
-namespace CombatAnalysis.Core.ViewModels
+namespace CombatAnalysis.Core.ViewModels;
+
+public class ResourceRecoveryDetailsViewModel : MvxViewModel<Tuple<CombatPlayerModel, CombatModel>>
 {
-    public class ResourceRecoveryDetailsViewModel : MvxViewModel<Tuple<CombatPlayerModel, CombatModel>>
+    private readonly IMapper _mapper;
+    private readonly ILogger _logger;
+    private readonly CombatParserAPIService _combatParserAPIService;
+
+    private IImprovedMvxViewModel _basicTemplate;
+    private ObservableCollection<ResourceRecoveryModel> _resourceRecoveryInformations;
+    private ObservableCollection<ResourceRecoveryModel> _resourceRecoveryInformationsWithoutFilter;
+    private ObservableCollection<string> _resourceRecoverySources;
+    private ObservableCollection<ResourceRecoveryGeneralModel> _resourceRecoveryGeneralInformations;
+    private string _selectedResourceRecoverySource = "Все";
+    private string _selectedPlayer;
+    private double _totalValue;
+
+    public ResourceRecoveryDetailsViewModel(IMapper mapper, IHttpClientHelper httpClient, ILogger logger, IMemoryCache memoryCache)
     {
-        private readonly IMapper _mapper;
-        private readonly ILogger _logger;
-        private readonly CombatParserAPIService _combatParserAPIService;
+        _mapper = mapper;
+        _logger = logger;
 
-        private IImprovedMvxViewModel _basicTemplate;
-        private ObservableCollection<ResourceRecoveryModel> _resourceRecoveryInformations;
-        private ObservableCollection<ResourceRecoveryModel> _resourceRecoveryInformationsWithoutFilter;
-        private ObservableCollection<string> _resourceRecoverySources;
-        private ObservableCollection<ResourceRecoveryGeneralModel> _resourceRecoveryGeneralInformations;
-        private string _selectedResourceRecoverySource = "Все";
-        private string _selectedPlayer;
-        private double _totalValue;
+        _combatParserAPIService = new CombatParserAPIService(httpClient, logger, memoryCache);
 
-        public ResourceRecoveryDetailsViewModel(IMapper mapper, IHttpClientHelper httpClient, ILogger logger, IMemoryCache memoryCache)
+        BasicTemplate = Templates.Basic;
+        BasicTemplate.Parent = this;
+        BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, "Step", 6);
+    }
+
+    #region Properties
+
+    public IImprovedMvxViewModel BasicTemplate
+    {
+        get { return _basicTemplate; }
+        set
         {
-            _mapper = mapper;
-            _logger = logger;
-
-            _combatParserAPIService = new CombatParserAPIService(httpClient, logger, memoryCache);
-
-            BasicTemplate = Templates.Basic;
-            BasicTemplate.Parent = this;
-            BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, "Step", 6);
+            SetProperty(ref _basicTemplate, value);
         }
+    }
 
-        #region Properties
-
-        public IImprovedMvxViewModel BasicTemplate
+    public ObservableCollection<ResourceRecoveryModel> ResourceRecoveryInformations
+    {
+        get { return _resourceRecoveryInformations; }
+        set
         {
-            get { return _basicTemplate; }
-            set
-            {
-                SetProperty(ref _basicTemplate, value);
-            }
+            SetProperty(ref _resourceRecoveryInformations, value);
         }
+    }
 
-        public ObservableCollection<ResourceRecoveryModel> ResourceRecoveryInformations
+    public ObservableCollection<string> ResourceRecoverySources
+    {
+        get { return _resourceRecoverySources; }
+        set
         {
-            get { return _resourceRecoveryInformations; }
-            set
-            {
-                SetProperty(ref _resourceRecoveryInformations, value);
-            }
+            SetProperty(ref _resourceRecoverySources, value);
         }
+    }
 
-        public ObservableCollection<string> ResourceRecoverySources
+    public ObservableCollection<ResourceRecoveryGeneralModel> ResourceRecoveryGeneralInformations
+    {
+        get { return _resourceRecoveryGeneralInformations; }
+        set
         {
-            get { return _resourceRecoverySources; }
-            set
-            {
-                SetProperty(ref _resourceRecoverySources, value);
-            }
+            SetProperty(ref _resourceRecoveryGeneralInformations, value);
         }
+    }
 
-        public ObservableCollection<ResourceRecoveryGeneralModel> ResourceRecoveryGeneralInformations
+    public string SelectedPlayer
+    {
+        get { return _selectedPlayer; }
+        set
         {
-            get { return _resourceRecoveryGeneralInformations; }
-            set
-            {
-                SetProperty(ref _resourceRecoveryGeneralInformations, value);
-            }
+            SetProperty(ref _selectedPlayer, value);
         }
+    }
 
-        public string SelectedPlayer
+    public string SelectedResourceRecoverySource
+    {
+        get { return _selectedResourceRecoverySource; }
+        set
         {
-            get { return _selectedPlayer; }
-            set
-            {
-                SetProperty(ref _selectedPlayer, value);
-            }
+            SetProperty(ref _selectedResourceRecoverySource, value);
+
+            ResourceRecoveryInformationFilter();
         }
+    }
 
-        public string SelectedResourceRecoverySource
+    public double TotalValue
+    {
+        get { return _totalValue; }
+        set
         {
-            get { return _selectedResourceRecoverySource; }
-            set
-            {
-                SetProperty(ref _selectedResourceRecoverySource, value);
-
-                ResourceRecoveryInformationFilter();
-            }
+            SetProperty(ref _totalValue, value);
         }
+    }
 
-        public double TotalValue
+    #endregion
+
+    public override void Prepare(Tuple<CombatPlayerModel, CombatModel> parameter)
+    {
+        var combat = parameter.Item2;
+        var player = parameter.Item1;
+        SelectedPlayer = player.UserName;
+        TotalValue = player.EnergyRecovery;
+
+        if (player.Id > 0)
         {
-            get { return _totalValue; }
-            set
-            {
-                SetProperty(ref _totalValue, value);
-            }
+            Task.Run(async () => await LoadResourceRecoveryDetailsAsync(player.Id));
+            Task.Run(async () => await LoadResourceRecoveryGeneralAsync(player.Id));
         }
-
-        #endregion
-
-        public override void Prepare(Tuple<CombatPlayerModel, CombatModel> parameter)
+        else
         {
-            var combat = parameter.Item2;
-            var player = parameter.Item1;
-            SelectedPlayer = player.UserName;
-            TotalValue = player.EnergyRecovery;
+            CombatDetailsTemplate combatInformation = new CombatDetailsResourceRecovery(_logger);
+            var map = _mapper.Map<Combat>(combat);
 
-            if (player.Id > 0)
-            {
-                Task.Run(async () => await LoadResourceRecoveryDetailsAsync(player.Id));
-                Task.Run(async () => await LoadResourceRecoveryGeneralAsync(player.Id));
-            }
-            else
-            {
-                CombatDetailsTemplate combatInformation = new CombatDetailsResourceRecovery(_logger);
-                var map = _mapper.Map<Combat>(combat);
-
-                GetResourceRecoveryDetails(combatInformation, SelectedPlayer, map);
-                GetResourceRecoveryGeneral(combatInformation, map);
-            }
+            GetResourceRecoveryDetails(combatInformation, SelectedPlayer, map);
+            GetResourceRecoveryGeneral(combatInformation, map);
         }
+    }
 
-        private void GetResourceRecoveryDetails(CombatDetailsTemplate combatInformation, string player, Combat combat)
+    private void GetResourceRecoveryDetails(CombatDetailsTemplate combatInformation, string player, Combat combat)
+    {
+        combatInformation.GetData(player, combat.Data);
+
+        var map1 = _mapper.Map<ObservableCollection<ResourceRecoveryModel>>(combatInformation.ResourceRecovery);
+
+        ResourceRecoveryInformations = map1;
+        _resourceRecoveryInformations = new ObservableCollection<ResourceRecoveryModel>(map1);
+        _resourceRecoveryInformationsWithoutFilter = new ObservableCollection<ResourceRecoveryModel>(map1);
+
+        var resourceRecoverySources = ResourceRecoveryInformations.Select(x => x.SpellOrItem).Distinct().ToList();
+        resourceRecoverySources.Insert(0, "Все");
+        ResourceRecoverySources = new ObservableCollection<string>(resourceRecoverySources);
+    }
+
+    private void GetResourceRecoveryGeneral(CombatDetailsTemplate combatInformation, Combat combat)
+    {
+        var resourceRecoveryGeneralInformations = combatInformation.GetResourceRecoveryGeneral(combatInformation.ResourceRecovery, combat);
+        var map2 = _mapper.Map<ObservableCollection<ResourceRecoveryGeneralModel>>(resourceRecoveryGeneralInformations);
+        ResourceRecoveryGeneralInformations = map2;
+    }
+
+    private async Task LoadResourceRecoveryDetailsAsync(int combatPlayerId)
+    {
+        var resourceRecoveries = await _combatParserAPIService.LoadResourceRecoveryDetailsAsync(combatPlayerId);
+        ResourceRecoveryInformations = new ObservableCollection<ResourceRecoveryModel>(resourceRecoveries.ToList());
+        _resourceRecoveryInformations = new ObservableCollection<ResourceRecoveryModel>(resourceRecoveries.ToList());
+    }
+
+    private async Task LoadResourceRecoveryGeneralAsync(int combatPlayerId)
+    {
+        var resourceRecoveries = await _combatParserAPIService.LoadResourceRecoveryGeneralAsync(combatPlayerId);
+        ResourceRecoveryGeneralInformations = new ObservableCollection<ResourceRecoveryGeneralModel>(resourceRecoveries.ToList());
+    }
+
+    private void ResourceRecoveryInformationFilter()
+    {
+        if (_resourceRecoveryInformationsWithoutFilter.Any(x => x.SpellOrItem == SelectedResourceRecoverySource))
         {
-            combatInformation.GetData(player, combat.Data);
-
-            var map1 = _mapper.Map<ObservableCollection<ResourceRecoveryModel>>(combatInformation.ResourceRecovery);
-
-            ResourceRecoveryInformations = map1;
-            _resourceRecoveryInformations = new ObservableCollection<ResourceRecoveryModel>(map1);
-            _resourceRecoveryInformationsWithoutFilter = new ObservableCollection<ResourceRecoveryModel>(map1);
-
-            var resourceRecoverySources = ResourceRecoveryInformations.Select(x => x.SpellOrItem).Distinct().ToList();
-            resourceRecoverySources.Insert(0, "Все");
-            ResourceRecoverySources = new ObservableCollection<string>(resourceRecoverySources);
+            ResourceRecoveryInformations = new ObservableCollection<ResourceRecoveryModel>(_resourceRecoveryInformationsWithoutFilter.Where(x => x.SpellOrItem == SelectedResourceRecoverySource));
         }
-
-        private void GetResourceRecoveryGeneral(CombatDetailsTemplate combatInformation, Combat combat)
+        else
         {
-            var resourceRecoveryGeneralInformations = combatInformation.GetResourceRecoveryGeneral(combatInformation.ResourceRecovery, combat);
-            var map2 = _mapper.Map<ObservableCollection<ResourceRecoveryGeneralModel>>(resourceRecoveryGeneralInformations);
-            ResourceRecoveryGeneralInformations = map2;
-        }
-
-        private async Task LoadResourceRecoveryDetailsAsync(int combatPlayerId)
-        {
-            var resourceRecoveries = await _combatParserAPIService.LoadResourceRecoveryDetailsAsync(combatPlayerId);
-            ResourceRecoveryInformations = new ObservableCollection<ResourceRecoveryModel>(resourceRecoveries.ToList());
-            _resourceRecoveryInformations = new ObservableCollection<ResourceRecoveryModel>(resourceRecoveries.ToList());
-        }
-
-        private async Task LoadResourceRecoveryGeneralAsync(int combatPlayerId)
-        {
-            var resourceRecoveries = await _combatParserAPIService.LoadResourceRecoveryGeneralAsync(combatPlayerId);
-            ResourceRecoveryGeneralInformations = new ObservableCollection<ResourceRecoveryGeneralModel>(resourceRecoveries.ToList());
-        }
-
-        private void ResourceRecoveryInformationFilter()
-        {
-            if (_resourceRecoveryInformationsWithoutFilter.Any(x => x.SpellOrItem == SelectedResourceRecoverySource))
-            {
-                ResourceRecoveryInformations = new ObservableCollection<ResourceRecoveryModel>(_resourceRecoveryInformationsWithoutFilter.Where(x => x.SpellOrItem == SelectedResourceRecoverySource));
-            }
-            else
-            {
-                ResourceRecoveryInformations = _resourceRecoveryInformationsWithoutFilter;
-            }
+            ResourceRecoveryInformations = _resourceRecoveryInformationsWithoutFilter;
         }
     }
 }

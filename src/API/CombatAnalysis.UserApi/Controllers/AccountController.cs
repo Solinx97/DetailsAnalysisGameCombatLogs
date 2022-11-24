@@ -5,41 +5,59 @@ using CombatAnalysis.Identity.Interfaces;
 using CombatAnalysis.UserApi.Models;
 using CombatAnalysis.UserApi.Models.Response;
 using CombatAnalysis.UserApi.Models.User;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
-using System;
-using System.Linq;
-using System.Threading.Tasks;
 
-namespace CombatAnalysis.UserApi.Controllers
+namespace CombatAnalysis.UserApi.Controllers;
+
+[Route("api/v1/[controller]")]
+[ApiController]
+public class AccountController : ControllerBase
 {
-    [Route("[controller]")]
-    [ApiController]
-    public class AccountController : ControllerBase
+    private readonly IUserService<AppUserDto> _service;
+    private readonly IIdentityTokenService _tokenService;
+    private readonly IMapper _mapper;
+    private readonly ILogger _logger;
+
+    public AccountController(IUserService<AppUserDto> service, IIdentityTokenService tokenService, IMapper mapper, ILogger logger)
     {
-        private readonly IUserService<AppUserDto> _service;
-        private readonly IIdentityTokenService _tokenService;
-        private readonly IMapper _mapper;
-        private readonly ILogger _logger;
+        _service = service;
+        _tokenService = tokenService;
+        _mapper = mapper;
+        _logger = logger;
+    }
 
-        public AccountController(IUserService<AppUserDto> service, IIdentityTokenService tokenService, IMapper mapper, ILogger logger)
+    [HttpPost]
+    public async Task<IActionResult> Login(LoginModel model)
+    {
+        var user = await _service.GetAsync(model.Email, model.Password);
+        if (user != null)
         {
-            _service = service;
-            _tokenService = tokenService;
-            _mapper = mapper;
-            _logger = logger;
+            var tokens = await _tokenService.GenerateTokensAsync(HttpContext.Response.Cookies, user.Id);
+            var map = _mapper.Map<AppUserModel>(user);
+            var response = new ResponseFromAccount(map, tokens.Item1, tokens.Item2);
+
+            return Ok(response);
         }
-
-        [HttpPost]
-        public async Task<IActionResult> Login(LoginModel model)
+        else
         {
-            var user = await _service.GetAsync(model.Email, model.Password);
-            if (user != null)
+            return BadRequest();
+        }
+    }
+
+    [HttpPost("registration")]
+    public async Task<IActionResult> Register(RegisterModel model)
+    {
+        try
+        {
+            var user = await _service.GetAsync(model.Email);
+            if (user == null)
             {
-                var tokens = await _tokenService.GenerateTokensAsync(HttpContext.Response.Cookies, user.Id);
-                var map = _mapper.Map<AppUserModel>(user);
-                var response = new ResponseFromAccount(map, tokens.Item1, tokens.Item2);
+                var newUser = new AppUserModel { Id = Guid.NewGuid().ToString(), Email = model.Email, Password = model.Password };
+                var map = _mapper.Map<AppUserDto>(newUser);
+                await _service.CreateAsync(map);
+
+                var tokens = await _tokenService.GenerateTokensAsync(HttpContext.Response.Cookies, newUser.Id);
+                var response = new ResponseFromAccount(newUser, tokens.Item1, tokens.Item2);
 
                 return Ok(response);
             }
@@ -48,72 +66,48 @@ namespace CombatAnalysis.UserApi.Controllers
                 return BadRequest();
             }
         }
-
-        [HttpPost("registration")]
-        public async Task<IActionResult> Register(RegisterModel model)
+        catch (ArgumentNullException ex)
         {
-            try
-            {
-                var user = await _service.GetAsync(model.Email);
-                if (user == null)
-                {
-                    var newUser = new AppUserModel { Id = Guid.NewGuid().ToString(), Email = model.Email, Password = model.Password };
-                    var map = _mapper.Map<AppUserDto>(newUser);
-                    await _service.CreateAsync(map);
+            _logger.LogError(ex, ex.Message);
 
-                    var tokens = await _tokenService.GenerateTokensAsync(HttpContext.Response.Cookies, newUser.Id);
-                    var response = new ResponseFromAccount(newUser, tokens.Item1, tokens.Item2);
-
-                    return Ok(response);
-                }
-                else
-                {
-                    return BadRequest();
-                }
-            }
-            catch (ArgumentNullException ex)
-            {
-                _logger.LogError(ex, ex.Message);
-
-                return BadRequest();
-            }
+            return BadRequest();
         }
+    }
 
-        [HttpGet]
-        public async Task<IActionResult> GetAll()
+    [HttpGet]
+    public async Task<IActionResult> GetAll()
+    {
+        var users = await _service.GetAllAsync();
+        if (users.Any())
         {
-            var users = await _service.GetAllAsync();
-            if (users.Any())
-            {
-                return Ok(users);
-            }
-            else
-            {
-                return BadRequest();
-            }
+            return Ok(users);
         }
-
-        [HttpGet("logout/{refreshToken}")]
-        public async Task<IActionResult> Logout(string refreshToken)
+        else
         {
-            var refreshTokenModel = await _tokenService.FindRefreshTokenAsync(refreshToken);
-            await _tokenService.RemoveRefreshTokenAsync(refreshTokenModel);
-
-            return Ok();
+            return BadRequest();
         }
+    }
 
-        [HttpGet("find/{email}")]
-        public async Task<IActionResult> Find(string email)
+    [HttpGet("logout/{refreshToken}")]
+    public async Task<IActionResult> Logout(string refreshToken)
+    {
+        var refreshTokenModel = await _tokenService.FindRefreshTokenAsync(refreshToken);
+        await _tokenService.RemoveRefreshTokenAsync(refreshTokenModel);
+
+        return Ok();
+    }
+
+    [HttpGet("find/{email}")]
+    public async Task<IActionResult> Find(string email)
+    {
+        var user = await _service.GetAsync(email);
+        if (user != null)
         {
-            var user = await _service.GetAsync(email);
-            if (user != null)
-            {
-                return Ok(user);
-            }
-            else
-            {
-                return BadRequest();
-            }
+            return Ok(user);
+        }
+        else
+        {
+            return BadRequest();
         }
     }
 }

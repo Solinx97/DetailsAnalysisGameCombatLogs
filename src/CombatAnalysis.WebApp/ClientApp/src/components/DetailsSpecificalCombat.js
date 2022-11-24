@@ -184,7 +184,7 @@ const DetailsSpecificalCombat = () => {
                     <h5 className="card-title">{element.userName}</h5>
                 </div>
                 <div className="form-check form-switch">
-                    <input className="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckChecked" onChange={() => switchRadarChart(index, event)} />
+                    <input className="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckChecked" onChange={() => switchRadarChart(index)} />
                     <label className="form-check-label" htmlFor="flexSwitchCheckChecked">Показать статистику</label>
                 </div>
                 {activeUserIndex == index &&

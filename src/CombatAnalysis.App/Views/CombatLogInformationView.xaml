@@ -54,7 +54,7 @@
             <StackPanel IsEnabled="{Binding IsParsing, Converter={StaticResource BoolToXAMLBool}, ConverterParameter=true}" Grid.Row="0"
                     HorizontalAlignment="Center" VerticalAlignment="Top" MinWidth="375">
                 <TextBlock HorizontalAlignment="Center" Text="Загрузить файл с данными о бое" Margin="0 20" FontSize="16" />
-                <Button Name="selectCmbatLogFile" mvx:Bi.nd="Command GetCombatLogCommand" Content="Выбрать файл" Width="125" FontSize="16"
+                <Button Name="selectCmbatLogFile" Click="SelectCmbatLogFile" Content="Выбрать файл" Width="125" FontSize="16"
                     Margin="15 0" Style="{StaticResource showButton}" />
                 <StackPanel Orientation="Horizontal" Margin="20">
                     <TextBlock Text="Файл:" FontSize="16" />

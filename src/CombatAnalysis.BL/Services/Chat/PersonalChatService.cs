@@ -3,148 +3,144 @@ using CombatAnalysis.BL.DTO.Chat;
 using CombatAnalysis.BL.Interfaces;
 using CombatAnalysis.DAL.Entities.Chat;
 using CombatAnalysis.DAL.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 
-namespace CombatAnalysis.BL.Services.Chat
+namespace CombatAnalysis.BL.Services.Chat;
+
+internal class PersonalChatService : IService<PersonalChatDto, int>
 {
-    internal class PersonalChatService : IService<PersonalChatDto, int>
+    private readonly IGenericRepository<PersonalChat, int> _repository;
+    private readonly IMapper _mapper;
+
+    public PersonalChatService(IGenericRepository<PersonalChat, int> repository, IMapper mapper)
     {
-        private readonly IGenericRepository<PersonalChat, int> _repository;
-        private readonly IMapper _mapper;
+        _repository = repository;
+        _mapper = mapper;
+    }
 
-        public PersonalChatService(IGenericRepository<PersonalChat, int> repository, IMapper mapper)
+    public Task<PersonalChatDto> CreateAsync(PersonalChatDto item)
+    {
+        if (item == null)
         {
-            _repository = repository;
-            _mapper = mapper;
+            throw new ArgumentNullException(nameof(PersonalChatDto), $"The {nameof(PersonalChatDto)} can't be null");
         }
 
-        Task<PersonalChatDto> IService<PersonalChatDto, int>.CreateAsync(PersonalChatDto item)
-        {
-            if (item == null)
-            {
-                throw new ArgumentNullException(nameof(PersonalChatDto), $"The {nameof(PersonalChatDto)} can't be null");
-            }
+        return CreateInternalAsync(item);
+    }
 
-            return CreateInternalAsync(item);
+    public Task<int> DeleteAsync(PersonalChatDto item)
+    {
+        if (item == null)
+        {
+            throw new ArgumentNullException(nameof(PersonalChatDto), $"The {nameof(PersonalChatDto)} can't be null");
         }
 
-        Task<int> IService<PersonalChatDto, int>.DeleteAsync(PersonalChatDto item)
-        {
-            if (item == null)
-            {
-                throw new ArgumentNullException(nameof(PersonalChatDto), $"The {nameof(PersonalChatDto)} can't be null");
-            }
+        return DeleteInternalAsync(item);
+    }
 
-            return DeleteInternalAsync(item);
+    public async Task<IEnumerable<PersonalChatDto>> GetAllAsync()
+    {
+        var allData = await _repository.GetAllAsync();
+        var result = _mapper.Map<IEnumerable<PersonalChatDto>>(allData);
+
+        return result;
+    }
+
+    public async Task<PersonalChatDto> GetByIdAsync(int id)
+    {
+        var result = await _repository.GetByIdAsync(id);
+        var resultMap = _mapper.Map<PersonalChatDto>(result);
+
+        return resultMap;
+    }
+
+    public async Task<IEnumerable<PersonalChatDto>> GetByParamAsync(string paramName, object value)
+    {
+        var result = await Task.Run(() => _repository.GetByParam(paramName, value));
+        var resultMap = _mapper.Map<IEnumerable<PersonalChatDto>>(result);
+
+        return resultMap;
+    }
+
+    public Task<int> UpdateAsync(PersonalChatDto item)
+    {
+        if (item == null)
+        {
+            throw new ArgumentNullException(nameof(PersonalChatDto), $"The {nameof(PersonalChatDto)} can't be null");
         }
 
-        async Task<IEnumerable<PersonalChatDto>> IService<PersonalChatDto, int>.GetAllAsync()
-        {
-            var allData = await _repository.GetAllAsync();
-            var result = _mapper.Map<IEnumerable<PersonalChatDto>>(allData);
+        return UpdateInternalAsync(item);
+    }
 
-            return result;
+    private async Task<PersonalChatDto> CreateInternalAsync(PersonalChatDto item)
+    {
+        if (string.IsNullOrEmpty(item.LastMessage))
+        {
+            throw new ArgumentNullException(nameof(PersonalChatDto), 
+                $"The property {nameof(PersonalChatDto.LastMessage)} of the {nameof(PersonalChatDto)} object can't be null or empty");
+        }
+        if (string.IsNullOrEmpty(item.InitiatorUsername))
+        {
+            throw new ArgumentNullException(nameof(PersonalChatDto), 
+                $"The property {nameof(PersonalChatDto.InitiatorUsername)} of the {nameof(PersonalChatDto)} object can't be null or empty");
+        }
+        if (string.IsNullOrEmpty(item.CompanionUsername))
+        {
+            throw new ArgumentNullException(nameof(PersonalChatDto), 
+                $"The property {nameof(PersonalChatDto.CompanionUsername)} of the {nameof(PersonalChatDto)} object can't be null or empty");
         }
 
-        async Task<PersonalChatDto> IService<PersonalChatDto, int>.GetByIdAsync(int id)
-        {
-            var result = await _repository.GetByIdAsync(id);
-            var resultMap = _mapper.Map<PersonalChatDto>(result);
+        var map = _mapper.Map<PersonalChat>(item);
+        var createdItem = await _repository.CreateAsync(map);
+        var resultMap = _mapper.Map<PersonalChatDto>(createdItem);
 
-            return resultMap;
+        return resultMap;
+    }
+
+    private async Task<int> DeleteInternalAsync(PersonalChatDto item)
+    {
+        if (string.IsNullOrEmpty(item.LastMessage))
+        {
+            throw new ArgumentNullException(nameof(PersonalChatDto), 
+                $"The property {nameof(PersonalChatDto.LastMessage)} of the {nameof(PersonalChatDto)} object can't be null or empty");
+        }
+        if (string.IsNullOrEmpty(item.InitiatorUsername))
+        {
+            throw new ArgumentNullException(nameof(PersonalChatDto), 
+                $"The property {nameof(PersonalChatDto.InitiatorUsername)} of the {nameof(PersonalChatDto)} object can't be null or empty");
+        }
+        if (string.IsNullOrEmpty(item.CompanionUsername))
+        {
+            throw new ArgumentNullException(nameof(PersonalChatDto), 
+                $"The property {nameof(PersonalChatDto.CompanionUsername)} of the {nameof(PersonalChatDto)} object can't be null or empty");
         }
 
-        async Task<IEnumerable<PersonalChatDto>> IService<PersonalChatDto, int>.GetByParamAsync(string paramName, object value)
-        {
-            var result = await Task.Run(() => _repository.GetByParam(paramName, value));
-            var resultMap = _mapper.Map<IEnumerable<PersonalChatDto>>(result);
+        var map = _mapper.Map<PersonalChat>(item);
+        var rowsAffected = await _repository.DeleteAsync(map);
 
-            return resultMap;
+        return rowsAffected;
+    }
+
+    private async Task<int> UpdateInternalAsync(PersonalChatDto item)
+    {
+        if (string.IsNullOrEmpty(item.LastMessage))
+        {
+            throw new ArgumentNullException(nameof(PersonalChatDto), 
+                $"The property {nameof(PersonalChatDto.LastMessage)} of the {nameof(PersonalChatDto)} object can't be null or empty");
+        }
+        if (string.IsNullOrEmpty(item.InitiatorUsername))
+        {
+            throw new ArgumentNullException(nameof(PersonalChatDto), 
+                $"The property {nameof(PersonalChatDto.InitiatorUsername)} of the {nameof(PersonalChatDto)} object can't be null or empty");
+        }
+        if (string.IsNullOrEmpty(item.CompanionUsername))
+        {
+            throw new ArgumentNullException(nameof(PersonalChatDto), 
+                $"The property {nameof(PersonalChatDto.CompanionUsername)} of the {nameof(PersonalChatDto)} object can't be null or empty");
         }
 
-        Task<int> IService<PersonalChatDto, int>.UpdateAsync(PersonalChatDto item)
-        {
-            if (item == null)
-            {
-                throw new ArgumentNullException(nameof(PersonalChatDto), $"The {nameof(PersonalChatDto)} can't be null");
-            }
+        var map = _mapper.Map<PersonalChat>(item);
+        var rowsAffected = await _repository.UpdateAsync(map);
 
-            return UpdateInternalAsync(item);
-        }
-
-        private async Task<PersonalChatDto> CreateInternalAsync(PersonalChatDto item)
-        {
-            if (string.IsNullOrEmpty(item.LastMessage))
-            {
-                throw new ArgumentNullException(nameof(PersonalChatDto), 
-                    $"The property {nameof(PersonalChatDto.LastMessage)} of the {nameof(PersonalChatDto)} object can't be null or empty");
-            }
-            if (string.IsNullOrEmpty(item.InitiatorUsername))
-            {
-                throw new ArgumentNullException(nameof(PersonalChatDto), 
-                    $"The property {nameof(PersonalChatDto.InitiatorUsername)} of the {nameof(PersonalChatDto)} object can't be null or empty");
-            }
-            if (string.IsNullOrEmpty(item.CompanionUsername))
-            {
-                throw new ArgumentNullException(nameof(PersonalChatDto), 
-                    $"The property {nameof(PersonalChatDto.CompanionUsername)} of the {nameof(PersonalChatDto)} object can't be null or empty");
-            }
-
-            var map = _mapper.Map<PersonalChat>(item);
-            var createdItem = await _repository.CreateAsync(map);
-            var resultMap = _mapper.Map<PersonalChatDto>(createdItem);
-
-            return resultMap;
-        }
-
-        private async Task<int> DeleteInternalAsync(PersonalChatDto item)
-        {
-            if (string.IsNullOrEmpty(item.LastMessage))
-            {
-                throw new ArgumentNullException(nameof(PersonalChatDto), 
-                    $"The property {nameof(PersonalChatDto.LastMessage)} of the {nameof(PersonalChatDto)} object can't be null or empty");
-            }
-            if (string.IsNullOrEmpty(item.InitiatorUsername))
-            {
-                throw new ArgumentNullException(nameof(PersonalChatDto), 
-                    $"The property {nameof(PersonalChatDto.InitiatorUsername)} of the {nameof(PersonalChatDto)} object can't be null or empty");
-            }
-            if (string.IsNullOrEmpty(item.CompanionUsername))
-            {
-                throw new ArgumentNullException(nameof(PersonalChatDto), 
-                    $"The property {nameof(PersonalChatDto.CompanionUsername)} of the {nameof(PersonalChatDto)} object can't be null or empty");
-            }
-
-            var map = _mapper.Map<PersonalChat>(item);
-            var rowsAffected = await _repository.DeleteAsync(map);
-
-            return rowsAffected;
-        }
-
-        private async Task<int> UpdateInternalAsync(PersonalChatDto item)
-        {
-            if (string.IsNullOrEmpty(item.LastMessage))
-            {
-                throw new ArgumentNullException(nameof(PersonalChatDto), 
-                    $"The property {nameof(PersonalChatDto.LastMessage)} of the {nameof(PersonalChatDto)} object can't be null or empty");
-            }
-            if (string.IsNullOrEmpty(item.InitiatorUsername))
-            {
-                throw new ArgumentNullException(nameof(PersonalChatDto), 
-                    $"The property {nameof(PersonalChatDto.InitiatorUsername)} of the {nameof(PersonalChatDto)} object can't be null or empty");
-            }
-            if (string.IsNullOrEmpty(item.CompanionUsername))
-            {
-                throw new ArgumentNullException(nameof(PersonalChatDto), 
-                    $"The property {nameof(PersonalChatDto.CompanionUsername)} of the {nameof(PersonalChatDto)} object can't be null or empty");
-            }
-
-            var map = _mapper.Map<PersonalChat>(item);
-            var rowsAffected = await _repository.UpdateAsync(map);
-
-            return rowsAffected;
-        }
+        return rowsAffected;
     }
 }

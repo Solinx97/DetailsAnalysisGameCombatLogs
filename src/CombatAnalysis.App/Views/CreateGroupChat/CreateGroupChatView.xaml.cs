@@ -1,12 +1,11 @@
 ﻿using MvvmCross.Platforms.Wpf.Views;
 
-namespace CombatAnalysis.App.Views.CreateGroupChat
+namespace CombatAnalysis.App.Views.CreateGroupChat;
+
+public partial class CreateGroupChatView : MvxWpfView
 {
-    public partial class CreateGroupChatView : MvxWpfView
+    public CreateGroupChatView()
     {
-        public CreateGroupChatView()
-        {
-            InitializeComponent();
-        }
+        InitializeComponent();
     }
 }

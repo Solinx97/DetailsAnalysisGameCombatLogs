@@ -196,7 +196,7 @@
                     Orientation="Horizontal" Panel.ZIndex="1">
             <Border VerticalAlignment="Top" Margin="0 5 10 0" Panel.ZIndex="2" 
                     Background="LightGray" Width="250" Height="130" Padding="10 0" CornerRadius="10"
-                    Visibility="{Binding ShowInviteToGroupChat}">
+                    Visibility="{Binding InviteToGroupChatIsVisibly, Converter={StaticResource BoolToVisibility}, ConverterParameter='true:false'}">
                 <StackPanel Orientation="Horizontal">
                     <StackPanel Width="200" Margin="0 20">
                         <ComboBox Height="30" Padding="5" IsEditable="True" StaysOpenOnEdit="True" ItemsSource="{Binding UsersForInviteToGroupChat}"
@@ -221,7 +221,7 @@
                 </StackPanel>
             </Border>
             <Border Background="LightGray" Width="175" Height="110" Margin="0 5 75 0" Padding="10" CornerRadius="10"
-                Visibility="{Binding ShowGroupChatMenu}">
+                Visibility="{Binding GroupChatMenuIsVisibly, Converter={StaticResource BoolToVisibility}, ConverterParameter='true:false'}">
                 <StackPanel>
                     <Button Margin="5" Background="Transparent" BorderThickness="0" mvx:Bi.nd="Command OpenInviteToGroupChatCommand">
                         <TextBlock Text="Добавить пользователя"/>

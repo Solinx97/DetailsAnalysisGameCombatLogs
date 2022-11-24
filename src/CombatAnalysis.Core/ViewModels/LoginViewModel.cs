@@ -6,154 +6,150 @@ using Microsoft.Extensions.Caching.Memory;
 using MvvmCross.Commands;
 using MvvmCross.Navigation;
 using MvvmCross.ViewModels;
-using System;
-using System.Net.Http;
 using System.Net.Http.Json;
-using System.Threading.Tasks;
 
-namespace CombatAnalysis.Core.ViewModels
+namespace CombatAnalysis.Core.ViewModels;
+
+public class LoginViewModel : MvxViewModel
 {
-    public class LoginViewModel : MvxViewModel
+    private readonly IMemoryCache _memoryCache;
+    private readonly IHttpClientHelper _httpClientHelper;
+    private readonly IMvxNavigationService _mvvmNavigation;
+
+    private IImprovedMvxViewModel _basicTemplate;
+    private string _email;
+    private string _password;
+    private bool _authIsFailed;
+    private bool _serverIsNotAvailable;
+
+    public LoginViewModel(IMemoryCache memoryCache, IHttpClientHelper httpClient, IMvxNavigationService mvvmNavigation)
     {
-        private readonly IMemoryCache _memoryCache;
-        private readonly IHttpClientHelper _httpClientHelper;
-        private readonly IMvxNavigationService _mvvmNavigation;
+        _memoryCache = memoryCache;
+        _httpClientHelper = httpClient;
+        _mvvmNavigation = mvvmNavigation;
 
-        private IImprovedMvxViewModel _basicTemplate;
-        private string _email;
-        private string _password;
-        private bool _authIsFailed;
-        private bool _serverIsNotAvailable;
+        LoginCommand = new MvxCommand(Login);
+        CancelCommand = new MvxAsyncCommand(CancelAsync);
 
-        public LoginViewModel(IMemoryCache memoryCache, IHttpClientHelper httpClient, IMvxNavigationService mvvmNavigation)
+        BasicTemplate = Templates.Basic;
+        if (BasicTemplate.Parent is RegistrationViewModel)
         {
-            _memoryCache = memoryCache;
-            _httpClientHelper = httpClient;
-            _mvvmNavigation = mvvmNavigation;
-
-            LoginCommand = new MvxCommand(Login);
-            CancelCommand = new MvxAsyncCommand(CancelAsync);
-
-            BasicTemplate = Templates.Basic;
-            if (BasicTemplate.Parent is RegistrationViewModel)
-            {
-                _mvvmNavigation.Close(BasicTemplate.Parent).GetAwaiter().GetResult();
-            }
-
-            BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, "IsRegistrationNotActivated", true);
-            BasicTemplate.Parent = this;
+            _mvvmNavigation.Close(BasicTemplate.Parent).GetAwaiter().GetResult();
         }
 
-        #region Commands
+        BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, "IsRegistrationNotActivated", true);
+        BasicTemplate.Parent = this;
+    }
 
-        public IMvxCommand LoginCommand { get; set; }
+    #region Commands
 
-        public IMvxAsyncCommand CancelCommand { get; set; }
+    public IMvxCommand LoginCommand { get; set; }
 
-        #endregion
+    public IMvxAsyncCommand CancelCommand { get; set; }
 
-        #region Properties
+    #endregion
 
-        public IImprovedMvxViewModel BasicTemplate
+    #region Properties
+
+    public IImprovedMvxViewModel BasicTemplate
+    {
+        get { return _basicTemplate; }
+        set
         {
-            get { return _basicTemplate; }
-            set
-            {
-                SetProperty(ref _basicTemplate, value);
-            }
+            SetProperty(ref _basicTemplate, value);
         }
+    }
 
-        public string Email
+    public string Email
+    {
+        get { return _email; }
+        set
         {
-            get { return _email; }
-            set
-            {
-                SetProperty(ref _email, value);
-            }
+            SetProperty(ref _email, value);
         }
+    }
 
-        public string Password
+    public string Password
+    {
+        get { return _password; }
+        set
         {
-            get { return _password; }
-            set
-            {
-                SetProperty(ref _password, value);
-            }
+            SetProperty(ref _password, value);
         }
+    }
 
-        public bool AuthIsFailed
+    public bool AuthIsFailed
+    {
+        get { return _authIsFailed; }
+        set
         {
-            get { return _authIsFailed; }
-            set
-            {
-                SetProperty(ref _authIsFailed, value);
-            }
+            SetProperty(ref _authIsFailed, value);
         }
+    }
 
-        public bool ServerIsNotAvailable
+    public bool ServerIsNotAvailable
+    {
+        get { return _serverIsNotAvailable; }
+        set
         {
-            get { return _serverIsNotAvailable; }
-            set
-            {
-                SetProperty(ref _serverIsNotAvailable, value);
-            }
+            SetProperty(ref _serverIsNotAvailable, value);
         }
+    }
 
-        #endregion
+    #endregion
 
-        public void Login()
+    public void Login()
+    {
+        AuthIsFailed = false;
+        ServerIsNotAvailable = false;
+
+        var loginModel = new LoginModel { Email = Email, Password = Password };
+
+        Action action = async () =>
         {
-            AuthIsFailed = false;
-            ServerIsNotAvailable = false;
-
-            var loginModel = new LoginModel { Email = Email, Password = Password };
-
-            Action action = async () =>
+            try
             {
-                try
+                _httpClientHelper.BaseAddress = Port.UserApi;
+                var responseMessage = await _httpClientHelper.PostAsync("Account", JsonContent.Create(loginModel));
+                if (responseMessage.StatusCode == System.Net.HttpStatusCode.OK)
                 {
-                    _httpClientHelper.BaseAddress = Port.UserApi;
-                    var responseMessage = await _httpClientHelper.PostAsync("Account", JsonContent.Create(loginModel));
-                    if (responseMessage.StatusCode == System.Net.HttpStatusCode.OK)
-                    {
-                        var response = await responseMessage.Content.ReadFromJsonAsync<ResponseFromAccount>();
+                    var response = await responseMessage.Content.ReadFromJsonAsync<ResponseFromAccount>();
 
-                        SetMemoryCache(response);
+                    SetMemoryCache(response);
 
-                        BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, "IsAuth", true);
-                        BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, "Email", response.User.Email);
+                    BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, "IsAuth", true);
+                    BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, "Email", response.User.Email);
 
-                        BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, "IsLoginNotActivated", true);
+                    BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, "IsLoginNotActivated", true);
 
-                        await _mvvmNavigation.Close(this);
-                    }
-                    else
-                    {
-                        AuthIsFailed = true;
-                    }
+                    await _mvvmNavigation.Close(this);
                 }
-                catch (HttpRequestException)
+                else
                 {
-                    ServerIsNotAvailable = true;
+                    AuthIsFailed = true;
                 }
+            }
+            catch (HttpRequestException)
+            {
+                ServerIsNotAvailable = true;
+            }
 
-            };
+        };
 
-            Task.Run(action);
-        }
+        Task.Run(action);
+    }
 
-        public async Task CancelAsync()
-        {
-            BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, "IsLoginNotActivated", true);
-            BasicTemplate.Parent = null;
-            await _mvvmNavigation.Close(this);
-        }
+    public async Task CancelAsync()
+    {
+        BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, "IsLoginNotActivated", true);
+        BasicTemplate.Parent = null;
+        await _mvvmNavigation.Close(this);
+    }
 
-        private void SetMemoryCache(ResponseFromAccount response)
-        {
-            _memoryCache.Set("accessToken", response.AccessToken, new MemoryCacheEntryOptions { Size = 10 });
-            _memoryCache.Set("refreshToken", response.RefreshToken, new MemoryCacheEntryOptions { Size = 10 });
-            _memoryCache.Set("account", response.User, new MemoryCacheEntryOptions { Size = 50 });
-        }
+    private void SetMemoryCache(ResponseFromAccount response)
+    {
+        _memoryCache.Set("accessToken", response.AccessToken, new MemoryCacheEntryOptions { Size = 10 });
+        _memoryCache.Set("refreshToken", response.RefreshToken, new MemoryCacheEntryOptions { Size = 10 });
+        _memoryCache.Set("account", response.User, new MemoryCacheEntryOptions { Size = 50 });
     }
 }

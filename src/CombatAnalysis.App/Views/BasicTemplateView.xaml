@@ -89,7 +89,7 @@
                                    OnClick="{Binding LogPanelStatusCommand}"/>
                 </StackPanel>
 
-                <StackPanel Margin="30 0 0 0" Visibility="{Binding LogPanelStatus}">
+                <StackPanel Margin="30 0 0 0" Visibility="{Binding LogPanelStatusIsVisibly, Converter={StaticResource BoolToVisibility}, ConverterParameter='true:false'}">
                     <uc:MenuButton x:Name="combatLogUpload" Title="Загрузка" Icon="Upload" IsEnabled="{Binding Step, Converter={StaticResource IntToXAMLBoolExpress}, ConverterParameter='>=,-1'}" 
                                    IsActive="{Binding Step, Converter={StaticResource IntToXAMLBool}, ConverterParameter= 0}" OnClick="{Binding UploadCombatsCommand}"/>
                     <uc:MenuButton Title="Все бои" Icon="ChartTimelineVariantShimmer" IsEnabled="{Binding AllowStep, Converter={StaticResource IntToXAMLBoolExpress}, ConverterParameter='>,0'}"
@@ -180,7 +180,7 @@
                     </Button>
                 </StackPanel>
                 <StackPanel Orientation="Horizontal">
-                    <Button Style="{StaticResource textBoxButton}" mvx:Bi.nd="Command MinimazeCommand">
+                    <Button Style="{StaticResource textBoxButton}" Click="Minimaze">
                         <Button.ToolTip>
                             <ToolTip>
                                 Свернуть
@@ -188,7 +188,7 @@
                         </Button.ToolTip>
                         <Icon:PackIconMaterial Kind="WindowMinimize" Foreground="Gray" Width="15" Height="15"/>
                     </Button>
-                    <Button Style="{StaticResource textBoxButton}" mvx:Bi.nd="Command MaximazeCommand">
+                    <Button Style="{StaticResource textBoxButton}" Click="Maximaze">
                         <Button.ToolTip>
                             <ToolTip>
                                 На весь экран

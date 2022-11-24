@@ -1,34 +1,32 @@
 ﻿using CombatAnalysis.CombatParser.Entities;
-using System.Collections.Generic;
 
-namespace CombatAnalysis.CombatParser.Interfaces
+namespace CombatAnalysis.CombatParser.Interfaces;
+
+public interface ICombatDetails
 {
-    public interface ICombatDetails
-    {
-        List<DamageDone> DamageDone { get; }
+    List<DamageDone> DamageDone { get; }
 
-        List<HealDone> HealDone { get; }
+    List<HealDone> HealDone { get; }
 
-        List<DamageTaken> DamageTaken { get; }
+    List<DamageTaken> DamageTaken { get; }
 
-        List<ResourceRecovery> ResourceRecovery { get; }
+    List<ResourceRecovery> ResourceRecovery { get; }
 
-        void Initialization(Combat combat, string player);
+    void Initialization(Combat combat, string player);
 
-        void Initialization(Combat combat);
+    void Initialization(Combat combat);
 
-        void Initialization(string player);
+    void Initialization(string player);
 
-        void Clear();
+    void Clear();
 
-        //int GetDamageDone();
+    //int GetDamageDone();
 
-        int GetHealDone();
+    int GetHealDone();
 
-        int GetDamageTaken();
+    int GetDamageTaken();
 
-        double GetResourceRecovery();
+    double GetResourceRecovery();
 
-        int GetDeathsNumber();
-    }
+    int GetDeathsNumber();
 }

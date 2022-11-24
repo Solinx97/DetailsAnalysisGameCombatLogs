@@ -1,8 +1,7 @@
-﻿namespace CombatAnalysis.DAL.Enums
+﻿namespace CombatAnalysis.DAL.Enums;
+
+public enum DatabaseType
 {
-    public enum DatabaseType
-    {
-        MSSQL,
-        Firebase
-    }
+    MSSQL,
+    Firebase
 }

@@ -1,12 +1,11 @@
 ﻿using MvvmCross.Platforms.Wpf.Views;
 
-namespace CombatAnalysis.App.Views
+namespace CombatAnalysis.App.Views;
+
+public partial class ChatView : MvxWpfView
 {
-    public partial class ChatView : MvxWpfView
+    public ChatView()
     {
-        public ChatView()
-        {
-            InitializeComponent();
-        }
+        InitializeComponent();
     }
 }

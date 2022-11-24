@@ -1,28 +1,59 @@
-using CombatAnalysis.CombatParserAPI.Core;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Hosting;
+using AutoMapper;
+using CombatAnalysis.BL.Extensions;
+using CombatAnalysis.BL.Mapping;
+using CombatAnalysis.CombatParserAPI.Helpers;
+using CombatAnalysis.CombatParserAPI.Interfaces;
+using CombatAnalysis.CombatParserAPI.Mapping;
+using Microsoft.OpenApi.Models;
 
-namespace CombatAnalysis.CombatParserAPI
+var builder = WebApplication.CreateBuilder(args);
+
+// Add services to the container.
+builder.Services.RegisterDependenciesForBL(builder.Configuration, "DefaultConnection");
+
+var loggerFactory = new LoggerFactory();
+var logger = new Logger<ILogger>(loggerFactory);
+
+var mappingConfig = new MapperConfiguration(mc =>
 {
-    public class Program
-    {
-        public static void Main(string[] args)
-        {
-            CreateHostBuilder(args).Build().Run();
-        }
+    mc.AddProfile(new CombatParserApiMapper());
+    mc.AddProfile(new BLMapper());
+});
 
-        public static IHostBuilder CreateHostBuilder(string[] args) =>
-            Host.CreateDefaultBuilder(args)
-                .ConfigureWebHostDefaults(webBuilder =>
-                {
-                    if (args.Length > 0 && args[0] == nameof(CommandLineArgs.Tests))
-                    {
-                        webBuilder.UseStartup<TestStartup>();
-                    }
-                    else
-                    {
-                        webBuilder.UseStartup<Startup>();
-                    }
-                });
-    }
+var mapper = mappingConfig.CreateMapper();
+builder.Services.AddSingleton(mapper);
+builder.Services.AddSingleton<ILogger>(logger);
+
+builder.Services.AddTransient<IHttpClientHelper, HttpClientHelper>();
+
+builder.Services.AddControllers();
+// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen(options =>
+{
+    options.SwaggerDoc("v1", new OpenApiInfo
+    {
+        Title = "Combat parser API",
+        Version = "v1",
+    });
+});
+
+var app = builder.Build();
+
+// Configure the HTTP request pipeline.
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI(options =>
+    {
+        options.SwaggerEndpoint("/swagger/v1/swagger.json", "Combat parser API v1");
+    });
 }
+
+app.UseHttpsRedirection();
+
+app.UseAuthorization();
+
+app.MapControllers();
+
+app.Run();

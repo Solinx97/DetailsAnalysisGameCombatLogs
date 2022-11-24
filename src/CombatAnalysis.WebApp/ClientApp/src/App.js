@@ -1,29 +1,22 @@
-import React from 'react';
-import {
-    Routes,
-    Route
-} from 'react-router-dom';
+import React, { Component } from 'react';
+import { Route, Routes } from 'react-router-dom';
+import AppRoutes from './AppRoutes';
 import Layout from './components/Layout';
-import MainInformation from './components/MainInformation';
-import GeneralAnalysis from './components/GeneralAnalysis';
-import DetailsSpecificalCombat from './components/DetailsSpecificalCombat';
-import CombatGeneralDetails from './components/CombatGeneralDetails';
-import Registration from './components/account/Registration';
-import Login from './components/account/Login';
+import './custom.css';
 
-import './custom.css'
+export default class App extends Component {
+  static displayName = App.name;
 
-const App = () => {
-    return <Layout>
-            <Routes>
-                <Route path='/' element={<MainInformation />} />
-                <Route path='/general-analysis' element={<GeneralAnalysis />} />
-                <Route path='/details-specifical-combat' element={<DetailsSpecificalCombat />} />
-                <Route path='/combat-general-details' element={<CombatGeneralDetails />} />
-                <Route path='/registration' element={<Registration />} />
-                <Route path='/login' element={<Login />} />
-            </Routes>
-        </Layout>;
+  render() {
+    return (
+      <Layout>
+        <Routes>
+          {AppRoutes.map((route, index) => {
+            const { element, ...rest } = route;
+            return <Route key={index} {...rest} element={element} />;
+          })}
+        </Routes>
+      </Layout>
+    );
+  }
 }
-
-export default App;

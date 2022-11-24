@@ -1,11 +1,10 @@
-﻿namespace CombatAnalysis.Core.Models.Chat
+﻿namespace CombatAnalysis.Core.Models.Chat;
+
+public class BannedUserModel
 {
-    public class BannedUserModel
-    {
-        public int Id { get; set; }
+    public int Id { get; set; }
 
-        public string WhomBannedId { get; set; }
+    public string WhomBannedId { get; set; }
 
-        public string BannedUserId { get; set; }
-    }
+    public string BannedUserId { get; set; }
 }

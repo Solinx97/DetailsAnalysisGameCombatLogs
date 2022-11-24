@@ -1,8 +1,7 @@
-﻿namespace CombatAnalysis.DAL.Enums
+﻿namespace CombatAnalysis.DAL.Enums;
+
+public enum DataProcessingType
 {
-    public enum DataProcessingType
-    {
-        Default,
-        StoredProcedure
-    }
+    Default,
+    StoredProcedure
 }

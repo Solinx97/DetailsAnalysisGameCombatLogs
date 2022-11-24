@@ -3,73 +3,67 @@ using CombatAnalysis.BL.DTO;
 using CombatAnalysis.BL.Interfaces;
 using CombatAnalysis.CombatParserAPI.Models;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
-using Newtonsoft.Json.Linq;
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 
-namespace CombatAnalysis.CombatParserAPI.Controllers
+namespace CombatAnalysis.CombatParserAPI.Controllers;
+
+[Route("api/v1/[controller]")]
+[ApiController]
+public class HealDoneGeneralController : ControllerBase
 {
-    [Route("[controller]")]
-    [ApiController]
-    public class HealDoneGeneralController : ControllerBase
+    private readonly IService<HealDoneGeneralDto, int> _service;
+    private readonly IMapper _mapper;
+    private readonly ILogger _logger;
+
+    public HealDoneGeneralController(IService<HealDoneGeneralDto, int> service, IMapper mapper, ILogger logger)
     {
-        private readonly IService<HealDoneGeneralDto, int> _service;
-        private readonly IMapper _mapper;
-        private readonly ILogger _logger;
+        _service = service;
+        _mapper = mapper;
+        _logger = logger;
+    }
 
-        public HealDoneGeneralController(IService<HealDoneGeneralDto, int> service, IMapper mapper, ILogger logger)
+    [HttpGet("findByCombatPlayerId/{combatPlayerId:int:min(1)}")]
+    public async Task<IActionResult> Find(int combatPlayerId)
+    {
+        var healDoneGenerals = await _service.GetByParamAsync("CombatPlayerId", combatPlayerId);
+        var map = _mapper.Map<IEnumerable<HealDoneGeneralModel>>(healDoneGenerals);
+
+        return Ok(map);
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> Create(HealDoneGeneralModel model)
+    {
+        try
         {
-            _service = service;
-            _mapper = mapper;
-            _logger = logger;
+            var map = _mapper.Map<HealDoneGeneralDto>(model);
+            var createdItem = await _service.CreateAsync(map);
+            var resultMap = _mapper.Map<HealDoneGeneralModel>(createdItem);
+
+            return Ok(resultMap);
         }
-
-        [HttpGet("findByCombatPlayerId/{combatPlayerId:int:min(1)}")]
-        public async Task<IActionResult> Find(int combatPlayerId)
+        catch (ArgumentNullException ex)
         {
-            var healDoneGenerals = await _service.GetByParamAsync("CombatPlayerId", combatPlayerId);
-            var map = _mapper.Map<IEnumerable<HealDoneGeneralModel>>(healDoneGenerals);
+            _logger.LogError(ex, ex.Message);
 
-            return Ok(map);
+            return BadRequest();
         }
+    }
 
-        [HttpPost]
-        public async Task<IActionResult> Create(HealDoneGeneralModel model)
+    [HttpDelete]
+    public async Task<IActionResult> Delete(HealDoneGeneralModel model)
+    {
+        try
         {
-            try
-            {
-                var map = _mapper.Map<HealDoneGeneralDto>(model);
-                var createdItem = await _service.CreateAsync(map);
-                var resultMap = _mapper.Map<HealDoneGeneralModel>(createdItem);
+            var map = _mapper.Map<HealDoneGeneralDto>(model);
+            var deletedId = await _service.DeleteAsync(map);
 
-                return Ok(resultMap);
-            }
-            catch (ArgumentNullException ex)
-            {
-                _logger.LogError(ex, ex.Message);
-
-                return BadRequest();
-            }
+            return Ok(deletedId);
         }
-
-        [HttpDelete]
-        public async Task<IActionResult> Delete(HealDoneGeneralModel model)
+        catch (ArgumentNullException ex)
         {
-            try
-            {
-                var map = _mapper.Map<HealDoneGeneralDto>(model);
-                var deletedId = await _service.DeleteAsync(map);
+            _logger.LogError(ex, ex.Message);
 
-                return Ok(deletedId);
-            }
-            catch (ArgumentNullException ex)
-            {
-                _logger.LogError(ex, ex.Message);
-
-                return BadRequest();
-            }
+            return BadRequest();
         }
     }
 }

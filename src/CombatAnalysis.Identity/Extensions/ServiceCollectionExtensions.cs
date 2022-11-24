@@ -2,13 +2,12 @@
 using CombatAnalysis.Identity.Services;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace CombatAnalysis.Identity.Extensions
+namespace CombatAnalysis.Identity.Extensions;
+
+public static class ServiceCollectionExtensions
 {
-    public static class ServiceCollectionExtensions
+    public static void RegisterIdentityDependencies(this IServiceCollection services)
     {
-        public static void RegisterIdentityDependencies(this IServiceCollection services)
-        {
-            services.AddScoped<IIdentityTokenService, TokenService>();
-        }
+        services.AddScoped<IIdentityTokenService, TokenService>();
     }
 }
