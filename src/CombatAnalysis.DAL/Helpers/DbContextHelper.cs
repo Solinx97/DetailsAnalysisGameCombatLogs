@@ -80,7 +80,7 @@ public static class DbProcedureHelper
         var properties = type.GetProperties();
         var procedureParamNames = new StringBuilder();
         var procedureParamNamesWithPropertyTypes = new StringBuilder();
-        if (type.GetProperty("Id").PropertyType != typeof(int))
+        if (type.GetProperty("Id")?.PropertyType != typeof(int))
         {
             var propertTypeName = properties[0].PropertyType.Name;
             procedureParamNamesWithPropertyTypes.Append($"@{properties[0].Name} {Converter(propertTypeName)},");

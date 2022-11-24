@@ -3,5 +3,5 @@
 public enum DataProcessingType
 {
     Default,
-    StoredProcedure
+    StoredProcedure,
 }

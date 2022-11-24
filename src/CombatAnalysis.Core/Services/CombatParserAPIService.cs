@@ -82,24 +82,24 @@ internal class CombatParserAPIService
     public async Task<IEnumerable<CombatLogModel>> LoadCombatLogsByUserAsync()
     {
         var user = _memoryCache.Get<AppUserModel>("account");
-        if (user != null)
+        if (user == null)
         {
-            var combatLogs = new List<CombatLogModel>();
-            var responseMessage = await _httpClient.GetAsync($"CombatLogByUser/byUserId/{user.Id}");
-            var combatLogsByUser = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<CombatLogByUserModel>>();
-
-            foreach (var item in combatLogsByUser)
-            {
-                responseMessage = await _httpClient.GetAsync($"CombatLog/{item.CombatLogId}");
-                var combatLog = await responseMessage.Content.ReadFromJsonAsync<CombatLogModel>();
-
-                combatLogs.Add(combatLog);
-            }
-
-            return combatLogs;
+            return new List<CombatLogModel>();
         }
 
-        return new List<CombatLogModel>();
+        var combatLogs = new List<CombatLogModel>();
+        var responseMessage = await _httpClient.GetAsync($"CombatLogByUser/byUserId/{user.Id}");
+        var combatLogsByUser = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<CombatLogByUserModel>>();
+
+        foreach (var item in combatLogsByUser)
+        {
+            responseMessage = await _httpClient.GetAsync($"CombatLog/{item.CombatLogId}");
+            var combatLog = await responseMessage.Content.ReadFromJsonAsync<CombatLogModel>();
+
+            combatLogs.Add(combatLog);
+        }
+
+        return combatLogs;
     }
 
     public async Task<IEnumerable<CombatModel>> LoadCombatsAsync(int combatLogId)
@@ -198,17 +198,19 @@ internal class CombatParserAPIService
     private async Task SaveCombatLogByUser(int combatLogId, LogType logType)
     {
         var user = _memoryCache.Get<AppUserModel>("account");
-        if (user != null)
+        if (user == null)
         {
-            var combatLogByUser = new CombatLogByUserModel
-            {
-                UserId = user.Id,
-                CombatLogId = combatLogId,
-                PersonalLogType = (int)logType
-            };
-
-            await _httpClient.PostAsync("CombatLogByUser", JsonContent.Create(combatLogByUser));
+            return;
         }
+
+        var combatLogByUser = new CombatLogByUserModel
+        {
+            UserId = user.Id,
+            CombatLogId = combatLogId,
+            PersonalLogType = (int)logType
+        };
+
+        await _httpClient.PostAsync("CombatLogByUser", JsonContent.Create(combatLogByUser));
     }
 
     private async Task SaveCombatDataAsync(CombatModel combat, int createdCombatLogId)
@@ -222,7 +224,7 @@ internal class CombatParserAPIService
             item.CombatId = createdCombat.Id;
         }
 
-        await _httpClient.PostAsync("Combat/SaveCombatPlayers", JsonContent.Create(combat.Players));
+        await _httpClient.PostAsync("Combat/saveCombatPlayers", JsonContent.Create(combat.Players));
     }
 
     private async Task SetReadyForCombatLog(int createdCombatLogId)

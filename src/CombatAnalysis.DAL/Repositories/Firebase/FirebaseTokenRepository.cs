@@ -17,7 +17,7 @@ public class FirebaseTokenRepository : ITokenRepository
     public async Task<RefreshToken> CreateAsync(RefreshToken item)
     {
         var itemPropertyId = item.GetType().GetProperty(nameof(RefreshToken.Id));
-        if (itemPropertyId.PropertyType == typeof(int))
+        if (itemPropertyId?.PropertyType == typeof(int))
         {
             var hashCodeToId = int.Parse(Guid.NewGuid().GetHashCode().ToString());
             var newId = hashCodeToId >= 0 ? hashCodeToId : -hashCodeToId;
@@ -36,7 +36,7 @@ public class FirebaseTokenRepository : ITokenRepository
               .Child(nameof(RefreshToken))
               .OnceAsync<RefreshToken>();
 
-        var id = item.GetType().GetProperty(nameof(RefreshToken.Id)).GetValue(item);
+        var id = item.GetType().GetProperty(nameof(RefreshToken.Id))?.GetValue(item);
         var result = data.Select(x => new KeyValuePair<string, RefreshToken>(x.Key, x.Object))
                         .AsEnumerable()
                         .FirstOrDefault(x => x.Value.GetType().GetProperty(nameof(RefreshToken.Id)).GetValue(x.Value).Equals(id));

@@ -83,7 +83,7 @@
                             </Button.ToolTip>
                             <Icon:PackIconMaterial Kind="Recycle" Margin="0" Foreground="#a6a6a6" Width="20" Height="20"/>
                         </Button>
-                        <Button Style="{StaticResource textBoxButton}" VerticalAlignment="Center" mvx:Bi.nd="Command CreateGroupChatCommand">
+                        <Button Style="{StaticResource textBoxButton}" VerticalAlignment="Center" Click="CreateGroupChat">
                             <Button.ToolTip>
                                 <ToolTip>
                                     Создать новый групповой чат

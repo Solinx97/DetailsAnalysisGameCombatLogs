@@ -215,13 +215,8 @@ public class HealDoneDetailsViewModel : MvxViewModel<Tuple<CombatPlayerModel, Co
 
     private void HealDoneInformationFilter()
     {
-        if (_healDoneInformationsWithoutFilter.Any(x => x.SpellOrItem == SelectedHealDoneSource))
-        {
-            HealDoneInformations = new ObservableCollection<HealDoneModel>(_healDoneInformationsWithoutFilter.Where(x => x.SpellOrItem == SelectedHealDoneSource));
-        }
-        else
-        {
-            HealDoneInformations = _healDoneInformationsWithoutFilter;
-        }
+        HealDoneInformations = _healDoneInformationsWithoutFilter.Any(x => x.SpellOrItem == SelectedHealDoneSource) 
+            ? new ObservableCollection<HealDoneModel>(_healDoneInformationsWithoutFilter.Where(x => x.SpellOrItem == SelectedHealDoneSource)) 
+            : _healDoneInformationsWithoutFilter;
     }
 }

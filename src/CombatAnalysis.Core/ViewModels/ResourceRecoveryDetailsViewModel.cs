@@ -168,13 +168,8 @@ public class ResourceRecoveryDetailsViewModel : MvxViewModel<Tuple<CombatPlayerM
 
     private void ResourceRecoveryInformationFilter()
     {
-        if (_resourceRecoveryInformationsWithoutFilter.Any(x => x.SpellOrItem == SelectedResourceRecoverySource))
-        {
-            ResourceRecoveryInformations = new ObservableCollection<ResourceRecoveryModel>(_resourceRecoveryInformationsWithoutFilter.Where(x => x.SpellOrItem == SelectedResourceRecoverySource));
-        }
-        else
-        {
-            ResourceRecoveryInformations = _resourceRecoveryInformationsWithoutFilter;
-        }
+        ResourceRecoveryInformations = _resourceRecoveryInformationsWithoutFilter.Any(x => x.SpellOrItem == SelectedResourceRecoverySource)
+            ? new ObservableCollection<ResourceRecoveryModel>(_resourceRecoveryInformationsWithoutFilter.Where(x => x.SpellOrItem == SelectedResourceRecoverySource)) 
+            : _resourceRecoveryInformationsWithoutFilter;
     }
 }

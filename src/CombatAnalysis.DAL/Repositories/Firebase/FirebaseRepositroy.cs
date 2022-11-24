@@ -18,7 +18,7 @@ public class FirebaseRepositroy<TModel, TIdType> : IGenericRepository<TModel, TI
     public async Task<TModel> CreateAsync(TModel item)
     {
         var itemPropertyId = item.GetType().GetProperty("Id");
-        if (itemPropertyId.PropertyType == typeof(int))
+        if (itemPropertyId?.PropertyType == typeof(int))
         {
             var hashCodeToId = int.Parse(Guid.NewGuid().GetHashCode().ToString());
             var newId = hashCodeToId >= 0 ? hashCodeToId : -hashCodeToId;
@@ -37,7 +37,7 @@ public class FirebaseRepositroy<TModel, TIdType> : IGenericRepository<TModel, TI
               .Child(typeof(TModel).Name)
               .OnceAsync<TModel>();
 
-        var id = item.GetType().GetProperty("Id").GetValue(item);
+        var id = item.GetType().GetProperty("Id")?.GetValue(item);
         var result = data.Select(x => new KeyValuePair<string, TModel>(x.Key, x.Object))
             .AsEnumerable()
             .FirstOrDefault(x => x.Value.GetType().GetProperty("Id").GetValue(x.Value).Equals(id));
@@ -99,7 +99,7 @@ public class FirebaseRepositroy<TModel, TIdType> : IGenericRepository<TModel, TI
               .Child(typeof(TModel).Name)
               .OnceAsync<TModel>();
 
-        var id = item.GetType().GetProperty("Id").GetValue(item);
+        var id = item.GetType().GetProperty("Id")?.GetValue(item);
         var result = data.Select(x => new KeyValuePair<string, TModel>(x.Key, x.Object))
             .AsEnumerable()
             .FirstOrDefault(x => x.Value.GetType().GetProperty("Id").GetValue(x.Value).Equals(id));

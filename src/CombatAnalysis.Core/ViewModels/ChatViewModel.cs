@@ -62,7 +62,6 @@ public class ChatViewModel : MvxViewModel, IImprovedMvxViewModel
         GroupChatMessages = new ObservableCollection<GroupChatMessageModel>();
         SendGroupMessageCommand = new MvxAsyncCommand(SendGroupMessageAsync);
         SendPersonalMessageCommand = new MvxAsyncCommand(SendPersonalMessageAsync);
-        CreateGroupChatCommand = new MvxCommand(CreateGroupChat);
         RefreshGroupChatsCommand = new MvxAsyncCommand(LoadGroupChatsAsync);
         RefreshPersonalChatsCommand = new MvxAsyncCommand(LoadPersonalChatsAsync);
         ShowGroupChatMenuCommand = new MvxCommand(ShowGCMenu);
@@ -84,8 +83,6 @@ public class ChatViewModel : MvxViewModel, IImprovedMvxViewModel
     public IMvxAsyncCommand SendGroupMessageCommand { get; set; }
 
     public IMvxAsyncCommand SendPersonalMessageCommand { get; set; }
-
-    public IMvxCommand CreateGroupChatCommand { get; set; }
 
     public IMvxAsyncCommand RefreshGroupChatsCommand { get; set; }
 
@@ -418,9 +415,9 @@ public class ChatViewModel : MvxViewModel, IImprovedMvxViewModel
     {
         base.Prepare();
 
-        Task.Run(async () => await LoadGroupChatsAsync());
-        Task.Run(async () => await LoadPersonalChatsAsync());
-        Task.Run(async () => await LoadUsersAsync());
+        Task.Run(LoadGroupChatsAsync);
+        Task.Run(LoadPersonalChatsAsync);
+        Task.Run(LoadUsersAsync);
     }
 
     public async Task SendGroupMessageAsync()
@@ -461,11 +458,6 @@ public class ChatViewModel : MvxViewModel, IImprovedMvxViewModel
         SelectedPersonalChat.LastMessage = newPersonalChatMessage.Message;
 
         await _httpClientHelper.PutAsync("PersonalChat", JsonContent.Create(SelectedPersonalChat));
-    }
-
-    public void CreateGroupChat()
-    {
-        //WindowManager.CreateGroupChat.Show();
     }
 
     public void ShowGCMenu()
@@ -571,20 +563,23 @@ public class ChatViewModel : MvxViewModel, IImprovedMvxViewModel
         UsersForInviteToGroupChat = null;
 
         var response = await _httpClientHelper.GetAsync("GroupChatUser");
-        if (response.StatusCode == System.Net.HttpStatusCode.OK)
-        {
-            var groupChatUsers = await response.Content.ReadFromJsonAsync<IEnumerable<GroupChatUserModel>>();
-            var usersForInviteToGroupChat = Users.Where(x => !groupChatUsers.Any(y => x.Id == y.UserId)).ToList();
 
-            UsersForInviteToGroupChat = new ObservableCollection<AppUserModel>(usersForInviteToGroupChat);
+        if (response.StatusCode != System.Net.HttpStatusCode.OK)
+        {
+            return;
         }
+
+        var groupChatUsers = await response.Content.ReadFromJsonAsync<IEnumerable<GroupChatUserModel>>();
+        var usersForInviteToGroupChat = Users.Where(x => !groupChatUsers.Any(y => x.Id == y.UserId)).ToList();
+
+        UsersForInviteToGroupChat = new ObservableCollection<AppUserModel>(usersForInviteToGroupChat);
 
         SwitchInviteToGroupChat();
     }
 
     private void InitLoadGroupChatMessages(object obj)
     {
-        Task.Run(async () => await LoadGroupChatMessagesAsync());
+        Task.Run(LoadGroupChatMessagesAsync);
 
         if (SelectedMyGroupChat != null)
         {
@@ -594,7 +589,7 @@ public class ChatViewModel : MvxViewModel, IImprovedMvxViewModel
 
     private void InitLoadPersonalChatMessages(object obj)
     {
-        Task.Run(async () => await LoadPersonalChatMessagesAsync());
+        Task.Run(LoadPersonalChatMessagesAsync);
 
         if (SelectedPersonalChat != null)
         {
@@ -651,14 +646,16 @@ public class ChatViewModel : MvxViewModel, IImprovedMvxViewModel
     private async Task GetGroupChatsAsync()
     {
         var response = await _httpClientHelper.GetAsync("GroupChat");
-        if (response.StatusCode == System.Net.HttpStatusCode.OK)
+        if (response.StatusCode != System.Net.HttpStatusCode.OK)
         {
-            var groupChats = await response.Content.ReadFromJsonAsync<IEnumerable<GroupChatModel>>();
-            var groupChatsExcludeMe = groupChats.Where(x => !MyGroupChats.Any(y => x.Id == y.Id)).ToList();
-
-            _allGroupChats = groupChatsExcludeMe.ToList();
-            GroupChats = new ObservableCollection<GroupChatModel>(groupChatsExcludeMe);
+            return;
         }
+
+        var groupChats = await response.Content.ReadFromJsonAsync<IEnumerable<GroupChatModel>>();
+        var groupChatsExcludeMe = groupChats.Where(x => !MyGroupChats.Any(y => x.Id == y.Id)).ToList();
+
+        _allGroupChats = groupChatsExcludeMe.ToList();
+        GroupChats = new ObservableCollection<GroupChatModel>(groupChatsExcludeMe);
     }
 
     private async Task LoadPersonalChatsAsync()
@@ -714,20 +711,22 @@ public class ChatViewModel : MvxViewModel, IImprovedMvxViewModel
         _httpClientHelper.BaseAddress = Port.ChatApi;
 
         var response = await _httpClientHelper.GetAsync("PersonalChatMessage");
-        if (response.StatusCode == System.Net.HttpStatusCode.OK)
+        if (response.StatusCode != System.Net.HttpStatusCode.OK)
         {
-            var personalChatMessages = await response.Content.ReadFromJsonAsync<IEnumerable<PersonalChatMessageModel>>();
-            var selectedPersonalChatMessages = new List<PersonalChatMessageModel>();
-            foreach (var item in personalChatMessages)
-            {
-                if (item.PersonalChatId == SelectedPersonalChat?.Id)
-                {
-                    selectedPersonalChatMessages.Add(item);
-                }
-            }
-
-            PersonalChatMessages = new ObservableCollection<PersonalChatMessageModel>(selectedPersonalChatMessages);
+            return;
         }
+
+        var personalChatMessages = await response.Content.ReadFromJsonAsync<IEnumerable<PersonalChatMessageModel>>();
+        var selectedPersonalChatMessages = new List<PersonalChatMessageModel>();
+        foreach (var item in personalChatMessages)
+        {
+            if (item.PersonalChatId == SelectedPersonalChat?.Id)
+            {
+                selectedPersonalChatMessages.Add(item);
+            }
+        }
+
+        PersonalChatMessages = new ObservableCollection<PersonalChatMessageModel>(selectedPersonalChatMessages);
     }
 
     private async Task LoadUsersAsync()

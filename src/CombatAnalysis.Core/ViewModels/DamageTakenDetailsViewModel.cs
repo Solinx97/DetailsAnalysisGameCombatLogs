@@ -316,13 +316,8 @@ public class DamageTakenDetailsViewModel : MvxViewModel<Tuple<CombatPlayerModel,
 
     private void DamageTakenInformationFilter()
     {
-        if (_damageTakenInformationsWithoutFilter.Any(x => x.SpellOrItem == SelectedDamageTakenSource))
-        {
-            DamageTakenInformations = new ObservableCollection<DamageTakenModel>(_damageTakenInformationsWithoutFilter.Where(x => x.SpellOrItem == SelectedDamageTakenSource));
-        }
-        else
-        {
-            DamageTakenInformations = _damageTakenInformationsWithoutFilter;
-        }
+        DamageTakenInformations = _damageTakenInformationsWithoutFilter.Any(x => x.SpellOrItem == SelectedDamageTakenSource)
+            ? new ObservableCollection<DamageTakenModel>(_damageTakenInformationsWithoutFilter.Where(x => x.SpellOrItem == SelectedDamageTakenSource))
+            : _damageTakenInformationsWithoutFilter;
     }
 }

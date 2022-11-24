@@ -5,7 +5,7 @@ namespace CombatAnalysis.Core.Core;
 internal static class Sorts<T>
     where T : class
 {
-    private static string _propertyName;
+    private static string _propertyName = string.Empty;
 
     public static void SetProperty(string propertyName)
     {

@@ -341,10 +341,12 @@ public class BasicTemplateViewModel : MvxViewModel, IImprovedMvxViewModel, IResp
     public void CheckAuth()
     {
         var user = _memoryCache.Get<AppUserModel>("account");
-        if (user != null)
+        if (user == null)
         {
-            IsAuth = true;
-            Email = user.Email;
+            return;
         }
+
+        IsAuth = true;
+        Email = user.Email;
     }
 }

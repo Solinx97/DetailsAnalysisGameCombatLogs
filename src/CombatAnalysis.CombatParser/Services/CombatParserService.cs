@@ -13,7 +13,7 @@ public class CombatParserService : IParser
     private readonly IFileManager _fileManager;
     private readonly ILogger _logger;
 
-    private TimeSpan _minCombatDuration = TimeSpan.Parse("00:00:20");
+    private readonly TimeSpan _minCombatDuration = TimeSpan.Parse("00:00:20");
 
     public CombatParserService(IFileManager fileManager, ILogger logger)
     {

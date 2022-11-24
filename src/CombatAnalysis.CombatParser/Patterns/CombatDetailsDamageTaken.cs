@@ -1,9 +1,6 @@
 ﻿using CombatAnalysis.CombatParser.Core;
 using CombatAnalysis.CombatParser.Entities;
 using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace CombatAnalysis.CombatParser.Patterns;
 

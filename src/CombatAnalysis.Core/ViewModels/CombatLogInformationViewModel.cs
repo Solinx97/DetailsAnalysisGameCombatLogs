@@ -270,8 +270,8 @@ public class CombatLogInformationViewModel : MvxViewModel, IObserver, IAuthObser
 
     public void LoadCombatLogs()
     {
-        Task.Run(async () => await LoadCombatLogsAsync());
-        Task.Run(async () => await LoadCombatLogsByUserAsync());
+        Task.Run(LoadCombatLogsAsync);
+        Task.Run(LoadCombatLogsByUserAsync);
     }
 
     public async Task OpenPlayerAnalysisAsync()
@@ -295,9 +295,6 @@ public class CombatLogInformationViewModel : MvxViewModel, IObserver, IAuthObser
 
         CombatLogs?.Clear();
         LoadCombatLogs();
-
-        //ScreenWidth = SystemParameters.PrimaryScreenWidth * 0.75;
-        //ScreenHeight = SystemParameters.PrimaryScreenHeight * 0.75;
     }
 
     public void AuthUpdate(bool isAuth)

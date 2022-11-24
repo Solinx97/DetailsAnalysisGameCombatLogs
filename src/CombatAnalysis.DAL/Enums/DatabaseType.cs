@@ -3,5 +3,5 @@
 public enum DatabaseType
 {
     MSSQL,
-    Firebase
+    Firebase,
 }

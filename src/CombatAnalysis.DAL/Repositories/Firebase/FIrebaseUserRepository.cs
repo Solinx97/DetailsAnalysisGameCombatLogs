@@ -17,7 +17,7 @@ public class FIrebaseUserRepository : IUserRepository
     public async Task<AppUser> CreateAsync(AppUser item)
     {
         var itemPropertyId = item.GetType().GetProperty(nameof(AppUser.Id));
-        if (itemPropertyId.PropertyType == typeof(int))
+        if (itemPropertyId?.PropertyType == typeof(int))
         {
             var hashCodeToId = int.Parse(Guid.NewGuid().GetHashCode().ToString());
             var newId = hashCodeToId >= 0 ? hashCodeToId : -hashCodeToId;
@@ -36,7 +36,7 @@ public class FIrebaseUserRepository : IUserRepository
               .Child(nameof(AppUser))
               .OnceAsync<AppUser>();
 
-        var id = item.GetType().GetProperty(nameof(AppUser.Id)).GetValue(item);
+        var id = item.GetType().GetProperty(nameof(AppUser.Id))?.GetValue(item);
         var result = data.Select(x => new KeyValuePair<string, AppUser>(x.Key, x.Object))
                         .AsEnumerable()
                         .FirstOrDefault(x => x.Value.GetType().GetProperty(nameof(AppUser.Id)).GetValue(x.Value).Equals(id));
