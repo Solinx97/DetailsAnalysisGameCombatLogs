@@ -35,7 +35,10 @@ public static class DataCollectionExtensions
     {
         var connection = configuration.GetConnectionString(connectionName);
 
-        services.AddDbContext<SQLContext>(options => options.UseSqlServer(connection));
+        services.AddDbContext<SQLContext>(options =>
+        {
+            options.UseSqlServer(connection);
+        });
         services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
                 .AddCookie();
 

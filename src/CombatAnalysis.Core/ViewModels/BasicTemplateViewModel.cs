@@ -249,6 +249,7 @@ public class BasicTemplateViewModel : MvxViewModel, IImprovedMvxViewModel, IResp
         Step = -1;
         LogPanelStatusIsVisibly = false;
         await _mvvmNavigation.Close(Parent);
+        await _mvvmNavigation.Navigate<HomeViewModel>();
     }
 
     public async Task UploadCombatLogsAsync()

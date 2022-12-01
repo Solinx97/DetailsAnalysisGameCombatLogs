@@ -2,32 +2,28 @@
 using CombatAnalysis.WebApp.Interfaces;
 using CombatAnalysis.WebApp.Models;
 using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
-using System.Net.Http.Json;
-using System.Threading.Tasks;
 
-namespace CombatAnalysis.WebApp.Controllers
+namespace CombatAnalysis.WebApp.Controllers;
+
+[ApiController]
+[Route("[controller]")]
+public class MainInformationController : ControllerBase
 {
-    [ApiController]
-    [Route("[controller]")]
-    public class MainInformationController : Controller
+    private readonly IHttpClientHelper _httpClient;
+
+    //public MainInformationController(IHttpClientHelper httpClient)
+    //{
+    //    _httpClient = httpClient;
+    //}
+
+    [HttpGet]
+    public async Task<IActionResult> Get()
     {
-        private readonly IHttpClientHelper _httpClient;
+        _httpClient.BaseAddress = Port.CombatParserApi;
 
-        public MainInformationController(IHttpClientHelper httpClient)
-        {
-            _httpClient = httpClient;
-        }
+        var responseMessage = await _httpClient.GetAsync("CombatLog");
+        var combatLogs = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<CombatLogModel>>();
 
-        [HttpGet]
-        public async Task<IEnumerable<CombatLogModel>> Get()
-        {
-            _httpClient.BaseAddress = Port.CombatParserApi;
-
-            var responseMessage = await _httpClient.GetAsync("CombatLog");
-            var combatLogs = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<CombatLogModel>>();
-
-            return combatLogs;
-        }
+        return Ok(combatLogs);
     }
 }

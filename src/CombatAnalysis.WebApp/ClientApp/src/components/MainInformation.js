@@ -16,7 +16,7 @@ const MainInformation = () => {
     }, []);
 
     const getCombatLogsAsync = async () => {
-        const response = await fetch('mainInformation');
+        const response = await fetch('MainInformation');
         const combatLogs = await response.json();
 
         fillingCombatLogList(combatLogs);
