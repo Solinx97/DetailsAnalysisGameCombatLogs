@@ -26,7 +26,7 @@ const NavMenu = (props) => {
     });
 
     const checkAuthAsyn = async () => {
-        const response = await fetch('authentication');
+        const response = await fetch('api/v1/Authentication');
 
         const result = await response;
         if (result.status == 200) {
@@ -41,7 +41,7 @@ const NavMenu = (props) => {
     }
 
     const logout = async () => {
-        const response = await fetch('account/logout', {
+        const response = await fetch('api/v1/Account/logout', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'

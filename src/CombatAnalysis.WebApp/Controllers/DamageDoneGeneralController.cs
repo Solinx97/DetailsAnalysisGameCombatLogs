@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace CombatAnalysis.WebApp.Controllers;
 
-[Route("[controller]")]
+[Route("api/v1/[controller]")]
 [ApiController]
 public class DamageDoneGeneralController : ControllerBase
 {

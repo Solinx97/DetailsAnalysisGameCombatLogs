@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace CombatAnalysis.WebApp.Controllers;
 
-[Route("apiv1/[controller]")]
+[Route("api/v1/[controller]")]
 [ApiController]
 public class ResourceRecoveryController : ControllerBase
 {

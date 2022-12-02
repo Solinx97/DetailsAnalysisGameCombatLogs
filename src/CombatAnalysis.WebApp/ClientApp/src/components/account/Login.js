@@ -13,7 +13,7 @@ const Login = () => {
             password: password
         };
 
-        const response = await fetch('account', {
+        const response = await fetch('api/v1/Account', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'

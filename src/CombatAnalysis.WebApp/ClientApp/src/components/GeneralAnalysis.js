@@ -26,7 +26,7 @@ const GeneralAnalysis = () => {
     }, [combatLogId]);
 
     const getCombatsAsync = async () => {
-        const response = await fetch(`generalAnalysis/${combatLogId}`);
+        const response = await fetch(`api/v1/GeneralAnalysis/${combatLogId}`);
         const combats = await response.json();
 
         fillingCombatList(combats);

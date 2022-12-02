@@ -66,7 +66,7 @@ const CombatGeneralDetails = () => {
     }
 
     const getCombatPlayerAsync = async () => {
-        const response = await fetch(`detailsSpecificalCombat/combatPlayerById/${combatPlayerId}`);
+        const response = await fetch(`api/v1/DetailsSpecificalCombat/combatPlayerById/${combatPlayerId}`);
         const combatPlayer = await response.json();
 
         setUserName(combatPlayer.userName);
@@ -75,7 +75,7 @@ const CombatGeneralDetails = () => {
     }
 
     const getCombatsAsync = async (id) => {
-        const response = await fetch(`detailsSpecificalCombat/combatById/${id}`);
+        const response = await fetch(`api/v1/DetailsSpecificalCombat/combatById/${id}`);
         const combat = await response.json();
 
         setCombatId(combat.id);

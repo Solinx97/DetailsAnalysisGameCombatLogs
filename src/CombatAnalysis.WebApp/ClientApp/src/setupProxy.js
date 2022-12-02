@@ -5,7 +5,20 @@ const target = env.ASPNETCORE_HTTPS_PORT ? `https://localhost:${env.ASPNETCORE_H
   env.ASPNETCORE_URLS ? env.ASPNETCORE_URLS.split(';')[0] : 'http://localhost:62166';
 
 const context = [
-  "/weatherforecast",
+    "/api/v1/MainInformation",
+    "/api/v1/Account",
+    "/api/v1/Authentication",
+    "/api/v1/DamageDone",
+    "/api/v1/DamageDoneGeneral",
+    "/api/v1/DamageDoneGeneral",
+    "/api/v1/DamageTaken",
+    "/api/v1/DamageTakenGeneral",
+    "/api/v1/DetailsSpecificalCombat",
+    "/api/v1/GeneralAnalysis",
+    "/api/v1/HealDone",
+    "/api/v1/HealDoneGeneral",
+    "/api/v1/ResourceRecovery",
+    "/api/v1/ResourceRecoveryGeneral",
 ];
 
 const onError = (err, req, resp, target) => {

@@ -8,18 +8,21 @@ const MainInformation = () => {
     const [combatsRender, setCombatsRender] = useState(null);
 
     useEffect(() => {
-        const getCombatLogs = async () => {
+        async function fetchBusinesses() {
             await getCombatLogsAsync();
         };
 
-        getCombatLogs();
+        fetchBusinesses();
     }, []);
 
     const getCombatLogsAsync = async () => {
-        const response = await fetch('MainInformation');
-        const combatLogs = await response.json();
+        const response = await fetch('/api/v1/MainInformation');
+        const status = response.status;
+        if (status == 200) {
+            const combatLogs = await response.json();
 
-        fillingCombatLogList(combatLogs);
+            fillingCombatLogList(combatLogs);
+        }
     }
 
     const fillingCombatLogList = (combats) => {

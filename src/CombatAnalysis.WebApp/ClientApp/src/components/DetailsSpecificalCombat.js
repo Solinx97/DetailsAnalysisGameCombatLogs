@@ -72,7 +72,7 @@ const DetailsSpecificalCombat = () => {
     }, [combatPlayers]);
 
     const getCombatPlayersAsync = async () => {
-        const response = await fetch(`detailsSpecificalCombat/combatPlayersByCombatId/${combatId}`);
+        const response = await fetch(`api/v1/DetailsSpecificalCombat/combatPlayersByCombatId/${combatId}`);
         const combatPlayersData = await response.json();
         setCombatPlayers(combatPlayersData);
 
@@ -82,7 +82,7 @@ const DetailsSpecificalCombat = () => {
     }
 
     const getCombatsAsync = async () => {
-        const response = await fetch(`detailsSpecificalCombat/combatById/${combatId}`);
+        const response = await fetch(`api/v1/DetailsSpecificalCombat/combatById/${combatId}`);
         const combat = await response.json();
 
         setCombatLogId(combat.combatLogId);

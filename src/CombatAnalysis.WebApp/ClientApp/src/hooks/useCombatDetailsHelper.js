@@ -17,14 +17,14 @@ const useCombatDetailsHelper = (combatPlayerId) => {
     }
 
     const getGeneralDetailsAsync = async (detailsType) => {
-        const response = await fetch(`${detailsType}General/${combatPlayerId}`);
+        const response = await fetch(`api/v1/${detailsType}General/${combatPlayerId}`);
         const generalDetailsGeneralData = await response.json();
 
         return generalDetailsGeneralData;
     }
 
     const getDetailsAsync = async (detailsType) => {
-        const response = await fetch(`${detailsType}/${combatPlayerId}`);
+        const response = await fetch(`api/v1/${detailsType}/${combatPlayerId}`);
         const generalDetailsGeneralData = await response.json();
 
         return generalDetailsGeneralData;

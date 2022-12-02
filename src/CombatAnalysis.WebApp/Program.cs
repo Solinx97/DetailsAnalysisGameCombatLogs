@@ -9,7 +9,6 @@ using CombatAnalysis.WebApp.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
 builder.Services.RegisterDependenciesForBL(builder.Configuration, "DefaultConnection");
 builder.Services.RegisterIdentityDependencies();
 
@@ -20,8 +19,6 @@ builder.Services.Configure<TokenSettings>(settings);
 
 Port.CombatParserApi = builder.Configuration.GetValue<string>("CombatParserApiPort");
 Port.UserApi = builder.Configuration.GetValue<string>("UserApiPort");
-
-builder.Services.AddControllersWithViews();
 
 IHttpClientHelper httpClient = new HttpClientHelper();
 builder.Services.AddSingleton(httpClient);
