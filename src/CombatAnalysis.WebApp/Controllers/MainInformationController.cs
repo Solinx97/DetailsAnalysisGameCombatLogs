@@ -5,16 +5,16 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace CombatAnalysis.WebApp.Controllers;
 
+[Route("api/v1/[controller]")]
 [ApiController]
-[Route("[controller]")]
 public class MainInformationController : ControllerBase
 {
     private readonly IHttpClientHelper _httpClient;
 
-    //public MainInformationController(IHttpClientHelper httpClient)
-    //{
-    //    _httpClient = httpClient;
-    //}
+    public MainInformationController(IHttpClientHelper httpClient)
+    {
+        _httpClient = httpClient;
+    }
 
     [HttpGet]
     public async Task<IActionResult> Get()

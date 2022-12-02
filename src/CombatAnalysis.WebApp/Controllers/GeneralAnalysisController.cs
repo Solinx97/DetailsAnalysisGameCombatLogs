@@ -2,31 +2,27 @@
 using CombatAnalysis.WebApp.Interfaces;
 using CombatAnalysis.WebApp.Models;
 using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
-using System.Net.Http.Json;
-using System.Threading.Tasks;
 
-namespace CombatAnalysis.WebApp.Controllers
+namespace CombatAnalysis.WebApp.Controllers;
+
+[Route("api/v1/[controller]")]
+[ApiController]
+public class GeneralAnalysisController : ControllerBase
 {
-    [ApiController]
-    [Route("[controller]")]
-    public class GeneralAnalysisController : ControllerBase
+    private readonly IHttpClientHelper _httpClient;
+
+    public GeneralAnalysisController(IHttpClientHelper httpClient)
     {
-        private readonly IHttpClientHelper _httpClient;
+        _httpClient = httpClient;
+        _httpClient.BaseAddress = Port.CombatParserApi;
+    }
 
-        public GeneralAnalysisController(IHttpClientHelper httpClient)
-        {
-            _httpClient = httpClient;
-            _httpClient.BaseAddress = Port.CombatParserApi;
-        }
+    [HttpGet("{id}")]
+    public async Task<IActionResult> GetById(int id)
+    {
+        var responseMessage = await _httpClient.GetAsync($"Combat/FindByCombatLogId/{id}");
+        var combats = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<CombatModel>>();
 
-        [HttpGet("{id}")]
-        public async Task<IEnumerable<CombatModel>> GetById(int id)
-        {
-            var responseMessage = await _httpClient.GetAsync($"Combat/FindByCombatLogId/{id}");
-            var combats = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<CombatModel>>();
-
-            return combats;
-        }
+        return Ok(combats);
     }
 }
