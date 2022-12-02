@@ -3,6 +3,7 @@ using CombatAnalysis.BL.Extensions;
 using CombatAnalysis.BL.Mapping;
 using CombatAnalysis.Identity.Extensions;
 using CombatAnalysis.Identity.Mapping;
+using CombatAnalysis.Identity.Security;
 using CombatAnalysis.Identity.Settings;
 using CombatAnalysis.UserApi.Mapping;
 using Microsoft.OpenApi.Models;
@@ -12,6 +13,9 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.RegisterDependenciesForBL(builder.Configuration, "DefaultConnection");
 builder.Services.RegisterIdentityDependencies();
+
+JWTSecret.GenerateAccessSecretKey();
+JWTSecret.GenerateRefreshSecretKey();
 
 var settings = builder.Configuration.GetSection(nameof(TokenSettings));
 var scheme = settings.GetValue<string>(nameof(TokenSettings.AuthScheme));

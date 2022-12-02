@@ -65,8 +65,6 @@ public class CombatLogInformationViewModel : MvxViewModel, IObserver, IAuthObser
 
         var authObservable = (IAuthObservable)BasicTemplate;
         authObservable.AddObserver(this);
-
-        ((BasicTemplateViewModel)BasicTemplate).CheckAuth();
     }
 
     #region Commands

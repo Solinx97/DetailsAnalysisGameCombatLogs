@@ -58,6 +58,8 @@ public class BasicTemplateViewModel : MvxViewModel, IImprovedMvxViewModel, IResp
         HealDoneDetailsCommand = new MvxAsyncCommand(HealDoneDetailsAsync);
         DamageTakenDetailsCommand = new MvxAsyncCommand(DamageTakenDetailsAsync);
         ResourceDetailsCommand = new MvxAsyncCommand(ResourceDetailsAsync);
+
+        CheckAuth();
     }
 
     #region Commands
