@@ -1,27 +1,19 @@
-﻿using AutoMapper;
-using CombatAnalysis.CombatParser.Entities;
-using CombatAnalysis.CombatParser.Extensions;
-using CombatAnalysis.CombatParser.Patterns;
-using CombatAnalysis.Core.Consts;
+﻿using CombatAnalysis.Core.Consts;
 using CombatAnalysis.Core.Core;
 using CombatAnalysis.Core.Interfaces;
 using CombatAnalysis.Core.Models;
 using CombatAnalysis.Core.Services;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
-using MvvmCross.ViewModels;
 using System.Collections.ObjectModel;
 
 namespace CombatAnalysis.Core.ViewModels;
 
-public class DamageDoneDetailsViewModel : MvxViewModel<Tuple<CombatPlayerModel, CombatModel>>
+public class DamageDoneDetailsViewModel : GenericTemplate<Tuple<CombatPlayerModel, CombatModel>>
 {
-    private readonly IMapper _mapper;
-    private readonly ILogger _logger;
     private readonly PowerUpInCombat<DamageDoneModel> _powerUpInCombat;
     private readonly CombatParserAPIService _combatParserAPIService;
 
-    private IImprovedMvxViewModel _basicTemplate;
     private ObservableCollection<DamageDoneModel> _damageDoneInformations;
     private ObservableCollection<DamageDoneModel> _damageDoneInformationsWithoutFilter;
     private ObservableCollection<DamageDoneModel> _damageDoneInformationsWithSkipDamage;
@@ -35,16 +27,9 @@ public class DamageDoneDetailsViewModel : MvxViewModel<Tuple<CombatPlayerModel, 
     private bool _isShowResist = true;
     private bool _isShowImmune = true;
     private bool _isShowDirectDamage;
-    private bool _isShowFilters;
-    private string _selectedPlayer;
-    private string _selectedDamageDoneSource = "Все";
-    private long _totalValue;
 
-    public DamageDoneDetailsViewModel(IMapper mapper, IHttpClientHelper httpClient, ILogger loger, IMemoryCache memoryCache)
+    public DamageDoneDetailsViewModel(IHttpClientHelper httpClient, ILogger loger, IMemoryCache memoryCache)
     {
-        _mapper = mapper;
-        _logger = loger;
-
         _combatParserAPIService = new CombatParserAPIService(httpClient, loger, memoryCache);
         _powerUpInCombat = new PowerUpInCombat<DamageDoneModel>(_damageDoneInformationsWithSkipDamage);
 
@@ -54,15 +39,6 @@ public class DamageDoneDetailsViewModel : MvxViewModel<Tuple<CombatPlayerModel, 
     }
 
     #region Properties
-
-    public IImprovedMvxViewModel BasicTemplate
-    {
-        get { return _basicTemplate; }
-        set
-        {
-            SetProperty(ref _basicTemplate, value);
-        }
-    }
 
     public ObservableCollection<DamageDoneModel> DamageDoneInformations
     {
@@ -190,88 +166,34 @@ public class DamageDoneDetailsViewModel : MvxViewModel<Tuple<CombatPlayerModel, 
         }
     }
 
-    public bool IsShowFilters
-    {
-        get { return _isShowFilters; }
-        set
-        {
-            SetProperty(ref _isShowFilters, value);
-        }
-    }
-
-    public string SelectedPlayer
-    {
-        get { return _selectedPlayer; }
-        set
-        {
-            SetProperty(ref _selectedPlayer, value);
-        }
-    }
-
-    public string SelectedDamageDoneSource
-    {
-        get { return _selectedDamageDoneSource; }
-        set
-        {
-            SetProperty(ref _selectedDamageDoneSource, value);
-
-            DamageDoneInformationFilter();
-        }
-    }
-
-    public long TotalValue
-    {
-        get { return _totalValue; }
-        set
-        {
-            SetProperty(ref _totalValue, value);
-        }
-    }
-
     #endregion
 
-    public override void Prepare(Tuple<CombatPlayerModel, CombatModel> parameter)
+    protected override void ChildPrepare(Tuple<CombatPlayerModel, CombatModel> parameter)
     {
         var combat = parameter.Item2;
         var player = parameter.Item1;
         SelectedPlayer = player.UserName;
         TotalValue = player.DamageDone;
 
-        if (player.Id > 0)
-        {
-            Task.Run(async () => await LoadDamageDoneDetailsAsync(player.Id));
-            Task.Run(async () => await LoadDamageDoneGeneralAsync(player.Id));
-        }
-        else
-        {
-            CombatDetailsTemplate combatInformation = new CombatDetailsDamageDone(_logger);
-            var map = _mapper.Map<Combat>(combat);
-
-            GetDamageDoneDetails(combatInformation, SelectedPlayer, map);
-            GetDamageDoneGeneral(combatInformation, map);
-        }
+        Task.Run(async () => await LoadDamageDoneDetailsAsync(player.Id));
+        Task.Run(async () => await LoadDamageDoneGeneralAsync(player.Id));
     }
 
-    private void GetDamageDoneDetails(CombatDetailsTemplate combatDetails, string player, Combat combat)
+    protected override void GetDetails()
     {
-        combatDetails.GetData(player, combat.Data);
-
-        var map1 = _mapper.Map<ObservableCollection<DamageDoneModel>>(combatDetails.DamageDone);
-
-        DamageDoneInformations = map1;
-        _damageDoneInformationsWithoutFilter = new ObservableCollection<DamageDoneModel>(map1);
-        _damageDoneInformationsWithSkipDamage = new ObservableCollection<DamageDoneModel>(map1);
+        _damageDoneInformationsWithoutFilter = new ObservableCollection<DamageDoneModel>(DamageDoneInformations);
+        _damageDoneInformationsWithSkipDamage = new ObservableCollection<DamageDoneModel>(DamageDoneInformations);
 
         var damageDoneSources = DamageDoneInformations.Select(x => x.SpellOrItem).Distinct().ToList();
         damageDoneSources.Insert(0, "Все");
         DamageDoneSources = new ObservableCollection<string>(damageDoneSources);
     }
 
-    private void GetDamageDoneGeneral(CombatDetailsTemplate combatDetails, Combat combat)
+    protected override void Filter()
     {
-        var damageDoneGeneralInformations = combatDetails.GetDamageDoneGeneral(combatDetails.DamageDone, combat);
-        var map2 = _mapper.Map<ObservableCollection<DamageDoneGeneralModel>>(damageDoneGeneralInformations);
-        DamageDoneGeneralInformations = map2;
+        DamageDoneInformations = _damageDoneInformationsWithoutFilter.Any(x => x.SpellOrItem == SelectedSource)
+            ? new ObservableCollection<DamageDoneModel>(_damageDoneInformationsWithoutFilter.Where(x => x.SpellOrItem == SelectedSource))
+            : _damageDoneInformationsWithoutFilter;
     }
 
     private async Task LoadDamageDoneDetailsAsync(int combatPlayerId)
@@ -287,10 +209,14 @@ public class DamageDoneDetailsViewModel : MvxViewModel<Tuple<CombatPlayerModel, 
         DamageDoneGeneralInformations = new ObservableCollection<DamageDoneGeneralModel>(healDoneGenerals.ToList());
     }
 
-    private void DamageDoneInformationFilter()
-    {
-        DamageDoneInformations = _damageDoneInformationsWithoutFilter.Any(x => x.SpellOrItem == SelectedDamageDoneSource)
-            ? new ObservableCollection<DamageDoneModel>(_damageDoneInformationsWithoutFilter.Where(x => x.SpellOrItem == SelectedDamageDoneSource))
-            : _damageDoneInformationsWithoutFilter;
-    }
+    //private void SwitchToChecked()
+    //{
+    //    IsShowDirectDamage = true;
+    //    IsShowImmune = true;
+    //    IsShowResist = true;
+    //    IsShowMiss = true;
+    //    IsShowParry = true;
+    //    IsShowDodge = true;
+    //    IsShowCrit = true;
+    //}
 }

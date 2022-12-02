@@ -270,8 +270,8 @@ public class CombatLogInformationViewModel : MvxViewModel, IObserver, IAuthObser
 
     public void LoadCombatLogs()
     {
-        Task.Run(LoadCombatLogsAsync);
-        Task.Run(LoadCombatLogsByUserAsync);
+        Task.Run(async () => await LoadCombatLogsAsync());
+        Task.Run(async () => await LoadCombatLogsByUserAsync());
     }
 
     public async Task OpenPlayerAnalysisAsync()

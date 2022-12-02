@@ -61,7 +61,7 @@
                 <TextBlock Text="Источник" FontSize="15" TextAlignment="Center" Padding="10" FontWeight="SemiBold"
                            Margin="0" Width="100" Foreground="Gray"/>
                 <ComboBox Name="sortingProperty" Style="{DynamicResource ComboBoxStyle1}" ItemsSource="{Binding DamageDoneSources}"
-                          VerticalAlignment="Center" Width="210" SelectedItem="{Binding SelectedDamageDoneSource}"/>
+                          VerticalAlignment="Center" Width="210" SelectedItem="{Binding SelectedSource}" SelectedIndex="0"/>
             </StackPanel>
         </StackPanel>
 

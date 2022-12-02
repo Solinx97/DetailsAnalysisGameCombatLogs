@@ -57,11 +57,11 @@
             <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Text="Анализ ресурсов"
                        Width="350" TextAlignment="Center" Style="{StaticResource titleText}"
                        Margin="25 0"/>
-            <StackPanel Orientation="Horizontal" Visibility="{Binding ElementName=detailsType, Path=SelectedIndex, Converter={StaticResource IntToVisibility}, ConverterParameter=false:1}">
+            <StackPanel Orientation="Horizontal" Visibility="{Binding IsShowFilters, Converter={StaticResource BoolToVisibility}, ConverterParameter=false}">
                 <TextBlock Text="Источник" FontSize="15" TextAlignment="Center" Padding="10" FontWeight="SemiBold"
                            Margin="0" Width="100" Foreground="Gray"/>
                 <ComboBox Name="sortingProperty" Style="{DynamicResource ComboBoxStyle1}" ItemsSource="{Binding ResourceRecoverySources}"
-                          VerticalAlignment="Center" Width="210" SelectedItem="{Binding SelectedResourceRecoverySource}"/>
+                          VerticalAlignment="Center" Width="210" SelectedItem="{Binding SelectedSource}" SelectedIndex="0"/>
             </StackPanel>
         </StackPanel>
 
@@ -165,6 +165,11 @@
 
         <StackPanel Grid.Row="2" Grid.Column="3" Grid.ColumnSpan="2"
                     Visibility="{Binding ElementName=detailsType, Path=SelectedIndex, Converter={StaticResource IntToVisibility}, ConverterParameter=true:1}">
+            <StackPanel Orientation="Horizontal">
+                <CheckBox Margin="25 5" VerticalContentAlignment="Center" Content="Показать фильтры" IsChecked="{Binding IsShowFilters}"
+                  FontSize="16" VerticalAlignment="Center" FontWeight="SemiBold" />
+            </StackPanel>
+            
             <DataGrid Margin="20 10" Height="450" GridLinesVisibility="None" 
                       CanUserAddRows="False" CanUserDeleteRows="False" AutoGenerateColumns="False"
                  VerticalAlignment="Top" Background="Transparent" ItemsSource="{Binding ResourceRecoveryInformations}" 

@@ -1,27 +1,19 @@
-﻿using AutoMapper;
-using CombatAnalysis.CombatParser.Entities;
-using CombatAnalysis.CombatParser.Extensions;
-using CombatAnalysis.CombatParser.Patterns;
-using CombatAnalysis.Core.Consts;
+﻿using CombatAnalysis.Core.Consts;
 using CombatAnalysis.Core.Core;
 using CombatAnalysis.Core.Interfaces;
 using CombatAnalysis.Core.Models;
 using CombatAnalysis.Core.Services;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
-using MvvmCross.ViewModels;
 using System.Collections.ObjectModel;
 
 namespace CombatAnalysis.Core.ViewModels;
 
-public class HealDoneDetailsViewModel : MvxViewModel<Tuple<CombatPlayerModel, CombatModel>>
+public class HealDoneDetailsViewModel : GenericTemplate<Tuple<CombatPlayerModel, CombatModel>>
 {
-    private readonly IMapper _mapper;
-    private readonly ILogger _logger;
     private readonly CombatParserAPIService _combatParserAPIService;
     private readonly PowerUpInCombat<HealDoneModel> _powerUpInCombat;
 
-    private IImprovedMvxViewModel _basicTemplate;
     private ObservableCollection<HealDoneModel> _healDoneInformations;
     private ObservableCollection<HealDoneModel> _healDoneInformationsWithoutFilter;
     private ObservableCollection<HealDoneModel> _healDoneInformationsWithOverheal;
@@ -30,16 +22,9 @@ public class HealDoneDetailsViewModel : MvxViewModel<Tuple<CombatPlayerModel, Co
 
     private bool _isShowOverheal = true;
     private bool _isShowCrit = true;
-    private bool _isShowFilters;
-    private string _selectedPlayer;
-    private string _selectedHealDoneSource = "Все";
-    private long _totalValue;
 
-    public HealDoneDetailsViewModel(IMapper mapper, IHttpClientHelper httpClient, ILogger logger, IMemoryCache memoryCache)
+    public HealDoneDetailsViewModel(IHttpClientHelper httpClient, ILogger logger, IMemoryCache memoryCache)
     {
-        _mapper = mapper;
-        _logger = logger;
-
         _combatParserAPIService = new CombatParserAPIService(httpClient, logger, memoryCache);
         _powerUpInCombat = new PowerUpInCombat<HealDoneModel>(_healDoneInformationsWithOverheal);
 
@@ -49,15 +34,6 @@ public class HealDoneDetailsViewModel : MvxViewModel<Tuple<CombatPlayerModel, Co
     }
 
     #region Properties
-
-    public IImprovedMvxViewModel BasicTemplate
-    {
-        get { return _basicTemplate; }
-        set
-        {
-            SetProperty(ref _basicTemplate, value);
-        }
-    }
 
     public ObservableCollection<HealDoneModel> HealDoneInformations
     {
@@ -116,88 +92,34 @@ public class HealDoneDetailsViewModel : MvxViewModel<Tuple<CombatPlayerModel, Co
         }
     }
 
-    public bool IsShowFilters
-    {
-        get { return _isShowFilters; }
-        set
-        {
-            SetProperty(ref _isShowFilters, value);
-        }
-    }
-
-    public string SelectedPlayer
-    {
-        get { return _selectedPlayer; }
-        set
-        {
-            SetProperty(ref _selectedPlayer, value);
-        }
-    }
-
-    public string SelectedHealDoneSource
-    {
-        get { return _selectedHealDoneSource; }
-        set
-        {
-            SetProperty(ref _selectedHealDoneSource, value);
-
-            HealDoneInformationFilter();
-        }
-    }
-
-    public long TotalValue
-    {
-        get { return _totalValue; }
-        set
-        {
-            SetProperty(ref _totalValue, value);
-        }
-    }
-
     #endregion
 
-    public override void Prepare(Tuple<CombatPlayerModel, CombatModel> parameter)
+    protected override void ChildPrepare(Tuple<CombatPlayerModel, CombatModel> parameter)
     {
         var combat = parameter.Item2;
         var player = parameter.Item1;
         SelectedPlayer = player.UserName;
         TotalValue = player.HealDone;
 
-        if (player.Id > 0)
-        {
-            Task.Run(async () => await LoadHealDoneDetailsAsync(player.Id));
-            Task.Run(async () => await LoadHealDoneGeneralAsync(player.Id));
-        }
-        else
-        {
-            CombatDetailsTemplate combatInformation = new CombatDetailsHealDone(_logger);
-            var map = _mapper.Map<Combat>(combat);
-
-            GetHealDoneDetails(combatInformation, SelectedPlayer, map);
-            GetHealDoneGeneral(combatInformation, map);
-        }
+        Task.Run(async () => await LoadHealDoneDetailsAsync(player.Id));
+        Task.Run(async () => await LoadHealDoneGeneralAsync(player.Id));
     }
 
-    private void GetHealDoneDetails(CombatDetailsTemplate combatInformation, string player, Combat combat)
+    protected override void GetDetails()
     {
-        combatInformation.GetData(player, combat.Data);
-
-        var map1 = _mapper.Map<ObservableCollection<HealDoneModel>>(combatInformation.HealDone);
-
-        HealDoneInformations = map1;
-        _healDoneInformationsWithoutFilter = new ObservableCollection<HealDoneModel>(map1);
-        _healDoneInformationsWithOverheal = new ObservableCollection<HealDoneModel>(map1);
+        _healDoneInformationsWithoutFilter = new ObservableCollection<HealDoneModel>(HealDoneInformations);
+        _healDoneInformationsWithOverheal = new ObservableCollection<HealDoneModel>(HealDoneInformations);
 
         var healDOneSources = HealDoneInformations.Select(x => x.SpellOrItem).Distinct().ToList();
         healDOneSources.Insert(0, "Все");
         HealDoneSources = new ObservableCollection<string>(healDOneSources);
     }
 
-    private void GetHealDoneGeneral(CombatDetailsTemplate combatInformation, Combat combat)
+    protected override void Filter()
     {
-        var damageDoneGeneralInformations = combatInformation.GetHealDoneGeneral(combatInformation.HealDone, combat);
-        var map2 = _mapper.Map<ObservableCollection<HealDoneGeneralModel>>(damageDoneGeneralInformations);
-        HealDoneGeneralInformations = map2;
+        HealDoneInformations = _healDoneInformationsWithoutFilter.Any(x => x.SpellOrItem == SelectedSource)
+            ? new ObservableCollection<HealDoneModel>(_healDoneInformationsWithoutFilter.Where(x => x.SpellOrItem == SelectedSource))
+            : _healDoneInformationsWithoutFilter;
     }
 
     private async Task LoadHealDoneDetailsAsync(int combatPlayerId)
@@ -211,12 +133,5 @@ public class HealDoneDetailsViewModel : MvxViewModel<Tuple<CombatPlayerModel, Co
     {
         var healDoneGenerals = await _combatParserAPIService.LoadHealDoneGeneralAsync(combatPlayerId);
         HealDoneGeneralInformations = new ObservableCollection<HealDoneGeneralModel>(healDoneGenerals.ToList());
-    }
-
-    private void HealDoneInformationFilter()
-    {
-        HealDoneInformations = _healDoneInformationsWithoutFilter.Any(x => x.SpellOrItem == SelectedHealDoneSource) 
-            ? new ObservableCollection<HealDoneModel>(_healDoneInformationsWithoutFilter.Where(x => x.SpellOrItem == SelectedHealDoneSource)) 
-            : _healDoneInformationsWithoutFilter;
     }
 }
