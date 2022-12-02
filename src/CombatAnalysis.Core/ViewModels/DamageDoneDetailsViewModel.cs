@@ -3,6 +3,7 @@ using CombatAnalysis.Core.Core;
 using CombatAnalysis.Core.Interfaces;
 using CombatAnalysis.Core.Models;
 using CombatAnalysis.Core.Services;
+using CombatAnalysis.Core.ViewModels.ViewModelTemplates;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
 using System.Collections.ObjectModel;
@@ -168,25 +169,15 @@ public class DamageDoneDetailsViewModel : GenericTemplate<Tuple<CombatPlayerMode
 
     #endregion
 
-    protected override void ChildPrepare(Tuple<CombatPlayerModel, CombatModel> parameter)
+    protected override async Task ChildPrepareAsync(Tuple<CombatPlayerModel, CombatModel> parameter)
     {
         var combat = parameter.Item2;
         var player = parameter.Item1;
         SelectedPlayer = player.UserName;
         TotalValue = player.DamageDone;
 
-        Task.Run(async () => await LoadDamageDoneDetailsAsync(player.Id));
-        Task.Run(async () => await LoadDamageDoneGeneralAsync(player.Id));
-    }
-
-    protected override void GetDetails()
-    {
-        _damageDoneInformationsWithoutFilter = new ObservableCollection<DamageDoneModel>(DamageDoneInformations);
-        _damageDoneInformationsWithSkipDamage = new ObservableCollection<DamageDoneModel>(DamageDoneInformations);
-
-        var damageDoneSources = DamageDoneInformations.Select(x => x.SpellOrItem).Distinct().ToList();
-        damageDoneSources.Insert(0, "Все");
-        DamageDoneSources = new ObservableCollection<string>(damageDoneSources);
+        await LoadDetailsAsync(player.Id);
+        await LoadGenericDetailsAsync(player.Id);
     }
 
     protected override void Filter()
@@ -196,27 +187,38 @@ public class DamageDoneDetailsViewModel : GenericTemplate<Tuple<CombatPlayerMode
             : _damageDoneInformationsWithoutFilter;
     }
 
-    private async Task LoadDamageDoneDetailsAsync(int combatPlayerId)
+    protected override async Task LoadDetailsAsync(int combatPlayerId)
     {
-        var healDones = await _combatParserAPIService.LoadDamageDoneDetailsAsync(combatPlayerId);
-        DamageDoneInformations = new ObservableCollection<DamageDoneModel>(healDones.ToList());
-        _damageDoneInformationsWithSkipDamage = new ObservableCollection<DamageDoneModel>(healDones.ToList());
+        var details = await _combatParserAPIService.LoadDamageDoneDetailsAsync(combatPlayerId);
+        DamageDoneInformations = new ObservableCollection<DamageDoneModel>(details.ToList());
+
+        GetDetails();
     }
 
-    private async Task LoadDamageDoneGeneralAsync(int combatPlayerId)
+    protected override async Task LoadGenericDetailsAsync(int combatPlayerId)
     {
-        var healDoneGenerals = await _combatParserAPIService.LoadDamageDoneGeneralAsync(combatPlayerId);
-        DamageDoneGeneralInformations = new ObservableCollection<DamageDoneGeneralModel>(healDoneGenerals.ToList());
+        var generalDetails = await _combatParserAPIService.LoadDamageDoneGeneralAsync(combatPlayerId);
+        DamageDoneGeneralInformations = new ObservableCollection<DamageDoneGeneralModel>(generalDetails.ToList());
     }
 
-    //private void SwitchToChecked()
-    //{
-    //    IsShowDirectDamage = true;
-    //    IsShowImmune = true;
-    //    IsShowResist = true;
-    //    IsShowMiss = true;
-    //    IsShowParry = true;
-    //    IsShowDodge = true;
-    //    IsShowCrit = true;
-    //}
+    protected override void GetDetails()
+    {
+        _damageDoneInformationsWithoutFilter = new ObservableCollection<DamageDoneModel>(DamageDoneInformations);
+        _damageDoneInformationsWithSkipDamage = new ObservableCollection<DamageDoneModel>(DamageDoneInformations);
+
+        var sources = DamageDoneInformations.Select(x => x.SpellOrItem).Distinct().ToList();
+        sources.Insert(0, "Все");
+        DamageDoneSources = new ObservableCollection<string>(sources);
+    }
+
+    protected override void TurnOnAllFilters()
+    {
+        if (!IsShowDirectDamage) IsShowDirectDamage = true;
+        if (!IsShowImmune) IsShowImmune = true;
+        if (!IsShowResist) IsShowResist = true;
+        if (!IsShowMiss) IsShowMiss = true;
+        if (!IsShowParry) IsShowParry = true;
+        if (!IsShowDodge) IsShowDodge = true;
+        if (!IsShowCrit) IsShowCrit = true;
+    }
 }

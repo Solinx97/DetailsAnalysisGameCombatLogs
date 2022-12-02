@@ -2,6 +2,7 @@
 using CombatAnalysis.Core.Interfaces;
 using CombatAnalysis.Core.Models;
 using CombatAnalysis.Core.Services;
+using CombatAnalysis.Core.ViewModels.ViewModelTemplates;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
 using System.Collections.ObjectModel;
@@ -57,25 +58,15 @@ public class ResourceRecoveryDetailsViewModel : GenericTemplate<Tuple<CombatPlay
 
     #endregion
 
-    protected override void ChildPrepare(Tuple<CombatPlayerModel, CombatModel> parameter)
+    protected override async Task ChildPrepareAsync(Tuple<CombatPlayerModel, CombatModel> parameter)
     {
         var combat = parameter.Item2;
         var player = parameter.Item1;
         SelectedPlayer = player.UserName;
         TotalValue = player.EnergyRecovery;
 
-        Task.Run(async () => await LoadResourceRecoveryDetailsAsync(player.Id));
-        Task.Run(async () => await LoadResourceRecoveryGeneralAsync(player.Id));
-    }
-
-    protected override void GetDetails()
-    {
-        _resourceRecoveryInformations = new ObservableCollection<ResourceRecoveryModel>(ResourceRecoveryInformations);
-        _resourceRecoveryInformationsWithoutFilter = new ObservableCollection<ResourceRecoveryModel>(ResourceRecoveryInformations);
-
-        var resourceRecoverySources = ResourceRecoveryInformations.Select(x => x.SpellOrItem).Distinct().ToList();
-        resourceRecoverySources.Insert(0, "Все");
-        ResourceRecoverySources = new ObservableCollection<string>(resourceRecoverySources);
+        await LoadDetailsAsync(player.Id);
+        await LoadGenericDetailsAsync(player.Id);
     }
 
     protected override void Filter()
@@ -85,16 +76,32 @@ public class ResourceRecoveryDetailsViewModel : GenericTemplate<Tuple<CombatPlay
             : _resourceRecoveryInformationsWithoutFilter;
     }
 
-    private async Task LoadResourceRecoveryDetailsAsync(int combatPlayerId)
+    protected override async Task LoadDetailsAsync(int combatPlayerId)
     {
-        var resourceRecoveries = await _combatParserAPIService.LoadResourceRecoveryDetailsAsync(combatPlayerId);
-        ResourceRecoveryInformations = new ObservableCollection<ResourceRecoveryModel>(resourceRecoveries.ToList());
-        _resourceRecoveryInformations = new ObservableCollection<ResourceRecoveryModel>(resourceRecoveries.ToList());
+        var details = await _combatParserAPIService.LoadResourceRecoveryDetailsAsync(combatPlayerId);
+        ResourceRecoveryInformations = new ObservableCollection<ResourceRecoveryModel>(details.ToList());
+
+        GetDetails();
     }
 
-    private async Task LoadResourceRecoveryGeneralAsync(int combatPlayerId)
+    protected override async Task LoadGenericDetailsAsync(int combatPlayerId)
     {
-        var resourceRecoveries = await _combatParserAPIService.LoadResourceRecoveryGeneralAsync(combatPlayerId);
-        ResourceRecoveryGeneralInformations = new ObservableCollection<ResourceRecoveryGeneralModel>(resourceRecoveries.ToList());
+        var generalDetails = await _combatParserAPIService.LoadResourceRecoveryGeneralAsync(combatPlayerId);
+        ResourceRecoveryGeneralInformations = new ObservableCollection<ResourceRecoveryGeneralModel>(generalDetails.ToList());
+    }
+
+    protected override void GetDetails()
+    {
+        _resourceRecoveryInformations = new ObservableCollection<ResourceRecoveryModel>(ResourceRecoveryInformations);
+        _resourceRecoveryInformationsWithoutFilter = new ObservableCollection<ResourceRecoveryModel>(ResourceRecoveryInformations);
+
+        var sources = ResourceRecoveryInformations.Select(x => x.SpellOrItem).Distinct().ToList();
+        sources.Insert(0, "Все");
+        ResourceRecoverySources = new ObservableCollection<string>(sources);
+    }
+
+    protected override void TurnOnAllFilters()
+    {
+        // write here your filters
     }
 }

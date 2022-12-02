@@ -3,6 +3,7 @@ using CombatAnalysis.Core.Core;
 using CombatAnalysis.Core.Interfaces;
 using CombatAnalysis.Core.Models;
 using CombatAnalysis.Core.Services;
+using CombatAnalysis.Core.ViewModels.ViewModelTemplates;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
 using MvvmCross.Commands;
@@ -196,25 +197,15 @@ public class DamageTakenDetailsViewModel : GenericTemplate<Tuple<CombatPlayerMod
 
     #endregion
 
-    protected override void ChildPrepare(Tuple<CombatPlayerModel, CombatModel> parameter)
+    protected override async Task ChildPrepareAsync(Tuple<CombatPlayerModel, CombatModel> parameter)
     {
         var combat = parameter.Item2;
         var player = parameter.Item1;
         SelectedPlayer = player.UserName;
         TotalValue = player.DamageTaken;
 
-        Task.Run(async () => await LoadDamageTakenDetails(player.Id));
-        Task.Run(async () => await LoadDamageTakenGeneral(player.Id));
-    }
-
-    protected override void GetDetails()
-    {
-        _damageTakenInformationsWithSkipDamage = new ObservableCollection<DamageTakenModel>(DamageTakenInformations);
-        _damageTakenInformationsWithoutFilter = new ObservableCollection<DamageTakenModel>(DamageTakenInformations);
-
-        var damageTakenSources = DamageTakenInformations.Select(x => x.SpellOrItem).Distinct().ToList();
-        damageTakenSources.Insert(0, "Все");
-        DamageTakenSources = new ObservableCollection<string>(damageTakenSources);
+        await LoadDetailsAsync(player.Id);
+        await LoadGenericDetailsAsync(player.Id);
     }
 
     protected override void Filter()
@@ -224,16 +215,38 @@ public class DamageTakenDetailsViewModel : GenericTemplate<Tuple<CombatPlayerMod
             : _damageTakenInformationsWithoutFilter;
     }
 
-    private async Task LoadDamageTakenDetails(int combatPlayerId)
+    protected override async Task LoadDetailsAsync(int combatPlayerId)
     {
-        var damageTakens = await _combatParserAPIService.LoadDamageTakenDetailsAsync(combatPlayerId);
-        DamageTakenInformations = new ObservableCollection<DamageTakenModel>(damageTakens.ToList());
-        _damageTakenInformationsWithSkipDamage = new ObservableCollection<DamageTakenModel>(damageTakens.ToList());
+        var details = await _combatParserAPIService.LoadDamageTakenDetailsAsync(combatPlayerId);
+        DamageTakenInformations = new ObservableCollection<DamageTakenModel>(details.ToList());
+
+        GetDetails();
     }
 
-    private async Task LoadDamageTakenGeneral(int combatPlayerId)
+    protected override async Task LoadGenericDetailsAsync(int combatPlayerId)
     {
-        var healDoneGenerals = await _combatParserAPIService.LoadDamageTakenGeneralAsync(combatPlayerId);
-        DamageTakenGeneralInformations = new ObservableCollection<DamageTakenGeneralModel>(healDoneGenerals.ToList());
+        var generalDetails = await _combatParserAPIService.LoadDamageTakenGeneralAsync(combatPlayerId);
+        DamageTakenGeneralInformations = new ObservableCollection<DamageTakenGeneralModel>(generalDetails.ToList());
+    }
+
+    protected override void GetDetails()
+    {
+        _damageTakenInformationsWithSkipDamage = new ObservableCollection<DamageTakenModel>(DamageTakenInformations);
+        _damageTakenInformationsWithoutFilter = new ObservableCollection<DamageTakenModel>(DamageTakenInformations);
+
+        var sources = DamageTakenInformations.Select(x => x.SpellOrItem).Distinct().ToList();
+        sources.Insert(0, "Все");
+        DamageTakenSources = new ObservableCollection<string>(sources);
+    }
+
+    protected override void TurnOnAllFilters()
+    {
+        if (!IsShowDodge) IsShowDodge = true;
+        if (!IsShowParry) IsShowParry = true;
+        if (!IsShowMiss) IsShowMiss = true;
+        if (!IsShowResist) IsShowResist = true;
+        if (!IsShowImmune) IsShowImmune = true;
+        if (!IsShowCrushing) IsShowCrushing = true;
+        if (!IsShowAbsorb) IsShowAbsorb = true;
     }
 }

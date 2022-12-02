@@ -3,6 +3,7 @@ using CombatAnalysis.Core.Core;
 using CombatAnalysis.Core.Interfaces;
 using CombatAnalysis.Core.Models;
 using CombatAnalysis.Core.Services;
+using CombatAnalysis.Core.ViewModels.ViewModelTemplates;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
 using System.Collections.ObjectModel;
@@ -94,25 +95,15 @@ public class HealDoneDetailsViewModel : GenericTemplate<Tuple<CombatPlayerModel,
 
     #endregion
 
-    protected override void ChildPrepare(Tuple<CombatPlayerModel, CombatModel> parameter)
+    protected override async Task ChildPrepareAsync(Tuple<CombatPlayerModel, CombatModel> parameter)
     {
         var combat = parameter.Item2;
         var player = parameter.Item1;
         SelectedPlayer = player.UserName;
         TotalValue = player.HealDone;
 
-        Task.Run(async () => await LoadHealDoneDetailsAsync(player.Id));
-        Task.Run(async () => await LoadHealDoneGeneralAsync(player.Id));
-    }
-
-    protected override void GetDetails()
-    {
-        _healDoneInformationsWithoutFilter = new ObservableCollection<HealDoneModel>(HealDoneInformations);
-        _healDoneInformationsWithOverheal = new ObservableCollection<HealDoneModel>(HealDoneInformations);
-
-        var healDOneSources = HealDoneInformations.Select(x => x.SpellOrItem).Distinct().ToList();
-        healDOneSources.Insert(0, "Все");
-        HealDoneSources = new ObservableCollection<string>(healDOneSources);
+        await LoadDetailsAsync(player.Id);
+        await LoadGenericDetailsAsync(player.Id);
     }
 
     protected override void Filter()
@@ -122,16 +113,33 @@ public class HealDoneDetailsViewModel : GenericTemplate<Tuple<CombatPlayerModel,
             : _healDoneInformationsWithoutFilter;
     }
 
-    private async Task LoadHealDoneDetailsAsync(int combatPlayerId)
+    protected override async Task LoadDetailsAsync(int combatPlayerId)
     {
-        var healDones = await _combatParserAPIService.LoadHealDoneDetailsAsync(combatPlayerId);
-        HealDoneInformations = new ObservableCollection<HealDoneModel>(healDones.ToList());
-        _healDoneInformationsWithOverheal = new ObservableCollection<HealDoneModel>(healDones.ToList());
+        var details = await _combatParserAPIService.LoadHealDoneDetailsAsync(combatPlayerId);
+        HealDoneInformations = new ObservableCollection<HealDoneModel>(details.ToList());
+
+        GetDetails();
     }
 
-    private async Task LoadHealDoneGeneralAsync(int combatPlayerId)
+    protected override async Task LoadGenericDetailsAsync(int combatPlayerId)
     {
-        var healDoneGenerals = await _combatParserAPIService.LoadHealDoneGeneralAsync(combatPlayerId);
-        HealDoneGeneralInformations = new ObservableCollection<HealDoneGeneralModel>(healDoneGenerals.ToList());
+        var generalDetails = await _combatParserAPIService.LoadHealDoneGeneralAsync(combatPlayerId);
+        HealDoneGeneralInformations = new ObservableCollection<HealDoneGeneralModel>(generalDetails.ToList());
+    }
+
+    protected override void GetDetails()
+    {
+        _healDoneInformationsWithoutFilter = new ObservableCollection<HealDoneModel>(HealDoneInformations);
+        _healDoneInformationsWithOverheal = new ObservableCollection<HealDoneModel>(HealDoneInformations);
+
+        var sources = HealDoneInformations.Select(x => x.SpellOrItem).Distinct().ToList();
+        sources.Insert(0, "Все");
+        HealDoneSources = new ObservableCollection<string>(sources);
+    }
+
+    protected override void TurnOnAllFilters()
+    {
+        if (!IsShowOverheal) IsShowOverheal = true;
+        if (!IsShowCrit) IsShowCrit = true;
     }
 }

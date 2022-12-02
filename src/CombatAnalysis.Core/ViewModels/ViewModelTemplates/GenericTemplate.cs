@@ -1,7 +1,7 @@
 ﻿using CombatAnalysis.Core.Interfaces;
 using MvvmCross.ViewModels;
 
-namespace CombatAnalysis.Core.ViewModels;
+namespace CombatAnalysis.Core.ViewModels.ViewModelTemplates;
 
 abstract public class GenericTemplate<TParameter> : MvxViewModel<TParameter>
     where TParameter : notnull
@@ -58,13 +58,10 @@ abstract public class GenericTemplate<TParameter> : MvxViewModel<TParameter>
         set
         {
             SetProperty(ref _isShowFilters, value);
-            if (value)
+
+            if (!value)
             {
-                GetDetails();
-            }
-            else
-            {
-                SelectedSource = "Все";
+                TurnOnAllFilters();
             }
         }
     }
@@ -73,12 +70,18 @@ abstract public class GenericTemplate<TParameter> : MvxViewModel<TParameter>
 
     public override void Prepare(TParameter parameter)
     {
-        ChildPrepare(parameter);
+        Task.Run(() => ChildPrepareAsync(parameter));
     }
 
-    protected abstract void ChildPrepare(TParameter parameter);
+    protected abstract Task ChildPrepareAsync(TParameter parameter);
+
+    protected abstract void Filter();
+
+    protected abstract Task LoadDetailsAsync(int combatPlayerId);
+
+    protected abstract Task LoadGenericDetailsAsync(int combatPlayerId);
 
     protected abstract void GetDetails();
 
-    protected abstract void Filter();
+    protected abstract void TurnOnAllFilters();
 }
