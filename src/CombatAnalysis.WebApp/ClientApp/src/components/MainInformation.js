@@ -18,7 +18,7 @@ const MainInformation = () => {
     const getCombatLogsAsync = async () => {
         const response = await fetch('/api/v1/MainInformation');
         const status = response.status;
-        if (status == 200) {
+        if (status === 200) {
             const combatLogs = await response.json();
 
             fillingCombatLogList(combatLogs);
@@ -26,22 +26,22 @@ const MainInformation = () => {
     }
 
     const fillingCombatLogList = (combats) => {
-        if (combats.length > 0) {
-            const list = combats.map((element) => combatLogList(element));
-
-            setCombatsRender(
-                <ul className="combats__container">
-                    {list}
-                </ul>
-            );
-        }
-        else {
+        if (combats.length <= 0) {
             setCombatsRender(<div>Необходимо добавить хотя бы 1 элемент</div>);
+            return;
         }
+
+        const list = combats.map((element) => combatLogList(element));
+
+        setCombatsRender(
+            <ul className="combats__container">
+                {list}
+            </ul>
+        );
     }
 
     const combatLogList = (element) => {
-        return <li key={element.id}>
+        return (<li key={element.id}>
             <div className="card">
                 <ul className="list-group list-group-flush">
                     <li className="list-group-item">{element.name}</li>
@@ -51,14 +51,14 @@ const MainInformation = () => {
                     <NavLink className="card-link" to={`/general-analysis?id=${element.id}`}>Разбор</NavLink>
                 </div>
             </div>
-        </li>;
+        </li>);
     }
 
     const render = () => {
-        return <div className="main-information__container">
+        return (<div className="main-information__container">
             <h2>Логи боев</h2>
             {combatsRender}
-        </div>;
+        </div>);
     }
 
     return render();

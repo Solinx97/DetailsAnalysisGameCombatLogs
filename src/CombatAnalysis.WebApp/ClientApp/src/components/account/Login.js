@@ -7,7 +7,7 @@ const Login = () => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
 
-    const login = async () => {
+    const loginAsync = async () => {
         const data = {
             email: email,
             password: password
@@ -22,7 +22,7 @@ const Login = () => {
         });
 
         const result = await response;
-        if (result.status == 200) {
+        if (result.status === 200) {
             navigate('/');
         }
     }
@@ -35,14 +35,14 @@ const Login = () => {
         setPassword(event.target.value);
     }
 
-    const handleSubmit = async (event) => {
+    const handleSubmitAsync = async (event) => {
         event.preventDefault();
 
-        await login();
+        await loginAsync();
     }
 
     const render = () => {
-        return <form onSubmit={handleSubmit}>
+        return (<form onSubmit={handleSubmitAsync}>
             <div className="mb-3">
                 <label htmlFor="exampleInputEmail1" className="form-label">Email address</label>
                 <input type="email" className="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" onChange={handleEmailChange} />
@@ -57,7 +57,7 @@ const Login = () => {
                 <label className="form-check-label" htmlFor="exampleCheck1">Check me out</label>
             </div>
             <input type="submit" className="btn btn-primary" value="Login" />
-        </form>;
+        </form>);
     }
 
     return render();

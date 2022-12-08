@@ -28,7 +28,7 @@ const CombatDetails = ({ detailsTypeName, userName }) => {
     useEffect(() => {
         if (combatPlayerId > 0) {
             const getDetails = async () => {
-                await fillingDetailsDataList();
+                await fillingDetailsDataListAsync();
             };
 
             getDetails();
@@ -74,7 +74,7 @@ const CombatDetails = ({ detailsTypeName, userName }) => {
         return duration;
     }
 
-    const fillingDetailsDataList = async (spellsByTime) => {
+    const fillingDetailsDataListAsync = async (spellsByTime) => {
         let combatDetailsData = [];
         if (spellsByTime == undefined) {
             combatDetailsData = await combatDetailsHelperPayload.data(detailsType);
@@ -85,41 +85,40 @@ const CombatDetails = ({ detailsTypeName, userName }) => {
 
         setDetailsData(combatDetailsData);
 
-        if (combatDetailsData.length > 0) {
-            let list = <div></div>;
-
-            switch (detailsType) {
-                case "DamageDone":
-                    list = combatDetailsData.map((element) => combatDetailsHelperPayload.damageDone.list(element));
-                    break;
-                case "HealDone":
-                    list = combatDetailsData.map((element) => combatDetailsHelperPayload.healDone.list(element));
-                    break;
-                case "DamageTaken":
-                    list = combatDetailsData.map((element) => combatDetailsHelperPayload.damageTaken.list(element));
-                    break;
-                case "ResourceRecovery":
-                    list = combatDetailsData.map((element) => combatDetailsHelperPayload.resourceRecovery.list(element));
-                    break;
-            }
-
-            createChartData(combatDetailsData);
-
-            setDamageDoneRender(
-                <ul className="damage-done__container">
-                    {list}
-                </ul>
-            );
-        }
-        else {
+        if (combatDetailsData.length === 0) {
             setDamageDoneRender(<div>Необходимо добавить хотя бы 1 элемент</div>);
+            return;
         }
+
+        let list = <div></div>;
+        switch (detailsType) {
+            case "DamageDone":
+                list = combatDetailsData.map((element) => combatDetailsHelperPayload.damageDone.list(element));
+                break;
+            case "HealDone":
+                list = combatDetailsData.map((element) => combatDetailsHelperPayload.healDone.list(element));
+                break;
+            case "DamageTaken":
+                list = combatDetailsData.map((element) => combatDetailsHelperPayload.damageTaken.list(element));
+                break;
+            case "ResourceRecovery":
+                list = combatDetailsData.map((element) => combatDetailsHelperPayload.resourceRecovery.list(element));
+                break;
+        }
+
+        createChartData(combatDetailsData);
+
+        setDamageDoneRender(
+            <ul className="damage-done__container">
+                {list}
+            </ul>
+        );
     }
 
     const createChartData = (combatDetailsData) => {
         let chartData = new Array(combatDetailsData.length);
 
-        for (var i = 0; i < combatDetailsData.length; i++) {
+        for (let i = 0; i < combatDetailsData.length; i++) {
             let spellsData = {
                 time: getTimeWithoutMs(combatDetailsData[i].time),
                 value: combatDetailsData[i].value,
@@ -138,59 +137,63 @@ const CombatDetails = ({ detailsTypeName, userName }) => {
         setSelectedTime(e.activeLabel);
         setUsedSingleFilter(true);
 
-        for (var i = 0; i < detailsData.length; i++) {
+        for (let i = 0; i < detailsData.length; i++) {
             if (detailsData[i].time.includes(activePayloadTime)) {
                 spellsByTime.push(detailsData[i]);
             }
         }
 
-        fillingDetailsDataList(spellsByTime);
+        fillingDetailsDataListAsync(spellsByTime);
     }
 
     const getStartTimeInterval = (e) => {
-        if (e != null) {
-            if (usedMultiplyFilter) {
-                setStartTime(e.activeLabel);
-            }
-            else {
-                getSpellsByTime(e);
-            }
+        if (e === null) {
+            return;
+        }
+
+        if (usedMultiplyFilter) {
+            setStartTime(e.activeLabel);
+        }
+        else {
+            getSpellsByTime(e);
         }
     }
 
     const getFinishTimeInterval = (e) => {
-        if (usedMultiplyFilter && e != null) {
-            let spellsByTime = [];
-            let damageDonesByFilter = [];
-            setFinishTime(e.activeLabel);
+        if (!usedMultiplyFilter || e === null) {
+            return;
+        }
 
-            for (var i = 0; i < detailsData.length; i++) {
-                let getDurationAsSeconds = getSeconds(detailsChartData[i].duration);
-                let startTimeAsSeconds = getSeconds(startTime);
-                let finishTimeAsSeconds = getSeconds(e.activeLabel);
+        let spellsByTime = [];
+        let damageDonesByFilter = [];
+        setFinishTime(e.activeLabel);
 
-                if (getDurationAsSeconds >= startTimeAsSeconds
-                    && getDurationAsSeconds <= finishTimeAsSeconds) {
-                    if (detailsData[i].time.includes(detailsChartData[i].time)) {
-                        spellsByTime.push(detailsData[i]);
-                        damageDonesByFilter.push(detailsData[i]);
-                    }
+        for (let i = 0; i < detailsData.length; i++) {
+            let getDurationAsSeconds = getSeconds(detailsChartData[i].duration);
+            let startTimeAsSeconds = getSeconds(startTime);
+            let finishTimeAsSeconds = getSeconds(e.activeLabel);
+
+            if (getDurationAsSeconds >= startTimeAsSeconds
+                && getDurationAsSeconds <= finishTimeAsSeconds) {
+                if (detailsData[i].time.includes(detailsChartData[i].time)) {
+                    spellsByTime.push(detailsData[i]);
+                    damageDonesByFilter.push(detailsData[i]);
                 }
             }
-
-            createChartData(damageDonesByFilter);
-            fillingDetailsDataList(spellsByTime);
         }
+
+        createChartData(damageDonesByFilter);
+        fillingDetailsDataListAsync(spellsByTime);
     }
 
     const cancelSingleFilter = () => {
-        fillingDetailsDataList();
+        fillingDetailsDataListAsync();
         setSelectedTime("");
         setUsedSingleFilter(false);
     }
 
     const cancelMultiplyFilter = () => {
-        fillingDetailsDataList();
+        fillingDetailsDataListAsync();
         setStartTime("");
         setFinishTime("");
         setUsedMultiplyFilter(false);
@@ -198,13 +201,14 @@ const CombatDetails = ({ detailsTypeName, userName }) => {
 
     const switchSelectInterval = () => {
         setUsedMultiplyFilter(!usedMultiplyFilter);
+
         if (usedMultiplyFilter) {
             cancelMultiplyFilter();
         }
     }
 
     const render = () => {
-        return <div className="details__container">
+        return (<div className="details__container">
             <div>
                 <h3>Подробная информация [{detailsTypeName}]</h3>
                 <h4>Игрок: {userName}</h4>
@@ -249,7 +253,7 @@ const CombatDetails = ({ detailsTypeName, userName }) => {
                 </div>
             }
             {damageDoneRender}
-        </div>;
+        </div>);
     }
 
     return render();

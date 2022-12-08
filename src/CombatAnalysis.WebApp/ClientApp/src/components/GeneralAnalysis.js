@@ -33,18 +33,18 @@ const GeneralAnalysis = () => {
     }
 
     const fillingCombatList = (combats) => {
-        if (combats.length > 0) {
-            const list = combats.map((element) => combatList(element));
-
-            setCombatsRender(
-                <ul className="combats__container">
-                    {list}
-                </ul>
-            );
-        }
-        else {
+        if (combats.length <= 0) {
             setCombatsRender(<div>Необходимо добавить хотя бы 1 элемент</div>);
+            return;
         }
+
+        const list = combats.map((element) => combatList(element));
+
+        setCombatsRender(
+            <ul className="combats__container">
+                {list}
+            </ul>
+        );
     }
 
     const getCombatStatus = (status) => {
@@ -52,7 +52,7 @@ const GeneralAnalysis = () => {
     }
 
     const combatList = (element) => {
-        return <li key={element.id}>
+        return (<li key={element.id}>
             <div className="card">
                 <div className="card-body">
                     <h5 className="card-title">{element.name}</h5>
@@ -110,17 +110,17 @@ const GeneralAnalysis = () => {
                     <NavLink className="card-link" to={`/details-specifical-combat?id=${element.id}`}>Подробнее</NavLink>
                 </div>
             </div>
-        </li>;
+        </li>);
     }
 
     const render = () => {
-        return <div className="general-analysis__container">
+        return (<div className="general-analysis__container">
             <div className="general-analysis__container_navigate">
                 <h3>Бои</h3>
                 <button type="button" className="btn btn-primary" onClick={() => navigate("/")}>Главная страница</button>
             </div>
             {combatsRender}
-        </div>;
+        </div>);
     }
 
     return render();
