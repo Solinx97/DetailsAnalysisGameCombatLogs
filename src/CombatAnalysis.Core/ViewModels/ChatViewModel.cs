@@ -45,9 +45,9 @@ public class ChatViewModel : MvxViewModel, IImprovedMvxViewModel
     private int _selectedPersonalChatIndex = -1;
     private string _message;
     private bool _groupChatMenuIsVisibly;
-    private ResponseStatus _groupChatLoadingResponse;
-    private ResponseStatus _personalChatLoadingResponse;
-    private ResponseStatus _addUserToGroupChatResponse;
+    private LoadingStatus _groupChatLoadingResponse;
+    private LoadingStatus _personalChatLoadingResponse;
+    private LoadingStatus _addUserToGroupChatResponse;
     private Timer _groupChatMessagesUpdateTimer;
     private Timer _personalChatMessagesUpdateTimer;
     private AppUserModel _myAccount;
@@ -331,7 +331,7 @@ public class ChatViewModel : MvxViewModel, IImprovedMvxViewModel
         }
     }
 
-    public ResponseStatus GroupChatLoadingResponse
+    public LoadingStatus GroupChatLoadingResponse
     {
         get { return _groupChatLoadingResponse; }
         set
@@ -343,7 +343,7 @@ public class ChatViewModel : MvxViewModel, IImprovedMvxViewModel
         }
     }
 
-    public ResponseStatus PersonalChatLoadingResponse
+    public LoadingStatus PersonalChatLoadingResponse
     {
         get { return _personalChatLoadingResponse; }
         set
@@ -355,7 +355,7 @@ public class ChatViewModel : MvxViewModel, IImprovedMvxViewModel
         }
     }
 
-    public ResponseStatus AddUserToGroupChatResponse
+    public LoadingStatus AddUserToGroupChatResponse
     {
         get { return _addUserToGroupChatResponse; }
         set
@@ -517,7 +517,7 @@ public class ChatViewModel : MvxViewModel, IImprovedMvxViewModel
 
         try
         {
-            AddUserToGroupChatResponse = ResponseStatus.Pending;
+            AddUserToGroupChatResponse = LoadingStatus.Pending;
 
             var response = await _httpClientHelper.PostAsync("GroupChatUser", JsonContent.Create(groupChatUser));
             if (response.StatusCode == System.Net.HttpStatusCode.OK)
@@ -525,18 +525,18 @@ public class ChatViewModel : MvxViewModel, IImprovedMvxViewModel
                 SwitchInviteToGroupChat();
                 await OpenInviteToGroupChatAsync();
 
-                AddUserToGroupChatResponse = ResponseStatus.Successful;
+                AddUserToGroupChatResponse = LoadingStatus.Successful;
             }
             else
             {
-                AddUserToGroupChatResponse = ResponseStatus.Failed;
+                AddUserToGroupChatResponse = LoadingStatus.Failed;
             }
         }
         catch (HttpRequestException ex)
         {
             _logger.LogError(ex, ex.Message);
 
-            AddUserToGroupChatResponse = ResponseStatus.Failed;
+            AddUserToGroupChatResponse = LoadingStatus.Failed;
         }
     }
 
@@ -559,7 +559,7 @@ public class ChatViewModel : MvxViewModel, IImprovedMvxViewModel
 
     public async Task OpenInviteToGroupChatAsync()
     {
-        AddUserToGroupChatResponse = ResponseStatus.None;
+        AddUserToGroupChatResponse = LoadingStatus.None;
         UsersForInviteToGroupChat = null;
 
         var response = await _httpClientHelper.GetAsync("GroupChatUser");
@@ -599,7 +599,7 @@ public class ChatViewModel : MvxViewModel, IImprovedMvxViewModel
 
     private async Task LoadGroupChatsAsync()
     {
-        GroupChatLoadingResponse = ResponseStatus.Pending;
+        GroupChatLoadingResponse = LoadingStatus.Pending;
 
         try
         {
@@ -610,18 +610,18 @@ public class ChatViewModel : MvxViewModel, IImprovedMvxViewModel
                 await GetMyGroupChatsAsync(response);
                 await GetGroupChatsAsync();
                 
-                GroupChatLoadingResponse = ResponseStatus.Successful;
+                GroupChatLoadingResponse = LoadingStatus.Successful;
             }
             else
             {
-                GroupChatLoadingResponse = ResponseStatus.Failed;
+                GroupChatLoadingResponse = LoadingStatus.Failed;
             }
         }
         catch (HttpRequestException ex)
         {
             _logger.LogError(ex, ex.Message);
 
-            GroupChatLoadingResponse = ResponseStatus.Failed;
+            GroupChatLoadingResponse = LoadingStatus.Failed;
         }
     }
 
@@ -660,7 +660,7 @@ public class ChatViewModel : MvxViewModel, IImprovedMvxViewModel
 
     private async Task LoadPersonalChatsAsync()
     {
-        PersonalChatLoadingResponse = ResponseStatus.Pending;
+        PersonalChatLoadingResponse = LoadingStatus.Pending;
 
         try
         {
@@ -673,18 +673,18 @@ public class ChatViewModel : MvxViewModel, IImprovedMvxViewModel
 
                 PersonalChats = new ObservableCollection<PersonalChatModel>(myPersonalChats);
 
-                PersonalChatLoadingResponse = ResponseStatus.Successful;
+                PersonalChatLoadingResponse = LoadingStatus.Successful;
             }
             else
             {
-                PersonalChatLoadingResponse = ResponseStatus.Failed;
+                PersonalChatLoadingResponse = LoadingStatus.Failed;
             }
         }
         catch (HttpRequestException ex)
         {
             _logger.LogError(ex, ex.Message);
 
-            PersonalChatLoadingResponse = ResponseStatus.Failed;
+            PersonalChatLoadingResponse = LoadingStatus.Failed;
         }
     }
 

@@ -1,4 +1,4 @@
-﻿using CombatAnalysis.Core.ViewModels.CreateGroupChat;
+﻿using CombatAnalysis.Core.ViewModels.Chat;
 using CombatAnalysis.WinCore;
 using MvvmCross.Platforms.Wpf.Views;
 

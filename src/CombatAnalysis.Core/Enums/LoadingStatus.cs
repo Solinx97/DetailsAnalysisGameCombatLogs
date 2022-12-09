@@ -1,6 +1,6 @@
 ﻿namespace CombatAnalysis.Core.Enums;
 
-public enum ResponseStatus
+public enum LoadingStatus
 {
     None = 0,
     Pending = 1,

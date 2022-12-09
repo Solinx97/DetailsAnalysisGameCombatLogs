@@ -4,5 +4,5 @@ namespace CombatAnalysis.Core.Interfaces.Observers;
 
 public interface IResponseStatusObserver
 {
-    void Update(ResponseStatus status);
+    void Update(LoadingStatus status);
 }

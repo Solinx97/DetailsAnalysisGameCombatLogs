@@ -29,19 +29,18 @@ public class CombatLogInformationViewModel : MvxViewModel, IObserver, IAuthObser
     private bool _isShowSteps;
     private string _foundCombat;
     private string _combatLogPath;
-    private int _selectedCombatLogId;
+    private int _combatListSelectedIndex;
     private int _selectedCombatLogTypeTabItem;
-    private int _combatLogsNumber;
-    private int _combatLogsByUserNumber;
     private IImprovedMvxViewModel _basicTemplate;
-    private ObservableCollection<CombatLogModel> _combatLogs;
-    private ObservableCollection<CombatLogModel> _combatLogsByUser;
+    private ObservableCollection<CombatLogModel> _combatLogs = new ObservableCollection<CombatLogModel>();
+    private ObservableCollection<CombatLogModel> _combatLogsByUser = new ObservableCollection<CombatLogModel>();
     private double _screenWidth;
     private double _screenHeight;
     private bool _isAuth;
     private bool _isAllowSaveLogs = true;
     private LogType _logType;
-    private ObservableCollection<CombatLogModel>[] _combatLogLists = new ObservableCollection<CombatLogModel>[2];
+    private LoadingStatus _combatLogLoadingStatus;
+    private LoadingStatus _combatLogByUserLoadingStatus;
 
     public CombatLogInformationViewModel(IMapper mapper, IMvxNavigationService mvvmNavigation, IHttpClientHelper httpClient, IParser parser, ILogger logger, IMemoryCache memoryCache)
     {
@@ -50,8 +49,10 @@ public class CombatLogInformationViewModel : MvxViewModel, IObserver, IAuthObser
         _parser = parser;
 
         OpenPlayerAnalysisCommand = new MvxAsyncCommand(OpenPlayerAnalysisAsync);
-        LoadCombatsCommand = new MvxAsyncCommand(LoadCombatsAsync);
-        ReloadCombatsCommand = new MvxCommand(LoadCombatLogs);
+        LoadCombatsCommand = new MvxAsyncCommand(() => LoadCombatsAsync(CombatLogs));
+        LoadCombatsByUserCommand = new MvxAsyncCommand(() => LoadCombatsAsync(CombatLogsByUser));
+        ReloadCombatsCommand = new MvxAsyncCommand(LoadCombatLogsAsync);
+        ReloadCombatsByUserCommand = new MvxAsyncCommand(LoadCombatLogsByUserAsync);
         DeleteCombatCommand = new MvxAsyncCommand(DeleteAsync);
 
         GetLogTypeCommand = new MvxCommand<int>(GetLogType);
@@ -73,7 +74,11 @@ public class CombatLogInformationViewModel : MvxViewModel, IObserver, IAuthObser
 
     public IMvxAsyncCommand LoadCombatsCommand { get; set; }
 
-    public IMvxCommand ReloadCombatsCommand { get; set; }
+    public IMvxAsyncCommand LoadCombatsByUserCommand { get; set; }
+
+    public IMvxAsyncCommand ReloadCombatsCommand { get; set; }
+
+    public IMvxAsyncCommand ReloadCombatsByUserCommand { get; set; }
 
     public IMvxAsyncCommand DeleteCombatCommand { get; set; }
 
@@ -176,12 +181,12 @@ public class CombatLogInformationViewModel : MvxViewModel, IObserver, IAuthObser
         }
     }
 
-    public int SelectedCombatLogId
+    public int CombatListSelectedIndex
     {
-        get { return _selectedCombatLogId; }
+        get { return _combatListSelectedIndex; }
         set
         {
-            SetProperty(ref _selectedCombatLogId, value);
+            SetProperty(ref _combatListSelectedIndex, value);
         }
     }
 
@@ -191,24 +196,6 @@ public class CombatLogInformationViewModel : MvxViewModel, IObserver, IAuthObser
         set
         {
             SetProperty(ref _selectedCombatLogTypeTabItem, value);
-        }
-    }
-
-    public int CombatLogsNumber
-    {
-        get { return _combatLogsNumber; }
-        set
-        {
-            SetProperty(ref _combatLogsNumber, value);
-        }
-    }
-
-    public int CombatLogsByUserNumber
-    {
-        get { return _combatLogsByUserNumber; }
-        set
-        {
-            SetProperty(ref _combatLogsByUserNumber, value);
         }
     }
 
@@ -258,18 +245,30 @@ public class CombatLogInformationViewModel : MvxViewModel, IObserver, IAuthObser
         }
     }
 
+    public LoadingStatus CombatLogLoadingStatus
+    {
+        get { return _combatLogLoadingStatus; }
+        set
+        {
+            SetProperty(ref _combatLogLoadingStatus, value);
+        }
+    }
+
+    public LoadingStatus CombatLogByUserLoadingStatus
+    {
+        get { return _combatLogByUserLoadingStatus; }
+        set
+        {
+            SetProperty(ref _combatLogByUserLoadingStatus, value);
+        }
+    }
+
     #endregion
 
     public void GetCombatLog()
     {
         var split = CombatLogPath.Split(@"\");
         CombatLog = split[split.Length - 1];
-    }
-
-    public void LoadCombatLogs()
-    {
-        Task.Run(async () => await LoadCombatLogsAsync());
-        Task.Run(async () => await LoadCombatLogsByUserAsync());
     }
 
     public async Task OpenPlayerAnalysisAsync()
@@ -292,7 +291,9 @@ public class CombatLogInformationViewModel : MvxViewModel, IObserver, IAuthObser
         IsParsing = false;
 
         CombatLogs?.Clear();
-        LoadCombatLogs();
+
+        Task.Run(LoadCombatLogsAsync);
+        Task.Run(LoadCombatLogsByUserAsync);
     }
 
     public void AuthUpdate(bool isAuth)
@@ -305,9 +306,9 @@ public class CombatLogInformationViewModel : MvxViewModel, IObserver, IAuthObser
         }
     }
 
-    public async Task LoadCombatsAsync()
+    public async Task LoadCombatsAsync(ObservableCollection<CombatLogModel> combatCollection)
     {
-        var id = _combatLogLists[SelectedCombatLogTypeTabItem][SelectedCombatLogId].Id;
+        var id = combatCollection[CombatListSelectedIndex].Id;
         var loadedCombats = await _combatParserAPIService.LoadCombatsAsync(id);
 
         foreach (var item in loadedCombats)
@@ -329,8 +330,7 @@ public class CombatLogInformationViewModel : MvxViewModel, IObserver, IAuthObser
         FoundCombat = string.Empty;
         IsParsing = true;
 
-        await _combatParserAPIService.DeleteCombatLogAsync(CombatLogs[SelectedCombatLogId].Id);
-        await LoadCombatLogsAsync();
+        await _combatParserAPIService.DeleteCombatLogAsync(CombatLogsByUser[CombatListSelectedIndex].Id);
         await LoadCombatLogsByUserAsync();
 
         IsParsing = false;
@@ -365,9 +365,9 @@ public class CombatLogInformationViewModel : MvxViewModel, IObserver, IAuthObser
 
         if (IsNeedSave)
         {
-            BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, "ResponseStatus", ResponseStatus.Pending);
+            BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, "ResponseStatus", LoadingStatus.Pending);
 
-            var responseStatus = await _combatParserAPIService.SaveAsync(combats, LogType).ConfigureAwait(false) ? ResponseStatus.Successful : ResponseStatus.Failed;
+            var responseStatus = await _combatParserAPIService.SaveAsync(combats, LogType).ConfigureAwait(false) ? LoadingStatus.Successful : LoadingStatus.Failed;
 
             BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, "ResponseStatus", responseStatus);
         }
@@ -375,9 +375,17 @@ public class CombatLogInformationViewModel : MvxViewModel, IObserver, IAuthObser
 
     private async Task LoadCombatLogsAsync()
     {
+        CombatLogLoadingStatus = LoadingStatus.Pending;
+
         _combatParserAPIService.SetUpPort();
 
         var combatLogsData = await _combatParserAPIService.LoadCombatLogsAsync();
+        if (combatLogsData == null)
+        {
+            CombatLogLoadingStatus = LoadingStatus.Failed;
+            return;
+        }
+
         var readyCombatLogData = new List<CombatLogModel>();
 
         foreach (var item in combatLogsData)
@@ -389,16 +397,23 @@ public class CombatLogInformationViewModel : MvxViewModel, IObserver, IAuthObser
         }
 
         CombatLogs = new ObservableCollection<CombatLogModel>(readyCombatLogData);
-        CombatLogsNumber = CombatLogs.Count;
 
-        _combatLogLists[0] = CombatLogs;
+        CombatLogLoadingStatus = LoadingStatus.Successful;
     }
 
     private async Task LoadCombatLogsByUserAsync()
     {
+        CombatLogByUserLoadingStatus = LoadingStatus.Pending;
+
         _combatParserAPIService.SetUpPort();
 
         var combatLogsData = await _combatParserAPIService.LoadCombatLogsByUserAsync();
+        if (combatLogsData == null)
+        {
+            CombatLogByUserLoadingStatus = LoadingStatus.Failed;
+            return;
+        }
+
         var readyCombatLogData = new List<CombatLogModel>();
 
         foreach (var item in combatLogsData)
@@ -410,8 +425,7 @@ public class CombatLogInformationViewModel : MvxViewModel, IObserver, IAuthObser
         }
 
         CombatLogsByUser = new ObservableCollection<CombatLogModel>(readyCombatLogData);
-        CombatLogsByUserNumber = CombatLogsByUser.Count;
 
-        _combatLogLists[1] = CombatLogsByUser;
+        CombatLogByUserLoadingStatus = LoadingStatus.Successful;
     }
 }

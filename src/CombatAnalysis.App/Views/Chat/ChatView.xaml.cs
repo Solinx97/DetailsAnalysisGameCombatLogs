@@ -1,7 +1,7 @@
 ﻿using CombatAnalysis.WinCore;
 using MvvmCross.Platforms.Wpf.Views;
 
-namespace CombatAnalysis.App.Views;
+namespace CombatAnalysis.App.Views.Chat;
 
 public partial class ChatView : MvxWpfView
 {

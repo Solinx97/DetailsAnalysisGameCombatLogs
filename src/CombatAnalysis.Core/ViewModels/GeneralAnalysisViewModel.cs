@@ -21,7 +21,7 @@ public class GeneralAnalysisViewModel : MvxViewModel<Tuple<List<CombatModel>, Lo
     private IImprovedMvxViewModel _basicTemplate;
     private ObservableCollection<CombatModel> _combats;
     private CombatModel _selectedCombat;
-    private ResponseStatus _status;
+    private LoadingStatus _status;
     private LogType _logType;
 
     public GeneralAnalysisViewModel(IMvxNavigationService mvvmNavigation, IHttpClientHelper httpClient, ILogger logger, IMemoryCache memoryCache)
@@ -77,7 +77,7 @@ public class GeneralAnalysisViewModel : MvxViewModel<Tuple<List<CombatModel>, Lo
         }
     }
 
-    public ResponseStatus ResponseStatus
+    public LoadingStatus ResponseStatus
     {
         get { return _status; }
         set
@@ -114,17 +114,17 @@ public class GeneralAnalysisViewModel : MvxViewModel<Tuple<List<CombatModel>, Lo
 
     public void RepeatSaveCombatDataDetails()
     {
-        BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, "ResponseStatus", ResponseStatus.Pending);
+        BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, "ResponseStatus", LoadingStatus.Pending);
 
         Task.Run(async () =>
         {
-            var responseStatus = await _combatParserAPIService.SaveAsync(Combats.ToList(), _logType) ? ResponseStatus.Successful : ResponseStatus.Failed;
+            var responseStatus = await _combatParserAPIService.SaveAsync(Combats.ToList(), _logType) ? LoadingStatus.Successful : LoadingStatus.Failed;
 
             BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, "ResponseStatus", responseStatus);
         });
     }
 
-    public void Update(ResponseStatus status)
+    public void Update(LoadingStatus status)
     {
         ResponseStatus = status;
     }

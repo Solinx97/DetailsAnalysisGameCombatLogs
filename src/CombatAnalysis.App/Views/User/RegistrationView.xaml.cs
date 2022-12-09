@@ -1,7 +1,7 @@
 ﻿using MvvmCross.Platforms.Wpf.Views;
 using System.Windows.Controls;
 
-namespace CombatAnalysis.App.Views;
+namespace CombatAnalysis.App.Views.User;
 
 public partial class RegistrationView : MvxWpfView
 {

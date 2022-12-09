@@ -30,18 +30,16 @@ public class AccountController : ControllerBase
     public async Task<IActionResult> Login(LoginModel model)
     {
         var user = await _service.GetAsync(model.Email, model.Password);
-        if (user != null)
-        {
-            var tokens = await _tokenService.GenerateTokensAsync(HttpContext.Response.Cookies, user.Id);
-            var map = _mapper.Map<AppUserModel>(user);
-            var response = new ResponseFromAccount(map, tokens.Item1, tokens.Item2);
-
-            return Ok(response);
-        }
-        else
+        if (user == null)
         {
             return BadRequest();
         }
+
+        var tokens = await _tokenService.GenerateTokensAsync(HttpContext.Response.Cookies, user.Id);
+        var map = _mapper.Map<AppUserModel>(user);
+        var response = new ResponseFromAccount(map, tokens.Item1, tokens.Item2);
+
+        return Ok(response);
     }
 
     [HttpPost("registration")]
@@ -50,21 +48,19 @@ public class AccountController : ControllerBase
         try
         {
             var user = await _service.GetAsync(model.Email);
-            if (user == null)
-            {
-                var newUser = new AppUserModel { Id = Guid.NewGuid().ToString(), Email = model.Email, Password = model.Password };
-                var map = _mapper.Map<AppUserDto>(newUser);
-                await _service.CreateAsync(map);
-
-                var tokens = await _tokenService.GenerateTokensAsync(HttpContext.Response.Cookies, newUser.Id);
-                var response = new ResponseFromAccount(newUser, tokens.Item1, tokens.Item2);
-
-                return Ok(response);
-            }
-            else
+            if (user != null)
             {
                 return BadRequest();
             }
+
+            var newUser = new AppUserModel { Id = Guid.NewGuid().ToString(), Email = model.Email, Password = model.Password };
+            var map = _mapper.Map<AppUserDto>(newUser);
+            await _service.CreateAsync(map);
+
+            var tokens = await _tokenService.GenerateTokensAsync(HttpContext.Response.Cookies, newUser.Id);
+            var response = new ResponseFromAccount(newUser, tokens.Item1, tokens.Item2);
+
+            return Ok(response);
         }
         catch (ArgumentNullException ex)
         {

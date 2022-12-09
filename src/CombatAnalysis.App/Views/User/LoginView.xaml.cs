@@ -2,7 +2,7 @@
 using System.Windows;
 using System.Windows.Controls;
 
-namespace CombatAnalysis.App.Views;
+namespace CombatAnalysis.App.Views.User;
 
 public partial class LoginView : MvxWpfView
 {

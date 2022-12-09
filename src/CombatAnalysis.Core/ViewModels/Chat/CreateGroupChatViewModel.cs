@@ -8,7 +8,7 @@ using MvvmCross.Commands;
 using MvvmCross.ViewModels;
 using System.Net.Http.Json;
 
-namespace CombatAnalysis.Core.ViewModels.CreateGroupChat;
+namespace CombatAnalysis.Core.ViewModels.Chat;
 
 public class CreateGroupChatViewModel : MvxViewModel
 {

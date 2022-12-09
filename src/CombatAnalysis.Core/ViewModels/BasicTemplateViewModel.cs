@@ -30,7 +30,7 @@ public class BasicTemplateViewModel : MvxViewModel, IImprovedMvxViewModel, IResp
     private LogType _logType;
     private bool _logPanelStatusIsVisibly;
 
-    private static ResponseStatus _responseStatus;
+    private static LoadingStatus _responseStatus;
     private static int _allowStep;
 
     public BasicTemplateViewModel(IViewModelConnect handler, IMvxNavigationService mvvmNavigation, IMemoryCache memoryCache, IHttpClientHelper httpClient)
@@ -130,7 +130,7 @@ public class BasicTemplateViewModel : MvxViewModel, IImprovedMvxViewModel, IResp
         }
     }
 
-    public ResponseStatus ResponseStatus
+    public LoadingStatus ResponseStatus
     {
         get { return _responseStatus; }
         set
