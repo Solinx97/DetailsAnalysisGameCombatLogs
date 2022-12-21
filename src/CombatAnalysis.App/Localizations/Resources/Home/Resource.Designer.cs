@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace CombatAnalysis.App.Localizations.Resources {
+namespace CombatAnalysis.App.Localizations.Resources.Home {
     using System;
     
     
@@ -39,7 +39,7 @@ namespace CombatAnalysis.App.Localizations.Resources {
         public static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("CombatAnalysis.App.Localizations.Resources.Resource", typeof(Resource).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("CombatAnalysis.App.Localizations.Resources.Home.Resource", typeof(Resource).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -61,11 +61,47 @@ namespace CombatAnalysis.App.Localizations.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Language.
+        ///   Looks up a localized string similar to Analyzing of combats.
         /// </summary>
-        public static string Language {
+        public static string Analyzing {
             get {
-                return ResourceManager.GetString("Language", resourceCulture);
+                return ResourceManager.GetString("Analyzing", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Uploading or analyzing the existing logs. Get more details information about the events, that happened during the combat. See information about the players, who were in the combats..
+        /// </summary>
+        public static string AnalyzingDescribe {
+            get {
+                return ResourceManager.GetString("AnalyzingDescribe", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Communication.
+        /// </summary>
+        public static string Communication {
+            get {
+                return ResourceManager.GetString("Communication", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Chatting with other users. Create or join other group chats for chatting or discussing any topics or questions..
+        /// </summary>
+        public static string CommunicationDescribe {
+            get {
+                return ResourceManager.GetString("CommunicationDescribe", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Login required.
+        /// </summary>
+        public static string LoginRequired {
+            get {
+                return ResourceManager.GetString("LoginRequired", resourceCulture);
             }
         }
     }
