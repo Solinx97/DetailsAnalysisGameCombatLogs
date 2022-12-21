@@ -2,31 +2,27 @@
 using CombatAnalysis.WebApp.Interfaces;
 using CombatAnalysis.WebApp.Models;
 using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
-using System.Net.Http.Json;
-using System.Threading.Tasks;
 
-namespace CombatAnalysis.WebApp.Controllers
+namespace CombatAnalysis.WebApp.Controllers;
+
+[Route("api/v1/[controller]")]
+[ApiController]
+public class DamageTakenGeneralController : ControllerBase
 {
-    [Route("[controller]")]
-    [ApiController]
-    public class DamageTakenGeneralController : ControllerBase
+    private readonly IHttpClientHelper _httpClient;
+
+    public DamageTakenGeneralController(IHttpClientHelper httpClient)
     {
-        private readonly IHttpClientHelper _httpClient;
+        _httpClient = httpClient;
+        _httpClient.BaseAddress = Port.CombatParserApi;
+    }
 
-        public DamageTakenGeneralController(IHttpClientHelper httpClient)
-        {
-            _httpClient = httpClient;
-            _httpClient.BaseAddress = Port.CombatParserApi;
-        }
+    [HttpGet("{id}")]
+    public async Task<IActionResult> GetById(int id)
+    {
+        var responseMessage = await _httpClient.GetAsync($"DamageTakenGeneral/FindByCombatPlayerId/{id}");
+        var damageTakenGenerals = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<DamageTakenGeneralModel>>();
 
-        [HttpGet("{id}")]
-        public async Task<IEnumerable<DamageTakenGeneralModel>> GetById(int id)
-        {
-            var responseMessage = await _httpClient.GetAsync($"DamageTakenGeneral/FindByCombatPlayerId/{id}");
-            var damageTakenGenerals = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<DamageTakenGeneralModel>>();
-
-            return damageTakenGenerals;
-        }
+        return Ok(damageTakenGenerals);
     }
 }

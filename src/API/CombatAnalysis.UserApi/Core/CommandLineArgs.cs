@@ -1,7 +1,6 @@
-﻿namespace CombatAnalysis.UserApi.Core
+﻿namespace CombatAnalysis.UserApi.Core;
+
+public enum CommandLineArgs
 {
-    public enum CommandLineArgs
-    {
-        Tests
-    }
+    Tests,
 }

@@ -3,100 +3,96 @@ using CombatAnalysis.BL.DTO;
 using CombatAnalysis.BL.Interfaces;
 using CombatAnalysis.DAL.Entities;
 using CombatAnalysis.DAL.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 
-namespace CombatAnalysis.BL.Services
+namespace CombatAnalysis.BL.Services;
+
+internal class HealDoneGeneralService : IService<HealDoneGeneralDto, int>
 {
-    internal class HealDoneGeneralService : IService<HealDoneGeneralDto, int>
+    private readonly IGenericRepository<HealDoneGeneral, int> _repository;
+    private readonly IMapper _mapper;
+
+    public HealDoneGeneralService(IGenericRepository<HealDoneGeneral, int> repository, IMapper mapper)
     {
-        private readonly IGenericRepository<HealDoneGeneral, int> _repository;
-        private readonly IMapper _mapper;
+        _repository = repository;
+        _mapper = mapper;
+    }
 
-        public HealDoneGeneralService(IGenericRepository<HealDoneGeneral, int> repository, IMapper mapper)
+    public Task<HealDoneGeneralDto> CreateAsync(HealDoneGeneralDto item)
+    {
+        if (item == null)
         {
-            _repository = repository;
-            _mapper = mapper;
+            throw new ArgumentNullException(nameof(HealDoneGeneralDto), $"The {nameof(HealDoneGeneralDto)} can't be null");
         }
 
-        Task<HealDoneGeneralDto> IService<HealDoneGeneralDto, int>.CreateAsync(HealDoneGeneralDto item)
-        {
-            if (item == null)
-            {
-                throw new ArgumentNullException(nameof(HealDoneGeneralDto), $"The {nameof(HealDoneGeneralDto)} can't be null");
-            }
+        return CreateInternalAsync(item);
+    }
 
-            return CreateInternalAsync(item);
+    public Task<int> DeleteAsync(HealDoneGeneralDto item)
+    {
+        if (item == null)
+        {
+            throw new ArgumentNullException(nameof(HealDoneGeneralDto), $"The {nameof(HealDoneGeneralDto)} can't be null");
         }
 
-        Task<int> IService<HealDoneGeneralDto, int>.DeleteAsync(HealDoneGeneralDto item)
-        {
-            if (item == null)
-            {
-                throw new ArgumentNullException(nameof(HealDoneGeneralDto), $"The {nameof(HealDoneGeneralDto)} can't be null");
-            }
+        return DeleteInternalAsync(item);
+    }
 
-            return DeleteInternalAsync(item);
+    public async Task<IEnumerable<HealDoneGeneralDto>> GetAllAsync()
+    {
+        var allData = await _repository.GetAllAsync();
+        var result = _mapper.Map<List<HealDoneGeneralDto>>(allData);
+
+        return result;
+    }
+
+    public async Task<HealDoneGeneralDto> GetByIdAsync(int id)
+    {
+        var result = await _repository.GetByIdAsync(id);
+        var resultMap = _mapper.Map<HealDoneGeneralDto>(result);
+
+        return resultMap;
+    }
+
+    public async Task<IEnumerable<HealDoneGeneralDto>> GetByParamAsync(string paramName, object value)
+    {
+        var result = await Task.Run(() => _repository.GetByParam(paramName, value));
+        var resultMap = _mapper.Map<IEnumerable<HealDoneGeneralDto>>(result);
+
+        return resultMap;
+    }
+
+    public Task<int> UpdateAsync(HealDoneGeneralDto item)
+    {
+        if (item == null)
+        {
+            throw new ArgumentNullException(nameof(HealDoneGeneralDto), $"The {nameof(HealDoneGeneralDto)} can't be null");
         }
 
-        async Task<IEnumerable<HealDoneGeneralDto>> IService<HealDoneGeneralDto, int>.GetAllAsync()
-        {
-            var allData = await _repository.GetAllAsync();
-            var result = _mapper.Map<List<HealDoneGeneralDto>>(allData);
+        return UpdateInternalAsync(item);
+    }
 
-            return result;
-        }
+    private async Task<HealDoneGeneralDto> CreateInternalAsync(HealDoneGeneralDto item)
+    {
+        var map = _mapper.Map<HealDoneGeneral>(item);
+        var createdItem = await _repository.CreateAsync(map);
+        var resultMap = _mapper.Map<HealDoneGeneralDto>(createdItem);
 
-        async Task<HealDoneGeneralDto> IService<HealDoneGeneralDto, int>.GetByIdAsync(int id)
-        {
-            var result = await _repository.GetByIdAsync(id);
-            var resultMap = _mapper.Map<HealDoneGeneralDto>(result);
+        return resultMap;
+    }
 
-            return resultMap;
-        }
+    private async Task<int> DeleteInternalAsync(HealDoneGeneralDto item)
+    {
+        var map = _mapper.Map<HealDoneGeneral>(item);
+        var rowsAffected = await _repository.DeleteAsync(map);
 
-        async Task<IEnumerable<HealDoneGeneralDto>> IService<HealDoneGeneralDto, int>.GetByParamAsync(string paramName, object value)
-        {
-            var result = await Task.Run(() => _repository.GetByParam(paramName, value));
-            var resultMap = _mapper.Map<IEnumerable<HealDoneGeneralDto>>(result);
+        return rowsAffected;
+    }
 
-            return resultMap;
-        }
+    private async Task<int> UpdateInternalAsync(HealDoneGeneralDto item)
+    {
+        var map = _mapper.Map<HealDoneGeneral>(item);
+        var rowsAffected = await _repository.UpdateAsync(map);
 
-        Task<int> IService<HealDoneGeneralDto, int>.UpdateAsync(HealDoneGeneralDto item)
-        {
-            if (item == null)
-            {
-                throw new ArgumentNullException(nameof(HealDoneGeneralDto), $"The {nameof(HealDoneGeneralDto)} can't be null");
-            }
-
-            return UpdateInternalAsync(item);
-        }
-
-        private async Task<HealDoneGeneralDto> CreateInternalAsync(HealDoneGeneralDto item)
-        {
-            var map = _mapper.Map<HealDoneGeneral>(item);
-            var createdItem = await _repository.CreateAsync(map);
-            var resultMap = _mapper.Map<HealDoneGeneralDto>(createdItem);
-
-            return resultMap;
-        }
-
-        private async Task<int> DeleteInternalAsync(HealDoneGeneralDto item)
-        {
-            var map = _mapper.Map<HealDoneGeneral>(item);
-            var rowsAffected = await _repository.DeleteAsync(map);
-
-            return rowsAffected;
-        }
-
-        private async Task<int> UpdateInternalAsync(HealDoneGeneralDto item)
-        {
-            var map = _mapper.Map<HealDoneGeneral>(item);
-            var rowsAffected = await _repository.UpdateAsync(map);
-
-            return rowsAffected;
-        }
+        return rowsAffected;
     }
 }

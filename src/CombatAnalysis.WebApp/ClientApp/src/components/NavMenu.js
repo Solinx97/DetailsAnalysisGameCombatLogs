@@ -5,9 +5,9 @@ import { Collapse, Container, Navbar, NavbarBrand, NavbarToggler } from 'reactst
 import { checkAuth } from '../features/AuthenticationReducer';
 import { userUpdate } from '../features/UserReducer';
 
-import './NavMenu.css';
+import '../styles/navMenu.css';
 
-const NavMenu = (props) => {
+const NavMenu = () => {
     const isAuth = useSelector((state) => state.authentication.value);
     const user = useSelector((state) => state.user.value);
     const dispatch = useDispatch();
@@ -16,20 +16,22 @@ const NavMenu = (props) => {
     const [collapsed, setCollapsed] = useState(true);
 
     useEffect(() => {
-        if (user == null) {
-            const checkAuthResult = async () => {
-                await checkAuthAsyn();
-            }
-
-            checkAuthResult().catch(console.error);
+        if (user !== null) {
+            return;
         }
+
+        const checkAuthResult = async () => {
+            await checkAuthAsync();
+        }
+
+        checkAuthResult().catch(console.error);
     });
 
-    const checkAuthAsyn = async () => {
-        const response = await fetch('authentication');
+    const checkAuthAsync = async () => {
+        const response = await fetch('api/v1/Authentication');
 
         const result = await response;
-        if (result.status == 200) {
+        if (result.status === 200) {
             const jsonData = await result.json();
 
             dispatch(userUpdate(jsonData));
@@ -40,15 +42,15 @@ const NavMenu = (props) => {
         }
     }
 
-    const logout = async () => {
-        const response = await fetch('account/logout', {
+    const logoutAsync = async () => {
+        const response = await fetch('api/v1/Account/logout', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             }
         });
 
-        if (response.status == 200) {
+        if (response.status === 200) {
             dispatch(checkAuth(false))
             dispatch(userUpdate(null));
         }
@@ -59,7 +61,7 @@ const NavMenu = (props) => {
     }
 
     const render = () => {
-        return <header>
+        return (<header>
             <Navbar className="navbar-expand-sm navbar-toggleable-sm ng-white border-bottom box-shadow mb-3" light>
                 <Container>
                     <NavbarBrand tag={Link} to="/">Wow Analysis</NavbarBrand>
@@ -72,12 +74,12 @@ const NavMenu = (props) => {
                         </div>
                         : <div>
                             <div>Welcome, <strong>{user.email}</strong></div>
-                            <button type="button" className="btn btn-primary" onClick={logout}>Logout</button>
+                            <button type="button" className="btn btn-primary" onClick={logoutAsync}>Logout</button>
                           </div>
                     }
                 </Container>
             </Navbar>
-        </header>;
+        </header>);
     }
 
   return render();

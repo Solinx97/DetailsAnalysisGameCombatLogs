@@ -3,251 +3,245 @@ using CombatAnalysis.CombatParser.Interfaces;
 using CombatAnalysis.CombatParser.Services;
 using Microsoft.Extensions.Logging;
 using Moq;
-using NUnit.Framework;
-using System;
-using System.Collections.Generic;
-using System.IO;
 using System.Text;
-using System.Threading.Tasks;
 
-namespace CombatAnalysis.Parser.Tests.CombatParser
+namespace CombatAnalysis.Parser.Tests.CombatParser;
+
+[TestFixture]
+internal class CombatParserServiceTests
 {
-    [TestFixture]
-    internal class CombatParserServiceTests
+    [Test]
+    public async Task CombatParserService_FileCheck_Must_Return_True()
     {
-        [Test]
-        public async Task CombatParserService_FileCheck_Must_Return_True()
+        var testCombatLog = "combatLog.txt";
+
+        var correctCombatLogFile = "6/8 20:42:39.739  COMBAT_LOG_VERSION,9,ADVANCED_LOG_ENABLED,1,BUILD_VERSION,2.5.4,PROJECT_ID,5";
+        var fakeFileBytes = Encoding.UTF8.GetBytes(correctCombatLogFile);
+        var fakeMemoryStream = new MemoryStream(fakeFileBytes);
+
+        var mockFileManager = new Mock<IFileManager>();
+        mockFileManager.Setup(fileManager => fileManager.StreamReader(testCombatLog))
+                       .Returns(() => new StreamReader(fakeMemoryStream));
+        var mockLogger = new Mock<ILogger>();
+
+        var parser = new CombatParserService(mockFileManager.Object, mockLogger.Object);
+        var fileIsCorrect = await parser.FileCheck(testCombatLog);
+        Assert.IsTrue(fileIsCorrect);
+    }
+
+    [Test]
+    public async Task CombatParserService_FileCheck_Must_Return_False()
+    {
+        var testCombatLog = "combatLog.txt";
+
+        var correctCombatLogFile = "6/8 20:42:39.739  COMBAT_LOG_,9,ADVANCED_LOG_ENABLED,1,BUILD_VERSION,2.5.4,PROJECT_ID,5";
+        var fakeFileBytes = Encoding.UTF8.GetBytes(correctCombatLogFile);
+        var fakeMemoryStream = new MemoryStream(fakeFileBytes);
+
+        var mockFileManager = new Mock<IFileManager>();
+        mockFileManager.Setup(fileManager => fileManager.StreamReader(testCombatLog))
+                       .Returns(() => new StreamReader(fakeMemoryStream));
+        var mockLogger = new Mock<ILogger>();
+
+        var parser = new CombatParserService(mockFileManager.Object, mockLogger.Object);
+        var fileIsCorrect = await parser.FileCheck(testCombatLog);
+        Assert.IsFalse(fileIsCorrect);
+    }
+
+    [Test]
+    public async Task CombatParserService_Parse_Must_Fill_Combats_Collection_With_Incorrect_Combat_Name()
+    {
+        var testCombatLog = "combatLog.txt";
+
+        var fakeFileContents = CreateCorrectlyCombatLogWithIncorrectCombatName();
+        var fakeFileBytes = Encoding.UTF8.GetBytes(fakeFileContents);
+        var fakeMemoryStream = new MemoryStream(fakeFileBytes);
+
+        var mockFileManager = new Mock<IFileManager>();
+        mockFileManager.Setup(fileManager => fileManager.StreamReader(testCombatLog))
+                       .Returns(() => new StreamReader(fakeMemoryStream));
+        var mockLogger = new Mock<ILogger>();
+
+        var parser = new CombatParserService(mockFileManager.Object, mockLogger.Object);
+        await parser.Parse(testCombatLog);
+
+        var combats = parser.Combats;
+        Assert.IsNotEmpty(combats);
+
+        var firstCombat = combats[0];
+
+        var expectedCombat = new Combat
         {
-            var testCombatLog = "combatLog.txt";
+            Name = "Test",
+            Data = new List<string> { "data" },
+            IsWin = true,
+            StartDate = new DateTimeOffset(2022, 06, 03, 21, 15, 05, TimeSpan.Zero),
+            FinishDate = new DateTimeOffset(2022, 06, 03, 21, 17, 58, TimeSpan.Zero),
+        };
+        Assert.AreNotEqual(expectedCombat.Name, firstCombat.Name, "Combat name isn't correct.");
+    }
 
-            var correctCombatLogFile = "6/8 20:42:39.739  COMBAT_LOG_VERSION,9,ADVANCED_LOG_ENABLED,1,BUILD_VERSION,2.5.4,PROJECT_ID,5";
-            var fakeFileBytes = Encoding.UTF8.GetBytes(correctCombatLogFile);
-            var fakeMemoryStream = new MemoryStream(fakeFileBytes);
+    [Test]
+    public async Task CombatParserService_Parse_Must_Fill_Combats_Collection_With_Incorrect_Player_Name()
+    {
+        var testCombatLog = "combatLog.txt";
 
-            var mockFileManager = new Mock<IFileManager>();
-            mockFileManager.Setup(fileManager => fileManager.StreamReader(testCombatLog))
-                           .Returns(() => new StreamReader(fakeMemoryStream));
-            var mockLogger = new Mock<ILogger>();
+        var fakeFileContents = CreateCorrectlyCombatLogWithIncorrectPlayerName();
+        var fakeFileBytes = Encoding.UTF8.GetBytes(fakeFileContents);
+        var fakeMemoryStream = new MemoryStream(fakeFileBytes);
 
-            var parser = new CombatParserService(mockFileManager.Object, mockLogger.Object);
-            var fileIsCorrect = await parser.FileCheck(testCombatLog);
-            Assert.IsTrue(fileIsCorrect);
-        }
+        var mockFileManager = new Mock<IFileManager>();
+        mockFileManager.Setup(fileManager => fileManager.StreamReader(testCombatLog))
+                       .Returns(() => new StreamReader(fakeMemoryStream));
+        var mockLogger = new Mock<ILogger>();
 
-        [Test]
-        public async Task CombatParserService_FileCheck_Must_Return_False()
+        var parser = new CombatParserService(mockFileManager.Object, mockLogger.Object);
+        await parser.Parse(testCombatLog);
+
+        var combats = parser.Combats;
+        Assert.IsNotEmpty(combats);
+
+        var firstCombat = combats[0];
+
+        var expectedCombatPlayerData = new CombatPlayer
         {
-            var testCombatLog = "combatLog.txt";
-
-            var correctCombatLogFile = "6/8 20:42:39.739  COMBAT_LOG_,9,ADVANCED_LOG_ENABLED,1,BUILD_VERSION,2.5.4,PROJECT_ID,5";
-            var fakeFileBytes = Encoding.UTF8.GetBytes(correctCombatLogFile);
-            var fakeMemoryStream = new MemoryStream(fakeFileBytes);
-
-            var mockFileManager = new Mock<IFileManager>();
-            mockFileManager.Setup(fileManager => fileManager.StreamReader(testCombatLog))
-                           .Returns(() => new StreamReader(fakeMemoryStream));
-            var mockLogger = new Mock<ILogger>();
-
-            var parser = new CombatParserService(mockFileManager.Object, mockLogger.Object);
-            var fileIsCorrect = await parser.FileCheck(testCombatLog);
-            Assert.IsFalse(fileIsCorrect);
-        }
-
-        [Test]
-        public async Task CombatParserService_Parse_Must_Fill_Combats_Collection_With_Incorrect_Combat_Name()
+            UserName = "Oleg - Chrome",
+            DamageDone = 10,
+            DamageTaken = 15,
+            HealDone = 20,
+            EnergyRecovery = 25,
+            UsedBuffs = 2,
+        };
+        var expectedCombat = new Combat
         {
-            var testCombatLog = "combatLog.txt";
+            Name = "Test",
+            Data = new List<string> { "data" },
+            IsWin = true,
+            StartDate = new DateTimeOffset(2022, 06, 03, 21, 15, 05, TimeSpan.Zero),
+            FinishDate = new DateTimeOffset(2022, 06, 03, 21, 17, 58, TimeSpan.Zero),
+            Players = new List<CombatPlayer> { expectedCombatPlayerData },
+        };
 
-            var fakeFileContents = CreateCorrectlyCombatLogWithIncorrectCombatName();
-            var fakeFileBytes = Encoding.UTF8.GetBytes(fakeFileContents);
-            var fakeMemoryStream = new MemoryStream(fakeFileBytes);
+        Assert.AreEqual(expectedCombat.Name, firstCombat.Name, "Combat name isn't correct.");
 
-            var mockFileManager = new Mock<IFileManager>();
-            mockFileManager.Setup(fileManager => fileManager.StreamReader(testCombatLog))
-                           .Returns(() => new StreamReader(fakeMemoryStream));
-            var mockLogger = new Mock<ILogger>();
+        Assert.IsNotEmpty(firstCombat.Players);
 
-            var parser = new CombatParserService(mockFileManager.Object, mockLogger.Object);
-            await parser.Parse(testCombatLog);
+        var firstCombatPlayerData = firstCombat.Players[0];
+        Assert.AreNotEqual(expectedCombatPlayerData.UserName, firstCombatPlayerData.UserName, "Combat players username isn't correct.");
+    }
 
-            var combats = parser.Combats;
-            Assert.IsNotEmpty(combats);
+    [Test]
+    public async Task CombatParserService_Parse_Must_Not_Fill_Combats_Collection()
+    {
+        var testCombatLog = "combatLog.txt";
 
-            var firstCombat = combats[0];
+        var fakeFileContents = CreateIncorrectlyCombatLog();
+        byte[] fakeFileBytes = Encoding.UTF8.GetBytes(fakeFileContents);
+        var fakeMemoryStream = new MemoryStream(fakeFileBytes);
 
-            var expectedCombat = new Combat
-            {
-                Name = "Test",
-                Data = new List<string> { "data" },
-                IsWin = true,
-                StartDate = new DateTimeOffset(2022, 06, 03, 21, 15, 05, TimeSpan.Zero),
-                FinishDate = new DateTimeOffset(2022, 06, 03, 21, 17, 58, TimeSpan.Zero),
-            };
-            Assert.AreNotEqual(expectedCombat.Name, firstCombat.Name, "Combat name isn't correct.");
-        }
+        var mockFileManager = new Mock<IFileManager>();
+        mockFileManager.Setup(fileManager => fileManager.StreamReader(testCombatLog))
+                       .Returns(() => new StreamReader(fakeMemoryStream));
+        var mockLogger = new Mock<ILogger>();
 
-        [Test]
-        public async Task CombatParserService_Parse_Must_Fill_Combats_Collection_With_Incorrect_Player_Name()
+        var parser = new CombatParserService(mockFileManager.Object, mockLogger.Object);
+        await parser.Parse(testCombatLog);
+
+        var combats = parser.Combats;
+        Assert.IsEmpty(combats);
+    }
+
+    [Test]
+    public async Task CombatParserService_Parse_Must_Fill_Combats_Collection_Without_Players()
+    {
+        var testCombatLog = "combatLog.txt";
+
+        var mockFileManager = new Mock<IFileManager>();
+
+        var fakeFileContents = CreateCorrectlyCombatLogWithoutPlayers();
+        byte[] fakeFileBytes = Encoding.UTF8.GetBytes(fakeFileContents);
+        var fakeMemoryStream = new MemoryStream(fakeFileBytes);
+
+        mockFileManager.Setup(fileManager => fileManager.StreamReader(testCombatLog))
+                       .Returns(() => new StreamReader(fakeMemoryStream));
+        var mockLogger = new Mock<ILogger>();
+
+        var parser = new CombatParserService(mockFileManager.Object, mockLogger.Object);
+        await parser.Parse(testCombatLog);
+
+        var combats = parser.Combats;
+        Assert.IsNotEmpty(combats);
+
+        var firstCombat = combats[0];
+
+        var expectedCombat = new Combat
         {
-            var testCombatLog = "combatLog.txt";
+            Name = "Test",
+            Data = new List<string> { "data" },
+            IsWin = true,
+            StartDate = new DateTimeOffset(2022, 06, 03, 21, 15, 05, TimeSpan.Zero),
+            FinishDate = new DateTimeOffset(2022, 06, 03, 21, 17, 58, TimeSpan.Zero),
+        };
 
-            var fakeFileContents = CreateCorrectlyCombatLogWithIncorrectPlayerName();
-            var fakeFileBytes = Encoding.UTF8.GetBytes(fakeFileContents);
-            var fakeMemoryStream = new MemoryStream(fakeFileBytes);
+        Assert.AreEqual(expectedCombat.Name, firstCombat.Name, "Combat name isn't correct.");
 
-            var mockFileManager = new Mock<IFileManager>();
-            mockFileManager.Setup(fileManager => fileManager.StreamReader(testCombatLog))
-                           .Returns(() => new StreamReader(fakeMemoryStream));
-            var mockLogger = new Mock<ILogger>();
+        Assert.IsEmpty(combats[0].Players);
+    }
 
-            var parser = new CombatParserService(mockFileManager.Object, mockLogger.Object);
-            await parser.Parse(testCombatLog);
+    private string CreateCorrectlyCombatLog()
+    {
+        var fakeFileContents = new StringBuilder();
+        fakeFileContents.AppendLine("6/3 21:15:05  ENCOUNTER_START,,\"Test\"");
+        fakeFileContents.AppendLine("1  COMBATANT_INFO,Player-4452-02FE19CD");
+        fakeFileContents.AppendLine("1  COMBATANT_INFO,Player-4452-02FE19TY");
+        fakeFileContents.AppendLine("1  1,Player-4452-02FE19CD,\"Oleg\"");
+        fakeFileContents.AppendLine("1  1,Player-4452-02FE19TY,\"Kiril\"");
+        fakeFileContents.AppendLine("6/3 21:17:58  ENCOUNTER_END,,,,,1");
 
-            var combats = parser.Combats;
-            Assert.IsNotEmpty(combats);
+        return fakeFileContents.ToString();
+    }
 
-            var firstCombat = combats[0];
+    private string CreateCorrectlyCombatLogWithoutPlayers()
+    {
+        var fakeFileContents = new StringBuilder();
+        fakeFileContents.AppendLine("6/3 21:15:05  ENCOUNTER_START,,\"Test\"");
+        fakeFileContents.AppendLine("1  COMBATANT_IO,Player-4452-02FE19CD");
+        fakeFileContents.AppendLine("1  1,Player-4452-02FE19CD,\"Oleg - Chrome\"");
+        fakeFileContents.AppendLine("6/3 21:17:58  ENCOUNTER_END,,,,,1");
 
-            var expectedCombatPlayerData = new CombatPlayer
-            {
-                UserName = "Oleg - Chrome",
-                DamageDone = 10,
-                DamageTaken = 15,
-                HealDone = 20,
-                EnergyRecovery = 25,
-                UsedBuffs = 2,
-            };
-            var expectedCombat = new Combat
-            {
-                Name = "Test",
-                Data = new List<string> { "data" },
-                IsWin = true,
-                StartDate = new DateTimeOffset(2022, 06, 03, 21, 15, 05, TimeSpan.Zero),
-                FinishDate = new DateTimeOffset(2022, 06, 03, 21, 17, 58, TimeSpan.Zero),
-                Players = new List<CombatPlayer> { expectedCombatPlayerData },
-            };
+        return fakeFileContents.ToString();
+    }
 
-            Assert.AreEqual(expectedCombat.Name, firstCombat.Name, "Combat name isn't correct.");
+    private string CreateCorrectlyCombatLogWithIncorrectCombatName()
+    {
+        var fakeFileContents = new StringBuilder();
+        fakeFileContents.AppendLine("6/3 21:15:05  ENCOUNTER_START,,\"Te2st\"");
+        fakeFileContents.AppendLine("1  COMBATANT_INFO,Player-4452-02FE19CD");
+        fakeFileContents.AppendLine("1  1,Player-4452-02FE19CD,\"Oleg - Chrome\"");
+        fakeFileContents.AppendLine("6/3 21:17:58  ENCOUNTER_END,,,,,1");
 
-            Assert.IsNotEmpty(firstCombat.Players);
+        return fakeFileContents.ToString();
+    }
 
-            var firstCombatPlayerData = firstCombat.Players[0];
-            Assert.AreNotEqual(expectedCombatPlayerData.UserName, firstCombatPlayerData.UserName, "Combat players username isn't correct.");
-        }
+    private string CreateCorrectlyCombatLogWithIncorrectPlayerName()
+    {
+        var fakeFileContents = new StringBuilder();
+        fakeFileContents.AppendLine("6/3 21:15:05  ENCOUNTER_START,,\"Test\"");
+        fakeFileContents.AppendLine("1  COMBATANT_INFO,Player-4452-02FE19CD");
+        fakeFileContents.AppendLine("1  1,Player-4452-02FE19CD,\"Ol345eg - Chrome\"");
+        fakeFileContents.AppendLine("6/3 21:17:58  ENCOUNTER_END,,,,,1");
 
-        [Test]
-        public async Task CombatParserService_Parse_Must_Not_Fill_Combats_Collection()
-        {
-            var testCombatLog = "combatLog.txt";
+        return fakeFileContents.ToString();
+    }
 
-            var fakeFileContents = CreateIncorrectlyCombatLog();
-            byte[] fakeFileBytes = Encoding.UTF8.GetBytes(fakeFileContents);
-            var fakeMemoryStream = new MemoryStream(fakeFileBytes);
+    private string CreateIncorrectlyCombatLog()
+    {
+        var fakeFileContents = new StringBuilder();
+        fakeFileContents.AppendLine("6/3 21:15:05  ENCOUNTER_T,,\"Test\"");
+        fakeFileContents.AppendLine("1  COMBATANT_INFO,Player-4452-02FE19CD");
+        fakeFileContents.AppendLine("1  1,Player-4452-02FE19CD,\"Oleg - Chrome\"");
+        fakeFileContents.AppendLine("6/3 21:17:58  ENCOUNTER_END,,,,,1");
 
-            var mockFileManager = new Mock<IFileManager>();
-            mockFileManager.Setup(fileManager => fileManager.StreamReader(testCombatLog))
-                           .Returns(() => new StreamReader(fakeMemoryStream));
-            var mockLogger = new Mock<ILogger>();
-
-            var parser = new CombatParserService(mockFileManager.Object, mockLogger.Object);
-            await parser.Parse(testCombatLog);
-
-            var combats = parser.Combats;
-            Assert.IsEmpty(combats);
-        }
-
-        [Test]
-        public async Task CombatParserService_Parse_Must_Fill_Combats_Collection_Without_Players()
-        {
-            var testCombatLog = "combatLog.txt";
-
-            var mockFileManager = new Mock<IFileManager>();
-
-            var fakeFileContents = CreateCorrectlyCombatLogWithoutPlayers();
-            byte[] fakeFileBytes = Encoding.UTF8.GetBytes(fakeFileContents);
-            var fakeMemoryStream = new MemoryStream(fakeFileBytes);
-
-            mockFileManager.Setup(fileManager => fileManager.StreamReader(testCombatLog))
-                           .Returns(() => new StreamReader(fakeMemoryStream));
-            var mockLogger = new Mock<ILogger>();
-
-            var parser = new CombatParserService(mockFileManager.Object, mockLogger.Object);
-            await parser.Parse(testCombatLog);
-
-            var combats = parser.Combats;
-            Assert.IsNotEmpty(combats);
-
-            var firstCombat = combats[0];
-
-            var expectedCombat = new Combat
-            {
-                Name = "Test",
-                Data = new List<string> { "data" },
-                IsWin = true,
-                StartDate = new DateTimeOffset(2022, 06, 03, 21, 15, 05, TimeSpan.Zero),
-                FinishDate = new DateTimeOffset(2022, 06, 03, 21, 17, 58, TimeSpan.Zero),
-            };
-
-            Assert.AreEqual(expectedCombat.Name, firstCombat.Name, "Combat name isn't correct.");
-
-            Assert.IsEmpty(combats[0].Players);
-        }
-
-        private string CreateCorrectlyCombatLog()
-        {
-            var fakeFileContents = new StringBuilder();
-            fakeFileContents.AppendLine("6/3 21:15:05  ENCOUNTER_START,,\"Test\"");
-            fakeFileContents.AppendLine("1  COMBATANT_INFO,Player-4452-02FE19CD");
-            fakeFileContents.AppendLine("1  COMBATANT_INFO,Player-4452-02FE19TY");
-            fakeFileContents.AppendLine("1  1,Player-4452-02FE19CD,\"Oleg\"");
-            fakeFileContents.AppendLine("1  1,Player-4452-02FE19TY,\"Kiril\"");
-            fakeFileContents.AppendLine("6/3 21:17:58  ENCOUNTER_END,,,,,1");
-
-            return fakeFileContents.ToString();
-        }
-
-        private string CreateCorrectlyCombatLogWithoutPlayers()
-        {
-            var fakeFileContents = new StringBuilder();
-            fakeFileContents.AppendLine("6/3 21:15:05  ENCOUNTER_START,,\"Test\"");
-            fakeFileContents.AppendLine("1  COMBATANT_IO,Player-4452-02FE19CD");
-            fakeFileContents.AppendLine("1  1,Player-4452-02FE19CD,\"Oleg - Chrome\"");
-            fakeFileContents.AppendLine("6/3 21:17:58  ENCOUNTER_END,,,,,1");
-
-            return fakeFileContents.ToString();
-        }
-
-        private string CreateCorrectlyCombatLogWithIncorrectCombatName()
-        {
-            var fakeFileContents = new StringBuilder();
-            fakeFileContents.AppendLine("6/3 21:15:05  ENCOUNTER_START,,\"Te2st\"");
-            fakeFileContents.AppendLine("1  COMBATANT_INFO,Player-4452-02FE19CD");
-            fakeFileContents.AppendLine("1  1,Player-4452-02FE19CD,\"Oleg - Chrome\"");
-            fakeFileContents.AppendLine("6/3 21:17:58  ENCOUNTER_END,,,,,1");
-
-            return fakeFileContents.ToString();
-        }
-
-        private string CreateCorrectlyCombatLogWithIncorrectPlayerName()
-        {
-            var fakeFileContents = new StringBuilder();
-            fakeFileContents.AppendLine("6/3 21:15:05  ENCOUNTER_START,,\"Test\"");
-            fakeFileContents.AppendLine("1  COMBATANT_INFO,Player-4452-02FE19CD");
-            fakeFileContents.AppendLine("1  1,Player-4452-02FE19CD,\"Ol345eg - Chrome\"");
-            fakeFileContents.AppendLine("6/3 21:17:58  ENCOUNTER_END,,,,,1");
-
-            return fakeFileContents.ToString();
-        }
-
-        private string CreateIncorrectlyCombatLog()
-        {
-            var fakeFileContents = new StringBuilder();
-            fakeFileContents.AppendLine("6/3 21:15:05  ENCOUNTER_T,,\"Test\"");
-            fakeFileContents.AppendLine("1  COMBATANT_INFO,Player-4452-02FE19CD");
-            fakeFileContents.AppendLine("1  1,Player-4452-02FE19CD,\"Oleg - Chrome\"");
-            fakeFileContents.AppendLine("6/3 21:17:58  ENCOUNTER_END,,,,,1");
-
-            return fakeFileContents.ToString();
-        }
+        return fakeFileContents.ToString();
     }
 }

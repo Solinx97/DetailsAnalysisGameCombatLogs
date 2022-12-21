@@ -1,9 +1,8 @@
-﻿namespace CombatAnalysis.Core.Enums
+﻿namespace CombatAnalysis.Core.Enums;
+
+public enum AppVersionType
 {
-    public enum AppVersionType
-    {
-        Alfa,
-        Beta,
-        Release
-    }
+    Alfa,
+    Beta,
+    Release,
 }

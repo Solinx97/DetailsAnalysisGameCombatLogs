@@ -1,7 +1,6 @@
-﻿namespace CombatAnalysis.Core.Interfaces.Observers
+﻿namespace CombatAnalysis.Core.Interfaces.Observers;
+
+public interface IAuthObserver
 {
-    public interface IAuthObserver
-    {
-        void AuthUpdate(bool isAuth);
-    }
+    void AuthUpdate(bool isAuth);
 }

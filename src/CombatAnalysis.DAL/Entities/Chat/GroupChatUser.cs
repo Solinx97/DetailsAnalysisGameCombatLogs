@@ -1,11 +1,10 @@
-﻿namespace CombatAnalysis.DAL.Entities.Chat
+﻿namespace CombatAnalysis.DAL.Entities.Chat;
+
+public class GroupChatUser
 {
-    public class GroupChatUser
-    {
-        public int Id { get; set; }
+    public int Id { get; set; }
 
-        public string UserId { get; set; }
+    public string UserId { get; set; }
 
-        public int GroupChatId { get; set; }
-    }
+    public int GroupChatId { get; set; }
 }

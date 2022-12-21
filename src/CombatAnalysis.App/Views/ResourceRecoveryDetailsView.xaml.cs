@@ -1,12 +1,11 @@
 ﻿using MvvmCross.Platforms.Wpf.Views;
 
-namespace CombatAnalysis.App.Views
+namespace CombatAnalysis.App.Views;
+
+public partial class ResourceRecoveryDetailsView : MvxWpfView
 {
-    public partial class ResourceRecoveryDetailsView : MvxWpfView
+    public ResourceRecoveryDetailsView()
     {
-        public ResourceRecoveryDetailsView()
-        {
-            InitializeComponent();
-        }
+        InitializeComponent();
     }
 }

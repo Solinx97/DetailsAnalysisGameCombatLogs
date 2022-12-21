@@ -1,7 +1,6 @@
-﻿namespace CombatAnalysis.CombatParser.Interfaces
+﻿namespace CombatAnalysis.CombatParser.Interfaces;
+
+public interface IObserver
 {
-    public interface IObserver
-    {
-        void Update(string data);
-    }
+    void Update(string data);
 }

@@ -5,59 +5,58 @@ using CombatAnalysis.DAL.Entities.User;
 using CombatAnalysis.DAL.Helpers;
 using Microsoft.EntityFrameworkCore;
 
-namespace CombatAnalysis.DAL.Data.SQL
+namespace CombatAnalysis.DAL.Data.SQL;
+
+public class SQLContext : DbContext
 {
-    public class SQLContext : DbContext
+    public SQLContext(DbContextOptions<SQLContext> options) : base(options)
     {
-        public SQLContext(DbContextOptions<SQLContext> options) : base(options)
+        var isExists = Database.EnsureCreated();
+        if (isExists)
         {
-            var isExists = Database.EnsureCreated();
-            if (isExists)
-            {
-                DbProcedureHelper.CreateProcedures(this);
-            }
+            DbProcedureHelper.CreateProcedures(this);
         }
-
-        public DbSet<AppUser> AppUser { get; set; }
-
-        public DbSet<RefreshToken> RefreshToken { get; set; }
-
-        public DbSet<PersonalChat> PersonalChat { get; set; }
-
-        public DbSet<PersonalChatMessage> PersonalChatMessage { get; set; }
-
-        public DbSet<InviteToGroupChat> InviteToGroupChat { get; set; }
-
-        public DbSet<GroupChat> GroupChat { get; set; }
-
-        public DbSet<GroupChatMessage> GroupChatMessage { get; set; }
-
-        public DbSet<GroupChatUser> GroupChatUser { get; set; }
-
-        public DbSet<BannedUser> BannedUser { get; set; }
-
-        public DbSet<CombatLog> CombatLog { get; set; }
-
-        public DbSet<CombatLogByUser> CombatLogByUser { get; set; }
-
-        public DbSet<Combat> Combat { get; set; }
-
-        public DbSet<CombatPlayer> CombatPlayer { get; set; }
-
-        public DbSet<DamageDone> DamageDone { get; set; }
-
-        public DbSet<DamageDoneGeneral> DamageDoneGeneral { get; set; }
-
-        public DbSet<HealDone> HealDone { get; set; }
-
-        public DbSet<HealDoneGeneral> HealDoneGeneral { get; set; }
-
-        public DbSet<DamageTaken> DamageTaken { get; set; }
-
-        public DbSet<DamageTakenGeneral> DamageTakenGeneral { get; set; }
-
-        public DbSet<ResourceRecovery> ResourceRecovery { get; set; }
-
-        public DbSet<ResourceRecoveryGeneral> ResourceRecoveryGeneral { get; set; }
     }
+
+    public DbSet<AppUser>? AppUser { get; }
+
+    public DbSet<RefreshToken>? RefreshToken { get; }
+
+    public DbSet<PersonalChat>? PersonalChat { get; }
+
+    public DbSet<PersonalChatMessage>? PersonalChatMessage { get; }
+
+    public DbSet<InviteToGroupChat>? InviteToGroupChat { get; }
+
+    public DbSet<GroupChat>? GroupChat { get; }
+
+    public DbSet<GroupChatMessage>? GroupChatMessage { get; }
+
+    public DbSet<GroupChatUser>? GroupChatUser { get; }
+
+    public DbSet<BannedUser>? BannedUser { get; }
+
+    public DbSet<CombatLog>? CombatLog { get; }
+
+    public DbSet<CombatLogByUser>? CombatLogByUser { get; }
+
+    public DbSet<Combat>? Combat { get; }
+
+    public DbSet<CombatPlayer>? CombatPlayer { get; }
+
+    public DbSet<DamageDone>? DamageDone { get; }
+
+    public DbSet<DamageDoneGeneral>? DamageDoneGeneral { get; }
+
+    public DbSet<HealDone>? HealDone { get; }
+
+    public DbSet<HealDoneGeneral>? HealDoneGeneral { get; }
+
+    public DbSet<DamageTaken>? DamageTaken { get; }
+
+    public DbSet<DamageTakenGeneral>? DamageTakenGeneral { get; }
+
+    public DbSet<ResourceRecovery>? ResourceRecovery { get; }
+
+    public DbSet<ResourceRecoveryGeneral>? ResourceRecoveryGeneral { get; }
 }

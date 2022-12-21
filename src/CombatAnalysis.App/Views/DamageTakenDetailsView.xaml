@@ -6,9 +6,8 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:converters="clr-namespace:CombatAnalysis.App.Converters"
-    xmlns:local="clr-namespace:CombatAnalysis.App.Views"
+    xmlns:local="clr-namespace:CombatAnalysis.App.Views.ViewTemplates"
     xmlns:viewModels="clr-namespace:CombatAnalysis.Core.ViewModels;assembly=CombatAnalysis.Core"
-    xmlns:mvx="clr-namespace:MvvmCross.Platforms.Wpf.Binding;assembly=MvvmCross.Platforms.Wpf"
     xmlns:views="clr-namespace:MvvmCross.Platforms.Wpf.Views;assembly=MvvmCross.Platforms.Wpf"
     mc:Ignorable="d" d:DesignHeight="850" d:DesignWidth="1250">
 
@@ -62,7 +61,7 @@
                 <TextBlock Text="Источник" FontSize="15" TextAlignment="Center" Padding="10" FontWeight="SemiBold"
                            Margin="0" Width="100" Foreground="Gray"/>
                 <ComboBox Name="sortingProperty" Style="{DynamicResource ComboBoxStyle1}" ItemsSource="{Binding DamageTakenSources}"
-                          VerticalAlignment="Center" Width="210" SelectedItem="{Binding SelectedDamageTakenSource}" SelectedIndex="0"/>
+                          VerticalAlignment="Center" Width="210" SelectedItem="{Binding SelectedSource}" SelectedIndex="0"/>
             </StackPanel>
         </StackPanel>
 

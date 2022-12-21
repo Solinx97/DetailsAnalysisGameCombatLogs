@@ -2,13 +2,12 @@
 using CombatAnalysis.DAL.Entities.Authentication;
 using CombatAnalysis.Identity.DTO;
 
-namespace CombatAnalysis.Identity.Mapping
+namespace CombatAnalysis.Identity.Mapping;
+
+public class IdentityMappingMapper : Profile
 {
-    public class IdentityMappingMapper : Profile
+    public IdentityMappingMapper()
     {
-        public IdentityMappingMapper()
-        {
-            CreateMap<RefreshTokenDto, RefreshToken>().ReverseMap();
-        }
+        CreateMap<RefreshTokenDto, RefreshToken>().ReverseMap();
     }
 }

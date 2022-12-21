@@ -1,15 +1,14 @@
-﻿namespace CombatAnalysis.ChatApi.Models
+﻿namespace CombatAnalysis.ChatApi.Models;
+
+public class GroupChatMessageModel
 {
-    public class GroupChatMessageModel
-    {
-        public int Id { get; set; }
+    public int Id { get; set; }
 
-        public string Username { get; set; }
+    public string Username { get; set; }
 
-        public string Message { get; set; }
+    public string Message { get; set; }
 
-        public string Time { get; set; }
+    public string Time { get; set; }
 
-        public int GroupChatId { get; set; }
-    }
+    public int GroupChatId { get; set; }
 }

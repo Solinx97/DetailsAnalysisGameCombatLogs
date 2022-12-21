@@ -2,18 +2,17 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 
-namespace CombatAnalysis.DAL.Data
+namespace CombatAnalysis.DAL.Data;
+
+public class FirebaseContext : DbContext
 {
-    public class FirebaseContext : DbContext
+    public FirebaseContext(DbContextOptions<FirebaseContext> options, IConfiguration configuration) : base(options)
     {
-        public FirebaseContext(DbContextOptions<FirebaseContext> options, IConfiguration configuration) : base(options)
-        {
-            var databaseName = configuration.GetSection("Database:Name").Value;
-            var connection = configuration.GetConnectionString(databaseName);
+        var databaseName = configuration.GetSection("Database:Name").Value??string.Empty;
+        var connection = configuration.GetConnectionString(databaseName);
 
-            FirebaseClient = new FirebaseClient(connection);
-        }
-
-        public FirebaseClient FirebaseClient { get; private set; }
+        FirebaseClient = new FirebaseClient(connection);
     }
+
+    public FirebaseClient FirebaseClient { get; private set; }
 }

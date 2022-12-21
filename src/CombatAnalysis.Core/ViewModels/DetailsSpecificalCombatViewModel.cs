@@ -2,110 +2,107 @@
 using CombatAnalysis.Core.Interfaces;
 using CombatAnalysis.Core.Models;
 using MvvmCross.ViewModels;
-using System;
-using System.Collections.Generic;
 
-namespace CombatAnalysis.Core.ViewModels
+namespace CombatAnalysis.Core.ViewModels;
+
+public class DetailsSpecificalCombatViewModel : MvxViewModel<CombatModel>
 {
-    public class DetailsSpecificalCombatViewModel : MvxViewModel<CombatModel>
+    private CombatModel _combat;
+    private IImprovedMvxViewModel _basicTemplate;
+    private List<CombatPlayerModel> _playersCombatData;
+    private long _maxDamageDone;
+    private long _maxHealDone;
+    private double _maxEnergyRecovery;
+    private CombatPlayerModel _selectedPlayer;
+    private string _selectedCombat;
+
+    public DetailsSpecificalCombatViewModel()
     {
-        private CombatModel _combat;
-        private IImprovedMvxViewModel _basicTemplate;
-        private List<CombatPlayerModel> _playersCombatData;
-        private long _maxDamageDone;
-        private long _maxHealDone;
-        private double _maxEnergyRecovery;
-        private CombatPlayerModel _selectedPlayer;
-        private string _selectedCombat;
+        BasicTemplate = Templates.Basic;
+        BasicTemplate.Parent = this;
+        BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, "Step", 2);
+    }
 
-        public DetailsSpecificalCombatViewModel()
+    #region Properties
+
+    public IImprovedMvxViewModel BasicTemplate
+    {
+        get { return _basicTemplate; }
+        set
         {
-            BasicTemplate = Templates.Basic;
-            BasicTemplate.Parent = this;
-            BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, "Step", 2);
+            SetProperty(ref _basicTemplate, value);
         }
+    }
 
-        #region Properties
-
-        public IImprovedMvxViewModel BasicTemplate
+    public List<CombatPlayerModel> PlayersCombatData
+    {
+        get { return _playersCombatData; }
+        set
         {
-            get { return _basicTemplate; }
-            set
-            {
-                SetProperty(ref _basicTemplate, value);
-            }
-        }
+            SetProperty(ref _playersCombatData, value);
 
-        public List<CombatPlayerModel> PlayersCombatData
+            SelectedPlayer = value[0];
+        }
+    }
+
+    public CombatPlayerModel SelectedPlayer
+    {
+        get { return _selectedPlayer; }
+        set
         {
-            get { return _playersCombatData; }
-            set
-            {
-                SetProperty(ref _playersCombatData, value);
+            SetProperty(ref _selectedPlayer, value);
 
-                SelectedPlayer = value[0];
-            }
+            BasicTemplate.Handler.Data = Tuple.Create(value, _combat);
         }
+    }
 
-        public CombatPlayerModel SelectedPlayer
+    public long MaxDamageDone
+    {
+        get { return _maxDamageDone; }
+        set
         {
-            get { return _selectedPlayer; }
-            set
-            {
-                SetProperty(ref _selectedPlayer, value);
-
-                BasicTemplate.Handler.Data = Tuple.Create(value, _combat);
-            }
+            SetProperty(ref _maxDamageDone, value);
         }
+    }
 
-        public long MaxDamageDone
+    public long MaxHealDone
+    {
+        get { return _maxHealDone; }
+        set
         {
-            get { return _maxDamageDone; }
-            set
-            {
-                SetProperty(ref _maxDamageDone, value);
-            }
+            SetProperty(ref _maxHealDone, value);
         }
+    }
 
-        public long MaxHealDone
+    public double MaxEnergyRecovery
+    {
+        get { return _maxEnergyRecovery; }
+        set
         {
-            get { return _maxHealDone; }
-            set
-            {
-                SetProperty(ref _maxHealDone, value);
-            }
+            SetProperty(ref _maxEnergyRecovery, value);
         }
+    }
 
-        public double MaxEnergyRecovery
+    public string SelectedCombat
+    {
+        get { return _selectedCombat; }
+        set
         {
-            get { return _maxEnergyRecovery; }
-            set
-            {
-                SetProperty(ref _maxEnergyRecovery, value);
-            }
+            SetProperty(ref _selectedCombat, value);
         }
+    }
 
-        public string SelectedCombat
-        {
-            get { return _selectedCombat; }
-            set
-            {
-                SetProperty(ref _selectedCombat, value);
-            }
-        }
+    #endregion
 
-        #endregion
+    public override void Prepare(CombatModel parameter)
+    {
+        _combat = parameter;
 
-        public override void Prepare(CombatModel parameter)
-        {
-            _combat = parameter;
+        PlayersCombatData = _combat.Players;
+        MaxDamageDone = _combat.DamageDone;
+        MaxHealDone = _combat.HealDone;
+        MaxEnergyRecovery = _combat.EnergyRecovery;
 
-            PlayersCombatData = _combat.Players;
-            MaxDamageDone = _combat.DamageDone;
-            MaxHealDone = _combat.HealDone;
-            MaxEnergyRecovery = _combat.EnergyRecovery;
-
-            SelectedCombat = parameter.Name;
-        }
+        SelectedCombat = parameter.Name;
     }
 }

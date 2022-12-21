@@ -1,5 +1,5 @@
 ﻿import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faHandFist, faGauge, faStopwatch20, faLocationCrosshairs, faMeteor, faShare, faCircleUp, faCircleDown, faClock, faRightToBracket, faCopy, faHands, faFire, faFlask } from '@fortawesome/free-solid-svg-icons';
+import { fa0, faHandFist, faGauge, faStopwatch20, faLocationCrosshairs, faMeteor, faShare, faCircleUp, faCircleDown, faClock, faRightToBracket, faCopy, faHands, faFire, faFlask, faPooStorm } from '@fortawesome/free-solid-svg-icons';
 
 const useCombatDetailsHelper = (combatPlayerId) => {
     const getUserNameWithoutRealm = (userName) => {
@@ -17,14 +17,14 @@ const useCombatDetailsHelper = (combatPlayerId) => {
     }
 
     const getGeneralDetailsAsync = async (detailsType) => {
-        const response = await fetch(`${detailsType}General/${combatPlayerId}`);
+        const response = await fetch(`api/v1/${detailsType}General/${combatPlayerId}`);
         const generalDetailsGeneralData = await response.json();
 
         return generalDetailsGeneralData;
     }
 
     const getDetailsAsync = async (detailsType) => {
-        const response = await fetch(`${detailsType}/${combatPlayerId}`);
+        const response = await fetch(`api/v1/${detailsType}/${combatPlayerId}`);
         const generalDetailsGeneralData = await response.json();
 
         return generalDetailsGeneralData;
@@ -210,7 +210,7 @@ const useCombatDetailsHelper = (combatPlayerId) => {
                             <FontAwesomeIcon icon={faHands} title="Промах" />
                         }
                         {element.isParry &&
-                            <FontAwesomeIcon icon={faCompas} title="Паррирование" />
+                            <FontAwesomeIcon icon={fa0} title="Паррирование" />
                         }
                         {element.isImmune &&
                             <FontAwesomeIcon icon={faPooStorm} title="Иммунитет к урону" />
@@ -294,7 +294,7 @@ const useCombatDetailsHelper = (combatPlayerId) => {
                             <FontAwesomeIcon icon={faHands} title="Промах" />
                         }
                         {element.isParry &&
-                            <FontAwesomeIcon icon={faCompas} title="Паррирование" />
+                            <FontAwesomeIcon icon={fa0} title="Паррирование" />
                         }
                         {element.isImmune &&
                             <FontAwesomeIcon icon={faPooStorm} title="Иммунитет к урону" />
@@ -342,7 +342,7 @@ const useCombatDetailsHelper = (combatPlayerId) => {
                             <FontAwesomeIcon icon={faHands} title="Промах" />
                         }
                         {element.isParry &&
-                            <FontAwesomeIcon icon={faCompas} title="Паррирование" />
+                            <FontAwesomeIcon icon={fa0} title="Паррирование" />
                         }
                         {element.isImmune &&
                             <FontAwesomeIcon icon={faPooStorm} title="Иммунитет к урону" />
