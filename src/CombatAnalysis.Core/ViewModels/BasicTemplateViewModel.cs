@@ -3,12 +3,15 @@ using CombatAnalysis.Core.Core;
 using CombatAnalysis.Core.Enums;
 using CombatAnalysis.Core.Interfaces;
 using CombatAnalysis.Core.Interfaces.Observers;
+using CombatAnalysis.Core.Localizations;
 using CombatAnalysis.Core.Models;
 using CombatAnalysis.Core.Models.User;
 using Microsoft.Extensions.Caching.Memory;
 using MvvmCross.Commands;
 using MvvmCross.Navigation;
 using MvvmCross.ViewModels;
+using System.Collections.ObjectModel;
+using System.Globalization;
 
 namespace CombatAnalysis.Core.ViewModels;
 
@@ -29,6 +32,8 @@ public class BasicTemplateViewModel : MvxViewModel, IImprovedMvxViewModel, IResp
     private string _email;
     private LogType _logType;
     private bool _logPanelStatusIsVisibly;
+    private ObservableCollection<Language> _languages;
+    private Language _selectedLanguage;
 
     private static LoadingStatus _responseStatus;
     private static int _allowStep;
@@ -59,6 +64,7 @@ public class BasicTemplateViewModel : MvxViewModel, IImprovedMvxViewModel, IResp
         DamageTakenDetailsCommand = new MvxAsyncCommand(DamageTakenDetailsAsync);
         ResourceDetailsCommand = new MvxAsyncCommand(ResourceDetailsAsync);
 
+        LanguageInit();
         CheckAuth();
     }
 
@@ -110,6 +116,25 @@ public class BasicTemplateViewModel : MvxViewModel, IImprovedMvxViewModel, IResp
     public string AppVersionType
     {
         get { return AppInformation.VersionType.ToString(); }
+    }
+
+    public ObservableCollection<Language> Languages
+    {
+        get { return _languages; }
+        set
+        {
+            SetProperty(ref _languages, value);
+        }
+    }
+
+    public Language SelectedLanguage
+    {
+        get { return _selectedLanguage; }
+        set
+        {
+            TranslationSource.Instance.Language = value.ToString().ToLower(CultureInfo.CurrentCulture);
+            SetProperty(ref _selectedLanguage, value);
+        }
     }
 
     public int Step
@@ -351,5 +376,18 @@ public class BasicTemplateViewModel : MvxViewModel, IImprovedMvxViewModel, IResp
 
         IsAuth = true;
         Email = user.Email;
+    }
+
+    private void LanguageInit()
+    {
+        var currentCultureTag = CultureInfo.CurrentCulture.IetfLanguageTag;
+
+        SelectedLanguage = currentCultureTag switch
+        {
+            "ru" => Language.RU,
+            _ => Language.EN,
+        };
+
+        Languages = new ObservableCollection<Language> { Language.EN, Language.RU, };
     }
 }

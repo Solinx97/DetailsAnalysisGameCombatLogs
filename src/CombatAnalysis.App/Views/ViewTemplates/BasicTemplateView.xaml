@@ -9,6 +9,9 @@
       xmlns:uc="clr-namespace:CombatAnalysis.App.UserControls"
       xmlns:Icon="http://metro.mahapps.com/winfx/xaml/iconpacks"
       xmlns:converters="clr-namespace:CombatAnalysis.App.Converters"
+      xmlns:resx="clr-namespace:CombatAnalysis.App.Localizations.Resources"
+      xmlns:loc="clr-namespace:CombatAnalysis.App.Localizations"
+      loc:LocalizationObject.ResourceManager="{x:Static resx:Resource.ResourceManager}"
       mc:Ignorable="d">
 
     <Grid>
@@ -130,7 +133,7 @@
             </StackPanel>
         </Border>
 
-        <Border Grid.Column="2" Grid.ColumnSpan="2" Background="Transparent" Margin="10 10" Height="40"
+        <Border Grid.Column="2" Grid.ColumnSpan="2" Background="Transparent" Margin="10" Height="50"
                 VerticalAlignment="Center" MouseDown="Border_MouseDown" Panel.ZIndex="2">
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
                 <StackPanel VerticalAlignment="Center">
@@ -161,8 +164,10 @@
                         </TextBlock>
                     </StackPanel>
                 </StackPanel>
-                <StackPanel Orientation="Horizontal" Margin="30 0">
-                    <Button Style="{StaticResource textBoxButton}">
+                <StackPanel Margin="25 0">
+                    <TextBlock Text="{loc:Loc Language}" Margin="5"/>
+                    <ComboBox ItemsSource="{Binding Languages}" SelectedItem="{Binding SelectedLanguage}"/>
+                    <!--<Button Style="{StaticResource textBoxButton}">
                         <Button.ToolTip>
                             <ToolTip>
                                 Уведомления
@@ -177,7 +182,7 @@
                             </ToolTip>
                         </Button.ToolTip>
                         <Icon:PackIconMaterial Kind="DotsVertical" Foreground="#88878e"/>
-                    </Button>
+                    </Button>-->
                 </StackPanel>
                 <StackPanel Orientation="Horizontal">
                     <Button Style="{StaticResource textBoxButton}" Click="Minimaze">
