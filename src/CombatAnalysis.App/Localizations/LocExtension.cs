@@ -41,6 +41,11 @@ public class LocExtension : MarkupExtension
     public override object ProvideValue(IServiceProvider serviceProvider)
     {
         var targetObject = (serviceProvider as IProvideValueTarget)?.TargetObject;
+        if (targetObject?.GetType().Name == "SharedDp")
+        {
+            return targetObject;
+        }
+
         var baseName = GetBaseName(targetObject, serviceProvider);
 
         var binding = new Binding
@@ -56,7 +61,7 @@ public class LocExtension : MarkupExtension
         return expression;
     }
 
-    private string GetBaseName(object targetObject, IServiceProvider serviceProvider)
+    private static string GetBaseName(object targetObject, IServiceProvider serviceProvider)
     {
         var baseName = GetResourceManager(targetObject)?.BaseName ?? string.Empty;
         if (string.IsNullOrEmpty(baseName))
