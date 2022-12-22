@@ -213,6 +213,9 @@
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
                                 <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                                    <Icon:PackIconMaterial Visibility="{Binding Path=IsCrit, Converter={StaticResource BoolToVisibility}, ConverterParameter=true}"
+                                                   Kind="Star" Foreground="Brown" Style="{StaticResource menuButtonIcon}"
+                                                   HorizontalAlignment="Center" ToolTip="{loc:Loc CritDamage}"/>
                                     <Icon:PackIconMaterial Visibility="{Binding Path=IsParry, Converter={StaticResource BoolToVisibility}, ConverterParameter=true}"
                                                    Kind="SwordCross" Foreground="Black" Style="{StaticResource menuButtonIcon}"
                                                    HorizontalAlignment="Center" ToolTip="{loc:Loc PeriodicDamage}"/>

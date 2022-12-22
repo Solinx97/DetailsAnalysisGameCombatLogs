@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace CombatAnalysis.App.Localizations.Resources.DamageDoneDetails {
+namespace CombatAnalysis.App.Localizations.Resources.HealDoneDetails {
     using System;
     
     
@@ -39,7 +39,7 @@ namespace CombatAnalysis.App.Localizations.Resources.DamageDoneDetails {
         public static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("CombatAnalysis.App.Localizations.Resources.DamageDoneDetails.Resource", typeof(Resource).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("CombatAnalysis.App.Localizations.Resources.HealDoneDetails.Resource", typeof(Resource).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -88,52 +88,34 @@ namespace CombatAnalysis.App.Localizations.Resources.DamageDoneDetails {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Crit damage.
+        ///   Looks up a localized string similar to Crit healing.
         /// </summary>
-        public static string CritDamage {
+        public static string CritHealing {
             get {
-                return ResourceManager.GetString("CritDamage", resourceCulture);
+                return ResourceManager.GetString("CritHealing", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Damage.
+        ///   Looks up a localized string similar to Healing.
         /// </summary>
-        public static string Damage {
+        public static string Healing {
             get {
-                return ResourceManager.GetString("Damage", resourceCulture);
+                return ResourceManager.GetString("Healing", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Damage per sec..
+        ///   Looks up a localized string similar to Healing per sec..
         /// </summary>
-        public static string DamagePerSec {
+        public static string HealingPerSec {
             get {
-                return ResourceManager.GetString("DamagePerSec", resourceCulture);
+                return ResourceManager.GetString("HealingPerSec", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Dodge.
-        /// </summary>
-        public static string Dodge {
-            get {
-                return ResourceManager.GetString("Dodge", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Immune.
-        /// </summary>
-        public static string Immune {
-            get {
-                return ResourceManager.GetString("Immune", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Max. value.
+        ///   Looks up a localized string similar to Max value.
         /// </summary>
         public static string MaxValue {
             get {
@@ -142,20 +124,11 @@ namespace CombatAnalysis.App.Localizations.Resources.DamageDoneDetails {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Min. value.
+        ///   Looks up a localized string similar to Min value.
         /// </summary>
         public static string MinValue {
             get {
                 return ResourceManager.GetString("MinValue", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Miss.
-        /// </summary>
-        public static string Miss {
-            get {
-                return ResourceManager.GetString("Miss", resourceCulture);
             }
         }
         
@@ -169,56 +142,20 @@ namespace CombatAnalysis.App.Localizations.Resources.DamageDoneDetails {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Parry.
+        ///   Looks up a localized string similar to Over healing.
         /// </summary>
-        public static string Parry {
+        public static string OverHealing {
             get {
-                return ResourceManager.GetString("Parry", resourceCulture);
+                return ResourceManager.GetString("OverHealing", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Periodic damage.
+        ///   Looks up a localized string similar to Show crit.
         /// </summary>
-        public static string PeriodicDamage {
+        public static string ShowCrit {
             get {
-                return ResourceManager.GetString("PeriodicDamage", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Player.
-        /// </summary>
-        public static string Player {
-            get {
-                return ResourceManager.GetString("Player", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Resist.
-        /// </summary>
-        public static string Resist {
-            get {
-                return ResourceManager.GetString("Resist", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Show crit. damage.
-        /// </summary>
-        public static string ShowCritDamage {
-            get {
-                return ResourceManager.GetString("ShowCritDamage", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Show dodge.
-        /// </summary>
-        public static string ShowDodge {
-            get {
-                return ResourceManager.GetString("ShowDodge", resourceCulture);
+                return ResourceManager.GetString("ShowCrit", resourceCulture);
             }
         }
         
@@ -232,38 +169,11 @@ namespace CombatAnalysis.App.Localizations.Resources.DamageDoneDetails {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Show immune.
+        ///   Looks up a localized string similar to Show over heal.
         /// </summary>
-        public static string ShowImmune {
+        public static string ShowOverHealing {
             get {
-                return ResourceManager.GetString("ShowImmune", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Show miss.
-        /// </summary>
-        public static string ShowMiss {
-            get {
-                return ResourceManager.GetString("ShowMiss", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Show parry.
-        /// </summary>
-        public static string ShowParry {
-            get {
-                return ResourceManager.GetString("ShowParry", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Show resist.
-        /// </summary>
-        public static string ShowResist {
-            get {
-                return ResourceManager.GetString("ShowResist", resourceCulture);
+                return ResourceManager.GetString("ShowOverHealing", resourceCulture);
             }
         }
         
@@ -277,34 +187,7 @@ namespace CombatAnalysis.App.Localizations.Resources.DamageDoneDetails {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Status.
-        /// </summary>
-        public static string Status {
-            get {
-                return ResourceManager.GetString("Status", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Target.
-        /// </summary>
-        public static string Target {
-            get {
-                return ResourceManager.GetString("Target", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Time.
-        /// </summary>
-        public static string Time {
-            get {
-                return ResourceManager.GetString("Time", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Analyzing of damage done.
+        ///   Looks up a localized string similar to Analyzing of heal done.
         /// </summary>
         public static string Title {
             get {
@@ -313,7 +196,7 @@ namespace CombatAnalysis.App.Localizations.Resources.DamageDoneDetails {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Total:.
+        ///   Looks up a localized string similar to Total: .
         /// </summary>
         public static string Total {
             get {

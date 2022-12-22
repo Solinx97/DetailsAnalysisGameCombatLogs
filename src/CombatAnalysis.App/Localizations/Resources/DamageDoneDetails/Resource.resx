@@ -126,6 +126,9 @@
   <data name="CountOfSkills" xml:space="preserve">
     <value>Count of skills</value>
   </data>
+  <data name="CritDamage" xml:space="preserve">
+    <value>Crit damage</value>
+  </data>
   <data name="Damage" xml:space="preserve">
     <value>Damage</value>
   </data>
