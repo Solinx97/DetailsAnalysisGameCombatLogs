@@ -117,7 +117,7 @@
                 </StackPanel>
                 
                 <StackPanel Margin="10 5 0 0" VerticalAlignment="Bottom">
-                    <uc:MenuButton Title="{loc:Loc Settings}" Icon="CogOutline" IsEnabled="False"/>
+                    <uc:MenuButton Title="{loc:Loc Settings}" OnClick="{Binding SettingsCommand}" Icon="CogOutline"/>
                     <uc:MenuButton Title="{loc:Loc Exit}" OnClick="{Binding CloseCommand}" Icon="Logout"/>
                 </StackPanel>
             </StackPanel>
@@ -139,10 +139,8 @@
                                    ToolTip="{loc:Loc LoadingSuccess}"/>
                     </StackPanel>
                 </StackPanel>
-                <StackPanel Margin="25 0">
-                    <TextBlock Text="{loc:Loc Language}" FontSize="14" Margin="5"/>
-                    <ComboBox Style="{DynamicResource ComboBoxStyle1}" ItemsSource="{Binding Languages}" SelectedItem="{Binding SelectedLanguage}"/>
-                    <!--<Button Style="{StaticResource textBoxButton}">
+                <StackPanel Margin="25 0" Orientation="Horizontal">
+                    <Button Style="{StaticResource textBoxButton}">
                         <Button.ToolTip>
                             <ToolTip>
                                 Уведомления
@@ -157,7 +155,7 @@
                             </ToolTip>
                         </Button.ToolTip>
                         <Icon:PackIconMaterial Kind="DotsVertical" Foreground="#88878e"/>
-                    </Button>-->
+                    </Button>
                 </StackPanel>
                 <StackPanel Orientation="Horizontal">
                     <Button Style="{StaticResource textBoxButton}" Click="Minimaze" ToolTip="{loc:Loc MinimazeWindow}">
