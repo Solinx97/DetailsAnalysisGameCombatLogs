@@ -1,4 +1,5 @@
-﻿using CombatAnalysis.Core.Consts;
+﻿using CombatAnalysis.Core.Commands;
+using CombatAnalysis.Core.Consts;
 using CombatAnalysis.Core.Core;
 using CombatAnalysis.Core.Enums;
 using CombatAnalysis.Core.Interfaces;
@@ -33,9 +34,10 @@ public class BasicTemplateViewModel : MvxViewModel, IImprovedMvxViewModel, IResp
     private static LoadingStatus _responseStatus;
     private static int _allowStep;
 
-    public BasicTemplateViewModel(IViewModelConnect handler, IMvxNavigationService mvvmNavigation, IMemoryCache memoryCache, IHttpClientHelper httpClient)
+    public BasicTemplateViewModel(IMvxNavigationService mvvmNavigation, IMemoryCache memoryCache, IHttpClientHelper httpClient)
     {
-        Handler = handler;
+        Handler = new ViewModelMConnect();
+
         _mvvmNavigation = mvvmNavigation;
         _memoryCache = memoryCache;
         _httpClient = httpClient;
@@ -60,7 +62,10 @@ public class BasicTemplateViewModel : MvxViewModel, IImprovedMvxViewModel, IResp
         DamageTakenDetailsCommand = new MvxAsyncCommand(DamageTakenDetailsAsync);
         ResourceDetailsCommand = new MvxAsyncCommand(ResourceDetailsAsync);
 
+        Templates.Basic = this;
+
         CheckAuth();
+        Task.Run(async () => await _mvvmNavigation.Navigate<HomeViewModel, bool>(IsAuth));
     }
 
     #region Commands
@@ -252,9 +257,8 @@ public class BasicTemplateViewModel : MvxViewModel, IImprovedMvxViewModel, IResp
     public async Task ToHomeAsync()
     {
         Step = -1;
-        LogPanelStatusIsVisibly = false;
         await _mvvmNavigation.Close(Parent);
-        await _mvvmNavigation.Navigate<HomeViewModel>();
+        await _mvvmNavigation.Navigate<HomeViewModel, bool>(IsAuth);
     }
 
     public async Task UploadCombatLogsAsync()

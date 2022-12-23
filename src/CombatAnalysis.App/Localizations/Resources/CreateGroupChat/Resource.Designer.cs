@@ -22,7 +22,7 @@ namespace CombatAnalysis.App.Localizations.Resources.CreateGroupChat {
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    internal class Resource {
+    public class Resource {
         
         private static global::System.Resources.ResourceManager resourceMan;
         
@@ -36,7 +36,7 @@ namespace CombatAnalysis.App.Localizations.Resources.CreateGroupChat {
         ///   Returns the cached ResourceManager instance used by this class.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        internal static global::System.Resources.ResourceManager ResourceManager {
+        public static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
                     global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("CombatAnalysis.App.Localizations.Resources.CreateGroupChat.Resource", typeof(Resource).Assembly);
@@ -51,7 +51,7 @@ namespace CombatAnalysis.App.Localizations.Resources.CreateGroupChat {
         ///   resource lookups using this strongly typed resource class.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        internal static global::System.Globalization.CultureInfo Culture {
+        public static global::System.Globalization.CultureInfo Culture {
             get {
                 return resourceCulture;
             }
@@ -63,7 +63,7 @@ namespace CombatAnalysis.App.Localizations.Resources.CreateGroupChat {
         /// <summary>
         ///   Looks up a localized string similar to Cancel.
         /// </summary>
-        internal static string Cancel {
+        public static string Cancel {
             get {
                 return ResourceManager.GetString("Cancel", resourceCulture);
             }
@@ -72,7 +72,7 @@ namespace CombatAnalysis.App.Localizations.Resources.CreateGroupChat {
         /// <summary>
         ///   Looks up a localized string similar to Can&apos;t add a new user.
         /// </summary>
-        internal static string CanNotAddUser {
+        public static string CanNotAddUser {
             get {
                 return ResourceManager.GetString("CanNotAddUser", resourceCulture);
             }
@@ -81,7 +81,7 @@ namespace CombatAnalysis.App.Localizations.Resources.CreateGroupChat {
         /// <summary>
         ///   Looks up a localized string similar to Can&apos;t remove user.
         /// </summary>
-        internal static string CanNotRemoveUser {
+        public static string CanNotRemoveUser {
             get {
                 return ResourceManager.GetString("CanNotRemoveUser", resourceCulture);
             }
@@ -90,7 +90,7 @@ namespace CombatAnalysis.App.Localizations.Resources.CreateGroupChat {
         /// <summary>
         ///   Looks up a localized string similar to Chat name.
         /// </summary>
-        internal static string ChatName {
+        public static string ChatName {
             get {
                 return ResourceManager.GetString("ChatName", resourceCulture);
             }
@@ -99,7 +99,7 @@ namespace CombatAnalysis.App.Localizations.Resources.CreateGroupChat {
         /// <summary>
         ///   Looks up a localized string similar to Chat privacy.
         /// </summary>
-        internal static string ChatPrivacy {
+        public static string ChatPrivacy {
             get {
                 return ResourceManager.GetString("ChatPrivacy", resourceCulture);
             }
@@ -108,7 +108,7 @@ namespace CombatAnalysis.App.Localizations.Resources.CreateGroupChat {
         /// <summary>
         ///   Looks up a localized string similar to Chat restrictions.
         /// </summary>
-        internal static string ChatRestrictions {
+        public static string ChatRestrictions {
             get {
                 return ResourceManager.GetString("ChatRestrictions", resourceCulture);
             }
@@ -117,7 +117,7 @@ namespace CombatAnalysis.App.Localizations.Resources.CreateGroupChat {
         /// <summary>
         ///   Looks up a localized string similar to Create.
         /// </summary>
-        internal static string Create {
+        public static string Create {
             get {
                 return ResourceManager.GetString("Create", resourceCulture);
             }
@@ -126,7 +126,7 @@ namespace CombatAnalysis.App.Localizations.Resources.CreateGroupChat {
         /// <summary>
         ///   Looks up a localized string similar to Only read.
         /// </summary>
-        internal static string OnlyRead {
+        public static string OnlyRead {
             get {
                 return ResourceManager.GetString("OnlyRead", resourceCulture);
             }
@@ -135,7 +135,7 @@ namespace CombatAnalysis.App.Localizations.Resources.CreateGroupChat {
         /// <summary>
         ///   Looks up a localized string similar to Private.
         /// </summary>
-        internal static string Private {
+        public static string Private {
             get {
                 return ResourceManager.GetString("Private", resourceCulture);
             }
@@ -144,7 +144,7 @@ namespace CombatAnalysis.App.Localizations.Resources.CreateGroupChat {
         /// <summary>
         ///   Looks up a localized string similar to Private (with join from link).
         /// </summary>
-        internal static string PrivateWithLinks {
+        public static string PrivateWithLinks {
             get {
                 return ResourceManager.GetString("PrivateWithLinks", resourceCulture);
             }
@@ -153,7 +153,7 @@ namespace CombatAnalysis.App.Localizations.Resources.CreateGroupChat {
         /// <summary>
         ///   Looks up a localized string similar to Public.
         /// </summary>
-        internal static string Public {
+        public static string Public {
             get {
                 return ResourceManager.GetString("Public", resourceCulture);
             }
@@ -162,7 +162,7 @@ namespace CombatAnalysis.App.Localizations.Resources.CreateGroupChat {
         /// <summary>
         ///   Looks up a localized string similar to Restriction on posting content.
         /// </summary>
-        internal static string RestrictionsToContent {
+        public static string RestrictionsToContent {
             get {
                 return ResourceManager.GetString("RestrictionsToContent", resourceCulture);
             }
@@ -171,7 +171,7 @@ namespace CombatAnalysis.App.Localizations.Resources.CreateGroupChat {
         /// <summary>
         ///   Looks up a localized string similar to Create a new group chat.
         /// </summary>
-        internal static string Title {
+        public static string Title {
             get {
                 return ResourceManager.GetString("Title", resourceCulture);
             }
@@ -180,7 +180,7 @@ namespace CombatAnalysis.App.Localizations.Resources.CreateGroupChat {
         /// <summary>
         ///   Looks up a localized string similar to Without restrictions.
         /// </summary>
-        internal static string WithoutRestrictions {
+        public static string WithoutRestrictions {
             get {
                 return ResourceManager.GetString("WithoutRestrictions", resourceCulture);
             }

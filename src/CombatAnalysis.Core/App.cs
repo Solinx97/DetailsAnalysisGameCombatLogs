@@ -50,6 +50,6 @@ public class App : MvxApplication
         Mvx.IoCProvider.RegisterSingleton<ILogger>(logger);
         Mvx.IoCProvider.RegisterSingleton<IMemoryCache>(memoryCache);
 
-        RegisterAppStart<HomeViewModel>();
+        RegisterAppStart<BasicTemplateViewModel>();
     }
 }

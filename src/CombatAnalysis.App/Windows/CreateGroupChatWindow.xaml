@@ -7,7 +7,7 @@
     xmlns:local="clr-namespace:CombatAnalysis.App.Views.Chat"
     xmlns:viewModels="clr-namespace:CombatAnalysis.Core.ViewModels.Chat;assembly=CombatAnalysis.Core"
     xmlns:views="clr-namespace:MvvmCross.Platforms.Wpf.Views;assembly=MvvmCross.Platforms.Wpf"
-    mc:Ignorable="d" Title="CreateGroupChat" Height="550" Width="600" WindowStartupLocation="CenterScreen">
+    mc:Ignorable="d" Title="Create group chat" Height="550" Width="600" WindowStartupLocation="CenterScreen">
 
     <Window.Resources>
         <DataTemplate DataType="{x:Type viewModels:CreateGroupChatViewModel}">

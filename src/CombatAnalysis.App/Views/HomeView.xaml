@@ -15,12 +15,7 @@
 
     <Grid>
         <Grid.Resources>
-            <converters:TheNativeStringToVisibilityConverter x:Key="ToVisibility" />
-            <converters:TheNativeStringToXAMLBoolConverter x:Key="ToXAMLBool" />
             <converters:TheNativeBoolToXAMLBoolConverter x:Key="BoolToXAMLBool" />
-            <converters:TheNativeBoolToVisibilityConverter x:Key="BoolToVisibility" />
-            <converters:TheNativeIntToVisibilityConverter x:Key="IntToVisibility" />
-            <converters:TheNativeIntToXAMLBoolConverter x:Key="IntToXAMLBool" />
         </Grid.Resources>
 
         <Grid.ColumnDefinitions>
@@ -59,7 +54,7 @@
         <StackPanel Grid.Column="2" Grid.ColumnSpan="2" Grid.Row="0" Grid.RowSpan="3" Orientation="Horizontal" Margin="30 0">
             <StackPanel VerticalAlignment="Center">
                 <TextBlock Text="{loc:Loc Communication}" HorizontalAlignment="Center" FontSize="18" FontFamily="Comic Sans MS"/>
-                <Image Name="openChat" IsEnabled="False" Style="{StaticResource homeItems}" Source="../Resource/Chat.jpg" Height="275" Margin="20" Panel.ZIndex="1" Cursor="Hand">
+                <Image Name="openChat" IsEnabled="{Binding ChatIsEnabled, Converter={StaticResource BoolToXAMLBool}}" Style="{StaticResource homeItems}" Source="../Resource/Chat.jpg" Height="275" Margin="20" Panel.ZIndex="1" Cursor="Hand">
                     <Image.InputBindings>
                         <MouseBinding Gesture="LeftClick" Command="{Binding OpenChatCommand, Mode=OneTime}" />
                     </Image.InputBindings>

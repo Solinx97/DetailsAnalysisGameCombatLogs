@@ -183,8 +183,8 @@
   <data name="StartDialog" xml:space="preserve">
     <value>Начать диалог</value>
   </data>
-  <data name="TypingMessage" xml:space="preserve">
-    <value>Печатает сообщение...</value>
+  <data name="TypeMessage" xml:space="preserve">
+    <value>Пишите сообщение...</value>
   </data>
   <data name="UserAdded" xml:space="preserve">
     <value>Пользователь добавлен</value>

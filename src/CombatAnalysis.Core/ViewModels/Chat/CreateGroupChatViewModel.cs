@@ -26,7 +26,6 @@ public class CreateGroupChatViewModel : MvxViewModel
         _memoryCache = Mvx.IoCProvider.GetSingleton<IMemoryCache>();
 
         CreateCommand = new MvxAsyncCommand(CreateAsync);
-        CancelCommand = new MvxCommand(Cancel);
 
         _groupChat = new GroupChatModel();
         GetPolicyTypeCommand = new MvxCommand<int>(GetChatType);
@@ -85,11 +84,6 @@ public class CreateGroupChatViewModel : MvxViewModel
                 CancelCommand.Execute();
             }
         }
-    }
-
-    public void Cancel()
-    {
-        //WindowManager.CreateGroupChat.Close();
     }
 
     public void GetChatType(int policyType)

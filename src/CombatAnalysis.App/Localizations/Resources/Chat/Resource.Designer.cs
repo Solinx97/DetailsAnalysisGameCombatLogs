@@ -259,11 +259,11 @@ namespace CombatAnalysis.App.Localizations.Resources.Chat {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Typing message....
+        ///   Looks up a localized string similar to Type message....
         /// </summary>
-        public static string TypingMessage {
+        public static string TypeMessage {
             get {
-                return ResourceManager.GetString("TypingMessage", resourceCulture);
+                return ResourceManager.GetString("TypeMessage", resourceCulture);
             }
         }
         

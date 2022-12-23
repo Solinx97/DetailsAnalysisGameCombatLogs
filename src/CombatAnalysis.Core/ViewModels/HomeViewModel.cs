@@ -1,32 +1,31 @@
-﻿using CombatAnalysis.Core.Commands;
-using CombatAnalysis.Core.Consts;
+﻿using CombatAnalysis.Core.Consts;
 using CombatAnalysis.Core.Interfaces;
-using Microsoft.Extensions.Caching.Memory;
+using CombatAnalysis.Core.Interfaces.Observers;
 using MvvmCross.Commands;
 using MvvmCross.Navigation;
 using MvvmCross.ViewModels;
 
 namespace CombatAnalysis.Core.ViewModels;
 
-public class HomeViewModel : MvxViewModel
+public class HomeViewModel : MvxViewModel<bool>, IAuthObserver
 {
     private readonly IMvxNavigationService _mvvmNavigation;
 
     private IImprovedMvxViewModel _basicTemplate;
-    private IViewModelConnect _handler;
+    private bool _chatIsEnabled;
 
-    public HomeViewModel(IMvxNavigationService mvvmNavigation, IHttpClientHelper httpClient, IMemoryCache memoryCache)
+    public HomeViewModel(IMvxNavigationService mvvmNavigation)
     {
         _mvvmNavigation = mvvmNavigation;
-
-        _handler = new ViewModelMConnect();
 
         OpenChatCommand = new MvxAsyncCommand(OpenChatAsync);
         OpenCombatAnalysisCommand = new MvxAsyncCommand(OpenCombatAnalysisAsync);
 
-        BasicTemplate = new BasicTemplateViewModel(_handler, mvvmNavigation, memoryCache, httpClient);
-        BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, "Step", -1);
-        Templates.Basic = BasicTemplate;
+        BasicTemplate = Templates.Basic;
+        BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, nameof(BasicTemplateViewModel.Step), -1);
+
+        var authObservable = (IAuthObservable)BasicTemplate;
+        authObservable.AddObserver(this);
     }
 
     #region Command
@@ -48,7 +47,21 @@ public class HomeViewModel : MvxViewModel
         }
     }
 
+    public bool ChatIsEnabled
+    {
+        get { return _chatIsEnabled; }
+        set
+        {
+            SetProperty(ref _chatIsEnabled, value);
+        }
+    }
+
     #endregion
+
+    public override void Prepare(bool isAuth)
+    {
+        ChatIsEnabled = isAuth;
+    }
 
     public async Task OpenChatAsync()
     {
@@ -58,5 +71,10 @@ public class HomeViewModel : MvxViewModel
     public async Task OpenCombatAnalysisAsync()
     {
         await _mvvmNavigation.Navigate<CombatLogInformationViewModel>();
+    }
+
+    public void AuthUpdate(bool isAuth)
+    {
+        ChatIsEnabled = isAuth;
     }
 }
