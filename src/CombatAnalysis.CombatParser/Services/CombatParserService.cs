@@ -268,10 +268,7 @@ public class CombatParserService : IParser
     {
         foreach (var observer in _observers)
         {
-            var combatResult = Combats[^1].IsWin ? "Победа" : "Поражение";
-            var combatInformation = $"Подземелье: {Combats[^1].DungeonName}, Бой: {Combats[^1].Name}, Время: {Combats[^1].Duration}, Результат: {combatResult}";
-
-            observer.Update(combatInformation);
+            observer.Update(Combats[^1]);
         }
     }
 }

@@ -70,6 +70,24 @@ namespace CombatAnalysis.App.Localizations.Resources.CombatLogInformation {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Combat.
+        /// </summary>
+        public static string Combat {
+            get {
+                return ResourceManager.GetString("Combat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Dungeon.
+        /// </summary>
+        public static string Dungeon {
+            get {
+                return ResourceManager.GetString("Dungeon", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to File:.
         /// </summary>
         public static string File {
@@ -178,6 +196,15 @@ namespace CombatAnalysis.App.Localizations.Resources.CombatLogInformation {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Result.
+        /// </summary>
+        public static string Result {
+            get {
+                return ResourceManager.GetString("Result", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Save data.
         /// </summary>
         public static string SaveData {
@@ -201,6 +228,15 @@ namespace CombatAnalysis.App.Localizations.Resources.CombatLogInformation {
         public static string SelectFile {
             get {
                 return ResourceManager.GetString("SelectFile", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Time.
+        /// </summary>
+        public static string Time {
+            get {
+                return ResourceManager.GetString("Time", resourceCulture);
             }
         }
         
