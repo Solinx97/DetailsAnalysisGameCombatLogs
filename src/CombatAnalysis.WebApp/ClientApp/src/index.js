@@ -8,6 +8,9 @@ import { Provider } from 'react-redux';
 import * as serviceWorkerRegistration from './serviceWorkerRegistration';
 import reportWebVitals from './reportWebVitals';
 
+import "bootstrap/dist/css/bootstrap.min.css";
+import "bootstrap/dist/js/bootstrap.bundle.min";
+
 import './i18n';
 
 const baseUrl = document.getElementsByTagName('base')[0].getAttribute('href');

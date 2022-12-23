@@ -56,14 +56,8 @@ const MainInformation = () => {
         </li>);
     }
 
-    const changeLanguage = (language) => {
-        i18n.changeLanguage(language);
-    }
-
     const render = () => {
         return (<div className="main-information__container">
-            <button onClick={() => changeLanguage("ru")}>RU</button>
-            <button onClick={() => changeLanguage("en")}>EN</button>
             <h2>{t("Logs")}</h2>
             {combatsRender}
         </div>);

@@ -6,8 +6,11 @@ import {
     PolarAngleAxis, PolarGrid, PolarRadiusAxis, Radar,
     RadarChart
 } from "recharts";
+import { useTranslation } from 'react-i18next';
 
 const DetailsPlayer = ({ combatPlayers }) => {
+    const { t, i18n } = useTranslation("detailsPlayer");
+
     const compatPlayersMemo = useMemo(() => {
         return combatPlayers;
     }, [combatPlayers])
@@ -29,23 +32,23 @@ const DetailsPlayer = ({ combatPlayers }) => {
     const createUserRadarChartData = (playerData) => {
         return [
             {
-                subject: "Урон",
+                subject: t("Damage"),
                 A: playerData.damageDone,
             },
             {
-                subject: "Исцеление",
+                subject: t("Healing"),
                 A: playerData.healDone,
             },
             {
-                subject: "Полученный урон",
+                subject: t("DamageTaken"),
                 A: playerData.damageTaken,
             },
             {
-                subject: "Ресурсы",
+                subject: t("Resources"),
                 A: playerData.energyRecovery,
             },
             {
-                subject: "Бафы",
+                subject: t("Buffs"),
                 A: playerData.usedBuffs,
             },
         ];
@@ -70,7 +73,7 @@ const DetailsPlayer = ({ combatPlayers }) => {
 
     const fillingCombatPlayerList = () => {
         if (compatPlayersMemo.length === 0) {
-            setCombatPlayersRender(<div>Необходимо добавить хотя бы 1 элемент</div>);
+            setCombatPlayersRender(<div>{t("NeedToAddSomething")}</div>);
             return;
         }
 
@@ -91,7 +94,7 @@ const DetailsPlayer = ({ combatPlayers }) => {
                 </div>
                 <div className="form-check form-switch">
                     <input className="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckChecked" onChange={switchRadarChart(index)} />
-                    <label className="form-check-label" htmlFor="flexSwitchCheckChecked">Показать статистику</label>
+                    <label className="form-check-label" htmlFor="flexSwitchCheckChecked">{t("ShowStatistics")}</label>
                 </div>
                 {activeUserIndex === index &&
                     <RadarChart
@@ -116,43 +119,43 @@ const DetailsPlayer = ({ combatPlayers }) => {
                 }
                 <ul className="list-group list-group-flush">
                     <li className="list-group-item">
-                        <FontAwesomeIcon icon={faHandFist} className="list-group-item__damage-done" title="Нанесенный урон" />
+                        <FontAwesomeIcon icon={faHandFist} className="list-group-item__damage-done" title={t("Damage")} />
                         <div>{element.damageDone}</div>
                         {element.damageDone > 0 &&
                             <FontAwesomeIcon icon={faBoxOpen} className="list-group-item__details"
-                                onClick={() => navigate(`/combat-general-details?id=${element.id}&detailsType=DamageDone`)} title="Открыть анализ урон" />
+                            onClick={() => navigate(`/combat-general-details?id=${element.id}&detailsType=DamageDone`)} title={t("OpenDamageAnalyzing")} />
                         }
                     </li>
                     <li className="list-group-item">
-                        <FontAwesomeIcon icon={faPlusCircle} className="list-group-item__heal-done" title="Исцеление" />
+                        <FontAwesomeIcon icon={faPlusCircle} className="list-group-item__heal-done" title={t("Healing")} />
                         <div>{element.healDone}</div>
                         {element.healDone > 0 &&
                             <FontAwesomeIcon icon={faBoxOpen} className="list-group-item__details"
-                                onClick={() => navigate(`/combat-general-details?id=${element.id}&detailsType=HealDone`)} title="Открыть анализ исцеления" />
+                            onClick={() => navigate(`/combat-general-details?id=${element.id}&detailsType=HealDone`)} title={t("OpenHealingAnalyzing")}/>
                         }
                     </li>
                     <li className="list-group-item">
-                        <FontAwesomeIcon icon={faShieldHalved} className="list-group-item__damage-taken" title="Полученный урон" />
+                        <FontAwesomeIcon icon={faShieldHalved} className="list-group-item__damage-taken" title={t("DamageTaken")} />
                         <div>{element.damageTaken}</div>
                         {element.damageTaken > 0 &&
                             <FontAwesomeIcon icon={faBoxOpen} className="list-group-item__details"
-                                onClick={() => navigate(`/combat-general-details?id=${element.id}&detailsType=DamageTaken`)} title="Открыть анализ полученного урона" />
+                            onClick={() => navigate(`/combat-general-details?id=${element.id}&detailsType=DamageTaken`)} title={t("OpenDamageTakenAnalyzing")} />
                         }
                     </li>
                     <li className="list-group-item">
-                        <FontAwesomeIcon icon={faBolt} className="list-group-item__energy-recovery" title="Затрачено ресурсов" />
+                        <FontAwesomeIcon icon={faBolt} className="list-group-item__energy-recovery" title={t("ResourcesRecovery")} />
                         <div>{element.energyRecovery}</div>
                         {element.energyRecovery > 0 &&
                             <FontAwesomeIcon icon={faBoxOpen} className="list-group-item__details"
-                                onClick={() => navigate(`/combat-general-details?id=${element.id}&detailsType=ResourceRecovery`)} title="Открыть анализ затраченных ресурсов" />
+                            onClick={() => navigate(`/combat-general-details?id=${element.id}&detailsType=ResourceRecovery`)} title={t("OpenResourcesRecoveryAnalyzing")} />
                         }
                     </li>
                     <li className="list-group-item">
-                        <FontAwesomeIcon icon={faCircleNodes} className="list-group-item__used-buffs" title="Бафы" />
+                        <FontAwesomeIcon icon={faCircleNodes} className="list-group-item__used-buffs" title={t("Buffs")} />
                         <div>{element.usedBuffs}</div>
                         {element.usedBuffs > 0 &&
                             <FontAwesomeIcon icon={faBoxOpen} className="list-group-item__details"
-                                onClick={() => navigate(`/combat-general-details?id=${element.id}`)} title="Открыть анализ бафов" />
+                            onClick={() => navigate(`/combat-general-details?id=${element.id}`)} title={t("OpenBuffsAnalyzing")} />
                         }
                     </li>
                 </ul>
