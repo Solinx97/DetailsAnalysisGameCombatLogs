@@ -1,5 +1,6 @@
 ﻿using CombatAnalysis.Core.Consts;
 using CombatAnalysis.Core.Interfaces;
+using CombatAnalysis.Core.Localizations;
 using CombatAnalysis.Core.Models;
 using CombatAnalysis.Core.Services;
 using CombatAnalysis.Core.ViewModels.ViewModelTemplates;
@@ -9,7 +10,7 @@ using System.Collections.ObjectModel;
 
 namespace CombatAnalysis.Core.ViewModels;
 
-public class ResourceRecoveryDetailsViewModel : GenericTemplate<Tuple<CombatPlayerModel, CombatModel>>
+public class ResourceRecoveryDetailsViewModel : GenericTemplate<CombatPlayerModel>
 {
     private readonly CombatParserAPIService _combatParserAPIService;
 
@@ -58,10 +59,9 @@ public class ResourceRecoveryDetailsViewModel : GenericTemplate<Tuple<CombatPlay
 
     #endregion
 
-    protected override async Task ChildPrepareAsync(Tuple<CombatPlayerModel, CombatModel> parameter)
+    protected override async Task ChildPrepareAsync(CombatPlayerModel parameter)
     {
-        var combat = parameter.Item2;
-        var player = parameter.Item1;
+        var player = parameter;
         SelectedPlayer = player.UserName;
         TotalValue = player.EnergyRecovery;
 
@@ -96,7 +96,8 @@ public class ResourceRecoveryDetailsViewModel : GenericTemplate<Tuple<CombatPlay
         _resourceRecoveryInformationsWithoutFilter = new ObservableCollection<ResourceRecoveryModel>(ResourceRecoveryInformations);
 
         var sources = ResourceRecoveryInformations.Select(x => x.SpellOrItem).Distinct().ToList();
-        sources.Insert(0, "Все");
+        var allSourcesName = TranslationSource.Instance["CombatAnalysis.App.Localizations.Resources.ResourceRecoveryDetails.Resource.All"];
+        sources.Insert(0, allSourcesName);
         ResourceRecoverySources = new ObservableCollection<string>(sources);
     }
 

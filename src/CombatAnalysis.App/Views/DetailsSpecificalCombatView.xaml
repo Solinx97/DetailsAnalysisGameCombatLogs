@@ -37,9 +37,9 @@
         <!--#region Combat data -->
         
         <Grid Visibility="Hidden">
-            <ProgressBar Name="maxDamageDone" Value="{Binding MaxDamageDone}" Maximum="{Binding MaxDamageDone}" />
-            <ProgressBar Name="maxHealDone" Value="{Binding MaxHealDone}" Maximum="{Binding MaxHealDone}" />
-            <ProgressBar Name="maxEnergyRecovery" Value="{Binding MaxEnergyRecovery}" Maximum="{Binding MaxEnergyRecovery}" />
+            <ProgressBar Name="maxDamageDone" Value="{Binding Combat.DamageDone}" Maximum="{Binding Combat.DamageDone}" />
+            <ProgressBar Name="maxHealDone" Value="{Binding Combat.HealDone}" Maximum="{Binding Combat.HealDone}" />
+            <ProgressBar Name="maxEnergyRecovery" Value="{Binding Combat.EnergyRecovery}" Maximum="{Binding Combat.EnergyRecovery}" />
         </Grid>
         
         <!--#endregion-->
@@ -49,7 +49,7 @@
                     Orientation="Horizontal">
             <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Text="{loc:Loc Title}"
                        Margin="50 0" Style="{StaticResource titleText}"/>
-            <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Text="{Binding SelectedCombat}"
+            <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Text="{Binding Combat.Name}"
                        Margin="50 0" FontSize="16" FontWeight="Bold"/>
         </StackPanel>
 
@@ -60,7 +60,7 @@
         
         <DataGrid Background="Transparent" Grid.Row="2" Grid.Column="2" Grid.ColumnSpan="2" GridLinesVisibility="None" 
                  CanUserAddRows="False" CanUserDeleteRows="False" AutoGenerateColumns="False"
-                 Margin="20" ItemsSource="{Binding PlayersCombatData}" SelectedItem="{Binding SelectedPlayer}">
+                 Margin="20" ItemsSource="{Binding Combat.Players}" SelectedItem="{Binding SelectedPlayer}">
             <DataGrid.Columns>
                 <DataGridTemplateColumn SortMemberPath="UserName" IsReadOnly="True" MinWidth="200">
                     <DataGridTemplateColumn.CellTemplate>

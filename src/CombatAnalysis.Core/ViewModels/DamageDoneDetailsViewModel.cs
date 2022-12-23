@@ -1,6 +1,7 @@
 ﻿using CombatAnalysis.Core.Consts;
 using CombatAnalysis.Core.Core;
 using CombatAnalysis.Core.Interfaces;
+using CombatAnalysis.Core.Localizations;
 using CombatAnalysis.Core.Models;
 using CombatAnalysis.Core.Services;
 using CombatAnalysis.Core.ViewModels.ViewModelTemplates;
@@ -10,7 +11,7 @@ using System.Collections.ObjectModel;
 
 namespace CombatAnalysis.Core.ViewModels;
 
-public class DamageDoneDetailsViewModel : GenericTemplate<Tuple<CombatPlayerModel, CombatModel>>
+public class DamageDoneDetailsViewModel : GenericTemplate<CombatPlayerModel>
 {
     private readonly PowerUpInCombat<DamageDoneModel> _powerUpInCombat;
     private readonly CombatParserAPIService _combatParserAPIService;
@@ -169,10 +170,9 @@ public class DamageDoneDetailsViewModel : GenericTemplate<Tuple<CombatPlayerMode
 
     #endregion
 
-    protected override async Task ChildPrepareAsync(Tuple<CombatPlayerModel, CombatModel> parameter)
+    protected override async Task ChildPrepareAsync(CombatPlayerModel parameter)
     {
-        var combat = parameter.Item2;
-        var player = parameter.Item1;
+        var player = parameter;
         SelectedPlayer = player.UserName;
         TotalValue = player.DamageDone;
 
@@ -207,7 +207,8 @@ public class DamageDoneDetailsViewModel : GenericTemplate<Tuple<CombatPlayerMode
         _damageDoneInformationsWithSkipDamage = new ObservableCollection<DamageDoneModel>(DamageDoneInformations);
 
         var sources = DamageDoneInformations.Select(x => x.SpellOrItem).Distinct().ToList();
-        sources.Insert(0, "Все");
+        var allSourcesName = TranslationSource.Instance["CombatAnalysis.App.Localizations.Resources.DamageDoneDetails.Resource.All"];
+        sources.Insert(0, allSourcesName);
         DamageDoneSources = new ObservableCollection<string>(sources);
     }
 
