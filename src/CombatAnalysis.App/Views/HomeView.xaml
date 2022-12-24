@@ -16,6 +16,7 @@
     <Grid>
         <Grid.Resources>
             <converters:TheNativeBoolToXAMLBoolConverter x:Key="BoolToXAMLBool" />
+            <converters:TheNativeBoolToVisibilityConverter x:Key="BoolToVisibility" />
         </Grid.Resources>
 
         <Grid.ColumnDefinitions>
@@ -61,7 +62,8 @@
                 </Image>
                 <TextBlock Text="{loc:Loc CommunicationDescribe}"
                            TextWrapping="Wrap" HorizontalAlignment="Center" Margin="-200" FontSize="16" FontWeight="DemiBold" MaxWidth="400"/>
-                <TextBlock Text="{loc:Loc LoginRequired}" Foreground="White" Opacity="0.75" HorizontalAlignment="Center" FontStyle="Italic"/>
+                <TextBlock Text="{loc:Loc LoginRequired}" Foreground="White" Opacity="0.75" HorizontalAlignment="Center" FontStyle="Italic"
+                           Visibility="{Binding ChatIsEnabled, Converter={StaticResource BoolToVisibility}, ConverterParameter=true:true}"/>
             </StackPanel>
             <StackPanel VerticalAlignment="Center">
                 <TextBlock Text="{loc:Loc Analyzing}" HorizontalAlignment="Center" FontSize="18" FontFamily="Comic Sans MS"/>
