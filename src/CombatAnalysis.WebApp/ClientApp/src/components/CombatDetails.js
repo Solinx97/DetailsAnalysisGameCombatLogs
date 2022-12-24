@@ -1,9 +1,11 @@
 ﻿import React, { useState, useEffect } from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPen } from '@fortawesome/free-solid-svg-icons';
+import { faPen, faXmark } from '@fortawesome/free-solid-svg-icons';
 import useCombatDetailsHelper from '../hooks/useCombatDetailsHelper';
 import { useTranslation } from 'react-i18next';
+
+import "../styles/combatDetails.scss";
 
 const CombatDetails = ({ detailsTypeName, userName }) => {
     const { t, i18n } = useTranslation("combatDetails");
@@ -118,7 +120,20 @@ const CombatDetails = ({ detailsTypeName, userName }) => {
         );
     }
 
+    const compare = (a, b) => {
+        if (a.time < b.time) {
+            return -1;
+        }
+        if (a.time > b.time) {
+            return 1;
+        }
+
+        return 0;
+    }
+
     const createChartData = (combatDetailsData) => {
+        combatDetailsData.sort(compare);
+
         let chartData = new Array(combatDetailsData.length);
 
         for (let i = 0; i < combatDetailsData.length; i++) {
@@ -195,18 +210,18 @@ const CombatDetails = ({ detailsTypeName, userName }) => {
         setUsedSingleFilter(false);
     }
 
-    const cancelMultiplyFilter = () => {
+    const cancelSelectInterval = () => {
         fillingDetailsDataListAsync();
         setStartTime("");
         setFinishTime("");
         setUsedMultiplyFilter(false);
     }
 
-    const switchSelectInterval = () => {
+    const switchToInterval = () => {
         setUsedMultiplyFilter(!usedMultiplyFilter);
 
         if (usedMultiplyFilter) {
-            cancelMultiplyFilter();
+            cancelSelectInterval();
         }
     }
 
@@ -222,7 +237,7 @@ const CombatDetails = ({ detailsTypeName, userName }) => {
             </div>
             {showGeneralDetails &&
                 <div>
-                    <FontAwesomeIcon icon={faPen} className={usedMultiplyFilter ? "chart-editor active" : "chart-editor"} title={t("SelectInterval")} onClick={switchSelectInterval} />
+                    <FontAwesomeIcon icon={faPen} className={usedMultiplyFilter ? "chart-editor active" : "chart-editor"} title={t("SelectInterval")} onClick={switchToInterval} />
                     <LineChart
                         width={1250}
                         height={300}
@@ -246,13 +261,15 @@ const CombatDetails = ({ detailsTypeName, userName }) => {
                 </div>
             }
             {usedSingleFilter &&
-                <div>
-                    <div onClick={cancelSingleFilter}>Время: {selectedTime}</div>
+                <div className="select-filter">
+                    <FontAwesomeIcon icon={faXmark} className="list-group-item__value" onClick={cancelSingleFilter} title={t("Cancel")} />
+                    <div>{t("Time")}: {selectedTime}</div>
                 </div>
             }
             {(usedMultiplyFilter && finishTime != "") &&
-                <div>
-                    <div onClick={cancelMultiplyFilter}>{t("StartOfInterval")}: {startTime}, {t("FinishOfInterval")}: {finishTime}</div>
+                <div className="select-filter">
+                    <FontAwesomeIcon icon={faXmark} className="list-group-item__value" onClick={cancelSelectInterval} title={t("Cancel")} />
+                    <div>{t("StartOfInterval")}: {startTime}, {t("FinishOfInterval")}: {finishTime}</div>
                 </div>
             }
             {damageDoneRender}

@@ -5,5 +5,7 @@
   "Player": "Игрок",
   "SelectInterval": "Выбрать интервал",
   "StartOfInterval": "Начало интервала",
-  "FinishOfInterval": "Конец интервала"
+  "FinishOfInterval": "Конец интервала",
+  "Time": "Время",
+  "Cancel": "Отмена"
 }

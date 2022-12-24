@@ -1,7 +1,7 @@
 ﻿import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { RadialBarChart, RadialBar, Legend } from 'recharts';
-import DamageDoneDetails from './CombatDetails';
+import CombatDetails from './CombatDetails';
 import useCombatDetailsHelper from '../hooks/useCombatDetailsHelper';
 import { useTranslation } from 'react-i18next';
 
@@ -198,7 +198,7 @@ const CombatGeneralDetails = () => {
             </div>
             {tabIndex === 0
                 ? generalDetailsDOM()
-                : <DamageDoneDetails detailsTypeName={getDetailsTypeName()} userName={userName} />
+                : <CombatDetails detailsTypeName={getDetailsTypeName()} userName={userName} />
             }
         </div>);
     }
