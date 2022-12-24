@@ -132,6 +132,7 @@ internal class CombatParserAPIService
 
     public async Task<IEnumerable<CombatModel>> LoadCombatsAsync(int combatLogId)
     {
+        _httpClient.BaseAddress = Port.CombatParserApi;
         var responseMessage = await _httpClient.GetAsync($"Combat/FindByCombatLogId/{combatLogId}");
         var combats = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<CombatModel>>();
 

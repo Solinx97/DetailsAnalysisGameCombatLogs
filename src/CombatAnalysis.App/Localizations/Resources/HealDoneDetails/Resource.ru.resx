@@ -150,6 +150,9 @@
   <data name="OverHealing" xml:space="preserve">
     <value>Оверхил</value>
   </data>
+  <data name="Player" xml:space="preserve">
+    <value>Игрок</value>
+  </data>
   <data name="ShowCrit" xml:space="preserve">
     <value>Показать крит. исцеление</value>
   </data>
@@ -161,6 +164,15 @@
   </data>
   <data name="Source" xml:space="preserve">
     <value>Источник</value>
+  </data>
+  <data name="Status" xml:space="preserve">
+    <value>Статус</value>
+  </data>
+  <data name="Target" xml:space="preserve">
+    <value>Цель</value>
+  </data>
+  <data name="Time" xml:space="preserve">
+    <value>Время</value>
   </data>
   <data name="Title" xml:space="preserve">
     <value>Анализ исцеления</value>

@@ -150,6 +150,9 @@
   <data name="OverHealing" xml:space="preserve">
     <value>Over healing</value>
   </data>
+  <data name="Player" xml:space="preserve">
+    <value>Player</value>
+  </data>
   <data name="ShowCrit" xml:space="preserve">
     <value>Show crit</value>
   </data>
@@ -161,6 +164,15 @@
   </data>
   <data name="Source" xml:space="preserve">
     <value>Source</value>
+  </data>
+  <data name="Status" xml:space="preserve">
+    <value>Status</value>
+  </data>
+  <data name="Target" xml:space="preserve">
+    <value>Target</value>
+  </data>
+  <data name="Time" xml:space="preserve">
+    <value>Time</value>
   </data>
   <data name="Title" xml:space="preserve">
     <value>Analyzing of heal done</value>
