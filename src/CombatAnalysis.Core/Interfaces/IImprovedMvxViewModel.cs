@@ -1,7 +1,10 @@
-﻿namespace CombatAnalysis.Core.Interfaces
+﻿using MvvmCross.ViewModels;
+
+namespace CombatAnalysis.Core.Interfaces;
+
+public interface IImprovedMvxViewModel
 {
-    public interface IImprovedMvxViewModel
-    {
-        IViewModelConnect Handler { get; set; }
-    }
+    IViewModelConnect Handler { get; set; }
+
+    IMvxViewModel Parent { get; set; }
 }

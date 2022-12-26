@@ -1,197 +1,166 @@
-﻿using Microsoft.EntityFrameworkCore;
-using System.Threading.Tasks;
+﻿using CombatAnalysis.DAL.Entities;
+using CombatAnalysis.DAL.Entities.Authentication;
+using CombatAnalysis.DAL.Entities.Chat;
+using CombatAnalysis.DAL.Entities.User;
+using Microsoft.EntityFrameworkCore;
+using System.Text;
 
-namespace CombatAnalysis.DAL.Helpers
+namespace CombatAnalysis.DAL.Helpers;
+
+public static class DbProcedureHelper
 {
-    public static class DbProcedureHelper
+    public static void CreateProcedures(DbContext dbContext)
     {
-        public static string GetCombat = "GetCombatByCombatLogId";
-        public static string GetCombatPlayer = "GetCombatPlayerByCombatId";
-        public static string GetDamageDone = "GetDamageDoneByCombatPlayerId";
-        public static string GetDamageDoneGeneral = "GetDamageDoneGeneralByCombatPlayerId";
-        public static string GetHealDone = "GetHealDoneByCombatPlayerId";
-        public static string GetHealDoneGeneral = "GetHealDoneGeneralByCombatPlayerId";
-        public static string GetDamageTaken = "GetDamageTakenByCombatPlayerId";
-        public static string GetDamageTakenGeneral = "GetDamageTakenGeneralByCombatPlayerId";
-        public static string GetResourceRecovery = "GetResourceRecoveryByCombatPlayerId";
-        public static string GetResourceRecoveryGeneral = "GetResourceRecoveryGeneralByCombatPlayerId";
-        public static string InsertIntoDamageDone = "InsertIntoDamageDone";
-        public static string InsertIntoDamageDoneGeneral = "InsertIntoDamageDoneGeneral";
-        public static string InsertIntoHealDone = "InsertIntoHealDone";
-        public static string InsertIntoHealDoneGeneral = "InsertIntoHealDoneGeneral";
-        public static string InsertIntoDamageTaken = "InsertIntoDamageTaken";
-        public static string InsertIntoDamageTakenGeneral = "InsertIntoDamageTakenGeneral";
-        public static string InsertIntoResourceRecovery = "InsertIntoResourceRecovery";
-        public static string InsertIntoResourceRecoveryGeneral = "InsertIntoResourceRecoveryGeneral";
-        public static string DeleteHealDone = "DeleteHealDoneByCombatPlayerId";
-        public static string DeleteHealDoneGeneral = "DeleteHealDoneGeneralByCombatPlayerId";
-        public static string DeleteDamageDone = "DeleteDamageDoneByCombatPlayerId";
-        public static string DeleteDamageDoneGeneral = "DeleteDamageDoneGeneralByCombatPlayerId";
-        public static string DeleteDamageTaken = "DeleteDamageTakenByCombatPlayerId";
-        public static string DeleteDamageTakenGeneral = "DeleteDamageTakenGeneralByCombatPlayerId";
-        public static string DeleteResourceRecovery = "DeleteResourceRecoveryByCombatPlayerId";
-        public static string DeleteResourceRecoveryGeneral = "DeleteResourceRecoveryGeneralByCombatPlayerId";
-
-        public static async Task CreateProceduresAsync(DbContext dbContext)
+        var types = new Type[]
         {
-            await SelectStoredProcedures(dbContext);
-            await InsertIntoStoredProcedures(dbContext);
-            await DeleteStoredProcedures(dbContext);
+            typeof(AppUser),
+            typeof(RefreshToken),
+            typeof(PersonalChat),
+            typeof(PersonalChatMessage),
+            typeof(InviteToGroupChat),
+            typeof(GroupChat),
+            typeof(GroupChatMessage),
+            typeof(GroupChatUser),
+            typeof(BannedUser),
+            typeof(CombatLog),
+            typeof(CombatLogByUser),
+            typeof(CombatPlayer),
+            typeof(Combat),
+            typeof(DamageDone),
+            typeof(DamageDoneGeneral),
+            typeof(HealDone),
+            typeof(HealDoneGeneral),
+            typeof(DamageTaken),
+            typeof(DamageTakenGeneral),
+            typeof(ResourceRecovery),
+            typeof(ResourceRecoveryGeneral),
+        };
+
+        foreach (var item in types)
+        {
+            var query = $"CREATE PROCEDURE GetAll{item.Name}\n" +
+                          "\tAS SELECT * \n" +
+                          $"\tFROM {item.Name}";
+            dbContext.Database.ExecuteSqlRaw(query);
+
+            var property = item.GetProperty("Id");
+            query = $"CREATE PROCEDURE Get{item.Name}ById (@id {Converter(property.PropertyType.Name)})\n" +
+                          "\tAS SELECT * \n" +
+                          $"\tFROM {item.Name}\n" +
+                          "\tWHERE Id = @id";
+            dbContext.Database.ExecuteSqlRaw(query);
+
+            var data = InsertIntoParamsAndValues(item);
+            var data1 = InsertIntoParamsAndValues1(item);
+            query = $"CREATE PROCEDURE InsertInto{item.Name} ({data.Item1})\n" +
+                          $"\tAS\n" +
+                          $"\tDECLARE @OutputTbl TABLE ({data1})\n" +
+                          $"\tINSERT INTO {item.Name}\n" +
+                          $"\tOUTPUT INSERTED.* INTO @OutputTbl\n" +
+                          $"\tVALUES ({data.Item2})\n" +
+                          "\tSELECT * FROM @OutputTbl";
+            dbContext.Database.ExecuteSqlRaw(query);
+
+            data = UpdateParamsAndValues(item);
+            query = $"CREATE PROCEDURE Update{item.Name} ({data.Item1})\n" +
+                          $"\tAS UPDATE {item.Name}\n" +
+                          $"\tSET {data.Item2}\n" +
+                          "\tWHERE Id = @Id";
+            dbContext.Database.ExecuteSqlRaw(query);
+
+            query = $"CREATE PROCEDURE Delete{item.Name}ById (@id {Converter(property.PropertyType.Name)})\n" +
+                          $"\tAS DELETE FROM {item.Name}\n" +
+                          "\tWHERE Id = @id";
+            dbContext.Database.ExecuteSqlRaw(query);
+        }
+    }
+
+    private static Tuple<string, string> InsertIntoParamsAndValues(Type type)
+    {
+        var properties = type.GetProperties();
+        var procedureParamNames = new StringBuilder();
+        var procedureParamNamesWithPropertyTypes = new StringBuilder();
+        if (type.GetProperty("Id")?.PropertyType != typeof(int))
+        {
+            var propertTypeName = properties[0].PropertyType.Name;
+            procedureParamNamesWithPropertyTypes.Append($"@{properties[0].Name} {Converter(propertTypeName)},");
+            procedureParamNames.Append($"@{properties[0].Name},");
         }
 
-        private static async Task SelectStoredProcedures(DbContext dbContext)
+        for (int i = 1; i < properties.Length; i++)
         {
-            var query = @"CREATE PROCEDURE GetCombatByCombatLogId (@combatLogId INT)
-                          AS SELECT *
-                          FROM Combat
-                          WHERE CombatLogId = @combatLogId";
-            await dbContext.Database.ExecuteSqlRawAsync(query);
-
-            query = @"CREATE PROCEDURE GetCombatPlayerByCombatId (@combatId INT)
-                          AS SELECT *
-                          FROM CombatPlayerData
-                          WHERE CombatId = @combatId";
-            await dbContext.Database.ExecuteSqlRawAsync(query);
-
-            query = @"CREATE PROCEDURE GetDamageDoneByCombatPlayerId (@combatPlayerDataId INT)
-                          AS SELECT *
-                          FROM DamageDone
-                          WHERE CombatPlayerDataId = @combatPlayerDataId";
-            await dbContext.Database.ExecuteSqlRawAsync(query);
-
-            query = @"CREATE PROCEDURE GetDamageDoneGeneralByCombatPlayerId (@combatPlayerDataId INT)
-                          AS SELECT *
-                          FROM DamageDoneGeneral
-                          WHERE CombatPlayerDataId = @combatPlayerDataId";
-            await dbContext.Database.ExecuteSqlRawAsync(query);
-
-            query = @"CREATE PROCEDURE GetHealDoneByCombatPlayerId (@combatPlayerDataId INT)
-                          AS SELECT *
-                          FROM HealDone
-                          WHERE CombatPlayerDataId = @combatPlayerDataId";
-            await dbContext.Database.ExecuteSqlRawAsync(query);
-
-            query = @"CREATE PROCEDURE GetHealDoneGeneralByCombatPlayerId (@combatPlayerDataId INT)
-                          AS SELECT *
-                          FROM HealDoneGeneral
-                          WHERE CombatPlayerDataId = @combatPlayerDataId";
-            await dbContext.Database.ExecuteSqlRawAsync(query);
-
-            query = @"CREATE PROCEDURE GetDamageTakenByCombatPlayerId (@combatPlayerDataId INT)
-                          AS SELECT *
-                          FROM DamageTaken
-                          WHERE CombatPlayerDataId = @combatPlayerDataId";
-            await dbContext.Database.ExecuteSqlRawAsync(query);
-
-            query = @"CREATE PROCEDURE GetDamageTakenGeneralByCombatPlayerId (@combatPlayerDataId INT)
-                          AS SELECT *
-                          FROM DamageTakenGeneral
-                          WHERE CombatPlayerDataId = @combatPlayerDataId";
-            await dbContext.Database.ExecuteSqlRawAsync(query);
-
-            query = @"CREATE PROCEDURE GetResourceRecoveryByCombatPlayerId (@combatPlayerDataId INT)
-                          AS SELECT *
-                          FROM ResourceRecovery
-                          WHERE CombatPlayerDataId = @combatPlayerDataId";
-            await dbContext.Database.ExecuteSqlRawAsync(query);
-
-            query = @"CREATE PROCEDURE GetResourceRecoveryGeneralByCombatPlayerId (@combatPlayerDataId INT)
-                          AS SELECT *
-                          FROM ResourceRecoveryGeneral
-                          WHERE CombatPlayerDataId = @combatPlayerDataId";
-            await dbContext.Database.ExecuteSqlRawAsync(query);
+            if (properties[i].CanWrite)
+            {
+                var propertTypeName = properties[i].PropertyType.Name;
+                procedureParamNamesWithPropertyTypes.Append($"@{properties[i].Name} {Converter(propertTypeName)},");
+                procedureParamNames.Append($"@{properties[i].Name},");
+            }
         }
 
-        private static async Task InsertIntoStoredProcedures(DbContext dbContext)
+        procedureParamNamesWithPropertyTypes.Remove(procedureParamNamesWithPropertyTypes.Length - 1, 1);
+        procedureParamNames.Remove(procedureParamNames.Length - 1, 1);
+
+        return new Tuple<string, string>(procedureParamNamesWithPropertyTypes.ToString(), procedureParamNames.ToString());
+    }
+
+    private static string InsertIntoParamsAndValues1(Type type)
+    {
+        var properties = type.GetProperties();
+        var procedureParamNamesWithPropertyTypes = new StringBuilder();
+        for (int i = 0; i < properties.Length; i++)
         {
-            var query = @"CREATE PROCEDURE InsertIntoDamageDone (@Value INT, @Time NVARCHAR (MAX), @FromPlayer NVARCHAR (MAX), @ToEnemy NVARCHAR (MAX), @SpellOrItem NVARCHAR (MAX),
-                                           @IsDodge BIT, @IsParry BIT, @IsMiss BIT, @IsResist BIT, @IsImmune BIT, @IsCrit BIT, @CombatPlayerDataId INT)
-                          AS INSERT INTO DamageDone
-                          VALUES (@Value, @Time, @FromPlayer, @ToEnemy, @SpellOrItem, @IsDodge, @IsParry, @IsMiss, @IsResist, @IsImmune, @IsCrit, @CombatPlayerDataId)";
-            await dbContext.Database.ExecuteSqlRawAsync(query);
-
-            query = @"CREATE PROCEDURE InsertIntoDamageDoneGeneral (@Value INT, @DamagePerSecond FLOAT (53), @SpellOrItem NVARCHAR (MAX), @CritNumber INT,
-                                       @MissNumber INT, @CastNumber INT, @MinValue INT, @MaxValue INT, @AverageValue FLOAT (53), @CombatPlayerDataId INT)
-                          AS INSERT INTO DamageDoneGeneral
-                          VALUES (@Value, @DamagePerSecond, @SpellOrItem, @CritNumber, @MissNumber, @CastNumber, @MinValue, @MaxValue, @AverageValue, @CombatPlayerDataId)";
-            await dbContext.Database.ExecuteSqlRawAsync(query);
-
-            query = @"CREATE PROCEDURE InsertIntoHealDone (@ValueWithOverheal INT, @Time NVARCHAR (MAX), @Overheal INT, @Value INT,
-                                       @FromPlayer NVARCHAR (MAX), @ToPlayer NVARCHAR (MAX), @SpellOrItem NVARCHAR (MAX), @CurrentHealth INT, @MaxHealth INT, @IsCrit BIT, @IsFullOverheal BIT, @CombatPlayerDataId INT)
-                          AS INSERT INTO HealDone
-                          VALUES (@ValueWithOverheal, @Time, @Overheal, @Value, @FromPlayer, @ToPlayer, @SpellOrItem, @CurrentHealth, @MaxHealth, @IsCrit, @IsFullOverheal, @CombatPlayerDataId)";
-            await dbContext.Database.ExecuteSqlRawAsync(query);
-
-            query = @"CREATE PROCEDURE InsertIntoHealDoneGeneral (@Value INT, @HealPerSecond FLOAT (53), @SpellOrItem NVARCHAR (MAX),
-                                           @CritNumber INT, @CastNumber INT, @MinValue INT, @MaxValue INT, @AverageValue FLOAT (53), @CombatPlayerDataId INT)
-                          AS INSERT INTO HealDoneGeneral
-                          VALUES (@Value, @HealPerSecond, @SpellOrItem, @CritNumber, @CastNumber, @MinValue, @MaxValue, @AverageValue, @CombatPlayerDataId)";
-            await dbContext.Database.ExecuteSqlRawAsync(query);
-
-            query = @"CREATE PROCEDURE InsertIntoDamageTaken (@Value INT, @Time NVARCHAR (MAX), @From NVARCHAR (MAX),
-                                           @To NVARCHAR (MAX), @SpellOrItem NVARCHAR (MAX), @IsDodge BIT, @IsParry BIT, @IsMiss BIT, @IsResist BIT, @IsImmune BIT, @IsCrushing BIT, @CombatPlayerDataId INT)
-                          AS INSERT INTO DamageTaken
-                          VALUES (@Value, @Time, @From, @To, @SpellOrItem, @IsDodge, @IsParry, @IsMiss, @IsResist, @IsImmune, @IsCrushing, @CombatPlayerDataId)";
-            await dbContext.Database.ExecuteSqlRawAsync(query);
-
-            query = @"CREATE PROCEDURE InsertIntoDamageTakenGeneral (@Value INT, @DamageTakenPerSecond FLOAT (53), @SpellOrItem NVARCHAR (MAX),
-                                           @CritNumber INT, @MissNumber INT, @CastNumber INT, @MinValue INT, @MaxValue INT, @AverageValue FLOAT (53), @CombatPlayerDataId INT)
-                          AS INSERT INTO DamageTakenGeneral
-                          VALUES (@Value, @DamageTakenPerSecond, @SpellOrItem, @CritNumber, @MissNumber, @CastNumber, @MinValue, @MaxValue, @AverageValue, @CombatPlayerDataId)";
-            await dbContext.Database.ExecuteSqlRawAsync(query);
-
-            query = @"CREATE PROCEDURE InsertIntoResourceRecovery (@Value FLOAT (53), @Time NVARCHAR (MAX), @SpellOrItem NVARCHAR (MAX), @CombatPlayerDataId INT)
-                          AS INSERT INTO ResourceRecovery
-                          VALUES (@Value, @Time, @SpellOrItem, @CombatPlayerDataId)";
-            await dbContext.Database.ExecuteSqlRawAsync(query);
-
-            query = @"CREATE PROCEDURE InsertIntoResourceRecoveryGeneral (@Value INT, @ResourcePerSecond FLOAT (53), @SpellOrItem NVARCHAR (MAX), @CastNumber INT, @MinValue INT, @MaxValue INT, @AverageValue FLOAT (53), @CombatPlayerDataId INT)
-                          AS INSERT INTO ResourceRecoveryGeneral
-                          VALUES (@Value, @ResourcePerSecond, @SpellOrItem, @CastNumber, @MinValue, @MaxValue, @AverageValue, @CombatPlayerDataId)";
-            await dbContext.Database.ExecuteSqlRawAsync(query);
+            if (properties[i].CanWrite)
+            {
+                var propertTypeName = properties[i].PropertyType.Name;
+                procedureParamNamesWithPropertyTypes.Append($"{properties[i].Name} {Converter(propertTypeName)},");
+            }
         }
 
-        private static async Task DeleteStoredProcedures(DbContext dbContext)
+        procedureParamNamesWithPropertyTypes.Remove(procedureParamNamesWithPropertyTypes.Length - 1, 1);
+
+        return procedureParamNamesWithPropertyTypes.ToString();
+    }
+
+    private static Tuple<string, string> UpdateParamsAndValues(Type type)
+    {
+        var properties = type.GetProperties();
+        var procedureParamNames = new StringBuilder();
+        var procedureParamNamesWithPropertyTypes = new StringBuilder();
+        for (int i = 0; i < properties.Length; i++)
         {
-            var query = @"CREATE PROCEDURE DeleteHealDoneByCombatPlayerId (@combatPlayerDataId INT)
-                          AS DELETE FROM HealDone 
-                          WHERE CombatPlayerDataId = @combatPlayerDataId";
-            await dbContext.Database.ExecuteSqlRawAsync(query);
-
-            query = @"CREATE PROCEDURE DeleteHealDoneGeneralByCombatPlayerId (@combatPlayerDataId INT)
-                          AS DELETE FROM HealDoneGeneral
-                          WHERE CombatPlayerDataId = @combatPlayerDataId";
-            await dbContext.Database.ExecuteSqlRawAsync(query);
-
-            query = @"CREATE PROCEDURE DeleteDamageDoneByCombatPlayerId (@combatPlayerDataId INT)
-                          AS DELETE FROM DamageDone 
-                          WHERE CombatPlayerDataId = @combatPlayerDataId";
-            await dbContext.Database.ExecuteSqlRawAsync(query);
-
-            query = @"CREATE PROCEDURE DeleteDamageDoneGeneralByCombatPlayerId (@combatPlayerDataId INT)
-                          AS DELETE FROM DamageDoneGeneral 
-                          WHERE CombatPlayerDataId = @combatPlayerDataId";
-            await dbContext.Database.ExecuteSqlRawAsync(query);
-
-            query = @"CREATE PROCEDURE DeleteDamageTakenByCombatPlayerId (@combatPlayerDataId INT)
-                          AS DELETE FROM DamageTaken 
-                          WHERE CombatPlayerDataId = @combatPlayerDataId";
-            await dbContext.Database.ExecuteSqlRawAsync(query);
-
-            query = @"CREATE PROCEDURE DeleteDamageTakenGeneralByCombatPlayerId (@combatPlayerDataId INT)
-                          AS DELETE FROM DamageTakenGeneral 
-                          WHERE CombatPlayerDataId = @combatPlayerDataId";
-            await dbContext.Database.ExecuteSqlRawAsync(query);
-
-            query = @"CREATE PROCEDURE DeleteResourceRecoveryByCombatPlayerId (@combatPlayerDataId INT)
-                          AS DELETE FROM ResourceRecovery 
-                          WHERE CombatPlayerDataId = @combatPlayerDataId";
-            await dbContext.Database.ExecuteSqlRawAsync(query);
-
-            query = @"CREATE PROCEDURE DeleteResourceRecoveryGeneralByCombatPlayerId (@combatPlayerDataId INT)
-                          AS DELETE FROM ResourceRecoveryGeneral 
-                          WHERE CombatPlayerDataId = @combatPlayerDataId";
-            await dbContext.Database.ExecuteSqlRawAsync(query);
+            if (properties[i].CanWrite)
+            {
+                var propertTypeName = properties[i].PropertyType.Name;
+                procedureParamNamesWithPropertyTypes.Append($"@{properties[i].Name} {Converter(propertTypeName)},");
+            }
         }
+
+        for (int i = 1; i < properties.Length; i++)
+        {
+            if (properties[i].CanWrite)
+            {
+                procedureParamNames.Append($"{properties[i].Name} = @{properties[i].Name},");
+            }
+        }
+
+        procedureParamNamesWithPropertyTypes.Remove(procedureParamNamesWithPropertyTypes.Length - 1, 1);
+        procedureParamNames.Remove(procedureParamNames.Length - 1, 1);
+
+        return new Tuple<string, string>(procedureParamNamesWithPropertyTypes.ToString(), procedureParamNames.ToString());
+    }
+
+    private static string Converter(string type)
+    {
+        return type switch
+        {
+            "String" => "NVARCHAR (MAX)",
+            "Int32" => "INT",
+            "Int16" => "INT",
+            "Boolean" => "BIT",
+            "DateTimeOffset" => "DATETIMEOFFSET (7)",
+            "Double" => "FLOAT (53)",
+            "TimeSpan" => "TIME (7)",
+            _ => "NVARCHAR (MAX)",
+        };
     }
 }

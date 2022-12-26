@@ -3,48 +3,67 @@ using CombatAnalysis.BL.DTO;
 using CombatAnalysis.BL.Interfaces;
 using CombatAnalysis.CombatParserAPI.Models;
 using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 
-namespace CombatAnalysis.CombatParserAPI.Controllers
+namespace CombatAnalysis.CombatParserAPI.Controllers;
+
+[Route("api/v1/[controller]")]
+[ApiController]
+public class DamageTakenGeneralController : ControllerBase
 {
-    [Route("[controller]")]
-    [ApiController]
-    public class DamageTakenGeneralController : ControllerBase
+    private readonly IService<DamageTakenGeneralDto, int> _service;
+    private readonly IMapper _mapper;
+    private readonly ILogger _logger;
+
+    public DamageTakenGeneralController(IService<DamageTakenGeneralDto, int> service, IMapper mapper, ILogger logger)
     {
-        private readonly IService<DamageTakenGeneralDto> _service;
-        private readonly IMapper _mapper;
+        _service = service;
+        _mapper = mapper;
+        _logger = logger;
+    }
 
-        public DamageTakenGeneralController(IService<DamageTakenGeneralDto> service, IMapper mapper)
+    [HttpGet("findByCombatPlayerId/{combatPlayerId:int:min(1)}")]
+    public async Task<IActionResult> Find(int combatPlayerId)
+    {
+        var damageTakenGenerals = await _service.GetByParamAsync("CombatPlayerId", combatPlayerId);
+        var map = _mapper.Map<IEnumerable<DamageTakenGeneralModel>>(damageTakenGenerals);
+
+        return Ok(map);
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> Create(DamageTakenGeneralModel model)
+    {
+        try
         {
-            _service = service;
-            _mapper = mapper;
+            var map = _mapper.Map<DamageTakenGeneralDto>(model);
+            var createdItem = await _service.CreateAsync(map);
+            var resultMap = _mapper.Map<DamageTakenGeneralModel>(createdItem);
+
+            return Ok(resultMap);
         }
-
-        [HttpGet("FindByCombatPlayerId/{combatPlayerId}")]
-        public async Task<IEnumerable<DamageTakenGeneralModel>> Find(int combatPlayerId)
+        catch (ArgumentNullException ex)
         {
-            var damageTakenGenerals = await _service.GetByProcedureAsync(combatPlayerId);
-            var map = _mapper.Map<IEnumerable<DamageTakenGeneralModel>>(damageTakenGenerals);
+            _logger.LogError(ex, ex.Message);
 
-            return map;
+            return BadRequest();
         }
+    }
 
-        [HttpPost]
-        public async Task<int> Post(DamageTakenGeneralModel value)
+    [HttpDelete]
+    public async Task<IActionResult> Delete(DamageTakenGeneralModel model)
+    {
+        try
         {
-            var map = _mapper.Map<DamageTakenGeneralDto>(value);
-            var createdCombatId = await _service.CreateByProcedureAsync(map);
+            var map = _mapper.Map<DamageTakenGeneralDto>(model);
+            var deletedId = await _service.DeleteAsync(map);
 
-            return createdCombatId;
+            return Ok(deletedId);
         }
-
-        [HttpDelete("DeleteByCombatPlayerId/{combatPlayerId}")]
-        public async Task<int> Delete(int combatPlayerId)
+        catch (ArgumentNullException ex)
         {
-            var deletedId = await _service.DeleteByProcedureAsync(combatPlayerId);
+            _logger.LogError(ex, ex.Message);
 
-            return deletedId;
+            return BadRequest();
         }
     }
 }

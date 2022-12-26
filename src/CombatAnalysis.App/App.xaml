@@ -7,6 +7,95 @@
     StartupUri="MainWindow.xaml">
     
     <Application.Resources>
+        <!-- region Home View -->
+
+        <Style x:Key="homeItems" TargetType="Image">
+            <Style.Triggers>
+                <EventTrigger RoutedEvent="MouseEnter">
+                    <EventTrigger.Actions>
+                        <BeginStoryboard>
+                            <Storyboard>
+                                <DoubleAnimation Storyboard.TargetProperty="Height" From="275" To="300"
+                                            AutoReverse="False"
+                                            RepeatBehavior="1x"
+                                            Duration="0:0:0.5"/>
+                                <DoubleAnimation Storyboard.TargetProperty="Opacity" From="1" To="0.25"
+                                            AutoReverse="False"
+                                            RepeatBehavior="1x"
+                                            Duration="0:0:0.5"/>
+                            </Storyboard>
+                        </BeginStoryboard>
+                    </EventTrigger.Actions>
+                </EventTrigger>
+                <EventTrigger RoutedEvent="MouseLeave">
+                    <EventTrigger.Actions>
+                        <BeginStoryboard>
+                            <Storyboard>
+                                <DoubleAnimation Storyboard.TargetProperty="Height"  From="300" To="275"
+                                            AutoReverse="False"
+                                            RepeatBehavior="1x"
+                                            Duration="0:0:0.5"/>
+                                <DoubleAnimation Storyboard.TargetProperty="Opacity" From="0.25" To="1"
+                                            AutoReverse="False"
+                                            RepeatBehavior="1x"
+                                            Duration="0:0:0.5"/>
+                            </Storyboard>
+                        </BeginStoryboard>
+                    </EventTrigger.Actions>
+                </EventTrigger>
+            </Style.Triggers>
+        </Style>
+        
+        <!-- endregion -->
+        
+        <!-- region Chat View -->
+        
+        <Style x:Key="joinToGroupChatStyle" TargetType="Icon:PackIconMaterial">
+            <Style.Triggers>
+                <Trigger Property="IsEnabled" Value="False">
+                    <Setter Property="Foreground" Value="Gray"/>
+                </Trigger>
+                <Trigger Property="IsEnabled" Value="True">
+                    <Setter Property="Foreground" Value="GreenYellow"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+        
+        <Style x:Key="openInviteToGroupChatStyle" TargetType="Icon:PackIconMaterial">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding ElementName=usersEmail, Path=IsEnabled}" Value="False">
+                    <Setter Property="Foreground" Value="Gray"/>
+                </DataTrigger>
+                <DataTrigger Binding="{Binding ElementName=usersEmail, Path=IsEnabled}" Value="True">
+                    <Setter Property="Foreground" Value="Orange"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="startDialogStyle" TargetType="Icon:PackIconMaterial">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding ElementName=usersEmail, Path=IsEnabled}" Value="False">
+                    <Setter Property="Foreground" Value="Gray"/>
+                </DataTrigger>
+                <DataTrigger Binding="{Binding ElementName=usersEmail, Path=IsEnabled}" Value="True">
+                    <Setter Property="Foreground" Value="Blue"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="inviteToGroupChatStyle" TargetType="Icon:PackIconMaterial">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding ElementName=inviteToGroupChat, Path=IsEnabled}" Value="False">
+                    <Setter Property="Foreground" Value="Gray"/>
+                </DataTrigger>
+                <DataTrigger Binding="{Binding ElementName=inviteToGroupChat, Path=IsEnabled}" Value="True">
+                    <Setter Property="Foreground" Value="Green"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+
+        <!-- endregion -->
+        
         <Style x:Key="leftSideButton" TargetType="Button">
             <Setter Property="Background" Value="Transparent"/>
             <Setter Property="Foreground" Value="White"/>
@@ -35,6 +124,7 @@
         </Style>
 
         <!-- region ComboBox Style -->
+            
         <SolidColorBrush x:Key="TextBox.Static.Background" Color="#FFFFFFFF"/>
         
         <LinearGradientBrush x:Key="ComboBox.Static.Background" EndPoint="0,1" StartPoint="0,0">
@@ -315,7 +405,40 @@
                 </Trigger>
             </Style.Triggers>
         </Style>
-        
+
+        <Style x:Key="accountButton" TargetType="Button">
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="Foreground" Value="Black"/>
+            <Setter Property="Tag" Value="Hidden"/>
+            <Setter Property="Margin" Value="20 0 0 0"/>
+            <Setter Property="Height" Value="40"/>
+            <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}" CornerRadius="20 20 20 20">
+                            <ContentPresenter VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Tag" Value="Visible"/>
+                    <Setter Property="Background" Value="#f8f7fc"/>
+                    <Setter Property="Foreground" Value="Green"/>
+                </Trigger>
+                <Trigger Property="IsMouseOver" Value="False">
+                    <Setter Property="Tag" Value="Hidden"/>
+                </Trigger>
+                <Trigger Property="IsEnabled" Value="False">
+                    <Setter Property="Foreground" Value="DarkSlateGray"/>
+                    <Setter Property="Opacity" Value="0.5"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
         <Style x:Key="menuButtonIcon" TargetType="Icon:PackIconMaterial">
             <Setter Property="Width" Value="16"/>
             <Setter Property="Height" Value="16"/>
@@ -335,8 +458,8 @@
             <Setter Property="Background" Value="Transparent"/>
             <Setter Property="Foreground" Value="#88878e"/>
             <Setter Property="Margin" Value="3 0 0 0"/>
-            <Setter Property="Width" Value="35"/>
-            <Setter Property="Height" Value="35"/>
+            <Setter Property="Width" Value="40"/>
+            <Setter Property="Height" Value="40"/>
             <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
             <Setter Property="Template">
                 <Setter.Value>
@@ -351,8 +474,63 @@
             <Style.Triggers>
                 <Trigger Property="IsMouseOver" Value="True">
                     <Setter Property="Tag" Value="Visible"/>
-                    <Setter Property="Background" Value="#f8f7fc"/>
-                    <Setter Property="Foreground" Value="AliceBlue"/>
+                    <Setter Property="Cursor" Value="Hand"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="searchTextBox" TargetType="TextBox">
+            <Setter Property="Background" Value="#f5f7f9"/>
+            <Setter Property="Foreground" Value="#767676"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="Padding" Value="150 15"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="Margin" Value="0 10"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="TextBoxBase">
+                        <Border x:Name="border" CornerRadius="22" Background="{TemplateBinding Background}" BorderThickness="{TemplateBinding BorderThickness}"
+                                BorderBrush="{TemplateBinding BorderBrush}" SnapsToDevicePixels="True">
+                            <ScrollViewer x:Name="PART_ContentHost" Focusable="False" HorizontalScrollBarVisibility="Hidden"
+                                          VerticalScrollBarVisibility="Hidden"/>
+                        </Border>
+
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="BorderBrush" Value="#d9d9d9" TargetName="border"/>
+                            </Trigger>
+                            <Trigger Property="IsKeyboardFocused" Value="True">
+                                <Setter Property="BorderBrush" Value="#d9d9d9" TargetName="border"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        
+        <Style x:Key="userButton" TargetType="Button">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Foreground" Value="#88878e"/>
+            <Setter Property="Margin" Value="3 0 0 0"/>
+            <Setter Property="Width" Value="40"/>
+            <Setter Property="Height" Value="40"/>
+            <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}" CornerRadius="50">
+                            <ContentPresenter VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Tag" Value="Visible"/>
+                    <Setter Property="Background" Value="LightBlue"/>
+                    <Setter Property="Foreground" Value="Gray"/>
                 </Trigger>
             </Style.Triggers>
         </Style>
@@ -388,6 +566,58 @@
                     <Setter Property="Opacity" Value="0.4"/>
                 </Trigger>
             </Style.Triggers>
+        </Style>
+
+        <Style x:Key="timeText" TargetType="TextBlock">
+            <Setter Property="Foreground" Value="#979797"/>
+            <Setter Property="FontSize" Value="11"/>
+            <Setter Property="Margin" Value="47 3 0 0"/>
+        </Style>
+
+        <Style x:Key="timeTextRight" TargetType="TextBlock" BasedOn="{StaticResource timeText}">
+            <Setter Property="Margin" Value="0 3 7 0"/>
+            <Setter Property="HorizontalAlignment" Value="Right"/>
+        </Style>
+
+        <Style x:Key="messageTextBox" TargetType="TextBox">
+            <Setter Property="Background" Value="#f5f7f9"/>
+            <Setter Property="Foreground" Value="#767676"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="BorderBrush" Value="#e1e0e3"/>
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="Padding" Value="10 15 120 15"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="Margin" Value="0 10"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="TextBoxBase">
+                        <Border x:Name="border" CornerRadius="3" Background="{TemplateBinding Background}" BorderThickness="{TemplateBinding BorderThickness}"
+                                BorderBrush="{TemplateBinding BorderBrush}" SnapsToDevicePixels="True">
+                            <ScrollViewer x:Name="PART_ContentHost" Focusable="False" HorizontalScrollBarVisibility="Hidden"
+                                          VerticalScrollBarVisibility="Hidden"/>
+                        </Border>
+
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="BorderBrush" Value="#d9d9d9" TargetName="border"/>
+                            </Trigger>
+                            <Trigger Property="IsKeyboardFocused" Value="True">
+                                <Setter Property="BorderBrush" Value="#d9d9d9" TargetName="border"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="passwordTextBox" TargetType="PasswordBox">
+            <Setter Property="Background" Value="#f5f7f9"/>
+            <Setter Property="Foreground" Value="#767676"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="BorderBrush" Value="#e1e0e3"/>
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="Margin" Value="0 10"/>
         </Style>
     </Application.Resources>
 </views:MvxApplication>

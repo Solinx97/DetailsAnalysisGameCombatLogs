@@ -1,11 +1,10 @@
-﻿using CombatAnalysis.CombatParser.Entities;
+﻿using CombatAnalysis.Core.Models;
 
-namespace CombatAnalysis.Core.CommunicateViewModels
+namespace CombatAnalysis.Core.CommunicateViewModels;
+
+public class CombatInformation
 {
-    public class CombatInformation
-    {
-        public Combat Combat { get; set; }
+    public CombatModel Combat { get; set; }
 
-        public string UserName { get; set; }
-    }
+    public string UserName { get; set; }
 }

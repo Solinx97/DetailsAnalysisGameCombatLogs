@@ -1,0 +1,16 @@
+{
+  "Damage": "Damage",
+  "Healing": "Healing",
+  "DamageTaken": "Damage taken",
+  "ResourcesRecovery": "Resources recovery",
+  "Deaths": "Deaths",
+  "Buffs": "Buffs",
+  "CombatStatus": "Combat status",
+  "StartDate": "Start date",
+  "FinishDate": "Finish date",
+  "Duration": "Duration",
+  "MoreDetails": "More details",
+  "MainPage": "Main page",
+  "Combats": "Combats",
+  "NeedToAddSomething": "Need to add at least 1 item."
+}

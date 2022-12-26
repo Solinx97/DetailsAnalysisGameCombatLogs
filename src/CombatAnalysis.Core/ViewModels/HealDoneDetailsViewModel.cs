@@ -1,277 +1,146 @@
-﻿using AutoMapper;
-using CombatAnalysis.CombatParser.Entities;
-using CombatAnalysis.CombatParser.Extensions;
-using CombatAnalysis.CombatParser.Services;
-using CombatAnalysis.Core.Consts;
+﻿using CombatAnalysis.Core.Consts;
 using CombatAnalysis.Core.Core;
 using CombatAnalysis.Core.Interfaces;
+using CombatAnalysis.Core.Localizations;
 using CombatAnalysis.Core.Models;
 using CombatAnalysis.Core.Services;
+using CombatAnalysis.Core.ViewModels.ViewModelTemplates;
+using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
-using MvvmCross.ViewModels;
-using System;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Threading.Tasks;
 
-namespace CombatAnalysis.Core.ViewModels
+namespace CombatAnalysis.Core.ViewModels;
+
+public class HealDoneDetailsViewModel : GenericTemplate<CombatPlayerModel>
 {
-    public class HealDoneDetailsViewModel : MvxViewModel<Tuple<int, CombatModel>>
+    private readonly CombatParserAPIService _combatParserAPIService;
+    private readonly PowerUpInCombat<HealDoneModel> _powerUpInCombat;
+
+    private ObservableCollection<HealDoneModel> _healDoneInformations;
+    private ObservableCollection<HealDoneModel> _healDoneInformationsWithoutFilter;
+    private ObservableCollection<HealDoneModel> _healDoneInformationsWithOverheal;
+    private ObservableCollection<string> _healDoneSources;
+    private ObservableCollection<HealDoneGeneralModel> _healDoneGeneralInformations;
+
+    private bool _isShowOverheal = true;
+    private bool _isShowCrit = true;
+
+    public HealDoneDetailsViewModel(IHttpClientHelper httpClient, ILogger logger, IMemoryCache memoryCache)
     {
-        private readonly IMapper _mapper;
-        private readonly ILogger _logger;
-        private readonly CombatParserAPIService _combatParserAPIService;
-        private readonly PowerUpInCombat<HealDoneModel> _powerUpInCombat;
+        _combatParserAPIService = new CombatParserAPIService(httpClient, logger, memoryCache);
+        _powerUpInCombat = new PowerUpInCombat<HealDoneModel>(_healDoneInformationsWithOverheal);
 
-        private IImprovedMvxViewModel _basicTemplate;
-        private ObservableCollection<HealDoneModel> _healDoneInformations;
-        private ObservableCollection<HealDoneModel> _healDoneInformationsWithOverheal;
-        private ObservableCollection<HealDoneGeneralModel> _healDoneGeneralInformations;
+        BasicTemplate = Templates.Basic;
+        BasicTemplate.Parent = this;
+        BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, "Step", 4);
+    }
 
-        private bool _isShowOverheal = true;
-        private bool _isShowCrit = true;
-        private bool _isShowOnlyOverheal;
-        private bool _isShowOnlyCrit;
-        private string _selectedPlayer;
-        private int _selectedIndexSorting;
-        private bool _isCollectionReversed;
-        private long _totalValue;
+    #region Properties
 
-        public HealDoneDetailsViewModel(IMapper mapper, IHttpClientHelper httpClient, ILogger logger)
+    public ObservableCollection<HealDoneModel> HealDoneInformations
+    {
+        get { return _healDoneInformations; }
+        set
         {
-            _mapper = mapper;
-            _logger = logger;
-
-            _combatParserAPIService = new CombatParserAPIService(httpClient, logger);
-            _powerUpInCombat = new PowerUpInCombat<HealDoneModel>(_healDoneInformationsWithOverheal);
-
-            BasicTemplate = Templates.Basic;
-            BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, "Step", 4);
+            SetProperty(ref _healDoneInformations, value);
         }
+    }
 
-        public IImprovedMvxViewModel BasicTemplate
+    public ObservableCollection<string> HealDoneSources
+    {
+        get { return _healDoneSources; }
+        set
         {
-            get { return _basicTemplate; }
-            set
-            {
-                SetProperty(ref _basicTemplate, value);
-            }
+            SetProperty(ref _healDoneSources, value);
         }
+    }
 
-        public ObservableCollection<HealDoneModel> HealDoneInformations
+    public ObservableCollection<HealDoneGeneralModel> HealDoneGeneralInformations
+    {
+        get { return _healDoneGeneralInformations; }
+        set
         {
-            get { return _healDoneInformations; }
-            set
-            {
-                SetProperty(ref _healDoneInformations, value);
-            }
+            SetProperty(ref _healDoneGeneralInformations, value);
         }
+    }
 
-        public ObservableCollection<HealDoneGeneralModel> HealDoneGeneralInformations
+    public bool IsShowOverheal
+    {
+        get { return _isShowOverheal; }
+        set
         {
-            get { return _healDoneGeneralInformations; }
-            set
-            {
-                SetProperty(ref _healDoneGeneralInformations, value);
-            }
-        }
+            SetProperty(ref _isShowOverheal, value);
 
-        public bool IsShowOverheal
+            _powerUpInCombat.UpdateProperty("IsFullOverheal");
+            _powerUpInCombat.UpdateCollection(_healDoneInformationsWithOverheal);
+            HealDoneInformations = _powerUpInCombat.ShowSpecificalValue("Time", HealDoneInformations, value);
+
+            RaisePropertyChanged(() => HealDoneInformations);
+        }
+    }
+
+    public bool IsShowCrit
+    {
+        get { return _isShowCrit; }
+        set
         {
-            get { return _isShowOverheal; }
-            set
-            {
-                SetProperty(ref _isShowOverheal, value);
+            SetProperty(ref _isShowCrit, value);
 
-                _powerUpInCombat.UpdateProperty("IsFullOverheal");
-                _powerUpInCombat.UpdateCollection(_healDoneInformationsWithOverheal);
-                HealDoneInformations = _powerUpInCombat.ShowSpecificalValue("Time", HealDoneInformations, value);
+            _powerUpInCombat.UpdateProperty("IsCrit");
+            _powerUpInCombat.UpdateCollection(_healDoneInformationsWithOverheal);
+            HealDoneInformations = _powerUpInCombat.ShowSpecificalValue("Time", HealDoneInformations, value);
 
-                RaisePropertyChanged(() => HealDoneInformations);
-            }
+            RaisePropertyChanged(() => HealDoneInformations);
         }
+    }
 
-        public bool IsShowOnlyOverheal
-        {
-            get { return _isShowOnlyOverheal; }
-            set
-            {
-                SetProperty(ref _isShowOnlyOverheal, value);
+    #endregion
 
-                _powerUpInCombat.UpdateProperty("IsFullOverheal");
-                _powerUpInCombat.UpdateCollection(_healDoneInformationsWithOverheal);
-                HealDoneInformations = _powerUpInCombat.ShowSpecificalValueInversion("Time", HealDoneInformations, value);
+    protected override async Task ChildPrepareAsync(CombatPlayerModel parameter)
+    {
+        var player = parameter;
+        SelectedPlayer = player.UserName;
+        TotalValue = player.HealDone;
 
-                RaisePropertyChanged(() => HealDoneInformations);
-            }
-        }
+        await LoadDetailsAsync(player.Id);
+        await LoadGenericDetailsAsync(player.Id);
+    }
 
-        public bool IsShowCrit
-        {
-            get { return _isShowCrit; }
-            set
-            {
-                SetProperty(ref _isShowCrit, value);
+    protected override void Filter()
+    {
+        HealDoneInformations = _healDoneInformationsWithoutFilter.Any(x => x.SpellOrItem == SelectedSource)
+            ? new ObservableCollection<HealDoneModel>(_healDoneInformationsWithoutFilter.Where(x => x.SpellOrItem == SelectedSource))
+            : _healDoneInformationsWithoutFilter;
+    }
 
-                _powerUpInCombat.UpdateProperty("IsCrit");
-                _powerUpInCombat.UpdateCollection(_healDoneInformationsWithOverheal);
-                HealDoneInformations = _powerUpInCombat.ShowSpecificalValue("Time", HealDoneInformations, value);
+    protected override async Task LoadDetailsAsync(int combatPlayerId)
+    {
+        var details = await _combatParserAPIService.LoadHealDoneDetailsAsync(combatPlayerId);
+        HealDoneInformations = new ObservableCollection<HealDoneModel>(details.ToList());
 
-                RaisePropertyChanged(() => HealDoneInformations);
-            }
-        }
+        GetDetails();
+    }
 
-        public bool IsShowOnlyCrit
-        {
-            get { return _isShowOnlyCrit; }
-            set
-            {
-                SetProperty(ref _isShowOnlyCrit, value);
+    protected override async Task LoadGenericDetailsAsync(int combatPlayerId)
+    {
+        var generalDetails = await _combatParserAPIService.LoadHealDoneGeneralAsync(combatPlayerId);
+        HealDoneGeneralInformations = new ObservableCollection<HealDoneGeneralModel>(generalDetails.ToList());
+    }
 
-                _powerUpInCombat.UpdateProperty("IsCrit");
-                _powerUpInCombat.UpdateCollection(_healDoneInformationsWithOverheal);
-                HealDoneInformations = _powerUpInCombat.ShowSpecificalValueInversion("Time", HealDoneInformations, value);
+    protected override void GetDetails()
+    {
+        _healDoneInformationsWithoutFilter = new ObservableCollection<HealDoneModel>(HealDoneInformations);
+        _healDoneInformationsWithOverheal = new ObservableCollection<HealDoneModel>(HealDoneInformations);
 
-                RaisePropertyChanged(() => HealDoneInformations);
-            }
-        }
+        var sources = HealDoneInformations.Select(x => x.SpellOrItem).Distinct().ToList();
+        var allSourcesName = TranslationSource.Instance["CombatAnalysis.App.Localizations.Resources.HealDoneDetails.Resource.All"];
+        sources.Insert(0, allSourcesName);
+        HealDoneSources = new ObservableCollection<string>(sources);
+    }
 
-        public string SelectedPlayer
-        {
-            get { return _selectedPlayer; }
-            set
-            {
-                SetProperty(ref _selectedPlayer, value);
-            }
-        }
-
-        public int SelectedIndexSorting
-        {
-            get { return _selectedIndexSorting; }
-            set
-            {
-                SetProperty(ref _selectedIndexSorting, value);
-
-                Sorting(value);
-
-                RaisePropertyChanged(() => HealDoneGeneralInformations);
-            }
-        }
-
-        public bool IsCollectionReversed
-        {
-            get { return _isCollectionReversed; }
-            set
-            {
-                SetProperty(ref _isCollectionReversed, value);
-
-                Reverse();
-
-                RaisePropertyChanged(() => HealDoneGeneralInformations);
-            }
-        }
-
-        public long TotalValue
-        {
-            get { return _totalValue; }
-            set
-            {
-                SetProperty(ref _totalValue, value);
-            }
-        }
-
-        public override void Prepare(Tuple<int, CombatModel> parameter)
-        {
-            var combat = parameter.Item2;
-            var player = combat.Players[parameter.Item1];
-            SelectedPlayer = player.UserName;
-            TotalValue = player.HealDone;
-
-            if (player.Id > 0)
-            {
-                Task.Run(async () => await LoadHealDoneDetails(player.Id));
-                Task.Run(async () => await LoadHealDoneGeneral(player.Id));
-            }
-            else
-            {
-                var combatInformation = new CombatDetailsService(_logger);
-                var map = _mapper.Map<Combat>(combat);
-
-                GetHealDoneDetails(combatInformation, SelectedPlayer, map);
-                GetHealDoneGeneral(combatInformation, map);
-            }
-        }
-
-        private void GetHealDoneDetails(CombatDetailsService combatInformation, string player, Combat combat)
-        {
-            combatInformation.Initialization(combat, player);
-            combatInformation.GetHealDone();
-
-            var map1 = _mapper.Map<ObservableCollection<HealDoneModel>>(combatInformation.HealDone);
-
-            HealDoneInformations = map1;
-            _healDoneInformationsWithOverheal = new ObservableCollection<HealDoneModel>(map1);
-        }
-
-        private void GetHealDoneGeneral(CombatDetailsService combatInformation, Combat combat)
-        {
-            var damageDoneGeneralInformations = combatInformation.GetHealDoneGeneral(combatInformation.HealDone, combat);
-            var map2 = _mapper.Map<ObservableCollection<HealDoneGeneralModel>>(damageDoneGeneralInformations);
-            HealDoneGeneralInformations = map2;
-        }
-
-        private async Task LoadHealDoneDetails(int combatPlayerId)
-        {
-            var healDones = await _combatParserAPIService.LoadHealDoneDetailsAsync(combatPlayerId);
-            HealDoneInformations = new ObservableCollection<HealDoneModel>(healDones.ToList());
-            _healDoneInformationsWithOverheal = new ObservableCollection<HealDoneModel>(healDones.ToList());
-        }
-
-        private async Task LoadHealDoneGeneral(int combatPlayerId)
-        {
-            var healDoneGenerals = await _combatParserAPIService.LoadHealDoneGeneralAsync(combatPlayerId);
-            HealDoneGeneralInformations = new ObservableCollection<HealDoneGeneralModel>(healDoneGenerals.ToList());
-        }
-
-        private void Sorting(int index)
-        {
-            IOrderedEnumerable<HealDoneGeneralModel> sortedCollection;
-
-            switch (index)
-            {
-                case 0:
-                    sortedCollection = HealDoneGeneralInformations.OrderBy(x => x.SpellOrItem);
-                    break;
-                case 1:
-                    sortedCollection = HealDoneGeneralInformations.OrderBy(x => x.Value);
-                    break;
-                case 2:
-                    sortedCollection = HealDoneGeneralInformations.OrderBy(x => x.CastNumber);
-                    break;
-                case 3:
-                    sortedCollection = HealDoneGeneralInformations.OrderBy(x => x.MinValue);
-                    break;
-                case 4:
-                    sortedCollection = HealDoneGeneralInformations.OrderBy(x => x.MaxValue);
-                    break;
-                case 5:
-                    sortedCollection = HealDoneGeneralInformations.OrderBy(x => x.AverageValue);
-                    break;
-                case 6:
-                    sortedCollection = HealDoneGeneralInformations.OrderBy(x => x.HealPerSecond);
-                    break;
-                default:
-                    sortedCollection = HealDoneGeneralInformations.OrderBy(x => x.Value);
-                    break;
-            }
-
-            HealDoneGeneralInformations = new ObservableCollection<HealDoneGeneralModel>(sortedCollection.ToList());
-            IsCollectionReversed = false;
-        }
-
-        private void Reverse()
-        {
-            HealDoneGeneralInformations = new ObservableCollection<HealDoneGeneralModel>(HealDoneGeneralInformations.Reverse().ToList());
-        }
+    protected override void TurnOnAllFilters()
+    {
+        if (!IsShowOverheal) IsShowOverheal = true;
+        if (!IsShowCrit) IsShowCrit = true;
     }
 }

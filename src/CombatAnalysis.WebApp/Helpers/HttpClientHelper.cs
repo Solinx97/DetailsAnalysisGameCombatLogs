@@ -1,50 +1,45 @@
-﻿using CombatAnalysis.WebApp.Consts;
-using CombatAnalysis.WebApp.Interfaces;
-using System;
-using System.Net.Http;
-using System.Net.Http.Json;
-using System.Threading.Tasks;
+﻿using CombatAnalysis.WebApp.Interfaces;
 
-namespace CombatAnalysis.WebApp.Helpers
+namespace CombatAnalysis.WebApp.Helpers;
+
+internal class HttpClientHelper : IHttpClientHelper
 {
-    internal class HttpClientHelper : IHttpClientHelper
+    private const string BaseAddressApi = "api/v1/";
+
+    public HttpClientHelper()
     {
-        public HttpClientHelper()
-        {
-            Client = new HttpClient
-            {
-                BaseAddress = new Uri(Port.CombatParserApi)
-            };
-        }
+        Client = new HttpClient();
+    }
 
-        public HttpClient Client { get; set; }
+    public HttpClient Client { get; set; }
 
-        public async Task<HttpResponseMessage> PostAsync(string requestUri, JsonContent content)
-        {
-            var result = await Client.PostAsync(requestUri, content);
+    public string BaseAddress { get; set; }
 
-            return result;
-        }
+    public async Task<HttpResponseMessage> PostAsync(string requestUri, JsonContent content)
+    {
+        var result = await Client.PostAsync($"{BaseAddress}{BaseAddressApi}{requestUri}", content);
 
-        public async Task<HttpResponseMessage> GetAsync(string requestUri)
-        {
-            var result = await Client.GetAsync(requestUri);
+        return result;
+    }
 
-            return result;
-        }
+    public async Task<HttpResponseMessage> GetAsync(string requestUri)
+    {
+        var result = await Client.GetAsync($"{BaseAddress}{BaseAddressApi}{requestUri}");
 
-        public async Task<HttpResponseMessage> PutAsync(string requestUri, JsonContent content)
-        {
-            var result = await Client.PutAsync(requestUri, content);
+        return result;
+    }
 
-            return result;
-        }
+    public async Task<HttpResponseMessage> PutAsync(string requestUri, JsonContent content)
+    {
+        var result = await Client.PutAsync($"{BaseAddress}{BaseAddressApi}{requestUri}", content);
 
-        public async Task<HttpResponseMessage> DeletAsync(string requestUri)
-        {
-            var result = await Client.DeleteAsync(requestUri);
+        return result;
+    }
 
-            return result;
-        }
+    public async Task<HttpResponseMessage> DeletAsync(string requestUri)
+    {
+        var result = await Client.DeleteAsync($"{BaseAddress}{BaseAddressApi}{requestUri}");
+
+        return result;
     }
 }

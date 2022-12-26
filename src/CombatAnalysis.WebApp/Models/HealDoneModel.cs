@@ -18,14 +18,10 @@
 
         public string SpellOrItem { get; set; }
 
-        public int CurrentHealth { get; set; }
-
-        public int MaxHealth { get; set; }
-
         public bool IsCrit { get; set; }
 
         public bool IsFullOverheal { get; set; }
 
-        public int CombatPlayerDataId { get; set; }
+        public int CombatPlayerId { get; set; }
     }
 }

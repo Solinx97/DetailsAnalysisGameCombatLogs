@@ -1,0 +1,11 @@
+﻿CREATE PROCEDURE [dbo].[InsertIntoAppUser]
+	@Id NVARCHAR (MAX),
+	@Email NVARCHAR (MAX),
+	@Password NVARCHAR (MAX)
+AS
+	DECLARE @OutputTbl TABLE (Id NVARCHAR (MAX),Email NVARCHAR (MAX),Password NVARCHAR (MAX))
+	INSERT INTO AppUser
+	OUTPUT INSERTED.* INTO @OutputTbl
+	VALUES (@Id,@Email,@Password)
+	SELECT * FROM @OutputTbl
+RETURN 0

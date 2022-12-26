@@ -16,6 +16,8 @@ namespace CombatAnalysis.WebApp.Models
 
         public string SpellOrItem { get; set; }
 
+        public bool IsPeriodicDamage { get; set; }
+
         public bool IsDodge { get; set; }
 
         public bool IsParry { get; set; }
@@ -28,6 +30,6 @@ namespace CombatAnalysis.WebApp.Models
 
         public bool IsCrit { get; set; }
 
-        public int CombatPlayerDataId { get; set; }
+        public int CombatPlayerId { get; set; }
     }
 }

@@ -3,46 +3,67 @@ using CombatAnalysis.BL.DTO;
 using CombatAnalysis.BL.Interfaces;
 using CombatAnalysis.CombatParserAPI.Models;
 using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 
-namespace CombatAnalysis.CombatParserAPI.Controllers
+namespace CombatAnalysis.CombatParserAPI.Controllers;
+
+[Route("api/v1/[controller]")]
+[ApiController]
+public class ResourceRecoveryController : ControllerBase
 {
-    [Route("[controller]")]
-    [ApiController]
-    public class ResourceRecoveryController : ControllerBase
+    private readonly IService<ResourceRecoveryDto, int> _service;
+    private readonly IMapper _mapper;
+    private readonly ILogger _logger;
+
+    public ResourceRecoveryController(IService<ResourceRecoveryDto, int> service, IMapper mapper, ILogger logger)
     {
-        private readonly IService<ResourceRecoveryDto> _service;
-        private readonly IMapper _mapper;
+        _service = service;
+        _mapper = mapper;
+        _logger = logger;
+    }
 
-        public ResourceRecoveryController(IService<ResourceRecoveryDto> service, IMapper mapper)
+    [HttpGet("findByCombatPlayerId/{combatPlayerId:int:min(1)}")]
+    public async Task<IActionResult> Find(int combatPlayerId)
+    {
+        var resourceRecoveryes = await _service.GetByParamAsync("CombatPlayerId", combatPlayerId);
+        var map = _mapper.Map<IEnumerable<ResourceRecoveryModel>>(resourceRecoveryes);
+
+        return Ok(map);
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> Create(ResourceRecoveryModel model)
+    {
+        try
         {
-            _service = service;
-            _mapper = mapper;
+            var map = _mapper.Map<ResourceRecoveryDto>(model);
+            var createdItem = await _service.CreateAsync(map);
+            var resultMap = _mapper.Map<ResourceRecoveryModel>(createdItem);
+
+            return Ok(resultMap);
         }
-
-        [HttpGet("FindByCombatPlayerId/{combatPlayerId}")]
-        public async Task<IEnumerable<ResourceRecoveryModel>> Find(int combatPlayerId)
+        catch (ArgumentNullException ex)
         {
-            var resourceRecoveryes = await _service.GetByProcedureAsync(combatPlayerId);
-            var map = _mapper.Map<IEnumerable<ResourceRecoveryModel>>(resourceRecoveryes);
+            _logger.LogError(ex, ex.Message);
 
-            return map;
+            return BadRequest();
         }
+    }
 
-        [HttpPost]
-        public async Task Post(ResourceRecoveryModel value)
+    [HttpDelete]
+    public async Task<IActionResult> Delete(ResourceRecoveryModel model)
+    {
+        try
         {
-            var map = _mapper.Map<ResourceRecoveryDto>(value);
-            await _service.CreateByProcedureAsync(map);
+            var map = _mapper.Map<ResourceRecoveryDto>(model);
+            var deletedId = await _service.DeleteAsync(map);
+
+            return Ok(deletedId);
         }
-
-        [HttpDelete("DeleteByCombatPlayerId/{combatPlayerId}")]
-        public async Task<int> Delete(int combatPlayerId)
+        catch (ArgumentNullException ex)
         {
-            var deletedId = await _service.DeleteByProcedureAsync(combatPlayerId);
+            _logger.LogError(ex, ex.Message);
 
-            return deletedId;
+            return BadRequest();
         }
     }
 }

@@ -1,12 +1,11 @@
 ﻿using MvvmCross.Platforms.Wpf.Views;
 
-namespace CombatAnalysis.App.Views
+namespace CombatAnalysis.App.Views;
+
+public partial class DamageDoneDetailsView : MvxWpfView
 {
-    public partial class DamageDoneDetailsView : MvxWpfView
+    public DamageDoneDetailsView()
     {
-        public DamageDoneDetailsView()
-        {
-            InitializeComponent();
-        }
+        InitializeComponent();
     }
 }

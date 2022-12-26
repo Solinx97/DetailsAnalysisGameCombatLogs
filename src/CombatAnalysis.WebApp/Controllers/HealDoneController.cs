@@ -1,30 +1,28 @@
-﻿using CombatAnalysis.WebApp.Interfaces;
+﻿using CombatAnalysis.WebApp.Consts;
+using CombatAnalysis.WebApp.Interfaces;
 using CombatAnalysis.WebApp.Models;
 using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
-using System.Net.Http.Json;
-using System.Threading.Tasks;
 
-namespace CombatAnalysis.WebApp.Controllers
+namespace CombatAnalysis.WebApp.Controllers;
+
+[Route("api/v1/[controller]")]
+[ApiController]
+public class HealDoneController : ControllerBase
 {
-    [Route("[controller]")]
-    [ApiController]
-    public class HealDoneController : ControllerBase
+    private readonly IHttpClientHelper _httpClient;
+
+    public HealDoneController(IHttpClientHelper httpClient)
     {
-        private readonly IHttpClientHelper _httpClient;
+        _httpClient = httpClient;
+        _httpClient.BaseAddress = Port.CombatParserApi;
+    }
 
-        public HealDoneController(IHttpClientHelper httpClient)
-        {
-            _httpClient = httpClient;
-        }
+    [HttpGet("{id}")]
+    public async Task<IActionResult> GetById(int id)
+    {
+        var responseMessage = await _httpClient.GetAsync($"HealDone/FindByCombatPlayerId/{id}");
+        var healDones = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<HealDoneModel>>();
 
-        [HttpGet("{id}")]
-        public async Task<IEnumerable<HealDoneModel>> GetById(int id)
-        {
-            var responseMessage = await _httpClient.GetAsync($"HealDone/FindByCombatPlayerId/{id}");
-            var healDones = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<HealDoneModel>>();
-
-            return healDones;
-        }
+        return Ok(healDones);
     }
 }

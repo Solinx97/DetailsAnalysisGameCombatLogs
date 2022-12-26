@@ -1,137 +1,146 @@
 ﻿using AutoMapper;
 using CombatAnalysis.BL.DTO;
-using CombatAnalysis.BL.Exceptions;
 using CombatAnalysis.BL.Interfaces;
 using CombatAnalysis.DAL.Entities;
-using CombatAnalysis.DAL.Helpers;
 using CombatAnalysis.DAL.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
-namespace CombatAnalysis.BL.Services
+namespace CombatAnalysis.BL.Services;
+
+internal class DamageTakenService : IService<DamageTakenDto, int>
 {
-    internal class DamageTakenService : IService<DamageTakenDto>
+    private readonly IGenericRepository<DamageTaken, int> _repository;
+    private readonly IMapper _mapper;
+
+    public DamageTakenService(IGenericRepository<DamageTaken, int> repository, IMapper mapper)
     {
-        private readonly IGenericRepository<DamageTaken> _repository;
-        private readonly IMapper _mapper;
+        _repository = repository;
+        _mapper = mapper;
+    }
 
-        public DamageTakenService(IGenericRepository<DamageTaken> userRepository, IMapper mapper)
+    public Task<DamageTakenDto> CreateAsync(DamageTakenDto item)
+    {
+        if (item == null)
         {
-            _repository = userRepository;
-            _mapper = mapper;
+            throw new ArgumentNullException(nameof(DamageTakenDto), $"The {nameof(DamageTakenDto)} can't be null");
         }
 
-        Task<int> IService<DamageTakenDto>.CreateAsync(DamageTakenDto item)
-        {
-            if (item == null)
-            {
-                throw new ArgumentNullException(nameof(item));
-            }
+        return CreateInternalAsync(item);
+    }
 
-            return CreateInternalAsync(item);
+    public Task<int> DeleteAsync(DamageTakenDto item)
+    {
+        if (item == null)
+        {
+            throw new ArgumentNullException(nameof(DamageTakenDto), $"The {nameof(DamageTakenDto)} can't be null");
         }
 
-        async Task<int> IService<DamageTakenDto>.CreateByProcedureAsync(DamageTakenDto item)
-        {
-            var paramNames = new string[] { nameof(item.Value), nameof(item.Time), nameof(item.From),
-                nameof(item.To), nameof(item.SpellOrItem), nameof(item.IsDodge), nameof(item.IsParry), nameof(item.IsMiss),
-                nameof(item.IsResist), nameof(item.IsImmune), nameof(item.IsCrushing), nameof(item.CombatPlayerDataId) };
-            var paramValues = new object[] { item.Value, item.Time, item.From,
-                item.To, item.SpellOrItem, item.IsDodge, item.IsParry, item.IsMiss,
-                item.IsResist, item.IsImmune, item.IsCrushing, item.CombatPlayerDataId };
+        return DeleteInternalAsync(item);
+    }
 
-            var response = await _repository.ExecuteStoredProcedureAsync(DbProcedureHelper.InsertIntoDamageTaken, paramNames, paramValues);
-            return response;
+    public async Task<IEnumerable<DamageTakenDto>> GetAllAsync()
+    {
+        var allData = await _repository.GetAllAsync();
+        var result = _mapper.Map<List<DamageTakenDto>>(allData);
+
+        return result;
+    }
+
+    public async Task<DamageTakenDto> GetByIdAsync(int id)
+    {
+        var result = await _repository.GetByIdAsync(id);
+        var resultMap = _mapper.Map<DamageTakenDto>(result);
+
+        return resultMap;
+    }
+
+    public async Task<IEnumerable<DamageTakenDto>> GetByParamAsync(string paramName, object value)
+    {
+        var result = await Task.Run(() => _repository.GetByParam(paramName, value));
+        var resultMap = _mapper.Map<IEnumerable<DamageTakenDto>>(result);
+
+        return resultMap;
+    }
+
+    public Task<int> UpdateAsync(DamageTakenDto item)
+    {
+        if (item == null)
+        {
+            throw new ArgumentNullException(nameof(DamageTakenDto), $"The {nameof(DamageTakenDto)} can't be null");
         }
 
-        Task<int> IService<DamageTakenDto>.DeleteAsync(DamageTakenDto item)
-        {
-            if (item == null)
-            {
-                throw new ArgumentNullException(nameof(item));
-            }
+        return UpdateInternalAsync(item);
+    }
 
-            return DeleteInternalAsync(item);
+    private async Task<DamageTakenDto> CreateInternalAsync(DamageTakenDto item)
+    {
+        if (string.IsNullOrEmpty(item.FromEnemy))
+        {
+            throw new ArgumentNullException(nameof(DamageTakenDto),
+                $"The property {nameof(DamageTakenDto.FromEnemy)} of the {nameof(DamageTakenDto)} object can't be null or empty");
+        }
+        if (string.IsNullOrEmpty(item.ToPlayer))
+        {
+            throw new ArgumentNullException(nameof(DamageTakenDto),
+                $"The property {nameof(DamageTakenDto.ToPlayer)} of the {nameof(DamageTakenDto)} object can't be null or empty");
+        }
+        if (string.IsNullOrEmpty(item.SpellOrItem))
+        {
+            throw new ArgumentNullException(nameof(DamageTakenDto),
+                $"The property {nameof(DamageTakenDto.SpellOrItem)} of the {nameof(DamageTakenDto)} object can't be null or empty");
         }
 
-        async Task<int> IService<DamageTakenDto>.DeleteByProcedureAsync(int combatPlayerId)
-        {
-            var paramNames = new string[] { nameof(combatPlayerId) };
-            var paramValues = new object[] { combatPlayerId };
+        var map = _mapper.Map<DamageTaken>(item);
+        var createdItem = await _repository.CreateAsync(map);
+        var resultMap = _mapper.Map<DamageTakenDto>(createdItem);
 
-            var response = await _repository.ExecuteStoredProcedureAsync(DbProcedureHelper.DeleteDamageTaken, paramNames, paramValues);
-            return response;
+        return resultMap;
+    }
+
+    private async Task<int> DeleteInternalAsync(DamageTakenDto item)
+    {
+        if (string.IsNullOrEmpty(item.FromEnemy))
+        {
+            throw new ArgumentNullException(nameof(DamageTakenDto),
+                $"The property {nameof(DamageTakenDto.FromEnemy)} of the {nameof(DamageTakenDto)} object can't be null or empty");
+        }
+        if (string.IsNullOrEmpty(item.ToPlayer))
+        {
+            throw new ArgumentNullException(nameof(DamageTakenDto),
+                $"The property {nameof(DamageTakenDto.ToPlayer)} of the {nameof(DamageTakenDto)} object can't be null or empty");
+        }
+        if (string.IsNullOrEmpty(item.SpellOrItem))
+        {
+            throw new ArgumentNullException(nameof(DamageTakenDto), 
+                $"The property {nameof(DamageTakenDto.SpellOrItem)} of the {nameof(DamageTakenDto)} object can't be null or empty");
         }
 
-        async Task<IEnumerable<DamageTakenDto>> IService<DamageTakenDto>.GetAllAsync()
-        {
-            var allData = await _repository.GetAllAsync();
-            var result = _mapper.Map<List<DamageTakenDto>>(allData);
+        var map = _mapper.Map<DamageTaken>(item);
+        var rowsAffected = await _repository.DeleteAsync(map);
 
-            return result;
+        return rowsAffected;
+    }
+
+    private async Task<int> UpdateInternalAsync(DamageTakenDto item)
+    {
+        if (string.IsNullOrEmpty(item.FromEnemy))
+        {
+            throw new ArgumentNullException(nameof(DamageTakenDto), 
+                $"The property {nameof(DamageTakenDto.FromEnemy)} of the {nameof(DamageTakenDto)} object can't be null or empty");
+        }
+        if (string.IsNullOrEmpty(item.ToPlayer))
+        {
+            throw new ArgumentNullException(nameof(DamageTakenDto), 
+                $"The property {nameof(DamageTakenDto.ToPlayer)} of the {nameof(DamageTakenDto)} object can't be null or empty");
+        }
+        if (string.IsNullOrEmpty(item.SpellOrItem))
+        {
+            throw new ArgumentNullException(nameof(DamageTakenDto),
+                $"The property {nameof(DamageTakenDto.SpellOrItem)} of the {nameof(DamageTakenDto)} object can't be null or empty");
         }
 
-        async Task<IEnumerable<DamageTakenDto>> IService<DamageTakenDto>.GetByProcedureAsync(int combatPlayerId)
-        {
-            var paramNames = new string[] { nameof(combatPlayerId) };
-            var paramValues = new object[] { combatPlayerId };
+        var map = _mapper.Map<DamageTaken>(item);
+        var rowsAffected = await _repository.UpdateAsync(map);
 
-            var data = await _repository.ExecuteStoredProcedureUseModelAsync(DbProcedureHelper.GetDamageTaken, paramNames, paramValues);
-            var result = _mapper.Map<IEnumerable<DamageTakenDto>>(data);
-
-            return result;
-        }
-
-        async Task<DamageTakenDto> IService<DamageTakenDto>.GetByIdAsync(int id)
-        {
-            var executeLoad = await _repository.GetByIdAsync(id);
-            var result = _mapper.Map<DamageTakenDto>(executeLoad);
-
-            return result;
-        }
-
-        Task<int> IService<DamageTakenDto>.UpdateAsync(DamageTakenDto item)
-        {
-            if (item == null)
-            {
-                throw new ArgumentNullException(nameof(item));
-            }
-
-            return UpdateInternalAsync(item);
-        }
-
-        private async Task<int> CreateInternalAsync(DamageTakenDto item)
-        {
-            var map = _mapper.Map<DamageTaken>(item);
-            var createdCombatId = await _repository.CreateAsync(map);
-
-            return createdCombatId;
-        }
-
-        private async Task<int> DeleteInternalAsync(DamageTakenDto item)
-        {
-            var allData = await _repository.GetAllAsync();
-            if (!allData.Any())
-            {
-                throw new NotFoundException($"Collection entity {nameof(DamageTakenDto)} not found", nameof(allData));
-            }
-
-            var numberEntries = await _repository.DeleteAsync(_mapper.Map<DamageTaken>(item));
-            return numberEntries;
-        }
-
-        private async Task<int> UpdateInternalAsync(DamageTakenDto item)
-        {
-            var allData = await _repository.GetAllAsync();
-            if (!allData.Any())
-            {
-                throw new NotFoundException($"Collection entity {nameof(DamageTakenDto)} not found", nameof(allData));
-            }
-
-            var numberEntries = await _repository.UpdateAsync(_mapper.Map<DamageTaken>(item));
-            return numberEntries;
-        }
+        return rowsAffected;
     }
 }

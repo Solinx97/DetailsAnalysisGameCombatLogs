@@ -3,48 +3,67 @@ using CombatAnalysis.BL.DTO;
 using CombatAnalysis.BL.Interfaces;
 using CombatAnalysis.CombatParserAPI.Models;
 using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 
-namespace CombatAnalysis.CombatParserAPI.Controllers
+namespace CombatAnalysis.CombatParserAPI.Controllers;
+
+[Route("api/v1/[controller]")]
+[ApiController]
+public class ResourceRecoveryGeneralController : ControllerBase
 {
-    [Route("[controller]")]
-    [ApiController]
-    public class ResourceRecoveryGeneralController : ControllerBase
+    private readonly IService<ResourceRecoveryGeneralDto, int> _service;
+    private readonly IMapper _mapper;
+    private readonly ILogger _logger;
+
+    public ResourceRecoveryGeneralController(IService<ResourceRecoveryGeneralDto, int> service, IMapper mapper, ILogger logger)
     {
-        private readonly IService<ResourceRecoveryGeneralDto> _service;
-        private readonly IMapper _mapper;
+        _service = service;
+        _mapper = mapper;
+        _logger = logger;
+    }
 
-        public ResourceRecoveryGeneralController(IService<ResourceRecoveryGeneralDto> service, IMapper mapper)
+    [HttpGet("findByCombatPlayerId/{combatPlayerId:int:min(1)}")]
+    public async Task<IActionResult> Find(int combatPlayerId)
+    {
+        var resourceRecoveryGenerals = await _service.GetByParamAsync("CombatPlayerId", combatPlayerId);
+        var map = _mapper.Map<IEnumerable<ResourceRecoveryGeneralModel>>(resourceRecoveryGenerals);
+
+        return Ok(map);
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> Create(ResourceRecoveryGeneralModel model)
+    {
+        try
         {
-            _service = service;
-            _mapper = mapper;
+            var map = _mapper.Map<ResourceRecoveryGeneralDto>(model);
+            var createdItem = await _service.CreateAsync(map);
+            var resultMap = _mapper.Map<ResourceRecoveryGeneralModel>(createdItem);
+
+            return Ok(resultMap);
         }
-
-        [HttpGet("FindByCombatPlayerId/{combatPlayerId}")]
-        public async Task<IEnumerable<ResourceRecoveryGeneralModel>> Find(int combatPlayerId)
+        catch (ArgumentNullException ex)
         {
-            var resourceRecoveryGenerals = await _service.GetByProcedureAsync(combatPlayerId);
-            var map = _mapper.Map<IEnumerable<ResourceRecoveryGeneralModel>>(resourceRecoveryGenerals);
+            _logger.LogError(ex, ex.Message);
 
-            return map;
+            return BadRequest();
         }
+    }
 
-        [HttpPost]
-        public async Task<int> Post(ResourceRecoveryGeneralModel value)
+    [HttpDelete]
+    public async Task<IActionResult> Delete(ResourceRecoveryGeneralModel model)
+    {
+        try
         {
-            var map = _mapper.Map<ResourceRecoveryGeneralDto>(value);
-            var createdCombatId = await _service.CreateByProcedureAsync(map);
+            var map = _mapper.Map<ResourceRecoveryGeneralDto>(model);
+            var deletedId = await _service.DeleteAsync(map);
 
-            return createdCombatId;
+            return Ok(deletedId);
         }
-
-        [HttpDelete("DeleteByCombatPlayerId/{combatPlayerId}")]
-        public async Task<int> Delete(int combatPlayerId)
+        catch (ArgumentNullException ex)
         {
-            var deletedId = await _service.DeleteByProcedureAsync(combatPlayerId);
+            _logger.LogError(ex, ex.Message);
 
-            return deletedId;
+            return BadRequest();
         }
     }
 }

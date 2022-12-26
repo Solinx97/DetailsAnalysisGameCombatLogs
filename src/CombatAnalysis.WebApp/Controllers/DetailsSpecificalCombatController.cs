@@ -1,48 +1,46 @@
-﻿using CombatAnalysis.WebApp.Interfaces;
+﻿using CombatAnalysis.WebApp.Consts;
+using CombatAnalysis.WebApp.Interfaces;
 using CombatAnalysis.WebApp.Models;
 using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
-using System.Net.Http.Json;
-using System.Threading.Tasks;
 
-namespace CombatAnalysis.WebApp.Controllers
+namespace CombatAnalysis.WebApp.Controllers;
+
+[Route("api/v1/[controller]")]
+[ApiController]
+public class DetailsSpecificalCombatController : ControllerBase
 {
-    [ApiController]
-    [Route("[controller]")]
-    public class DetailsSpecificalCombatController : ControllerBase
+    private readonly IHttpClientHelper _httpClient;
+
+    public DetailsSpecificalCombatController(IHttpClientHelper httpClient)
     {
-        private readonly IHttpClientHelper _httpClient;
+        _httpClient = httpClient;
+        _httpClient.BaseAddress = Port.CombatParserApi;
+    }
 
-        public DetailsSpecificalCombatController(IHttpClientHelper httpClient)
-        {
-            _httpClient = httpClient;
-        }
+    [HttpGet("combatPlayersByCombatId/{id}")]
+    public async Task<IActionResult> GetCombatPlayersByCombatId(int id)
+    {
+        var responseMessage = await _httpClient.GetAsync($"CombatPlayer/FindByCombatId/{id}");
+        var combatPlayers = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<CombatPlayerModel>>();
 
-        [HttpGet("combatPlayersByCombatId/{id}")]
-        public async Task<IEnumerable<CombatPlayerDataModel>> GetCombatPlayersByCombatId(int id)
-        {
-            var responseMessage = await _httpClient.GetAsync($"CombatPlayer/FindByCombatId/{id}");
-            var combatPlayers = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<CombatPlayerDataModel>>();
+        return Ok(combatPlayers);
+    }
 
-            return combatPlayers;
-        }
+    [HttpGet("combatPlayerById/{id}")]
+    public async Task<IActionResult> GetCombatPlayerById(int id)
+    {
+        var responseMessage = await _httpClient.GetAsync($"CombatPlayer/{id}");
+        var combatPlayer = await responseMessage.Content.ReadFromJsonAsync<CombatPlayerModel>();
 
-        [HttpGet("combatPlayerById/{id}")]
-        public async Task<CombatPlayerDataModel> GetCombatPlayerById(int id)
-        {
-            var responseMessage = await _httpClient.GetAsync($"CombatPlayer/{id}");
-            var combatPlayer = await responseMessage.Content.ReadFromJsonAsync<CombatPlayerDataModel>();
+        return Ok(combatPlayer);
+    }
 
-            return combatPlayer;
-        }
+    [HttpGet("combatById/{id}")]
+    public async Task<IActionResult> GetCombatById(int id)
+    {
+        var responseMessage = await _httpClient.GetAsync($"Combat/{id}");
+        var combat = await responseMessage.Content.ReadFromJsonAsync<CombatModel>();
 
-        [HttpGet("combatById/{id}")]
-        public async Task<CombatModel> GetCombatById(int id)
-        {
-            var responseMessage = await _httpClient.GetAsync($"Combat/{id}");
-            var combat = await responseMessage.Content.ReadFromJsonAsync<CombatModel>();
-
-            return combat;
-        }
+        return Ok(combat);
     }
 }

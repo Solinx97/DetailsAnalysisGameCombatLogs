@@ -3,11 +3,617 @@
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <link rel="stylesheet" href="src/styles/main.css">
+    <link rel="stylesheet" href="src/styles/aboutMeSkills.css">
+    <link rel="stylesheet" href="src/styles/aboutMeQualification.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-iYQeCzEYFbKjA/T2uDLTpkwGzCiq6soy8tYaI1GyVh/UjpbCx/TYkiZhlZB6+fzT" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css" integrity="sha512-xh6O/CkQoPOWDdYTDqeRdPCVd1SpvCA9XXcUnZS2FmJNp1coAFzvtCN9BmamE+4aHK8yyUHUSCcJHgXloTyT2A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Oleg [Portfolio]</title>
 </head>
 <body>
-    <div>Data Analysis application:</div>
-    <div><a target="_blank" href="https://install.appcenter.ms/users/Aleh_Fiadosau-epam.com/apps/DetalsAnalysisGamesCombatLogs/releases/6">Download</a></div>
+    <div class="navigation">
+        <div class="navigation__container">
+            <ul>
+                <li class="list active">
+                    <a class="go-to" href="#about-me">
+                        <span class="icon"><i class="fa-solid fa-house"></i></span>
+                        <span class="title">About me</span>
+                    </a>
+                </li>
+                <li class="list">
+                    <a class="go-to" href="#skills">
+                        <span class="icon"><i class="fa-solid fa-earth-oceania"></i></span>
+                        <span class="title">Skills</span>
+                    </a>
+                </li>
+                <li class="list">
+                    <a class="go-to" href="#qualifications">
+                        <span class="icon"><i class="fa-solid fa-briefcase"></i></span>
+                        <span class="title">Qualifications</span>
+                    </a>
+                </li>
+                <li class="list">
+                    <a class="go-to" href="#what-is-project">
+                        <span class="icon"><i class="fa-solid fa-crop-simple"></i></span>
+                        <span class="title">What's project?</span>
+                    </a>
+                </li>
+                <li class="list">
+                    <a class="go-to" href="#social-links">
+                        <span class="icon"><i class="fa-solid fa-fire"></i></span>
+                        <span class="title">Social links</span>
+                    </a>
+                </li>
+                <div class="indicator"></div>
+            </ul>
+        </div>
+    </div>
+
+    <span class="about-me">
+        <span class="about-me__description">
+            <a name="about-me"></a>
+            <span class="title">
+                <h3>Portfolio</h3>
+            </span>
+            <div class="about-me__description_intro">
+                <p>Hi, my name is</p>
+                <p class="my-name">Oleg Fedosov</p>
+                <p class="orientired">I'm a BackEnd Developer</p>
+                <p>I focus on .Net desktop and Web application development</p>
+            </div>
+        </span>
+        <span class="about-me__skills">
+            <a name="skills"></a>
+            <h4>Skills</h4>
+            <span class="about-me__skills_container">
+                <ul>
+                    <li>
+                        <div class="skills-name">.Net Core</div>
+                        <span>
+                            <div class="skill-level active">
+                                <p class="name">Novice</p>
+                            </div>
+                            <div class="skill-level active">
+                                <p class="name">Intermediate</p>
+                            </div>
+                            <div class="skill-level active">
+                                <p class="name">Advanced</p>
+                            </div>
+                            <div class="skill-level">
+                                <p class="name">Expert</p>
+                            </div>
+                        </span>
+                    </li>
+                    <li>
+                        <div class="skills-name">ASP.Net Core</div>
+                        <span>
+                            <div class="skill-level active">
+                                <p class="name">Novice</p>
+                            </div>
+                            <div class="skill-level active">
+                                <p class="name">Intermediate</p>
+                            </div>
+                            <div class="skill-level">
+                                <p class="name">Advanced</p>
+                            </div>
+                            <div class="skill-level">
+                                <p class="name">Expert</p>
+                            </div>
+                        </span>
+                    </li>
+                    <li>
+                        <div class="skills-name">WPF Core</div>
+                        <span>
+                            <div class="skill-level active">
+                                <p class="name">Novice</p>
+                            </div>
+                            <div class="skill-level active">
+                                <p class="name">Intermediate</p>
+                            </div>
+                            <div class="skill-level active">
+                                <p class="name">Advanced</p>
+                            </div>
+                            <div class="skill-level">
+                                <p class="name">Expert</p>
+                            </div>
+                        </span>
+                    </li>
+                    <li>
+                        <div class="skills-name">Web API</div>
+                        <span>
+                            <div class="skill-level active">
+                                <p class="name">Novice</p>
+                            </div>
+                            <div class="skill-level active">
+                                <p class="name">Intermediate</p>
+                            </div>
+                            <div class="skill-level active">
+                                <p class="name">Advanced</p>
+                            </div>
+                            <div class="skill-level">
+                                <p class="name">Expert</p>
+                            </div>
+                        </span>
+                    </li>
+                    <li>
+                        <div class="skills-name">HTML/CSS</div>
+                        <span>
+                            <div class="skill-level active">
+                                <p class="name">Novice</p>
+                            </div>
+                            <div class="skill-level active">
+                                <p class="name">Intermediate</p>
+                            </div>
+                            <div class="skill-level active">
+                                <p class="name">Advanced</p>
+                            </div>
+                            <div class="skill-level">
+                                <p class="name">Expert</p>
+                            </div>
+                        </span>
+                    </li>
+                    <li>
+                        <div class="skills-name">MS SQL</div>
+                        <span>
+                            <div class="skill-level active">
+                                <p class="name">Novice</p>
+                            </div>
+                            <div class="skill-level active">
+                                <p class="name">Intermediate</p>
+                            </div>
+                            <div class="skill-level">
+                                <p class="name">Advanced</p>
+                            </div>
+                            <div class="skill-level">
+                                <p class="name">Expert</p>
+                            </div>
+                        </span>
+                    </li>
+                    <li>
+                        <div class="skills-name">Native JS</div>
+                        <span>
+                            <div class="skill-level active">
+                                <p class="name">Novice</p>
+                            </div>
+                            <div class="skill-level active">
+                                <p class="name">Intermediate</p>
+                            </div>
+                            <div class="skill-level active">
+                                <p class="name">Advanced</p>
+                            </div>
+                            <div class="skill-level">
+                                <p class="name">Expert</p>
+                            </div>
+                        </span>
+                    </li>
+                    <li>
+                        <div class="skills-name">React.js</div>
+                        <span>
+                            <div class="skill-level active">
+                                <p class="name">Novice</p>
+                            </div>
+                            <div class="skill-level">
+                                <p class="name">Intermediate</p>
+                            </div>
+                            <div class="skill-level">
+                                <p class="name">Advanced</p>
+                            </div>
+                            <div class="skill-level">
+                                <p class="name">Expert</p>
+                            </div>
+                        </span>
+                    </li>
+                    <li>
+                        <div class="skills-name">GitHub + Action</div>
+                        <span>
+                            <div class="skill-level active">
+                                <p class="name">Novice</p>
+                            </div>
+                            <div class="skill-level active">
+                                <p class="name">Intermediate</p>
+                            </div>
+                            <div class="skill-level active">
+                                <p class="name">Advanced</p>
+                            </div>
+                            <div class="skill-level">
+                                <p class="name">Expert</p>
+                            </div>
+                        </span>
+                    </li>
+                    <li>
+                        <div class="skills-name">Azure Cloud</div>
+                        <span>
+                            <div class="skill-level active">
+                                <p class="name">Novice</p>
+                            </div>
+                            <div class="skill-level">
+                                <p class="name">Intermediate</p>
+                            </div>
+                            <div class="skill-level">
+                                <p class="name">Advanced</p>
+                            </div>
+                            <div class="skill-level">
+                                <p class="name">Expert</p>
+                            </div>
+                        </span>
+                    </li>
+                </ul>
+            </span>
+        </span>
+        <span class="about-me__qualification">
+            <a name="qualifications"></a>
+            <h4>Qualification</h4>
+            <div class="way">
+                <div class="point">
+                    <div class="point__selected"></div>
+                    <div class="description">
+                        <p class="name">Gomel State Engineering College</p>
+                        <div class="qualififcation">
+                            <span>
+                                <p class="qualififcation-name">Speciality</p>
+                                <p class="qualififcation-description">Maintenance of technological machines</p>
+                            </span>
+                            <span>
+                                <p class="qualififcation-name">Programming level: </p>
+                                <p class="qualififcation-description">Intro</p>
+                            </span>
+                            <span>
+                                <p class="qualififcation-name">Achievements: </p>
+                                <p class="qualififcation-description">None</p>
+                            </span>
+                            <span>
+                                <p class="qualififcation-name">Rewards: </p>
+                                <p class="qualififcation-description">None</p>
+                            </span>
+                        </div>
+                        <p class="place-date">Gomel, 2013 - 2017</p>
+                    </div>
+                </div>
+                <div class="point">
+                    <div class="point__selected"></div>
+                    <div class="description">
+                        <p class="name">Sukhoi State Technical University of Gomel</p>
+                        <div class="qualififcation">
+                            <span>
+                                <p class="qualififcation-name">Speciality:</p>
+                                <p class="qualififcation-description">Information and technology of programming</p>
+                            </span>
+                            <span>
+                                <p class="qualififcation-name">Programming level: </p>
+                                <p class="qualififcation-description">Junior</p>
+                            </span>
+                            <span>
+                                <p class="qualififcation-name">Achievements: </p>
+                                <p class="qualififcation-description">Participation in the event of the university "Freshman"</p>
+                            </span>
+                            <span>
+                                <p class="qualififcation-name">Rewards: </p>
+                                <p class="qualififcation-description">None</p>
+                            </span>
+                        </div>
+                        <p class="place-date">Gomel, 2017 - 2021</p>
+                    </div>
+                </div>
+                <div class="point">
+                    <div class="point__selected"></div>
+                    <div class="description">
+                        <p class="name">Epam Systems</p>
+                        <div class="qualififcation">
+                            <span>
+                                <p class="qualififcation-name">Position:</p>
+                                <p class="qualififcation-description">Software Engineer</p>
+                            </span>
+                            <span>
+                                <p class="qualififcation-name">Programming level: </p>
+                                <p class="qualififcation-description">Middle</p>
+                            </span>
+                            <span>
+                                <p class="qualififcation-name">Achievements: </p>
+                                <p class="qualififcation-description">None</p>
+                            </span>
+                            <span>
+                                <p class="qualififcation-name">Rewards: </p>
+                                <p class="qualififcation-description">None</p>
+                            </span>
+                        </div>
+                        <p class="place-date">Gomel, 2021 - 2022</p>
+                    </div>
+                </div>
+                <div class="point">
+                    <div class="point__selected"></div>
+                    <div class="description">
+                        <p class="name">Epam Poland Systems</p>
+                        <div class="qualififcation">
+                            <span>
+                                <p class="qualififcation-name">Position:</p>
+                                <p class="qualififcation-description">Software Engineer</p>
+                            </span>
+                            <span>
+                                <p class="qualififcation-name">Programming level: </p>
+                                <p class="qualififcation-description">Middle</p>
+                            </span>
+                            <span>
+                                <p class="qualififcation-name">Achievements: </p>
+                                <p class="qualififcation-description">None</p>
+                            </span>
+                            <span>
+                                <p class="qualififcation-name">Rewards: </p>
+                                <p class="qualififcation-description">None</p>
+                            </span>
+                        </div>
+                        <p class="place-date">Gdansk, 2022 - Now</p>
+                    </div>
+                </div>
+            </div>
+        </span>
+        <span class="what-is-project">
+            <a name="what-is-project"></a>
+            <button type="button" class="open-personal-project active btn btn-primary btn-lg">What's project?</button>
+            <button type="button" class="close-personal-project btn btn-info btn-lg">Close project</button>
+            <span class="personal-project">
+                <span class="application-switcher">
+                    <div class="application-switcher__shell">
+                        <div class="application-switcher__container">
+                            <div>Web app</div>
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" id="app-switcher" type="checkbox" role="switch" checked>
+                            </div>
+                            <div>Desktop app for Windows</div>
+                        </div>
+                    </div>
+                </span>
+            
+                <div class="desktop-app-navigation">
+                    <div class="desktop-app-navigation__container">
+                        <ul>
+                            <li class="list active">
+                                <div class="go-to">
+                                    <span class="icon"><i class="fa-solid fa-house"></i></span>
+                                    <span class="title">Home</span>
+                                    <div class="status"></div>
+                                </div>
+                            </li>
+                            <li class="list">
+                                <div class="go-to">
+                                    <span class="icon"><i class="fa-solid fa-earth-oceania"></i></span>
+                                    <span class="title">Why it need?</span>
+                                    <div class="status"></div>
+                                </div>
+                            </li>
+                            <li class="list">
+                                <div class="go-to">
+                                    <span class="icon"><i class="fa-solid fa-briefcase"></i></span>
+                                    <span class="title">How it work</span>
+                                    <div class="status"></div>
+                                </div>
+                            </li>
+                            <li class="list">
+                                <div class="go-to">
+                                    <span class="icon"><i class="fa-solid fa-crop-simple"></i></span>
+                                    <span class="title">Example</span>
+                                    <div class="status"></div>
+                                </div>
+                            </li>
+                            <li class="list">
+                                <div class="go-to">
+                                    <span class="icon"><i class="fa-solid fa-fire"></i></span>
+                                    <span class="title">Another features</span>
+                                    <div class="status"></div>
+                                </div>
+                            </li>
+                            <li class="list">
+                                <div class="go-to">
+                                    <span class="icon"><i class="fa-solid fa-circle-down"></i></span>
+                                    <span class="title">Donwload</span>
+                                    <div class="status"></div>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+        
+                <div class="web-app-navigation">
+                    <div class="web-app-navigation__container">
+                        <ul>
+                            <li class="list active">
+                                <div class="go-to">
+                                    <span class="icon"><i class="fa-solid fa-house"></i></span>
+                                    <span class="title">Home</span>
+                                    <div class="status"></div>
+                                </div>
+                            </li>
+                            <li class="list">
+                                <div class="go-to">
+                                    <span class="icon"><i class="fa-solid fa-circle-question"></i></span>
+                                    <span class="title">Why need Web?</span>
+                                    <div class="status"></div>
+                                </div>
+                            </li>
+                            <li class="list">
+                                <div class="go-to">
+                                    <span class="icon"><i class="fa-brands fa-artstation"></i></span>
+                                    <span class="title">Statistics</span>
+                                    <div class="status"></div>
+                                </div>
+                            </li>
+                            <li class="list">
+                                <div class="go-to">
+                                    <span class="icon"><i class="fa-solid fa-circle-down"></i></span>
+                                    <span class="title">Open</span>
+                                    <div class="status"></div>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+        
+                <span class="applications">
+                    <ul class="applications__desktop-application active">
+                        <li class="go-to-target active">
+                            <img src="src/images/DetailsAnalysisGCL.png">
+                            <div class="description">
+                                <h4>Desktop app fot Winows</h3>
+                                <div>
+                                    <p><strong>The Windows app</strong> allows users to:</p>
+                                    <ul>
+                                        <li>Upload Combat Logs or delete already existing (personal) Combat Logs;</li>
+                                        <li>View general information about combats (damage, healing, damage taken, resources, etc.);</li>
+                                        <li>View detailed information about combats (damage, healing, damage taken, resources, etc.);</li>
+                                        <li>Chat with other users.</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </li>
+            
+                        <li class="go-to-target">
+                            <p><strong>Why it need?</strong></p>
+                            <div>
+                                <p><strong>Details Analysis GCL</strong> allows players to analyze combats in order to:</p>
+                                <ol>
+                                    <li><i>Improve your performance in combat;</i></li>
+                                    <li><i>Find out what mistakes were made during the combat;</i></li>
+                                    <li><i>Improve or change combat tactics;</i></li>
+                                    <li><i>Compare your combat score with other players and, if necessary, change the order and timing of using different talents;</i></li>
+                                    <li><i>Find out how effective your group was in combat or compare with other groups;</i></li>
+                                    <li><i>View personal achievements in combat (compare with previous results).</i></li>
+                                </ol>
+                            </div>
+                        </li>
+        
+                        <li class="go-to-target">
+                            <p><strong>How it work?</strong></p>
+                            <div>
+                                <p><strong>Details Analysis GCL</strong> interprets the combat log that is incomprehensible to humans into a more understandable and easy-to-view form.</p>
+                                <p>After interpretation, any user, without knowing how the Combat Log is created and what information is written to the Battle Log, receives the most important information.</p>
+                                <p>An example of important information:</p>
+                                <ol>
+                                    <li><i>Information about the damage dealt for the entire combat or separately by each player;</i></li>
+                                    <li><i>What target the player attacked in a certain period of time;</i></li>
+                                    <li><i>When and what abilities did the player use;</i></li>
+                                    <li><i>What damage the ability did and the status of the ability (critical damage, miss, parry, etc.);</i></li>
+                                    <li><i>Sorting information according to the necessary criteria (name of the ability, target, damage, etc.).</i></li>
+                                </ol>
+                                <p>In addition to interpretation, <strong>Details Analysis GCL</strong> allows you to save data to a database so that you can view the result again.</p>
+                            </div>
+                        </li>
+        
+                        <li class="go-to-target">
+                            <p><strong>Example:</strong></p>
+                            <div>
+                                <p>Suppose in a game (for example, World of Warcraft) it is possible to enable the Logging of combats in especially difficult dungeons (raid dungeons).</p>
+                                <p>Combat logging will create a special file that will store information about the events that happened/are happening during the battle,</p>
+                                <p>but the information is written in a way that will be understandable to the game, but difficult to understand for the players. An example of a combat log file:</p>
+                            </div>
+                            <img src="src/images/EncounterSample.png">
+                            <div>
+                                <p>The presented example with information about the battle is difficult for an ordinary person to understand: it is difficult to get the necessary information about the combat.</p>
+                                <p>App <strong>Details Analysis GCL</strong> reads the above information, splits the data into the required entities, extracts the information, and presents the resulting information in an understandable form.</p>
+                                <p>How does it look in <strong>Details Analysis GCL</strong>:</p>
+                            </div>
+                            <img src="src/images/DetailsAnalysisGCL_Analysis.png">
+                            <img src="src/images/DetailsAnalysisGCL_Details.png">
+                            <img src="src/images/DetailsAnalysisGCL_DamageDoneGeneral.png">
+                            <img src="src/images/DetailsAnalysisGCL_DamageDone.png">
+                        </li>
+        
+                        <li class="go-to-target">
+                            <p><strong>Another features</strong></p>
+                            <div>
+                                <p>On the above application images <strong>Details Analysis GCL</strong> it is clear that the information has become clear to any player.</p>
+                                <p>The information is presented in general form and expanded form (for each player separately). In addition, to obtain the information you need personally, you can use data display filters.</p>
+                                <p>The example shows only part of the application functionality. In addition to parsing Battle Logs, the <strong>Details Analysis GCL</strong> application allows users (authorized) to communicate with other users in person or join group chats.</p>
+                                <p>Communication in <strong>Details Analysis GCL</strong>:</p>
+                            </div>
+                            <img src="src/images/DetailsAnalysisGCL_PersonalChat.png">
+                        </li>
+                        
+                        <li class="go-to-target">
+                            <button type="button" class="desktop-app-download btn btn-primary btn-lg">Download</button>
+                            <span>
+                                <p style="opacity: 0.5; font-size: 13px; display: none;">The app is not yet available for download</p>
+                                <p style="opacity: 0.5; font-size: 13px;">App with limited functionality</p>
+                            </span>
+                        </li>
+                    </ul>
+                
+                    <ul class="applications__web-application">
+                        <li class="go-to-target active">
+                            <img src="src/images/WowAnalysisWeb.png">
+                            <div class="description">
+                                <h4>Web app</h4>
+                                <div>
+                                    <p><strong>Web app</strong> allows users to:</p>
+                                    <ul>
+                                        <li>View general information about combats (damage, healing, damage taken, resources, etc.);</li>
+                                        <li>View detailed information about combats (damage, healing, damage taken, resources, etc.);</li>
+                                        <li>View overall combat statistics;</li>
+                                        <li>View personal (each player) combat statistics;</li>
+                                        <li>View the events of each player during the entire battle or during the definition. combat interval;</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </li>
+                        <li class="go-to-target">
+                            <p><strong>Why need Web?</strong></p>
+                            <div>
+                                <p>There are several reasons why some users are better off using the Web Application.:</p>
+                                <ol>
+                                    <li><i>The web application does not need to be installed on a computer: just go to the Browser and specify the address of the Web application;</i></li>
+                                    <li><i>The Windows app needs to be self-updated after each update is released, unlike the Web app;</i></li>
+                                    <li><i>The web application provides functionality in the form of diagrams and diagrams for combat statistics;</i></li>
+                                    <li><i>The user does not need all the functionality provided by the Windows application (for example, saving Logs).</i></li>
+                                </ol>
+                            </div>
+                        </li>
+                        <li class="go-to-target">
+                            <p><strong>Statistics</strong></p>
+                            <img src="src/images/WowAnalysisWeb_PlayerDiagram.png">
+                            <img src="src/images/WowAnalysisWeb_Information.png">
+                            <img src="src/images/WowAnalysisWeb_CommonInformation.png">
+        
+                        </li>
+                        <li class="go-to-target">
+                            <button type="button" class="btn btn-primary btn-lg" disabled>Open</button>
+                            <p style="opacity: 0.5; font-size: 13px;">The application is not yet available</p>
+                        </li>
+                    </ul>
+                </span>
+            </span>
+        </span>
+    </span>
+
+    <span class="social-links">
+        <a name="social-links"></a>
+        <h4>Social links</h4>
+        <span class="social-links__container">
+            <span class="links">
+                <span class="icon">
+                    <a href="https://vk.com/pro_solinx" target="_blank"><i class="fa-brands fa-vk"></i></a>
+                    <div class="nickname">Олег Федосов</div>
+                </span>
+            </span>
+            <span class="links">
+                <span class="icon">
+                    <a href="https://twitter.com/_solinx_" target="_blank"><i class="fa-brands fa-twitter"></i></a>
+                    <div class="nickname">Олег Федосов</div>
+                </span>
+            </span>
+            <span class="links">
+                <span class="icon">
+                    <a href="https://www.linkedin.com/in/oleg-fedosov-a96345172/" target="_blank"><i class="fa-brands fa-linkedin"></i></a>
+                    <div class="nickname">Oleg Fedosov</div>
+                </span>
+            </span>
+            <span class="links">
+                <span class="icon">
+                    <a href="https://web.telegram.org/z/"><i class="fa-brands fa-telegram"></i></a>
+                    <div class="nickname">@Solinx</div>
+                </span>
+            </span>
+        </span>
+    </span>
+
+    <script src="src/scripts/main.js"></script>
 </body>
 </html>
