@@ -1,9 +1,9 @@
-﻿import React, { useState, useEffect } from 'react';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
+﻿import { faPen, faXmark } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPen, faXmark } from '@fortawesome/free-solid-svg-icons';
-import useCombatDetailsHelper from '../hooks/useCombatDetailsHelper';
+import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { CartesianGrid, Legend, Line, LineChart, Tooltip, XAxis, YAxis } from 'recharts';
+import useCombatDetailsData from '../hooks/useCombatDetailsData';
 
 import "../styles/combatDetails.scss";
 
@@ -12,7 +12,7 @@ const CombatDetails = ({ detailsTypeName, userName }) => {
 
     const [combatPlayerId, setCombatPlayerId] = useState(0);
     const [detailsType, setDetailsType] = useState("");
-    const [damageDoneRender, setDamageDoneRender] = useState(null);
+    const [combatDataRender, setCombatDataRender] = useState(<></>);
     const [detailsChartData, setDetailsChartData] = useState([]);
     const [detailsData, setDetailsData] = useState(null);
     const [showGeneralDetails, setShowGeneralDetails] = useState(false);
@@ -22,7 +22,7 @@ const CombatDetails = ({ detailsTypeName, userName }) => {
     const [usedSingleFilter, setUsedSingleFilter] = useState(false);
     const [usedMultiplyFilter, setUsedMultiplyFilter] = useState(false);
 
-    const combatDetailsHelperPayload = useCombatDetailsHelper(combatPlayerId);
+    const [combatDataList, getCombatData] = useCombatDetailsData(combatPlayerId, detailsType);
 
     useEffect(() => {
         const queryParams = new URLSearchParams(window.location.search);
@@ -31,13 +31,15 @@ const CombatDetails = ({ detailsTypeName, userName }) => {
     }, []);
 
     useEffect(() => {
-        if (combatPlayerId > 0) {
-            const getDetails = async () => {
-                await fillingDetailsDataListAsync();
-            };
-
-            getDetails();
+        if (combatPlayerId <= 0) {
+            return;
         }
+
+        const getDetails = async () => {
+            await fillingDetailsListAsync();
+        };
+
+        getDetails();
     }, [combatPlayerId]);
 
     const getTimeWithoutMs = (time) => {
@@ -79,10 +81,10 @@ const CombatDetails = ({ detailsTypeName, userName }) => {
         return duration;
     }
 
-    const fillingDetailsDataListAsync = async (spellsByTime) => {
+    const fillingDetailsListAsync = async (spellsByTime) => {
         let combatDetailsData = [];
         if (spellsByTime == undefined) {
-            combatDetailsData = await combatDetailsHelperPayload.data(detailsType);
+            combatDetailsData = await getCombatData();
         }
         else {
             combatDetailsData = spellsByTime;
@@ -91,33 +93,12 @@ const CombatDetails = ({ detailsTypeName, userName }) => {
         setDetailsData(combatDetailsData);
 
         if (combatDetailsData.length === 0) {
-            setDamageDoneRender(<div>{t("NeedToAddSomething")}</div>);
+            setCombatDataRender(<div>{t("NeedToAddSomething")}</div>);
             return;
         }
 
-        let list = <div></div>;
-        switch (detailsType) {
-            case "DamageDone":
-                list = combatDetailsData.map((element) => combatDetailsHelperPayload.damageDone.list(element));
-                break;
-            case "HealDone":
-                list = combatDetailsData.map((element) => combatDetailsHelperPayload.healDone.list(element));
-                break;
-            case "DamageTaken":
-                list = combatDetailsData.map((element) => combatDetailsHelperPayload.damageTaken.list(element));
-                break;
-            case "ResourceRecovery":
-                list = combatDetailsData.map((element) => combatDetailsHelperPayload.resourceRecovery.list(element));
-                break;
-        }
-
+        setCombatDataRender(await combatDataList());
         createChartData(combatDetailsData);
-
-        setDamageDoneRender(
-            <ul className="damage-done__container">
-                {list}
-            </ul>
-        );
     }
 
     const compare = (a, b) => {
@@ -161,7 +142,7 @@ const CombatDetails = ({ detailsTypeName, userName }) => {
             }
         }
 
-        fillingDetailsDataListAsync(spellsByTime);
+        fillingDetailsListAsync(spellsByTime);
     }
 
     const getStartTimeInterval = (e) => {
@@ -201,17 +182,17 @@ const CombatDetails = ({ detailsTypeName, userName }) => {
         }
 
         createChartData(damageDonesByFilter);
-        fillingDetailsDataListAsync(spellsByTime);
+        fillingDetailsListAsync(spellsByTime);
     }
 
     const cancelSingleFilter = () => {
-        fillingDetailsDataListAsync();
+        fillingDetailsListAsync();
         setSelectedTime("");
         setUsedSingleFilter(false);
     }
 
     const cancelSelectInterval = () => {
-        fillingDetailsDataListAsync();
+        fillingDetailsListAsync();
         setStartTime("");
         setFinishTime("");
         setUsedMultiplyFilter(false);
@@ -272,7 +253,7 @@ const CombatDetails = ({ detailsTypeName, userName }) => {
                     <div>{t("StartOfInterval")}: {startTime}, {t("FinishOfInterval")}: {finishTime}</div>
                 </div>
             }
-            {damageDoneRender}
+            {combatDataRender}
         </div>);
     }
 

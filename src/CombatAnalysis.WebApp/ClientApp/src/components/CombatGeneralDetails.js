@@ -1,9 +1,9 @@
-﻿import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { RadialBarChart, RadialBar, Legend } from 'recharts';
-import CombatDetails from './CombatDetails';
-import useCombatDetailsHelper from '../hooks/useCombatDetailsHelper';
+﻿import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
+import { Legend, RadialBar, RadialBarChart } from 'recharts';
+import useCombatGeneralData from '../hooks/useCombatGeneralData';
+import CombatDetails from './CombatDetails';
 
 import "../styles/combatGeneralDetails.scss";
 
@@ -15,12 +15,12 @@ const CombatGeneralDetails = () => {
     const [detailsType, setDetailsType] = useState("");
     const [userName, setUserName] = useState("");
     const [combatId, setCombatId] = useState(0);
-    const [damageDoneRenderGeneral, setDamageDoneGeneralRender] = useState(null);
+    const [combatDataRender, setCombatDataRender] = useState(<></>);
     const [showGeneralChart, setShowGeneralChart] = useState(false);
     const [spells, setSpells] = useState([]);
     const [tabIndex, setTabIndex] = useState(0);
 
-    const combatDetailsHelperPayload = useCombatDetailsHelper(combatPlayerId);
+    const [combatGeneralDataList, getCombatGeneralData] = useCombatGeneralData(combatPlayerId, detailsType);
 
     const style = {
         top: '50%',
@@ -49,24 +49,18 @@ const CombatGeneralDetails = () => {
     }, [combatPlayerId]);
 
     const getDetailsTypeName = () => {
-        let name = "";
-
         switch (detailsType) {
             case "DamageDone":
-                name = t("Damage");
-                break;
+                return t("Damage");
             case "HealDone":
-                name = t("Healing");
-                break;
+                return t("Healing");
             case "DamageTaken":
-                name = t("DamageTaken");
-                break;
+                return t("DamageTaken");
             case "ResourceRecovery":
-                name = t("ResourcesRecovery");
-                break;
+                return t("ResourcesRecovery");
+            default:
+                return "";
         }
-
-        return name;
     }
 
     const getCombatPlayerAsync = async () => {
@@ -86,37 +80,15 @@ const CombatGeneralDetails = () => {
     }
 
     const fillingGeneralDetailsList = async () => {
-        const combatGeneralDetailsData = await combatDetailsHelperPayload.generalData(detailsType);
+        const combatGeneralDetailsData = await getCombatGeneralData();
 
         if (combatGeneralDetailsData.length == 0) {
-            setDamageDoneGeneralRender(<div>{t("NeedToAddSomething")}</div>);
+            setCombatDataRender(<div>{t("NeedToAddSomething")}</div>);
             return;
         }
-        
-        let list = <div></div>;
 
-        switch (detailsType) {
-            case "DamageDone":
-                list = combatGeneralDetailsData.map((element) => combatDetailsHelperPayload.damageDone.generalList(element));
-                break;
-            case "HealDone":
-                list = combatGeneralDetailsData.map((element) => combatDetailsHelperPayload.healDone.generalList(element));
-                break;
-            case "DamageTaken":
-                list = combatGeneralDetailsData.map((element) => combatDetailsHelperPayload.damageTaken.generalList(element));
-                break;
-            case "ResourceRecovery":
-                list = combatGeneralDetailsData.map((element) => combatDetailsHelperPayload.resourceRecovery.generalList(element));
-                break;
-        }
-
-        await createBarChartData(combatGeneralDetailsData);
-
-        setDamageDoneGeneralRender(
-            <ul>
-                {list}
-            </ul>
-        );
+        setCombatDataRender(await combatGeneralDataList());
+        createBarChartData(combatGeneralDetailsData);
     }
 
     const createBarChartData = (combatGeneralDetailsData) => {
@@ -177,7 +149,7 @@ const CombatGeneralDetails = () => {
                     <div className="title">{t("Skills")}</div>
                 </div>
             }
-            {damageDoneRenderGeneral}
+            {combatDataRender}
         </div>);
     }
 

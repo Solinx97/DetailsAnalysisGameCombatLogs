@@ -1,7 +1,7 @@
 ﻿import React, { useEffect, useState, memo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import usePieChart from '../hooks/usePieChart';
-import DetailsPlayer from './childs/DetailsPlayer';
+import PlayerInformation from './childs/PlayerInformation';
+import DetailsPieChart from './childs/DetailsPieChart';
 import { useTranslation } from 'react-i18next';
 
 import "../styles/detailsSpecificalCombat.scss";
@@ -14,12 +14,11 @@ const DetailsSpecificalCombat = () => {
     const [combatLogId, setCombatLogId] = useState(0);
     const [combatPlayers, setCombatPlayers] = useState([]);
     const [showGeneralDetails, setShowGeneralDetails] = useState(false);
+    const [damageDonePieChart, setDamageDonePieChart] = useState({});
+    const [healDonePieChart, setHealDonePieChart] = useState({});
+    const [damageTakenPieChart, setDamageTakenPieChart] = useState({});
 
-    const [damageDonePieChart, setDamageDonePieChart] = usePieChart({});
-    const [healDonePieChart, setHealDonePieChart] = usePieChart({});
-    const [damageTakenPieChart, setDamageTakenPieChart] = usePieChart({});
-
-    const DetailsPlayerMemo = memo(DetailsPlayer);
+    const PlayerInformationMemo = memo(PlayerInformation);
 
     useEffect(() => {
         const queryParams = new URLSearchParams(window.location.search);
@@ -111,7 +110,6 @@ const DetailsSpecificalCombat = () => {
     }
 
     const render = () => {
-        console.log(1);
         return (<div className="details-specifical-combat__container">
             <div className="details-specifical-combat__container_navigate">
                 <h3>{t("Players")}</h3>
@@ -125,12 +123,12 @@ const DetailsSpecificalCombat = () => {
             </div>
             {showGeneralDetails &&
                 <div className="details-specifical-combat__container_general-details-charts">
-                    {damageDonePieChart()}
-                    {healDonePieChart()}
-                    {damageTakenPieChart()}
+                    <DetailsPieChart payload={damageDonePieChart} />
+                    <DetailsPieChart payload={healDonePieChart} />
+                    <DetailsPieChart payload={damageTakenPieChart} />
                 </div>
             }
-            <DetailsPlayerMemo combatPlayers={combatPlayers} />
+            <PlayerInformationMemo combatPlayers={combatPlayers} />
         </div>);
     };
 
