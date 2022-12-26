@@ -1,0 +1,40 @@
+﻿.details__container {
+    .chart-editor {
+        cursor: pointer;
+    }
+    
+    .chart-editor.active {
+        color: green;
+        transform: scale(1.25);
+    }
+
+    .card-body {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+
+        &__extra-damage {
+            display: flex;
+
+            svg {
+                margin: 5px;
+                transform: scale(1.25);
+            }
+        }
+    }
+
+    .card {
+        width: 40%;
+    }
+}
+
+.select-filter {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+
+    svg {
+        margin: 0 15px;
+        cursor: pointer;
+    }
+}

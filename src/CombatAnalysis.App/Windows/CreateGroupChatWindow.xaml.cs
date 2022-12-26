@@ -1,5 +1,6 @@
 ﻿using CombatAnalysis.Core.ViewModels.Chat;
 using CombatAnalysis.WinCore;
+using MvvmCross.Commands;
 using MvvmCross.Platforms.Wpf.Views;
 
 namespace CombatAnalysis.App.Windows;
@@ -10,8 +11,12 @@ public partial class CreateGroupChatWindow : MvxWindow
     {
         InitializeComponent();
 
-        DataContext = new CreateGroupChatViewModel();
+        var createGroupChat = new CreateGroupChatViewModel
+        {
+            CancelCommand = new MvxCommand(() => WindowManager.CreateGroupChat.Close())
+        };
 
+        DataContext = createGroupChat;
         Closed += CreateGroupChatWindowClosed;
     }
 

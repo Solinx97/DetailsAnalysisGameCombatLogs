@@ -1,6 +1,7 @@
 ﻿using CombatAnalysis.Core.Consts;
 using CombatAnalysis.Core.Core;
 using CombatAnalysis.Core.Interfaces;
+using CombatAnalysis.Core.Localizations;
 using CombatAnalysis.Core.Models;
 using CombatAnalysis.Core.Services;
 using CombatAnalysis.Core.ViewModels.ViewModelTemplates;
@@ -11,7 +12,7 @@ using System.Collections.ObjectModel;
 
 namespace CombatAnalysis.Core.ViewModels;
 
-public class DamageTakenDetailsViewModel : GenericTemplate<Tuple<CombatPlayerModel, CombatModel>>
+public class DamageTakenDetailsViewModel : GenericTemplate<CombatPlayerModel>
 {
     private readonly PowerUpInCombat<DamageTakenModel> _powerUpInCombat;
     private readonly CombatParserAPIService _combatParserAPIService;
@@ -197,10 +198,9 @@ public class DamageTakenDetailsViewModel : GenericTemplate<Tuple<CombatPlayerMod
 
     #endregion
 
-    protected override async Task ChildPrepareAsync(Tuple<CombatPlayerModel, CombatModel> parameter)
+    protected override async Task ChildPrepareAsync(CombatPlayerModel parameter)
     {
-        var combat = parameter.Item2;
-        var player = parameter.Item1;
+        var player = parameter;
         SelectedPlayer = player.UserName;
         TotalValue = player.DamageTaken;
 
@@ -235,7 +235,8 @@ public class DamageTakenDetailsViewModel : GenericTemplate<Tuple<CombatPlayerMod
         _damageTakenInformationsWithoutFilter = new ObservableCollection<DamageTakenModel>(DamageTakenInformations);
 
         var sources = DamageTakenInformations.Select(x => x.SpellOrItem).Distinct().ToList();
-        sources.Insert(0, "Все");
+        var allSourcesName = TranslationSource.Instance["CombatAnalysis.App.Localizations.Resources.DamageTakenDetails.Resource.All"];
+        sources.Insert(0, allSourcesName);
         DamageTakenSources = new ObservableCollection<string>(sources);
     }
 

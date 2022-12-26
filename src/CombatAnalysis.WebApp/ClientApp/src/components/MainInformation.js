@@ -1,11 +1,13 @@
 ﻿import React, { useState, useEffect } from 'react';
 import { NavLink } from 'react-router-dom';
 import { format } from 'date-fns';
+import { useTranslation } from 'react-i18next';
 
 import "../styles/mainInformation.scss";
 
 const MainInformation = () => {
     const [combatsRender, setCombatsRender] = useState(null);
+    const { t, i18n } = useTranslation("mainInformation");
 
     useEffect(() => {
         async function fetchBusinesses() {
@@ -27,7 +29,7 @@ const MainInformation = () => {
 
     const fillingCombatLogList = (combats) => {
         if (combats.length <= 0) {
-            setCombatsRender(<div>Необходимо добавить хотя бы 1 элемент</div>);
+            setCombatsRender(<div>{t("NeedToAddSomething")}</div>);
             return;
         }
 
@@ -48,7 +50,7 @@ const MainInformation = () => {
                     <li className="list-group-item">{format(new Date(element.date), 'MM/dd/yyyy HH:mm')}</li>
                 </ul>
                 <div className="card-body">
-                    <NavLink className="card-link" to={`/general-analysis?id=${element.id}`}>Разбор</NavLink>
+                    <NavLink className="card-link" to={`/general-analysis?id=${element.id}`}>{t("Analyzing")}</NavLink>
                 </div>
             </div>
         </li>);
@@ -56,7 +58,7 @@ const MainInformation = () => {
 
     const render = () => {
         return (<div className="main-information__container">
-            <h2>Логи боев</h2>
+            <h2>{t("Logs")}</h2>
             {combatsRender}
         </div>);
     }

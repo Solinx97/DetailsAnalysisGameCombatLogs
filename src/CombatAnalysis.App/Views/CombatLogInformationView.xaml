@@ -6,10 +6,13 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:converters="clr-namespace:CombatAnalysis.App.Converters"
+    xmlns:loc="clr-namespace:CombatAnalysis.App.Localizations"
+    xmlns:resx="clr-namespace:CombatAnalysis.App.Localizations.Resources.CombatLogInformation"
     xmlns:local="clr-namespace:CombatAnalysis.App.Views.ViewTemplates"
     xmlns:viewModels="clr-namespace:CombatAnalysis.Core.ViewModels;assembly=CombatAnalysis.Core"
     xmlns:mvx="clr-namespace:MvvmCross.Platforms.Wpf.Binding;assembly=MvvmCross.Platforms.Wpf"
     xmlns:views="clr-namespace:MvvmCross.Platforms.Wpf.Views;assembly=MvvmCross.Platforms.Wpf"
+    loc:LocalizationObject.ResourceManager="{x:Static resx:Resource.ResourceManager}"
     mc:Ignorable="d">
 
     <Grid>
@@ -44,7 +47,7 @@
         </ContentControl>
 
         <TextBlock Name="combatLogInformTitle" Grid.Row="0" Grid.Column="2" Grid.ColumnSpan="2" HorizontalAlignment="Center" VerticalAlignment="Center"
-                   Text="Получение информации о бое" FontSize="18" FontFamily="Comic Snas MS" Margin="0 30" Style="{StaticResource titleText}"/>
+                   Text="{loc:Loc Title}" FontSize="18" FontFamily="Comic Snas MS" Margin="0 30" Style="{StaticResource titleText}"/>
         <Grid Grid.Row="1" Grid.Column="3" Margin="0 50">
             <Grid.RowDefinitions>
                 <RowDefinition Height="*"/>
@@ -53,25 +56,25 @@
             
             <StackPanel IsEnabled="{Binding IsParsing, Converter={StaticResource BoolToXAMLBool}, ConverterParameter=true}" Grid.Row="0"
                     HorizontalAlignment="Center" VerticalAlignment="Top" MinWidth="375">
-                <TextBlock HorizontalAlignment="Center" Text="Загрузить файл с данными о бое" Margin="0 20" FontSize="16" />
-                <Button Name="selectCmbatLogFile" Click="SelectCmbatLogFile" Content="Выбрать файл" Width="125" FontSize="16"
+                <TextBlock HorizontalAlignment="Center" Text="{loc:Loc UploadFile}" Margin="0 20" FontSize="16" />
+                <Button Name="selectCmbatLogFile" Click="SelectCmbatLogFile" Content="{loc:Loc SelectFile}" Width="125" FontSize="16"
                     Margin="15 0" Style="{StaticResource showButton}" />
                 <StackPanel Orientation="Horizontal" Margin="20">
-                    <TextBlock Text="Файл:" FontSize="16" />
+                    <TextBlock Text="{loc:Loc File}" FontSize="16" />
                     <TextBlock Text="{Binding CombatLog, Mode=TwoWay}" FontWeight="Bold" Margin="20 0" FontSize="14" />
                 </StackPanel>
             </StackPanel>
             <StackPanel Grid.Row="1" IsEnabled="{Binding IsAuth, Converter={StaticResource BoolToXAMLBool}}" MaxWidth="500">
-                <TextBlock Text="Тип логов" FontSize="16" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                <TextBlock Text="{loc:Loc TypeOfLogs}" FontSize="16" VerticalAlignment="Center" HorizontalAlignment="Center"/>
                 <StackPanel Margin="10">
-                    <RadioButton Content="Без привязки к игроку" mvx:Bi.nd="Command GetLogTypeCommand, CommandParameter=0"
+                    <RadioButton Content="{loc:Loc WithoutUser}" mvx:Bi.nd="Command GetLogTypeCommand, CommandParameter=0"
                                  IsChecked="{Binding LogType, Converter={StaticResource IntToXAMLBool}, ConverterParameter=0}" Margin="5" />
-                    <RadioButton Content="Открытыте" mvx:Bi.nd="Command GetLogTypeCommand, CommandParameter=1"
+                    <RadioButton Content="{loc:Loc Public}" mvx:Bi.nd="Command GetLogTypeCommand, CommandParameter=1"
                                  IsChecked="{Binding LogType, Converter={StaticResource IntToXAMLBool}, ConverterParameter=1}" Margin="5" />
-                    <RadioButton Content="Закрытые" mvx:Bi.nd="Command GetLogTypeCommand, CommandParameter=2"
+                    <RadioButton Content="{loc:Loc Private}" mvx:Bi.nd="Command GetLogTypeCommand, CommandParameter=2"
                                  IsChecked="{Binding LogType, Converter={StaticResource IntToXAMLBool}, ConverterParameter=2}" Margin="5" />
                 </StackPanel>
-                <TextBlock Text="Для сохранения 'Открытые' или 'Закрытые' логов необходимо авторизоваться" TextWrapping="Wrap" Height="50"
+                <TextBlock Text="{loc:Loc TypeOfLogsLoginRequired}" TextWrapping="Wrap" Height="50"
                            VerticalAlignment="Center" HorizontalAlignment="Center" Opacity="0.5"
                            Visibility="{Binding IsAuth, Converter={StaticResource BoolToVisibility}, ConverterParameter=true:true}"/>
             </StackPanel>
@@ -79,27 +82,22 @@
 
         <StackPanel Grid.Row="1" Grid.Column="2">
             <TabControl Background="Transparent" MaxHeight="400" SelectedIndex="{Binding SelectedCombatLogTypeTabItem}">
-                <TabItem Header="Общедоступные логи" FontSize="15">
+                <TabItem Header="{loc:Loc PublicLogs}" FontSize="15">
                     <StackPanel Margin="10 50">
                         <ScrollViewer MaxHeight="200" VerticalScrollBarVisibility="Auto">
                             <StackPanel IsEnabled="{Binding IsParsing, Converter={StaticResource BoolToXAMLBool},ConverterParameter=true}" 
                                     HorizontalAlignment="Center" VerticalAlignment="Top" Margin="20">
-                                <TextBlock Text="Загрузка..." Opacity="0.4" HorizontalAlignment="Center" 
+                                <TextBlock Text="{loc:Loc Loading}" Opacity="0.4" HorizontalAlignment="Center" Margin="0 10"
                                            Visibility="{Binding CombatLogLoadingStatus, Converter={StaticResource IntToVisibility}, ConverterParameter='true:1:='}"/>
-                                <TextBlock Text="Ошибка загруки" Foreground="Orange" HorizontalAlignment="Center" 
+                                <TextBlock Text="{loc:Loc LoadingFailed}" Foreground="Orange" HorizontalAlignment="Center" Margin="0 10"
                                            Visibility="{Binding CombatLogLoadingStatus, Converter={StaticResource IntToVisibility}, ConverterParameter='true:3:='}"/>
                                 <StackPanel Orientation="Horizontal">
-                                    <TextBlock HorizontalAlignment="Center" Text="Общедоступные логи" Margin="0" FontSize="16" />
-                                    <Button Style="{StaticResource userButton}" Margin="5 -10" mvx:Bi.nd="Command ReloadCombatsCommand">
-                                        <Button.ToolTip>
-                                            <ToolTip>
-                                                Обновление списка загруженных логов.
-                                            </ToolTip>
-                                        </Button.ToolTip>
+                                    <TextBlock HorizontalAlignment="Center" Text="{loc:Loc PublicLogs}" Margin="0" FontSize="16" />
+                                    <Button Style="{StaticResource userButton}" Margin="5 -10" mvx:Bi.nd="Command ReloadCombatsCommand" ToolTip="{Binding RefreshLogs}">
                                         <Icon:PackIconMaterial Kind="Reload" Foreground="Gray"/>
                                     </Button>
                                 </StackPanel>
-                                <Button mvx:Bi.nd="Command LoadCombatsCommand" Content="Загрузить" Width="100" FontSize="16"
+                                <Button mvx:Bi.nd="Command LoadCombatsCommand" Content="{loc:Loc Upload}" Width="100" FontSize="16"
                                         Margin="10,10" Style="{StaticResource showButton}" Foreground="Blue"
                                         Visibility="{Binding CombatLogs.Count, Converter={StaticResource IntToVisibility}, ConverterParameter='true:0:>'}"
                                         IsEnabled="{Binding CombatListSelectedIndex, Converter={StaticResource IntToXAMLBool}, ConverterParameter='-1:>'}"/>
@@ -118,39 +116,29 @@
                         </ScrollViewer>
                     </StackPanel>
                 </TabItem>
-                <TabItem Header="Личные логи" FontSize="15" IsEnabled="{Binding IsAuth, Converter={StaticResource BoolToXAMLBool}, ConverterParameter=false}">
+                <TabItem Header="{loc:Loc PrivateLogs}" FontSize="15" IsEnabled="{Binding IsAuth, Converter={StaticResource BoolToXAMLBool}, ConverterParameter=false}">
                     <StackPanel Margin="10 50">
                         <ScrollViewer MaxHeight="210" VerticalScrollBarVisibility="Auto">
                             <StackPanel IsEnabled="{Binding IsParsing, Converter={StaticResource BoolToXAMLBool},ConverterParameter=true}" 
                                     HorizontalAlignment="Center" VerticalAlignment="Top" Margin="20">
-                                <TextBlock Text="Загрузка..." Opacity="0.4" HorizontalAlignment="Center"
+                                <TextBlock Text="{loc:Loc Loading}" Opacity="0.4" HorizontalAlignment="Center" Margin="0 10"
                                            Visibility="{Binding CombatLogByUserLoadingStatus, Converter={StaticResource IntToVisibility}, ConverterParameter='true:1:='}"/>
-                                <TextBlock Text="Ошибка загруки" Foreground="Orange" HorizontalAlignment="Center" 
+                                <TextBlock Text="{loc:Loc LoadingFailed}" Foreground="Orange" HorizontalAlignment="Center" Margin="0 10"
                                            Visibility="{Binding CombatLogByUserLoadingStatus, Converter={StaticResource IntToVisibility}, ConverterParameter='true:3:='}"/>
                                 <StackPanel Orientation="Horizontal">
-                                    <TextBlock HorizontalAlignment="Center" Text="Личные логи" Margin="0" FontSize="16" />
-                                    <Button Style="{StaticResource userButton}" Margin="5 -10" mvx:Bi.nd="Command ReloadCombatsByUserCommand">
-                                        <Button.ToolTip>
-                                            <ToolTip>
-                                                Обновление списка загруженных логов.
-                                            </ToolTip>
-                                        </Button.ToolTip>
+                                    <TextBlock HorizontalAlignment="Center" Text="{loc:Loc PrivateLogs}" Margin="0" FontSize="16" />
+                                    <Button Style="{StaticResource userButton}" Margin="5 -10" mvx:Bi.nd="Command ReloadCombatsByUserCommand" ToolTip="{loc:Loc RefreshLogs}">
                                         <Icon:PackIconMaterial Kind="Reload" Foreground="Gray"/>
                                     </Button>
                                 </StackPanel>
                                 <StackPanel Orientation="Horizontal" Width="250">
-                                    <Button mvx:Bi.nd="Command LoadCombatsByUserCommand" Content="Загрузить" Width="100" FontSize="16"
+                                    <Button mvx:Bi.nd="Command LoadCombatsByUserCommand" Content="{loc:Loc Upload}" Width="100" FontSize="16"
                                             Visibility="{Binding CombatLogsByUser.Count, Converter={StaticResource IntToVisibility}, ConverterParameter='true:0:>'}"
                                             IsEnabled="{Binding CombatListSelectedIndex, Converter={StaticResource IntToXAMLBool}, ConverterParameter='-1:>'}"
                                             Margin="10,10" Style="{StaticResource showButton}" Foreground="Blue" HorizontalAlignment="Center"/>
                                     <Icon:PackIconMaterial Kind="Delete" Foreground="Orange" Style="{StaticResource menuButtonIcon}" 
                                                            Visibility="{Binding CombatLogsByUser.Count, Converter={StaticResource IntToVisibility}, ConverterParameter='true:0:>'}" mvx:Bi.nd="Command DeleteCombatCommand"
-                                                           HorizontalAlignment="Center">
-                                        <Icon:PackIconMaterial.ToolTip>
-                                            <ToolTip>
-                                                Удалить выбранный Лог без возможности восстановить.
-                                            </ToolTip>
-                                        </Icon:PackIconMaterial.ToolTip>
+                                                           HorizontalAlignment="Center" ToolTip="{loc:Loc RefreshLogs}">
                                         <Icon:PackIconMaterial.InputBindings>
                                             <MouseBinding Command="{Binding DeleteCombatCommand}" Gesture="LeftClick"/>
                                         </Icon:PackIconMaterial.InputBindings>
@@ -172,31 +160,25 @@
                     </StackPanel>
                 </TabItem>
             </TabControl>
-            <TextBlock Text="Для просмотра 'Мои логи' необходимо авторизоваться" TextAlignment="Center" Opacity="0.5"
+            <TextBlock Text="{loc:Loc PrivateLogsLoginRequired}" TextAlignment="Center" Opacity="0.5"
                        Visibility="{Binding IsAuth, Converter={StaticResource BoolToVisibility}, ConverterParameter=true:true}"/>
         </StackPanel>
 
         <StackPanel IsEnabled="{Binding IsParsing, Converter={StaticResource BoolToXAMLBool}, ConverterParameter=true}" Grid.Row="2" Grid.Column="2"
                     Grid.ColumnSpan="2" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0 -25 0 0">
             <StackPanel IsEnabled="{Binding CombatLog, Converter={StaticResource ToXAMLBool}}" Margin="20">
-                <Button Name="combatLogFileAnalysis" Height="35" Content="Анализ" Width="100" FontSize="16" Margin="0 20"
+                <Button Name="combatLogFileAnalysis" Height="35" Content="{loc:Loc Analyzing}" Width="100" FontSize="16" Margin="0 20"
                     mvx:Bi.nd="Command OpenPlayerAnalysisCommand" Style="{StaticResource showButton}" />
                 <StackPanel Orientation="Horizontal" Width="200" IsEnabled="{Binding IsAllowSaveLogs, Converter={StaticResource BoolToXAMLBool}, ConverterParameter=false}">
-                    <CheckBox Name="isSaveCombatLog" VerticalAlignment="Center" VerticalContentAlignment="Center" Content="Сохранить данные" 
+                    <CheckBox Name="isSaveCombatLog" VerticalAlignment="Center" VerticalContentAlignment="Center" Content="{loc:Loc SaveData}" 
                            HorizontalContentAlignment="Center" IsChecked="{Binding IsNeedSave}" FontSize="16"/>
-                    <Icon:PackIconMaterial Kind="ChatQuestion"  Foreground="Gray" Style="{StaticResource menuButtonIcon}">
-                        <Icon:PackIconMaterial.ToolTip>
-                            <ToolTip>
-                                Сохранение данных позволяет просматривать данные в будущем и делиться с другими пользователями.
-                            </ToolTip>
-                        </Icon:PackIconMaterial.ToolTip>
-                    </Icon:PackIconMaterial>
+                    <Icon:PackIconMaterial Kind="ChatQuestion"  Foreground="Gray" Style="{StaticResource menuButtonIcon}" ToolTip="{loc:Loc SaveDataDescribe}"/>
                 </StackPanel>
             </StackPanel>
-            <TextBlock Name="workWithDataTitle" Width="175" Text="Работа с данными..." FontSize="16" TextAlignment="Center" Foreground="BlueViolet"
+            <TextBlock Name="workWithDataTitle" Width="175" Text="{loc:Loc Processing}" FontSize="16" TextAlignment="Center" Foreground="BlueViolet"
                        Margin="10" HorizontalAlignment="Center" VerticalAlignment="Center"
                        Visibility="{Binding IsParsing, Converter={StaticResource BoolToVisibility}}" />
-            <TextBlock Width="210" TextWrapping="Wrap" Text="Ошибка: файл поврежден или не поддерживается" FontSize="16" TextAlignment="Center" Foreground="Orange"
+            <TextBlock Width="210" TextWrapping="Wrap" Text="{loc:Loc ProcessingFailed}" FontSize="16" TextAlignment="Center" Foreground="Orange"
                        Margin="10" HorizontalAlignment="Center" VerticalAlignment="Center"
                        Visibility="{Binding FileIsNotCorrect, Converter={StaticResource BoolToVisibility}}" />
             <TextBlock Text="{Binding FoundCombat}" FontSize="16" TextAlignment="Center" TextWrapping="Wrap"

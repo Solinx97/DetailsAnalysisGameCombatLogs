@@ -4,8 +4,11 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:loc="clr-namespace:CombatAnalysis.App.Localizations"
+    xmlns:resx="clr-namespace:CombatAnalysis.App.Localizations.Resources.CreateGroupChat"
     xmlns:mvx="clr-namespace:MvvmCross.Platforms.Wpf.Binding;assembly=MvvmCross.Platforms.Wpf"
     xmlns:views="clr-namespace:MvvmCross.Platforms.Wpf.Views;assembly=MvvmCross.Platforms.Wpf"
+    loc:LocalizationObject.ResourceManager="{x:Static resx:Resource.ResourceManager}"
     mc:Ignorable="d">
 
     <Grid>
@@ -20,33 +23,33 @@
             <RowDefinition Height="0.25*"/>
         </Grid.RowDefinitions>
 
-        <TextBlock Grid.Column="1" Grid.Row="0" Text="Создание группового чата" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="18" FontWeight="DemiBold"/>
+        <TextBlock Grid.Column="1" Grid.Row="0" Text="{loc:Loc Title}" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="18" FontWeight="DemiBold"/>
         
         <StackPanel Grid.Column="1" Grid.Row="1">
             <StackPanel Orientation="Horizontal">
-                <TextBlock Text="Название чата" VerticalAlignment="Center" Margin="10"/>
+                <TextBlock Text="{loc:Loc ChatName}" VerticalAlignment="Center" Margin="10"/>
                 <TextBox VerticalAlignment="Center" Style="{StaticResource messageTextBox}" Text="{Binding Name}" Padding="5" VerticalContentAlignment="Center" Height="45" Width="200"/>
             </StackPanel>
             <StackPanel IsEnabled="False" VerticalAlignment="Top" HorizontalAlignment="Left">
-                <TextBlock Text="Приватность чата" VerticalAlignment="Center" Margin="10"/>
-                <RadioButton Margin="50 5" Content="Открытый чат" FontSize="12" IsChecked="True" mvx:Bi.nd="Command GetPolicyTypeCommand, CommandParameter=0"/>
-                <RadioButton Margin="50 5" Content="Закрытый чат" FontSize="12" mvx:Bi.nd="Command GetPolicyTypeCommand, CommandParameter=1"/>
-                <RadioButton Margin="50 5" Content="Закрытый чат (переход по ссылке)" FontSize="12" mvx:Bi.nd="Command GetPolicyTypeCommand, CommandParameter=2"/>
+                <TextBlock Text="{loc:Loc ChatPrivacy}" VerticalAlignment="Center" Margin="10"/>
+                <RadioButton Margin="50 5" Content="{loc:Loc Public}" FontSize="12" IsChecked="True" mvx:Bi.nd="Command GetPolicyTypeCommand, CommandParameter=0"/>
+                <RadioButton Margin="50 5" Content="{loc:Loc Private}" FontSize="12" mvx:Bi.nd="Command GetPolicyTypeCommand, CommandParameter=1"/>
+                <RadioButton Margin="50 5" Content="{loc:Loc PrivateWithLinks}" FontSize="12" mvx:Bi.nd="Command GetPolicyTypeCommand, CommandParameter=2"/>
             </StackPanel>
             <StackPanel VerticalAlignment="Top" HorizontalAlignment="Left" IsEnabled="False">
-                <TextBlock Text="Ограничения чата" VerticalAlignment="Center" Margin="10"/>
-                <CheckBox Margin="50 5" Content="Без ограничений" FontSize="12" IsChecked="True" mvx:Bi.nd="Command GetChatTypeCommand, CommandParameter=0"/>
-                <CheckBox Margin="50 5" Content="Запрет на добавление новых пользователей" FontSize="12" mvx:Bi.nd="Command GetChatTypeCommand, CommandParameter=1"/>
-                <CheckBox Margin="50 5" Content="Запрет на исключение пользователей из чата" FontSize="12" mvx:Bi.nd="Command GetChatTypeCommand, CommandParameter=2"/>
-                <CheckBox Margin="50 5" Content="Ограничение на публикацию контента" FontSize="12" mvx:Bi.nd="Command GetChatTypeCommand, CommandParameter=3"/>
-                <CheckBox Margin="50 5" Content="Только для чтения" FontSize="12" mvx:Bi.nd="Command GetChatTypeCommand, CommandParameter=4"/>
+                <TextBlock Text="{loc:Loc ChatRestrictions}" VerticalAlignment="Center" Margin="10"/>
+                <CheckBox Margin="50 5" Content="{loc:Loc WithoutRestrictions}" FontSize="12" IsChecked="True" mvx:Bi.nd="Command GetChatTypeCommand, CommandParameter=0"/>
+                <CheckBox Margin="50 5" Content="{loc:Loc CanNotAddUser}" FontSize="12" mvx:Bi.nd="Command GetChatTypeCommand, CommandParameter=1"/>
+                <CheckBox Margin="50 5" Content="{loc:Loc CanNotRemoveUser}" FontSize="12" mvx:Bi.nd="Command GetChatTypeCommand, CommandParameter=2"/>
+                <CheckBox Margin="50 5" Content="{loc:Loc RestrictionsToContent}" FontSize="12" mvx:Bi.nd="Command GetChatTypeCommand, CommandParameter=3"/>
+                <CheckBox Margin="50 5" Content="{loc:Loc OnlyRead}" FontSize="12" mvx:Bi.nd="Command GetChatTypeCommand, CommandParameter=4"/>
             </StackPanel>
         </StackPanel>
 
         <StackPanel Grid.Column="1" Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Center">
-            <Button mvx:Bi.nd="Command CreateCommand" Content="Создать" Width="100" Height="50" FontSize="16"
+            <Button mvx:Bi.nd="Command CreateCommand" Content="{loc:Loc Create}" Width="100" Height="50" FontSize="16"
                     Margin="0" Style="{StaticResource showButton}" />
-            <Button mvx:Bi.nd="Command CancelCommand" Content="Отмена" Width="100" Height="50" FontSize="16"
+            <Button mvx:Bi.nd="Command CancelCommand" Content="{loc:Loc Cancel}" Width="100" Height="50" FontSize="16"
                     Margin="0" Style="{StaticResource showButton}" />
         </StackPanel>
     </Grid>

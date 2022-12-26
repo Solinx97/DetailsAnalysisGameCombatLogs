@@ -5,9 +5,12 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:converters="clr-namespace:CombatAnalysis.App.Converters"
+    xmlns:loc="clr-namespace:CombatAnalysis.App.Localizations"
+    xmlns:resx="clr-namespace:CombatAnalysis.App.Localizations.Resources.Login"
     xmlns:local="clr-namespace:CombatAnalysis.App.Views.ViewTemplates"
     xmlns:viewModels="clr-namespace:CombatAnalysis.Core.ViewModels;assembly=CombatAnalysis.Core"
     xmlns:views="clr-namespace:MvvmCross.Platforms.Wpf.Views;assembly=MvvmCross.Platforms.Wpf"
+    loc:LocalizationObject.ResourceManager="{x:Static resx:Resource.ResourceManager}"
     mc:Ignorable="d" d:DesignHeight="850" d:DesignWidth="1250">
 
     <Grid>
@@ -28,8 +31,8 @@
                 </DataTemplate>
             </ContentControl.Resources>
         </ContentControl>
-        
-        <TextBlock Grid.Row="0" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="30" Text="Авторизация"/>
+
+        <TextBlock Grid.Row="0" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="30" Text="{loc:Loc Title}"/>
         <Grid Grid.Row="1">
             <Grid.RowDefinitions>
                 <RowDefinition Height="0.5*" />
@@ -45,22 +48,22 @@
             </Grid.ColumnDefinitions>
 
             <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Column="1" Grid.Row="1">
-                <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" Text="Email" FontSize="18" Margin="0 20"/>
-                <TextBox Style="{StaticResource messageTextBox}" VerticalContentAlignment="Center" Height="35" Padding="5" Width="300" FontSize="16" Text="{Binding Email}" />
+                <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" Text="{loc:Loc Email}" FontSize="18" Margin="0 20"/>
+                <TextBox Style="{StaticResource messageTextBox}" VerticalContentAlignment="Center" Height="30" Padding="3" Width="300" FontSize="14" Text="{Binding Email}" />
             </StackPanel>
             <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Column="1" Grid.Row="2">
-                <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" Text="Пароль" FontSize="18" Margin="0 20"/>
-                <PasswordBox Name="password" Style="{StaticResource passwordTextBox}" VerticalContentAlignment="Center" Height="35" Width="300" FontSize="16"
+                <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" Text="{loc:Loc Password}" FontSize="18" Margin="0 20"/>
+                <PasswordBox Name="password" Style="{StaticResource passwordTextBox}" VerticalContentAlignment="Center" Height="30" Padding="3" Width="300" FontSize="14"
                              PasswordChanged="PasswordBox_PasswordChanged"/>
-                <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" Text="Вы указали не верно логин/пароль"
+                <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" Text="{loc:Loc IncorrectData}"
                            FontSize="12" Foreground="Brown" Margin="0 10" Visibility="{Binding AuthIsFailed, Converter={StaticResource BoolToVisibility}, ConverterParameter=true:false}"/>
-                <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" TextAlignment="Center" Width="250" Height="80" TextWrapping="Wrap" Text="Не удалось получить ответ от сервера. Возможно проблемы с подключением или сервер временно не доступен"
+                <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" TextAlignment="Center" Width="250" Height="80" TextWrapping="Wrap" Text="{loc:Loc LoginFailed}"
                            FontSize="12" Foreground="Brown" Margin="0 10" Visibility="{Binding ServerIsNotAvailable, Converter={StaticResource BoolToVisibility}, ConverterParameter=true:false}"/>
             </StackPanel>
-            <Button Grid.Column="1" Grid.Row="3" Height="30" Width="125" Content="Авторизация" Style="{StaticResource showButton}"
+            <Button Grid.Column="1" Grid.Row="3" Height="30" Width="125" Content="{loc:Loc Login}" Style="{StaticResource showButton}"
                     Command="{Binding LoginCommand}" />
         </Grid>
-        <Button VerticalAlignment="Center" HorizontalAlignment="Center" Grid.Column="1" Grid.Row="2" Height="30" Width="125" Content="Назад" Style="{StaticResource showButton}"
+        <Button VerticalAlignment="Center" HorizontalAlignment="Center" Grid.Column="1" Grid.Row="2" Height="30" Width="125" Content="{loc:Loc Back}" Style="{StaticResource showButton}"
                     Command="{Binding CancelCommand}" />
     </Grid>
 </views:MvxWpfView>

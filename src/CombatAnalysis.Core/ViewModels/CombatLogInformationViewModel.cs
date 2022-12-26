@@ -1,9 +1,11 @@
 ﻿using AutoMapper;
+using CombatAnalysis.CombatParser.Entities;
 using CombatAnalysis.CombatParser.Interfaces;
 using CombatAnalysis.Core.Consts;
 using CombatAnalysis.Core.Enums;
 using CombatAnalysis.Core.Interfaces;
 using CombatAnalysis.Core.Interfaces.Observers;
+using CombatAnalysis.Core.Localizations;
 using CombatAnalysis.Core.Models;
 using CombatAnalysis.Core.Services;
 using Microsoft.Extensions.Caching.Memory;
@@ -276,9 +278,14 @@ public class CombatLogInformationViewModel : MvxViewModel, IObserver, IAuthObser
         await CombatLogFileValidateAsync(_combatLogPath);
     }
 
-    public void Update(string combatInformation)
+    public void Update(Combat data)
     {
-        FoundCombat = combatInformation;
+        var dungeon = TranslationSource.Instance["CombatAnalysis.App.Localizations.Resources.CombatLogInformation.Resource.Dungeon"];
+        var combat = TranslationSource.Instance["CombatAnalysis.App.Localizations.Resources.CombatLogInformation.Resource.Combat"];
+        var time = TranslationSource.Instance["CombatAnalysis.App.Localizations.Resources.CombatLogInformation.Resource.Time"];
+        var result = TranslationSource.Instance["CombatAnalysis.App.Localizations.Resources.CombatLogInformation.Resource.Result"];
+
+        FoundCombat = $"{dungeon}: {data.DungeonName}, {combat}: {data.Name}, {time}: {data.Duration}, {result}: {data.IsWin}";
     }
 
     public void GetLogType(int logType)

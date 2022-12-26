@@ -4,6 +4,7 @@ import {
     Pie,
     Sector
 } from "recharts";
+import { useTranslation } from 'react-i18next';
 
 /**
  * Payload mus have next fields: 'title', 'color' and 'data'.
@@ -25,6 +26,7 @@ import {
 const usePieChart = (payload) => {
     const [activeIndex, setActiveIndex] = useState(0);
     const [payloadData, setPayloadData] = useState(payload);
+    const { t, i18n } = useTranslation("usePieChart");
 
     const renderActiveShape = (props) => {
         const RADIAN = Math.PI / 180;
@@ -37,7 +39,7 @@ const usePieChart = (payload) => {
         const my = cy + (outerRadius + 30) * sin;
         const ex = mx + (cos >= 0 ? 1 : -1) * 22;
         const ey = my;
-        const textAnchor = cos >= 0 ? 'start' : 'end';
+        const textAnchor = cos >= 0 ? t("TextAnchorStart") : t("TextAnchorEnd");
 
         return (
             <g>
