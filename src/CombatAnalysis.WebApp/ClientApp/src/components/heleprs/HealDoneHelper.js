@@ -1,21 +1,17 @@
 ﻿import { faClock, faFire, faFlask, faHandFist, faRightToBracket, faUserTie } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useTranslation } from 'react-i18next';
+import useTime from '../../hooks/useTime';
 
 const HealDoneHelper = ({ detailsData }) => {
+    const [getTimeWithoutMs] = useTime();
+    const { t, i18n } = useTranslation("useCombatDetailsHelper");
+
     const getUserNameWithoutRealm = (userName) => {
         let realmNameIndex = userName.indexOf('-');
         let userNameWithOutRealm = userName.substr(0, realmNameIndex);
 
         return userNameWithOutRealm;
-    }
-    const { t, i18n } = useTranslation("useCombatDetailsHelper");
-
-    const getTimeWithoutMs = (time) => {
-        let ms = time.indexOf('.');
-        let timeWithoutMs = time.substring(0, ms);
-
-        return timeWithoutMs;
     }
 
     const createItem = (element) => {

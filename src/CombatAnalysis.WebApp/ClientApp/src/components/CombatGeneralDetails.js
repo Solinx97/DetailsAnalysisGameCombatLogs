@@ -149,7 +149,9 @@ const CombatGeneralDetails = () => {
                     <div className="title">{t("Skills")}</div>
                 </div>
             }
-            {combatDataRender}
+            <ul>
+                {combatDataRender}
+            </ul>
         </div>);
     }
 
