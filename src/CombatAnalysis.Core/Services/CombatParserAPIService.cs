@@ -10,7 +10,7 @@ using System.Net.Http.Json;
 
 namespace CombatAnalysis.Core.Services;
 
-internal class CombatParserAPIService
+public class CombatParserAPIService
 {
     private readonly IHttpClientHelper _httpClient;
     private readonly ILogger _logger;
@@ -193,10 +193,10 @@ internal class CombatParserAPIService
         var combatDataResponse = await _httpClient.PostAsync("Combat", JsonContent.Create(combat));
         var createdCombat = await combatDataResponse.Content.ReadFromJsonAsync<CombatModel>();
 
-        Parallel.ForEach(combat.Players, async (item) =>
+        Parallel.ForEach(combat.Players, (item) =>
         {
             item.CombatId = createdCombat.Id;
-            await _httpClient.PostAsync("CombatPlayer", JsonContent.Create(item));
+            _httpClient.PostAsync("CombatPlayer", JsonContent.Create(item));
         });
     }
 

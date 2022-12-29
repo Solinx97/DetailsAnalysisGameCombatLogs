@@ -6,7 +6,6 @@ using CombatAnalysis.Core.Consts;
 using CombatAnalysis.Core.Core;
 using CombatAnalysis.Core.Interfaces;
 using CombatAnalysis.Core.Models;
-using CombatAnalysis.Core.Services;
 using CombatAnalysis.Core.ViewModels.ViewModelTemplates;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
@@ -17,7 +16,6 @@ namespace CombatAnalysis.Core.ViewModels;
 public class DamageDoneDetailsViewModel : DetailsGenericTemplate<DamageDoneModel, DamageDoneGeneralModel>
 {
     private readonly PowerUpInCombat<DamageDoneModel> _powerUpInCombat;
-    private readonly CombatParserAPIService _combatParserAPIService;
 
     private ObservableCollection<DamageDoneModel> _damageDoneInformationsWithoutFilter;
     private ObservableCollection<DamageDoneModel> _damageDoneInformationsWithSkipDamage;
@@ -30,9 +28,8 @@ public class DamageDoneDetailsViewModel : DetailsGenericTemplate<DamageDoneModel
     private bool _isShowImmune = true;
     private bool _isShowDirectDamage;
 
-    public DamageDoneDetailsViewModel(IHttpClientHelper httpClient, ILogger loger, IMemoryCache memoryCache, IMapper mapper) : base(loger, mapper)
+    public DamageDoneDetailsViewModel(IHttpClientHelper httpClient, ILogger loger, IMemoryCache memoryCache, IMapper mapper) : base(httpClient, loger, memoryCache, mapper)
     {
-        _combatParserAPIService = new CombatParserAPIService(httpClient, loger, memoryCache);
         _powerUpInCombat = new PowerUpInCombat<DamageDoneModel>(_damageDoneInformationsWithSkipDamage);
 
         BasicTemplate = Templates.Basic;

@@ -6,7 +6,6 @@ using CombatAnalysis.Core.Consts;
 using CombatAnalysis.Core.Core;
 using CombatAnalysis.Core.Interfaces;
 using CombatAnalysis.Core.Models;
-using CombatAnalysis.Core.Services;
 using CombatAnalysis.Core.ViewModels.ViewModelTemplates;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
@@ -18,7 +17,6 @@ namespace CombatAnalysis.Core.ViewModels;
 public class DamageTakenDetailsViewModel : DetailsGenericTemplate<DamageTakenModel, DamageTakenGeneralModel>
 {
     private readonly PowerUpInCombat<DamageTakenModel> _powerUpInCombat;
-    private readonly CombatParserAPIService _combatParserAPIService;
 
     private ObservableCollection<DamageTakenModel> _damageTakenInformationsWithoutFilter;
     private ObservableCollection<DamageTakenModel> _damageTakenInformationsWithSkipDamage;
@@ -32,9 +30,8 @@ public class DamageTakenDetailsViewModel : DetailsGenericTemplate<DamageTakenMod
     private bool _isShowAbsorb = true;
     private bool _isShowDamageInform = true;
 
-    public DamageTakenDetailsViewModel(IHttpClientHelper httpClient, ILogger logger, IMemoryCache memoryCache, IMapper mapper) : base (logger, mapper)
+    public DamageTakenDetailsViewModel(IHttpClientHelper httpClient, ILogger logger, IMemoryCache memoryCache, IMapper mapper) : base (httpClient, logger, memoryCache, mapper)
     {
-        _combatParserAPIService = new CombatParserAPIService(httpClient, logger, memoryCache);
         _powerUpInCombat = new PowerUpInCombat<DamageTakenModel>(_damageTakenInformationsWithSkipDamage);
 
         ShowDamageInformCommand = new MvxCommand(() => IsShowDamageInfrom = !IsShowDamageInfrom);

@@ -93,7 +93,8 @@
                                            Visibility="{Binding CombatLogLoadingStatus, Converter={StaticResource IntToVisibility}, ConverterParameter='true:3:='}"/>
                                 <StackPanel Orientation="Horizontal">
                                     <TextBlock HorizontalAlignment="Center" Text="{loc:Loc PublicLogs}" Margin="0" FontSize="16" />
-                                    <Button Style="{StaticResource userButton}" Margin="5 -10" mvx:Bi.nd="Command ReloadCombatsCommand" ToolTip="{Binding RefreshLogs}">
+                                    <Button Style="{StaticResource userButton}" Margin="5 -10" mvx:Bi.nd="Command ReloadCombatsCommand" ToolTip="{Binding RefreshLogs}"
+                                            IsEnabled="{Binding IsParsing, Converter={StaticResource BoolToXAMLBool},ConverterParameter=true}">
                                         <Icon:PackIconMaterial Kind="Reload" Foreground="Gray"/>
                                     </Button>
                                 </StackPanel>

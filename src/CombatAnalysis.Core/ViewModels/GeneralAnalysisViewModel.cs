@@ -18,7 +18,6 @@ public class GeneralAnalysisViewModel : MvxViewModel<Tuple<List<CombatModel>, Lo
 {
     private readonly IMvxNavigationService _mvvmNavigation;
     private readonly CombatParserAPIService _combatParserAPIService;
-    private readonly IHttpClientHelper _httpClient;
 
     private IImprovedMvxViewModel _basicTemplate;
     private ObservableCollection<CombatModel> _combats;
@@ -30,7 +29,6 @@ public class GeneralAnalysisViewModel : MvxViewModel<Tuple<List<CombatModel>, Lo
     public GeneralAnalysisViewModel(IMvxNavigationService mvvmNavigation, IHttpClientHelper httpClient, ILogger logger, IMemoryCache memoryCache)
     {
         _mvvmNavigation = mvvmNavigation;
-        _httpClient = httpClient;
 
         _combatParserAPIService = new CombatParserAPIService(httpClient, logger, memoryCache);
 
@@ -138,7 +136,6 @@ public class GeneralAnalysisViewModel : MvxViewModel<Tuple<List<CombatModel>, Lo
         BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, nameof(BasicTemplateViewModel.SelectedCombat), SelectedCombat);
 
         Task.Run(async () => await _mvvmNavigation.Navigate<DetailsSpecificalCombatViewModel, CombatModel>(SelectedCombat));
-        Task.Run(async () => await _mvvmNavigation.Close(this));
     }
 
     public async Task RepeatSaveCombatDataDetailsAsync()
@@ -161,9 +158,14 @@ public class GeneralAnalysisViewModel : MvxViewModel<Tuple<List<CombatModel>, Lo
             return;
         }
 
-        var responseMessage = await _httpClient.GetAsync($"Combat/FindByCombatLogId/{CombatLogId}");
-        var combats = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<CombatModel>>();
+        var loadedCombats = await _combatParserAPIService.LoadCombatsAsync(CombatLogId);
 
-        Combats = new ObservableCollection<CombatModel>(combats);
+        foreach (var item in loadedCombats)
+        {
+            var players = await _combatParserAPIService.LoadCombatPlayersAsync(item.Id);
+            item.Players = players.ToList();
+        }
+
+        Combats = new ObservableCollection<CombatModel>(loadedCombats);
     }
 }

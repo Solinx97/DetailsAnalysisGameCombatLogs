@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
 using CombatAnalysis.Core.Interfaces;
 using CombatAnalysis.Core.Models;
+using CombatAnalysis.Core.Services;
+using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
 using MvvmCross.ViewModels;
 using System.Collections.ObjectModel;
@@ -15,6 +17,7 @@ abstract public class DetailsGenericTemplate<T, T1> : MvxViewModel<CombatPlayerM
 {
     protected readonly ILogger _logger;
     protected readonly IMapper _mapper;
+    protected readonly CombatParserAPIService _combatParserAPIService;
 
     private IImprovedMvxViewModel _basicTemplate;
     private bool _isShowFilters;
@@ -26,10 +29,12 @@ abstract public class DetailsGenericTemplate<T, T1> : MvxViewModel<CombatPlayerM
     private ObservableCollection<string> _sources;
     private int _detailsTypeSelectedIndex;
 
-    public DetailsGenericTemplate(ILogger logger, IMapper mapper)
+    public DetailsGenericTemplate(IHttpClientHelper httpClient, ILogger logger, IMemoryCache memoryCache, IMapper mapper)
     {
         _logger = logger;
         _mapper = mapper;
+
+        _combatParserAPIService = new CombatParserAPIService(httpClient, logger, memoryCache);
     }
 
     #region Properties
@@ -145,14 +150,18 @@ abstract public class DetailsGenericTemplate<T, T1> : MvxViewModel<CombatPlayerM
 
         if (SelectedCombat.Id > 0)
         {
-            Task.Run(async () => {
+            Task.Run(async () =>
+            {
                 await LoadDetailsAsync(parameter.Id);
                 await LoadGenericDetailsAsync(parameter.Id);
+
+                GetSources();
             });
         }
         else
         {
             ChildPrepare(parameter);
+            GetSources();
         }
     }
 
@@ -180,12 +189,5 @@ abstract public class DetailsGenericTemplate<T, T1> : MvxViewModel<CombatPlayerM
         sources.Insert(0, allSourcesName);
 
         Sources = new ObservableCollection<string>(sources);
-    }
-
-    public override void ViewAppeared()
-    {
-        base.ViewAppeared();
-
-        GetSources();
     }
 }

@@ -5,7 +5,6 @@ using CombatAnalysis.CombatParser.Patterns;
 using CombatAnalysis.Core.Consts;
 using CombatAnalysis.Core.Interfaces;
 using CombatAnalysis.Core.Models;
-using CombatAnalysis.Core.Services;
 using CombatAnalysis.Core.ViewModels.ViewModelTemplates;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
@@ -15,14 +14,10 @@ namespace CombatAnalysis.Core.ViewModels;
 
 public class ResourceRecoveryDetailsViewModel : DetailsGenericTemplate<ResourceRecoveryModel, ResourceRecoveryGeneralModel>
 {
-    private readonly CombatParserAPIService _combatParserAPIService;
-
     private ObservableCollection<ResourceRecoveryModel> _resourceRecoveryInformationsWithoutFilter;
 
-    public ResourceRecoveryDetailsViewModel(IHttpClientHelper httpClient, ILogger logger, IMemoryCache memoryCache, IMapper mapper) : base(logger, mapper)
+    public ResourceRecoveryDetailsViewModel(IHttpClientHelper httpClient, ILogger logger, IMemoryCache memoryCache, IMapper mapper) : base(httpClient, logger, memoryCache, mapper)
     {
-        _combatParserAPIService = new CombatParserAPIService(httpClient, logger, memoryCache);
-
         BasicTemplate = Templates.Basic;
         BasicTemplate.Parent = this;
         BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, nameof(BasicTemplateViewModel.Step), 6);

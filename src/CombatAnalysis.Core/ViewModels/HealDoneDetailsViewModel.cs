@@ -6,7 +6,6 @@ using CombatAnalysis.Core.Consts;
 using CombatAnalysis.Core.Core;
 using CombatAnalysis.Core.Interfaces;
 using CombatAnalysis.Core.Models;
-using CombatAnalysis.Core.Services;
 using CombatAnalysis.Core.ViewModels.ViewModelTemplates;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
@@ -16,7 +15,6 @@ namespace CombatAnalysis.Core.ViewModels;
 
 public class HealDoneDetailsViewModel : DetailsGenericTemplate<HealDoneModel, HealDoneGeneralModel>
 {
-    private readonly CombatParserAPIService _combatParserAPIService;
     private readonly PowerUpInCombat<HealDoneModel> _powerUpInCombat;
 
     private ObservableCollection<HealDoneModel> _healDoneInformationsWithoutFilter;
@@ -25,9 +23,8 @@ public class HealDoneDetailsViewModel : DetailsGenericTemplate<HealDoneModel, He
     private bool _isShowOverheal = true;
     private bool _isShowCrit = true;
 
-    public HealDoneDetailsViewModel(IHttpClientHelper httpClient, ILogger logger, IMemoryCache memoryCache, IMapper mapper) : base(logger, mapper)
+    public HealDoneDetailsViewModel(IHttpClientHelper httpClient, ILogger logger, IMemoryCache memoryCache, IMapper mapper) : base(httpClient, logger, memoryCache, mapper)
     {
-        _combatParserAPIService = new CombatParserAPIService(httpClient, logger, memoryCache);
         _powerUpInCombat = new PowerUpInCombat<HealDoneModel>(_healDoneInformationsWithOverheal);
 
         BasicTemplate = Templates.Basic;
