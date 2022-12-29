@@ -1,0 +1,12 @@
+﻿CREATE PROCEDURE [dbo].[InsertIntoRefreshToken]
+	@Id NVARCHAR (MAX),
+	@UserId NVARCHAR (MAX),
+	@Token NVARCHAR (MAX),
+	@Expires DATETIMEOFFSET (7)
+AS
+	DECLARE @OutputTbl TABLE (Id NVARCHAR (MAX),UserId NVARCHAR (MAX),Token NVARCHAR (MAX),Expires DATETIMEOFFSET (7))
+	INSERT INTO RefreshToken
+	OUTPUT INSERTED.* INTO @OutputTbl
+	VALUES (@Id,@UserId,@Token,@Expires)
+	SELECT * FROM @OutputTbl
+RETURN 0

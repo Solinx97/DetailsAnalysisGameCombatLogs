@@ -4,25 +4,35 @@ using System;
 using System.Globalization;
 using System.Windows;
 
-namespace CombatAnalysis.App.Converters
+namespace CombatAnalysis.App.Converters;
+
+public class StringToVisibilityConverter : MvxValueConverter<string, Visibility>
 {
-    public class StringToVisibilityConverter : MvxValueConverter<string, Visibility>
+    protected override Visibility Convert(string value, Type targetType, object parameter, CultureInfo culture)
     {
-        protected override Visibility Convert(string value, Type targetType, object parameter, CultureInfo culture)
+        Visibility result = Visibility.Visible;
+        if (parameter != null)
         {
-            var result = !string.IsNullOrWhiteSpace(value) ? Visibility.Visible : Visibility.Hidden;
-
-            return result;
+            var isEqual = value.Equals(parameter);
+            result = !string.IsNullOrWhiteSpace(value)
+                ? (isEqual ? Visibility.Visible : Visibility.Hidden)
+                : Visibility.Hidden;
+        }
+        else
+        {
+            result = !string.IsNullOrWhiteSpace(value) ? Visibility.Visible : Visibility.Hidden;
         }
 
-        protected override string ConvertBack(Visibility value, Type targetType, object parameter, CultureInfo culture)
-        {
-            return value.ToString();
-        }
+        return result;
     }
 
-    public class TheNativeStringToVisibilityConverter
-    : MvxNativeValueConverter<StringToVisibilityConverter>
+    protected override string ConvertBack(Visibility value, Type targetType, object parameter, CultureInfo culture)
     {
+        return value.ToString();
     }
+}
+
+public class TheNativeStringToVisibilityConverter
+: MvxNativeValueConverter<StringToVisibilityConverter>
+{
 }

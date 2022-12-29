@@ -3,25 +3,37 @@ using MvvmCross.Platforms.Wpf.Converters;
 using System;
 using System.Globalization;
 
-namespace CombatAnalysis.App.Converters
+namespace CombatAnalysis.App.Converters;
+
+public class BoolToXAMLBoolConverter : MvxValueConverter<bool, string>
 {
-    public class BoolToXAMLBoolConverter : MvxValueConverter<bool, string>
+    protected override string Convert(bool value, Type targetType, object parameter, CultureInfo culture)
     {
-        protected override string Convert(bool value, Type targetType, object parameter, CultureInfo culture)
-        {
-            var result = value ? "False" : "True";
+        var isInversion = false;
+        var stringParam = (string)parameter;
 
-            return result;
+        if (!string.IsNullOrWhiteSpace(stringParam))
+        {
+            bool.TryParse(stringParam, out isInversion);
         }
 
-        protected override bool ConvertBack(string value, Type targetType, object parameter, CultureInfo culture)
+        if (isInversion)
         {
-            return !string.IsNullOrEmpty(value);
+            value = !value;
         }
+
+        var result = value ? "True" : "False";
+
+        return result;
     }
 
-    public class TheNativeBoolToXAMLBoolConverter
-         : MvxNativeValueConverter<BoolToXAMLBoolConverter>
+    protected override bool ConvertBack(string value, Type targetType, object parameter, CultureInfo culture)
     {
+        return !string.IsNullOrEmpty(value);
     }
+}
+
+public class TheNativeBoolToXAMLBoolConverter
+     : MvxNativeValueConverter<BoolToXAMLBoolConverter>
+{
 }

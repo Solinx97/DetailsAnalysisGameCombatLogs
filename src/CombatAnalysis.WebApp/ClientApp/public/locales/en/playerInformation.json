@@ -1,0 +1,14 @@
+{
+  "NeedToAddSomething": "Need to add at least 1 item.",
+  "Damage": "Damage",
+  "Healing": "Healing",
+  "DamageTaken": "Damage taken",
+  "ResourcesRecovery": "Resources recovery",
+  "Buffs": "Buffs",
+  "ShowStatistics": "Show statistics",
+  "OpenDamageAnalyzing": "Open damage analyzing",
+  "OpenDamageTakenAnalyzing": "Open damage takne analyzing",
+  "OpenHealingAnalyzing": "Open healing analyzing",
+  "OpenResourcesRecoveryAnalyzing": "Open resources recovery analyzing",
+  "OpenBuffsAnalyzing": "Open buffs analyzing"
+}

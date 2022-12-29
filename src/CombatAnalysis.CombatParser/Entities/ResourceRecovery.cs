@@ -1,13 +1,12 @@
 ﻿using System;
 
-namespace CombatAnalysis.CombatParser.Entities
+namespace CombatAnalysis.CombatParser.Entities;
+
+public class ResourceRecovery
 {
-    public class ResourceRecovery
-    {
-        public double Value { get; set; }
+    public int Value { get; set; }
 
-        public TimeSpan Time { get; set; }
+    public TimeSpan Time { get; set; }
 
-        public string SpellOrItem { get; set; }
-    }
+    public string SpellOrItem { get; set; }
 }

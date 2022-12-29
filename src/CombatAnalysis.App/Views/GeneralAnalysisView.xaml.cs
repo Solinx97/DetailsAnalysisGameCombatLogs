@@ -1,12 +1,11 @@
 ﻿using MvvmCross.Platforms.Wpf.Views;
 
-namespace CombatAnalysis.App.Views
+namespace CombatAnalysis.App.Views;
+
+public partial class GeneralAnalysisView : MvxWpfView
 {
-    public partial class GeneralAnalysisView : MvxWpfView
+    public GeneralAnalysisView()
     {
-        public GeneralAnalysisView()
-        {
-            InitializeComponent();
-        }
+        InitializeComponent();
     }
 }

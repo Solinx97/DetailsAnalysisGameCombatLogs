@@ -6,9 +6,12 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:converters="clr-namespace:CombatAnalysis.App.Converters"
-    xmlns:local="clr-namespace:CombatAnalysis.App.Views"
+    xmlns:loc="clr-namespace:CombatAnalysis.App.Localizations"
+    xmlns:resx="clr-namespace:CombatAnalysis.App.Localizations.Resources.HealDoneDetails"
+    xmlns:local="clr-namespace:CombatAnalysis.App.Views.ViewTemplates"
     xmlns:viewModels="clr-namespace:CombatAnalysis.Core.ViewModels;assembly=CombatAnalysis.Core"
     xmlns:views="clr-namespace:MvvmCross.Platforms.Wpf.Views;assembly=MvvmCross.Platforms.Wpf"
+    loc:LocalizationObject.ResourceManager="{x:Static resx:Resource.ResourceManager}"
     mc:Ignorable="d" d:DesignHeight="850" d:DesignWidth="1250">
 
     <Grid>
@@ -37,123 +40,244 @@
             </ContentControl.Resources>
         </ContentControl>
 
-        <Grid Grid.Column="2" Grid.ColumnSpan="2" Margin="40 30">
-            <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
-                <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center"
-                   Text="Игрок:" FontSize="16" TextAlignment="Center" 
-                           Foreground="Gray" Margin="10 0" FontWeight="Medium" />
-                <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center"
+        <Grid Grid.Column="2" Grid.ColumnSpan="2" Margin="20" VerticalAlignment="Bottom" HorizontalAlignment="Center">
+            <TextBlock HorizontalAlignment="Left" VerticalAlignment="Top"
                    Text="{Binding SelectedPlayer}" FontSize="18"
-                   FontWeight="Bold" TextAlignment="Center" />
-            </StackPanel>
+                   FontWeight="Bold" FontFamily="Comic Sans MS" FontStyle="Italic" TextAlignment="Center" />
         </Grid>
-        
+
         <StackPanel Grid.Column="3" Grid.Row="1" Orientation="Horizontal" VerticalAlignment="Center"
                     HorizontalAlignment="Center" Panel.ZIndex="1">
             <StackPanel Orientation="Horizontal">
-                <TextBlock Text="Тип" FontSize="15" TextAlignment="Center" Padding="10" FontWeight="SemiBold"
+                <TextBlock Text="{loc:Loc TypeOf}" FontSize="15" TextAlignment="Center" Padding="10" FontWeight="SemiBold"
                            VerticalAlignment="Center" Margin="0" Width="100" Foreground="Gray"/>
                 <ComboBox Style="{DynamicResource ComboBoxStyle1}" VerticalAlignment="Center" Name="detailsType"
                           Width="135" SelectedIndex="0">
-                    <ComboBoxItem Content="Общий" IsSelected="True"/>
-                    <ComboBoxItem Content="Подробнее" />
+                    <ComboBoxItem Content="{loc:Loc Common}" IsSelected="True"/>
+                    <ComboBoxItem Content="{loc:Loc MoreDetails}" />
                 </ComboBox>
             </StackPanel>
-            <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Text="Анализ исцеления"
+            <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Text="{loc:Loc Title}"
                        Width="350" TextAlignment="Center" Style="{StaticResource titleText}"
                        Margin="25 0"/>
-            <StackPanel Orientation="Horizontal" Visibility="{Binding ElementName=detailsType, Path=SelectedIndex, Converter={StaticResource IntToVisibility}, ConverterParameter=false:0}">
-                <TextBlock Text="Порядок" FontSize="15" TextAlignment="Center" Padding="10" FontWeight="SemiBold"
+            <StackPanel Orientation="Horizontal" Visibility="{Binding IsShowFilters, Converter={StaticResource BoolToVisibility}, ConverterParameter=false}">
+                <TextBlock Text="{loc:Loc Source}" FontSize="15" TextAlignment="Center" Padding="10" FontWeight="SemiBold"
                            Margin="0" Width="100" Foreground="Gray"/>
-                <ComboBox Name="sortingProperty" Style="{DynamicResource ComboBoxStyle1}" 
-                          VerticalAlignment="Center" Width="210" SelectedIndex="{Binding SelectedIndexSorting}">
-                    <ComboBoxItem Content="Название закл." IsSelected="True"/>
-                    <ComboBoxItem Content="Исцеление" />
-                    <ComboBoxItem Content="Кол-во прим." />
-                    <ComboBoxItem Content="Мин. исцеление" />
-                    <ComboBoxItem Content="Макс. исцеление" />
-                    <ComboBoxItem Content="Среднее знач. исц."/>
-                    <ComboBoxItem Content="Исцеление в секунду" />
-                </ComboBox>
+                <ComboBox Name="sortingProperty" Style="{DynamicResource ComboBoxStyle1}" ItemsSource="{Binding HealDoneSources}"
+                          VerticalAlignment="Center" Width="210" SelectedItem="{Binding SelectedSource}" SelectedIndex="0"/>
             </StackPanel>
         </StackPanel>
 
-        <StackPanel Grid.Column="2" Grid.Row="1" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="0 -20">
-            <CheckBox Margin="50 0" HorizontalAlignment="Center" VerticalAlignment="Center"
-                   Content="Обратный порядок" FontSize="16" VerticalContentAlignment="Center" 
-                   FontWeight="SemiBold" IsChecked="{Binding IsCollectionReversed}"/>
+        <DataGrid Margin="20 30 20 45" Grid.Row="2" Grid.Column="2" Height="450"
+                 VerticalAlignment="Top" Background="Transparent" ItemsSource="{Binding HealDoneGeneralInformations}"
+                  GridLinesVisibility="None" CanUserAddRows="False" CanUserDeleteRows="False" AutoGenerateColumns="False"
+                 Visibility="{Binding ElementName=detailsType, Path=SelectedIndex, Converter={StaticResource IntToVisibility}, ConverterParameter=true:0}">
+            <DataGrid.Columns>
+                <DataGridTemplateColumn SortMemberPath="SpellOrItem" IsReadOnly="True" MinWidth="175">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding Path=SpellOrItem}" TextAlignment="Center" Margin="10" FontSize="14" FontFamily="Comic Sans MS"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                    <DataGridTemplateColumn.HeaderTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{loc:Loc Source}" Margin="5" TextAlignment="Center" FontSize="14" FontStyle="Oblique"  FontWeight="Bold"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.HeaderTemplate>
+                </DataGridTemplateColumn>
+
+                <DataGridTemplateColumn SortMemberPath="Value" IsReadOnly="True" MinWidth="150">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding Path=Value}" TextAlignment="Center" Margin="10" FontSize="14" FontFamily="Comic Sans MS"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                    <DataGridTemplateColumn.HeaderTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{loc:Loc Healing}" Margin="5" TextAlignment="Center" FontSize="14" FontStyle="Oblique"  FontWeight="Bold"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.HeaderTemplate>
+                </DataGridTemplateColumn>
+
+                <DataGridTemplateColumn SortMemberPath="CastNumber" IsReadOnly="True" MinWidth="100">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding Path=CastNumber}" TextAlignment="Center" Margin="10" FontSize="14" FontFamily="Comic Sans MS"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                    <DataGridTemplateColumn.HeaderTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{loc:Loc CountOfSkills}" Margin="5" TextAlignment="Center" FontSize="14" FontStyle="Oblique"  FontWeight="Bold"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.HeaderTemplate>
+                </DataGridTemplateColumn>
+
+                <DataGridTemplateColumn SortMemberPath="MinValue" IsReadOnly="True" MinWidth="150">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding Path=MinValue}" TextAlignment="Center" Margin="10" FontSize="14" FontFamily="Comic Sans MS"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                    <DataGridTemplateColumn.HeaderTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{loc:Loc MinValue}" Margin="5" TextAlignment="Center" FontSize="14" FontStyle="Oblique"  FontWeight="Bold"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.HeaderTemplate>
+                </DataGridTemplateColumn>
+
+                <DataGridTemplateColumn SortMemberPath="MaxValue" IsReadOnly="True" MinWidth="150">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding Path=MaxValue}" TextAlignment="Center" Margin="10" FontSize="14" FontFamily="Comic Sans MS"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                    <DataGridTemplateColumn.HeaderTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{loc:Loc MaxValue}" Margin="5" TextAlignment="Center" FontSize="14" FontStyle="Oblique"  FontWeight="Bold"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.HeaderTemplate>
+                </DataGridTemplateColumn>
+
+                <DataGridTemplateColumn SortMemberPath="AverageValue" IsReadOnly="True" MinWidth="150">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding Path=AverageValue, StringFormat=00.00}" TextAlignment="Center" Margin="10" FontSize="14" FontFamily="Comic Sans MS"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                    <DataGridTemplateColumn.HeaderTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{loc:Loc AverageValue}" Margin="5" TextAlignment="Center" FontSize="14" FontStyle="Oblique"  FontWeight="Bold"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.HeaderTemplate>
+                </DataGridTemplateColumn>
+
+                <DataGridTemplateColumn SortMemberPath="HealPerSecond" IsReadOnly="True" MinWidth="150">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding Path=HealPerSecond, StringFormat=00.00}" TextAlignment="Center" Margin="10" FontSize="14" FontFamily="Comic Sans MS"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                    <DataGridTemplateColumn.HeaderTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{loc:Loc HealingPerSec}" Margin="5" TextAlignment="Center" FontSize="14" FontStyle="Oblique"  FontWeight="Bold"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.HeaderTemplate>
+                </DataGridTemplateColumn>
+            </DataGrid.Columns>
+        </DataGrid>
+
+        <StackPanel Grid.Row="2" Grid.Column="3" Grid.ColumnSpan="2"
+                    Visibility="{Binding ElementName=detailsType, Path=SelectedIndex, Converter={StaticResource IntToVisibility}, ConverterParameter=true:1}">
+            <StackPanel Orientation="Horizontal">
+                <CheckBox Margin="25 5" VerticalContentAlignment="Center" Content="{loc:Loc ShowFilters}" IsChecked="{Binding IsShowFilters}"
+                  FontSize="16" VerticalAlignment="Center" FontWeight="SemiBold" />
+            </StackPanel>
+
+            <DataGrid Margin="20 10" Background="Transparent" Height="450" ItemsSource="{Binding HealDoneInformations}" GridLinesVisibility="None" 
+                      CanUserAddRows="False" CanUserDeleteRows="False" AutoGenerateColumns="False">
+                <DataGrid.Columns>
+                    <DataGridTemplateColumn SortMemberPath="Time" IsReadOnly="True" MinWidth="100">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Path=Time, StringFormat=hh\\:mm\\:ss}" TextAlignment="Center" Margin="10" FontSize="14" FontFamily="Comic Sans MS"/>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                        <DataGridTemplateColumn.HeaderTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{loc:Loc Time}" Margin="5" TextAlignment="Center" FontSize="14" FontStyle="Oblique"  FontWeight="Bold"/>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.HeaderTemplate>
+                    </DataGridTemplateColumn>
+
+                    <DataGridTemplateColumn SortMemberPath="Value" IsReadOnly="True" MinWidth="100">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Path=Value}" TextAlignment="Center" Margin="10" FontSize="14" FontFamily="Comic Sans MS"/>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                        <DataGridTemplateColumn.HeaderTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{loc:Loc Healing}" Margin="5" TextAlignment="Center" FontSize="14" FontStyle="Oblique"  FontWeight="Bold"/>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.HeaderTemplate>
+                    </DataGridTemplateColumn>
+
+                    <DataGridTemplateColumn IsReadOnly="True" MinWidth="100">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                    <Icon:PackIconMaterial Visibility="{Binding Path=IsCrit, Converter={StaticResource BoolToVisibility}, ConverterParameter=true}"
+                                                   Kind="LightningBolt" Foreground="Orange" Style="{StaticResource menuButtonIcon}" ToolTip="{loc:Loc CritHealing}"/>
+                                    <Icon:PackIconMaterial Visibility="{Binding Path=IsFullOverheal, Converter={StaticResource BoolToVisibility}, ConverterParameter=true}"
+                                                   Kind="PlusBox" Foreground="Red" Style="{StaticResource menuButtonIcon}" ToolTip="{loc:Loc OverHealing}"/>
+                                </StackPanel>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                        <DataGridTemplateColumn.HeaderTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{loc:Loc Status}" Margin="5" TextAlignment="Center" FontSize="14" FontStyle="Oblique"  FontWeight="Bold"/>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.HeaderTemplate>
+                    </DataGridTemplateColumn>
+
+                    <DataGridTemplateColumn SortMemberPath="FromPlayer" IsReadOnly="True" MinWidth="150">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Path=FromPlayer}" TextAlignment="Center" Margin="10" FontSize="14" FontFamily="Comic Sans MS"/>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                        <DataGridTemplateColumn.HeaderTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{loc:Loc Player}" Margin="5" TextAlignment="Center" FontSize="14" FontStyle="Oblique"  FontWeight="Bold"/>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.HeaderTemplate>
+                    </DataGridTemplateColumn>
+
+                    <DataGridTemplateColumn SortMemberPath="ToPlayer" IsReadOnly="True" MinWidth="150">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Path=ToPlayer}" TextAlignment="Center" Margin="10" FontSize="14" FontFamily="Comic Sans MS"/>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                        <DataGridTemplateColumn.HeaderTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{loc:Loc Target}" Margin="5" TextAlignment="Center" FontSize="14" FontStyle="Oblique"  FontWeight="Bold"/>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.HeaderTemplate>
+                    </DataGridTemplateColumn>
+
+                    <DataGridTemplateColumn SortMemberPath="SpellOrItem" IsReadOnly="True" MinWidth="175">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Path=SpellOrItem}" TextAlignment="Center" Margin="10" FontSize="14" FontFamily="Comic Sans MS"/>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                        <DataGridTemplateColumn.HeaderTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{loc:Loc Source}" Margin="5" TextAlignment="Center" FontSize="14" FontStyle="Oblique"  FontWeight="Bold"/>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.HeaderTemplate>
+                    </DataGridTemplateColumn>
+                </DataGrid.Columns>
+            </DataGrid>
         </StackPanel>
 
-        <ListBox Margin="20 30 20 45" Grid.Row="2" Grid.Column="2" 
-                 Background="Transparent" ItemsSource="{Binding HealDoneGeneralInformations}"
-                 Visibility="{Binding ElementName=detailsType, Path=SelectedIndex, Converter={StaticResource IntToVisibility}, ConverterParameter=true:0}">
-            <ListBox.ItemTemplate>
-                <DataTemplate>
-                    <StackPanel Margin="10" Orientation="Horizontal" HorizontalAlignment="Center">
-                        <TextBlock FontSize="14" Text="{Binding Path=SpellOrItem}" MinWidth="200" Margin="15" />
-                        <TextBlock FontSize="14" Text="{Binding Path=Value}" MinWidth="75" Margin="15" />
-                        <TextBlock FontSize="14" Text="{Binding Path=CastNumber}" MinWidth="75" Margin="15" />
-                        <TextBlock FontSize="14" Text="{Binding Path=MinValue}" MinWidth="75" Margin="15" />
-                        <TextBlock FontSize="14" Text="{Binding Path=MaxValue}" MinWidth="75" Margin="15" />
-                        <TextBlock FontSize="14" Text="{Binding Path=AverageValue, StringFormat=00.00}" MinWidth="75" Margin="15" />
-                        <TextBlock FontSize="14" Text="{Binding Path=HealPerSecond, StringFormat=00.00}" MinWidth="75" Margin="15" />
-                    </StackPanel>
-                </DataTemplate>
-            </ListBox.ItemTemplate>
-        </ListBox>
-
-        <ListBox Margin="20 30 20 45" Background="Transparent" Grid.Row="2" Grid.Column="3" 
-                 Grid.ColumnSpan="2" ItemsSource="{Binding HealDoneInformations}"
-                 Visibility="{Binding ElementName=detailsType, Path=SelectedIndex, Converter={StaticResource IntToVisibility}, ConverterParameter=true:1}">
-            <ListBox.ItemTemplate>
-                <DataTemplate>
-                    <StackPanel Margin="10" Orientation="Horizontal" HorizontalAlignment="Center">
-                        <TextBlock FontSize="14" Text="{Binding Path=Time}" MinWidth="75" Margin="15" />
-                        <StackPanel Orientation="Horizontal">
-                            <StackPanel MinWidth="75" VerticalAlignment="Center" MaxHeight="40">
-                                <Icon:PackIconMaterial Visibility="{Binding Path=IsCrit, Converter={StaticResource BoolToVisibility}, ConverterParameter=true}"
-                                                   Kind="LightningBolt" Foreground="Orange" Style="{StaticResource menuButtonIcon}"/>
-                                <Icon:PackIconMaterial Visibility="{Binding Path=IsFullOverheal, Converter={StaticResource BoolToVisibility}, ConverterParameter=true}"
-                                                   Kind="PlusBox" Foreground="Red" Style="{StaticResource menuButtonIcon}"/>
-                            </StackPanel>
-                            <TextBlock FontSize="14" Text="{Binding Path=Value}" MinWidth="75" Margin="15" />
-                        </StackPanel>
-                        <TextBlock FontSize="14" Text="{Binding Path=FromPlayer}" MinWidth="175" Margin="15" />
-                        <TextBlock FontSize="14" Text="{Binding Path=ToPlayer}" MinWidth="150" Margin="15" />
-                        <TextBlock FontSize="14" Text="{Binding Path=SpellOrItem}" MinWidth="200" Margin="15" />
-                    </StackPanel>
-                </DataTemplate>
-            </ListBox.ItemTemplate>
-        </ListBox>
-
-        <StackPanel Grid.Column="2" Grid.Row="2" VerticalAlignment="Bottom" HorizontalAlignment="Left" Margin="20 10"
+        <StackPanel Grid.Column="2" Grid.Row="2" VerticalAlignment="Bottom" HorizontalAlignment="Left" Margin="0 50"
                     Orientation="Horizontal">
             <TextBlock Margin="50 0" HorizontalAlignment="Center" VerticalAlignment="Center"
-                   Text="Всего:" FontSize="16" TextAlignment="Center"/>
+                   Text="{loc:Loc Total}" FontSize="16" TextAlignment="Center"/>
             <TextBlock Margin="50 0" HorizontalAlignment="Center" VerticalAlignment="Center"
                    Text="{Binding TotalValue}" FontSize="18" TextAlignment="Center" FontWeight="Bold"/>
         </StackPanel>
         
-        <StackPanel Margin="25 0" Grid.Row="3" Grid.Column="3" Orientation="Horizontal"
-                    Visibility="{Binding ElementName=detailsType, Path=SelectedIndex, Converter={StaticResource IntToVisibility}, ConverterParameter=true:1}">
-            <StackPanel Margin="20 0" MinWidth="400">
-                <StackPanel>
-                    <CheckBox Name="dependency" Margin="5" VerticalContentAlignment="Center" 
-                              Content="Показать крит. урон" IsChecked="{Binding IsShowCrit}" FontSize="18"
-                              Height="30" VerticalAlignment="Center" FontWeight="SemiBold" />
-                    <CheckBox Margin="25 5" VerticalContentAlignment="Center" Content="Показать только крит. урон" FontSize="18" Height="30" 
-                              VerticalAlignment="Center" FontWeight="SemiBold" Visibility="{Binding ElementName=dependency, Path=IsChecked, Converter={StaticResource BoolToVisibility}, ConverterParameter=true}"
-                              IsChecked="{Binding IsShowOnlyCrit}"/>
-                </StackPanel>
-                <StackPanel>
-                    <CheckBox Name="dependency1" Margin="5" VerticalContentAlignment="Center" 
-                              Content="Показать оверхил" IsChecked="{Binding IsShowOverheal}" FontSize="18"
-                              Height="30" VerticalAlignment="Center" FontWeight="SemiBold" />
-                    <CheckBox Margin="25 5" VerticalContentAlignment="Center" Content="Показать только оверхил" FontSize="18" Height="30" 
-                              VerticalAlignment="Center" FontWeight="SemiBold" Visibility="{Binding ElementName=dependency1, Path=IsChecked, Converter={StaticResource BoolToVisibility}, ConverterParameter=true}"
-                              IsChecked="{Binding IsShowOnlyOverheal}"/>
-                </StackPanel>
-            </StackPanel>
+        <StackPanel Margin="40 -20" Grid.Row="3" Grid.Column="3" Orientation="Horizontal" VerticalAlignment="Top"
+                    Visibility="{Binding IsShowFilters, Converter={StaticResource BoolToVisibility}, ConverterParameter=false}">
+            <CheckBox Name="dependency" Margin="0 5" VerticalContentAlignment="Center" 
+                              Content="{loc:Loc ShowCrit}" IsChecked="{Binding IsShowCrit}" FontSize="14"
+                              VerticalAlignment="Center" FontWeight="SemiBold" />
+            <CheckBox Name="dependency1" Margin="50 5" VerticalContentAlignment="Center" 
+                              Content="{loc:Loc ShowOverHealing}" IsChecked="{Binding IsShowOverheal}" FontSize="14"
+                              VerticalAlignment="Center" FontWeight="SemiBold" />
         </StackPanel>
     </Grid>
 </views:MvxWpfView>

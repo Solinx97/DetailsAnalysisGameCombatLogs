@@ -1,58 +1,105 @@
 ﻿using AutoMapper;
 using CombatAnalysis.BL.DTO;
 using CombatAnalysis.BL.Interfaces;
+using CombatAnalysis.CombatParserAPI.Helpers;
+using CombatAnalysis.CombatParserAPI.Interfaces;
 using CombatAnalysis.CombatParserAPI.Models;
 using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 
-namespace CombatAnalysis.CombatParserAPI.Controllers
+namespace CombatAnalysis.CombatParserAPI.Controllers;
+
+[Route("api/v1/[controller]")]
+[ApiController]
+public class CombatController : ControllerBase
 {
-    [Route("[controller]")]
-    [ApiController]
-    public class CombatController : ControllerBase
+    private readonly IService<CombatDto, int> _service;
+    private readonly IMapper _mapper;
+    private readonly ILogger _logger;
+    private readonly SaveCombatDataHelper _saveCombatDataHelper;
+
+    public CombatController(IService<CombatDto, int> service, IMapper mapper, IHttpClientHelper httpClient, ILogger logger)
     {
-        private readonly IService<CombatDto> _service;
-        private readonly IMapper _mapper;
+        _service = service;
+        _mapper = mapper;
+        _logger = logger;
+        _saveCombatDataHelper = new SaveCombatDataHelper(mapper, httpClient, logger);
+    }
 
-        public CombatController(IService<CombatDto> service, IMapper mapper)
+    [HttpGet("{id:int:min(1)}")]
+    public async Task<IActionResult> GetById(int id)
+    {
+        var combat = await _service.GetByIdAsync(id);
+        var map = _mapper.Map<CombatModel>(combat);
+
+        return Ok(map);
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> GetAll()
+    {
+        var combat = await _service.GetAllAsync();
+        var map = _mapper.Map<IEnumerable<CombatModel>>(combat);
+
+        return Ok(map);
+    }
+
+    [HttpGet("findByCombatLogId/{combatLogId:int:min(1)}")]
+    public async Task<IActionResult> Find(int combatLogId)
+    {
+        var combats = await _service.GetByParamAsync("CombatLogId", combatLogId);
+        var map = _mapper.Map<IEnumerable<CombatModel>>(combats);
+
+        return Ok(map);
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> Create(CombatModel model)
+    {
+        try
         {
-            _service = service;
-            _mapper = mapper;
+            SaveCombatDataHelper.CombatData = model.Data;
+
+            var map = _mapper.Map<CombatDto>(model);
+            var createdItem = await _service.CreateAsync(map);
+            var resultMap = _mapper.Map<CombatModel>(createdItem);
+
+            return Ok(resultMap);
         }
-
-        [HttpGet]
-        public async Task<IEnumerable<CombatModel>> Get()
+        catch (ArgumentNullException ex)
         {
-            var combats = await _service.GetAllAsync();
-            var map = _mapper.Map<IEnumerable<CombatModel>>(combats);
+            _logger.LogError(ex, ex.Message);
 
-            return map;
+            return BadRequest();
         }
+    }
 
-        [HttpGet("{id}")]
-        public string Get(int id)
+    [HttpPost("saveCombatPlayers")]
+    public async Task<IActionResult> SaveCombatPlayers(List<CombatPlayerModel> combatPlayers)
+    {
+        var combat = await _service.GetByIdAsync(combatPlayers[0].CombatId);
+        var map = _mapper.Map<CombatModel>(combat);
+        map.Data = SaveCombatDataHelper.CombatData;
+
+        await _saveCombatDataHelper.SaveCombatPlayerDataAsync(map, combatPlayers);
+
+        return Ok();
+    }
+
+    [HttpDelete]
+    public async Task<IActionResult> Delete(CombatModel combat)
+    {
+        try
         {
-            return "value";
+            var map = _mapper.Map<CombatDto>(combat);
+            var deletedId = await _service.DeleteAsync(map);
+
+            return Ok(deletedId);
         }
-
-        [HttpPost]
-        public async Task<int> Post(CombatModel value)
+        catch (ArgumentNullException ex)
         {
-            var map = _mapper.Map<CombatDto>(value);
-            var createdCombatId = await _service.CreateAsync(map);
+            _logger.LogError(ex, ex.Message);
 
-            return createdCombatId;
-        }
-
-        [HttpPut("{id}")]
-        public void Put(int id, string value)
-        {
-        }
-
-        [HttpDelete("{id}")]
-        public void Delete(int id)
-        {
+            return BadRequest();
         }
     }
 }

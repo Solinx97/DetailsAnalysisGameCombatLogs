@@ -3,53 +3,67 @@ using CombatAnalysis.BL.DTO;
 using CombatAnalysis.BL.Interfaces;
 using CombatAnalysis.CombatParserAPI.Models;
 using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 
-namespace CombatAnalysis.CombatParserAPI.Controllers
+namespace CombatAnalysis.CombatParserAPI.Controllers;
+
+[Route("api/v1/[controller]")]
+[ApiController]
+public class DamageTakenGeneralController : ControllerBase
 {
-    [Route("[controller]")]
-    [ApiController]
-    public class DamageTakenGeneralController : ControllerBase
+    private readonly IService<DamageTakenGeneralDto, int> _service;
+    private readonly IMapper _mapper;
+    private readonly ILogger _logger;
+
+    public DamageTakenGeneralController(IService<DamageTakenGeneralDto, int> service, IMapper mapper, ILogger logger)
     {
-        private readonly IService<DamageTakenGeneralDto> _service;
-        private readonly IMapper _mapper;
+        _service = service;
+        _mapper = mapper;
+        _logger = logger;
+    }
 
-        public DamageTakenGeneralController(IService<DamageTakenGeneralDto> service, IMapper mapper)
+    [HttpGet("findByCombatPlayerId/{combatPlayerId:int:min(1)}")]
+    public async Task<IActionResult> Find(int combatPlayerId)
+    {
+        var damageTakenGenerals = await _service.GetByParamAsync("CombatPlayerId", combatPlayerId);
+        var map = _mapper.Map<IEnumerable<DamageTakenGeneralModel>>(damageTakenGenerals);
+
+        return Ok(map);
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> Create(DamageTakenGeneralModel model)
+    {
+        try
         {
-            _service = service;
-            _mapper = mapper;
+            var map = _mapper.Map<DamageTakenGeneralDto>(model);
+            var createdItem = await _service.CreateAsync(map);
+            var resultMap = _mapper.Map<DamageTakenGeneralModel>(createdItem);
+
+            return Ok(resultMap);
         }
-
-        [HttpGet]
-        public IEnumerable<string> Get()
+        catch (ArgumentNullException ex)
         {
-            return new string[] { "value1", "value2" };
+            _logger.LogError(ex, ex.Message);
+
+            return BadRequest();
         }
+    }
 
-        [HttpGet("{id}")]
-        public string Get(int id)
+    [HttpDelete]
+    public async Task<IActionResult> Delete(DamageTakenGeneralModel model)
+    {
+        try
         {
-            return "value";
+            var map = _mapper.Map<DamageTakenGeneralDto>(model);
+            var deletedId = await _service.DeleteAsync(map);
+
+            return Ok(deletedId);
         }
-
-        [HttpPost]
-        public async Task<int> Post(DamageTakenGeneralModel value)
+        catch (ArgumentNullException ex)
         {
-            var map = _mapper.Map<DamageTakenGeneralDto>(value);
-            var createdCombatId = await _service.CreateAsync(map);
+            _logger.LogError(ex, ex.Message);
 
-            return createdCombatId;
-        }
-
-        [HttpPut("{id}")]
-        public void Put(int id, string value)
-        {
-        }
-
-        [HttpDelete("{id}")]
-        public void Delete(int id)
-        {
+            return BadRequest();
         }
     }
 }

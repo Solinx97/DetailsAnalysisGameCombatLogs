@@ -1,13 +1,14 @@
-﻿namespace CombatAnalysis.BL.DTO
+﻿namespace CombatAnalysis.BL.DTO;
+
+public class ResourceRecoveryDto
 {
-    public class ResourceRecoveryDto
-    {
-        public double Value { get; set; }
+    public int Id { get; set; }
 
-        public string Time { get; set; }
+    public int Value { get; set; }
 
-        public string SpellOrItem { get; set; }
+    public string Time { get; set; }
 
-        public int CombatPlayerDataId { get; set; }
-    }
+    public string SpellOrItem { get; set; }
+
+    public int CombatPlayerId { get; set; }
 }

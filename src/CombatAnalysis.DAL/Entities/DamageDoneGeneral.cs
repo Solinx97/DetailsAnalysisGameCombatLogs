@@ -1,27 +1,26 @@
-﻿namespace CombatAnalysis.DAL.Entities
+﻿namespace CombatAnalysis.DAL.Entities;
+
+public class DamageDoneGeneral
 {
-    public class DamageDoneGeneral
-    {
-        public int Id { get; set; }
+    public int Id { get; set; }
 
-        public int Value { get; set; }
+    public int Value { get; set; }
 
-        public double DamagePerSecond { get; set; }
+    public double DamagePerSecond { get; set; }
 
-        public string SpellOrItem { get; set; }
+    public string SpellOrItem { get; set; }
 
-        public int CritNumber { get; set; }
+    public int CritNumber { get; set; }
 
-        public int MissNumber { get; set; }
+    public int MissNumber { get; set; }
 
-        public int CastNumber { get; set; }
+    public int CastNumber { get; set; }
 
-        public int MinValue { get; set; }
+    public int MinValue { get; set; }
 
-        public int MaxValue { get; set; }
+    public int MaxValue { get; set; }
 
-        public double AverageValue { get; set; }
+    public double AverageValue { get; set; }
 
-        public int CombatPlayerDataId { get; set; }
-    }
+    public int CombatPlayerId { get; set; }
 }

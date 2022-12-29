@@ -1,103 +1,116 @@
 ﻿using AutoMapper;
 using CombatAnalysis.BL.DTO;
-using CombatAnalysis.BL.Exceptions;
 using CombatAnalysis.BL.Interfaces;
 using CombatAnalysis.DAL.Entities;
 using CombatAnalysis.DAL.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
-namespace CombatAnalysis.BL.Services
+namespace CombatAnalysis.BL.Services;
+
+internal class HealDoneService : IService<HealDoneDto, int>
 {
-    internal class HealDoneService : IService<HealDoneDto>
+    private readonly IGenericRepository<HealDone, int> _repository;
+    private readonly IMapper _mapper;
+
+    public HealDoneService(IGenericRepository<HealDone, int> repository, IMapper mapper)
     {
-        private readonly IGenericRepository<HealDone> _repository;
-        private readonly IMapper _mapper;
+        _repository = repository;
+        _mapper = mapper;
+    }
 
-        public HealDoneService(IGenericRepository<HealDone> userRepository, IMapper mapper)
+    public Task<HealDoneDto> CreateAsync(HealDoneDto item)
+    {
+        if (item == null)
         {
-            _repository = userRepository;
-            _mapper = mapper;
+            throw new ArgumentNullException(nameof(HealDoneDto), $"The {nameof(HealDoneDto)} can't be null");
         }
 
-        Task<int> IService<HealDoneDto>.CreateAsync(HealDoneDto item)
-        {
-            if (item == null)
-            {
-                throw new ArgumentNullException(nameof(item));
-            }
+        return CreateInternalAsync(item);
+    }
 
-            return CreateInternalAsync(item);
+    public Task<int> DeleteAsync(HealDoneDto item)
+    {
+        if (item == null)
+        {
+            throw new ArgumentNullException(nameof(HealDoneDto), $"The {nameof(HealDoneDto)} can't be null");
         }
 
-        Task<int> IService<HealDoneDto>.DeleteAsync(HealDoneDto item)
-        {
-            if (item == null)
-            {
-                throw new ArgumentNullException(nameof(item));
-            }
+        return DeleteInternalAsync(item);
+    }
 
-            return DeleteInternalAsync(item);
+    public async Task<IEnumerable<HealDoneDto>> GetAllAsync()
+    {
+        var allData = await _repository.GetAllAsync();
+        var result = _mapper.Map<List<HealDoneDto>>(allData);
+
+        return result;
+    }
+
+    public async Task<HealDoneDto> GetByIdAsync(int id)
+    {
+        var result = await _repository.GetByIdAsync(id);
+        var resultMap = _mapper.Map<HealDoneDto>(result);
+
+        return resultMap;
+    }
+
+    public async Task<IEnumerable<HealDoneDto>> GetByParamAsync(string paramName, object value)
+    {
+        var result = await Task.Run(() => _repository.GetByParam(paramName, value));
+        var resultMap = _mapper.Map<IEnumerable<HealDoneDto>>(result);
+
+        return resultMap;
+    }
+
+    public Task<int> UpdateAsync(HealDoneDto item)
+    {
+        if (item == null)
+        {
+            throw new ArgumentNullException(nameof(HealDoneDto), $"The {nameof(HealDoneDto)} can't be null");
         }
 
-        async Task<IEnumerable<HealDoneDto>> IService<HealDoneDto>.GetAllAsync()
-        {
-            var allData = await _repository.GetAllAsync();
-            var result = _mapper.Map<List<HealDoneDto>>(allData);
+        return UpdateInternalAsync(item);
+    }
 
-            return result;
+    private async Task<HealDoneDto> CreateInternalAsync(HealDoneDto item)
+    {
+        if (string.IsNullOrEmpty(item.SpellOrItem))
+        {
+            throw new ArgumentNullException(nameof(HealDoneDto), 
+                $"The property {nameof(HealDoneDto.SpellOrItem)} of the {nameof(HealDoneDto)} object can't be null or empty");
         }
 
-        async Task<HealDoneDto> IService<HealDoneDto>.GetByIdAsync(int id)
-        {
-            var executeLoad = await _repository.GetByIdAsync(id);
-            var result = _mapper.Map<HealDoneDto>(executeLoad);
+        var map = _mapper.Map<HealDone>(item);
+        var createdItem = await _repository.CreateAsync(map);
+        var resultMap = _mapper.Map<HealDoneDto>(createdItem);
 
-            return result;
+        return resultMap;
+    }
+
+    private async Task<int> DeleteInternalAsync(HealDoneDto item)
+    {
+        if (string.IsNullOrEmpty(item.SpellOrItem))
+        {
+            throw new ArgumentNullException(nameof(HealDoneDto), 
+                $"The property {nameof(HealDoneDto.SpellOrItem)} of the {nameof(HealDoneDto)} object can't be null or empty");
         }
 
-        Task<int> IService<HealDoneDto>.UpdateAsync(HealDoneDto item)
-        {
-            if (item == null)
-            {
-                throw new ArgumentNullException(nameof(item));
-            }
+        var map = _mapper.Map<HealDone>(item);
+        var rowsAffected = await _repository.DeleteAsync(map);
 
-            return UpdateInternalAsync(item);
+        return rowsAffected;
+    }
+
+    private async Task<int> UpdateInternalAsync(HealDoneDto item)
+    {
+        if (string.IsNullOrEmpty(item.SpellOrItem))
+        {
+            throw new ArgumentNullException(nameof(HealDoneDto), 
+                $"The property {nameof(HealDoneDto.SpellOrItem)} of the {nameof(HealDoneDto)} object can't be null or empty");
         }
 
-        private async Task<int> CreateInternalAsync(HealDoneDto item)
-        {
-            var map = _mapper.Map<HealDone>(item);
-            var createdCombatId = await _repository.CreateAsync(map);
+        var map = _mapper.Map<HealDone>(item);
+        var rowsAffected = await _repository.UpdateAsync(map);
 
-            return createdCombatId;
-        }
-
-        private async Task<int> DeleteInternalAsync(HealDoneDto item)
-        {
-            var allData = await _repository.GetAllAsync();
-            if (!allData.Any())
-            {
-                throw new NotFoundException($"Collection entity {nameof(HealDoneDto)} not found", nameof(allData));
-            }
-
-            var numberEntries = await _repository.DeleteAsync(_mapper.Map<HealDone>(item));
-            return numberEntries;
-        }
-
-        private async Task<int> UpdateInternalAsync(HealDoneDto item)
-        {
-            var allData = await _repository.GetAllAsync();
-            if (!allData.Any())
-            {
-                throw new NotFoundException($"Collection entity {nameof(HealDoneDto)} not found", nameof(allData));
-            }
-
-            var numberEntries = await _repository.UpdateAsync(_mapper.Map<HealDone>(item));
-            return numberEntries;
-        }
+        return rowsAffected;
     }
 }

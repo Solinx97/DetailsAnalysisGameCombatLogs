@@ -1,11 +1,12 @@
-﻿using System;
+﻿namespace CombatAnalysis.Core.Models;
 
-namespace CombatAnalysis.Core.Models
+public class CombatLogModel
 {
-    public class CombatLogModel
-    {
-        public string Name { get; set; }
+    public int Id { get; set; }
 
-        public DateTimeOffset Date { get; set; }
-    }
+    public string Name { get; set; }
+
+    public DateTimeOffset Date { get; set; }
+
+    public bool IsReady { get; set; }
 }
