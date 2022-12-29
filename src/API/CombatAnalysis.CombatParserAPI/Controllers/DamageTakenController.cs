@@ -25,9 +25,8 @@ public class DamageTakenController : ControllerBase
     public async Task<IActionResult> Find(int combatPlayerId)
     {
         var damageTakens = await _service.GetByParamAsync("CombatPlayerId", combatPlayerId);
-        var map = _mapper.Map<IEnumerable<DamageTakenModel>>(damageTakens);
 
-        return Ok(map);
+        return Ok(damageTakens);
     }
 
     [HttpPost]
@@ -37,9 +36,8 @@ public class DamageTakenController : ControllerBase
         {
             var map = _mapper.Map<DamageTakenDto>(model);
             var createdItem = await _service.CreateAsync(map);
-            var resultMap = _mapper.Map<DamageTakenModel>(createdItem);
 
-            return Ok(resultMap);
+            return Ok(createdItem);
         }
         catch (ArgumentNullException ex)
         {

@@ -32,4 +32,6 @@ public class Combat
     {
         get { return (FinishDate - StartDate).ToString(@"hh\:mm\:ss"); }
     }
+
+    public bool IsReady { get; set; }
 }

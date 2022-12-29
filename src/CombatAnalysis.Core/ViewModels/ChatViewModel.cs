@@ -73,7 +73,7 @@ public class ChatViewModel : MvxViewModel, IImprovedMvxViewModel
 
         BasicTemplate = Templates.Basic;
         BasicTemplate.Parent = this;
-        BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, "Step", -2);
+        BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, nameof(BasicTemplateViewModel.Step), -2);
 
         GetMyAccount();
     }
@@ -107,6 +107,8 @@ public class ChatViewModel : MvxViewModel, IImprovedMvxViewModel
     public IViewModelConnect Handler { get; set; }
 
     public IMvxViewModel Parent { get; set; }
+
+    public IMvxViewModel SavedViewModel { get; set; }
 
     public IImprovedMvxViewModel BasicTemplate
     {

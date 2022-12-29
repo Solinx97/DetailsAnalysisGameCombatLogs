@@ -10,6 +10,7 @@ using MvvmCross.Commands;
 using MvvmCross.Navigation;
 using MvvmCross.ViewModels;
 using System.Collections.ObjectModel;
+using System.Net.Http.Json;
 
 namespace CombatAnalysis.Core.ViewModels;
 
@@ -17,24 +18,29 @@ public class GeneralAnalysisViewModel : MvxViewModel<Tuple<List<CombatModel>, Lo
 {
     private readonly IMvxNavigationService _mvvmNavigation;
     private readonly CombatParserAPIService _combatParserAPIService;
+    private readonly IHttpClientHelper _httpClient;
 
     private IImprovedMvxViewModel _basicTemplate;
     private ObservableCollection<CombatModel> _combats;
     private CombatModel _selectedCombat;
     private LoadingStatus _status;
     private LogType _logType;
+    private int _combatLogId;
 
     public GeneralAnalysisViewModel(IMvxNavigationService mvvmNavigation, IHttpClientHelper httpClient, ILogger logger, IMemoryCache memoryCache)
     {
         _mvvmNavigation = mvvmNavigation;
+        _httpClient = httpClient;
 
         _combatParserAPIService = new CombatParserAPIService(httpClient, logger, memoryCache);
 
-        RepeatSaveCommand = new MvxCommand(RepeatSaveCombatDataDetails);
+        RepeatSaveCommand = new MvxAsyncCommand(RepeatSaveCombatDataDetailsAsync);
+        RefreshCommand = new MvxAsyncCommand(RefreshAsync);
 
         BasicTemplate = Templates.Basic;
         BasicTemplate.Parent = this;
-        BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, "Step", 1);
+        BasicTemplate.SavedViewModel = this;
+        BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, nameof(BasicTemplateViewModel.Step), 1);
 
         var responseStatusObservable = (IResponseStatusObservable)BasicTemplate;
         responseStatusObservable.AddObserver(this);
@@ -42,7 +48,9 @@ public class GeneralAnalysisViewModel : MvxViewModel<Tuple<List<CombatModel>, Lo
 
     #region Commands
 
-    public IMvxCommand RepeatSaveCommand { get; set; }
+    public IMvxAsyncCommand RepeatSaveCommand { get; set; }
+
+    public IMvxAsyncCommand RefreshCommand { get; set; }
 
     #endregion
 
@@ -86,15 +94,31 @@ public class GeneralAnalysisViewModel : MvxViewModel<Tuple<List<CombatModel>, Lo
         }
     }
 
+    public int CombatLogId
+    {
+        get { return _combatLogId; }
+        set
+        {
+            SetProperty(ref _combatLogId, value);
+
+            if (value > 0)
+            {
+                RefreshCommand.CanExecute(true);
+            }
+        }
+    }
+
     #endregion
 
     public override void Prepare(Tuple<List<CombatModel>, LogType> parameter)
     {
-        if (parameter != null)
+        if (parameter == null)
         {
-            Combats = new ObservableCollection<CombatModel>(parameter.Item1);
-            _logType = parameter.Item2;
+            return;
         }
+
+        Combats = new ObservableCollection<CombatModel>(parameter.Item1);
+        _logType = parameter.Item2;
     }
 
     public override void ViewDestroy(bool viewFinishing = true)
@@ -106,26 +130,40 @@ public class GeneralAnalysisViewModel : MvxViewModel<Tuple<List<CombatModel>, Lo
 
     public void ShowDetails()
     {
-        BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, "TargetCombat", SelectedCombat);
+        if (SelectedCombat == null || (!SelectedCombat.IsReady && SelectedCombat.Id > 0))
+        {
+            return;
+        }
 
-        Task.Run(async () => await _mvvmNavigation.Close(this));
+        BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, nameof(BasicTemplateViewModel.SelectedCombat), SelectedCombat);
+
         Task.Run(async () => await _mvvmNavigation.Navigate<DetailsSpecificalCombatViewModel, CombatModel>(SelectedCombat));
+        Task.Run(async () => await _mvvmNavigation.Close(this));
     }
 
-    public void RepeatSaveCombatDataDetails()
+    public async Task RepeatSaveCombatDataDetailsAsync()
     {
-        BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, "ResponseStatus", LoadingStatus.Pending);
+        BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, nameof(BasicTemplateViewModel.ResponseStatus), LoadingStatus.Pending);
 
-        Task.Run(async () =>
-        {
-            var responseStatus = await _combatParserAPIService.SaveAsync(Combats.ToList(), _logType) ? LoadingStatus.Successful : LoadingStatus.Failed;
-
-            BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, "ResponseStatus", responseStatus);
-        });
+        var responseStatus = await _combatParserAPIService.SaveAsync(Combats.ToList(), _logType) > 0 ? LoadingStatus.Successful : LoadingStatus.Failed;
+        BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, nameof(BasicTemplateViewModel.ResponseStatus), responseStatus);
     }
 
     public void Update(LoadingStatus status)
     {
         ResponseStatus = status;
+    }
+
+    public async Task RefreshAsync()
+    {
+        if (CombatLogId == 0)
+        {
+            return;
+        }
+
+        var responseMessage = await _httpClient.GetAsync($"Combat/FindByCombatLogId/{CombatLogId}");
+        var combats = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<CombatModel>>();
+
+        Combats = new ObservableCollection<CombatModel>(combats);
     }
 }

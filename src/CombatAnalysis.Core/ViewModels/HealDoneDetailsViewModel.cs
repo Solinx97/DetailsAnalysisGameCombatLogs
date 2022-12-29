@@ -1,7 +1,10 @@
-﻿using CombatAnalysis.Core.Consts;
+﻿using AutoMapper;
+using CombatAnalysis.CombatParser.Entities;
+using CombatAnalysis.CombatParser.Extensions;
+using CombatAnalysis.CombatParser.Patterns;
+using CombatAnalysis.Core.Consts;
 using CombatAnalysis.Core.Core;
 using CombatAnalysis.Core.Interfaces;
-using CombatAnalysis.Core.Localizations;
 using CombatAnalysis.Core.Models;
 using CombatAnalysis.Core.Services;
 using CombatAnalysis.Core.ViewModels.ViewModelTemplates;
@@ -11,58 +14,28 @@ using System.Collections.ObjectModel;
 
 namespace CombatAnalysis.Core.ViewModels;
 
-public class HealDoneDetailsViewModel : GenericTemplate<CombatPlayerModel>
+public class HealDoneDetailsViewModel : DetailsGenericTemplate<HealDoneModel, HealDoneGeneralModel>
 {
     private readonly CombatParserAPIService _combatParserAPIService;
     private readonly PowerUpInCombat<HealDoneModel> _powerUpInCombat;
 
-    private ObservableCollection<HealDoneModel> _healDoneInformations;
     private ObservableCollection<HealDoneModel> _healDoneInformationsWithoutFilter;
     private ObservableCollection<HealDoneModel> _healDoneInformationsWithOverheal;
-    private ObservableCollection<string> _healDoneSources;
-    private ObservableCollection<HealDoneGeneralModel> _healDoneGeneralInformations;
 
     private bool _isShowOverheal = true;
     private bool _isShowCrit = true;
 
-    public HealDoneDetailsViewModel(IHttpClientHelper httpClient, ILogger logger, IMemoryCache memoryCache)
+    public HealDoneDetailsViewModel(IHttpClientHelper httpClient, ILogger logger, IMemoryCache memoryCache, IMapper mapper) : base(logger, mapper)
     {
         _combatParserAPIService = new CombatParserAPIService(httpClient, logger, memoryCache);
         _powerUpInCombat = new PowerUpInCombat<HealDoneModel>(_healDoneInformationsWithOverheal);
 
         BasicTemplate = Templates.Basic;
         BasicTemplate.Parent = this;
-        BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, "Step", 4);
+        BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, nameof(BasicTemplateViewModel.Step), 4);
     }
 
     #region Properties
-
-    public ObservableCollection<HealDoneModel> HealDoneInformations
-    {
-        get { return _healDoneInformations; }
-        set
-        {
-            SetProperty(ref _healDoneInformations, value);
-        }
-    }
-
-    public ObservableCollection<string> HealDoneSources
-    {
-        get { return _healDoneSources; }
-        set
-        {
-            SetProperty(ref _healDoneSources, value);
-        }
-    }
-
-    public ObservableCollection<HealDoneGeneralModel> HealDoneGeneralInformations
-    {
-        get { return _healDoneGeneralInformations; }
-        set
-        {
-            SetProperty(ref _healDoneGeneralInformations, value);
-        }
-    }
 
     public bool IsShowOverheal
     {
@@ -73,9 +46,9 @@ public class HealDoneDetailsViewModel : GenericTemplate<CombatPlayerModel>
 
             _powerUpInCombat.UpdateProperty("IsFullOverheal");
             _powerUpInCombat.UpdateCollection(_healDoneInformationsWithOverheal);
-            HealDoneInformations = _powerUpInCombat.ShowSpecificalValue("Time", HealDoneInformations, value);
+            DetailsInformations = _powerUpInCombat.ShowSpecificalValue("Time", DetailsInformations, value);
 
-            RaisePropertyChanged(() => HealDoneInformations);
+            RaisePropertyChanged(() => DetailsInformations);
         }
     }
 
@@ -88,54 +61,57 @@ public class HealDoneDetailsViewModel : GenericTemplate<CombatPlayerModel>
 
             _powerUpInCombat.UpdateProperty("IsCrit");
             _powerUpInCombat.UpdateCollection(_healDoneInformationsWithOverheal);
-            HealDoneInformations = _powerUpInCombat.ShowSpecificalValue("Time", HealDoneInformations, value);
+            DetailsInformations = _powerUpInCombat.ShowSpecificalValue("Time", DetailsInformations, value);
 
-            RaisePropertyChanged(() => HealDoneInformations);
+            RaisePropertyChanged(() => DetailsInformations);
         }
     }
 
     #endregion
 
-    protected override async Task ChildPrepareAsync(CombatPlayerModel parameter)
+    protected override void ChildPrepare(CombatPlayerModel parameter)
     {
-        var player = parameter;
-        SelectedPlayer = player.UserName;
-        TotalValue = player.HealDone;
+        var selectedCombatMap = _mapper.Map<Combat>(SelectedCombat);
 
-        await LoadDetailsAsync(player.Id);
-        await LoadGenericDetailsAsync(player.Id);
+        var healDoneDetails = new CombatDetailsHealDone(_logger);
+        healDoneDetails.GetData(parameter.UserName, SelectedCombat.Data);
+
+        var healDoneMap = _mapper.Map<List<HealDoneModel>>(healDoneDetails.HealDone);
+        DetailsInformations = new ObservableCollection<HealDoneModel>(healDoneMap);
+
+        var healDoneGeneralData = healDoneDetails.GetHealDoneGeneral(healDoneDetails.HealDone, selectedCombatMap);
+        var healDoneGeneralMap = _mapper.Map<List<HealDoneGeneralModel>>(healDoneGeneralData);
+        GeneralInformations = new ObservableCollection<HealDoneGeneralModel>(healDoneGeneralMap);
     }
 
     protected override void Filter()
     {
-        HealDoneInformations = _healDoneInformationsWithoutFilter.Any(x => x.SpellOrItem == SelectedSource)
+        DetailsInformations = _healDoneInformationsWithoutFilter.Any(x => x.SpellOrItem == SelectedSource)
             ? new ObservableCollection<HealDoneModel>(_healDoneInformationsWithoutFilter.Where(x => x.SpellOrItem == SelectedSource))
             : _healDoneInformationsWithoutFilter;
     }
 
     protected override async Task LoadDetailsAsync(int combatPlayerId)
     {
-        var details = await _combatParserAPIService.LoadHealDoneDetailsAsync(combatPlayerId);
-        HealDoneInformations = new ObservableCollection<HealDoneModel>(details.ToList());
-
-        GetDetails();
+        var details = await _combatParserAPIService.LoadCombatDetailsByCombatPlayerId<HealDoneModel>("HealDone/FindByCombatPlayerId", combatPlayerId);
+        DetailsInformations = new ObservableCollection<HealDoneModel>(details.ToList());
     }
 
     protected override async Task LoadGenericDetailsAsync(int combatPlayerId)
     {
-        var generalDetails = await _combatParserAPIService.LoadHealDoneGeneralAsync(combatPlayerId);
-        HealDoneGeneralInformations = new ObservableCollection<HealDoneGeneralModel>(generalDetails.ToList());
+        var generalDetails = await _combatParserAPIService.LoadCombatDetailsByCombatPlayerId<HealDoneGeneralModel>("HealDoneGeneral/FindByCombatPlayerId", combatPlayerId);
+        GeneralInformations = new ObservableCollection<HealDoneGeneralModel>(generalDetails.ToList());
     }
 
-    protected override void GetDetails()
+    protected override void SetUpFilteredCollection()
     {
-        _healDoneInformationsWithoutFilter = new ObservableCollection<HealDoneModel>(HealDoneInformations);
-        _healDoneInformationsWithOverheal = new ObservableCollection<HealDoneModel>(HealDoneInformations);
+        _healDoneInformationsWithoutFilter = new ObservableCollection<HealDoneModel>(DetailsInformations);
+        _healDoneInformationsWithOverheal = new ObservableCollection<HealDoneModel>(DetailsInformations);
+    }
 
-        var sources = HealDoneInformations.Select(x => x.SpellOrItem).Distinct().ToList();
-        var allSourcesName = TranslationSource.Instance["CombatAnalysis.App.Localizations.Resources.HealDoneDetails.Resource.All"];
-        sources.Insert(0, allSourcesName);
-        HealDoneSources = new ObservableCollection<string>(sources);
+    protected override void SetTotalValue(CombatPlayerModel parameter)
+    {
+        TotalValue= parameter.HealDone;
     }
 
     protected override void TurnOnAllFilters()

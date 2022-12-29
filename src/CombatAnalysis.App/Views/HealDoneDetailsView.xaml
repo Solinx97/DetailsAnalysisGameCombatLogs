@@ -52,9 +52,9 @@
                 <TextBlock Text="{loc:Loc TypeOf}" FontSize="15" TextAlignment="Center" Padding="10" FontWeight="SemiBold"
                            VerticalAlignment="Center" Margin="0" Width="100" Foreground="Gray"/>
                 <ComboBox Style="{DynamicResource ComboBoxStyle1}" VerticalAlignment="Center" Name="detailsType"
-                          Width="135" SelectedIndex="0">
+                          Width="135" SelectedIndex="{Binding DetailsTypeSelectedIndex}">
                     <ComboBoxItem Content="{loc:Loc Common}" IsSelected="True"/>
-                    <ComboBoxItem Content="{loc:Loc MoreDetails}" />
+                    <ComboBoxItem Content="{loc:Loc MoreDetails}"/>
                 </ComboBox>
             </StackPanel>
             <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Text="{loc:Loc Title}"
@@ -63,14 +63,14 @@
             <StackPanel Orientation="Horizontal" Visibility="{Binding IsShowFilters, Converter={StaticResource BoolToVisibility}, ConverterParameter=false}">
                 <TextBlock Text="{loc:Loc Source}" FontSize="15" TextAlignment="Center" Padding="10" FontWeight="SemiBold"
                            Margin="0" Width="100" Foreground="Gray"/>
-                <ComboBox Name="sortingProperty" Style="{DynamicResource ComboBoxStyle1}" ItemsSource="{Binding HealDoneSources}"
+                <ComboBox Name="sortingProperty" Style="{DynamicResource ComboBoxStyle1}" ItemsSource="{Binding Sources}"
                           VerticalAlignment="Center" Width="210" SelectedItem="{Binding SelectedSource}" SelectedIndex="0"/>
             </StackPanel>
         </StackPanel>
 
         <DataGrid Margin="20 30 20 45" Grid.Row="2" Grid.Column="2" Height="450"
-                 VerticalAlignment="Top" Background="Transparent" ItemsSource="{Binding HealDoneGeneralInformations}"
-                  GridLinesVisibility="None" CanUserAddRows="False" CanUserDeleteRows="False" AutoGenerateColumns="False"
+                 VerticalAlignment="Top" Background="Transparent" ItemsSource="{Binding GeneralInformations}"
+                 GridLinesVisibility="None" CanUserAddRows="False" CanUserDeleteRows="False" AutoGenerateColumns="False"
                  Visibility="{Binding ElementName=detailsType, Path=SelectedIndex, Converter={StaticResource IntToVisibility}, ConverterParameter=true:0}">
             <DataGrid.Columns>
                 <DataGridTemplateColumn SortMemberPath="SpellOrItem" IsReadOnly="True" MinWidth="175">
@@ -173,7 +173,7 @@
                   FontSize="16" VerticalAlignment="Center" FontWeight="SemiBold" />
             </StackPanel>
 
-            <DataGrid Margin="20 10" Background="Transparent" Height="450" ItemsSource="{Binding HealDoneInformations}" GridLinesVisibility="None" 
+            <DataGrid Margin="20 10" Background="Transparent" Height="450" ItemsSource="{Binding DetailsInformations}" GridLinesVisibility="None" 
                       CanUserAddRows="False" CanUserDeleteRows="False" AutoGenerateColumns="False">
                 <DataGrid.Columns>
                     <DataGridTemplateColumn SortMemberPath="Time" IsReadOnly="True" MinWidth="100">

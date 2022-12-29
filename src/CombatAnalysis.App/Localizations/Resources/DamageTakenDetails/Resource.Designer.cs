@@ -79,15 +79,6 @@ namespace CombatAnalysis.App.Localizations.Resources.DamageTakenDetails {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to All.
-        /// </summary>
-        public static string All {
-            get {
-                return ResourceManager.GetString("All", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Average value.
         /// </summary>
         public static string AverageValue {

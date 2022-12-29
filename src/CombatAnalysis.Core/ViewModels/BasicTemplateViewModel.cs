@@ -6,6 +6,7 @@ using CombatAnalysis.Core.Interfaces;
 using CombatAnalysis.Core.Interfaces.Observers;
 using CombatAnalysis.Core.Models;
 using CombatAnalysis.Core.Models.User;
+using CombatAnalysis.Core.ViewModels.ViewModelTemplates;
 using Microsoft.Extensions.Caching.Memory;
 using MvvmCross.Commands;
 using MvvmCross.Navigation;
@@ -30,6 +31,7 @@ public class BasicTemplateViewModel : MvxViewModel, IImprovedMvxViewModel, IResp
     private string _email;
     private LogType _logType;
     private bool _logPanelStatusIsVisibly;
+    private CombatModel _selectedCombat;
 
     private static LoadingStatus _responseStatus;
     private static int _allowStep;
@@ -104,11 +106,28 @@ public class BasicTemplateViewModel : MvxViewModel, IImprovedMvxViewModel, IResp
 
     #region Properties
 
-    public CombatModel TargetCombat { get; set; }
+    public CombatModel SelectedCombat
+    {
+        get
+        {
+            return _selectedCombat;
+        }
+
+        set
+        {
+            _selectedCombat = value;
+            DetailsGenericTemplate<DamageDoneModel, DamageDoneGeneralModel>.SelectedCombat = value;
+            DetailsGenericTemplate<HealDoneModel, HealDoneGeneralModel>.SelectedCombat = value;
+            DetailsGenericTemplate<DamageTakenModel, DamageTakenGeneralModel>.SelectedCombat = value;
+            DetailsGenericTemplate<ResourceRecoveryModel, ResourceRecoveryGeneralModel>.SelectedCombat = value;
+        }
+    }
 
     public IViewModelConnect Handler { get; set; }
 
     public IMvxViewModel Parent { get; set; }
+
+    public IMvxViewModel SavedViewModel { get; set; }
 
     public string AppVersion
     {

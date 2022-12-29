@@ -15,4 +15,6 @@ public class ResourceRecoveryGeneral
     public int MaxValue { get; set; }
 
     public double AverageValue { get; set; }
+
+    public int CombatPlayerId { get; set; }
 }

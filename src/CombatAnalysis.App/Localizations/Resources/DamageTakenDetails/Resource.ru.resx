@@ -123,9 +123,6 @@
   <data name="AbsorptionDetails" xml:space="preserve">
     <value>Поглащено: </value>
   </data>
-  <data name="All" xml:space="preserve">
-    <value>Все</value>
-  </data>
   <data name="AverageValue" xml:space="preserve">
     <value>Среднее значение</value>
   </data>

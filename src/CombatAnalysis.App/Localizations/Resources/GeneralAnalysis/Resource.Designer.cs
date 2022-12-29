@@ -97,6 +97,15 @@ namespace CombatAnalysis.App.Localizations.Resources.GeneralAnalysis {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Defeat.
+        /// </summary>
+        public static string Defeat {
+            get {
+                return ResourceManager.GetString("Defeat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Enemy.
         /// </summary>
         public static string Enemy {
@@ -120,6 +129,33 @@ namespace CombatAnalysis.App.Localizations.Resources.GeneralAnalysis {
         public static string LoadingFailed {
             get {
                 return ResourceManager.GetString("LoadingFailed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Not ready.
+        /// </summary>
+        public static string NotReady {
+            get {
+                return ResourceManager.GetString("NotReady", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Ready.
+        /// </summary>
+        public static string Ready {
+            get {
+                return ResourceManager.GetString("Ready", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Refresh.
+        /// </summary>
+        public static string Refresh {
+            get {
+                return ResourceManager.GetString("Refresh", resourceCulture);
             }
         }
         
@@ -156,6 +192,15 @@ namespace CombatAnalysis.App.Localizations.Resources.GeneralAnalysis {
         public static string Title {
             get {
                 return ResourceManager.GetString("Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Win.
+        /// </summary>
+        public static string Win {
+            get {
+                return ResourceManager.GetString("Win", resourceCulture);
             }
         }
     }

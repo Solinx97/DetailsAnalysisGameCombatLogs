@@ -29,18 +29,16 @@ public class CombatLogController : ControllerBase
     public async Task<IActionResult> GetAll()
     {
         var combatLogs = await _service.GetAllAsync();
-        var map = _mapper.Map<IEnumerable<CombatLogModel>>(combatLogs);
 
-        return Ok(map);
+        return Ok(combatLogs);
     }
 
     [HttpGet("{id:int:min(1)}")]
     public async Task<IActionResult> GetById(int id)
     {
         var combatLog = await _service.GetByIdAsync(id);
-        var map = _mapper.Map<CombatLogModel>(combatLog);
 
-        return Ok(map);
+        return Ok(combatLog);
     }
 
     [HttpPost]
@@ -52,9 +50,8 @@ public class CombatLogController : ControllerBase
 
             var map = _mapper.Map<CombatLogDto>(combatLog);
             var createdItem = await _service.CreateAsync(map);
-            var resultMap = _mapper.Map<CombatLogModel>(createdItem);
 
-            return Ok(resultMap);
+            return Ok(createdItem);
         }
         catch (ArgumentNullException ex)
         {

@@ -63,8 +63,8 @@ public class CombatLogInformationViewModel : MvxViewModel, IObserver, IAuthObser
 
         BasicTemplate = Templates.Basic;
         BasicTemplate.Parent = this;
-        BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, "Step", 0);
-        BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, "LogPanelStatusIsVisibly", true);
+        BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, nameof(BasicTemplateViewModel.Step), 0);
+        BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, nameof(BasicTemplateViewModel.LogPanelStatusIsVisibly), true);
 
         var authObservable = (IAuthObservable)BasicTemplate;
         authObservable.AddObserver(this);
@@ -243,7 +243,7 @@ public class CombatLogInformationViewModel : MvxViewModel, IObserver, IAuthObser
         set
         {
             SetProperty(ref _logType, value);
-            BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, "LogType", value);
+            BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, nameof(BasicTemplateViewModel.LogType), value);
         }
     }
 
@@ -324,12 +324,13 @@ public class CombatLogInformationViewModel : MvxViewModel, IObserver, IAuthObser
             item.Players = players.ToList();
         }
 
-        BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, "AllowStep", 1);
+        BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, nameof(BasicTemplateViewModel.AllowStep), 1);
 
         var dataForGeneralAnalysis = Tuple.Create(loadedCombats.ToList(), LogType);
         await _mvvmNavigation.Navigate<GeneralAnalysisViewModel, Tuple<List<CombatModel>, LogType>>(dataForGeneralAnalysis);
 
-        BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, "Combats", loadedCombats.ToList());
+        BasicTemplate.Handler.PropertyUpdate<GeneralAnalysisViewModel>(BasicTemplate.Parent, nameof(GeneralAnalysisViewModel.CombatLogId), id);
+        BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, nameof(BasicTemplateViewModel.Combats), loadedCombats.ToList());
     }
 
     public async Task DeleteAsync()
@@ -350,33 +351,34 @@ public class CombatLogInformationViewModel : MvxViewModel, IObserver, IAuthObser
 
         if (!FileIsNotCorrect)
         {
-            await GetCombatDataDetailsAsync(combatLog);
+            await PrepareCombatData(combatLog);
         }
     }
 
-    private async Task GetCombatDataDetailsAsync(string combatLog)
+    private async Task PrepareCombatData(string combatLog)
     {
         IsParsing = true;
 
         await _parser.Parse(combatLog);
 
-        var map = _parser.Combats;
-        var combats = _mapper.Map<List<CombatModel>>(map);
+        var combatModels = _mapper.Map<List<CombatModel>>(_parser.Combats);
 
-        BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(Templates.Basic, "AllowStep", 1);
+        BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, nameof(BasicTemplateViewModel.AllowStep), 1);
 
-        var dataForGeneralAnalysis = Tuple.Create(combats, LogType);
+        var dataForGeneralAnalysis = Tuple.Create(combatModels, LogType);
         await _mvvmNavigation.Navigate<GeneralAnalysisViewModel, Tuple<List<CombatModel>, LogType>>(dataForGeneralAnalysis);
 
-        BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, "Combats", combats);
+        BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, nameof(BasicTemplateViewModel.Combats), combatModels);
 
         if (IsNeedSave)
         {
-            BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, "ResponseStatus", LoadingStatus.Pending);
+            BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, nameof(BasicTemplateViewModel.ResponseStatus), LoadingStatus.Pending);
 
-            var responseStatus = await _combatParserAPIService.SaveAsync(combats, LogType).ConfigureAwait(false) ? LoadingStatus.Successful : LoadingStatus.Failed;
+            var combatLogId = await _combatParserAPIService.SaveAsync(combatModels, LogType);
+            BasicTemplate.Handler.PropertyUpdate<GeneralAnalysisViewModel>(BasicTemplate.SavedViewModel, nameof(GeneralAnalysisViewModel.CombatLogId), combatLogId);
 
-            BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, "ResponseStatus", responseStatus);
+            var responseStatus = combatLogId > 0 ? LoadingStatus.Successful : LoadingStatus.Failed;
+            BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, nameof(BasicTemplateViewModel.ResponseStatus), responseStatus);
         }
     }
 

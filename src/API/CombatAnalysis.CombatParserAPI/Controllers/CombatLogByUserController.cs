@@ -25,18 +25,16 @@ public class CombatLogByUserController : ControllerBase
     public async Task<IActionResult> GetAll()
     {
         var combatLogsByUser = await _service.GetAllAsync();
-        var map = _mapper.Map<IEnumerable<CombatLogByUserModel>>(combatLogsByUser);
 
-        return Ok(map);
+        return Ok(combatLogsByUser);
     }
 
     [HttpGet("{id:int:min(1)}")]
     public async Task<IActionResult> GetById(int id)
     {
         var combatLogByUser = await _service.GetByIdAsync(id);
-        var map = _mapper.Map<CombatLogByUserModel>(combatLogByUser);
 
-        return Ok(map);
+        return Ok(combatLogByUser);
     }
 
     [HttpGet("byUserId/{userId}")]
@@ -45,6 +43,7 @@ public class CombatLogByUserController : ControllerBase
         var combatLogsByUser = new List<CombatLogByUserModel>();
         var allCombatLogsByUser = await _service.GetAllAsync();
         var mapAllCombatLogsByUser = _mapper.Map<IEnumerable<CombatLogByUserModel>>(allCombatLogsByUser);
+
         foreach (var item in mapAllCombatLogsByUser)
         {
             if (item.UserId == userId)
@@ -63,9 +62,8 @@ public class CombatLogByUserController : ControllerBase
         {
             var map = _mapper.Map<CombatLogByUserDto>(model);
             var createdItem = await _service.CreateAsync(map);
-            var resultMap = _mapper.Map<CombatLogByUserModel>(createdItem);
 
-            return Ok(resultMap);
+            return Ok(createdItem);
         }
         catch (ArgumentNullException ex)
         {

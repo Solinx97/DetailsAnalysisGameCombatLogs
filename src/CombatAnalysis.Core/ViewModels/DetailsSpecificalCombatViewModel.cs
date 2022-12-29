@@ -16,7 +16,7 @@ public class DetailsSpecificalCombatViewModel : MvxViewModel<CombatModel>
     {
         BasicTemplate = Templates.Basic;
         BasicTemplate.Parent = this;
-        BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, "Step", 2);
+        BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, nameof(BasicTemplateViewModel.Step), 2);
     }
 
     #region Properties

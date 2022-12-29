@@ -7,4 +7,6 @@ public interface IImprovedMvxViewModel
     IViewModelConnect Handler { get; set; }
 
     IMvxViewModel Parent { get; set; }
+
+    IMvxViewModel SavedViewModel { get; set; }
 }
