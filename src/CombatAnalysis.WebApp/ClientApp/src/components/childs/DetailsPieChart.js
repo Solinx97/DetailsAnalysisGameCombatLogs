@@ -6,26 +6,8 @@ import {
 } from "recharts";
 import { useTranslation } from 'react-i18next';
 
-/**
- * Payload mus have next fields: 'title', 'color' and 'data'.
- * Field 'data' is array with a few objects, what must have only field 'name' and field 'value'.
- * Payload example:
- * 
- * title: 'Test title',
- * color: 'green',
- * data: [
- *  { name: 'Test name', value: 10 },
- *  { name: 'Test name 1', value: 37 },
- *  { name: 'Test name 2', value: 20 },
- *  { name: 'Test name 3', value: 66 },
- *  { name: 'Test name 4', value: 9 },
- * ]
- * 
- * @param {object} payload
- */
-const usePieChart = (payload) => {
+const DetailsPieChart = ({ payload }) => {
     const [activeIndex, setActiveIndex] = useState(0);
-    const [payloadData, setPayloadData] = useState(payload);
     const { t, i18n } = useTranslation("usePieChart");
 
     const renderActiveShape = (props) => {
@@ -79,26 +61,27 @@ const usePieChart = (payload) => {
     }
 
     const render = () => {
+        console.log(2);
         return <div className="pie-chart-hook">
             <PieChart width={475} height={350}>
                 <Pie
                     activeIndex={activeIndex}
                     activeShape={renderActiveShape}
-                    data={payloadData.data}
+                    data={payload.data}
                     cx="50%"
                     cy={200}
                     innerRadius={65}
                     outerRadius={85}
-                    fill={payloadData.color}
+                    fill={payload.color}
                     dataKey="value"
                     onMouseEnter={onPieEnter}
                 />
             </PieChart>
-            <div className="title">{payloadData.title}</div>
+            <div className="title">{payload.title}</div>
         </div>;
     }
 
-    return [render, setPayloadData];
+    return render();
 }
 
-export default usePieChart;
+export default DetailsPieChart;
