@@ -126,6 +126,9 @@
   <data name="Dungeon" xml:space="preserve">
     <value>Dungeon</value>
   </data>
+  <data name="Empty" xml:space="preserve">
+    <value>Empty</value>
+  </data>
   <data name="File" xml:space="preserve">
     <value>File:</value>
   </data>

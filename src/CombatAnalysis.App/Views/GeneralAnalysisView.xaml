@@ -176,10 +176,10 @@
                             <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
                                 <Icon:PackIconMaterial Visibility="{Binding Path=IsReady, Converter={StaticResource BoolToVisibility}, ConverterParameter=true}"
                                                    Kind="Check" Foreground="Green" Style="{StaticResource menuButtonIcon}" Width="10" Height="10" Margin="0"
-                                                   HorizontalAlignment="Center" ToolTip="{loc:Loc Ready}"/>
+                                                   HorizontalAlignment="Center" ToolTip="{loc:Loc Ready}" Cursor="Help"/>
                                 <Icon:PackIconMaterial Visibility="{Binding Path=IsReady, Converter={StaticResource BoolToVisibility}, ConverterParameter=true:true}"
                                                    Kind="Clock" Foreground="MediumVioletRed" Style="{StaticResource menuButtonIcon}" Width="10" Height="10" Margin="0"
-                                                   HorizontalAlignment="Center" ToolTip="{loc:Loc NotReady}"/>
+                                                   HorizontalAlignment="Center" ToolTip="{loc:Loc NotReady}" Cursor="Help"/>
                             </StackPanel>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>

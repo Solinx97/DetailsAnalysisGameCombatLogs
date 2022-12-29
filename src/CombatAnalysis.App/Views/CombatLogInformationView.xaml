@@ -113,6 +113,10 @@
                                         </DataTemplate>
                                     </ListBox.ItemTemplate>
                                 </ListBox>
+                                <StackPanel Visibility="{Binding CombatLogLoadingStatus, Converter={StaticResource IntToVisibility}, ConverterParameter='true:2:='}">
+                                    <TextBlock Text="{loc:Loc Empty}" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="Gray" Margin="5"
+                                           Visibility="{Binding CombatLogs.Count, Converter={StaticResource IntToVisibility}, ConverterParameter='true:0:='}"/>
+                                </StackPanel>
                             </StackPanel>
                         </ScrollViewer>
                     </StackPanel>
@@ -156,6 +160,10 @@
                                         </DataTemplate>
                                     </ListBox.ItemTemplate>
                                 </ListBox>
+                                <StackPanel Visibility="{Binding CombatLogByUserLoadingStatus, Converter={StaticResource IntToVisibility}, ConverterParameter='true:2:='}">
+                                    <TextBlock Text="{loc:Loc Empty}" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="Gray" Margin="5"
+                                           Visibility="{Binding CombatLogsByUser.Count, Converter={StaticResource IntToVisibility}, ConverterParameter='true:0:='}"/>
+                                </StackPanel>
                             </StackPanel>
                         </ScrollViewer>
                     </StackPanel>
