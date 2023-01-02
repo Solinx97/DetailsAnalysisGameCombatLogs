@@ -10,7 +10,6 @@ using MvvmCross.Commands;
 using MvvmCross.Navigation;
 using MvvmCross.ViewModels;
 using System.Collections.ObjectModel;
-using System.Net.Http.Json;
 
 namespace CombatAnalysis.Core.ViewModels;
 
@@ -25,6 +24,7 @@ public class GeneralAnalysisViewModel : MvxViewModel<Tuple<List<CombatModel>, Lo
     private LoadingStatus _status;
     private LogType _logType;
     private int _combatLogId;
+    private bool _combatIsNotLoaded = false;
 
     public GeneralAnalysisViewModel(IMvxNavigationService mvvmNavigation, IHttpClientHelper httpClient, ILogger logger, IMemoryCache memoryCache)
     {
@@ -106,6 +106,15 @@ public class GeneralAnalysisViewModel : MvxViewModel<Tuple<List<CombatModel>, Lo
         }
     }
 
+    public bool CombatIsNotLoaded
+    {
+        get { return _combatIsNotLoaded; }
+        set
+        {
+            SetProperty(ref _combatIsNotLoaded, value);
+        }
+    }
+
     #endregion
 
     public override void Prepare(Tuple<List<CombatModel>, LogType> parameter)
@@ -128,8 +137,14 @@ public class GeneralAnalysisViewModel : MvxViewModel<Tuple<List<CombatModel>, Lo
 
     public void ShowDetails()
     {
-        if (SelectedCombat == null || (!SelectedCombat.IsReady && SelectedCombat.Id > 0))
+        if (SelectedCombat == null)
         {
+            return;
+        }
+
+        if (!SelectedCombat.IsReady && SelectedCombat.Id > 0)
+        {
+            CombatIsNotLoaded = true;
             return;
         }
 
@@ -153,6 +168,8 @@ public class GeneralAnalysisViewModel : MvxViewModel<Tuple<List<CombatModel>, Lo
 
     public async Task RefreshAsync()
     {
+        CombatIsNotLoaded = false;
+
         if (CombatLogId == 0)
         {
             return;
