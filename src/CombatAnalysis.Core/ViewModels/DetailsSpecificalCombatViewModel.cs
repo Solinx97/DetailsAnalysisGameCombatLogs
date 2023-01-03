@@ -9,14 +9,14 @@ public class DetailsSpecificalCombatViewModel : MvxViewModel<CombatModel>
 {
     private CombatModel _combat;
     private IImprovedMvxViewModel _basicTemplate;
-    private List<CombatPlayerModel> _playersCombatData;
+    private List<CombatPlayerModel> _playersCombat;
     private CombatPlayerModel _selectedPlayer;
 
     public DetailsSpecificalCombatViewModel()
     {
         BasicTemplate = Templates.Basic;
         BasicTemplate.Parent = this;
-        BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, "Step", 2);
+        BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, nameof(BasicTemplateViewModel.Step), 2);
     }
 
     #region Properties
@@ -30,12 +30,12 @@ public class DetailsSpecificalCombatViewModel : MvxViewModel<CombatModel>
         }
     }
 
-    public List<CombatPlayerModel> PlayersCombatData
+    public List<CombatPlayerModel> PlayersCombat
     {
-        get { return _playersCombatData; }
+        get { return _playersCombat; }
         set
         {
-            SetProperty(ref _playersCombatData, value);
+            SetProperty(ref _playersCombat, value);
 
             SelectedPlayer = value[0];
         }
@@ -65,6 +65,7 @@ public class DetailsSpecificalCombatViewModel : MvxViewModel<CombatModel>
 
     public override void Prepare(CombatModel parameter)
     {
+        PlayersCombat = parameter.Players;
         Combat = parameter;
     }
 }

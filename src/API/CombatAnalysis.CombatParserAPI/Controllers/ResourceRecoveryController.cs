@@ -25,9 +25,8 @@ public class ResourceRecoveryController : ControllerBase
     public async Task<IActionResult> Find(int combatPlayerId)
     {
         var resourceRecoveryes = await _service.GetByParamAsync("CombatPlayerId", combatPlayerId);
-        var map = _mapper.Map<IEnumerable<ResourceRecoveryModel>>(resourceRecoveryes);
 
-        return Ok(map);
+        return Ok(resourceRecoveryes);
     }
 
     [HttpPost]
@@ -37,9 +36,8 @@ public class ResourceRecoveryController : ControllerBase
         {
             var map = _mapper.Map<ResourceRecoveryDto>(model);
             var createdItem = await _service.CreateAsync(map);
-            var resultMap = _mapper.Map<ResourceRecoveryModel>(createdItem);
 
-            return Ok(resultMap);
+            return Ok(_mapper);
         }
         catch (ArgumentNullException ex)
         {

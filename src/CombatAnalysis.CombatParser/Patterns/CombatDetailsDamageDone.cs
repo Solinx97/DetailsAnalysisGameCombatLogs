@@ -36,7 +36,7 @@ public class CombatDetailsDamageDone : CombatDetailsTemplate
 
             foreach (var item in combatData)
             {
-                var itemHasDamageVariation = _damageVariations.Any(damageVariation => item.Contains(damageVariation));
+                var itemHasDamageVariation = _damageVariations.Any(item.Contains);
                 if (itemHasDamageVariation && item.Contains(player))
                 {
                     var succesfullCombatDataInformation = GetUsefulInformation(item);

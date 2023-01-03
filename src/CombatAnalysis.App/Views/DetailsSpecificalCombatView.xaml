@@ -60,7 +60,7 @@
         
         <DataGrid Background="Transparent" Grid.Row="2" Grid.Column="2" Grid.ColumnSpan="2" GridLinesVisibility="None" 
                  CanUserAddRows="False" CanUserDeleteRows="False" AutoGenerateColumns="False"
-                 Margin="20" ItemsSource="{Binding Combat.Players}" SelectedItem="{Binding SelectedPlayer}">
+                 Margin="20" ItemsSource="{Binding PlayersCombat}" SelectedItem="{Binding SelectedPlayer}">
             <DataGrid.Columns>
                 <DataGridTemplateColumn SortMemberPath="UserName" IsReadOnly="True" MinWidth="200">
                     <DataGridTemplateColumn.CellTemplate>

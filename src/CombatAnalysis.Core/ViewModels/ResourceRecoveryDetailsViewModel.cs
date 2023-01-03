@@ -1,8 +1,10 @@
-﻿using CombatAnalysis.Core.Consts;
+﻿using AutoMapper;
+using CombatAnalysis.CombatParser.Entities;
+using CombatAnalysis.CombatParser.Extensions;
+using CombatAnalysis.CombatParser.Patterns;
+using CombatAnalysis.Core.Consts;
 using CombatAnalysis.Core.Interfaces;
-using CombatAnalysis.Core.Localizations;
 using CombatAnalysis.Core.Models;
-using CombatAnalysis.Core.Services;
 using CombatAnalysis.Core.ViewModels.ViewModelTemplates;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
@@ -10,95 +12,59 @@ using System.Collections.ObjectModel;
 
 namespace CombatAnalysis.Core.ViewModels;
 
-public class ResourceRecoveryDetailsViewModel : GenericTemplate<CombatPlayerModel>
+public class ResourceRecoveryDetailsViewModel : DetailsGenericTemplate<ResourceRecoveryModel, ResourceRecoveryGeneralModel>
 {
-    private readonly CombatParserAPIService _combatParserAPIService;
-
-    private ObservableCollection<ResourceRecoveryModel> _resourceRecoveryInformations;
     private ObservableCollection<ResourceRecoveryModel> _resourceRecoveryInformationsWithoutFilter;
-    private ObservableCollection<string> _resourceRecoverySources;
-    private ObservableCollection<ResourceRecoveryGeneralModel> _resourceRecoveryGeneralInformations;
 
-    public ResourceRecoveryDetailsViewModel(IHttpClientHelper httpClient, ILogger logger, IMemoryCache memoryCache)
+    public ResourceRecoveryDetailsViewModel(IHttpClientHelper httpClient, ILogger logger, IMemoryCache memoryCache, IMapper mapper) : base(httpClient, logger, memoryCache, mapper)
     {
-        _combatParserAPIService = new CombatParserAPIService(httpClient, logger, memoryCache);
-
         BasicTemplate = Templates.Basic;
         BasicTemplate.Parent = this;
-        BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, "Step", 6);
+        BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, nameof(BasicTemplateViewModel.Step), 6);
     }
 
-    #region Properties
-
-    public ObservableCollection<ResourceRecoveryModel> ResourceRecoveryInformations
+    protected override void ChildPrepare(CombatPlayerModel parameter)
     {
-        get { return _resourceRecoveryInformations; }
-        set
-        {
-            SetProperty(ref _resourceRecoveryInformations, value);
-        }
-    }
+        var selectedCombatMap = _mapper.Map<Combat>(SelectedCombat);
 
-    public ObservableCollection<string> ResourceRecoverySources
-    {
-        get { return _resourceRecoverySources; }
-        set
-        {
-            SetProperty(ref _resourceRecoverySources, value);
-        }
-    }
+        var resourceRecovery = new CombatDetailsResourceRecovery(_logger);
+        resourceRecovery.GetData(parameter.UserName, SelectedCombat.Data);
 
-    public ObservableCollection<ResourceRecoveryGeneralModel> ResourceRecoveryGeneralInformations
-    {
-        get { return _resourceRecoveryGeneralInformations; }
-        set
-        {
-            SetProperty(ref _resourceRecoveryGeneralInformations, value);
-        }
-    }
+        var healDoneMap = _mapper.Map<List<ResourceRecoveryModel>>(resourceRecovery.ResourceRecovery);
+        DetailsInformations = new ObservableCollection<ResourceRecoveryModel>(healDoneMap);
 
-    #endregion
-
-    protected override async Task ChildPrepareAsync(CombatPlayerModel parameter)
-    {
-        var player = parameter;
-        SelectedPlayer = player.UserName;
-        TotalValue = player.EnergyRecovery;
-
-        await LoadDetailsAsync(player.Id);
-        await LoadGenericDetailsAsync(player.Id);
+        var healDoneGeneralData = resourceRecovery.GetResourceRecoveryGeneral(resourceRecovery.ResourceRecovery, selectedCombatMap);
+        var healDoneGeneralMap = _mapper.Map<List<ResourceRecoveryGeneralModel>>(healDoneGeneralData);
+        GeneralInformations = new ObservableCollection<ResourceRecoveryGeneralModel>(healDoneGeneralMap);
     }
 
     protected override void Filter()
     {
-        ResourceRecoveryInformations = _resourceRecoveryInformationsWithoutFilter.Any(x => x.SpellOrItem == SelectedSource)
+        DetailsInformations = _resourceRecoveryInformationsWithoutFilter.Any(x => x.SpellOrItem == SelectedSource)
             ? new ObservableCollection<ResourceRecoveryModel>(_resourceRecoveryInformationsWithoutFilter.Where(x => x.SpellOrItem == SelectedSource))
             : _resourceRecoveryInformationsWithoutFilter;
     }
 
     protected override async Task LoadDetailsAsync(int combatPlayerId)
     {
-        var details = await _combatParserAPIService.LoadResourceRecoveryDetailsAsync(combatPlayerId);
-        ResourceRecoveryInformations = new ObservableCollection<ResourceRecoveryModel>(details.ToList());
-
-        GetDetails();
+        var details = await _combatParserAPIService.LoadCombatDetailsByCombatPlayerId<ResourceRecoveryModel>("ResourceRecovery/FindByCombatPlayerId", combatPlayerId);
+        DetailsInformations = new ObservableCollection<ResourceRecoveryModel>(details.ToList());
     }
 
     protected override async Task LoadGenericDetailsAsync(int combatPlayerId)
     {
-        var generalDetails = await _combatParserAPIService.LoadResourceRecoveryGeneralAsync(combatPlayerId);
-        ResourceRecoveryGeneralInformations = new ObservableCollection<ResourceRecoveryGeneralModel>(generalDetails.ToList());
+        var generalDetails = await _combatParserAPIService.LoadCombatDetailsByCombatPlayerId<ResourceRecoveryGeneralModel>("ResourceRecoveryGeneral/FindByCombatPlayerId", combatPlayerId);
+        GeneralInformations = new ObservableCollection<ResourceRecoveryGeneralModel>(generalDetails.ToList());
     }
 
-    protected override void GetDetails()
+    protected override void SetUpFilteredCollection()
     {
-        _resourceRecoveryInformations = new ObservableCollection<ResourceRecoveryModel>(ResourceRecoveryInformations);
-        _resourceRecoveryInformationsWithoutFilter = new ObservableCollection<ResourceRecoveryModel>(ResourceRecoveryInformations);
+        _resourceRecoveryInformationsWithoutFilter = new ObservableCollection<ResourceRecoveryModel>(DetailsInformations);
+    }
 
-        var sources = ResourceRecoveryInformations.Select(x => x.SpellOrItem).Distinct().ToList();
-        var allSourcesName = TranslationSource.Instance["CombatAnalysis.App.Localizations.Resources.ResourceRecoveryDetails.Resource.All"];
-        sources.Insert(0, allSourcesName);
-        ResourceRecoverySources = new ObservableCollection<string>(sources);
+    protected override void SetTotalValue(CombatPlayerModel parameter)
+    {
+        TotalValue = parameter.EnergyRecovery;
     }
 
     protected override void TurnOnAllFilters()

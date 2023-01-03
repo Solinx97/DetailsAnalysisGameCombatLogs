@@ -19,4 +19,6 @@ public class HealDone
     public bool IsCrit { get; set; }
 
     public bool IsFullOverheal { get; set; }
+
+    public int CombatPlayerId { get; set; }
 }

@@ -1,7 +1,7 @@
 ﻿import React, { useState, useEffect } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPlusCircle, faShieldHalved, faHandFist, faBolt, faCalendarPlus, faCalendarXmark, faClockRotateLeft, faSignal, faBookSkull, faCircleNodes } from '@fortawesome/free-solid-svg-icons';
+import { faCheck, faClock, faPlusCircle, faShieldHalved, faHandFist, faBolt, faCalendarPlus, faCalendarXmark, faClockRotateLeft, faSignal, faBookSkull, faCircleNodes } from '@fortawesome/free-solid-svg-icons';
 import { format } from 'date-fns';
 import { useTranslation } from 'react-i18next';
 
@@ -56,9 +56,16 @@ const GeneralAnalysis = () => {
     const combatList = (element) => {
         return (<li key={element.id}>
             <div className="card">
-                <div className="card-body">
-                    <h5 className="card-title">{element.name}</h5>
-                    <p className="card-text">{element.dungeonName}</p>
+                <div className="combat-title">
+                    <div className="card-body">
+                        <h5 className="card-title">{element.name}</h5>
+                        <p className="card-text">{element.dungeonName}</p>
+                    </div>
+                    {!element.isReady ? (
+                        <FontAwesomeIcon icon={faClock} className="list-group-item__not-ready" title={t("NotReady")} />
+                    ) : (
+                        <FontAwesomeIcon icon={faCheck} className="list-group-item__ready" title={t("Ready")} />
+                    )}
                 </div>
                 <ul className="list-group list-group-flush">
                     <li className="list-group-item">
@@ -109,7 +116,11 @@ const GeneralAnalysis = () => {
                     </li>
                 </ul>
                 <div className="card-body">
-                    <NavLink className="card-link" to={`/details-specifical-combat?id=${element.id}`}>{t("MoreDetails")}</NavLink>
+                    {!element.isReady ? (
+                        <div>{t("NeedWait")}</div>
+                    ) : (
+                        <NavLink className="card-link" to={`/details-specifical-combat?id=${element.id}`}>{t("MoreDetails")}</NavLink>
+                    )}
                 </div>
             </div>
         </li>);

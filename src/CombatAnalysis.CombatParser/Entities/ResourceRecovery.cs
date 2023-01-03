@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace CombatAnalysis.CombatParser.Entities;
+﻿namespace CombatAnalysis.CombatParser.Entities;
 
 public class ResourceRecovery
 {
@@ -9,4 +7,6 @@ public class ResourceRecovery
     public TimeSpan Time { get; set; }
 
     public string SpellOrItem { get; set; }
+
+    public int CombatPlayerId { get; set; }
 }

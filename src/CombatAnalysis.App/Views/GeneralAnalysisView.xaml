@@ -1,6 +1,7 @@
 ﻿<views:MvxWpfView
     x:Class="CombatAnalysis.App.Views.GeneralAnalysisView"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:Icon="http://metro.mahapps.com/winfx/xaml/iconpacks"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -42,6 +43,12 @@
 
         <StackPanel Grid.Column="3" Grid.Row="1" Orientation="Horizontal"
                     HorizontalAlignment="Center" VerticalAlignment="Center">
+            <StackPanel>
+                <Button Content="{loc:Loc Refresh}" FontSize="14" Width="100" Command="{Binding RefreshCommand}"
+                        Foreground="CadetBlue" Style="{StaticResource showButton}"/>
+                <TextBlock Text="You can't inspect this combat because it hasn't been uploaded." Margin="5"
+                           Visibility="{Binding CombatIsNotLoaded, Converter={StaticResource BoolToVisibility}, ConverterParameter=true}"/>
+            </StackPanel>
             <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" 
                        Text="{loc:Loc Title}" FontSize="18" FontWeight="Bold"
                        Margin="100 0" Style="{StaticResource titleText}"/>
@@ -153,9 +160,9 @@
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <StackPanel>
-                                <TextBlock Text="Победа" TextAlignment="Center" Margin="10" FontSize="14" FontFamily="Comic Sans MS" Foreground="Green"
+                                <TextBlock Text="{loc:Loc Win}" TextAlignment="Center" Margin="10" FontSize="14" FontFamily="Comic Sans MS" Foreground="Green"
                                            Visibility="{Binding Path=IsWin, Converter={StaticResource BoolToVisibility}, ConverterParameter=true}"/>
-                                <TextBlock Text="Поражение" TextAlignment="Center" Margin="10" FontSize="14" FontFamily="Comic Sans MS" Foreground="Orange"
+                                <TextBlock Text="{loc:Loc Defeat}" TextAlignment="Center" Margin="10" FontSize="14" FontFamily="Comic Sans MS" Foreground="Orange"
                                            Visibility="{Binding Path=IsWin, Converter={StaticResource BoolToVisibility}, ConverterParameter=true:true}"/>
                             </StackPanel>
                         </DataTemplate>
@@ -163,6 +170,26 @@
                     <DataGridTemplateColumn.HeaderTemplate>
                         <DataTemplate>
                             <TextBlock Text="{loc:Loc Status}" Margin="5" TextAlignment="Center" FontSize="14" FontStyle="Oblique"  FontWeight="Bold"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.HeaderTemplate>
+                </DataGridTemplateColumn>
+
+                <DataGridTemplateColumn SortMemberPath="IsReady" IsReadOnly="True" MinWidth="50">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+                                <Icon:PackIconMaterial Visibility="{Binding Path=IsReady, Converter={StaticResource BoolToVisibility}, ConverterParameter=true}"
+                                                   Kind="Check" Foreground="Green" Style="{StaticResource menuButtonIcon}" Width="10" Height="10" Margin="0"
+                                                   HorizontalAlignment="Center" ToolTip="{loc:Loc Ready}" Cursor="Help"/>
+                                <Icon:PackIconMaterial Visibility="{Binding Path=IsReady, Converter={StaticResource BoolToVisibility}, ConverterParameter=true:true}"
+                                                   Kind="Clock" Foreground="MediumVioletRed" Style="{StaticResource menuButtonIcon}" Width="10" Height="10" Margin="0"
+                                                   HorizontalAlignment="Center" ToolTip="{loc:Loc NotReady}" Cursor="Help"/>
+                            </StackPanel>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                    <DataGridTemplateColumn.HeaderTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{loc:Loc Ready}" Margin="5" TextAlignment="Center" FontSize="14" FontStyle="Oblique"  FontWeight="Bold"/>
                         </DataTemplate>
                     </DataGridTemplateColumn.HeaderTemplate>
                 </DataGridTemplateColumn>
