@@ -1,5 +1,4 @@
 ﻿using CombatAnalysis.CombatParserAPI.Models;
-
 namespace CombatAnalysis.CombatParserAPI.Interfaces;
 
 public interface ISaveCombatDataHelper

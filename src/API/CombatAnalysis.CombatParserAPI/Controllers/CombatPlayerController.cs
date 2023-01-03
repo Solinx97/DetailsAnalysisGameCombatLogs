@@ -52,8 +52,9 @@ public class CombatPlayerController : ControllerBase
             {
                 var map = _mapper.Map<CombatPlayerDto>(item);
                 var createdItem = await _service.CreateAsync(map);
+                var createdItemToModel = _mapper.Map<CombatPlayerModel>(createdItem);
 
-                await _saveCombatDataHelper.SaveCombatPlayerDataAsync(createdItem.CombatId, item);
+                await _saveCombatDataHelper.SaveCombatPlayerDataAsync(createdItem.CombatId, createdItemToModel);
             }
 
             await transaction.CommitAsync();
@@ -66,7 +67,6 @@ public class CombatPlayerController : ControllerBase
 
             return BadRequest();
         }
-
         catch (Exception ex)
         {
             _logger.LogError(ex, ex.Message);

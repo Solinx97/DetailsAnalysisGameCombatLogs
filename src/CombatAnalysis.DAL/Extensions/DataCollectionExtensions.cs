@@ -81,6 +81,6 @@ public static class DataCollectionExtensions
         services.AddScoped<IUserRepository, SQLSPUserRepository>();
         services.AddScoped<ITokenRepository, SQLSPTokenRepository>();
 
-        services.AddScoped(typeof(IGenericRepository<,>), typeof(SQLRepository<,>));
+        services.AddScoped(typeof(IGenericRepository<,>), typeof(SQLSPRepository<,>));
     }
 }
