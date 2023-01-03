@@ -98,11 +98,6 @@ public class SaveCombatDataHelper : ISaveCombatDataHelper
 
         var resourceRecoveryGeneralData = resourceRecoveryDetails.GetResourceRecoveryGeneral(resourceRecoveryDetails.ResourceRecovery, combat);
         SaveData<ResourceRecoveryGeneral, ResourceRecoveryGeneralDto>(resourceRecoveryGeneralData.ToList(), (detailsItem) => _resourceRecoveryGeneralService.CreateAsync(detailsItem).GetAwaiter().GetResult(), combatPlayer.Id);
-
-        combatModel.IsReady = true;
-        combatModel.Data = new List<string>();
-        combatModel.Players = new List<CombatPlayerModel>();
-        await _httpClient.PutAsync("Combat", JsonContent.Create(combatModel));
     }
 
     private void SaveData<T, T2>(List<T> data, Action<T2> detailsItem, int combatPlayerId)

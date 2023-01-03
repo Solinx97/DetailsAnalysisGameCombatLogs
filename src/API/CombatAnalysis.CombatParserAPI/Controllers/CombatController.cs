@@ -64,7 +64,18 @@ public class CombatController : ControllerBase
                 item.CombatId = createdItem.Id;
             }
 
-            await _httpClient.PostAsync("CombatPlayer", JsonContent.Create(model.Players));
+            var response = await _httpClient.PostAsync("CombatPlayer", JsonContent.Create(model.Players));
+            if (response.StatusCode == System.Net.HttpStatusCode.BadRequest)
+            {
+                return BadRequest();
+            }
+
+            createdItem.IsReady = true;
+            var rowsAffected = await _service.UpdateAsync(createdItem);
+            if (rowsAffected == 0)
+            {
+                return BadRequest();
+            }
 
             return Ok(createdItem);
         }

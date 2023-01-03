@@ -42,10 +42,10 @@ public class CombatParserAPIService
                 await SaveCombatLogByUserAsync(createdCombatLog.Id, logType);
             }
 
-            await Parallel.ForEachAsync(combats, async (item, token) =>
+            Parallel.ForEach(combats, (item) =>
             {
                 item.CombatLogId = createdCombatLog.Id;
-                await _httpClient.PostAsync("Combat", JsonContent.Create(item));
+                _httpClient.PostAsync("Combat", JsonContent.Create(item));
             });
 
             await SetReadyForCombatLog(createdCombatLog);
