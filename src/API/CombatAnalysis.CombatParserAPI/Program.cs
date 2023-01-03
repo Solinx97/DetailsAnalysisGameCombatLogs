@@ -26,6 +26,8 @@ builder.Services.AddSingleton<ILogger>(logger);
 
 builder.Services.AddTransient<IHttpClientHelper, HttpClientHelper>();
 
+builder.Services.AddScoped<ISaveCombatDataHelper, SaveCombatDataHelper>();
+
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();

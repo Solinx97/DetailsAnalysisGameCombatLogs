@@ -39,6 +39,7 @@ public static class DataCollectionExtensions
         {
             options.UseSqlServer(connection);
         });
+
         services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
                 .AddCookie();
 
@@ -80,6 +81,6 @@ public static class DataCollectionExtensions
         services.AddScoped<IUserRepository, SQLSPUserRepository>();
         services.AddScoped<ITokenRepository, SQLSPTokenRepository>();
 
-        services.AddScoped(typeof(IGenericRepository<,>), typeof(SQLSPRepository<,>));
+        services.AddScoped(typeof(IGenericRepository<,>), typeof(SQLRepository<,>));
     }
 }
