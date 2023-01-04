@@ -1,6 +1,6 @@
 ﻿namespace CombatAnalysis.CombatParser.Entities;
 
-public class HealDoneGeneral
+public class HealDoneGeneral : DetailsBase
 {
     public int Value { get; set; }
 
@@ -17,6 +17,4 @@ public class HealDoneGeneral
     public int MaxValue { get; set; }
 
     public double AverageValue { get; set; }
-
-    public int CombatPlayerId { get; set; }
 }

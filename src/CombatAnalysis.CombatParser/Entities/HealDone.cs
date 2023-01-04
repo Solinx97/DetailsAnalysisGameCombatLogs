@@ -1,6 +1,6 @@
 ﻿namespace CombatAnalysis.CombatParser.Entities;
 
-public class HealDone
+public class HealDone : DetailsBase
 {
     public int ValueWithOverheal { get; set; }
 
@@ -19,6 +19,4 @@ public class HealDone
     public bool IsCrit { get; set; }
 
     public bool IsFullOverheal { get; set; }
-
-    public int CombatPlayerId { get; set; }
 }

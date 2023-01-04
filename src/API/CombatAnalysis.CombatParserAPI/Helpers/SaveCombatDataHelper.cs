@@ -101,12 +101,12 @@ public class SaveCombatDataHelper : ISaveCombatDataHelper
     }
 
     private void SaveData<T, T2>(List<T> data, Action<T2> detailsItem, int combatPlayerId)
-        where T : class
+        where T : DetailsBase
         where T2 : class
     {
         foreach (var item in data)
         {
-            item.GetType().GetProperty("CombatPlayerId").SetValue(item, combatPlayerId);
+            item.CombatPlayerId = combatPlayerId;
 
             var map = _mapper.Map<T2>(item);
             detailsItem?.Invoke(map);

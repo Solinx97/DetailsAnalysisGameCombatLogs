@@ -1,6 +1,6 @@
 ﻿namespace CombatAnalysis.CombatParser.Entities;
 
-public class DamageDoneGeneral
+public class DamageDoneGeneral : DetailsBase
 {
     public int Value { get; set; }
 
@@ -19,6 +19,4 @@ public class DamageDoneGeneral
     public int MaxValue { get; set; }
 
     public double AverageValue { get; set; }
-
-    public int CombatPlayerId { get; set; }
 }
