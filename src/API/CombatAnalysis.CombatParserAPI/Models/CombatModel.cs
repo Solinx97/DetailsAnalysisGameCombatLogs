@@ -28,6 +28,8 @@ public class CombatModel
 
     public DateTimeOffset FinishDate { get; set; }
 
+    public List<CombatPlayerModel> Players { get; set; }
+
     public string Duration
     {
         get { return (FinishDate - StartDate).ToString(@"hh\:mm\:ss"); }

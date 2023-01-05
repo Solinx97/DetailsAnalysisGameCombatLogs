@@ -1,6 +1,6 @@
 ﻿namespace CombatAnalysis.CombatParser.Entities;
 
-public class DamageTaken
+public class DamageTaken : DetailsBase
 {
     public int Value { get; set; }
 
@@ -37,6 +37,4 @@ public class DamageTaken
     public bool IsAbsorb { get; set; }
 
     public bool IsCrushing { get; set; }
-
-    public int CombatPlayerId { get; set; }
 }

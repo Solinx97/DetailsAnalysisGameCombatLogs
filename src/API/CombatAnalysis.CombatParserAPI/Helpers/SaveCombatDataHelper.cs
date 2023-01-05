@@ -1,4 +1,6 @@
 ﻿using AutoMapper;
+using CombatAnalysis.BL.DTO;
+using CombatAnalysis.BL.Interfaces;
 using CombatAnalysis.CombatParser.Entities;
 using CombatAnalysis.CombatParser.Extensions;
 using CombatAnalysis.CombatParser.Patterns;
@@ -8,17 +10,36 @@ using System.Text;
 
 namespace CombatAnalysis.CombatParserAPI.Helpers;
 
-public class SaveCombatDataHelper
+public class SaveCombatDataHelper : ISaveCombatDataHelper
 {
     private readonly IMapper _mapper;
     private readonly IHttpClientHelper _httpClient;
     private readonly ILogger _logger;
+    private readonly IService<DamageDoneDto, int> _damageDoneService;
+    private readonly IService<DamageDoneGeneralDto, int> _damageDoneGeneralService;
+    private readonly IService<HealDoneDto, int> _healDoneService;
+    private readonly IService<HealDoneGeneralDto, int> _healDoneGeneralService;
+    private readonly IService<DamageTakenDto, int> _damageTakenService;
+    private readonly IService<DamageTakenGeneralDto, int> _damageTakenGeneralService;
+    private readonly IService<ResourceRecoveryDto, int> _resourceRecoveryService;
+    private readonly IService<ResourceRecoveryGeneralDto, int> _resourceRecoveryGeneralService;
 
-    public SaveCombatDataHelper(IMapper mapper, IHttpClientHelper httpClient, ILogger logger)
+    public SaveCombatDataHelper(IMapper mapper, IHttpClientHelper httpClient, ILogger logger, IService<DamageDoneDto, int> damageDoneService,
+        IService<DamageDoneGeneralDto, int> damageDoneGeneralService, IService<HealDoneDto, int> healDoneService,
+        IService<HealDoneGeneralDto, int> healDoneGeneralService, IService<DamageTakenDto, int> damageTakenService, IService<DamageTakenGeneralDto, int> damageTakenGeneralService,
+        IService<ResourceRecoveryDto, int> resourceRecoveryService, IService<ResourceRecoveryGeneralDto, int> resourceRecoveryGeneralService)
     {
         _mapper = mapper;
         _httpClient = httpClient;
         _logger = logger;
+        _damageDoneService = damageDoneService;
+        _damageDoneGeneralService = damageDoneGeneralService;
+        _healDoneService = healDoneService;
+        _healDoneGeneralService = healDoneGeneralService;
+        _damageTakenService = damageTakenService;
+        _damageTakenGeneralService = damageTakenGeneralService;
+        _resourceRecoveryService = resourceRecoveryService;
+        _resourceRecoveryGeneralService = resourceRecoveryGeneralService;
     }
 
     public static List<string> CombatData { get; set; }
@@ -49,51 +70,46 @@ public class SaveCombatDataHelper
         var combatModel = await combatResponse.Content.ReadFromJsonAsync<CombatModel>();
         var combat = _mapper.Map<Combat>(combatModel);
 
-        var tasks = new List<Task>();
-
         var damageDoneDetails = new CombatDetailsDamageDone(_logger);
         damageDoneDetails.GetData(combatPlayer.UserName, CombatData);
-        tasks.Add(SaveData(damageDoneDetails.DamageDone, nameof(DamageDone), combatPlayer.Id));
+
+        SaveData<DamageDone, DamageDoneDto>(damageDoneDetails.DamageDone, (detailsItem) => _damageDoneService.CreateAsync(detailsItem).GetAwaiter().GetResult(), combatPlayer.Id);
 
         var damageDoneGeneralData = damageDoneDetails.GetDamageDoneGeneral(damageDoneDetails.DamageDone, combat);
-        tasks.Add(SaveData(damageDoneGeneralData.ToList(), nameof(DamageDoneGeneral), combatPlayer.Id));
+        SaveData<DamageDoneGeneral, DamageDoneGeneralDto>(damageDoneGeneralData.ToList(), (detailsItem) => _damageDoneGeneralService.CreateAsync(detailsItem).GetAwaiter().GetResult(), combatPlayer.Id);
 
         var healDoneDetails = new CombatDetailsHealDone(_logger);
         healDoneDetails.GetData(combatPlayer.UserName, CombatData);
-        tasks.Add(SaveData(healDoneDetails.HealDone, nameof(HealDone), combatPlayer.Id));
+        SaveData<HealDone, HealDoneDto>(healDoneDetails.HealDone, (detailsItem) => _healDoneService.CreateAsync(detailsItem).GetAwaiter().GetResult(), combatPlayer.Id);
 
         var healDoneGeneralData = healDoneDetails.GetHealDoneGeneral(healDoneDetails.HealDone, combat);
-        tasks.Add(SaveData(healDoneGeneralData.ToList(), nameof(HealDoneGeneral), combatPlayer.Id));
+        SaveData<HealDoneGeneral, HealDoneGeneralDto>(healDoneGeneralData.ToList(), (detailsItem) => _healDoneGeneralService.CreateAsync(detailsItem).GetAwaiter().GetResult(), combatPlayer.Id);
 
         var damageTakenDetails = new CombatDetailsDamageTaken(_logger);
         damageTakenDetails.GetData(combatPlayer.UserName, CombatData);
-        tasks.Add(SaveData(damageTakenDetails.DamageTaken, nameof(DamageTaken), combatPlayer.Id));
+        SaveData<DamageTaken, DamageTakenDto>(damageTakenDetails.DamageTaken, (detailsItem) => _damageTakenService.CreateAsync(detailsItem).GetAwaiter().GetResult(), combatPlayer.Id);
 
         var damageTakenGeneralData = damageTakenDetails.GetDamageTakenGeneral(damageTakenDetails.DamageTaken, combat);
-        tasks.Add(SaveData(damageTakenGeneralData.ToList(), nameof(DamageTakenGeneral), combatPlayer.Id));
+        SaveData<DamageTakenGeneral, DamageTakenGeneralDto>(damageTakenGeneralData.ToList(), (detailsItem) => _damageTakenGeneralService.CreateAsync(detailsItem).GetAwaiter().GetResult(), combatPlayer.Id);
 
         var resourceRecoveryDetails = new CombatDetailsResourceRecovery(_logger);
         resourceRecoveryDetails.GetData(combatPlayer.UserName, CombatData);
-        tasks.Add(SaveData(resourceRecoveryDetails.ResourceRecovery, nameof(ResourceRecovery), combatPlayer.Id));
+        SaveData<ResourceRecovery, ResourceRecoveryDto>(resourceRecoveryDetails.ResourceRecovery, (detailsItem) => _resourceRecoveryService.CreateAsync(detailsItem).GetAwaiter().GetResult(), combatPlayer.Id);
 
         var resourceRecoveryGeneralData = resourceRecoveryDetails.GetResourceRecoveryGeneral(resourceRecoveryDetails.ResourceRecovery, combat);
-        tasks.Add(SaveData(resourceRecoveryGeneralData.ToList(), nameof(ResourceRecoveryGeneral), combatPlayer.Id));
-
-        await Task.WhenAll(tasks);
-
-        combatModel.IsReady = true;
-        combatModel.Data = new List<string>();
-        await _httpClient.PutAsync("Combat", JsonContent.Create(combatModel));
+        SaveData<ResourceRecoveryGeneral, ResourceRecoveryGeneralDto>(resourceRecoveryGeneralData.ToList(), (detailsItem) => _resourceRecoveryGeneralService.CreateAsync(detailsItem).GetAwaiter().GetResult(), combatPlayer.Id);
     }
 
-    private async Task SaveData<T>(List<T> data, string dataName, int combatPlayerId)
-        where T : class
+    private void SaveData<T, T2>(List<T> data, Action<T2> detailsItem, int combatPlayerId)
+        where T : DetailsBase
+        where T2 : class
     {
         foreach (var item in data)
         {
-            item.GetType().GetProperty("CombatPlayerId").SetValue(item, combatPlayerId);
+            item.CombatPlayerId = combatPlayerId;
 
-            await _httpClient.PostAsync(dataName, JsonContent.Create(item));
+            var map = _mapper.Map<T2>(item);
+            detailsItem?.Invoke(map);
         }
     }
 }

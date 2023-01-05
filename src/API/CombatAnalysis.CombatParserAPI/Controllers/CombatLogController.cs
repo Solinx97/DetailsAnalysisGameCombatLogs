@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
 using CombatAnalysis.BL.DTO;
 using CombatAnalysis.BL.Interfaces;
-using CombatAnalysis.CombatParserAPI.Helpers;
 using CombatAnalysis.CombatParserAPI.Interfaces;
 using CombatAnalysis.CombatParserAPI.Models;
 using Microsoft.AspNetCore.Mvc;
@@ -15,14 +14,14 @@ public class CombatLogController : ControllerBase
     private readonly IService<CombatLogDto, int> _service;
     private readonly IMapper _mapper;
     private readonly ILogger _logger;
-    private readonly SaveCombatDataHelper _saveCombatDataHelper;
+    private readonly ISaveCombatDataHelper _saveCombatDataHelper;
 
-    public CombatLogController(IService<CombatLogDto, int> service, IMapper mapper, IHttpClientHelper httpClient, ILogger logger)
+    public CombatLogController(IService<CombatLogDto, int> service, IMapper mapper, ILogger logger, ISaveCombatDataHelper saveCombatDataHelper)
     {
         _service = service;
         _mapper = mapper;
         _logger = logger;
-        _saveCombatDataHelper = new SaveCombatDataHelper(mapper, httpClient, logger);
+        _saveCombatDataHelper = saveCombatDataHelper;
     }
 
     [HttpGet]

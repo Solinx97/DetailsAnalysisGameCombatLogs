@@ -39,6 +39,7 @@ public static class DataCollectionExtensions
         {
             options.UseSqlServer(connection);
         });
+
         services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
                 .AddCookie();
 

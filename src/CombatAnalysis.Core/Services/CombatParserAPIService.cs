@@ -36,20 +36,21 @@ public class CombatParserAPIService
 
         try
         {
-            var createdCombatLogId = await SaveCombatLogAsync();
+            var createdCombatLog = await SaveCombatLogAsync();
             if (logType == LogType.Public || logType == LogType.Private)
             {
-                await SaveCombatLogByUserAsync(createdCombatLogId, logType);
+                await SaveCombatLogByUserAsync(createdCombatLog.Id, logType);
             }
 
-            foreach (var item in combats)
+            Parallel.ForEach(combats, (item) =>
             {
-                await SaveCombatDataAsync(item, createdCombatLogId);
-            }
+                item.CombatLogId = createdCombatLog.Id;
+                _httpClient.PostAsync("Combat", JsonContent.Create(item));
+            });
 
-            await SetReadyForCombatLog(createdCombatLogId);
+            await SetReadyForCombatLog(createdCombatLog);
 
-            return createdCombatLogId;
+            return createdCombatLog.Id;
         }
         catch (HttpRequestException ex)
         {
@@ -156,7 +157,7 @@ public class CombatParserAPIService
         return healDones;
     }
 
-    private async Task<int> SaveCombatLogAsync()
+    private async Task<CombatLogModel> SaveCombatLogAsync()
     {
         var dungeonNames = _combats
              .GroupBy(group => group.DungeonName)
@@ -166,7 +167,7 @@ public class CombatParserAPIService
         var combatLogResponse = await _httpClient.PostAsync("CombatLog", JsonContent.Create(dungeonNames));
         var createdCombatLog = await combatLogResponse.Content.ReadFromJsonAsync<CombatLogModel>();
 
-        return createdCombatLog.Id;
+        return createdCombatLog;
     }
 
     private async Task SaveCombatLogByUserAsync(int combatLogId, LogType logType)
@@ -187,23 +188,8 @@ public class CombatParserAPIService
         await _httpClient.PostAsync("CombatLogByUser", JsonContent.Create(combatLogByUser));
     }
 
-    private async Task SaveCombatDataAsync(CombatModel combat, int createdCombatLogId)
+    private async Task SetReadyForCombatLog(CombatLogModel combatLog)
     {
-        combat.CombatLogId = createdCombatLogId;
-        var combatDataResponse = await _httpClient.PostAsync("Combat", JsonContent.Create(combat));
-        var createdCombat = await combatDataResponse.Content.ReadFromJsonAsync<CombatModel>();
-
-        Parallel.ForEach(combat.Players, (item) =>
-        {
-            item.CombatId = createdCombat.Id;
-            _httpClient.PostAsync("CombatPlayer", JsonContent.Create(item));
-        });
-    }
-
-    private async Task SetReadyForCombatLog(int createdCombatLogId)
-    {
-        var combatLogResponse = await _httpClient.GetAsync($"CombatLog/{createdCombatLogId}");
-        var combatLog = await combatLogResponse.Content.ReadFromJsonAsync<CombatLogModel>();
         combatLog.IsReady = true;
 
         await _httpClient.PutAsync("CombatLog", JsonContent.Create(combatLog));

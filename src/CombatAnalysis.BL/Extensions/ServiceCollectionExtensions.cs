@@ -1,5 +1,5 @@
-﻿using CombatAnalysis.BL.DTO.Chat;
-using CombatAnalysis.BL.DTO;
+﻿using CombatAnalysis.BL.DTO;
+using CombatAnalysis.BL.DTO.Chat;
 using CombatAnalysis.BL.DTO.User;
 using CombatAnalysis.BL.Interfaces;
 using CombatAnalysis.BL.Services;
@@ -18,6 +18,8 @@ public static class ServiceCollectionExtensions
         services.RegisterDependenciesForDAL(configuration, connectionName);
 
         services.AddScoped<IUserService<AppUserDto>, UserService>();
+
+        services.AddScoped<ISqlContextService, SqlContextService>();
 
         services.AddScoped<IService<PersonalChatDto, int>, PersonalChatService>();
         services.AddScoped<IService<PersonalChatMessageDto, int>, PersonalChatMessageService>();

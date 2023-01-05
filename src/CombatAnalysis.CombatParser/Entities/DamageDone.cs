@@ -1,6 +1,6 @@
 ﻿namespace CombatAnalysis.CombatParser.Entities;
 
-public class DamageDone
+public class DamageDone : DetailsBase
 {
     public int Value { get; set; }
 
@@ -25,6 +25,4 @@ public class DamageDone
     public bool IsImmune { get; set; }
 
     public bool IsCrit { get; set; }
-
-    public int CombatPlayerId { get; set; }
 }
