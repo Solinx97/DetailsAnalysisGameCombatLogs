@@ -14,7 +14,7 @@ namespace CombatAnalysis.Core.ViewModels.Chat;
 
 public class GroupChatMessagesViewModel : MvxViewModel, IImprovedMvxViewModel
 {
-    private const int MessagesUpdateTimeIsMs = 250;
+    private const int MessagesUpdateTimeIsMs = 500;
 
     private readonly IHttpClientHelper _httpClientHelper;
     private readonly IMemoryCache _memoryCache;
@@ -54,7 +54,7 @@ public class GroupChatMessagesViewModel : MvxViewModel, IImprovedMvxViewModel
         CloseInviteToChatCommand = new MvxCommand(SwitchInviteToGroupChat);
         TurnOnEditModeCommand = new MvxCommand(() => IsEditMode = !IsEditMode);
         EditMessageCommand = new MvxAsyncCommand(EditMessageAsync);
-        RemoveMessageCommand = new MvxCommand(SwitchInviteToGroupChat);
+        RemoveMessageCommand = new MvxAsyncCommand(RemoveMessageAsync);
 
         Messages = new ObservableCollection<GroupChatMessageModel>();
         _allMessages = new List<GroupChatMessageModel>();
@@ -79,7 +79,7 @@ public class GroupChatMessagesViewModel : MvxViewModel, IImprovedMvxViewModel
 
     public IMvxAsyncCommand EditMessageCommand { get; set; }
 
-    public IMvxCommand RemoveMessageCommand { get; set; }
+    public IMvxAsyncCommand RemoveMessageCommand { get; set; }
 
     #endregion
 
@@ -364,9 +364,23 @@ public class GroupChatMessagesViewModel : MvxViewModel, IImprovedMvxViewModel
         IsEditMode= false;
     }
 
+    public async Task RemoveMessageAsync()
+    {
+        _httpClientHelper.BaseAddress = Port.ChatApi;
+        var response = await _httpClientHelper.DeletAsync($"GroupChatMessage/{SelectedMessage.Id}");
+        if (response.StatusCode == System.Net.HttpStatusCode.OK)
+        {
+            await AsyncDispatcher.ExecuteOnMainThreadAsync(() =>
+            {
+                Messages.Remove(Messages[SelectedMessageIndex]);
+                SelectedMessage = null;
+            });
+        }
+    }
+
     private void InitLoadMessages(object obj)
     {
-        Task.Run(LoadMessagesAsync);
+        Task.Run(LoadMessagesAsync).Wait();
         AsyncDispatcher.ExecuteOnMainThreadAsync(() =>
         {
             Fill();

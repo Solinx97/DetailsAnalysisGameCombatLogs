@@ -47,13 +47,12 @@ public class HealDoneGeneralController : ControllerBase
         }
     }
 
-    [HttpDelete]
-    public async Task<IActionResult> Delete(HealDoneGeneralModel model)
+    [HttpDelete("{id:int:min(1)}")]
+    public async Task<IActionResult> Delete(int id)
     {
         try
         {
-            var map = _mapper.Map<HealDoneGeneralDto>(model);
-            var deletedId = await _service.DeleteAsync(map);
+            var deletedId = await _service.DeleteAsync(id);
 
             return Ok(deletedId);
         }

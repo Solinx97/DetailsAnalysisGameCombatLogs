@@ -31,19 +31,18 @@ public class FirebaseRepositroy<TModel, TIdType> : IGenericRepository<TModel, TI
         return result.Object;
     }
 
-    public async Task<int> DeleteAsync(TModel item)
+    public async Task<int> DeleteAsync(int id)
     {
         var data = await _context.FirebaseClient
               .Child(typeof(TModel).Name)
               .OnceAsync<TModel>();
 
-        var id = item.GetType().GetProperty("Id")?.GetValue(item);
         var result = data.Select(x => new KeyValuePair<string, TModel>(x.Key, x.Object))
             .AsEnumerable()
             .FirstOrDefault(x => x.Value.GetType().GetProperty("Id").GetValue(x.Value).Equals(id));
 
         await _context.FirebaseClient
-                     .Child(item.GetType().Name)
+                     .Child(typeof(TModel).Name)
                      .Child(result.Key)
                      .DeleteAsync();
 

@@ -58,7 +58,7 @@
                         </StackPanel>
                     </Button>
 
-                    <Button mvx:Bi.nd="Command RemoveMessageCommand" IsEnabled="False" ToolTip="{loc:Loc Close}">
+                    <Button mvx:Bi.nd="Command RemoveMessageCommand" ToolTip="{loc:Loc Close}">
                         <Button.Style>
                             <Style TargetType="Button" BasedOn="{StaticResource textBoxButton}">
                                 <Style.Triggers>

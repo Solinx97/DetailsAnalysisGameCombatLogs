@@ -27,14 +27,11 @@ internal class CombatLogByUserService : IService<CombatLogByUserDto, int>
         return CreateInternalAsync(item);
     }
 
-    public Task<int> DeleteAsync(CombatLogByUserDto item)
+    public async Task<int> DeleteAsync(int id)
     {
-        if (item == null)
-        {
-            throw new ArgumentNullException(nameof(CombatLogByUserDto), $"The {nameof(CombatLogByUserDto)} can't be null");
-        }
+        var rowsAffected = await _repository.DeleteAsync(id);
 
-        return DeleteInternalAsync(item);
+        return rowsAffected;
     }
 
     public async Task<IEnumerable<CombatLogByUserDto>> GetAllAsync()
@@ -78,14 +75,6 @@ internal class CombatLogByUserService : IService<CombatLogByUserDto, int>
         var resultMap = _mapper.Map<CombatLogByUserDto>(createdItem);
 
         return resultMap;
-    }
-
-    private async Task<int> DeleteInternalAsync(CombatLogByUserDto item)
-    {
-        var map = _mapper.Map<CombatLogByUser>(item);
-        var rowsAffected = await _repository.DeleteAsync(map);
-
-        return rowsAffected;
     }
 
     private async Task<int> UpdateInternalAsync(CombatLogByUserDto item)

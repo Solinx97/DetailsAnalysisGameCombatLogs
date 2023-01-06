@@ -27,14 +27,11 @@ internal class DamageDoneService : IService<DamageDoneDto, int>
         return CreateInternalAsync(item);
     }
 
-    public Task<int> DeleteAsync(DamageDoneDto item)
+    public async Task<int> DeleteAsync(int id)
     {
-        if (item == null)
-        {
-            throw new ArgumentNullException(nameof(DamageDoneDto), $"The {nameof(DamageDoneDto)} can't be null");
-        }
+        var rowsAffected = await _repository.DeleteAsync(id);
 
-        return DeleteInternalAsync(item);
+        return rowsAffected;
     }
 
     public async Task<IEnumerable<DamageDoneDto>> GetAllAsync()
@@ -94,30 +91,6 @@ internal class DamageDoneService : IService<DamageDoneDto, int>
         var resultMap = _mapper.Map<DamageDoneDto>(createdItem);
 
         return resultMap;
-    }
-
-    private async Task<int> DeleteInternalAsync(DamageDoneDto item)
-    {
-        if (string.IsNullOrEmpty(item.FromPlayer))
-        {
-            throw new ArgumentNullException(nameof(DamageDoneDto), 
-                $"The property {nameof(DamageDoneDto.FromPlayer)} of the {nameof(DamageDoneDto)} object can't be null or empty");
-        }
-        if (string.IsNullOrEmpty(item.ToEnemy))
-        {
-            throw new ArgumentNullException(nameof(DamageDoneDto),
-                $"The property {nameof(DamageDoneDto.ToEnemy)} of the {nameof(DamageDoneDto)} object can't be null or empty");
-        }
-        if (string.IsNullOrEmpty(item.SpellOrItem))
-        {
-            throw new ArgumentNullException(nameof(DamageDoneDto),
-                $"The property {nameof(DamageDoneDto.SpellOrItem)} of the {nameof(DamageDoneDto)} object can't be null or empty");
-        }
-
-        var map = _mapper.Map<DamageDone>(item);
-        var rowsAffected = await _repository.DeleteAsync(map);
-
-        return rowsAffected;
     }
 
     private async Task<int> UpdateInternalAsync(DamageDoneDto item)

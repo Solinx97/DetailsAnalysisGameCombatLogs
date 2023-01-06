@@ -27,14 +27,11 @@ internal class CombatPlayerService : IService<CombatPlayerDto, int>
         return CreateInternalAsync(item);
     }
 
-    public Task<int> DeleteAsync(CombatPlayerDto item)
+    public async Task<int> DeleteAsync(int id)
     {
-        if (item == null)
-        {
-            throw new ArgumentNullException(nameof(CombatPlayerDto), $"The {nameof(CombatPlayerDto)} can't be null");
-        }
+        var rowsAffected = await _repository.DeleteAsync(id);
 
-        return DeleteInternalAsync(item);
+        return rowsAffected;
     }
 
     public async Task<IEnumerable<CombatPlayerDto>> GetAllAsync()
@@ -84,20 +81,6 @@ internal class CombatPlayerService : IService<CombatPlayerDto, int>
         var resultMap = _mapper.Map<CombatPlayerDto>(createdItem);
 
         return resultMap;
-    }
-
-    private async Task<int> DeleteInternalAsync(CombatPlayerDto item)
-    {
-        if (string.IsNullOrEmpty(item.UserName))
-        {
-            throw new ArgumentNullException(nameof(CombatPlayerDto),
-                $"The property {nameof(CombatPlayerDto.UserName)} of the {nameof(CombatPlayerDto)} object can't be null or empty");
-        }
-
-        var map = _mapper.Map<CombatPlayer>(item);
-        var rowsAffected = await _repository.DeleteAsync(map);
-
-        return rowsAffected;
     }
 
     private async Task<int> UpdateInternalAsync(CombatPlayerDto item)

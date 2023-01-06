@@ -76,13 +76,12 @@ public class PersonalChatMessageController : ControllerBase
         }
     }
 
-    [HttpDelete]
-    public async Task<IActionResult> Delete(PersonalChatMessageModel model)
+    [HttpDelete("{id:int:min(1)}")]
+    public async Task<IActionResult> Delete(int id)
     {
         try
         {
-            var map = _mapper.Map<PersonalChatMessageDto>(model);
-            var result = await _service.DeleteAsync(map);
+            var result = await _service.DeleteAsync(id);
 
             return Ok(result);
         }

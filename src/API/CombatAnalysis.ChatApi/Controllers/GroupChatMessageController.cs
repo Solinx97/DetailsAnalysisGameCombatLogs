@@ -76,13 +76,12 @@ public class GroupChatMessageController : ControllerBase
         }
     }
 
-    [HttpDelete]
-    public async Task<IActionResult> Delete(GroupChatMessageModel model)
+    [HttpDelete("{id:int:min(1)}")]
+    public async Task<IActionResult> Delete(int id)
     {
         try
         {
-            var map = _mapper.Map<GroupChatMessageDto>(model);
-            var result = await _service.DeleteAsync(map);
+            var result = await _service.DeleteAsync(id);
 
             return Ok(result);
         }
