@@ -33,7 +33,28 @@ const useHealDoneHelper = (combatPlayerId, detailsType) => {
         return list;
     }
 
-    return [getListAsync, getDetailsDataAsync];
+    const getFilteredList = (data) => {
+        let list = null;
+
+        switch (detailsType) {
+            case "DamageDone":
+                list = <DamageDoneHelper detailsData={data} />
+                break;
+            case "HealDone":
+                list = <HealDoneHelper detailsData={data} />
+                break;
+            case "DamageTaken":
+                list = <DamageTakenHelper detailsData={data} />
+                break;
+            case "ResourceRecovery":
+                list = <ResourceRecoveryHelper detailsData={data} />
+                break;
+        }
+
+        return list;
+    }
+
+    return [getListAsync, getFilteredList, getDetailsDataAsync];
 }
 
 export default useHealDoneHelper;
