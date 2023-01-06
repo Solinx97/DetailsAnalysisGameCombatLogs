@@ -13,7 +13,7 @@ namespace CombatAnalysis.Core.ViewModels.Chat;
 
 public class PersonalChatMessagesVewModel : MvxViewModel, IImprovedMvxViewModel
 {
-    private const int MessagesUpdateTimeIsMs = 500;
+    private const int MessagesUpdateTimeIsMs = 250;
 
     private readonly IHttpClientHelper _httpClientHelper;
     private readonly IMemoryCache _memoryCache;
