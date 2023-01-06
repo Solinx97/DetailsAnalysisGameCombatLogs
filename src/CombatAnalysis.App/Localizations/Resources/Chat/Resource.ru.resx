@@ -126,6 +126,9 @@
   <data name="AttachDocument" xml:space="preserve">
     <value>Прикрепить документ</value>
   </data>
+  <data name="Close" xml:space="preserve">
+    <value>Закрыть</value>
+  </data>
   <data name="Copy" xml:space="preserve">
     <value>Копировать</value>
   </data>

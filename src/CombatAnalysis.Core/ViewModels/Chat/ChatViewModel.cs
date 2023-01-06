@@ -3,55 +3,41 @@ using CombatAnalysis.Core.Enums;
 using CombatAnalysis.Core.Interfaces;
 using CombatAnalysis.Core.Models.Chat;
 using CombatAnalysis.Core.Models.User;
+using CombatAnalysis.Core.ViewModels.Base;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
+using MvvmCross;
 using MvvmCross.Commands;
-using MvvmCross.ViewModels;
 using System.Collections.ObjectModel;
 using System.Net.Http.Json;
 
-namespace CombatAnalysis.Core.ViewModels;
+namespace CombatAnalysis.Core.ViewModels.Chat;
 
-public class ChatViewModel : MvxViewModel, IImprovedMvxViewModel
+public class ChatViewModel : ParentTemplate
 {
-    private const int GroupChatMessagesUpdateTimeIsMs = 500;
-    private const int PersonalChatMessagesUpdateTimeIsMs = 500;
-
     private readonly IHttpClientHelper _httpClientHelper;
     private readonly ILogger _logger;
 
-    private IImprovedMvxViewModel _basicTemplate;
+    private IImprovedMvxViewModel _personalChatMessagesTemplate;
+    private IImprovedMvxViewModel _groupChatMessagesTemplate;
     private IMemoryCache _memoryCache;
-    private ObservableCollection<GroupChatMessageModel> _groupChatMessages;
-    private ObservableCollection<PersonalChatMessageModel> _personalChatMessages;
     private ObservableCollection<GroupChatModel> _myGroupChats;
     private ObservableCollection<GroupChatModel> _groupChats;
     private ObservableCollection<PersonalChatModel> _personalChats;
     private ObservableCollection<AppUserModel> _users;
-    private ObservableCollection<AppUserModel> _usersForInviteToGroupChat;
     private List<AppUserModel> _allUsers;
     private List<GroupChatModel> _allGroupChats;
     private string _inputedUserEmail;
-    private string _inputedUserEmailForInviteToGroupChat;
     private string _inputedGroupChatName;
     private int _selectedUsersIndex = -1;
-    private int _selectedUsersForInviteToGroupChatIndex = -1;
     private int _selectedGroupChatsIndex = -1;
-    private bool _isMyMessage = true;
-    private string _selectedChatName;
     private GroupChatModel _selectedMyGroupChat;
     private PersonalChatModel _selectedPersonalChat;
     private int _selectedMyGroupChatIndex = -1;
     private int _selectedPersonalChatIndex = -1;
-    private string _message;
-    private bool _groupChatMenuIsVisibly;
     private LoadingStatus _groupChatLoadingResponse;
     private LoadingStatus _personalChatLoadingResponse;
-    private LoadingStatus _addUserToGroupChatResponse;
-    private Timer _groupChatMessagesUpdateTimer;
-    private Timer _personalChatMessagesUpdateTimer;
     private AppUserModel _myAccount;
-    private bool _inviteToGroupChatIsVisibly;
 
     public ChatViewModel(IHttpClientHelper httpClientHelper, IMemoryCache memoryCache, ILogger logger)
     {
@@ -59,30 +45,21 @@ public class ChatViewModel : MvxViewModel, IImprovedMvxViewModel
         _memoryCache = memoryCache;
         _logger = logger;
 
-        GroupChatMessages = new ObservableCollection<GroupChatMessageModel>();
-        SendGroupMessageCommand = new MvxAsyncCommand(SendGroupMessageAsync);
-        SendPersonalMessageCommand = new MvxAsyncCommand(SendPersonalMessageAsync);
         RefreshGroupChatsCommand = new MvxAsyncCommand(LoadGroupChatsAsync);
         RefreshPersonalChatsCommand = new MvxAsyncCommand(LoadPersonalChatsAsync);
-        ShowGroupChatMenuCommand = new MvxCommand(ShowGCMenu);
         CreatePersonalChatCommand = new MvxAsyncCommand(CreatePersonalChatAsync);
-        OpenInviteToGroupChatCommand = new MvxAsyncCommand(OpenInviteToGroupChatAsync);
-        CloseInviteToGroupChatCommand = new MvxCommand(SwitchInviteToGroupChat);
-        InviteToGroupChatCommand = new MvxAsyncCommand(InviteToGroupChatAsync);
         JoinToGroupChatCommand = new MvxAsyncCommand(JoinToGroupChatAsync);
 
-        BasicTemplate = Templates.Basic;
         BasicTemplate.Parent = this;
         BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, nameof(BasicTemplateViewModel.Step), -2);
+
+        PersonalChatMessagesTemplate = Mvx.IoCProvider.IoCConstruct<PersonalChatMessagesVewModel>();
+        GroupChatMessagesTemplate = Mvx.IoCProvider.IoCConstruct<GroupChatMessagesViewModel>();
 
         GetMyAccount();
     }
 
     #region Commands
-
-    public IMvxAsyncCommand SendGroupMessageCommand { get; set; }
-
-    public IMvxAsyncCommand SendPersonalMessageCommand { get; set; }
 
     public IMvxAsyncCommand RefreshGroupChatsCommand { get; set; }
 
@@ -90,51 +67,29 @@ public class ChatViewModel : MvxViewModel, IImprovedMvxViewModel
 
     public IMvxAsyncCommand RefreshPersonalChatsCommand { get; set; }
 
-    public IMvxCommand ShowGroupChatMenuCommand { get; set; }
-
-    public IMvxAsyncCommand OpenInviteToGroupChatCommand { get; set; }
-
-    public IMvxCommand CloseInviteToGroupChatCommand { get; set; }
-
-    public IMvxAsyncCommand InviteToGroupChatCommand { get; set; }
-
     public IMvxAsyncCommand JoinToGroupChatCommand { get; set; }
 
     #endregion
 
     #region Properties
 
-    public IViewModelConnect Handler { get; set; }
-
-    public IMvxViewModel Parent { get; set; }
-
-    public IMvxViewModel SavedViewModel { get; set; }
-
-    public IImprovedMvxViewModel BasicTemplate
+    public IImprovedMvxViewModel PersonalChatMessagesTemplate
     {
-        get { return _basicTemplate; }
+        get { return _personalChatMessagesTemplate; }
 
         set
         {
-            SetProperty(ref _basicTemplate, value);
+            SetProperty(ref _personalChatMessagesTemplate, value);
         }
     }
 
-    public ObservableCollection<GroupChatMessageModel> GroupChatMessages
+    public IImprovedMvxViewModel GroupChatMessagesTemplate
     {
-        get { return _groupChatMessages; }
-        set
-        {
-            SetProperty(ref _groupChatMessages, value);
-        }
-    }
+        get { return _groupChatMessagesTemplate; }
 
-    public ObservableCollection<PersonalChatMessageModel> PersonalChatMessages
-    {
-        get { return _personalChatMessages; }
         set
         {
-            SetProperty(ref _personalChatMessages, value);
+            SetProperty(ref _groupChatMessagesTemplate, value);
         }
     }
 
@@ -144,15 +99,6 @@ public class ChatViewModel : MvxViewModel, IImprovedMvxViewModel
         set
         {
             SetProperty(ref _users, value);
-        }
-    }
-
-    public ObservableCollection<AppUserModel> UsersForInviteToGroupChat
-    {
-        get { return _usersForInviteToGroupChat; }
-        set
-        {
-            SetProperty(ref _usersForInviteToGroupChat, value);
         }
     }
 
@@ -192,15 +138,6 @@ public class ChatViewModel : MvxViewModel, IImprovedMvxViewModel
         }
     }
 
-    public int SelectedUsersForInviteToGroupChatIndex
-    {
-        get { return _selectedUsersForInviteToGroupChatIndex; }
-        set
-        {
-            SetProperty(ref _selectedUsersForInviteToGroupChatIndex, value);
-        }
-    }
-
     public int SelectedGroupChatsIndex
     {
         get { return _selectedGroupChatsIndex; }
@@ -217,16 +154,6 @@ public class ChatViewModel : MvxViewModel, IImprovedMvxViewModel
         {
             SetProperty(ref _inputedUserEmail, value);
             LoadUsersEmailByStartChars(value);
-        }
-    }
-
-    public string InputedUserEmailForInviteToGroupChat
-    {
-        get { return _inputedUserEmailForInviteToGroupChat; }
-        set
-        {
-            SetProperty(ref _inputedUserEmailForInviteToGroupChat, value);
-            LoadUsersEmailForInviteByStartChars(value);
         }
     }
 
@@ -258,8 +185,9 @@ public class ChatViewModel : MvxViewModel, IImprovedMvxViewModel
 
             if (value != null)
             {
-                SelectedChatName = value.Name;
-                _groupChatMessagesUpdateTimer = new Timer(InitLoadGroupChatMessages, null, GroupChatMessagesUpdateTimeIsMs, Timeout.Infinite);
+                SelectedPersonalChatIndex = -1;
+                GroupChatMessagesTemplate.Handler.PropertyUpdate<GroupChatMessagesViewModel>(GroupChatMessagesTemplate, nameof(GroupChatMessagesViewModel.SelectedChat), value);
+                GroupChatMessagesTemplate.Handler.PropertyUpdate<GroupChatMessagesViewModel>(GroupChatMessagesTemplate, nameof(GroupChatMessagesViewModel.ChatId), MyGroupChats[SelectedMyGroupChatIndex].Id);
             }
         }
     }
@@ -282,36 +210,9 @@ public class ChatViewModel : MvxViewModel, IImprovedMvxViewModel
 
             if (value != null)
             {
-                SelectedChatName = MyAccount.Id == value.InitiatorId ? value.CompanionUsername : value.InitiatorUsername;
-                _personalChatMessagesUpdateTimer = new Timer(InitLoadPersonalChatMessages, null, PersonalChatMessagesUpdateTimeIsMs, Timeout.Infinite);
+                SelectedMyGroupChatIndex = -1;
+                PersonalChatMessagesTemplate.Handler.PropertyUpdate<PersonalChatMessagesVewModel>(PersonalChatMessagesTemplate, nameof(PersonalChatMessagesVewModel.SelectedChat), value);
             }
-        }
-    }
-
-    public string SelectedChatName
-    {
-        get { return _selectedChatName; }
-        set
-        {
-            SetProperty(ref _selectedChatName, value);
-        }
-    }
-
-    public bool IsMyMessage
-    {
-        get { return _isMyMessage; }
-        set
-        {
-            SetProperty(ref _isMyMessage, value);
-        }
-    }
-
-    public string Message
-    {
-        get { return _message; }
-        set
-        {
-            SetProperty(ref _message, value);
         }
     }
 
@@ -321,15 +222,6 @@ public class ChatViewModel : MvxViewModel, IImprovedMvxViewModel
         set
         {
             SetProperty(ref _myAccount, value);
-        }
-    }
-    
-    public bool GroupChatMenuIsVisibly
-    {
-        get { return _groupChatMenuIsVisibly; }
-        set
-        {
-            SetProperty(ref _groupChatMenuIsVisibly, value);
         }
     }
 
@@ -357,39 +249,21 @@ public class ChatViewModel : MvxViewModel, IImprovedMvxViewModel
         }
     }
 
-    public LoadingStatus AddUserToGroupChatResponse
-    {
-        get { return _addUserToGroupChatResponse; }
-        set
-        {
-            SetProperty(ref _addUserToGroupChatResponse, value);
-        }
-    }
-
-    public bool InviteToGroupChatIsVisibly
-    {
-        get { return _inviteToGroupChatIsVisibly; }
-        set
-        {
-            SetProperty(ref _inviteToGroupChatIsVisibly, value);
-        }
-    }
-
     public bool IsShowEmptyMyGroupChat
     {
         get
         {
             return (int)GroupChatLoadingResponse > 0 && (int)GroupChatLoadingResponse < 3
-                        && (MyGroupChats?.Count == 0);
+                        && MyGroupChats?.Count == 0;
         }
     }
 
     public bool IsLoadMyGroupChatList
     {
-        get 
-        { 
+        get
+        {
             return (int)GroupChatLoadingResponse > 0 && (int)GroupChatLoadingResponse < 3
-                        && (MyGroupChats?.Count > 0);
+                        && MyGroupChats?.Count > 0;
         }
     }
 
@@ -398,7 +272,7 @@ public class ChatViewModel : MvxViewModel, IImprovedMvxViewModel
         get
         {
             return (int)PersonalChatLoadingResponse > 0 && (int)PersonalChatLoadingResponse < 3
-                        && (PersonalChats?.Count == 0);
+                        && PersonalChats?.Count == 0;
         }
     }
 
@@ -407,7 +281,7 @@ public class ChatViewModel : MvxViewModel, IImprovedMvxViewModel
         get
         {
             return (int)PersonalChatLoadingResponse > 0 && (int)PersonalChatLoadingResponse < 3
-                        && (PersonalChats?.Count > 0);
+                        && PersonalChats?.Count > 0;
         }
     }
 
@@ -420,51 +294,6 @@ public class ChatViewModel : MvxViewModel, IImprovedMvxViewModel
         Task.Run(LoadGroupChatsAsync);
         Task.Run(LoadPersonalChatsAsync);
         Task.Run(LoadUsersAsync);
-    }
-
-    public async Task SendGroupMessageAsync()
-    {
-        var newGroupChatMessage = new GroupChatMessageModel
-        {
-            Message = Message,
-            Time = TimeSpan.Parse($"{DateTimeOffset.UtcNow.Hour}:{DateTimeOffset.UtcNow.Minute}"),
-            Username = MyAccount.Email,
-            GroupChatId = SelectedMyGroupChat.Id,
-        };
-
-        Message = string.Empty;
-
-        _httpClientHelper.BaseAddress = Port.ChatApi;
-        await _httpClientHelper.PostAsync("GroupChatMessage", JsonContent.Create(newGroupChatMessage));
-
-        SelectedMyGroupChat.LastMessage = newGroupChatMessage.Message;
-
-        await _httpClientHelper.PutAsync("GroupChat", JsonContent.Create(SelectedMyGroupChat));
-    }
-
-    public async Task SendPersonalMessageAsync()
-    {
-        var newPersonalChatMessage = new PersonalChatMessageModel
-        {
-            Message = Message,
-            Time = TimeSpan.Parse($"{DateTimeOffset.UtcNow.Hour}:{DateTimeOffset.UtcNow.Minute}"),
-            Username = MyAccount.Email,
-            PersonalChatId = SelectedPersonalChat.Id,
-        };
-
-        Message = string.Empty;
-
-        _httpClientHelper.BaseAddress = Port.ChatApi;
-        await _httpClientHelper.PostAsync("PersonalChatMessage", JsonContent.Create(newPersonalChatMessage));
-
-        SelectedPersonalChat.LastMessage = newPersonalChatMessage.Message;
-
-        await _httpClientHelper.PutAsync("PersonalChat", JsonContent.Create(SelectedPersonalChat));
-    }
-
-    public void ShowGCMenu()
-    {
-        GroupChatMenuIsVisibly = !GroupChatMenuIsVisibly;
     }
 
     public async Task CreatePersonalChatAsync()
@@ -499,49 +328,6 @@ public class ChatViewModel : MvxViewModel, IImprovedMvxViewModel
         }
     }
 
-    public void SwitchInviteToGroupChat()
-    {
-        InviteToGroupChatIsVisibly = !InviteToGroupChatIsVisibly;
-    }
-
-    public async Task InviteToGroupChatAsync()
-    {
-        var myGroupChatId = MyGroupChats[SelectedMyGroupChatIndex].Id;
-        var userId = UsersForInviteToGroupChat[SelectedUsersForInviteToGroupChatIndex].Id;
-
-        var groupChatUser = new GroupChatUserModel
-        {
-            GroupChatId = myGroupChatId,
-            UserId = userId,
-        };
-
-        InputedUserEmailForInviteToGroupChat = string.Empty;
-
-        try
-        {
-            AddUserToGroupChatResponse = LoadingStatus.Pending;
-
-            var response = await _httpClientHelper.PostAsync("GroupChatUser", JsonContent.Create(groupChatUser));
-            if (response.StatusCode == System.Net.HttpStatusCode.OK)
-            {
-                SwitchInviteToGroupChat();
-                await OpenInviteToGroupChatAsync();
-
-                AddUserToGroupChatResponse = LoadingStatus.Successful;
-            }
-            else
-            {
-                AddUserToGroupChatResponse = LoadingStatus.Failed;
-            }
-        }
-        catch (HttpRequestException ex)
-        {
-            _logger.LogError(ex, ex.Message);
-
-            AddUserToGroupChatResponse = LoadingStatus.Failed;
-        }
-    }
-
     public async Task JoinToGroupChatAsync()
     {
         var groupChatId = GroupChats[SelectedGroupChatsIndex].Id;
@@ -559,46 +345,6 @@ public class ChatViewModel : MvxViewModel, IImprovedMvxViewModel
         await LoadGroupChatsAsync();
     }
 
-    public async Task OpenInviteToGroupChatAsync()
-    {
-        AddUserToGroupChatResponse = LoadingStatus.None;
-        UsersForInviteToGroupChat = null;
-
-        var response = await _httpClientHelper.GetAsync("GroupChatUser");
-
-        if (response.StatusCode != System.Net.HttpStatusCode.OK)
-        {
-            return;
-        }
-
-        var groupChatUsers = await response.Content.ReadFromJsonAsync<IEnumerable<GroupChatUserModel>>();
-        var usersForInviteToGroupChat = Users.Where(x => !groupChatUsers.Any(y => x.Id == y.UserId)).ToList();
-
-        UsersForInviteToGroupChat = new ObservableCollection<AppUserModel>(usersForInviteToGroupChat);
-
-        SwitchInviteToGroupChat();
-    }
-
-    private void InitLoadGroupChatMessages(object obj)
-    {
-        Task.Run(LoadGroupChatMessagesAsync);
-
-        if (SelectedMyGroupChat != null)
-        {
-            _groupChatMessagesUpdateTimer.Change(GroupChatMessagesUpdateTimeIsMs, Timeout.Infinite);
-        }
-    }
-
-    private void InitLoadPersonalChatMessages(object obj)
-    {
-        Task.Run(LoadPersonalChatMessagesAsync);
-
-        if (SelectedPersonalChat != null)
-        {
-            _personalChatMessagesUpdateTimer.Change(PersonalChatMessagesUpdateTimeIsMs, Timeout.Infinite);
-        }
-    }
-
     private async Task LoadGroupChatsAsync()
     {
         GroupChatLoadingResponse = LoadingStatus.Pending;
@@ -611,7 +357,7 @@ public class ChatViewModel : MvxViewModel, IImprovedMvxViewModel
             {
                 await GetMyGroupChatsAsync(response);
                 await GetGroupChatsAsync();
-                
+
                 GroupChatLoadingResponse = LoadingStatus.Successful;
             }
             else
@@ -690,52 +436,11 @@ public class ChatViewModel : MvxViewModel, IImprovedMvxViewModel
         }
     }
 
-    private async Task LoadGroupChatMessagesAsync()
-    {
-        _httpClientHelper.BaseAddress = Port.ChatApi;
-
-        var response = await _httpClientHelper.GetAsync("GroupChatMessage").ConfigureAwait(false);
-        var groupChatMessages = await response.Content.ReadFromJsonAsync<IEnumerable<GroupChatMessageModel>>();
-        var selectedGroupChatMessages = new List<GroupChatMessageModel>();
-        foreach (var item in groupChatMessages)
-        {
-            if (item.GroupChatId == SelectedMyGroupChat?.Id)
-            {
-                selectedGroupChatMessages.Add(item);
-            }
-        }
-
-        GroupChatMessages = new ObservableCollection<GroupChatMessageModel>(selectedGroupChatMessages);
-    }
-
-    private async Task LoadPersonalChatMessagesAsync()
-    {
-        _httpClientHelper.BaseAddress = Port.ChatApi;
-
-        var response = await _httpClientHelper.GetAsync("PersonalChatMessage");
-        if (response.StatusCode != System.Net.HttpStatusCode.OK)
-        {
-            return;
-        }
-
-        var personalChatMessages = await response.Content.ReadFromJsonAsync<IEnumerable<PersonalChatMessageModel>>();
-        var selectedPersonalChatMessages = new List<PersonalChatMessageModel>();
-        foreach (var item in personalChatMessages)
-        {
-            if (item.PersonalChatId == SelectedPersonalChat?.Id)
-            {
-                selectedPersonalChatMessages.Add(item);
-            }
-        }
-
-        PersonalChatMessages = new ObservableCollection<PersonalChatMessageModel>(selectedPersonalChatMessages);
-    }
-
     private async Task LoadUsersAsync()
     {
         _httpClientHelper.BaseAddress = Port.UserApi;
 
-        var response = await _httpClientHelper.GetAsync("Account").ConfigureAwait(false);
+        var response = await _httpClientHelper.GetAsync("Account").ConfigureAwait(true);
         var users = await response.Content.ReadFromJsonAsync<IEnumerable<AppUserModel>>();
 
         _allUsers = users.ToList();
@@ -762,20 +467,6 @@ public class ChatViewModel : MvxViewModel, IImprovedMvxViewModel
         else
         {
             Users = new ObservableCollection<AppUserModel>(_allUsers);
-        }
-    }
-
-    private void LoadUsersEmailForInviteByStartChars(string startChars)
-    {
-        if (!string.IsNullOrEmpty(startChars))
-        {
-            var usersEmailByStartChars = _allUsers.Where(x => x.Email.StartsWith(startChars));
-
-            UsersForInviteToGroupChat = new ObservableCollection<AppUserModel>(usersEmailByStartChars);
-        }
-        else
-        {
-            UsersForInviteToGroupChat = new ObservableCollection<AppUserModel>(_allUsers);
         }
     }
 

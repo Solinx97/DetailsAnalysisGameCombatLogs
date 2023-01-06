@@ -1,36 +1,23 @@
-﻿using CombatAnalysis.Core.Consts;
-using CombatAnalysis.Core.Interfaces;
-using CombatAnalysis.Core.Localizations;
-using MvvmCross.ViewModels;
+﻿using CombatAnalysis.Core.Localizations;
+using CombatAnalysis.Core.ViewModels.Base;
 using System.Collections.ObjectModel;
 using System.Globalization;
 
 namespace CombatAnalysis.Core.ViewModels;
 
-public class SettingsViewModel : MvxViewModel
+public class SettingsViewModel : ParentTemplate
 {
-    private IImprovedMvxViewModel _basicTemplate;
     private ObservableCollection<Language> _languages;
     private Language _selectedLanguage;
 
     public SettingsViewModel()
 	{
-        BasicTemplate = Templates.Basic;
         BasicTemplate.Parent = this;
 
         LanguageInit();
     }
 
     #region Properties
-
-    public IImprovedMvxViewModel BasicTemplate
-    {
-        get { return _basicTemplate; }
-        set
-        {
-            SetProperty(ref _basicTemplate, value);
-        }
-    }
 
     public ObservableCollection<Language> Languages
     {

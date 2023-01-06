@@ -1,23 +1,22 @@
 ﻿using AutoMapper;
 using CombatAnalysis.CombatParser.Entities;
 using CombatAnalysis.CombatParser.Interfaces;
-using CombatAnalysis.Core.Consts;
 using CombatAnalysis.Core.Enums;
 using CombatAnalysis.Core.Interfaces;
 using CombatAnalysis.Core.Interfaces.Observers;
 using CombatAnalysis.Core.Localizations;
 using CombatAnalysis.Core.Models;
 using CombatAnalysis.Core.Services;
+using CombatAnalysis.Core.ViewModels.Base;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
 using MvvmCross.Commands;
 using MvvmCross.Navigation;
-using MvvmCross.ViewModels;
 using System.Collections.ObjectModel;
 
 namespace CombatAnalysis.Core.ViewModels;
 
-public class CombatLogInformationViewModel : MvxViewModel, IObserver, IAuthObserver
+public class CombatLogInformationViewModel : ParentTemplate, IObserver, IAuthObserver
 {
     private readonly IMvxNavigationService _mvvmNavigation;
     private readonly IMapper _mapper;
@@ -33,7 +32,6 @@ public class CombatLogInformationViewModel : MvxViewModel, IObserver, IAuthObser
     private string _combatLogPath;
     private int _combatListSelectedIndex;
     private int _selectedCombatLogTypeTabItem;
-    private IImprovedMvxViewModel _basicTemplate;
     private ObservableCollection<CombatLogModel> _combatLogs = new ObservableCollection<CombatLogModel>();
     private ObservableCollection<CombatLogModel> _combatLogsByUser = new ObservableCollection<CombatLogModel>();
     private double _screenWidth;
@@ -61,7 +59,6 @@ public class CombatLogInformationViewModel : MvxViewModel, IObserver, IAuthObser
 
         _combatParserAPIService = new CombatParserAPIService(httpClient, logger, memoryCache);
 
-        BasicTemplate = Templates.Basic;
         BasicTemplate.Parent = this;
         BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, nameof(BasicTemplateViewModel.Step), 0);
         BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, nameof(BasicTemplateViewModel.LogPanelStatusIsVisibly), true);
@@ -91,15 +88,6 @@ public class CombatLogInformationViewModel : MvxViewModel, IObserver, IAuthObser
     #endregion
 
     #region Properties
-
-    public IImprovedMvxViewModel BasicTemplate
-    {
-        get { return _basicTemplate; }
-        set
-        {
-            SetProperty(ref _basicTemplate, value);
-        }
-    }
 
     public ObservableCollection<CombatLogModel> CombatLogs
     {

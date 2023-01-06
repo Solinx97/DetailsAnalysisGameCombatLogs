@@ -1,24 +1,22 @@
-﻿using CombatAnalysis.Core.Consts;
-using CombatAnalysis.Core.Enums;
+﻿using CombatAnalysis.Core.Enums;
 using CombatAnalysis.Core.Interfaces;
 using CombatAnalysis.Core.Interfaces.Observers;
 using CombatAnalysis.Core.Models;
 using CombatAnalysis.Core.Services;
+using CombatAnalysis.Core.ViewModels.Base;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
 using MvvmCross.Commands;
 using MvvmCross.Navigation;
-using MvvmCross.ViewModels;
 using System.Collections.ObjectModel;
 
 namespace CombatAnalysis.Core.ViewModels;
 
-public class GeneralAnalysisViewModel : MvxViewModel<Tuple<List<CombatModel>, LogType>>, IResponseStatusObserver
+public class GeneralAnalysisViewModel : ParentTemplate<Tuple<List<CombatModel>, LogType>>, IResponseStatusObserver
 {
     private readonly IMvxNavigationService _mvvmNavigation;
     private readonly CombatParserAPIService _combatParserAPIService;
 
-    private IImprovedMvxViewModel _basicTemplate;
     private ObservableCollection<CombatModel> _combats;
     private CombatModel _selectedCombat;
     private LoadingStatus _status;
@@ -35,7 +33,6 @@ public class GeneralAnalysisViewModel : MvxViewModel<Tuple<List<CombatModel>, Lo
         RepeatSaveCommand = new MvxAsyncCommand(RepeatSaveCombatDataDetailsAsync);
         RefreshCommand = new MvxAsyncCommand(RefreshAsync);
 
-        BasicTemplate = Templates.Basic;
         BasicTemplate.Parent = this;
         BasicTemplate.SavedViewModel = this;
         BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, nameof(BasicTemplateViewModel.Step), 1);
@@ -53,15 +50,6 @@ public class GeneralAnalysisViewModel : MvxViewModel<Tuple<List<CombatModel>, Lo
     #endregion
 
     #region Properties
-
-    public IImprovedMvxViewModel BasicTemplate
-    {
-        get { return _basicTemplate; }
-        set
-        {
-            SetProperty(ref _basicTemplate, value);
-        }
-    }
 
     public ObservableCollection<CombatModel> Combats
     {
@@ -117,7 +105,7 @@ public class GeneralAnalysisViewModel : MvxViewModel<Tuple<List<CombatModel>, Lo
 
     #endregion
 
-    public override void Prepare(Tuple<List<CombatModel>, LogType> parameter)
+    protected override void ChildPrepare(Tuple<List<CombatModel>, LogType> parameter)
     {
         if (parameter == null)
         {
@@ -130,7 +118,7 @@ public class GeneralAnalysisViewModel : MvxViewModel<Tuple<List<CombatModel>, Lo
 
     public override void ViewDestroy(bool viewFinishing = true)
     {
-        ((BasicTemplateViewModel)Templates.Basic).Combats = Combats.ToList();
+        ((BasicTemplateViewModel)BasicTemplate).Combats = Combats.ToList();
 
         base.ViewDestroy(viewFinishing);
     }

@@ -2,7 +2,6 @@
 using CombatAnalysis.CombatParser.Entities;
 using CombatAnalysis.CombatParser.Extensions;
 using CombatAnalysis.CombatParser.Patterns;
-using CombatAnalysis.Core.Consts;
 using CombatAnalysis.Core.Interfaces;
 using CombatAnalysis.Core.Models;
 using CombatAnalysis.Core.ViewModels.ViewModelTemplates;
@@ -18,7 +17,6 @@ public class ResourceRecoveryDetailsViewModel : DetailsGenericTemplate<ResourceR
 
     public ResourceRecoveryDetailsViewModel(IHttpClientHelper httpClient, ILogger logger, IMemoryCache memoryCache, IMapper mapper) : base(httpClient, logger, memoryCache, mapper)
     {
-        BasicTemplate = Templates.Basic;
         BasicTemplate.Parent = this;
         BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, nameof(BasicTemplateViewModel.Step), 6);
     }

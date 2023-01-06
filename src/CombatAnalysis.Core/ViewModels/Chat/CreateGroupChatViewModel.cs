@@ -15,7 +15,6 @@ public class CreateGroupChatViewModel : MvxViewModel
     private readonly IHttpClientHelper _httpClientHelper;
     private readonly IMemoryCache _memoryCache;
 
-    private IImprovedMvxViewModel _basicTemplate;
     private string _name;
     private int _policyType;
     private GroupChatModel _groupChat;
@@ -47,15 +46,6 @@ public class CreateGroupChatViewModel : MvxViewModel
     #endregion
 
     #region Properties
-
-    public IImprovedMvxViewModel BasicTemplate
-    {
-        get { return _basicTemplate; }
-        set
-        {
-            SetProperty(ref _basicTemplate, value);
-        }
-    }
 
     public string Name
     {

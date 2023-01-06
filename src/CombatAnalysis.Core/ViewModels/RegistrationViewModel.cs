@@ -2,21 +2,20 @@
 using CombatAnalysis.Core.Interfaces;
 using CombatAnalysis.Core.Models.Response;
 using CombatAnalysis.Core.Models.User;
+using CombatAnalysis.Core.ViewModels.Base;
 using Microsoft.Extensions.Caching.Memory;
 using MvvmCross.Commands;
 using MvvmCross.Navigation;
-using MvvmCross.ViewModels;
 using System.Net.Http.Json;
 
 namespace CombatAnalysis.Core.ViewModels;
 
-public class RegistrationViewModel : MvxViewModel
+public class RegistrationViewModel : ParentTemplate
 {
     private readonly IMemoryCache _memoryCache;
     private readonly IHttpClientHelper _httpClientHelper;
     private readonly IMvxNavigationService _mvvmNavigation;
 
-    private IImprovedMvxViewModel _basicTemplate;
     private string _email;
     private string _password;
     private string _confirmPassword;
@@ -34,7 +33,6 @@ public class RegistrationViewModel : MvxViewModel
         RegistrationCommand = new MvxAsyncCommand(ValidateAsync);
         CancelCommand = new MvxAsyncCommand(CancelAsync);
 
-        BasicTemplate = Templates.Basic;
         if (BasicTemplate.Parent is LoginViewModel)
         {
             _mvvmNavigation.Close(BasicTemplate.Parent).GetAwaiter().GetResult();
@@ -53,15 +51,6 @@ public class RegistrationViewModel : MvxViewModel
     #endregion
 
     #region Properties
-
-    public IImprovedMvxViewModel BasicTemplate
-    {
-        get { return _basicTemplate; }
-        set
-        {
-            SetProperty(ref _basicTemplate, value);
-        }
-    }
 
     public string Email
     {
