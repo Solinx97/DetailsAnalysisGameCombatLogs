@@ -27,7 +27,7 @@ public class GroupChatMessagesViewModel : MvxViewModel, IImprovedMvxViewModel
     private List<AppUserModel> _usersExcludingInvitees;
     private GroupChatModel _selectedChat;
     private GroupChatMessageModel _selectedMessage;
-    private int _selectedMessageIndex;
+    private int _selectedMessageIndex = -1;
     private string _selectedChatName;
     private string _message;
     private bool _chatMenuIsVisibly;
@@ -38,6 +38,7 @@ public class GroupChatMessagesViewModel : MvxViewModel, IImprovedMvxViewModel
     private int _selectedUsersForInviteToGroupChatIndex = -1;
     private string _inputedUserEmailForInviteToChat;
     private bool _isEditMode;
+    private bool _isRemoveMode;
 
     public GroupChatMessagesViewModel(IHttpClientHelper httpClientHelper, IMemoryCache memoryCache)
     {
@@ -51,6 +52,7 @@ public class GroupChatMessagesViewModel : MvxViewModel, IImprovedMvxViewModel
         OpenInviteToChatCommand = new MvxAsyncCommand(OpenInviteToChatAsync);
         InviteToChatCommand = new MvxAsyncCommand(InviteToChatAsync);
         CloseInviteToChatCommand = new MvxCommand(SwitchInviteToGroupChat);
+        TurnOnEditModeCommand = new MvxCommand(() => IsEditMode = !IsEditMode);
         EditMessageCommand = new MvxAsyncCommand(EditMessageAsync);
         RemoveMessageCommand = new MvxCommand(SwitchInviteToGroupChat);
 
@@ -72,6 +74,8 @@ public class GroupChatMessagesViewModel : MvxViewModel, IImprovedMvxViewModel
     public IMvxAsyncCommand InviteToChatCommand { get; set; }
 
     public IMvxCommand CloseInviteToChatCommand { get; set; }
+
+    public IMvxCommand TurnOnEditModeCommand { get; set; }
 
     public IMvxAsyncCommand EditMessageCommand { get; set; }
 
@@ -239,6 +243,15 @@ public class GroupChatMessagesViewModel : MvxViewModel, IImprovedMvxViewModel
         }
     }
 
+    public bool IsRemoveMode
+    {
+        get { return _isRemoveMode; }
+        set
+        {
+            SetProperty(ref _isRemoveMode, value);
+        }
+    }
+
     public IVMHandler Handler { get; set; }
 
     public IMvxViewModel Parent { get; set; }
@@ -347,6 +360,8 @@ public class GroupChatMessagesViewModel : MvxViewModel, IImprovedMvxViewModel
     {
         _httpClientHelper.BaseAddress = Port.ChatApi;
         await _httpClientHelper.PutAsync("GroupChatMessage", JsonContent.Create(SelectedMessage));
+
+        IsEditMode= false;
     }
 
     private void InitLoadMessages(object obj)

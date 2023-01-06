@@ -168,6 +168,9 @@
   <data name="RemoveUser" xml:space="preserve">
     <value>Remove user</value>
   </data>
+  <data name="SaveEdit" xml:space="preserve">
+    <value>Save edit</value>
+  </data>
   <data name="SearchUser" xml:space="preserve">
     <value>Search user</value>
   </data>

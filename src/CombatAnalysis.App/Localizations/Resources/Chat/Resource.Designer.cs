@@ -214,6 +214,15 @@ namespace CombatAnalysis.App.Localizations.Resources.Chat {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Save edit.
+        /// </summary>
+        public static string SaveEdit {
+            get {
+                return ResourceManager.GetString("SaveEdit", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Search user.
         /// </summary>
         public static string SearchUser {

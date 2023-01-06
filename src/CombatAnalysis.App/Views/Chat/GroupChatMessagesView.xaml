@@ -40,15 +40,41 @@
             <TextBlock Text="{Binding SelectedChatName}" FontSize="16" Margin="20 15" HorizontalAlignment="Left"/>
             
             <StackPanel Orientation="Horizontal" Margin="0 0 10 0" HorizontalAlignment="Right">
-                <!--<StackPanel Orientation="Horizontal" Visibility="{Binding SelectedMessageIndex, Converter={StaticResource IntToVisibility}, ConverterParameter='true:-1:>'}">
-                    <Button Style="{StaticResource textBoxButton}" mvx:Bi.nd="Command EditMessageCommand" ToolTip="{loc:Loc Close}">
-                        <Icon:PackIconMaterial Foreground="Green" Kind="Pen"/>
+                <StackPanel Orientation="Horizontal" Visibility="{Binding SelectedMessageIndex, Converter={StaticResource IntToVisibility}, ConverterParameter='true:-1:>'}">
+                    <Button mvx:Bi.nd="Command TurnOnEditModeCommand" ToolTip="{loc:Loc Close}">
+                        <Button.Style>
+                            <Style TargetType="Button" BasedOn="{StaticResource textBoxButton}">
+                                <Style.Triggers>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter Property="Background" Value="NavajoWhite"/>
+                                    </Trigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Button.Style>
+
+                        <StackPanel>
+                            <Icon:PackIconMaterial Kind="Pen" Visibility="{Binding IsEditMode, Converter={StaticResource BoolToVisibility}, ConverterParameter='true:true'}"/>
+                            <Icon:PackIconMaterial Foreground="Green" Kind="Pen" Visibility="{Binding IsEditMode, Converter={StaticResource BoolToVisibility}, ConverterParameter='true:false'}"/>
+                        </StackPanel>
                     </Button>
 
-                    <Button Style="{StaticResource textBoxButton}" mvx:Bi.nd="Command RemoveMessageCommand" ToolTip="{loc:Loc Close}">
-                        <Icon:PackIconMaterial Foreground="Red" Kind="Remote"/>
+                    <Button mvx:Bi.nd="Command RemoveMessageCommand" IsEnabled="False" ToolTip="{loc:Loc Close}">
+                        <Button.Style>
+                            <Style TargetType="Button" BasedOn="{StaticResource textBoxButton}">
+                                <Style.Triggers>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter Property="Background" Value="NavajoWhite"/>
+                                    </Trigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Button.Style>
+
+                        <StackPanel>
+                            <Icon:PackIconMaterial Kind="Remote" Visibility="{Binding IsRemoveMode, Converter={StaticResource BoolToVisibility}, ConverterParameter='true:true'}"/>
+                            <Icon:PackIconMaterial Foreground="Red" Kind="Remote" Visibility="{Binding IsRemoveMode, Converter={StaticResource BoolToVisibility}, ConverterParameter='true:false'}"/>
+                        </StackPanel>
                     </Button>
-                </StackPanel>-->
+                </StackPanel>
 
                 <!--<TextBlock Text="and 3 others" VerticalAlignment="Center" Margin="7 0" Foreground="#8b8a8f" FontSize="11" />-->
 
@@ -100,18 +126,8 @@
             </Border>
         </StackPanel>
 
-        <ListBox Name="Tyui" Grid.Row="1" HorizontalContentAlignment="Stretch" Margin="0" ItemsSource="{Binding Messages}"
-                 SelectedIndex="{Binding SelectedMessageIndex}" SelectedItem="{Binding SelectedMessage}">
-            <!--<ListBox.ItemContainerStyle>
-                <Style TargetType="ListBoxItem" x:Name="Tip1">
-                    <Style.Triggers>
-                        <Trigger Property="IsMouseOver" Value="True">
-                            <Setter Property="IsSelected" Value="True"/>
-                        </Trigger>
-                    </Style.Triggers>
-                </Style>
-            </ListBox.ItemContainerStyle>-->
-            
+        <ListBox Name="Tyui" Grid.Row="1" HorizontalContentAlignment="Stretch" Margin="0" ItemsSource="{Binding Messages}" SelectedItem="{Binding SelectedMessage}"
+                 SelectedIndex="{Binding SelectedMessageIndex}">
             <ListBox.ItemTemplate>
                 <DataTemplate>
                     <Grid>
@@ -139,8 +155,7 @@
                                 </MultiBinding>
                             </StackPanel.Visibility>
 
-                            <uc:MyMessageChat Message="{Binding Path=Message}"/>
-                            <TextBox Text="{Binding Path=IsSelected}" Width="200" Height="25" Margin="5" FontSize="14" HorizontalAlignment="Right" Visibility="Collapsed"/>
+                            <uc:MyMessageChat x:Name="MyMessage"  Message="{Binding Path=Message}"/>
                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
                                 <TextBlock Text="{Binding Path=Time, StringFormat=hh\\:mm}" Style="{StaticResource timeTextRight}"/>
                             </StackPanel>
@@ -151,36 +166,55 @@
         </ListBox>
 
         <Grid Grid.Row="2" Margin="10 0">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="auto"/>
-            </Grid.ColumnDefinitions>
+            <Grid Visibility="{Binding IsEditMode, Converter={StaticResource BoolToVisibility}, ConverterParameter='true:true'}" ToolTip="{loc:Loc SendMessage}">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="auto"/>
+                </Grid.ColumnDefinitions>
 
-            <Grid>
-                <TextBlock Margin="15 0 120 0" VerticalAlignment="Center" Foreground="#868686" Panel.ZIndex="1"
+                <Grid>
+                    <TextBlock Margin="15 0 120 0" VerticalAlignment="Center" Foreground="#868686" Panel.ZIndex="1"
                                    IsHitTestVisible="False" Text="{loc:Loc TypeMessage}" Visibility="{Binding ElementName=txtMessage, Path=Text.IsEmpty, Converter={StaticResource BoolToVisibility}}"/>
-                <TextBox Name="txtMessage" Style="{StaticResource messageTextBox}" Text="{Binding Message}"/>
+                    <TextBox Name="txtMessage" Style="{StaticResource messageTextBox}" Text="{Binding Message}"/>
 
-                <StackPanel Orientation="Horizontal" Margin="0 0 8 0" HorizontalAlignment="Right" VerticalAlignment="Center">
-                    <Button Style="{StaticResource textBoxButton}" ToolTip="{loc:Loc Copy}">
-                        <Icon:PackIconMaterial Kind="BookmarkCheckOutline" Foreground="#a6a6a6"/>
-                    </Button>
-                    <Button Style="{StaticResource textBoxButton}" ToolTip="{loc:Loc AttachDocument}">
-                        <Icon:PackIconMaterial Kind="Paperclip" Foreground="#a6a6a6"/>
-                    </Button>
-                    <Button Style="{StaticResource textBoxButton}" ToolTip="{loc:Loc CreateVoiceMessage}">
-                        <Icon:PackIconMaterial Kind="Microphone" Foreground="#a6a6a6"/>
-                    </Button>
-                </StackPanel>
+                    <StackPanel Orientation="Horizontal" Margin="0 0 8 0" HorizontalAlignment="Right" VerticalAlignment="Center">
+                        <Button Style="{StaticResource textBoxButton}" ToolTip="{loc:Loc Copy}">
+                            <Icon:PackIconMaterial Kind="BookmarkCheckOutline" Foreground="#a6a6a6"/>
+                        </Button>
+                        <Button Style="{StaticResource textBoxButton}" ToolTip="{loc:Loc AttachDocument}">
+                            <Icon:PackIconMaterial Kind="Paperclip" Foreground="#a6a6a6"/>
+                        </Button>
+                        <Button Style="{StaticResource textBoxButton}" ToolTip="{loc:Loc CreateVoiceMessage}">
+                            <Icon:PackIconMaterial Kind="Microphone" Foreground="#a6a6a6"/>
+                        </Button>
+                    </StackPanel>
+                </Grid>
+
+                <Button Grid.Column="1" Margin="5 0 0 0" Style="{StaticResource textBoxButton}" mvx:Bi.nd="Command SendMessageCommand">
+                    <Icon:PackIconMaterial Kind="Send" Margin="3 0 0 2" Width="16" Foreground="#6f59d4">
+                        <Icon:PackIconMaterial.LayoutTransform>
+                            <RotateTransform Angle="-45"/>
+                        </Icon:PackIconMaterial.LayoutTransform>
+                    </Icon:PackIconMaterial>
+                </Button>
             </Grid>
 
-            <Button Grid.Column="1" Margin="5 0 0 0" Style="{StaticResource textBoxButton}" mvx:Bi.nd="Command SendMessageCommand" ToolTip="{loc:Loc SendMessage}">
-                <Icon:PackIconMaterial Kind="Send" Margin="3 0 0 2" Width="16" Foreground="#6f59d4">
-                    <Icon:PackIconMaterial.LayoutTransform>
-                        <RotateTransform Angle="-45"/>
-                    </Icon:PackIconMaterial.LayoutTransform>
-                </Icon:PackIconMaterial>
-            </Button>
+            <Grid Visibility="{Binding IsEditMode, Converter={StaticResource BoolToVisibility}, ConverterParameter='true:false'}" ToolTip="{loc:Loc SendMessage}">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="auto"/>
+                </Grid.ColumnDefinitions>
+
+                <TextBox Style="{StaticResource messageTextBox}" Text="{Binding SelectedMessage.Message}"/>
+
+                <Button Grid.Column="1" Margin="5 0 0 0" Style="{StaticResource textBoxButton}" mvx:Bi.nd="Command EditMessageCommand" ToolTip="{loc:Loc SaveEdit}">
+                    <Icon:PackIconMaterial Kind="Pen" Margin="3 0 0 2" Width="16" Foreground="Green">
+                        <Icon:PackIconMaterial.LayoutTransform>
+                            <RotateTransform Angle="-15"/>
+                        </Icon:PackIconMaterial.LayoutTransform>
+                    </Icon:PackIconMaterial>
+                </Button>
+            </Grid>
         </Grid>
     </Grid>
 </views:MvxWpfView>
