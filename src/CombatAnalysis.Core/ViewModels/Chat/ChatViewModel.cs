@@ -187,8 +187,8 @@ public class ChatViewModel : ParentTemplate
             {
                 SelectedPersonalChatIndex = -1;
 
-                GroupChatMessagesTemplate.Handler.PropertyUpdate<GroupChatMessagesViewModel>(GroupChatMessagesTemplate, nameof(GroupChatMessagesViewModel.SelectedChat), value);
                 GroupChatMessagesTemplate.Handler.PropertyUpdate<GroupChatMessagesViewModel>(GroupChatMessagesTemplate, nameof(GroupChatMessagesViewModel.ChatId), MyGroupChats[SelectedMyGroupChatIndex].Id);
+                GroupChatMessagesTemplate.Handler.PropertyUpdate<GroupChatMessagesViewModel>(GroupChatMessagesTemplate, nameof(GroupChatMessagesViewModel.SelectedChat), value);
             }
         }
     }

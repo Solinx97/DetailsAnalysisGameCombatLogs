@@ -112,6 +112,7 @@ public class GroupChatMessagesViewModel : MvxViewModel, IImprovedMvxViewModel
 
             if (value != null)
             {
+                Messages.Clear();
                 SelectedChatName = value.Name;
 
                 Task.Run(LoadMessagesAsync);
@@ -393,7 +394,7 @@ public class GroupChatMessagesViewModel : MvxViewModel, IImprovedMvxViewModel
     {
         _httpClientHelper.BaseAddress = Port.ChatApi;
 
-        var response = await _httpClientHelper.GetAsync("GroupChatMessage");
+        var response = await _httpClientHelper.GetAsync($"GroupChatMessage/FindByGroupId/{ChatId}");
         if (response.StatusCode != System.Net.HttpStatusCode.OK)
         {
             return;
