@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 
-namespace CombatAnalysis.WebApp.Controllers;
+namespace CombatAnalysis.WebApp.Controllers.User;
 
 [Route("api/v1/[controller]")]
 [ApiController]
@@ -56,7 +56,7 @@ public class AccountController : ControllerBase
     {
         _httpClient.BaseAddress = Port.UserApi;
 
-        var responseMessage = await _httpClient.PostAsync("Account/registration", JsonContent.Create(model.Email));
+        var responseMessage = await _httpClient.PostAsync("Account/registration", JsonContent.Create(model));
         if (responseMessage.StatusCode == System.Net.HttpStatusCode.OK)
         {
 

@@ -37,6 +37,14 @@ public class GroupChatUserController : ControllerBase
         return Ok(result);
     }
 
+    [HttpGet("findByUserId/{userId}")]
+    public async Task<IActionResult> Find(string userId)
+    {
+        var result = await _service.GetByParamAsync("UserId", userId);
+
+        return Ok(result);
+    }
+
     [HttpPost]
     public async Task<IActionResult> Create(GroupChatUserModel model)
     {

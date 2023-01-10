@@ -34,7 +34,6 @@ public class GroupChatMessagesViewModel : MvxViewModel, IImprovedMvxViewModel
     private AppUserModel _myAccount;
     private LoadingStatus _addUserToChatResponse;
     private bool _inviteToChatIsVisibly;
-    private int _chatId;
     private int _selectedUsersForInviteToGroupChatIndex = -1;
     private string _inputedUserEmailForInviteToChat;
     private bool _isEditMode;
@@ -112,7 +111,11 @@ public class GroupChatMessagesViewModel : MvxViewModel, IImprovedMvxViewModel
 
             if (value != null)
             {
-                Messages.Clear();
+                AsyncDispatcher.ExecuteOnMainThreadAsync(() =>
+                {
+                    Messages.Clear();
+                });
+
                 SelectedChatName = value.Name;
 
                 Task.Run(LoadMessagesAsync);
@@ -141,15 +144,6 @@ public class GroupChatMessagesViewModel : MvxViewModel, IImprovedMvxViewModel
         set
         {
             SetProperty(ref _selectedMessageIndex, value);
-        }
-    }
-
-    public int ChatId
-    {
-        get { return _chatId; }
-        set
-        {
-            SetProperty(ref _chatId, value);
         }
     }
 
@@ -326,7 +320,7 @@ public class GroupChatMessagesViewModel : MvxViewModel, IImprovedMvxViewModel
 
         var groupChatUser = new GroupChatUserModel
         {
-            GroupChatId = ChatId,
+            GroupChatId = SelectedChat.Id,
             UserId = userId,
         };
 
@@ -394,7 +388,7 @@ public class GroupChatMessagesViewModel : MvxViewModel, IImprovedMvxViewModel
     {
         _httpClientHelper.BaseAddress = Port.ChatApi;
 
-        var response = await _httpClientHelper.GetAsync($"GroupChatMessage/FindByGroupId/{ChatId}");
+        var response = await _httpClientHelper.GetAsync($"GroupChatMessage/findByChatId/{SelectedChat?.Id}");
         if (response.StatusCode != System.Net.HttpStatusCode.OK)
         {
             return;

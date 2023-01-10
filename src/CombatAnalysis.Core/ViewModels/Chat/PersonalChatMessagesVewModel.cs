@@ -69,6 +69,11 @@ public class PersonalChatMessagesVewModel : MvxViewModel, IImprovedMvxViewModel
             {
                 SelectedChatName = MyAccount.Id == value.InitiatorId ? value.CompanionUsername : value.InitiatorUsername;
 
+                AsyncDispatcher.ExecuteOnMainThreadAsync(() =>
+                {
+                    Messages.Clear();
+                });
+
                 Task.Run(LoadMessagesAsync);
                 AsyncDispatcher.ExecuteOnMainThreadAsync(() =>
                 {
@@ -162,7 +167,7 @@ public class PersonalChatMessagesVewModel : MvxViewModel, IImprovedMvxViewModel
     {
         _httpClientHelper.BaseAddress = Port.ChatApi;
 
-        var response = await _httpClientHelper.GetAsync("PersonalChatMessage");
+        var response = await _httpClientHelper.GetAsync($"PersonalChatMessage/findByChatId/{SelectedChat?.Id}");
         if (response.StatusCode != System.Net.HttpStatusCode.OK)
         {
             return;

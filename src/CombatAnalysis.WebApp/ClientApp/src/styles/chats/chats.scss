@@ -1,0 +1,72 @@
+﻿.chats {
+    display: flex;
+    flex-direction: row;
+    align-items: start;
+    justify-content: start;
+
+    &__my-chats {
+        ul {
+            padding: 0;
+        }
+
+        &__group-chats, &__personal-chats {
+            .last-message {
+                margin: 5px 0;
+                font-style: italic;
+            }
+        }
+
+        li {
+            cursor: pointer;
+            margin: 10px 5px;
+            padding: 10px;
+            box-shadow: 3px 3px 3px 3px gray;
+        }
+    }
+
+    &__messages {
+        width: 50%;
+        margin: 0px 25px;
+
+        ul {
+            height: 500px;
+            margin: 12px 0px;
+            border: 2px solid black;
+            padding: 0;
+
+            li {
+                margin: 5px;
+
+                :hover {
+                    cursor: pointer;
+                    background: #DCDCDC;
+                }
+
+                div {
+                    padding: 5px 20px;
+
+                    :hover {
+                        background: #DCDCDC;
+                    }
+                }
+            }
+        }
+
+        &_input-message {
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            align-items: center;
+
+            svg {
+                margin: 0 10px;
+                width: 25px;
+                height: 25px;
+
+                :hover {
+                    cursor: pointer;
+                }
+            }
+        }
+    }
+}

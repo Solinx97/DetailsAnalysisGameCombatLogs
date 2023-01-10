@@ -4,6 +4,7 @@ using CombatAnalysis.Core.Interfaces;
 using CombatAnalysis.Core.Models.Chat;
 using CombatAnalysis.Core.Models.User;
 using CombatAnalysis.Core.ViewModels.Base;
+using CombatAnalysis.DAL.Entities.Chat;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
 using MvvmCross;
@@ -187,7 +188,6 @@ public class ChatViewModel : ParentTemplate
             {
                 SelectedPersonalChatIndex = -1;
 
-                GroupChatMessagesTemplate.Handler.PropertyUpdate<GroupChatMessagesViewModel>(GroupChatMessagesTemplate, nameof(GroupChatMessagesViewModel.ChatId), MyGroupChats[SelectedMyGroupChatIndex].Id);
                 GroupChatMessagesTemplate.Handler.PropertyUpdate<GroupChatMessagesViewModel>(GroupChatMessagesTemplate, nameof(GroupChatMessagesViewModel.SelectedChat), value);
             }
         }
@@ -353,10 +353,12 @@ public class ChatViewModel : ParentTemplate
         try
         {
             _httpClientHelper.BaseAddress = Port.ChatApi;
-            var response = await _httpClientHelper.GetAsync("GroupChatUser").ConfigureAwait(false);
+            var response = await _httpClientHelper.GetAsync($"GroupChatUser/findByUserId/{MyAccount.Id}");
             if (response.StatusCode == System.Net.HttpStatusCode.OK)
             {
-                await GetMyGroupChatsAsync(response);
+                var myGroupChatUsers = await response.Content.ReadFromJsonAsync<IEnumerable<GroupChatUserModel>>();
+
+                await GetMyGroupChatsAsync(myGroupChatUsers);
                 await GetGroupChatsAsync();
 
                 GroupChatLoadingResponse = LoadingStatus.Successful;
@@ -374,14 +376,12 @@ public class ChatViewModel : ParentTemplate
         }
     }
 
-    private async Task GetMyGroupChatsAsync(HttpResponseMessage response)
+    private async Task GetMyGroupChatsAsync(IEnumerable<GroupChatUserModel> myGroupChatUsers)
     {
-        var groupChatUsers = await response.Content.ReadFromJsonAsync<IEnumerable<GroupChatUserModel>>();
-        var myGroupChatUsers = groupChatUsers.Where(x => x.UserId == MyAccount.Id);
         var myGroupChats = new List<GroupChatModel>();
         foreach (var item in myGroupChatUsers)
         {
-            response = await _httpClientHelper.GetAsync($"GroupChat/{item.GroupChatId}");
+            var response = await _httpClientHelper.GetAsync($"GroupChat/{item.GroupChatId}");
             if (response.StatusCode == System.Net.HttpStatusCode.OK)
             {
                 var groupChat = await response.Content.ReadFromJsonAsync<GroupChatModel>();
@@ -414,7 +414,7 @@ public class ChatViewModel : ParentTemplate
         try
         {
             _httpClientHelper.BaseAddress = Port.ChatApi;
-            var response = await _httpClientHelper.GetAsync("PersonalChat").ConfigureAwait(false);
+            var response = await _httpClientHelper.GetAsync("PersonalChat");
             if (response.StatusCode == System.Net.HttpStatusCode.OK)
             {
                 var personalChats = await response.Content.ReadFromJsonAsync<IEnumerable<PersonalChatModel>>();

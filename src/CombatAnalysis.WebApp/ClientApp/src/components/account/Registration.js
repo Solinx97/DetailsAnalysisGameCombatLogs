@@ -15,7 +15,7 @@ const Registration = () => {
             password: password
         };
 
-        const response = await fetch('api/v1/Account/registration', {
+        const response = await fetch("api/v1/Account/registration", {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -23,8 +23,8 @@ const Registration = () => {
             body: JSON.stringify(data)
         });
 
-        const statusCode = await response.status;
-        if (statusCode === 200) {
+        const result = await response;
+        if (result.status === 200) {
             navigate('/');
         }
     }

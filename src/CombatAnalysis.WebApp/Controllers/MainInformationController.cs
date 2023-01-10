@@ -14,13 +14,12 @@ public class MainInformationController : ControllerBase
     public MainInformationController(IHttpClientHelper httpClient)
     {
         _httpClient = httpClient;
+        _httpClient.BaseAddress = Port.CombatParserApi;
     }
 
     [HttpGet]
     public async Task<IActionResult> Get()
     {
-        _httpClient.BaseAddress = Port.CombatParserApi;
-
         var responseMessage = await _httpClient.GetAsync("CombatLog");
         var combatLogs = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<CombatLogModel>>();
 
