@@ -82,6 +82,18 @@ public class AccountController : ControllerBase
         }
     }
 
+    [HttpGet]
+    public async Task<IActionResult> GetAll()
+    {
+        var responseMessage = await _httpClient.GetAsync("Account");
+        if (responseMessage.StatusCode == System.Net.HttpStatusCode.OK)
+        {
+            var users = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<UserModel>>();
+            return Ok(users);
+        }
+
+        return BadRequest();
+    }
 
     [HttpPost("logout")]
     public async Task<IActionResult> Logout()

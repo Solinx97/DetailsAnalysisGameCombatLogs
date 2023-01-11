@@ -1,4 +1,28 @@
-﻿.chats {
+﻿.search {
+    display: flex;
+    flex-direction: row;
+
+    &__search-people, &__search-groups {
+        display: flex;
+        flex-direction: row;
+        justify-content: start;
+        align-items: center;
+        margin: 15px;
+        width: 375px;
+
+        &_name {
+            margin: 5px;
+            width: 200px;
+        }
+
+        svg {
+            margin: 0 15px;
+            cursor: pointer;
+        }
+    }
+}
+
+.chats {
     display: flex;
     flex-direction: row;
     align-items: start;

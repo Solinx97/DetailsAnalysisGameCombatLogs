@@ -25,4 +25,16 @@ public class GroupChatUserController : ControllerBase
 
         return Ok(myGroupChatUser);
     }
+
+    [HttpPost]
+    public async Task<IActionResult> Create(GroupChatUserModel user)
+    {
+        var responseMessage = await _httpClient.PostAsync("GroupChatUser", JsonContent.Create(user));
+        if (responseMessage.StatusCode == System.Net.HttpStatusCode.OK)
+        {
+            return Ok();
+        }
+
+        return BadRequest();
+    }
 }

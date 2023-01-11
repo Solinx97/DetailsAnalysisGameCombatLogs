@@ -441,7 +441,7 @@ public class ChatViewModel : ParentTemplate
     {
         _httpClientHelper.BaseAddress = Port.UserApi;
 
-        var response = await _httpClientHelper.GetAsync("Account").ConfigureAwait(true);
+        var response = await _httpClientHelper.GetAsync("Account");
         var users = await response.Content.ReadFromJsonAsync<IEnumerable<AppUserModel>>();
 
         _allUsers = users.ToList();

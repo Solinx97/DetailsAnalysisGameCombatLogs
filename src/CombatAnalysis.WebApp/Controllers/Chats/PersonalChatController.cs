@@ -32,6 +32,18 @@ public class PersonalChatController : ControllerBase
         return BadRequest();
     }
 
+    [HttpPost]
+    public async Task<IActionResult> Create(PersonalChatModel chat)
+    {
+        var responseMessage = await _httpClient.PostAsync("PersonalChat", JsonContent.Create(chat));
+        if (responseMessage.StatusCode == System.Net.HttpStatusCode.OK)
+        {
+            return Ok();
+        }
+
+        return BadRequest();
+    }
+
     [HttpPut]
     public async Task<IActionResult> Update(PersonalChatModel chat)
     {

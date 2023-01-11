@@ -51,11 +51,11 @@ const PersonalChat = ({ chat }) => {
     const createChatMessageAsync = async (message) => {
         const today = new Date();
         const data = {
-            Id: 0,
-            UserName: "temp@yandex.by",
-            Message: message,
-            Time: `${today.getHours()}:${today.getMinutes()}`,
-            PersonalChatId: chat.id
+            id: 0,
+            userName: "temp@yandex.by",
+            message: message,
+            time: `${today.getHours()}:${today.getMinutes()}`,
+            personalChatId: chat.id
         };
 
         const response = await fetch("/api/v1/PersonalChatMessage", {

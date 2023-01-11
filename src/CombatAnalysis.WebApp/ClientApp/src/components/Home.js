@@ -8,7 +8,7 @@ const Home = () => {
     const render = () => {
         return (<div>
             <div>
-                <div>Communication (need pass authorization)</div>
+                <div>Communication (need be authorized)</div>
                 <button onClick={() => navigate("/chats")} disabled={isAuth ? false : true}>Open</button>
             </div>
             <div>
