@@ -27,6 +27,14 @@
     flex-direction: row;
     align-items: start;
     justify-content: start;
+    margin: 20px 0;
+
+    .select-chat {
+        width: 100%;
+        margin: 25px;
+        font-size: 20px;
+        text-align: center;
+    }
 
     &__my-chats {
         ul {
@@ -76,7 +84,7 @@
             }
         }
 
-        ul {
+        .group-chat-messages, .personal-chat-messages {
             height: 500px;
             margin: 12px 0px;
             box-shadow: 3px 3px 3px 3px gray;

@@ -21,15 +21,46 @@ public class GroupChatUserController : ControllerBase
     public async Task<IActionResult> GetByIdUserId(string userId)
     {
         var responseMessage = await _httpClient.GetAsync($"GroupChatUser/findByUserId/{userId}");
-        var myGroupChatUser = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<GroupChatUserModel>>();
+        if (responseMessage.StatusCode == System.Net.HttpStatusCode.OK)
+        {
+            var myGroupChatUser = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<GroupChatUserModel>>();
 
-        return Ok(myGroupChatUser);
+            return Ok(myGroupChatUser);
+        }
+
+        return BadRequest();
+    }
+
+    [HttpGet("findByChatId/{chatId:int:min(1)}")]
+    public async Task<IActionResult> Find(int chatId)
+    {
+        var responseMessage = await _httpClient.GetAsync($"GroupChatUser/findByChatId/{chatId}");
+        if (responseMessage.StatusCode == System.Net.HttpStatusCode.OK)
+        {
+            var groupChatUsers = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<GroupChatUserModel>>();
+
+            return Ok(groupChatUsers);
+        }
+
+        return BadRequest();
     }
 
     [HttpPost]
     public async Task<IActionResult> Create(GroupChatUserModel user)
     {
         var responseMessage = await _httpClient.PostAsync("GroupChatUser", JsonContent.Create(user));
+        if (responseMessage.StatusCode == System.Net.HttpStatusCode.OK)
+        {
+            return Ok();
+        }
+
+        return BadRequest();
+    }
+
+    [HttpDelete("{id:int:min(1)}")]
+    public async Task<IActionResult> Delete(int id)
+    {
+        var responseMessage = await _httpClient.DeletAsync($"GroupChatUser/{id}");
         if (responseMessage.StatusCode == System.Net.HttpStatusCode.OK)
         {
             return Ok();

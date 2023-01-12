@@ -1,2 +1,63 @@
-﻿body {
+﻿.chats__messages {
+    .title__container {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+
+        .settings-handler {
+            color: black;
+            cursor: pointer;
+
+            &-active {
+                cursor: pointer;
+                color: lightseagreen;
+                transform: scale(1.2);
+            }
+        }
+    }
+
+    .settings {
+        display: none;
+
+        &-active {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: start;
+
+            svg {
+                cursor: pointer;
+                margin: 5px 15px;
+            }
+
+            .people-inspection {
+                display: none;
+
+                &-active {
+                    display: flex;
+                    flex-direction: column;
+                    position: absolute;
+                    border: 3px solid gray;
+                    border-radius: 10px;
+                    background: white;
+                    padding: 10px;
+                    margin: 40px;
+                }
+            }
+
+            .people-inspection-handler {
+                color: black;
+
+                &-active {
+                    color: lightgreen;
+                    transform: scale(1.2);
+                }
+            }
+
+            .leave-from-chat {
+                color: red;
+                transform: scale(1.4);
+            }
+        }
+    }
 }

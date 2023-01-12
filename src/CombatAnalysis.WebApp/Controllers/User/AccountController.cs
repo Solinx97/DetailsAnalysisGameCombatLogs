@@ -1,4 +1,5 @@
-﻿using CombatAnalysis.WebApp.Consts;
+﻿using CombatAnalysis.BL.Interfaces;
+using CombatAnalysis.WebApp.Consts;
 using CombatAnalysis.WebApp.Interfaces;
 using CombatAnalysis.WebApp.Models.Response;
 using CombatAnalysis.WebApp.Models.User;
@@ -18,6 +19,7 @@ public class AccountController : ControllerBase
     public AccountController(IHttpClientHelper httpClient)
     {
         _httpClient = httpClient;
+        _httpClient.BaseAddress = Port.UserApi;
     }
 
     [HttpPost]
@@ -90,6 +92,19 @@ public class AccountController : ControllerBase
         {
             var users = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<UserModel>>();
             return Ok(users);
+        }
+
+        return BadRequest();
+    }
+
+    [HttpGet("{id}")]
+    public async Task<IActionResult> GetById(string id)
+    {
+        var responseMessage = await _httpClient.GetAsync($"Account/{id}");
+        if (responseMessage.StatusCode == System.Net.HttpStatusCode.OK)
+        {
+            var user = await responseMessage.Content.ReadFromJsonAsync<UserModel>();
+            return Ok(user);
         }
 
         return BadRequest();

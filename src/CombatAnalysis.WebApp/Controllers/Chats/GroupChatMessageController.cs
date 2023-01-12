@@ -37,4 +37,28 @@ public class GroupChatMessageController : ControllerBase
 
         return BadRequest();
     }
+
+    [HttpPut]
+    public async Task<IActionResult> Update(GroupChatMessageModel message)
+    {
+        var responseMessage = await _httpClient.PutAsync("GroupChatMessage", JsonContent.Create(message));
+        if (responseMessage.StatusCode == System.Net.HttpStatusCode.OK)
+        {
+            return Ok();
+        }
+
+        return BadRequest();
+    }
+
+    [HttpDelete("{messageId:int:min(1)}")]
+    public async Task<IActionResult> Delete(int messageId)
+    {
+        var responseMessage = await _httpClient.DeletAsync($"GroupChatMessage/{messageId}");
+        if (responseMessage.StatusCode == System.Net.HttpStatusCode.OK)
+        {
+            return Ok();
+        }
+
+        return BadRequest();
+    }
 }

@@ -1,15 +1,4 @@
-﻿.chats__messages {
-    .edit-message-handler, .delete-message-handler {
-        color: black;
-
-        &-active {
-            color: orange;
-            transform: scale(1.2);
-        }
-    }
-}
-
-.personal-chat {
+﻿.personal-chat-messages, .group-chat-messages {
     padding: 7px;
 
     &__right {
@@ -56,6 +45,15 @@
             border-radius: 25px;
             text-align: center;
             margin: 5px;
+        }
+    }
+
+    .edit-message-handler, .delete-message-handler {
+        color: black;
+
+        &-active {
+            color: orange;
+            transform: scale(1.2);
         }
     }
 }

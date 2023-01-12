@@ -46,7 +46,7 @@ const PersonalChat = ({ chat }) => {
         const isMyMessage = user.email === element.username;
         const elementIsSelected = element.id == selectedMessageId;
 
-        return (<li key={element.id} className={`personal-chat__${isMyMessage ? "right" : "left"}`}
+        return (<li key={element.id} className={`personal-chat-messages__${isMyMessage ? "right" : "left"}`}
             onClick={() => setSelectedMessageId(element.id)}>
             {!isMyMessage &&
                 <div className="username">{element.username}</div>
@@ -59,7 +59,7 @@ const PersonalChat = ({ chat }) => {
                 : <div className="message">{element.message}</div>
             }
             {deleteModeIsOn && isMyMessage && elementIsSelected &&
-                <FontAwesomeIcon icon={faTrash} title="Save" onClick={async () => await deletePersonalChatAsync(element.id)} />
+                <FontAwesomeIcon icon={faTrash} title="Save" onClick={async () => await deleteMessageChatAsync(element.id)} />
             }
         </li>);
     }
@@ -74,6 +74,13 @@ const PersonalChat = ({ chat }) => {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify(myMessage)
+        });
+    }
+
+    const deleteMessageChatAsync = async (messageId) => {
+        setDeleteMode(false);
+        await fetch(`/api/v1/PersonalChatMessage/${messageId}`, {
+            method: 'DELETE'
         });
     }
 
@@ -117,12 +124,6 @@ const PersonalChat = ({ chat }) => {
         });
     }
 
-    const deletePersonalChatAsync = async (messageId) => {
-        await fetch(`/api/v1/PersonalChatMessage/${messageId}`, {
-            method: 'DELETE'
-        });
-    }
-
     const render = () => {
         return (
             <div className="chats__messages">
@@ -133,7 +134,7 @@ const PersonalChat = ({ chat }) => {
                         <FontAwesomeIcon icon={faTrash} title="Delete" className={`delete-message-handler${deleteModeIsOn ? "-active" : ""}`} onClick={() => setDeleteMode(!deleteModeIsOn)} />
                     </div>
                 </div>
-                <ul className="personal-chat">
+                <ul className="personal-chat-messages">
                     {chatMessages !== null &&
                         chatMessages.map((element) => createMessage(element))
                     }

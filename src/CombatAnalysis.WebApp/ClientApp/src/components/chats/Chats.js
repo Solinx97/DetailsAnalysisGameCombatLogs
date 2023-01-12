@@ -20,6 +20,7 @@ const Chats = () => {
     const [allMyGroupChats, setAllMyGroupChats] = useState(null);
     const [allMyPersonalChats, setAllMyPersonalChats] = useState(null);
     const [newGroupChats, setNewGroupChats] = useState(null);
+    const [chatIsLeft, setChatIsLeft] = useState(false);
     const chatsUpdateInterval = 200;
 
     const usersDatalist = useRef(null);
@@ -30,12 +31,14 @@ const Chats = () => {
     useEffect(() => {
         if (selectedGroupChat !== null) {
             setSelectedPersonalChat(null);
+            setChatIsLeft(false);
         }
     }, [selectedGroupChat]);
 
     useEffect(() => {
         if (selectedPersonalChat !== null) {
             setSelectedGroupChat(null);
+            setChatIsLeft(false);
         }
     }, [selectedPersonalChat]);
 
@@ -258,12 +261,12 @@ const Chats = () => {
     }
 
     const render = () => {
-        let chat = <div>Select chat</div>;
-        if (selectedPersonalChat !== null) {
+        let chat = <div className="select-chat">Select chat</div>;
+        if (!chatIsLeft && selectedPersonalChat !== null) {
             chat = <PersonalChat chat={selectedPersonalChat} />;
         }
-        else if (selectedGroupChat !== null) {
-            chat = <GroupChat chat={selectedGroupChat} />;
+        else if (!chatIsLeft && selectedGroupChat !== null) {
+            chat = <GroupChat chat={selectedGroupChat} setChatIsLeaft={setChatIsLeft} />;
         }
 
         return (<div className="communication">

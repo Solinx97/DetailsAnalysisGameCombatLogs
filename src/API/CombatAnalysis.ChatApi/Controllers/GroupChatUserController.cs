@@ -38,9 +38,17 @@ public class GroupChatUserController : ControllerBase
     }
 
     [HttpGet("findByUserId/{userId}")]
-    public async Task<IActionResult> Find(string userId)
+    public async Task<IActionResult> FindByUserId(string userId)
     {
         var result = await _service.GetByParamAsync("UserId", userId);
+
+        return Ok(result);
+    }
+
+    [HttpGet("findByChatId/{groupId:int:min(1)}")]
+    public async Task<IActionResult> FindByGroupId(int groupId)
+    {
+        var result = await _service.GetByParamAsync("GroupChatId", groupId);
 
         return Ok(result);
     }
