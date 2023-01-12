@@ -45,6 +45,7 @@
             margin: 10px 5px;
             padding: 10px;
             box-shadow: 3px 3px 3px 3px gray;
+            border-radius: 10px;
         }
     }
 
@@ -52,26 +53,40 @@
         width: 50%;
         margin: 0px 25px;
 
+        .title {
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+
+            &__companion, &__message-panel {
+                margin: 0 20px;
+            }
+
+            &__message-panel {
+                display: none;
+
+                &-active {
+                    display: flex;
+
+                    svg {
+                        margin: 0 15px;
+                        cursor: pointer;
+                    }
+                }
+            }
+        }
+
         ul {
             height: 500px;
             margin: 12px 0px;
-            border: 2px solid black;
-            padding: 0;
+            box-shadow: 3px 3px 3px 3px gray;
+            border-radius: 25px;
 
             li {
                 margin: 5px;
 
-                :hover {
-                    cursor: pointer;
-                    background: #DCDCDC;
-                }
-
                 div {
                     padding: 5px 20px;
-
-                    :hover {
-                        background: #DCDCDC;
-                    }
                 }
             }
         }
@@ -86,10 +101,6 @@
                 margin: 0 10px;
                 width: 25px;
                 height: 25px;
-
-                :hover {
-                    cursor: pointer;
-                }
             }
         }
     }

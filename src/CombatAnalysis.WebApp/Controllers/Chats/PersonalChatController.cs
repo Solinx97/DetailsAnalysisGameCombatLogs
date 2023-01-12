@@ -47,7 +47,7 @@ public class PersonalChatController : ControllerBase
     [HttpPut]
     public async Task<IActionResult> Update(PersonalChatModel chat)
     {
-        var responseMessage = await _httpClient.PutAsync($"PersonalChat", JsonContent.Create(chat));
+        var responseMessage = await _httpClient.PutAsync("PersonalChat", JsonContent.Create(chat));
         if (responseMessage.StatusCode == System.Net.HttpStatusCode.OK)
         {
             return Ok();
