@@ -82,6 +82,23 @@
                     }
                 }
             }
+
+            &__container {
+                display: flex;
+                flex-direction: row;
+                align-items: center;
+
+                .settings-handler {
+                    color: black;
+                    cursor: pointer;
+
+                    &-active {
+                        cursor: pointer;
+                        color: lightseagreen;
+                        transform: scale(1.2);
+                    }
+                }
+            }
         }
 
         .group-chat-messages, .personal-chat-messages {
@@ -113,3 +130,64 @@
         }
     }
 }
+
+.personal-chat-messages, .group-chat-messages {
+    padding: 7px;
+
+    &__right {
+        flex-direction: row;
+        justify-content: right;
+        align-items: center;
+
+        .message {
+            border: 2px solid orange;
+            background: #f0f8ff;
+            min-width: 15%;
+        }
+
+        .edit-message {
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            align-items: center;
+        }
+    }
+
+    &__left {
+        flex-direction: column;
+        align-items: start;
+
+        .message {
+            border: 2px solid gray;
+            min-width: 25%;
+        }
+    }
+
+    &__right, &__left {
+        display: flex;
+
+        svg {
+            margin: 0 10px;
+        }
+
+        :hover {
+            cursor: pointer;
+        }
+
+        .message {
+            border-radius: 25px;
+            text-align: center;
+            margin: 5px;
+        }
+    }
+
+    .edit-message-handler, .delete-message-handler {
+        color: black;
+
+        &-active {
+            color: orange;
+            transform: scale(1.2);
+        }
+    }
+}
+

@@ -55,4 +55,16 @@ public class PersonalChatController : ControllerBase
 
         return BadRequest();
     }
+
+    [HttpDelete("{chatId:int:min(1)}")]
+    public async Task<IActionResult> Delete(int chatId)
+    {
+        var responseMessage = await _httpClient.DeletAsync($"PersonalChat/{chatId}");
+        if (responseMessage.StatusCode == System.Net.HttpStatusCode.OK)
+        {
+            return Ok();
+        }
+
+        return BadRequest();
+    }
 }

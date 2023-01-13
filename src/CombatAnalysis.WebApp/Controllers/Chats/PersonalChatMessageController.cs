@@ -61,4 +61,22 @@ public class PersonalChatMessageController : ControllerBase
 
         return BadRequest();
     }
+
+    [HttpDelete("deleteByChatId/{chatId:int:min(1)}")]
+    public async Task<IActionResult> DeleteByChatId(int chatId)
+    {
+        var responseMessage = await _httpClient.GetAsync($"PersonalChatMessage/findByChatId/{chatId}");
+        if (responseMessage.StatusCode == System.Net.HttpStatusCode.OK)
+        {
+            var messages = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<PersonalChatMessageModel>>();
+            foreach (var item in messages)
+            {
+                await Delete(item.Id);
+            }
+
+            return Ok();
+        }
+
+        return BadRequest();
+    }
 }

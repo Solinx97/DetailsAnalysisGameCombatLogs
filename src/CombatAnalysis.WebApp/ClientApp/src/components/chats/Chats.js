@@ -263,7 +263,7 @@ const Chats = () => {
     const render = () => {
         let chat = <div className="select-chat">Select chat</div>;
         if (!chatIsLeft && selectedPersonalChat !== null) {
-            chat = <PersonalChat chat={selectedPersonalChat} />;
+            chat = <PersonalChat chat={selectedPersonalChat} setChatIsLeaft={setChatIsLeft} />;
         }
         else if (!chatIsLeft && selectedGroupChat !== null) {
             chat = <GroupChat chat={selectedGroupChat} setChatIsLeaft={setChatIsLeft} />;

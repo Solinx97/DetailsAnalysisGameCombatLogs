@@ -1,21 +1,4 @@
 ﻿.chats__messages {
-    .title__container {
-        display: flex;
-        flex-direction: row;
-        align-items: center;
-
-        .settings-handler {
-            color: black;
-            cursor: pointer;
-
-            &-active {
-                cursor: pointer;
-                color: lightseagreen;
-                transform: scale(1.2);
-            }
-        }
-    }
-
     .settings {
         display: none;
 

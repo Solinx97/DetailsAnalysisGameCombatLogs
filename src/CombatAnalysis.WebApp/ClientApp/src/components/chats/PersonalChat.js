@@ -1,11 +1,11 @@
 ﻿import { useEffect, useRef, useState } from "react";
 import { useSelector } from 'react-redux';
-import { faPaperPlane, faPen, faTrash, faCloudArrowUp } from '@fortawesome/free-solid-svg-icons';
+import { faPaperPlane, faPen, faTrash, faCloudArrowUp, faPersonWalkingArrowRight } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import "../../styles/chats/personalChat.scss";
 
-const PersonalChat = ({ chat }) => {
+const PersonalChat = ({ chat, setChatIsLeaft }) => {
     const chatMessageUpdatesInterval = 200;
 
     const user = useSelector((state) => state.user.value);
@@ -124,11 +124,29 @@ const PersonalChat = ({ chat }) => {
         });
     }
 
+    const leaveFromChatAsync = async () => {
+        const response = await fetch(`/api/v1/PersonalChat/${chat.id}`, {
+            method: 'DELETE'
+        });
+
+        const status = response.status;
+        if (status === 200) {
+            await fetch(`/api/v1/PersonalChatMessage/deleteByChatId/${chat.id}`, {
+                method: 'DELETE'
+            });
+
+            setChatIsLeaft(true);
+        }
+    }
+
     const render = () => {
         return (
             <div className="chats__messages">
                 <div className="title">
-                    <div className="title__companion">{chat.companionUsername}</div>
+                    <div className="title__container">
+                        <div className="title__companion">{chat.companionUsername}</div>
+                        <FontAwesomeIcon icon={faPersonWalkingArrowRight} title="Remove chat" className="remove-chat-handler" onClick={() => leaveFromChatAsync()} />
+                    </div>
                     <div className={`title__message-panel${selectedMessageId > 0 ? "-active" : ""}`}>
                         <FontAwesomeIcon icon={faPen} title="Edit" className={`edit-message-handler${editModeIsOn ? "-active" : ""}`} onClick={() => setEditMode(!editModeIsOn)} />
                         <FontAwesomeIcon icon={faTrash} title="Delete" className={`delete-message-handler${deleteModeIsOn ? "-active" : ""}`} onClick={() => setDeleteMode(!deleteModeIsOn)} />

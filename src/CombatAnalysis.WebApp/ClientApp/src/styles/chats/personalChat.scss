@@ -1,59 +1,12 @@
-﻿.personal-chat-messages, .group-chat-messages {
-    padding: 7px;
-
-    &__right {
-        flex-direction: row;
-        justify-content: right;
-        align-items: center;
-
-        .message {
-            border: 2px solid orange;
-            background: #f0f8ff;
-            min-width: 15%;
-        }
-
-        .edit-message {
-            display: flex;
-            flex-direction: row;
-            justify-content: center;
-            align-items: center;
-        }
-    }
-
-    &__left {
-        flex-direction: column;
-        align-items: start;
-
-        .message {
-            border: 2px solid gray;
-            min-width: 25%;
-        }
-    }
-
-    &__right, &__left {
+﻿.chats__messages {
+    .remove-chat-handler {
         display: flex;
-
-        svg {
-            margin: 0 10px;
-        }
-
-        :hover {
-            cursor: pointer;
-        }
-
-        .message {
-            border-radius: 25px;
-            text-align: center;
-            margin: 5px;
-        }
-    }
-
-    .edit-message-handler, .delete-message-handler {
-        color: black;
-
-        &-active {
-            color: orange;
-            transform: scale(1.2);
-        }
+        flex-direction: column;
+        align-items: center;
+        justify-content: start;
+        margin: 0 20px;
+        cursor: pointer;
+        color: red;
+        transform: scale(1.4);
     }
 }
