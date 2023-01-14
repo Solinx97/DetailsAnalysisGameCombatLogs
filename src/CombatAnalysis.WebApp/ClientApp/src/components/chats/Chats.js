@@ -113,7 +113,7 @@ const Chats = () => {
     const myGroupChats = (element) => {
         return (<li key={element.id} onClick={() => setSelectedGroupChat(element)}>
             <div><strong>{element.name}</strong></div>
-            <div className="last-message">{element.lastMessage}</div>
+            <div className="last-message" title={element.lastMessage}>{element.lastMessage}</div>
         </li>);
     }
 
@@ -138,7 +138,7 @@ const Chats = () => {
     const myPersonalChats = (element) => {
         return (<li key={element.id} onClick={() => setSelectedPersonalChat(element)}>
             <div><strong>{element.companionUsername}</strong></div>
-            <div className="last-message">{element.lastMessage}</div>
+            <div className="last-message" title={element.lastMessage}>{element.lastMessage}</div>
         </li>);
     }
 

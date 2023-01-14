@@ -85,6 +85,10 @@ const PersonalChat = ({ chat, setChatIsLeaft }) => {
     }
 
     const sendMessageAsync = async () => {
+        if (messageInput.current.value.length === 0) {
+            return;
+        }
+
         await createChatMessageAsync(messageInput.current.value);
         messageInput.current.value = "";
     }
