@@ -9,7 +9,7 @@ const Home = () => {
         return (<div>
             <div>
                 <div>Communication (need be authorized)</div>
-                <button onClick={() => navigate("/chats")} disabled={isAuth ? false : true}>Open</button>
+                <button onClick={() => navigate("/communication")} disabled={isAuth ? false : true}>Open</button>
             </div>
             <div>
                 <div>Analyzing of combats</div>

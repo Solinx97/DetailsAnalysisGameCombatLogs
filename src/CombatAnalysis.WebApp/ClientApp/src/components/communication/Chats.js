@@ -5,9 +5,9 @@ import GroupChat from './GroupChat';
 import { faCommentMedical, faRightToBracket } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
-import "../../styles/chats/chats.scss";
+import "../../styles/communication/chats.scss";
 
-const Chats = () => {
+const Communication = () => {
     const user = useSelector((state) => state.user.value);
 
     const [myGroupChatsRender, setMyGroupChatsRender] = useState(<></>);
@@ -269,7 +269,7 @@ const Chats = () => {
             chat = <GroupChat chat={selectedGroupChat} setChatIsLeaft={setChatIsLeft} />;
         }
 
-        return (<div className="communication">
+        return (<div>
             <div className="search">
                 <div className="search__search-people">
                     <div className="search__search-people_name">Search people</div>
@@ -307,4 +307,4 @@ const Chats = () => {
     return render();
 }
 
-export default Chats;
+export default Communication;

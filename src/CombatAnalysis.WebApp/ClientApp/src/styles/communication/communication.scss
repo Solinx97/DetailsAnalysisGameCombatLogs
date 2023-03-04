@@ -1,0 +1,29 @@
+.communication {
+    display: flex;
+    flex-direction: row;
+
+    &__menu {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-around;
+        margin: 10px;
+        width: 100px;
+
+        div:hover {
+            cursor: pointer;
+            transform: scale(1.1);
+            color: yellowgreen;
+        }
+
+        .menu-item {
+            display: flex;
+            flex-direction: row;
+            justify-content: start;
+            align-items: center;
+            
+            div {
+                margin: 10px;
+            }
+        }
+    }
+}
