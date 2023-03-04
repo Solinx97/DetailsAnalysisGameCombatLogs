@@ -2,6 +2,8 @@
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 
+import "../../styles/account/login.scss";
+
 const Login = () => {
     const navigate = useNavigate();
     const { t, i18n } = useTranslation("login");
@@ -44,7 +46,7 @@ const Login = () => {
     }
 
     const render = () => {
-        return (<form onSubmit={handleSubmitAsync}>
+        return (<form className="login" onSubmit={handleSubmitAsync}>
             <div className="mb-3">
                 <label htmlFor="exampleInputEmail1" className="form-label">{t("Email")}</label>
                 <input type="email" className="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" onChange={handleEmailChange} />
@@ -53,10 +55,10 @@ const Login = () => {
                 <label htmlFor="exampleInputPassword1" className="form-label">{t("Password")}</label>
                 <input type="password" className="form-control" id="exampleInputPassword1" onChange={handlePasswordChange} />
             </div>
-            <div className="mb-3 form-check">
-                <input type="checkbox" className="form-check-input" id="exampleCheck1" />
-                <label className="form-check-label" htmlFor="exampleCheck1">{t("CheckMeOut")}</label>
-            </div>
+            {/*<div className="mb-3 form-check">*/}
+            {/*    <input type="checkbox" className="form-check-input" id="exampleCheck1" />*/}
+            {/*    <label className="form-check-label" htmlFor="exampleCheck1">{t("CheckMeOut")}</label>*/}
+            {/*</div>*/}
             <input type="submit" className="btn btn-primary" value="Login" />
         </form>);
     }

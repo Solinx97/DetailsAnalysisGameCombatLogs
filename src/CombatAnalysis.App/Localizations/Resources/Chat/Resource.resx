@@ -126,6 +126,9 @@
   <data name="AttachDocument" xml:space="preserve">
     <value>Attach document</value>
   </data>
+  <data name="Close" xml:space="preserve">
+    <value>Close</value>
+  </data>
   <data name="Copy" xml:space="preserve">
     <value>Copy</value>
   </data>
@@ -164,6 +167,9 @@
   </data>
   <data name="RemoveUser" xml:space="preserve">
     <value>Remove user</value>
+  </data>
+  <data name="SaveEdit" xml:space="preserve">
+    <value>Save edit</value>
   </data>
   <data name="SearchUser" xml:space="preserve">
     <value>Search user</value>

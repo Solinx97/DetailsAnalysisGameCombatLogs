@@ -27,14 +27,11 @@ internal class BannedUserService : IService<BannedUserDto, int>
         return CreateInternalAsync(item);
     }
 
-    public Task<int> DeleteAsync(BannedUserDto item)
+    public async Task<int> DeleteAsync(int id)
     {
-        if (item == null)
-        {
-            throw new ArgumentNullException(nameof(BannedUserDto), $"The {nameof(BannedUserDto)} can't be null");
-        }
+        var rowsAffected = await _repository.DeleteAsync(id);
 
-        return DeleteInternalAsync(item);
+        return rowsAffected;
     }
 
     public async Task<IEnumerable<BannedUserDto>> GetAllAsync()
@@ -78,14 +75,6 @@ internal class BannedUserService : IService<BannedUserDto, int>
         var resultMap = _mapper.Map<BannedUserDto>(createdItem);
 
         return resultMap;
-    }
-
-    private async Task<int> DeleteInternalAsync(BannedUserDto item)
-    {
-        var map = _mapper.Map<BannedUser>(item);
-        var rowsAffected = await _repository.DeleteAsync(map);
-
-        return rowsAffected;
     }
 
     private async Task<int> UpdateInternalAsync(BannedUserDto item)

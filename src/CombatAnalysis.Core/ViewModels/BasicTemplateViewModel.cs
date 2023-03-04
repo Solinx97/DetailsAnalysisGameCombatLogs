@@ -1,20 +1,21 @@
-﻿using CombatAnalysis.Core.Commands;
-using CombatAnalysis.Core.Consts;
+﻿using CombatAnalysis.Core.Consts;
 using CombatAnalysis.Core.Core;
 using CombatAnalysis.Core.Enums;
+using CombatAnalysis.Core.Helpers;
 using CombatAnalysis.Core.Interfaces;
 using CombatAnalysis.Core.Interfaces.Observers;
 using CombatAnalysis.Core.Models;
 using CombatAnalysis.Core.Models.User;
+using CombatAnalysis.Core.ViewModels.Base;
+using CombatAnalysis.Core.ViewModels.Chat;
 using CombatAnalysis.Core.ViewModels.ViewModelTemplates;
 using Microsoft.Extensions.Caching.Memory;
 using MvvmCross.Commands;
 using MvvmCross.Navigation;
-using MvvmCross.ViewModels;
 
 namespace CombatAnalysis.Core.ViewModels;
 
-public class BasicTemplateViewModel : MvxViewModel, IImprovedMvxViewModel, IResponseStatusObservable, IAuthObservable
+public class BasicTemplateViewModel : ParentTemplate, IVMDataHandler<CombatPlayerModel>, IResponseStatusObservable, IAuthObservable
 {
     private readonly List<IResponseStatusObserver> _responseStatusObservers;
     private readonly List<IAuthObserver> _authObservers;
@@ -23,7 +24,6 @@ public class BasicTemplateViewModel : MvxViewModel, IImprovedMvxViewModel, IResp
     private readonly IHttpClientHelper _httpClient;
 
     private int _step = -1;
-    private CombatPlayerModel _combatInformtaion;
     private List<CombatModel> _combats;
     private bool _isAuth;
     private bool _isLoginNotActivated = true;
@@ -38,7 +38,7 @@ public class BasicTemplateViewModel : MvxViewModel, IImprovedMvxViewModel, IResp
 
     public BasicTemplateViewModel(IMvxNavigationService mvvmNavigation, IMemoryCache memoryCache, IHttpClientHelper httpClient)
     {
-        Handler = new ViewModelMConnect();
+        Handler = new VMHandler();
 
         _mvvmNavigation = mvvmNavigation;
         _memoryCache = memoryCache;
@@ -64,7 +64,7 @@ public class BasicTemplateViewModel : MvxViewModel, IImprovedMvxViewModel, IResp
         DamageTakenDetailsCommand = new MvxAsyncCommand(DamageTakenDetailsAsync);
         ResourceDetailsCommand = new MvxAsyncCommand(ResourceDetailsAsync);
 
-        Templates.Basic = this;
+        Basic = this;
 
         CheckAuth();
         Task.Run(async () => await _mvvmNavigation.Navigate<HomeViewModel, bool>(IsAuth));
@@ -106,6 +106,8 @@ public class BasicTemplateViewModel : MvxViewModel, IImprovedMvxViewModel, IResp
 
     #region Properties
 
+    public CombatPlayerModel Data { get; set; }
+
     public CombatModel SelectedCombat
     {
         get
@@ -122,12 +124,6 @@ public class BasicTemplateViewModel : MvxViewModel, IImprovedMvxViewModel, IResp
             DetailsGenericTemplate<ResourceRecoveryModel, ResourceRecoveryGeneralModel>.SelectedCombat = value;
         }
     }
-
-    public IViewModelConnect Handler { get; set; }
-
-    public IMvxViewModel Parent { get; set; }
-
-    public IMvxViewModel SavedViewModel { get; set; }
 
     public string AppVersion
     {
@@ -300,30 +296,22 @@ public class BasicTemplateViewModel : MvxViewModel, IImprovedMvxViewModel, IResp
 
     public async Task DamageDoneDetailsAsync()
     {
-        _combatInformtaion = (CombatPlayerModel)Handler.Data;
-
-        await _mvvmNavigation.Navigate<DamageDoneDetailsViewModel, CombatPlayerModel>(_combatInformtaion);
+        await _mvvmNavigation.Navigate<DamageDoneDetailsViewModel, CombatPlayerModel>(Data);
     }
 
     public async Task HealDoneDetailsAsync()
     {
-        _combatInformtaion = (CombatPlayerModel)Handler.Data;
-
-        await _mvvmNavigation.Navigate<HealDoneDetailsViewModel, CombatPlayerModel>(_combatInformtaion);
+        await _mvvmNavigation.Navigate<HealDoneDetailsViewModel, CombatPlayerModel>(Data);
     }
 
     public async Task DamageTakenDetailsAsync()
     {
-        _combatInformtaion = (CombatPlayerModel)Handler.Data;
-
-        await _mvvmNavigation.Navigate<DamageTakenDetailsViewModel, CombatPlayerModel>(_combatInformtaion);
+        await _mvvmNavigation.Navigate<DamageTakenDetailsViewModel, CombatPlayerModel>(Data);
     }
 
     public async Task ResourceDetailsAsync()
     {
-        _combatInformtaion = (CombatPlayerModel)Handler.Data;
-
-        await _mvvmNavigation.Navigate<ResourceRecoveryDetailsViewModel, CombatPlayerModel>(_combatInformtaion);
+        await _mvvmNavigation.Navigate<ResourceRecoveryDetailsViewModel, CombatPlayerModel>(Data);
     }
 
     public async Task ChatAsync()

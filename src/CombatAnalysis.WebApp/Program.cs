@@ -19,6 +19,7 @@ builder.Services.Configure<TokenSettings>(settings);
 
 Port.CombatParserApi = builder.Configuration.GetValue<string>("CombatParserApiPort");
 Port.UserApi = builder.Configuration.GetValue<string>("UserApiPort");
+Port.ChatApi = builder.Configuration.GetValue<string>("ChatApiPort");
 
 IHttpClientHelper httpClient = new HttpClientHelper();
 builder.Services.AddSingleton(httpClient);

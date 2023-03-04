@@ -1,4 +1,5 @@
-﻿using CombatAnalysis.WebApp.Consts;
+﻿using CombatAnalysis.BL.Interfaces;
+using CombatAnalysis.WebApp.Consts;
 using CombatAnalysis.WebApp.Interfaces;
 using CombatAnalysis.WebApp.Models.Response;
 using CombatAnalysis.WebApp.Models.User;
@@ -7,7 +8,7 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 
-namespace CombatAnalysis.WebApp.Controllers;
+namespace CombatAnalysis.WebApp.Controllers.User;
 
 [Route("api/v1/[controller]")]
 [ApiController]
@@ -18,6 +19,7 @@ public class AccountController : ControllerBase
     public AccountController(IHttpClientHelper httpClient)
     {
         _httpClient = httpClient;
+        _httpClient.BaseAddress = Port.UserApi;
     }
 
     [HttpPost]
@@ -56,7 +58,7 @@ public class AccountController : ControllerBase
     {
         _httpClient.BaseAddress = Port.UserApi;
 
-        var responseMessage = await _httpClient.PostAsync("Account/registration", JsonContent.Create(model.Email));
+        var responseMessage = await _httpClient.PostAsync("Account/registration", JsonContent.Create(model));
         if (responseMessage.StatusCode == System.Net.HttpStatusCode.OK)
         {
 
@@ -82,6 +84,31 @@ public class AccountController : ControllerBase
         }
     }
 
+    [HttpGet]
+    public async Task<IActionResult> GetAll()
+    {
+        var responseMessage = await _httpClient.GetAsync("Account");
+        if (responseMessage.StatusCode == System.Net.HttpStatusCode.OK)
+        {
+            var users = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<UserModel>>();
+            return Ok(users);
+        }
+
+        return BadRequest();
+    }
+
+    [HttpGet("{id}")]
+    public async Task<IActionResult> GetById(string id)
+    {
+        var responseMessage = await _httpClient.GetAsync($"Account/{id}");
+        if (responseMessage.StatusCode == System.Net.HttpStatusCode.OK)
+        {
+            var user = await responseMessage.Content.ReadFromJsonAsync<UserModel>();
+            return Ok(user);
+        }
+
+        return BadRequest();
+    }
 
     [HttpPost("logout")]
     public async Task<IActionResult> Logout()

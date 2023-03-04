@@ -23,9 +23,12 @@ public class SQLRepository<TModel, TIdType> : IGenericRepository<TModel, TIdType
         return entityEntry.Entity;
     }
 
-    public async Task<int> DeleteAsync(TModel item)
+    public async Task<int> DeleteAsync(int id)
     {
-        _context.Set<TModel>().Remove(item);
+        var model = Activator.CreateInstance<TModel>();
+        model.GetType().GetProperty("Id").SetValue(model, id);
+
+        _context.Set<TModel>().Remove(model);
         var rowsAffected = await _context.SaveChangesAsync();
 
         return rowsAffected;

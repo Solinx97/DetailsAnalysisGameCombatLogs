@@ -27,14 +27,11 @@ internal class GroupChatUserService : IService<GroupChatUserDto, int>
         return CreateInternalAsync(item);
     }
 
-    public Task<int> DeleteAsync(GroupChatUserDto item)
+    public async Task<int> DeleteAsync(int id)
     {
-        if (item == null)
-        {
-            throw new ArgumentNullException(nameof(GroupChatUserDto), $"The {nameof(GroupChatUserDto)} can't be null");
-        }
+        var rowsAffected = await _repository.DeleteAsync(id);
 
-        return DeleteInternalAsync(item);
+        return rowsAffected;
     }
 
     public async Task<IEnumerable<GroupChatUserDto>> GetAllAsync()
@@ -78,14 +75,6 @@ internal class GroupChatUserService : IService<GroupChatUserDto, int>
         var resultMap = _mapper.Map<GroupChatUserDto>(createdItem);
 
         return resultMap;
-    }
-
-    private async Task<int> DeleteInternalAsync(GroupChatUserDto item)
-    {
-        var map = _mapper.Map<GroupChatUser>(item);
-        var rowsAffected = await _repository.DeleteAsync(map);
-
-        return rowsAffected;
     }
 
     private async Task<int> UpdateInternalAsync(GroupChatUserDto item)

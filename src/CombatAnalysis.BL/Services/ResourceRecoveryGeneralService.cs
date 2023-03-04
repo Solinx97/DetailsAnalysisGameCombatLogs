@@ -27,14 +27,11 @@ internal class ResourceRecoveryGeneralService : IService<ResourceRecoveryGeneral
         return CreateInternalAsync(item);
     }
 
-    public Task<int> DeleteAsync(ResourceRecoveryGeneralDto item)
+    public async Task<int> DeleteAsync(int id)
     {
-        if (item == null)
-        {
-            throw new ArgumentNullException(nameof(ResourceRecoveryGeneralDto), $"The {nameof(ResourceRecoveryGeneralDto)} can't be null");
-        }
+        var rowsAffected = await _repository.DeleteAsync(id);
 
-        return DeleteInternalAsync(item);
+        return rowsAffected;
     }
 
     public async Task<IEnumerable<ResourceRecoveryGeneralDto>> GetAllAsync()
@@ -84,20 +81,6 @@ internal class ResourceRecoveryGeneralService : IService<ResourceRecoveryGeneral
         var resultMap = _mapper.Map<ResourceRecoveryGeneralDto>(createdItem);
 
         return resultMap;
-    }
-
-    private async Task<int> DeleteInternalAsync(ResourceRecoveryGeneralDto item)
-    {
-        if (string.IsNullOrEmpty(item.SpellOrItem))
-        {
-            throw new ArgumentNullException(nameof(ResourceRecoveryGeneralDto), 
-                $"The property {nameof(ResourceRecoveryGeneralDto.SpellOrItem)} of the {nameof(ResourceRecoveryGeneralDto)} object can't be null or empty");
-        }
-
-        var map = _mapper.Map<ResourceRecoveryGeneral>(item);
-        var rowsAffected = await _repository.DeleteAsync(map);
-
-        return rowsAffected;
     }
 
     private async Task<int> UpdateInternalAsync(ResourceRecoveryGeneralDto item)

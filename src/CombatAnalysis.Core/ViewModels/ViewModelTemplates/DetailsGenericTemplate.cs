@@ -2,16 +2,16 @@
 using CombatAnalysis.Core.Interfaces;
 using CombatAnalysis.Core.Models;
 using CombatAnalysis.Core.Services;
+using CombatAnalysis.Core.ViewModels.Base;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
-using MvvmCross.ViewModels;
 using System.Collections.ObjectModel;
 using System.Reflection;
 using System.Resources;
 
 namespace CombatAnalysis.Core.ViewModels.ViewModelTemplates;
 
-abstract public class DetailsGenericTemplate<T, T1> : MvxViewModel<CombatPlayerModel>
+abstract public class DetailsGenericTemplate<T, T1> : ParentTemplate<CombatPlayerModel>
     where T : class
     where T1 : class
 {
@@ -19,7 +19,6 @@ abstract public class DetailsGenericTemplate<T, T1> : MvxViewModel<CombatPlayerM
     protected readonly IMapper _mapper;
     protected readonly CombatParserAPIService _combatParserAPIService;
 
-    private IImprovedMvxViewModel _basicTemplate;
     private bool _isShowFilters;
     private string _selectedDamageDoneSource;
     private string _selectedPlayer;
@@ -42,15 +41,6 @@ abstract public class DetailsGenericTemplate<T, T1> : MvxViewModel<CombatPlayerM
     public static CombatModel SelectedCombat { get; set; }
 
     public static bool IsNeedSave { get; set; }
-
-    public IImprovedMvxViewModel BasicTemplate
-    {
-        get { return _basicTemplate; }
-        set
-        {
-            SetProperty(ref _basicTemplate, value);
-        }
-    }
 
     public string SelectedSource
     {
@@ -164,8 +154,6 @@ abstract public class DetailsGenericTemplate<T, T1> : MvxViewModel<CombatPlayerM
             GetSources();
         }
     }
-
-    protected abstract void ChildPrepare(CombatPlayerModel parameter);
 
     protected abstract void Filter();
 

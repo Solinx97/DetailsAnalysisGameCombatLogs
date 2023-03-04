@@ -24,7 +24,7 @@ const CombatDetails = ({ detailsTypeName, userName }) => {
     const [usedMultiplyFilter, setUsedMultiplyFilter] = useState(false);
 
     const [getTimeWithoutMs, getSeconds, getDuration] = useTime();
-    const [combatDataList, getCombatData] = useCombatDetailsData(combatPlayerId, detailsType);
+    const [combatDataList, filteredDataList, getCombatData] = useCombatDetailsData(combatPlayerId, detailsType);
 
     useEffect(() => {
         const queryParams = new URLSearchParams(window.location.search);
@@ -60,7 +60,7 @@ const CombatDetails = ({ detailsTypeName, userName }) => {
             return;
         }
 
-        setCombatDataRender(await combatDataList());
+        setCombatDataRender(filteredDataList(combatDetailsData));
         createChartData(combatDetailsData);
     }
 

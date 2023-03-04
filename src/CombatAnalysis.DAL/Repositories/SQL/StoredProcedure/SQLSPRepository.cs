@@ -40,11 +40,10 @@ public class SQLSPRepository<TModel, TIdType> : IGenericRepository<TModel, TIdTy
         return data;
     }
 
-    public async Task<int> DeleteAsync(TModel item)
+    public async Task<int> DeleteAsync(int id)
     {
-        var property = item.GetType().GetProperty("Id");
         var rowsAffected = await _context.Database
-                            .ExecuteSqlRawAsync($"Delete{item.GetType().Name}ById {property.Name}", property.GetValue(item));
+                            .ExecuteSqlRawAsync($"Delete{typeof(TModel).Name}ById @Id", new SqlParameter("Id", id));
 
         return rowsAffected;
     }

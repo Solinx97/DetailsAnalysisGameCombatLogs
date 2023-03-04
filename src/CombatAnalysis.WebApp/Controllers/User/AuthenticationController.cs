@@ -4,7 +4,7 @@ using CombatAnalysis.WebApp.Models.User;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace CombatAnalysis.WebApp.Controllers;
+namespace CombatAnalysis.WebApp.Controllers.User;
 
 [Route("api/v1/[controller]")]
 [ApiController]

@@ -27,14 +27,11 @@ internal class DamageTakenGeneralService : IService<DamageTakenGeneralDto, int>
         return CreateInternalAsync(item);
     }
 
-    public Task<int> DeleteAsync(DamageTakenGeneralDto item)
+    public async Task<int> DeleteAsync(int id)
     {
-        if (item == null)
-        {
-            throw new ArgumentNullException(nameof(DamageTakenGeneralDto), $"The {nameof(DamageTakenGeneralDto)} can't be null");
-        }
+        var rowsAffected = await _repository.DeleteAsync(id);
 
-        return DeleteInternalAsync(item);
+        return rowsAffected;
     }
 
     public async Task<IEnumerable<DamageTakenGeneralDto>> GetAllAsync()
@@ -84,20 +81,6 @@ internal class DamageTakenGeneralService : IService<DamageTakenGeneralDto, int>
         var resultMap = _mapper.Map<DamageTakenGeneralDto>(createdItem);
 
         return resultMap;
-    }
-
-    private async Task<int> DeleteInternalAsync(DamageTakenGeneralDto item)
-    {
-        if (string.IsNullOrEmpty(item.SpellOrItem))
-        {
-            throw new ArgumentNullException(nameof(DamageTakenGeneralDto), 
-                $"The property {nameof(DamageTakenGeneralDto.SpellOrItem)} of the {nameof(DamageTakenGeneralDto)} object can't be null or empty");
-        }
-
-        var map = _mapper.Map<DamageTakenGeneral>(item);
-        var rowsAffected = await _repository.DeleteAsync(map);
-
-        return rowsAffected;
     }
 
     private async Task<int> UpdateInternalAsync(DamageTakenGeneralDto item)

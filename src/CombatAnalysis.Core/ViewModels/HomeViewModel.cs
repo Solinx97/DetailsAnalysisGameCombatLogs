@@ -1,17 +1,15 @@
-﻿using CombatAnalysis.Core.Consts;
-using CombatAnalysis.Core.Interfaces;
-using CombatAnalysis.Core.Interfaces.Observers;
+﻿using CombatAnalysis.Core.Interfaces.Observers;
+using CombatAnalysis.Core.ViewModels.Base;
+using CombatAnalysis.Core.ViewModels.Chat;
 using MvvmCross.Commands;
 using MvvmCross.Navigation;
-using MvvmCross.ViewModels;
 
 namespace CombatAnalysis.Core.ViewModels;
 
-public class HomeViewModel : MvxViewModel<bool>, IAuthObserver
+public class HomeViewModel : ParentTemplate<bool>, IAuthObserver
 {
     private readonly IMvxNavigationService _mvvmNavigation;
 
-    private IImprovedMvxViewModel _basicTemplate;
     private bool _chatIsEnabled;
 
     public HomeViewModel(IMvxNavigationService mvvmNavigation)
@@ -21,7 +19,7 @@ public class HomeViewModel : MvxViewModel<bool>, IAuthObserver
         OpenChatCommand = new MvxAsyncCommand(OpenChatAsync);
         OpenCombatAnalysisCommand = new MvxAsyncCommand(OpenCombatAnalysisAsync);
 
-        BasicTemplate = Templates.Basic;
+        BasicTemplate = ParentTemplate.Basic;
         BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, nameof(BasicTemplateViewModel.Step), -1);
 
         var authObservable = (IAuthObservable)BasicTemplate;
@@ -38,15 +36,6 @@ public class HomeViewModel : MvxViewModel<bool>, IAuthObserver
 
     #region Properties
 
-    public IImprovedMvxViewModel BasicTemplate
-    {
-        get { return _basicTemplate; }
-        set
-        {
-            SetProperty(ref _basicTemplate, value);
-        }
-    }
-
     public bool ChatIsEnabled
     {
         get { return _chatIsEnabled; }
@@ -58,7 +47,7 @@ public class HomeViewModel : MvxViewModel<bool>, IAuthObserver
 
     #endregion
 
-    public override void Prepare(bool isAuth)
+    protected override void ChildPrepare(bool isAuth)
     {
         ChatIsEnabled = isAuth;
     }

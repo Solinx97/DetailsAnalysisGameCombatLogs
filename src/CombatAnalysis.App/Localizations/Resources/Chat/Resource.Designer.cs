@@ -88,6 +88,15 @@ namespace CombatAnalysis.App.Localizations.Resources.Chat {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Close.
+        /// </summary>
+        public static string Close {
+            get {
+                return ResourceManager.GetString("Close", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Copy.
         /// </summary>
         public static string Copy {
@@ -201,6 +210,15 @@ namespace CombatAnalysis.App.Localizations.Resources.Chat {
         public static string RemoveUser {
             get {
                 return ResourceManager.GetString("RemoveUser", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Save edit.
+        /// </summary>
+        public static string SaveEdit {
+            get {
+                return ResourceManager.GetString("SaveEdit", resourceCulture);
             }
         }
         

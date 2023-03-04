@@ -2,6 +2,8 @@
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 
+import "../../styles/account/registration.scss";
+
 const Registration = () => {
     const navigate = useNavigate();
     const { t, i18n } = useTranslation("registration");
@@ -15,7 +17,7 @@ const Registration = () => {
             password: password
         };
 
-        const response = await fetch('api/v1/Account/registration', {
+        const response = await fetch("api/v1/Account/registration", {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -23,8 +25,8 @@ const Registration = () => {
             body: JSON.stringify(data)
         });
 
-        const statusCode = await response.status;
-        if (statusCode === 200) {
+        const result = await response;
+        if (result.status === 200) {
             navigate('/');
         }
     }
@@ -44,7 +46,7 @@ const Registration = () => {
     }
 
     const render = () => {
-        return (<form onSubmit={handleSubmitAsync}>
+        return (<form className="registration" onSubmit={handleSubmitAsync}>
             <div className="mb-3">
                 <label htmlFor="exampleInputEmail1" className="form-label">{t("Email")}</label>
                 <input type="email" className="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" onChange={handleEmailChange} />
@@ -53,10 +55,10 @@ const Registration = () => {
                 <label htmlFor="exampleInputPassword1" className="form-label">{t("Password")}</label>
                 <input type="password" className="form-control" id="exampleInputPassword1" onChange={handlePasswordChange} />
             </div>
-            <div className="mb-3 form-check">
-                <input type="checkbox" className="form-check-input" id="exampleCheck1" />
-                <label className="form-check-label" htmlFor="exampleCheck1">{t("CheckMeOut")}</label>
-            </div>
+            {/*<div className="mb-3 form-check">*/}
+            {/*    <input type="checkbox" className="form-check-input" id="exampleCheck1" />*/}
+            {/*    <label className="form-check-label" htmlFor="exampleCheck1">{t("CheckMeOut")}</label>*/}
+            {/*</div>*/}
             <input type="submit" className="btn btn-primary" value="Registration" />
         </form>);
     }

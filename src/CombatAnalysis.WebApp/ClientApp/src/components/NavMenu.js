@@ -40,9 +40,9 @@ const NavMenu = () => {
 
         const result = await response;
         if (result.status === 200) {
-            const jsonData = await result.json();
+            const currentUser = await result.json();
 
-            dispatch(userUpdate(jsonData));
+            dispatch(userUpdate(currentUser));
             dispatch(checkAuth(true));
         }
         else {

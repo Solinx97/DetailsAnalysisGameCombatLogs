@@ -39,6 +39,14 @@ public class GroupChatMessageController : ControllerBase
         return Ok(map);
     }
 
+    [HttpGet("findByChatId/{chatId:int:min(1)}")]
+    public async Task<IActionResult> Find(int chatId)
+    {
+        var groupChatMessages = await _service.GetByParamAsync("GroupChatId", chatId);
+
+        return Ok(groupChatMessages);
+    }
+
     [HttpPost]
     public async Task<IActionResult> Create(GroupChatMessageModel model)
     {
@@ -76,13 +84,12 @@ public class GroupChatMessageController : ControllerBase
         }
     }
 
-    [HttpDelete]
-    public async Task<IActionResult> Delete(GroupChatMessageModel model)
+    [HttpDelete("{id:int:min(1)}")]
+    public async Task<IActionResult> Delete(int id)
     {
         try
         {
-            var map = _mapper.Map<GroupChatMessageDto>(model);
-            var result = await _service.DeleteAsync(map);
+            var result = await _service.DeleteAsync(id);
 
             return Ok(result);
         }

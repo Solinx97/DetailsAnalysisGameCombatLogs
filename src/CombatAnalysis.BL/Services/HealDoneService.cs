@@ -27,14 +27,11 @@ internal class HealDoneService : IService<HealDoneDto, int>
         return CreateInternalAsync(item);
     }
 
-    public Task<int> DeleteAsync(HealDoneDto item)
+    public async Task<int> DeleteAsync(int id)
     {
-        if (item == null)
-        {
-            throw new ArgumentNullException(nameof(HealDoneDto), $"The {nameof(HealDoneDto)} can't be null");
-        }
+        var rowsAffected = await _repository.DeleteAsync(id);
 
-        return DeleteInternalAsync(item);
+        return rowsAffected;
     }
 
     public async Task<IEnumerable<HealDoneDto>> GetAllAsync()
@@ -84,20 +81,6 @@ internal class HealDoneService : IService<HealDoneDto, int>
         var resultMap = _mapper.Map<HealDoneDto>(createdItem);
 
         return resultMap;
-    }
-
-    private async Task<int> DeleteInternalAsync(HealDoneDto item)
-    {
-        if (string.IsNullOrEmpty(item.SpellOrItem))
-        {
-            throw new ArgumentNullException(nameof(HealDoneDto), 
-                $"The property {nameof(HealDoneDto.SpellOrItem)} of the {nameof(HealDoneDto)} object can't be null or empty");
-        }
-
-        var map = _mapper.Map<HealDone>(item);
-        var rowsAffected = await _repository.DeleteAsync(map);
-
-        return rowsAffected;
     }
 
     private async Task<int> UpdateInternalAsync(HealDoneDto item)

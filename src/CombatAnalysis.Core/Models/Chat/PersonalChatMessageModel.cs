@@ -1,4 +1,7 @@
-﻿namespace CombatAnalysis.Core.Models.Chat;
+﻿using MvvmCross.ViewModels;
+using System.ComponentModel;
+
+namespace CombatAnalysis.Core.Models.Chat;
 
 public class PersonalChatMessageModel
 {

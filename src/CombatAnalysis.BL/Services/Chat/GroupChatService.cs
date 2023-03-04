@@ -27,14 +27,11 @@ internal class GroupChatService : IService<GroupChatDto, int>
         return CreateInternalAsync(item);
     }
 
-    public Task<int> DeleteAsync(GroupChatDto item)
+    public async Task<int> DeleteAsync(int id)
     {
-        if (item == null)
-        {
-            throw new ArgumentNullException(nameof(GroupChatDto), $"The {nameof(GroupChatDto)} can't be null");
-        }
+        var rowsAffected = await _repository.DeleteAsync(id);
 
-        return DeleteInternalAsync(item);
+        return rowsAffected;
     }
 
     public async Task<IEnumerable<GroupChatDto>> GetAllAsync()
@@ -94,30 +91,6 @@ internal class GroupChatService : IService<GroupChatDto, int>
         var resultMap = _mapper.Map<GroupChatDto>(createdItem);
 
         return resultMap;
-    }
-
-    private async Task<int> DeleteInternalAsync(GroupChatDto item)
-    {
-        if (string.IsNullOrEmpty(item.ShortName))
-        {
-            throw new ArgumentNullException(nameof(GroupChatDto), 
-                $"The property {nameof(GroupChatDto.ShortName)} of the {nameof(GroupChatDto)} object can't be null or empty");
-        }
-        if (string.IsNullOrEmpty(item.Name))
-        {
-            throw new ArgumentNullException(nameof(GroupChatDto), 
-                $"The property {nameof(GroupChatDto.Name)} of the {nameof(GroupChatDto)} object can't be null or empty");
-        }
-        if (string.IsNullOrEmpty(item.LastMessage))
-        {
-            throw new ArgumentNullException(nameof(GroupChatDto), 
-                $"The property {nameof(GroupChatDto.LastMessage)} of the {nameof(GroupChatDto)} object can't be null or empty");
-        }
-
-        var map = _mapper.Map<GroupChat>(item);
-        var rowsAffected = await _repository.DeleteAsync(map);
-
-        return rowsAffected;
     }
 
     private async Task<int> UpdateInternalAsync(GroupChatDto item)

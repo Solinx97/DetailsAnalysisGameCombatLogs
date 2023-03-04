@@ -126,6 +126,9 @@
   <data name="AttachDocument" xml:space="preserve">
     <value>Прикрепить документ</value>
   </data>
+  <data name="Close" xml:space="preserve">
+    <value>Закрыть</value>
+  </data>
   <data name="Copy" xml:space="preserve">
     <value>Копировать</value>
   </data>
@@ -164,6 +167,9 @@
   </data>
   <data name="RemoveUser" xml:space="preserve">
     <value>Удалить пользователя</value>
+  </data>
+  <data name="SaveEdit" xml:space="preserve">
+    <value>Сохранить изменения</value>
   </data>
   <data name="SearchUser" xml:space="preserve">
     <value>Поиск игрока</value>

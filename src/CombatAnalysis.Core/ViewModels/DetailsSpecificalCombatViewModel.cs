@@ -1,34 +1,21 @@
-﻿using CombatAnalysis.Core.Consts;
-using CombatAnalysis.Core.Interfaces;
-using CombatAnalysis.Core.Models;
-using MvvmCross.ViewModels;
+﻿using CombatAnalysis.Core.Models;
+using CombatAnalysis.Core.ViewModels.Base;
 
 namespace CombatAnalysis.Core.ViewModels;
 
-public class DetailsSpecificalCombatViewModel : MvxViewModel<CombatModel>
+public class DetailsSpecificalCombatViewModel : ParentTemplate<CombatModel>
 {
     private CombatModel _combat;
-    private IImprovedMvxViewModel _basicTemplate;
     private List<CombatPlayerModel> _playersCombat;
     private CombatPlayerModel _selectedPlayer;
 
     public DetailsSpecificalCombatViewModel()
     {
-        BasicTemplate = Templates.Basic;
         BasicTemplate.Parent = this;
         BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, nameof(BasicTemplateViewModel.Step), 2);
     }
 
     #region Properties
-
-    public IImprovedMvxViewModel BasicTemplate
-    {
-        get { return _basicTemplate; }
-        set
-        {
-            SetProperty(ref _basicTemplate, value);
-        }
-    }
 
     public List<CombatPlayerModel> PlayersCombat
     {
@@ -48,7 +35,7 @@ public class DetailsSpecificalCombatViewModel : MvxViewModel<CombatModel>
         {
             SetProperty(ref _selectedPlayer, value);
 
-            BasicTemplate.Handler.Data = value;
+            (BasicTemplate as BasicTemplateViewModel).Data = value;
         }
     }
 
@@ -63,7 +50,7 @@ public class DetailsSpecificalCombatViewModel : MvxViewModel<CombatModel>
 
     #endregion
 
-    public override void Prepare(CombatModel parameter)
+    protected override void ChildPrepare(CombatModel parameter)
     {
         PlayersCombat = parameter.Players;
         Combat = parameter;

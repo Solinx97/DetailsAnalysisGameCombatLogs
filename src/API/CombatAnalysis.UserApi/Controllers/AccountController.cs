@@ -84,6 +84,20 @@ public class AccountController : ControllerBase
         }
     }
 
+    [HttpGet("{id}")]
+    public async Task<IActionResult> GetById(string id)
+    {
+        var user = await _service.GetByIdAsync(id);
+        if (user != null)
+        {
+            return Ok(user);
+        }
+        else
+        {
+            return BadRequest();
+        }
+    }
+
     [HttpGet("logout/{refreshToken}")]
     public async Task<IActionResult> Logout(string refreshToken)
     {
