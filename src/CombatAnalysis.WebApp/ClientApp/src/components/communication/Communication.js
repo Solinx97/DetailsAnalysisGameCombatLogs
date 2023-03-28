@@ -1,5 +1,8 @@
-import { useEffect, useState, useRef } from 'react';
-import Chats from './Chats';
+import { useState } from 'react';
+import Chats from './chats/Chats';
+import Communities from './Communities';
+import People from './people/People';
+import Invites from './Invites';
 import { faCircleArrowRight } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
@@ -16,16 +19,23 @@ const Communication = () => {
                     <div>Chats</div>
                 </div>
                 <div className="menu-item" onClick={() => setCurrentMenuItem(1)}>
-                    {currentMenuItem === 1 ? < FontAwesomeIcon icon={faCircleArrowRight} title="Current action" /> : null }
-                    <div>People</div>
+                    {currentMenuItem === 1 ? < FontAwesomeIcon icon={faCircleArrowRight} title="Current action" /> : null}
+                    <div>Communities</div>
                 </div>
                 <div className="menu-item" onClick={() => setCurrentMenuItem(2)}>
-                    {currentMenuItem === 2 ? < FontAwesomeIcon icon={faCircleArrowRight} title="Current action" /> : null}
+                    {currentMenuItem === 2 ? < FontAwesomeIcon icon={faCircleArrowRight} title="Current action" /> : null }
+                    <div>People</div>
+                </div>
+                <div className="menu-item" onClick={() => setCurrentMenuItem(3)}>
+                    {currentMenuItem === 3 ? < FontAwesomeIcon icon={faCircleArrowRight} title="Current action" /> : null}
                     <div>Invites</div>
                 </div>
             </div>
             <div className="communication__action">
-                <Chats />
+                {currentMenuItem === 0 ? <Chats /> : null}
+                {currentMenuItem === 1 ? <Communities /> : null}
+                {currentMenuItem === 2 ? <People /> : null}
+                {currentMenuItem === 3 ? <Invites /> : null}
             </div>
         </div>);
     }

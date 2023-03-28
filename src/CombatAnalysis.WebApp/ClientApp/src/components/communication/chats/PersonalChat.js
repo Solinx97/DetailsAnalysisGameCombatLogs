@@ -3,7 +3,7 @@ import { useSelector } from 'react-redux';
 import { faPaperPlane, faPen, faTrash, faCloudArrowUp, faPersonWalkingArrowRight } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
-import "../../styles/communication/personalChat.scss";
+import "../../../styles/communication/personalChat.scss";
 
 const PersonalChat = ({ chat, setChatIsLeaft }) => {
     const chatMessageUpdatesInterval = 200;

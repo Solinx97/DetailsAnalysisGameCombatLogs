@@ -3,7 +3,7 @@ import { useSelector } from 'react-redux';
 import { faPaperPlane, faPen, faTrash, faCloudArrowUp, faGear, faPerson, faRightToBracket, faRightFromBracket, faFileWaveform, faFolderOpen } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
-import "../../styles/communication/groupChat.scss";
+import "../../../styles/communication/groupChat.scss";
 
 const GroupChat = ({ chat, setChatIsLeaft }) => {
     const chatMessageUpdateInterval = 200;

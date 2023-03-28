@@ -2,7 +2,6 @@
 using CombatAnalysis.WebApp.Interfaces;
 using CombatAnalysis.WebApp.Models.Chats;
 using Microsoft.AspNetCore.Mvc;
-using System.Collections;
 
 namespace CombatAnalysis.WebApp.Controllers.Chats;
 
@@ -16,6 +15,19 @@ public class GroupChatController : ControllerBase
     {
         _httpClient = httpClient;
         _httpClient.BaseAddress = Port.ChatApi;
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> Create(GroupChatModel chat)
+    {
+        var responseMessage = await _httpClient.PostAsync("GroupChat", JsonContent.Create(chat));
+        if (responseMessage.StatusCode == System.Net.HttpStatusCode.OK)
+        {
+            var groupChat = await responseMessage.Content.ReadFromJsonAsync<GroupChatModel>();
+            return Ok(groupChat);
+        }
+
+        return BadRequest();
     }
 
     [HttpGet]

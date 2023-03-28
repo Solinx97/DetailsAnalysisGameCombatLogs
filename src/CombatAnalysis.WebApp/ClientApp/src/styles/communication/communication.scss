@@ -5,9 +5,9 @@
     &__menu {
         display: flex;
         flex-direction: column;
-        justify-content: space-around;
+        justify-content: start;
         margin: 10px;
-        width: 100px;
+        width: 10%;
 
         div:hover {
             cursor: pointer;
@@ -25,5 +25,9 @@
                 margin: 10px;
             }
         }
+    }
+
+    &__action {
+        width: 90%;
     }
 }
