@@ -55,14 +55,23 @@
                 overflow: hidden;
                 word-wrap: break-word;
             }
+
+            .active {
+                border: 3px double orange;
+            }
         }
 
         li {
             cursor: pointer;
             margin: 10px 5px;
             padding: 10px;
-            box-shadow: 3px 3px 3px 3px gray;
-            border-radius: 10px;
+            box-shadow: 5px 5px gray;
+            border-radius: 15px;
+
+            div, strong {
+                position: relative;
+                z-index: -1;
+            }
         }
     }
 

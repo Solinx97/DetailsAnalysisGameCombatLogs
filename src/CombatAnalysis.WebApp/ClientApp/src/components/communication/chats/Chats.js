@@ -1,4 +1,4 @@
-﻿import { useEffect, useState, useRef } from 'react';
+﻿import React, { useEffect, useState, useRef } from 'react';
 import { useSelector } from 'react-redux';
 import PersonalChat from './PersonalChat';
 import GroupChat from './GroupChat';
@@ -19,6 +19,7 @@ const Chats = ({ isOpenChat, initiatorId, companionId }) => {
     const [personalChatsHidden, setPersonalChatsHidden] = useState(false);
     const [createGroupChatIsActive, setCreateGroupChatIsActive] = useState(false);
     const [personalChats, setPersonalChats] = useState([]);
+    const [groupChats, setGroupChats] = useState([]);
     const [isOpenPersonalChat, setIsOpenPersonalChat] = useState(isOpenChat);
     const [chatPolicyType, setChatPolicyType] = useState(0);
 
@@ -60,7 +61,13 @@ const Chats = ({ isOpenChat, initiatorId, companionId }) => {
         if (isOpenPersonalChat && personalChats.length > 0) {
             openChatFromCommunication(initiatorId, companionId);
         }
+
+        fillMyPersonalChatList(personalChats);
     }, [personalChats])
+
+    useEffect(() => {
+        fillMyGroupChatList(groupChats);
+    }, [groupChats])
 
     const openChatFromCommunication = (initiatorId, companionId) => {
         let selectedChat = personalChats.filter((chat) => chat.initiatorId === initiatorId && chat.companionId === companionId);
@@ -85,7 +92,7 @@ const Chats = ({ isOpenChat, initiatorId, companionId }) => {
                 myGroupChats.push(myGroupChat);
             }
 
-            fillMyGroupChatList(myGroupChats);
+            setGroupChats(myGroupChats);
         }
     }
 
@@ -108,7 +115,8 @@ const Chats = ({ isOpenChat, initiatorId, companionId }) => {
     }
 
     const myGroupChats = (element) => {
-        return (<li key={element.id} onClick={() => setSelectedGroupChat(element)}>
+        return (<li key={element.id} className={selectedGroupChat !== null && selectedGroupChat.id === element.id ? `active` : ``}
+            onClick={() => setSelectedGroupChat(element)}>
             <div><strong>{element.name}</strong></div>
             <div className="last-message" title={element.lastMessage}>{element.lastMessage}</div>
         </li>);
@@ -122,7 +130,6 @@ const Chats = ({ isOpenChat, initiatorId, companionId }) => {
             const chats = await response.json();
 
             setPersonalChats(chats);
-            fillMyPersonalChatList(chats);
         }
     }
 
@@ -133,13 +140,14 @@ const Chats = ({ isOpenChat, initiatorId, companionId }) => {
     }
 
     const myPersonalChats = (element) => {
-        return (<li key={element.id} onClick={() => setSelectedPersonalChat(element)}>
+        return (<li className={selectedPersonalChat !== null && selectedPersonalChat.id === element.id ? `active` : ``}
+            key={element.id} onClick={() => setSelectedPersonalChat(element)}>
             <div><strong>{element.companionUsername}</strong></div>
             <div className="last-message" title={element.lastMessage}>{element.lastMessage}</div>
         </li>);
     }
 
-    const createNewGroupChat = async (event) => {
+    const createNewGroupChatAsync = async (event) => {
         event.preventDefault();
 
         const groupChat = {
@@ -218,7 +226,7 @@ const Chats = ({ isOpenChat, initiatorId, companionId }) => {
             </div>
             <div className={`create-group-chat${createGroupChatIsActive ? "_active" : ""}`}>
                 <p className="create-group-chat__title">Create a new group chat</p>
-                <form onSubmit={createNewGroupChat}>
+                <form onSubmit={createNewGroupChatAsync}>
                     <div className="form-group">
                         <label htmlFor="group-chat-name">Name</label>
                         <input type="text" className="form-control" name="name" id="group-chat-name" ref={nameInput} required />
