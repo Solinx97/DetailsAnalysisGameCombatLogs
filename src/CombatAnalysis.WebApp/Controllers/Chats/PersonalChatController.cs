@@ -32,6 +32,31 @@ public class PersonalChatController : ControllerBase
         return BadRequest();
     }
 
+    [HttpGet("isExist")]
+    public async Task<IActionResult> IsExist(string initiatorId, string companionId)
+    {
+        var responseMessage = await _httpClient.GetAsync($"PersonalChat");
+        if (responseMessage.StatusCode != System.Net.HttpStatusCode.OK)
+        {
+            return BadRequest();
+        }
+
+        var personalChats = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<PersonalChatModel>>();
+        var chats = personalChats.Where(x => x.InitiatorId == initiatorId && x.CompanionId == companionId).ToList();
+        if (!chats.Any())
+        {
+            var anotherChats = personalChats.Where(x => x.InitiatorId == companionId && x.CompanionId == initiatorId).ToList();
+            if (chats.Any())
+            {
+                return Ok(true);
+            }
+
+            return Ok(false);
+        }
+
+        return Ok(true);
+    }
+
     [HttpPost]
     public async Task<IActionResult> Create(PersonalChatModel chat)
     {

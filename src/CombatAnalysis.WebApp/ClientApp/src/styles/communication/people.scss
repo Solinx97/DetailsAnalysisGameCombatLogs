@@ -1,0 +1,14 @@
+.people {
+    &__cards {
+        .card-body {
+            &__links {
+                display: flex;
+                justify-content: space-around;
+
+                svg:hover {
+                    cursor: pointer;
+                }
+            }
+        }
+    }
+}

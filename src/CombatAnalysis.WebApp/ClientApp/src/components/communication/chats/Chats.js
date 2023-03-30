@@ -7,7 +7,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import "../../../styles/communication/chats.scss";
 
-const Chats = () => {
+const Chats = ({ isOpenChat, initiatorId, companionId }) => {
     const user = useSelector((state) => state.user.value);
 
     const [myGroupChatsRender, setMyGroupChatsRender] = useState(<></>);
@@ -18,12 +18,13 @@ const Chats = () => {
     const [groupChatsHidden, setGroupChatsHidden] = useState(false);
     const [personalChatsHidden, setPersonalChatsHidden] = useState(false);
     const [createGroupChatIsActive, setCreateGroupChatIsActive] = useState(false);
+    const [personalChats, setPersonalChats] = useState([]);
+    const [isOpenPersonalChat, setIsOpenPersonalChat] = useState(isOpenChat);
     const [chatPolicyType, setChatPolicyType] = useState(0);
 
     const nameInput = useRef(null);
     const shortNameInput = useRef(null);
     const memberNumberSelect = useRef(null);
-    const chatPolicyButton = useRef(null);
 
     const chatsUpdateInterval = 200;
 
@@ -54,6 +55,22 @@ const Chats = () => {
             clearInterval(personalChatUpdateInterval);
         };
     }, [user])
+
+    useEffect(() => {
+        if (isOpenPersonalChat && personalChats.length > 0) {
+            openChatFromCommunication(initiatorId, companionId);
+        }
+    }, [personalChats])
+
+    const openChatFromCommunication = (initiatorId, companionId) => {
+        let selectedChat = personalChats.filter((chat) => chat.initiatorId === initiatorId && chat.companionId === companionId);
+        if (selectedChat.length === 0) {
+            selectedChat = personalChats.filter((chat) => chat.initiatorId === companionId && chat.companionId === initiatorId);
+        }
+
+        setSelectedPersonalChat(selectedChat[0]);
+        setIsOpenPersonalChat(false);
+    }
 
     const getMyGroupChatUsersAsync = async () => {
         const response = await fetch(`/api/v1/GroupChatUser/${user.id}`);
@@ -104,6 +121,7 @@ const Chats = () => {
         if (status === 200) {
             const chats = await response.json();
 
+            setPersonalChats(chats);
             fillMyPersonalChatList(chats);
         }
     }
@@ -172,9 +190,6 @@ const Chats = () => {
         }
 
         return (<div>
-            <div>
-                <p>Chats</p>
-            </div>
             <div className="chats">
                 <div className="chats__my-chats">
                     <div className="chats__my-chats_title">
