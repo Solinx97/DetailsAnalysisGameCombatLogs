@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useSelector } from 'react-redux';
-import { faCommentDots, faUserPlus, faSquarePlus, faPlus } from '@fortawesome/free-solid-svg-icons';
+import { faCommentDots, faUserPlus, faSquarePlus } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import "../../../styles/communication/people.scss";
@@ -89,7 +89,6 @@ const People = ({ updateCurrentMenuItem }) => {
                     <FontAwesomeIcon icon={faCommentDots} title="Start chat" onClick={async () => await startChatAsync(element)} />
                     <FontAwesomeIcon icon={faUserPlus} title="Request to connect" />
                     <FontAwesomeIcon icon={faSquarePlus} title="Add to community" />
-                    <FontAwesomeIcon icon={faPlus} title="Add to chat" />
                 </div>
             </div>
         </li>);

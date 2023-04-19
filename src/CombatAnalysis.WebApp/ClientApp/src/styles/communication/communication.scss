@@ -5,21 +5,16 @@
     &__menu {
         display: flex;
         flex-direction: column;
-        justify-content: start;
-        margin: 10px;
-        width: 15%;
+        margin: 10px 0 0 -75px;
+        width: 20%;
 
         .menu-item {
             display: flex;
             flex-direction: row;
             justify-content: start;
             align-items: center;
-
-            div:hover {
-                cursor: pointer;
-                transform: scale(1.1);
-                color: yellowgreen;
-            }
+            padding: 0 5px;
+            width: 200px;
 
             div {
                 margin: 10px;
@@ -29,6 +24,12 @@
                 margin: 10px;
                 opacity: 0.5;
             }
+        }
+
+        .menu-item:hover {
+            box-shadow: 5px 5px 5px 5px gray;
+            border-radius: 10px;
+            cursor: pointer;
         }
     }
 

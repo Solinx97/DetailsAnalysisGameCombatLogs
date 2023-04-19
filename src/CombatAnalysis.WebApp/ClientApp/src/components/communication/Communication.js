@@ -2,7 +2,7 @@ import { useState } from 'react';
 import Chats from './chats/Chats';
 import Communities from './Communities';
 import People from './people/People';
-import MyEnvironment from './MyEnvironment';
+import MyEnvironment from './myEnvironment/MyEnvironment';
 import { faCircleArrowRight } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
@@ -23,24 +23,24 @@ const Communication = () => {
 
     const render = () => {
         return (<div className="communication">
-            <div className="communication__menu">
-                <div className="menu-item" onClick={() => setCurrentMenuItem(0)}>
+            <ul className="communication__menu">
+                <li className="menu-item" onClick={() => setCurrentMenuItem(0)}>
                     {currentMenuItem === 0 ? < FontAwesomeIcon icon={faCircleArrowRight} title="Current action" /> : null}
                     <div>Chats</div>
-                </div>
-                <div className="menu-item_disabled">
+                </li>
+                <li className="menu-item_disabled">
                     {currentMenuItem === 1 ? < FontAwesomeIcon icon={faCircleArrowRight} title="Current action" /> : null}
                     <div>Communities</div>
-                </div>
-                <div className="menu-item" onClick={() => setCurrentMenuItem(2)}>
+                </li>
+                <li className="menu-item" onClick={() => setCurrentMenuItem(2)}>
                     {currentMenuItem === 2 ? < FontAwesomeIcon icon={faCircleArrowRight} title="Current action" /> : null }
                     <div>People</div>
-                </div>
-                <div className="menu-item" onClick={() => setCurrentMenuItem(3)}>
+                </li>
+                <li className="menu-item" onClick={() => setCurrentMenuItem(3)}>
                     {currentMenuItem === 3 ? < FontAwesomeIcon icon={faCircleArrowRight} title="Current action" /> : null}
                     <div>My environment</div>
-                </div>
-            </div>
+                </li>
+            </ul>
             <div className="communication__action">
                 {currentMenuItem === 0 ? <Chats isOpenChat={isOpenChat} initiatorId={initiatorId} companionId={companionId} /> : null}
                 {currentMenuItem === 1 ? <Communities /> : null}
