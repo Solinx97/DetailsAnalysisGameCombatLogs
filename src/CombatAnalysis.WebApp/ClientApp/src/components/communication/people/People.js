@@ -14,12 +14,12 @@ const People = ({ updateCurrentMenuItem }) => {
         let getPeople = async () => {
             await getPeopleAsync();
         }
-
+        console.log(1);
         getPeople();
     }, [])
 
     const getPeopleAsync = async () => {
-        const response = await fetch(`/api/v1/Account`);
+        const response = await fetch("/api/v1/Account");
         const status = response.status;
 
         if (status === 200) {
@@ -30,7 +30,7 @@ const People = ({ updateCurrentMenuItem }) => {
 
     const checkExistNewChatAsync = async (targetUser) => {
         const response = await fetch(`/api/v1/PersonalChat/isExist?initiatorId=${user.id}&companionId=${targetUser.id}`);
-        if (response.status == 200) {
+        if (response.status === 200) {
             const isExist = await response.json();
             return isExist;
         }
@@ -62,15 +62,21 @@ const People = ({ updateCurrentMenuItem }) => {
             body: JSON.stringify(newChat)
         });
 
-        if (response.status == 200) {
+        if (response.status === 200) {
             updateCurrentMenuItem(0, user.id, targetUser.id);
         }
     }
 
     const fillCards = (allPeople) => {
-        const list = allPeople.map((element) => createPersonalCard(element));
-
+        const list = allPeople.filter(peopleListFilter).map((element) => createPersonalCard(element));
+        
         setPeople(list);
+    }
+
+    const peopleListFilter = (value) => {
+        if (value.id !== user.id) {
+            return value;
+        }
     }
 
     const createPersonalCard = (element) => {
@@ -81,21 +87,22 @@ const People = ({ updateCurrentMenuItem }) => {
                     <p className="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
                 </div>
                 <ul className="list-group list-group-flush">
-                    <li className="list-group-item">Cras justo odio</li>
-                    <li className="list-group-item">Dapibus ac facilisis in</li>
-                    <li className="list-group-item">Vestibulum at eros</li>
+                    <li className="list-group-item"><FontAwesomeIcon icon={faCommentDots} title="Start chat" onClick={async () => await startChatAsync(element)} /></li>
+                    <li className="list-group-item"><FontAwesomeIcon icon={faUserPlus} title="Request to connect" /></li>
+                    <li className="list-group-item"><FontAwesomeIcon icon={faSquarePlus} title="Add to community" /></li>
                 </ul>
-                <div className="card-body__links">
-                    <FontAwesomeIcon icon={faCommentDots} title="Start chat" onClick={async () => await startChatAsync(element)} />
-                    <FontAwesomeIcon icon={faUserPlus} title="Request to connect" />
-                    <FontAwesomeIcon icon={faSquarePlus} title="Add to community" />
-                </div>
             </div>
         </li>);
     }
 
     const render = () => {
         return (<div className="people">
+            <div>
+                <div>Populations people</div>
+                <div>Active people</div>
+                <div>Looking for</div>
+                <div>Looking for by tag(s)</div>
+            </div>
             <ul className="people__cards">
                 {people}
             </ul>

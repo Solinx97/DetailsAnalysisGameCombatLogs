@@ -109,8 +109,12 @@ const Chats = ({ isOpenChat, initiatorId, companionId }) => {
     }
 
     const fillMyGroupChatList = (chats) => {
-        const list = chats.map((element) => myGroupChats(element));
+        if (chats.length === 0) {
+            setMyGroupChatsRender(<div className="chats-empty">У вас нет групповых чатов</div>);
+            return;
+        }
 
+        const list = chats.map((element) => myGroupChats(element));
         setMyGroupChatsRender(list);
     }
 
@@ -134,13 +138,17 @@ const Chats = ({ isOpenChat, initiatorId, companionId }) => {
     }
 
     const fillMyPersonalChatList = (chats) => {
-        const list = chats.map((element) => myPersonalChats(element));
+        if (chats.length === 0) {
+            setPersoanlChatsRender(<div className="chats-empty">Отправьте ваше первое сообщение</div>);
+            return;
+        }
 
+        const list = chats.map((element) => myPersonalChats(element));
         setPersoanlChatsRender(list);
     }
 
     const myPersonalChats = (element) => {
-        return (<li className={selectedPersonalChat !== null && selectedPersonalChat.id === element.id ? `active` : ``}
+        return (<li className={selectedPersonalChat !== null && selectedPersonalChat.id === element.id ? "active" : ""}
             key={element.id} onClick={() => setSelectedPersonalChat(element)}>
             <div><strong>{element.companionUsername}</strong></div>
             <div className="last-message" title={element.lastMessage}>{element.lastMessage}</div>

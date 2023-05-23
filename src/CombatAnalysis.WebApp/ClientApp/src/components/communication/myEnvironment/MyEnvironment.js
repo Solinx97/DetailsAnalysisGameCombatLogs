@@ -17,15 +17,15 @@ const MyEnvironment = () => {
                 </li>
                 <li onClick={() => setCurrentMenuItem(1)}>
                     {currentMenuItem === 1 ? < FontAwesomeIcon icon={faCheck} /> : null}
-                    <div>Requests to connect</div>
+                    <div>Recomendations</div>
                 </li>
                 <li onClick={() => setCurrentMenuItem(2)}>
                     {currentMenuItem === 2 ? < FontAwesomeIcon icon={faCheck} /> : null}
-                    <div>Invites to community</div>
+                    <div>Requests to connect</div>
                 </li>
                 <li onClick={() => setCurrentMenuItem(3)}>
                     {currentMenuItem === 3 ? < FontAwesomeIcon icon={faCheck} /> : null}
-                    <div>Invites to chat</div>
+                    <div>Invites to community</div>
                 </li>
             </ul>
             <div className="my-environment__action">
