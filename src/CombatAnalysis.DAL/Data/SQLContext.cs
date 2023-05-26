@@ -1,11 +1,12 @@
 ﻿using CombatAnalysis.DAL.Entities;
 using CombatAnalysis.DAL.Entities.Authentication;
 using CombatAnalysis.DAL.Entities.Chat;
+using CombatAnalysis.DAL.Entities.Community;
 using CombatAnalysis.DAL.Entities.User;
 using CombatAnalysis.DAL.Helpers;
 using Microsoft.EntityFrameworkCore;
 
-namespace CombatAnalysis.DAL.Data.SQL;
+namespace CombatAnalysis.DAL.Data;
 
 public class SQLContext : DbContext
 {
@@ -24,6 +25,26 @@ public class SQLContext : DbContext
 
     public DbSet<PersonalChat>? PersonalChat { get; }
 
+    #region Communication
+
+    public DbSet<Community>? Community { get; }
+
+    public DbSet<CommunityPost>? CommunityPost { get; }
+
+    public DbSet<CommunityPostComment>? CommunityPostComment { get; }
+
+    public DbSet<CommunityPostDislike>? CommunityPostDislike { get; }
+
+    public DbSet<CommunityPostLike>? CommunityPostLike { get; }
+
+    public DbSet<CommunityUser>? CommunityUser { get; }
+
+    public DbSet<InviteToCommunity>? InviteToCommunity { get; }
+
+    #endregion
+
+    #region Chat
+
     public DbSet<PersonalChatMessage>? PersonalChatMessage { get; }
 
     public DbSet<InviteToGroupChat>? InviteToGroupChat { get; }
@@ -34,7 +55,27 @@ public class SQLContext : DbContext
 
     public DbSet<GroupChatUser>? GroupChatUser { get; }
 
+    #endregion
+
+    #region User
+
+    public DbSet<Customer>? Customer { get; }
+
     public DbSet<BannedUser>? BannedUser { get; }
+
+    public DbSet<Friend>? Friend { get; }
+
+    public DbSet<Post>? Post { get; }
+
+    public DbSet<PostLike>? PostLike { get; }
+
+    public DbSet<PostDislike>? PostDislike { get; }
+
+    public DbSet<RequestToConnet>? RequestToConnet { get; }
+
+    #endregion
+
+    #region Combat details
 
     public DbSet<CombatLog>? CombatLog { get; }
 
@@ -59,4 +100,6 @@ public class SQLContext : DbContext
     public DbSet<ResourceRecovery>? ResourceRecovery { get; }
 
     public DbSet<ResourceRecoveryGeneral>? ResourceRecoveryGeneral { get; }
+
+    #endregion
 }

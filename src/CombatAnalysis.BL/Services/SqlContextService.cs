@@ -1,5 +1,5 @@
 ﻿using CombatAnalysis.BL.Interfaces;
-using CombatAnalysis.DAL.Data.SQL;
+using CombatAnalysis.DAL.Data;
 using Microsoft.EntityFrameworkCore.Storage;
 
 namespace CombatAnalysis.BL.Services;

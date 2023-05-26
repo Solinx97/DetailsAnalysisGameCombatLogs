@@ -1,4 +1,4 @@
-﻿using CombatAnalysis.DAL.Data.SQL;
+﻿using CombatAnalysis.DAL.Data;
 using CombatAnalysis.DAL.Entities.User;
 using CombatAnalysis.DAL.Interfaces;
 using Microsoft.EntityFrameworkCore;

@@ -1,5 +1,4 @@
 ﻿using CombatAnalysis.DAL.Data;
-using CombatAnalysis.DAL.Data.SQL;
 using CombatAnalysis.DAL.Enums;
 using CombatAnalysis.DAL.Interfaces;
 using CombatAnalysis.DAL.Repositories.Firebase;
