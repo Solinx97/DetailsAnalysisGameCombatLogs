@@ -1,0 +1,21 @@
+﻿using CombatAnalysis.CustomerBL.DTO;
+using CombatAnalysis.CustomerBL.Interfaces;
+using CombatAnalysis.CustomerBL.Services;
+using CombatAnalysis.CustomerBL.Services.User;
+using CombatAnalysis.DAL.Extensions;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+
+namespace CombatAnalysis.CutomerBL.Extensions;
+
+public static class ServiceCollectionExtensions
+{
+    public static void CustomerBLDependencies(this IServiceCollection services, IConfiguration configuration, string connectionName)
+    {
+        services.RegisterDependenciesForDAL(configuration, connectionName);
+
+        services.AddScoped<IUserService<AppUserDto>, UserService>();
+
+        services.AddScoped<IService<CustomerDto, string>, CustomerService>();
+    }
+}

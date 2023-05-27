@@ -8,7 +8,7 @@ public interface IGenericRepository<TModel, TIdType>
 
     Task<int> UpdateAsync(TModel item);
 
-    Task<int> DeleteAsync(int id);
+    Task<int> DeleteAsync(TIdType id);
 
     Task<TModel> GetByIdAsync(TIdType id);
 

@@ -9,7 +9,7 @@ using Microsoft.OpenApi.Models;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.RegisterDependenciesForBL(builder.Configuration, "DefaultConnection");
+builder.Services.BLDependencies(builder.Configuration, "DefaultConnection");
 
 var loggerFactory = new LoggerFactory();
 var logger = new Logger<ILogger>(loggerFactory);

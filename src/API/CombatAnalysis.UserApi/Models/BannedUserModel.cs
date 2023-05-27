@@ -1,4 +1,4 @@
-﻿namespace CombatAnalysis.ChatApi.Models;
+﻿namespace CombatAnalysis.UserApi.Models;
 
 public class BannedUserModel
 {

@@ -1,6 +1,4 @@
-﻿using CombatAnalysis.UserApi.Models.User;
-
-namespace CombatAnalysis.UserApi.Models.Response;
+﻿namespace CombatAnalysis.UserApi.Models.Response;
 
 public struct ResponseFromAccount
 {

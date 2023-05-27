@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
-using CombatAnalysis.BL.DTO.Chat;
-using CombatAnalysis.BL.Interfaces;
+using CombatAnalysis.CustomerBL.DTO;
+using CombatAnalysis.CustomerBL.Interfaces;
 using CombatAnalysis.DAL.Entities.User;
 using CombatAnalysis.DAL.Interfaces;
 

@@ -1,6 +1,6 @@
 ﻿namespace CombatAnalysis.DAL.Entities.User;
 
-public class RequestToConnet
+public class RequestToConnect
 {
     public int Id { get; set; }
 

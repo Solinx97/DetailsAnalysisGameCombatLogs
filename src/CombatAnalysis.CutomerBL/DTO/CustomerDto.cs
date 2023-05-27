@@ -1,6 +1,6 @@
-﻿namespace CombatAnalysis.DAL.Entities.User;
+﻿namespace CombatAnalysis.CustomerBL.DTO;
 
-public class Customer
+public class CustomerDto
 {
     public string Id { get; set; }
 

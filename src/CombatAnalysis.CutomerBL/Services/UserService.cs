@@ -1,10 +1,10 @@
 ﻿using AutoMapper;
-using CombatAnalysis.BL.DTO.User;
-using CombatAnalysis.BL.Interfaces;
+using CombatAnalysis.CustomerBL.DTO;
+using CombatAnalysis.CustomerBL.Interfaces;
 using CombatAnalysis.DAL.Entities.User;
 using CombatAnalysis.DAL.Interfaces;
 
-namespace CombatAnalysis.BL.Services.User;
+namespace CombatAnalysis.CustomerBL.Services.User;
 
 internal class UserService : IUserService<AppUserDto>
 {
@@ -84,12 +84,12 @@ internal class UserService : IUserService<AppUserDto>
     {
         if (string.IsNullOrEmpty(item.Email))
         {
-            throw new ArgumentNullException(nameof(AppUserDto), 
+            throw new ArgumentNullException(nameof(AppUserDto),
                 $"The property {nameof(AppUserDto.Email)} of the {nameof(AppUserDto)} object can't be null or empty");
         }
         if (string.IsNullOrEmpty(item.Password))
         {
-            throw new ArgumentNullException(nameof(AppUserDto), 
+            throw new ArgumentNullException(nameof(AppUserDto),
                 $"The property {nameof(AppUserDto.Password)} of the {nameof(AppUserDto)} object can't be null or empty");
         }
 
@@ -104,7 +104,7 @@ internal class UserService : IUserService<AppUserDto>
     {
         if (string.IsNullOrEmpty(item.Email))
         {
-            throw new ArgumentNullException(nameof(AppUserDto), 
+            throw new ArgumentNullException(nameof(AppUserDto),
                 $"The property {nameof(AppUserDto.Email)} of the {nameof(AppUserDto)} object can't be null or empty");
         }
         if (string.IsNullOrEmpty(item.Password))
@@ -123,12 +123,12 @@ internal class UserService : IUserService<AppUserDto>
     {
         if (string.IsNullOrEmpty(item.Email))
         {
-            throw new ArgumentNullException(nameof(AppUserDto), 
+            throw new ArgumentNullException(nameof(AppUserDto),
                 $"The property {nameof(AppUserDto.Email)} of the {nameof(AppUserDto)} object can't be null or empty");
         }
         if (string.IsNullOrEmpty(item.Password))
         {
-            throw new ArgumentNullException(nameof(AppUserDto), 
+            throw new ArgumentNullException(nameof(AppUserDto),
                 $"The property {nameof(AppUserDto.Password)} of the {nameof(AppUserDto)} object can't be null or empty");
         }
 

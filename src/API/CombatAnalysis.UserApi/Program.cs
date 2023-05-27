@@ -1,6 +1,6 @@
 using AutoMapper;
-using CombatAnalysis.BL.Extensions;
-using CombatAnalysis.BL.Mapping;
+using CombatAnalysis.CustomerBL.Mapping;
+using CombatAnalysis.CutomerBL.Extensions;
 using CombatAnalysis.Identity.Extensions;
 using CombatAnalysis.Identity.Mapping;
 using CombatAnalysis.Identity.Security;
@@ -11,7 +11,7 @@ using Microsoft.OpenApi.Models;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.RegisterDependenciesForBL(builder.Configuration, "DefaultConnection");
+builder.Services.CustomerBLDependencies(builder.Configuration, "DefaultConnection");
 builder.Services.RegisterIdentityDependencies();
 
 JWTSecret.GenerateAccessSecretKey();
@@ -28,7 +28,7 @@ var logger = new Logger<ILogger>(loggerFactory);
 var mappingConfig = new MapperConfiguration(mc =>
 {
     mc.AddProfile(new UserApiMapper());
-    mc.AddProfile(new BLMapper());
+    mc.AddProfile(new CustomerBLMapper());
     mc.AddProfile(new IdentityMappingMapper());
 });
 

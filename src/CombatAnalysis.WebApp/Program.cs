@@ -9,7 +9,7 @@ using CombatAnalysis.WebApp.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.RegisterDependenciesForBL(builder.Configuration, "DefaultConnection");
+builder.Services.BLDependencies(builder.Configuration, "DefaultConnection");
 builder.Services.RegisterIdentityDependencies();
 
 var settings = builder.Configuration.GetSection(nameof(TokenSettings));

@@ -31,7 +31,7 @@ public class FirebaseRepositroy<TModel, TIdType> : IGenericRepository<TModel, TI
         return result.Object;
     }
 
-    public async Task<int> DeleteAsync(int id)
+    public async Task<int> DeleteAsync(TIdType id)
     {
         var data = await _context.FirebaseClient
               .Child(typeof(TModel).Name)

@@ -1,6 +1,6 @@
-﻿namespace CombatAnalysis.DAL.Entities.User;
+﻿namespace CombatAnalysis.UserApi.Models;
 
-public class Customer
+public class CustomerModel
 {
     public string Id { get; set; }
 

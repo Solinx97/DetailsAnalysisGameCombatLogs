@@ -14,6 +14,5 @@ public class ChatMapper : Profile
         CreateMap<GroupChatDto, GroupChatModel>().ReverseMap();
         CreateMap<GroupChatMessageDto, GroupChatMessageModel>().ReverseMap();
         CreateMap<GroupChatUserDto, GroupChatUserModel>().ReverseMap();
-        CreateMap<BannedUserDto, BannedUserModel>().ReverseMap();
     }
 }

@@ -1,6 +1,6 @@
-﻿namespace CombatAnalysis.BL.DTO.User;
+﻿namespace CombatAnalysis.UserApi.Models;
 
-public class AppUserDto
+public class AppUserModel
 {
     public string Id { get; set; }
 

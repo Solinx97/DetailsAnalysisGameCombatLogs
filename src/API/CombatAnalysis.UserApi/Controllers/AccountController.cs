@@ -1,10 +1,9 @@
 ﻿using AutoMapper;
-using CombatAnalysis.BL.DTO.User;
-using CombatAnalysis.BL.Interfaces;
+using CombatAnalysis.CustomerBL.DTO;
+using CombatAnalysis.CustomerBL.Interfaces;
 using CombatAnalysis.Identity.Interfaces;
 using CombatAnalysis.UserApi.Models;
 using CombatAnalysis.UserApi.Models.Response;
-using CombatAnalysis.UserApi.Models.User;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CombatAnalysis.UserApi.Controllers;

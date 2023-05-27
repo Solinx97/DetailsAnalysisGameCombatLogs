@@ -1,20 +1,20 @@
 ﻿using AutoMapper;
-using CombatAnalysis.BL.DTO.Chat;
-using CombatAnalysis.BL.Interfaces;
-using CombatAnalysis.ChatApi.Models;
+using CombatAnalysis.CustomerBL.DTO;
+using CombatAnalysis.CustomerBL.Interfaces;
+using CombatAnalysis.UserApi.Models;
 using Microsoft.AspNetCore.Mvc;
 
-namespace CombatAnalysis.ChatApi.Controllers;
+namespace CombatAnalysis.UserApi.Controllers;
 
 [Route("api/v1/[controller]")]
 [ApiController]
-public class BannedUserController : ControllerBase
+public class FriendController : ControllerBase
 {
-    private readonly IService<BannedUserDto, int> _service;
+    private readonly IService<FriendDto, int> _service;
     private readonly IMapper _mapper;
     private readonly ILogger _logger;
 
-    public BannedUserController(IService<BannedUserDto, int> service, IMapper mapper, ILogger logger)
+    public FriendController(IService<FriendDto, int> service, IMapper mapper, ILogger logger)
     {
         _service = service;
         _mapper = mapper;
@@ -38,11 +38,11 @@ public class BannedUserController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<IActionResult> Create(BannedUserModel model)
+    public async Task<IActionResult> Create(FriendModel model)
     {
         try
         {
-            var map = _mapper.Map<BannedUserDto>(model);
+            var map = _mapper.Map<FriendDto>(model);
             var result = await _service.CreateAsync(map);
 
             return Ok(result);
@@ -56,11 +56,11 @@ public class BannedUserController : ControllerBase
     }
 
     [HttpPut]
-    public async Task<IActionResult> Update(BannedUserModel model)
+    public async Task<IActionResult> Update(CustomerModel model)
     {
         try
         {
-            var map = _mapper.Map<BannedUserDto>(model);
+            var map = _mapper.Map<FriendDto>(model);
             var result = await _service.UpdateAsync(map);
 
             return Ok(result);
@@ -90,3 +90,4 @@ public class BannedUserController : ControllerBase
         }
     }
 }
+

@@ -1,4 +1,4 @@
-﻿namespace CombatAnalysis.BL.Interfaces;
+﻿namespace CombatAnalysis.CustomerBL.Interfaces;
 
 public interface IUserService<TModel>
     where TModel : class

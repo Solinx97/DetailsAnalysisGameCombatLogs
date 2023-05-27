@@ -71,7 +71,7 @@ public class SQLContext : DbContext
 
     public DbSet<PostDislike>? PostDislike { get; }
 
-    public DbSet<RequestToConnet>? RequestToConnet { get; }
+    public DbSet<RequestToConnect>? RequestToConnet { get; }
 
     #endregion
 
