@@ -31,7 +31,7 @@ public class AccountController : ControllerBase
         var user = await _service.GetAsync(model.Email, model.Password);
         if (user == null)
         {
-            return BadRequest();
+            return NotFound();
         }
 
         var tokens = await _tokenService.GenerateTokensAsync(HttpContext.Response.Cookies, user.Id);
@@ -49,7 +49,7 @@ public class AccountController : ControllerBase
             var user = await _service.GetAsync(model.Email);
             if (user != null)
             {
-                return BadRequest();
+                return Ok();
             }
 
             var newUser = new AppUserModel { Id = Guid.NewGuid().ToString(), Email = model.Email, Password = model.Password };

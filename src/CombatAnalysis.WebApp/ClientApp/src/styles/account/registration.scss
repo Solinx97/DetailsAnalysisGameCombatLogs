@@ -1,3 +1,10 @@
 ﻿.registration {
     width: 300px;
+
+    &__error-message {
+        margin: 15px;
+        padding: 10px;
+        border-radius: 15px;
+        background: yellow;
+    }
 }

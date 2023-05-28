@@ -10,8 +10,11 @@ const Login = () => {
 
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const [showErrorMessage, setShowErrorMessage] = useState(false);
 
     const loginAsync = async () => {
+        setShowErrorMessage(false);
+
         const data = {
             email: email,
             password: password
@@ -26,7 +29,10 @@ const Login = () => {
         });
 
         const result = await response;
-        if (result.status === 200) {
+        if (result.status === 404) {
+            setShowErrorMessage(true);
+        }
+        else {
             navigate('/');
         }
     }
@@ -56,6 +62,7 @@ const Login = () => {
                 <input type="password" className="form-control" id="exampleInputPassword1" onChange={handlePasswordChange} />
             </div>
             <input type="submit" className="btn btn-primary" value="Login" />
+            <div className="login__error-message" style={{ display: showErrorMessage ? "flex" : "none" }}>Incorrect email/password. Try again</div>
         </form>);
     }
 

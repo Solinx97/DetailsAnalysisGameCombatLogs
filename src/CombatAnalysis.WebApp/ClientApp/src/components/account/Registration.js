@@ -11,8 +11,11 @@ const Registration = () => {
     const [email, setEmail] = useState("");
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
+    const [showErrorMessage, setShowErrorMessage] = useState(false);
 
     const registrationAsync = async () => {
+        setShowErrorMessage(false);
+
         const data = {
             email: email,
             password: password
@@ -28,7 +31,12 @@ const Registration = () => {
 
         const result = await response;
         if (result.status === 200) {
-            await createCustomer(await response.json());
+            try {
+                const createdUser = await response.json();
+                await createCustomer(createdUser);
+            } catch (SyntaxError) {
+                setShowErrorMessage(true);
+            }
         }
     }
 
@@ -88,6 +96,7 @@ const Registration = () => {
                 <input type="password" className="form-control" id="exampleInputPassword1" onChange={handlePasswordChange} />
             </div>
             <input type="submit" className="btn btn-primary" value="Registration" />
+            <div className="registration__error-message" style={{ display: showErrorMessage ? "flex" : "none" }}>This email already used!</div>
         </form>);
     }
 

@@ -1,14 +1,21 @@
 ﻿import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
+import { useState } from 'react';
+import { useEffect } from 'react';
 
 const Home = () => {
     const navigate = useNavigate();
     const isAuth = useSelector((state) => state.authentication.value);
+    const [showAuthNotification, setShowAuthNotification] = useState(false);
+
+    useEffect(() => {
+        setShowAuthNotification(!isAuth);
+    }, [isAuth])
 
     const render = () => {
         return (<div>
             <div>
-                <div>Communication (need be authorized)</div>
+                <div>Communication <span style={{ display: showAuthNotification ? "flex" : "none" }}>(need be authorized)</span></div>
                 <button onClick={() => navigate("/communication")} disabled={isAuth ? false : true}>Open</button>
             </div>
             <div>
