@@ -9,6 +9,7 @@ const People = ({ updateCurrentMenuItem }) => {
     const user = useSelector((state) => state.user.value);
 
     const [people, setPeople] = useState(<></>);
+    const [showSuccessfullRequest, setShowSuccessfullRequest] = useState(false);
 
     useEffect(() => {
         let getPeople = async () => {
@@ -68,8 +69,11 @@ const People = ({ updateCurrentMenuItem }) => {
     }
 
     const createRequestToConnect = async (people) => {
+        setShowSuccessfullRequest(false);
+
         const newRequest = {
             id: 0,
+            username: user.email,
             toUserId: people.id,
             when: new Date(),
             result: 0,
@@ -85,7 +89,11 @@ const People = ({ updateCurrentMenuItem }) => {
         });
 
         if (response.status === 200) {
-            console.log(1);
+            setShowSuccessfullRequest(true);
+
+            setTimeout(() => {
+                setShowSuccessfullRequest(false);
+            }, 5000);
         }
     }
 
@@ -126,6 +134,7 @@ const People = ({ updateCurrentMenuItem }) => {
                 <div>Looking for</div>
                 <div>Looking for by tag(s)</div>
             </div>
+            <div className="people__successfully-request" style={{ display: showSuccessfullRequest ? "flex" : "none" }}>You have successfully sent a connection request</div>
             <ul className="people__cards">
                 {people}
             </ul>

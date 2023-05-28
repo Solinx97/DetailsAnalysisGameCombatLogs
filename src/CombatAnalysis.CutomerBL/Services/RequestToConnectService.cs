@@ -71,6 +71,12 @@ internal class RequestToConnectService : IService<RequestToConnectDto, int>
 
     private async Task<RequestToConnectDto> CreateInternalAsync(RequestToConnectDto item)
     {
+        if (string.IsNullOrEmpty(item.Username))
+        {
+            throw new ArgumentNullException(nameof(RequestToConnectDto),
+                $"The property {nameof(RequestToConnectDto.Username)} of the {nameof(RequestToConnectDto)} object can't be null or empty");
+        }
+
         var map = _mapper.Map<RequestToConnect>(item);
         var createdItem = await _repository.CreateAsync(map);
         var resultMap = _mapper.Map<RequestToConnectDto>(createdItem);
@@ -80,6 +86,12 @@ internal class RequestToConnectService : IService<RequestToConnectDto, int>
 
     private async Task<int> UpdateInternalAsync(RequestToConnectDto item)
     {
+        if (string.IsNullOrEmpty(item.Username))
+        {
+            throw new ArgumentNullException(nameof(RequestToConnectDto),
+                $"The property {nameof(RequestToConnectDto.Username)} of the {nameof(RequestToConnectDto)} object can't be null or empty");
+        }
+
         var map = _mapper.Map<RequestToConnect>(item);
         var rowsAffected = await _repository.UpdateAsync(map);
 

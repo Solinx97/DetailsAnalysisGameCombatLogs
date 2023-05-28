@@ -2,6 +2,7 @@ import { useEffect, useState, useRef } from 'react';
 import { faCheck } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Friends from './Friends';
+import RequestsToConnect from './RequestsToConnect';
 
 import "../../../styles/communication/myEnvironment.scss";
 
@@ -30,6 +31,7 @@ const MyEnvironment = () => {
             </ul>
             <div className="my-environment__action">
                 {currentMenuItem === 0 ? <Friends /> : null}
+                {currentMenuItem === 2 ? <RequestsToConnect /> : null}
             </div>
         </div>);
     }

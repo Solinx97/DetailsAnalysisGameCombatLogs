@@ -28,8 +28,7 @@ const Login = () => {
             body: JSON.stringify(data)
         });
 
-        const result = await response;
-        if (result.status === 404) {
+        if (response.status === 404) {
             setShowErrorMessage(true);
         }
         else {

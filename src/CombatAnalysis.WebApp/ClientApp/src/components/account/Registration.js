@@ -29,8 +29,7 @@ const Registration = () => {
             body: JSON.stringify(data)
         });
 
-        const result = await response;
-        if (result.status === 200) {
+        if (response.status === 200) {
             try {
                 const createdUser = await response.json();
                 await createCustomer(createdUser);
