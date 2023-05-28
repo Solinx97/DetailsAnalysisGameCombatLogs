@@ -60,7 +60,7 @@ const NavMenu = () => {
 
         if (response.status === 200) {
             dispatch(checkAuth(false))
-            dispatch(userUpdate(null));
+            dispatch(userUpdate(null));;
         }
     }
 

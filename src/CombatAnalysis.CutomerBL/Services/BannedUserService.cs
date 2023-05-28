@@ -4,7 +4,7 @@ using CombatAnalysis.CustomerBL.Interfaces;
 using CombatAnalysis.DAL.Entities.User;
 using CombatAnalysis.DAL.Interfaces;
 
-namespace CombatAnalysis.BL.Services.Chat;
+namespace CombatAnalysis.CustomerBL.Services;
 
 internal class BannedUserService : IService<BannedUserDto, int>
 {

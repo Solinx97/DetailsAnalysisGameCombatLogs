@@ -1,6 +1,6 @@
 using AutoMapper;
 using CombatAnalysis.CustomerBL.Mapping;
-using CombatAnalysis.CutomerBL.Extensions;
+using CombatAnalysis.CustomerBL.Extensions;
 using CombatAnalysis.Identity.Extensions;
 using CombatAnalysis.Identity.Mapping;
 using CombatAnalysis.Identity.Security;

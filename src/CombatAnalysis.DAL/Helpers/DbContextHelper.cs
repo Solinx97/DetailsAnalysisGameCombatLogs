@@ -13,15 +13,6 @@ public static class DbProcedureHelper
     {
         var types = new Type[]
         {
-            typeof(AppUser),
-            typeof(RefreshToken),
-            typeof(PersonalChat),
-            typeof(PersonalChatMessage),
-            typeof(InviteToGroupChat),
-            typeof(GroupChat),
-            typeof(GroupChatMessage),
-            typeof(GroupChatUser),
-            typeof(BannedUser),
             typeof(CombatLog),
             typeof(CombatLogByUser),
             typeof(CombatPlayer),

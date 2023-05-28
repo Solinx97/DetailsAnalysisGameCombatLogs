@@ -14,7 +14,7 @@ const People = ({ updateCurrentMenuItem }) => {
         let getPeople = async () => {
             await getPeopleAsync();
         }
-        console.log(1);
+
         getPeople();
     }, [])
 
@@ -67,6 +67,29 @@ const People = ({ updateCurrentMenuItem }) => {
         }
     }
 
+    const createRequestToConnect = async (people) => {
+        const newRequest = {
+            id: 0,
+            toUserId: people.id,
+            when: new Date(),
+            result: 0,
+            ownerId: user.id,
+        };
+
+        const response = await fetch("/api/v1/RequestToConnect", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(newRequest)
+        });
+
+        if (response.status === 200) {
+            console.log(1);
+        }
+    }
+
+
     const fillCards = (allPeople) => {
         const list = allPeople.filter(peopleListFilter).map((element) => createPersonalCard(element));
         
@@ -88,7 +111,7 @@ const People = ({ updateCurrentMenuItem }) => {
                 </div>
                 <ul className="list-group list-group-flush">
                     <li className="list-group-item"><FontAwesomeIcon icon={faCommentDots} title="Start chat" onClick={async () => await startChatAsync(element)} /></li>
-                    <li className="list-group-item"><FontAwesomeIcon icon={faUserPlus} title="Request to connect" /></li>
+                    <li className="list-group-item"><FontAwesomeIcon icon={faUserPlus} title="Request to connect" onClick={async () => await createRequestToConnect(element)} /></li>
                     <li className="list-group-item"><FontAwesomeIcon icon={faSquarePlus} title="Add to community" /></li>
                 </ul>
             </div>

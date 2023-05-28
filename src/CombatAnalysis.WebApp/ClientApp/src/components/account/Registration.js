@@ -9,6 +9,7 @@ const Registration = () => {
     const { t, i18n } = useTranslation("registration");
 
     const [email, setEmail] = useState("");
+    const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
 
     const registrationAsync = async () => {
@@ -27,12 +28,39 @@ const Registration = () => {
 
         const result = await response;
         if (result.status === 200) {
+            await createCustomer(await response.json());
+        }
+    }
+
+    const createCustomer = async (accountData) => {
+        const data = {
+            id: "",
+            username: username,
+            firstName: " ",
+            lastName: " ",
+            appUserId: accountData.id
+        };
+
+        const response = await fetch("api/v1/Customer", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        });
+
+        const result = await response;
+        if (result.status === 200) {
             navigate('/');
         }
     }
 
     const handleEmailChange = (event) => {
         setEmail(event.target.value);
+    }
+
+    const handleUsernameChange = (event) => {
+        setUsername(event.target.value);
     }
 
     const handlePasswordChange = (event) => {
@@ -48,17 +76,17 @@ const Registration = () => {
     const render = () => {
         return (<form className="registration" onSubmit={handleSubmitAsync}>
             <div className="mb-3">
-                <label htmlFor="exampleInputEmail1" className="form-label">{t("Email")}</label>
-                <input type="email" className="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" onChange={handleEmailChange} />
+                <label htmlFor="inputEmail1" className="form-label">{t("Email")}</label>
+                <input type="email" className="form-control" id="inputEmail1" aria-describedby="emailHelp" onChange={handleEmailChange} />
+            </div>
+            <div className="mb-3">
+                <label htmlFor="inputUsername" className="form-label">Username</label>
+                <input type="text" className="form-control" id="inputUsername" onChange={handleUsernameChange} />
             </div>
             <div className="mb-3">
                 <label htmlFor="exampleInputPassword1" className="form-label">{t("Password")}</label>
                 <input type="password" className="form-control" id="exampleInputPassword1" onChange={handlePasswordChange} />
             </div>
-            {/*<div className="mb-3 form-check">*/}
-            {/*    <input type="checkbox" className="form-check-input" id="exampleCheck1" />*/}
-            {/*    <label className="form-check-label" htmlFor="exampleCheck1">{t("CheckMeOut")}</label>*/}
-            {/*</div>*/}
             <input type="submit" className="btn btn-primary" value="Registration" />
         </form>);
     }

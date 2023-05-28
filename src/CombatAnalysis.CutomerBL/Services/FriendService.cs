@@ -4,14 +4,14 @@ using CombatAnalysis.CustomerBL.Interfaces;
 using CombatAnalysis.DAL.Entities.User;
 using CombatAnalysis.DAL.Interfaces;
 
-namespace CombatAnalysis.FriendBL.Services;
+namespace CombatAnalysis.CustomerBL.Services;
 
-internal class FriiendService : IService<FriendDto, int>
+internal class FriendService : IService<FriendDto, int>
 {
     private readonly IGenericRepository<Friend, int> _repository;
     private readonly IMapper _mapper;
 
-    public FriiendService(IGenericRepository<Friend, int> repository, IMapper mapper)
+    public FriendService(IGenericRepository<Friend, int> repository, IMapper mapper)
     {
         _repository = repository;
         _mapper = mapper;

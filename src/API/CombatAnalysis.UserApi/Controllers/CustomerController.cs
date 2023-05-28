@@ -42,6 +42,8 @@ public class CustomerController : ControllerBase
     {
         try
         {
+            model.Id = Guid.NewGuid().ToString();
+
             var map = _mapper.Map<CustomerDto>(model);
             var result = await _service.CreateAsync(map);
 
