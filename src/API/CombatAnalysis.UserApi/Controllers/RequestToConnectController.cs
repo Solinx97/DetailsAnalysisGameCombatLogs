@@ -40,7 +40,7 @@ public class RequestToConnectController : ControllerBase
     [HttpGet("searchByOwnerId/{id}")]
     public async Task<IActionResult> SearchByOwnerId(string id)
     {
-        var result = await _service.GetByParamAsync("OwnerId", id);
+        var result = await _service.GetByParamAsync(nameof(RequestToConnectModel.OwnerId), id);
 
         return Ok(result);
     }
@@ -48,7 +48,7 @@ public class RequestToConnectController : ControllerBase
     [HttpGet("searchByToUserId/{id}")]
     public async Task<IActionResult> SearchByToUserId(string id)
     {
-        var result = await _service.GetByParamAsync("ToUserId", id);
+        var result = await _service.GetByParamAsync(nameof(RequestToConnectModel.ToUserId), id);
 
         return Ok(result);
     }

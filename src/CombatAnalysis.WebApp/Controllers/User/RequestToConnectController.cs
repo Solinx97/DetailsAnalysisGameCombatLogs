@@ -52,4 +52,12 @@ public class RequestToConnectController : ControllerBase
 
         return Ok(requestToConnect);
     }
+
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> Delete(int id)
+    {
+        await _httpClient.DeletAsync($"RequestToConnect/{id}");
+
+        return Ok();
+    }
 }

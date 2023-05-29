@@ -52,12 +52,55 @@ const RequestToConnect = () => {
         setMyRequestsToConnect(list);
     }
 
+    const acceptRequestAsync = async (request) => {
+        const newFriend = {
+            id: 0,
+            username: request.username,
+            whoFriendId: request.toUserId,
+            forWhomId: request.ownerId
+        };
+
+        let response = await fetch("/api/v1/Friend", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(newFriend)
+        });
+
+        if (response.status !== 200) {
+            console.log(1);
+            return
+        }
+
+        response = await fetch(`/api/v1/RequestToConnect/${request.id}`, {
+            method: 'DELETE',
+        });
+
+        if (response.status !== 200) {
+            console.log(2);
+            return;
+        }
+    }
+
+    const rejectRequestAsync = async (requestId) => {
+        const response = await fetch(`/api/v1/RequestToConnect/${requestId}`, {
+            method: 'DELETE',
+        });
+
+        if (response.status !== 200) {
+            console.log(3);
+        }
+    }
+
     const createCard = (element) => {
         return (<li key={element.id} className="request-to-connect">
             <div>{element.username}</div>
             <ul className="request-to-connect__answer">
-                <li className="accept"><FontAwesomeIcon icon={faCircleCheck} title="Accept" /></li>
-                <li className="reject"><FontAwesomeIcon icon={faCircleXmark} title="Reject" /></li>
+                <li className="accept"><FontAwesomeIcon icon={faCircleCheck} title="Accept"
+                    onClick={async () => await acceptRequestAsync(element)} /></li>
+                <li className="reject"><FontAwesomeIcon icon={faCircleXmark} title="Reject"
+                    onClick={async () => await rejectRequestAsync(element.id)} /></li>
             </ul>
         </li>);
     }

@@ -8,6 +8,8 @@ import "../../../styles/communication/people.scss";
 const People = ({ updateCurrentMenuItem }) => {
     const user = useSelector((state) => state.user.value);
 
+    const timeForHideNotifications = 4000;
+
     const [people, setPeople] = useState(<></>);
     const [showSuccessfullRequest, setShowSuccessfullRequest] = useState(false);
 
@@ -68,7 +70,7 @@ const People = ({ updateCurrentMenuItem }) => {
         }
     }
 
-    const createRequestToConnect = async (people) => {
+    const createRequestToConnectAsync = async (people) => {
         setShowSuccessfullRequest(false);
 
         const newRequest = {
@@ -76,7 +78,6 @@ const People = ({ updateCurrentMenuItem }) => {
             username: user.email,
             toUserId: people.id,
             when: new Date(),
-            result: 0,
             ownerId: user.id,
         };
 
@@ -93,10 +94,9 @@ const People = ({ updateCurrentMenuItem }) => {
 
             setTimeout(() => {
                 setShowSuccessfullRequest(false);
-            }, 5000);
+            }, timeForHideNotifications);
         }
     }
-
 
     const fillCards = (allPeople) => {
         const list = allPeople.filter(peopleListFilter).map((element) => createPersonalCard(element));
@@ -119,7 +119,7 @@ const People = ({ updateCurrentMenuItem }) => {
                 </div>
                 <ul className="list-group list-group-flush">
                     <li className="list-group-item"><FontAwesomeIcon icon={faCommentDots} title="Start chat" onClick={async () => await startChatAsync(element)} /></li>
-                    <li className="list-group-item"><FontAwesomeIcon icon={faUserPlus} title="Request to connect" onClick={async () => await createRequestToConnect(element)} /></li>
+                    <li className="list-group-item"><FontAwesomeIcon icon={faUserPlus} title="Request to connect" onClick={async () => await createRequestToConnectAsync(element)} /></li>
                     <li className="list-group-item"><FontAwesomeIcon icon={faSquarePlus} title="Add to community" /></li>
                 </ul>
             </div>

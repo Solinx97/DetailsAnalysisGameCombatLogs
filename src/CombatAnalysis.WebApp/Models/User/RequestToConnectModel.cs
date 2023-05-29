@@ -10,7 +10,5 @@ public class RequestToConnectModel
 
     public DateTimeOffset When { get; set; }
 
-    public int Result { get; set; }
-
     public string OwnerId { get; set; }
 }
