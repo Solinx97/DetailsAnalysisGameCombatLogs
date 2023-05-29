@@ -1,25 +1,18 @@
 .my-environment {
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
 
     &__menu {
         li {
             display: flex;
             align-items: center;
-            margin: 20px 10px;
-            padding: 10px;
-            width: 200px;
+            justify-content: center;
+            margin: 10px 0;
 
-            svg {
-                margin-right: 10px;
-                color: green;
+            button {
+                width: 200px;
+                margin: 5px;
             }
-        }
-
-        li:hover {
-            box-shadow: 5px 5px 5px 5px gray;
-            border-radius: 10px;
-            cursor: pointer;
         }
     }
 }

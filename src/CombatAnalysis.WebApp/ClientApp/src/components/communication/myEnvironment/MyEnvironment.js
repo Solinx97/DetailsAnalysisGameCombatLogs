@@ -2,6 +2,8 @@ import { useEffect, useState, useRef } from 'react';
 import { faCheck } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Friends from './Friends';
+import MyFeed from './MyFeed';
+import Profile from './Profile';
 import RequestsToConnect from './RequestsToConnect';
 
 import "../../../styles/communication/myEnvironment.scss";
@@ -12,26 +14,25 @@ const MyEnvironment = () => {
     const render = () => {
         return (<div className="my-environment">
             <ul className="my-environment__menu">
-                <li onClick={() => setCurrentMenuItem(0)}>
-                    {currentMenuItem === 0 ? < FontAwesomeIcon icon={faCheck} /> : null}
-                    <div>Friends</div>
+                <li>
+                    <button type="button" className="btn btn-outline-success" onClick={() => setCurrentMenuItem(1)}>Profile</button>
                 </li>
-                <li onClick={() => setCurrentMenuItem(1)}>
-                    {currentMenuItem === 1 ? < FontAwesomeIcon icon={faCheck} /> : null}
-                    <div>Recomendations</div>
+                <li>
+                    <button type="button" className="btn btn-outline-info" onClick={() => setCurrentMenuItem(0)}>Feed</button>
+                    <button type="button" className="btn btn-outline-info" onClick={() => setCurrentMenuItem(2)}>Friends</button>
+                    <button type="button" className="btn btn-outline-info" onClick={() => setCurrentMenuItem(3)}>Community</button>
                 </li>
-                <li onClick={() => setCurrentMenuItem(2)}>
-                    {currentMenuItem === 2 ? < FontAwesomeIcon icon={faCheck} /> : null}
-                    <div>Requests to connect</div>
-                </li>
-                <li onClick={() => setCurrentMenuItem(3)}>
-                    {currentMenuItem === 3 ? < FontAwesomeIcon icon={faCheck} /> : null}
-                    <div>Invites to community</div>
+                <li>
+                    <button type="button" className="btn btn-outline-info" onClick={() => setCurrentMenuItem(4)}>Requests</button>
+                    <button type="button" className="btn btn-outline-info" onClick={() => setCurrentMenuItem(5)}>Invites</button>
+                    <button type="button" className="btn btn-outline-info" onClick={() => setCurrentMenuItem(6)}>Recomendations</button>
                 </li>
             </ul>
-            <div className="my-environment__action">
-                {currentMenuItem === 0 ? <Friends /> : null}
-                {currentMenuItem === 2 ? <RequestsToConnect /> : null}
+            <div>
+                {currentMenuItem === 0 ? <MyFeed /> : null}
+                {currentMenuItem === 1 ? <Profile /> : null}
+                {currentMenuItem === 2 ? <Friends /> : null}
+                {currentMenuItem === 3 ? <RequestsToConnect /> : null}
             </div>
         </div>);
     }

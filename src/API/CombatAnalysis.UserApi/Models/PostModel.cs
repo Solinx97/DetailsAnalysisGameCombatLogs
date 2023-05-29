@@ -4,7 +4,7 @@ public class PostModel
 {
     public int Id { get; set; }
 
-    public string Description { get; set; }
+    public string Content { get; set; }
 
     public DateTimeOffset When { get; set; }
 

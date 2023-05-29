@@ -28,3 +28,20 @@
         }
     }
 }
+
+.request-notifications {
+    margin: 10px;
+
+    div {
+        padding: 10px;
+        border-radius: 20px;
+    }
+
+    &__accept {
+        border: 3px solid green;
+    }
+
+    &__reject {
+        border: 3px solid yellow;
+    }
+}

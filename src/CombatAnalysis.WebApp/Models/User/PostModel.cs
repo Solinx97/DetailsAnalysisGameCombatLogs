@@ -1,6 +1,6 @@
-﻿namespace CombatAnalysis.DAL.Entities.User;
+﻿namespace CombatAnalysis.WebApp.Models.User;
 
-public class Post
+public class PostModel
 {
     public int Id { get; set; }
 

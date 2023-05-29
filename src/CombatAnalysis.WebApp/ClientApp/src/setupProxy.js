@@ -9,6 +9,7 @@ const context = [
     "/api/v1/Account",
     "/api/v1/Customer",
     "/api/v1/Friend",
+    "/api/v1/Post",
     "/api/v1/RequestToConnect",
     "/api/v1/Authentication",
     "/api/v1/DamageDone",

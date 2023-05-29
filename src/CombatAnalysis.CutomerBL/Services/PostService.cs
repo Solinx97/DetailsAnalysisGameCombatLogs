@@ -71,10 +71,10 @@ internal class PostService : IService<PostDto, int>
 
     private async Task<PostDto> CreateInternalAsync(PostDto item)
     {
-        if (string.IsNullOrEmpty(item.Description))
+        if (string.IsNullOrEmpty(item.Content))
         {
             throw new ArgumentNullException(nameof(PostDto),
-                $"The property {nameof(PostDto.Description)} of the {nameof(PostDto)} object can't be null or empty");
+                $"The property {nameof(PostDto.Content)} of the {nameof(PostDto)} object can't be null or empty");
         }
 
         var map = _mapper.Map<Post>(item);
@@ -86,10 +86,10 @@ internal class PostService : IService<PostDto, int>
 
     private async Task<int> UpdateInternalAsync(PostDto item)
     {
-        if (string.IsNullOrEmpty(item.Description))
+        if (string.IsNullOrEmpty(item.Content))
         {
             throw new ArgumentNullException(nameof(PostDto),
-                $"The property {nameof(PostDto.Description)} of the {nameof(PostDto)} object can't be null or empty");
+                $"The property {nameof(PostDto.Content)} of the {nameof(PostDto)} object can't be null or empty");
         }
 
         var map = _mapper.Map<Post>(item);

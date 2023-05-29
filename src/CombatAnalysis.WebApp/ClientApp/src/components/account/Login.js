@@ -1,4 +1,4 @@
-﻿import React, { useState } from 'react';
+﻿import React, { useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 
@@ -8,16 +8,16 @@ const Login = () => {
     const navigate = useNavigate();
     const { t, i18n } = useTranslation("login");
 
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
     const [showErrorMessage, setShowErrorMessage] = useState(false);
+    const email = useRef(null);
+    const password = useRef(null);
 
     const loginAsync = async () => {
         setShowErrorMessage(false);
 
         const data = {
-            email: email,
-            password: password
+            email: email.current.value,
+            password: password.current.value
         };
 
         const response = await fetch('api/v1/Account', {
@@ -36,14 +36,6 @@ const Login = () => {
         }
     }
 
-    const handleEmailChange = (event) => {
-        setEmail(event.target.value);
-    }
-
-    const handlePasswordChange = (event) => {
-        setPassword(event.target.value);
-    }
-
     const handleSubmitAsync = async (event) => {
         event.preventDefault();
 
@@ -54,11 +46,11 @@ const Login = () => {
         return (<form className="login" onSubmit={handleSubmitAsync}>
             <div className="mb-3">
                 <label htmlFor="exampleInputEmail1" className="form-label">{t("Email")}</label>
-                <input type="email" className="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" onChange={handleEmailChange} />
+                <input type="email" className="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" ref={email} />
             </div>
             <div className="mb-3">
                 <label htmlFor="exampleInputPassword1" className="form-label">{t("Password")}</label>
-                <input type="password" className="form-control" id="exampleInputPassword1" onChange={handlePasswordChange} />
+                <input type="password" className="form-control" id="exampleInputPassword1" ref={password} />
             </div>
             <input type="submit" className="btn btn-primary" value="Login" />
             <div className="login__error-message" style={{ display: showErrorMessage ? "flex" : "none" }}>Incorrect email/password. Try again</div>

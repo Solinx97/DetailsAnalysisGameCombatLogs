@@ -1,0 +1,13 @@
+.create-post {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 10px 50px;
+    width: auto;
+
+    button {
+        margin: 10px;
+        width: 100px;
+    }
+}

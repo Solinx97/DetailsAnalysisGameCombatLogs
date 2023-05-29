@@ -3,6 +3,7 @@ using CombatAnalysis.CustomerBL.DTO;
 using CombatAnalysis.CustomerBL.Interfaces;
 using CombatAnalysis.UserApi.Models;
 using Microsoft.AspNetCore.Mvc;
+using System.Net.Http;
 
 namespace CombatAnalysis.UserApi.Controllers;
 
@@ -33,6 +34,14 @@ public class PostController : ControllerBase
     public async Task<IActionResult> GetById(int id)
     {
         var result = await _service.GetByIdAsync(id);
+
+        return Ok(result);
+    }
+
+    [HttpGet("searchByOwnerId/{id}")]
+    public async Task<IActionResult> SearchByOwnerId(string id)
+    {
+        var result = await _service.GetByParamAsync(nameof(PostModel.OwnerId), id);
 
         return Ok(result);
     }

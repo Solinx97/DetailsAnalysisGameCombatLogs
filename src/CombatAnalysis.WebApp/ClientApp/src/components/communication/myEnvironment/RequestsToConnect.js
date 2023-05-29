@@ -8,8 +8,13 @@ import "../../../styles/communication/requestToConnect.scss";
 const RequestToConnect = () => {
     const user = useSelector((state) => state.user.value);
 
+    const timeForHideNotifications = 4000;
+
     const [requestsToConnect, setRequestsToConnect] = useState(<></>);
     const [myRequestsToConnect, setMyRequestsToConnect] = useState(<></>);
+    const [showAcceptMessage, setShowAcceptMessage] = useState(false);
+    const [showRejectMessage, setShowRejectMessage] = useState(false);
+    const [showErrorMessage, setShowErrorMessage] = useState(false);
 
     useEffect(() => {
         let getRequests = async () => {
@@ -53,6 +58,8 @@ const RequestToConnect = () => {
     }
 
     const acceptRequestAsync = async (request) => {
+        setShowAcceptMessage(false);
+
         const newFriend = {
             id: 0,
             username: request.username,
@@ -69,7 +76,11 @@ const RequestToConnect = () => {
         });
 
         if (response.status !== 200) {
-            console.log(1);
+            setShowErrorMessage(true);
+            setTimeout(() => {
+                setShowErrorMessage(false);
+            }, timeForHideNotifications);
+
             return
         }
 
@@ -78,12 +89,25 @@ const RequestToConnect = () => {
         });
 
         if (response.status !== 200) {
-            console.log(2);
+            setShowErrorMessage(true);
+            setTimeout(() => {
+                setShowErrorMessage(false);
+            }, timeForHideNotifications);
+
             return;
         }
+
+        setShowAcceptMessage(true);
+        setTimeout(() => {
+            setShowAcceptMessage(false);
+        }, timeForHideNotifications);
+
+        await getRequestsAsync();
     }
 
     const rejectRequestAsync = async (requestId) => {
+        setShowRejectMessage(false);
+
         const response = await fetch(`/api/v1/RequestToConnect/${requestId}`, {
             method: 'DELETE',
         });
@@ -91,6 +115,13 @@ const RequestToConnect = () => {
         if (response.status !== 200) {
             console.log(3);
         }
+
+        setShowRejectMessage(true);
+        setTimeout(() => {
+            setShowRejectMessage(false);
+        }, timeForHideNotifications);
+
+        await getRequestsAsync();
     }
 
     const createCard = (element) => {
@@ -107,6 +138,11 @@ const RequestToConnect = () => {
 
     const render = () => {
         return (<div>
+            <div className="request-notifications">
+                <div style={{ display: showErrorMessage ? "flex" : "none" }}>Something wrong. Try again</div>
+                <div className="request-notifications__accept" style={{ display: showAcceptMessage ? "flex" : "none" }}>You accepted request to connect</div>
+                <div className="request-notifications__reject" style={{ display: showRejectMessage ? "flex" : "none" }}>You rejected request to connect</div>
+            </div>
             <div>Requests</div>
             <ul>{requestsToConnect}</ul>
             <div>My requests</div>
