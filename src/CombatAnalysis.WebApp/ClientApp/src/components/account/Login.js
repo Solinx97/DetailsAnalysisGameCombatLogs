@@ -45,12 +45,12 @@ const Login = () => {
     const render = () => {
         return (<form className="login" onSubmit={handleSubmitAsync}>
             <div className="mb-3">
-                <label htmlFor="exampleInputEmail1" className="form-label">{t("Email")}</label>
-                <input type="email" className="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" ref={email} />
+                <label htmlFor="inputEmail" className="form-label">{t("Email")}</label>
+                <input type="email" className="form-control" id="inputEmail" aria-describedby="emailHelp" ref={email} />
             </div>
             <div className="mb-3">
-                <label htmlFor="exampleInputPassword1" className="form-label">{t("Password")}</label>
-                <input type="password" className="form-control" id="exampleInputPassword1" ref={password} />
+                <label htmlFor="inputPassword" className="form-label">{t("Password")}</label>
+                <input type="password" className="form-control" id="inputPassword" ref={password} />
             </div>
             <input type="submit" className="btn btn-primary" value="Login" />
             <div className="login__error-message" style={{ display: showErrorMessage ? "flex" : "none" }}>Incorrect email/password. Try again</div>

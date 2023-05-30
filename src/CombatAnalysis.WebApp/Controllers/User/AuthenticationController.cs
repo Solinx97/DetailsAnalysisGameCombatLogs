@@ -52,7 +52,7 @@ public class AuthenticationController : ControllerBase
         var responseMessage = await _httpClient.GetAsync($"account/find/{email}");
         if (responseMessage.StatusCode == System.Net.HttpStatusCode.OK)
         {
-            var user = await responseMessage.Content.ReadFromJsonAsync<UserModel>();
+            var user = await responseMessage.Content.ReadFromJsonAsync<AppUserModel>();
             if (user == null)
             {
                 await _httpClient.GetAsync($"authentication/check/{user.Id}");
@@ -65,7 +65,7 @@ public class AuthenticationController : ControllerBase
         return BadRequest();
     }
 
-    private async Task<IActionResult> CheckAccessToken(UserModel user)
+    private async Task<IActionResult> CheckAccessToken(AppUserModel user)
     {
         if (!HttpContext.Request.Cookies.TryGetValue("accessToken", out var accessToken))
         {

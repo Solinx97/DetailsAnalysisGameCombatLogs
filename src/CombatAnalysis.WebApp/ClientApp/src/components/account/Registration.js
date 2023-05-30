@@ -83,16 +83,16 @@ const Registration = () => {
     const render = () => {
         return (<form className="registration" onSubmit={handleSubmitAsync}>
             <div className="mb-3">
-                <label htmlFor="inputEmail1" className="form-label">{t("Email")}</label>
-                <input type="email" className="form-control" id="inputEmail1" aria-describedby="emailHelp" onChange={handleEmailChange} />
+                <label htmlFor="inputEmail" className="form-label">{t("Email")}</label>
+                <input type="email" className="form-control" id="inputEmail" aria-describedby="emailHelp" onChange={handleEmailChange} />
             </div>
             <div className="mb-3">
                 <label htmlFor="inputUsername" className="form-label">Username</label>
                 <input type="text" className="form-control" id="inputUsername" onChange={handleUsernameChange} />
             </div>
             <div className="mb-3">
-                <label htmlFor="exampleInputPassword1" className="form-label">{t("Password")}</label>
-                <input type="password" className="form-control" id="exampleInputPassword1" onChange={handlePasswordChange} />
+                <label htmlFor="inputPassword" className="form-label">{t("Password")}</label>
+                <input type="password" className="form-control" id="inputPassword" onChange={handlePasswordChange} />
             </div>
             <input type="submit" className="btn btn-primary" value="Registration" />
             <div className="registration__error-message" style={{ display: showErrorMessage ? "flex" : "none" }}>This email already used!</div>

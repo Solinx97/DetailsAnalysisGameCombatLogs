@@ -11,3 +11,37 @@
         width: 100px;
     }
 }
+
+.post {
+    &__reaction.list-group-item {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        text-align: center;
+    }
+
+    &__reaction.item .count {
+        font-size: 11px;
+    }
+
+    &__reaction {
+        svg {
+            margin: 0 10px;
+            padding: 5px;
+            border-radius: 25px;
+        }
+
+        svg:hover {
+            cursor: pointer;
+            transform: scale(1.25);
+        }
+
+        &_like:hover {
+            border: 2px solid green;
+        }
+
+        &_dislike:hover {
+            border: 2px solid yellow;
+        }
+    }
+}

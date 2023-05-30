@@ -1,7 +1,7 @@
+import { faCommentDots, faSquarePlus, faUserPlus } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useEffect, useState } from "react";
 import { useSelector } from 'react-redux';
-import { faCommentDots, faUserPlus, faSquarePlus } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import "../../../styles/communication/people.scss";
 

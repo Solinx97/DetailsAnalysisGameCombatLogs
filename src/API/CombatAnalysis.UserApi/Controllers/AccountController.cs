@@ -97,6 +97,15 @@ public class AccountController : ControllerBase
         }
     }
 
+    [HttpPut]
+    public async Task<IActionResult> Edit(AppUserModel user)
+    {
+        var map = _mapper.Map<AppUserDto>(user);
+        var updatedUser = await _service.UpdateAsync(map);
+
+        return Ok(updatedUser);
+    }
+
     [HttpGet("logout/{refreshToken}")]
     public async Task<IActionResult> Logout(string refreshToken)
     {

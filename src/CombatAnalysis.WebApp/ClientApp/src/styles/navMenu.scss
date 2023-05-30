@@ -39,3 +39,14 @@ html {
         margin: 0 25px;
     }
 }
+
+.language {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+
+    &__title {
+        margin: 0 15px;
+    }
+}

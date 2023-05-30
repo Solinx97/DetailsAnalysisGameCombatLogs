@@ -18,7 +18,7 @@ public class PostController : ControllerBase
     }
 
     [HttpGet("{id}")]
-    public async Task<IActionResult> GetById(string id)
+    public async Task<IActionResult> GetById(int id)
     {
         var responseMessage = await _httpClient.GetAsync($"Post/{id}");
         var post = await responseMessage.Content.ReadFromJsonAsync<PostModel>();
@@ -33,6 +33,14 @@ public class PostController : ControllerBase
         var posts = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<PostModel>>();
 
         return Ok(posts);
+    }
+
+    [HttpPut]
+    public async Task<IActionResult> Update(PostModel model)
+    {
+        await _httpClient.PutAsync("Post", JsonContent.Create(model));
+
+        return Ok();
     }
 
     [HttpPost]

@@ -37,6 +37,14 @@ public class PostLikeController : ControllerBase
         return Ok(result);
     }
 
+    [HttpGet("searchByPostId/{id:int:min(1)}")]
+    public async Task<IActionResult> SearchByPostId(int id)
+    {
+        var result = await _service.GetByParamAsync(nameof(PostLikeModel.PostId), id);
+
+        return Ok(result);
+    }
+
     [HttpPost]
     public async Task<IActionResult> Create(PostLikeModel model)
     {

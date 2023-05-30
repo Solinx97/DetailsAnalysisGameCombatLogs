@@ -16,7 +16,22 @@ const NavMenu = () => {
 
     const { t, i18n } = useTranslation("translate");
 
+    const [languageName, setLanguageName] = useState("English");
     const [collapsed, setCollapsed] = useState(true);
+
+    useEffect(() => {
+        switch (i18n.language) {
+            case "ru":
+                setLanguageName(t("RU"));
+                break;
+            case "en":
+                setLanguageName(t("EN"));
+                break;
+            default:
+                setLanguageName(t("EN"));
+                break;
+        }
+    }, [])
 
     useEffect(() => {
         if (user !== null) {
@@ -32,6 +47,7 @@ const NavMenu = () => {
 
     const changeLanguage = (language) => {
         i18n.changeLanguage(language);
+
         window.location.reload(true);
     }
 
@@ -59,8 +75,10 @@ const NavMenu = () => {
         });
 
         if (response.status === 200) {
-            dispatch(checkAuth(false))
-            dispatch(userUpdate(null));;
+            dispatch(checkAuth(false));
+            dispatch(userUpdate(null));
+
+            navigate("/");
         }
     }
 
@@ -72,12 +90,13 @@ const NavMenu = () => {
         return (<header>
             <Navbar className="navbar-expand-sm navbar-toggleable-sm ng-white border-bottom box-shadow mb-3" light>
                 <div className="language dropdown">
+                    <div className="language__title">{t("Langugae")}</div>
                     <button className="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
-                        {t("Langugae")}
+                        {languageName}
                     </button>
                     <ul className="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                        <li><a className="dropdown-item" onClick={() => changeLanguage("ru")}>{t("RU")}</a></li>
-                        <li><a className="dropdown-item" onClick={() => changeLanguage("en")}>{t("EN")}</a></li>
+                        <li><div className="dropdown-item" onClick={() => changeLanguage("ru")}>{t("RU")}</div></li>
+                        <li><div className="dropdown-item" onClick={() => changeLanguage("en")}>{t("EN")}</div></li>
                     </ul>
                 </div>
                 <Container>
