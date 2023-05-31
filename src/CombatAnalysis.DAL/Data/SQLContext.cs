@@ -67,6 +67,8 @@ public class SQLContext : DbContext
 
     public DbSet<Post>? Post { get; }
 
+    public DbSet<PostComment>? PostComment { get; }
+
     public DbSet<PostLike>? PostLike { get; }
 
     public DbSet<PostDislike>? PostDislike { get; }

@@ -8,9 +8,13 @@ import "../../../styles/communication/myFeed.scss";
 const MyFeed = () => {
     const user = useSelector((state) => state.user.value);
 
-    const [posts, setPosts] = useState(<></>);
     const postContentRef = useRef(null);
+    const [postCommentContent, setPostCommentContent] = useState("");
+    const [posts, setPosts] = useState(<></>);
+    const [postComments, setPostComments] = useState(<></>);
     const [showCreatePost, setShowCreatePost] = useState(false);
+    const [showComments, setShowComments] = useState(false);
+    const [selectedPostId, setSelectedPostId] = useState(0);
 
     useEffect(() => {
         let getPosts = async () => {
@@ -26,6 +30,15 @@ const MyFeed = () => {
         if (response.status === 200) {
             const allPosts = await response.json();
             fillPosts(allPosts);
+        }
+    }
+
+    const getPostCommentsByPostIdAsync = async (postId) => {
+        const response = await fetch(`/api/v1/PostComment/searchByPostId/${postId}`);
+
+        if (response.status === 200) {
+            const allostComments = await response.json();
+            fillPostComments(allostComments);
         }
     }
 
@@ -58,6 +71,7 @@ const MyFeed = () => {
 
         if (response.status === 200) {
             postContentRef.current.value = "";
+            setShowCreatePost(false);
         }
     }
 
@@ -208,15 +222,56 @@ const MyFeed = () => {
         }
     }
 
+    const createPostCommentAsync = async (postId) => {
+        const newPostComment = {
+            id: 0,
+            content: postCommentContent,
+            when: new Date(),
+            postId: postId,
+            ownerId: user.id
+        }
+
+        const response = await fetch("/api/v1/PostComment", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(newPostComment)
+        });
+
+        if (response.status === 200) {
+            setPostCommentContent("");
+            await updatePostAsync(postId, 0, 0, 1);
+            await getPostCommentsByPostIdAsync(postId);
+        }
+    }
+
     const fillPosts = (allPosts) => {
-        const list = allPosts.map((element) => createPostStyle(element));
+        const list = allPosts.map((element) => createPostCard(element));
 
         setPosts(list);
     }
 
-    const createPostStyle = (element) => {
+    const fillPostComments = (allComments) => {
+        const list = allComments.map((element) => createPostCommentCard(element));
+
+        setPostComments(list);
+    }
+
+    const showSelectedPostCommentsAsync = async (postId) => {
+        await getPostCommentsByPostIdAsync(postId);
+
+        setShowComments(!showComments);
+        if (selectedPostId !== postId) {
+            setShowComments(true);
+        }
+
+        setSelectedPostId(postId);
+    }
+
+    const createPostCard = (element) => {
         return (<li key={element.id}>
-            <div className="post card">
+            <div className="card">
                 <ul className="list-group list-group-flush">
                     <li className="list-group-item">
                         <p className="card-title">{dateFormatting(element.when)}</p>
@@ -236,12 +291,36 @@ const MyFeed = () => {
                             <div className="count">{element.dislikeCount}</div>
                         </div>
                         <div className="post__reaction item">
-                            <FontAwesomeIcon icon={faMessage} title="Comment" />
+                            <FontAwesomeIcon icon={faMessage} title="Comment"
+                                onClick={async () => await showSelectedPostCommentsAsync(element.id)} />
                             <div className="count">{element.commentCount}</div>
                         </div>
                     </li>
                 </ul>
             </div>
+            <ul className="post-comment" style={{ display: showComments && selectedPostId === element.id ? "flex" : "none" }}>
+                {postComments}
+            </ul>
+            <div className="add-new-comment" style={{ display: showComments && selectedPostId === element.id ? "flex" : "none" }}>
+                <div className="add-new-comment__title">
+                    <div>Add comment:</div>
+                </div>
+                <textarea rows="1" cols="75" onChange={e => setPostCommentContent(e.target.value)} value={postCommentContent} />
+                <button type="button" className="btn btn-outline-info" onClick={async () => await createPostCommentAsync(element.id)}>Add</button>
+            </div>
+        </li>);
+    }
+
+    const createPostCommentCard = (element) => {
+        return (<li key={element.id} className="card">
+            <ul className="post__comment list-group list-group-flush">
+                <li className="list-group-item">
+                    <p className="card-title">{dateFormatting(element.when)}</p>
+                </li>
+                <li className="list-group-item">
+                    <div className="card-text">{element.content}</div>
+                </li>
+            </ul>
         </li>);
     }
 
@@ -309,7 +388,7 @@ const MyFeed = () => {
                 </div>
                 <textarea rows="5" cols="100" ref={postContentRef} style={{ display: showCreatePost ? "flex" : "none" }} />
             </div>
-            <ul>{posts}</ul>
+            <ul className="post">{posts}</ul>
         </div>);
     }
 

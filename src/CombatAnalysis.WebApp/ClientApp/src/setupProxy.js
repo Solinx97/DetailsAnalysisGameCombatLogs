@@ -10,6 +10,7 @@ const context = [
     "/api/v1/Customer",
     "/api/v1/Friend",
     "/api/v1/Post",
+    "/api/v1/PostComment",
     "/api/v1/PostLike",
     "/api/v1/PostDislike",
     "/api/v1/PostDislike",
