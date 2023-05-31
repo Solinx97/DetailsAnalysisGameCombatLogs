@@ -51,4 +51,12 @@ public class PostCommentController : ControllerBase
 
         return Ok(postComment);
     }
+
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> Delete(int id)
+    {
+        await _httpClient.DeletAsync($"PostComment/{id}");
+
+        return Ok();
+    }
 }
