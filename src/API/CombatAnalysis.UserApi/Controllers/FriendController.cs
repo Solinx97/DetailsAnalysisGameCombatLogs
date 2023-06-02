@@ -46,6 +46,14 @@ public class FriendController : ControllerBase
         return Ok(result);
     }
 
+    [HttpGet("searchByWhoFriendId/{id}")]
+    public async Task<IActionResult> SearchByWhoFriendId(string id)
+    {
+        var result = await _service.GetByParamAsync(nameof(FriendModel.WhoFriendId), id);
+
+        return Ok(result);
+    }
+
     [HttpPost]
     public async Task<IActionResult> Create(FriendModel model)
     {

@@ -45,3 +45,19 @@
         border: 3px solid yellow;
     }
 }
+
+.requests, .my-requests {
+    &__title {
+        display: flex;
+        align-items: center;
+
+        svg {
+            margin: 0 15px;
+        }
+
+        svg:hover {
+            cursor: pointer;
+            transform: scale(1.25);
+        }
+    }
+}

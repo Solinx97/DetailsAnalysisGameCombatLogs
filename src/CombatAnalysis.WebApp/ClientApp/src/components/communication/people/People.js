@@ -115,7 +115,7 @@ const People = ({ updateCurrentMenuItem }) => {
             <div className="card">
                 <div className="card-body">
                     <h5 className="card-title">{element.email}</h5>
-                    <p className="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+                    {/*<p className="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>*/}
                 </div>
                 <ul className="list-group list-group-flush">
                     <li className="list-group-item"><FontAwesomeIcon icon={faCommentDots} title="Start chat" onClick={async () => await startChatAsync(element)} /></li>

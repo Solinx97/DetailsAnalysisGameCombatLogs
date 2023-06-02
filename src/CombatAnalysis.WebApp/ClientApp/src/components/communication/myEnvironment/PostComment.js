@@ -2,7 +2,7 @@ import { faPen, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { memo, useEffect, useState } from 'react';
 
-const PostComment = ({ user, postId, updatePostAsync }) => {
+const PostComment = ({ userId, postId, updatePostAsync }) => {
     const [commentsList, setCommentsList] = useState(<></>);
     const [postCommentContent, setPostCommentContent] = useState("");
 
@@ -30,7 +30,7 @@ const PostComment = ({ user, postId, updatePostAsync }) => {
             content: postCommentContent,
             when: new Date(),
             postId: postId,
-            ownerId: user.id
+            ownerId: userId
         }
 
         const response = await fetch("/api/v1/PostComment", {
@@ -97,10 +97,13 @@ const PostComment = ({ user, postId, updatePostAsync }) => {
             <ul className="list-group list-group-flush">
                 <li className="post-comment-header list-group-item">
                     <p className="card-title">{element.when}</p>
-                    <div className="post-comment-header__menu">
-                        <FontAwesomeIcon icon={faPen} title="Edit" onClick={async () => await getPostCommentsByPostIdAsync(element.id)} />
-                        <FontAwesomeIcon icon={faTrash} title="Remove" onClick={async () => await deletePostCommentAsync(element.id)} />
-                    </div>
+                    {element.ownerId === userId
+                        ? (<div className="post-comment-header__menu">
+                            <FontAwesomeIcon icon={faPen} title="Edit" onClick={async () => await getPostCommentsByPostIdAsync(element.id)} />
+                            <FontAwesomeIcon icon={faTrash} title="Remove" onClick={async () => await deletePostCommentAsync(element.id)} />
+                        </div>)
+                        : null
+                    }
                 </li>
                 <li className="list-group-item">
                     {editCommentElements}

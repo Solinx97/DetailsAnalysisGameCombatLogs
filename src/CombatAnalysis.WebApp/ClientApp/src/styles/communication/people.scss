@@ -1,12 +1,20 @@
 .people {
     &__cards {
-        .card-body {
-            &__links {
-                display: flex;
-                justify-content: space-around;
+        display: flex;
+        flex-wrap: wrap;
 
-                svg:hover {
-                    cursor: pointer;
+        .card {
+            margin: 10px;
+            width: 250px;
+
+            .card-body {
+                &__links {
+                    display: flex;
+                    justify-content: space-around;
+
+                    svg:hover {
+                        cursor: pointer;
+                    }
                 }
             }
         }

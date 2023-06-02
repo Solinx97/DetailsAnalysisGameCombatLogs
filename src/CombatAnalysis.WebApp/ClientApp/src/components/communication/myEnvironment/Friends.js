@@ -17,17 +17,30 @@ const Friends = () => {
     }, [])
 
     const getFriendsAsync = async () => {
-        const response = await fetch(`/api/v1/Friend/searchByForWhomId/${user.id}`);
-        const status = response.status;
+        let response = await fetch(`/api/v1/Friend/searchByForWhomId/${user.id}`);
+        if (response.status !== 200) {
+            console.log("problem");
 
-        if (status === 200) {
-            const allFriends = await response.json();
-            fillFriends(allFriends);
+            return;
         }
+
+        const myFriendsByForWhom = await response.json();
+
+        response = await fetch(`/api/v1/Friend/searchByWhoFriendId/${user.id}`);
+        if (response.status !== 200) {
+            console.log("problem");
+
+            return;
+        }
+
+        const myFriendsByWhoFriend = await response.json();
+
+        const myFriends = myFriendsByForWhom.concat(myFriendsByWhoFriend);
+        fillFriends(myFriends);
     }
 
-    const fillFriends = (allRequests) => {
-        const list = allRequests.map((element) => createCard(element));
+    const fillFriends = (myFriends) => {
+        const list = myFriends.map((element) => createCard(element));
 
         setFriends(list);
     }

@@ -35,6 +35,15 @@ public class FriendController : ControllerBase
         return Ok(friends);
     }
 
+    [HttpGet("searchByWhoFriendId/{id}")]
+    public async Task<IActionResult> SearchByWhoFriendId(string id)
+    {
+        var responseMessage = await _httpClient.GetAsync($"Friend/searchByWhoFriendId/{id}");
+        var friends = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<FriendModel>>();
+
+        return Ok(friends);
+    }
+
     [HttpPost]
     public async Task<IActionResult> Create(FriendModel model)
     {

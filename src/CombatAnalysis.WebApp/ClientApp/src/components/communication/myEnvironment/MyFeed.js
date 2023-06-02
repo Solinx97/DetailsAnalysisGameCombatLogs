@@ -6,7 +6,7 @@ import PostComment from './PostComment';
 
 import "../../../styles/communication/myFeed.scss";
 
-const MyFeed = () => {
+const MyFeed = ({ usersId }) => {
     const user = useSelector((state) => state.user.value);
 
     const postContentRef = useRef(null);
@@ -21,15 +21,35 @@ const MyFeed = () => {
         }
 
         getPosts();
-    })
+    }, [])
+
+    useEffect(() => {
+        let getPosts = async () => {
+            await getPostsAsync();
+        }
+
+        getPosts();
+    }, [showComments, selectedPostCommentId])
 
     const getPostsAsync = async () => {
-        const response = await fetch(`/api/v1/Post/searchByOwnerId/${user.id}`);
+        let posts = [];
+        for (var i = 0; i < usersId.length; i++) {
+            const newPosts = await getPostsByOwnerIdAsync(usersId[i]);
+            posts = posts.concat(newPosts);
+        }
+
+        fillPosts(posts);
+    }
+
+    const getPostsByOwnerIdAsync = async (ownerId) => {
+        const response = await fetch(`/api/v1/Post/searchByOwnerId/${ownerId}`);
 
         if (response.status === 200) {
-            const allPosts = await response.json();
-            fillPosts(allPosts);
+            const posts = await response.json();
+            return posts;
         }
+
+        return [];
     }
 
     const getPostByIdAsync = async (postId) => {
@@ -62,6 +82,8 @@ const MyFeed = () => {
         if (response.status === 200) {
             postContentRef.current.value = "";
             setShowCreatePost(false);
+
+            await getPostsAsync();
         }
     }
 
@@ -90,7 +112,7 @@ const MyFeed = () => {
         });
 
         if (response.status === 200) {
-            //console.log(123);
+            await getPostsAsync();
         }
     }
 
@@ -213,12 +235,12 @@ const MyFeed = () => {
     }
 
     const fillPosts = (allPosts) => {
-        const list = allPosts.map((element) => createPostCard(element));
+        const list = allPosts.reverse().map((element) => createPostCard(element));
 
         setPosts(list);
     }
 
-    const postCommentsHandler = (postId) => {
+    const postCommentsHandler = async (postId) => {
         setShowComments(!showComments);
         if (selectedPostCommentId !== postId) {
             setShowComments(true);
@@ -250,14 +272,14 @@ const MyFeed = () => {
                         </div>
                         <div className="post__reaction item">
                             <FontAwesomeIcon icon={faMessage} title="Comment"
-                                onClick={() => postCommentsHandler(element.id)} />
+                                onClick={async () => await postCommentsHandler(element.id)} />
                             <div className="count">{element.commentCount}</div>
                         </div>
                     </li>
                 </ul>
             </div>
             {showComments && selectedPostCommentId === element.id &&
-                <PostComment user={user} postId={element.id} updatePostAsync={updatePostAsync} />
+                <PostComment userId={user.id} postId={element.id} updatePostAsync={updatePostAsync} />
             }
         </li>);
     }
