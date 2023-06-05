@@ -62,33 +62,6 @@
     }
 }
 
-.post-comment {
-    display: flex;
-    flex-direction: column;
-
-    .card {
-        width: 475px;
-        margin: 5px 0 5px 75px;
-    }
-
-    .post-comment-header {
-        display: flex;
-        flex-direction: row;
-        justify-content: space-between;
-
-        &__menu {
-            svg {
-                margin: 5px 10px;
-            }
-
-            svg:hover {
-                cursor: pointer;
-                transform: scale(1.25);
-            }
-        }
-    }
-}
-
 .add-new-comment {
     display: flex;
     flex-direction: column;

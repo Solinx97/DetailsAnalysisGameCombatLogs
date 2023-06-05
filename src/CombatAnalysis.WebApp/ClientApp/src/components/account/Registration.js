@@ -32,17 +32,20 @@ const Registration = () => {
         if (response.status === 200) {
             try {
                 const createdUser = await response.json();
-                await createCustomer(createdUser);
+                await createCustomerAsync(createdUser);
             } catch (SyntaxError) {
                 setShowErrorMessage(true);
             }
         }
     }
 
-    const createCustomer = async (accountData) => {
+    const createCustomerAsync = async (accountData) => {
         const data = {
             id: "",
+            message: " ",
             username: username,
+            aboutMe: " ",
+            gender: 1,
             firstName: " ",
             lastName: " ",
             appUserId: accountData.id

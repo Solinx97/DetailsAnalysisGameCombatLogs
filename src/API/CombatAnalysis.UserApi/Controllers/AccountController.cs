@@ -52,7 +52,7 @@ public class AccountController : ControllerBase
                 return Ok();
             }
 
-            var newUser = new AppUserModel { Id = Guid.NewGuid().ToString(), Email = model.Email, Password = model.Password };
+            var newUser = new AppUserModel { Id = Guid.NewGuid().ToString(), Email = model.Email, Password = model.Password, PhoneNumber = string.Empty, Birthday = DateTimeOffset.Now };
             var map = _mapper.Map<AppUserDto>(newUser);
             await _service.CreateAsync(map);
 

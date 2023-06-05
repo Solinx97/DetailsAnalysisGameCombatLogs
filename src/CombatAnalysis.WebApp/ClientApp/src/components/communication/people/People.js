@@ -22,17 +22,16 @@ const People = ({ updateCurrentMenuItem }) => {
     }, [])
 
     const getPeopleAsync = async () => {
-        const response = await fetch("/api/v1/Account");
-        const status = response.status;
+        const response = await fetch("/api/v1/Customer");
 
-        if (status === 200) {
+        if (response.status === 200) {
             const allPeople = await response.json();
             fillCards(allPeople);
         }
     }
 
-    const checkExistNewChatAsync = async (targetUser) => {
-        const response = await fetch(`/api/v1/PersonalChat/isExist?initiatorId=${customer.id}&companionId=${targetUser.id}`);
+    const checkExistNewChatAsync = async (targetCustomer) => {
+        const response = await fetch(`/api/v1/PersonalChat/isExist?initiatorId=${customer.id}&companionId=${targetCustomer.id}`);
         if (response.status === 200) {
             const isExist = await response.json();
             return isExist;
@@ -114,7 +113,7 @@ const People = ({ updateCurrentMenuItem }) => {
         return (<li key={element.id}>
             <div className="card">
                 <div className="card-body">
-                    <h5 className="card-title">{element.email}</h5>
+                    <h5 className="card-title">{element.username}</h5>
                     {/*<p className="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>*/}
                 </div>
                 <ul className="list-group list-group-flush">

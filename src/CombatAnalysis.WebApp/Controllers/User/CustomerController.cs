@@ -17,6 +17,15 @@ public class CustomerController : ControllerBase
         _httpClient.BaseAddress = Port.UserApi;
     }
 
+    [HttpGet]
+    public async Task<IActionResult> GetAll()
+    {
+        var responseMessage = await _httpClient.GetAsync("Customer");
+        var customers = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<CustomerModel>>();
+
+        return Ok(customers);
+    }
+
     [HttpGet("{id}")]
     public async Task<IActionResult> GetById(string id)
     {

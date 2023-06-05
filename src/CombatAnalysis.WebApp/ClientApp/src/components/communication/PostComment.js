@@ -2,7 +2,9 @@ import { faPen, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { memo, useEffect, useState } from 'react';
 
-const PostComment = ({ userId, postId, updatePostAsync }) => {
+import "../../styles/communication/postComment.scss";
+
+const PostComment = ({ dateFormatting, customerId, postId, updatePostAsync }) => {
     const [commentsList, setCommentsList] = useState(<></>);
     const [postCommentContent, setPostCommentContent] = useState("");
 
@@ -19,9 +21,25 @@ const PostComment = ({ userId, postId, updatePostAsync }) => {
 
         if (response.status === 200) {
             const allComments = await response.json();
+            for (var i = 0; i < allComments.length; i++) {
+                const customer = await getCustomerByIdAsync(allComments[i].ownerId);
+                allComments[i].username = customer.username;
+            }
 
             fillPostComments(allComments, editablePostCommentId);
         }
+    }
+
+
+    const getCustomerByIdAsync = async (customerId) => {
+        const response = await fetch(`/api/v1/Customer/${customerId}`);
+
+        if (response.status === 200) {
+            let customer = await response.json();
+            return customer;
+        }
+
+        return null;
     }
 
     const createPostCommentAsync = async () => {
@@ -30,7 +48,7 @@ const PostComment = ({ userId, postId, updatePostAsync }) => {
             content: postCommentContent,
             when: new Date(),
             postId: postId,
-            ownerId: userId
+            ownerId: customerId
         }
 
         const response = await fetch("/api/v1/PostComment", {
@@ -85,8 +103,10 @@ const PostComment = ({ userId, postId, updatePostAsync }) => {
         if (editablePostCommentId === element.id) {
             editCommentElements = <>
                 <textarea rows="1" cols="57" onChange={e => element.content = e.target.value} defaultValue={element.content} />
-                <button type="button" className="btn btn-outline-info" onClick={async () => await updatePostCommentAsync(element)}>Save</button>
-                <button type="button" className="btn btn-outline-warning" onClick={async () => await getPostCommentsByPostIdAsync(0)}>Cancel</button>
+                <div>
+                    <button type="button" className="btn btn-outline-info" onClick={async () => await updatePostCommentAsync(element)}>Save</button>
+                    <button type="button" className="btn btn-outline-warning" onClick={async () => await getPostCommentsByPostIdAsync(0)}>Cancel</button>
+                </div>
             </>;
         }
         else {
@@ -95,17 +115,18 @@ const PostComment = ({ userId, postId, updatePostAsync }) => {
 
         return (<li key={element.id} className="card">
             <ul className="list-group list-group-flush">
-                <li className="post-comment-header list-group-item">
-                    <p className="card-title">{element.when}</p>
-                    {element.ownerId === userId
-                        ? (<div className="post-comment-header__menu">
+                <li className="post-comments__title list-group-item">
+                    <div className="card-title">{element.username}</div>
+                    <div className="card-title">{dateFormatting(element.when)}</div>
+                    {element.ownerId === customerId
+                        ? (<div className="post-comments__menu">
                             <FontAwesomeIcon icon={faPen} title="Edit" onClick={async () => await getPostCommentsByPostIdAsync(element.id)} />
                             <FontAwesomeIcon icon={faTrash} title="Remove" onClick={async () => await deletePostCommentAsync(element.id)} />
                         </div>)
                         : null
                     }
                 </li>
-                <li className="list-group-item">
+                <li className="post-comments__edit list-group-item">
                     {editCommentElements}
                 </li>
             </ul>
@@ -114,7 +135,7 @@ const PostComment = ({ userId, postId, updatePostAsync }) => {
 
     const render = () => {
         return (<>
-            <ul className="post-comment">
+            <ul className="post-comments">
                 {commentsList}
             </ul>
             <div className="add-new-comment">

@@ -299,7 +299,7 @@ const Post = ({ customersId }) => {
                 </ul>
             </div>
             {showComments && selectedPostCommentId === element.id &&
-                <PostComment userId={customer.id} postId={element.id} updatePostAsync={updatePostAsync} />
+                <PostComment dateFormatting={dateFormatting} customerId={customer.id} postId={element.id} updatePostAsync={updatePostAsync} />
             }
         </li>);
     }
