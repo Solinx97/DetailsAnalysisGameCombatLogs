@@ -26,6 +26,16 @@ public class CustomerController : ControllerBase
         return Ok(customer);
     }
 
+    [HttpGet("searchByUserId/{id}")]
+    public async Task<IActionResult> SearchByUserId(string id)
+    {
+        var responseMessage = await _httpClient.GetAsync($"Customer/searchByUserId/{id}");
+        var customers = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<CustomerModel>>();
+        var currentCustomer = customers.FirstOrDefault();
+
+        return Ok(currentCustomer);
+    }
+
     [HttpPost]
     public async Task<IActionResult> Create(CustomerModel model)
     {

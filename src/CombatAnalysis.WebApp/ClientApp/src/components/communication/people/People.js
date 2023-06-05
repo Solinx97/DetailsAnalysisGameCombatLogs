@@ -6,7 +6,7 @@ import { useSelector } from 'react-redux';
 import "../../../styles/communication/people.scss";
 
 const People = ({ updateCurrentMenuItem }) => {
-    const user = useSelector((state) => state.user.value);
+    const customer = useSelector((state) => state.customer.value);
 
     const timeForHideNotifications = 4000;
 
@@ -32,7 +32,7 @@ const People = ({ updateCurrentMenuItem }) => {
     }
 
     const checkExistNewChatAsync = async (targetUser) => {
-        const response = await fetch(`/api/v1/PersonalChat/isExist?initiatorId=${user.id}&companionId=${targetUser.id}`);
+        const response = await fetch(`/api/v1/PersonalChat/isExist?initiatorId=${customer.id}&companionId=${targetUser.id}`);
         if (response.status === 200) {
             const isExist = await response.json();
             return isExist;
@@ -41,20 +41,20 @@ const People = ({ updateCurrentMenuItem }) => {
         return true;
     }
 
-    const startChatAsync = async (targetUser) => {
-        const isExist = await checkExistNewChatAsync(targetUser);
+    const startChatAsync = async (targetCustomer) => {
+        const isExist = await checkExistNewChatAsync(targetCustomer);
         if (isExist) {
-            updateCurrentMenuItem(0, user.id, targetUser.id);
+            updateCurrentMenuItem(0, customer.id, targetCustomer.id);
             return;
         }
 
         const newChat = {
             id: 0,
-            initiatorUsername: user.email,
-            companionUsername: targetUser.email,
+            initiatorUsername: customer.username,
+            companionUsername: targetCustomer.username,
             lastMessage: " ",
-            initiatorId: user.id,
-            companionId: targetUser.id
+            initiatorId: customer.id,
+            companionId: targetCustomer.id
         };
 
         const response = await fetch("/api/v1/PersonalChat", {
@@ -66,7 +66,7 @@ const People = ({ updateCurrentMenuItem }) => {
         });
 
         if (response.status === 200) {
-            updateCurrentMenuItem(0, user.id, targetUser.id);
+            updateCurrentMenuItem(0, customer.id, targetCustomer.id);
         }
     }
 
@@ -75,10 +75,10 @@ const People = ({ updateCurrentMenuItem }) => {
 
         const newRequest = {
             id: 0,
-            username: user.email,
+            username: customer.username,
             toUserId: people.id,
             when: new Date(),
-            ownerId: user.id,
+            ownerId: customer.id,
         };
 
         const response = await fetch("/api/v1/RequestToConnect", {
@@ -105,7 +105,7 @@ const People = ({ updateCurrentMenuItem }) => {
     }
 
     const peopleListFilter = (value) => {
-        if (value.id !== user.id) {
+        if (value.id !== customer.id) {
             return value;
         }
     }

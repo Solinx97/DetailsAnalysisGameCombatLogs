@@ -8,7 +8,7 @@ import "../../../styles/communication/groupChat.scss";
 const GroupChat = ({ chat, setChatIsLeaft }) => {
     const chatMessageUpdateInterval = 200;
 
-    const user = useSelector((state) => state.user.value);
+    const customer = useSelector((state) => state.customer.value);
 
     const [chatMessages, setChatMessage] = useState(null);
     const [groupChatUsers, setGroupChatUsers] = useState(null);
@@ -62,7 +62,7 @@ const GroupChat = ({ chat, setChatIsLeaft }) => {
     }
 
     const getChatUserByMyIdAsync = async () => {
-        const response = await fetch(`/api/v1/GroupChatUser/${user.id}`);
+        const response = await fetch(`/api/v1/GroupChatUser/${customer.id}`);
         const status = response.status;
         if (status === 200) {
             const myGroupChatUsers = await response.json();
@@ -162,8 +162,8 @@ const GroupChat = ({ chat, setChatIsLeaft }) => {
     }
 
     const createMessage = (element) => {
-        const isMyMessage = user.email === element.username;
-        const elementIsSelected = element.id == selectedMessageId;
+        const isMyMessage = customer.username === element.username;
+        const elementIsSelected = element.id === selectedMessageId;
 
         return (<li key={element.id} className={`group-chat-messages__${isMyMessage ? "right" : "left"}`} onClick={() => setSelectedMessageId(element.id)}>
             {!isMyMessage &&

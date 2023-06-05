@@ -8,7 +8,7 @@ import "../../../styles/communication/personalChat.scss";
 const PersonalChat = ({ chat, setChatIsLeaft }) => {
     const chatMessageUpdatesInterval = 200;
 
-    const user = useSelector((state) => state.user.value);
+    const customer = useSelector((state) => state.customer.value);
 
     const [chatMessages, setChatMessage] = useState(null);
     const [selectedMessageId, setSelectedMessageId] = useState(0);
@@ -43,8 +43,8 @@ const PersonalChat = ({ chat, setChatIsLeaft }) => {
     }
 
     const createMessage = (element) => {
-        const isMyMessage = user.email === element.username;
-        const elementIsSelected = element.id == selectedMessageId;
+        const isMyMessage = customer.username === element.username;
+        const elementIsSelected = element.id === selectedMessageId;
 
         return (<li key={element.id} className={`personal-chat-messages__${isMyMessage ? "right" : "left"}`}
             onClick={() => setSelectedMessageId(element.id)}>

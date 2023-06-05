@@ -25,4 +25,26 @@
             border: 3px solid blue;
         }
     }
+
+    .friend {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+
+        &__remove {
+            margin: 0 15px;
+
+            svg {
+                padding: 5px;
+                border-radius: 20px;
+            }
+
+            svg:hover {
+                transform: scale(1.25);
+                cursor: pointer;
+                border: 3px solid yellow;
+                box-shadow: 3px 3px 3px gray;
+            }
+        }
+    }
 }

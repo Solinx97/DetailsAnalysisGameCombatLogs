@@ -1,12 +1,12 @@
-import { useEffect, useState, useRef } from 'react';
-import { useSelector } from 'react-redux';
 import { faCircleCheck, faCircleXmark, faRotate } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
 
 import "../../../styles/communication/requestToConnect.scss";
 
 const RequestToConnect = () => {
-    const user = useSelector((state) => state.user.value);
+    const customer = useSelector((state) => state.customer.value);
 
     const timeForHideNotifications = 4000;
 
@@ -27,7 +27,7 @@ const RequestToConnect = () => {
     }, [])
 
     const getRequestsAsync = async () => {
-        const response = await fetch(`/api/v1/RequestToConnect/searchByToUserId/${user.id}`);
+        const response = await fetch(`/api/v1/RequestToConnect/searchByToUserId/${customer.id}`);
         const status = response.status;
 
         if (status === 200) {
@@ -37,7 +37,7 @@ const RequestToConnect = () => {
     }
 
     const getMyRequestsAsync = async () => {
-        const response = await fetch(`/api/v1/RequestToConnect/searchByOwnerId/${user.id}`);
+        const response = await fetch(`/api/v1/RequestToConnect/searchByOwnerId/${customer.id}`);
         const status = response.status;
 
         if (status === 200) {

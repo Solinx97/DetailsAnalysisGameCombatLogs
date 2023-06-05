@@ -4,10 +4,10 @@ import { useEffect, useRef, useState } from "react";
 import { useSelector } from 'react-redux';
 import PostComment from './PostComment';
 
-import "../../../styles/communication/myFeed.scss";
+import "../../styles/communication/post.scss";
 
-const MyFeed = ({ usersId }) => {
-    const user = useSelector((state) => state.user.value);
+const Post = ({ customersId }) => {
+    const customer = useSelector((state) => state.customer.value);
 
     const postContentRef = useRef(null);
     const [posts, setPosts] = useState(<></>);
@@ -33,8 +33,8 @@ const MyFeed = ({ usersId }) => {
 
     const getPostsAsync = async () => {
         let posts = [];
-        for (var i = 0; i < usersId.length; i++) {
-            const newPosts = await getPostsByOwnerIdAsync(usersId[i]);
+        for (var i = 0; i < customersId.length; i++) {
+            const newPosts = await getPostsByOwnerIdAsync(customersId[i]);
             posts = posts.concat(newPosts);
         }
 
@@ -45,11 +45,27 @@ const MyFeed = ({ usersId }) => {
         const response = await fetch(`/api/v1/Post/searchByOwnerId/${ownerId}`);
 
         if (response.status === 200) {
-            const posts = await response.json();
+            let posts = await response.json();
+            for (let i = 0; i < posts.length; i++) {
+                const postCustomer = await getCustomerByIdAsync(posts[i].ownerId);
+                posts[i].username = postCustomer.username;
+            }
+
             return posts;
         }
 
         return [];
+    }
+
+    const getCustomerByIdAsync = async (customerId) => {
+        const response = await fetch(`/api/v1/Customer/${customerId}`);
+
+        if (response.status === 200) {
+            let customer = await response.json();
+            return customer;
+        }
+
+        return null;
     }
 
     const getPostByIdAsync = async (postId) => {
@@ -68,7 +84,10 @@ const MyFeed = ({ usersId }) => {
             id: 0,
             content: postContentRef.current.value,
             when: new Date(),
-            ownerId: user.id
+            likeCount: 0,
+            dislikeCount: 0,
+            postComment: 0,
+            ownerId: customer.id
         }
 
         const response = await fetch("/api/v1/Post", {
@@ -127,7 +146,7 @@ const MyFeed = ({ usersId }) => {
         const newPostLike = {
             id: 0,
             postId: postId,
-            ownerId: user.id
+            ownerId: customer.id
         }
 
         const response = await fetch("/api/v1/PostLike", {
@@ -156,7 +175,7 @@ const MyFeed = ({ usersId }) => {
 
     const checkIfPostLikeExistAsync = async (postLikes) => {
         for (var i = 0; i < postLikes.length; i++) {
-            if (postLikes[i].ownerId === user.id) {
+            if (postLikes[i].ownerId === customer.id) {
                 await deletePostLikeAsync(postLikes[i].postId, postLikes[i].id);
                 return true;
             }
@@ -186,7 +205,7 @@ const MyFeed = ({ usersId }) => {
         const newPostDislike = {
             id: 0,
             postId: postId,
-            ownerId: user.id
+            ownerId: customer.id
         }
 
         const response = await fetch("/api/v1/PostDislike", {
@@ -215,7 +234,7 @@ const MyFeed = ({ usersId }) => {
 
     const checkIfPostDislikeExistAsync = async (postDislikes) => {
         for (var i = 0; i < postDislikes.length; i++) {
-            if (postDislikes[i].ownerId === user.id) {
+            if (postDislikes[i].ownerId === customer.id) {
                 await deletePostDislikeAsync(postDislikes[i].postId, postDislikes[i].id);
                 return true;
             }
@@ -253,24 +272,25 @@ const MyFeed = ({ usersId }) => {
         return (<li key={element.id}>
             <div className="card">
                 <ul className="list-group list-group-flush">
-                    <li className="list-group-item">
-                        <p className="card-title">{dateFormatting(element.when)}</p>
+                    <li className="posts__title list-group-item">
+                        <div>{element.username}</div>
+                        <div>{dateFormatting(element.when)}</div>
                     </li>
                     <li className="list-group-item">
                         <div className="card-text">{element.content}</div>
                     </li>
-                    <li className="post__reaction list-group-item">
-                        <div className="post__reaction item">
+                    <li className="posts__reaction list-group-item">
+                        <div className="posts__reaction item">
                             <FontAwesomeIcon className="post__reaction_like" icon={faHeart} title="Like"
                                 onClick={async () => await createPostLikeAsync(element.id)} />
                             <div className="count">{element.likeCount}</div>
                         </div>
-                        <div className="post__reaction item">
+                        <div className="posts__reaction item">
                             <FontAwesomeIcon className="post__reaction_dislike" icon={faThumbsDown} title="Dislike"
                                 onClick={async () => await createPostDislikeAsync(element.id)} />
                             <div className="count">{element.dislikeCount}</div>
                         </div>
-                        <div className="post__reaction item">
+                        <div className="posts__reaction item">
                             <FontAwesomeIcon icon={faMessage} title="Comment"
                                 onClick={async () => await postCommentsHandler(element.id)} />
                             <div className="count">{element.commentCount}</div>
@@ -279,7 +299,7 @@ const MyFeed = ({ usersId }) => {
                 </ul>
             </div>
             {showComments && selectedPostCommentId === element.id &&
-                <PostComment userId={user.id} postId={element.id} updatePostAsync={updatePostAsync} />
+                <PostComment userId={customer.id} postId={element.id} updatePostAsync={updatePostAsync} />
             }
         </li>);
     }
@@ -348,11 +368,11 @@ const MyFeed = ({ usersId }) => {
                 </div>
                 <textarea rows="5" cols="100" ref={postContentRef} style={{ display: showCreatePost ? "flex" : "none" }} />
             </div>
-            <ul className="post">{posts}</ul>
+            <ul className="posts">{posts}</ul>
         </div>);
     }
 
     return render();
 }
 
-export default MyFeed;
+export default Post;

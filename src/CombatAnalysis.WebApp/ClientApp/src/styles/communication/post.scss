@@ -12,7 +12,7 @@
     }
 }
 
-.post {
+.posts {
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -21,6 +21,12 @@
     .card {
         width: 575px;
         margin: 5px;
+    }
+
+    &__title.list-group-item {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
     }
 
     &__reaction.list-group-item {

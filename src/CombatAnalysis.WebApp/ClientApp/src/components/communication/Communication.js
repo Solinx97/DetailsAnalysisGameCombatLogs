@@ -6,7 +6,7 @@ import Chats from './chats/Chats';
 import Communities from './Communities';
 import Events from './events/Events';
 import MyEnvironment from './myEnvironment/MyEnvironment';
-import MyFeed from './myEnvironment/MyFeed';
+import Post from './Post';
 import People from './people/People';
 
 import "../../styles/communication/communication.scss";
@@ -19,10 +19,10 @@ const Communication = () => {
     const [companionId, setCompanionId] = useState("");
     const [feed, setFeed] = useState(<></>);
 
-    const user = useSelector((state) => state.user.value);
+    const customer = useSelector((state) => state.customer.value);
 
     useEffect(() => {
-        if (user === null) {
+        if (customer === null) {
             return;
         }
 
@@ -31,7 +31,7 @@ const Communication = () => {
         }
 
         getUserFriends();
-    }, [user])
+    }, [customer])
 
     const updateCurrentMenuItem = (menuItem, initiatorId, companionId) => {
         setCurrentMenuItem(menuItem);
@@ -44,14 +44,14 @@ const Communication = () => {
         const friendsIdByForWhom = await getFriendsIdByForWhomIdAsync();
         const friendsIdByWhoFriend = await getFriendsIdByWhoFriendIdAsync();
 
-        let allUsersId = friendsIdByForWhom.concat(friendsIdByWhoFriend);
-        allUsersId.push(user.id);
+        let allCustomersId = friendsIdByForWhom.concat(friendsIdByWhoFriend);
+        allCustomersId.push(customer.id);
 
-        setFeed(<MyFeed usersId={allUsersId} />);
+        setFeed(<Post customersId={allCustomersId} />);
     }
 
     const getFriendsIdByForWhomIdAsync = async () => {
-        const response = await fetch(`/api/v1/Friend/searchByForWhomId/${user.id}`);
+        const response = await fetch(`/api/v1/Friend/searchByForWhomId/${customer.id}`);
         if (response.status !== 200) {
             console.log("problem");
 
@@ -68,7 +68,7 @@ const Communication = () => {
     }
 
     const getFriendsIdByWhoFriendIdAsync = async () => {
-        const response = await fetch(`/api/v1/Friend/searchByWhoFriendId/${user.id}`);
+        const response = await fetch(`/api/v1/Friend/searchByWhoFriendId/${customer.id}`);
         if (response.status !== 200) {
             console.log("problem");
 

@@ -52,4 +52,12 @@ public class FriendController : ControllerBase
 
         return Ok(friend);
     }
+
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> Delete(int id)
+    {
+        await _httpClient.DeletAsync($"Friend/{id}");
+
+        return Ok();
+    }
 }

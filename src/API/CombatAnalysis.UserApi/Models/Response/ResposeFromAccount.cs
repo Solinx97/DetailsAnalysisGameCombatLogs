@@ -1,6 +1,6 @@
 ﻿namespace CombatAnalysis.UserApi.Models.Response;
 
-public struct ResponseFromAccount
+public readonly struct ResponseFromAccount
 {
     public ResponseFromAccount(AppUserModel user, string accessToke, string refreshToken)
     {

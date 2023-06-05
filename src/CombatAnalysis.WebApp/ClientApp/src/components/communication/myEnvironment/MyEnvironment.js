@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useSelector } from 'react-redux';
 import Friends from './Friends';
-import MyFeed from './MyFeed';
+import Post from '../Post';
 import Profile from './Profile';
 import RequestsToConnect from './RequestsToConnect';
 
@@ -12,15 +12,15 @@ const MyEnvironment = () => {
     const [currentMenuItem, setCurrentMenuItem] = useState(0);
     const [myFeed, setMyFeed] = useState(<></>);
 
-    const user = useSelector((state) => state.user.value);
+    const customer = useSelector((state) => state.customer.value);
 
     useEffect(() => {
-        setMyFeed(<MyFeed usersId={[user.id]}/>);
+        setMyFeed(<Post customersId={[customer.id]}/>);
     }, [])
 
     useEffect(() => {
-        setMyFeed(<MyFeed usersId={[user === null ? 0 : user.id]} />);
-    }, [user])
+        setMyFeed(<Post customersId={[customer === null ? 0 : customer.id]} />);
+    }, [customer])
 
     const render = () => {
         return (<div className="my-environment">
