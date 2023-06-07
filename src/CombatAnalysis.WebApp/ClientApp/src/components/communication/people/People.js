@@ -1,7 +1,8 @@
-import { faCommentDots, faSquarePlus, faUserPlus } from '@fortawesome/free-solid-svg-icons';
+import { faCommentDots, faSquarePlus, faUserPlus, faWindowRestore } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useEffect, useState } from "react";
 import { useSelector } from 'react-redux';
+import UserInformation from './../UserInformation';
 
 import "../../../styles/communication/people.scss";
 
@@ -11,7 +12,10 @@ const People = ({ updateCurrentMenuItem }) => {
     const timeForHideNotifications = 4000;
 
     const [people, setPeople] = useState(<></>);
+    const [userInformation, setUserInformation] = useState(<></>);
     const [showSuccessfullRequest, setShowSuccessfullRequest] = useState(false);
+
+    let showUserInformationTimeout = null;
 
     useEffect(() => {
         let getPeople = async () => {
@@ -26,6 +30,7 @@ const People = ({ updateCurrentMenuItem }) => {
 
         if (response.status === 200) {
             const allPeople = await response.json();
+
             fillCards(allPeople);
         }
     }
@@ -109,14 +114,36 @@ const People = ({ updateCurrentMenuItem }) => {
         }
     }
 
+    const openUserInformationWithTimeout = (customer) => {
+        let timeout = setTimeout(() => {
+            setUserInformation(<UserInformation customer={customer} closeUserInformation={closeUserInformation} />);
+        }, 1000);
+
+        showUserInformationTimeout = timeout;
+    }
+
+    const openUserInformation = (customer) => {
+        setUserInformation(<UserInformation customer={customer} closeUserInformation={closeUserInformation} />);
+    }
+
+    const clearUserInformationTimeout = () => {
+        clearInterval(showUserInformationTimeout);
+    }
+
+    const closeUserInformation = () => {
+        setUserInformation(<></>);
+    }
+
     const createPersonalCard = (element) => {
         return (<li key={element.id}>
             <div className="card">
                 <div className="card-body">
-                    <h5 className="card-title">{element.username}</h5>
-                    {/*<p className="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>*/}
+                    <div>[icon]</div>
+                    <h5 className="card-title" onMouseOver={() => openUserInformationWithTimeout(element)}
+                        onMouseLeave={() => clearUserInformationTimeout()}>{element.username}</h5>
+                    <FontAwesomeIcon icon={faWindowRestore} title="Show details" onClick={() => openUserInformation(element)} />
                 </div>
-                <ul className="list-group list-group-flush">
+                <ul className="card__links list-group list-group-flush">
                     <li className="list-group-item"><FontAwesomeIcon icon={faCommentDots} title="Start chat" onClick={async () => await startChatAsync(element)} /></li>
                     <li className="list-group-item"><FontAwesomeIcon icon={faUserPlus} title="Request to connect" onClick={async () => await createRequestToConnectAsync(element)} /></li>
                     <li className="list-group-item"><FontAwesomeIcon icon={faSquarePlus} title="Add to community" /></li>
@@ -137,6 +164,7 @@ const People = ({ updateCurrentMenuItem }) => {
             <ul className="people__cards">
                 {people}
             </ul>
+            {userInformation}
         </div>);
     }
 

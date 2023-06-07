@@ -8,13 +8,34 @@
             width: 250px;
 
             .card-body {
-                &__links {
-                    display: flex;
-                    justify-content: space-around;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
 
-                    svg:hover {
-                        cursor: pointer;
-                    }
+                .card-title {
+                    margin: 0 15px;
+                }
+
+                .card-title:hover {
+                    transform: scale(1.1);
+                    font-family: 'Comic Sans MS';
+                    cursor: pointer;
+                }
+
+                svg:hover {
+                    transform: scale(1.1);
+                    cursor: pointer;
+                }
+            }
+
+            &__links {
+                display: flex;
+                flex-direction: row;
+                justify-content: space-around;
+
+                svg:hover {
+                    cursor: pointer;
+                    transform: scale(1.25);
                 }
             }
         }

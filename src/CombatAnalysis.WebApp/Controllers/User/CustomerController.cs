@@ -53,4 +53,12 @@ public class CustomerController : ControllerBase
 
         return Ok(customer);
     }
+
+    [HttpPut]
+    public async Task<IActionResult> Edit(CustomerModel model)
+    {
+        await _httpClient.PutAsync("Customer", JsonContent.Create(model));
+
+        return Ok();
+    }
 }

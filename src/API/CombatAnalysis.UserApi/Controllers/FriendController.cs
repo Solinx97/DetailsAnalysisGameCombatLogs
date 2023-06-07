@@ -38,20 +38,14 @@ public class FriendController : ControllerBase
         return Ok(result);
     }
 
-    [HttpGet("searchByForWhomId/{id}")]
-    public async Task<IActionResult> SearchByOwnerId(string id)
+    [HttpGet("searchByUserId/{id}")]
+    public async Task<IActionResult> SearchByUserId(string id)
     {
-        var result = await _service.GetByParamAsync(nameof(FriendModel.ForWhomId), id);
+        var forWhomId = await _service.GetByParamAsync(nameof(FriendModel.ForWhomId), id);
+        var whoFriendId = await _service.GetByParamAsync(nameof(FriendModel.WhoFriendId), id);
 
-        return Ok(result);
-    }
-
-    [HttpGet("searchByWhoFriendId/{id}")]
-    public async Task<IActionResult> SearchByWhoFriendId(string id)
-    {
-        var result = await _service.GetByParamAsync(nameof(FriendModel.WhoFriendId), id);
-
-        return Ok(result);
+        var friends = forWhomId.Concat(whoFriendId);
+        return Ok(friends);
     }
 
     [HttpPost]

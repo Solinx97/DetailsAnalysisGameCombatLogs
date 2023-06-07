@@ -40,48 +40,29 @@ const Communication = () => {
         setCompanionId(companionId);
     }
 
+    const getFriendsIdByUserIdAsync = async () => {
+        const response = await fetch(`/api/v1/Friend/searchByUserId/${customer.id}`);
+        if (response.status !== 200) {
+            console.log("problem");
+
+            return;
+        }
+
+        const friends = await response.json();
+        let customersId = [];
+        for (var i = 0; i < friends.length; i++) {
+            const customerId = friends[i].whoFriendId === customer.id ? friends[i].forWhomId : friends[i].whoFriendId;
+            customersId.push(customerId);
+        }
+
+        return customersId;
+    }
+
     const getUserFriendsAsync = async () => {
-        const friendsIdByForWhom = await getFriendsIdByForWhomIdAsync();
-        const friendsIdByWhoFriend = await getFriendsIdByWhoFriendIdAsync();
+        const customerId = await getFriendsIdByUserIdAsync();
+        customerId.push(customer.id);
 
-        let allCustomersId = friendsIdByForWhom.concat(friendsIdByWhoFriend);
-        allCustomersId.push(customer.id);
-
-        setFeed(<Post customersId={allCustomersId} />);
-    }
-
-    const getFriendsIdByForWhomIdAsync = async () => {
-        const response = await fetch(`/api/v1/Friend/searchByForWhomId/${customer.id}`);
-        if (response.status !== 200) {
-            console.log("problem");
-
-            return;
-        }
-
-        const friends = await response.json();
-        let friendsId = [];
-        for (var i = 0; i < friends.length; i++) {
-            friendsId.push(friends[i].whoFriendId);
-        }
-
-        return friendsId;
-    }
-
-    const getFriendsIdByWhoFriendIdAsync = async () => {
-        const response = await fetch(`/api/v1/Friend/searchByWhoFriendId/${customer.id}`);
-        if (response.status !== 200) {
-            console.log("problem");
-
-            return;
-        }
-
-        const friends = await response.json();
-        let friendsId = [];
-        for (var i = 0; i < friends.length; i++) {
-            friendsId.push(friends[i].forWhomId);
-        }
-
-        return friendsId;
+        setFeed(<Post customersId={customerId} />);
     }
 
     const render = () => {

@@ -29,6 +29,21 @@
         justify-content: space-between;
     }
 
+    &__title-username {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+
+        svg {
+            margin: 0 10px;
+        }
+
+        svg:hover {
+            cursor: pointer;
+            transform: scale(1.1);
+        }
+    }
+
     &__reaction.list-group-item {
         display: flex;
         flex-direction: row;

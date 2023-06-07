@@ -1,37 +1,70 @@
 import { useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { userUpdate } from '../../../features/UserReducer';
+import { customerUpdate } from '../../../features/CustomerReducer';
 import { checkAuth } from '../../../features/AuthenticationReducer';
 
 const Profile = () => {
     const user = useSelector((state) => state.user.value);
+    const customer = useSelector((state) => state.customer.value);
     const dispatch = useDispatch();
 
     const email = useRef(null);
+    const phoneNumber = useRef(null);
+    const birthday = useRef(null);
+    const message = useRef(null);
+    const username = useRef(null);
+    const aboutMe = useRef(null);
+    const firstName = useRef(null);
+    const lastName = useRef(null);
+    const gender = useRef(null);
     const currentPassword = useRef(null);
     const password = useRef(null);
     const confirmPassword = useRef(null);
 
     useEffect(() => {
         getUserInformation();
+        getCustomerInformation();
     }, [])
 
     const getUserInformation = () => {
+        const date = new Date(user.birthday);
+        const correntMonthNumber = date.getMonth() === 0 ? 1 : date.getMonth();
+        const month = correntMonthNumber < 10 ? `0${correntMonthNumber}` : correntMonthNumber;
+        const day = date.getDate() < 10 ? `0${date.getDate()}` : date.getDate();
+
+        let birthdayFromDate = `${date.getFullYear()}-${month}-${day}`;
+
         email.current.value = user.email;
+        phoneNumber.current.value = user.phoneNumber;
+        birthday.current.value = birthdayFromDate;
+    }
+
+    const getCustomerInformation = () => {
+        email.current.value = user.email;
+        message.current.value = customer.message;
+        username.current.value = customer.username;
+        aboutMe.current.value = customer.aboutMe;
+        firstName.current.value = customer.firstName;
+        lastName.current.value = customer.lastName;
+        gender.current.value = customer.gender;
     }
 
     const editUserAsync = async () => {
         let updatesForUser = {
             id: user.id,
             email: user.email,
+            phoneNumber: user.phoneNumber,
+            birthday: user.birthday,
             password: user.password
         };
 
-        if (email.current.value !== "" && email.current.value !== user.email) {
-            updatesForUser.email = email.current.value;
-        }
+        updatesForUser.email = email.current.value;
+        updatesForUser.phoneNumber = phoneNumber.current.value;
+        updatesForUser.birthday = birthday.current.value;
 
-        if (password.current.value !== "" && password.current.value !== user.password) {
+        if (password.current.value !== "" && password.current.value !== user.password
+            && password.current.value === confirmPassword.current.value) {
             updatesForUser.password = password.current.value;
         }
 
@@ -44,8 +77,42 @@ const Profile = () => {
         });
 
         if (response.status === 200) {
+            await editCustomerAsync();
+
             dispatch(userUpdate(updatesForUser));
             dispatch(checkAuth(true));
+        }
+    }
+
+    const editCustomerAsync = async () => {
+        let updatesForCustomer = {
+            id: customer.id,
+            message: customer.message,
+            username: customer.username,
+            aboutMe: customer.aboutMe,
+            firstName: customer.firstName,
+            lastName: customer.lastName,
+            gender: +customer.gender,
+            appUserId: user.id
+        };
+
+        updatesForCustomer.message = message.current.value;
+        updatesForCustomer.username = username.current.value;
+        updatesForCustomer.aboutMe = aboutMe.current.value;
+        updatesForCustomer.firstName = firstName.current.value;
+        updatesForCustomer.lastName = lastName.current.value;
+        updatesForCustomer.gender = gender.current.value;
+
+        const response = await fetch('api/v1/Customer', {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(updatesForCustomer)
+        });
+
+        if (response.status === 200) {
+            dispatch(customerUpdate(updatesForCustomer));
         }
     }
 
@@ -57,12 +124,20 @@ const Profile = () => {
 
     const render = () => {
         return (<div>
-            <div>
+            <form onSubmit={handleSubmitAsync}>
                 <div>Privacy</div>
-                <form onSubmit={handleSubmitAsync}>
+                <div>
                     <div className="mb-3">
                         <label htmlFor="inputEmail" className="form-label">Email</label>
                         <input type="email" className="form-control" id="inputEmail" aria-describedby="emailHelp" ref={email} />
+                    </div>
+                    <div className="mb-3">
+                        <label htmlFor="inputPhoneNumber" className="form-label">Phone number</label>
+                        <input type="number" className="form-control" id="inputPhoneNumber" ref={phoneNumber} />
+                    </div>
+                    <div className="mb-3">
+                        <label htmlFor="inputBithdayl" className="form-label">Birthday</label>
+                        <input type="date" className="form-control" id="inputBithdayl" ref={birthday} />
                     </div>
                     <div className="mb-3">
                         <label htmlFor="inputCurrentPassword" className="form-label">Current password</label>
@@ -76,9 +151,36 @@ const Profile = () => {
                         <label htmlFor="inputConfirmPassword" className="form-label">Confirm new password</label>
                         <input type="password" className="form-control" id="inputConfirmPassword" ref={confirmPassword} />
                     </div>
-                    <input type="submit" className="btn btn-primary" value="Save" />
-                </form>
-            </div>
+                </div>
+                <div>General</div>
+                <div>
+                    <div className="mb-3">
+                        <label htmlFor="inputMessage" className="form-label">Message</label>
+                        <input type="text" className="form-control" id="inputMessage" ref={message} />
+                    </div>
+                    <div className="mb-3">
+                        <label htmlFor="inputUsername" className="form-label">Username</label>
+                        <input type="text" className="form-control" id="inputUsername" ref={username} />
+                    </div>
+                    <div className="mb-3">
+                        <label htmlFor="inputAboutMe" className="form-label">About me</label>
+                        <input type="text" className="form-control" id="inputAboutMe" ref={aboutMe} />
+                    </div>
+                    <div className="mb-3">
+                        <label htmlFor="inutFirstName" className="form-label">First name</label>
+                        <input type="text" className="form-control" id="inutFirstName" ref={firstName} />
+                    </div>
+                    <div className="mb-3">
+                        <label htmlFor="inputLastName" className="form-label">Last name</label>
+                        <input type="text" className="form-control" id="inputLastName" ref={lastName} />
+                    </div>
+                    <div className="mb-3">
+                        <label htmlFor="inputGender" className="form-label">Gender</label>
+                        <input type="number" className="form-control" id="inputGender" ref={gender} />
+                    </div>
+                </div>
+                <input type="submit" className="btn btn-primary" value="Save" />
+            </form>
         </div>);
     }
 

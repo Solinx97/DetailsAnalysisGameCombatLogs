@@ -19,25 +19,15 @@ const Friends = () => {
     }, [])
 
     const getFriendsAsync = async () => {
-        let response = await fetch(`/api/v1/Friend/searchByForWhomId/${customer.id}`);
+        const response = await fetch(`/api/v1/Friend/searchByUserId/${customer.id}`);
         if (response.status !== 200) {
             console.log("problem");
 
             return;
         }
 
-        const myFriendsByForWhom = await response.json();
+        const myFriends = await response.json();
 
-        response = await fetch(`/api/v1/Friend/searchByWhoFriendId/${customer.id}`);
-        if (response.status !== 200) {
-            console.log("problem");
-
-            return;
-        }
-
-        const myFriendsByWhoFriend = await response.json();
-
-        const myFriends = myFriendsByForWhom.concat(myFriendsByWhoFriend);
         fillFriends(myFriends);
     }
 

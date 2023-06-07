@@ -1,8 +1,9 @@
-import { faHeart, faMessage, faThumbsDown } from '@fortawesome/free-solid-svg-icons';
+import { faHeart, faMessage, faThumbsDown, faWindowRestore } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useEffect, useRef, useState } from "react";
 import { useSelector } from 'react-redux';
 import PostComment from './PostComment';
+import UserInformation from './UserInformation';
 
 import "../../styles/communication/post.scss";
 
@@ -11,9 +12,11 @@ const Post = ({ customersId }) => {
 
     const postContentRef = useRef(null);
     const [posts, setPosts] = useState(<></>);
+    const [userInformation, setUserInformation] = useState(<></>);
     const [showCreatePost, setShowCreatePost] = useState(false);
     const [showComments, setShowComments] = useState(false);
     const [selectedPostCommentId, setSelectedPostCommentId] = useState(0);
+    const [selectedPostCustomerId, setSelectedPostCustomerId] = useState(0);
 
     useEffect(() => {
         let getPosts = async () => {
@@ -29,7 +32,7 @@ const Post = ({ customersId }) => {
         }
 
         getPosts();
-    }, [showComments, selectedPostCommentId])
+    }, [showComments, selectedPostCommentId, userInformation])
 
     const getPostsAsync = async () => {
         let posts = [];
@@ -259,7 +262,7 @@ const Post = ({ customersId }) => {
         setPosts(list);
     }
 
-    const postCommentsHandler = async (postId) => {
+    const postCommentsHandler = (postId) => {
         setShowComments(!showComments);
         if (selectedPostCommentId !== postId) {
             setShowComments(true);
@@ -268,14 +271,32 @@ const Post = ({ customersId }) => {
         setSelectedPostCommentId(postId);
     }
 
+    const userInformationHandlerAsync = async (post) => {
+        const customer = await getCustomerByIdAsync(post.ownerId);
+        setUserInformation(<UserInformation customer={customer} closeUserInformation={closeUserInformation} />);
+
+        setSelectedPostCustomerId(post.id);
+    }
+
+    const closeUserInformation = () => {
+        setUserInformation(<></>);
+        setSelectedPostCustomerId(0);
+    }
+
     const createPostCard = (element) => {
         return (<li key={element.id}>
             <div className="card">
                 <ul className="list-group list-group-flush">
                     <li className="posts__title list-group-item">
-                        <div>{element.username}</div>
+                        <div className="posts__title-username">
+                            <div>{element.username}</div>
+                            <FontAwesomeIcon icon={faWindowRestore} title="Show details" onClick={async () => await userInformationHandlerAsync(element)} />
+                        </div>
                         <div>{dateFormatting(element.when)}</div>
                     </li>
+                    {selectedPostCustomerId === element.id &&
+                        userInformation
+                    }
                     <li className="list-group-item">
                         <div className="card-text">{element.content}</div>
                     </li>
@@ -292,7 +313,7 @@ const Post = ({ customersId }) => {
                         </div>
                         <div className="posts__reaction item">
                             <FontAwesomeIcon icon={faMessage} title="Comment"
-                                onClick={async () => await postCommentsHandler(element.id)} />
+                                onClick={() => postCommentsHandler(element.id)} />
                             <div className="count">{element.commentCount}</div>
                         </div>
                     </li>
