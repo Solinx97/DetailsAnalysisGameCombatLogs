@@ -1,12 +1,11 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
-import Friends from './Friends';
 import Post from '../Post';
+import Friends from './Friends';
 import Profile from './Profile';
 import RequestsToConnect from './RequestsToConnect';
 
 import "../../../styles/communication/myEnvironment.scss";
-import { useEffect } from 'react';
 
 const MyEnvironment = () => {
     const [currentMenuItem, setCurrentMenuItem] = useState(0);
