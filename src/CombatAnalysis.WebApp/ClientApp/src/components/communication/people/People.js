@@ -155,10 +155,7 @@ const People = ({ updateCurrentMenuItem }) => {
     const render = () => {
         return (<div className="people">
             <div>
-                <div>Populations people</div>
-                <div>Active people</div>
                 <div>Looking for</div>
-                <div>Looking for by tag(s)</div>
             </div>
             <div className="people__successfully-request" style={{ display: showSuccessfullRequest ? "flex" : "none" }}>You have successfully sent a connection request</div>
             <ul className="people__cards">

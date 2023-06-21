@@ -47,13 +47,17 @@ const RequestToConnect = () => {
     }
 
     const fillRequestsToConnect = (allRequests) => {
-        const list = allRequests.map((element) => requestsCard(element));
-
+        const list = allRequests.length !== 0
+            ? allRequests.map((element) => requestsCard(element))
+            : (<div className="requests__empty">You don't have any requests</div>);
+        
         setRequestsToConnect(list);
     }
 
-    const fillMyRequestsToConnect = (allRequests) => {
-        const list = allRequests.map((element) => myRequestsCard(element));
+    const fillMyRequestsToConnect = (allMyRequests) => {
+        const list = allMyRequests.length !== 0
+            ? allMyRequests.map((element) => myRequestsCard(element))
+            : (<div className="my-requests__empty">You didn't do any requests</div>);
 
         setMyRequestsToConnect(list);
     }

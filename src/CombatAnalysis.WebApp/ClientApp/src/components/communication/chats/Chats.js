@@ -1,9 +1,9 @@
-﻿import React, { useEffect, useState, useRef } from 'react';
-import { useSelector } from 'react-redux';
-import PersonalChat from './PersonalChat';
-import GroupChat from './GroupChat';
-import { faArrowDown, faArrowUp, faSquarePlus } from '@fortawesome/free-solid-svg-icons';
+﻿import { faArrowDown, faArrowUp, faSquarePlus } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import React, { useEffect, useRef, useState } from 'react';
+import { useSelector } from 'react-redux';
+import GroupChat from './GroupChat';
+import PersonalChat from './PersonalChat';
 
 import "../../../styles/communication/chats.scss";
 
@@ -110,7 +110,7 @@ const Chats = ({ isOpenChat, initiatorId, companionId }) => {
 
     const fillMyGroupChatList = (chats) => {
         if (chats.length === 0) {
-            setMyGroupChatsRender(<div className="chats-empty">У вас нет групповых чатов</div>);
+            setMyGroupChatsRender(<div className="chats-empty">You don't hav any group chats</div>);
             return;
         }
 
@@ -139,7 +139,7 @@ const Chats = ({ isOpenChat, initiatorId, companionId }) => {
 
     const fillMyPersonalChatList = (chats) => {
         if (chats.length === 0) {
-            setPersoanlChatsRender(<div className="chats-empty">Отправьте ваше первое сообщение</div>);
+            setPersoanlChatsRender(<div className="chats-empty">You don't have any chats</div>);
             return;
         }
 

@@ -1,8 +1,8 @@
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { userUpdate } from '../../../features/UserReducer';
-import { customerUpdate } from '../../../features/CustomerReducer';
 import { checkAuth } from '../../../features/AuthenticationReducer';
+import { customerUpdate } from '../../../features/CustomerReducer';
+import { userUpdate } from '../../../features/UserReducer';
 
 import "../../../styles/communication/profile.scss";
 
