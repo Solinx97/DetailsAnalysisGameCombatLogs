@@ -1,0 +1,68 @@
+pipeline {
+    agent any
+
+    parameters {
+        string defaultValue: "lucid-diode-391208", name: "CREDENTIALS_ID"
+        string defaultValue: "lucid-diode-391208", name: "PROJECT_ID"
+        string defaultValue: "combat-analysis-cluster", name: "CLUSTER_NAME"
+        string defaultValue: "us-central1", name: "LOCATION"
+        string defaultValue: "combat-analysis-web-app", name: "DOCKER_IMAGE"
+        string defaultValue: "latest", name: "DOCKER_IMAGE_VERSION"
+        string defaultValue: "solinx", name: "DOCKER_HUB_LOGIN"
+    }
+
+    environment {
+        PROJECT_ID = "${PROJECT_ID}"
+        CLUSTER_NAME = "${CLUSTER_NAME}"
+        LOCATION = "${LOCATION}"
+        CREDENTIALS_ID = "${CREDENTIALS_ID}"
+    }
+
+    stages {
+        stage('Build') {
+            steps {
+                bat "dotnet restore src/CombatAnalysis.WebApp/CombatAnalysis.WebApp.csproj"
+                bat "dotnet build src/CombatAnalysis.WebApp/CombatAnalysis.WebApp.csproj"
+            }
+        }
+        stage('Tests') {
+            steps {
+                bat "dotnet test tests/CombatAnalysis.Parser.Tests/CombatAnalysis.Parser.Tests.csproj"
+            }
+        }
+        stage("Docker build") {
+            steps {
+                bat "docker build -f src/CombatAnalysis.WebApp/Dockerfile --force-rm -t ${DOCKER_HUB_LOGIN}/${DOCKER_IMAGE}:${DOCKER_IMAGE_VERSION} ."
+            }
+        }
+        stage("Docker push") {
+            steps {
+                withCredentials([string(credentialsId: "docker-hub", variable: "dockerhubpwd")]) {
+                    bat "docker login -u ${DOCKER_HUB_LOGIN} -p ${dockerhubpwd}"
+                    bat "docker push ${DOCKER_HUB_LOGIN}/${DOCKER_IMAGE}:${DOCKER_IMAGE_VERSION}"
+                }
+            }
+        }
+        stage("Deploy to GKE") {
+            steps{
+                step([
+                $class: "KubernetesEngineBuilder",
+                projectId: env.PROJECT_ID,
+                clusterName: env.CLUSTER_NAME,
+                location: env.LOCATION,
+                manifestPattern: "Deploy/GoogleCloud/WebApp/web-app-deploy.yaml",
+                credentialsId: env.CREDENTIALS_ID,
+                verifyDeployments: true])
+
+                step([
+                $class: "KubernetesEngineBuilder",
+                projectId: env.PROJECT_ID,
+                clusterName: env.CLUSTER_NAME,
+                location: env.LOCATION,
+                manifestPattern: "Deploy/GoogleCloud/WebApp/web-app-service.yaml",
+                credentialsId: env.CREDENTIALS_ID,
+                verifyDeployments: true])
+            }
+        }
+    }
+}
