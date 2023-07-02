@@ -25,9 +25,11 @@ pipeline {
         }
         stage('Deploy to GKE') {
             steps {
-                bat "kubectl apply -f Deploy/GoogleCloud/UserApi/user-api-deploy.yaml"
-                bat "kubectl apply -f Deploy/GoogleCloud/UserApi/user-api-autoscaling.yaml"
-                bat "kubectl apply -f Deploy/GoogleCloud/UserApi/user-api-service.yaml"
+                withKubeConfig([credentialsId: 'gke', serverUrl: 'https://console.cloud.google.com/kubernetes/clusters/details/us-central1/combat-analysis-cluster/details?project=lucid-diode-391208']) {
+                    bat "kubectl apply -f Deploy/GoogleCloud/UserApi/user-api-deploy.yaml"
+                    bat "kubectl apply -f Deploy/GoogleCloud/UserApi/user-api-autoscaling.yaml"
+                    bat "kubectl apply -f Deploy/GoogleCloud/UserApi/user-api-service.yaml"
+                }
             }
         }
     }
