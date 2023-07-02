@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: combat-parser-api
+  annotations:
+    cloud.google.com/neg: '{"ingress": true}'
+spec:
+  type: ClusterIP
+  selector:
+    app: combat-parser-api
+  ports:
+  - port: 80
+    targetPort: 80
