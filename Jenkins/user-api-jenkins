@@ -17,7 +17,10 @@ pipeline {
             steps {
                 bat "docker build -f src/API/CombatAnalysis.UserApi/Dockerfile --force-rm -t user-api ."
                 bat "docker tag user-api:latest solinx/combat-analysis-user-api:latest"
-                bat "docker push solinx/combat-analysis-user-api:latest"
+                withCredentials([string(credentialsId: 'docker-hub', variable: 'dockerhubpwd')]) {
+                    bat "docker login -u solinx -p ${dockerhubpwd}"
+                    bat "docker push solinx/combat-analysis-user-api:latest"
+                }
             }
         }
         stage('Deploy to GKE') {
