@@ -13,5 +13,10 @@ pipeline {
                 bat "dotnet test tests/CombatAnalysis.Parser.Tests/CombatAnalysis.Parser.Tests.csproj"
             }
         }
+        stage('Docker build') {
+            steps {
+                bat "docker build -f src/CombatAnalysis.WebApp/Dockerfile --force-rm -t user-api ."
+            }
+        }
     }
 }
