@@ -1,0 +1,31 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('Build') {
+            steps {
+                bat "dotnet restore src/API/CombatAnalysis.UserApi/CombatAnalysis.UserApi.csproj"
+                bat "dotnet build src/API/CombatAnalysis.UserApi/CombatAnalysis.UserApi.csproj"
+            }
+        }
+        stage('Test') {
+            steps {
+                bat "dotnet test tests/CombatAnalysis.Parser.Tests/CombatAnalysis.Parser.Tests.csproj"
+            }
+        }
+        stage('Docker build') {
+            steps {
+                bat "docker build -f src/API/CombatAnalysis.UserApi/Dockerfile --force-rm -t user-api ."
+                bat "docker tag user-api:latest solinx/combat-analysis-user-api:latest"
+            }
+        }
+        stage('Docker push') {
+            steps {
+                withCredentials([string(credentialsId: 'docker-hub', variable: 'dockerhubpwd')]) {
+                    bat "docker login -u solinx -p ${dockerhubpwd}"
+                    bat "docker push solinx/combat-analysis-user-api:latest"
+                }
+            }
+        }
+    }
+}

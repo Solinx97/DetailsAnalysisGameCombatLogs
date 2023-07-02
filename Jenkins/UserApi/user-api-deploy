@@ -1,12 +1,18 @@
 pipeline {
     agent any
 
+    parameters {
+        string defaultValue: 'lucid-diode-391208', name: 'PROJECT_ID'
+        string defaultValue: 'combat-analysis-cluster', name: 'CLUSTER_NAME'
+        string defaultValue: 'us-central1', name: 'LOCATION'
+        string defaultValue: 'latest', name: 'DOCKER_IMAGE_VERSION'
+    }
+
     environment {
-        PROJECT_ID = 'lucid-diode-391208'
-        CLUSTER_NAME = 'combat-analysis-cluster'
-        LOCATION = 'us-central1'
+        PROJECT_ID = ${PROJECT_ID}
+        CLUSTER_NAME = ${CLUSTER_NAME}
+        LOCATION = ${LOCATION}
         CREDENTIALS_ID = 'lucid-diode-391208'
-        OWNER = 'Aleh Fiadosau'
     }
 
     stages {
@@ -24,7 +30,7 @@ pipeline {
         stage('Docker build') {
             steps {
                 bat "docker build -f src/API/CombatAnalysis.UserApi/Dockerfile --force-rm -t user-api ."
-                bat "docker tag user-api:latest solinx/combat-analysis-user-api:latest"
+                bat "docker tag user-api:latest solinx/combat-analysis-user-api:${DOCKER_IMAGE_VERSION}"
             }
         }
         stage('Docker push') {
