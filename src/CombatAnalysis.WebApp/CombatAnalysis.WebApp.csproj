@@ -30,7 +30,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="ClientApp\src\components\communication\feed\" />
     <Folder Include="ClientApp\src\components\communication\events\" />
     <Folder Include="ClientApp\src\components\general\" />
   </ItemGroup>

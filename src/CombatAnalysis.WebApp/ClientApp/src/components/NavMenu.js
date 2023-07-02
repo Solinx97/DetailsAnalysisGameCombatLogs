@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
 import { Collapse, Container, Navbar, NavbarBrand, NavbarToggler } from 'reactstrap';
 import { checkAuth } from '../features/AuthenticationReducer';
 import { userUpdate } from '../features/UserReducer';
-import { useTranslation } from 'react-i18next';
+import { customerUpdate } from '../features/CustomerReducer';
 
 import '../styles/navMenu.scss';
 
@@ -16,7 +17,22 @@ const NavMenu = () => {
 
     const { t, i18n } = useTranslation("translate");
 
+    const [languageName, setLanguageName] = useState("English");
     const [collapsed, setCollapsed] = useState(true);
+
+    useEffect(() => {
+        switch (i18n.language) {
+            case "ru":
+                setLanguageName(t("RU"));
+                break;
+            case "en":
+                setLanguageName(t("EN"));
+                break;
+            default:
+                setLanguageName(t("EN"));
+                break;
+        }
+    }, [])
 
     useEffect(() => {
         if (user !== null) {
@@ -32,17 +48,31 @@ const NavMenu = () => {
 
     const changeLanguage = (language) => {
         i18n.changeLanguage(language);
+
         window.location.reload(true);
     }
 
     const checkAuthAsync = async () => {
-        const response = await fetch('api/v1/Authentication');
+        const response = await fetch("api/v1/Authentication");
 
-        const result = await response;
-        if (result.status === 200) {
-            const currentUser = await result.json();
+        if (response.status === 200) {
+            const currentUser = await response.json();
 
             dispatch(userUpdate(currentUser));
+            await getCustomerByUserIdAsync(currentUser.id);
+        }
+        else {
+            dispatch(checkAuth(false));
+        }
+    }
+
+    const getCustomerByUserIdAsync = async (userId) => {
+        const response = await fetch(`api/v1/Customer/searchByUserId/${userId}`);
+
+        if (response.status === 200) {
+            const customer = await response.json();
+
+            dispatch(customerUpdate(customer));
             dispatch(checkAuth(true));
         }
         else {
@@ -51,7 +81,7 @@ const NavMenu = () => {
     }
 
     const logoutAsync = async () => {
-        const response = await fetch('api/v1/Account/logout', {
+        const response = await fetch("api/v1/Account/logout", {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -59,8 +89,10 @@ const NavMenu = () => {
         });
 
         if (response.status === 200) {
-            dispatch(checkAuth(false))
-            dispatch(userUpdate(null));;
+            dispatch(checkAuth(false));
+            dispatch(userUpdate(null));
+
+            navigate("/");
         }
     }
 
@@ -72,12 +104,13 @@ const NavMenu = () => {
         return (<header>
             <Navbar className="navbar-expand-sm navbar-toggleable-sm ng-white border-bottom box-shadow mb-3" light>
                 <div className="language dropdown">
+                    <div className="language__title">{t("Langugae")}</div>
                     <button className="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
-                        {t("Langugae")}
+                        {languageName}
                     </button>
                     <ul className="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                        <li><a className="dropdown-item" onClick={() => changeLanguage("ru")}>{t("RU")}</a></li>
-                        <li><a className="dropdown-item" onClick={() => changeLanguage("en")}>{t("EN")}</a></li>
+                        <li><div className="dropdown-item" onClick={() => changeLanguage("ru")}>{t("RU")}</div></li>
+                        <li><div className="dropdown-item" onClick={() => changeLanguage("en")}>{t("EN")}</div></li>
                     </ul>
                 </div>
                 <Container>

@@ -1,5 +1,4 @@
-﻿using CombatAnalysis.BL.Interfaces;
-using CombatAnalysis.WebApp.Consts;
+﻿using CombatAnalysis.WebApp.Consts;
 using CombatAnalysis.WebApp.Interfaces;
 using CombatAnalysis.WebApp.Models.Response;
 using CombatAnalysis.WebApp.Models.User;
@@ -84,13 +83,21 @@ public class AccountController : ControllerBase
         return Ok(response.User);
     }
 
+    [HttpPut]
+    public async Task<IActionResult> Edit(AppUserModel model)
+    {
+        await _httpClient.PutAsync("Account", JsonContent.Create(model));
+
+        return Ok();
+    }
+
     [HttpGet]
     public async Task<IActionResult> GetAll()
     {
         var responseMessage = await _httpClient.GetAsync("Account");
         if (responseMessage.StatusCode == System.Net.HttpStatusCode.OK)
         {
-            var users = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<UserModel>>();
+            var users = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<AppUserModel>>();
             return Ok(users);
         }
 
@@ -103,7 +110,7 @@ public class AccountController : ControllerBase
         var responseMessage = await _httpClient.GetAsync($"Account/{id}");
         if (responseMessage.StatusCode == System.Net.HttpStatusCode.OK)
         {
-            var user = await responseMessage.Content.ReadFromJsonAsync<UserModel>();
+            var user = await responseMessage.Content.ReadFromJsonAsync<AppUserModel>();
             return Ok(user);
         }
 

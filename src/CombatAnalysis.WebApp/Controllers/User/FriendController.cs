@@ -21,17 +21,43 @@ public class FriendController : ControllerBase
     public async Task<IActionResult> GetById(string id)
     {
         var responseMessage = await _httpClient.GetAsync($"Friend/{id}");
-        var damageDones = await responseMessage.Content.ReadFromJsonAsync<FriendModel>();
+        var friend = await responseMessage.Content.ReadFromJsonAsync<FriendModel>();
 
-        return Ok(damageDones);
+        return Ok(friend);
+    }
+
+    [HttpGet("searchByForWhomId/{id}")]
+    public async Task<IActionResult> SearchByForWhomId(string id)
+    {
+        var responseMessage = await _httpClient.GetAsync($"Friend/searchByForWhomId/{id}");
+        var friends = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<FriendModel>>();
+
+        return Ok(friends);
+    }
+
+    [HttpGet("searchByUserId/{id}")]
+    public async Task<IActionResult> SearchByUserId(string id)
+    {
+        var responseMessage = await _httpClient.GetAsync($"Friend/searchByUserId/{id}");
+        var friends = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<FriendModel>>();
+
+        return Ok(friends);
     }
 
     [HttpPost]
     public async Task<IActionResult> Create(FriendModel model)
     {
         var responseMessage = await _httpClient.PostAsync("Friend", JsonContent.Create(model));
-        var customer = await responseMessage.Content.ReadFromJsonAsync<FriendModel>();
+        var friend = await responseMessage.Content.ReadFromJsonAsync<FriendModel>();
 
-        return Ok(customer);
+        return Ok(friend);
+    }
+
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> Delete(int id)
+    {
+        await _httpClient.DeletAsync($"Friend/{id}");
+
+        return Ok();
     }
 }

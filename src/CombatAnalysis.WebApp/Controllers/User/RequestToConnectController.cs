@@ -26,6 +26,24 @@ public class RequestToConnectController : ControllerBase
         return Ok(requestToConnect);
     }
 
+    [HttpGet("searchByOwnerId/{id}")]
+    public async Task<IActionResult> SearchByOwnerId(string id)
+    {
+        var responseMessage = await _httpClient.GetAsync($"RequestToConnect/searchByOwnerId/{id}");
+        var requestsToConnect = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<RequestToConnectModel>>();
+
+        return Ok(requestsToConnect);
+    }
+
+    [HttpGet("searchByToUserId/{id}")]
+    public async Task<IActionResult> SearchByToUserId(string id)
+    {
+        var responseMessage = await _httpClient.GetAsync($"RequestToConnect/searchByToUserId/{id}");
+        var requestsToConnect = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<RequestToConnectModel>>();
+
+        return Ok(requestsToConnect);
+    }
+
     [HttpPost]
     public async Task<IActionResult> Create(RequestToConnectModel model)
     {
@@ -33,5 +51,13 @@ public class RequestToConnectController : ControllerBase
         var requestToConnect = await responseMessage.Content.ReadFromJsonAsync<RequestToConnectModel>();
 
         return Ok(requestToConnect);
+    }
+
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> Delete(int id)
+    {
+        await _httpClient.DeletAsync($"RequestToConnect/{id}");
+
+        return Ok();
     }
 }

@@ -1,4 +1,8 @@
 .friends {
+    &__empty {
+        opacity: 0.5;
+    }
+
     .tabs {
         display: flex;
         flex-direction: column;
@@ -23,6 +27,26 @@
 
         .active {
             border: 3px solid blue;
+        }
+    }
+
+    .friend {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+
+        &__remove, &__details {
+            margin: 0 15px;
+
+            svg {
+                padding: 5px;
+                border-radius: 20px;
+            }
+
+            svg:hover {
+                cursor: pointer;
+                transform: scale(1.25);
+            }
         }
     }
 }

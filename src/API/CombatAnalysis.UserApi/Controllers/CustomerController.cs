@@ -37,6 +37,14 @@ public class CustomerController : ControllerBase
         return Ok(result);
     }
 
+    [HttpGet("searchByUserId/{id}")]
+    public async Task<IActionResult> SearchByUserId(string id)
+    {
+        var result = await _service.GetByParamAsync(nameof(CustomerModel.AppUserId), id);
+
+        return Ok(result);
+    }
+
     [HttpPost]
     public async Task<IActionResult> Create(CustomerModel model)
     {

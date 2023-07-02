@@ -3,6 +3,7 @@ using CombatAnalysis.CustomerBL.DTO;
 using CombatAnalysis.CustomerBL.Interfaces;
 using CombatAnalysis.UserApi.Models;
 using Microsoft.AspNetCore.Mvc;
+using System.Net.Http;
 
 namespace CombatAnalysis.UserApi.Controllers;
 
@@ -35,6 +36,16 @@ public class FriendController : ControllerBase
         var result = await _service.GetByIdAsync(id);
 
         return Ok(result);
+    }
+
+    [HttpGet("searchByUserId/{id}")]
+    public async Task<IActionResult> SearchByUserId(string id)
+    {
+        var forWhomId = await _service.GetByParamAsync(nameof(FriendModel.ForWhomId), id);
+        var whoFriendId = await _service.GetByParamAsync(nameof(FriendModel.WhoFriendId), id);
+
+        var friends = forWhomId.Concat(whoFriendId);
+        return Ok(friends);
     }
 
     [HttpPost]

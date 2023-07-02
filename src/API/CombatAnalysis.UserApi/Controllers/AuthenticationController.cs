@@ -15,8 +15,7 @@ public class AuthenticationController : ControllerBase
         _tokenService = tokenService;
     }
 
-    [HttpGet]
-    [Route("validateRefreshToken/{refreshToken}")]
+    [HttpGet("validateRefreshToken/{refreshToken}")]
     public IActionResult ValidateToken(string refreshToken)
     {
         var claimsByRefreshToken = _tokenService.ValidateToken(refreshToken, JWTSecret.RefreshSecretKey, out var _);
@@ -30,8 +29,7 @@ public class AuthenticationController : ControllerBase
         }
     }
 
-    [HttpGet]
-    [Route("validateAccessToken/{accessToken}")]
+    [HttpGet("validateAccessToken/{accessToken}")]
     public IActionResult ValidateAccessToken(string accessToken)
     {
         var claimsByRefreshToken = _tokenService.ValidateToken(accessToken, JWTSecret.AccessSecretKey, out var _);
@@ -45,8 +43,7 @@ public class AuthenticationController : ControllerBase
         }
     }
 
-    [HttpGet]
-    [Route("find/{refreshToken}")]
+    [HttpGet("find/{refreshToken}")]
     public async Task<IActionResult> FindRefreshTokenAsync(string refreshToken)
     {
         var foundToken = await _tokenService.FindRefreshTokenAsync(refreshToken);
@@ -60,8 +57,7 @@ public class AuthenticationController : ControllerBase
         }
     }
 
-    [HttpGet]
-    [Route("check/{userId}")]
+    [HttpGet("check/{userId}")]
     public async Task Check(string userId)
     {
         await _tokenService.CheckRefreshTokensByUserAsync(userId);

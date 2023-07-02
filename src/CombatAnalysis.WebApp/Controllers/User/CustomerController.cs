@@ -17,6 +17,15 @@ public class CustomerController : ControllerBase
         _httpClient.BaseAddress = Port.UserApi;
     }
 
+    [HttpGet]
+    public async Task<IActionResult> GetAll()
+    {
+        var responseMessage = await _httpClient.GetAsync("Customer");
+        var customers = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<CustomerModel>>();
+
+        return Ok(customers);
+    }
+
     [HttpGet("{id}")]
     public async Task<IActionResult> GetById(string id)
     {
@@ -26,6 +35,16 @@ public class CustomerController : ControllerBase
         return Ok(customer);
     }
 
+    [HttpGet("searchByUserId/{id}")]
+    public async Task<IActionResult> SearchByUserId(string id)
+    {
+        var responseMessage = await _httpClient.GetAsync($"Customer/searchByUserId/{id}");
+        var customers = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<CustomerModel>>();
+        var currentCustomer = customers.FirstOrDefault();
+
+        return Ok(currentCustomer);
+    }
+
     [HttpPost]
     public async Task<IActionResult> Create(CustomerModel model)
     {
@@ -33,5 +52,13 @@ public class CustomerController : ControllerBase
         var customer = await responseMessage.Content.ReadFromJsonAsync<CustomerModel>();
 
         return Ok(customer);
+    }
+
+    [HttpPut]
+    public async Task<IActionResult> Edit(CustomerModel model)
+    {
+        await _httpClient.PutAsync("Customer", JsonContent.Create(model));
+
+        return Ok();
     }
 }
