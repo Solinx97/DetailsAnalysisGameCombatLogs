@@ -1,0 +1,17 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('Build') {
+            steps {
+                bat "dotnet restore src/API/CombatAnalysis.UserApi/CombatAnalysis.UserApi.csproj"
+                bat "dotnet build src/API/CombatAnalysis.UserApi/CombatAnalysis.UserApip.csproj"
+            }
+        }
+        stage('Tests') {
+            steps {
+                bat "dotnet test tests/CombatAnalysis.Parser.Tests/CombatAnalysis.Parser.Tests.csproj"
+            }
+        }
+    }
+}
