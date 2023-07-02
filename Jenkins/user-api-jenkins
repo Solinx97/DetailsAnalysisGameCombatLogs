@@ -20,10 +20,14 @@ pipeline {
                 bat "dotnet test tests/CombatAnalysis.Parser.Tests/CombatAnalysis.Parser.Tests.csproj"
             }
         }
-        stage('Docker push') {
+        stage('Docker build') {
             steps {
                 bat "docker build -f src/API/CombatAnalysis.UserApi/Dockerfile --force-rm -t user-api ."
                 bat "docker tag user-api:latest solinx/combat-analysis-user-api:latest"
+            }
+        }
+        stage('Docker push') {
+            steps {
                 withCredentials([string(credentialsId: 'docker-hub', variable: 'dockerhubpwd')]) {
                     bat "docker login -u solinx -p ${dockerhubpwd}"
                     bat "docker push solinx/combat-analysis-user-api:latest"
@@ -38,6 +42,15 @@ pipeline {
                 clusterName: env.CLUSTER_NAME,
                 location: env.LOCATION,
                 manifestPattern: 'Deploy/GoogleCloud/UserApi/user-api-deploy.yaml',
+                credentialsId: env.CREDENTIALS_ID,
+                verifyDeployments: true])
+
+                step([
+                $class: 'KubernetesEngineBuilder',
+                projectId: env.PROJECT_ID,
+                clusterName: env.CLUSTER_NAME,
+                location: env.LOCATION,
+                manifestPattern: 'Deploy/GoogleCloud/UserApi/user-api-service.yaml',
                 credentialsId: env.CREDENTIALS_ID,
                 verifyDeployments: true])
             }
