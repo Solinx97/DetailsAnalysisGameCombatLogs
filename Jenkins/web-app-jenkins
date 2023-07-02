@@ -4,13 +4,13 @@ pipeline {
     stages {
         stage('Build') {
             steps {
-                dotnet restore src\CombatAnalysis.WebApp\CombatAnalysis.WebApp.csproj
-                dotnet build src\CombatAnalysis.WebApp\CombatAnalysis.WebApp.csproj
+                bat "dotnet restore src/CombatAnalysis.WebApp/CombatAnalysis.WebApp.csproj"
+                bat "dotnet build src/CombatAnalysis.WebApp/CombatAnalysis.WebApp.csproj"
             }
         }
         stage('Tests') {
             steps {
-                dotnet test tests\CombatAnalysis.Parser.Tests\CombatAnalysis.Parser.Tests.csproj
+                bat "dotnet test tests/CombatAnalysis.Parser.Tests/CombatAnalysis.Parser.Tests.csproj"
             }
         }
     }
