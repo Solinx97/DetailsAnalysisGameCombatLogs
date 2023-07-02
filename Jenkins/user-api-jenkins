@@ -1,6 +1,13 @@
 pipeline {
     agent any
 
+    environment {
+        PROJECT_ID = 'lucid-diode-391208'
+        CLUSTER_NAME = 'combat-analysis-cluster'
+        LOCATION = 'us-central1'
+        CREDENTIALS_ID = 'gke'
+    }
+
     stages {
         stage('Build') {
             steps {
@@ -24,12 +31,15 @@ pipeline {
             }
         }
         stage('Deploy to GKE') {
-            steps {
-                withKubeConfig([credentialsId: 'gke', serverUrl: 'https://console.cloud.google.com/kubernetes/clusters/details/us-central1/combat-analysis-cluster/details?project=lucid-diode-391208']) {
-                    bat "kubectl apply -f Deploy/GoogleCloud/UserApi/user-api-deploy.yaml"
-                    bat "kubectl apply -f Deploy/GoogleCloud/UserApi/user-api-autoscaling.yaml"
-                    bat "kubectl apply -f Deploy/GoogleCloud/UserApi/user-api-service.yaml"
-                }
+            steps{
+                step([
+                $class: 'KubernetesEngineBuilder',
+                projectId: env.PROJECT_ID,
+                clusterName: env.CLUSTER_NAME,
+                location: env.LOCATION,
+                manifestPattern: 'Deploy/UserApi/user-api-deploy.yaml',
+                credentialsId: env.CREDENTIALS_ID,
+                verifyDeployments: true])
             }
         }
     }
