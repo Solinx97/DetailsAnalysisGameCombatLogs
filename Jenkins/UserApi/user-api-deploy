@@ -9,9 +9,9 @@ pipeline {
     }
 
     environment {
-        PROJECT_ID = ${PROJECT_ID}
-        CLUSTER_NAME = ${CLUSTER_NAME}
-        LOCATION = ${LOCATION}
+        PROJECT_ID = "${PROJECT_ID}"
+        CLUSTER_NAME = "${CLUSTER_NAME}"
+        LOCATION = "${LOCATION}"
         CREDENTIALS_ID = 'lucid-diode-391208'
     }
 
