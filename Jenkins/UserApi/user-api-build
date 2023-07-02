@@ -1,0 +1,25 @@
+pipeline {
+    agent any
+
+    environment {
+        PROJECT_ID = 'lucid-diode-391208'
+        CLUSTER_NAME = 'combat-analysis-cluster'
+        LOCATION = 'us-central1'
+        CREDENTIALS_ID = 'lucid-diode-391208'
+        OWNER = 'Aleh Fiadosau'
+    }
+
+    stages {
+        stage('Build') {
+            steps {
+                bat "dotnet restore src/API/CombatAnalysis.UserApi/CombatAnalysis.UserApi.csproj"
+                bat "dotnet build src/API/CombatAnalysis.UserApi/CombatAnalysis.UserApi.csproj"
+            }
+        }
+        stage('Test') {
+            steps {
+                bat "dotnet test tests/CombatAnalysis.Parser.Tests/CombatAnalysis.Parser.Tests.csproj"
+            }
+        }
+    }
+}
