@@ -1,6 +1,12 @@
 pipeline {
     agent any
 
+    parameters {
+        string defaultValue: "combat-analysis-user-api", name: "DOCKER_IMAGE"
+        string defaultValue: "latest", name: "DOCKER_IMAGE_VERSION"
+        string defaultValue: "solinx", name: "DOCKER_HUB_LOGIN"
+    }
+
     stages {
         stage('Build') {
             steps {
@@ -13,17 +19,16 @@ pipeline {
                 bat "dotnet test tests/CombatAnalysis.Parser.Tests/CombatAnalysis.Parser.Tests.csproj"
             }
         }
-        stage('Docker build') {
+        stage("Docker build") {
             steps {
-                bat "docker build -f src/API/CombatAnalysis.UserApi/Dockerfile --force-rm -t user-api ."
-                bat "docker tag user-api:latest solinx/combat-analysis-user-api:latest"
+                bat "docker build -f src/API/CombatAnalysis.UserApi/Dockerfile --force-rm -t ${DOCKER_HUB_LOGIN}/${DOCKER_IMAGE}:${DOCKER_IMAGE_VERSION} ."
             }
         }
-        stage('Docker push') {
+        stage("Docker push") {
             steps {
-                withCredentials([string(credentialsId: 'docker-hub', variable: 'dockerhubpwd')]) {
-                    bat "docker login -u solinx -p ${dockerhubpwd}"
-                    bat "docker push solinx/combat-analysis-user-api:latest"
+                withCredentials([string(credentialsId: "docker-hub", variable: "dockerhubpwd")]) {
+                    bat "docker login -u ${DOCKER_HUB_LOGIN} -p ${dockerhubpwd}"
+                    bat "docker push ${DOCKER_HUB_IMAGE}:${DOCKER_IMAGE_VERSION}"
                 }
             }
         }

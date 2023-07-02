@@ -39,7 +39,7 @@ pipeline {
             steps {
                 withCredentials([string(credentialsId: "docker-hub", variable: "dockerhubpwd")]) {
                     bat "docker login -u ${DOCKER_HUB_LOGIN} -p ${dockerhubpwd}"
-                    bat "docker push ${DOCKER_HUB_IMAGE}:${DOCKER_IMAGE_VERSION}"
+                    bat "docker push ${DOCKER_HUB_LOGIN}/${DOCKER_IMAGE}:${DOCKER_IMAGE_VERSION}"
                 }
             }
         }
