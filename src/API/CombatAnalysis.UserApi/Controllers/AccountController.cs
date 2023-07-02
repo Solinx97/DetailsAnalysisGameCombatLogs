@@ -72,12 +72,17 @@ public class AccountController : ControllerBase
     [HttpGet]
     public async Task<IActionResult> GetAll()
     {
-        var users = await _service.GetAllAsync();
-        if (users.Any())
+        try
         {
+            var users = await _service.GetAllAsync();
+            if (!users.Any())
+            {
+                return NotFound();
+            }
+
             return Ok(users);
         }
-        else
+        catch (Exception)
         {
             return BadRequest();
         }
@@ -86,12 +91,17 @@ public class AccountController : ControllerBase
     [HttpGet("{id}")]
     public async Task<IActionResult> GetById(string id)
     {
-        var user = await _service.GetByIdAsync(id);
-        if (user != null)
+        try
         {
+            var user = await _service.GetByIdAsync(id);
+            if (user == null)
+            {
+                return NotFound();
+            }
+
             return Ok(user);
         }
-        else
+        catch (Exception)
         {
             return BadRequest();
         }
@@ -118,12 +128,18 @@ public class AccountController : ControllerBase
     [HttpGet("find/{email}")]
     public async Task<IActionResult> Find(string email)
     {
-        var user = await _service.GetAsync(email);
-        if (user != null)
+        try
         {
+            var user = await _service.GetAsync(email);
+            if (user == null)
+            {
+                return NotFound();
+                
+            }
+
             return Ok(user);
         }
-        else
+        catch (Exception)
         {
             return BadRequest();
         }

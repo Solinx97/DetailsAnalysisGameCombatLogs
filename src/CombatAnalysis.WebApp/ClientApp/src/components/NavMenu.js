@@ -35,10 +35,6 @@ const NavMenu = () => {
     }, [])
 
     useEffect(() => {
-        if (user !== null) {
-            return;
-        }
-
         const checkAuthResult = async () => {
             await checkAuthAsync();
         }
@@ -59,6 +55,8 @@ const NavMenu = () => {
             const currentUser = await response.json();
 
             dispatch(userUpdate(currentUser));
+            dispatch(checkAuth(true));
+
             await getCustomerByUserIdAsync(currentUser.id);
         }
         else {
@@ -69,11 +67,11 @@ const NavMenu = () => {
     const getCustomerByUserIdAsync = async (userId) => {
         const response = await fetch(`api/v1/Customer/searchByUserId/${userId}`);
 
-        if (response.status === 200) {
+        if (response.status === 200
+            || response.status === 204) {
             const customer = await response.json();
 
             dispatch(customerUpdate(customer));
-            dispatch(checkAuth(true));
         }
         else {
             dispatch(checkAuth(false));
@@ -117,15 +115,15 @@ const NavMenu = () => {
                     <NavbarBrand tag={Link} to="/">Wow Analysis</NavbarBrand>
                     <NavbarToggler onClick={toggleNavbar} className="mr-2" />
                     <Collapse className="d-sm-inline-flex flex-sm-row-reverse" isOpen={!collapsed} navbar />
-                    {!isAuth
-                        ? <div className="authorization">
+                    {isAuth
+                        ? <div className="authorized">
+                            <div>{t("Welcome")}, <strong>{user.email}</strong></div>
+                            <button type="button" className="btn btn-primary" onClick={logoutAsync}>{t("Logout")}</button>
+                        </div>
+                        : <div className="authorization">
                             <button type="button" className="btn btn-primary" onClick={() => navigate('/registration')}>{t("Registration")}</button>
                             <button type="button" className="btn btn-primary" onClick={() => navigate('/login')}>{t("Login")}</button>
                         </div>
-                        : <div className="authorized">
-                            <div>{t("Welcome")}, <strong>{user.email}</strong></div>
-                            <button type="button" className="btn btn-primary" onClick={logoutAsync}>{t("Logout")}</button>
-                          </div>
                     }
                 </Container>
             </Navbar>
