@@ -8,14 +8,23 @@ pipeline {
                 bat "dotnet build src/API/CombatAnalysis.UserApi/CombatAnalysis.UserApi.csproj"
             }
         }
-        stage('Tests') {
+        stage('Test') {
             steps {
                 bat "dotnet test tests/CombatAnalysis.Parser.Tests/CombatAnalysis.Parser.Tests.csproj"
             }
         }
-        stage('Docker build') {
+        stage('Docker push') {
             steps {
-                bat "docker build -f src/CombatAnalysis.WebApp/Dockerfile --force-rm -t user-api ."
+                bat "docker build -f src/API/CombatAnalysis.UserApi/Dockerfile --force-rm -t user-api ."
+                bat "docker tag user-api:latest solinx/combat-analysis-user-api:latest"
+                bat "docker push solinx/combat-analysis-user-api:latest"
+            }
+        }
+        stage('Deploy to GKE') {
+            steps {
+                bat "kubectl apply -f Deploy/GoogleCloud/UserApi/user-api-deploy.yaml"
+                bat "kubectl apply -f Deploy/GoogleCloud/UserApi/user-api-autoscaling.yaml"
+                bat "kubectl apply -f Deploy/GoogleCloud/UserApi/user-api-service.yaml"
             }
         }
     }
