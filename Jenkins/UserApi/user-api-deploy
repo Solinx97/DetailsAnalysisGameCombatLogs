@@ -9,6 +9,7 @@ pipeline {
         string defaultValue: "combat-analysis-user-api", name: "DOCKER_IMAGE"
         string defaultValue: "latest", name: "DOCKER_IMAGE_VERSION"
         string defaultValue: "solinx", name: "DOCKER_HUB_LOGIN"
+        string defaultValue: "user-api", name: "RELEASE_NAME"
     }
 
     environment {
@@ -48,7 +49,7 @@ pipeline {
                 withCredentials([file(credentialsId: "google-cloud-key", variable: "googleCloudKey")]) {
                     bat "gcloud auth activate-service-account --key-file=${googleCloudKey}"
                     bat "gcloud container clusters get-credentials ${CLUSTER_NAME} --region ${LOCATION} --project ${PROJECT_ID}"
-                    bat "helm upgrade user-api -i Deploy/GoogleCloud/UserApi/UserApiChart/ --set container.image=${DOCKER_IMAGE}:${DOCKER_IMAGE_VERSION}"
+                    bat "helm upgrade ${RELEASE_NAME} -i Deploy/GoogleCloud/Chart/ --set container.image=${DOCKER_IMAGE}:${DOCKER_IMAGE_VERSION}"
                 }
             }
         }
