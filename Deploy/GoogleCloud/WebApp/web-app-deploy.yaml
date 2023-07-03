@@ -16,7 +16,7 @@ spec:
       serviceAccountName: combat-analysis-account
       containers:
         - name: web-app
-          image: solinx/combat-analysis-web-app:0.0.3
+          image: solinx/combat-analysis-web-app:latest
           ports:
           - containerPort: 80
           env:

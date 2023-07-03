@@ -16,7 +16,7 @@ spec:
       serviceAccountName: combat-analysis-account
       containers:
         - name: combat-parser-api
-          image: solinx/combat-analysis-combat-parser-api:0.0.1
+          image: solinx/combat-analysis-combat-parser-api:latest
           ports:
           - containerPort: 80
           env:
