@@ -46,9 +46,8 @@ pipeline {
         stage("Deploy to GKE") {
             steps{
                 withCredentials([file(credentialsId: "helm-auth", variable: "helmauth")]) {
-                    bat "C:/Helm/helm registry login -u _json_key --password-stdin https://us-central1-docker.pkg.dev < ${helmauth}"
-                    bat "C:/Helm/helm list"
-                    bat "C:/Helm/helm install user-api Deploy/GoogleCloud/UserApi/UserApiChart/"
+                    bat "helm registry login -u _json_key --password-stdin https://us-central1-docker.pkg.dev < ${helmauth}"
+                    bat "helm install user-api Deploy/GoogleCloud/UserApi/UserApiChart/"
                 }
             }
         }
