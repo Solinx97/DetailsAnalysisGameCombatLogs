@@ -47,6 +47,7 @@ pipeline {
             steps{
                 withCredentials([file(credentialsId: "helm-auth", variable: "helmauth")]) {
                     bat "C:/Helm/helm registry login -u _json_key --password-stdin https://us-central1-docker.pkg.dev < ${helmauth}"
+                    bat "gcloud container clusters get-credentials combat-analysis-cluster --region us-central1 --project lucid-diode-391208"
                     bat "C:/Helm/helm install user-api Deploy/GoogleCloud/UserApi/UserApiChart/"
                 }
             }
