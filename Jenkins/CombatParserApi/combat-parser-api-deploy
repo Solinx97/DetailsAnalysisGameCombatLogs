@@ -33,7 +33,7 @@ pipeline {
         }
         stage("Docker build") {
             steps {
-                bat "docker build -f src/API/CombatParserAPI/Dockerfile --force-rm -t ${DOCKER_HUB_LOGIN}/${DOCKER_IMAGE}:${DOCKER_IMAGE_VERSION} ."
+                bat "docker build -f src/API/CombatAnalysis.CombatParserAPI/Dockerfile --force-rm -t ${DOCKER_HUB_LOGIN}/${DOCKER_IMAGE}:${DOCKER_IMAGE_VERSION} ."
             }
         }
         stage("Docker push") {
