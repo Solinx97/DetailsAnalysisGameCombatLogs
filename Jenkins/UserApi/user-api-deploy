@@ -16,7 +16,6 @@ pipeline {
         CLUSTER_NAME = "${CLUSTER_NAME}"
         LOCATION = "${LOCATION}"
         CREDENTIALS_ID = "${CREDENTIALS_ID}"
-        KUBERNETES_CREDENTIAL = credentials("lucid-diode-391208")
     }
 
     stages {
