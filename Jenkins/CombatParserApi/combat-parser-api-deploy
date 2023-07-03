@@ -6,7 +6,7 @@ pipeline {
         string defaultValue: "lucid-diode-391208", name: "PROJECT_ID"
         string defaultValue: "combat-analysis-cluster", name: "CLUSTER_NAME"
         string defaultValue: "us-central1", name: "LOCATION"
-        string defaultValue: "combat-analysis-chat-api", name: "DOCKER_IMAGE"
+        string defaultValue: "combat-analysis-combat-parser-api", name: "DOCKER_IMAGE"
         string defaultValue: "latest", name: "DOCKER_IMAGE_VERSION"
         string defaultValue: "solinx", name: "DOCKER_HUB_LOGIN"
         string defaultValue: "combat-parser-api", name: "RELEASE_NAME"
