@@ -45,10 +45,12 @@ pipeline {
             }
         }
         stage("Deploy to GKE") {
-            withCredentials([file(credentialsId: "google-cloud-key", variable: "googleCloudKey")]) {
-                bat "gcloud auth activate-service-account --key-file=${googleCloudKey}"
-                bat "gcloud container clusters get-credentials ${CLUSTER_NAME} --region ${LOCATION} --project ${PROJECT_ID}"
-                bat "helm upgrade ${RELEASE_NAME} -i Deploy/GoogleCloud/Chart/ --set container.image=${DOCKER_IMAGE}:${DOCKER_IMAGE_VERSION}"
+            steps {
+                withCredentials([file(credentialsId: "google-cloud-key", variable: "googleCloudKey")]) {
+                    bat "gcloud auth activate-service-account --key-file=${googleCloudKey}"
+                    bat "gcloud container clusters get-credentials ${CLUSTER_NAME} --region ${LOCATION} --project ${PROJECT_ID}"
+                    bat "helm upgrade ${RELEASE_NAME} -i Deploy/GoogleCloud/Chart/ --set container.image=${DOCKER_IMAGE}:${DOCKER_IMAGE_VERSION}"
+                }
             }
         }
     }

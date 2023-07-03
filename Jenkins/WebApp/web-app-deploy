@@ -45,7 +45,7 @@ pipeline {
             }
         }
         stage("Deploy to GKE") {
-            steps{
+            steps {
                 withCredentials([file(credentialsId: "google-cloud-key", variable: "googleCloudKey")]) {
                     bat "gcloud auth activate-service-account --key-file=${googleCloudKey}"
                     bat "gcloud container clusters get-credentials ${CLUSTER_NAME} --region ${LOCATION} --project ${PROJECT_ID}"
