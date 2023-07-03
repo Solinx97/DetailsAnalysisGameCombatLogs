@@ -16,7 +16,6 @@ pipeline {
         CLUSTER_NAME = "${CLUSTER_NAME}"
         LOCATION = "${LOCATION}"
         CREDENTIALS_ID = "${CREDENTIALS_ID}"
-        KUBECONFIG = credentials('kubernetes-config')
     }
 
     stages {
@@ -31,25 +30,24 @@ pipeline {
                 bat "dotnet test tests/CombatAnalysis.Parser.Tests/CombatAnalysis.Parser.Tests.csproj"
             }
         }
-        // stage("Docker build") {
-        //     steps {
-        //         bat "docker build -f src/API/CombatAnalysis.UserApi/Dockerfile --force-rm -t ${DOCKER_HUB_LOGIN}/${DOCKER_IMAGE}:${DOCKER_IMAGE_VERSION} ."
-        //     }
-        // }
-        // stage("Docker push") {
-        //     steps {
-        //         withCredentials([string(credentialsId: "docker-hub", variable: "dockerhubpwd")]) {
-        //             bat "docker login -u ${DOCKER_HUB_LOGIN} -p ${dockerhubpwd}"
-        //             bat "docker push ${DOCKER_HUB_LOGIN}/${DOCKER_IMAGE}:${DOCKER_IMAGE_VERSION}"
-        //         }
-        //     }
-        // }
+        stage("Docker build") {
+            steps {
+                bat "docker build -f src/API/CombatAnalysis.UserApi/Dockerfile --force-rm -t ${DOCKER_HUB_LOGIN}/${DOCKER_IMAGE}:${DOCKER_IMAGE_VERSION} ."
+            }
+        }
+        stage("Docker push") {
+            steps {
+                withCredentials([string(credentialsId: "docker-hub", variable: "dockerhubpwd")]) {
+                    bat "docker login -u ${DOCKER_HUB_LOGIN} -p ${dockerhubpwd}"
+                    bat "docker push ${DOCKER_HUB_LOGIN}/${DOCKER_IMAGE}:${DOCKER_IMAGE_VERSION}"
+                }
+            }
+        }
         stage("Deploy to GKE") {
             steps{
-                withCredentials([file(credentialsId: "helm-auth", variable: "helmauth")]) {
-                    bat "helm registry login -u _json_key --password-stdin https://us-central1-docker.pkg.dev < ${helmauth}"
-                    bat "gcloud auth activate-service-account --key-file=E:/Devs/DetailsAnalysisGameCombatLogs/Deploy/jenkins-gke-key.json"
-                    bat "gcloud container clusters get-credentials combat-analysis-cluster --region us-central1 --project lucid-diode-391208"
+                withCredentials([file(credentialsId: "google-cloud-key", variable: "googleCloudKey")]) {
+                    bat "gcloud auth activate-service-account --key-file=${googleCloudKey}"
+                    bat "gcloud container clusters get-credentials ${CLUSTER_NAME} --region ${LOCATION} --project ${PROJECT_ID}"
                     bat "helm install user-api Deploy/GoogleCloud/UserApi/UserApiChart/"
                 }
             }
