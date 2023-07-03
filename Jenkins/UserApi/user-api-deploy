@@ -45,7 +45,7 @@ pipeline {
         }
         stage("Deploy to GKE") {
             steps{
-                bat "helm install user-api Deploy/GoogleCloud/UserApi/UserApiChart/"
+                bat "C:/Helm/helm install user-api Deploy/GoogleCloud/UserApi/UserApiChart/"
             }
         }
     }
