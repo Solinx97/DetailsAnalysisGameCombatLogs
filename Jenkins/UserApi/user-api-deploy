@@ -16,6 +16,7 @@ pipeline {
         CLUSTER_NAME = "${CLUSTER_NAME}"
         LOCATION = "${LOCATION}"
         CREDENTIALS_ID = "${CREDENTIALS_ID}"
+        KUBERNETES_CREDENTIAL = creadentials("${CREDENTIALS_ID}")
     }
 
     stages {
@@ -45,10 +46,8 @@ pipeline {
         }
         stage("Deploy to GKE") {
             steps{
-                withCredentials([string(credentialsId: "lucid-diode-391208", variable: "secrekey")]) {
-                    bat "C:/Helm/helm registry login -u _json_key --password-stdin https://us-central1-docker.pkg.dev < ${secrekey}"
-                    bat "C:/Helm/helm install user-api Deploy/GoogleCloud/UserApi/UserApiChart/"
-                }
+                bat "C:/Helm/helm registry login -u _json_key --password-stdin https://us-central1-docker.pkg.dev < ${KUBERNETES_CREDENTIAL}"
+                bat "C:/Helm/helm install user-api Deploy/GoogleCloud/UserApi/UserApiChart/"
             }
         }
     }
