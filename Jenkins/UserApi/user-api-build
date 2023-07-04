@@ -8,7 +8,7 @@ pipeline {
                 bat "dotnet build src/API/CombatAnalysis.UserApi/CombatAnalysis.UserApi.csproj"
             }
         }
-        stage('Tests') {
+        stage('Test solution') {
             steps {
                 bat "dotnet test tests/CombatAnalysis.Parser.Tests/CombatAnalysis.Parser.Tests.csproj"
             }
