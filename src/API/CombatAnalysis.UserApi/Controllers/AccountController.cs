@@ -112,8 +112,13 @@ public class AccountController : ControllerBase
     {
         var map = _mapper.Map<AppUserDto>(user);
         var updatedUser = await _service.UpdateAsync(map);
+        if (updatedUser == 0)
+        {
+            return BadRequest();
+        }
 
-        return Ok(updatedUser);
+        var login = new LoginModel { Email = user.Email, Password = user.Password };
+        return await Login(login);
     }
 
     [HttpGet("logout/{refreshToken}")]

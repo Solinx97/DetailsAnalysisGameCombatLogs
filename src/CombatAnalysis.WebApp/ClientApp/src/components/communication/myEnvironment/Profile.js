@@ -90,6 +90,8 @@ const Profile = () => {
 
             dispatch(userUpdate(updatesForUser));
             dispatch(checkAuth(true));
+
+            setIsEditMode(false);
         }
     }
 

@@ -27,7 +27,7 @@ public class AuthenticationController : ControllerBase
         }
 
         _httpClient.BaseAddress = Port.UserApi;
-        var response = await _httpClient.GetAsync($"authentication/validateRefreshToken/{refreshToken}");
+        var response = await _httpClient.GetAsync($"Authentication/validateRefreshToken/{refreshToken}");
         if (response.StatusCode == System.Net.HttpStatusCode.BadRequest)
         {
             Response.Cookies.Delete("accessToken");
@@ -37,7 +37,7 @@ public class AuthenticationController : ControllerBase
         }
 
         _httpClient.BaseAddress = Port.UserApi;
-        response = await _httpClient.GetAsync($"authentication/find/{refreshToken}");
+        response = await _httpClient.GetAsync($"Authentication/find/{refreshToken}");
         if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
         {
             Response.Cookies.Delete("accessToken");
@@ -49,13 +49,18 @@ public class AuthenticationController : ControllerBase
         var email = HttpContext.User.Identity.Name;
 
         _httpClient.BaseAddress = Port.UserApi;
-        var responseMessage = await _httpClient.GetAsync($"account/find/{email}");
+        var responseMessage = await _httpClient.GetAsync($"Account/find/{email}");
+        if (responseMessage.StatusCode == System.Net.HttpStatusCode.NotFound)
+        {
+            return NotFound();
+        }
+
         if (responseMessage.StatusCode == System.Net.HttpStatusCode.OK)
         {
             var user = await responseMessage.Content.ReadFromJsonAsync<AppUserModel>();
             if (user == null)
             {
-                await _httpClient.GetAsync($"authentication/check/{user.Id}");
+                await _httpClient.GetAsync($"Authentication/check/{user.Id}");
             }
 
             return await CheckAccessToken(user);
@@ -74,7 +79,7 @@ public class AuthenticationController : ControllerBase
             return Unauthorized();
         }
 
-        var response = await _httpClient.GetAsync($"authentication/validateAccessToken/{accessToken}");
+        var response = await _httpClient.GetAsync($"Authentication/validateAccessToken/{accessToken}");
         if (response.StatusCode == System.Net.HttpStatusCode.BadRequest)
         {
             Response.Cookies.Delete("accessToken");

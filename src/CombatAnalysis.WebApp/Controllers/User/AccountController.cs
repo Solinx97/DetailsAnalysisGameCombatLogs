@@ -86,9 +86,27 @@ public class AccountController : ControllerBase
     [HttpPut]
     public async Task<IActionResult> Edit(AppUserModel model)
     {
-        await _httpClient.PutAsync("Account", JsonContent.Create(model));
+        var responseMessage = await _httpClient.PutAsync("Account", JsonContent.Create(model));
+        if (responseMessage.StatusCode != System.Net.HttpStatusCode.OK)
+        {
+            return NotFound();
+        }
 
-        return Ok();
+        var response = await responseMessage.Content.ReadFromJsonAsync<ResponseFromAccount>();
+        HttpContext.Response.Cookies.Append("accessToken", response.AccessToken, new CookieOptions
+        {
+            HttpOnly = true,
+            Expires = DateTimeOffset.UtcNow.AddMinutes(TokenExpires.AccessExpiresTimeInMinutes),
+        });
+        HttpContext.Response.Cookies.Append("refreshToken", response.RefreshToken, new CookieOptions
+        {
+            HttpOnly = true,
+            Expires = DateTimeOffset.UtcNow.AddHours(TokenExpires.RefreshExpiresTimeInHours),
+        });
+
+        await Authenticate(response.User.Email);
+
+        return Ok(response.User);
     }
 
     [HttpGet]
