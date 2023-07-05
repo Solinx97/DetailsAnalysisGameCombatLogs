@@ -7,7 +7,6 @@ using CombatAnalysis.DAL.Interfaces;
 using CombatAnalysis.DAL.Repositories.Firebase;
 using CombatAnalysis.DAL.Repositories.SQL;
 using CombatAnalysis.DAL.Repositories.SQL.StoredProcedure;
-using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -41,9 +40,6 @@ public static class DataCollectionExtensions
         {
             options.UseSqlServer(connection);
         });
-
-        services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-                .AddCookie();
 
         services.AddScoped<IUserRepository, SQLUserRepository>();
         services.AddScoped<ITokenRepository, SQLTokenRepository>();

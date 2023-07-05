@@ -1,21 +1,9 @@
-using AutoMapper;
-using CombatAnalysis.BL.Extensions;
-using CombatAnalysis.Identity.Extensions;
-using CombatAnalysis.Identity.Mapping;
-using CombatAnalysis.Identity.Settings;
 using CombatAnalysis.WebApp.Consts;
 using CombatAnalysis.WebApp.Helpers;
 using CombatAnalysis.WebApp.Interfaces;
+using Microsoft.AspNetCore.Authentication.Cookies;
 
 var builder = WebApplication.CreateBuilder(args);
-
-builder.Services.BLDependencies(builder.Configuration, "DefaultConnection");
-builder.Services.RegisterIdentityDependencies();
-
-var settings = builder.Configuration.GetSection(nameof(TokenSettings));
-var scheme = settings.GetValue<string>(nameof(TokenSettings.AuthScheme));
-
-builder.Services.Configure<TokenSettings>(settings);
 
 Port.CombatParserApi = builder.Configuration.GetValue<string>("CombatParserApiPort");
 Port.UserApi = builder.Configuration.GetValue<string>("UserApiPort");
@@ -24,15 +12,9 @@ Port.ChatApi = builder.Configuration.GetValue<string>("ChatApiPort");
 IHttpClientHelper httpClient = new HttpClientHelper();
 builder.Services.AddSingleton(httpClient);
 
-var mappingConfig = new MapperConfiguration(mc =>
-{
-    mc.AddProfile(new IdentityMappingMapper());
-});
-
-var mapper = mappingConfig.CreateMapper();
-builder.Services.AddSingleton(mapper);
-
 builder.Services.AddControllersWithViews();
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+        .AddCookie();
 
 var app = builder.Build();
 
