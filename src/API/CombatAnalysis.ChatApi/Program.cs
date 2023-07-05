@@ -18,6 +18,13 @@ var mappingConfig = new MapperConfiguration(mc =>
     mc.AddProfile(new BLMapper());
 });
 
+var mapper = mappingConfig.CreateMapper();
+builder.Services.AddSingleton(mapper);
+builder.Services.AddSingleton<ILogger>(logger);
+
+builder.Services.AddControllers();
+// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
 {
     options.SwaggerDoc("v1", new OpenApiInfo
@@ -26,14 +33,6 @@ builder.Services.AddSwaggerGen(options =>
         Version = "v1",
     });
 });
-
-var mapper = mappingConfig.CreateMapper();
-builder.Services.AddSingleton(mapper);
-builder.Services.AddSingleton<ILogger>(logger);
-
-builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddEndpointsApiExplorer();
 
 var app = builder.Build();
 
