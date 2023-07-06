@@ -1,8 +1,7 @@
-﻿namespace CombatAnalysis.Core
+﻿namespace CombatAnalysis.Core;
+
+public enum ServerStatus
 {
-    public enum ServerStatus
-    {
-        Successful,
-        Failed,
-    }
+    Successful,
+    Failed,
 }

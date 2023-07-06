@@ -1,0 +1,36 @@
+pipeline {
+    agent any
+
+    parameters {
+        string defaultValue: "combat-analysis-combat-parser-api", name: "DOCKER_IMAGE"
+        string defaultValue: "latest", name: "DOCKER_IMAGE_VERSION"
+        string defaultValue: "solinx", name: "DOCKER_HUB_LOGIN"
+    }
+
+    stages {
+        stage('Build') {
+            steps {
+                bat "dotnet restore src/API/CombatAnalysis.CombatParserAPI/CombatAnalysis.CombatParserAPI.csproj"
+                bat "dotnet build src/API/CombatAnalysis.CombatParserAPI/CombatAnalysis.CombatParserAPI.csproj"
+            }
+        }
+        stage('Tests') {
+            steps {
+                bat "dotnet test tests/CombatAnalysis.Parser.Tests/CombatAnalysis.Parser.Tests.csproj"
+            }
+        }
+        stage("Docker image build") {
+            steps {
+                bat "docker build -f src/API/CombatAnalysis.CombatParserAPI/Dockerfile --force-rm -t ${DOCKER_HUB_LOGIN}/${DOCKER_IMAGE}:${DOCKER_IMAGE_VERSION} ."
+            }
+        }
+        stage("Docker image push") {
+            steps {
+                withCredentials([string(credentialsId: "docker-hub", variable: "dockerhubpwd")]) {
+                    bat "docker login -u ${DOCKER_HUB_LOGIN} -p ${dockerhubpwd}"
+                    bat "docker push ${DOCKER_HUB_LOGIN}/${DOCKER_IMAGE}:${DOCKER_IMAGE_VERSION}"
+                }
+            }
+        }
+    }
+}

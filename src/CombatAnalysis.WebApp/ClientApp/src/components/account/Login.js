@@ -1,19 +1,29 @@
-﻿import React, { useState } from 'react';
+﻿import React, { useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
+import { userUpdate } from '../../features/UserReducer';
+
+import "../../styles/account/login.scss";
 
 const Login = () => {
     const navigate = useNavigate();
+    const { t, i18n } = useTranslation("login");
+    const dispatch = useDispatch();
 
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
+    const [showErrorMessage, setShowErrorMessage] = useState(false);
+    const email = useRef(null);
+    const password = useRef(null);
 
-    const login = async () => {
+    const loginAsync = async () => {
+        setShowErrorMessage(false);
+
         const data = {
-            email: email,
-            password: password
+            email: email.current.value,
+            password: password.current.value
         };
 
-        const response = await fetch('account', {
+        const response = await fetch('api/v1/Account', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -21,43 +31,36 @@ const Login = () => {
             body: JSON.stringify(data)
         });
 
-        const result = await response;
-        if (result.status == 200) {
+        if (response.status === 404) {
+            setShowErrorMessage(true);
+        }
+        else {
+            const currentUser = await response.json();
+
+            dispatch(userUpdate(currentUser));
             navigate('/');
         }
     }
 
-    const handleEmailChange = (event) => {
-        setEmail(event.target.value);
-    }
-
-    const handlePasswordChange = (event) => {
-        setPassword(event.target.value);
-    }
-
-    const handleSubmit = async (event) => {
+    const handleSubmitAsync = async (event) => {
         event.preventDefault();
 
-        await login();
+        await loginAsync();
     }
 
     const render = () => {
-        return <form onSubmit={handleSubmit}>
+        return (<form className="login" onSubmit={handleSubmitAsync}>
             <div className="mb-3">
-                <label htmlFor="exampleInputEmail1" className="form-label">Email address</label>
-                <input type="email" className="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" onChange={handleEmailChange} />
-                <div id="emailHelp" className="form-text">We'll never share your email with anyone else.</div>
+                <label htmlFor="inputEmail" className="form-label">{t("Email")}</label>
+                <input type="email" className="form-control" id="inputEmail" aria-describedby="emailHelp" ref={email} />
             </div>
             <div className="mb-3">
-                <label htmlFor="exampleInputPassword1" className="form-label">Password</label>
-                <input type="password" className="form-control" id="exampleInputPassword1" onChange={handlePasswordChange} />
-            </div>
-            <div className="mb-3 form-check">
-                <input type="checkbox" className="form-check-input" id="exampleCheck1" />
-                <label className="form-check-label" htmlFor="exampleCheck1">Check me out</label>
+                <label htmlFor="inputPassword" className="form-label">{t("Password")}</label>
+                <input type="password" className="form-control" id="inputPassword" ref={password} />
             </div>
             <input type="submit" className="btn btn-primary" value="Login" />
-        </form>;
+            <div className="login__error-message" style={{ display: showErrorMessage ? "flex" : "none" }}>Incorrect email/password. Try again</div>
+        </form>);
     }
 
     return render();

@@ -1,0 +1,52 @@
+﻿a.navbar-brand {
+    white-space: normal;
+    text-align: center;
+    word-break: break-all;
+}
+
+html {
+    font-size: 14px;
+}
+
+@media (min-width: 768px) {
+    html {
+        font-size: 16px;
+    }
+}
+
+.box-shadow {
+    box-shadow: 0 .25rem .75rem rgba(0, 0, 0, .05);
+}
+
+.navbar-expand-sm .container {
+    display: flex;
+}
+
+.language.dropdown {
+    padding: 0 25px;
+}
+
+.authorization button {
+    margin: 10px;
+}
+
+.authorized {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    button {
+        margin: 0 25px;
+    }
+}
+
+.language {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+
+    &__title {
+        margin: 0 15px;
+    }
+}

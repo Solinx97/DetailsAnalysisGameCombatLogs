@@ -1,22 +1,27 @@
-﻿using CombatAnalysis.Core.ViewModels.CreateGroupChat;
+﻿using CombatAnalysis.Core.ViewModels.Chat;
+using CombatAnalysis.WinCore;
+using MvvmCross.Commands;
 using MvvmCross.Platforms.Wpf.Views;
 
-namespace CombatAnalysis.App.Windows
+namespace CombatAnalysis.App.Windows;
+
+public partial class CreateGroupChatWindow : MvxWindow
 {
-    public partial class CreateGroupChatWindow : MvxWindow
+    public CreateGroupChatWindow()
     {
-        public CreateGroupChatWindow()
+        InitializeComponent();
+
+        var createGroupChat = new CreateGroupChatViewModel
         {
-            InitializeComponent();
+            CancelCommand = new MvxCommand(() => WindowManager.CreateGroupChat.Close())
+        };
 
-            DataContext = new CreateGroupChatViewModel();
+        DataContext = createGroupChat;
+        Closed += CreateGroupChatWindowClosed;
+    }
 
-            Closed += CreateGroupChatWindowClosed;
-        }
-
-        private void CreateGroupChatWindowClosed(object sender, System.EventArgs e)
-        {
-            Core.WindowManager.CreateGroupChat = new CreateGroupChatWindow();
-        }
+    private void CreateGroupChatWindowClosed(object sender, System.EventArgs e)
+    {
+        WindowManager.CreateGroupChat = new CreateGroupChatWindow();
     }
 }

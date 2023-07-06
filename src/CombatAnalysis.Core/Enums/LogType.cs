@@ -1,9 +1,8 @@
-﻿namespace CombatAnalysis.Core.Enums
+﻿namespace CombatAnalysis.Core.Enums;
+
+public enum LogType
 {
-    public enum LogType
-    {
-        NotIncludePlayer,
-        Public,
-        Private,
-    }
+    NotIncludePlayer,
+    Public,
+    Private,
 }

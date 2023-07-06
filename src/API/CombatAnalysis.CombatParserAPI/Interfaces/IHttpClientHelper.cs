@@ -1,19 +1,14 @@
-﻿using System.Net.Http;
-using System.Net.Http.Json;
-using System.Threading.Tasks;
+﻿namespace CombatAnalysis.CombatParserAPI.Interfaces;
 
-namespace CombatAnalysis.CombatParserAPI.Interfaces
+public interface IHttpClientHelper
 {
-    public interface IHttpClientHelper
-    {
-        HttpClient Client { get; set; }
+    HttpClient Client { get; set; }
 
-        Task<HttpResponseMessage> PostAsync(string requestAddress, JsonContent content);
+    Task<HttpResponseMessage> PostAsync(string requestAddress, JsonContent content);
 
-        Task<HttpResponseMessage> GetAsync(string requestAddress);
+    Task<HttpResponseMessage> GetAsync(string requestAddress);
 
-        Task<HttpResponseMessage> PutAsync(string requestAddress, JsonContent content);
+    Task<HttpResponseMessage> PutAsync(string requestAddress, JsonContent content);
 
-        Task<HttpResponseMessage> DeletAsync(string requestAddress);
-    }
+    Task<HttpResponseMessage> DeletAsync(string requestAddress);
 }

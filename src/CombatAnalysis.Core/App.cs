@@ -15,42 +15,41 @@ using MvvmCross;
 using MvvmCross.ViewModels;
 using System.Configuration;
 
-namespace CombatAnalysis.Core
+namespace CombatAnalysis.Core;
+
+public class App : MvxApplication
 {
-    public class App : MvxApplication
+    public override void Initialize()
     {
-        public override void Initialize()
+        Port.CombatParserApi = ConfigurationManager.AppSettings.Get("combatParserApiPort");
+        Port.UserApi = ConfigurationManager.AppSettings.Get("userApiPort");
+        Port.ChatApi = ConfigurationManager.AppSettings.Get("chatApiPort");
+
+        AppInformation.Version = ConfigurationManager.AppSettings.Get("appVersion");
+        Enum.TryParse(ConfigurationManager.AppSettings.Get("appVersionType"), out AppVersionType appVersionType);
+        AppInformation.VersionType = appVersionType;
+
+        var mappingConfig = new MapperConfiguration(mc =>
         {
-            Port.CombatParserApi = ConfigurationManager.AppSettings.Get("combatParserApiPort");
-            Port.UserApi = ConfigurationManager.AppSettings.Get("userApiPort");
-            Port.ChatApi = ConfigurationManager.AppSettings.Get("chatApiPort");
+            mc.AddProfile(new CombatAnalysisMapper());
+        });
 
-            AppInformation.Version = ConfigurationManager.AppSettings.Get("appVersion");
-            System.Enum.TryParse(ConfigurationManager.AppSettings.Get("appVersionType"), out AppVersionType appVersionType);
-            AppInformation.VersionType = appVersionType;
+        var loggerFactory = new LoggerFactory();
+        var logger = new Logger<ILogger>(loggerFactory);
+        var mapper = mappingConfig.CreateMapper();
+        IHttpClientHelper httpClient = new HttpClientHelper();
+        IFileManager fileManager = new FileManager();
+        IParser parser = new CombatParserService(fileManager, logger);
 
-            var mappingConfig = new MapperConfiguration(mc =>
-            {
-                mc.AddProfile(new CombatAnalysisMapper());
-            });
+        var memoryCacheOptions = new MemoryCacheOptions { SizeLimit = 1024 };
+        var memoryCache = new MemoryCache(memoryCacheOptions);
 
-            var loggerFactory = new LoggerFactory();
-            var logger = new Logger<ILogger>(loggerFactory);
-            var mapper = mappingConfig.CreateMapper();
-            IHttpClientHelper httpClient = new HttpClientHelper();
-            IFileManager fileManager = new FileManager();
-            IParser parser = new CombatParserService(fileManager, logger);
+        Mvx.IoCProvider.RegisterSingleton(mapper);
+        Mvx.IoCProvider.RegisterSingleton(httpClient);
+        Mvx.IoCProvider.RegisterSingleton(parser);
+        Mvx.IoCProvider.RegisterSingleton<ILogger>(logger);
+        Mvx.IoCProvider.RegisterSingleton<IMemoryCache>(memoryCache);
 
-            var memoryCacheOptions = new MemoryCacheOptions { SizeLimit = 1024 };
-            var memoryCache = new MemoryCache(memoryCacheOptions);
-
-            Mvx.IoCProvider.RegisterSingleton(mapper);
-            Mvx.IoCProvider.RegisterSingleton(httpClient);
-            Mvx.IoCProvider.RegisterSingleton(parser);
-            Mvx.IoCProvider.RegisterSingleton<ILogger>(logger);
-            Mvx.IoCProvider.RegisterSingleton<IMemoryCache>(memoryCache);
-
-            RegisterAppStart<HomeViewModel>();
-        }
+        RegisterAppStart<BasicTemplateViewModel>();
     }
 }

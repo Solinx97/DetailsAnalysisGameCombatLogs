@@ -1,11 +1,10 @@
-﻿namespace CombatAnalysis.Core.Interfaces.Observers
+﻿namespace CombatAnalysis.Core.Interfaces.Observers;
+
+public interface IResponseStatusObservable
 {
-    public interface IResponseStatusObservable
-    {
-        void AddObserver(IResponseStatusObserver o);
+    void AddObserver(IResponseStatusObserver o);
 
-        void RemoveObserver(IResponseStatusObserver o);
+    void RemoveObserver(IResponseStatusObserver o);
 
-        void NotifyResponseStatusObservers();
-    }
+    void NotifyResponseStatusObservers();
 }

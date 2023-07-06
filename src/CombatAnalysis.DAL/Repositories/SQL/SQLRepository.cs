@@ -1,66 +1,65 @@
-﻿using CombatAnalysis.DAL.Data.SQL;
+﻿using CombatAnalysis.DAL.Data;
 using CombatAnalysis.DAL.Interfaces;
 using Microsoft.EntityFrameworkCore;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
-namespace CombatAnalysis.DAL.Repositories.SQL
+namespace CombatAnalysis.DAL.Repositories.SQL;
+
+public class SQLRepository<TModel, TIdType> : IGenericRepository<TModel, TIdType>
+    where TModel : class
+    where TIdType : notnull
 {
-    public class SQLRepository<TModel, TIdType> : IGenericRepository<TModel, TIdType>
-        where TModel : class
-        where TIdType : notnull
+    private readonly SQLContext _context;
+
+    public SQLRepository(SQLContext context)
     {
-        private readonly SQLContext _context;
+        _context = context;
+    }
 
-        public SQLRepository(SQLContext context)
+    public async Task<TModel> CreateAsync(TModel item)
+    {
+        var entityEntry = await _context.Set<TModel>().AddAsync(item);
+        await _context.SaveChangesAsync();
+
+        return entityEntry.Entity;
+    }
+
+    public async Task<int> DeleteAsync(TIdType id)
+    {
+        var model = Activator.CreateInstance<TModel>();
+        model.GetType().GetProperty("Id").SetValue(model, id);
+
+        _context.Set<TModel>().Remove(model);
+        var rowsAffected = await _context.SaveChangesAsync();
+
+        return rowsAffected;
+    }
+
+    public async Task<IEnumerable<TModel>> GetAllAsync() => await _context.Set<TModel>().AsNoTracking().ToListAsync();
+
+    public async Task<TModel> GetByIdAsync(TIdType id)
+    {
+        var entity = await _context.Set<TModel>().FindAsync(id);
+        if (entity != null)
         {
-            _context = context;
+            _context.Entry(entity).State = EntityState.Detached;
         }
 
-        async Task<TModel> IGenericRepository<TModel, TIdType>.CreateAsync(TModel item)
-        {
-            var entityEntry = await _context.Set<TModel>().AddAsync(item);
-            await _context.SaveChangesAsync();
+        return entity;
+    }
 
-            return entityEntry.Entity;
-        }
+    public IEnumerable<TModel> GetByParam(string paramName, object value)
+    {
+        var collection = _context.Set<TModel>().AsEnumerable();
+        var data = collection.Where(x => x.GetType().GetProperty(paramName).GetValue(x).Equals(value));
 
-        async Task<int> IGenericRepository<TModel, TIdType>.DeleteAsync(TModel item)
-        {
-            _context.Set<TModel>().Remove(item);
-            var rowsAffected = await _context.SaveChangesAsync();
+        return data;
+    }
 
-            return rowsAffected;
-        }
+    public async Task<int> UpdateAsync(TModel item)
+    {
+        _context.Entry(item).State = EntityState.Modified;
+        var rowsAffected = await _context.SaveChangesAsync();
 
-        async Task<IEnumerable<TModel>> IGenericRepository<TModel, TIdType>.GetAllAsync() => await _context.Set<TModel>().AsNoTracking().ToListAsync();
-
-        async Task<TModel> IGenericRepository<TModel, TIdType>.GetByIdAsync(TIdType id)
-        {
-            var entity = await _context.Set<TModel>().FindAsync(id);
-            if (entity != null)
-            {
-                _context.Entry(entity).State = EntityState.Detached;
-            }
-
-            return entity;
-        }
-
-        IEnumerable<TModel> IGenericRepository<TModel, TIdType>.GetByParam(string paramName, object value)
-        {
-            var collection = _context.Set<TModel>().AsEnumerable();
-            var data = collection.Where(x => x.GetType().GetProperty(paramName).GetValue(x).Equals(value));
-
-            return data;
-        }
-
-        async Task<int> IGenericRepository<TModel, TIdType>.UpdateAsync(TModel item)
-        {
-            _context.Entry(item).State = EntityState.Modified;
-            var rowsAffected = await _context.SaveChangesAsync();
-
-            return rowsAffected;
-        }
+        return rowsAffected;
     }
 }

@@ -1,7 +1,6 @@
-﻿namespace CombatAnalysis.CombatParserAPI.Core
+﻿namespace CombatAnalysis.CombatParserAPI.Core;
+
+public enum CommandLineArgs
 {
-    public enum CommandLineArgs
-    {
-        Tests
-    }
+    Tests,
 }

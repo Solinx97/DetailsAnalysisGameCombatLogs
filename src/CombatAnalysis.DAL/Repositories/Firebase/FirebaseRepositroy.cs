@@ -1,124 +1,118 @@
 ﻿using CombatAnalysis.DAL.Data;
 using CombatAnalysis.DAL.Interfaces;
 using Firebase.Database.Query;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
-namespace CombatAnalysis.DAL.Repositories.Firebase
+namespace CombatAnalysis.DAL.Repositories.Firebase;
+
+public class FirebaseRepositroy<TModel, TIdType> : IGenericRepository<TModel, TIdType>
+    where TModel : class
+    where TIdType : notnull
 {
-    public class FirebaseRepositroy<TModel, TIdType> : IGenericRepository<TModel, TIdType>
-        where TModel : class
-        where TIdType : notnull
+    private readonly FirebaseContext _context;
+
+    public FirebaseRepositroy(FirebaseContext context)
     {
-        private readonly FirebaseContext _context;
+        _context = context;
+    }
 
-        public FirebaseRepositroy(FirebaseContext context)
+    public async Task<TModel> CreateAsync(TModel item)
+    {
+        var itemPropertyId = item.GetType().GetProperty("Id");
+        if (itemPropertyId?.PropertyType == typeof(int))
         {
-            _context = context;
+            var hashCodeToId = int.Parse(Guid.NewGuid().GetHashCode().ToString());
+            var newId = hashCodeToId >= 0 ? hashCodeToId : -hashCodeToId;
+            itemPropertyId.SetValue(item, newId);
         }
 
-        async Task<TModel> IGenericRepository<TModel, TIdType>.CreateAsync(TModel item)
-        {
-            var itemPropertyId= item.GetType().GetProperty("Id");
-            if (itemPropertyId.PropertyType == typeof(int))
-            {
-                var hashCodeToId = int.Parse(Guid.NewGuid().GetHashCode().ToString());
-                var newId = hashCodeToId >= 0 ? hashCodeToId : -hashCodeToId;
-                itemPropertyId.SetValue(item, newId);
-            }
- 
-            var result = await _context.FirebaseClient
-                         .Child(item.GetType().Name)
-                         .PostAsync(item);
-            return result.Object;
-        }
+        var result = await _context.FirebaseClient
+                     .Child(item.GetType().Name)
+                     .PostAsync(item);
+        return result.Object;
+    }
 
-        async Task<int> IGenericRepository<TModel, TIdType>.DeleteAsync(TModel item)
-        {
-            var data = await _context.FirebaseClient
-                  .Child(typeof(TModel).Name)
-                  .OnceAsync<TModel>();
-
-            var id = item.GetType().GetProperty("Id").GetValue(item);
-            var result = data.Select(x => new KeyValuePair<string, TModel>(x.Key, x.Object))
-                .AsEnumerable()
-                .FirstOrDefault(x => x.Value.GetType().GetProperty("Id").GetValue(x.Value).Equals(id));
-
-            await _context.FirebaseClient
-                         .Child(item.GetType().Name)
-                         .Child(result.Key)
-                         .DeleteAsync();
-
-            var checkResult = await _context.FirebaseClient
-                  .Child(typeof(TModel).Name)
-                  .Child(result.Key)
-                  .OnceSingleAsync<TModel>();
-
-            return checkResult == null ? 1 : 0;
-        }
-
-        async Task<IEnumerable<TModel>> IGenericRepository<TModel, TIdType>.GetAllAsync()
-        {
-            var data = await _context.FirebaseClient
+    public async Task<int> DeleteAsync(TIdType id)
+    {
+        var data = await _context.FirebaseClient
               .Child(typeof(TModel).Name)
               .OnceAsync<TModel>();
 
-            var result = data.Select(x => x.Object).AsEnumerable();
-            return result;
-        }
+        var result = data.Select(x => new KeyValuePair<string, TModel>(x.Key, x.Object))
+            .AsEnumerable()
+            .FirstOrDefault(x => x.Value.GetType().GetProperty("Id").GetValue(x.Value).Equals(id));
 
-        async Task<TModel> IGenericRepository<TModel, TIdType>.GetByIdAsync(TIdType id)
-        {
-            var data = await _context.FirebaseClient
-                  .Child(typeof(TModel).Name)
-                  .OnceAsync<TModel>();
+        await _context.FirebaseClient
+                     .Child(typeof(TModel).Name)
+                     .Child(result.Key)
+                     .DeleteAsync();
 
-            var result = data.Select(x => x.Object)
-                .AsEnumerable()
-                .FirstOrDefault(x => x.GetType().GetProperty("Id").GetValue(x).Equals(id));
+        var checkResult = await _context.FirebaseClient
+              .Child(typeof(TModel).Name)
+              .Child(result.Key)
+              .OnceSingleAsync<TModel>();
 
-            return result;
-        }
+        return checkResult == null ? 1 : 0;
+    }
 
-        IEnumerable<TModel> IGenericRepository<TModel, TIdType>.GetByParam(string paramName, object value)
-        {
-            var data =  _context.FirebaseClient
-                  .Child(typeof(TModel).Name)
-                  .OnceAsync<TModel>()
-                  .GetAwaiter()
-                  .GetResult();
+    public async Task<IEnumerable<TModel>> GetAllAsync()
+    {
+        var data = await _context.FirebaseClient
+          .Child(typeof(TModel).Name)
+          .OnceAsync<TModel>();
 
-            var result = data.Select(x => x.Object)
-                .AsEnumerable()
-                .Where(x => x.GetType().GetProperty(paramName).GetValue(x).Equals(value));
+        var result = data.Select(x => x.Object).AsEnumerable();
+        return result;
+    }
 
-            return result;
-        }
+    public async Task<TModel> GetByIdAsync(TIdType id)
+    {
+        var data = await _context.FirebaseClient
+              .Child(typeof(TModel).Name)
+              .OnceAsync<TModel>();
 
-        async Task<int> IGenericRepository<TModel, TIdType>.UpdateAsync(TModel item)
-        {
-            var data = await _context.FirebaseClient
-                  .Child(typeof(TModel).Name)
-                  .OnceAsync<TModel>();
+        var result = data.Select(x => x.Object)
+            .AsEnumerable()
+            .FirstOrDefault(x => x.GetType().GetProperty("Id").GetValue(x).Equals(id));
 
-            var id = item.GetType().GetProperty("Id").GetValue(item);
-            var result = data.Select(x => new KeyValuePair<string, TModel>(x.Key, x.Object))
-                .AsEnumerable()
-                .FirstOrDefault(x => x.Value.GetType().GetProperty("Id").GetValue(x.Value).Equals(id));
+        return result;
+    }
 
-            await _context.FirebaseClient
-                         .Child(item.GetType().Name)
-                         .Child(result.Key)
-                         .PutAsync(item);
+    public IEnumerable<TModel> GetByParam(string paramName, object value)
+    {
+        var data =  _context.FirebaseClient
+              .Child(typeof(TModel).Name)
+              .OnceAsync<TModel>()
+              .GetAwaiter()
+              .GetResult();
 
-            var checkResult = await _context.FirebaseClient
-                  .Child(typeof(TModel).Name)
-                  .Child(result.Key)
-                  .OnceSingleAsync<TModel>();
+        var result = data.Select(x => x.Object)
+            .AsEnumerable()
+            .Where(x => x.GetType().GetProperty(paramName).GetValue(x).Equals(value));
 
-            return checkResult != null ? 1 : 0;
-        }
+        return result;
+    }
+
+    public async Task<int> UpdateAsync(TModel item)
+    {
+        var data = await _context.FirebaseClient
+              .Child(typeof(TModel).Name)
+              .OnceAsync<TModel>();
+
+        var id = item.GetType().GetProperty("Id")?.GetValue(item);
+        var result = data.Select(x => new KeyValuePair<string, TModel>(x.Key, x.Object))
+            .AsEnumerable()
+            .FirstOrDefault(x => x.Value.GetType().GetProperty("Id").GetValue(x.Value).Equals(id));
+
+        await _context.FirebaseClient
+                     .Child(item.GetType().Name)
+                     .Child(result.Key)
+                     .PutAsync(item);
+
+        var checkResult = await _context.FirebaseClient
+              .Child(typeof(TModel).Name)
+              .Child(result.Key)
+              .OnceSingleAsync<TModel>();
+
+        return checkResult != null ? 1 : 0;
     }
 }

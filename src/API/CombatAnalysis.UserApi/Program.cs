@@ -1,32 +1,68 @@
+using AutoMapper;
+using CombatAnalysis.CustomerBL.Mapping;
+using CombatAnalysis.CustomerBL.Extensions;
+using CombatAnalysis.Identity.Extensions;
+using CombatAnalysis.Identity.Mapping;
 using CombatAnalysis.Identity.Security;
-using CombatAnalysis.UserApi.Core;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Hosting;
+using CombatAnalysis.Identity.Settings;
+using CombatAnalysis.UserApi.Mapping;
+using Microsoft.OpenApi.Models;
 
-namespace CombatAnalysis.UserApi
+var builder = WebApplication.CreateBuilder(args);
+
+// Add services to the container.
+builder.Services.CustomerBLDependencies(builder.Configuration, "DefaultConnection");
+builder.Services.RegisterIdentityDependencies();
+
+JWTSecret.GenerateAccessSecretKey();
+JWTSecret.GenerateRefreshSecretKey();
+
+var settings = builder.Configuration.GetSection(nameof(TokenSettings));
+var scheme = settings.GetValue<string>(nameof(TokenSettings.AuthScheme));
+
+builder.Services.Configure<TokenSettings>(settings);
+
+var loggerFactory = new LoggerFactory();
+var logger = new Logger<ILogger>(loggerFactory);
+
+var mappingConfig = new MapperConfiguration(mc =>
 {
-    public class Program
+    mc.AddProfile(new UserApiMapper());
+    mc.AddProfile(new CustomerBLMapper());
+    mc.AddProfile(new IdentityMappingMapper());
+});
+
+var mapper = mappingConfig.CreateMapper();
+builder.Services.AddSingleton(mapper);
+builder.Services.AddSingleton<ILogger>(logger);
+
+builder.Services.AddControllers();
+// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen(options =>
+{
+    options.SwaggerDoc("v1", new OpenApiInfo
     {
-        public static void Main(string[] args)
-        {
-            JWTSecret.GenerateAccessSecretKey();
-            JWTSecret.GenerateRefreshSecretKey();
+        Title = "User API",
+        Version = "v1",
+    });
+});
 
-            CreateHostBuilder(args).Build().Run();
-        }
+var app = builder.Build();
 
-        public static IHostBuilder CreateHostBuilder(string[] args) =>
-            Host.CreateDefaultBuilder(args)
-                .ConfigureWebHostDefaults(webBuilder =>
-                {
-                    if (args.Length > 0 && args[0] == nameof(CommandLineArgs.Tests))
-                    {
-                        webBuilder.UseStartup<TestStartup>();
-                    }
-                    else
-                    {
-                        webBuilder.UseStartup<Startup>();
-                    }
-                });
-    }
+// Configure the HTTP request pipeline.
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI(options =>
+    {
+        options.SwaggerEndpoint("/swagger/v1/swagger.json", "User API v1");
+    });
 }
+
+app.UseHttpsRedirection();
+
+app.UseAuthorization();
+
+app.MapControllers();
+app.Run();

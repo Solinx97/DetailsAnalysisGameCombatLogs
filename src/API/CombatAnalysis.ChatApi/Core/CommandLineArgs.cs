@@ -1,7 +1,6 @@
-﻿namespace CombatAnalysis.ChatApi.Core
+﻿namespace CombatAnalysis.ChatApi.Core;
+
+public enum CommandLineArgs
 {
-    public enum CommandLineArgs
-    {
-        Tests
-    }
+    Tests,
 }

@@ -1,11 +1,10 @@
-﻿namespace CombatAnalysis.Core.Enums
+﻿namespace CombatAnalysis.Core.Enums;
+
+public enum WhenType
 {
-    public enum WhenType
-    {
-        YearAgo,
-        MonthAgo,
-        WeekAgo,
-        Yesterday,
-        Today,
-    }
+    YearAgo,
+    MonthAgo,
+    WeekAgo,
+    Yesterday,
+    Today,
 }

@@ -4,7 +4,7 @@ namespace CombatAnalysis.WebApp.Models.Response
 {
     public struct ResponseFromAccount
     {
-        public UserModel User { get; set; }
+        public AppUserModel User { get; set; }
 
         public string AccessToken { get; set; }
 

@@ -57,6 +57,15 @@
             &__duration {
                 color: cornflowerblue;
             }
+
+            &__not-ready {
+                color: lightcoral;
+            }
+
+
+            &__ready {
+                color: green;
+            }
         }
 
         .list-group {
@@ -80,4 +89,15 @@ ul {
 
 .combats__container {
     width: auto;
+}
+
+.combat-title {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+
+    svg {
+        margin: 0 50px;
+    }
 }

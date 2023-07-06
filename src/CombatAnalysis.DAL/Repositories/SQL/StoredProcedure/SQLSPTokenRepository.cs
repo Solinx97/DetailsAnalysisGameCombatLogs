@@ -1,112 +1,108 @@
-﻿using CombatAnalysis.DAL.Data.SQL;
+﻿using CombatAnalysis.DAL.Data;
 using CombatAnalysis.DAL.Entities.Authentication;
 using CombatAnalysis.DAL.Interfaces;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
-namespace CombatAnalysis.DAL.Repositories.SQL.StoredProcedure
+namespace CombatAnalysis.DAL.Repositories.SQL.StoredProcedure;
+
+public class SQLSPTokenRepository : ITokenRepository
 {
-    public class SQLSPTokenRepository : ITokenRepository
+    private readonly SQLContext _context;
+
+    public SQLSPTokenRepository(SQLContext context)
     {
-        private readonly SQLContext _context;
+        _context = context;
+    }
 
-        public SQLSPTokenRepository(SQLContext context)
+    public async Task<RefreshToken> CreateAsync(RefreshToken item)
+    {
+        var properties = item.GetType().GetProperties();
+        var procedureParams = new List<SqlParameter>();
+        var procedureParamNames = new StringBuilder();
+
+        for (int i = 0; i < properties.Length; i++)
         {
-            _context = context;
-        }
-
-        async Task<RefreshToken> ITokenRepository.CreateAsync(RefreshToken item)
-        {
-            var properties = item.GetType().GetProperties();
-            var procedureParams = new List<SqlParameter>();
-            var procedureParamNames = new StringBuilder();
-
-            for (int i = 0; i < properties.Length; i++)
+            if (properties[i].CanWrite)
             {
-                if (properties[i].CanWrite)
-                {
-                    procedureParams.Add(new SqlParameter(properties[i].Name, properties[i].GetValue(item)));
-                    procedureParamNames.Append($"@{properties[i].Name},");
-                }
+                procedureParams.Add(new SqlParameter(properties[i].Name, properties[i].GetValue(item)));
+                procedureParamNames.Append($"@{properties[i].Name},");
             }
-            procedureParamNames.Remove(procedureParamNames.Length - 1, 1);
-
-            var data = await Task.Run(() => _context.Set<RefreshToken>().FromSqlRaw($"InsertInto{item.GetType().Name} {procedureParamNames}", procedureParams.ToArray())
-                                                .AsEnumerable()
-                                                .FirstOrDefault());
-
-            return data;
         }
+        procedureParamNames.Remove(procedureParamNames.Length - 1, 1);
 
-        async Task<int> ITokenRepository.DeleteAsync(RefreshToken item)
+        var data = await Task.Run(() => _context.Set<RefreshToken>().FromSqlRaw($"InsertInto{item.GetType().Name} {procedureParamNames}", procedureParams.ToArray())
+                                            .AsEnumerable()
+                                            .FirstOrDefault());
+
+        return data;
+    }
+
+    public async Task<int> DeleteAsync(RefreshToken item)
+    {
+        var property = item.GetType().GetProperty("Id");
+        var rowsAffected = await _context.Database
+                            .ExecuteSqlRawAsync($"Delete{item.GetType().Name}ById {property.Name}", property.GetValue(item));
+
+        return rowsAffected;
+    }
+
+    public async Task<RefreshToken> GetByTokenAsync(string token)
+    {
+        var result = new RefreshToken();
+        var data = await _context.Set<RefreshToken>()
+                            .FromSqlRaw($"GetAll{nameof(RefreshToken)}")
+                            .ToListAsync();
+
+        foreach (var item in data)
         {
-            var property = item.GetType().GetProperty("Id");
-            var rowsAffected = await _context.Database
-                                .ExecuteSqlRawAsync($"Delete{item.GetType().Name}ById {property.Name}", property.GetValue(item));
-
-            return rowsAffected;
-        }
-
-        async Task<RefreshToken> ITokenRepository.GetByTokenAsync(string token)
-        {
-            var result = new RefreshToken();
-            var data = await _context.Set<RefreshToken>()
-                                .FromSqlRaw($"GetAll{nameof(RefreshToken)}")
-                                .ToListAsync();
-
-            foreach (var item in data)
+            if (item.GetType().GetProperty(nameof(RefreshToken.Token)).GetValue(item).Equals(token))
             {
-                if (item.GetType().GetProperty(nameof(RefreshToken.Token)).GetValue(item).Equals(token))
-                {
-                    result = item;
-                    break;
-                }
+                result = item;
+                break;
             }
-
-            return result;
         }
 
-        async Task<IEnumerable<RefreshToken>> ITokenRepository.GetAllByUserAsync(string userId)
+        return result;
+    }
+
+    public async Task<IEnumerable<RefreshToken>> GetAllByUserAsync(string userId)
+    {
+        var result = new List<RefreshToken>();
+        var data = await _context.Set<RefreshToken>()
+                            .FromSqlRaw($"GetAll{nameof(RefreshToken)}")
+                            .ToListAsync();
+
+        foreach (var item in data)
         {
-            var result = new List<RefreshToken>();
-            var data = await _context.Set<RefreshToken>()
-                                .FromSqlRaw($"GetAll{nameof(RefreshToken)}")
-                                .ToListAsync();
-
-            foreach (var item in data)
+            if (item.GetType().GetProperty(nameof(RefreshToken.UserId)).GetValue(item).Equals(userId))
             {
-                if (item.GetType().GetProperty(nameof(RefreshToken.UserId)).GetValue(item).Equals(userId))
-                {
-                    result.Add(item);
-                }
+                result.Add(item);
             }
-
-            return result;
         }
 
-        async Task<int> ITokenRepository.UpdateAsync(RefreshToken item)
+        return result;
+    }
+
+    public async Task<int> UpdateAsync(RefreshToken item)
+    {
+        var properties = item.GetType().GetProperties();
+        var procedureParams = new List<SqlParameter>();
+        var procedureParamNames = new StringBuilder();
+        for (int i = 0; i < properties.Length; i++)
         {
-            var properties = item.GetType().GetProperties();
-            var procedureParams = new List<SqlParameter>();
-            var procedureParamNames = new StringBuilder();
-            for (int i = 0; i < properties.Length; i++)
+            if (properties[i].CanWrite)
             {
-                if (properties[i].CanWrite)
-                {
-                    procedureParams.Add(new SqlParameter(properties[i].Name, properties[i].GetValue(item)));
-                    procedureParamNames.Append($"@{properties[i].Name},");
-                }
+                procedureParams.Add(new SqlParameter(properties[i].Name, properties[i].GetValue(item)));
+                procedureParamNames.Append($"@{properties[i].Name},");
             }
-            procedureParamNames.Remove(procedureParamNames.Length - 1, 1);
-
-            var rowsAffected = await _context.Database
-                                .ExecuteSqlRawAsync($"Update{item.GetType().Name} {procedureParamNames}", procedureParams);
-
-            return rowsAffected;
         }
+        procedureParamNames.Remove(procedureParamNames.Length - 1, 1);
+
+        var rowsAffected = await _context.Database
+                            .ExecuteSqlRawAsync($"Update{item.GetType().Name} {procedureParamNames}", procedureParams);
+
+        return rowsAffected;
     }
 }

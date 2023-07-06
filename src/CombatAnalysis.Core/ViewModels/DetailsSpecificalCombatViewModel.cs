@@ -1,107 +1,58 @@
-﻿using CombatAnalysis.Core.Consts;
-using CombatAnalysis.Core.Interfaces;
-using CombatAnalysis.Core.Models;
-using MvvmCross.ViewModels;
-using System;
-using System.Collections.Generic;
+﻿using CombatAnalysis.Core.Models;
+using CombatAnalysis.Core.ViewModels.Base;
 
-namespace CombatAnalysis.Core.ViewModels
+namespace CombatAnalysis.Core.ViewModels;
+
+public class DetailsSpecificalCombatViewModel : ParentTemplate<CombatModel>
 {
-    public class DetailsSpecificalCombatViewModel : MvxViewModel<CombatModel>
+    private CombatModel _combat;
+    private List<CombatPlayerModel> _playersCombat;
+    private CombatPlayerModel _selectedPlayer;
+
+    public DetailsSpecificalCombatViewModel()
     {
-        private CombatModel _combat;
-        private IImprovedMvxViewModel _basicTemplate;
-        private List<CombatPlayerModel> _playersCombatData;
-        private long _maxDamageDone;
-        private long _maxHealDone;
-        private double _maxEnergyRecovery;
-        private CombatPlayerModel _selectedPlayer;
-        private string _selectedCombat;
+        BasicTemplate.Parent = this;
+        BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, nameof(BasicTemplateViewModel.Step), 2);
+    }
 
-        public DetailsSpecificalCombatViewModel()
+    #region Properties
+
+    public List<CombatPlayerModel> PlayersCombat
+    {
+        get { return _playersCombat; }
+        set
         {
-            BasicTemplate = Templates.Basic;
-            BasicTemplate.Parent = this;
-            BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, "Step", 2);
-        }
+            SetProperty(ref _playersCombat, value);
 
-        public IImprovedMvxViewModel BasicTemplate
+            SelectedPlayer = value[0];
+        }
+    }
+
+    public CombatPlayerModel SelectedPlayer
+    {
+        get { return _selectedPlayer; }
+        set
         {
-            get { return _basicTemplate; }
-            set
-            {
-                SetProperty(ref _basicTemplate, value);
-            }
-        }
+            SetProperty(ref _selectedPlayer, value);
 
-        public List<CombatPlayerModel> PlayersCombatData
+            (BasicTemplate as BasicTemplateViewModel).Data = value;
+        }
+    }
+
+    public CombatModel Combat
+    {
+        get { return _combat; }
+        set
         {
-            get { return _playersCombatData; }
-            set
-            {
-                SetProperty(ref _playersCombatData, value);
-
-                SelectedPlayer = value[0];
-            }
+            SetProperty(ref _combat, value);
         }
+    }
 
-        public CombatPlayerModel SelectedPlayer
-        {
-            get { return _selectedPlayer; }
-            set
-            {
-                SetProperty(ref _selectedPlayer, value);
+    #endregion
 
-                BasicTemplate.Handler.Data = Tuple.Create(value, _combat);
-            }
-        }
-
-        public long MaxDamageDone
-        {
-            get { return _maxDamageDone; }
-            set
-            {
-                SetProperty(ref _maxDamageDone, value);
-            }
-        }
-
-        public long MaxHealDone
-        {
-            get { return _maxHealDone; }
-            set
-            {
-                SetProperty(ref _maxHealDone, value);
-            }
-        }
-
-        public double MaxEnergyRecovery
-        {
-            get { return _maxEnergyRecovery; }
-            set
-            {
-                SetProperty(ref _maxEnergyRecovery, value);
-            }
-        }
-
-        public string SelectedCombat
-        {
-            get { return _selectedCombat; }
-            set
-            {
-                SetProperty(ref _selectedCombat, value);
-            }
-        }
-
-        public override void Prepare(CombatModel parameter)
-        {
-            _combat = parameter;
-
-            PlayersCombatData = _combat.Players;
-            MaxDamageDone = _combat.DamageDone;
-            MaxHealDone = _combat.HealDone;
-            MaxEnergyRecovery = _combat.EnergyRecovery;
-
-            SelectedCombat = parameter.Name;
-        }
+    protected override void ChildPrepare(CombatModel parameter)
+    {
+        PlayersCombat = parameter.Players;
+        Combat = parameter;
     }
 }

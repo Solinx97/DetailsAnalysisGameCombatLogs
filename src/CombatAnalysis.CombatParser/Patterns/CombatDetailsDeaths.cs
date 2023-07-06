@@ -1,56 +1,54 @@
-﻿using CombatAnalysis.CombatParser.Entities;
+﻿using CombatAnalysis.CombatParser.Core;
+using CombatAnalysis.CombatParser.Entities;
 using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
 
-namespace CombatAnalysis.CombatParser.Patterns
+namespace CombatAnalysis.CombatParser.Patterns;
+
+public class CombatDetailsDeaths : CombatDetailsTemplate
 {
-    public class CombatDetailsDeaths : CombatDetailsTemplate
+    private readonly ILogger _logger;
+    private readonly List<CombatPlayer> _players;
+
+    public CombatDetailsDeaths(ILogger logger, List<CombatPlayer> players) : base()
     {
-        private readonly ILogger _logger;
-        private readonly List<CombatPlayer> _players;
+        _logger = logger;
+        _players = players;
+    }
 
-        public CombatDetailsDeaths(ILogger logger, List<CombatPlayer> players) : base()
+    public override int GetData(string player, List<string> combatData)
+    {
+        int deaths = 0;
+        foreach (var item in combatData)
         {
-            _logger = logger;
-            _players = players;
+            if (item.Contains(CombatLogConsts.UnitDied))
+            {
+                deaths += GetPlayersStatus(item);
+            }
         }
 
-        public override int GetData(string player, List<string> combatData)
+        return deaths;
+    }
+
+    private int GetPlayersStatus(string combatData)
+    {
+        var isFound = false;
+
+        try
         {
-            int deaths = 0;
-            foreach (var item in combatData)
+            foreach (var item in _players)
             {
-                if (item.Contains("UNIT_DIED"))
+                if (combatData.Contains(item.UserName))
                 {
-                    deaths += GetPlayersStatus(item);
+                    isFound = true;
+                    break;
                 }
             }
-
-            return deaths;
         }
-
-        private int GetPlayersStatus(string combatData)
+        catch (ArgumentNullException ex)
         {
-            var isFound = false;
-
-            try
-            {
-                foreach (var item in _players)
-                {
-                    if (combatData.Contains(item.UserName))
-                    {
-                        isFound = true;
-                        break;
-                    }
-                }
-            }
-            catch (ArgumentNullException ex)
-            {
-                _logger.LogError(ex, ex.Message, _players);
-            }
-
-            return isFound ? 1 : 0;
+            _logger.LogError(ex, ex.Message, _players);
         }
+
+        return isFound ? 1 : 0;
     }
 }

@@ -1,0 +1,53 @@
+.people {
+    &__cards {
+        display: flex;
+        flex-wrap: wrap;
+
+        .card {
+            margin: 10px;
+            width: 250px;
+
+            .card-body {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+
+                .card-title {
+                    margin: 0 15px;
+                }
+
+                .card-title:hover {
+                    transform: scale(1.1);
+                    font-family: 'Comic Sans MS';
+                    cursor: pointer;
+                }
+
+                svg:hover {
+                    transform: scale(1.1);
+                    cursor: pointer;
+                }
+            }
+
+            &__links {
+                display: flex;
+                flex-direction: row;
+                justify-content: space-around;
+
+                svg:hover {
+                    cursor: pointer;
+                    transform: scale(1.25);
+                }
+            }
+        }
+    }
+
+
+    &__successfully-request {
+        margin: 10px;
+        padding: 10px;
+        width: 425px;
+        text-align: center;
+        border-radius: 20px;
+        border: 3px solid green;
+    }
+}

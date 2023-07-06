@@ -1,0 +1,13 @@
+{
+  "NeedToAddSomething": "Необходимо добавить как минимум 1 элемент.",
+  "Damage": "Урон",
+  "Healing": "Исцеление",
+  "DamageTaken": "Получено урона",
+  "ResourcesRecovery": "Восстановлено ресурсов",
+  "ShowDiagram": "Показать диаграмму",
+  "DetailsInform": "Подробее",
+  "CommonInform": "Общая информация",
+  "SelectPlayer": "Выбрать игрока",
+  "Player": "Игрок",
+  "Skills": "Заклинания"
+}

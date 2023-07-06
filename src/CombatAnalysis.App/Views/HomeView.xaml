@@ -5,19 +5,18 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:converters="clr-namespace:CombatAnalysis.App.Converters"
-    xmlns:local="clr-namespace:CombatAnalysis.App.Views"
+    xmlns:loc="clr-namespace:CombatAnalysis.App.Localizations"
+    xmlns:resx="clr-namespace:CombatAnalysis.App.Localizations.Resources.Home"
+    xmlns:local="clr-namespace:CombatAnalysis.App.Views.ViewTemplates"
     xmlns:viewModels="clr-namespace:CombatAnalysis.Core.ViewModels;assembly=CombatAnalysis.Core"
     xmlns:views="clr-namespace:MvvmCross.Platforms.Wpf.Views;assembly=MvvmCross.Platforms.Wpf"
+    loc:LocalizationObject.ResourceManager="{x:Static resx:Resource.ResourceManager}"
     mc:Ignorable="d">
 
     <Grid>
         <Grid.Resources>
-            <converters:TheNativeStringToVisibilityConverter x:Key="ToVisibility" />
-            <converters:TheNativeStringToXAMLBoolConverter x:Key="ToXAMLBool" />
             <converters:TheNativeBoolToXAMLBoolConverter x:Key="BoolToXAMLBool" />
             <converters:TheNativeBoolToVisibilityConverter x:Key="BoolToVisibility" />
-            <converters:TheNativeIntToVisibilityConverter x:Key="IntToVisibility" />
-            <converters:TheNativeIntToXAMLBoolConverter x:Key="IntToXAMLBool" />
         </Grid.Resources>
 
         <Grid.ColumnDefinitions>
@@ -55,25 +54,26 @@
         
         <StackPanel Grid.Column="2" Grid.ColumnSpan="2" Grid.Row="0" Grid.RowSpan="3" Orientation="Horizontal" Margin="30 0">
             <StackPanel VerticalAlignment="Center">
-                <TextBlock Text="Общение" HorizontalAlignment="Center" FontSize="18" FontFamily="Comic Sans MS"/>
-                <Image Name="openChat" IsEnabled="False" Style="{StaticResource homeItems}" Source="../Resources/Chat.jpg" Height="275" Margin="20" Panel.ZIndex="1" Cursor="Hand">
+                <TextBlock Text="{loc:Loc Communication}" HorizontalAlignment="Center" FontSize="18" FontFamily="Comic Sans MS"/>
+                <Image Name="openChat" IsEnabled="{Binding ChatIsEnabled, Converter={StaticResource BoolToXAMLBool}}" Style="{StaticResource homeItems}" Source="../Resource/Chat.jpg" Height="275" Margin="20" Panel.ZIndex="1" Cursor="Hand">
                     <Image.InputBindings>
                         <MouseBinding Gesture="LeftClick" Command="{Binding OpenChatCommand, Mode=OneTime}" />
                     </Image.InputBindings>
                 </Image>
-                <TextBlock Text="Общение с другими пользователями. Создание и вступление в групповые чаты для обсуждения вопросов или общении в компании друзей или знакомых."
+                <TextBlock Text="{loc:Loc CommunicationDescribe}"
                            TextWrapping="Wrap" HorizontalAlignment="Center" Margin="-200" FontSize="16" FontWeight="DemiBold" MaxWidth="400"/>
-                <TextBlock Text="Необходимо авторизоваться" Foreground="White" Opacity="0.75" HorizontalAlignment="Center" FontStyle="Italic"/>
+                <TextBlock Text="{loc:Loc LoginRequired}" Foreground="White" Opacity="0.75" HorizontalAlignment="Center" FontStyle="Italic"
+                           Visibility="{Binding ChatIsEnabled, Converter={StaticResource BoolToVisibility}, ConverterParameter=true:true}"/>
             </StackPanel>
             <StackPanel VerticalAlignment="Center">
-                <TextBlock Text="Анализ боев" HorizontalAlignment="Center" FontSize="18" FontFamily="Comic Sans MS"/>
-                <Image Name="openCombatLogInform" Style="{StaticResource homeItems}" Source="../Resources/CombatLogs.jpg" Height="275" Margin="20" Panel.ZIndex="1" Cursor="Hand">
+                <TextBlock Text="{loc:Loc Analyzing}" HorizontalAlignment="Center" FontSize="18" FontFamily="Comic Sans MS"/>
+                <Image Name="openCombatLogInform" Style="{StaticResource homeItems}" Source="../Resource/CombatLogs.jpg" Height="275" Margin="20" Panel.ZIndex="1" Cursor="Hand">
                     <Image.InputBindings>
                         <MouseBinding Gesture="LeftClick" Command="{Binding OpenCombatAnalysisCommand, Mode=OneTime}" />
                     </Image.InputBindings>
                 </Image>
                 <StackPanel Margin="-200">
-                    <TextBlock Text="Загрузка или анализ ранее загруженых логов боев. Получение подробной информации о событиях, произошедших во время боя. Просмотр информации об игроках."
+                    <TextBlock Text="{loc:Loc AnalyzingDescribe}"
                            TextWrapping="Wrap" HorizontalAlignment="Center"  FontSize="16" FontWeight="DemiBold" MaxWidth="400"/>
                 </StackPanel>
             </StackPanel>

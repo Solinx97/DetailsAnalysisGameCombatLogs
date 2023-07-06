@@ -1,15 +1,12 @@
 ﻿using CombatAnalysis.CombatParser.Entities;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 
-namespace CombatAnalysis.CombatParser.Interfaces
+namespace CombatAnalysis.CombatParser.Interfaces;
+
+public interface IParser : IObservable
 {
-    public interface IParser : IObservable
-    {
-        List<Combat> Combats { get; }
+    List<Combat> Combats { get; }
 
-        Task<bool> FileCheck(string combatLog);
+    Task<bool> FileCheck(string combatLog);
 
-        Task Parse(string combatLog);
-    }
+    Task Parse(string combatLog);
 }

@@ -1,56 +1,69 @@
-﻿using CombatAnalysis.Core.Commands;
-using CombatAnalysis.Core.Consts;
-using CombatAnalysis.Core.Interfaces;
-using Microsoft.Extensions.Caching.Memory;
+﻿using CombatAnalysis.Core.Interfaces.Observers;
+using CombatAnalysis.Core.ViewModels.Base;
+using CombatAnalysis.Core.ViewModels.Chat;
 using MvvmCross.Commands;
 using MvvmCross.Navigation;
-using MvvmCross.ViewModels;
-using System.Threading.Tasks;
 
-namespace CombatAnalysis.Core.ViewModels
+namespace CombatAnalysis.Core.ViewModels;
+
+public class HomeViewModel : ParentTemplate<bool>, IAuthObserver
 {
-    public class HomeViewModel : MvxViewModel
+    private readonly IMvxNavigationService _mvvmNavigation;
+
+    private bool _chatIsEnabled;
+
+    public HomeViewModel(IMvxNavigationService mvvmNavigation)
     {
-        private readonly IMvxNavigationService _mvvmNavigation;
+        _mvvmNavigation = mvvmNavigation;
 
-        private IImprovedMvxViewModel _basicTemplate;
-        private IViewModelConnect _handler;
+        OpenChatCommand = new MvxAsyncCommand(OpenChatAsync);
+        OpenCombatAnalysisCommand = new MvxAsyncCommand(OpenCombatAnalysisAsync);
 
-        public HomeViewModel(IMvxNavigationService mvvmNavigation, IHttpClientHelper httpClient, IMemoryCache memoryCache)
+        BasicTemplate = ParentTemplate.Basic;
+        BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, nameof(BasicTemplateViewModel.Step), -1);
+
+        var authObservable = (IAuthObservable)BasicTemplate;
+        authObservable.AddObserver(this);
+    }
+
+    #region Command
+
+    public IMvxAsyncCommand OpenChatCommand { get; set; }
+
+    public IMvxAsyncCommand OpenCombatAnalysisCommand { get; set; }
+
+    #endregion
+
+    #region Properties
+
+    public bool ChatIsEnabled
+    {
+        get { return _chatIsEnabled; }
+        set
         {
-            _mvvmNavigation = mvvmNavigation;
-
-            _handler = new ViewModelMConnect();
-
-            OpenChatCommand = new MvxAsyncCommand(OpenChatAsync);
-            OpenCombatAnalysisCommand = new MvxAsyncCommand(OpenCombatAnalysisAsync);
-
-            BasicTemplate = new BasicTemplateViewModel(_handler, mvvmNavigation, memoryCache, httpClient);
-            BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, "Step", -1);
-            Templates.Basic = BasicTemplate;
+            SetProperty(ref _chatIsEnabled, value);
         }
+    }
 
-        public IMvxAsyncCommand OpenChatCommand { get; set; }
+    #endregion
 
-        public IMvxAsyncCommand OpenCombatAnalysisCommand { get; set; }
+    protected override void ChildPrepare(bool isAuth)
+    {
+        ChatIsEnabled = isAuth;
+    }
 
-        public IImprovedMvxViewModel BasicTemplate
-        {
-            get { return _basicTemplate; }
-            set
-            {
-                SetProperty(ref _basicTemplate, value);
-            }
-        }
+    public async Task OpenChatAsync()
+    {
+        await _mvvmNavigation.Navigate<ChatViewModel>();
+    }
 
-        public async Task OpenChatAsync()
-        {
-            await _mvvmNavigation.Navigate<ChatViewModel>();
-        }
+    public async Task OpenCombatAnalysisAsync()
+    {
+        await _mvvmNavigation.Navigate<CombatLogInformationViewModel>();
+    }
 
-        public async Task OpenCombatAnalysisAsync()
-        {
-            await _mvvmNavigation.Navigate<CombatLogInformationViewModel>();
-        }
+    public void AuthUpdate(bool isAuth)
+    {
+        ChatIsEnabled = isAuth;
     }
 }
