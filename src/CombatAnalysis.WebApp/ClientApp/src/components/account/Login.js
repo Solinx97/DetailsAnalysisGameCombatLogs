@@ -1,12 +1,15 @@
 ﻿import React, { useRef, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { useDispatch } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
+import { userUpdate } from '../../features/UserReducer';
 
 import "../../styles/account/login.scss";
 
 const Login = () => {
     const navigate = useNavigate();
     const { t, i18n } = useTranslation("login");
+    const dispatch = useDispatch();
 
     const [showErrorMessage, setShowErrorMessage] = useState(false);
     const email = useRef(null);
@@ -32,6 +35,9 @@ const Login = () => {
             setShowErrorMessage(true);
         }
         else {
+            const currentUser = await response.json();
+
+            dispatch(userUpdate(currentUser));
             navigate('/');
         }
     }

@@ -35,11 +35,15 @@ const NavMenu = () => {
     }, [])
 
     useEffect(() => {
-        const checkAuthResult = async () => {
+        if (user === null) {
+            return;
+        }
+
+        const checkAuth = async () => {
             await checkAuthAsync();
         }
 
-        checkAuthResult().catch(console.error);
+        checkAuth().catch(console.error);
     });
 
     const changeLanguage = (language) => {
