@@ -1,10 +1,10 @@
 import { faCommentDots, faSquarePlus, faUserPlus, faWindowRestore } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useSelector } from 'react-redux';
 import UserInformation from './../UserInformation';
 
-import "../../../styles/communication/people.scss";
+import '../../../styles/communication/people.scss';
 
 const People = ({ updateCurrentMenuItem }) => {
     const customer = useSelector((state) => state.customer.value);
@@ -108,18 +108,16 @@ const People = ({ updateCurrentMenuItem }) => {
         setPeople(list);
     }
 
-    const peopleListFilter = (value) => {
+    const peopleListFilter = useCallback((value) => {
         if (value.id !== customer.id) {
             return value;
         }
-    }
+    }, [])
 
     const openUserInformationWithTimeout = (customer) => {
-        let timeout = setTimeout(() => {
+        showUserInformationTimeout = setTimeout(() => {
             setUserInformation(<UserInformation customer={customer} closeUserInformation={closeUserInformation} />);
         }, 1000);
-
-        showUserInformationTimeout = timeout;
     }
 
     const openUserInformation = (customer) => {

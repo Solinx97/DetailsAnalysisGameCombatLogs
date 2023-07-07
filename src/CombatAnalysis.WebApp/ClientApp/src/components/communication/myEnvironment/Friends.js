@@ -1,10 +1,10 @@
 import { faCircleXmark, faWindowRestore } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import UserInformation from './../UserInformation';
 
-import "../../../styles/communication/friends.scss";
+import '../../../styles/communication/friends.scss';
 
 const Friends = () => {
     const customer = useSelector((state) => state.customer.value);
@@ -55,9 +55,9 @@ const Friends = () => {
         setFriends(list);
     }
 
-    const openUserInformation = (customer) => {
+    const openUserInformation = useCallback((customer) => {
         setUserInformation(<UserInformation customer={customer} closeUserInformation={closeUserInformation} />);
-    }
+    }, [])
 
     const closeUserInformation = () => {
         setUserInformation(<></>);

@@ -1,9 +1,10 @@
-import { faCircleXmark} from '@fortawesome/free-solid-svg-icons';
+import { faCircleXmark } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { memo } from 'react';
 import { useEffect, useState } from 'react';
 import { NavLink } from 'react-router-dom';
 
-import "./../../styles/communication/userInformation.scss";
+import './../../styles/communication/userInformation.scss';
 
 const UserInformation = ({ customer, closeUserInformation }) => {
     const [friendsCount, setFriendsCount] = useState(0);
@@ -70,4 +71,4 @@ const UserInformation = ({ customer, closeUserInformation }) => {
     return render();
 }
 
-export default UserInformation;
+export default memo(UserInformation);

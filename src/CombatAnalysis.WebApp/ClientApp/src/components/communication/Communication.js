@@ -9,7 +9,7 @@ import MyEnvironment from './myEnvironment/MyEnvironment';
 import Post from './Post';
 import People from './people/People';
 
-import "../../styles/communication/communication.scss";
+import '../../styles/communication/communication.scss';
 import { useEffect } from 'react';
 
 const Communication = () => {
@@ -43,9 +43,7 @@ const Communication = () => {
     const getFriendsIdByUserIdAsync = async () => {
         const response = await fetch(`/api/v1/Friend/searchByUserId/${customer.id}`);
         if (response.status !== 200) {
-            console.log("problem");
-
-            return;
+            return [];
         }
 
         const friends = await response.json();

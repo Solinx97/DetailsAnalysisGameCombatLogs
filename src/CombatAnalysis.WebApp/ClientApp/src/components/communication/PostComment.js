@@ -2,7 +2,7 @@ import { faPen, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { memo, useEffect, useState } from 'react';
 
-import "../../styles/communication/postComment.scss";
+import '../../styles/communication/postComment.scss';
 
 const PostComment = ({ dateFormatting, customerId, postId, updatePostAsync }) => {
     const [commentsList, setCommentsList] = useState(<></>);
@@ -29,7 +29,6 @@ const PostComment = ({ dateFormatting, customerId, postId, updatePostAsync }) =>
             fillPostComments(allComments, editablePostCommentId);
         }
     }
-
 
     const getCustomerByIdAsync = async (customerId) => {
         const response = await fetch(`/api/v1/Customer/${customerId}`);

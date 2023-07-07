@@ -5,7 +5,7 @@ import Friends from './Friends';
 import Profile from './Profile';
 import RequestsToConnect from './RequestsToConnect';
 
-import "../../../styles/communication/myEnvironment.scss";
+import '../../../styles/communication/myEnvironment.scss';
 
 const MyEnvironment = () => {
     const [currentMenuItem, setCurrentMenuItem] = useState(0);

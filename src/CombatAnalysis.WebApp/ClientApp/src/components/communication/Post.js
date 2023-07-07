@@ -5,7 +5,7 @@ import { useSelector } from 'react-redux';
 import PostComment from './PostComment';
 import UserInformation from './UserInformation';
 
-import "../../styles/communication/post.scss";
+import '../../styles/communication/post.scss';
 
 const Post = ({ customersId }) => {
     const customer = useSelector((state) => state.customer.value);
