@@ -1,4 +1,4 @@
-﻿namespace CombatAnalysis.DAL.Entities.User;
+﻿namespace CombatAnalysis.DAL.Entities.Post;
 
 public class Post
 {

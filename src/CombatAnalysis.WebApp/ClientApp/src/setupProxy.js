@@ -31,6 +31,8 @@ const context = [
     "/api/v1/GroupChat",
     "/api/v1/PersonalChat",
     "/api/v1/PersonalChatMessage",
+    "/api/v1/Community",
+    "/api/v1/CommunityUser",
 ];
 
 const onError = (err, req, resp, target) => {

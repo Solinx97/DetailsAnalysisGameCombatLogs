@@ -1,8 +1,10 @@
 ﻿using CombatAnalysis.BL.DTO;
 using CombatAnalysis.BL.DTO.Chat;
+using CombatAnalysis.BL.DTO.Community;
 using CombatAnalysis.BL.Interfaces;
 using CombatAnalysis.BL.Services;
 using CombatAnalysis.BL.Services.Chat;
+using CombatAnalysis.BL.Services.Community;
 using CombatAnalysis.DAL.Extensions;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -23,6 +25,14 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IService<GroupChatDto, int>, GroupChatService>();
         services.AddScoped<IService<GroupChatMessageDto, int>, GroupChatMessageService>();
         services.AddScoped<IService<GroupChatUserDto, int>, GroupChatUserService>();
+
+        services.AddScoped<IService<CommunityDto, int>, CommunityService>();
+        services.AddScoped<IService<CommunityPostDto, int>, CommunityPostService>();
+        services.AddScoped<IService<CommunityPostCommentDto, int>, CommunityPostCommentService>();
+        services.AddScoped<IService<CommunityPostLikeDto, int>, CommunityPostLikeService>();
+        services.AddScoped<IService<CommunityPostDislikeDto, int>, CommunityPostDislikeService>();
+        services.AddScoped<IService<CommunityUserDto, int>, CommunityUserService>();
+        services.AddScoped<IService<InviteToCommunityDto, int>, InviteToCommunityService>();
 
         services.AddScoped<IService<CombatLogDto, int>, CombatLogService>();
         services.AddScoped<IService<CombatLogByUserDto, int>, CombatLogByUserService>();

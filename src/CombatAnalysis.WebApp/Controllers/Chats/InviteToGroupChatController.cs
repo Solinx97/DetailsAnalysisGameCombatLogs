@@ -7,23 +7,23 @@ namespace CombatAnalysis.WebApp.Controllers.Chats;
 
 [Route("api/v1/[controller]")]
 [ApiController]
-public class GroupChatController : ControllerBase
+public class InviteToGroupChatController : ControllerBase
 {
     private readonly IHttpClientHelper _httpClient;
 
-    public GroupChatController(IHttpClientHelper httpClient)
+    public InviteToGroupChatController(IHttpClientHelper httpClient)
     {
         _httpClient = httpClient;
         _httpClient.BaseAddress = Port.ChatApi;
     }
 
     [HttpPost]
-    public async Task<IActionResult> Create(GroupChatModel chat)
+    public async Task<IActionResult> Create(InviteToGroupChatModel chat)
     {
-        var responseMessage = await _httpClient.PostAsync("GroupChat", JsonContent.Create(chat));
+        var responseMessage = await _httpClient.PostAsync("InviteToGroupChat", JsonContent.Create(chat));
         if (responseMessage.StatusCode == System.Net.HttpStatusCode.OK)
         {
-            var groupChat = await responseMessage.Content.ReadFromJsonAsync<GroupChatModel>();
+            var groupChat = await responseMessage.Content.ReadFromJsonAsync<InviteToGroupChatModel>();
             return Ok(groupChat);
         }
 
@@ -33,10 +33,10 @@ public class GroupChatController : ControllerBase
     [HttpGet]
     public async Task<IActionResult> GetAll()
     {
-        var responseMessage = await _httpClient.GetAsync("GroupChat");
+        var responseMessage = await _httpClient.GetAsync("InviteToGroupChat");
         if (responseMessage.StatusCode == System.Net.HttpStatusCode.OK)
         {
-            var groupChats = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<GroupChatModel>>();
+            var groupChats = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<InviteToGroupChatModel>>();
 
             return Ok(groupChats);
         }
@@ -48,10 +48,10 @@ public class GroupChatController : ControllerBase
     [HttpGet("{id}")]
     public async Task<IActionResult> GetById(int id)
     {
-        var responseMessage = await _httpClient.GetAsync($"GroupChat/{id}");
+        var responseMessage = await _httpClient.GetAsync($"InviteToGroupChat/{id}");
         if (responseMessage.StatusCode == System.Net.HttpStatusCode.OK)
         {
-            var groupChat = await responseMessage.Content.ReadFromJsonAsync<GroupChatModel>();
+            var groupChat = await responseMessage.Content.ReadFromJsonAsync<InviteToGroupChatModel>();
 
             return Ok(groupChat);
         }
@@ -61,9 +61,9 @@ public class GroupChatController : ControllerBase
     }
 
     [HttpPut]
-    public async Task<IActionResult> Update(GroupChatModel chat)
+    public async Task<IActionResult> Update(InviteToGroupChatModel chat)
     {
-        var responseMessage = await _httpClient.PutAsync("GroupChat", JsonContent.Create(chat));
+        var responseMessage = await _httpClient.PutAsync("InviteToGroupChat", JsonContent.Create(chat));
         if (responseMessage.StatusCode == System.Net.HttpStatusCode.OK)
         {
             return Ok();

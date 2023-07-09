@@ -1,6 +1,6 @@
-﻿namespace CombatAnalysis.DAL.Entities.Community;
+﻿namespace CombatAnalysis.BL.DTO.Community;
 
-public class CommunityPost
+public class CommunityPostDto
 {
     public int Id { get; set; }
 

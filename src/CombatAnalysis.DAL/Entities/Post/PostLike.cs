@@ -1,6 +1,6 @@
-﻿namespace CombatAnalysis.DAL.Entities.User;
+﻿namespace CombatAnalysis.DAL.Entities.Post;
 
-public class PostDislike
+public class PostLike
 {
     public int Id { get; set; }
 

@@ -1,6 +1,6 @@
-﻿namespace CombatAnalysis.DAL.Entities.Community;
+﻿namespace CombatAnalysis.ChatApi.Models.Community;
 
-public class CommunityPost
+public class CommunityPostModel
 {
     public int Id { get; set; }
 

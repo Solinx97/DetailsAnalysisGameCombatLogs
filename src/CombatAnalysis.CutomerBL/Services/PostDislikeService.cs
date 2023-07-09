@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using CombatAnalysis.CustomerBL.DTO;
 using CombatAnalysis.CustomerBL.Interfaces;
-using CombatAnalysis.DAL.Entities.User;
+using CombatAnalysis.DAL.Entities.Post;
 using CombatAnalysis.DAL.Interfaces;
 
 namespace CombatAnalysis.PostDislikeBL.Services;

@@ -1,0 +1,53 @@
+.communities {
+    display: flex;
+
+    &__my-list {
+        .list {
+            margin: 10px;
+            min-width: 200px;
+        }
+
+        .my-community {
+            display: flex;
+            justify-content: space-between;
+            border: 2px solid gray;
+            margin: 5px;
+            padding: 10px;
+            border-radius: 5px;
+            text-align: center;
+
+            svg {
+                margin: 0 10px;
+            }
+
+            svg:hover {
+                cursor: pointer;
+                transform: scale(1.1);
+            }
+        }
+    }
+
+    &__list {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+
+        .title {
+            display: flex;
+            justify-content: center;
+        }
+
+        ul {
+            display: flex;
+            flex-wrap: wrap;
+
+            .community {
+                margin: 10px;
+
+                .card {
+                    width: 250px;
+                }
+            }
+        }
+    }
+}

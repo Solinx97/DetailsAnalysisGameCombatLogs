@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using CombatAnalysis.CustomerBL.DTO;
+using CombatAnalysis.DAL.Entities.Post;
 using CombatAnalysis.DAL.Entities.User;
 
 namespace CombatAnalysis.CustomerBL.Mapping;

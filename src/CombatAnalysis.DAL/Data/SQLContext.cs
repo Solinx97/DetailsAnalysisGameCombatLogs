@@ -2,6 +2,7 @@
 using CombatAnalysis.DAL.Entities.Authentication;
 using CombatAnalysis.DAL.Entities.Chat;
 using CombatAnalysis.DAL.Entities.Community;
+using CombatAnalysis.DAL.Entities.Post;
 using CombatAnalysis.DAL.Entities.User;
 using CombatAnalysis.DAL.Helpers;
 using Microsoft.EntityFrameworkCore;

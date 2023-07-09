@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useState } from 'react';
 import { useSelector } from 'react-redux';
 import Chats from './chats/Chats';
-import Communities from './Communities';
+import Communities from './community/Communities';
 import Events from './events/Events';
 import MyEnvironment from './myEnvironment/MyEnvironment';
 import Post from './Post';
