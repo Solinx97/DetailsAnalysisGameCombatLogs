@@ -74,7 +74,7 @@ const Communication = () => {
                     {currentMenuItem === 1 ? < FontAwesomeIcon icon={faCircleArrowRight} title="Current action" /> : null}
                     <div>Chats</div>
                 </li>
-                <li className="menu-item_disabled">
+                <li className="menu-item" onClick={() => setCurrentMenuItem(2)}>
                     {currentMenuItem === 2 ? < FontAwesomeIcon icon={faCircleArrowRight} title="Current action" /> : null}
                     <div>Communities</div>
                 </li>

@@ -16,11 +16,11 @@ const Home = () => {
         return (<div>
             <div>
                 <div>Communication <span style={{ display: showAuthNotification ? "flex" : "none" }}>(need be authorized)</span></div>
-                <button onClick={() => navigate("/communication")} disabled={isAuth ? false : true}>Open</button>
+                <button className="btn btn-info" onClick={() => navigate("/communication")} disabled={isAuth ? false : true}>Open</button>
             </div>
             <div>
                 <div>Analyzing of combats</div>
-                <button onClick={() => navigate("/main-information")}>Open</button>
+                <button className="btn btn-info"  onClick={() => navigate("/main-information")}>Open</button>
             </div>
         </div>);
     }
