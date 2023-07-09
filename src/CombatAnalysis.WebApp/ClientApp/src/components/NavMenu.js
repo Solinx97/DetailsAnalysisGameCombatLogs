@@ -35,10 +35,6 @@ const NavMenu = () => {
     }, [])
 
     useEffect(() => {
-        if (user === null) {
-            return;
-        }
-
         const checkAuth = async () => {
             await checkAuthAsync();
         }
