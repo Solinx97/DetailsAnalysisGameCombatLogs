@@ -1,4 +1,5 @@
 ﻿using CombatAnalysis.WebApp.Consts;
+using CombatAnalysis.WebApp.Extensions;
 using CombatAnalysis.WebApp.Interfaces;
 using CombatAnalysis.WebApp.Models.Community;
 using Microsoft.AspNetCore.Mvc;
@@ -14,15 +15,12 @@ public class CommunityUserController : ControllerBase
     public CommunityUserController(IHttpClientHelper httpClient)
     {
         _httpClient = httpClient;
-        _httpClient.BaseAddress = Port.ChatApi;
     }
 
-    [HttpGet("{userId}")]
-    public async Task<IActionResult> GetByIdUserId(string userId)
+    [HttpGet("{id}")]
+    public async Task<IActionResult> GetByIdUserId(string id)
     {
-        _httpClient.BaseAddress = Port.ChatApi;
-
-        var responseMessage = await _httpClient.GetAsync($"CommunityUser/findByUserId/{userId}");
+        var responseMessage = await _httpClient.GetAsync($"CommunityUser/findByUserId/{id}", Port.ChatApi);
         if (responseMessage.StatusCode == System.Net.HttpStatusCode.OK)
         {
             var myGroupChatUser = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<CommunityUserModel>>();
@@ -33,12 +31,10 @@ public class CommunityUserController : ControllerBase
         return BadRequest();
     }
 
-    [HttpGet("findByChatId/{chatId:int:min(1)}")]
-    public async Task<IActionResult> Find(int chatId)
+    [HttpGet("findByChatId/{id:int:min(1)}")]
+    public async Task<IActionResult> Find(int id)
     {
-        _httpClient.BaseAddress = Port.ChatApi;
-
-        var responseMessage = await _httpClient.GetAsync($"CommunityUser/findByChatId/{chatId}");
+        var responseMessage = await _httpClient.GetAsync($"CommunityUser/findByChatId/{id}", Port.ChatApi);
         if (responseMessage.StatusCode == System.Net.HttpStatusCode.OK)
         {
             var groupChatUsers = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<CommunityUserModel>>();
@@ -52,9 +48,7 @@ public class CommunityUserController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> Create(CommunityUserModel user)
     {
-        _httpClient.BaseAddress = Port.ChatApi;
-
-        var responseMessage = await _httpClient.PostAsync("CommunityUser", JsonContent.Create(user));
+        var responseMessage = await _httpClient.PostAsync("CommunityUser", JsonContent.Create(user), Port.ChatApi);
         if (responseMessage.StatusCode == System.Net.HttpStatusCode.OK)
         {
             return Ok();
@@ -66,9 +60,7 @@ public class CommunityUserController : ControllerBase
     [HttpDelete("{id:int:min(1)}")]
     public async Task<IActionResult> Delete(int id)
     {
-        _httpClient.BaseAddress = Port.ChatApi;
-
-        var responseMessage = await _httpClient.DeletAsync($"CommunityUser/{id}");
+        var responseMessage = await _httpClient.DeletAsync($"CommunityUser/{id}", Port.ChatApi);
         if (responseMessage.StatusCode == System.Net.HttpStatusCode.OK)
         {
             return Ok();

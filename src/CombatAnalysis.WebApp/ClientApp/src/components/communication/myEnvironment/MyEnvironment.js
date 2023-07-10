@@ -1,7 +1,6 @@
-import { useState, useEffect } from 'react';
-import { useSelector } from 'react-redux';
-import Post from '../Post';
+import { useState } from 'react';
 import Friends from './Friends';
+import MyFeed from './MyFeed';
 import Profile from './Profile';
 import RequestsToConnect from './RequestsToConnect';
 
@@ -9,17 +8,6 @@ import '../../../styles/communication/myEnvironment.scss';
 
 const MyEnvironment = () => {
     const [currentMenuItem, setCurrentMenuItem] = useState(0);
-    const [myFeed, setMyFeed] = useState(<></>);
-
-    const customer = useSelector((state) => state.customer.value);
-
-    useEffect(() => {
-        setMyFeed(<Post customersId={[customer.id]}/>);
-    }, [])
-
-    useEffect(() => {
-        setMyFeed(<Post customersId={[customer === null ? 0 : customer.id]} />);
-    }, [customer])
 
     const render = () => {
         return (<div className="my-environment">
@@ -39,7 +27,7 @@ const MyEnvironment = () => {
                 </li>
             </ul>
             <div>
-                {currentMenuItem === 0 ? myFeed : null}
+                {currentMenuItem === 0 ? <MyFeed/> : null}
                 {currentMenuItem === 1 ? <Profile /> : null}
                 {currentMenuItem === 2 ? <Friends /> : null}
                 {currentMenuItem === 4 ? <RequestsToConnect /> : null}

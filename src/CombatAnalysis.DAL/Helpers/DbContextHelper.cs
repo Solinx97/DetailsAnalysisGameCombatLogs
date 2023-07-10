@@ -1,7 +1,4 @@
 ﻿using CombatAnalysis.DAL.Entities;
-using CombatAnalysis.DAL.Entities.Authentication;
-using CombatAnalysis.DAL.Entities.Chat;
-using CombatAnalysis.DAL.Entities.User;
 using Microsoft.EntityFrameworkCore;
 using System.Text;
 

@@ -1,4 +1,5 @@
 ﻿using CombatAnalysis.WebApp.Consts;
+using CombatAnalysis.WebApp.Extensions;
 using CombatAnalysis.WebApp.Interfaces;
 using CombatAnalysis.WebApp.Models.Community;
 using Microsoft.AspNetCore.Mvc;
@@ -14,15 +15,12 @@ public class CommunityController : ControllerBase
     public CommunityController(IHttpClientHelper httpClient)
     {
         _httpClient = httpClient;
-        _httpClient.BaseAddress = Port.ChatApi;
     }
 
     [HttpPost]
     public async Task<IActionResult> Create(CommunityModel newCommunity)
     {
-        _httpClient.BaseAddress = Port.ChatApi;
-
-        var responseMessage = await _httpClient.PostAsync("Community", JsonContent.Create(newCommunity));
+        var responseMessage = await _httpClient.PostAsync("Community", JsonContent.Create(newCommunity), Port.ChatApi);
         if (responseMessage.StatusCode == System.Net.HttpStatusCode.OK)
         {
             var community = await responseMessage.Content.ReadFromJsonAsync<CommunityModel>();
@@ -35,9 +33,7 @@ public class CommunityController : ControllerBase
     [HttpGet]
     public async Task<IActionResult> GetAll()
     {
-        _httpClient.BaseAddress = Port.ChatApi;
-
-        var responseMessage = await _httpClient.GetAsync("Community");
+        var responseMessage = await _httpClient.GetAsync("Community", Port.ChatApi);
         if (responseMessage.StatusCode == System.Net.HttpStatusCode.OK)
         {
             var communities = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<CommunityModel>>();
@@ -49,12 +45,10 @@ public class CommunityController : ControllerBase
         return BadRequest();
     }
 
-    [HttpGet("{id}")]
+    [HttpGet("{id:int:min(1)}")]
     public async Task<IActionResult> GetById(int id)
     {
-        _httpClient.BaseAddress = Port.ChatApi;
-
-        var responseMessage = await _httpClient.GetAsync($"Community/{id}");
+        var responseMessage = await _httpClient.GetAsync($"Community/{id}", Port.ChatApi);
         if (responseMessage.StatusCode == System.Net.HttpStatusCode.OK)
         {
             var community = await responseMessage.Content.ReadFromJsonAsync<CommunityModel>();
@@ -69,9 +63,19 @@ public class CommunityController : ControllerBase
     [HttpPut]
     public async Task<IActionResult> Update(CommunityModel chat)
     {
-        _httpClient.BaseAddress = Port.ChatApi;
+        var responseMessage = await _httpClient.PutAsync("Community", JsonContent.Create(chat), Port.ChatApi);
+        if (responseMessage.StatusCode == System.Net.HttpStatusCode.OK)
+        {
+            return Ok();
+        }
 
-        var responseMessage = await _httpClient.PutAsync("Community", JsonContent.Create(chat));
+        return BadRequest();
+    }
+
+    [HttpDelete("{id:int:min(1)}")]
+    public async Task<IActionResult> Delete(int id)
+    {
+        var responseMessage = await _httpClient.DeletAsync($"Community/{id}", Port.ChatApi);
         if (responseMessage.StatusCode == System.Net.HttpStatusCode.OK)
         {
             return Ok();

@@ -1,12 +1,12 @@
+import { faArrowRightToBracket, faCircleInfo } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useEffect, useState } from "react";
 import { NavLink } from 'react-router-dom';
 import CreateCommunity from './CreateCommunity';
-import { faArrowRightToBracket, faCircleInfo } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import '../../../styles/communication/communities.scss';
 
-const Communities = () => {
+const Communities = ({ openCommunity }) => {
     const [showCreateCommunity, setShowCreateCommunity] = useState(false);
     const [communities, setCommunities] = useState(<></>);
     const [myCommunities, setMyCommunities] = useState(<></>);
@@ -69,7 +69,7 @@ const Communities = () => {
                 <div className="card-body">
                     <h5 className="card-title">{element.name}</h5>
                     <p className="card-text">{element.description}</p>
-                    <NavLink className="card-link">Open</NavLink>
+                    <NavLink className="card-link" onClick={() => openCommunity(element.id)}>Open</NavLink>
                     <NavLink className="card-link">Enter</NavLink>
                     <NavLink className="card-link">More details</NavLink>
                 </div>
@@ -83,7 +83,7 @@ const Communities = () => {
                 {element.name}
             </div>
             <div>
-                <FontAwesomeIcon icon={faArrowRightToBracket} title="Open" />
+                <FontAwesomeIcon icon={faArrowRightToBracket} title="Open" onClick={() => openCommunity(element.id)} />
                 <FontAwesomeIcon icon={faCircleInfo} title="Info" />
             </div>
         </li>);

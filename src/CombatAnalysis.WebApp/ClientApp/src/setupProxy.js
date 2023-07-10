@@ -33,6 +33,8 @@ const context = [
     "/api/v1/PersonalChatMessage",
     "/api/v1/Community",
     "/api/v1/CommunityUser",
+    "/api/v1/UserPost",
+    "/api/v1/CommunityPost",
 ];
 
 const onError = (err, req, resp, target) => {

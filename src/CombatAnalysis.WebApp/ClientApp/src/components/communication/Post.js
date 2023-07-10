@@ -7,7 +7,7 @@ import UserInformation from './UserInformation';
 
 import '../../styles/communication/post.scss';
 
-const Post = ({ customersId }) => {
+const Post = ({ selectedPosts, createPostAsync }) => {
     const customer = useSelector((state) => state.customer.value);
 
     const postContentRef = useRef(null);
@@ -36,72 +36,42 @@ const Post = ({ customersId }) => {
 
     const getPostsAsync = async () => {
         let posts = [];
-        for (var i = 0; i < customersId.length; i++) {
-            const newPosts = await getPostsByOwnerIdAsync(customersId[i]);
-            posts = posts.concat(newPosts);
+        for (var i = 0; i < selectedPosts.length; i++) {
+            const post = await getPostByIdAsync(selectedPosts[i].postId);
+            const customer = await getCustomerByIdAsync(post.ownerId);
+            post.username = customer.username;
+            posts.push(post);
         }
 
         fillPosts(posts);
-    }
-
-    const getPostsByOwnerIdAsync = async (ownerId) => {
-        const response = await fetch(`/api/v1/Post/searchByOwnerId/${ownerId}`);
-
-        if (response.status === 200) {
-            let posts = await response.json();
-            for (let i = 0; i < posts.length; i++) {
-                const postCustomer = await getCustomerByIdAsync(posts[i].ownerId);
-                posts[i].username = postCustomer.username;
-            }
-
-            return posts;
-        }
-
-        return [];
-    }
-
-    const getCustomerByIdAsync = async (customerId) => {
-        const response = await fetch(`/api/v1/Customer/${customerId}`);
-
-        if (response.status === 200) {
-            let customer = await response.json();
-            return customer;
-        }
-
-        return null;
     }
 
     const getPostByIdAsync = async (postId) => {
         const response = await fetch(`/api/v1/Post/${postId}`);
 
         if (response.status === 200) {
-            const post = await response.json();
+            let post = await response.json();
+
             return post;
         }
 
         return null;
     }
 
-    const createPostAsync = async () => {
-        const newPost = {
-            id: 0,
-            content: postContentRef.current.value,
-            when: new Date(),
-            likeCount: 0,
-            dislikeCount: 0,
-            postComment: 0,
-            ownerId: customer.id
-        }
-
-        const response = await fetch("/api/v1/Post", {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(newPost)
-        });
+    const getCustomerByIdAsync = async (customerId) => {
+        const response = await fetch(`/api/v1/Customer/${customerId}`);
 
         if (response.status === 200) {
+            const customer = await response.json();
+            return customer;
+        }
+
+        return null;
+    }
+
+    const handleCreatePostAsync = async () => {
+        const isCreated = await createPostAsync(postContentRef.current.value);
+        if (isCreated) {
             postContentRef.current.value = "";
             setShowCreatePost(false);
 
@@ -384,7 +354,7 @@ const Post = ({ customersId }) => {
                         style={{ display: !showCreatePost ? "flex" : "none" }}>New post</button>
                     <div style={{ display: showCreatePost ? "flex" : "none" }}>
                         <button type="button" className="btn btn-outline-warning" onClick={() => setShowCreatePost(false)}>Cancel</button>
-                        <button type="button" className="btn btn-outline-success" onClick={async () => await createPostAsync()}>Create</button>
+                        <button type="button" className="btn btn-outline-success" onClick={async () => await handleCreatePostAsync()}>Create</button>
                     </div>
                 </div>
                 <textarea rows="5" cols="100" ref={postContentRef} style={{ display: showCreatePost ? "flex" : "none" }} />

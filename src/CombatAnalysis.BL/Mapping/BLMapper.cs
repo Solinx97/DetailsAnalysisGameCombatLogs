@@ -2,9 +2,11 @@
 using CombatAnalysis.BL.DTO;
 using CombatAnalysis.BL.DTO.Chat;
 using CombatAnalysis.BL.DTO.Community;
+using CombatAnalysis.BL.DTO.Post;
 using CombatAnalysis.DAL.Entities;
 using CombatAnalysis.DAL.Entities.Chat;
 using CombatAnalysis.DAL.Entities.Community;
+using CombatAnalysis.DAL.Entities.Post;
 
 namespace CombatAnalysis.BL.Mapping;
 
@@ -31,11 +33,13 @@ public class BLMapper : Profile
         CreateMap<ResourceRecoveryDto, ResourceRecovery>().ReverseMap();
         CreateMap<ResourceRecoveryGeneralDto, ResourceRecoveryGeneral>().ReverseMap();
         CreateMap<CommunityDto, Community>().ReverseMap();
-        CreateMap<CommunityPostDto, CommunityPost>().ReverseMap();
-        CreateMap<CommunityPostCommentDto, CommunityPostComment>().ReverseMap();
-        CreateMap<CommunityPostDislikeDto, CommunityPostDislike>().ReverseMap();
-        CreateMap<CommunityPostLikeDto, CommunityPostLike>().ReverseMap();
         CreateMap<CommunityUserDto, CommunityUser>().ReverseMap();
         CreateMap<InviteToCommunityDto, InviteToCommunity>().ReverseMap();
+        CreateMap<PostDto, Post>().ReverseMap();
+        CreateMap<PostLikeDto, PostLike>().ReverseMap();
+        CreateMap<PostDislikeDto, PostDislike>().ReverseMap();
+        CreateMap<PostCommentDto, PostComment>().ReverseMap();
+        CreateMap<CommunityPostDto, CommunityPost>().ReverseMap();
+        CreateMap<UserPostDto, UserPost>().ReverseMap();
     }
 }

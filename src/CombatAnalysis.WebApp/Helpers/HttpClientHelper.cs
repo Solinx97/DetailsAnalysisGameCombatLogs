@@ -4,12 +4,13 @@ namespace CombatAnalysis.WebApp.Helpers;
 
 internal class HttpClientHelper : IHttpClientHelper
 {
-    private const string BaseAddressApi = "api/v1/";
-
     public HttpClientHelper()
     {
         Client = new HttpClient();
+        BaseAddressApi = "api/v1/";
     }
+
+    public string BaseAddressApi { get; }
 
     public HttpClient Client { get; set; }
 

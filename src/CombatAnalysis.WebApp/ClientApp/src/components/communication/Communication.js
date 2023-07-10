@@ -1,37 +1,22 @@
 import { faCircleArrowRight } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useState } from 'react';
-import { useSelector } from 'react-redux';
 import Chats from './chats/Chats';
 import Communities from './community/Communities';
+import SelectedCommunity from './community/SelectedCommunity';
 import Events from './events/Events';
+import Feed from './Feed';
 import MyEnvironment from './myEnvironment/MyEnvironment';
-import Post from './Post';
 import People from './people/People';
 
 import '../../styles/communication/communication.scss';
-import { useEffect } from 'react';
 
 const Communication = () => {
     const [currentMenuItem, setCurrentMenuItem] = useState(0);
+    const [communityId, setCommunityId] = useState(0);
     const [isOpenChat, setIsOpenChat] = useState(false);
     const [initiatorId, setInitiatorId] = useState("");
     const [companionId, setCompanionId] = useState("");
-    const [feed, setFeed] = useState(<></>);
-
-    const customer = useSelector((state) => state.customer.value);
-
-    useEffect(() => {
-        if (customer === null) {
-            return;
-        }
-
-        let getUserFriends = async () => {
-            await getUserFriendsAsync();
-        }
-
-        getUserFriends();
-    }, [customer])
 
     const updateCurrentMenuItem = (menuItem, initiatorId, companionId) => {
         setCurrentMenuItem(menuItem);
@@ -40,27 +25,9 @@ const Communication = () => {
         setCompanionId(companionId);
     }
 
-    const getFriendsIdByUserIdAsync = async () => {
-        const response = await fetch(`/api/v1/Friend/searchByUserId/${customer.id}`);
-        if (response.status !== 200) {
-            return [];
-        }
-
-        const friends = await response.json();
-        let customersId = [];
-        for (var i = 0; i < friends.length; i++) {
-            const customerId = friends[i].whoFriendId === customer.id ? friends[i].forWhomId : friends[i].whoFriendId;
-            customersId.push(customerId);
-        }
-
-        return customersId;
-    }
-
-    const getUserFriendsAsync = async () => {
-        const customerId = await getFriendsIdByUserIdAsync();
-        customerId.push(customer.id);
-
-        setFeed(<Post customersId={customerId} />);
+    const openCommunity = (id) => {
+        setCommunityId(id);
+        setCurrentMenuItem(6);
     }
 
     const render = () => {
@@ -75,7 +42,7 @@ const Communication = () => {
                     <div>Chats</div>
                 </li>
                 <li className="menu-item" onClick={() => setCurrentMenuItem(2)}>
-                    {currentMenuItem === 2 ? < FontAwesomeIcon icon={faCircleArrowRight} title="Current action" /> : null}
+                    {currentMenuItem === 6 || currentMenuItem === 2 ? < FontAwesomeIcon icon={faCircleArrowRight} title="Current action" /> : null}
                     <div>Communities</div>
                 </li>
                 <li className="menu-item" onClick={() => setCurrentMenuItem(3)}>
@@ -92,12 +59,13 @@ const Communication = () => {
                 </li>
             </ul>
             <div className="communication__action">
-                {currentMenuItem === 0 ? feed : null}
+                {currentMenuItem === 0 ? <Feed/> : null}
                 {currentMenuItem === 1 ? <Chats isOpenChat={isOpenChat} initiatorId={initiatorId} companionId={companionId} /> : null}
-                {currentMenuItem === 2 ? <Communities /> : null}
+                {currentMenuItem === 2 ? <Communities openCommunity={openCommunity} /> : null}
                 {currentMenuItem === 3 ? <Events /> : null}
                 {currentMenuItem === 4 ? <People updateCurrentMenuItem={updateCurrentMenuItem} /> : null}
                 {currentMenuItem === 5 ? <MyEnvironment /> : null}
+                {currentMenuItem === 6 ? <SelectedCommunity communityId={communityId} /> : null}
             </div>
         </div>);
     }

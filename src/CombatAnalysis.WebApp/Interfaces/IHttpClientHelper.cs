@@ -1,12 +1,9 @@
-﻿using System;
-using System.Net.Http;
-using System.Net.Http.Json;
-using System.Threading.Tasks;
-
-namespace CombatAnalysis.WebApp.Interfaces
+﻿namespace CombatAnalysis.WebApp.Interfaces
 {
     public interface IHttpClientHelper
     {
+        public string BaseAddressApi { get; }
+
         HttpClient Client { get; set; }
 
         string BaseAddress { get; set; }
