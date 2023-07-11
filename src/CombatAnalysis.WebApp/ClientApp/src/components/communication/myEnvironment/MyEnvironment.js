@@ -5,8 +5,9 @@ import Profile from './Profile';
 import RequestsToConnect from './RequestsToConnect';
 
 import '../../../styles/communication/myEnvironment.scss';
+import MyCommunities from './MyCommunities';
 
-const MyEnvironment = () => {
+const MyEnvironment = ({ openCommunity }) => {
     const [currentMenuItem, setCurrentMenuItem] = useState(0);
 
     const render = () => {
@@ -18,7 +19,7 @@ const MyEnvironment = () => {
                 <li>
                     <button type="button" className="btn btn-outline-info" onClick={() => setCurrentMenuItem(0)}>Feed</button>
                     <button type="button" className="btn btn-outline-info" onClick={() => setCurrentMenuItem(2)}>Friends</button>
-                    <button type="button" className="btn btn-outline-info" onClick={() => setCurrentMenuItem(3)}>Community</button>
+                    <button type="button" className="btn btn-outline-info" onClick={() => setCurrentMenuItem(3)}>Communities</button>
                 </li>
                 <li>
                     <button type="button" className="btn btn-outline-info" onClick={() => setCurrentMenuItem(4)}>Requests</button>
@@ -30,6 +31,7 @@ const MyEnvironment = () => {
                 {currentMenuItem === 0 ? <MyFeed/> : null}
                 {currentMenuItem === 1 ? <Profile /> : null}
                 {currentMenuItem === 2 ? <Friends /> : null}
+                {currentMenuItem === 3 ? <MyCommunities openCommunity={openCommunity} /> : null}
                 {currentMenuItem === 4 ? <RequestsToConnect /> : null}
             </div>
         </div>);

@@ -2,6 +2,7 @@
 using CombatAnalysis.WebApp.Extensions;
 using CombatAnalysis.WebApp.Interfaces;
 using CombatAnalysis.WebApp.Models.Community;
+using CombatAnalysis.WebApp.Models.Post;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CombatAnalysis.WebApp.Controllers.Community;
@@ -17,44 +18,49 @@ public class CommunityUserController : ControllerBase
         _httpClient = httpClient;
     }
 
-    [HttpGet("{id}")]
-    public async Task<IActionResult> GetByIdUserId(string id)
+    [HttpGet("{id:int:min(1)}")]
+    public async Task<IActionResult> GetById(int id)
     {
-        var responseMessage = await _httpClient.GetAsync($"CommunityUser/findByUserId/{id}", Port.ChatApi);
-        if (responseMessage.StatusCode == System.Net.HttpStatusCode.OK)
-        {
-            var myGroupChatUser = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<CommunityUserModel>>();
+        var responseMessage = await _httpClient.GetAsync($"CommunityUser/{id}", Port.ChatApi);
+        var post = await responseMessage.Content.ReadFromJsonAsync<CommunityUserModel>();
 
-            return Ok(myGroupChatUser);
-        }
-
-        return BadRequest();
+        return Ok(post);
     }
 
-    [HttpGet("findByChatId/{id:int:min(1)}")]
-    public async Task<IActionResult> Find(int id)
+    [HttpGet("searchByCommunityId/{id:int:min(1)}")]
+    public async Task<IActionResult> SearchByCommunityId(int id)
     {
-        var responseMessage = await _httpClient.GetAsync($"CommunityUser/findByChatId/{id}", Port.ChatApi);
-        if (responseMessage.StatusCode == System.Net.HttpStatusCode.OK)
-        {
-            var groupChatUsers = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<CommunityUserModel>>();
+        var responseMessage = await _httpClient.GetAsync($"CommunityUser/searchByCommunityId/{id}", Port.ChatApi);
+        var posts = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<CommunityUserModel>>();
 
-            return Ok(groupChatUsers);
-        }
+        return Ok(posts);
+    }
 
-        return BadRequest();
+
+    [HttpGet("searchByUserId/{id}")]
+    public async Task<IActionResult> SearchByUserId(string id)
+    {
+        var responseMessage = await _httpClient.GetAsync($"CommunityUser/searchByUserId/{id}", Port.ChatApi);
+        var posts = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<CommunityUserModel>>();
+
+        return Ok(posts);
+    }
+
+    [HttpPut]
+    public async Task<IActionResult> Update(CommunityUserModel model)
+    {
+        await _httpClient.PutAsync("CommunityUser", JsonContent.Create(model), Port.ChatApi);
+
+        return Ok();
     }
 
     [HttpPost]
-    public async Task<IActionResult> Create(CommunityUserModel user)
+    public async Task<IActionResult> Create(CommunityUserModel model)
     {
-        var responseMessage = await _httpClient.PostAsync("CommunityUser", JsonContent.Create(user), Port.ChatApi);
-        if (responseMessage.StatusCode == System.Net.HttpStatusCode.OK)
-        {
-            return Ok();
-        }
+        var responseMessage = await _httpClient.PostAsync("CommunityUser", JsonContent.Create(model), Port.ChatApi);
+        var post = await responseMessage.Content.ReadFromJsonAsync<CommunityUserModel>();
 
-        return BadRequest();
+        return Ok(post);
     }
 
     [HttpDelete("{id:int:min(1)}")]

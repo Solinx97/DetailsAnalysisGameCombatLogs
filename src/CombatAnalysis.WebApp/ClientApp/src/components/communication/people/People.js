@@ -29,9 +29,9 @@ const People = ({ updateCurrentMenuItem }) => {
         const response = await fetch("/api/v1/Customer");
 
         if (response.status === 200) {
-            const allPeople = await response.json();
+            const people = await response.json();
 
-            fillCards(allPeople);
+            fillPeopleCards(people);
         }
     }
 
@@ -102,8 +102,8 @@ const People = ({ updateCurrentMenuItem }) => {
         }
     }
 
-    const fillCards = (allPeople) => {
-        const list = allPeople.filter(peopleListFilter).map((element) => createPersonalCard(element));
+    const fillPeopleCards = (people) => {
+        const list = people.filter(peopleListFilter).map((element) => createPersonalCard(element));
         
         setPeople(list);
     }
@@ -132,18 +132,18 @@ const People = ({ updateCurrentMenuItem }) => {
         setUserInformation(<></>);
     }
 
-    const createPersonalCard = (element) => {
-        return (<li key={element.id}>
+    const createPersonalCard = (customer) => {
+        return (<li key={customer.id}>
             <div className="card">
                 <div className="card-body">
                     <div>[icon]</div>
-                    <h5 className="card-title" onMouseOver={() => openUserInformationWithTimeout(element)}
-                        onMouseLeave={() => clearUserInformationTimeout()}>{element.username}</h5>
-                    <FontAwesomeIcon icon={faWindowRestore} title="Show details" onClick={() => openUserInformation(element)} />
+                    <h5 className="card-title" onMouseOver={() => openUserInformationWithTimeout(customer)}
+                        onMouseLeave={() => clearUserInformationTimeout()}>{customer.username}</h5>
+                    <FontAwesomeIcon icon={faWindowRestore} title="Show details" onClick={() => openUserInformation(customer)} />
                 </div>
                 <ul className="card__links list-group list-group-flush">
-                    <li className="list-group-item"><FontAwesomeIcon icon={faCommentDots} title="Start chat" onClick={async () => await startChatAsync(element)} /></li>
-                    <li className="list-group-item"><FontAwesomeIcon icon={faUserPlus} title="Request to connect" onClick={async () => await createRequestToConnectAsync(element)} /></li>
+                    <li className="list-group-item"><FontAwesomeIcon icon={faCommentDots} title="Start chat" onClick={async () => await startChatAsync(customer)} /></li>
+                    <li className="list-group-item"><FontAwesomeIcon icon={faUserPlus} title="Request to connect" onClick={async () => await createRequestToConnectAsync(customer)} /></li>
                     <li className="list-group-item"><FontAwesomeIcon icon={faSquarePlus} title="Add to community" /></li>
                 </ul>
             </div>

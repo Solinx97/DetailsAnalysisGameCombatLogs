@@ -5,7 +5,7 @@
     &__menu {
         display: flex;
         flex-direction: column;
-        margin: 10px 0 0 -75px;
+        margin: 0 50px 0 -100px;
         width: 20%;
 
         .menu-item {
@@ -16,7 +16,21 @@
             padding: 0 5px;
             width: 200px;
 
-            div {
+            &__extension {
+                display: flex;
+                flex-direction: column;
+                margin: 0;
+
+                .extension-item {
+                    display: flex;
+                    flex-direction: row;
+                    align-items: center;
+                    justify-content: center;
+                    margin: 0;
+                }
+            }
+
+            .title {
                 margin: 10px;
             }
 
@@ -34,6 +48,6 @@
     }
 
     &__action {
-        width: 90%;
+        width: 100%;
     }
 }

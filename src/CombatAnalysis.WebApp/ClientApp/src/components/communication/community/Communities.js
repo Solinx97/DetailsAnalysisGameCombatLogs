@@ -1,50 +1,42 @@
-import { faArrowRightToBracket, faCircleInfo } from '@fortawesome/free-solid-svg-icons';
+import { faArrowsRotate, faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useEffect, useState } from "react";
 import { NavLink } from 'react-router-dom';
+import MyCommunities from '../myEnvironment/MyCommunities';
 import CreateCommunity from './CreateCommunity';
 
 import '../../../styles/communication/communities.scss';
 
 const Communities = ({ openCommunity }) => {
     const [showCreateCommunity, setShowCreateCommunity] = useState(false);
+    const [showCommunities, setShowCommunities] = useState(true);
     const [communities, setCommunities] = useState(<></>);
-    const [myCommunities, setMyCommunities] = useState(<></>);
+    const [myCommunitiesId, setMyCommunitiesId] = useState([]);
 
     useEffect(() => {
         let getCommunities = async () => {
             await getCommunitiesAsync();
-            await getMyCommunitiesAsync();
         }
 
         getCommunities();
-    }, [])
-
-    useEffect(() => {
-        let getCommunities = async () => {
-            await getCommunitiesAsync();
-            await getMyCommunitiesAsync();
-        }
-
-        getCommunities();
-    }, [showCreateCommunity])
+    }, [myCommunitiesId])
 
     const getCommunitiesAsync = async () => {
+        const newCommunities = [];
         const response = await fetch('api/v1/Community');
 
-        if (response.status === 200) {
-            const myCommunities = await response.json();
-            fillCommunities(myCommunities);
+        if (response.status !== 200) {
+            return;
         }
-    }
 
-    const getMyCommunitiesAsync = async () => {
-        const response = await fetch('api/v1/Community');
-
-        if (response.status === 200) {
-            const myCommunities = await response.json();
-            fillMyCommunities(myCommunities);
+        const communities = await response.json();
+        for (var i = 0; i < communities.length; i++) {
+            if (myCommunitiesId.indexOf(communities[i].id) === -1) {
+                newCommunities.push(communities[i]);
+            }
         }
+
+        fillCommunities(newCommunities);
     }
 
     const fillCommunities = (communities) => {
@@ -55,21 +47,13 @@ const Communities = ({ openCommunity }) => {
         setCommunities(list);
     }
 
-    const fillMyCommunities = (communities) => {
-        const list = communities.length !== 0
-            ? communities.map((element) => createMyCommunityCard(element))
-            : (<div className="community__empty">You don't have any communities</div>);
-
-        setMyCommunities(list);
-    }
-
-    const createCommunityCard = (element) => {
-        return (<li key={element.id} className="community">
+    const createCommunityCard = (community) => {
+        return (<li key={community.id} className="community">
             <div className="card">
                 <div className="card-body">
-                    <h5 className="card-title">{element.name}</h5>
-                    <p className="card-text">{element.description}</p>
-                    <NavLink className="card-link" onClick={() => openCommunity(element.id)}>Open</NavLink>
+                    <h5 className="card-title">{community.name}</h5>
+                    <p className="card-text">{community.description}</p>
+                    <NavLink className="card-link" onClick={() => openCommunity(community)}>Open</NavLink>
                     <NavLink className="card-link">Enter</NavLink>
                     <NavLink className="card-link">More details</NavLink>
                 </div>
@@ -77,38 +61,26 @@ const Communities = ({ openCommunity }) => {
         </li>);
     }
 
-    const createMyCommunityCard = (element) => {
-        return (<li key={element.id} className="my-community">
-            <div>
-                {element.name}
-            </div>
-            <div>
-                <FontAwesomeIcon icon={faArrowRightToBracket} title="Open" onClick={() => openCommunity(element.id)} />
-                <FontAwesomeIcon icon={faCircleInfo} title="Info" />
-            </div>
-        </li>);
-    }
-
     const render = () => {
         return (<div className="communities">
-            <div className="communities__my-list">
-                <div className="create">
-                    <button type="button" className="btn btn-success" onClick={() => setShowCreateCommunity(!showCreateCommunity)}>Create</button>
-                </div>
-                <div className="list">
-                    <p>My communities</p>
-                    <ul>
-                        {myCommunities}
-                    </ul>
-                </div>
-            </div>
+            <MyCommunities openCommunity={openCommunity} setMyCommunitiesId={setMyCommunitiesId} />
             <div className="communities__list">
                 <div className="title">
-                    <p>Communities</p>
+                    <div className="content">
+                        <FontAwesomeIcon icon={faArrowsRotate} title="Refresh" onClick={async () => await getCommunitiesAsync()} />
+                        <div>Communities</div>
+                        {showCommunities
+                            ? <FontAwesomeIcon icon={faEye} title="Hide" onClick={() => setShowCommunities(false)} />
+                            : <FontAwesomeIcon icon={faEyeSlash} title="Show" onClick={() => setShowCommunities(true)} />
+                        }
+                    </div>
                 </div>
-                <ul>
-                    {communities} 
-                </ul>
+                {showCommunities
+                    ? <ul>
+                        {communities}
+                    </ul>
+                    : null
+                }
             </div>
             {showCreateCommunity &&
                 <CreateCommunity setShowCreateCommunity={setShowCreateCommunity} />

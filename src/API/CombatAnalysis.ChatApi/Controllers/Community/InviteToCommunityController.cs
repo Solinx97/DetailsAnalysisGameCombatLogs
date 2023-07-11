@@ -37,6 +37,14 @@ public class InviteToCommunityController : ControllerBase
         return Ok(result);
     }
 
+    [HttpGet("searchByUserId/{id}")]
+    public async Task<IActionResult> SearchByUserId(string id)
+    {
+        var result = await _service.GetByParamAsync(nameof(InviteToCommunityModel.ToCustomerId), id);
+
+        return Ok(result);
+    }
+
     [HttpPost]
     public async Task<IActionResult> Create(InviteToCommunityModel model)
     {

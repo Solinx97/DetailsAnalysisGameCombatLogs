@@ -60,6 +60,15 @@ public class InviteToCommunityController : ControllerBase
         return BadRequest();
     }
 
+    [HttpGet("searchByUserId/{id}")]
+    public async Task<IActionResult> SearchByUserId(string id)
+    {
+        var responseMessage = await _httpClient.GetAsync($"InviteToCommunity/searchByUserId/{id}", Port.ChatApi);
+        var posts = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<InviteToCommunityModel>>();
+
+        return Ok(posts);
+    }
+
     [HttpPut]
     public async Task<IActionResult> Update(InviteToCommunityModel chat)
     {

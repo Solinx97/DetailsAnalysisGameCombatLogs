@@ -86,7 +86,7 @@ const RequestToConnect = () => {
                 setShowErrorMessage(false);
             }, timeForHideNotifications);
 
-            return
+            return;
         }
 
         response = await fetch(`/api/v1/RequestToConnect/${request.id}`, {
@@ -118,7 +118,7 @@ const RequestToConnect = () => {
         });
 
         if (response.status !== 200) {
-            console.log(3);
+            return;
         }
 
         setShowRejectMessage(true);
@@ -137,7 +137,7 @@ const RequestToConnect = () => {
         });
 
         if (response.status !== 200) {
-            console.log(3);
+            return;
         }
 
         setShowCancelMessage(true);
@@ -148,14 +148,14 @@ const RequestToConnect = () => {
         await getMyRequestsAsync();
     }
 
-    const requestsCard = (element) => {
-        return (<li key={element.id} className="request-to-connect">
-            <div>{element.username}</div>
+    const requestsCard = (request) => {
+        return (<li key={request.id} className="request-to-connect">
+            <div>{request.username}</div>
             <div className="request-to-connect__answer">
                 <div className="accept"><FontAwesomeIcon icon={faCircleCheck} title="Accept"
-                    onClick={async () => await acceptRequestAsync(element)} /></div>
+                    onClick={async () => await acceptRequestAsync(request)} /></div>
                 <div className="reject"><FontAwesomeIcon icon={faCircleXmark} title="Reject"
-                    onClick={async () => await rejectRequestAsync(element.id)} /></div>
+                    onClick={async () => await rejectRequestAsync(request.id)} /></div>
             </div>
         </li>);
     }

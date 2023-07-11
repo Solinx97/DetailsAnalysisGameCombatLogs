@@ -47,9 +47,9 @@ const Friends = () => {
         await getFriendsAsync();
     }
 
-    const fillFriends = (myFriends) => {
-        const list = myFriends.length !== 0
-            ? myFriends.map((element) => createCard(element))
+    const fillFriends = (friends) => {
+        const list = friends.length !== 0
+            ? friends.map((element) => createCard(element))
             : (<div className="friends__empty">You don't have any friends</div>);
 
         setFriends(list);
@@ -63,14 +63,14 @@ const Friends = () => {
         setUserInformation(<></>);
     }
 
-    const createCard = (element) => {
-        return (<li key={element.id} className="friend">
+    const createCard = (friedn) => {
+        return (<li key={friedn.id} className="friend">
             <div className="friend__details">
-                <FontAwesomeIcon icon={faWindowRestore} title="Show details" onClick={() => openUserInformation(element)} />
+                <FontAwesomeIcon icon={faWindowRestore} title="Show details" onClick={() => openUserInformation(friedn)} />
             </div>
-            <div>{element.username}</div>
+            <div>{friedn.username}</div>
             <div className="friend__remove">
-                <FontAwesomeIcon icon={faCircleXmark} title="Remove" onClick={async () => await removeFriendAsync(element.id)} />
+                <FontAwesomeIcon icon={faCircleXmark} title="Remove" onClick={async () => await removeFriendAsync(friedn.id)} />
             </div>
         </li>);
     }

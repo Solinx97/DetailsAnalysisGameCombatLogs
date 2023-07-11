@@ -13,7 +13,7 @@ import '../../styles/communication/communication.scss';
 
 const Communication = () => {
     const [currentMenuItem, setCurrentMenuItem] = useState(0);
-    const [communityId, setCommunityId] = useState(0);
+    const [community, setCommunity] = useState(null);
     const [isOpenChat, setIsOpenChat] = useState(false);
     const [initiatorId, setInitiatorId] = useState("");
     const [companionId, setCompanionId] = useState("");
@@ -25,9 +25,14 @@ const Communication = () => {
         setCompanionId(companionId);
     }
 
-    const openCommunity = (id) => {
-        setCommunityId(id);
+    const openCommunity = (community) => {
+        setCommunity(community);
         setCurrentMenuItem(6);
+    }
+
+    const closeCommunity = () => {
+        setCommunity(null);
+        setCurrentMenuItem(2);
     }
 
     const render = () => {
@@ -35,27 +40,38 @@ const Communication = () => {
             <ul className="communication__menu">
                 <li className="menu-item" onClick={() => setCurrentMenuItem(0)}>
                     {currentMenuItem === 0 ? < FontAwesomeIcon icon={faCircleArrowRight} title="Current action" /> : null}
-                    <div>Feed</div>
+                    <div className="title">Feed</div>
                 </li>
                 <li className="menu-item" onClick={() => setCurrentMenuItem(1)}>
                     {currentMenuItem === 1 ? < FontAwesomeIcon icon={faCircleArrowRight} title="Current action" /> : null}
-                    <div>Chats</div>
+                    <div className="title">Chats</div>
                 </li>
-                <li className="menu-item" onClick={() => setCurrentMenuItem(2)}>
-                    {currentMenuItem === 6 || currentMenuItem === 2 ? < FontAwesomeIcon icon={faCircleArrowRight} title="Current action" /> : null}
-                    <div>Communities</div>
+                <li>
+                    <div className="menu-item" onClick={() => setCurrentMenuItem(2)}>
+                        {currentMenuItem === 2 ? < FontAwesomeIcon icon={faCircleArrowRight} title="Current action" /> : null}
+                        <div className="title">Communities</div>
+                    </div>
+                    <ul>
+                        {currentMenuItem === 6
+                            ? <li className="menu-item">
+                                {currentMenuItem === 6 ? < FontAwesomeIcon icon={faCircleArrowRight} title="Current action" /> : null}
+                                <div className="title">{community.name}</div>
+                              </li>
+                            : <li></li>
+                        }
+                    </ul>
                 </li>
                 <li className="menu-item" onClick={() => setCurrentMenuItem(3)}>
                     {currentMenuItem === 3 ? < FontAwesomeIcon icon={faCircleArrowRight} title="Current action" /> : null}
-                    <div>Events</div>
+                    <div className="title">Events</div>
                 </li>
                 <li className="menu-item" onClick={() => setCurrentMenuItem(4)}>
                     {currentMenuItem === 4 ? < FontAwesomeIcon icon={faCircleArrowRight} title="Current action" /> : null }
-                    <div>People</div>
+                    <div className="title">People</div>
                 </li>
                 <li className="menu-item" onClick={() => setCurrentMenuItem(5)}>
                     {currentMenuItem === 5 ? < FontAwesomeIcon icon={faCircleArrowRight} title="Current action" /> : null}
-                    <div>My environment</div>
+                    <div className="title">My environment</div>
                 </li>
             </ul>
             <div className="communication__action">
@@ -64,8 +80,8 @@ const Communication = () => {
                 {currentMenuItem === 2 ? <Communities openCommunity={openCommunity} /> : null}
                 {currentMenuItem === 3 ? <Events /> : null}
                 {currentMenuItem === 4 ? <People updateCurrentMenuItem={updateCurrentMenuItem} /> : null}
-                {currentMenuItem === 5 ? <MyEnvironment /> : null}
-                {currentMenuItem === 6 ? <SelectedCommunity communityId={communityId} /> : null}
+                {currentMenuItem === 5 ? <MyEnvironment openCommunity={openCommunity} /> : null}
+                {currentMenuItem === 6 ? <SelectedCommunity community={community} closeCommunity={closeCommunity} /> : null}
             </div>
         </div>);
     }

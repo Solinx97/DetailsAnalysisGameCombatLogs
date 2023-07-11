@@ -86,11 +86,11 @@ const Feed = () => {
         return false;
     }
 
-    const createUserPostAsync = async (psotId) => {
+    const createUserPostAsync = async (postId) => {
         const newUserPost = {
             id: 0,
             userId: customer.id,
-            postId: psotId
+            postId: postId
         }
 
         const response = await fetch("/api/v1/UserPost", {
