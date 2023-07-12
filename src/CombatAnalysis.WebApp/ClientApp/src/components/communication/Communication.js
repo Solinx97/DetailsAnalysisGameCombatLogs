@@ -1,6 +1,6 @@
 import { faCircleArrowRight } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import Chats from './chats/Chats';
 import Communities from './community/Communities';
 import SelectedCommunity from './community/SelectedCommunity';
@@ -25,15 +25,15 @@ const Communication = () => {
         setCompanionId(companionId);
     }
 
-    const openCommunity = (community) => {
+    const openCommunity = useCallback((community) => {
         setCommunity(community);
         setCurrentMenuItem(6);
-    }
+    }, [currentMenuItem]);
 
-    const closeCommunity = () => {
+    const closeCommunity = useCallback(() => {
         setCommunity(null);
         setCurrentMenuItem(2);
-    }
+    }, []);
 
     const render = () => {
         return (<div className="communication">

@@ -3,6 +3,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useEffect, useState } from "react";
 import { useSelector } from 'react-redux';
 import { NavLink } from 'react-router-dom';
+import CreateCommunity from './CreateCommunity';
 
 import '../../../styles/communication/communities.scss';
 
@@ -118,17 +119,16 @@ const MyCommunities = ({ openCommunity, setMyCommunitiesId = () => { return; } }
                     <h5 className="card-title">{community.name}</h5>
                     <p className="card-text">{community.description}</p>
                     <NavLink className="card-link" onClick={() => openCommunity(community)}>Open</NavLink>
-                    <NavLink className="card-link">Enter</NavLink>
                     <NavLink className="card-link">More details</NavLink>
                 </div>
             </div>
         </li>);
     }
 
-    const acceptRequestAsync = async (inviteToCommunityId) => {
+    const acceptRequestAsync = async (inviteToCommunity) => {
         const newCommunityUser = {
             id: 0,
-            communityId: inviteToCommunityId,
+            communityId: inviteToCommunity.communityId,
             customerId: customer.id
         };
 
@@ -144,7 +144,7 @@ const MyCommunities = ({ openCommunity, setMyCommunitiesId = () => { return; } }
             return;
         }
 
-        response = await fetch(`/api/v1/InviteToCommunity/${inviteToCommunityId}`, {
+        response = await fetch(`/api/v1/InviteToCommunity/${inviteToCommunity.id}`, {
             method: 'DELETE',
         });
 
@@ -155,8 +155,8 @@ const MyCommunities = ({ openCommunity, setMyCommunitiesId = () => { return; } }
         await getInvitesToCommunityAsync();
     }
 
-    const rejectRequestAsync = async (inviteToCommunityId) => {
-        const response = await fetch(`/api/v1/RequestToConnect/${inviteToCommunityId}`, {
+    const rejectRequestAsync = async (inviteToCommunity) => {
+        const response = await fetch(`/api/v1/InviteToCommunity/${inviteToCommunity.id}`, {
             method: 'DELETE',
         });
 
@@ -172,9 +172,9 @@ const MyCommunities = ({ openCommunity, setMyCommunitiesId = () => { return; } }
             <div>'{inviteToCommunity.username}' sent you invite to '{inviteToCommunity.community}'</div>
             <div className="request-to-connect__answer">
                 <div className="accept"><FontAwesomeIcon icon={faCircleCheck} title="Accept"
-                    onClick={async () => await acceptRequestAsync(inviteToCommunity.id)}/></div>
+                    onClick={async () => await acceptRequestAsync(inviteToCommunity)} /></div>
                 <div className="reject"><FontAwesomeIcon icon={faCircleXmark} title="Reject"
-                    onClick={async () => await rejectRequestAsync(inviteToCommunity.id)}/></div>
+                    onClick={async () => await rejectRequestAsync(inviteToCommunity)} /></div>
             </div>
         </li>);
     }
@@ -206,6 +206,9 @@ const MyCommunities = ({ openCommunity, setMyCommunitiesId = () => { return; } }
                     : null
                 }
             </div>
+            {showCreateCommunity &&
+                <CreateCommunity setShowCreateCommunity={setShowCreateCommunity} />
+            }
         </div>);
     }
 

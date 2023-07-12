@@ -3,12 +3,10 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useEffect, useState } from "react";
 import { NavLink } from 'react-router-dom';
 import MyCommunities from '../myEnvironment/MyCommunities';
-import CreateCommunity from './CreateCommunity';
 
 import '../../../styles/communication/communities.scss';
 
 const Communities = ({ openCommunity }) => {
-    const [showCreateCommunity, setShowCreateCommunity] = useState(false);
     const [showCommunities, setShowCommunities] = useState(true);
     const [communities, setCommunities] = useState(<></>);
     const [myCommunitiesId, setMyCommunitiesId] = useState([]);
@@ -54,7 +52,6 @@ const Communities = ({ openCommunity }) => {
                     <h5 className="card-title">{community.name}</h5>
                     <p className="card-text">{community.description}</p>
                     <NavLink className="card-link" onClick={() => openCommunity(community)}>Open</NavLink>
-                    <NavLink className="card-link">Enter</NavLink>
                     <NavLink className="card-link">More details</NavLink>
                 </div>
             </div>
@@ -82,9 +79,6 @@ const Communities = ({ openCommunity }) => {
                     : null
                 }
             </div>
-            {showCreateCommunity &&
-                <CreateCommunity setShowCreateCommunity={setShowCreateCommunity} />
-            }
         </div>);
     }
 

@@ -1,4 +1,4 @@
-    import React, { useRef } from 'react';
+import React, { useRef } from 'react';
 import { useSelector } from 'react-redux';
 
 import '../../../styles/communication/createCommunity.scss';
@@ -14,7 +14,7 @@ const CreateCommunity = ({ setShowCreateCommunity }) => {
         const data = {
             name: name.current.value,
             description: description.current.value,
-            communityPolicyType: policy.current.value,
+            communityPolicyType: +policy.current.value,
             ownerId: customer.id
         };
 
@@ -71,8 +71,12 @@ const CreateCommunity = ({ setShowCreateCommunity }) => {
                     <input type="text" className="form-control" id="inputDescription" ref={description} />
                 </div>
                 <div className="mb-3">
-                    <label htmlFor="inputPolicy" className="form-label">Policy</label>
-                    <input type="number" className="form-control" id="inputPolicy" ref={policy} />
+                    <label htmlFor="inputDescription" className="form-label">Policy</label>
+                    <select className="form-select" ref={policy}>
+                        <option value="1">Open</option>
+                        <option value="2">Close</option>
+                        <option value="3">Close (use link)</option>
+                    </select>
                 </div>
                 <div>
                     <input type="submit" className="btn btn-primary" value="Create" />

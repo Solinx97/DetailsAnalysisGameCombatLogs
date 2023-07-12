@@ -6,31 +6,42 @@
     &__content {
         width: 100%;
 
-        .title {
+        .header {
             display: flex;
-            justify-content: start;
+            justify-content: space-between;
             align-items: center;
-            max-width: 25%;
 
-            div {
-                margin: 10px 25px;
-                padding: 10px 20px;
-                box-shadow: 3px 3px 3px 3px gray;
-                border-radius: 20px;
+            .title {
+                display: flex;
+                justify-content: start;
+                align-items: center;
+                max-width: 25%;
+
+                div {
+                    margin: 10px 25px;
+                    padding: 10px 20px;
+                    box-shadow: 3px 3px 3px 3px gray;
+                    border-radius: 20px;
+                }
+
+                div:hover {
+                    cursor: pointer;
+                    box-shadow: 3px 3px 3px 3px green;
+                }
+
+                svg:hover {
+                    cursor: pointer;
+                    transform: scale(1.25);
+                }
             }
 
-            div:hover {
-                cursor: pointer;
-                box-shadow: 3px 3px 3px 3px green;
-            }
-
-            svg:hover {
-                cursor: pointer;
-                transform: scale(1.25);
+            .leave {
+                margin: 0 50px;
             }
         }
 
-        .add-new-people {
+
+        .add-new-people, .remove-people, .leave-from-community {
             position: absolute;
             display: flex;
             flex-direction: column;
@@ -58,10 +69,10 @@
 
     &__topics {
         padding: 0;
-        margin: 0 50px;
+        width: 25%;
 
         li {
-            margin: 10px;
+            margin: 10px 0;
         }
 
         .members {
@@ -70,8 +81,15 @@
                 flex-direction: row;
                 justify-content: start;
 
+                .tool {
+                    display: flex;
+                    justify-content: space-around;
+                    align-items: center;
+                    margin: 0 10px;
+                }
+
                 svg {
-                    margin: 0 20px;
+                    margin: 0 10px;
                 }
 
                 svg:hover {
@@ -81,15 +99,29 @@
             }
 
             .member {
-                padding: 5px 10px;
-                border-radius: 5px;
-                font-weight: bold;
-            }
+                display: flex;
 
-            .member:hover {
-                cursor: pointer;
-                transform: scale(1.1);
-                box-shadow: 2px 2px 2px 2px gray;
+                &__username {
+                    padding: 5px 10px;
+                    border-radius: 5px;
+                    align-items: center;
+                    font-weight: bold;
+                }
+
+                &__username:hover {
+                    cursor: pointer;
+                    transform: scale(1.1);
+                    box-shadow: 2px 2px 2px 2px gray;
+                }
+
+                svg {
+                    margin: 10px 20px;
+                    color: red;
+                }
+
+                svg:hover {
+                    cursor: pointer;
+                }
             }
         }
     }
