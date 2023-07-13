@@ -7,10 +7,11 @@ import UserInformation from './UserInformation';
 
 import '../../styles/communication/post.scss';
 
-const Post = ({ selectedPostsType, createPostAsync, updatePostsAsync }) => {
+const Post = ({ selectedPostsType, createPostAsync, updatePostsAsync, setShowUpdatingAlert }) => {
     const customer = useSelector((state) => state.customer.value);
 
     const postContentRef = useRef(null);
+
     const [posts, setPosts] = useState(<></>);
     const [userInformation, setUserInformation] = useState(<></>);
     const [showCreatePost, setShowCreatePost] = useState(false);
@@ -23,8 +24,15 @@ const Post = ({ selectedPostsType, createPostAsync, updatePostsAsync }) => {
             await getPostsAsync();
         }
 
+        setShowUpdatingAlert(true);
         getPosts();
     }, [selectedPostsType])
+
+    useEffect(() => {
+        if (posts.key === undefined) {
+            setShowUpdatingAlert(false);
+        }
+    }, [posts])
 
     const getPostsAsync = async () => {
         const searchedPosts = [];
@@ -342,12 +350,17 @@ const Post = ({ selectedPostsType, createPostAsync, updatePostsAsync }) => {
         setShowCreatePost(!showCreatePost);
     }
 
+    const handleUpdatePostsAsync = async () => {
+        setShowUpdatingAlert(true);
+        await updatePostsAsync();
+    }
+
     const render = () => {
         return (<div>
             <div className="create-post">
                 <div>
                     <div className="create-post__tool" style={{ display: !showCreatePost ? "flex" : "none" }}>
-                        <FontAwesomeIcon icon={faArrowsRotate} title="Refresh" onClick={async () => updatePostsAsync()} />
+                        <FontAwesomeIcon icon={faArrowsRotate} title="Refresh" onClick={async () => handleUpdatePostsAsync()} />
                         <button type="button" className="btn btn-outline-info" onClick={handleCreatePostVisisbility}>New post</button>
                     </div>
                     <div style={{ display: showCreatePost ? "flex" : "none" }} className="create-post__create-tool">

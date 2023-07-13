@@ -3,6 +3,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useEffect, useState } from "react";
 import { NavLink } from 'react-router-dom';
 import MyCommunities from '../myEnvironment/MyCommunities';
+import Alert from '../../Alert';
 
 import '../../../styles/communication/communities.scss';
 
@@ -10,6 +11,7 @@ const Communities = ({ openCommunity }) => {
     const [showCommunities, setShowCommunities] = useState(true);
     const [communities, setCommunities] = useState(<></>);
     const [myCommunitiesId, setMyCommunitiesId] = useState([]);
+    const [showUpdatingAlert, setShowUpdatingAlert] = useState(false);
 
     useEffect(() => {
         let getCommunities = async () => {
@@ -17,7 +19,16 @@ const Communities = ({ openCommunity }) => {
         }
 
         getCommunities();
-    }, [myCommunitiesId])
+    }, [])
+
+    useEffect(() => {
+        if (communities.key === undefined || communities.key === null) {
+            setShowUpdatingAlert(false);
+        }
+        else {
+            setShowUpdatingAlert(true);
+        }
+    }, [communities])
 
     const getCommunitiesAsync = async () => {
         const newCommunities = [];
@@ -35,6 +46,11 @@ const Communities = ({ openCommunity }) => {
         }
 
         fillCommunities(newCommunities);
+    }
+
+    const updateCommunitiesAsync = async () => {
+        setShowUpdatingAlert(true);
+        await getCommunitiesAsync()
     }
 
     const fillCommunities = (communities) => {
@@ -64,11 +80,12 @@ const Communities = ({ openCommunity }) => {
 
     const render = () => {
         return (<div className="communities">
+            <Alert isVisible={showUpdatingAlert} />
             <MyCommunities openCommunity={openCommunity} setMyCommunitiesId={setMyCommunitiesId} />
             <div className="communities__list">
                 <div className="title">
                     <div className="content">
-                        <FontAwesomeIcon icon={faArrowsRotate} title="Refresh" onClick={async () => await getCommunitiesAsync()} />
+                        <FontAwesomeIcon icon={faArrowsRotate} title="Refresh" onClick={async () => await updateCommunitiesAsync()} />
                         <div>Communities</div>
                         {showCommunities
                             ? <FontAwesomeIcon icon={faEye} title="Hide" onClick={handleCommunityVisibility} />

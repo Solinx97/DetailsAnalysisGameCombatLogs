@@ -1,8 +1,9 @@
 import { faArrowRightToBracket, faEye, faEyeSlash, faGear, faPlus, faTrash, faUserPlus } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useSelector } from 'react-redux';
 import Post from '../Post';
+import Alert from '../../Alert';
 
 import '../../../styles/communication/selectedCommunity.scss';
 
@@ -20,6 +21,7 @@ const SelectedCommunity = ({ community, closeCommunity }) => {
     const [showRemovePeopleAlert, setShowRemovePeopleAlert] = useState(false);
     const [showLeaveFromCommunityAlert, setShowLeaveFromCommunityAlert] = useState(false);
     const [showDescription, setShowDescription] = useState(true);
+    const [showUpdatingAlert, setShowUpdatingAlert] = useState(true);
     const [memberForRemove, setMemberForRemove] = useState(null);
 
     useEffect(() => {
@@ -31,7 +33,7 @@ const SelectedCommunity = ({ community, closeCommunity }) => {
             await getCommunityPostsAsync();
             await getCommunityUsersAsync();
         }
-
+;
         getPosts();
     }, [])
 
@@ -77,7 +79,7 @@ const SelectedCommunity = ({ community, closeCommunity }) => {
         }
 
         const communityPosts = await response.json();
-        setFeed(<Post selectedPostsType={communityPosts} createPostAsync={createPostAsync} updatePostsAsync={getCommunityPostsAsync} />);
+        setFeed(<Post selectedPostsType={communityPosts} createPostAsync={createPostAsync} updatePostsAsync={getCommunityPostsAsync} setShowUpdatingAlert={setShowUpdatingAlert} />);
     }
 
     const createPostAsync = async (postContent) => {
@@ -305,6 +307,7 @@ const SelectedCommunity = ({ community, closeCommunity }) => {
     const render = () => {
         return (<div className="selected-community">
             <div className="selected-community__content">
+                <Alert isVisible={showUpdatingAlert} />
                 <div className="header">
                     <div className="title">
                         <FontAwesomeIcon icon={faArrowRightToBracket} title="Close" onClick={closeCommunity} />
