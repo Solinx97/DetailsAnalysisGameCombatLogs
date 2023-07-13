@@ -58,6 +58,10 @@ const Communities = ({ openCommunity }) => {
         </li>);
     }
 
+    const handleCommunityVisibility = () => {
+        setShowCommunities(!showCommunities);
+    }
+
     const render = () => {
         return (<div className="communities">
             <MyCommunities openCommunity={openCommunity} setMyCommunitiesId={setMyCommunitiesId} />
@@ -67,8 +71,8 @@ const Communities = ({ openCommunity }) => {
                         <FontAwesomeIcon icon={faArrowsRotate} title="Refresh" onClick={async () => await getCommunitiesAsync()} />
                         <div>Communities</div>
                         {showCommunities
-                            ? <FontAwesomeIcon icon={faEye} title="Hide" onClick={() => setShowCommunities(false)} />
-                            : <FontAwesomeIcon icon={faEyeSlash} title="Show" onClick={() => setShowCommunities(true)} />
+                            ? <FontAwesomeIcon icon={faEye} title="Hide" onClick={handleCommunityVisibility} />
+                            : <FontAwesomeIcon icon={faEyeSlash} title="Show" onClick={handleCommunityVisibility} />
                         }
                     </div>
                 </div>

@@ -179,6 +179,14 @@ const MyCommunities = ({ openCommunity, setMyCommunitiesId = () => { return; } }
         </li>);
     }
 
+    const handleCreateCommunityVisibility = () => {
+        setShowCreateCommunity(!showCreateCommunity);
+    }
+
+    const handleCommunityVisibility = () => {
+        setShowMyCommunities(!showMyCommunities);
+    }
+
     const render = () => {
         return (<div>
             <div>
@@ -189,13 +197,13 @@ const MyCommunities = ({ openCommunity, setMyCommunitiesId = () => { return; } }
             </div>
             <div className="communities__list">
                 <div className="title">
-                    <button type="button" className="btn btn-success" onClick={() => setShowCreateCommunity(!showCreateCommunity)}>Create</button>
+                    <button type="button" className="btn btn-success" onClick={handleCreateCommunityVisibility}>Create</button>
                     <div className="content">
                         <FontAwesomeIcon icon={faArrowsRotate} title="Refresh" onClick={async () => await getUserCommunitiesAsync()} />
                         <div>My communities</div>
                         {showMyCommunities
-                            ? <FontAwesomeIcon icon={faEye} title="Hide" onClick={() => setShowMyCommunities(false)} />
-                            : <FontAwesomeIcon icon={faEyeSlash} title="Show" onClick={() => setShowMyCommunities(true)} />
+                            ? <FontAwesomeIcon icon={faEye} title="Hide" onClick={handleCommunityVisibility} />
+                            : <FontAwesomeIcon icon={faEyeSlash} title="Show" onClick={handleCommunityVisibility} />
                         }
                     </div>
                 </div>

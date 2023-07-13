@@ -55,7 +55,7 @@ const Feed = () => {
         customersId.push(customer.id);
 
         const userPosts = await getUserPostsAsync(customersId);
-        setFeed(<Post selectedPosts={userPosts} createPostAsync={createPostAsync} />);
+        setFeed(<Post selectedPostsType={userPosts} createPostAsync={createPostAsync} />);
     }
 
     const createPostAsync = async (postContent) => {

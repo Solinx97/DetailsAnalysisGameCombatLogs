@@ -15,18 +15,22 @@
                 display: flex;
                 justify-content: start;
                 align-items: center;
-                max-width: 25%;
 
-                div {
+                &__name {
                     margin: 10px 25px;
                     padding: 10px 20px;
                     box-shadow: 3px 3px 3px 3px gray;
                     border-radius: 20px;
                 }
 
-                div:hover {
+                &__name:hover {
                     cursor: pointer;
                     box-shadow: 3px 3px 3px 3px green;
+                }
+
+                &__policy {
+                    opacity: 0.6;
+                    cursor: default;
                 }
 
                 svg:hover {
@@ -40,6 +44,34 @@
             }
         }
 
+        .description {
+            display: flex;
+            flex-direction: column;
+
+            &__title {
+                display: flex;
+                align-items: center;
+                margin: 10px 0;
+                cursor: default;
+
+                svg {
+                    margin: 0 15px;
+                    cursor: pointer;
+                }
+
+                svg:hover {
+                    transform: scale(1.1);
+                }
+            }
+
+            &__content {
+                padding: 15px;
+                border: 2px solid gray;
+                border-radius: 20px;
+                width: 70%;
+                margin: 0 25px;
+            }
+        }
 
         .add-new-people, .remove-people, .leave-from-community {
             position: absolute;

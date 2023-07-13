@@ -8,13 +8,13 @@ const CreateCommunity = ({ setShowCreateCommunity }) => {
 
     const name = useRef(null);
     const description = useRef(null);
-    const policy = useRef(null);
+    const policyType = useRef(null);
 
     const createCommunityAsync = async () => {
         const data = {
             name: name.current.value,
             description: description.current.value,
-            communityPolicyType: +policy.current.value,
+            policyType: +policyType.current.value,
             ownerId: customer.id
         };
 
@@ -72,7 +72,7 @@ const CreateCommunity = ({ setShowCreateCommunity }) => {
                 </div>
                 <div className="mb-3">
                     <label htmlFor="inputDescription" className="form-label">Policy</label>
-                    <select className="form-select" ref={policy}>
+                    <select className="form-select" ref={policyType}>
                         <option value="1">Open</option>
                         <option value="2">Close</option>
                         <option value="3">Close (use link)</option>

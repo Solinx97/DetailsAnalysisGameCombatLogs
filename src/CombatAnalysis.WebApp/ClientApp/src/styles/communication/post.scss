@@ -6,9 +6,23 @@
     padding: 10px 50px;
     width: auto;
 
-    button {
-        margin: 10px;
-        width: 100px;
+    &__tool, &__create-tool {
+        display: flex;
+        align-items: center;
+
+        button {
+            margin: 10px;
+            width: 100px;
+        }
+        
+        svg {
+            margin: 0 25px;
+            cursor: pointer;
+        }
+
+        svg:hover {
+            transform: scale(1.1);
+        }
     }
 }
 

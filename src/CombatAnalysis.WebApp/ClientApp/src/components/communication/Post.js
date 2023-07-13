@@ -1,4 +1,4 @@
-import { faHeart, faMessage, faThumbsDown, faWindowRestore } from '@fortawesome/free-solid-svg-icons';
+import { faArrowsRotate, faHeart, faMessage, faThumbsDown, faWindowRestore } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useEffect, useRef, useState } from "react";
 import { useSelector } from 'react-redux';
@@ -7,7 +7,7 @@ import UserInformation from './UserInformation';
 
 import '../../styles/communication/post.scss';
 
-const Post = ({ selectedPosts, createPostAsync }) => {
+const Post = ({ selectedPostsType, createPostAsync, updatePostsAsync }) => {
     const customer = useSelector((state) => state.customer.value);
 
     const postContentRef = useRef(null);
@@ -24,26 +24,18 @@ const Post = ({ selectedPosts, createPostAsync }) => {
         }
 
         getPosts();
-    }, [])
-
-    useEffect(() => {
-        let getPosts = async () => {
-            await getPostsAsync();
-        }
-
-        getPosts();
-    }, [showComments, selectedPostCommentId, userInformation])
+    }, [selectedPostsType])
 
     const getPostsAsync = async () => {
-        let posts = [];
-        for (var i = 0; i < selectedPosts.length; i++) {
-            const post = await getPostByIdAsync(selectedPosts[i].postId);
+        const searchedPosts = [];
+        for (let i = 0; i < selectedPostsType.length; i++) {
+            const post = await getPostByIdAsync(selectedPostsType[i].postId);
             const customer = await getCustomerByIdAsync(post.ownerId);
             post.username = customer.username;
-            posts.push(post);
+            searchedPosts.push(post);
         }
 
-        fillPosts(posts);
+        fillPosts(searchedPosts);
     }
 
     const getPostByIdAsync = async (postId) => {
@@ -346,14 +338,21 @@ const Post = ({ selectedPosts, createPostAsync }) => {
         return formatted;
     }
 
+    const handleCreatePostVisisbility = () => {
+        setShowCreatePost(!showCreatePost);
+    }
+
     const render = () => {
         return (<div>
             <div className="create-post">
                 <div>
-                    <button type="button" className="btn btn-outline-info" onClick={() => setShowCreatePost(true)}
-                        style={{ display: !showCreatePost ? "flex" : "none" }}>New post</button>
-                    <div style={{ display: showCreatePost ? "flex" : "none" }}>
-                        <button type="button" className="btn btn-outline-warning" onClick={() => setShowCreatePost(false)}>Cancel</button>
+                    <div className="create-post__tool" style={{ display: !showCreatePost ? "flex" : "none" }}>
+                        <FontAwesomeIcon icon={faArrowsRotate} title="Refresh" onClick={async () => updatePostsAsync()} />
+                        <button type="button" className="btn btn-outline-info" onClick={handleCreatePostVisisbility}>New post</button>
+                    </div>
+                    <div style={{ display: showCreatePost ? "flex" : "none" }} className="create-post__create-tool">
+                        <FontAwesomeIcon icon={faArrowsRotate} title="Refresh" onClick={async () => updatePostsAsync()} />
+                        <button type="button" className="btn btn-outline-warning" onClick={handleCreatePostVisisbility}>Cancel</button>
                         <button type="button" className="btn btn-outline-success" onClick={async () => await handleCreatePostAsync()}>Create</button>
                     </div>
                 </div>
