@@ -3,6 +3,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useCallback, useState } from 'react';
 import Chats from './chats/Chats';
 import Communities from './community/Communities';
+import CommunityItem from './community/CommunityItem';
 import SelectedCommunity from './community/SelectedCommunity';
 import Events from './events/Events';
 import Feed from './Feed';
@@ -51,15 +52,10 @@ const Communication = () => {
                         {currentMenuItem === 2 ? < FontAwesomeIcon icon={faCircleArrowRight} title="Current action" /> : null}
                         <div className="title">Communities</div>
                     </div>
-                    <ul>
-                        {currentMenuItem === 6
-                            ? <li className="menu-item">
-                                {currentMenuItem === 6 ? < FontAwesomeIcon icon={faCircleArrowRight} title="Current action" /> : null}
-                                <div className="title">{community.name}</div>
-                              </li>
-                            : <li></li>
-                        }
-                    </ul>
+                    {currentMenuItem === 6
+                        ? <CommunityItem currentMenuItem={currentMenuItem} community={community} />
+                        : null
+                    }
                 </li>
                 <li className="menu-item" onClick={() => setCurrentMenuItem(3)}>
                     {currentMenuItem === 3 ? < FontAwesomeIcon icon={faCircleArrowRight} title="Current action" /> : null}
@@ -75,7 +71,7 @@ const Communication = () => {
                 </li>
             </ul>
             <div className="communication__action">
-                {currentMenuItem === -1 ? <Feed/> : null}
+                {currentMenuItem === 0 ? <Feed/> : null}
                 {currentMenuItem === 1 ? <Chats isOpenChat={isOpenChat} initiatorId={initiatorId} companionId={companionId} /> : null}
                 {currentMenuItem === 2 ? <Communities openCommunity={openCommunity} /> : null}
                 {currentMenuItem === 3 ? <Events /> : null}

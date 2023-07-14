@@ -1,8 +1,9 @@
 import { faCircleXmark, faWindowRestore } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import UserInformation from './../UserInformation';
+import RequestsToConnect from './RequestsToConnect';
 
 import '../../../styles/communication/friends.scss';
 
@@ -23,8 +24,6 @@ const Friends = () => {
     const getFriendsAsync = async () => {
         const response = await fetch(`/api/v1/Friend/searchByUserId/${customer.id}`);
         if (response.status !== 200) {
-            console.log("problem");
-
             return;
         }
 
@@ -39,8 +38,6 @@ const Friends = () => {
         });
 
         if (response.status !== 200) {
-            console.log("problem");
-
             return;
         }
 
@@ -55,9 +52,12 @@ const Friends = () => {
         setFriends(list);
     }
 
-    const openUserInformation = useCallback((customer) => {
-        setUserInformation(<UserInformation customer={customer} closeUserInformation={closeUserInformation} />);
-    }, [])
+    const openUserInformation = (customer) => {
+        setUserInformation(<UserInformation
+            customer={customer}
+            closeUserInformation={closeUserInformation}
+        />);
+    }
 
     const closeUserInformation = () => {
         setUserInformation(<></>);
@@ -66,17 +66,26 @@ const Friends = () => {
     const createCard = (friedn) => {
         return (<li key={friedn.id} className="friend">
             <div className="friend__details">
-                <FontAwesomeIcon icon={faWindowRestore} title="Show details" onClick={() => openUserInformation(friedn)} />
+                <FontAwesomeIcon
+                    icon={faWindowRestore}
+                    title="Show details"
+                    onClick={() => openUserInformation(friedn)}
+                />
             </div>
             <div>{friedn.username}</div>
             <div className="friend__remove">
-                <FontAwesomeIcon icon={faCircleXmark} title="Remove" onClick={async () => await removeFriendAsync(friedn.id)} />
+                <FontAwesomeIcon
+                    icon={faCircleXmark}
+                    title="Remove"
+                    onClick={async () => await removeFriendAsync(friedn.id)}
+                />
             </div>
         </li>);
     }
 
     const render = () => {
         return (<div className="friends">
+            <RequestsToConnect />
             <div>
                 <div>Friends</div>
             </div>

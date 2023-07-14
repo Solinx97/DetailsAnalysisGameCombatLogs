@@ -31,7 +31,7 @@ const UserInformation = ({ customer, closeUserInformation }) => {
     const render = () => {
         return (<div className="user-information">
             <div className="user-information__menu">
-                <FontAwesomeIcon icon={faCircleXmark} title="Close" onClick={() => closeUserInformation()} />
+                <FontAwesomeIcon icon={faCircleXmark} title="Close" onClick={closeUserInformation} />
             </div>
             <div className="user-information__username">
                 {customer.username}

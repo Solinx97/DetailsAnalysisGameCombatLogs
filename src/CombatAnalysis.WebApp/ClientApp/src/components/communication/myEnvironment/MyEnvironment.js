@@ -1,11 +1,10 @@
 import { useState } from 'react';
 import Friends from './Friends';
+import MyCommunities from './MyCommunities';
 import MyFeed from './MyFeed';
 import Profile from './Profile';
-import RequestsToConnect from './RequestsToConnect';
 
 import '../../../styles/communication/myEnvironment.scss';
-import MyCommunities from './MyCommunities';
 
 const MyEnvironment = ({ openCommunity }) => {
     const [currentMenuItem, setCurrentMenuItem] = useState(0);
@@ -22,8 +21,6 @@ const MyEnvironment = ({ openCommunity }) => {
                     <button type="button" className="btn btn-outline-info" onClick={() => setCurrentMenuItem(3)}>Communities</button>
                 </li>
                 <li>
-                    <button type="button" className="btn btn-outline-info" onClick={() => setCurrentMenuItem(4)}>Requests</button>
-                    <button type="button" className="btn btn-outline-info" onClick={() => setCurrentMenuItem(5)}>Invites</button>
                     <button type="button" className="btn btn-outline-info" onClick={() => setCurrentMenuItem(6)}>Recomendations</button>
                 </li>
             </ul>
@@ -32,7 +29,6 @@ const MyEnvironment = ({ openCommunity }) => {
                 {currentMenuItem === 1 ? <Profile /> : null}
                 {currentMenuItem === 2 ? <Friends /> : null}
                 {currentMenuItem === 3 ? <MyCommunities openCommunity={openCommunity} /> : null}
-                {currentMenuItem === 4 ? <RequestsToConnect /> : null}
             </div>
         </div>);
     }

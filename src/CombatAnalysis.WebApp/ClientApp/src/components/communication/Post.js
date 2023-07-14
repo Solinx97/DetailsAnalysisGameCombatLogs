@@ -233,7 +233,7 @@ const Post = ({ selectedPostsType, createPostAsync, updatePostsAsync, setShowUpd
     }
 
     const postCommentsHandler = (postId) => {
-        setShowComments(!showComments);
+        setShowComments((item) => !item);
         if (selectedPostCommentId !== postId) {
             setShowComments(true);
         }
@@ -346,10 +346,6 @@ const Post = ({ selectedPostsType, createPostAsync, updatePostsAsync, setShowUpd
         return formatted;
     }
 
-    const handleCreatePostVisisbility = () => {
-        setShowCreatePost(!showCreatePost);
-    }
-
     const handleUpdatePostsAsync = async () => {
         setShowUpdatingAlert(true);
         await updatePostsAsync();
@@ -361,11 +357,11 @@ const Post = ({ selectedPostsType, createPostAsync, updatePostsAsync, setShowUpd
                 <div>
                     <div className="create-post__tool" style={{ display: !showCreatePost ? "flex" : "none" }}>
                         <FontAwesomeIcon icon={faArrowsRotate} title="Refresh" onClick={async () => handleUpdatePostsAsync()} />
-                        <button type="button" className="btn btn-outline-info" onClick={handleCreatePostVisisbility}>New post</button>
+                        <button type="button" className="btn btn-outline-info" onClick={() => setShowCreatePost((item) => !item)}>New post</button>
                     </div>
                     <div style={{ display: showCreatePost ? "flex" : "none" }} className="create-post__create-tool">
                         <FontAwesomeIcon icon={faArrowsRotate} title="Refresh" onClick={async () => updatePostsAsync()} />
-                        <button type="button" className="btn btn-outline-warning" onClick={handleCreatePostVisisbility}>Cancel</button>
+                        <button type="button" className="btn btn-outline-warning" onClick={() => setShowCreatePost((item) => !item)}>Cancel</button>
                         <button type="button" className="btn btn-outline-success" onClick={async () => await handleCreatePostAsync()}>Create</button>
                     </div>
                 </div>

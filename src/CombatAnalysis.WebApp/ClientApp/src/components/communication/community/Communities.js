@@ -10,37 +10,39 @@ import '../../../styles/communication/communities.scss';
 const Communities = ({ openCommunity }) => {
     const [showCommunities, setShowCommunities] = useState(true);
     const [communities, setCommunities] = useState(<></>);
-    const [myCommunitiesId, setMyCommunitiesId] = useState([]);
+    const [userCommunitiesId, setUserCommunitiesId] = useState([]);
     const [showUpdatingAlert, setShowUpdatingAlert] = useState(false);
 
     useEffect(() => {
+        if (userCommunitiesId.length === 0) {
+            return;
+        }
+
         let getCommunities = async () => {
             await getCommunitiesAsync();
         }
 
         getCommunities();
-    }, [])
+    }, [userCommunitiesId])
 
     useEffect(() => {
-        if (communities.key === undefined || communities.key === null) {
-            setShowUpdatingAlert(false);
-        }
-        else {
-            setShowUpdatingAlert(true);
-        }
+        communities.key === undefined || communities.key === null 
+            ? setShowUpdatingAlert(false)
+            : setShowUpdatingAlert(true);
     }, [communities])
 
     const getCommunitiesAsync = async () => {
         const newCommunities = [];
-        const response = await fetch('api/v1/Community');
 
+        setShowUpdatingAlert(true);
+        const response = await fetch('api/v1/Community');
         if (response.status !== 200) {
             return;
         }
 
         const communities = await response.json();
         for (var i = 0; i < communities.length; i++) {
-            if (myCommunitiesId.indexOf(communities[i].id) === -1) {
+            if (userCommunitiesId.indexOf(communities[i].id) === -1) {
                 newCommunities.push(communities[i]);
             }
         }
@@ -48,15 +50,10 @@ const Communities = ({ openCommunity }) => {
         fillCommunities(newCommunities);
     }
 
-    const updateCommunitiesAsync = async () => {
-        setShowUpdatingAlert(true);
-        await getCommunitiesAsync()
-    }
-
     const fillCommunities = (communities) => {
         const list = communities.length !== 0
             ? communities.map((element) => createCommunityCard(element))
-            : (<div className="community__empty">You don't have any communities</div>);
+            : (<div className="community__empty">Didn't found any communities</div>);
 
         setCommunities(list);
     }
@@ -80,16 +77,34 @@ const Communities = ({ openCommunity }) => {
 
     const render = () => {
         return (<div className="communities">
-            <Alert isVisible={showUpdatingAlert} />
-            <MyCommunities openCommunity={openCommunity} setMyCommunitiesId={setMyCommunitiesId} />
+            <Alert
+                isVisible={showUpdatingAlert}
+                content="Updating..."
+            />
+            <MyCommunities
+                openCommunity={openCommunity}
+                setUserCommunitiesId={setUserCommunitiesId}
+            />
             <div className="communities__list">
                 <div className="title">
                     <div className="content">
-                        <FontAwesomeIcon icon={faArrowsRotate} title="Refresh" onClick={async () => await updateCommunitiesAsync()} />
+                        <FontAwesomeIcon
+                            icon={faArrowsRotate}
+                            title="Refresh"
+                            onClick={async () => await getCommunitiesAsync()}
+                        />
                         <div>Communities</div>
                         {showCommunities
-                            ? <FontAwesomeIcon icon={faEye} title="Hide" onClick={handleCommunityVisibility} />
-                            : <FontAwesomeIcon icon={faEyeSlash} title="Show" onClick={handleCommunityVisibility} />
+                            ? <FontAwesomeIcon
+                                icon={faEye}
+                                title="Hide"
+                                onClick={handleCommunityVisibility}
+                            />
+                            : <FontAwesomeIcon
+                                icon={faEyeSlash}
+                                title="Show"
+                                onClick={handleCommunityVisibility}
+                            />
                         }
                     </div>
                 </div>

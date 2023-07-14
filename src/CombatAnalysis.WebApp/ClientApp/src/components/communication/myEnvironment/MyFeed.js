@@ -1,11 +1,13 @@
 import { useEffect, useState } from "react";
 import { useSelector } from 'react-redux';
 import Post from '../Post';
+import Alert from '../../Alert';
 
 const MyFeed = () => {
     const customer = useSelector((state) => state.customer.value);
 
     const [feed, setFeed] = useState(<></>);
+    const [showUpdatingAlert, setShowUpdatingAlert] = useState(true);
 
     useEffect(() => {
         if (customer === null) {
@@ -37,7 +39,12 @@ const MyFeed = () => {
         const customersId = [customer.id];
 
         const userPosts = await getUserPostsAsync(customersId);
-        setFeed(<Post selectedPosts={userPosts} createPostAsync={createPostAsync} />);
+        setFeed(<Post
+            selectedPostsType={userPosts}
+            createPostAsync={createPostAsync}
+            updatePostsAsync={getPostsAsync}
+            setShowUpdatingAlert={setShowUpdatingAlert}
+        />);
     }
 
     const createPostAsync = async (postContent) => {
@@ -91,9 +98,13 @@ const MyFeed = () => {
     }
 
     const render = () => {
-        return (<>
+        return (<div>
+            <Alert
+                isVisible={showUpdatingAlert}
+                content="Updating..."
+            />
             {feed}
-        </>)
+        </div>)
     }
 
     return render();

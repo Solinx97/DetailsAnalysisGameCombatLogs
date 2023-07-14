@@ -152,10 +152,20 @@ const RequestToConnect = () => {
         return (<li key={request.id} className="request-to-connect">
             <div>{request.username}</div>
             <div className="request-to-connect__answer">
-                <div className="accept"><FontAwesomeIcon icon={faCircleCheck} title="Accept"
-                    onClick={async () => await acceptRequestAsync(request)} /></div>
-                <div className="reject"><FontAwesomeIcon icon={faCircleXmark} title="Reject"
-                    onClick={async () => await rejectRequestAsync(request.id)} /></div>
+                <div className="accept">
+                    <FontAwesomeIcon
+                        icon={faCircleCheck}
+                        title="Accept"
+                        onClick={async () => await acceptRequestAsync(request)}
+                    />
+                </div>
+                <div className="reject">
+                    <FontAwesomeIcon
+                        icon={faCircleXmark}
+                        title="Reject"
+                        onClick={async () => await rejectRequestAsync(request.id)}
+                    />
+                </div>
             </div>
         </li>);
     }
@@ -164,13 +174,50 @@ const RequestToConnect = () => {
         return (<li key={element.id} className="request-to-connect">
             <div>{element.username}</div>
             <div className="request-to-connect__answer">
-                <div className="reject"><FontAwesomeIcon icon={faCircleXmark} title="Cancel"
-                    onClick={async () => await cancelMyRequestAsync(element.id)} /></div>
+                <div className="reject">
+                    <FontAwesomeIcon
+                        icon={faCircleXmark}
+                        title="Cancel"
+                        onClick={async () => await cancelMyRequestAsync(element.id)}
+                    />
+                </div>
             </div>
         </li>);
     }
 
-    const render = () => {
+    const myRequestsPanel = () => {
+        return (
+            <div className="my-requests">
+                <div className="my-requests__title">
+                    <div>My requests</div>
+                    <FontAwesomeIcon
+                        icon={faRotate}
+                        title="Update"
+                        onClick={async () => await getMyRequestsAsync()}
+                    />
+                </div>
+                <ul>{myRequestsToConnect}</ul>
+            </div>
+        );
+    }
+
+    const fromAnotherPeopleRequestsPanel = () => {
+        return (
+            <div className="requests">
+                <div className="requests__title">
+                    <div>Requests</div>
+                    <FontAwesomeIcon
+                        icon={faRotate}
+                        title="Update"
+                        onClick={async () => await getRequestsAsync()}
+                    />
+                </div>
+                <ul>{requestsToConnect}</ul>
+            </div>
+        );
+    }
+
+    const requestsPanel = () => {
         return (<div>
             <div className="request-notifications">
                 <div style={{ display: showErrorMessage ? "flex" : "none" }}>Something wrong. Try again</div>
@@ -178,22 +225,18 @@ const RequestToConnect = () => {
                 <div className="request-notifications__reject" style={{ display: showRejectMessage ? "flex" : "none" }}>You rejected request to connect</div>
                 <div className="request-notifications__reject" style={{ display: showCancelMessage ? "flex" : "none" }}>You canceled your request to connect</div>
             </div>
-            <div className="requests">
-                <div className="requests__title">
-                    <div>Requests</div>
-                    <FontAwesomeIcon icon={faRotate} title="Update" onClick={async () => await getRequestsAsync()} />
-                </div>
-                <ul>{requestsToConnect}</ul>
-            </div>
-            <div className="my-requests">
-                <div className="my-requests__title">
-                    <div>My requests</div>
-                    <FontAwesomeIcon icon={faRotate} title="Update" onClick={async () => await getMyRequestsAsync()} />
-                </div>
-                <ul>{myRequestsToConnect}</ul>
-            </div>
-
+            {myRequestsToConnect.length !== undefined ? myRequestsPanel() : null }
+            {requestsToConnect.length !== undefined ? fromAnotherPeopleRequestsPanel() : null }
         </div>);
+    }
+
+    const render = () => {
+        if (myRequestsToConnect.length === undefined
+            && requestsToConnect.length === undefined) {
+            return (<></>);
+        }
+
+        return requestsPanel();
     }
 
     return render();

@@ -3,17 +3,19 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useEffect, useState } from "react";
 import { useSelector } from 'react-redux';
 import { NavLink } from 'react-router-dom';
+import Alert from '../../Alert';
 import CreateCommunity from './CreateCommunity';
 
 import '../../../styles/communication/communities.scss';
 
-const MyCommunities = ({ openCommunity, setMyCommunitiesId = () => { return; } }) => {
+const MyCommunities = ({ openCommunity, setUserCommunitiesId = null }) => {
     const customer = useSelector((state) => state.customer.value);
 
     const [showCreateCommunity, setShowCreateCommunity] = useState(false);
     const [showMyCommunities, setShowMyCommunities] = useState(true);
-    const [myCommunities, setMyCommunities] = useState(<></>);
+    const [communities, setCommunities] = useState(<></>);
     const [invitesToCommunity, setInvitesToCommunity] = useState(<></>);
+    const [showUpdatingAlert, setShowUpdatingAlert] = useState(false);
 
     useEffect(() => {
         let getMyCommunities = async () => {
@@ -23,6 +25,12 @@ const MyCommunities = ({ openCommunity, setMyCommunitiesId = () => { return; } }
 
         getMyCommunities();
     }, [])
+
+    useEffect(() => {
+        communities.key === undefined || communities.key === null
+            ? setShowUpdatingAlert(false)
+            : setShowUpdatingAlert(true);
+    }, [communities])
 
     const getInvitesToCommunityAsync = async () => {
         const response = await fetch(`api/v1/InviteToCommunity/searchByUserId/${customer.id}`);
@@ -69,19 +77,23 @@ const MyCommunities = ({ openCommunity, setMyCommunitiesId = () => { return; } }
         const myCommunities = [];
         const myCommunitiesId = [];
 
+        setShowUpdatingAlert(true);
         const response = await fetch(`api/v1/CommunityUser/searchByUserId/${customer.id}`);
         if (response.status !== 200) {
             return;
         }
 
         const userCommunities = await response.json();
-        for (var i = 0; i < userCommunities.length; i++) {
+        for (let i = 0; i < userCommunities.length; i++) {
             const myCommunity = await getMyCommunityAsync(userCommunities[i].communityId);
             myCommunities.push(myCommunity);
             myCommunitiesId.push(userCommunities[i].communityId);
         }
 
-        setMyCommunitiesId(myCommunitiesId);
+        if (setUserCommunitiesId != null) {
+            setUserCommunitiesId(myCommunitiesId);
+        }
+
         fillMyCommunities(myCommunities);
     }
 
@@ -101,7 +113,7 @@ const MyCommunities = ({ openCommunity, setMyCommunitiesId = () => { return; } }
             ? communities.map((element) => createMyCommunityCard(element))
             : (<div className="community__empty">You don't have any communities</div>);
 
-        setMyCommunities(list);
+        setCommunities(list);
     }
 
     const fillInvitesToCommunity = (communities) => {
@@ -179,38 +191,37 @@ const MyCommunities = ({ openCommunity, setMyCommunitiesId = () => { return; } }
         </li>);
     }
 
-    const handleCreateCommunityVisibility = () => {
-        setShowCreateCommunity(!showCreateCommunity);
-    }
-
-    const handleCommunityVisibility = () => {
-        setShowMyCommunities(!showMyCommunities);
-    }
-
     const render = () => {
         return (<div>
-            <div>
-                <div>Invites to community</div>
-                <ul>
-                    {invitesToCommunity}
-                </ul>
-            </div>
+            <Alert
+                isVisible={showUpdatingAlert}
+                content="Updating..."
+            />
+            {invitesToCommunity.length !== undefined
+                ? <div className="invite-to-community">
+                    <div>Invites to community</div>
+                    <ul>
+                        {invitesToCommunity}
+                    </ul>
+                  </div>
+                : null
+            }
             <div className="communities__list">
                 <div className="title">
-                    <button type="button" className="btn btn-success" onClick={handleCreateCommunityVisibility}>Create</button>
+                    <button type="button" className="btn btn-success" onClick={() => setShowCreateCommunity((item) => !item)}>Create</button>
                     <div className="content">
                         <FontAwesomeIcon icon={faArrowsRotate} title="Refresh" onClick={async () => await getUserCommunitiesAsync()} />
                         <div>My communities</div>
                         {showMyCommunities
-                            ? <FontAwesomeIcon icon={faEye} title="Hide" onClick={handleCommunityVisibility} />
-                            : <FontAwesomeIcon icon={faEyeSlash} title="Show" onClick={handleCommunityVisibility} />
+                            ? <FontAwesomeIcon icon={faEye} title="Hide" onClick={() => setShowMyCommunities((item) => !item)} />
+                            : <FontAwesomeIcon icon={faEyeSlash} title="Show" onClick={() => setShowMyCommunities((item) => !item)} />
                         }
                     </div>
                 </div>
                 {showMyCommunities
                     ? <ul>
-                        {myCommunities}
-                    </ul>
+                        {communities}
+                      </ul>
                     : null
                 }
             </div>
