@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { userUpdate } from '../../features/UserReducer';
+import useHttpClientAsync from '../../hooks/useHttpClientAsync';
 
 import "../../styles/account/login.scss";
 
@@ -10,6 +11,8 @@ const Login = () => {
     const navigate = useNavigate();
     const { t, i18n } = useTranslation("login");
     const dispatch = useDispatch();
+
+    const [, , postAsync] = useHttpClientAsync();
 
     const [showErrorMessage, setShowErrorMessage] = useState(false);
     const email = useRef(null);
@@ -23,23 +26,16 @@ const Login = () => {
             password: password.current.value
         };
 
-        const response = await fetch('api/v1/Account', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(data)
-        });
-
-        if (response.status === 404) {
+        const dataState = await postAsync("Account", data);
+        if (dataState.statusCode === 404) {
             setShowErrorMessage(true);
+            return;
         }
-        else {
-            const currentUser = await response.json();
 
-            dispatch(userUpdate(currentUser));
-            navigate('/');
-        }
+        const user = dataState.data;
+        dispatch(userUpdate(user));
+
+        navigate('/');
     }
 
     const handleSubmitAsync = async (event) => {
@@ -49,18 +45,20 @@ const Login = () => {
     }
 
     const render = () => {
-        return (<form className="login" onSubmit={handleSubmitAsync}>
-            <div className="mb-3">
-                <label htmlFor="inputEmail" className="form-label">{t("Email")}</label>
-                <input type="email" className="form-control" id="inputEmail" aria-describedby="emailHelp" ref={email} />
-            </div>
-            <div className="mb-3">
-                <label htmlFor="inputPassword" className="form-label">{t("Password")}</label>
-                <input type="password" className="form-control" id="inputPassword" ref={password} />
-            </div>
-            <input type="submit" className="btn btn-primary" value="Login" />
-            <div className="login__error-message" style={{ display: showErrorMessage ? "flex" : "none" }}>Incorrect email/password. Try again</div>
-        </form>);
+        return (
+            <form className="login" onSubmit={handleSubmitAsync}>
+                <div className="mb-3">
+                    <label htmlFor="inputEmail" className="form-label">{t("Email")}</label>
+                    <input type="email" className="form-control" id="inputEmail" aria-describedby="emailHelp" ref={email} />
+                </div>
+                <div className="mb-3">
+                    <label htmlFor="inputPassword" className="form-label">{t("Password")}</label>
+                    <input type="password" className="form-control" id="inputPassword" ref={password} />
+                </div>
+                <input type="submit" className="btn btn-primary" value="Login" />
+                <div className="login__error-message" style={{ display: showErrorMessage ? "flex" : "none" }}>Incorrect email/password. Try again</div>
+            </form>
+        );
     }
 
     return render();

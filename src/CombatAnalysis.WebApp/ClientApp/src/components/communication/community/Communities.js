@@ -2,16 +2,35 @@ import { faArrowsRotate, faEye, faEyeSlash } from '@fortawesome/free-solid-svg-i
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useEffect, useState } from "react";
 import { NavLink } from 'react-router-dom';
-import MyCommunities from '../myEnvironment/MyCommunities';
+import useAuthentificationAsync from '../../../hooks/useAuthentificationAsync';
 import Alert from '../../Alert';
+import useHttpClientAsync from '../../../hooks/useHttpClientAsync';
+import MyCommunities from '../myEnvironment/MyCommunities';
 
 import '../../../styles/communication/communities.scss';
 
 const Communities = ({ openCommunity }) => {
     const [showCommunities, setShowCommunities] = useState(true);
-    const [communities, setCommunities] = useState(<></>);
+    const [communitiesCards, setCommunitiesCards] = useState(<></>);
     const [userCommunitiesId, setUserCommunitiesId] = useState([]);
     const [showUpdatingAlert, setShowUpdatingAlert] = useState(false);
+
+    const [getAllAsync] = useHttpClientAsync();
+
+    const checkAuthentificationAsync = useAuthentificationAsync();
+
+    useEffect(() => {
+        let checkAuthentification = async () => {
+            await checkAuthentificationAsync();
+        }
+
+        let getCommunities = async () => {
+            await getCommunitiesAsync();
+        }
+
+        checkAuthentification();
+        getCommunities();
+    }, [])
 
     useEffect(() => {
         if (userCommunitiesId.length === 0) {
@@ -26,22 +45,22 @@ const Communities = ({ openCommunity }) => {
     }, [userCommunitiesId])
 
     useEffect(() => {
-        communities.key === undefined || communities.key === null 
+        communitiesCards.key === undefined || communitiesCards.key === null 
             ? setShowUpdatingAlert(false)
             : setShowUpdatingAlert(true);
-    }, [communities])
+    }, [communitiesCards])
 
     const getCommunitiesAsync = async () => {
         const newCommunities = [];
 
         setShowUpdatingAlert(true);
-        const response = await fetch('api/v1/Community');
-        if (response.status !== 200) {
+        const dataState = await getAllAsync('Community');
+        if (dataState.statusCode !== 200) {
             return;
         }
 
-        const communities = await response.json();
-        for (var i = 0; i < communities.length; i++) {
+        const communities = dataState.data;
+        for (let i = 0; i < communities.length; i++) {
             if (userCommunitiesId.indexOf(communities[i].id) === -1) {
                 newCommunities.push(communities[i]);
             }
@@ -55,24 +74,22 @@ const Communities = ({ openCommunity }) => {
             ? communities.map((element) => createCommunityCard(element))
             : (<div className="community__empty">Didn't found any communities</div>);
 
-        setCommunities(list);
+        setCommunitiesCards(list);
     }
 
     const createCommunityCard = (community) => {
-        return (<li key={community.id} className="community">
-            <div className="card">
-                <div className="card-body">
-                    <h5 className="card-title">{community.name}</h5>
-                    <p className="card-text">{community.description}</p>
-                    <NavLink className="card-link" onClick={() => openCommunity(community)}>Open</NavLink>
-                    <NavLink className="card-link">More details</NavLink>
+        return (
+            <li key={community.id} className="community">
+                <div className="card">
+                    <div className="card-body">
+                        <h5 className="card-title">{community.name}</h5>
+                        <p className="card-text">{community.description}</p>
+                        <NavLink className="card-link" onClick={() => openCommunity(community)}>Open</NavLink>
+                        <NavLink className="card-link">More details</NavLink>
+                    </div>
                 </div>
-            </div>
-        </li>);
-    }
-
-    const handleCommunityVisibility = () => {
-        setShowCommunities(!showCommunities);
+            </li>
+        );
     }
 
     const render = () => {
@@ -98,19 +115,19 @@ const Communities = ({ openCommunity }) => {
                             ? <FontAwesomeIcon
                                 icon={faEye}
                                 title="Hide"
-                                onClick={handleCommunityVisibility}
+                                onClick={() => setShowCommunities((item) => !item)}
                             />
                             : <FontAwesomeIcon
                                 icon={faEyeSlash}
                                 title="Show"
-                                onClick={handleCommunityVisibility}
+                                onClick={() => setShowCommunities((item) => !item)}
                             />
                         }
                     </div>
                 </div>
                 {showCommunities
                     ? <ul>
-                        {communities}
+                        {communitiesCards}
                     </ul>
                     : null
                 }

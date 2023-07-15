@@ -2,6 +2,8 @@ import { faArrowRightToBracket, faEye, faEyeSlash, faGear, faPlus, faTrash } fro
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useEffect, useState } from "react";
 import { useSelector } from 'react-redux';
+import useAuthentificationAsync from '../../../hooks/useAuthentificationAsync';
+import useHttpClientAsync from '../../../hooks/useHttpClientAsync';
 import AddPeople from '../../AddPeople';
 import Alert from '../../Alert';
 import Post from '../Post';
@@ -24,28 +26,36 @@ const SelectedCommunity = ({ community, closeCommunity }) => {
     const [showAddedUserAlert, setShowAddedUserAlert] = useState(false);
     const [memberForRemove, setMemberForRemove] = useState(null);
 
+    const checkAuthentificationAsync = useAuthentificationAsync();
+    const [, getByIdAsync, postAsync, , deleteAsync] = useHttpClientAsync();
+
     useEffect(() => {
         if (customer === null) {
             return;
+        }
+
+        let checkAuthentification = async () => {
+            await checkAuthentificationAsync();
         }
 
         let getPosts = async () => {
             await getCommunityPostsAsync();
             await getCommunityUsersAsync();
         }
-;
+
+        checkAuthentification();
         getPosts();
     }, [])
 
     const getCommunityUsersAsync = async () => {
         const members = [];
         const customersId = [];
-        const response = await fetch(`/api/v1/CommunityUser/searchByCommunityId/${community.id}`);
-        if (response.status !== 200) {
+        const dataState = await getByIdAsync("CommunityUser/searchByCommunityId", community.id);
+        if (dataState.statusCode !== 200) {
             return;
         }
 
-        const communityUsers = await response.json();
+        const communityUsers = dataState.data;
         for (let i = 0; i < communityUsers.length; i++) {
             const customerById = await getCustomerByIdAsync(communityUsers[i].customerId);
             customerById.communityUserId = communityUsers[i].id;
@@ -63,22 +73,22 @@ const SelectedCommunity = ({ community, closeCommunity }) => {
     }
 
     const getCustomerByIdAsync = async (userId) => {
-        const response = await fetch(`/api/v1/Customer/${userId}`);
-        if (response.status !== 200) {
+        const dataState = await getByIdAsync("Customer", userId);
+        if (dataState.statusCode !== 200) {
             return null;
         }
 
-        const user = await response.json();
+        const user = dataState.data;
         return user;
     }
 
     const getCommunityPostsAsync = async () => {
-        const response = await fetch(`/api/v1/CommunityPost/searchByCommunityId/${community.id}`);
-        if (response.status !== 200) {
+        const dataState = await getByIdAsync("CommunityPost/searchByCommunityId", community.id);
+        if (dataState.statusCode !== 200) {
             return [];
         }
 
-        const communityPosts = await response.json();
+        const communityPosts = dataState.data;
         setFeed(<Post
             selectedPostsType={communityPosts}
             createPostAsync={createPostAsync}
@@ -98,24 +108,17 @@ const SelectedCommunity = ({ community, closeCommunity }) => {
             ownerId: customer.id
         }
 
-        const response = await fetch("/api/v1/Post", {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(newPost)
-        });
-
-        if (response.status === 200) {
-            const createdPost = await response.json();
-            const isCreated = await createCommunityPostAsync(createdPost.id);
-
-            await getCommunityPostsAsync();
-
-            return isCreated;
+        const dataState = postAsync("Post", newPost);
+        if (dataState.statusCode !== 200) {
+            return false;
         }
 
-        return false;
+        const createdPost = dataState.data;
+        const isCreated = await createCommunityPostAsync(createdPost.id);
+
+        await getCommunityPostsAsync();
+
+        return isCreated;
     }
 
     const createCommunityPostAsync = async (postId) => {
@@ -125,15 +128,8 @@ const SelectedCommunity = ({ community, closeCommunity }) => {
             postId: postId
         }
 
-        const response = await fetch("/api/v1/CommunityPost", {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(newUserPost)
-        });
-
-        if (response.status === 200) {
+        const dataState = postAsync("CommunityPost", newUserPost);
+        if (dataState.statusCode === 200) {
             return true;
         }
 
@@ -141,32 +137,23 @@ const SelectedCommunity = ({ community, closeCommunity }) => {
     }
 
     const removePeopleAsync = async () => {
-        const response = await fetch(`/api/v1/CommunityUser/${memberForRemove.communityUserId}`, {
-            method: 'DELETE'
-        });
-
-        if (response.status === 200) {
+        const dataState = deleteAsync("CommunityUser", memberForRemove.communityUserId);
+        if (dataState.statusCode === 200) {
             await getCommunityUsersAsync(false);
             openRemovePeople(null);
         }
     }
 
     const leaveFromCommunityAsync = async () => {
-        const response = await fetch(`/api/v1/CommunityUser/${myCommunityUserId}`, {
-            method: 'DELETE'
-        });
-
-        if (response.status === 200) {
+        const dataState = deleteAsync("CommunityUser", myCommunityUserId);
+        if (dataState.statusCode === 200) {
             closeCommunity();
         }
     }
 
     const ownerLeaveFromCommunityAsync = async () => {
-        const response = await fetch(`/api/v1/Community/${community.id}`, {
-            method: 'DELETE'
-        });
-
-        if (response.status === 200) {
+        const dataState = deleteAsync("Community", community.id);
+        if (dataState.statusCode === 200) {
             closeCommunity();
         }
     }
@@ -181,30 +168,15 @@ const SelectedCommunity = ({ community, closeCommunity }) => {
             ownerId: customer.id
         }
 
-        const response = await fetch("/api/v1/InviteToCommunity", {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(newInviteToCommunity)
-        });
-
-        if (response.status === 200) {
+        const dataState = postAsync("InviteToCommunity", newInviteToCommunity);
+        if (dataState.statusCode === 200) {
             setShowAddedUserAlert(true);
         }
-    }
-
-    const openAddNewPeopleAsync = async () => {
-        setShowAddPeople(!showAddPeople);
     }
 
     const openRemovePeople = (member) => {
         setMemberForRemove(member);
         setShowRemovePeopleAlert(!showRemovePeopleAlert);
-    }
-
-    const openLeaveFromCommunity = () => {
-        setShowLeaveFromCommunityAlert(!showLeaveFromCommunityAlert);
     }
 
     const fillMembers = (setShowRemovePeople) => {
@@ -221,22 +193,6 @@ const SelectedCommunity = ({ community, closeCommunity }) => {
             }
             <div className="member__username">{member.username}</div>
         </li>);
-    }
-
-    const handleMembersSettingsVisibility = () => {
-        setShowRemovePeople(!showRemovePeople);
-    }
-
-    const handleVisibility = () => {
-        setShowDescription(!showDescription);
-    }
-
-    const handleRemovePeopleVisibility = () => {
-        setShowRemovePeopleAlert(!showRemovePeopleAlert);
-    }
-
-    const handleShowLeaveFromCommunityVisibility = () => {
-        setShowLeaveFromCommunityAlert(!showLeaveFromCommunityAlert);
     }
 
     const getCommunityPolicyType = () => {
@@ -276,7 +232,7 @@ const SelectedCommunity = ({ community, closeCommunity }) => {
                         {getCommunityPolicyType()}
                     </div>
                     <div className="leave">
-                        <button className="btn btn-outline-danger" onClick={openLeaveFromCommunity}>Leave</button>
+                        <button className="btn btn-outline-danger" onClick={() => setShowLeaveFromCommunityAlert((item) => !item)}>Leave</button>
                     </div>
                 </div>
                 <div className="description">
@@ -286,12 +242,12 @@ const SelectedCommunity = ({ community, closeCommunity }) => {
                             ? <FontAwesomeIcon
                                 icon={faEye}
                                 title="Hide"
-                                onClick={handleVisibility}
+                                onClick={() => setShowDescription((item) => !item)}
                             />
                             : <FontAwesomeIcon
                                 icon={faEyeSlash}
                                 title="Show"
-                                onClick={handleVisibility}
+                                onClick={() => setShowDescription((item) => !item)}
                             />
                         }
                     </div>
@@ -317,7 +273,7 @@ const SelectedCommunity = ({ community, closeCommunity }) => {
                         </div>
                         <div>
                             <button className="btn btn-outline-warning" onClick={async () => await removePeopleAsync()}>Remove</button>
-                            <button className="btn btn-outline-success" onClick={handleRemovePeopleVisibility}>Cancel</button>
+                            <button className="btn btn-outline-success" onClick={() => setShowRemovePeopleAlert((item) => !item)}>Cancel</button>
                         </div>
                     </div>
                     : null
@@ -335,12 +291,12 @@ const SelectedCommunity = ({ community, closeCommunity }) => {
                                 </div>
                                 <div>
                                     <button className="btn btn-outline-danger" onClick={async () => await ownerLeaveFromCommunityAsync()}>Leave</button>
-                                    <button className="btn btn-outline-success" onClick={handleShowLeaveFromCommunityVisibility}>Cancel</button>
+                                    <button className="btn btn-outline-success" onClick={() => setShowLeaveFromCommunityAlert((item) => !item)}>Cancel</button>
                                 </div>
                               </>
                             : <div>
                                 <button className="btn btn-outline-danger" onClick={async () => await leaveFromCommunityAsync()}>Leave</button>
-                                <button className="btn btn-outline-success" onClick={handleShowLeaveFromCommunityVisibility}>Cancel</button>
+                                <button className="btn btn-outline-success" onClick={() => setShowLeaveFromCommunityAlert((item) => !item)}>Cancel</button>
                               </div>
                         }
                     </div>
@@ -359,12 +315,12 @@ const SelectedCommunity = ({ community, closeCommunity }) => {
                             <FontAwesomeIcon
                                 icon={faGear}
                                 title="Settings"
-                                onClick={handleMembersSettingsVisibility}
+                                onClick={() => setShowRemovePeople((item) => !item)}
                             />
                             <FontAwesomeIcon
                                 icon={faPlus}
                                 title="Add a new people"
-                                onClick={async () => await openAddNewPeopleAsync()}
+                                onClick={() => setShowAddPeople((item) => !item)}
                             />
                         </div>
                     </div>

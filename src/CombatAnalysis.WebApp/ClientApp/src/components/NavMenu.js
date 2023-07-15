@@ -5,7 +5,6 @@ import { Link, useNavigate } from 'react-router-dom';
 import { Collapse, Container, Navbar, NavbarBrand, NavbarToggler } from 'reactstrap';
 import { checkAuth } from '../features/AuthenticationReducer';
 import { userUpdate } from '../features/UserReducer';
-import { customerUpdate } from '../features/CustomerReducer';
 
 import '../styles/navMenu.scss';
 
@@ -34,48 +33,10 @@ const NavMenu = () => {
         }
     }, [])
 
-    useEffect(() => {
-        const checkAuth = async () => {
-            await checkAuthAsync();
-        }
-
-        checkAuth().catch(console.error);
-    });
-
     const changeLanguage = (language) => {
         i18n.changeLanguage(language);
 
         window.location.reload(true);
-    }
-
-    const checkAuthAsync = async () => {
-        const response = await fetch("api/v1/Authentication");
-
-        if (response.status === 200) {
-            const currentUser = await response.json();
-
-            dispatch(userUpdate(currentUser));
-            dispatch(checkAuth(true));
-
-            await getCustomerByUserIdAsync(currentUser.id);
-        }
-        else {
-            dispatch(checkAuth(false));
-        }
-    }
-
-    const getCustomerByUserIdAsync = async (userId) => {
-        const response = await fetch(`api/v1/Customer/searchByUserId/${userId}`);
-
-        if (response.status === 200
-            || response.status === 204) {
-            const customer = await response.json();
-
-            dispatch(customerUpdate(customer));
-        }
-        else {
-            dispatch(checkAuth(false));
-        }
     }
 
     const logoutAsync = async () => {
