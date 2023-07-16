@@ -3,19 +3,19 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useEffect, useState } from "react";
 import { NavLink } from 'react-router-dom';
 import useAuthentificationAsync from '../../../hooks/useAuthentificationAsync';
+import CommunityService from '../../../services/CommunityService';
 import Alert from '../../Alert';
-import useHttpClientAsync from '../../../hooks/useHttpClientAsync';
 import MyCommunities from '../myEnvironment/MyCommunities';
 
 import '../../../styles/communication/communities.scss';
 
 const Communities = ({ openCommunity }) => {
+    const communityService = new CommunityService();
+
     const [showCommunities, setShowCommunities] = useState(true);
-    const [communitiesCards, setCommunitiesCards] = useState(<></>);
+    const [communityList, setCommunityList] = useState(<></>);
     const [userCommunitiesId, setUserCommunitiesId] = useState([]);
     const [showUpdatingAlert, setShowUpdatingAlert] = useState(false);
-
-    const [getAllAsync] = useHttpClientAsync();
 
     const checkAuthentificationAsync = useAuthentificationAsync();
 
@@ -45,39 +45,34 @@ const Communities = ({ openCommunity }) => {
     }, [userCommunitiesId])
 
     useEffect(() => {
-        communitiesCards.key === undefined || communitiesCards.key === null 
+        communityList.key === undefined || communityList.key === null 
             ? setShowUpdatingAlert(false)
             : setShowUpdatingAlert(true);
-    }, [communitiesCards])
+    }, [communityList])
 
     const getCommunitiesAsync = async () => {
         const newCommunities = [];
 
         setShowUpdatingAlert(true);
-        const dataState = await getAllAsync('Community');
-        if (dataState.statusCode !== 200) {
-            return;
-        }
-
-        const communities = dataState.data;
+        const communities = await communityService.getAllAsync();
         for (let i = 0; i < communities.length; i++) {
             if (userCommunitiesId.indexOf(communities[i].id) === -1) {
                 newCommunities.push(communities[i]);
             }
         }
 
-        fillCommunities(newCommunities);
+        createCommunityList(newCommunities);
     }
 
-    const fillCommunities = (communities) => {
+    const createCommunityList = (communities) => {
         const list = communities.length !== 0
-            ? communities.map((element) => createCommunityCard(element))
+            ? communities.map((element) => createCommunityItem(element))
             : (<div className="community__empty">Didn't found any communities</div>);
 
-        setCommunitiesCards(list);
+        setCommunityList(list);
     }
 
-    const createCommunityCard = (community) => {
+    const createCommunityItem = (community) => {
         return (
             <li key={community.id} className="community">
                 <div className="card">
@@ -93,46 +88,48 @@ const Communities = ({ openCommunity }) => {
     }
 
     const render = () => {
-        return (<div className="communities">
-            <Alert
-                isVisible={showUpdatingAlert}
-                content="Updating..."
-            />
-            <MyCommunities
-                openCommunity={openCommunity}
-                setUserCommunitiesId={setUserCommunitiesId}
-            />
-            <div className="communities__list">
-                <div className="title">
-                    <div className="content">
-                        <FontAwesomeIcon
-                            icon={faArrowsRotate}
-                            title="Refresh"
-                            onClick={async () => await getCommunitiesAsync()}
-                        />
-                        <div>Communities</div>
-                        {showCommunities
-                            ? <FontAwesomeIcon
-                                icon={faEye}
-                                title="Hide"
-                                onClick={() => setShowCommunities((item) => !item)}
+        return (
+            <div className="communities">
+                <Alert
+                    isVisible={showUpdatingAlert}
+                    content="Updating..."
+                />
+                <MyCommunities
+                    openCommunity={openCommunity}
+                    setUserCommunitiesId={setUserCommunitiesId}
+                />
+                <div className="communities__list">
+                    <div className="title">
+                        <div className="content">
+                            <FontAwesomeIcon
+                                icon={faArrowsRotate}
+                                title="Refresh"
+                                onClick={async () => await getCommunitiesAsync()}
                             />
-                            : <FontAwesomeIcon
-                                icon={faEyeSlash}
-                                title="Show"
-                                onClick={() => setShowCommunities((item) => !item)}
-                            />
-                        }
+                            <div>Communities</div>
+                            {showCommunities
+                                ? <FontAwesomeIcon
+                                    icon={faEye}
+                                    title="Hide"
+                                    onClick={() => setShowCommunities((item) => !item)}
+                                />
+                                : <FontAwesomeIcon
+                                    icon={faEyeSlash}
+                                    title="Show"
+                                    onClick={() => setShowCommunities((item) => !item)}
+                                />
+                            }
+                        </div>
                     </div>
+                    {showCommunities
+                        ? <ul>
+                            {communityList}
+                        </ul>
+                        : null
+                    }
                 </div>
-                {showCommunities
-                    ? <ul>
-                        {communitiesCards}
-                    </ul>
-                    : null
-                }
             </div>
-        </div>);
+        );
     }
 
     return render();

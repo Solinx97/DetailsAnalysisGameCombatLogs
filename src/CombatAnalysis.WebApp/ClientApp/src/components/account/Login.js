@@ -3,16 +3,16 @@ import { useTranslation } from 'react-i18next';
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { userUpdate } from '../../features/UserReducer';
-import useHttpClientAsync from '../../hooks/useHttpClientAsync';
+import AccountService from '../../services/AccountService';
 
 import "../../styles/account/login.scss";
 
 const Login = () => {
+    const accountService = new AccountService();
+
     const navigate = useNavigate();
     const { t, i18n } = useTranslation("login");
     const dispatch = useDispatch();
-
-    const [, , postAsync] = useHttpClientAsync();
 
     const [showErrorMessage, setShowErrorMessage] = useState(false);
     const email = useRef(null);
@@ -26,13 +26,7 @@ const Login = () => {
             password: password.current.value
         };
 
-        const dataState = await postAsync("Account", data);
-        if (dataState.statusCode === 404) {
-            setShowErrorMessage(true);
-            return;
-        }
-
-        const user = dataState.data;
+        const user = await accountService.loginAsync(data);
         dispatch(userUpdate(user));
 
         navigate('/');

@@ -3,14 +3,25 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useEffect, useState } from "react";
 import { useSelector } from 'react-redux';
 import useAuthentificationAsync from '../../../hooks/useAuthentificationAsync';
-import useHttpClientAsync from '../../../hooks/useHttpClientAsync';
+import CommunityPostService from '../../../services/CommunityPostService';
+import CommunityUserService from '../../../services/CommunityUserService';
+import CustomerService from '../../../services/CustomerService';
+import InviteToCommunityService from '../../../services/InviteToCommunityService';
+import PostService from '../../../services/PostService';
 import AddPeople from '../../AddPeople';
 import Alert from '../../Alert';
 import Post from '../Post';
 
+import CommunityService from '../../../services/CommunityService';
 import '../../../styles/communication/selectedCommunity.scss';
 
 const SelectedCommunity = ({ community, closeCommunity }) => {
+    const communityUserService = new CommunityUserService();
+    const communityPostService = new CommunityPostService();
+    const customerService = new CustomerService();
+    const postService = new PostService();
+    const inviteToCommunityService = new InviteToCommunityService();
+
     const customer = useSelector((state) => state.customer.value);
 
     const [myCommunityUserId, setMyCommunityUserId] = useState(0);
@@ -27,7 +38,6 @@ const SelectedCommunity = ({ community, closeCommunity }) => {
     const [memberForRemove, setMemberForRemove] = useState(null);
 
     const checkAuthentificationAsync = useAuthentificationAsync();
-    const [, getByIdAsync, postAsync, , deleteAsync] = useHttpClientAsync();
 
     useEffect(() => {
         if (customer === null) {
@@ -50,12 +60,7 @@ const SelectedCommunity = ({ community, closeCommunity }) => {
     const getCommunityUsersAsync = async () => {
         const members = [];
         const customersId = [];
-        const dataState = await getByIdAsync("CommunityUser/searchByCommunityId", community.id);
-        if (dataState.statusCode !== 200) {
-            return;
-        }
-
-        const communityUsers = dataState.data;
+        const communityUsers = await communityUserService.searchByCommunityIdAsync(community.id);
         for (let i = 0; i < communityUsers.length; i++) {
             const customerById = await getCustomerByIdAsync(communityUsers[i].customerId);
             customerById.communityUserId = communityUsers[i].id;
@@ -72,23 +77,13 @@ const SelectedCommunity = ({ community, closeCommunity }) => {
         setMembers(members);
     }
 
-    const getCustomerByIdAsync = async (userId) => {
-        const dataState = await getByIdAsync("Customer", userId);
-        if (dataState.statusCode !== 200) {
-            return null;
-        }
-
-        const user = dataState.data;
+    const getCustomerByIdAsync = async (id) => {
+        const user = await customerService.getByIdAsync(id);
         return user;
     }
 
     const getCommunityPostsAsync = async () => {
-        const dataState = await getByIdAsync("CommunityPost/searchByCommunityId", community.id);
-        if (dataState.statusCode !== 200) {
-            return [];
-        }
-
-        const communityPosts = dataState.data;
+        const communityPosts = await communityPostService.searchByCommunityIdAsync(community.id);
         setFeed(<Post
             selectedPostsType={communityPosts}
             createPostAsync={createPostAsync}
@@ -108,12 +103,7 @@ const SelectedCommunity = ({ community, closeCommunity }) => {
             ownerId: customer.id
         }
 
-        const dataState = postAsync("Post", newPost);
-        if (dataState.statusCode !== 200) {
-            return false;
-        }
-
-        const createdPost = dataState.data;
+        const createdPost = await postService.createAsync(newPost);
         const isCreated = await createCommunityPostAsync(createdPost.id);
 
         await getCommunityPostsAsync();
@@ -128,8 +118,8 @@ const SelectedCommunity = ({ community, closeCommunity }) => {
             postId: postId
         }
 
-        const dataState = postAsync("CommunityPost", newUserPost);
-        if (dataState.statusCode === 200) {
+        const createdCommunityPost = await communityPostService.createAsync(newUserPost);
+        if (createdCommunityPost !== null) {
             return true;
         }
 
@@ -137,23 +127,23 @@ const SelectedCommunity = ({ community, closeCommunity }) => {
     }
 
     const removePeopleAsync = async () => {
-        const dataState = deleteAsync("CommunityUser", memberForRemove.communityUserId);
-        if (dataState.statusCode === 200) {
+        const deletedItemCount = await communityUserService.deleteAsync(memberForRemove.communityUserId);
+        if (deletedItemCount != null) {
             await getCommunityUsersAsync(false);
             openRemovePeople(null);
         }
     }
 
     const leaveFromCommunityAsync = async () => {
-        const dataState = deleteAsync("CommunityUser", myCommunityUserId);
-        if (dataState.statusCode === 200) {
+        const deletedItemCount = await communityUserService.deleteAsync(myCommunityUserId);
+        if (deletedItemCount != null) {
             closeCommunity();
         }
     }
 
     const ownerLeaveFromCommunityAsync = async () => {
-        const dataState = deleteAsync("Community", community.id);
-        if (dataState.statusCode === 200) {
+        const deletedItemCount = await CommunityService.deleteAsync(community.id);
+        if (deletedItemCount != null) {
             closeCommunity();
         }
     }
@@ -168,8 +158,8 @@ const SelectedCommunity = ({ community, closeCommunity }) => {
             ownerId: customer.id
         }
 
-        const dataState = postAsync("InviteToCommunity", newInviteToCommunity);
-        if (dataState.statusCode === 200) {
+        const createdItem = await inviteToCommunityService.createAsync(newInviteToCommunity);
+        if (createdItem !== null) {
             setShowAddedUserAlert(true);
         }
     }

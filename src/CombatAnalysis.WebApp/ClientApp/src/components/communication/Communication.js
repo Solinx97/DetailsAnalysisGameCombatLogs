@@ -1,6 +1,6 @@
 import { faCircleArrowRight } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import useAuthentificationAsync from '../../hooks/useAuthentificationAsync';
 import Chats from './chats/Chats';
 import Communities from './community/Communities';
@@ -20,15 +20,15 @@ const Communication = () => {
     const [initiatorId, setInitiatorId] = useState("");
     const [companionId, setCompanionId] = useState("");
 
-    //const checkAuthentificationAsync = useAuthentificationAsync();
+    const checkAuthentificationAsync = useAuthentificationAsync();
 
-    //useEffect(() => {
-    //    let checkAuthentification = async () => {
-    //        await checkAuthentificationAsync();
-    //    }
+    useEffect(() => {
+        let checkAuthentification = async () => {
+            await checkAuthentificationAsync();
+        }
 
-    //    checkAuthentification();
-    //}, [])
+        checkAuthentification();
+    }, [])
 
     const updateCurrentMenuItem = (menuItem, initiatorId, companionId) => {
         setCurrentMenuItem(menuItem);
