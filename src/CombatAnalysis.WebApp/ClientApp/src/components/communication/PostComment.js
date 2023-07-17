@@ -1,10 +1,15 @@
 import { faPen, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { memo, useEffect, useState } from 'react';
+import CustomerService from '../../services/CustomerService';
+import PostCommentService from '../../services/PostCommentService';
 
 import '../../styles/communication/postComment.scss';
 
 const PostComment = ({ dateFormatting, customerId, postId, updatePostAsync }) => {
+    const postCommentService = new PostCommentService();
+    const customerService = new CustomerService();
+
     const [commentsList, setCommentsList] = useState(<></>);
     const [postCommentContent, setPostCommentContent] = useState("");
 
@@ -17,28 +22,22 @@ const PostComment = ({ dateFormatting, customerId, postId, updatePostAsync }) =>
     }, [])
 
     const getPostCommentsByPostIdAsync = async (editablePostCommentId = 0) => {
-        const response = await fetch(`/api/v1/PostComment/searchByPostId/${postId}`);
-
-        if (response.status === 200) {
-            const allComments = await response.json();
-            for (var i = 0; i < allComments.length; i++) {
-                const customer = await getCustomerByIdAsync(allComments[i].ownerId);
-                allComments[i].username = customer.username;
-            }
-
-            fillPostComments(allComments, editablePostCommentId);
+        const allComments = await postCommentService.searchByPostIdAsync(postId);
+        if (allComments === null) {
+            return;
         }
+
+        for (let i = 0; i < allComments.length; i++) {
+            const customer = await getCustomerByIdAsync(allComments[i].ownerId);
+            allComments[i].username = customer.username;
+        }
+
+        fillPostComments(allComments, editablePostCommentId);
     }
 
     const getCustomerByIdAsync = async (customerId) => {
-        const response = await fetch(`/api/v1/Customer/${customerId}`);
-
-        if (response.status === 200) {
-            let customer = await response.json();
-            return customer;
-        }
-
-        return null;
+        const customer = await customerService.getByIdAsync(customerId);
+        return customer;
     }
 
     const createPostCommentAsync = async () => {
@@ -50,15 +49,8 @@ const PostComment = ({ dateFormatting, customerId, postId, updatePostAsync }) =>
             ownerId: customerId
         }
 
-        const response = await fetch("/api/v1/PostComment", {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(newPostComment)
-        });
-
-        if (response.status === 200) {
+        const createdPostComment = await postCommentService.createAsync(newPostComment);
+        if (createdPostComment !== null) {
             setPostCommentContent("");
 
             await updatePostAsync(postId, 0, 0, 1);
@@ -67,25 +59,15 @@ const PostComment = ({ dateFormatting, customerId, postId, updatePostAsync }) =>
     }
 
     const updatePostCommentAsync = async (postComment) => {
-        const response = await fetch("/api/v1/PostComment", {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(postComment)
-        });
-
-        if (response.status === 200) {
+        const updatedPostComment = await postCommentService.updateAsync(postComment);
+        if (updatedPostComment !== null) {
             await getPostCommentsByPostIdAsync(postComment.postId);
         }
     }
 
     const deletePostCommentAsync = async (postCommentId) => {
-        const response = await fetch(`/api/v1/PostComment/${postCommentId}`, {
-            method: 'DELETE'
-        });
-
-        if (response.status === 200) {
+        const deletedItem = await postCommentService.deleteAsync(postCommentId);
+        if (deletedItem !== null) {
             await updatePostAsync(postId, 0, 0, -1);
             await getPostCommentsByPostIdAsync();
         }
@@ -97,54 +79,58 @@ const PostComment = ({ dateFormatting, customerId, postId, updatePostAsync }) =>
         setCommentsList(list);
     }
 
-    const createPostComment = (element, editablePostCommentId) => {
+    const createPostComment = (postComment, editablePostCommentId) => {
         let editCommentElements = (<></>);
-        if (editablePostCommentId === element.id) {
+        if (editablePostCommentId === postComment.id) {
             editCommentElements = <>
-                <textarea rows="1" cols="57" onChange={e => element.content = e.target.value} defaultValue={element.content} />
+                <textarea rows="1" cols="57" onChange={e => postComment.content = e.target.value} defaultValue={postComment.content} />
                 <div>
-                    <button type="button" className="btn btn-outline-info" onClick={async () => await updatePostCommentAsync(element)}>Save</button>
+                    <button type="button" className="btn btn-outline-info" onClick={async () => await updatePostCommentAsync(postComment)}>Save</button>
                     <button type="button" className="btn btn-outline-warning" onClick={async () => await getPostCommentsByPostIdAsync(0)}>Cancel</button>
                 </div>
             </>;
         }
         else {
-            editCommentElements = <div className="card-text">{element.content}</div>;
+            editCommentElements = <div className="card-text">{postComment.content}</div>;
         }
 
-        return (<li key={element.id} className="card">
-            <ul className="list-group list-group-flush">
-                <li className="post-comments__title list-group-item">
-                    <div className="card-title">{element.username}</div>
-                    <div className="card-title">{dateFormatting(element.when)}</div>
-                    {element.ownerId === customerId
-                        ? (<div className="post-comments__menu">
-                            <FontAwesomeIcon icon={faPen} title="Edit" onClick={async () => await getPostCommentsByPostIdAsync(element.id)} />
-                            <FontAwesomeIcon icon={faTrash} title="Remove" onClick={async () => await deletePostCommentAsync(element.id)} />
-                        </div>)
-                        : null
-                    }
-                </li>
-                <li className="post-comments__edit list-group-item">
-                    {editCommentElements}
-                </li>
-            </ul>
-        </li>);
+        return (
+            <li key={postComment.id} className="card">
+                <ul className="list-group list-group-flush">
+                    <li className="post-comments__title list-group-item">
+                        <div className="card-title">{postComment.username}</div>
+                        <div className="card-title">{dateFormatting(postComment.when)}</div>
+                        {postComment.ownerId === customerId
+                            ? (<div className="post-comments__menu">
+                                <FontAwesomeIcon icon={faPen} title="Edit" onClick={async () => await getPostCommentsByPostIdAsync(postComment.id)} />
+                                <FontAwesomeIcon icon={faTrash} title="Remove" onClick={async () => await deletePostCommentAsync(postComment.id)} />
+                            </div>)
+                            : null
+                        }
+                    </li>
+                    <li className="post-comments__edit list-group-item">
+                        {editCommentElements}
+                    </li>
+                </ul>
+            </li>
+        );
     }
 
     const render = () => {
-        return (<>
-            <ul className="post-comments">
-                {commentsList}
-            </ul>
-            <div className="add-new-comment">
-                <div className="add-new-comment__title">
-                    <div>Add comment:</div>
+        return (
+            <div>
+                <ul className="post-comments">
+                    {commentsList}
+                </ul>
+                <div className="add-new-comment">
+                    <div className="add-new-comment__title">
+                        <div>Add comment:</div>
+                    </div>
+                    <textarea rows="1" cols="75" onChange={e => setPostCommentContent(e.target.value)} value={postCommentContent} />
+                    <button type="button" className="btn btn-outline-info" onClick={async () => await createPostCommentAsync()}>Add</button>
                 </div>
-                <textarea rows="1" cols="75" onChange={e => setPostCommentContent(e.target.value)} value={postCommentContent} />
-                <button type="button" className="btn btn-outline-info" onClick={async () => await createPostCommentAsync()}>Add</button>
             </div>
-        </>);
+        );
     }
 
     return render();

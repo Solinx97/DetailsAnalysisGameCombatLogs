@@ -2,12 +2,21 @@ import { faArrowsRotate, faHeart, faMessage, faThumbsDown, faWindowRestore } fro
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useEffect, useRef, useState } from "react";
 import { useSelector } from 'react-redux';
+import CustomerService from '../../services/CustomerService';
+import PostDislikeService from '../../services/PostDislikeService';
+import PostLikeService from '../../services/PostLikeService';
+import PostService from '../../services/PostService';
 import PostComment from './PostComment';
 import UserInformation from './UserInformation';
 
 import '../../styles/communication/post.scss';
 
 const Post = ({ selectedPostsType, createPostAsync, updatePostsAsync, setShowUpdatingAlert }) => {
+    const postService = new PostService();
+    const customerService = new CustomerService();
+    const postLikeService = new PostLikeService();
+    const postDislikeService = new PostDislikeService();
+
     const customer = useSelector((state) => state.customer.value);
 
     const postContentRef = useRef(null);
@@ -47,26 +56,13 @@ const Post = ({ selectedPostsType, createPostAsync, updatePostsAsync, setShowUpd
     }
 
     const getPostByIdAsync = async (postId) => {
-        const response = await fetch(`/api/v1/Post/${postId}`);
-
-        if (response.status === 200) {
-            let post = await response.json();
-
-            return post;
-        }
-
-        return null;
+        const post = await postService.getByIdAsync(postId);
+        return post;
     }
 
     const getCustomerByIdAsync = async (customerId) => {
-        const response = await fetch(`/api/v1/Customer/${customerId}`);
-
-        if (response.status === 200) {
-            const customer = await response.json();
-            return customer;
-        }
-
-        return null;
+        const customer = await customerService.getByIdAsync(customerId);
+        return customer;
     }
 
     const handleCreatePostAsync = async () => {
@@ -81,11 +77,11 @@ const Post = ({ selectedPostsType, createPostAsync, updatePostsAsync, setShowUpd
 
     const updatePostAsync = async (postId, likesCount, dislikesCount, commentsCount) => {
         const post = await getPostByIdAsync(postId);
-        if (post == null) {
+        if (post === null) {
             return;
         }
 
-        const updatedPost = {
+        const postForUpdate = {
             id: post.id,
             content: post.content,
             when: post.when,
@@ -95,15 +91,8 @@ const Post = ({ selectedPostsType, createPostAsync, updatePostsAsync, setShowUpd
             ownerId: post.ownerId
         }
 
-        const response = await fetch("/api/v1/Post", {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(updatedPost)
-        });
-
-        if (response.status === 200) {
+        const updatedPost = await postService.updateAsync(postForUpdate);
+        if (updatedPost !== null) {
             await getPostsAsync();
         }
     }
@@ -122,24 +111,15 @@ const Post = ({ selectedPostsType, createPostAsync, updatePostsAsync, setShowUpd
             ownerId: customer.id
         }
 
-        const response = await fetch("/api/v1/PostLike", {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(newPostLike)
-        });
-
-        if (response.status === 200) {
+        const createdPostLike = await postLikeService.createAsync(newPostLike);
+        if (createdPostLike !== null) {
             await updatePostAsync(postId, 1, 0, 0);
         }
     }
 
     const getPostLikesAsync = async (postId) => {
-        const response = await fetch(`/api/v1/PostLike/searchByPostId/${postId}`);
-
-        if (response.status === 200) {
-            const postLikes = await response.json();
+        const postLikes = await PostLikeService.searchByPostIdAsync(postId);
+        if (postLikes !== null) {
             return await checkIfPostLikeExistAsync(postLikes);
         }
 
@@ -147,7 +127,7 @@ const Post = ({ selectedPostsType, createPostAsync, updatePostsAsync, setShowUpd
     }
 
     const checkIfPostLikeExistAsync = async (postLikes) => {
-        for (var i = 0; i < postLikes.length; i++) {
+        for (let i = 0; i < postLikes.length; i++) {
             if (postLikes[i].ownerId === customer.id) {
                 await deletePostLikeAsync(postLikes[i].postId, postLikes[i].id);
                 return true;
@@ -158,11 +138,8 @@ const Post = ({ selectedPostsType, createPostAsync, updatePostsAsync, setShowUpd
     }
 
     const deletePostLikeAsync = async (postId, postLikeId) => {
-        const response = await fetch(`/api/v1/PostLike/${postLikeId}`, {
-            method: 'DELETE'
-        });
-
-        if (response.status === 200) {
+        const deletedItem = await postLikeService.deleteAsync(postLikeId);
+        if (deletedItem !== null) {
             await updatePostAsync(postId, -1, 0, 0);
         }
     }
@@ -181,24 +158,15 @@ const Post = ({ selectedPostsType, createPostAsync, updatePostsAsync, setShowUpd
             ownerId: customer.id
         }
 
-        const response = await fetch("/api/v1/PostDislike", {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(newPostDislike)
-        });
-
-        if (response.status === 200) {
+        const createdPostDislike = await postDislikeService.createAsync(newPostDislike);
+        if (createdPostDislike !== null) {
             await updatePostAsync(postId, 0, 1, 0);
         }
     }
 
     const getPostDislikesAsync = async (postId) => {
-        const response = await fetch(`/api/v1/PostDislike/searchByPostId/${postId}`);
-
-        if (response.status === 200) {
-            const postDislikes = await response.json();
+        const postDislikes = await postDislikeService.searchByPostIdAsync(postId);
+        if (postDislikes !== null) {
             return await checkIfPostDislikeExistAsync(postDislikes);
         }
 
@@ -206,7 +174,7 @@ const Post = ({ selectedPostsType, createPostAsync, updatePostsAsync, setShowUpd
     }
 
     const checkIfPostDislikeExistAsync = async (postDislikes) => {
-        for (var i = 0; i < postDislikes.length; i++) {
+        for (let i = 0; i < postDislikes.length; i++) {
             if (postDislikes[i].ownerId === customer.id) {
                 await deletePostDislikeAsync(postDislikes[i].postId, postDislikes[i].id);
                 return true;
@@ -217,11 +185,8 @@ const Post = ({ selectedPostsType, createPostAsync, updatePostsAsync, setShowUpd
     }
 
     const deletePostDislikeAsync = async (postId, postDislikeId) => {
-        const response = await fetch(`/api/v1/PostDislike/${postDislikeId}`, {
-            method: 'DELETE'
-        });
-
-        if (response.status === 200) {
+        const deletedItem = await postDislikeService.deleteAsync(postDislikeId);
+        if (deletedItem !== null) {
             await updatePostAsync(postId, 0, -1, 0);
         }
     }
@@ -253,46 +218,48 @@ const Post = ({ selectedPostsType, createPostAsync, updatePostsAsync, setShowUpd
         setSelectedPostCustomerId(0);
     }
 
-    const createPostCard = (element) => {
-        return (<li key={element.id}>
-            <div className="card">
-                <ul className="list-group list-group-flush">
-                    <li className="posts__title list-group-item">
-                        <div className="posts__title-username">
-                            <div>{element.username}</div>
-                            <FontAwesomeIcon icon={faWindowRestore} title="Show details" onClick={async () => await userInformationHandlerAsync(element)} />
-                        </div>
-                        <div>{dateFormatting(element.when)}</div>
-                    </li>
-                    {selectedPostCustomerId === element.id &&
-                        userInformation
-                    }
-                    <li className="list-group-item">
-                        <div className="card-text">{element.content}</div>
-                    </li>
-                    <li className="posts__reaction list-group-item">
-                        <div className="posts__reaction item">
-                            <FontAwesomeIcon className="post__reaction_like" icon={faHeart} title="Like"
-                                onClick={async () => await createPostLikeAsync(element.id)} />
-                            <div className="count">{element.likeCount}</div>
-                        </div>
-                        <div className="posts__reaction item">
-                            <FontAwesomeIcon className="post__reaction_dislike" icon={faThumbsDown} title="Dislike"
-                                onClick={async () => await createPostDislikeAsync(element.id)} />
-                            <div className="count">{element.dislikeCount}</div>
-                        </div>
-                        <div className="posts__reaction item">
-                            <FontAwesomeIcon icon={faMessage} title="Comment"
-                                onClick={() => postCommentsHandler(element.id)} />
-                            <div className="count">{element.commentCount}</div>
-                        </div>
-                    </li>
-                </ul>
-            </div>
-            {showComments && selectedPostCommentId === element.id &&
-                <PostComment dateFormatting={dateFormatting} customerId={customer.id} postId={element.id} updatePostAsync={updatePostAsync} />
-            }
-        </li>);
+    const createPostCard = (post) => {
+        return (
+            <li key={post.id}>
+                <div className="card">
+                    <ul className="list-group list-group-flush">
+                        <li className="posts__title list-group-item">
+                            <div className="posts__title-username">
+                                <div>{post.username}</div>
+                                <FontAwesomeIcon icon={faWindowRestore} title="Show details" onClick={async () => await userInformationHandlerAsync(post)} />
+                            </div>
+                            <div>{dateFormatting(post.when)}</div>
+                        </li>
+                        {selectedPostCustomerId === post.id &&
+                            userInformation
+                        }
+                        <li className="list-group-item">
+                            <div className="card-text">{post.content}</div>
+                        </li>
+                        <li className="posts__reaction list-group-item">
+                            <div className="posts__reaction item">
+                                <FontAwesomeIcon className="post__reaction_like" icon={faHeart} title="Like"
+                                    onClick={async () => await createPostLikeAsync(post.id)} />
+                                <div className="count">{post.likeCount}</div>
+                            </div>
+                            <div className="posts__reaction item">
+                                <FontAwesomeIcon className="post__reaction_dislike" icon={faThumbsDown} title="Dislike"
+                                    onClick={async () => await createPostDislikeAsync(post.id)} />
+                                <div className="count">{post.dislikeCount}</div>
+                            </div>
+                            <div className="posts__reaction item">
+                                <FontAwesomeIcon icon={faMessage} title="Comment"
+                                    onClick={() => postCommentsHandler(post.id)} />
+                                <div className="count">{post.commentCount}</div>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+                {showComments && selectedPostCommentId === post.id &&
+                    <PostComment dateFormatting={dateFormatting} customerId={customer.id} postId={post.id} updatePostAsync={updatePostAsync} />
+                }
+            </li>
+        );
     }
 
     const dateFormatting = (stringOfDate) => {
@@ -352,23 +319,25 @@ const Post = ({ selectedPostsType, createPostAsync, updatePostsAsync, setShowUpd
     }
 
     const render = () => {
-        return (<div>
-            <div className="create-post">
-                <div>
-                    <div className="create-post__tool" style={{ display: !showCreatePost ? "flex" : "none" }}>
-                        <FontAwesomeIcon icon={faArrowsRotate} title="Refresh" onClick={async () => handleUpdatePostsAsync()} />
-                        <button type="button" className="btn btn-outline-info" onClick={() => setShowCreatePost((item) => !item)}>New post</button>
+        return (
+            <div>
+                <div className="create-post">
+                    <div>
+                        <div className="create-post__tool" style={{ display: !showCreatePost ? "flex" : "none" }}>
+                            <FontAwesomeIcon icon={faArrowsRotate} title="Refresh" onClick={async () => handleUpdatePostsAsync()} />
+                            <button type="button" className="btn btn-outline-info" onClick={() => setShowCreatePost((item) => !item)}>New post</button>
+                        </div>
+                        <div style={{ display: showCreatePost ? "flex" : "none" }} className="create-post__create-tool">
+                            <FontAwesomeIcon icon={faArrowsRotate} title="Refresh" onClick={async () => updatePostsAsync()} />
+                            <button type="button" className="btn btn-outline-warning" onClick={() => setShowCreatePost((item) => !item)}>Cancel</button>
+                            <button type="button" className="btn btn-outline-success" onClick={async () => await handleCreatePostAsync()}>Create</button>
+                        </div>
                     </div>
-                    <div style={{ display: showCreatePost ? "flex" : "none" }} className="create-post__create-tool">
-                        <FontAwesomeIcon icon={faArrowsRotate} title="Refresh" onClick={async () => updatePostsAsync()} />
-                        <button type="button" className="btn btn-outline-warning" onClick={() => setShowCreatePost((item) => !item)}>Cancel</button>
-                        <button type="button" className="btn btn-outline-success" onClick={async () => await handleCreatePostAsync()}>Create</button>
-                    </div>
+                    <textarea rows="5" cols="100" ref={postContentRef} style={{ display: showCreatePost ? "flex" : "none" }} />
                 </div>
-                <textarea rows="5" cols="100" ref={postContentRef} style={{ display: showCreatePost ? "flex" : "none" }} />
+                <ul className="posts">{posts}</ul>
             </div>
-            <ul className="posts">{posts}</ul>
-        </div>);
+        );
     }
 
     return render();

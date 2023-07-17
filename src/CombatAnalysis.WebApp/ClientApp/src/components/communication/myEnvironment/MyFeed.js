@@ -1,9 +1,14 @@
 import { useEffect, useState } from "react";
 import { useSelector } from 'react-redux';
-import Post from '../Post';
+import PostService from '../../../services/PostService';
+import UserPostService from '../../../services/UserPostService';
 import Alert from '../../Alert';
+import Post from '../Post';
 
 const MyFeed = () => {
+    const userPostService = new UserPostService();
+    const postService = new PostService();
+
     const customer = useSelector((state) => state.customer.value);
 
     const [feed, setFeed] = useState(<></>);
@@ -24,12 +29,13 @@ const MyFeed = () => {
     const getUserPostsAsync = async (customersId) => {
         let userPosts = [];
         for (let i = 0; i < customersId.length; i++) {
-            const response = await fetch(`/api/v1/UserPost/searchByUserId/${customersId[i]}`);
+            const response = await userPostService.searchByUserId(customersId[i]);
             if (response.status !== 200) {
                 return [];
             }
 
-            userPosts = await response.json();
+            const result = await response.json();
+            userPosts = [...userPosts, ...result];
         }
 
         return userPosts;
@@ -58,16 +64,8 @@ const MyFeed = () => {
             ownerId: customer.id
         }
 
-        const response = await fetch("/api/v1/Post", {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(newPost)
-        });
-
-        if (response.status === 200) {
-            const createdPost = await response.json();
+        const createdPost = await postService.createAsync(newPost);
+        if (createdPost !== null) {
             const isCreated = await createUserPostAsync(createdPost.id);
             return isCreated;
         }
@@ -77,34 +75,24 @@ const MyFeed = () => {
 
     const createUserPostAsync = async (postId) => {
         const newUserPost = {
-            id: 0,
             userId: customer.id,
             postId: postId
         }
 
-        const response = await fetch("/api/v1/UserPost", {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(newUserPost)
-        });
-
-        if (response.status === 200) {
-            return true;
-        }
-
-        return false;
+        const createdUserPost = await userPostService.createAsync(newUserPost);
+        return createdUserPost === null ? false : true;
     }
 
     const render = () => {
-        return (<div>
-            <Alert
-                isVisible={showUpdatingAlert}
-                content="Updating..."
-            />
-            {feed}
-        </div>)
+        return (
+            <div>
+                <Alert
+                    isVisible={showUpdatingAlert}
+                    content="Updating..."
+                />
+                {feed}
+            </div>
+        )
     }
 
     return render();

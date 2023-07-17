@@ -2,10 +2,15 @@ import { faCircleCheck, faCircleXmark, faRotate } from '@fortawesome/free-solid-
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
+import FriendService from '../../../services/FriendService';
+import RequestToConnectService from '../../../services/RequestToConnectService';
 
 import "../../../styles/communication/requestToConnect.scss";
 
 const RequestToConnect = () => {
+    const requestToConnectService = new RequestToConnectService();
+    const friendService = new FriendService();
+
     const customer = useSelector((state) => state.customer.value);
 
     const timeForHideNotifications = 4000;
@@ -27,21 +32,15 @@ const RequestToConnect = () => {
     }, [])
 
     const getRequestsAsync = async () => {
-        const response = await fetch(`/api/v1/RequestToConnect/searchByToUserId/${customer.id}`);
-        const status = response.status;
-
-        if (status === 200) {
-            const allRequests = await response.json();
+        const allRequests = await requestToConnectService.searchByToUserIdAsync(customer.id);
+        if (allRequests !== null) {
             fillRequestsToConnect(allRequests);
         }
     }
 
     const getMyRequestsAsync = async () => {
-        const response = await fetch(`/api/v1/RequestToConnect/searchByOwnerId/${customer.id}`);
-        const status = response.status;
-
-        if (status === 200) {
-            const allMyRequests = await response.json();
+        const allMyRequests = await requestToConnectService.searchByOwnerIdAsync(customer.id);
+        if (allMyRequests !== null) {
             fillMyRequestsToConnect(allMyRequests);
         }
     }
@@ -72,15 +71,8 @@ const RequestToConnect = () => {
             forWhomId: request.ownerId
         };
 
-        let response = await fetch("/api/v1/Friend", {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(newFriend)
-        });
-
-        if (response.status !== 200) {
+        const creadetFriend = await friendService.createAsync(newFriend);
+        if (creadetFriend === null) {
             setShowErrorMessage(true);
             setTimeout(() => {
                 setShowErrorMessage(false);
@@ -89,11 +81,8 @@ const RequestToConnect = () => {
             return;
         }
 
-        response = await fetch(`/api/v1/RequestToConnect/${request.id}`, {
-            method: 'DELETE',
-        });
-
-        if (response.status !== 200) {
+        const deletedItem = await requestToConnectService.deleteAsync(request.id);
+        if (deletedItem === null) {
             setShowErrorMessage(true);
             setTimeout(() => {
                 setShowErrorMessage(false);
@@ -113,11 +102,8 @@ const RequestToConnect = () => {
     const rejectRequestAsync = async (requestId) => {
         setShowRejectMessage(false);
 
-        const response = await fetch(`/api/v1/RequestToConnect/${requestId}`, {
-            method: 'DELETE',
-        });
-
-        if (response.status !== 200) {
+        const deletedItem = await requestToConnectService.deleteAsync(requestId);
+        if (deletedItem === null) {
             return;
         }
 
@@ -132,11 +118,8 @@ const RequestToConnect = () => {
     const cancelMyRequestAsync = async (requestId) => {
         setShowCancelMessage(false);
 
-        const response = await fetch(`/api/v1/RequestToConnect/${requestId}`, {
-            method: 'DELETE',
-        });
-
-        if (response.status !== 200) {
+        const deletedItem = await requestToConnectService.deleteAsync(requestId);
+        if (deletedItem === null) {
             return;
         }
 
@@ -149,40 +132,44 @@ const RequestToConnect = () => {
     }
 
     const requestsCard = (request) => {
-        return (<li key={request.id} className="request-to-connect">
-            <div>{request.username}</div>
-            <div className="request-to-connect__answer">
-                <div className="accept">
-                    <FontAwesomeIcon
-                        icon={faCircleCheck}
-                        title="Accept"
-                        onClick={async () => await acceptRequestAsync(request)}
-                    />
+        return (
+            <li key={request.id} className="request-to-connect">
+                <div>{request.username}</div>
+                <div className="request-to-connect__answer">
+                    <div className="accept">
+                        <FontAwesomeIcon
+                            icon={faCircleCheck}
+                            title="Accept"
+                            onClick={async () => await acceptRequestAsync(request)}
+                        />
+                    </div>
+                    <div className="reject">
+                        <FontAwesomeIcon
+                            icon={faCircleXmark}
+                            title="Reject"
+                            onClick={async () => await rejectRequestAsync(request.id)}
+                        />
+                    </div>
                 </div>
-                <div className="reject">
-                    <FontAwesomeIcon
-                        icon={faCircleXmark}
-                        title="Reject"
-                        onClick={async () => await rejectRequestAsync(request.id)}
-                    />
-                </div>
-            </div>
-        </li>);
+            </li>
+        );
     }
 
     const myRequestsCard = (element) => {
-        return (<li key={element.id} className="request-to-connect">
-            <div>{element.username}</div>
-            <div className="request-to-connect__answer">
-                <div className="reject">
-                    <FontAwesomeIcon
-                        icon={faCircleXmark}
-                        title="Cancel"
-                        onClick={async () => await cancelMyRequestAsync(element.id)}
-                    />
+        return (
+            <li key={element.id} className="request-to-connect">
+                <div>{element.username}</div>
+                <div className="request-to-connect__answer">
+                    <div className="reject">
+                        <FontAwesomeIcon
+                            icon={faCircleXmark}
+                            title="Cancel"
+                            onClick={async () => await cancelMyRequestAsync(element.id)}
+                        />
+                    </div>
                 </div>
-            </div>
-        </li>);
+            </li>
+        );
     }
 
     const myRequestsPanel = () => {
@@ -218,16 +205,18 @@ const RequestToConnect = () => {
     }
 
     const requestsPanel = () => {
-        return (<div>
-            <div className="request-notifications">
-                <div style={{ display: showErrorMessage ? "flex" : "none" }}>Something wrong. Try again</div>
-                <div className="request-notifications__accept" style={{ display: showAcceptMessage ? "flex" : "none" }}>You accepted request to connect</div>
-                <div className="request-notifications__reject" style={{ display: showRejectMessage ? "flex" : "none" }}>You rejected request to connect</div>
-                <div className="request-notifications__reject" style={{ display: showCancelMessage ? "flex" : "none" }}>You canceled your request to connect</div>
+        return (
+            <div>
+                <div className="request-notifications">
+                    <div style={{ display: showErrorMessage ? "flex" : "none" }}>Something wrong. Try again</div>
+                    <div className="request-notifications__accept" style={{ display: showAcceptMessage ? "flex" : "none" }}>You accepted request to connect</div>
+                    <div className="request-notifications__reject" style={{ display: showRejectMessage ? "flex" : "none" }}>You rejected request to connect</div>
+                    <div className="request-notifications__reject" style={{ display: showCancelMessage ? "flex" : "none" }}>You canceled your request to connect</div>
+                </div>
+                {myRequestsToConnect.length !== undefined ? myRequestsPanel() : null }
+                {requestsToConnect.length !== undefined ? fromAnotherPeopleRequestsPanel() : null }
             </div>
-            {myRequestsToConnect.length !== undefined ? myRequestsPanel() : null }
-            {requestsToConnect.length !== undefined ? fromAnotherPeopleRequestsPanel() : null }
-        </div>);
+        );
     }
 
     const render = () => {

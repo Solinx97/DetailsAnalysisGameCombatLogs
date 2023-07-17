@@ -2,11 +2,18 @@ import { faCommentDots, faSquarePlus, faUserPlus, faWindowRestore } from '@forta
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useCallback, useEffect, useState } from "react";
 import { useSelector } from 'react-redux';
+import CustomerService from '../../../services/CustomerService';
+import PersonalChatService from '../../../services/PersonalChatService';
+import RequestToConnectService from '../../../services/RequestToConnectService';
 import UserInformation from './../UserInformation';
 
 import '../../../styles/communication/people.scss';
 
 const People = ({ updateCurrentMenuItem }) => {
+    const customerService = new CustomerService();
+    const personalChatService = new PersonalChatService();
+    const requestToConnectService = new RequestToConnectService();
+
     const customer = useSelector((state) => state.customer.value);
 
     const timeForHideNotifications = 4000;
@@ -26,23 +33,15 @@ const People = ({ updateCurrentMenuItem }) => {
     }, [])
 
     const getPeopleAsync = async () => {
-        const response = await fetch("/api/v1/Customer");
-
-        if (response.status === 200) {
-            const people = await response.json();
-
+        const people = await customerService.getAllAsync();
+        if (people !== null) {
             fillPeopleCards(people);
         }
     }
 
     const checkExistNewChatAsync = async (targetCustomer) => {
-        const response = await fetch(`/api/v1/PersonalChat/isExist?initiatorId=${customer.id}&companionId=${targetCustomer.id}`);
-        if (response.status === 200) {
-            const isExist = await response.json();
-            return isExist;
-        }
-
-        return true;
+        const isExist = await personalChatService.isExistAsync(customer.id, targetCustomer.id);
+        return isExist !== null ? isExist : true;
     }
 
     const startChatAsync = async (targetCustomer) => {
@@ -61,15 +60,8 @@ const People = ({ updateCurrentMenuItem }) => {
             companionId: targetCustomer.id
         };
 
-        const response = await fetch("/api/v1/PersonalChat", {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(newChat)
-        });
-
-        if (response.status === 200) {
+        const createdChat = await personalChatService.createAsync(newChat);
+        if (createdChat !== null) {
             updateCurrentMenuItem(0, customer.id, targetCustomer.id);
         }
     }
@@ -85,15 +77,8 @@ const People = ({ updateCurrentMenuItem }) => {
             ownerId: customer.id,
         };
 
-        const response = await fetch("/api/v1/RequestToConnect", {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(newRequest)
-        });
-
-        if (response.status === 200) {
+        const createdRequest = await requestToConnectService.createAsync(newRequest);
+        if (createdRequest !== null) {
             setShowSuccessfullRequest(true);
 
             setTimeout(() => {
@@ -133,34 +118,38 @@ const People = ({ updateCurrentMenuItem }) => {
     }
 
     const createPersonalCard = (customer) => {
-        return (<li key={customer.id}>
-            <div className="card">
-                <div className="card-body">
-                    <div>[icon]</div>
-                    <h5 className="card-title" onMouseOver={() => openUserInformationWithTimeout(customer)}
-                        onMouseLeave={() => clearUserInformationTimeout()}>{customer.username}</h5>
-                    <FontAwesomeIcon icon={faWindowRestore} title="Show details" onClick={() => openUserInformation(customer)} />
+        return (
+            <li key={customer.id}>
+                <div className="card">
+                    <div className="card-body">
+                        <div>[icon]</div>
+                        <h5 className="card-title" onMouseOver={() => openUserInformationWithTimeout(customer)}
+                            onMouseLeave={() => clearUserInformationTimeout()}>{customer.username}</h5>
+                        <FontAwesomeIcon icon={faWindowRestore} title="Show details" onClick={() => openUserInformation(customer)} />
+                    </div>
+                    <ul className="card__links list-group list-group-flush">
+                        <li className="list-group-item"><FontAwesomeIcon icon={faCommentDots} title="Start chat" onClick={async () => await startChatAsync(customer)} /></li>
+                        <li className="list-group-item"><FontAwesomeIcon icon={faUserPlus} title="Request to connect" onClick={async () => await createRequestToConnectAsync(customer)} /></li>
+                        <li className="list-group-item"><FontAwesomeIcon icon={faSquarePlus} title="Add to community" /></li>
+                    </ul>
                 </div>
-                <ul className="card__links list-group list-group-flush">
-                    <li className="list-group-item"><FontAwesomeIcon icon={faCommentDots} title="Start chat" onClick={async () => await startChatAsync(customer)} /></li>
-                    <li className="list-group-item"><FontAwesomeIcon icon={faUserPlus} title="Request to connect" onClick={async () => await createRequestToConnectAsync(customer)} /></li>
-                    <li className="list-group-item"><FontAwesomeIcon icon={faSquarePlus} title="Add to community" /></li>
-                </ul>
-            </div>
-        </li>);
+            </li>
+        );
     }
 
     const render = () => {
-        return (<div className="people">
-            <div>
-                <div>Looking for</div>
+        return (
+            <div className="people">
+                <div>
+                    <div>Looking for</div>
+                </div>
+                <div className="people__successfully-request" style={{ display: showSuccessfullRequest ? "flex" : "none" }}>You have successfully sent a connection request</div>
+                <ul className="people__cards">
+                    {people}
+                </ul>
+                {userInformation}
             </div>
-            <div className="people__successfully-request" style={{ display: showSuccessfullRequest ? "flex" : "none" }}>You have successfully sent a connection request</div>
-            <ul className="people__cards">
-                {people}
-            </ul>
-            {userInformation}
-        </div>);
+        );
     }
 
     return render();

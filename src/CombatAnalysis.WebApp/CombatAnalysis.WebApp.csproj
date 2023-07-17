@@ -31,7 +31,6 @@
   <ItemGroup>
     <Folder Include="ClientApp\src\components\communication\events\" />
     <Folder Include="ClientApp\src\components\general\" />
-    <Folder Include="ClientApp\src\services\" />
   </ItemGroup>
 
   <Target Name="DebugEnsureNodeEnv" BeforeTargets="Build" Condition=" '$(Configuration)' == 'Debug' And !Exists('$(SpaRoot)node_modules') ">

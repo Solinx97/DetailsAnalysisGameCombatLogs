@@ -1,4 +1,4 @@
-import HttpClient from '../helpers/HttpClient'
+import HttpClient from '../helpers/HttpClient';
 
 class CommunityUserService {
     _httpClient = null;
@@ -8,23 +8,53 @@ class CommunityUserService {
     }
 
     async getAllAsync() {
-        const result = await this._httpClient.getAllAsync("CommunityUser");
-        return result;
+        try {
+            const result = await this._httpClient.getAsync("CommunityUser");
+            return result;
+        } catch (e) {
+            console.log(e.message);
+            return null;
+        }
     }
 
     async getByIdAsync(id) {
-        const result = await this._httpClient.getAllAsync(`CommunityUser/${id}`);
-        return result;
+        try {
+            const result = await this._httpClient.getAsync(`CommunityUser/${id}`);
+            return result;
+        } catch (e) {
+            console.log(e.message);
+            return null;
+        }
     }
 
     async searchByCommunityIdAsync(id) {
-        const result = await this._httpClient.getAllAsync(`CommunityUser/searchByCommunityId/${id}`);
-        return result;
+        try {
+            const result = await this._httpClient.getAsync(`CommunityUser/searchByCommunityId/${id}`);
+            return result;
+        } catch (e) {
+            console.log(e.message);
+            return null;
+        }
+    }
+
+    async searchByUserId(id) {
+        try {
+            const result = await this._httpClient.getAsync(`CommunityUser/searchByUserId/${id}`);
+            return result;
+        } catch (e) {
+            console.log(e.message);
+            return null;
+        }
     }
 
     async deleteAsync(id) {
-        const result = await this._httpClient.deleteAsync(`CommunityUser/${id}`);
-        return result;
+        try {
+            const result = await this._httpClient.deleteAsync(`CommunityUser/${id}`);
+            return result;
+        } catch (e) {
+            console.log(e.message);
+            return null;
+        }
     }
 }
 

@@ -2,10 +2,15 @@ import { faUserPlus } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useEffect, useState } from "react";
 import { useSelector } from 'react-redux';
+import CustomerService from '../services/CustomerService';
+import FriendService from '../services/FriendService';
 
 import '../styles/addPeople.scss';
 
 const AddPeople = ({ communityUsersId, createInviteAsync, setShowAddPeople }) => {
+    const friendService = new FriendService();
+    const customerService = new CustomerService();
+
     const customer = useSelector((state) => state.customer.value);
 
     const [friends, setFriends] = useState(<></>);
@@ -34,13 +39,13 @@ const AddPeople = ({ communityUsersId, createInviteAsync, setShowAddPeople }) =>
 
     const getFriendsAsync = async () => {
         const friendsId = [];
-        const response = await fetch(`/api/v1/Friend/searchByUserId/${customer.id}`);
-        if (response.status !== 200) {
+
+        const friends = await friendService.searchByUserId(customer.id);
+        if (friends === null) {
             return;
         }
 
-        const friends = await response.json();
-        for (var i = 0; i < friends.length; i++) {
+        for (let i = 0; i < friends.length; i++) {
             friends[i].whoFriendId === customer.id
                 ? friendsId.push(friends[i].forWhomId)
                 : friendsId.push(friends[i].whoFriendId);
@@ -52,13 +57,12 @@ const AddPeople = ({ communityUsersId, createInviteAsync, setShowAddPeople }) =>
 
     const getPeopleAsync = async () => {
         const newPeople = [];
-        const response = await fetch("/api/v1/Customer");
 
-        if (response.status !== 200) {
+        const people = await customerService.getAllAsync();
+        if (people === null) {
             return;
         }
 
-        const people = await response.json();
         for (let i = 0; i < people.length; i++) {
             if (communityUsersId.indexOf(people[i].id) === -1
                 && friendsId.indexOf(people[i].id) === -1) {
@@ -84,10 +88,12 @@ const AddPeople = ({ communityUsersId, createInviteAsync, setShowAddPeople }) =>
     }
 
     const createUserCard = (user) => {
-        return (<li key={user.id} className="friend">
-            <div>{user.username}</div>
-            <FontAwesomeIcon icon={faUserPlus} title="Send invite to community" onClick={async () => await createInviteAsync(user.id)} />
-        </li>);
+        return (
+            <li key={user.id} className="friend">
+                <div>{user.username}</div>
+                <FontAwesomeIcon icon={faUserPlus} title="Send invite to community" onClick={async () => await createInviteAsync(user.id)} />
+            </li>
+        );
     }
 
     const handleAddNewPeopleVisibility = () => {
@@ -95,28 +101,30 @@ const AddPeople = ({ communityUsersId, createInviteAsync, setShowAddPeople }) =>
     }
 
     const render = () => {
-        return (<div className="add-new-people">
-            <div>Add new people</div>
-            <div>
-                <div>Search</div>
-                <input type="text" />
-            </div>
-            <div>
+        return (
+            <div className="add-new-people">
+                <div>Add new people</div>
                 <div>
-                    <div>Friends</div>
-                    <ul>
-                        {friends}
-                    </ul>
+                    <div>Search</div>
+                    <input type="text" />
                 </div>
                 <div>
-                    <div>Another people</div>
-                    <ul>
-                        {people}
-                    </ul>
+                    <div>
+                        <div>Friends</div>
+                        <ul>
+                            {friends}
+                        </ul>
+                    </div>
+                    <div>
+                        <div>Another people</div>
+                        <ul>
+                            {people}
+                        </ul>
+                    </div>
                 </div>
+                <button className="btn btn-outline-success" onClick={handleAddNewPeopleVisibility}>Close</button>
             </div>
-            <button className="btn btn-outline-success" onClick={handleAddNewPeopleVisibility}>Close</button>
-        </div>);
+        );
     }
 
     return render();

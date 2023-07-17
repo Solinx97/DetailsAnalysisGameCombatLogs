@@ -1,9 +1,16 @@
 import { useEffect, useState } from "react";
 import { useSelector } from 'react-redux';
-import Post from './Post';
+import FriendService from '../../services/FriendService';
+import PostService from "../../services/PostService";
+import UserPostService from '../../services/UserPostService';
 import Alert from '../Alert';
+import Post from './Post';
 
 const Feed = () => {
+    const friendService = new FriendService();
+    const userPostService = new UserPostService();
+    const postService = new PostService();
+
     const customer = useSelector((state) => state.customer.value);
 
     const [feed, setFeed] = useState(<></>);
@@ -23,13 +30,13 @@ const Feed = () => {
 
     const getFriendsIdByUserIdAsync = async () => {
         const customersId = [];
-        const response = await fetch(`/api/v1/Friend/searchByUserId/${customer.id}`);
-        if (response.status !== 200) {
+
+        const friends = await friendService.searchByUserId(customer.id);
+        if (friends === null) {
             return [];
         }
 
-        const friends = await response.json();
-        for (var i = 0; i < friends.length; i++) {
+        for (let i = 0; i < friends.length; i++) {
             const customerId = friends[i].whoFriendId === customer.id ? friends[i].forWhomId : friends[i].whoFriendId;
             customersId.push(customerId);
         }
@@ -38,18 +45,15 @@ const Feed = () => {
     }
 
     const getUserPostsAsync = async (customersId) => {
-        let userPosts = [];
+        let allUserPosts = [];
         for (let i = 0; i < customersId.length; i++) {
-            const response = await fetch(`/api/v1/UserPost/searchByUserId/${customersId[i]}`);
-            if (response.status !== 200) {
-                return [];
+            const userPosts = await userPostService.searchByUserId(customersId[i]);
+            if (userPosts !== null) {
+                allUserPosts = [...allUserPosts, ...userPosts];
             }
-
-            const result = await response.json();
-            userPosts = [...userPosts, ...result];
         }
 
-        return userPosts;
+        return allUserPosts;
     }
 
     const getPostsAsync = async () => {
@@ -76,16 +80,8 @@ const Feed = () => {
             ownerId: customer.id
         }
 
-        const response = await fetch("/api/v1/Post", {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(newPost)
-        });
-
-        if (response.status === 200) {
-            const createdPost = await response.json();
+        const createdPost = await postService.createAsync(newPost);
+        if (createdPost !== null) {
             const isCreated = await createUserPostAsync(createdPost.id);
             return isCreated;
         }
@@ -100,29 +96,20 @@ const Feed = () => {
             postId: postId
         }
 
-        const response = await fetch("/api/v1/UserPost", {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(newUserPost)
-        });
-
-        if (response.status === 200) {
-            return true;
-        }
-
-        return false;
+        const createdUserPost = await userPostService.createAsync(newUserPost);
+        return createdUserPost === null ? false : true; 
     }
 
     const render = () => {
-        return (<div>
-            <Alert
-                isVisible={showUpdatingAlert}
-                content="Updating..."
-            />
-            {feed}
-        </div>)
+        return (
+            <div>
+                <Alert
+                    isVisible={showUpdatingAlert}
+                    content="Updating..."
+                />
+                {feed}
+            </div>
+        )
     }
 
     return render();

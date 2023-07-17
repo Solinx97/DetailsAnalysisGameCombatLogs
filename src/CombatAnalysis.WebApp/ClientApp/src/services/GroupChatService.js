@@ -1,6 +1,6 @@
 import HttpClient from '../helpers/HttpClient';
 
-class CustomerService {
+class GroupChatService {
     _httpClient = null;
 
     constructor() {
@@ -9,7 +9,7 @@ class CustomerService {
 
     async getAllAsync() {
         try {
-            const result = await this._httpClient.getAsync("Customer");
+            const result = await this._httpClient.getAsync("GroupChat");
             return result;
         } catch (e) {
             console.log(e.message);
@@ -19,7 +19,7 @@ class CustomerService {
 
     async getByIdAsync(id) {
         try {
-            const result = await this._httpClient.getAsync(`Customer/${id}`);
+            const result = await this._httpClient.getAsync(`GroupChat/${id}`);
             return result;
         } catch (e) {
             console.log(e.message);
@@ -29,7 +29,7 @@ class CustomerService {
 
     async createAsync(data) {
         try {
-            const result = await this._httpClient.postAsync("Customer", data);
+            const result = await this._httpClient.postAsync("GroupChat", data);
             return result;
         } catch (e) {
             console.log(e.message);
@@ -39,7 +39,7 @@ class CustomerService {
 
     async updateAsync(data) {
         try {
-            const result = await this._httpClient.putAsync("Customer", data);
+            const result = await this._httpClient.putAsync("GroupChat", data);
             return result;
         } catch (e) {
             console.log(e.message);
@@ -49,7 +49,7 @@ class CustomerService {
 
     async deleteAsync(id) {
         try {
-            const result = await this._httpClient.deleteAsync(`Customer/${id}`);
+            const result = await this._httpClient.deleteAsync(`GroupChat/${id}`);
             return result;
         } catch (e) {
             console.log(e.message);
@@ -58,4 +58,4 @@ class CustomerService {
     }
 }
 
-export default CustomerService;
+export default GroupChatService;

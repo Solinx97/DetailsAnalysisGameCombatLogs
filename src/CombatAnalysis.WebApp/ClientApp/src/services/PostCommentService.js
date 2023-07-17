@@ -1,6 +1,6 @@
 import HttpClient from '../helpers/HttpClient'
 
-class CommunityPostService {
+class PostCommentService {
     _httpClient = null;
 
     constructor() {
@@ -9,7 +9,7 @@ class CommunityPostService {
 
     async getAllAsync() {
         try {
-            const result = await this._httpClient.getAsync("CommunityPost");
+            const result = await this._httpClient.getAsync("PostComment");
             return result;
         } catch (e) {
             console.log(e.message);
@@ -19,7 +19,7 @@ class CommunityPostService {
 
     async getByIdAsync(id) {
         try {
-            const result = await this._httpClient.getAsync(`CommunityPost/${id}`);
+            const result = await this._httpClient.getAsync(`PostComment/${id}`);
             return result;
         } catch (e) {
             console.log(e.message);
@@ -27,9 +27,19 @@ class CommunityPostService {
         }
     }
 
-    async searchByCommunityIdAsync(id) {
+    async searchByPostIdAsync(id) {
         try {
-            const result = await this._httpClient.getAsync(`CommunityPost/searchByCommunityId/${id}`);
+            const result = await this._httpClient.getAsync(`PostComment/searchByPostId/${id}`);
+            return result;
+        } catch (e) {
+            console.log(e.message);
+            return null;
+        }
+    }
+
+    async updateAsync(data) {
+        try {
+            const result = await this._httpClient.putAsync("PostComment", data);
             return result;
         } catch (e) {
             console.log(e.message);
@@ -39,7 +49,7 @@ class CommunityPostService {
 
     async createAsync(data) {
         try {
-            const result = await this._httpClient.postAsync("CommunityPost", data);
+            const result = await this._httpClient.postAsync("PostComment", data);
             return result;
         } catch (e) {
             console.log(e.message);
@@ -48,4 +58,4 @@ class CommunityPostService {
     }
 }
 
-export default CommunityPostService;
+export default PostCommentService;

@@ -1,6 +1,6 @@
 import HttpClient from '../helpers/HttpClient'
 
-class CommunityPostService {
+class FriendService {
     _httpClient = null;
 
     constructor() {
@@ -9,7 +9,7 @@ class CommunityPostService {
 
     async getAllAsync() {
         try {
-            const result = await this._httpClient.getAsync("CommunityPost");
+            const result = await this._httpClient.getAsync("Friend");
             return result;
         } catch (e) {
             console.log(e.message);
@@ -19,7 +19,7 @@ class CommunityPostService {
 
     async getByIdAsync(id) {
         try {
-            const result = await this._httpClient.getAsync(`CommunityPost/${id}`);
+            const result = await this._httpClient.getAsync(`Friend/${id}`);
             return result;
         } catch (e) {
             console.log(e.message);
@@ -27,9 +27,9 @@ class CommunityPostService {
         }
     }
 
-    async searchByCommunityIdAsync(id) {
+    async searchByUserId(id) {
         try {
-            const result = await this._httpClient.getAsync(`CommunityPost/searchByCommunityId/${id}`);
+            const result = await this._httpClient.getAsync(`Friend/searchByUserId/${id}`);
             return result;
         } catch (e) {
             console.log(e.message);
@@ -39,7 +39,17 @@ class CommunityPostService {
 
     async createAsync(data) {
         try {
-            const result = await this._httpClient.postAsync("CommunityPost", data);
+            const result = await this._httpClient.postAsync("Friend", data);
+            return result;
+        } catch (e) {
+            console.log(e.message);
+            return null;
+        }
+    }
+
+    async deleteAsync(id) {
+        try {
+            const result = await this._httpClient.deleteAsync(`Friend/${id}`);
             return result;
         } catch (e) {
             console.log(e.message);
@@ -48,4 +58,4 @@ class CommunityPostService {
     }
 }
 
-export default CommunityPostService;
+export default FriendService;

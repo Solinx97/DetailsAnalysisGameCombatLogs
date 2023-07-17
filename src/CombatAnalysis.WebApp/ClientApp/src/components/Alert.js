@@ -45,11 +45,13 @@ const Alert = ({ isVisible, typeOfAlert = 0, content = "", timeout = -1 }) => {
             return (<></>);
         }
 
-        return (<div className="request-alert">
-            <div className={getTypeOfAlert()} role="alert">
-                {content}
+        return (
+            <div className="request-alert">
+                <div className={getTypeOfAlert()} role="alert">
+                    {content}
+                </div>
             </div>
-        </div>);
+        );
     }
 
     return render();

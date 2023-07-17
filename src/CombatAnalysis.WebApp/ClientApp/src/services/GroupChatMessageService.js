@@ -1,6 +1,6 @@
 import HttpClient from '../helpers/HttpClient';
 
-class CustomerService {
+class GroupChatMessageService {
     _httpClient = null;
 
     constructor() {
@@ -9,7 +9,7 @@ class CustomerService {
 
     async getAllAsync() {
         try {
-            const result = await this._httpClient.getAsync("Customer");
+            const result = await this._httpClient.getAsync("GroupChatMessage");
             return result;
         } catch (e) {
             console.log(e.message);
@@ -19,7 +19,17 @@ class CustomerService {
 
     async getByIdAsync(id) {
         try {
-            const result = await this._httpClient.getAsync(`Customer/${id}`);
+            const result = await this._httpClient.getAsync(`GroupChatMessage/${id}`);
+            return result;
+        } catch (e) {
+            console.log(e.message);
+            return null;
+        }
+    }
+
+    async findByChatIdAsync(id) {
+        try {
+            const result = await this._httpClient.getAsync(`GroupChatMessage/findByChatId/${id}`);
             return result;
         } catch (e) {
             console.log(e.message);
@@ -29,7 +39,7 @@ class CustomerService {
 
     async createAsync(data) {
         try {
-            const result = await this._httpClient.postAsync("Customer", data);
+            const result = await this._httpClient.postAsync("GroupChatMessage", data);
             return result;
         } catch (e) {
             console.log(e.message);
@@ -39,7 +49,7 @@ class CustomerService {
 
     async updateAsync(data) {
         try {
-            const result = await this._httpClient.putAsync("Customer", data);
+            const result = await this._httpClient.putAsync("GroupChatMessage", data);
             return result;
         } catch (e) {
             console.log(e.message);
@@ -49,7 +59,7 @@ class CustomerService {
 
     async deleteAsync(id) {
         try {
-            const result = await this._httpClient.deleteAsync(`Customer/${id}`);
+            const result = await this._httpClient.deleteAsync(`GroupChatMessage/${id}`);
             return result;
         } catch (e) {
             console.log(e.message);
@@ -58,4 +68,4 @@ class CustomerService {
     }
 }
 
-export default CustomerService;
+export default GroupChatMessageService;

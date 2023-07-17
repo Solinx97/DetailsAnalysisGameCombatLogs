@@ -8,18 +8,43 @@ class PostService {
     }
 
     async getAllAsync() {
-        const result = await this._httpClient.getAllAsync("Post");
-        return result;
+        try {
+            const result = await this._httpClient.getAsync("Post");
+            return result;
+        } catch (e) {
+            console.log(e.message);
+            return null;
+        }
     }
 
     async getByIdAsync(id) {
-        const result = await this._httpClient.getAllAsync(`Post/${id}`);
-        return result;
+        try {
+            const result = await this._httpClient.getAsync(`Post/${id}`);
+            return result;
+        } catch (e) {
+            console.log(e.message);
+            return null;
+        }
+    }
+
+    async updateAsync(data) {
+        try {
+            const result = await this._httpClient.putAsync("Post", data);
+            return result;
+        } catch (e) {
+            console.log(e.message);
+            return null;
+        }
     }
 
     async createAsync(data) {
-        const result = await this._httpClient.postAsync("Post", data);
-        return result;
+        try {
+            const result = await this._httpClient.postAsync("Post", data);
+            return result;
+        } catch (e) {
+            console.log(e.message);
+            return null;
+        }
     }
 }
 

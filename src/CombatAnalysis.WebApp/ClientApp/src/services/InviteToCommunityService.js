@@ -1,4 +1,4 @@
-import HttpClient from '../helpers/HttpClient'
+import HttpClient from '../helpers/HttpClient';
 
 class InviteToCommunityService {
     _httpClient = null;
@@ -8,23 +8,53 @@ class InviteToCommunityService {
     }
 
     async getAllAsync() {
-        const result = await this._httpClient.getAllAsync("InviteToCommunity");
-        return result;
+        try {
+            const result = await this._httpClient.getAsync("InviteToCommunity");
+            return result;
+        } catch (e) {
+            console.log(e.message);
+            return null;
+        }
     }
 
     async getByIdAsync(id) {
-        const result = await this._httpClient.getAllAsync(`InviteToCommunity/${id}`);
-        return result;
+        try {
+            const result = await this._httpClient.getAsync(`InviteToCommunity/${id}`);
+            return result;
+        } catch (e) {
+            console.log(e.message);
+            return null;
+        }
+    }
+
+    async searchByUserId(id) {
+        try {
+            const result = await this._httpClient.getAsync(`InviteToCommunity/searchByUserId/${id}`);
+            return result;
+        } catch (e) {
+            console.log(e.message);
+            return null;
+        }
     }
 
     async createAsync(data) {
-        const result = await this._httpClient.postAsync("InviteToCommunity", data);
-        return result;
+        try {
+            const result = await this._httpClient.postAsync("InviteToCommunity", data);
+            return result;
+        } catch (e) {
+            console.log(e.message);
+            return null;
+        }
     }
 
     async deleteAsync(id) {
-        const result = await this._httpClient.deleteAsync(`InviteToCommunity/${id}`);
-        return result;
+        try {
+            const result = await this._httpClient.deleteAsync(`InviteToCommunity/${id}`);
+            return result;
+        } catch (e) {
+            console.log(e.message);
+            return null;
+        }
     }
 }
 

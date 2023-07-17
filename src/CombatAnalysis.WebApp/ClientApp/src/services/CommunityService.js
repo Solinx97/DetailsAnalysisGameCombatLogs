@@ -1,4 +1,4 @@
-import HttpClient from '../helpers/HttpClient'
+import HttpClient from '../helpers/HttpClient';
 
 class CommunityService {
     _httpClient = null;
@@ -8,13 +8,43 @@ class CommunityService {
     }
 
     async getAllAsync() {
-        const result = await this._httpClient.getAllAsync("Community");
-        return result;
+        try {
+            const result = await this._httpClient.getAsync("Community");
+            return result;
+        } catch (e) {
+            console.log(e.message);
+            return null;
+        }
     }
 
     async getByIdAsync(id) {
-        const result = await this._httpClient.getAllAsync(`Community/${id}`);
-        return result;
+        try {
+            const result = await this._httpClient.getAsync(`Community/${id}`);
+            return result;
+        } catch (e) {
+            console.log(e.message);
+            return null;
+        }
+    }
+
+    async updateAsync(data) {
+        try {
+            const result = await this._httpClient.putAsync("Community", data);
+            return result;
+        } catch (e) {
+            console.log(e.message);
+            return null;
+        }
+    }
+
+    async createAsync(data) {
+        try {
+            const result = await this._httpClient.postAsync("Community", data);
+            return result;
+        } catch (e) {
+            console.log(e.message);
+            return null;
+        }
     }
 }
 

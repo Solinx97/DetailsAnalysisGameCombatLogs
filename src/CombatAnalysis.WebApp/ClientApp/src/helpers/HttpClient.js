@@ -9,7 +9,7 @@ class HttpClient {
         this._baseAddressApi = "/api/v1";
     }
 
-    async getAllAsync(requestUri) {
+    async getAsync(requestUri) {
         const response = await fetch(`${this._baseAddressApi}/${requestUri}`);
         if (response.status !== 200) {
             throw new Error(`Could not fetch ${requestUri}, received ${response.status}`);
@@ -34,6 +34,21 @@ class HttpClient {
 
         const result = await response.json();
         return result;
+    }
+
+    async postEmptyAsync(requestUri) {
+        const response = await fetch(`${this._baseAddressApi}/${requestUri}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+
+        if (response.status !== 200) {
+            throw new Error(`Could not fetch ${requestUri}, received ${response.status}`);
+        }
+
+        return true;
     }
 
     async putAsync(requestUri, content)  {
