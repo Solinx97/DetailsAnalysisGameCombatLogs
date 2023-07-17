@@ -11,7 +11,7 @@ class HttpClient {
 
     async getAsync(requestUri) {
         const response = await fetch(`${this._baseAddressApi}/${requestUri}`);
-        if (response.status !== 200) {
+        if (response.status !== 200 && response.status !== 204) {
             throw new Error(`Could not fetch ${requestUri}, received ${response.status}`);
         }
 

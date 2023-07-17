@@ -1,12 +1,15 @@
-﻿import React, { useEffect, useState, memo } from 'react';
-import { useNavigate } from 'react-router-dom';
-import PlayerInformation from './childs/PlayerInformation';
-import DetailsPieChart from './childs/DetailsPieChart';
+﻿import React, { memo, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
+import DetailsSpecificalCombatService from '../services/DetailsSpecificalCombatService';
+import DetailsPieChart from './childs/DetailsPieChart';
+import PlayerInformation from './childs/PlayerInformation';
 
 import "../styles/detailsSpecificalCombat.scss";
 
 const DetailsSpecificalCombat = () => {
+    const detailsSpecificalCombatService = new DetailsSpecificalCombatService();
+
     const navigate = useNavigate();
     const { t, i18n } = useTranslation("detailsSpecificalCombat");
 
@@ -62,16 +65,17 @@ const DetailsSpecificalCombat = () => {
     }, [combatPlayers]);
 
     const getCombatPlayersAsync = async () => {
-        const response = await fetch(`api/v1/DetailsSpecificalCombat/combatPlayersByCombatId/${combatId}`);
-        const combatPlayersData = await response.json();
+        const combatPlayersData = await detailsSpecificalCombatService.combatPlayersByCombatIdAsync(combatId);
         setCombatPlayers(combatPlayersData);
 
         await getCombatsAsync();
     }
 
     const getCombatsAsync = async () => {
-        const response = await fetch(`api/v1/DetailsSpecificalCombat/combatById/${combatId}`);
-        const combat = await response.json();
+        const combat = await detailsSpecificalCombatService.combatByIdAsync(combatId);
+        if (combat === null) {
+            return;
+        }
 
         setCombatLogId(combat.combatLogId);
     }
@@ -110,26 +114,28 @@ const DetailsSpecificalCombat = () => {
     }
 
     const render = () => {
-        return (<div className="details-specifical-combat__container">
-            <div className="details-specifical-combat__container_navigate">
-                <h3>{t("Players")}</h3>
-                <div className="btn-group" role="group">
-                    <button type="button" className="btn btn-primary" onClick={() => navigate(`/general-analysis?id=${combatLogId}`)}>{t("SelectCombat")}</button>
+        return (
+            <div className="details-specifical-combat__container">
+                <div className="details-specifical-combat__container_navigate">
+                    <h3>{t("Players")}</h3>
+                    <div className="btn-group" role="group">
+                        <button type="button" className="btn btn-primary" onClick={() => navigate(`/general-analysis?id=${combatLogId}`)}>{t("SelectCombat")}</button>
+                    </div>
                 </div>
-            </div>
-            <div className="form-check form-switch">
-                <input className="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckChecked" onChange={() => setShowGeneralDetails(!showGeneralDetails)} />
-                <label className="form-check-label" htmlFor="flexSwitchCheckChecked">{t("ShowCommonStatistics")}</label>
-            </div>
-            {showGeneralDetails &&
-                <div className="details-specifical-combat__container_general-details-charts">
-                    <DetailsPieChart payload={damageDonePieChart} />
-                    <DetailsPieChart payload={healDonePieChart} />
-                    <DetailsPieChart payload={damageTakenPieChart} />
+                <div className="form-check form-switch">
+                    <input className="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckChecked" onChange={() => setShowGeneralDetails((item) => !item)} />
+                    <label className="form-check-label" htmlFor="flexSwitchCheckChecked">{t("ShowCommonStatistics")}</label>
                 </div>
-            }
-            <PlayerInformationMemo combatPlayers={combatPlayers} />
-        </div>);
+                {showGeneralDetails &&
+                    <div className="details-specifical-combat__container_general-details-charts">
+                        <DetailsPieChart payload={damageDonePieChart} />
+                        <DetailsPieChart payload={healDonePieChart} />
+                        <DetailsPieChart payload={damageTakenPieChart} />
+                    </div>
+                }
+                <PlayerInformationMemo combatPlayers={combatPlayers} />
+            </div>
+        );
     };
 
     return render();

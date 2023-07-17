@@ -27,6 +27,16 @@ class CustomerService {
         }
     }
 
+    async searchByUserIdAsync(id) {
+        try {
+            const result = await this._httpClient.getAsync(`Customer/searchByUserId/${id}`);
+            return result;
+        } catch (e) {
+            console.log(e.message);
+            return null;
+        }
+    }
+
     async createAsync(data) {
         try {
             const result = await this._httpClient.postAsync("Customer", data);

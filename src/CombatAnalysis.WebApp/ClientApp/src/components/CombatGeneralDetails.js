@@ -3,11 +3,14 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { Legend, RadialBar, RadialBarChart } from 'recharts';
 import useCombatGeneralData from '../hooks/useCombatGeneralData';
+import DetailsSpecificalCombatService from '../services/DetailsSpecificalCombatService';
 import CombatDetails from './CombatDetails';
 
 import "../styles/combatGeneralDetails.scss";
 
 const CombatGeneralDetails = () => {
+    const detailsSpecificalCombatService = new DetailsSpecificalCombatService();
+
     const navigate = useNavigate();
     const { t, i18n } = useTranslation("combatGeneralDetails");
 
@@ -64,17 +67,20 @@ const CombatGeneralDetails = () => {
     }
 
     const getCombatPlayerAsync = async () => {
-        const response = await fetch(`api/v1/DetailsSpecificalCombat/combatPlayerById/${combatPlayerId}`);
-        const combatPlayer = await response.json();
+        const combatPlayer = await detailsSpecificalCombatService.combatPlayerByIdAsync(combatPlayerId);
+        if (combatPlayer === null) {
+            return;
+        }
 
         setUserName(combatPlayer.userName);
-
         await getCombatsAsync(combatPlayer.combatId);
     }
 
     const getCombatsAsync = async (id) => {
-        const response = await fetch(`api/v1/DetailsSpecificalCombat/combatById/${id}`);
-        const combat = await response.json();
+        const combat = await detailsSpecificalCombatService.combatByIdAsync(id);
+        if (combat === null) {
+            return;
+        }
 
         setCombatId(combat.id);
     }
@@ -82,7 +88,7 @@ const CombatGeneralDetails = () => {
     const fillingGeneralDetailsList = async () => {
         const combatGeneralDetailsData = await getCombatGeneralData();
 
-        if (combatGeneralDetailsData.length == 0) {
+        if (combatGeneralDetailsData.length === 0) {
             setCombatDataRender(<div>{t("NeedToAddSomething")}</div>);
             return;
         }
@@ -109,72 +115,76 @@ const CombatGeneralDetails = () => {
     }
 
     const generalDetailsDOM = () => {
-        return (<div>
+        return (
             <div>
-                <h3>{t("CommonInform")} [{getDetailsTypeName()}]</h3>
-                <h4>{t("Player")}: {userName}</h4>
-            </div>
-            <div className="form-check form-switch">
-                <input className="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckChecked" onChange={() => setShowGeneralChart(!showGeneralChart)} defaultChecked={showGeneralChart} />
-                <label className="form-check-label" htmlFor="flexSwitchCheckChecked">{t("ShowDiagram")}</label>
-            </div>
-            {showGeneralChart &&
-                <div className="general-details__container_radial-chart">
-                    <RadialBarChart
-                        width={500}
-                        height={450}
-                        cx={150}
-                        cy={200}
-                        innerRadius={20}
-                        outerRadius={160}
-                        barSize={20}
-                        data={spells}
-                    >
-                        <RadialBar
-                            minAngle={15}
-                            label={{ position: "insideStart", fill: "#fff", fontSize: "13px" }}
-                            background
-                            clockWise
-                            dataKey="value"
-                        />
-                        <Legend
-                            iconSize={15}
-                            width={120}
-                            height={400}
-                            layout="vertical"
-                            verticalAlign="middle"
-                            wrapperStyle={style}
-                        />
-                    </RadialBarChart>
-                    <div className="title">{t("Skills")}</div>
+                <div>
+                    <h3>{t("CommonInform")} [{getDetailsTypeName()}]</h3>
+                    <h4>{t("Player")}: {userName}</h4>
                 </div>
-            }
-            <ul>
-                {combatDataRender}
-            </ul>
-        </div>);
+                <div className="form-check form-switch">
+                    <input className="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckChecked" onChange={() => setShowGeneralChart((item) => !item)} defaultChecked={showGeneralChart} />
+                    <label className="form-check-label" htmlFor="flexSwitchCheckChecked">{t("ShowDiagram")}</label>
+                </div>
+                {showGeneralChart &&
+                    <div className="general-details__container_radial-chart">
+                        <RadialBarChart
+                            width={500}
+                            height={450}
+                            cx={150}
+                            cy={200}
+                            innerRadius={20}
+                            outerRadius={160}
+                            barSize={20}
+                            data={spells}
+                        >
+                            <RadialBar
+                                minAngle={15}
+                                label={{ position: "insideStart", fill: "#fff", fontSize: "13px" }}
+                                background
+                                clockWise
+                                dataKey="value"
+                            />
+                            <Legend
+                                iconSize={15}
+                                width={120}
+                                height={400}
+                                layout="vertical"
+                                verticalAlign="middle"
+                                wrapperStyle={style}
+                            />
+                        </RadialBarChart>
+                        <div className="title">{t("Skills")}</div>
+                    </div>
+                }
+                <ul>
+                    {combatDataRender}
+                </ul>
+            </div>
+        );
     }
 
     const render = () => {
-        return (<div className="general-details__container">
-            <div className="general-details__container_navigate">
-                <div className="btn-group" role="group">
-                    <button type="button" className="btn btn-primary" onClick={() => navigate(`/details-specifical-combat?id=${combatId}`)}>{t("SelectPlayer")}</button>
+        return (
+            <div className="general-details__container">
+                <div className="general-details__container_navigate">
+                    <div className="btn-group" role="group">
+                        <button type="button" className="btn btn-primary" onClick={() => navigate(`/details-specifical-combat?id=${combatId}`)}>{t("SelectPlayer")}</button>
+                    </div>
+                    <ul className="nav nav-tabs">
+                        <li className="nav-item">
+                            <a className={tabIndex == 0 ? "nav-link active" : "nav-link"} aria-current="page" onClick={() => setTabIndex(0)}>{t("CommonInform")}</a>
+                        </li>
+                        <li className="nav-item">
+                            <a className={tabIndex == 1 ? "nav-link active" : "nav-link"} onClick={() => setTabIndex(1)}>{t("DetailsInform")}</a>
+                        </li>
+                    </ul>
                 </div>
-                <ul className="nav nav-tabs">
-                    <li className="nav-item">
-                        <a className={tabIndex == 0 ? "nav-link active" : "nav-link"} aria-current="page" onClick={() => setTabIndex(0)}>{t("CommonInform")}</a>
-                    </li>
-                    <li className="nav-item">
-                        <a className={tabIndex == 1 ? "nav-link active" : "nav-link"} onClick={() => setTabIndex(1)}>{t("DetailsInform")}</a>
-                    </li>
-                </ul>
+                {tabIndex === 0
+                    ? generalDetailsDOM()
+                    : <CombatDetails detailsTypeName={getDetailsTypeName()} userName={userName} />
+                }
             </div>
-            {tabIndex === 0
-                ? generalDetailsDOM()
-                : <CombatDetails detailsTypeName={getDetailsTypeName()} userName={userName} />
-            }
-        </div>);
+        );
     }
 
     return render();

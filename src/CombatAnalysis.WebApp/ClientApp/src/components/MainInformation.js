@@ -1,11 +1,14 @@
-﻿import React, { useState, useEffect } from 'react';
-import { NavLink } from 'react-router-dom';
-import { format } from 'date-fns';
+﻿import { format } from 'date-fns';
+import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { NavLink } from 'react-router-dom';
+import MainInformationService from '../services/MainInformationService';
 
 import "../styles/mainInformation.scss";
 
 const MainInformation = () => {
+    const mainInformationService = new MainInformationService();
+
     const [combatsRender, setCombatsRender] = useState(null);
     const { t, i18n } = useTranslation("mainInformation");
 
@@ -18,11 +21,8 @@ const MainInformation = () => {
     }, []);
 
     const getCombatLogsAsync = async () => {
-        const response = await fetch('/api/v1/MainInformation');
-        const status = response.status;
-        if (status === 200) {
-            const combatLogs = await response.json();
-
+        const combatLogs = await mainInformationService.getAllAsync();
+        if (combatLogs !== null) {
             fillingCombatLogList(combatLogs);
         }
     }
