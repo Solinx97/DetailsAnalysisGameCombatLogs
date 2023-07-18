@@ -1,20 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useDispatch, useSelector } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
 import { Collapse, Container, Navbar, NavbarBrand, NavbarToggler } from 'reactstrap';
-import { checkAuth } from '../features/AuthenticationReducer';
-import { userUpdate } from '../features/UserReducer';
-import AccountService from '../services/AccountService';
+import useAuthentificationAsync from '../hooks/useAuthentificationAsync';
+import { useLogoutAsyncMutation } from '../store/api/Account.api';
 
 import '../styles/navMenu.scss';
 
 const NavMenu = () => {
-    const accountService = new AccountService();
+    const [currentUser, , setIsAuth, isAuth] = useAuthentificationAsync();
+    const [logoutMutAsync] = useLogoutAsyncMutation();
 
-    const isAuth = useSelector((state) => state.authentication.value);
-    const user = useSelector((state) => state.user.value);
-    const dispatch = useDispatch();
     const navigate = useNavigate();
 
     const { t, i18n } = useTranslation("translate");
@@ -43,11 +39,9 @@ const NavMenu = () => {
     }
 
     const logoutAsync = async () => {
-        const logoutItem = await accountService.logoutAsync();
+        const logoutItem = await logoutMutAsync();
         if (logoutItem !== null) {
-            dispatch(checkAuth(false));
-            dispatch(userUpdate(null));
-
+            setIsAuth(false);
             navigate("/");
         }
     }
@@ -76,7 +70,7 @@ const NavMenu = () => {
                         <Collapse className="d-sm-inline-flex flex-sm-row-reverse" isOpen={!collapsed} navbar />
                         {isAuth
                             ? <div className="authorized">
-                                <div>{t("Welcome")}, <strong>{user.email}</strong></div>
+                                <div>{t("Welcome")}, <strong>{currentUser.email}</strong></div>
                                 <button type="button" className="btn btn-primary" onClick={logoutAsync}>{t("Logout")}</button>
                             </div>
                             : <div className="authorization">

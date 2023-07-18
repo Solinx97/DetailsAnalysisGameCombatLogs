@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useSelector } from 'react-redux';
+import useAuthentificationAsync from '../../hooks/useAuthentificationAsync';
 import FriendService from '../../services/FriendService';
 import PostService from "../../services/PostService";
 import UserPostService from '../../services/UserPostService';
@@ -11,33 +11,29 @@ const Feed = () => {
     const userPostService = new UserPostService();
     const postService = new PostService();
 
-    const customer = useSelector((state) => state.customer.value);
+    const [, customer] = useAuthentificationAsync();
 
     const [feed, setFeed] = useState(<></>);
     const [showUpdatingAlert, setShowUpdatingAlert] = useState(true);
 
     useEffect(() => {
-        if (customer === null) {
-            return;
-        }
-
         let getPosts = async () => {
             await getPostsAsync();
         }
 
         getPosts();
-    }, [])
+    }, [customer])
 
     const getFriendsIdByUserIdAsync = async () => {
         const customersId = [];
 
-        const friends = await friendService.searchByUserId(customer.id);
+        const friends = await friendService.searchByUserId(customer?.id);
         if (friends === null) {
             return [];
         }
 
         for (let i = 0; i < friends.length; i++) {
-            const customerId = friends[i].whoFriendId === customer.id ? friends[i].forWhomId : friends[i].whoFriendId;
+            const customerId = friends[i].whoFriendId === customer?.id ? friends[i].forWhomId : friends[i].whoFriendId;
             customersId.push(customerId);
         }
 
@@ -58,10 +54,12 @@ const Feed = () => {
 
     const getPostsAsync = async () => {
         const customersId = await getFriendsIdByUserIdAsync();
-        customersId.push(customer.id);
+        customersId.push(customer?.id);
 
         const userPosts = await getUserPostsAsync(customersId);
+
         setFeed(<Post
+            customer={customer}
             selectedPostsType={userPosts}
             createPostAsync={createPostAsync}
             updatePostsAsync={getPostsAsync}
@@ -77,7 +75,7 @@ const Feed = () => {
             likeCount: 0,
             dislikeCount: 0,
             postComment: 0,
-            ownerId: customer.id
+            ownerId: customer?.id
         }
 
         const createdPost = await postService.createAsync(newPost);
@@ -92,7 +90,7 @@ const Feed = () => {
     const createUserPostAsync = async (postId) => {
         const newUserPost = {
             id: 0,
-            userId: customer.id,
+            userId: customer?.id,
             postId: postId
         }
 

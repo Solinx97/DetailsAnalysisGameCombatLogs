@@ -1,7 +1,7 @@
 import { faCircleXmark, faWindowRestore } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
+import useAuthentificationAsync from '../../../hooks/useAuthentificationAsync';
 import FriendService from '../../../services/FriendService';
 import UserInformation from './../UserInformation';
 import RequestsToConnect from './RequestsToConnect';
@@ -11,7 +11,7 @@ import '../../../styles/communication/friends.scss';
 const Friends = () => {
     const friendService = new FriendService();
 
-    const customer = useSelector((state) => state.customer.value);
+    const [, customer] = useAuthentificationAsync();
 
     const [friends, setFriends] = useState(<></>);
     const [userInformation, setUserInformation] = useState(<></>);
@@ -25,7 +25,7 @@ const Friends = () => {
     }, [])
 
     const getFriendsAsync = async () => {
-        const myFriends = await friendService.searchByUserId(customer.id);
+        const myFriends = await friendService.searchByUserId(customer?.id);
         if (myFriends !== null) {
             fillFriends(myFriends);
         }

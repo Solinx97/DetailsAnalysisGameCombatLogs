@@ -1,56 +1,27 @@
-import { useEffect } from "react";
-import { useDispatch, useSelector } from 'react-redux';
+import { useEffect, useState } from "react";
 import { useNavigate } from 'react-router-dom';
-import { checkAuth } from '../features/AuthenticationReducer';
-import { customerUpdate } from '../features/CustomerReducer';
-import { userUpdate } from '../features/UserReducer';
-import AuthenticationService from '../services/AuthenticationService';
-import CustomerService from '../services/CustomerService';
+import { useAuthenticationAsyncQuery } from '../store/api/UserApi';
+import { useSearchByUserIdAsyncQuery } from '../store/api/Customer.api';
 
 const useAuthentificationAsync = () => {
-    const authenticationService = new AuthenticationService();
-    const customerService = new CustomerService();
+    const auth = useAuthenticationAsyncQuery();
+    const customer = useSearchByUserIdAsyncQuery(auth.data?.id);
 
-    const user = useSelector((state) => state.user.value);
+    const [isAuth, setIsAuth] = useState(false);
 
-    const dispatch = useDispatch();
     const navigate = useNavigate();
 
     useEffect(() => {
-        if (user === null) {
-            return;
+        if (auth.status === 'fulfilled' && auth.data !== null) {
+            setIsAuth(true);
         }
-
-        const checkAuth = async () => {
-            await checkAuthAsync();
-        }
-
-        checkAuth();
-    }, []);
-
-    const checkAuthAsync = async () => {
-        const currentUser = await authenticationService.authenticationAsync();
-        if (currentUser !== null) {
-            dispatch(userUpdate(currentUser));
-            dispatch(checkAuth(true));
-
-            await getCustomerByUserIdAsync(currentUser.id);
-        }
-        else {
-            dispatch(checkAuth(false));
-
+        else if (auth.status === 'rejected' || auth.data === null) {
+            setIsAuth(false);
             navigate("/");
         }
-    }
+    }, [auth])
 
-    const getCustomerByUserIdAsync = async (userId) => {
-        const customer = await customerService.searchByUserIdAsync(userId);
-        customer !== null
-            ? dispatch(customerUpdate(customer))
-            : dispatch(checkAuth(false));
-    }
-
-    return checkAuthAsync;
+    return [auth.data, customer.data, setIsAuth, isAuth];
 }
 
 export default useAuthentificationAsync;

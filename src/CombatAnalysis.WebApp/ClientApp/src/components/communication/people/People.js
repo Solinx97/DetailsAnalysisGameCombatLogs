@@ -1,7 +1,7 @@
 import { faCommentDots, faSquarePlus, faUserPlus, faWindowRestore } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useCallback, useEffect, useState } from "react";
-import { useSelector } from 'react-redux';
+import useAuthentificationAsync from '../../../hooks/useAuthentificationAsync';
 import CustomerService from '../../../services/CustomerService';
 import PersonalChatService from '../../../services/PersonalChatService';
 import RequestToConnectService from '../../../services/RequestToConnectService';
@@ -14,7 +14,7 @@ const People = ({ updateCurrentMenuItem }) => {
     const personalChatService = new PersonalChatService();
     const requestToConnectService = new RequestToConnectService();
 
-    const customer = useSelector((state) => state.customer.value);
+    const [, customer] = useAuthentificationAsync();
 
     const timeForHideNotifications = 4000;
 
@@ -30,7 +30,7 @@ const People = ({ updateCurrentMenuItem }) => {
         }
 
         getPeople();
-    }, [])
+    }, [customer])
 
     const getPeopleAsync = async () => {
         const people = await customerService.getAllAsync();
@@ -40,29 +40,29 @@ const People = ({ updateCurrentMenuItem }) => {
     }
 
     const checkExistNewChatAsync = async (targetCustomer) => {
-        const isExist = await personalChatService.isExistAsync(customer.id, targetCustomer.id);
+        const isExist = await personalChatService.isExistAsync(customer?.id, targetCustomer.id);
         return isExist !== null ? isExist : true;
     }
 
     const startChatAsync = async (targetCustomer) => {
         const isExist = await checkExistNewChatAsync(targetCustomer);
         if (isExist) {
-            updateCurrentMenuItem(0, customer.id, targetCustomer.id);
+            updateCurrentMenuItem(0, customer?.id, targetCustomer.id);
             return;
         }
 
         const newChat = {
             id: 0,
-            initiatorUsername: customer.username,
+            initiatorUsername: customer?.username,
             companionUsername: targetCustomer.username,
             lastMessage: " ",
-            initiatorId: customer.id,
+            initiatorId: customer?.id,
             companionId: targetCustomer.id
         };
 
         const createdChat = await personalChatService.createAsync(newChat);
         if (createdChat !== null) {
-            updateCurrentMenuItem(0, customer.id, targetCustomer.id);
+            updateCurrentMenuItem(0, customer?.id, targetCustomer.id);
         }
     }
 

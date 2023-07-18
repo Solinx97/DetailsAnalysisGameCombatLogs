@@ -1,24 +1,20 @@
 import { useEffect, useState } from "react";
-import { useSelector } from 'react-redux';
 import PostService from '../../../services/PostService';
 import UserPostService from '../../../services/UserPostService';
 import Alert from '../../Alert';
+import useAuthentificationAsync from '../../../hooks/useAuthentificationAsync';
 import Post from '../Post';
 
 const MyFeed = () => {
     const userPostService = new UserPostService();
     const postService = new PostService();
 
-    const customer = useSelector((state) => state.customer.value);
+    const [, customer] = useAuthentificationAsync();
 
     const [feed, setFeed] = useState(<></>);
     const [showUpdatingAlert, setShowUpdatingAlert] = useState(true);
 
     useEffect(() => {
-        if (customer === null) {
-            return;
-        }
-
         let getPosts = async () => {
             await getPostsAsync();
         }
@@ -29,12 +25,11 @@ const MyFeed = () => {
     const getUserPostsAsync = async (customersId) => {
         let userPosts = [];
         for (let i = 0; i < customersId.length; i++) {
-            const response = await userPostService.searchByUserId(customersId[i]);
-            if (response.status !== 200) {
+            const result = await userPostService.searchByUserId(customersId[i]);
+            if (result === null) {
                 return [];
             }
 
-            const result = await response.json();
             userPosts = [...userPosts, ...result];
         }
 
@@ -42,10 +37,12 @@ const MyFeed = () => {
     }
 
     const getPostsAsync = async () => {
-        const customersId = [customer.id];
+        const customersId = [customer?.id];
 
         const userPosts = await getUserPostsAsync(customersId);
+
         setFeed(<Post
+            customer={customer}
             selectedPostsType={userPosts}
             createPostAsync={createPostAsync}
             updatePostsAsync={getPostsAsync}
@@ -61,7 +58,7 @@ const MyFeed = () => {
             likeCount: 0,
             dislikeCount: 0,
             postComment: 0,
-            ownerId: customer.id
+            ownerId: customer?.id
         }
 
         const createdPost = await postService.createAsync(newPost);
@@ -75,7 +72,7 @@ const MyFeed = () => {
 
     const createUserPostAsync = async (postId) => {
         const newUserPost = {
-            userId: customer.id,
+            userId: customer?.id,
             postId: postId
         }
 

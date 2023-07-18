@@ -1,9 +1,9 @@
 import { faArrowRightToBracket, faEye, faEyeSlash, faGear, faPlus, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useEffect, useState } from "react";
-import { useSelector } from 'react-redux';
 import useAuthentificationAsync from '../../../hooks/useAuthentificationAsync';
 import CommunityPostService from '../../../services/CommunityPostService';
+import CommunityService from '../../../services/CommunityService';
 import CommunityUserService from '../../../services/CommunityUserService';
 import CustomerService from '../../../services/CustomerService';
 import InviteToCommunityService from '../../../services/InviteToCommunityService';
@@ -12,7 +12,6 @@ import AddPeople from '../../AddPeople';
 import Alert from '../../Alert';
 import Post from '../Post';
 
-import CommunityService from '../../../services/CommunityService';
 import '../../../styles/communication/selectedCommunity.scss';
 
 const SelectedCommunity = ({ community, closeCommunity }) => {
@@ -22,7 +21,7 @@ const SelectedCommunity = ({ community, closeCommunity }) => {
     const postService = new PostService();
     const inviteToCommunityService = new InviteToCommunityService();
 
-    const customer = useSelector((state) => state.customer.value);
+    const [, customer] = useAuthentificationAsync();
 
     const [myCommunityUserId, setMyCommunityUserId] = useState(0);
     const [members, setMembers] = useState([]);
@@ -37,15 +36,9 @@ const SelectedCommunity = ({ community, closeCommunity }) => {
     const [showAddedUserAlert, setShowAddedUserAlert] = useState(false);
     const [memberForRemove, setMemberForRemove] = useState(null);
 
-    const checkAuthentificationAsync = useAuthentificationAsync();
-
     useEffect(() => {
         if (customer === null) {
             return;
-        }
-
-        let checkAuthentification = async () => {
-            await checkAuthentificationAsync();
         }
 
         let getPosts = async () => {
@@ -53,7 +46,6 @@ const SelectedCommunity = ({ community, closeCommunity }) => {
             await getCommunityUsersAsync();
         }
 
-        checkAuthentification();
         getPosts();
     }, [])
 

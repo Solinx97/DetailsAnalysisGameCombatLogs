@@ -1,8 +1,8 @@
 import { faArrowsRotate, faCircleCheck, faCircleXmark, faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useEffect, useState } from "react";
-import { useSelector } from 'react-redux';
 import { NavLink } from 'react-router-dom';
+import useAuthentificationAsync from '../../../hooks/useAuthentificationAsync';
 import CommunityService from '../../../services/CommunityService';
 import CommunityUserService from '../../../services/CommunityUserService';
 import CustomerService from '../../../services/CustomerService';
@@ -18,7 +18,7 @@ const MyCommunities = ({ openCommunity, setUserCommunitiesId = null }) => {
     const communityService = new CommunityService();
     const communityUserService = new CommunityUserService();
 
-    const customer = useSelector((state) => state.customer.value);
+    const [, customer] = useAuthentificationAsync();
 
     const [showCreateCommunity, setShowCreateCommunity] = useState(false);
     const [showMyCommunities, setShowMyCommunities] = useState(true);
@@ -33,7 +33,7 @@ const MyCommunities = ({ openCommunity, setUserCommunitiesId = null }) => {
         }
 
         getMyCommunities();
-    }, [])
+    }, [customer])
 
     useEffect(() => {
         communities.key === undefined || communities.key === null
@@ -42,7 +42,7 @@ const MyCommunities = ({ openCommunity, setUserCommunitiesId = null }) => {
     }, [communities])
 
     const getInvitesToCommunityAsync = async () => {
-        const invitesToCommunity = await inviteToCommunityService.searchByUserId(customer.id);
+        const invitesToCommunity = await inviteToCommunityService.searchByUserId(customer?.id);
         if (invitesToCommunity === null) {
             return;
         }
@@ -73,7 +73,7 @@ const MyCommunities = ({ openCommunity, setUserCommunitiesId = null }) => {
         const myCommunitiesId = [];
 
         setShowUpdatingAlert(true);
-        const userCommunities = await communityUserService.searchByUserId(customer.id);
+        const userCommunities = await communityUserService.searchByUserId(customer?.id);
         if (userCommunities === null) {
             return;
         }

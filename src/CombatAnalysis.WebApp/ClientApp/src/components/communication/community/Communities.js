@@ -2,7 +2,6 @@ import { faArrowsRotate, faEye, faEyeSlash } from '@fortawesome/free-solid-svg-i
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useEffect, useState } from "react";
 import { NavLink } from 'react-router-dom';
-import useAuthentificationAsync from '../../../hooks/useAuthentificationAsync';
 import CommunityService from '../../../services/CommunityService';
 import Alert from '../../Alert';
 import MyCommunities from '../myEnvironment/MyCommunities';
@@ -17,18 +16,11 @@ const Communities = ({ openCommunity }) => {
     const [userCommunitiesId, setUserCommunitiesId] = useState([]);
     const [showUpdatingAlert, setShowUpdatingAlert] = useState(false);
 
-    const checkAuthentificationAsync = useAuthentificationAsync();
-
     useEffect(() => {
-        let checkAuthentification = async () => {
-            await checkAuthentificationAsync();
-        }
-
         let getCommunities = async () => {
             await getCommunitiesAsync();
         }
 
-        checkAuthentification();
         getCommunities();
     }, [])
 

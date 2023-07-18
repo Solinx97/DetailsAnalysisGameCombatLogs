@@ -1,14 +1,14 @@
 ﻿import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import AccountService from '../../services/AccountService';
-import CustomerService from '../../services/CustomerService';
+import { useRegistrationAsyncMutation } from '../../store/api/Account.api';
+import { useCreateAsyncMutation } from '../../store/api/Customer.api';
 
 import "../../styles/account/registration.scss";
 
 const Registration = () => {
-    const accountService = new AccountService();
-    const customerService = new CustomerService();
+    const [registrationMutAsync] = useRegistrationAsyncMutation();
+    const [createCustomerMutAsync] = useCreateAsyncMutation();
 
     const navigate = useNavigate();
     const { t, i18n } = useTranslation("registration");
@@ -27,7 +27,7 @@ const Registration = () => {
         };
 
         try {
-            const createdUser = await accountService.registrationAsync(data);
+            const createdUser = await registrationMutAsync(data);
             if (createdUser === null) {
                 return;
             }
@@ -50,7 +50,7 @@ const Registration = () => {
             appUserId: accountData.id
         };
 
-        const createdCustomer = await customerService.createAsync(data);
+        const createdCustomer = await createCustomerMutAsync(data);
         if (createdCustomer !== null) {
             navigate('/');
         }

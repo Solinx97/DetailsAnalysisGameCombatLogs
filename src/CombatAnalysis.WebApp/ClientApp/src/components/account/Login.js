@@ -1,24 +1,23 @@
 ﻿import React, { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { userUpdate } from '../../features/UserReducer';
-import AccountService from '../../services/AccountService';
+import { useLoginAsyncMutation } from '../../store/api/Account.api';
 
 import "../../styles/account/login.scss";
 
 const Login = () => {
-    const accountService = new AccountService();
+    const [ loginAsync ] = useLoginAsyncMutation();
 
     const navigate = useNavigate();
     const { t, i18n } = useTranslation("login");
-    const dispatch = useDispatch();
 
     const [showErrorMessage, setShowErrorMessage] = useState(false);
     const email = useRef(null);
     const password = useRef(null);
 
-    const loginAsync = async () => {
+    const handleSubmitAsync = async (event) => {
+        event.preventDefault();
+
         setShowErrorMessage(false);
 
         const data = {
@@ -26,16 +25,13 @@ const Login = () => {
             password: password.current.value
         };
 
-        const user = await accountService.loginAsync(data);
-        dispatch(userUpdate(user));
-
-        navigate('/');
-    }
-
-    const handleSubmitAsync = async (event) => {
-        event.preventDefault();
-
-        await loginAsync();
+        const user = await loginAsync(data);
+        if (user.error !== undefined) {
+            setShowErrorMessage(true);
+        }
+        else {
+            navigate('/');
+        }
     }
 
     const render = () => {

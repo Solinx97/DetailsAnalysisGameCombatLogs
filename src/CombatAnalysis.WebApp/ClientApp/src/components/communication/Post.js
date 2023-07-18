@@ -1,7 +1,6 @@
 import { faArrowsRotate, faHeart, faMessage, faThumbsDown, faWindowRestore } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useEffect, useRef, useState } from "react";
-import { useSelector } from 'react-redux';
 import CustomerService from '../../services/CustomerService';
 import PostDislikeService from '../../services/PostDislikeService';
 import PostLikeService from '../../services/PostLikeService';
@@ -11,13 +10,11 @@ import UserInformation from './UserInformation';
 
 import '../../styles/communication/post.scss';
 
-const Post = ({ selectedPostsType, createPostAsync, updatePostsAsync, setShowUpdatingAlert }) => {
+const Post = ({ customer, selectedPostsType, createPostAsync, updatePostsAsync, setShowUpdatingAlert }) => {
     const postService = new PostService();
     const customerService = new CustomerService();
     const postLikeService = new PostLikeService();
     const postDislikeService = new PostDislikeService();
-
-    const customer = useSelector((state) => state.customer.value);
 
     const postContentRef = useRef(null);
 
@@ -35,7 +32,7 @@ const Post = ({ selectedPostsType, createPostAsync, updatePostsAsync, setShowUpd
 
         setShowUpdatingAlert(true);
         getPosts();
-    }, [selectedPostsType])
+    }, [customer])
 
     useEffect(() => {
         if (posts.key === undefined) {

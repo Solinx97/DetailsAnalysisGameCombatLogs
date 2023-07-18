@@ -1,10 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { checkAuth } from '../../../features/AuthenticationReducer';
-import { customerUpdate } from '../../../features/CustomerReducer';
-import { userUpdate } from '../../../features/UserReducer';
-import CustomerService from '../../../services/CustomerService';
+import useAuthentificationAsync from '../../../hooks/useAuthentificationAsync';
 import AccountService from '../../../services/AccountService';
+import CustomerService from '../../../services/CustomerService';
 
 import "../../../styles/communication/profile.scss";
 
@@ -12,9 +9,7 @@ const Profile = () => {
     const customerService = new CustomerService();
     const accountService = new AccountService();
 
-    const user = useSelector((state) => state.user.value);
-    const customer = useSelector((state) => state.customer.value);
-    const dispatch = useDispatch();
+    const [currentUser, customer] = useAuthentificationAsync();
 
     const [isEditMode, setIsEditMode] = useState(false);
 
@@ -42,20 +37,20 @@ const Profile = () => {
     }, [isEditMode])
 
     const getUserInformation = () => {
-        const date = new Date(user.birthday);
+        const date = new Date(currentUser.birthday);
         const correntMonthNumber = date.getMonth() === 0 ? 1 : date.getMonth();
         const month = correntMonthNumber < 10 ? `0${correntMonthNumber}` : correntMonthNumber;
         const day = date.getDate() < 10 ? `0${date.getDate()}` : date.getDate();
 
         let birthdayFromDate = `${date.getFullYear()}-${month}-${day}`;
 
-        email.current.value = user.email;
-        phoneNumber.current.value = user.phoneNumber;
+        email.current.value = currentUser.email;
+        phoneNumber.current.value = currentUser.phoneNumber;
         birthday.current.value = birthdayFromDate;
     }
 
     const getCustomerInformation = () => {
-        email.current.value = user.email;
+        email.current.value = currentUser.email;
         message.current.value = customer.message;
         username.current.value = customer.username;
         aboutMe.current.value = customer.aboutMe;
@@ -66,29 +61,25 @@ const Profile = () => {
 
     const editUserAsync = async () => {
         let updatesForUser = {
-            id: user.id,
-            email: user.email,
-            phoneNumber: user.phoneNumber,
-            birthday: user.birthday,
-            password: user.password
+            id: currentUser.id,
+            email: currentUser.email,
+            phoneNumber: currentUser.phoneNumber,
+            birthday: currentUser.birthday,
+            password: currentUser.password
         };
 
         updatesForUser.email = email.current.value;
         updatesForUser.phoneNumber = phoneNumber.current.value;
         updatesForUser.birthday = birthday.current.value;
 
-        if (password.current.value !== "" && password.current.value !== user.password
+        if (password.current.value !== "" && password.current.value !== currentUser.password
             && password.current.value === confirmPassword.current.value) {
             updatesForUser.password = password.current.value;
         }
 
-        const response = await accountService.updateAsync(updatesForUser);
-
-        if (response.status === 200) {
+        const updatedItem = await accountService.updateAsync(updatesForUser);
+        if (updatedItem !== null) {
             await editCustomerAsync();
-
-            dispatch(userUpdate(updatesForUser));
-            dispatch(checkAuth(true));
         }
     }
 
@@ -101,7 +92,7 @@ const Profile = () => {
             firstName: customer.firstName,
             lastName: customer.lastName,
             gender: +customer.gender,
-            appUserId: user.id
+            appUserId: currentUser.id
         };
 
         updatesForCustomer.message = message.current.value;
@@ -111,10 +102,7 @@ const Profile = () => {
         updatesForCustomer.lastName = lastName.current.value;
         updatesForCustomer.gender = gender.current.value;
 
-        const updatedCustomer = await customerService.updateAsync(updatesForCustomer);
-        if (updatedCustomer !== null) {
-            dispatch(customerUpdate(updatesForCustomer));
-        }
+        await customerService.updateAsync(updatesForCustomer);
     }
 
     const handleSubmitAsync = async (event) => {

@@ -1,7 +1,7 @@
 import { faCircleCheck, faCircleXmark, faRotate } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
+import useAuthentificationAsync from '../../../hooks/useAuthentificationAsync';
 import FriendService from '../../../services/FriendService';
 import RequestToConnectService from '../../../services/RequestToConnectService';
 
@@ -11,7 +11,7 @@ const RequestToConnect = () => {
     const requestToConnectService = new RequestToConnectService();
     const friendService = new FriendService();
 
-    const customer = useSelector((state) => state.customer.value);
+    const [, customer] = useAuthentificationAsync();
 
     const timeForHideNotifications = 4000;
 
@@ -32,14 +32,14 @@ const RequestToConnect = () => {
     }, [])
 
     const getRequestsAsync = async () => {
-        const allRequests = await requestToConnectService.searchByToUserIdAsync(customer.id);
+        const allRequests = await requestToConnectService.searchByToUserIdAsync(customer?.id);
         if (allRequests !== null) {
             fillRequestsToConnect(allRequests);
         }
     }
 
     const getMyRequestsAsync = async () => {
-        const allMyRequests = await requestToConnectService.searchByOwnerIdAsync(customer.id);
+        const allMyRequests = await requestToConnectService.searchByOwnerIdAsync(customer?.id);
         if (allMyRequests !== null) {
             fillMyRequestsToConnect(allMyRequests);
         }

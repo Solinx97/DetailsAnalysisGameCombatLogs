@@ -1,7 +1,7 @@
 ﻿import { faArrowDown, faArrowUp, faSquarePlus } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useEffect, useRef, useState } from 'react';
-import { useSelector } from 'react-redux';
+import useAuthentificationAsync from '../../../hooks/useAuthentificationAsync';
 import GroupChatService from '../../../services/GroupChatService';
 import GroupChatUserService from '../../../services/GroupChatUserService';
 import PersonalChatService from '../../../services/PersonalChatService';
@@ -15,7 +15,7 @@ const Chats = ({ isOpenChat, initiatorId, companionId }) => {
     const groupChatService = new GroupChatService();
     const personalChatService = new PersonalChatService();
 
-    const customer = useSelector((state) => state.customer.value);
+    const [, customer] = useAuthentificationAsync();
 
     const [myGroupChatsRender, setMyGroupChatsRender] = useState(<></>);
     const [personalChatsRender, setPersoanlChatsRender] = useState(<></>);
@@ -69,11 +69,11 @@ const Chats = ({ isOpenChat, initiatorId, companionId }) => {
             openChatFromCommunication(initiatorId, companionId);
         }
 
-        fillMyPersonalChatList(personalChats);
+        fillMyPersonalChatList();
     }, [personalChats])
 
     useEffect(() => {
-        fillMyGroupChatList(groupChats);
+        fillMyGroupChatList();
     }, [groupChats])
 
     const openChatFromCommunication = (initiatorId, companionId) => {
@@ -87,46 +87,42 @@ const Chats = ({ isOpenChat, initiatorId, companionId }) => {
     }
 
     const getMyGroupChatUsersAsync = async () => {
-        const myGroupChatUsers = await groupChatUserService.getByIdAsync(customer.id);
+        const myGroupChats = [];
+        const myGroupChatUsers = await groupChatUserService.getByIdAsync(customer?.id);
         if (myGroupChatUsers === null) {
             return;
         }
 
         for (let i = 0; i < myGroupChatUsers.length; i++) {
-            let myGroupChat = await getMyGroupChatsAsync(myGroupChatUsers[i].groupChatId);
+            let myGroupChat = await groupChatService.getByIdAsync(myGroupChatUsers[i].groupChatId);
             myGroupChats.push(myGroupChat);
         }
 
         setGroupChats(myGroupChats);
     }
 
-    const getMyGroupChatsAsync = async (groupChatId) => {
-        const chat = await groupChatService.getByIdAsync(groupChatId);
-        return chat;
-    }
-
-    const fillMyGroupChatList = (chats) => {
-        if (chats.length === 0) {
+    const fillMyGroupChatList = () => {
+        if (groupChats.length === 0) {
             setMyGroupChatsRender(<div className="chats-empty">You don't hav any group chats</div>);
             return;
         }
 
-        const list = chats.map((element) => myGroupChats(element));
+        const list = groupChats.map((element) => createMyGroupChatCard(element));
         setMyGroupChatsRender(list);
     }
 
-    const myGroupChats = (element) => {
+    const createMyGroupChatCard = (groupChat) => {
         return (
-            <li key={element.id} className={selectedGroupChat !== null && selectedGroupChat.id === element.id ? `active` : ``}
-                onClick={() => setSelectedGroupChat(element)}>
-                <div><strong>{element.name}</strong></div>
-                <div className="last-message" title={element.lastMessage}>{element.lastMessage}</div>
+            <li key={groupChat.id} className={selectedGroupChat !== null && selectedGroupChat.id === groupChat.id ? `active` : ``}
+                onClick={() => setSelectedGroupChat(groupChat)}>
+                <div><strong>{groupChat.name}</strong></div>
+                <div className="last-message" title={groupChat.lastMessage}>{groupChat.lastMessage}</div>
             </li>
         );
     }
 
     const getMyPersonalChatsAsync = async () => {
-        const chats = await personalChatService.getByIdAsync(customer.id);
+        const chats = await personalChatService.getByIdAsync(customer?.id);
         if (chats === null) {
             return;
         }
@@ -134,13 +130,13 @@ const Chats = ({ isOpenChat, initiatorId, companionId }) => {
         setPersonalChats(chats);
     }
 
-    const fillMyPersonalChatList = (chats) => {
-        if (chats.length === 0) {
+    const fillMyPersonalChatList = () => {
+        if (personalChats.length === 0) {
             setPersoanlChatsRender(<div className="chats-empty">You don't have any chats</div>);
             return;
         }
 
-        const list = chats.map((element) => myPersonalChats(element));
+        const list = personalChats.map((element) => myPersonalChats(element));
         setPersoanlChatsRender(list);
     }
 
@@ -163,7 +159,7 @@ const Chats = ({ isOpenChat, initiatorId, companionId }) => {
             lastMessage: " ",
             memberNumber: +memberNumberSelect.current.value,
             chatPolicyType: chatPolicyType,
-            ownerId: customer.id
+            ownerId: customer?.id
         };
 
         const createdGroupChat = await groupChatService.createAsync(newGroupChat);
@@ -173,7 +169,7 @@ const Chats = ({ isOpenChat, initiatorId, companionId }) => {
 
         const newGroupChatUser = {
             id: 0,
-            userId: customer.id,
+            userId: customer?.id,
             groupChatId: createdGroupChat.id,
         };
 
