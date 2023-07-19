@@ -94,7 +94,7 @@ const People = ({ updateCurrentMenuItem }) => {
     }
 
     const peopleListFilter = useCallback((value) => {
-        if (value.id !== customer.id) {
+        if (value.id !== customer?.id) {
             return value;
         }
     }, [])

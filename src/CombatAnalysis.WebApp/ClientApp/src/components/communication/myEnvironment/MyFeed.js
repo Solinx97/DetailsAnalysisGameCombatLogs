@@ -1,59 +1,24 @@
-import { useEffect, useState } from "react";
-import PostService from '../../../services/PostService';
-import UserPostService from '../../../services/UserPostService';
-import Alert from '../../Alert';
+import { faArrowsRotate } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { useRef, useState } from 'react';
 import useAuthentificationAsync from '../../../hooks/useAuthentificationAsync';
-import Post from '../Post';
+import { useCreatePostAsyncMutation } from '../../../store/api/Post.api';
+import { useCreateUserPostAsyncMutation } from '../../../store/api/UserPost.api';
+import UserPosts from '../UserPosts';
 
 const MyFeed = () => {
-    const userPostService = new UserPostService();
-    const postService = new PostService();
-
     const [, customer] = useAuthentificationAsync();
 
-    const [feed, setFeed] = useState(<></>);
-    const [showUpdatingAlert, setShowUpdatingAlert] = useState(true);
+    const [createNewPostAsync] = useCreatePostAsyncMutation();
+    const [createNewUserPostAsync] = useCreateUserPostAsyncMutation();
 
-    useEffect(() => {
-        let getPosts = async () => {
-            await getPostsAsync();
-        }
+    const postContentRef = useRef(null);
 
-        getPosts();
-    }, [])
+    const [showCreatePost, setShowCreatePost] = useState(false);
 
-    const getUserPostsAsync = async (customersId) => {
-        let userPosts = [];
-        for (let i = 0; i < customersId.length; i++) {
-            const result = await userPostService.searchByUserId(customersId[i]);
-            if (result === null) {
-                return [];
-            }
-
-            userPosts = [...userPosts, ...result];
-        }
-
-        return userPosts;
-    }
-
-    const getPostsAsync = async () => {
-        const customersId = [customer?.id];
-
-        const userPosts = await getUserPostsAsync(customersId);
-
-        setFeed(<Post
-            customer={customer}
-            selectedPostsType={userPosts}
-            createPostAsync={createPostAsync}
-            updatePostsAsync={getPostsAsync}
-            setShowUpdatingAlert={setShowUpdatingAlert}
-        />);
-    }
-
-    const createPostAsync = async (postContent) => {
+    const createPostAsync = async () => {
         const newPost = {
-            id: 0,
-            content: postContent,
+            content: postContentRef.current.value,
             when: new Date(),
             likeCount: 0,
             dislikeCount: 0,
@@ -61,9 +26,9 @@ const MyFeed = () => {
             ownerId: customer?.id
         }
 
-        const createdPost = await postService.createAsync(newPost);
-        if (createdPost !== null) {
-            const isCreated = await createUserPostAsync(createdPost.id);
+        const createdPost = await createNewPostAsync(newPost);
+        if (createdPost.status === 'fulfilled') {
+            const isCreated = await createUserPostAsync(createdPost.data.id);
             return isCreated;
         }
 
@@ -76,23 +41,33 @@ const MyFeed = () => {
             postId: postId
         }
 
-        const createdUserPost = await userPostService.createAsync(newUserPost);
-        return createdUserPost === null ? false : true;
+        const createdUserPost = await createNewUserPostAsync(newUserPost);
+        return createdUserPost.data === undefined ? false : true;
     }
 
-    const render = () => {
-        return (
+    if (customer === undefined || customer === null) {
+        return <></>;
+    }
+
+    return (<div>
+        <div className="create-post">
             <div>
-                <Alert
-                    isVisible={showUpdatingAlert}
-                    content="Updating..."
-                />
-                {feed}
+                <div className="create-post__tool" style={{ display: !showCreatePost ? "flex" : "none" }}>
+                    <FontAwesomeIcon icon={faArrowsRotate} title="Refresh" />
+                    <button type="button" className="btn btn-outline-info" onClick={() => setShowCreatePost((item) => !item)}>New post</button>
+                </div>
+                <div style={{ display: showCreatePost ? "flex" : "none" }} className="create-post__create-tool">
+                    <FontAwesomeIcon icon={faArrowsRotate} title="Refresh" />
+                    <button type="button" className="btn btn-outline-warning" onClick={() => setShowCreatePost((item) => !item)}>Cancel</button>
+                    <button type="button" className="btn btn-outline-success" onClick={async () => await createPostAsync()}>Create</button>
+                </div>
             </div>
-        )
-    }
-
-    return render();
+            <textarea rows="5" cols="100" ref={postContentRef} style={{ display: showCreatePost ? "flex" : "none" }} />
+        </div>
+        <ul>
+            <UserPosts customer={customer} userId={customer?.id} />
+        </ul>
+    </div>);
 }
 
 export default MyFeed;

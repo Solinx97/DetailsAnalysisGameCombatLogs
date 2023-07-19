@@ -15,6 +15,10 @@ export const UserApi = createApi({
         getCustomers: builder.query({
             query: () => '/Customer'
         }),
+        friendSearchByUserId: builder.query({
+            query: (id) => `/Friend/searchByUserId/${id}`,
+            keepUnusedDataFor: 5
+        }),
         authenticationAsync: builder.query({
             query: () => '/Authentication',
             providesTags: (result, error, id) => [{ type: 'Authentication', id }],
@@ -23,4 +27,9 @@ export const UserApi = createApi({
     })
 })
 
-export const { useGetUsersQuery, useGetCustomersQuery, useAuthenticationAsyncQuery } = UserApi;
+export const {
+    useGetUsersQuery,
+    useGetCustomersQuery,
+    useFriendSearchByUserIdQuery,
+    useAuthenticationAsyncQuery
+} = UserApi;

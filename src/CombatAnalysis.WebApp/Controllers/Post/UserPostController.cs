@@ -27,7 +27,7 @@ public class UserPostController : ControllerBase
     }
 
     [HttpGet("searchByUserId/{id}")]
-    public async Task<IActionResult> SearchByCommunityId(string id)
+    public async Task<IActionResult> SearchByUserId(string id)
     {
         var responseMessage = await _httpClient.GetAsync($"UserPost/searchByUserId/{id}", Port.ChatApi);
         var posts = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<UserPostModel>>();

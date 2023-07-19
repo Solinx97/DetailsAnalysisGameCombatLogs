@@ -1,27 +1,38 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from 'react-router-dom';
+import { useLazySearchByUserIdAsyncQuery } from '../store/api/Customer.api';
 import { useAuthenticationAsyncQuery } from '../store/api/UserApi';
-import { useSearchByUserIdAsyncQuery } from '../store/api/Customer.api';
 
 const useAuthentificationAsync = () => {
-    const auth = useAuthenticationAsyncQuery();
-    const customer = useSearchByUserIdAsyncQuery(auth.data?.id);
-
-    const [isAuth, setIsAuth] = useState(false);
+    const authQuery = useAuthenticationAsyncQuery();
+    const [ getCustomerAsync ] = useLazySearchByUserIdAsyncQuery();
 
     const navigate = useNavigate();
 
-    useEffect(() => {
-        if (auth.status === 'fulfilled' && auth.data !== null) {
-            setIsAuth(true);
-        }
-        else if (auth.status === 'rejected' || auth.data === null) {
-            setIsAuth(false);
-            navigate("/");
-        }
-    }, [auth])
+    const [isAuth, setIsAuth] = useState(false);
+    const [customer, setCustomer] = useState(null);
+    const [user, setUser] = useState(null);
 
-    return [auth.data, customer.data, setIsAuth, isAuth];
+    useEffect(() => {
+        const auth = async () => {
+            if (authQuery.status === 'fulfilled') {
+                setUser(authQuery.data);
+
+                const getCustomerResult = await getCustomerAsync(authQuery.data.id);
+                if (getCustomerResult.status === 'fulfilled') {
+                    setCustomer(getCustomerResult.data);
+                    setIsAuth(true);
+                }
+            }
+            else if (authQuery.status === 'rejected') {
+                setIsAuth(false);
+                navigate('/');
+            }
+        }
+        auth();
+    }, [authQuery])
+
+    return [user, customer, setIsAuth, isAuth];
 }
 
 export default useAuthentificationAsync;

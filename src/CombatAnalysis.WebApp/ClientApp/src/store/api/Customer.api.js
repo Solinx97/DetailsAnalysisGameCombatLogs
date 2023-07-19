@@ -9,6 +9,9 @@ export const CustomerApi = UserApi.injectEndpoints({
                 method: 'POST'
             })
         }),
+        getCustomerById: builder.query({
+            query: (id) => `/Customer/${id}`
+        }),
         searchByUserIdAsync: builder.query({
             query: (id) => `/Customer/searchByUserId/${id}`,
             providesTags: (result, error, id) => [{ type: 'Customer', id }],
@@ -16,4 +19,8 @@ export const CustomerApi = UserApi.injectEndpoints({
     })
 })
 
-export const { useCreateAsyncMutation, useSearchByUserIdAsyncQuery } = CustomerApi;
+export const {
+    useCreateAsyncMutation,
+    useGetCustomerByIdQuery,
+    useLazySearchByUserIdAsyncQuery
+} = CustomerApi;

@@ -1,15 +1,13 @@
 import { useEffect, useRef, useState } from 'react';
 import useAuthentificationAsync from '../../../hooks/useAuthentificationAsync';
-import AccountService from '../../../services/AccountService';
-import CustomerService from '../../../services/CustomerService';
+import { useEditAsyncMutation, useLoginAsyncMutation } from '../../../store/api/Account.api';
 
 import "../../../styles/communication/profile.scss";
 
 const Profile = () => {
-    const customerService = new CustomerService();
-    const accountService = new AccountService();
-
     const [currentUser, customer] = useAuthentificationAsync();
+    const [loginAsync] = useLoginAsyncMutation();
+    const [editAsync] = useEditAsyncMutation();
 
     const [isEditMode, setIsEditMode] = useState(false);
 
@@ -29,7 +27,7 @@ const Profile = () => {
     useEffect(() => {
         getUserInformation();
         getCustomerInformation();
-    }, [])
+    }, [currentUser])
 
     useEffect(() => {
         getUserInformation();
@@ -37,72 +35,57 @@ const Profile = () => {
     }, [isEditMode])
 
     const getUserInformation = () => {
-        const date = new Date(currentUser.birthday);
+        const date = new Date(currentUser?.birthday);
         const correntMonthNumber = date.getMonth() === 0 ? 1 : date.getMonth();
         const month = correntMonthNumber < 10 ? `0${correntMonthNumber}` : correntMonthNumber;
         const day = date.getDate() < 10 ? `0${date.getDate()}` : date.getDate();
 
         let birthdayFromDate = `${date.getFullYear()}-${month}-${day}`;
 
-        email.current.value = currentUser.email;
-        phoneNumber.current.value = currentUser.phoneNumber;
+        email.current.value = currentUser?.email;
+        phoneNumber.current.value = currentUser?.phoneNumber;
         birthday.current.value = birthdayFromDate;
     }
 
     const getCustomerInformation = () => {
-        email.current.value = currentUser.email;
-        message.current.value = customer.message;
-        username.current.value = customer.username;
-        aboutMe.current.value = customer.aboutMe;
-        firstName.current.value = customer.firstName;
-        lastName.current.value = customer.lastName;
-        gender.current.value = customer.gender;
+        email.current.value = currentUser?.email;
+        message.current.value = customer?.message;
+        username.current.value = customer?.username;
+        aboutMe.current.value = customer?.aboutMe;
+        firstName.current.value = customer?.firstName;
+        lastName.current.value = customer?.lastName;
+        gender.current.value = customer?.gender;
     }
 
     const editUserAsync = async () => {
-        let updatesForUser = {
-            id: currentUser.id,
-            email: currentUser.email,
-            phoneNumber: currentUser.phoneNumber,
-            birthday: currentUser.birthday,
-            password: currentUser.password
+        const updatesForUser = {
+            id: currentUser?.id,
+            email: currentUser?.email,
+            phoneNumber: currentUser?.phoneNumber,
+            birthday: currentUser?.birthday,
+            password: currentUser?.password
         };
 
         updatesForUser.email = email.current.value;
         updatesForUser.phoneNumber = phoneNumber.current.value;
         updatesForUser.birthday = birthday.current.value;
 
-        if (password.current.value !== "" && password.current.value !== currentUser.password
+        if (password.current.value !== "" && password.current.value !== currentUser?.password
             && password.current.value === confirmPassword.current.value) {
             updatesForUser.password = password.current.value;
         }
 
-        const updatedItem = await accountService.updateAsync(updatesForUser);
-        if (updatedItem !== null) {
-            await editCustomerAsync();
+        const updatedItem = await editAsync(updatesForUser);
+        if (updatedItem.data !== undefined) {
+            const data = {
+                email: updatesForUser.email,
+                password: updatesForUser.password
+            };
+
+            await loginAsync(data);
+
+            setIsEditMode(false);
         }
-    }
-
-    const editCustomerAsync = async () => {
-        let updatesForCustomer = {
-            id: customer.id,
-            message: customer.message,
-            username: customer.username,
-            aboutMe: customer.aboutMe,
-            firstName: customer.firstName,
-            lastName: customer.lastName,
-            gender: +customer.gender,
-            appUserId: currentUser.id
-        };
-
-        updatesForCustomer.message = message.current.value;
-        updatesForCustomer.username = username.current.value;
-        updatesForCustomer.aboutMe = aboutMe.current.value;
-        updatesForCustomer.firstName = firstName.current.value;
-        updatesForCustomer.lastName = lastName.current.value;
-        updatesForCustomer.gender = gender.current.value;
-
-        await customerService.updateAsync(updatesForCustomer);
     }
 
     const handleSubmitAsync = async (event) => {

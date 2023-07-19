@@ -1,86 +1,34 @@
-import { useEffect, useState } from "react";
+import { faArrowsRotate } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { useRef, useState } from 'react';
 import useAuthentificationAsync from '../../hooks/useAuthentificationAsync';
-import FriendService from '../../services/FriendService';
-import PostService from "../../services/PostService";
-import UserPostService from '../../services/UserPostService';
-import Alert from '../Alert';
-import Post from './Post';
+import FeedParticipants from './FeedParticipants';
+import { useCreatePostAsyncMutation } from '../../store/api/Post.api';
+import { useCreateUserPostAsyncMutation  } from '../../store/api/UserPost.api';
 
 const Feed = () => {
-    const friendService = new FriendService();
-    const userPostService = new UserPostService();
-    const postService = new PostService();
-
     const [, customer] = useAuthentificationAsync();
 
-    const [feed, setFeed] = useState(<></>);
-    const [showUpdatingAlert, setShowUpdatingAlert] = useState(true);
+    const [createNewPostAsync] = useCreatePostAsyncMutation();
+    const [createNewUserPostAsync] = useCreateUserPostAsyncMutation();
 
-    useEffect(() => {
-        let getPosts = async () => {
-            await getPostsAsync();
-        }
+    const postContentRef = useRef(null);
 
-        getPosts();
-    }, [customer])
+    const [showCreatePost, setShowCreatePost] = useState(false);
 
-    const getFriendsIdByUserIdAsync = async () => {
-        const customersId = [];
-
-        const friends = await friendService.searchByUserId(customer?.id);
-        if (friends === null) {
-            return [];
-        }
-
-        for (let i = 0; i < friends.length; i++) {
-            const customerId = friends[i].whoFriendId === customer?.id ? friends[i].forWhomId : friends[i].whoFriendId;
-            customersId.push(customerId);
-        }
-
-        return customersId;
-    }
-
-    const getUserPostsAsync = async (customersId) => {
-        let allUserPosts = [];
-        for (let i = 0; i < customersId.length; i++) {
-            const userPosts = await userPostService.searchByUserId(customersId[i]);
-            if (userPosts !== null) {
-                allUserPosts = [...allUserPosts, ...userPosts];
-            }
-        }
-
-        return allUserPosts;
-    }
-
-    const getPostsAsync = async () => {
-        const customersId = await getFriendsIdByUserIdAsync();
-        customersId.push(customer?.id);
-
-        const userPosts = await getUserPostsAsync(customersId);
-
-        setFeed(<Post
-            customer={customer}
-            selectedPostsType={userPosts}
-            createPostAsync={createPostAsync}
-            updatePostsAsync={getPostsAsync}
-            setShowUpdatingAlert={setShowUpdatingAlert}
-        />);
-    }
-
-    const createPostAsync = async (postContent) => {
+    const createPostAsync = async () => {
         const newPost = {
-            id: 0,
-            content: postContent,
+            content: postContentRef.current.value,
             when: new Date(),
-            likeCount: 0,
+            likeCount: '',
             dislikeCount: 0,
             postComment: 0,
             ownerId: customer?.id
         }
 
-        const createdPost = await postService.createAsync(newPost);
-        if (createdPost !== null) {
-            const isCreated = await createUserPostAsync(createdPost.id);
+        const createdPost = await createNewPostAsync(newPost);
+        if (createdPost.data !== undefined) {
+            const isCreated = await createUserPostAsync(createdPost.data?.id);
             return isCreated;
         }
 
@@ -89,28 +37,35 @@ const Feed = () => {
 
     const createUserPostAsync = async (postId) => {
         const newUserPost = {
-            id: 0,
             userId: customer?.id,
             postId: postId
         }
 
-        const createdUserPost = await userPostService.createAsync(newUserPost);
-        return createdUserPost === null ? false : true; 
+        const createdUserPost = await createNewUserPostAsync(newUserPost);
+        return createdUserPost.data === undefined ? false : true;
     }
 
-    const render = () => {
-        return (
+    if (customer === undefined || customer === null) {
+        return <></>;
+    }
+
+    return (<div>
+        <div className="create-post">
             <div>
-                <Alert
-                    isVisible={showUpdatingAlert}
-                    content="Updating..."
-                />
-                {feed}
+                <div className="create-post__tool" style={{ display: !showCreatePost ? "flex" : "none" }}>
+                    <FontAwesomeIcon icon={faArrowsRotate} title="Refresh" />
+                    <button type="button" className="btn btn-outline-info" onClick={() => setShowCreatePost((item) => !item)}>New post</button>
+                </div>
+                <div style={{ display: showCreatePost ? "flex" : "none" }} className="create-post__create-tool">
+                    <FontAwesomeIcon icon={faArrowsRotate} title="Refresh" />
+                    <button type="button" className="btn btn-outline-warning" onClick={() => setShowCreatePost((item) => !item)}>Cancel</button>
+                    <button type="button" className="btn btn-outline-success" onClick={async () => await createPostAsync()}>Create</button>
+                </div>
             </div>
-        )
-    }
-
-    return render();
+            <textarea rows="5" cols="100" ref={postContentRef} style={{ display: showCreatePost ? "flex" : "none" }} />
+        </div>
+        <FeedParticipants customer={customer} />
+    </div>);
 }
 
 export default Feed;

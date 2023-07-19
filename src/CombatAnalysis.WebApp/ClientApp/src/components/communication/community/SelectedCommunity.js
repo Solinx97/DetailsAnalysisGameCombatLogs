@@ -1,6 +1,6 @@
-import { faArrowRightToBracket, faEye, faEyeSlash, faGear, faPlus, faTrash } from '@fortawesome/free-solid-svg-icons';
+import { faArrowRightToBracket, faEye, faEyeSlash, faArrowsRotate } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import useAuthentificationAsync from '../../../hooks/useAuthentificationAsync';
 import CommunityPostService from '../../../services/CommunityPostService';
 import CommunityService from '../../../services/CommunityService';
@@ -9,85 +9,44 @@ import CustomerService from '../../../services/CustomerService';
 import InviteToCommunityService from '../../../services/InviteToCommunityService';
 import PostService from '../../../services/PostService';
 import AddPeople from '../../AddPeople';
-import Alert from '../../Alert';
 import Post from '../Post';
+import CommunityMembers from './CommunityMembers';
+import { usePostSearchByCommunityIdAsyncQuery } from '../../../store/api/ChatApi';
+import { useCreatePostAsyncMutation } from '../../../store/api/Post.api';
+import { useCreateCommunityPostAsyncMutation } from '../../../store/api/CommunityPost.api';
 
 import '../../../styles/communication/selectedCommunity.scss';
 
 const SelectedCommunity = ({ community, closeCommunity }) => {
     const communityUserService = new CommunityUserService();
-    const communityPostService = new CommunityPostService();
-    const customerService = new CustomerService();
-    const postService = new PostService();
+    //const communityPostService = new CommunityPostService();
+    //const customerService = new CustomerService();
+    //const postService = new PostService();
     const inviteToCommunityService = new InviteToCommunityService();
 
     const [, customer] = useAuthentificationAsync();
 
     const [myCommunityUserId, setMyCommunityUserId] = useState(0);
-    const [members, setMembers] = useState([]);
     const [communityUsersId, setCommunityUsersId] = useState([]);
-    const [feed, setFeed] = useState(<></>);
+    //const [feed, setFeed] = useState(<></>);
     const [showAddPeople, setShowAddPeople] = useState(false);
-    const [showRemovePeople, setShowRemovePeople] = useState(false);
     const [showRemovePeopleAlert, setShowRemovePeopleAlert] = useState(false);
     const [showLeaveFromCommunityAlert, setShowLeaveFromCommunityAlert] = useState(false);
     const [showDescription, setShowDescription] = useState(true);
-    const [showUpdatingAlert, setShowUpdatingAlert] = useState(true);
+    //const [showUpdatingAlert, setShowUpdatingAlert] = useState(true);
     const [showAddedUserAlert, setShowAddedUserAlert] = useState(false);
     const [memberForRemove, setMemberForRemove] = useState(null);
+    const [showCreatePost, setShowCreatePost] = useState(false);
 
-    useEffect(() => {
-        if (customer === null) {
-            return;
-        }
+    const postContentRef = useRef(null);
 
-        let getPosts = async () => {
-            await getCommunityPostsAsync();
-            await getCommunityUsersAsync();
-        }
+    const { data: communityPosts, isLoading } = usePostSearchByCommunityIdAsyncQuery(community.id);
+    const [createNewPostAsync] = useCreatePostAsyncMutation();
+    const [createNewCommunityPostAsync] = useCreateCommunityPostAsyncMutation();
 
-        getPosts();
-    }, [])
-
-    const getCommunityUsersAsync = async () => {
-        const members = [];
-        const customersId = [];
-        const communityUsers = await communityUserService.searchByCommunityIdAsync(community.id);
-        for (let i = 0; i < communityUsers.length; i++) {
-            const customerById = await getCustomerByIdAsync(communityUsers[i].customerId);
-            customerById.communityUserId = communityUsers[i].id;
-
-            if (communityUsers[i].customerId === customer.id) {
-                setMyCommunityUserId(communityUsers[i].id);
-            }
-
-            members.push(customerById);
-            customersId.push(customerById.id);
-        }
-
-        setCommunityUsersId(customersId);
-        setMembers(members);
-    }
-
-    const getCustomerByIdAsync = async (id) => {
-        const user = await customerService.getByIdAsync(id);
-        return user;
-    }
-
-    const getCommunityPostsAsync = async () => {
-        const communityPosts = await communityPostService.searchByCommunityIdAsync(community.id);
-        setFeed(<Post
-            selectedPostsType={communityPosts}
-            createPostAsync={createPostAsync}
-            updatePostsAsync={getCommunityPostsAsync}
-            setShowUpdatingAlert={setShowUpdatingAlert}
-        />);
-    }
-
-    const createPostAsync = async (postContent) => {
+    const createPostAsync = async () => {
         const newPost = {
-            id: 0,
-            content: postContent,
+            content: postContentRef.current.value,
             when: new Date(),
             likeCount: 0,
             dislikeCount: 0,
@@ -95,33 +54,28 @@ const SelectedCommunity = ({ community, closeCommunity }) => {
             ownerId: customer.id
         }
 
-        const createdPost = await postService.createAsync(newPost);
-        const isCreated = await createCommunityPostAsync(createdPost.id);
-
-        await getCommunityPostsAsync();
-
-        return isCreated;
-    }
-
-    const createCommunityPostAsync = async (postId) => {
-        const newUserPost = {
-            id: 0,
-            communityId: community.id,
-            postId: postId
-        }
-
-        const createdCommunityPost = await communityPostService.createAsync(newUserPost);
-        if (createdCommunityPost !== null) {
-            return true;
+        const createdPost = await createNewPostAsync(newPost);
+        if (createdPost.data !== undefined) {
+            const isCreated = await createCommunityPostAsync(createdPost.data?.id);
+            return isCreated;
         }
 
         return false;
     }
 
+    const createCommunityPostAsync = async (postId) => {
+        const newComunityPost = {
+            communityId: community.id,
+            postId: postId
+        }
+
+        const createdUserPost = await createNewCommunityPostAsync(newComunityPost);
+        return createdUserPost.data === undefined ? false : true;
+    }
+
     const removePeopleAsync = async () => {
         const deletedItemCount = await communityUserService.deleteAsync(memberForRemove.communityUserId);
         if (deletedItemCount != null) {
-            await getCommunityUsersAsync(false);
             openRemovePeople(null);
         }
     }
@@ -161,22 +115,6 @@ const SelectedCommunity = ({ community, closeCommunity }) => {
         setShowRemovePeopleAlert(!showRemovePeopleAlert);
     }
 
-    const fillMembers = (setShowRemovePeople) => {
-        const list = members.map((element) => createMemberCard(element, setShowRemovePeople));
-
-        return list;
-    }
-
-    const createMemberCard = (member) => {
-        return (<li key={member.id} className="member">
-            {showRemovePeople && member.id !== community.ownerId && customer.id !== member.id
-                ? <FontAwesomeIcon icon={faTrash} title="Remove" onClick={() => openRemovePeople(member)} />
-                : null
-            }
-            <div className="member__username">{member.username}</div>
-        </li>);
-    }
-
     const getCommunityPolicyType = () => {
         switch (community.policyType) {
             case 1:
@@ -193,16 +131,6 @@ const SelectedCommunity = ({ community, closeCommunity }) => {
     const render = () => {
         return (<div className="selected-community">
             <div className="selected-community__content">
-                <Alert
-                    isVisible={showUpdatingAlert}
-                    content="Updating..."
-                />
-                <Alert
-                    isVisible={showAddedUserAlert}
-                    typeOfAlert={2}
-                    content="Created invite for user"
-                    timeout={2000}
-                />
                 <div className="header">
                     <div className="title">
                         <FontAwesomeIcon
@@ -238,7 +166,35 @@ const SelectedCommunity = ({ community, closeCommunity }) => {
                         : null
                     }
                 </div>
-                {feed}
+                <div>
+                    <div className="create-post">
+                        <div>
+                            <div className="create-post__tool" style={{ display: !showCreatePost ? "flex" : "none" }}>
+                                <FontAwesomeIcon icon={faArrowsRotate} title="Refresh" />
+                                <button type="button" className="btn btn-outline-info" onClick={() => setShowCreatePost((item) => !item)}>New post</button>
+                            </div>
+                            <div style={{ display: showCreatePost ? "flex" : "none" }} className="create-post__create-tool">
+                                <FontAwesomeIcon icon={faArrowsRotate} title="Refresh" />
+                                <button type="button" className="btn btn-outline-warning" onClick={() => setShowCreatePost((item) => !item)}>Cancel</button>
+                                <button type="button" className="btn btn-outline-success" onClick={async () => await createPostAsync()}>Create</button>
+                            </div>
+                        </div>
+                        <textarea rows="5" cols="100" ref={postContentRef} style={{ display: showCreatePost ? "flex" : "none" }} />
+                    </div>
+                    <ul>
+                        {
+                            communityPosts.map((item) => (
+                                <li key={item?.id}>
+                                    <Post
+                                        key={item?.id}
+                                        customer={customer}
+                                        targetPostType={item}
+                                    />
+                                </li>
+                            ))
+                        }
+                    </ul>
+                </div>
                 {showAddPeople
                     ? <AddPeople
                         communityUsersId={communityUsersId}
@@ -291,24 +247,7 @@ const SelectedCommunity = ({ community, closeCommunity }) => {
                     <ul></ul>
                 </li>
                 <li className="members">
-                    <div className="title">
-                        <div>Members</div>
-                        <div className="tool">
-                            <FontAwesomeIcon
-                                icon={faGear}
-                                title="Settings"
-                                onClick={() => setShowRemovePeople((item) => !item)}
-                            />
-                            <FontAwesomeIcon
-                                icon={faPlus}
-                                title="Add a new people"
-                                onClick={() => setShowAddPeople((item) => !item)}
-                            />
-                        </div>
-                    </div>
-                    <ul>
-                        {fillMembers()}
-                    </ul>
+                    <CommunityMembers community={community} />
                 </li>
                 <li>
                     <div>Friends</div>
@@ -320,6 +259,10 @@ const SelectedCommunity = ({ community, closeCommunity }) => {
                 </li>
             </ul>
         </div>)
+    }
+
+    if (isLoading) {
+        return <>Loading...</>;
     }
 
     return render();

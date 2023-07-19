@@ -20,6 +20,13 @@ export const AccountApi = UserApi.injectEndpoints({
                 method: 'POST'
             })
         }),
+        editAsync: builder.mutation({
+            query: user => ({
+                body: user,
+                url: '/Account',
+                method: 'PUT'
+            })
+        }),
         logoutAsync: builder.mutation({
             query: () => ({
                 url: '/Account/logout',
@@ -30,4 +37,10 @@ export const AccountApi = UserApi.injectEndpoints({
     })
 })
 
-export const { useGetUserByIdQuery, useLoginAsyncMutation, useRegistrationAsyncMutation, useLogoutAsyncMutation } = AccountApi;
+export const {
+    useGetUserByIdQuery,
+    useLoginAsyncMutation,
+    useRegistrationAsyncMutation,
+    useEditAsyncMutation,
+    useLogoutAsyncMutation
+} = AccountApi;

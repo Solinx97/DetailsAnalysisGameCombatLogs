@@ -72,7 +72,7 @@ const Communication = () => {
                     </li>
                 </ul>
                 <div className="communication__action">
-                    {currentMenuItem === 0 ? <Feed/> : null}
+                    {currentMenuItem === 0 ? <Feed /> : null}
                     {currentMenuItem === 1 ? <Chats isOpenChat={isOpenChat} initiatorId={initiatorId} companionId={companionId} /> : null}
                     {currentMenuItem === 2 ? <Communities openCommunity={openCommunity} /> : null}
                     {currentMenuItem === 3 ? <Events /> : null}
