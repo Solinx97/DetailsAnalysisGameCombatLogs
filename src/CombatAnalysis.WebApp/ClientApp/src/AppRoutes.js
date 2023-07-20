@@ -1,6 +1,7 @@
 import MainInformation from './components/MainInformation';
 import Home from './components/Home';
 import Communication from './components/communication/Communication';
+import SelectedCommunity from './components/communication/community/SelectedCommunity';
 import GeneralAnalysis from './components/GeneralAnalysis';
 import DetailsSpecificalCombat from './components/DetailsSpecificalCombat';
 import CombatGeneralDetails from './components/CombatGeneralDetails';
@@ -19,6 +20,10 @@ const AppRoutes = [
     {
         path: '/communication',
         element: <Communication />
+    },
+    {
+        path: '/community',
+        element: <SelectedCommunity />
     },
     {
         path: '/general-analysis',

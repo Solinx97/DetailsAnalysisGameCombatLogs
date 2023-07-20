@@ -1,17 +1,19 @@
 import { faArrowsRotate, faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useEffect, useState } from "react";
-import { NavLink } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
 import { useGetCommunitiesQuery } from '../../../store/api/ChatApi';
 import MyCommunities from '../myEnvironment/MyCommunities';
 
 import '../../../styles/communication/communities.scss';
 
-const Communities = ({ openCommunity }) => {
+const Communities = () => {
     const [showCommunities, setShowCommunities] = useState(true);
     const [communityList, setCommunityList] = useState(<></>);
 
     const { data: communities, isLoading } = useGetCommunitiesQuery();
+
+    const navigate = useNavigate();
 
     useEffect(() => {
         !isLoading && createCommunityList();
@@ -32,7 +34,7 @@ const Communities = ({ openCommunity }) => {
                     <div className="card-body">
                         <h5 className="card-title">{community.name}</h5>
                         <p className="card-text">{community.description}</p>
-                        <NavLink className="card-link" onClick={() => openCommunity(community)}>Open</NavLink>
+                        <NavLink className="card-link" onClick={() => navigate(`/community?id=${community.id}`)}>Open</NavLink>
                         <NavLink className="card-link">More details</NavLink>
                     </div>
                 </div>
@@ -46,9 +48,7 @@ const Communities = ({ openCommunity }) => {
 
     return (
         <div className="communities">
-            <MyCommunities
-                openCommunity={openCommunity}
-            />
+            <MyCommunities/>
             <div className="communities__list">
                 <div className="title">
                     <div className="content">

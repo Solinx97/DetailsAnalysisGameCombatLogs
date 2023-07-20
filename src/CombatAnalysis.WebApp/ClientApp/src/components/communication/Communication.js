@@ -4,7 +4,6 @@ import { useState } from 'react';
 import Chats from './chats/Chats';
 import Communities from './community/Communities';
 import CommunityItem from './community/CommunityItem';
-import SelectedCommunity from './community/SelectedCommunity';
 import Events from './events/Events';
 import Feed from './Feed';
 import MyEnvironment from './myEnvironment/MyEnvironment';
@@ -24,16 +23,6 @@ const Communication = () => {
         setIsOpenChat(true);
         setInitiatorId(initiatorId);
         setCompanionId(companionId);
-    }
-
-    const openCommunity = (community) => {
-        setCommunity(community);
-        setCurrentMenuItem(6);
-    }
-
-    const closeCommunity = () => {
-        setCommunity(null);
-        setCurrentMenuItem(2);
     }
 
     const render = () => {
@@ -74,11 +63,10 @@ const Communication = () => {
                 <div className="communication__action">
                     {currentMenuItem === 0 ? <Feed /> : null}
                     {currentMenuItem === 1 ? <Chats isOpenChat={isOpenChat} initiatorId={initiatorId} companionId={companionId} /> : null}
-                    {currentMenuItem === 2 ? <Communities openCommunity={openCommunity} /> : null}
+                    {currentMenuItem === 2 ? <Communities /> : null}
                     {currentMenuItem === 3 ? <Events /> : null}
                     {currentMenuItem === 4 ? <People updateCurrentMenuItem={updateCurrentMenuItem} /> : null}
-                    {currentMenuItem === 5 ? <MyEnvironment openCommunity={openCommunity} /> : null}
-                    {currentMenuItem === 6 ? <SelectedCommunity community={community} closeCommunity={closeCommunity} /> : null}
+                    {currentMenuItem === 5 ? <MyEnvironment /> : null}
                 </div>
             </div>
         );

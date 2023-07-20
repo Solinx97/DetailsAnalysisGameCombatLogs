@@ -35,5 +35,6 @@ export const {
     useUserPostSearchByUserIdQuery,
     useSearchByCommunityIdAsyncQuery,
     usePostSearchByCommunityIdAsyncQuery,
+    useLazyPostSearchByCommunityIdAsyncQuery,
     useAuthenticationAsyncQuery
 } = ChatApi;

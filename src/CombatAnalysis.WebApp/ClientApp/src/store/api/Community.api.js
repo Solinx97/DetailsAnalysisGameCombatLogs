@@ -24,5 +24,6 @@ export const CommunityApi = ChatApi.injectEndpoints({
 export const {
     useCreateCommunityAsyncMutation,
     useGetCommunityByIdQuery,
+    useLazyGetCommunityByIdQuery,
     useRemoveCommunityAsyncMutation
 } = CommunityApi;

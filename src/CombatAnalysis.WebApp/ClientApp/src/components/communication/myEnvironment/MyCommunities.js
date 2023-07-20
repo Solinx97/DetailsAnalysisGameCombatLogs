@@ -9,7 +9,7 @@ import InvitesToCommunity from './InvitesToCommunity';
 import '../../../styles/communication/communities.scss';
 import MyCommunitiesItem from './MyCommunitiesItem';
 
-const MyCommunities = ({ openCommunity }) => {
+const MyCommunities = () => {
     const [, customer] = useAuthentificationAsync();
     const { data: userCommunities, isLoading } = useSearchByUserIdAsyncQuery(customer?.id);
 
@@ -39,7 +39,7 @@ const MyCommunities = ({ openCommunity }) => {
                     {
                         userCommunities.map((item) => (
                             <li key={item.id}>
-                                <MyCommunitiesItem userCommunity={item} openCommunity={openCommunity} />
+                                <MyCommunitiesItem userCommunity={item} />
                             </li>
                         ))
                     }

@@ -1,9 +1,9 @@
 import { faArrowRightToBracket, faArrowsRotate, faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import useAuthentificationAsync from '../../../hooks/useAuthentificationAsync';
-import { usePostSearchByCommunityIdAsyncQuery } from '../../../store/api/ChatApi';
-import { useRemoveCommunityAsyncMutation } from '../../../store/api/Community.api';
+import { useLazyPostSearchByCommunityIdAsyncQuery } from '../../../store/api/ChatApi';
+import { useRemoveCommunityAsyncMutation, useLazyGetCommunityByIdQuery } from '../../../store/api/Community.api';
 import { useCreateCommunityPostAsyncMutation } from '../../../store/api/CommunityPost.api';
 import { useLazySearchByUserIdAsyncQuery, useRemoveCommunityUserAsyncMutation } from '../../../store/api/CommunityUser.api';
 import { useCreatePostAsyncMutation } from '../../../store/api/Post.api';
@@ -12,21 +12,41 @@ import CommunityMembers from './CommunityMembers';
 
 import '../../../styles/communication/selectedCommunity.scss';
 
-const SelectedCommunity = ({ community, closeCommunity }) => {
+const SelectedCommunity = ({ closeCommunity }) => {
     const [, customer] = useAuthentificationAsync();
 
     const [showLeaveFromCommunityAlert, setShowLeaveFromCommunityAlert] = useState(false);
     const [showDescription, setShowDescription] = useState(true);
     const [showCreatePost, setShowCreatePost] = useState(false);
+    const [communityPosts, setCommunityPosts] = useState([]);
+    const [community, setCommunity] = useState({});
 
     const postContentRef = useRef(null);
 
-    const { data: communityPosts, isLoading } = usePostSearchByCommunityIdAsyncQuery(community.id);
+    const [getCommunityByIdAsync] = useLazyGetCommunityByIdQuery();
+    const [searchByCommunityIdAsync] = useLazyPostSearchByCommunityIdAsyncQuery(1);
     const [createNewPostAsync] = useCreatePostAsyncMutation();
     const [createNewCommunityPostAsync] = useCreateCommunityPostAsyncMutation();
     const [removeCommunityAsync] = useRemoveCommunityAsyncMutation();
     const [searchByUserIdAsync] = useLazySearchByUserIdAsyncQuery();
     const [removeCommunityUserAsync] = useRemoveCommunityUserAsyncMutation();
+
+    useEffect(() => {
+        const queryParams = new URLSearchParams(window.location.search);
+        const id = queryParams.get("id");
+
+        let searchByCommunityId = async () => {
+            const communityRes = await getCommunityByIdAsync(id);
+            if (communityRes.data !== undefined) {
+                setCommunity(communityRes.data);
+
+                const communityPostsRes = await searchByCommunityIdAsync(communityRes.data?.id);
+                setCommunityPosts(communityPostsRes.data);
+            }
+        }
+
+        searchByCommunityId();
+    }, []);
 
     const createPostAsync = async () => {
         const newPost = {
@@ -195,10 +215,6 @@ const SelectedCommunity = ({ community, closeCommunity }) => {
                 </li>
             </ul>
         </div>)
-    }
-
-    if (isLoading) {
-        return <>Loading...</>;
     }
 
     return render();
