@@ -1,19 +1,16 @@
 import React, { useRef } from 'react';
-import { useSelector } from 'react-redux';
-import CommunityService from '../../../services/CommunityService';
-import CommunityUserService from '../../../services/CommunityUserService';
+import { useCreateCommunityAsyncMutation } from '../../../store/api/Community.api';
+import { useCreateCommunityUserAsyncMutation } from '../../../store/api/CommunityUser.api';
 
 import '../../../styles/communication/createCommunity.scss';
 
-const CreateCommunity = ({ setShowCreateCommunity }) => {
-    const communityService = new CommunityService();
-    const communityUserService = new CommunityUserService();
-
-    const customer = useSelector((state) => state.customer.value);
-
+const CreateCommunity = ({ customer, setShowCreateCommunity }) => {
     const name = useRef(null);
     const description = useRef(null);
     const policyType = useRef(null);
+
+    const [createCommunityAsyncMut] = useCreateCommunityAsyncMutation();
+    const [createCommunityUserAsyncMut] = useCreateCommunityUserAsyncMutation();
 
     const createCommunityAsync = async () => {
         const newCommunity = {
@@ -23,9 +20,9 @@ const CreateCommunity = ({ setShowCreateCommunity }) => {
             ownerId: customer.id
         };
 
-        const createdCommunity = await communityService.createAsync(newCommunity);
-        if (createdCommunity !== null) {
-            await createCommunityUserAsync(createdCommunity.id);
+        const createdCommunity = await createCommunityAsyncMut(newCommunity);
+        if (createdCommunity.data !== undefined) {
+            await createCommunityUserAsync(createdCommunity.data.id);
         }
     }
 
@@ -35,8 +32,8 @@ const CreateCommunity = ({ setShowCreateCommunity }) => {
             customerId: customer.id
         };
 
-        const createdCommunityUser = await communityUserService.createAsync(newCommunityUser);
-        if (createdCommunityUser !== null) {
+        const createdCommunityUser = await createCommunityUserAsyncMut(newCommunityUser);
+        if (createdCommunityUser.data !== undefined) {
             setShowCreateCommunity(false);
         }
     }

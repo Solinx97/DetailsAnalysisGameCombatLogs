@@ -12,6 +12,9 @@ export const ChatApi = createApi({
         getPosts: builder.query({
             query: () => 'Post'
         }),
+        getCommunities: builder.query({
+            query: () => 'Community'
+        }),
         userPostSearchByUserId: builder.query({
             query: (id) => `/UserPost/searchByUserId/${id}`,
             providesTags: (result, error, id) => [{ type: 'UserPost', id }],
@@ -28,6 +31,7 @@ export const ChatApi = createApi({
 
 export const {
     useGetPostQuery,
+    useGetCommunitiesQuery,
     useUserPostSearchByUserIdQuery,
     useSearchByCommunityIdAsyncQuery,
     usePostSearchByCommunityIdAsyncQuery,

@@ -1,17 +1,14 @@
 import { faUserPlus } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useEffect, useState } from "react";
-import { useSelector } from 'react-redux';
 import CustomerService from '../services/CustomerService';
 import FriendService from '../services/FriendService';
 
 import '../styles/addPeople.scss';
 
-const AddPeople = ({ communityUsersId, createInviteAsync, setShowAddPeople }) => {
+const AddPeople = ({ customer, communityUsersId, createInviteAsync, setShowAddPeople }) => {
     const friendService = new FriendService();
     const customerService = new CustomerService();
-
-    const customer = useSelector((state) => state.customer.value);
 
     const [friends, setFriends] = useState(<></>);
     const [friendsId, setFriendsId] = useState([]);

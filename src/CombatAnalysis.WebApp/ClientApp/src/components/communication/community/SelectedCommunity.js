@@ -1,41 +1,22 @@
-import { faArrowRightToBracket, faEye, faEyeSlash, faArrowsRotate } from '@fortawesome/free-solid-svg-icons';
+import { faArrowRightToBracket, faArrowsRotate, faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import useAuthentificationAsync from '../../../hooks/useAuthentificationAsync';
-import CommunityPostService from '../../../services/CommunityPostService';
-import CommunityService from '../../../services/CommunityService';
-import CommunityUserService from '../../../services/CommunityUserService';
-import CustomerService from '../../../services/CustomerService';
-import InviteToCommunityService from '../../../services/InviteToCommunityService';
-import PostService from '../../../services/PostService';
-import AddPeople from '../../AddPeople';
+import { usePostSearchByCommunityIdAsyncQuery } from '../../../store/api/ChatApi';
+import { useRemoveCommunityAsyncMutation } from '../../../store/api/Community.api';
+import { useCreateCommunityPostAsyncMutation } from '../../../store/api/CommunityPost.api';
+import { useLazySearchByUserIdAsyncQuery, useRemoveCommunityUserAsyncMutation } from '../../../store/api/CommunityUser.api';
+import { useCreatePostAsyncMutation } from '../../../store/api/Post.api';
 import Post from '../Post';
 import CommunityMembers from './CommunityMembers';
-import { usePostSearchByCommunityIdAsyncQuery } from '../../../store/api/ChatApi';
-import { useCreatePostAsyncMutation } from '../../../store/api/Post.api';
-import { useCreateCommunityPostAsyncMutation } from '../../../store/api/CommunityPost.api';
 
 import '../../../styles/communication/selectedCommunity.scss';
 
 const SelectedCommunity = ({ community, closeCommunity }) => {
-    const communityUserService = new CommunityUserService();
-    //const communityPostService = new CommunityPostService();
-    //const customerService = new CustomerService();
-    //const postService = new PostService();
-    const inviteToCommunityService = new InviteToCommunityService();
-
     const [, customer] = useAuthentificationAsync();
 
-    const [myCommunityUserId, setMyCommunityUserId] = useState(0);
-    const [communityUsersId, setCommunityUsersId] = useState([]);
-    //const [feed, setFeed] = useState(<></>);
-    const [showAddPeople, setShowAddPeople] = useState(false);
-    const [showRemovePeopleAlert, setShowRemovePeopleAlert] = useState(false);
     const [showLeaveFromCommunityAlert, setShowLeaveFromCommunityAlert] = useState(false);
     const [showDescription, setShowDescription] = useState(true);
-    //const [showUpdatingAlert, setShowUpdatingAlert] = useState(true);
-    const [showAddedUserAlert, setShowAddedUserAlert] = useState(false);
-    const [memberForRemove, setMemberForRemove] = useState(null);
     const [showCreatePost, setShowCreatePost] = useState(false);
 
     const postContentRef = useRef(null);
@@ -43,6 +24,9 @@ const SelectedCommunity = ({ community, closeCommunity }) => {
     const { data: communityPosts, isLoading } = usePostSearchByCommunityIdAsyncQuery(community.id);
     const [createNewPostAsync] = useCreatePostAsyncMutation();
     const [createNewCommunityPostAsync] = useCreateCommunityPostAsyncMutation();
+    const [removeCommunityAsync] = useRemoveCommunityAsyncMutation();
+    const [searchByUserIdAsync] = useLazySearchByUserIdAsyncQuery();
+    const [removeCommunityUserAsync] = useRemoveCommunityUserAsyncMutation();
 
     const createPostAsync = async () => {
         const newPost = {
@@ -73,46 +57,19 @@ const SelectedCommunity = ({ community, closeCommunity }) => {
         return createdUserPost.data === undefined ? false : true;
     }
 
-    const removePeopleAsync = async () => {
-        const deletedItemCount = await communityUserService.deleteAsync(memberForRemove.communityUserId);
-        if (deletedItemCount != null) {
-            openRemovePeople(null);
-        }
-    }
-
     const leaveFromCommunityAsync = async () => {
-        const deletedItemCount = await communityUserService.deleteAsync(myCommunityUserId);
-        if (deletedItemCount != null) {
+        const myCommunityUserId = await searchByUserIdAsync(customer.id);
+        const deletedItemCount = await removeCommunityUserAsync(myCommunityUserId);
+        if (deletedItemCount.data !== undefined) {
             closeCommunity();
         }
     }
 
     const ownerLeaveFromCommunityAsync = async () => {
-        const deletedItemCount = await CommunityService.deleteAsync(community.id);
-        if (deletedItemCount != null) {
+        const deletedItemCount = await removeCommunityAsync(community.id);
+        if (deletedItemCount.data !== undefined) {
             closeCommunity();
         }
-    }
-
-    const createInviteAsync = async (userId) => {
-        const newInviteToCommunity = {
-            id: 0,
-            communityId: community.id,
-            toCustomerId: userId,
-            when: new Date(),
-            result: 0,
-            ownerId: customer.id
-        }
-
-        const createdItem = await inviteToCommunityService.createAsync(newInviteToCommunity);
-        if (createdItem !== null) {
-            setShowAddedUserAlert(true);
-        }
-    }
-
-    const openRemovePeople = (member) => {
-        setMemberForRemove(member);
-        setShowRemovePeopleAlert(!showRemovePeopleAlert);
     }
 
     const getCommunityPolicyType = () => {
@@ -195,27 +152,6 @@ const SelectedCommunity = ({ community, closeCommunity }) => {
                         }
                     </ul>
                 </div>
-                {showAddPeople
-                    ? <AddPeople
-                        communityUsersId={communityUsersId}
-                        createInviteAsync={createInviteAsync}
-                        setShowAddPeople={setShowAddPeople}
-                    />
-                    : null
-                }
-                {showRemovePeopleAlert
-                    ? <div className="remove-people">
-                        <div>Remove people</div>
-                        <div>
-                            <div>You sure, that you want to remove <strong>'{memberForRemove.username}'</strong> from community <strong>'{community.name}'</strong>?</div>
-                        </div>
-                        <div>
-                            <button className="btn btn-outline-warning" onClick={async () => await removePeopleAsync()}>Remove</button>
-                            <button className="btn btn-outline-success" onClick={() => setShowRemovePeopleAlert((item) => !item)}>Cancel</button>
-                        </div>
-                    </div>
-                    : null
-                }
                 {showLeaveFromCommunityAlert
                     ? <div className="leave-from-community">
                         <div>Leave</div>
@@ -247,7 +183,7 @@ const SelectedCommunity = ({ community, closeCommunity }) => {
                     <ul></ul>
                 </li>
                 <li className="members">
-                    <CommunityMembers community={community} />
+                    <CommunityMembers community={community} customer={customer} />
                 </li>
                 <li>
                     <div>Friends</div>
