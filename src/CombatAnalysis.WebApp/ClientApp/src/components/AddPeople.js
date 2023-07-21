@@ -1,130 +1,129 @@
 import { faUserPlus } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useEffect, useState } from "react";
-import CustomerService from '../services/CustomerService';
-import FriendService from '../services/FriendService';
+import { useFriendSearchByUserIdQuery } from '../store/api/Friend.api';
+import { useGetCustomersQuery } from '../store/api/UserApi';
+import { useCreateInviteAsyncMutation } from '../store/api/InviteToCommunity.api';
 
 import '../styles/addPeople.scss';
 
-const AddPeople = ({ customer, communityUsersId, createInviteAsync, setShowAddPeople }) => {
-    const friendService = new FriendService();
-    const customerService = new CustomerService();
+const AddPeople = ({ customer, community, communityUsersId, setShowAddPeople }) => {
+    const { data: friends, isLoading: friendsIsLoading } = useFriendSearchByUserIdQuery(customer?.id);
+    const { data: allPeople, isLoading: peopleIsLoading } = useGetCustomersQuery();
+    const [createInviteAsyncMut] = useCreateInviteAsyncMutation();
 
-    const [friends, setFriends] = useState(<></>);
     const [friendsId, setFriendsId] = useState([]);
-    const [people, setPeople] = useState(<></>);
+    const [people, setPeople] = useState([]);
 
     useEffect(() => {
-        let getFriends = async () => {
-            await getFriendsAsync();
-        }
-
-        getFriends();
-    }, [])
+        !friendsIsLoading && getFriends();
+    }, [friendsIsLoading])
 
     useEffect(() => {
-        if (friendsId.length === 0) {
-            return;
-        }
+        !peopleIsLoading && getPeople();
+    }, [peopleIsLoading])
 
-        let getPeople = async () => {
-            await getPeopleAsync();
-        }
-
-        getPeople();
-    }, [friendsId])
-
-    const getFriendsAsync = async () => {
+    const getFriends = () => {
         const friendsId = [];
-
-        const friends = await friendService.searchByUserId(customer.id);
-        if (friends === null) {
-            return;
-        }
-
-        for (let i = 0; i < friends.length; i++) {
+        for (let i = 0; i < friends?.length; i++) {
             friends[i].whoFriendId === customer.id
                 ? friendsId.push(friends[i].forWhomId)
                 : friendsId.push(friends[i].whoFriendId);
         }
 
         setFriendsId(friendsId);
-        fillFriends(friends);
     }
 
-    const getPeopleAsync = async () => {
-        const newPeople = [];
-
-        const people = await customerService.getAllAsync();
-        if (people === null) {
-            return;
-        }
-
-        for (let i = 0; i < people.length; i++) {
-            if (communityUsersId.indexOf(people[i].id) === -1
-                && friendsId.indexOf(people[i].id) === -1) {
-                newPeople.push(people[i]);
+    const getPeople = () => {
+        const anotherPeople = [];
+        for (let i = 0; i < allPeople?.length; i++) {
+            if (communityUsersId.indexOf(allPeople[i].id) === -1
+                && friendsId.indexOf(allPeople[i].id) === -1
+                && allPeople[i].id !== customer?.id) {
+                anotherPeople.push(allPeople[i]);
             }
         }
 
-        fillPeople(newPeople);
+        setPeople(anotherPeople);
     }
 
-    const fillFriends = (friends) => {
-        const list = friends.length !== 0
-            ? friends.map((element) => createUserCard(element))
-            : (<div className="friends__empty">You don't have any friends</div>);
+    const createInviteForAnotherPeopleAsync = async (userId) => {
+        const newInviteToCommunity = {
+            communityId: community.id,
+            toCustomerId: userId,
+            when: new Date(),
+            result: 0,
+            ownerId: customer?.id
+        }
 
-        setFriends(list);
+        await createInviteAsync(newInviteToCommunity);
     }
 
-    const fillPeople = (people) => {
-        const list = people.map((element) => createUserCard(element));
+    const createInviteForFriendAsync = async (friend) => {
+        const newInviteToCommunity = {
+            communityId: community.id,
+            toCustomerId: friend.whoFriendId === customer.id ? friend.forWhomId : friend.whoFriendId,
+            when: new Date(),
+            result: 0,
+            ownerId: customer?.id
+        }
 
-        setPeople(list);
+        await createInviteAsync(newInviteToCommunity);
     }
 
-    const createUserCard = (user) => {
-        return (
-            <li key={user.id} className="friend">
-                <div>{user.username}</div>
-                <FontAwesomeIcon icon={faUserPlus} title="Send invite to community" onClick={async () => await createInviteAsync(user.id)} />
-            </li>
-        );
+    const createInviteAsync = async (newInviteToCommunity) => {
+        const res = await createInviteAsyncMut(newInviteToCommunity);
+        if (res.data !== undefined) {
+            setShowAddPeople(false);
+        }
     }
 
     const handleAddNewPeopleVisibility = () => {
         setShowAddPeople(false);
     }
 
-    const render = () => {
-        return (
-            <div className="add-new-people">
-                <div>Add new people</div>
-                <div>
-                    <div>Search</div>
-                    <input type="text" />
-                </div>
-                <div>
-                    <div>
-                        <div>Friends</div>
-                        <ul>
-                            {friends}
-                        </ul>
-                    </div>
-                    <div>
-                        <div>Another people</div>
-                        <ul>
-                            {people}
-                        </ul>
-                    </div>
-                </div>
-                <button className="btn btn-outline-success" onClick={handleAddNewPeopleVisibility}>Close</button>
-            </div>
-        );
+    if (friendsIsLoading || peopleIsLoading) {
+        return <></>;
     }
 
-    return render();
+    return (
+        <div className="add-new-people">
+            <div>Add new people</div>
+            <div>
+                <div>Search</div>
+                <input type="text" />
+            </div>
+            <div>
+                <div>
+                    <div>Friends</div>
+                    <ul>
+                        {
+                            friends?.map((item) => (
+                                <li key={item.id} className="friend">
+                                    <div>{item.username}</div>
+                                    <FontAwesomeIcon icon={faUserPlus} title="Send invite to community" onClick={async () => await createInviteForFriendAsync(item)} />
+                                </li>
+                            ))
+                        }
+                    </ul>
+                </div>
+                <div>
+                    <div>Another people</div>
+                    <ul>
+                        {
+                            people?.map((item) => (
+                                <li key={item.id} className="friend">
+                                    <div>{item.username}</div>
+                                    <FontAwesomeIcon icon={faUserPlus} title="Send invite to community" onClick={async () => await createInviteForAnotherPeopleAsync(item.id)} />
+                                </li>
+                            ))
+                        }
+                    </ul>
+                </div>
+            </div>
+            <button className="btn btn-outline-success" onClick={handleAddNewPeopleVisibility}>Close</button>
+        </div>
+    );
 }
 
 export default AddPeople;

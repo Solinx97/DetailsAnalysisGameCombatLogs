@@ -8,9 +8,7 @@ const FeedParticipants = ({ customer }) => {
     const [peopleId, setPeopleId] = useState([customer?.id]);
 
     useEffect(() => {
-        if (!isLoading) {
-            getPeopleId();
-        }
+        !isLoading && getPeopleId();
     }, [isLoading])
 
     const getPeopleId = () => {
@@ -24,7 +22,7 @@ const FeedParticipants = ({ customer }) => {
     }
 
     if (isLoading) {
-        return <>Loading...</>;
+        return <></>;
     }
 
     return (

@@ -5,7 +5,7 @@ const UserPosts = ({ customer, userId }) => {
     const { data: userPosts, isLoading } = useSearchByUserIdQuery(userId);
 
     if (isLoading) {
-        return <>Loading...</>;
+        return <></>;
     }
 
     return userPosts.map((item) => (

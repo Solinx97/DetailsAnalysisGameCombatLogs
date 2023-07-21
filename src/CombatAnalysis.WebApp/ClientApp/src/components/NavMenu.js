@@ -8,8 +8,8 @@ import { useLogoutAsyncMutation } from '../store/api/Account.api';
 import '../styles/navMenu.scss';
 
 const NavMenu = () => {
-    const [, customer, , isAuth] = useAuthentificationAsync();
-    const [logoutMutAsync] = useLogoutAsyncMutation();
+    const [, customer, isAuth] = useAuthentificationAsync();
+    const [logoutAsyncMut] = useLogoutAsyncMutation();
 
     const navigate = useNavigate();
 
@@ -39,11 +39,12 @@ const NavMenu = () => {
     }
 
     const logoutAsync = async () => {
-        await logoutMutAsync();
+        const res = await logoutAsyncMut();
+        res.data !== undefined && navigate('/');
     }
 
     const toggleNavbar = () => {
-        setCollapsed(!collapsed);
+        setCollapsed((item) => !item);
     }
 
     return (

@@ -6,7 +6,7 @@ import { useLoginAsyncMutation } from '../../store/api/Account.api';
 import "../../styles/account/login.scss";
 
 const Login = () => {
-    const [ loginAsync ] = useLoginAsyncMutation();
+    const [loginAsync] = useLoginAsyncMutation();
 
     const navigate = useNavigate();
     const { t, i18n } = useTranslation("login");

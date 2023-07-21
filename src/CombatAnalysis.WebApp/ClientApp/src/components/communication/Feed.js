@@ -46,7 +46,7 @@ const Feed = () => {
     }
 
     if (customer === undefined || customer === null) {
-        return <>Loading...</>;
+        return <></>;
     }
 
     return (<div>

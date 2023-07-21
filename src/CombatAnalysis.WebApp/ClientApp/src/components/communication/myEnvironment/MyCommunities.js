@@ -17,7 +17,7 @@ const MyCommunities = () => {
     const [showMyCommunities, setShowMyCommunities] = useState(true);
 
     if (isLoading) {
-        return <>Loading...</>;
+        return <></>;
     }
 
     return (

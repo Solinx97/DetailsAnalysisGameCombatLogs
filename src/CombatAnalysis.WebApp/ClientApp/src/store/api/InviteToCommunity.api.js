@@ -11,16 +11,17 @@ export const InviteToCommunityApi = ChatApi.injectEndpoints({
         }),
         inviteSearchByUserId: builder.query({
             query: (id) => `/InviteToCommunity/searchByUserId/${id}`,
-            providesTags: (result, error, id) => [{ type: 'UserPost', id }],
+            providesTags: (result, error, id) => [{ type: 'InviteToCommunity', id }],
         }),
         getInviteToCommunityId: builder.query({
             query: (id) => `/InviteToCommunity/${id}`
         }),
         removeInviteAsync: builder.mutation({
             query: id => ({
-                url: `/CommunityUser/${id}`,
+                url: `/InviteToCommunity/${id}`,
                 method: 'DELETE'
-            })
+            }),
+            invalidatesTags: (result, error) => [{ type: 'InviteToCommunity', result }],
         })
     })
 })

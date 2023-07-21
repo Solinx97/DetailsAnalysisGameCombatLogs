@@ -4,7 +4,7 @@ const apiURL = '/api/v1';
 
 export const ChatApi = createApi({
     reducerPath: 'chatApi',
-    tagTyes: ['Post', 'CommunityPost', 'CommunityUser', 'UserPost'],
+    tagTyes: ['Post', 'CommunityPost', 'CommunityUser', 'UserPost', 'Friend', 'RequestToConnect', 'InviteToCommunity'],
     baseQuery: fetchBaseQuery({
         baseUrl: apiURL
     }),

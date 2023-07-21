@@ -1,38 +1,45 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
 import { useLazySearchByUserIdAsyncQuery } from '../store/api/Customer.api';
 import { useAuthenticationAsyncQuery } from '../store/api/UserApi';
+import { update } from '../store/slicers/AuthSlice';
+import { updateCustomer } from '../store/slicers/CustomerSlice';
 
 const useAuthentificationAsync = () => {
-    const authQuery = useAuthenticationAsyncQuery();
-    const [ getCustomerAsync ] = useLazySearchByUserIdAsyncQuery();
+    const isAuth = useSelector((state) => state.auth.value);
+    const customer = useSelector((state) => state.customer.value);
+    const dispatch = useDispatch();
 
-    const navigate = useNavigate();
-
-    const [isAuth, setIsAuth] = useState(false);
-    const [customer, setCustomer] = useState(null);
     const [user, setUser] = useState(null);
 
+    const authRes = useAuthenticationAsyncQuery();
+    const [getCustomerAsync] = useLazySearchByUserIdAsyncQuery();
+
     useEffect(() => {
-        const auth = async () => {
-            if (authQuery.status === 'fulfilled') {
-                setUser(authQuery.data);
-
-                const getCustomerResult = await getCustomerAsync(authQuery.data.id);
-                if (getCustomerResult.status === 'fulfilled') {
-                    setCustomer(getCustomerResult.data);
-                    setIsAuth(true);
-                }
-            }
-            else if (authQuery.status === 'rejected') {
-                setIsAuth(false);
-                navigate('/');
-            }
+        const checkAuth = async () => {
+            await checkAuthAsync();
         }
-        auth();
-    }, [authQuery])
 
-    return [user, customer, setIsAuth, isAuth];
+        if (authRes.status === 'fulfilled') {
+            checkAuth();
+        }
+        else {
+            dispatch(updateCustomer(null));
+            dispatch(update(false));
+        }
+    }, [authRes])
+
+    const checkAuthAsync = async () => {
+        setUser(authRes.data);
+
+        const getCustomerResult = await getCustomerAsync(authRes.data.id);
+        if (getCustomerResult.data !== undefined) {
+            dispatch(updateCustomer(getCustomerResult.data));
+            dispatch(update(true));
+        }
+    }
+
+    return [user, customer, isAuth];
 }
 
 export default useAuthentificationAsync;

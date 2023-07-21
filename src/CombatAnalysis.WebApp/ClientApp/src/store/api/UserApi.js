@@ -21,8 +21,7 @@ export const UserApi = createApi({
         }),
         authenticationAsync: builder.query({
             query: () => '/Authentication',
-            providesTags: (result, error, id) => [{ type: 'Authentication', id }],
-            invalidatesTags: (result, error) => [{ type: 'Customer', result }],
+            providesTags: (result, error, id) => [{ type: 'Authentication', id }]
         })
     })
 })
@@ -31,5 +30,6 @@ export const {
     useGetUsersQuery,
     useGetCustomersQuery,
     useFriendSearchByUserIdQuery,
-    useAuthenticationAsyncQuery
+    useAuthenticationAsyncQuery,
+    useLazyAuthenticationAsyncQuery,
 } = UserApi;

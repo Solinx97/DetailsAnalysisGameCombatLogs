@@ -2,45 +2,31 @@ import { faCircleXmark, faWindowRestore } from '@fortawesome/free-solid-svg-icon
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useEffect, useState } from 'react';
 import useAuthentificationAsync from '../../../hooks/useAuthentificationAsync';
-import FriendService from '../../../services/FriendService';
+import { useFriendSearchByUserIdQuery, useRemoveFriendAsyncMutation } from '../../../store/api/Friend.api';
 import UserInformation from './../UserInformation';
 import RequestsToConnect from './RequestsToConnect';
 
 import '../../../styles/communication/friends.scss';
 
 const Friends = () => {
-    const friendService = new FriendService();
-
     const [, customer] = useAuthentificationAsync();
+    const { data: myFriends, isLoading } = useFriendSearchByUserIdQuery(customer?.id);
+    const [removeFriendAsyncMut] = useRemoveFriendAsyncMutation(customer?.id);
 
     const [friends, setFriends] = useState(<></>);
     const [userInformation, setUserInformation] = useState(<></>);
 
     useEffect(() => {
-        let getFriends = async () => {
-            await getFriendsAsync();
-        }
-
-        getFriends();
-    }, [])
-
-    const getFriendsAsync = async () => {
-        const myFriends = await friendService.searchByUserId(customer?.id);
-        if (myFriends !== null) {
-            fillFriends(myFriends);
-        }
-    }
+        !isLoading && fillFriends();
+    }, [isLoading])
 
     const removeFriendAsync = async (friendId) => {
-        const deletedItem = await friendService.deleteAsync(friendId);
-        if (deletedItem !== null) {
-            await getFriendsAsync();
-        }
+        await removeFriendAsyncMut(friendId);
     }
 
-    const fillFriends = (friends) => {
-        const list = friends.length !== 0
-            ? friends.map((element) => createCard(element))
+    const fillFriends = () => {
+        const list = myFriends.length !== 0
+            ? myFriends.map((element) => createCard(element))
             : (<div className="friends__empty">You don't have any friends</div>);
 
         setFriends(list);
@@ -57,22 +43,22 @@ const Friends = () => {
         setUserInformation(<></>);
     }
 
-    const createCard = (friedn) => {
+    const createCard = (friend) => {
         return (
-            <li key={friedn.id} className="friend">
+            <li key={friend.id} className="friend">
                 <div className="friend__details">
                     <FontAwesomeIcon
                         icon={faWindowRestore}
                         title="Show details"
-                        onClick={() => openUserInformation(friedn)}
+                        onClick={() => openUserInformation(friend)}
                     />
                 </div>
-                <div>{friedn.username}</div>
+                <div>{friend.username}</div>
                 <div className="friend__remove">
                     <FontAwesomeIcon
                         icon={faCircleXmark}
                         title="Remove"
-                        onClick={async () => await removeFriendAsync(friedn.id)}
+                        onClick={async () => await removeFriendAsync(friend.id)}
                     />
                 </div>
             </li>

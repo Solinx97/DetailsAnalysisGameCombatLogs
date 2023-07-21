@@ -5,7 +5,7 @@ const InvitesToCommunity = ({ customer }) => {
     const { data: invitesToCommunity, isLoading } = useInviteSearchByUserIdQuery(customer?.id);
 
     if (isLoading) {
-        return <>Loading....</>
+        return <></>
     }
 
     return (
@@ -15,7 +15,7 @@ const InvitesToCommunity = ({ customer }) => {
                 {
                     invitesToCommunity.map((item) => (
                         <li key={item.id}>
-                            <InvitesToCommunityItem inviteToCommunity={item} />
+                            <InvitesToCommunityItem customer={customer} inviteToCommunity={item} />
                         </li>
                     ))
                 }
