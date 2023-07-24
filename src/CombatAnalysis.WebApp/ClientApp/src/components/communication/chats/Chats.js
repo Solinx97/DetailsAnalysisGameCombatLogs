@@ -1,40 +1,28 @@
 ﻿import { faArrowDown, faArrowUp, faSquarePlus } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import useAuthentificationAsync from '../../../hooks/useAuthentificationAsync';
-import GroupChatService from '../../../services/GroupChatService';
-import GroupChatUserService from '../../../services/GroupChatUserService';
-import PersonalChatService from '../../../services/PersonalChatService';
+import { useGetGroupChatUserByUserIdQuery, useGetPersonalChatsByUserIdQuery } from '../../../store/api/ChatApi';
+import CreateGroupChat from './CreateGroupChat';
 import GroupChat from './GroupChat';
+import MyGroupChatItem from './MyGroupChatItem';
+import MyPersonalChatItem from './MyPersonalChatItem';
 import PersonalChat from './PersonalChat';
 
 import "../../../styles/communication/chats.scss";
 
-const Chats = ({ isOpenChat, initiatorId, companionId }) => {
-    const groupChatUserService = new GroupChatUserService();
-    const groupChatService = new GroupChatService();
-    const personalChatService = new PersonalChatService();
-
+const Chats = () => {
     const [, customer] = useAuthentificationAsync();
 
-    const [myGroupChatsRender, setMyGroupChatsRender] = useState(<></>);
-    const [personalChatsRender, setPersoanlChatsRender] = useState(<></>);
+    const { data: personalChats, isLoading } = useGetPersonalChatsByUserIdQuery(customer?.id);
+    const { data: groupChatUsers, isLoading: chatUserIsLoading } = useGetGroupChatUserByUserIdQuery(customer?.id);
+
     const [selectedGroupChat, setSelectedGroupChat] = useState(null);
     const [selectedPersonalChat, setSelectedPersonalChat] = useState(null);
     const [chatIsLeft, setChatIsLeft] = useState(false);
     const [groupChatsHidden, setGroupChatsHidden] = useState(false);
     const [personalChatsHidden, setPersonalChatsHidden] = useState(false);
     const [createGroupChatIsActive, setCreateGroupChatIsActive] = useState(false);
-    const [personalChats, setPersonalChats] = useState([]);
-    const [groupChats, setGroupChats] = useState([]);
-    const [isOpenPersonalChat, setIsOpenPersonalChat] = useState(isOpenChat);
-    const [chatPolicyType, setChatPolicyType] = useState(0);
-
-    const nameInput = useRef(null);
-    const shortNameInput = useRef(null);
-    const memberNumberSelect = useRef(null);
-
-    const chatsUpdateInterval = 200;
 
     useEffect(() => {
         if (selectedGroupChat !== null) {
@@ -50,220 +38,102 @@ const Chats = ({ isOpenChat, initiatorId, companionId }) => {
         }
     }, [selectedPersonalChat]);
 
-    useEffect(() => {
-        let groupChatUpdateInterval = setInterval(async () => {
-            await getMyGroupChatUsersAsync();
-        }, chatsUpdateInterval);
-        let personalChatUpdateInterval = setInterval(async () => {
-            await getMyPersonalChatsAsync();
-        }, chatsUpdateInterval);
-
-        return () => {
-            clearInterval(groupChatUpdateInterval);
-            clearInterval(personalChatUpdateInterval);
-        };
-    }, [customer])
-
-    useEffect(() => {
-        if (isOpenPersonalChat && personalChats.length > 0) {
-            openChatFromCommunication(initiatorId, companionId);
-        }
-
-        fillMyPersonalChatList();
-    }, [personalChats])
-
-    useEffect(() => {
-        fillMyGroupChatList();
-    }, [groupChats])
-
-    const openChatFromCommunication = (initiatorId, companionId) => {
-        let selectedChat = personalChats.filter((chat) => chat.initiatorId === initiatorId && chat.companionId === companionId);
-        if (selectedChat.length === 0) {
-            selectedChat = personalChats.filter((chat) => chat.initiatorId === companionId && chat.companionId === initiatorId);
-        }
-
-        setSelectedPersonalChat(selectedChat[0]);
-        setIsOpenPersonalChat(false);
+    if (isLoading || chatUserIsLoading) {
+        return <></>;
     }
 
-    const getMyGroupChatUsersAsync = async () => {
-        const myGroupChats = [];
-        const myGroupChatUsers = await groupChatUserService.getByIdAsync(customer?.id);
-        if (myGroupChatUsers === null) {
-            return;
-        }
-
-        for (let i = 0; i < myGroupChatUsers.length; i++) {
-            let myGroupChat = await groupChatService.getByIdAsync(myGroupChatUsers[i].groupChatId);
-            myGroupChats.push(myGroupChat);
-        }
-
-        setGroupChats(myGroupChats);
+    let chat = <div className="select-chat">Select chat</div>;
+    if (!chatIsLeft && selectedPersonalChat !== null) {
+        chat = <PersonalChat
+            chat={Object.assign({}, selectedPersonalChat)}
+            customer={customer}
+            setChatIsLeaft={setChatIsLeft}
+        />;
+    }
+    else if (!chatIsLeft && selectedGroupChat !== null) {
+        chat = <GroupChat
+            chat={Object.assign({}, selectedGroupChat)}
+            customer={customer}
+            setChatIsLeaft={setChatIsLeft}
+        />;
     }
 
-    const fillMyGroupChatList = () => {
-        if (groupChats.length === 0) {
-            setMyGroupChatsRender(<div className="chats-empty">You don't hav any group chats</div>);
-            return;
-        }
-
-        const list = groupChats.map((element) => createMyGroupChatCard(element));
-        setMyGroupChatsRender(list);
-    }
-
-    const createMyGroupChatCard = (groupChat) => {
-        return (
-            <li key={groupChat.id} className={selectedGroupChat !== null && selectedGroupChat.id === groupChat.id ? `active` : ``}
-                onClick={() => setSelectedGroupChat(groupChat)}>
-                <div><strong>{groupChat.name}</strong></div>
-                <div className="last-message" title={groupChat.lastMessage}>{groupChat.lastMessage}</div>
-            </li>
-        );
-    }
-
-    const getMyPersonalChatsAsync = async () => {
-        const chats = await personalChatService.getByIdAsync(customer?.id);
-        if (chats === null) {
-            return;
-        }
-
-        setPersonalChats(chats);
-    }
-
-    const fillMyPersonalChatList = () => {
-        if (personalChats.length === 0) {
-            setPersoanlChatsRender(<div className="chats-empty">You don't have any chats</div>);
-            return;
-        }
-
-        const list = personalChats.map((element) => myPersonalChats(element));
-        setPersoanlChatsRender(list);
-    }
-
-    const myPersonalChats = (element) => {
-        return (
-            <li className={selectedPersonalChat !== null && selectedPersonalChat.id === element.id ? "active" : ""}
-                key={element.id} onClick={() => setSelectedPersonalChat(element)}>
-                <div><strong>{element.companionUsername}</strong></div>
-                <div className="last-message" title={element.lastMessage}>{element.lastMessage}</div>
-            </li>
-        );
-    }
-
-    const createNewGroupChatAsync = async (event) => {
-        event.preventDefault();
-
-        const newGroupChat = {
-            name: nameInput.current.value,
-            shortName: shortNameInput.current.value,
-            lastMessage: " ",
-            memberNumber: +memberNumberSelect.current.value,
-            chatPolicyType: chatPolicyType,
-            ownerId: customer?.id
-        };
-
-        const createdGroupChat = await groupChatService.createAsync(newGroupChat);
-        if (createdGroupChat === null) {
-            return;
-        }
-
-        const newGroupChatUser = {
-            id: 0,
-            userId: customer?.id,
-            groupChatId: createdGroupChat.id,
-        };
-
-        const createdGroupChatUser = await groupChatUserService.createAsync(newGroupChatUser);
-        if (createdGroupChatUser === null) {
-            return;
-        }
-
-        setCreateGroupChatIsActive(false);
-    }
-
-    const render = () => {
-        let chat = <div className="select-chat">Select chat</div>;
-        if (!chatIsLeft && selectedPersonalChat !== null) {
-            chat = <PersonalChat chat={selectedPersonalChat} setChatIsLeaft={setChatIsLeft} />;
-        }
-        else if (!chatIsLeft && selectedGroupChat !== null) {
-            chat = <GroupChat chat={selectedGroupChat} setChatIsLeaft={setChatIsLeft} />;
-        }
-
-        return (
-            <div>
-                <div className="chats">
-                    <div className="chats__my-chats">
-                        <div className="chats__my-chats_title">
-                            <div>Group chats</div>
-                            {groupChatsHidden
-                                ? <FontAwesomeIcon icon={faArrowDown} title="Show chats" onClick={() => setGroupChatsHidden(!groupChatsHidden)} />
-                                : <FontAwesomeIcon icon={faArrowUp} title="Hide chats" onClick={() => setGroupChatsHidden(!groupChatsHidden)} />
-                            }
-                            <FontAwesomeIcon className="create" icon={faSquarePlus} title="Create a new group chat" onClick={() => setCreateGroupChatIsActive(!createGroupChatIsActive)} />
-                        </div>
-                        <ul className="chats__my-chats__group-chats">
-                            {groupChatsHidden ? null : myGroupChatsRender}
-                        </ul>
-                        <div className="chats__my-chats_title">
-                            <div>Personal chats</div>
-                            {personalChatsHidden
-                                ? <FontAwesomeIcon icon={faArrowDown} title="Show chats" onClick={() => setPersonalChatsHidden(!personalChatsHidden)} />
-                                : <FontAwesomeIcon icon={faArrowUp} title="Hide chats" onClick={() => setPersonalChatsHidden(!personalChatsHidden)} />
-                            }
-                        </div>
-                        <ul className="chats__my-chats__personal-chats">
-                            {personalChatsHidden ? null : personalChatsRender}
-                        </ul>
+    return (
+        <div>
+            <div className="chats">
+                <div className="chats__my-chats">
+                    <div className="chats__my-chats_title">
+                        <div>Group chats</div>
+                        {groupChatsHidden
+                            ? <FontAwesomeIcon
+                                icon={faArrowDown}
+                                title="Show chats"
+                                onClick={() => setGroupChatsHidden(!groupChatsHidden)}
+                            />
+                            : <FontAwesomeIcon
+                                icon={faArrowUp}
+                                title="Hide chats"
+                                onClick={() => setGroupChatsHidden(!groupChatsHidden)}
+                            />
+                        }
+                        <FontAwesomeIcon
+                            className="create"
+                            icon={faSquarePlus}
+                            title="Create a new group chat"
+                            onClick={() => setCreateGroupChatIsActive(!createGroupChatIsActive)}
+                        />
                     </div>
-                    {chat}
+                    <ul className="chats__my-chats__group-chats">
+                        {
+                            groupChatUsers.map((item) => (
+                                <li key={item.id}>
+                                    <MyGroupChatItem
+                                        groupChatId={item.groupChatId}
+                                        selectedGroupChat={selectedGroupChat}
+                                        setSelectedGroupChat={setSelectedGroupChat}
+                                    />
+                                </li>
+                            ))
+                        }
+                    </ul>
+                    <div className="chats__my-chats_title">
+                        <div>Personal chats</div>
+                        {personalChatsHidden
+                            ? <FontAwesomeIcon
+                                icon={faArrowDown}
+                                title="Show chats"
+                                onClick={() => setPersonalChatsHidden(!personalChatsHidden)}
+                            />
+                            : <FontAwesomeIcon
+                                icon={faArrowUp}
+                                title="Hide chats"
+                                onClick={() => setPersonalChatsHidden(!personalChatsHidden)}
+                            />
+                        }
+                    </div>
+                    <ul className="chats__my-chats__personal-chats">
+                        {
+                            personalChats?.map((item) => (
+                                <li key={item.id}>
+                                    <MyPersonalChatItem
+                                        personalChat={item}
+                                        selectedPersonalChat={selectedPersonalChat}
+                                        setSelectedPersonalChat={setSelectedPersonalChat}
+                                    />
+                                </li>
+                            ))
+                        }
+                    </ul>
                 </div>
-                <div className={`create-group-chat${createGroupChatIsActive ? "_active" : ""}`}>
-                    <p className="create-group-chat__title">Create a new group chat</p>
-                    <form onSubmit={createNewGroupChatAsync}>
-                        <div className="form-group">
-                            <label htmlFor="group-chat-name">Name</label>
-                            <input type="text" className="form-control" name="name" id="group-chat-name" ref={nameInput} required />
-                        </div>
-                        <div className="form-group">
-                            <label htmlFor="short-group-chat-name">Short name</label>
-                            <input type="text" className="form-control" name="shortName" id="short-group-chat-name" ref={shortNameInput} required />
-                        </div>
-                        <div className="form-group">
-                            <label htmlFor="exampleFormControlSelect1">Member number</label>
-                            <select className="form-control" name="memberNumber" ref={memberNumberSelect} id="exampleFormControlSelect1">
-                                <option>100</option>
-                                <option>500</option>
-                                <option>1000</option>
-                                <option>2500</option>
-                            </select>
-                        </div>
-                        <div className="chat-policy">
-                            <p>Chat policy</p>
-                            <div className="form-check form-check-inline">
-                                <input className="form-check-input" type="radio" name="chat-policy" id="public" value="0" defaultChecked onChange={() => setChatPolicyType(0)} />
-                                <label className="form-check-label" htmlFor="public">Public</label>
-                            </div>
-                            <div className="form-check form-check-inline">
-                                <input className="form-check-input" type="radio" name="chat-policy" id="private" value="1" onChange={() => setChatPolicyType(1)} />
-                                <label className="form-check-label" htmlFor="private">Private</label>
-                            </div>
-                            <div className="form-check form-check-inline">
-                                <input className="form-check-input" type="radio" name="chat-policy" id="privatelinks" value="2" disabled onChange={() => setChatPolicyType(2)} />
-                                <label className="form-check-label" htmlFor="privatelinks">Private with link</label>
-                            </div>
-                        </div>
-                        <div className="create-group-chat__accept">
-                            <input type="submit" value="Create" className="btn btn-success" />
-                            <input type="button" value="Close" className="btn btn-light" onClick={() => setCreateGroupChatIsActive(false)} />
-                        </div>
-                    </form>
-                </div>
+                {chat}
             </div>
-        );
-    }
-
-    return render();
+            <CreateGroupChat
+                setCreateGroupChatIsActive={setCreateGroupChatIsActive}
+                customer={customer}
+                createGroupChatIsActive={createGroupChatIsActive}
+            />
+        </div>
+    );
 }
 
 export default Chats;

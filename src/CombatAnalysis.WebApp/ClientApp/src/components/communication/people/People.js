@@ -28,8 +28,8 @@ const People = ({ updateCurrentMenuItem }) => {
 
     const startChatAsync = async (targetCustomer) => {
         const isExist = await checkExistNewChatAsync(targetCustomer);
-        if (isExist) {
-            updateCurrentMenuItem(0, customer?.id, targetCustomer.id);
+        if (isExist.data) {
+            updateCurrentMenuItem(1, customer?.id, targetCustomer.id);
             return;
         }
 
@@ -42,8 +42,8 @@ const People = ({ updateCurrentMenuItem }) => {
         };
 
         const createdChat = await createPersonalChatAsync(newChat);
-        if (createdChat.data !== null) {
-            updateCurrentMenuItem(0, customer?.id, targetCustomer.id);
+        if (createdChat.data !== undefined) {
+            updateCurrentMenuItem(1, customer?.id, targetCustomer.id);
         }
     }
 

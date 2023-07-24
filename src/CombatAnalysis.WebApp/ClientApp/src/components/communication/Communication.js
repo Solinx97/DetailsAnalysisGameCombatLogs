@@ -3,8 +3,6 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useState } from 'react';
 import Chats from './chats/Chats';
 import Communities from './community/Communities';
-import CommunityItem from './community/CommunityItem';
-import Events from './events/Events';
 import Feed from './Feed';
 import MyEnvironment from './myEnvironment/MyEnvironment';
 import People from './people/People';
@@ -13,7 +11,6 @@ import '../../styles/communication/communication.scss';
 
 const Communication = () => {
     const [currentMenuItem, setCurrentMenuItem] = useState(0);
-    const [community, setCommunity] = useState(null);
     const [isOpenChat, setIsOpenChat] = useState(false);
     const [initiatorId, setInitiatorId] = useState("");
     const [companionId, setCompanionId] = useState("");
@@ -42,12 +39,8 @@ const Communication = () => {
                             {currentMenuItem === 2 ? < FontAwesomeIcon icon={faCircleArrowRight} title="Current action" /> : null}
                             <div className="title">Communities</div>
                         </div>
-                        {currentMenuItem === 6
-                            ? <CommunityItem currentMenuItem={currentMenuItem} community={community} />
-                            : null
-                        }
                     </li>
-                    <li className="menu-item" onClick={() => setCurrentMenuItem(3)}>
+                    <li className="menu-item_disabled">
                         {currentMenuItem === 3 ? < FontAwesomeIcon icon={faCircleArrowRight} title="Current action" /> : null}
                         <div className="title">Events</div>
                     </li>
@@ -64,7 +57,6 @@ const Communication = () => {
                     {currentMenuItem === 0 ? <Feed /> : null}
                     {currentMenuItem === 1 ? <Chats isOpenChat={isOpenChat} initiatorId={initiatorId} companionId={companionId} /> : null}
                     {currentMenuItem === 2 ? <Communities /> : null}
-                    {currentMenuItem === 3 ? <Events /> : null}
                     {currentMenuItem === 4 ? <People updateCurrentMenuItem={updateCurrentMenuItem} /> : null}
                     {currentMenuItem === 5 ? <MyEnvironment /> : null}
                 </div>
