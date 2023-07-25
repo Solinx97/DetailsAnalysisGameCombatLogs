@@ -3,14 +3,12 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useEffect, useState } from "react";
 import { useFriendSearchByUserIdQuery } from '../store/api/Friend.api';
 import { useGetCustomersQuery } from '../store/api/UserApi';
-import { useCreateInviteAsyncMutation } from '../store/api/InviteToCommunity.api';
 
 import '../styles/addPeople.scss';
 
-const AddPeople = ({ customer, community, communityUsersId, setShowAddPeople }) => {
+const AddPeople = ({ customer, createInviteAsync, communityUsersId, setShowAddPeople }) => {
     const { data: friends, isLoading: friendsIsLoading } = useFriendSearchByUserIdQuery(customer?.id);
     const { data: allPeople, isLoading: peopleIsLoading } = useGetCustomersQuery();
-    const [createInviteAsyncMut] = useCreateInviteAsyncMutation();
 
     const [friendsId, setFriendsId] = useState([]);
     const [people, setPeople] = useState([]);
@@ -47,35 +45,9 @@ const AddPeople = ({ customer, community, communityUsersId, setShowAddPeople }) 
         setPeople(anotherPeople);
     }
 
-    const createInviteForAnotherPeopleAsync = async (userId) => {
-        const newInviteToCommunity = {
-            communityId: community.id,
-            toCustomerId: userId,
-            when: new Date(),
-            result: 0,
-            ownerId: customer?.id
-        }
-
-        await createInviteAsync(newInviteToCommunity);
-    }
-
     const createInviteForFriendAsync = async (friend) => {
-        const newInviteToCommunity = {
-            communityId: community.id,
-            toCustomerId: friend.whoFriendId === customer.id ? friend.forWhomId : friend.whoFriendId,
-            when: new Date(),
-            result: 0,
-            ownerId: customer?.id
-        }
-
-        await createInviteAsync(newInviteToCommunity);
-    }
-
-    const createInviteAsync = async (newInviteToCommunity) => {
-        const res = await createInviteAsyncMut(newInviteToCommunity);
-        if (res.data !== undefined) {
-            setShowAddPeople(false);
-        }
+        const whomId = friend.whoFriendId === customer.id ? friend.forWhomId : friend.whoFriendId;
+        await createInviteAsync(whomId);
     }
 
     const handleAddNewPeopleVisibility = () => {
@@ -90,10 +62,6 @@ const AddPeople = ({ customer, community, communityUsersId, setShowAddPeople }) 
         <div className="add-new-people">
             <div>Add new people</div>
             <div>
-                <div>Search</div>
-                <input type="text" />
-            </div>
-            <div>
                 <div>
                     <div>Friends</div>
                     <ul>
@@ -101,7 +69,11 @@ const AddPeople = ({ customer, community, communityUsersId, setShowAddPeople }) 
                             friends?.map((item) => (
                                 <li key={item.id} className="friend">
                                     <div>{item.username}</div>
-                                    <FontAwesomeIcon icon={faUserPlus} title="Send invite to community" onClick={async () => await createInviteForFriendAsync(item)} />
+                                    <FontAwesomeIcon
+                                        icon={faUserPlus}
+                                        title="Send invite to community"
+                                        onClick={async () => await createInviteForFriendAsync(item)}
+                                    />
                                 </li>
                             ))
                         }
@@ -114,7 +86,11 @@ const AddPeople = ({ customer, community, communityUsersId, setShowAddPeople }) 
                             people?.map((item) => (
                                 <li key={item.id} className="friend">
                                     <div>{item.username}</div>
-                                    <FontAwesomeIcon icon={faUserPlus} title="Send invite to community" onClick={async () => await createInviteForAnotherPeopleAsync(item.id)} />
+                                    <FontAwesomeIcon
+                                        icon={faUserPlus}
+                                        title="Send invite to community"
+                                        onClick={async () => await createInviteAsync(item.id)}
+                                    />
                                 </li>
                             ))
                         }

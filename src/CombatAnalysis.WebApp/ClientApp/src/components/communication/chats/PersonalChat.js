@@ -1,22 +1,18 @@
-﻿import { faCloudArrowUp, faPaperPlane, faPen, faPersonWalkingArrowRight, faTrash } from '@fortawesome/free-solid-svg-icons';
+﻿import { faPaperPlane, faPersonWalkingArrowRight } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { useRef, useState } from "react";
+import { useRef } from "react";
 import { useFindPersonalChatMessageByChatIdQuery } from '../../../store/api/ChatApi';
 import { useRemovePersonalChatAsyncMutation, useUpdatePersonalChatAsyncMutation } from '../../../store/api/PersonalChat.api';
 import {
     useCreatePersonalChatMessageAsyncMutation, useRemovePersonalChatMessageAsyncMutation,
     useRemovePersonalChatMessageByChatIdAsyncMutation, useUpdatePersonalChatMessageAsyncMutation
 } from '../../../store/api/PersonalChatMessage.api';
+import ChatMessageItem from './ChatMessageItem';
 
 import "../../../styles/communication/personalChat.scss";
 
 const PersonalChat = ({ chat, customer, setChatIsLeaft }) => {
-    const [selectedMessageId, setSelectedMessageId] = useState(0);
-    const [editModeIsOn, setEditMode] = useState(false);
-    const [deleteModeIsOn, setDeleteMode] = useState(false);
-
     const messageInput = useRef(null);
-    const editMessageInput = useRef(null);
 
     const { data: messages, isLoading} = useFindPersonalChatMessageByChatIdQuery(chat.id);
     const [createPersonalChatMessageAsync] = useCreatePersonalChatMessageAsyncMutation();
@@ -26,16 +22,13 @@ const PersonalChat = ({ chat, customer, setChatIsLeaft }) => {
     const [removePersonalChatAsync] = useRemovePersonalChatAsyncMutation();
     const [updatePersonalChatAsyncMut] = useUpdatePersonalChatAsyncMutation();
 
-    const updateMessageAsync = async (myMessage) => {
-        setEditMode(false);
-        myMessage.message = editMessageInput.current.value;
+    const updateMessageAsync = async (myMessage, newMessageContent) => {
+        myMessage.message = newMessageContent;
 
         await updatePersonalChatMessageAsync(myMessage);
     }
 
-    const deleteMessageChatAsync = async (messageId) => {
-        setDeleteMode(false);
-
+    const deleteMessageAsync = async (messageId) => {
         await removePersonalChatMessageAsync(messageId);
     }
 
@@ -95,46 +88,17 @@ const PersonalChat = ({ chat, customer, setChatIsLeaft }) => {
                         onClick={() => leaveFromChatAsync()}
                     />
                 </div>
-                <div className={`title__message-panel${selectedMessageId > 0 ? "-active" : ""}`}>
-                    <FontAwesomeIcon
-                        icon={faPen} title="Edit"
-                        className={`edit-message-handler${editModeIsOn ? "-active" : ""}`}
-                        onClick={() => setEditMode((item) => !item)}
-                    />
-                    <FontAwesomeIcon
-                        icon={faTrash}
-                        title="Delete"
-                        className={`delete-message-handler${deleteModeIsOn ? "-active" : ""}`}
-                        onClick={() => setDeleteMode((item) => !item)}
-                    />
-                </div>
             </div>
-            <ul className="personal-chat-messages">
+            <ul className="chat-messages">
                 {
                     messages.map((item) => (
-                        <li key={item.id} className={`personal-chat-messages__${customer.username === item.username ? "right" : "left"}`}
-                            onClick={() => setSelectedMessageId(item.id)}>
-                            {customer?.username !== item.username &&
-                                <div className="username">{item.username}</div>
-                            }
-                            {editModeIsOn && customer.username === item.username && item.id === selectedMessageId
-                                ? <div className="edit-message">
-                                    <input className="form-control" defaultValue={item.message} ref={editMessageInput} />
-                                    <FontAwesomeIcon
-                                        icon={faCloudArrowUp}
-                                        title="Save"
-                                        onClick={async () => await updateMessageAsync(item)}
-                                    />
-                                </div>
-                                : <div className="message">{item.message}</div>
-                            }
-                            {deleteModeIsOn && customer.username === item.username && item.id === selectedMessageId &&
-                                <FontAwesomeIcon
-                                    icon={faTrash}
-                                    title="Save"
-                                    onClick={async () => await deleteMessageChatAsync(item.id)}
-                                />
-                            }
+                        <li key={item.id}>
+                            <ChatMessageItem
+                                customer={customer}
+                                message={item}
+                                updateMessageAsync={updateMessageAsync}
+                                deleteMessageAsync={deleteMessageAsync}
+                            />
                         </li>
                     ))
                 }

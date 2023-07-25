@@ -2,6 +2,7 @@ import { faGear, faPlus } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useEffect, useState } from 'react';
 import { useSearchByCommunityIdAsyncQuery } from '../../../store/api/ChatApi';
+import { useCreateInviteAsyncMutation } from '../../../store/api/InviteToCommunity.api';
 import AddPeople from '../../AddPeople';
 import CommunityMemberItem from './CommunityMemberItem';
 
@@ -10,6 +11,7 @@ import '../../../styles/communication/selectedCommunity.scss';
 const CommunityMembers = ({ community, customer }) => {
     const [showAddPeople, setShowAddPeople] = useState(false);
     const [communityUsersId, setCommunityUsersId] = useState([]);
+    const [createInviteAsyncMut] = useCreateInviteAsyncMutation();
 
     const { data: communityUsers, isLoading } = useSearchByCommunityIdAsyncQuery(community?.id);
 
@@ -22,19 +24,33 @@ const CommunityMembers = ({ community, customer }) => {
         setCommunityUsersId(idList);
     }, [])
 
+    const createInviteAsync = async (whomId) => {
+        const newInviteToCommunity = {
+            communityId: community.id,
+            toCustomerId: whomId,
+            when: new Date(),
+            result: 0,
+            ownerId: customer?.id
+        }
+
+        const res = await createInviteAsyncMut(newInviteToCommunity);
+        if (res.data !== undefined) {
+            setShowAddPeople(false);
+        }
+    }
+
     if (isLoading) {
         return <>Loading...</>;
     }
 
     return (<>
-        {showAddPeople
-            ? <AddPeople
+        {showAddPeople &&
+            <AddPeople
                 customer={customer}
-                community={community}
                 communityUsersId={communityUsersId}
                 setShowAddPeople={setShowAddPeople}
+                createInviteAsync={createInviteAsync}
             />
-            : null
         }
         <div className="title">
             <div>Members</div>

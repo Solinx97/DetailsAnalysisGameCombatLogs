@@ -15,19 +15,22 @@ export const PersonalChatMessageApi = ChatApi.injectEndpoints({
                 body: message,
                 url: '/PersonalChatMessage',
                 method: 'PUT'
-            })
+            }),
+            invalidatesTags: (result, error) => [{ type: 'PersonalChatMessage', result }],
         }),
         removePersonalChatMessageAsync: builder.mutation({
             query: id => ({
                 url: `/PersonalChatMessage/${id}`,
                 method: 'DELETE'
-            })
+            }),
+            invalidatesTags: (result, error) => [{ type: 'PersonalChatMessage', result }],
         }),
         removePersonalChatMessageByChatIdAsync: builder.mutation({
             query: id => ({
                 url: `/PersonalChatMessage/deleteByChatId/${id}`,
                 method: 'DELETE'
-            })
+            }),
+            invalidatesTags: (result, error) => [{ type: 'PersonalChatMessage', result }],
         })
     })
 })
