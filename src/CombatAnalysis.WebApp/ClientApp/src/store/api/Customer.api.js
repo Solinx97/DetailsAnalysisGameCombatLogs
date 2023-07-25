@@ -10,7 +10,7 @@ export const CustomerApi = UserApi.injectEndpoints({
             })
         }),
         getCustomerById: builder.query({
-            query: (id) => `/Customer/${id}`
+            query: (id) => `/Customer/${id}`,
         }),
         searchByUserIdAsync: builder.query({
             query: (id) => `/Customer/searchByUserId/${id}`,

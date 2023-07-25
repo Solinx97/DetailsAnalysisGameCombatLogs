@@ -11,10 +11,14 @@ import ChatMessageItem from './ChatMessageItem';
 
 import "../../../styles/communication/personalChat.scss";
 
+const getPersonalChatMessagesInterval = 1000;
+
 const PersonalChat = ({ chat, customer, setChatIsLeaft }) => {
     const messageInput = useRef(null);
 
-    const { data: messages, isLoading} = useFindPersonalChatMessageByChatIdQuery(chat.id);
+    const { data: messages, isLoading } = useFindPersonalChatMessageByChatIdQuery(chat.id, {
+        pollingInterval: getPersonalChatMessagesInterval
+    });
     const [createPersonalChatMessageAsync] = useCreatePersonalChatMessageAsyncMutation();
     const [updatePersonalChatMessageAsync] = useUpdatePersonalChatMessageAsyncMutation();
     const [removePersonalChatMessageAsync] = useRemovePersonalChatMessageAsyncMutation();

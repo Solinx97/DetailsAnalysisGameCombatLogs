@@ -6,7 +6,12 @@ const CommunityItem = ({ currentMenuItem, community }) => {
         return (
             <ul>
                 <li className="menu-item">
-                    {currentMenuItem === 6 ? < FontAwesomeIcon icon={faCircleArrowRight} title="Current action" /> : null}
+                    {currentMenuItem === 6 &&
+                        <FontAwesomeIcon
+                            icon={faCircleArrowRight}
+                            title="Current action"
+                        />
+                    }
                     <div className="title">{community.name}</div>
                 </li>
             </ul>

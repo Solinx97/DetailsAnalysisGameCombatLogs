@@ -11,11 +11,15 @@ import PersonalChat from './PersonalChat';
 
 import "../../../styles/communication/chats.scss";
 
+const getGroupChatUsersInterval = 2000;
+
 const Chats = () => {
     const [, customer] = useAuthentificationAsync();
 
     const { data: personalChats, isLoading } = useGetPersonalChatsByUserIdQuery(customer?.id);
-    const { data: groupChatUsers, isLoading: chatUserIsLoading } = useGetGroupChatUserByUserIdQuery(customer?.id);
+    const { data: groupChatUsers, isLoading: chatUserIsLoading } = useGetGroupChatUserByUserIdQuery(customer?.id, {
+        pollingInterval: getGroupChatUsersInterval
+    });
 
     const [selectedGroupChat, setSelectedGroupChat] = useState(null);
     const [selectedPersonalChat, setSelectedPersonalChat] = useState(null);

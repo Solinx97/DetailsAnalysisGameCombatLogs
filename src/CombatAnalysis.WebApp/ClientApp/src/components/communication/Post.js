@@ -222,7 +222,7 @@ const Post = ({ customer, targetPostType }) => {
     }
 
     if (isLoading) {
-        return <>Loading...</>;
+        return <></>;
     }
 
     return (

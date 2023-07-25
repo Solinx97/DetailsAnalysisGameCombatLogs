@@ -18,7 +18,7 @@ const CommunityMemberItem = ({ community, customerId }) => {
     }
 
     if (isLoading) {
-        return <>Loading...</>;
+        return <></>;
     }
 
     return (
@@ -37,9 +37,12 @@ const CommunityMemberItem = ({ community, customerId }) => {
                 : null
             }
             <div className="member">
-                {member?.id !== community.ownerId && customerId !== member?.id
-                    ? <FontAwesomeIcon icon={faTrash} title="Remove" onClick={() => setShowRemovePeopleAlert((item) => !item)} />
-                    : null
+                {member?.id !== community.ownerId && customerId !== member?.id &&
+                    <FontAwesomeIcon
+                        icon={faTrash}
+                        title="Remove"
+                        onClick={() => setShowRemovePeopleAlert((item) => !item)}
+                    />
                 }
                 <div className="member__username">{member?.username}</div>
             </div>

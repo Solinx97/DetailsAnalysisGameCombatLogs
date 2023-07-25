@@ -7,19 +7,25 @@ import {
     useCreateGroupChatMessageAsyncMutation, useRemoveGroupChatMessageAsyncMutation,
     useUpdateGroupChatMessageAsyncMutation
 } from '../../../store/api/GroupChatMessage.api';
-import { useGetGroupChatUserByChatIdQuery, useRemoveGroupChatUserAsyncMutation } from '../../../store/api/GroupChatUser.api';
+import { useCreateGroupChatUserAsyncMutation, useGetGroupChatUserByChatIdQuery, useRemoveGroupChatUserAsyncMutation } from '../../../store/api/GroupChatUser.api';
+import AddPeople from '../../AddPeople';
 import ChatMessageItem from './ChatMessageItem';
-
-import "../../../styles/communication/groupChat.scss";
 import GroupChatUser from './GroupChatUser';
 
+import "../../../styles/communication/groupChat.scss";
+
+const getGroupChatMessagesInterval = 1000;
+
 const GroupChat = ({ chat, customer, setChatIsLeaft }) => {
+    const [showAddPeople, setShowAddPeople] = useState(false);
     const [peopleInspectionModeOn, setPeopleInspectionMode] = useState(false);
     const [settingsIsShow, setSettingsIsShow] = useState(false);
 
     const messageInput = useRef(null);
 
-    const { data: messages, isLoading } = useFindGroupChatMessageByChatIdQuery(chat.id);
+    const { data: messages, isLoading } = useFindGroupChatMessageByChatIdQuery(chat.id, {
+        pollingInterval: getGroupChatMessagesInterval
+    });
     const { data: muGroupChatUsers } = useGetGroupChatUserByUserIdQuery(customer?.id);
     const { data: groupChatUsers, isLoading: usersIsLoading } = useGetGroupChatUserByChatIdQuery(chat.id);
     const [createGroupChatMessageAsync] = useCreateGroupChatMessageAsyncMutation();
@@ -27,6 +33,7 @@ const GroupChat = ({ chat, customer, setChatIsLeaft }) => {
     const [removeGroupChatMessageAsync] = useRemoveGroupChatMessageAsyncMutation();
     const [updateGroupChatAsyncMut] = useUpdateGroupChatAsyncMutation();
     const [removeGroupChatUserAsync] = useRemoveGroupChatUserAsyncMutation();
+    const [createGroupChatUserMutAsync] = useCreateGroupChatUserAsyncMutation();
 
     const getChatUserByMyIdAsync = async () => {
         const currentGroupChatUser = muGroupChatUsers?.filter((chatUser) => chatUser.groupChatId === chat.id)[0];
@@ -40,6 +47,15 @@ const GroupChat = ({ chat, customer, setChatIsLeaft }) => {
 
         await createChatMessageAsync(messageInput.current.value);
         messageInput.current.value = "";
+    }
+
+    const createGroupChatUserAsync = async (whomId) => {
+        const newGroupChatUser = {
+            userId: whomId,
+            groupChatId: chat.id,
+        };
+
+        await createGroupChatUserMutAsync(newGroupChatUser);
     }
 
     const createChatMessageAsync = async (message) => {
@@ -80,10 +96,6 @@ const GroupChat = ({ chat, customer, setChatIsLeaft }) => {
         }
     }
 
-    const peopleInspectionHandler = async () => {
-        setPeopleInspectionMode((item) => !item);
-    }
-
     if (isLoading || usersIsLoading) {
         return <></>;
     }
@@ -106,11 +118,13 @@ const GroupChat = ({ chat, customer, setChatIsLeaft }) => {
                         icon={faPerson}
                         title="Group members"
                         className={`people-inspection-handler${peopleInspectionModeOn ? "-active" : ""}`}
-                        onClick={peopleInspectionHandler}
+                        onClick={() => setPeopleInspectionMode((item) => !item)}
                     />
                     <FontAwesomeIcon
                         icon={faUserPlus}
                         title="Invite a new person"
+                        className={`add-new-people-handler${showAddPeople ? "-active" : ""}`}
+                        onClick={() => setShowAddPeople((item) => !item)}
                     />
                     <FontAwesomeIcon
                         icon={faFileWaveform}
@@ -161,6 +175,14 @@ const GroupChat = ({ chat, customer, setChatIsLeaft }) => {
                     onClick={async () => await sendMessageAsync()}
                 />
             </div>
+            {showAddPeople &&
+                <AddPeople
+                    customer={customer}
+                    communityUsersId={groupChatUsers}
+                    setShowAddPeople={setShowAddPeople}
+                    createInviteAsync={createGroupChatUserAsync}
+                />
+            }
         </div>
     );
 }

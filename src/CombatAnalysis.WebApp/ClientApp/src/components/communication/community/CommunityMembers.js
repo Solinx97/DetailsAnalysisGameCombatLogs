@@ -40,7 +40,7 @@ const CommunityMembers = ({ community, customer }) => {
     }
 
     if (isLoading) {
-        return <>Loading...</>;
+        return <></>;
     }
 
     return (<>

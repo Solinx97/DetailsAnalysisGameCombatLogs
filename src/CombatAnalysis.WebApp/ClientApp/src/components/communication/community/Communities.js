@@ -43,7 +43,7 @@ const Communities = () => {
     }
 
     if (isLoading) {
-        return <>Loading...</>;
+        return <></>;
     }
 
     return (
@@ -72,11 +72,10 @@ const Communities = () => {
                         }
                     </div>
                 </div>
-                {showCommunities
-                    ? <ul>
+                {showCommunities && 
+                    <ul>
                         {communityList}
                     </ul>
-                    : null
                 }
             </div>
         </div>

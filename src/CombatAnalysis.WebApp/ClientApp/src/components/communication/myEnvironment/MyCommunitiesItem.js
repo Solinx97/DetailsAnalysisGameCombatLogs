@@ -5,7 +5,7 @@ const MyCommunitiesItem = ({ userCommunity }) => {
     const { data: community, isLoading } = useGetCommunityByIdQuery(userCommunity?.communityId);
 
     if (isLoading) {
-        return <>Loading...</>;
+        return <></>;
     }
 
     return (

@@ -45,9 +45,17 @@ const AddPeople = ({ customer, createInviteAsync, communityUsersId, setShowAddPe
         setPeople(anotherPeople);
     }
 
-    const createInviteForFriendAsync = async (friend) => {
+    const createInviteHandlerForFriendAsync = async (friend) => {
         const whomId = friend.whoFriendId === customer.id ? friend.forWhomId : friend.whoFriendId;
         await createInviteAsync(whomId);
+
+        setShowAddPeople(false);
+    }
+
+    const createInviteHandlerAsync = async (whomId) => {
+        await createInviteAsync(whomId);
+
+        setShowAddPeople(false);
     }
 
     const handleAddNewPeopleVisibility = () => {
@@ -72,7 +80,7 @@ const AddPeople = ({ customer, createInviteAsync, communityUsersId, setShowAddPe
                                     <FontAwesomeIcon
                                         icon={faUserPlus}
                                         title="Send invite to community"
-                                        onClick={async () => await createInviteForFriendAsync(item)}
+                                        onClick={async () => await createInviteHandlerForFriendAsync(item)}
                                     />
                                 </li>
                             ))
@@ -89,7 +97,7 @@ const AddPeople = ({ customer, createInviteAsync, communityUsersId, setShowAddPe
                                     <FontAwesomeIcon
                                         icon={faUserPlus}
                                         title="Send invite to community"
-                                        onClick={async () => await createInviteAsync(item.id)}
+                                        onClick={async () => await createInviteHandlerAsync(item.id)}
                                     />
                                 </li>
                             ))
