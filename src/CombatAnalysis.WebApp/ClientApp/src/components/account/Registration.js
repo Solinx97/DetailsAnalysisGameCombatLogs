@@ -32,7 +32,7 @@ const Registration = () => {
                 return;
             }
 
-            await createCustomerAsync(createdUser);
+            await createCustomerAsync(createdUser.data);
         } catch (SyntaxError) {
             setShowErrorMessage(true);
         }
@@ -40,18 +40,18 @@ const Registration = () => {
 
     const createCustomerAsync = async (accountData) => {
         const data = {
-            id: "",
+            id: " ",
             message: " ",
             username: username,
             aboutMe: " ",
-            gender: 1,
             firstName: " ",
             lastName: " ",
+            gender: 1,
             appUserId: accountData.id
         };
 
         const createdCustomer = await createCustomerMutAsync(data);
-        if (createdCustomer !== null) {
+        if (createdCustomer.data !== undefined) {
             navigate('/');
         }
     }

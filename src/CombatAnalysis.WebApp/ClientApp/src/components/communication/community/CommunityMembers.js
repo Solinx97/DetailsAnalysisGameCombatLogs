@@ -17,12 +17,12 @@ const CommunityMembers = ({ community, customer }) => {
 
     useEffect(() => {
         const idList = [];
-        for (var i = 0; i < communityUsers?.length; i++) {
-            idList.push(communityUsers[i].id);
+        for (let i = 0; i < communityUsers?.length; i++) {
+            idList.push(communityUsers[i].customerId);
         }
 
         setCommunityUsersId(idList);
-    }, [])
+    }, [communityUsers])
 
     const createInviteAsync = async (whomId) => {
         const newInviteToCommunity = {
@@ -33,10 +33,8 @@ const CommunityMembers = ({ community, customer }) => {
             ownerId: customer?.id
         }
 
-        const res = await createInviteAsyncMut(newInviteToCommunity);
-        if (res.data !== undefined) {
-            setShowAddPeople(false);
-        }
+        const createdInvite = await createInviteAsyncMut(newInviteToCommunity);
+        return createdInvite.data ? createdInvite.data : null;
     }
 
     if (isLoading) {
@@ -47,9 +45,9 @@ const CommunityMembers = ({ community, customer }) => {
         {showAddPeople &&
             <AddPeople
                 customer={customer}
+                createInviteAsync={createInviteAsync}
                 communityUsersId={communityUsersId}
                 setShowAddPeople={setShowAddPeople}
-                createInviteAsync={createInviteAsync}
             />
         }
         <div className="title">
@@ -70,7 +68,10 @@ const CommunityMembers = ({ community, customer }) => {
             {
                 communityUsers?.map((item) => (
                     <li key={item.id }>
-                        <CommunityMemberItem community={community} customerId={item.customerId} />
+                        <CommunityMemberItem
+                            community={community}
+                            customerId={item.customerId}
+                        />
                     </li>
                 ))
             }

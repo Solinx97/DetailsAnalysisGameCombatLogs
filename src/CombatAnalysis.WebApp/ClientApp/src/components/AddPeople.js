@@ -1,65 +1,64 @@
-import { faUserPlus } from '@fortawesome/free-solid-svg-icons';
+import { faEye, faEyeSlash, faUserPlus } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { useEffect, useState } from "react";
 import { useFriendSearchByUserIdQuery } from '../store/api/Friend.api';
 import { useGetCustomersQuery } from '../store/api/UserApi';
+import AddFriendItem from './AddFriendItem';
 
+import { useState } from 'react';
 import '../styles/addPeople.scss';
 
+const defaultMaxPeopleItems = 5;
+const defaultMaxFriendsItems = 5;
+const hideInviteAlertTimer = 2000;
+let hideInviteAlertTimeout = null;
+
 const AddPeople = ({ customer, createInviteAsync, communityUsersId, setShowAddPeople }) => {
-    const { data: friends, isLoading: friendsIsLoading } = useFriendSearchByUserIdQuery(customer?.id);
-    const { data: allPeople, isLoading: peopleIsLoading } = useGetCustomersQuery();
+    const [maxPeopleItems, setMaxPeopleItems] = useState(defaultMaxPeopleItems);
+    const [maxFriendsItems, setMaxFriendsItems] = useState(defaultMaxFriendsItems);
+    const [showInviteAlert, setShowInviteAlert] = useState(false);
+    const [invitedUsername, setInvitedUsername] = useState("");
 
-    const [friendsId, setFriendsId] = useState([]);
-    const [people, setPeople] = useState([]);
+    const { friends, isLoading: friendsIsLoading } = useFriendSearchByUserIdQuery(customer?.id, {
+        selectFromResult: ({ data }) => ({
+            friends: data?.length <= defaultMaxFriendsItems
+                ? data?.filter((item) => !communityUsersId.includes(customer?.id === item.whoFriendId ? item.forWhomId : item.whoFriendId))
+                : data?.filter((item) => !communityUsersId.includes(customer?.id === item.whoFriendId ? item.forWhomId : item.whoFriendId))
+                    .slice(0, maxFriendsItems)
+        }),
+    });
+    const { people, isLoading: peopleIsLoading } = useGetCustomersQuery(undefined, {
+        selectFromResult: ({ data }) => ({
+            people: data?.length <= defaultMaxPeopleItems
+                ? data?.filter((item) => !communityUsersId.includes(item.id))
+                : data?.filter((item) => !communityUsersId.includes(item.id))
+                    .slice(0, maxPeopleItems)
+        }),
+    });
 
-    useEffect(() => {
-        !friendsIsLoading && getFriends();
-    }, [friendsIsLoading])
+    const [filterContent, setFilterContent] = useState("");
+    const [showFriendList, setShowFriendList] = useState(true);
+    const [showPeopleList, setShowPeopleList] = useState(true);
 
-    useEffect(() => {
-        !peopleIsLoading && getPeople();
-    }, [peopleIsLoading])
+    const createInviteHandlerAsync = async (username, whomId) => {
+        hideInviteAlertTimeout && clearTimeout(hideInviteAlertTimeout);
 
-    const getFriends = () => {
-        const friendsId = [];
-        for (let i = 0; i < friends?.length; i++) {
-            friends[i].whoFriendId === customer.id
-                ? friendsId.push(friends[i].forWhomId)
-                : friendsId.push(friends[i].whoFriendId);
+        const createdInvite = await createInviteAsync(whomId);
+        if (createdInvite !== null) {
+            setShowInviteAlert(true);
+            setInvitedUsername(username);
+
+            hideInviteAlertTimeout = setTimeout(() => {
+                setShowInviteAlert(false);
+            }, hideInviteAlertTimer);
         }
-
-        setFriendsId(friendsId);
-    }
-
-    const getPeople = () => {
-        const anotherPeople = [];
-        for (let i = 0; i < allPeople?.length; i++) {
-            if (communityUsersId.indexOf(allPeople[i].id) === -1
-                && friendsId.indexOf(allPeople[i].id) === -1
-                && allPeople[i].id !== customer?.id) {
-                anotherPeople.push(allPeople[i]);
-            }
-        }
-
-        setPeople(anotherPeople);
-    }
-
-    const createInviteHandlerForFriendAsync = async (friend) => {
-        const whomId = friend.whoFriendId === customer.id ? friend.forWhomId : friend.whoFriendId;
-        await createInviteAsync(whomId);
-
-        setShowAddPeople(false);
-    }
-
-    const createInviteHandlerAsync = async (whomId) => {
-        await createInviteAsync(whomId);
-
-        setShowAddPeople(false);
     }
 
     const handleAddNewPeopleVisibility = () => {
         setShowAddPeople(false);
+    }
+
+    const searchHandler = (e) => {
+        setFilterContent(e.target.value);
     }
 
     if (friendsIsLoading || peopleIsLoading) {
@@ -68,41 +67,107 @@ const AddPeople = ({ customer, createInviteAsync, communityUsersId, setShowAddPe
 
     return (
         <div className="add-new-people">
-            <div>Add new people</div>
-            <div>
-                <div>
-                    <div>Friends</div>
-                    <ul>
-                        {
-                            friends?.map((item) => (
-                                <li key={item.id} className="friend">
-                                    <div>{item.username}</div>
-                                    <FontAwesomeIcon
-                                        icon={faUserPlus}
-                                        title="Send invite to community"
-                                        onClick={async () => await createInviteHandlerForFriendAsync(item)}
-                                    />
-                                </li>
-                            ))
-                        }
-                    </ul>
+            <div className="add-new-people__title"><i><strong>Add new people</strong></i></div>
+            {showInviteAlert &&
+                <div className="alert alert-success add-new-people__invite-alert" role="alert">
+                    You sent invite to <strong>{invitedUsername}</strong>
                 </div>
-                <div>
-                    <div>Another people</div>
-                    <ul>
+            }
+            <input type="text" onChange={searchHandler} />
+            <div>
+                <div className="add-new-people__content">
+                    <div className="add-new-people__content-title">
+                        <div><i><strong>Friends</strong></i></div>
+                        {showFriendList
+                            ? <FontAwesomeIcon
+                                icon={faEye}
+                                title="Hide"
+                                onClick={() => setShowFriendList((item) => !item)}
+                            />
+                            : <FontAwesomeIcon
+                                icon={faEyeSlash}
+                                title="Show"
+                                onClick={() => setShowFriendList((item) => !item)}
+                            />
+                        }
+                    </div>
+                    <ul className="add-new-people__list">
                         {
-                            people?.map((item) => (
-                                <li key={item.id} className="friend">
-                                    <div>{item.username}</div>
-                                    <FontAwesomeIcon
-                                        icon={faUserPlus}
-                                        title="Send invite to community"
-                                        onClick={async () => await createInviteHandlerAsync(item.id)}
+                            showFriendList && friends?.map((item) => (
+                                <li key={item.id} className="person">
+                                    <AddFriendItem
+                                        friendUserId={item.whoFriendId === customer.id ? item.forWhomId : item.whoFriendId}
+                                        createInviteAsync={createInviteHandlerAsync}
+                                        filterContent={filterContent}
                                     />
                                 </li>
                             ))
                         }
                     </ul>
+                    {showFriendList && 
+                        <div className="add-new-people__more">
+                            {maxFriendsItems === defaultMaxFriendsItems
+                                ? <button
+                                    className="btn btn-outline-secondary"
+                                    title="Show more people"
+                                    onClick={() => setMaxFriendsItems(-1)}
+                                >More</button>
+                                : <button
+                                    className="btn btn-outline-secondary"
+                                    title="Show less people"
+                                    onClick={() => setMaxFriendsItems(defaultMaxFriendsItems)}
+                                >Less</button>
+                            }
+                        </div>
+                    }
+                </div>
+                <div className="add-new-people__content">
+                    <div className="add-new-people__content-title">
+                        <div><i><strong>Another people</strong></i></div>
+                        {showPeopleList
+                            ? <FontAwesomeIcon
+                                icon={faEye}
+                                title="Hide"
+                                onClick={() => setShowPeopleList((item) => !item)}
+                            />
+                            : <FontAwesomeIcon
+                                icon={faEyeSlash}
+                                title="Show"
+                                onClick={() => setShowPeopleList((item) => !item)}
+                            />
+                        }
+                    </div>
+                    <ul className="add-new-people__list">
+                        {
+                            showPeopleList && people?.filter((item) => item.username.toLowerCase().startsWith(filterContent.toLowerCase()))
+                                .map((item) => (
+                                <li key={item.id} className="person">
+                                    <div>{item.username}</div>
+                                    <FontAwesomeIcon
+                                        icon={faUserPlus}
+                                        title="Send invite to community"
+                                        onClick={async () => await createInviteHandlerAsync(item.username, item.id)}
+                                    />
+                                </li>
+                            ))
+                        }
+                    </ul>
+                    {showPeopleList &&
+                        <div className="add-new-people__more">
+                            {maxPeopleItems === defaultMaxPeopleItems
+                                ? <button
+                                    className="btn btn-outline-secondary"
+                                    title="Show more people"
+                                    onClick={() => setMaxPeopleItems(-1)}
+                                >More</button>
+                                : <button
+                                    className="btn btn-outline-secondary"
+                                    title="Show less people"
+                                    onClick={() => setMaxPeopleItems(defaultMaxPeopleItems)}
+                                >Less</button>
+                            }
+                        </div>
+                    }
                 </div>
             </div>
             <button className="btn btn-outline-success" onClick={handleAddNewPeopleVisibility}>Close</button>
