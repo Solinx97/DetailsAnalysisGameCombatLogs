@@ -2,7 +2,8 @@ import { faCircleXmark, faWindowRestore } from '@fortawesome/free-solid-svg-icon
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useEffect, useState } from 'react';
 import useAuthentificationAsync from '../../../hooks/useAuthentificationAsync';
-import { useFriendSearchByUserIdQuery, useRemoveFriendAsyncMutation } from '../../../store/api/Friend.api';
+import { useFriendSearchByUserIdQuery } from '../../../store/api/UserApi';
+import { useRemoveFriendAsyncMutation } from '../../../store/api/Friend.api';
 import UserInformation from './../UserInformation';
 import RequestsToConnect from './RequestsToConnect';
 

@@ -13,9 +13,6 @@ export const InviteToCommunityApi = ChatApi.injectEndpoints({
             query: (id) => `/InviteToCommunity/searchByUserId/${id}`,
             providesTags: (result, error, id) => [{ type: 'InviteToCommunity', id }],
         }),
-        getInviteToCommunityId: builder.query({
-            query: (id) => `/InviteToCommunity/${id}`
-        }),
         removeInviteAsync: builder.mutation({
             query: id => ({
                 url: `/InviteToCommunity/${id}`,
@@ -29,6 +26,5 @@ export const InviteToCommunityApi = ChatApi.injectEndpoints({
 export const {
     useCreateInviteAsyncMutation,
     useInviteSearchByUserIdQuery,
-    useGetInviteToCommunityIdQuery,
     useRemoveInviteAsyncMutation,
 } = InviteToCommunityApi;

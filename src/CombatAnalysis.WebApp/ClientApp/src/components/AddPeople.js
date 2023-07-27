@@ -1,7 +1,6 @@
 import { faEye, faEyeSlash, faUserPlus } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { useFriendSearchByUserIdQuery } from '../store/api/Friend.api';
-import { useGetCustomersQuery } from '../store/api/UserApi';
+import { useGetCustomersQuery, useFriendSearchByUserIdQuery } from '../store/api/UserApi';
 import AddFriendItem from './AddFriendItem';
 
 import { useState } from 'react';

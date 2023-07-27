@@ -1,6 +1,7 @@
 import useAuthentificationAsync from '../../../hooks/useAuthentificationAsync';
 import { useCreateFriendAsyncMutation } from '../../../store/api/Friend.api';
-import { useRemoveRequestAsyncMutation, useSearchByOwnerIdQuery, useSearchByToUserIdQuery } from '../../../store/api/RequestToConnect.api';
+import { useSearchByToUserIdQuery } from '../../../store/api/UserApi';
+import { useRemoveRequestAsyncMutation, useSearchByOwnerIdQuery } from '../../../store/api/RequestToConnect.api';
 
 import "../../../styles/communication/requestToConnect.scss";
 import MyRequestItem from './MyRequestItem';

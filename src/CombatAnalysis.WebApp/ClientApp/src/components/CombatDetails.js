@@ -5,11 +5,14 @@ import { useTranslation } from 'react-i18next';
 import { CartesianGrid, Legend, Line, LineChart, Tooltip, XAxis, YAxis } from 'recharts';
 import useCombatDetailsData from '../hooks/useCombatDetailsData';
 import useTime from '../hooks/useTime';
+import { useGetDamageDoneByPlayerIdQuery } from '../store/api/CombatParserApi';
 
 import "../styles/combatDetails.scss";
 
 const CombatDetails = ({ detailsTypeName, userName }) => {
     const { t, i18n } = useTranslation("combatDetails");
+
+    const { data: damageDone, isLoading } = useGetDamageDoneByPlayerIdQuery(combatPlayerId);
 
     const [combatPlayerId, setCombatPlayerId] = useState(0);
     const [detailsType, setDetailsType] = useState("");
@@ -32,21 +35,21 @@ const CombatDetails = ({ detailsTypeName, userName }) => {
         setDetailsType(queryParams.get("detailsType"));
     }, []);
 
-    useEffect(() => {
-        if (combatPlayerId <= 0) {
-            return;
-        }
+    //useEffect(() => {
+    //    if (combatPlayerId <= 0) {
+    //        return;
+    //    }
 
-        const getDetails = async () => {
-            await fillingDetailsListAsync();
-        };
+    //    const getDetails = async () => {
+    //        await fillingDetailsListAsync();
+    //    };
 
-        getDetails();
-    }, [combatPlayerId]);
+    //    getDetails();
+    //}, [combatPlayerId]);
 
     const fillingDetailsListAsync = async (spellsByTime) => {
         let combatDetailsData = [];
-        if (spellsByTime == undefined) {
+        if (spellsByTime === undefined) {
             combatDetailsData = await getCombatData();
         }
         else {
@@ -169,8 +172,8 @@ const CombatDetails = ({ detailsTypeName, userName }) => {
         }
     }
 
-    const render = () => {
-        return (<div className="details__container">
+    return (
+        <div className="details__container">
             <div>
                 <h3>{t("DetailsInform")} [{detailsTypeName}]</h3>
                 <h4>{t("Player")}: {userName}</h4>
@@ -181,7 +184,12 @@ const CombatDetails = ({ detailsTypeName, userName }) => {
             </div>
             {showGeneralDetails &&
                 <div>
-                    <FontAwesomeIcon icon={faPen} className={usedMultiplyFilter ? "chart-editor active" : "chart-editor"} title={t("SelectInterval")} onClick={switchToInterval} />
+                    <FontAwesomeIcon
+                        icon={faPen}
+                        className={usedMultiplyFilter ? "chart-editor active" : "chart-editor"}
+                        title={t("SelectInterval")}
+                        onClick={switchToInterval}
+                    />
                     <LineChart
                         width={1250}
                         height={300}
@@ -195,34 +203,52 @@ const CombatDetails = ({ detailsTypeName, userName }) => {
                         onMouseDown={getStartTimeInterval}
                         onMouseUp={getFinishTimeInterval}
                     >
-                        <CartesianGrid strokeDasharray="3 3" />
-                        <XAxis dataKey="duration" />
-                        <YAxis />
-                        <Tooltip />
-                        <Legend />
-                        <Line type="monotone" dataKey="value" name={detailsTypeName} stroke="#8884d8" activeDot={{ r: 8 }} />
+                        <CartesianGrid
+                            strokeDasharray="3 3"
+                        />
+                        <XAxis
+                            dataKey="duration"
+                        />
+                        <YAxis/>
+                        <Tooltip/>
+                        <Legend/>
+                        <Line
+                            type="monotone"
+                            dataKey="value"
+                            name={detailsTypeName}
+                            stroke="#8884d8"
+                            activeDot={{ r: 8 }}
+                        />
                     </LineChart>
                 </div>
             }
             {usedSingleFilter &&
                 <div className="select-filter">
-                    <FontAwesomeIcon icon={faXmark} className="list-group-item__value" onClick={cancelSingleFilter} title={t("Cancel")} />
+                    <FontAwesomeIcon
+                        icon={faXmark}
+                        className="list-group-item__value"
+                        onClick={cancelSingleFilter}
+                        title={t("Cancel")}
+                    />
                     <div>{t("Time")}: {selectedTime}</div>
                 </div>
             }
             {(usedMultiplyFilter && finishTime != "") &&
                 <div className="select-filter">
-                    <FontAwesomeIcon icon={faXmark} className="list-group-item__value" onClick={cancelSelectInterval} title={t("Cancel")} />
+                    <FontAwesomeIcon
+                        icon={faXmark}
+                        className="list-group-item__value"
+                        onClick={cancelSelectInterval}
+                        title={t("Cancel")}
+                    />
                     <div>{t("StartOfInterval")}: {startTime}, {t("FinishOfInterval")}: {finishTime}</div>
                 </div>
             }
             <ul>
                 {combatDataRender}
             </ul>
-        </div>);
-    }
-
-    return render();
+        </div>
+    );
 }
 
 export default CombatDetails;

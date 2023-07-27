@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react';
-import { useFriendSearchByUserIdQuery as useSearchByUserIdQuery } from '../../store/api/UserApi';
+import { useFriendSearchByUserIdQuery } from '../../store/api/UserApi';
 import UserPosts from './UserPosts';
 
 const FeedParticipants = ({ customer }) => {
-    const { data: friends, isLoading } = useSearchByUserIdQuery(customer?.id);
+    const { data: friends, isLoading } = useFriendSearchByUserIdQuery(customer?.id);
 
     const [peopleId, setPeopleId] = useState([customer?.id]);
 

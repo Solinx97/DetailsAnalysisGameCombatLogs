@@ -4,7 +4,13 @@ const apiURL = '/api/v1';
 
 export const UserApi = createApi({
     reducerPath: 'userApi',
-    tagTyes: ['Account', 'Authentication', 'Customer'],
+    tagTyes: [
+        'Account',
+        'Authentication',
+        'Customer',
+        'Friend',
+        'RequestToConnect',
+    ],
     baseQuery: fetchBaseQuery({
         baseUrl: apiURL
     }),
@@ -16,13 +22,16 @@ export const UserApi = createApi({
             query: () => '/Customer'
         }),
         friendSearchByUserId: builder.query({
-            query: (id) => `/Friend/searchByUserId/${id}`,
-            keepUnusedDataFor: 5
+            query: (id) => `/Friend/searchByUserId/${id}`
         }),
         authenticationAsync: builder.query({
             query: () => '/Authentication',
             providesTags: (result, error, id) => [{ type: 'Authentication', id }]
-        })
+        }),
+        searchByToUserId: builder.query({
+            query: (id) => `/RequestToConnect/searchByToUserId/${id}`,
+            providesTags: (result, error, id) => [{ type: 'RequestToConnect', id }],
+        }),
     })
 })
 
@@ -33,4 +42,5 @@ export const {
     useFriendSearchByUserIdQuery,
     useAuthenticationAsyncQuery,
     useLazyAuthenticationAsyncQuery,
+    useSearchByToUserIdQuery,
 } = UserApi;

@@ -1,6 +1,6 @@
-import { ChatApi } from "./ChatApi";
+import { UserApi } from "./UserApi";
 
-export const FriendApi = ChatApi.injectEndpoints({
+export const FriendApi = UserApi.injectEndpoints({
     endpoints: builder => ({
         createFriendAsync: builder.mutation({
             query: friend => ({
@@ -8,10 +8,6 @@ export const FriendApi = ChatApi.injectEndpoints({
                 url: '/Friend',
                 method: 'POST'
             })
-        }),
-        friendSearchByUserId: builder.query({
-            query: (id) => `/Friend/searchByUserId/${id}`,
-            providesTags: (result, error, id) => [{ type: 'Friend', id }],
         }),
         removeFriendAsync: builder.mutation({
             query: id => ({
@@ -25,6 +21,5 @@ export const FriendApi = ChatApi.injectEndpoints({
 
 export const {
     useCreateFriendAsyncMutation,
-    useFriendSearchByUserIdQuery,
     useRemoveFriendAsyncMutation,
 } = FriendApi;
