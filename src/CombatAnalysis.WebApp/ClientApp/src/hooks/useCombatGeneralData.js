@@ -1,7 +1,7 @@
-﻿import DamageDoneGeneralHelper from '../components/heleprs/DamageDoneGeneralHelper';
-import DamageTakenGeneralHelper from '../components/heleprs/DamageTakenGeneralHelper';
-import HealDoneGeneralHelper from '../components/heleprs/HealDoneGeneralHelper';
-import ResourceRecoveryGeneralHelper from '../components/heleprs/ResourceRecoveryGeneralHelper';
+﻿import DamageDoneGeneralHelper from '../components/helpers/DamageDoneGeneralHelper';
+import DamageTakenGeneralHelper from '../components/helpers/DamageTakenGeneralHelper';
+import HealDoneGeneralHelper from '../components/helpers/HealDoneGeneralHelper';
+import ResourceRecoveryGeneralHelper from '../components/helpers/ResourceRecoveryGeneralHelper';
 
 const useHealDoneHelper = (combatPlayerId, detailsType) => {
     const getGeneralDataAsync = async () => {
@@ -27,6 +27,9 @@ const useHealDoneHelper = (combatPlayerId, detailsType) => {
                 break;
             case "ResourceRecovery":
                 list = <ResourceRecoveryGeneralHelper generalData={data} />
+                break;
+            default:
+                list = <DamageDoneGeneralHelper generalData={data} />
                 break;
         }
 

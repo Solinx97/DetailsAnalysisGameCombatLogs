@@ -1,7 +1,7 @@
-﻿import DamageDoneHelper from '../components/heleprs/DamageDoneHelper';
-import DamageTakenHelper from '../components/heleprs/DamageTakenHelper';
-import HealDoneHelper from '../components/heleprs/HealDoneHelper';
-import ResourceRecoveryHelper from '../components/heleprs/ResourceRecoveryHelper';
+﻿import DamageDoneHelper from '../components/helpers/DamageDoneHelper';
+import DamageTakenHelper from '../components/helpers/DamageTakenHelper';
+import HealDoneHelper from '../components/helpers/HealDoneHelper';
+import ResourceRecoveryHelper from '../components/helpers/ResourceRecoveryHelper';
 
 const useHealDoneHelper = (combatPlayerId, detailsType) => {
     const getDetailsDataAsync = async () => {
@@ -28,6 +28,9 @@ const useHealDoneHelper = (combatPlayerId, detailsType) => {
             case "ResourceRecovery":
                 list = <ResourceRecoveryHelper detailsData={data} />
                 break;
+            default:
+                list = <DamageDoneHelper detailsData={data} />
+                break;
         }
 
         return list;
@@ -48,6 +51,9 @@ const useHealDoneHelper = (combatPlayerId, detailsType) => {
                 break;
             case "ResourceRecovery":
                 list = <ResourceRecoveryHelper detailsData={data} />
+                break;
+            default:
+                list = <DamageDoneHelper detailsData={data} />
                 break;
         }
 

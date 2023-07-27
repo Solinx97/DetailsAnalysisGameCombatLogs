@@ -1,6 +1,6 @@
-﻿import React from 'react';
-import { faShare, faCircleDown, faCircleUp, faGauge, faHandFist, faLocationCrosshairs, faMeteor, faStopwatch20 } from '@fortawesome/free-solid-svg-icons';
+﻿import { faCircleDown, faCircleUp, faGauge, faHandFist, faLocationCrosshairs, faMeteor, faShare, faStopwatch20 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
 
 const DamageDoneGeneralHelper = ({ generalData }) => {
