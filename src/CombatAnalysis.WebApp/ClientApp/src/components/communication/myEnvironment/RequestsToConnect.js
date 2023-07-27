@@ -1,10 +1,10 @@
-import { faCircleCheck, faCircleXmark } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import useAuthentificationAsync from '../../../hooks/useAuthentificationAsync';
 import { useCreateFriendAsyncMutation } from '../../../store/api/Friend.api';
 import { useRemoveRequestAsyncMutation, useSearchByOwnerIdQuery, useSearchByToUserIdQuery } from '../../../store/api/RequestToConnect.api';
 
 import "../../../styles/communication/requestToConnect.scss";
+import MyRequestItem from './MyRequestItem';
+import RequestItem from './RequestItem';
 
 const RequestToConnect = () => {
     const [, customer] = useAuthentificationAsync();
@@ -46,52 +46,6 @@ const RequestToConnect = () => {
         }
     }
 
-    const requestsPanel = () => {
-        return (
-            <div>
-                {
-                    allRequests?.map((item) => (
-                        <li key={item.id} className="request-to-connect">
-                            <div>{item.username}</div>
-                            <div className="request-to-connect__answer">
-                                <div className="accept">
-                                    <FontAwesomeIcon
-                                        icon={faCircleCheck}
-                                        title="Accept"
-                                        onClick={async () => await acceptRequestAsync(item)}
-                                    />
-                                </div>
-                                <div className="reject">
-                                    <FontAwesomeIcon
-                                        icon={faCircleXmark}
-                                        title="Reject"
-                                        onClick={async () => await rejectRequestAsync(item.id)}
-                                    />
-                                </div>
-                            </div>
-                        </li>
-                    ))
-                }
-                {
-                    allMyRequests?.map((item) => (
-                        <li key={item.id} className="request-to-connect">
-                            <div>{item.username}</div>
-                            <div className="request-to-connect__answer">
-                                <div className="reject">
-                                    <FontAwesomeIcon
-                                        icon={faCircleXmark}
-                                        title="Cancel"
-                                        onClick={async () => await cancelMyRequestAsync(item.id)}
-                                    />
-                                </div>
-                            </div>
-                        </li>
-                    ))
-                }
-            </div>
-        );
-    }
-
     if (reqIsLoading || myReqIsLoading) {
         return <></>;
     }
@@ -101,7 +55,45 @@ const RequestToConnect = () => {
         return (<></>);
     }
 
-    return requestsPanel();
+    return (
+        <>
+            {allRequests?.length > 0 &&
+                <div>
+                    <div><strong>Requests</strong></div>
+                    <ul>
+                        {
+                            allRequests?.map((item) => (
+                                <li key={item.id}>
+                                    <RequestItem
+                                        request={item}
+                                        acceptRequestAsync={acceptRequestAsync}
+                                        rejectRequestAsync={rejectRequestAsync}
+                                    />
+                                </li>
+                            ))
+                        }
+                    </ul>
+                </div>
+            }
+            {allMyRequests?.length > 0 &&
+                <div>
+                    <div><strong>My requests</strong></div>
+                    <ul>
+                        {
+                            allMyRequests?.map((item) => (
+                                <li key={item.id}>
+                                    <MyRequestItem
+                                        request={item}
+                                        cancelMyRequestAsync={cancelMyRequestAsync}
+                                    />
+                                </li>
+                            ))
+                        }
+                    </ul>
+                </div>
+            }
+        </>
+    );
 }
 
 export default RequestToConnect;

@@ -70,7 +70,7 @@ const Friends = () => {
             <div className="friends">
                 <RequestsToConnect />
                 <div>
-                    <div>Friends</div>
+                    <div><strong>Friends</strong></div>
                 </div>
                 <ul>{friends}</ul>
                 {userInformation}
