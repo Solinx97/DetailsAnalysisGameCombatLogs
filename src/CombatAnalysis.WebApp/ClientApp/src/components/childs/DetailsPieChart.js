@@ -1,13 +1,12 @@
 ﻿import React, { useState } from 'react';
-import {
-    PieChart,
-    Pie,
-    Sector
-} from "recharts";
 import { useTranslation } from 'react-i18next';
+import {
+    Pie, PieChart, Sector
+} from "recharts";
 
 const DetailsPieChart = ({ payload }) => {
     const [activeIndex, setActiveIndex] = useState(0);
+
     const { t, i18n } = useTranslation("usePieChart");
 
     const renderActiveShape = (props) => {
@@ -60,10 +59,12 @@ const DetailsPieChart = ({ payload }) => {
         setActiveIndex(index);
     }
 
-    const render = () => {
-        console.log(2);
-        return <div className="pie-chart-hook">
-            <PieChart width={475} height={350}>
+    return (
+        <div className="pie-chart-hook">
+            <PieChart
+                width={475}
+                height={350}
+            >
                 <Pie
                     activeIndex={activeIndex}
                     activeShape={renderActiveShape}
@@ -78,10 +79,8 @@ const DetailsPieChart = ({ payload }) => {
                 />
             </PieChart>
             <div className="title">{payload.title}</div>
-        </div>;
-    }
-
-    return render();
+        </div>
+    );
 }
 
 export default DetailsPieChart;

@@ -6,57 +6,51 @@ import { useTranslation } from 'react-i18next';
 const DamageDoneGeneralHelper = ({ generalData }) => {
     const { t, i18n } = useTranslation("useCombatDetailsHelper");
 
-    const createGeneralItem = (element) => {
-        return <li key={element.id}>
-            <div className="card">
-                <div className="card-body">
-                    <h5 className="card-title">{element.spellOrItem}</h5>
+    return (
+        generalData.map((item) => (
+            <li key={item.id}>
+                <div className="card">
+                    <div className="card-body">
+                        <h5 className="card-title">{item.spellOrItem}</h5>
+                    </div>
+                    <ul className="list-group list-group-flush">
+                        <li className="list-group-item">
+                            <FontAwesomeIcon icon={faHandFist} className="list-group-item__value" title={t("TotalDamage")} />
+                            <div>{item.value}</div>
+                        </li>
+                        <li className="list-group-item">
+                            <FontAwesomeIcon icon={faGauge} className="list-group-item__average-value" title={t("AverageValue")} />
+                            <div>{item.averageValue.toFixed(2)}</div>
+                        </li>
+                        <li className="list-group-item">
+                            <FontAwesomeIcon icon={faStopwatch20} className="list-group-item__damage-per-second" title={t("DamagePerSec")} />
+                            <div>{item.damagePerSecond.toFixed(2)}</div>
+                        </li>
+                        <li className="list-group-item">
+                            <FontAwesomeIcon icon={faLocationCrosshairs} className="list-group-item__cast-number" title={t("CountOfSkills")} />
+                            <div>{item.castNumber}</div>
+                        </li>
+                        <li className="list-group-item">
+                            <FontAwesomeIcon icon={faMeteor} className="list-group-item__crit-number" title={t("CountOfCrits")} />
+                            <div>{item.critNumber}</div>
+                        </li>
+                        <li className="list-group-item">
+                            <FontAwesomeIcon icon={faShare} className="list-group-item__miss-number" title={t("CountOfMiss")} />
+                            <div>{item.missNumber}</div>
+                        </li>
+                        <li className="list-group-item">
+                            <FontAwesomeIcon icon={faCircleUp} className="list-group-item__max-value" title={t("MaxValue")} />
+                            <div>{item.maxValue}</div>
+                        </li>
+                        <li className="list-group-item">
+                            <FontAwesomeIcon icon={faCircleDown} className="list-group-item__min-value" title={t("MinValue")} />
+                            <div>{item.minValue}</div>
+                        </li>
+                    </ul>
                 </div>
-                <ul className="list-group list-group-flush">
-                    <li className="list-group-item">
-                        <FontAwesomeIcon icon={faHandFist} className="list-group-item__value" title={t("TotalDamage")} />
-                        <div>{element.value}</div>
-                    </li>
-                    <li className="list-group-item">
-                        <FontAwesomeIcon icon={faGauge} className="list-group-item__average-value" title={t("AverageValue")} />
-                        <div>{element.averageValue.toFixed(2)}</div>
-                    </li>
-                    <li className="list-group-item">
-                        <FontAwesomeIcon icon={faStopwatch20} className="list-group-item__damage-per-second" title={t("DamagePerSec")} />
-                        <div>{element.damagePerSecond.toFixed(2)}</div>
-                    </li>
-                    <li className="list-group-item">
-                        <FontAwesomeIcon icon={faLocationCrosshairs} className="list-group-item__cast-number" title={t("CountOfSkills")} />
-                        <div>{element.castNumber}</div>
-                    </li>
-                    <li className="list-group-item">
-                        <FontAwesomeIcon icon={faMeteor} className="list-group-item__crit-number" title={t("CountOfCrits")} />
-                        <div>{element.critNumber}</div>
-                    </li>
-                    <li className="list-group-item">
-                        <FontAwesomeIcon icon={faShare} className="list-group-item__miss-number" title={t("CountOfMiss")} />
-                        <div>{element.missNumber}</div>
-                    </li>
-                    <li className="list-group-item">
-                        <FontAwesomeIcon icon={faCircleUp} className="list-group-item__max-value" title={t("MaxValue")} />
-                        <div>{element.maxValue}</div>
-                    </li>
-                    <li className="list-group-item">
-                        <FontAwesomeIcon icon={faCircleDown} className="list-group-item__min-value" title={t("MinValue")} />
-                        <div>{element.minValue}</div>
-                    </li>
-                </ul>
-            </div>
-        </li>;
-    }
-
-    const render = () => {
-        const list = generalData.map((element) => createGeneralItem(element));
-
-        return list;
-    }
-
-    return render();
+            </li>
+        ))
+    );
 }
 
 export default DamageDoneGeneralHelper;

@@ -1,42 +1,32 @@
 ﻿import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { Legend, RadialBar, RadialBarChart } from 'recharts';
-import useCombatGeneralData from '../hooks/useCombatGeneralData';
-import DetailsSpecificalCombatService from '../services/DetailsSpecificalCombatService';
+import { useLazyGetCombatPlayerIdQuery } from '../store/api/CombatParserApi';
 import CombatDetails from './CombatDetails';
+import CombatGeneralDetailsItem from './CombatGeneralDetailsItem';
 
 import "../styles/combatGeneralDetails.scss";
 
 const CombatGeneralDetails = () => {
-    const detailsSpecificalCombatService = new DetailsSpecificalCombatService();
-
     const navigate = useNavigate();
     const { t, i18n } = useTranslation("combatGeneralDetails");
 
     const [combatPlayerId, setCombatPlayerId] = useState(0);
+    const [combatPlayer, setCombatPlayer] = useState(null);
     const [detailsType, setDetailsType] = useState("");
-    const [userName, setUserName] = useState("");
     const [combatId, setCombatId] = useState(0);
-    const [combatDataRender, setCombatDataRender] = useState(<></>);
-    const [showGeneralChart, setShowGeneralChart] = useState(false);
-    const [spells, setSpells] = useState([]);
+    const [combatLogId, setCombatLogId] = useState(0);
     const [tabIndex, setTabIndex] = useState(0);
 
-    const [combatGeneralDataList, getCombatGeneralData] = useCombatGeneralData(combatPlayerId, detailsType);
-
-    const style = {
-        top: '50%',
-        right: 0,
-        transform: 'translate(0, -50%)',
-        lineHeight: '24px',
-    };
+    const [getCombatPlayerIdAsyncMut] = useLazyGetCombatPlayerIdQuery();
 
     useEffect(() => {
         const queryParams = new URLSearchParams(window.location.search);
         setCombatPlayerId(+queryParams.get("id"));
         setDetailsType(queryParams.get("detailsType"));
-    }, []);
+        setCombatId(+queryParams.get("combatId"));
+        setCombatLogId(+queryParams.get("combatLogId"));
+    }, [])
 
     useEffect(() => {
         if (combatPlayerId <= 0) {
@@ -44,12 +34,18 @@ const CombatGeneralDetails = () => {
         }
 
         const getGeneralDetails = async () => {
-            await getCombatPlayerAsync();
-            await fillingGeneralDetailsList();
-        };
+            await getCombatPlayerByIdAsync(combatPlayerId);
+        }
 
         getGeneralDetails();
-    }, [combatPlayerId]);
+    }, [combatPlayerId])
+
+    const getCombatPlayerByIdAsync = async (combatPlayerId) => {
+        const combatPlayer = await getCombatPlayerIdAsyncMut(combatPlayerId);
+        if (combatPlayer.data !== undefined) {
+            setCombatPlayer(combatPlayer.data);
+        }
+    }
 
     const getDetailsTypeName = () => {
         switch (detailsType) {
@@ -66,128 +62,41 @@ const CombatGeneralDetails = () => {
         }
     }
 
-    const getCombatPlayerAsync = async () => {
-        const combatPlayer = await detailsSpecificalCombatService.combatPlayerByIdAsync(combatPlayerId);
-        if (combatPlayer === null) {
-            return;
-        }
-
-        setUserName(combatPlayer.userName);
-        await getCombatsAsync(combatPlayer.combatId);
+    if (combatPlayerId <= 0) {
+        return <></>;
     }
 
-    const getCombatsAsync = async (id) => {
-        const combat = await detailsSpecificalCombatService.combatByIdAsync(id);
-        if (combat === null) {
-            return;
-        }
-
-        setCombatId(combat.id);
-    }
-
-    const fillingGeneralDetailsList = async () => {
-        const combatGeneralDetailsData = await getCombatGeneralData();
-
-        if (combatGeneralDetailsData.length === 0) {
-            setCombatDataRender(<div>{t("NeedToAddSomething")}</div>);
-            return;
-        }
-
-        setCombatDataRender(await combatGeneralDataList());
-        createBarChartData(combatGeneralDetailsData);
-    }
-
-    const createBarChartData = (combatGeneralDetailsData) => {
-        let spellsRadialChartData = new Array(combatGeneralDetailsData.length);
-
-        for (let i = 0; i < combatGeneralDetailsData.length; i++) {
-            let color = '#' + (Math.random().toString(16) + '000000').substring(2, 8).toUpperCase();
-            let spellsData = {
-                name: combatGeneralDetailsData[i].spellOrItem,
-                value: combatGeneralDetailsData[i].value,
-                fill: color == "#fff" ? '#' + (Math.random().toString(16) + '00000  0').substring(2, 8).toUpperCase() : color
-            };
-
-            spellsRadialChartData[i] = spellsData;
-        }
-
-        setSpells(spellsRadialChartData);
-    }
-
-    const generalDetailsDOM = () => {
-        return (
-            <div>
-                <div>
-                    <h3>{t("CommonInform")} [{getDetailsTypeName()}]</h3>
-                    <h4>{t("Player")}: {userName}</h4>
+    return (
+        <div className="general-details__container">
+            <div className="general-details__container_navigate">
+                <div className="btn-group" role="group">
+                    <button type="button" className="btn btn-primary" onClick={() => navigate(`/details-specifical-combat?id=${combatId}&combatLogId=${combatLogId}`)}>{t("SelectPlayer")}</button>
                 </div>
-                <div className="form-check form-switch">
-                    <input className="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckChecked" onChange={() => setShowGeneralChart((item) => !item)} defaultChecked={showGeneralChart} />
-                    <label className="form-check-label" htmlFor="flexSwitchCheckChecked">{t("ShowDiagram")}</label>
-                </div>
-                {showGeneralChart &&
-                    <div className="general-details__container_radial-chart">
-                        <RadialBarChart
-                            width={500}
-                            height={450}
-                            cx={150}
-                            cy={200}
-                            innerRadius={20}
-                            outerRadius={160}
-                            barSize={20}
-                            data={spells}
-                        >
-                            <RadialBar
-                                minAngle={15}
-                                label={{ position: "insideStart", fill: "#fff", fontSize: "13px" }}
-                                background
-                                clockWise
-                                dataKey="value"
-                            />
-                            <Legend
-                                iconSize={15}
-                                width={120}
-                                height={400}
-                                layout="vertical"
-                                verticalAlign="middle"
-                                wrapperStyle={style}
-                            />
-                        </RadialBarChart>
-                        <div className="title">{t("Skills")}</div>
-                    </div>
-                }
-                <ul>
-                    {combatDataRender}
+                <ul className="nav nav-tabs">
+                    <li className="nav-item">
+                        <a className={tabIndex == 0 ? "nav-link active" : "nav-link"} aria-current="page" onClick={() => setTabIndex(0)}>{t("CommonInform")}</a>
+                    </li>
+                    <li className="nav-item">
+                        <a className={tabIndex == 1 ? "nav-link active" : "nav-link"} onClick={() => setTabIndex(1)}>{t("DetailsInform")}</a>
+                    </li>
                 </ul>
             </div>
-        );
-    }
-
-    const render = () => {
-        return (
-            <div className="general-details__container">
-                <div className="general-details__container_navigate">
-                    <div className="btn-group" role="group">
-                        <button type="button" className="btn btn-primary" onClick={() => navigate(`/details-specifical-combat?id=${combatId}`)}>{t("SelectPlayer")}</button>
-                    </div>
-                    <ul className="nav nav-tabs">
-                        <li className="nav-item">
-                            <a className={tabIndex == 0 ? "nav-link active" : "nav-link"} aria-current="page" onClick={() => setTabIndex(0)}>{t("CommonInform")}</a>
-                        </li>
-                        <li className="nav-item">
-                            <a className={tabIndex == 1 ? "nav-link active" : "nav-link"} onClick={() => setTabIndex(1)}>{t("DetailsInform")}</a>
-                        </li>
-                    </ul>
-                </div>
-                {tabIndex === 0
-                    ? generalDetailsDOM()
-                    : <CombatDetails detailsTypeName={getDetailsTypeName()} userName={userName} />
-                }
-            </div>
-        );
-    }
-
-    return render();
+            {tabIndex === 0
+                ? <CombatGeneralDetailsItem
+                    combatPlayerUsername={combatPlayer?.userName}
+                    combatPlayerId={combatPlayerId}
+                    detailsType={detailsType}
+                    detailsTypeName={getDetailsTypeName()}
+                />
+                : <CombatDetails
+                    combatPlayerId={combatPlayerId}
+                    detailsType={detailsType}
+                    detailsTypeName={getDetailsTypeName()}
+                    username={combatPlayer?.userName}
+                />
+            }
+        </div>
+    );
 }
 
 export default CombatGeneralDetails;

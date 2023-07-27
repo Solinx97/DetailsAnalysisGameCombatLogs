@@ -1,24 +1,19 @@
 ﻿import { faPen, faXmark } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CartesianGrid, Legend, Line, LineChart, Tooltip, XAxis, YAxis } from 'recharts';
 import useCombatDetailsData from '../hooks/useCombatDetailsData';
 import useTime from '../hooks/useTime';
-import { useGetDamageDoneByPlayerIdQuery } from '../store/api/CombatParserApi';
 
 import "../styles/combatDetails.scss";
 
-const CombatDetails = ({ detailsTypeName, userName }) => {
+const CombatDetails = ({ combatPlayerId, detailsType, detailsTypeName, username }) => {
     const { t, i18n } = useTranslation("combatDetails");
 
-    const { data: damageDone, isLoading } = useGetDamageDoneByPlayerIdQuery(combatPlayerId);
-
-    const [combatPlayerId, setCombatPlayerId] = useState(0);
-    const [detailsType, setDetailsType] = useState("");
-    const [combatDataRender, setCombatDataRender] = useState(<></>);
     const [detailsChartData, setDetailsChartData] = useState([]);
-    const [detailsData, setDetailsData] = useState(null);
+    const [detailsData, setDetailsData] = useState([]);
+    const [detailsDataRender, setDetailsDataRender] = useState(<></>);
     const [showGeneralDetails, setShowGeneralDetails] = useState(false);
     const [selectedTime, setSelectedTime] = useState("");
     const [startTime, setStartTime] = useState("");
@@ -27,25 +22,21 @@ const CombatDetails = ({ detailsTypeName, userName }) => {
     const [usedMultiplyFilter, setUsedMultiplyFilter] = useState(false);
 
     const [getTimeWithoutMs, getSeconds, getDuration] = useTime();
-    const [combatDataList, filteredDataList, getCombatData] = useCombatDetailsData(combatPlayerId, detailsType);
+    const [getCombatDataListAsync, , getCombatData] = useCombatDetailsData(combatPlayerId, detailsType);
 
-    useEffect(() => {
-        const queryParams = new URLSearchParams(window.location.search);
-        setCombatPlayerId(+queryParams.get("id"));
-        setDetailsType(queryParams.get("detailsType"));
-    }, []);
+    useState(() => {
+        const getCombatDataComponent = async () => {
+            const combatDataList = await getCombatData();
+            setDetailsData(combatDataList);
 
-    //useEffect(() => {
-    //    if (combatPlayerId <= 0) {
-    //        return;
-    //    }
+            const combatDataComponent = await getCombatDataListAsync();
+            setDetailsDataRender(combatDataComponent);
 
-    //    const getDetails = async () => {
-    //        await fillingDetailsListAsync();
-    //    };
+            fillingDetailsListAsync();
+        }
 
-    //    getDetails();
-    //}, [combatPlayerId]);
+        getCombatDataComponent();
+    }, [])
 
     const fillingDetailsListAsync = async (spellsByTime) => {
         let combatDetailsData = [];
@@ -56,15 +47,7 @@ const CombatDetails = ({ detailsTypeName, userName }) => {
             combatDetailsData = spellsByTime;
         }
 
-        setDetailsData(combatDetailsData);
-
-        if (combatDetailsData.length === 0) {
-            setCombatDataRender(<div>{t("NeedToAddSomething")}</div>);
-            return;
-        }
-
-        setCombatDataRender(filteredDataList(combatDetailsData));
-        createChartData(combatDetailsData);
+        createChartData(Object.assign([], combatDetailsData));
     }
 
     const compare = (a, b) => {
@@ -82,9 +65,8 @@ const CombatDetails = ({ detailsTypeName, userName }) => {
         combatDetailsData.sort(compare);
 
         let chartData = new Array(combatDetailsData.length);
-
         for (let i = 0; i < combatDetailsData.length; i++) {
-            let spellsData = {
+            const spellsData = {
                 time: getTimeWithoutMs(combatDetailsData[i].time),
                 value: combatDetailsData[i].value,
                 duration: getDuration(getTimeWithoutMs(combatDetailsData[i].time), getTimeWithoutMs(combatDetailsData[0].time))
@@ -133,16 +115,16 @@ const CombatDetails = ({ detailsTypeName, userName }) => {
         let damageDonesByFilter = [];
         setFinishTime(e.activeLabel);
 
-        for (let i = 0; i < detailsData.length; i++) {
+        for (let i = 0; i < detailsDataRender.length; i++) {
             let getDurationAsSeconds = getSeconds(detailsChartData[i].duration);
             let startTimeAsSeconds = getSeconds(startTime);
             let finishTimeAsSeconds = getSeconds(e.activeLabel);
 
             if (getDurationAsSeconds >= startTimeAsSeconds
                 && getDurationAsSeconds <= finishTimeAsSeconds) {
-                if (detailsData[i].time.includes(detailsChartData[i].time)) {
-                    spellsByTime.push(detailsData[i]);
-                    damageDonesByFilter.push(detailsData[i]);
+                if (detailsDataRender[i].time.includes(detailsChartData[i].time)) {
+                    spellsByTime.push(detailsDataRender[i]);
+                    damageDonesByFilter.push(detailsDataRender[i]);
                 }
             }
         }
@@ -176,10 +158,10 @@ const CombatDetails = ({ detailsTypeName, userName }) => {
         <div className="details__container">
             <div>
                 <h3>{t("DetailsInform")} [{detailsTypeName}]</h3>
-                <h4>{t("Player")}: {userName}</h4>
+                <h4>{t("Player")}: {username}</h4>
             </div>
             <div className="form-check form-switch">
-                <input className="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckChecked" onChange={() => setShowGeneralDetails(!showGeneralDetails)} />
+                <input className="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckChecked" onChange={() => setShowGeneralDetails((item) => !item)} />
                 <label className="form-check-label" htmlFor="flexSwitchCheckChecked">{t("ShowDiagram")}</label>
             </div>
             {showGeneralDetails &&
@@ -233,7 +215,7 @@ const CombatDetails = ({ detailsTypeName, userName }) => {
                     <div>{t("Time")}: {selectedTime}</div>
                 </div>
             }
-            {(usedMultiplyFilter && finishTime != "") &&
+            {(usedMultiplyFilter && finishTime !== "") &&
                 <div className="select-filter">
                     <FontAwesomeIcon
                         icon={faXmark}
@@ -245,7 +227,7 @@ const CombatDetails = ({ detailsTypeName, userName }) => {
                 </div>
             }
             <ul>
-                {combatDataRender}
+                {detailsDataRender}
             </ul>
         </div>
     );

@@ -2,65 +2,76 @@
 import DamageTakenHelper from '../components/helpers/DamageTakenHelper';
 import HealDoneHelper from '../components/helpers/HealDoneHelper';
 import ResourceRecoveryHelper from '../components/helpers/ResourceRecoveryHelper';
+import {
+    useLazyGetDamageDoneByPlayerIdQuery, useLazyGetDamageTakenByPlayerIdQuery, useLazyGetHealDoneByPlayerIdQuery, useLazyGetResourceRecoveryByPlayerIdQuery
+} from '../store/api/CombatParserApi';
 
 const useHealDoneHelper = (combatPlayerId, detailsType) => {
-    const getDetailsDataAsync = async () => {
-        const response = await fetch(`api/v1/${detailsType}/${combatPlayerId}`);
-        const detailsData = await response.json();
-
-        return detailsData;
-    }
+    const [getDamageDoneByPlayerIdAsync] = useLazyGetDamageDoneByPlayerIdQuery();
+    const [getHealDoneByPlayerIdAsync] = useLazyGetDamageTakenByPlayerIdQuery();
+    const [getDamageTakenByPlayerIdAsync] = useLazyGetHealDoneByPlayerIdQuery();
+    const [getResourceRecoveryGeneralyByPlayerIdAsync] = useLazyGetResourceRecoveryByPlayerIdQuery();
 
     const getListAsync = async () => {
-        let list = null;
-        const data = await getDetailsDataAsync();
+        const data = await getPlayerDetailsAsync();
 
         switch (detailsType) {
             case "DamageDone":
-                list = <DamageDoneHelper detailsData={data} />
+                return <DamageDoneHelper detailsData={data} />
+            case "HealDone":
+                return <HealDoneHelper detailsData={data} />
+            case "DamageTaken":
+                return <DamageTakenHelper detailsData={data} />
+            case "ResourceRecovery":
+                return <ResourceRecoveryHelper detailsData={data} />
+            default:
+                return <DamageDoneHelper detailsData={data} />
+        }
+    }
+
+    const getPlayerDetailsAsync = async () => {
+        let detailsResult = null;
+        switch (detailsType) {
+            case "DamageDone":
+                detailsResult = await getDamageDoneByPlayerIdAsync(combatPlayerId);
                 break;
             case "HealDone":
-                list = <HealDoneHelper detailsData={data} />
+                detailsResult = await getHealDoneByPlayerIdAsync(combatPlayerId);
                 break;
             case "DamageTaken":
-                list = <DamageTakenHelper detailsData={data} />
+                detailsResult = await getDamageTakenByPlayerIdAsync(combatPlayerId);
                 break;
             case "ResourceRecovery":
-                list = <ResourceRecoveryHelper detailsData={data} />
+                detailsResult = await getResourceRecoveryGeneralyByPlayerIdAsync(combatPlayerId);
                 break;
             default:
-                list = <DamageDoneHelper detailsData={data} />
+                detailsResult = await getDamageDoneByPlayerIdAsync(combatPlayerId);
                 break;
         }
 
-        return list;
+        if (detailsResult.data !== undefined) {
+            return detailsResult.data;
+        }
+
+        return null;
     }
 
     const getFilteredList = (data) => {
-        let list = null;
-
         switch (detailsType) {
             case "DamageDone":
-                list = <DamageDoneHelper detailsData={data} />
-                break;
+                return <DamageDoneHelper detailsData={data} />
             case "HealDone":
-                list = <HealDoneHelper detailsData={data} />
-                break;
+                return <HealDoneHelper detailsData={data} />
             case "DamageTaken":
-                list = <DamageTakenHelper detailsData={data} />
-                break;
+                return <DamageTakenHelper detailsData={data} />
             case "ResourceRecovery":
-                list = <ResourceRecoveryHelper detailsData={data} />
-                break;
+                return <ResourceRecoveryHelper detailsData={data} />
             default:
-                list = <DamageDoneHelper detailsData={data} />
-                break;
+                return <DamageDoneHelper detailsData={data} />
         }
-
-        return list;
     }
 
-    return [getListAsync, getFilteredList, getDetailsDataAsync];
+    return [getListAsync, getFilteredList, getPlayerDetailsAsync];
 }
 
 export default useHealDoneHelper;
