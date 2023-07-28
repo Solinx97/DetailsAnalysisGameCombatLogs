@@ -62,10 +62,12 @@ const CombatGeneralDetailsItem = ({ combatPlayerUsername, combatPlayerId, detail
                 <h3>{t("CommonInform")} [{detailsTypeName}]</h3>
                 <h4>{t("Player")}: {combatPlayerUsername}</h4>
             </div>
-            <div className="form-check form-switch">
-                <input className="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckChecked" onChange={() => setShowGeneralChart((item) => !item)} defaultChecked={showGeneralChart} />
-                <label className="form-check-label" htmlFor="flexSwitchCheckChecked">{t("ShowDiagram")}</label>
-            </div>
+            {spells.length > 0 &&
+                <div className="form-check form-switch">
+                    <input className="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckChecked" onChange={() => setShowGeneralChart((item) => !item)} defaultChecked={showGeneralChart} />
+                    <label className="form-check-label" htmlFor="flexSwitchCheckChecked">{t("ShowDiagram")}</label>
+                </div>
+            }
             {showGeneralChart &&
                 <div className="general-details__container_radial-chart">
                     <RadialBarChart

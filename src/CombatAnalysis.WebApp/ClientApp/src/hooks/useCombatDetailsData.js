@@ -3,14 +3,14 @@ import DamageTakenHelper from '../components/helpers/DamageTakenHelper';
 import HealDoneHelper from '../components/helpers/HealDoneHelper';
 import ResourceRecoveryHelper from '../components/helpers/ResourceRecoveryHelper';
 import {
-    useLazyGetDamageDoneByPlayerIdQuery, useLazyGetDamageTakenByPlayerIdQuery, useLazyGetHealDoneByPlayerIdQuery, useLazyGetResourceRecoveryByPlayerIdQuery
+    useLazyGetDamageDoneByPlayerIdQuery, useLazyGetHealDoneByPlayerIdQuery, useLazyGetDamageTakenByPlayerIdQuery, useLazyGetResourceRecoveryByPlayerIdQuery
 } from '../store/api/CombatParserApi';
 
 const useHealDoneHelper = (combatPlayerId, detailsType) => {
     const [getDamageDoneByPlayerIdAsync] = useLazyGetDamageDoneByPlayerIdQuery();
-    const [getHealDoneByPlayerIdAsync] = useLazyGetDamageTakenByPlayerIdQuery();
-    const [getDamageTakenByPlayerIdAsync] = useLazyGetHealDoneByPlayerIdQuery();
-    const [getResourceRecoveryGeneralyByPlayerIdAsync] = useLazyGetResourceRecoveryByPlayerIdQuery();
+    const [getHealDoneByPlayerIdAsync] = useLazyGetHealDoneByPlayerIdQuery();
+    const [getDamageTakenByPlayerIdAsync] = useLazyGetDamageTakenByPlayerIdQuery();
+    const [getResourceRecoveryByPlayerIdAsync] = useLazyGetResourceRecoveryByPlayerIdQuery();
 
     const getListAsync = async () => {
         const data = await getPlayerDetailsAsync();
@@ -42,7 +42,7 @@ const useHealDoneHelper = (combatPlayerId, detailsType) => {
                 detailsResult = await getDamageTakenByPlayerIdAsync(combatPlayerId);
                 break;
             case "ResourceRecovery":
-                detailsResult = await getResourceRecoveryGeneralyByPlayerIdAsync(combatPlayerId);
+                detailsResult = await getResourceRecoveryByPlayerIdAsync(combatPlayerId);
                 break;
             default:
                 detailsResult = await getDamageDoneByPlayerIdAsync(combatPlayerId);

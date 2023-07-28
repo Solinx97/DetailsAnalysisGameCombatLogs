@@ -1,11 +1,21 @@
 ﻿.details__container {
+    svg {
+        cursor: pointer;
+    }
+
     .chart-editor {
         cursor: pointer;
     }
     
     .chart-editor.active {
         color: green;
-        transform: scale(1.25);
+        transform: scale(1.2);
+    }
+
+    .chart-editor-menu {
+        display: flex;
+        justify-content: space-around;
+        margin: 10px;
     }
 
     .card-body {
@@ -17,8 +27,7 @@
             display: flex;
 
             svg {
-                margin: 5px;
-                transform: scale(1.25);
+                transform: scale(1.2);
             }
         }
     }
