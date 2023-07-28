@@ -9,10 +9,18 @@ export const UserPostApi = ChatApi.injectEndpoints({
                 method: 'POST'
             }),
             invalidatesTags: (result, error) => [{ type: 'UserPost', result }],
-        })
+        }),
+        removeUserPostAsync: builder.mutation({
+            query: id => ({
+                url: `/UserPost/${id}`,
+                method: 'DELETE'
+            }),
+            invalidatesTags: (result, error) => [{ type: 'UserPost', result }],
+        }),
     })
 })
 
 export const {
-    useCreateUserPostAsyncMutation
+    useCreateUserPostAsyncMutation,
+    useRemoveUserPostAsyncMutation,
 } = UserPostApi;

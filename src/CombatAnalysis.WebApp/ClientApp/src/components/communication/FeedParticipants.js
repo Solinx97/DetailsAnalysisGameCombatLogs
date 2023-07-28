@@ -29,7 +29,10 @@ const FeedParticipants = ({ customer }) => {
         <ul>
             {peopleId.map(item => (
                 <span key={item}>
-                    <UserPosts customer={customer} userId={item} />
+                    <UserPosts
+                        customer={customer}
+                        userId={item}
+                    />
                 </span>
             ))}
         </ul>

@@ -2,9 +2,9 @@ import { faArrowsRotate } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useRef, useState } from 'react';
 import useAuthentificationAsync from '../../hooks/useAuthentificationAsync';
-import FeedParticipants from './FeedParticipants';
 import { useCreatePostAsyncMutation } from '../../store/api/Post.api';
-import { useCreateUserPostAsyncMutation  } from '../../store/api/UserPost.api';
+import { useCreateUserPostAsyncMutation } from '../../store/api/UserPost.api';
+import FeedParticipants from './FeedParticipants';
 
 const Feed = () => {
     const [, customer] = useAuthentificationAsync();
@@ -20,7 +20,7 @@ const Feed = () => {
         const newPost = {
             content: postContentRef.current.value,
             when: new Date(),
-            likeCount: '',
+            likeCount: 0,
             dislikeCount: 0,
             postComment: 0,
             ownerId: customer?.id
@@ -28,6 +28,8 @@ const Feed = () => {
 
         const createdPost = await createNewPostAsync(newPost);
         if (createdPost.data !== undefined) {
+            setShowCreatePost(false);
+            postContentRef.current.value = "";
             const isCreated = await createUserPostAsync(createdPost.data?.id);
             return isCreated;
         }
@@ -49,23 +51,33 @@ const Feed = () => {
         return <></>;
     }
 
-    return (<div>
-        <div className="create-post">
-            <div>
-                <div className="create-post__tool" style={{ display: !showCreatePost ? "flex" : "none" }}>
-                    <FontAwesomeIcon icon={faArrowsRotate} title="Refresh" />
-                    <button type="button" className="btn btn-outline-info" onClick={() => setShowCreatePost((item) => !item)}>New post</button>
+    return (
+        <>
+            <div className="create-post">
+                <div>
+                    <div className="create-post__tool" style={{ display: !showCreatePost ? "flex" : "none" }}>
+                        <FontAwesomeIcon
+                            icon={faArrowsRotate}
+                            title="Refresh"
+                        />
+                        <button type="button" className="btn btn-outline-info" onClick={() => setShowCreatePost((item) => !item)}>New post</button>
+                    </div>
+                    <div style={{ display: showCreatePost ? "flex" : "none" }} className="create-post__create-tool">
+                        <FontAwesomeIcon
+                            icon={faArrowsRotate}
+                            title="Refresh"
+                        />
+                        <button type="button" className="btn btn-outline-warning" onClick={() => setShowCreatePost((item) => !item)}>Cancel</button>
+                        <button type="button" className="btn btn-outline-success" onClick={async () => await createPostAsync()}>Create</button>
+                    </div>
                 </div>
-                <div style={{ display: showCreatePost ? "flex" : "none" }} className="create-post__create-tool">
-                    <FontAwesomeIcon icon={faArrowsRotate} title="Refresh" />
-                    <button type="button" className="btn btn-outline-warning" onClick={() => setShowCreatePost((item) => !item)}>Cancel</button>
-                    <button type="button" className="btn btn-outline-success" onClick={async () => await createPostAsync()}>Create</button>
-                </div>
+                <textarea rows="5" cols="100" ref={postContentRef} style={{ display: showCreatePost ? "flex" : "none" }} />
             </div>
-            <textarea rows="5" cols="100" ref={postContentRef} style={{ display: showCreatePost ? "flex" : "none" }} />
-        </div>
-        <FeedParticipants customer={customer} />
-    </div>);
+            <FeedParticipants
+                customer={customer}
+            />
+        </>
+    );
 }
 
 export default Feed;

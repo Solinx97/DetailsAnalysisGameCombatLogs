@@ -8,15 +8,21 @@ const UserPosts = ({ customer, userId }) => {
         return <></>;
     }
 
-    return userPosts.map((item) => (
-        <li key={item?.id}>
-            <Post
-                key={item?.id}
-                customer={customer}
-                targetPostType={item}
-            />
-        </li>
-    ));
+    return (
+        <>
+            {
+                userPosts?.map((item) => (
+                    <li key={item?.id}>
+                        <Post
+                            key={item?.id}
+                            customer={customer}
+                            targetPostType={item}
+                        />
+                    </li>
+                ))
+            }
+        </>
+    );
 }
 
 export default UserPosts;

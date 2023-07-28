@@ -22,5 +22,6 @@ export const CustomerApi = UserApi.injectEndpoints({
 export const {
     useCreateAsyncMutation,
     useGetCustomerByIdQuery,
+    useLazyGetCustomerByIdQuery,
     useLazySearchByUserIdAsyncQuery
 } = CustomerApi;

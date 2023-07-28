@@ -15,19 +15,31 @@
 
     &__menu {
         svg {
-            margin: 5px 10px;
+            cursor: pointer;
         }
 
         svg:hover {
-            cursor: pointer;
-            transform: scale(1.25);
+            transform: scale(1.1);
         }
     }
 
     &__edit.list-group-item {
         display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: start;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+
+        svg {
+            cursor: pointer;
+        }
+
+        svg:hover {
+            transform: scale(1.1);
+        }
+
+        button {
+            margin: 0 10px;
+            font-size: 12px;
+        }
     }
 }

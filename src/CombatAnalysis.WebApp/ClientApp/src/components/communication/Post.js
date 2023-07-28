@@ -1,49 +1,33 @@
-import { faHeart, faMessage, faThumbsDown, faWindowRestore } from '@fortawesome/free-solid-svg-icons';
+import { faHeart, faMessage, faThumbsDown } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useState } from "react";
-import CustomerService from '../../services/CustomerService';
-import PostDislikeService from '../../services/PostDislikeService';
-import PostLikeService from '../../services/PostLikeService';
-import PostService from '../../services/PostService';
-import { useGetPostByIdQuery } from '../../store/api/Post.api';
-import PostComment from './PostComment';
-import UserInformation from './UserInformation';
+import { useGetPostByIdQuery, useUpdatePostAsyncMutation } from '../../store/api/Post.api';
+import { useCreatePostDislikeAsyncMutation, useLazySearchPostDislikeByPostIdQuery, useRemovePostDislikeAsyncMutation } from '../../store/api/PostDislike.api';
+import { useCreatePostLikeAsyncMutation, useLazySearchPostLikeByPostIdQuery, useRemovePostLikeAsyncMutation } from '../../store/api/PostLike.api';
+import { useCreatePostCommentAsyncMutation } from '../../store/api/PostComment.api';
+import PostComments from './PostComments';
+import PostTitle from './PostTitle';
 
 import '../../styles/communication/post.scss';
 
 const Post = ({ customer, targetPostType }) => {
-    const postService = new PostService();
-    const customerService = new CustomerService();
-    const postLikeService = new PostLikeService();
-    const postDislikeService = new PostDislikeService();
-
     const { data: post, isLoading } = useGetPostByIdQuery(targetPostType?.postId);
 
-    const [userInformation, setUserInformation] = useState(<></>);
+    const [updatePostAsyncMut] = useUpdatePostAsyncMutation();
+    const [createPostLikeAsyncMut] = useCreatePostLikeAsyncMutation();
+    const [removePostLikeAsyncMut] = useRemovePostLikeAsyncMutation();
+    const [searchPostLikeByPostIdAsync] = useLazySearchPostLikeByPostIdQuery();
+    const [createPostDislikeAsyncMut] = useCreatePostDislikeAsyncMutation();
+    const [removePostDislikeAsyncMut] = useRemovePostDislikeAsyncMutation();
+    const [searchPostDislikeByPostIdAsync] = useLazySearchPostDislikeByPostIdQuery();
+    const [createPostCommentAsyncMut] = useCreatePostCommentAsyncMutation();
+
     const [showComments, setShowComments] = useState(false);
-    const [selectedPostCommentId, setSelectedPostCommentId] = useState(0);
-    const [selectedPostCustomerId, setSelectedPostCustomerId] = useState(0);
-
-    const username = "Oleg";
-
-    const getPostByIdAsync = async (postId) => {
-        const post = await postService.getByIdAsync(postId);
-        return post;
-    }
-
-    const getCustomerByIdAsync = async (customerId) => {
-        const customer = await customerService.getByIdAsync(customerId);
-        return customer;
-    }
+    const [postCommentContent, setPostCommentContent] = useState("");
 
     const updatePostAsync = async (postId, likesCount, dislikesCount, commentsCount) => {
-        const post = await getPostByIdAsync(postId);
-        if (post === null) {
-            return;
-        }
-
         const postForUpdate = {
-            id: post.id,
+            id: postId,
             content: post.content,
             when: post.when,
             likeCount: post.likeCount + likesCount,
@@ -52,7 +36,7 @@ const Post = ({ customer, targetPostType }) => {
             ownerId: post.ownerId
         }
 
-        await postService.updateAsync(postForUpdate);
+        await updatePostAsyncMut(postForUpdate);
     }
 
     const createPostLikeAsync = async (postId) => {
@@ -61,30 +45,34 @@ const Post = ({ customer, targetPostType }) => {
             return;
         }
 
-        await getPostDislikesAsync(postId);
+        const postDislikeIsExist = await getPostDislikesAsync(postId)
 
         const newPostLike = {
-            id: 0,
             postId: postId,
             ownerId: customer.id
         }
 
-        const createdPostLike = await postLikeService.createAsync(newPostLike);
-        if (createdPostLike !== null) {
-            await updatePostAsync(postId, 1, 0, 0);
+        const createdPostLike = await createPostLikeAsyncMut(newPostLike);
+        if (createdPostLike.data !== undefined) {
+            if (postDislikeIsExist) {
+                await updatePostAsync(postId, 1, -1, 0);
+            }
+            else {
+                await updatePostAsync(postId, 1, 0, 0);
+            }
         }
     }
 
     const getPostLikesAsync = async (postId) => {
-        const postLikes = await PostLikeService.searchByPostIdAsync(postId);
-        if (postLikes !== null) {
-            return await checkIfPostLikeExistAsync(postLikes);
+        const postLikes = await searchPostLikeByPostIdAsync(postId);
+        if (postLikes.data !== undefined) {
+            return await removePostLikeIfExistAsync(postLikes.data);
         }
 
         return false;
     }
 
-    const checkIfPostLikeExistAsync = async (postLikes) => {
+    const removePostLikeIfExistAsync = async (postLikes) => {
         for (let i = 0; i < postLikes.length; i++) {
             if (postLikes[i].ownerId === customer.id) {
                 await deletePostLikeAsync(postLikes[i].postId, postLikes[i].id);
@@ -96,7 +84,7 @@ const Post = ({ customer, targetPostType }) => {
     }
 
     const deletePostLikeAsync = async (postId, postLikeId) => {
-        const deletedItem = await postLikeService.deleteAsync(postLikeId);
+        const deletedItem = await removePostLikeAsyncMut(postLikeId);
         if (deletedItem !== null) {
             await updatePostAsync(postId, -1, 0, 0);
         }
@@ -108,30 +96,34 @@ const Post = ({ customer, targetPostType }) => {
             return;
         }
 
-        await getPostLikesAsync(postId);
+        const postLikeIsExist = await getPostLikesAsync(postId);
 
         const newPostDislike = {
-            id: 0,
             postId: postId,
             ownerId: customer.id
         }
 
-        const createdPostDislike = await postDislikeService.createAsync(newPostDislike);
-        if (createdPostDislike !== null) {
-            await updatePostAsync(postId, 0, 1, 0);
+        const createdPostDislike = await createPostDislikeAsyncMut(newPostDislike);
+        if (createdPostDislike.data !== undefined) {
+            if (postLikeIsExist) {
+                await updatePostAsync(postId, -1, 1, 0);
+            }
+            else {
+                await updatePostAsync(postId, 0, 1, 0);
+            }
         }
     }
 
     const getPostDislikesAsync = async (postId) => {
-        const postDislikes = await postDislikeService.searchByPostIdAsync(postId);
-        if (postDislikes !== null) {
-            return await checkIfPostDislikeExistAsync(postDislikes);
+        const postDislikes = await searchPostDislikeByPostIdAsync(postId);
+        if (postDislikes.data !== undefined) {
+            return await removePostDislikeIfExistAsync(postDislikes.data);
         }
 
         return false;
     }
 
-    const checkIfPostDislikeExistAsync = async (postDislikes) => {
+    const removePostDislikeIfExistAsync = async (postDislikes) => {
         for (let i = 0; i < postDislikes.length; i++) {
             if (postDislikes[i].ownerId === customer.id) {
                 await deletePostDislikeAsync(postDislikes[i].postId, postDislikes[i].id);
@@ -143,31 +135,30 @@ const Post = ({ customer, targetPostType }) => {
     }
 
     const deletePostDislikeAsync = async (postId, postDislikeId) => {
-        const deletedItem = await postDislikeService.deleteAsync(postDislikeId);
-        if (deletedItem !== null) {
+        const deletedItem = await removePostDislikeAsyncMut(postDislikeId);
+        if (deletedItem.data !== undefined) {
             await updatePostAsync(postId, 0, -1, 0);
         }
     }
 
-    const postCommentsHandler = (postId) => {
-        setShowComments((item) => !item);
-        if (selectedPostCommentId !== postId) {
-            setShowComments(true);
+    const createPostCommentAsync = async () => {
+        const newPostComment = {
+            content: postCommentContent,
+            when: new Date(),
+            postId: post.id,
+            ownerId: customer.id
         }
 
-        setSelectedPostCommentId(postId);
+        const createdPostComment = await createPostCommentAsyncMut(newPostComment);
+        if (createdPostComment.data !== undefined) {
+            setPostCommentContent("");
+
+            await updatePostAsync(post.id, 0, 0, 1);
+        }
     }
 
-    const userInformationHandlerAsync = async (post) => {
-        const customer = await getCustomerByIdAsync(post.ownerId);
-        setUserInformation(<UserInformation customer={customer} closeUserInformation={closeUserInformation} />);
-
-        setSelectedPostCustomerId(post.id);
-    }
-
-    const closeUserInformation = () => {
-        setUserInformation(<></>);
-        setSelectedPostCustomerId(0);
+    const postCommentsHandler = () => {
+        setShowComments((item) => !item);
     }
 
     const dateFormatting = (stringOfDate) => {
@@ -226,45 +217,62 @@ const Post = ({ customer, targetPostType }) => {
     }
 
     return (
-        <div>
+        <>
             <div className="card">
                 <ul className="list-group list-group-flush">
-                    <li className="posts__title list-group-item">
-                        <div className="posts__title-username">
-                            <div>{username}</div>
-                            <FontAwesomeIcon icon={faWindowRestore} title="Show details" onClick={async () => await userInformationHandlerAsync(post)} />
-                        </div>
-                        <div>{dateFormatting(post.when)}</div>
-                    </li>
-                    {selectedPostCustomerId === post.id &&
-                        userInformation
-                    }
+                    <PostTitle
+                        post={post}
+                        dateFormatting={dateFormatting}
+                    />
                     <li className="list-group-item">
                         <div className="card-text">{post.content}</div>
                     </li>
                     <li className="posts__reaction list-group-item">
                         <div className="posts__reaction item">
-                            <FontAwesomeIcon className="post__reaction_like" icon={faHeart} title="Like"
-                                onClick={async () => await createPostLikeAsync(post.id)} />
+                            <FontAwesomeIcon
+                                className="post__reaction_like"
+                                icon={faHeart} title="Like"
+                                onClick={async () => await createPostLikeAsync(post.id)}
+                            />
                             <div className="count">{post.likeCount}</div>
                         </div>
                         <div className="posts__reaction item">
-                            <FontAwesomeIcon className="post__reaction_dislike" icon={faThumbsDown} title="Dislike"
-                                onClick={async () => await createPostDislikeAsync(post.id)} />
+                            <FontAwesomeIcon
+                                className="post__reaction_dislike"
+                                icon={faThumbsDown} title="Dislike"
+                                onClick={async () => await createPostDislikeAsync(post.id)}
+                            />
                             <div className="count">{post.dislikeCount}</div>
                         </div>
                         <div className="posts__reaction item">
-                            <FontAwesomeIcon icon={faMessage} title="Comment"
-                                onClick={() => postCommentsHandler(post.id)} />
+                            <FontAwesomeIcon
+                                icon={faMessage}
+                                title="Comment"
+                                onClick={postCommentsHandler}
+                            />
                             <div className="count">{post.commentCount}</div>
                         </div>
                     </li>
                 </ul>
             </div>
-            {showComments && selectedPostCommentId === post.id &&
-                <PostComment dateFormatting={dateFormatting} customerId={customer.id} postId={post.id} updatePostAsync={updatePostAsync} />
+            {showComments &&
+                <>
+                    <PostComments
+                        dateFormatting={dateFormatting}
+                        customerId={customer.id}
+                        postId={post.id}
+                        updatePostAsync={updatePostAsync}
+                    />
+                    <div className="add-new-comment">
+                        <div className="add-new-comment__title">
+                            <div>Add comment:</div>
+                        </div>
+                        <textarea rows="1" cols="75" onChange={e => setPostCommentContent(e.target.value)} value={postCommentContent} />
+                        <button type="button" className="btn btn-outline-info" onClick={async () => await createPostCommentAsync()}>Add</button>
+                    </div>
+                </>
             }
-        </div>
+        </>
     );
 }
 
