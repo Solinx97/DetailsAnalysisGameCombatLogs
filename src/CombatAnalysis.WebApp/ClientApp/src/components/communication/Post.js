@@ -10,7 +10,7 @@ import PostTitle from './PostTitle';
 
 import '../../styles/communication/post.scss';
 
-const Post = ({ customer, targetPostType }) => {
+const Post = ({ customer, targetPostType, deletePostAsync }) => {
     const { data: post, isLoading } = useGetPostByIdQuery(targetPostType?.postId);
 
     const [updatePostAsyncMut] = useUpdatePostAsyncMutation();
@@ -223,6 +223,7 @@ const Post = ({ customer, targetPostType }) => {
                     <PostTitle
                         post={post}
                         dateFormatting={dateFormatting}
+                        deletePostAsync={deletePostAsync}
                     />
                     <li className="list-group-item">
                         <div className="card-text">{post.content}</div>
@@ -246,6 +247,7 @@ const Post = ({ customer, targetPostType }) => {
                         </div>
                         <div className="posts__reaction item">
                             <FontAwesomeIcon
+                                className={`post__reaction${showComments && '_active'}`}
                                 icon={faMessage}
                                 title="Comment"
                                 onClick={postCommentsHandler}

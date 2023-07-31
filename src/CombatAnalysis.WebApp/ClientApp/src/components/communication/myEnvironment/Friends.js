@@ -1,9 +1,9 @@
 import { faCircleXmark, faWindowRestore } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import useAuthentificationAsync from '../../../hooks/useAuthentificationAsync';
-import { useFriendSearchByUserIdQuery } from '../../../store/api/UserApi';
 import { useRemoveFriendAsyncMutation } from '../../../store/api/Friend.api';
+import { useFriendSearchByUserIdQuery } from '../../../store/api/UserApi';
 import UserInformation from './../UserInformation';
 import RequestsToConnect from './RequestsToConnect';
 
@@ -14,23 +14,10 @@ const Friends = () => {
     const { data: myFriends, isLoading } = useFriendSearchByUserIdQuery(customer?.id);
     const [removeFriendAsyncMut] = useRemoveFriendAsyncMutation(customer?.id);
 
-    const [friends, setFriends] = useState(<></>);
-    const [userInformation, setUserInformation] = useState(<></>);
-
-    useEffect(() => {
-        !isLoading && fillFriends();
-    }, [isLoading])
+    const [userInformation, setUserInformation] = useState(null);
 
     const removeFriendAsync = async (friendId) => {
         await removeFriendAsyncMut(friendId);
-    }
-
-    const fillFriends = () => {
-        const list = myFriends.length !== 0
-            ? myFriends.map((element) => createCard(element))
-            : (<div className="friends__empty">You don't have any friends</div>);
-
-        setFriends(list);
     }
 
     const openUserInformation = (customer) => {
@@ -41,45 +28,45 @@ const Friends = () => {
     }
 
     const closeUserInformation = () => {
-        setUserInformation(<></>);
+        setUserInformation(null);
     }
 
-    const createCard = (friend) => {
-        return (
-            <li key={friend.id} className="friend">
-                <div className="friend__details">
-                    <FontAwesomeIcon
-                        icon={faWindowRestore}
-                        title="Show details"
-                        onClick={() => openUserInformation(friend)}
-                    />
-                </div>
-                <div>{friend.username}</div>
-                <div className="friend__remove">
-                    <FontAwesomeIcon
-                        icon={faCircleXmark}
-                        title="Remove"
-                        onClick={async () => await removeFriendAsync(friend.id)}
-                    />
-                </div>
-            </li>
-        );
+    if (isLoading) {
+        return <></>;
     }
 
-    const render = () => {
-        return (
-            <div className="friends">
-                <RequestsToConnect />
-                <div>
-                    <div><strong>Friends</strong></div>
-                </div>
-                <ul>{friends}</ul>
-                {userInformation}
+    return (
+        <div className="friends">
+            <RequestsToConnect />
+            <div>
+                <div><strong>Friends</strong></div>
             </div>
-        );
-    }
-
-    return render();
+            <ul>
+                {
+                    myFriends?.map((item) => (
+                        <li key={item.id} className="friend">
+                            <div className="friend__details">
+                                <FontAwesomeIcon
+                                    icon={faWindowRestore}
+                                    title="Show details"
+                                    onClick={() => openUserInformation(item)}
+                                />
+                            </div>
+                            <div>{item.username}</div>
+                            <div className="friend__remove">
+                                <FontAwesomeIcon
+                                    icon={faCircleXmark}
+                                    title="Remove"
+                                    onClick={async () => await removeFriendAsync(item.id)}
+                                />
+                            </div>
+                        </li>
+                    ))
+                }
+            </ul>
+            {userInformation}
+        </div>
+    );
 }
 
 export default Friends;

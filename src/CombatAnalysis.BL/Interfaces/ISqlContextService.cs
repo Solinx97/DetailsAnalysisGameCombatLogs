@@ -4,5 +4,7 @@ namespace CombatAnalysis.BL.Interfaces;
 
 public interface ISqlContextService
 {
-    Task<IDbContextTransaction> BeginTransactionAsync();
+    Task<IDbContextTransaction> BeginTransactionAsync(bool createSharedTransaction);
+
+    Task<IDbContextTransaction> UseTransactionAsync();
 }

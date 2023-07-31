@@ -49,25 +49,34 @@ const MyFeed = () => {
         return <></>;
     }
 
-    return (<div>
-        <div className="create-post">
-            <div>
-                <div className="create-post__tool" style={{ display: !showCreatePost ? "flex" : "none" }}>
-                    <FontAwesomeIcon icon={faArrowsRotate} title="Refresh" />
-                    <button type="button" className="btn btn-outline-info" onClick={() => setShowCreatePost((item) => !item)}>New post</button>
+    return (
+        <div>
+            <div className="create-post">
+                <div>
+                    <div className="create-post__tool" style={{ display: !showCreatePost ? "flex" : "none" }}>
+                        <FontAwesomeIcon
+                            icon={faArrowsRotate}
+                            title="Refresh" />
+                        <button type="button" className="btn btn-outline-info" onClick={() => setShowCreatePost((item) => !item)}>New post</button>
+                    </div>
+                    <div style={{ display: showCreatePost ? "flex" : "none" }} className="create-post__create-tool">
+                        <FontAwesomeIcon
+                            icon={faArrowsRotate}
+                            title="Refresh" />
+                        <button type="button" className="btn btn-outline-warning" onClick={() => setShowCreatePost((item) => !item)}>Cancel</button>
+                        <button type="button" className="btn btn-outline-success" onClick={async () => await createPostAsync()}>Create</button>
+                    </div>
                 </div>
-                <div style={{ display: showCreatePost ? "flex" : "none" }} className="create-post__create-tool">
-                    <FontAwesomeIcon icon={faArrowsRotate} title="Refresh" />
-                    <button type="button" className="btn btn-outline-warning" onClick={() => setShowCreatePost((item) => !item)}>Cancel</button>
-                    <button type="button" className="btn btn-outline-success" onClick={async () => await createPostAsync()}>Create</button>
-                </div>
+                <textarea rows="5" cols="100" ref={postContentRef} style={{ display: showCreatePost ? "flex" : "none" }} />
             </div>
-            <textarea rows="5" cols="100" ref={postContentRef} style={{ display: showCreatePost ? "flex" : "none" }} />
+            <ul>
+                <UserPosts
+                    customer={customer}
+                    userId={customer?.id}
+                />
+            </ul>
         </div>
-        <ul>
-            <UserPosts customer={customer} userId={customer?.id} />
-        </ul>
-    </div>);
+    );
 }
 
 export default MyFeed;

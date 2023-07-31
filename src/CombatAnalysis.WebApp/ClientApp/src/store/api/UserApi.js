@@ -22,7 +22,8 @@ export const UserApi = createApi({
             query: () => '/Customer'
         }),
         friendSearchByUserId: builder.query({
-            query: (id) => `/Friend/searchByUserId/${id}`
+            query: (id) => `/Friend/searchByUserId/${id}`,
+            providesTags: (result, error, id) => [{ type: 'Friend', id }],
         }),
         authenticationAsync: builder.query({
             query: () => '/Authentication',

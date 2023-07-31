@@ -5,18 +5,21 @@ export const CommunityApi = ChatApi.injectEndpoints({
         createCommunityAsync: builder.mutation({
             query: community => ({
                 body: community,
-                url: 'Community',
+                url: '/Community',
                 method: 'POST'
-            })
+            }),
+            invalidatesTags: (result, error, arg) => [{ type: 'Community', arg }]
         }),
         getCommunityById: builder.query({
             query: (id) => `/Community/${id}`,
+            providesTags: (result, error, id) => [{ type: 'Community', id }]
         }),
         removeCommunityAsync: builder.mutation({
             query: id => ({
                 url: `/Community/${id}`,
                 method: 'DELETE'
-            })
+            }),
+            invalidatesTags: (result, error, arg) => [{ type: 'Community', arg }]
         })
     })
 })

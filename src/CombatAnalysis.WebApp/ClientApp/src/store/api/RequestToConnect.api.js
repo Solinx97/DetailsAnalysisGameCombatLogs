@@ -8,25 +8,22 @@ export const RequestToConnectApi = ChatApi.injectEndpoints({
                 url: '/RequestToConnect',
                 method: 'POST'
             }),
-            invalidatesTags: (result, error, arg) => [{ type: 'RequestToConnect', arg }],
+            invalidatesTags: (result, error, arg) => [{ type: 'RequestToConnect', arg }]
         }),
         searchByToUserId: builder.query({
             query: (id) => `/RequestToConnect/searchByToUserId/${id}`,
-            providesTags: (result, error, id) => [{ type: 'RequestToConnect', id }],
+            providesTags: (result, error, id) => [{ type: 'RequestToConnect', id }]
         }),
         searchByOwnerId: builder.query({
             query: (id) => `/RequestToConnect/searchByOwnerId/${id}`,
-            providesTags: (result, error, arg) =>
-                result
-                    ? [...result.map(({ id }) => ({ type: 'RequestToConnect', id })), 'RequestToConnect']
-                    : ['RequestToConnect'],
+            providesTags: (result, error, id) => [{ type: 'RequestToConnect', id }]
         }),
         removeRequestAsync: builder.mutation({
             query: id => ({ 
                 url: `/RequestToConnect/${id}`,
                 method: 'DELETE'
             }),
-            invalidatesTags: (result, error, arg) => [{ type: 'RequestToConnect', arg }],
+            invalidatesTags: (result, error, arg) => [{ type: 'RequestToConnect', arg }]
         })
     })
 })

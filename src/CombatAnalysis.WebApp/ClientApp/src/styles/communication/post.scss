@@ -76,21 +76,32 @@
             margin: 0 10px;
             padding: 5px;
             border-radius: 25px;
+            cursor: pointer;
         }
 
         svg:hover {
-            cursor: pointer;
             transform: scale(1.25);
         }
+    }
 
-        &_like:hover {
-            border: 2px solid green;
+    &__reaction_active {
+        svg {
+            margin: 0 10px;
+            padding: 5px;
+            border-radius: 25px;
+            cursor: pointer;
         }
 
-        &_dislike:hover {
-            border: 2px solid yellow;
+        svg:hover {
+            transform: scale(1.1);
         }
     }
+}
+
+.svg-inline--fa.fa-message.post__reaction_active {
+    box-shadow: 2px 2px 2px 2px gray;
+    color: green;
+    transform: scale(1.1);
 }
 
 .add-new-comment {

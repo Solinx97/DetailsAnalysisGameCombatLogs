@@ -37,7 +37,7 @@ const MyCommunities = () => {
                 </div>
                 <ul>
                     {
-                        userCommunities.map((item) => (
+                        userCommunities?.map((item) => (
                             <li key={item.id}>
                                 <MyCommunitiesItem userCommunity={item} />
                             </li>

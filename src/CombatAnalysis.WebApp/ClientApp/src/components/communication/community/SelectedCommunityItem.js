@@ -1,10 +1,10 @@
-import { useUserPostSearchByUserIdQuery as useSearchByUserIdQuery } from '../../store/api/ChatApi';
-import { useRemoveUserPostAsyncMutation } from '../../store/api/UserPost.api';
-import Post from './Post';
+import { usePostSearchByCommunityIdAsyncQuery } from '../../../store/api/ChatApi';
+import { useRemoveCommunityPostAsyncMutation } from '../../../store/api/CommunityPost.api';
+import Post from '../Post';
 
-const UserPosts = ({ customer, userId }) => {
-    const { data: userPosts, isLoading } = useSearchByUserIdQuery(userId);
-    const [removeCommunityPostAsyncMutation] = useRemoveUserPostAsyncMutation();
+const SelectedCommunityItem = ({ customer, communityId }) => {
+    const { data: communityPosts, isLoading } = usePostSearchByCommunityIdAsyncQuery(communityId);
+    const [removeCommunityPostAsyncMutation] = useRemoveCommunityPostAsyncMutation();
 
     const deleteCommunityPostAsync = async (communityPostId) => {
         await removeCommunityPostAsyncMutation(communityPostId);
@@ -15,9 +15,9 @@ const UserPosts = ({ customer, userId }) => {
     }
 
     return (
-        <>
+        <ul>
             {
-                userPosts?.map((item) => (
+                communityPosts?.map((item) => (
                     <li key={item?.id}>
                         <Post
                             key={item?.id}
@@ -28,8 +28,8 @@ const UserPosts = ({ customer, userId }) => {
                     </li>
                 ))
             }
-        </>
+        </ul>
     );
 }
 
-export default UserPosts;
+export default SelectedCommunityItem;

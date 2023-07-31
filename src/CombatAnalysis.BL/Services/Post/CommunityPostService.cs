@@ -9,11 +9,14 @@ namespace CombatAnalysis.BL.Services.Post;
 internal class CommunityPostService : IService<CommunityPostDto, int>
 {
     private readonly IGenericRepository<CommunityPost, int> _repository;
+    private readonly IService<PostDto, int> _postService;
     private readonly IMapper _mapper;
 
-    public CommunityPostService(IGenericRepository<CommunityPost, int> repository, IMapper mapper)
+    public CommunityPostService(IGenericRepository<CommunityPost, int> repository, IService<PostDto, int> postService, 
+        IMapper mapper)
     {
         _repository = repository;
+        _postService = postService;
         _mapper = mapper;
     }
 
@@ -67,7 +70,6 @@ internal class CommunityPostService : IService<CommunityPostDto, int>
 
         return UpdateInternalAsync(item);
     }
-
 
     private async Task<CommunityPostDto> CreateInternalAsync(CommunityPostDto item)
     {

@@ -8,12 +8,22 @@ namespace CombatAnalysis.BL.Services.Post;
 internal class PostService : IService<PostDto, int>
 {
     private readonly IGenericRepository<DAL.Entities.Post.Post, int> _repository;
+    private readonly IService<PostLikeDto, int> _postLikeService;
+    private readonly IService<PostDislikeDto, int> _postDislikeService;
+    private readonly IService<PostCommentDto, int> _postCommentService;
+    private readonly ISqlContextService _sqlContextService;
     private readonly IMapper _mapper;
 
-    public PostService(IGenericRepository<DAL.Entities.Post.Post, int> repository, IMapper mapper)
+    public PostService(IGenericRepository<DAL.Entities.Post.Post, int> repository, IMapper mapper, 
+        IService<PostLikeDto, int> postLikeService, IService<PostDislikeDto, int> postDislikeService,
+        IService<PostCommentDto, int> postCommentService, ISqlContextService sqlContextService)
     {
         _repository = repository;
         _mapper = mapper;
+        _postLikeService = postLikeService;
+        _postDislikeService = postDislikeService;
+        _postCommentService = postCommentService;
+        _sqlContextService = sqlContextService;
     }
 
     public Task<PostDto> CreateAsync(PostDto item)
@@ -28,9 +38,29 @@ internal class PostService : IService<PostDto, int>
 
     public async Task<int> DeleteAsync(int id)
     {
-        var rowsAffected = await _repository.DeleteAsync(id);
+        var transaction = await _sqlContextService.UseTransactionAsync();
+        try
+        {
+            await DeletePostLikesAsync(id);
+            await DeletePostDislikesAsync(id);
+            await DeletePostComentsAsync(id);
+            transaction.CreateSavepoint("BeforeDeletePost");
 
-        return rowsAffected;
+            var rowsAffected = await _repository.DeleteAsync(id);
+            return rowsAffected;
+        }
+        catch (ArgumentException ex)
+        {
+            await transaction.RollbackToSavepointAsync("BeforeDeletePost");
+
+            return 0;
+        }
+        catch (Exception ex)
+        {
+            await transaction.RollbackToSavepointAsync("BeforeDeletePost");
+
+            return 0;
+        }
     }
 
     public async Task<IEnumerable<PostDto>> GetAllAsync()
@@ -67,7 +97,6 @@ internal class PostService : IService<PostDto, int>
         return UpdateInternalAsync(item);
     }
 
-
     private async Task<PostDto> CreateInternalAsync(PostDto item)
     {
         if (string.IsNullOrEmpty(item.Content))
@@ -95,5 +124,44 @@ internal class PostService : IService<PostDto, int>
         var rowsAffected = await _repository.UpdateAsync(map);
 
         return rowsAffected;
+    }
+
+    private async Task DeletePostLikesAsync(int postId)
+    {
+        var postLikes = await _postLikeService.GetByParamAsync(nameof(PostLikeDto.PostId), postId);
+        foreach (var item in postLikes)
+        {
+            var rowsAffected = await _postLikeService.DeleteAsync(item.Id);
+            if (rowsAffected == 0)
+            {
+                throw new ArgumentException("Post like didn't removed");
+            }
+        }
+    }
+
+    private async Task DeletePostDislikesAsync(int postId)
+    {
+        var postDislikes = await _postDislikeService.GetByParamAsync(nameof(PostDislikeDto.PostId), postId);
+        foreach (var item in postDislikes)
+        {
+            var rowsAffected = await _postDislikeService.DeleteAsync(item.Id);
+            if (rowsAffected == 0)
+            {
+                throw new ArgumentException("Post dislike didn't removed");
+            }
+        }
+    }
+
+    private async Task DeletePostComentsAsync(int postId)
+    {
+        var postComments = await _postCommentService.GetByParamAsync(nameof(PostCommentDto.PostId), postId);
+        foreach (var item in postComments)
+        {
+            var rowsAffected = await _postCommentService.DeleteAsync(item.Id);
+            if (rowsAffected == 0)
+            {
+                throw new ArgumentException("Post comment didn't removed");
+            }
+        }
     }
 }

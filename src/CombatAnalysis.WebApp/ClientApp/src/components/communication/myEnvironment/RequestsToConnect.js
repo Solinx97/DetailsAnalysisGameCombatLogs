@@ -53,7 +53,7 @@ const RequestToConnect = () => {
 
     if (allRequests.length === undefined
         && allMyRequests.length === undefined) {
-        return (<></>);
+        return <></>;
     }
 
     return (

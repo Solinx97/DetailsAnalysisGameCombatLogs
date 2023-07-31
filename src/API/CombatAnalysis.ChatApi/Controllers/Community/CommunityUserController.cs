@@ -13,13 +13,11 @@ public class CommunityUserController : ControllerBase
     private readonly IService<CommunityUserDto, int> _service;
     private readonly IMapper _mapper;
     private readonly ILogger _logger;
-    private readonly ISqlContextService _sqlContextService;
 
-    public CommunityUserController(IService<CommunityUserDto, int> service, IMapper mapper, ISqlContextService sqlContextService, ILogger logger)
+    public CommunityUserController(IService<CommunityUserDto, int> service, IMapper mapper, ILogger logger)
     {
         _service = service;
         _mapper = mapper;
-        _sqlContextService = sqlContextService;
         _logger = logger;
     }
 
@@ -103,39 +101,6 @@ public class CommunityUserController : ControllerBase
         catch (ArgumentNullException ex)
         {
             _logger.LogError(ex, ex.Message);
-
-            return BadRequest();
-        }
-    }
-
-    [HttpDelete]
-    public async Task<IActionResult> Delete(List<int> usersId)
-    {
-        using var transaction = await _sqlContextService.BeginTransactionAsync();
-        try
-        {
-            foreach (var item in usersId)
-            {
-                var result = await _service.DeleteAsync(item);
-            }
-
-            await transaction.CommitAsync();
-
-            return Ok();
-        }
-        catch (ArgumentNullException ex)
-        {
-            _logger.LogError(ex, ex.Message);
-
-            await transaction.RollbackAsync();
-
-            return BadRequest();
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, ex.Message);
-
-            await transaction.RollbackAsync();
 
             return BadRequest();
         }

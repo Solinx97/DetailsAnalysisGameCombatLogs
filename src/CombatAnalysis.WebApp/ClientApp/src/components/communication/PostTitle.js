@@ -1,19 +1,13 @@
-import { faWindowRestore, faTrash } from '@fortawesome/free-solid-svg-icons';
+import { faTrash, faWindowRestore } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useState } from 'react';
 import { useGetCustomerByIdQuery } from '../../store/api/Customer.api';
 import UserInformation from './UserInformation';
-import { useRemoveUserPostAsyncMutation } from '../../store/api/UserPost.api';
 
-const PostTitle = ({ post, dateFormatting }) => {
+const PostTitle = ({ post, dateFormatting, deletePostAsync }) => {
     const { data: targetCustomer, isLoading } = useGetCustomerByIdQuery(post?.ownerId);
-    const [removeUserPostAsyncMut] = useRemoveUserPostAsyncMutation();
 
     const [showPostOwner, setShowPostOwner] = useState(false);
-
-    const deletePostAsync = async () => {
-        //await removeUserPostAsyncMut(post.id);
-    }
 
     const switchPostOwnerInformation = () => {
         setShowPostOwner((item) => !item);
@@ -39,14 +33,14 @@ const PostTitle = ({ post, dateFormatting }) => {
                     <FontAwesomeIcon
                         icon={faTrash}
                         title="Remove post"
-                        onClick={switchPostOwnerInformation}
+                        onClick={deletePostAsync}
                     />
                 </div>
             </li>
             {showPostOwner &&
                 <UserInformation
                     customer={targetCustomer}
-                closeUserInformation={async () => await deletePostAsync()}
+                    closeUserInformation={() =>setShowPostOwner((item) => !item)}
                 />
             }
         </>
