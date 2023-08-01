@@ -1,12 +1,12 @@
-import MainInformation from './components/MainInformation';
-import Home from './components/Home';
+import Login from './components/account/Login';
+import Registration from './components/account/Registration';
+import CombatGeneralDetails from './components/combatDetails/CombatGeneralDetails';
+import DetailsSpecificalCombat from './components/combatDetails/DetailsSpecificalCombat';
+import GeneralAnalysis from './components/combatDetails/GeneralAnalysis';
+import MainInformation from './components/combatDetails/MainInformation';
 import Communication from './components/communication/Communication';
 import SelectedCommunity from './components/communication/community/SelectedCommunity';
-import GeneralAnalysis from './components/GeneralAnalysis';
-import DetailsSpecificalCombat from './components/DetailsSpecificalCombat';
-import CombatGeneralDetails from './components/CombatGeneralDetails';
-import Registration from './components/account/Registration';
-import Login from './components/account/Login';
+import Home from './components/Home';
 
 const AppRoutes = [
     {

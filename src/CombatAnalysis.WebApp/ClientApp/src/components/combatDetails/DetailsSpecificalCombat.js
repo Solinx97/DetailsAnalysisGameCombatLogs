@@ -1,11 +1,11 @@
 ﻿import React, { memo, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { useLazyGetCombatPlayersByCombatIdQuery } from '../store/api/CombatParserApi';
-import PlayerInformation from './childs/PlayerInformation';
-
-import "../styles/detailsSpecificalCombat.scss";
+import { useLazyGetCombatPlayersByCombatIdQuery } from '../../store/api/CombatParserApi';
+import PlayerInformation from '../childs/PlayerInformation';
 import GeneralDetailsChart from './GeneralDetailsChart';
+
+import "../../styles/detailsSpecificalCombat.scss";
 
 const DetailsSpecificalCombat = () => {
     const navigate = useNavigate();

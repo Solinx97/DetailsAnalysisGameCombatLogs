@@ -1,10 +1,10 @@
 ﻿import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { useLazyGetGeneralAnalysisByIdQuery } from '../store/api/CombatParserApi';
+import { useLazyGetGeneralAnalysisByIdQuery } from '../../store/api/CombatParserApi';
 import GeneralAnalysisItem from './GeneralAnalysisItem';
 
-import "../styles/generalAnalysis.scss";
+import "../../styles/generalAnalysis.scss";
 
 const GeneralAnalysis = () => {
     const navigate = useNavigate();

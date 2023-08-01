@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import DetailsPieChart from './childs/DetailsPieChart';
+import DetailsPieChart from '../childs/DetailsPieChart';
 
 const GeneralDetailsChart = ({ combatPlayers }) => {
     const { t, i18n } = useTranslation("detailsSpecificalCombat");

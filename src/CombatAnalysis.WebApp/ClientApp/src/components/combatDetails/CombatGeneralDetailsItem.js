@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Legend, RadialBar, RadialBarChart } from 'recharts';
-import useCombatGeneralData from '../hooks/useCombatGeneralData';
+import useCombatGeneralData from '../../hooks/useCombatGeneralData';
 
 const CombatGeneralDetailsItem = ({ combatPlayerUsername, combatPlayerId, detailsType, detailsTypeName }) => {
     const { t, i18n } = useTranslation("combatGeneralDetails");

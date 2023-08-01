@@ -1,11 +1,11 @@
 ﻿import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { useLazyGetCombatPlayerIdQuery } from '../store/api/CombatParserApi';
+import { useLazyGetCombatPlayerIdQuery } from '../../store/api/CombatParserApi';
 import CombatDetails from './CombatDetails';
 import CombatGeneralDetailsItem from './CombatGeneralDetailsItem';
 
-import "../styles/combatGeneralDetails.scss";
+import "../../styles/combatGeneralDetails.scss";
 
 const CombatGeneralDetails = () => {
     const navigate = useNavigate();

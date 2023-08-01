@@ -2,9 +2,9 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { NavLink } from 'react-router-dom';
-import { useGetCombatLogsQuery } from '../store/api/CombatParserApi';
+import { useGetCombatLogsQuery } from '../../store/api/CombatParserApi';
 
-import "../styles/mainInformation.scss";
+import "../../styles/mainInformation.scss";
 
 const MainInformation = () => {
     const { t, i18n } = useTranslation("mainInformation");

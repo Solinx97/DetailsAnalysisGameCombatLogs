@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CartesianGrid, Legend, Line, LineChart, Tooltip, XAxis, YAxis } from 'recharts';
-import useTime from '../hooks/useTime';
+import useTime from '../../hooks/useTime';
 
 const CombatDetailsChart = ({ detailsTypeName, detailsData, setDetailsDataRender, getFilteredCombatDataList }) => {
     const { t, i18n } = useTranslation("combatDetails");

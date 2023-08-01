@@ -2,10 +2,10 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import useCombatDetailsData from '../hooks/useCombatDetailsData';
+import useCombatDetailsData from '../../hooks/useCombatDetailsData';
 import CombatDetailsChart from './CombatDetailsChart';
 
-import "../styles/combatDetails.scss";
+import "../../styles/combatDetails.scss";
 
 const CombatDetails = ({ combatPlayerId, detailsType, detailsTypeName, username }) => {
     const { t, i18n } = useTranslation("combatDetails");
