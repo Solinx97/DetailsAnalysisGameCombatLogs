@@ -70,11 +70,6 @@ internal class PersonalChatMessageService : IService<PersonalChatMessageDto, int
 
     private async Task<PersonalChatMessageDto> CreateInternalAsync(PersonalChatMessageDto item)
     {
-        if (string.IsNullOrEmpty(item.Username))
-        {
-            throw new ArgumentNullException(nameof(PersonalChatMessageDto),
-                $"The property {nameof(PersonalChatMessageDto.Username)} of the {nameof(PersonalChatMessageDto)} object can't be null or empty");
-        }
         if (string.IsNullOrEmpty(item.Message))
         {
             throw new ArgumentNullException(nameof(PersonalChatMessageDto), 
@@ -90,11 +85,6 @@ internal class PersonalChatMessageService : IService<PersonalChatMessageDto, int
 
     private async Task<int> UpdateInternalAsync(PersonalChatMessageDto item)
     {
-        if (string.IsNullOrEmpty(item.Username))
-        {
-            throw new ArgumentNullException(nameof(PersonalChatMessageDto), 
-                $"The property {nameof(PersonalChatMessageDto.Username)} of the {nameof(PersonalChatMessageDto)} object can't be null or empty");
-        }
         if (string.IsNullOrEmpty(item.Message))
         {
             throw new ArgumentNullException(nameof(PersonalChatMessageDto), 

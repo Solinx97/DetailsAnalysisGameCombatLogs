@@ -1,11 +1,11 @@
 ﻿CREATE PROCEDURE [dbo].[UpdateGroupChatMessage]
 	@Id INT,
-	@Username NVARCHAR (MAX),
 	@Message NVARCHAR (MAX),
 	@Time TIME (7),
-	@GroupChatId INT
+	@GroupChatId INT,
+	@OwnerId NVARCHAR (MAX)
 AS
 	UPDATE GroupChatMessage
-	SET Username = @Username,Message = @Message,Time = @Time,GroupChatId = @GroupChatId
+	SET Message = @Message,Time = @Time,GroupChatId = @GroupChatId,OwnerId = @OwnerId
 	WHERE Id = @Id
 RETURN 0

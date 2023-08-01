@@ -1,9 +1,16 @@
+import { useGetCustomerByIdQuery } from '../../../store/api/Customer.api';
 
-const MyPersonalChatItem = ({ personalChat, selectedPersonalChat, setSelectedPersonalChat }) => {
+const MyPersonalChatItem = ({ personalChat, selectedGroupChatId, setSelectedPersonalChat, companionId }) => {
+    const { data: user, isLoading } = useGetCustomerByIdQuery(companionId);
+
+    if (isLoading) {
+        return <></>;
+    }
+
     return (
-        <span className={selectedPersonalChat !== null && selectedPersonalChat.id === personalChat.id ? "active" : ""}
+        <span className={selectedGroupChatId === personalChat.id ? "active" : ""}
             onClick={() => setSelectedPersonalChat(personalChat)}>
-            <div><strong>{personalChat.companionUsername}</strong></div>
+            <div><strong>{user.username}</strong></div>
             <div className="last-message" title={personalChat.lastMessage}>{personalChat.lastMessage}</div>
         </span>
     );

@@ -70,7 +70,7 @@ const Chats = () => {
                     </div>
                     <ul className="chats__my-chats__group-chats">
                         {
-                            groupChatUsers.map((item) => (
+                            groupChatUsers?.map((item) => (
                                 <li key={item.id}>
                                     <MyGroupChatItem
                                         groupChatId={item.groupChatId}
@@ -102,8 +102,9 @@ const Chats = () => {
                                 <li key={item.id}>
                                     <MyPersonalChatItem
                                         personalChat={item}
-                                        selectedPersonalChat={selectedPersonalChat}
+                                        selectedGroupChatId={selectedPersonalChat?.id}
                                         setSelectedPersonalChat={setSelectedPersonalChat}
+                                        companionId={item.initiatorId === customer?.id ? item.companionId : item.initiatorId}
                                     />
                                 </li>
                             ))
@@ -123,6 +124,7 @@ const Chats = () => {
                                 chat={Object.assign({}, selectedPersonalChat)}
                                 customer={customer}
                                 setSelectedChat={setSelectedPersonalChat}
+                                companionId={selectedPersonalChat.initiatorId === customer?.id ? selectedPersonalChat.companionId : selectedPersonalChat.initiatorId}
                             />
                 }
             </div>

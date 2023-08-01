@@ -61,10 +61,10 @@ const GroupChat = ({ chat, customer, setSelectedChat }) => {
     const createChatMessageAsync = async (message) => {
         const today = new Date();
         const newMessage = {
-            userName: customer.username,
             message: message,
             time: `${today.getHours()}:${today.getMinutes()}`,
-            groupChatId: chat.id
+            groupChatId: chat.id,
+            ownerId: customer?.id
         };
 
         const createdMessage = await createGroupChatMessageAsync(newMessage);

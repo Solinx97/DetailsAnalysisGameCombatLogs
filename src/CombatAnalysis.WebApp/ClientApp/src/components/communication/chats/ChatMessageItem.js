@@ -1,6 +1,7 @@
 import { faClose, faCloudArrowUp, faPen, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useRef, useState } from 'react';
+import ChatMessageUsername from './ChatMessageUsername';
 
 import "../../../styles/communication/chatMessageItem.scss";
 
@@ -57,11 +58,13 @@ const ChatMessageItem = ({ customer, message, updateMessageAsync, deleteMessageA
                     </div>
                 </div>
             }
-            <div className={`chat-messages__${customer?.username === message?.username ? "right" : "left"}`}>
-                {customer?.username !== message?.username &&
-                    <div className="username">{message?.username}</div>
+            <div className={`chat-messages__${customer?.id === message?.ownerId ? "right" : "left"}`}>
+                {customer?.id !== message?.ownerId &&
+                    <ChatMessageUsername
+                        messageOwnerId={message?.ownerId}
+                    />
                 }
-                {editModeIsOn && customer?.username === message?.username
+                {editModeIsOn && customer?.id === message?.ownerId
                     ? <div className="edit-message">
                         <input className="form-control" defaultValue={message.message} ref={editMessageInput} />
                         <FontAwesomeIcon

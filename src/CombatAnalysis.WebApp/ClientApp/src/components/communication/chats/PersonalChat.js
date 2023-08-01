@@ -8,17 +8,19 @@ import {
     useUpdatePersonalChatMessageAsyncMutation
 } from '../../../store/api/PersonalChatMessage.api';
 import ChatMessageItem from './ChatMessageItem';
+import { useGetCustomerByIdQuery } from '../../../store/api/Customer.api';
 
 import "../../../styles/communication/personalChat.scss";
 
 const getPersonalChatMessagesInterval = 1000;
 
-const PersonalChat = ({ chat, customer, setSelectedChat }) => {
+const PersonalChat = ({ chat, customer, setSelectedChat, companionId }) => {
     const messageInput = useRef(null);
 
     const { data: messages, isLoading } = useFindPersonalChatMessageByChatIdQuery(chat.id, {
         pollingInterval: getPersonalChatMessagesInterval
     });
+    const { data: user, isLoading: userIsLoading } = useGetCustomerByIdQuery(companionId);
     const [createPersonalChatMessageAsync] = useCreatePersonalChatMessageAsyncMutation();
     const [updatePersonalChatMessageAsync] = useUpdatePersonalChatMessageAsyncMutation();
     const [removePersonalChatMessageAsync] = useRemovePersonalChatMessageAsyncMutation();
@@ -47,10 +49,10 @@ const PersonalChat = ({ chat, customer, setSelectedChat }) => {
     const createChatMessageAsync = async (message) => {
         const today = new Date();
         const newMessage = {
-            userName: customer.username,
             message: message,
             time: `${today.getHours()}:${today.getMinutes()}`,
-            personalChatId: chat.id
+            personalChatId: chat.id,
+            ownerId: customer?.id
         };
 
         const createdMessage = await createPersonalChatMessageAsync(newMessage);
@@ -73,7 +75,7 @@ const PersonalChat = ({ chat, customer, setSelectedChat }) => {
         }
     }
 
-    if (isLoading) {
+    if (isLoading || userIsLoading) {
         return <></>;
     }
 
@@ -81,7 +83,7 @@ const PersonalChat = ({ chat, customer, setSelectedChat }) => {
         <div className="chats__messages">
             <div className="title">
                 <div className="title__container">
-                    <div className="title__companion">{chat.companionUsername}</div>
+                    <div className="title__companion">{user.username}</div>
                     <FontAwesomeIcon
                         icon={faPersonWalkingArrowRight}
                         title="Remove chat"

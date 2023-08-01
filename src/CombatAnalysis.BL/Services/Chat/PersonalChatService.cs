@@ -101,16 +101,6 @@ internal class PersonalChatService : IService<PersonalChatDto, int>
             throw new ArgumentNullException(nameof(PersonalChatDto), 
                 $"The property {nameof(PersonalChatDto.LastMessage)} of the {nameof(PersonalChatDto)} object can't be null or empty");
         }
-        if (string.IsNullOrEmpty(item.InitiatorUsername))
-        {
-            throw new ArgumentNullException(nameof(PersonalChatDto), 
-                $"The property {nameof(PersonalChatDto.InitiatorUsername)} of the {nameof(PersonalChatDto)} object can't be null or empty");
-        }
-        if (string.IsNullOrEmpty(item.CompanionUsername))
-        {
-            throw new ArgumentNullException(nameof(PersonalChatDto), 
-                $"The property {nameof(PersonalChatDto.CompanionUsername)} of the {nameof(PersonalChatDto)} object can't be null or empty");
-        }
 
         var map = _mapper.Map<PersonalChat>(item);
         var createdItem = await _repository.CreateAsync(map);
@@ -125,16 +115,6 @@ internal class PersonalChatService : IService<PersonalChatDto, int>
         {
             throw new ArgumentNullException(nameof(PersonalChatDto), 
                 $"The property {nameof(PersonalChatDto.LastMessage)} of the {nameof(PersonalChatDto)} object can't be null or empty");
-        }
-        if (string.IsNullOrEmpty(item.InitiatorUsername))
-        {
-            throw new ArgumentNullException(nameof(PersonalChatDto), 
-                $"The property {nameof(PersonalChatDto.InitiatorUsername)} of the {nameof(PersonalChatDto)} object can't be null or empty");
-        }
-        if (string.IsNullOrEmpty(item.CompanionUsername))
-        {
-            throw new ArgumentNullException(nameof(PersonalChatDto), 
-                $"The property {nameof(PersonalChatDto.CompanionUsername)} of the {nameof(PersonalChatDto)} object can't be null or empty");
         }
 
         var map = _mapper.Map<PersonalChat>(item);
