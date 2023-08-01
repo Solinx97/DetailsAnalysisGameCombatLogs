@@ -5,7 +5,7 @@ import { useFindPersonalChatMessageByChatIdQuery } from '../../../store/api/Chat
 import { useRemovePersonalChatAsyncMutation, useUpdatePersonalChatAsyncMutation } from '../../../store/api/PersonalChat.api';
 import {
     useCreatePersonalChatMessageAsyncMutation, useRemovePersonalChatMessageAsyncMutation,
-    useRemovePersonalChatMessageByChatIdAsyncMutation, useUpdatePersonalChatMessageAsyncMutation
+    useUpdatePersonalChatMessageAsyncMutation
 } from '../../../store/api/PersonalChatMessage.api';
 import ChatMessageItem from './ChatMessageItem';
 
@@ -13,7 +13,7 @@ import "../../../styles/communication/personalChat.scss";
 
 const getPersonalChatMessagesInterval = 1000;
 
-const PersonalChat = ({ chat, customer, setChatIsLeaft }) => {
+const PersonalChat = ({ chat, customer, setSelectedChat }) => {
     const messageInput = useRef(null);
 
     const { data: messages, isLoading } = useFindPersonalChatMessageByChatIdQuery(chat.id, {
@@ -22,7 +22,6 @@ const PersonalChat = ({ chat, customer, setChatIsLeaft }) => {
     const [createPersonalChatMessageAsync] = useCreatePersonalChatMessageAsyncMutation();
     const [updatePersonalChatMessageAsync] = useUpdatePersonalChatMessageAsyncMutation();
     const [removePersonalChatMessageAsync] = useRemovePersonalChatMessageAsyncMutation();
-    const [removePersonalChatMessageByChatIdAsync] = useRemovePersonalChatMessageByChatIdAsyncMutation();
     const [removePersonalChatAsync] = useRemovePersonalChatAsyncMutation();
     const [updatePersonalChatAsyncMut] = useUpdatePersonalChatAsyncMutation();
 
@@ -68,11 +67,9 @@ const PersonalChat = ({ chat, customer, setChatIsLeaft }) => {
     }
 
     const leaveFromChatAsync = async () => {
-        const deleteItem = await removePersonalChatAsync(chat.id);
-        if (deleteItem.data !== undefined) {
-            await removePersonalChatMessageByChatIdAsync(chat.id);
-
-            setChatIsLeaft(true);
+        const deletedItem = await removePersonalChatAsync(chat.id);
+        if (deletedItem.data !== undefined) {
+            setSelectedChat(null);
         }
     }
 
@@ -95,7 +92,7 @@ const PersonalChat = ({ chat, customer, setChatIsLeaft }) => {
             </div>
             <ul className="chat-messages">
                 {
-                    messages.map((item) => (
+                    messages?.map((item) => (
                         <li key={item.id}>
                             <ChatMessageItem
                                 customer={customer}

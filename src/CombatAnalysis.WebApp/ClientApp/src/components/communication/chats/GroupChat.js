@@ -16,7 +16,7 @@ import "../../../styles/communication/groupChat.scss";
 
 const getGroupChatMessagesInterval = 1000;
 
-const GroupChat = ({ chat, customer, setChatIsLeaft }) => {
+const GroupChat = ({ chat, customer, setSelectedChat }) => {
     const [showAddPeople, setShowAddPeople] = useState(false);
     const [peopleInspectionModeOn, setPeopleInspectionMode] = useState(false);
     const [settingsIsShow, setSettingsIsShow] = useState(false);
@@ -92,7 +92,7 @@ const GroupChat = ({ chat, customer, setChatIsLeaft }) => {
     const leaveFromChatAsync = async (id) => {
         const deletedItem = await removeGroupChatUserAsync(id);
         if (deletedItem.data !== undefined) {
-            setChatIsLeaft(true);
+            setSelectedChat(null);
         }
     }
 

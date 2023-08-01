@@ -23,7 +23,6 @@ const Chats = () => {
 
     const [selectedGroupChat, setSelectedGroupChat] = useState(null);
     const [selectedPersonalChat, setSelectedPersonalChat] = useState(null);
-    const [chatIsLeft, setChatIsLeft] = useState(false);
     const [groupChatsHidden, setGroupChatsHidden] = useState(false);
     const [personalChatsHidden, setPersonalChatsHidden] = useState(false);
     const [createGroupChatIsActive, setCreateGroupChatIsActive] = useState(false);
@@ -31,35 +30,17 @@ const Chats = () => {
     useEffect(() => {
         if (selectedGroupChat !== null) {
             setSelectedPersonalChat(null);
-            setChatIsLeft(false);
         }
     }, [selectedGroupChat]);
 
     useEffect(() => {
         if (selectedPersonalChat !== null) {
             setSelectedGroupChat(null);
-            setChatIsLeft(false);
         }
     }, [selectedPersonalChat]);
 
     if (isLoading || chatUserIsLoading) {
         return <></>;
-    }
-
-    let chat = <div className="select-chat">Select chat</div>;
-    if (!chatIsLeft && selectedPersonalChat !== null) {
-        chat = <PersonalChat
-            chat={Object.assign({}, selectedPersonalChat)}
-            customer={customer}
-            setChatIsLeaft={setChatIsLeft}
-        />;
-    }
-    else if (!chatIsLeft && selectedGroupChat !== null) {
-        chat = <GroupChat
-            chat={Object.assign({}, selectedGroupChat)}
-            customer={customer}
-            setChatIsLeaft={setChatIsLeft}
-        />;
     }
 
     return (
@@ -106,12 +87,12 @@ const Chats = () => {
                             ? <FontAwesomeIcon
                                 icon={faArrowDown}
                                 title="Show chats"
-                                onClick={() => setPersonalChatsHidden(!personalChatsHidden)}
+                                onClick={() => setPersonalChatsHidden((item) => !item)}
                             />
                             : <FontAwesomeIcon
                                 icon={faArrowUp}
                                 title="Hide chats"
-                                onClick={() => setPersonalChatsHidden(!personalChatsHidden)}
+                                onClick={() => setPersonalChatsHidden((item) => !item)}
                             />
                         }
                     </div>
@@ -129,7 +110,21 @@ const Chats = () => {
                         }
                     </ul>
                 </div>
-                {chat}
+                {(selectedPersonalChat === null && selectedGroupChat === null)
+                    ? <div className="select-chat">Select chat</div>
+                    : selectedGroupChat !== null 
+                        ? <GroupChat
+                            chat={Object.assign({}, selectedGroupChat)}
+                            customer={customer}
+                            setSelectedChat={setSelectedGroupChat}
+                        />
+                        : selectedPersonalChat !== null &&
+                            <PersonalChat
+                                chat={Object.assign({}, selectedPersonalChat)}
+                                customer={customer}
+                                setSelectedChat={setSelectedPersonalChat}
+                            />
+                }
             </div>
             <CreateGroupChat
                 setCreateGroupChatIsActive={setCreateGroupChatIsActive}

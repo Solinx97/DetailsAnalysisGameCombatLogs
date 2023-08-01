@@ -9,12 +9,17 @@ namespace CombatAnalysis.BL.Services.Chat;
 internal class PersonalChatService : IService<PersonalChatDto, int>
 {
     private readonly IGenericRepository<PersonalChat, int> _repository;
+    private readonly IService<PersonalChatMessageDto, int> _personalChatMessageService;
     private readonly IMapper _mapper;
+    private readonly ISqlContextService _sqlContextService;
 
-    public PersonalChatService(IGenericRepository<PersonalChat, int> repository, IMapper mapper)
+    public PersonalChatService(IGenericRepository<PersonalChat, int> repository, IMapper mapper, 
+        ISqlContextService sqlContextService, IService<PersonalChatMessageDto, int> personalChatMessageService)
     {
         _repository = repository;
         _mapper = mapper;
+        _sqlContextService = sqlContextService;
+        _personalChatMessageService = personalChatMessageService;
     }
 
     public Task<PersonalChatDto> CreateAsync(PersonalChatDto item)
@@ -29,9 +34,30 @@ internal class PersonalChatService : IService<PersonalChatDto, int>
 
     public async Task<int> DeleteAsync(int id)
     {
-        var rowsAffected = await _repository.DeleteAsync(id);
+        using var transaction = await _sqlContextService.BeginTransactionAsync(false);
+        try
+        {
+            await DeletePersonalChatMessagesAsync(id);
+            transaction.CreateSavepoint("BeforeDeletePersonalChat");
 
-        return rowsAffected;
+            var rowsAffected = await _repository.DeleteAsync(id);
+
+            await transaction.CommitAsync();
+
+            return rowsAffected;
+        }
+        catch (ArgumentException ex)
+        {
+            await transaction.RollbackToSavepointAsync("BeforeDeletePersonalChat");
+
+            return 0;
+        }
+        catch (Exception ex)
+        {
+            await transaction.RollbackToSavepointAsync("BeforeDeletePersonalChat");
+
+            return 0;
+        }
     }
 
     public async Task<IEnumerable<PersonalChatDto>> GetAllAsync()
@@ -115,5 +141,18 @@ internal class PersonalChatService : IService<PersonalChatDto, int>
         var rowsAffected = await _repository.UpdateAsync(map);
 
         return rowsAffected;
+    }
+
+    private async Task DeletePersonalChatMessagesAsync(int chatId)
+    {
+        var perosnalChatMessages = await _personalChatMessageService.GetByParamAsync(nameof(PersonalChatMessageDto.PersonalChatId), chatId);
+        foreach (var item in perosnalChatMessages)
+        {
+            var rowsAffected = await _personalChatMessageService.DeleteAsync(item.Id);
+            if (rowsAffected == 0)
+            {
+                throw new ArgumentException("Personal chat message didn't removed");
+            }
+        }
     }
 }

@@ -57,11 +57,11 @@ const ChatMessageItem = ({ customer, message, updateMessageAsync, deleteMessageA
                     </div>
                 </div>
             }
-            <div className={`chat-messages__${customer.username === message.username ? "right" : "left"}`}>
-                {customer?.username !== message.username &&
-                    <div className="username">{message.username}</div>
+            <div className={`chat-messages__${customer?.username === message?.username ? "right" : "left"}`}>
+                {customer?.username !== message?.username &&
+                    <div className="username">{message?.username}</div>
                 }
-                {editModeIsOn && customer.username === message.username
+                {editModeIsOn && customer?.username === message?.username
                     ? <div className="edit-message">
                         <input className="form-control" defaultValue={message.message} ref={editMessageInput} />
                         <FontAwesomeIcon
@@ -70,7 +70,7 @@ const ChatMessageItem = ({ customer, message, updateMessageAsync, deleteMessageA
                             onClick={async () => await updateMessageHandlerAsync()}
                         />
                       </div>
-                    : <div className="message" onClick={() => setOpenMessageMenu((item) => !item)}>{message.message}</div>
+                    : <div className="message" onClick={() => setOpenMessageMenu((item) => !item)}>{message?.message}</div>
                 }
             </div>
         </>
