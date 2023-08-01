@@ -6,7 +6,7 @@ import useTime from '../../hooks/useTime';
 
 const DamageDoneHelper = ({ detailsData }) => {
     const [getTimeWithoutMs, , getDuration] = useTime();
-    const { t, i18n } = useTranslation("useCombatDetailsHelper");
+    const { t, i18n } = useTranslation("helpers/combatDetailsHelper");
 
     const getUserNameWithoutRealm = (userName) => {
         let realmNameIndex = userName.indexOf('-');

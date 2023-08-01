@@ -1,6 +1,7 @@
 import { faCircleArrowRight } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import Chats from './chats/Chats';
 import Communities from './community/Communities';
 import Feed from './Feed';
@@ -10,6 +11,8 @@ import People from './people/People';
 import '../../styles/communication/communication.scss';
 
 const Communication = () => {
+    const { t, i18n } = useTranslation("communication/communication");
+
     const [currentMenuItem, setCurrentMenuItem] = useState(0);
     const [isOpenChat, setIsOpenChat] = useState(false);
     const [initiatorId, setInitiatorId] = useState("");
@@ -27,30 +30,30 @@ const Communication = () => {
             <div className="communication">
                 <ul className="communication__menu">
                     <li className="menu-item" onClick={() => setCurrentMenuItem(0)}>
-                        {currentMenuItem === 0 ? < FontAwesomeIcon icon={faCircleArrowRight} title="Current action" /> : null}
-                        <div className="title">Feed</div>
+                        {currentMenuItem === 0 ? < FontAwesomeIcon icon={faCircleArrowRight} /> : null}
+                        <div className="title">{t("Feed")}</div>
                     </li>
                     <li className="menu-item" onClick={() => setCurrentMenuItem(1)}>
-                        {currentMenuItem === 1 ? < FontAwesomeIcon icon={faCircleArrowRight} title="Current action" /> : null}
-                        <div className="title">Chats</div>
+                        {currentMenuItem === 1 ? < FontAwesomeIcon icon={faCircleArrowRight} /> : null}
+                        <div className="title">{t("Chats")}</div>
                     </li>
                     <li>
                         <div className="menu-item" onClick={() => setCurrentMenuItem(2)}>
-                            {currentMenuItem === 2 ? < FontAwesomeIcon icon={faCircleArrowRight} title="Current action" /> : null}
-                            <div className="title">Communities</div>
+                            {currentMenuItem === 2 ? < FontAwesomeIcon icon={faCircleArrowRight} /> : null}
+                            <div className="title">{t("Communities")}</div>
                         </div>
                     </li>
                     <li className="menu-item_disabled">
-                        {currentMenuItem === 3 ? < FontAwesomeIcon icon={faCircleArrowRight} title="Current action" /> : null}
-                        <div className="title">Events</div>
+                        {currentMenuItem === 3 ? < FontAwesomeIcon icon={faCircleArrowRight} /> : null}
+                        <div className="title">{t("Events")}</div>
                     </li>
                     <li className="menu-item" onClick={() => setCurrentMenuItem(4)}>
-                        {currentMenuItem === 4 ? < FontAwesomeIcon icon={faCircleArrowRight} title="Current action" /> : null }
-                        <div className="title">People</div>
+                        {currentMenuItem === 4 ? < FontAwesomeIcon icon={faCircleArrowRight} /> : null }
+                        <div className="title">{t("People")}</div>
                     </li>
                     <li className="menu-item" onClick={() => setCurrentMenuItem(5)}>
-                        {currentMenuItem === 5 ? < FontAwesomeIcon icon={faCircleArrowRight} title="Current action" /> : null}
-                        <div className="title">My environment</div>
+                        {currentMenuItem === 5 ? < FontAwesomeIcon icon={faCircleArrowRight} /> : null}
+                        <div className="title">{t("MyEnvironment")}</div>
                     </li>
                 </ul>
                 <div className="communication__action">

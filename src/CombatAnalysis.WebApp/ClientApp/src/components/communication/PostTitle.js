@@ -1,10 +1,13 @@
 import { faTrash, faWindowRestore } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useGetCustomerByIdQuery } from '../../store/api/Customer.api';
 import UserInformation from './UserInformation';
 
 const PostTitle = ({ post, dateFormatting, deletePostAsync }) => {
+    const { t, i18n } = useTranslation("communication/postTitle");
+
     const { data: targetCustomer, isLoading } = useGetCustomerByIdQuery(post?.ownerId);
 
     const [showPostOwner, setShowPostOwner] = useState(false);
@@ -24,7 +27,7 @@ const PostTitle = ({ post, dateFormatting, deletePostAsync }) => {
                     <div>{targetCustomer?.username}</div>
                     <FontAwesomeIcon
                         icon={faWindowRestore}
-                        title="Show details"
+                        title={t("ShowUserDetails")}
                         onClick={switchPostOwnerInformation}
                     />
                 </div>
@@ -32,7 +35,7 @@ const PostTitle = ({ post, dateFormatting, deletePostAsync }) => {
                     <div>{dateFormatting(post.when)}</div>
                     <FontAwesomeIcon
                         icon={faTrash}
-                        title="Remove post"
+                        title={t("RemovePost")}
                         onClick={deletePostAsync}
                     />
                 </div>

@@ -1,9 +1,12 @@
 import { faPen } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useUpdatePostCommentAsyncMutation } from '../../store/api/PostComment.api';
 
 const PostCommentContent = ({ customerId, comment }) => {
+    const { t, i18n } = useTranslation("communication/postCommentContent");
+
     const [updatePostCommentAsyncMut] = useUpdatePostCommentAsyncMutation();
 
     const [editModeOn, setEditModeOne] = useState(false);
@@ -26,8 +29,8 @@ const PostCommentContent = ({ customerId, comment }) => {
                 ? <div>
                     <textarea rows="1" cols="50" ref={commentContent} defaultValue={comment.content} />
                     <div>
-                        <button type="button" className="btn btn-outline-info" onClick={async () => await updatePostCommentAsync(comment)}>Save</button>
-                        <button type="button" className="btn btn-outline-warning" onClick={() => setEditModeOne(false)}>Cancel</button>
+                        <button type="button" className="btn btn-outline-info" onClick={async () => await updatePostCommentAsync(comment)}>{t("Save")}</button>
+                        <button type="button" className="btn btn-outline-warning" onClick={() => setEditModeOne(false)}>{t("Cancel")}</button>
                     </div>
                 </div>
                 : <div className="card-text">{comment.content}</div>
@@ -35,7 +38,7 @@ const PostCommentContent = ({ customerId, comment }) => {
             {comment.ownerId === customerId &&
                 < FontAwesomeIcon
                     icon={faPen}
-                    title="Edit"
+                    title={t("Edit")}
                     onClick={() => setEditModeOne((item) => !item)}
                 />
             }

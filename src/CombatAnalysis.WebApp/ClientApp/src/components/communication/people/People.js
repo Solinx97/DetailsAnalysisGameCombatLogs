@@ -1,6 +1,7 @@
 import { faCommentDots, faSquarePlus, faUserPlus, faWindowRestore } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useCallback, useState } from "react";
+import { useTranslation } from 'react-i18next';
 import useAuthentificationAsync from '../../../hooks/useAuthentificationAsync';
 import { useCreatePersonalChatAsyncMutation, useLazyIsExistAsyncQuery } from '../../../store/api/PersonalChat.api';
 import { useCreateRequestAsyncMutation } from '../../../store/api/RequestToConnect.api';
@@ -10,6 +11,8 @@ import UserInformation from './../UserInformation';
 import '../../../styles/communication/people.scss';
 
 const People = ({ updateCurrentMenuItem }) => {
+    const { t, i18n } = useTranslation("communication/people/people");
+
     const [, customer] = useAuthentificationAsync();
 
     const { data: people, isLoading } = useGetCustomersQuery();
@@ -89,7 +92,7 @@ const People = ({ updateCurrentMenuItem }) => {
     return (
         <div className="people">
             <div>
-                <div>People</div>
+                <div>{t("People")}</div>
             </div>
             <ul className="people__cards">
                 {
@@ -100,12 +103,32 @@ const People = ({ updateCurrentMenuItem }) => {
                                     <div>[icon]</div>
                                     <h5 className="card-title" onMouseOver={() => openUserInformationWithTimeout(item)}
                                         onMouseLeave={() => clearUserInformationTimeout()}>{item.username}</h5>
-                                    <FontAwesomeIcon icon={faWindowRestore} title="Show details" onClick={() => openUserInformation(item)} />
+                                    <FontAwesomeIcon
+                                        icon={faWindowRestore}
+                                        title={t("ShowDetails")}
+                                        onClick={() => openUserInformation(item)}
+                                    />
                                 </div>
                                 <ul className="card__links list-group list-group-flush">
-                                    <li className="list-group-item"><FontAwesomeIcon icon={faCommentDots} title="Start chat" onClick={async () => await startChatAsync(item)} /></li>
-                                    <li className="list-group-item"><FontAwesomeIcon icon={faUserPlus} title="Request to connect" onClick={async () => await createRequestToConnectAsync(item)} /></li>
-                                    <li className="list-group-item"><FontAwesomeIcon icon={faSquarePlus} title="Add to community" /></li>
+                                    <li className="list-group-item">
+                                        <FontAwesomeIcon
+                                            icon={faCommentDots}
+                                            title={t("StartChat")}
+                                            onClick={async () => await startChatAsync(item)}
+                                        />
+                                    </li>
+                                    <li className="list-group-item">
+                                        <FontAwesomeIcon
+                                            icon={faUserPlus}
+                                            title={t("RequestToConnect")}
+                                            onClick={async () => await createRequestToConnectAsync(item)} />
+                                    </li>
+                                    <li className="list-group-item">
+                                        <FontAwesomeIcon
+                                            icon={faSquarePlus}
+                                            title={t("InviteToCommunity")}
+                                        />
+                                    </li>
                                 </ul>
                             </div>
                         </li>

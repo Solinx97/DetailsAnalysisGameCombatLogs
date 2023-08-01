@@ -1,6 +1,7 @@
 ﻿import { faArrowDown, faArrowUp, faSquarePlus } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import useAuthentificationAsync from '../../../hooks/useAuthentificationAsync';
 import { useGetGroupChatUserByUserIdQuery, useGetPersonalChatsByUserIdQuery } from '../../../store/api/ChatApi';
 import CreateGroupChat from './CreateGroupChat';
@@ -14,6 +15,8 @@ import "../../../styles/communication/chats.scss";
 const getGroupChatUsersInterval = 2000;
 
 const Chats = () => {
+    const { t, i18n } = useTranslation("communication/chats/chats");
+
     const [, customer] = useAuthentificationAsync();
 
     const { data: personalChats, isLoading } = useGetPersonalChatsByUserIdQuery(customer?.id);
@@ -48,23 +51,23 @@ const Chats = () => {
             <div className="chats">
                 <div className="chats__my-chats">
                     <div className="chats__my-chats_title">
-                        <div>Group chats</div>
+                        <div>{t("GroupChats")}</div>
                         {groupChatsHidden
                             ? <FontAwesomeIcon
                                 icon={faArrowDown}
-                                title="Show chats"
+                                title={t("ShowChats")}
                                 onClick={() => setGroupChatsHidden(!groupChatsHidden)}
                             />
                             : <FontAwesomeIcon
                                 icon={faArrowUp}
-                                title="Hide chats"
+                                title={t("HideChats")}
                                 onClick={() => setGroupChatsHidden(!groupChatsHidden)}
                             />
                         }
                         <FontAwesomeIcon
                             className="create"
                             icon={faSquarePlus}
-                            title="Create a new group chat"
+                            title={t("CreateNewGroupChat")}
                             onClick={() => setCreateGroupChatIsActive(!createGroupChatIsActive)}
                         />
                     </div>
@@ -82,16 +85,16 @@ const Chats = () => {
                         }
                     </ul>
                     <div className="chats__my-chats_title">
-                        <div>Personal chats</div>
+                        <div>{t("PersonalChats")}</div>
                         {personalChatsHidden
                             ? <FontAwesomeIcon
                                 icon={faArrowDown}
-                                title="Show chats"
+                                title={t("ShowChats")}
                                 onClick={() => setPersonalChatsHidden((item) => !item)}
                             />
                             : <FontAwesomeIcon
                                 icon={faArrowUp}
-                                title="Hide chats"
+                                title={t("HideChats")}
                                 onClick={() => setPersonalChatsHidden((item) => !item)}
                             />
                         }
@@ -112,7 +115,7 @@ const Chats = () => {
                     </ul>
                 </div>
                 {(selectedPersonalChat === null && selectedGroupChat === null)
-                    ? <div className="select-chat">Select chat</div>
+                    ? <div className="select-chat">{t("SelectChat")}</div>
                     : selectedGroupChat !== null 
                         ? <GroupChat
                             chat={Object.assign({}, selectedGroupChat)}

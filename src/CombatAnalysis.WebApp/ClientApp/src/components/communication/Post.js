@@ -1,16 +1,19 @@
 import { faHeart, faMessage, faThumbsDown } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useState } from "react";
+import { useTranslation } from 'react-i18next';
 import { useGetPostByIdQuery, useUpdatePostAsyncMutation } from '../../store/api/Post.api';
+import { useCreatePostCommentAsyncMutation } from '../../store/api/PostComment.api';
 import { useCreatePostDislikeAsyncMutation, useLazySearchPostDislikeByPostIdQuery, useRemovePostDislikeAsyncMutation } from '../../store/api/PostDislike.api';
 import { useCreatePostLikeAsyncMutation, useLazySearchPostLikeByPostIdQuery, useRemovePostLikeAsyncMutation } from '../../store/api/PostLike.api';
-import { useCreatePostCommentAsyncMutation } from '../../store/api/PostComment.api';
 import PostComments from './PostComments';
 import PostTitle from './PostTitle';
 
 import '../../styles/communication/post.scss';
 
 const Post = ({ customer, targetPostType, deletePostAsync }) => {
+    const { t, i18n } = useTranslation("communication/post");
+
     const { data: post, isLoading } = useGetPostByIdQuery(targetPostType?.postId);
 
     const [updatePostAsyncMut] = useUpdatePostAsyncMutation();
@@ -232,7 +235,8 @@ const Post = ({ customer, targetPostType, deletePostAsync }) => {
                         <div className="posts__reaction item">
                             <FontAwesomeIcon
                                 className="post__reaction_like"
-                                icon={faHeart} title="Like"
+                                icon={faHeart}
+                                title={t("Like")}
                                 onClick={async () => await createPostLikeAsync(post.id)}
                             />
                             <div className="count">{post.likeCount}</div>
@@ -240,7 +244,8 @@ const Post = ({ customer, targetPostType, deletePostAsync }) => {
                         <div className="posts__reaction item">
                             <FontAwesomeIcon
                                 className="post__reaction_dislike"
-                                icon={faThumbsDown} title="Dislike"
+                                icon={faThumbsDown}
+                                title={t("Dislike")}
                                 onClick={async () => await createPostDislikeAsync(post.id)}
                             />
                             <div className="count">{post.dislikeCount}</div>
@@ -249,7 +254,7 @@ const Post = ({ customer, targetPostType, deletePostAsync }) => {
                             <FontAwesomeIcon
                                 className={`post__reaction${showComments && '_active'}`}
                                 icon={faMessage}
-                                title="Comment"
+                                title={t("Comment")}
                                 onClick={postCommentsHandler}
                             />
                             <div className="count">{post.commentCount}</div>
@@ -267,10 +272,10 @@ const Post = ({ customer, targetPostType, deletePostAsync }) => {
                     />
                     <div className="add-new-comment">
                         <div className="add-new-comment__title">
-                            <div>Add comment:</div>
+                            <div>{t("AddComment")}</div>
                         </div>
                         <textarea rows="1" cols="75" onChange={e => setPostCommentContent(e.target.value)} value={postCommentContent} />
-                        <button type="button" className="btn btn-outline-info" onClick={async () => await createPostCommentAsync()}>Add</button>
+                        <button type="button" className="btn btn-outline-info" onClick={async () => await createPostCommentAsync()}>{t("Add")}</button>
                     </div>
                 </>
             }

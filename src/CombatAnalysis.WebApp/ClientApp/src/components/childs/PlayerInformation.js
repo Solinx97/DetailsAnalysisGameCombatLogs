@@ -7,7 +7,7 @@ import {
 import CommonPlayerInform from './CommonPlayerInform';
 
 const PlayerInformation = ({ combatPlayers, combatId, combatLogId }) => {
-    const { t, i18n } = useTranslation("playerInformation");
+    const { t, i18n } = useTranslation("childs/playerInformation");
 
     const [selectedCharts, setSelectedCharts] = useState([]);
     const [activeUserIndex, setActiveUserIndex] = useState(-1);

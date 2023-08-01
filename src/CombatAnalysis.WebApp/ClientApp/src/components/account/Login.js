@@ -9,7 +9,7 @@ const Login = () => {
     const [loginAsync] = useLoginAsyncMutation();
 
     const navigate = useNavigate();
-    const { t, i18n } = useTranslation("login");
+    const { t, i18n } = useTranslation("account/login");
 
     const [showErrorMessage, setShowErrorMessage] = useState(false);
     const email = useRef(null);
@@ -46,7 +46,7 @@ const Login = () => {
                     <input type="password" className="form-control" id="inputPassword" ref={password} />
                 </div>
                 <input type="submit" className="btn btn-primary" value="Login" />
-                <div className="login__error-message" style={{ display: showErrorMessage ? "flex" : "none" }}>Incorrect email/password. Try again</div>
+                <div className="login__error-message" style={{ display: showErrorMessage ? "flex" : "none" }}>{t("IncorrectData")}</div>
             </form>
         );
     }

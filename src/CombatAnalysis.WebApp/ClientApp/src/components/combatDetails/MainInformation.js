@@ -7,7 +7,7 @@ import { useGetCombatLogsQuery } from '../../store/api/CombatParserApi';
 import "../../styles/mainInformation.scss";
 
 const MainInformation = () => {
-    const { t, i18n } = useTranslation("mainInformation");
+    const { t, i18n } = useTranslation("combatDetails/mainInformation");
 
     const { data: combatLogs, isLoading } = useGetCombatLogsQuery();
 

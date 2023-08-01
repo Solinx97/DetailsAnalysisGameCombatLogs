@@ -6,7 +6,7 @@ import { CartesianGrid, Legend, Line, LineChart, Tooltip, XAxis, YAxis } from 'r
 import useTime from '../../hooks/useTime';
 
 const CombatDetailsChart = ({ detailsTypeName, detailsData, setDetailsDataRender, getFilteredCombatDataList }) => {
-    const { t, i18n } = useTranslation("combatDetails");
+    const { t, i18n } = useTranslation("combatDetails/combatDetailsChart");
 
     const [detailsChartData, setDetailsChartData] = useState([]);
     const [useFilter, setUseFilter] = useState(false);
@@ -113,10 +113,10 @@ const CombatDetailsChart = ({ detailsTypeName, detailsData, setDetailsDataRender
                             title={t("Cancel")}
                         />
                         <div>
-                            Start of interval: {startDurationOfInterval}
+                            {t("StartOfInterval")}: {startDurationOfInterval}
                         </div>
                         <div>
-                            Finish of interval: {finishDurationOfInterval}
+                            {t("FinishOfInterval")}: {finishDurationOfInterval}
                         </div>
                     </div>
                 }
@@ -133,7 +133,7 @@ const CombatDetailsChart = ({ detailsTypeName, detailsData, setDetailsDataRender
                         <FontAwesomeIcon
                             icon={faStopwatch}
                             className="chart-editor"
-                            title="Calculate"
+                            title={t("Calculate")}
                             onClick={calculateSpellsByTimespan}
                         />
                     }

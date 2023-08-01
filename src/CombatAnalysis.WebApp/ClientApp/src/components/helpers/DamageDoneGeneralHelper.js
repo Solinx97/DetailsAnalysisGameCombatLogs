@@ -4,7 +4,7 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 
 const DamageDoneGeneralHelper = ({ generalData }) => {
-    const { t, i18n } = useTranslation("useCombatDetailsHelper");
+    const { t, i18n } = useTranslation("helpers/combatDetailsHelper");
 
     return (
         generalData.map((item) => (
