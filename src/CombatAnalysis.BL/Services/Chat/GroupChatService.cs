@@ -10,11 +10,19 @@ internal class GroupChatService : IService<GroupChatDto, int>
 {
     private readonly IGenericRepository<GroupChat, int> _repository;
     private readonly IMapper _mapper;
+    private readonly ISqlContextService _sqlContextService;
+    private readonly IService<GroupChatMessageDto, int> _groupChatMessageService;
+    private readonly IService<GroupChatUserDto, int> _groupChatUserService;
 
-    public GroupChatService(IGenericRepository<GroupChat, int> repository, IMapper mapper)
+    public GroupChatService(IGenericRepository<GroupChat, int> repository, IMapper mapper, 
+        ISqlContextService sqlContextService, IService<GroupChatMessageDto, int> groupChatMessageService,
+        IService<GroupChatUserDto, int> groupChatUserService)
     {
         _repository = repository;
         _mapper = mapper;
+        _sqlContextService = sqlContextService;
+        _groupChatMessageService = groupChatMessageService;
+        _groupChatUserService = groupChatUserService;
     }
 
     public Task<GroupChatDto> CreateAsync(GroupChatDto item)
@@ -29,9 +37,31 @@ internal class GroupChatService : IService<GroupChatDto, int>
 
     public async Task<int> DeleteAsync(int id)
     {
-        var rowsAffected = await _repository.DeleteAsync(id);
+        using var transaction = await _sqlContextService.BeginTransactionAsync(false);
+        try
+        {
+            await DeleteGroupChatMessagesAsync(id);
+            await DeleteGroupChatUsersAsync(id);
+            transaction.CreateSavepoint("BeforeDeleteGroupChat");
 
-        return rowsAffected;
+            var rowsAffected = await _repository.DeleteAsync(id);
+
+            await transaction.CommitAsync();
+
+            return rowsAffected;
+        }
+        catch (ArgumentException ex)
+        {
+            await transaction.RollbackToSavepointAsync("BeforeDeleteGroupChat");
+
+            return 0;
+        }
+        catch (Exception ex)
+        {
+            await transaction.RollbackToSavepointAsync("BeforeDeleteGroupChat");
+
+            return 0;
+        }
     }
 
     public async Task<IEnumerable<GroupChatDto>> GetAllAsync()
@@ -115,5 +145,31 @@ internal class GroupChatService : IService<GroupChatDto, int>
         var rowsAffected = await _repository.UpdateAsync(map);
 
         return rowsAffected;
+    }
+
+    private async Task DeleteGroupChatMessagesAsync(int chatId)
+    {
+        var groupChatMessages = await _groupChatMessageService.GetByParamAsync(nameof(GroupChatMessageDto.GroupChatId), chatId);
+        foreach (var item in groupChatMessages)
+        {
+            var rowsAffected = await _groupChatMessageService.DeleteAsync(item.Id);
+            if (rowsAffected == 0)
+            {
+                throw new ArgumentException("Group chat message didn't removed");
+            }
+        }
+    }
+
+    private async Task DeleteGroupChatUsersAsync(int chatId)
+    {
+        var groupChatUsers = await _groupChatUserService.GetByParamAsync(nameof(GroupChatUserDto.GroupChatId), chatId);
+        foreach (var item in groupChatUsers)
+        {
+            var rowsAffected = await _groupChatUserService.DeleteAsync(item.Id);
+            if (rowsAffected == 0)
+            {
+                throw new ArgumentException("Group chat user didn't removed");
+            }
+        }
     }
 }

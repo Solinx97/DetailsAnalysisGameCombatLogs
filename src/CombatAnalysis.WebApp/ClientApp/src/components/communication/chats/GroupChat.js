@@ -1,8 +1,8 @@
-﻿import { faFileWaveform, faFolderOpen, faGear, faPaperPlane, faPerson, faRightFromBracket, faUserPlus } from '@fortawesome/free-solid-svg-icons';
+﻿import { faFileWaveform, faFolderOpen, faGear, faTrash, faPaperPlane, faPerson, faRightFromBracket, faUserPlus } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { memo, useRef, useState } from 'react';
 import { useFindGroupChatMessageByChatIdQuery, useGetGroupChatUserByUserIdQuery } from '../../../store/api/ChatApi';
-import { useUpdateGroupChatAsyncMutation } from '../../../store/api/GroupChat.api';
+import { useUpdateGroupChatAsyncMutation, useRemoveGroupChatAsyncMutation } from '../../../store/api/GroupChat.api';
 import {
     useCreateGroupChatMessageAsyncMutation, useRemoveGroupChatMessageAsyncMutation,
     useUpdateGroupChatMessageAsyncMutation
@@ -35,6 +35,7 @@ const GroupChat = ({ chat, customer, setSelectedChat }) => {
     const [updateGroupChatMessageAsync] = useUpdateGroupChatMessageAsyncMutation();
     const [removeGroupChatMessageAsync] = useRemoveGroupChatMessageAsyncMutation();
     const [updateGroupChatAsyncMut] = useUpdateGroupChatAsyncMutation();
+    const [removeGroupChatAsyncMut] = useRemoveGroupChatAsyncMutation();
     const [removeGroupChatUserAsync] = useRemoveGroupChatUserAsyncMutation();
     const [createGroupChatUserMutAsync] = useCreateGroupChatUserAsyncMutation();
 
@@ -99,6 +100,13 @@ const GroupChat = ({ chat, customer, setSelectedChat }) => {
         }
     }
 
+    const removeChatAsync = async () => {
+        const deletedItem = await removeGroupChatAsyncMut(chat.id);
+        if (deletedItem.data !== undefined) {
+            setSelectedChat(null);
+        }
+    }
+
     if (isLoading || usersIsLoading) {
         return <></>;
     }
@@ -138,12 +146,20 @@ const GroupChat = ({ chat, customer, setSelectedChat }) => {
                         icon={faFolderOpen}
                         title={t("ShowDocuments")}
                     />
-                    <FontAwesomeIcon
-                        icon={faRightFromBracket}
-                        title={t("LeaveFromChat")}
-                        className="leave-from-chat"
-                        onClick={getChatUserByMyIdAsync}
-                    />
+                    {customer?.id === chat.ownerId
+                        ? <FontAwesomeIcon
+                            icon={faTrash}
+                            title={t("RemoveChat")}
+                            className="leave-from-chat"
+                            onClick={async () => await removeChatAsync()}
+                        />
+                        : <FontAwesomeIcon
+                            icon={faRightFromBracket}
+                            title={t("LeaveFromChat")}
+                            className="leave-from-chat"
+                            onClick={getChatUserByMyIdAsync}
+                        />
+                    }
                 </div>
                 <ul className={`people-inspection${peopleInspectionModeOn ? "-active" : ""}`}>
                     {
