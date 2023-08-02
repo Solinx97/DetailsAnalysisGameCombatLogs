@@ -1,12 +1,15 @@
 import { faArrowsRotate } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import useAuthentificationAsync from '../../../hooks/useAuthentificationAsync';
 import { useCreatePostAsyncMutation } from '../../../store/api/Post.api';
 import { useCreateUserPostAsyncMutation } from '../../../store/api/UserPost.api';
 import UserPosts from '../UserPosts';
 
 const MyFeed = () => {
+    const { t } = useTranslation("communication/myEnvironment/myFeed");
+
     const [, customer] = useAuthentificationAsync();
 
     const [createNewPostAsync] = useCreatePostAsyncMutation();
@@ -56,15 +59,17 @@ const MyFeed = () => {
                     <div className="create-post__tool" style={{ display: !showCreatePost ? "flex" : "none" }}>
                         <FontAwesomeIcon
                             icon={faArrowsRotate}
-                            title="Refresh" />
-                        <button type="button" className="btn btn-outline-info" onClick={() => setShowCreatePost((item) => !item)}>New post</button>
+                            title={t("Refresh")}
+                        />
+                        <button type="button" className="btn btn-outline-info" onClick={() => setShowCreatePost((item) => !item)}>{t("NewPost")}</button>
                     </div>
                     <div style={{ display: showCreatePost ? "flex" : "none" }} className="create-post__create-tool">
                         <FontAwesomeIcon
                             icon={faArrowsRotate}
-                            title="Refresh" />
-                        <button type="button" className="btn btn-outline-warning" onClick={() => setShowCreatePost((item) => !item)}>Cancel</button>
-                        <button type="button" className="btn btn-outline-success" onClick={async () => await createPostAsync()}>Create</button>
+                            title={t("Refresh")}
+                        />
+                        <button type="button" className="btn btn-outline-warning" onClick={() => setShowCreatePost((item) => !item)}>{t("Cancel")}</button>
+                        <button type="button" className="btn btn-outline-success" onClick={async () => await createPostAsync()}>{t("Create")}</button>
                     </div>
                 </div>
                 <textarea rows="5" cols="100" ref={postContentRef} style={{ display: showCreatePost ? "flex" : "none" }} />

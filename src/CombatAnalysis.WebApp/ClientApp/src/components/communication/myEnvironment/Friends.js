@@ -1,6 +1,7 @@
 import { faCircleXmark, faWindowRestore } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import useAuthentificationAsync from '../../../hooks/useAuthentificationAsync';
 import { useRemoveFriendAsyncMutation } from '../../../store/api/Friend.api';
 import { useFriendSearchByUserIdQuery } from '../../../store/api/UserApi';
@@ -10,6 +11,8 @@ import RequestsToConnect from './RequestsToConnect';
 import '../../../styles/communication/friends.scss';
 
 const Friends = () => {
+    const { t } = useTranslation("communication/myEnvironment/friends");
+
     const [, customer] = useAuthentificationAsync();
     const { data: myFriends, isLoading } = useFriendSearchByUserIdQuery(customer?.id);
     const [removeFriendAsyncMut] = useRemoveFriendAsyncMutation(customer?.id);
@@ -39,7 +42,7 @@ const Friends = () => {
         <div className="friends">
             <RequestsToConnect />
             <div>
-                <div><strong>Friends</strong></div>
+                <div><strong>{t("Friends")}</strong></div>
             </div>
             <ul>
                 {
@@ -48,7 +51,7 @@ const Friends = () => {
                             <div className="friend__details">
                                 <FontAwesomeIcon
                                     icon={faWindowRestore}
-                                    title="Show details"
+                                    title={t("ShowDetails")}
                                     onClick={() => openUserInformation(item)}
                                 />
                             </div>
@@ -56,7 +59,7 @@ const Friends = () => {
                             <div className="friend__remove">
                                 <FontAwesomeIcon
                                     icon={faCircleXmark}
-                                    title="Remove"
+                                    title={t("Remove")}
                                     onClick={async () => await removeFriendAsync(item.id)}
                                 />
                             </div>

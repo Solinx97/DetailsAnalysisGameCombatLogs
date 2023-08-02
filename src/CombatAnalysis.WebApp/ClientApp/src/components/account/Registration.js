@@ -82,7 +82,7 @@ const Registration = () => {
                     <input type="email" className="form-control" id="inputEmail" aria-describedby="emailHelp" onChange={handleEmailChange} />
                 </div>
                 <div className="mb-3">
-                    <label htmlFor="inputUsername" className="form-label">{t("Login")}</label>
+                    <label htmlFor="inputUsername" className="form-label">{t("Username")}</label>
                     <input type="text" className="form-control" id="inputUsername" onChange={handleUsernameChange} />
                 </div>
                 <div className="mb-3">

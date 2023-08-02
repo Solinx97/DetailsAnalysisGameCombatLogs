@@ -1,13 +1,16 @@
+import { useTranslation } from 'react-i18next';
 import useAuthentificationAsync from '../../../hooks/useAuthentificationAsync';
 import { useCreateFriendAsyncMutation } from '../../../store/api/Friend.api';
-import { useSearchByToUserIdQuery } from '../../../store/api/UserApi';
 import { useRemoveRequestAsyncMutation, useSearchByOwnerIdQuery } from '../../../store/api/RequestToConnect.api';
-
-import "../../../styles/communication/requestToConnect.scss";
+import { useSearchByToUserIdQuery } from '../../../store/api/UserApi';
 import MyRequestItem from './MyRequestItem';
 import RequestItem from './RequestItem';
 
+import "../../../styles/communication/requestToConnect.scss";
+
 const RequestToConnect = () => {
+    const { t } = useTranslation("communication/myEnvironment/requestsToConnect");
+
     const [, customer] = useAuthentificationAsync();
 
     const { data: allRequests, isLoading: reqIsLoading } = useSearchByToUserIdQuery(customer?.id);
@@ -60,7 +63,7 @@ const RequestToConnect = () => {
         <>
             {allRequests?.length > 0 &&
                 <div>
-                    <div><strong>Requests</strong></div>
+                    <div><strong>{t("Requests")}</strong></div>
                     <ul>
                         {
                             allRequests?.map((item) => (
@@ -78,7 +81,7 @@ const RequestToConnect = () => {
             }
             {allMyRequests?.length > 0 &&
                 <div>
-                    <div><strong>My requests</strong></div>
+                    <div><strong>{t("MyRequests")}</strong></div>
                     <ul>
                         {
                             allMyRequests?.map((item) => (

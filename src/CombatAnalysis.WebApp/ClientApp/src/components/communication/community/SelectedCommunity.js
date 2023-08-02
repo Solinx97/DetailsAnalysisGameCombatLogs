@@ -1,6 +1,7 @@
 import { faArrowRightToBracket, faArrowsRotate, faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useEffect, useRef, useState } from "react";
+import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import useAuthentificationAsync from '../../../hooks/useAuthentificationAsync';
 import { useLazyGetCommunityByIdQuery, useRemoveCommunityAsyncMutation } from '../../../store/api/Community.api';
@@ -13,6 +14,8 @@ import SelectedCommunityItem from './SelectedCommunityItem';
 import '../../../styles/communication/selectedCommunity.scss';
 
 const SelectedCommunity = () => {
+    const { t } = useTranslation("communication/community/selectedCommunity");
+
     const [, customer] = useAuthentificationAsync();
 
     const [showLeaveFromCommunityAlert, setShowLeaveFromCommunityAlert] = useState(false);
@@ -96,13 +99,13 @@ const SelectedCommunity = () => {
     const getCommunityPolicyType = () => {
         switch (community.policyType) {
             case 1:
-                return <div className="title__policy" title="Any users can search and connect to this community free">Open</div>
+                return <div className="title__policy" title={t("OpenExplain")}>{t("Open")}</div>
             case 2:
-                return <div className="title__policy" title="This is community is hide and allow only invite another users from members">Close</div>
+                return <div className="title__policy" title={t("PrivateExplain")}>{t("Private")}</div>
             case 3:
-                return <div className="title__policy" title="This is community is hide and allow invite another users from members or from special link">Close (use link)</div>
+                return <div className="title__policy" title={t("PrivateWithLinkExplain")}>{t("PrivateWithLink")}</div>
             default:
-                return <div className="title__policy" title="Any users can search and connect to this community free">Open</div>
+                return <div className="title__policy" title={t("OpenExplain")}>{t("Open")}</div>
         }
     }
 
@@ -117,28 +120,28 @@ const SelectedCommunity = () => {
                     <div className="title">
                         <FontAwesomeIcon
                             icon={faArrowRightToBracket}
-                            title="Close"
+                            title={t("Close")}
                             onClick={() => navigate('/communication')}
                         />
                         <div className="title__name" title={community.name} onClick={() => navigate('/communication')}>{community.name}</div>
                         {getCommunityPolicyType()}
                     </div>
                     <div className="leave">
-                        <button className="btn btn-outline-danger" onClick={() => setShowLeaveFromCommunityAlert((item) => !item)}>Leave</button>
+                        <button className="btn btn-outline-danger" onClick={() => setShowLeaveFromCommunityAlert((item) => !item)}>{t("Leave")}</button>
                     </div>
                 </div>
                 <div className="description">
                     <div className="description__title">
-                        <div>Description</div>
+                        <div>{t("Description")}</div>
                         {showDescription
                             ? <FontAwesomeIcon
                                 icon={faEye}
-                                title="Hide"
+                                title={t("Hide")}
                                 onClick={() => setShowDescription((item) => !item)}
                             />
                             : <FontAwesomeIcon
                                 icon={faEyeSlash}
-                                title="Show"
+                                title={t("Show")}
                                 onClick={() => setShowDescription((item) => !item)}
                             />
                         }
@@ -151,13 +154,19 @@ const SelectedCommunity = () => {
                     <div className="create-post">
                         <div>
                             <div className="create-post__tool" style={{ display: !showCreatePost ? "flex" : "none" }}>
-                                <FontAwesomeIcon icon={faArrowsRotate} title="Refresh" />
-                                <button type="button" className="btn btn-outline-info" onClick={() => setShowCreatePost((item) => !item)}>New post</button>
+                                <FontAwesomeIcon
+                                    icon={faArrowsRotate}
+                                    title={t("Refresh")}
+                                />
+                                <button type="button" className="btn btn-outline-info" onClick={() => setShowCreatePost((item) => !item)}>{t("NewPost")}</button>
                             </div>
                             <div style={{ display: showCreatePost ? "flex" : "none" }} className="create-post__create-tool">
-                                <FontAwesomeIcon icon={faArrowsRotate} title="Refresh" />
-                                <button type="button" className="btn btn-outline-warning" onClick={() => setShowCreatePost((item) => !item)}>Cancel</button>
-                                <button type="button" className="btn btn-outline-success" onClick={async () => await createPostAsync()}>Create</button>
+                                <FontAwesomeIcon
+                                    icon={faArrowsRotate}
+                                    title={t("Refresh")}
+                                />
+                                <button type="button" className="btn btn-outline-warning" onClick={() => setShowCreatePost((item) => !item)}>{t("Cancel")}</button>
+                                <button type="button" className="btn btn-outline-success" onClick={async () => await createPostAsync()}>{t("Create")}</button>
                             </div>
                         </div>
                         <textarea rows="5" cols="100" ref={postContentRef} style={{ display: showCreatePost ? "flex" : "none" }} />
@@ -169,23 +178,23 @@ const SelectedCommunity = () => {
                 </div>
                 {showLeaveFromCommunityAlert &&
                     <div className="leave-from-community">
-                        <div>Leave</div>
+                        <div>{t("LeaveAlert")}</div>
                         <div>
-                            <div>You sure, that you want to leave from community <strong>'{community.name}'</strong>?</div>
+                            <div>{t("LeaveConfirm")} <strong>'{community.name}'</strong>?</div>
                         </div>
                         {customer.id === community.ownerId
                             ? <>
                                 <div className="alert alert-danger" role="alert">
-                                    DANGER: You are owner of this community and if you leave this community will be removed. All users and content will be removed!!!
+                                    {t("LeaveOwnerConfirm")}
                                 </div>
                                 <div>
-                                    <button className="btn btn-outline-danger" onClick={async () => await ownerLeaveFromCommunityAsync()}>Leave</button>
-                                    <button className="btn btn-outline-success" onClick={() => setShowLeaveFromCommunityAlert((item) => !item)}>Cancel</button>
+                                    <button className="btn btn-outline-danger" onClick={async () => await ownerLeaveFromCommunityAsync()}>{t("Leave")}</button>
+                                    <button className="btn btn-outline-success" onClick={() => setShowLeaveFromCommunityAlert((item) => !item)}>{t("Cancel")}</button>
                                 </div>
                             </>
                             : <div>
-                                <button className="btn btn-outline-danger" onClick={async () => await leaveFromCommunityAsync()}>Leave</button>
-                                <button className="btn btn-outline-success" onClick={() => setShowLeaveFromCommunityAlert((item) => !item)}>Cancel</button>
+                                <button className="btn btn-outline-danger" onClick={async () => await leaveFromCommunityAsync()}>{t("Leave")}</button>
+                                <button className="btn btn-outline-success" onClick={() => setShowLeaveFromCommunityAlert((item) => !item)}>{t("Cancel")}</button>
                             </div>
                         }
                     </div>
@@ -193,7 +202,7 @@ const SelectedCommunity = () => {
             </div>
             <ul className="selected-community__topics">
                 <li>
-                    <div>Discussions</div>
+                    <div>{t("Discussions")}</div>
                     <ul></ul>
                 </li>
                 <li className="members">
@@ -203,11 +212,11 @@ const SelectedCommunity = () => {
                     />
                 </li>
                 <li>
-                    <div>Friends</div>
+                    <div>{t("Friends")}</div>
                     <ul></ul>
                 </li>
                 <li>
-                    <div>Contacts</div>
+                    <div>{t("Contacts")}</div>
                     <ul></ul>
                 </li>
             </ul>

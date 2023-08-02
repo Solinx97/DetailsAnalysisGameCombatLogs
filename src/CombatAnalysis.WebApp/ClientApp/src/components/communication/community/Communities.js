@@ -1,6 +1,7 @@
 import { faArrowsRotate, faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { useEffect, useState } from "react";
+import { useState } from "react";
+import { useTranslation } from 'react-i18next';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { useGetCommunitiesQuery } from '../../../store/api/ChatApi';
 import MyCommunities from '../myEnvironment/MyCommunities';
@@ -8,39 +9,13 @@ import MyCommunities from '../myEnvironment/MyCommunities';
 import '../../../styles/communication/communities.scss';
 
 const Communities = () => {
+    const { t } = useTranslation("communication/community/Communities");
+
     const [showCommunities, setShowCommunities] = useState(true);
-    const [communityList, setCommunityList] = useState(<></>);
 
     const { data: communities, isLoading } = useGetCommunitiesQuery();
 
     const navigate = useNavigate();
-
-    useEffect(() => {
-        !isLoading && createCommunityList();
-    }, [isLoading])
-
-    const createCommunityList = () => {
-        const list = communities.length !== 0
-            ? communities.map((element) => createCommunityItem(element))
-            : (<div className="community__empty">Didn't found any communities</div>);
-
-        setCommunityList(list);
-    }
-
-    const createCommunityItem = (community) => {
-        return (
-            <li key={community.id} className="community">
-                <div className="card">
-                    <div className="card-body">
-                        <h5 className="card-title">{community.name}</h5>
-                        <p className="card-text">{community.description}</p>
-                        <NavLink className="card-link" onClick={() => navigate(`/community?id=${community.id}`)}>Open</NavLink>
-                        <NavLink className="card-link">More details</NavLink>
-                    </div>
-                </div>
-            </li>
-        );
-    }
 
     if (isLoading) {
         return <></>;
@@ -54,19 +29,18 @@ const Communities = () => {
                     <div className="content">
                         <FontAwesomeIcon
                             icon={faArrowsRotate}
-                            title="Refresh"
-                            onClick={createCommunityList}
+                            title={t("Refresh")}
                         />
-                        <div>Communities</div>
+                        <div>{t("Communities")}</div>
                         {showCommunities
                             ? <FontAwesomeIcon
                                 icon={faEye}
-                                title="Hide"
+                                title={t("Hide")}
                                 onClick={() => setShowCommunities((item) => !item)}
                             />
                             : <FontAwesomeIcon
                                 icon={faEyeSlash}
-                                title="Show"
+                                title={t("Show")}
                                 onClick={() => setShowCommunities((item) => !item)}
                             />
                         }
@@ -74,7 +48,29 @@ const Communities = () => {
                 </div>
                 {showCommunities && 
                     <ul>
-                        {communityList}
+                        {
+                            communities?.map((item) => (
+                                <li key={item.id} className="community">
+                                    <div className="card">
+                                        <div className="card-body">
+                                            <h5 className="card-title">{item.name}</h5>
+                                            <p className="card-text">{item.description}</p>
+                                            <NavLink
+                                                className="card-link"
+                                                onClick={() => navigate(`/community?id=${item.id}`)}
+                                            >
+                                                {t("Open")}
+                                            </NavLink>
+                                            <NavLink
+                                                className="card-link"
+                                            >
+                                                {t("MoreDetails")}
+                                            </NavLink>
+                                        </div>
+                                    </div>
+                                </li>
+                            ))
+                        }
                     </ul>
                 }
             </div>

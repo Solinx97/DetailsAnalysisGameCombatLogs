@@ -4,9 +4,9 @@
   "ShortName": "Короткое название",
   "MembersNumber": "Количство участником",
   "ChatPolicy": "Политика чата",
-  "Public": "Публичный",
-  "Private": "Приватный",
-  "PrivateWithLink": "Приватный с ссылкой",
+  "Public": "Открытый",
+  "Private": "Закрытый",
+  "PrivateWithLink": "Закрытый (с ссылкой)",
   "Create": "Создать",
   "Close": "Закрыть"
 }

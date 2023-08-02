@@ -1,15 +1,18 @@
 import { faArrowsRotate, faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useState } from "react";
+import { useTranslation } from 'react-i18next';
 import useAuthentificationAsync from '../../../hooks/useAuthentificationAsync';
 import { useSearchByUserIdAsyncQuery } from '../../../store/api/CommunityUser.api';
 import CreateCommunity from './CreateCommunity';
 import InvitesToCommunity from './InvitesToCommunity';
-
-import '../../../styles/communication/communities.scss';
 import MyCommunitiesItem from './MyCommunitiesItem';
 
+import '../../../styles/communication/communities.scss';
+
 const MyCommunities = () => {
+    const { t } = useTranslation("communication/myEnvironment/myCommunities");
+
     const [, customer] = useAuthentificationAsync();
     const { data: userCommunities, isLoading } = useSearchByUserIdAsyncQuery(customer?.id);
 
@@ -22,16 +25,29 @@ const MyCommunities = () => {
 
     return (
         <div>
-            <InvitesToCommunity customer={customer} />
+            <InvitesToCommunity
+                customer={customer}
+            />
             <div className="communities__list">
                 <div className="title">
-                    <button type="button" className="btn btn-success" onClick={() => setShowCreateCommunity((item) => !item)}>Create</button>
+                    <button type="button" className="btn btn-success" onClick={() => setShowCreateCommunity((item) => !item)}>{t("Create")}</button>
                     <div className="content">
-                        <FontAwesomeIcon icon={faArrowsRotate} title="Refresh" />
-                        <div>My communities</div>
+                        <FontAwesomeIcon
+                            icon={faArrowsRotate}
+                            title={t("Refresh")}
+                        />
+                        <div>{t("MyCommunitites")}</div>
                         {showMyCommunities
-                            ? <FontAwesomeIcon icon={faEye} title="Hide" onClick={() => setShowMyCommunities((item) => !item)} />
-                            : <FontAwesomeIcon icon={faEyeSlash} title="Show" onClick={() => setShowMyCommunities((item) => !item)} />
+                            ? <FontAwesomeIcon
+                                icon={faEye}
+                                title={t("Hide")}
+                                onClick={() => setShowMyCommunities((item) => !item)}
+                            />
+                            : <FontAwesomeIcon
+                                icon={faEyeSlash}
+                                title={t("Show")}
+                                onClick={() => setShowMyCommunities((item) => !item)}
+                            />
                         }
                     </div>
                 </div>
@@ -39,14 +55,19 @@ const MyCommunities = () => {
                     {
                         userCommunities?.map((item) => (
                             <li key={item.id}>
-                                <MyCommunitiesItem userCommunity={item} />
+                                <MyCommunitiesItem
+                                    userCommunity={item}
+                                />
                             </li>
                         ))
                     }
                 </ul>
             </div>
             {showCreateCommunity &&
-                <CreateCommunity customer={customer} setShowCreateCommunity={setShowCreateCommunity} />
+                <CreateCommunity
+                    customer={customer}
+                    setShowCreateCommunity={setShowCreateCommunity}
+                />
             }
         </div>
     );

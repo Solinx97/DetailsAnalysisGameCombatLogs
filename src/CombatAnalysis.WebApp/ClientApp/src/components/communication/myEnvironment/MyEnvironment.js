@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import Friends from './Friends';
 import MyCommunities from './MyCommunities';
 import MyFeed from './MyFeed';
@@ -7,28 +8,30 @@ import Profile from './Profile';
 import '../../../styles/communication/myEnvironment.scss';
 
 const MyEnvironment = ({ openCommunity }) => {
+    const { t } = useTranslation("communication/myEnvironment/myEnvironment");
+
     const [currentMenuItem, setCurrentMenuItem] = useState(0);
 
     const render = () => {
         return (<div className="my-environment">
             <ul className="my-environment__menu">
                 <li>
-                    <button type="button" className="btn btn-outline-success" onClick={() => setCurrentMenuItem(1)}>Profile</button>
+                    <button type="button" className="btn btn-outline-success" onClick={() => setCurrentMenuItem(1)}>{t("Profile")}</button>
                 </li>
                 <li>
-                    <button type="button" className="btn btn-outline-info" onClick={() => setCurrentMenuItem(0)}>Feed</button>
-                    <button type="button" className="btn btn-outline-info" onClick={() => setCurrentMenuItem(2)}>Friends</button>
-                    <button type="button" className="btn btn-outline-info" onClick={() => setCurrentMenuItem(3)}>Communities</button>
+                    <button type="button" className="btn btn-outline-info" onClick={() => setCurrentMenuItem(0)}>{t("Feed")}</button>
+                    <button type="button" className="btn btn-outline-info" onClick={() => setCurrentMenuItem(2)}>{t("Friends")}</button>
+                    <button type="button" className="btn btn-outline-info" onClick={() => setCurrentMenuItem(3)}>{t("Communities")}</button>
                 </li>
                 <li>
-                    <button type="button" className="btn btn-outline-info" onClick={() => setCurrentMenuItem(6)}>Recomendations</button>
+                    <button type="button" className="btn btn-outline-info" onClick={() => setCurrentMenuItem(6)}>{t("Recomendations")}</button>
                 </li>
             </ul>
             <div>
-                {currentMenuItem === 0 ? <MyFeed/> : null}
-                {currentMenuItem === 1 ? <Profile /> : null}
-                {currentMenuItem === 2 ? <Friends /> : null}
-                {currentMenuItem === 3 ? <MyCommunities openCommunity={openCommunity} /> : null}
+                {currentMenuItem === 0 && <MyFeed/>}
+                {currentMenuItem === 1 && <Profile />}
+                {currentMenuItem === 2 && <Friends />}
+                {currentMenuItem === 3 && <MyCommunities openCommunity={openCommunity} />}
             </div>
         </div>);
     }

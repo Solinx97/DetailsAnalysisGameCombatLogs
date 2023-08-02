@@ -1,10 +1,13 @@
 import React, { useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useCreateCommunityAsyncMutation } from '../../../store/api/Community.api';
 import { useCreateCommunityUserAsyncMutation } from '../../../store/api/CommunityUser.api';
 
 import '../../../styles/communication/createCommunity.scss';
 
 const CreateCommunity = ({ customer, setShowCreateCommunity }) => {
+    const { t } = useTranslation("communication/myEnvironment/createCommunity");
+
     const name = useRef(null);
     const description = useRef(null);
     const policyType = useRef(null);
@@ -48,26 +51,26 @@ const CreateCommunity = ({ customer, setShowCreateCommunity }) => {
         return (
             <div className="create-community">
                 <form onSubmit={handleSubmitAsync}>
-                    <p>Create community</p>
+                    <p>{t("CreateCommunity")}</p>
                     <div className="mb-3">
-                        <label htmlFor="inputName" className="form-label">Name</label>
+                        <label htmlFor="inputName" className="form-label">{t("Name")}</label>
                         <input type="text" className="form-control" id="inputName" ref={name} />
                     </div>
                     <div className="mb-3">
-                        <label htmlFor="inputDescription" className="form-label">Description</label>
+                        <label htmlFor="inputDescription" className="form-label">{t("Description")}</label>
                         <input type="text" className="form-control" id="inputDescription" ref={description} />
                     </div>
                     <div className="mb-3">
-                        <label htmlFor="inputDescription" className="form-label">Policy</label>
+                        <label htmlFor="inputDescription" className="form-label">{t("Policy")}</label>
                         <select className="form-select" ref={policyType}>
-                            <option value="1">Open</option>
-                            <option value="2">Close</option>
-                            <option value="3">Close (use link)</option>
+                            <option value="1">{t("Open")}</option>
+                            <option value="2">{t("Close")}</option>
+                            <option value="3">{t("CloseWithLink")}</option>
                         </select>
                     </div>
                     <div>
-                        <input type="submit" className="btn btn-primary" value="Create" />
-                        <input type="button" className="btn btn-info" value="Cancel" onClick={() => setShowCreateCommunity(false)} />
+                        <input type="submit" className="btn btn-primary" value={t("Create")} />
+                        <input type="button" className="btn btn-info" value={t("Cancel")} onClick={() => setShowCreateCommunity(false)} />
                     </div>
                 </form>
             </div>

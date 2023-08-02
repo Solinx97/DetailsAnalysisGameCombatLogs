@@ -1,0 +1,23 @@
+{
+  "Open": "Open",
+  "OpenExplain": "Any users can search and connect to this community free",
+  "Private": "Private",
+  "PrivateExplain": "This is community is hide and allow only invite another users from members",
+  "PrivateWithLink": "Private (with link)",
+  "PrivateWithLinkExplain": "This is community is hide and allow invite another users from members or from special link",
+  "Close": "Close",
+  "Leave": "Leave",
+  "LeaveConfirm": "You sure, that you want to leave from community",
+  "LeaveOwnerConfirm": "DANGER: You are owner of this community and if you leave this community will be removed. All content will be removed and can't be restored in future!!!",
+  "LeaveAlert": "You want to leave",
+  "Description": "Description",
+  "Hide": "Hide",
+  "Show": "Show",
+  "Refresh": "Refresh",
+  "NewPost": "New post",
+  "Cancel": "Cancel",
+  "Create": "Create",
+  "Discussions": "Discussions",
+  "Friends": "Friends",
+  "Contacts": "Contacts"
+}

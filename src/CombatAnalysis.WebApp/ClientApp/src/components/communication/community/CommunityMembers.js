@@ -1,6 +1,7 @@
 import { faGear, faPlus } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useSearchByCommunityIdAsyncQuery } from '../../../store/api/ChatApi';
 import { useCreateInviteAsyncMutation } from '../../../store/api/InviteToCommunity.api';
 import AddPeople from '../../AddPeople';
@@ -9,6 +10,8 @@ import CommunityMemberItem from './CommunityMemberItem';
 import '../../../styles/communication/selectedCommunity.scss';
 
 const CommunityMembers = ({ community, customer }) => {
+    const { t } = useTranslation("communication/community/communityMembers");
+
     const [showAddPeople, setShowAddPeople] = useState(false);
     const [communityUsersId, setCommunityUsersId] = useState([]);
     const [createInviteAsyncMut] = useCreateInviteAsyncMutation();
@@ -51,15 +54,15 @@ const CommunityMembers = ({ community, customer }) => {
             />
         }
         <div className="title">
-            <div>Members</div>
+            <div>{t("Members")}</div>
             <div className="tool">
                 <FontAwesomeIcon
                     icon={faGear}
-                    title="Settings"
+                    title={t("Settings")}
                 />
                 <FontAwesomeIcon
                     icon={faPlus}
-                    title="Add a new people"
+                    title={t("AddNewPeople")}
                     onClick={() => setShowAddPeople(true)}
                 />
             </div>
