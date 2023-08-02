@@ -1,20 +1,23 @@
 ﻿import { faPaperPlane, faPersonWalkingArrowRight } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useRef } from "react";
+import { useTranslation } from 'react-i18next';
 import { useFindPersonalChatMessageByChatIdQuery } from '../../../store/api/ChatApi';
+import { useGetCustomerByIdQuery } from '../../../store/api/Customer.api';
 import { useRemovePersonalChatAsyncMutation, useUpdatePersonalChatAsyncMutation } from '../../../store/api/PersonalChat.api';
 import {
     useCreatePersonalChatMessageAsyncMutation, useRemovePersonalChatMessageAsyncMutation,
     useUpdatePersonalChatMessageAsyncMutation
 } from '../../../store/api/PersonalChatMessage.api';
-import ChatMessageItem from './ChatMessageItem';
-import { useGetCustomerByIdQuery } from '../../../store/api/Customer.api';
+import ChatMessage from './ChatMessage';
 
 import "../../../styles/communication/personalChat.scss";
 
 const getPersonalChatMessagesInterval = 1000;
 
 const PersonalChat = ({ chat, customer, setSelectedChat, companionId }) => {
+    const { t } = useTranslation("communication/chats/personalChat");
+
     const messageInput = useRef(null);
 
     const { data: messages, isLoading } = useFindPersonalChatMessageByChatIdQuery(chat.id, {
@@ -86,7 +89,7 @@ const PersonalChat = ({ chat, customer, setSelectedChat, companionId }) => {
                     <div className="title__companion">{user.username}</div>
                     <FontAwesomeIcon
                         icon={faPersonWalkingArrowRight}
-                        title="Remove chat"
+                        title={t("LeaveFromChat")}
                         className="remove-chat-handler"
                         onClick={() => leaveFromChatAsync()}
                     />
@@ -96,7 +99,7 @@ const PersonalChat = ({ chat, customer, setSelectedChat, companionId }) => {
                 {
                     messages?.map((item) => (
                         <li key={item.id}>
-                            <ChatMessageItem
+                            <ChatMessage
                                 customer={customer}
                                 message={item}
                                 updateMessageAsync={updateMessageAsync}
@@ -107,10 +110,10 @@ const PersonalChat = ({ chat, customer, setSelectedChat, companionId }) => {
                 }
             </ul>
             <div className="form-group chats__messages_input-message">
-                <input type="text" className="form-control" placeholder="Type your message" ref={messageInput} />
+                <input type="text" className="form-control" placeholder={t("TypeYourMessage")} ref={messageInput} />
                 <FontAwesomeIcon
                     icon={faPaperPlane}
-                    title="Send message"
+                    title={t("SendMessage")}
                     onClick={sendMessageAsync}
                 />
             </div>

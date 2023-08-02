@@ -6,8 +6,8 @@ import useAuthentificationAsync from '../../../hooks/useAuthentificationAsync';
 import { useGetGroupChatUserByUserIdQuery, useGetPersonalChatsByUserIdQuery } from '../../../store/api/ChatApi';
 import CreateGroupChat from './CreateGroupChat';
 import GroupChat from './GroupChat';
-import MyGroupChatItem from './MyGroupChatItem';
-import MyPersonalChatItem from './MyPersonalChatItem';
+import MyGroupChat from './MyGroupChat';
+import MyPersonalChat from './MyPersonalChat';
 import PersonalChat from './PersonalChat';
 
 import "../../../styles/communication/chats.scss";
@@ -15,7 +15,7 @@ import "../../../styles/communication/chats.scss";
 const getGroupChatUsersInterval = 2000;
 
 const Chats = () => {
-    const { t, i18n } = useTranslation("communication/chats/chats");
+    const { t } = useTranslation("communication/chats/chats");
 
     const [, customer] = useAuthentificationAsync();
 
@@ -74,10 +74,9 @@ const Chats = () => {
                     <ul className="chats__my-chats__group-chats">
                         {
                             groupChatUsers?.map((item) => (
-                                <li key={item.id}>
-                                    <MyGroupChatItem
+                                <li key={item.id} className={selectedGroupChat?.id === item?.groupChatId ? `active` : ``}>
+                                    <MyGroupChat
                                         groupChatId={item.groupChatId}
-                                        selectedGroupChat={selectedGroupChat}
                                         setSelectedGroupChat={setSelectedGroupChat}
                                     />
                                 </li>
@@ -102,8 +101,8 @@ const Chats = () => {
                     <ul className="chats__my-chats__personal-chats">
                         {
                             personalChats?.map((item) => (
-                                <li key={item.id}>
-                                    <MyPersonalChatItem
+                                <li key={item.id} className={selectedPersonalChat?.id === item?.id ? `active` : ``}>
+                                    <MyPersonalChat
                                         personalChat={item}
                                         selectedGroupChatId={selectedPersonalChat?.id}
                                         setSelectedPersonalChat={setSelectedPersonalChat}

@@ -7,7 +7,7 @@ import {
 const DetailsPieChart = ({ payload }) => {
     const [activeIndex, setActiveIndex] = useState(0);
 
-    const { t, i18n } = useTranslation("childs/detailsPieChart");
+    const { t } = useTranslation("childs/detailsPieChart");
 
     const renderActiveShape = (props) => {
         const RADIAN = Math.PI / 180;

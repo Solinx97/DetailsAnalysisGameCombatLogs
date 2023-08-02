@@ -6,7 +6,7 @@ import { useTranslation } from 'react-i18next';
 import { NavLink } from 'react-router-dom';
 
 const GeneralAnalysisItem = ({ combat, combatLogId }) => {
-    const { t, i18n } = useTranslation("generalAnalysis");
+    const { t } = useTranslation("generalAnalysis");
 
     const getCombatStatus = (status) => {
         return status ? t("Win") : t("Defeat");

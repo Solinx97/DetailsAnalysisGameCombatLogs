@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 
 const CommonPlayerInform = ({ combatPlayer, combatId, combatLogId }) => {
-    const { t, i18n } = useTranslation("detailsPlayer");
+    const { t } = useTranslation("detailsPlayer");
     const navigate = useNavigate();
 
     return (

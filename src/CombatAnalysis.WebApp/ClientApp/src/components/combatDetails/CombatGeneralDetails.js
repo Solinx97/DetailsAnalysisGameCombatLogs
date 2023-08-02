@@ -9,7 +9,7 @@ import "../../styles/combatGeneralDetails.scss";
 
 const CombatGeneralDetails = () => {
     const navigate = useNavigate();
-    const { t, i18n } = useTranslation("combatDetails/combatGeneralDetails");
+    const { t } = useTranslation("combatDetails/combatGeneralDetails");
 
     const [combatPlayerId, setCombatPlayerId] = useState(0);
     const [combatPlayer, setCombatPlayer] = useState(null);

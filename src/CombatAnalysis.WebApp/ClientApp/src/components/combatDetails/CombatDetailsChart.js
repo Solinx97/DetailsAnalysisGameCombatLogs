@@ -6,7 +6,7 @@ import { CartesianGrid, Legend, Line, LineChart, Tooltip, XAxis, YAxis } from 'r
 import useTime from '../../hooks/useTime';
 
 const CombatDetailsChart = ({ detailsTypeName, detailsData, setDetailsDataRender, getFilteredCombatDataList }) => {
-    const { t, i18n } = useTranslation("combatDetails/combatDetailsChart");
+    const { t } = useTranslation("combatDetails/combatDetailsChart");
 
     const [detailsChartData, setDetailsChartData] = useState([]);
     const [useFilter, setUseFilter] = useState(false);

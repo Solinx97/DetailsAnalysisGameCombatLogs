@@ -11,7 +11,7 @@ import UserInformation from './../UserInformation';
 import '../../../styles/communication/people.scss';
 
 const People = ({ updateCurrentMenuItem }) => {
-    const { t, i18n } = useTranslation("communication/people/people");
+    const { t } = useTranslation("communication/people/people");
 
     const [, customer] = useAuthentificationAsync();
 

@@ -8,7 +8,7 @@ import "../../styles/generalAnalysis.scss";
 
 const GeneralAnalysis = () => {
     const navigate = useNavigate();
-    const { t, i18n } = useTranslation("combatDetails/generalAnalysis");
+    const { t } = useTranslation("combatDetails/generalAnalysis");
 
     const [combatLogId, setCombatLogId] = useState(0);
     const [combats, setCombats] = useState([]);

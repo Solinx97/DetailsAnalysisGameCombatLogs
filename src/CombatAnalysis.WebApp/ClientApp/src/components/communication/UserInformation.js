@@ -8,7 +8,7 @@ import { useFriendSearchByUserIdQuery } from '../../store/api/UserApi';
 import './../../styles/communication/userInformation.scss';
 
 const UserInformation = ({ customer, closeUserInformation }) => {
-    const { t, i18n } = useTranslation("communication/userInformation");
+    const { t } = useTranslation("communication/userInformation");
 
     const { data: friends, isLoading } = useFriendSearchByUserIdQuery(customer?.id);
 

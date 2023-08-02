@@ -9,14 +9,17 @@ import {
 } from '../../../store/api/GroupChatMessage.api';
 import { useCreateGroupChatUserAsyncMutation, useGetGroupChatUserByChatIdQuery, useRemoveGroupChatUserAsyncMutation } from '../../../store/api/GroupChatUser.api';
 import AddPeople from '../../AddPeople';
-import ChatMessageItem from './ChatMessageItem';
+import ChatMessage from './ChatMessage';
 import GroupChatUser from './GroupChatUser';
+import { useTranslation } from 'react-i18next';
 
 import "../../../styles/communication/groupChat.scss";
 
 const getGroupChatMessagesInterval = 1000;
 
 const GroupChat = ({ chat, customer, setSelectedChat }) => {
+    const { t } = useTranslation("communication/chats/groupChat");
+
     const [showAddPeople, setShowAddPeople] = useState(false);
     const [peopleInspectionModeOn, setPeopleInspectionMode] = useState(false);
     const [settingsIsShow, setSettingsIsShow] = useState(false);
@@ -106,7 +109,8 @@ const GroupChat = ({ chat, customer, setSelectedChat }) => {
                 <div className="title__container">
                     <div className="title__companion">{chat.name}</div>
                     <FontAwesomeIcon
-                        icon={faGear} title="Settings"
+                        icon={faGear}
+                        title={t("Settings")}
                         className={`settings-handler${settingsIsShow ? "-active" : ""}`}
                         onClick={() => setSettingsIsShow(!settingsIsShow)}
                     />
@@ -116,27 +120,27 @@ const GroupChat = ({ chat, customer, setSelectedChat }) => {
                 <div>
                     <FontAwesomeIcon
                         icon={faPerson}
-                        title="Group members"
+                        title={t("GroupMembers")}
                         className={`people-inspection-handler${peopleInspectionModeOn ? "-active" : ""}`}
                         onClick={() => setPeopleInspectionMode((item) => !item)}
                     />
                     <FontAwesomeIcon
                         icon={faUserPlus}
-                        title="Invite a new person"
+                        title={t("InviteNewUser")}
                         className={`add-new-people-handler${showAddPeople ? "-active" : ""}`}
                         onClick={() => setShowAddPeople((item) => !item)}
                     />
                     <FontAwesomeIcon
                         icon={faFileWaveform}
-                        title="Show description"
+                        title={t("ShowDescription")}
                     />
                     <FontAwesomeIcon
                         icon={faFolderOpen}
-                        title="Show documents"
+                        title={t("ShowDocuments")}
                     />
                     <FontAwesomeIcon
                         icon={faRightFromBracket}
-                        title="Leave from chat"
+                        title={t("LeaveFromChat")}
                         className="leave-from-chat"
                         onClick={getChatUserByMyIdAsync}
                     />
@@ -157,7 +161,7 @@ const GroupChat = ({ chat, customer, setSelectedChat }) => {
                 {
                     messages.map((item) => (
                         <li key={item.id}>
-                            <ChatMessageItem
+                            <ChatMessage
                                 customer={customer}
                                 message={item}
                                 updateMessageAsync={updateMessageAsync}
@@ -168,10 +172,10 @@ const GroupChat = ({ chat, customer, setSelectedChat }) => {
                 }
             </ul>
             <div className="form-group chats__messages_input-message">
-                <input type="text" className="form-control" placeholder="Type your message" ref={messageInput} />
+                <input type="text" className="form-control" placeholder={t("TypeYourMessage")} ref={messageInput} />
                 <FontAwesomeIcon
                     icon={faPaperPlane}
-                    title="Send message"
+                    title={t("SendMessage")}
                     onClick={async () => await sendMessageAsync()}
                 />
             </div>

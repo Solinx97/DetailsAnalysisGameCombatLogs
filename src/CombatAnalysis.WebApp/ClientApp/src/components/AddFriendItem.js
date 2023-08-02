@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { useGetCustomerByIdQuery } from '../store/api/Customer.api';
 
 const AddFriendItem = ({ friendUserId, createInviteAsync, filterContent }) => {
-    const { t, i18n } = useTranslation("addFriendItem");
+    const { t } = useTranslation("addFriendItem");
 
     const { data: user, isLoading } = useGetCustomerByIdQuery(friendUserId);
 

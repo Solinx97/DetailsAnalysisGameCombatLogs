@@ -8,7 +8,7 @@ import { useCreateUserPostAsyncMutation } from '../../store/api/UserPost.api';
 import FeedParticipants from './FeedParticipants';
 
 const Feed = () => {
-    const { t, i18n } = useTranslation("communication/feed");
+    const { t } = useTranslation("communication/feed");
 
     const [, customer] = useAuthentificationAsync();
 

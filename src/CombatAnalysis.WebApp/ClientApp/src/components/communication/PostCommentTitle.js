@@ -5,7 +5,7 @@ import { useGetCustomerByIdQuery } from '../../store/api/Customer.api';
 import { useRemovePostCommentAsyncMutation } from '../../store/api/PostComment.api';
 
 const PostCommentTitle = ({ customerId, comment, dateFormatting, postId, updatePostAsync }) => {
-    const { t, i18n } = useTranslation("communication/postCommentTitle");
+    const { t } = useTranslation("communication/postCommentTitle");
 
     const { data: targetCustomer, isLoading } = useGetCustomerByIdQuery(comment?.ownerId);
 

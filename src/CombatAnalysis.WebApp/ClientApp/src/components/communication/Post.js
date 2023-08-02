@@ -12,7 +12,7 @@ import PostTitle from './PostTitle';
 import '../../styles/communication/post.scss';
 
 const Post = ({ customer, targetPostType, deletePostAsync }) => {
-    const { t, i18n } = useTranslation("communication/post");
+    const { t } = useTranslation("communication/post");
 
     const { data: post, isLoading } = useGetPostByIdQuery(targetPostType?.postId);
 

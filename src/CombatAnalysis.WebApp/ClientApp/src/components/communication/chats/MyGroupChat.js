@@ -1,6 +1,6 @@
 import { useGetGroupChatByIdQuery } from '../../../store/api/ChatApi';
 
-const MyGroupChatItem = ({ groupChatId, selectedGroupChat, setSelectedGroupChat }) => {
+const MyGroupChat = ({ groupChatId, setSelectedGroupChat }) => {
     const { data: groupChat, isLoading } = useGetGroupChatByIdQuery(groupChatId);
 
     if (isLoading) {
@@ -8,12 +8,11 @@ const MyGroupChatItem = ({ groupChatId, selectedGroupChat, setSelectedGroupChat 
     }
 
     return (
-        <span className={selectedGroupChat !== null && selectedGroupChat?.id === groupChat?.id ? `active` : ``}
-            onClick={() => setSelectedGroupChat(groupChat)}>
+        <span onClick={() => setSelectedGroupChat(groupChat)}>
             <div><strong>{groupChat?.name}</strong></div>
             <div className="last-message" title={groupChat?.lastMessage}>{groupChat?.lastMessage}</div>
         </span>
     );
 }
 
-export default MyGroupChatItem;
+export default MyGroupChat;

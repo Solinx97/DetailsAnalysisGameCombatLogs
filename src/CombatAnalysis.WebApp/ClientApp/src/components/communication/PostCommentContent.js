@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { useUpdatePostCommentAsyncMutation } from '../../store/api/PostComment.api';
 
 const PostCommentContent = ({ customerId, comment }) => {
-    const { t, i18n } = useTranslation("communication/postCommentContent");
+    const { t } = useTranslation("communication/postCommentContent");
 
     const [updatePostCommentAsyncMut] = useUpdatePostCommentAsyncMutation();
 

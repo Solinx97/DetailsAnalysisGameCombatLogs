@@ -8,7 +8,7 @@ import CombatDetailsChart from './CombatDetailsChart';
 import "../../styles/combatDetails.scss";
 
 const CombatDetails = ({ combatPlayerId, detailsType, detailsTypeName, username }) => {
-    const { t, i18n } = useTranslation("combatDetails/combatDetails");
+    const { t } = useTranslation("combatDetails/combatDetails");
 
     const [combatDetailsData, setCombatDetailsData] = useState([]);
     const [detailsDataRender, setDetailsDataRender] = useState(null);

@@ -5,7 +5,7 @@ import useAuthentificationAsync from '../hooks/useAuthentificationAsync';
 const Home = () => {
     const navigate = useNavigate();
 
-    const { t, i18n } = useTranslation("home");
+    const { t } = useTranslation("home");
 
     const [, , isAuth] = useAuthentificationAsync();
 

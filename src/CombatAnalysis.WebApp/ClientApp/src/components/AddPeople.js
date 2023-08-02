@@ -13,7 +13,7 @@ const hideInviteAlertTimer = 2000;
 let hideInviteAlertTimeout = null;
 
 const AddPeople = ({ customer, createInviteAsync, communityUsersId, setShowAddPeople }) => {
-    const { t, i18n } = useTranslation("addPeople");
+    const { t } = useTranslation("addPeople");
 
     const [maxPeopleItems, setMaxPeopleItems] = useState(defaultMaxPeopleItems);
     const [maxFriendsItems, setMaxFriendsItems] = useState(defaultMaxFriendsItems);

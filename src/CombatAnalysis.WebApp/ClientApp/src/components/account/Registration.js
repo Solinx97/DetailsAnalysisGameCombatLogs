@@ -11,7 +11,7 @@ const Registration = () => {
     const [createCustomerMutAsync] = useCreateAsyncMutation();
 
     const navigate = useNavigate();
-    const { t, i18n } = useTranslation("account/registration");
+    const { t } = useTranslation("account/registration");
 
     const [email, setEmail] = useState("");
     const [username, setUsername] = useState("");
@@ -89,7 +89,7 @@ const Registration = () => {
                     <label htmlFor="inputPassword" className="form-label">{t("Password")}</label>
                     <input type="password" className="form-control" id="inputPassword" onChange={handlePasswordChange} />
                 </div>
-                <input type="submit" className="btn btn-primary" value="Registration" />
+                <input type="submit" className="btn btn-primary" value={t("Registration")} />
                 <div className="registration__error-message" style={{ display: showErrorMessage ? "flex" : "none" }}>{t("EmailExist")}</div>
             </form>
         );

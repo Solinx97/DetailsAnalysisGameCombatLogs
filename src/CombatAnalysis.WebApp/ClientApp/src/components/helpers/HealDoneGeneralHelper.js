@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useTranslation } from 'react-i18next';
 
 const HealDoneGemeralHelper = ({ generalData }) => {
-    const { t, i18n } = useTranslation("helpers/combatDetailsHelper");
+    const { t } = useTranslation("helpers/combatDetailsHelper");
 
     const createGeneralItem = (element) => {
         return <li key={element.id}>

@@ -6,7 +6,7 @@ import { useGetCustomerByIdQuery } from '../../store/api/Customer.api';
 import UserInformation from './UserInformation';
 
 const PostTitle = ({ post, dateFormatting, deletePostAsync }) => {
-    const { t, i18n } = useTranslation("communication/postTitle");
+    const { t } = useTranslation("communication/postTitle");
 
     const { data: targetCustomer, isLoading } = useGetCustomerByIdQuery(post?.ownerId);
 

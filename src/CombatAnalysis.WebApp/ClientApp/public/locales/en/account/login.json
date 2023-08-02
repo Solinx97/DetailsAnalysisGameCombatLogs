@@ -2,5 +2,6 @@
   "Email": "Email address",
   "Password": "Password",
   "CheckMeOut": "Check me out",
-  "IncorrectData": "Incorrect email/password. Try again"
+  "IncorrectData": "Incorrect email/password. Try again",
+  "Login": "Login"
 }

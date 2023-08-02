@@ -11,7 +11,7 @@ import People from './people/People';
 import '../../styles/communication/communication.scss';
 
 const Communication = () => {
-    const { t, i18n } = useTranslation("communication/communication");
+    const { t } = useTranslation("communication/communication");
 
     const [currentMenuItem, setCurrentMenuItem] = useState(0);
     const [isOpenChat, setIsOpenChat] = useState(false);
