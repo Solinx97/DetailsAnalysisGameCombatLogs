@@ -27,7 +27,7 @@ const PlayerInformation = ({ combatPlayers, combatId, combatLogId }) => {
                 A: playerData.damageTaken,
             },
             {
-                subject: t("Resources"),
+                subject: t("ResourcesRecovery"),
                 A: playerData.energyRecovery,
             },
             {

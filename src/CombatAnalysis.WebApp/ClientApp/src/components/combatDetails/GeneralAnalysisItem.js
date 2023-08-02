@@ -6,7 +6,7 @@ import { useTranslation } from 'react-i18next';
 import { NavLink } from 'react-router-dom';
 
 const GeneralAnalysisItem = ({ combat, combatLogId }) => {
-    const { t } = useTranslation("generalAnalysis");
+    const { t } = useTranslation("combatDetails/generalAnalysis");
 
     const getCombatStatus = (status) => {
         return status ? t("Win") : t("Defeat");
@@ -125,7 +125,9 @@ const GeneralAnalysisItem = ({ combat, combatLogId }) => {
                         ? <NavLink
                             className="card-link"
                             to={`/details-specifical-combat?id=${combat.id}&combatLogId=${combatLogId}`}
-                        >{t("MoreDetails")}</NavLink>
+                        >
+                            {t("MoreDetails")}
+                        </NavLink>
                         : <div>{t("NeedWait")}</div>
                     }
                 </div>

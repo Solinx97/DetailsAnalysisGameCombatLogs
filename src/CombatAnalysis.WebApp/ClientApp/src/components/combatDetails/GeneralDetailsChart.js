@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import DetailsPieChart from '../childs/DetailsPieChart';
 
 const GeneralDetailsChart = ({ combatPlayers }) => {
-    const { t } = useTranslation("detailsSpecificalCombat");
+    const { t } = useTranslation("combatDetails/detailsSpecificalCombat");
 
     const [damageDonePieChart, setDamageDonePieChart] = useState({});
     const [healDonePieChart, setHealDonePieChart] = useState({});

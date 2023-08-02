@@ -4,7 +4,7 @@ import { Legend, RadialBar, RadialBarChart } from 'recharts';
 import useCombatGeneralData from '../../hooks/useCombatGeneralData';
 
 const CombatGeneralDetailsItem = ({ combatPlayerUsername, combatPlayerId, detailsType, detailsTypeName }) => {
-    const { t } = useTranslation("combatGeneralDetails");
+    const { t } = useTranslation("combatDetails/combatGeneralDetails");
 
     const [spells, setSpells] = useState([]);
     const [showGeneralChart, setShowGeneralChart] = useState(false);

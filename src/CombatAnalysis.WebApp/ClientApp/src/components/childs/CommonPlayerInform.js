@@ -6,6 +6,7 @@ import { useTranslation } from 'react-i18next';
 
 const CommonPlayerInform = ({ combatPlayer, combatId, combatLogId }) => {
     const { t } = useTranslation("detailsPlayer");
+
     const navigate = useNavigate();
 
     return (
