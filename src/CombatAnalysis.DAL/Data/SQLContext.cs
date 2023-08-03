@@ -24,6 +24,10 @@ public class SQLContext : DbContext
 
     public DbSet<RefreshToken>? RefreshToken { get; }
 
+    public DbSet<AccessToken>? AccessToken { get; }
+
+    public DbSet<Secret>? Secrets { get; }
+
     public DbSet<PersonalChat>? PersonalChat { get; }
 
     #region Communication

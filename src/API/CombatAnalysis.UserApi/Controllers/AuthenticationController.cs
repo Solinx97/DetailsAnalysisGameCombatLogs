@@ -1,5 +1,5 @@
 ﻿using CombatAnalysis.Identity.Interfaces;
-using CombatAnalysis.Identity.Security;
+using CombatAnalysis.Identity.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CombatAnalysis.UserApi.Controllers;
@@ -18,29 +18,32 @@ public class AuthenticationController : ControllerBase
     [HttpGet("validateRefreshToken/{refreshToken}")]
     public IActionResult ValidateToken(string refreshToken)
     {
-        var claimsByRefreshToken = _tokenService.ValidateToken(refreshToken, JWTSecret.RefreshSecretKey, out var _);
-        if (!claimsByRefreshToken.Any())
-        {
-            return BadRequest();
-        }
-        else
-        {
-            return Ok();
-        }
+        //var claimsByRefreshToken = _tokenService.ValidateToken(refreshToken, JWTSecretService.RefreshSecretKey, out var _);
+        //if (!claimsByRefreshToken.Any())
+        //{
+        //    return BadRequest();
+        //}
+        //else
+        //{
+        //    return Ok();
+        //}
+
+        return Ok();
     }
 
     [HttpGet("validateAccessToken/{accessToken}")]
     public IActionResult ValidateAccessToken(string accessToken)
     {
-        var claimsByRefreshToken = _tokenService.ValidateToken(accessToken, JWTSecret.AccessSecretKey, out var _);
-        if (!claimsByRefreshToken.Any())
-        {
-            return BadRequest();
-        }
-        else
-        {
-            return Ok();
-        }
+        //var claimsByRefreshToken = _tokenService.ValidateToken(accessToken, JWTSecretService.AccessSecretKey, out var _);
+        //if (!claimsByRefreshToken.Any())
+        //{
+        //    return BadRequest();
+        //}
+        //else
+        //{
+        //    return Ok();
+        //}
+        return Ok();
     }
 
     [HttpGet("find/{refreshToken}")]

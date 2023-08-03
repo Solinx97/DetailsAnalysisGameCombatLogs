@@ -1,4 +1,5 @@
 ﻿using CombatAnalysis.DAL.Data;
+using CombatAnalysis.DAL.Entities.Authentication;
 using CombatAnalysis.DAL.Entities.Chat;
 using CombatAnalysis.DAL.Entities.Community;
 using CombatAnalysis.DAL.Entities.Post;
@@ -43,7 +44,8 @@ public static class DataCollectionExtensions
         });
 
         services.AddScoped<IUserRepository, SQLUserRepository>();
-        services.AddScoped<ITokenRepository, SQLTokenRepository>();
+        services.AddScoped<ITokenRepository<RefreshToken>, SQLRefreshTokenRepository>();
+        services.AddScoped<ITokenRepository<AccessToken>, SQLAccessTokenRepository>();
         services.AddScoped<IGenericRepository<Customer, string>, SQLRepository<Customer, string>>();
         services.AddScoped<IGenericRepository<Friend, int>, SQLRepository<Friend, int>>();
         services.AddScoped<IGenericRepository<BannedUser, int>, SQLRepository<BannedUser, int>>();
@@ -85,7 +87,8 @@ public static class DataCollectionExtensions
         services.AddDbContext<FirebaseContext>();
 
         services.AddScoped<IUserRepository, FIrebaseUserRepository>();
-        services.AddScoped<ITokenRepository, FirebaseTokenRepository>();
+        services.AddScoped<ITokenRepository<RefreshToken>, FirebaseRefreshTokenRepository>();
+        services.AddScoped<ITokenRepository<AccessToken>, FirebaseAccessTokenRepository>();
 
         services.AddScoped(typeof(IGenericRepository<,>), typeof(FirebaseRepositroy<,>));
     }

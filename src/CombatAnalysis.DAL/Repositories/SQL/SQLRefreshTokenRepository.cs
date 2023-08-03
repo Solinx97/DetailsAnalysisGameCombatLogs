@@ -5,11 +5,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CombatAnalysis.DAL.Repositories.SQL;
 
-public class SQLTokenRepository : ITokenRepository
+public class SQLRefreshTokenRepository : ITokenRepository<RefreshToken>
 {
     private readonly SQLContext _context;
 
-    public SQLTokenRepository(SQLContext context)
+    public SQLRefreshTokenRepository(SQLContext context)
     {
         _context = context;
     }

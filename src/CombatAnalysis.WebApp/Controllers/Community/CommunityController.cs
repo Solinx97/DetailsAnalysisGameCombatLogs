@@ -20,7 +20,12 @@ public class CommunityController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> Create(CommunityModel newCommunity)
     {
-        var responseMessage = await _httpClient.PostAsync("Community", JsonContent.Create(newCommunity), Port.ChatApi);
+        if (!HttpContext.Request.Cookies.TryGetValue("refreshToken", out var refreshToken))
+        {
+            return Unauthorized();
+        }
+
+        var responseMessage = await _httpClient.PostAsync("Community", refreshToken, JsonContent.Create(newCommunity), Port.ChatApi);
         if (responseMessage.StatusCode == System.Net.HttpStatusCode.OK)
         {
             var community = await responseMessage.Content.ReadFromJsonAsync<CommunityModel>();
@@ -33,7 +38,12 @@ public class CommunityController : ControllerBase
     [HttpGet]
     public async Task<IActionResult> GetAll()
     {
-        var responseMessage = await _httpClient.GetAsync("Community", Port.ChatApi);
+        if (!HttpContext.Request.Cookies.TryGetValue("refreshToken", out var refreshToken))
+        {
+            return Unauthorized();
+        }
+
+        var responseMessage = await _httpClient.GetAsync("Community", refreshToken, Port.ChatApi);
         if (responseMessage.StatusCode == System.Net.HttpStatusCode.OK)
         {
             var communities = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<CommunityModel>>();
@@ -48,7 +58,12 @@ public class CommunityController : ControllerBase
     [HttpGet("{id:int:min(1)}")]
     public async Task<IActionResult> GetById(int id)
     {
-        var responseMessage = await _httpClient.GetAsync($"Community/{id}", Port.ChatApi);
+        if (!HttpContext.Request.Cookies.TryGetValue("refreshToken", out var refreshToken))
+        {
+            return Unauthorized();
+        }
+
+        var responseMessage = await _httpClient.GetAsync($"Community/{id}", refreshToken, Port.ChatApi);
         if (responseMessage.StatusCode == System.Net.HttpStatusCode.OK)
         {
             var community = await responseMessage.Content.ReadFromJsonAsync<CommunityModel>();

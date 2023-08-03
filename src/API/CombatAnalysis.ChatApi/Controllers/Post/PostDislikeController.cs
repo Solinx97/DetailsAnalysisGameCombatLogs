@@ -2,12 +2,14 @@
 using CombatAnalysis.BL.DTO.Post;
 using CombatAnalysis.BL.Interfaces;
 using CombatAnalysis.ChatApi.Models.Post;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CombatAnalysis.ChatApi.Controllers.Post;
 
 [Route("api/v1/[controller]")]
 [ApiController]
+[Authorize]
 public class PostDislikeController : ControllerBase
 {
     private readonly IService<PostDislikeDto, int> _service;

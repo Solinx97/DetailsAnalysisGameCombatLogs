@@ -15,9 +15,9 @@ const MyCommunitiesItem = ({ userCommunity }) => {
         <div className="community">
             <div className="card">
                 <div className="card-body">
-                    <h5 className="card-title">{community.name}</h5>
-                    <p className="card-text">{community.description}</p>
-                    <NavLink className="card-link" to={`/community?id=${community.id}`}>{t("Open")}</NavLink>
+                    <h5 className="card-title">{community?.name}</h5>
+                    <p className="card-text">{community?.description}</p>
+                    <NavLink className="card-link" to={`/community?id=${community?.id}`}>{t("Open")}</NavLink>
                     <NavLink className="card-link">{t("MoreDetails")}</NavLink>
                 </div>
             </div>

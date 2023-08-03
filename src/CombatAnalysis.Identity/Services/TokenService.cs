@@ -3,7 +3,6 @@ using CombatAnalysis.DAL.Entities.Authentication;
 using CombatAnalysis.DAL.Interfaces;
 using CombatAnalysis.Identity.DTO;
 using CombatAnalysis.Identity.Interfaces;
-using CombatAnalysis.Identity.Security;
 using CombatAnalysis.Identity.Settings;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
@@ -17,7 +16,9 @@ namespace CombatAnalysis.Identity.Services;
 
 internal class TokenService : IIdentityTokenService
 {
-    private readonly ITokenRepository _repository;
+    private readonly ITokenRepository<RefreshToken> _refreshTokenRepository;
+    private readonly ITokenRepository<AccessToken> _accessTokenrepository;
+    private readonly IJWTSecret _jwtSecretService;
     private readonly ILogger<TokenService> _logger;
     private readonly IMapper _mapper;
     private readonly TokenSettings _tokenSettings;
@@ -25,20 +26,30 @@ internal class TokenService : IIdentityTokenService
     private const int AccessExpiresTimeInMinutes = 30;
     private const int RefreshExpiresTimeInHours = 12;
 
-    public TokenService(IOptions<TokenSettings> settings, ITokenRepository repository,
-        IMapper mapper, ILogger<TokenService> logger)
+    public TokenService(IOptions<TokenSettings> settings, ITokenRepository<RefreshToken> refreshTokenRepository,
+        ITokenRepository<AccessToken> accessTokenrepository, IMapper mapper, 
+        ILogger<TokenService> logger, IJWTSecret jwtSecretService)
     {
-        _repository = repository;
+        _refreshTokenRepository = refreshTokenRepository;
+        _accessTokenrepository = accessTokenrepository;
         _mapper = mapper;
         _tokenSettings = settings.Value;
         _logger = logger;
+        _jwtSecretService = jwtSecretService;
     }
 
     async Task<Tuple<string, string>> IIdentityTokenService.GenerateTokensAsync(IResponseCookies cookies, string userId)
     {
-        var accessToken = GenerateToken(JWTSecret.AccessSecretKey);
-        var refreshToken = GenerateToken(JWTSecret.RefreshSecretKey);
+        var secret = await _jwtSecretService.GetSecretAsync();
+        if (secret == null)
+        {
+            return null;
+        }
 
+        var accessToken = GenerateToken(secret.AccessSecret);
+        var refreshToken = GenerateToken(secret.RefreshSecret);
+
+        await SaveAccessTokenAsync(accessToken, userId);
         await SaveRefreshTokenAsync(refreshToken, userId);
 
         return new Tuple<string, string>(accessToken, refreshToken);
@@ -76,7 +87,7 @@ internal class TokenService : IIdentityTokenService
 
     async Task<RefreshTokenDto> IIdentityTokenService.FindRefreshTokenAsync(string refreshToken)
     {
-        var token = await _repository.GetByTokenAsync(refreshToken);
+        var token = await _refreshTokenRepository.GetByTokenAsync(refreshToken);
         var map = _mapper.Map<RefreshTokenDto>(token);
 
         return map;
@@ -84,7 +95,7 @@ internal class TokenService : IIdentityTokenService
 
     async Task IIdentityTokenService.CheckRefreshTokensByUserAsync(string userId)
     {
-        var tokens = await _repository.GetAllByUserAsync(userId);
+        var tokens = await _refreshTokenRepository.GetAllByUserAsync(userId);
         foreach (var token in tokens)
         {
             var map = _mapper.Map<RefreshTokenDto>(token);
@@ -98,7 +109,7 @@ internal class TokenService : IIdentityTokenService
     public async Task<int> RemoveRefreshTokenAsync(RefreshTokenDto refreshToken)
     {
         var map = _mapper.Map<RefreshToken>(refreshToken);
-        var result = await _repository.DeleteAsync(map);
+        var result = await _refreshTokenRepository.DeleteAsync(map);
 
         return result;
     }
@@ -125,6 +136,7 @@ internal class TokenService : IIdentityTokenService
 
     private async Task SaveRefreshTokenAsync(string refreshToken, string userId)
     {
+        await RemoveUserRefreshTokensAsync(userId);
         var refreshTokenModel = new RefreshToken
         {   
             Id = Guid.NewGuid().ToString(),
@@ -133,6 +145,48 @@ internal class TokenService : IIdentityTokenService
             UserId = userId
         };
 
-        await _repository.CreateAsync(refreshTokenModel);
+        await _refreshTokenRepository.CreateAsync(refreshTokenModel);
+    }
+
+    private async Task SaveAccessTokenAsync(string accessToken, string userId)
+    {
+        await RemoveUserAccessTokensAsync(userId);
+        var refreshTokenModel = new AccessToken
+        {
+            Id = Guid.NewGuid().ToString(),
+            Token = accessToken,
+            Expires = DateTimeOffset.UtcNow.AddHours(RefreshExpiresTimeInHours).UtcDateTime,
+            UserId = userId
+        };
+
+        await _accessTokenrepository.CreateAsync(refreshTokenModel);
+    }
+
+    private async Task RemoveUserRefreshTokensAsync(string userId)
+    {
+        var tokens = await _refreshTokenRepository.GetAllByUserAsync(userId);
+        if (tokens == null)
+        {
+            return;
+        }
+
+        foreach (var token in tokens)
+        {
+            await _refreshTokenRepository.DeleteAsync(token);
+        }
+    }
+
+    private async Task RemoveUserAccessTokensAsync(string userId)
+    {
+        var tokens = await _accessTokenrepository.GetAllByUserAsync(userId);
+        if (tokens == null)
+        {
+            return;
+        }
+
+        foreach (var token in tokens)
+        {
+            await _accessTokenrepository.DeleteAsync(token);
+        }
     }
 }

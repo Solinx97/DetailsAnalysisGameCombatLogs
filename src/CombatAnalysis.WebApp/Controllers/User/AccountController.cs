@@ -1,4 +1,5 @@
 ﻿using CombatAnalysis.WebApp.Consts;
+using CombatAnalysis.WebApp.Extensions;
 using CombatAnalysis.WebApp.Interfaces;
 using CombatAnalysis.WebApp.Models.Response;
 using CombatAnalysis.WebApp.Models.User;
@@ -18,15 +19,12 @@ public class AccountController : ControllerBase
     public AccountController(IHttpClientHelper httpClient)
     {
         _httpClient = httpClient;
-        _httpClient.BaseAddress = Port.UserApi;
     }
 
     [HttpPost]
     public async Task<IActionResult> Login(LoginModel model)
     {
-        _httpClient.BaseAddress = Port.UserApi;
-
-        var responseMessage = await _httpClient.PostAsync("Account", JsonContent.Create(model));
+        var responseMessage = await _httpClient.PostAsync("Account", JsonContent.Create(model), Port.UserApi);
         if (responseMessage.StatusCode != System.Net.HttpStatusCode.OK)
         {
             return NotFound();
@@ -52,9 +50,7 @@ public class AccountController : ControllerBase
     [HttpPost("registration")]
     public async Task<IActionResult> Register(RegisterModel model)
     {
-        _httpClient.BaseAddress = Port.UserApi;
-
-        var responseMessage = await _httpClient.PostAsync("Account/registration", JsonContent.Create(model));
+        var responseMessage = await _httpClient.PostAsync("Account/registration", JsonContent.Create(model), Port.UserApi);
         if (responseMessage.StatusCode != System.Net.HttpStatusCode.OK)
         {
             return BadRequest();
@@ -86,7 +82,12 @@ public class AccountController : ControllerBase
     [HttpPut]
     public async Task<IActionResult> Edit(AppUserModel model)
     {
-        await _httpClient.PutAsync("Account", JsonContent.Create(model));
+        if (!HttpContext.Request.Cookies.TryGetValue("refreshToken", out var refreshToken))
+        {
+            return Unauthorized();
+        }
+
+        await _httpClient.PutAsync("Account", refreshToken, JsonContent.Create(model), Port.UserApi);
 
         return Ok();
     }
@@ -94,7 +95,12 @@ public class AccountController : ControllerBase
     [HttpGet]
     public async Task<IActionResult> GetAll()
     {
-        var responseMessage = await _httpClient.GetAsync("Account");
+        if (!HttpContext.Request.Cookies.TryGetValue("refreshToken", out var refreshToken))
+        {
+            return Unauthorized();
+        }
+
+        var responseMessage = await _httpClient.GetAsync("Account", refreshToken, Port.UserApi);
         if (responseMessage.StatusCode == System.Net.HttpStatusCode.OK)
         {
             var users = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<AppUserModel>>();
@@ -107,7 +113,12 @@ public class AccountController : ControllerBase
     [HttpGet("{id}")]
     public async Task<IActionResult> GetById(string id)
     {
-        var responseMessage = await _httpClient.GetAsync($"Account/{id}");
+        if (!HttpContext.Request.Cookies.TryGetValue("refreshToken", out var refreshToken))
+        {
+            return Unauthorized();
+        }
+
+        var responseMessage = await _httpClient.GetAsync($"Account/{id}", refreshToken, Port.UserApi);
         if (responseMessage.StatusCode == System.Net.HttpStatusCode.OK)
         {
             var user = await responseMessage.Content.ReadFromJsonAsync<AppUserModel>();
@@ -120,8 +131,6 @@ public class AccountController : ControllerBase
     [HttpPost("logout")]
     public async Task<IActionResult> Logout()
     {
-        _httpClient.BaseAddress = Port.UserApi;
-
         await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
 
         HttpContext.Response.Cookies.Delete("accessToken");
@@ -129,7 +138,7 @@ public class AccountController : ControllerBase
 
         if (Request.Cookies.TryGetValue("refreshToken", out var refreshToken))
         {
-            await _httpClient.GetAsync($"Account/logout/{refreshToken}");
+            await _httpClient.GetAsync($"Account/logout/{refreshToken}", refreshToken, Port.UserApi);
         }
 
         return Ok();

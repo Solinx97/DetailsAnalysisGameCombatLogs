@@ -1,4 +1,5 @@
 ﻿using CombatAnalysis.WebApp.Consts;
+using CombatAnalysis.WebApp.Extensions;
 using CombatAnalysis.WebApp.Interfaces;
 using CombatAnalysis.WebApp.Models.User;
 using Microsoft.AspNetCore.Mvc;
@@ -14,13 +15,17 @@ public class CustomerController : ControllerBase
     public CustomerController(IHttpClientHelper httpClient)
     {
         _httpClient = httpClient;
-        _httpClient.BaseAddress = Port.UserApi;
     }
 
     [HttpGet]
     public async Task<IActionResult> GetAll()
     {
-        var responseMessage = await _httpClient.GetAsync("Customer");
+        if (!HttpContext.Request.Cookies.TryGetValue("refreshToken", out var refreshToken))
+        {
+            return Unauthorized();
+        }
+
+        var responseMessage = await _httpClient.GetAsync("Customer", refreshToken, Port.UserApi);
         var customers = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<CustomerModel>>();
 
         return Ok(customers);
@@ -29,7 +34,12 @@ public class CustomerController : ControllerBase
     [HttpGet("{id}")]
     public async Task<IActionResult> GetById(string id)
     {
-        var responseMessage = await _httpClient.GetAsync($"Customer/{id}");
+        if (!HttpContext.Request.Cookies.TryGetValue("refreshToken", out var refreshToken))
+        {
+            return Unauthorized();
+        }
+
+        var responseMessage = await _httpClient.GetAsync($"Customer/{id}", refreshToken, Port.UserApi);
         var customer = await responseMessage.Content.ReadFromJsonAsync<CustomerModel>();
 
         return Ok(customer);
@@ -38,7 +48,12 @@ public class CustomerController : ControllerBase
     [HttpGet("searchByUserId/{id}")]
     public async Task<IActionResult> SearchByUserId(string id)
     {
-        var responseMessage = await _httpClient.GetAsync($"Customer/searchByUserId/{id}");
+        if (!HttpContext.Request.Cookies.TryGetValue("refreshToken", out var refreshToken))
+        {
+            return Unauthorized();
+        }
+
+        var responseMessage = await _httpClient.GetAsync($"Customer/searchByUserId/{id}", refreshToken, Port.UserApi);
         var customers = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<CustomerModel>>();
         var currentCustomer = customers.FirstOrDefault();
 
@@ -48,7 +63,12 @@ public class CustomerController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> Create(CustomerModel model)
     {
-        var responseMessage = await _httpClient.PostAsync("Customer", JsonContent.Create(model));
+        if (!HttpContext.Request.Cookies.TryGetValue("refreshToken", out var refreshToken))
+        {
+            return Unauthorized();
+        }
+
+        var responseMessage = await _httpClient.PostAsync("Customer", refreshToken, JsonContent.Create(model), Port.UserApi);
         var customer = await responseMessage.Content.ReadFromJsonAsync<CustomerModel>();
 
         return Ok(customer);
@@ -57,7 +77,12 @@ public class CustomerController : ControllerBase
     [HttpPut]
     public async Task<IActionResult> Edit(CustomerModel model)
     {
-        await _httpClient.PutAsync("Customer", JsonContent.Create(model));
+        if (!HttpContext.Request.Cookies.TryGetValue("refreshToken", out var refreshToken))
+        {
+            return Unauthorized();
+        }
+
+        await _httpClient.PutAsync("Customer", refreshToken, JsonContent.Create(model), Port.UserApi);
 
         return Ok();
     }

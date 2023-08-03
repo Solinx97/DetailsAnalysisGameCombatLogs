@@ -1,19 +1,18 @@
-﻿namespace CombatAnalysis.WebApp.Interfaces
+﻿namespace CombatAnalysis.WebApp.Interfaces;
+
+public interface IHttpClientHelper
 {
-    public interface IHttpClientHelper
-    {
-        public string BaseAddressApi { get; }
+    public string BaseAddressApi { get; }
 
-        HttpClient Client { get; set; }
+    HttpClient Client { get; set; }
 
-        string BaseAddress { get; set; }
+    string BaseAddress { get; set; }
 
-        Task<HttpResponseMessage> PostAsync(string requestAddress, JsonContent content);
+    Task<HttpResponseMessage> PostAsync(string requestAddress, JsonContent content);
 
-        Task<HttpResponseMessage> GetAsync(string requestAddress);
+    Task<HttpResponseMessage> GetAsync(string requestAddress);
 
-        Task<HttpResponseMessage> PutAsync(string requestAddress, JsonContent content);
+    Task<HttpResponseMessage> PutAsync(string requestAddress, JsonContent content);
 
-        Task<HttpResponseMessage> DeletAsync(string requestAddress);
-    }
+    Task<HttpResponseMessage> DeletAsync(string requestAddress);
 }

@@ -2,13 +2,14 @@ import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link, useNavigate } from 'react-router-dom';
 import { Collapse, Container, Navbar, NavbarBrand, NavbarToggler } from 'reactstrap';
-import useAuthentificationAsync from '../hooks/useAuthentificationAsync';
+import { useSelector } from 'react-redux';
 import { useLogoutAsyncMutation } from '../store/api/Account.api';
 
 import '../styles/navMenu.scss';
 
 const NavMenu = () => {
-    const [, customer, isAuth] = useAuthentificationAsync();
+    const customer = useSelector((state) => state.customer.value);
+
     const [logoutAsyncMut] = useLogoutAsyncMutation();
 
     const navigate = useNavigate();
@@ -64,7 +65,7 @@ const NavMenu = () => {
                     <NavbarBrand tag={Link} to="/">Wow Analysis</NavbarBrand>
                     <NavbarToggler onClick={toggleNavbar} className="mr-2" />
                     <Collapse className="d-sm-inline-flex flex-sm-row-reverse" isOpen={!collapsed} navbar />
-                    {isAuth
+                    {customer !== null
                         ? <div className="authorized">
                             <div>{t("Welcome")}, <strong>{customer?.username}</strong></div>
                             <button type="button" className="btn btn-primary" onClick={logoutAsync}>{t("Logout")}</button>

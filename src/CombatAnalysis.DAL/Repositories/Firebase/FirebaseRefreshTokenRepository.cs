@@ -5,11 +5,11 @@ using Firebase.Database.Query;
 
 namespace CombatAnalysis.DAL.Repositories.Firebase;
 
-public class FirebaseTokenRepository : ITokenRepository
+public class FirebaseRefreshTokenRepository : ITokenRepository<RefreshToken>
 {
     private readonly FirebaseContext _context;
 
-    public FirebaseTokenRepository(FirebaseContext context)
+    public FirebaseRefreshTokenRepository(FirebaseContext context)
     {
         _context = context;
     }

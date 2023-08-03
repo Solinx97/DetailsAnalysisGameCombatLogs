@@ -1,4 +1,6 @@
-﻿using CombatAnalysis.Identity.Interfaces;
+﻿using CombatAnalysis.DAL.Interfaces;
+using CombatAnalysis.DAL.Repositories.SQL;
+using CombatAnalysis.Identity.Interfaces;
 using CombatAnalysis.Identity.Services;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -8,6 +10,8 @@ public static class ServiceCollectionExtensions
 {
     public static void RegisterIdentityDependencies(this IServiceCollection services)
     {
+        services.AddScoped<IAppSecret, SQLSecretRepository>();
+        services.AddScoped<IJWTSecret, JWTSecretService>();
         services.AddScoped<IIdentityTokenService, TokenService>();
     }
 }

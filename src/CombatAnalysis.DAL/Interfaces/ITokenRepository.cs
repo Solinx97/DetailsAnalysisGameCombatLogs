@@ -2,15 +2,16 @@
 
 namespace CombatAnalysis.DAL.Interfaces;
 
-public interface ITokenRepository
+public interface ITokenRepository<TModel>
+    where TModel : class
 {
-    Task<RefreshToken> CreateAsync(RefreshToken item);
+    Task<TModel> CreateAsync(TModel item);
 
-    Task<int> UpdateAsync(RefreshToken item);
+    Task<int> UpdateAsync(TModel item);
 
-    Task<int> DeleteAsync(RefreshToken item);
+    Task<int> DeleteAsync(TModel item);
 
-    Task<RefreshToken> GetByTokenAsync(string token);
+    Task<TModel> GetByTokenAsync(string token);
 
-    Task<IEnumerable<RefreshToken>> GetAllByUserAsync(string userId);
+    Task<IEnumerable<TModel>> GetAllByUserAsync(string userId);
 }

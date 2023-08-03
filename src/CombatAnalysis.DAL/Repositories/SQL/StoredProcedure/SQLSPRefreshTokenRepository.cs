@@ -7,11 +7,11 @@ using System.Text;
 
 namespace CombatAnalysis.DAL.Repositories.SQL.StoredProcedure;
 
-public class SQLSPTokenRepository : ITokenRepository
+public class SQLSPRefreshTokenRepository : ITokenRepository<RefreshToken>
 {
     private readonly SQLContext _context;
 
-    public SQLSPTokenRepository(SQLContext context)
+    public SQLSPRefreshTokenRepository(SQLContext context)
     {
         _context = context;
     }

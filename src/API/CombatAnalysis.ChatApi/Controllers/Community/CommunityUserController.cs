@@ -2,12 +2,14 @@
 using CombatAnalysis.BL.DTO.Community;
 using CombatAnalysis.BL.Interfaces;
 using CombatAnalysis.ChatApi.Models.Community;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CombatAnalysis.ChatApi.Controllers.Community;
 
 [Route("api/v1/[controller]")]
 [ApiController]
+[Authorize]
 public class CommunityUserController : ControllerBase
 {
     private readonly IService<CommunityUserDto, int> _service;
