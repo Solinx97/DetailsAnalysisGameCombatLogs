@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { useLoginAsyncMutation } from '../../store/api/Account.api';
 import { useLazySearchByUserIdAsyncQuery } from '../../store/api/Customer.api';
 import { updateCustomer } from '../../store/slicers/CustomerSlice';
+import { updateUser } from '../../store/slicers/UserSlice';
 
 import "../../styles/account/login.scss";
 
@@ -33,6 +34,8 @@ const Login = () => {
 
         const user = await loginAsync(data);
         if (user.data !== undefined) {
+            dispatch(updateUser(user.data));
+
             const customer = await getCustomerAsync(user.data.id);
             if (customer.data !== undefined) {
                 dispatch(updateCustomer(customer.data));

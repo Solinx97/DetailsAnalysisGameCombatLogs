@@ -2,7 +2,7 @@ import { faArrowsRotate } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import useAuthentificationAsync from '../../../hooks/useAuthentificationAsync';
+import { useSelector } from 'react-redux';
 import { useCreatePostAsyncMutation } from '../../../store/api/Post.api';
 import { useCreateUserPostAsyncMutation } from '../../../store/api/UserPost.api';
 import UserPosts from '../UserPosts';
@@ -10,7 +10,7 @@ import UserPosts from '../UserPosts';
 const MyFeed = () => {
     const { t } = useTranslation("communication/myEnvironment/myFeed");
 
-    const [, customer] = useAuthentificationAsync();
+    const customer = useSelector((state) => state.customer.value);
 
     const [createNewPostAsync] = useCreatePostAsyncMutation();
     const [createNewUserPostAsync] = useCreateUserPostAsyncMutation();

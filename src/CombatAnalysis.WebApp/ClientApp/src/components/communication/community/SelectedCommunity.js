@@ -2,8 +2,8 @@ import { faArrowRightToBracket, faArrowsRotate, faEye, faEyeSlash } from '@forta
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useEffect, useRef, useState } from "react";
 import { useTranslation } from 'react-i18next';
+import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import useAuthentificationAsync from '../../../hooks/useAuthentificationAsync';
 import { useLazyGetCommunityByIdQuery, useRemoveCommunityAsyncMutation } from '../../../store/api/Community.api';
 import { useCreateCommunityPostAsyncMutation } from '../../../store/api/CommunityPost.api';
 import { useLazySearchByUserIdAsyncQuery, useRemoveCommunityUserAsyncMutation } from '../../../store/api/CommunityUser.api';
@@ -16,7 +16,7 @@ import '../../../styles/communication/selectedCommunity.scss';
 const SelectedCommunity = () => {
     const { t } = useTranslation("communication/community/selectedCommunity");
 
-    const [, customer] = useAuthentificationAsync();
+    const customer = useSelector((state) => state.customer.value);
 
     const [showLeaveFromCommunityAlert, setShowLeaveFromCommunityAlert] = useState(false);
     const [showDescription, setShowDescription] = useState(true);

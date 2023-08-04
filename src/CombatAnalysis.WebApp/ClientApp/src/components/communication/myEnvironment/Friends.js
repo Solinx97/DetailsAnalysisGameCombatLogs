@@ -2,7 +2,7 @@ import { faCircleXmark, faWindowRestore } from '@fortawesome/free-solid-svg-icon
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import useAuthentificationAsync from '../../../hooks/useAuthentificationAsync';
+import { useSelector } from 'react-redux';
 import { useRemoveFriendAsyncMutation } from '../../../store/api/Friend.api';
 import { useFriendSearchByUserIdQuery } from '../../../store/api/UserApi';
 import UserInformation from './../UserInformation';
@@ -13,7 +13,8 @@ import '../../../styles/communication/friends.scss';
 const Friends = () => {
     const { t } = useTranslation("communication/myEnvironment/friends");
 
-    const [, customer] = useAuthentificationAsync();
+    const customer = useSelector((state) => state.customer.value);
+
     const { data: myFriends, isLoading } = useFriendSearchByUserIdQuery(customer?.id);
     const [removeFriendAsyncMut] = useRemoveFriendAsyncMutation(customer?.id);
 

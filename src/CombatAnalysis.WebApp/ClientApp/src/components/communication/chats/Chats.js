@@ -2,7 +2,7 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import useAuthentificationAsync from '../../../hooks/useAuthentificationAsync';
+import { useSelector } from 'react-redux';
 import { useGetGroupChatUserByUserIdQuery, useGetPersonalChatsByUserIdQuery } from '../../../store/api/ChatApi';
 import CreateGroupChat from './CreateGroupChat';
 import GroupChat from './GroupChat';
@@ -17,7 +17,7 @@ const getGroupChatUsersInterval = 2000;
 const Chats = () => {
     const { t } = useTranslation("communication/chats/chats");
 
-    const [, customer] = useAuthentificationAsync();
+    const customer = useSelector((state) => state.customer.value);
 
     const { data: personalChats, isLoading } = useGetPersonalChatsByUserIdQuery(customer?.id);
     const { data: groupChatUsers, isLoading: chatUserIsLoading } = useGetGroupChatUserByUserIdQuery(customer?.id, {

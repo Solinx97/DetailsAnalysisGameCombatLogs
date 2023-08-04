@@ -2,7 +2,7 @@ import { faArrowsRotate } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import useAuthentificationAsync from '../../hooks/useAuthentificationAsync';
+import { useSelector } from 'react-redux';
 import { useCreatePostAsyncMutation } from '../../store/api/Post.api';
 import { useCreateUserPostAsyncMutation } from '../../store/api/UserPost.api';
 import FeedParticipants from './FeedParticipants';
@@ -10,7 +10,7 @@ import FeedParticipants from './FeedParticipants';
 const Feed = () => {
     const { t } = useTranslation("communication/feed");
 
-    const [, customer] = useAuthentificationAsync();
+    const customer = useSelector((state) => state.customer.value);
 
     const [createNewPostAsync] = useCreatePostAsyncMutation();
     const [createNewUserPostAsync] = useCreateUserPostAsyncMutation();
@@ -50,7 +50,7 @@ const Feed = () => {
         return createdUserPost.data === undefined ? false : true;
     }
 
-    if (customer === undefined || customer === null) {
+    if (customer === null) {
         return <></>;
     }
 

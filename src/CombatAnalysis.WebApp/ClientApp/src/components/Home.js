@@ -1,19 +1,19 @@
 ﻿import { useTranslation } from 'react-i18next';
+import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import useAuthentificationAsync from '../hooks/useAuthentificationAsync';
 
 const Home = () => {
     const navigate = useNavigate();
 
     const { t } = useTranslation("home");
 
-    const [, , isAuth] = useAuthentificationAsync();
+    const customer = useSelector((state) => state.customer.value);
 
     return (
         <div>
             <div>
-                <div>{t("Communication")} <span style={{ display: isAuth ? "none" : "flex" }}>({t("ShouldAuthorize")})</span></div>
-                <button className="btn btn-info" onClick={() => navigate("/communication")} disabled={!isAuth}>{t("Open")}</button>
+                <div>{t("Communication")} <span style={{ display: customer !== null ? "none" : "flex" }}>({t("ShouldAuthorize")})</span></div>
+                <button className="btn btn-info" onClick={() => navigate("/communication")} disabled={customer == null}>{t("Open")}</button>
             </div>
             <div>
                 <div>{t("Analyzing")}</div>

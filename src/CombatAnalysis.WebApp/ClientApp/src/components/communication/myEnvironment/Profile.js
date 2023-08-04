@@ -1,16 +1,23 @@
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import useAuthentificationAsync from '../../../hooks/useAuthentificationAsync';
+import { useDispatch, useSelector } from 'react-redux';
 import { useEditAsyncMutation, useLoginAsyncMutation } from '../../../store/api/Account.api';
+import { useLazySearchByUserIdAsyncQuery } from '../../../store/api/Customer.api';
+import { updateCustomer } from '../../../store/slicers/CustomerSlice';
+import { updateUser } from '../../../store/slicers/UserSlice';
 
 import "../../../styles/communication/profile.scss";
 
 const Profile = () => {
     const { t } = useTranslation("communication/myEnvironment/profile");
 
-    const [currentUser, customer] = useAuthentificationAsync();
+    const dispatch = useDispatch();
+    const customer = useSelector((state) => state.customer.value);
+    const user = useSelector((state) => state.user.value);
+
     const [loginAsync] = useLoginAsyncMutation();
     const [editAsync] = useEditAsyncMutation();
+    const [getCustomerAsync] = useLazySearchByUserIdAsyncQuery();
 
     const [isEditMode, setIsEditMode] = useState(false);
 
@@ -30,7 +37,7 @@ const Profile = () => {
     useEffect(() => {
         getUserInformation();
         getCustomerInformation();
-    }, [currentUser])
+    }, [])
 
     useEffect(() => {
         getUserInformation();
@@ -38,20 +45,20 @@ const Profile = () => {
     }, [isEditMode])
 
     const getUserInformation = () => {
-        const date = new Date(currentUser?.birthday);
+        const date = new Date(user?.birthday);
         const correntMonthNumber = date.getMonth() === 0 ? 1 : date.getMonth();
         const month = correntMonthNumber < 10 ? `0${correntMonthNumber}` : correntMonthNumber;
         const day = date.getDate() < 10 ? `0${date.getDate()}` : date.getDate();
 
         let birthdayFromDate = `${date.getFullYear()}-${month}-${day}`;
 
-        email.current.value = currentUser?.email;
-        phoneNumber.current.value = currentUser?.phoneNumber;
+        email.current.value = user?.email;
+        phoneNumber.current.value = user?.phoneNumber;
         birthday.current.value = birthdayFromDate;
     }
 
     const getCustomerInformation = () => {
-        email.current.value = currentUser?.email;
+        email.current.value = user?.email;
         message.current.value = customer?.message;
         username.current.value = customer?.username;
         aboutMe.current.value = customer?.aboutMe;
@@ -62,18 +69,18 @@ const Profile = () => {
 
     const editUserAsync = async () => {
         const updatesForUser = {
-            id: currentUser?.id,
-            email: currentUser?.email,
-            phoneNumber: currentUser?.phoneNumber,
-            birthday: currentUser?.birthday,
-            password: currentUser?.password
+            id: user?.id,
+            email: user?.email,
+            phoneNumber: user?.phoneNumber,
+            birthday: user?.birthday,
+            password: user?.password
         };
 
         updatesForUser.email = email.current.value;
         updatesForUser.phoneNumber = phoneNumber.current.value;
         updatesForUser.birthday = birthday.current.value;
 
-        if (password.current.value !== "" && password.current.value !== currentUser?.password
+        if (password.current.value !== "" && password.current.value !== user?.password
             && password.current.value === confirmPassword.current.value) {
             updatesForUser.password = password.current.value;
         }
@@ -85,7 +92,15 @@ const Profile = () => {
                 password: updatesForUser.password
             };
 
-            await loginAsync(data);
+            const newUser = await loginAsync(data);
+            if (newUser.data !== undefined) {
+                dispatch(updateUser(newUser.data));
+
+                const customer = await getCustomerAsync(newUser.data.id);
+                if (customer.data !== undefined) {
+                    dispatch(updateCustomer(customer.data));;
+                }
+            }
 
             setIsEditMode(false);
         }
@@ -210,18 +225,14 @@ const Profile = () => {
         );
     }
 
-    const render = () => {
-        return (
-            <div className="profile">
-                {isEditMode
-                    ? editForm()
-                    : information()
-                }
-            </div>
-        );
-    }
-
-    return render();
+    return (
+        <div className="profile">
+            {isEditMode
+                ? editForm()
+                : information()
+            }
+        </div>
+    );
 }
 
 export default Profile;

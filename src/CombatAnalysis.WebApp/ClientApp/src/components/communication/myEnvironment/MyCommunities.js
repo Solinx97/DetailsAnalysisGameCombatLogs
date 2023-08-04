@@ -2,7 +2,7 @@ import { faArrowsRotate, faEye, faEyeSlash } from '@fortawesome/free-solid-svg-i
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useState } from "react";
 import { useTranslation } from 'react-i18next';
-import useAuthentificationAsync from '../../../hooks/useAuthentificationAsync';
+import { useSelector } from 'react-redux';
 import { useSearchByUserIdAsyncQuery } from '../../../store/api/CommunityUser.api';
 import CreateCommunity from './CreateCommunity';
 import InvitesToCommunity from './InvitesToCommunity';
@@ -13,7 +13,8 @@ import '../../../styles/communication/communities.scss';
 const MyCommunities = () => {
     const { t } = useTranslation("communication/myEnvironment/myCommunities");
 
-    const [, customer] = useAuthentificationAsync();
+    const customer = useSelector((state) => state.customer.value);
+
     const { data: userCommunities, isLoading } = useSearchByUserIdAsyncQuery(customer?.id);
 
     const [showCreateCommunity, setShowCreateCommunity] = useState(false);

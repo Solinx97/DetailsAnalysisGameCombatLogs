@@ -123,7 +123,7 @@ public class AccountController : ControllerBase
     }
 
     [HttpGet("logout/{refreshToken}")]
-    [Authorize]
+    [AllowAnonymous]
     public async Task<IActionResult> Logout(string refreshToken)
     {
         var refreshTokenModel = await _tokenService.FindRefreshTokenAsync(refreshToken);

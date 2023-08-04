@@ -2,7 +2,7 @@ import { faCommentDots, faSquarePlus, faUserPlus, faWindowRestore } from '@forta
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useCallback, useState } from "react";
 import { useTranslation } from 'react-i18next';
-import useAuthentificationAsync from '../../../hooks/useAuthentificationAsync';
+import { useSelector } from 'react-redux';
 import { useCreatePersonalChatAsyncMutation, useLazyIsExistAsyncQuery } from '../../../store/api/PersonalChat.api';
 import { useCreateRequestAsyncMutation } from '../../../store/api/RequestToConnect.api';
 import { useGetCustomersQuery } from '../../../store/api/UserApi';
@@ -13,7 +13,7 @@ import '../../../styles/communication/people.scss';
 const People = ({ updateCurrentMenuItem }) => {
     const { t } = useTranslation("communication/people/people");
 
-    const [, customer] = useAuthentificationAsync();
+    const customer = useSelector((state) => state.customer.value);
 
     const { data: people, isLoading } = useGetCustomersQuery();
     const [isExistAsync] = useLazyIsExistAsyncQuery();

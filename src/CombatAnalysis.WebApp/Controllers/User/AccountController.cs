@@ -133,12 +133,18 @@ public class AccountController : ControllerBase
     {
         await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
 
-        HttpContext.Response.Cookies.Delete("accessToken");
-        HttpContext.Response.Cookies.Delete("refreshToken");
-
         if (Request.Cookies.TryGetValue("refreshToken", out var refreshToken))
         {
-            await _httpClient.GetAsync($"Account/logout/{refreshToken}", refreshToken, Port.UserApi);
+            var reponse = await _httpClient.GetAsync($"Account/logout/{refreshToken}", Port.UserApi);
+            if (reponse.IsSuccessStatusCode)
+            {
+                HttpContext.Response.Cookies.Delete("accessToken");
+                HttpContext.Response.Cookies.Delete("refreshToken");
+            }
+            else
+            {
+                return BadRequest();
+            }
         }
 
         return Ok();

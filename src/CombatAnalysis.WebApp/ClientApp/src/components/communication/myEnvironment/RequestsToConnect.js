@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import useAuthentificationAsync from '../../../hooks/useAuthentificationAsync';
+import { useSelector } from 'react-redux';
 import { useCreateFriendAsyncMutation } from '../../../store/api/Friend.api';
 import { useRemoveRequestAsyncMutation, useSearchByOwnerIdQuery } from '../../../store/api/RequestToConnect.api';
 import { useSearchByToUserIdQuery } from '../../../store/api/UserApi';
@@ -11,7 +11,7 @@ import "../../../styles/communication/requestToConnect.scss";
 const RequestToConnect = () => {
     const { t } = useTranslation("communication/myEnvironment/requestsToConnect");
 
-    const [, customer] = useAuthentificationAsync();
+    const customer = useSelector((state) => state.customer.value);
 
     const { data: allRequests, isLoading: reqIsLoading } = useSearchByToUserIdQuery(customer?.id);
     const { data: allMyRequests, isLoading: myReqIsLoading } = useSearchByOwnerIdQuery(customer?.id);
