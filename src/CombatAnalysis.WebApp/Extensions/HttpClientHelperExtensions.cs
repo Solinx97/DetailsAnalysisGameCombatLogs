@@ -1,4 +1,5 @@
 ﻿using CombatAnalysis.WebApp.Interfaces;
+using System.Net.Http.Headers;
 
 namespace CombatAnalysis.WebApp.Extensions;
 
@@ -11,10 +12,9 @@ public static class HttpClientHelperExtensions
         return result;
     }
 
-    public static async Task<HttpResponseMessage> PostAsync(this IHttpClientHelper clientHelper, string requestUri, string token, JsonContent content, string baseAddress)
+    public static async Task<HttpResponseMessage> PostAsync(this IHttpClientHelper clientHelper, string requestUri, JsonContent content, string token, string baseAddress)
     {
-        clientHelper.Client.DefaultRequestHeaders.Clear();
-        clientHelper.Client.DefaultRequestHeaders.Add("Authorization", $"bearer {token}");
+        clientHelper.Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
         var result = await clientHelper.Client.PostAsync($"{baseAddress}{clientHelper.BaseAddressApi}{requestUri}", content);
 
@@ -30,8 +30,7 @@ public static class HttpClientHelperExtensions
 
     public static async Task<HttpResponseMessage> GetAsync(this IHttpClientHelper clientHelper, string requestUri, string token, string baseAddress)
     {
-        clientHelper.Client.DefaultRequestHeaders.Clear();
-        clientHelper.Client.DefaultRequestHeaders.Add("Authorization", $"bearer {token}");
+        clientHelper.Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
         var result = await clientHelper.Client.GetAsync($"{baseAddress}{clientHelper.BaseAddressApi}{requestUri}");
 
@@ -45,10 +44,9 @@ public static class HttpClientHelperExtensions
         return result;
     }
 
-    public static async Task<HttpResponseMessage> PutAsync(this IHttpClientHelper clientHelper, string requestUri, string token, JsonContent content, string baseAddress)
+    public static async Task<HttpResponseMessage> PutAsync(this IHttpClientHelper clientHelper, string requestUri, JsonContent content, string token, string baseAddress)
     {
-        clientHelper.Client.DefaultRequestHeaders.Clear();
-        clientHelper.Client.DefaultRequestHeaders.Add("Authorization", $"bearer {token}");
+        clientHelper.Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
         var result = await clientHelper.Client.PutAsync($"{baseAddress}{clientHelper.BaseAddressApi}{requestUri}", content);
 
@@ -64,8 +62,7 @@ public static class HttpClientHelperExtensions
 
     public static async Task<HttpResponseMessage> DeletAsync(this IHttpClientHelper clientHelper, string requestUri, string token, string baseAddress)
     {
-        clientHelper.Client.DefaultRequestHeaders.Clear();
-        clientHelper.Client.DefaultRequestHeaders.Add("Authorization", $"bearer {token}");
+        clientHelper.Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
         var result = await clientHelper.Client.DeleteAsync($"{baseAddress}{clientHelper.BaseAddressApi}{requestUri}");
 

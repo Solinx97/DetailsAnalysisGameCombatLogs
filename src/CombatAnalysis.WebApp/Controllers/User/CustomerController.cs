@@ -26,9 +26,18 @@ public class CustomerController : ControllerBase
         }
 
         var responseMessage = await _httpClient.GetAsync("Customer", refreshToken, Port.UserApi);
-        var customers = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<CustomerModel>>();
+        if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+        {
+            return Unauthorized();
+        }
+        else if (responseMessage.IsSuccessStatusCode)
+        {
+            var customers = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<CustomerModel>>();
 
-        return Ok(customers);
+            return Ok(customers);
+        }
+
+        return BadRequest();
     }
 
     [HttpGet("{id}")]
@@ -40,9 +49,23 @@ public class CustomerController : ControllerBase
         }
 
         var responseMessage = await _httpClient.GetAsync($"Customer/{id}", refreshToken, Port.UserApi);
-        var customer = await responseMessage.Content.ReadFromJsonAsync<CustomerModel>();
+        if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+        {
+            return Unauthorized();
+        }
+        else if (responseMessage.IsSuccessStatusCode)
+        {
+            if (responseMessage.StatusCode == System.Net.HttpStatusCode.OK)
+            {
+                var customer = await responseMessage.Content.ReadFromJsonAsync<CustomerModel>();
 
-        return Ok(customer);
+                return Ok(customer);
+            }
+
+            return NotFound();
+        }
+
+        return BadRequest();
     }
 
     [HttpGet("searchByUserId/{id}")]
@@ -54,10 +77,19 @@ public class CustomerController : ControllerBase
         }
 
         var responseMessage = await _httpClient.GetAsync($"Customer/searchByUserId/{id}", refreshToken, Port.UserApi);
-        var customers = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<CustomerModel>>();
-        var currentCustomer = customers.FirstOrDefault();
+        if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+        {
+            return Unauthorized();
+        }
+        else if (responseMessage.IsSuccessStatusCode)
+        {
+            var customers = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<CustomerModel>>();
+            var currentCustomer = customers.FirstOrDefault();
 
-        return Ok(currentCustomer);
+            return Ok(currentCustomer);
+        }
+
+        return BadRequest();
     }
 
     [HttpPost]
@@ -68,10 +100,19 @@ public class CustomerController : ControllerBase
             return Unauthorized();
         }
 
-        var responseMessage = await _httpClient.PostAsync("Customer", refreshToken, JsonContent.Create(model), Port.UserApi);
-        var customer = await responseMessage.Content.ReadFromJsonAsync<CustomerModel>();
+        var responseMessage = await _httpClient.PostAsync("Customer", JsonContent.Create(model), refreshToken, Port.UserApi);
+        if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+        {
+            return Unauthorized();
+        }
+        else if (responseMessage.IsSuccessStatusCode)
+        {
+            var customer = await responseMessage.Content.ReadFromJsonAsync<CustomerModel>();
 
-        return Ok(customer);
+            return Ok(customer);
+        }
+
+        return BadRequest();
     }
 
     [HttpPut]
@@ -82,8 +123,16 @@ public class CustomerController : ControllerBase
             return Unauthorized();
         }
 
-        await _httpClient.PutAsync("Customer", refreshToken, JsonContent.Create(model), Port.UserApi);
+        var responseMessage = await _httpClient.PutAsync("Customer", JsonContent.Create(model), refreshToken, Port.UserApi);
+        if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+        {
+            return Unauthorized();
+        }
+        else if (responseMessage.IsSuccessStatusCode)
+        {
+            return Ok();
+        }
 
-        return Ok();
+        return BadRequest();
     }
 }

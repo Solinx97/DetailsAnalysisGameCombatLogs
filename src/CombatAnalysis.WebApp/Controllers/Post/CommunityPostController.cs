@@ -20,43 +20,107 @@ public class CommunityPostController : ControllerBase
     [HttpGet("{id:int:min(1)}")]
     public async Task<IActionResult> GetById(int id)
     {
-        var responseMessage = await _httpClient.GetAsync($"CommunityPost/{id}", Port.ChatApi);
-        var post = await responseMessage.Content.ReadFromJsonAsync<CommunityPostModel>();
+        if (!HttpContext.Request.Cookies.TryGetValue("refreshToken", out var refreshToken))
+        {
+            return Unauthorized();
+        }
 
-        return Ok(post);
+        var responseMessage = await _httpClient.GetAsync($"CommunityPost/{id}", refreshToken, Port.ChatApi);
+        if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+        {
+            return Unauthorized();
+        }
+        else if (responseMessage.IsSuccessStatusCode)
+        {
+            var communityPost = await responseMessage.Content.ReadFromJsonAsync<CommunityPostModel>();
+
+            return Ok(communityPost);
+        }
+
+        return BadRequest();
     }
 
     [HttpGet("searchByCommunityId/{id:int:min(1)}")]
     public async Task<IActionResult> SearchByCommunityId(int id)
     {
-        var responseMessage = await _httpClient.GetAsync($"CommunityPost/searchByCommunityId/{id}", Port.ChatApi);
-        var posts = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<CommunityPostModel>>();
+        if (!HttpContext.Request.Cookies.TryGetValue("refreshToken", out var refreshToken))
+        {
+            return Unauthorized();
+        }
 
-        return Ok(posts);
+        var responseMessage = await _httpClient.GetAsync($"CommunityPost/searchByCommunityId/{id}", refreshToken, Port.ChatApi);
+        if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+        {
+            return Unauthorized();
+        }
+        else if (responseMessage.IsSuccessStatusCode)
+        {
+            var communityPosts = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<CommunityPostModel>>();
+
+            return Ok(communityPosts);
+        }
+
+        return BadRequest();
     }
 
     [HttpPut]
     public async Task<IActionResult> Update(CommunityPostModel model)
     {
-        await _httpClient.PutAsync("CommunityPost", JsonContent.Create(model), Port.ChatApi);
+        if (!HttpContext.Request.Cookies.TryGetValue("refreshToken", out var refreshToken))
+        {
+            return Unauthorized();
+        }
 
-        return Ok();
+        var responseMessage = await _httpClient.PutAsync("CommunityPost", JsonContent.Create(model), refreshToken, Port.ChatApi);
+        if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+        {
+            return Unauthorized();
+        }
+        else if (responseMessage.IsSuccessStatusCode)
+        {
+            return Ok();
+        }
+
+        return BadRequest();
     }
 
     [HttpPost]
     public async Task<IActionResult> Create(CommunityPostModel model)
     {
-        var responseMessage = await _httpClient.PostAsync("CommunityPost", JsonContent.Create(model), Port.ChatApi);
-        var post = await responseMessage.Content.ReadFromJsonAsync<CommunityPostModel>();
+        if (!HttpContext.Request.Cookies.TryGetValue("refreshToken", out var refreshToken))
+        {
+            return Unauthorized();
+        }
 
-        return Ok(post);
+        var responseMessage = await _httpClient.PostAsync("CommunityPost", JsonContent.Create(model), refreshToken, Port.ChatApi);
+        if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+        {
+            return Unauthorized();
+        }
+        else if (responseMessage.IsSuccessStatusCode)
+        {
+            var communityPost = await responseMessage.Content.ReadFromJsonAsync<CommunityPostModel>();
+
+            return Ok(communityPost);
+        }
+
+        return BadRequest();
     }
 
     [HttpDelete("{id:int:min(1)}")]
     public async Task<IActionResult> Delete(int id)
     {
-        var responseMessage = await _httpClient.DeletAsync($"CommunityPost/{id}", Port.ChatApi);
-        if (responseMessage.StatusCode == System.Net.HttpStatusCode.OK)
+        if (!HttpContext.Request.Cookies.TryGetValue("refreshToken", out var refreshToken))
+        {
+            return Unauthorized();
+        }
+
+        var responseMessage = await _httpClient.DeletAsync($"CommunityPost/{id}", refreshToken, Port.ChatApi);
+        if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+        {
+            return Unauthorized();
+        }
+        else if (responseMessage.IsSuccessStatusCode)
         {
             return Ok();
         }

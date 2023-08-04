@@ -1,4 +1,5 @@
 ﻿using CombatAnalysis.WebApp.Consts;
+using CombatAnalysis.WebApp.Extensions;
 using CombatAnalysis.WebApp.Interfaces;
 using CombatAnalysis.WebApp.Models.Chats;
 using Microsoft.AspNetCore.Mvc;
@@ -14,16 +15,25 @@ public class GroupChatController : ControllerBase
     public GroupChatController(IHttpClientHelper httpClient)
     {
         _httpClient = httpClient;
-        _httpClient.BaseAddress = Port.ChatApi;
     }
 
     [HttpPost]
     public async Task<IActionResult> Create(GroupChatModel chat)
     {
-        var responseMessage = await _httpClient.PostAsync("GroupChat", JsonContent.Create(chat));
-        if (responseMessage.StatusCode == System.Net.HttpStatusCode.OK)
+        if (!HttpContext.Request.Cookies.TryGetValue("refreshToken", out var refreshToken))
+        {
+            return Unauthorized();
+        }
+
+        var responseMessage = await _httpClient.PostAsync("GroupChat", JsonContent.Create(chat), refreshToken, Port.ChatApi);
+        if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+        {
+            return Unauthorized();
+        }
+        else if (responseMessage.IsSuccessStatusCode)
         {
             var groupChat = await responseMessage.Content.ReadFromJsonAsync<GroupChatModel>();
+
             return Ok(groupChat);
         }
 
@@ -33,14 +43,22 @@ public class GroupChatController : ControllerBase
     [HttpGet]
     public async Task<IActionResult> GetAll()
     {
-        var responseMessage = await _httpClient.GetAsync("GroupChat");
-        if (responseMessage.StatusCode == System.Net.HttpStatusCode.OK)
+        if (!HttpContext.Request.Cookies.TryGetValue("refreshToken", out var refreshToken))
+        {
+            return Unauthorized();
+        }
+
+        var responseMessage = await _httpClient.GetAsync("GroupChat", refreshToken, Port.ChatApi);
+        if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+        {
+            return Unauthorized();
+        }
+        else if (responseMessage.IsSuccessStatusCode)
         {
             var groupChats = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<GroupChatModel>>();
 
             return Ok(groupChats);
         }
-
 
         return BadRequest();
     }
@@ -48,14 +66,22 @@ public class GroupChatController : ControllerBase
     [HttpGet("{id}")]
     public async Task<IActionResult> GetById(int id)
     {
-        var responseMessage = await _httpClient.GetAsync($"GroupChat/{id}");
-        if (responseMessage.StatusCode == System.Net.HttpStatusCode.OK)
+        if (!HttpContext.Request.Cookies.TryGetValue("refreshToken", out var refreshToken))
+        {
+            return Unauthorized();
+        }
+
+        var responseMessage = await _httpClient.GetAsync($"GroupChat/{id}", refreshToken, Port.ChatApi);
+        if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+        {
+            return Unauthorized();
+        }
+        else if (responseMessage.IsSuccessStatusCode)
         {
             var groupChat = await responseMessage.Content.ReadFromJsonAsync<GroupChatModel>();
 
             return Ok(groupChat);
         }
-
 
         return BadRequest();
     }
@@ -63,8 +89,17 @@ public class GroupChatController : ControllerBase
     [HttpPut]
     public async Task<IActionResult> Update(GroupChatModel chat)
     {
-        var responseMessage = await _httpClient.PutAsync("GroupChat", JsonContent.Create(chat));
-        if (responseMessage.StatusCode == System.Net.HttpStatusCode.OK)
+        if (!HttpContext.Request.Cookies.TryGetValue("refreshToken", out var refreshToken))
+        {
+            return Unauthorized();
+        }
+
+        var responseMessage = await _httpClient.PutAsync("GroupChat", JsonContent.Create(chat), refreshToken, Port.ChatApi);
+        if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+        {
+            return Unauthorized();
+        }
+        else if (responseMessage.IsSuccessStatusCode)
         {
             return Ok();
         }
@@ -75,8 +110,17 @@ public class GroupChatController : ControllerBase
     [HttpDelete("{chatId:int:min(1)}")]
     public async Task<IActionResult> Delete(int chatId)
     {
-        var responseMessage = await _httpClient.DeletAsync($"GroupChat/{chatId}");
-        if (responseMessage.StatusCode == System.Net.HttpStatusCode.OK)
+        if (!HttpContext.Request.Cookies.TryGetValue("refreshToken", out var refreshToken))
+        {
+            return Unauthorized();
+        }
+
+        var responseMessage = await _httpClient.DeletAsync($"GroupChat/{chatId}", refreshToken, Port.ChatApi);
+        if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+        {
+            return Unauthorized();
+        }
+        else if (responseMessage.IsSuccessStatusCode)
         {
             return Ok();
         }

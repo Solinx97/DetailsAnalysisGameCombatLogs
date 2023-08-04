@@ -25,10 +25,15 @@ public class CommunityController : ControllerBase
             return Unauthorized();
         }
 
-        var responseMessage = await _httpClient.PostAsync("Community", refreshToken, JsonContent.Create(newCommunity), Port.ChatApi);
-        if (responseMessage.StatusCode == System.Net.HttpStatusCode.OK)
+        var responseMessage = await _httpClient.PostAsync("Community", JsonContent.Create(newCommunity), refreshToken, Port.ChatApi);
+        if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+        {
+            return Unauthorized();
+        }
+        else if (responseMessage.IsSuccessStatusCode)
         {
             var community = await responseMessage.Content.ReadFromJsonAsync<CommunityModel>();
+
             return Ok(community);
         }
 
@@ -44,13 +49,16 @@ public class CommunityController : ControllerBase
         }
 
         var responseMessage = await _httpClient.GetAsync("Community", refreshToken, Port.ChatApi);
-        if (responseMessage.StatusCode == System.Net.HttpStatusCode.OK)
+        if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+        {
+            return Unauthorized();
+        }
+        else if (responseMessage.IsSuccessStatusCode)
         {
             var communities = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<CommunityModel>>();
 
             return Ok(communities);
         }
-
 
         return BadRequest();
     }
@@ -64,13 +72,16 @@ public class CommunityController : ControllerBase
         }
 
         var responseMessage = await _httpClient.GetAsync($"Community/{id}", refreshToken, Port.ChatApi);
-        if (responseMessage.StatusCode == System.Net.HttpStatusCode.OK)
+        if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+        {
+            return Unauthorized();
+        }
+        else if (responseMessage.IsSuccessStatusCode)
         {
             var community = await responseMessage.Content.ReadFromJsonAsync<CommunityModel>();
 
             return Ok(community);
         }
-
 
         return BadRequest();
     }
@@ -79,7 +90,11 @@ public class CommunityController : ControllerBase
     public async Task<IActionResult> Update(CommunityModel chat)
     {
         var responseMessage = await _httpClient.PutAsync("Community", JsonContent.Create(chat), Port.ChatApi);
-        if (responseMessage.StatusCode == System.Net.HttpStatusCode.OK)
+        if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+        {
+            return Unauthorized();
+        }
+        else if (responseMessage.IsSuccessStatusCode)
         {
             return Ok();
         }
@@ -91,7 +106,11 @@ public class CommunityController : ControllerBase
     public async Task<IActionResult> Delete(int id)
     {
         var responseMessage = await _httpClient.DeletAsync($"Community/{id}", Port.ChatApi);
-        if (responseMessage.StatusCode == System.Net.HttpStatusCode.OK)
+        if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+        {
+            return Unauthorized();
+        }
+        else if (responseMessage.IsSuccessStatusCode)
         {
             return Ok();
         }

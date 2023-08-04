@@ -24,7 +24,7 @@ internal class TokenService : IIdentityTokenService
     private readonly TokenSettings _tokenSettings;
 
     private const int AccessExpiresTimeInMinutes = 30;
-    private const int RefreshExpiresTimeInHours = 12;
+    private const int RefreshExpiresTimeInMinutes = 120;
 
     public TokenService(IOptions<TokenSettings> settings, ITokenRepository<RefreshToken> refreshTokenRepository,
         ITokenRepository<AccessToken> accessTokenrepository, IMapper mapper, 
@@ -46,8 +46,8 @@ internal class TokenService : IIdentityTokenService
             return null;
         }
 
-        var accessToken = GenerateToken(secret.AccessSecret);
-        var refreshToken = GenerateToken(secret.RefreshSecret);
+        var accessToken = GenerateToken(secret.AccessSecret, AccessExpiresTimeInMinutes);
+        var refreshToken = GenerateToken(secret.RefreshSecret, RefreshExpiresTimeInMinutes);
 
         await SaveAccessTokenAsync(accessToken, userId);
         await SaveRefreshTokenAsync(refreshToken, userId);
@@ -114,13 +114,13 @@ internal class TokenService : IIdentityTokenService
         return result;
     }
 
-    private string GenerateToken(string accessKey)
+    private string GenerateToken(string accessKey, double tokenExpiresInMinutes)
     {
         var tokenDescriptor = new SecurityTokenDescriptor
         {
             Issuer = _tokenSettings.Issuer,
             Audience = _tokenSettings.Audience,
-            Expires = DateTime.UtcNow.AddMinutes(AccessExpiresTimeInMinutes),
+            Expires = DateTime.UtcNow.AddMinutes(tokenExpiresInMinutes),
             SigningCredentials = new SigningCredentials(
                 new SymmetricSecurityKey(Encoding.UTF8.GetBytes(accessKey)),
                 SecurityAlgorithms.HmacSha256),
@@ -141,7 +141,7 @@ internal class TokenService : IIdentityTokenService
         {   
             Id = Guid.NewGuid().ToString(),
             Token = refreshToken,
-            Expires = DateTimeOffset.UtcNow.AddHours(RefreshExpiresTimeInHours).UtcDateTime,
+            Expires = DateTimeOffset.UtcNow.AddHours(RefreshExpiresTimeInMinutes).UtcDateTime,
             UserId = userId
         };
 
@@ -155,7 +155,7 @@ internal class TokenService : IIdentityTokenService
         {
             Id = Guid.NewGuid().ToString(),
             Token = accessToken,
-            Expires = DateTimeOffset.UtcNow.AddHours(RefreshExpiresTimeInHours).UtcDateTime,
+            Expires = DateTimeOffset.UtcNow.AddHours(RefreshExpiresTimeInMinutes).UtcDateTime,
             UserId = userId
         };
 

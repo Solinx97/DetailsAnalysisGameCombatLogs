@@ -14,7 +14,7 @@ import '../../styles/communication/post.scss';
 const Post = ({ customer, targetPostType, deletePostAsync }) => {
     const { t } = useTranslation("communication/post");
 
-    const { data: post, isLoading } = useGetPostByIdQuery(targetPostType?.postId);
+    const { data: post, isLoading } = useGetPostByIdQuery(targetPostType.postId);
 
     const [updatePostAsyncMut] = useUpdatePostAsyncMutation();
     const [createPostLikeAsyncMut] = useCreatePostLikeAsyncMutation();
@@ -229,7 +229,7 @@ const Post = ({ customer, targetPostType, deletePostAsync }) => {
                         deletePostAsync={deletePostAsync}
                     />
                     <li className="list-group-item">
-                        <div className="card-text">{post.content}</div>
+                        <div className="card-text">{post?.content}</div>
                     </li>
                     <li className="posts__reaction list-group-item">
                         <div className="posts__reaction item">
@@ -237,18 +237,18 @@ const Post = ({ customer, targetPostType, deletePostAsync }) => {
                                 className="post__reaction_like"
                                 icon={faHeart}
                                 title={t("Like")}
-                                onClick={async () => await createPostLikeAsync(post.id)}
+                                onClick={async () => await createPostLikeAsync(post?.id)}
                             />
-                            <div className="count">{post.likeCount}</div>
+                            <div className="count">{post?.likeCount}</div>
                         </div>
                         <div className="posts__reaction item">
                             <FontAwesomeIcon
                                 className="post__reaction_dislike"
                                 icon={faThumbsDown}
                                 title={t("Dislike")}
-                                onClick={async () => await createPostDislikeAsync(post.id)}
+                                onClick={async () => await createPostDislikeAsync(post?.id)}
                             />
-                            <div className="count">{post.dislikeCount}</div>
+                            <div className="count">{post?.dislikeCount}</div>
                         </div>
                         <div className="posts__reaction item">
                             <FontAwesomeIcon
@@ -257,7 +257,7 @@ const Post = ({ customer, targetPostType, deletePostAsync }) => {
                                 title={t("Comment")}
                                 onClick={postCommentsHandler}
                             />
-                            <div className="count">{post.commentCount}</div>
+                            <div className="count">{post?.commentCount}</div>
                         </div>
                     </li>
                 </ul>

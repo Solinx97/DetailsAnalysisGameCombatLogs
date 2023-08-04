@@ -32,7 +32,7 @@ const PostTitle = ({ post, dateFormatting, deletePostAsync }) => {
                     />
                 </div>
                 <div className="posts__title_details">
-                    <div>{dateFormatting(post.when)}</div>
+                    <div>{dateFormatting(post?.when)}</div>
                     <FontAwesomeIcon
                         icon={faTrash}
                         title={t("RemovePost")}

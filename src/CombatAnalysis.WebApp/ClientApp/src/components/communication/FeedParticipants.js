@@ -27,7 +27,7 @@ const FeedParticipants = ({ customer }) => {
 
     return (
         <ul>
-            {peopleId.map(item => (
+            {peopleId?.map(item => (
                 <span key={item}>
                     <UserPosts
                         customer={customer}

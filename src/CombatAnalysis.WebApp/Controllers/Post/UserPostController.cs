@@ -20,43 +20,104 @@ public class UserPostController : ControllerBase
     [HttpGet("{id:int:min(1)}")]
     public async Task<IActionResult> GetById(int id)
     {
-        var responseMessage = await _httpClient.GetAsync($"UserPost/{id}", Port.ChatApi);
-        var post = await responseMessage.Content.ReadFromJsonAsync<UserPostModel>();
+        if (!HttpContext.Request.Cookies.TryGetValue("refreshToken", out var refreshToken))
+        {
+            return Unauthorized();
+        }
 
-        return Ok(post);
+        var responseMessage = await _httpClient.GetAsync($"UserPost/{id}", refreshToken, Port.ChatApi);
+        if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+        {
+            return Unauthorized();
+        } else if (responseMessage.IsSuccessStatusCode)
+        {
+            var post = await responseMessage.Content.ReadFromJsonAsync<UserPostModel>();
+
+            return Ok(post);
+        }
+
+        return BadRequest();
     }
 
     [HttpGet("searchByUserId/{id}")]
     public async Task<IActionResult> SearchByUserId(string id)
     {
-        var responseMessage = await _httpClient.GetAsync($"UserPost/searchByUserId/{id}", Port.ChatApi);
-        var posts = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<UserPostModel>>();
+        if (!HttpContext.Request.Cookies.TryGetValue("refreshToken", out var refreshToken))
+        {
+            return Unauthorized();
+        }
 
-        return Ok(posts);
+        var responseMessage = await _httpClient.GetAsync($"UserPost/searchByUserId/{id}", refreshToken, Port.ChatApi);
+        if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+        {
+            return Unauthorized();
+        } else if (responseMessage.IsSuccessStatusCode)
+        {
+            var posts = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<UserPostModel>>();
+
+            return Ok(posts);
+        }
+
+        return BadRequest();
     }
 
     [HttpPut]
     public async Task<IActionResult> Update(UserPostModel model)
     {
-        await _httpClient.PutAsync("UserPost", JsonContent.Create(model), Port.ChatApi);
+        if (!HttpContext.Request.Cookies.TryGetValue("refreshToken", out var refreshToken))
+        {
+            return Unauthorized();
+        }
 
-        return Ok();
+        var responseMessage = await _httpClient.PutAsync("UserPost", JsonContent.Create(model), refreshToken, Port.ChatApi);
+        if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+        {
+            return Unauthorized();
+        } else if (responseMessage.IsSuccessStatusCode)
+        {
+            return Ok();
+        }
+
+        return BadRequest();
     }
 
     [HttpPost]
     public async Task<IActionResult> Create(UserPostModel model)
     {
-        var responseMessage = await _httpClient.PostAsync("UserPost", JsonContent.Create(model), Port.ChatApi);
-        var post = await responseMessage.Content.ReadFromJsonAsync<UserPostModel>();
+        if (!HttpContext.Request.Cookies.TryGetValue("refreshToken", out var refreshToken))
+        {
+            return Unauthorized();
+        }
 
-        return Ok(post);
-    }
+        var responseMessage = await _httpClient.PostAsync("UserPost", JsonContent.Create(model), refreshToken, Port.ChatApi);
+        if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+        {
+            return Unauthorized();
+        }
+        else if (responseMessage.IsSuccessStatusCode)
+        {
+            var post = await responseMessage.Content.ReadFromJsonAsync<UserPostModel>();
+
+            return Ok(post);
+        }
+
+        return BadRequest();
+    }   
 
     [HttpDelete("{id:int:min(1)}")]
     public async Task<IActionResult> Delete(int id)
     {
-        var responseMessage = await _httpClient.DeletAsync($"UserPost/{id}", Port.ChatApi);
-        if (responseMessage.StatusCode == System.Net.HttpStatusCode.OK)
+        if (!HttpContext.Request.Cookies.TryGetValue("refreshToken", out var refreshToken))
+        {
+            return Unauthorized();
+        }
+
+        var responseMessage = await _httpClient.DeletAsync($"UserPost/{id}", refreshToken, Port.ChatApi);
+        if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+        {
+            return Unauthorized();
+        }
+        else if (responseMessage.IsSuccessStatusCode)
         {
             return Ok();
         }

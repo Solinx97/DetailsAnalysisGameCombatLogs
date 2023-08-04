@@ -20,43 +20,107 @@ public class PostLikeController : ControllerBase
     [HttpGet("{id:int:min(1)}")]
     public async Task<IActionResult> GetById(int id)
     {
-        var responseMessage = await _httpClient.GetAsync($"PostLike/{id}", Port.ChatApi);
-        var postLike = await responseMessage.Content.ReadFromJsonAsync<PostLikeModel>();
+        if (!HttpContext.Request.Cookies.TryGetValue("refreshToken", out var refreshToken))
+        {
+            return Unauthorized();
+        }
 
-        return Ok(postLike);
+        var responseMessage = await _httpClient.GetAsync($"PostLike/{id}", refreshToken, Port.ChatApi);
+        if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+        {
+            return Unauthorized();
+        }
+        else if (responseMessage.IsSuccessStatusCode)
+        {
+            var postLike = await responseMessage.Content.ReadFromJsonAsync<PostLikeModel>();
+
+            return Ok(postLike);
+        }
+
+        return BadRequest();
     }
 
     [HttpGet("searchByPostId/{id:int:min(1)}")]
     public async Task<IActionResult> SearchByPostId(int id)
     {
-        var responseMessage = await _httpClient.GetAsync($"PostLike/searchByPostId/{id}", Port.ChatApi);
-        var postLikes = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<PostLikeModel>>();
+        if (!HttpContext.Request.Cookies.TryGetValue("refreshToken", out var refreshToken))
+        {
+            return Unauthorized();
+        }
 
-        return Ok(postLikes);
+        var responseMessage = await _httpClient.GetAsync($"PostLike/searchByPostId/{id}", refreshToken, Port.ChatApi);
+        if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+        {
+            return Unauthorized();
+        }
+        else if (responseMessage.IsSuccessStatusCode)
+        {
+            var postLikes = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<PostLikeModel>>();
+
+            return Ok(postLikes);
+        }
+
+        return BadRequest();
     }
 
     [HttpPut]
     public async Task<IActionResult> Update(PostLikeModel model)
     {
-        await _httpClient.PutAsync("PostLike", JsonContent.Create(model), Port.ChatApi);
+        if (!HttpContext.Request.Cookies.TryGetValue("refreshToken", out var refreshToken))
+        {
+            return Unauthorized();
+        }
 
-        return Ok();
+        var responseMessage = await _httpClient.PutAsync("PostLike", JsonContent.Create(model), refreshToken, Port.ChatApi);
+        if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+        {
+            return Unauthorized();
+        }
+        else if (responseMessage.IsSuccessStatusCode)
+        {
+            return Ok();
+        }
+
+        return BadRequest();
     }
 
     [HttpPost]
     public async Task<IActionResult> Create(PostLikeModel model)
     {
-        var responseMessage = await _httpClient.PostAsync("PostLike", JsonContent.Create(model), Port.ChatApi);
-        var postLike = await responseMessage.Content.ReadFromJsonAsync<PostLikeModel>();
+        if (!HttpContext.Request.Cookies.TryGetValue("refreshToken", out var refreshToken))
+        {
+            return Unauthorized();
+        }
 
-        return Ok(postLike);
+        var responseMessage = await _httpClient.PostAsync("PostLike", JsonContent.Create(model), refreshToken, Port.ChatApi);
+        if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+        {
+            return Unauthorized();
+        }
+        else if (responseMessage.IsSuccessStatusCode)
+        {
+            var postLike = await responseMessage.Content.ReadFromJsonAsync<PostLikeModel>();
+
+            return Ok(postLike);
+        }
+
+        return BadRequest();
     }
 
     [HttpDelete("{id:int:min(1)}")]
     public async Task<IActionResult> Delete(int id)
     {
-        var responseMessage = await _httpClient.DeletAsync($"PostLike/{id}", Port.ChatApi);
-        if (responseMessage.StatusCode == System.Net.HttpStatusCode.OK)
+        if (!HttpContext.Request.Cookies.TryGetValue("refreshToken", out var refreshToken))
+        {
+            return Unauthorized();
+        }
+
+        var responseMessage = await _httpClient.DeletAsync($"PostLike/{id}", refreshToken, Port.ChatApi);
+        if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+        {
+            return Unauthorized();
+        }
+        else if (responseMessage.IsSuccessStatusCode)
         {
             return Ok();
         }

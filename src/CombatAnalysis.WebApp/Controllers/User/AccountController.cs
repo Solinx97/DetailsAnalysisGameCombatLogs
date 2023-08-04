@@ -87,9 +87,17 @@ public class AccountController : ControllerBase
             return Unauthorized();
         }
 
-        await _httpClient.PutAsync("Account", refreshToken, JsonContent.Create(model), Port.UserApi);
+        var responseMessage = await _httpClient.PutAsync("Account", JsonContent.Create(model), refreshToken, Port.UserApi);
+        if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+        {
+            return Unauthorized();
+        }
+        else if (responseMessage.IsSuccessStatusCode)
+        {
+            return Ok();
+        }
 
-        return Ok();
+        return BadRequest();
     }
 
     [HttpGet]
@@ -101,9 +109,14 @@ public class AccountController : ControllerBase
         }
 
         var responseMessage = await _httpClient.GetAsync("Account", refreshToken, Port.UserApi);
-        if (responseMessage.StatusCode == System.Net.HttpStatusCode.OK)
+        if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+        {
+            return Unauthorized();
+        }
+        else if (responseMessage.IsSuccessStatusCode)
         {
             var users = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<AppUserModel>>();
+
             return Ok(users);
         }
 
@@ -119,9 +132,14 @@ public class AccountController : ControllerBase
         }
 
         var responseMessage = await _httpClient.GetAsync($"Account/{id}", refreshToken, Port.UserApi);
-        if (responseMessage.StatusCode == System.Net.HttpStatusCode.OK)
+        if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+        {
+            return Unauthorized();
+        }
+        else if (responseMessage.IsSuccessStatusCode)
         {
             var user = await responseMessage.Content.ReadFromJsonAsync<AppUserModel>();
+            
             return Ok(user);
         }
 
@@ -131,20 +149,21 @@ public class AccountController : ControllerBase
     [HttpPost("logout")]
     public async Task<IActionResult> Logout()
     {
-        await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-
-        if (Request.Cookies.TryGetValue("refreshToken", out var refreshToken))
+        if (!Request.Cookies.TryGetValue("refreshToken", out var refreshToken))
         {
-            var reponse = await _httpClient.GetAsync($"Account/logout/{refreshToken}", Port.UserApi);
-            if (reponse.IsSuccessStatusCode)
-            {
-                HttpContext.Response.Cookies.Delete("accessToken");
-                HttpContext.Response.Cookies.Delete("refreshToken");
-            }
-            else
-            {
-                return BadRequest();
-            }
+            return Unauthorized();
+        }
+
+        await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+        var reponse = await _httpClient.GetAsync($"Account/logout/{refreshToken}", Port.UserApi);
+        if (reponse.IsSuccessStatusCode)
+        {
+            HttpContext.Response.Cookies.Delete("accessToken");
+            HttpContext.Response.Cookies.Delete("refreshToken");
+        }
+        else
+        {
+            return BadRequest();
         }
 
         return Ok();

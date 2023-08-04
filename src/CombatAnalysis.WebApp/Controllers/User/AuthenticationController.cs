@@ -2,6 +2,8 @@
 using CombatAnalysis.WebApp.Extensions;
 using CombatAnalysis.WebApp.Interfaces;
 using CombatAnalysis.WebApp.Models.User;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CombatAnalysis.WebApp.Controllers.User;
@@ -27,13 +29,12 @@ public class AuthenticationController : ControllerBase
 
         var email = HttpContext.User.Identity.Name;
         var responseMessage = await _httpClient.GetAsync($"account/find/{email}", refreshToken, Port.UserApi);
-        if (responseMessage.StatusCode == System.Net.HttpStatusCode.OK)
+        if (responseMessage.IsSuccessStatusCode)
         {
             var user = await responseMessage.Content.ReadFromJsonAsync<AppUserModel>();
             return Ok(user);
         }
 
-
-        return BadRequest();
+        return Unauthorized();
     }
 }

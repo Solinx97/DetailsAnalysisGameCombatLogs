@@ -20,7 +20,6 @@ const UserPosts = ({ customer, userId }) => {
                 userPosts?.map((item) => (
                     <li key={item?.id}>
                         <Post
-                            key={item?.id}
                             customer={customer}
                             targetPostType={item}
                             deletePostAsync={async () => await deleteCommunityPostAsync(item.id)}

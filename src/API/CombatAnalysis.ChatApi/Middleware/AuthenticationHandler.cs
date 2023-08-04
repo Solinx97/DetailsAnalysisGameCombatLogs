@@ -26,12 +26,12 @@ namespace CombatAnalysis.ChatApi.Middleware
 
         protected override async Task<AuthenticateResult> HandleAuthenticateAsync()
         {
-            if (!Request.Headers.ContainsKey("Authorization"))
+            if (Request.Headers.Authorization.Count == 0)
             {
                 return AuthenticateResult.Fail("Unauthorized");
             }
 
-            string authorizationHeader = Request.Headers["Authorization"];
+            string authorizationHeader = Request.Headers.Authorization;
             if (string.IsNullOrEmpty(authorizationHeader))
             {
                 return AuthenticateResult.NoResult();
@@ -75,6 +75,7 @@ namespace CombatAnalysis.ChatApi.Middleware
             var identity = new ClaimsIdentity(claimsByRefreshToken, Scheme.Name);
             var principal = new System.Security.Principal.GenericPrincipal(identity, null);
             var ticket = new AuthenticationTicket(principal, Scheme.Name);
+
             return AuthenticateResult.Success(ticket);
         }
     }
