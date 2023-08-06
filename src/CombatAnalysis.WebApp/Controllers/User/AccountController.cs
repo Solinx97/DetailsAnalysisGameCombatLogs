@@ -34,12 +34,16 @@ public class AccountController : ControllerBase
         HttpContext.Response.Cookies.Append("accessToken", response.AccessToken, new CookieOptions
         {
             HttpOnly = true,
+            Secure = true,
+            SameSite = SameSiteMode.Lax,
             Expires = DateTimeOffset.UtcNow.AddMinutes(TokenExpires.AccessExpiresTimeInMinutes),
         });
         HttpContext.Response.Cookies.Append("refreshToken", response.RefreshToken, new CookieOptions
         {
             HttpOnly = true,
-            Expires = DateTimeOffset.UtcNow.AddHours(TokenExpires.RefreshExpiresTimeInHours),
+            Secure = true,
+            SameSite = SameSiteMode.Lax,
+            Expires = DateTimeOffset.UtcNow.AddMinutes(TokenExpires.RefreshExpiresTimeInMinutes),
         });
 
         await Authenticate(response.User.Email);
@@ -71,7 +75,7 @@ public class AccountController : ControllerBase
         HttpContext.Response.Cookies.Append("refreshToken", response.RefreshToken, new CookieOptions
         {
             HttpOnly = true,
-            Expires = DateTimeOffset.UtcNow.AddHours(TokenExpires.RefreshExpiresTimeInHours),
+            Expires = DateTimeOffset.UtcNow.AddHours(TokenExpires.RefreshExpiresTimeInMinutes),
         });
 
         await Authenticate(response.User.Email);
@@ -149,22 +153,9 @@ public class AccountController : ControllerBase
     [HttpPost("logout")]
     public async Task<IActionResult> Logout()
     {
-        if (!Request.Cookies.TryGetValue("refreshToken", out var refreshToken))
-        {
-            return Unauthorized();
-        }
-
         await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-        var reponse = await _httpClient.GetAsync($"Account/logout/{refreshToken}", Port.UserApi);
-        if (reponse.IsSuccessStatusCode)
-        {
-            HttpContext.Response.Cookies.Delete("accessToken");
-            HttpContext.Response.Cookies.Delete("refreshToken");
-        }
-        else
-        {
-            return BadRequest();
-        }
+        HttpContext.Response.Cookies.Delete("accessToken");
+        HttpContext.Response.Cookies.Delete("refreshToken");
 
         return Ok();
     }
@@ -177,6 +168,12 @@ public class AccountController : ControllerBase
         };
 
         var claimsIdentity = new ClaimsIdentity(claims, "ApplicationCookie", ClaimsIdentity.DefaultNameClaimType, ClaimsIdentity.DefaultRoleClaimType);
-        await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity));
+        await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme,
+            new ClaimsPrincipal(claimsIdentity),
+            new AuthenticationProperties
+            {
+                IsPersistent = true,
+                ExpiresUtc = DateTimeOffset.UtcNow.AddMinutes(TokenExpires.RefreshExpiresTimeInMinutes)
+            });
     }
 }

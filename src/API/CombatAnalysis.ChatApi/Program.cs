@@ -4,7 +4,6 @@ using CombatAnalysis.BL.Mapping;
 using CombatAnalysis.ChatApi.Mapping;
 using CombatAnalysis.ChatApi.Middleware;
 using CombatAnalysis.Identity.Extensions;
-using CombatAnalysis.Identity.Mapping;
 using CombatAnalysis.Identity.Settings;
 using Microsoft.OpenApi.Models;
 
@@ -26,7 +25,6 @@ var mappingConfig = new MapperConfiguration(mc =>
 {
     mc.AddProfile(new ChatMapper());
     mc.AddProfile(new BLMapper());
-    mc.AddProfile(new IdentityMappingMapper());
 });
 
 var mapper = mappingConfig.CreateMapper();

@@ -1,4 +1,4 @@
-﻿namespace CombatAnalysis.WebApp.Consts;
+﻿namespace CombatAnalysis.Identity.Settings;
 
 public static class TokenExpires
 {

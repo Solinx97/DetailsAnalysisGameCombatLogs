@@ -3,7 +3,6 @@ using CombatAnalysis.CustomerBL.Extensions;
 using CombatAnalysis.CustomerBL.Mapping;
 using CombatAnalysis.Identity.Extensions;
 using CombatAnalysis.Identity.Interfaces;
-using CombatAnalysis.Identity.Mapping;
 using CombatAnalysis.Identity.Settings;
 using CombatAnalysis.UserApi.Mapping;
 using CombatAnalysis.UserApi.Middleware;
@@ -27,7 +26,6 @@ var mappingConfig = new MapperConfiguration(mc =>
 {
     mc.AddProfile(new UserApiMapper());
     mc.AddProfile(new CustomerBLMapper());
-    mc.AddProfile(new IdentityMappingMapper());
 });
 
 var mapper = mappingConfig.CreateMapper();
@@ -50,9 +48,9 @@ builder.Services.AddSwaggerGen(options =>
 
 var app = builder.Build();
 
-var scope = app.Services.CreateScope();
-var jwtSecretService = scope.ServiceProvider.GetService<IJWTSecret>();
-await jwtSecretService.GenerateSecretKeysAsync();
+//var scope = app.Services.CreateScope();
+//var jwtSecretService = scope.ServiceProvider.GetService<IJWTSecret>();
+//await jwtSecretService.GenerateSecretKeysAsync();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

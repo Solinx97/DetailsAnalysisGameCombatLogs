@@ -122,16 +122,6 @@ public class AccountController : ControllerBase
         return Ok(updatedUser);
     }
 
-    [HttpGet("logout/{refreshToken}")]
-    [AllowAnonymous]
-    public async Task<IActionResult> Logout(string refreshToken)
-    {
-        var refreshTokenModel = await _tokenService.FindRefreshTokenAsync(refreshToken);
-        await _tokenService.RemoveRefreshTokenAsync(refreshTokenModel);
-
-        return Ok();
-    }
-
     [HttpGet("find/{email}")]
     [Authorize]
     public async Task<IActionResult> Find(string email)
