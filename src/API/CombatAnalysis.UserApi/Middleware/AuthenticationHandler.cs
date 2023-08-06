@@ -42,7 +42,7 @@ namespace CombatAnalysis.UserApi.Middleware
                 return AuthenticateResult.Fail("Unauthorized");
             }
 
-            var token = authorizationHeader.Substring("bearer".Length).Trim();
+            var token = authorizationHeader["bearer".Length..].Trim();
             if (string.IsNullOrEmpty(token))
             {
                 return AuthenticateResult.Fail("Unauthorized");

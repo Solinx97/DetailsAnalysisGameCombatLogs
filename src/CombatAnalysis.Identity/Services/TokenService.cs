@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
 using CombatAnalysis.Identity.Interfaces;
 using CombatAnalysis.Identity.Settings;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
@@ -27,7 +26,7 @@ internal class TokenService : IIdentityTokenService
         _jwtSecretService = jwtSecretService;
     }
 
-    async Task<Tuple<string, string>> IIdentityTokenService.GenerateTokensAsync(IResponseCookies cookies, string userId)
+    async Task<string> IIdentityTokenService.GenerateTokensAsync(string userId)
     {
         var secret = await _jwtSecretService.GetSecretAsync();
         if (secret == null)
@@ -35,10 +34,9 @@ internal class TokenService : IIdentityTokenService
             return null;
         }
 
-        var accessToken = GenerateToken(secret.AccessSecret, TokenExpires.AccessExpiresTimeInMinutes);
         var refreshToken = GenerateToken(secret.RefreshSecret, TokenExpires.RefreshExpiresTimeInMinutes);
 
-        return new Tuple<string, string>(accessToken, refreshToken);
+        return refreshToken;
     }
 
     IEnumerable<Claim> IIdentityTokenService.ValidateToken(string token, string secretKey, out SecurityToken validatedToken)

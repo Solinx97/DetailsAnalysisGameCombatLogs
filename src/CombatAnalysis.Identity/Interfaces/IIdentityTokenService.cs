@@ -6,7 +6,7 @@ namespace CombatAnalysis.Identity.Interfaces;
 
 public interface IIdentityTokenService
 {
-    Task<Tuple<string, string>> GenerateTokensAsync(IResponseCookies cookies, string userId);
+    Task<string> GenerateTokensAsync(string userId);
 
     IEnumerable<Claim> ValidateToken(string token, string secretKey, out SecurityToken validatedToken);
 }

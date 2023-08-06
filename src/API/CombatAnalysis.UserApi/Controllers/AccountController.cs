@@ -36,9 +36,9 @@ public class AccountController : ControllerBase
             return NotFound();
         }
 
-        var tokens = await _tokenService.GenerateTokensAsync(HttpContext.Response.Cookies, user.Id);
+        var refreshToken = await _tokenService.GenerateTokensAsync(user.Id);
         var map = _mapper.Map<AppUserModel>(user);
-        var response = new ResponseFromAccount(map, tokens.Item1, tokens.Item2);
+        var response = new ResponseFromAccount(map, refreshToken);
 
         return Ok(response);
     }
@@ -59,8 +59,8 @@ public class AccountController : ControllerBase
             var map = _mapper.Map<AppUserDto>(newUser);
             await _service.CreateAsync(map);
 
-            var tokens = await _tokenService.GenerateTokensAsync(HttpContext.Response.Cookies, newUser.Id);
-            var response = new ResponseFromAccount(newUser, tokens.Item1, tokens.Item2);
+            var refreshToken = await _tokenService.GenerateTokensAsync(newUser.Id);
+            var response = new ResponseFromAccount(newUser, refreshToken);
 
             return Ok(response);
         }

@@ -31,13 +31,6 @@ public class AccountController : ControllerBase
         }
 
         var response = await responseMessage.Content.ReadFromJsonAsync<ResponseFromAccount>();
-        HttpContext.Response.Cookies.Append("accessToken", response.AccessToken, new CookieOptions
-        {
-            HttpOnly = true,
-            Secure = true,
-            SameSite = SameSiteMode.Lax,
-            Expires = DateTimeOffset.UtcNow.AddMinutes(TokenExpires.AccessExpiresTimeInMinutes),
-        });
         HttpContext.Response.Cookies.Append("refreshToken", response.RefreshToken, new CookieOptions
         {
             HttpOnly = true,
@@ -67,15 +60,12 @@ public class AccountController : ControllerBase
         }
 
         var response = await responseMessage.Content.ReadFromJsonAsync<ResponseFromAccount>();
-        HttpContext.Response.Cookies.Append("accessToken", response.AccessToken, new CookieOptions
-        {
-            HttpOnly = true,
-            Expires = DateTimeOffset.UtcNow.AddMinutes(TokenExpires.AccessExpiresTimeInMinutes),
-        });
         HttpContext.Response.Cookies.Append("refreshToken", response.RefreshToken, new CookieOptions
         {
             HttpOnly = true,
-            Expires = DateTimeOffset.UtcNow.AddHours(TokenExpires.RefreshExpiresTimeInMinutes),
+            Secure = true,
+            SameSite = SameSiteMode.Lax,
+            Expires = DateTimeOffset.UtcNow.AddMinutes(TokenExpires.RefreshExpiresTimeInMinutes),
         });
 
         await Authenticate(response.User.Email);
@@ -154,7 +144,6 @@ public class AccountController : ControllerBase
     public async Task<IActionResult> Logout()
     {
         await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-        HttpContext.Response.Cookies.Delete("accessToken");
         HttpContext.Response.Cookies.Delete("refreshToken");
 
         return Ok();
