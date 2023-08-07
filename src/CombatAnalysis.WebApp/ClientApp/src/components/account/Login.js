@@ -19,10 +19,13 @@ const Login = () => {
     const { t } = useTranslation("account/login");
 
     const [showErrorMessage, setShowErrorMessage] = useState(false);
+
     const email = useRef(null);
     const password = useRef(null);
+    const dontLogout = useRef(null);
 
     const handleSubmitAsync = async (event) => {
+        document.cookie = `dontLogout=${dontLogout.current.checked}`;
         event.preventDefault();
 
         setShowErrorMessage(false);
@@ -40,7 +43,7 @@ const Login = () => {
             if (customer.data !== undefined) {
                 dispatch(updateCustomer(customer.data));
 
-                navigate('/');
+                navigate("/");
             }
         }
         else {
@@ -57,6 +60,12 @@ const Login = () => {
             <div className="mb-3">
                 <label htmlFor="inputPassword" className="form-label">{t("Password")}</label>
                 <input type="password" className="form-control" id="inputPassword" ref={password} />
+            </div>
+            <div className="form-check">
+                <label className="form-check-label" htmlFor="invalidCheck">
+                    Don't logout
+                </label>
+                <input className="form-check-input" type="checkbox" id="invalidCheck" ref={dontLogout} />
             </div>
             <input type="submit" className="btn btn-primary" value={t("Login")} />
             <div className="login__error-message" style={{ display: showErrorMessage ? "flex" : "none" }}>{t("IncorrectData")}</div>

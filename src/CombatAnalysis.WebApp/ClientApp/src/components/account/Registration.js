@@ -1,4 +1,4 @@
-﻿import React, { useState } from 'react';
+﻿import React, { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { useRegistrationAsyncMutation } from '../../store/api/Account.api';
@@ -17,6 +17,8 @@ const Registration = () => {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const [showErrorMessage, setShowErrorMessage] = useState(false);
+
+    const dontLogout = useRef(null);
 
     const registrationAsync = async () => {
         setShowErrorMessage(false);
@@ -69,6 +71,8 @@ const Registration = () => {
     }
 
     const handleSubmitAsync = async (event) => {
+        document.cookie = `dontLogout=${dontLogout.current.checked}`;
+
         event.preventDefault();
 
         await registrationAsync();
@@ -88,6 +92,12 @@ const Registration = () => {
                 <div className="mb-3">
                     <label htmlFor="inputPassword" className="form-label">{t("Password")}</label>
                     <input type="password" className="form-control" id="inputPassword" onChange={handlePasswordChange} />
+                </div>
+                <div className="form-check">
+                    <label className="form-check-label" htmlFor="invalidCheck">
+                        Don't logout
+                    </label>
+                    <input className="form-check-input" type="checkbox" id="invalidCheck" ref={dontLogout} />
                 </div>
                 <input type="submit" className="btn btn-primary" value={t("Registration")} />
                 <div className="registration__error-message" style={{ display: showErrorMessage ? "flex" : "none" }}>{t("EmailExist")}</div>

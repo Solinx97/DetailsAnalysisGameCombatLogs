@@ -39,7 +39,8 @@ public class AccountController : ControllerBase
             Expires = DateTimeOffset.UtcNow.AddMinutes(TokenExpires.RefreshExpiresTimeInMinutes),
         });
 
-        await Authenticate(response.User.Email);
+        var dontLogoutValue = HttpContext.Request.Cookies?["dontLogout"];
+        await Authenticate(response.User.Email, dontLogoutValue == "true");
 
         return Ok(response.User);
     }
@@ -51,26 +52,10 @@ public class AccountController : ControllerBase
         if (responseMessage.StatusCode != System.Net.HttpStatusCode.OK)
         {
             return BadRequest();
-
         }
 
-        if (responseMessage.Content.Headers.ContentLength == 0)
-        {
-            return Ok();
-        }
-
-        var response = await responseMessage.Content.ReadFromJsonAsync<ResponseFromAccount>();
-        HttpContext.Response.Cookies.Append("refreshToken", response.RefreshToken, new CookieOptions
-        {
-            HttpOnly = true,
-            Secure = true,
-            SameSite = SameSiteMode.Lax,
-            Expires = DateTimeOffset.UtcNow.AddMinutes(TokenExpires.RefreshExpiresTimeInMinutes),
-        });
-
-        await Authenticate(response.User.Email);
-
-        return Ok(response.User);
+        var login = new LoginModel { Email = model.Email, Password = model.Password };
+        return await Login(login);
     }
 
     [HttpPut]
@@ -149,7 +134,7 @@ public class AccountController : ControllerBase
         return Ok();
     }
 
-    private async Task Authenticate(string email)
+    private async Task Authenticate(string email, bool dontLogout)
     {
         var claims = new List<Claim>
         {
@@ -161,7 +146,7 @@ public class AccountController : ControllerBase
             new ClaimsPrincipal(claimsIdentity),
             new AuthenticationProperties
             {
-                IsPersistent = true,
+                IsPersistent = dontLogout,
                 ExpiresUtc = DateTimeOffset.UtcNow.AddMinutes(TokenExpires.RefreshExpiresTimeInMinutes)
             });
     }
