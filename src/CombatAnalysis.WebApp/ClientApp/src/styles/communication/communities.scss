@@ -1,10 +1,20 @@
 .communities {
-    display: flex;
-    flex-direction: column;
-
     .invite-to-community {
         width: 100%;
         padding: 10px 50px;
+    }
+
+    &__search {
+        display: flex;
+        align-items: center;
+
+        lbael, input {
+            margin: 5px 15px;
+        }
+
+        input {
+            width: 350px;
+        }
     }
 
     &__list {

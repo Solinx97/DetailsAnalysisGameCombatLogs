@@ -2,78 +2,54 @@ import { faArrowsRotate, faEye, faEyeSlash } from '@fortawesome/free-solid-svg-i
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useState } from "react";
 import { useTranslation } from 'react-i18next';
-import { NavLink, useNavigate } from 'react-router-dom';
-import { useGetCommunitiesQuery } from '../../../store/api/ChatApi';
-import MyCommunities from '../myEnvironment/MyCommunities';
+import CommunityItem from './CommunityItem';
 
 import '../../../styles/communication/communities.scss';
 
 const Communities = () => {
     const { t } = useTranslation("communication/community/Communities");
 
-    const [showCommunities, setShowCommunities] = useState(true);
+    const [showCommunities, setShowCommunities] = useState(false);
+    const [filterContent, setFilterContent] = useState("");
 
-    const { data: communities, isLoading } = useGetCommunitiesQuery();
-
-    const navigate = useNavigate();
-
-    if (isLoading) {
-        return <></>;
+    const searchHandler = (e) => {
+        setFilterContent(e.target.value);
     }
 
     return (
-        <div className="communities">
-            <MyCommunities/>
-            <div className="communities__list">
-                <div className="title">
-                    <div className="content">
-                        <FontAwesomeIcon
-                            icon={faArrowsRotate}
-                            title={t("Refresh")}
+        <div className="communities__list">
+            <div className="title">
+                <div className="content">
+                    <FontAwesomeIcon
+                        icon={faArrowsRotate}
+                        title={t("Refresh")}
+                    />
+                    <div>{t("Communities")}</div>
+                    {showCommunities
+                        ? <FontAwesomeIcon
+                            icon={faEye}
+                            title={t("Hide")}
+                            onClick={() => setShowCommunities((item) => !item)}
                         />
-                        <div>{t("Communities")}</div>
-                        {showCommunities
-                            ? <FontAwesomeIcon
-                                icon={faEye}
-                                title={t("Hide")}
-                                onClick={() => setShowCommunities((item) => !item)}
-                            />
-                            : <FontAwesomeIcon
-                                icon={faEyeSlash}
-                                title={t("Show")}
-                                onClick={() => setShowCommunities((item) => !item)}
-                            />
-                        }
-                    </div>
+                        : <FontAwesomeIcon
+                            icon={faEyeSlash}
+                            title={t("Show")}
+                            onClick={() => setShowCommunities((item) => !item)}
+                        />
+                    }
                 </div>
-                {showCommunities && 
-                    <ul>
-                        {
-                            communities?.map((item) => (
-                                <li key={item.id} className="community">
-                                    <div className="card">
-                                        <div className="card-body">
-                                            <h5 className="card-title">{item.name}</h5>
-                                            <p className="card-text">{item.description}</p>
-                                            <NavLink
-                                                className="card-link"
-                                                onClick={() => navigate(`/community?id=${item.id}`)}
-                                            >
-                                                {t("Open")}
-                                            </NavLink>
-                                            <NavLink
-                                                className="card-link"
-                                            >
-                                                {t("MoreDetails")}
-                                            </NavLink>
-                                        </div>
-                                    </div>
-                                </li>
-                            ))
-                        }
-                    </ul>
-                }
             </div>
+            {showCommunities &&
+                <>
+                    <div className="communities__search mb-3">
+                        <label htmlFor="inputSearchCommunity" className="form-label">{t("Search")}</label>
+                        <input type="text" className="form-control" id="inputSearchCommunity" placeholder={t("TypeCommunityName")} onChange={searchHandler} />
+                    </div>
+                    <CommunityItem
+                        filterContent={filterContent}
+                    />
+                </>
+            }
         </div>
     );
 }

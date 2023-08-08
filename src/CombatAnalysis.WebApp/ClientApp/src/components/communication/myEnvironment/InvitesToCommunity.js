@@ -7,8 +7,8 @@ const InvitesToCommunity = ({ customer }) => {
 
     const { data: invitesToCommunity, isLoading } = useInviteSearchByUserIdQuery(customer?.id);
 
-    if (isLoading) {
-        return <></>
+    if (isLoading || invitesToCommunity?.length === 0) {
+        return <></>;
     }
 
     return (

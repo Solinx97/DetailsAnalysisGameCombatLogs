@@ -3,6 +3,8 @@
   "Hide": "Скрыть",
   "Show": "Показать",
   "Open": "Открыть",
-  "MoreDetails": "Подробнее",
-  "Communities": "Сообщества"
+  "Join": "Присоединиться",
+  "Communities": "Сообщества",
+  "Search": "Поиск",
+  "TypeCommunityName": "Напишите название сообщества"
 }

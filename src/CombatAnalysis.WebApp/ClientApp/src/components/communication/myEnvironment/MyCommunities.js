@@ -20,8 +20,14 @@ const MyCommunities = () => {
     const [showCreateCommunity, setShowCreateCommunity] = useState(false);
     const [showMyCommunities, setShowMyCommunities] = useState(true);
 
+    const [filterContent, setFilterContent] = useState("");
+
     if (isLoading) {
         return <></>;
+    }
+
+    const searchHandler = (e) => {
+        setFilterContent(e.target.value);
     }
 
     return (
@@ -52,17 +58,26 @@ const MyCommunities = () => {
                         }
                     </div>
                 </div>
-                <ul>
-                    {
-                        userCommunities?.map((item) => (
-                            <li key={item.id}>
-                                <MyCommunitiesItem
-                                    userCommunity={item}
-                                />
-                            </li>
-                        ))
-                    }
-                </ul>
+                {showMyCommunities &&
+                    <>
+                        <div className="communities__search mb-3">
+                            <label htmlFor="inputSearchCommunity" className="form-label">{t("Search")}</label>
+                            <input type="text" className="form-control" id="inputSearchCommunity" placeholder={t("TypeCommunityName")} onChange={searchHandler} />
+                        </div>
+                        <ul>
+                            {
+                                userCommunities?.map((item) => (
+                                    <li key={item.id}>
+                                        <MyCommunitiesItem
+                                            userCommunity={item}
+                                            filterContent={filterContent}
+                                        />
+                                    </li>
+                                ))
+                            }
+                        </ul>
+                    </>
+                }
             </div>
             {showCreateCommunity &&
                 <CreateCommunity

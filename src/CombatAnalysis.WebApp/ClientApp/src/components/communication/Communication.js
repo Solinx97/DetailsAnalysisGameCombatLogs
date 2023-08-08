@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import Chats from './chats/Chats';
-import Communities from './community/Communities';
+import AllCommunities from './community/AllCommunities';
 import Feed from './Feed';
 import MyEnvironment from './myEnvironment/MyEnvironment';
 import People from './people/People';
@@ -57,11 +57,27 @@ const Communication = () => {
                     </li>
                 </ul>
                 <div className="communication__action">
-                    {currentMenuItem === 0 ? <Feed /> : null}
-                    {currentMenuItem === 1 ? <Chats isOpenChat={isOpenChat} initiatorId={initiatorId} companionId={companionId} /> : null}
-                    {currentMenuItem === 2 ? <Communities /> : null}
-                    {currentMenuItem === 4 ? <People updateCurrentMenuItem={updateCurrentMenuItem} /> : null}
-                    {currentMenuItem === 5 ? <MyEnvironment /> : null}
+                    {currentMenuItem === 0 &&
+                        <Feed />
+                    }
+                    {currentMenuItem === 1 &&
+                        <Chats
+                            isOpenChat={isOpenChat}
+                            initiatorId={initiatorId}
+                            companionId={companionId}
+                        />
+                    }
+                    {currentMenuItem === 2 &&
+                        <AllCommunities />
+                    }
+                    {currentMenuItem === 4 &&
+                        <People
+                            updateCurrentMenuItem={updateCurrentMenuItem}
+                        />
+                    }
+                    {currentMenuItem === 5 &&
+                        <MyEnvironment />
+                    }
                 </div>
             </div>
         );

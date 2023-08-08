@@ -3,6 +3,8 @@
   "Hide": "Hide",
   "Show": "Show",
   "Open": "Open",
-  "MoreDetails": "More details",
-  "Communities": "Communities"
+  "Join": "Join",
+  "Communities": "Communities",
+  "Search": "Search",
+  "TypeCommunityName": "Type community name"
 }
