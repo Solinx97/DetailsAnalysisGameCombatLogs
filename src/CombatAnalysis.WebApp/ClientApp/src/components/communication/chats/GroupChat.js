@@ -13,7 +13,7 @@ import ChatMessage from './ChatMessage';
 import GroupChatUser from './GroupChatUser';
 import { useTranslation } from 'react-i18next';
 
-import "../../../styles/communication/groupChat.scss";
+import "../../../styles/communication/chats/groupChat.scss";
 
 const getGroupChatMessagesInterval = 1000;
 

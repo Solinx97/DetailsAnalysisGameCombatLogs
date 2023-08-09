@@ -30,10 +30,6 @@ const AppRoutes = [
         element: <Chats />
     },
     {
-        path: '/chats',
-        element: <Chats />
-    },
-    {
         path: '/communities',
         element: <AllCommunities />
     },

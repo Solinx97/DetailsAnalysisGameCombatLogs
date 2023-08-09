@@ -6,7 +6,7 @@ import { useLazySearchByUserIdAsyncQuery } from '../../../store/api/Customer.api
 import { updateCustomer } from '../../../store/slicers/CustomerSlice';
 import { updateUser } from '../../../store/slicers/UserSlice';
 
-import "../../../styles/communication/profile.scss";
+import "../../../styles/communication/myEnvironment/profile.scss";
 
 const Profile = () => {
     const { t } = useTranslation("communication/myEnvironment/profile");

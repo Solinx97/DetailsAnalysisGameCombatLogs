@@ -8,7 +8,7 @@ import { useFriendSearchByUserIdQuery } from '../../../store/api/UserApi';
 import UserInformation from './../UserInformation';
 import RequestsToConnect from './RequestsToConnect';
 
-import '../../../styles/communication/friends.scss';
+import '../../../styles/communication/myEnvironment/friends.scss';
 
 const Friends = () => {
     const { t } = useTranslation("communication/myEnvironment/friends");

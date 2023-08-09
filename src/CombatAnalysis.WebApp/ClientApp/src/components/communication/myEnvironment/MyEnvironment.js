@@ -6,7 +6,7 @@ import MyCommunities from './MyCommunities';
 import MyFeed from './MyFeed';
 import Profile from './Profile';
 
-import '../../../styles/communication/myEnvironment.scss';
+import '../../../styles/communication/myEnvironment/myEnvironment.scss';
 
 const MyEnvironment = ({ openCommunity }) => {
     const { t } = useTranslation("communication/myEnvironment/myEnvironment");

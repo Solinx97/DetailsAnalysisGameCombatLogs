@@ -8,7 +8,7 @@ import CreateCommunity from './CreateCommunity';
 import InvitesToCommunity from './InvitesToCommunity';
 import MyCommunitiesItem from './MyCommunitiesItem';
 
-import '../../../styles/communication/communities.scss';
+import '../../../styles/communication/community/communities.scss';
 
 const MyCommunities = () => {
     const { t } = useTranslation("communication/myEnvironment/myCommunities");

@@ -11,7 +11,7 @@ import {
 } from '../../../store/api/PersonalChatMessage.api';
 import ChatMessage from './ChatMessage';
 
-import "../../../styles/communication/personalChat.scss";
+import "../../../styles/communication/chats/personalChat.scss";
 
 const getPersonalChatMessagesInterval = 1000;
 

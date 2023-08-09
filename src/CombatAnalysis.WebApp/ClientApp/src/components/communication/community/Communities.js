@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useTranslation } from 'react-i18next';
 import CommunityItem from './CommunityItem';
 
-import '../../../styles/communication/communities.scss';
+import '../../../styles/communication/community/communities.scss';
 
 const Communities = () => {
     const { t } = useTranslation("communication/community/Communities");

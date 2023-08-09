@@ -1,6 +1,5 @@
 import { faCircleArrowRight } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { memo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 
@@ -79,4 +78,4 @@ const Communication = ({ currentMenuItem }) => {
     return render();
 }
 
-export default memo(Communication);
+export default Communication;

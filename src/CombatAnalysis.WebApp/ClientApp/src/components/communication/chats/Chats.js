@@ -11,7 +11,7 @@ import MyGroupChat from './MyGroupChat';
 import MyPersonalChat from './MyPersonalChat';
 import PersonalChat from './PersonalChat';
 
-import "../../../styles/communication/chats.scss";
+import "../../../styles/communication/chats/chats.scss";
 
 const getGroupChatUsersInterval = 2000;
 

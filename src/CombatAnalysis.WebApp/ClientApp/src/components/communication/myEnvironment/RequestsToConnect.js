@@ -6,7 +6,7 @@ import { useSearchByToUserIdQuery } from '../../../store/api/UserApi';
 import MyRequestItem from './MyRequestItem';
 import RequestItem from './RequestItem';
 
-import "../../../styles/communication/requestToConnect.scss";
+import "../../../styles/communication/myEnvironment/requestToConnect.scss";
 
 const RequestToConnect = () => {
     const { t } = useTranslation("communication/myEnvironment/requestsToConnect");

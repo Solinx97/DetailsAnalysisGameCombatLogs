@@ -4,7 +4,7 @@ import { useRef, useState } from 'react';
 import ChatMessageUsername from './ChatMessageUsername';
 import { useTranslation } from 'react-i18next';
 
-import "../../../styles/communication/chatMessageItem.scss";
+import "../../../styles/communication/chats/chatMessage.scss";
 
 const ChatMessage = ({ customer, message, updateMessageAsync, deleteMessageAsync }) => {
     const { t } = useTranslation("communication/chats/chatMessage");

@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { useCreateCommunityAsyncMutation } from '../../../store/api/Community.api';
 import { useCreateCommunityUserAsyncMutation } from '../../../store/api/CommunityUser.api';
 
-import '../../../styles/communication/createCommunity.scss';
+import '../../../styles/communication/myEnvironment/createCommunity.scss';
 
 const CreateCommunity = ({ customer, setShowCreateCommunity }) => {
     const { t } = useTranslation("communication/myEnvironment/createCommunity");

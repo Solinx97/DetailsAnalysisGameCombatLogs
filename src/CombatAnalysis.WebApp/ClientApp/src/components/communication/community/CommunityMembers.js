@@ -7,8 +7,6 @@ import { useCreateInviteAsyncMutation } from '../../../store/api/InviteToCommuni
 import AddPeople from '../../AddPeople';
 import CommunityMemberItem from './CommunityMemberItem';
 
-import '../../../styles/communication/selectedCommunity.scss';
-
 const CommunityMembers = ({ community, customer }) => {
     const { t } = useTranslation("communication/community/communityMembers");
 

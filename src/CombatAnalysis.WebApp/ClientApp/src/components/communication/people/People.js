@@ -8,13 +8,16 @@ import { useCreateRequestAsyncMutation } from '../../../store/api/RequestToConne
 import { useGetCustomersQuery } from '../../../store/api/UserApi';
 import Communication from '../Communication';
 import UserInformation from './../UserInformation';
+import { useNavigate } from 'react-router-dom';
 
-import '../../../styles/communication/people.scss';
+import '../../../styles/communication/people/people.scss';
 
-const People = ({ updateCurrentMenuItem }) => {
+const People = () => {
     const { t } = useTranslation("communication/people/people");
 
     const customer = useSelector((state) => state.customer.value);
+
+    const navigate = useNavigate();
 
     const { data: people, isLoading } = useGetCustomersQuery();
     const [isExistAsync] = useLazyIsExistAsyncQuery();
@@ -33,7 +36,6 @@ const People = ({ updateCurrentMenuItem }) => {
     const startChatAsync = async (targetCustomer) => {
         const isExist = await checkExistNewChatAsync(targetCustomer);
         if (isExist.data) {
-            updateCurrentMenuItem(1, customer?.id, targetCustomer.id);
             return;
         }
 
@@ -47,7 +49,7 @@ const People = ({ updateCurrentMenuItem }) => {
 
         const createdChat = await createPersonalChatAsync(newChat);
         if (createdChat.data !== undefined) {
-            updateCurrentMenuItem(1, customer?.id, targetCustomer.id);
+            navigate("/chats");
         }
     }
 

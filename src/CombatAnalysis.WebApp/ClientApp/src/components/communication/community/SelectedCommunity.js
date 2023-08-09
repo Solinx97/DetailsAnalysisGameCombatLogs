@@ -1,4 +1,4 @@
-import { faArrowRightToBracket, faArrowsRotate, faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
+import { faArrowsRotate, faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useEffect, useRef, useState } from "react";
 import { useTranslation } from 'react-i18next';
@@ -12,7 +12,7 @@ import Communication from '../Communication';
 import CommunityMembers from './CommunityMembers';
 import SelectedCommunityItem from './SelectedCommunityItem';
 
-import '../../../styles/communication/selectedCommunity.scss';
+import '../../../styles/communication/community/selectedCommunity.scss';
 
 const SelectedCommunity = () => {
     const { t } = useTranslation("communication/community/selectedCommunity");
