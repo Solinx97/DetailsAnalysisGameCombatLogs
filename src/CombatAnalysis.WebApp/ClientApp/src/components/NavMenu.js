@@ -3,16 +3,23 @@ import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
 import { Collapse, Container, Navbar, NavbarBrand, NavbarToggler } from 'reactstrap';
-import { checkAuth } from '../features/AuthenticationReducer';
-import { userUpdate } from '../features/UserReducer';
-import { customerUpdate } from '../features/CustomerReducer';
+import { useLogoutAsyncMutation } from '../store/api/Account.api';
+import { useLazySearchByUserIdAsyncQuery } from '../store/api/Customer.api';
+import { useAuthenticationAsyncQuery } from '../store/api/UserApi';
+import { updateCustomer } from '../store/slicers/CustomerSlice';
+import { updateUser } from '../store/slicers/UserSlice';
 
 import '../styles/navMenu.scss';
 
 const NavMenu = () => {
-    const isAuth = useSelector((state) => state.authentication.value);
-    const user = useSelector((state) => state.user.value);
     const dispatch = useDispatch();
+    const customer = useSelector((state) => state.customer.value);
+
+    const auth = useAuthenticationAsyncQuery();
+
+    const [getCustomerAsync] = useLazySearchByUserIdAsyncQuery();
+    const [logoutAsyncMut] = useLogoutAsyncMutation();
+
     const navigate = useNavigate();
 
     const { t, i18n } = useTranslation("translate");
@@ -35,12 +42,32 @@ const NavMenu = () => {
     }, [])
 
     useEffect(() => {
-        const checkAuthResult = async () => {
-            await checkAuthAsync();
-        }
+        switch (auth.status) {
+            case "rejected":
+                dispatch(updateCustomer(null));
+                navigate('/');
+                break;
+            case "fulfilled":
+                const updateUserData = async () => {
+                    await updateUserDataAsync();
+                }
 
-        checkAuthResult().catch(console.error);
-    });
+                updateUserData();
+                break;
+            default:
+                dispatch(updateCustomer(null));
+                break;
+        }
+    }, [auth])
+
+    const updateUserDataAsync = async () => {
+        dispatch(updateUser(auth.data));
+
+        const customer = await getCustomerAsync(auth.data?.id);
+        if (customer.data !== undefined) {
+            dispatch(updateCustomer(customer.data));
+        }
+    }
 
     const changeLanguage = (language) => {
         i18n.changeLanguage(language);
@@ -48,59 +75,24 @@ const NavMenu = () => {
         window.location.reload(true);
     }
 
-    const checkAuthAsync = async () => {
-        const response = await fetch("api/v1/Authentication");
-
-        if (response.status === 200) {
-            const currentUser = await response.json();
-
-            dispatch(userUpdate(currentUser));
-            dispatch(checkAuth(true));
-
-            await getCustomerByUserIdAsync(currentUser.id);
-        }
-        else {
-            dispatch(checkAuth(false));
-        }
-    }
-
-    const getCustomerByUserIdAsync = async (userId) => {
-        const response = await fetch(`api/v1/Customer/searchByUserId/${userId}`);
-
-        if (response.status === 200
-            || response.status === 204) {
-            const customer = await response.json();
-
-            dispatch(customerUpdate(customer));
-        }
-        else {
-            dispatch(checkAuth(false));
-        }
-    }
-
     const logoutAsync = async () => {
-        const response = await fetch("api/v1/Account/logout", {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        });
-
-        if (response.status === 200) {
-            dispatch(checkAuth(false));
-            dispatch(userUpdate(null));
-
-            navigate("/");
-        }
+        const res = await logoutAsyncMut();
+        res.data !== undefined && navigate('/');
     }
 
     const toggleNavbar = () => {
-        setCollapsed(!collapsed);
+        setCollapsed((item) => !item);
     }
 
-    const render = () => {
-        return (<header>
-            <Navbar className="navbar-expand-sm navbar-toggleable-sm ng-white border-bottom box-shadow mb-3" light>
+    if (auth.isLoading) {
+        return <></>;
+    }
+
+    return (
+        <header>
+            <Navbar
+                className="navbar-expand-sm navbar-toggleable-sm ng-white border-bottom box-shadow mb-3"
+                light>
                 <div className="language dropdown">
                     <div className="language__title">{t("Langugae")}</div>
                     <button className="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
@@ -112,12 +104,23 @@ const NavMenu = () => {
                     </ul>
                 </div>
                 <Container>
-                    <NavbarBrand tag={Link} to="/">Wow Analysis</NavbarBrand>
-                    <NavbarToggler onClick={toggleNavbar} className="mr-2" />
-                    <Collapse className="d-sm-inline-flex flex-sm-row-reverse" isOpen={!collapsed} navbar />
-                    {isAuth
+                    <NavbarBrand
+                        tag={Link}
+                        to="/"
+                    >
+                        Wow Analysis
+                    </NavbarBrand>
+                    <NavbarToggler
+                        onClick={toggleNavbar} className="mr-2"
+                    />
+                    <Collapse
+                        className="d-sm-inline-flex flex-sm-row-reverse"
+                        isOpen={!collapsed}
+                        navbar
+                    />
+                    {customer !== null
                         ? <div className="authorized">
-                            <div>{t("Welcome")}, <strong>{user.email}</strong></div>
+                            <div>{t("Welcome")}, <strong>{customer?.username}</strong></div>
                             <button type="button" className="btn btn-primary" onClick={logoutAsync}>{t("Logout")}</button>
                         </div>
                         : <div className="authorization">
@@ -127,10 +130,8 @@ const NavMenu = () => {
                     }
                 </Container>
             </Navbar>
-        </header>);
-    }
-
-  return render();
+        </header>
+    );
 }
 
 export default NavMenu;

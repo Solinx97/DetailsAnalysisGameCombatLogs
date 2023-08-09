@@ -4,6 +4,7 @@ using CombatAnalysis.CustomerBL.Interfaces;
 using CombatAnalysis.Identity.Interfaces;
 using CombatAnalysis.UserApi.Models;
 using CombatAnalysis.UserApi.Models.Response;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CombatAnalysis.UserApi.Controllers;
@@ -26,6 +27,7 @@ public class AccountController : ControllerBase
     }
 
     [HttpPost]
+    [AllowAnonymous]
     public async Task<IActionResult> Login(LoginModel model)
     {
         var user = await _service.GetAsync(model.Email, model.Password);
@@ -34,14 +36,15 @@ public class AccountController : ControllerBase
             return NotFound();
         }
 
-        var tokens = await _tokenService.GenerateTokensAsync(HttpContext.Response.Cookies, user.Id);
+        var refreshToken = await _tokenService.GenerateTokensAsync(user.Id);
         var map = _mapper.Map<AppUserModel>(user);
-        var response = new ResponseFromAccount(map, tokens.Item1, tokens.Item2);
+        var response = new ResponseFromAccount(map, refreshToken);
 
         return Ok(response);
     }
 
     [HttpPost("registration")]
+    [AllowAnonymous]
     public async Task<IActionResult> Register(RegisterModel model)
     {
         try
@@ -56,8 +59,8 @@ public class AccountController : ControllerBase
             var map = _mapper.Map<AppUserDto>(newUser);
             await _service.CreateAsync(map);
 
-            var tokens = await _tokenService.GenerateTokensAsync(HttpContext.Response.Cookies, newUser.Id);
-            var response = new ResponseFromAccount(newUser, tokens.Item1, tokens.Item2);
+            var refreshToken = await _tokenService.GenerateTokensAsync(newUser.Id);
+            var response = new ResponseFromAccount(newUser, refreshToken);
 
             return Ok(response);
         }
@@ -70,6 +73,7 @@ public class AccountController : ControllerBase
     }
 
     [HttpGet]
+    [Authorize]
     public async Task<IActionResult> GetAll()
     {
         try
@@ -89,6 +93,7 @@ public class AccountController : ControllerBase
     }
 
     [HttpGet("{id}")]
+    [Authorize]
     public async Task<IActionResult> GetById(string id)
     {
         try
@@ -108,6 +113,7 @@ public class AccountController : ControllerBase
     }
 
     [HttpPut]
+    [Authorize]
     public async Task<IActionResult> Edit(AppUserModel user)
     {
         var map = _mapper.Map<AppUserDto>(user);
@@ -121,16 +127,8 @@ public class AccountController : ControllerBase
         return await Login(login);
     }
 
-    [HttpGet("logout/{refreshToken}")]
-    public async Task<IActionResult> Logout(string refreshToken)
-    {
-        var refreshTokenModel = await _tokenService.FindRefreshTokenAsync(refreshToken);
-        await _tokenService.RemoveRefreshTokenAsync(refreshTokenModel);
-
-        return Ok();
-    }
-
     [HttpGet("find/{email}")]
+    [Authorize]
     public async Task<IActionResult> Find(string email)
     {
         try

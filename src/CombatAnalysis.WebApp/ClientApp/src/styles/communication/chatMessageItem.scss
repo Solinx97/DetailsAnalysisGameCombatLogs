@@ -1,0 +1,46 @@
+.message-menu {
+    display: flex;
+    flex-direction: row;
+    justify-content: right;
+
+    svg {
+        margin: 5px 10px;
+        cursor: pointer;
+    }
+
+    &__handler {
+        color: black;
+
+        &_active {
+            color: orange;
+            transform: scale(1.2);
+        }
+    }
+}
+
+.delete-message-alert {
+    display: flex;
+    justify-content: right;
+    align-items: center;
+    text-align: center;
+    font-size: 11px;
+    margin: -10px;
+
+    &__content {
+        margin: 0 -20px;
+    }
+
+    &__choice {
+        display: flex;
+        justify-content: center;
+
+        svg {
+            margin: 0 10px;
+            cursor: pointer;
+        }
+
+        svg:hover {
+            transform: scale(1.1);
+        }
+    }
+}

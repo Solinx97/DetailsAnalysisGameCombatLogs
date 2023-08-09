@@ -1,4 +1,5 @@
 ﻿using CombatAnalysis.WebApp.Consts;
+using CombatAnalysis.WebApp.Extensions;
 using CombatAnalysis.WebApp.Interfaces;
 using CombatAnalysis.WebApp.Models.User;
 using Microsoft.AspNetCore.Mvc;
@@ -14,51 +15,124 @@ public class CustomerController : ControllerBase
     public CustomerController(IHttpClientHelper httpClient)
     {
         _httpClient = httpClient;
-        _httpClient.BaseAddress = Port.UserApi;
     }
 
     [HttpGet]
     public async Task<IActionResult> GetAll()
     {
-        var responseMessage = await _httpClient.GetAsync("Customer");
-        var customers = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<CustomerModel>>();
+        if (!HttpContext.Request.Cookies.TryGetValue("refreshToken", out var refreshToken))
+        {
+            return Unauthorized();
+        }
 
-        return Ok(customers);
+        var responseMessage = await _httpClient.GetAsync("Customer", refreshToken, Port.UserApi);
+        if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+        {
+            return Unauthorized();
+        }
+        else if (responseMessage.IsSuccessStatusCode)
+        {
+            var customers = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<CustomerModel>>();
+
+            return Ok(customers);
+        }
+
+        return BadRequest();
     }
 
     [HttpGet("{id}")]
     public async Task<IActionResult> GetById(string id)
     {
-        var responseMessage = await _httpClient.GetAsync($"Customer/{id}");
-        var customer = await responseMessage.Content.ReadFromJsonAsync<CustomerModel>();
+        if (!HttpContext.Request.Cookies.TryGetValue("refreshToken", out var refreshToken))
+        {
+            return Unauthorized();
+        }
 
-        return Ok(customer);
+        var responseMessage = await _httpClient.GetAsync($"Customer/{id}", refreshToken, Port.UserApi);
+        if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+        {
+            return Unauthorized();
+        }
+        else if (responseMessage.IsSuccessStatusCode)
+        {
+            if (responseMessage.StatusCode == System.Net.HttpStatusCode.OK)
+            {
+                var customer = await responseMessage.Content.ReadFromJsonAsync<CustomerModel>();
+
+                return Ok(customer);
+            }
+
+            return NotFound();
+        }
+
+        return BadRequest();
     }
 
     [HttpGet("searchByUserId/{id}")]
     public async Task<IActionResult> SearchByUserId(string id)
     {
-        var responseMessage = await _httpClient.GetAsync($"Customer/searchByUserId/{id}");
-        var customers = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<CustomerModel>>();
-        var currentCustomer = customers.FirstOrDefault();
+        if (!HttpContext.Request.Cookies.TryGetValue("refreshToken", out var refreshToken))
+        {
+            return Unauthorized();
+        }
 
-        return Ok(currentCustomer);
+        var responseMessage = await _httpClient.GetAsync($"Customer/searchByUserId/{id}", refreshToken, Port.UserApi);
+        if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+        {
+            return Unauthorized();
+        }
+        else if (responseMessage.IsSuccessStatusCode)
+        {
+            var customers = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<CustomerModel>>();
+            var currentCustomer = customers.FirstOrDefault();
+
+            return Ok(currentCustomer);
+        }
+
+        return BadRequest();
     }
 
     [HttpPost]
     public async Task<IActionResult> Create(CustomerModel model)
     {
-        var responseMessage = await _httpClient.PostAsync("Customer", JsonContent.Create(model));
-        var customer = await responseMessage.Content.ReadFromJsonAsync<CustomerModel>();
+        if (!HttpContext.Request.Cookies.TryGetValue("refreshToken", out var refreshToken))
+        {
+            return Unauthorized();
+        }
 
-        return Ok(customer);
+        var responseMessage = await _httpClient.PostAsync("Customer", JsonContent.Create(model), refreshToken, Port.UserApi);
+        if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+        {
+            return Unauthorized();
+        }
+        else if (responseMessage.IsSuccessStatusCode)
+        {
+            var customer = await responseMessage.Content.ReadFromJsonAsync<CustomerModel>();
+
+            return Ok(customer);
+        }
+
+        return BadRequest();
     }
 
     [HttpPut]
     public async Task<IActionResult> Edit(CustomerModel model)
     {
-        await _httpClient.PutAsync("Customer", JsonContent.Create(model));
+        if (!HttpContext.Request.Cookies.TryGetValue("refreshToken", out var refreshToken))
+        {
+            return Unauthorized();
+        }
 
-        return Ok();
+        var responseMessage = await _httpClient.PutAsync("Customer", JsonContent.Create(model), refreshToken, Port.UserApi);
+        if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+        {
+            return Unauthorized();
+        }
+        else if (responseMessage.IsSuccessStatusCode)
+        {
+            return Ok();
+        }
+
+        return BadRequest();
     }
 }

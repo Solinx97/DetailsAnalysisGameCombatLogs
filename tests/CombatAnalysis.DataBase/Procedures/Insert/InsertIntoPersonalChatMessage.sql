@@ -1,12 +1,12 @@
 ﻿CREATE PROCEDURE [dbo].[InsertIntoPersonalChatMessage]
-	@Username NVARCHAR (MAX),
 	@Message NVARCHAR (MAX),
 	@Time TIME (7),
-	@PersonalChatId INT
+	@PersonalChatId INT,
+	@OwnerId NVARCHAR (MAX)
 AS
-	DECLARE @OutputTbl TABLE (Id INT,Username NVARCHAR (MAX),Message NVARCHAR (MAX),Time TIME (7),PersonalChatId INT)
+	DECLARE @OutputTbl TABLE (Id INT,Message NVARCHAR (MAX),Time TIME (7),PersonalChatId INT, wnerId NVARCHAR (MAX))
 	INSERT INTO PersonalChatMessage
 	OUTPUT INSERTED.* INTO @OutputTbl
-	VALUES (@Username,@Message,@Time,@PersonalChatId)
+	VALUES (@Message,@Time,@PersonalChatId,@OwnerId)
 	SELECT * FROM @OutputTbl
 RETURN 0

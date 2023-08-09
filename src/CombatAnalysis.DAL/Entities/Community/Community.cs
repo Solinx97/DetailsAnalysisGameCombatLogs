@@ -8,7 +8,7 @@ public class Community
 
     public string Description { get; set; }
 
-    public int CommunityPolicyType { get; set; }
+    public int PolicyType { get; set; }
 
     public string OwnerId { get; set; }
 }

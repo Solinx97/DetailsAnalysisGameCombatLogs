@@ -1,0 +1,11 @@
+{
+  "CreateCommunity": "Create community",
+  "Name": "Name",
+  "Description": "Description",
+  "Policy": "Policy",
+  "Open": "Open",
+  "Close": "Close",
+  "CloseWithLink": "Close (with link)",
+  "Create": "Create",
+  "Cancel": "Cancel"
+}

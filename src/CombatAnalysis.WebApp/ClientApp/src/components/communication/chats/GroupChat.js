@@ -1,89 +1,47 @@
-﻿import { memo, useEffect, useRef, useState } from 'react';
-import { useSelector } from 'react-redux';
-import { faPaperPlane, faPen, faTrash, faCloudArrowUp, faGear, faPerson, faRightToBracket, faRightFromBracket, faFileWaveform, faFolderOpen } from '@fortawesome/free-solid-svg-icons';
+﻿import { faFileWaveform, faFolderOpen, faGear, faTrash, faPaperPlane, faPerson, faRightFromBracket, faUserPlus } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { memo, useRef, useState } from 'react';
+import { useFindGroupChatMessageByChatIdQuery, useGetGroupChatUserByUserIdQuery } from '../../../store/api/ChatApi';
+import { useUpdateGroupChatAsyncMutation, useRemoveGroupChatAsyncMutation } from '../../../store/api/GroupChat.api';
+import {
+    useCreateGroupChatMessageAsyncMutation, useRemoveGroupChatMessageAsyncMutation,
+    useUpdateGroupChatMessageAsyncMutation
+} from '../../../store/api/GroupChatMessage.api';
+import { useCreateGroupChatUserAsyncMutation, useGetGroupChatUserByChatIdQuery, useRemoveGroupChatUserAsyncMutation } from '../../../store/api/GroupChatUser.api';
+import AddPeople from '../../AddPeople';
+import ChatMessage from './ChatMessage';
+import GroupChatUser from './GroupChatUser';
+import { useTranslation } from 'react-i18next';
 
 import "../../../styles/communication/groupChat.scss";
 
-const GroupChat = ({ chat, setChatIsLeaft }) => {
-    const chatMessageUpdateInterval = 200;
+const getGroupChatMessagesInterval = 1000;
 
-    const customer = useSelector((state) => state.customer.value);
+const GroupChat = ({ chat, customer, setSelectedChat }) => {
+    const { t } = useTranslation("communication/chats/groupChat");
 
-    const [chatMessages, setChatMessage] = useState(null);
-    const [groupChatUsers, setGroupChatUsers] = useState(null);
-    const [selectedMessageId, setSelectedMessageId] = useState(0);
-    const [editModeIsOn, setEditMode] = useState(false);
-    const [deleteModeIsOn, setDeleteMode] = useState(false);
+    const [showAddPeople, setShowAddPeople] = useState(false);
     const [peopleInspectionModeOn, setPeopleInspectionMode] = useState(false);
     const [settingsIsShow, setSettingsIsShow] = useState(false);
 
     const messageInput = useRef(null);
-    const editMessageInput = useRef(null);
 
-    useEffect(() => {
-        async function getChatMessages() {
-            await getChatMessagesAsync();
-        };
-
-        let interval = setInterval(() => {
-            getChatMessages();
-        }, chatMessageUpdateInterval);
-
-        return () => {
-            clearInterval(interval);
-        };
-    }, [chat])
-
-    const getChatMessagesAsync = async () => {
-        const response = await fetch(`/api/v1/GroupChatMessage/findByChatId/${chat.id}`);
-        const status = response.status;
-        if (status === 200) {
-            const messages = await response.json();
-
-            setChatMessage(messages);
-        }
-    }
-
-    const getChatUsersAsync = async () => {
-        const response = await fetch(`/api/v1/GroupChatUser/findByChatId/${chat.id}`);
-        const status = response.status;
-        if (status === 200) {
-            const groupChatUsers = await response.json();
-            let users = [];
-
-            for (var i = 0; i < groupChatUsers.length; i++) {
-                const user = await getUserAsync(groupChatUsers[i].userId);
-                users.push(user);
-            }
-
-            setGroupChatUsers(users);
-        }
-    }
+    const { data: messages, isLoading } = useFindGroupChatMessageByChatIdQuery(chat.id, {
+        pollingInterval: getGroupChatMessagesInterval
+    });
+    const { data: muGroupChatUsers } = useGetGroupChatUserByUserIdQuery(customer?.id);
+    const { data: groupChatUsers, isLoading: usersIsLoading } = useGetGroupChatUserByChatIdQuery(chat.id);
+    const [createGroupChatMessageAsync] = useCreateGroupChatMessageAsyncMutation();
+    const [updateGroupChatMessageAsync] = useUpdateGroupChatMessageAsyncMutation();
+    const [removeGroupChatMessageAsync] = useRemoveGroupChatMessageAsyncMutation();
+    const [updateGroupChatAsyncMut] = useUpdateGroupChatAsyncMutation();
+    const [removeGroupChatAsyncMut] = useRemoveGroupChatAsyncMutation();
+    const [removeGroupChatUserAsync] = useRemoveGroupChatUserAsyncMutation();
+    const [createGroupChatUserMutAsync] = useCreateGroupChatUserAsyncMutation();
 
     const getChatUserByMyIdAsync = async () => {
-        const response = await fetch(`/api/v1/GroupChatUser/${customer.id}`);
-        const status = response.status;
-        if (status === 200) {
-            const myGroupChatUsers = await response.json();
-            const currentGroupChatUser = myGroupChatUsers.filter((chatUser) => chatUser.groupChatId === chat.id)[0];
-
-            await leaveFromChatAsync(currentGroupChatUser.id);
-        }
-    }
-
-    const getUserAsync = async (id) => {
-        const response = await fetch(`/api/v1/Account/${id}`);
-        const status = response.status;
-        if (status === 200) {
-            const user = await response.json();
-            return user;
-        }
-
-        return {
-            id: -1,
-            email: "undefined"
-        };
+        const currentGroupChatUser = muGroupChatUsers?.filter((chatUser) => chatUser.groupChatId === chat.id)[0];
+        await leaveFromChatAsync(currentGroupChatUser.id);
     }
 
     const sendMessageAsync = async () => {
@@ -95,25 +53,26 @@ const GroupChat = ({ chat, setChatIsLeaft }) => {
         messageInput.current.value = "";
     }
 
-    const createChatMessageAsync = async (message) => {
-        const today = new Date();
-        const data = {
-            id: 0,
-            userName: "temp@yandex.by",
-            message: message,
-            time: `${today.getHours()}:${today.getMinutes()}`,
-            groupChatId: chat.id
+    const createGroupChatUserAsync = async (whomId) => {
+        const newGroupChatUser = {
+            userId: whomId,
+            groupChatId: chat.id,
         };
 
-        const response = await fetch("/api/v1/GroupChatMessage", {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(data)
-        });
+        await createGroupChatUserMutAsync(newGroupChatUser);
+    }
 
-        if (response.status == 200) {
+    const createChatMessageAsync = async (message) => {
+        const today = new Date();
+        const newMessage = {
+            message: message,
+            time: `${today.getHours()}:${today.getMinutes()}`,
+            groupChatId: chat.id,
+            ownerId: customer?.id
+        };
+
+        const createdMessage = await createGroupChatMessageAsync(newMessage);
+        if (createdMessage.data !== undefined) {
             await updateGroupChatAsync(message);
         }
     }
@@ -121,116 +80,131 @@ const GroupChat = ({ chat, setChatIsLeaft }) => {
     const updateGroupChatAsync = async (message) => {
         chat.lastMessage = message;
 
-        await fetch("/api/v1/GroupChat", {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(chat)
-        });
+        await updateGroupChatAsyncMut(chat);
     }
 
-    const updateMessageAsync = async (myMessage) => {
-        setEditMode(false);
-        myMessage.message = editMessageInput.current.value;
+    const updateMessageAsync = async (myMessage, newMessageContent) => {
+        myMessage.message = newMessageContent;
 
-        await fetch("/api/v1/GroupChatMessage", {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(myMessage)
-        });
+        await updateGroupChatMessageAsync(myMessage);
     }
 
     const deleteMessageAsync = async (messageId) => {
-        setDeleteMode(false);
-        await fetch(`/api/v1/GroupChatMessage/${messageId}`, {
-            method: 'DELETE'
-        });
+        await removeGroupChatMessageAsync(messageId);
     }
 
     const leaveFromChatAsync = async (id) => {
-        const response = await fetch(`/api/v1/GroupChatUser/${id}`, {
-            method: 'DELETE'
-        });
-
-        const status = response.status;
-        if (status === 200) {
-            setChatIsLeaft(true);
+        const deletedItem = await removeGroupChatUserAsync(id);
+        if (deletedItem.data !== undefined) {
+            setSelectedChat(null);
         }
     }
 
-    const createMessage = (element) => {
-        const isMyMessage = customer.username === element.username;
-        const elementIsSelected = element.id === selectedMessageId;
-
-        return (<li key={element.id} className={`group-chat-messages__${isMyMessage ? "right" : "left"}`} onClick={() => setSelectedMessageId(element.id)}>
-            {!isMyMessage &&
-                <div className="username">{element.username}</div>
-            }
-            {editModeIsOn && isMyMessage && elementIsSelected
-                ? <div className="edit-message">
-                    <input className="form-control" defaultValue={element.message} ref={editMessageInput} />
-                    <FontAwesomeIcon icon={faCloudArrowUp} title="Save" onClick={async () => await updateMessageAsync(element)} />
-                </div>
-                : <div className="message">{element.message}</div>
-            }
-            {deleteModeIsOn && isMyMessage && elementIsSelected &&
-                <FontAwesomeIcon icon={faTrash} title="Save" onClick={async () => await deleteMessageAsync(element.id)} />
-            }
-        </li>);
+    const removeChatAsync = async () => {
+        const deletedItem = await removeGroupChatAsyncMut(chat.id);
+        if (deletedItem.data !== undefined) {
+            setSelectedChat(null);
+        }
     }
 
-    const createGroupChatUser = (chatUser) => {
-        return (<li key={chatUser.id}>{chatUser.email}</li>);
+    if (isLoading || usersIsLoading) {
+        return <></>;
     }
 
-    const peopleInspectionHandler = async () => {
-        setPeopleInspectionMode(!peopleInspectionModeOn);
-        await getChatUsersAsync();
-    }
-
-    const render = () => {
-        return (
-            <div className="chats__messages">
-                <div className="title">
-                    <div className="title__container">
-                        <div className="title__companion">{chat.name}</div>
-                        <FontAwesomeIcon icon={faGear} title="Settings" className={`settings-handler${settingsIsShow ? "-active" : ""}`} onClick={() => setSettingsIsShow(!settingsIsShow)} />
-                    </div>
-                    <div className={`title__message-panel${selectedMessageId > 0 ? "-active" : ""}`}>
-                        <FontAwesomeIcon icon={faPen} title="Edit" className={`edit-message-handler${editModeIsOn ? "-active" : ""}`} onClick={() => setEditMode(!editModeIsOn)} />
-                        <FontAwesomeIcon icon={faTrash} title="Delete" className={`delete-message-handler${deleteModeIsOn ? "-active" : ""}`} onClick={() => setDeleteMode(!deleteModeIsOn)} />
-                    </div>
+    return (
+        <div className="chats__messages">
+            <div className="title">
+                <div className="title__container">
+                    <div className="title__companion">{chat.name}</div>
+                    <FontAwesomeIcon
+                        icon={faGear}
+                        title={t("Settings")}
+                        className={`settings-handler${settingsIsShow ? "-active" : ""}`}
+                        onClick={() => setSettingsIsShow(!settingsIsShow)}
+                    />
                 </div>
-                <div className={`settings${settingsIsShow ? "-active" : ""}`}>
-                    <div>
-                        <FontAwesomeIcon icon={faPerson} title="People inspection" className={`people-inspection-handler${peopleInspectionModeOn ? "-active" : ""}`} onClick={peopleInspectionHandler} />
-                        <FontAwesomeIcon icon={faRightToBracket} title="Invite a new person" onClick={() => setEditMode(!editModeIsOn)} />
-                        <FontAwesomeIcon icon={faFileWaveform} title="Show description" onClick={() => setEditMode(!editModeIsOn)} />
-                        <FontAwesomeIcon icon={faFolderOpen} title="Show documents" onClick={() => setEditMode(!editModeIsOn)} />
-                        <FontAwesomeIcon icon={faRightFromBracket} title="Leave from chat" className="leave-from-chat" onClick={getChatUserByMyIdAsync} />
-                    </div>
-                    <ul className={`people-inspection${peopleInspectionModeOn ? "-active" : ""}`}>
-                        {groupChatUsers !== null &&
-                            groupChatUsers.map((element) => createGroupChatUser(element))
-                        }
-                    </ul>
+            </div>
+            <div className={`settings${settingsIsShow ? "-active" : ""}`}>
+                <div>
+                    <FontAwesomeIcon
+                        icon={faPerson}
+                        title={t("GroupMembers")}
+                        className={`people-inspection-handler${peopleInspectionModeOn ? "-active" : ""}`}
+                        onClick={() => setPeopleInspectionMode((item) => !item)}
+                    />
+                    <FontAwesomeIcon
+                        icon={faUserPlus}
+                        title={t("InviteNewUser")}
+                        className={`add-new-people-handler${showAddPeople ? "-active" : ""}`}
+                        onClick={() => setShowAddPeople((item) => !item)}
+                    />
+                    <FontAwesomeIcon
+                        icon={faFileWaveform}
+                        title={t("ShowDescription")}
+                    />
+                    <FontAwesomeIcon
+                        icon={faFolderOpen}
+                        title={t("ShowDocuments")}
+                    />
+                    {customer?.id === chat.ownerId
+                        ? <FontAwesomeIcon
+                            icon={faTrash}
+                            title={t("RemoveChat")}
+                            className="leave-from-chat"
+                            onClick={async () => await removeChatAsync()}
+                        />
+                        : <FontAwesomeIcon
+                            icon={faRightFromBracket}
+                            title={t("LeaveFromChat")}
+                            className="leave-from-chat"
+                            onClick={getChatUserByMyIdAsync}
+                        />
+                    }
                 </div>
-                <ul className="group-chat-messages">
-                    {chatMessages !== null &&
-                        chatMessages.map((element) => createMessage(element))
+                <ul className={`people-inspection${peopleInspectionModeOn ? "-active" : ""}`}>
+                    {
+                        groupChatUsers.map((item) => (
+                            <li key={item.id}>
+                                <GroupChatUser
+                                    userId={item.userId}
+                                />
+                            </li>
+                        ))
                     }
                 </ul>
-                <div className="form-group chats__messages_input-message">
-                    <input type="text" className="form-control" placeholder="Type your message" ref={messageInput} />
-                    <FontAwesomeIcon icon={faPaperPlane} title="Send message" onClick={async () => await sendMessageAsync()} />
-                </div>
-            </div>);
-    }
-
-    return render();
+            </div>
+            <ul className="chat-messages">
+                {
+                    messages.map((item) => (
+                        <li key={item.id}>
+                            <ChatMessage
+                                customer={customer}
+                                message={item}
+                                updateMessageAsync={updateMessageAsync}
+                                deleteMessageAsync={deleteMessageAsync}
+                            />
+                        </li>
+                    ))
+                }
+            </ul>
+            <div className="form-group chats__messages_input-message">
+                <input type="text" className="form-control" placeholder={t("TypeYourMessage")} ref={messageInput} />
+                <FontAwesomeIcon
+                    icon={faPaperPlane}
+                    title={t("SendMessage")}
+                    onClick={async () => await sendMessageAsync()}
+                />
+            </div>
+            {showAddPeople &&
+                <AddPeople
+                    customer={customer}
+                    communityUsersId={groupChatUsers}
+                    setShowAddPeople={setShowAddPeople}
+                    createInviteAsync={createGroupChatUserAsync}
+                />
+            }
+        </div>
+    );
 }
 
 export default memo(GroupChat);

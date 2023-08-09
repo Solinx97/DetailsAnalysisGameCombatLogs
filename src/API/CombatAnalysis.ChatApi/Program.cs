@@ -2,12 +2,21 @@ using AutoMapper;
 using CombatAnalysis.BL.Extensions;
 using CombatAnalysis.BL.Mapping;
 using CombatAnalysis.ChatApi.Mapping;
+using CombatAnalysis.ChatApi.Middleware;
+using CombatAnalysis.Identity.Extensions;
+using CombatAnalysis.Identity.Settings;
 using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.BLDependencies(builder.Configuration, "DefaultConnection");
+builder.Services.RegisterIdentityDependencies();
+
+var settings = builder.Configuration.GetSection(nameof(TokenSettings));
+var scheme = settings.GetValue<string>(nameof(TokenSettings.AuthScheme));
+
+builder.Services.Configure<TokenSettings>(settings);
 
 var loggerFactory = new LoggerFactory();
 var logger = new Logger<ILogger>(loggerFactory);
@@ -21,6 +30,8 @@ var mappingConfig = new MapperConfiguration(mc =>
 var mapper = mappingConfig.CreateMapper();
 builder.Services.AddSingleton(mapper);
 builder.Services.AddSingleton<ILogger>(logger);
+builder.Services.AddAuthentication("Basic")
+    .AddScheme<BasicAuthenticationOptions, AuthenticationHandler>("Basic", null);
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

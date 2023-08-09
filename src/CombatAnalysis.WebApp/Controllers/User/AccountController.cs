@@ -1,4 +1,5 @@
 ﻿using CombatAnalysis.WebApp.Consts;
+using CombatAnalysis.WebApp.Extensions;
 using CombatAnalysis.WebApp.Interfaces;
 using CombatAnalysis.WebApp.Models.Response;
 using CombatAnalysis.WebApp.Models.User;
@@ -18,33 +19,28 @@ public class AccountController : ControllerBase
     public AccountController(IHttpClientHelper httpClient)
     {
         _httpClient = httpClient;
-        _httpClient.BaseAddress = Port.UserApi;
     }
 
     [HttpPost]
     public async Task<IActionResult> Login(LoginModel model)
     {
-        _httpClient.BaseAddress = Port.UserApi;
-
-        var responseMessage = await _httpClient.PostAsync("Account", JsonContent.Create(model));
+        var responseMessage = await _httpClient.PostAsync("Account", JsonContent.Create(model), Port.UserApi);
         if (responseMessage.StatusCode != System.Net.HttpStatusCode.OK)
         {
             return NotFound();
         }
 
         var response = await responseMessage.Content.ReadFromJsonAsync<ResponseFromAccount>();
-        HttpContext.Response.Cookies.Append("accessToken", response.AccessToken, new CookieOptions
-        {
-            HttpOnly = true,
-            Expires = DateTimeOffset.UtcNow.AddMinutes(TokenExpires.AccessExpiresTimeInMinutes),
-        });
         HttpContext.Response.Cookies.Append("refreshToken", response.RefreshToken, new CookieOptions
         {
             HttpOnly = true,
-            Expires = DateTimeOffset.UtcNow.AddHours(TokenExpires.RefreshExpiresTimeInHours),
+            Secure = true,
+            SameSite = SameSiteMode.Lax,
+            Expires = DateTimeOffset.UtcNow.AddMinutes(TokenExpires.RefreshExpiresTimeInMinutes),
         });
 
-        await Authenticate(response.User.Email);
+        var dontLogoutValue = HttpContext.Request.Cookies?["dontLogout"];
+        await Authenticate(response.User.Email, dontLogoutValue == "true");
 
         return Ok(response.User);
     }
@@ -52,70 +48,54 @@ public class AccountController : ControllerBase
     [HttpPost("registration")]
     public async Task<IActionResult> Register(RegisterModel model)
     {
-        _httpClient.BaseAddress = Port.UserApi;
-
-        var responseMessage = await _httpClient.PostAsync("Account/registration", JsonContent.Create(model));
+        var responseMessage = await _httpClient.PostAsync("Account/registration", JsonContent.Create(model), Port.UserApi);
         if (responseMessage.StatusCode != System.Net.HttpStatusCode.OK)
         {
             return BadRequest();
-
         }
 
-        if (responseMessage.Content.Headers.ContentLength == 0)
-        {
-            return Ok();
-        }
-
-        var response = await responseMessage.Content.ReadFromJsonAsync<ResponseFromAccount>();
-        HttpContext.Response.Cookies.Append("accessToken", response.AccessToken, new CookieOptions
-        {
-            HttpOnly = true,
-            Expires = DateTimeOffset.UtcNow.AddMinutes(TokenExpires.AccessExpiresTimeInMinutes),
-        });
-        HttpContext.Response.Cookies.Append("refreshToken", response.RefreshToken, new CookieOptions
-        {
-            HttpOnly = true,
-            Expires = DateTimeOffset.UtcNow.AddHours(TokenExpires.RefreshExpiresTimeInHours),
-        });
-
-        await Authenticate(response.User.Email);
-
-        return Ok(response.User);
+        var login = new LoginModel { Email = model.Email, Password = model.Password };
+        return await Login(login);
     }
 
     [HttpPut]
     public async Task<IActionResult> Edit(AppUserModel model)
     {
-        var responseMessage = await _httpClient.PutAsync("Account", JsonContent.Create(model));
-        if (responseMessage.StatusCode != System.Net.HttpStatusCode.OK)
+        if (!HttpContext.Request.Cookies.TryGetValue("refreshToken", out var refreshToken))
         {
-            return NotFound();
+            return Unauthorized();
         }
 
-        var response = await responseMessage.Content.ReadFromJsonAsync<ResponseFromAccount>();
-        HttpContext.Response.Cookies.Append("accessToken", response.AccessToken, new CookieOptions
+        var responseMessage = await _httpClient.PutAsync("Account", JsonContent.Create(model), refreshToken, Port.UserApi);
+        if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
         {
-            HttpOnly = true,
-            Expires = DateTimeOffset.UtcNow.AddMinutes(TokenExpires.AccessExpiresTimeInMinutes),
-        });
-        HttpContext.Response.Cookies.Append("refreshToken", response.RefreshToken, new CookieOptions
+            return Unauthorized();
+        }
+        else if (responseMessage.IsSuccessStatusCode)
         {
-            HttpOnly = true,
-            Expires = DateTimeOffset.UtcNow.AddHours(TokenExpires.RefreshExpiresTimeInHours),
-        });
+            return Ok();
+        }
 
-        await Authenticate(response.User.Email);
-
-        return Ok(response.User);
+        return BadRequest();
     }
 
     [HttpGet]
     public async Task<IActionResult> GetAll()
     {
-        var responseMessage = await _httpClient.GetAsync("Account");
-        if (responseMessage.StatusCode == System.Net.HttpStatusCode.OK)
+        if (!HttpContext.Request.Cookies.TryGetValue("refreshToken", out var refreshToken))
+        {
+            return Unauthorized();
+        }
+
+        var responseMessage = await _httpClient.GetAsync("Account", refreshToken, Port.UserApi);
+        if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+        {
+            return Unauthorized();
+        }
+        else if (responseMessage.IsSuccessStatusCode)
         {
             var users = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<AppUserModel>>();
+
             return Ok(users);
         }
 
@@ -125,10 +105,20 @@ public class AccountController : ControllerBase
     [HttpGet("{id}")]
     public async Task<IActionResult> GetById(string id)
     {
-        var responseMessage = await _httpClient.GetAsync($"Account/{id}");
-        if (responseMessage.StatusCode == System.Net.HttpStatusCode.OK)
+        if (!HttpContext.Request.Cookies.TryGetValue("refreshToken", out var refreshToken))
+        {
+            return Unauthorized();
+        }
+
+        var responseMessage = await _httpClient.GetAsync($"Account/{id}", refreshToken, Port.UserApi);
+        if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+        {
+            return Unauthorized();
+        }
+        else if (responseMessage.IsSuccessStatusCode)
         {
             var user = await responseMessage.Content.ReadFromJsonAsync<AppUserModel>();
+            
             return Ok(user);
         }
 
@@ -138,22 +128,13 @@ public class AccountController : ControllerBase
     [HttpPost("logout")]
     public async Task<IActionResult> Logout()
     {
-        _httpClient.BaseAddress = Port.UserApi;
-
         await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-
-        HttpContext.Response.Cookies.Delete("accessToken");
         HttpContext.Response.Cookies.Delete("refreshToken");
-
-        if (Request.Cookies.TryGetValue("refreshToken", out var refreshToken))
-        {
-            await _httpClient.GetAsync($"Account/logout/{refreshToken}");
-        }
 
         return Ok();
     }
 
-    private async Task Authenticate(string email)
+    private async Task Authenticate(string email, bool dontLogout)
     {
         var claims = new List<Claim>
         {
@@ -161,6 +142,12 @@ public class AccountController : ControllerBase
         };
 
         var claimsIdentity = new ClaimsIdentity(claims, "ApplicationCookie", ClaimsIdentity.DefaultNameClaimType, ClaimsIdentity.DefaultRoleClaimType);
-        await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity));
+        await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme,
+            new ClaimsPrincipal(claimsIdentity),
+            new AuthenticationProperties
+            {
+                IsPersistent = dontLogout,
+                ExpiresUtc = DateTimeOffset.UtcNow.AddMinutes(TokenExpires.RefreshExpiresTimeInMinutes)
+            });
     }
 }

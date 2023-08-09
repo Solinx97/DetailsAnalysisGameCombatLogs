@@ -1,0 +1,160 @@
+.selected-community {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+
+    &__content {
+        width: 100%;
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+
+            .title {
+                display: flex;
+                justify-content: start;
+                align-items: center;
+
+                &__name {
+                    margin: 10px 25px;
+                    padding: 10px 20px;
+                    box-shadow: 3px 3px 3px 3px gray;
+                    border-radius: 20px;
+                }
+
+                &__name:hover {
+                    cursor: pointer;
+                    box-shadow: 3px 3px 3px 3px green;
+                }
+
+                &__policy {
+                    opacity: 0.6;
+                    cursor: default;
+                }
+
+                svg:hover {
+                    cursor: pointer;
+                    transform: scale(1.25);
+                }
+            }
+
+            .leave {
+                margin: 0 50px;
+            }
+        }
+
+        .description {
+            display: flex;
+            flex-direction: column;
+
+            &__title {
+                display: flex;
+                align-items: center;
+                margin: 10px 0;
+                cursor: default;
+
+                svg {
+                    margin: 0 15px;
+                    cursor: pointer;
+                }
+
+                svg:hover {
+                    transform: scale(1.1);
+                }
+            }
+
+            &__content {
+                padding: 15px;
+                border: 2px solid gray;
+                border-radius: 20px;
+                width: 70%;
+                margin: 0 25px;
+            }
+        }
+
+        .remove-people, .leave-from-community {
+            position: absolute;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 300px;
+            padding: 25px;
+            top: 25%;
+            left: 40%;
+            border: 2px solid gray;
+            border-radius: 25px;
+            background: white;
+
+            .friend {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
+
+            svg:hover {
+                cursor: pointer;
+                transform: scale(1.25);
+            }
+        }
+    }
+
+    &__topics {
+        padding: 0;
+        width: 25%;
+
+        li {
+            margin: 10px 0;
+        }
+
+        .members {
+            .title {
+                display: flex;
+                flex-direction: row;
+                justify-content: start;
+
+                .tool {
+                    display: flex;
+                    justify-content: space-around;
+                    align-items: center;
+                    margin: 0 10px;
+                }
+
+                svg {
+                    margin: 0 10px;
+                }
+
+                svg:hover {
+                    cursor: pointer;
+                    transform: scale(1.2);
+                }
+            }
+
+            .member {
+                display: flex;
+
+                &__username {
+                    padding: 5px 10px;
+                    border-radius: 5px;
+                    align-items: center;
+                    font-weight: bold;
+                }
+
+                &__username:hover {
+                    cursor: pointer;
+                    transform: scale(1.1);
+                    box-shadow: 2px 2px 2px 2px gray;
+                }
+
+                svg {
+                    margin: 10px 20px;
+                    color: red;
+                }
+
+                svg:hover {
+                    cursor: pointer;
+                }
+            }
+        }
+    }
+}

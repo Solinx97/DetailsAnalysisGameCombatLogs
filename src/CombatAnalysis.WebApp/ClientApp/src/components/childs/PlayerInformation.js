@@ -1,29 +1,16 @@
-﻿import React, { useEffect, useMemo, useState } from "react";
-import CommonPlayerInform from './CommonPlayerInform';
+﻿import React, { useState } from "react";
+import { useTranslation } from 'react-i18next';
 import {
     PolarAngleAxis, PolarGrid, PolarRadiusAxis, Radar,
     RadarChart
 } from "recharts";
-import { useTranslation } from 'react-i18next';
+import CommonPlayerInform from './CommonPlayerInform';
 
-const PlayerInformation = ({ combatPlayers }) => {
-    const { t, i18n } = useTranslation("playerInformation");
+const PlayerInformation = ({ combatPlayers, combatId, combatLogId }) => {
+    const { t } = useTranslation("childs/playerInformation");
 
-    const compatPlayersMemo = useMemo(() => {
-        return combatPlayers;
-    }, [combatPlayers])
-
-    const [combatPlayersRender, setCombatPlayersRender] = useState(<></>);
     const [selectedCharts, setSelectedCharts] = useState([]);
     const [activeUserIndex, setActiveUserIndex] = useState(-1);
-
-    useEffect(() => {
-        if (compatPlayersMemo.length === 0) {
-            return;
-        }
-
-        fillingCombatPlayerList();
-    }, [compatPlayersMemo, activeUserIndex]);
 
     const createUserRadarChartData = (playerData) => {
         return [
@@ -40,7 +27,7 @@ const PlayerInformation = ({ combatPlayers }) => {
                 A: playerData.damageTaken,
             },
             {
-                subject: t("Resources"),
+                subject: t("ResourcesRecovery"),
                 A: playerData.energyRecovery,
             },
             {
@@ -59,7 +46,7 @@ const PlayerInformation = ({ combatPlayers }) => {
         }
 
         if (event.target.checked) {
-            let charts = selectedCharts;
+            const charts = selectedCharts;
             charts.push(event.target);
             setSelectedCharts(charts);
 
@@ -67,58 +54,51 @@ const PlayerInformation = ({ combatPlayers }) => {
         }
     }
 
-    const fillingCombatPlayerList = () => {
-        if (compatPlayersMemo.length === 0) {
-            setCombatPlayersRender(<div>{t("NeedToAddSomething")}</div>);
-            return;
-        }
-
-        const list = compatPlayersMemo.map((element, index) => combatPlayerList(element, index));
-
-        setCombatPlayersRender(
-            <ul className="combat-players__container">
-                {list}
-            </ul>
-        );
-    }
-
-    const combatPlayerList = (element, index) => {
-        return (<li key={element.id}>
-            <div className="card">
-                <div className="card-body">
-                    <h5 className="card-title">{element.userName}</h5>
-                </div>
-                <div className="form-check form-switch">
-                    <input className="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckChecked" onChange={switchRadarChart(index)} />
-                    <label className="form-check-label" htmlFor="flexSwitchCheckChecked">{t("ShowStatistics")}</label>
-                </div>
-                {activeUserIndex === index &&
-                    <RadarChart
-                        cx={350}
-                        cy={250}
-                        outerRadius={150}
-                        width={600}
-                        height={500}
-                        data={createUserRadarChartData(element)}
-                    >
-                        <PolarGrid />
-                        <PolarAngleAxis dataKey="subject" />
-                        <PolarRadiusAxis />
-                        <Radar
-                            name={element.userName}
-                            dataKey="A"
-                            stroke="#8884d8"
-                            fill="#8884d8"
-                            fillOpacity={0.6}
+    return (
+        <ul className="combat-players__container">
+            {
+                combatPlayers?.map((item, index) => (
+                    <li key={item.id} className="card">
+                        <div className="card-body">
+                            <h5 className="card-title">{item.userName}</h5>
+                        </div>
+                        <div className="form-check form-switch">
+                            <input className="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckChecked" onChange={switchRadarChart(index)} />
+                            <label className="form-check-label" htmlFor="flexSwitchCheckChecked">{t("ShowStatistics")}</label>
+                        </div>
+                        {activeUserIndex === index &&
+                            <RadarChart
+                                cx={350}
+                                cy={250}
+                                outerRadius={150}
+                                width={600}
+                                height={500}
+                                data={createUserRadarChartData(item)}
+                            >
+                                <PolarGrid/>
+                                <PolarAngleAxis
+                                    dataKey="subject"
+                                />
+                                <PolarRadiusAxis/>
+                                <Radar
+                                    name={item.userName}
+                                    dataKey="A"
+                                    stroke="#8884d8"
+                                    fill="#8884d8"
+                                    fillOpacity={0.6}
+                                />
+                            </RadarChart>
+                        }
+                        <CommonPlayerInform
+                            combatPlayer={item}
+                            combatId={combatId}
+                            combatLogId={combatLogId}
                         />
-                    </RadarChart>
-                }
-                <CommonPlayerInform element={element} />
-            </div>
-        </li>);
-    }
-
-    return combatPlayersRender;
+                    </li>
+                ))
+            }
+        </ul>
+    );
 }
 
 export default PlayerInformation;

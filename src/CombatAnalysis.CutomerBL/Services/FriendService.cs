@@ -71,12 +71,6 @@ internal class FriendService : IService<FriendDto, int>
 
     private async Task<FriendDto> CreateInternalAsync(FriendDto item)
     {
-        if (string.IsNullOrEmpty(item.Username))
-        {
-            throw new ArgumentNullException(nameof(FriendDto),
-                $"The property {nameof(FriendDto.Username)} of the {nameof(FriendDto)} object can't be null or empty");
-        }
-
         var map = _mapper.Map<Friend>(item);
         var createdItem = await _repository.CreateAsync(map);
         var resultMap = _mapper.Map<FriendDto>(createdItem);
@@ -86,12 +80,6 @@ internal class FriendService : IService<FriendDto, int>
 
     private async Task<int> UpdateInternalAsync(FriendDto item)
     {
-        if (string.IsNullOrEmpty(item.Username))
-        {
-            throw new ArgumentNullException(nameof(FriendDto),
-                $"The property {nameof(FriendDto.Username)} of the {nameof(FriendDto)} object can't be null or empty");
-        }
-
         var map = _mapper.Map<Friend>(item);
         var rowsAffected = await _repository.UpdateAsync(map);
 

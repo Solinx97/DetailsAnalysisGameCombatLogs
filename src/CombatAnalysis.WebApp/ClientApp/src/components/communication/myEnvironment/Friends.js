@@ -1,91 +1,76 @@
 import { faCircleXmark, faWindowRestore } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
+import { useRemoveFriendAsyncMutation } from '../../../store/api/Friend.api';
+import { useFriendSearchByUserIdQuery } from '../../../store/api/UserApi';
 import UserInformation from './../UserInformation';
+import RequestsToConnect from './RequestsToConnect';
 
-import "../../../styles/communication/friends.scss";
+import '../../../styles/communication/friends.scss';
 
 const Friends = () => {
+    const { t } = useTranslation("communication/myEnvironment/friends");
+
     const customer = useSelector((state) => state.customer.value);
 
-    const [friends, setFriends] = useState(<></>);
-    const [userInformation, setUserInformation] = useState(<></>);
+    const { data: myFriends, isLoading } = useFriendSearchByUserIdQuery(customer?.id);
+    const [removeFriendAsyncMut] = useRemoveFriendAsyncMutation(customer?.id);
 
-    useEffect(() => {
-        let getFriends = async () => {
-            await getFriendsAsync();
-        }
-
-        getFriends();
-    }, [])
-
-    const getFriendsAsync = async () => {
-        const response = await fetch(`/api/v1/Friend/searchByUserId/${customer.id}`);
-        if (response.status !== 200) {
-            console.log("problem");
-
-            return;
-        }
-
-        const myFriends = await response.json();
-
-        fillFriends(myFriends);
-    }
+    const [userInformation, setUserInformation] = useState(null);
 
     const removeFriendAsync = async (friendId) => {
-        let response = await fetch(`/api/v1/Friend/${friendId}`, {
-            method: 'DELETE',
-        });
-
-        if (response.status !== 200) {
-            console.log("problem");
-
-            return;
-        }
-
-        await getFriendsAsync();
-    }
-
-    const fillFriends = (myFriends) => {
-        const list = myFriends.length !== 0
-            ? myFriends.map((element) => createCard(element))
-            : (<div className="friends__empty">You don't have any friends</div>);
-
-        setFriends(list);
+        await removeFriendAsyncMut(friendId);
     }
 
     const openUserInformation = (customer) => {
-        setUserInformation(<UserInformation customer={customer} closeUserInformation={closeUserInformation} />);
+        setUserInformation(<UserInformation
+            customer={customer}
+            closeUserInformation={closeUserInformation}
+        />);
     }
 
     const closeUserInformation = () => {
-        setUserInformation(<></>);
+        setUserInformation(null);
     }
 
-    const createCard = (element) => {
-        return (<li key={element.id} className="friend">
-            <div className="friend__details">
-                <FontAwesomeIcon icon={faWindowRestore} title="Show details" onClick={() => openUserInformation(element)} />
-            </div>
-            <div>{element.username}</div>
-            <div className="friend__remove">
-                <FontAwesomeIcon icon={faCircleXmark} title="Remove" onClick={async () => await removeFriendAsync(element.id)} />
-            </div>
-        </li>);
+    if (isLoading) {
+        return <></>;
     }
 
-    const render = () => {
-        return (<div className="friends">
+    return (
+        <div className="friends">
+            <RequestsToConnect />
             <div>
-                <div>Friends</div>
+                <div><strong>{t("Friends")}</strong></div>
             </div>
-            <ul>{friends}</ul>
+            <ul>
+                {
+                    myFriends?.map((item) => (
+                        <li key={item.id} className="friend">
+                            <div className="friend__details">
+                                <FontAwesomeIcon
+                                    icon={faWindowRestore}
+                                    title={t("ShowDetails")}
+                                    onClick={() => openUserInformation(item)}
+                                />
+                            </div>
+                            <div>{item.username}</div>
+                            <div className="friend__remove">
+                                <FontAwesomeIcon
+                                    icon={faCircleXmark}
+                                    title={t("Remove")}
+                                    onClick={async () => await removeFriendAsync(item.id)}
+                                />
+                            </div>
+                        </li>
+                    ))
+                }
+            </ul>
             {userInformation}
-        </div>);
-    }
-
-    return render();
+        </div>
+    );
 }
 
 export default Friends;

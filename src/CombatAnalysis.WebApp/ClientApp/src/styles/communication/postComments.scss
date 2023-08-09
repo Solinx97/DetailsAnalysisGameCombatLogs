@@ -1,0 +1,45 @@
+.post-comments {
+    display: flex;
+    flex-direction: column;
+
+    .card {
+        width: 475px;
+        margin: 5px 0 5px 75px;
+    }
+
+    &__title.list-group-item {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+    }
+
+    &__menu {
+        svg {
+            cursor: pointer;
+        }
+
+        svg:hover {
+            transform: scale(1.1);
+        }
+    }
+
+    &__edit.list-group-item {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+
+        svg {
+            cursor: pointer;
+        }
+
+        svg:hover {
+            transform: scale(1.1);
+        }
+
+        button {
+            margin: 0 10px;
+            font-size: 12px;
+        }
+    }
+}

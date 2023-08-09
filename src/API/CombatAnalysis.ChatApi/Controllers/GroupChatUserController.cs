@@ -2,12 +2,14 @@
 using CombatAnalysis.BL.DTO.Chat;
 using CombatAnalysis.BL.Interfaces;
 using CombatAnalysis.ChatApi.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CombatAnalysis.ChatApi.Controllers;
 
 [Route("api/v1/[controller]")]
 [ApiController]
+[Authorize]
 public class GroupChatUserController : ControllerBase
 {
     private readonly IService<GroupChatUserDto, int> _service;

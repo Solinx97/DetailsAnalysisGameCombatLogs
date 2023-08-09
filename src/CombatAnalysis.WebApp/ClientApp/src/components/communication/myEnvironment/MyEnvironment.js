@@ -1,48 +1,37 @@
-import { useState, useEffect } from 'react';
-import { useSelector } from 'react-redux';
-import Post from '../Post';
+import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import Friends from './Friends';
+import MyCommunities from './MyCommunities';
+import MyFeed from './MyFeed';
 import Profile from './Profile';
-import RequestsToConnect from './RequestsToConnect';
 
-import "../../../styles/communication/myEnvironment.scss";
+import '../../../styles/communication/myEnvironment.scss';
 
-const MyEnvironment = () => {
+const MyEnvironment = ({ openCommunity }) => {
+    const { t } = useTranslation("communication/myEnvironment/myEnvironment");
+
     const [currentMenuItem, setCurrentMenuItem] = useState(0);
-    const [myFeed, setMyFeed] = useState(<></>);
-
-    const customer = useSelector((state) => state.customer.value);
-
-    useEffect(() => {
-        setMyFeed(<Post customersId={[customer.id]}/>);
-    }, [])
-
-    useEffect(() => {
-        setMyFeed(<Post customersId={[customer === null ? 0 : customer.id]} />);
-    }, [customer])
 
     const render = () => {
         return (<div className="my-environment">
             <ul className="my-environment__menu">
                 <li>
-                    <button type="button" className="btn btn-outline-success" onClick={() => setCurrentMenuItem(1)}>Profile</button>
+                    <button type="button" className="btn btn-outline-success" onClick={() => setCurrentMenuItem(1)}>{t("Profile")}</button>
                 </li>
                 <li>
-                    <button type="button" className="btn btn-outline-info" onClick={() => setCurrentMenuItem(0)}>Feed</button>
-                    <button type="button" className="btn btn-outline-info" onClick={() => setCurrentMenuItem(2)}>Friends</button>
-                    <button type="button" className="btn btn-outline-info" onClick={() => setCurrentMenuItem(3)}>Community</button>
+                    <button type="button" className="btn btn-outline-info" onClick={() => setCurrentMenuItem(0)}>{t("Feed")}</button>
+                    <button type="button" className="btn btn-outline-info" onClick={() => setCurrentMenuItem(2)}>{t("Friends")}</button>
+                    <button type="button" className="btn btn-outline-info" onClick={() => setCurrentMenuItem(3)}>{t("Communities")}</button>
                 </li>
                 <li>
-                    <button type="button" className="btn btn-outline-info" onClick={() => setCurrentMenuItem(4)}>Requests</button>
-                    <button type="button" className="btn btn-outline-info" onClick={() => setCurrentMenuItem(5)}>Invites</button>
-                    <button type="button" className="btn btn-outline-info" onClick={() => setCurrentMenuItem(6)}>Recomendations</button>
+                    <button type="button" className="btn btn-outline-info" onClick={() => setCurrentMenuItem(6)}>{t("Recomendations")}</button>
                 </li>
             </ul>
             <div>
-                {currentMenuItem === 0 ? myFeed : null}
-                {currentMenuItem === 1 ? <Profile /> : null}
-                {currentMenuItem === 2 ? <Friends /> : null}
-                {currentMenuItem === 4 ? <RequestsToConnect /> : null}
+                {currentMenuItem === 0 && <MyFeed/>}
+                {currentMenuItem === 1 && <Profile />}
+                {currentMenuItem === 2 && <Friends />}
+                {currentMenuItem === 3 && <MyCommunities openCommunity={openCommunity} />}
             </div>
         </div>);
     }

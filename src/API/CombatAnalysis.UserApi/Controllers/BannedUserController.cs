@@ -2,12 +2,14 @@
 using CombatAnalysis.CustomerBL.DTO;
 using CombatAnalysis.CustomerBL.Interfaces;
 using CombatAnalysis.UserApi.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CombatAnalysis.UserApi.Controllers;
 
 [Route("api/v1/[controller]")]
 [ApiController]
+[Authorize]
 public class BannedUserController : ControllerBase
 {
     private readonly IService<BannedUserDto, int> _service;

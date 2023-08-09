@@ -3,6 +3,7 @@ using CombatAnalysis.CombatParser.Entities;
 using CombatAnalysis.CombatParser.Interfaces;
 using CombatAnalysis.CombatParser.Patterns;
 using Microsoft.Extensions.Logging;
+using System.Globalization;
 
 namespace CombatAnalysis.CombatParser.Services;
 
@@ -136,9 +137,10 @@ public class CombatParserService : IParser
         var combatDate = parse.Split(' ');
         var dateWithoutTime = combatDate[0].Split('/');
         var time = combatDate[1].Split('.')[0];
-        var clearDate = $"{dateWithoutTime[1]}/{dateWithoutTime[0]}/{DateTimeOffset.Now.Year} {time}";
+        var clearDate = $"{dateWithoutTime[0]}/{dateWithoutTime[1]}/{DateTimeOffset.Now.Year} {time}";
 
-        DateTimeOffset.TryParse(clearDate, out var date);
+        DateTimeOffset.TryParse(clearDate, null,
+                            DateTimeStyles.AssumeUniversal, out var date);
         return date.UtcDateTime;
     }
 

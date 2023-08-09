@@ -1,4 +1,5 @@
 ﻿using CombatAnalysis.WebApp.Consts;
+using CombatAnalysis.WebApp.Extensions;
 using CombatAnalysis.WebApp.Interfaces;
 using CombatAnalysis.WebApp.Models.Chats;
 using Microsoft.AspNetCore.Mvc;
@@ -14,23 +15,45 @@ public class PersonalChatMessageController : ControllerBase
     public PersonalChatMessageController(IHttpClientHelper httpClient)
     {
         _httpClient = httpClient;
-        _httpClient.BaseAddress = Port.ChatApi;
     }
 
     [HttpGet("findByChatId/{chatId:int:min(1)}")]
     public async Task<IActionResult> Find(int chatId)
     {
-        var responseMessage = await _httpClient.GetAsync($"PersonalChatMessage/findByChatId/{chatId}");
-        var personalChatMessages = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<PersonalChatMessageModel>>();
+        if (!HttpContext.Request.Cookies.TryGetValue("refreshToken", out var refreshToken))
+        {
+            return Unauthorized();
+        }
 
-        return Ok(personalChatMessages);
+        var responseMessage = await _httpClient.GetAsync($"PersonalChatMessage/findByChatId/{chatId}", refreshToken, Port.ChatApi);
+        if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+        {
+            return Unauthorized();
+        }
+        else if (responseMessage.IsSuccessStatusCode)
+        {
+            var personalChatMessages = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<PersonalChatMessageModel>>();
+
+            return Ok(personalChatMessages);
+        }
+
+        return BadRequest();
     }
 
     [HttpPost]
     public async Task<IActionResult> Create(PersonalChatMessageModel message)
     {
-        var responseMessage = await _httpClient.PostAsync("PersonalChatMessage", JsonContent.Create(message));
-        if (responseMessage.StatusCode == System.Net.HttpStatusCode.OK)
+        if (!HttpContext.Request.Cookies.TryGetValue("refreshToken", out var refreshToken))
+        {
+            return Unauthorized();
+        }
+
+        var responseMessage = await _httpClient.PostAsync("PersonalChatMessage", JsonContent.Create(message), refreshToken, Port.ChatApi);
+        if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+        {
+            return Unauthorized();
+        }
+        else if (responseMessage.IsSuccessStatusCode)
         {
             return Ok();
         }
@@ -41,8 +64,17 @@ public class PersonalChatMessageController : ControllerBase
     [HttpPut]
     public async Task<IActionResult> Update(PersonalChatMessageModel message)
     {
-        var responseMessage = await _httpClient.PutAsync("PersonalChatMessage", JsonContent.Create(message));
-        if (responseMessage.StatusCode == System.Net.HttpStatusCode.OK)
+        if (!HttpContext.Request.Cookies.TryGetValue("refreshToken", out var refreshToken))
+        {
+            return Unauthorized();
+        }
+
+        var responseMessage = await _httpClient.PutAsync("PersonalChatMessage", JsonContent.Create(message), refreshToken, Port.ChatApi);
+        if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+        {
+            return Unauthorized();
+        }
+        else if (responseMessage.IsSuccessStatusCode)
         {
             return Ok();
         }
@@ -53,8 +85,17 @@ public class PersonalChatMessageController : ControllerBase
     [HttpDelete("{messageId:int:min(1)}")]
     public async Task<IActionResult> Delete(int messageId)
     {
-        var responseMessage = await _httpClient.DeletAsync($"PersonalChatMessage/{messageId}");
-        if (responseMessage.StatusCode == System.Net.HttpStatusCode.OK)
+        if (!HttpContext.Request.Cookies.TryGetValue("refreshToken", out var refreshToken))
+        {
+            return Unauthorized();
+        }
+
+        var responseMessage = await _httpClient.DeletAsync($"PersonalChatMessage/{messageId}", refreshToken, Port.ChatApi);
+        if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+        {
+            return Unauthorized();
+        }
+        else if (responseMessage.IsSuccessStatusCode)
         {
             return Ok();
         }
@@ -65,8 +106,17 @@ public class PersonalChatMessageController : ControllerBase
     [HttpDelete("deleteByChatId/{chatId:int:min(1)}")]
     public async Task<IActionResult> DeleteByChatId(int chatId)
     {
-        var responseMessage = await _httpClient.GetAsync($"PersonalChatMessage/findByChatId/{chatId}");
-        if (responseMessage.StatusCode == System.Net.HttpStatusCode.OK)
+        if (!HttpContext.Request.Cookies.TryGetValue("refreshToken", out var refreshToken))
+        {
+            return Unauthorized();
+        }
+
+        var responseMessage = await _httpClient.GetAsync($"PersonalChatMessage/findByChatId/{chatId}", refreshToken, Port.ChatApi);
+        if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+        {
+            return Unauthorized();
+        }
+        else if (responseMessage.IsSuccessStatusCode)
         {
             var messages = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<PersonalChatMessageModel>>();
             foreach (var item in messages)

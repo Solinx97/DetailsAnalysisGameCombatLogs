@@ -45,7 +45,7 @@ public class CombatPlayerController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> Create(List<CombatPlayerModel> model)
     {
-        using var transaction = await _sqlContextService.BeginTransactionAsync();
+        using var transaction = await _sqlContextService.BeginTransactionAsync(false);
         try
         {
             foreach (var item in model)

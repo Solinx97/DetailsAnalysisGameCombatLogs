@@ -1,0 +1,8 @@
+{
+  "Email": "Email",
+  "Password": "Пароль",
+  "CheckMeOut": "Оставаться в системе",
+  "EmailExist": "Такой Email уже зарегистрирован!",
+  "Registration": "Регистрация",
+  "Username": "Имя пользователя"
+}

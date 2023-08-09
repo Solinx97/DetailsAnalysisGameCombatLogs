@@ -1,11 +1,11 @@
 using AutoMapper;
-using CombatAnalysis.CustomerBL.Mapping;
 using CombatAnalysis.CustomerBL.Extensions;
+using CombatAnalysis.CustomerBL.Mapping;
 using CombatAnalysis.Identity.Extensions;
-using CombatAnalysis.Identity.Mapping;
-using CombatAnalysis.Identity.Security;
+using CombatAnalysis.Identity.Interfaces;
 using CombatAnalysis.Identity.Settings;
 using CombatAnalysis.UserApi.Mapping;
+using CombatAnalysis.UserApi.Middleware;
 using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -13,9 +13,6 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.CustomerBLDependencies(builder.Configuration, "DefaultConnection");
 builder.Services.RegisterIdentityDependencies();
-
-JWTSecret.GenerateAccessSecretKey();
-JWTSecret.GenerateRefreshSecretKey();
 
 var settings = builder.Configuration.GetSection(nameof(TokenSettings));
 var scheme = settings.GetValue<string>(nameof(TokenSettings.AuthScheme));
@@ -29,12 +26,13 @@ var mappingConfig = new MapperConfiguration(mc =>
 {
     mc.AddProfile(new UserApiMapper());
     mc.AddProfile(new CustomerBLMapper());
-    mc.AddProfile(new IdentityMappingMapper());
 });
 
 var mapper = mappingConfig.CreateMapper();
 builder.Services.AddSingleton(mapper);
 builder.Services.AddSingleton<ILogger>(logger);
+builder.Services.AddAuthentication("Basic")
+    .AddScheme<BasicAuthenticationOptions, AuthenticationHandler>("Basic", null);
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -49,6 +47,10 @@ builder.Services.AddSwaggerGen(options =>
 });
 
 var app = builder.Build();
+
+//var scope = app.Services.CreateScope();
+//var jwtSecretService = scope.ServiceProvider.GetService<IJWTSecret>();
+//await jwtSecretService.GenerateSecretKeysAsync();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

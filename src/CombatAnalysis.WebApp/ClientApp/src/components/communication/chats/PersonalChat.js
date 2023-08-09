@@ -1,87 +1,43 @@
-﻿import { useEffect, useRef, useState } from "react";
-import { useSelector } from 'react-redux';
-import { faPaperPlane, faPen, faTrash, faCloudArrowUp, faPersonWalkingArrowRight } from '@fortawesome/free-solid-svg-icons';
+﻿import { faPaperPlane, faPersonWalkingArrowRight } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { useRef } from "react";
+import { useTranslation } from 'react-i18next';
+import { useFindPersonalChatMessageByChatIdQuery } from '../../../store/api/ChatApi';
+import { useGetCustomerByIdQuery } from '../../../store/api/Customer.api';
+import { useRemovePersonalChatAsyncMutation, useUpdatePersonalChatAsyncMutation } from '../../../store/api/PersonalChat.api';
+import {
+    useCreatePersonalChatMessageAsyncMutation, useRemovePersonalChatMessageAsyncMutation,
+    useUpdatePersonalChatMessageAsyncMutation
+} from '../../../store/api/PersonalChatMessage.api';
+import ChatMessage from './ChatMessage';
 
 import "../../../styles/communication/personalChat.scss";
 
-const PersonalChat = ({ chat, setChatIsLeaft }) => {
-    const chatMessageUpdatesInterval = 200;
+const getPersonalChatMessagesInterval = 1000;
 
-    const customer = useSelector((state) => state.customer.value);
-
-    const [chatMessages, setChatMessage] = useState(null);
-    const [selectedMessageId, setSelectedMessageId] = useState(0);
-    const [editModeIsOn, setEditMode] = useState(false);
-    const [deleteModeIsOn, setDeleteMode] = useState(false);
+const PersonalChat = ({ chat, customer, setSelectedChat, companionId }) => {
+    const { t } = useTranslation("communication/chats/personalChat");
 
     const messageInput = useRef(null);
-    const editMessageInput = useRef(null);
 
-    useEffect(() => {
-        async function getChatMessages() {
-            await getChatMessagesAsync();
-        };
+    const { data: messages, isLoading } = useFindPersonalChatMessageByChatIdQuery(chat.id, {
+        pollingInterval: getPersonalChatMessagesInterval
+    });
+    const { data: user, isLoading: userIsLoading } = useGetCustomerByIdQuery(companionId);
+    const [createPersonalChatMessageAsync] = useCreatePersonalChatMessageAsyncMutation();
+    const [updatePersonalChatMessageAsync] = useUpdatePersonalChatMessageAsyncMutation();
+    const [removePersonalChatMessageAsync] = useRemovePersonalChatMessageAsyncMutation();
+    const [removePersonalChatAsync] = useRemovePersonalChatAsyncMutation();
+    const [updatePersonalChatAsyncMut] = useUpdatePersonalChatAsyncMutation();
 
-        let interval = setInterval(() => {
-            getChatMessages();
-        }, chatMessageUpdatesInterval);
+    const updateMessageAsync = async (myMessage, newMessageContent) => {
+        myMessage.message = newMessageContent;
 
-        return () => {
-            clearInterval(interval);
-        };
-    }, [chat])
-
-    const getChatMessagesAsync = async () => {
-        const response = await fetch(`/api/v1/PersonalChatMessage/findByChatId/${chat.id}`);
-        const status = response.status;
-        if (status === 200) {
-            var messages = await response.json();
-
-            setChatMessage(messages);
-        }
+        await updatePersonalChatMessageAsync(myMessage);
     }
 
-    const createMessage = (element) => {
-        const isMyMessage = customer.username === element.username;
-        const elementIsSelected = element.id === selectedMessageId;
-
-        return (<li key={element.id} className={`personal-chat-messages__${isMyMessage ? "right" : "left"}`}
-            onClick={() => setSelectedMessageId(element.id)}>
-            {!isMyMessage &&
-                <div className="username">{element.username}</div>
-            }
-            {editModeIsOn && isMyMessage && elementIsSelected
-                ? <div className="edit-message">
-                    <input className="form-control" defaultValue={element.message} ref={editMessageInput} />
-                    <FontAwesomeIcon icon={faCloudArrowUp} title="Save" onClick={async () => await updateMessageAsync(element)} />
-                  </div>
-                : <div className="message">{element.message}</div>
-            }
-            {deleteModeIsOn && isMyMessage && elementIsSelected &&
-                <FontAwesomeIcon icon={faTrash} title="Save" onClick={async () => await deleteMessageChatAsync(element.id)} />
-            }
-        </li>);
-    }
-
-    const updateMessageAsync = async (myMessage) => {
-        setEditMode(false);
-        myMessage.message = editMessageInput.current.value;
-
-        await fetch("/api/v1/PersonalChatMessage", {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(myMessage)
-        });
-    }
-
-    const deleteMessageChatAsync = async (messageId) => {
-        setDeleteMode(false);
-        await fetch(`/api/v1/PersonalChatMessage/${messageId}`, {
-            method: 'DELETE'
-        });
+    const deleteMessageAsync = async (messageId) => {
+        await removePersonalChatMessageAsync(messageId);
     }
 
     const sendMessageAsync = async () => {
@@ -95,23 +51,16 @@ const PersonalChat = ({ chat, setChatIsLeaft }) => {
 
     const createChatMessageAsync = async (message) => {
         const today = new Date();
-        const data = {
-            id: 0,
-            userName: "temp@yandex.by",
+        const newMessage = {
             message: message,
             time: `${today.getHours()}:${today.getMinutes()}`,
-            personalChatId: chat.id
+            personalChatId: chat.id,
+            ownerId: customer?.id
         };
 
-        const response = await fetch("/api/v1/PersonalChatMessage", {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(data)
-        });
+        const createdMessage = await createPersonalChatMessageAsync(newMessage);
 
-        if (response.status == 200) {
+        if (createdMessage.data !== undefined) {
             await updatePersonalChatAsync(message);
         }
     }
@@ -119,56 +68,57 @@ const PersonalChat = ({ chat, setChatIsLeaft }) => {
     const updatePersonalChatAsync = async (message) => {
         chat.lastMessage = message;
 
-        await fetch("/api/v1/PersonalChat", {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(chat)
-        });
+        await updatePersonalChatAsyncMut(chat);
     }
 
     const leaveFromChatAsync = async () => {
-        const response = await fetch(`/api/v1/PersonalChat/${chat.id}`, {
-            method: 'DELETE'
-        });
-
-        const status = response.status;
-        if (status === 200) {
-            await fetch(`/api/v1/PersonalChatMessage/deleteByChatId/${chat.id}`, {
-                method: 'DELETE'
-            });
-
-            setChatIsLeaft(true);
+        const deletedItem = await removePersonalChatAsync(chat.id);
+        if (deletedItem.data !== undefined) {
+            setSelectedChat(null);
         }
     }
 
-    const render = () => {
-        return (
-            <div className="chats__messages">
-                <div className="title">
-                    <div className="title__container">
-                        <div className="title__companion">{chat.companionUsername}</div>
-                        <FontAwesomeIcon icon={faPersonWalkingArrowRight} title="Remove chat" className="remove-chat-handler" onClick={() => leaveFromChatAsync()} />
-                    </div>
-                    <div className={`title__message-panel${selectedMessageId > 0 ? "-active" : ""}`}>
-                        <FontAwesomeIcon icon={faPen} title="Edit" className={`edit-message-handler${editModeIsOn ? "-active" : ""}`} onClick={() => setEditMode(!editModeIsOn)} />
-                        <FontAwesomeIcon icon={faTrash} title="Delete" className={`delete-message-handler${deleteModeIsOn ? "-active" : ""}`} onClick={() => setDeleteMode(!deleteModeIsOn)} />
-                    </div>
-                </div>
-                <ul className="personal-chat-messages">
-                    {chatMessages !== null &&
-                        chatMessages.map((element) => createMessage(element))
-                    }
-                </ul>
-                <div className="form-group chats__messages_input-message">
-                    <input type="text" className="form-control" placeholder="Type your message" ref={messageInput} />
-                    <FontAwesomeIcon icon={faPaperPlane} title="Send message" onClick={sendMessageAsync} />
-                </div>
-            </div>);
+    if (isLoading || userIsLoading) {
+        return <></>;
     }
 
-    return render();
+    return (
+        <div className="chats__messages">
+            <div className="title">
+                <div className="title__container">
+                    <div className="title__companion">{user.username}</div>
+                    <FontAwesomeIcon
+                        icon={faPersonWalkingArrowRight}
+                        title={t("LeaveFromChat")}
+                        className="remove-chat-handler"
+                        onClick={() => leaveFromChatAsync()}
+                    />
+                </div>
+            </div>
+            <ul className="chat-messages">
+                {
+                    messages?.map((item) => (
+                        <li key={item.id}>
+                            <ChatMessage
+                                customer={customer}
+                                message={item}
+                                updateMessageAsync={updateMessageAsync}
+                                deleteMessageAsync={deleteMessageAsync}
+                            />
+                        </li>
+                    ))
+                }
+            </ul>
+            <div className="form-group chats__messages_input-message">
+                <input type="text" className="form-control" placeholder={t("TypeYourMessage")} ref={messageInput} />
+                <FontAwesomeIcon
+                    icon={faPaperPlane}
+                    title={t("SendMessage")}
+                    onClick={sendMessageAsync}
+                />
+            </div>
+        </div>
+    );
 }
 
 export default PersonalChat;

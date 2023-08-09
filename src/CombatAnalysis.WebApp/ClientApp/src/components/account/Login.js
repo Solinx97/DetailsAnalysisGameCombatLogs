@@ -1,18 +1,33 @@
 ﻿import React, { useRef, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { useDispatch } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
+import { useLoginAsyncMutation } from '../../store/api/Account.api';
+import { useLazySearchByUserIdAsyncQuery } from '../../store/api/Customer.api';
+import { updateCustomer } from '../../store/slicers/CustomerSlice';
+import { updateUser } from '../../store/slicers/UserSlice';
 
 import "../../styles/account/login.scss";
 
 const Login = () => {
+    const dispatch = useDispatch();
+
+    const [loginAsync] = useLoginAsyncMutation();
+    const [getCustomerAsync] = useLazySearchByUserIdAsyncQuery();
+
     const navigate = useNavigate();
-    const { t, i18n } = useTranslation("login");
+    const { t } = useTranslation("account/login");
 
     const [showErrorMessage, setShowErrorMessage] = useState(false);
+
     const email = useRef(null);
     const password = useRef(null);
+    const dontLogout = useRef(null);
 
-    const loginAsync = async () => {
+    const handleSubmitAsync = async (event) => {
+        document.cookie = `dontLogout=${dontLogout.current.checked}`;
+        event.preventDefault();
+
         setShowErrorMessage(false);
 
         const data = {
@@ -20,30 +35,24 @@ const Login = () => {
             password: password.current.value
         };
 
-        const response = await fetch('api/v1/Account', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(data)
-        });
+        const user = await loginAsync(data);
+        if (user.data !== undefined) {
+            dispatch(updateUser(user.data));
 
-        if (response.status === 404) {
-            setShowErrorMessage(true);
+            const customer = await getCustomerAsync(user.data.id);
+            if (customer.data !== undefined) {
+                dispatch(updateCustomer(customer.data));
+
+                navigate("/");
+            }
         }
         else {
-            navigate('/');
+            setShowErrorMessage(true);
         }
     }
 
-    const handleSubmitAsync = async (event) => {
-        event.preventDefault();
-
-        await loginAsync();
-    }
-
-    const render = () => {
-        return (<form className="login" onSubmit={handleSubmitAsync}>
+    return (
+        <form className="login" onSubmit={handleSubmitAsync}>
             <div className="mb-3">
                 <label htmlFor="inputEmail" className="form-label">{t("Email")}</label>
                 <input type="email" className="form-control" id="inputEmail" aria-describedby="emailHelp" ref={email} />
@@ -52,12 +61,16 @@ const Login = () => {
                 <label htmlFor="inputPassword" className="form-label">{t("Password")}</label>
                 <input type="password" className="form-control" id="inputPassword" ref={password} />
             </div>
-            <input type="submit" className="btn btn-primary" value="Login" />
-            <div className="login__error-message" style={{ display: showErrorMessage ? "flex" : "none" }}>Incorrect email/password. Try again</div>
-        </form>);
-    }
-
-    return render();
+            <div className="form-check">
+                <label className="form-check-label" htmlFor="invalidCheck">
+                    Don't logout
+                </label>
+                <input className="form-check-input" type="checkbox" id="invalidCheck" ref={dontLogout} />
+            </div>
+            <input type="submit" className="btn btn-primary" value={t("Login")} />
+            <div className="login__error-message" style={{ display: showErrorMessage ? "flex" : "none" }}>{t("IncorrectData")}</div>
+        </form>
+    );
 }
 
 export default Login;

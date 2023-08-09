@@ -1,14 +1,13 @@
 ﻿import React, { useState } from 'react';
-import {
-    PieChart,
-    Pie,
-    Sector
-} from "recharts";
 import { useTranslation } from 'react-i18next';
+import {
+    Pie, PieChart, Sector
+} from "recharts";
 
 const DetailsPieChart = ({ payload }) => {
     const [activeIndex, setActiveIndex] = useState(0);
-    const { t, i18n } = useTranslation("usePieChart");
+
+    const { t } = useTranslation("childs/detailsPieChart");
 
     const renderActiveShape = (props) => {
         const RADIAN = Math.PI / 180;
@@ -19,7 +18,7 @@ const DetailsPieChart = ({ payload }) => {
         const sy = cy + (outerRadius + 10) * sin;
         const mx = cx + (outerRadius + 30) * cos;
         const my = cy + (outerRadius + 30) * sin;
-        const ex = mx + (cos >= 0 ? 1 : -1) * 22;
+        const ex = mx + (cos >= 0 ? 1 : -1) * 60;
         const ey = my;
         const textAnchor = cos >= 0 ? t("TextAnchorStart") : t("TextAnchorEnd");
 
@@ -60,10 +59,12 @@ const DetailsPieChart = ({ payload }) => {
         setActiveIndex(index);
     }
 
-    const render = () => {
-        console.log(2);
-        return <div className="pie-chart-hook">
-            <PieChart width={475} height={350}>
+    return (
+        <div className="pie-chart-hook">
+            <PieChart
+                width={475}
+                height={350}
+            >
                 <Pie
                     activeIndex={activeIndex}
                     activeShape={renderActiveShape}
@@ -78,10 +79,8 @@ const DetailsPieChart = ({ payload }) => {
                 />
             </PieChart>
             <div className="title">{payload.title}</div>
-        </div>;
-    }
-
-    return render();
+        </div>
+    );
 }
 
 export default DetailsPieChart;

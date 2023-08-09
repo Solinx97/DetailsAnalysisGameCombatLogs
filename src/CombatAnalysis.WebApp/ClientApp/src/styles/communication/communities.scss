@@ -1,0 +1,72 @@
+.communities {
+    .invite-to-community {
+        width: 100%;
+        padding: 10px 50px;
+    }
+
+    &__search {
+        display: flex;
+        align-items: center;
+
+        lbael, input {
+            margin: 5px 15px;
+        }
+
+        input {
+            width: 350px;
+        }
+    }
+
+    &__list {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+
+        .title {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 10px 0;
+
+            .content {
+                display: flex;
+                justify-content: start;
+                width: 75%;
+            }
+
+            svg {
+                margin: 0 25px;
+            }
+
+            svg:hover {
+                cursor: pointer;
+                transform: scale(1.1);
+            }
+        }
+
+        ul {
+            display: flex;
+            flex-wrap: wrap;
+
+            .community {
+                margin: 10px;
+
+                &__member {
+                    position: relative;
+                    display: flex;
+                    justify-content: end;
+                    z-index: 10;
+
+                    svg {
+                        position: absolute;
+                        margin: -5px;
+                    }
+                }
+
+                .card {
+                    width: 250px;
+                }
+            }
+        }
+    }
+}

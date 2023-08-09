@@ -3,7 +3,6 @@ using CombatAnalysis.CustomerBL.Interfaces;
 using CombatAnalysis.CustomerBL.Services;
 using CombatAnalysis.CustomerBL.Services.User;
 using CombatAnalysis.DAL.Extensions;
-using CombatAnalysis.PostDislikeBL.Services;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -18,10 +17,6 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IUserService<AppUserDto>, UserService>();
 
         services.AddScoped<IService<CustomerDto, string>, CustomerService>();
-        services.AddScoped<IService<PostDto, int>, PostService>();
-        services.AddScoped<IService<PostLikeDto, int>, PostLikeService>();
-        services.AddScoped<IService<PostDislikeDto, int>, PostDislikeService>();
-        services.AddScoped<IService<PostCommentDto, int>, PostCommentService>();
         services.AddScoped<IService<RequestToConnectDto, int>, RequestToConnectService>();
         services.AddScoped<IService<FriendDto, int>, FriendService>();
         services.AddScoped<IService<BannedUserDto, int>, BannedUserService>();

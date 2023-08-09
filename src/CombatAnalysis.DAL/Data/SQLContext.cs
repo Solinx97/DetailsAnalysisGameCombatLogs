@@ -2,6 +2,7 @@
 using CombatAnalysis.DAL.Entities.Authentication;
 using CombatAnalysis.DAL.Entities.Chat;
 using CombatAnalysis.DAL.Entities.Community;
+using CombatAnalysis.DAL.Entities.Post;
 using CombatAnalysis.DAL.Entities.User;
 using CombatAnalysis.DAL.Helpers;
 using Microsoft.EntityFrameworkCore;
@@ -21,7 +22,7 @@ public class SQLContext : DbContext
 
     public DbSet<AppUser>? AppUser { get; }
 
-    public DbSet<RefreshToken>? RefreshToken { get; }
+    public DbSet<Secret>? Secrets { get; }
 
     public DbSet<PersonalChat>? PersonalChat { get; }
 
@@ -29,17 +30,25 @@ public class SQLContext : DbContext
 
     public DbSet<Community>? Community { get; }
 
-    public DbSet<CommunityPost>? CommunityPost { get; }
-
-    public DbSet<CommunityPostComment>? CommunityPostComment { get; }
-
-    public DbSet<CommunityPostDislike>? CommunityPostDislike { get; }
-
-    public DbSet<CommunityPostLike>? CommunityPostLike { get; }
-
     public DbSet<CommunityUser>? CommunityUser { get; }
 
     public DbSet<InviteToCommunity>? InviteToCommunity { get; }
+
+    #endregion
+
+    #region Post
+
+    public DbSet<Post>? Post { get; }
+
+    public DbSet<PostComment>? PostComment { get; }
+
+    public DbSet<PostLike>? PostLike { get; }
+
+    public DbSet<PostDislike>? PostDislike { get; }
+
+    public DbSet<CommunityPost>? CommunityPost { get; }
+
+    public DbSet<UserPost>? UserPost { get; }
 
     #endregion
 
@@ -64,14 +73,6 @@ public class SQLContext : DbContext
     public DbSet<BannedUser>? BannedUser { get; }
 
     public DbSet<Friend>? Friend { get; }
-
-    public DbSet<Post>? Post { get; }
-
-    public DbSet<PostComment>? PostComment { get; }
-
-    public DbSet<PostLike>? PostLike { get; }
-
-    public DbSet<PostDislike>? PostDislike { get; }
 
     public DbSet<RequestToConnect>? RequestToConnet { get; }
 
