@@ -3,9 +3,9 @@ import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 
 const Home = () => {
-    const navigate = useNavigate();
-
     const { t } = useTranslation("home");
+
+    const navigate = useNavigate();
 
     const customer = useSelector((state) => state.customer.value);
 
@@ -13,7 +13,7 @@ const Home = () => {
         <div>
             <div>
                 <div>{t("Communication")} <span style={{ display: customer !== null ? "none" : "flex" }}>({t("ShouldAuthorize")})</span></div>
-                <button className="btn btn-info" onClick={() => navigate("/communication")} disabled={customer == null}>{t("Open")}</button>
+                <button className="btn btn-info" onClick={() => navigate("/feed")} disabled={customer == null}>{t("Open")}</button>
             </div>
             <div>
                 <div>{t("Analyzing")}</div>

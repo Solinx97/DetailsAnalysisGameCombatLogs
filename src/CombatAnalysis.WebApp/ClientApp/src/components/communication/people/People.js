@@ -6,6 +6,7 @@ import { useSelector } from 'react-redux';
 import { useCreatePersonalChatAsyncMutation, useLazyIsExistAsyncQuery } from '../../../store/api/PersonalChat.api';
 import { useCreateRequestAsyncMutation } from '../../../store/api/RequestToConnect.api';
 import { useGetCustomersQuery } from '../../../store/api/UserApi';
+import Communication from '../Communication';
 import UserInformation from './../UserInformation';
 
 import '../../../styles/communication/people.scss';
@@ -90,52 +91,57 @@ const People = ({ updateCurrentMenuItem }) => {
     }
 
     return (
-        <div className="people">
-            <div>
-                <div>{t("People")}</div>
-            </div>
-            <ul className="people__cards">
-                {
-                    people.filter(peopleListFilter).map((item) => (
-                        <li key={item.id}>
-                            <div className="card">
-                                <div className="card-body">
-                                    <div>[icon]</div>
-                                    <h5 className="card-title" onMouseOver={() => openUserInformationWithTimeout(item)}
-                                        onMouseLeave={() => clearUserInformationTimeout()}>{item.username}</h5>
-                                    <FontAwesomeIcon
-                                        icon={faWindowRestore}
-                                        title={t("ShowDetails")}
-                                        onClick={() => openUserInformation(item)}
-                                    />
+        <div className="communication">
+            <Communication
+                currentMenuItem={4}
+            />
+            <div className="communication__content people">
+                <div>
+                    <div>{t("People")}</div>
+                </div>
+                <ul className="people__cards">
+                    {
+                        people.filter(peopleListFilter).map((item) => (
+                            <li key={item.id}>
+                                <div className="card">
+                                    <div className="card-body">
+                                        <div>[icon]</div>
+                                        <h5 className="card-title" onMouseOver={() => openUserInformationWithTimeout(item)}
+                                            onMouseLeave={() => clearUserInformationTimeout()}>{item.username}</h5>
+                                        <FontAwesomeIcon
+                                            icon={faWindowRestore}
+                                            title={t("ShowDetails")}
+                                            onClick={() => openUserInformation(item)}
+                                        />
+                                    </div>
+                                    <ul className="card__links list-group list-group-flush">
+                                        <li className="list-group-item">
+                                            <FontAwesomeIcon
+                                                icon={faCommentDots}
+                                                title={t("StartChat")}
+                                                onClick={async () => await startChatAsync(item)}
+                                            />
+                                        </li>
+                                        <li className="list-group-item">
+                                            <FontAwesomeIcon
+                                                icon={faUserPlus}
+                                                title={t("RequestToConnect")}
+                                                onClick={async () => await createRequestToConnectAsync(item)} />
+                                        </li>
+                                        <li className="list-group-item">
+                                            <FontAwesomeIcon
+                                                icon={faSquarePlus}
+                                                title={t("InviteToCommunity")}
+                                            />
+                                        </li>
+                                    </ul>
                                 </div>
-                                <ul className="card__links list-group list-group-flush">
-                                    <li className="list-group-item">
-                                        <FontAwesomeIcon
-                                            icon={faCommentDots}
-                                            title={t("StartChat")}
-                                            onClick={async () => await startChatAsync(item)}
-                                        />
-                                    </li>
-                                    <li className="list-group-item">
-                                        <FontAwesomeIcon
-                                            icon={faUserPlus}
-                                            title={t("RequestToConnect")}
-                                            onClick={async () => await createRequestToConnectAsync(item)} />
-                                    </li>
-                                    <li className="list-group-item">
-                                        <FontAwesomeIcon
-                                            icon={faSquarePlus}
-                                            title={t("InviteToCommunity")}
-                                        />
-                                    </li>
-                                </ul>
-                            </div>
-                        </li>
-                    ))
-                }
-            </ul>
-            {userInformation}
+                            </li>
+                        ))
+                    }
+                </ul>
+                {userInformation}
+            </div>
         </div>
     );
 }

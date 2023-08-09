@@ -24,7 +24,7 @@
                 }
 
                 &__name:hover {
-                    cursor: pointer;
+                    cursor: default;
                     box-shadow: 3px 3px 3px 3px green;
                 }
 
@@ -99,9 +99,11 @@
         }
     }
 
-    &__topics {
-        padding: 0;
-        width: 25%;
+    &__menu {
+        position: fixed;
+        right: 0px;
+        padding: 0 10px;
+        width: 275px;
 
         li {
             margin: 10px 0;

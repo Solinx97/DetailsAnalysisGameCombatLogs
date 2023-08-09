@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import { useGetGroupChatUserByUserIdQuery, useGetPersonalChatsByUserIdQuery } from '../../../store/api/ChatApi';
+import Communication from '../Communication';
 import CreateGroupChat from './CreateGroupChat';
 import GroupChat from './GroupChat';
 import MyGroupChat from './MyGroupChat';
@@ -47,94 +48,99 @@ const Chats = () => {
     }
 
     return (
-        <div>
-            <div className="chats">
-                <div className="chats__my-chats">
-                    <div className="chats__my-chats_title">
-                        <div>{t("GroupChats")}</div>
-                        {groupChatsHidden
-                            ? <FontAwesomeIcon
-                                icon={faArrowDown}
-                                title={t("ShowChats")}
-                                onClick={() => setGroupChatsHidden(!groupChatsHidden)}
+        <div className="communication">
+            <Communication
+                currentMenuItem={1}
+            />
+            <div className="communication__content">
+                <div className="chats">
+                    <div className="chats__my-chats">
+                        <div className="chats__my-chats_title">
+                            <div>{t("GroupChats")}</div>
+                            {groupChatsHidden
+                                ? <FontAwesomeIcon
+                                    icon={faArrowDown}
+                                    title={t("ShowChats")}
+                                    onClick={() => setGroupChatsHidden(!groupChatsHidden)}
+                                />
+                                : <FontAwesomeIcon
+                                    icon={faArrowUp}
+                                    title={t("HideChats")}
+                                    onClick={() => setGroupChatsHidden(!groupChatsHidden)}
+                                />
+                            }
+                            <FontAwesomeIcon
+                                className="create"
+                                icon={faSquarePlus}
+                                title={t("CreateNewGroupChat")}
+                                onClick={() => setCreateGroupChatIsActive(!createGroupChatIsActive)}
                             />
-                            : <FontAwesomeIcon
-                                icon={faArrowUp}
-                                title={t("HideChats")}
-                                onClick={() => setGroupChatsHidden(!groupChatsHidden)}
-                            />
-                        }
-                        <FontAwesomeIcon
-                            className="create"
-                            icon={faSquarePlus}
-                            title={t("CreateNewGroupChat")}
-                            onClick={() => setCreateGroupChatIsActive(!createGroupChatIsActive)}
-                        />
+                        </div>
+                        <ul className="chats__my-chats__group-chats">
+                            {
+                                groupChatUsers?.map((item) => (
+                                    <li key={item.id} className={selectedGroupChat?.id === item?.groupChatId ? `active` : ``}>
+                                        <MyGroupChat
+                                            groupChatId={item.groupChatId}
+                                            setSelectedGroupChat={setSelectedGroupChat}
+                                        />
+                                    </li>
+                                ))
+                            }
+                        </ul>
+                        <div className="chats__my-chats_title">
+                            <div>{t("PersonalChats")}</div>
+                            {personalChatsHidden
+                                ? <FontAwesomeIcon
+                                    icon={faArrowDown}
+                                    title={t("ShowChats")}
+                                    onClick={() => setPersonalChatsHidden((item) => !item)}
+                                />
+                                : <FontAwesomeIcon
+                                    icon={faArrowUp}
+                                    title={t("HideChats")}
+                                    onClick={() => setPersonalChatsHidden((item) => !item)}
+                                />
+                            }
+                        </div>
+                        <ul className="chats__my-chats__personal-chats">
+                            {
+                                personalChats?.map((item) => (
+                                    <li key={item.id} className={selectedPersonalChat?.id === item?.id ? `active` : ``}>
+                                        <MyPersonalChat
+                                            personalChat={item}
+                                            selectedGroupChatId={selectedPersonalChat?.id}
+                                            setSelectedPersonalChat={setSelectedPersonalChat}
+                                            companionId={item.initiatorId === customer?.id ? item.companionId : item.initiatorId}
+                                        />
+                                    </li>
+                                ))
+                            }
+                        </ul>
                     </div>
-                    <ul className="chats__my-chats__group-chats">
-                        {
-                            groupChatUsers?.map((item) => (
-                                <li key={item.id} className={selectedGroupChat?.id === item?.groupChatId ? `active` : ``}>
-                                    <MyGroupChat
-                                        groupChatId={item.groupChatId}
-                                        setSelectedGroupChat={setSelectedGroupChat}
-                                    />
-                                </li>
-                            ))
-                        }
-                    </ul>
-                    <div className="chats__my-chats_title">
-                        <div>{t("PersonalChats")}</div>
-                        {personalChatsHidden
-                            ? <FontAwesomeIcon
-                                icon={faArrowDown}
-                                title={t("ShowChats")}
-                                onClick={() => setPersonalChatsHidden((item) => !item)}
+                    {(selectedPersonalChat === null && selectedGroupChat === null)
+                        ? <div className="select-chat">{t("SelectChat")}</div>
+                        : selectedGroupChat !== null
+                            ? <GroupChat
+                                chat={Object.assign({}, selectedGroupChat)}
+                                customer={customer}
+                                setSelectedChat={setSelectedGroupChat}
                             />
-                            : <FontAwesomeIcon
-                                icon={faArrowUp}
-                                title={t("HideChats")}
-                                onClick={() => setPersonalChatsHidden((item) => !item)}
-                            />
-                        }
-                    </div>
-                    <ul className="chats__my-chats__personal-chats">
-                        {
-                            personalChats?.map((item) => (
-                                <li key={item.id} className={selectedPersonalChat?.id === item?.id ? `active` : ``}>
-                                    <MyPersonalChat
-                                        personalChat={item}
-                                        selectedGroupChatId={selectedPersonalChat?.id}
-                                        setSelectedPersonalChat={setSelectedPersonalChat}
-                                        companionId={item.initiatorId === customer?.id ? item.companionId : item.initiatorId}
-                                    />
-                                </li>
-                            ))
-                        }
-                    </ul>
-                </div>
-                {(selectedPersonalChat === null && selectedGroupChat === null)
-                    ? <div className="select-chat">{t("SelectChat")}</div>
-                    : selectedGroupChat !== null 
-                        ? <GroupChat
-                            chat={Object.assign({}, selectedGroupChat)}
-                            customer={customer}
-                            setSelectedChat={setSelectedGroupChat}
-                        />
-                        : selectedPersonalChat !== null &&
+                            : selectedPersonalChat !== null &&
                             <PersonalChat
                                 chat={Object.assign({}, selectedPersonalChat)}
                                 customer={customer}
                                 setSelectedChat={setSelectedPersonalChat}
                                 companionId={selectedPersonalChat.initiatorId === customer?.id ? selectedPersonalChat.companionId : selectedPersonalChat.initiatorId}
                             />
-                }
+                    }
+                </div>
+                <CreateGroupChat
+                    setCreateGroupChatIsActive={setCreateGroupChatIsActive}
+                    customer={customer}
+                    createGroupChatIsActive={createGroupChatIsActive}
+                />
             </div>
-            <CreateGroupChat
-                setCreateGroupChatIsActive={setCreateGroupChatIsActive}
-                customer={customer}
-                createGroupChatIsActive={createGroupChatIsActive}
-            />
         </div>
     );
 }

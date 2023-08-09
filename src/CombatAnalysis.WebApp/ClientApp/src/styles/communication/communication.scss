@@ -1,12 +1,15 @@
 .communication {
     display: flex;
-    flex-direction: row;
+    gap: 25px;
 
     &__menu {
-        display: flex;
-        flex-direction: column;
-        margin: 0 50px 0 -100px;
-        width: 20%;
+        position: fixed;
+        top: 35%;
+        margin: 0 0 0 -90px;
+        padding: 20px;
+        box-shadow: 3px 3px 3px 3px gray;
+        border-radius: 15px;
+        width: 275px;
 
         .menu-item {
             display: flex;
@@ -15,6 +18,7 @@
             align-items: center;
             padding: 0 5px;
             width: 200px;
+            cursor: pointer;
 
             .title {
                 margin: 10px;
@@ -27,13 +31,23 @@
         }
 
         .menu-item:hover {
-            box-shadow: 5px 5px 5px 5px gray;
+            border: 2px solid green;
             border-radius: 10px;
-            cursor: pointer;
+        }
+
+        .menu-item.selected-community:hover {
+            cursor: default;
+            box-shadow: 2px 2px 2px 2px green;
+            border-radius: 10px;
+        }
+
+        .selected-community {
+            margin: 0 30px;
         }
     }
 
-    &__action {
-        width: 100%;
+    &__content {
+        flex-grow: 1;
+        margin: 0 225px;
     }
 }
