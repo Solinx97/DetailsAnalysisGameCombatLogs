@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
-import { useEditAsyncMutation, useLoginAsyncMutation } from '../../../store/api/Account.api';
+import { useEditAsyncMutation } from '../../../store/api/Account.api';
 import { useLazySearchByUserIdAsyncQuery } from '../../../store/api/Customer.api';
 import { updateCustomer } from '../../../store/slicers/CustomerSlice';
 import { updateUser } from '../../../store/slicers/UserSlice';
@@ -15,7 +15,6 @@ const Profile = () => {
     const customer = useSelector((state) => state.customer.value);
     const user = useSelector((state) => state.user.value);
 
-    const [loginAsync] = useLoginAsyncMutation();
     const [editAsync] = useEditAsyncMutation();
     const [getCustomerAsync] = useLazySearchByUserIdAsyncQuery();
 
@@ -85,21 +84,13 @@ const Profile = () => {
             updatesForUser.password = password.current.value;
         }
 
-        const updatedItem = await editAsync(updatesForUser);
-        if (updatedItem.data !== undefined) {
-            const data = {
-                email: updatesForUser.email,
-                password: updatesForUser.password
-            };
+        const updatedUser = await editAsync(updatesForUser);
+        if (updatedUser.data !== undefined) {
+            dispatch(updateUser(updatedUser.data));
 
-            const newUser = await loginAsync(data);
-            if (newUser.data !== undefined) {
-                dispatch(updateUser(newUser.data));
-
-                const customer = await getCustomerAsync(newUser.data.id);
-                if (customer.data !== undefined) {
-                    dispatch(updateCustomer(customer.data));;
-                }
+            const customer = await getCustomerAsync(updatedUser.data.id);
+            if (customer.data !== undefined) {
+                dispatch(updateCustomer(customer.data));;
             }
 
             setIsEditMode(false);
