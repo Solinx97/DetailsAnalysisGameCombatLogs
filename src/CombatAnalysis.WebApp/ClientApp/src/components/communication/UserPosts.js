@@ -2,8 +2,12 @@ import { useUserPostSearchByUserIdQuery as useSearchByUserIdQuery } from '../../
 import { useRemoveUserPostAsyncMutation } from '../../store/api/UserPost.api';
 import Post from './Post';
 
+const getUserPostsInterval = 10000;
+
 const UserPosts = ({ customer, userId }) => {
-    const { data: userPosts, isLoading } = useSearchByUserIdQuery(userId);
+    const { data: userPosts, isLoading } = useSearchByUserIdQuery(userId, {
+        pollingInterval: getUserPostsInterval
+    });
     const [removeCommunityPostAsyncMutation] = useRemoveUserPostAsyncMutation();
 
     const deleteCommunityPostAsync = async (communityPostId) => {

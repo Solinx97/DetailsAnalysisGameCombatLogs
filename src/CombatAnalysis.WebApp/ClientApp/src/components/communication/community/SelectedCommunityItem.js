@@ -2,8 +2,12 @@ import { usePostSearchByCommunityIdAsyncQuery } from '../../../store/api/ChatApi
 import { useRemoveCommunityPostAsyncMutation } from '../../../store/api/CommunityPost.api';
 import Post from '../Post';
 
+const getCommunityPostsInterval = 10000;
+
 const SelectedCommunityItem = ({ customer, communityId }) => {
-    const { data: communityPosts, isLoading } = usePostSearchByCommunityIdAsyncQuery(communityId);
+    const { data: communityPosts, isLoading } = usePostSearchByCommunityIdAsyncQuery(communityId, {
+        pollingInterval: getCommunityPostsInterval
+    });
     const [removeCommunityPostAsyncMutation] = useRemoveCommunityPostAsyncMutation();
 
     const deleteCommunityPostAsync = async (communityPostId) => {
