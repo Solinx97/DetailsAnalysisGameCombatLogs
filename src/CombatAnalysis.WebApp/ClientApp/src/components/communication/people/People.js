@@ -95,7 +95,7 @@ const People = () => {
     return (
         <div className="communication">
             <Communication
-                currentMenuItem={4}
+                currentMenuItem={7}
             />
             <div className="communication__content people">
                 <div>

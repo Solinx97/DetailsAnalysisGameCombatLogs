@@ -4,5 +4,11 @@
   "Communities": "Communities",
   "Events": "Events",
   "People": "People",
-  "MyEnvironment": "My environment"
+  "MyEnvironment": "My environment",
+  "Profile": "Profile",
+  "Friends": "Friends",
+  "Recomendations": "Recomendations",
+  "MyPosts": "My posts",
+  "CreateChat": "Create chat",
+  "CreateCommunity": "Create community"
 }

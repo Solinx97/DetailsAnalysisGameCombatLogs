@@ -4,5 +4,11 @@
   "Communities": "Сообщества",
   "Events": "События",
   "People": "Люди",
-  "MyEnvironment": "Мое окружение"
+  "MyEnvironment": "Мое окружение",
+  "Profile": "Профиль",
+  "Friends": "Друзья",
+  "Recomendations": "Рекомендации",
+  "MyPosts": "Мои посты",
+  "CreateChat": "Создать чат",
+  "CreateCommunity": "Создать сообщество"
 }

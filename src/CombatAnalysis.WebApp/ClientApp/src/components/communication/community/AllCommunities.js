@@ -6,7 +6,7 @@ const AllCommunities = () => {
     return (
         <div className="communication">
             <Communication
-                currentMenuItem={2}
+                currentMenuItem={3}
             />
             <div className="communication__content communities">
                 <MyCommunities />

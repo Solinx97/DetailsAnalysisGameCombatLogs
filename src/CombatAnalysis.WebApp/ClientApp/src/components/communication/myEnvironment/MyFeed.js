@@ -57,10 +57,6 @@ const MyFeed = () => {
             <div className="create-post">
                 <div>
                     <div className="create-post__tool" style={{ display: !showCreatePost ? "flex" : "none" }}>
-                        <FontAwesomeIcon
-                            icon={faArrowsRotate}
-                            title={t("Refresh")}
-                        />
                         <button type="button" className="btn btn-outline-info" onClick={() => setShowCreatePost((item) => !item)}>{t("NewPost")}</button>
                     </div>
                     <div style={{ display: showCreatePost ? "flex" : "none" }} className="create-post__create-tool">

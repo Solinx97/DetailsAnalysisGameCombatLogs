@@ -4,12 +4,13 @@
 
     &__menu {
         position: fixed;
-        top: 35%;
+        top: 20%;
         margin: 0 0 0 -90px;
-        padding: 20px;
-        box-shadow: 3px 3px 3px 3px gray;
+        padding: 10px;
+        box-shadow: 2px 2px 2px 2px gray;
         border-radius: 15px;
-        width: 275px;
+        width: 250px;
+        font-size: 13px;
 
         .menu-item {
             display: flex;
@@ -17,16 +18,26 @@
             justify-content: start;
             align-items: center;
             padding: 0 5px;
-            width: 200px;
+            width: 175px;
             cursor: pointer;
 
             .title {
                 margin: 10px;
             }
 
-            &_disabled div {
-                margin: 10px;
+            &_disabled {
+                display: flex;
+                flex-direction: row;
+                justify-content: start;
+                align-items: center;
+                padding: 0 5px;
+                width: 175px;
+                cursor: default;
                 opacity: 0.5;
+
+                .title {
+                    margin: 10px;
+                }
             }
         }
 
@@ -35,19 +46,28 @@
             border-radius: 10px;
         }
 
-        .menu-item.selected-community:hover {
-            cursor: default;
+        .menu-item.sub-menu:hover {
             box-shadow: 2px 2px 2px 2px green;
             border-radius: 10px;
         }
 
-        .selected-community {
+        .sub-menu {
             margin: 0 30px;
+
+            &_disabled {
+                opacity: 0.5;
+            }
         }
     }
 
     &__content {
         flex-grow: 1;
         margin: 0 225px;
+
+        .create-post {
+            .btn-outline-info {
+                min-width: 150px;
+            }
+        }
     }
 }
