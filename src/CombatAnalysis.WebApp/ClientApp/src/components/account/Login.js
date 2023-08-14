@@ -10,13 +10,14 @@ import { updateUser } from '../../store/slicers/UserSlice';
 import "../../styles/account/login.scss";
 
 const Login = () => {
+    const { t } = useTranslation("account/login");
+
     const dispatch = useDispatch();
 
     const [loginAsync] = useLoginAsyncMutation();
     const [getCustomerAsync] = useLazySearchByUserIdAsyncQuery();
 
     const navigate = useNavigate();
-    const { t } = useTranslation("account/login");
 
     const [showErrorMessage, setShowErrorMessage] = useState(false);
 
@@ -61,10 +62,8 @@ const Login = () => {
                 <label htmlFor="inputPassword" className="form-label">{t("Password")}</label>
                 <input type="password" className="form-control" id="inputPassword" ref={password} />
             </div>
-            <div className="form-check">
-                <label className="form-check-label" htmlFor="invalidCheck">
-                    Don't logout
-                </label>
+            <div className="form-check remember">
+                <label className="form-check-label" htmlFor="invalidCheck">{t("RememberMe")}</label>
                 <input className="form-check-input" type="checkbox" id="invalidCheck" ref={dontLogout} />
             </div>
             <input type="submit" className="btn btn-primary" value={t("Login")} />

@@ -3,5 +3,6 @@
   "Password": "Password",
   "CheckMeOut": "Check me out",
   "IncorrectData": "Incorrect email/password. Try again",
-  "Login": "Login"
+  "Login": "Login",
+  "RememberMe": "Don't logout"
 }
