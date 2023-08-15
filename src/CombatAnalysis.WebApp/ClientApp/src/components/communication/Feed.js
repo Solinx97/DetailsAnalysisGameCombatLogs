@@ -56,7 +56,7 @@ const Feed = () => {
     }
 
     return (
-        <div className="communication">
+        <>
             <Communication
                 currentMenuItem={0}
             />
@@ -81,7 +81,7 @@ const Feed = () => {
                     customer={customer}
                 />
             </div>
-        </div>
+        </>
     );
 }
 

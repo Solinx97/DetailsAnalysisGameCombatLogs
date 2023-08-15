@@ -1,0 +1,59 @@
+.create-group-chat {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    border-radius: 25px;
+    width: 750px;
+    height: 350px;
+    padding: 10px;
+    box-shadow: 5px 5px 5px 5px gray;
+    background: white;
+
+    &__container {
+        display: flex;
+        flex-direction: row;
+        width: 750px;
+    }
+
+    &__menu {
+        display: flex;
+        flex-direction: column;
+        width: 25%;
+        margin: 10px 15px;
+        border-radius: 15px;
+
+        .menu-item {
+            margin: 5px;
+            cursor: pointer;
+            padding: 10px;
+            border-radius: 10px;
+        }
+
+        .menu-item:hover {
+            border: 2px solid blue;
+        }
+    }
+
+    ul {
+        padding: 0;
+    }
+
+    &__content {
+        flex-grow: 1;
+        margin: 5px;
+
+        .form-group {
+            margin: 10px;
+            width: 300px;
+        }
+    }
+
+    &__accept {
+        margin: 10px;
+
+        input {
+            margin: 5px;
+        }
+    }
+}

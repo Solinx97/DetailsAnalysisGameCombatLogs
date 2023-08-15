@@ -1,11 +1,10 @@
-﻿import { faArrowDown, faArrowUp, faSquarePlus } from '@fortawesome/free-solid-svg-icons';
+﻿import { faArrowDown, faArrowUp } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import { useGetGroupChatUserByUserIdQuery, useGetPersonalChatsByUserIdQuery } from '../../../store/api/ChatApi';
 import Communication from '../Communication';
-import CreateGroupChat from './CreateGroupChat';
 import GroupChat from './GroupChat';
 import MyGroupChat from './MyGroupChat';
 import MyPersonalChat from './MyPersonalChat';
@@ -29,7 +28,6 @@ const Chats = () => {
     const [selectedPersonalChat, setSelectedPersonalChat] = useState(null);
     const [groupChatsHidden, setGroupChatsHidden] = useState(false);
     const [personalChatsHidden, setPersonalChatsHidden] = useState(false);
-    const [createGroupChatIsActive, setCreateGroupChatIsActive] = useState(false);
 
     useEffect(() => {
         if (selectedGroupChat !== null) {
@@ -48,7 +46,7 @@ const Chats = () => {
     }
 
     return (
-        <div className="communication">
+        <>
             <Communication
                 currentMenuItem={1}
             />
@@ -69,12 +67,6 @@ const Chats = () => {
                                     onClick={() => setGroupChatsHidden(!groupChatsHidden)}
                                 />
                             }
-                            <FontAwesomeIcon
-                                className="create"
-                                icon={faSquarePlus}
-                                title={t("CreateNewGroupChat")}
-                                onClick={() => setCreateGroupChatIsActive(!createGroupChatIsActive)}
-                            />
                         </div>
                         <ul className="chats__my-chats__group-chats">
                             {
@@ -135,13 +127,8 @@ const Chats = () => {
                             />
                     }
                 </div>
-                <CreateGroupChat
-                    setCreateGroupChatIsActive={setCreateGroupChatIsActive}
-                    customer={customer}
-                    createGroupChatIsActive={createGroupChatIsActive}
-                />
             </div>
-        </div>
+        </>
     );
 }
 

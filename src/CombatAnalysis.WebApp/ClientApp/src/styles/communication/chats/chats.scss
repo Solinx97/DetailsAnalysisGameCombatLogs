@@ -208,38 +208,6 @@
     }
 }
 
-.create-group-chat {
-    display: none;
-
-    &_active {
-        position: absolute;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        top: 15%;
-        right: 30%;
-        width: 500px;
-        height: 450px;
-        border-radius: 25px;
-        box-shadow: 5px 5px 5px 5px gray;
-        background: white;
-
-        .chat-policy {
-            display: flex;
-            flex-direction: column;
-        }
-    }
-
-    &__accept {
-        margin: 10px;
-
-        input {
-            margin: 5px;
-        }
-    }
-}
-
 .chats-empty {
     width: 300px;
     opacity: 0.5;

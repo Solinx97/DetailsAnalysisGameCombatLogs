@@ -5,6 +5,7 @@ import DetailsSpecificalCombat from './components/combatDetails/DetailsSpecifica
 import GeneralAnalysis from './components/combatDetails/GeneralAnalysis';
 import MainInformation from './components/combatDetails/MainInformation';
 import Chats from './components/communication/chats/Chats';
+import CreateGroupChat from './components/communication/chats/createGroupChat/CreateGroupChat';
 import AllCommunities from './components/communication/community/AllCommunities';
 import SelectedCommunity from './components/communication/community/SelectedCommunity';
 import Feed from './components/communication/Feed';
@@ -28,6 +29,10 @@ const AppRoutes = [
     {
         path: '/chats',
         element: <Chats />
+    },
+    {
+        path: '/chats/create',
+        element: <CreateGroupChat />
     },
     {
         path: '/communities',
