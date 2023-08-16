@@ -1,4 +1,4 @@
-import { faEye, faEyeSlash, faUserPlus } from '@fortawesome/free-solid-svg-icons';
+import { faEye, faEyeSlash, faMagnifyingGlassMinus, faMagnifyingGlassPlus, faPlus, faUserPlus } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -9,16 +9,9 @@ import '../styles/addPeople.scss';
 
 const defaultMaxPeopleItems = 5;
 const defaultMaxFriendsItems = 5;
-const hideInviteAlertTimer = 2000;
-let hideInviteAlertTimeout = null;
 
-const AddPeople = ({ customer, createInviteAsync, communityUsersId, setShowAddPeople }) => {
+const AddPeople = ({ customer, communityUsersId, peopleToJoin, setPeopleToJoin }) => {
     const { t } = useTranslation("addPeople");
-
-    const [maxPeopleItems, setMaxPeopleItems] = useState(defaultMaxPeopleItems);
-    const [maxFriendsItems, setMaxFriendsItems] = useState(defaultMaxFriendsItems);
-    const [showInviteAlert, setShowInviteAlert] = useState(false);
-    const [invitedUsername, setInvitedUsername] = useState("");
 
     const { friends, isLoading: friendsIsLoading } = useFriendSearchByUserIdQuery(customer?.id, {
         selectFromResult: ({ data }) => ({
@@ -37,30 +30,41 @@ const AddPeople = ({ customer, createInviteAsync, communityUsersId, setShowAddPe
         }),
     });
 
+    const [maxPeopleItems, setMaxPeopleItems] = useState(defaultMaxPeopleItems);
+    const [maxFriendsItems, setMaxFriendsItems] = useState(defaultMaxFriendsItems);
+    const [showSearchPeople, setShowSearchPeople] = useState(false);
     const [filterContent, setFilterContent] = useState("");
     const [showFriendList, setShowFriendList] = useState(true);
     const [showPeopleList, setShowPeopleList] = useState(true);
 
-    const createInviteHandlerAsync = async (username, whomId) => {
-        hideInviteAlertTimeout && clearTimeout(hideInviteAlertTimeout);
+    const [peopleIdToJoin, setPeopleIdToJoin] = useState(peopleToJoin);
 
-        const createdInvite = await createInviteAsync(whomId);
-        if (createdInvite !== null) {
-            setShowInviteAlert(true);
-            setInvitedUsername(username);
+    const handleAddUserIdToList = (id) => {
+        const people = peopleIdToJoin;
+        people.push(id);
 
-            hideInviteAlertTimeout = setTimeout(() => {
-                setShowInviteAlert(false);
-            }, hideInviteAlertTimer);
-        }
+        setPeopleIdToJoin(people);
+        setPeopleToJoin(people);
     }
 
-    const handleAddNewPeopleVisibility = () => {
-        setShowAddPeople(false);
+    const handleRemoveUserIdToList = (id) => {
+        const people = peopleIdToJoin.filter((element) => element !== id);
+
+        setPeopleIdToJoin(people);
+        setPeopleToJoin(people);
     }
 
     const searchHandler = (e) => {
         setFilterContent(e.target.value);
+    }
+
+    const arePeopleMoreThenLimit = (limit) => {
+        if (people === undefined) {
+            return false;
+        }
+
+        const count = people.filter((item) => item.username.toLowerCase().startsWith(filterContent.toLowerCase())).length;
+        return count === limit;
     }
 
     if (friendsIsLoading || peopleIsLoading) {
@@ -69,17 +73,29 @@ const AddPeople = ({ customer, createInviteAsync, communityUsersId, setShowAddPe
 
     return (
         <div className="add-new-people">
-            <div className="add-new-people__title"><i><strong>{t("AddNewPeople")}</strong></i></div>
-            {showInviteAlert &&
-                <div className="alert alert-success add-new-people__invite-alert" role="alert">
-                    {t("SentInvite")} <strong>{invitedUsername}</strong>
-                </div>
-            }
-            <input type="text" onChange={searchHandler} />
+            <div className="add-new-people__title">
+                <div>Invite people</div>
+                {showSearchPeople
+                    ? <FontAwesomeIcon
+                        icon={faMagnifyingGlassMinus}
+                        title="Search people"
+                        onClick={() => setShowSearchPeople((item) => !item)}
+                    />
+                    : <FontAwesomeIcon
+                        icon={faMagnifyingGlassPlus}
+                        title="Search people"
+                        onClick={() => setShowSearchPeople((item) => !item)}
+                    />
+                }
+            </div>
+            <div className={`add-new-people__search${showSearchPeople ? "_active" : ""}`}>
+                <div className="add-new-people__search-title">{t("SearchPeople")}</div>
+                <input type="text" onChange={searchHandler} />
+            </div>
             <div>
-                <div className="add-new-people__content">
+                <div className="add-new-people__content_active">
                     <div className="add-new-people__content-title">
-                        <div><i><strong>{t("Friends")}</strong></i></div>
+                        <div>{t("Friends")}</div>
                         {showFriendList
                             ? <FontAwesomeIcon
                                 icon={faEye}
@@ -93,43 +109,43 @@ const AddPeople = ({ customer, createInviteAsync, communityUsersId, setShowAddPe
                             />
                         }
                     </div>
-                    <ul className="add-new-people__list">
-                        {
-                            showFriendList && friends?.map((item) => (
+                    <ul className={`add-new-people__list${showFriendList ? "_active" : ""}`}>
+                        {friends?.length > 0
+                            ? friends.map((item) => (
                                 <li key={item.id} className="person">
                                     <AddFriendItem
                                         friendUserId={item.whoFriendId === customer.id ? item.forWhomId : item.whoFriendId}
-                                        createInviteAsync={createInviteHandlerAsync}
                                         filterContent={filterContent}
                                     />
                                 </li>
-                            ))
+                                ))
+                            : <li className="empty">Empty</li>
                         }
                     </ul>
-                    {showFriendList && 
-                        <div className="add-new-people__more">
-                            {maxFriendsItems === defaultMaxFriendsItems
+                    {showFriendList &&
+                        <div className={`add-new-people__more${arePeopleMoreThenLimit(defaultMaxFriendsItems) ? "_active" : ""}`}>
+                            {maxFriendsItems > defaultMaxFriendsItems
                                 ? <button
-                                    className="btn btn-outline-secondary"
-                                    title={t("ShowMorePeople")}
-                                    onClick={() => setMaxFriendsItems(-1)}
-                                  >
-                                     {t("More")}
-                                  </button>
-                                : <button
                                     className="btn btn-outline-secondary"
                                     title={t("ShowLessPeople")}
                                     onClick={() => setMaxFriendsItems(defaultMaxFriendsItems)}
                                   >
                                     {t("Less")}
                                   </button>
+                                : <button
+                                    className="btn btn-outline-secondary"
+                                    title={t("ShowMorePeople")}
+                                    onClick={() => setMaxFriendsItems(-1)}
+                                  >
+                                      {t("More")}
+                                  </button>
                             }
                         </div>
                     }
                 </div>
-                <div className="add-new-people__content">
+                <div className={`add-new-people__content${filterContent !== "" ? "_active" : ""}`}>
                     <div className="add-new-people__content-title">
-                        <div><i><strong>{t("AnotherPeople")}</strong></i></div>
+                        <div>{t("AnotherPeople")}</div>
                         {showPeopleList
                             ? <FontAwesomeIcon
                                 icon={faEye}
@@ -143,44 +159,51 @@ const AddPeople = ({ customer, createInviteAsync, communityUsersId, setShowAddPe
                             />
                         }
                     </div>
-                    <ul className="add-new-people__list">
-                        {
-                            showPeopleList && people?.filter((item) => item.username.toLowerCase().startsWith(filterContent.toLowerCase()))
+                    <ul className={`add-new-people__list${showPeopleList ? "_active" : ""}`}>
+                        {people?.length > 0
+                            ? people.filter((item) => item.username.toLowerCase().startsWith(filterContent.toLowerCase()))
                                 .map((item) => (
-                                <li key={item.id} className="person">
-                                    <div>{item.username}</div>
-                                    <FontAwesomeIcon
-                                        icon={faUserPlus}
-                                        title={t("SendInviteToCommunity")}
-                                        onClick={async () => await createInviteHandlerAsync(item.username, item.id)}
-                                    />
-                                </li>
-                            ))
+                                    <li key={item.id} className="person">
+                                        <div>{item.username}</div>
+                                        {peopleIdToJoin.includes(item.id)
+                                            ? <FontAwesomeIcon
+                                                icon={faUserPlus}
+                                                title="Cancel request"
+                                                onClick={() => handleRemoveUserIdToList(item.id)}
+                                            />
+                                            : <FontAwesomeIcon
+                                                icon={faPlus}
+                                                title={t("SendInvite")}
+                                                onClick={() => handleAddUserIdToList(item.id)}
+                                            />
+                                        }
+                                    </li>
+                                ))
+                            : <li className="empty">Empty</li>
                         }
                     </ul>
                     {showPeopleList &&
-                        <div className="add-new-people__more">
-                            {maxPeopleItems === defaultMaxPeopleItems
+                        <div className={`add-new-people__more${arePeopleMoreThenLimit(defaultMaxPeopleItems) ? "_active" : ""}`}>
+                            {maxPeopleItems > defaultMaxPeopleItems
                                 ? <button
-                                    className="btn btn-outline-secondary"
-                                    title={t("ShowMorePeople")}
-                                    onClick={() => setMaxPeopleItems(-1)}
-                                  >
-                                    {t("More")}
-                                  </button>
-                                : <button
                                     className="btn btn-outline-secondary"
                                     title={t("ShowLessPeople")}
                                     onClick={() => setMaxPeopleItems(defaultMaxPeopleItems)}
                                    >
-                                    {t("Less")}
+                                      {t("Less")}
                                    </button>
+                                : <button
+                                    className="btn btn-outline-secondary"
+                                    title={t("ShowMorePeople")}
+                                    onClick={() => setMaxPeopleItems(-1)}
+                                  >
+                                     {t("More")}
+                                  </button>
                             }
                         </div>
                     }
                 </div>
             </div>
-            <button className="btn btn-outline-success" onClick={handleAddNewPeopleVisibility}>{t("Close")}</button>
         </div>
     );
 }

@@ -1,5 +1,5 @@
 {
-  "AddNewPeople": "Add new people",
+  "SearchPeople": "Search people",
   "SentInvite": "You sent invite to",
   "Friends": "Friends",
   "Hide": "Hide",
@@ -9,6 +9,6 @@
   "More": "More",
   "Less": "Less",
   "AnotherPeople": "Another people",
-  "SendInviteToCommunity": "Send invite",
+  "SendInvite": "Send invite",
   "Close": "Close"
 }

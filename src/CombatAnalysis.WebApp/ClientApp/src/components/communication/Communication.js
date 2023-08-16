@@ -22,7 +22,7 @@ const Communication = ({ currentMenuItem, setMenuItem, selectedCommunityName }) 
             </li>
             <div>
                 <li className="menu-item" onClick={() => navigate("/chats")}>
-                    {currentMenuItem === 1 &&
+                    {(currentMenuItem === 1 || currentMenuItem === 2) &&
                         <FontAwesomeIcon
                             icon={faCircleArrowRight}
                         />
@@ -31,7 +31,7 @@ const Communication = ({ currentMenuItem, setMenuItem, selectedCommunityName }) 
                 </li>
                 {(currentMenuItem === 1 || currentMenuItem === 2) &&
                     <>
-                        <li className="menu-item sub-menu">
+                        <li className="menu-item sub-menu" onClick={() => navigate("/chats")}>
                             {currentMenuItem === 1 &&
                                 <FontAwesomeIcon
                                     icon={faCheck}

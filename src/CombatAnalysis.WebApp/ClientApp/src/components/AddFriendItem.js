@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useTranslation } from 'react-i18next';
 import { useGetCustomerByIdQuery } from '../store/api/Customer.api';
 
-const AddFriendItem = ({ friendUserId, createInviteAsync, filterContent }) => {
+const AddFriendItem = ({ friendUserId, addUserIdToList, filterContent }) => {
     const { t } = useTranslation("addFriendItem");
 
     const { data: user, isLoading } = useGetCustomerByIdQuery(friendUserId);
@@ -19,7 +19,7 @@ const AddFriendItem = ({ friendUserId, createInviteAsync, filterContent }) => {
             <FontAwesomeIcon
                 icon={faUserPlus}
                 title={t("SendInvite")}
-                onClick={async () => await createInviteAsync(user?.username, friendUserId)}
+                onClick={() => addUserIdToList(user?.id)}
             />
         </>
     );
