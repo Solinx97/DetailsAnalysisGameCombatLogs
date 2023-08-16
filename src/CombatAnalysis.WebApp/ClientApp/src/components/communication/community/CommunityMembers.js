@@ -12,6 +12,8 @@ const CommunityMembers = ({ community, customer }) => {
 
     const [showAddPeople, setShowAddPeople] = useState(false);
     const [communityUsersId, setCommunityUsersId] = useState([]);
+    const [peopleIdToJoin, setPeopleToJoin] = useState([]);
+
     const [createInviteAsyncMut] = useCreateInviteAsyncMutation();
 
     const { data: communityUsers, isLoading } = useSearchByCommunityIdAsyncQuery(community?.id);
@@ -25,17 +27,20 @@ const CommunityMembers = ({ community, customer }) => {
         setCommunityUsersId(idList);
     }, [communityUsers])
 
-    const createInviteAsync = async (whomId) => {
-        const newInviteToCommunity = {
-            communityId: community.id,
-            toCustomerId: whomId,
-            when: new Date(),
-            result: 0,
-            ownerId: customer?.id
+    const createInviteAsync = async () => {
+        for (var i = 0; i < peopleIdToJoin.length; i++) {
+            const newInviteToCommunity = {
+                communityId: community.id,
+                toCustomerId: peopleIdToJoin[i],
+                when: new Date(),
+                result: 0,
+                ownerId: customer?.id
+            }
+
+            await createInviteAsyncMut(newInviteToCommunity);
         }
 
-        const createdInvite = await createInviteAsyncMut(newInviteToCommunity);
-        return createdInvite.data ? createdInvite.data : null;
+        setShowAddPeople(false);
     }
 
     if (isLoading) {
@@ -44,20 +49,22 @@ const CommunityMembers = ({ community, customer }) => {
 
     return (<>
         {showAddPeople &&
-            <AddPeople
-                customer={customer}
-                createInviteAsync={createInviteAsync}
-                communityUsersId={communityUsersId}
-                setShowAddPeople={setShowAddPeople}
-            />
+            <div className="add-people-to-community">
+                <AddPeople
+                    customer={customer}
+                    communityUsersId={communityUsersId}
+                    peopleToJoin={peopleIdToJoin}
+                    setPeopleToJoin={setPeopleToJoin}
+                />
+                <div className="item-result">
+                    <input type="button" value={t("Create")} className="btn btn-success" onClick={async () => await createInviteAsync()} />
+                    <input type="button" value={t("Cancel")} className="btn btn-light" onClick={() => setShowAddPeople(false)} />
+                </div>
+            </div>
         }
         <div className="title">
             <div>{t("Members")}</div>
             <div className="tool">
-                <FontAwesomeIcon
-                    icon={faGear}
-                    title={t("Settings")}
-                />
                 <FontAwesomeIcon
                     icon={faPlus}
                     title={t("AddNewPeople")}
