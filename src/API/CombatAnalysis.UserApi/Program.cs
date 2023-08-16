@@ -48,9 +48,9 @@ builder.Services.AddSwaggerGen(options =>
 
 var app = builder.Build();
 
-//var scope = app.Services.CreateScope();
-//var jwtSecretService = scope.ServiceProvider.GetService<IJWTSecret>();
-//await jwtSecretService.GenerateSecretKeysAsync();
+var scope = app.Services.CreateScope();
+var jwtSecretService = scope.ServiceProvider.GetService<IJWTSecret>();
+await jwtSecretService.GenerateSecretKeysAsync();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

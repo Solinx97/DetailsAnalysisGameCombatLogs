@@ -13,6 +13,9 @@ const defaultMaxFriendsItems = 5;
 const AddPeople = ({ customer, communityUsersId, peopleToJoin, setPeopleToJoin }) => {
     const { t } = useTranslation("addPeople");
 
+    const [maxPeopleItems, setMaxPeopleItems] = useState(defaultMaxPeopleItems);
+    const [maxFriendsItems, setMaxFriendsItems] = useState(defaultMaxFriendsItems);
+
     const { friends, isLoading: friendsIsLoading } = useFriendSearchByUserIdQuery(customer?.id, {
         selectFromResult: ({ data }) => ({
             friends: data?.length <= defaultMaxFriendsItems
@@ -30,8 +33,6 @@ const AddPeople = ({ customer, communityUsersId, peopleToJoin, setPeopleToJoin }
         }),
     });
 
-    const [maxPeopleItems, setMaxPeopleItems] = useState(defaultMaxPeopleItems);
-    const [maxFriendsItems, setMaxFriendsItems] = useState(defaultMaxFriendsItems);
     const [showSearchPeople, setShowSearchPeople] = useState(true);
 
     const [showFriendList, setShowFriendList] = useState(true);

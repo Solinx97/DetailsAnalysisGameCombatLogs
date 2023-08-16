@@ -36,8 +36,6 @@ const CreateGroupChat = () => {
             name: chatName,
             shortName: chatShortName,
             lastMessage: " ",
-            memberNumber: 100,
-            chatPolicyType: 0,
             ownerId: customer?.id
         };
 

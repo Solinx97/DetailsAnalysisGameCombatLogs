@@ -7,11 +7,12 @@ import { useCreateAsyncMutation } from '../../store/api/Customer.api';
 import "../../styles/account/registration.scss";
 
 const Registration = () => {
+    const { t } = useTranslation("account/registration");
+
     const [registrationMutAsync] = useRegistrationAsyncMutation();
     const [createCustomerMutAsync] = useCreateAsyncMutation();
 
     const navigate = useNavigate();
-    const { t } = useTranslation("account/registration");
 
     const [email, setEmail] = useState("");
     const [username, setUsername] = useState("");
@@ -30,7 +31,7 @@ const Registration = () => {
 
         try {
             const createdUser = await registrationMutAsync(data);
-            if (createdUser === null) {
+            if (createdUser.error !== undefined) {
                 return;
             }
 
