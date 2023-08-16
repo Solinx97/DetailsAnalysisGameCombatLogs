@@ -1,4 +1,4 @@
-import { faGear, faPlus } from '@fortawesome/free-solid-svg-icons';
+import { faPlus } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -57,7 +57,7 @@ const CommunityMembers = ({ community, customer }) => {
                     setPeopleToJoin={setPeopleToJoin}
                 />
                 <div className="item-result">
-                    <input type="button" value={t("Create")} className="btn btn-success" onClick={async () => await createInviteAsync()} />
+                    <input type="button" value={t("Invite")} className="btn btn-success" onClick={async () => await createInviteAsync()} />
                     <input type="button" value={t("Cancel")} className="btn btn-light" onClick={() => setShowAddPeople(false)} />
                 </div>
             </div>
