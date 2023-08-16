@@ -1,6 +1,6 @@
-import { faEye, faEyeSlash, faMagnifyingGlassMinus, faMagnifyingGlassPlus, faPlus, faUserPlus } from '@fortawesome/free-solid-svg-icons';
+import { faEye, faEyeSlash, faMagnifyingGlassMinus, faMagnifyingGlassPlus, faPlus, faUserPlus, faXmark } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useFriendSearchByUserIdQuery, useGetCustomersQuery } from '../store/api/UserApi';
 import AddFriendItem from './AddFriendItem';
@@ -32,12 +32,15 @@ const AddPeople = ({ customer, communityUsersId, peopleToJoin, setPeopleToJoin }
 
     const [maxPeopleItems, setMaxPeopleItems] = useState(defaultMaxPeopleItems);
     const [maxFriendsItems, setMaxFriendsItems] = useState(defaultMaxFriendsItems);
-    const [showSearchPeople, setShowSearchPeople] = useState(false);
-    const [filterContent, setFilterContent] = useState("");
+    const [showSearchPeople, setShowSearchPeople] = useState(true);
+
     const [showFriendList, setShowFriendList] = useState(true);
     const [showPeopleList, setShowPeopleList] = useState(true);
 
     const [peopleIdToJoin, setPeopleIdToJoin] = useState(peopleToJoin);
+    const [filteredPeople, setFilteredPeople] = useState([]);
+
+    const filterContent = useRef(null);
 
     const handleAddUserIdToList = (id) => {
         const people = peopleIdToJoin;
@@ -54,16 +57,23 @@ const AddPeople = ({ customer, communityUsersId, peopleToJoin, setPeopleToJoin }
         setPeopleToJoin(people);
     }
 
-    const searchHandler = (e) => {
-        setFilterContent(e.target.value);
+    const handlerSearch = (e) => {
+        const filteredPeople = people.filter((item) => item.username.toLowerCase().startsWith(e.target.value.toLowerCase()));
+        setFilteredPeople(filteredPeople);
+    }
+
+    const cleanSearch = () => {
+        filterContent.current.value = "";
+
+        setFilteredPeople([]);
     }
 
     const arePeopleMoreThenLimit = (limit) => {
-        if (people === undefined) {
+        if (people === undefined || filterContent.current === null) {
             return false;
         }
 
-        const count = people.filter((item) => item.username.toLowerCase().startsWith(filterContent.toLowerCase())).length;
+        const count = people.filter((item) => item.username.toLowerCase().startsWith(filterContent.current.value.toLowerCase())).length;
         return count === limit;
     }
 
@@ -74,23 +84,31 @@ const AddPeople = ({ customer, communityUsersId, peopleToJoin, setPeopleToJoin }
     return (
         <div className="add-new-people">
             <div className="add-new-people__title">
-                <div>Invite people</div>
+                <div>{t("InvitePeople")}</div>
                 {showSearchPeople
                     ? <FontAwesomeIcon
                         icon={faMagnifyingGlassMinus}
-                        title="Search people"
+                        title={t("ShowSearchPeople")}
                         onClick={() => setShowSearchPeople((item) => !item)}
                     />
                     : <FontAwesomeIcon
                         icon={faMagnifyingGlassPlus}
-                        title="Search people"
+                        title={t("HideSearchPeople")}
                         onClick={() => setShowSearchPeople((item) => !item)}
                     />
                 }
             </div>
-            <div className={`add-new-people__search${showSearchPeople ? "_active" : ""}`}>
-                <div className="add-new-people__search-title">{t("SearchPeople")}</div>
-                <input type="text" onChange={searchHandler} />
+            <div className={`mb-3 add-new-people__search${showSearchPeople ? "_active" : ""}`}>
+                <label htmlFor="inputUsername" className="form-label">{t("SearchPeople")}</label>
+                <div className="add-new-people__search-input">
+                    <input type="text" className="form-control" placeholder={t("TypeUsername")} id="inputUsername"
+                        ref={filterContent} onChange={handlerSearch } />
+                    <FontAwesomeIcon
+                        icon={faXmark}
+                        title={t("Clean")}
+                        onClick={cleanSearch}
+                    />
+                </div>
             </div>
             <div>
                 <div className="add-new-people__content_active">
@@ -115,11 +133,11 @@ const AddPeople = ({ customer, communityUsersId, peopleToJoin, setPeopleToJoin }
                                 <li key={item.id} className="person">
                                     <AddFriendItem
                                         friendUserId={item.whoFriendId === customer.id ? item.forWhomId : item.whoFriendId}
-                                        filterContent={filterContent}
+                                        filterContent={filterContent.current.value}
                                     />
                                 </li>
                                 ))
-                            : <li className="empty">Empty</li>
+                            : <li className="empty">{t("Empty")}</li>
                         }
                     </ul>
                     {showFriendList &&
@@ -143,7 +161,7 @@ const AddPeople = ({ customer, communityUsersId, peopleToJoin, setPeopleToJoin }
                         </div>
                     }
                 </div>
-                <div className={`add-new-people__content${filterContent !== "" ? "_active" : ""}`}>
+                <div className={`add-new-people__content${filterContent.current?.value !== "" ? "_active" : ""}`}>
                     <div className="add-new-people__content-title">
                         <div>{t("AnotherPeople")}</div>
                         {showPeopleList
@@ -160,9 +178,8 @@ const AddPeople = ({ customer, communityUsersId, peopleToJoin, setPeopleToJoin }
                         }
                     </div>
                     <ul className={`add-new-people__list${showPeopleList ? "_active" : ""}`}>
-                        {people?.length > 0
-                            ? people.filter((item) => item.username.toLowerCase().startsWith(filterContent.toLowerCase()))
-                                .map((item) => (
+                        {filteredPeople.length > 0
+                            ? filteredPeople.map((item) => (
                                     <li key={item.id} className="person">
                                         <div>{item.username}</div>
                                         {peopleIdToJoin.includes(item.id)
@@ -179,7 +196,7 @@ const AddPeople = ({ customer, communityUsersId, peopleToJoin, setPeopleToJoin }
                                         }
                                     </li>
                                 ))
-                            : <li className="empty">Empty</li>
+                            : <li className="empty">{t("Empty")}</li>
                         }
                     </ul>
                     {showPeopleList &&

@@ -8,5 +8,17 @@
   "Private": "Закрытый",
   "PrivateWithLink": "Закрытый (с ссылкой)",
   "Create": "Создать",
-  "Close": "Закрыть"
+  "Close": "Закрыть",
+  "Back": "Назад",
+  "Next": "Дальше",
+  "Description": "Описание",
+  "Rules": "Правила",
+  "InvitePeople": "Добавить пользователей",
+  "Cancel": "Отмена",
+  "InviteAnotherPeople": "Кто может приглашать других пользователей?",
+  "RemoveAnotherPeople": "Кто может исключать пользователей?",
+  "PinMessage": "Кто может закреплять сообщения?",
+  "Announcements": "Кто может делать анонсы?",
+  "Anyone": "Любой",
+  "SpecialPeople": "Отдельные пользователи"
 }

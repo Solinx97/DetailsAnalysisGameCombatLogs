@@ -1,7 +1,9 @@
 import { faCircleCheck, faCircleQuestion } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useState } from "react";
+import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 import { useCreateGroupChatAsyncMutation } from '../../../../store/api/GroupChat.api';
 import { useCreateGroupChatUserAsyncMutation } from '../../../../store/api/GroupChatUser.api';
 import Communication from '../../Communication';
@@ -13,6 +15,10 @@ import "../../../../styles/communication/chats/createGroupChat.scss";
 
 const CreateGroupChat = () => {
     const customer = useSelector((state) => state.customer.value);
+
+    const { t } = useTranslation("communication/chats/createGroupChat");
+
+    const navigate = useNavigate();
 
     const [itemIndex, seItemIndex] = useState(0);
     const [passedItemIndex, setPassedItemIndex] = useState(0);
@@ -88,7 +94,7 @@ const CreateGroupChat = () => {
                                     icon={faCircleQuestion}
                                 />
                         }
-                        <div>Description</div>
+                        <div>{t("Description")}</div>
                     </li>
                     <li className={`menu-item ${passedItemIndex >= 1 && "passed"}`} onClick={() => changeMenuItem(1)}>
                         {(passedItemIndex > 1 && itemIndex !== 1)
@@ -101,7 +107,7 @@ const CreateGroupChat = () => {
                                 icon={faCircleQuestion}
                                 />
                         }
-                        <div>Rules</div>
+                        <div>{t("Rules")}</div>
                     </li>
                     <li className={`menu-item ${passedItemIndex >= 2 && "passed"}`} onClick={() => changeMenuItem(2)}>
                         {itemIndex === 2 &&
@@ -109,7 +115,10 @@ const CreateGroupChat = () => {
                                 icon={faCircleQuestion}
                             />
                         }
-                        <div>Invite people</div>
+                        <div>{t("InvitePeople")}</div>
+                    </li>
+                    <li>
+                        <input type="submit" value={t("Cancel")} className="btn btn-warning" onClick={() => navigate("/chats")} />
                     </li>
                 </ul>
                 <div className="create-group-chat__content">

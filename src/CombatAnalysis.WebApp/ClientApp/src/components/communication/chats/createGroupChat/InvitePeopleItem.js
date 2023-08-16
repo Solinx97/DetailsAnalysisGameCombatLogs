@@ -36,9 +36,9 @@ const InvitePeopleItem = ({ createNewGroupChatAsync, previouslyStep, customer, p
                 peopleToJoin={peopleIdToJoin}
                 setPeopleToJoin={setPeopleToJoin}
             />
-            <div>
+            <div className="item-result">
                 <input type="button" value={t("Create")} className="btn btn-success" onClick={async () => await handleCreateNewGroupChatAsync()} />
-                <input type="button" value="Back" className="btn btn-light" onClick={previouslyStep} />
+                <input type="button" value={t("Back")} className="btn btn-light" onClick={previouslyStep} />
             </div>
         </div>
     );

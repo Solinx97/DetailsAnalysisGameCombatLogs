@@ -8,5 +8,17 @@
   "Private": "Private",
   "PrivateWithLink": "Private (with link)",
   "Create": "Create",
-  "Close": "Close"
+  "Close": "Close",
+  "Back": "Back",
+  "Next": "Next",
+  "Description": "Description",
+  "Rules": "Rules",
+  "InvitePeople": "Invite people",
+  "Cancel": "Cancel",
+  "InviteAnotherPeople": "Who can invite another people?",
+  "RemoveAnotherPeople": "Who can remove people?",
+  "PinMessage": "Who can pin message?",
+  "Announcements": "Who can make announcements?",
+  "Anyone": "Anyone",
+  "SpecialPeople": "Special people"
 }

@@ -10,5 +10,11 @@
   "Less": "Less",
   "AnotherPeople": "Another people",
   "SendInvite": "Send invite",
-  "Close": "Close"
+  "Close": "Close",
+  "InvitePeople": "Invite people",
+  "Empty": "Empty",
+  "ShowSearchPeople": "Show search people",
+  "HideSearchPeople": "Hide search people",
+  "Clean": "Clean",
+  "TypeUsername": "Type username"
 }

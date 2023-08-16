@@ -18,6 +18,7 @@
     &__menu {
         display: flex;
         flex-direction: column;
+        align-items: start;
         width: 25%;
         margin: 10px 15px;
         border-radius: 15px;
@@ -47,6 +48,12 @@
         .menu-item:hover {
             border: 2px solid blue;
         }
+
+        .btn {
+            position: relative;
+            margin: 10px;
+            top: 100px;
+        }
     }
 
     ul {
@@ -67,6 +74,11 @@
         display: flex;
         flex-direction: column;
         align-items: center;
+        
+        .item-result {
+            display: flex;
+            gap: 15px;
+        }
     }
 
     .chat-policy {

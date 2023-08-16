@@ -21,72 +21,72 @@ const RulesItem = ({ nextStep, previouslyStep }) => {
 
     return (
         <div className="create-group-chat__item">
-            <div>Rules</div>
+            <div>{t("Rules")}</div>
             <ul className="chat-rules">
                 <li>
-                    <div>Who can invite another people?</div>
+                    <div>{t("InviteAnotherPeople")}</div>
                     <div className="chat-rules__rules">
                         <div className="form-check form-check-inline">
                             <input className="form-check-input" type="radio" name="invite-people" id="invite-people-anyone" value="0"
                                 onChange={handleInviteChange} defaultChecked disabled/>
-                            <label className="form-check-label" htmlFor="invite-people-anyone">Anyone</label>
+                            <label className="form-check-label" htmlFor="invite-people-anyone">{t("Anyone")}</label>
                         </div>
                         <div className="form-check form-check-inline">
                             <input className="form-check-input" type="radio" name="invite-people" id="invite-people-special" value="1"
                                 onChange={handleInviteChange} disabled/>
-                            <label className="form-check-label" htmlFor="invite-people-special">Special people</label>
+                            <label className="form-check-label" htmlFor="invite-people-special">{t("SpecialPeople")}</label>
                         </div>
                     </div>
                 </li>
                 <li>
-                    <div>Who can remove people?</div>
+                    <div>{t("RemoveAnotherPeople")}</div>
                     <div className="chat-rules__rules">
                         <div className="form-check form-check-inline">
                             <input className="form-check-input" type="radio" name="remove-people" id="remove-people-anyone" value="0"
                                 onChange={handleRemoveChange} defaultChecked disabled/>
-                            <label className="form-check-label" htmlFor="remove-people-anyone">Anyone</label>
+                            <label className="form-check-label" htmlFor="remove-people-anyone">{t("Anyone")}</label>
                         </div>
                         <div className="form-check form-check-inline">
                             <input className="form-check-input" type="radio" name="remove-people" id="remove-people-special" value="1"
                                 onChange={handleRemoveChange} disabled/>
-                            <label className="form-check-label" htmlFor="remove-people-special">Special people</label>
+                            <label className="form-check-label" htmlFor="remove-people-special">{t("SpecialPeople")}</label>
                         </div>
                     </div>
                 </li>
                 <li>
-                    <div>Who can pin message?</div>
+                    <div>{t("PinMessage")}</div>
                     <div className="chat-rules__rules">
                         <div className="form-check form-check-inline">
                             <input className="form-check-input" type="radio" name="pin-message" id="pin-message-anyone" value="0"
                                 onChange={handlePinMessageChange} defaultChecked disabled/>
-                            <label className="form-check-label" htmlFor="pin-message-anyone">Anyone</label>
+                            <label className="form-check-label" htmlFor="pin-message-anyone">{t("Anyone")}</label>
                         </div>
                         <div className="form-check form-check-inline">
                             <input className="form-check-input" type="radio" name="pin-message" id="pin-message-special" value="1"
                                 onChange={handlePinMessageChange} disabled/>
-                            <label className="form-check-label" htmlFor="pin-message-special">Special people</label>
+                            <label className="form-check-label" htmlFor="pin-message-special">{t("SpecialPeople")}</label>
                         </div>
                     </div>
                 </li>
                 <li>
-                    <div>Who can make announcements?</div>
+                    <div>{t("Announcements")}</div>
                     <div className="chat-rules__rules">
                         <div className="form-check form-check-inline">
                             <input className="form-check-input" type="radio" name="announce" id="announce-anyone" value="0"
                                 onChange={handleAnnounceChange} defaultChecked disabled/>
-                            <label className="form-check-label" htmlFor="announce-anyone">Anyone</label>
+                            <label className="form-check-label" htmlFor="announce-anyone">{t("Anyone")}</label>
                         </div>
                         <div className="form-check form-check-inline">
                             <input className="form-check-input" type="radio" name="pin-message" id="announce-special" value="1"
                                 onChange={handleAnnounceChange} disabled/>
-                            <label className="form-check-label" htmlFor="announce-special">Special people</label>
+                            <label className="form-check-label" htmlFor="announce-special">{t("SpecialPeople")}</label>
                         </div>
                     </div>
                 </li>
             </ul>
-            <div>
-                <input type="button" value="Next" className="btn btn-success" onClick={() => nextStep(2)} />
-                <input type="button" value="Back" className="btn btn-light" onClick={previouslyStep} />
+            <div className="item-result">
+                <input type="button" value={t("Next")} className="btn btn-success" onClick={() => nextStep(2)} />
+                <input type="button" value={t("Back")} className="btn btn-light" onClick={previouslyStep} />
             </div>
         </div>
     );

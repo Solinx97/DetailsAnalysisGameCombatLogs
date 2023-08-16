@@ -7,6 +7,7 @@
     &__title {
         display: flex;
         align-items: center;
+        margin: 10px;
 
         svg {
             margin: 0 15px;
@@ -19,6 +20,15 @@
         &_active {
             display: flex;
             flex-direction: column;
+        }
+    }
+
+    &__search-input {
+        display: flex;
+        align-items: center;
+
+        svg {
+            margin: 0 10px;
         }
     }
 

@@ -11,7 +11,7 @@ const DescriptionItem = ({ chatName, setChatName, chatShortName, setChatShortNam
 
     return (
         <div className="create-group-chat__item">
-            <div className="title">Description</div>
+            <div className="title">{t("Description")}</div>
             <form onSubmit={checkDescription}>
                 <div>
                     <div className="form-group">
@@ -25,8 +25,8 @@ const DescriptionItem = ({ chatName, setChatName, chatShortName, setChatShortNam
                             onChange={(e) => setChatShortName(e.target.value)} defaultValue={chatShortName} required />
                     </div>
                 </div>
-                <div>
-                    <input type="submit" value="Next" className="btn btn-success" />
+                <div className="item-result">
+                    <input type="submit" value={t("Next")} className="btn btn-success" />
                 </div>
             </form>
         </div>
