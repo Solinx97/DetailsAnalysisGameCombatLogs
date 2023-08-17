@@ -32,7 +32,7 @@ const InvitePeopleItem = ({ createNewGroupChatAsync, previouslyStep, customer, p
         <div className="create-group-chat__item">
             <AddPeople
                 customer={customer}
-                communityUsersId={[0]}
+                communityUsersId={[customer.id]}
                 peopleToJoin={peopleIdToJoin}
                 setPeopleToJoin={setPeopleToJoin}
             />

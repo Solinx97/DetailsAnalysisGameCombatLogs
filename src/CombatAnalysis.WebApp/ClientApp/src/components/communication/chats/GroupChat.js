@@ -1,6 +1,6 @@
 ﻿import { faGear, faPaperPlane, faMinus, faRightFromBracket } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { memo, useRef, useState } from 'react';
+import { memo, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useFindGroupChatMessageByChatIdQuery, useGetGroupChatUserByUserIdQuery } from '../../../store/api/ChatApi';
 import { useRemoveGroupChatAsyncMutation, useUpdateGroupChatAsyncMutation } from '../../../store/api/GroupChat.api';
@@ -25,6 +25,7 @@ const GroupChat = ({ chat, customer, setSelectedChat }) => {
     const [settingsIsShow, setSettingsIsShow] = useState(false);
     const [peopleIdToJoin, setPeopleToJoin] = useState([]);
     const [peopleIdToRemove, setPeopleToRemove] = useState([]);
+    const [groupChatUsersId, setGroupChatUsersId] = useState([]);
 
     const messageInput = useRef(null);
 
@@ -40,6 +41,19 @@ const GroupChat = ({ chat, customer, setSelectedChat }) => {
     const [removeGroupChatAsyncMut] = useRemoveGroupChatAsyncMutation();
     const [removeGroupChatUserAsyncMut] = useRemoveGroupChatUserAsyncMutation();
     const [createGroupChatUserMutAsync] = useCreateGroupChatUserAsyncMutation();
+
+    useEffect(() => {
+        if (groupChatUsers === undefined) {
+            return;
+        }
+
+        const usersId = [];
+        for (var i = 0; i < groupChatUsers.length; i++) {
+            usersId.push(groupChatUsers[i].userId);
+        }
+
+        setGroupChatUsersId(usersId);
+    }, [groupChatUsers])
 
     const getChatUserByMyIdAsync = async () => {
         const currentGroupChatUser = muGroupChatUsers?.filter((chatUser) => chatUser.groupChatId === chat.id)[0];
@@ -176,7 +190,7 @@ const GroupChat = ({ chat, customer, setSelectedChat }) => {
                     <div className="add-people-to-chat">
                         <AddPeople
                             customer={customer}
-                            communityUsersId={groupChatUsers}
+                            communityUsersId={groupChatUsersId}
                             peopleToJoin={peopleIdToJoin}
                             setPeopleToJoin={setPeopleToJoin}
                         />

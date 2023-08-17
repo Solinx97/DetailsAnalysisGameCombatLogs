@@ -137,6 +137,7 @@ const CreateGroupChat = () => {
                     }
                     {itemIndex === 2 &&
                         <InvitePeopleItem
+                            customer={customer}
                             createNewGroupChatAsync={createNewGroupChatAsync}
                             previouslyStep={previouslyStep}
                             peopleIdToJoin={peopleIdToJoin}
