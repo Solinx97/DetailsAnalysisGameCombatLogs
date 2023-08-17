@@ -117,103 +117,90 @@ const GroupChat = ({ chat, customer, setSelectedChat }) => {
     }
 
     return (
-        <div className="chats__messages">
-            <div className="title">
-                <div className="title__container">
+        <div className="chats__selected-chat">
+            <div className="messages-container">
+                <div className="title">
                     <div className="title__companion">{chat.name}</div>
                     <FontAwesomeIcon
                         icon={faGear}
                         title={t("Settings")}
-                        className={`settings-handler${settingsIsShow ? "-active" : ""}`}
+                        className={`settings-handler${settingsIsShow ? "_active" : ""}`}
                         onClick={() => setSettingsIsShow(!settingsIsShow)}
                     />
                 </div>
-            </div>
-            <div className={`settings${settingsIsShow ? "-active" : ""}`}>
-                <div>
-                    <FontAwesomeIcon
-                        icon={faPerson}
-                        title={t("GroupMembers")}
-                        className={`people-inspection-handler${peopleInspectionModeOn ? "-active" : ""}`}
-                        onClick={() => setPeopleInspectionMode((item) => !item)}
-                    />
-                    <FontAwesomeIcon
-                        icon={faUserPlus}
-                        title={t("InviteNewUser")}
-                        className={`add-new-people-handler${showAddPeople ? "-active" : ""}`}
-                        onClick={() => setShowAddPeople((item) => !item)}
-                    />
-                    <FontAwesomeIcon
-                        icon={faFileWaveform}
-                        title={t("ShowDescription")}
-                    />
-                    <FontAwesomeIcon
-                        icon={faFolderOpen}
-                        title={t("ShowDocuments")}
-                    />
-                    {customer?.id === chat.ownerId
-                        ? <FontAwesomeIcon
-                            icon={faTrash}
-                            title={t("RemoveChat")}
-                            className="leave-from-chat"
-                            onClick={async () => await removeChatAsync()}
-                        />
-                        : <FontAwesomeIcon
-                            icon={faRightFromBracket}
-                            title={t("LeaveFromChat")}
-                            className="leave-from-chat"
-                            onClick={getChatUserByMyIdAsync}
-                        />
-                    }
-                </div>
-                <ul className={`people-inspection${peopleInspectionModeOn ? "-active" : ""}`}>
+                <ul className="chat-messages">
                     {
-                        groupChatUsers.map((item) => (
+                        messages.map((item) => (
                             <li key={item.id}>
-                                <GroupChatUser
-                                    userId={item.userId}
+                                <ChatMessage
+                                    customer={customer}
+                                    message={item}
+                                    updateMessageAsync={updateMessageAsync}
+                                    deleteMessageAsync={deleteMessageAsync}
                                 />
                             </li>
                         ))
                     }
                 </ul>
-            </div>
-            <ul className="chat-messages">
-                {
-                    messages.map((item) => (
-                        <li key={item.id}>
-                            <ChatMessage
-                                customer={customer}
-                                message={item}
-                                updateMessageAsync={updateMessageAsync}
-                                deleteMessageAsync={deleteMessageAsync}
-                            />
-                        </li>
-                    ))
-                }
-            </ul>
-            <div className="form-group chats__messages_input-message">
-                <input type="text" className="form-control" placeholder={t("TypeYourMessage")} ref={messageInput} />
-                <FontAwesomeIcon
-                    icon={faPaperPlane}
-                    title={t("SendMessage")}
-                    onClick={async () => await sendMessageAsync()}
-                />
-            </div>
-            {showAddPeople &&
-                <div className="add-people-to-chat">
-                    <AddPeople
-                        customer={customer}
-                        communityUsersId={groupChatUsers}
-                        peopleToJoin={peopleIdToJoin}
-                        setPeopleToJoin={setPeopleToJoin}
+                <div className="form-group input-message">
+                    <input type="text" className="form-control" placeholder={t("TypeYourMessage")} ref={messageInput} />
+                    <FontAwesomeIcon
+                        icon={faPaperPlane}
+                        title={t("SendMessage")}
+                        onClick={async () => await sendMessageAsync()}
                     />
-                    <div className="item-result">
-                        <input type="button" value={t("Invite")} className="btn btn-success" onClick={async () => await createGroupChatUserAsync()} />
-                        <input type="button" value={t("Cancel")} className="btn btn-light" onClick={() => setShowAddPeople(false)} />
+                </div>
+                {showAddPeople &&
+                    <div className="add-people-to-chat">
+                        <AddPeople
+                            customer={customer}
+                            communityUsersId={groupChatUsers}
+                            peopleToJoin={peopleIdToJoin}
+                            setPeopleToJoin={setPeopleToJoin}
+                        />
+                        <div className="item-result">
+                            <input type="button" value={t("Invite")} className="btn btn-success" onClick={async () => await createGroupChatUserAsync()} />
+                            <input type="button" value={t("Cancel")} className="btn btn-light" onClick={() => setShowAddPeople(false)} />
+                        </div>
+                    </div>
+                }
+            </div>
+            <div className={`settings${settingsIsShow ? "_active" : ""}`}>
+                <div className="settings__content">
+                    <div className="main-settings">
+                        <input type="button" value={t("Members")} className="btn btn-light" onClick={() => setPeopleInspectionMode((item) => !item)} />
+                        <input type="button" value={t("Invite")} className="btn btn-light" onClick={() => setShowAddPeople((item) => !item)} />
+                        <input type="button" value={t("Documents")} className="btn btn-light" disabled />
+                    </div>
+                    <div className="danger-settings">
+                        {customer?.id === chat.ownerId &&
+                            <input type="button" value={t("RemoveChat")} className="btn btn-danger" onClick={async () => await removeChatAsync()} />
+                        }
+                        <input type="button" value={t("Leave")} className="btn btn-warning" onClick={async () => await getChatUserByMyIdAsync()} />
                     </div>
                 </div>
-            }
+                <div className={`settings__people-inspection${peopleInspectionModeOn ? "_active" : ""}`}>
+                    <div>{t("Members")}</div>
+                    <ul>
+                        {
+                            groupChatUsers.map((item) => (
+                                <li key={item.id}>
+                                    <GroupChatUser
+                                        userId={item.userId}
+                                    />
+                                    <FontAwesomeIcon
+                                        icon={faRightFromBracket}
+                                        title={t("RomeFromChat")}
+                                        className={`settings-handler${settingsIsShow ? "_active" : ""}`}
+                                        onClick={() => setSettingsIsShow(!settingsIsShow)}
+                                    />
+                                </li>
+                            ))
+                        }
+                    </ul>
+                    <input type="button" value={t("Close")} className="btn btn-secondary" onClick={() => setPeopleInspectionMode((item) => !item)} />
+                </div>
+            </div>
         </div>
     );
 }

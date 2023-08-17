@@ -8,7 +8,9 @@ const GroupChatUser = ({ userId }) => {
     }
 
     return (
-        <>{customer?.username}</>
+        <div className="group-chat-user">
+            {customer?.username}
+        </div>
     );
 }
 

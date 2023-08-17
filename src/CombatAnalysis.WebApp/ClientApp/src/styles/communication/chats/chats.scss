@@ -3,18 +3,15 @@
     flex-direction: row;
     align-items: start;
     justify-content: start;
-    margin: 20px 0;
+    gap: 25px;
 
     .select-chat {
-        width: 100%;
         margin: 25px;
         font-size: 20px;
         text-align: center;
     }
 
     &__my-chats {
-        max-width: 25%;
-
         &_title {
             display: flex;
             align-items: center;
@@ -71,70 +68,6 @@
             div, strong {
                 position: relative;
                 z-index: -1;
-            }
-        }
-    }
-
-    &__messages {
-        width: 60%;
-        margin: 0px 25px;
-
-        .title {
-            display: flex;
-            flex-direction: row;
-            justify-content: space-between;
-
-            &__companion, &__message-panel {
-                margin: 0 20px;
-            }
-
-            &__message-panel {
-                display: none;
-
-                &-active {
-                    display: flex;
-
-                    svg {
-                        margin: 0 15px;
-                        cursor: pointer;
-                    }
-                }
-            }
-
-            &__container {
-                display: flex;
-                flex-direction: row;
-                align-items: center;
-
-                .settings-handler {
-                    color: black;
-                    cursor: pointer;
-
-                    &-active {
-                        cursor: pointer;
-                        color: lightseagreen;
-                        transform: scale(1.2);
-                    }
-                }
-            }
-        }
-
-        &_input-message {
-            display: flex;
-            flex-direction: row;
-            justify-content: center;
-            align-items: center;
-
-            svg {
-                margin: 0 10px;
-                width: 25px;
-                height: 25px;
-                cursor: pointer;
-
-                :hover {
-                    transform: scale(1.1);
-                    color: cornflowerblue;
-                }
             }
         }
     }

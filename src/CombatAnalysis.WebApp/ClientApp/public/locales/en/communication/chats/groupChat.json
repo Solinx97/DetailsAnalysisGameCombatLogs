@@ -1,11 +1,14 @@
 {
   "Settings": "Settings",
-  "GroupMembers": "Group members",
-  "InviteNewUser": "Invite new user",
-  "ShowDescription": "Show description",
-  "ShowDocuments": "Show documents",
+  "Members": "Members",
+  "Invite": "Invite",
+  "Documents": "Documents",
   "LeaveFromChat": "Leave from chat",
   "SendMessage": "Send message",
   "TypeYourMessage": "Type your message",
-  "RemoveChat": "Remove chat"
+  "RemoveChat": "Remove chat",
+  "RomeFromChat": "Remove from chat",
+  "Leave": "Leave",
+  "Close": "Close",
+  "Cancel": "Cancel"
 }

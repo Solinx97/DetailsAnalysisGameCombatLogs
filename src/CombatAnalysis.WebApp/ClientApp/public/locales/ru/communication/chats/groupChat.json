@@ -1,11 +1,14 @@
 {
   "Settings": "Настройки",
-  "GroupMembers": "Участники чата",
-  "InviteNewUser": "Пригласите нового пользователя",
-  "ShowDescription": "Показать описание",
-  "ShowDocuments": "Показать окументы",
+  "Members": "Участники",
+  "Invite": "Пригласить",
+  "Documents": "Документы",
   "LeaveFromChat": "Выйти из чата",
   "SendMessage": "Отправить сообщение",
   "TypeYourMessage": "Напишите ваше сообщение",
-  "RemoveChat": "Удалить чат"
+  "RemoveChat": "Удалить чат",
+  "RomeFromChat": "Удалить из чата",
+  "Leave": "Уйти",
+  "Close": "Закрыть",
+  "Cancel": "Отмена"
 }
