@@ -1,44 +1,67 @@
-﻿.chats__messages .settings {
-    display: none;
-
-    &-active {
+﻿.chats__messages {
+    .add-people-to-chat {
+        position: fixed;
         display: flex;
         flex-direction: column;
+        justify-content: center;
         align-items: center;
-        justify-content: start;
+        border-radius: 25px;
+        right: 35%;
+        bottom: 20%;
+        padding: 10px;
+        width: 500px;
+        min-height: 400px;
+        box-shadow: 5px 5px 5px 5px gray;
+        background: white;
 
-        svg {
-            cursor: pointer;
-            margin: 5px 15px;
+        .item-result {
+            display: flex;
+            gap: 10px;
         }
+    }
 
-        .people-inspection {
-            display: none;
+    .settings {
+        display: none;
 
-            &-active {
-                display: flex;
-                flex-direction: column;
-                position: absolute;
-                border: 3px solid gray;
-                border-radius: 10px;
-                background: white;
-                padding: 10px;
-                margin: 40px;
+        &-active {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: start;
+
+            svg {
+                cursor: pointer;
+                margin: 5px 15px;
             }
-        }
 
-        .people-inspection-handler, .add-new-people-handler {
-            color: black;
+            .people-inspection {
+                display: none;
 
-            &-active {
-                color: lightgreen;
-                transform: scale(1.2);
+                &-active {
+                    display: flex;
+                    flex-direction: column;
+                    position: absolute;
+                    border: 3px solid gray;
+                    border-radius: 10px;
+                    background: white;
+                    padding: 10px;
+                    margin: 40px;
+                }
             }
-        }
 
-        .leave-from-chat {
-            color: red;
-            transform: scale(1.4);
+            .people-inspection-handler, .add-new-people-handler {
+                color: black;
+
+                &-active {
+                    color: lightgreen;
+                    transform: scale(1.2);
+                }
+            }
+
+            .leave-from-chat {
+                color: red;
+                transform: scale(1.4);
+            }
         }
     }
 }

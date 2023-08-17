@@ -23,6 +23,7 @@ const GroupChat = ({ chat, customer, setSelectedChat }) => {
     const [showAddPeople, setShowAddPeople] = useState(false);
     const [peopleInspectionModeOn, setPeopleInspectionMode] = useState(false);
     const [settingsIsShow, setSettingsIsShow] = useState(false);
+    const [peopleIdToJoin, setPeopleToJoin] = useState([]);
 
     const messageInput = useRef(null);
 
@@ -53,13 +54,17 @@ const GroupChat = ({ chat, customer, setSelectedChat }) => {
         messageInput.current.value = "";
     }
 
-    const createGroupChatUserAsync = async (whomId) => {
-        const newGroupChatUser = {
-            userId: whomId,
-            groupChatId: chat.id,
-        };
+    const createGroupChatUserAsync = async () => {
+        for (var i = 0; i < peopleIdToJoin.length; i++) {
+            const newGroupChatUser = {
+                userId: peopleIdToJoin[i],
+                groupChatId: chat.id,
+            };
 
-        await createGroupChatUserMutAsync(newGroupChatUser);
+            await createGroupChatUserMutAsync(newGroupChatUser);
+        }
+
+        setShowAddPeople(false);
     }
 
     const createChatMessageAsync = async (message) => {
@@ -196,12 +201,18 @@ const GroupChat = ({ chat, customer, setSelectedChat }) => {
                 />
             </div>
             {showAddPeople &&
-                <AddPeople
-                    customer={customer}
-                    communityUsersId={groupChatUsers}
-                    setShowAddPeople={setShowAddPeople}
-                    createInviteAsync={createGroupChatUserAsync}
-                />
+                <div className="add-people-to-chat">
+                    <AddPeople
+                        customer={customer}
+                        communityUsersId={groupChatUsers}
+                        peopleToJoin={peopleIdToJoin}
+                        setPeopleToJoin={setPeopleToJoin}
+                    />
+                    <div className="item-result">
+                        <input type="button" value={t("Invite")} className="btn btn-success" onClick={async () => await createGroupChatUserAsync()} />
+                        <input type="button" value={t("Cancel")} className="btn btn-light" onClick={() => setShowAddPeople(false)} />
+                    </div>
+                </div>
             }
         </div>
     );

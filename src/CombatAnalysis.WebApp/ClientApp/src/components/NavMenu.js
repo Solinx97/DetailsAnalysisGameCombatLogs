@@ -45,7 +45,6 @@ const NavMenu = () => {
         switch (auth.status) {
             case "rejected":
                 dispatch(updateCustomer(null));
-                navigate('/');
                 break;
             case "fulfilled":
                 const updateUserData = async () => {
