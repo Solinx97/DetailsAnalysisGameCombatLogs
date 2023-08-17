@@ -114,6 +114,15 @@
                             }
                         }
                     }
+
+                    .item-result {
+                        display: flex;
+                        gap: 10px;
+
+                        input {
+                            font-size: 12px;
+                        }
+                    }
                 }
             }
 
