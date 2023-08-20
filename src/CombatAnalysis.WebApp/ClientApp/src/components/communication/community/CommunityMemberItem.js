@@ -5,18 +5,18 @@ import { useTranslation } from 'react-i18next';
 import { useRemoveCommunityUserAsyncMutation } from '../../../store/api/CommunityUser.api';
 import { useGetCustomerByIdQuery } from '../../../store/api/Customer.api';
 
-const CommunityMemberItem = ({ community, customerId }) => {
+const CommunityMemberItem = ({ community, comunityUser, customerId, showRemovePeople }) => {
     const { t } = useTranslation("communication/community/communityMemberItem");
 
     const [showRemovePeopleAlert, setShowRemovePeopleAlert] = useState(false);
 
     const [removeCommunityUserAsync] = useRemoveCommunityUserAsyncMutation();
-    const { data: member, isLoading } = useGetCustomerByIdQuery(customerId);
+    const { data: member, isLoading } = useGetCustomerByIdQuery(comunityUser.customerId);
 
     const removePeopleAsync = async () => {
-        const deletedItemCount = await removeCommunityUserAsync(member.communityUserId);
+        const deletedItemCount = await removeCommunityUserAsync(comunityUser.id);
         if (deletedItemCount.data !== undefined) {
-            showRemovePeopleAlert(false);
+            setShowRemovePeopleAlert(false);
         }
     }
 
@@ -26,8 +26,8 @@ const CommunityMemberItem = ({ community, customerId }) => {
 
     return (
         <>
-            {showRemovePeopleAlert
-                ? <div className="remove-people">
+            {showRemovePeopleAlert &&
+                <div className="remove-people">
                     <div>{t("RemovePerson")}</div>
                     <div>
                         <div>{t("RemovePeopleAlertStart")} <strong>'{member.username}'</strong> {t("RemovePeopleAlertFinish")} <strong>'{community.name}'</strong>?</div>
@@ -37,10 +37,9 @@ const CommunityMemberItem = ({ community, customerId }) => {
                         <button className="btn btn-outline-success" onClick={() => setShowRemovePeopleAlert((item) => !item)}>{t("Cancel")}</button>
                     </div>
                 </div>
-                : null
             }
             <div className="member">
-                {member?.id !== community.ownerId && customerId !== member?.id &&
+                {(showRemovePeople && member?.id !== community.ownerId && customerId !== member?.id) &&
                     <FontAwesomeIcon
                         icon={faTrash}
                         title={t("Remove")}

@@ -72,47 +72,20 @@
                 margin: 0 25px;
             }
         }
-
-        .remove-people, .leave-from-community {
-            position: absolute;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            width: 300px;
-            padding: 25px;
-            top: 25%;
-            left: 40%;
-            border: 2px solid gray;
-            border-radius: 25px;
-            background: white;
-
-            .friend {
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-            }
-
-            svg:hover {
-                cursor: pointer;
-                transform: scale(1.25);
-            }
-        }
     }
 
-    &__menu {
+    &__actions {
         position: fixed;
+        display: flex;
+        flex-direction: column;
         right: 0px;
-        padding: 0 10px;
         width: 275px;
-
-        li {
-            margin: 10px 0;
-        }
+        gap: 15px;
 
         .members {
-            .title {
+            &__title {
                 display: flex;
-                flex-direction: row;
+                flex-direction: column;
                 justify-content: start;
 
                 .tool {
@@ -120,16 +93,35 @@
                     justify-content: space-around;
                     align-items: center;
                     margin: 0 10px;
+
+                    .remove_active {
+                        color: saddlebrown;
+                    }
+                }
+
+                .actions {
+                    display: flex;
+                    flex-direction: row;
+                }
+
+                .notification {
+                    font-size: 12px;
+                    text-align: center;
                 }
 
                 svg {
                     margin: 0 10px;
+                    cursor: pointer;
                 }
 
                 svg:hover {
-                    cursor: pointer;
                     transform: scale(1.2);
                 }
+            }
+
+            &__content {
+                display: flex;
+                flex-direction: column;
             }
 
             .add-people-to-community {
@@ -157,7 +149,8 @@
                 display: flex;
 
                 &__username {
-                    padding: 5px 10px;
+                    margin: 5px;
+                    padding: 5px;
                     border-radius: 5px;
                     align-items: center;
                     font-weight: bold;
@@ -179,5 +172,29 @@
                 }
             }
         }
+    }
+}
+
+.remove-people, .leave-from-community {
+    position: fixed;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 25px;
+    top: 20%;
+    right: 30%;
+    border: 2px solid gray;
+    border-radius: 25px;
+    background: white;
+
+    .friend {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    svg:hover {
+        cursor: pointer;
+        transform: scale(1.25);
     }
 }

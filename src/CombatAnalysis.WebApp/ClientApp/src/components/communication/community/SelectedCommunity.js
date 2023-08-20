@@ -1,4 +1,4 @@
-import { faArrowsRotate, faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
+import { faArrowsRotate, faBars, faEarthEurope, faEye, faEyeSlash, faShieldHalved } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useEffect, useRef, useState } from "react";
 import { useTranslation } from 'react-i18next';
@@ -10,6 +10,7 @@ import { useLazySearchByUserIdAsyncQuery, useRemoveCommunityUserAsyncMutation } 
 import { useCreatePostAsyncMutation } from '../../../store/api/Post.api';
 import Communication from '../Communication';
 import CommunityMembers from './CommunityMembers';
+import CommunityMenu from './CommunityMenu';
 import SelectedCommunityItem from './SelectedCommunityItem';
 
 import '../../../styles/communication/community/selectedCommunity.scss';
@@ -22,8 +23,10 @@ const SelectedCommunity = () => {
     const [showLeaveFromCommunityAlert, setShowLeaveFromCommunityAlert] = useState(false);
     const [showDescription, setShowDescription] = useState(true);
     const [showCreatePost, setShowCreatePost] = useState(false);
+    const [showMenu, setShowMenu] = useState(false);
     const [communityId, setCommunityId] = useState(0);
     const [community, setCommunity] = useState(null);
+    const [showAddPeople, setShowAddPeople] = useState(false);
 
     const postContentRef = useRef(null);
 
@@ -97,17 +100,8 @@ const SelectedCommunity = () => {
         }
     }
 
-    const getCommunityPolicyType = () => {
-        switch (community.policyType) {
-            case 1:
-                return <div className="title__policy" title={t("OpenExplain")}>{t("Open")}</div>
-            case 2:
-                return <div className="title__policy" title={t("PrivateExplain")}>{t("Private")}</div>
-            case 3:
-                return <div className="title__policy" title={t("PrivateWithLinkExplain")}>{t("PrivateWithLink")}</div>
-            default:
-                return <div className="title__policy" title={t("OpenExplain")}>{t("Open")}</div>
-        }
+    const handleShowAddPeople = () => {
+        setShowAddPeople((item) => !item);
     }
 
     if (community === null) {
@@ -124,8 +118,22 @@ const SelectedCommunity = () => {
                 <div className="selected-community__content">
                     <div className="header">
                         <div className="title">
+                            {community.policyType === 1
+                                ? <FontAwesomeIcon
+                                    icon={faEarthEurope}
+                                    title={t("Open")}
+                                />
+                                : <FontAwesomeIcon
+                                    icon={faShieldHalved}
+                                    title={t("Private")}
+                                />
+                            }
                             <div className="title__name" title={community.name}>{community.name}</div>
-                            {getCommunityPolicyType()}
+                            <FontAwesomeIcon
+                                icon={faBars}
+                                title={t("Menu")}
+                                onClick={() => setShowMenu((item) => !item)}
+                            />
                         </div>
                         <div className="leave">
                             <button className="btn btn-outline-danger" onClick={() => setShowLeaveFromCommunityAlert((item) => !item)}>{t("Leave")}</button>
@@ -197,15 +205,17 @@ const SelectedCommunity = () => {
                         </div>
                     }
                 </div>
-                <ul className="selected-community__menu">
+                <ul className="selected-community__actions">
                     <li>
                         <div>{t("Discussions")}</div>
                         <ul></ul>
                     </li>
-                    <li className="members">
+                    <li>
                         <CommunityMembers
                             community={community}
                             customer={customer}
+                            handleShowAddPeople={handleShowAddPeople}
+                            showAddPeople={showAddPeople}
                         />
                     </li>
                     <li>
@@ -218,6 +228,13 @@ const SelectedCommunity = () => {
                     </li>
                 </ul>
             </div>
+            {showMenu &&
+                <CommunityMenu
+                    setShowMenu={setShowMenu}
+                    customer={customer}
+                    community={community}
+                />
+            }
         </div>
     )
 }

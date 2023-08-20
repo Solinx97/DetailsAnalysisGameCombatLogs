@@ -34,6 +34,7 @@ export const ChatApi = createApi({
         }),
         searchByCommunityIdAsync: builder.query({
             query: (id) => `/CommunityUser/searchByCommunityId/${id}`,
+            providesTags: (result, error, id) => [{ type: 'CommunityUser', id }]
         }),
         getPersonalChatsByUserId: builder.query({
             query: (id) => `/PersonalChat/${id}`,
@@ -60,7 +61,8 @@ export const ChatApi = createApi({
             providesTags: (result, error, id) => [{ type: 'UserPost', id }],
         }),
         getInviteToCommunityId: builder.query({
-            query: (id) => `/InviteToCommunity/${id}`
+            query: (id) => `/InviteToCommunity/${id}`,
+            providesTags: (result, error, id) => [{ type: 'InviteToCommunity', id }],
         }),
     })
 })

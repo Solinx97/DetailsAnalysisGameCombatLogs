@@ -1,7 +1,7 @@
 .create-group-chat {
     display: flex;
-    flex-direction: row;
-    justify-content: space-between;
+    flex-direction: column;
+    justify-content: space-around;
     align-items: center;
     border-radius: 25px;
     width: 700px;
@@ -10,7 +10,7 @@
     box-shadow: 5px 5px 5px 5px gray;
     background: white;
 
-    &__container {
+    &__content {
         display: flex;
         flex-direction: row;
     }
@@ -60,7 +60,7 @@
         padding: 0;
     }
 
-    &__content {
+    &__items {
         flex-grow: 1;
         margin: 5px;
 
@@ -74,25 +74,21 @@
         display: flex;
         flex-direction: column;
         align-items: center;
-        
+
         .item-result {
             display: flex;
-            gap: 15px;
-        }
-    }
+            justify-content: end;
+            gap: 225px;
 
-    .chat-policy {
-        display: flex;
-        flex-direction: column;
-        align-items: start;
-        width: 100%;
-
-        &__policy {
-            display: flex;
-            flex-direction: column;
-
-            .form-check {
+            svg {
                 margin: 10px;
+                transform: scale(1.5);
+                cursor: pointer;
+            }
+
+            svg:hover {
+                transform: scale(1.75);
+                color: green;
             }
         }
     }
@@ -105,5 +101,11 @@
         &__rules {
             margin: 10px;
         }
+    }
+
+    .finish-create {
+        display: flex;
+        justify-content: center;
+        gap: 100px;
     }
 }

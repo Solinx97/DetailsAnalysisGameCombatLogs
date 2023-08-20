@@ -20,5 +20,12 @@
   "PinMessage": "Who can pin message?",
   "Announcements": "Who can make announcements?",
   "Anyone": "Anyone",
-  "SpecialPeople": "Special people"
+  "SpecialPeople": "Special people",
+  "Main": "Main",
+  "Members": "Members",
+  "Permisions": "Permisions",
+  "Update": "Update",
+  "Apply": "Apply",
+  "NextStep": "Next step",
+  "PrevioslyStep": "Previosly step"
 }

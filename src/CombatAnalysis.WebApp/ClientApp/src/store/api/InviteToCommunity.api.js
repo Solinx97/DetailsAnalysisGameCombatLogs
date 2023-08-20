@@ -7,7 +7,8 @@ export const InviteToCommunityApi = ChatApi.injectEndpoints({
                 body: invite,
                 url: '/InviteToCommunity',
                 method: 'POST'
-            })
+            }),
+            invalidatesTags: (result, error) => [{ type: 'InviteToCommunity', result }],
         }),
         inviteSearchByUserId: builder.query({
             query: (id) => `/InviteToCommunity/searchByUserId/${id}`,

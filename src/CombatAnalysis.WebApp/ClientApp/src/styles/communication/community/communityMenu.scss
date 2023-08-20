@@ -1,0 +1,172 @@
+.community-menu {
+    position: fixed;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: center;
+    border-radius: 25px;
+    top: 19%;
+    width: 700px;
+    height: 500px;
+    padding: 10px;
+    box-shadow: 5px 5px 5px 5px gray;
+    background: white;
+    z-index: 2;
+
+    &__content {
+        display: flex;
+        flex-direction: row;
+    }
+
+    &__menu {
+        display: flex;
+        flex-direction: column;
+        justify-content: start;
+        align-items: start;
+        width: 25%;
+        margin: 10px 15px;
+        border-radius: 15px;
+
+        .menu-item {
+            display: flex;
+            align-items: center;
+            margin: 5px;
+            cursor: pointer;
+            padding: 10px;
+            border-radius: 10px;
+
+            svg {
+                margin: 0 10px;
+            }
+
+            &__passed {
+                color: green;
+            }
+        }
+
+        .menu-item:hover {
+            border: 2px solid blue;
+        }
+
+        .btn {
+            position: relative;
+            margin: 10px;
+            top: 50px;
+        }
+    }
+
+    ul {
+        padding: 0;
+    }
+
+    &__items {
+        flex-grow: 1;
+        margin: 5px;
+
+        .form-group {
+            margin: 10px;
+            width: 300px;
+        }
+
+        .members {
+            display: flex;
+            flex-direction: column;
+            justify-content: start;
+            gap: 20px;
+
+            &__title {
+                display: flex;
+                flex-direction: column;
+
+                .tool, .tool_active {
+                    display: flex;
+                    align-items: center;
+                    gap: 25px;
+                    margin: 0 50px;
+
+                    .remove_active {
+                        color: saddlebrown;
+                    }
+
+                    svg {
+                        cursor: pointer;
+                    }
+                }
+
+                .actions {
+                    display: flex;
+                    flex-direction: row;
+                }
+
+                .tool_active {
+                    svg {
+                        color: saddlebrown;
+                    }
+                }
+
+                .notification {
+                    font-size: 12px;
+                    text-align: center;
+                    margin: 5px;
+                }
+            }
+
+            &__content {
+                display: flex;
+                flex-direction: column;
+                gap: 20px;
+
+                .member {
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    width: 300px;
+
+                    svg {
+                        margin: 0 25px;
+                        color: red;
+                        cursor: pointer;
+                    }
+                }
+
+                .remove-people {
+                    position: fixed;
+                    z-index: 5;
+                    right: 35%;
+                }
+            }
+        }
+
+        .actions {
+            display: flex;
+            justify-content: center;
+        }
+    }
+
+    &__item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+
+        .item-result {
+            display: flex;
+            gap: 15px;
+        }
+    }
+
+    .chat-rules {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+
+        &__rules {
+            margin: 10px;
+        }
+    }
+
+    .finish-create {
+        display: flex;
+        justify-content: center;
+        gap: 100px;
+    }
+}

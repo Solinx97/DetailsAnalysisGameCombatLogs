@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next';
 
-const RulesItem = ({ nextStep, previouslyStep }) => {
+const RulesItem = ({ connector }) => {
     const { t } = useTranslation("communication/chats/createGroupChat");
 
     const handleInviteChange = (event) => {
@@ -84,10 +84,7 @@ const RulesItem = ({ nextStep, previouslyStep }) => {
                     </div>
                 </li>
             </ul>
-            <div className="item-result">
-                <input type="button" value={t("Next")} className="btn btn-success" onClick={() => nextStep(2)} />
-                <input type="button" value={t("Back")} className="btn btn-light" onClick={previouslyStep} />
-            </div>
+            {connector}
         </div>
     );
 }

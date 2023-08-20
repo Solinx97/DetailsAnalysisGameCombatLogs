@@ -1,4 +1,4 @@
-import { faPlus } from '@fortawesome/free-solid-svg-icons';
+import { faPlus, faRectangleXmark } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -7,10 +7,10 @@ import { useCreateInviteAsyncMutation } from '../../../store/api/InviteToCommuni
 import AddPeople from '../../AddPeople';
 import CommunityMemberItem from './CommunityMemberItem';
 
-const CommunityMembers = ({ community, customer }) => {
+const CommunityMembers = ({ community, customer, handleShowAddPeople, showAddPeople }) => {
     const { t } = useTranslation("communication/community/communityMembers");
 
-    const [showAddPeople, setShowAddPeople] = useState(false);
+    const [showRemovePeople, setShowRemovePeople] = useState(false);
     const [communityUsersId, setCommunityUsersId] = useState([]);
     const [peopleIdToJoin, setPeopleToJoin] = useState([]);
 
@@ -40,51 +40,68 @@ const CommunityMembers = ({ community, customer }) => {
             await createInviteAsyncMut(newInviteToCommunity);
         }
 
-        setShowAddPeople(false);
+        handleShowAddPeople();
     }
 
     if (isLoading) {
         return <></>;
     }
 
-    return (<>
-        {showAddPeople &&
-            <div className="add-people-to-community">
-                <AddPeople
-                    customer={customer}
-                    communityUsersId={communityUsersId}
-                    peopleToJoin={peopleIdToJoin}
-                    setPeopleToJoin={setPeopleToJoin}
-                />
-                <div className="item-result">
-                    <input type="button" value={t("Invite")} className="btn btn-success" onClick={async () => await createInviteAsync()} />
-                    <input type="button" value={t("Cancel")} className="btn btn-light" onClick={() => setShowAddPeople(false)} />
-                </div>
-            </div>
-        }
-        <div className="title">
-            <div>{t("Members")}</div>
-            <div className="tool">
-                <FontAwesomeIcon
-                    icon={faPlus}
-                    title={t("AddNewPeople")}
-                    onClick={() => setShowAddPeople(true)}
-                />
-            </div>
-        </div>
-        <ul>
-            {
-                communityUsers?.map((item) => (
-                    <li key={item.id }>
-                        <CommunityMemberItem
-                            community={community}
-                            customerId={item.customerId}
+    return (
+        <span className="members">
+            <div className="members__title">
+                <div className="actions">
+                    <div>{t("Members")}</div>
+                    <div className="tool">
+                        {community.ownerId === customer?.id &&
+                            <FontAwesomeIcon
+                                className={`remove${showRemovePeople ? "_active" : ""}`}
+                                icon={faRectangleXmark}
+                                title={t("RemovePeople")}
+                                onClick={() => setShowRemovePeople((item) => !item)}
+                            />
+                        }
+                        <FontAwesomeIcon
+                            icon={faPlus}
+                            title={t("AddNewPeople")}
+                            onClick={handleShowAddPeople}
                         />
-                    </li>
-                ))
+                    </div>
+                </div>
+                {showRemovePeople &&
+                    <div className="notification">{t("RemovePeople")}</div>
+                }
+            </div>
+            <ul className="members__content">
+                {
+                    communityUsers?.map((item) => (
+                        <li key={item.id }>
+                            <CommunityMemberItem
+                                community={community}
+                                comunityUser={item}
+                                customerId={customer?.id}
+                                showRemovePeople={showRemovePeople}
+                            />
+                        </li>
+                    ))
+                }
+            </ul>
+            {showAddPeople &&
+                <div className="add-people-to-community">
+                    <AddPeople
+                        customer={customer}
+                        communityUsersId={communityUsersId}
+                        peopleToJoin={peopleIdToJoin}
+                        setPeopleToJoin={setPeopleToJoin}
+                    />
+                    <div className="item-result">
+                        <input type="button" value={t("Invite")} className="btn btn-success" onClick={async () => await createInviteAsync()} />
+                        <input type="button" value={t("Cancel")} className="btn btn-light" onClick={handleShowAddPeople} />
+                    </div>
+                </div>
             }
-        </ul>
-    </>);
+        </span>
+    );
 }
 
 export default CommunityMembers;
