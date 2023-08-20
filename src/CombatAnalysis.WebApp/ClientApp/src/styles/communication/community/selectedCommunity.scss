@@ -164,7 +164,6 @@
 
                 svg {
                     margin: 10px 20px;
-                    color: red;
                 }
 
                 svg:hover {
@@ -191,6 +190,12 @@
         display: flex;
         justify-content: space-between;
         align-items: center;
+    }
+
+    .actions {
+        display: flex;
+        gap: 20px;
+        margin: 10px;
     }
 
     svg:hover {

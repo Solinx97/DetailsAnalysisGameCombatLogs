@@ -1,4 +1,4 @@
-import { faTrash } from '@fortawesome/free-solid-svg-icons';
+import { faPersonWalkingArrowRight } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -32,7 +32,7 @@ const CommunityMemberItem = ({ community, comunityUser, customerId, showRemovePe
                     <div>
                         <div>{t("RemovePeopleAlertStart")} <strong>'{member.username}'</strong> {t("RemovePeopleAlertFinish")} <strong>'{community.name}'</strong>?</div>
                     </div>
-                    <div>
+                    <div className="actions">
                         <button className="btn btn-outline-warning" onClick={async () => await removePeopleAsync()}>{t("Remove")}</button>
                         <button className="btn btn-outline-success" onClick={() => setShowRemovePeopleAlert((item) => !item)}>{t("Cancel")}</button>
                     </div>
@@ -41,7 +41,7 @@ const CommunityMemberItem = ({ community, comunityUser, customerId, showRemovePe
             <div className="member">
                 {(showRemovePeople && member?.id !== community.ownerId && customerId !== member?.id) &&
                     <FontAwesomeIcon
-                        icon={faTrash}
+                        icon={faPersonWalkingArrowRight}
                         title={t("Remove")}
                         onClick={() => setShowRemovePeopleAlert((item) => !item)}
                     />
