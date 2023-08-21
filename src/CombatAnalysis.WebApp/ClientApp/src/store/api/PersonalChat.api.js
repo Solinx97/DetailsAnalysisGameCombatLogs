@@ -19,9 +19,12 @@ export const PersonalChatApi = ChatApi.injectEndpoints({
             invalidatesTags: (result, error) => [{ type: 'PersonalChat', result }],
         }),
         isExistAsync: builder.query({
-            query: (userId, targetUserId) => ({
-                url: `/PersonalChat/isExist?initiatorId=${userId}&companionId=${targetUserId}`,
-            })
+            query: (arg) => {
+                const { userId, targetUserId } = arg;
+                return {
+                    url: `/PersonalChat/isExist?initiatorId=${userId}&companionId=${targetUserId}`,
+                }
+            }
         }),
         removePersonalChatAsync: builder.mutation({
             query: id => ({

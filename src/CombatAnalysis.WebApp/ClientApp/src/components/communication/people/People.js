@@ -28,14 +28,20 @@ const People = () => {
 
     let showUserInformationTimeout = null;
 
-    const checkExistNewChatAsync = async (targetCustomer) => {
-        const isExist = await isExistAsync(customer?.id, targetCustomer.id);
-        return isExist.data !== undefined ? isExist : true;
+    const checkExistChatAsync = async (targetCustomer) => {
+        const queryParams = {
+            userId: customer?.id,
+            targetUserId: targetCustomer?.id
+        };
+
+        const isExist = await isExistAsync(queryParams);
+        return isExist.data !== undefined ? isExist.data : true;
     }
 
     const startChatAsync = async (targetCustomer) => {
-        const isExist = await checkExistNewChatAsync(targetCustomer);
-        if (isExist.data) {
+        const isExist = await checkExistChatAsync(targetCustomer);
+        if (isExist) {
+            navigate("/chats");
             return;
         }
 

@@ -69,6 +69,16 @@ const GroupChat = ({ chat, customer, setSelectedChat }) => {
         messageInput.current.value = "";
     }
 
+    const sendMessageByKeyAsync = async (e) => {
+        if (messageInput.current.value.length === 0
+            || e.code !== "Enter") {
+            return;
+        }
+
+        await createChatMessageAsync(messageInput.current.value);
+        messageInput.current.value = "";
+    }
+
     const createGroupChatUserAsync = async () => {
         for (var i = 0; i < peopleIdToJoin.length; i++) {
             const newGroupChatUser = {
@@ -179,7 +189,8 @@ const GroupChat = ({ chat, customer, setSelectedChat }) => {
                     }
                 </ul>
                 <div className="form-group input-message">
-                    <input type="text" className="form-control" placeholder={t("TypeYourMessage")} ref={messageInput} />
+                    <input type="text" className="form-control" placeholder={t("TypeYourMessage")}
+                        ref={messageInput} onKeyDown={async (event) => await sendMessageByKeyAsync(event)} />
                     <FontAwesomeIcon
                         icon={faPaperPlane}
                         title={t("SendMessage")}

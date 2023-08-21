@@ -49,6 +49,16 @@ const PersonalChat = ({ chat, customer, setSelectedChat, companionId }) => {
         messageInput.current.value = "";
     }
 
+    const sendMessageByKeyAsync = async (e) => {
+        if (messageInput.current.value.length === 0
+            || e.code !== "Enter") {
+            return;
+        }
+
+        await createChatMessageAsync(messageInput.current.value);
+        messageInput.current.value = "";
+    }
+
     const createChatMessageAsync = async (message) => {
         const today = new Date();
         const newMessage = {
@@ -109,7 +119,8 @@ const PersonalChat = ({ chat, customer, setSelectedChat, companionId }) => {
                     }
                 </ul>
                 <div className="form-group input-message">
-                    <input type="text" className="form-control" placeholder={t("TypeYourMessage")} ref={messageInput} />
+                    <input type="text" className="form-control" placeholder={t("TypeYourMessage")}
+                        ref={messageInput} onKeyDown={async (event) => await sendMessageByKeyAsync(event)} />
                     <FontAwesomeIcon
                         icon={faPaperPlane}
                         title={t("SendMessage")}

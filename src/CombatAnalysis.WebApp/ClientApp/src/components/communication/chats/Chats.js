@@ -68,10 +68,10 @@ const Chats = () => {
                                 />
                             }
                         </div>
-                        <ul className="chats__my-chats__group-chats">
+                        <ul className={`group-chats${!groupChatsHidden ? "_active" : ""}`}>
                             {
                                 groupChatUsers?.map((item) => (
-                                    <li key={item.id} className={selectedGroupChat?.id === item?.groupChatId ? `active` : ``}>
+                                    <li key={item.id} className={selectedGroupChat?.id === item?.groupChatId ? `selected` : ``}>
                                         <MyGroupChat
                                             groupChatId={item.groupChatId}
                                             setSelectedGroupChat={setSelectedGroupChat}
@@ -95,10 +95,10 @@ const Chats = () => {
                                 />
                             }
                         </div>
-                        <ul className="chats__my-chats__personal-chats">
+                        <ul className={`personal-chats${!personalChatsHidden ? "_active" : ""}`}>
                             {
                                 personalChats?.map((item) => (
-                                    <li key={item.id} className={selectedPersonalChat?.id === item?.id ? `active` : ``}>
+                                    <li key={item.id} className={selectedPersonalChat?.id === item?.id ? `selected` : ``}>
                                         <MyPersonalChat
                                             personalChat={item}
                                             selectedGroupChatId={selectedPersonalChat?.id}

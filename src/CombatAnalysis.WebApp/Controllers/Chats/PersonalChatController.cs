@@ -54,25 +54,25 @@ public class PersonalChatController : ControllerBase
         {
             return Unauthorized();
         }
-        else if (responseMessage.IsSuccessStatusCode)
+        else if (!responseMessage.IsSuccessStatusCode)
         {
-            var personalChats = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<PersonalChatModel>>();
-            var chats = personalChats.Where(x => x.InitiatorId == initiatorId && x.CompanionId == companionId).ToList();
-            if (!chats.Any())
-            {
-                var anotherChats = personalChats.Where(x => x.InitiatorId == companionId && x.CompanionId == initiatorId).ToList();
-                if (chats.Any())
-                {
-                    return Ok(true);
-                }
+            return BadRequest();
+        }
 
-                return Ok(false);
-            }
-
+        var personalChats = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<PersonalChatModel>>();
+        var chats = personalChats.Where(x => x.InitiatorId == initiatorId && x.CompanionId == companionId).ToList();
+        if (chats.Any())
+        {
             return Ok(true);
         }
 
-        return BadRequest();
+        var moreChats = personalChats.Where(x => x.CompanionId == companionId && x.InitiatorId == initiatorId).ToList();
+        if (moreChats.Any())
+        {
+            return Ok(true);
+        }
+
+        return Ok(false);
     }
 
     [HttpPost]

@@ -9,8 +9,10 @@ const MyPersonalChat = ({ personalChat, setSelectedPersonalChat, companionId }) 
 
     return (
         <span onClick={() => setSelectedPersonalChat(personalChat)}>
-            <div><strong>{user?.username}</strong></div>
-            <div className="last-message" title={personalChat.lastMessage}>{personalChat.lastMessage}</div>
+            <div className="username">{user?.username}</div>
+            {personalChat.lastMessage.length > 0 &&
+                < div className="last-message">{personalChat.lastMessage}</div>
+            }
         </span>
     );
 }

@@ -1,9 +1,11 @@
 ﻿.chats {
+    position: relative;
     display: flex;
     flex-direction: row;
     align-items: start;
     justify-content: start;
-    gap: 25px;
+    gap: 15px;
+    width: 100%;
 
     &__selected-chat {
         display: flex;
@@ -62,28 +64,38 @@
             padding: 0;
         }
 
-        &__group-chats, &__personal-chats {
+        .group-chats, .personal-chats {
+            display: none;
             overflow: hidden;
 
-            .last-message {
-                margin: 10px;
-                max-height: 25px;
-                font-style: italic;
-                overflow: hidden;
-                word-wrap: break-word;
-            }
+            &__active {
+                display: flex;
 
-            .active {
-                border: 3px double orange;
+                .last-message {
+                    margin: 10px;
+                    max-height: 20px;
+                    max-width: 140px;
+                    font-style: italic;
+                    overflow: hidden;
+                    word-wrap: break-word;
+                    font-size: 12px;
+                }
+
+                .selected {
+                    border: 3px solid blue;
+                }
             }
         }
 
         li {
             cursor: pointer;
-            margin: 10px 5px;
+            margin: 5px;
             padding: 10px;
             box-shadow: 5px 5px gray;
-            border-radius: 15px;
+
+            .username {
+                font-weight: bold;
+            }
 
             div, strong {
                 position: relative;
