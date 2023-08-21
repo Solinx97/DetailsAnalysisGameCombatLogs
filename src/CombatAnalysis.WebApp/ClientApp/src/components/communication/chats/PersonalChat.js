@@ -83,9 +83,9 @@ const PersonalChat = ({ chat, customer, setSelectedChat, companionId }) => {
     }
 
     return (
-        <div className="chats__messages">
-            <div className="title">
-                <div className="title__container">
+        <div className="chats__selected-chat">
+            <div className="messages-container">
+                <div className="title">
                     <div className="title__companion">{user.username}</div>
                     <FontAwesomeIcon
                         icon={faPersonWalkingArrowRight}
@@ -94,28 +94,28 @@ const PersonalChat = ({ chat, customer, setSelectedChat, companionId }) => {
                         onClick={() => leaveFromChatAsync()}
                     />
                 </div>
-            </div>
-            <ul className="chat-messages">
-                {
-                    messages?.map((item) => (
-                        <li key={item.id}>
-                            <ChatMessage
-                                customer={customer}
-                                message={item}
-                                updateMessageAsync={updateMessageAsync}
-                                deleteMessageAsync={deleteMessageAsync}
-                            />
-                        </li>
-                    ))
-                }
-            </ul>
-            <div className="form-group chats__messages_input-message">
-                <input type="text" className="form-control" placeholder={t("TypeYourMessage")} ref={messageInput} />
-                <FontAwesomeIcon
-                    icon={faPaperPlane}
-                    title={t("SendMessage")}
-                    onClick={sendMessageAsync}
-                />
+                <ul className="chat-messages">
+                    {
+                        messages?.map((item) => (
+                            <li key={item.id}>
+                                <ChatMessage
+                                    customer={customer}
+                                    message={item}
+                                    updateMessageAsync={updateMessageAsync}
+                                    deleteMessageAsync={deleteMessageAsync}
+                                />
+                            </li>
+                        ))
+                    }
+                </ul>
+                <div className="form-group input-message">
+                    <input type="text" className="form-control" placeholder={t("TypeYourMessage")} ref={messageInput} />
+                    <FontAwesomeIcon
+                        icon={faPaperPlane}
+                        title={t("SendMessage")}
+                        onClick={async () => await sendMessageAsync()}
+                    />
+                </div>
             </div>
         </div>
     );

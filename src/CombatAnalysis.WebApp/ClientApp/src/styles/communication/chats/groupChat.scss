@@ -1,163 +1,145 @@
-﻿.chats {
-    &__selected-chat {
-        display: flex;
-        gap: 25px;
-        flex-grow: 2;
+﻿.chats__selected-chat {
+    .messages-container {
+        .add-people-to-chat {
+            position: fixed;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            border-radius: 25px;
+            right: 30%;
+            top: 15%;
+            padding: 10px;
+            width: 500px;
+            min-height: 400px;
+            box-shadow: 5px 5px 5px 5px gray;
+            background: white;
 
-        .messages-container {
-            flex-grow: 2;
-
-            .title {
+            .item-result {
                 display: flex;
-                flex-direction: row;
-                justify-content: space-around;
-
-                &__companion {
-                    margin: 0 20px;
-                }
+                gap: 10px;
             }
+        }
 
-            .add-people-to-chat {
+        .settings-handler {
+            &_active {
+                color: green;
+                transform: scale(1.25);
+            }
+        }
+
+        svg {
+            cursor: pointer;
+        }
+    }
+
+    .input-message {
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        align-items: center;
+
+        svg {
+            margin: 0 10px;
+            width: 25px;
+            height: 25px;
+            cursor: pointer;
+
+            :hover {
+                transform: scale(1.1);
+                color: cornflowerblue;
+            }
+        }
+    }
+
+    .settings {
+        display: none;
+
+        &_active {
+            display: flex;
+            flex-direction: column;
+
+            svg {
+                cursor: pointer;
+                margin: 5px 15px;
+            }
+        }
+
+        &__people-inspection {
+            display: none;
+
+            &_active {
                 position: fixed;
                 display: flex;
                 flex-direction: column;
                 justify-content: center;
                 align-items: center;
+                gap: 20px;
                 border-radius: 25px;
-                right: 30%;
-                top: 15%;
+                right: 40%;
+                top: 20%;
                 padding: 10px;
-                width: 500px;
-                min-height: 400px;
+                width: 225px;
+                min-height: 200px;
                 box-shadow: 5px 5px 5px 5px gray;
                 background: white;
+
+                ul {
+                    padding: 0;
+
+                    li {
+                        display: flex;
+                        justify-content: space-between;
+                        margin: 10px;
+
+                        .group-chat-user {
+                            min-width: 110px;
+                        }
+                    }
+                }
 
                 .item-result {
                     display: flex;
                     gap: 10px;
-                }
-            }
 
-            .settings-handler {
-                &_active {
-                    color: green;
-                    transform: scale(1.25);
+                    input {
+                        font-size: 12px;
+                    }
                 }
-            }
-
-            svg {
-                cursor: pointer;
             }
         }
 
-        .input-message {
+        .people-inspection-handler, .add-new-people-handler {
+            color: black;
+
+            &-active {
+                color: lightgreen;
+                transform: scale(1.2);
+            }
+        }
+
+        .leave-from-chat {
+            color: red;
+            transform: scale(1.4);
+        }
+
+        &__content {
             display: flex;
-            flex-direction: row;
-            justify-content: center;
-            align-items: center;
+            flex-direction: column;
+            gap: 125px;
 
-            svg {
-                margin: 0 10px;
-                width: 25px;
-                height: 25px;
-                cursor: pointer;
-
-                :hover {
-                    transform: scale(1.1);
-                    color: cornflowerblue;
-                }
-            }
-        }
-
-        .settings {
-            display: none;
-
-            &_active {
+            .main-settings, .danger-settings {
                 display: flex;
                 flex-direction: column;
-
-                svg {
-                    cursor: pointer;
-                    margin: 5px 15px;
-                }
+                gap: 30px;
             }
 
-            &__people-inspection {
-                display: none;
-
-                &_active {
-                    position: fixed;
-                    display: flex;
-                    flex-direction: column;
-                    justify-content: center;
-                    align-items: center;
-                    gap: 20px;
-                    border-radius: 25px;
-                    right: 40%;
-                    top: 20%;
-                    padding: 10px;
-                    width: 225px;
-                    min-height: 200px;
-                    box-shadow: 5px 5px 5px 5px gray;
-                    background: white;
-
-                    ul {
-                        padding: 0;
-
-                        li {
-                            display: flex;
-                            justify-content: space-between;
-                            margin: 10px;
-
-                            .group-chat-user {
-                                min-width: 110px;
-                            }
-                        }
-                    }
-
-                    .item-result {
-                        display: flex;
-                        gap: 10px;
-
-                        input {
-                            font-size: 12px;
-                        }
-                    }
-                }
+            .main-settings {
+                gap: 15px;
             }
 
-            .people-inspection-handler, .add-new-people-handler {
-                color: black;
-
-                &-active {
-                    color: lightgreen;
-                    transform: scale(1.2);
-                }
-            }
-
-            .leave-from-chat {
-                color: red;
-                transform: scale(1.4);
-            }
-
-            &__content {
-                display: flex;
-                flex-direction: column;
-                gap: 125px;
-
-                .main-settings, .danger-settings {
-                    display: flex;
-                    flex-direction: column;
-                    gap: 30px;
-                }
-
-                .main-settings {
-                    gap: 15px;
-                }
-
-                input {
-                    font-size: 12px;
-                }
+            input {
+                font-size: 12px;
             }
         }
     }

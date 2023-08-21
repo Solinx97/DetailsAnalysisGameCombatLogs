@@ -5,6 +5,26 @@
     justify-content: start;
     gap: 25px;
 
+    &__selected-chat {
+        display: flex;
+        gap: 25px;
+        flex-grow: 2;
+
+        .messages-container {
+            flex-grow: 2;
+
+            .title {
+                display: flex;
+                flex-direction: row;
+                justify-content: space-around;
+
+                &__companion {
+                    margin: 0 20px;
+                }
+            }
+        }
+    }
+
     .select-chat {
         margin: 25px;
         font-size: 20px;
