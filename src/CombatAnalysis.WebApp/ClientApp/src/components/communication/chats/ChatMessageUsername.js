@@ -7,7 +7,9 @@ const ChatMessageUsername = ({ messageOwnerId }) => {
         return <></>;
     }
 
-    return <div className="username">{user?.username}</div>;
+    return (
+        <div className="username" title={user?.usernam}>{user?.username}</div>
+    );
 }
 
 export default ChatMessageUsername;

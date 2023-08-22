@@ -41,12 +41,14 @@ const PersonalChat = ({ chat, customer, setSelectedChat, companionId }) => {
     }
 
     const sendMessageAsync = async () => {
-        if (messageInput.current.value.length === 0) {
+        if (messageInput.current?.value.length === 0) {
             return;
         }
 
         await createChatMessageAsync(messageInput.current.value);
-        messageInput.current.value = "";
+        if (messageInput.current !== null) {
+            messageInput.current.value = "";
+        }
     }
 
     const sendMessageByKeyAsync = async (e) => {

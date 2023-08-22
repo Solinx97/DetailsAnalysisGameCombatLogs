@@ -1,8 +1,8 @@
 import { faClose, faCloudArrowUp, faPen, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useRef, useState } from 'react';
-import ChatMessageUsername from './ChatMessageUsername';
 import { useTranslation } from 'react-i18next';
+import ChatMessageUsername from './ChatMessageUsername';
 
 import "../../../styles/communication/chats/chatMessage.scss";
 
@@ -61,12 +61,10 @@ const ChatMessage = ({ customer, message, updateMessageAsync, deleteMessageAsync
                     </div>
                 </div>
             }
-            <div className={`chat-messages__${customer?.id === message?.ownerId ? "right" : "left"}`}>
-                {customer?.id !== message?.ownerId &&
-                    <ChatMessageUsername
-                        messageOwnerId={message?.ownerId}
-                    />
-                }
+            <div className="chat-messages__content">
+                <ChatMessageUsername
+                    messageOwnerId={message?.ownerId}
+                />
                 {editModeIsOn && customer?.id === message?.ownerId
                     ? <div className="edit-message">
                         <input className="form-control" defaultValue={message.message} ref={editMessageInput} />
@@ -75,8 +73,10 @@ const ChatMessage = ({ customer, message, updateMessageAsync, deleteMessageAsync
                             title={t("Save")}
                             onClick={async () => await updateMessageHandlerAsync()}
                         />
-                      </div>
-                    : <div className="message" onClick={() => setOpenMessageMenu((item) => !item)}>{message?.message}</div>
+                    </div>
+                    : message?.message.startsWith("http")
+                        ? <a className="message" href={message?.message} onClick={() => setOpenMessageMenu((item) => !item)}>{message?.message}</a>
+                        : <div className="message" onClick={() => setOpenMessageMenu((item) => !item)}>{message?.message}</div>
                 }
             </div>
         </>

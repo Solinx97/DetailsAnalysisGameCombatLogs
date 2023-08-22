@@ -18,6 +18,51 @@
     }
 }
 
+.chat-messages {
+    display: flex;
+    flex-direction: column;
+    height: 500px;
+    width: 100%;
+    margin: 12px 0px;
+    box-shadow: 3px 3px 3px 3px gray;
+    gap: 5px;
+    overflow-y: scroll;
+
+    &__content {
+        display: flex;
+        flex-direction: column;
+
+        .message {
+            padding: 5px 25px;
+            width: 95%;
+            word-wrap: break-word;
+        }
+
+        .edit-message {
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .username {
+            margin: 5px 0;
+            max-width: 150px;
+            padding: 10px;
+            border-radius: 10px;
+            font-size: 12px;
+            overflow-x: hidden;
+            cursor: default;
+            background: linear-gradient(blue, 1%, gray);
+            color: white;
+        }
+    }
+
+    ul li {
+        width: 90%;
+    }
+}
+
 .delete-message-alert {
     display: flex;
     justify-content: right;
