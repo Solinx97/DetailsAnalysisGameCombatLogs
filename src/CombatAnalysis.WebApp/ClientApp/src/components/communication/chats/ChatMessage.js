@@ -1,8 +1,8 @@
-import { faClose, faCloudArrowUp, faPen, faTrash } from '@fortawesome/free-solid-svg-icons';
+import { faCloudArrowUp } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import ChatMessageUsername from './ChatMessageUsername';
+import ChatMessageTitle from './ChatMessageTitle';
 
 import "../../../styles/communication/chats/chatMessage.scss";
 
@@ -10,76 +10,51 @@ const ChatMessage = ({ customer, message, updateMessageAsync, deleteMessageAsync
     const { t } = useTranslation("communication/chats/chatMessage");
 
     const [openMessageMenu, setOpenMessageMenu] = useState(false);
-    const [showDeleteAlert, setShowDeleteAlert] = useState(false);
     const [editModeIsOn, setEditModeIsOn] = useState(false);
 
     const editMessageInput = useRef(null);
 
     const updateMessageHandlerAsync = async () => {
         await updateMessageAsync(Object.assign({}, message), editMessageInput.current.value);
+
         setEditModeIsOn(false);
         setOpenMessageMenu(false);
     }
 
+    const handleOpenMessageMenu = () => {
+        if (customer?.id !== message?.ownerId) {
+            return;
+        }
+
+        setOpenMessageMenu((item) => !item);
+    }
+
     return (
-        <>
-            {openMessageMenu &&
-                <div className="message-menu">
+        <div className="chat-messages__content"
+            onMouseOver={handleOpenMessageMenu}
+            onMouseOut={handleOpenMessageMenu}>
+            <ChatMessageTitle
+                itIsMe={customer?.id !== message?.ownerId}
+                deleteMessageAsync={deleteMessageAsync}
+                setEditModeIsOn={setEditModeIsOn}
+                openMessageMenu={openMessageMenu}
+                editModeIsOn={editModeIsOn}
+                message={message}
+            />
+            {editModeIsOn && customer?.id === message?.ownerId
+                ? <div className="edit-message">
+                    <input className="form-control" defaultValue={message.message} ref={editMessageInput} />
                     <FontAwesomeIcon
-                        icon={faPen}
-                        title={t("Edit")}
-                        className={`message-menu__handler${editModeIsOn && "_active"}`}
-                        onClick={() => setEditModeIsOn((item) => !item)}
-                    />
-                    <FontAwesomeIcon
-                        icon={faTrash}
-                        title={t("Delete")}
-                        className={`message-menu__handler${showDeleteAlert && "_active"}`}
-                        onClick={() => setShowDeleteAlert((item) => !item)}
-                    />
-                    <FontAwesomeIcon
-                        icon={faClose}
-                        title={t("CloseMenu")}
-                        onClick={() => setOpenMessageMenu((item) => !item)}
+                        icon={faCloudArrowUp}
+                        title={t("Save")}
+                        onClick={async () => await updateMessageHandlerAsync()}
                     />
                 </div>
+                : message?.message.startsWith("http")
+                    ? <a className="message link" href={message?.message} target="_blank" rel="noreferrer">{message?.message}</a>
+                    : <div className="message">{message?.message}</div>
             }
-            {showDeleteAlert &&
-                <div className="delete-message-alert">
-                    <div className="delete-message-alert__content">{t("AreYouSure")}</div>
-                    <div className="delete-message-alert__choice">
-                        <FontAwesomeIcon
-                            icon={faTrash}
-                            title={t("Delete")}
-                            onClick={async () => await deleteMessageAsync(message.id)}
-                        />
-                        <FontAwesomeIcon
-                            icon={faClose}
-                            title={t("Cancel")}
-                            onClick={() => setShowDeleteAlert((item) => !item)}
-                        />
-                    </div>
-                </div>
-            }
-            <div className="chat-messages__content">
-                <ChatMessageUsername
-                    messageOwnerId={message?.ownerId}
-                />
-                {editModeIsOn && customer?.id === message?.ownerId
-                    ? <div className="edit-message">
-                        <input className="form-control" defaultValue={message.message} ref={editMessageInput} />
-                        <FontAwesomeIcon
-                            icon={faCloudArrowUp}
-                            title={t("Save")}
-                            onClick={async () => await updateMessageHandlerAsync()}
-                        />
-                    </div>
-                    : message?.message.startsWith("http")
-                        ? <a className="message" href={message?.message} onClick={() => setOpenMessageMenu((item) => !item)}>{message?.message}</a>
-                        : <div className="message" onClick={() => setOpenMessageMenu((item) => !item)}>{message?.message}</div>
-                }
-            </div>
-        </>
+        </div>
     );
 }
 
