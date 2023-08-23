@@ -1,6 +1,8 @@
 {
   "SearchPeople": "Search people",
   "SentInvite": "You sent invite to",
+  "SendInvite": "Send invite",
+  "CancelRequest": "Cancel request",
   "Friends": "Friends",
   "Hide": "Hide",
   "Show": "Show",
@@ -9,7 +11,6 @@
   "More": "More",
   "Less": "Less",
   "AnotherPeople": "Another people",
-  "SendInvite": "Send invite",
   "Close": "Close",
   "InvitePeople": "Invite people",
   "Empty": "Empty",

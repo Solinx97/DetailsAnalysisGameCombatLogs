@@ -3,5 +3,12 @@
   "ShowDetails": "Подробнее",
   "StartChat": "Начать общение",
   "RequestToConnect": "Запрос на дружбу",
-  "InviteToCommunity": "Пригласить в сообщество"
+  "InviteToCommunity": "Пригласить в сообщество",
+  "AlreadyFriend": "Этот пользователь уже ваш друг",
+  "SentRequest": "Вы отправили запрос ",
+  "AlreadySentRequest": "Вы уже отправили запрос ",
+  "CancelInvite": "Отменить приглашение",
+  "SendInvite": "Отправить приглашение",
+  "Send": "Отправить",
+  "Cancel": "Отмена"
 }

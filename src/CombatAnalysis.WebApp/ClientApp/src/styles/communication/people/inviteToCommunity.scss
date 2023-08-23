@@ -1,0 +1,43 @@
+.invite-to-community {
+    position: fixed;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 25px;
+    padding: 10px;
+    border: 2px solid green;
+    border-radius: 10px;
+    background: white;
+    z-index: 10;
+    top: 28%;
+    width: 250px;
+
+    ul {
+        padding: 0;
+        width: 95%;
+    }
+
+    .community {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 25px;
+
+        svg {
+            cursor: pointer;
+        }
+
+        svg:hover {
+            transform: scale(1.2);
+        }
+    }
+
+    .actions {
+        display: flex;
+        gap: 20px;
+
+        input {
+            font-size: 13px;
+        }
+    }
+}

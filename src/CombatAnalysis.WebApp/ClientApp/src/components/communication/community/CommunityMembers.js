@@ -28,7 +28,7 @@ const CommunityMembers = ({ community, customer, handleShowAddPeople, showAddPeo
     }, [communityUsers])
 
     const createInviteAsync = async () => {
-        for (var i = 0; i < peopleIdToJoin.length; i++) {
+        for (let i = 0; i < peopleIdToJoin.length; i++) {
             const newInviteToCommunity = {
                 communityId: community.id,
                 toCustomerId: peopleIdToJoin[i],

@@ -3,10 +3,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useEffect, useRef, useState } from "react";
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
-import { useLazyGetCommunityByIdQuery, useRemoveCommunityAsyncMutation } from '../../../store/api/Community.api';
+import { useLazyGetCommunityByIdQuery } from '../../../store/api/Community.api';
 import { useCreateCommunityPostAsyncMutation } from '../../../store/api/CommunityPost.api';
-import { useLazySearchByUserIdAsyncQuery, useRemoveCommunityUserAsyncMutation } from '../../../store/api/CommunityUser.api';
 import { useCreatePostAsyncMutation } from '../../../store/api/Post.api';
 import Communication from '../Communication';
 import CommunityMembers from './CommunityMembers';
@@ -20,7 +18,6 @@ const SelectedCommunity = () => {
 
     const customer = useSelector((state) => state.customer.value);
 
-    const [showLeaveFromCommunityAlert, setShowLeaveFromCommunityAlert] = useState(false);
     const [showDescription, setShowDescription] = useState(true);
     const [showCreatePost, setShowCreatePost] = useState(false);
     const [showMenu, setShowMenu] = useState(false);
@@ -30,14 +27,9 @@ const SelectedCommunity = () => {
 
     const postContentRef = useRef(null);
 
-    const navigate = useNavigate();
-
     const [getCommunityByIdAsync] = useLazyGetCommunityByIdQuery();
     const [createNewPostAsync] = useCreatePostAsyncMutation();
     const [createNewCommunityPostAsync] = useCreateCommunityPostAsyncMutation();
-    const [removeCommunityAsync] = useRemoveCommunityAsyncMutation();
-    const [searchByUserIdAsync] = useLazySearchByUserIdAsyncQuery();
-    const [removeCommunityUserAsync] = useRemoveCommunityUserAsyncMutation();
 
     useEffect(() => {
         const queryParams = new URLSearchParams(window.location.search);
@@ -85,21 +77,6 @@ const SelectedCommunity = () => {
         return createdUserPost.data === undefined ? false : true;
     }
 
-    const leaveFromCommunityAsync = async () => {
-        const myCommunityUserId = await searchByUserIdAsync(customer.id);
-        const deletedItemCount = await removeCommunityUserAsync(myCommunityUserId);
-        if (deletedItemCount.data !== undefined) {
-            navigate('/communication');
-        }
-    }
-
-    const ownerLeaveFromCommunityAsync = async () => {
-        const deletedItemCount = await removeCommunityAsync(community.id);
-        if (deletedItemCount.data !== undefined) {
-            navigate('/communication');
-        }
-    }
-
     const handleShowAddPeople = () => {
         setShowAddPeople((item) => !item);
     }
@@ -134,9 +111,6 @@ const SelectedCommunity = () => {
                                 title={t("Menu")}
                                 onClick={() => setShowMenu((item) => !item)}
                             />
-                        </div>
-                        <div className="leave">
-                            <button className="btn btn-outline-danger" onClick={() => setShowLeaveFromCommunityAlert((item) => !item)}>{t("Leave")}</button>
                         </div>
                     </div>
                     <div className="description">
@@ -181,29 +155,6 @@ const SelectedCommunity = () => {
                             communityId={communityId}
                         />
                     </div>
-                    {showLeaveFromCommunityAlert &&
-                        <div className="leave-from-community">
-                            <div>{t("LeaveAlert")}</div>
-                            <div>
-                                <div>{t("LeaveConfirm")} <strong>'{community.name}'</strong>?</div>
-                            </div>
-                            {customer.id === community.ownerId
-                                ? <>
-                                    <div className="alert alert-danger" role="alert">
-                                        {t("LeaveOwnerConfirm")}
-                                    </div>
-                                    <div>
-                                        <button className="btn btn-outline-danger" onClick={async () => await ownerLeaveFromCommunityAsync()}>{t("Leave")}</button>
-                                        <button className="btn btn-outline-success" onClick={() => setShowLeaveFromCommunityAlert((item) => !item)}>{t("Cancel")}</button>
-                                    </div>
-                                </>
-                                : <div>
-                                    <button className="btn btn-outline-danger" onClick={async () => await leaveFromCommunityAsync()}>{t("Leave")}</button>
-                                    <button className="btn btn-outline-success" onClick={() => setShowLeaveFromCommunityAlert((item) => !item)}>{t("Cancel")}</button>
-                                </div>
-                            }
-                        </div>
-                    }
                 </div>
                 <ul className="selected-community__actions">
                     <li>

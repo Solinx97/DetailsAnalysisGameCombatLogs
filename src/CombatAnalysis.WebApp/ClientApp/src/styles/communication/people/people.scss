@@ -2,9 +2,10 @@
     &__cards {
         display: flex;
         flex-wrap: wrap;
+        gap: 25px;
+        margin-top: 10px;
 
         .card {
-            margin: 10px;
             width: 250px;
 
             .card-body {
@@ -36,6 +37,32 @@
                 svg:hover {
                     cursor: pointer;
                     transform: scale(1.25);
+                }
+            }
+
+            .user-friend {
+                opacity: 0.4;
+            }
+
+            .user-friend:hover {
+                transform: scale(1);
+                cursor: default;
+            }
+        }
+
+        .sent-request {
+            display: none;
+
+            &_active {
+                display: flex;
+                justify-content: center;
+                font-size: 13px;
+                padding: 5px;
+
+                p {
+                    font-weight: bold;
+                    font-size: 14px;
+                    margin-left: 3px;
                 }
             }
         }

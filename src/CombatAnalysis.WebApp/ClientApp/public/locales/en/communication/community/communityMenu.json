@@ -1,0 +1,14 @@
+{
+  "Main": "Main",
+  "Members": "Members",
+  "InvitePeople": "Invite people",
+  "Permisions": "Permisions",
+  "Rules": "Rules",
+  "Leave": "Leave",
+  "Update": "Update",
+  "Apply": "Apply",
+  "Cancel": "Cancel",
+  "LeaveConfirm": "You sure, that you want to leave from community",
+  "LeaveOwnerConfirm": "DANGER: You are owner of this community and if you leave this community will be removed. All content will be removed and can't be restored in future!!!",
+  "LeaveAlert": "You want to leave"
+}

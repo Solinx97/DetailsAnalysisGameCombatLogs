@@ -3,9 +3,14 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { useCreatePersonalChatAsyncMutation, useLazyIsExistAsyncQuery } from '../../../store/api/PersonalChat.api';
-import { useFriendSearchByUserIdQuery } from '../../../store/api/UserApi';
 import { useCreateRequestAsyncMutation, useLazySearchByOwnerIdQuery, useLazySearchByToUserIdQuery } from '../../../store/api/RequestToConnect.api';
+import { useFriendSearchByUserIdQuery } from '../../../store/api/UserApi';
 import UserInformation from './../UserInformation';
+import { useState } from 'react';
+import InviteToCommunity from './InviteToCommunity';
+
+const successNotificationTimeout = 2000;
+const failedNotificationTimeout = 2000;
 
 const PeopleItem = ({ setUserInformation, people, customer }) => {
     const { t } = useTranslation("communication/people/people");
@@ -17,6 +22,10 @@ const PeopleItem = ({ setUserInformation, people, customer }) => {
     const [createRequestAsync] = useCreateRequestAsyncMutation();
     const [sarchByToUserIdAsync] = useLazySearchByToUserIdQuery();
     const [sarchByOwnerIdAsync] = useLazySearchByOwnerIdQuery();
+
+    const [showSuccessNotification, setShowSuccessNotification] = useState(false);
+    const [showFailedNotification, setShowFailedNotification] = useState(false);
+    const [openInviteToCommunity, setOpenInviteToCommunity] = useState(false);
 
     const { data: isFriend, isLoading } = useFriendSearchByUserIdQuery({
         userId: customer?.id,
@@ -76,6 +85,12 @@ const PeopleItem = ({ setUserInformation, people, customer }) => {
     const createRequestToConnectAsync = async (people) => {
         const isExist = await checkExistRequestAsync(people.id);
         if (isExist) {
+            setShowFailedNotification(true);
+
+            setTimeout(() => {
+                setShowFailedNotification(false);
+            }, failedNotificationTimeout);
+
             return;
         }
 
@@ -86,7 +101,14 @@ const PeopleItem = ({ setUserInformation, people, customer }) => {
             ownerId: customer?.id,
         };
 
-        customer && await createRequestAsync(newRequest);
+        const createdRequest = await createRequestAsync(newRequest);
+        if (createdRequest.data !== undefined) {
+            setShowSuccessNotification(true);
+
+            setTimeout(() => {
+                setShowSuccessNotification(false);
+            }, successNotificationTimeout);
+        }
     }
 
     const openUserInformationWithTimeout = (targetCustomer) => {
@@ -107,42 +129,68 @@ const PeopleItem = ({ setUserInformation, people, customer }) => {
         setUserInformation(<></>);
     }
 
+    if (isLoading) {
+        return <></>;
+    }
+
     return (
-        <div className="card">
-            <div className="card-body">
-                <div>[icon]</div>
-                <h5 className="card-title" onMouseOver={() => openUserInformationWithTimeout(people)}
-                    onMouseLeave={() => clearUserInformationTimeout()}>{people.username}</h5>
-                <FontAwesomeIcon
-                    icon={faWindowRestore}
-                    title={t("ShowDetails")}
-                    onClick={() => openUserInformation(people)}
-                />
+        <div>
+            <div className={`alert alert-success sent-request${showSuccessNotification ? "_active" : ""}`} role="alert">
+                <div>{t("SentRequest")}</div>
+                <p>{people.username}</p>
             </div>
-            <ul className="card__links list-group list-group-flush">
-                <li className="list-group-item">
+            <div className={`alert alert-warning sent-request${showFailedNotification ? "_active" : ""}`} role="alert">
+                <div>{t("AlreadySentRequest")}</div>
+                <p>{people.username}</p>
+            </div>
+            <div className="card">
+                <div className="card-body">
+                    <h5 className="card-title" onMouseOver={() => openUserInformationWithTimeout(people)}
+                        onMouseLeave={() => clearUserInformationTimeout()}>{people.username}</h5>
                     <FontAwesomeIcon
-                        icon={faCommentDots}
-                        title={t("StartChat")}
-                        onClick={async () => await startChatAsync(people)}
+                        icon={faWindowRestore}
+                        title={t("ShowDetails")}
+                        onClick={() => openUserInformation(people)}
                     />
-                </li>
-                <li className="list-group-item">
-                    {!isFriend &&
+                </div>
+                <ul className="card__links list-group list-group-flush">
+                    <li className="list-group-item">
                         <FontAwesomeIcon
-                            icon={faUserPlus}
-                            title={t("RequestToConnect")}
-                            onClick={async () => await createRequestToConnectAsync(people)}
+                            icon={faCommentDots}
+                            title={t("StartChat")}
+                            onClick={async () => await startChatAsync(people)}
                         />
-                    }
-                </li>
-                <li className="list-group-item">
-                    <FontAwesomeIcon
-                        icon={faSquarePlus}
-                        title={t("InviteToCommunity")}
-                    />
-                </li>
-            </ul>
+                    </li>
+                    <li className="list-group-item">
+                        {isFriend
+                            ? <FontAwesomeIcon
+                                icon={faUserPlus}
+                                title={t("AlreadyFriend")}
+                                className="user-friend"
+                            />
+                            : <FontAwesomeIcon
+                                icon={faUserPlus}
+                                title={t("RequestToConnect")}
+                                onClick={async () => await createRequestToConnectAsync(people)}
+                            />
+                        }
+                    </li>
+                    <li className="list-group-item">
+                        <FontAwesomeIcon
+                            icon={faSquarePlus}
+                            title={t("InviteToCommunity")}
+                            onClick={() => setOpenInviteToCommunity((item) => !item)}
+                        />
+                    </li>
+                </ul>
+            </div>
+            {openInviteToCommunity &&
+                <InviteToCommunity
+                    customer={customer}
+                    setOpenInviteToCommunity={setOpenInviteToCommunity}
+                    people={people}
+                />
+            }
         </div>
     );
 }

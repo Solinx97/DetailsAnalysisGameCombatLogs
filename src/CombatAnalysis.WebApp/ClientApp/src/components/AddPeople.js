@@ -2,7 +2,8 @@ import { faEye, faEyeSlash, faMagnifyingGlassMinus, faMagnifyingGlassPlus, faPlu
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useFriendSearchByUserIdQuery, useGetCustomersQuery } from '../store/api/UserApi';
+import { useFriendSearchMyFriendsQuery } from '../store/api/Friend.api';
+import { useGetCustomersQuery } from '../store/api/UserApi';
 import AddFriendItem from './AddFriendItem';
 
 import '../styles/addPeople.scss';
@@ -16,7 +17,7 @@ const AddPeople = ({ customer, communityUsersId, peopleToJoin, setPeopleToJoin }
     const [maxPeopleItems, setMaxPeopleItems] = useState(defaultMaxPeopleItems);
     const [maxFriendsItems, setMaxFriendsItems] = useState(defaultMaxFriendsItems);
 
-    const { friends, isLoading: friendsIsLoading } = useFriendSearchByUserIdQuery(customer?.id, {
+    const { friends, isLoading: friendsIsLoading } = useFriendSearchMyFriendsQuery(customer?.id, {
         selectFromResult: ({ data }) => ({
             friends: data?.length <= defaultMaxFriendsItems
                 ? data?.filter((item) => !communityUsersId.includes(customer?.id === item.whoFriendId ? item.forWhomId : item.whoFriendId))
@@ -134,7 +135,10 @@ const AddPeople = ({ customer, communityUsersId, peopleToJoin, setPeopleToJoin }
                                 <li key={item.id} className="person">
                                     <AddFriendItem
                                         friendUserId={item.whoFriendId === customer.id ? item.forWhomId : item.whoFriendId}
-                                        filterContent={filterContent.current.value}
+                                        filterContent={filterContent.current === null ? "" : filterContent.current.value}
+                                        addUserIdToList={handleAddUserIdToList}
+                                        removeUserIdToList={handleRemoveUserIdToList}
+                                        peopleIdToJoin={peopleIdToJoin}
                                     />
                                 </li>
                                 ))
@@ -186,7 +190,7 @@ const AddPeople = ({ customer, communityUsersId, peopleToJoin, setPeopleToJoin }
                                         {peopleIdToJoin.includes(item.id)
                                             ? <FontAwesomeIcon
                                                 icon={faUserPlus}
-                                                title="Cancel request"
+                                                title={t("CancelRequest")}
                                                 onClick={() => handleRemoveUserIdToList(item.id)}
                                             />
                                             : <FontAwesomeIcon
