@@ -22,7 +22,12 @@ export const UserApi = createApi({
             query: () => '/Customer'
         }),
         friendSearchByUserId: builder.query({
-            query: (id) => `/Friend/searchByUserId/${id}`,
+            query: (arg) => {
+                const { userId, targetUserId } = arg;
+                return {
+                    url: `/Friend/searchByUserId?userId=${userId}&targetUserId=${targetUserId}`,
+                }
+            },
             providesTags: (result, error, id) => [{ type: 'Friend', id }],
         }),
         authenticationAsync: builder.query({

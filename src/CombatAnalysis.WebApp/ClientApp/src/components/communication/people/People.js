@@ -1,14 +1,9 @@
-import { faCommentDots, faSquarePlus, faUserPlus, faWindowRestore } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useCallback, useState } from "react";
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
-import { useCreatePersonalChatAsyncMutation, useLazyIsExistAsyncQuery } from '../../../store/api/PersonalChat.api';
-import { useCreateRequestAsyncMutation } from '../../../store/api/RequestToConnect.api';
 import { useGetCustomersQuery } from '../../../store/api/UserApi';
 import Communication from '../Communication';
-import UserInformation from './../UserInformation';
-import { useNavigate } from 'react-router-dom';
+import PeopleItem from './PeopleItem';
 
 import '../../../styles/communication/people/people.scss';
 
@@ -17,82 +12,18 @@ const People = () => {
 
     const customer = useSelector((state) => state.customer.value);
 
-    const navigate = useNavigate();
-
-    const { data: people, isLoading } = useGetCustomersQuery();
-    const [isExistAsync] = useLazyIsExistAsyncQuery();
-    const [createPersonalChatAsync] = useCreatePersonalChatAsyncMutation();
-    const [createRequestAsync] = useCreateRequestAsyncMutation();
-
+    const { people, isLoading } = useGetCustomersQuery(undefined, {
+        selectFromResult: ({ data }) => ({
+            people: data !== undefined ? data.filter((item) => item.id !== customer?.id) : []
+        }),
+    });
     const [userInformation, setUserInformation] = useState(<></>);
-
-    let showUserInformationTimeout = null;
-
-    const checkExistChatAsync = async (targetCustomer) => {
-        const queryParams = {
-            userId: customer?.id,
-            targetUserId: targetCustomer?.id
-        };
-
-        const isExist = await isExistAsync(queryParams);
-        return isExist.data !== undefined ? isExist.data : true;
-    }
-
-    const startChatAsync = async (targetCustomer) => {
-        const isExist = await checkExistChatAsync(targetCustomer);
-        if (isExist) {
-            navigate("/chats");
-            return;
-        }
-
-        const newChat = {
-            initiatorUsername: customer?.username,
-            companionUsername: targetCustomer.username,
-            lastMessage: " ",
-            initiatorId: customer?.id,
-            companionId: targetCustomer.id
-        };
-
-        const createdChat = await createPersonalChatAsync(newChat);
-        if (createdChat.data !== undefined) {
-            navigate("/chats");
-        }
-    }
-
-    const createRequestToConnectAsync = async (people) => {
-        const newRequest = {
-            username: customer?.username,
-            toUserId: people.id,
-            when: new Date(),
-            ownerId: customer?.id,
-        };
-
-        customer && await createRequestAsync(newRequest);
-    }
 
     const peopleListFilter = useCallback((value) => {
         if (value.id !== customer?.id) {
             return value;
         }
     }, [])
-
-    const openUserInformationWithTimeout = (targetCustomer) => {
-        showUserInformationTimeout = setTimeout(() => {
-            setUserInformation(<UserInformation customer={targetCustomer} closeUserInformation={closeUserInformation} />);
-        }, 1000);
-    }
-
-    const openUserInformation = (targetCustomer) => {
-        setUserInformation(<UserInformation customer={targetCustomer} closeUserInformation={closeUserInformation} />);
-    }
-
-    const clearUserInformationTimeout = () => {
-        clearInterval(showUserInformationTimeout);
-    }
-
-    const closeUserInformation = () => {
-        setUserInformation(<></>);
-    }
 
     if (isLoading) {
         return <></>;
@@ -111,39 +42,11 @@ const People = () => {
                     {
                         people.filter(peopleListFilter).map((item) => (
                             <li key={item.id}>
-                                <div className="card">
-                                    <div className="card-body">
-                                        <div>[icon]</div>
-                                        <h5 className="card-title" onMouseOver={() => openUserInformationWithTimeout(item)}
-                                            onMouseLeave={() => clearUserInformationTimeout()}>{item.username}</h5>
-                                        <FontAwesomeIcon
-                                            icon={faWindowRestore}
-                                            title={t("ShowDetails")}
-                                            onClick={() => openUserInformation(item)}
-                                        />
-                                    </div>
-                                    <ul className="card__links list-group list-group-flush">
-                                        <li className="list-group-item">
-                                            <FontAwesomeIcon
-                                                icon={faCommentDots}
-                                                title={t("StartChat")}
-                                                onClick={async () => await startChatAsync(item)}
-                                            />
-                                        </li>
-                                        <li className="list-group-item">
-                                            <FontAwesomeIcon
-                                                icon={faUserPlus}
-                                                title={t("RequestToConnect")}
-                                                onClick={async () => await createRequestToConnectAsync(item)} />
-                                        </li>
-                                        <li className="list-group-item">
-                                            <FontAwesomeIcon
-                                                icon={faSquarePlus}
-                                                title={t("InviteToCommunity")}
-                                            />
-                                        </li>
-                                    </ul>
-                                </div>
+                                <PeopleItem
+                                    customer={customer}
+                                    setUserInformation={setUserInformation}
+                                    people={item}
+                                />
                             </li>
                         ))
                     }

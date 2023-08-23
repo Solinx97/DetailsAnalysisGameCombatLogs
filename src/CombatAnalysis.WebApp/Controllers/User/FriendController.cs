@@ -40,31 +40,32 @@ public class FriendController : ControllerBase
         return BadRequest();
     }
 
-    [HttpGet("searchByForWhomId/{id}")]
-    public async Task<IActionResult> SearchByForWhomId(string id)
+    [HttpGet("searchByUserId")]
+    public async Task<IActionResult> SearchByUserId(string userId, string targetUserId)
     {
         if (!HttpContext.Request.Cookies.TryGetValue("refreshToken", out var refreshToken))
         {
             return Unauthorized();
         }
 
-        var responseMessage = await _httpClient.GetAsync($"Friend/searchByForWhomId/{id}", refreshToken, Port.UserApi);
+        var responseMessage = await _httpClient.GetAsync($"Friend/searchByUserId/{targetUserId}", refreshToken, Port.UserApi);
         if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
         {
             return Unauthorized();
         }
         else if (responseMessage.IsSuccessStatusCode)
         {
-            var friends = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<FriendModel>>();
+            var friendsCurrentUser = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<FriendModel>>();
+            var myFriends = friendsCurrentUser?.Where(x => x.WhoFriendId == userId || x.ForWhomId == userId);
 
-            return Ok(friends);
+            return Ok(myFriends?.Any());
         }
 
         return BadRequest();
     }
 
-    [HttpGet("searchByUserId/{id}")]
-    public async Task<IActionResult> SearchByUserId(string id)
+    [HttpGet("searchMyFriends/{id}")]
+    public async Task<IActionResult> SearchMyFriends(string id)
     {
         if (!HttpContext.Request.Cookies.TryGetValue("refreshToken", out var refreshToken))
         {
@@ -78,9 +79,9 @@ public class FriendController : ControllerBase
         }
         else if (responseMessage.IsSuccessStatusCode)
         {
-            var friends = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<FriendModel>>();
+            var friendsCurrentUser = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<FriendModel>>();
 
-            return Ok(friends);
+            return Ok(friendsCurrentUser);
         }
 
         return BadRequest();

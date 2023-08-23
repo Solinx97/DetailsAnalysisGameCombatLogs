@@ -30,6 +30,9 @@ export const RequestToConnectApi = ChatApi.injectEndpoints({
 
 export const {
     useCreateRequestAsyncMutation,
+    useSearchByToUserIdQuery,
+    useLazySearchByToUserIdQuery,
     useSearchByOwnerIdQuery,
+    useLazySearchByOwnerIdQuery,
     useRemoveRequestAsyncMutation,
 } = RequestToConnectApi;

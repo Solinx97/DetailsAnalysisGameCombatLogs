@@ -15,11 +15,16 @@ export const FriendApi = UserApi.injectEndpoints({
                 method: 'DELETE'
             }),
             invalidatesTags: (result, error) => [{ type: 'Friend', result }],
-        })
+        }),
+        friendSearchMyFriends: builder.query({
+            query: (currentUser) => `/Friend/searchMyFriends/${currentUser}`,
+            providesTags: (result, error, id) => [{ type: 'Friend', id }],
+        }),
     })
 })
 
 export const {
     useCreateFriendAsyncMutation,
     useRemoveFriendAsyncMutation,
+    useFriendSearchMyFriendsQuery
 } = FriendApi;

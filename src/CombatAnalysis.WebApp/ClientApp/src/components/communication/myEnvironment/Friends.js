@@ -3,9 +3,9 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
-import { useRemoveFriendAsyncMutation } from '../../../store/api/Friend.api';
-import { useFriendSearchByUserIdQuery } from '../../../store/api/UserApi';
+import { useFriendSearchMyFriendsQuery, useRemoveFriendAsyncMutation } from '../../../store/api/Friend.api';
 import UserInformation from './../UserInformation';
+import FriendUsername from './FriendUsername';
 import RequestsToConnect from './RequestsToConnect';
 
 import '../../../styles/communication/myEnvironment/friends.scss';
@@ -15,7 +15,7 @@ const Friends = () => {
 
     const customer = useSelector((state) => state.customer.value);
 
-    const { data: myFriends, isLoading } = useFriendSearchByUserIdQuery(customer?.id);
+    const { data: myFriends, isLoading } = useFriendSearchMyFriendsQuery(customer?.id);
     const [removeFriendAsyncMut] = useRemoveFriendAsyncMutation(customer?.id);
 
     const [userInformation, setUserInformation] = useState(null);
@@ -43,7 +43,7 @@ const Friends = () => {
         <div className="friends">
             <RequestsToConnect />
             <div>
-                <div><strong>{t("Friends")}</strong></div>
+                <div>{t("Friends")}</div>
             </div>
             <ul>
                 {
@@ -56,7 +56,9 @@ const Friends = () => {
                                     onClick={() => openUserInformation(item)}
                                 />
                             </div>
-                            <div>{item.username}</div>
+                            <FriendUsername
+                                friendId={item.forWhomId === customer?.id ? item.whoFriendId : item.forWhomId}
+                            />
                             <div className="friend__remove">
                                 <FontAwesomeIcon
                                     icon={faCircleXmark}
