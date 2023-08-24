@@ -31,7 +31,7 @@ const MyCommunities = () => {
     }
 
     return (
-        <div>
+        <>
             <InvitesToCommunity
                 customer={customer}
             />
@@ -85,7 +85,7 @@ const MyCommunities = () => {
                     setShowCreateCommunity={setShowCreateCommunity}
                 />
             }
-        </div>
+        </>
     );
 }
 

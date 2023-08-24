@@ -4,9 +4,9 @@ import { useSearchByUserIdAsyncQuery } from '../../../store/api/CommunityUser.ap
 import { useCreateInviteAsyncMutation, useLazyInviteIsExistQuery } from '../../../store/api/InviteToCommunity.api';
 import TargetCommunity from './TargetCommunity';
 
-import '../../../styles/communication/people/inviteToCommunity.scss';
+import '../../../styles/communication/people/peopleInvitesToCommunity.scss';
 
-const InviteToCommunity = ({ customer, people, setOpenInviteToCommunity }) => {
+const PeopleInvitesToCommunity = ({ customer, people, setOpenInviteToCommunity }) => {
     const { t } = useTranslation("communication/people/people");
 
     const { data: communityUsers, isLoading } = useSearchByUserIdAsyncQuery(customer?.id);
@@ -56,7 +56,7 @@ const InviteToCommunity = ({ customer, people, setOpenInviteToCommunity }) => {
     }
 
     return (
-        <div className="invite-to-community">
+        <div className="invites">
             <div className="title">{t("InviteToCommunity")}</div>
             <ul>
                 {
@@ -79,4 +79,4 @@ const InviteToCommunity = ({ customer, people, setOpenInviteToCommunity }) => {
     );
 }
 
-export default InviteToCommunity;
+export default PeopleInvitesToCommunity;

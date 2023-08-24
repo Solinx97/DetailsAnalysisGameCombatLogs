@@ -54,16 +54,11 @@ const RequestToConnect = () => {
         return <></>;
     }
 
-    if (allRequests.length === undefined
-        && allMyRequests.length === undefined) {
-        return <></>;
-    }
-
     return (
         <>
             {allRequests?.length > 0 &&
                 <div>
-                    <div><strong>{t("Requests")}</strong></div>
+                    <div>{t("Requests")}</div>
                     <ul>
                         {
                             allRequests?.map((item) => (
@@ -81,7 +76,7 @@ const RequestToConnect = () => {
             }
             {allMyRequests?.length > 0 &&
                 <div>
-                    <div><strong>{t("MyRequests")}</strong></div>
+                    <div>{t("MyRequests")}</div>
                     <ul>
                         {
                             allMyRequests?.map((item) => (

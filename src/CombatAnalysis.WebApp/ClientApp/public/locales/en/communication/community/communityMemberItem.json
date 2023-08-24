@@ -3,5 +3,6 @@
   "RemovePeopleAlertStart": "You sure, that you want to remove user",
   "RemovePeopleAlertFinish": "from community",
   "Remove": "Remove",
-  "Cancel": "Cancel"
+  "Cancel": "Cancel",
+  "Information": "Informaion"
 }

@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { useCallback } from "react";
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import { useGetCustomersQuery } from '../../../store/api/UserApi';
@@ -17,7 +17,6 @@ const People = () => {
             people: data !== undefined ? data.filter((item) => item.id !== customer?.id) : []
         }),
     });
-    const [userInformation, setUserInformation] = useState(<></>);
 
     const peopleListFilter = useCallback((value) => {
         if (value.id !== customer?.id) {
@@ -44,14 +43,12 @@ const People = () => {
                             <li key={item.id}>
                                 <PeopleItem
                                     customer={customer}
-                                    setUserInformation={setUserInformation}
                                     people={item}
                                 />
                             </li>
                         ))
                     }
                 </ul>
-                {userInformation}
             </div>
         </div>
     );

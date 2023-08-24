@@ -73,7 +73,8 @@ public class AccountController : ControllerBase
         }
         else if (responseMessage.IsSuccessStatusCode)
         {
-            return Ok();
+            var response = await responseMessage.Content.ReadFromJsonAsync<ResponseFromAccount>();
+            return Ok(response.User);
         }
 
         return BadRequest();

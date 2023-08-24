@@ -3,5 +3,6 @@
   "RemovePeopleAlertStart": "Вы уверены, что хотите удалить пользователя",
   "RemovePeopleAlertFinish": "из сообщества",
   "Remove": "Исключить",
-  "Cancel": "Отмена"
+  "Cancel": "Отмена",
+  "Information": "Информация"
 }

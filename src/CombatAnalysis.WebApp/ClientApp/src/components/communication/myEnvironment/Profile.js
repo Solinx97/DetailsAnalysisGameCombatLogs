@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 import { useEditAsyncMutation } from '../../../store/api/Account.api';
-import { useLazySearchByUserIdAsyncQuery } from '../../../store/api/Customer.api';
+import { useEditCustomerAsyncMutation, useLazyGetCustomerByIdQuery } from '../../../store/api/Customer.api';
 import { updateCustomer } from '../../../store/slicers/CustomerSlice';
 import { updateUser } from '../../../store/slicers/UserSlice';
 
@@ -15,8 +15,9 @@ const Profile = () => {
     const customer = useSelector((state) => state.customer.value);
     const user = useSelector((state) => state.user.value);
 
-    const [editAsync] = useEditAsyncMutation();
-    const [getCustomerAsync] = useLazySearchByUserIdAsyncQuery();
+    const [editUserAsyncMut] = useEditAsyncMutation();
+    const [editCustomerAsyncMut] = useEditCustomerAsyncMutation();
+    const [getCustomerById] = useLazyGetCustomerByIdQuery();
 
     const [isEditMode, setIsEditMode] = useState(false);
 
@@ -34,66 +35,78 @@ const Profile = () => {
     const confirmPassword = useRef(null);
 
     useEffect(() => {
-        getUserInformation();
-        getCustomerInformation();
+        getUserInformation(user);
+        getCustomerInformation(customer);
     }, [])
 
     useEffect(() => {
-        getUserInformation();
-        getCustomerInformation();
+        getUserInformation(user);
+        getCustomerInformation(customer);
     }, [isEditMode])
 
-    const getUserInformation = () => {
-        const date = new Date(user?.birthday);
-        const correntMonthNumber = date.getMonth() === 0 ? 1 : date.getMonth();
+    const getUserInformation = (user) => {
+        const date = new Date(user.birthday);
+        const correntMonthNumber = date.getMonth() === 0 ? 1 : date.getMonth() + 1;
         const month = correntMonthNumber < 10 ? `0${correntMonthNumber}` : correntMonthNumber;
         const day = date.getDate() < 10 ? `0${date.getDate()}` : date.getDate();
 
-        let birthdayFromDate = `${date.getFullYear()}-${month}-${day}`;
+        const birthdayFromDate = `${date.getFullYear()}-${month}-${day}`;
 
-        email.current.value = user?.email;
-        phoneNumber.current.value = user?.phoneNumber;
+        email.current.value = user.email;
+        phoneNumber.current.value = user.phoneNumber;
         birthday.current.value = birthdayFromDate;
     }
 
-    const getCustomerInformation = () => {
-        email.current.value = user?.email;
-        message.current.value = customer?.message;
-        username.current.value = customer?.username;
-        aboutMe.current.value = customer?.aboutMe;
-        firstName.current.value = customer?.firstName;
-        lastName.current.value = customer?.lastName;
-        gender.current.value = customer?.gender;
+    const getCustomerInformation = (customer) => {
+        message.current.value = customer.message;
+        username.current.value = customer.username;
+        aboutMe.current.value = customer.aboutMe;
+        firstName.current.value = customer.firstName;
+        lastName.current.value = customer.lastName;
+        gender.current.value = customer.gender;
     }
 
     const editUserAsync = async () => {
-        const updatesForUser = {
+        const updateForUser = {
             id: user?.id,
-            email: user?.email,
-            phoneNumber: user?.phoneNumber,
-            birthday: user?.birthday,
+            email: email.current.value,
+            phoneNumber: phoneNumber.current.value,
+            birthday: birthday.current.value,
             password: user?.password
         };
 
-        updatesForUser.email = email.current.value;
-        updatesForUser.phoneNumber = phoneNumber.current.value;
-        updatesForUser.birthday = birthday.current.value;
-
         if (password.current.value !== "" && password.current.value !== user?.password
             && password.current.value === confirmPassword.current.value) {
-            updatesForUser.password = password.current.value;
+            updateForUser.password = password.current.value;
         }
 
-        const updatedUser = await editAsync(updatesForUser);
+        const updatedUser = await editUserAsyncMut(updateForUser);
         if (updatedUser.data !== undefined) {
             dispatch(updateUser(updatedUser.data));
 
-            const customer = await getCustomerAsync(updatedUser.data.id);
-            if (customer.data !== undefined) {
-                dispatch(updateCustomer(customer.data));;
-            }
+            await editCustomerAsync(updatedUser.data.id);
+        }
 
-            setIsEditMode(false);
+        setIsEditMode(false);
+    }
+
+    const editCustomerAsync = async (userId) => {
+        const updateForCustomer = {
+            id: customer?.id,
+            message: message.current.value,
+            username: username.current.value,
+            aboutMe: aboutMe.current.value,
+            firstName: firstName.current.value,
+            lastName: lastName.current.value,
+            gender: +gender.current.value,
+            appUserId: userId
+        };
+
+        const updatedItem = await editCustomerAsyncMut(updateForCustomer);
+        if (updatedItem.data !== undefined) {
+            const updatedCustomer = await getCustomerById(customer?.id);
+
+            dispatch(updateCustomer(updatedCustomer.data));
         }
     }
 

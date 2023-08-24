@@ -29,17 +29,6 @@
                 }
             }
 
-            &__links {
-                display: flex;
-                flex-direction: row;
-                justify-content: space-around;
-
-                svg:hover {
-                    cursor: pointer;
-                    transform: scale(1.25);
-                }
-            }
-
             .user-friend {
                 opacity: 0.4;
             }
@@ -58,16 +47,9 @@
                 justify-content: center;
                 font-size: 13px;
                 padding: 5px;
-
-                p {
-                    font-weight: bold;
-                    font-size: 14px;
-                    margin-left: 3px;
-                }
             }
         }
     }
-
 
     &__successfully-request {
         margin: 10px;

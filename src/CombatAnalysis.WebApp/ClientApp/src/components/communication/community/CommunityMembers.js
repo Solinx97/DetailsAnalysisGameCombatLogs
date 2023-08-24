@@ -104,7 +104,7 @@ const CommunityMembers = ({ community, customer, handleShowAddPeople, showAddPeo
                             <CommunityMemberItem
                                 community={community}
                                 comunityUser={item}
-                                customerId={customer?.id}
+                                customer={customer}
                                 showRemovePeople={showRemovePeople}
                             />
                         </li>
