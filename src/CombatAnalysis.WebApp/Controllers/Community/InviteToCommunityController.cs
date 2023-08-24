@@ -109,6 +109,34 @@ public class InviteToCommunityController : ControllerBase
         return BadRequest();
     }
 
+    [HttpGet("isExist")]
+    public async Task<IActionResult> IsExist(string peopleId, int communityId)
+    {
+        if (!HttpContext.Request.Cookies.TryGetValue("refreshToken", out var refreshToken))
+        {
+            return Unauthorized();
+        }
+
+        var responseMessage = await _httpClient.GetAsync("InviteToCommunity", refreshToken, Port.ChatApi);
+        if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+        {
+            return Unauthorized();
+        }
+        else if (!responseMessage.IsSuccessStatusCode)
+        {
+            return BadRequest();
+        }
+
+        var allInvites = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<InviteToCommunityModel>>();
+        var existedInvites = allInvites.Where(x => x.ToCustomerId == peopleId && x.CommunityId == communityId).ToList();
+        if (existedInvites.Any())
+        {
+            return Ok(true);
+        }
+
+        return Ok(false);
+    }
+
     [HttpPut]
     public async Task<IActionResult> Update(InviteToCommunityModel chat)
     {

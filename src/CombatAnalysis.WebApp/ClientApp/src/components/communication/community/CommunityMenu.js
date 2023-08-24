@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { useRemoveCommunityAsyncMutation } from '../../../store/api/Community.api';
 import { useLazySearchByUserIdAsyncQuery, useRemoveCommunityUserAsyncMutation } from '../../../store/api/CommunityUser.api';
-import { useCreateInviteAsyncMutation } from '../../../store/api/InviteToCommunity.api';
+import { useCreateInviteAsyncMutation, useLazyInviteIsExistQuery } from '../../../store/api/InviteToCommunity.api';
 import AddPeople from '../../AddPeople';
 import CommonItem from "../chats/createGroupChat/CommonItem";
 import ItemConnector from '../chats/createGroupChat/ItemConnector';
@@ -36,6 +36,7 @@ const CommunityMenu = ({ setShowMenu, customer, community }) => {
     const [searchByUserIdAsync] = useLazySearchByUserIdAsyncQuery();
     const [removeCommunityUserAsync] = useRemoveCommunityUserAsyncMutation();
     const [createInviteAsyncMut] = useCreateInviteAsyncMutation();
+    const [isInviteExistAsync] = useLazyInviteIsExistQuery();
 
     const leaveFromCommunityAsync = async () => {
         const myCommunityUserId = await searchByUserIdAsync(customer.id);
@@ -60,8 +61,27 @@ const CommunityMenu = ({ setShowMenu, customer, community }) => {
         seItemIndex(2);
     }
 
+    const checkIfRequestExistAsync = async (peopleId, communityId) => {
+        const arg = {
+            peopleId: peopleId,
+            communityId: communityId
+        };
+
+        const isExist = await isInviteExistAsync(arg);
+        if (isExist.error !== undefined) {
+            return true;
+        }
+
+        return isExist.data;
+    }
+
     const createInviteAsync = async () => {
         for (let i = 0; i < peopleIdToJoin.length; i++) {
+            const isExist = await checkIfRequestExistAsync(peopleIdToJoin[i], community.id);
+            if (isExist) {
+                continue;
+            }
+
             const newInviteToCommunity = {
                 communityId: community.id,
                 toCustomerId: peopleIdToJoin[i],
@@ -208,10 +228,10 @@ const CommunityMenu = ({ setShowMenu, customer, community }) => {
                                 />
                         </div>
                             <div class={`alert alert-success ${showInvitesSuccess ? "active" : ""}`} role="alert">
-                                Invites sent success
+                                {t("InviteSuccess")}
                             </div>
                             <div class={`alert alert-warning ${showInvitesFailed ? "active" : ""}`} role="alert">
-                                Someting wrong. Invites didn't sent
+                                {t("InviteFailed")}
                             </div>
                             <div className="actions">
                                 <input type="button" value={t("Apply")} className="btn btn-success" onClick={async () => await createInviteAsync()} />

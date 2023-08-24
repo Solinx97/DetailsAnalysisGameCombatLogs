@@ -10,8 +10,13 @@ export const RequestToConnectApi = ChatApi.injectEndpoints({
             }),
             invalidatesTags: (result, error, arg) => [{ type: 'RequestToConnect', arg }]
         }),
-        searchByToUserId: builder.query({
-            query: (id) => `/RequestToConnect/searchByToUserId/${id}`,
+        requestIsExist: builder.query({
+            query: (arg) => {
+                const { userId, targetUserId } = arg;
+                return {
+                    url: `/RequestToConnect/isExist?initiatorId=${userId}&companionId=${targetUserId}`,
+                }
+            },
             providesTags: (result, error, id) => [{ type: 'RequestToConnect', id }]
         }),
         searchByOwnerId: builder.query({
@@ -30,8 +35,8 @@ export const RequestToConnectApi = ChatApi.injectEndpoints({
 
 export const {
     useCreateRequestAsyncMutation,
-    useSearchByToUserIdQuery,
-    useLazySearchByToUserIdQuery,
+    useRequestIsExistQuery,
+    useLazyRequestIsExistQuery,
     useSearchByOwnerIdQuery,
     useLazySearchByOwnerIdQuery,
     useRemoveRequestAsyncMutation,

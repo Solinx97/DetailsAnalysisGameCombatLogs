@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSearchByCommunityIdAsyncQuery } from '../../../store/api/ChatApi';
-import { useCreateInviteAsyncMutation } from '../../../store/api/InviteToCommunity.api';
+import { useCreateInviteAsyncMutation, useLazyInviteIsExistQuery } from '../../../store/api/InviteToCommunity.api';
 import AddPeople from '../../AddPeople';
 import CommunityMemberItem from './CommunityMemberItem';
 
@@ -17,6 +17,7 @@ const CommunityMembers = ({ community, customer, handleShowAddPeople, showAddPeo
     const [createInviteAsyncMut] = useCreateInviteAsyncMutation();
 
     const { data: communityUsers, isLoading } = useSearchByCommunityIdAsyncQuery(community?.id);
+    const [isInviteExistAsync] = useLazyInviteIsExistQuery();
 
     useEffect(() => {
         const idList = [];
@@ -27,8 +28,27 @@ const CommunityMembers = ({ community, customer, handleShowAddPeople, showAddPeo
         setCommunityUsersId(idList);
     }, [communityUsers])
 
+    const checkIfRequestExistAsync = async (peopleId, communityId) => {
+        const arg = {
+            peopleId: peopleId,
+            communityId: communityId
+        };
+
+        const isExist = await isInviteExistAsync(arg);
+        if (isExist.error !== undefined) {
+            return true;
+        }
+
+        return isExist.data;
+    }
+
     const createInviteAsync = async () => {
         for (let i = 0; i < peopleIdToJoin.length; i++) {
+            const isExist = await checkIfRequestExistAsync(peopleIdToJoin[i], community.id);
+            if (isExist) {
+                continue;
+            }
+
             const newInviteToCommunity = {
                 communityId: community.id,
                 toCustomerId: peopleIdToJoin[i],
@@ -40,6 +60,11 @@ const CommunityMembers = ({ community, customer, handleShowAddPeople, showAddPeo
             await createInviteAsyncMut(newInviteToCommunity);
         }
 
+        handleShowAddPeople();
+    }
+
+    const clearListOfInvites = () => {
+        setPeopleToJoin([]);
         handleShowAddPeople();
     }
 
@@ -64,7 +89,7 @@ const CommunityMembers = ({ community, customer, handleShowAddPeople, showAddPeo
                         <FontAwesomeIcon
                             icon={faPlus}
                             title={t("AddNewPeople")}
-                            onClick={handleShowAddPeople}
+                            onClick={clearListOfInvites}
                         />
                     </div>
                 </div>
@@ -96,7 +121,7 @@ const CommunityMembers = ({ community, customer, handleShowAddPeople, showAddPeo
                     />
                     <div className="item-result">
                         <input type="button" value={t("Invite")} className="btn btn-success" onClick={async () => await createInviteAsync()} />
-                        <input type="button" value={t("Cancel")} className="btn btn-light" onClick={handleShowAddPeople} />
+                        <input type="button" value={t("Cancel")} className="btn btn-light" onClick={clearListOfInvites} />
                     </div>
                 </div>
             }

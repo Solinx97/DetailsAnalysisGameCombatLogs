@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSearchByUserIdAsyncQuery } from '../../../store/api/CommunityUser.api';
-import { useCreateInviteAsyncMutation } from '../../../store/api/InviteToCommunity.api';
+import { useCreateInviteAsyncMutation, useLazyInviteIsExistQuery } from '../../../store/api/InviteToCommunity.api';
 import TargetCommunity from './TargetCommunity';
 
 import '../../../styles/communication/people/inviteToCommunity.scss';
@@ -14,9 +14,29 @@ const InviteToCommunity = ({ customer, people, setOpenInviteToCommunity }) => {
     const [communityIdToInvite, setCommunityIdToInvite] = useState([]);
 
     const [createInviteAsyncMut] = useCreateInviteAsyncMutation();
+    const [isInviteExistAsync] = useLazyInviteIsExistQuery();
+
+    const checkIfRequestExistAsync = async (peopleId, communityId) => {
+        const arg = {
+            peopleId: peopleId,
+            communityId: communityId
+        };
+
+        const isExist = await isInviteExistAsync(arg);
+        if (isExist.error !== undefined) {
+            return true;
+        }
+
+        return isExist.data;
+    }
 
     const createInviteAsync = async () => {
         for (let i = 0; i < communityIdToInvite.length; i++) {
+            const isExist = await checkIfRequestExistAsync(people.id, communityIdToInvite[i]);
+            if (isExist) {
+                continue;
+            }
+
             const newInviteToCommunity = {
                 communityId: communityIdToInvite[i],
                 toCustomerId: people?.id,
@@ -25,12 +45,7 @@ const InviteToCommunity = ({ customer, people, setOpenInviteToCommunity }) => {
                 ownerId: customer?.id
             }
 
-            const createdInvite = await createInviteAsyncMut(newInviteToCommunity);
-            if (createdInvite.error !== undefined) {
-                setOpenInviteToCommunity(false);
-
-                return;
-            }
+            await createInviteAsyncMut(newInviteToCommunity);
         }
 
         setOpenInviteToCommunity(false);

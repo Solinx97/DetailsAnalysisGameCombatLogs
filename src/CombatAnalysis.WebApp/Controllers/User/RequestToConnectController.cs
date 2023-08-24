@@ -63,27 +63,38 @@ public class RequestToConnectController : ControllerBase
         return BadRequest();
     }
 
-    [HttpGet("searchByToUserId/{id}")]
-    public async Task<IActionResult> SearchByToUserId(string id)
+    [HttpGet("isExist")]
+    public async Task<IActionResult> IsExist(string initiatorId, string companionId)
     {
         if (!HttpContext.Request.Cookies.TryGetValue("refreshToken", out var refreshToken))
         {
             return Unauthorized();
         }
 
-        var responseMessage = await _httpClient.GetAsync($"RequestToConnect/searchByToUserId/{id}", refreshToken, Port.UserApi);
+        var responseMessage = await _httpClient.GetAsync("RequestToConnect", refreshToken, Port.UserApi);
         if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
         {
             return Unauthorized();
         }
-        else if (responseMessage.IsSuccessStatusCode)
+        else if (!responseMessage.IsSuccessStatusCode)
         {
-            var requestsToConnect = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<RequestToConnectModel>>();
-
-            return Ok(requestsToConnect);
+            return BadRequest();
         }
 
-        return BadRequest();
+        var allRequestsToConnect = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<RequestToConnectModel>>();
+        var requestsToConnectToUser = allRequestsToConnect.Where(x => x.ToUserId == initiatorId && x.OwnerId == companionId).ToList();
+        if (requestsToConnectToUser.Any())
+        {
+            return Ok(true);
+        }
+
+        var requestsToConnectToOwner = allRequestsToConnect.Where(x => x.ToUserId == companionId && x.OwnerId == initiatorId).ToList();
+        if (requestsToConnectToOwner.Any())
+        {
+            return Ok(true);
+        }
+
+        return Ok(false);
     }
 
     [HttpPost]

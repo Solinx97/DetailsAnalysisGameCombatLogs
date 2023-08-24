@@ -1,16 +1,17 @@
 import { faCommentDots, faSquarePlus, faUserPlus, faWindowRestore } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { useCreatePersonalChatAsyncMutation, useLazyIsExistAsyncQuery } from '../../../store/api/PersonalChat.api';
-import { useCreateRequestAsyncMutation, useLazySearchByOwnerIdQuery, useLazySearchByToUserIdQuery } from '../../../store/api/RequestToConnect.api';
+import { useCreateRequestAsyncMutation, useLazyRequestIsExistQuery } from '../../../store/api/RequestToConnect.api';
 import { useFriendSearchByUserIdQuery } from '../../../store/api/UserApi';
 import UserInformation from './../UserInformation';
-import { useState } from 'react';
 import InviteToCommunity from './InviteToCommunity';
 
 const successNotificationTimeout = 2000;
 const failedNotificationTimeout = 2000;
+let showUserInformationTimeout = null;
 
 const PeopleItem = ({ setUserInformation, people, customer }) => {
     const { t } = useTranslation("communication/people/people");
@@ -20,8 +21,7 @@ const PeopleItem = ({ setUserInformation, people, customer }) => {
     const [isExistAsync] = useLazyIsExistAsyncQuery();
     const [createPersonalChatAsync] = useCreatePersonalChatAsyncMutation();
     const [createRequestAsync] = useCreateRequestAsyncMutation();
-    const [sarchByToUserIdAsync] = useLazySearchByToUserIdQuery();
-    const [sarchByOwnerIdAsync] = useLazySearchByOwnerIdQuery();
+    const [isRequestExistAsync] = useLazyRequestIsExistQuery();
 
     const [showSuccessNotification, setShowSuccessNotification] = useState(false);
     const [showFailedNotification, setShowFailedNotification] = useState(false);
@@ -32,9 +32,7 @@ const PeopleItem = ({ setUserInformation, people, customer }) => {
         targetUserId: people?.id
     });
 
-    let showUserInformationTimeout = null;
-
-    const checkExistChatAsync = async (targetCustomer) => {
+    const checkIfChatExistAsync = async (targetCustomer) => {
         const queryParams = {
             userId: customer?.id,
             targetUserId: targetCustomer?.id
@@ -45,7 +43,7 @@ const PeopleItem = ({ setUserInformation, people, customer }) => {
     }
 
     const startChatAsync = async (targetCustomer) => {
-        const isExist = await checkExistChatAsync(targetCustomer);
+        const isExist = await checkIfChatExistAsync(targetCustomer);
         if (isExist) {
             navigate("/chats");
             return;
@@ -65,25 +63,22 @@ const PeopleItem = ({ setUserInformation, people, customer }) => {
         }
     }
 
-    const checkExistRequestAsync = async (id) => {
-        let request = await sarchByToUserIdAsync(id);
-        if (request.error !== undefined) {
-            return true;
-        }
-        else if (request.data.length > 0) {
+    const checkIfRequestExistAsync = async (id) => {
+        const arg = {
+            userId: customer?.id,
+            targetUserId: id
+        };
+
+        const isExist = await isRequestExistAsync(arg);
+        if (isExist.error !== undefined) {
             return true;
         }
 
-        request = await sarchByOwnerIdAsync(id);
-        if (request.error !== undefined) {
-            return true;
-        }
-
-        return request.data.length > 0;
+        return isExist.data;
     }
 
     const createRequestToConnectAsync = async (people) => {
-        const isExist = await checkExistRequestAsync(people.id);
+        const isExist = await checkIfRequestExistAsync(people.id);
         if (isExist) {
             setShowFailedNotification(true);
 
