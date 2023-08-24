@@ -61,6 +61,15 @@
         margin: 10px;
         gap: 10px;
 
+        .user-friend {
+            opacity: 0.4;
+        }
+
+        .user-friend:hover {
+            transform: scale(1);
+            cursor: default;
+        }
+
         svg:hover {
             cursor: pointer;
             transform: scale(1.25);
@@ -93,6 +102,17 @@
                 overflow: clip;
                 max-height: 50px;
             }
+        }
+    }
+
+    .sent-request {
+        display: none;
+
+        &_active {
+            display: flex;
+            justify-content: center;
+            font-size: 13px;
+            padding: 5px;
         }
     }
 }

@@ -34,10 +34,6 @@ export const UserApi = createApi({
             query: () => '/Authentication',
             providesTags: (result, error, id) => [{ type: 'Authentication', id }]
         }),
-        searchByToUserId: builder.query({
-            query: (id) => `/RequestToConnect/searchByToUserId/${id}`,
-            providesTags: (result, error, id) => [{ type: 'RequestToConnect', id }],
-        }),
     })
 })
 
@@ -48,5 +44,4 @@ export const {
     useFriendSearchByUserIdQuery,
     useAuthenticationAsyncQuery,
     useLazyAuthenticationAsyncQuery,
-    useSearchByToUserIdQuery,
 } = UserApi;

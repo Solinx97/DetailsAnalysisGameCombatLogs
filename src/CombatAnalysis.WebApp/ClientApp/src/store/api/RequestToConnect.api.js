@@ -23,6 +23,10 @@ export const RequestToConnectApi = ChatApi.injectEndpoints({
             query: (id) => `/RequestToConnect/searchByOwnerId/${id}`,
             providesTags: (result, error, id) => [{ type: 'RequestToConnect', id }]
         }),
+        searchByToUserId: builder.query({
+            query: (id) => `/RequestToConnect/searchByToUserId/${id}`,
+            providesTags: (result, error, id) => [{ type: 'RequestToConnect', id }],
+        }),
         removeRequestAsync: builder.mutation({
             query: id => ({ 
                 url: `/RequestToConnect/${id}`,
@@ -40,4 +44,5 @@ export const {
     useSearchByOwnerIdQuery,
     useLazySearchByOwnerIdQuery,
     useRemoveRequestAsyncMutation,
+    useSearchByToUserIdQuery,
 } = RequestToConnectApi;

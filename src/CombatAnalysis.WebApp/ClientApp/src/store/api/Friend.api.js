@@ -7,7 +7,8 @@ export const FriendApi = UserApi.injectEndpoints({
                 body: friend,
                 url: '/Friend',
                 method: 'POST'
-            })
+            }),
+            invalidatesTags: (result, error, arg) => [{ type: 'Friend', arg }]
         }),
         removeFriendAsync: builder.mutation({
             query: id => ({

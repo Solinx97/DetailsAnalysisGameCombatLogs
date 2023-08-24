@@ -1,8 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import { useCreateFriendAsyncMutation } from '../../../store/api/Friend.api';
-import { useRemoveRequestAsyncMutation, useSearchByOwnerIdQuery } from '../../../store/api/RequestToConnect.api';
-import { useSearchByToUserIdQuery } from '../../../store/api/UserApi';
+import { useRemoveRequestAsyncMutation, useSearchByOwnerIdQuery, useSearchByToUserIdQuery } from '../../../store/api/RequestToConnect.api';
 import MyRequestItem from './MyRequestItem';
 import RequestItem from './RequestItem';
 

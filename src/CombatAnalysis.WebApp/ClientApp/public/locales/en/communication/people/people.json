@@ -1,12 +1,6 @@
 {
   "People": "People",
   "ShowDetails": "Show details",
-  "StartChat": "Start chat",
-  "RequestToConnect": "Request to connect",
-  "InviteToCommunity": "Invite to community",
-  "AlreadyFriend": "This user already your friend",
-  "SentRequest": "You sent request to connect to ",
-  "AlreadySentRequest": "You already sent request to ",
   "CancelInvite": "Cancel invite",
   "SendInvite": "Send invite",
   "Send": "Send",

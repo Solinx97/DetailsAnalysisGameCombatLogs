@@ -3,6 +3,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
+import { useLazyGetCustomerByIdQuery } from '../../../store/api/Customer.api';
 import { useFriendSearchMyFriendsQuery, useRemoveFriendAsyncMutation } from '../../../store/api/Friend.api';
 import UserInformation from './../UserInformation';
 import FriendUsername from './FriendUsername';
@@ -17,6 +18,7 @@ const Friends = () => {
 
     const { data: myFriends, isLoading } = useFriendSearchMyFriendsQuery(customer?.id);
     const [removeFriendAsyncMut] = useRemoveFriendAsyncMutation(customer?.id);
+    const [getCustomerByIdQ] = useLazyGetCustomerByIdQuery();
 
     const [userInformation, setUserInformation] = useState(null);
 
@@ -24,11 +26,16 @@ const Friends = () => {
         await removeFriendAsyncMut(friendId);
     }
 
-    const openUserInformation = (customer) => {
-        setUserInformation(<UserInformation
-            customer={customer}
-            closeUserInformation={closeUserInformation}
-        />);
+    const openUserInformationAsync = async (targetCustomerId) => {
+        const targetCustomer = await getCustomerByIdQ(targetCustomerId);
+
+        setUserInformation(
+            <UserInformation
+                customer={customer}
+                people={targetCustomer.data}
+                closeUserInformation={closeUserInformation}
+            />
+        );
     }
 
     const closeUserInformation = () => {
@@ -53,7 +60,7 @@ const Friends = () => {
                                 <FontAwesomeIcon
                                     icon={faWindowRestore}
                                     title={t("ShowDetails")}
-                                    onClick={() => openUserInformation(item)}
+                                    onClick={async () => await openUserInformationAsync(item.forWhomId === customer?.id ? item.whoFriendId : item.forWhomId)}
                                 />
                             </div>
                             <FriendUsername

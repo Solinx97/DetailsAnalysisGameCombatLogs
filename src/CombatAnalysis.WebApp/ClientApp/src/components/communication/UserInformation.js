@@ -110,7 +110,6 @@ const UserInformation = ({ people, customer, closeUserInformation }) => {
         return <></>;
     }
 
-    console.log(people);
     return (
         <div className="user-information">
             <div className={`alert alert-success sent-request${showSuccessNotification ? "_active" : ""}`} role="alert">

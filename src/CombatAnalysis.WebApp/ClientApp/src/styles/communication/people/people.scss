@@ -38,17 +38,6 @@
                 cursor: default;
             }
         }
-
-        .sent-request {
-            display: none;
-
-            &_active {
-                display: flex;
-                justify-content: center;
-                font-size: 13px;
-                padding: 5px;
-            }
-        }
     }
 
     &__successfully-request {
