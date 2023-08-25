@@ -8,34 +8,17 @@
         .card {
             width: 250px;
 
-            .card-body {
+            .special-user {
                 display: flex;
-                justify-content: space-between;
+                justify-content: space-around;
                 align-items: center;
-
-                .card-title {
-                    margin: 0 15px;
-                }
-
-                .card-title:hover {
-                    transform: scale(1.1);
-                    font-family: 'Comic Sans MS';
-                    cursor: pointer;
-                }
-
-                svg:hover {
-                    transform: scale(1.1);
-                    cursor: pointer;
-                }
-            }
-
-            .user-friend {
-                opacity: 0.4;
-            }
-
-            .user-friend:hover {
-                transform: scale(1);
+                padding: 10px;
+                font-family: 'Comic Sans MS';
                 cursor: default;
+
+                svg {
+                    cursor: pointer;
+                }
             }
         }
     }

@@ -16,10 +16,12 @@
     &__menu {
         display: flex;
         flex-direction: column;
+        justify-content: center;
         padding: 10px;
         box-shadow: 2px 2px 2px 2px gray;
         border-radius: 15px;
         gap: 20px;
+        height: 315px;
 
         .sub-menu {
             display: flex;

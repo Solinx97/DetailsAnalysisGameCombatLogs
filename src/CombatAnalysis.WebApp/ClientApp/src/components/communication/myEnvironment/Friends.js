@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useFriendSearchMyFriendsQuery } from '../../../store/api/Friend.api';
-import FriendItem from './FriendItem';
+import User from '../User';
 
 import '../../../styles/communication/myEnvironment/friends.scss';
 
@@ -25,9 +25,8 @@ const Friends = ({ customer, requestsToConnect, allowRemoveFriend }) => {
                 {
                     myFriends?.map((item) => (
                         <li key={item.id} className="friend">
-                            <FriendItem
-                                customer={customer}
-                                friend={item}
+                            <User
+                                userId={item.forWhomId === customer?.id ? item.whoFriendId : item.forWhomId}
                                 setUserInformation={setUserInformation}
                                 allowRemoveFriend={allowRemoveFriend}
                             />

@@ -14,6 +14,7 @@ import ChatMessage from './ChatMessage';
 import GroupChatUser from './GroupChatUser';
 
 import "../../../styles/communication/chats/groupChat.scss";
+import User from '../User';
 
 const getGroupChatMessagesInterval = 1000;
 
@@ -26,6 +27,7 @@ const GroupChat = ({ chat, customer, setSelectedChat }) => {
     const [peopleIdToJoin, setPeopleToJoin] = useState([]);
     const [peopleIdToRemove, setPeopleToRemove] = useState([]);
     const [groupChatUsersId, setGroupChatUsersId] = useState([]);
+    const [userInformation, setUserInformation] = useState(null);
 
     const messageInput = useRef(null);
 
@@ -232,8 +234,10 @@ const GroupChat = ({ chat, customer, setSelectedChat }) => {
                         {
                             groupChatUsers.map((item) => (
                                 <li key={item.id}>
-                                    <GroupChatUser
+                                    <User
                                         userId={item.userId}
+                                        setUserInformation={setUserInformation}
+                                        allowRemoveFriend={false}
                                     />
                                     {(customer?.id === chat.ownerId && item.userId !== chat.ownerId)
                                         ? peopleIdToRemove.includes(item.id)
@@ -260,6 +264,7 @@ const GroupChat = ({ chat, customer, setSelectedChat }) => {
 
                 </div>
             </div>
+            {userInformation}
         </div>
     );
 }

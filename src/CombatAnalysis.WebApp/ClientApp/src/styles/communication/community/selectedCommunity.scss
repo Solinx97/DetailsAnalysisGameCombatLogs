@@ -177,6 +177,16 @@
                     cursor: pointer;
                 }
             }
+
+            .special-user {
+                display: flex;
+                align-items: center;
+                gap: 25px;
+
+                svg {
+                    cursor: pointer;
+                }
+            }
         }
     }
 
