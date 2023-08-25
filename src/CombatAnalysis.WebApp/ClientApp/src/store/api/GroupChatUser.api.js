@@ -11,7 +11,8 @@ export const GroupChatUserApi = ChatApi.injectEndpoints({
             invalidatesTags: (result, error) => [{ type: 'GroupChatUser', result }]
         }),
         getGroupChatUserByChatId: builder.query({
-            query: (id) => `/GroupChatUser/findByChatId/${id}`
+            query: (id) => `/GroupChatUser/findByChatId/${id}`,
+            providesTags: (result, error, id) => [{ type: 'GroupChatUser', id }],
         }),
         removeGroupChatUserAsync: builder.mutation({
             query: id => ({

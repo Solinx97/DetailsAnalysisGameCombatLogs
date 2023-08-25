@@ -14,7 +14,6 @@ public class ChatMapper : Profile
     {
         CreateMap<PersonalChatDto, PersonalChatModel>().ReverseMap();
         CreateMap<PersonalChatMessageDto, PersonalChatMessageModel>().ReverseMap();
-        CreateMap<InviteToGroupChatDto, InviteToGroupChatModel>().ReverseMap();
         CreateMap<GroupChatDto, GroupChatModel>().ReverseMap();
         CreateMap<GroupChatMessageDto, GroupChatMessageModel>().ReverseMap();
         CreateMap<GroupChatUserDto, GroupChatUserModel>().ReverseMap();

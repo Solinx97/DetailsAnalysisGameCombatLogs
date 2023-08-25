@@ -16,7 +16,6 @@ public class BLMapper : Profile
     {
         CreateMap<PersonalChatDto, PersonalChat>().ReverseMap();
         CreateMap<PersonalChatMessageDto, PersonalChatMessage>().ReverseMap();
-        CreateMap<InviteToGroupChatDto, InviteToGroupChat>().ReverseMap();
         CreateMap<GroupChatDto, GroupChat>().ReverseMap();
         CreateMap<GroupChatMessageDto, GroupChatMessage>().ReverseMap();
         CreateMap<GroupChatUserDto, GroupChatUser>().ReverseMap();
