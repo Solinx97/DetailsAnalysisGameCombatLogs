@@ -1,17 +1,18 @@
+import Home from './components/Home';
 import Login from './components/account/Login';
 import Registration from './components/account/Registration';
 import CombatGeneralDetails from './components/combatDetails/CombatGeneralDetails';
 import DetailsSpecificalCombat from './components/combatDetails/DetailsSpecificalCombat';
 import GeneralAnalysis from './components/combatDetails/GeneralAnalysis';
 import MainInformation from './components/combatDetails/MainInformation';
+import Feed from './components/communication/Feed';
 import Chats from './components/communication/chats/Chats';
 import CreateGroupChat from './components/communication/chats/createGroupChat/CreateGroupChat';
 import AllCommunities from './components/communication/community/AllCommunities';
 import SelectedCommunity from './components/communication/community/SelectedCommunity';
-import Feed from './components/communication/Feed';
 import MyEnvironment from './components/communication/myEnvironment/MyEnvironment';
 import People from './components/communication/people/People';
-import Home from './components/Home';
+import SelectedUser from './components/communication/people/SelectedUser';
 
 const AppRoutes = [
     {
@@ -41,6 +42,10 @@ const AppRoutes = [
     {
         path: '/people',
         element: <People />
+    },
+    {
+        path: '/user',
+        element: <SelectedUser />
     },
     {
         path: '/environment',

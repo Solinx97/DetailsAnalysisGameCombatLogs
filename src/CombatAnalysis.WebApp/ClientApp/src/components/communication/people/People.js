@@ -1,4 +1,4 @@
-import { useCallback } from "react";
+import { useCallback, useState } from "react";
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import { useGetCustomersQuery } from '../../../store/api/UserApi';
@@ -11,6 +11,7 @@ const People = () => {
     const { t } = useTranslation("communication/people/people");
 
     const customer = useSelector((state) => state.customer.value);
+    const [menuItem, setMenuItem] = useState(7);
 
     const { people, isLoading } = useGetCustomersQuery(undefined, {
         selectFromResult: ({ data }) => ({
@@ -31,7 +32,8 @@ const People = () => {
     return (
         <div className="communication">
             <Communication
-                currentMenuItem={7}
+                currentMenuItem={menuItem}
+                setMenuItem={setMenuItem}
             />
             <div className="communication__content people">
                 <div>

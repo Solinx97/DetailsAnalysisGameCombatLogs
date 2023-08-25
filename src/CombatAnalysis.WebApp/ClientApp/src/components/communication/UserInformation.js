@@ -7,6 +7,7 @@ import { useCreatePersonalChatAsyncMutation, useLazyIsExistAsyncQuery } from '..
 import { useCreateRequestAsyncMutation, useLazyRequestIsExistQuery } from '../../store/api/RequestToConnect.api';
 import { useFriendSearchByUserIdQuery } from '../../store/api/UserApi';
 import PeopleInvitesToCommunity from './people/PeopleInvitesToCommunity';
+import { NavLink } from 'react-router-dom';
 
 import './../../styles/communication/userInformation.scss';
 
@@ -175,6 +176,9 @@ const UserInformation = ({ people, customer, closeUserInformation }) => {
                         />
                     </li>
                 </ul>
+                <div className="details">
+                    <NavLink  to={`/user?id=${people.id}`}>{t("MoreDetails")}</NavLink>
+                </div>
             </div>
             {openInviteToCommunity &&
                 <div className="invite">

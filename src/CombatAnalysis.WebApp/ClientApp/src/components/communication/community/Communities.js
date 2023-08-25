@@ -2,7 +2,7 @@ import { faArrowsRotate, faEye, faEyeSlash } from '@fortawesome/free-solid-svg-i
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useState } from "react";
 import { useTranslation } from 'react-i18next';
-import CommunityItem from './CommunityItem';
+import CommunityList from './CommunityList';
 
 import '../../../styles/communication/community/communities.scss';
 
@@ -45,7 +45,7 @@ const Communities = () => {
                         <label htmlFor="inputSearchCommunity" className="form-label">{t("Search")}</label>
                         <input type="text" className="form-control" id="inputSearchCommunity" placeholder={t("TypeCommunityName")} onChange={searchHandler} />
                     </div>
-                    <CommunityItem
+                    <CommunityList
                         filterContent={filterContent}
                     />
                 </>

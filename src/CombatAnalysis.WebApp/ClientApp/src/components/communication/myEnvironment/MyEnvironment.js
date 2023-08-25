@@ -1,14 +1,18 @@
 import { useState } from 'react';
+import { useSelector } from 'react-redux';
 import Communication from '../Communication';
 import Friends from './Friends';
 import MyCommunities from './MyCommunities';
 import MyFeed from './MyFeed';
 import Profile from './Profile';
+import RequestsToConnect from './RequestsToConnect';
 
 import '../../../styles/communication/myEnvironment/myEnvironment.scss';
 
 const MyEnvironment = ({ openCommunity }) => {
     const [menuItem, setMenuItem] = useState(8);
+
+    const customer = useSelector((state) => state.customer.value);
 
     const render = () => {
         return (
@@ -23,7 +27,11 @@ const MyEnvironment = ({ openCommunity }) => {
                             <MyFeed />
                         }
                         {menuItem === 9 &&
-                            <Friends />
+                            <Friends
+                                customer={customer}
+                                requestsToConnect={<RequestsToConnect />}
+                                allowRemoveFriend={true}
+                            />
                         }
                         {menuItem === 10 &&
                             <MyCommunities

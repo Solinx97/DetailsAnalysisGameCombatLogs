@@ -28,6 +28,13 @@
         border-radius: 20px;
         background: white;
         width: 350px;
+
+        .details {
+            display: flex;
+            justify-content: center;
+            width: 100%;
+            margin: 5px 0;
+        }
     }
 
     &__menu {

@@ -39,6 +39,7 @@ export const AccountApi = UserApi.injectEndpoints({
 
 export const {
     useGetUserByIdQuery,
+    useLazyGetUserByIdQuery,
     useLoginAsyncMutation,
     useRegistrationAsyncMutation,
     useEditAsyncMutation,
