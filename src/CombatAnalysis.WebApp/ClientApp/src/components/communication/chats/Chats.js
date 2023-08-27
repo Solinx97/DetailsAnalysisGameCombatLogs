@@ -3,7 +3,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
-import { useGetGroupChatUserByUserIdQuery, useGetPersonalChatsByUserIdQuery } from '../../../store/api/ChatApi';
+import { useGetGroupChatUserByUserIdQuery } from '../../../store/api/ChatApi';
+import { useGetByUserIdAsyncQuery } from '../../../store/api/PersonalChat.api';
 import Communication from '../Communication';
 import GroupChat from './GroupChat';
 import MyGroupChat from './MyGroupChat';
@@ -17,10 +18,10 @@ const getGroupChatUsersInterval = 2000;
 const Chats = () => {
     const { t } = useTranslation("communication/chats/chats");
 
-    const customer = useSelector((state) => state.customer.value);
+    const me = useSelector((state) => state.customer.value);
 
-    const { data: personalChats, isLoading } = useGetPersonalChatsByUserIdQuery(customer?.id);
-    const { data: groupChatUsers, isLoading: chatUserIsLoading } = useGetGroupChatUserByUserIdQuery(customer?.id, {
+    const { data: personalChats, isLoading } = useGetByUserIdAsyncQuery(me?.id);
+    const { data: groupChatUsers, isLoading: chatUserIsLoading } = useGetGroupChatUserByUserIdQuery(me?.id, {
         pollingInterval: getGroupChatUsersInterval
     });
 
@@ -103,7 +104,7 @@ const Chats = () => {
                                             personalChat={item}
                                             selectedGroupChatId={selectedPersonalChat?.id}
                                             setSelectedPersonalChat={setSelectedPersonalChat}
-                                            companionId={item.initiatorId === customer?.id ? item.companionId : item.initiatorId}
+                                            companionId={item.initiatorId === me?.id ? item.companionId : item.initiatorId}
                                         />
                                     </li>
                                 ))
@@ -115,15 +116,15 @@ const Chats = () => {
                         : selectedGroupChat !== null
                             ? <GroupChat
                                 chat={Object.assign({}, selectedGroupChat)}
-                                customer={customer}
+                                me={me}
                                 setSelectedChat={setSelectedGroupChat}
                             />
                             : selectedPersonalChat !== null &&
                             <PersonalChat
                                 chat={Object.assign({}, selectedPersonalChat)}
-                                customer={customer}
+                                me={me}
                                 setSelectedChat={setSelectedPersonalChat}
-                                companionId={selectedPersonalChat.initiatorId === customer?.id ? selectedPersonalChat.companionId : selectedPersonalChat.initiatorId}
+                                companionId={selectedPersonalChat.initiatorId === me?.id ? selectedPersonalChat.companionId : selectedPersonalChat.initiatorId}
                             />
                     }
                 </div>

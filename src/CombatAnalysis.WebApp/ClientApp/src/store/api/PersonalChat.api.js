@@ -24,7 +24,12 @@ export const PersonalChatApi = ChatApi.injectEndpoints({
                 return {
                     url: `/PersonalChat/isExist?initiatorId=${userId}&companionId=${targetUserId}`,
                 }
-            }
+            },
+            providesTags: (result, error, id) => [{ type: 'PersonalChat', id }],
+        }),
+        getByUserIdAsync: builder.query({
+            query: (id) => `/PersonalChat/${id}`,
+            providesTags: (result, error, id) => [{ type: 'PersonalChat', id }],
         }),
         removePersonalChatAsync: builder.mutation({
             query: id => ({
@@ -40,5 +45,6 @@ export const {
     useCreatePersonalChatAsyncMutation,
     useUpdatePersonalChatAsyncMutation,
     useLazyIsExistAsyncQuery,
+    useGetByUserIdAsyncQuery,
     useRemovePersonalChatAsyncMutation,
 } = PersonalChatApi;

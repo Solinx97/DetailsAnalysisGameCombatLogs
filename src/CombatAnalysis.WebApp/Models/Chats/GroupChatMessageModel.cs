@@ -8,6 +8,8 @@ public class GroupChatMessageModel
 
     public string Time { get; set; }
 
+    public int Status { get; set; }
+
     public int GroupChatId { get; set; }
 
     public string OwnerId { get; set; }

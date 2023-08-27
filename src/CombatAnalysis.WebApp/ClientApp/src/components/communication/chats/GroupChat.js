@@ -1,4 +1,4 @@
-﻿import { faGear, faPaperPlane, faMinus, faRightFromBracket } from '@fortawesome/free-solid-svg-icons';
+﻿import { faGear, faMinus, faPaperPlane, faRightFromBracket } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { memo, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -11,14 +11,13 @@ import {
 import { useCreateGroupChatUserAsyncMutation, useGetGroupChatUserByChatIdQuery, useRemoveGroupChatUserAsyncMutation } from '../../../store/api/GroupChatUser.api';
 import AddPeople from '../../AddPeople';
 import ChatMessage from './ChatMessage';
-import GroupChatUser from './GroupChatUser';
 
 import "../../../styles/communication/chats/groupChat.scss";
 import User from '../User';
 
 const getGroupChatMessagesInterval = 1000;
 
-const GroupChat = ({ chat, customer, setSelectedChat }) => {
+const GroupChat = ({ chat, me, setSelectedChat }) => {
     const { t } = useTranslation("communication/chats/groupChat");
 
     const [showAddPeople, setShowAddPeople] = useState(false);
@@ -34,7 +33,7 @@ const GroupChat = ({ chat, customer, setSelectedChat }) => {
     const { data: messages, isLoading } = useFindGroupChatMessageByChatIdQuery(chat.id, {
         pollingInterval: getGroupChatMessagesInterval
     });
-    const { data: muGroupChatUsers } = useGetGroupChatUserByUserIdQuery(customer?.id);
+    const { data: muGroupChatUsers } = useGetGroupChatUserByUserIdQuery(me?.id);
     const { data: groupChatUsers, isLoading: usersIsLoading } = useGetGroupChatUserByChatIdQuery(chat.id);
     const [createGroupChatMessageAsync] = useCreateGroupChatMessageAsyncMutation();
     const [updateGroupChatMessageAsync] = useUpdateGroupChatMessageAsyncMutation();
@@ -121,12 +120,18 @@ const GroupChat = ({ chat, customer, setSelectedChat }) => {
             message: message,
             time: `${today.getHours()}:${today.getMinutes()}`,
             groupChatId: chat.id,
-            ownerId: customer?.id
+            ownerId: me?.id
         };
 
         const createdMessage = await createGroupChatMessageAsync(newMessage);
         if (createdMessage.data !== undefined) {
             await updateGroupChatAsync(message);
+
+
+            const updateForMessage = Object.assign({}, createdMessage.data);
+            updateForMessage.status = 1;
+
+            await updateGroupChatMessageAsync(updateForMessage);
         }
     }
 
@@ -134,12 +139,6 @@ const GroupChat = ({ chat, customer, setSelectedChat }) => {
         chat.lastMessage = message;
 
         await updateGroupChatAsyncMut(chat);
-    }
-
-    const updateMessageAsync = async (myMessage, newMessageContent) => {
-        myMessage.message = newMessageContent;
-
-        await updateGroupChatMessageAsync(myMessage);
     }
 
     const deleteMessageAsync = async (messageId) => {
@@ -181,9 +180,9 @@ const GroupChat = ({ chat, customer, setSelectedChat }) => {
                         messages.map((item) => (
                             <li key={item.id}>
                                 <ChatMessage
-                                    customer={customer}
+                                    me={me}
                                     message={item}
-                                    updateMessageAsync={updateMessageAsync}
+                                    updateMessageAsync={updateGroupChatMessageAsync}
                                     deleteMessageAsync={deleteMessageAsync}
                                 />
                             </li>
@@ -202,7 +201,7 @@ const GroupChat = ({ chat, customer, setSelectedChat }) => {
                 {showAddPeople &&
                     <div className="add-people-to-chat">
                         <AddPeople
-                            customer={customer}
+                            customer={me}
                             communityUsersId={groupChatUsersId}
                             peopleToJoin={peopleIdToJoin}
                             setPeopleToJoin={setPeopleToJoin}
@@ -222,7 +221,7 @@ const GroupChat = ({ chat, customer, setSelectedChat }) => {
                         <input type="button" value={t("Documents")} className="btn btn-light" disabled />
                     </div>
                     <div className="danger-settings">
-                        {customer?.id === chat.ownerId &&
+                        {me?.id === chat.ownerId &&
                             <input type="button" value={t("RemoveChat")} className="btn btn-danger" onClick={async () => await removeChatAsync()} />
                         }
                         <input type="button" value={t("Leave")} className="btn btn-warning" onClick={async () => await getChatUserByMyIdAsync()} />
@@ -239,7 +238,7 @@ const GroupChat = ({ chat, customer, setSelectedChat }) => {
                                         setUserInformation={setUserInformation}
                                         allowRemoveFriend={false}
                                     />
-                                    {(customer?.id === chat.ownerId && item.userId !== chat.ownerId)
+                                    {(me?.id === chat.ownerId && item.userId !== chat.ownerId)
                                         ? peopleIdToRemove.includes(item.id)
                                             ? <FontAwesomeIcon
                                                 icon={faRightFromBracket}

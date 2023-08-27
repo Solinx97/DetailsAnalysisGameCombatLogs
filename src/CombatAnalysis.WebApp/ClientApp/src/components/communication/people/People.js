@@ -10,17 +10,17 @@ import '../../../styles/communication/people/people.scss';
 const People = () => {
     const { t } = useTranslation("communication/people/people");
 
-    const customer = useSelector((state) => state.customer.value);
+    const me = useSelector((state) => state.customer.value);
     const [menuItem, setMenuItem] = useState(7);
 
     const { people, isLoading } = useGetCustomersQuery(undefined, {
         selectFromResult: ({ data }) => ({
-            people: data !== undefined ? data.filter((item) => item.id !== customer?.id) : []
+            people: data !== undefined ? data.filter((item) => item.id !== me?.id) : []
         }),
     });
 
     const peopleListFilter = useCallback((value) => {
-        if (value.id !== customer?.id) {
+        if (value.id !== me?.id) {
             return value;
         }
     }, [])
@@ -44,7 +44,7 @@ const People = () => {
                         people.filter(peopleListFilter).map((item) => (
                             <li key={item.id}>
                                 <PeopleItem
-                                    customer={customer}
+                                    me={me}
                                     people={item}
                                 />
                             </li>

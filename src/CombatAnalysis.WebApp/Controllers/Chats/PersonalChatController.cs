@@ -17,8 +17,8 @@ public class PersonalChatController : ControllerBase
         _httpClient = httpClient;
     }
 
-    [HttpGet("{userId}")]
-    public async Task<IActionResult> GetByUserId(string userId)
+    [HttpGet("{id}")]
+    public async Task<IActionResult> GetByUserId(string id)
     {
         if (!HttpContext.Request.Cookies.TryGetValue("refreshToken", out var refreshToken))
         {
@@ -33,7 +33,7 @@ public class PersonalChatController : ControllerBase
         else if (responseMessage.IsSuccessStatusCode)
         {
             var personalChats = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<PersonalChatModel>>();
-            var myPersonalChats = personalChats.Where(x => x.InitiatorId == userId || x.CompanionId == userId).ToList();
+            var myPersonalChats = personalChats.Where(x => x.InitiatorId == id || x.CompanionId == id).ToList();
 
             return Ok(myPersonalChats);
         }

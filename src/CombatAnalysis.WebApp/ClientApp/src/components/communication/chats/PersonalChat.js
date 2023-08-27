@@ -15,7 +15,7 @@ import "../../../styles/communication/chats/personalChat.scss";
 
 const getPersonalChatMessagesInterval = 1000;
 
-const PersonalChat = ({ chat, customer, setSelectedChat, companionId }) => {
+const PersonalChat = ({ chat, me, setSelectedChat, companionId }) => {
     const { t } = useTranslation("communication/chats/personalChat");
 
     const messageInput = useRef(null);
@@ -29,12 +29,6 @@ const PersonalChat = ({ chat, customer, setSelectedChat, companionId }) => {
     const [removePersonalChatMessageAsync] = useRemovePersonalChatMessageAsyncMutation();
     const [removePersonalChatAsync] = useRemovePersonalChatAsyncMutation();
     const [updatePersonalChatAsyncMut] = useUpdatePersonalChatAsyncMutation();
-
-    const updateMessageAsync = async (myMessage, newMessageContent) => {
-        myMessage.message = newMessageContent;
-
-        await updatePersonalChatMessageAsync(myMessage);
-    }
 
     const deleteMessageAsync = async (messageId) => {
         await removePersonalChatMessageAsync(messageId);
@@ -67,13 +61,18 @@ const PersonalChat = ({ chat, customer, setSelectedChat, companionId }) => {
             message: message,
             time: `${today.getHours()}:${today.getMinutes()}`,
             personalChatId: chat.id,
-            ownerId: customer?.id
+            ownerId: me?.id,
+            status: 0
         };
 
         const createdMessage = await createPersonalChatMessageAsync(newMessage);
-
         if (createdMessage.data !== undefined) {
             await updatePersonalChatAsync(message);
+
+            const updateForMessage = Object.assign({}, createdMessage.data);
+            updateForMessage.status = 1;
+
+            await updatePersonalChatMessageAsync(updateForMessage);
         }
     }
 
@@ -111,9 +110,9 @@ const PersonalChat = ({ chat, customer, setSelectedChat, companionId }) => {
                         messages?.map((item) => (
                             <li key={item.id}>
                                 <ChatMessage
-                                    customer={customer}
+                                    me={me}
                                     message={item}
-                                    updateMessageAsync={updateMessageAsync}
+                                    updateMessageAsync={updatePersonalChatMessageAsync}
                                     deleteMessageAsync={deleteMessageAsync}
                                 />
                             </li>

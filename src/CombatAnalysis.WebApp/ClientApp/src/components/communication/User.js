@@ -1,28 +1,27 @@
-import { faCircleXmark, faWindowRestore } from '@fortawesome/free-solid-svg-icons';
+import { faCircleXmark, faUser } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useTranslation } from 'react-i18next';
 import { useGetCustomerByIdQuery, useLazyGetCustomerByIdQuery } from '../../store/api/Customer.api';
 import { useRemoveFriendAsyncMutation } from '../../store/api/Friend.api';
 import UserInformation from './UserInformation';
 
-const User = ({ userId, setUserInformation, allowRemoveFriend }) => {
+const User = ({ me, itIsMe, targetCustomerId, setUserInformation, allowRemoveFriend }) => {
     const { t } = useTranslation("communication/myEnvironment/friends");
 
     const [removeFriendAsyncMut] = useRemoveFriendAsyncMutation();
     const [getCustomerByIdQ] = useLazyGetCustomerByIdQuery();
+    const { data: targetCustomer, isLoading } = useGetCustomerByIdQuery(targetCustomerId);
 
-    const { data: customer, isLoading } = useGetCustomerByIdQuery(userId);
-
-    const removeFriendAsync = async (friendId) => {
-        await removeFriendAsyncMut(friendId);
+    const removeFriendAsync = async () => {
+        await removeFriendAsyncMut(targetCustomerId);
     }
 
-    const openUserInformationAsync = async (targetCustomerId) => {
+    const openUserInformationAsync = async () => {
         const targetCustomer = await getCustomerByIdQ(targetCustomerId);
 
         setUserInformation(
             <UserInformation
-                customer={customer}
+                me={me}
                 people={targetCustomer.data}
                 closeUserInformation={closeUserInformation}
             />
@@ -38,20 +37,20 @@ const User = ({ userId, setUserInformation, allowRemoveFriend }) => {
     }
 
     return (
-        <div className="special-user">
+        <div className={`special-user${itIsMe ? "__me" : "__another"}`}>
             <FontAwesomeIcon
-                icon={faWindowRestore}
+                icon={faUser}
                 title={t("ShowDetails")}
                 className="details"
-                onClick={async () => await openUserInformationAsync(userId)}
+                onClick={async () => await openUserInformationAsync()}
             />
-            <div className="username">{customer?.username}</div>
+            <div className="username">{targetCustomer?.username}</div>
             {allowRemoveFriend &&
                 <FontAwesomeIcon
                     icon={faCircleXmark}
                     title={t("Remove")}
                     className="remove"
-                    onClick={async () => await removeFriendAsync(userId)}
+                    onClick={async () => await removeFriendAsync()}
                 />
             }
         </div>

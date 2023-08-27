@@ -2,19 +2,18 @@ import { faCircleXmark, faCommentDots, faSquarePlus, faUserPlus } from '@fortawe
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { memo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
 import { useCreatePersonalChatAsyncMutation, useLazyIsExistAsyncQuery } from '../../store/api/PersonalChat.api';
 import { useCreateRequestAsyncMutation, useLazyRequestIsExistQuery } from '../../store/api/RequestToConnect.api';
 import { useFriendSearchByUserIdQuery } from '../../store/api/UserApi';
 import PeopleInvitesToCommunity from './people/PeopleInvitesToCommunity';
-import { NavLink } from 'react-router-dom';
 
 import './../../styles/communication/userInformation.scss';
 
 const successNotificationTimeout = 2000;
 const failedNotificationTimeout = 2000;
 
-const UserInformation = ({ people, customer, closeUserInformation }) => {
+const UserInformation = ({ me, people, closeUserInformation }) => {
     const { t } = useTranslation("communication/userInformation");
 
     const navigate = useNavigate();
@@ -29,13 +28,13 @@ const UserInformation = ({ people, customer, closeUserInformation }) => {
     const [openInviteToCommunity, setOpenInviteToCommunity] = useState(false);
 
     const { data: isFriend, isLoading } = useFriendSearchByUserIdQuery({
-        userId: customer?.id,
+        userId: me?.id,
         targetUserId: people?.id
     });
 
-    const checkIfChatExistAsync = async (targetCustomer) => {
+    const checkExistOfChatsAsync = async (targetCustomer) => {
         const queryParams = {
-            userId: customer?.id,
+            userId: me?.id,
             targetUserId: targetCustomer?.id
         };
 
@@ -44,17 +43,17 @@ const UserInformation = ({ people, customer, closeUserInformation }) => {
     }
 
     const startChatAsync = async (targetCustomer) => {
-        const isExist = await checkIfChatExistAsync(targetCustomer);
+        const isExist = await checkExistOfChatsAsync(targetCustomer);
         if (isExist) {
             navigate("/chats");
             return;
         }
 
         const newChat = {
-            initiatorUsername: customer?.username,
+            initiatorUsername: me?.username,
             companionUsername: targetCustomer.username,
             lastMessage: " ",
-            initiatorId: customer?.id,
+            initiatorId: me?.id,
             companionId: targetCustomer.id
         };
 
@@ -66,7 +65,7 @@ const UserInformation = ({ people, customer, closeUserInformation }) => {
 
     const checkIfRequestExistAsync = async (id) => {
         const arg = {
-            userId: customer?.id,
+            userId: me?.id,
             targetUserId: id
         };
 
@@ -91,10 +90,10 @@ const UserInformation = ({ people, customer, closeUserInformation }) => {
         }
 
         const newRequest = {
-            username: customer?.username,
+            username: me?.username,
             toUserId: people.id,
             when: new Date(),
-            ownerId: customer?.id,
+            ownerId: me?.id,
         };
 
         const createdRequest = await createRequestAsync(newRequest);
@@ -183,7 +182,7 @@ const UserInformation = ({ people, customer, closeUserInformation }) => {
             {openInviteToCommunity &&
                 <div className="invite">
                     <PeopleInvitesToCommunity
-                        customer={customer}
+                        customer={me}
                         setOpenInviteToCommunity={setOpenInviteToCommunity}
                         people={people}
                     />

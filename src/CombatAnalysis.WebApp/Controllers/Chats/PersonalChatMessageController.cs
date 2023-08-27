@@ -55,7 +55,8 @@ public class PersonalChatMessageController : ControllerBase
         }
         else if (responseMessage.IsSuccessStatusCode)
         {
-            return Ok();
+            var personalChatMessage = await responseMessage.Content.ReadFromJsonAsync<PersonalChatMessageModel>();
+            return Ok(personalChatMessage);
         }
 
         return BadRequest();

@@ -36,10 +36,6 @@ export const ChatApi = createApi({
             query: (id) => `/CommunityUser/searchByCommunityId/${id}`,
             providesTags: (result, error, id) => [{ type: 'CommunityUser', id }]
         }),
-        getPersonalChatsByUserId: builder.query({
-            query: (id) => `/PersonalChat/${id}`,
-            providesTags: (result, error, id) => [{ type: 'PersonalChat', id }],
-        }),
         findPersonalChatMessageByChatId: builder.query({
             query: (id) => `/PersonalChatMessage/findByChatId/${id}`,
             providesTags: (result, error, id) => [{ type: 'PersonalChatMessage', id }],
@@ -70,7 +66,6 @@ export const ChatApi = createApi({
 export const {
     useGetPostQuery,
     useGetCommunitiesQuery,
-    useGetPersonalChatsByUserIdQuery,
     useGetGroupChatByIdQuery,
     useGetGroupChatUserByUserIdQuery,
     useFindPersonalChatMessageByChatIdQuery,

@@ -8,6 +8,8 @@ public class GroupChatMessageDto
 
     public TimeSpan Time { get; set; }
 
+    public int Status { get; set; }
+
     public int GroupChatId { get; set; }
 
     public string OwnerId { get; set; }

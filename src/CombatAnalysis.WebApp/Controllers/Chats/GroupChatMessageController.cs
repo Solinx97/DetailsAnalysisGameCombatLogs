@@ -55,7 +55,8 @@ public class GroupChatMessageController : ControllerBase
         }
         else if (responseMessage.IsSuccessStatusCode)
         {
-            return Ok();
+            var groupChatMessage = await responseMessage.Content.ReadFromJsonAsync<GroupChatMessageModel>();
+            return Ok(groupChatMessage);
         }
 
         return BadRequest();

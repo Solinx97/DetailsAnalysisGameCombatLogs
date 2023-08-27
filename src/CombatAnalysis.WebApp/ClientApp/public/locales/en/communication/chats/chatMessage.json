@@ -4,5 +4,8 @@
   "CloseMenu": "Close menu",
   "AreYouSure": "Are you sure?",
   "Cancel": "Cancel",
-  "Save": "Save"
+  "Save": "Save",
+  "Delivery": "Message delivery",
+  "Delivered": "Message delivered",
+  "Read": "Message read"
 }

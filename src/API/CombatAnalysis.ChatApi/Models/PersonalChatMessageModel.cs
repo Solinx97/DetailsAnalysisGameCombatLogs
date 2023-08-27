@@ -8,6 +8,8 @@ public class PersonalChatMessageModel
 
     public string Time { get; set; }
 
+    public int Status { get; set; }
+
     public int PersonalChatId { get; set; }
 
     public string OwnerId { get; set; }

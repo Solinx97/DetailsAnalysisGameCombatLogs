@@ -1,10 +1,14 @@
-import { faPen, faTrash, faUser } from '@fortawesome/free-solid-svg-icons';
+import { faPen, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useGetCustomerByIdQuery } from '../../../store/api/Customer.api';
+import User from '../User';
 
-const ChatMessageTitle = ({ itIsMe, setEditModeIsOn, openMessageMenu, editModeIsOn, deleteMessageAsync, message }) => {
+const ChatMessageTitle = ({ me, itIsMe, setEditModeIsOn, openMessageMenu, editModeIsOn, deleteMessageAsync, message }) => {
     const { t } = useTranslation("communication/chats/chatMessage");
+
+    const [userInformation, setUserInformation] = useState(null);
 
     const { data: user, isLoading } = useGetCustomerByIdQuery(message?.ownerId);
 
@@ -16,15 +20,14 @@ const ChatMessageTitle = ({ itIsMe, setEditModeIsOn, openMessageMenu, editModeIs
         <div>
             <div className="message-title">
                 <div className="username-container">
-                    <div className="username-container__username" title={user?.usernam}>{user?.username}</div>
-                    {itIsMe &&
-                        <FontAwesomeIcon
-                        icon={faUser}
-                        title={t("Information")}
-                        />
-                    }
+                    <User
+                        me={me}
+                        itIsMe={itIsMe}
+                        targetCustomerId={user.id}
+                        setUserInformation={setUserInformation}
+                        allowRemoveFriend={false}
+                    />
                 </div>
-
                 {openMessageMenu &&
                     <div className="message-menu">
                         <FontAwesomeIcon
@@ -42,8 +45,8 @@ const ChatMessageTitle = ({ itIsMe, setEditModeIsOn, openMessageMenu, editModeIs
                     </div>
                 }
             </div>
+            {userInformation}
         </div>
-
     );
 }
 

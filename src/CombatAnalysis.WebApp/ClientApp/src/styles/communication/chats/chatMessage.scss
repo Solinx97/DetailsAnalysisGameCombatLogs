@@ -13,19 +13,30 @@
         flex-direction: column;
 
         .message {
-            padding: 5px 25px;
-            width: 90%;
-            word-wrap: break-word;
-            border-radius: 10px;
-            cursor: default;
-        }
+            display: flex;
+            align-items: center;
 
-        .message:hover {
-            background: rgb(239, 243, 253);
-        }
+            .text-of-message {
+                padding: 5px 10px;
+                width: 90%;
+                word-wrap: break-word;
+                border-radius: 10px;
+                cursor: default;
+            }
 
-        .link:hover {
-            cursor: pointer;
+            .text-of-message:hover {
+                background: rgb(239, 243, 253);
+            }
+
+            .link:hover {
+                cursor: pointer;
+            }
+
+            .status {
+                margin-right: 5px;
+                cursor: default;
+                font-size: 12px;
+            }
         }
 
         .message-title {
@@ -57,19 +68,42 @@
             }
 
             .username-container {
-                display: flex;
-                align-items: center;
+                .special-user {
+                    &__me {
+                        display: flex;
+                        align-items: center;
+                        margin: 5px 0;
+                        max-width: 150px;
+                        padding: 10px;
+                        border-radius: 10px;
+                        font-size: 12px;
+                        overflow-x: hidden;
+                        cursor: default;
+                        background: white;
+                        color: black;
+                        border: 2px solid gray;
+                    }
 
-                &__username {
-                    margin: 5px 0;
-                    max-width: 150px;
-                    padding: 10px;
-                    border-radius: 10px;
-                    font-size: 12px;
-                    overflow-x: hidden;
-                    cursor: default;
-                    background: linear-gradient(blue, 1%, gray);
-                    color: white;
+                    &__another {
+                        display: flex;
+                        align-items: center;
+                        margin: 5px 0;
+                        max-width: 150px;
+                        padding: 10px;
+                        border-radius: 10px;
+                        font-size: 12px;
+                        overflow-x: hidden;
+                        cursor: default;
+                        background: linear-gradient(blue, 1%, gray);
+                        color: white;
+                    }
+
+                    &__me, &__another {
+                        svg:hover {
+                            cursor: pointer;
+                            transform: scale(1.25);
+                        }
+                    }
                 }
 
                 svg {

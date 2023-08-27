@@ -26,7 +26,7 @@ const Friends = ({ customer, requestsToConnect, allowRemoveFriend }) => {
                     myFriends?.map((item) => (
                         <li key={item.id} className="friend">
                             <User
-                                userId={item.forWhomId === customer?.id ? item.whoFriendId : item.forWhomId}
+                                targetCustomerId={item.forWhomId === customer?.id ? item.whoFriendId : item.forWhomId}
                                 setUserInformation={setUserInformation}
                                 allowRemoveFriend={allowRemoveFriend}
                             />
