@@ -2,11 +2,11 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useRef } from "react";
 import { useTranslation } from 'react-i18next';
-import { useFindPersonalChatMessageByChatIdQuery } from '../../../store/api/ChatApi';
 import { useGetCustomerByIdQuery } from '../../../store/api/Customer.api';
 import { useRemovePersonalChatAsyncMutation, useUpdatePersonalChatAsyncMutation } from '../../../store/api/PersonalChat.api';
+import { useFindPersonalChatMessageCountQuery, useUpdatePersonalChatMessageCountAsyncMutation } from '../../../store/api/PersonalChatMessagCount.api';
 import {
-    useCreatePersonalChatMessageAsyncMutation, useRemovePersonalChatMessageAsyncMutation,
+    useCreatePersonalChatMessageAsyncMutation, useFindPersonalChatMessageByChatIdQuery, useRemovePersonalChatMessageAsyncMutation,
     useUpdatePersonalChatMessageAsyncMutation
 } from '../../../store/api/PersonalChatMessage.api';
 import ChatMessage from './ChatMessage';
@@ -29,6 +29,9 @@ const PersonalChat = ({ chat, me, setSelectedChat, companionId }) => {
     const [removePersonalChatMessageAsync] = useRemovePersonalChatMessageAsyncMutation();
     const [removePersonalChatAsync] = useRemovePersonalChatAsyncMutation();
     const [updatePersonalChatAsyncMut] = useUpdatePersonalChatAsyncMutation();
+    const [updatePersonalChatMessageCountMut] = useUpdatePersonalChatMessageCountAsyncMutation();
+    const { data: messagesCount, isLoading: messagesCountLoading } = useFindPersonalChatMessageCountQuery({ chatId: chat?.id, userId: companionId });
+    const { data: myMessagesCount, isLoading: myMessagesCountLoading } = useFindPersonalChatMessageCountQuery({ chatId: chat?.id, userId: me?.id });
 
     const deleteMessageAsync = async (messageId) => {
         await removePersonalChatMessageAsync(messageId);
@@ -73,6 +76,8 @@ const PersonalChat = ({ chat, me, setSelectedChat, companionId }) => {
             updateForMessage.status = 1;
 
             await updatePersonalChatMessageAsync(updateForMessage);
+
+            await updateChatMessagesCountAsync(messagesCount, 1);
         }
     }
 
@@ -82,6 +87,20 @@ const PersonalChat = ({ chat, me, setSelectedChat, companionId }) => {
         await updatePersonalChatAsyncMut(chat);
     }
 
+    const updateChatMessagesCountAsync = async (messagesCount, count) => {
+        const newMessagesCount = Object.assign({}, messagesCount);
+        newMessagesCount.count = newMessagesCount.count + count;
+
+        await updatePersonalChatMessageCountMut(newMessagesCount);
+    }
+
+    const handleUpdatePersonalChatMessageAsync = async (message, count) => {
+        const updated = await updatePersonalChatMessageAsync(message);
+        if (updated.data !== undefined && count !== 0) {
+            await updateChatMessagesCountAsync(myMessagesCount, count);
+        }
+    }
+
     const leaveFromChatAsync = async () => {
         const deletedItem = await removePersonalChatAsync(chat.id);
         if (deletedItem.data !== undefined) {
@@ -89,7 +108,8 @@ const PersonalChat = ({ chat, me, setSelectedChat, companionId }) => {
         }
     }
 
-    if (isLoading || userIsLoading) {
+    if (isLoading || userIsLoading
+        || messagesCountLoading || myMessagesCountLoading) {
         return <></>;
     }
 
@@ -97,7 +117,7 @@ const PersonalChat = ({ chat, me, setSelectedChat, companionId }) => {
         <div className="chats__selected-chat">
             <div className="messages-container">
                 <div className="title">
-                    <div className="title__companion">{user.username}</div>
+                    <div className="name">{user.username}</div>
                     <FontAwesomeIcon
                         icon={faPersonWalkingArrowRight}
                         title={t("LeaveFromChat")}
@@ -112,7 +132,7 @@ const PersonalChat = ({ chat, me, setSelectedChat, companionId }) => {
                                 <ChatMessage
                                     me={me}
                                     message={item}
-                                    updateMessageAsync={updatePersonalChatMessageAsync}
+                                    updateMessageAsync={handleUpdatePersonalChatMessageAsync}
                                     deleteMessageAsync={deleteMessageAsync}
                                 />
                             </li>

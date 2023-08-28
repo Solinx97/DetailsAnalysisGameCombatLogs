@@ -1,8 +1,10 @@
 ﻿namespace CombatAnalysis.DAL.Entities.Chat;
 
-public class GroupChatUser
+public class GroupChatMessageCount
 {
-    public string Id { get; set; }
+    public int Id { get; set; }
+
+    public int Count { get; set; }
 
     public string UserId { get; set; }
 

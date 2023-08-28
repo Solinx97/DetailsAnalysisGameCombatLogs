@@ -10,7 +10,6 @@ export const ChatApi = createApi({
         'CommunityPost',
         'CommunityUser',
         'PersonalChat',
-        'PersonalChatMessage',
         'GroupChat',
         'GroupChatMessage',
         'GroupChatUser',
@@ -36,10 +35,6 @@ export const ChatApi = createApi({
             query: (id) => `/CommunityUser/searchByCommunityId/${id}`,
             providesTags: (result, error, id) => [{ type: 'CommunityUser', id }]
         }),
-        findPersonalChatMessageByChatId: builder.query({
-            query: (id) => `/PersonalChatMessage/findByChatId/${id}`,
-            providesTags: (result, error, id) => [{ type: 'PersonalChatMessage', id }],
-        }),
         getGroupChatById: builder.query({
             query: (id) => `/GroupChat/${id}`,
             providesTags: (result, error, id) => [{ type: 'GroupChat', id }],
@@ -48,7 +43,7 @@ export const ChatApi = createApi({
             query: (id) => `/GroupChatMessage/findByChatId/${id}`,
             providesTags: (result, error, id) => [{ type: 'GroupChatMessage', id }],
         }),
-        getGroupChatUserByUserId: builder.query({
+        getGroupChatUserById: builder.query({
             query: (id) => `/GroupChatUser/${id}`,
             providesTags: (result, error, id) => [{ type: 'GroupChatUser', id }],
         }),
@@ -67,8 +62,7 @@ export const {
     useGetPostQuery,
     useGetCommunitiesQuery,
     useGetGroupChatByIdQuery,
-    useGetGroupChatUserByUserIdQuery,
-    useFindPersonalChatMessageByChatIdQuery,
+    useGetGroupChatUserByIdQuery,
     useFindGroupChatMessageByChatIdQuery,
     useUserPostSearchByUserIdQuery,
     useSearchByCommunityIdAsyncQuery,

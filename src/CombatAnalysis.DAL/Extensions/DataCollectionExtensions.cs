@@ -49,9 +49,11 @@ public static class DataCollectionExtensions
         services.AddScoped<IGenericRepository<RequestToConnect, int>, SQLRepository<RequestToConnect, int>>();
         services.AddScoped<IGenericRepository<PersonalChat, int>, SQLRepository<PersonalChat, int>>();
         services.AddScoped<IGenericRepository<PersonalChatMessage, int>, SQLRepository<PersonalChatMessage, int>>();
+        services.AddScoped<IGenericRepository<PersonalChatMessageCount, int>, SQLRepository<PersonalChatMessageCount, int>>();
         services.AddScoped<IGenericRepository<GroupChat, int>, SQLRepository<GroupChat, int>>();
         services.AddScoped<IGenericRepository<GroupChatMessage, int>, SQLRepository<GroupChatMessage, int>>();
-        services.AddScoped<IGenericRepository<GroupChatUser, int>, SQLRepository<GroupChatUser, int>>();
+        services.AddScoped<IGenericRepository<GroupChatMessageCount, int>, SQLRepository<GroupChatMessageCount, int>>();
+        services.AddScoped<IGenericRepository<GroupChatUser, string>, SQLRepository<GroupChatUser, string>>();
         services.AddScoped<IGenericRepository<Post, int>, SQLRepository<Post, int>>();
         services.AddScoped<IGenericRepository<PostDislike, int>, SQLRepository<PostDislike, int>>();
         services.AddScoped<IGenericRepository<PostLike, int>, SQLRepository<PostLike, int>>();

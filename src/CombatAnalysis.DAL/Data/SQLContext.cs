@@ -56,9 +56,13 @@ public class SQLContext : DbContext
 
     public DbSet<PersonalChatMessage>? PersonalChatMessage { get; }
 
+    public DbSet<PersonalChatMessageCount>? PersonalChatMessageCount { get; }
+
     public DbSet<GroupChat>? GroupChat { get; }
 
     public DbSet<GroupChatMessage>? GroupChatMessage { get; }
+
+    public DbSet<GroupChatMessageCount>? GroupChatMessageCount { get; }
 
     public DbSet<GroupChatUser>? GroupChatUser { get; }
 

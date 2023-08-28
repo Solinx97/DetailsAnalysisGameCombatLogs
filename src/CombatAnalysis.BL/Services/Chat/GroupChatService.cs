@@ -12,11 +12,11 @@ internal class GroupChatService : IService<GroupChatDto, int>
     private readonly IMapper _mapper;
     private readonly ISqlContextService _sqlContextService;
     private readonly IService<GroupChatMessageDto, int> _groupChatMessageService;
-    private readonly IService<GroupChatUserDto, int> _groupChatUserService;
+    private readonly IService<GroupChatUserDto, string> _groupChatUserService;
 
     public GroupChatService(IGenericRepository<GroupChat, int> repository, IMapper mapper, 
         ISqlContextService sqlContextService, IService<GroupChatMessageDto, int> groupChatMessageService,
-        IService<GroupChatUserDto, int> groupChatUserService)
+        IService<GroupChatUserDto, string> groupChatUserService)
     {
         _repository = repository;
         _mapper = mapper;

@@ -10,9 +10,10 @@ import Communication from '../../Communication';
 import CommonItem from "./CommonItem";
 import ItemConnector from './ItemConnector';
 import RulesItem from "./RulesItem";
+import { useCreateGroupChatMessageCountAsyncMutation } from '../../../../store/api/GroupChatMessagCount.api';
+import AddPeople from '../../../AddPeople';
 
 import "../../../../styles/communication/chats/createGroupChat.scss";
-import AddPeople from '../../../AddPeople';
 
 const CreateGroupChat = () => {
     const customer = useSelector((state) => state.customer.value);
@@ -33,6 +34,7 @@ const CreateGroupChat = () => {
     const [createGroupChatAsync] = useCreateGroupChatAsyncMutation();
     const [createGroupChatUserAsync] = useCreateGroupChatUserAsyncMutation();
     const [createGroupChatUserMutAsync] = useCreateGroupChatUserAsyncMutation();
+    const [createGroupChatCountAsyncMut] = useCreateGroupChatMessageCountAsyncMutation();
 
     const createNewGroupChatAsync = async () => {
         const newGroupChat = {
@@ -48,6 +50,7 @@ const CreateGroupChat = () => {
         }
 
         const newGroupChatUser = {
+            id: "",
             userId: customer?.id,
             groupChatId: createdGroupChat.data.id,
         };
@@ -57,23 +60,43 @@ const CreateGroupChat = () => {
             return null;
         }
 
+        const countIsCreated = await createGroupChatCountAsync(createdGroupChat.data.id, customer?.id);
+        if (!countIsCreated) {
+            return;
+        }
+
         return createdGroupChat.data;
     }
 
+    const createGroupChatCountAsync = async (chatId, userId) => {
+        const newMessagesCount = {
+            count: 0,
+            userId: userId,
+            groupChatId: +chatId,
+        };
+
+        const createdMessagesCount = await createGroupChatCountAsyncMut(newMessagesCount);
+        return createdMessagesCount.data !== undefined;
+    }
+
     const joinPeopleAsync = async (groupChatId) => {
-        for (var i = 0; i < peopleIdToJoin.length; i++) {
+        for (let i = 0; i < peopleIdToJoin.length; i++) {
             const newGroupChatUser = {
+                id: "",
                 userId: peopleIdToJoin[i],
                 groupChatId: groupChatId,
             };
 
-            await createGroupChatUserMutAsync(newGroupChatUser);
+            const createdGroupChatUser = await createGroupChatUserMutAsync(newGroupChatUser);
+            if (createdGroupChatUser.data !== undefined) {
+                await createGroupChatCountAsync(groupChatId, peopleIdToJoin[i]);
+            }
         }
     }
 
     const handleCreateNewGroupChatAsync = async () => {
         const createdGroupChat = await createNewGroupChatAsync();
-        await joinPeopleAsync(createdGroupChat.id);
+        await joinPeopleAsync(createdGroupChat?.id);
 
         navigate("/chats");
     }

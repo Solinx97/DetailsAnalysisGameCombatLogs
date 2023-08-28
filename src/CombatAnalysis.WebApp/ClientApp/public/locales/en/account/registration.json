@@ -4,5 +4,6 @@
   "CheckMeOut": "Check me out",
   "EmailExist": "This Email already reg!",
   "Registration": "Registration",
-  "Username": "Username"
+  "Username": "Username",
+  "RememberMe": "Don't logout"
 }

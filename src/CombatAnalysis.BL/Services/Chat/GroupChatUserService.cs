@@ -6,12 +6,12 @@ using CombatAnalysis.DAL.Interfaces;
 
 namespace CombatAnalysis.BL.Services.Chat;
 
-internal class GroupChatUserService : IService<GroupChatUserDto, int>
+internal class GroupChatUserService : IService<GroupChatUserDto, string>
 {
-    private readonly IGenericRepository<GroupChatUser, int> _repository;
+    private readonly IGenericRepository<GroupChatUser, string> _repository;
     private readonly IMapper _mapper;
 
-    public GroupChatUserService(IGenericRepository<GroupChatUser, int> repository, IMapper mapper)
+    public GroupChatUserService(IGenericRepository<GroupChatUser, string> repository, IMapper mapper)
     {
         _repository = repository;
         _mapper = mapper;
@@ -27,7 +27,7 @@ internal class GroupChatUserService : IService<GroupChatUserDto, int>
         return CreateInternalAsync(item);
     }
 
-    public async Task<int> DeleteAsync(int id)
+    public async Task<int> DeleteAsync(string id)
     {
         var rowsAffected = await _repository.DeleteAsync(id);
 
@@ -42,7 +42,7 @@ internal class GroupChatUserService : IService<GroupChatUserDto, int>
         return result;
     }
 
-    public async Task<GroupChatUserDto> GetByIdAsync(int id)
+    public async Task<GroupChatUserDto> GetByIdAsync(string id)
     {
         var result = await _repository.GetByIdAsync(id);
         var resultMap = _mapper.Map<GroupChatUserDto>(result);

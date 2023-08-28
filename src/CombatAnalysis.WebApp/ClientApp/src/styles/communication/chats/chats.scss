@@ -17,10 +17,21 @@
             .title {
                 display: flex;
                 flex-direction: row;
-                justify-content: space-around;
+                justify-content: start;
+                align-items: center;
+                box-shadow: 3px 3px 3px 3px black;
+                border-radius: 10px;
+                padding: 10px;
+                gap: 25px;
+                cursor: default;
 
-                &__companion {
+                .name {
                     margin: 0 20px;
+                    font-weight: bold;
+                    background: linear-gradient(blue, 1%, gray);
+                    color: white;
+                    padding: 5px 10px;
+                    border-radius: 10px;
                 }
             }
         }
@@ -75,6 +86,27 @@
                     overflow: hidden;
                     word-wrap: break-word;
                     font-size: 12px;
+                }
+
+                .chat-card {
+                    display: flex;
+                    flex-direction: column;
+                    gap: 5px;
+
+                    .chat-tooltip {
+                        display: flex;
+                        align-items: center;
+                        gap: 10px;
+
+                        .unread-message-count {
+                            padding: 5px;
+                            box-shadow: 2px 2px 2px 2px gray;
+                            border-radius: 25px;
+                            font-size: 10px;
+                            width: 25px;
+                            text-align: center;
+                        }
+                    }
                 }
             }
         }

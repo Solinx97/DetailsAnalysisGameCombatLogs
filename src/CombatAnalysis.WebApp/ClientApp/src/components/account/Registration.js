@@ -95,9 +95,7 @@ const Registration = () => {
                     <input type="password" className="form-control" id="inputPassword" onChange={handlePasswordChange} />
                 </div>
                 <div className="form-check">
-                    <label className="form-check-label" htmlFor="invalidCheck">
-                        Don't logout
-                    </label>
+                    <label className="form-check-label" htmlFor="invalidCheck">{t("RememberMe")}</label>
                     <input className="form-check-input" type="checkbox" id="invalidCheck" ref={dontLogout} />
                 </div>
                 <input type="submit" className="btn btn-primary" value={t("Registration")} />

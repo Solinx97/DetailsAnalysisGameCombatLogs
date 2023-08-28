@@ -4,6 +4,7 @@ import { memo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { useCreatePersonalChatAsyncMutation, useLazyIsExistAsyncQuery } from '../../store/api/PersonalChat.api';
+import { useCreatePersonalChatMessageCountAsyncMutation } from '../../store/api/PersonalChatMessagCount.api';
 import { useCreateRequestAsyncMutation, useLazyRequestIsExistQuery } from '../../store/api/RequestToConnect.api';
 import { useFriendSearchByUserIdQuery } from '../../store/api/UserApi';
 import PeopleInvitesToCommunity from './people/PeopleInvitesToCommunity';
@@ -20,6 +21,7 @@ const UserInformation = ({ me, people, closeUserInformation }) => {
 
     const [isExistAsync] = useLazyIsExistAsyncQuery();
     const [createPersonalChatAsync] = useCreatePersonalChatAsyncMutation();
+    const [createPersonalChatCountAsyncMut] = useCreatePersonalChatMessageCountAsyncMutation();
     const [createRequestAsync] = useCreateRequestAsyncMutation();
     const [isRequestExistAsync] = useLazyRequestIsExistQuery();
 
@@ -42,7 +44,7 @@ const UserInformation = ({ me, people, closeUserInformation }) => {
         return isExist.data !== undefined ? isExist.data : true;
     }
 
-    const startChatAsync = async (targetCustomer) => {
+    const createChatAsync = async (targetCustomer) => {
         const isExist = await checkExistOfChatsAsync(targetCustomer);
         if (isExist) {
             navigate("/chats");
@@ -59,8 +61,27 @@ const UserInformation = ({ me, people, closeUserInformation }) => {
 
         const createdChat = await createPersonalChatAsync(newChat);
         if (createdChat.data !== undefined) {
-            navigate("/chats");
+            let countIsCreated = await createPersonalChatCountAsync(createdChat.data.id, me?.id);
+            if (!countIsCreated) {
+                return;
+            }
+
+            countIsCreated = await createPersonalChatCountAsync(createdChat.data.id, targetCustomer.id);
+            if (countIsCreated) {
+                navigate("/chats");
+            }
         }
+    }
+
+    const createPersonalChatCountAsync = async (chatId, userId) => {
+        const newMessagesCount = {
+            count: 0,
+            userId: userId,
+            personalChatId: +chatId,
+        };
+
+        const createdMessagesCount = await createPersonalChatCountAsyncMut(newMessagesCount);
+        return createdMessagesCount.data !== undefined;
     }
 
     const checkIfRequestExistAsync = async (id) => {
@@ -150,7 +171,7 @@ const UserInformation = ({ me, people, closeUserInformation }) => {
                         <FontAwesomeIcon
                             icon={faCommentDots}
                             title={t("StartChat")}
-                            onClick={async () => await startChatAsync(people)}
+                            onClick={async () => await createChatAsync(people)}
                         />
                     </li>
                     <li className="list-group-item">

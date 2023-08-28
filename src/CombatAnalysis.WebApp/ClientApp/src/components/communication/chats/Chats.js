@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
-import { useGetGroupChatUserByUserIdQuery } from '../../../store/api/ChatApi';
+import { useGetGroupChatUserByIdQuery } from '../../../store/api/ChatApi';
 import { useGetByUserIdAsyncQuery } from '../../../store/api/PersonalChat.api';
 import Communication from '../Communication';
 import GroupChat from './GroupChat';
@@ -21,7 +21,7 @@ const Chats = () => {
     const me = useSelector((state) => state.customer.value);
 
     const { data: personalChats, isLoading } = useGetByUserIdAsyncQuery(me?.id);
-    const { data: groupChatUsers, isLoading: chatUserIsLoading } = useGetGroupChatUserByUserIdQuery(me?.id, {
+    const { data: groupChatUsers, isLoading: chatUserIsLoading } = useGetGroupChatUserByIdQuery(me?.id, {
         pollingInterval: getGroupChatUsersInterval
     });
 
@@ -76,6 +76,7 @@ const Chats = () => {
                                         <MyGroupChat
                                             groupChatId={item.groupChatId}
                                             setSelectedGroupChat={setSelectedGroupChat}
+                                            meId={me?.id}
                                         />
                                     </li>
                                 ))
@@ -105,6 +106,7 @@ const Chats = () => {
                                             selectedGroupChatId={selectedPersonalChat?.id}
                                             setSelectedPersonalChat={setSelectedPersonalChat}
                                             companionId={item.initiatorId === me?.id ? item.companionId : item.initiatorId}
+                                            meId={me?.id}
                                         />
                                     </li>
                                 ))

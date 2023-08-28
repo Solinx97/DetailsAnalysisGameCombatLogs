@@ -61,18 +61,16 @@ public class PersonalChatController : ControllerBase
 
         var personalChats = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<PersonalChatModel>>();
         var chats = personalChats.Where(x => x.InitiatorId == initiatorId && x.CompanionId == companionId).ToList();
-        if (chats.Any())
+        if (!chats.Any())
         {
-            return Ok(true);
+            chats = personalChats.Where(x => x.CompanionId == companionId && x.InitiatorId == initiatorId).ToList();
+            if (!chats.Any())
+            {
+                return Ok(false);
+            }
         }
 
-        var moreChats = personalChats.Where(x => x.CompanionId == companionId && x.InitiatorId == initiatorId).ToList();
-        if (moreChats.Any())
-        {
-            return Ok(true);
-        }
-
-        return Ok(false);
+        return Ok(true);
     }
 
     [HttpPost]
@@ -90,7 +88,8 @@ public class PersonalChatController : ControllerBase
         }
         else if (responseMessage.IsSuccessStatusCode)
         {
-            return Ok();
+            var personalChat = await responseMessage.Content.ReadFromJsonAsync<PersonalChatModel>();
+            return Ok(personalChat);
         }
 
         return BadRequest();

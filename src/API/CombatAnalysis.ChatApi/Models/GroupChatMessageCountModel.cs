@@ -1,8 +1,10 @@
 ﻿namespace CombatAnalysis.ChatApi.Models;
 
-public class GroupChatUserModel
+public class GroupChatMessageCountModel
 {
-    public string Id { get; set; }
+    public int Id { get; set; }
+
+    public int Count { get; set; }
 
     public string UserId { get; set; }
 

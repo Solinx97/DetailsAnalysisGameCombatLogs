@@ -2,18 +2,25 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { memo, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useFindGroupChatMessageByChatIdQuery, useGetGroupChatUserByUserIdQuery } from '../../../store/api/ChatApi';
+import { useFindGroupChatMessageByChatIdQuery, useGetGroupChatUserByIdQuery } from '../../../store/api/ChatApi';
 import { useRemoveGroupChatAsyncMutation, useUpdateGroupChatAsyncMutation } from '../../../store/api/GroupChat.api';
+import {
+    useCreateGroupChatMessageCountAsyncMutation, useFindGroupChatMessageCountQuery,
+    useLazyFindGroupChatMessageCountQuery, useUpdateGroupChatMessageCountAsyncMutation
+} from '../../../store/api/GroupChatMessagCount.api';
 import {
     useCreateGroupChatMessageAsyncMutation, useRemoveGroupChatMessageAsyncMutation,
     useUpdateGroupChatMessageAsyncMutation
 } from '../../../store/api/GroupChatMessage.api';
-import { useCreateGroupChatUserAsyncMutation, useGetGroupChatUserByChatIdQuery, useRemoveGroupChatUserAsyncMutation } from '../../../store/api/GroupChatUser.api';
+import {
+    useCreateGroupChatUserAsyncMutation, useGetGroupChatUserByChatIdQuery,
+    useRemoveGroupChatUserAsyncMutation
+} from '../../../store/api/GroupChatUser.api';
 import AddPeople from '../../AddPeople';
+import User from '../User';
 import ChatMessage from './ChatMessage';
 
 import "../../../styles/communication/chats/groupChat.scss";
-import User from '../User';
 
 const getGroupChatMessagesInterval = 1000;
 
@@ -33,7 +40,7 @@ const GroupChat = ({ chat, me, setSelectedChat }) => {
     const { data: messages, isLoading } = useFindGroupChatMessageByChatIdQuery(chat.id, {
         pollingInterval: getGroupChatMessagesInterval
     });
-    const { data: muGroupChatUsers } = useGetGroupChatUserByUserIdQuery(me?.id);
+    const { data: meInChat, isLoading: myUsersIsLoading } = useGetGroupChatUserByIdQuery(me?.id);
     const { data: groupChatUsers, isLoading: usersIsLoading } = useGetGroupChatUserByChatIdQuery(chat.id);
     const [createGroupChatMessageAsync] = useCreateGroupChatMessageAsyncMutation();
     const [updateGroupChatMessageAsync] = useUpdateGroupChatMessageAsyncMutation();
@@ -42,6 +49,10 @@ const GroupChat = ({ chat, me, setSelectedChat }) => {
     const [removeGroupChatAsyncMut] = useRemoveGroupChatAsyncMutation();
     const [removeGroupChatUserAsyncMut] = useRemoveGroupChatUserAsyncMutation();
     const [createGroupChatUserMutAsync] = useCreateGroupChatUserAsyncMutation();
+    const [updateGroupChatMessageCountMut] = useUpdateGroupChatMessageCountAsyncMutation();
+    const [getMessagesCount] = useLazyFindGroupChatMessageCountQuery();
+    const [createGroupChatCountAsyncMut] = useCreateGroupChatMessageCountAsyncMutation();
+    const { data: myMessagesCount, isLoading: myMessagesCountLoading } = useFindGroupChatMessageCountQuery({ chatId: chat?.id, userId: me?.id });
 
     useEffect(() => {
         if (groupChatUsers === undefined) {
@@ -55,11 +66,6 @@ const GroupChat = ({ chat, me, setSelectedChat }) => {
 
         setGroupChatUsersId(usersId);
     }, [groupChatUsers])
-
-    const getChatUserByMyIdAsync = async () => {
-        const currentGroupChatUser = muGroupChatUsers?.filter((chatUser) => chatUser.groupChatId === chat.id)[0];
-        await leaveFromChatAsync(currentGroupChatUser.id);
-    }
 
     const sendMessageAsync = async () => {
         if (messageInput.current.value.length === 0) {
@@ -81,16 +87,31 @@ const GroupChat = ({ chat, me, setSelectedChat }) => {
     }
 
     const createGroupChatUserAsync = async () => {
-        for (var i = 0; i < peopleIdToJoin.length; i++) {
+        for (let i = 0; i < peopleIdToJoin.length; i++) {
             const newGroupChatUser = {
+                id: "",
                 userId: peopleIdToJoin[i],
                 groupChatId: chat.id,
             };
 
-            await createGroupChatUserMutAsync(newGroupChatUser);
+            const created = await createGroupChatUserMutAsync(newGroupChatUser);
+            if (created.data !== undefined) {
+                await createGroupChatCountAsync(chat.id, peopleIdToJoin[i]);
+            }
         }
 
         setShowAddPeople(false);
+    }
+
+    const createGroupChatCountAsync = async (chatId, userId) => {
+        const newMessagesCount = {
+            count: 0,
+            userId: userId,
+            groupChatId: +chatId,
+        };
+
+        const createdMessagesCount = await createGroupChatCountAsyncMut(newMessagesCount);
+        return createdMessagesCount.data !== undefined;
     }
 
     const addPeopleForRemove = (id) => {
@@ -127,11 +148,12 @@ const GroupChat = ({ chat, me, setSelectedChat }) => {
         if (createdMessage.data !== undefined) {
             await updateGroupChatAsync(message);
 
-
             const updateForMessage = Object.assign({}, createdMessage.data);
             updateForMessage.status = 1;
 
             await updateGroupChatMessageAsync(updateForMessage);
+
+            updateChatMessagesCountAsync(1);
         }
     }
 
@@ -141,8 +163,36 @@ const GroupChat = ({ chat, me, setSelectedChat }) => {
         await updateGroupChatAsyncMut(chat);
     }
 
+    const updateChatMessagesCountAsync = async (count) => {
+        for (let i = 0; i < groupChatUsers.length; i++) {
+            if (groupChatUsers[i].userId === me?.id) {
+                continue;
+            }
+
+            const messagesCount = await getMessagesCount({ chatId: chat?.id, userId: groupChatUsers[i].userId });
+            const newMessagesCount = Object.assign({}, messagesCount.data);
+            newMessagesCount.count = newMessagesCount.count + count;
+
+            await updateGroupChatMessageCountMut(newMessagesCount);
+        }
+    }
+
+    const updateMyChatMessagesCountAsync = async (count) => {
+        const newMessagesCount = Object.assign({}, myMessagesCount);
+        newMessagesCount.count = newMessagesCount.count + count;
+
+        await updateGroupChatMessageCountMut(newMessagesCount);
+    }
+
     const deleteMessageAsync = async (messageId) => {
         await removeGroupChatMessageAsync(messageId);
+    }
+
+    const handleUpdateGroupChatMessageAsync = async (message, count) => {
+        const updated = await updateGroupChatMessageAsync(message);
+        if (updated.data !== undefined && count !== 0) {
+            await updateMyChatMessagesCountAsync(count);
+        }
     }
 
     const leaveFromChatAsync = async (id) => {
@@ -159,7 +209,8 @@ const GroupChat = ({ chat, me, setSelectedChat }) => {
         }
     }
 
-    if (isLoading || usersIsLoading) {
+    if (isLoading || usersIsLoading
+        || myUsersIsLoading || myMessagesCountLoading) {
         return <></>;
     }
 
@@ -167,7 +218,7 @@ const GroupChat = ({ chat, me, setSelectedChat }) => {
         <div className="chats__selected-chat">
             <div className="messages-container">
                 <div className="title">
-                    <div className="title__companion">{chat.name}</div>
+                    <div className="name" title={chat.name}>{chat.name}</div>
                     <FontAwesomeIcon
                         icon={faGear}
                         title={t("Settings")}
@@ -182,7 +233,7 @@ const GroupChat = ({ chat, me, setSelectedChat }) => {
                                 <ChatMessage
                                     me={me}
                                     message={item}
-                                    updateMessageAsync={updateGroupChatMessageAsync}
+                                    updateMessageAsync={handleUpdateGroupChatMessageAsync}
                                     deleteMessageAsync={deleteMessageAsync}
                                 />
                             </li>
@@ -224,7 +275,7 @@ const GroupChat = ({ chat, me, setSelectedChat }) => {
                         {me?.id === chat.ownerId &&
                             <input type="button" value={t("RemoveChat")} className="btn btn-danger" onClick={async () => await removeChatAsync()} />
                         }
-                        <input type="button" value={t("Leave")} className="btn btn-warning" onClick={async () => await getChatUserByMyIdAsync()} />
+                        <input type="button" value={t("Leave")} className="btn btn-warning" onClick={async () => await leaveFromChatAsync(meInChat?.id)} />
                     </div>
                 </div>
                 <div className={`settings__people-inspection${peopleInspectionModeOn ? "_active" : ""}`}>
@@ -234,7 +285,8 @@ const GroupChat = ({ chat, me, setSelectedChat }) => {
                             groupChatUsers.map((item) => (
                                 <li key={item.id}>
                                     <User
-                                        userId={item.userId}
+                                        me={me}
+                                        targetCustomerId={item.userId}
                                         setUserInformation={setUserInformation}
                                         allowRemoveFriend={false}
                                     />

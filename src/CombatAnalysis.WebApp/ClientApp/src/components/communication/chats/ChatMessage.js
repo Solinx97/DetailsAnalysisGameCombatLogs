@@ -1,4 +1,4 @@
-import { faCircleUp, faClock, faCloudArrowUp, faEye } from '@fortawesome/free-solid-svg-icons';
+import { faCircleUp, faClock, faCloudArrowUp, faEye, faCircle } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -24,21 +24,21 @@ const ChatMessage = ({ me, message, updateMessageAsync, deleteMessageAsync }) =>
         const updateForMessage = Object.assign({}, message);
         updateForMessage.message = editMessageInput.current.value;
 
-        await updateMessageAsync(updateForMessage);
+        await updateMessageAsync(updateForMessage, 0);
 
         setEditModeIsOn(false);
         setOpenMessageMenu(false);
     }
 
     const updateMessageStatusAsync = async () => {
-        if (message.status === 2 || message.ownerId === me?.id) {
+        if (message.ownerId === me?.id) {
             return;
         }
 
         const updateForMessage = Object.assign({}, message);
         updateForMessage.status = 2;
 
-        await updateMessageAsync(updateForMessage);
+        await updateMessageAsync(updateForMessage, -1);
     }
 
     const handleOpenMessageMenu = () => {
@@ -101,13 +101,20 @@ const ChatMessage = ({ me, message, updateMessageAsync, deleteMessageAsync }) =>
                     />
                 </div>
                 : <div className="message">
-                    {message?.ownerId === me?.id &&
-                        getMessageStatus()
+                    {message?.ownerId === me?.id
+                        ? getMessageStatus()
+                        : message.status === status["delivered"] &&
+                            <FontAwesomeIcon
+                                icon={faCircle}
+                                className="status"
+                                title={t("Delivered")}
+                            />
                     }
                     {message?.message.startsWith("http")
                         ? <a className="text-of-message link" href={message?.message} target="_blank"
                             rel="noreferrer" onMouseOver={async () => await updateMessageStatusAsync()}>{message?.message}</a>
-                        : <div className="text-of-message" onMouseOver={async () => await updateMessageStatusAsync()}>{message?.message}</div>
+                        : <div className={`text-of-message${message?.status === status["delivered"] ? "__unread" : "__read"}`}
+                            onMouseOver={async () => await updateMessageStatusAsync()}>{message?.message}</div>
                     }
                   </div>
             }

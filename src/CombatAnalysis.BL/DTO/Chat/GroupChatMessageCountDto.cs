@@ -1,8 +1,10 @@
 ﻿namespace CombatAnalysis.BL.DTO.Chat;
 
-public class GroupChatUserDto
+public class GroupChatMessageCountDto
 {
-    public string Id { get; set; }
+    public int Id { get; set; }
+
+    public int Count { get; set; }
 
     public string UserId { get; set; }
 

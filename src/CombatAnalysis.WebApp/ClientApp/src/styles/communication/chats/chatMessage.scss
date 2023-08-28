@@ -17,11 +17,18 @@
             align-items: center;
 
             .text-of-message {
-                padding: 5px 10px;
-                width: 90%;
-                word-wrap: break-word;
-                border-radius: 10px;
-                cursor: default;
+                &__unread, &__read {
+                    padding: 5px 10px;
+                    width: 90%;
+                    word-wrap: break-word;
+                    border-radius: 10px;
+                    cursor: default;
+                    padding: 3px;
+                }
+
+                &__unread {
+                    background: #E0F0E4;
+                }
             }
 
             .text-of-message:hover {
@@ -35,7 +42,7 @@
             .status {
                 margin-right: 5px;
                 cursor: default;
-                font-size: 12px;
+                font-size: 10px;
             }
         }
 
