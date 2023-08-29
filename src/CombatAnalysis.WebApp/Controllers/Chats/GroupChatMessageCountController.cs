@@ -25,7 +25,7 @@ public class GroupChatMessageCountController : ControllerBase
             return Unauthorized();
         }
 
-        var responseMessage = await _httpClient.GetAsync($"GroupChatMessageCount", refreshToken, Port.ChatApi);
+        var responseMessage = await _httpClient.GetAsync("GroupChatMessageCount", refreshToken, Port.ChatApi);
         if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
         {
             return Unauthorized();
@@ -36,9 +36,9 @@ public class GroupChatMessageCountController : ControllerBase
         }
 
         var groupChatMessagesCount = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<GroupChatMessageCountModel>>();
-        var myGroupChatMessagesCount = groupChatMessagesCount.Where(x => x.GroupChatId == chatId && x.UserId == userId).FirstOrDefault();
+        var myGroupChatMessageCount = groupChatMessagesCount.Where(x => x.GroupChatId == chatId && x.UserId == userId).FirstOrDefault();
 
-        return Ok(myGroupChatMessagesCount);
+        return Ok(myGroupChatMessageCount);
     }
 
     [HttpPost]

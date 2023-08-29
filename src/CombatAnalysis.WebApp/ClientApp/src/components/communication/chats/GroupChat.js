@@ -2,7 +2,7 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { memo, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useFindGroupChatMessageByChatIdQuery, useGetGroupChatUserByIdQuery } from '../../../store/api/ChatApi';
+import { useFindGroupChatMessageByChatIdQuery } from '../../../store/api/ChatApi';
 import { useRemoveGroupChatAsyncMutation, useUpdateGroupChatAsyncMutation } from '../../../store/api/GroupChat.api';
 import {
     useCreateGroupChatMessageCountAsyncMutation, useFindGroupChatMessageCountQuery,
@@ -13,12 +13,17 @@ import {
     useUpdateGroupChatMessageAsyncMutation
 } from '../../../store/api/GroupChatMessage.api';
 import {
-    useCreateGroupChatUserAsyncMutation, useGetGroupChatUserByChatIdQuery,
-    useRemoveGroupChatUserAsyncMutation
+    useCreateGroupChatUserAsyncMutation, useFindGroupChatUserByChatIdQuery,
+    useFindGroupChatUserQuery, useRemoveGroupChatUserAsyncMutation
 } from '../../../store/api/GroupChatUser.api';
+import {
+    useCreateUnreadGroupChatMessageAsyncMutation,
+    useLazyFindUnreadGroupChatMessageQuery,
+    useRemoveUnreadGroupChatMessageAsyncMutation
+} from '../../../store/api/UnreadGroupChatMessage.api';
 import AddPeople from '../../AddPeople';
 import User from '../User';
-import ChatMessage from './ChatMessage';
+import GroupChatMessage from './GroupChatMessage';
 
 import "../../../styles/communication/chats/groupChat.scss";
 
@@ -40,8 +45,8 @@ const GroupChat = ({ chat, me, setSelectedChat }) => {
     const { data: messages, isLoading } = useFindGroupChatMessageByChatIdQuery(chat.id, {
         pollingInterval: getGroupChatMessagesInterval
     });
-    const { data: meInChat, isLoading: myUsersIsLoading } = useGetGroupChatUserByIdQuery(me?.id);
-    const { data: groupChatUsers, isLoading: usersIsLoading } = useGetGroupChatUserByChatIdQuery(chat.id);
+    const { data: meInChat, isLoading: myUsersIsLoading } = useFindGroupChatUserQuery({ chatId: chat?.id, userId: me?.id });
+    const { data: groupChatUsers, isLoading: usersIsLoading } = useFindGroupChatUserByChatIdQuery(chat.id);
     const [createGroupChatMessageAsync] = useCreateGroupChatMessageAsyncMutation();
     const [updateGroupChatMessageAsync] = useUpdateGroupChatMessageAsyncMutation();
     const [removeGroupChatMessageAsync] = useRemoveGroupChatMessageAsyncMutation();
@@ -52,6 +57,9 @@ const GroupChat = ({ chat, me, setSelectedChat }) => {
     const [updateGroupChatMessageCountMut] = useUpdateGroupChatMessageCountAsyncMutation();
     const [getMessagesCount] = useLazyFindGroupChatMessageCountQuery();
     const [createGroupChatCountAsyncMut] = useCreateGroupChatMessageCountAsyncMutation();
+    const [createUnreadGroupChatMessageAsyncMut] = useCreateUnreadGroupChatMessageAsyncMutation();
+    const [removeUnreadGroupChatMessageAsyncMut] = useRemoveUnreadGroupChatMessageAsyncMutation();
+    const [findUnreadGroupChatMessageQ] = useLazyFindUnreadGroupChatMessageQuery();
     const { data: myMessagesCount, isLoading: myMessagesCountLoading } = useFindGroupChatMessageCountQuery({ chatId: chat?.id, userId: me?.id });
 
     useEffect(() => {
@@ -145,16 +153,21 @@ const GroupChat = ({ chat, me, setSelectedChat }) => {
         };
 
         const createdMessage = await createGroupChatMessageAsync(newMessage);
-        if (createdMessage.data !== undefined) {
-            await updateGroupChatAsync(message);
-
-            const updateForMessage = Object.assign({}, createdMessage.data);
-            updateForMessage.status = 1;
-
-            await updateGroupChatMessageAsync(updateForMessage);
-
-            updateChatMessagesCountAsync(1);
+        if (createdMessage.error !== undefined) {
+            return;
         }
+
+        await updateGroupChatAsync(message);
+
+        const updateForMessage = Object.assign({}, createdMessage.data);
+        updateForMessage.status = 1;
+
+        await updateGroupChatMessageAsync(updateForMessage);
+
+        const increaseUnreadMessages = 1;
+        await updateChatMessagesCountAsync(increaseUnreadMessages);
+
+        await createUnreadMessageAsync(createdMessage.data.id);
     }
 
     const updateGroupChatAsync = async (message) => {
@@ -177,11 +190,33 @@ const GroupChat = ({ chat, me, setSelectedChat }) => {
         }
     }
 
+    const createUnreadMessageAsync = async (messageId) => {
+        for (let i = 0; i < groupChatUsers.length; i++) {
+            if (groupChatUsers[i].userId === me?.id) {
+                continue;
+            }
+
+            const newUnreadMessage = {
+                groupChatUserId: groupChatUsers[i].id,
+                groupChatMessageId: messageId
+            }
+
+            await createUnreadGroupChatMessageAsyncMut(newUnreadMessage);
+        }
+    }
+
     const updateMyChatMessagesCountAsync = async (count) => {
         const newMessagesCount = Object.assign({}, myMessagesCount);
         newMessagesCount.count = newMessagesCount.count + count;
 
         await updateGroupChatMessageCountMut(newMessagesCount);
+    }
+
+    const removeUnreadMessageAsync = async (message) => {
+        const unreadMessage = await findUnreadGroupChatMessageQ({ messageId: message.id, groupChatUserId: meInChat?.id });
+        if (unreadMessage.data !== undefined && unreadMessage.data !== null) {
+            await removeUnreadGroupChatMessageAsyncMut(unreadMessage.data.id);
+        }
     }
 
     const deleteMessageAsync = async (messageId) => {
@@ -192,6 +227,7 @@ const GroupChat = ({ chat, me, setSelectedChat }) => {
         const updated = await updateGroupChatMessageAsync(message);
         if (updated.data !== undefined && count !== 0) {
             await updateMyChatMessagesCountAsync(count);
+            await removeUnreadMessageAsync(message);
         }
     }
 
@@ -230,8 +266,9 @@ const GroupChat = ({ chat, me, setSelectedChat }) => {
                     {
                         messages.map((item) => (
                             <li key={item.id}>
-                                <ChatMessage
+                                <GroupChatMessage
                                     me={me}
+                                    meInChat={meInChat}
                                     message={item}
                                     updateMessageAsync={handleUpdateGroupChatMessageAsync}
                                     deleteMessageAsync={deleteMessageAsync}

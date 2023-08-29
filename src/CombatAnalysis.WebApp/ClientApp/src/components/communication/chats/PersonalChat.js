@@ -23,7 +23,7 @@ const PersonalChat = ({ chat, me, setSelectedChat, companionId }) => {
     const { data: messages, isLoading } = useFindPersonalChatMessageByChatIdQuery(chat.id, {
         pollingInterval: getPersonalChatMessagesInterval
     });
-    const { data: user, isLoading: userIsLoading } = useGetCustomerByIdQuery(companionId);
+    const { data: companion, isLoading: companionIsLoading } = useGetCustomerByIdQuery(companionId);
     const [createPersonalChatMessageAsync] = useCreatePersonalChatMessageAsyncMutation();
     const [updatePersonalChatMessageAsync] = useUpdatePersonalChatMessageAsyncMutation();
     const [removePersonalChatMessageAsync] = useRemovePersonalChatMessageAsyncMutation();
@@ -77,7 +77,8 @@ const PersonalChat = ({ chat, me, setSelectedChat, companionId }) => {
 
             await updatePersonalChatMessageAsync(updateForMessage);
 
-            await updateChatMessagesCountAsync(messagesCount, 1);
+            const increaseUnreadMessages = 1;
+            await updateChatMessagesCountAsync(messagesCount, increaseUnreadMessages);
         }
     }
 
@@ -108,7 +109,7 @@ const PersonalChat = ({ chat, me, setSelectedChat, companionId }) => {
         }
     }
 
-    if (isLoading || userIsLoading
+    if (isLoading || companionIsLoading
         || messagesCountLoading || myMessagesCountLoading) {
         return <></>;
     }
@@ -117,7 +118,7 @@ const PersonalChat = ({ chat, me, setSelectedChat, companionId }) => {
         <div className="chats__selected-chat">
             <div className="messages-container">
                 <div className="title">
-                    <div className="name">{user.username}</div>
+                    <div className="name">{companion.username}</div>
                     <FontAwesomeIcon
                         icon={faPersonWalkingArrowRight}
                         title={t("LeaveFromChat")}
@@ -132,6 +133,7 @@ const PersonalChat = ({ chat, me, setSelectedChat, companionId }) => {
                                 <ChatMessage
                                     me={me}
                                     message={item}
+                                    messageStatus={item.status}
                                     updateMessageAsync={handleUpdatePersonalChatMessageAsync}
                                     deleteMessageAsync={deleteMessageAsync}
                                 />

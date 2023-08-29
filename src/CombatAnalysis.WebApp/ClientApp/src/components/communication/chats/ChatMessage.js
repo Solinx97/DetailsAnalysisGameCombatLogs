@@ -12,7 +12,7 @@ const status = {
     "read": 2
 };
 
-const ChatMessage = ({ me, message, updateMessageAsync, deleteMessageAsync }) => {
+const ChatMessage = ({ me, message, messageStatus, updateMessageAsync, deleteMessageAsync }) => {
     const { t } = useTranslation("communication/chats/chatMessage");
 
     const [openMessageMenu, setOpenMessageMenu] = useState(false);
@@ -31,7 +31,7 @@ const ChatMessage = ({ me, message, updateMessageAsync, deleteMessageAsync }) =>
     }
 
     const updateMessageStatusAsync = async () => {
-        if (message.ownerId === me?.id) {
+        if (message.ownerId === me?.id || messageStatus === status["read"]) {
             return;
         }
 
@@ -103,7 +103,7 @@ const ChatMessage = ({ me, message, updateMessageAsync, deleteMessageAsync }) =>
                 : <div className="message">
                     {message?.ownerId === me?.id
                         ? getMessageStatus()
-                        : message.status === status["delivered"] &&
+                        : messageStatus === status["delivered"] &&
                             <FontAwesomeIcon
                                 icon={faCircle}
                                 className="status"
@@ -113,7 +113,7 @@ const ChatMessage = ({ me, message, updateMessageAsync, deleteMessageAsync }) =>
                     {message?.message.startsWith("http")
                         ? <a className="text-of-message link" href={message?.message} target="_blank"
                             rel="noreferrer" onMouseOver={async () => await updateMessageStatusAsync()}>{message?.message}</a>
-                        : <div className={`text-of-message${message?.status === status["delivered"] ? "__unread" : "__read"}`}
+                        : <div className={`text-of-message${messageStatus === status["delivered"] ? "__unread" : "__read"}`}
                             onMouseOver={async () => await updateMessageStatusAsync()}>{message?.message}</div>
                     }
                   </div>

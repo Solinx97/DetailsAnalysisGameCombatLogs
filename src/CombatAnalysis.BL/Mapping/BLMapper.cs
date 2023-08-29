@@ -19,6 +19,7 @@ public class BLMapper : Profile
         CreateMap<PersonalChatMessageCountDto, PersonalChatMessageCount>().ReverseMap();
         CreateMap<GroupChatDto, GroupChat>().ReverseMap();
         CreateMap<GroupChatMessageDto, GroupChatMessage>().ReverseMap();
+        CreateMap<UnreadGroupChatMessageDto, UnreadGroupChatMessage>().ReverseMap();
         CreateMap<GroupChatMessageCountDto, GroupChatMessageCount>().ReverseMap();
         CreateMap<GroupChatUserDto, GroupChatUser>().ReverseMap();
         CreateMap<CombatLogDto, CombatLog>().ReverseMap();

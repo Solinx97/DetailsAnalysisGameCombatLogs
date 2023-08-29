@@ -43,7 +43,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CombatAnalysis.Parser.Tests
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CombatAnalysis.App.Smoke.Tests", "tests\CombatAnalysis.App.Smoke.Tests\CombatAnalysis.App.Smoke.Tests.csproj", "{BC098674-DA43-40E9-801A-3D7F3CD615E7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CombatAnalysis.CustomerBL", "src\CombatAnalysis.CutomerBL\CombatAnalysis.CustomerBL.csproj", "{87D51CE9-DC31-4820-B866-059954CE2454}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CombatAnalysis.CustomerBL", "src\CombatAnalysis.CutomerBL\CombatAnalysis.CustomerBL.csproj", "{87D51CE9-DC31-4820-B866-059954CE2454}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

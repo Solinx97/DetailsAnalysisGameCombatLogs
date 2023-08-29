@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
-import { useGetGroupChatUserByIdQuery } from '../../../store/api/ChatApi';
+import { useFindGroupChatUserByUserIdQuery } from '../../../store/api/GroupChatUser.api';
 import { useGetByUserIdAsyncQuery } from '../../../store/api/PersonalChat.api';
 import Communication from '../Communication';
 import GroupChat from './GroupChat';
@@ -21,7 +21,7 @@ const Chats = () => {
     const me = useSelector((state) => state.customer.value);
 
     const { data: personalChats, isLoading } = useGetByUserIdAsyncQuery(me?.id);
-    const { data: groupChatUsers, isLoading: chatUserIsLoading } = useGetGroupChatUserByIdQuery(me?.id, {
+    const { data: groupChatUsers, isLoading: chatUserIsLoading } = useFindGroupChatUserByUserIdQuery(me?.id, {
         pollingInterval: getGroupChatUsersInterval
     });
 

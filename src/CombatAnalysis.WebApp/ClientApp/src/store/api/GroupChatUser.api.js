@@ -10,10 +10,6 @@ export const GroupChatUserApi = ChatApi.injectEndpoints({
             }),
             invalidatesTags: (result, error) => [{ type: 'GroupChatUser', result }]
         }),
-        getGroupChatUserByChatId: builder.query({
-            query: (id) => `/GroupChatUser/findByChatId/${id}`,
-            providesTags: (result, error, id) => [{ type: 'GroupChatUser', id }],
-        }),
         removeGroupChatUserAsync: builder.mutation({
             query: id => ({
                 url: `/GroupChatUser/${id}`,
@@ -21,11 +17,30 @@ export const GroupChatUserApi = ChatApi.injectEndpoints({
             }),
             invalidatesTags: (result, error) => [{ type: 'GroupChatUser', result }],
         }),
+        findGroupChatUser: builder.query({
+            query: (arg) => {
+                const { chatId, userId } = arg;
+                return {
+                    url: `/GroupChatUser/find?chatId=${chatId}&userId=${userId}`,
+                }
+            },
+            providesTags: (result, error, id) => [{ type: 'GroupChatUser', id }],
+        }),
+        findGroupChatUserByUserId: builder.query({
+            query: (id) => `/GroupChatUser/findByUserId/${id}`,
+            providesTags: (result, error, id) => [{ type: 'GroupChatUser', id }],
+        }),
+        findGroupChatUserByChatId: builder.query({
+            query: (id) => `/GroupChatUser/findByChatId/${id}`,
+            providesTags: (result, error, id) => [{ type: 'GroupChatUser', id }],
+        }),
     })
 })
 
 export const {
     useCreateGroupChatUserAsyncMutation,
-    useGetGroupChatUserByChatIdQuery,
     useRemoveGroupChatUserAsyncMutation,
+    useFindGroupChatUserQuery,
+    useFindGroupChatUserByUserIdQuery,
+    useFindGroupChatUserByChatIdQuery,
 } = GroupChatUserApi;

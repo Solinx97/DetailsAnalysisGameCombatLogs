@@ -27,6 +27,7 @@ const context = [
     "/api/v1/ResourceRecovery",
     "/api/v1/ResourceRecoveryGeneral",
     "/api/v1/GroupChatMessage",
+    "/api/v1/UnreadGroupChatMessage",
     "/api/v1/GroupChatUser",
     "/api/v1/GroupChat",
     "/api/v1/PersonalChat",
