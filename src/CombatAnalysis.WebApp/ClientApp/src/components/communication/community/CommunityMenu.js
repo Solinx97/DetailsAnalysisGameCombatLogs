@@ -4,8 +4,8 @@ import { useState } from "react";
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { useRemoveCommunityAsyncMutation } from '../../../store/api/communication/community/Community.api';
-import { useCreateInviteAsyncMutation, useLazyInviteIsExistQuery } from '../../../store/api/communication/community/InviteToCommunity.api';
 import { useLazySearchByUserIdAsyncQuery, useRemoveCommunityUserAsyncMutation } from '../../../store/api/communication/community/CommunityUser.api';
+import { useCreateInviteAsyncMutation, useLazyInviteIsExistQuery } from '../../../store/api/communication/community/InviteToCommunity.api';
 import AddPeople from '../../AddPeople';
 import CommonItem from "../chats/createGroupChat/CommonItem";
 import ItemConnector from '../chats/createGroupChat/ItemConnector';
@@ -86,8 +86,7 @@ const CommunityMenu = ({ setShowMenu, customer, community }) => {
                 communityId: community.id,
                 toCustomerId: peopleIdToJoin[i],
                 when: new Date(),
-                result: 0,
-                ownerId: customer?.id
+                customerId: customer?.id
             }
 
             const createdInvite = await createInviteAsyncMut(newInviteToCommunity);
@@ -117,7 +116,7 @@ const CommunityMenu = ({ setShowMenu, customer, community }) => {
                     <div>
                         <div>{t("LeaveConfirm")} <strong>'{community.name}'</strong>?</div>
                     </div>
-                    {customer.id === community.ownerId
+                    {customer.id === community.customerId
                         ? <>
                             <div className="alert alert-danger" role="alert">
                                 {t("LeaveOwnerConfirm")}
@@ -219,7 +218,7 @@ const CommunityMenu = ({ setShowMenu, customer, community }) => {
                             <div className="create-group-chat__item">
                                 <AddPeople
                                     customer={customer}
-                                    communityUsersId={[customer.id]}
+                                    communityUsersId={[customer?.id]}
                                     peopleToJoin={peopleIdToJoin}
                                     setPeopleToJoin={setPeopleIdToJoin}
                                 />
@@ -227,10 +226,10 @@ const CommunityMenu = ({ setShowMenu, customer, community }) => {
                                     connectorType={0}
                                 />
                         </div>
-                            <div class={`alert alert-success ${showInvitesSuccess ? "active" : ""}`} role="alert">
+                            <div className={`alert alert-success ${showInvitesSuccess ? "active" : ""}`} role="alert">
                                 {t("InviteSuccess")}
                             </div>
-                            <div class={`alert alert-warning ${showInvitesFailed ? "active" : ""}`} role="alert">
+                            <div className={`alert alert-warning ${showInvitesFailed ? "active" : ""}`} role="alert">
                                 {t("InviteFailed")}
                             </div>
                             <div className="actions">

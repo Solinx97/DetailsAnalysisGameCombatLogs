@@ -20,7 +20,7 @@ const CreateCommunity = ({ customer, setShowCreateCommunity }) => {
             name: name.current.value,
             description: description.current.value,
             policyType: +policyType.current.value,
-            ownerId: customer.id
+            customerId: customer.id
         };
 
         const createdCommunity = await createCommunityAsyncMut(newCommunity);

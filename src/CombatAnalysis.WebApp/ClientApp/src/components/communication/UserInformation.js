@@ -76,7 +76,7 @@ const UserInformation = ({ me, people, closeUserInformation }) => {
     const createPersonalChatCountAsync = async (chatId, userId) => {
         const newMessagesCount = {
             count: 0,
-            userId: userId,
+            customerId: userId,
             personalChatId: +chatId,
         };
 
@@ -114,7 +114,7 @@ const UserInformation = ({ me, people, closeUserInformation }) => {
             username: me?.username,
             toUserId: people.id,
             when: new Date(),
-            ownerId: me?.id,
+            customerId: me?.id,
         };
 
         const createdRequest = await createRequestAsync(newRequest);

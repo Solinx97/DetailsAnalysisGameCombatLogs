@@ -42,7 +42,7 @@ public class RequestToConnectController : ControllerBase
     [HttpGet("searchByOwnerId/{id}")]
     public async Task<IActionResult> SearchByOwnerId(string id)
     {
-        var result = await _service.GetByParamAsync(nameof(RequestToConnectModel.OwnerId), id);
+        var result = await _service.GetByParamAsync(nameof(RequestToConnectModel.CustomerId), id);
 
         return Ok(result);
     }

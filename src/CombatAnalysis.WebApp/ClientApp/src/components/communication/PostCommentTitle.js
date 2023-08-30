@@ -7,7 +7,7 @@ import { useRemovePostCommentAsyncMutation } from '../../store/api/communication
 const PostCommentTitle = ({ customerId, comment, dateFormatting, postId, updatePostAsync }) => {
     const { t } = useTranslation("communication/postCommentTitle");
 
-    const { data: targetCustomer, isLoading } = useGetCustomerByIdQuery(comment?.ownerId);
+    const { data: targetCustomer, isLoading } = useGetCustomerByIdQuery(comment?.customerId);
 
     const [removePostCommentAsyncMut] = useRemovePostCommentAsyncMutation();
 
@@ -26,7 +26,7 @@ const PostCommentTitle = ({ customerId, comment, dateFormatting, postId, updateP
         <li className="post-comments__title list-group-item">
             <div className="card-title">{targetCustomer.username}</div>
             <div className="card-title">{dateFormatting(comment.when)}</div>
-            {comment.ownerId === customerId &&
+            {comment.customerId === customerId &&
                 <div className="post-comments__menu">
                     <FontAwesomeIcon
                         icon={faTrash}

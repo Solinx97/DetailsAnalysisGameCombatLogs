@@ -32,7 +32,6 @@ const CreateGroupChat = () => {
     const [peopleIdToJoin, setPeopleIdToJoin] = useState([]);
 
     const [createGroupChatAsync] = useCreateGroupChatAsyncMutation();
-    const [createGroupChatUserAsync] = useCreateGroupChatUserAsyncMutation();
     const [createGroupChatUserMutAsync] = useCreateGroupChatUserAsyncMutation();
     const [createGroupChatCountAsyncMut] = useCreateGroupChatMessageCountAsyncMutation();
 
@@ -51,11 +50,11 @@ const CreateGroupChat = () => {
 
         const newGroupChatUser = {
             id: "",
-            userId: customer?.id,
+            customerId: customer?.id,
             groupChatId: createdGroupChat.data.id,
         };
 
-        const createdGroupChatUser = await createGroupChatUserAsync(newGroupChatUser);
+        const createdGroupChatUser = await createGroupChatUserMutAsync(newGroupChatUser);
         if (createdGroupChatUser.error !== undefined) {
             return null;
         }
@@ -68,10 +67,10 @@ const CreateGroupChat = () => {
         return createdGroupChat.data;
     }
 
-    const createGroupChatCountAsync = async (chatId, userId) => {
+    const createGroupChatCountAsync = async (chatId, customerId) => {
         const newMessagesCount = {
             count: 0,
-            userId: userId,
+            customerId: customerId,
             groupChatId: +chatId,
         };
 
@@ -83,7 +82,7 @@ const CreateGroupChat = () => {
         for (let i = 0; i < peopleIdToJoin.length; i++) {
             const newGroupChatUser = {
                 id: "",
-                userId: peopleIdToJoin[i],
+                customerId: peopleIdToJoin[i],
                 groupChatId: groupChatId,
             };
 

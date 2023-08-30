@@ -35,7 +35,7 @@ const PostCommentContent = ({ customerId, comment }) => {
                 </div>
                 : <div className="card-text">{comment.content}</div>
             }
-            {comment.ownerId === customerId &&
+            {comment.customerId === customerId &&
                 < FontAwesomeIcon
                     icon={faPen}
                     title={t("Edit")}

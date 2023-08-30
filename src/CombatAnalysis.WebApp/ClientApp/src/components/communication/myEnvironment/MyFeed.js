@@ -26,7 +26,7 @@ const MyFeed = () => {
             likeCount: 0,
             dislikeCount: 0,
             postComment: 0,
-            ownerId: customer?.id
+            customerId: customer?.id
         }
 
         const createdPost = await createNewPostAsync(newPost);

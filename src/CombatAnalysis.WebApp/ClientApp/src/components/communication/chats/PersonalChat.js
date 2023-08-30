@@ -63,9 +63,9 @@ const PersonalChat = ({ chat, me, setSelectedChat, companionId }) => {
         const newMessage = {
             message: message,
             time: `${today.getHours()}:${today.getMinutes()}`,
+            status: 0,
             personalChatId: chat.id,
-            ownerId: me?.id,
-            status: 0
+            customerId: me?.id
         };
 
         const createdMessage = await createPersonalChatMessageAsync(newMessage);

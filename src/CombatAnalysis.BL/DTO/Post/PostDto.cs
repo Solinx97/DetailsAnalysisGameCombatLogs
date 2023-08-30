@@ -14,5 +14,5 @@ public class PostDto
 
     public int CommentCount { get; set; }
 
-    public string OwnerId { get; set; }
+    public string CustomerId { get; set; }
 }

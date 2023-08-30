@@ -8,7 +8,7 @@ import UserInformation from './UserInformation';
 const PostTitle = ({ post, dateFormatting, deletePostAsync }) => {
     const { t } = useTranslation("communication/postTitle");
 
-    const { data: targetCustomer, isLoading } = useGetCustomerByIdQuery(post?.ownerId);
+    const { data: targetCustomer, isLoading } = useGetCustomerByIdQuery(post?.customerId);
 
     const [showPostOwner, setShowPostOwner] = useState(false);
 

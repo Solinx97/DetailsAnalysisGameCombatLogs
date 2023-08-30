@@ -21,7 +21,7 @@ const RequestToConnect = () => {
         const newFriend = {
             username: request.username,
             whoFriendId: request.toUserId,
-            forWhomId: request.ownerId
+            forWhomId: request.customerId
         };
 
         const creadetFriend = await createFriendAsync(newFriend);

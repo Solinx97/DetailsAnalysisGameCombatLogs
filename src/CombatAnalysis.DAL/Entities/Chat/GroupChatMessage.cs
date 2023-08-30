@@ -12,5 +12,5 @@ public class GroupChatMessage
 
     public int GroupChatId { get; set; }
 
-    public string OwnerId { get; set; }
+    public string CustomerId { get; set; }
 }

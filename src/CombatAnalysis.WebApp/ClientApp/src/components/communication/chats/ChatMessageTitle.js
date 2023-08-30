@@ -10,7 +10,7 @@ const ChatMessageTitle = ({ me, itIsMe, setEditModeIsOn, openMessageMenu, editMo
 
     const [userInformation, setUserInformation] = useState(null);
 
-    const { data: user, isLoading } = useGetCustomerByIdQuery(message?.ownerId);
+    const { data: user, isLoading } = useGetCustomerByIdQuery(message?.customerId);
 
     if (isLoading) {
         return <></>;

@@ -41,8 +41,7 @@ const PeopleInvitesToCommunity = ({ customer, people, setOpenInviteToCommunity }
                 communityId: communityIdToInvite[i],
                 toCustomerId: people?.id,
                 when: new Date(),
-                result: 0,
-                ownerId: customer?.id
+                customer: customer?.id
             }
 
             await createInviteAsyncMut(newInviteToCommunity);

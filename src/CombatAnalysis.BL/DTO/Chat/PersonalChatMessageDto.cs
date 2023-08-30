@@ -12,5 +12,5 @@ public class PersonalChatMessageDto
 
     public int PersonalChatId { get; set; }
 
-    public string OwnerId { get; set; }
+    public string CustomerId { get; set; }
 }

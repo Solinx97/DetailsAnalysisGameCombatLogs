@@ -53,8 +53,7 @@ const CommunityMembers = ({ community, customer, handleShowAddPeople, showAddPeo
                 communityId: community.id,
                 toCustomerId: peopleIdToJoin[i],
                 when: new Date(),
-                result: 0,
-                ownerId: customer?.id
+                customerId: customer?.id
             }
 
             await createInviteAsyncMut(newInviteToCommunity);
@@ -78,7 +77,7 @@ const CommunityMembers = ({ community, customer, handleShowAddPeople, showAddPeo
                 <div className="actions">
                     <div>{t("Members")}</div>
                     <div className="tool">
-                        {community.ownerId === customer?.id &&
+                        {community.customerId === customer?.id &&
                             <FontAwesomeIcon
                                 className={`remove${showRemovePeople ? "_active" : ""}`}
                                 icon={faRectangleXmark}

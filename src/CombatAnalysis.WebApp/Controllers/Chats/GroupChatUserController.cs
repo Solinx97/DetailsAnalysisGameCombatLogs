@@ -36,7 +36,7 @@ public class GroupChatUserController : ControllerBase
         }
 
         var groupChatUsers = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<GroupChatUserModel>>();
-        var myGroupCHatUser = groupChatUsers.Where(x => x.GroupChatId == chatId && x.UserId == userId).FirstOrDefault();
+        var myGroupCHatUser = groupChatUsers.Where(x => x.GroupChatId == chatId && x.CustomerId == userId).FirstOrDefault();
 
         return Ok(myGroupCHatUser);
     }

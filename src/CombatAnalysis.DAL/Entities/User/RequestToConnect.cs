@@ -8,5 +8,5 @@ public class RequestToConnect
 
     public DateTimeOffset When { get; set; }
 
-    public string OwnerId { get; set; }
+    public string CustomerId { get; set; }
 }

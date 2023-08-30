@@ -6,5 +6,5 @@ public class UserPostModel
 
     public string UserId { get; set; }
 
-    public int PostId { get; set; }
+    public int CustomerId { get; set; }
 }

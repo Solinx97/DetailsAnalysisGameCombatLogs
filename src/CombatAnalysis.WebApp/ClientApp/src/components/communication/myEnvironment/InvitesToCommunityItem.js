@@ -10,7 +10,7 @@ const InvitesToCommunityItem = ({ customer, inviteToCommunity }) => {
     const { t } = useTranslation("communication/myEnvironment/invitesToCommunityItem");
 
     const { data: community, isLoading: communityIsLoading } = useGetCommunityByIdQuery(inviteToCommunity?.communityId);
-    const { data: inviteOwner, isLoading: targetUserIsLoading } = useGetCustomerByIdQuery(inviteToCommunity?.ownerId);
+    const { data: inviteOwner, isLoading: targetUserIsLoading } = useGetCustomerByIdQuery(inviteToCommunity?.customerId);
     const [createCommunityUserAsyn] = useCreateCommunityUserAsyncMutation();
     const [removeInviteAsync] = useRemoveInviteAsyncMutation();
 

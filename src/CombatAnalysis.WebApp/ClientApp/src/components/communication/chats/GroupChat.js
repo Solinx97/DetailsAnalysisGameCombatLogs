@@ -67,12 +67,12 @@ const GroupChat = ({ chat, me, setSelectedChat }) => {
             return;
         }
 
-        const usersId = [];
+        const customersId = [];
         for (var i = 0; i < groupChatUsers.length; i++) {
-            usersId.push(groupChatUsers[i].userId);
+            customersId.push(groupChatUsers[i].customerId);
         }
 
-        setGroupChatUsersId(usersId);
+        setGroupChatUsersId(customersId);
     }, [groupChatUsers])
 
     const sendMessageAsync = async () => {
@@ -98,7 +98,7 @@ const GroupChat = ({ chat, me, setSelectedChat }) => {
         for (let i = 0; i < peopleIdToJoin.length; i++) {
             const newGroupChatUser = {
                 id: "",
-                userId: peopleIdToJoin[i],
+                customerId: peopleIdToJoin[i],
                 groupChatId: chat.id,
             };
 
@@ -111,10 +111,10 @@ const GroupChat = ({ chat, me, setSelectedChat }) => {
         setShowAddPeople(false);
     }
 
-    const createGroupChatCountAsync = async (chatId, userId) => {
+    const createGroupChatCountAsync = async (chatId, customerId) => {
         const newMessagesCount = {
             count: 0,
-            userId: userId,
+            customerId: customerId,
             groupChatId: +chatId,
         };
 
@@ -149,7 +149,7 @@ const GroupChat = ({ chat, me, setSelectedChat }) => {
             message: message,
             time: `${today.getHours()}:${today.getMinutes()}`,
             groupChatId: chat.id,
-            ownerId: me?.id
+            customerId: me?.id
         };
 
         const createdMessage = await createGroupChatMessageAsync(newMessage);
@@ -178,11 +178,11 @@ const GroupChat = ({ chat, me, setSelectedChat }) => {
 
     const updateChatMessagesCountAsync = async (count) => {
         for (let i = 0; i < groupChatUsers.length; i++) {
-            if (groupChatUsers[i].userId === me?.id) {
+            if (groupChatUsers[i].customerId === me?.id) {
                 continue;
             }
 
-            const messagesCount = await getMessagesCount({ chatId: chat?.id, userId: groupChatUsers[i].userId });
+            const messagesCount = await getMessagesCount({ chatId: chat?.id, userId: groupChatUsers[i].customerId });
             const newMessagesCount = Object.assign({}, messagesCount.data);
             newMessagesCount.count = newMessagesCount.count + count;
 
@@ -192,7 +192,7 @@ const GroupChat = ({ chat, me, setSelectedChat }) => {
 
     const createUnreadMessageAsync = async (messageId) => {
         for (let i = 0; i < groupChatUsers.length; i++) {
-            if (groupChatUsers[i].userId === me?.id) {
+            if (groupChatUsers[i].customerId === me?.id) {
                 continue;
             }
 
@@ -323,11 +323,11 @@ const GroupChat = ({ chat, me, setSelectedChat }) => {
                                 <li key={item.id}>
                                     <User
                                         me={me}
-                                        targetCustomerId={item.userId}
+                                        targetCustomerId={item.customerId}
                                         setUserInformation={setUserInformation}
                                         allowRemoveFriend={false}
                                     />
-                                    {(me?.id === chat.customerId && item.userId !== chat.customerId)
+                                    {(me?.id === chat.customerId && item.customerId !== chat.customerId)
                                         ? peopleIdToRemove.includes(item.id)
                                             ? <FontAwesomeIcon
                                                 icon={faRightFromBracket}

@@ -36,7 +36,7 @@ public class GroupChatMessageCountController : ControllerBase
         }
 
         var groupChatMessagesCount = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<GroupChatMessageCountModel>>();
-        var myGroupChatMessageCount = groupChatMessagesCount.Where(x => x.GroupChatId == chatId && x.UserId == userId).FirstOrDefault();
+        var myGroupChatMessageCount = groupChatMessagesCount.Where(x => x.GroupChatId == chatId && x.CustomerId == userId).FirstOrDefault();
 
         return Ok(myGroupChatMessageCount);
     }

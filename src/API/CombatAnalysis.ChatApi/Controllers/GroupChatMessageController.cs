@@ -44,7 +44,7 @@ public class GroupChatMessageController : ControllerBase
     [HttpGet("findByChatId/{chatId:int:min(1)}")]
     public async Task<IActionResult> Find(int chatId)
     {
-        var groupChatMessages = await _service.GetByParamAsync("GroupChatId", chatId);
+        var groupChatMessages = await _service.GetByParamAsync(nameof(GroupChatMessageModel.GroupChatId), chatId);
 
         return Ok(groupChatMessages);
     }

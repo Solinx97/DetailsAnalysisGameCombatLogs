@@ -42,7 +42,7 @@ public class GroupChatUserController : ControllerBase
     [HttpGet("findByUserId/{id}")]
     public async Task<IActionResult> FindByUserId(string id)
     {
-        var result = await _service.GetByParamAsync("UserId", id);
+        var result = await _service.GetByParamAsync(nameof(GroupChatUserModel.CustomerId), id);
 
         return Ok(result);
     }
@@ -50,7 +50,7 @@ public class GroupChatUserController : ControllerBase
     [HttpGet("findByChatId/{id:int:min(1)}")]
     public async Task<IActionResult> FindByChatId(int id)
     {
-        var result = await _service.GetByParamAsync("GroupChatId", id);
+        var result = await _service.GetByParamAsync(nameof(GroupChatUserModel.GroupChatId), id);
 
         return Ok(result);
     }

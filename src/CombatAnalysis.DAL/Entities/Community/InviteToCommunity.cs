@@ -10,8 +10,5 @@ public class InviteToCommunity
 
     public DateTimeOffset When { get; set; }
 
-    public int Result { get; set; }
-
-    public string OwnerId { get; set; }
-
+    public string CustomerId { get; set; }
 }

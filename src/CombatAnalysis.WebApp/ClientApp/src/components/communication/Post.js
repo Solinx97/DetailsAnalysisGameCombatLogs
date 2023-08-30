@@ -36,7 +36,7 @@ const Post = ({ customer, targetPostType, deletePostAsync }) => {
             likeCount: post.likeCount + likesCount,
             dislikeCount: post.dislikeCount + dislikesCount,
             commentCount: post.commentCount + commentsCount,
-            ownerId: post.ownerId
+            customerId: post.customerId
         }
 
         await updatePostAsyncMut(postForUpdate);
@@ -52,7 +52,7 @@ const Post = ({ customer, targetPostType, deletePostAsync }) => {
 
         const newPostLike = {
             postId: postId,
-            ownerId: customer.id
+            customerId: customer.id
         }
 
         const createdPostLike = await createPostLikeAsyncMut(newPostLike);
@@ -77,7 +77,7 @@ const Post = ({ customer, targetPostType, deletePostAsync }) => {
 
     const removePostLikeIfExistAsync = async (postLikes) => {
         for (let i = 0; i < postLikes.length; i++) {
-            if (postLikes[i].ownerId === customer.id) {
+            if (postLikes[i].customerId === customer.id) {
                 await deletePostLikeAsync(postLikes[i].postId, postLikes[i].id);
                 return true;
             }
@@ -103,7 +103,7 @@ const Post = ({ customer, targetPostType, deletePostAsync }) => {
 
         const newPostDislike = {
             postId: postId,
-            ownerId: customer.id
+            customerId: customer.id
         }
 
         const createdPostDislike = await createPostDislikeAsyncMut(newPostDislike);
@@ -128,7 +128,7 @@ const Post = ({ customer, targetPostType, deletePostAsync }) => {
 
     const removePostDislikeIfExistAsync = async (postDislikes) => {
         for (let i = 0; i < postDislikes.length; i++) {
-            if (postDislikes[i].ownerId === customer.id) {
+            if (postDislikes[i].customerId === customer.id) {
                 await deletePostDislikeAsync(postDislikes[i].postId, postDislikes[i].id);
                 return true;
             }
@@ -149,7 +149,7 @@ const Post = ({ customer, targetPostType, deletePostAsync }) => {
             content: postCommentContent,
             when: new Date(),
             postId: post.id,
-            ownerId: customer.id
+            customerId: customer.id
         }
 
         const createdPostComment = await createPostCommentAsyncMut(newPostComment);

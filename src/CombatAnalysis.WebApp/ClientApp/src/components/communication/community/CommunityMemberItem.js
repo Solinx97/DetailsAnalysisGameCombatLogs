@@ -41,7 +41,7 @@ const CommunityMemberItem = ({ community, comunityUser, customer, showRemovePeop
                 </div>
             }
             <div className="member">
-                {(showRemovePeople && member?.id !== community.ownerId && customer?.id !== member?.id) &&
+                {(showRemovePeople && member?.id !== community.customerId && customer?.id !== member?.id) &&
                     <FontAwesomeIcon
                         icon={faPersonWalkingArrowRight}
                         title={t("Remove")}
@@ -49,7 +49,7 @@ const CommunityMemberItem = ({ community, comunityUser, customer, showRemovePeop
                     />
                 }
                 <User
-                    userId={member?.id}
+                    targetCustomerId={member?.id}
                     setUserInformation={setUserInformation}
                     allowRemoveFriend={false}
                 />
