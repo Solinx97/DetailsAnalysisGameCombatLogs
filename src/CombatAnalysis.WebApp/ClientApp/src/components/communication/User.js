@@ -2,7 +2,7 @@ import { faCircleXmark, faUser } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useTranslation } from 'react-i18next';
 import { useGetCustomerByIdQuery, useLazyGetCustomerByIdQuery } from '../../store/api/Customer.api';
-import { useRemoveFriendAsyncMutation } from '../../store/api/Friend.api';
+import { useRemoveFriendAsyncMutation } from '../../store/api/communication/myEnvironment/Friend.api';
 import UserInformation from './UserInformation';
 
 const User = ({ me, itIsMe, targetCustomerId, setUserInformation, allowRemoveFriend }) => {

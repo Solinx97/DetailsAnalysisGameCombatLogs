@@ -2,7 +2,7 @@ import { faPersonWalkingArrowRight } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useRemoveCommunityUserAsyncMutation } from '../../../store/api/CommunityUser.api';
+import { useRemoveCommunityUserAsyncMutation } from '../../../store/api/communication/community/CommunityUser.api';
 import { useGetCustomerByIdQuery } from '../../../store/api/Customer.api';
 import User from '../User';
 

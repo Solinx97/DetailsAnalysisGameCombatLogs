@@ -1,4 +1,4 @@
-import { ChatApi } from "./ChatApi";
+import { ChatApi } from "../../ChatApi";
 
 export const CommunityPostApi = ChatApi.injectEndpoints({
     endpoints: builder => ({

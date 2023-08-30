@@ -1,5 +1,5 @@
 import { useGetCustomerByIdQuery } from '../../../store/api/Customer.api';
-import { useFindPersonalChatMessageCountQuery } from '../../../store/api/PersonalChatMessagCount.api';
+import { useFindPersonalChatMessageCountQuery } from '../../../store/api/communication/chats/PersonalChatMessagCount.api';
 
 const MyPersonalChat = ({ personalChat, setSelectedPersonalChat, companionId, meId }) => {
     const { data: user, isLoading } = useGetCustomerByIdQuery(companionId);

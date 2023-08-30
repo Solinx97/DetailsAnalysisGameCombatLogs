@@ -2,7 +2,7 @@ import { faTrash } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useTranslation } from 'react-i18next';
 import { useGetCustomerByIdQuery } from '../../store/api/Customer.api';
-import { useRemovePostCommentAsyncMutation } from '../../store/api/PostComment.api';
+import { useRemovePostCommentAsyncMutation } from '../../store/api/communication/PostComment.api';
 
 const PostCommentTitle = ({ customerId, comment, dateFormatting, postId, updatePostAsync }) => {
     const { t } = useTranslation("communication/postCommentTitle");

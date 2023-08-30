@@ -3,9 +3,9 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { memo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { NavLink, useNavigate } from 'react-router-dom';
-import { useCreatePersonalChatAsyncMutation, useLazyIsExistAsyncQuery } from '../../store/api/PersonalChat.api';
-import { useCreatePersonalChatMessageCountAsyncMutation } from '../../store/api/PersonalChatMessagCount.api';
-import { useCreateRequestAsyncMutation, useLazyRequestIsExistQuery } from '../../store/api/RequestToConnect.api';
+import { useCreatePersonalChatAsyncMutation, useLazyIsExistAsyncQuery } from '../../store/api/communication/chats/PersonalChat.api';
+import { useCreatePersonalChatMessageCountAsyncMutation } from '../../store/api/communication/chats/PersonalChatMessagCount.api';
+import { useCreateRequestAsyncMutation, useLazyRequestIsExistQuery } from '../../store/api/communication/myEnvironment/RequestToConnect.api';
 import { useFriendSearchByUserIdQuery } from '../../store/api/UserApi';
 import PeopleInvitesToCommunity from './people/PeopleInvitesToCommunity';
 

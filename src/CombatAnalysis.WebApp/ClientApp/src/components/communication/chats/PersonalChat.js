@@ -3,12 +3,12 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useRef } from "react";
 import { useTranslation } from 'react-i18next';
 import { useGetCustomerByIdQuery } from '../../../store/api/Customer.api';
-import { useRemovePersonalChatAsyncMutation, useUpdatePersonalChatAsyncMutation } from '../../../store/api/PersonalChat.api';
-import { useFindPersonalChatMessageCountQuery, useUpdatePersonalChatMessageCountAsyncMutation } from '../../../store/api/PersonalChatMessagCount.api';
+import { useRemovePersonalChatAsyncMutation, useUpdatePersonalChatAsyncMutation } from '../../../store/api/communication/chats/PersonalChat.api';
+import { useFindPersonalChatMessageCountQuery, useUpdatePersonalChatMessageCountAsyncMutation } from '../../../store/api/communication/chats/PersonalChatMessagCount.api';
 import {
     useCreatePersonalChatMessageAsyncMutation, useFindPersonalChatMessageByChatIdQuery, useRemovePersonalChatMessageAsyncMutation,
     useUpdatePersonalChatMessageAsyncMutation
-} from '../../../store/api/PersonalChatMessage.api';
+} from '../../../store/api/communication/chats/PersonalChatMessage.api';
 import ChatMessage from './ChatMessage';
 
 import "../../../styles/communication/chats/personalChat.scss";

@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useSearchByUserIdAsyncQuery } from '../../../store/api/CommunityUser.api';
-import { useCreateInviteAsyncMutation, useLazyInviteIsExistQuery } from '../../../store/api/InviteToCommunity.api';
+import { useSearchByUserIdAsyncQuery } from '../../../store/api/communication/community/CommunityUser.api';
+import { useCreateInviteAsyncMutation, useLazyInviteIsExistQuery } from '../../../store/api/communication/community/InviteToCommunity.api';
 import TargetCommunity from './TargetCommunity';
 
 import '../../../styles/communication/people/peopleInvitesToCommunity.scss';

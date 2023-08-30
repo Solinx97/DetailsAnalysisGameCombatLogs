@@ -3,8 +3,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
-import { useCreatePostAsyncMutation } from '../../../store/api/Post.api';
-import { useCreateUserPostAsyncMutation } from '../../../store/api/UserPost.api';
+import { useCreatePostAsyncMutation } from '../../../store/api/communication/Post.api';
+import { useCreateUserPostAsyncMutation } from '../../../store/api/communication/UserPost.api';
 import UserPosts from '../UserPosts';
 
 const MyFeed = () => {

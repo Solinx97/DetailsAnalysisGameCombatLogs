@@ -2,7 +2,7 @@ import { faPen } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useUpdatePostCommentAsyncMutation } from '../../store/api/PostComment.api';
+import { useUpdatePostCommentAsyncMutation } from '../../store/api/communication/PostComment.api';
 
 const PostCommentContent = ({ customerId, comment }) => {
     const { t } = useTranslation("communication/postCommentContent");

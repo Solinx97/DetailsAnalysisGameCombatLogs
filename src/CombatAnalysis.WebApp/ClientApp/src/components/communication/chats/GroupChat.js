@@ -3,24 +3,24 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { memo, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useFindGroupChatMessageByChatIdQuery } from '../../../store/api/ChatApi';
-import { useRemoveGroupChatAsyncMutation, useUpdateGroupChatAsyncMutation } from '../../../store/api/GroupChat.api';
+import { useRemoveGroupChatAsyncMutation, useUpdateGroupChatAsyncMutation } from '../../../store/api/communication/chats/GroupChat.api';
 import {
     useCreateGroupChatMessageCountAsyncMutation, useFindGroupChatMessageCountQuery,
     useLazyFindGroupChatMessageCountQuery, useUpdateGroupChatMessageCountAsyncMutation
-} from '../../../store/api/GroupChatMessagCount.api';
+} from '../../../store/api/communication/chats/GroupChatMessagCount.api';
 import {
     useCreateGroupChatMessageAsyncMutation, useRemoveGroupChatMessageAsyncMutation,
     useUpdateGroupChatMessageAsyncMutation
-} from '../../../store/api/GroupChatMessage.api';
+} from '../../../store/api/communication/chats/GroupChatMessage.api';
 import {
     useCreateGroupChatUserAsyncMutation, useFindGroupChatUserByChatIdQuery,
     useFindGroupChatUserQuery, useRemoveGroupChatUserAsyncMutation
-} from '../../../store/api/GroupChatUser.api';
+} from '../../../store/api/communication/chats/GroupChatUser.api';
 import {
     useCreateUnreadGroupChatMessageAsyncMutation,
     useLazyFindUnreadGroupChatMessageQuery,
     useRemoveUnreadGroupChatMessageAsyncMutation
-} from '../../../store/api/UnreadGroupChatMessage.api';
+} from '../../../store/api/communication/chats/UnreadGroupChatMessage.api';
 import AddPeople from '../../AddPeople';
 import User from '../User';
 import GroupChatMessage from './GroupChatMessage';
@@ -309,7 +309,7 @@ const GroupChat = ({ chat, me, setSelectedChat }) => {
                         <input type="button" value={t("Documents")} className="btn btn-light" disabled />
                     </div>
                     <div className="danger-settings">
-                        {me?.id === chat.ownerId &&
+                        {me?.id === chat.customerId &&
                             <input type="button" value={t("RemoveChat")} className="btn btn-danger" onClick={async () => await removeChatAsync()} />
                         }
                         <input type="button" value={t("Leave")} className="btn btn-warning" onClick={async () => await leaveFromChatAsync(meInChat?.id)} />
@@ -327,7 +327,7 @@ const GroupChat = ({ chat, me, setSelectedChat }) => {
                                         setUserInformation={setUserInformation}
                                         allowRemoveFriend={false}
                                     />
-                                    {(me?.id === chat.ownerId && item.userId !== chat.ownerId)
+                                    {(me?.id === chat.customerId && item.userId !== chat.customerId)
                                         ? peopleIdToRemove.includes(item.id)
                                             ? <FontAwesomeIcon
                                                 icon={faRightFromBracket}

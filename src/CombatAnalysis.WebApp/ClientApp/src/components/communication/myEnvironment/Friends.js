@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useFriendSearchMyFriendsQuery } from '../../../store/api/Friend.api';
+import { useFriendSearchMyFriendsQuery } from '../../../store/api/communication/myEnvironment/Friend.api';
 import User from '../User';
 
 import '../../../styles/communication/myEnvironment/friends.scss';

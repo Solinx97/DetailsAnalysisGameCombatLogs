@@ -1,6 +1,6 @@
 import { useSelector } from 'react-redux';
 import { useGetCommunitiesQuery } from '../../../store/api/ChatApi';
-import { useSearchByUserIdAsyncQuery } from '../../../store/api/CommunityUser.api';
+import { useSearchByUserIdAsyncQuery } from '../../../store/api/communication/community/CommunityUser.api';
 import CommunityItem from './CommunityItem';
 
 const CommunityList = ({ filterContent }) => {

@@ -1,4 +1,4 @@
-import { useSearchByUserIdAsyncQuery } from '../../../store/api/CommunityUser.api';
+import { useSearchByUserIdAsyncQuery } from '../../../store/api/communication/community/CommunityUser.api';
 import CommunityItem from "../community/CommunityItem";
 
 const SelectedUserCommunities = ({ customer }) => {

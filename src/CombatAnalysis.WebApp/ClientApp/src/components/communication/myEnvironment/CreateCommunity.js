@@ -1,7 +1,7 @@
 import React, { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useCreateCommunityAsyncMutation } from '../../../store/api/Community.api';
-import { useCreateCommunityUserAsyncMutation } from '../../../store/api/CommunityUser.api';
+import { useCreateCommunityAsyncMutation } from '../../../store/api/communication/community/Community.api';
+import { useCreateCommunityUserAsyncMutation } from '../../../store/api/communication/community/CommunityUser.api';
 
 import '../../../styles/communication/myEnvironment/createCommunity.scss';
 

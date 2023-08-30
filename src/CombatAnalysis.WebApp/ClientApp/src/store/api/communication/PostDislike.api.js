@@ -1,4 +1,4 @@
-import { ChatApi } from "./ChatApi";
+import { ChatApi } from "../ChatApi";
 
 export const PostDislikeApi = ChatApi.injectEndpoints({
     endpoints: builder => ({

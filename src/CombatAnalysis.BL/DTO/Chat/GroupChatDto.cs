@@ -10,5 +10,5 @@ public class GroupChatDto
 
     public string LastMessage { get; set; }
 
-    public string OwnerId { get; set; }
+    public string CustomerId { get; set; }
 }

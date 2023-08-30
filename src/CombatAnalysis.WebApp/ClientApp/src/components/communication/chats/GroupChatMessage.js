@@ -1,4 +1,4 @@
-import { useFindUnreadGroupChatMessageQuery, useFindUnreadGroupChatMessageByMessageIdQuery } from '../../../store/api/UnreadGroupChatMessage.api';
+import { useFindUnreadGroupChatMessageQuery, useFindUnreadGroupChatMessageByMessageIdQuery } from '../../../store/api/communication/chats/UnreadGroupChatMessage.api';
 import ChatMessage from "./ChatMessage";
 
 const status = {

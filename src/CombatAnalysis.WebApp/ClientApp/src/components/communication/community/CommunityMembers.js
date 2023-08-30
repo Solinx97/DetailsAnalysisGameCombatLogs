@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSearchByCommunityIdAsyncQuery } from '../../../store/api/ChatApi';
-import { useCreateInviteAsyncMutation, useLazyInviteIsExistQuery } from '../../../store/api/InviteToCommunity.api';
+import { useCreateInviteAsyncMutation, useLazyInviteIsExistQuery } from '../../../store/api/communication/community/InviteToCommunity.api';
 import AddPeople from '../../AddPeople';
 import CommunityMemberItem from './CommunityMemberItem';
 

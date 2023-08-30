@@ -1,10 +1,10 @@
 import { faCircleCheck, faCircleXmark } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useTranslation } from 'react-i18next';
-import { useGetCommunityByIdQuery } from '../../../store/api/Community.api';
-import { useCreateCommunityUserAsyncMutation } from '../../../store/api/CommunityUser.api';
 import { useGetCustomerByIdQuery } from '../../../store/api/Customer.api';
-import { useRemoveInviteAsyncMutation } from '../../../store/api/InviteToCommunity.api';
+import { useGetCommunityByIdQuery } from '../../../store/api/communication/community/Community.api';
+import { useCreateCommunityUserAsyncMutation } from '../../../store/api/communication/community/CommunityUser.api';
+import { useRemoveInviteAsyncMutation } from '../../../store/api/communication/community/InviteToCommunity.api';
 
 const InvitesToCommunityItem = ({ customer, inviteToCommunity }) => {
     const { t } = useTranslation("communication/myEnvironment/invitesToCommunityItem");

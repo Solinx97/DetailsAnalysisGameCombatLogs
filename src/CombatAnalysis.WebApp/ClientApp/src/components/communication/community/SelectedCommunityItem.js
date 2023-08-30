@@ -1,5 +1,5 @@
 import { usePostSearchByCommunityIdAsyncQuery } from '../../../store/api/ChatApi';
-import { useRemoveCommunityPostAsyncMutation } from '../../../store/api/CommunityPost.api';
+import { useRemoveCommunityPostAsyncMutation } from '../../../store/api/communication/community/CommunityPost.api';
 import Post from '../Post';
 
 const getCommunityPostsInterval = 10000;

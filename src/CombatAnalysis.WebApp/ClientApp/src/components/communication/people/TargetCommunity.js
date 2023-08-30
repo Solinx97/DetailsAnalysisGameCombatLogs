@@ -2,7 +2,7 @@ import { faEnvelope, faPlus } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useGetCommunityByIdQuery } from '../../../store/api/Community.api';
+import { useGetCommunityByIdQuery } from '../../../store/api/communication/community/Community.api';
 
 const TargetCommunity = ({ communityId, communityIdToInvite, setCommunityIdToInvite }) => {
     const { t } = useTranslation("communication/people/people");

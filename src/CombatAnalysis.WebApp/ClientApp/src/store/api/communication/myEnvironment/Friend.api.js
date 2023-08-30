@@ -1,4 +1,4 @@
-import { UserApi } from "./UserApi";
+import { UserApi } from "../../UserApi";
 
 export const FriendApi = UserApi.injectEndpoints({
     endpoints: builder => ({

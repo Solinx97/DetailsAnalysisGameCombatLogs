@@ -1,4 +1,4 @@
-import { ChatApi } from "./ChatApi";
+import { ChatApi } from "../../ChatApi";
 
 export const GroupChatUserApi = ChatApi.injectEndpoints({
     endpoints: builder => ({

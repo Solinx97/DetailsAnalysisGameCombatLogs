@@ -1,9 +1,9 @@
 import React, { memo } from 'react';
-import { useSearchPostCommentByPostIdQuery } from '../../store/api/PostComment.api';
+import { useSearchPostCommentByPostIdQuery } from '../../store/api/communication/PostComment.api';
+import PostCommentContent from './PostCommentContent';
 import PostCommentTitle from './PostCommentTitle';
 
 import '../../styles/communication/postComments.scss';
-import PostCommentContent from './PostCommentContent';
 
 const PostComments = ({ dateFormatting, customerId, postId, updatePostAsync }) => {
     const { data: postComments, isLoading } = useSearchPostCommentByPostIdQuery(postId);

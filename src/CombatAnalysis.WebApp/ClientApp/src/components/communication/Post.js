@@ -2,10 +2,10 @@ import { faHeart, faMessage, faThumbsDown } from '@fortawesome/free-solid-svg-ic
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useState } from "react";
 import { useTranslation } from 'react-i18next';
-import { useGetPostByIdQuery, useUpdatePostAsyncMutation } from '../../store/api/Post.api';
-import { useCreatePostCommentAsyncMutation } from '../../store/api/PostComment.api';
-import { useCreatePostDislikeAsyncMutation, useLazySearchPostDislikeByPostIdQuery, useRemovePostDislikeAsyncMutation } from '../../store/api/PostDislike.api';
-import { useCreatePostLikeAsyncMutation, useLazySearchPostLikeByPostIdQuery, useRemovePostLikeAsyncMutation } from '../../store/api/PostLike.api';
+import { useGetPostByIdQuery, useUpdatePostAsyncMutation } from '../../store/api/communication/Post.api';
+import { useCreatePostCommentAsyncMutation } from '../../store/api/communication/PostComment.api';
+import { useCreatePostDislikeAsyncMutation, useLazySearchPostDislikeByPostIdQuery, useRemovePostDislikeAsyncMutation } from '../../store/api/communication/PostDislike.api';
+import { useCreatePostLikeAsyncMutation, useLazySearchPostLikeByPostIdQuery, useRemovePostLikeAsyncMutation } from '../../store/api/communication/PostLike.api';
 import PostComments from './PostComments';
 import PostTitle from './PostTitle';
 

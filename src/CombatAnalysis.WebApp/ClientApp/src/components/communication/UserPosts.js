@@ -1,5 +1,5 @@
 import { useUserPostSearchByUserIdQuery as useSearchByUserIdQuery } from '../../store/api/ChatApi';
-import { useRemoveUserPostAsyncMutation } from '../../store/api/UserPost.api';
+import { useRemoveUserPostAsyncMutation } from '../../store/api/communication/UserPost.api';
 import Post from './Post';
 
 const getUserPostsInterval = 10000;

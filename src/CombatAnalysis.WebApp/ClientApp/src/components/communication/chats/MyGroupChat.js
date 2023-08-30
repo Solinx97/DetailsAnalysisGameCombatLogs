@@ -1,5 +1,5 @@
-import { useGetGroupChatByIdQuery } from '../../../store/api/ChatApi';
-import { useFindGroupChatMessageCountQuery } from '../../../store/api/GroupChatMessagCount.api';
+import { useGetGroupChatByIdQuery } from '../../../store/api/communication/chats/GroupChat.api';
+import { useFindGroupChatMessageCountQuery } from '../../../store/api/communication/chats/GroupChatMessagCount.api';
 
 const MyGroupChat = ({ groupChatId, setSelectedGroupChat, meId }) => {
     const { data: groupChat, isLoading } = useGetGroupChatByIdQuery(groupChatId);

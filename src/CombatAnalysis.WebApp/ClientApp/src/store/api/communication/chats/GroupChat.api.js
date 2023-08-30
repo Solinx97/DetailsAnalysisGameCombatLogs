@@ -1,4 +1,4 @@
-import { ChatApi } from "./ChatApi";
+import { ChatApi } from "../../ChatApi";
 
 export const GroupChatApi = ChatApi.injectEndpoints({
     endpoints: builder => ({
@@ -24,12 +24,17 @@ export const GroupChatApi = ChatApi.injectEndpoints({
                 method: 'DELETE'
             }),
             invalidatesTags: (result, error, arg) => [{ type: 'GroupChat', arg }]
-        })
+        }),
+        getGroupChatById: builder.query({
+            query: (id) => `/GroupChat/${id}`,
+            providesTags: (result, error, id) => [{ type: 'GroupChat', id }],
+        }),
     })
 })
 
 export const {
     useCreateGroupChatAsyncMutation,
     useUpdateGroupChatAsyncMutation,
-    useRemoveGroupChatAsyncMutation
+    useRemoveGroupChatAsyncMutation,
+    useGetGroupChatByIdQuery,
 } = GroupChatApi;

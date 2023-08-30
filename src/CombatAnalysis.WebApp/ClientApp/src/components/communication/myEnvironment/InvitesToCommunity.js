@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import { useInviteSearchByUserIdQuery } from '../../../store/api/InviteToCommunity.api';
+import { useInviteSearchByUserIdQuery } from '../../../store/api/communication/community/InviteToCommunity.api';
 import InvitesToCommunityItem from './InvitesToCommunityItem';
 
 const InvitesToCommunity = ({ customer }) => {

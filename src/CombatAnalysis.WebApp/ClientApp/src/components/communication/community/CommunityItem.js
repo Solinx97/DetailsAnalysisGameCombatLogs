@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import { NavLink } from 'react-router-dom';
-import { useGetCommunityByIdQuery } from '../../../store/api/Community.api';
+import { useGetCommunityByIdQuery } from '../../../store/api/communication/community/Community.api';
 
 const CommunityItem = ({ id }) => {
     const { t } = useTranslation("communication/community/Communities");

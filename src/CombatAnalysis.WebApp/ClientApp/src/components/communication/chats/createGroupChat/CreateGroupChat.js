@@ -4,14 +4,14 @@ import { useState } from "react";
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { useCreateGroupChatAsyncMutation } from '../../../../store/api/GroupChat.api';
-import { useCreateGroupChatUserAsyncMutation } from '../../../../store/api/GroupChatUser.api';
+import { useCreateGroupChatAsyncMutation } from '../../../../store/api/communication/chats/GroupChat.api';
+import { useCreateGroupChatMessageCountAsyncMutation } from '../../../../store/api/communication/chats/GroupChatMessagCount.api';
+import { useCreateGroupChatUserAsyncMutation } from '../../../../store/api/communication/chats/GroupChatUser.api';
+import AddPeople from '../../../AddPeople';
 import Communication from '../../Communication';
 import CommonItem from "./CommonItem";
 import ItemConnector from './ItemConnector';
 import RulesItem from "./RulesItem";
-import { useCreateGroupChatMessageCountAsyncMutation } from '../../../../store/api/GroupChatMessagCount.api';
-import AddPeople from '../../../AddPeople';
 
 import "../../../../styles/communication/chats/createGroupChat.scss";
 
@@ -41,7 +41,7 @@ const CreateGroupChat = () => {
             name: chatName,
             shortName: chatShortName,
             lastMessage: " ",
-            ownerId: customer?.id
+            customerId: customer?.id
         };
 
         const createdGroupChat = await createGroupChatAsync(newGroupChat);
