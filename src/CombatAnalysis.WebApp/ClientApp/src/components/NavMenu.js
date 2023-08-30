@@ -48,7 +48,7 @@ const NavMenu = () => {
                 break;
             case "fulfilled":
                 const updateUserData = async () => {
-                    await updateUserDataAsync();
+                    await getUserDataAsync();
                 }
 
                 updateUserData();
@@ -59,7 +59,7 @@ const NavMenu = () => {
         }
     }, [auth])
 
-    const updateUserDataAsync = async () => {
+    const getUserDataAsync = async () => {
         dispatch(updateUser(auth.data));
 
         const customer = await getCustomerAsync(auth.data?.id);
@@ -119,9 +119,9 @@ const NavMenu = () => {
                     />
                     {customer !== null
                         ? <div className="authorized">
-                            <div>{t("Welcome")}, <strong>{customer?.username}</strong></div>
+                            <div>{t("Welcome")}, {customer?.username}</div>
                             <button type="button" className="btn btn-primary" onClick={logoutAsync}>{t("Logout")}</button>
-                        </div>
+                          </div>
                         : <div className="authorization">
                             <button type="button" className="btn btn-primary" onClick={() => navigate('/registration')}>{t("Registration")}</button>
                             <button type="button" className="btn btn-primary" onClick={() => navigate('/login')}>{t("Login")}</button>

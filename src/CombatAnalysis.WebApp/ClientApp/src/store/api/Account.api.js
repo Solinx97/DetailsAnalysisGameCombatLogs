@@ -18,7 +18,8 @@ export const AccountApi = UserApi.injectEndpoints({
                 body: user,
                 url: '/Account/registration',
                 method: 'POST'
-            })
+            }),
+            invalidatesTags: (result, error) => [{ type: 'Authentication', result }],
         }),
         editAsync: builder.mutation({
             query: user => ({
