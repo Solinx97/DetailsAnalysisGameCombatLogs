@@ -6,8 +6,6 @@ public class GroupChatModel
 
     public string Name { get; set; }
 
-    public string ShortName { get; set; }
-
     public string LastMessage { get; set; }
 
     public string CustomerId { get; set; }

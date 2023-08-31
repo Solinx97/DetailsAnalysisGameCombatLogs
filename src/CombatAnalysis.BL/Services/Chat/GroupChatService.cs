@@ -100,11 +100,6 @@ internal class GroupChatService : IService<GroupChatDto, int>
 
     private async Task<GroupChatDto> CreateInternalAsync(GroupChatDto item)
     {
-        if (string.IsNullOrEmpty(item.ShortName))
-        {
-            throw new ArgumentNullException(nameof(GroupChatDto), 
-                $"The property {nameof(GroupChatDto.ShortName)} of the {nameof(GroupChatDto)} object can't be null or empty");
-        }
         if (string.IsNullOrEmpty(item.Name))
         {
             throw new ArgumentNullException(nameof(GroupChatDto), 
@@ -125,11 +120,6 @@ internal class GroupChatService : IService<GroupChatDto, int>
 
     private async Task<int> UpdateInternalAsync(GroupChatDto item)
     {
-        if (string.IsNullOrEmpty(item.ShortName))
-        {
-            throw new ArgumentNullException(nameof(GroupChatDto), 
-                $"The property {nameof(GroupChatDto.ShortName)} of the {nameof(GroupChatDto)} object can't be null or empty");
-        }
         if (string.IsNullOrEmpty(item.Name))
         {
             throw new ArgumentNullException(nameof(GroupChatDto), 

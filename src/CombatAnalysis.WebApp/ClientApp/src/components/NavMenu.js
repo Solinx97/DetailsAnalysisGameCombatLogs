@@ -119,7 +119,7 @@ const NavMenu = () => {
                     />
                     {customer !== null
                         ? <div className="authorized">
-                            <div>{t("Welcome")}, {customer?.username}</div>
+                            <div className="username">{customer?.username}</div>
                             <button type="button" className="btn btn-primary" onClick={logoutAsync}>{t("Logout")}</button>
                           </div>
                         : <div className="authorization">

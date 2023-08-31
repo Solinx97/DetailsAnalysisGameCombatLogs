@@ -1,6 +1,6 @@
-﻿import { faPaperPlane, faPersonWalkingArrowRight } from '@fortawesome/free-solid-svg-icons';
+﻿import { faPaperPlane, faUserXmark, faUserPlus } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { useTranslation } from 'react-i18next';
 import { useGetCustomerByIdQuery } from '../../../store/api/Customer.api';
 import { useRemovePersonalChatAsyncMutation, useUpdatePersonalChatAsyncMutation } from '../../../store/api/communication/chats/PersonalChat.api';
@@ -17,6 +17,8 @@ const getPersonalChatMessagesInterval = 1000;
 
 const PersonalChat = ({ chat, me, setSelectedChat, companionId }) => {
     const { t } = useTranslation("communication/chats/personalChat");
+
+    const [showRemoveChatAlert, setShowRemoveChatAlert] = useState();
 
     const messageInput = useRef(null);
 
@@ -115,16 +117,17 @@ const PersonalChat = ({ chat, me, setSelectedChat, companionId }) => {
     }
 
     return (
-        <div className="chats__selected-chat">
+        <div className="chats__selected-chat personal-chat">
             <div className="messages-container">
                 <div className="title">
                     <div className="name">{companion.username}</div>
-                    <FontAwesomeIcon
-                        icon={faPersonWalkingArrowRight}
-                        title={t("LeaveFromChat")}
-                        className="remove-chat-handler"
-                        onClick={() => leaveFromChatAsync()}
-                    />
+                    <div className="title__content">
+                        <FontAwesomeIcon
+                            icon={faUserPlus}
+                            title={t("AddPeople")}
+                            onClick={() => leaveFromChatAsync()}
+                        />
+                    </div>
                 </div>
                 <ul className="chat-messages">
                     {
@@ -151,6 +154,22 @@ const PersonalChat = ({ chat, me, setSelectedChat, companionId }) => {
                     />
                 </div>
             </div>
+            <FontAwesomeIcon
+                icon={faUserXmark}
+                title={t("RemoveChat")}
+                className={`remove-chat${showRemoveChatAlert ? "_active" : ""}`}
+                onClick={() => setShowRemoveChatAlert((item) => !item)}
+            />
+            {showRemoveChatAlert &&
+                <div className="remove-chat-alert">
+                    <p>{t("AreYouSureRemoveChat")}</p>
+                    <p>{t("ThatWillBeRemoveChat")}</p>
+                    <div className="remove-chat-alert__actions">
+                        <input type="button" value={t("Remove")} className="btn btn-warning" onClick={async () => await leaveFromChatAsync()} />
+                        <input type="button" value={t("Cancel")} className="btn btn-light" onClick={() => setShowRemoveChatAlert((item) => !item)} />
+                    </div>
+                </div>
+            }
         </div>
     );
 }

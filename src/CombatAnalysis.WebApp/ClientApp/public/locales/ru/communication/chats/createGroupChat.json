@@ -1,7 +1,6 @@
 {
   "CreateNewGroupChat": "Создать новый групповой чат",
   "Name": "Название",
-  "ShortName": "Короткое название",
   "MembersNumber": "Количство участником",
   "ChatPolicy": "Политика чата",
   "Public": "Открытый",

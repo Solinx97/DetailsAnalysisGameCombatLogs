@@ -1,9 +1,9 @@
-﻿import { faGear, faMinus, faPaperPlane, faRightFromBracket } from '@fortawesome/free-solid-svg-icons';
+﻿import { faCloudArrowUp, faGear, faPaperPlane, faPen } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { memo, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useFindGroupChatMessageByChatIdQuery } from '../../../store/api/ChatApi';
-import { useRemoveGroupChatAsyncMutation, useUpdateGroupChatAsyncMutation } from '../../../store/api/communication/chats/GroupChat.api';
+import { useUpdateGroupChatAsyncMutation } from '../../../store/api/communication/chats/GroupChat.api';
 import {
     useCreateGroupChatMessageCountAsyncMutation, useFindGroupChatMessageCountQuery,
     useLazyFindGroupChatMessageCountQuery, useUpdateGroupChatMessageCountAsyncMutation
@@ -14,7 +14,7 @@ import {
 } from '../../../store/api/communication/chats/GroupChatMessage.api';
 import {
     useCreateGroupChatUserAsyncMutation, useFindGroupChatUserByChatIdQuery,
-    useFindGroupChatUserQuery, useRemoveGroupChatUserAsyncMutation
+    useFindGroupChatUserQuery
 } from '../../../store/api/communication/chats/GroupChatUser.api';
 import {
     useCreateUnreadGroupChatMessageAsyncMutation,
@@ -22,10 +22,10 @@ import {
     useRemoveUnreadGroupChatMessageAsyncMutation
 } from '../../../store/api/communication/chats/UnreadGroupChatMessage.api';
 import AddPeople from '../../AddPeople';
-import User from '../User';
 import GroupChatMessage from './GroupChatMessage';
 
 import "../../../styles/communication/chats/groupChat.scss";
+import GroupChatMenu from './GroupChatMenu';
 
 const getGroupChatMessagesInterval = 1000;
 
@@ -33,14 +33,14 @@ const GroupChat = ({ chat, me, setSelectedChat }) => {
     const { t } = useTranslation("communication/chats/groupChat");
 
     const [showAddPeople, setShowAddPeople] = useState(false);
-    const [peopleInspectionModeOn, setPeopleInspectionMode] = useState(false);
     const [settingsIsShow, setSettingsIsShow] = useState(false);
     const [peopleIdToJoin, setPeopleToJoin] = useState([]);
-    const [peopleIdToRemove, setPeopleToRemove] = useState([]);
     const [groupChatUsersId, setGroupChatUsersId] = useState([]);
     const [userInformation, setUserInformation] = useState(null);
+    const [editNameOn, setEditNameOn] = useState(false);
 
     const messageInput = useRef(null);
+    const chatNameInput = useRef(null);
 
     const { data: messages, isLoading } = useFindGroupChatMessageByChatIdQuery(chat.id, {
         pollingInterval: getGroupChatMessagesInterval
@@ -51,8 +51,6 @@ const GroupChat = ({ chat, me, setSelectedChat }) => {
     const [updateGroupChatMessageAsync] = useUpdateGroupChatMessageAsyncMutation();
     const [removeGroupChatMessageAsync] = useRemoveGroupChatMessageAsyncMutation();
     const [updateGroupChatAsyncMut] = useUpdateGroupChatAsyncMutation();
-    const [removeGroupChatAsyncMut] = useRemoveGroupChatAsyncMutation();
-    const [removeGroupChatUserAsyncMut] = useRemoveGroupChatUserAsyncMutation();
     const [createGroupChatUserMutAsync] = useCreateGroupChatUserAsyncMutation();
     const [updateGroupChatMessageCountMut] = useUpdateGroupChatMessageCountAsyncMutation();
     const [getMessagesCount] = useLazyFindGroupChatMessageCountQuery();
@@ -68,7 +66,7 @@ const GroupChat = ({ chat, me, setSelectedChat }) => {
         }
 
         const customersId = [];
-        for (var i = 0; i < groupChatUsers.length; i++) {
+        for (let i = 0; i < groupChatUsers.length; i++) {
             customersId.push(groupChatUsers[i].customerId);
         }
 
@@ -122,27 +120,6 @@ const GroupChat = ({ chat, me, setSelectedChat }) => {
         return createdMessagesCount.data !== undefined;
     }
 
-    const addPeopleForRemove = (id) => {
-        const people = peopleIdToRemove;
-        people.push(id);
-
-        setPeopleToRemove(people);
-    }
-
-    const removePeopleForRemove = (id) => {
-        const people = peopleIdToRemove.filter((item) => item !== id);
-
-        setPeopleToRemove(people);
-    }
-
-    const removeGroupChatUserAsync = async () => {
-        for (var i = 0; i < peopleIdToRemove.length; i++) {
-            await removeGroupChatUserAsyncMut(peopleIdToRemove[i]);
-        }
-
-        setPeopleInspectionMode(false);
-    }
-
     const createChatMessageAsync = async (message) => {
         const today = new Date();
         const newMessage = {
@@ -157,7 +134,7 @@ const GroupChat = ({ chat, me, setSelectedChat }) => {
             return;
         }
 
-        await updateGroupChatAsync(message);
+        await updateGroupChatLastMessageAsync(message);
 
         const updateForMessage = Object.assign({}, createdMessage.data);
         updateForMessage.status = 1;
@@ -170,8 +147,16 @@ const GroupChat = ({ chat, me, setSelectedChat }) => {
         await createUnreadMessageAsync(createdMessage.data.id);
     }
 
-    const updateGroupChatAsync = async (message) => {
+    const updateGroupChatLastMessageAsync = async (message) => {
         chat.lastMessage = message;
+
+        await updateGroupChatAsyncMut(chat);
+    }
+
+    const updateGroupChatNameAsync = async () => {
+        setEditNameOn(false);
+
+        chat.name = chatNameInput.current.value;
 
         await updateGroupChatAsyncMut(chat);
     }
@@ -231,20 +216,6 @@ const GroupChat = ({ chat, me, setSelectedChat }) => {
         }
     }
 
-    const leaveFromChatAsync = async (id) => {
-        const deletedItem = await removeGroupChatUserAsyncMut(id);
-        if (deletedItem.data !== undefined) {
-            setSelectedChat(null);
-        }
-    }
-
-    const removeChatAsync = async () => {
-        const deletedItem = await removeGroupChatAsyncMut(chat.id);
-        if (deletedItem.data !== undefined) {
-            setSelectedChat(null);
-        }
-    }
-
     if (isLoading || usersIsLoading
         || myUsersIsLoading || myMessagesCountLoading) {
         return <></>;
@@ -254,7 +225,28 @@ const GroupChat = ({ chat, me, setSelectedChat }) => {
         <div className="chats__selected-chat">
             <div className="messages-container">
                 <div className="title">
-                    <div className="name" title={chat.name}>{chat.name}</div>
+                    <div className="title__content">
+                        {chat?.customerId === me?.id &&
+                            <FontAwesomeIcon
+                                icon={faPen}
+                                title={t("EditName")}
+                                className={`settings-handler${editNameOn ? "_active" : ""}`}
+                                onClick={() => setEditNameOn((item) => !item)}
+                            />
+                        }
+                        {editNameOn
+                            ? <>
+                                <input className="form-control" type="text" defaultValue={chat.name} ref={chatNameInput} />
+                                <FontAwesomeIcon
+                                    icon={faCloudArrowUp}
+                                    title={t("Save")}
+                                    className={`settings-handler${settingsIsShow ? "_active" : ""}`}
+                                    onClick={async () => await updateGroupChatNameAsync()}
+                                />
+                              </>
+                            : <div className="name" title={chat.name}>{chat.name}</div>
+                        }
+                    </div>
                     <FontAwesomeIcon
                         icon={faGear}
                         title={t("Settings")}
@@ -301,57 +293,17 @@ const GroupChat = ({ chat, me, setSelectedChat }) => {
                     </div>
                 }
             </div>
-            <div className={`settings${settingsIsShow ? "_active" : ""}`}>
-                <div className="settings__content">
-                    <div className="main-settings">
-                        <input type="button" value={t("Members")} className="btn btn-light" onClick={() => setPeopleInspectionMode((item) => !item)} />
-                        <input type="button" value={t("Invite")} className="btn btn-light" onClick={() => setShowAddPeople((item) => !item)} />
-                        <input type="button" value={t("Documents")} className="btn btn-light" disabled />
-                    </div>
-                    <div className="danger-settings">
-                        {me?.id === chat.customerId &&
-                            <input type="button" value={t("RemoveChat")} className="btn btn-danger" onClick={async () => await removeChatAsync()} />
-                        }
-                        <input type="button" value={t("Leave")} className="btn btn-warning" onClick={async () => await leaveFromChatAsync(meInChat?.id)} />
-                    </div>
-                </div>
-                <div className={`settings__people-inspection${peopleInspectionModeOn ? "_active" : ""}`}>
-                    <div>{t("Members")}</div>
-                    <ul>
-                        {
-                            groupChatUsers.map((item) => (
-                                <li key={item.id}>
-                                    <User
-                                        me={me}
-                                        targetCustomerId={item.customerId}
-                                        setUserInformation={setUserInformation}
-                                        allowRemoveFriend={false}
-                                    />
-                                    {(me?.id === chat.customerId && item.customerId !== chat.customerId)
-                                        ? peopleIdToRemove.includes(item.id)
-                                            ? <FontAwesomeIcon
-                                                icon={faRightFromBracket}
-                                                title={t("RomeFromChat")}
-                                                onClick={() => removePeopleForRemove(item.id)}
-                                            />
-                                            : <FontAwesomeIcon
-                                                icon={faMinus}
-                                                title={t("RomeFromChat")}
-                                                onClick={() => addPeopleForRemove(item.id)}
-                                            />
-                                        : null
-                                    }
-                                </li>
-                            ))
-                        }
-                    </ul>
-                    <div className="item-result">
-                        <input type="button" value={t("Accept")} className="btn btn-success" onClick={async () => await removeGroupChatUserAsync()} />
-                        <input type="button" value={t("Close")} className="btn btn-secondary" onClick={() => setPeopleInspectionMode((item) => !item)} />
-                    </div>
-
-                </div>
-            </div>
+            {settingsIsShow &&
+                <GroupChatMenu
+                    me={me}
+                    setUserInformation={setUserInformation}
+                    setSelectedChat={setSelectedChat}
+                    setShowAddPeople={setShowAddPeople}
+                    groupChatUsers={groupChatUsers}
+                    meInChat={meInChat}
+                    chat={chat}
+                />
+            }
             {userInformation}
         </div>
     );

@@ -26,7 +26,6 @@ const CreateGroupChat = () => {
     const [passedItemIndex, setPassedItemIndex] = useState(0);
 
     const [chatName, setChatName] = useState("");
-    const [chatShortName, setChatShortName] = useState("");
     const [canFinishCreate, setCanFinishCreate] = useState(false);
 
     const [peopleIdToJoin, setPeopleIdToJoin] = useState([]);
@@ -38,7 +37,6 @@ const CreateGroupChat = () => {
     const createNewGroupChatAsync = async () => {
         const newGroupChat = {
             name: chatName,
-            shortName: chatShortName,
             lastMessage: " ",
             customerId: customer?.id
         };
@@ -175,8 +173,6 @@ const CreateGroupChat = () => {
                             <CommonItem
                                 chatName={chatName}
                                 setChatName={setChatName}
-                                chatShortName={chatShortName}
-                                setChatShortName={setChatShortName}
                                 connector={
                                     <ItemConnector
                                         connectorType={1}

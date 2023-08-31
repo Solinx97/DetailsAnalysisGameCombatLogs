@@ -1,11 +1,11 @@
-import { faArrowsRotate, faBars, faEarthEurope, faEye, faEyeSlash, faShieldHalved } from '@fortawesome/free-solid-svg-icons';
+import { faArrowsRotate, faBars, faCloudArrowUp, faEarthEurope, faEye, faEyeSlash, faPen, faShieldHalved } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useEffect, useRef, useState } from "react";
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
-import { useLazyGetCommunityByIdQuery } from '../../../store/api/communication/community/Community.api';
-import { useCreateCommunityPostAsyncMutation } from '../../../store/api/communication/community/CommunityPost.api';
 import { useCreatePostAsyncMutation } from '../../../store/api/communication/Post.api';
+import { useLazyGetCommunityByIdQuery, useUpdateCommunityAsyncMutation } from '../../../store/api/communication/community/Community.api';
+import { useCreateCommunityPostAsyncMutation } from '../../../store/api/communication/community/CommunityPost.api';
 import Communication from '../Communication';
 import CommunityMembers from './CommunityMembers';
 import CommunityMenu from './CommunityMenu';
@@ -24,11 +24,16 @@ const SelectedCommunity = () => {
     const [communityId, setCommunityId] = useState(0);
     const [community, setCommunity] = useState(null);
     const [showAddPeople, setShowAddPeople] = useState(false);
+    const [editNameOn, setEditNameOn] = useState(false);
+    const [editDescriptionOn, setEditDescriptionOn] = useState(false);
 
     const postContentRef = useRef(null);
+    const communityNameInput = useRef(null);
+    const communityDescriptionInput = useRef(null);
 
     const [getCommunityByIdAsync] = useLazyGetCommunityByIdQuery();
     const [createNewPostAsync] = useCreatePostAsyncMutation();
+    const [updateCommunityAsync] = useUpdateCommunityAsyncMutation();
     const [createNewCommunityPostAsync] = useCreateCommunityPostAsyncMutation();
 
     useEffect(() => {
@@ -77,6 +82,30 @@ const SelectedCommunity = () => {
         return createdUserPost.data === undefined ? false : true;
     }
 
+    const updateCommunityNameAsync = async () => {
+        setEditNameOn(false);
+
+        const communityForUpdate = Object.assign({}, community);
+        communityForUpdate.name = communityNameInput.current.value;
+
+        const updated = await updateCommunityAsync(communityForUpdate);
+        if (updated.data !== undefined) {
+            setCommunity(communityForUpdate);
+        }
+    }
+
+    const updateCommunityDescriptionAsync = async () => {
+        setEditDescriptionOn(false);
+
+        const communityForUpdate = Object.assign({}, community);
+        communityForUpdate.description = communityDescriptionInput.current.value;
+
+        const updated = await updateCommunityAsync(communityForUpdate);
+        if (updated.data !== undefined) {
+            setCommunity(communityForUpdate);
+        }
+    }
+
     const handleShowAddPeople = () => {
         setShowAddPeople((item) => !item);
     }
@@ -95,17 +124,40 @@ const SelectedCommunity = () => {
                 <div className="selected-community__content">
                     <div className="header">
                         <div className="title">
-                            {community.policyType === 1
-                                ? <FontAwesomeIcon
-                                    icon={faEarthEurope}
-                                    title={t("Open")}
-                                />
-                                : <FontAwesomeIcon
-                                    icon={faShieldHalved}
-                                    title={t("Private")}
-                                />
-                            }
-                            <div className="title__name" title={community.name}>{community.name}</div>
+                            <div className="title__content">
+                                {community?.customerId === customer?.id &&
+                                    <FontAwesomeIcon
+                                        icon={faPen}
+                                        title={t("EditName")}
+                                        className={`edit${editNameOn ? "_active" : ""}`}
+                                        onClick={() => setEditNameOn((item) => !item)}
+                                    />
+                                }
+                                {editNameOn
+                                    ? <>
+                                        <input className="form-control" type="text" defaultValue={community.name} ref={communityNameInput} />
+                                        <FontAwesomeIcon
+                                            icon={faCloudArrowUp}
+                                            title={t("Save")}
+                                            onClick={async () => await updateCommunityNameAsync()}
+                                        />
+                                    </>
+                                    : 
+                                    <div className="name" title={community.name}>
+                                        {community.policyType === 1
+                                            ? <FontAwesomeIcon
+                                                icon={faEarthEurope}
+                                                title={t("Open")}
+                                            />
+                                            : <FontAwesomeIcon
+                                                icon={faShieldHalved}
+                                                title={t("Private")}
+                                            />
+                                        }
+                                        <div>{community.name}</div>
+                                    </div>
+                                }
+                            </div>
                             <FontAwesomeIcon
                                 icon={faBars}
                                 title={t("Menu")}
@@ -114,8 +166,25 @@ const SelectedCommunity = () => {
                         </div>
                     </div>
                     <div className="description">
-                        <div className="description__title">
-                            <div>{t("Description")}</div>
+                        <div className="title">
+                            <div className="title__content">
+                                {community?.customerId === customer?.id &&
+                                    <FontAwesomeIcon
+                                        icon={faPen}
+                                        title={t("EditDescription")}
+                                        className={`edit${editDescriptionOn ? "_active" : ""}`}
+                                        onClick={() => setEditDescriptionOn((item) => !item)}
+                                    />
+                                }
+                                <div>{t("Description")}</div>
+                                {editDescriptionOn &&
+                                    <FontAwesomeIcon
+                                        icon={faCloudArrowUp}
+                                        title={t("Save")}
+                                        onClick={async () => await updateCommunityDescriptionAsync()}
+                                    />
+                                }
+                            </div>
                             {showDescription
                                 ? <FontAwesomeIcon
                                     icon={faEye}
@@ -129,8 +198,11 @@ const SelectedCommunity = () => {
                                 />
                             }
                         </div>
-                        {showDescription &&
-                            <div className="description__content">{community.description}</div>
+                        {showDescription
+                            ? editDescriptionOn
+                                ? <textarea className="form-control" rows="4" cols="50" ref={communityDescriptionInput} defaultValue={community.description} />
+                                : <div className="description__content">{community.description}</div>
+                            : null
                         }
                     </div>
                     <div>

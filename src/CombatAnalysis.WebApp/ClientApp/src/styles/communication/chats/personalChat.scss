@@ -1,12 +1,46 @@
 ﻿.chats__selected-chat {
-    .remove-chat-handler {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: start;
-        margin: 0 20px;
+    .title {
+        &__content {
+            display: flex;
+            gap: 100px;
+        }
+    }
+
+    .remove-chat, .remove-chat_active {
+        margin: 15px 5px;
         cursor: pointer;
-        color: red;
-        transform: scale(1.4);
+        transform: scale(1.25);
+
+        &_active {
+            color: orange;
+        }
+    }
+
+    .remove-chat :hover {
+        color: orange;
+    }
+}
+
+.personal-chat {
+    display: flex;
+    align-items: start;
+}
+
+.remove-chat-alert {
+    position: fixed;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    left: 50%;
+    top: 25%;
+    background: white;
+    padding: 20px;
+    border-radius: 25px;
+    box-shadow: 3px 3px 3px 3px gray;
+
+    &__actions {
+        display: flex;
+        gap: 25px;
     }
 }

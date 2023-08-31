@@ -35,6 +35,11 @@ html {
     justify-content: center;
     align-items: center;
 
+    .username {
+        font-weight: bold;
+        font-family: 'Comic Sans MS';
+    }
+
     button {
         margin: 0 25px;
     }

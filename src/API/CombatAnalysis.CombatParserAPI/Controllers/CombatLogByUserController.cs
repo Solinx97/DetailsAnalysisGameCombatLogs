@@ -37,8 +37,8 @@ public class CombatLogByUserController : ControllerBase
         return Ok(combatLogByUser);
     }
 
-    [HttpGet("byUserId/{userId}")]
-    public async Task<IActionResult> GetByUserId(string userId)
+    [HttpGet("byUserId/{id}")]
+    public async Task<IActionResult> GetByUserId(string id)
     {
         var combatLogsByUser = new List<CombatLogByUserModel>();
         var allCombatLogsByUser = await _service.GetAllAsync();
@@ -46,7 +46,7 @@ public class CombatLogByUserController : ControllerBase
 
         foreach (var item in mapAllCombatLogsByUser)
         {
-            if (item.UserId == userId)
+            if (item.UserId == id)
             {
                 combatLogsByUser.Add(item);
             }

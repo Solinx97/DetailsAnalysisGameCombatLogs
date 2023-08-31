@@ -1,7 +1,6 @@
 {
   "CreateNewGroupChat": "Create new group chat",
   "Name": "Name",
-  "ShortName": "Short name",
   "MembersNumber": "Members number",
   "ChatPolicy": "Chat policy",
   "Public": "Public",

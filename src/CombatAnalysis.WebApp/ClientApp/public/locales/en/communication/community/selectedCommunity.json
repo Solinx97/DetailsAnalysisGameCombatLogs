@@ -1,5 +1,8 @@
 {
   "Open": "Open",
+  "EditName": "Edit community name",
+  "EditDescription": "Edit community description",
+  "Save": "Save changes",
   "OpenExplain": "Any users can search and connect to this community free",
   "Private": "Private",
   "PrivateExplain": "This is community is hide and allow only invite another users from members",

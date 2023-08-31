@@ -17,13 +17,18 @@
             .title {
                 display: flex;
                 flex-direction: row;
-                justify-content: start;
+                justify-content: space-between;
                 align-items: center;
                 box-shadow: 3px 3px 3px 3px black;
                 border-radius: 10px;
-                padding: 10px;
-                gap: 25px;
+                padding: 10px 25px;
                 cursor: default;
+
+                &__content {
+                    display: flex;
+                    align-items: center;
+                    gap: 10px;
+                }
 
                 .name {
                     margin: 0 20px;
