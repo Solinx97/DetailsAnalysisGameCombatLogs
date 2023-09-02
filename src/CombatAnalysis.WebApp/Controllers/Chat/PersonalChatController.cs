@@ -1,10 +1,10 @@
 ﻿using CombatAnalysis.WebApp.Consts;
 using CombatAnalysis.WebApp.Extensions;
 using CombatAnalysis.WebApp.Interfaces;
-using CombatAnalysis.WebApp.Models.Chats;
+using CombatAnalysis.WebApp.Models.Chat;
 using Microsoft.AspNetCore.Mvc;
 
-namespace CombatAnalysis.WebApp.Controllers.Chats;
+namespace CombatAnalysis.WebApp.Controllers.Chat;
 
 [Route("api/v1/[controller]")]
 [ApiController]

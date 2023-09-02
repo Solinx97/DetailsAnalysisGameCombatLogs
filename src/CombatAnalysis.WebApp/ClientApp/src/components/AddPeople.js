@@ -2,8 +2,8 @@ import { faEye, faEyeSlash, faMagnifyingGlassMinus, faMagnifyingGlassPlus, faPlu
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useFriendSearchMyFriendsQuery } from '../store/api/communication/myEnvironment/Friend.api';
 import { useGetCustomersQuery } from '../store/api/UserApi';
+import { useFriendSearchMyFriendsQuery } from '../store/api/communication/myEnvironment/Friend.api';
 import AddFriendItem from './AddFriendItem';
 
 import '../styles/addPeople.scss';
@@ -39,23 +39,23 @@ const AddPeople = ({ customer, communityUsersId, peopleToJoin, setPeopleToJoin }
     const [showFriendList, setShowFriendList] = useState(true);
     const [showPeopleList, setShowPeopleList] = useState(true);
 
-    const [peopleIdToJoin, setPeopleIdToJoin] = useState(peopleToJoin);
+    const [selectedPeopleToJoin, setSelectedPeopleToJoin] = useState(peopleToJoin);
     const [filteredPeople, setFilteredPeople] = useState([]);
 
     const filterContent = useRef(null);
 
-    const handleAddUserIdToList = (id) => {
-        const people = peopleIdToJoin;
-        people.push(id);
+    const handleAddUserToJoin = (user) => {
+        const people = selectedPeopleToJoin;
+        people.push(user);
 
-        setPeopleIdToJoin(people);
+        setSelectedPeopleToJoin(people);
         setPeopleToJoin(people);
     }
 
-    const handleRemoveUserIdToList = (id) => {
-        const people = peopleIdToJoin.filter((element) => element !== id);
+    const handleRemoveUserFromToJoin = (user) => {
+        const people = selectedPeopleToJoin.filter((selectedUser) => selectedUser.id !== user.id);
 
-        setPeopleIdToJoin(people);
+        setSelectedPeopleToJoin(people);
         setPeopleToJoin(people);
     }
 
@@ -136,9 +136,9 @@ const AddPeople = ({ customer, communityUsersId, peopleToJoin, setPeopleToJoin }
                                     <AddFriendItem
                                         friendUserId={item.whoFriendId === customer.id ? item.forWhomId : item.whoFriendId}
                                         filterContent={filterContent.current === null ? "" : filterContent.current.value}
-                                        addUserIdToList={handleAddUserIdToList}
-                                        removeUserIdToList={handleRemoveUserIdToList}
-                                        peopleIdToJoin={peopleIdToJoin}
+                                        addUserIdToList={handleAddUserToJoin}
+                                        removeUserIdToList={handleRemoveUserFromToJoin}
+                                        peopleIdToJoin={selectedPeopleToJoin}
                                     />
                                 </li>
                                 ))
@@ -184,19 +184,19 @@ const AddPeople = ({ customer, communityUsersId, peopleToJoin, setPeopleToJoin }
                     </div>
                     <ul className={`add-new-people__list${showPeopleList ? "_active" : ""}`}>
                         {filteredPeople.length > 0
-                            ? filteredPeople.map((item) => (
-                                    <li key={item.id} className="person">
-                                        <div>{item.username}</div>
-                                        {peopleIdToJoin.includes(item.id)
+                            ? filteredPeople.map((user) => (
+                                    <li key={user.id} className="person">
+                                    <div>{user.username}</div>
+                                        {selectedPeopleToJoin.filter((item) => item.id === user.id).length > 0
                                             ? <FontAwesomeIcon
                                                 icon={faUserPlus}
                                                 title={t("CancelRequest")}
-                                                onClick={() => handleRemoveUserIdToList(item.id)}
+                                                onClick={() => handleRemoveUserFromToJoin(user)}
                                             />
                                             : <FontAwesomeIcon
                                                 icon={faPlus}
                                                 title={t("SendInvite")}
-                                                onClick={() => handleAddUserIdToList(item.id)}
+                                                onClick={() => handleAddUserToJoin(user)}
                                             />
                                         }
                                     </li>

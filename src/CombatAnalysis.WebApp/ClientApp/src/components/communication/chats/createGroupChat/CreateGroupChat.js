@@ -6,6 +6,7 @@ import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { useCreateGroupChatAsyncMutation } from '../../../../store/api/communication/chats/GroupChat.api';
 import { useCreateGroupChatMessageCountAsyncMutation } from '../../../../store/api/communication/chats/GroupChatMessagCount.api';
+import { useCreateGroupChatMessageAsyncMutation } from '../../../../store/api/communication/chats/GroupChatMessage.api';
 import { useCreateGroupChatUserAsyncMutation } from '../../../../store/api/communication/chats/GroupChatUser.api';
 import AddPeople from '../../../AddPeople';
 import Communication from '../../Communication';
@@ -28,11 +29,12 @@ const CreateGroupChat = () => {
     const [chatName, setChatName] = useState("");
     const [canFinishCreate, setCanFinishCreate] = useState(false);
 
-    const [peopleIdToJoin, setPeopleIdToJoin] = useState([]);
+    const [peopleToJoin, setPeopleToJoin] = useState([]);
 
     const [createGroupChatAsync] = useCreateGroupChatAsyncMutation();
     const [createGroupChatUserMutAsync] = useCreateGroupChatUserAsyncMutation();
     const [createGroupChatCountAsyncMut] = useCreateGroupChatMessageCountAsyncMutation();
+    const [createGroupChatMessageAsync] = useCreateGroupChatMessageAsyncMutation();
 
     const createNewGroupChatAsync = async () => {
         const newGroupChat = {
@@ -77,18 +79,35 @@ const CreateGroupChat = () => {
     }
 
     const joinPeopleAsync = async (groupChatId) => {
-        for (let i = 0; i < peopleIdToJoin.length; i++) {
+        for (let i = 0; i < peopleToJoin.length; i++) {
             const newGroupChatUser = {
                 id: "",
-                customerId: peopleIdToJoin[i],
+                customerId: peopleToJoin[i].id,
                 groupChatId: groupChatId,
             };
 
             const createdGroupChatUser = await createGroupChatUserMutAsync(newGroupChatUser);
             if (createdGroupChatUser.data !== undefined) {
-                await createGroupChatCountAsync(groupChatId, peopleIdToJoin[i]);
+                await createGroupChatCountAsync(groupChatId, peopleToJoin[i].id);
+
+                const systemMessage = `'${customer?.username}' added '${peopleToJoin[i].username}' to chat`;
+                await createMessageAsync(groupChatId, systemMessage);
             }
         }
+    }
+
+    const createMessageAsync = async (groupChatId, message) => {
+        const today = new Date();
+        const newMessage = {
+            message: message,
+            time: `${today.getHours()}:${today.getMinutes()}`,
+            status: 0,
+            type: 1,
+            groupChatId: groupChatId,
+            customerId: customer?.id
+        };
+
+        await createGroupChatMessageAsync(newMessage);
     }
 
     const handleCreateNewGroupChatAsync = async () => {
@@ -199,8 +218,8 @@ const CreateGroupChat = () => {
                                 <AddPeople
                                     customer={customer}
                                     communityUsersId={[customer.id]}
-                                    peopleToJoin={peopleIdToJoin}
-                                    setPeopleToJoin={setPeopleIdToJoin}
+                                    peopleToJoin={peopleToJoin}
+                                    setPeopleToJoin={setPeopleToJoin}
                                 />
                                 <ItemConnector
                                     connectorType={3}

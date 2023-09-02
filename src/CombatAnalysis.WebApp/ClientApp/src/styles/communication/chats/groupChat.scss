@@ -84,20 +84,6 @@
                 box-shadow: 5px 5px 5px 5px gray;
                 background: white;
 
-                ul {
-                    padding: 0;
-
-                    li {
-                        display: flex;
-                        justify-content: space-between;
-                        margin: 10px;
-
-                        .group-chat-user {
-                            min-width: 110px;
-                        }
-                    }
-                }
-
                 .item-result {
                     display: flex;
                     gap: 10px;
@@ -114,6 +100,20 @@
 
                     svg {
                         cursor: pointer;
+                    }
+                }
+
+                .list {
+                    display: flex;
+                    flex-direction: column;
+                    padding: 0;
+                    margin: 0;
+                    gap: 10px;
+
+                    .group-chat-user {
+                        display: flex;
+                        align-items: center;
+                        gap: 20px;
                     }
                 }
             }

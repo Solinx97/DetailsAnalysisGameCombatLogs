@@ -70,10 +70,9 @@ const GroupChatMenu = ({ me, setUserInformation, setSelectedChat, setShowAddPeop
             </div>
             <div className={`settings__people-inspection${peopleInspectionModeOn ? "_active" : ""}`}>
                 <div>{t("Members")}</div>
-                <ul>
-                    {
-                        groupChatUsers.map((item) => (
-                            <li key={item.id}>
+                <ul className="list">
+                    {groupChatUsers.map((item) => (
+                            <li className="group-chat-user" key={item.id}>
                                 <User
                                     me={me}
                                     targetCustomerId={item.customerId}

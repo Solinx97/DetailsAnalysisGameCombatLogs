@@ -10,6 +10,8 @@ public class PersonalChatMessageModel
 
     public int Status { get; set; }
 
+    public int Type { get; set; }
+
     public int PersonalChatId { get; set; }
 
     public string CustomerId { get; set; }

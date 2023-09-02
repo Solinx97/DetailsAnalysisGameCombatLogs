@@ -6,6 +6,7 @@
     margin: 12px 0px;
     box-shadow: 3px 3px 3px 3px gray;
     gap: 5px;
+    padding: 15px;
     overflow-y: scroll;
 
     &__content {
@@ -48,10 +49,10 @@
 
         .message-title {
             display: flex;
-            flex-direction: row;
+            justify-content: start;
             width: 90%;
-            justify-content: space-between;
             align-items: center;
+            gap: 20px;
 
             .message-menu {
                 display: flex;
@@ -130,6 +131,34 @@
             svg {
                 margin: 0 15px;
             }
+        }
+
+        .system-message {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+
+            &__message {
+                display: flex;
+                justify-content: center;
+                font-size: 14px;
+                font-weight: bold;
+                opacity: 0.6;
+            }
+
+            &__time {
+                display: flex;
+                justify-content: center;
+                font-size: 12px;
+                font-weight: bold;
+                opacity: 0.4;
+            }
+        }
+
+        .message-time {
+            font-size: 13px;
+            opacity: 0.75;
         }
     }
 

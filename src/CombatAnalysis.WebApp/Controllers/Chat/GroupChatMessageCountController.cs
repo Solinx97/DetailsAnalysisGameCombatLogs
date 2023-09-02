@@ -1,18 +1,18 @@
 ﻿using CombatAnalysis.WebApp.Consts;
 using CombatAnalysis.WebApp.Extensions;
 using CombatAnalysis.WebApp.Interfaces;
-using CombatAnalysis.WebApp.Models.Chats;
+using CombatAnalysis.WebApp.Models.Chat;
 using Microsoft.AspNetCore.Mvc;
 
-namespace CombatAnalysis.WebApp.Controllers.Chats;
+namespace CombatAnalysis.WebApp.Controllers.Chat;
 
 [Route("api/v1/[controller]")]
 [ApiController]
-public class PersonalChatMessageCountController : ControllerBase
+public class GroupChatMessageCountController : ControllerBase
 {
     private readonly IHttpClientHelper _httpClient;
 
-    public PersonalChatMessageCountController(IHttpClientHelper httpClient)
+    public GroupChatMessageCountController(IHttpClientHelper httpClient)
     {
         _httpClient = httpClient;
     }
@@ -25,7 +25,7 @@ public class PersonalChatMessageCountController : ControllerBase
             return Unauthorized();
         }
 
-        var responseMessage = await _httpClient.GetAsync($"PersonalChatMessageCount", refreshToken, Port.ChatApi);
+        var responseMessage = await _httpClient.GetAsync("GroupChatMessageCount", refreshToken, Port.ChatApi);
         if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
         {
             return Unauthorized();
@@ -35,28 +35,28 @@ public class PersonalChatMessageCountController : ControllerBase
             return BadRequest();
         }
 
-        var personalChatMessagesCount = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<PersonalChatMessageCountModel>>();
-        var myPersonalChatMessagesCount = personalChatMessagesCount.Where(x => x.PersonalChatId == chatId && x.CustomerId == userId).FirstOrDefault();
+        var groupChatMessagesCount = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<GroupChatMessageCountModel>>();
+        var myGroupChatMessageCount = groupChatMessagesCount.Where(x => x.GroupChatId == chatId && x.CustomerId == userId).FirstOrDefault();
 
-        return Ok(myPersonalChatMessagesCount);
+        return Ok(myGroupChatMessageCount);
     }
 
     [HttpPost]
-    public async Task<IActionResult> Create(PersonalChatMessageCountModel message)
+    public async Task<IActionResult> Create(GroupChatMessageCountModel message)
     {
         if (!HttpContext.Request.Cookies.TryGetValue("refreshToken", out var refreshToken))
         {
             return Unauthorized();
         }
 
-        var responseMessage = await _httpClient.PostAsync("PersonalChatMessageCount", JsonContent.Create(message), refreshToken, Port.ChatApi);
+        var responseMessage = await _httpClient.PostAsync("GroupChatMessageCount", JsonContent.Create(message), refreshToken, Port.ChatApi);
         if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
         {
             return Unauthorized();
         }
         else if (responseMessage.IsSuccessStatusCode)
         {
-            var personalChatMessage = await responseMessage.Content.ReadFromJsonAsync<PersonalChatMessageCountModel>();
+            var personalChatMessage = await responseMessage.Content.ReadFromJsonAsync<GroupChatMessageCountModel>();
             return Ok(personalChatMessage);
         }
 
@@ -64,14 +64,14 @@ public class PersonalChatMessageCountController : ControllerBase
     }
 
     [HttpPut]
-    public async Task<IActionResult> Update(PersonalChatMessageCountModel message)
+    public async Task<IActionResult> Update(GroupChatMessageCountModel message)
     {
         if (!HttpContext.Request.Cookies.TryGetValue("refreshToken", out var refreshToken))
         {
             return Unauthorized();
         }
 
-        var responseMessage = await _httpClient.PutAsync("PersonalChatMessageCount", JsonContent.Create(message), refreshToken, Port.ChatApi);
+        var responseMessage = await _httpClient.PutAsync("GroupChatMessageCount", JsonContent.Create(message), refreshToken, Port.ChatApi);
         if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
         {
             return Unauthorized();
@@ -92,7 +92,7 @@ public class PersonalChatMessageCountController : ControllerBase
             return Unauthorized();
         }
 
-        var responseMessage = await _httpClient.DeletAsync($"PersonalChatMessageCount/{id}", refreshToken, Port.ChatApi);
+        var responseMessage = await _httpClient.DeletAsync($"GroupChatMessageCount/{id}", refreshToken, Port.ChatApi);
         if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
         {
             return Unauthorized();

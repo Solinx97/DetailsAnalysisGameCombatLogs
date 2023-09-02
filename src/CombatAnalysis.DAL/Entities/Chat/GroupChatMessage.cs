@@ -10,6 +10,8 @@ public class GroupChatMessage
 
     public int Status { get; set; }
 
+    public int Type { get; set; }
+
     public int GroupChatId { get; set; }
 
     public string CustomerId { get; set; }

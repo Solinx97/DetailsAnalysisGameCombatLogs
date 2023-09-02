@@ -66,6 +66,7 @@ const PersonalChat = ({ chat, me, setSelectedChat, companionId }) => {
             message: message,
             time: `${today.getHours()}:${today.getMinutes()}`,
             status: 0,
+            type: 0,
             personalChatId: chat.id,
             customerId: me?.id
         };

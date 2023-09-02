@@ -1,4 +1,4 @@
-﻿namespace CombatAnalysis.WebApp.Models.Chats;
+﻿namespace CombatAnalysis.WebApp.Models.Chat;
 
 public class GroupChatMessageModel
 {
@@ -9,6 +9,8 @@ public class GroupChatMessageModel
     public string Time { get; set; }
 
     public int Status { get; set; }
+
+    public int Type { get; set; }
 
     public int GroupChatId { get; set; }
 

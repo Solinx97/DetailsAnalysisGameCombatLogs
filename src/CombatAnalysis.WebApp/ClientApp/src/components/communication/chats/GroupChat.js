@@ -28,13 +28,17 @@ import "../../../styles/communication/chats/groupChat.scss";
 import GroupChatMenu from './GroupChatMenu';
 
 const getGroupChatMessagesInterval = 1000;
+const messageType = {
+    default: 0,
+    system: 1
+};
 
 const GroupChat = ({ chat, me, setSelectedChat }) => {
     const { t } = useTranslation("communication/chats/groupChat");
 
     const [showAddPeople, setShowAddPeople] = useState(false);
     const [settingsIsShow, setSettingsIsShow] = useState(false);
-    const [peopleIdToJoin, setPeopleToJoin] = useState([]);
+    const [peopleToJoin, setPeopleToJoin] = useState([]);
     const [groupChatUsersId, setGroupChatUsersId] = useState([]);
     const [userInformation, setUserInformation] = useState(null);
     const [editNameOn, setEditNameOn] = useState(false);
@@ -78,7 +82,7 @@ const GroupChat = ({ chat, me, setSelectedChat }) => {
             return;
         }
 
-        await createChatMessageAsync(messageInput.current.value);
+        await createMessageAsync(messageInput.current.value, messageType["default"]);
         messageInput.current.value = "";
     }
 
@@ -88,21 +92,24 @@ const GroupChat = ({ chat, me, setSelectedChat }) => {
             return;
         }
 
-        await createChatMessageAsync(messageInput.current.value);
+        await createMessageAsync(messageInput.current.value, messageType["default"]);
         messageInput.current.value = "";
     }
 
     const createGroupChatUserAsync = async () => {
-        for (let i = 0; i < peopleIdToJoin.length; i++) {
+        for (let i = 0; i < peopleToJoin.length; i++) {
             const newGroupChatUser = {
                 id: "",
-                customerId: peopleIdToJoin[i],
+                customerId: peopleToJoin[i].id,
                 groupChatId: chat.id,
             };
 
             const created = await createGroupChatUserMutAsync(newGroupChatUser);
             if (created.data !== undefined) {
-                await createGroupChatCountAsync(chat.id, peopleIdToJoin[i]);
+                await createGroupChatCountAsync(chat.id, peopleToJoin[i].id);
+
+                const systemMessage = `'${me?.username}' added '${peopleToJoin[i].username}' to chat`;
+                await createMessageAsync(systemMessage, messageType["system"]);
             }
         }
 
@@ -120,23 +127,27 @@ const GroupChat = ({ chat, me, setSelectedChat }) => {
         return createdMessagesCount.data !== undefined;
     }
 
-    const createChatMessageAsync = async (message) => {
+    const createMessageAsync = async (message, type) => {
         const today = new Date();
         const newMessage = {
             message: message,
             time: `${today.getHours()}:${today.getMinutes()}`,
+            status: 0,
+            type: type,
             groupChatId: chat.id,
             customerId: me?.id
         };
 
         const createdMessage = await createGroupChatMessageAsync(newMessage);
-        if (createdMessage.error !== undefined) {
-            return;
+        if (createdMessage.data !== undefined && type !== messageType["system"]) {
+            await messageSentSuccessfulAsync(createdMessage.data);
         }
+    }
 
-        await updateGroupChatLastMessageAsync(message);
+    const messageSentSuccessfulAsync = async (createdMessage) => {
+        await updateGroupChatLastMessageAsync(createdMessage.message);
 
-        const updateForMessage = Object.assign({}, createdMessage.data);
+        const updateForMessage = Object.assign({}, createdMessage);
         updateForMessage.status = 1;
 
         await updateGroupChatMessageAsync(updateForMessage);
@@ -144,7 +155,7 @@ const GroupChat = ({ chat, me, setSelectedChat }) => {
         const increaseUnreadMessages = 1;
         await updateChatMessagesCountAsync(increaseUnreadMessages);
 
-        await createUnreadMessageAsync(createdMessage.data.id);
+        await createUnreadMessageAsync(createdMessage.id);
     }
 
     const updateGroupChatLastMessageAsync = async (message) => {
@@ -283,7 +294,7 @@ const GroupChat = ({ chat, me, setSelectedChat }) => {
                         <AddPeople
                             customer={me}
                             communityUsersId={groupChatUsersId}
-                            peopleToJoin={peopleIdToJoin}
+                            peopleToJoin={peopleToJoin}
                             setPeopleToJoin={setPeopleToJoin}
                         />
                         <div className="item-result">

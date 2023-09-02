@@ -1,4 +1,4 @@
-﻿namespace CombatAnalysis.WebApp.Models.Chats;
+﻿namespace CombatAnalysis.WebApp.Models.Chat;
 
 public class PersonalChatModel
 {
