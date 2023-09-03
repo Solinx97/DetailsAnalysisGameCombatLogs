@@ -22,10 +22,10 @@ import {
     useRemoveUnreadGroupChatMessageAsyncMutation
 } from '../../../store/api/communication/chats/UnreadGroupChatMessage.api';
 import AddPeople from '../../AddPeople';
+import GroupChatMenu from './GroupChatMenu';
 import GroupChatMessage from './GroupChatMessage';
 
 import "../../../styles/communication/chats/groupChat.scss";
-import GroupChatMenu from './GroupChatMenu';
 
 const getGroupChatMessagesInterval = 1000;
 const messageType = {
@@ -113,6 +113,7 @@ const GroupChat = ({ chat, me, setSelectedChat }) => {
             }
         }
 
+        setPeopleToJoin([]);
         setShowAddPeople(false);
     }
 

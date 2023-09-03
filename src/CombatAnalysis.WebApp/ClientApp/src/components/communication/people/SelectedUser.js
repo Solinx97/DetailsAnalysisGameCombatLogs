@@ -6,10 +6,10 @@ import { useLazyGetCustomerByIdQuery } from '../../../store/api/Customer.api';
 import Communication from "../Communication";
 import UserPosts from '../UserPosts';
 import Friends from '../myEnvironment/Friends';
+import SelectedUserCommunities from './SelectedUserCommunities';
 import SelectedUserProfile from './SelectedUserProfile';
 
-import '../../../styles/communication/people/user.scss';
-import SelectedUserCommunities from './SelectedUserCommunities';
+import '../../../styles/communication/people/selectedUser.scss';
 
 const SelectedUser = () => {
     const { t } = useTranslation("communication/people/user");

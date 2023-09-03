@@ -97,8 +97,7 @@ const CommunityMembers = ({ community, customer, handleShowAddPeople, showAddPeo
                 }
             </div>
             <ul className="members__content">
-                {
-                    communityUsers?.map((item) => (
+                {communityUsers?.map((item) => (
                         <li key={item.id }>
                             <CommunityMemberItem
                                 community={community}

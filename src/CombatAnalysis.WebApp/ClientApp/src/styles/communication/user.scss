@@ -1,0 +1,9 @@
+.special-user {
+    &__me, &__another {
+        .username {
+            width: 100px;
+            overflow-x: hidden;
+            cursor: default;
+        }
+    }
+}

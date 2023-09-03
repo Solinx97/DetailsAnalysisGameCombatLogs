@@ -5,6 +5,8 @@ import { useGetCustomerByIdQuery, useLazyGetCustomerByIdQuery } from '../../stor
 import { useRemoveFriendAsyncMutation } from '../../store/api/communication/myEnvironment/Friend.api';
 import UserInformation from './UserInformation';
 
+import "../../styles/communication/user.scss";
+
 const User = ({ me, itIsMe, targetCustomerId, setUserInformation, allowRemoveFriend }) => {
     const { t } = useTranslation("communication/myEnvironment/friends");
 
@@ -44,7 +46,7 @@ const User = ({ me, itIsMe, targetCustomerId, setUserInformation, allowRemoveFri
                 className="details"
                 onClick={async () => await openUserInformationAsync()}
             />
-            <div className="username">{targetCustomer?.username}</div>
+            <div className="username" title={targetCustomer?.username}>{targetCustomer?.username}</div>
             {allowRemoveFriend &&
                 <FontAwesomeIcon
                     icon={faCircleXmark}

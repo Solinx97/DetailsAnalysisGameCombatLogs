@@ -1,8 +1,10 @@
-import { faMinus, faRightFromBracket } from '@fortawesome/free-solid-svg-icons';
+import { faUserXmark } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useLazyGetCustomerByIdQuery } from '../../../store/api/Customer.api';
 import { useRemoveGroupChatAsyncMutation } from '../../../store/api/communication/chats/GroupChat.api';
+import { useCreateGroupChatMessageAsyncMutation } from '../../../store/api/communication/chats/GroupChatMessage.api';
 import {
     useRemoveGroupChatUserAsyncMutation
 } from '../../../store/api/communication/chats/GroupChatUser.api';
@@ -12,31 +14,58 @@ const GroupChatMenu = ({ me, setUserInformation, setSelectedChat, setShowAddPeop
     const { t } = useTranslation("communication/chats/groupChat");
 
     const [peopleInspectionModeOn, setPeopleInspectionMode] = useState(false);
-    const [peopleIdToRemove, setPeopleToRemove] = useState([]);
-    const [showRemoveChatAlert, setShowRemoveChatAlert] = useState();
+    const [peopleToRemove, setPeopleToRemove] = useState([]);
+    const [showRemoveChatAlert, setShowRemoveChatAlert] = useState(false);
+    const [showRemoveUser, setShowRemoveUser] = useState(false);
 
     const [removeGroupChatAsyncMut] = useRemoveGroupChatAsyncMutation();
     const [removeGroupChatUserAsyncMut] = useRemoveGroupChatUserAsyncMutation();
+    const [createGroupChatMessageAsync] = useCreateGroupChatMessageAsyncMutation();
+    const [getCustomerByIdAsync] = useLazyGetCustomerByIdQuery();
 
-    const addPeopleForRemove = (id) => {
-        const people = peopleIdToRemove;
-        people.push(id);
+    const addPeopleForRemove = (user) => {
+        const people = peopleToRemove;
+        people.push(user);
 
         setPeopleToRemove(people);
     }
 
-    const removePeopleFromForRemove = (id) => {
-        const people = peopleIdToRemove.filter((item) => item !== id);
+    const removePeopleFromForRemove = (user) => {
+        const people = peopleToRemove.filter((item) => item.id !== user.id);
 
         setPeopleToRemove(people);
     }
 
     const removeGroupChatUserAsync = async () => {
-        for (var i = 0; i < peopleIdToRemove.length; i++) {
-            await removeGroupChatUserAsyncMut(peopleIdToRemove[i]);
+        for (let i = 0; i < peopleToRemove.length; i++) {
+            const removed = await removeGroupChatUserAsyncMut(peopleToRemove[i].id);
+
+            if (removed.data !== undefined) {
+                const customer = await getCustomerByIdAsync(peopleToRemove[i].customerId);
+
+                if (customer.data !== undefined) {
+                    const systemMessage = `'${me?.username}' removed '${customer.data.username}' from chat`;
+                    await createMessageAsync(chat?.id, systemMessage);
+                }
+            }
         }
 
         setPeopleInspectionMode(false);
+        setShowRemoveUser(false);
+    }
+
+    const createMessageAsync = async (groupChatId, message) => {
+        const today = new Date();
+        const newMessage = {
+            message: message,
+            time: `${today.getHours()}:${today.getMinutes()}`,
+            status: 0,
+            type: 1,
+            groupChatId: groupChatId,
+            customerId: me?.id
+        };
+
+        await createGroupChatMessageAsync(newMessage);
     }
 
     const leaveFromChatAsync = async (id) => {
@@ -51,6 +80,25 @@ const GroupChatMenu = ({ me, setUserInformation, setSelectedChat, setShowAddPeop
         if (deletedItem.data !== undefined) {
             setSelectedChat(null);
         }
+    }
+
+    const handleRemoveUser = (e, user) => {
+        const checked = e.target.checked;
+
+        checked ? addPeopleForRemove(user) : removePeopleFromForRemove(user);
+    }
+
+    const hidePeopleInspectionMode = () => {
+        setPeopleToRemove([]);
+
+        setPeopleInspectionMode(false);
+        setShowRemoveUser(false);
+    }
+
+    const handleRemoveUsers = () => {
+        setShowRemoveUser((item) => !item);
+
+        setPeopleToRemove([]);
     }
 
     return (
@@ -69,7 +117,15 @@ const GroupChatMenu = ({ me, setUserInformation, setSelectedChat, setShowAddPeop
                 </div>
             </div>
             <div className={`settings__people-inspection${peopleInspectionModeOn ? "_active" : ""}`}>
-                <div>{t("Members")}</div>
+                <div className="title">
+                    <div>{t("Members")}</div>
+                    <FontAwesomeIcon
+                        icon={faUserXmark}
+                        className={`remove${showRemoveUser ? "_active" : ""}`}
+                        title={t("Remove")}
+                        onClick={handleRemoveUsers}
+                    />
+                </div>
                 <ul className="list">
                     {groupChatUsers.map((item) => (
                             <li className="group-chat-user" key={item.id}>
@@ -79,19 +135,9 @@ const GroupChatMenu = ({ me, setUserInformation, setSelectedChat, setShowAddPeop
                                     setUserInformation={setUserInformation}
                                     allowRemoveFriend={false}
                                 />
-                                {(me?.id === chat.customerId && item.customerId !== chat.customerId)
-                                    ? peopleIdToRemove.includes(item.id)
-                                        ? <FontAwesomeIcon
-                                            icon={faRightFromBracket}
-                                            title={t("RomeFromChat")}
-                                            onClick={() => removePeopleFromForRemove(item.id)}
-                                        />
-                                        : <FontAwesomeIcon
-                                            icon={faMinus}
-                                            title={t("RomeFromChat")}
-                                            onClick={() => addPeopleForRemove(item.id)}
-                                        />
-                                    : null
+                                {(me?.id === chat.customerId && item.customerId !== chat.customerId
+                                    && showRemoveUser) &&
+                                    <input className="form-check-input" type="checkbox" onChange={(e) => handleRemoveUser(e, item)} />
                                 }
                             </li>
                         ))
@@ -99,9 +145,8 @@ const GroupChatMenu = ({ me, setUserInformation, setSelectedChat, setShowAddPeop
                 </ul>
                 <div className="item-result">
                     <input type="button" value={t("Accept")} className="btn btn-success" onClick={async () => await removeGroupChatUserAsync()} />
-                    <input type="button" value={t("Close")} className="btn btn-secondary" onClick={() => setPeopleInspectionMode((item) => !item)} />
+                    <input type="button" value={t("Close")} className="btn btn-secondary" onClick={hidePeopleInspectionMode} />
                 </div>
-
             </div>
             {showRemoveChatAlert &&
                 <div className="remove-chat-alert">

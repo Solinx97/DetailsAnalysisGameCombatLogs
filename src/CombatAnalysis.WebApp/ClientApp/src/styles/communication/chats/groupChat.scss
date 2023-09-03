@@ -76,13 +76,33 @@
                 align-items: center;
                 gap: 20px;
                 border-radius: 25px;
-                right: 40%;
+                right: 35%;
                 top: 20%;
-                padding: 10px;
-                width: 225px;
+                padding: 15px 10px;
+                width: 300px;
                 min-height: 200px;
                 box-shadow: 5px 5px 5px 5px gray;
                 background: white;
+
+                .title {
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    width: 50%;
+
+                    .remove {
+                        cursor: pointer;
+
+                        &_active {
+                            color: orange;
+                            transform: scale(1.5);
+                        }
+                    }
+
+                    .remove:hover {
+                        transform: scale(1.25);
+                    }
+                }
 
                 .item-result {
                     display: flex;
@@ -113,7 +133,7 @@
                     .group-chat-user {
                         display: flex;
                         align-items: center;
-                        gap: 20px;
+                        gap: 50px;
                     }
                 }
             }
