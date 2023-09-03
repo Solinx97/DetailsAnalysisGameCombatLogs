@@ -1,0 +1,85 @@
+.people-inspection {
+    &__popup {
+        position: fixed;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        gap: 20px;
+        border-radius: 25px;
+        right: 35%;
+        top: 20%;
+        padding: 15px 10px;
+        width: 300px;
+        min-height: 200px;
+        box-shadow: 5px 5px 5px 5px gray;
+        background: white;
+    }
+
+    &__window {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        gap: 20px;
+        width: 300px;
+    }
+}
+
+.people-inspection__popup, .people-inspection__window {
+    .title {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        width: 50%;
+
+        .remove {
+            cursor: pointer;
+
+            &_active {
+                color: orange;
+                transform: scale(1.25);
+                cursor: pointer;
+            }
+        }
+
+        .remove:hover {
+            transform: scale(1.25);
+        }
+    }
+
+    .item-result {
+        display: flex;
+        gap: 10px;
+
+        input {
+            font-size: 12px;
+        }
+    }
+
+    .special-user__another {
+        display: flex;
+        align-items: center;
+        gap: 25px;
+
+        svg {
+            cursor: pointer;
+        }
+    }
+
+    .list {
+        display: flex;
+        flex-direction: column;
+        padding: 0;
+        margin: 0;
+        gap: 10px;
+
+        .user-target-community {
+            &__information {
+                display: flex;
+                align-items: center;
+                gap: 50px;
+            }
+        }
+    }
+}

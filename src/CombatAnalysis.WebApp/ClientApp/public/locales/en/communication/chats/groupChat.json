@@ -1,8 +1,6 @@
 {
   "AreYouSureRemoveChat": "Are you sure that you want to remove this chat?",
   "ThatWillBeRemoveChat": "That's remove all messages and documents!",
-  "Remove": "Remove",
-  "Cancel": "Cancel",
   "Settings": "Settings",
   "EditName": "Edit group name",
   "Save": "Save changes",
@@ -15,7 +13,5 @@
   "RemoveChat": "Remove chat",
   "RomeFromChat": "Remove from chat",
   "Leave": "Leave",
-  "Close": "Close",
-  "Cancel": "Cancel",
-  "Accept": "Accept"
+  "Cancel": "Cancel"
 }

@@ -3,8 +3,10 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSearchByCommunityIdAsyncQuery } from '../../../store/api/ChatApi';
+import { useRemoveCommunityUserAsyncMutation } from '../../../store/api/communication/community/CommunityUser.api';
 import { useCreateInviteAsyncMutation, useLazyInviteIsExistQuery } from '../../../store/api/communication/community/InviteToCommunity.api';
 import AddPeople from '../../AddPeople';
+import Members from '../Members';
 import CommunityMemberItem from './CommunityMemberItem';
 
 const CommunityMembers = ({ community, customer, handleShowAddPeople, showAddPeople }) => {
@@ -12,12 +14,13 @@ const CommunityMembers = ({ community, customer, handleShowAddPeople, showAddPeo
 
     const [showRemovePeople, setShowRemovePeople] = useState(false);
     const [communityUsersId, setCommunityUsersId] = useState([]);
-    const [peopleIdToJoin, setPeopleToJoin] = useState([]);
+    const [peopleToJoin, setPeopleToJoin] = useState([]);
 
     const [createInviteAsyncMut] = useCreateInviteAsyncMutation();
 
     const { data: communityUsers, isLoading } = useSearchByCommunityIdAsyncQuery(community?.id);
     const [isInviteExistAsync] = useLazyInviteIsExistQuery();
+    const [removeCommunityUserAsync] = useRemoveCommunityUserAsyncMutation();
 
     useEffect(() => {
         const idList = [];
@@ -43,15 +46,15 @@ const CommunityMembers = ({ community, customer, handleShowAddPeople, showAddPeo
     }
 
     const createInviteAsync = async () => {
-        for (let i = 0; i < peopleIdToJoin.length; i++) {
-            const isExist = await checkIfRequestExistAsync(peopleIdToJoin[i], community.id);
+        for (let i = 0; i < peopleToJoin.length; i++) {
+            const isExist = await checkIfRequestExistAsync(peopleToJoin[i].id, community.id);
             if (isExist) {
                 continue;
             }
 
             const newInviteToCommunity = {
                 communityId: community.id,
-                toCustomerId: peopleIdToJoin[i],
+                toCustomerId: peopleToJoin[i].id,
                 when: new Date(),
                 customerId: customer?.id
             }
@@ -60,6 +63,14 @@ const CommunityMembers = ({ community, customer, handleShowAddPeople, showAddPeo
         }
 
         handleShowAddPeople();
+    }
+
+    const removeUsersAsync = async (peopleToRemove) => {
+        for (let i = 0; i < peopleToRemove.length; i++) {
+            await removeCommunityUserAsync(peopleToRemove[i].id);
+        }
+
+        setShowRemovePeople(false);
     }
 
     const clearListOfInvites = () => {
@@ -79,7 +90,6 @@ const CommunityMembers = ({ community, customer, handleShowAddPeople, showAddPeo
                     <div className="tool">
                         {community.customerId === customer?.id &&
                             <FontAwesomeIcon
-                                className={`remove${showRemovePeople ? "_active" : ""}`}
                                 icon={faRectangleXmark}
                                 title={t("RemovePeople")}
                                 onClick={() => setShowRemovePeople((item) => !item)}
@@ -92,18 +102,12 @@ const CommunityMembers = ({ community, customer, handleShowAddPeople, showAddPeo
                         />
                     </div>
                 </div>
-                {showRemovePeople &&
-                    <div className="notification">{t("RemovePeople")}</div>
-                }
             </div>
             <ul className="members__content">
                 {communityUsers?.map((item) => (
                         <li key={item.id }>
                             <CommunityMemberItem
-                                community={community}
                                 comunityUser={item}
-                                customer={customer}
-                                showRemovePeople={showRemovePeople}
                             />
                         </li>
                     ))
@@ -114,7 +118,7 @@ const CommunityMembers = ({ community, customer, handleShowAddPeople, showAddPeo
                     <AddPeople
                         customer={customer}
                         communityUsersId={communityUsersId}
-                        peopleToJoin={peopleIdToJoin}
+                        peopleToJoin={peopleToJoin}
                         setPeopleToJoin={setPeopleToJoin}
                     />
                     <div className="item-result">
@@ -122,6 +126,16 @@ const CommunityMembers = ({ community, customer, handleShowAddPeople, showAddPeo
                         <input type="button" value={t("Cancel")} className="btn btn-light" onClick={clearListOfInvites} />
                     </div>
                 </div>
+            }
+            {showRemovePeople &&
+                <Members
+                    me={customer}
+                    users={communityUsers}
+                    communityItem={community}
+                    removeUsersAsync={removeUsersAsync}
+                    setShowMembers={setShowRemovePeople}
+                    isPopup={true}
+                />
             }
         </span>
     );

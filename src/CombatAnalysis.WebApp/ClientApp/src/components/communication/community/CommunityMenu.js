@@ -3,14 +3,15 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useState } from "react";
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
+import { useSearchByCommunityIdAsyncQuery } from '../../../store/api/ChatApi';
 import { useRemoveCommunityAsyncMutation } from '../../../store/api/communication/community/Community.api';
 import { useLazySearchByUserIdAsyncQuery, useRemoveCommunityUserAsyncMutation } from '../../../store/api/communication/community/CommunityUser.api';
 import { useCreateInviteAsyncMutation, useLazyInviteIsExistQuery } from '../../../store/api/communication/community/InviteToCommunity.api';
 import AddPeople from '../../AddPeople';
+import Members from '../Members';
 import CommonItem from "../chats/createGroupChat/CommonItem";
 import ItemConnector from '../chats/createGroupChat/ItemConnector';
 import RulesItem from "../chats/createGroupChat/RulesItem";
-import CommunityMembers from './CommunityMembers';
 
 import '../../../styles/communication/community/communityMenu.scss';
 
@@ -27,6 +28,7 @@ const CommunityMenu = ({ setShowMenu, customer, community }) => {
     const [chatName, setChatName] = useState("");
     const [chatShortName, setChatShortName] = useState("");
     const [showLeaveFromCommunity, setShowLeaveFromCommunity] = useState(false);
+    const [showRemovePeople, setShowRemovePeople] = useState(false);
 
     const [peopleIdToJoin, setPeopleIdToJoin] = useState([]);
     const [showInvitesSuccess, setShowInvitesSuccess] = useState(false);
@@ -37,6 +39,7 @@ const CommunityMenu = ({ setShowMenu, customer, community }) => {
     const [removeCommunityUserAsync] = useRemoveCommunityUserAsyncMutation();
     const [createInviteAsyncMut] = useCreateInviteAsyncMutation();
     const [isInviteExistAsync] = useLazyInviteIsExistQuery();
+    const { data: communityUsers, isLoading } = useSearchByCommunityIdAsyncQuery(community?.id);
 
     const leaveFromCommunityAsync = async () => {
         const myCommunityUserId = await searchByUserIdAsync(customer.id);
@@ -55,10 +58,6 @@ const CommunityMenu = ({ setShowMenu, customer, community }) => {
 
     const changeMenuItem = (index) => {
         seItemIndex(index);
-    }
-
-    const openAddPeople = () => {
-        seItemIndex(2);
     }
 
     const checkIfRequestExistAsync = async (peopleId, communityId) => {
@@ -106,6 +105,18 @@ const CommunityMenu = ({ setShowMenu, customer, community }) => {
         setTimeout(() => {
             setShowInvitesSuccess(false);
         }, successNotificationTimeout);
+    }
+
+    const removeUsersAsync = async (peopleToRemove) => {
+        for (let i = 0; i < peopleToRemove.length; i++) {
+            await removeCommunityUserAsync(peopleToRemove[i].id);
+        }
+
+        setShowRemovePeople(false);
+    }
+
+    if (isLoading) {
+        return <></>;
     }
 
     return (
@@ -205,11 +216,12 @@ const CommunityMenu = ({ setShowMenu, customer, community }) => {
                     }
                     {itemIndex === 1 &&
                         <div className="members">
-                            <CommunityMembers
-                                community={community}
-                                customer={customer}
-                                handleShowAddPeople={openAddPeople}
-                                showAddPeople={false}
+                            <Members
+                                me={customer}
+                                users={communityUsers}
+                                communityItem={community}
+                                removeUsersAsync={removeUsersAsync}
+                                setShowMembers={setShowRemovePeople}
                             />
                         </div>
                     }
@@ -225,7 +237,7 @@ const CommunityMenu = ({ setShowMenu, customer, community }) => {
                                 <ItemConnector
                                     connectorType={0}
                                 />
-                        </div>
+                            </div>
                             <div className={`alert alert-success ${showInvitesSuccess ? "active" : ""}`} role="alert">
                                 {t("InviteSuccess")}
                             </div>

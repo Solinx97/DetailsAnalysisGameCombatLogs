@@ -1,5 +1,3 @@
-import { faUserXmark } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLazyGetCustomerByIdQuery } from '../../../store/api/Customer.api';
@@ -8,35 +6,20 @@ import { useCreateGroupChatMessageAsyncMutation } from '../../../store/api/commu
 import {
     useRemoveGroupChatUserAsyncMutation
 } from '../../../store/api/communication/chats/GroupChatUser.api';
-import User from '../User';
+import Members from '../Members';
 
 const GroupChatMenu = ({ me, setUserInformation, setSelectedChat, setShowAddPeople, groupChatUsers, meInChat, chat }) => {
     const { t } = useTranslation("communication/chats/groupChat");
 
-    const [peopleInspectionModeOn, setPeopleInspectionMode] = useState(false);
-    const [peopleToRemove, setPeopleToRemove] = useState([]);
+    const [peopleInspectionModeOn, setPeopleInspectionModeOn] = useState(false);
     const [showRemoveChatAlert, setShowRemoveChatAlert] = useState(false);
-    const [showRemoveUser, setShowRemoveUser] = useState(false);
 
     const [removeGroupChatAsyncMut] = useRemoveGroupChatAsyncMutation();
     const [removeGroupChatUserAsyncMut] = useRemoveGroupChatUserAsyncMutation();
     const [createGroupChatMessageAsync] = useCreateGroupChatMessageAsyncMutation();
     const [getCustomerByIdAsync] = useLazyGetCustomerByIdQuery();
 
-    const addPeopleForRemove = (user) => {
-        const people = peopleToRemove;
-        people.push(user);
-
-        setPeopleToRemove(people);
-    }
-
-    const removePeopleFromForRemove = (user) => {
-        const people = peopleToRemove.filter((item) => item.id !== user.id);
-
-        setPeopleToRemove(people);
-    }
-
-    const removeGroupChatUserAsync = async () => {
+    const removeGroupChatUserAsync = async (peopleToRemove) => {
         for (let i = 0; i < peopleToRemove.length; i++) {
             const removed = await removeGroupChatUserAsyncMut(peopleToRemove[i].id);
 
@@ -50,8 +33,7 @@ const GroupChatMenu = ({ me, setUserInformation, setSelectedChat, setShowAddPeop
             }
         }
 
-        setPeopleInspectionMode(false);
-        setShowRemoveUser(false);
+        setPeopleInspectionModeOn(false);
     }
 
     const createMessageAsync = async (groupChatId, message) => {
@@ -82,30 +64,11 @@ const GroupChatMenu = ({ me, setUserInformation, setSelectedChat, setShowAddPeop
         }
     }
 
-    const handleRemoveUser = (e, user) => {
-        const checked = e.target.checked;
-
-        checked ? addPeopleForRemove(user) : removePeopleFromForRemove(user);
-    }
-
-    const hidePeopleInspectionMode = () => {
-        setPeopleToRemove([]);
-
-        setPeopleInspectionMode(false);
-        setShowRemoveUser(false);
-    }
-
-    const handleRemoveUsers = () => {
-        setShowRemoveUser((item) => !item);
-
-        setPeopleToRemove([]);
-    }
-
     return (
         <>
             <div className="settings__content">
                 <div className="main-settings">
-                    <input type="button" value={t("Members")} className="btn btn-light" onClick={() => setPeopleInspectionMode((item) => !item)} />
+                    <input type="button" value={t("Members")} className="btn btn-light" onClick={() => setPeopleInspectionModeOn((item) => !item)} />
                     <input type="button" value={t("Invite")} className="btn btn-light" onClick={() => setShowAddPeople((item) => !item)} />
                     <input type="button" value={t("Documents")} className="btn btn-light" disabled />
                 </div>
@@ -116,38 +79,17 @@ const GroupChatMenu = ({ me, setUserInformation, setSelectedChat, setShowAddPeop
                     <input type="button" value={t("Leave")} className="btn btn-warning" onClick={async () => await leaveFromChatAsync(meInChat?.id)} />
                 </div>
             </div>
-            <div className={`settings__people-inspection${peopleInspectionModeOn ? "_active" : ""}`}>
-                <div className="title">
-                    <div>{t("Members")}</div>
-                    <FontAwesomeIcon
-                        icon={faUserXmark}
-                        className={`remove${showRemoveUser ? "_active" : ""}`}
-                        title={t("Remove")}
-                        onClick={handleRemoveUsers}
-                    />
-                </div>
-                <ul className="list">
-                    {groupChatUsers.map((item) => (
-                            <li className="group-chat-user" key={item.id}>
-                                <User
-                                    me={me}
-                                    targetCustomerId={item.customerId}
-                                    setUserInformation={setUserInformation}
-                                    allowRemoveFriend={false}
-                                />
-                                {(me?.id === chat.customerId && item.customerId !== chat.customerId
-                                    && showRemoveUser) &&
-                                    <input className="form-check-input" type="checkbox" onChange={(e) => handleRemoveUser(e, item)} />
-                                }
-                            </li>
-                        ))
-                    }
-                </ul>
-                <div className="item-result">
-                    <input type="button" value={t("Accept")} className="btn btn-success" onClick={async () => await removeGroupChatUserAsync()} />
-                    <input type="button" value={t("Close")} className="btn btn-secondary" onClick={hidePeopleInspectionMode} />
-                </div>
-            </div>
+            {peopleInspectionModeOn &&
+                <Members
+                    me={me}
+                    users={groupChatUsers}
+                    communityItem={chat}
+                    setUserInformation={setUserInformation}
+                    removeUsersAsync={removeGroupChatUserAsync}
+                    setShowMembers={setPeopleInspectionModeOn}
+                    isPopup={true}
+                />
+            }
             {showRemoveChatAlert &&
                 <div className="remove-chat-alert">
                     <p>{t("AreYouSureRemoveChat")}</p>
