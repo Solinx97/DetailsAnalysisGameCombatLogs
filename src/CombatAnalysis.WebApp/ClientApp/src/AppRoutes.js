@@ -7,8 +7,9 @@ import GeneralAnalysis from './components/combatDetails/GeneralAnalysis';
 import MainInformation from './components/combatDetails/MainInformation';
 import Feed from './components/communication/Feed';
 import Chats from './components/communication/chats/Chats';
-import CreateGroupChat from './components/communication/chats/createGroupChat/CreateGroupChat';
+import CreateGroupChat from './components/communication/create/CreateGroupChat';
 import AllCommunities from './components/communication/community/AllCommunities';
+import CreateCommunity from './components/communication/create/CreateCommunity';
 import SelectedCommunity from './components/communication/community/SelectedCommunity';
 import MyEnvironment from './components/communication/myEnvironment/MyEnvironment';
 import People from './components/communication/people/People';
@@ -38,6 +39,10 @@ const AppRoutes = [
     {
         path: '/communities',
         element: <AllCommunities />
+    },
+    {
+        path: '/communities/create',
+        element: <CreateCommunity />
     },
     {
         path: '/people',

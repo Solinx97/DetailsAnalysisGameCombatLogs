@@ -9,9 +9,9 @@ import { useLazySearchByUserIdAsyncQuery, useRemoveCommunityUserAsyncMutation } 
 import { useCreateInviteAsyncMutation, useLazyInviteIsExistQuery } from '../../../store/api/communication/community/InviteToCommunity.api';
 import AddPeople from '../../AddPeople';
 import Members from '../Members';
-import CommonItem from "../chats/createGroupChat/CommonItem";
-import ItemConnector from '../chats/createGroupChat/ItemConnector';
-import RulesItem from "../chats/createGroupChat/RulesItem";
+import CommonItem from "../create/CommonItem";
+import CommunityRulesItem from "../create/CommunityRulesItem";
+import ItemConnector from '../create/ItemConnector';
 
 import '../../../styles/communication/community/communityMenu.scss';
 
@@ -21,15 +21,12 @@ const failedNotificationTimeout = 2000;
 const CommunityMenu = ({ setShowMenu, customer, community }) => {
     const { t } = useTranslation("communication/community/communityMenu");
 
-    const [itemIndex, seItemIndex] = useState(0);
-
     const navigate = useNavigate();
 
+    const [itemIndex, seItemIndex] = useState(0);
     const [chatName, setChatName] = useState("");
     const [chatShortName, setChatShortName] = useState("");
     const [showLeaveFromCommunity, setShowLeaveFromCommunity] = useState(false);
-    const [showRemovePeople, setShowRemovePeople] = useState(false);
-
     const [peopleIdToJoin, setPeopleIdToJoin] = useState([]);
     const [showInvitesSuccess, setShowInvitesSuccess] = useState(false);
     const [showInvitesFailed, setShowInvitesFailed] = useState(false);
@@ -111,8 +108,6 @@ const CommunityMenu = ({ setShowMenu, customer, community }) => {
         for (let i = 0; i < peopleToRemove.length; i++) {
             await removeCommunityUserAsync(peopleToRemove[i].id);
         }
-
-        setShowRemovePeople(false);
     }
 
     if (isLoading) {
@@ -221,7 +216,6 @@ const CommunityMenu = ({ setShowMenu, customer, community }) => {
                                 users={communityUsers}
                                 communityItem={community}
                                 removeUsersAsync={removeUsersAsync}
-                                setShowMembers={setShowRemovePeople}
                             />
                         </div>
                     }
@@ -251,7 +245,7 @@ const CommunityMenu = ({ setShowMenu, customer, community }) => {
                     }
                     {itemIndex === 4 &&
                         <>
-                            <RulesItem
+                            <CommunityRulesItem
                                 connector={
                                     <ItemConnector
                                         connectorType={0}

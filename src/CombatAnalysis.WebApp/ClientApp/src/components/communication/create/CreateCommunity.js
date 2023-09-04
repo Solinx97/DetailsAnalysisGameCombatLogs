@@ -4,19 +4,16 @@ import { useState } from "react";
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { useCreateGroupChatAsyncMutation } from '../../../../store/api/communication/chats/GroupChat.api';
-import { useCreateGroupChatMessageCountAsyncMutation } from '../../../../store/api/communication/chats/GroupChatMessagCount.api';
-import { useCreateGroupChatMessageAsyncMutation } from '../../../../store/api/communication/chats/GroupChatMessage.api';
-import { useCreateGroupChatUserAsyncMutation } from '../../../../store/api/communication/chats/GroupChatUser.api';
-import AddPeople from '../../../AddPeople';
-import Communication from '../../Communication';
-import CommonItem from "./CommonItem";
+import { useCreateCommunityAsyncMutation } from '../../../store/api/communication/community/Community.api';
+import { useCreateCommunityUserAsyncMutation } from '../../../store/api/communication/community/CommunityUser.api';
+import AddPeople from '../../AddPeople';
+import Communication from '../Communication';
+import CommunityRulesItem from './CommunityRulesItem';
 import ItemConnector from './ItemConnector';
-import RulesItem from "./RulesItem";
 
-import "../../../../styles/communication/chats/createGroupChat.scss";
+import "../../../styles/communication/create.scss";
 
-const CreateGroupChat = () => {
+const CreateCommunity = () => {
     const customer = useSelector((state) => state.customer.value);
 
     const { t } = useTranslation("communication/chats/createGroupChat");
@@ -25,85 +22,46 @@ const CreateGroupChat = () => {
 
     const [itemIndex, seItemIndex] = useState(0);
     const [passedItemIndex, setPassedItemIndex] = useState(0);
-
-    const [chatName, setChatName] = useState("");
+    const [name, setName] = useState("");
+    const [description, setDescription] = useState("");
+    const [policy, setPolicy] = useState(0);
     const [canFinishCreate, setCanFinishCreate] = useState(false);
-
     const [peopleToJoin, setPeopleToJoin] = useState([]);
 
-    const [createGroupChatAsync] = useCreateGroupChatAsyncMutation();
-    const [createGroupChatUserMutAsync] = useCreateGroupChatUserAsyncMutation();
-    const [createGroupChatCountAsyncMut] = useCreateGroupChatMessageCountAsyncMutation();
-    const [createGroupChatMessageAsync] = useCreateGroupChatMessageAsyncMutation();
+    const [createCommunityAsyncMut] = useCreateCommunityAsyncMutation();
+    const [createCommunityUserAsyncMut] = useCreateCommunityUserAsyncMutation();
 
-    const createNewGroupChatAsync = async () => {
-        const newGroupChat = {
-            name: chatName,
-            lastMessage: " ",
-            customerId: customer?.id
+    const createCommunityAsync = async () => {
+        const newCommunity = {
+            name: name,
+            description: description,
+            policyType: policy,
+            customerId: customer.id
         };
 
-        const createdGroupChat = await createGroupChatAsync(newGroupChat);
-        if (createdGroupChat.error !== undefined) {
-            return null;
+        const createdCommunity = await createCommunityAsyncMut(newCommunity);
+        if (createdCommunity.data !== undefined) {
+            peopleToJoin.push(customer);
+
+            await createCommunityUserAsync(createdCommunity.data.id);
         }
-
-        const people = peopleToJoin;
-        people.push(customer);
-
-        setPeopleToJoin(people);
-
-        return createdGroupChat.data;
     }
 
-    const createGroupChatCountAsync = async (chatId, customerId) => {
-        const newMessagesCount = {
-            count: 0,
-            customerId: customerId,
-            groupChatId: +chatId,
-        };
-
-        const createdMessagesCount = await createGroupChatCountAsyncMut(newMessagesCount);
-        return createdMessagesCount.data !== undefined;
-    }
-
-    const joinPeopleAsync = async (groupChatId) => {
+    const createCommunityUserAsync = async (communityId) => {
         for (let i = 0; i < peopleToJoin.length; i++) {
-            const newGroupChatUser = {
-                id: "",
-                customerId: peopleToJoin[i].id,
-                groupChatId: groupChatId,
+            const newCommunityUser = {
+                communityId: communityId,
+                customerId: peopleToJoin[i].id
             };
 
-            const createdGroupChatUser = await createGroupChatUserMutAsync(newGroupChatUser);
-            if (createdGroupChatUser.data !== undefined && peopleToJoin[i].id !== customer?.id) {
-                await createGroupChatCountAsync(groupChatId, peopleToJoin[i].id);
-
-                const systemMessage = `'${customer?.username}' added '${peopleToJoin[i].username}' to chat`;
-                await createMessageAsync(groupChatId, systemMessage);
-            }
+            await createCommunityUserAsyncMut(newCommunityUser);
         }
-    }
-
-    const createMessageAsync = async (groupChatId, message) => {
-        const today = new Date();
-        const newMessage = {
-            message: message,
-            time: `${today.getHours()}:${today.getMinutes()}`,
-            status: 0,
-            type: 1,
-            groupChatId: groupChatId,
-            customerId: customer?.id
-        };
-
-        await createGroupChatMessageAsync(newMessage);
     }
 
     const handleCreateNewGroupChatAsync = async () => {
-        const createdGroupChat = await createNewGroupChatAsync();
-        await joinPeopleAsync(createdGroupChat?.id);
+        await createCommunityAsync();
 
-        navigate("/chats");
+        navigate("/communities");
     }
 
     const nextStep = (index) => {
@@ -131,11 +89,11 @@ const CreateGroupChat = () => {
     return (
         <>
             <Communication
-                currentMenuItem={2}
+                currentMenuItem={4}
             />
-            <div className="communication__content create-group-chat">
-                <div className="create-group-chat__content">
-                    <ul className="create-group-chat__menu">
+            <div className="communication__content create-community">
+                <div className="create-community__content">
+                    <ul className="create-community__menu">
                         <li className={`menu-item ${passedItemIndex >= 0 && "passed"}`} onClick={() => changeMenuItem(0)}>
                             {(passedItemIndex > 0 && itemIndex !== 0)
                                 ? <FontAwesomeIcon
@@ -176,22 +134,34 @@ const CreateGroupChat = () => {
                             <div>{t("InvitePeople")}</div>
                         </li>
                     </ul>
-                    <div className="create-group-chat__items">
+                    <div className="create-community__items">
                         {itemIndex === 0 &&
-                            <CommonItem
-                                chatName={chatName}
-                                setChatName={setChatName}
-                                connector={
+                            <div className="create-community__item">
+                                <div className="title">{t("Description")}</div>
+                                <div>
+                                    <div>
+                                        <div className="form-group">
+                                            <label htmlFor="name">{t("Name")}</label>
+                                            <input type="text" className="form-control" name="name" id="name"
+                                                onChange={(e) => setName(e.target.value)} defaultValue={name} required />
+                                        </div>
+                                        <div className="form-group">
+                                            <label htmlFor="description">{t("Description")}</label>
+                                            <textarea className="form-control" name="description" id="description"
+                                                onChange={(e) => setDescription(e.target.value)} defaultValue={description} required />
+                                        </div>
+                                    </div>
                                     <ItemConnector
                                         connectorType={1}
                                         nextStep={nextStep}
                                         nextStepIndex={1}
                                     />
-                                }
-                            />
+                                </div>
+                            </div>
                         }
                         {itemIndex === 1 &&
-                            <RulesItem
+                            <CommunityRulesItem
+                                setPolicy={setPolicy}
                                 connector={
                                     <ItemConnector
                                         connectorType={3}
@@ -203,7 +173,7 @@ const CreateGroupChat = () => {
                             />
                         }
                         {itemIndex >= 2 &&
-                            <div className="create-group-chat__item">
+                            <div className="create-community__item">
                                 <AddPeople
                                     customer={customer}
                                     communityUsersId={[customer.id]}
@@ -223,11 +193,11 @@ const CreateGroupChat = () => {
                 <div className="finish-create">
                     <input type="button" value={t("Create")} className="btn btn-success"
                         onClick={async () => await handleCreateNewGroupChatAsync()} disabled={!canFinishCreate} />
-                    <input type="submit" value={t("Cancel")} className="btn btn-warning" onClick={() => navigate("/chats")} />
+                    <input type="submit" value={t("Cancel")} className="btn btn-warning" onClick={() => navigate("/communities")} />
                 </div>
             </div>
         </>
     );
 }
 
-export default CreateGroupChat;
+export default CreateCommunity;

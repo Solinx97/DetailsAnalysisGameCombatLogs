@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next';
 
-const RulesItem = ({ connector }) => {
+const ChatRulesItem = ({ connector }) => {
     const { t } = useTranslation("communication/chats/createGroupChat");
 
     const handleInviteChange = (event) => {
@@ -20,12 +20,12 @@ const RulesItem = ({ connector }) => {
     }
 
     return (
-        <div className="create-group-chat__item">
+        <div className="create-community__item">
             <div>{t("Rules")}</div>
-            <ul className="chat-rules">
+            <ul className="rules">
                 <li>
                     <div>{t("InviteAnotherPeople")}</div>
-                    <div className="chat-rules__rules">
+                    <div className="rules__content">
                         <div className="form-check form-check-inline">
                             <input className="form-check-input" type="radio" name="invite-people" id="invite-people-anyone" value="0"
                                 onChange={handleInviteChange} defaultChecked disabled/>
@@ -40,7 +40,7 @@ const RulesItem = ({ connector }) => {
                 </li>
                 <li>
                     <div>{t("RemoveAnotherPeople")}</div>
-                    <div className="chat-rules__rules">
+                    <div className="rules__content">
                         <div className="form-check form-check-inline">
                             <input className="form-check-input" type="radio" name="remove-people" id="remove-people-anyone" value="0"
                                 onChange={handleRemoveChange} defaultChecked disabled/>
@@ -55,7 +55,7 @@ const RulesItem = ({ connector }) => {
                 </li>
                 <li>
                     <div>{t("PinMessage")}</div>
-                    <div className="chat-rules__rules">
+                    <div className="rules__content">
                         <div className="form-check form-check-inline">
                             <input className="form-check-input" type="radio" name="pin-message" id="pin-message-anyone" value="0"
                                 onChange={handlePinMessageChange} defaultChecked disabled/>
@@ -70,7 +70,7 @@ const RulesItem = ({ connector }) => {
                 </li>
                 <li>
                     <div>{t("Announcements")}</div>
-                    <div className="chat-rules__rules">
+                    <div className="rules__content">
                         <div className="form-check form-check-inline">
                             <input className="form-check-input" type="radio" name="announce" id="announce-anyone" value="0"
                                 onChange={handleAnnounceChange} defaultChecked disabled/>
@@ -89,4 +89,4 @@ const RulesItem = ({ connector }) => {
     );
 }
 
-export default RulesItem;
+export default ChatRulesItem;

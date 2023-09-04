@@ -12,7 +12,6 @@ import CommunityMenu from './CommunityMenu';
 import SelectedCommunityItem from './SelectedCommunityItem';
 
 import '../../../styles/communication/community/selectedCommunity.scss';
-import Members from '../Members';
 
 const SelectedCommunity = () => {
     const { t } = useTranslation("communication/community/selectedCommunity");
@@ -145,7 +144,7 @@ const SelectedCommunity = () => {
                                     </>
                                     : 
                                     <div className="name" title={community.name}>
-                                        {community.policyType === 1
+                                        {community.policyType === 0
                                             ? <FontAwesomeIcon
                                                 icon={faEarthEurope}
                                                 title={t("Open")}

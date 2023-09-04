@@ -1,4 +1,4 @@
-.create-group-chat {
+.create-community {
     display: flex;
     flex-direction: column;
     justify-content: space-around;
@@ -93,12 +93,12 @@
         }
     }
 
-    .chat-rules {
+    .rules {
         display: flex;
         flex-direction: column;
         width: 100%;
 
-        &__rules {
+        &__content {
             margin: 10px;
         }
     }

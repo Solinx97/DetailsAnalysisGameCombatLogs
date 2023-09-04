@@ -4,7 +4,6 @@ import { useState } from "react";
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import { useSearchByUserIdAsyncQuery } from '../../../store/api/communication/community/CommunityUser.api';
-import CreateCommunity from './CreateCommunity';
 import InvitesToCommunity from './InvitesToCommunity';
 import MyCommunitiesItem from './MyCommunitiesItem';
 
@@ -17,17 +16,15 @@ const MyCommunities = () => {
 
     const { data: userCommunities, isLoading } = useSearchByUserIdAsyncQuery(customer?.id);
 
-    const [showCreateCommunity, setShowCreateCommunity] = useState(false);
     const [showMyCommunities, setShowMyCommunities] = useState(true);
-
     const [filterContent, setFilterContent] = useState("");
-
-    if (isLoading) {
-        return <></>;
-    }
 
     const searchHandler = (e) => {
         setFilterContent(e.target.value);
+    }
+
+    if (isLoading) {
+        return <></>;
     }
 
     return (
@@ -37,7 +34,6 @@ const MyCommunities = () => {
             />
             <div className="communities__list">
                 <div className="title">
-                    <button type="button" className="btn btn-success" onClick={() => setShowCreateCommunity((item) => !item)}>{t("Create")}</button>
                     <div className="content">
                         <FontAwesomeIcon
                             icon={faArrowsRotate}
@@ -79,12 +75,6 @@ const MyCommunities = () => {
                     </>
                 }
             </div>
-            {showCreateCommunity &&
-                <CreateCommunity
-                    customer={customer}
-                    setShowCreateCommunity={setShowCreateCommunity}
-                />
-            }
         </>
     );
 }

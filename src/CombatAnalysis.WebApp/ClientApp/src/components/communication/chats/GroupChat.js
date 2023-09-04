@@ -154,7 +154,7 @@ const GroupChat = ({ chat, me, setSelectedChat }) => {
         await updateGroupChatMessageAsync(updateForMessage);
 
         const increaseUnreadMessages = 1;
-        await updateChatMessagesCountAsync(increaseUnreadMessages);
+        await updateGroupChatMessagesCountAsync(increaseUnreadMessages);
 
         await createUnreadMessageAsync(createdMessage.id);
     }
@@ -173,7 +173,7 @@ const GroupChat = ({ chat, me, setSelectedChat }) => {
         await updateGroupChatAsyncMut(chat);
     }
 
-    const updateChatMessagesCountAsync = async (count) => {
+    const updateGroupChatMessagesCountAsync = async (count) => {
         for (let i = 0; i < groupChatUsers.length; i++) {
             if (groupChatUsers[i].customerId === me?.id) {
                 continue;

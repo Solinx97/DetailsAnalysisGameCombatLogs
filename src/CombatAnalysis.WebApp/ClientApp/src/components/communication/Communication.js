@@ -61,7 +61,7 @@ const Communication = ({ currentMenuItem, setMenuItem, selectedCommunityName }) 
                 </li>
                 {(currentMenuItem >= 3 && currentMenuItem <= 5) &&
                     <>
-                        <li className="menu-item sub-menu">
+                        <li className="menu-item sub-menu" onClick={() => navigate("/communities")}>
                             {currentMenuItem === 3 &&
                                 <FontAwesomeIcon
                                     icon={faCheck}
@@ -69,7 +69,7 @@ const Communication = ({ currentMenuItem, setMenuItem, selectedCommunityName }) 
                             }
                             <div className="title">{t("Communities")}</div>
                         </li>
-                        <li className="menu-item_disabled sub-menu">
+                        <li className="menu-item sub-menu" onClick={() => navigate("/communities/create")}>
                             {currentMenuItem === 4 &&
                                 <FontAwesomeIcon
                                     icon={faCheck}
@@ -138,6 +138,14 @@ const Communication = ({ currentMenuItem, setMenuItem, selectedCommunityName }) 
                                 />
                             }
                             <div className="title">{t("Communities")}</div>
+                        </li>
+                        <li className="menu-item sub-menu" onClick={() => navigate("/communities/create")}>
+                            {currentMenuItem === 11 &&
+                                <FontAwesomeIcon
+                                    icon={faCheck}
+                                />
+                            }
+                            <div className="title">{t("CreateCommunity")}</div>
                         </li>
                         <li className="menu-item_disabled sub-menu">
                             {currentMenuItem === 11 &&
