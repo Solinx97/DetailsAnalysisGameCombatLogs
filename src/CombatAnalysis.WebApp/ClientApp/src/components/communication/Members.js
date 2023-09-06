@@ -6,7 +6,7 @@ import MembersItem from './MembersItem';
 
 import "../../styles/communication/members.scss";
 
-const Members = ({ me, users, communityItem, removeUsersAsync, setShowMembers, isPopup = false }) => {
+const Members = ({ me, users, communityItem, removeUsersAsync, setShowMembers, isPopup = false, canRemovePeople = false }) => {
     const { t } = useTranslation("communication/members");
 
     const [showRemoveUser, setShowRemoveUser] = useState(false);
@@ -29,12 +29,14 @@ const Members = ({ me, users, communityItem, removeUsersAsync, setShowMembers, i
         <div className={`people-inspection${isPopup ? "__popup" : "__window"}`}>
             <div className="title">
                 <div>{t("Members")}</div>
-                <FontAwesomeIcon
-                    icon={faUserXmark}
-                    className={`remove${showRemoveUser ? "_active" : ""}`}
-                    title={t("Remove")}
-                    onClick={handleShowRemoveUsers}
-                />
+                {canRemovePeople &&
+                    <FontAwesomeIcon
+                        icon={faUserXmark}
+                        className={`remove${showRemoveUser ? "_active" : ""}`}
+                        title={t("Remove")}
+                        onClick={handleShowRemoveUsers}
+                    />
+                }
             </div>
             <ul className="list">
                 {users.map((item) => (
@@ -52,7 +54,9 @@ const Members = ({ me, users, communityItem, removeUsersAsync, setShowMembers, i
                 }
             </ul>
             <div className="item-result">
-                <input type="button" value={t("Accept")} className="btn btn-success" onClick={async () => await removeUsersAsync(peopleToRemove)} />
+                {canRemovePeople &&
+                    <input type="button" value={t("Accept")} className="btn btn-success" onClick={async () => await removeUsersAsync(peopleToRemove)} />
+                }
                 {isPopup &&
                     <input type="button" value={t("Close")} className="btn btn-secondary" onClick={hidePeopleInspectionMode} />
                 }

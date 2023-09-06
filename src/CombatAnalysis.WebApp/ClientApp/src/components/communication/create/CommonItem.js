@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next';
 
 const CommonItem = ({ connector, name, setName, description = "", setDescription = "", useDescription = false }) => {
-    const { t } = useTranslation("communication/chats/createGroupChat");
+    const { t } = useTranslation("communication/create");
 
     return (
         <div className="create-community__item">

@@ -8,7 +8,7 @@ export const GroupChatApi = ChatApi.injectEndpoints({
                 url: '/GroupChat',
                 method: 'POST'
             }),
-            invalidatesTags: (result, error) => [{ type: 'GroupChatUser', result }],
+            invalidatesTags: (result, error) => [{ type: 'GroupChat', result }],
         }),
         updateGroupChatAsync: builder.mutation({
             query: groupChat => ({

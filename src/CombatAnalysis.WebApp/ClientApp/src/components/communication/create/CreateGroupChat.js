@@ -7,6 +7,7 @@ import { useNavigate } from 'react-router-dom';
 import { useCreateGroupChatAsyncMutation } from '../../../store/api/communication/chats/GroupChat.api';
 import { useCreateGroupChatMessageCountAsyncMutation } from '../../../store/api/communication/chats/GroupChatMessagCount.api';
 import { useCreateGroupChatMessageAsyncMutation } from '../../../store/api/communication/chats/GroupChatMessage.api';
+import { useCreateGroupChatRulesAsyncMutation } from '../../../store/api/communication/chats/GroupChatRules.api';
 import { useCreateGroupChatUserAsyncMutation } from '../../../store/api/communication/chats/GroupChatUser.api';
 import AddPeople from '../../AddPeople';
 import Communication from '../Communication';
@@ -15,42 +16,61 @@ import ItemConnector from './ItemConnector';
 
 import "../../../styles/communication/create.scss";
 
+const payload = {
+    invitePeople: 0,
+    removePeople: 0,
+    pinMessage: 1,
+    announcements: 1,
+};
+
 const CreateGroupChat = () => {
     const customer = useSelector((state) => state.customer.value);
 
-    const { t } = useTranslation("communication/chats/createGroupChat");
+    const { t } = useTranslation("communication/create");
 
     const navigate = useNavigate();
 
     const [itemIndex, seItemIndex] = useState(0);
     const [passedItemIndex, setPassedItemIndex] = useState(0);
     const [chatName, setChatName] = useState("");
+    const [invitePeople, setInvitePeople] = useState(0);
+    const [removePeople, setRemovePeople] = useState(0);
+    const [pinMessage, setPinMessage] = useState(1);
+    const [announcements, setAnnouncements] = useState(1);
     const [canFinishCreate, setCanFinishCreate] = useState(false);
     const [peopleToJoin, setPeopleToJoin] = useState([]);
 
-    const [createGroupChatAsync] = useCreateGroupChatAsyncMutation();
+    const [createGroupChatMutAsync] = useCreateGroupChatAsyncMutation();
+    const [createGroupChatRulesMutAsync] = useCreateGroupChatRulesAsyncMutation();
     const [createGroupChatUserMutAsync] = useCreateGroupChatUserAsyncMutation();
     const [createGroupChatCountAsyncMut] = useCreateGroupChatMessageCountAsyncMutation();
     const [createGroupChatMessageAsync] = useCreateGroupChatMessageAsyncMutation();
 
-    const createNewGroupChatAsync = async () => {
-        const newGroupChat = {
+    const createGroupChatAsync = async () => {
+        const groupChat = {
             name: chatName,
             lastMessage: " ",
             customerId: customer?.id
         };
 
-        const createdGroupChat = await createGroupChatAsync(newGroupChat);
+        const createdGroupChat = await createGroupChatMutAsync(groupChat);
         if (createdGroupChat.error !== undefined) {
             return null;
         }
 
-        const people = peopleToJoin;
-        people.push(customer);
-
-        setPeopleToJoin(people);
-
         return createdGroupChat.data;
+    }
+
+    const createGroupChatRulesAsync = async (groupChatId) => {
+        const groupChatRules = {
+            invitePeople: invitePeople,
+            removePeople: removePeople,
+            pinMessage: pinMessage,
+            announcements: announcements,
+            groupChatId: groupChatId
+        };
+
+        await createGroupChatRulesMutAsync(groupChatRules);
     }
 
     const createGroupChatCountAsync = async (chatId, customerId) => {
@@ -97,7 +117,15 @@ const CreateGroupChat = () => {
     }
 
     const handleCreateNewGroupChatAsync = async () => {
-        const createdGroupChat = await createNewGroupChatAsync();
+        const createdGroupChat = await createGroupChatAsync();
+
+        await createGroupChatRulesAsync(createdGroupChat.id);
+
+        const people = peopleToJoin;
+        people.push(customer);
+
+        setPeopleToJoin(people);
+
         await joinPeopleAsync(createdGroupChat?.id);
 
         navigate("/chats");
@@ -196,6 +224,11 @@ const CreateGroupChat = () => {
                         }
                         {itemIndex === 1 &&
                             <ChatRulesItem
+                                setInvitePeople={setInvitePeople}
+                                setRemovePeople={setRemovePeople}
+                                setPinMessage={setPinMessage }
+                                setAnnouncements={setAnnouncements}
+                                payload={payload}
                                 connector={
                                     <ItemConnector
                                         connectorType={3}

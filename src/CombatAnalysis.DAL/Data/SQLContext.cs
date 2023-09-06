@@ -60,6 +60,8 @@ public class SQLContext : DbContext
 
     public DbSet<GroupChat>? GroupChat { get; }
 
+    public DbSet<GroupChatRules>? GroupChatRules { get; }
+
     public DbSet<GroupChatMessage>? GroupChatMessage { get; }
 
     public DbSet<UnreadGroupChatMessage>? UnreadGroupChatMessage { get; }

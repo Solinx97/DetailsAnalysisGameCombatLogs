@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useTranslation } from 'react-i18next';
 
 const ItemConnector = ({ connectorType, previouslyStep = null, nextStep = null, previouslyStepIndex = 0, nextStepIndex = 0 }) => {
-    const { t } = useTranslation("communication/chats/createGroupChat");
+    const { t } = useTranslation("communication/create");
 
     switch (connectorType) {
         case 0:

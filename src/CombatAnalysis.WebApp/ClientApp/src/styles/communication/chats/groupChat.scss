@@ -99,4 +99,29 @@
             }
         }
     }
+
+    .rules-container {
+        position: fixed;
+        padding: 15px 10px;
+        border-radius: 25px;
+        box-shadow: 5px 5px 5px 5px gray;
+        background: white;
+        min-width: 500px;
+
+        .create-community__item {
+            gap: 10px;
+
+            .rules {
+                display: flex;
+                flex-direction: column;
+                gap: 10px;
+            }
+        }
+
+        .item-result {
+            display: flex;
+            justify-content: center;
+            gap: 25px;
+        }
+    }
 }

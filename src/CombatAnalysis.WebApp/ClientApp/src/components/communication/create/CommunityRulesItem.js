@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next';
 
 const CommunityRulesItem = ({ setPolicy, connector }) => {
-    const { t } = useTranslation("communication/chats/createGroupChat");
+    const { t } = useTranslation("communication/create");
 
     const handleTypeOfCommunityChange = (event) => {
         setPolicy(event.target.value);

@@ -51,6 +51,7 @@ public static class DataCollectionExtensions
         services.AddScoped<IGenericRepository<PersonalChatMessage, int>, SQLRepository<PersonalChatMessage, int>>();
         services.AddScoped<IGenericRepository<PersonalChatMessageCount, int>, SQLRepository<PersonalChatMessageCount, int>>();
         services.AddScoped<IGenericRepository<GroupChat, int>, SQLRepository<GroupChat, int>>();
+        services.AddScoped<IGenericRepository<GroupChatRules, int>, SQLRepository<GroupChatRules, int>>();
         services.AddScoped<IGenericRepository<GroupChatMessage, int>, SQLRepository<GroupChatMessage, int>>();
         services.AddScoped<IGenericRepository<UnreadGroupChatMessage, int>, SQLRepository<UnreadGroupChatMessage, int>>();
         services.AddScoped<IGenericRepository<GroupChatMessageCount, int>, SQLRepository<GroupChatMessageCount, int>>();

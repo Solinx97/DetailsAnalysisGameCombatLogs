@@ -16,7 +16,7 @@ import "../../../styles/communication/create.scss";
 const CreateCommunity = () => {
     const customer = useSelector((state) => state.customer.value);
 
-    const { t } = useTranslation("communication/chats/createGroupChat");
+    const { t } = useTranslation("communication/create");
 
     const navigate = useNavigate();
 

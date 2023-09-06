@@ -1,23 +1,59 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLazyGetCustomerByIdQuery } from '../../../store/api/Customer.api';
 import { useRemoveGroupChatAsyncMutation } from '../../../store/api/communication/chats/GroupChat.api';
 import { useCreateGroupChatMessageAsyncMutation } from '../../../store/api/communication/chats/GroupChatMessage.api';
+import { useGetGroupChatRulesByIdQuery, useUpdateGroupChatRulesAsyncMutation } from '../../../store/api/communication/chats/GroupChatRules.api';
 import {
     useRemoveGroupChatUserAsyncMutation
 } from '../../../store/api/communication/chats/GroupChatUser.api';
 import Members from '../Members';
+import ChatRulesItem from '../create/ChatRulesItem';
+
+const rulesEnum = {
+    "owner": 0,
+    "anyone": 1
+};
+
+const defaultPayload = {
+    invitePeople: 0,
+    removePeople: 0,
+    pinMessage: 1,
+    announcements: 1,
+};
 
 const GroupChatMenu = ({ me, setUserInformation, setSelectedChat, setShowAddPeople, groupChatUsers, meInChat, chat }) => {
     const { t } = useTranslation("communication/chats/groupChat");
 
     const [peopleInspectionModeOn, setPeopleInspectionModeOn] = useState(false);
+    const [rulesInspectionModeOn, setRulesInspectionModeOn] = useState(false);
     const [showRemoveChatAlert, setShowRemoveChatAlert] = useState(false);
+    const [invitePeople, setInvitePeople] = useState(0);
+    const [removePeople, setRemovePeople] = useState(0);
+    const [pinMessage, setPinMessage] = useState(1);
+    const [announcements, setAnnouncements] = useState(1);
+    const [payload, setPayload] = useState(defaultPayload);
 
     const [removeGroupChatAsyncMut] = useRemoveGroupChatAsyncMutation();
     const [removeGroupChatUserAsyncMut] = useRemoveGroupChatUserAsyncMutation();
     const [createGroupChatMessageAsync] = useCreateGroupChatMessageAsyncMutation();
     const [getCustomerByIdAsync] = useLazyGetCustomerByIdQuery();
+    const [updateGroupChatRulesMutAsync] = useUpdateGroupChatRulesAsyncMutation();
+
+    const { data: rules, isLoading } = useGetGroupChatRulesByIdQuery(chat?.id);
+
+    useEffect(() => {
+        if (rules === undefined) {
+            return;
+        }
+
+        setPayload({
+            invitePeople: rules.invitePeople,
+            removePeople: rules.removePeople,
+            pinMessage: rules.pinMessage,
+            announcements: rules.announcements,
+        });
+    }, [rules])
 
     const removeGroupChatUserAsync = async (peopleToRemove) => {
         for (let i = 0; i < peopleToRemove.length; i++) {
@@ -64,12 +100,55 @@ const GroupChatMenu = ({ me, setUserInformation, setSelectedChat, setShowAddPeop
         }
     }
 
+    const updateGroupChatRulesAsync = async () => {
+        const groupChatRules = {
+            id: rules.id,
+            invitePeople: +invitePeople,
+            removePeople: +removePeople,
+            pinMessage: +pinMessage,
+            announcements: +announcements,
+            groupChatId: rules.groupChatId
+        };
+
+        const updated = await updateGroupChatRulesMutAsync(groupChatRules);
+        if (updated.data !== undefined) {
+            setRulesInspectionModeOn((item) => !item);
+        }
+    }
+
+    const canInvitePeople = () => {
+        const canAnyone = rules?.invitePeople === rulesEnum["anyone"];
+        if (canAnyone) {
+            return true;
+        }
+
+        return chat?.customerId === me?.id;
+    }
+
+    const canRemovePeople = () => {
+        const canAnyone = rules?.removePeople === rulesEnum["anyone"];
+        if (canAnyone) {
+            return true;
+        }
+
+        return chat?.customerId === me?.id;
+    }
+
+    if (isLoading) {
+        return <></>;
+    }
+
     return (
         <>
             <div className="settings__content">
                 <div className="main-settings">
                     <input type="button" value={t("Members")} className="btn btn-light" onClick={() => setPeopleInspectionModeOn((item) => !item)} />
-                    <input type="button" value={t("Invite")} className="btn btn-light" onClick={() => setShowAddPeople((item) => !item)} />
+                    {canInvitePeople() &&
+                        <input type="button" value={t("Invite")} className="btn btn-light" onClick={() => setShowAddPeople((item) => !item)} />
+                    }
+                    {chat?.customerId === me?.id &&
+                        <input type="button" value={t("Rules")} className="btn btn-light" onClick={() => setRulesInspectionModeOn((item) => !item)} />
+                    }
                     <input type="button" value={t("Documents")} className="btn btn-light" disabled />
                 </div>
                 <div className="danger-settings">
@@ -88,7 +167,23 @@ const GroupChatMenu = ({ me, setUserInformation, setSelectedChat, setShowAddPeop
                     removeUsersAsync={removeGroupChatUserAsync}
                     setShowMembers={setPeopleInspectionModeOn}
                     isPopup={true}
+                    canRemovePeople={canRemovePeople()}
                 />
+            }
+            {rulesInspectionModeOn &&
+                <div className="rules-container">
+                    <ChatRulesItem
+                        setInvitePeople={setInvitePeople}
+                        setRemovePeople={setRemovePeople}
+                        setPinMessage={setPinMessage}
+                        setAnnouncements={setAnnouncements}
+                        payload={payload}
+                    />
+                    <div className="item-result">
+                        <input type="button" value={t("SaveChanges")} className="btn btn-success" onClick={async () => await updateGroupChatRulesAsync()} />
+                        <input type="submit" value={t("Cancel")} className="btn btn-light" onClick={() => setRulesInspectionModeOn((item) => !item)} />
+                    </div>
+                </div>
             }
             {showRemoveChatAlert &&
                 <div className="remove-chat-alert">

@@ -29,7 +29,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="ClientApp\public\locales\en\communication\chats\" />
     <Folder Include="ClientApp\public\locales\en\communication\myEnvironment\" />
     <Folder Include="ClientApp\public\locales\ru\communication\myEnvironment\" />
     <Folder Include="ClientApp\src\components\communication\events\" />
