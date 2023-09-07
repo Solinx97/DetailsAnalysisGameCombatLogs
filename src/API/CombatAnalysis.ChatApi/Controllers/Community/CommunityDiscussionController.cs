@@ -39,6 +39,14 @@ public class CommunityDiscussionController : ControllerBase
         return Ok(result);
     }
 
+    [HttpGet("findByCommunityId/{id:int:min(1)}")]
+    public async Task<IActionResult> FindByCommunityId(int id)
+    {
+        var result = await _service.GetByParamAsync(nameof(CommunityDiscussionModel.CommunityId), id);
+
+        return Ok(result);
+    }
+
     [HttpPost]
     public async Task<IActionResult> Create(CommunityDiscussionModel model)
     {

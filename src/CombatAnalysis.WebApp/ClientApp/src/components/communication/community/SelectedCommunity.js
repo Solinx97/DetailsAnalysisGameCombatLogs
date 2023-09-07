@@ -7,11 +7,13 @@ import { useCreatePostAsyncMutation } from '../../../store/api/communication/Pos
 import { useLazyGetCommunityByIdQuery, useUpdateCommunityAsyncMutation } from '../../../store/api/communication/community/Community.api';
 import { useCreateCommunityPostAsyncMutation } from '../../../store/api/communication/community/CommunityPost.api';
 import Communication from '../Communication';
+import CommunityDiscussions from './CommunityDiscussions';
 import CommunityMembers from './CommunityMembers';
 import CommunityMenu from './CommunityMenu';
 import SelectedCommunityItem from './SelectedCommunityItem';
 
 import '../../../styles/communication/community/selectedCommunity.scss';
+import Discussion from './Discussion';
 
 const SelectedCommunity = () => {
     const { t } = useTranslation("communication/community/selectedCommunity");
@@ -23,9 +25,10 @@ const SelectedCommunity = () => {
     const [showMenu, setShowMenu] = useState(false);
     const [communityId, setCommunityId] = useState(0);
     const [community, setCommunity] = useState(null);
-    const [showAddPeople, setShowAddPeople] = useState(false);
     const [editNameOn, setEditNameOn] = useState(false);
     const [editDescriptionOn, setEditDescriptionOn] = useState(false);
+    const [showDiscussion, setShowDiscussion] = useState(false);
+    const [discussion, setDiscussion] = useState(null);
 
     const postContentRef = useRef(null);
     const communityNameInput = useRef(null);
@@ -104,10 +107,6 @@ const SelectedCommunity = () => {
         if (updated.data !== undefined) {
             setCommunity(communityForUpdate);
         }
-    }
-
-    const handleShowAddPeople = () => {
-        setShowAddPeople((item) => !item);
     }
 
     if (community === null) {
@@ -205,45 +204,49 @@ const SelectedCommunity = () => {
                             : null
                         }
                     </div>
-                    <div>
-                        <div className="create-post">
-                            <div>
-                                <div className="create-post__tool" style={{ display: !showCreatePost ? "flex" : "none" }}>
-                                    <button type="button" className="btn btn-outline-info" onClick={() => setShowCreatePost((item) => !item)}>{t("NewPost")}</button>
+                    {showDiscussion
+                        ? <Discussion
+                            discussionId={discussion?.id}
+                            setShowDiscussion={setShowDiscussion}
+                          />
+                        : <div>
+                            <div className="create-post">
+                                <div>
+                                    <div className="create-post__tool" style={{ display: !showCreatePost ? "flex" : "none" }}>
+                                        <button type="button" className="btn btn-outline-info" onClick={() => setShowCreatePost((item) => !item)}>{t("NewPost")}</button>
+                                    </div>
+                                    <div style={{ display: showCreatePost ? "flex" : "none" }} className="create-post__create-tool">
+                                        <FontAwesomeIcon
+                                            icon={faArrowsRotate}
+                                            title={t("Refresh")}
+                                        />
+                                        <button type="button" className="btn btn-outline-warning" onClick={() => setShowCreatePost((item) => !item)}>{t("Cancel")}</button>
+                                        <button type="button" className="btn btn-outline-success" onClick={async () => await createPostAsync()}>{t("Create")}</button>
+                                    </div>
                                 </div>
-                                <div style={{ display: showCreatePost ? "flex" : "none" }} className="create-post__create-tool">
-                                    <FontAwesomeIcon
-                                        icon={faArrowsRotate}
-                                        title={t("Refresh")}
-                                    />
-                                    <button type="button" className="btn btn-outline-warning" onClick={() => setShowCreatePost((item) => !item)}>{t("Cancel")}</button>
-                                    <button type="button" className="btn btn-outline-success" onClick={async () => await createPostAsync()}>{t("Create")}</button>
-                                </div>
+                                <textarea rows="5" cols="100" ref={postContentRef} style={{ display: showCreatePost ? "flex" : "none" }} />
                             </div>
-                            <textarea rows="5" cols="100" ref={postContentRef} style={{ display: showCreatePost ? "flex" : "none" }} />
+                            <SelectedCommunityItem
+                                customer={customer}
+                                communityId={communityId}
+                            />
                         </div>
-                        <SelectedCommunityItem
-                            customer={customer}
-                            communityId={communityId}
-                        />
-                    </div>
+                    }
                 </div>
                 <ul className="selected-community__actions">
                     <li>
                         <CommunityMembers
                             community={community}
                             customer={customer}
-                            handleShowAddPeople={handleShowAddPeople}
-                            showAddPeople={showAddPeople}
                         />
                     </li>
                     <li>
-                        <div>{t("Contacts")}</div>
-                        <ul></ul>
-                    </li>
-                    <li>
-                        <div>{t("Discussions")}</div>
-                        <ul></ul>
+                        <CommunityDiscussions
+                            community={community}
+                            customer={customer}
+                            setShowDiscussion={setShowDiscussion}
+                            setDiscussion={setDiscussion}
+                        />
                     </li>
                 </ul>
             </div>

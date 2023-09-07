@@ -9,12 +9,13 @@ import AddPeople from '../../AddPeople';
 import Members from '../Members';
 import CommunityMemberItem from './CommunityMemberItem';
 
-const CommunityMembers = ({ community, customer, handleShowAddPeople, showAddPeople }) => {
+const CommunityMembers = ({ community, customer }) => {
     const { t } = useTranslation("communication/community/communityMembers");
 
     const [showRemovePeople, setShowRemovePeople] = useState(false);
     const [communityUsersId, setCommunityUsersId] = useState([]);
     const [peopleToJoin, setPeopleToJoin] = useState([]);
+    const [showAddPeople, setShowAddPeople] = useState(false);
 
     const [createInviteAsyncMut] = useCreateInviteAsyncMutation();
 
@@ -76,6 +77,10 @@ const CommunityMembers = ({ community, customer, handleShowAddPeople, showAddPeo
     const clearListOfInvites = () => {
         setPeopleToJoin([]);
         handleShowAddPeople();
+    }
+
+    const handleShowAddPeople = () => {
+        setShowAddPeople((item) => !item);
     }
 
     if (isLoading) {

@@ -86,6 +86,29 @@ public class CommunityDiscussionController : ControllerBase
         return BadRequest();
     }
 
+    [HttpGet("findByCommunityId/{id:int:min(1)}")]
+    public async Task<IActionResult> FindByCommunityId(int id)
+    {
+        if (!HttpContext.Request.Cookies.TryGetValue("refreshToken", out var refreshToken))
+        {
+            return Unauthorized();
+        }
+
+        var responseMessage = await _httpClient.GetAsync($"CommunityDiscussion/findByCommunityId/{id}", refreshToken, Port.ChatApi);
+        if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+        {
+            return Unauthorized();
+        }
+        else if (responseMessage.IsSuccessStatusCode)
+        {
+            var communityDiscussions = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<CommunityDiscussionModel>>();
+
+            return Ok(communityDiscussions);
+        }
+
+        return BadRequest();
+    }
+
     [HttpPut]
     public async Task<IActionResult> Update(CommunityDiscussionModel chat)
     {

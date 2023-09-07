@@ -132,7 +132,7 @@ const GroupChat = ({ chat, me, setSelectedChat }) => {
         const today = new Date();
         const newMessage = {
             message: message,
-            time: `${today.getHours()}:${today.getMinutes()}`,
+            when: `${today.getHours()}:${today.getMinutes()}`,
             status: 0,
             type: type,
             groupChatId: chat.id,
