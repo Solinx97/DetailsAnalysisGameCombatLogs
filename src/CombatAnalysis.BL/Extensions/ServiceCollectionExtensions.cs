@@ -32,6 +32,8 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IService<GroupChatUserDto, string>, GroupChatUserService>();
 
         services.AddScoped<IService<CommunityDto, int>, CommunityService>();
+        services.AddScoped<IService<CommunityDiscussionDto, int>, CommunityDiscussionService>();
+        services.AddScoped<IService<CommunityDiscussionCommentDto, int>, CommunityDiscussionCommentService>();
         services.AddScoped<IService<CommunityUserDto, int>, CommunityUserService>();
         services.AddScoped<IService<InviteToCommunityDto, int>, InviteToCommunityService>();
 

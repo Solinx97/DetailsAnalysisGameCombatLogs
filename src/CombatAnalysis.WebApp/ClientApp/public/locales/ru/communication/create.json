@@ -5,6 +5,7 @@
   "ChatPolicy": "Политика чата",
   "Public": "Открытый",
   "Private": "Закрытый",
+  "TypeOfCommunity": "Тип сообщества",
   "PrivateWithLink": "Закрытый (с ссылкой)",
   "Create": "Создать",
   "Close": "Закрыть",

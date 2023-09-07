@@ -1,9 +1,9 @@
 import { faArrowsRotate, faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
-import { useSearchByUserIdAsyncQuery } from '../../../store/api/communication/community/CommunityUser.api';
+import { useLazySearchByUserIdAsyncQuery } from '../../../store/api/communication/community/CommunityUser.api';
 import InvitesToCommunity from './InvitesToCommunity';
 import MyCommunitiesItem from './MyCommunitiesItem';
 
@@ -14,17 +14,34 @@ const MyCommunities = () => {
 
     const customer = useSelector((state) => state.customer.value);
 
-    const { data: userCommunities, isLoading } = useSearchByUserIdAsyncQuery(customer?.id);
-
     const [showMyCommunities, setShowMyCommunities] = useState(true);
     const [filterContent, setFilterContent] = useState("");
+    const [userCommunities, setUserCommunities] = useState(null);
+
+    const [getMyCommunitiesAsync] = useLazySearchByUserIdAsyncQuery();
 
     const searchHandler = (e) => {
         setFilterContent(e.target.value);
     }
 
-    if (isLoading) {
-        return <></>;
+    useEffect(() => {
+        if (customer === undefined) {
+            return;
+        }
+
+        const getUserCommunities = async () => {
+            await refreshAsync();
+        }
+
+        getUserCommunities();
+    }, [customer])
+
+    const refreshAsync = async () => {
+        const result = await getMyCommunitiesAsync(customer?.id);
+
+        if (result.data !== undefined) {
+            setUserCommunities(result.data);
+        }
     }
 
     return (
@@ -38,18 +55,19 @@ const MyCommunities = () => {
                         <FontAwesomeIcon
                             icon={faArrowsRotate}
                             title={t("Refresh")}
+                            onClick={async () => await refreshAsync()}
                         />
                         <div>{t("MyCommunitites")}</div>
                         {showMyCommunities
                             ? <FontAwesomeIcon
                                 icon={faEye}
                                 title={t("Hide")}
-                                onClick={() => setShowMyCommunities((item) => !item)}
+                                onClick={() => setShowMyCommunities(false)}
                             />
                             : <FontAwesomeIcon
                                 icon={faEyeSlash}
                                 title={t("Show")}
-                                onClick={() => setShowMyCommunities((item) => !item)}
+                                onClick={() => setShowMyCommunities(true)}
                             />
                         }
                     </div>
@@ -61,8 +79,7 @@ const MyCommunities = () => {
                             <input type="text" className="form-control" id="inputSearchCommunity" placeholder={t("TypeCommunityName")} onChange={searchHandler} />
                         </div>
                         <ul>
-                            {
-                                userCommunities?.map((item) => (
+                            {userCommunities?.map((item) => (
                                     <li key={item.id}>
                                         <MyCommunitiesItem
                                             userCommunity={item}

@@ -230,10 +230,6 @@ const SelectedCommunity = () => {
                 </div>
                 <ul className="selected-community__actions">
                     <li>
-                        <div>{t("Discussions")}</div>
-                        <ul></ul>
-                    </li>
-                    <li>
                         <CommunityMembers
                             community={community}
                             customer={customer}
@@ -242,11 +238,11 @@ const SelectedCommunity = () => {
                         />
                     </li>
                     <li>
-                        <div>{t("Friends")}</div>
+                        <div>{t("Contacts")}</div>
                         <ul></ul>
                     </li>
                     <li>
-                        <div>{t("Contacts")}</div>
+                        <div>{t("Discussions")}</div>
                         <ul></ul>
                     </li>
                 </ul>

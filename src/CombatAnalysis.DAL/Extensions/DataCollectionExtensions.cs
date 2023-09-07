@@ -60,9 +60,10 @@ public static class DataCollectionExtensions
         services.AddScoped<IGenericRepository<PostDislike, int>, SQLRepository<PostDislike, int>>();
         services.AddScoped<IGenericRepository<PostLike, int>, SQLRepository<PostLike, int>>();
         services.AddScoped<IGenericRepository<PostComment, int>, SQLRepository<PostComment, int>>();
-        services.AddScoped<IGenericRepository<CommunityPost, int>, SQLRepository<CommunityPost, int>>();
         services.AddScoped<IGenericRepository<UserPost, int>, SQLRepository<UserPost, int>>();
         services.AddScoped<IGenericRepository<Community, int>, SQLRepository<Community, int>>();
+        services.AddScoped<IGenericRepository<CommunityDiscussion, int>, SQLRepository<CommunityDiscussion, int>>();
+        services.AddScoped<IGenericRepository<CommunityDiscussionComment, int>, SQLRepository<CommunityDiscussionComment, int>>();
         services.AddScoped<IGenericRepository<CommunityPost, int>, SQLRepository<CommunityPost, int>>();
         services.AddScoped<IGenericRepository<CommunityUser, int>, SQLRepository<CommunityUser, int>>();
         services.AddScoped<IGenericRepository<InviteToCommunity, int>, SQLRepository<InviteToCommunity, int>>();

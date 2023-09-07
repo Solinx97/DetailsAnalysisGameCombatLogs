@@ -51,6 +51,7 @@ export const ChatApi = createApi({
 export const {
     useGetPostQuery,
     useGetCommunitiesQuery,
+    useLazyGetCommunitiesQuery,
     useFindGroupChatMessageByChatIdQuery,
     useUserPostSearchByUserIdQuery,
     useSearchByCommunityIdAsyncQuery,

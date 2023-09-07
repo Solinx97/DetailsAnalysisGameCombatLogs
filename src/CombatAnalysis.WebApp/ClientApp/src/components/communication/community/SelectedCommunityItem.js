@@ -20,8 +20,7 @@ const SelectedCommunityItem = ({ customer, communityId }) => {
 
     return (
         <ul>
-            {
-                communityPosts?.map((item) => (
+            {communityPosts?.map((item) => (
                     <li key={item?.id}>
                         <Post
                             key={item?.id}

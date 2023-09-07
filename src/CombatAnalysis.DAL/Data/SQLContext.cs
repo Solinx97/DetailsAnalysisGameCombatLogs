@@ -26,9 +26,13 @@ public class SQLContext : DbContext
 
     public DbSet<PersonalChat>? PersonalChat { get; }
 
-    #region Communication
+    #region Community
 
     public DbSet<Community>? Community { get; }
+
+    public DbSet<CommunityDiscussion>? CommunityDiscussion { get; }
+
+    public DbSet<CommunityDiscussionComment>? CommunityDiscussionComment { get; }
 
     public DbSet<CommunityUser>? CommunityUser { get; }
 

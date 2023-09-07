@@ -1,15 +1,13 @@
 import { useSelector } from 'react-redux';
-import { useGetCommunitiesQuery } from '../../../store/api/ChatApi';
 import { useSearchByUserIdAsyncQuery } from '../../../store/api/communication/community/CommunityUser.api';
 import CommunityItem from './CommunityItem';
 
-const CommunityList = ({ filterContent }) => {
+const CommunityList = ({ filterContent, communities }) => {
     const customer = useSelector((state) => state.customer.value);
 
-    const { data: communities, isLoading } = useGetCommunitiesQuery();
-    const { data: userCommunities, isLoading: userCommunitiesIsLoading } = useSearchByUserIdAsyncQuery(customer?.id);
+    const { data: userCommunities, isLoading } = useSearchByUserIdAsyncQuery(customer?.id);
 
-    if (isLoading || userCommunitiesIsLoading) {
+    if (isLoading) {
         return <></>;
     }
 
@@ -18,24 +16,19 @@ const CommunityList = ({ filterContent }) => {
             || userCommunities?.length === 0;
     }
 
-    const render = () => {
-        return (
-            <ul>
-                {
-                    communities?.map((item) => (
-                        (anotherCommunity(item) && item.name.toLowerCase().startsWith(filterContent.toLowerCase())) &&
-                        <li key={item.id} className="community">
-                             <CommunityItem
-                                id={item.id}
-                            />
-                        </li>
-                    ))
-                }
-            </ul>
-        );
-    }
-
-    return render();
+    return (
+        <ul>
+            {communities?.map((item) => (
+                    (anotherCommunity(item) && item.name.toLowerCase().startsWith(filterContent.toLowerCase())) &&
+                    <li key={item.id} className="community">
+                        <CommunityItem
+                            id={item.id}
+                        />
+                    </li>
+                ))
+            }
+        </ul>
+    );
 }
 
 export default CommunityList;

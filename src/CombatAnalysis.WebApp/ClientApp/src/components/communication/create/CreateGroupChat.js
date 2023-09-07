@@ -201,7 +201,6 @@ const CreateGroupChat = () => {
                             <div>{t("InvitePeople")}</div>
                         </li>
                     </ul>
-
                     <div className="create-community__items">
                         {itemIndex === 0 &&
                             <div className="create-community__item">

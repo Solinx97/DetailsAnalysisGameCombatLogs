@@ -23,9 +23,9 @@ const CommunityRulesItem = ({ setPolicy, connector }) => {
                     <div>{t("TypeOfCommunity")}</div>
                     <div className="rules__content">
                         <div className="form-check form-check-inline">
-                            <input className="form-check-input" type="radio" name="type-of-community" id="pubic" value="0"
+                            <input className="form-check-input" type="radio" name="type-of-community" id="public" value="0"
                                 onChange={handleTypeOfCommunityChange} defaultChecked />
-                            <label className="form-check-label" htmlFor="pubic">{t("Pubic")}</label>
+                            <label className="form-check-label" htmlFor="public">{t("Public")}</label>
                         </div>
                         <div className="form-check form-check-inline">
                             <input className="form-check-input" type="radio" name="type-of-community" id="private" value="1"
@@ -45,7 +45,7 @@ const CommunityRulesItem = ({ setPolicy, connector }) => {
                         <div className="form-check form-check-inline">
                             <input className="form-check-input" type="radio" name="invite-people" id="invite-people-special" value="1"
                                 onChange={handleInviteChange} disabled />
-                            <label className="form-check-label" htmlFor="invite-people-special">{t("SpecialPeople")}</label>
+                            <label className="form-check-label" htmlFor="invite-people-special">{t("Owner")}</label>
                         </div>
                     </div>
                 </li>
@@ -60,7 +60,7 @@ const CommunityRulesItem = ({ setPolicy, connector }) => {
                         <div className="form-check form-check-inline">
                             <input className="form-check-input" type="radio" name="remove-people" id="remove-people-special" value="1"
                                 onChange={handleRemoveChange} disabled />
-                            <label className="form-check-label" htmlFor="remove-people-special">{t("SpecialPeople")}</label>
+                            <label className="form-check-label" htmlFor="remove-people-special">{t("Owner")}</label>
                         </div>
                     </div>
                 </li>

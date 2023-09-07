@@ -6,7 +6,7 @@ public class GroupChatMessageDto
 
     public string Message { get; set; }
 
-    public TimeSpan Time { get; set; }
+    public DateTimeOffset When { get; set; }
 
     public int Status { get; set; }
 

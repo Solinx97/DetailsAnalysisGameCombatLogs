@@ -1,7 +1,8 @@
 import { faArrowsRotate, faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useTranslation } from 'react-i18next';
+import { useLazyGetCommunitiesQuery } from '../../../store/api/ChatApi';
 import CommunityList from './CommunityList';
 
 import '../../../styles/communication/community/communities.scss';
@@ -11,9 +12,28 @@ const Communities = () => {
 
     const [showCommunities, setShowCommunities] = useState(false);
     const [filterContent, setFilterContent] = useState("");
+    const [communities, setCommunities] = useState(null);
+
+    const [getCommunitiesAsync] = useLazyGetCommunitiesQuery();
+
+    useEffect(() => {
+        const getCommunities = async () => {
+            await refreshAsync();
+        }
+
+        getCommunities();
+    }, [])
 
     const searchHandler = (e) => {
         setFilterContent(e.target.value);
+    }
+
+    const refreshAsync = async () => {
+        const result = await getCommunitiesAsync();
+
+        if (result.data !== undefined) {
+            setCommunities(result.data);
+        }
     }
 
     return (
@@ -23,6 +43,7 @@ const Communities = () => {
                     <FontAwesomeIcon
                         icon={faArrowsRotate}
                         title={t("Refresh")}
+                        onClick={async () => await refreshAsync()}
                     />
                     <div>{t("Communities")}</div>
                     {showCommunities
@@ -47,6 +68,7 @@ const Communities = () => {
                     </div>
                     <CommunityList
                         filterContent={filterContent}
+                        communities={communities}
                     />
                 </>
             }
