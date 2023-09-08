@@ -2,22 +2,22 @@ import { faPen } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useUpdatePostCommentAsyncMutation } from '../../store/api/communication/PostComment.api';
+import { useUpdateCommunityDiscussionCommentAsyncMutation } from '../../../store/api/communication/community/CommunityDiscussionComment.api';
 
-const PostCommentContent = ({ customerId, comment }) => {
+const DiscussionCommentContent = ({ customerId, comment }) => {
     const { t } = useTranslation("communication/postCommentContent");
 
-    const [updatePostCommentAsyncMut] = useUpdatePostCommentAsyncMutation();
+    const [updateDiscussionCommentAsyncMut] = useUpdateCommunityDiscussionCommentAsyncMutation();
 
     const [editModeOn, setEditModeOne] = useState(false);
 
     const commentContent = useRef(null);
 
-    const updatePostCommentAsync = async () => {
+    const updateDiscussionCommentAsync = async () => {
         const postCommentForUpdate = Object.assign({}, comment);
         postCommentForUpdate.content = commentContent.current.value;
 
-        const updatedItem = await updatePostCommentAsyncMut(postCommentForUpdate);
+        const updatedItem = await updateDiscussionCommentAsyncMut(postCommentForUpdate);
         if (updatedItem.data !== undefined) {
             setEditModeOne(false);
         }
@@ -29,7 +29,7 @@ const PostCommentContent = ({ customerId, comment }) => {
                 ? <div>
                     <textarea rows="1" cols="50" ref={commentContent} defaultValue={comment.content} />
                     <div>
-                        <button type="button" className="btn btn-outline-info" onClick={async () => await updatePostCommentAsync()}>{t("Save")}</button>
+                        <button type="button" className="btn btn-outline-info" onClick={async () => await updateDiscussionCommentAsync()}>{t("Save")}</button>
                         <button type="button" className="btn btn-outline-warning" onClick={() => setEditModeOne(false)}>{t("Cancel")}</button>
                     </div>
                 </div>
@@ -46,4 +46,4 @@ const PostCommentContent = ({ customerId, comment }) => {
     );
 }
 
-export default PostCommentContent;
+export default DiscussionCommentContent;

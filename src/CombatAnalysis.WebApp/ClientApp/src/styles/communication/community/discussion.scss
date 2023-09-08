@@ -3,26 +3,50 @@
         display: flex;
         justify-content: space-between;
         align-items: center;
+
+        svg {
+            cursor: pointer;
+        }
+
+        svg:hover {
+            transform: scale(1.2);
+        }
     }
 
     &__content {
         display: flex;
         flex-direction: column;
         gap: 5px;
+        margin: 5px 0;
 
         li {
             cursor: pointer;
             font-weight: bold;
             max-width: 130px;
+            padding: 5px;
             overflow-x: hidden;
         }
 
         li:hover {
-            transform: scale(1.1);
+            border: 1px solid gray;
+            border-radius: 10px;
         }
     }
 
     &__selected-discussion, &__create {
+        position: fixed;
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+        right: 25%;
+        top: 10%;
+        padding: 25px;
+        box-shadow: 3px 3px 3px 3px gray;
+        border-radius: 20px;
+        width: 800px;
+        z-index: 10;
+        background: white;
+
         .title {
             display: flex;
             justify-content: center;
@@ -33,20 +57,6 @@
             justify-content: center;
             gap: 50px;
         }
-    }
-
-    &__create {
-        position: fixed;
-        display: flex;
-        flex-direction: column;
-        gap: 15px;
-        right: 25%;
-        top: 10%;
-        padding: 25px;
-        box-shadow: 3px 3px 3px 3px gray;
-        border-radius: 20px;
-        width: 800px;
-        background: white;
 
         .form-group {
             display: flex;
@@ -56,23 +66,12 @@
     }
 
     &__selected-discussion {
-        position: fixed;
-        display: flex;
-        flex-direction: column;
-        gap: 15px;
-        right: 25%;
-        top: 10%;
-        padding: 25px;
-        box-shadow: 3px 3px 3px 3px gray;
-        border-radius: 20px;
-        width: 800px;
-        background: white;
-
         .tool {
             display: flex;
             flex-direction: column;
             align-items: center;
             gap: 10px;
+            margin: 10px 0;
 
             svg {
                 cursor: pointer;
@@ -84,8 +83,59 @@
         }
 
         .content {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            padding: 10px;
             word-wrap: anywhere;
             max-height: 500px;
+
+            .select-add-new-discussion-comment {
+                display: flex;
+                justify-content: end;
+
+                .action, .action_active {
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    gap: 10px;
+                    padding: 5px;
+                    box-shadow: 3px 3px 3px 3px gray;
+                    border-radius: 10px;
+                    width: 150px;
+                    cursor: pointer;
+
+                    &_active {
+                        box-shadow: 3px 3px 3px 3px green;
+                    }
+                }
+            }
+        }
+
+        .edit, .information {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .add-new-discussion-comment {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+
+            &__title {
+                display: flex;
+                flex-direction: row;
+                justify-content: start;
+                width: 100%;
+                margin: 5px -15px;
+            }
+
+            &__content {
+                display: flex;
+                align-items: center;
+                gap: 20px;
+            }
         }
     }
 }

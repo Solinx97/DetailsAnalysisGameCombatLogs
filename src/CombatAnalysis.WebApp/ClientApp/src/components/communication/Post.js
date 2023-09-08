@@ -273,9 +273,11 @@ const Post = ({ customer, targetPostType, deletePostAsync }) => {
                     <div className="add-new-comment">
                         <div className="add-new-comment__title">
                             <div>{t("AddComment")}</div>
-                        </div>
+                    </div>
+                    <div className="add-new-comment__content">
                         <textarea rows="1" cols="75" onChange={e => setPostCommentContent(e.target.value)} value={postCommentContent} />
                         <button type="button" className="btn btn-outline-info" onClick={async () => await createPostCommentAsync()}>{t("Add")}</button>
+                    </div>
                     </div>
                 </>
             }

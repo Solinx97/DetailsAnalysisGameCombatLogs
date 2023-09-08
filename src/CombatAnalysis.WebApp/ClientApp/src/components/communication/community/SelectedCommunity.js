@@ -1,4 +1,4 @@
-import { faArrowsRotate, faBars, faCloudArrowUp, faEarthEurope, faEye, faEyeSlash, faPen, faShieldHalved } from '@fortawesome/free-solid-svg-icons';
+import { faBars, faCloudArrowUp, faEarthEurope, faEye, faEyeSlash, faPen, faShieldHalved } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useEffect, useRef, useState } from "react";
 import { useTranslation } from 'react-i18next';
@@ -10,10 +10,10 @@ import Communication from '../Communication';
 import CommunityDiscussions from './CommunityDiscussions';
 import CommunityMembers from './CommunityMembers';
 import CommunityMenu from './CommunityMenu';
+import Discussion from './Discussion';
 import SelectedCommunityItem from './SelectedCommunityItem';
 
 import '../../../styles/communication/community/selectedCommunity.scss';
-import Discussion from './Discussion';
 
 const SelectedCommunity = () => {
     const { t } = useTranslation("communication/community/selectedCommunity");
@@ -117,7 +117,7 @@ const SelectedCommunity = () => {
         <div className="communication">
             <Communication
                 currentMenuItem={3}
-                selectedCommunityName={community.name}
+                selectedCommunityName={community?.name}
             />
             <div className="communication__content selected-community">
                 <div className="selected-community__content">
@@ -134,16 +134,15 @@ const SelectedCommunity = () => {
                                 }
                                 {editNameOn
                                     ? <>
-                                        <input className="form-control" type="text" defaultValue={community.name} ref={communityNameInput} />
+                                        <input className="form-control" type="text" defaultValue={community?.name} ref={communityNameInput} />
                                         <FontAwesomeIcon
                                             icon={faCloudArrowUp}
                                             title={t("Save")}
                                             onClick={async () => await updateCommunityNameAsync()}
                                         />
                                     </>
-                                    : 
-                                    <div className="name" title={community.name}>
-                                        {community.policyType === 0
+                                    : <div className="name" title={community?.name}>
+                                        {community?.policyType === 0
                                             ? <FontAwesomeIcon
                                                 icon={faEarthEurope}
                                                 title={t("Open")}
@@ -153,7 +152,7 @@ const SelectedCommunity = () => {
                                                 title={t("Private")}
                                             />
                                         }
-                                        <div>{community.name}</div>
+                                        <div>{community?.name}</div>
                                     </div>
                                 }
                             </div>
@@ -199,39 +198,36 @@ const SelectedCommunity = () => {
                         </div>
                         {showDescription
                             ? editDescriptionOn
-                                ? <textarea className="form-control" rows="4" cols="50" ref={communityDescriptionInput} defaultValue={community.description} />
-                                : <div className="description__content">{community.description}</div>
+                                ? <textarea className="form-control" rows="4" cols="50" ref={communityDescriptionInput} defaultValue={community?.description} />
+                                : <div className="description__content">{community?.description}</div>
                             : null
                         }
                     </div>
-                    {showDiscussion
-                        ? <Discussion
+                    {showDiscussion &&
+                        <Discussion
                             discussionId={discussion?.id}
                             setShowDiscussion={setShowDiscussion}
-                          />
-                        : <div>
-                            <div className="create-post">
-                                <div>
-                                    <div className="create-post__tool" style={{ display: !showCreatePost ? "flex" : "none" }}>
-                                        <button type="button" className="btn btn-outline-info" onClick={() => setShowCreatePost((item) => !item)}>{t("NewPost")}</button>
-                                    </div>
-                                    <div style={{ display: showCreatePost ? "flex" : "none" }} className="create-post__create-tool">
-                                        <FontAwesomeIcon
-                                            icon={faArrowsRotate}
-                                            title={t("Refresh")}
-                                        />
-                                        <button type="button" className="btn btn-outline-warning" onClick={() => setShowCreatePost((item) => !item)}>{t("Cancel")}</button>
-                                        <button type="button" className="btn btn-outline-success" onClick={async () => await createPostAsync()}>{t("Create")}</button>
-                                    </div>
-                                </div>
-                                <textarea rows="5" cols="100" ref={postContentRef} style={{ display: showCreatePost ? "flex" : "none" }} />
-                            </div>
-                            <SelectedCommunityItem
-                                customer={customer}
-                                communityId={communityId}
-                            />
-                        </div>
+                            customer={customer}
+                        />
                     }
+                    <div>
+                        <div className="create-post">
+                            <div>
+                                <div className="create-post__tool" style={{ display: !showCreatePost ? "flex" : "none" }}>
+                                    <button type="button" className="btn btn-outline-info" onClick={() => setShowCreatePost((item) => !item)}>{t("NewPost")}</button>
+                                </div>
+                                <div style={{ display: showCreatePost ? "flex" : "none" }} className="create-post__create-tool">
+                                    <button type="button" className="btn btn-outline-warning" onClick={() => setShowCreatePost((item) => !item)}>{t("Cancel")}</button>
+                                    <button type="button" className="btn btn-outline-success" onClick={async () => await createPostAsync()}>{t("Create")}</button>
+                                </div>
+                            </div>
+                            <textarea rows="5" cols="100" ref={postContentRef} style={{ display: showCreatePost ? "flex" : "none" }} />
+                        </div>
+                        <SelectedCommunityItem
+                            customer={customer}
+                            communityId={communityId}
+                        />
+                    </div>
                 </div>
                 <ul className="selected-community__actions">
                     <li>

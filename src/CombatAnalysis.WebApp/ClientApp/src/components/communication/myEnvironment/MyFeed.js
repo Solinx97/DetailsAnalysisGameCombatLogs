@@ -1,5 +1,3 @@
-import { faArrowsRotate } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
@@ -60,10 +58,6 @@ const MyFeed = () => {
                         <button type="button" className="btn btn-outline-info" onClick={() => setShowCreatePost((item) => !item)}>{t("NewPost")}</button>
                     </div>
                     <div style={{ display: showCreatePost ? "flex" : "none" }} className="create-post__create-tool">
-                        <FontAwesomeIcon
-                            icon={faArrowsRotate}
-                            title={t("Refresh")}
-                        />
                         <button type="button" className="btn btn-outline-warning" onClick={() => setShowCreatePost((item) => !item)}>{t("Cancel")}</button>
                         <button type="button" className="btn btn-outline-success" onClick={async () => await createPostAsync()}>{t("Create")}</button>
                     </div>
