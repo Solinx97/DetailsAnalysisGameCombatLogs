@@ -20,8 +20,7 @@ const UserPosts = ({ customer, userId }) => {
 
     return (
         <>
-            {
-                userPosts?.map((item) => (
+            {userPosts?.map((item) => (
                     <li key={item?.id}>
                         <Post
                             customer={customer}

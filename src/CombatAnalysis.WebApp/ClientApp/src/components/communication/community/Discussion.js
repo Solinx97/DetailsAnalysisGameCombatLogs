@@ -9,12 +9,13 @@ import DiscussionComments from './DiscussionComments';
 import '../../../styles/communication/community/discussion.scss';
 
 const Discussion = ({ discussionId, setShowDiscussion, customer }) => {
-    const { t } = useTranslation("communication/community/selectedCommunity");
+    const { t } = useTranslation("communication/community/discussion");
 
     const [title, setTitle] = useState("");
     const [content, setContent] = useState("");
     const [editModeOne, setEditModeOne] = useState(false);
     const [showComments, setShowComments] = useState(false);
+    const [showAddComment, setAddShowComment] = useState(false);
     const [discussionCommentContent, setDiscussionCommentContent] = useState("");
 
     const [updateCommunityAsyncMut] = useUpdateCommunityDiscussionAsyncMutation();
@@ -142,7 +143,7 @@ const Discussion = ({ discussionId, setShowDiscussion, customer }) => {
                             />
                             <FontAwesomeIcon
                                 icon={faTrash}
-                                title={t("Remvoe")}
+                                title={t("Remove")}
                                 onClick={async () => await removeDiscussionAsync()}
                             />
                         </div>
@@ -169,12 +170,20 @@ const Discussion = ({ discussionId, setShowDiscussion, customer }) => {
                         />
                         <div className="add-new-discussion-comment">
                             <div className="add-new-discussion-comment__title">
-                                <div>{t("AddComment")}</div>
-                            </div>
+                            {showAddComment
+                                ? <div>{t("AddComment")}</div>
+                                : <button type="button" className="btn btn-outline-info" onClick={() => setAddShowComment((item) => !item)}>{t("AddComment")}</button>
+                            }
+                        </div>
+                        {showAddComment &&
                             <div className="add-new-discussion-comment__content">
-                                <textarea rows="1" cols="75" onChange={e => setDiscussionCommentContent(e.target.value)} value={discussionCommentContent} />
-                                <button type="button" className="btn btn-outline-info" onClick={async () => await createDiscussionCommentAsync()}>{t("Add")}</button>
+                                <textarea class="form-control" rows="3" cols="60" onChange={e => setDiscussionCommentContent(e.target.value)} value={discussionCommentContent} />
+                                <div className="actions">
+                                    <button type="button" className="btn btn-outline-info" onClick={async () => await createDiscussionCommentAsync()}>{t("Add")}</button>
+                                    <button type="button" className="btn btn-light" onClick={() => setAddShowComment((item) => !item)}>{t("Hide")}</button>
+                                </div>
                             </div>
+                        }
                         </div>
                     </>
                 }

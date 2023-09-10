@@ -27,6 +27,7 @@ const Post = ({ customer, targetPostType, deletePostAsync }) => {
 
     const [showComments, setShowComments] = useState(false);
     const [postCommentContent, setPostCommentContent] = useState("");
+    const [showAddComment, setShowAddComment] = useState(false);
 
     const updatePostAsync = async (postId, likesCount, dislikesCount, commentsCount) => {
         const postForUpdate = {
@@ -221,7 +222,7 @@ const Post = ({ customer, targetPostType, deletePostAsync }) => {
 
     return (
         <>
-            <div className="card">
+            <div className="card posts__card">
                 <ul className="list-group list-group-flush">
                     <PostTitle
                         post={post}
@@ -272,12 +273,20 @@ const Post = ({ customer, targetPostType, deletePostAsync }) => {
                     />
                     <div className="add-new-comment">
                         <div className="add-new-comment__title">
-                            <div>{t("AddComment")}</div>
-                    </div>
-                    <div className="add-new-comment__content">
-                        <textarea rows="1" cols="75" onChange={e => setPostCommentContent(e.target.value)} value={postCommentContent} />
-                        <button type="button" className="btn btn-outline-info" onClick={async () => await createPostCommentAsync()}>{t("Add")}</button>
-                    </div>
+                            {showAddComment
+                                ? <div>{t("AddComment")}</div>
+                                : <button type="button" className="btn btn-outline-info" onClick={() => setShowAddComment((item) => !item)}>{t("AddComment")}</button>
+                            }
+                        </div>
+                        {showAddComment &&
+                            <div className="add-new-comment__content">
+                            <textarea className="form-control" rows="3" cols="60" onChange={e => setPostCommentContent(e.target.value)} value={postCommentContent} />
+                                <div className="actions">
+                                    <button type="button" className="btn btn-outline-info" onClick={async () => await createPostCommentAsync()}>{t("Add")}</button>
+                                    <button type="button" className="btn btn-light" onClick={() => setShowAddComment((item) => !item)}>{t("Hide")}</button>
+                                </div>
+                            </div>
+                        }
                     </div>
                 </>
             }

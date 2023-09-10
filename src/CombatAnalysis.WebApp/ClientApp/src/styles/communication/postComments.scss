@@ -1,10 +1,13 @@
 .post-comments {
     display: flex;
     flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 0;
+    gap: 10px;
 
     .card {
-        width: 475px;
-        margin: 5px 0 5px 75px;
+        width: 600px;
     }
 
     &__title.list-group-item {
@@ -23,11 +26,31 @@
         }
     }
 
-    &__edit.list-group-item {
+    &__content.list-group-item {
         display: flex;
         flex-direction: row;
         justify-content: space-between;
         align-items: center;
+        gap: 15px;
+        padding: 10px;
+
+        .card-text {
+            font-size: 13px;
+            overflow-x: hidden;
+            word-wrap: anywhere;
+        }
+
+        .actions {
+            display: flex;
+            justify-content: center;
+            margin: 5px 0;
+        }
+
+        .comment-edit {
+            &_active {
+                color: green;
+            }
+        }
 
         svg {
             cursor: pointer;
@@ -43,3 +66,29 @@
         }
     }
 }
+
+/*.post-comments__content {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    overflow-x: hidden;
+
+    .card-text {*/
+        /*max-width: 200px;*/
+        /*font-size: 13px;
+    }
+
+    svg {
+        cursor: pointer;
+    }
+
+    svg:hover {
+        transform: scale(1.1);
+    }
+
+    button {
+        margin: 0 10px;
+        font-size: 12px;
+    }
+}*/

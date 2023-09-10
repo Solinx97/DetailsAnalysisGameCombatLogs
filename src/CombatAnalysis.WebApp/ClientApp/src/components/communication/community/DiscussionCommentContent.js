@@ -24,13 +24,13 @@ const DiscussionCommentContent = ({ customerId, comment }) => {
     }
 
     return (
-        <li className="post-comments__edit list-group-item">
+        <li className="discussion-comments__content list-group-item">
             {editModeOn
                 ? <div>
-                    <textarea rows="1" cols="50" ref={commentContent} defaultValue={comment.content} />
-                    <div>
+                    <textarea className="form-control" rows="3" cols="50" ref={commentContent} defaultValue={comment.content} />
+                    <div className="actions">
                         <button type="button" className="btn btn-outline-info" onClick={async () => await updateDiscussionCommentAsync()}>{t("Save")}</button>
-                        <button type="button" className="btn btn-outline-warning" onClick={() => setEditModeOne(false)}>{t("Cancel")}</button>
+                        <button type="button" className="btn btn-light" onClick={() => setEditModeOne(false)}>{t("Cancel")}</button>
                     </div>
                 </div>
                 : <div className="card-text">{comment.content}</div>

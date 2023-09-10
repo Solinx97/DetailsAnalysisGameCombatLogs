@@ -5,7 +5,7 @@ import { useGetCustomerByIdQuery } from '../../../store/api/Customer.api';
 import { useRemoveCommunityDiscussionCommentAsyncMutation } from '../../../store/api/communication/community/CommunityDiscussionComment.api';
 
 const DiscussionCommentTitle = ({ meId, comment, dateFormatting }) => {
-    const { t } = useTranslation("communication/postCommentTitle");
+    const { t } = useTranslation("communication/community/discussion");
 
     const { data: customer, isLoading } = useGetCustomerByIdQuery(comment?.customerId);
 

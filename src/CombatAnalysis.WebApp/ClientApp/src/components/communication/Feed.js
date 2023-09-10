@@ -32,6 +32,7 @@ const Feed = () => {
         if (createdPost.data !== undefined) {
             setShowCreatePost(false);
             postContentRef.current.value = "";
+
             const isCreated = await createUserPostAsync(createdPost.data?.id);
             return isCreated;
         }

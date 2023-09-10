@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { useCreateCommunityDiscussionAsyncMutation } from '../../../store/api/communication/community/CommunityDiscussion.api';
 
 const CreateDiscussion = ({ community, customer, setShowDiscussion }) => {
-    const { t } = useTranslation("communication/community/selectedCommunity");
+    const { t } = useTranslation("communication/community/discussion");
 
     const title = useRef(null);
     const content = useRef(null);

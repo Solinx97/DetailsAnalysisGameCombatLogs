@@ -39,13 +39,15 @@
         flex-direction: column;
         gap: 15px;
         right: 25%;
-        top: 10%;
-        padding: 25px;
+        top: 5%;
+        padding: 15px;
         box-shadow: 3px 3px 3px 3px gray;
         border-radius: 20px;
         width: 800px;
+        max-height: 90%;
         z-index: 10;
         background: white;
+        overflow-y: auto;
 
         .title {
             display: flex;
@@ -71,7 +73,6 @@
             flex-direction: column;
             align-items: center;
             gap: 10px;
-            margin: 10px 0;
 
             svg {
                 cursor: pointer;
@@ -115,18 +116,20 @@
         .edit, .information {
             display: flex;
             flex-direction: column;
-            gap: 15px;
+            gap: 10px;
         }
 
         .add-new-discussion-comment {
             display: flex;
             flex-direction: column;
             align-items: center;
+            justify-content: center;
+            gap: 5px;
 
             &__title {
                 display: flex;
                 flex-direction: row;
-                justify-content: start;
+                justify-content: center;
                 width: 100%;
                 margin: 5px -15px;
             }
@@ -135,6 +138,71 @@
                 display: flex;
                 align-items: center;
                 gap: 20px;
+
+                .actions {
+                    display: flex;
+                    flex-direction: column;
+                    justify-content: center;
+                    gap: 10px;
+                }
+            }
+        }
+
+        .discussion-comments {
+            display: flex;
+            flex-direction: column;
+            margin: 0;
+
+            .card {
+                width: 475px;
+                margin: 5px 0 5px 75px;
+            }
+
+            &__title.list-group-item {
+                display: flex;
+                flex-direction: row;
+                justify-content: space-between;
+            }
+
+            &__menu {
+                svg {
+                    cursor: pointer;
+                }
+
+                svg:hover {
+                    transform: scale(1.1);
+                }
+            }
+
+            &__content {
+                display: flex;
+                flex-direction: row;
+                justify-content: space-between;
+                align-items: center;
+                overflow-x: hidden;
+
+                .card-text {
+                    max-width: 90%;
+                    font-size: 13px;
+                }
+
+                .actions {
+                    display: flex;
+                    margin: 5px 0;
+                }
+
+                svg {
+                    cursor: pointer;
+                }
+
+                svg:hover {
+                    transform: scale(1.1);
+                }
+
+                button {
+                    margin: 0 10px;
+                    font-size: 12px;
+                }
             }
         }
     }

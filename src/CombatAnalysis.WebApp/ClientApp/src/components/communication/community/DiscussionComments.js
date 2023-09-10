@@ -11,7 +11,7 @@ const DiscussionComments = ({ dateFormatting, customerId, discussionId }) => {
 
     return (
         <div>
-            <ul className="post-comments">
+            <ul className="discussion-comments">
                 {discussionComments?.map((item) => (
                     <li key={item.id} className="card">
                         <ul className="list-group list-group-flush">

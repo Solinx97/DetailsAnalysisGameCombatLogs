@@ -64,7 +64,7 @@ const MyFeed = () => {
                 </div>
                 <textarea rows="5" cols="100" ref={postContentRef} style={{ display: showCreatePost ? "flex" : "none" }} />
             </div>
-            <ul>
+            <ul className="posts">
                 <UserPosts
                     customer={customer}
                     userId={customer?.id}

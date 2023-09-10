@@ -15,7 +15,7 @@ const PostComments = ({ dateFormatting, customerId, postId, updatePostAsync }) =
     return (
         <ul className="post-comments">
             {postComments?.map((item) => (
-                    <li key={item.id} className="card">
+                    <li key={item.id} className="post-comments__card card">
                         <ul className="list-group list-group-flush">
                             <PostCommentTitle
                                 customerId={customerId}
