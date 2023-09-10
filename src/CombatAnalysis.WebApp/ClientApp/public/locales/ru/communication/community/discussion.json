@@ -12,5 +12,12 @@
   "Add": "Добавить",
   "Discussion": "Обсуждения",
   "Hide": "Скрыть",
-  "CreateDiscussion": "Создать обсуждение"
+  "CreateDiscussion": "Создать обсуждение",
+  "AllDiscussions": "Все обсуждения",
+  "Discussions": "Обсуждения",
+  "SearchDiscussion": "Поиск обсуждение",
+  "TypeDiscussion": "Название обсуждений",
+  "Clean": "Очистить",
+  "ShowSearchDiscussion": "Показать поиск обсуждений",
+  "HideSearchDiscussion": "Скрыть поиск обсуждений"
 }

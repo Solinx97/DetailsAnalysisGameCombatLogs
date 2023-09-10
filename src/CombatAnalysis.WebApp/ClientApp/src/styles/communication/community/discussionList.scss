@@ -1,0 +1,78 @@
+.discussion-inspection {
+    position: fixed;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+    border-radius: 25px;
+    right: 35%;
+    top: 10%;
+    padding: 15px 10px;
+    width: 350px;
+    max-height: 600px;
+    box-shadow: 5px 5px 5px 5px gray;
+    background: white;
+
+    .title {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 20px;
+        font-weight: bold;
+
+        svg {
+            cursor: pointer;
+        }
+
+        svg:hover {
+            transform: scale(1.1);
+        }
+    }
+
+    &__search {
+        display: none;
+
+        &_active {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+    }
+
+    &__search-input {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+    }
+
+    .divide {
+        width: 100%;
+        height: 5px;
+        margin-top: -10px;
+        background: #015666;
+    }
+
+    &__content {
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+        margin: 10px 0;
+        overflow-y: auto;
+        overflow-x: hidden;
+        overflow-wrap: break-word;
+
+        li {
+            cursor: pointer;
+            font-weight: bold;
+            width: 220px;
+            padding: 5px;
+            margin: 0 5px;
+        }
+
+        li:hover {
+            border: 1px solid gray;
+            border-radius: 10px;
+        }
+    }
+}

@@ -40,6 +40,7 @@ export const {
     useCreateCommunityDiscussionAsyncMutation,
     useGetCommunityDiscussionByIdQuery,
     useGetCommunityDiscussionByCommunityIdQuery,
+    useLazyGetCommunityDiscussionByCommunityIdQuery,
     useUpdateCommunityDiscussionAsyncMutation,
     useRemoveCommunityDiscussionAsyncMutation
 } = CommunityDiscussionApi;

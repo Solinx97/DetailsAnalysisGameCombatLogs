@@ -1,36 +1,45 @@
 import { faPlus, faRectangleXmark } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { useEffect, useState } from 'react';
+import { memo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useSearchByCommunityIdAsyncQuery } from '../../../store/api/ChatApi';
+import { useLazySearchByCommunityIdAsyncQuery, useSearchByCommunityIdAsyncQuery } from '../../../store/api/ChatApi';
 import { useRemoveCommunityUserAsyncMutation } from '../../../store/api/communication/community/CommunityUser.api';
 import { useCreateInviteAsyncMutation, useLazyInviteIsExistQuery } from '../../../store/api/communication/community/InviteToCommunity.api';
 import AddPeople from '../../AddPeople';
 import Members from '../Members';
 import CommunityMemberItem from './CommunityMemberItem';
 
+const defaultMaxPeople = 5;
+
 const CommunityMembers = ({ community, customer }) => {
     const { t } = useTranslation("communication/community/communityMembers");
 
-    const [showRemovePeople, setShowRemovePeople] = useState(false);
-    const [communityUsersId, setCommunityUsersId] = useState([]);
+    let communityUsersId = [];
+
+    const [showAllPeople, setShowAllPeople] = useState(false);
     const [peopleToJoin, setPeopleToJoin] = useState([]);
+    const [allCommunityUsers, setAllCommunityUsers] = useState([]);
     const [showAddPeople, setShowAddPeople] = useState(false);
 
     const [createInviteAsyncMut] = useCreateInviteAsyncMutation();
 
-    const { data: communityUsers, isLoading } = useSearchByCommunityIdAsyncQuery(community?.id);
+    const { communityUsers, isLoading } = useSearchByCommunityIdAsyncQuery(community?.id, {
+        selectFromResult: ({ data }) => {
+            const idList = [];
+            for (let i = 0; i < data?.length; i++) {
+                idList.push(data[i].customerId);
+            }
+
+            communityUsersId = idList;
+
+            return {
+                communityUsers: data?.slice(0, defaultMaxPeople)
+            };
+        }
+    });
+    const [getAllCommunityUsersAsync] = useLazySearchByCommunityIdAsyncQuery();
     const [isInviteExistAsync] = useLazyInviteIsExistQuery();
     const [removeCommunityUserAsync] = useRemoveCommunityUserAsyncMutation();
-
-    useEffect(() => {
-        const idList = [];
-        for (let i = 0; i < communityUsers?.length; i++) {
-            idList.push(communityUsers[i].customerId);
-        }
-
-        setCommunityUsersId(idList);
-    }, [communityUsers])
 
     const checkIfRequestExistAsync = async (peopleId, communityId) => {
         const arg = {
@@ -71,7 +80,7 @@ const CommunityMembers = ({ community, customer }) => {
             await removeCommunityUserAsync(peopleToRemove[i].id);
         }
 
-        setShowRemovePeople(false);
+        setShowAllPeople(false);
     }
 
     const clearListOfInvites = () => {
@@ -81,6 +90,14 @@ const CommunityMembers = ({ community, customer }) => {
 
     const handleShowAddPeople = () => {
         setShowAddPeople((item) => !item);
+    }
+
+    const handleShowAllPeopleAsync = async () => {
+        const users = await getAllCommunityUsersAsync(community?.id);
+        if (users.data !== undefined) {
+            setAllCommunityUsers(users.data);
+            setShowAllPeople((item) => !item);
+        }
     }
 
     if (isLoading) {
@@ -97,7 +114,7 @@ const CommunityMembers = ({ community, customer }) => {
                             <FontAwesomeIcon
                                 icon={faRectangleXmark}
                                 title={t("RemovePeople")}
-                                onClick={() => setShowRemovePeople((item) => !item)}
+                                onClick={handleShowAllPeopleAsync}
                             />
                         }
                         <FontAwesomeIcon
@@ -118,6 +135,7 @@ const CommunityMembers = ({ community, customer }) => {
                     ))
                 }
             </ul>
+            <input type="button" value={t("AllMembers")} className="btn btn-outline-success all-people" onClick={handleShowAllPeopleAsync} />
             {showAddPeople &&
                 <div className="add-people-to-community">
                     <AddPeople
@@ -132,18 +150,19 @@ const CommunityMembers = ({ community, customer }) => {
                     </div>
                 </div>
             }
-            {showRemovePeople &&
+            {showAllPeople &&
                 <Members
                     me={customer}
-                    users={communityUsers}
+                    users={allCommunityUsers}
                     communityItem={community}
                     removeUsersAsync={removeUsersAsync}
-                    setShowMembers={setShowRemovePeople}
+                    setShowMembers={setShowAllPeople}
                     isPopup={true}
+                    canRemovePeople={customer?.id === community?.customerId}
                 />
             }
         </span>
     );
 }
 
-export default CommunityMembers;
+export default memo(CommunityMembers);

@@ -10,26 +10,24 @@ const DiscussionComments = ({ dateFormatting, customerId, discussionId }) => {
     }
 
     return (
-        <div>
-            <ul className="discussion-comments">
-                {discussionComments?.map((item) => (
-                    <li key={item.id} className="card">
-                        <ul className="list-group list-group-flush">
-                            <DiscussionCommentTitle
-                                meId={customerId}
-                                comment={item}
-                                dateFormatting={dateFormatting}
-                            />
-                            <DiscussionCommentContent
-                                customerId={customerId}
-                                comment={item}
-                            />
-                        </ul>
-                    </li>
-                ))
-                }
-            </ul>
-        </div>
+        <ul className="discussion-comments">
+            {discussionComments?.map((item) => (
+                <li key={item.id} className="card">
+                    <ul className="list-group list-group-flush">
+                        <DiscussionCommentTitle
+                            meId={customerId}
+                            comment={item}
+                            dateFormatting={dateFormatting}
+                        />
+                        <DiscussionCommentContent
+                            customerId={customerId}
+                            comment={item}
+                        />
+                    </ul>
+                </li>
+            ))
+            }
+        </ul>
     );
 }
 

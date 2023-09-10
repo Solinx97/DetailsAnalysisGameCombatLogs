@@ -1,8 +1,13 @@
 .discussion {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
     &__title .actions {
         display: flex;
         justify-content: space-between;
         align-items: center;
+        width: 150px;
 
         svg {
             cursor: pointer;
@@ -17,14 +22,14 @@
         display: flex;
         flex-direction: column;
         gap: 5px;
-        margin: 5px 0;
+        margin: 10px 0;
 
         li {
             cursor: pointer;
             font-weight: bold;
             max-width: 130px;
             padding: 5px;
-            overflow-x: hidden;
+            overflow: hidden;
         }
 
         li:hover {
@@ -205,5 +210,9 @@
                 }
             }
         }
+    }
+
+    .all-discussion {
+        font-size: 12px;
     }
 }

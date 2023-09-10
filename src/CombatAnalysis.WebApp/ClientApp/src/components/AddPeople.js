@@ -112,6 +112,7 @@ const AddPeople = ({ customer, communityUsersId, peopleToJoin, setPeopleToJoin }
                     />
                 </div>
             </div>
+            <div className="divide"></div>
             <div>
                 <div className="add-new-people__content_active">
                     <div className="add-new-people__content-title">

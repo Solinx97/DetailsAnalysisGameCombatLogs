@@ -1,6 +1,6 @@
 import { faBars, faCloudArrowUp, faEarthEurope, faEye, faEyeSlash, faPen, faShieldHalved } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { useEffect, useRef, useState } from "react";
+import { memo, useEffect, useRef, useState } from "react";
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import { useCreatePostAsyncMutation } from '../../../store/api/communication/Post.api';
@@ -45,12 +45,16 @@ const SelectedCommunity = () => {
     }, [])
 
     useEffect(() => {
+        if (communityId === 0) {
+            return;
+        }
+
         let searchByCommunityId = async () => {
             const community = await getCommunityByIdAsync(communityId);
             setCommunity(community.data);
         }
 
-        communityId > 0 && searchByCommunityId();
+        searchByCommunityId();
     }, [communityId])
 
     const createPostAsync = async () => {
@@ -257,4 +261,4 @@ const SelectedCommunity = () => {
     )
 }
 
-export default SelectedCommunity;
+export default memo(SelectedCommunity);

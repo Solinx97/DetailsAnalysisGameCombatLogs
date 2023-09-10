@@ -1,4 +1,4 @@
-import { faUserXmark } from '@fortawesome/free-solid-svg-icons';
+import { faUserXmark, faXmark, faMagnifyingGlassMinus, faMagnifyingGlassPlus } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -10,6 +10,7 @@ const Members = ({ me, users, communityItem, removeUsersAsync, setShowMembers, i
     const { t } = useTranslation("communication/members");
 
     const [showRemoveUser, setShowRemoveUser] = useState(false);
+    const [showSearchPeople, setShowSearchPeople] = useState(false);
     const [peopleToRemove, setPeopleToRemove] = useState([]);
 
     const handleShowRemoveUsers = () => {
@@ -28,6 +29,18 @@ const Members = ({ me, users, communityItem, removeUsersAsync, setShowMembers, i
     return (
         <div className={`people-inspection${isPopup ? "__popup" : "__window"}`}>
             <div className="title">
+                {showSearchPeople
+                    ? <FontAwesomeIcon
+                        icon={faMagnifyingGlassMinus}
+                        title={t("HideSearchPeople")}
+                        onClick={() => setShowSearchPeople(false)}
+                    />
+                    : <FontAwesomeIcon
+                        icon={faMagnifyingGlassPlus}
+                        title={t("ShowSearchPeople")}
+                        onClick={() => setShowSearchPeople(true)}
+                    />
+                }
                 <div>{t("Members")}</div>
                 {canRemovePeople &&
                     <FontAwesomeIcon
@@ -38,8 +51,19 @@ const Members = ({ me, users, communityItem, removeUsersAsync, setShowMembers, i
                     />
                 }
             </div>
+            <div className={`mb-3 add-new-people__search${showSearchPeople ? "_active" : ""}`}>
+                <label htmlFor="inputUsername" className="form-label">{t("SearchPeople")}</label>
+                <div className="add-new-people__search-input">
+                    <input type="text" className="form-control" placeholder={t("TypeUsername")} id="inputUsername"/>
+                    <FontAwesomeIcon
+                        icon={faXmark}
+                        title={t("Clean")}
+                    />
+                </div>
+            </div>
+            <div className="divide"></div>
             <ul className="list">
-                {users.map((item) => (
+                {users?.map((item) => (
                     <li className="user-target-community" key={item.id}>
                         <MembersItem
                             me={me}

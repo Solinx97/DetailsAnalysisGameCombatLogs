@@ -12,5 +12,12 @@
   "Add": "Add",
   "Discussion": "Discussion",
   "Hide": "Hide",
-  "CreateDiscussion": "Create discussion"
+  "CreateDiscussion": "Create discussion",
+  "AllDiscussions": "All discussions",
+  "Discussions": "Discussions",
+  "SearchDiscussion": "Search discussion",
+  "TypeDiscussion": "Type discussion",
+  "Clean": "Clean",
+  "ShowSearchDiscussion": "Show search people",
+  "HideSearchDiscussion": "Hide search people"
 }
