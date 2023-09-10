@@ -9,6 +9,7 @@ const DiscussionList = ({ discussions, setShowDiscussion, handleDiscussion }) =>
     const { t } = useTranslation("communication/community/discussion");
 
     const [showSearchPeople, setShowSearchPeople] = useState(false);
+    const [filteredContent, setFilteredContent] = useState("");
 
     const hidePeopleInspectionMode = () => {
         setShowDiscussion(false);
@@ -18,6 +19,16 @@ const DiscussionList = ({ discussions, setShowDiscussion, handleDiscussion }) =>
         setShowDiscussion(false);
 
         handleDiscussion(item);
+    }
+
+    const handleFilterDiscussions = (event) => {
+        const content = event.target.value;
+
+        setFilteredContent(content);
+    }
+
+    const clear = () => {
+        setFilteredContent("");
     }
 
     return (
@@ -40,20 +51,27 @@ const DiscussionList = ({ discussions, setShowDiscussion, handleDiscussion }) =>
             <div className={`mb-3 discussion-inspection__search${showSearchPeople ? "_active" : ""}`}>
                 <label htmlFor="inputDiscussion" className="form-label">{t("SearchDiscussion")}</label>
                 <div className="discussion-inspection__search-input">
-                    <input type="text" className="form-control" placeholder={t("TypeDiscussion")} id="inputDiscussion" />
+                    <input type="text" className="form-control" placeholder={t("TypeDiscussion")} id="inputDiscussion" onChange={handleFilterDiscussions} value={filteredContent} />
                     <FontAwesomeIcon
                         icon={faXmark}
                         title={t("Clean")}
+                        onClick={clear}
                     />
                 </div>
             </div>
             <div className="divide"></div>
             <ul className="discussion-inspection__content">
-                {discussions?.map((item) => (
-                    <li key={item.id} title={item.title} onClick={() => openDiscussion(item)}>
-                        {item.title}
-                    </li>
-                ))
+                {filteredContent !== ""
+                    ? discussions?.filter(x => x.title.toLowerCase().startsWith(filteredContent.toLowerCase())).map((item) => (
+                        <li key={item.id} title={item.title} onClick={() => openDiscussion(item)}>
+                            {item.title}
+                        </li>
+                    ))
+                    : discussions?.map((item) => (
+                        <li key={item.id} title={item.title} onClick={() => openDiscussion(item)}>
+                            {item.title}
+                        </li>
+                    ))
                 }
             </ul>
             <div className="item-result">

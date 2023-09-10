@@ -58,11 +58,11 @@
                 cursor: pointer;
             }
         }
+    }
 
-        svg:hover {
-            cursor: pointer;
-            transform: scale(1.25);
-        }
+    svg:hover {
+        cursor: pointer;
+        transform: scale(1.25);
     }
 
     .item-result {

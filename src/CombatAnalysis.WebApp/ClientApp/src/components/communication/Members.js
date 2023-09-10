@@ -33,12 +33,10 @@ const Members = ({ me, users, communityItem, removeUsersAsync, setShowMembers, i
                     ? <FontAwesomeIcon
                         icon={faMagnifyingGlassMinus}
                         title={t("HideSearchPeople")}
-                        onClick={() => setShowSearchPeople(false)}
                     />
                     : <FontAwesomeIcon
                         icon={faMagnifyingGlassPlus}
                         title={t("ShowSearchPeople")}
-                        onClick={() => setShowSearchPeople(true)}
                     />
                 }
                 <div>{t("Members")}</div>

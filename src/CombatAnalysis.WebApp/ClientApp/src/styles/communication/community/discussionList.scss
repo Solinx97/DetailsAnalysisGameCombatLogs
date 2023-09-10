@@ -20,14 +20,14 @@
         align-items: center;
         gap: 20px;
         font-weight: bold;
+    }
 
-        svg {
-            cursor: pointer;
-        }
+    svg {
+        cursor: pointer;
+    }
 
-        svg:hover {
-            transform: scale(1.1);
-        }
+    svg:hover {
+        transform: scale(1.1);
     }
 
     &__search {
