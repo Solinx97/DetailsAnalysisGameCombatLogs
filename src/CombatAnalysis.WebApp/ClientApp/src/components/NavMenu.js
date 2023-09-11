@@ -5,17 +5,19 @@ import { Link, useNavigate } from 'react-router-dom';
 import { Collapse, Container, Navbar, NavbarBrand, NavbarToggler } from 'reactstrap';
 import { useLogoutAsyncMutation } from '../store/api/Account.api';
 import { useLazySearchByUserIdAsyncQuery } from '../store/api/Customer.api';
-import { useAuthenticationAsyncQuery } from '../store/api/UserApi';
+import { useLazyAuthenticationAsyncQuery } from '../store/api/UserApi';
 import { updateCustomer } from '../store/slicers/CustomerSlice';
 import { updateUser } from '../store/slicers/UserSlice';
 
 import '../styles/navMenu.scss';
 
+const pageWithoutAuth = ["/", "/login", "/registration", "/main-information", "/general-analysis", "/details-specifical-combat", "/combat-general-details"];
+
 const NavMenu = () => {
     const dispatch = useDispatch();
     const customer = useSelector((state) => state.customer.value);
 
-    const auth = useAuthenticationAsyncQuery();
+    const [getAuthAsync] = useLazyAuthenticationAsyncQuery();
 
     const [getCustomerAsync] = useLazySearchByUserIdAsyncQuery();
     const [logoutAsyncMut] = useLogoutAsyncMutation();
@@ -26,6 +28,8 @@ const NavMenu = () => {
 
     const [languageName, setLanguageName] = useState("English");
     const [collapsed, setCollapsed] = useState(true);
+
+    const pathName = window.location.pathname;
 
     useEffect(() => {
         switch (i18n.language) {
@@ -39,30 +43,32 @@ const NavMenu = () => {
                 setLanguageName(t("EN"));
                 break;
         }
+
+        const checkAuth = async () => {
+            await checkAuthAsync();
+        }
+
+        checkAuth();
     }, [])
 
-    useEffect(() => {
-        switch (auth.status) {
-            case "rejected":
-                dispatch(updateCustomer(null));
-                break;
-            case "fulfilled":
-                const updateUserData = async () => {
-                    await getUserDataAsync();
-                }
-
-                updateUserData();
-                break;
-            default:
-                dispatch(updateCustomer(null));
-                break;
+    const checkAuthAsync = async () => {
+        if (pageWithoutAuth.includes(pathName)) {
+            return;
         }
-    }, [auth])
 
-    const getUserDataAsync = async () => {
-        dispatch(updateUser(auth.data));
+        const auth = await getAuthAsync();
+        if (auth.error !== undefined) {
+            dispatch(updateCustomer(null));
+            return;
+        }
 
-        const customer = await getCustomerAsync(auth.data?.id);
+        await getUserDataAsync(auth.data);
+    }
+
+    const getUserDataAsync = async (user) => {
+        dispatch(updateUser(user));
+
+        const customer = await getCustomerAsync(user?.id);
         if (customer.data !== undefined) {
             dispatch(updateCustomer(customer.data));
         }
@@ -81,10 +87,6 @@ const NavMenu = () => {
 
     const toggleNavbar = () => {
         setCollapsed((item) => !item);
-    }
-
-    if (auth.isLoading) {
-        return <></>;
     }
 
     return (

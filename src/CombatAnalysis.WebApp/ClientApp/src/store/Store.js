@@ -4,6 +4,7 @@ import { CombatParserApi } from './api/CombatParserApi';
 import { UserApi } from './api/UserApi';
 import customerReducer from './slicers/CustomerSlice';
 import userReducer from './slicers/UserSlice';
+import authenticationMiddleware from '../middleware/authenticationMiddleware';
 
 const reducers = combineReducers({
     customer: customerReducer,
@@ -20,7 +21,8 @@ const Store = configureStore({
         getDefaultMiddleware()
             .concat(UserApi.middleware)
             .concat(ChatApi.middleware)
-            .concat(CombatParserApi.middleware),
+            .concat(CombatParserApi.middleware)
+            .concat(authenticationMiddleware)
 });
 
 export default Store;
