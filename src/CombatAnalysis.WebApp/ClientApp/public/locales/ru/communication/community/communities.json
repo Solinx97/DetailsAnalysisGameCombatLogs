@@ -6,5 +6,7 @@
   "Join": "Присоединиться",
   "Communities": "Сообщества",
   "Search": "Поиск",
-  "TypeCommunityName": "Напишите название сообщества"
+  "TypeCommunityName": "Название сообщества",
+  "ShowSearchCommunity": "Показать поиск сообществ",
+  "HideSearchCommunity": "Скрыть поиск сообществ"
 }

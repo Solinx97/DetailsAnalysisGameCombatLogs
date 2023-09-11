@@ -6,5 +6,7 @@
   "Join": "Join",
   "Communities": "Communities",
   "Search": "Search",
-  "TypeCommunityName": "Type community name"
+  "TypeCommunityName": "Community name",
+  "ShowSearchCommunity": "Show search communities",
+  "HideSearchCommunity": "Hide search communities"
 }

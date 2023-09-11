@@ -5,5 +5,7 @@
   "Hide": "Скрыть",
   "Show": "Показать",
   "Search": "Поиск",
-  "TypeCommunityName": "Напишите название сообщества"
+  "TypeCommunityName": "Название сообщества",
+  "ShowSearchCommunity": "Показать поиск сообществ",
+  "HideSearchCommunity": "Скрыть поиск сообществ"
 }

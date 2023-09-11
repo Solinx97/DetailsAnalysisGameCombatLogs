@@ -1,4 +1,4 @@
-import { faArrowsRotate, faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
+import { faArrowsRotate, faEye, faEyeSlash, faMagnifyingGlassMinus, faMagnifyingGlassPlus } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useEffect, useState } from "react";
 import { useTranslation } from 'react-i18next';
@@ -8,11 +8,12 @@ import CommunityList from './CommunityList';
 import '../../../styles/communication/community/communities.scss';
 
 const Communities = () => {
-    const { t } = useTranslation("communication/community/Communities");
+    const { t } = useTranslation("communication/community/communities");
 
     const [showCommunities, setShowCommunities] = useState(false);
     const [filterContent, setFilterContent] = useState("");
     const [communities, setCommunities] = useState(null);
+    const [showSearchCommunity, setShowSearchCommunity] = useState(false);
 
     const [getCommunitiesAsync] = useLazyGetCommunitiesQuery();
 
@@ -40,6 +41,18 @@ const Communities = () => {
         <div className="communities__list">
             <div className="title">
                 <div className="content">
+                    {showSearchCommunity
+                        ? <FontAwesomeIcon
+                            icon={faMagnifyingGlassMinus}
+                            title={t("HideSearchCommunity")}
+                            onClick={() => setShowSearchCommunity(false)}
+                        />
+                        : <FontAwesomeIcon
+                            icon={faMagnifyingGlassPlus}
+                            title={t("ShowSearchCommunity")}
+                            onClick={() => setShowSearchCommunity(true)}
+                        />
+                    }
                     <FontAwesomeIcon
                         icon={faArrowsRotate}
                         title={t("Refresh")}
@@ -62,10 +75,12 @@ const Communities = () => {
             </div>
             {showCommunities &&
                 <>
-                    <div className="communities__search mb-3">
-                        <label htmlFor="inputSearchCommunity" className="form-label">{t("Search")}</label>
-                        <input type="text" className="form-control" id="inputSearchCommunity" placeholder={t("TypeCommunityName")} onChange={searchHandler} />
-                    </div>
+                    {showSearchCommunity &&
+                        <div className="communities__search mb-3">
+                            <label htmlFor="inputSearchCommunity" className="form-label">{t("Search")}</label>
+                            <input type="text" className="form-control" id="inputSearchCommunity" placeholder={t("TypeCommunityName")} onChange={searchHandler} />
+                        </div>
+                    }
                     <CommunityList
                         filterContent={filterContent}
                         communities={communities}

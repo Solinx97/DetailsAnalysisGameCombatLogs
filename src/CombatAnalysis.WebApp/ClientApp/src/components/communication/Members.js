@@ -33,6 +33,10 @@ const Members = ({ me, users, communityItem, removeUsersAsync, setShowMembers, i
         setSearchUsername(content);
     }
 
+    const clear = () => {
+        setSearchUsername("");
+    }
+
     return (
         <div className={`people-inspection${isPopup ? "__popup" : "__window"}`}>
             <div className="title">
@@ -61,10 +65,11 @@ const Members = ({ me, users, communityItem, removeUsersAsync, setShowMembers, i
             <div className={`mb-3 add-new-people__search${showSearchPeople ? "_active" : ""}`}>
                 <label htmlFor="inputUsername" className="form-label">{t("SearchPeople")}</label>
                 <div className="add-new-people__search-input">
-                    <input type="text" className="form-control" placeholder={t("TypeUsername")} id="inputUsername" onChange={handleSearchUsername} />
+                    <input type="text" className="form-control" placeholder={t("TypeUsername")} id="inputUsername" value={searchUsername} onChange={handleSearchUsername} />
                     <FontAwesomeIcon
                         icon={faXmark}
                         title={t("Clean")}
+                        onClick={clear}
                     />
                 </div>
             </div>
@@ -97,7 +102,7 @@ const Members = ({ me, users, communityItem, removeUsersAsync, setShowMembers, i
                 ))}
             </ul>
             <div className="item-result">
-                {canRemovePeople &&
+                {(canRemovePeople && showRemoveUser) &&
                     <input type="button" value={t("Accept")} className="btn btn-success" onClick={async () => await removeUsersAsync(peopleToRemove)} />
                 }
                 {isPopup &&

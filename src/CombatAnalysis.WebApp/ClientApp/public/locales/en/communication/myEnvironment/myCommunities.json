@@ -5,5 +5,7 @@
   "Hide": "Hide",
   "Show": "Show",
   "Search": "Search",
-  "TypeCommunityName": "Type community name"
+  "TypeCommunityName": "Сommunity name",
+  "ShowSearchCommunity": "Show search communities",
+  "HideSearchCommunity": "Hide search communities"
 }
