@@ -16,6 +16,8 @@ const InvitesToCommunityItem = ({ customer, inviteToCommunity }) => {
 
     const acceptRequestAsync = async () => {
         const newCommunityUser = {
+            id: " ",
+            username: customer?.username,
             communityId: community?.id,
             customerId: customer?.id
         };

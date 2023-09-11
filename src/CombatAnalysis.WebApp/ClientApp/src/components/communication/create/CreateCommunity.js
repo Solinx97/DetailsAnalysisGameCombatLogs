@@ -50,15 +50,17 @@ const CreateCommunity = () => {
     const createCommunityUserAsync = async (communityId) => {
         for (let i = 0; i < peopleToJoin.length; i++) {
             const newCommunityUser = {
-                communityId: communityId,
-                customerId: peopleToJoin[i].id
+                id: "",
+                username: peopleToJoin[i].username,
+                customerId: peopleToJoin[i].id,
+                communityId: communityId
             };
 
             await createCommunityUserAsyncMut(newCommunityUser);
         }
     }
 
-    const handleCreateNewGroupChatAsync = async () => {
+    const handleCreateNewCommunityAsync = async () => {
         await createCommunityAsync();
 
         navigate("/communities");
@@ -192,7 +194,7 @@ const CreateCommunity = () => {
                 </div>
                 <div className="finish-create">
                     <input type="button" value={t("Create")} className="btn btn-success"
-                        onClick={async () => await handleCreateNewGroupChatAsync()} disabled={!canFinishCreate} />
+                        onClick={async () => await handleCreateNewCommunityAsync()} disabled={!canFinishCreate} />
                     <input type="submit" value={t("Cancel")} className="btn btn-warning" onClick={() => navigate("/communities")} />
                 </div>
             </div>

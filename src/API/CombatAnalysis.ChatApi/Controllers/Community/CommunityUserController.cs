@@ -12,11 +12,11 @@ namespace CombatAnalysis.ChatApi.Controllers.Community;
 [Authorize]
 public class CommunityUserController : ControllerBase
 {
-    private readonly IService<CommunityUserDto, int> _service;
+    private readonly IService<CommunityUserDto, string> _service;
     private readonly IMapper _mapper;
     private readonly ILogger _logger;
 
-    public CommunityUserController(IService<CommunityUserDto, int> service, IMapper mapper, ILogger logger)
+    public CommunityUserController(IService<CommunityUserDto, string> service, IMapper mapper, ILogger logger)
     {
         _service = service;
         _mapper = mapper;
@@ -32,7 +32,7 @@ public class CommunityUserController : ControllerBase
     }
 
     [HttpGet("{id:int:min(1)}")]
-    public async Task<IActionResult> GetById(int id)
+    public async Task<IActionResult> GetById(string id)
     {
         var result = await _service.GetByIdAsync(id);
 
@@ -60,6 +60,8 @@ public class CommunityUserController : ControllerBase
     {
         try
         {
+            model.Id = Guid.NewGuid().ToString();
+
             var map = _mapper.Map<CommunityUserDto>(model);
             var result = await _service.CreateAsync(map);
 
@@ -92,7 +94,7 @@ public class CommunityUserController : ControllerBase
     }
 
     [HttpDelete("{id:int:min(1)}")]
-    public async Task<IActionResult> Delete(int id)
+    public async Task<IActionResult> Delete(string id)
     {
         try
         {

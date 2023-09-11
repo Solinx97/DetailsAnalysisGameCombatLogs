@@ -6,12 +6,12 @@ using CombatAnalysis.DAL.Interfaces;
 
 namespace CombatAnalysis.BL.Services.Community;
 
-internal class CommunityUserService : IService<CommunityUserDto, int>
+internal class CommunityUserService : IService<CommunityUserDto, string>
 {
-    private readonly IGenericRepository<CommunityUser, int> _repository;
+    private readonly IGenericRepository<CommunityUser, string> _repository;
     private readonly IMapper _mapper;
 
-    public CommunityUserService(IGenericRepository<CommunityUser, int> repository, IMapper mapper)
+    public CommunityUserService(IGenericRepository<CommunityUser, string> repository, IMapper mapper)
     {
         _repository = repository;
         _mapper = mapper;
@@ -27,7 +27,7 @@ internal class CommunityUserService : IService<CommunityUserDto, int>
         return CreateInternalAsync(item);
     }
 
-    public async Task<int> DeleteAsync(int id)
+    public async Task<int> DeleteAsync(string id)
     {
         var rowsAffected = await _repository.DeleteAsync(id);
 
@@ -42,7 +42,7 @@ internal class CommunityUserService : IService<CommunityUserDto, int>
         return result;
     }
 
-    public async Task<CommunityUserDto> GetByIdAsync(int id)
+    public async Task<CommunityUserDto> GetByIdAsync(string id)
     {
         var result = await _repository.GetByIdAsync(id);
         var resultMap = _mapper.Map<CommunityUserDto>(result);
@@ -70,6 +70,12 @@ internal class CommunityUserService : IService<CommunityUserDto, int>
 
     private async Task<CommunityUserDto> CreateInternalAsync(CommunityUserDto item)
     {
+        if (string.IsNullOrEmpty(item.Username))
+        {
+            throw new ArgumentNullException(nameof(CommunityUserDto),
+                $"The property {nameof(CommunityUserDto.Username)} of the {nameof(CommunityUserDto)} object can't be null or empty");
+        }
+
         var map = _mapper.Map<CommunityUser>(item);
         var createdItem = await _repository.CreateAsync(map);
         var resultMap = _mapper.Map<CommunityUserDto>(createdItem);
@@ -79,6 +85,12 @@ internal class CommunityUserService : IService<CommunityUserDto, int>
 
     private async Task<int> UpdateInternalAsync(CommunityUserDto item)
     {
+        if (string.IsNullOrEmpty(item.Username))
+        {
+            throw new ArgumentNullException(nameof(CommunityUserDto),
+                $"The property {nameof(CommunityUserDto.Username)} of the {nameof(CommunityUserDto)} object can't be null or empty");
+        }
+
         var map = _mapper.Map<CommunityUser>(item);
         var rowsAffected = await _repository.UpdateAsync(map);
 

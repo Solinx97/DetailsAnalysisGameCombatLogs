@@ -65,7 +65,7 @@ public static class DataCollectionExtensions
         services.AddScoped<IGenericRepository<CommunityDiscussion, int>, SQLRepository<CommunityDiscussion, int>>();
         services.AddScoped<IGenericRepository<CommunityDiscussionComment, int>, SQLRepository<CommunityDiscussionComment, int>>();
         services.AddScoped<IGenericRepository<CommunityPost, int>, SQLRepository<CommunityPost, int>>();
-        services.AddScoped<IGenericRepository<CommunityUser, int>, SQLRepository<CommunityUser, int>>();
+        services.AddScoped<IGenericRepository<CommunityUser, string>, SQLRepository<CommunityUser, string>>();
         services.AddScoped<IGenericRepository<InviteToCommunity, int>, SQLRepository<InviteToCommunity, int>>();
 
         var dataProcessingType = configuration.GetSection("Database:DataProcessingType").Value ?? string.Empty;

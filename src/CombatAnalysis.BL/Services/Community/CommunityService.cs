@@ -9,7 +9,7 @@ namespace CombatAnalysis.BL.Services.Community;
 internal class CommunityService : IService<CommunityDto, int>
 {
     private readonly IGenericRepository<DAL.Entities.Community.Community, int> _repository;
-    private readonly IService<CommunityUserDto, int> _communityUserService;
+    private readonly IService<CommunityUserDto, string> _communityUserService;
     private readonly IService<InviteToCommunityDto, int> _inviteToCommunityService;
     private readonly IService<CommunityPostDto, int> _communityPostService;
     private readonly IService<PostDto, int> _postService;
@@ -17,7 +17,7 @@ internal class CommunityService : IService<CommunityDto, int>
     private readonly IMapper _mapper;
 
     public CommunityService(IGenericRepository<DAL.Entities.Community.Community, int> communityRepository, ISqlContextService sqlContextService,
-        IService<InviteToCommunityDto, int> inviteToCommunityService, IService<CommunityUserDto, int> communityUserService,
+        IService<InviteToCommunityDto, int> inviteToCommunityService, IService<CommunityUserDto, string> communityUserService,
         IService<CommunityPostDto, int> communityPostService, IService<PostDto, int> postService,
         IMapper mapper)
     {

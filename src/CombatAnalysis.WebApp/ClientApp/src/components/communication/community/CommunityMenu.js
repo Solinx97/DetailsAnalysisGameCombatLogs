@@ -80,7 +80,7 @@ const CommunityMenu = ({ setShowMenu, customer, community }) => {
 
             const newInviteToCommunity = {
                 communityId: community.id,
-                toCustomerId: peopleIdToJoin[i],
+                toCustomerId: peopleIdToJoin[i].id,
                 when: new Date(),
                 customerId: customer?.id
             }

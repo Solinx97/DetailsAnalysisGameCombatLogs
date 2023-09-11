@@ -99,7 +99,8 @@ const GroupChat = ({ chat, me, setSelectedChat }) => {
     const createGroupChatUserAsync = async () => {
         for (let i = 0; i < peopleToJoin.length; i++) {
             const newGroupChatUser = {
-                id: "",
+                id: " ",
+                username: peopleToJoin[i].username,
                 customerId: peopleToJoin[i].id,
                 groupChatId: chat.id,
             };

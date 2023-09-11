@@ -12,6 +12,7 @@ const Members = ({ me, users, communityItem, removeUsersAsync, setShowMembers, i
     const [showRemoveUser, setShowRemoveUser] = useState(false);
     const [showSearchPeople, setShowSearchPeople] = useState(false);
     const [peopleToRemove, setPeopleToRemove] = useState([]);
+    const [searchUsername, setSearchUsername] = useState("");
 
     const handleShowRemoveUsers = () => {
         setShowRemoveUser((item) => !item);
@@ -26,6 +27,12 @@ const Members = ({ me, users, communityItem, removeUsersAsync, setShowMembers, i
         setShowRemoveUser(false);
     }
 
+    const handleSearchUsername = (event) => {
+        const content = event.target.value;
+
+        setSearchUsername(content);
+    }
+
     return (
         <div className={`people-inspection${isPopup ? "__popup" : "__window"}`}>
             <div className="title">
@@ -33,10 +40,12 @@ const Members = ({ me, users, communityItem, removeUsersAsync, setShowMembers, i
                     ? <FontAwesomeIcon
                         icon={faMagnifyingGlassMinus}
                         title={t("HideSearchPeople")}
+                        onClick={() => setShowSearchPeople(false)}
                     />
                     : <FontAwesomeIcon
                         icon={faMagnifyingGlassPlus}
                         title={t("ShowSearchPeople")}
+                        onClick={() => setShowSearchPeople(true)}
                     />
                 }
                 <div>{t("Members")}</div>
@@ -52,7 +61,7 @@ const Members = ({ me, users, communityItem, removeUsersAsync, setShowMembers, i
             <div className={`mb-3 add-new-people__search${showSearchPeople ? "_active" : ""}`}>
                 <label htmlFor="inputUsername" className="form-label">{t("SearchPeople")}</label>
                 <div className="add-new-people__search-input">
-                    <input type="text" className="form-control" placeholder={t("TypeUsername")} id="inputUsername"/>
+                    <input type="text" className="form-control" placeholder={t("TypeUsername")} id="inputUsername" onChange={handleSearchUsername} />
                     <FontAwesomeIcon
                         icon={faXmark}
                         title={t("Clean")}
@@ -61,19 +70,31 @@ const Members = ({ me, users, communityItem, removeUsersAsync, setShowMembers, i
             </div>
             <div className="divide"></div>
             <ul className="list">
-                {users?.map((item) => (
-                    <li className="user-target-community" key={item.id}>
-                        <MembersItem
-                            me={me}
-                            user={item}
-                            communityItem={communityItem}
-                            peopleToRemove={peopleToRemove}
-                            setPeopleToRemove={setPeopleToRemove}
-                            showRemoveUser={showRemoveUser}
-                        />
-                    </li>
-                ))
-                }
+                {searchUsername === ""
+                    ? users?.map((item) => (
+                        <li className="user-target-community" key={item.id}>
+                            <MembersItem
+                                me={me}
+                                user={item}
+                                communityItem={communityItem}
+                                peopleToRemove={peopleToRemove}
+                                setPeopleToRemove={setPeopleToRemove}
+                                showRemoveUser={showRemoveUser}
+                            />
+                        </li>
+                    ))
+                    : users?.filter(x => x.username.toLowerCase().startsWith(searchUsername.toLowerCase())).map((item) => (
+                        <li className="user-target-community" key={item.id}>
+                            <MembersItem
+                                me={me}
+                                user={item}
+                                communityItem={communityItem}
+                                peopleToRemove={peopleToRemove}
+                                setPeopleToRemove={setPeopleToRemove}
+                                showRemoveUser={showRemoveUser}
+                            />
+                        </li>
+                ))}
             </ul>
             <div className="item-result">
                 {canRemovePeople &&

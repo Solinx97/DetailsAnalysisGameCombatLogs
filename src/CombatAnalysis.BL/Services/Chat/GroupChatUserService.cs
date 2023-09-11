@@ -70,6 +70,12 @@ internal class GroupChatUserService : IService<GroupChatUserDto, string>
 
     private async Task<GroupChatUserDto> CreateInternalAsync(GroupChatUserDto item)
     {
+        if (string.IsNullOrEmpty(item.Username))
+        {
+            throw new ArgumentNullException(nameof(GroupChatUserDto),
+                $"The property {nameof(GroupChatUserDto.Username)} of the {nameof(GroupChatUserDto)} object can't be null or empty");
+        }
+
         var map = _mapper.Map<GroupChatUser>(item);
         var createdItem = await _repository.CreateAsync(map);
         var resultMap = _mapper.Map<GroupChatUserDto>(createdItem);
@@ -79,6 +85,12 @@ internal class GroupChatUserService : IService<GroupChatUserDto, string>
 
     private async Task<int> UpdateInternalAsync(GroupChatUserDto item)
     {
+        if (string.IsNullOrEmpty(item.Username))
+        {
+            throw new ArgumentNullException(nameof(GroupChatUserDto),
+                $"The property {nameof(GroupChatUserDto.Username)} of the {nameof(GroupChatUserDto)} object can't be null or empty");
+        }
+
         var map = _mapper.Map<GroupChatUser>(item);
         var rowsAffected = await _repository.UpdateAsync(map);
 
