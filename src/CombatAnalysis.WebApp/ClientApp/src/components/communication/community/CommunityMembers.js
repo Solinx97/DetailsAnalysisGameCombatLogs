@@ -135,7 +135,9 @@ const CommunityMembers = ({ community, customer }) => {
                     ))
                 }
             </ul>
-            <input type="button" value={t("AllMembers")} className="btn btn-outline-success all-people" onClick={handleShowAllPeopleAsync} />
+            {communityUsers?.length >= defaultMaxPeople &&
+                <input type="button" value={t("AllMembers")} className="btn btn-outline-success all-people" onClick={handleShowAllPeopleAsync} />
+            }
             {showAddPeople &&
                 <div className="add-people-to-community">
                     <AddPeople

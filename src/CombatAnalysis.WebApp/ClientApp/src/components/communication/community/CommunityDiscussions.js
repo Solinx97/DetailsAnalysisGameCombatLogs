@@ -61,7 +61,9 @@ const CommunityDiscussions = ({ community, customer, setShowDiscussion, setDiscu
                     ))
                 }
             </ul>
-            <input type="button" value={t("AllDiscussions")} className="btn btn-outline-success all-discussion" onClick={handleShowAllDiscussionsAsync} />
+            {discussions?.length >= defaultMaxDiscussions &&
+                <input type="button" value={t("AllDiscussions")} className="btn btn-outline-success all-discussion" onClick={handleShowAllDiscussionsAsync} />
+            }
             {showCreateDiscussion &&
                 <CreateDiscussion
                     community={community}
