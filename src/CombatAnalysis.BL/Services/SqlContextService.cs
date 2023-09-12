@@ -28,6 +28,13 @@ internal class SqlContextService : ISqlContextService
 
     public async Task<IDbContextTransaction> UseTransactionAsync()
     {
-        return await _context.Database.UseTransactionAsync(_transaction.GetDbTransaction());
+        if (_transaction == null)
+        {
+            return await _context.Database.BeginTransactionAsync();
+        }
+        else
+        {
+            return await _context.Database.UseTransactionAsync(_transaction.GetDbTransaction());
+        }
     }
 }

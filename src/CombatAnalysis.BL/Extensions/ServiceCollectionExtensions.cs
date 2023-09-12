@@ -29,7 +29,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IService<GroupChatMessageDto, int>, GroupChatMessageService>();
         services.AddScoped<IService<UnreadGroupChatMessageDto, int>, UnreadGroupChatMessageService>();
         services.AddScoped<IService<GroupChatMessageCountDto, int>, GroupChatMessageCountService>();
-        services.AddScoped<IService<GroupChatUserDto, string>, GroupChatUserService>();
+        services.AddScoped<IServiceTransaction<GroupChatUserDto, string>, GroupChatUserService>();
 
         services.AddScoped<IService<CommunityDto, int>, CommunityService>();
         services.AddScoped<IService<CommunityDiscussionDto, int>, CommunityDiscussionService>();

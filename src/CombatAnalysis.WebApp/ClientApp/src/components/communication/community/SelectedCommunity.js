@@ -255,6 +255,7 @@ const SelectedCommunity = () => {
                     setShowMenu={setShowMenu}
                     customer={customer}
                     community={community}
+                    setCommunity={setCommunity}
                 />
             }
         </div>

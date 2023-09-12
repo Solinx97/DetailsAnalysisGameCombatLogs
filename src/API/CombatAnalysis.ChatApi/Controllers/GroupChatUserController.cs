@@ -12,11 +12,11 @@ namespace CombatAnalysis.ChatApi.Controllers;
 [Authorize]
 public class GroupChatUserController : ControllerBase
 {
-    private readonly IService<GroupChatUserDto, string> _service;
+    private readonly IServiceTransaction<GroupChatUserDto, string> _service;
     private readonly IMapper _mapper;
     private readonly ILogger _logger;
 
-    public GroupChatUserController(IService<GroupChatUserDto, string> service, IMapper mapper, ILogger logger)
+    public GroupChatUserController(IServiceTransaction<GroupChatUserDto, string> service, IMapper mapper, ILogger logger)
     {
         _service = service;
         _mapper = mapper;

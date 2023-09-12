@@ -6,7 +6,7 @@ public class GroupChatMessageCountDto
 
     public int Count { get; set; }
 
-    public string CustomerId { get; set; }
+    public string GroupChatUserId { get; set; }
 
     public int GroupChatId { get; set; }
 }

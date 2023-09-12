@@ -12,6 +12,7 @@ internal class CommunityService : IService<CommunityDto, int>
     private readonly IService<CommunityUserDto, string> _communityUserService;
     private readonly IService<InviteToCommunityDto, int> _inviteToCommunityService;
     private readonly IService<CommunityPostDto, int> _communityPostService;
+    private readonly IService<CommunityDiscussionDto, int> _communityDiscussionService;
     private readonly IService<PostDto, int> _postService;
     private readonly ISqlContextService _sqlContextService;
     private readonly IMapper _mapper;
@@ -19,7 +20,7 @@ internal class CommunityService : IService<CommunityDto, int>
     public CommunityService(IGenericRepository<DAL.Entities.Community.Community, int> communityRepository, ISqlContextService sqlContextService,
         IService<InviteToCommunityDto, int> inviteToCommunityService, IService<CommunityUserDto, string> communityUserService,
         IService<CommunityPostDto, int> communityPostService, IService<PostDto, int> postService,
-        IMapper mapper)
+        IService<CommunityDiscussionDto, int> communityDiscussionService, IMapper mapper)
     {
         _repository = communityRepository;
         _sqlContextService = sqlContextService;
@@ -27,6 +28,7 @@ internal class CommunityService : IService<CommunityDto, int>
         _communityUserService = communityUserService;
         _communityPostService = communityPostService;
         _postService = postService;
+        _communityDiscussionService = communityDiscussionService;
         _mapper = mapper;
     }
 
@@ -46,9 +48,11 @@ internal class CommunityService : IService<CommunityDto, int>
         try
         {
             await DeletePostsAsync(id);
-            await DeleteCommunityUsersAsync(id);
-            await DeleteInvitesToCommunityAsync(id);
             await DeleteCommunityPostsAsync(id);
+            await DeleteCommunityDiscussionsAsync(id);
+            await DeleteInvitesToCommunityAsync(id);
+            await DeleteCommunityUsersAsync(id);
+
             transaction.CreateSavepoint("BeforeDeleteCommunity");
 
             var rowsAffected = await _repository.DeleteAsync(id);
@@ -144,32 +148,6 @@ internal class CommunityService : IService<CommunityDto, int>
         return rowsAffected;
     }
 
-    private async Task DeleteCommunityUsersAsync(int communityId)
-    {
-        var communityUsers = await _communityUserService.GetByParamAsync(nameof(CommunityUserDto.CommunityId), communityId);
-        foreach (var item in communityUsers)
-        {
-            var rowsAffected = await _communityUserService.DeleteAsync(item.Id);
-            if (rowsAffected == 0)
-            {
-                throw new ArgumentException("Community user didn't removed");
-            }
-        }
-    }
-
-    private async Task DeleteInvitesToCommunityAsync(int communityId)
-    {
-        var invitesToCommunity = await _inviteToCommunityService.GetByParamAsync(nameof(InviteToCommunityDto.CommunityId), communityId);
-        foreach (var item in invitesToCommunity)
-        {
-            var rowsAffected = await _inviteToCommunityService.DeleteAsync(item.Id);
-            if (rowsAffected == 0)
-            {
-                throw new ArgumentException("Invite to community didn't removed");
-            }
-        }
-    }
-
     private async Task DeletePostsAsync(int communityId)
     {
         var communityPosts = await _communityPostService.GetByParamAsync(nameof(CommunityPostDto.CommunityId), communityId);
@@ -192,6 +170,45 @@ internal class CommunityService : IService<CommunityDto, int>
             if (rowsAffected == 0)
             {
                 throw new ArgumentException("Community post didn't removed");
+            }
+        }
+    }
+
+    private async Task DeleteCommunityDiscussionsAsync(int communityId)
+    {
+        var communityDiscussions = await _communityDiscussionService.GetByParamAsync(nameof(CommunityDiscussionDto.CommunityId), communityId);
+        foreach (var item in communityDiscussions)
+        {
+            var rowsAffected = await _communityDiscussionService.DeleteAsync(item.Id);
+            if (rowsAffected == 0)
+            {
+                throw new ArgumentException("Community discussion didn't removed");
+            }
+        }
+    }
+
+    private async Task DeleteInvitesToCommunityAsync(int communityId)
+    {
+        var invitesToCommunity = await _inviteToCommunityService.GetByParamAsync(nameof(InviteToCommunityDto.CommunityId), communityId);
+        foreach (var item in invitesToCommunity)
+        {
+            var rowsAffected = await _inviteToCommunityService.DeleteAsync(item.Id);
+            if (rowsAffected == 0)
+            {
+                throw new ArgumentException("Invite to community didn't removed");
+            }
+        }
+    }
+
+    private async Task DeleteCommunityUsersAsync(int communityId)
+    {
+        var communityUsers = await _communityUserService.GetByParamAsync(nameof(CommunityUserDto.CommunityId), communityId);
+        foreach (var item in communityUsers)
+        {
+            var rowsAffected = await _communityUserService.DeleteAsync(item.Id);
+            if (rowsAffected == 0)
+            {
+                throw new ArgumentException("Community user didn't removed");
             }
         }
     }

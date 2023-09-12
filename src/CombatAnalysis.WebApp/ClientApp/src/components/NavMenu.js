@@ -11,8 +11,6 @@ import { updateUser } from '../store/slicers/UserSlice';
 
 import '../styles/navMenu.scss';
 
-const pageWithoutAuth = ["/", "/login", "/registration", "/main-information", "/general-analysis", "/details-specifical-combat", "/combat-general-details"];
-
 const NavMenu = () => {
     const dispatch = useDispatch();
     const customer = useSelector((state) => state.customer.value);
@@ -28,8 +26,6 @@ const NavMenu = () => {
 
     const [languageName, setLanguageName] = useState("English");
     const [collapsed, setCollapsed] = useState(true);
-
-    const pathName = window.location.pathname;
 
     useEffect(() => {
         switch (i18n.language) {
@@ -52,10 +48,6 @@ const NavMenu = () => {
     }, [])
 
     const checkAuthAsync = async () => {
-        if (pageWithoutAuth.includes(pathName)) {
-            return;
-        }
-
         const auth = await getAuthAsync();
         if (auth.error !== undefined) {
             dispatch(updateCustomer(null));
@@ -81,8 +73,10 @@ const NavMenu = () => {
     }
 
     const logoutAsync = async () => {
-        const res = await logoutAsyncMut();
-        res.data !== undefined && navigate('/');
+        dispatch(updateCustomer(null));
+        navigate("/");
+
+        await logoutAsyncMut();
     }
 
     const toggleNavbar = () => {

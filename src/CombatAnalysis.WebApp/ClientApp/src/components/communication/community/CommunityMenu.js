@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { useSearchByCommunityIdAsyncQuery } from '../../../store/api/ChatApi';
-import { useRemoveCommunityAsyncMutation } from '../../../store/api/communication/community/Community.api';
+import { useRemoveCommunityAsyncMutation, useUpdateCommunityAsyncMutation } from '../../../store/api/communication/community/Community.api';
 import { useLazySearchByUserIdAsyncQuery, useRemoveCommunityUserAsyncMutation } from '../../../store/api/communication/community/CommunityUser.api';
 import { useCreateInviteAsyncMutation, useLazyInviteIsExistQuery } from '../../../store/api/communication/community/InviteToCommunity.api';
 import AddPeople from '../../AddPeople';
@@ -18,14 +18,14 @@ import '../../../styles/communication/community/communityMenu.scss';
 const successNotificationTimeout = 2000;
 const failedNotificationTimeout = 2000;
 
-const CommunityMenu = ({ setShowMenu, customer, community }) => {
+const CommunityMenu = ({ setShowMenu, customer, community, setCommunity }) => {
     const { t } = useTranslation("communication/community/communityMenu");
 
     const navigate = useNavigate();
 
     const [itemIndex, seItemIndex] = useState(0);
-    const [chatName, setChatName] = useState("");
-    const [chatShortName, setChatShortName] = useState("");
+    const [communityName, setCommunityName] = useState(community?.name);
+    const [communityDescription, setCommunityDescription] = useState(community?.description);
     const [showLeaveFromCommunity, setShowLeaveFromCommunity] = useState(false);
     const [peopleIdToJoin, setPeopleIdToJoin] = useState([]);
     const [showInvitesSuccess, setShowInvitesSuccess] = useState(false);
@@ -36,6 +36,7 @@ const CommunityMenu = ({ setShowMenu, customer, community }) => {
     const [removeCommunityUserAsync] = useRemoveCommunityUserAsyncMutation();
     const [createInviteAsyncMut] = useCreateInviteAsyncMutation();
     const [isInviteExistAsync] = useLazyInviteIsExistQuery();
+    const [updateCommunityAsyncMut] = useUpdateCommunityAsyncMutation();
     const { data: communityUsers, isLoading } = useSearchByCommunityIdAsyncQuery(community?.id);
 
     const leaveFromCommunityAsync = async () => {
@@ -50,6 +51,17 @@ const CommunityMenu = ({ setShowMenu, customer, community }) => {
         const deletedItemCount = await removeCommunityAsync(community.id);
         if (deletedItemCount.data !== undefined) {
             navigate('/communities');
+        }
+    }
+
+    const updateCommunityAsync = async () => {
+        const communityForUpdate = Object.assign({}, community);
+        communityForUpdate.name = communityName;
+        communityForUpdate.description = communityDescription;
+
+        const updated = await updateCommunityAsyncMut(communityForUpdate);
+        if (updated.data !== undefined) {
+            setCommunity(communityForUpdate);
         }
     }
 
@@ -194,18 +206,19 @@ const CommunityMenu = ({ setShowMenu, customer, community }) => {
                     {itemIndex === 0 &&
                         <>
                             <CommonItem
-                                chatName={chatName}
-                                setChatName={setChatName}
-                                chatShortName={chatShortName}
-                                setChatShortName={setChatShortName}
+                                name={communityName}
+                                setName={setCommunityName}
+                                description={communityDescription}
+                                setDescription={setCommunityDescription}
+                                useDescription={true}
                                 connector={
                                     <ItemConnector
                                         connectorType={0}
                                     />
                                 }
-                        />
+                            />
                             <div className="actions">
-                                <input type="submit" value={t("Update")} className="btn btn-success" />
+                                <input type="button" value={t("Update")} className="btn btn-success" onClick={async () => await updateCommunityAsync()} />
                             </div>
                         </>
                     }

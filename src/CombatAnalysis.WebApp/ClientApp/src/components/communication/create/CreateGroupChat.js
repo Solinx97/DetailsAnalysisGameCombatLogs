@@ -73,10 +73,10 @@ const CreateGroupChat = () => {
         await createGroupChatRulesMutAsync(groupChatRules);
     }
 
-    const createGroupChatCountAsync = async (chatId, customerId) => {
+    const createGroupChatCountAsync = async (chatId, groupChatUserId) => {
         const newMessagesCount = {
             count: 0,
-            customerId: customerId,
+            groupChatUserId: groupChatUserId,
             groupChatId: +chatId,
         };
 
@@ -94,11 +94,13 @@ const CreateGroupChat = () => {
             };
 
             const createdGroupChatUser = await createGroupChatUserMutAsync(newGroupChatUser);
-            if (createdGroupChatUser.data !== undefined && peopleToJoin[i].id !== customer?.id) {
-                await createGroupChatCountAsync(groupChatId, peopleToJoin[i].id);
+            if (createdGroupChatUser.data !== undefined) {
+                await createGroupChatCountAsync(groupChatId, createdGroupChatUser.data.id);
 
-                const systemMessage = `'${customer?.username}' added '${peopleToJoin[i].username}' to chat`;
-                await createMessageAsync(groupChatId, systemMessage);
+                if (peopleToJoin[i].id !== customer?.id) {
+                    const systemMessage = `'${customer?.username}' added '${peopleToJoin[i].username}' to chat`;
+                    await createMessageAsync(groupChatId, systemMessage);
+                }
             }
         }
     }

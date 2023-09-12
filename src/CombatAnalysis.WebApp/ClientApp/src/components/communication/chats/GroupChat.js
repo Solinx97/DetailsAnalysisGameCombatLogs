@@ -5,8 +5,8 @@ import { useTranslation } from 'react-i18next';
 import { useFindGroupChatMessageByChatIdQuery } from '../../../store/api/ChatApi';
 import { useUpdateGroupChatAsyncMutation } from '../../../store/api/communication/chats/GroupChat.api';
 import {
-    useCreateGroupChatMessageCountAsyncMutation, useFindGroupChatMessageCountQuery,
-    useLazyFindGroupChatMessageCountQuery, useUpdateGroupChatMessageCountAsyncMutation
+    useCreateGroupChatMessageCountAsyncMutation, useLazyFindGroupChatMessageCountQuery,
+    useUpdateGroupChatMessageCountAsyncMutation
 } from '../../../store/api/communication/chats/GroupChatMessagCount.api';
 import {
     useCreateGroupChatMessageAsyncMutation, useRemoveGroupChatMessageAsyncMutation,
@@ -42,6 +42,7 @@ const GroupChat = ({ chat, me, setSelectedChat }) => {
     const [groupChatUsersId, setGroupChatUsersId] = useState([]);
     const [userInformation, setUserInformation] = useState(null);
     const [editNameOn, setEditNameOn] = useState(false);
+    const [myMessagesCount, setMyMessagesCount] = useState(null);
 
     const messageInput = useRef(null);
     const chatNameInput = useRef(null);
@@ -62,7 +63,7 @@ const GroupChat = ({ chat, me, setSelectedChat }) => {
     const [createUnreadGroupChatMessageAsyncMut] = useCreateUnreadGroupChatMessageAsyncMutation();
     const [removeUnreadGroupChatMessageAsyncMut] = useRemoveUnreadGroupChatMessageAsyncMutation();
     const [findUnreadGroupChatMessageQ] = useLazyFindUnreadGroupChatMessageQuery();
-    const { data: myMessagesCount, isLoading: myMessagesCountLoading } = useFindGroupChatMessageCountQuery({ chatId: chat?.id, userId: me?.id });
+    const [getMyMessageCountAsync] = useLazyFindGroupChatMessageCountQuery();
 
     useEffect(() => {
         if (groupChatUsers === undefined) {
@@ -76,6 +77,21 @@ const GroupChat = ({ chat, me, setSelectedChat }) => {
 
         setGroupChatUsersId(customersId);
     }, [groupChatUsers])
+
+    useEffect(() => {
+        if (meInChat === undefined) {
+            return;
+        }
+
+        const getMyMessageCount = async () => {
+            const countObject = await getMyMessageCountAsync({ chatId: chat?.id, userId: meInChat?.id });
+            if (countObject.data !== undefined) {
+                setMyMessagesCount(countObject.data);
+            }
+        }
+
+        getMyMessageCount();
+    }, [meInChat])
 
     const sendMessageAsync = async () => {
         if (messageInput.current.value.length === 0) {
@@ -107,7 +123,7 @@ const GroupChat = ({ chat, me, setSelectedChat }) => {
 
             const created = await createGroupChatUserMutAsync(newGroupChatUser);
             if (created.data !== undefined) {
-                await createGroupChatCountAsync(chat.id, peopleToJoin[i].id);
+                await createGroupChatCountAsync(chat.id, created.data.id);
 
                 const systemMessage = `'${me?.username}' added '${peopleToJoin[i].username}' to chat`;
                 await createMessageAsync(systemMessage, messageType["system"]);
@@ -121,7 +137,7 @@ const GroupChat = ({ chat, me, setSelectedChat }) => {
     const createGroupChatCountAsync = async (chatId, customerId) => {
         const newMessagesCount = {
             count: 0,
-            customerId: customerId,
+            groupChatUserId: customerId,
             groupChatId: +chatId,
         };
 
@@ -180,11 +196,13 @@ const GroupChat = ({ chat, me, setSelectedChat }) => {
                 continue;
             }
 
-            const messagesCount = await getMessagesCount({ chatId: chat?.id, userId: groupChatUsers[i].customerId });
-            const newMessagesCount = Object.assign({}, messagesCount.data);
-            newMessagesCount.count = newMessagesCount.count + count;
+            const messagesCount = await getMessagesCount({ chatId: chat?.id, userId: groupChatUsers[i].id });
+            if (messagesCount.data !== undefined) {
+                const newMessagesCount = Object.assign({}, messagesCount.data);
+                newMessagesCount.count = newMessagesCount.count + count;
 
-            await updateGroupChatMessageCountMut(newMessagesCount);
+                await updateGroupChatMessageCountMut(newMessagesCount);
+            }
         }
     }
 
@@ -229,8 +247,7 @@ const GroupChat = ({ chat, me, setSelectedChat }) => {
         }
     }
 
-    if (isLoading || usersIsLoading
-        || myUsersIsLoading || myMessagesCountLoading) {
+    if (isLoading || usersIsLoading || myUsersIsLoading) {
         return <></>;
     }
 
