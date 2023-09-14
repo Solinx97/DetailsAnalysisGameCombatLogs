@@ -2,15 +2,18 @@ import { UserApi } from "./UserApi";
 
 export const CustomerApi = UserApi.injectEndpoints({
     endpoints: builder => ({
+        getCustomerById: builder.query({
+            query: (id) => `/Customer/${id}`,
+        }),
+        checkIfCustomerExist: builder.query({
+            query: (username) => `/Customer/checkIfCustomerExist/${username}`
+        }),
         createAsync: builder.mutation({
             query: customer => ({
                 body: customer,
                 url: '/Customer',
                 method: 'POST'
             })
-        }),
-        getCustomerById: builder.query({
-            query: (id) => `/Customer/${id}`,
         }),
         editCustomerAsync: builder.mutation({
             query: customer => ({
@@ -27,8 +30,9 @@ export const CustomerApi = UserApi.injectEndpoints({
 })
 
 export const {
-    useCreateAsyncMutation,
     useGetCustomerByIdQuery,
+    useLazyCheckIfCustomerExistQuery,
+    useCreateAsyncMutation,
     useLazyGetCustomerByIdQuery,
     useEditCustomerAsyncMutation,
     useLazySearchByUserIdAsyncQuery

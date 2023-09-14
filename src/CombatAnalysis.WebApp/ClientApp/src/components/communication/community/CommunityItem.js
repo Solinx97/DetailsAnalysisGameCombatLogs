@@ -1,11 +1,30 @@
 import { useTranslation } from 'react-i18next';
 import { NavLink } from 'react-router-dom';
 import { useGetCommunityByIdQuery } from '../../../store/api/communication/community/Community.api';
+import { useCreateCommunityUserAsyncMutation } from '../../../store/api/communication/community/CommunityUser.api';
+import { useNavigate } from 'react-router-dom';
 
-const CommunityItem = ({ id }) => {
+const CommunityItem = ({ id, me }) => {
     const { t } = useTranslation("communication/community/Communities");
 
+    const navigate = useNavigate();
+
     const { data: community, isLoading } = useGetCommunityByIdQuery(id);
+    const [createCommunityUserAsyncMut] = useCreateCommunityUserAsyncMutation();
+
+    const createCommunityUserAsync = async () => {
+        const newCommunityUser = {
+            id: "",
+            username: me?.username,
+            customerId: me?.id,
+            communityId: id
+        };
+
+        const createdUser = await createCommunityUserAsyncMut(newCommunityUser);
+        if (createdUser.data !== undefined) {
+            navigate(`/community?id=${id}`);
+        }
+    }
 
     if (isLoading) {
         return <></>;
@@ -25,6 +44,7 @@ const CommunityItem = ({ id }) => {
                     </NavLink>
                     <NavLink
                         className="card-link"
+                        onClick={async () => await createCommunityUserAsync()}
                     >
                         {t("Join")}
                     </NavLink>

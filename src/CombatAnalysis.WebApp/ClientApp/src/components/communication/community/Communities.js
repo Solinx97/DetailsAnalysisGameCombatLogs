@@ -7,10 +7,10 @@ import CommunityList from './CommunityList';
 
 import '../../../styles/communication/community/communities.scss';
 
-const Communities = () => {
+const Communities = ({ showCommunitiesAtStart = false }) => {
     const { t } = useTranslation("communication/community/communities");
 
-    const [showCommunities, setShowCommunities] = useState(false);
+    const [showCommunities, setShowCommunities] = useState(showCommunitiesAtStart);
     const [filterContent, setFilterContent] = useState("");
     const [communities, setCommunities] = useState(null);
     const [showSearchCommunity, setShowSearchCommunity] = useState(false);

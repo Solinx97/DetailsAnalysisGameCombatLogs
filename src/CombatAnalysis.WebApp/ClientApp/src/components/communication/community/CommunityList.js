@@ -12,6 +12,10 @@ const CommunityList = ({ filterContent, communities }) => {
     }
 
     const anotherCommunity = (community) => {
+        if (customer == null) {
+            return true;
+        }
+
         return userCommunities?.filter(userCommunity => userCommunity.communityId === community.id).length === 0
             || userCommunities?.length === 0;
     }
@@ -23,6 +27,7 @@ const CommunityList = ({ filterContent, communities }) => {
                     <li key={item.id} className="community">
                         <CommunityItem
                             id={item.id}
+                            me={customer}
                         />
                     </li>
                 ))

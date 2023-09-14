@@ -1,110 +1,114 @@
-﻿import React, { useRef, useState } from 'react';
-import { useTranslation } from 'react-i18next';
+﻿import React, { useState } from 'react';
+import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { useRegistrationAsyncMutation } from '../../store/api/Account.api';
 import { useCreateAsyncMutation } from '../../store/api/Customer.api';
+import { updateCustomer } from '../../store/slicers/CustomerSlice';
+import { updateUser } from '../../store/slicers/UserSlice';
+import ConfidentialRegistrationStep from './ConfidentialRegistrationStep';
+import GeneralRegistrationStep from './GeneralRegistrationStep';
+import SourcesRegistrationStep from './SourcesRegistrationStep';
 
 import "../../styles/account/registration.scss";
 
 const Registration = () => {
-    const { t } = useTranslation("account/registration");
-
     const [registrationMutAsync] = useRegistrationAsyncMutation();
     const [createCustomerMutAsync] = useCreateAsyncMutation();
 
     const navigate = useNavigate();
+    const dispatch = useDispatch();
 
-    const [email, setEmail] = useState("");
-    const [username, setUsername] = useState("");
-    const [password, setPassword] = useState("");
-    const [showErrorMessage, setShowErrorMessage] = useState(false);
+    const [step, setStep] = useState(0);
+    const [user, setUser] = useState({
+        id: " ",
+        email: "",
+        phoneNumber: "",
+        birthday: new Date(),
+        password: ""
+    });
+    const [customer, setCustomer] = useState({
+        id: " ",
+        message: " ",
+        username: "",
+        aboutMe: " ",
+        firstName: "",
+        lastName: "",
+        gender: 0,
+        appUserId: ""
+    });
 
-    const dontLogout = useRef(null);
+    const updateConfidentialInformation = (email, phoneNumber, birthday, password) => {
+        const updateUser = user;
+
+        updateUser.email = email;
+        updateUser.phoneNumber = phoneNumber;
+        updateUser.birthday = birthday;
+        updateUser.password = password;
+
+        setUser(updateUser);
+    }
+
+    const updateGeneralInformation = (username, aboutMe, firstName, lastName, gender) => {
+        const updateCustomer = customer;
+
+        updateCustomer.username = username;
+        updateCustomer.aboutMe = aboutMe;
+        updateCustomer.firstName = firstName;
+        updateCustomer.lastName = lastName;
+        updateCustomer.gender = +gender;
+
+        setCustomer(updateCustomer);
+    }
 
     const registrationAsync = async () => {
-        setShowErrorMessage(false);
-
-        const data = {
-            email: email,
-            password: password
-        };
-
-        try {
-            const createdUser = await registrationMutAsync(data);
-            if (createdUser.error !== undefined) {
-                return;
-            }
-
-            await createCustomerAsync(createdUser.data);
-        } catch (SyntaxError) {
-            setShowErrorMessage(true);
+        const createdUser = await registrationMutAsync(user);
+        if (createdUser.error !== undefined) {
+            return;
         }
+
+        dispatch(updateUser(createdUser.data));
+
+        await createCustomerAsync(createdUser.data.id);
     }
 
-    const createCustomerAsync = async (accountData) => {
-        const data = {
-            id: " ",
-            message: " ",
-            username: username,
-            aboutMe: " ",
-            firstName: " ",
-            lastName: " ",
-            gender: 1,
-            appUserId: accountData.id
-        };
+    const createCustomerAsync = async (userId) => {
+        customer.appUserId = userId;
 
-        const createdCustomer = await createCustomerMutAsync(data);
-        if (createdCustomer.data !== undefined) {
-            navigate('/');
+        const createdCustomer = await createCustomerMutAsync(customer);
+        if (createdCustomer.error !== undefined) {
+            return;
         }
+
+        dispatch(updateCustomer(createdCustomer.data));
+
+        navigate("/");
     }
 
-    const handleEmailChange = (event) => {
-        setEmail(event.target.value);
+    switch (step) {
+        case 0:
+            return <ConfidentialRegistrationStep
+                setStep={setStep}
+                user={user}
+                updateConfidentialInformation={updateConfidentialInformation}
+            />;
+        case 1:
+            return <GeneralRegistrationStep
+                setStep={setStep}
+                customer={customer}
+                updateGeneralInformation={updateGeneralInformation}
+                registrationAsync={registrationAsync}
+            />;
+        case 2:
+            return <SourcesRegistrationStep
+                setStep={setStep}
+                registrationAsync={registrationAsync}
+            />
+        default:
+            return <ConfidentialRegistrationStep
+                setStep={setStep}
+                updateConfidentialInformation={updateConfidentialInformation}
+            />;
     }
-
-    const handleUsernameChange = (event) => {
-        setUsername(event.target.value);
-    }
-
-    const handlePasswordChange = (event) => {
-        setPassword(event.target.value);
-    }
-
-    const handleSubmitAsync = async (event) => {
-        document.cookie = `dontLogout=${dontLogout.current.checked}`;
-
-        event.preventDefault();
-
-        await registrationAsync();
-    }
-
-    const render = () => {
-        return (
-            <form className="registration" onSubmit={handleSubmitAsync}>
-                <div className="mb-3">
-                    <label htmlFor="inputEmail" className="form-label">{t("Email")}</label>
-                    <input type="email" className="form-control" id="inputEmail" aria-describedby="emailHelp" onChange={handleEmailChange} />
-                </div>
-                <div className="mb-3">
-                    <label htmlFor="inputUsername" className="form-label">{t("Username")}</label>
-                    <input type="text" className="form-control" id="inputUsername" onChange={handleUsernameChange} />
-                </div>
-                <div className="mb-3">
-                    <label htmlFor="inputPassword" className="form-label">{t("Password")}</label>
-                    <input type="password" className="form-control" id="inputPassword" onChange={handlePasswordChange} />
-                </div>
-                <div className="form-check">
-                    <label className="form-check-label" htmlFor="invalidCheck">{t("RememberMe")}</label>
-                    <input className="form-check-input" type="checkbox" id="invalidCheck" ref={dontLogout} />
-                </div>
-                <input type="submit" className="btn btn-primary" value={t("Registration")} />
-                <div className="registration__error-message" style={{ display: showErrorMessage ? "flex" : "none" }}>{t("EmailExist")}</div>
-            </form>
-        );
-    }
-
-    return render();
 }
 
 export default Registration;

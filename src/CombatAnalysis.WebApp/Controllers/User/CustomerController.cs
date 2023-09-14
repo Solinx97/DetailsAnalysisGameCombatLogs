@@ -135,4 +135,18 @@ public class CustomerController : ControllerBase
 
         return BadRequest();
     }
+
+    [HttpGet("checkIfCustomerExist/{username}")]
+    public async Task<IActionResult> CheckIfCustomerExist(string username)
+    {
+        var responseMessage = await _httpClient.GetAsync($"Customer/checkIfCustomerExist/{username}", Port.UserApi);
+        if (responseMessage.IsSuccessStatusCode)
+        {
+            var customerIsExist = await responseMessage.Content.ReadFromJsonAsync<bool>();
+
+            return Ok(customerIsExist);
+        }
+
+        return BadRequest();
+    }
 }

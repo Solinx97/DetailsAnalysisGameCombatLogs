@@ -14,7 +14,7 @@ const authenticationMiddleware = (store) => (next) => (action) => {
     if (!pageWithoutAuth.includes(pathName) && isRejectedWithValue(action)) {
         if (action.payload.status === statusCode["notAuthorized"]) {
             store.dispatch(updateCustomer(null));
-            window.location.href = unautorizedRedirectTo;
+            window.location.href = unautorizedRedirectTo + "?shouldBeAuthorize";
         }
     }
 

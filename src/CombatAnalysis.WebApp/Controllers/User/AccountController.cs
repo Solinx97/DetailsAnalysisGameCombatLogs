@@ -49,7 +49,7 @@ public class AccountController : ControllerBase
     public async Task<IActionResult> Register(RegisterModel model)
     {
         var responseMessage = await _httpClient.PostAsync("Account/registration", JsonContent.Create(model), Port.UserApi);
-        if (responseMessage.StatusCode != System.Net.HttpStatusCode.OK)
+        if (!responseMessage.IsSuccessStatusCode)
         {
             return BadRequest();
         }
@@ -121,6 +121,20 @@ public class AccountController : ControllerBase
             var user = await responseMessage.Content.ReadFromJsonAsync<AppUserModel>();
             
             return Ok(user);
+        }
+
+        return BadRequest();
+    }
+
+    [HttpGet("checkIfUserExist/{email}")]
+    public async Task<IActionResult> CheckIfUserExist(string email)
+    {
+        var responseMessage = await _httpClient.GetAsync($"Account/checkIfUserExist/{email}", Port.UserApi);
+        if (responseMessage.IsSuccessStatusCode)
+        {
+            var userIsExist = await responseMessage.Content.ReadFromJsonAsync<bool>();
+
+            return Ok(userIsExist);
         }
 
         return BadRequest();

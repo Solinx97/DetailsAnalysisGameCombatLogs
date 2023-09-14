@@ -43,17 +43,8 @@ public class CommunityController : ControllerBase
     [HttpGet]
     public async Task<IActionResult> GetAll()
     {
-        if (!HttpContext.Request.Cookies.TryGetValue("refreshToken", out var refreshToken))
-        {
-            return Unauthorized();
-        }
-
-        var responseMessage = await _httpClient.GetAsync("Community", refreshToken, Port.ChatApi);
-        if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
-        {
-            return Unauthorized();
-        }
-        else if (responseMessage.IsSuccessStatusCode)
+        var responseMessage = await _httpClient.GetAsync("Community", Port.ChatApi);
+        if (responseMessage.IsSuccessStatusCode)
         {
             var communities = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<CommunityModel>>();
 
@@ -66,17 +57,8 @@ public class CommunityController : ControllerBase
     [HttpGet("{id:int:min(1)}")]
     public async Task<IActionResult> GetById(int id)
     {
-        if (!HttpContext.Request.Cookies.TryGetValue("refreshToken", out var refreshToken))
-        {
-            return Unauthorized();
-        }
-
-        var responseMessage = await _httpClient.GetAsync($"Community/{id}", refreshToken, Port.ChatApi);
-        if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
-        {
-            return Unauthorized();
-        }
-        else if (responseMessage.IsSuccessStatusCode)
+        var responseMessage = await _httpClient.GetAsync($"Community/{id}", Port.ChatApi);
+        if (responseMessage.IsSuccessStatusCode)
         {
             var community = await responseMessage.Content.ReadFromJsonAsync<CommunityModel>();
 

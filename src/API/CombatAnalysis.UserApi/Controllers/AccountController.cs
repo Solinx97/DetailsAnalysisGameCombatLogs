@@ -52,10 +52,10 @@ public class AccountController : ControllerBase
             var user = await _service.GetAsync(model.Email);
             if (user != null)
             {
-                return Ok();
+                return BadRequest();
             }
 
-            var newUser = new AppUserModel { Id = Guid.NewGuid().ToString(), Email = model.Email, Password = model.Password, PhoneNumber = string.Empty, Birthday = DateTimeOffset.Now };
+            var newUser = new AppUserModel { Id = Guid.NewGuid().ToString(), Email = model.Email, Password = model.Password, PhoneNumber = model.PhoneNumber, Birthday = model.Birthday };
             var map = _mapper.Map<AppUserDto>(newUser);
             await _service.CreateAsync(map);
 
@@ -134,13 +134,22 @@ public class AccountController : ControllerBase
         try
         {
             var user = await _service.GetAsync(email);
-            if (user == null)
-            {
-                return NotFound();
-                
-            }
-
             return Ok(user);
+        }
+        catch (Exception)
+        {
+            return BadRequest();
+        }
+    }
+
+    [HttpGet("checkIfUserExist/{email}")]
+    [AllowAnonymous]
+    public async Task<IActionResult> CheckIfUserExist(string email)
+    {
+        try
+        {
+            var user = await _service.GetAsync(email);
+            return Ok(user != null);
         }
         catch (Exception)
         {

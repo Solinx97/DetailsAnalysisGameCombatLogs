@@ -5,6 +5,9 @@ export const AccountApi = UserApi.injectEndpoints({
         getUserById: builder.query({
             query: (id) => `/Account/${id}`
         }),
+        checkIfUserExist: builder.query({
+            query: (email) => `/Account/checkIfUserExist/${email}`
+        }),
         loginAsync: builder.mutation({
             query: user => ({
                 body: user,
@@ -34,12 +37,13 @@ export const AccountApi = UserApi.injectEndpoints({
                 method: 'POST'
             }),
             invalidatesTags: (result, error) => [{ type: 'Authentication', result }],
-        })
+        }),
     })
 })
 
 export const {
     useGetUserByIdQuery,
+    useLazyCheckIfUserExistQuery,
     useLazyGetUserByIdQuery,
     useLoginAsyncMutation,
     useRegistrationAsyncMutation,

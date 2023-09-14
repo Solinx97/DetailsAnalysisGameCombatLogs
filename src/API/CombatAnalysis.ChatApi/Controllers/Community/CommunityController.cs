@@ -24,6 +24,7 @@ public class CommunityController : ControllerBase
     }
 
     [HttpGet]
+    [AllowAnonymous]
     public async Task<IActionResult> GetAll()
     {
         var result = await _service.GetAllAsync();
@@ -32,6 +33,7 @@ public class CommunityController : ControllerBase
     }
 
     [HttpGet("{id:int:min(1)}")]
+    [AllowAnonymous]
     public async Task<IActionResult> GetById(int id)
     {
         var result = await _service.GetByIdAsync(id);
