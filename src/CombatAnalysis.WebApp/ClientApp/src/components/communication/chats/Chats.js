@@ -3,6 +3,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
+import { NavLink } from 'react-router-dom';
 import { useFindGroupChatUserByUserIdQuery } from '../../../store/api/communication/chats/GroupChatUser.api';
 import { useGetByUserIdAsyncQuery } from '../../../store/api/communication/chats/PersonalChat.api';
 import Communication from '../Communication';
@@ -114,7 +115,9 @@ const Chats = () => {
                         </ul>
                     </div>
                     {(selectedPersonalChat === null && selectedGroupChat === null)
-                        ? <div className="select-chat">{t("SelectChat")}</div>
+                        ? <div className="select-chat">
+                            {t("SelectChat")} <NavLink to="/chats/create">{t("Create")}</NavLink> {t("NewChat")}
+                        </div>
                         : selectedGroupChat !== null
                             ? <GroupChat
                                 chat={Object.assign({}, selectedGroupChat)}

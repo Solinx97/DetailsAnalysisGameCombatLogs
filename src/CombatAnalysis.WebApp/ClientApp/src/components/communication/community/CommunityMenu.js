@@ -40,8 +40,14 @@ const CommunityMenu = ({ setShowMenu, customer, community, setCommunity }) => {
     const { data: communityUsers, isLoading } = useSearchByCommunityIdAsyncQuery(community?.id);
 
     const leaveFromCommunityAsync = async () => {
-        const myCommunityUserId = await searchByUserIdAsync(customer.id);
-        const deletedItemCount = await removeCommunityUserAsync(myCommunityUserId);
+        const myCommunityUserId = await searchByUserIdAsync(customer?.id);
+        if (myCommunityUserId.error !== undefined) {
+            return;
+        }
+
+        const meInCommunity = myCommunityUserId.data.filter(x => x.communityId === community?.id)[0];
+
+        const deletedItemCount = await removeCommunityUserAsync(meInCommunity.id);
         if (deletedItemCount.data !== undefined) {
             navigate('/communities');
         }
@@ -130,21 +136,21 @@ const CommunityMenu = ({ setShowMenu, customer, community, setCommunity }) => {
         <div className="communication__content community-menu">
             {showLeaveFromCommunity &&
                 <div className="leave-from-community">
-                    <div>{t("LeaveAlert")}</div>
+                    <div className="leave-from-community__title">{t("LeaveAlert")}</div>
                     <div>
-                        <div>{t("LeaveConfirm")} <strong>'{community.name}'</strong>?</div>
+                        <div>{t("LeaveConfirm")}?</div>
                     </div>
                     {customer.id === community.customerId
                         ? <>
                             <div className="alert alert-danger" role="alert">
                                 {t("LeaveOwnerConfirm")}
                             </div>
-                            <div>
+                            <div className="actions">
                                 <button className="btn btn-outline-danger" onClick={async () => await ownerLeaveFromCommunityAsync()}>{t("Leave")}</button>
                                 <button className="btn btn-outline-success" onClick={() => setShowLeaveFromCommunity((item) => !item)}>{t("Cancel")}</button>
                             </div>
                         </>
-                        : <div>
+                        : <div className="actions">
                             <button className="btn btn-outline-danger" onClick={async () => await leaveFromCommunityAsync()}>{t("Leave")}</button>
                             <button className="btn btn-outline-success" onClick={() => setShowLeaveFromCommunity((item) => !item)}>{t("Cancel")}</button>
                         </div>
@@ -189,15 +195,17 @@ const CommunityMenu = ({ setShowMenu, customer, community, setCommunity }) => {
                         }
                         <div>{t("Permisions")}</div>
                     </li>
-                    <li className="menu-item" onClick={() => changeMenuItem(4)}>
-                        {itemIndex === 4 &&
-                            <FontAwesomeIcon
-                                className="menu-item__passed"
-                                icon={faCircleCheck}
-                            />
-                        }
-                        <div>{t("Rules")}</div>
-                    </li>
+                    {community?.customerId === customer?.id &&
+                        <li className="menu-item" onClick={() => changeMenuItem(4)}>
+                            {itemIndex === 4 &&
+                                <FontAwesomeIcon
+                                    className="menu-item__passed"
+                                    icon={faCircleCheck}
+                                />
+                            }
+                            <div>{t("Rules")}</div>
+                        </li>
+                    }
                     <li className="menu-item-leave">
                         <button className="btn btn-outline-danger" onClick={() => setShowLeaveFromCommunity((item) => !item)}>{t("Leave")}</button>
                     </li>

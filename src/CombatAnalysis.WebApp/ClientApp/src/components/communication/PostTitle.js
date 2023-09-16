@@ -1,20 +1,16 @@
-import { faTrash, faWindowRestore } from '@fortawesome/free-solid-svg-icons';
+import { faTrash } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useGetCustomerByIdQuery } from '../../store/api/Customer.api';
-import UserInformation from './UserInformation';
+import User from './User';
 
 const PostTitle = ({ post, dateFormatting, deletePostAsync }) => {
     const { t } = useTranslation("communication/postTitle");
 
     const { data: targetCustomer, isLoading } = useGetCustomerByIdQuery(post?.customerId);
 
-    const [showPostOwner, setShowPostOwner] = useState(false);
-
-    const switchPostOwnerInformation = () => {
-        setShowPostOwner((item) => !item);
-    }
+    const [userInformation, setUserInformation] = useState(null);
 
     if (isLoading) {
         return <></>;
@@ -23,15 +19,14 @@ const PostTitle = ({ post, dateFormatting, deletePostAsync }) => {
     return (
         <>
             <li className="posts__title list-group-item">
-                <div className="posts__title_username">
-                    <div>{targetCustomer?.username}</div>
-                    <FontAwesomeIcon
-                        icon={faWindowRestore}
-                        title={t("ShowUserDetails")}
-                        onClick={switchPostOwnerInformation}
+                <div className="posts__title-username">
+                    <User
+                        targetCustomerId={targetCustomer?.id}
+                        setUserInformation={setUserInformation}
+                        allowRemoveFriend={false}
                     />
                 </div>
-                <div className="posts__title_details">
+                <div className="posts__title-details">
                     <div>{dateFormatting(post?.when)}</div>
                     <FontAwesomeIcon
                         icon={faTrash}
@@ -40,11 +35,8 @@ const PostTitle = ({ post, dateFormatting, deletePostAsync }) => {
                     />
                 </div>
             </li>
-            {showPostOwner &&
-                <UserInformation
-                    customer={targetCustomer}
-                    closeUserInformation={() =>setShowPostOwner((item) => !item)}
-                />
+            {userInformation !== null &&
+                <div className="community-user-information">{userInformation}</div>
             }
         </>
     );

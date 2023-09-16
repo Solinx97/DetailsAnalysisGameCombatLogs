@@ -8,8 +8,12 @@ const FeedParticipants = ({ customer }) => {
     const [peopleId, setPeopleId] = useState([customer?.id]);
 
     useEffect(() => {
-        !isLoading && getPeopleId();
-    }, [isLoading])
+        if (friends === undefined) {
+            return;
+        }
+
+        getPeopleId();
+    }, [friends])
 
     const getPeopleId = () => {
         const friendsId = [];

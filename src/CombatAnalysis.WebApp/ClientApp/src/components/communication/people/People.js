@@ -7,6 +7,8 @@ import PeopleItem from './PeopleItem';
 
 import '../../../styles/communication/people/people.scss';
 
+const peopleInterval = 5000;
+
 const People = () => {
     const { t } = useTranslation("communication/people/people");
 
@@ -14,6 +16,7 @@ const People = () => {
     const [menuItem, setMenuItem] = useState(7);
 
     const { people, isLoading } = useGetCustomersQuery(undefined, {
+        pollingInterval: peopleInterval,
         selectFromResult: ({ data }) => ({
             people: data !== undefined ? data.filter((item) => item.id !== me?.id) : []
         }),

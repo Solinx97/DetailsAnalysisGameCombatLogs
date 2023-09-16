@@ -43,19 +43,28 @@
         justify-content: space-between;
     }
 
-    &__title {
-        &_username, &_details {
-            display: flex;
-            flex-direction: row;
-            align-items: center;
+    &__title-username, &__title-details {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
 
-            svg {
-                margin: 0 10px;
-            }
+        svg {
+            margin: 0 10px;
+        }
 
-            svg:hover {
-                cursor: pointer;
-                transform: scale(1.1);
+        svg:hover {
+            cursor: pointer;
+            transform: scale(1.1);
+        }
+    }
+
+    &__title-username {
+        .special-user {
+            &__another {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                gap: 5px;
             }
         }
     }

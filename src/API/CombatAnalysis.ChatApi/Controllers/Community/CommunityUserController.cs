@@ -31,7 +31,7 @@ public class CommunityUserController : ControllerBase
         return Ok(result);
     }
 
-    [HttpGet("{id:int:min(1)}")]
+    [HttpGet("{id}")]
     public async Task<IActionResult> GetById(string id)
     {
         var result = await _service.GetByIdAsync(id);
@@ -93,7 +93,7 @@ public class CommunityUserController : ControllerBase
         }
     }
 
-    [HttpDelete("{id:int:min(1)}")]
+    [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(string id)
     {
         try

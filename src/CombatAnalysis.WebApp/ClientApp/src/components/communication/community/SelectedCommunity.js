@@ -20,6 +20,7 @@ const SelectedCommunity = () => {
 
     const customer = useSelector((state) => state.customer.value);
 
+    const [isCommunityMember, setIsCommunityMember] = useState(false);
     const [showDescription, setShowDescription] = useState(true);
     const [showCreatePost, setShowCreatePost] = useState(false);
     const [showMenu, setShowMenu] = useState(false);
@@ -160,11 +161,13 @@ const SelectedCommunity = () => {
                                     </div>
                                 }
                             </div>
-                            <FontAwesomeIcon
-                                icon={faBars}
-                                title={t("Menu")}
-                                onClick={() => setShowMenu((item) => !item)}
-                            />
+                            {isCommunityMember &&
+                                <FontAwesomeIcon
+                                    icon={faBars}
+                                    title={t("Menu")}
+                                    onClick={() => setShowMenu((item) => !item)}
+                                />
+                            }
                         </div>
                     </div>
                     <div className="description">
@@ -215,18 +218,20 @@ const SelectedCommunity = () => {
                         />
                     }
                     <div>
-                        <div className="create-post">
-                            <div>
-                                <div className="create-post__tool" style={{ display: !showCreatePost ? "flex" : "none" }}>
-                                    <button type="button" className="btn btn-outline-info" onClick={() => setShowCreatePost((item) => !item)}>{t("NewPost")}</button>
+                        {isCommunityMember &&
+                            <div className="create-post">
+                                <div>
+                                    <div className="create-post__tool" style={{ display: !showCreatePost ? "flex" : "none" }}>
+                                        <button type="button" className="btn btn-outline-info" onClick={() => setShowCreatePost((item) => !item)}>{t("NewPost")}</button>
+                                    </div>
+                                    <div style={{ display: showCreatePost ? "flex" : "none" }} className="create-post__create-tool">
+                                        <button type="button" className="btn btn-outline-warning" onClick={() => setShowCreatePost((item) => !item)}>{t("Cancel")}</button>
+                                        <button type="button" className="btn btn-outline-success" onClick={async () => await createPostAsync()}>{t("Create")}</button>
+                                    </div>
                                 </div>
-                                <div style={{ display: showCreatePost ? "flex" : "none" }} className="create-post__create-tool">
-                                    <button type="button" className="btn btn-outline-warning" onClick={() => setShowCreatePost((item) => !item)}>{t("Cancel")}</button>
-                                    <button type="button" className="btn btn-outline-success" onClick={async () => await createPostAsync()}>{t("Create")}</button>
-                                </div>
+                                <textarea rows="5" cols="100" ref={postContentRef} style={{ display: showCreatePost ? "flex" : "none" }} />
                             </div>
-                            <textarea rows="5" cols="100" ref={postContentRef} style={{ display: showCreatePost ? "flex" : "none" }} />
-                        </div>
+                        }
                         <SelectedCommunityItem
                             customer={customer}
                             communityId={communityId}
@@ -238,6 +243,7 @@ const SelectedCommunity = () => {
                         <CommunityMembers
                             community={community}
                             customer={customer}
+                            setIsCommunityMember={setIsCommunityMember}
                         />
                     </li>
                     <li>
@@ -246,6 +252,7 @@ const SelectedCommunity = () => {
                             customer={customer}
                             setShowDiscussion={setShowDiscussion}
                             setDiscussion={setDiscussion}
+                            isCommunityMember={isCommunityMember}
                         />
                     </li>
                 </ul>

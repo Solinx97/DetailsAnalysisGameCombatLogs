@@ -1,12 +1,12 @@
-import { faCircleXmark, faCommentDots, faSquarePlus, faUserPlus } from '@fortawesome/free-solid-svg-icons';
+import { faCircleXmark, faCommentDots, faPersonCircleQuestion, faSquarePlus, faUserPlus } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { memo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { NavLink, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+import { useFriendSearchByUserIdQuery } from '../../store/api/UserApi';
 import { useCreatePersonalChatAsyncMutation, useLazyIsExistAsyncQuery } from '../../store/api/communication/chats/PersonalChat.api';
 import { useCreatePersonalChatMessageCountAsyncMutation } from '../../store/api/communication/chats/PersonalChatMessagCount.api';
 import { useCreateRequestAsyncMutation, useLazyRequestIsExistQuery } from '../../store/api/communication/myEnvironment/RequestToConnect.api';
-import { useFriendSearchByUserIdQuery } from '../../store/api/UserApi';
 import PeopleInvitesToCommunity from './people/PeopleInvitesToCommunity';
 
 import './../../styles/communication/userInformation.scss';
@@ -196,8 +196,13 @@ const UserInformation = ({ me, people, closeUserInformation }) => {
                         />
                     </li>
                 </ul>
-                <div className="details">
-                    <NavLink  to={`/user?id=${people.id}`}>{t("MoreDetails")}</NavLink>
+                <div className="details" onClick={() => navigate(`/user?id=${people.id}`)}>
+                    <div className="details__content">
+                        <FontAwesomeIcon
+                            icon={faPersonCircleQuestion}
+                        />
+                        <div>{t("MoreDetails")}</div>
+                    </div>
                 </div>
             </div>
             {openInviteToCommunity &&

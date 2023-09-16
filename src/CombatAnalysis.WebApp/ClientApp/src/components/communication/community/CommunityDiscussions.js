@@ -10,7 +10,7 @@ import '../../../styles/communication/community/discussion.scss';
 
 const defaultMaxDiscussions = 5;
 
-const CommunityDiscussions = ({ community, customer, setShowDiscussion, setDiscussion }) => {
+const CommunityDiscussions = ({ community, customer, setShowDiscussion, setDiscussion, isCommunityMember }) => {
     const { t } = useTranslation("communication/community/discussion");
 
     const [showCreateDiscussion, setShowCreateDiscussion] = useState(false);
@@ -46,13 +46,15 @@ const CommunityDiscussions = ({ community, customer, setShowDiscussion, setDiscu
             <div className="discussion__title">
                 <div className="actions">
                     <div>{t("Discussion")}</div>
-                    <div className="tool">
-                        <FontAwesomeIcon
-                            icon={faPlus}
-                            title={t("CreateDiscussion")}
-                            onClick={() => setShowCreateDiscussion((item) => !item) }
-                        />
-                    </div>
+                    {isCommunityMember &&
+                        <div className="tool">
+                            <FontAwesomeIcon
+                                icon={faPlus}
+                                title={t("CreateDiscussion")}
+                                onClick={() => setShowCreateDiscussion((item) => !item)}
+                            />
+                        </div>
+                    }
                 </div>
             </div>
             <ul className="discussion__content">

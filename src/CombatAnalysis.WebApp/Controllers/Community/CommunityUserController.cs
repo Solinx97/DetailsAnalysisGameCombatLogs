@@ -17,8 +17,8 @@ public class CommunityUserController : ControllerBase
         _httpClient = httpClient;
     }
 
-    [HttpGet("{id:int:min(1)}")]
-    public async Task<IActionResult> GetById(int id)
+    [HttpGet("{id}")]
+    public async Task<IActionResult> GetById(string id)
     {
         if (!HttpContext.Request.Cookies.TryGetValue("refreshToken", out var refreshToken))
         {
@@ -130,8 +130,8 @@ public class CommunityUserController : ControllerBase
         return BadRequest();
     }
 
-    [HttpDelete("{id:int:min(1)}")]
-    public async Task<IActionResult> Delete(int id)
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> Delete(string id)
     {
         if (!HttpContext.Request.Cookies.TryGetValue("refreshToken", out var refreshToken))
         {

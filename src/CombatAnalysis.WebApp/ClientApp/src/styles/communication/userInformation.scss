@@ -2,7 +2,6 @@
     position: absolute;
     display: flex;
     flex-direction: column;
-    margin: 20px 0;
     z-index: 10;
 
     .alert-success, .alert-warning {
@@ -33,7 +32,18 @@
             display: flex;
             justify-content: center;
             width: 100%;
-            margin: 5px 0;
+            margin-bottom: 10px;
+
+            &__content {
+                display: flex;
+                align-items: center;
+                gap: 15px;
+                padding: 5px 10px;
+                border: 2px solid gray;
+                border-radius: 15px;
+                box-shadow: 3px 3px 3px 3px gray;
+                cursor: pointer;
+            }
         }
     }
 

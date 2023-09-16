@@ -1,6 +1,6 @@
 import { faPlus, faRectangleXmark } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { memo, useState } from 'react';
+import { memo, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLazySearchByCommunityIdAsyncQuery, useSearchByCommunityIdAsyncQuery } from '../../../store/api/ChatApi';
 import { useRemoveCommunityUserAsyncMutation } from '../../../store/api/communication/community/CommunityUser.api';
@@ -11,7 +11,7 @@ import CommunityMemberItem from './CommunityMemberItem';
 
 const defaultMaxPeople = 5;
 
-const CommunityMembers = ({ community, customer }) => {
+const CommunityMembers = ({ community, customer, setIsCommunityMember }) => {
     const { t } = useTranslation("communication/community/communityMembers");
 
     let communityUsersId = [];
@@ -40,6 +40,14 @@ const CommunityMembers = ({ community, customer }) => {
     const [getAllCommunityUsersAsync] = useLazySearchByCommunityIdAsyncQuery();
     const [isInviteExistAsync] = useLazyInviteIsExistQuery();
     const [removeCommunityUserAsync] = useRemoveCommunityUserAsyncMutation();
+
+    useEffect(() => {
+        if (communityUsersId.length === 0) {
+            return;
+        }
+
+        setIsCommunityMember(communityUsersId.includes(customer?.id));
+    }, [communityUsersId])
 
     const checkIfRequestExistAsync = async (peopleId, communityId) => {
         const arg = {
@@ -117,11 +125,13 @@ const CommunityMembers = ({ community, customer }) => {
                                 onClick={handleShowAllPeopleAsync}
                             />
                         }
-                        <FontAwesomeIcon
-                            icon={faPlus}
-                            title={t("AddNewPeople")}
-                            onClick={clearListOfInvites}
-                        />
+                        {communityUsersId.includes(customer?.id) &&
+                            <FontAwesomeIcon
+                                icon={faPlus}
+                                title={t("AddNewPeople")}
+                                onClick={clearListOfInvites}
+                            />
+                        }
                     </div>
                 </div>
             </div>

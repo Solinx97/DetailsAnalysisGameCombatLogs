@@ -4,5 +4,7 @@
   "HideChats": "Скрыть чаты",
   "CreateNewGroupChat": "Создать новый групповой чат",
   "PersonalChats": "Личные сообщения",
-  "SelectChat": "Выберите чат"
+  "SelectChat": "Выберите чат или",
+  "Create": "создайте",
+  "NewChat": "новый чат"
 }

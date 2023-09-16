@@ -1,9 +1,13 @@
+import { faCommentDots } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useTranslation } from 'react-i18next';
-import { NavLink } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useGetCommunityByIdQuery } from '../../../store/api/communication/community/Community.api';
 
 const MyCommunitiesItem = ({ userCommunity, filterContent }) => {
     const { t } = useTranslation("communication/myEnvironment/myCommunitiesItem");
+
+    const navigate = useNavigate();
 
     const { data: myCommunity, isLoading } = useGetCommunityByIdQuery(userCommunity?.communityId);
 
@@ -18,7 +22,14 @@ const MyCommunitiesItem = ({ userCommunity, filterContent }) => {
                 <div className="card-body">
                     <h5 className="card-title">{myCommunity?.name}</h5>
                     <p className="card-text">{myCommunity?.description}</p>
-                    <NavLink className="card-link" to={`/community?id=${myCommunity?.id}`}>{t("Open")}</NavLink>
+                    <div className="open-community">
+                        <div className="open-community__content" onClick={() => navigate(`/community?id=${myCommunity?.id}`)}>
+                        <FontAwesomeIcon
+                            icon={faCommentDots}
+                            />
+                            <div>{t("Open")}</div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

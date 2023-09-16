@@ -44,7 +44,7 @@ const Home = () => {
             {shouldBeAuthorize &&
                 <div className="should-be-authorize">
                     <div className="alert alert-success" role="alert">
-                        You need <NavLink to="/login">Login</NavLink> in application to continue use "Communication"
+                        {t("YouNeed")} <NavLink to="/login">{t("Login")}</NavLink> {t("InApp")}
                     </div>
                 </div>
             }

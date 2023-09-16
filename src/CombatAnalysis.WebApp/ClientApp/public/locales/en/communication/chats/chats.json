@@ -4,5 +4,7 @@
   "HideChats": "Hide chats",
   "CreateNewGroupChat": "Create new group chat",
   "PersonalChats": "Personal chats",
-  "SelectChat": "Select chat"
+  "SelectChat": "Select chat or",
+  "Create": "create",
+  "NewChat": "new chat"
 }

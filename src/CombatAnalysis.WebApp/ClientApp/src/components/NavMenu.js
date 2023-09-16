@@ -12,6 +12,8 @@ import { updateUser } from '../store/slicers/UserSlice';
 import '../styles/navMenu.scss';
 
 const NavMenu = () => {
+    const { t, i18n } = useTranslation("translate");
+
     const dispatch = useDispatch();
     const customer = useSelector((state) => state.customer.value);
 
@@ -22,7 +24,6 @@ const NavMenu = () => {
 
     const navigate = useNavigate();
 
-    const { t, i18n } = useTranslation("translate");
 
     const [languageName, setLanguageName] = useState("English");
     const [collapsed, setCollapsed] = useState(true);
