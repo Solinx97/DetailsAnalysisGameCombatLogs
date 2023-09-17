@@ -55,16 +55,15 @@ const PlayerInformation = ({ combatPlayers, combatId, combatLogId }) => {
     }
 
     return (
-        <ul className="combat-players__container">
-            {
-                combatPlayers?.map((item, index) => (
+        <ul>
+            {combatPlayers?.map((item, index) => (
                     <li key={item.id} className="card">
                         <div className="card-body">
                             <h5 className="card-title">{item.userName}</h5>
                         </div>
                         <div className="form-check form-switch">
-                            <input className="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckChecked" onChange={switchRadarChart(index)} />
-                            <label className="form-check-label" htmlFor="flexSwitchCheckChecked">{t("ShowStatistics")}</label>
+                            <input className="form-check-input" type="checkbox" role="switch" id={`flexSwitchCheckChecked-${index}`} onChange={switchRadarChart(index)} />
+                            <label className="form-check-label" htmlFor={`flexSwitchCheckChecked-${index}`}>{t("ShowStatistics")}</label>
                         </div>
                         {activeUserIndex === index &&
                             <RadarChart
@@ -95,8 +94,7 @@ const PlayerInformation = ({ combatPlayers, combatId, combatLogId }) => {
                             combatLogId={combatLogId}
                         />
                     </li>
-                ))
-            }
+                ))}
         </ul>
     );
 }

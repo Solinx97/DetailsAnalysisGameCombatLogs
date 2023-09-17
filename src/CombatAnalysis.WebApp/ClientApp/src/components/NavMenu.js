@@ -24,7 +24,6 @@ const NavMenu = () => {
 
     const navigate = useNavigate();
 
-
     const [languageName, setLanguageName] = useState("English");
     const [collapsed, setCollapsed] = useState(true);
 

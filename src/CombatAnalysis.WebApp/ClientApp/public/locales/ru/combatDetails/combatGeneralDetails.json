@@ -6,8 +6,7 @@
   "ResourcesRecovery": "Восстановлено ресурсов",
   "ShowDiagram": "Показать диаграмму",
   "DetailsInform": "Подробее",
-  "CommonInform": "Общая информация",
   "SelectPlayer": "Выбрать игрока",
-  "Player": "Игрок",
-  "Skills": "Заклинания"
+  "Skills": "Заклинания",
+  "CommonInform": "Общая информация"
 }

@@ -1,16 +1,16 @@
 ﻿import React, { memo } from 'react';
-import { faBolt, faBoxOpen, faCircleNodes, faHandFist, faPlusCircle, faShieldHalved } from '@fortawesome/free-solid-svg-icons';
+import { faBolt, faBookOpenReader, faCircleNodes, faHandFist, faPlusCircle, faShieldHalved } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 
 const CommonPlayerInform = ({ combatPlayer, combatId, combatLogId }) => {
-    const { t } = useTranslation("detailsPlayer");
+    const { t } = useTranslation("childs/playerInformation");
 
     const navigate = useNavigate();
 
     return (
-        <ul className="list-group list-group-flush">
+        <ul className="list-group list-group-flush player-information">
             <li className="list-group-item">
                 <FontAwesomeIcon
                     icon={faHandFist}
@@ -19,12 +19,13 @@ const CommonPlayerInform = ({ combatPlayer, combatId, combatLogId }) => {
                 />
                 <div>{combatPlayer.damageDone}</div>
                 {combatPlayer.damageDone > 0 &&
-                    <FontAwesomeIcon
-                        icon={faBoxOpen}
-                        className="list-group-item__details"
-                        onClick={() => navigate(`/combat-general-details?id=${combatPlayer.id}&detailsType=DamageDone&combatId=${combatId}&combatLogId=${combatLogId}`)}
-                        title={t("OpenDamageAnalyzing")}
-                    />
+                    <div className="btn-shadow" onClick={() => navigate(`/combat-general-details?id=${combatPlayer.id}&detailsType=DamageDone&combatId=${combatId}&combatLogId=${combatLogId}`)}
+                        title={t("OpenDamageAnalyzing")}>
+                        <FontAwesomeIcon
+                            icon={faBookOpenReader}
+                        />
+                        <div>{t("Damage")}</div>
+                    </div>
                 }
             </li>
             <li className="list-group-item">
@@ -35,12 +36,13 @@ const CommonPlayerInform = ({ combatPlayer, combatId, combatLogId }) => {
                 />
                 <div>{combatPlayer.healDone}</div>
                 {combatPlayer.healDone > 0 &&
-                    <FontAwesomeIcon
-                        icon={faBoxOpen}
-                        className="list-group-item__details"
-                    onClick={() => navigate(`/combat-general-details?id=${combatPlayer.id}&detailsType=HealDone&combatId=${combatId}&combatLogId=${combatLogId}`)}
-                        title={t("OpenHealingAnalyzing")}
-                    />
+                    <div className="btn-shadow" onClick={() => navigate(`/combat-general-details?id=${combatPlayer.id}&detailsType=HealDone&combatId=${combatId}&combatLogId=${combatLogId}`)}
+                        title={t("OpenHealingAnalyzing")}>
+                        <FontAwesomeIcon
+                            icon={faBookOpenReader}
+                        />
+                        <div>{t("Healing")}</div>
+                    </div>
                 }
             </li>
             <li className="list-group-item">
@@ -51,12 +53,13 @@ const CommonPlayerInform = ({ combatPlayer, combatId, combatLogId }) => {
                 />
                 <div>{combatPlayer.damageTaken}</div>
                 {combatPlayer.damageTaken > 0 &&
-                    <FontAwesomeIcon
-                        icon={faBoxOpen}
-                        className="list-group-item__details"
-                    onClick={() => navigate(`/combat-general-details?id=${combatPlayer.id}&detailsType=DamageTaken&combatId=${combatId}&combatLogId=${combatLogId}`)}
-                        title={t("OpenDamageTakenAnalyzing")}
-                    />
+                    <div className="btn-shadow" onClick={() => navigate(`/combat-general-details?id=${combatPlayer.id}&detailsType=DamageTaken&combatId=${combatId}&combatLogId=${combatLogId}`)}
+                        title={t("OpenDamageTakenAnalyzing")}>
+                        <FontAwesomeIcon
+                            icon={faBookOpenReader}
+                        />
+                        <div>{t("DamageTaken")}</div>
+                    </div>
                 }
             </li>
             <li className="list-group-item">
@@ -67,12 +70,13 @@ const CommonPlayerInform = ({ combatPlayer, combatId, combatLogId }) => {
                 />
                 <div>{combatPlayer.energyRecovery}</div>
                 {combatPlayer.energyRecovery > 0 &&
-                    <FontAwesomeIcon
-                        icon={faBoxOpen}
-                        className="list-group-item__details"
-                    onClick={() => navigate(`/combat-general-details?id=${combatPlayer.id}&detailsType=ResourceRecovery&combatId=${combatId}&combatLogId=${combatLogId}`)}
-                        title={t("OpenResourcesRecoveryAnalyzing")}
-                    />
+                    <div className="btn-shadow" onClick={() => navigate(`/combat-general-details?id=${combatPlayer.id}&detailsType=ResourceRecovery&combatId=${combatId}&combatLogId=${combatLogId}`)}
+                        title={t("OpenResourcesRecoveryAnalyzing")}>
+                        <FontAwesomeIcon
+                            icon={faBookOpenReader}
+                        />
+                        <div>{t("ResourcesRecovery")}</div>
+                    </div>
                 }
             </li>
             <li className="list-group-item">
@@ -83,12 +87,13 @@ const CommonPlayerInform = ({ combatPlayer, combatId, combatLogId }) => {
                 />
                 <div>{combatPlayer.usedBuffs}</div>
                 {combatPlayer.usedBuffs > 0 &&
-                    <FontAwesomeIcon
-                        icon={faBoxOpen}
-                        className="list-group-item__details"
-                        onClick={() => navigate(`/combat-general-details?id=${combatPlayer.id}`)}
-                        title={t("OpenBuffsAnalyzing")}
-                    />
+                    <div className="btn-shadow" onClick={() => navigate(`/combat-general-details?id=${combatPlayer.id}`)}
+                        title={t("OpenBuffsAnalyzing")}>
+                        <FontAwesomeIcon
+                            icon={faBookOpenReader}
+                        />
+                        <div>{t("Buffs")}</div>
+                    </div>
                 }
             </li>
         </ul>

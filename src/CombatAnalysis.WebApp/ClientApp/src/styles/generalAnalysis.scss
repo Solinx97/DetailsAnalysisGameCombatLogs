@@ -1,84 +1,96 @@
-.general-analysis__container {
-    .card {
-        width: 1000px;
-        box-shadow: 10px 10px gray;
-        margin: 25px;
+.general-analysis {
+    &__container {
+        .card {
+            width: 1000px;
+            box-shadow: 10px 10px gray;
+            margin: 25px;
 
-        .list-group-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            margin: 20px 10px 0 0;
-
-            div {
-                display: flex;
-                align-items: center;
-                width: auto;
-                height: 75px;
-            }
-
-            &__date {
+            .list-group-item {
                 display: flex;
                 flex-direction: column;
+                align-items: center;
+                margin: 20px 10px 0 0;
+
+                div {
+                    display: flex;
+                    align-items: center;
+                    width: auto;
+                    height: 75px;
+                }
+
+                &__date {
+                    display: flex;
+                    flex-direction: column;
+                }
+
+                svg {
+                    height: 20px;
+                }
+
+                &__damage-done {
+                    color: saddlebrown;
+                }
+
+                &__heal-done {
+                    color: green;
+                }
+
+                &__damage-taken {
+                    color: darkorange;
+                }
+
+                &__energy-recovery {
+                    color: yellowgreen;
+                }
+
+                &__death-number {
+                    color: red;
+                }
+
+                &__status {
+                    color: dimgray;
+                }
+
+                &__duration {
+                    color: cornflowerblue;
+                }
+
+                &__not-ready {
+                    color: lightcoral;
+                }
+
+
+                &__ready {
+                    color: green;
+                }
             }
 
-            svg {
-                height: 20px;
-            }
-
-            &__damage-done {
-                color: saddlebrown;
-            }
-
-            &__heal-done {
-                color: green;
-            }
-
-            &__damage-taken {
-                color: darkorange;
-            }
-
-            &__energy-recovery {
-                color: yellowgreen;
-            }
-
-            &__death-number {
-                color: red;
-            }
-
-            &__status {
-                color: dimgray;
-            }
-
-            &__date-icon {
-                color: mediumpurple;
-            }
-
-            &__duration {
-                color: cornflowerblue;
-            }
-
-            &__not-ready {
-                color: lightcoral;
-            }
-
-
-            &__ready {
-                color: green;
+            .list-group {
+                display: flex;
+                flex-direction: row;
             }
         }
 
-        .list-group {
+        .combats {
+            &__container {
+                .details {
+                    display: flex;
+                }
+            }
+        }
+
+        .information {
             display: flex;
-            flex-direction: row;
+            justify-content: space-around;
         }
     }
 
-    &_navigate {
+    &__navigate {
         display: flex;
+        gap: 25px;
 
-        div, h3 {
-            margin: 5px;
+        button {
+            font-size: 13px;
         }
     }
 }
@@ -87,15 +99,27 @@ ul {
     list-style-type: none;
 }
 
-.combats__container {
-    width: auto;
-}
-
 .combat-title {
     display: flex;
     flex-direction: row;
-    justify-content: center;
+    justify-content: space-between;
     align-items: center;
+
+    .status {
+        display: flex;
+        align-items: center;
+        border: 1px solid gray;
+        border-radius: 25px;
+        margin: 10px;
+
+        .lose {
+            color: darkorange;
+        }
+
+        .win {
+            color: green;
+        }
+    }
 
     svg {
         margin: 0 50px;

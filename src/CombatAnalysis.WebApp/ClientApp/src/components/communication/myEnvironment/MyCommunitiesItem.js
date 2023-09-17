@@ -23,9 +23,9 @@ const MyCommunitiesItem = ({ userCommunity, filterContent }) => {
                     <h5 className="card-title">{myCommunity?.name}</h5>
                     <p className="card-text">{myCommunity?.description}</p>
                     <div className="open-community">
-                        <div className="open-community__content" onClick={() => navigate(`/community?id=${myCommunity?.id}`)}>
-                        <FontAwesomeIcon
-                            icon={faCommentDots}
+                        <div className="btn-shadow" onClick={() => navigate(`/community?id=${myCommunity?.id}`)}>
+                            <FontAwesomeIcon
+                                icon={faCommentDots}
                             />
                             <div>{t("Open")}</div>
                         </div>

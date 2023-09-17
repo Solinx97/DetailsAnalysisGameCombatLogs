@@ -1,4 +1,4 @@
-import { faCircleQuestion, faCirclePlus } from '@fortawesome/free-solid-svg-icons';
+import { faCirclePlus, faCircleQuestion } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
@@ -39,7 +39,7 @@ const CommunityItem = ({ id, me }) => {
                     <p className="card-text">{community?.description}</p>
                     <div className="links">
                         <div className="open-community">
-                            <div className="open-community__content" onClick={() => navigate(`/community?id=${community?.id}`)}>
+                            <div className="btn-shadow" onClick={() => navigate(`/community?id=${community?.id}`)}>
                                 <FontAwesomeIcon
                                     icon={faCircleQuestion}
                                 />
@@ -47,7 +47,7 @@ const CommunityItem = ({ id, me }) => {
                             </div>
                         </div>
                         <div className="join-to-community">
-                            <div className="join-to-community__content" onClick={async () => await createCommunityUserAsync()}>
+                            <div className="btn-shadow" onClick={async () => await createCommunityUserAsync()}>
                                 <FontAwesomeIcon
                                     icon={faCirclePlus}
                                 />

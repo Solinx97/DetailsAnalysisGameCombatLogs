@@ -196,8 +196,8 @@ const UserInformation = ({ me, people, closeUserInformation }) => {
                         />
                     </li>
                 </ul>
-                <div className="details" onClick={() => navigate(`/user?id=${people.id}`)}>
-                    <div className="details__content">
+                <div className="details">
+                    <div className="btn-shadow" onClick={() => navigate(`/user?id=${people.id}`)}>
                         <FontAwesomeIcon
                             icon={faPersonCircleQuestion}
                         />

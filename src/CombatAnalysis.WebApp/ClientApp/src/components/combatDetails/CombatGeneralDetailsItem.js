@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Legend, RadialBar, RadialBarChart } from 'recharts';
+import { Brush, CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import useCombatGeneralData from '../../hooks/useCombatGeneralData';
 
-const CombatGeneralDetailsItem = ({ combatPlayerUsername, combatPlayerId, detailsType, detailsTypeName }) => {
+const CombatGeneralDetailsItem = ({ combatPlayerId, detailsType }) => {
     const { t } = useTranslation("combatDetails/combatGeneralDetails");
 
     const [spells, setSpells] = useState([]);
@@ -11,13 +11,6 @@ const CombatGeneralDetailsItem = ({ combatPlayerUsername, combatPlayerId, detail
     const [playerDataDetailsRender, setPlayerDataDetailsRender] = useState(<></>);
 
     const [getGeneralListAsync, getPlayerGeneralDetailsAsync] = useCombatGeneralData(combatPlayerId, detailsType);
-
-    const style = {
-        top: '50%',
-        right: 0,
-        transform: 'translate(0, -50%)',
-        lineHeight: '24px',
-    };
 
     useEffect(() => {
         const getGeneralDetails = async () => {
@@ -35,7 +28,7 @@ const CombatGeneralDetailsItem = ({ combatPlayerUsername, combatPlayerId, detail
 
         const data = await getPlayerGeneralDetailsAsync(combatPlayerId, detailsType);
         if (data !== undefined) {
-            await createBarChartData(data);
+            createBarChartData(data);
         }
     }
 
@@ -46,7 +39,7 @@ const CombatGeneralDetailsItem = ({ combatPlayerUsername, combatPlayerId, detail
             const color = '#' + (Math.random().toString(16) + '000000').substring(2, 8).toUpperCase();
             const spellsData = {
                 name: combatGeneralDetailsData[i].spellOrItem,
-                value: combatGeneralDetailsData[i].value,
+                uv: combatGeneralDetailsData[i].value,
                 fill: color === "#fff" ? '#' + (Math.random().toString(16) + '00000  0').substring(2, 8).toUpperCase() : color
             };
 
@@ -58,10 +51,6 @@ const CombatGeneralDetailsItem = ({ combatPlayerUsername, combatPlayerId, detail
 
     return (
         <div>
-            <div>
-                <h3>{t("CommonInform")} [{detailsTypeName}]</h3>
-                <h4>{t("Player")}: {combatPlayerUsername}</h4>
-            </div>
             {spells.length > 0 &&
                 <div className="form-check form-switch">
                     <input className="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckChecked" onChange={() => setShowGeneralChart((item) => !item)} defaultChecked={showGeneralChart} />
@@ -69,33 +58,28 @@ const CombatGeneralDetailsItem = ({ combatPlayerUsername, combatPlayerId, detail
                 </div>
             }
             {showGeneralChart &&
-                <div className="general-details__container_radial-chart">
-                    <RadialBarChart
-                        width={500}
-                        height={450}
-                        cx={150}
-                        cy={200}
-                        innerRadius={20}
-                        outerRadius={160}
-                        barSize={20}
-                        data={spells}
-                    >
-                        <RadialBar
-                            minAngle={15}
-                            label={{ position: "insideStart", fill: "#fff", fontSize: "13px" }}
-                            background
-                            clockWise
-                            dataKey="value"
-                        />
-                        <Legend
-                            iconSize={15}
-                            width={120}
-                            height={400}
-                            layout="vertical"
-                            verticalAlign="middle"
-                            wrapperStyle={style}
-                        />
-                    </RadialBarChart>
+                <div className="general-details__radial-chart">
+                    <ResponsiveContainer width="100%" height={200}>
+                        <LineChart
+                            width={500}
+                            height={200}
+                            data={spells}
+                            syncId="anyId"
+                            margin={{
+                                top: 10,
+                                right: 30,
+                                left: 0,
+                                bottom: 0,
+                            }}
+                        >
+                            <CartesianGrid strokeDasharray="3 3" />
+                            <XAxis dataKey="name" />
+                            <YAxis />
+                            <Tooltip />
+                            <Line type="monotone" dataKey="uv" stroke="#8884d8" fill="#8884d8" />
+                            <Brush />
+                        </LineChart>
+                    </ResponsiveContainer>
                     <div className="title">{t("Skills")}</div>
                 </div>
             }

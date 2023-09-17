@@ -4,5 +4,9 @@
   "DamageTaken": "Damage taken",
   "Players": "Players",
   "SelectCombat": "Select combat",
-  "ShowCommonStatistics": "Show common statistics"
+  "ShowCommonStatistics": "Show common statistics",
+  "SearchPlayer": "Search player",
+  "Clean": "Clean",
+  "TypeUsername": "Type player",
+  "Search": "Search"
 }

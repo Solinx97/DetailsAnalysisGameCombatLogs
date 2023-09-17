@@ -1,5 +1,42 @@
 ﻿.main-information__container {
+    .title {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+
+        .actions {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+
+            .communication {
+                display: flex;
+                gap: 15px;
+            }
+
+            .authorization {
+                color: orange;
+                transform: scale(1.25);
+            }
+        }
+
+        .disabled {
+            opacity: 0.5;
+            border: 1px solid gray;
+            border-radius: 25px;
+            padding: 10px 15px;
+
+            .btn-shadow {
+                cursor: default;
+            }
+        }
+    }
+
     .card {
-        width: 40%;
+        width: 45%;
+
+        .card-body {
+            display: flex;
+        }
     }
 }

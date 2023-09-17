@@ -104,7 +104,7 @@ const AddPeople = ({ customer, communityUsersId, peopleToJoin, setPeopleToJoin }
                 <label htmlFor="inputUsername" className="form-label">{t("SearchPeople")}</label>
                 <div className="add-new-people__search-input">
                     <input type="text" className="form-control" placeholder={t("TypeUsername")} id="inputUsername"
-                        ref={filterContent} onChange={handlerSearch } />
+                        ref={filterContent} onChange={handlerSearch} />
                     <FontAwesomeIcon
                         icon={faXmark}
                         title={t("Clean")}

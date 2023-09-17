@@ -77,19 +77,6 @@
 
                     .open-community, .join-to-community {
                         display: flex;
-
-                        &__content {
-                            display: flex;
-                            justify-content: center;
-                            align-items: center;
-                            gap: 10px;
-                            width: 200px;
-                            padding: 5px 10px;
-                            border: 2px solid gray;
-                            border-radius: 15px;
-                            box-shadow: 3px 3px 3px 3px gray;
-                            cursor: pointer;
-                        }
                     }
 
                     .join-to-community {

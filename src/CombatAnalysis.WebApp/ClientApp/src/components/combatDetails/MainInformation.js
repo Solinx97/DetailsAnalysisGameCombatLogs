@@ -1,8 +1,8 @@
-﻿import { format } from 'date-fns';
-import React from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { NavLink } from 'react-router-dom';
 import { useGetCombatLogsQuery } from '../../store/api/CombatParserApi';
+import CombatLogItem from './CombatLogItem';
+import { useLazyAuthenticationAsyncQuery } from '../../store/api/UserApi';
 
 import "../../styles/mainInformation.scss";
 
@@ -10,33 +10,35 @@ const MainInformation = () => {
     const { t } = useTranslation("combatDetails/mainInformation");
 
     const { data: combatLogs, isLoading } = useGetCombatLogsQuery();
+    const [getAuthAsync] = useLazyAuthenticationAsyncQuery();
+
+    const [isAuth, setIsAuth] = useState(false);
+
+    useEffect(() => {
+        const checkAuth = async () => {
+            const auth = await getAuthAsync();
+            setIsAuth(auth.status !== "rejected");
+        }
+
+        checkAuth();
+    }, [])
 
     if (isLoading) {
-        return <h2>{t("Logs")}</h2>;
+        return <></>;
     }
 
     return (
         <div className="main-information__container">
             <h2>{t("Logs")}</h2>
             <ul className="combats__container">
-                {
-                    combatLogs?.map((item) => (
-                        <li key={item.id}>
-                            <div className="card">
-                                <ul className="list-group list-group-flush">
-                                    <li className="list-group-item">{item.name}</li>
-                                    <li className="list-group-item">{format(new Date(item.date), 'MM/dd/yyyy HH:mm')}</li>
-                                </ul>
-                                <div className="card-body">
-                                    <NavLink
-                                        className="card-link"
-                                        to={`/general-analysis?id=${item.id}`}
-                                    >{t("Analyzing")}</NavLink>
-                                </div>
-                            </div>
-                        </li>
-                    ))
-                }
+                {combatLogs?.map((item) => (
+                    <li key={item.id}>
+                        <CombatLogItem
+                            log={item}
+                            isAuth={isAuth}
+                        />
+                    </li>
+                ))}
             </ul>
         </div>
     );

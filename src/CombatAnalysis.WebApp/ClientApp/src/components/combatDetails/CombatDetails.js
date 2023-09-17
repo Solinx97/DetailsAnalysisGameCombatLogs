@@ -7,7 +7,7 @@ import CombatDetailsChart from './CombatDetailsChart';
 
 import "../../styles/combatDetails.scss";
 
-const CombatDetails = ({ combatPlayerId, detailsType, detailsTypeName, username }) => {
+const CombatDetails = ({ combatPlayerId, detailsType, detailsTypeName }) => {
     const { t } = useTranslation("combatDetails/combatDetails");
 
     const [combatDetailsData, setCombatDetailsData] = useState([]);
@@ -52,10 +52,6 @@ const CombatDetails = ({ combatPlayerId, detailsType, detailsTypeName, username 
 
     return (
         <div className="details__container">
-            <div>
-                <h3>{t("DetailsInform")} [{detailsTypeName}]</h3>
-                <h4>{t("Player")}: {username}</h4>
-            </div>
             {detailsDataRender &&
                 <div className="form-check form-switch">
                     <input className="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckChecked" onChange={() => setShowGeneralDetailsChart((item) => !item)} />

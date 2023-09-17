@@ -4,5 +4,9 @@
   "DamageTaken": "Полученный урон",
   "Players": "Игроки",
   "SelectCombat": "Выбрать бой",
-  "ShowCommonStatistics": "Показать общую статистику"
+  "ShowCommonStatistics": "Показать общую статистику",
+  "SearchPlayer": "Поиск игрока",
+  "Clean": "Очистить",
+  "TypeUsername": "Имя игрока",
+  "Search": "Поиск"
 }

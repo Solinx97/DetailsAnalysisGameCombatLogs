@@ -9,7 +9,7 @@ const DamageDoneGeneralHelper = ({ generalData }) => {
     const { t } = useTranslation("helpers/combatDetailsHelper");
 
     return (
-        generalData.map((item) => (
+        generalData?.map((item) => (
             <li key={item.id}>
                 <div className="card">
                     <div className="card-body">

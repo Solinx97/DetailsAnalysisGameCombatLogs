@@ -1,92 +1,150 @@
-﻿.details-specifical-combat__container {
-    .card {
-        width: 75%;
-        box-shadow: 10px 10px gray;
-        margin: 25px;
+﻿.details-specifical-combat {
+    &__container {
+        .card {
+            width: 75%;
+            box-shadow: 10px 10px gray;
+            margin: 25px;
 
-        .list-group {
-            display: flex;
-            flex-direction: row;
-        }
+            .list-group {
+                display: flex;
+                flex-direction: row;
+            }
 
-        .list-group-item {
-            display: flex;
-            align-items: center;
-            flex-direction: column;
-            width: 20%;
-
-            div {
+            .list-group-item {
                 display: flex;
                 align-items: center;
-                width: auto;
-                height: 75px;
-            }
+                flex-direction: column;
+                gap: 20px;
+                width: 20%;
 
-            svg {
-                height: 20px;
-            }
+                .btn-shadow {
+                    width: 45px;
+                    overflow: hidden;
+                    height: 50px;
+
+                    &:hover {
+                        color: green;
+                        animation-name: show-more;
+                        animation-duration: 0.5s;
+                        animation-fill-mode: forwards;
+                    }
+                }
+
+                @keyframes show-more {
+                    from {
+                        width: 45px;
+                    }
+
+                    to {
+                        width: 175px;
+                    }
+                }
+
+                div {
+                    display: flex;
+                    align-items: center;
+                    width: auto;
+                }
+
+                svg {
+                    height: 20px;
+                }
 
 
-            &__details {
-                width: 25px;
-                color: gray;
+                &__details {
+                    width: 25px;
+                    color: gray;
 
-                :hover {
-                    cursor: pointer;
-                    transform: scale(1.25);
+                    :hover {
+                        cursor: pointer;
+                        transform: scale(1.25);
+                    }
+                }
+
+                &__damage-done {
+                    color: saddlebrown;
+                }
+
+                &__heal-done {
+                    color: green;
+                }
+
+                &__damage-taken {
+                    color: darkorange;
+                }
+
+                &__energy-recovery {
+                    color: yellowgreen;
                 }
             }
 
-            &__damage-done {
-                color: saddlebrown;
-            }
-
-            &__heal-done {
-                color: green;
-            }
-
-            &__damage-taken {
-                color: darkorange;
-            }
-
-            &__energy-recovery {
-                color: yellowgreen;
+            .form-check {
+                margin: 15px;
             }
         }
 
         .form-check {
-            margin: 15px;
+            margin: 20px;
         }
-    }
 
-    .form-check {
-        margin: 20px;
-    }
+        &_general-details-charts {
+            display: flex;
+            margin-left: -100px;
 
-    &_navigate {
-        display: flex;
+            .pie-chart-hook {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
 
-        div, h3 {
-            margin: 5px;
+                div {
+                    font-family: 'Comic Sans MS';
+                }
+
+                .title {
+                    font-size: 1.5em;
+                }
+            }
         }
-    }
 
-    &_general-details-charts {
-        display: flex;
-        margin-left: -100px;
+        .player-information {
+            display: flex;
+        }
 
-        .pie-chart-hook {
+        .search-people {
             display: flex;
             flex-direction: column;
-            align-items: center;
+            width: 325px;
+            margin: 10px 0;
+        }
 
-            div {
-                font-family: 'Comic Sans MS';
+        .search-icon {
+            width: 40px;
+            overflow: hidden;
+
+            &:hover {
+                animation-name: search;
+                animation-duration: 0.5s;
+                animation-fill-mode: forwards;
+            }
+        }
+
+        @keyframes search {
+            from {
+                width: 40px;
             }
 
-            .title {
-                font-size: 1.5em;
+            to {
+                width: 110px;
             }
+        }
+    }
+
+    &__navigate {
+        display: flex;
+        gap: 25px;
+
+        button {
+            font-size: 13px;
         }
     }
 }

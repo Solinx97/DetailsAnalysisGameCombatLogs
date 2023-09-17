@@ -21,11 +21,15 @@ const GeneralAnalysis = () => {
     }, []);
 
     useEffect(() => {
+        if (combatLogId <= 0) {
+            return;
+        }
+
         const getCombats = async () => {
             await getCombatsAsync();
         };
 
-        combatLogId > 0 && getCombats();
+        getCombats();
     }, [combatLogId]);
 
     const getCombatsAsync = async () => {
@@ -37,13 +41,12 @@ const GeneralAnalysis = () => {
 
     return (
         <div className="general-analysis__container">
-            <div className="general-analysis__container_navigate">
-                <h3>{t("Combats")}</h3>
-                <button type="button" className="btn btn-primary" onClick={() => navigate("/")}>{t("MainPage")}</button>
+            <div className="general-analysis__navigate">
+                <h3 className="title">{t("Combats")}</h3>
+                <button type="button" className="btn btn-light" onClick={() => navigate("/main-information")}>{t("Logs")}</button>
             </div>
             <ul className="combats__container">
-                {
-                    combats?.map((item) => (
+                {combats?.map((item) => (
                         <li key={item.id}>
                             <GeneralAnalysisItem
                                 combat={item}
