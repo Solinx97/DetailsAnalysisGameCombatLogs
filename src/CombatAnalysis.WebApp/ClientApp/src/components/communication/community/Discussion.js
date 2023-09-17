@@ -1,4 +1,4 @@
-import { faPen, faSquarePlus, faTrash } from '@fortawesome/free-solid-svg-icons';
+import { faPen, faSquarePlus, faTrash, faCircleXmark } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -133,26 +133,37 @@ const Discussion = ({ discussionId, setShowDiscussion, customer }) => {
         return (
             <div className="information">
                 <div className="tool">
+                    <div className="menu">
+                        <FontAwesomeIcon
+                            icon={faCircleXmark}
+                            title={t("Close")}
+                            onClick={() => setShowDiscussion(false)}
+                        />
+                    </div>
                     <div className="title">{discussion.title}</div>
                     {discussion?.customerId === customer?.id &&
                         <div className="actions">
-                            <FontAwesomeIcon
-                                icon={faPen}
-                                title={t("Edit")}
-                                onClick={() => setEditModeOne(true)}
-                            />
-                            <FontAwesomeIcon
-                                icon={faTrash}
-                                title={t("Remove")}
-                                onClick={async () => await removeDiscussionAsync()}
-                            />
+                            <div className={`btn-shadow ${showComments ? "active" : ""}`} onClick={() => setEditModeOne(true)}>
+                                <FontAwesomeIcon
+                                    icon={faPen}
+                                    title={t("Edit")}
+                                />
+                                <div>{t("Edit")}</div>
+                            </div>
+                            <div className={`btn-shadow ${showComments ? "active" : ""}`} onClick={async () => await removeDiscussionAsync()}>
+                                <FontAwesomeIcon
+                                    icon={faTrash}
+                                    title={t("Remove")}
+                                />
+                                <div>{t("Remove")}</div>
+                            </div>
                         </div>
                     }
                 </div>
                 <div className="form-control content">
                     <div>{discussion.content}</div>
                     <div className="select-add-new-discussion-comment">
-                        <div className={`action${showComments ? "_active" : ""}`} onClick={() => setShowComments((item) => !item)}>
+                        <div className={`btn-shadow ${showComments ? "active" : ""}`} onClick={() => setShowComments((item) => !item)}>
                             <FontAwesomeIcon
                                 icon={faSquarePlus}
                                 title={t("AddComment")}

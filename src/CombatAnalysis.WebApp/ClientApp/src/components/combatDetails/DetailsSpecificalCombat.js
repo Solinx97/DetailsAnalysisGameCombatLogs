@@ -1,4 +1,4 @@
-﻿import { faXmark, faMagnifyingGlassPlus, faMagnifyingGlassMinus } from '@fortawesome/free-solid-svg-icons';
+﻿import { faDeleteLeft, faMagnifyingGlassMinus, faMagnifyingGlassPlus, faXmark } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { memo, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -67,8 +67,13 @@ const DetailsSpecificalCombat = () => {
     return (
         <div className="details-specifical-combat__container">
             <div className="details-specifical-combat__navigate">
+                <div className="btn-shadow select-combat" onClick={() => navigate(`/general-analysis?id=${combatLogId}`)}>
+                    <FontAwesomeIcon
+                        icon={faDeleteLeft}
+                    />
+                    <div>{t("SelectCombat")}</div>
+                </div>
                 <h3>{t("Players")}</h3>
-                <button type="button" className="btn btn-light" onClick={() => navigate(`/general-analysis?id=${combatLogId}`)}>{t("SelectCombat")}</button>
                 <div className="btn-shadow search-icon" onClick={() => setShowSearch((item) => !item)}>
                     {showSearch
                         ? <FontAwesomeIcon

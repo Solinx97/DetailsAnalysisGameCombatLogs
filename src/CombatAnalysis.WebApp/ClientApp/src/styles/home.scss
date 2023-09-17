@@ -1,4 +1,8 @@
 .home {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+
     .should-be-authorize {
         position: fixed;
         display: flex;
@@ -7,5 +11,37 @@
         left: 35%;
         top: 0;
         width: 500px;
+    }
+
+    .communication-alert {
+        display: flex;
+        align-items: center;
+        gap: 25px;
+
+        .authorize-alert {
+            width: 40px;
+            overflow: hidden;
+            white-space: nowrap;
+
+            &:hover {
+                animation-name: need-be-authorize;
+                animation-duration: 0.5s;
+                animation-fill-mode: forwards;
+            }
+
+            svg {
+                color: orange;
+            }
+        }
+
+        @keyframes need-be-authorize {
+            from {
+                width: 40px;
+            }
+
+            to {
+                width: 275px;
+            }
+        }
     }
 }

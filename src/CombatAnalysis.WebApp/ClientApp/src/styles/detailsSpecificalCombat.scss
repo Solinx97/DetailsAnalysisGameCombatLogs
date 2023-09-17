@@ -1,7 +1,7 @@
 ﻿.details-specifical-combat {
     &__container {
         .card {
-            width: 75%;
+            width: 90%;
             box-shadow: 10px 10px gray;
             margin: 25px;
 
@@ -15,12 +15,14 @@
                 align-items: center;
                 flex-direction: column;
                 gap: 20px;
-                width: 20%;
+                width: 25%;
 
                 .btn-shadow {
                     width: 45px;
                     overflow: hidden;
-                    height: 50px;
+                    text-align: center;
+                    font-size: 13px;
+                    white-space: nowrap;
 
                     &:hover {
                         color: green;
@@ -117,6 +119,28 @@
             margin: 10px 0;
         }
 
+        .select-combat {
+            width: 40px;
+            overflow: hidden;
+            white-space: nowrap;
+
+            &:hover {
+                animation-name: select-combat;
+                animation-duration: 0.5s;
+                animation-fill-mode: forwards;
+            }
+        }
+
+        @keyframes select-combat {
+            from {
+                width: 40px;
+            }
+
+            to {
+                width: 150px;
+            }
+        }
+
         .search-icon {
             width: 40px;
             overflow: hidden;
@@ -141,6 +165,7 @@
 
     &__navigate {
         display: flex;
+        align-items: center;
         gap: 25px;
 
         button {

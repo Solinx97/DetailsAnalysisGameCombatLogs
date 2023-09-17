@@ -11,10 +11,10 @@
 
         svg {
             cursor: pointer;
-        }
 
-        svg:hover {
-            transform: scale(1.2);
+            &:hover {
+                transform: scale(1.25);
+            }
         }
     }
 
@@ -30,11 +30,11 @@
             max-width: 130px;
             padding: 5px;
             overflow: hidden;
-        }
 
-        li:hover {
-            border: 1px solid gray;
-            border-radius: 10px;
+            &:hover {
+                border: 1px solid gray;
+                border-radius: 10px;
+            }
         }
     }
 
@@ -57,18 +57,34 @@
         .title {
             display: flex;
             justify-content: center;
+            border: 1px solid gray;
+            border-radius: 15px;
+            padding: 5px 10px;
         }
 
         .actions {
             display: flex;
             justify-content: center;
-            gap: 50px;
+            gap: 25px;
         }
 
         .form-group {
             display: flex;
             flex-direction: column;
             gap: 5px;
+        }
+    }
+
+    .menu {
+        display: flex;
+        justify-content: end;
+        width: 100%;
+
+        svg {
+            &:hover {
+                cursor: pointer;
+                transform: scale(1.25);
+            }
         }
     }
 
@@ -79,12 +95,48 @@
             align-items: center;
             gap: 10px;
 
-            svg {
-                cursor: pointer;
+            .actions {
+                display: flex;
+                justify-content: end;
+                width: 100%;
+                gap: 25px;
+                font-size: 13px;
+
+                .btn-shadow {
+                    width: 35px;
+                    overflow: hidden;
+
+                    &:hover {
+                        color: green;
+                        animation-name: details;
+                        animation-duration: 0.5s;
+                        animation-fill-mode: forwards;
+                    }
+                }
             }
 
-            svg:hover {
-                transform: scale(1.2);
+            @keyframes details {
+                from {
+                    width: 35px;
+                }
+
+                to {
+                    width: 145px;
+                }
+            }
+
+            .menu {
+                display: flex;
+                justify-content: end;
+                width: 100%;
+            }
+
+            svg {
+                cursor: pointer;
+
+                &:hover {
+                    transform: scale(1.25);
+                }
             }
         }
 
@@ -100,20 +152,8 @@
                 display: flex;
                 justify-content: end;
 
-                .action, .action_active {
-                    display: flex;
-                    justify-content: center;
-                    align-items: center;
-                    gap: 10px;
-                    padding: 5px;
-                    box-shadow: 3px 3px 3px 3px gray;
-                    border-radius: 10px;
-                    width: 150px;
-                    cursor: pointer;
-
-                    &_active {
-                        box-shadow: 3px 3px 3px 3px green;
-                    }
+                .btn-shadow.active {
+                    box-shadow: 3px 3px 3px 3px green;
                 }
             }
         }
@@ -198,10 +238,10 @@
 
                 svg {
                     cursor: pointer;
-                }
 
-                svg:hover {
-                    transform: scale(1.1);
+                    &:hover {
+                        transform: scale(1.1);
+                    }
                 }
 
                 button {

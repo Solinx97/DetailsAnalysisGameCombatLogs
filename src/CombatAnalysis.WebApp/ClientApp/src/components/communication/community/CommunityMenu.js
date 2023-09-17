@@ -1,4 +1,4 @@
-import { faCircleCheck } from '@fortawesome/free-solid-svg-icons';
+import { faCircleCheck, faCircleXmark } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useState } from "react";
 import { useTranslation } from 'react-i18next';
@@ -279,9 +279,16 @@ const CommunityMenu = ({ setShowMenu, customer, community, setCommunity }) => {
                         </>
                     }
                 </div>
+                <div className="close">
+                    <FontAwesomeIcon
+                        icon={faCircleXmark}
+                        title={t("Close")}
+                        onClick={() => setShowMenu(false)}
+                    />
+                </div>
             </div>
             <div className="finish-create">
-                <input type="submit" value={t("Cancel")} className="btn btn-secondary" onClick={() => setShowMenu((item) => !item)} />
+                <input type="submit" value={t("Cancel")} className="btn btn-secondary" onClick={() => setShowMenu(false)} />
             </div>
         </div>
     );

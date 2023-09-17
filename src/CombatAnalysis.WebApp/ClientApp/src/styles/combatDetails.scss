@@ -3,18 +3,49 @@
         cursor: pointer;
     }
 
-    .chart-editor {
-        cursor: pointer;
-    }
-    
-    .chart-editor.active {
-        color: green;
-        transform: scale(1.2);
+    .filter {
+        display: flex;
+        flex-direction: column;
+        align-items: start;
+        gap: 10px;
+        margin: 10px 0;
+
+        &__menu {
+            display: flex;
+            gap: 25px;
+        }
+
+        .select-interval, .select-interval_active {
+            display: flex;
+            width: 40px;
+            overflow: hidden;
+            white-space: nowrap;
+
+            &:hover {
+                animation-name: filter;
+                animation-duration: 0.5s;
+                animation-fill-mode: forwards;
+            }
+        }
+
+        .select-interval_active {
+            box-shadow: 3px 3px 3px 3px green;
+        }
+
+        @keyframes filter {
+            from {
+                width: 40px;
+            }
+
+            to {
+                width: 190px;
+            }
+        }
     }
 
     .chart-editor-menu {
         display: flex;
-        justify-content: space-around;
+        justify-content: start;
         margin: 10px;
     }
 

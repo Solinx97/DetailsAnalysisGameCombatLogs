@@ -1,7 +1,9 @@
-﻿import { useTranslation } from 'react-i18next';
+﻿import { faTriangleExclamation } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import { NavLink, useNavigate } from 'react-router-dom';
-import { useEffect, useState } from 'react';
 
 import '../styles/home.scss';
 
@@ -34,7 +36,17 @@ const Home = () => {
     return (
         <div className="home">
             <div>
-                <div>{t("Communication")} <span style={{ display: customer !== null ? "none" : "flex" }}>({t("ShouldAuthorize")})</span></div>
+                <div className="communication-alert">
+                    <div>{t("Communication")}</div>
+                    {customer === null &&
+                        <div className="btn-shadow authorize-alert" onClick={() => navigate("/login")} title={t("GoToLogin")}>
+                            <FontAwesomeIcon
+                                icon={faTriangleExclamation}
+                            />
+                            <div>{t("ShouldAuthorize")}</div>
+                        </div>
+                    }
+                </div>
                 <button className="btn btn-info" onClick={() => navigate("/feed")} disabled={customer == null}>{t("Open")}</button>
             </div>
             <div>

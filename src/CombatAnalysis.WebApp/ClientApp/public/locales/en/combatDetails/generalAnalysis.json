@@ -15,5 +15,7 @@
   "NeedToAddSomething": "Need to add at least 1 item.",
   "Ready": "Ready",
   "NotReady": "Not ready",
+  "Win": "Win",
+  "Lose": "Lose",
   "NeedWait": "You have to wait until the fight is ready to inspection"
 }

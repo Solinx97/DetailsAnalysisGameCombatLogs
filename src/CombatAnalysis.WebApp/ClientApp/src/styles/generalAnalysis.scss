@@ -87,10 +87,29 @@
 
     &__navigate {
         display: flex;
+        align-items: center;
         gap: 25px;
 
-        button {
-            font-size: 13px;
+        .select-logs {
+            width: 40px;
+            overflow: hidden;
+            white-space: nowrap;
+
+            &:hover {
+                animation-name: select-logs;
+                animation-duration: 0.5s;
+                animation-fill-mode: forwards;
+            }
+        }
+
+        @keyframes select-logs {
+            from {
+                width: 40px;
+            }
+
+            to {
+                width: 100px;
+            }
         }
     }
 }

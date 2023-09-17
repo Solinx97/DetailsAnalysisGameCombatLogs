@@ -1,4 +1,6 @@
-﻿import React, { useEffect, useState } from 'react';
+﻿import { faDeleteLeft } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { useLazyGetGeneralAnalysisByIdQuery } from '../../store/api/CombatParserApi';
@@ -42,8 +44,13 @@ const GeneralAnalysis = () => {
     return (
         <div className="general-analysis__container">
             <div className="general-analysis__navigate">
+                <div className="btn-shadow select-logs" onClick={() => navigate("/main-information")}>
+                    <FontAwesomeIcon
+                        icon={faDeleteLeft}
+                    />
+                    <div>{t("Logs")}</div>
+                </div>
                 <h3 className="title">{t("Combats")}</h3>
-                <button type="button" className="btn btn-light" onClick={() => navigate("/main-information")}>{t("Logs")}</button>
             </div>
             <ul className="combats__container">
                 {combats?.map((item) => (

@@ -12,5 +12,6 @@
   "LeaveOwnerConfirm": "DANGER: You are owner of this community and if you leave this community will be removed. All content will be removed and can't be restored in future!!!",
   "LeaveAlert": "You want to leave",
   "InviteSuccess": "Invites sent success",
-  "InviteFailed": "Someting wrong. Invites didn't sent"
+  "InviteFailed": "Someting wrong. Invites didn't sent",
+  "Close": "Close"
 }

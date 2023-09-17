@@ -75,7 +75,7 @@ const CommonPlayerInform = ({ combatPlayer, combatId, combatLogId }) => {
                         <FontAwesomeIcon
                             icon={faBookOpenReader}
                         />
-                        <div>{t("ResourcesRecovery")}</div>
+                        <div>{t("Resources")}</div>
                     </div>
                 }
             </li>

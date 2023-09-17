@@ -1,3 +1,5 @@
+import { faCircleXmark } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useCreateCommunityDiscussionAsyncMutation } from '../../../store/api/communication/community/CommunityDiscussion.api';
@@ -29,6 +31,13 @@ const CreateDiscussion = ({ community, customer, setShowDiscussion }) => {
 
     return (
         <form className="discussion__create" onSubmit={async (event) => await createDiscussionAsync(event)}>
+            <div className="menu">
+                <FontAwesomeIcon
+                    icon={faCircleXmark}
+                    title={t("Close")}
+                    onClick={() => setShowDiscussion(false)}
+                />
+            </div>
             <div className="title">{t("CreateDiscussion")}</div>
             <div className="form-group">
                 <label htmlFor="title">{t("Title")}</label>

@@ -1,4 +1,4 @@
-import { faPlus, faRectangleXmark } from '@fortawesome/free-solid-svg-icons';
+import { faPlus, faRectangleXmark, faCircleXmark } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { memo, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -150,6 +150,13 @@ const CommunityMembers = ({ community, customer, setIsCommunityMember }) => {
             }
             {showAddPeople &&
                 <div className="add-people-to-community">
+                    <div className="add-people-to-community__menu"> 
+                        <FontAwesomeIcon
+                            icon={faCircleXmark}
+                            title={t("Close")}
+                            onClick={clearListOfInvites}
+                        />
+                    </div>
                     <AddPeople
                         customer={customer}
                         communityUsersId={communityUsersId}

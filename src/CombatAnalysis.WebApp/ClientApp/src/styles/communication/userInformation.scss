@@ -44,11 +44,11 @@
 
         svg {
             padding: 10px;
-        }
 
-        svg:hover {
-            cursor: pointer;
-            transform: scale(1.25);
+            &:hover {
+                cursor: pointer;
+                transform: scale(1.25);
+            }
         }
     }
 

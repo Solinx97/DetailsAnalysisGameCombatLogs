@@ -1,4 +1,4 @@
-import { faPen, faStopwatch, faXmark } from '@fortawesome/free-solid-svg-icons';
+import { faMap, faMapLocationDot, faStopwatch } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -39,8 +39,8 @@ const CombatDetailsChart = ({ detailsTypeName, detailsData, setDetailsDataRender
         for (let i = 0; i < selectedCombateDetailsData.length; i++) {
             const spellsData = {
                 time: getTimeWithoutMs(selectedCombateDetailsData[i].time),
-                value: selectedCombateDetailsData[i].value,
-                duration: getDuration(getTimeWithoutMs(selectedCombateDetailsData[i].time), getTimeWithoutMs(startTime))
+                Value: selectedCombateDetailsData[i].value,
+                Duration: getDuration(getTimeWithoutMs(selectedCombateDetailsData[i].time), getTimeWithoutMs(startTime))
             };
 
             chartData[i] = spellsData;
@@ -103,15 +103,33 @@ const CombatDetailsChart = ({ detailsTypeName, detailsData, setDetailsDataRender
 
     return (
         <>
-            <div>
+            <div className="filter">
+                <div className="filter__menu">
+                    {useFilter
+                        ? <div className="btn-shadow select-interval_active" onClick={cancelSelectInterval}>
+                            <FontAwesomeIcon
+                                icon={faMap}
+                            />
+                            <div>{t("ClearInterval")}</div>
+                        </div>
+                        : <div className="btn-shadow select-interval" onClick={switchToMultplyInterval}>
+                            <FontAwesomeIcon
+                                icon={faMapLocationDot}
+                            />
+                            <div>{t("SelectInterval")}</div>
+                        </div>
+                    }
+                    {finishOfInterval !== "" &&
+                        <div className="btn-shadow calculate" onClick={calculateSpellsByTimespan}>
+                            <FontAwesomeIcon
+                                icon={faStopwatch}
+                            />
+                            <div>{t("Calculate")}</div>
+                        </div>
+                    }
+                </div>
                 {useFilter &&
                     <div>
-                        <FontAwesomeIcon
-                            icon={faXmark}
-                            className="list-group-item__value"
-                            onClick={cancelSelectInterval}
-                            title={t("Cancel")}
-                        />
                         <div>
                             {t("StartOfInterval")}: {startDurationOfInterval}
                         </div>
@@ -122,22 +140,6 @@ const CombatDetailsChart = ({ detailsTypeName, detailsData, setDetailsDataRender
                 }
             </div>
             <div>
-                <div className="chart-editor-menu">
-                    <FontAwesomeIcon
-                        icon={faPen}
-                        className={useFilter ? "chart-editor active" : "chart-editor"}
-                        title={t("SelectInterval")}
-                        onClick={switchToMultplyInterval}
-                    />
-                    {finishOfInterval !== "" &&
-                        <FontAwesomeIcon
-                            icon={faStopwatch}
-                            className="chart-editor"
-                            title={t("Calculate")}
-                            onClick={calculateSpellsByTimespan}
-                        />
-                    }
-                </div>
                 <LineChart
                     width={1250}
                     height={300}
@@ -154,14 +156,14 @@ const CombatDetailsChart = ({ detailsTypeName, detailsData, setDetailsDataRender
                         strokeDasharray="3 3"
                     />
                     <XAxis
-                        dataKey="duration"
+                        dataKey="Duration"
                     />
                     <YAxis />
                     <Tooltip />
                     <Legend />
                     <Line
                         type="monotone"
-                        dataKey="value"
+                        dataKey="Value"
                         name={detailsTypeName}
                         stroke="#8884d8"
                         activeDot={{ r: 8 }}

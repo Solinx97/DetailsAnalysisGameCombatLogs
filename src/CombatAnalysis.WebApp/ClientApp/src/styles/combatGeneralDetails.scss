@@ -102,9 +102,42 @@
             cursor: pointer;
         }
 
-        .username.btn-shadow {
-            box-shadow: 3px 3px 3px 3px blue;
-            font-weight: bold;
+        .player {
+            display: flex;
+            gap: 20px;
+
+            .select-another-player {
+                display: flex;
+                width: 45px;
+                overflow: hidden;
+
+                &:hover {
+                    color: green;
+                    animation-name: select-player;
+                    animation-duration: 0.5s;
+                    animation-fill-mode: forwards;
+                }
+
+                div {
+                    width: 200px;
+                    white-space: nowrap;
+                }
+            }
+
+            @keyframes select-player {
+                from {
+                    width: 45px;
+                }
+
+                to {
+                    width: 175px;
+                }
+            }
+
+            .username.btn-shadow {
+                box-shadow: 3px 3px 3px 3px blue;
+                font-weight: bold;
+            }
         }
 
         .details-type {

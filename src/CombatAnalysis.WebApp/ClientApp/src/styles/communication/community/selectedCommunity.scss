@@ -175,6 +175,21 @@
                 box-shadow: 5px 5px 5px 5px gray;
                 background: white;
 
+                &__menu {
+                    display: flex;
+                    justify-content: end;
+                    width: 100%;
+
+                    svg {
+                        padding: 0 5px;
+
+                        &:hover {
+                            cursor: pointer;
+                            transform: scale(1.25);
+                        }
+                    }
+                }
+
                 .form-label {
                     display: flex;
                     justify-content: center;
