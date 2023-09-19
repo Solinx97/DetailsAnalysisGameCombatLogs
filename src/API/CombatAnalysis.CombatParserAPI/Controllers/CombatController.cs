@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
 using CombatAnalysis.BL.DTO;
 using CombatAnalysis.BL.Interfaces;
-using CombatAnalysis.CombatParserAPI.Helpers;
 using CombatAnalysis.CombatParserAPI.Interfaces;
 using CombatAnalysis.CombatParserAPI.Models;
 using Microsoft.AspNetCore.Mvc;
@@ -13,16 +12,21 @@ namespace CombatAnalysis.CombatParserAPI.Controllers;
 public class CombatController : ControllerBase
 {
     private readonly IService<CombatDto, int> _service;
+    private readonly IService<CombatPlayerDto, int> _combatPlayerService;
     private readonly IMapper _mapper;
     private readonly ILogger _logger;
-    private readonly IHttpClientHelper _httpClient;
+    private readonly ISqlContextService _sqlContextService;
+    private readonly ISaveCombatDataHelper _saveCombatDataHelper;
 
-    public CombatController(IService<CombatDto, int> service, IMapper mapper, IHttpClientHelper httpClient, ILogger logger)
+    public CombatController(IService<CombatDto, int> service, IMapper mapper, ILogger logger,
+        ISqlContextService sqlContextService, ISaveCombatDataHelper saveCombatDataHelper, IService<CombatPlayerDto, int> combatPlayerService)
     {
         _service = service;
         _mapper = mapper;
         _logger = logger;
-        _httpClient = httpClient;
+        _sqlContextService = sqlContextService;
+        _saveCombatDataHelper = saveCombatDataHelper;
+        _combatPlayerService = combatPlayerService;
     }
 
     [HttpGet("{id:int:min(1)}")]
@@ -52,42 +56,55 @@ public class CombatController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> Create(CombatModel model)
     {
+        using var transaction = await _sqlContextService.BeginTransactionAsync(false);
         try
         {
-            SaveCombatDataHelper.CombatData = model.Data;
-
             var map = _mapper.Map<CombatDto>(model);
-            var createdItem = await _service.CreateAsync(map);
+            var createdCombat = await _service.CreateAsync(map);
 
-            foreach (var item in model.Players)
+            foreach (var player in model.Players)
             {
-                item.CombatId = createdItem.Id;
+                player.CombatId = createdCombat.Id;
+
+                var createdCombatPlayer = await UploadCombatPlayerAsync(player);
+
+                await _saveCombatDataHelper.SaveCombatPlayerDataAsync(createdCombat, createdCombatPlayer, model.Data);
             }
 
-            var response = await _httpClient.PostAsync("CombatPlayer", JsonContent.Create(model.Players));
-            if (response.StatusCode == System.Net.HttpStatusCode.BadRequest)
-            {
-                return BadRequest();
-            }
-
-            createdItem.IsReady = true;
-            var rowsAffected = await _service.UpdateAsync(createdItem);
+            createdCombat.IsReady = true;
+            var rowsAffected = await _service.UpdateAsync(createdCombat);
             if (rowsAffected == 0)
             {
+                await transaction.RollbackAsync();
+
                 return BadRequest();
             }
 
-            return Ok(createdItem);
+            await transaction.CommitAsync();
+
+            return Ok(createdCombat);
         }
         catch (ArgumentNullException ex)
         {
             _logger.LogError(ex, ex.Message);
 
+            await transaction.RollbackAsync();
+
             return BadRequest();
         }
-        catch(Exception ex)
+        catch (ArgumentException ex)
         {
             _logger.LogError(ex, ex.Message);
+
+            await transaction.RollbackAsync();
+
+            return BadRequest();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, ex.Message);
+
+            await transaction.RollbackAsync();
 
             return BadRequest();
         }
@@ -126,5 +143,17 @@ public class CombatController : ControllerBase
 
             return BadRequest();
         }
+    }
+
+    private async Task<CombatPlayerDto> UploadCombatPlayerAsync(CombatPlayerModel model)
+    {
+        var map = _mapper.Map<CombatPlayerDto>(model);
+        var createdItem = await _combatPlayerService.CreateAsync(map);
+        if (createdItem == null)
+        {
+            throw new ArgumentException("Combat player did not created");
+        }
+
+        return createdItem;
     }
 }

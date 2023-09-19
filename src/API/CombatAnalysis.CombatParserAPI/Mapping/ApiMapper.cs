@@ -12,6 +12,7 @@ public class CombatParserApiMapper : Profile
         CreateMap<CombatLogDto, CombatLogModel>().ReverseMap();
         CreateMap<CombatLogByUserDto, CombatLogByUserModel>().ReverseMap();
         CreateMap<CombatDto, CombatModel>().ReverseMap();
+        CreateMap<CombatDto, Combat>().ReverseMap();
         CreateMap<CombatPlayerDto, CombatPlayerModel>().ReverseMap();
         CreateMap<DamageDoneDto, DamageDoneModel>().ReverseMap();
         CreateMap<DamageDoneGeneralDto, DamageDoneGeneralModel>().ReverseMap();

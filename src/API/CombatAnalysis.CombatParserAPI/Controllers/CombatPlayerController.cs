@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
 using CombatAnalysis.BL.DTO;
 using CombatAnalysis.BL.Interfaces;
-using CombatAnalysis.CombatParserAPI.Interfaces;
 using CombatAnalysis.CombatParserAPI.Models;
 using Microsoft.AspNetCore.Mvc;
 
@@ -14,16 +13,12 @@ public class CombatPlayerController : ControllerBase
     private readonly IService<CombatPlayerDto, int> _service;
     private readonly IMapper _mapper;
     private readonly ILogger _logger;
-    private readonly ISqlContextService _sqlContextService;
-    private readonly ISaveCombatDataHelper _saveCombatDataHelper;
 
-    public CombatPlayerController(IService<CombatPlayerDto, int> service, ISaveCombatDataHelper saveCombatDataHelper, IMapper mapper, ISqlContextService sqlContextService, ILogger logger)
+    public CombatPlayerController(IService<CombatPlayerDto, int> service, IMapper mapper, ILogger logger)
     {
         _service = service;
         _mapper = mapper;
-        _sqlContextService= sqlContextService;
         _logger = logger;
-        _saveCombatDataHelper = saveCombatDataHelper;
     }
 
     [HttpGet("findByCombatId/{combatId:int:min(1)}")]
@@ -43,23 +38,14 @@ public class CombatPlayerController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<IActionResult> Create(List<CombatPlayerModel> model)
+    public async Task<IActionResult> Create(CombatPlayerModel model)
     {
-        using var transaction = await _sqlContextService.BeginTransactionAsync(false);
         try
         {
-            foreach (var item in model)
-            {
-                var map = _mapper.Map<CombatPlayerDto>(item);
-                var createdItem = await _service.CreateAsync(map);
-                var createdItemToModel = _mapper.Map<CombatPlayerModel>(createdItem);
+            var map = _mapper.Map<CombatPlayerDto>(model);
+            var createdItem = await _service.CreateAsync(map);
 
-                await _saveCombatDataHelper.SaveCombatPlayerDataAsync(createdItem.CombatId, createdItemToModel);
-            }
-
-            await transaction.CommitAsync();
-
-            return Ok();
+            return Ok(createdItem);
         }
         catch (ArgumentNullException ex)
         {
@@ -70,8 +56,6 @@ public class CombatPlayerController : ControllerBase
         catch (Exception ex)
         {
             _logger.LogError(ex, ex.Message);
-
-            await transaction.RollbackAsync();
 
             return BadRequest();
         }

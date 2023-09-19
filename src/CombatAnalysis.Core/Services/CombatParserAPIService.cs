@@ -16,8 +16,6 @@ public class CombatParserAPIService
     private readonly ILogger _logger;
     private readonly IMemoryCache _memoryCache;
 
-    private List<CombatModel> _combats;
-
     public CombatParserAPIService(IHttpClientHelper httpClient, ILogger logger, IMemoryCache memoryCache)
     {
         _httpClient = httpClient;
@@ -30,27 +28,24 @@ public class CombatParserAPIService
         _httpClient.BaseAddress = Port.CombatParserApi;
     }
 
-    public async Task<int> SaveAsync(List<CombatModel> combats, LogType logType)
+    public async Task<int> SaveAsync(List<CombatModel> combats, CombatLogModel combatLog, LogType logType)
     {
-        _combats = combats;
-
         try
         {
-            var createdCombatLog = await SaveCombatLogAsync();
             if (logType == LogType.Public || logType == LogType.Private)
             {
-                await SaveCombatLogByUserAsync(createdCombatLog.Id, logType);
+                await SaveCombatLogByUserAsync(combatLog.Id, logType);
             }
 
-            Parallel.ForEach(combats, (item) =>
+            await Parallel.ForEachAsync(combats, async (item, token) =>
             {
-                item.CombatLogId = createdCombatLog.Id;
-                _httpClient.PostAsync("Combat", JsonContent.Create(item));
+                item.CombatLogId = combatLog.Id;
+                await _httpClient.PostAsync("Combat", JsonContent.Create(item));
             });
 
-            await SetReadyForCombatLog(createdCombatLog);
+            await SetReadyForCombatLog(combatLog);
 
-            return createdCombatLog.Id;
+            return combatLog.Id;
         }
         catch (HttpRequestException ex)
         {
@@ -157,9 +152,9 @@ public class CombatParserAPIService
         return healDones;
     }
 
-    private async Task<CombatLogModel> SaveCombatLogAsync()
+    public async Task<CombatLogModel> SaveCombatLogAsync(List<CombatModel> combats)
     {
-        var dungeonNames = _combats
+        var dungeonNames = combats
              .GroupBy(group => group.DungeonName)
              .Select(select => select.Key)
              .ToList();

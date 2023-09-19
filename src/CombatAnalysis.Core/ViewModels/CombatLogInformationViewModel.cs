@@ -303,8 +303,8 @@ public class CombatLogInformationViewModel : ParentTemplate, IObserver, IAuthObs
 
     public async Task LoadCombatsAsync(ObservableCollection<CombatLogModel> combatCollection)
     {
-        var id = combatCollection[CombatListSelectedIndex].Id;
-        var loadedCombats = await _combatParserAPIService.LoadCombatsAsync(id);
+        var combatLog = combatCollection[CombatListSelectedIndex];
+        var loadedCombats = await _combatParserAPIService.LoadCombatsAsync(combatLog.Id);
 
         foreach (var item in loadedCombats)
         {
@@ -317,7 +317,7 @@ public class CombatLogInformationViewModel : ParentTemplate, IObserver, IAuthObs
         var dataForGeneralAnalysis = Tuple.Create(loadedCombats.ToList(), LogType);
         await _mvvmNavigation.Navigate<GeneralAnalysisViewModel, Tuple<List<CombatModel>, LogType>>(dataForGeneralAnalysis);
 
-        BasicTemplate.Handler.PropertyUpdate<GeneralAnalysisViewModel>(BasicTemplate.Parent, nameof(GeneralAnalysisViewModel.CombatLogId), id);
+        BasicTemplate.Handler.PropertyUpdate<GeneralAnalysisViewModel>(BasicTemplate.Parent, nameof(GeneralAnalysisViewModel.CombatLog), combatLog);
         BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, nameof(BasicTemplateViewModel.Combats), loadedCombats.ToList());
     }
 
@@ -339,15 +339,15 @@ public class CombatLogInformationViewModel : ParentTemplate, IObserver, IAuthObs
 
         if (!FileIsNotCorrect)
         {
+            IsParsing = true;
+
             await PrepareCombatData(combatLog);
         }
     }
 
-    private async Task PrepareCombatData(string combatLog)
+    private async Task PrepareCombatData(string combatLogData)
     {
-        IsParsing = true;
-
-        await _parser.Parse(combatLog);
+        await _parser.Parse(combatLogData);
 
         var combatModels = _mapper.Map<List<CombatModel>>(_parser.Combats);
 
@@ -358,16 +358,19 @@ public class CombatLogInformationViewModel : ParentTemplate, IObserver, IAuthObs
 
         BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, nameof(BasicTemplateViewModel.Combats), combatModels);
 
-        if (IsNeedSave)
+        if (!IsNeedSave)
         {
-            BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, nameof(BasicTemplateViewModel.ResponseStatus), LoadingStatus.Pending);
-
-            var combatLogId = await _combatParserAPIService.SaveAsync(combatModels, LogType);
-            BasicTemplate.Handler.PropertyUpdate<GeneralAnalysisViewModel>(BasicTemplate.SavedViewModel, nameof(GeneralAnalysisViewModel.CombatLogId), combatLogId);
-
-            var responseStatus = combatLogId > 0 ? LoadingStatus.Successful : LoadingStatus.Failed;
-            BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, nameof(BasicTemplateViewModel.ResponseStatus), responseStatus);
+            return;
         }
+
+        BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, nameof(BasicTemplateViewModel.ResponseStatus), LoadingStatus.Pending);
+
+        var createdCombatLog = await _combatParserAPIService.SaveCombatLogAsync(combatModels);
+        BasicTemplate.Handler.PropertyUpdate<GeneralAnalysisViewModel>(BasicTemplate.SavedViewModel, nameof(GeneralAnalysisViewModel.CombatLog), createdCombatLog);
+
+        var combatLogId = await _combatParserAPIService.SaveAsync(combatModels, createdCombatLog, LogType);
+        var responseStatus = combatLogId > 0 ? LoadingStatus.Successful : LoadingStatus.Failed;
+        BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, nameof(BasicTemplateViewModel.ResponseStatus), responseStatus);
     }
 
     private async Task LoadCombatLogsAsync()

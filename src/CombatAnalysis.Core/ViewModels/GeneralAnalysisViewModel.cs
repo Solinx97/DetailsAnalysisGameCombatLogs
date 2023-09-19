@@ -4,6 +4,7 @@ using CombatAnalysis.Core.Interfaces.Observers;
 using CombatAnalysis.Core.Models;
 using CombatAnalysis.Core.Services;
 using CombatAnalysis.Core.ViewModels.Base;
+using CombatAnalysis.DAL.Entities;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
 using MvvmCross.Commands;
@@ -21,7 +22,7 @@ public class GeneralAnalysisViewModel : ParentTemplate<Tuple<List<CombatModel>, 
     private CombatModel _selectedCombat;
     private LoadingStatus _status;
     private LogType _logType;
-    private int _combatLogId;
+    private CombatLogModel _combatLog;
     private bool _combatIsNotLoaded = false;
 
     public GeneralAnalysisViewModel(IMvxNavigationService mvvmNavigation, IHttpClientHelper httpClient, ILogger logger, IMemoryCache memoryCache)
@@ -80,14 +81,14 @@ public class GeneralAnalysisViewModel : ParentTemplate<Tuple<List<CombatModel>, 
         }
     }
 
-    public int CombatLogId
+    public CombatLogModel CombatLog
     {
-        get { return _combatLogId; }
+        get { return _combatLog; }
         set
         {
-            SetProperty(ref _combatLogId, value);
+            SetProperty(ref _combatLog, value);
 
-            if (value > 0)
+            if (value != null)
             {
                 RefreshCommand.CanExecute(true);
             }
@@ -145,7 +146,8 @@ public class GeneralAnalysisViewModel : ParentTemplate<Tuple<List<CombatModel>, 
     {
         BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, nameof(BasicTemplateViewModel.ResponseStatus), LoadingStatus.Pending);
 
-        var responseStatus = await _combatParserAPIService.SaveAsync(Combats.ToList(), _logType) > 0 ? LoadingStatus.Successful : LoadingStatus.Failed;
+        var combatLogId = await _combatParserAPIService.SaveAsync(Combats.ToList(), CombatLog, _logType);
+        var responseStatus = combatLogId > 0 ? LoadingStatus.Successful : LoadingStatus.Failed;
         BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, nameof(BasicTemplateViewModel.ResponseStatus), responseStatus);
     }
 
@@ -158,12 +160,12 @@ public class GeneralAnalysisViewModel : ParentTemplate<Tuple<List<CombatModel>, 
     {
         CombatIsNotLoaded = false;
 
-        if (CombatLogId == 0)
+        if (CombatLog.Id == 0)
         {
             return;
         }
 
-        var loadedCombats = await _combatParserAPIService.LoadCombatsAsync(CombatLogId);
+        var loadedCombats = await _combatParserAPIService.LoadCombatsAsync(CombatLog.Id);
 
         foreach (var item in loadedCombats)
         {
