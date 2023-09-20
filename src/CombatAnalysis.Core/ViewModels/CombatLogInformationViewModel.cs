@@ -402,10 +402,12 @@ public class CombatLogInformationViewModel : ParentTemplate, IObserver, IAuthObs
 
         await _mvvmNavigation.Navigate<GeneralAnalysisViewModel, Tuple<List<CombatModel>, LogType>>(dataForGeneralAnalysis);
 
+        BasicTemplate.Handler.PropertyUpdate<GeneralAnalysisViewModel>(BasicTemplate.SavedViewModel, nameof(GeneralAnalysisViewModel.ResponseStatus), LoadingStatus.Pending);
+
         BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, nameof(BasicTemplateViewModel.Combats), combatList);
         BasicTemplate.Handler.PropertyUpdate<GeneralAnalysisViewModel>(BasicTemplate.SavedViewModel, nameof(GeneralAnalysisViewModel.CombatLog), createdCombatLog);
 
-        var combatsAreUploaded = await _combatParserAPIService.SaveAsync(combatList, createdCombatLog, LogType);
+        var combatsAreUploaded = await _combatParserAPIService.SaveAsync(combatList, createdCombatLog, LogType, CombatUploaded);
         if (combatsAreUploaded == null)
         {
             BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, nameof(BasicTemplateViewModel.ResponseStatus), LoadingStatus.Failed);
@@ -470,5 +472,12 @@ public class CombatLogInformationViewModel : ParentTemplate, IObserver, IAuthObs
         CombatLogsByUser = new ObservableCollection<CombatLogModel>(readyCombatLogData);
 
         CombatLogByUserLoadingStatus = LoadingStatus.Successful;
+    }
+
+    private void CombatUploaded(int number, string dungeonName, string name)
+    {
+        BasicTemplate.Handler.PropertyUpdate<GeneralAnalysisViewModel>(BasicTemplate.SavedViewModel, nameof(GeneralAnalysisViewModel.CurrentCombatNumber), number);
+        BasicTemplate.Handler.PropertyUpdate<GeneralAnalysisViewModel>(BasicTemplate.SavedViewModel, nameof(GeneralAnalysisViewModel.DungeonName), dungeonName);
+        BasicTemplate.Handler.PropertyUpdate<GeneralAnalysisViewModel>(BasicTemplate.SavedViewModel, nameof(GeneralAnalysisViewModel.Name), name);
     }
 }

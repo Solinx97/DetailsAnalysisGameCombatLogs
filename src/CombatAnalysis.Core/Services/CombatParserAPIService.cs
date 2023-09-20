@@ -28,10 +28,11 @@ public class CombatParserAPIService
         _httpClient.BaseAddress = Port.CombatParserApi;
     }
 
-    public async Task<List<bool>> SaveAsync(List<CombatModel> combats, CombatLogModel combatLog, LogType logType)
+    public async Task<List<bool>> SaveAsync(List<CombatModel> combats, CombatLogModel combatLog, LogType logType, Action<int, string, string> combatUploaded)
     {
         try
         {
+            var currentCombatNumber = 0;
             var combatsAreUploaded = new List<bool>();
             if (logType == LogType.Public || logType == LogType.Private)
             {
@@ -44,6 +45,9 @@ public class CombatParserAPIService
 
                 var response = await _httpClient.PostAsync("Combat", JsonContent.Create(item));
                 combatsAreUploaded.Add(response.IsSuccessStatusCode);
+
+                currentCombatNumber++;
+                combatUploaded(currentCombatNumber, item.DungeonName, item.Name);
             });
 
             await SetReadyForCombatLog(combatLog);

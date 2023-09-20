@@ -61,11 +61,29 @@ namespace CombatAnalysis.App.Localizations.Resources.GeneralAnalysis {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to All combats saved!.
+        /// </summary>
+        public static string AllCombatsSaved {
+            get {
+                return ResourceManager.GetString("AllCombatsSaved", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Buffs.
         /// </summary>
         public static string Buffs {
             get {
                 return ResourceManager.GetString("Buffs", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Combat uploaded:   .
+        /// </summary>
+        public static string CombatUploaded {
+            get {
+                return ResourceManager.GetString("CombatUploaded", resourceCulture);
             }
         }
         
@@ -192,6 +210,15 @@ namespace CombatAnalysis.App.Localizations.Resources.GeneralAnalysis {
         public static string Title {
             get {
                 return ResourceManager.GetString("Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Uploading....
+        /// </summary>
+        public static string Uploading {
+            get {
+                return ResourceManager.GetString("Uploading", resourceCulture);
             }
         }
         

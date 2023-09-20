@@ -123,6 +123,9 @@
   <data name="Combat" xml:space="preserve">
     <value>Combat</value>
   </data>
+  <data name="CombatLogUploadingFailed" xml:space="preserve">
+    <value>Combat log uploading failed!</value>
+  </data>
   <data name="Dungeon" xml:space="preserve">
     <value>Dungeon</value>
   </data>
@@ -164,6 +167,9 @@
   </data>
   <data name="RemovePrivateLog" xml:space="preserve">
     <value>Remove the selected log without the posibl of recovering of removed data.</value>
+  </data>
+  <data name="Repeat" xml:space="preserve">
+    <value>Repeat</value>
   </data>
   <data name="Result" xml:space="preserve">
     <value>Result</value>

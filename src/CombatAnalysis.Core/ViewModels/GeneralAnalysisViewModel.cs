@@ -22,6 +22,10 @@ public class GeneralAnalysisViewModel : ParentTemplate<Tuple<List<CombatModel>, 
     private LoadingStatus _status;
     private LogType _logType;
     private CombatLogModel _combatLog;
+    private string _dungeonName;
+    private string _name;
+    private int _maxCombats;
+    private int _currentCombatNumber;
 
     public GeneralAnalysisViewModel(IMvxNavigationService mvvmNavigation, IHttpClientHelper httpClient, ILogger logger, IMemoryCache memoryCache)
     {
@@ -93,6 +97,42 @@ public class GeneralAnalysisViewModel : ParentTemplate<Tuple<List<CombatModel>, 
         }
     }
 
+    public string DungeonName
+    {
+        get { return _dungeonName; }
+        set
+        {
+            SetProperty(ref _dungeonName, value);
+        }
+    }
+
+    public string Name
+    {
+        get { return _name; }
+        set
+        {
+            SetProperty(ref _name, value);
+        }
+    }
+
+    public int MaxCombats
+    {
+        get { return _maxCombats; }
+        set
+        {
+            SetProperty(ref _maxCombats, value);
+        }
+    }
+
+    public int CurrentCombatNumber
+    {
+        get { return _currentCombatNumber; }
+        set
+        {
+            SetProperty(ref _currentCombatNumber, value);
+        }
+    }
+
     #endregion
 
     protected override void ChildPrepare(Tuple<List<CombatModel>, LogType> parameter)
@@ -103,6 +143,9 @@ public class GeneralAnalysisViewModel : ParentTemplate<Tuple<List<CombatModel>, 
         }
 
         Combats = new ObservableCollection<CombatModel>(parameter.Item1);
+        MaxCombats = Combats.Count;
+        CurrentCombatNumber = 0;
+
         _logType = parameter.Item2;
     }
 
@@ -131,7 +174,7 @@ public class GeneralAnalysisViewModel : ParentTemplate<Tuple<List<CombatModel>, 
 
         var combatsForUploadAgain = Combats.Where(combat => !combat.IsReady).ToList();
 
-        var combatsAreUploaded = await _combatParserAPIService.SaveAsync(combatsForUploadAgain, CombatLog, _logType);
+        var combatsAreUploaded = await _combatParserAPIService.SaveAsync(combatsForUploadAgain, CombatLog, _logType, CombatUploaded);
         if (combatsAreUploaded == null)
         {
             BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, nameof(BasicTemplateViewModel.ResponseStatus), LoadingStatus.Failed);
@@ -173,5 +216,12 @@ public class GeneralAnalysisViewModel : ParentTemplate<Tuple<List<CombatModel>, 
             item.IsReady = selectUploadedCombat.IsReady;
             Combats = new ObservableCollection<CombatModel>(Combats);
         }
+    }
+
+    private void CombatUploaded(int number, string dungeonName, string name)
+    {
+        CurrentCombatNumber = number;
+        DungeonName = dungeonName;
+        Name = name;
     }
 }

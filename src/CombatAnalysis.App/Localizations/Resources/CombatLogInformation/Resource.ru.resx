@@ -123,6 +123,9 @@
   <data name="Combat" xml:space="preserve">
     <value>Бой</value>
   </data>
+  <data name="CombatLogUploadingFailed" xml:space="preserve">
+    <value>Ошибка загрузки Лога боев!</value>
+  </data>
   <data name="Dungeon" xml:space="preserve">
     <value>Подземелье</value>
   </data>
@@ -164,6 +167,9 @@
   </data>
   <data name="RemovePrivateLog" xml:space="preserve">
     <value>Удалить выбранный лог без возможности восстановить.</value>
+  </data>
+  <data name="Repeat" xml:space="preserve">
+    <value>Повторить</value>
   </data>
   <data name="Result" xml:space="preserve">
     <value>Результат</value>

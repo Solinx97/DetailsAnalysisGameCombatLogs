@@ -79,6 +79,15 @@ namespace CombatAnalysis.App.Localizations.Resources.CombatLogInformation {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Combat log uploading failed!.
+        /// </summary>
+        public static string CombatLogUploadingFailed {
+            get {
+                return ResourceManager.GetString("CombatLogUploadingFailed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Dungeon.
         /// </summary>
         public static string Dungeon {
@@ -201,6 +210,15 @@ namespace CombatAnalysis.App.Localizations.Resources.CombatLogInformation {
         public static string RemovePrivateLog {
             get {
                 return ResourceManager.GetString("RemovePrivateLog", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Repeat.
+        /// </summary>
+        public static string Repeat {
+            get {
+                return ResourceManager.GetString("Repeat", resourceCulture);
             }
         }
         

@@ -20,7 +20,7 @@
             <RowDefinition Height="0.15*"/>
             <RowDefinition Height="0.1*"/>
             <RowDefinition Height="*"/>
-            <RowDefinition Height="0.15*"/>
+            <RowDefinition Height="0.17*"/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="55"/>
@@ -191,5 +191,24 @@
                 </DataGridTemplateColumn>
             </DataGrid.Columns>
         </DataGrid>
+        <StackPanel Grid.Row="3" Grid.Column="2" Visibility="{Binding ResponseStatus, Converter={StaticResource IntToVisibility}, ConverterParameter=true:1}">
+            <TextBlock HorizontalAlignment="Center"
+                       Text="{loc:Loc Uploading}" FontSize="12" />
+            <TextBlock HorizontalAlignment="Center"
+                       Text="{Binding DungeonName}" FontSize="15" Margin="0,0,0,5" />
+            <ProgressBar VerticalAlignment="Center" Minimum="0" Maximum="{Binding MaxCombats}" Value="{Binding CurrentCombatNumber}" Height="20" Width="500"></ProgressBar>
+            <StackPanel Orientation="Horizontal" Margin="0,5,0,0" HorizontalAlignment="Center">
+                <TextBlock HorizontalAlignment="Center"
+                       Text="{loc:Loc CombatUploaded}" FontSize="15" FontWeight="Bold" />
+                <TextBlock HorizontalAlignment="Center"
+                       Text="{Binding Name}" FontSize="15"/>
+            </StackPanel>
+
+        </StackPanel>
+        <StackPanel Grid.Row="3" Grid.Column="2" Visibility="{Binding ResponseStatus, Converter={StaticResource IntToVisibility}, ConverterParameter=true:2}">
+            <ProgressBar VerticalAlignment="Center" Minimum="0" Maximum="{Binding MaxCombats}" Value="{Binding CurrentCombatNumber}" Height="20" Width="500"></ProgressBar>
+            <TextBlock HorizontalAlignment="Center"
+                       Text="{loc:Loc AllCombatsSaved}" FontSize="15" Margin="0,5,0,0" FontWeight="Bold"/>
+        </StackPanel>
     </Grid>
 </views:MvxWpfView>
