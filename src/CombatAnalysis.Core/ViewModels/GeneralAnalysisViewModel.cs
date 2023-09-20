@@ -132,6 +132,12 @@ public class GeneralAnalysisViewModel : ParentTemplate<Tuple<List<CombatModel>, 
         var combatsForUploadAgain = Combats.Where(combat => !combat.IsReady).ToList();
 
         var combatsAreUploaded = await _combatParserAPIService.SaveAsync(combatsForUploadAgain, CombatLog, _logType);
+        if (combatsAreUploaded == null)
+        {
+            BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, nameof(BasicTemplateViewModel.ResponseStatus), LoadingStatus.Failed);
+            return;
+        }
+
         var responseStatus = combatsAreUploaded.Any(uploaded => !uploaded) ? LoadingStatus.Failed : LoadingStatus.Successful;
         BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, nameof(BasicTemplateViewModel.ResponseStatus), responseStatus);
     }
@@ -149,6 +155,13 @@ public class GeneralAnalysisViewModel : ParentTemplate<Tuple<List<CombatModel>, 
         }
 
         var loadedCombats = await _combatParserAPIService.LoadCombatsAsync(CombatLog.Id);
+        if (loadedCombats == null)
+        {
+            BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, nameof(BasicTemplateViewModel.ResponseStatus), LoadingStatus.Failed);
+
+            return;
+        }
+
         foreach (var item in Combats)
         {
             var selectUploadedCombat = loadedCombats.FirstOrDefault(x => x.LocallyNumber == item.LocallyNumber);

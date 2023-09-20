@@ -274,6 +274,7 @@ public class CombatLogInformationViewModel : ParentTemplate, IObserver, IAuthObs
     public async Task OpenPlayerAnalysisAsync()
     {
         CombatLogUploadingFailed = false;
+        BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, nameof(BasicTemplateViewModel.ResponseStatus), LoadingStatus.None);
 
         await CombatLogFileValidateAsync(_combatLogPath);
     }
@@ -317,6 +318,10 @@ public class CombatLogInformationViewModel : ParentTemplate, IObserver, IAuthObs
     {
         var combatLog = combatCollection[CombatListSelectedIndex];
         var loadedCombats = await _combatParserAPIService.LoadCombatsAsync(combatLog.Id);
+        if (loadedCombats == null)
+        {
+            return;
+        }
 
         foreach (var item in loadedCombats)
         {
@@ -382,11 +387,13 @@ public class CombatLogInformationViewModel : ParentTemplate, IObserver, IAuthObs
 
     private async Task UploadingCombatLogAsync(List<CombatModel> combatList, Tuple<List<CombatModel>, LogType> dataForGeneralAnalysis)
     {
-        var createdCombatLog = await _combatParserAPIService.SaveCombatLogAsync(combatList);
-
         BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, nameof(BasicTemplateViewModel.ResponseStatus), LoadingStatus.Pending);
+
+        var createdCombatLog = await _combatParserAPIService.SaveCombatLogAsync(combatList);
         if (createdCombatLog == null)
         {
+            BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, nameof(BasicTemplateViewModel.ResponseStatus), LoadingStatus.Failed);
+
             CombatLogUploadingFailed = true;
             return;
         }
@@ -399,6 +406,12 @@ public class CombatLogInformationViewModel : ParentTemplate, IObserver, IAuthObs
         BasicTemplate.Handler.PropertyUpdate<GeneralAnalysisViewModel>(BasicTemplate.SavedViewModel, nameof(GeneralAnalysisViewModel.CombatLog), createdCombatLog);
 
         var combatsAreUploaded = await _combatParserAPIService.SaveAsync(combatList, createdCombatLog, LogType);
+        if (combatsAreUploaded == null)
+        {
+            BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, nameof(BasicTemplateViewModel.ResponseStatus), LoadingStatus.Failed);
+            return;
+        }
+
         var responseStatus = combatsAreUploaded.Any(uploaded => !uploaded) ? LoadingStatus.Failed : LoadingStatus.Successful;
         BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, nameof(BasicTemplateViewModel.ResponseStatus), responseStatus);
     }

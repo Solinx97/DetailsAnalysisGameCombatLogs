@@ -27,9 +27,18 @@ public class CombatLogController : ControllerBase
     [HttpGet]
     public async Task<IActionResult> GetAll()
     {
-        var combatLogs = await _service.GetAllAsync();
+        try
+        {
+            var combatLogs = await _service.GetAllAsync();
 
-        return Ok(combatLogs);
+            return Ok(combatLogs);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, ex.Message);
+
+            return BadRequest();
+        }
     }
 
     [HttpGet("{id:int:min(1)}")]

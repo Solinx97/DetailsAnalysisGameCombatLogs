@@ -54,13 +54,18 @@ public class CombatParserAPIService
         {
             _logger.LogError(ex, ex.Message);
 
-            return new List<bool>();
+            return null;
         }
     }
 
     public async Task DeleteCombatLogAsync(int id)
     {
         var combats = await LoadCombatsAsync(id).ConfigureAwait(false);
+        if (combats == null)
+        {
+            return;
+        }
+
         foreach (var item in combats)
         {
             await DeleteCombatPlayersData(item.Id);
@@ -75,7 +80,7 @@ public class CombatParserAPIService
         try
         {
             var responseMessage = await _httpClient.GetAsync("CombatLog");
-            if (responseMessage.StatusCode != System.Net.HttpStatusCode.OK)
+            if (!responseMessage.IsSuccessStatusCode)
             {
                 return null;
             }
@@ -131,11 +136,21 @@ public class CombatParserAPIService
 
     public async Task<IEnumerable<CombatModel>> LoadCombatsAsync(int combatLogId)
     {
-        _httpClient.BaseAddress = Port.CombatParserApi;
-        var responseMessage = await _httpClient.GetAsync($"Combat/FindByCombatLogId/{combatLogId}");
-        var combats = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<CombatModel>>();
+        try
+        {
+            _httpClient.BaseAddress = Port.CombatParserApi;
 
-        return combats;
+            var responseMessage = await _httpClient.GetAsync($"Combat/FindByCombatLogId/{combatLogId}");
+            var combats = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<CombatModel>>();
+
+            return combats;
+        }
+        catch (HttpRequestException ex)
+        {
+            _logger.LogError(ex, ex.Message);
+
+            return null;
+        }
     }
 
     public async Task<IEnumerable<CombatPlayerModel>> LoadCombatPlayersAsync(int combatId)
@@ -157,20 +172,29 @@ public class CombatParserAPIService
 
     public async Task<CombatLogModel> SaveCombatLogAsync(List<CombatModel> combats)
     {
-        var dungeonNames = combats
-             .GroupBy(group => group.DungeonName)
-             .Select(select => select.Key)
-             .ToList();
-
-        var combatLogResponse = await _httpClient.PostAsync("CombatLog", JsonContent.Create(dungeonNames));
-        if (combatLogResponse.IsSuccessStatusCode)
+        try
         {
+            var dungeonNames = combats
+                 .GroupBy(group => group.DungeonName)
+                 .Select(select => select.Key)
+                 .ToList();
+
+            var combatLogResponse = await _httpClient.PostAsync("CombatLog", JsonContent.Create(dungeonNames));
+            if (!combatLogResponse.IsSuccessStatusCode)
+            {
+                return null;
+            }
+
             var createdCombatLog = await combatLogResponse.Content.ReadFromJsonAsync<CombatLogModel>();
 
             return createdCombatLog;
         }
+        catch (HttpRequestException ex)
+        {
+            _logger.LogError(ex, ex.Message);
 
-        return null;
+            return null;
+        }
     }
 
     private async Task SaveCombatLogByUserAsync(int combatLogId, LogType logType)
