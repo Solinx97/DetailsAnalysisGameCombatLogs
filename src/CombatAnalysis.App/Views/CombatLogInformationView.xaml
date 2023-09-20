@@ -35,7 +35,7 @@
             <RowDefinition Height="0.25*"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="0.75*"/>
-            <RowDefinition Height="0.05*"/>
+            <RowDefinition Height="0.1*"/>
         </Grid.RowDefinitions>
 
         <ContentControl Grid.RowSpan="4" Grid.ColumnSpan="4" Content="{Binding BasicTemplate}">
@@ -178,7 +178,7 @@
             <StackPanel IsEnabled="{Binding CombatLog, Converter={StaticResource ToXAMLBool}}" Margin="20">
                 <Button Name="combatLogFileAnalysis" Height="35" Content="{loc:Loc Analyzing}" Width="100" FontSize="16" Margin="0 20"
                     mvx:Bi.nd="Command OpenPlayerAnalysisCommand" Style="{StaticResource showButton}" />
-                <StackPanel Orientation="Horizontal" Width="200" IsEnabled="{Binding IsAllowSaveLogs, Converter={StaticResource BoolToXAMLBool}, ConverterParameter=false}">
+                <StackPanel Orientation="Horizontal" Margin="115,0,0,0" Width="200" IsEnabled="{Binding IsAllowSaveLogs, Converter={StaticResource BoolToXAMLBool}, ConverterParameter=false}">
                     <CheckBox Name="isSaveCombatLog" VerticalAlignment="Center" VerticalContentAlignment="Center" Content="{loc:Loc SaveData}" 
                            HorizontalContentAlignment="Center" IsChecked="{Binding IsNeedSave}" FontSize="16"/>
                     <Icon:PackIconMaterial Kind="ChatQuestion"  Foreground="Gray" Style="{StaticResource menuButtonIcon}" ToolTip="{loc:Loc SaveDataDescribe}"/>
@@ -193,6 +193,11 @@
             <TextBlock Text="{Binding FoundCombat}" FontSize="16" TextAlignment="Center" TextWrapping="Wrap"
                        Margin="0" VerticalAlignment="Center" Height="60" MaxWidth="650"
                        Visibility="{Binding IsParsing, Converter={StaticResource BoolToVisibility}}" />
+        </StackPanel>
+        <StackPanel Visibility="{Binding CombatLogUploadingFailed, Converter={StaticResource BoolToVisibility}}"  Grid.Row="2" Grid.Column="2" Grid.ColumnSpan="2" VerticalAlignment="Bottom">
+            <TextBlock Text="Combat log uploading failed!" FontSize="16" TextAlignment="Center" TextWrapping="Wrap"
+                       Margin="0" VerticalAlignment="Center" Height="60" MaxWidth="650" Foreground="Red" />
+            <Button Content="Repeat" FontSize="14" Width="100" Foreground="BlueViolet" Style="{StaticResource showButton}" mvx:Bi.nd="Command OpenPlayerAnalysisCommand" />
         </StackPanel>
     </Grid>
 </views:MvxWpfView>

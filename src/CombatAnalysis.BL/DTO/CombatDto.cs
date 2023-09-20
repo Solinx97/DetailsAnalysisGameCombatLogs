@@ -4,6 +4,8 @@ public class CombatDto
 {
     public int Id { get; set; }
 
+    public int LocallyNumber { get; set; }
+
     public string DungeonName { get; set; }
 
     public string Name { get; set; }

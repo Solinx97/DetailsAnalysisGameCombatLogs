@@ -16,6 +16,8 @@ public class CombatParserService : IParser
 
     private readonly TimeSpan _minCombatDuration = TimeSpan.Parse("00:00:20");
 
+    private int _combatNumber = 0;
+
     public CombatParserService(IFileManager fileManager, ILogger logger)
     {
         _fileManager = fileManager;
@@ -192,16 +194,19 @@ public class CombatParserService : IParser
             }
         }
 
+        combat.LocallyNumber = _combatNumber;
         Combats.Add(combat);
 
         NotifyObservers();
+
+        _combatNumber++;
     }
 
     private List<string> GetCombatPlayers(List<string> combatInformation)
     {
         var playersId = new List<string>();
 
-        for (int i = 1; i < combatInformation.Count; i++)
+        for (var i = 1; i < combatInformation.Count; i++)
         {
             if (combatInformation[i].Contains(CombatLogConsts.CombatantInfo))
             {

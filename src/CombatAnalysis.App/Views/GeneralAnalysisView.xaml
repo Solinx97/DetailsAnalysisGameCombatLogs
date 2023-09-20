@@ -43,12 +43,8 @@
 
         <StackPanel Grid.Column="3" Grid.Row="1" Orientation="Horizontal"
                     HorizontalAlignment="Center" VerticalAlignment="Center">
-            <StackPanel>
-                <Button Content="{loc:Loc Refresh}" FontSize="14" Width="100" Command="{Binding RefreshCommand}"
-                        Foreground="CadetBlue" Style="{StaticResource showButton}"/>
-                <TextBlock Text="You can't inspect this combat because it hasn't been uploaded." Margin="5"
-                           Visibility="{Binding CombatIsNotLoaded, Converter={StaticResource BoolToVisibility}, ConverterParameter=true}"/>
-            </StackPanel>
+            <Button Content="{loc:Loc Refresh}" FontSize="14" Width="100" Command="{Binding RefreshCommand}"
+                    Foreground="CadetBlue" Style="{StaticResource showButton}"/>
             <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" 
                        Text="{loc:Loc Title}" FontSize="18" FontWeight="Bold"
                        Margin="100 0" Style="{StaticResource titleText}"/>

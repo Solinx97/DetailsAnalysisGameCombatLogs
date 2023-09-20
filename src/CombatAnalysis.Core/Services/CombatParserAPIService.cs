@@ -28,10 +28,11 @@ public class CombatParserAPIService
         _httpClient.BaseAddress = Port.CombatParserApi;
     }
 
-    public async Task<int> SaveAsync(List<CombatModel> combats, CombatLogModel combatLog, LogType logType)
+    public async Task<List<bool>> SaveAsync(List<CombatModel> combats, CombatLogModel combatLog, LogType logType)
     {
         try
         {
+            var combatsAreUploaded = new List<bool>();
             if (logType == LogType.Public || logType == LogType.Private)
             {
                 await SaveCombatLogByUserAsync(combatLog.Id, logType);
@@ -40,18 +41,20 @@ public class CombatParserAPIService
             await Parallel.ForEachAsync(combats, async (item, token) =>
             {
                 item.CombatLogId = combatLog.Id;
-                await _httpClient.PostAsync("Combat", JsonContent.Create(item));
+
+                var response = await _httpClient.PostAsync("Combat", JsonContent.Create(item));
+                combatsAreUploaded.Add(response.IsSuccessStatusCode);
             });
 
             await SetReadyForCombatLog(combatLog);
 
-            return combatLog.Id;
+            return combatsAreUploaded;
         }
         catch (HttpRequestException ex)
         {
             _logger.LogError(ex, ex.Message);
 
-            return 0;
+            return new List<bool>();
         }
     }
 
@@ -160,9 +163,14 @@ public class CombatParserAPIService
              .ToList();
 
         var combatLogResponse = await _httpClient.PostAsync("CombatLog", JsonContent.Create(dungeonNames));
-        var createdCombatLog = await combatLogResponse.Content.ReadFromJsonAsync<CombatLogModel>();
+        if (combatLogResponse.IsSuccessStatusCode)
+        {
+            var createdCombatLog = await combatLogResponse.Content.ReadFromJsonAsync<CombatLogModel>();
 
-        return createdCombatLog;
+            return createdCombatLog;
+        }
+
+        return null;
     }
 
     private async Task SaveCombatLogByUserAsync(int combatLogId, LogType logType)
