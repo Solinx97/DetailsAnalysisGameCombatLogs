@@ -141,6 +141,9 @@
   <data name="LoadingFailed" xml:space="preserve">
     <value>Loading failed</value>
   </data>
+  <data name="Lose" xml:space="preserve">
+    <value>Lose</value>
+  </data>
   <data name="Private" xml:space="preserve">
     <value>Private</value>
   </data>
@@ -167,6 +170,9 @@
   </data>
   <data name="RemovePrivateLog" xml:space="preserve">
     <value>Remove the selected log without the posibl of recovering of removed data.</value>
+  </data>
+  <data name="RemovingInProgress" xml:space="preserve">
+    <value>Removing...</value>
   </data>
   <data name="Repeat" xml:space="preserve">
     <value>Repeat</value>
@@ -200,6 +206,9 @@
   </data>
   <data name="UploadFile" xml:space="preserve">
     <value>Upload file with combat data</value>
+  </data>
+  <data name="Win" xml:space="preserve">
+    <value>Win</value>
   </data>
   <data name="WithoutUser" xml:space="preserve">
     <value>Without user data</value>

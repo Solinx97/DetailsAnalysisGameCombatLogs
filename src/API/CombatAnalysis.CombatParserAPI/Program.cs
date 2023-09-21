@@ -27,7 +27,7 @@ builder.Services.AddSingleton<ILogger>(logger);
 
 builder.Services.AddTransient<IHttpClientHelper, HttpClientHelper>();
 
-builder.Services.AddScoped<ISaveCombatDataHelper, SaveCombatDataHelper>();
+builder.Services.AddScoped<ICombatDataHelper, CombatDataHelper>();
 
 builder.Services.Configure<KestrelServerOptions>(options =>
 {

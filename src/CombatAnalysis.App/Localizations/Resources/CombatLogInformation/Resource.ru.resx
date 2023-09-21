@@ -141,6 +141,9 @@
   <data name="LoadingFailed" xml:space="preserve">
     <value>Ошибка загрузки</value>
   </data>
+  <data name="Lose" xml:space="preserve">
+    <value>Поражение</value>
+  </data>
   <data name="Private" xml:space="preserve">
     <value>Приватные</value>
   </data>
@@ -167,6 +170,9 @@
   </data>
   <data name="RemovePrivateLog" xml:space="preserve">
     <value>Удалить выбранный лог без возможности восстановить.</value>
+  </data>
+  <data name="RemovingInProgress" xml:space="preserve">
+    <value>Удаление...</value>
   </data>
   <data name="Repeat" xml:space="preserve">
     <value>Повторить</value>
@@ -200,6 +206,9 @@
   </data>
   <data name="UploadFile" xml:space="preserve">
     <value>Загрузить файл с данными о бое</value>
+  </data>
+  <data name="Win" xml:space="preserve">
+    <value>Победа</value>
   </data>
   <data name="WithoutUser" xml:space="preserve">
     <value>Без привязки к игроку</value>

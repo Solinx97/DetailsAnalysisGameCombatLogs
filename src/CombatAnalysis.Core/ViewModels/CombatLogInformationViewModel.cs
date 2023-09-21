@@ -6,6 +6,8 @@ using CombatAnalysis.Core.Interfaces;
 using CombatAnalysis.Core.Interfaces.Observers;
 using CombatAnalysis.Core.Localizations;
 using CombatAnalysis.Core.Models;
+using CombatAnalysis.Core.Models.User;
+using CombatAnalysis.Core.Modelsl;
 using CombatAnalysis.Core.Services;
 using CombatAnalysis.Core.ViewModels.Base;
 using Microsoft.Extensions.Caching.Memory;
@@ -22,6 +24,7 @@ public class CombatLogInformationViewModel : ParentTemplate, IObserver, IAuthObs
     private readonly IMapper _mapper;
     private readonly IParser _parser;
     private readonly CombatParserAPIService _combatParserAPIService;
+    private readonly IMemoryCache _memoryCache;
 
     private string _combatLog;
     private bool _fileIsNotCorrect;
@@ -34,7 +37,8 @@ public class CombatLogInformationViewModel : ParentTemplate, IObserver, IAuthObs
     private int _combatListSelectedIndex;
     private int _selectedCombatLogTypeTabItem;
     private ObservableCollection<CombatLogModel> _combatLogs = new ObservableCollection<CombatLogModel>();
-    private ObservableCollection<CombatLogModel> _combatLogsByUser = new ObservableCollection<CombatLogModel>();
+    private ObservableCollection<CombatLogModel> _combatLogsForTargetUser = new ObservableCollection<CombatLogModel>();
+    private ObservableCollection<CombatLogByUserModel> _combatLogsByUser = new ObservableCollection<CombatLogByUserModel>();
     private double _screenWidth;
     private double _screenHeight;
     private bool _isAuth;
@@ -42,16 +46,19 @@ public class CombatLogInformationViewModel : ParentTemplate, IObserver, IAuthObs
     private LogType _logType;
     private LoadingStatus _combatLogLoadingStatus;
     private LoadingStatus _combatLogByUserLoadingStatus;
+    private bool _removingInProgress;
 
-    public CombatLogInformationViewModel(IMapper mapper, IMvxNavigationService mvvmNavigation, IHttpClientHelper httpClient, IParser parser, ILogger logger, IMemoryCache memoryCache)
+    public CombatLogInformationViewModel(IMapper mapper, IMvxNavigationService mvvmNavigation, IHttpClientHelper httpClient, 
+        IParser parser, ILogger logger, IMemoryCache memoryCache)
     {
         _mapper = mapper;
         _mvvmNavigation = mvvmNavigation;
         _parser = parser;
+        _memoryCache = memoryCache;
 
         OpenPlayerAnalysisCommand = new MvxAsyncCommand(OpenPlayerAnalysisAsync);
         LoadCombatsCommand = new MvxAsyncCommand(() => LoadCombatsAsync(CombatLogs));
-        LoadCombatsByUserCommand = new MvxAsyncCommand(() => LoadCombatsAsync(CombatLogsByUser));
+        LoadCombatsByUserCommand = new MvxAsyncCommand(() => LoadCombatsAsync(CombatLogsForTargetUser));
         ReloadCombatsCommand = new MvxAsyncCommand(LoadCombatLogsAsync);
         ReloadCombatsByUserCommand = new MvxAsyncCommand(LoadCombatLogsByUserAsync);
         DeleteCombatCommand = new MvxAsyncCommand(DeleteAsync);
@@ -99,12 +106,12 @@ public class CombatLogInformationViewModel : ParentTemplate, IObserver, IAuthObs
         }
     }
 
-    public ObservableCollection<CombatLogModel> CombatLogsByUser
+    public ObservableCollection<CombatLogModel> CombatLogsForTargetUser
     {
-        get { return _combatLogsByUser; }
+        get { return _combatLogsForTargetUser; }
         set
         {
-            SetProperty(ref _combatLogsByUser, value);
+            SetProperty(ref _combatLogsForTargetUser, value);
         }
     }
 
@@ -263,6 +270,15 @@ public class CombatLogInformationViewModel : ParentTemplate, IObserver, IAuthObs
         }
     }
 
+    public bool RemovingInProgress
+    {
+        get { return _removingInProgress; }
+        set
+        {
+            SetProperty(ref _removingInProgress, value);
+        }
+    }
+
     #endregion
 
     public void GetCombatLog()
@@ -285,8 +301,12 @@ public class CombatLogInformationViewModel : ParentTemplate, IObserver, IAuthObs
         var combat = TranslationSource.Instance["CombatAnalysis.App.Localizations.Resources.CombatLogInformation.Resource.Combat"];
         var time = TranslationSource.Instance["CombatAnalysis.App.Localizations.Resources.CombatLogInformation.Resource.Time"];
         var result = TranslationSource.Instance["CombatAnalysis.App.Localizations.Resources.CombatLogInformation.Resource.Result"];
+        var win = TranslationSource.Instance["CombatAnalysis.App.Localizations.Resources.CombatLogInformation.Resource.Win"];
+        var lose = TranslationSource.Instance["CombatAnalysis.App.Localizations.Resources.CombatLogInformation.Resource.Lose"];
 
-        FoundCombat = $"{dungeon}: {data.DungeonName}, {combat}: {data.Name}, {time}: {data.Duration}, {result}: {data.IsWin}";
+        var combatStatus = data.IsWin ? win : lose;
+
+        FoundCombat = $"{dungeon}: {data.DungeonName}, {combat}: {data.Name}, {time}: {data.Duration}, {result}: {combatStatus}";
     }
 
     public void GetLogType(int logType)
@@ -299,6 +319,7 @@ public class CombatLogInformationViewModel : ParentTemplate, IObserver, IAuthObs
         IsParsing = false;
 
         CombatLogs?.Clear();
+        CheckAuth();
 
         Task.Run(LoadCombatLogsAsync);
         Task.Run(LoadCombatLogsByUserAsync);
@@ -341,12 +362,19 @@ public class CombatLogInformationViewModel : ParentTemplate, IObserver, IAuthObs
     public async Task DeleteAsync()
     {
         FoundCombat = string.Empty;
-        IsParsing = true;
+        RemovingInProgress = true;
 
-        await _combatParserAPIService.DeleteCombatLogAsync(CombatLogsByUser[CombatListSelectedIndex].Id);
+        var selectedCombatLogByUser = _combatLogsByUser.FirstOrDefault(x => x.CombatLogId == CombatLogsForTargetUser[CombatListSelectedIndex].Id);
+        await _combatParserAPIService.DeleteCombatLogByUserAsync(selectedCombatLogByUser.Id);
         await LoadCombatLogsByUserAsync();
 
-        IsParsing = false;
+        RemovingInProgress = false;
+    }
+
+    private void CheckAuth()
+    {
+        var user = _memoryCache.Get<AppUserModel>("account");
+        IsAuth = user != null;
     }
 
     private async Task CombatLogFileValidateAsync(string combatLog)
@@ -452,16 +480,23 @@ public class CombatLogInformationViewModel : ParentTemplate, IObserver, IAuthObs
 
         _combatParserAPIService.SetUpPort();
 
-        var combatLogsData = await _combatParserAPIService.LoadCombatLogsByUserAsync();
-        if (combatLogsData == null)
+        var combatLogsByUser = await _combatParserAPIService.LoadCombatLogsByUserAsync();
+        if (combatLogsByUser == null)
         {
             CombatLogByUserLoadingStatus = LoadingStatus.Failed;
             return;
         }
 
-        var readyCombatLogData = new List<CombatLogModel>();
+        var combatLogsIdByUser = combatLogsByUser.GroupBy(x => x.CombatLogId).Select(x => x.Key);
+        var combatLogs = await _combatParserAPIService.LoadCombatLogsAsync(combatLogsIdByUser.ToList());
+        if (combatLogs == null)
+        {
+            CombatLogLoadingStatus = LoadingStatus.Failed;
+            return;
+        }
 
-        foreach (var item in combatLogsData)
+        var readyCombatLogData = new List<CombatLogModel>();
+        foreach (var item in combatLogs)
         {
             if (item.IsReady)
             {
@@ -469,7 +504,8 @@ public class CombatLogInformationViewModel : ParentTemplate, IObserver, IAuthObs
             }
         }
 
-        CombatLogsByUser = new ObservableCollection<CombatLogModel>(readyCombatLogData);
+        CombatLogsForTargetUser = new ObservableCollection<CombatLogModel>(readyCombatLogData);
+        _combatLogsByUser = new ObservableCollection<CombatLogByUserModel>(combatLogsByUser);
 
         CombatLogByUserLoadingStatus = LoadingStatus.Successful;
     }

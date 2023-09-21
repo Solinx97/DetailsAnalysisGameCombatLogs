@@ -133,6 +133,15 @@ namespace CombatAnalysis.App.Localizations.Resources.CombatLogInformation {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Lose.
+        /// </summary>
+        public static string Lose {
+            get {
+                return ResourceManager.GetString("Lose", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Private.
         /// </summary>
         public static string Private {
@@ -210,6 +219,15 @@ namespace CombatAnalysis.App.Localizations.Resources.CombatLogInformation {
         public static string RemovePrivateLog {
             get {
                 return ResourceManager.GetString("RemovePrivateLog", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Removing....
+        /// </summary>
+        public static string RemovingInProgress {
+            get {
+                return ResourceManager.GetString("RemovingInProgress", resourceCulture);
             }
         }
         
@@ -309,6 +327,15 @@ namespace CombatAnalysis.App.Localizations.Resources.CombatLogInformation {
         public static string UploadFile {
             get {
                 return ResourceManager.GetString("UploadFile", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Win.
+        /// </summary>
+        public static string Win {
+            get {
+                return ResourceManager.GetString("Win", resourceCulture);
             }
         }
         

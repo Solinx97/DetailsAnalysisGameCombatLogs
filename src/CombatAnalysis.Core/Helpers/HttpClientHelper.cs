@@ -9,7 +9,10 @@ internal class HttpClientHelper : IHttpClientHelper
 
     public HttpClientHelper()
     {
-        Client = new HttpClient();
+        Client = new HttpClient
+        {
+            Timeout = TimeSpan.FromMinutes(3),
+        };
     }
 
     public HttpClient Client { get; set; }

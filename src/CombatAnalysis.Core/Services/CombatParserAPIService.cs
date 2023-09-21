@@ -62,21 +62,16 @@ public class CombatParserAPIService
         }
     }
 
-    public async Task DeleteCombatLogAsync(int id)
+    public async Task DeleteCombatLogByUserAsync(int id)
     {
-        var combats = await LoadCombatsAsync(id).ConfigureAwait(false);
-        if (combats == null)
+        try
         {
-            return;
+            await _httpClient.DeletAsync($"CombatLogByUser/{id}");
         }
-
-        foreach (var item in combats)
+        catch (HttpRequestException ex)
         {
-            await DeleteCombatPlayersData(item.Id);
+            _logger.LogError(ex, ex.Message);
         }
-
-        await _httpClient.DeletAsync($"Combat/DeleteByCombatLogId/{id}");
-        await _httpClient.DeletAsync($"CombatLog/{id}");
     }
 
     public async Task<IEnumerable<CombatLogModel>> LoadCombatLogsAsync()
@@ -101,34 +96,54 @@ public class CombatParserAPIService
         }
     }
 
-    public async Task<IEnumerable<CombatLogModel>> LoadCombatLogsByUserAsync()
+    public async Task<IEnumerable<CombatLogModel>> LoadCombatLogsAsync(List<int> combatLogsId)
     {
         try
         {
-            var user = _memoryCache.Get<AppUserModel>("account");
-            if (user == null)
-            {
-                return new List<CombatLogModel>();
-            }
-
             var combatLogs = new List<CombatLogModel>();
-            var responseMessage = await _httpClient.GetAsync($"CombatLogByUser/byUserId/{user.Id}");
-            if (responseMessage.StatusCode != System.Net.HttpStatusCode.OK)
+            foreach (var item in combatLogsId)
             {
-                return null;
-            }
+                var responseMessage = await _httpClient.GetAsync($"CombatLog/{item}");
+                if (!responseMessage.IsSuccessStatusCode)
+                {
+                    return null;
+                }
 
-            var combatLogsByUser = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<CombatLogByUserModel>>();
 
-            foreach (var item in combatLogsByUser)
-            {
-                responseMessage = await _httpClient.GetAsync($"CombatLog/{item.CombatLogId}");
                 var combatLog = await responseMessage.Content.ReadFromJsonAsync<CombatLogModel>();
 
                 combatLogs.Add(combatLog);
             }
 
             return combatLogs;
+        }
+        catch (HttpRequestException ex)
+        {
+            _logger.LogError(ex, ex.Message);
+
+            return null;
+        }
+    }
+
+    public async Task<IEnumerable<CombatLogByUserModel>> LoadCombatLogsByUserAsync()
+    {
+        try
+        {
+            var user = _memoryCache.Get<AppUserModel>("account");
+            if (user == null)
+            {
+                return null;
+            }
+
+            var responseMessage = await _httpClient.GetAsync($"CombatLogByUser/byUserId/{user.Id}");
+            if (!responseMessage.IsSuccessStatusCode)
+            {
+                return null;
+            }
+
+            var combatLogsByUser = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<CombatLogByUserModel>>();
+
+            return combatLogsByUser;
         }
         catch (HttpRequestException ex)
         {
@@ -159,19 +174,37 @@ public class CombatParserAPIService
 
     public async Task<IEnumerable<CombatPlayerModel>> LoadCombatPlayersAsync(int combatId)
     {
-        var responseMessage = await _httpClient.GetAsync($"CombatPlayer/FindByCombatId/{combatId}");
-        var combatPlayers = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<CombatPlayerModel>>();
+        try
+        {
+            var responseMessage = await _httpClient.GetAsync($"CombatPlayer/FindByCombatId/{combatId}");
+            var combatPlayers = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<CombatPlayerModel>>();
 
-        return combatPlayers;
+            return combatPlayers;
+        }
+        catch (HttpRequestException ex)
+        {
+            _logger.LogError(ex, ex.Message);
+
+            return null;
+        }
     }
 
     public async Task<IEnumerable<T>> LoadCombatDetailsByCombatPlayerId<T>(string address, int combatPlayerId)
         where T : class
     {
-        var responseMessage = await _httpClient.GetAsync($"{address}/{combatPlayerId}");
-        var healDones = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<T>>();
+        try
+        {
+            var responseMessage = await _httpClient.GetAsync($"{address}/{combatPlayerId}");
+            var details = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<T>>();
 
-        return healDones;
+            return details;
+        }
+        catch (HttpRequestException ex)
+        {
+            _logger.LogError(ex, ex.Message);
+
+            return null;
+        }
     }
 
     public async Task<CombatLogModel> SaveCombatLogAsync(List<CombatModel> combats)
@@ -203,44 +236,40 @@ public class CombatParserAPIService
 
     private async Task SaveCombatLogByUserAsync(int combatLogId, LogType logType)
     {
-        var user = _memoryCache.Get<AppUserModel>("account");
-        if (user == null)
+        try
         {
-            return;
+            var user = _memoryCache.Get<AppUserModel>("account");
+            if (user == null)
+            {
+                return;
+            }
+
+            var combatLogByUser = new CombatLogByUserModel
+            {
+                UserId = user.Id,
+                CombatLogId = combatLogId,
+                PersonalLogType = (int)logType
+            };
+
+            await _httpClient.PostAsync("CombatLogByUser", JsonContent.Create(combatLogByUser));
         }
-
-        var combatLogByUser = new CombatLogByUserModel
+        catch (HttpRequestException ex)
         {
-            UserId = user.Id,
-            CombatLogId = combatLogId,
-            PersonalLogType = (int)logType
-        };
-
-        await _httpClient.PostAsync("CombatLogByUser", JsonContent.Create(combatLogByUser));
+            _logger.LogError(ex, ex.Message);
+        }
     }
 
     private async Task SetReadyForCombatLog(CombatLogModel combatLog)
     {
-        combatLog.IsReady = true;
-
-        await _httpClient.PutAsync("CombatLog", JsonContent.Create(combatLog));
-    }
-
-    private async Task DeleteCombatPlayersData(int combatId)
-    {
-        var players = await LoadCombatPlayersAsync(combatId);
-        foreach (var item in players)
+        try
         {
-            await _httpClient.DeletAsync($"HealDone/DeleteByCombatPlayerId/{item.Id}");
-            await _httpClient.DeletAsync($"HealDoneGeneral/DeleteByCombatPlayerId/{item.Id}");
-            await _httpClient.DeletAsync($"DamageDone/DeleteByCombatPlayerId/{item.Id}");
-            await _httpClient.DeletAsync($"DamageDoneGeneral/DeleteByCombatPlayerId/{item.Id}");
-            await _httpClient.DeletAsync($"DamageTaken/DeleteByCombatPlayerId/{item.Id}");
-            await _httpClient.DeletAsync($"DamageTakenGeneral/DeleteByCombatPlayerId/{item.Id}");
-            await _httpClient.DeletAsync($"ResourceRecovery/DeleteByCombatPlayerId/{item.Id}");
-            await _httpClient.DeletAsync($"ResourceRecoveryGeneral/DeleteByCombatPlayerId/{item.Id}");
-        }
+            combatLog.IsReady = true;
 
-        await _httpClient.DeletAsync($"CombatPlayer/DeleteByCombatId/{combatId}");
+            await _httpClient.PutAsync("CombatLog", JsonContent.Create(combatLog));
+        }
+        catch (HttpRequestException ex)
+        {
+            _logger.LogError(ex, ex.Message);
+        }
     }
 }

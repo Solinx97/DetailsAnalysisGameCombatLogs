@@ -16,10 +16,10 @@ public class CombatController : ControllerBase
     private readonly IMapper _mapper;
     private readonly ILogger _logger;
     private readonly ISqlContextService _sqlContextService;
-    private readonly ISaveCombatDataHelper _saveCombatDataHelper;
+    private readonly ICombatDataHelper _saveCombatDataHelper;
 
     public CombatController(IService<CombatDto, int> service, IMapper mapper, ILogger logger,
-        ISqlContextService sqlContextService, ISaveCombatDataHelper saveCombatDataHelper, IService<CombatPlayerDto, int> combatPlayerService)
+        ISqlContextService sqlContextService, ICombatDataHelper saveCombatDataHelper, IService<CombatPlayerDto, int> combatPlayerService)
     {
         _service = service;
         _mapper = mapper;

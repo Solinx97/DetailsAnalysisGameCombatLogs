@@ -117,7 +117,8 @@
                 </StackPanel>
                 
                 <StackPanel Margin="10 5 0 0" VerticalAlignment="Bottom">
-                    <uc:MenuButton Title="{loc:Loc Settings}" OnClick="{Binding SettingsCommand}" Icon="CogOutline"/>
+                    <uc:MenuButton Title="{loc:Loc Settings}" OnClick="{Binding SettingsCommand}" Icon="CogOutline"
+                                   IsActive="{Binding Step, Converter={StaticResource IntToXAMLBool}, ConverterParameter=-3}"/>
                     <uc:MenuButton Title="{loc:Loc Exit}" OnClick="{Binding CloseCommand}" Icon="Logout"/>
                 </StackPanel>
             </StackPanel>

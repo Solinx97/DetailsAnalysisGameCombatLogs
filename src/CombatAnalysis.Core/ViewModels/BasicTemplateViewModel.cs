@@ -321,6 +321,7 @@ public class BasicTemplateViewModel : ParentTemplate, IVMDataHandler<CombatPlaye
 
     public async Task SettingsAsync()
     {
+        Step = -3;
         await _mvvmNavigation.Navigate<SettingsViewModel>();
     }
 

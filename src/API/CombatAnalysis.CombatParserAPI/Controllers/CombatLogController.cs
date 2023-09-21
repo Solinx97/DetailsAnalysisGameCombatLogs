@@ -14,9 +14,9 @@ public class CombatLogController : ControllerBase
     private readonly IService<CombatLogDto, int> _service;
     private readonly IMapper _mapper;
     private readonly ILogger _logger;
-    private readonly ISaveCombatDataHelper _saveCombatDataHelper;
+    private readonly ICombatDataHelper _saveCombatDataHelper;
 
-    public CombatLogController(IService<CombatLogDto, int> service, IMapper mapper, ILogger logger, ISaveCombatDataHelper saveCombatDataHelper)
+    public CombatLogController(IService<CombatLogDto, int> service, IMapper mapper, ILogger logger, ICombatDataHelper saveCombatDataHelper)
     {
         _service = service;
         _mapper = mapper;
