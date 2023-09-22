@@ -192,9 +192,18 @@
             <TextBlock Width="210" TextWrapping="Wrap" Text="{loc:Loc ProcessingFailed}" FontSize="16" TextAlignment="Center" Foreground="Orange"
                        Margin="10" HorizontalAlignment="Center" VerticalAlignment="Center"
                        Visibility="{Binding FileIsNotCorrect, Converter={StaticResource BoolToVisibility}}" />
-            <TextBlock Text="{Binding FoundCombat}" FontSize="16" TextAlignment="Center" TextWrapping="Wrap"
-                       Margin="0" VerticalAlignment="Center" Height="60" MaxWidth="650"
-                       Visibility="{Binding IsParsing, Converter={StaticResource BoolToVisibility}}" />
+            <StackPanel Height="90" Visibility="{Binding IsParsing, Converter={StaticResource BoolToVisibility}}">
+                <TextBlock Text="{Binding DungeonName}" FontSize="14" TextAlignment="Center" TextWrapping="Wrap"
+                           VerticalAlignment="Center" MaxWidth="650" FontFamily="Comic Sans MS" />
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                    <TextBlock Text="{Binding CombatName}" FontSize="17" TextAlignment="Center" TextWrapping="Wrap"
+                           VerticalAlignment="Center" MaxWidth="650" FontWeight="Bold" Margin="5" FontFamily="Comic Sans MS"/>
+                    <TextBlock Text="{Binding CombatStatus}" FontSize="14" TextAlignment="Center" TextWrapping="Wrap"
+                           VerticalAlignment="Center" MaxWidth="650" Margin="25,0,0,0"
+                               FontFamily="Comic Sans MS" Foreground="CadetBlue"/>
+                </StackPanel>
+
+            </StackPanel>
         </StackPanel>
         <StackPanel Visibility="{Binding CombatLogUploadingFailed, Converter={StaticResource BoolToVisibility}}"  Grid.Row="2" Grid.Column="2" Grid.ColumnSpan="2" VerticalAlignment="Bottom">
             <TextBlock Text="{loc:Loc CombatLogUploadingFailed}" FontSize="16" TextAlignment="Center" TextWrapping="Wrap"

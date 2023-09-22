@@ -32,7 +32,9 @@ public class CombatLogInformationViewModel : ParentTemplate, IObserver, IAuthObs
     private bool _combatLogUploadingFailed;
     private bool _isNeedSave = true;
     private bool _isShowSteps;
-    private string _foundCombat;
+    private string _dungeonName;
+    private string _combatName;
+    private string _combatStatus;
     private string _combatLogPath;
     private int _combatListSelectedIndex;
     private int _selectedCombatLogTypeTabItem;
@@ -179,12 +181,30 @@ public class CombatLogInformationViewModel : ParentTemplate, IObserver, IAuthObs
         }
     }
 
-    public string FoundCombat
+    public string DungeonName
     {
-        get { return _foundCombat; }
+        get { return _dungeonName; }
         set
         {
-            SetProperty(ref _foundCombat, value);
+            SetProperty(ref _dungeonName, value);
+        }
+    }
+
+    public string CombatName
+    {
+        get { return _combatName; }
+        set
+        {
+            SetProperty(ref _combatName, value);
+        }
+    }
+
+    public string CombatStatus
+    {
+        get { return _combatStatus; }
+        set
+        {
+            SetProperty(ref _combatStatus, value);
         }
     }
 
@@ -304,9 +324,9 @@ public class CombatLogInformationViewModel : ParentTemplate, IObserver, IAuthObs
         var win = TranslationSource.Instance["CombatAnalysis.App.Localizations.Resources.CombatLogInformation.Resource.Win"];
         var lose = TranslationSource.Instance["CombatAnalysis.App.Localizations.Resources.CombatLogInformation.Resource.Lose"];
 
-        var combatStatus = data.IsWin ? win : lose;
-
-        FoundCombat = $"{dungeon}: {data.DungeonName}, {combat}: {data.Name}, {time}: {data.Duration}, {result}: {combatStatus}";
+        DungeonName = data.DungeonName;
+        CombatName = data.Name;
+        CombatStatus = data.IsWin ? win : lose;
     }
 
     public void GetLogType(int logType)
@@ -361,7 +381,9 @@ public class CombatLogInformationViewModel : ParentTemplate, IObserver, IAuthObs
 
     public async Task DeleteAsync()
     {
-        FoundCombat = string.Empty;
+        DungeonName = string.Empty;
+        CombatName = string.Empty;
+        CombatStatus = string.Empty;
         RemovingInProgress = true;
 
         var selectedCombatLogByUser = _combatLogsByUser.FirstOrDefault(x => x.CombatLogId == CombatLogsForTargetUser[CombatListSelectedIndex].Id);
