@@ -1,4 +1,5 @@
 ﻿using CombatAnalysis.Core.Consts;
+using CombatAnalysis.Core.Extensions;
 using CombatAnalysis.Core.Interfaces;
 using CombatAnalysis.Core.Models.Response;
 using CombatAnalysis.Core.Models.User;
@@ -17,6 +18,13 @@ public class RegistrationViewModel : ParentTemplate
     private readonly IMvxNavigationService _mvvmNavigation;
 
     private string _email;
+    private string _phoneNumber;
+    private DateTimeOffset _birthday = DateTimeOffset.UtcNow;
+    private string _username;
+    private string _firstName;
+    private string _lastName;
+    private string _aboutMe;
+    private int _gender;
     private string _password;
     private string _confirmPassword;
     private bool _confirmPasswordIsNotCorrect;
@@ -58,6 +66,69 @@ public class RegistrationViewModel : ParentTemplate
         set
         {
             SetProperty(ref _email, value);
+        }
+    }
+
+    public string PhoneNumber
+    {
+        get { return _phoneNumber; }
+        set
+        {
+            SetProperty(ref _phoneNumber, value);
+        }
+    }
+
+    public DateTimeOffset Birthday
+    {
+        get { return _birthday; }
+        set
+        {
+            SetProperty(ref _birthday, value);
+        }
+    }
+
+    public string Username
+    {
+        get { return _username; }
+        set
+        {
+            SetProperty(ref _username, value);
+        }
+    }
+
+    public string FirstName
+    {
+        get { return _firstName; }
+        set
+        {
+            SetProperty(ref _firstName, value);
+        }
+    }
+
+    public string LastName
+    {
+        get { return _lastName; }
+        set
+        {
+            SetProperty(ref _lastName, value);
+        }
+    }
+
+    public string AboutMe
+    {
+        get { return _aboutMe; }
+        set
+        {
+            SetProperty(ref _aboutMe, value);
+        }
+    }
+
+    public int Gender
+    {
+        get { return _gender; }
+        set
+        {
+            SetProperty(ref _gender, value);
         }
     }
 
@@ -160,37 +231,60 @@ public class RegistrationViewModel : ParentTemplate
     {
         try
         {
-            var registrationModel = new RegistrationModel { Id = Guid.NewGuid().ToString(), Email = Email, Password = Password };
+            var registrationModel = new RegistrationModel 
+            { 
+                Email = Email, 
+                Password = Password,
+                PhoneNumber = PhoneNumber,
+                Birthday = Birthday
+            };
 
             _httpClientHelper.BaseAddress = Port.UserApi;
             var responseMessage = await _httpClientHelper.PostAsync("Account/registration", JsonContent.Create(registrationModel));
-            if (responseMessage.StatusCode == System.Net.HttpStatusCode.OK)
-            {
-                var result = await responseMessage.Content.ReadFromJsonAsync<ResponseFromAccount>();
-
-                _memoryCache.Set("accessToken", result.AccessToken, new MemoryCacheEntryOptions { Size = 10 });
-                _memoryCache.Set("refreshToken", result.RefreshToken, new MemoryCacheEntryOptions { Size = 10 });
-                _memoryCache.Set("user", result.User, new MemoryCacheEntryOptions { Size = 50 });
-
-                BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, "IsAuth", true);
-                BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, "Email", result.User.Email);
-
-                BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, "IsRegistrationNotActivated", true);
-                if (BasicTemplate.Parent is LoginViewModel)
-                {
-                    await _mvvmNavigation.Close(BasicTemplate.Parent);
-                }
-
-                await _mvvmNavigation.Close(this);
-            }
-            else
+            if (!responseMessage.IsSuccessStatusCode)
             {
                 AccountIsReady = true;
+                return;
             }
+
+            var account = await responseMessage.Content.ReadFromJsonAsync<ResponseFromAccount>();
+
+            await CreateCustomerAsync(account.User.Id, account.RefreshToken);
+
+            _memoryCache.Set("refreshToken", account.RefreshToken, new MemoryCacheEntryOptions { Size = 10 });
+            _memoryCache.Set("user", account.User, new MemoryCacheEntryOptions { Size = 50 });
+
+            BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, "IsAuth", true);
+            BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, "Email", account.User.Email);
+
+            BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, "IsRegistrationNotActivated", true);
+            if (BasicTemplate.Parent is LoginViewModel)
+            {
+                await _mvvmNavigation.Close(BasicTemplate.Parent);
+            }
+
+            await _mvvmNavigation.Close(this);
         }
         catch (HttpRequestException)
         {
             ServerIsNotAvailable = true;
         }
+    }
+
+    private async Task CreateCustomerAsync(string userId, string refreshToken)
+    {
+        var newCustomer = new CustomerModel
+        {
+            Id = "",
+            Username = Username,
+            FirstName = FirstName,
+            LastName = LastName,
+            AboutMe = AboutMe,
+            Message = " ",
+            Gender = Gender,
+            AppUserId = userId
+        };
+
+        await _httpClientHelper.PostAsync("Customer", JsonContent.Create(newCustomer), refreshToken, Port.UserApi);
     }
 }

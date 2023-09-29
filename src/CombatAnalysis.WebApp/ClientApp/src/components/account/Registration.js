@@ -7,7 +7,6 @@ import { updateCustomer } from '../../store/slicers/CustomerSlice';
 import { updateUser } from '../../store/slicers/UserSlice';
 import ConfidentialRegistrationStep from './ConfidentialRegistrationStep';
 import GeneralRegistrationStep from './GeneralRegistrationStep';
-import SourcesRegistrationStep from './SourcesRegistrationStep';
 
 import "../../styles/account/registration.scss";
 
@@ -98,11 +97,6 @@ const Registration = () => {
                 updateGeneralInformation={updateGeneralInformation}
                 registrationAsync={registrationAsync}
             />;
-        case 2:
-            return <SourcesRegistrationStep
-                setStep={setStep}
-                registrationAsync={registrationAsync}
-            />
         default:
             return <ConfidentialRegistrationStep
                 setStep={setStep}

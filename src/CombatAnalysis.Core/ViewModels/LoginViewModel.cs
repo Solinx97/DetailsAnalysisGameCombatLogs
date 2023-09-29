@@ -137,7 +137,6 @@ public class LoginViewModel : ParentTemplate
 
     private void SetMemoryCache(ResponseFromAccount response)
     {
-        _memoryCache.Set("accessToken", response.AccessToken, new MemoryCacheEntryOptions { Size = 10 });
         _memoryCache.Set("refreshToken", response.RefreshToken, new MemoryCacheEntryOptions { Size = 10 });
         _memoryCache.Set("account", response.User, new MemoryCacheEntryOptions { Size = 50 });
     }
