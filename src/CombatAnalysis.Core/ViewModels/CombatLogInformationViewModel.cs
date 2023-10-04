@@ -395,7 +395,7 @@ public class CombatLogInformationViewModel : ParentTemplate, IObserver, IAuthObs
 
     private void CheckAuth()
     {
-        var user = _memoryCache.Get<AppUserModel>("account");
+        var user = _memoryCache.Get<AppUserModel>(nameof(MemoryCacheValue.User));
         IsAuth = user != null;
     }
 

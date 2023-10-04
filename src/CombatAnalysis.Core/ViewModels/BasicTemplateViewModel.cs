@@ -250,7 +250,7 @@ public class BasicTemplateViewModel : ParentTemplate, IVMDataHandler<CombatPlaye
 
     public async Task LogoutAsync()
     {
-        var refreshToken = _memoryCache.Get<string>("refreshToken");
+        var refreshToken = _memoryCache.Get<string>(nameof(MemoryCacheValue.RefreshToken));
 
         _httpClient.BaseAddress = Port.UserApi;
         await _httpClient.GetAsync($"Account/logout/{refreshToken}");
@@ -363,7 +363,7 @@ public class BasicTemplateViewModel : ParentTemplate, IVMDataHandler<CombatPlaye
 
     public void CheckAuth()
     {
-        var user = _memoryCache.Get<AppUserModel>("account");
+        var user = _memoryCache.Get<AppUserModel>(nameof(MemoryCacheValue.User));
         if (user == null)
         {
             return;

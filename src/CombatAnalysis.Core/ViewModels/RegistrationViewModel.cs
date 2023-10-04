@@ -1,4 +1,5 @@
 ﻿using CombatAnalysis.Core.Consts;
+using CombatAnalysis.Core.Enums;
 using CombatAnalysis.Core.Extensions;
 using CombatAnalysis.Core.Interfaces;
 using CombatAnalysis.Core.Models.Response;
@@ -251,8 +252,8 @@ public class RegistrationViewModel : ParentTemplate
 
             await CreateCustomerAsync(account.User.Id, account.RefreshToken);
 
-            _memoryCache.Set("refreshToken", account.RefreshToken, new MemoryCacheEntryOptions { Size = 10 });
-            _memoryCache.Set("user", account.User, new MemoryCacheEntryOptions { Size = 50 });
+            _memoryCache.Set(nameof(MemoryCacheValue.RefreshToken), account.RefreshToken, new MemoryCacheEntryOptions { Size = 10 });
+            _memoryCache.Set(nameof(MemoryCacheValue.User), account.User, new MemoryCacheEntryOptions { Size = 50 });
 
             BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, "IsAuth", true);
             BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, "Email", account.User.Email);

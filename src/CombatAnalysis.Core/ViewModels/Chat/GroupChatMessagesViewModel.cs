@@ -302,7 +302,7 @@ public class GroupChatMessagesViewModel : MvxViewModel, IImprovedMvxViewModel
         }
 
         var groupChatUsers = await response.Content.ReadFromJsonAsync<IEnumerable<GroupChatUserModel>>();
-        _usersExcludingInvitees = Users.Where(x => !groupChatUsers.Any(y => x.Id == y.UserId)).ToList();
+        _usersExcludingInvitees = Users.Where(x => !groupChatUsers.Any(y => x.Id == y.CustomerId)).ToList();
 
         UsersToInviteToChat = new ObservableCollection<AppUserModel>(_usersExcludingInvitees);
 
@@ -321,7 +321,7 @@ public class GroupChatMessagesViewModel : MvxViewModel, IImprovedMvxViewModel
         var groupChatUser = new GroupChatUserModel
         {
             GroupChatId = SelectedChat.Id,
-            UserId = userId,
+            CustomerId = userId,
         };
 
         InputedUserEmailForInviteToChat = string.Empty;
@@ -425,6 +425,6 @@ public class GroupChatMessagesViewModel : MvxViewModel, IImprovedMvxViewModel
 
     private void GetMyAccount()
     {
-        MyAccount = _memoryCache.Get<AppUserModel>("account");
+        MyAccount = _memoryCache.Get<AppUserModel>(nameof(MemoryCacheValue.User));
     }
 }

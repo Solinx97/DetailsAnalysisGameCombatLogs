@@ -6,13 +6,7 @@ public class GroupChatModel
 
     public string Name { get; set; }
 
-    public string ShortName { get; set; }
-
     public string LastMessage { get; set; }
 
-    public int MemberNumber { get; set; }
-
-    public int ChatPolicyType { get; set; }
-
-    public string OwnerId { get; set; }
+    public string CustomerId { get; set; }
 }

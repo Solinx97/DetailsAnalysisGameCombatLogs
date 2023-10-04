@@ -119,7 +119,7 @@
                         <TextBlock Text="{loc:Loc NoPersonalMessages}" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="16"
                                Visibility="{Binding IsShowEmptyPersonalChat, Converter={StaticResource BoolToVisibility}, ConverterParameter='true:false'}"/>
                         
-                        <TextBlock Name="myAccountId" Text="{Binding MyAccount.Id}" Visibility="Collapsed"/>
+                        <TextBlock Name="myAccountId" Text="{Binding Customer.Id}" Visibility="Collapsed"/>
                         
                         <ListBox HorizontalContentAlignment="Stretch" Grid.Row="1" Margin="10 10 10 30"
                              ItemsSource="{Binding PersonalChats}" Background="Transparent"
@@ -128,7 +128,7 @@
                             <ListBox.ItemTemplate>
                                 <DataTemplate>
                                     <StackPanel>
-                                        <uc:Item Title="{Binding CompanionUsername}" Message="{Binding LastMessage}" Color="#73afff" TagName="" MessageCount="0">
+                                        <uc:Item Title="{Binding Path=Username}" Message="{Binding LastMessage}" Color="#73afff" TagName="" MessageCount="0">
                                             <uc:Item.Visibility>
                                                 <MultiBinding Converter="{StaticResource MultiplyToVisibility}">
                                                     <Binding Path="InitiatorId" />
@@ -136,7 +136,7 @@
                                                 </MultiBinding>
                                             </uc:Item.Visibility>
                                         </uc:Item>
-                                        <uc:Item Title="{Binding InitiatorUsername}" Message="{Binding LastMessage}" Color="#73afff" TagName="" MessageCount="0">
+                                        <uc:Item Title="{Binding Path=Username}" Message="{Binding LastMessage}" Color="#73afff" TagName="" MessageCount="0">
                                             <uc:Item.Visibility>
                                                 <MultiBinding Converter="{StaticResource MultiplyToVisibility}">
                                                     <Binding Path="CompanionId" />

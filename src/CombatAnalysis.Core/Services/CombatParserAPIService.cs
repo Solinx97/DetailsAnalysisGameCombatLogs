@@ -129,7 +129,7 @@ public class CombatParserAPIService
     {
         try
         {
-            var user = _memoryCache.Get<AppUserModel>("account");
+            var user = _memoryCache.Get<AppUserModel>(nameof(MemoryCacheValue.User));
             if (user == null)
             {
                 return null;
@@ -238,7 +238,7 @@ public class CombatParserAPIService
     {
         try
         {
-            var user = _memoryCache.Get<AppUserModel>("account");
+            var user = _memoryCache.Get<AppUserModel>(nameof(MemoryCacheValue.User));
             if (user == null)
             {
                 return;

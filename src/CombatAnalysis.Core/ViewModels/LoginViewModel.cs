@@ -1,4 +1,6 @@
 ﻿using CombatAnalysis.Core.Consts;
+using CombatAnalysis.Core.Enums;
+using CombatAnalysis.Core.Extensions;
 using CombatAnalysis.Core.Interfaces;
 using CombatAnalysis.Core.Models.Response;
 using CombatAnalysis.Core.Models.User;
@@ -98,31 +100,28 @@ public class LoginViewModel : ParentTemplate
         {
             try
             {
-                _httpClientHelper.BaseAddress = Port.UserApi;
-                var responseMessage = await _httpClientHelper.PostAsync("Account", JsonContent.Create(loginModel));
-                if (responseMessage.StatusCode == System.Net.HttpStatusCode.OK)
-                {
-                    var response = await responseMessage.Content.ReadFromJsonAsync<ResponseFromAccount>();
-
-                    SetMemoryCache(response);
-
-                    BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, "IsAuth", true);
-                    BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, "Email", response.User.Email);
-
-                    BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, "IsLoginNotActivated", true);
-
-                    await _mvvmNavigation.Close(this);
-                }
-                else
+                var responseMessage = await _httpClientHelper.PostAsync("Account", JsonContent.Create(loginModel), Port.UserApi);
+                if (!responseMessage.IsSuccessStatusCode)
                 {
                     AuthIsFailed = true;
                 }
+
+                var response = await responseMessage.Content.ReadFromJsonAsync<ResponseFromAccount>();
+                var customer = await GetCustomerAsync(response.RefreshToken, response.User.Id);
+
+                SetMemoryCache(response.RefreshToken, response.User, customer);
+
+                BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, "IsAuth", true);
+                BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, "Email", response.User.Email);
+
+                BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, "IsLoginNotActivated", true);
+
+                await _mvvmNavigation.Close(this);
             }
             catch (HttpRequestException)
             {
                 ServerIsNotAvailable = true;
             }
-
         };
 
         Task.Run(action);
@@ -135,9 +134,22 @@ public class LoginViewModel : ParentTemplate
         await _mvvmNavigation.Close(this);
     }
 
-    private void SetMemoryCache(ResponseFromAccount response)
+    private async Task<CustomerModel> GetCustomerAsync(string refreshToken, string userId)
     {
-        _memoryCache.Set("refreshToken", response.RefreshToken, new MemoryCacheEntryOptions { Size = 10 });
-        _memoryCache.Set("account", response.User, new MemoryCacheEntryOptions { Size = 50 });
+        var response = await _httpClientHelper.GetAsync($"Customer/searchByUserId/{userId}", refreshToken, Port.UserApi);
+        if (!response.IsSuccessStatusCode)
+        {
+            return null;
+        }
+
+        var customer = await response.Content.ReadFromJsonAsync<IEnumerable<CustomerModel>>();
+        return customer.FirstOrDefault();
+    }
+
+    private void SetMemoryCache(object refreshToken, object user, object customer)
+    {
+        _memoryCache.Set(nameof(MemoryCacheValue.RefreshToken), refreshToken, new MemoryCacheEntryOptions { Size = 10 });
+        _memoryCache.Set(nameof(MemoryCacheValue.User), user, new MemoryCacheEntryOptions { Size = 50 });
+        _memoryCache.Set(nameof(MemoryCacheValue.Customer), customer, new MemoryCacheEntryOptions { Size = 50 });
     }
 }
