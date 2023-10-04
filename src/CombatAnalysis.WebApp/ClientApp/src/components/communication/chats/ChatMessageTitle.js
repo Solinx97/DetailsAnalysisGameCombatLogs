@@ -13,7 +13,7 @@ const ChatMessageTitle = ({ me, itIsMe, setEditModeIsOn, openMessageMenu, editMo
     const { data: user, isLoading } = useGetCustomerByIdQuery(message?.customerId);
 
     const getMessageTime = () => {
-        const timeItems = message?.when.split(":");
+        const timeItems = message?.time.split(":");
         const time = `${timeItems[0]}:${timeItems[1]}`;
 
         return time;

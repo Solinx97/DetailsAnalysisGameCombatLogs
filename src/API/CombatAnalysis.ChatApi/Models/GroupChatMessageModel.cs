@@ -6,7 +6,7 @@ public class GroupChatMessageModel
 
     public string Message { get; set; }
 
-    public string When { get; set; }
+    public string Time { get; set; }
 
     public int Status { get; set; }
 
