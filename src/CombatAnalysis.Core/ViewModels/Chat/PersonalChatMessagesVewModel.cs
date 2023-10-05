@@ -27,6 +27,7 @@ public class PersonalChatMessagesVewModel : MvxViewModel, IImprovedMvxViewModel
     private string _selectedChatName;
     private string _message;
     private AppUserModel _myAccount;
+    private CustomerModel _customer;
 
     public PersonalChatMessagesVewModel(IHttpClientHelper httpClientHelper, IMemoryCache memoryCache)
     {
@@ -74,9 +75,9 @@ public class PersonalChatMessagesVewModel : MvxViewModel, IImprovedMvxViewModel
                     Messages.Clear();
                 });
 
-                Task.Run(LoadMessagesAsync);
-                AsyncDispatcher.ExecuteOnMainThreadAsync(() =>
+                AsyncDispatcher.ExecuteOnMainThreadAsync(async () =>
                 {
+                    await LoadMessagesAsync();
                     Fill();
                 });
 
@@ -112,6 +113,15 @@ public class PersonalChatMessagesVewModel : MvxViewModel, IImprovedMvxViewModel
         }
     }
 
+    public CustomerModel Customer
+    {
+        get { return _customer; }
+        set
+        {
+            SetProperty(ref _customer, value);
+        }
+    }
+
     public IVMHandler Handler { get; set; }
 
     public IMvxViewModel Parent { get; set; }
@@ -137,9 +147,10 @@ public class PersonalChatMessagesVewModel : MvxViewModel, IImprovedMvxViewModel
         var newPersonalChatMessage = new PersonalChatMessageModel
         {
             Message = Message,
-            Time = TimeSpan.Parse($"{DateTimeOffset.UtcNow.Hour}:{DateTimeOffset.UtcNow.Minute}"),
-            Username = MyAccount.Email,
+            Time = TimeSpan.Parse($"{DateTimeOffset.UtcNow.Hour}:{DateTimeOffset.UtcNow.Minute}").ToString(),
+            Status = 0,
             PersonalChatId = SelectedChat.Id,
+            CustomerId = Customer.Id,
         };
 
         Message = string.Empty;
@@ -159,9 +170,9 @@ public class PersonalChatMessagesVewModel : MvxViewModel, IImprovedMvxViewModel
 
     private void InitLoadMessages(object obj)
     {
-        Task.Run(LoadMessagesAsync);
-        AsyncDispatcher.ExecuteOnMainThreadAsync(() =>
+        AsyncDispatcher.ExecuteOnMainThreadAsync(async () =>
         {
+            await LoadMessagesAsync();
             Fill();
         });
 
@@ -183,10 +194,33 @@ public class PersonalChatMessagesVewModel : MvxViewModel, IImprovedMvxViewModel
         }
 
         _allMessages = await response.Content.ReadFromJsonAsync<IEnumerable<PersonalChatMessageModel>>();
+        foreach (var item in _allMessages)
+        {
+            await GetPersonalChatCompanionAsync(item);
+        }
+    }
+
+    private async Task GetPersonalChatCompanionAsync(PersonalChatMessageModel personalChatMessages)
+    {
+        var refreshToken = _memoryCache.Get<string>(nameof(MemoryCacheValue.RefreshToken));
+        if (string.IsNullOrEmpty(refreshToken))
+        {
+            return;
+        }
+
+        var response = await _httpClientHelper.GetAsync($"Customer/{personalChatMessages.CustomerId}", refreshToken, Port.UserApi);
+        if (!response.IsSuccessStatusCode)
+        {
+            return;
+        }
+
+        var companions = await response.Content.ReadFromJsonAsync<CustomerModel>();
+        personalChatMessages.Username = companions?.Username;
     }
 
     private void GetMyAccount()
     {
         MyAccount = _memoryCache.Get<AppUserModel>(nameof(MemoryCacheValue.User));
+        Customer = _memoryCache.Get<CustomerModel>(nameof(MemoryCacheValue.Customer));
     }
 }

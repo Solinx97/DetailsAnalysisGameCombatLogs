@@ -28,7 +28,7 @@ public class BasicTemplateViewModel : ParentTemplate, IVMDataHandler<CombatPlaye
     private bool _isAuth;
     private bool _isLoginNotActivated = true;
     private bool _isRegistrationNotActivated = true;
-    private string _email;
+    private string _username;
     private LogType _logType;
     private bool _logPanelStatusIsVisibly;
     private CombatModel _selectedCombat;
@@ -202,12 +202,12 @@ public class BasicTemplateViewModel : ParentTemplate, IVMDataHandler<CombatPlaye
         }
     }
 
-    public string Email
+    public string Username
     {
-        get { return _email; }
+        get { return _username; }
         set
         {
-            SetProperty(ref _email, value);
+            SetProperty(ref _username, value);
         }
     }
 
@@ -260,7 +260,7 @@ public class BasicTemplateViewModel : ParentTemplate, IVMDataHandler<CombatPlaye
         _memoryCache.Remove("account");
 
         IsAuth = false;
-        Email = string.Empty;
+        Username = string.Empty;
 
         if (Parent is ChatViewModel)
         {
@@ -363,13 +363,13 @@ public class BasicTemplateViewModel : ParentTemplate, IVMDataHandler<CombatPlaye
 
     public void CheckAuth()
     {
-        var user = _memoryCache.Get<AppUserModel>(nameof(MemoryCacheValue.User));
-        if (user == null)
+        var customer = _memoryCache.Get<CustomerModel>(nameof(MemoryCacheValue.Customer));
+        if (customer == null)
         {
             return;
         }
 
         IsAuth = true;
-        Email = user.Email;
+        Username = customer.Username;
     }
 }

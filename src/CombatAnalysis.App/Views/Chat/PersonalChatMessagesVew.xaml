@@ -48,7 +48,7 @@
             </StackPanel>
         </Grid>
         
-        <TextBlock Name="myUsername" Text="{Binding MyAccount.Email}" Visibility="Collapsed"/>
+        <TextBlock Name="myCustomerId" Text="{Binding Customer.Id}" Visibility="Collapsed"/>
         <ListBox Name="personalChat" Grid.Row="1" HorizontalContentAlignment="Stretch" Margin="0" ItemsSource="{Binding Messages}">
             <ListBox.ItemTemplate>
                 <DataTemplate>
@@ -57,8 +57,8 @@
                         <StackPanel>
                             <StackPanel.Visibility>
                                 <MultiBinding Converter="{StaticResource MultiplyToVisibility}" ConverterParameter="true">
-                                    <Binding Path="Username" />
-                                    <Binding ElementName="myUsername" Path="Text" />
+                                    <Binding Path="CustomerId" />
+                                    <Binding ElementName="myCustomerId" Path="Text" />
                                 </MultiBinding>
                             </StackPanel.Visibility>
 
@@ -72,11 +72,12 @@
                         <StackPanel>
                             <StackPanel.Visibility>
                                 <MultiBinding Converter="{StaticResource MultiplyToVisibility}">
-                                    <Binding Path="Username" />
-                                    <Binding ElementName="myUsername" Path="Text" />
+                                    <Binding Path="CustomerId" />
+                                    <Binding ElementName="myCustomerId" Path="Text" />
                                 </MultiBinding>
                             </StackPanel.Visibility>
-
+                            
+                            <uc:UserChat HorizontalAlignment="Right" UserName="{Binding Path=Username}"/>
                             <uc:MyMessageChat Message="{Binding Path=Message}"/>
                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
                                 <TextBlock Text="{Binding Path=Time, StringFormat=hh\\:mm}" Style="{StaticResource timeTextRight}"/>

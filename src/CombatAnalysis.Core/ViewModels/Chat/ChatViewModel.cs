@@ -359,25 +359,6 @@ public class ChatViewModel : ParentTemplate
         await LoadGroupChatsAsync();
     }
 
-    private async Task GetPersonalChatCompanionAsync(PersonalChatModel personalChat)
-    {
-        var refreshToken = _memoryCache.Get<string>(nameof(MemoryCacheValue.RefreshToken));
-        if (string.IsNullOrEmpty(refreshToken))
-        {
-            return;
-        }
-
-        var companionId = personalChat.CompanionId == Customer.Id ? personalChat.InitiatorId : personalChat.CompanionId;
-        var response = await _httpClientHelper.GetAsync($"Customer/{companionId}", refreshToken, Port.UserApi);
-        if (!response.IsSuccessStatusCode)
-        {
-            return;
-        }
-
-        var companions = await response.Content.ReadFromJsonAsync<CustomerModel>();
-        personalChat.Username = companions?.Username;
-    }
-
     private async Task LoadGroupChatsAsync()
     {
         GroupChatLoadingResponse = LoadingStatus.Pending;
@@ -491,6 +472,25 @@ public class ChatViewModel : ParentTemplate
 
             PersonalChatLoadingResponse = LoadingStatus.Failed;
         }
+    }
+
+    private async Task GetPersonalChatCompanionAsync(PersonalChatModel personalChat)
+    {
+        var refreshToken = _memoryCache.Get<string>(nameof(MemoryCacheValue.RefreshToken));
+        if (string.IsNullOrEmpty(refreshToken))
+        {
+            return;
+        }
+
+        var companionId = personalChat.CompanionId == Customer.Id ? personalChat.InitiatorId : personalChat.CompanionId;
+        var response = await _httpClientHelper.GetAsync($"Customer/{companionId}", refreshToken, Port.UserApi);
+        if (!response.IsSuccessStatusCode)
+        {
+            return;
+        }
+
+        var companions = await response.Content.ReadFromJsonAsync<CustomerModel>();
+        personalChat.Username = companions?.Username;
     }
 
     private async Task LoadUsersAsync()

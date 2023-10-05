@@ -72,7 +72,7 @@
                             <Icon:PackIconMaterial Kind="NaturePeople" Foreground="White"/>
                         </Button>
                         <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Margin="15"
-                               FontFamily="Comic Sans MS" FontSize="16" Text="{Binding Email}" Foreground="White" />
+                               FontFamily="Comic Sans MS" FontSize="16" Text="{Binding Username}" Foreground="White" />
                     </StackPanel>
                     <Button Style="{StaticResource accountButton}" Content="{loc:Loc Logout}" Width="100" Height="30" mvx:Bi.nd="Command LogoutCommand"/>
                 </StackPanel>

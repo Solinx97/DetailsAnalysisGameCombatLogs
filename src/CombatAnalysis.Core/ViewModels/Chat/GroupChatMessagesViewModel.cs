@@ -1,5 +1,6 @@
 ﻿using CombatAnalysis.Core.Consts;
 using CombatAnalysis.Core.Enums;
+using CombatAnalysis.Core.Extensions;
 using CombatAnalysis.Core.Helpers;
 using CombatAnalysis.Core.Interfaces;
 using CombatAnalysis.Core.Models.Chat;
@@ -32,6 +33,7 @@ public class GroupChatMessagesViewModel : MvxViewModel, IImprovedMvxViewModel
     private string _message;
     private bool _chatMenuIsVisibly;
     private AppUserModel _myAccount;
+    private CustomerModel _customer;
     private LoadingStatus _addUserToChatResponse;
     private bool _inviteToChatIsVisibly;
     private int _selectedUsersForInviteToGroupChatIndex = -1;
@@ -118,9 +120,9 @@ public class GroupChatMessagesViewModel : MvxViewModel, IImprovedMvxViewModel
 
                 SelectedChatName = value.Name;
 
-                Task.Run(LoadMessagesAsync);
-                AsyncDispatcher.ExecuteOnMainThreadAsync(() =>
+                AsyncDispatcher.ExecuteOnMainThreadAsync(async () =>
                 {
+                    await LoadMessagesAsync();
                     Fill();
                 });
 
@@ -180,6 +182,15 @@ public class GroupChatMessagesViewModel : MvxViewModel, IImprovedMvxViewModel
         set
         {
             SetProperty(ref _myAccount, value);
+        }
+    }
+
+    public CustomerModel Customer
+    {
+        get { return _customer; }
+        set
+        {
+            SetProperty(ref _customer, value);
         }
     }
 
@@ -277,9 +288,10 @@ public class GroupChatMessagesViewModel : MvxViewModel, IImprovedMvxViewModel
         var newGroupChatMessage = new GroupChatMessageModel
         {
             Message = Message,
-            Time = TimeSpan.Parse($"{DateTimeOffset.UtcNow.Hour}:{DateTimeOffset.UtcNow.Minute}"),
-            Username = MyAccount.Email,
+            Time = TimeSpan.Parse($"{DateTimeOffset.UtcNow.Hour}:{DateTimeOffset.UtcNow.Minute}").ToString(),
+            Status = 0,
             GroupChatId = SelectedChat.Id,
+            CustomerId = Customer.Id,
         };
 
         Message = string.Empty;
@@ -375,9 +387,9 @@ public class GroupChatMessagesViewModel : MvxViewModel, IImprovedMvxViewModel
 
     private void InitLoadMessages(object obj)
     {
-        Task.Run(LoadMessagesAsync).Wait();
-        AsyncDispatcher.ExecuteOnMainThreadAsync(() =>
+        AsyncDispatcher.ExecuteOnMainThreadAsync(async () =>
         {
+            await LoadMessagesAsync();
             Fill();
         });
 
@@ -386,10 +398,14 @@ public class GroupChatMessagesViewModel : MvxViewModel, IImprovedMvxViewModel
 
     private async Task LoadMessagesAsync()
     {
-        _httpClientHelper.BaseAddress = Port.ChatApi;
+        var refreshToken = _memoryCache.Get<string>(nameof(MemoryCacheValue.RefreshToken));
+        if (string.IsNullOrEmpty(refreshToken))
+        {
+            return;
+        }
 
-        var response = await _httpClientHelper.GetAsync($"GroupChatMessage/findByChatId/{SelectedChat?.Id}");
-        if (response.StatusCode != System.Net.HttpStatusCode.OK)
+        var response = await _httpClientHelper.GetAsync($"GroupChatMessage/findByChatId/{SelectedChat?.Id}", refreshToken, Port.ChatApi);
+        if (!response.IsSuccessStatusCode)
         {
             return;
         }
@@ -403,8 +419,6 @@ public class GroupChatMessagesViewModel : MvxViewModel, IImprovedMvxViewModel
 
         var response = await _httpClientHelper.GetAsync("Account");
         var users = await response.Content.ReadFromJsonAsync<IEnumerable<AppUserModel>>();
-
-        //_allUsers = users.Where(x => x.Id != MyAccount?.Id).ToList();
 
         Users = new ObservableCollection<AppUserModel>(users.Where(x => x.Id != MyAccount?.Id).ToList());
     }
@@ -426,5 +440,6 @@ public class GroupChatMessagesViewModel : MvxViewModel, IImprovedMvxViewModel
     private void GetMyAccount()
     {
         MyAccount = _memoryCache.Get<AppUserModel>(nameof(MemoryCacheValue.User));
+        Customer = _memoryCache.Get<CustomerModel>(nameof(MemoryCacheValue.Customer));
     }
 }
