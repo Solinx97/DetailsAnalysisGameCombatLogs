@@ -107,6 +107,11 @@ public class LoginViewModel : ParentTemplate
                 }
 
                 var response = await responseMessage.Content.ReadFromJsonAsync<ResponseFromAccount>();
+                if (response.User == null | response.RefreshToken == null)
+                {
+                    return;
+                }
+
                 var customer = await GetCustomerAsync(response.RefreshToken, response.User.Id);
 
                 SetMemoryCache(response.RefreshToken, response.User, customer);

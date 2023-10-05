@@ -26,31 +26,48 @@
         <TextBlock Grid.Column="1" Grid.Row="0" Text="{loc:Loc Title}" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="18" FontWeight="DemiBold"/>
         
         <StackPanel Grid.Column="1" Grid.Row="1">
-            <StackPanel Orientation="Horizontal">
-                <TextBlock Text="{loc:Loc ChatName}" VerticalAlignment="Center" Margin="10"/>
-                <TextBox VerticalAlignment="Center" Style="{StaticResource messageTextBox}" Text="{Binding Name}" Padding="5" VerticalContentAlignment="Center" Height="45" Width="200"/>
+            <StackPanel HorizontalAlignment="Left">
+                <TextBlock Text="{loc:Loc ChatName}" VerticalAlignment="Center" FontWeight="Bold" Margin="0 5" />
+                <TextBox Style="{StaticResource messageTextBox}" Text="{Binding Name}" Height="35" Padding="8" Width="200"/>
             </StackPanel>
-            <StackPanel IsEnabled="False" VerticalAlignment="Top" HorizontalAlignment="Left">
-                <TextBlock Text="{loc:Loc ChatPrivacy}" VerticalAlignment="Center" Margin="10"/>
-                <RadioButton Margin="50 5" Content="{loc:Loc Public}" FontSize="12" IsChecked="True" mvx:Bi.nd="Command GetPolicyTypeCommand, CommandParameter=0"/>
-                <RadioButton Margin="50 5" Content="{loc:Loc Private}" FontSize="12" mvx:Bi.nd="Command GetPolicyTypeCommand, CommandParameter=1"/>
-                <RadioButton Margin="50 5" Content="{loc:Loc PrivateWithLinks}" FontSize="12" mvx:Bi.nd="Command GetPolicyTypeCommand, CommandParameter=2"/>
-            </StackPanel>
-            <StackPanel VerticalAlignment="Top" HorizontalAlignment="Left" IsEnabled="False">
-                <TextBlock Text="{loc:Loc ChatRestrictions}" VerticalAlignment="Center" Margin="10"/>
-                <CheckBox Margin="50 5" Content="{loc:Loc WithoutRestrictions}" FontSize="12" IsChecked="True" mvx:Bi.nd="Command GetChatTypeCommand, CommandParameter=0"/>
-                <CheckBox Margin="50 5" Content="{loc:Loc CanNotAddUser}" FontSize="12" mvx:Bi.nd="Command GetChatTypeCommand, CommandParameter=1"/>
-                <CheckBox Margin="50 5" Content="{loc:Loc CanNotRemoveUser}" FontSize="12" mvx:Bi.nd="Command GetChatTypeCommand, CommandParameter=2"/>
-                <CheckBox Margin="50 5" Content="{loc:Loc RestrictionsToContent}" FontSize="12" mvx:Bi.nd="Command GetChatTypeCommand, CommandParameter=3"/>
-                <CheckBox Margin="50 5" Content="{loc:Loc OnlyRead}" FontSize="12" mvx:Bi.nd="Command GetChatTypeCommand, CommandParameter=4"/>
+            <StackPanel VerticalAlignment="Top" HorizontalAlignment="Left">
+                <TextBlock Text="{loc:Loc ChatRules}" VerticalAlignment="Center" FontWeight="Bold" Margin="0 5" />
+                <StackPanel Margin="25 0">
+                    <TextBlock Text="{loc:Loc WhoCanInvite}" VerticalAlignment="Center" Margin="5"/>
+                    <StackPanel Orientation="Horizontal">
+                        <RadioButton GroupName="Invite" Margin="50 5" Content="{loc:Loc ChatOwner}" FontSize="12" IsChecked="True" mvx:Bi.nd="Command GetWhoCanInvitePeopleCommand, CommandParameter=0" />
+                        <RadioButton GroupName="Invite" Margin="50 5" Content="{loc:Loc Anyone}" FontSize="12" mvx:Bi.nd="Command GetWhoCanInvitePeopleCommand, CommandParameter=1" />
+                    </StackPanel>
+                </StackPanel>
+                <StackPanel Margin="25 0">
+                    <TextBlock Text="{loc:Loc WhoCanRemove}" VerticalAlignment="Center" Margin="5"/>
+                    <StackPanel Orientation="Horizontal">
+                        <RadioButton GroupName="Remove" Margin="50 5" Content="{loc:Loc ChatOwner}" FontSize="12" IsChecked="True" mvx:Bi.nd="Command GetWhoCanRemovePeopleCommand, CommandParameter=0" />
+                        <RadioButton GroupName="Remove" Margin="50 5" Content="{loc:Loc Anyone}" FontSize="12" mvx:Bi.nd="Command GetWhoCanRemovePeopleCommand, CommandParameter=1"/>
+                    </StackPanel>
+                </StackPanel>
+                <StackPanel Margin="25 0">
+                    <TextBlock Text="{loc:Loc WhoCanPinMessage}" VerticalAlignment="Center" Margin="5"/>
+                    <StackPanel Orientation="Horizontal">
+                        <RadioButton GroupName="PinMessage" Margin="50 5" Content="{loc:Loc ChatOwner}" FontSize="12" mvx:Bi.nd="Command GetWhoCanPinMessageCommand, CommandParameter=0" />
+                        <RadioButton GroupName="PinMessage" Margin="50 5" Content="{loc:Loc Anyone}" FontSize="12" IsChecked="True" mvx:Bi.nd="Command GetWhoCanPinMessageCommand, CommandParameter=1"/>
+                    </StackPanel>
+                </StackPanel>
+                <StackPanel Margin="25 0">
+                    <TextBlock Text="{loc:Loc WhoCanMakeAnnounces}" VerticalAlignment="Center" Margin="5"/>
+                    <StackPanel Orientation="Horizontal">
+                        <RadioButton GroupName="Announce" Margin="50 5" Content="{loc:Loc ChatOwner}" FontSize="12" mvx:Bi.nd="Command GetWhoCanMakeAnouncesCommand, CommandParameter=0" />
+                        <RadioButton GroupName="Announce" Margin="50 5" Content="{loc:Loc Anyone}" FontSize="12" IsChecked="True" mvx:Bi.nd="Command GetWhoCanMakeAnouncesCommand, CommandParameter=1" />
+                    </StackPanel>
+                </StackPanel>
             </StackPanel>
         </StackPanel>
 
         <StackPanel Grid.Column="1" Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Center">
-            <Button mvx:Bi.nd="Command CreateCommand" Content="{loc:Loc Create}" Width="100" Height="50" FontSize="16"
-                    Margin="0" Style="{StaticResource showButton}" />
-            <Button mvx:Bi.nd="Command CancelCommand" Content="{loc:Loc Cancel}" Width="100" Height="50" FontSize="16"
-                    Margin="0" Style="{StaticResource showButton}" />
+            <Button mvx:Bi.nd="Command CreateCommand" Content="{loc:Loc Create}" Width="100" Height="40" FontSize="16"
+                    Margin="10 0" Style="{StaticResource showButton}" />
+            <Button mvx:Bi.nd="Command CancelCommand" Content="{loc:Loc Cancel}" Width="100" Height="40" FontSize="16"
+                    Margin="10 0" Style="{StaticResource showButton}" />
         </StackPanel>
     </Grid>
 </views:MvxWpfView>

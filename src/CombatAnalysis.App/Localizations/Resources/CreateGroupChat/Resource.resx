@@ -117,6 +117,9 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="Anyone" xml:space="preserve">
+    <value>Anyone</value>
+  </data>
   <data name="Cancel" xml:space="preserve">
     <value>Cancel</value>
   </data>
@@ -129,11 +132,18 @@
   <data name="ChatName" xml:space="preserve">
     <value>Chat name</value>
   </data>
+  <data name="ChatOwner" xml:space="preserve">
+    <value>Chat owner</value>
+  </data>
   <data name="ChatPrivacy" xml:space="preserve">
     <value>Chat privacy</value>
   </data>
   <data name="ChatRestrictions" xml:space="preserve">
     <value>Chat restrictions</value>
+  </data>
+  <data name="ChatRules" xml:space="preserve">
+    <value>Chat rules</value>
+    <comment> r</comment>
   </data>
   <data name="Create" xml:space="preserve">
     <value>Create</value>
@@ -154,7 +164,19 @@
     <value>Restriction on posting content</value>
   </data>
   <data name="Title" xml:space="preserve">
-    <value>Create a new group chat</value>
+    <value>Create new group chat</value>
+  </data>
+  <data name="WhoCanInvite" xml:space="preserve">
+    <value>Who can invite another people?</value>
+  </data>
+  <data name="WhoCanMakeAnnounces" xml:space="preserve">
+    <value>Who can make announcements?</value>
+  </data>
+  <data name="WhoCanPinMessage" xml:space="preserve">
+    <value>Who can pin message?</value>
+  </data>
+  <data name="WhoCanRemove" xml:space="preserve">
+    <value>Who can remove people?</value>
   </data>
   <data name="WithoutRestrictions" xml:space="preserve">
     <value>Without restrictions</value>

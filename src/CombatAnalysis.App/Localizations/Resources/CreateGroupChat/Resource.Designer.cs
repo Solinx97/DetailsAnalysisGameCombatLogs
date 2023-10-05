@@ -61,6 +61,15 @@ namespace CombatAnalysis.App.Localizations.Resources.CreateGroupChat {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Anyone.
+        /// </summary>
+        public static string Anyone {
+            get {
+                return ResourceManager.GetString("Anyone", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Cancel.
         /// </summary>
         public static string Cancel {
@@ -97,6 +106,15 @@ namespace CombatAnalysis.App.Localizations.Resources.CreateGroupChat {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Chat owner.
+        /// </summary>
+        public static string ChatOwner {
+            get {
+                return ResourceManager.GetString("ChatOwner", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Chat privacy.
         /// </summary>
         public static string ChatPrivacy {
@@ -111,6 +129,15 @@ namespace CombatAnalysis.App.Localizations.Resources.CreateGroupChat {
         public static string ChatRestrictions {
             get {
                 return ResourceManager.GetString("ChatRestrictions", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Chat rules.
+        /// </summary>
+        public static string ChatRules {
+            get {
+                return ResourceManager.GetString("ChatRules", resourceCulture);
             }
         }
         
@@ -169,11 +196,47 @@ namespace CombatAnalysis.App.Localizations.Resources.CreateGroupChat {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Create a new group chat.
+        ///   Looks up a localized string similar to Create new group chat.
         /// </summary>
         public static string Title {
             get {
                 return ResourceManager.GetString("Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Who can invite another people?.
+        /// </summary>
+        public static string WhoCanInvite {
+            get {
+                return ResourceManager.GetString("WhoCanInvite", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Who can make announcements?.
+        /// </summary>
+        public static string WhoCanMakeAnnounces {
+            get {
+                return ResourceManager.GetString("WhoCanMakeAnnounces", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Who can pin message?.
+        /// </summary>
+        public static string WhoCanPinMessage {
+            get {
+                return ResourceManager.GetString("WhoCanPinMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Who can remove people?.
+        /// </summary>
+        public static string WhoCanRemove {
+            get {
+                return ResourceManager.GetString("WhoCanRemove", resourceCulture);
             }
         }
         

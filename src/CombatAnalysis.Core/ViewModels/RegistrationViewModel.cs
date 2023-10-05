@@ -249,16 +249,14 @@ public class RegistrationViewModel : ParentTemplate
             }
 
             var account = await responseMessage.Content.ReadFromJsonAsync<ResponseFromAccount>();
+            var customer = await CreateCustomerAsync(account.User.Id, account.RefreshToken);
 
-            await CreateCustomerAsync(account.User.Id, account.RefreshToken);
+            SetMemoryCache(account.RefreshToken, account.User, customer);
 
-            _memoryCache.Set(nameof(MemoryCacheValue.RefreshToken), account.RefreshToken, new MemoryCacheEntryOptions { Size = 10 });
-            _memoryCache.Set(nameof(MemoryCacheValue.User), account.User, new MemoryCacheEntryOptions { Size = 50 });
+            BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, nameof(BasicTemplateViewModel.IsAuth), true);
+            BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, nameof(BasicTemplateViewModel.Username), account.User.Email);
 
-            BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, "IsAuth", true);
-            BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, "Email", account.User.Email);
-
-            BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, "IsRegistrationNotActivated", true);
+            BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, nameof(BasicTemplateViewModel.IsLoginNotActivated), true);
             if (BasicTemplate.Parent is LoginViewModel)
             {
                 await _mvvmNavigation.Close(BasicTemplate.Parent);
@@ -272,7 +270,7 @@ public class RegistrationViewModel : ParentTemplate
         }
     }
 
-    private async Task CreateCustomerAsync(string userId, string refreshToken)
+    private async Task<CustomerModel> CreateCustomerAsync(string userId, string refreshToken)
     {
         var newCustomer = new CustomerModel
         {
@@ -286,6 +284,20 @@ public class RegistrationViewModel : ParentTemplate
             AppUserId = userId
         };
 
-        await _httpClientHelper.PostAsync("Customer", JsonContent.Create(newCustomer), refreshToken, Port.UserApi);
+        var response = await _httpClientHelper.PostAsync("Customer", JsonContent.Create(newCustomer), refreshToken, Port.UserApi);
+        if (!response.IsSuccessStatusCode)
+        {
+            return null;
+        }
+
+        var customer = await response.Content.ReadFromJsonAsync<CustomerModel>();
+        return customer;
+    }
+
+    private void SetMemoryCache(object refreshToken, object user, object customer)
+    {
+        _memoryCache.Set(nameof(MemoryCacheValue.RefreshToken), refreshToken, new MemoryCacheEntryOptions { Size = 10 });
+        _memoryCache.Set(nameof(MemoryCacheValue.User), user, new MemoryCacheEntryOptions { Size = 50 });
+        _memoryCache.Set(nameof(MemoryCacheValue.Customer), customer, new MemoryCacheEntryOptions { Size = 50 });
     }
 }
