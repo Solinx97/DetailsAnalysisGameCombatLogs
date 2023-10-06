@@ -23,15 +23,11 @@ public class ChatViewModel : ParentTemplate
     private IImprovedMvxViewModel _groupChatMessagesTemplate;
     private IMemoryCache _memoryCache;
     private ObservableCollection<GroupChatModel> _myGroupChats;
-    private ObservableCollection<GroupChatModel> _groupChats;
     private ObservableCollection<PersonalChatModel> _personalChats;
-    private ObservableCollection<AppUserModel> _users;
-    private List<AppUserModel> _allUsers;
-    private List<GroupChatModel> _allGroupChats;
-    private string _inputedUserEmail;
-    private string _inputedGroupChatName;
+    private ObservableCollection<CustomerModel> _customers;
+    private List<CustomerModel> _allCustomers;
+    private string _inputedUsername;
     private int _selectedUsersIndex = -1;
-    private int _selectedGroupChatsIndex = -1;
     private GroupChatModel _selectedMyGroupChat;
     private PersonalChatModel _selectedPersonalChat;
     private int _selectedMyGroupChatIndex = -1;
@@ -50,7 +46,6 @@ public class ChatViewModel : ParentTemplate
         RefreshGroupChatsCommand = new MvxAsyncCommand(LoadGroupChatsAsync);
         RefreshPersonalChatsCommand = new MvxAsyncCommand(LoadPersonalChatsAsync);
         CreatePersonalChatCommand = new MvxAsyncCommand(CreatePersonalChatAsync);
-        JoinToGroupChatCommand = new MvxAsyncCommand(JoinToGroupChatAsync);
 
         BasicTemplate.Parent = this;
         BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, nameof(BasicTemplateViewModel.Step), -2);
@@ -68,8 +63,6 @@ public class ChatViewModel : ParentTemplate
     public IMvxAsyncCommand CreatePersonalChatCommand { get; set; }
 
     public IMvxAsyncCommand RefreshPersonalChatsCommand { get; set; }
-
-    public IMvxAsyncCommand JoinToGroupChatCommand { get; set; }
 
     #endregion
 
@@ -95,21 +88,12 @@ public class ChatViewModel : ParentTemplate
         }
     }
 
-    public ObservableCollection<AppUserModel> Users
+    public ObservableCollection<CustomerModel> Customers
     {
-        get { return _users; }
+        get { return _customers; }
         set
         {
-            SetProperty(ref _users, value);
-        }
-    }
-
-    public ObservableCollection<GroupChatModel> GroupChats
-    {
-        get { return _groupChats; }
-        set
-        {
-            SetProperty(ref _groupChats, value);
+            SetProperty(ref _customers, value);
         }
     }
 
@@ -140,32 +124,13 @@ public class ChatViewModel : ParentTemplate
         }
     }
 
-    public int SelectedGroupChatsIndex
+    public string InputedUsername
     {
-        get { return _selectedGroupChatsIndex; }
+        get { return _inputedUsername; }
         set
         {
-            SetProperty(ref _selectedGroupChatsIndex, value);
-        }
-    }
-
-    public string InputedUserEmail
-    {
-        get { return _inputedUserEmail; }
-        set
-        {
-            SetProperty(ref _inputedUserEmail, value);
-            LoadUsersEmailByStartChars(value);
-        }
-    }
-
-    public string InputedGroupChatName
-    {
-        get { return _inputedGroupChatName; }
-        set
-        {
-            SetProperty(ref _inputedGroupChatName, value);
-            LoadGroupChatsNameByStartChars(value);
+            SetProperty(ref _inputedUsername, value);
+            LoadCustomersUsernameByStartChars(value);
         }
     }
 
@@ -227,7 +192,7 @@ public class ChatViewModel : ParentTemplate
         }
     }
 
-    public CustomerModel Customer
+    public CustomerModel MyCustomer
     {
         get { return _customer; }
         set
@@ -304,20 +269,21 @@ public class ChatViewModel : ParentTemplate
 
         Task.Run(LoadGroupChatsAsync);
         Task.Run(LoadPersonalChatsAsync);
-        Task.Run(LoadUsersAsync);
+        Task.Run(LoadCustomersAsync);
     }
 
     public async Task CreatePersonalChatAsync()
     {
-        var userId = Users[SelectedUsersIndex].Id;
+        var targetCustomer = Customers[SelectedUsersIndex];
         var personalChat = new PersonalChatModel
         {
-            InitiatorId = MyAccount.Id,
-            CompanionId = userId,
+            Username = " ",
             LastMessage = " ",
+            InitiatorId = MyCustomer.Id,
+            CompanionId = targetCustomer.Id,
         };
 
-        InputedUserEmail = string.Empty;
+        InputedUsername = string.Empty;
 
         var refreshToken = _memoryCache.Get<string>(nameof(MemoryCacheValue.RefreshToken));
         if (string.IsNullOrEmpty(refreshToken))
@@ -338,25 +304,8 @@ public class ChatViewModel : ParentTemplate
         }
         else
         {
-            await _httpClientHelper.PostAsync("PersonalChat", JsonContent.Create(personalChat));
+            response = await _httpClientHelper.PostAsync("PersonalChat", JsonContent.Create(personalChat), refreshToken, Port.ChatApi);
         }
-    }
-
-    public async Task JoinToGroupChatAsync()
-    {
-        var groupChatId = GroupChats[SelectedGroupChatsIndex].Id;
-
-        var groupChatUser = new GroupChatUserModel
-        {
-            GroupChatId = groupChatId,
-            CustomerId = Customer.Id,
-        };
-
-        InputedGroupChatName = string.Empty;
-
-        await _httpClientHelper.PostAsync("GroupChatUser", JsonContent.Create(groupChatUser));
-
-        await LoadGroupChatsAsync();
     }
 
     private async Task LoadGroupChatsAsync()
@@ -371,7 +320,7 @@ public class ChatViewModel : ParentTemplate
                 return;
             }
 
-            var response = await _httpClientHelper.GetAsync($"GroupChatUser/findByUserId/{Customer.Id}", refreshToken, Port.ChatApi);
+            var response = await _httpClientHelper.GetAsync($"GroupChatUser/findByUserId/{MyCustomer.Id}", refreshToken, Port.ChatApi);
             if (!response.IsSuccessStatusCode)
             {
                 GroupChatLoadingResponse = LoadingStatus.Failed;
@@ -381,7 +330,6 @@ public class ChatViewModel : ParentTemplate
             var myGroupChatUsers = await response.Content.ReadFromJsonAsync<IEnumerable<GroupChatUserModel>>();
 
             await GetMyGroupChatsAsync(myGroupChatUsers);
-            await GetGroupChatsAsync();
 
             GroupChatLoadingResponse = LoadingStatus.Successful;
         }
@@ -415,27 +363,6 @@ public class ChatViewModel : ParentTemplate
         MyGroupChats = new ObservableCollection<GroupChatModel>(myGroupChats);
     }
 
-    private async Task GetGroupChatsAsync()
-    {
-        var refreshToken = _memoryCache.Get<string>(nameof(MemoryCacheValue.RefreshToken));
-        if (string.IsNullOrEmpty(refreshToken))
-        {
-            return;
-        }
-
-        var response = await _httpClientHelper.GetAsync("GroupChat", refreshToken, Port.ChatApi);
-        if (!response.IsSuccessStatusCode)
-        {
-            return;
-        }
-
-        var groupChats = await response.Content.ReadFromJsonAsync<IEnumerable<GroupChatModel>>();
-        var groupChatsExcludeMe = groupChats.Where(x => !MyGroupChats.Any(y => x.Id == y.Id)).ToList();
-
-        _allGroupChats = groupChatsExcludeMe.ToList();
-        GroupChats = new ObservableCollection<GroupChatModel>(groupChatsExcludeMe);
-    }
-
     private async Task LoadPersonalChatsAsync()
     {
         PersonalChatLoadingResponse = LoadingStatus.Pending;
@@ -456,7 +383,7 @@ public class ChatViewModel : ParentTemplate
             }
 
             var personalChats = await response.Content.ReadFromJsonAsync<IEnumerable<PersonalChatModel>>();
-            var myPersonalChats = personalChats.Where(x => x.InitiatorId == Customer?.Id || x.CompanionId == Customer?.Id).ToList();
+            var myPersonalChats = personalChats.Where(x => x.InitiatorId == MyCustomer?.Id || x.CompanionId == MyCustomer?.Id).ToList();
             foreach (var item in myPersonalChats)
             {
                 await GetPersonalChatCompanionAsync(item);
@@ -482,7 +409,7 @@ public class ChatViewModel : ParentTemplate
             return;
         }
 
-        var companionId = personalChat.CompanionId == Customer.Id ? personalChat.InitiatorId : personalChat.CompanionId;
+        var companionId = personalChat.CompanionId == MyCustomer.Id ? personalChat.InitiatorId : personalChat.CompanionId;
         var response = await _httpClientHelper.GetAsync($"Customer/{companionId}", refreshToken, Port.UserApi);
         if (!response.IsSuccessStatusCode)
         {
@@ -493,7 +420,7 @@ public class ChatViewModel : ParentTemplate
         personalChat.Username = companions?.Username;
     }
 
-    private async Task LoadUsersAsync()
+    private async Task LoadCustomersAsync()
     {
         var refreshToken = _memoryCache.Get<string>(nameof(MemoryCacheValue.RefreshToken));
         if (string.IsNullOrEmpty(refreshToken))
@@ -502,52 +429,50 @@ public class ChatViewModel : ParentTemplate
         }
 
         var response = await _httpClientHelper.GetAsync("Account", refreshToken, Port.UserApi);
-        var users = await response.Content.ReadFromJsonAsync<IEnumerable<AppUserModel>>();
+        if (!response.IsSuccessStatusCode)
+        {
+            return;
+        }
 
-        _allUsers = users.ToList();
-        foreach (var item in _allUsers)
+        var users = await response.Content.ReadFromJsonAsync<IEnumerable<AppUserModel>>();
+        _allCustomers = new List<CustomerModel>();
+
+        foreach (var item in users)
         {
             if (item.Id == MyAccount?.Id)
             {
-                _allUsers.Remove(item);
+                continue;
+            }
+
+            response = await _httpClientHelper.GetAsync($"Customer/searchByUserId/{item.Id}", refreshToken, Port.UserApi);
+            if (string.IsNullOrEmpty(refreshToken))
+            {
                 break;
             }
+
+            var customer = await response.Content.ReadFromJsonAsync<IEnumerable<CustomerModel>>();
+            _allCustomers.Add(customer.FirstOrDefault());
         }
 
-        Users = new ObservableCollection<AppUserModel>(_allUsers);
+        Customers = new ObservableCollection<CustomerModel>(_allCustomers.ToList());
     }
 
-    private void LoadUsersEmailByStartChars(string startChars)
+    private void LoadCustomersUsernameByStartChars(string username)
     {
-        if (!string.IsNullOrEmpty(startChars))
+        if (!string.IsNullOrEmpty(username))
         {
-            var usersEmailByStartChars = _allUsers.Where(x => x.Email.StartsWith(startChars));
-
-            Users = new ObservableCollection<AppUserModel>(usersEmailByStartChars);
+            var customerUsernameByStartChars = _allCustomers.Where(x => x.Username.StartsWith(username));
+            Customers = new ObservableCollection<CustomerModel>(customerUsernameByStartChars.ToList());
         }
         else
         {
-            Users = new ObservableCollection<AppUserModel>(_allUsers);
-        }
-    }
-
-    private void LoadGroupChatsNameByStartChars(string startChars)
-    {
-        if (!string.IsNullOrEmpty(startChars))
-        {
-            var groupChatsNameByStartChars = _allGroupChats.Where(x => x.Name.StartsWith(startChars));
-
-            GroupChats = new ObservableCollection<GroupChatModel>(groupChatsNameByStartChars);
-        }
-        else
-        {
-            GroupChats = new ObservableCollection<GroupChatModel>(_allGroupChats);
+            Customers = new ObservableCollection<CustomerModel>(_allCustomers);
         }
     }
 
     private void GetMyAccount()
     {
         MyAccount = _memoryCache.Get<AppUserModel>(nameof(MemoryCacheValue.User));
-        Customer = _memoryCache.Get<CustomerModel>(nameof(MemoryCacheValue.Customer));
+        MyCustomer = _memoryCache.Get<CustomerModel>(nameof(MemoryCacheValue.Customer));
     }
 }

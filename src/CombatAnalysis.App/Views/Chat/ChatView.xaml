@@ -51,21 +51,6 @@
             </ContentControl.Resources>
         </ContentControl>
 
-        <StackPanel Grid.Row="0" Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="50 0">
-            <StackPanel>
-                <TextBlock VerticalAlignment="Center" Text="{loc:Loc LookingForGroupChat}" FontSize="18"/>
-                <ComboBox Height="30" Padding="5" Width="250" IsEditable="True" ItemsSource="{Binding GroupChats}" Margin="0 5"
-                          SelectedIndex="{Binding SelectedGroupChatsIndex}"
-                          StaysOpenOnEdit="True" Text="{Binding InputedGroupChatName}"
-                          DisplayMemberPath="Name"/>
-            </StackPanel>
-            <Button IsEnabled="{Binding SelectedGroupChatsIndex, Converter={StaticResource IntToXAMLBool}, ConverterParameter='0:>='}"
-                    Style="{StaticResource textBoxButton}" Margin="10 -2" VerticalAlignment="Bottom" HorizontalAlignment="Center"
-                    mvx:Bi.nd="Command JoinToGroupChatCommand" ToolTip="{loc:Loc Join}">
-                <Icon:PackIconMaterial Style="{StaticResource joinToGroupChatStyle}" Kind="PlusBox" Width="20" Height="20"/>
-            </Button>
-        </StackPanel>
-        
         <Border Grid.Column="2" Grid.Row="1" Grid.RowSpan="3" Margin="0 -20">
             <Grid>
                 <StackPanel Orientation="Horizontal" Margin="30 0 0 30">
@@ -119,7 +104,7 @@
                         <TextBlock Text="{loc:Loc NoPersonalMessages}" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="16"
                                Visibility="{Binding IsShowEmptyPersonalChat, Converter={StaticResource BoolToVisibility}, ConverterParameter='true:false'}"/>
                         
-                        <TextBlock Name="myAccountId" Text="{Binding Customer.Id}" Visibility="Collapsed"/>
+                        <TextBlock Name="myAccountId" Text="{Binding MyCustomer.Id}" Visibility="Collapsed"/>
                         
                         <ListBox HorizontalContentAlignment="Stretch" Grid.Row="1" Margin="10 10 10 30"
                              ItemsSource="{Binding PersonalChats}" Background="Transparent"
@@ -155,12 +140,12 @@
             </Grid>
         </Border>
 
-        <StackPanel Grid.Row="0" Grid.Column="3" VerticalAlignment="Center" HorizontalAlignment="Left">
+        <StackPanel Grid.Row="0" Grid.Column="2" Grid.ColumnSpan="2" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="30 0">
             <StackPanel>
-                <TextBlock VerticalAlignment="Center" Text="{loc:Loc SearchUser}" FontSize="18"/>
+                <TextBlock VerticalAlignment="Center" Text="{loc:Loc StartChatting}" FontSize="18"/>
                 <StackPanel Orientation="Horizontal">
-                    <ComboBox Height="30" Padding="5" Width="250" IsEditable="True" ItemsSource="{Binding Users}" SelectedIndex="{Binding SelectedUsersIndex}"
-                          StaysOpenOnEdit="True" Text="{Binding InputedUserEmail}" DisplayMemberPath="Email"/>
+                    <ComboBox Height="30" Padding="5" Width="250" IsEditable="True" ItemsSource="{Binding Customers}" SelectedIndex="{Binding SelectedUsersIndex}"
+                          StaysOpenOnEdit="True" Text="{Binding InputedUsername}" DisplayMemberPath="Username"/>
                     <StackPanel x:Name="usersEmail" Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center"
                                 IsEnabled="{Binding SelectedUsersIndex, Converter={StaticResource IntToXAMLBool}, ConverterParameter='0:>='}"
                                 Margin="25 0">
