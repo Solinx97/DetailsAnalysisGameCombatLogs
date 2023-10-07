@@ -7,6 +7,32 @@
     StartupUri="MainWindow.xaml">
     
     <Application.Resources>
+        <!--#region Data grid style -->
+        
+        <Style x:Key="dataGridStyle" TargetType="DataGrid">
+            <Setter Property="CellStyle">
+                <Setter.Value>
+                    <Style TargetType="DataGridCell">
+                        <Style.Triggers>
+                            <Trigger Property="IsSelected" Value="True">
+                                <Setter Property="Background" Value="#ff66ccff" />
+                                <Setter Property="BorderBrush" Value="Transparent" />
+                                <Setter Property="Foreground" Value="Black" />
+                            </Trigger>
+                            <Trigger Property="IsFocused" Value="True">
+                                <Setter Property="Background" Value="#ff66ccff" />
+                                <Setter Property="BorderBrush" Value="Black" />
+                                <Setter Property="BorderThickness" Value="1"/>
+                                <Setter Property="Foreground" Value="Black" />
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!--#endregion-->
+        
         <!-- region Home View -->
 
         <Style x:Key="homeItems" TargetType="Image">
@@ -96,6 +122,8 @@
 
         <!-- endregion -->
         
+        <!--#region Left side button -->
+        
         <Style x:Key="leftSideButton" TargetType="Button">
             <Setter Property="Background" Value="Transparent"/>
             <Setter Property="Foreground" Value="White"/>
@@ -122,7 +150,9 @@
                 </DataTrigger>
             </Style.Triggers>
         </Style>
-
+        
+        <!--#endregion-->
+        
         <!-- region ComboBox Style -->
             
         <SolidColorBrush x:Key="TextBox.Static.Background" Color="#FFFFFFFF"/>
@@ -369,6 +399,8 @@
         
         <!-- endregion -->
         
+        <!--#region Menu button -->
+
         <Style x:Key="menuButton" TargetType="Button">
             <Setter Property="Background" Value="Transparent"/>
             <Setter Property="Foreground" Value="White"/>
@@ -406,6 +438,10 @@
             </Style.Triggers>
         </Style>
 
+        <!--#endregion-->
+        
+        <!--#region Account button -->
+
         <Style x:Key="accountButton" TargetType="Button">
             <Setter Property="Background" Value="White"/>
             <Setter Property="Foreground" Value="Black"/>
@@ -438,6 +474,8 @@
                 </Trigger>
             </Style.Triggers>
         </Style>
+
+        <!--#endregion-->
 
         <Style x:Key="menuButtonIcon" TargetType="Icon:PackIconMaterial">
             <Setter Property="Width" Value="16"/>

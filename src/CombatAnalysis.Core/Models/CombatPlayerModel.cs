@@ -14,6 +14,14 @@ public class CombatPlayerModel
 
     public int EnergyRecovery { get; set; }
 
+    public double DamageDonePerSecond { get; set; }
+
+    public double HealDonePerSecond { get; set; }
+
+    public double DamageTakenPerSecond { get; set; }
+
+    public double EnergyRecoveryPerSecond { get; set; }
+
     public int UsedBuffs { get; set; }
 
     public int CombatId { get; set; }
