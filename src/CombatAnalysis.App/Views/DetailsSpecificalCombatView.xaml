@@ -21,10 +21,10 @@
         </Grid.Resources>
         
         <Grid.RowDefinitions>
-            <RowDefinition Height="0.125*"/>
-            <RowDefinition Height="0.2*"/>
+            <RowDefinition Height="0.12*"/>
+            <RowDefinition Height="0.19*"/>
             <RowDefinition Height="*"/>
-            <RowDefinition Height="0.1*"/>
+            <RowDefinition Height="0.14*"/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="55"/>
@@ -68,13 +68,13 @@
                                         VerticalAlignment="Bottom" Visibility="{Binding CombatInformationType, Converter={StaticResource IntToVisibility}, ConverterParameter='false:0:='}"/>
                 <TextBlock Text="{loc:Loc TotalValue}" FontSize="16"/>
             </StackPanel>
-            <Icon:PackIconMaterial Kind="ToggleSwitchOff" Width="200" Cursor="Hand"
+            <Icon:PackIconMaterial Kind="ToggleSwitchOff" Width="100" Cursor="Hand"
                                     VerticalAlignment="Bottom" Visibility="{Binding CombatInformationType, Converter={StaticResource IntToVisibility}, ConverterParameter='true:0:='}">
                 <Icon:PackIconMaterial.InputBindings>
                     <MouseBinding Command="{Binding SwitchBetweenValuesCommand}" CommandParameter="1" Gesture="LeftClick"/>
                 </Icon:PackIconMaterial.InputBindings>
             </Icon:PackIconMaterial>
-            <Icon:PackIconMaterial Kind="ToggleSwitch" Width="200" Cursor="Hand" 
+            <Icon:PackIconMaterial Kind="ToggleSwitch" Width="100" Cursor="Hand" 
                                     VerticalAlignment="Bottom" Visibility="{Binding CombatInformationType, Converter={StaticResource IntToVisibility}, ConverterParameter='true:1:='}">
                 <Icon:PackIconMaterial.InputBindings>
                     <MouseBinding Command="{Binding SwitchBetweenValuesCommand}" CommandParameter="0" Gesture="LeftClick"/>
@@ -424,5 +424,78 @@
                 </DataGridTemplateColumn>
             </DataGrid.Columns>
         </DataGrid>
+
+        <CheckBox Grid.Row="3" Grid.Column="2" Grid.ColumnSpan="2" VerticalAlignment="Top" VerticalContentAlignment="Center" Content="{loc:Loc ShowSummaryInform}" 
+                           HorizontalContentAlignment="Left" Margin="25 -10" IsChecked="{Binding ShowSummaryInformation}" />
+
+        <StackPanel Grid.Row="3" Grid.Column="2" Grid.ColumnSpan="2" Margin="0 15"
+                    Visibility="{Binding ShowSummaryInformation, Converter={StaticResource BoolToVisibility}, ConverterParameter=true:true}">
+            <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Left"
+                    Visibility="{Binding CombatInformationType, Converter={StaticResource IntToVisibility}, ConverterParameter='true:0:='}">
+                <StackPanel Margin="140 0">
+                    <TextBlock Text="{loc:Loc AverageDamage}" FontSize="13" />
+                    <TextBlock Text="{Binding AverageDamage}" TextAlignment="Center" Margin="0 5" FontSize="16" FontWeight="Bold" VerticalAlignment="Center" />
+                </StackPanel>
+                <StackPanel Margin="90 0">
+                    <TextBlock Text="{loc:Loc AverageHeal}" FontSize="13" />
+                    <TextBlock Text="{Binding AverageHeal}" TextAlignment="Center" Margin="0 5" FontSize="16" FontWeight="Bold" VerticalAlignment="Center" />
+                </StackPanel>
+                <StackPanel Margin="140 0">
+                    <TextBlock Text="{loc:Loc AverageResources}" FontSize="13" />
+                    <TextBlock Text="{Binding AverageResources}" TextAlignment="Center" Margin="0 5" FontSize="16" FontWeight="Bold" VerticalAlignment="Center" />
+                </StackPanel>
+            </StackPanel>
+
+            <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Left"
+                    Visibility="{Binding CombatInformationType, Converter={StaticResource IntToVisibility}, ConverterParameter='true:1:='}">
+                <StackPanel Margin="140 0">
+                    <TextBlock Text="{loc:Loc AverageDamagePerSecond}" FontSize="13" />
+                    <TextBlock Text="{Binding AverageDamagePerSecond, StringFormat=0.00}" TextAlignment="Center" Margin="0 5" FontSize="16" FontWeight="Bold" VerticalAlignment="Center" />
+                </StackPanel>
+                <StackPanel Margin="90 0">
+                    <TextBlock Text="{loc:Loc AverageHealPerSecond}" FontSize="13" />
+                    <TextBlock Text="{Binding AverageHealPerSecond, StringFormat=0.00}" TextAlignment="Center" Margin="0 5" FontSize="16" FontWeight="Bold" VerticalAlignment="Center" />
+                </StackPanel>
+                <StackPanel Margin="140 0">
+                    <TextBlock Text="{loc:Loc AverageResourcesPerSecond}" FontSize="13" />
+                    <TextBlock Text="{Binding AverageResourcesPerSecond, StringFormat=0.00}" TextAlignment="Center" Margin="0 5" FontSize="16" FontWeight="Bold" VerticalAlignment="Center" />
+                </StackPanel>
+            </StackPanel>
+        </StackPanel>
+
+        <StackPanel Grid.Row="3" Grid.Column="2" Grid.ColumnSpan="2" Margin="0 15"
+                    Visibility="{Binding ShowSummaryInformation, Converter={StaticResource BoolToVisibility}, ConverterParameter=true:false}">
+            <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Left"
+                    Visibility="{Binding CombatInformationType, Converter={StaticResource IntToVisibility}, ConverterParameter='true:0:='}">
+                <StackPanel Margin="140 0">
+                    <TextBlock Text="{loc:Loc TotalDamage}" FontSize="13" />
+                    <TextBlock Text="{Binding TotalDamage}" TextAlignment="Center" Margin="0 5" FontSize="16" FontWeight="Bold" VerticalAlignment="Center" />
+                </StackPanel>
+                <StackPanel Margin="90 0">
+                    <TextBlock Text="{loc:Loc TotalHeal}" FontSize="13" />
+                    <TextBlock Text="{Binding TotalHeal}" TextAlignment="Center" Margin="0 5" FontSize="16" FontWeight="Bold" VerticalAlignment="Center" />
+                </StackPanel>
+                <StackPanel Margin="140 0">
+                    <TextBlock Text="{loc:Loc TotalResoures}" FontSize="13" />
+                    <TextBlock Text="{Binding TotalResoures}" TextAlignment="Center" Margin="0 5" FontSize="16" FontWeight="Bold" VerticalAlignment="Center" />
+                </StackPanel>
+            </StackPanel>
+
+            <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Left"
+                    Visibility="{Binding CombatInformationType, Converter={StaticResource IntToVisibility}, ConverterParameter='true:1:='}">
+                <StackPanel Margin="140 0">
+                    <TextBlock Text="{loc:Loc TotalDamagePerSecond}" FontSize="13" />
+                    <TextBlock Text="{Binding TotalDamagePerSecond, StringFormat=0.00}" TextAlignment="Center" Margin="0 5" FontSize="16" FontWeight="Bold" VerticalAlignment="Center" />
+                </StackPanel>
+                <StackPanel Margin="90 0">
+                    <TextBlock Text="{loc:Loc TotalHealPerSecond}" FontSize="13" />
+                    <TextBlock Text="{Binding TotalHealPerSecond, StringFormat=0.00}" TextAlignment="Center" Margin="0 5" FontSize="16" FontWeight="Bold" VerticalAlignment="Center" />
+                </StackPanel>
+                <StackPanel Margin="140 0">
+                    <TextBlock Text="{loc:Loc TotalResourcesPerSecond}" FontSize="13" />
+                    <TextBlock Text="{Binding TotalResourcesPerSecond, StringFormat=0.00}" TextAlignment="Center" Margin="0 5" FontSize="16" FontWeight="Bold" VerticalAlignment="Center" />
+                </StackPanel>
+            </StackPanel>
+        </StackPanel>
     </Grid>
 </views:MvxWpfView>

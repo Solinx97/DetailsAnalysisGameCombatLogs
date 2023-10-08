@@ -32,6 +32,19 @@ public class DetailsSpecificalCombatViewModel : ParentTemplate<CombatModel>
     private bool _useFilterByMinDPS;
     private bool _useFilterByMinHPS;
     private bool _useFilterByMinRPS;
+    private double _averageDamage;
+    private double _averageHeal;
+    private double _averageResources;
+    private double _averageDamagePerSecond;
+    private double _averageHealPerSecond;
+    private double _averageResourcesPerSecond;
+    private bool _showSummaryInformation;
+    private int _totalDamage;
+    private int _totalHeal;
+    private int _totalResources;
+    private double _totalDamagePerSecond;
+    private double _totalHealPerSecond;
+    private double _totalResourcesPerSecond;
     private TimeSpan _duration;
 
     public DetailsSpecificalCombatViewModel()
@@ -372,6 +385,123 @@ public class DetailsSpecificalCombatViewModel : ParentTemplate<CombatModel>
         }
     }
 
+    public double AverageDamage
+    {
+        get { return _averageDamage; }
+        set
+        {
+            SetProperty(ref _averageDamage, value);
+        }
+    }
+
+    public double AverageHeal
+    {
+        get { return _averageHeal; }
+        set
+        {
+            SetProperty(ref _averageHeal, value);
+        }
+    }
+
+    public double AverageResources
+    {
+        get { return _averageResources; }
+        set
+        {
+            SetProperty(ref _averageResources, value);
+        }
+    }
+
+    public double AverageDamagePerSecond
+    {
+        get { return _averageDamagePerSecond; }
+        set
+        {
+            SetProperty(ref _averageDamagePerSecond, value);
+        }
+    }
+
+    public double AverageHealPerSecond
+    {
+        get { return _averageHealPerSecond; }
+        set
+        {
+            SetProperty(ref _averageHealPerSecond, value);
+        }
+    }
+
+    public double AverageResourcesPerSecond
+    {
+        get { return _averageResourcesPerSecond; }
+        set
+        {
+            SetProperty(ref _averageResourcesPerSecond, value);
+        }
+    }
+
+    public int TotalDamage
+    {
+        get { return _totalDamage; }
+        set
+        {
+            SetProperty(ref _totalDamage, value);
+        }
+    }
+
+    public int TotalHeal
+    {
+        get { return _totalHeal; }
+        set
+        {
+            SetProperty(ref _totalHeal, value);
+        }
+    }
+
+    public int TotalResoures
+    {
+        get { return _totalResources; }
+        set
+        {
+            SetProperty(ref _totalResources, value);
+        }
+    }
+
+    public double TotalDamagePerSecond
+    {
+        get { return _totalDamagePerSecond; }
+        set
+        {
+            SetProperty(ref _totalDamagePerSecond, value);
+        }
+    }
+
+    public double TotalHealPerSecond
+    {
+        get { return _totalHealPerSecond; }
+        set
+        {
+            SetProperty(ref _totalHealPerSecond, value);
+        }
+    }
+
+    public double TotalResourcesPerSecond
+    {
+        get { return _totalResourcesPerSecond; }
+        set
+        {
+            SetProperty(ref _totalResourcesPerSecond, value);
+        }
+    }
+
+    public bool ShowSummaryInformation
+    {
+        get { return _showSummaryInformation; }
+        set
+        {
+            SetProperty(ref _showSummaryInformation, value);
+        }
+    }
+
     #endregion
 
     public void ApplyMinDamageDone()
@@ -561,6 +691,22 @@ public class DetailsSpecificalCombatViewModel : ParentTemplate<CombatModel>
             player.HealDonePerSecond = player.HealDone / _duration.TotalSeconds;
             player.EnergyRecoveryPerSecond = player.EnergyRecovery / _duration.TotalSeconds;
         }
+
+        AverageDamage = PlayersCombat.Average(x => x.DamageDone);
+        AverageHeal = PlayersCombat.Average(x => x.HealDone);
+        AverageResources = PlayersCombat.Average(x => x.EnergyRecovery);
+
+        AverageDamagePerSecond = PlayersCombat.Average(x => x.DamageDonePerSecond);
+        AverageHealPerSecond = PlayersCombat.Average(x => x.HealDonePerSecond);
+        AverageResourcesPerSecond = PlayersCombat.Average(x => x.EnergyRecoveryPerSecond);
+
+        TotalDamage = PlayersCombat.Sum(x => x.DamageDone);
+        TotalHeal = PlayersCombat.Sum(x => x.HealDone);
+        TotalResoures = PlayersCombat.Sum(x => x.EnergyRecovery);
+
+        TotalDamagePerSecond = PlayersCombat.Sum(x => x.DamageDonePerSecond);
+        TotalHealPerSecond = PlayersCombat.Sum(x => x.HealDonePerSecond);
+        TotalResourcesPerSecond = PlayersCombat.Sum(x => x.EnergyRecoveryPerSecond);
     }
 
     private void GetTotalValueFiltersName()
