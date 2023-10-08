@@ -317,10 +317,6 @@ public class CombatLogInformationViewModel : ParentTemplate, IObserver, IAuthObs
 
     public void Update(Combat data)
     {
-        var dungeon = TranslationSource.Instance["CombatAnalysis.App.Localizations.Resources.CombatLogInformation.Resource.Dungeon"];
-        var combat = TranslationSource.Instance["CombatAnalysis.App.Localizations.Resources.CombatLogInformation.Resource.Combat"];
-        var time = TranslationSource.Instance["CombatAnalysis.App.Localizations.Resources.CombatLogInformation.Resource.Time"];
-        var result = TranslationSource.Instance["CombatAnalysis.App.Localizations.Resources.CombatLogInformation.Resource.Result"];
         var win = TranslationSource.Instance["CombatAnalysis.App.Localizations.Resources.CombatLogInformation.Resource.Win"];
         var lose = TranslationSource.Instance["CombatAnalysis.App.Localizations.Resources.CombatLogInformation.Resource.Lose"];
 

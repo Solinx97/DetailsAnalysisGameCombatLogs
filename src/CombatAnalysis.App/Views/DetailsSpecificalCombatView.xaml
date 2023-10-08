@@ -17,11 +17,12 @@
     <Grid>
         <Grid.Resources>
             <converters:TheNativeIntToVisibilityConverter x:Key="IntToVisibility" />
+            <converters:TheNativeBoolToVisibilityConverter x:Key="BoolToVisibility" />
         </Grid.Resources>
         
         <Grid.RowDefinitions>
-            <RowDefinition Height="0.15*"/>
-            <RowDefinition Height="0.15*"/>
+            <RowDefinition Height="0.125*"/>
+            <RowDefinition Height="0.2*"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="0.1*"/>
         </Grid.RowDefinitions>
@@ -50,42 +51,242 @@
         
         <!--#endregion-->
 
-        <StackPanel Grid.Column="2" Grid.ColumnSpan="2" Grid.Row="1"
-                    HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0 -25"
-                    Orientation="Horizontal">
+        <StackPanel Grid.Column="2" Grid.ColumnSpan="2" Grid.Row="0"
+                    HorizontalAlignment="Center" VerticalAlignment="Center"
+                    Orientation="Horizontal" ToolTip="{loc:Loc CombatName}">
             <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Text="{loc:Loc Title}"
                        Margin="50 0" Style="{StaticResource titleText}"/>
-            <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Text="{Binding Combat.Name}"
-                       Margin="50 0" FontSize="16" FontWeight="Bold"/>
+            <StackPanel Orientation="Horizontal">
+                <Icon:PackIconMaterial Kind="FaceAgent" Width="13" HorizontalAlignment="Center" Margin="10 0" VerticalAlignment="Center"/>
+                <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Text="{Binding Combat.Name}" FontSize="16" FontWeight="Bold"/>
+            </StackPanel>
         </StackPanel>
 
-        <StackPanel Grid.Column="2" Grid.Row="1" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="20 0" Orientation="Horizontal">
-            <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Text="{loc:Loc SelectedPlayer}" FontSize="15"/>
-            <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Text="{Binding SelectedPlayer.UserName}" FontSize="16" FontWeight="Bold"/>
-        </StackPanel>
-
-        <StackPanel Grid.Column="2" Grid.Row="1" Grid.ColumnSpan="2" HorizontalAlignment="Center" VerticalAlignment="Bottom" Orientation="Horizontal">
+        <StackPanel Grid.Column="2" Grid.Row="1" Grid.ColumnSpan="2" HorizontalAlignment="Center" VerticalAlignment="Top" Orientation="Horizontal">
             <StackPanel>
                 <Icon:PackIconMaterial Kind="Eye" Foreground="Green" Width="13" HorizontalAlignment="Center"
                                         VerticalAlignment="Bottom" Visibility="{Binding CombatInformationType, Converter={StaticResource IntToVisibility}, ConverterParameter='false:0:='}"/>
-                <TextBlock Text="Total value" FontSize="16"/>
+                <TextBlock Text="{loc:Loc TotalValue}" FontSize="16"/>
             </StackPanel>
-            <Icon:PackIconMaterial  Kind="ToggleSwitchOff" Width="200" Cursor="Hand"
+            <Icon:PackIconMaterial Kind="ToggleSwitchOff" Width="200" Cursor="Hand"
                                     VerticalAlignment="Bottom" Visibility="{Binding CombatInformationType, Converter={StaticResource IntToVisibility}, ConverterParameter='true:0:='}">
                 <Icon:PackIconMaterial.InputBindings>
                     <MouseBinding Command="{Binding SwitchBetweenValuesCommand}" CommandParameter="1" Gesture="LeftClick"/>
                 </Icon:PackIconMaterial.InputBindings>
             </Icon:PackIconMaterial>
-            <Icon:PackIconMaterial  Kind="ToggleSwitch" Width="200" Cursor="Hand" 
+            <Icon:PackIconMaterial Kind="ToggleSwitch" Width="200" Cursor="Hand" 
                                     VerticalAlignment="Bottom" Visibility="{Binding CombatInformationType, Converter={StaticResource IntToVisibility}, ConverterParameter='true:1:='}">
                 <Icon:PackIconMaterial.InputBindings>
                     <MouseBinding Command="{Binding SwitchBetweenValuesCommand}" CommandParameter="0" Gesture="LeftClick"/>
                 </Icon:PackIconMaterial.InputBindings>
             </Icon:PackIconMaterial>
             <StackPanel>
-                <Icon:PackIconMaterial  Kind="Eye" Foreground="Green" Width="13" HorizontalAlignment="Center"
+                <Icon:PackIconMaterial Kind="Eye" Foreground="Green" Width="13" HorizontalAlignment="Center"
                                         VerticalAlignment="Bottom" Visibility="{Binding CombatInformationType, Converter={StaticResource IntToVisibility}, ConverterParameter='false:1:='}"/>
-                <TextBlock Text="Value per second" FontSize="16"/>
+                <TextBlock Text="{loc:Loc ValuePerSecond}" FontSize="16"/>
+            </StackPanel>
+        </StackPanel>
+
+        <StackPanel Grid.Column="2" Grid.Row="1" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="20 10">
+            <TextBlock Text="{Binding SelectedPlayer.UserName}" FontSize="16" FontWeight="Bold"/>
+        </StackPanel>
+
+        <StackPanel Grid.Column="2" Grid.Row="1" HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="20 0">
+            <TextBlock Text="Filter" FontSize="16" Margin="0 5" />
+            <StackPanel Orientation="Horizontal">
+                <ComboBox Width="175" ItemsSource="{Binding FilterList}" SelectedIndex="{Binding SeletedFilterIndex}" />
+                <Icon:PackIconMaterial Kind="TrashCan" Cursor="Hand" Foreground="Orange" Width="10" Margin="15 5" HorizontalAlignment="Center"
+                                       VerticalAlignment="Top" ToolTip="{loc:Loc ClearFilters}">
+                    <Icon:PackIconMaterial.InputBindings>
+                        <MouseBinding Command="{Binding FilterClearCommand}" Gesture="LeftClick"/>
+                    </Icon:PackIconMaterial.InputBindings>
+                </Icon:PackIconMaterial>
+            </StackPanel>
+        </StackPanel>
+
+        <StackPanel Orientation="Horizontal" VerticalAlignment="Bottom" Grid.Column="2" Grid.Row="1" Grid.ColumnSpan="2" Margin="0 -5"
+                    HorizontalAlignment="Center" Visibility="{Binding CombatInformationType, Converter={StaticResource IntToVisibility}, ConverterParameter='false:0:='}"> 
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center" Width="200"
+                            Visibility="{Binding UseFilterByMinDamageDone, Converter={StaticResource BoolToVisibility}, ConverterParameter=true:false}">
+                    <Icon:PackIconMaterial Kind="Close" Cursor="Hand" Foreground="Red" Width="10" Margin="-20 6" HorizontalAlignment="Center" VerticalAlignment="Top">
+                        <Icon:PackIconMaterial.InputBindings>
+                            <MouseBinding Command="{Binding UseFilterByMinDamageDoneCommand}" Gesture="LeftClick"/>
+                        </Icon:PackIconMaterial.InputBindings>
+                    </Icon:PackIconMaterial>
+                    <StackPanel Margin="20 0">
+                        <TextBlock Text="{loc:Loc MinDamage}" Margin="0 5" FontSize="12" />
+                        <StackPanel Orientation="Horizontal" Cursor="Hand" ToolTip="{loc:Loc EditValue}"
+                                    Visibility="{Binding OpenEditMinDamageDone, Converter={StaticResource BoolToVisibility}, ConverterParameter=true:true}">
+                            <TextBlock Text="{Binding MinDamageDone}" Width="90" Margin="0 5" FontSize="12" FontWeight="Bold" />
+                            <Icon:PackIconMaterial Kind="Pen" Foreground="Gray" Width="13" Margin="10 6" HorizontalAlignment="Center" VerticalAlignment="Top">
+                                <Icon:PackIconMaterial.InputBindings>
+                                    <MouseBinding Command="{Binding OpenEditMinDamageDoneCommand}" Gesture="LeftClick"/>
+                                </Icon:PackIconMaterial.InputBindings>
+                            </Icon:PackIconMaterial>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" Cursor="Hand" ToolTip="{loc:Loc EditValue}"
+                                    Visibility="{Binding OpenEditMinDamageDone, Converter={StaticResource BoolToVisibility}, ConverterParameter=true:false}">
+                            <TextBox Text="{Binding MinDamageDone, UpdateSourceTrigger=PropertyChanged}" Width="90" Margin="0 5" FontSize="12" FontWeight="Bold" />
+                            <Icon:PackIconMaterial Kind="GamepadDown" Foreground="Green" Width="13" Margin="10 6" HorizontalAlignment="Center" VerticalAlignment="Top">
+                                <Icon:PackIconMaterial.InputBindings>
+                                    <MouseBinding Command="{Binding ApplyMinDamageDoneCommand}" Gesture="LeftClick"/>
+                                </Icon:PackIconMaterial.InputBindings>
+                            </Icon:PackIconMaterial>
+                        </StackPanel>
+                    </StackPanel>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center" Width="200"
+                            Visibility="{Binding UseFilterByMinHealDone, Converter={StaticResource BoolToVisibility}, ConverterParameter=true:false}">
+                    <Icon:PackIconMaterial Kind="Close" Cursor="Hand" Foreground="Red" Width="10" Margin="-20 6" HorizontalAlignment="Center" VerticalAlignment="Top">
+                        <Icon:PackIconMaterial.InputBindings>
+                            <MouseBinding Command="{Binding UseFilterByMinHealDoneCommand}" Gesture="LeftClick"/>
+                        </Icon:PackIconMaterial.InputBindings>
+                    </Icon:PackIconMaterial>
+                    <StackPanel Margin="20 0">
+                        <TextBlock Text="{loc:Loc MinHeal}" Margin="0 5" FontSize="12" />
+                        <StackPanel Orientation="Horizontal" Cursor="Hand" ToolTip="{loc:Loc EditValue}"
+                                    Visibility="{Binding OpenEditMinHealDone, Converter={StaticResource BoolToVisibility}, ConverterParameter=true:true}">
+                            <TextBlock Text="{Binding MinHealDone}" Width="90" Margin="0 5" FontSize="12" FontWeight="Bold" />
+                            <Icon:PackIconMaterial Kind="Pen" Foreground="Gray" Width="13" Margin="10 6" HorizontalAlignment="Center" VerticalAlignment="Top">
+                                <Icon:PackIconMaterial.InputBindings>
+                                    <MouseBinding Command="{Binding OpenEditMinHealDoneCommand}" Gesture="LeftClick"/>
+                                </Icon:PackIconMaterial.InputBindings>
+                            </Icon:PackIconMaterial>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" Cursor="Hand" ToolTip="{loc:Loc EditValue}"
+                                    Visibility="{Binding OpenEditMinHealDone, Converter={StaticResource BoolToVisibility}, ConverterParameter=true:false}">
+                            <TextBox Text="{Binding MinHealDone, UpdateSourceTrigger=PropertyChanged}" Width="90" Margin="0 5" FontSize="12" FontWeight="Bold" />
+                            <Icon:PackIconMaterial Kind="GamepadDown" Foreground="Green" Width="13" Margin="10 6" HorizontalAlignment="Center" VerticalAlignment="Top">
+                                <Icon:PackIconMaterial.InputBindings>
+                                    <MouseBinding Command="{Binding ApplyMinHealDoneCommand}" Gesture="LeftClick"/>
+                                </Icon:PackIconMaterial.InputBindings>
+                            </Icon:PackIconMaterial>
+                        </StackPanel>
+                    </StackPanel>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center" Width="200"
+                            Visibility="{Binding UseFilterByMinEnergyRecovery, Converter={StaticResource BoolToVisibility}, ConverterParameter=true:false}">
+                    <Icon:PackIconMaterial Kind="Close" Cursor="Hand" Foreground="Red" Width="10" Margin="-20 6" HorizontalAlignment="Center" VerticalAlignment="Top">
+                        <Icon:PackIconMaterial.InputBindings>
+                            <MouseBinding Command="{Binding UseFilterByMinEnergyRecoveryCommand}" Gesture="LeftClick"/>
+                        </Icon:PackIconMaterial.InputBindings>
+                    </Icon:PackIconMaterial>
+                    <StackPanel Margin="20 0">
+                        <TextBlock Text="{loc:Loc MinResources}" Margin="0 5" FontSize="12" />
+                        <StackPanel Orientation="Horizontal" Cursor="Hand" ToolTip="{loc:Loc EditValue}"
+                                    Visibility="{Binding OpenEditMinEnergyRecovery, Converter={StaticResource BoolToVisibility}, ConverterParameter=true:true}">
+                            <TextBlock Text="{Binding MinEnergyRecovery}" Width="90" Margin="0 5" FontSize="12" FontWeight="Bold" />
+                            <Icon:PackIconMaterial Kind="Pen" Foreground="Gray" Width="13" Margin="10 6" HorizontalAlignment="Center" VerticalAlignment="Top">
+                                <Icon:PackIconMaterial.InputBindings>
+                                    <MouseBinding Command="{Binding OpenEditEnergyRecoveryCommand}" Gesture="LeftClick"/>
+                                </Icon:PackIconMaterial.InputBindings>
+                            </Icon:PackIconMaterial>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" Cursor="Hand" ToolTip="{loc:Loc EditValue}"
+                                    Visibility="{Binding OpenEditMinEnergyRecovery, Converter={StaticResource BoolToVisibility}, ConverterParameter=true:false}">
+                            <TextBox Text="{Binding MinEnergyRecovery, UpdateSourceTrigger=PropertyChanged}" Width="90" Margin="0 5" FontSize="12" FontWeight="Bold" />
+                            <Icon:PackIconMaterial Kind="GamepadDown" Foreground="Green" Width="13" Margin="10 6" HorizontalAlignment="Center" VerticalAlignment="Top">
+                                <Icon:PackIconMaterial.InputBindings>
+                                    <MouseBinding Command="{Binding ApplyMinEnergyRecoveryCommand}" Gesture="LeftClick"/>
+                                </Icon:PackIconMaterial.InputBindings>
+                            </Icon:PackIconMaterial>
+                        </StackPanel>
+                    </StackPanel>
+                </StackPanel>
+            </StackPanel>
+        </StackPanel>
+
+        <StackPanel Orientation="Horizontal" VerticalAlignment="Bottom" Grid.Column="2" Grid.Row="1" Grid.ColumnSpan="2" Margin="0 -5"
+                    HorizontalAlignment="Center" Visibility="{Binding CombatInformationType, Converter={StaticResource IntToVisibility}, ConverterParameter='false:1:='}">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center" Width="200"
+                            Visibility="{Binding UseFilterByMinDPS, Converter={StaticResource BoolToVisibility}, ConverterParameter=true:false}">
+                    <Icon:PackIconMaterial Kind="Close" Cursor="Hand" Foreground="Red" Width="10" Margin="-20 6" HorizontalAlignment="Center" VerticalAlignment="Top">
+                        <Icon:PackIconMaterial.InputBindings>
+                            <MouseBinding Command="{Binding UseFilterByMinDPSCommand}" Gesture="LeftClick"/>
+                        </Icon:PackIconMaterial.InputBindings>
+                    </Icon:PackIconMaterial>
+                    <StackPanel Margin="20 0">
+                        <TextBlock Text="{loc:Loc MinDPS}" Margin="0 5" FontSize="12" />
+                        <StackPanel Orientation="Horizontal" Cursor="Hand" ToolTip="{loc:Loc EditValue}"
+                                    Visibility="{Binding OpenEditMinDPS, Converter={StaticResource BoolToVisibility}, ConverterParameter=true:true}">
+                            <TextBlock Text="{Binding MinDPS}" Width="90" Margin="0 5" FontSize="12" FontWeight="Bold" />
+                            <Icon:PackIconMaterial Kind="Pen" Foreground="Gray" Width="13" Margin="10 6" HorizontalAlignment="Center" VerticalAlignment="Top">
+                                <Icon:PackIconMaterial.InputBindings>
+                                    <MouseBinding Command="{Binding OpenEditMinDPSCommand}" Gesture="LeftClick"/>
+                                </Icon:PackIconMaterial.InputBindings>
+                            </Icon:PackIconMaterial>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" Cursor="Hand" ToolTip="{loc:Loc EditValue}"
+                                    Visibility="{Binding OpenEditMinDPS, Converter={StaticResource BoolToVisibility}, ConverterParameter=true:false}">
+                            <TextBox Text="{Binding MinDPS, UpdateSourceTrigger=PropertyChanged}" Width="90" Margin="0 5" FontSize="12" FontWeight="Bold" />
+                            <Icon:PackIconMaterial Kind="GamepadDown" Foreground="Green" Width="13" Margin="10 6" HorizontalAlignment="Center" VerticalAlignment="Top">
+                                <Icon:PackIconMaterial.InputBindings>
+                                    <MouseBinding Command="{Binding ApplyMinDPSCommand}" Gesture="LeftClick"/>
+                                </Icon:PackIconMaterial.InputBindings>
+                            </Icon:PackIconMaterial>
+                        </StackPanel>
+                    </StackPanel>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center" Width="200"
+                            Visibility="{Binding UseFilterByMinHPS, Converter={StaticResource BoolToVisibility}, ConverterParameter=true:false}">
+                    <Icon:PackIconMaterial Kind="Close" Cursor="Hand" Foreground="Red" Width="10" Margin="-20 6" HorizontalAlignment="Center" VerticalAlignment="Top">
+                        <Icon:PackIconMaterial.InputBindings>
+                            <MouseBinding Command="{Binding UseFilterByMinHPSCommand}" Gesture="LeftClick"/>
+                        </Icon:PackIconMaterial.InputBindings>
+                    </Icon:PackIconMaterial>
+                    <StackPanel Margin="20 0">
+                        <TextBlock Text="{loc:Loc MinHPS}" Margin="0 5" FontSize="12" />
+                        <StackPanel Orientation="Horizontal" Cursor="Hand" ToolTip="{loc:Loc EditValue}"
+                                    Visibility="{Binding OpenEditMinHPS, Converter={StaticResource BoolToVisibility}, ConverterParameter=true:true}">
+                            <TextBlock Text="{Binding MinHPS}" Width="90" Margin="0 5" FontSize="12" FontWeight="Bold" />
+                            <Icon:PackIconMaterial Kind="Pen" Foreground="Gray" Width="13" Margin="10 6" HorizontalAlignment="Center" VerticalAlignment="Top">
+                                <Icon:PackIconMaterial.InputBindings>
+                                    <MouseBinding Command="{Binding OpenEditMinHPSCommand}" Gesture="LeftClick"/>
+                                </Icon:PackIconMaterial.InputBindings>
+                            </Icon:PackIconMaterial>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" Cursor="Hand" ToolTip="{loc:Loc EditValue}"
+                                    Visibility="{Binding OpenEditMinHPS, Converter={StaticResource BoolToVisibility}, ConverterParameter=true:false}">
+                            <TextBox Text="{Binding MinHPS, UpdateSourceTrigger=PropertyChanged}" Width="90" Margin="0 5" FontSize="12" FontWeight="Bold" />
+                            <Icon:PackIconMaterial Kind="GamepadDown" Foreground="Green" Width="13" Margin="10 6" HorizontalAlignment="Center" VerticalAlignment="Top">
+                                <Icon:PackIconMaterial.InputBindings>
+                                    <MouseBinding Command="{Binding ApplyMinHPSCommand}" Gesture="LeftClick"/>
+                                </Icon:PackIconMaterial.InputBindings>
+                            </Icon:PackIconMaterial>
+                        </StackPanel>
+                    </StackPanel>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center" Width="200"
+                            Visibility="{Binding UseFilterByMinRPS, Converter={StaticResource BoolToVisibility}, ConverterParameter=true:false}">
+                    <Icon:PackIconMaterial Kind="Close" Cursor="Hand" Foreground="Red" Width="10" Margin="-20 6" HorizontalAlignment="Center" VerticalAlignment="Top">
+                        <Icon:PackIconMaterial.InputBindings>
+                            <MouseBinding Command="{Binding UseFilterByMinRPSCommand}" Gesture="LeftClick"/>
+                        </Icon:PackIconMaterial.InputBindings>
+                    </Icon:PackIconMaterial>
+                    <StackPanel Margin="20 0">
+                        <TextBlock Text="{loc:Loc MinRPS}" Margin="0 5" FontSize="12" />
+                        <StackPanel Orientation="Horizontal" Cursor="Hand" ToolTip="{loc:Loc EditValue}"
+                                    Visibility="{Binding OpenEditMinRPS, Converter={StaticResource BoolToVisibility}, ConverterParameter=true:true}">
+                            <TextBlock Text="{Binding MinRPS}" Width="90" Margin="0 5" FontSize="12" FontWeight="Bold" />
+                            <Icon:PackIconMaterial Kind="Pen" Foreground="Gray" Width="13" Margin="10 6" HorizontalAlignment="Center" VerticalAlignment="Top">
+                                <Icon:PackIconMaterial.InputBindings>
+                                    <MouseBinding Command="{Binding OpenEditMinRPSCommand}" Gesture="LeftClick"/>
+                                </Icon:PackIconMaterial.InputBindings>
+                            </Icon:PackIconMaterial>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" Cursor="Hand" ToolTip="{loc:Loc EditValue}"
+                                    Visibility="{Binding OpenEditMinRPS, Converter={StaticResource BoolToVisibility}, ConverterParameter=true:false}">
+                            <TextBox Text="{Binding MinRPS, UpdateSourceTrigger=PropertyChanged}" Width="90" Margin="0 5" FontSize="12" FontWeight="Bold" />
+                            <Icon:PackIconMaterial Kind="GamepadDown" Foreground="Green" Width="13" Margin="10 6" HorizontalAlignment="Center" VerticalAlignment="Top">
+                                <Icon:PackIconMaterial.InputBindings>
+                                    <MouseBinding Command="{Binding ApplyMinRPSCommand}" Gesture="LeftClick"/>
+                                </Icon:PackIconMaterial.InputBindings>
+                            </Icon:PackIconMaterial>
+                        </StackPanel>
+                    </StackPanel>
+                </StackPanel>
             </StackPanel>
         </StackPanel>
 
@@ -118,7 +319,7 @@
                     </DataGridTemplateColumn.CellTemplate>
                     <DataGridTemplateColumn.HeaderTemplate>
                         <DataTemplate>
-                            <TextBlock Text="{loc:Loc Damage}" Margin="5" TextAlignment="Center" FontSize="14" FontStyle="Oblique"  FontWeight="Bold"/>
+                            <TextBlock Text="{loc:Loc Damage}" TextAlignment="Center" FontSize="14" FontStyle="Oblique"  FontWeight="Bold"/>
                         </DataTemplate>
                     </DataGridTemplateColumn.HeaderTemplate>
                 </DataGridTemplateColumn>
@@ -135,7 +336,7 @@
                     </DataGridTemplateColumn.CellTemplate>
                     <DataGridTemplateColumn.HeaderTemplate>
                         <DataTemplate>
-                            <TextBlock Text="{loc:Loc Healing}" Margin="5" TextAlignment="Center" FontSize="14" FontStyle="Oblique"  FontWeight="Bold"/>
+                            <TextBlock Text="{loc:Loc Healing}" TextAlignment="Center" FontSize="14" FontStyle="Oblique"  FontWeight="Bold"/>
                         </DataTemplate>
                     </DataGridTemplateColumn.HeaderTemplate>
                 </DataGridTemplateColumn>
@@ -152,7 +353,7 @@
                     </DataGridTemplateColumn.CellTemplate>
                     <DataGridTemplateColumn.HeaderTemplate>
                         <DataTemplate>
-                            <TextBlock Text="{loc:Loc Resources}" Margin="5" TextAlignment="Center" FontSize="14" FontStyle="Oblique"  FontWeight="Bold"/>
+                            <TextBlock Text="{loc:Loc Resources}" TextAlignment="Center" FontSize="14" FontStyle="Oblique"  FontWeight="Bold"/>
                         </DataTemplate>
                     </DataGridTemplateColumn.HeaderTemplate>
                 </DataGridTemplateColumn>
@@ -187,7 +388,7 @@
                     </DataGridTemplateColumn.CellTemplate>
                     <DataGridTemplateColumn.HeaderTemplate>
                         <DataTemplate>
-                            <TextBlock Text="{loc:Loc Damage}" Margin="5" TextAlignment="Center" FontSize="14" FontStyle="Oblique"  FontWeight="Bold"/>
+                            <TextBlock Text="{loc:Loc DamagePerSecond}" Margin="5" TextAlignment="Center" FontSize="14" FontStyle="Oblique"  FontWeight="Bold"/>
                         </DataTemplate>
                     </DataGridTemplateColumn.HeaderTemplate>
                 </DataGridTemplateColumn>
@@ -202,7 +403,7 @@
                     </DataGridTemplateColumn.CellTemplate>
                     <DataGridTemplateColumn.HeaderTemplate>
                         <DataTemplate>
-                            <TextBlock Text="{loc:Loc Healing}" Margin="5" TextAlignment="Center" FontSize="14" FontStyle="Oblique"  FontWeight="Bold"/>
+                            <TextBlock Text="{loc:Loc HealingPerSecond}" Margin="5" TextAlignment="Center" FontSize="14" FontStyle="Oblique"  FontWeight="Bold"/>
                         </DataTemplate>
                     </DataGridTemplateColumn.HeaderTemplate>
                 </DataGridTemplateColumn>
@@ -217,7 +418,7 @@
                     </DataGridTemplateColumn.CellTemplate>
                     <DataGridTemplateColumn.HeaderTemplate>
                         <DataTemplate>
-                            <TextBlock Text="{loc:Loc Resources}" Margin="5" TextAlignment="Center" FontSize="14" FontStyle="Oblique"  FontWeight="Bold"/>
+                            <TextBlock Text="{loc:Loc ResourcesPerSecond}" Margin="5" TextAlignment="Center" FontSize="14" FontStyle="Oblique"  FontWeight="Bold"/>
                         </DataTemplate>
                     </DataGridTemplateColumn.HeaderTemplate>
                 </DataGridTemplateColumn>
