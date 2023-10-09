@@ -70,20 +70,29 @@ namespace CombatAnalysis.App.Localizations.Resources.GeneralAnalysis {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Average damage per sec..
+        /// </summary>
+        public static string AverageDamagePerSecond {
+            get {
+                return ResourceManager.GetString("AverageDamagePerSecond", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Average heal per sec..
+        /// </summary>
+        public static string AverageHealPerSecond {
+            get {
+                return ResourceManager.GetString("AverageHealPerSecond", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Buffs.
         /// </summary>
         public static string Buffs {
             get {
                 return ResourceManager.GetString("Buffs", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Combat uploaded:   .
-        /// </summary>
-        public static string CombatUploaded {
-            get {
-                return ResourceManager.GetString("CombatUploaded", resourceCulture);
             }
         }
         
@@ -196,6 +205,15 @@ namespace CombatAnalysis.App.Localizations.Resources.GeneralAnalysis {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Show average information for all combats.
+        /// </summary>
+        public static string ShowAverageInform {
+            get {
+                return ResourceManager.GetString("ShowAverageInform", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Status.
         /// </summary>
         public static string Status {
@@ -210,6 +228,15 @@ namespace CombatAnalysis.App.Localizations.Resources.GeneralAnalysis {
         public static string Title {
             get {
                 return ResourceManager.GetString("Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Uploaded:.
+        /// </summary>
+        public static string Uploaded {
+            get {
+                return ResourceManager.GetString("Uploaded", resourceCulture);
             }
         }
         

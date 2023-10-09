@@ -17,7 +17,7 @@
 
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="0.15*"/>
+            <RowDefinition Height="0.1*"/>
             <RowDefinition Height="0.1*"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="0.17*"/>
@@ -42,7 +42,7 @@
         </ContentControl>
 
         <StackPanel Grid.Column="3" Grid.Row="1" Orientation="Horizontal"
-                    HorizontalAlignment="Center" VerticalAlignment="Center">
+                    HorizontalAlignment="Center" VerticalAlignment="Bottom">
             <Button Content="{loc:Loc Refresh}" FontSize="14" Width="100" Command="{Binding RefreshCommand}"
                     Foreground="CadetBlue" Style="{StaticResource showButton}"/>
             <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" 
@@ -191,24 +191,35 @@
                 </DataGridTemplateColumn>
             </DataGrid.Columns>
         </DataGrid>
-        <StackPanel Grid.Row="3" Grid.Column="2" Visibility="{Binding ResponseStatus, Converter={StaticResource IntToVisibility}, ConverterParameter=true:1}">
-            <TextBlock HorizontalAlignment="Center"
-                       Text="{loc:Loc Uploading}" FontSize="12" />
-            <TextBlock HorizontalAlignment="Center"
-                       Text="{Binding DungeonName}" FontSize="15" Margin="0,0,0,5" />
-            <ProgressBar VerticalAlignment="Center" Minimum="0" Maximum="{Binding MaxCombats}" Value="{Binding CurrentCombatNumber}" Height="20" Width="500"></ProgressBar>
-            <StackPanel Orientation="Horizontal" Margin="0,5,0,0" HorizontalAlignment="Center">
-                <TextBlock HorizontalAlignment="Center"
-                       Text="{loc:Loc CombatUploaded}" FontSize="15" FontWeight="Bold" />
-                <TextBlock HorizontalAlignment="Center"
-                       Text="{Binding Name}" FontSize="15"/>
-            </StackPanel>
 
+        <CheckBox Grid.Row="3" Grid.Column="2" VerticalAlignment="Top" VerticalContentAlignment="Center" Content="{loc:Loc ShowAverageInform}" 
+                           HorizontalContentAlignment="Left" Margin="25 -10" IsChecked="{Binding ShowAverageInformation}" />
+        <StackPanel Grid.Row="3" Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Center" Orientation="Horizontal"
+                    Visibility="{Binding ShowAverageInformation, Converter={StaticResource BoolToVisibility}, ConverterParameter=true}">
+            <StackPanel Margin="140 0">
+                <TextBlock Text="{loc:Loc AverageDamagePerSecond}" FontSize="13" />
+                <TextBlock Text="{Binding AverageDamagePerSecond, StringFormat=0.00}" TextAlignment="Center" Margin="0 5" FontSize="16" FontWeight="Bold" VerticalAlignment="Center" />
+            </StackPanel>
+            <StackPanel Margin="90 0">
+                <TextBlock Text="{loc:Loc AverageHealPerSecond}" FontSize="13" />
+                <TextBlock Text="{Binding AverageHealPerSecond, StringFormat=0.00}" TextAlignment="Center" Margin="0 5" FontSize="16" FontWeight="Bold" VerticalAlignment="Center" />
+            </StackPanel>
         </StackPanel>
-        <StackPanel Grid.Row="3" Grid.Column="2" Visibility="{Binding ResponseStatus, Converter={StaticResource IntToVisibility}, ConverterParameter=true:2}">
-            <ProgressBar VerticalAlignment="Center" Minimum="0" Maximum="{Binding MaxCombats}" Value="{Binding CurrentCombatNumber}" Height="20" Width="500"></ProgressBar>
-            <TextBlock HorizontalAlignment="Center"
-                       Text="{loc:Loc AllCombatsSaved}" FontSize="15" Margin="0,5,0,0" FontWeight="Bold"/>
+
+        <StackPanel Grid.Row="3" Grid.Column="2" VerticalAlignment="Center"
+                    Visibility="{Binding ShowAverageInformation, Converter={StaticResource BoolToVisibility}, ConverterParameter=true:true}">
+            <StackPanel Visibility="{Binding ResponseStatus, Converter={StaticResource IntToVisibility}, ConverterParameter=true:1}">
+                <TextBlock HorizontalAlignment="Center" Text="{Binding DungeonName}" FontSize="15" Margin="0 5" />
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                    <TextBlock Text="{loc:Loc Uploading}" FontSize="12" Margin="20 0" />
+                    <ProgressBar Minimum="0" Maximum="{Binding MaxCombats}" Value="{Binding CurrentCombatNumber}" Height="20" Width="500"></ProgressBar>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Margin="0 5" HorizontalAlignment="Center">
+                    <TextBlock HorizontalAlignment="Center"
+                       Text="{loc:Loc Uploaded}" FontSize="14" FontWeight="Bold" />
+                    <TextBlock HorizontalAlignment="Center" Margin="20 0" Text="{Binding Name}" FontSize="15"/>
+                </StackPanel>
+            </StackPanel>
         </StackPanel>
     </Grid>
 </views:MvxWpfView>

@@ -26,6 +26,9 @@ public class GeneralAnalysisViewModel : ParentTemplate<Tuple<List<CombatModel>, 
     private string _name;
     private int _maxCombats;
     private int _currentCombatNumber;
+    private double _averageDamagePerSecond;
+    private double _averageHealPerSecond;
+    private bool _showAverageInformation;
 
     public GeneralAnalysisViewModel(IMvxNavigationService mvvmNavigation, IHttpClientHelper httpClient, ILogger logger, IMemoryCache memoryCache)
     {
@@ -133,6 +136,33 @@ public class GeneralAnalysisViewModel : ParentTemplate<Tuple<List<CombatModel>, 
         }
     }
 
+    public double AverageDamagePerSecond
+    {
+        get { return _averageDamagePerSecond; }
+        set
+        {
+            SetProperty(ref _averageDamagePerSecond, value);
+        }
+    }
+
+    public double AverageHealPerSecond
+    {
+        get { return _averageHealPerSecond; }
+        set
+        {
+            SetProperty(ref _averageHealPerSecond, value);
+        }
+    }
+
+    public bool ShowAverageInformation
+    {
+        get { return _showAverageInformation; }
+        set
+        {
+            SetProperty(ref _showAverageInformation, value);
+        }
+    }
+
     #endregion
 
     protected override void ChildPrepare(Tuple<List<CombatModel>, LogType> parameter)
@@ -147,6 +177,8 @@ public class GeneralAnalysisViewModel : ParentTemplate<Tuple<List<CombatModel>, 
         CurrentCombatNumber = 0;
 
         _logType = parameter.Item2;
+
+        GetAverageInformation(parameter.Item1);
     }
 
     public override void ViewDestroy(bool viewFinishing = true)
@@ -223,5 +255,42 @@ public class GeneralAnalysisViewModel : ParentTemplate<Tuple<List<CombatModel>, 
         CurrentCombatNumber = number;
         DungeonName = dungeonName;
         Name = name;
+    }
+
+    private void GetAverageInformation(List<CombatModel> combats)
+    {
+        var averageDPS = new List<double>();
+        var averageHPS = new List<double>();
+
+        foreach (var combat in combats)
+        {
+            GetCombatPlayersValuesPerSecond(combat);
+
+            var averageCombatPlayerDPS = combat.Players.Average(x => x.DamageDonePerSecond);
+            averageDPS.Add(averageCombatPlayerDPS);
+
+            var averageCombatPlayerHPS = combat.Players.Average(x => x.HealDonePerSecond);
+            averageHPS.Add(averageCombatPlayerHPS);
+        }
+
+        AverageDamagePerSecond = averageDPS.Average();
+        AverageHealPerSecond = averageHPS.Average();
+    }
+
+    private void GetCombatPlayersValuesPerSecond(CombatModel combat)
+    {
+        TimeSpan duration;
+        if (!TimeSpan.TryParse(combat.Duration, out duration))
+        {
+            duration = TimeSpan.Zero;
+            return;
+        }
+
+        foreach (var player in combat.Players)
+        {
+            player.DamageDonePerSecond = player.DamageDone / duration.TotalSeconds;
+            player.HealDonePerSecond = player.HealDone / duration.TotalSeconds;
+            player.EnergyRecoveryPerSecond = player.EnergyRecovery / duration.TotalSeconds;
+        }
     }
 }
