@@ -8,8 +8,8 @@ public class CombatDetailsHealDone : CombatDetailsTemplate
 {
     private readonly string[] _healVariations = new string[]
     {
-        CombatLogConsts.SpellHeal,
-        CombatLogConsts.SpellPeriodicHeal,
+        CombatLogKeyWords.SpellHeal,
+        CombatLogKeyWords.SpellPeriodicHeal,
     };
     private readonly ILogger _logger;
 
@@ -63,7 +63,7 @@ public class CombatDetailsHealDone : CombatDetailsTemplate
         int.TryParse(combatData[^4], out var value3);
         int.TryParse(combatData[^3], out var value4);
 
-        var isCrit = string.Equals(combatData[^1], "1", StringComparison.OrdinalIgnoreCase);
+        var isCrit = string.Equals(combatData[^1], CombatLogKeyWords.IsCrit, StringComparison.OrdinalIgnoreCase);
 
         var healDone = new HealDone
         {

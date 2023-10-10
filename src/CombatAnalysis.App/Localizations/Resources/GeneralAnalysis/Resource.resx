@@ -165,6 +165,9 @@
   <data name="Healing" xml:space="preserve">
     <value>Healing</value>
   </data>
+  <data name="Heroic" xml:space="preserve">
+    <value>H</value>
+  </data>
   <data name="IndexOfDeath" xml:space="preserve">
     <value>Index of death</value>
   </data>
@@ -195,6 +198,9 @@
   <data name="MaxResourcesPerSecond" xml:space="preserve">
     <value>Max. indicator resources recovery per sec.</value>
   </data>
+  <data name="Normal" xml:space="preserve">
+    <value>N</value>
+  </data>
   <data name="NotReady" xml:space="preserve">
     <value>Not ready</value>
   </data>
@@ -212,6 +218,9 @@
   </data>
   <data name="ShowAverageInform" xml:space="preserve">
     <value>Show average information for all combats</value>
+  </data>
+  <data name="Size" xml:space="preserve">
+    <value>Size</value>
   </data>
   <data name="Status" xml:space="preserve">
     <value>Status</value>

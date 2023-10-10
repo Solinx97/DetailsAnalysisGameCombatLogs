@@ -165,6 +165,9 @@
   <data name="Healing" xml:space="preserve">
     <value>Исцеление</value>
   </data>
+  <data name="Heroic" xml:space="preserve">
+    <value>Г</value>
+  </data>
   <data name="IndexOfDeath" xml:space="preserve">
     <value>Индекс смертей</value>
   </data>
@@ -195,6 +198,9 @@
   <data name="MaxResourcesPerSecond" xml:space="preserve">
     <value>Макс. показатель восст. ресурсов в сек.</value>
   </data>
+  <data name="Normal" xml:space="preserve">
+    <value>Н</value>
+  </data>
   <data name="NotReady" xml:space="preserve">
     <value>Не загружен</value>
   </data>
@@ -212,6 +218,9 @@
   </data>
   <data name="ShowAverageInform" xml:space="preserve">
     <value>Показать среднею информацию за все бои</value>
+  </data>
+  <data name="Size" xml:space="preserve">
+    <value>Размер</value>
   </data>
   <data name="Status" xml:space="preserve">
     <value>Статус</value>

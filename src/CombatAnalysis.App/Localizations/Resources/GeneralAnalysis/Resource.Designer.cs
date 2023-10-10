@@ -205,6 +205,15 @@ namespace CombatAnalysis.App.Localizations.Resources.GeneralAnalysis {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to H.
+        /// </summary>
+        public static string Heroic {
+            get {
+                return ResourceManager.GetString("Heroic", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Index of death.
         /// </summary>
         public static string IndexOfDeath {
@@ -295,6 +304,15 @@ namespace CombatAnalysis.App.Localizations.Resources.GeneralAnalysis {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to N.
+        /// </summary>
+        public static string Normal {
+            get {
+                return ResourceManager.GetString("Normal", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Not ready.
         /// </summary>
         public static string NotReady {
@@ -345,6 +363,15 @@ namespace CombatAnalysis.App.Localizations.Resources.GeneralAnalysis {
         public static string ShowAverageInform {
             get {
                 return ResourceManager.GetString("ShowAverageInform", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Size.
+        /// </summary>
+        public static string Size {
+            get {
+                return ResourceManager.GetString("Size", resourceCulture);
             }
         }
         

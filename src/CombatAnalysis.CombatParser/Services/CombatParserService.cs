@@ -35,7 +35,7 @@ public class CombatParserService : IParser
         using var reader = _fileManager.StreamReader(combatLog);
         var fileIsCorrect = true;
         var line = await reader.ReadLineAsync();
-        if (!line.Contains(CombatLogConsts.CombatLogVersion))
+        if (!line.Contains(CombatLogKeyWords.CombatLogVersion))
         {
             fileIsCorrect = false;
         }
@@ -51,11 +51,11 @@ public class CombatParserService : IParser
         string line;
         while ((line = await reader.ReadLineAsync()) != null)
         {
-            if (line.Contains(CombatLogConsts.EncounterStart))
+            if (line.Contains(CombatLogKeyWords.EncounterStart))
             {
                 await GetCombatInformation(line, reader);
             }
-            else if (line.Contains(CombatLogConsts.ZoneChange))
+            else if (line.Contains(CombatLogKeyWords.ZoneChange))
             {
                 GetDungeonName(line);
             }
@@ -72,6 +72,8 @@ public class CombatParserService : IParser
             var combat = new Combat
             {
                 Name = GetCombatName(combatData[0]),
+                Difficulty = GetDifficulty(combatData[0]),
+                DungeonSize = GetDungeonSize(combatData[0]),
                 Data = combatData,
                 IsWin = GetCombatResult(combatData[^1]),
                 StartDate = GetTime(combatData[0]),
@@ -105,7 +107,7 @@ public class CombatParserService : IParser
         while ((line = await reader.ReadLineAsync()) != null)
         {
             combatElements.Add(line);
-            if (line.Contains(CombatLogConsts.EncounterEnd))
+            if (line.Contains(CombatLogKeyWords.EncounterEnd))
             {
                 break;
             }
@@ -121,6 +123,32 @@ public class CombatParserService : IParser
         var clearName = name.Trim('"');
 
         return clearName;
+    }
+
+    private int GetDifficulty(string combatStart)
+    {
+        var data = combatStart.Split("  ")[1];
+        var difficulty = data.Split(',')[3];
+        
+        if (int.TryParse(difficulty, out var diff))
+        {
+            return diff;
+        }
+
+        return 0;
+    }
+
+    private int GetDungeonSize(string combatStart)
+    {
+        var data = combatStart.Split("  ")[1];
+        var capacity = data.Split(',')[4];
+
+        if (int.TryParse(capacity, out var cap))
+        {
+            return cap;
+        }
+
+        return 0;
     }
 
     private bool GetCombatResult(string combatFinish)
@@ -208,7 +236,7 @@ public class CombatParserService : IParser
 
         for (var i = 1; i < combatInformation.Count; i++)
         {
-            if (combatInformation[i].Contains(CombatLogConsts.CombatantInfo))
+            if (combatInformation[i].Contains(CombatLogKeyWords.CombatantInfo))
             {
                 var data = combatInformation[i].Split("  ")[1];
                 playersId.Add(data.Split(',')[1]);
@@ -249,7 +277,7 @@ public class CombatParserService : IParser
         for (int i = 1; i < combatInformation.Count; i++)
         {
             var data = combatInformation[i].Split(',');
-            if (!combatInformation[i].Contains(CombatLogConsts.CombatantInfo)
+            if (!combatInformation[i].Contains(CombatLogKeyWords.CombatantInfo)
                 && playerId == data[1])
             {
                 var userName = data[2];

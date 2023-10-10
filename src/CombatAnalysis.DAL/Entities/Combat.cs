@@ -10,6 +10,10 @@ public class Combat
 
     public string Name { get; set; }
 
+    public int Difficulty { get; set; }
+
+    public int DungeonSize { get; set; }
+
     public int DamageDone { get; set; }
 
     public int HealDone { get; set; }

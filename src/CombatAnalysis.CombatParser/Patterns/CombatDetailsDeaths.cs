@@ -20,7 +20,7 @@ public class CombatDetailsDeaths : CombatDetailsTemplate
         int deaths = 0;
         foreach (var item in combatData)
         {
-            if (item.Contains(CombatLogConsts.UnitDied))
+            if (item.Contains(CombatLogKeyWords.UnitDied))
             {
                 deaths += GetPlayersStatus(item);
             }

@@ -9,8 +9,8 @@ public class CombatDetailsResourceRecovery : CombatDetailsTemplate
 {
     private readonly string[] _resourceVariations = new string[]
     {
-        CombatLogConsts.SpellPeriodicEnergize,
-        CombatLogConsts.SpellEnergize,
+        CombatLogKeyWords.SpellPeriodicEnergize,
+        CombatLogKeyWords.SpellEnergize,
     };
     private readonly ILogger _logger;
 
@@ -55,7 +55,7 @@ public class CombatDetailsResourceRecovery : CombatDetailsTemplate
     {
         int.TryParse(combatData[^4], NumberStyles.Number, CultureInfo.InvariantCulture, out var value4);
 
-        var spellOrItem = combatData[1].Contains("SPELL_ENERGIZE") ? combatData[11] : combatData[3];
+        var spellOrItem = combatData[1].Contains(CombatLogKeyWords.SpellEnergize) ? combatData[11] : combatData[3];
 
         var energyRecovery = new ResourceRecovery
         {

@@ -41,6 +41,12 @@
             </ContentControl.Resources>
         </ContentControl>
 
+        <StackPanel Grid.Column="3" Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Center">
+            <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" TextAlignment="Center" MaxWidth="700" 
+                       Text="{Binding DungeonNames}" FontSize="16" FontWeight="Bold"
+                       Style="{StaticResource titleText}" TextWrapping="Wrap"/>
+        </StackPanel>
+
         <StackPanel Grid.Column="3" Grid.Row="1" Orientation="Horizontal"
                     HorizontalAlignment="Center" VerticalAlignment="Bottom">
             <Button Content="{loc:Loc Refresh}" FontSize="14" Width="100" Command="{Binding RefreshCommand}"
@@ -61,6 +67,24 @@
                       CanUserAddRows="False" CanUserDeleteRows="False" AutoGenerateColumns="False" ItemsSource="{Binding Combats}"
                  Margin="20" SelectedItem="{Binding SelectedCombat}">
             <DataGrid.Columns>
+                <DataGridTemplateColumn SortMemberPath="DungeonSize" IsReadOnly="True" Width="70">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="{Binding Path=DungeonSize}" TextAlignment="Center" Margin="10" FontSize="14" />
+                                <TextBlock Text="{loc:Loc Normal}" TextAlignment="Center" Margin="0 10" FontSize="14" 
+                                           Visibility="{Binding Path=Difficulty, Converter={StaticResource IntToVisibility}, ConverterParameter=true:4}"/>
+                                <TextBlock Text="{loc:Loc Heroic}" TextAlignment="Center" Margin="0 10" FontSize="14" 
+                                           Visibility="{Binding Path=Difficulty, Converter={StaticResource IntToVisibility}, ConverterParameter=true:5}"/>
+                            </StackPanel>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                    <DataGridTemplateColumn.HeaderTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{loc:Loc Size}" Margin="5" TextAlignment="Center" FontSize="11" />
+                        </DataTemplate>
+                    </DataGridTemplateColumn.HeaderTemplate>
+                </DataGridTemplateColumn>
                 <DataGridTemplateColumn SortMemberPath="Name" IsReadOnly="True" MinWidth="175">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>

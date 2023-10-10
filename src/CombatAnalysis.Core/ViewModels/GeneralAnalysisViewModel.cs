@@ -9,7 +9,9 @@ using Microsoft.Extensions.Logging;
 using MvvmCross.Commands;
 using MvvmCross.Navigation;
 using System.Collections.ObjectModel;
+using System.Data.Common;
 using System.Linq;
+using System.Reflection.Metadata;
 
 namespace CombatAnalysis.Core.ViewModels;
 
@@ -47,6 +49,7 @@ public class GeneralAnalysisViewModel : ParentTemplate<Tuple<List<CombatModel>, 
     private int _combatInformationStep;
     private int _maxCombatInformationStepIndex = 4;
     private bool _showAverageInformation;
+    private string _dungeonNames;
 
     public GeneralAnalysisViewModel(IMvxNavigationService mvvmNavigation, IHttpClientHelper httpClient, ILogger logger, IMemoryCache memoryCache)
     {
@@ -332,6 +335,15 @@ public class GeneralAnalysisViewModel : ParentTemplate<Tuple<List<CombatModel>, 
         }
     }
 
+    public string DungeonNames
+    {
+        get { return _dungeonNames; }
+        set
+        {
+            SetProperty(ref _dungeonNames, value);
+        }
+    }
+
     #endregion
 
     protected override void ChildPrepare(Tuple<List<CombatModel>, LogType> parameter)
@@ -346,6 +358,8 @@ public class GeneralAnalysisViewModel : ParentTemplate<Tuple<List<CombatModel>, 
         CurrentCombatNumber = 0;
 
         _logType = parameter.Item2;
+
+        GetUniqueDungeonNames(parameter.Item1);
 
         GetAverageInformationPerSecond(parameter.Item1);
         GetMaxInformationPerSecond(parameter.Item1);
@@ -445,6 +459,12 @@ public class GeneralAnalysisViewModel : ParentTemplate<Tuple<List<CombatModel>, 
             item.IsReady = selectUploadedCombat.IsReady;
             Combats = new ObservableCollection<CombatModel>(Combats);
         }
+    }
+
+    private void GetUniqueDungeonNames(List<CombatModel> combats)
+    {
+        var uniqueDungenNames = combats.DistinctBy(x => x.DungeonName).Select(x => x.DungeonName).ToList();
+        DungeonNames = string.Join(" / ", uniqueDungenNames);
     }
 
     private void CombatUploaded(int number, string dungeonName, string name)

@@ -8,13 +8,13 @@ public class CombatDetailsDamageDone : CombatDetailsTemplate
 {
     private readonly string[] _damageVariations = new string[]
     {
-        CombatLogConsts.SpellDamage,
-        CombatLogConsts.SwingDamage,
-        CombatLogConsts.SpellPeriodicDamage,
-        CombatLogConsts.SwingMissed,
-        CombatLogConsts.DamageShieldMissed,
-        CombatLogConsts.RangeDamage,
-        CombatLogConsts.SpellMissed,
+        CombatLogKeyWords.SpellDamage,
+        CombatLogKeyWords.SwingDamage,
+        CombatLogKeyWords.SpellPeriodicDamage,
+        CombatLogKeyWords.SwingMissed,
+        CombatLogKeyWords.DamageShieldMissed,
+        CombatLogKeyWords.RangeDamage,
+        CombatLogKeyWords.SpellMissed,
     };
     private readonly ILogger _logger;
 
@@ -63,7 +63,7 @@ public class CombatDetailsDamageDone : CombatDetailsTemplate
     private DamageDone GetDamageDoneInformation(string player, List<string> combatData)
     {
         if (!combatData[3].Contains(player)
-            || string.Equals(combatData[1], CombatLogConsts.SwingDamageLanded, StringComparison.OrdinalIgnoreCase))
+            || string.Equals(combatData[1], CombatLogKeyWords.SwingDamageLanded, StringComparison.OrdinalIgnoreCase))
         {
             return null;
         }
@@ -71,7 +71,7 @@ public class CombatDetailsDamageDone : CombatDetailsTemplate
         int.TryParse(combatData[^10], out var value1);
         string spellOrItem;
 
-        if (string.Equals(combatData[1], CombatLogConsts.SwingDamageLanded, StringComparison.OrdinalIgnoreCase))
+        if (string.Equals(combatData[1], CombatLogKeyWords.SwingDamageLanded, StringComparison.OrdinalIgnoreCase))
         {
             spellOrItem = "Ближ. бой";
         }
@@ -82,7 +82,7 @@ public class CombatDetailsDamageDone : CombatDetailsTemplate
         }
 
         var isPeriodicDamage = false;
-        if (combatData[1] == CombatLogConsts.SpellPeriodicDamage)
+        if (combatData[1] == CombatLogKeyWords.SpellPeriodicDamage)
         {
             isPeriodicDamage = true;
         }
@@ -93,29 +93,29 @@ public class CombatDetailsDamageDone : CombatDetailsTemplate
         var isDodge = false;
         var isMiss = false;
 
-        if (string.Equals(combatData[1], CombatLogConsts.DamageShieldMissed, StringComparison.OrdinalIgnoreCase))
+        if (string.Equals(combatData[1], CombatLogKeyWords.DamageShieldMissed, StringComparison.OrdinalIgnoreCase))
         {
-            isResist = string.Equals(combatData[13], "RESIST", StringComparison.OrdinalIgnoreCase);
-            isImmune = string.Equals(combatData[13], "IMMUNE", StringComparison.OrdinalIgnoreCase);
+            isResist = string.Equals(combatData[13], CombatLogKeyWords.Resist, StringComparison.OrdinalIgnoreCase);
+            isImmune = string.Equals(combatData[13], CombatLogKeyWords.Immune, StringComparison.OrdinalIgnoreCase);
         }
-        else if (string.Equals(combatData[1], CombatLogConsts.SpellMissed, StringComparison.OrdinalIgnoreCase))
+        else if (string.Equals(combatData[1], CombatLogKeyWords.SpellMissed, StringComparison.OrdinalIgnoreCase))
         {
-            isResist = string.Equals(combatData[13], "RESIST", StringComparison.OrdinalIgnoreCase);
-            isParry = string.Equals(combatData[13], "PARRY", StringComparison.OrdinalIgnoreCase);
-            isDodge = string.Equals(combatData[13], "DODGE", StringComparison.OrdinalIgnoreCase);
-            isImmune = string.Equals(combatData[13], "IMMUNE", StringComparison.OrdinalIgnoreCase);
-            isMiss = string.Equals(combatData[13], "MISS", StringComparison.OrdinalIgnoreCase);
+            isResist = string.Equals(combatData[13], CombatLogKeyWords.Resist, StringComparison.OrdinalIgnoreCase);
+            isParry = string.Equals(combatData[13], CombatLogKeyWords.Parry, StringComparison.OrdinalIgnoreCase);
+            isDodge = string.Equals(combatData[13], CombatLogKeyWords.Dodge, StringComparison.OrdinalIgnoreCase);
+            isImmune = string.Equals(combatData[13], CombatLogKeyWords.Immune, StringComparison.OrdinalIgnoreCase);
+            isMiss = string.Equals(combatData[13], CombatLogKeyWords.Miss, StringComparison.OrdinalIgnoreCase);
         }
-        else if (string.Equals(combatData[1], CombatLogConsts.SwingMissed, StringComparison.OrdinalIgnoreCase))
+        else if (string.Equals(combatData[1], CombatLogKeyWords.SwingMissed, StringComparison.OrdinalIgnoreCase))
         {
-            isResist = string.Equals(combatData[10], "RESIST", StringComparison.OrdinalIgnoreCase);
-            isParry = string.Equals(combatData[10], "PARRY", StringComparison.OrdinalIgnoreCase);
-            isDodge = string.Equals(combatData[10], "DODGE", StringComparison.OrdinalIgnoreCase);
-            isImmune = string.Equals(combatData[10], "IMMUNE", StringComparison.OrdinalIgnoreCase);
-            isMiss = string.Equals(combatData[10], "MISS", StringComparison.OrdinalIgnoreCase);
+            isResist = string.Equals(combatData[10], CombatLogKeyWords.Resist, StringComparison.OrdinalIgnoreCase);
+            isParry = string.Equals(combatData[10], CombatLogKeyWords.Parry, StringComparison.OrdinalIgnoreCase);
+            isDodge = string.Equals(combatData[10], CombatLogKeyWords.Dodge, StringComparison.OrdinalIgnoreCase);
+            isImmune = string.Equals(combatData[10], CombatLogKeyWords.Immune, StringComparison.OrdinalIgnoreCase);
+            isMiss = string.Equals(combatData[10], CombatLogKeyWords.Miss, StringComparison.OrdinalIgnoreCase);
         }
 
-        var isCrit = string.Equals(combatData[^3], "1", StringComparison.OrdinalIgnoreCase);
+        var isCrit = string.Equals(combatData[^3], CombatLogKeyWords.IsCrit, StringComparison.OrdinalIgnoreCase);
 
         var damageDone = new DamageDone
         {
