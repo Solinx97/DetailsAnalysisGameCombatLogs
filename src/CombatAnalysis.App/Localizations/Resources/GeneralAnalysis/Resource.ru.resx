@@ -120,11 +120,29 @@
   <data name="AllCombatsSaved" xml:space="preserve">
     <value>Все бои сохранены!</value>
   </data>
+  <data name="AverageDamage" xml:space="preserve">
+    <value>Ср. показатель урона</value>
+  </data>
   <data name="AverageDamagePerSecond" xml:space="preserve">
-    <value>Средний урон в сек.</value>
+    <value>Ср. показатель урона в сек.</value>
+  </data>
+  <data name="AverageDamageTaken" xml:space="preserve">
+    <value>Ср. показатель поченного урна</value>
+  </data>
+  <data name="AverageDamageTakenPerSecond" xml:space="preserve">
+    <value>Ср. показатель поченного урона в сек.</value>
+  </data>
+  <data name="AverageHeal" xml:space="preserve">
+    <value>Ср. показать исцеления</value>
   </data>
   <data name="AverageHealPerSecond" xml:space="preserve">
-    <value>Средне исцеление в сек.</value>
+    <value>Ср. показать исцеления в сек.</value>
+  </data>
+  <data name="AverageResources" xml:space="preserve">
+    <value>Ср. показатель восст. ресурсов</value>
+  </data>
+  <data name="AverageResourcesPerSecond" xml:space="preserve">
+    <value>Ср. показатель восст. ресурсов в сек.</value>
   </data>
   <data name="Buffs" xml:space="preserve">
     <value>Усилений</value>
@@ -147,8 +165,35 @@
   <data name="Healing" xml:space="preserve">
     <value>Исцеление</value>
   </data>
+  <data name="IndexOfDeath" xml:space="preserve">
+    <value>Индекс смертей</value>
+  </data>
   <data name="LoadingFailed" xml:space="preserve">
     <value>Нам не удалось сохранить ваши данные. Повторить?</value>
+  </data>
+  <data name="MaxDamage" xml:space="preserve">
+    <value>Макс. показатель урона</value>
+  </data>
+  <data name="MaxDamagePerSecond" xml:space="preserve">
+    <value>Макс. показатель урона в сек.</value>
+  </data>
+  <data name="MaxDamageTaken" xml:space="preserve">
+    <value>Макс. показатель поченного урона</value>
+  </data>
+  <data name="MaxDamageTakenPerSecond" xml:space="preserve">
+    <value>Макс. показатель поченного урона в сек.</value>
+  </data>
+  <data name="MaxHeal" xml:space="preserve">
+    <value>Макс. показать исцеления</value>
+  </data>
+  <data name="MaxHealPerSecond" xml:space="preserve">
+    <value>Макс. показать исцеления в сек.</value>
+  </data>
+  <data name="MaxResources" xml:space="preserve">
+    <value>Макс. показатель восст. ресурсов</value>
+  </data>
+  <data name="MaxResourcesPerSecond" xml:space="preserve">
+    <value>Макс. показатель восст. ресурсов в сек.</value>
   </data>
   <data name="NotReady" xml:space="preserve">
     <value>Не загружен</value>

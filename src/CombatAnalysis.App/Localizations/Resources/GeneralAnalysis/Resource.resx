@@ -120,11 +120,29 @@
   <data name="AllCombatsSaved" xml:space="preserve">
     <value>All combats saved!</value>
   </data>
+  <data name="AverageDamage" xml:space="preserve">
+    <value>Av. indicator damage</value>
+  </data>
   <data name="AverageDamagePerSecond" xml:space="preserve">
-    <value>Average damage per sec.</value>
+    <value>Av. indicator damage per sec.</value>
+  </data>
+  <data name="AverageDamageTaken" xml:space="preserve">
+    <value>Av. indicator damage taken</value>
+  </data>
+  <data name="AverageDamageTakenPerSecond" xml:space="preserve">
+    <value>Av. indicator damage taken per sec.</value>
+  </data>
+  <data name="AverageHeal" xml:space="preserve">
+    <value>Av. indicator heal</value>
   </data>
   <data name="AverageHealPerSecond" xml:space="preserve">
-    <value>Average heal per sec.</value>
+    <value>Av. indicator heal per sec.</value>
+  </data>
+  <data name="AverageResources" xml:space="preserve">
+    <value>Av. indicator resources recovery</value>
+  </data>
+  <data name="AverageResourcesPerSecond" xml:space="preserve">
+    <value>Av. indicator resources recovery per sec.</value>
   </data>
   <data name="Buffs" xml:space="preserve">
     <value>Buffs</value>
@@ -147,8 +165,35 @@
   <data name="Healing" xml:space="preserve">
     <value>Healing</value>
   </data>
+  <data name="IndexOfDeath" xml:space="preserve">
+    <value>Index of death</value>
+  </data>
   <data name="LoadingFailed" xml:space="preserve">
     <value>We couldn't save your data. Repeat?</value>
+  </data>
+  <data name="MaxDamage" xml:space="preserve">
+    <value>Max. indicator damage</value>
+  </data>
+  <data name="MaxDamagePerSecond" xml:space="preserve">
+    <value>Max. indicator damage per sec.</value>
+  </data>
+  <data name="MaxDamageTaken" xml:space="preserve">
+    <value>Max. indicator damage taken</value>
+  </data>
+  <data name="MaxDamageTakenPerSecond" xml:space="preserve">
+    <value>Max. indicator damage taken per sec.</value>
+  </data>
+  <data name="MaxHeal" xml:space="preserve">
+    <value>Max. indicator heal</value>
+  </data>
+  <data name="MaxHealPerSecond" xml:space="preserve">
+    <value>Max. indicator heal per sec.</value>
+  </data>
+  <data name="MaxResources" xml:space="preserve">
+    <value>Max. indicator resources recovery</value>
+  </data>
+  <data name="MaxResourcesPerSecond" xml:space="preserve">
+    <value>Max. indicator resources recovery per sec.</value>
   </data>
   <data name="NotReady" xml:space="preserve">
     <value>Not ready</value>

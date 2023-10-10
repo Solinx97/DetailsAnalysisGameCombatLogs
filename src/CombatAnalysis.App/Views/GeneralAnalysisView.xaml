@@ -175,7 +175,7 @@
                         <DataTemplate>
                             <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
                                 <Icon:PackIconMaterial Visibility="{Binding Path=IsReady, Converter={StaticResource BoolToVisibility}, ConverterParameter=true}"
-                                                   Kind="Check" Foreground="Green" Style="{StaticResource menuButtonIcon}" Width="10" Height="10" Margin="0"
+                                                   Kind="Check" Foreground="Green" Style="{StaticResource menuButtonIcon}" Width="10" Height="10"
                                                    HorizontalAlignment="Center" ToolTip="{loc:Loc Ready}" Cursor="Help"/>
                                 <Icon:PackIconMaterial Visibility="{Binding Path=IsReady, Converter={StaticResource BoolToVisibility}, ConverterParameter=true:true}"
                                                    Kind="Clock" Foreground="MediumVioletRed" Style="{StaticResource menuButtonIcon}" Width="10" Height="10" Margin="0"
@@ -194,16 +194,106 @@
 
         <CheckBox Grid.Row="3" Grid.Column="2" VerticalAlignment="Top" VerticalContentAlignment="Center" Content="{loc:Loc ShowAverageInform}" 
                            HorizontalContentAlignment="Left" Margin="25 -10" IsChecked="{Binding ShowAverageInformation}" />
+
         <StackPanel Grid.Row="3" Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Center" Orientation="Horizontal"
                     Visibility="{Binding ShowAverageInformation, Converter={StaticResource BoolToVisibility}, ConverterParameter=true}">
-            <StackPanel Margin="140 0">
-                <TextBlock Text="{loc:Loc AverageDamagePerSecond}" FontSize="13" />
-                <TextBlock Text="{Binding AverageDamagePerSecond, StringFormat=0.00}" TextAlignment="Center" Margin="0 5" FontSize="16" FontWeight="Bold" VerticalAlignment="Center" />
+
+            <Icon:PackIconMaterial Kind="ArrowLeftBold" Foreground="Gray" Style="{StaticResource menuButtonIcon}" Width="20" Height="20"
+                                                   HorizontalAlignment="Center" ToolTip="{loc:Loc Ready}" Cursor="Hand">
+                <Icon:PackIconMaterial.InputBindings>
+                    <MouseBinding Command="{Binding LastCombatInfromationStep}" Gesture="LeftClick"/>
+                </Icon:PackIconMaterial.InputBindings>
+            </Icon:PackIconMaterial>
+
+            <StackPanel Orientation="Horizontal" Visibility="{Binding CombatInformationStep, Converter={StaticResource IntToVisibility}, ConverterParameter=true:0}">
+                <StackPanel Margin="55 0">
+                    <TextBlock Text="{loc:Loc AverageDamagePerSecond}" FontSize="12" TextWrapping="Wrap" Width="130" TextAlignment="Center" />
+                    <TextBlock Text="{Binding AverageDamagePerSecond, StringFormat=0.00}" TextAlignment="Center" Margin="0 5" FontSize="16" FontWeight="Bold" VerticalAlignment="Center" />
+                </StackPanel>
+                <StackPanel Margin="55 0">
+                    <TextBlock Text="{loc:Loc AverageHealPerSecond}" FontSize="12" TextWrapping="Wrap" Width="130" TextAlignment="Center"  />
+                    <TextBlock Text="{Binding AverageHealPerSecond, StringFormat=0.00}" TextAlignment="Center" Margin="0 5" FontSize="16" FontWeight="Bold" VerticalAlignment="Center" />
+                </StackPanel>
+                <StackPanel Margin="55 0">
+                    <TextBlock Text="{loc:Loc AverageDamageTakenPerSecond}" FontSize="12" TextWrapping="Wrap" Width="130" TextAlignment="Center"  />
+                    <TextBlock Text="{Binding AverageDamageTakenPerSecond, StringFormat=0.00}" TextAlignment="Center" Margin="0 5" FontSize="16" FontWeight="Bold" VerticalAlignment="Center" />
+                </StackPanel>
+                <StackPanel Margin="55 0">
+                    <TextBlock Text="{loc:Loc AverageResourcesPerSecond}" FontSize="12" TextWrapping="Wrap" Width="130" TextAlignment="Center"  />
+                    <TextBlock Text="{Binding AverageResourcesPerSecond, StringFormat=0.00}" TextAlignment="Center" Margin="0 5" FontSize="16" FontWeight="Bold" VerticalAlignment="Center" />
+                </StackPanel>
             </StackPanel>
-            <StackPanel Margin="90 0">
-                <TextBlock Text="{loc:Loc AverageHealPerSecond}" FontSize="13" />
-                <TextBlock Text="{Binding AverageHealPerSecond, StringFormat=0.00}" TextAlignment="Center" Margin="0 5" FontSize="16" FontWeight="Bold" VerticalAlignment="Center" />
+
+            <StackPanel Orientation="Horizontal" Visibility="{Binding CombatInformationStep, Converter={StaticResource IntToVisibility}, ConverterParameter=true:1}">
+                <StackPanel Margin="55 0">
+                    <TextBlock Text="{loc:Loc MaxDamagePerSecond}" FontSize="12" TextWrapping="Wrap" Width="130" TextAlignment="Center" />
+                    <TextBlock Text="{Binding MaxDamagePerSecond, StringFormat=0.00}" TextAlignment="Center" Margin="0 5" FontSize="16" FontWeight="Bold" VerticalAlignment="Center" />
+                </StackPanel>
+                <StackPanel Margin="55 0">
+                    <TextBlock Text="{loc:Loc MaxHealPerSecond}" FontSize="12" TextWrapping="Wrap" Width="130" TextAlignment="Center"  />
+                    <TextBlock Text="{Binding MaxHealPerSecond, StringFormat=0.00}" TextAlignment="Center" Margin="0 5" FontSize="16" FontWeight="Bold" VerticalAlignment="Center" />
+                </StackPanel>
+                <StackPanel Margin="55 0">
+                    <TextBlock Text="{loc:Loc MaxResourcesPerSecond}" FontSize="12" TextWrapping="Wrap" Width="130" TextAlignment="Center"  />
+                    <TextBlock Text="{Binding MaxResourcesPerSecond, StringFormat=0.00}" TextAlignment="Center" Margin="0 5" FontSize="16" FontWeight="Bold" VerticalAlignment="Center" />
+                </StackPanel>
+                <StackPanel Margin="55 0">
+                    <TextBlock Text="{loc:Loc MaxDamageTakenPerSecond}" FontSize="12" TextWrapping="Wrap" Width="130" TextAlignment="Center"  />
+                    <TextBlock Text="{Binding MaxDamageTakenPerSecond, StringFormat=0.00}" TextAlignment="Center" Margin="0 5" FontSize="16" FontWeight="Bold" VerticalAlignment="Center" />
+                </StackPanel>
             </StackPanel>
+
+            <StackPanel Orientation="Horizontal" Visibility="{Binding CombatInformationStep, Converter={StaticResource IntToVisibility}, ConverterParameter=true:2}">
+                <StackPanel Margin="55 0">
+                    <TextBlock Text="{loc:Loc AverageDamage}" FontSize="12" TextWrapping="Wrap" Width="130" TextAlignment="Center" />
+                    <TextBlock Text="{Binding AverageDamage, StringFormat=0.00}" TextAlignment="Center" Margin="0 5" FontSize="16" FontWeight="Bold" VerticalAlignment="Center" />
+                </StackPanel>
+                <StackPanel Margin="55 0">
+                    <TextBlock Text="{loc:Loc AverageHeal}" FontSize="12" TextWrapping="Wrap" Width="130" TextAlignment="Center"  />
+                    <TextBlock Text="{Binding AverageHeal, StringFormat=0.00}" TextAlignment="Center" Margin="0 5" FontSize="16" FontWeight="Bold" VerticalAlignment="Center" />
+                </StackPanel>
+                <StackPanel Margin="55 0">
+                    <TextBlock Text="{loc:Loc AverageDamage}" FontSize="12" TextWrapping="Wrap" Width="130" TextAlignment="Center"  />
+                    <TextBlock Text="{Binding AverageDamage, StringFormat=0.00}" TextAlignment="Center" Margin="0 5" FontSize="16" FontWeight="Bold" VerticalAlignment="Center" />
+                </StackPanel>
+                <StackPanel Margin="55 0">
+                    <TextBlock Text="{loc:Loc AverageResources}" FontSize="12" TextWrapping="Wrap" Width="130" TextAlignment="Center"  />
+                    <TextBlock Text="{Binding AverageResources, StringFormat=0.00}" TextAlignment="Center" Margin="0 5" FontSize="16" FontWeight="Bold" VerticalAlignment="Center" />
+                </StackPanel>
+            </StackPanel>
+
+            <StackPanel Orientation="Horizontal" Visibility="{Binding CombatInformationStep, Converter={StaticResource IntToVisibility}, ConverterParameter=true:3}">
+                <StackPanel Margin="55 0">
+                    <TextBlock Text="{loc:Loc MaxDamage}" FontSize="12" TextWrapping="Wrap" Width="130" TextAlignment="Center" />
+                    <TextBlock Text="{Binding MaxDamage, StringFormat=0.00}" TextAlignment="Center" Margin="0 5" FontSize="16" FontWeight="Bold" VerticalAlignment="Center" />
+                </StackPanel>
+                <StackPanel Margin="55 0">
+                    <TextBlock Text="{loc:Loc MaxHeal}" FontSize="12" TextWrapping="Wrap" Width="130" TextAlignment="Center"  />
+                    <TextBlock Text="{Binding MaxHeal, StringFormat=0.00}" TextAlignment="Center" Margin="0 5" FontSize="16" FontWeight="Bold" VerticalAlignment="Center" />
+                </StackPanel>
+                <StackPanel Margin="55 0">
+                    <TextBlock Text="{loc:Loc MaxResources}" FontSize="12" TextWrapping="Wrap" Width="130" TextAlignment="Center"  />
+                    <TextBlock Text="{Binding MaxResources, StringFormat=0.00}" TextAlignment="Center" Margin="0 5" FontSize="16" FontWeight="Bold" VerticalAlignment="Center" />
+                </StackPanel>
+                <StackPanel Margin="55 0">
+                    <TextBlock Text="{loc:Loc MaxDamageTaken}" FontSize="12" TextWrapping="Wrap" Width="130" TextAlignment="Center"  />
+                    <TextBlock Text="{Binding MaxDamageTaken, StringFormat=0.00}" TextAlignment="Center" Margin="0 5" FontSize="16" FontWeight="Bold" VerticalAlignment="Center" />
+                </StackPanel>
+            </StackPanel>
+
+            <StackPanel Orientation="Horizontal" Visibility="{Binding CombatInformationStep, Converter={StaticResource IntToVisibility}, ConverterParameter=true:4}">
+                <StackPanel Margin="55 0">
+                    <TextBlock Text="{loc:Loc IndexOfDeath}" FontSize="12" TextWrapping="Wrap" Width="130" TextAlignment="Center" />
+                    <TextBlock Text="{Binding IndexOfDeath, StringFormat=0.00}" TextAlignment="Center" Margin="0 5" FontSize="16" FontWeight="Bold" VerticalAlignment="Center" />
+                </StackPanel>
+            </StackPanel>
+
+            <Icon:PackIconMaterial Kind="ArrowRightBold" Foreground="Gray" Style="{StaticResource menuButtonIcon}" Width="20" Height="20"
+                                                   HorizontalAlignment="Center" ToolTip="{loc:Loc Ready}" Cursor="Hand">
+                <Icon:PackIconMaterial.InputBindings>
+                    <MouseBinding Command="{Binding NextCombatInfromationStep}" Gesture="LeftClick"/>
+                </Icon:PackIconMaterial.InputBindings>
+            </Icon:PackIconMaterial>
         </StackPanel>
 
         <StackPanel Grid.Row="3" Grid.Column="2" VerticalAlignment="Center"
