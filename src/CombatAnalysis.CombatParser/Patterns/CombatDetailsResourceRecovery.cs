@@ -20,20 +20,20 @@ public class CombatDetailsResourceRecovery : CombatDetailsTemplate
         ResourceRecovery = new List<ResourceRecovery>();
     }
 
-    public override int GetData(string player, List<string> combatData)
+    public override int GetData(string playerId, List<string> combatData)
     {
         int energyRecovery = 0;
         try
         {
-            if (player == null)
+            if (playerId == null)
             {
-                throw new ArgumentNullException(player);
+                throw new ArgumentNullException(playerId);
             }
 
             foreach (var item in combatData)
             {
                 var itemHasResourceVariation = _resourceVariations.Any(resourceVariation => item.Contains(resourceVariation));
-                if (itemHasResourceVariation && item.Contains(player))
+                if (itemHasResourceVariation && item.Contains(playerId))
                 {
                     var usefulInformation = GetUsefulInformation(item);
                     var energyRecoveryInformation = GetEnergyInformation(usefulInformation);
@@ -45,7 +45,7 @@ public class CombatDetailsResourceRecovery : CombatDetailsTemplate
         }
         catch (ArgumentNullException ex)
         {
-            _logger.LogError(ex, ex.Message, player);
+            _logger.LogError(ex, ex.Message, playerId);
         }
 
         return energyRecovery;

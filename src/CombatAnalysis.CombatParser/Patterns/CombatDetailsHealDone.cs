@@ -19,23 +19,23 @@ public class CombatDetailsHealDone : CombatDetailsTemplate
         HealDone = new List<HealDone>();
     }
 
-    public override int GetData(string player, List<string> combatData)
+    public override int GetData(string playerId, List<string> combatData)
     {
         int healthDone = 0;
         try
         {
-            if (player == null)
+            if (playerId == null)
             {
-                throw new ArgumentNullException(player);
+                throw new ArgumentNullException(playerId);
             }
 
             foreach (var item in combatData)
             {
                 var itemHasHealVariation = _healVariations.Any(healVariation => item.Contains(healVariation));
-                if (itemHasHealVariation && item.Contains(player))
+                if (itemHasHealVariation && item.Contains(playerId))
                 {
                     var usefulInformation = GetUsefulInformation(item);
-                    var healDoneInformation = GetHealDoneInformation(player, usefulInformation);
+                    var healDoneInformation = GetHealDoneInformation(playerId, usefulInformation);
 
                     if (healDoneInformation != null)
                     {
@@ -47,15 +47,15 @@ public class CombatDetailsHealDone : CombatDetailsTemplate
         }
         catch (ArgumentNullException ex)
         {
-            _logger.LogError(ex, ex.Message, player);
+            _logger.LogError(ex, ex.Message, playerId);
         }
 
         return healthDone;
     }
 
-    private HealDone GetHealDoneInformation(string player, List<string> combatData)
+    private HealDone GetHealDoneInformation(string playerId, List<string> combatData)
     {
-        if (!combatData[3].Contains(player))
+        if (!combatData[2].Equals(playerId))
         {
             return null;
         }

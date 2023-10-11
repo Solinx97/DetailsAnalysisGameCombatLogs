@@ -10,6 +10,7 @@ public class CombatAnalysisMapper : Profile
     {
         CreateMap<CombatModel, Combat>().ReverseMap();
         CreateMap<CombatPlayerModel, CombatPlayer>().ReverseMap();
+        CreateMap<PlayerStatsModel, PlayerStats>().ReverseMap();
         CreateMap<DamageDoneModel, DamageDone>().ReverseMap();
         CreateMap<DamageDoneGeneralModel, DamageDoneGeneral>().ReverseMap();
         CreateMap<HealDoneModel, HealDone>().ReverseMap();

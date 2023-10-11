@@ -60,9 +60,9 @@ public class CombatDetailsDamageDone : CombatDetailsTemplate
         }
     }
 
-    private DamageDone GetDamageDoneInformation(string player, List<string> combatData)
+    private DamageDone GetDamageDoneInformation(string playerId, List<string> combatData)
     {
-        if (!combatData[3].Contains(player)
+        if (!combatData[2].Equals(playerId)
             || string.Equals(combatData[1], CombatLogKeyWords.SwingDamageLanded, StringComparison.OrdinalIgnoreCase))
         {
             return null;

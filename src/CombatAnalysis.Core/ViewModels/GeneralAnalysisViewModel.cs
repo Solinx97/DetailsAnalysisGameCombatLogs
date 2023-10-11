@@ -9,9 +9,6 @@ using Microsoft.Extensions.Logging;
 using MvvmCross.Commands;
 using MvvmCross.Navigation;
 using System.Collections.ObjectModel;
-using System.Data.Common;
-using System.Linq;
-using System.Reflection.Metadata;
 
 namespace CombatAnalysis.Core.ViewModels;
 

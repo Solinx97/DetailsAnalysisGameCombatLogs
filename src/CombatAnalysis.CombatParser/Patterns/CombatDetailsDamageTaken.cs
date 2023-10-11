@@ -24,20 +24,20 @@ public class CombatDetailsDamageTaken : CombatDetailsTemplate
         DamageTaken = new List<DamageTaken>();
     }
 
-    public override int GetData(string player, List<string> combatData)
+    public override int GetData(string playerId, List<string> combatData)
     {
         int damageTaken = 0;
         try
         {
-            if (player == null)
+            if (playerId == null)
             {
-                throw new ArgumentNullException(player);
+                throw new ArgumentNullException(playerId);
             }
 
             foreach (var item in combatData)
             {
                 var itemHasDamageVariation = _damageVariations.Any(damagVariation => item.Contains(damagVariation));
-                if (itemHasDamageVariation && item.Contains(player))
+                if (itemHasDamageVariation && item.Contains(playerId))
                 {
                     var usefulInformation = GetUsefulInformation(item);
                     var damageTakenInformation = GetDamageTakenInformation(usefulInformation);
@@ -52,7 +52,7 @@ public class CombatDetailsDamageTaken : CombatDetailsTemplate
         }
         catch (ArgumentNullException ex)
         {
-            _logger.LogError(ex, ex.Message, player);
+            _logger.LogError(ex, ex.Message, playerId);
         }
 
         return damageTaken;

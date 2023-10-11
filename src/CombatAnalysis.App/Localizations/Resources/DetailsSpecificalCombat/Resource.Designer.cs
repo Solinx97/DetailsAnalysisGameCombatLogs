@@ -97,6 +97,15 @@ namespace CombatAnalysis.App.Localizations.Resources.DetailsSpecificalCombat {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Average ILvl.
+        /// </summary>
+        public static string AverageItemllvl {
+            get {
+                return ResourceManager.GetString("AverageItemllvl", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Average resources.
         /// </summary>
         public static string AverageResources {
