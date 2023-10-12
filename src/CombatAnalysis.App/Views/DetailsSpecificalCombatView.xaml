@@ -294,7 +294,7 @@
                  CanUserAddRows="False" CanUserDeleteRows="False" AutoGenerateColumns="False" Style="{StaticResource dataGridStyle}"
                  Margin="20" ItemsSource="{Binding PlayersCombat}" SelectedItem="{Binding SelectedPlayer}">
             <DataGrid.Columns>
-                <DataGridTemplateColumn SortMemberPath="UserName" IsReadOnly="True" MinWidth="200">
+                <DataGridTemplateColumn SortMemberPath="UserName" IsReadOnly="True" MinWidth="175">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <TextBlock Text="{Binding Path=UserName}" VerticalAlignment="Center" TextAlignment="Center" Margin="10" FontSize="14" FontFamily="Comic Sans MS"/>
@@ -307,7 +307,7 @@
                     </DataGridTemplateColumn.HeaderTemplate>
                 </DataGridTemplateColumn>
 
-                <DataGridTemplateColumn SortMemberPath="DamageDone" IsReadOnly="True" Width="240">
+                <DataGridTemplateColumn SortMemberPath="DamageDone" IsReadOnly="True" Width="225">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <Grid>
@@ -341,7 +341,7 @@
                     </DataGridTemplateColumn.HeaderTemplate>
                 </DataGridTemplateColumn>
 
-                <DataGridTemplateColumn SortMemberPath="EnergyRecovery" IsReadOnly="True" Width="240">
+                <DataGridTemplateColumn SortMemberPath="EnergyRecovery" IsReadOnly="True" Width="225">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <Grid>
@@ -358,7 +358,22 @@
                     </DataGridTemplateColumn.HeaderTemplate>
                 </DataGridTemplateColumn>
 
-                <DataGridTemplateColumn SortMemberPath="AverageItemLevel" IsReadOnly="True" Width="175">
+                <DataGridTemplateColumn SortMemberPath="UsedBufs" IsReadOnly="True" Width="100">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <Grid>
+                                <TextBlock Text="{Binding Path=UsedBuffs}" HorizontalAlignment="Center" FontSize="14" FontWeight="DemiBold" VerticalAlignment="Center" />
+                            </Grid>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                    <DataGridTemplateColumn.HeaderTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{loc:Loc Buffs}" Margin="5" TextAlignment="Center" FontSize="14" FontStyle="Oblique"  FontWeight="Bold"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.HeaderTemplate>
+                </DataGridTemplateColumn>
+
+                <DataGridTemplateColumn SortMemberPath="AverageItemLevel" IsReadOnly="True" Width="125">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <Grid>
@@ -380,7 +395,7 @@
                 Margin="20" ItemsSource="{Binding PlayersCombat}" SelectedItem="{Binding SelectedPlayer}"
                 Visibility="{Binding CombatInformationType, Converter={StaticResource IntToVisibility}, ConverterParameter='false:1:='}">
             <DataGrid.Columns>
-                <DataGridTemplateColumn SortMemberPath="UserName" IsReadOnly="True" MinWidth="200">
+                <DataGridTemplateColumn SortMemberPath="UserName" IsReadOnly="True" MinWidth="175">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <TextBlock Text="{Binding Path=UserName}" VerticalAlignment="Center" TextAlignment="Center" Margin="10" FontSize="14" FontFamily="Comic Sans MS"/>
@@ -393,7 +408,7 @@
                     </DataGridTemplateColumn.HeaderTemplate>
                 </DataGridTemplateColumn>
 
-                <DataGridTemplateColumn SortMemberPath="DamageDone" IsReadOnly="True" Width="240">
+                <DataGridTemplateColumn SortMemberPath="DamageDone" IsReadOnly="True" Width="225">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <Grid>
@@ -408,7 +423,7 @@
                     </DataGridTemplateColumn.HeaderTemplate>
                 </DataGridTemplateColumn>
 
-                <DataGridTemplateColumn SortMemberPath="HealDone" IsReadOnly="True" Width="240">
+                <DataGridTemplateColumn SortMemberPath="HealDone" IsReadOnly="True" Width="225">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <Grid>
@@ -423,7 +438,7 @@
                     </DataGridTemplateColumn.HeaderTemplate>
                 </DataGridTemplateColumn>
 
-                <DataGridTemplateColumn SortMemberPath="EnergyRecovery" IsReadOnly="True" Width="240">
+                <DataGridTemplateColumn SortMemberPath="EnergyRecovery" IsReadOnly="True" Width="225">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <Grid>
@@ -438,7 +453,22 @@
                     </DataGridTemplateColumn.HeaderTemplate>
                 </DataGridTemplateColumn>
 
-                <DataGridTemplateColumn SortMemberPath="AverageItemLevel" IsReadOnly="True" Width="150">
+                <DataGridTemplateColumn SortMemberPath="UsedBufs" IsReadOnly="True" Width="100">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <Grid>
+                                <TextBlock Text="{Binding Path=UsedBuffs}" HorizontalAlignment="Center" FontSize="14" FontWeight="DemiBold" VerticalAlignment="Center" />
+                            </Grid>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                    <DataGridTemplateColumn.HeaderTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{loc:Loc Buffs}" Margin="5" TextAlignment="Center" FontSize="14" FontStyle="Oblique"  FontWeight="Bold"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.HeaderTemplate>
+                </DataGridTemplateColumn>
+
+                <DataGridTemplateColumn SortMemberPath="AverageItemLevel" IsReadOnly="True" Width="125">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <Grid>

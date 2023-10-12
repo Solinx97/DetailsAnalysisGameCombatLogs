@@ -26,8 +26,6 @@ public class CombatModel
 
     public int DeathNumber { get; set; }
 
-    public int UsedBuffs { get; set; }
-
     public bool IsWin { get; set; }
 
     public DateTimeOffset StartDate { get; set; }

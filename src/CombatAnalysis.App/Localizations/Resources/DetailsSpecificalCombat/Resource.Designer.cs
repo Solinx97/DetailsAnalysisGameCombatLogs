@@ -124,6 +124,15 @@ namespace CombatAnalysis.App.Localizations.Resources.DetailsSpecificalCombat {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Buffs.
+        /// </summary>
+        public static string Buffs {
+            get {
+                return ResourceManager.GetString("Buffs", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Clear all filters.
         /// </summary>
         public static string CLearFilters {

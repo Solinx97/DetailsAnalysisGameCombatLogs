@@ -224,8 +224,11 @@ public class CombatParserService : IParser
         var players = new List<CombatPlayer>();
         foreach (var item in playersIdAndStats)
         {
+            var playerCombatantInfoArray = item.Value.Split(new char[2] { '[', ']' });
+
             var username = GetCombatPlayerUsernameById(combatInformation, item.Key);
-            var averageItemLevel = GetAverageItemLevel(item.Value);
+            var averageItemLevel = GetAverageItemLevel(playerCombatantInfoArray[1]);
+            int usedBuffs = GetUsedBuffs(playerCombatantInfoArray[3]);
             var stats = GetPlayerStats(item.Value);
 
             var combatDetailsDamageDone = new CombatDetailsDamageDone(_logger);
@@ -241,6 +244,7 @@ public class CombatParserService : IParser
                 DamageDone = combatDetailsDamageDone.GetData(item.Key, combat.Data),
                 HealDone = combatDetailsHealDone.GetData(item.Key, combat.Data),
                 DamageTaken = combatDetailsDamageTaken.GetData(item.Key, combat.Data),
+                UsedBuffs = usedBuffs,
                 Stats = stats,
             };
 
@@ -285,17 +289,15 @@ public class CombatParserService : IParser
         return parsedUsername;
     }
 
-    private double GetAverageItemLevel(string combatantInfo)
+    private int GetUsedBuffs(string buffsInformation)
     {
-        var playerCombatantInfoArray = combatantInfo.Split(new char[2] { '[', ']' });
+        var splitInformations = buffsInformation.Split(",");
+        var countOfBuffs = splitInformations.Length / 2;
 
-        var equipmentsInformation = playerCombatantInfoArray[1];
-        var averageIlvl = GetEquipmentInformation(equipmentsInformation);
-
-        return averageIlvl;
+        return countOfBuffs;
     }
 
-    private double GetEquipmentInformation(string equipmentsInformation)
+    private double GetAverageItemLevel(string equipmentsInformation)
     {
         var splitEquipementsInformation = equipmentsInformation.Split("))");
         splitEquipementsInformation = splitEquipementsInformation.Select(x => x.TrimStart(',')).ToArray();
@@ -310,8 +312,8 @@ public class CombatParserService : IParser
             ilvl.Add(equipmentIlvl);
         }
 
-        var average = ilvl.Average();
-        return average;
+        var averageILvl = ilvl.Average();
+        return averageILvl;
     }
 
     private PlayerStats GetPlayerStats(string playerCombatantInfo)
