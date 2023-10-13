@@ -4,7 +4,9 @@ public class CombatPlayerModel
 {
     public int Id { get; set; }
 
-    public string UserName { get; set; }
+    public string Username { get; set; }
+
+    public string PlayerId { get; set; }
 
     public int EnergyRecovery { get; set; }
 

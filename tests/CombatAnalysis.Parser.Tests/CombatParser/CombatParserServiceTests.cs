@@ -105,7 +105,7 @@ internal class CombatParserServiceTests
 
         var expectedCombatPlayerData = new CombatPlayer
         {
-            UserName = "Oleg - Chrome",
+            Username = "Oleg - Chrome",
             DamageDone = 10,
             DamageTaken = 15,
             HealDone = 20,
@@ -127,7 +127,7 @@ internal class CombatParserServiceTests
         Assert.IsNotEmpty(firstCombat.Players);
 
         var firstCombatPlayerData = firstCombat.Players[0];
-        Assert.AreNotEqual(expectedCombatPlayerData.UserName, firstCombatPlayerData.UserName, "Combat players username isn't correct.");
+        Assert.AreNotEqual(expectedCombatPlayerData.Username, firstCombatPlayerData.Username, "Combat players username isn't correct.");
     }
 
     [Test]

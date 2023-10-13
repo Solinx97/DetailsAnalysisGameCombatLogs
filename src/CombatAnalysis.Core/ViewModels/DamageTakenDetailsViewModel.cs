@@ -170,7 +170,7 @@ public class DamageTakenDetailsViewModel : DetailsGenericTemplate<DamageTakenMod
         var selectedCombatMap = _mapper.Map<Combat>(SelectedCombat);
 
         var damageTakenDetails = new CombatDetailsDamageTaken(_logger);
-        damageTakenDetails.GetData(parameter.UserName, SelectedCombat.Data);
+        damageTakenDetails.GetData(parameter.PlayerId, SelectedCombat.Data);
 
         var healDoneMap = _mapper.Map<List<DamageTakenModel>>(damageTakenDetails.DamageTaken);
         DetailsInformations = new ObservableCollection<DamageTakenModel>(healDoneMap);

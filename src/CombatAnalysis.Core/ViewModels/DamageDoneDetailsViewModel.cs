@@ -143,14 +143,14 @@ public class DamageDoneDetailsViewModel : DetailsGenericTemplate<DamageDoneModel
         var selectedCombatMap = _mapper.Map<Combat>(SelectedCombat);
 
         var damageDpneDetails = new CombatDetailsDamageDone(_logger);
-        damageDpneDetails.GetData(parameter.UserName, SelectedCombat.Data);
+        damageDpneDetails.GetData(parameter.PlayerId, SelectedCombat.Data);
 
-        var healDoneMap = _mapper.Map<List<DamageDoneModel>>(damageDpneDetails.DamageDone);
-        DetailsInformations = new ObservableCollection<DamageDoneModel>(healDoneMap);
+        var damageDoneMap = _mapper.Map<List<DamageDoneModel>>(damageDpneDetails.DamageDone);
+        DetailsInformations = new ObservableCollection<DamageDoneModel>(damageDoneMap);
 
-        var healDoneGeneralData = damageDpneDetails.GetDamageDoneGeneral(damageDpneDetails.DamageDone, selectedCombatMap);
-        var healDoneGeneralMap = _mapper.Map<List<DamageDoneGeneralModel>>(healDoneGeneralData);
-        GeneralInformations = new ObservableCollection<DamageDoneGeneralModel>(healDoneGeneralMap);
+        var damageDoneGeneralData = damageDpneDetails.GetDamageDoneGeneral(damageDpneDetails.DamageDone, selectedCombatMap);
+        var damageDoneGeneralMap = _mapper.Map<List<DamageDoneGeneralModel>>(damageDoneGeneralData);
+        GeneralInformations = new ObservableCollection<DamageDoneGeneralModel>(damageDoneGeneralMap);
     }
 
     protected override void Filter()

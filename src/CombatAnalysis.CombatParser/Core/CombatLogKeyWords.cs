@@ -16,6 +16,10 @@ internal static class CombatLogKeyWords
 
     public static string UnitDied { get; } = "UNIT_DIED";
 
+    public static string BossTrash { get; } = "Creature";
+
+    public static string Boss { get; } = "Vehicle";
+
     #endregion
 
     #region Damage done

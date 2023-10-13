@@ -238,7 +238,8 @@ public class CombatParserService : IParser
 
             var combatPlayerData = new CombatPlayer
             {
-                UserName = username,
+                Username = username,
+                PlayerId = item.Key,
                 AverageItemLevel = averageItemLevel,
                 EnergyRecovery = combatDetailsResourceRecovery.GetData(item.Key, combat.Data),
                 DamageDone = combatDetailsDamageDone.GetData(item.Key, combat.Data),

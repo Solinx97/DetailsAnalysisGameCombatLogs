@@ -135,7 +135,7 @@ abstract public class DetailsGenericTemplate<T, T1> : ParentTemplate<CombatPlaye
             return;
         }
 
-        SelectedPlayer = parameter.UserName;
+        SelectedPlayer = parameter.Username;
         SetTotalValue(parameter);
 
         if (SelectedCombat.Id > 0)

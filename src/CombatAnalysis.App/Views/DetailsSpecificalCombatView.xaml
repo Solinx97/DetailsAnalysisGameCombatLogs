@@ -57,7 +57,7 @@
             <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Text="{loc:Loc Title}"
                        Margin="50 0" Style="{StaticResource titleText}"/>
             <StackPanel Orientation="Horizontal">
-                <Icon:PackIconMaterial Kind="FaceAgent" Width="13" HorizontalAlignment="Center" Margin="10 0" VerticalAlignment="Center"/>
+                <Icon:PackIconMaterial Kind="Skull" Width="13" HorizontalAlignment="Center" Margin="10 0" VerticalAlignment="Center"/>
                 <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Text="{Binding Combat.Name}" FontSize="16" FontWeight="Bold"/>
             </StackPanel>
         </StackPanel>
@@ -294,10 +294,10 @@
                  CanUserAddRows="False" CanUserDeleteRows="False" AutoGenerateColumns="False" Style="{StaticResource dataGridStyle}"
                  Margin="20" ItemsSource="{Binding PlayersCombat}" SelectedItem="{Binding SelectedPlayer}">
             <DataGrid.Columns>
-                <DataGridTemplateColumn SortMemberPath="UserName" IsReadOnly="True" MinWidth="175">
+                <DataGridTemplateColumn SortMemberPath="Username" IsReadOnly="True" MinWidth="175">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <TextBlock Text="{Binding Path=UserName}" VerticalAlignment="Center" TextAlignment="Center" Margin="10" FontSize="14" FontFamily="Comic Sans MS"/>
+                            <TextBlock Text="{Binding Path=Username}" VerticalAlignment="Center" TextAlignment="Center" Margin="10" FontSize="14" FontFamily="Comic Sans MS"/>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                     <DataGridTemplateColumn.HeaderTemplate>
@@ -388,6 +388,36 @@
                     </DataGridTemplateColumn.HeaderTemplate>
                 </DataGridTemplateColumn>
             </DataGrid.Columns>
+
+            <!--<DataGrid.RowDetailsTemplate>
+                <DataTemplate>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+                        
+                        <TextBlock Grid.Row="0" Grid.Column="0" Text="Hello" />
+                        <TextBlock Grid.Row="0" Grid.Column="1" Text="Hello" />
+                        <TextBlock Grid.Row="0" Grid.Column="2" Text="Hello" />
+                        <TextBlock Grid.Row="0" Grid.Column="3" Text="Hello" />
+                        <TextBlock Grid.Row="0" Grid.Column="4" Text="Hello" />
+
+                        <TextBlock Grid.Row="1" Grid.Column="0" Text="Hello" />
+                        <TextBlock Grid.Row="1" Grid.Column="1" Text="Hello" />
+                        <TextBlock Grid.Row="1" Grid.Column="2" Text="Hello" />
+                        <TextBlock Grid.Row="1" Grid.Column="3" Text="Hello" />
+                        <TextBlock Grid.Row="1" Grid.Column="4" Text="Hello" />
+                    </Grid>
+                </DataTemplate>
+            </DataGrid.RowDetailsTemplate>-->
         </DataGrid>
 
         <DataGrid Grid.Row="2" Grid.Column="2" Grid.ColumnSpan="2" GridLinesVisibility="None" 
@@ -395,10 +425,10 @@
                 Margin="20" ItemsSource="{Binding PlayersCombat}" SelectedItem="{Binding SelectedPlayer}"
                 Visibility="{Binding CombatInformationType, Converter={StaticResource IntToVisibility}, ConverterParameter='false:1:='}">
             <DataGrid.Columns>
-                <DataGridTemplateColumn SortMemberPath="UserName" IsReadOnly="True" MinWidth="175">
+                <DataGridTemplateColumn SortMemberPath="Username" IsReadOnly="True" MinWidth="175">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <TextBlock Text="{Binding Path=UserName}" VerticalAlignment="Center" TextAlignment="Center" Margin="10" FontSize="14" FontFamily="Comic Sans MS"/>
+                            <TextBlock Text="{Binding Path=Username}" VerticalAlignment="Center" TextAlignment="Center" Margin="10" FontSize="14" FontFamily="Comic Sans MS"/>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                     <DataGridTemplateColumn.HeaderTemplate>

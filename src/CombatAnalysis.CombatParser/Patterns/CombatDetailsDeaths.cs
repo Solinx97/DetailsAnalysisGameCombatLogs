@@ -37,7 +37,7 @@ public class CombatDetailsDeaths : CombatDetailsTemplate
         {
             foreach (var item in _players)
             {
-                if (combatData.Contains(item.UserName))
+                if (combatData.Contains(item.Username))
                 {
                     isFound = true;
                     break;

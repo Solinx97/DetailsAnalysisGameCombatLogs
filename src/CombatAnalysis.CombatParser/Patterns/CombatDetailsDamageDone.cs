@@ -68,7 +68,12 @@ public class CombatDetailsDamageDone : CombatDetailsTemplate
             return null;
         }
 
-        int.TryParse(combatData[^10], out var value1);
+        if (!combatData[6].Contains(CombatLogKeyWords.BossTrash) && !combatData[6].Contains(CombatLogKeyWords.Boss))
+        {
+            return null;
+        }
+
+        int.TryParse(combatData[^10], out var amountOfValue);
         string spellOrItem;
 
         if (string.Equals(combatData[1], CombatLogKeyWords.SwingDamageLanded, StringComparison.OrdinalIgnoreCase))
@@ -119,7 +124,7 @@ public class CombatDetailsDamageDone : CombatDetailsTemplate
 
         var damageDone = new DamageDone
         {
-            Value = value1,
+            Value = amountOfValue,
             Time = TimeSpan.Parse(combatData[0]),
             FromPlayer = combatData[3].Trim('"'),
             ToEnemy = combatData[7].Trim('"'),

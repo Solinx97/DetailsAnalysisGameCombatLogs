@@ -388,7 +388,7 @@ internal class CombatDetailsServiceTests
         var data = "6/3 21:16:34.927  UNIT_DIED,0000000000000000,nil,0x80000000,0x80000000,Player-4452-03684D5F,\"Никуапа\",0x512,0x0";
         var combatPlayerData = new CombatPlayer
         {
-            UserName = "Никуапа",
+            Username = "Никуапа",
             DamageDone = 1,
             DamageTaken = 15,
             HealDone = 44,
