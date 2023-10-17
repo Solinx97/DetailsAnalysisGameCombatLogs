@@ -18,6 +18,7 @@ public class DamageDoneDetailsViewModel : DetailsGenericTemplate<DamageDoneModel
 
     private ObservableCollection<DamageDoneModel> _damageDoneInformationsWithoutFilter;
     private ObservableCollection<DamageDoneModel> _damageDoneInformationsWithSkipDamage;
+    private Dictionary<string, List<string>> _petsId;
 
     private bool _isShowCrit = true;
     private bool _isShowDodge = true;
@@ -33,6 +34,8 @@ public class DamageDoneDetailsViewModel : DetailsGenericTemplate<DamageDoneModel
 
         BasicTemplate.Parent = this;
         BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, nameof(BasicTemplateViewModel.Step), 3);
+
+        _petsId = ((BasicTemplateViewModel)BasicTemplate).PetsId;
     }
 
     #region Properties
@@ -142,7 +145,10 @@ public class DamageDoneDetailsViewModel : DetailsGenericTemplate<DamageDoneModel
     {
         var selectedCombatMap = _mapper.Map<Combat>(SelectedCombat);
 
-        var damageDpneDetails = new CombatDetailsDamageDone(_logger);
+        var damageDpneDetails = new CombatDetailsDamageDone(_logger)
+        {
+            PetsId = _petsId,
+        };
         damageDpneDetails.GetData(parameter.PlayerId, SelectedCombat.Data);
 
         var damageDoneMap = _mapper.Map<List<DamageDoneModel>>(damageDpneDetails.DamageDone);

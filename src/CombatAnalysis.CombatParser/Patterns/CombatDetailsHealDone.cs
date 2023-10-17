@@ -10,6 +10,11 @@ public class CombatDetailsHealDone : CombatDetailsTemplate
     {
         CombatLogKeyWords.SpellHeal,
         CombatLogKeyWords.SpellPeriodicHeal,
+        CombatLogKeyWords.SpellAbsorbed,
+    };
+    private readonly string[] _absorbVariations = new string[]
+    {
+        CombatLogKeyWords.SpellAbsorbed,
     };
     private readonly ILogger _logger;
 
@@ -31,7 +36,7 @@ public class CombatDetailsHealDone : CombatDetailsTemplate
 
             foreach (var item in combatData)
             {
-                var itemHasHealVariation = _healVariations.Any(healVariation => item.Contains(healVariation));
+                var itemHasHealVariation = _healVariations.Any(item.Contains);
                 if (itemHasHealVariation && item.Contains(playerId))
                 {
                     var usefulInformation = GetUsefulInformation(item);
@@ -41,6 +46,19 @@ public class CombatDetailsHealDone : CombatDetailsTemplate
                     {
                         healthDone += healDoneInformation.Value;
                         HealDone.Add(healDoneInformation);
+                    }
+                }
+
+                var itemHasAbsrobVariation = _absorbVariations.Any(item.Contains);
+                if (itemHasAbsrobVariation && item.Contains(playerId))
+                {
+                    var usefulInformation = GetUsefulInformation(item);
+                    var absorbInformation = GetAbsorbDoneInformation(playerId, usefulInformation);
+
+                    if (absorbInformation != null)
+                    {
+                        healthDone += absorbInformation.Value;
+                        HealDone.Add(absorbInformation);
                     }
                 }
             }
@@ -71,6 +89,7 @@ public class CombatDetailsHealDone : CombatDetailsTemplate
             FromPlayer = combatData[3].Trim('"'),
             ToPlayer = combatData[7].Trim('"'),
             SpellOrItem = combatData[11].Trim('"'),
+            DamageAbsorbed = string.Empty,
             ValueWithOverheal = value3,
             Overheal = value4,
             Value = value3 - value4,
@@ -79,5 +98,34 @@ public class CombatDetailsHealDone : CombatDetailsTemplate
         };
 
         return healDone;
+    }
+
+    private HealDone GetAbsorbDoneInformation(string playerId, List<string> combatData)
+    {
+        var countDataWithMeleeDamage = 19;
+
+        if (!combatData[10].Equals(playerId) && !combatData[13].Equals(playerId))
+        {
+            return null;
+        }
+
+        int.TryParse(combatData[^2], out var amountOfHeal);
+
+        var absorbeDone = new HealDone
+        {
+            Time = TimeSpan.Parse(combatData[0]),
+            FromPlayer = combatData[^8].Trim('"'),
+            ToPlayer = combatData[7].Trim('"'),
+            SpellOrItem = combatData[^4].Trim('"'),
+            DamageAbsorbed = combatData.Count > countDataWithMeleeDamage ? combatData[11].Trim('"') : CombatLogKeyWords.MeleeDamage,
+            ValueWithOverheal = amountOfHeal,
+            Overheal = 0,
+            Value = amountOfHeal,
+            IsFullOverheal = false,
+            IsCrit = false,
+            IsAbsorbed = true
+        };
+
+        return absorbeDone;
     }
 }

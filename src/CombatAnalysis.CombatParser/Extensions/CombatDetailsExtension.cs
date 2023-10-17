@@ -10,7 +10,7 @@ public static class CombatDetailsExtension
     {
         var spells = collection
             .GroupBy(group => group.SpellOrItem)
-            .Select(select => select.ToList());
+            .Select(select => select.ToList()).ToList();
 
         TimeSpan.TryParse(combat.Duration, out var durationTime);
 

@@ -66,7 +66,7 @@ public class CombatDetailsDamageTaken : CombatDetailsTemplate
         }
 
         if (combatData[2].Contains("0000000000000000")
-            || combatData[2].Contains("Creature"))
+            || combatData[2].Contains(CombatLogKeyWords.Creature))
         {
 
             var damageTaken = GetDamageTaken(combatData);
@@ -83,7 +83,7 @@ public class CombatDetailsDamageTaken : CombatDetailsTemplate
         int.TryParse(combatData[^10], out var value);
 
         var spellOrItem = combatData[11].Contains("0000000000000000") || combatData[11].Contains("nil")
-            ? "Ближ. бой" : combatData[11].Trim('"');
+            ? CombatLogKeyWords.MeleeDamage : combatData[11].Trim('"');
 
         var isResist = false;
         var isImmune = false;

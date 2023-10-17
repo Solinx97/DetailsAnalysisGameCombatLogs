@@ -10,6 +10,8 @@ public class HealDoneGeneralModel
 
     public string SpellOrItem { get; set; }
 
+    public string DamageAbsorbed { get; set; }
+
     public int CritNumber { get; set; }
 
     public int CastNumber { get; set; }

@@ -30,6 +30,8 @@ public class CombatParserService : IParser
 
     public List<Combat> Combats { get; }
 
+    public Dictionary<string, List<string>> PetsId { get; private set; }
+
     public async Task<bool> FileCheck(string combatLog)
     {
         using var reader = _fileManager.StreamReader(combatLog);
@@ -47,13 +49,15 @@ public class CombatParserService : IParser
     {
         Combats.Clear();
 
-        using var reader = _fileManager.StreamReader(combatLog);
+        var allPetsId = await GetPetsAsync(combatLog);
+
         string line;
+        using var reader = _fileManager.StreamReader(combatLog);    
         while ((line = await reader.ReadLineAsync()) != null)
         {
             if (line.Contains(CombatLogKeyWords.EncounterStart))
             {
-                await GetCombatInformation(line, reader);
+                await GetCombatInformationAsync(line, allPetsId, reader);
             }
             else if (line.Contains(CombatLogKeyWords.ZoneChange))
             {
@@ -62,7 +66,67 @@ public class CombatParserService : IParser
         }
     }
 
-    private async Task GetCombatInformation(string line, StreamReader reader)
+    private async Task<Dictionary<string, List<string>>> GetPetsAsync(string combatLog)
+    {
+        var petsId = new Dictionary<string, List<string>>();
+        string line;
+
+        using var reader = _fileManager.StreamReader(combatLog);
+        while ((line = await reader.ReadLineAsync()) != null)
+        {
+            if (line.Contains(CombatLogKeyWords.SpellSummon))
+            {
+                ParseGetPets(line, petsId);
+                ParseGetAdditionalPets(line, petsId);
+            }
+        }
+
+        return petsId;
+    }
+
+    private void ParseGetPets(string data, Dictionary<string, List<string>> petsId)
+    {
+        var parseDateFromData = data.Split("  ");
+        var parseData = parseDateFromData[1].Split(',');
+
+        var playerId = parseData[1].Contains(CombatLogKeyWords.Player) ? parseData[1] : string.Empty;
+        var petId = parseData[1].Contains(CombatLogKeyWords.Player) ? parseData[5] : string.Empty;
+        if (petsId.Count == 0 && !string.IsNullOrEmpty(playerId))
+        {
+            petsId.Add(playerId, new List<string> { petId });
+
+            return;
+        }
+
+        if (!string.IsNullOrEmpty(playerId))
+        {
+            if (petsId.TryGetValue(playerId, out var includedPetsId))
+            {
+                includedPetsId.Add(petId);
+            }
+            else
+            {
+                petsId.Add(playerId, new List<string> { petId });
+            }
+        }
+    }
+
+    private void ParseGetAdditionalPets(string data, Dictionary<string, List<string>> petsId)
+    {
+        var parseDateFromData = data.Split("  ");
+        var parseData = parseDateFromData[1].Split(',');
+
+        foreach (var item in petsId)
+        {
+            if (item.Value.Contains(parseData[1]))
+            {
+                item.Value.Add(parseData[5]);
+                break;
+            }
+        }
+    }
+
+    private async Task GetCombatInformationAsync(string line, Dictionary<string, List<string>> petsId, StreamReader reader)
     {
         try
         {
@@ -86,7 +150,9 @@ public class CombatParserService : IParser
                 return;
             }
 
-            GetCombatPlayersData(combat);
+            PetsId = petsId;
+
+            GetCombatPlayersData(combat, petsId);
 
             CombatDetailsTemplate combatDetailsDeaths = new CombatDetailsDeaths(_logger, combat.Players);
             combat.DeathNumber = combatDetailsDeaths.GetData(string.Empty, combat.Data);
@@ -176,9 +242,9 @@ public class CombatParserService : IParser
         return date.UtcDateTime;
     }
 
-    private void GetCombatPlayersData(Combat combat)
+    private void GetCombatPlayersData(Combat combat, Dictionary<string, List<string>> petsId)
     {
-        var players = GetCombatPlayers(combat.Data, combat);
+        var players = GetCombatPlayers(combat.Data, combat, petsId);
         combat.Players = players;
     }
 
@@ -211,7 +277,7 @@ public class CombatParserService : IParser
         _combatNumber++;
     }
 
-    private List<CombatPlayer> GetCombatPlayers(List<string> combatInformation, Combat combat)
+    private List<CombatPlayer> GetCombatPlayers(List<string> combatInformation, Combat combat, Dictionary<string, List<string>> petsId)
     {
         var playersIdAndStats = new Dictionary<string, string>();
         for (var i = 1; i < combatInformation.Count && combatInformation[i].Contains(CombatLogKeyWords.CombatantInfo); i++)
@@ -231,7 +297,11 @@ public class CombatParserService : IParser
             int usedBuffs = GetUsedBuffs(playerCombatantInfoArray[3]);
             var stats = GetPlayerStats(item.Value);
 
-            var combatDetailsDamageDone = new CombatDetailsDamageDone(_logger);
+            var combatDetailsDamageDone = new CombatDetailsDamageDone(_logger)
+            {
+                PetsId = petsId
+            };
+
             var combatDetailsHealDone = new CombatDetailsHealDone(_logger);
             var combatDetailsDamageTaken = new CombatDetailsDamageTaken(_logger);
             var combatDetailsResourceRecovery = new CombatDetailsResourceRecovery(_logger);

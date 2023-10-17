@@ -108,6 +108,8 @@ public class BasicTemplateViewModel : ParentTemplate, IVMDataHandler<CombatPlaye
 
     public CombatPlayerModel Data { get; set; }
 
+    public Dictionary<string, List<string>> PetsId { get; set; }
+
     public CombatModel SelectedCombat
     {
         get

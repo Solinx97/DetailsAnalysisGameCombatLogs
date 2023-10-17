@@ -129,6 +129,9 @@
   <data name="CritHealing" xml:space="preserve">
     <value>Crit healing</value>
   </data>
+  <data name="DamageAbsorbed" xml:space="preserve">
+    <value>Damage absorb.</value>
+  </data>
   <data name="Healing" xml:space="preserve">
     <value>Healing</value>
   </data>

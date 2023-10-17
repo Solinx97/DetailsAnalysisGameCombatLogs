@@ -14,11 +14,17 @@ internal static class CombatLogKeyWords
 
     public static string CombatantInfo { get; } = "COMBATANT_INFO";
 
+    public static string SpellSummon { get; } = "SPELL_SUMMON";
+
     public static string UnitDied { get; } = "UNIT_DIED";
 
-    public static string BossTrash { get; } = "Creature";
+    public static string Creature { get; } = "Creature";
+
+    public static string Pet { get; } = "Pet";
 
     public static string Boss { get; } = "Vehicle";
+
+    public static string Player { get; } = "Player";
 
     #endregion
 
@@ -36,9 +42,13 @@ internal static class CombatLogKeyWords
 
     public static string RangeDamage { get; } = "RANGE_DAMAGE";
 
+    public static string SpellCastSuccess { get; } = "SPELL_CAST_SUCCESS";
+
     public static string SpellMissed { get; } = "SPELL_MISSED";
 
     public static string SwingDamageLanded { get; } = "SWING_DAMAGE_LANDED";
+
+    public static string MeleeDamage { get; } = "Melee";
 
     public static string IsCrit { get; } = "1";
 
@@ -67,6 +77,8 @@ internal static class CombatLogKeyWords
     public static string SpellHeal { get; } = "SPELL_HEAL";
 
     public static string SpellPeriodicHeal { get; } = "SPELL_PERIODIC_HEAL";
+
+    public static string SpellAbsorbed { get; } = "SPELL_ABSORBED";
 
     #endregion
 
