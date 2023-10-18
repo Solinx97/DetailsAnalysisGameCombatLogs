@@ -142,6 +142,7 @@ public class CombatParserService : IParser
                 IsWin = GetCombatResult(combatData[^1]),
                 StartDate = GetTime(combatData[0]),
                 FinishDate = GetTime(combatData[^1]),
+                PetsId = petsId,
             };
 
             var duration = combat.FinishDate - combat.StartDate;
@@ -150,7 +151,7 @@ public class CombatParserService : IParser
                 return;
             }
 
-            PetsId = petsId;
+            //PetsId = petsId;
 
             GetCombatPlayersData(combat, petsId);
 

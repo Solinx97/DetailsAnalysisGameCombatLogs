@@ -68,7 +68,7 @@ public class CombatController : ControllerBase
 
                 var createdCombatPlayer = await UploadCombatPlayerAsync(player);
 
-                await _saveCombatDataHelper.SaveCombatPlayerDataAsync(createdCombat, createdCombatPlayer, model.Data);
+                await _saveCombatDataHelper.SaveCombatPlayerDataAsync(createdCombat, model.PetsId, createdCombatPlayer, model.Data);
             }
 
             createdCombat.IsReady = true;

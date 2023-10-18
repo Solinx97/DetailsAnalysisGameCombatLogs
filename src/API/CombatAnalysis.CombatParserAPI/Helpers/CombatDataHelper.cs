@@ -59,12 +59,15 @@ public class CombatDataHelper : ICombatDataHelper
         return combatLog;
     }
 
-    public async Task SaveCombatPlayerDataAsync(CombatDto combat, CombatPlayerDto combatPlayer, List<string> combatData)
+    public async Task SaveCombatPlayerDataAsync(CombatDto combat, Dictionary<string, List<string>> petsId, CombatPlayerDto combatPlayer, List<string> combatData)
     {
         var parsedCombat = _mapper.Map<Combat>(combat);
 
-        var damageDoneDetails = new CombatDetailsDamageDone(_logger);
-        damageDoneDetails.GetData(combatPlayer.Username, combatData);
+        var damageDoneDetails = new CombatDetailsDamageDone(_logger)
+        {
+            PetsId = petsId,
+        };
+        damageDoneDetails.GetData(combatPlayer.PlayerId, combatData);
 
         var damageDoneGeneralData = damageDoneDetails.GetDamageDoneGeneral(damageDoneDetails.DamageDone, parsedCombat);
 
@@ -72,7 +75,7 @@ public class CombatDataHelper : ICombatDataHelper
         await UploadDataAsync(damageDoneGeneralData.ToList(), _damageDoneGeneralService, combatPlayer.Id);
 
         var healDoneDetails = new CombatDetailsHealDone(_logger);
-        healDoneDetails.GetData(combatPlayer.Username, combatData);
+        healDoneDetails.GetData(combatPlayer.PlayerId, combatData);
 
         var healDoneGeneralData = healDoneDetails.GetHealDoneGeneral(healDoneDetails.HealDone, parsedCombat);
 
@@ -80,7 +83,7 @@ public class CombatDataHelper : ICombatDataHelper
         await UploadDataAsync(healDoneGeneralData.ToList(), _healDoneGeneralService, combatPlayer.Id);
 
         var damageTakenDetails = new CombatDetailsDamageTaken(_logger);
-        damageTakenDetails.GetData(combatPlayer.Username, combatData);
+        damageTakenDetails.GetData(combatPlayer.PlayerId, combatData);
 
         var damageTakenGeneralData = damageTakenDetails.GetDamageTakenGeneral(damageTakenDetails.DamageTaken, parsedCombat);
 
@@ -88,7 +91,7 @@ public class CombatDataHelper : ICombatDataHelper
         await UploadDataAsync(damageTakenGeneralData.ToList(), _damageTakenGeneralService, combatPlayer.Id);
 
         var resourceRecoveryDetails = new CombatDetailsResourceRecovery(_logger);
-        resourceRecoveryDetails.GetData(combatPlayer.Username, combatData);
+        resourceRecoveryDetails.GetData(combatPlayer.PlayerId, combatData);
 
         var resourceRecoveryGeneralData = resourceRecoveryDetails.GetResourceRecoveryGeneral(resourceRecoveryDetails.ResourceRecovery, parsedCombat);
 

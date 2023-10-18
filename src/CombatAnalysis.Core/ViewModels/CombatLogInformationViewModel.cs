@@ -443,6 +443,7 @@ public class CombatLogInformationViewModel : ParentTemplate, IObserver, IAuthObs
             BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, nameof(BasicTemplateViewModel.ResponseStatus), LoadingStatus.Failed);
 
             CombatLogUploadingFailed = true;
+
             return;
         }
 

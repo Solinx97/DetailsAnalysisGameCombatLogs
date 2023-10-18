@@ -57,6 +57,7 @@ public static class CombatDetailsExtension
                 MaxValue = item.Max(x => x.Value),
                 SpellOrItem = item[0].SpellOrItem,
                 CastNumber = item.Count,
+                DamageAbsorbed = string.Empty
             };
 
             lessDetails.Add(healDoneGeneral);

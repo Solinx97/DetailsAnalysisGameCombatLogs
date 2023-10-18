@@ -36,11 +36,11 @@ public class CombatDetailsDamageTaken : CombatDetailsTemplate
 
             foreach (var item in combatData)
             {
-                var itemHasDamageVariation = _damageVariations.Any(damagVariation => item.Contains(damagVariation));
+                var itemHasDamageVariation = _damageVariations.Any(item.Contains);
                 if (itemHasDamageVariation && item.Contains(playerId))
                 {
                     var usefulInformation = GetUsefulInformation(item);
-                    var damageTakenInformation = GetDamageTakenInformation(usefulInformation);
+                    var damageTakenInformation = GetDamageTakenInformation(playerId, usefulInformation);
 
                     if (damageTakenInformation != null)
                     {
@@ -58,8 +58,13 @@ public class CombatDetailsDamageTaken : CombatDetailsTemplate
         return damageTaken;
     }
 
-    private DamageTaken GetDamageTakenInformation(List<string> combatData)
+    private DamageTaken GetDamageTakenInformation(string playerId, List<string> combatData)
     {
+        //if (!combatData[2].Equals(playerId))
+        //{
+        //    return null;
+        //}
+
         if (string.Equals(combatData[1], CombatLogKeyWords.SwingDamageLanded, StringComparison.OrdinalIgnoreCase))
         {
             return null;

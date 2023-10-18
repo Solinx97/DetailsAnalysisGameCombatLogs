@@ -34,6 +34,8 @@ public class CombatModel
 
     public List<CombatPlayerModel> Players { get; set; }
 
+    public Dictionary<string, List<string>> PetsId { get; set; }
+
     public string Duration
     {
         get { return (FinishDate - StartDate).ToString(@"hh\:mm\:ss"); }
