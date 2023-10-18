@@ -26,7 +26,6 @@ public class CombatDetailsDamageTaken : CombatDetailsTemplate
 
     public override int GetData(string playerId, List<string> combatData)
     {
-        int damageTaken = 0;
         try
         {
             if (playerId == null)
@@ -34,25 +33,36 @@ public class CombatDetailsDamageTaken : CombatDetailsTemplate
                 throw new ArgumentNullException(playerId);
             }
 
-            foreach (var item in combatData)
-            {
-                var itemHasDamageVariation = _damageVariations.Any(item.Contains);
-                if (itemHasDamageVariation && item.Contains(playerId))
-                {
-                    var usefulInformation = GetUsefulInformation(item);
-                    var damageTakenInformation = GetDamageTakenInformation(playerId, usefulInformation);
+            var damageTaken = GetSummaryDamageTaken(playerId, combatData);
 
-                    if (damageTakenInformation != null)
-                    {
-                        damageTaken += damageTakenInformation.Value;
-                        DamageTaken.Add(damageTakenInformation);
-                    }
-                }
-            }
+            return damageTaken;
         }
         catch (ArgumentNullException ex)
         {
             _logger.LogError(ex, ex.Message, playerId);
+
+            return 0;
+        }
+    }
+
+    private int GetSummaryDamageTaken(string playerId, List<string> combatData)
+    {
+        int damageTaken = 0;
+        foreach (var item in combatData)
+        {
+            var itemHasDamageVariation = _damageVariations.Any(item.Contains);
+            if (itemHasDamageVariation && item.Contains(playerId))
+            {
+                var usefulInformation = GetUsefulInformation(item);
+                var damageTakenInformation = GetDamageTakenInformation(playerId, usefulInformation);
+                if (damageTakenInformation == null)
+                {
+                    continue;
+                }
+
+                damageTaken += damageTakenInformation.Value;
+                DamageTaken.Add(damageTakenInformation);
+            }
         }
 
         return damageTaken;
@@ -60,11 +70,6 @@ public class CombatDetailsDamageTaken : CombatDetailsTemplate
 
     private DamageTaken GetDamageTakenInformation(string playerId, List<string> combatData)
     {
-        //if (!combatData[2].Equals(playerId))
-        //{
-        //    return null;
-        //}
-
         if (string.Equals(combatData[1], CombatLogKeyWords.SwingDamageLanded, StringComparison.OrdinalIgnoreCase))
         {
             return null;
@@ -87,7 +92,7 @@ public class CombatDetailsDamageTaken : CombatDetailsTemplate
     {
         int.TryParse(combatData[^10], out var value);
 
-        var spellOrItem = combatData[11].Contains("0000000000000000") || combatData[11].Contains("nil")
+        var spellOrItem = combatData[1].Equals(CombatLogKeyWords.SwingDamage) || combatData[1].Equals(CombatLogKeyWords.SwingMissed)
             ? CombatLogKeyWords.MeleeDamage : combatData[11].Trim('"');
 
         var isResist = false;

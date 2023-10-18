@@ -57,11 +57,13 @@ public class CombatDetailsDamageDone : CombatDetailsTemplate
             if (itemHasDamageVariation && item.Contains(playerId))
             {
                 var damageDoneInformation = GetDamageDoneInformation(playerId, succesfullCombatDataInformation);
-                if (damageDoneInformation != null)
+                if (damageDoneInformation == null)
                 {
-                    damageDone += damageDoneInformation.Value;
-                    DamageDone.Add(damageDoneInformation);
+                    continue;
                 }
+
+                damageDone += damageDoneInformation.Value;
+                DamageDone.Add(damageDoneInformation);
             }
 
             if (itemHasDamageVariation)

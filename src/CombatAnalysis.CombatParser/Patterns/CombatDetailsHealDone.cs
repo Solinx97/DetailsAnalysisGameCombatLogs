@@ -26,7 +26,6 @@ public class CombatDetailsHealDone : CombatDetailsTemplate
 
     public override int GetData(string playerId, List<string> combatData)
     {
-        int healthDone = 0;
         try
         {
             if (playerId == null)
@@ -34,38 +33,50 @@ public class CombatDetailsHealDone : CombatDetailsTemplate
                 throw new ArgumentNullException(playerId);
             }
 
-            foreach (var item in combatData)
-            {
-                var itemHasHealVariation = _healVariations.Any(item.Contains);
-                if (itemHasHealVariation && item.Contains(playerId))
-                {
-                    var usefulInformation = GetUsefulInformation(item);
-                    var healDoneInformation = GetHealDoneInformation(playerId, usefulInformation);
+            var healthDone = GetSummaryHealDone(playerId, combatData);
 
-                    if (healDoneInformation != null)
-                    {
-                        healthDone += healDoneInformation.Value;
-                        HealDone.Add(healDoneInformation);
-                    }
-                }
-
-                var itemHasAbsrobVariation = _absorbVariations.Any(item.Contains);
-                if (itemHasAbsrobVariation && item.Contains(playerId))
-                {
-                    var usefulInformation = GetUsefulInformation(item);
-                    var absorbInformation = GetAbsorbDoneInformation(playerId, usefulInformation);
-
-                    if (absorbInformation != null)
-                    {
-                        healthDone += absorbInformation.Value;
-                        HealDone.Add(absorbInformation);
-                    }
-                }
-            }
+            return healthDone;
         }
         catch (ArgumentNullException ex)
         {
             _logger.LogError(ex, ex.Message, playerId);
+
+            return 0;
+        }
+    }
+
+    private int GetSummaryHealDone(string playerId, List<string> combatData)
+    {
+        int healthDone = 0;
+        foreach (var item in combatData)
+        {
+            var itemHasHealVariation = _healVariations.Any(item.Contains);
+            if (itemHasHealVariation && item.Contains(playerId))
+            {
+                var usefulInformation = GetUsefulInformation(item);
+                var healDoneInformation = GetHealDoneInformation(playerId, usefulInformation);
+
+                if (healDoneInformation == null)
+                {
+                    continue;
+                }
+
+                healthDone += healDoneInformation.Value;
+                HealDone.Add(healDoneInformation);
+            }
+
+            var itemHasAbsrobVariation = _absorbVariations.Any(item.Contains);
+            if (itemHasAbsrobVariation && item.Contains(playerId))
+            {
+                var usefulInformation = GetUsefulInformation(item);
+                var absorbInformation = GetAbsorbDoneInformation(playerId, usefulInformation);
+
+                if (absorbInformation != null)
+                {
+                    healthDone += absorbInformation.Value;
+                    HealDone.Add(absorbInformation);
+                }
+            }
         }
 
         return healthDone;

@@ -26,7 +26,7 @@ public class ResourceRecoveryDetailsViewModel : DetailsGenericTemplate<ResourceR
         var selectedCombatMap = _mapper.Map<Combat>(SelectedCombat);
 
         var resourceRecovery = new CombatDetailsResourceRecovery(_logger);
-        resourceRecovery.GetData(parameter.Username, SelectedCombat.Data);
+        resourceRecovery.GetData(parameter.PlayerId, SelectedCombat.Data);
 
         var healDoneMap = _mapper.Map<List<ResourceRecoveryModel>>(resourceRecovery.ResourceRecovery);
         DetailsInformations = new ObservableCollection<ResourceRecoveryModel>(healDoneMap);
