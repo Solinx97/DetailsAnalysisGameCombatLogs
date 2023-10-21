@@ -28,5 +28,7 @@ public class DamageDoneDto
 
     public bool IsCrit { get; set; }
 
+    public bool IsPet { get; set; }
+
     public int CombatPlayerId { get; set; }
 }

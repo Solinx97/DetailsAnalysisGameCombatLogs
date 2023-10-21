@@ -87,10 +87,10 @@
                         </DataGridTemplateColumn.HeaderTemplate>
                     </DataGridTemplateColumn>
 
-                    <DataGridTemplateColumn SortMemberPath="Value" IsReadOnly="True" MinWidth="150">
+                    <DataGridTemplateColumn SortMemberPath="ActualValue" IsReadOnly="True" MinWidth="150">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
-                                <TextBlock Text="{Binding Path=Value}" TextAlignment="Center" Margin="10" FontSize="14" FontFamily="Comic Sans MS"/>
+                                <TextBlock Text="{Binding Path=ActualValue}" TextAlignment="Center" Margin="10" FontSize="14" FontFamily="Comic Sans MS"/>
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                         <DataGridTemplateColumn.HeaderTemplate>

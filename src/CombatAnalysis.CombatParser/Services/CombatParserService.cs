@@ -151,7 +151,7 @@ public class CombatParserService : IParser
                 return;
             }
 
-            //PetsId = petsId;
+            PetsId = petsId;
 
             GetCombatPlayersData(combat, petsId);
 

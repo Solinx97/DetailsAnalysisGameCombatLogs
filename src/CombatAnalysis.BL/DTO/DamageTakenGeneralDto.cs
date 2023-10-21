@@ -6,6 +6,8 @@ public class DamageTakenGeneralDto
 
     public int Value { get; set; }
 
+    public int ActualValue { get; set; }
+
     public double DamageTakenPerSecond { get; set; }
 
     public string SpellOrItem { get; set; }

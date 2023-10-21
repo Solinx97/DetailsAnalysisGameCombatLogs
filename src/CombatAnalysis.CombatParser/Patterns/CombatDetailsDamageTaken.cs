@@ -54,13 +54,13 @@ public class CombatDetailsDamageTaken : CombatDetailsTemplate
             if (itemHasDamageVariation && item.Contains(playerId))
             {
                 var usefulInformation = GetUsefulInformation(item);
-                var damageTakenInformation = GetDamageTakenInformation(playerId, usefulInformation);
+                var damageTakenInformation = GetDamageTakenInformation(usefulInformation);
                 if (damageTakenInformation == null)
                 {
                     continue;
                 }
 
-                damageTaken += damageTakenInformation.Value;
+                damageTaken += damageTakenInformation.ActualValue;
                 DamageTaken.Add(damageTakenInformation);
             }
         }
@@ -68,7 +68,7 @@ public class CombatDetailsDamageTaken : CombatDetailsTemplate
         return damageTaken;
     }
 
-    private DamageTaken GetDamageTakenInformation(string playerId, List<string> combatData)
+    private DamageTaken GetDamageTakenInformation(List<string> combatData)
     {
         if (string.Equals(combatData[1], CombatLogKeyWords.SwingDamageLanded, StringComparison.OrdinalIgnoreCase))
         {
@@ -140,6 +140,7 @@ public class CombatDetailsDamageTaken : CombatDetailsTemplate
         var damageTaken = new DamageTaken
         {
             Value = value,
+            ActualValue = value + absorb,
             Time = TimeSpan.Parse(combatData[0]),
             FromEnemy = enemy.Trim('"'),
             ToPlayer = combatData[7].Trim('"'),

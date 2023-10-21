@@ -264,6 +264,7 @@ public class CombatDetailsDamageDone : CombatDetailsTemplate
             IsResist = isResist,
             IsImmune = isImmune,
             IsCrit = isCrit,
+            IsPet = true,
         };
 
         return damageDone;

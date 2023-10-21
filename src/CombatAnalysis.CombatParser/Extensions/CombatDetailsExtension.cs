@@ -26,6 +26,7 @@ public static class CombatDetailsExtension
                 MaxValue = item.Max(x => x.Value),
                 SpellOrItem = item[0].SpellOrItem,
                 CastNumber = item.Count,
+                IsPet = item.FirstOrDefault().IsPet
             };
 
             lessDetails.Add(damageDoneGeneral);
@@ -83,6 +84,7 @@ public static class CombatDetailsExtension
             var damageTakenGeneral = new DamageTakenGeneral
             {
                 Value = item.Sum(x => x.Value),
+                ActualValue = item.Sum(x => x.ActualValue),
                 DamageTakenPerSecond = item.Sum(x => x.Value) / durationTime.TotalSeconds,
                 AverageValue = item.Average(x => x.Value),
                 MinValue = item.Min(x => x.Value),
