@@ -155,6 +155,18 @@ abstract public class DetailsGenericTemplate<T, T1> : ParentTemplate<CombatPlaye
         }
     }
 
+    public void GetSources()
+    {
+        SetUpFilteredCollection();
+
+        var sources = DetailsInformations.Select(x => x.GetType().GetProperty("SpellOrItem").GetValue(x).ToString()).Distinct().ToList();
+        var resourceMangaer = new ResourceManager("CombatAnalysis.App.Localizations.Resources.DetailsGeneralTemplate.Resource", Assembly.Load("CombatAnalysis.App"));
+        var allSourcesName = resourceMangaer.GetString("All");
+        sources.Insert(0, allSourcesName);
+
+        Sources = new ObservableCollection<string>(sources);
+    }
+
     protected abstract void Filter();
 
     protected abstract Task LoadDetailsAsync(int combatPlayerId);
@@ -166,16 +178,4 @@ abstract public class DetailsGenericTemplate<T, T1> : ParentTemplate<CombatPlaye
     protected abstract void SetUpFilteredCollection();
 
     protected abstract void SetTotalValue(CombatPlayerModel parameter);
-
-    private void GetSources()
-    {
-        SetUpFilteredCollection();
-
-        var sources = DetailsInformations.Select(x => x.GetType().GetProperty("SpellOrItem").GetValue(x).ToString()).Distinct().ToList();
-        var resourceMangaer = new ResourceManager("CombatAnalysis.App.Localizations.Resources.DetailsGeneralTemplate.Resource", Assembly.Load("CombatAnalysis.App"));
-        var allSourcesName = resourceMangaer.GetString("All");
-        sources.Insert(0, allSourcesName);
-
-        Sources = new ObservableCollection<string>(sources);
-    }
 }

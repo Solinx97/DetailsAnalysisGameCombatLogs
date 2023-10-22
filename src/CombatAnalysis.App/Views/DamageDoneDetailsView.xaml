@@ -20,6 +20,7 @@
             <RowDefinition Height="0.1*"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="0.15*"/>
+            <RowDefinition Height="0.15*"/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="55"/>
@@ -32,7 +33,7 @@
             <converters:TheNativeIntToVisibilityConverter x:Key="IntToVisibility" />
         </Grid.Resources>
         
-        <ContentControl Grid.ColumnSpan="3" Grid.RowSpan="4" Content="{Binding BasicTemplate}">
+        <ContentControl Grid.ColumnSpan="3" Grid.RowSpan="5" Content="{Binding BasicTemplate}">
             <ContentControl.Resources>
                 <DataTemplate DataType="{x:Type viewModels:BasicTemplateViewModel}">
                     <local:BasicTemplateView />
@@ -69,7 +70,7 @@
         </StackPanel>
 
         <DataGrid Margin="20 30 20 45" Grid.Row="2" Grid.Column="2" Height="450" GridLinesVisibility="None" 
-                      CanUserAddRows="False" CanUserDeleteRows="False" AutoGenerateColumns="False"
+                 CanUserAddRows="False" CanUserDeleteRows="False" AutoGenerateColumns="False"
                  VerticalAlignment="Top" Background="Transparent" ItemsSource="{Binding GeneralInformations}"
                  Visibility="{Binding ElementName=detailsType, Path=SelectedIndex, Converter={StaticResource IntToVisibility}, ConverterParameter=true:0}">
             <DataGrid.Columns>
@@ -283,7 +284,13 @@
             </DataGrid>
         </StackPanel>
 
-        <StackPanel Grid.Column="2" Grid.Row="2" VerticalAlignment="Bottom" HorizontalAlignment="Left" Margin="0 50"
+        <StackPanel Grid.Column="2" Grid.Row="3" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="50 -15"
+                    Orientation="Horizontal">
+            <CheckBox VerticalContentAlignment="Center" Content="{loc:Loc ShowPets}" IsChecked="{Binding IsShowPets}" FontSize="14"
+                              VerticalAlignment="Center" FontWeight="SemiBold" />
+        </StackPanel>
+        
+        <StackPanel Grid.Column="2" Grid.Row="3" VerticalAlignment="Center" HorizontalAlignment="Left"
                     Orientation="Horizontal">
             <TextBlock Margin="50 0" HorizontalAlignment="Center" VerticalAlignment="Center"
                    Text="{loc:Loc Total}" FontSize="16" TextAlignment="Center"/>
@@ -291,7 +298,7 @@
                    Text="{Binding TotalValue}" FontSize="18" TextAlignment="Center" FontWeight="Bold"/>
         </StackPanel>
 
-        <StackPanel Margin="40 -40" Grid.Row="3" Grid.Column="3" Orientation="Horizontal"
+        <StackPanel Margin="40 -20" Grid.Row="4" Grid.Column="3" Orientation="Horizontal"
                     Visibility="{Binding IsShowFilters, Converter={StaticResource BoolToVisibility}, ConverterParameter=true}">
             <StackPanel Margin="10">
                 <CheckBox Name="dependency" Margin="0 5" VerticalContentAlignment="Center" 
