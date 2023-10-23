@@ -1,7 +1,9 @@
 ﻿using CombatAnalysis.Core.Localizations;
 using CombatAnalysis.Core.ViewModels.Base;
+using CombatAnalysis.Core.ViewModels.Settings;
 using System.Collections.ObjectModel;
 using System.Globalization;
+using System.Text.Json;
 
 namespace CombatAnalysis.Core.ViewModels;
 
@@ -9,10 +11,14 @@ public class SettingsViewModel : ParentTemplate
 {
     private ObservableCollection<Language> _languages;
     private Language _selectedLanguage;
+    private string _logsLocation;
 
     public SettingsViewModel()
 	{
         BasicTemplate.Parent = this;
+
+        var userSettings = ReadUserSettings("user.json");
+        _logsLocation = userSettings.Location;
 
         LanguageInit();
     }
@@ -38,6 +44,15 @@ public class SettingsViewModel : ParentTemplate
         }
     }
 
+    public string LogsLocation
+    {
+        get { return _logsLocation; }
+        set
+        {
+            SetProperty(ref _logsLocation, value);
+        }
+    }
+
     #endregion
 
     private void LanguageInit()
@@ -51,5 +66,14 @@ public class SettingsViewModel : ParentTemplate
         };
 
         Languages = new ObservableCollection<Language> { Language.EN, Language.RU, };
+    }
+
+    private static UserSettings ReadUserSettings(string settingsName)
+    {
+        var baseDirectory = AppDomain.CurrentDomain.BaseDirectory;
+        using var fs = new FileStream($"{baseDirectory}{settingsName}", FileMode.OpenOrCreate);
+        var userSettings = JsonSerializer.Deserialize<UserSettings>(fs);
+
+        return userSettings;
     }
 }
