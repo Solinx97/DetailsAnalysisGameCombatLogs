@@ -18,14 +18,15 @@ using System.Collections.ObjectModel;
 
 namespace CombatAnalysis.Core.ViewModels;
 
-public class CombatLogInformationViewModel : ParentTemplate, IObserver, IAuthObserver
+public class CombatLogInformationViewModel : ParentTemplate, CombatParser.Interfaces.IObserver<Combat>, IAuthObserver
 {
     private readonly IMvxNavigationService _mvvmNavigation;
     private readonly IMapper _mapper;
-    private readonly IParser _parser;
+    private readonly IParser<Combat> _parser;
     private readonly CombatParserAPIService _combatParserAPIService;
     private readonly IMemoryCache _memoryCache;
 
+    private bool _isPreparePets;
     private string _combatLog;
     private bool _fileIsNotCorrect;
     private bool _isParsing;
@@ -51,7 +52,7 @@ public class CombatLogInformationViewModel : ParentTemplate, IObserver, IAuthObs
     private bool _removingInProgress;
 
     public CombatLogInformationViewModel(IMapper mapper, IMvxNavigationService mvvmNavigation, IHttpClientHelper httpClient, 
-        IParser parser, ILogger logger, IMemoryCache memoryCache)
+        IParser<Combat> parser, ILogger logger, IMemoryCache memoryCache)
     {
         _mapper = mapper;
         _mvvmNavigation = mvvmNavigation;
@@ -98,6 +99,15 @@ public class CombatLogInformationViewModel : ParentTemplate, IObserver, IAuthObs
     #endregion
 
     #region Properties
+
+    public bool IsPreparePets
+    {
+        get { return _isPreparePets; }
+        set
+        {
+            SetProperty(ref _isPreparePets, value);
+        }
+    }
 
     public ObservableCollection<CombatLogModel> CombatLogs
     {
@@ -317,12 +327,23 @@ public class CombatLogInformationViewModel : ParentTemplate, IObserver, IAuthObs
 
     public void Update(Combat data)
     {
+        IsPreparePets = string.IsNullOrEmpty(data.Name);
+        if (string.IsNullOrEmpty(data.Name))
+        {
+            return;
+        }
+
         var win = TranslationSource.Instance["CombatAnalysis.App.Localizations.Resources.CombatLogInformation.Resource.Win"];
         var lose = TranslationSource.Instance["CombatAnalysis.App.Localizations.Resources.CombatLogInformation.Resource.Lose"];
 
         DungeonName = data.DungeonName;
         CombatName = data.Name;
         CombatStatus = data.IsWin ? win : lose;
+    }
+
+    public void Update(string data)
+    {
+        var preparePets = TranslationSource.Instance["CombatAnalysis.App.Localizations.Resources.CombatLogInformation.Resource.PreparePets"];
     }
 
     public void GetLogType(int logType)

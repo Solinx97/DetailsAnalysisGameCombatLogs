@@ -1,10 +1,11 @@
 ﻿namespace CombatAnalysis.CombatParser.Interfaces;
 
-public interface IObservable
+public interface IObservable<TModel>
+    where TModel : class
 {
-    void AddObserver(IObserver o);
+    void AddObserver(IObserver<TModel> o);
 
-    void RemoveObserver(IObserver o);
+    void RemoveObserver(IObserver<TModel> o);
 
     void NotifyObservers();
 }

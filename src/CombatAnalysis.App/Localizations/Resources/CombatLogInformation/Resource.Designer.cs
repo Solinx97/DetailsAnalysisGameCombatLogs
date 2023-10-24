@@ -142,6 +142,15 @@ namespace CombatAnalysis.App.Localizations.Resources.CombatLogInformation {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Prepare pets.
+        /// </summary>
+        public static string PreparePets {
+            get {
+                return ResourceManager.GetString("PreparePets", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Private.
         /// </summary>
         public static string Private {
@@ -304,7 +313,7 @@ namespace CombatAnalysis.App.Localizations.Resources.CombatLogInformation {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to To select a type of logs you ned to login.
+        ///   Looks up a localized string similar to To select a type of logs you need to login.
         /// </summary>
         public static string TypeOfLogsLoginRequired {
             get {

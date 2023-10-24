@@ -2,7 +2,8 @@
 
 namespace CombatAnalysis.CombatParser.Interfaces;
 
-public interface IParser : IObservable
+public interface IParser<TModel> : IObservable<TModel>
+    where TModel : class
 {
     List<Combat> Combats { get; }
 

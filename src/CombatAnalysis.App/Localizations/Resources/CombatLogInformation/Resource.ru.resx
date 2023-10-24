@@ -144,6 +144,9 @@
   <data name="Lose" xml:space="preserve">
     <value>Поражение</value>
   </data>
+  <data name="PreparePets" xml:space="preserve">
+    <value>Подготовка питомцев</value>
+  </data>
   <data name="Private" xml:space="preserve">
     <value>Приватные</value>
   </data>

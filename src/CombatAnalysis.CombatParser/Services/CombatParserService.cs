@@ -7,9 +7,9 @@ using System.Globalization;
 
 namespace CombatAnalysis.CombatParser.Services;
 
-public class CombatParserService : IParser
+public class CombatParserService : IParser<Combat>
 {
-    private readonly IList<IObserver> _observers;
+    private readonly IList<Interfaces.IObserver<Combat>> _combatObservers;
     private readonly IList<PlaceInformation> _zones;
     private readonly IFileManager _fileManager;
     private readonly ILogger _logger;
@@ -24,7 +24,7 @@ public class CombatParserService : IParser
         _logger = logger;
 
         Combats = new List<Combat>();
-        _observers = new List<IObserver>();
+        _combatObservers = new List<Interfaces.IObserver<Combat>>();
         _zones = new List<PlaceInformation>();
     }
 
@@ -47,9 +47,9 @@ public class CombatParserService : IParser
 
     public async Task Parse(string combatLog)
     {
-        Combats.Clear();
+        var allPetsId = await PreparePetsAsync(combatLog);
 
-        var allPetsId = await GetPetsAsync(combatLog);
+        Combats.Clear();
 
         string line;
         using var reader = _fileManager.StreamReader(combatLog);    
@@ -64,6 +64,18 @@ public class CombatParserService : IParser
                 GetDungeonName(line);
             }
         }
+    }
+
+    private async Task<Dictionary<string, List<string>>> PreparePetsAsync(string combatLog)
+    {
+        Combats.Clear();
+        Combats.Add(new Combat());
+
+        NotifyObservers();
+
+        var allPetsId = await GetPetsAsync(combatLog);
+
+        return allPetsId;
     }
 
     private async Task<Dictionary<string, List<string>>> GetPetsAsync(string combatLog)
@@ -417,19 +429,19 @@ public class CombatParserService : IParser
         return playerStats;
     }
 
-    public void AddObserver(IObserver observer)
+    public void AddObserver(Interfaces.IObserver<Combat> observer)
     {
-        _observers.Add(observer);
+        _combatObservers.Add(observer);
     }
 
-    public void RemoveObserver(IObserver observer)
+    public void RemoveObserver(Interfaces.IObserver<Combat> observer)
     {
-        _observers.Remove(observer);
+        _combatObservers.Remove(observer);
     }
 
     public void NotifyObservers()
     {
-        foreach (var observer in _observers)
+        foreach (var observer in _combatObservers)
         {
             observer.Update(Combats[^1]);
         }

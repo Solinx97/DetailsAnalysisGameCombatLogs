@@ -144,6 +144,9 @@
   <data name="Lose" xml:space="preserve">
     <value>Lose</value>
   </data>
+  <data name="PreparePets" xml:space="preserve">
+    <value>Prepare pets</value>
+  </data>
   <data name="Private" xml:space="preserve">
     <value>Private</value>
   </data>
@@ -199,7 +202,7 @@
     <value>Type of logs</value>
   </data>
   <data name="TypeOfLogsLoginRequired" xml:space="preserve">
-    <value>To select a type of logs you ned to login</value>
+    <value>To select a type of logs you need to login</value>
   </data>
   <data name="Upload" xml:space="preserve">
     <value>Upload</value>
