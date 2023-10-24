@@ -7,7 +7,11 @@ internal class HttpClientHelper : IHttpClientHelper
 {
     public HttpClientHelper()
     {
-        Client = new HttpClient();
+        Client = new HttpClient
+        {
+            Timeout = TimeSpan.FromSeconds(500),
+        };
+
         BaseAddressApi = "api/v1/";
     }
 
