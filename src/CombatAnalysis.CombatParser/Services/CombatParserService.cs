@@ -47,22 +47,44 @@ public class CombatParserService : IParser<Combat>
 
     public async Task Parse(string combatLog)
     {
+        var combats = new List<List<string>>();
+        var newCombat = new List<string>();
+
         var allPetsId = await PreparePetsAsync(combatLog);
 
         Combats.Clear();
 
         string line;
-        using var reader = _fileManager.StreamReader(combatLog);    
+        using var reader = _fileManager.StreamReader(combatLog);
         while ((line = await reader.ReadLineAsync()) != null)
         {
             if (line.Contains(CombatLogKeyWords.EncounterStart))
             {
-                await GetCombatInformationAsync(line, allPetsId, reader);
+                newCombat = new List<string>
+                {
+                    line
+                };
+            }
+            else if (line.Contains(CombatLogKeyWords.EncounterEnd))
+            {
+                newCombat.Add(line);
+
+                var builtCombat = new List<string>(newCombat);
+                combats.Add(builtCombat);
             }
             else if (line.Contains(CombatLogKeyWords.ZoneChange))
             {
                 GetDungeonName(line);
             }
+            else
+            {
+                newCombat.Add(line);
+            }
+        }
+
+        foreach (var combat in combats)
+        {
+            await Task.Run(() => GetCombatInformation(combat, allPetsId));
         }
     }
 
@@ -138,22 +160,24 @@ public class CombatParserService : IParser<Combat>
         }
     }
 
-    private async Task GetCombatInformationAsync(string line, Dictionary<string, List<string>> petsId, StreamReader reader)
+    private void GetCombatInformation(List<string> builtCombat, Dictionary<string, List<string>> petsId)
     {
         try
         {
-            var combatData = await GetCombatData(reader);
-            combatData.Insert(0, line);
+            if (!builtCombat[^1].Contains(CombatLogKeyWords.EncounterEnd))
+            {
+                return;
+            }
 
             var combat = new Combat
             {
-                Name = GetCombatName(combatData[0]),
-                Difficulty = GetDifficulty(combatData[0]),
-                DungeonSize = GetDungeonSize(combatData[0]),
-                Data = combatData,
-                IsWin = GetCombatResult(combatData[^1]),
-                StartDate = GetTime(combatData[0]),
-                FinishDate = GetTime(combatData[^1]),
+                Name = GetCombatName(builtCombat[0]),
+                Difficulty = GetDifficulty(builtCombat[0]),
+                DungeonSize = GetDungeonSize(builtCombat[0]),
+                Data = builtCombat,
+                IsWin = GetCombatResult(builtCombat[^1]),
+                StartDate = GetTime(builtCombat[0]),
+                FinishDate = GetTime(builtCombat[^1]),
                 PetsId = petsId,
             };
 
@@ -179,22 +203,6 @@ public class CombatParserService : IParser<Combat>
             var combat = new Combat();
             AddNewCombat(combat);
         }
-    }
-
-    private async Task<List<string>> GetCombatData(StreamReader reader)
-    {
-        string line;
-        var combatElements = new List<string>();
-        while ((line = await reader.ReadLineAsync()) != null)
-        {
-            combatElements.Add(line);
-            if (line.Contains(CombatLogKeyWords.EncounterEnd))
-            {
-                break;
-            }
-        }
-
-        return combatElements;
     }
 
     private string GetCombatName(string combatStart)

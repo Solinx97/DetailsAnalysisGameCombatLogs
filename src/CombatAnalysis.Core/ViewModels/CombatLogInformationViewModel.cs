@@ -341,11 +341,6 @@ public class CombatLogInformationViewModel : ParentTemplate, CombatParser.Interf
         CombatStatus = data.IsWin ? win : lose;
     }
 
-    public void Update(string data)
-    {
-        var preparePets = TranslationSource.Instance["CombatAnalysis.App.Localizations.Resources.CombatLogInformation.Resource.PreparePets"];
-    }
-
     public void GetLogType(int logType)
     {
         LogType = (LogType)logType;
