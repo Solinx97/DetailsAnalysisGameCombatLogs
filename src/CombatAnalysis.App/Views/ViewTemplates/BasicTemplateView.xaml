@@ -18,6 +18,7 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="auto"/>
             <RowDefinition Height="*"/>
+            <RowDefinition Height="0.1*"/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="55"/>
@@ -35,9 +36,9 @@
         </Grid.Resources>
 
         <Border CornerRadius="0 20 20 0" Background="white" Grid.Column="2" Grid.ColumnSpan="2"
-                Margin="-25 0 0 0 " Grid.RowSpan="2"/>
+                Margin="-25 0 0 0 " Grid.RowSpan="3"/>
 
-        <Border CornerRadius="20" Grid.RowSpan="2" Panel.ZIndex="2" Background="#6145e3">
+        <Border CornerRadius="20" Grid.RowSpan="3" Panel.ZIndex="2" Background="#6145e3">
             <Grid>
                 <TextBlock Text="Details Analysis GCL" Foreground="White" FontSize="16"
                            VerticalAlignment="Top" HorizontalAlignment="Center" FontWeight="SemiBold"
@@ -49,7 +50,7 @@
             </Grid>
         </Border>
 
-        <Border Grid.Column="1" Grid.RowSpan="2" CornerRadius="0 20 20 0"
+        <Border Grid.Column="1" Grid.RowSpan="3" CornerRadius="0 20 20 0"
                 Panel.ZIndex="1" Margin="-25 0 0 0">
             <Border.Background>
                 <LinearGradientBrush>
@@ -141,20 +142,10 @@
                     </StackPanel>
                 </StackPanel>
                 <StackPanel Margin="25 0" Orientation="Horizontal">
-                    <Button Style="{StaticResource textBoxButton}">
-                        <Button.ToolTip>
-                            <ToolTip>
-                                Уведомления
-                            </ToolTip>
-                        </Button.ToolTip>
+                    <Button Style="{StaticResource textBoxButton}" ToolTip="{loc:Loc Notifications}">
                         <Icon:PackIconMaterial Kind="BellOutline" Foreground="#88878e"/>
                     </Button>
-                    <Button Style="{StaticResource textBoxButton}">
-                        <Button.ToolTip>
-                            <ToolTip>
-                                Меню
-                            </ToolTip>
-                        </Button.ToolTip>
+                    <Button Style="{StaticResource textBoxButton}" ToolTip="{loc:Loc Menu}">
                         <Icon:PackIconMaterial Kind="DotsVertical" Foreground="#88878e"/>
                     </Button>
                 </StackPanel>
@@ -172,10 +163,24 @@
             </StackPanel>
         </Border>
 
-        <StackPanel Grid.Row="1" Grid.Column="1" VerticalAlignment="Bottom" Panel.ZIndex="3" Margin="5" Orientation="Horizontal">
+        <StackPanel Grid.Row="2" Grid.Column="1" VerticalAlignment="Bottom" Panel.ZIndex="3" Margin="5" Orientation="Horizontal">
             <TextBlock Text="{Binding AppVersionType}" FontSize="13" Foreground="White"/>
             <TextBlock Text="  " FontSize="13" Foreground="White"/>
             <TextBlock Text="{Binding AppVersion}" FontSize="13" FontWeight="DemiBold" Foreground="White"/>
+        </StackPanel>
+        
+        <StackPanel Grid.Row="2" Grid.Column="2" Grid.ColumnSpan="2" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="20 5"
+                    Visibility="{Binding ResponseStatus, Converter={StaticResource IntToVisibility}, ConverterParameter=true:1}">
+            <ProgressBar Minimum="0" Maximum="{Binding UploadingCombatsCount}" Value="{Binding UploadedCombatsCount}" Height="10" Width="150">
+                <ProgressBar.ToolTip>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="Already uploaded: "/>
+                        <TextBlock Text="{Binding UploadedCombatsCount}"/>
+                        <TextBlock Text=" / "/>
+                        <TextBlock Text="{Binding UploadingCombatsCount}"/>
+                    </StackPanel>
+                </ProgressBar.ToolTip>
+            </ProgressBar>
         </StackPanel>
     </Grid>
 </views:MvxWpfView>

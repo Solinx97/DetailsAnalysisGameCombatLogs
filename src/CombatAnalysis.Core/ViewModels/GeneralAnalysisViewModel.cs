@@ -66,6 +66,9 @@ public class GeneralAnalysisViewModel : ParentTemplate<Tuple<List<CombatModel>, 
 
         var responseStatusObservable = (IResponseStatusObservable)BasicTemplate;
         responseStatusObservable.AddObserver(this);
+
+        ResponseStatus = ((BasicTemplateViewModel)BasicTemplate).ResponseStatus;
+        CombatLog = ((BasicTemplateViewModel)BasicTemplate).CombatLog;
     }
 
     #region Commands
@@ -392,6 +395,9 @@ public class GeneralAnalysisViewModel : ParentTemplate<Tuple<List<CombatModel>, 
     public override void ViewDestroy(bool viewFinishing = true)
     {
         ((BasicTemplateViewModel)BasicTemplate).Combats = Combats.ToList();
+
+        var responseStatusObservable = (IResponseStatusObservable)BasicTemplate;
+        responseStatusObservable.RemoveObserver(this);
 
         base.ViewDestroy(viewFinishing);
     }

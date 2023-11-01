@@ -32,6 +32,9 @@ public class BasicTemplateViewModel : ParentTemplate, IVMDataHandler<CombatPlaye
     private LogType _logType;
     private bool _logPanelStatusIsVisibly;
     private CombatModel _selectedCombat;
+    private CombatLogModel _combatLog;
+    private int _uploadingCombatsCount;
+    private int _uploadedCombatsCount;
 
     private static LoadingStatus _responseStatus;
     private static int _allowStep;
@@ -171,6 +174,19 @@ public class BasicTemplateViewModel : ParentTemplate, IVMDataHandler<CombatPlaye
         set
         {
             SetProperty(ref _combats, value);
+            if (value != null)
+            {
+                _uploadingCombatsCount = value.Count;
+            }
+        }
+    }
+
+    public CombatLogModel CombatLog
+    {
+        get { return _combatLog; }
+        set
+        {
+            SetProperty(ref _combatLog, value);
         }
     }
 
@@ -228,6 +244,24 @@ public class BasicTemplateViewModel : ParentTemplate, IVMDataHandler<CombatPlaye
         set
         {
             SetProperty(ref _logPanelStatusIsVisibly, value);
+        }
+    }
+
+    public int UploadingCombatsCount
+    {
+        get { return _uploadingCombatsCount; }
+        set
+        {
+            SetProperty(ref _uploadingCombatsCount, value);
+        }
+    }
+
+    public int UploadedCombatsCount
+    {
+        get { return _uploadedCombatsCount; }
+        set
+        {
+            SetProperty(ref _uploadedCombatsCount, value);
         }
     }
 

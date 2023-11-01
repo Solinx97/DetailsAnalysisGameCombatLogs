@@ -387,7 +387,7 @@ public class CombatLogInformationViewModel : ParentTemplate, CombatParser.Interf
         var dataForGeneralAnalysis = Tuple.Create(loadedCombats.ToList(), LogType);
         await _mvvmNavigation.Navigate<GeneralAnalysisViewModel, Tuple<List<CombatModel>, LogType>>(dataForGeneralAnalysis);
 
-        BasicTemplate.Handler.PropertyUpdate<GeneralAnalysisViewModel>(BasicTemplate.Parent, nameof(GeneralAnalysisViewModel.CombatLog), combatLog);
+        BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, nameof(BasicTemplateViewModel.CombatLog), combatLog);
         BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, nameof(BasicTemplateViewModel.Combats), loadedCombats.ToList());
     }
 
@@ -429,6 +429,7 @@ public class CombatLogInformationViewModel : ParentTemplate, CombatParser.Interf
     private async Task PrepareCombatData(string combatLogData)
     {
         await _parser.Parse(combatLogData);
+        BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, nameof(BasicTemplateViewModel.PetsId), _parser.PetsId);
 
         var combatModels = _mapper.Map<List<CombatModel>>(_parser.Combats);
 
@@ -441,7 +442,6 @@ public class CombatLogInformationViewModel : ParentTemplate, CombatParser.Interf
             await _mvvmNavigation.Navigate<GeneralAnalysisViewModel, Tuple<List<CombatModel>, LogType>>(dataForGeneralAnalysis);
 
             BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, nameof(BasicTemplateViewModel.Combats), combatModels);
-            BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, nameof(BasicTemplateViewModel.PetsId), _parser.PetsId);
 
             return;
         }
@@ -470,7 +470,7 @@ public class CombatLogInformationViewModel : ParentTemplate, CombatParser.Interf
         BasicTemplate.Handler.PropertyUpdate<GeneralAnalysisViewModel>(BasicTemplate.SavedViewModel, nameof(GeneralAnalysisViewModel.ResponseStatus), LoadingStatus.Pending);
 
         BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, nameof(BasicTemplateViewModel.Combats), combatList);
-        BasicTemplate.Handler.PropertyUpdate<GeneralAnalysisViewModel>(BasicTemplate.SavedViewModel, nameof(GeneralAnalysisViewModel.CombatLog), createdCombatLog);
+        BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, nameof(BasicTemplateViewModel.CombatLog), createdCombatLog);
 
         var combatsAreUploaded = await _combatParserAPIService.SaveAsync(combatList, createdCombatLog, LogType, CombatUploaded);
         if (combatsAreUploaded == null)
@@ -552,5 +552,8 @@ public class CombatLogInformationViewModel : ParentTemplate, CombatParser.Interf
         BasicTemplate.Handler.PropertyUpdate<GeneralAnalysisViewModel>(BasicTemplate.SavedViewModel, nameof(GeneralAnalysisViewModel.CurrentCombatNumber), number);
         BasicTemplate.Handler.PropertyUpdate<GeneralAnalysisViewModel>(BasicTemplate.SavedViewModel, nameof(GeneralAnalysisViewModel.DungeonName), dungeonName);
         BasicTemplate.Handler.PropertyUpdate<GeneralAnalysisViewModel>(BasicTemplate.SavedViewModel, nameof(GeneralAnalysisViewModel.Name), name);
+
+        var uploaded = ((BasicTemplateViewModel)BasicTemplate).UploadedCombatsCount;
+        BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, nameof(BasicTemplateViewModel.UploadedCombatsCount), ++uploaded);
     }
 }

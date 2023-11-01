@@ -259,7 +259,7 @@ namespace CombatAnalysis.App.Localizations.Resources.DamageDoneDetails {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Show pets and creature.
+        ///   Looks up a localized string similar to Show pets and creatures.
         /// </summary>
         public static string ShowPets {
             get {
