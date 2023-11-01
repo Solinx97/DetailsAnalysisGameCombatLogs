@@ -357,6 +357,13 @@ public class CombatLogInformationViewModel : ParentTemplate, CombatParser.Interf
         Task.Run(LoadCombatLogsByUserAsync);
     }
 
+    public override void ViewDestroy(bool viewFinishing = true)
+    {
+        _parser.RemoveObserver(this);
+
+        base.ViewDestroy(viewFinishing);
+    }
+
     public void AuthUpdate(bool isAuth)
     {
         IsAuth = isAuth;

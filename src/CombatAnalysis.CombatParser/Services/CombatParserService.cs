@@ -45,42 +45,44 @@ public class CombatParserService : IParser<Combat>
         return fileIsCorrect;
     }
 
-    public async Task Parse(string combatLog)
+    public async Task Parse(string combatLogPath)
     {
+        object locker = new();
         var combats = new List<List<string>>();
         var newCombat = new List<string>();
 
-        var allPetsId = await PreparePetsAsync(combatLog);
+        var allPetsId = await PreparePetsAsync(combatLogPath);
 
         Combats.Clear();
 
-        string line;
-        using var reader = _fileManager.StreamReader(combatLog);
-        while ((line = await reader.ReadLineAsync()) != null)
+        await Task.Run(() => Parallel.ForEach(File.ReadLines(combatLogPath), (line) =>
         {
-            if (line.Contains(CombatLogKeyWords.EncounterStart))
+            lock (locker)
             {
-                newCombat = new List<string>
+                if (line.Contains(CombatLogKeyWords.EncounterStart))
                 {
-                    line
-                };
-            }
-            else if (line.Contains(CombatLogKeyWords.EncounterEnd))
-            {
-                newCombat.Add(line);
+                    newCombat = new List<string>
+                    {
+                        line
+                    };
+                }
+                else if (line.Contains(CombatLogKeyWords.EncounterEnd))
+                {
+                    newCombat.Add(line);
 
-                var builtCombat = new List<string>(newCombat);
-                combats.Add(builtCombat);
+                    var builtCombat = new List<string>(newCombat);
+                    combats.Add(builtCombat);
+                }
+                else if (line.Contains(CombatLogKeyWords.ZoneChange))
+                {
+                    GetDungeonName(line);
+                }
+                else
+                {
+                    newCombat.Add(line);
+                }
             }
-            else if (line.Contains(CombatLogKeyWords.ZoneChange))
-            {
-                GetDungeonName(line);
-            }
-            else
-            {
-                newCombat.Add(line);
-            }
-        }
+        }));
 
         foreach (var combat in combats)
         {
@@ -88,32 +90,34 @@ public class CombatParserService : IParser<Combat>
         }
     }
 
-    private async Task<Dictionary<string, List<string>>> PreparePetsAsync(string combatLog)
+    private async Task<Dictionary<string, List<string>>> PreparePetsAsync(string combatLogPath)
     {
         Combats.Clear();
         Combats.Add(new Combat());
 
         NotifyObservers();
 
-        var allPetsId = await GetPetsAsync(combatLog);
+        var allPetsId = await GetPetsAsync(combatLogPath);
 
         return allPetsId;
     }
 
-    private async Task<Dictionary<string, List<string>>> GetPetsAsync(string combatLog)
+    private async Task<Dictionary<string, List<string>>> GetPetsAsync(string combatLogPath)
     {
-        var petsId = new Dictionary<string, List<string>>();
-        string line;
+        object locker = new();
 
-        using var reader = _fileManager.StreamReader(combatLog);
-        while ((line = await reader.ReadLineAsync()) != null)
+        var petsId = new Dictionary<string, List<string>>();
+        await Task.Run(() => Parallel.ForEach(File.ReadLines(combatLogPath), (line) =>
         {
-            if (line.Contains(CombatLogKeyWords.SpellSummon))
+            lock(locker)
             {
-                ParseGetPets(line, petsId);
-                ParseGetAdditionalPets(line, petsId);
+                if (line.Contains(CombatLogKeyWords.SpellSummon))
+                {
+                    ParseGetPets(line, petsId);
+                    ParseGetAdditionalPets(line, petsId);
+                }
             }
-        }
+        }));
 
         return petsId;
     }
@@ -125,7 +129,7 @@ public class CombatParserService : IParser<Combat>
 
         var playerId = parseData[1].Contains(CombatLogKeyWords.Player) ? parseData[1] : string.Empty;
         var petId = parseData[1].Contains(CombatLogKeyWords.Player) ? parseData[5] : string.Empty;
-        if (petsId.Count == 0 && !string.IsNullOrEmpty(playerId))
+        if (petsId.Count == 0 && !string.IsNullOrEmpty(playerId) && !petsId.ContainsKey(playerId))
         {
             petsId.Add(playerId, new List<string> { petId });
 
@@ -138,7 +142,7 @@ public class CombatParserService : IParser<Combat>
             {
                 includedPetsId.Add(petId);
             }
-            else
+            else if (!petsId.ContainsKey(playerId))
             {
                 petsId.Add(playerId, new List<string> { petId });
             }

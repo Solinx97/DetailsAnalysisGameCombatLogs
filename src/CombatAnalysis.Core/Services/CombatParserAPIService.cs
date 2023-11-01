@@ -109,7 +109,6 @@ public class CombatParserAPIService
                     return null;
                 }
 
-
                 var combatLog = await responseMessage.Content.ReadFromJsonAsync<CombatLogModel>();
 
                 combatLogs.Add(combatLog);
