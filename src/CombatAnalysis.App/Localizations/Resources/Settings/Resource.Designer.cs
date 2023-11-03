@@ -61,7 +61,7 @@ namespace CombatAnalysis.App.Localizations.Resources.Settings {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Изменить.
+        ///   Looks up a localized string similar to Change.
         /// </summary>
         public static string ChangeLocationPath {
             get {
@@ -75,6 +75,15 @@ namespace CombatAnalysis.App.Localizations.Resources.Settings {
         public static string Language {
             get {
                 return ResourceManager.GetString("Language", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Logs path.
+        /// </summary>
+        public static string LogsLocation {
+            get {
+                return ResourceManager.GetString("LogsLocation", resourceCulture);
             }
         }
         
