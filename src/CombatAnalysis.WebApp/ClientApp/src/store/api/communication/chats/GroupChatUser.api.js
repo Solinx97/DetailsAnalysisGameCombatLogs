@@ -42,5 +42,6 @@ export const {
     useRemoveGroupChatUserAsyncMutation,
     useFindGroupChatUserQuery,
     useFindGroupChatUserByUserIdQuery,
+    useLazyFindGroupChatUserByUserIdQuery,
     useFindGroupChatUserByChatIdQuery,
 } = GroupChatUserApi;

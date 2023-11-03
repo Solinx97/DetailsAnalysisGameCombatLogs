@@ -4,5 +4,14 @@
   "NeedToAddSomething": "Необходимо добавить как минимум 1 элемент.",
   "Chat": "Чат",
   "Discussion": "Общение",
-  "ShouldAuthorize":  "Необходимо авторизоваться"
+  "ShouldAuthorize": "Необходимо авторизоваться",
+  "Chats": "Чаты",
+  "PersonalChats": "Личные чаты",
+  "GroupChats": "Групповые чаты",
+  "Close": "Закрыть",
+  "Add": "Добавить",
+  "HideChats": "Скрыть чаты",
+  "ShowChats": "Показать чаты",
+  "SendToChat": "Отправить ссылку в чат",
+  "Sent": "Отправлено"
 }

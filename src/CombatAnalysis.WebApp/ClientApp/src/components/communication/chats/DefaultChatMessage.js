@@ -7,9 +7,9 @@ import ChatMessageTitle from './ChatMessageTitle';
 import "../../../styles/communication/chats/chatMessage.scss";
 
 const status = {
-    "delivery": 0,
-    "delivered": 1,
-    "read": 2
+    delivery: 0,
+    delivered: 1,
+    read: 2
 };
 
 const DefaultChatMessage = ({ me, message, messageStatus, updateMessageAsync, deleteMessageAsync }) => {

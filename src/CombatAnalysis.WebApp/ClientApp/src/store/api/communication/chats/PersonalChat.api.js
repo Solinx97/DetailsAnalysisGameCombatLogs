@@ -46,5 +46,6 @@ export const {
     useUpdatePersonalChatAsyncMutation,
     useLazyIsExistAsyncQuery,
     useGetByUserIdAsyncQuery,
+    useLazyGetByUserIdAsyncQuery,
     useRemovePersonalChatAsyncMutation,
 } = PersonalChatApi;

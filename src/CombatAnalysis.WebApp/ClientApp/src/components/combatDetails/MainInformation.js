@@ -1,8 +1,8 @@
-﻿import React, { useState, useEffect } from 'react';
+﻿import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useGetCombatLogsQuery } from '../../store/api/CombatParserApi';
-import CombatLogItem from './CombatLogItem';
 import { useLazyAuthenticationAsyncQuery } from '../../store/api/UserApi';
+import CombatLogItem from './CombatLogItem';
 
 import "../../styles/mainInformation.scss";
 
@@ -31,7 +31,7 @@ const MainInformation = () => {
         <div className="main-information__container">
             <h2>{t("Logs")}</h2>
             <ul className="combats__container">
-                {combatLogs?.map((item) => (
+                {combatLogs?.filter(log => log.isReady).map((item) => (
                     <li key={item.id}>
                         <CombatLogItem
                             log={item}

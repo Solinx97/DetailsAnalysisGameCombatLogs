@@ -1,11 +1,12 @@
-import DefaultChatMessage from './DefaultChatMessage';
-import SystemChatMessage from './SystemChatMessage';
-
 import "../../../styles/communication/chats/chatMessage.scss";
+import DefaultChatMessage from './DefaultChatMessage';
+import LogChatMessage from './LogChatMessage';
+import SystemChatMessage from './SystemChatMessage';
 
 const messageType = {
     default: 0,
-    system: 1
+    system: 1,
+    log: 2
 };
 
 const ChatMessage = ({ me, message, messageStatus, updateMessageAsync, deleteMessageAsync }) => {
@@ -19,9 +20,13 @@ const ChatMessage = ({ me, message, messageStatus, updateMessageAsync, deleteMes
                     updateMessageAsync={updateMessageAsync}
                     deleteMessageAsync={deleteMessageAsync}
                 />
-                : <SystemChatMessage
-                    message={message}
-                />
+                : message.type === messageType["log"]
+                    ? <LogChatMessage
+                        message={message}
+                    />
+                    : <SystemChatMessage
+                        message={message}
+                    />
             }
         </>
     );

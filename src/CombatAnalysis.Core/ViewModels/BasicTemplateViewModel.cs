@@ -33,7 +33,7 @@ public class BasicTemplateViewModel : ParentTemplate, IVMDataHandler<CombatPlaye
     private bool _logPanelStatusIsVisibly;
     private CombatModel _selectedCombat;
     private CombatLogModel _combatLog;
-    private int _uploadingCombatsCount;
+    private int _uploadingCombatsCount = 1;
     private int _uploadedCombatsCount;
 
     private static LoadingStatus _responseStatus;
