@@ -62,7 +62,7 @@
     .links {
         display: flex;
         flex-direction: row;
-        justify-content: center;
+        justify-content: space-around;
         width: 100%;
         margin: 10px 0;
         gap: 10px;
@@ -80,6 +80,11 @@
             cursor: pointer;
             transform: scale(1.25);
         }
+
+        .list-group-item {
+            display: flex;
+            justify-content: center;
+        }
     }
 
     &__more-details {
@@ -96,12 +101,12 @@
         .user-information-item {
             margin: 10px;
 
-            .title {
+            &__title {
                 font-style: italic;
                 font-size: 13px;
             }
 
-            .content {
+            &__content {
                 font-family: Comic Sans MS;
                 font-size: 16px;
                 font-weight: bold;

@@ -5,22 +5,26 @@ const SelectedUserProfile = ({ customer }) => {
 
     return (
         <ul className="user-information__common-information">
+            {customer?.message !== " " &&
+                <li className="user-information-item">
+                    <div className="user-information-item__title">{t("Message")}</div>
+                    <div className="user-information-item__content">{customer?.message}</div>
+                </li>
+            }
             <li className="user-information-item">
-                <div className="title">{t("Message")}</div>
-                <div className="content">{customer?.message}</div>
+                <div className="user-information-item__title">{t("FirstName")}</div>
+                <div className="user-information-item__content">{customer?.firstName}</div>
             </li>
             <li className="user-information-item">
-                <div className="title">{t("FirstName")}</div>
-                <div className="content">{customer?.firstName}</div>
+                <div className="user-information-item__title">{t("LastName")}</div>
+                <div className="user-information-item__content">{customer?.lastName}</div>
             </li>
-            <li className="user-information-item">
-                <div className="title">{t("LastName")}</div>
-                <div className="content">{customer?.lastName}</div>
-            </li>
-            <li className="user-information-item">
-                <div className="title">{t("AboutMe")}</div>
-                <div className="content">{customer?.aboutMe}</div>
-            </li>
+            {customer?.aboutMe !== " " &&
+                <li className="user-information-item">
+                    <div className="user-information-item__title">{t("AboutMe")}</div>
+                    <div className="user-information-item__content">{customer?.aboutMe}</div>
+                </li>
+            }
         </ul>
     );
 }

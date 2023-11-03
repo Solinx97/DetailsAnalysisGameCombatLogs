@@ -8,6 +8,7 @@ import { useCreatePersonalChatAsyncMutation, useLazyIsExistAsyncQuery } from '..
 import { useCreatePersonalChatMessageCountAsyncMutation } from '../../store/api/communication/chats/PersonalChatMessagCount.api';
 import { useCreateRequestAsyncMutation, useLazyRequestIsExistQuery } from '../../store/api/communication/myEnvironment/RequestToConnect.api';
 import PeopleInvitesToCommunity from './people/PeopleInvitesToCommunity';
+import SelectedUserProfile from './people/SelectedUserProfile';
 
 import './../../styles/communication/userInformation.scss';
 
@@ -152,20 +153,9 @@ const UserInformation = ({ me, people, closeUserInformation }) => {
                 <div className="user-information__username">
                     {people.username}
                 </div>
-                <ul className="user-information__common-information">
-                    <li className="user-information-item">
-                        <div className="title">{t("FirstName")}</div>
-                        <div className="content">{people.firstName}</div>
-                    </li>
-                    <li className="user-information-item">
-                        <div className="title">{t("LastName")}</div>
-                        <div className="content">{people.lastName}</div>
-                    </li>
-                    <li className="user-information-item">
-                        <div className="title">{t("AboutMe")}</div>
-                        <div className="content">{people.aboutMe}</div>
-                    </li>
-                </ul>
+                <SelectedUserProfile
+                    customer={people}
+                />
                 <ul className="links list-group list-group-flush">
                     <li className="list-group-item">
                         <FontAwesomeIcon
