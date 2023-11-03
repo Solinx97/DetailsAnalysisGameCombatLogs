@@ -274,11 +274,11 @@ public class RegistrationViewModel : ParentTemplate
     {
         var newCustomer = new CustomerModel
         {
-            Id = "",
+            Id = " ",
             Username = Username,
             FirstName = FirstName,
             LastName = LastName,
-            AboutMe = AboutMe,
+            AboutMe = string.IsNullOrEmpty(AboutMe) ? " " : AboutMe,
             Message = " ",
             Gender = Gender,
             AppUserId = userId
