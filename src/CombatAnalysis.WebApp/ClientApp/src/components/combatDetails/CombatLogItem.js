@@ -26,6 +26,10 @@ const CombatLogItem = ({ log, isAuth }) => {
     const [groupChatsUser, setGroupChatsUser] = useState([]);
 
     const getChatsByUserIdAsync = async () => {
+        if (!isAuth) {
+            return;
+        }
+
         setShowChats(true);
 
         const personalChats = await getPersonalChatsByUserIdAsync(me?.id);

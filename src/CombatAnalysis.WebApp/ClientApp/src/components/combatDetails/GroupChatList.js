@@ -23,7 +23,7 @@ const GroupChatList = ({ groupChatId, log }) => {
     const [sent, showSent] = useState(false);
 
     const createMessageAsync = async () => {
-        const date = format(new Date(log.date), 'MM/dd/yyyy HH:mm')
+        const date = format(new Date(log.date), 'MM/dd/yyyy HH:mm');
         const message = `${log.id};${log.name};${date}`;
 
         const today = new Date();

@@ -87,11 +87,7 @@ const CommonPlayerInform = ({ combatPlayer, combatId, combatLogId }) => {
                 />
                 <div>{combatPlayer.usedBuffs}</div>
                 {combatPlayer.usedBuffs > 0 &&
-                    <div className="btn-shadow" onClick={() => navigate(`/combat-general-details?id=${combatPlayer.id}`)}
-                        title={t("OpenBuffsAnalyzing")}>
-                        <FontAwesomeIcon
-                            icon={faBookOpenReader}
-                        />
+                    <div>
                         <div>{t("Buffs")}</div>
                     </div>
                 }
