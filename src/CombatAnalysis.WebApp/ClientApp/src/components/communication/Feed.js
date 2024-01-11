@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import { useCreatePostAsyncMutation } from '../../store/api/communication/Post.api';
 import { useCreateUserPostAsyncMutation } from '../../store/api/communication/UserPost.api';
-import Communication from './Communication';
+import CommunicationMenu from './CommunicationMenu';
 import FeedParticipants from './FeedParticipants';
 
 const Feed = () => {
@@ -51,12 +51,16 @@ const Feed = () => {
     }
 
     if (customer === null) {
-        return <></>;
+        return (
+            <CommunicationMenu
+                currentMenuItem={0}
+            />
+        );
     }
 
     return (
         <>
-            <Communication
+            <CommunicationMenu
                 currentMenuItem={0}
             />
             <div className="communication__content">

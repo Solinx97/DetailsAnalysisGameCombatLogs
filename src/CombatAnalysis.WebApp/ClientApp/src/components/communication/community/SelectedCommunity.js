@@ -6,7 +6,7 @@ import { useSelector } from 'react-redux';
 import { useCreatePostAsyncMutation } from '../../../store/api/communication/Post.api';
 import { useLazyGetCommunityByIdQuery, useUpdateCommunityAsyncMutation } from '../../../store/api/communication/community/Community.api';
 import { useCreateCommunityPostAsyncMutation } from '../../../store/api/communication/community/CommunityPost.api';
-import Communication from '../Communication';
+import CommunicationMenu from '../CommunicationMenu';
 import CommunityDiscussions from './CommunityDiscussions';
 import CommunityMembers from './CommunityMembers';
 import CommunityMenu from './CommunityMenu';
@@ -115,12 +115,17 @@ const SelectedCommunity = () => {
     }
 
     if (community === null) {
-        return <></>;
+        return (
+            <CommunicationMenu
+                currentMenuItem={3}
+                selectedCommunityName={community?.name}
+            />
+        );
     }
 
     return (
         <div className="communication">
-            <Communication
+            <CommunicationMenu
                 currentMenuItem={3}
                 selectedCommunityName={community?.name}
             />

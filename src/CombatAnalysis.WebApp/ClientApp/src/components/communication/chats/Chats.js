@@ -1,4 +1,4 @@
-﻿import { faArrowDown, faArrowUp } from '@fortawesome/free-solid-svg-icons';
+﻿import { faArrowDown, faArrowUp, faArrowsRotate } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -6,7 +6,7 @@ import { useSelector } from 'react-redux';
 import { NavLink } from 'react-router-dom';
 import { useFindGroupChatUserByUserIdQuery } from '../../../store/api/communication/chats/GroupChatUser.api';
 import { useGetByUserIdAsyncQuery } from '../../../store/api/communication/chats/PersonalChat.api';
-import Communication from '../Communication';
+import CommunicationMenu from '../CommunicationMenu';
 import GroupChat from './GroupChat';
 import MyGroupChat from './MyGroupChat';
 import MyPersonalChat from './MyPersonalChat';
@@ -14,16 +14,21 @@ import PersonalChat from './PersonalChat';
 
 import "../../../styles/communication/chats/chats.scss";
 
-const getGroupChatUsersInterval = 2000;
+const poolingInterval = 2000;
 
 const Chats = () => {
     const { t } = useTranslation("communication/chats/chats");
 
     const me = useSelector((state) => state.customer.value);
 
-    const { data: personalChats, isLoading } = useGetByUserIdAsyncQuery(me?.id);
-    const { data: groupChatUsers, isLoading: chatUserIsLoading } = useFindGroupChatUserByUserIdQuery(me?.id, {
-        pollingInterval: getGroupChatUsersInterval
+    const [personalChatsPollingInterval, setPersonalChatsPollingInterval] = useState(poolingInterval);
+    const [groupChatsPollingInterval, setGroupChatsPollingInterval] = useState(poolingInterval);
+
+    const { data: personalChats, isError, isLoading, refetch: personalChatRefetch } = useGetByUserIdAsyncQuery(me?.id, {
+        pollingInterval: personalChatsPollingInterval,
+    });
+    const { data: groupChatUsers, isError: groupChatError, isLoading: groupChatIsLoading, refetch: groupChatRefetch } = useFindGroupChatUserByUserIdQuery(me?.id, {
+        pollingInterval: groupChatsPollingInterval,
     });
 
     const [selectedGroupChat, setSelectedGroupChat] = useState(null);
@@ -43,13 +48,60 @@ const Chats = () => {
         }
     }, [selectedPersonalChat]);
 
-    if (isLoading || chatUserIsLoading) {
-        return <></>;
+    const handleRefetchOne = () => {
+        personalChatRefetch();
+        groupChatRefetch();
+    }
+
+    if (isLoading || groupChatIsLoading) {
+        return (
+            <>
+                <CommunicationMenu
+                    currentMenuItem={1}
+                />
+                <div className="communication__content">
+                    <div className="communication__content_loading">
+                        Loading
+                    </div>
+                </div>
+            </>
+        );
+    }
+
+    if (isError || groupChatError) {
+        if (personalChatsPollingInterval !== 0) {
+            setPersonalChatsPollingInterval(0);
+            setGroupChatsPollingInterval(0);
+        }
+
+        return (
+            <>
+                <CommunicationMenu
+                    currentMenuItem={1}
+                />
+                <div className="communication__content">
+                    <div className="communication__content_error">
+                        <div>Error loading</div>
+                        <div className="btn-shadow" onClick={handleRefetchOne}>
+                            <FontAwesomeIcon
+                                icon={faArrowsRotate}
+                            />
+                            <div>Refresh</div>
+                        </div>
+                    </div>
+                </div>
+            </>
+        );
+    }
+
+    if (personalChatsPollingInterval === 0) {
+        setPersonalChatsPollingInterval(poolingInterval);
+        setGroupChatsPollingInterval(poolingInterval);
     }
 
     return (
         <>
-            <Communication
+            <CommunicationMenu
                 currentMenuItem={1}
             />
             <div className="communication__content">
@@ -71,8 +123,9 @@ const Chats = () => {
                             }
                         </div>
                         <ul className={`group-chats${!groupChatsHidden ? "_active" : ""}`}>
-                            {
-                                groupChatUsers?.map((item) => (
+                            {groupChatUsers.length === 0
+                                ? <div className="group-chats__not-found">Not found</div>
+                                : groupChatUsers?.map((item) => (
                                     <li key={item.id} className={selectedGroupChat?.id === item?.groupChatId ? `selected` : ``}>
                                         <MyGroupChat
                                             groupChatId={item.groupChatId}
@@ -100,7 +153,9 @@ const Chats = () => {
                         </div>
                         <ul className={`personal-chats${!personalChatsHidden ? "_active" : ""}`}>
                             {
-                                personalChats?.map((item) => (
+                                personalChats.length === 0
+                                ? <div className="personal-chats__not-found">Not found</div>
+                                : personalChats?.map((item) => (
                                     <li key={item.id} className={selectedPersonalChat?.id === item?.id ? `selected` : ``}>
                                         <MyPersonalChat
                                             personalChat={item}

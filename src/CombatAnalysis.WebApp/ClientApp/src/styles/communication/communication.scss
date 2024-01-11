@@ -65,5 +65,14 @@
                 min-width: 150px;
             }
         }
+
+        &_error, &_loading {
+            position: absolute;
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+            top: 30%;
+            left: 50%;
+        }
     }
 }

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useSelector } from 'react-redux';
-import Communication from '../Communication';
+import CommunicationMenu from '../CommunicationMenu';
 import Friends from './Friends';
 import MyCommunities from './MyCommunities';
 import MyFeed from './MyFeed';
@@ -17,7 +17,7 @@ const MyEnvironment = ({ openCommunity }) => {
     const render = () => {
         return (
             <div className="communication">
-                <Communication
+                <CommunicationMenu
                     currentMenuItem={menuItem}
                     setMenuItem={setMenuItem}
                 />

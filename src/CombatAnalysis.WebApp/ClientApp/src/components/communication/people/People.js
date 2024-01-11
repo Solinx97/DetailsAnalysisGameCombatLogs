@@ -2,7 +2,7 @@ import { useCallback, useState } from "react";
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import { useGetCustomersQuery } from '../../../store/api/UserApi';
-import Communication from '../Communication';
+import CommunicationMenu from '../CommunicationMenu';
 import PeopleItem from './PeopleItem';
 
 import '../../../styles/communication/people/people.scss';
@@ -29,12 +29,17 @@ const People = () => {
     }, [])
 
     if (isLoading) {
-        return <></>;
+        return (
+            <CommunicationMenu
+                currentMenuItem={menuItem}
+                setMenuItem={setMenuItem}
+            />
+        );
     }
 
     return (
         <div className="communication">
-            <Communication
+            <CommunicationMenu
                 currentMenuItem={menuItem}
                 setMenuItem={setMenuItem}
             />

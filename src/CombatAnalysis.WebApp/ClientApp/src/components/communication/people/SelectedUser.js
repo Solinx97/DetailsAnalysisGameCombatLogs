@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useEffect, useState } from "react";
 import { useTranslation } from 'react-i18next';
 import { useLazyGetCustomerByIdQuery } from '../../../store/api/Customer.api';
-import Communication from "../Communication";
+import CommunicationMenu from "../CommunicationMenu";
 import UserPosts from '../UserPosts';
 import Friends from '../myEnvironment/Friends';
 import SelectedUserCommunities from './SelectedUserCommunities';
@@ -47,7 +47,7 @@ const SelectedUser = () => {
 
     return (
         <div className="communication">
-            <Communication
+            <CommunicationMenu
                 currentMenuItem={7}
             />
             <div className="communication__content user">

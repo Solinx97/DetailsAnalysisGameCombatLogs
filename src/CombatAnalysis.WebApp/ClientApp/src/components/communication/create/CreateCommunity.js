@@ -7,7 +7,7 @@ import { useNavigate } from 'react-router-dom';
 import { useCreateCommunityAsyncMutation } from '../../../store/api/communication/community/Community.api';
 import { useCreateCommunityUserAsyncMutation } from '../../../store/api/communication/community/CommunityUser.api';
 import AddPeople from '../../AddPeople';
-import Communication from '../Communication';
+import CommunicationMenu from '../CommunicationMenu';
 import CommunityRulesItem from './CommunityRulesItem';
 import ItemConnector from './ItemConnector';
 
@@ -90,7 +90,7 @@ const CreateCommunity = () => {
 
     return (
         <>
-            <Communication
+            <CommunicationMenu
                 currentMenuItem={4}
             />
             <div className="communication__content create-community">

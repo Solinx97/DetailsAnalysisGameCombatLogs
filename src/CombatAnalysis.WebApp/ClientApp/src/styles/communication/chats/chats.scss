@@ -84,6 +84,11 @@
         .group-chats, .personal-chats {
             display: none;
 
+            &__not-found {
+                opacity: 0.4;
+                text-align: center;
+            }
+
             &_active {
                 .last-message {
                     max-height: 20px;

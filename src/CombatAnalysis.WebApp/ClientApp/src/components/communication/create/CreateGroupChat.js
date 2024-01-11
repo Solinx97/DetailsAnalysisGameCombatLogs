@@ -10,7 +10,7 @@ import { useCreateGroupChatMessageAsyncMutation } from '../../../store/api/commu
 import { useCreateGroupChatRulesAsyncMutation } from '../../../store/api/communication/chats/GroupChatRules.api';
 import { useCreateGroupChatUserAsyncMutation } from '../../../store/api/communication/chats/GroupChatUser.api';
 import AddPeople from '../../AddPeople';
-import Communication from '../Communication';
+import CommunicationMenu from '../CommunicationMenu';
 import ChatRulesItem from "./ChatRulesItem";
 import ItemConnector from './ItemConnector';
 
@@ -158,7 +158,7 @@ const CreateGroupChat = () => {
 
     return (
         <>
-            <Communication
+            <CommunicationMenu
                 currentMenuItem={2}
             />
             <div className="communication__content create-community">

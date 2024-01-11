@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 
 import '../../styles/communication/communication.scss';
 
-const Communication = ({ currentMenuItem, setMenuItem, selectedCommunityName }) => {
+const CommunicationMenu = ({ currentMenuItem, setMenuItem, selectedCommunityName }) => {
     const { t } = useTranslation("communication/communication");
 
     const navigate = useNavigate();
@@ -170,4 +170,4 @@ const Communication = ({ currentMenuItem, setMenuItem, selectedCommunityName }) 
     );
 }
 
-export default Communication;
+export default CommunicationMenu;
