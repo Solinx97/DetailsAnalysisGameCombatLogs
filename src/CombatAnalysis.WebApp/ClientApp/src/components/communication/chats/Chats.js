@@ -1,4 +1,4 @@
-﻿import { faArrowDown, faArrowUp, faArrowsRotate } from '@fortawesome/free-solid-svg-icons';
+﻿import { faArrowDown, faArrowUp } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -6,6 +6,8 @@ import { useSelector } from 'react-redux';
 import { NavLink } from 'react-router-dom';
 import { useFindGroupChatUserByUserIdQuery } from '../../../store/api/communication/chats/GroupChatUser.api';
 import { useGetByUserIdAsyncQuery } from '../../../store/api/communication/chats/PersonalChat.api';
+import ErrorLoadingPage from '../../ErrorLoadingPage';
+import LoadingPage from '../../LoadingPage';
 import CommunicationMenu from '../CommunicationMenu';
 import GroupChat from './GroupChat';
 import MyGroupChat from './MyGroupChat';
@@ -59,11 +61,7 @@ const Chats = () => {
                 <CommunicationMenu
                     currentMenuItem={1}
                 />
-                <div className="communication__content">
-                    <div className="communication__content_loading">
-                        Loading
-                    </div>
-                </div>
+                <LoadingPage />
             </>
         );
     }
@@ -79,17 +77,9 @@ const Chats = () => {
                 <CommunicationMenu
                     currentMenuItem={1}
                 />
-                <div className="communication__content">
-                    <div className="communication__content_error">
-                        <div>Error loading</div>
-                        <div className="btn-shadow" onClick={handleRefetchOne}>
-                            <FontAwesomeIcon
-                                icon={faArrowsRotate}
-                            />
-                            <div>Refresh</div>
-                        </div>
-                    </div>
-                </div>
+                <ErrorLoadingPage
+                    handleRefetch={handleRefetchOne}
+                />
             </>
         );
     }

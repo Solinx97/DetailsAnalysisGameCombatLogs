@@ -1,0 +1,25 @@
+.loading-page {
+    &__in-progress, &__error {
+        position: absolute;
+        display: flex;
+        flex-direction: column;
+        gap: 25px;
+        top: 30%;
+        left: 50%;
+    }
+
+    &__error {
+        .content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+
+            .alert {
+                font-size: 12px;
+                margin: 0;
+                padding: 10px;
+            }
+        }
+    }
+}

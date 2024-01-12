@@ -1,4 +1,4 @@
-﻿import { faPaperPlane, faUserXmark, faUserPlus } from '@fortawesome/free-solid-svg-icons';
+﻿import { faPaperPlane, faUserXmark } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useRef, useState } from "react";
 import { useTranslation } from 'react-i18next';
@@ -122,13 +122,6 @@ const PersonalChat = ({ chat, me, setSelectedChat, companionId }) => {
             <div className="messages-container">
                 <div className="title">
                     <div className="name">{companion.username}</div>
-                    <div className="title__content">
-                        <FontAwesomeIcon
-                            icon={faUserPlus}
-                            title={t("AddPeople")}
-                            onClick={() => leaveFromChatAsync()}
-                        />
-                    </div>
                 </div>
                 <ul className="chat-messages">
                     {
