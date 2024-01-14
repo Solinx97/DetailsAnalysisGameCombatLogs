@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import User from '../User';
 
-const PeopleItem = ({ me, people }) => {
+const PeopleItem = ({ me, people, actionAfterRequests = null }) => {
     const [userInformation, setUserInformation] = useState(null);
 
     return (
@@ -12,6 +12,7 @@ const PeopleItem = ({ me, people }) => {
                     targetCustomerId={people.id}
                     setUserInformation={setUserInformation}
                     allowRemoveFriend={false}
+                    actionAfterRequests={actionAfterRequests}
                 />
             </div>
             {userInformation}

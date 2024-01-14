@@ -8,6 +8,7 @@ import { useLazySearchByUserIdAsyncQuery } from '../store/api/Customer.api';
 import { useLazyAuthenticationAsyncQuery } from '../store/api/UserApi';
 import { updateCustomer } from '../store/slicers/CustomerSlice';
 import { updateUser } from '../store/slicers/UserSlice';
+import Search from './Search';
 
 import '../styles/navMenu.scss';
 
@@ -108,6 +109,11 @@ const NavMenu = () => {
                     <NavbarToggler
                         onClick={toggleNavbar} className="mr-2"
                     />
+                    {customer !== null &&
+                        <Search
+                            me={customer}
+                        />
+                    }
                     <Collapse
                         className="d-sm-inline-flex flex-sm-row-reverse"
                         isOpen={!collapsed}

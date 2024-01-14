@@ -15,7 +15,7 @@ import './../../styles/communication/userInformation.scss';
 const successNotificationTimeout = 2000;
 const failedNotificationTimeout = 2000;
 
-const UserInformation = ({ me, people, closeUserInformation }) => {
+const UserInformation = ({ me, people, closeUserInformation, actionAfterRequests = null }) => {
     const { t } = useTranslation("communication/userInformation");
 
     const navigate = useNavigate();
@@ -46,6 +46,10 @@ const UserInformation = ({ me, people, closeUserInformation }) => {
     }
 
     const createChatAsync = async (targetCustomer) => {
+        if (actionAfterRequests !== null) {
+            actionAfterRequests();
+        }
+
         const isExist = await checkExistOfChatsAsync(targetCustomer);
         if (isExist) {
             navigate("/chats");
@@ -100,6 +104,10 @@ const UserInformation = ({ me, people, closeUserInformation }) => {
     }
 
     const createRequestToConnectAsync = async (people) => {
+        if (actionAfterRequests !== null) {
+            actionAfterRequests();
+        }
+
         const isExist = await checkIfRequestExistAsync(people.id);
         if (isExist) {
             setShowFailedNotification(true);
@@ -126,6 +134,14 @@ const UserInformation = ({ me, people, closeUserInformation }) => {
                 setShowSuccessNotification(false);
             }, successNotificationTimeout);
         }
+    }
+
+    const moreDetails = () => {
+        if (actionAfterRequests !== null) {
+            actionAfterRequests();
+        }
+
+        navigate(`/user?id=${people.id}`)
     }
 
     if (isLoading) {
@@ -187,7 +203,7 @@ const UserInformation = ({ me, people, closeUserInformation }) => {
                     </li>
                 </ul>
                 <div className="details">
-                    <div className="btn-shadow" onClick={() => navigate(`/user?id=${people.id}`)}>
+                    <div className="btn-shadow" onClick={moreDetails}>
                         <FontAwesomeIcon
                             icon={faPersonCircleQuestion}
                         />

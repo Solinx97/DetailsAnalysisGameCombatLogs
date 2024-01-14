@@ -7,11 +7,11 @@ import UserInformation from './UserInformation';
 
 import "../../styles/communication/user.scss";
 
-const User = ({ me, itIsMe, targetCustomerId, setUserInformation, allowRemoveFriend }) => {
+const User = ({ me, itIsMe, targetCustomerId, setUserInformation, allowRemoveFriend, actionAfterRequests = null }) => {
     const { t } = useTranslation("communication/myEnvironment/friends");
 
     const [removeFriendAsyncMut] = useRemoveFriendAsyncMutation();
-    const [getCustomerByIdQ] = useLazyGetCustomerByIdQuery();
+    const [getCustomerById] = useLazyGetCustomerByIdQuery();
     const { data: targetCustomer, isLoading } = useGetCustomerByIdQuery(targetCustomerId);
 
     const removeFriendAsync = async () => {
@@ -19,13 +19,14 @@ const User = ({ me, itIsMe, targetCustomerId, setUserInformation, allowRemoveFri
     }
 
     const openUserInformationAsync = async () => {
-        const targetCustomer = await getCustomerByIdQ(targetCustomerId);
+        const targetCustomer = await getCustomerById(targetCustomerId);
 
         setUserInformation(
             <UserInformation
                 me={me}
                 people={targetCustomer.data}
                 closeUserInformation={closeUserInformation}
+                actionAfterRequests={actionAfterRequests}
             />
         );
     }

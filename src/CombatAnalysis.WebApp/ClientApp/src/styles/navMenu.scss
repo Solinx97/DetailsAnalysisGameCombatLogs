@@ -57,3 +57,40 @@ html {
         margin: 0 15px;
     }
 }
+
+.search {
+    &__content {
+        display: none;
+
+
+        &_active {
+            position: absolute;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            top: 60px;
+            border: 1px solid black;
+            border-radius: 10px;
+            padding: 10px;
+            background: white;
+            min-width: 205px;
+            z-index: 100;
+
+            .close {
+                font-size: 12px;
+                cursor: pointer;
+                box-shadow: 2px 2px 2px 2px gray;
+                border-radius: 5px;
+                padding: 3px;
+                width: 100px;
+            }
+
+            .empty {
+                opacity: 0.4;
+                font-size: 12px;
+                margin: 5px 0;
+            }
+        }
+    }
+}
