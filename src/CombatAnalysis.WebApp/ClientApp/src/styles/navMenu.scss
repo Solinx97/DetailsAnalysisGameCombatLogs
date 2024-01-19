@@ -72,17 +72,40 @@ html {
             top: 60px;
             border: 1px solid black;
             border-radius: 10px;
-            padding: 10px;
+            padding: 5px;
             background: white;
             min-width: 205px;
             z-index: 100;
+
+            .people {
+                &__cards {
+                    display: flex;
+                    flex-direction: column;
+                    padding: 0 5px;
+                    gap: 15px;
+
+                    .special-user {
+                        &__another {
+                            padding: 5px;
+                        }
+                    }
+                }
+            }
+
+            .container {
+                display: flex;
+                flex-direction: column;
+                max-height: 275px;
+                overflow-y: auto;
+            }
 
             .close {
                 font-size: 12px;
                 cursor: pointer;
                 box-shadow: 2px 2px 2px 2px gray;
                 border-radius: 5px;
-                padding: 3px;
+                padding: 5px;
+                margin: 10px;
                 width: 100px;
             }
 

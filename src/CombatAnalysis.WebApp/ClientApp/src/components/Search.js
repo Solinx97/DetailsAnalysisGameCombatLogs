@@ -14,6 +14,10 @@ const Search = ({ me }) => {
 
     const searchText = useRef(null);
 
+    useState(() => {
+
+    }, [people])
+
     const loadingPeopleAsync = async () => {
         const peopleData = await loadingPeople();
 
@@ -48,20 +52,24 @@ const Search = ({ me }) => {
             />
             <div className={`search__content${showSearch ? "_active" : ""}`}>
                 <div>People</div>
-                <div className="empty">Empty</div>
-                <ul className="people__cards">
-                    {
-                        filteredPeople?.map((user) => (
-                            <li key={user.id}>
-                                <PeopleItem
-                                    me={me}
-                                    people={user}
-                                    actionAfterRequests={cleanSearch}
-                                />
-                            </li>
-                        ))
+                <div className="container">
+                    {filteredPeople.length === 0
+                        ? <div className="empty">Empty</div>
+                        : <ul className="people__cards">
+                            {
+                                filteredPeople?.map((user) => (
+                                    <li key={user.id}>
+                                        <PeopleItem
+                                            me={me}
+                                            people={user}
+                                            actionAfterRequests={cleanSearch}
+                                        />
+                                    </li>
+                                ))
+                            }
+                        </ul>
                     }
-                </ul>
+                </div>
                 <div className="close" onClick={() => setShowSearch(false)}>Close</div>
             </div>
         </div>

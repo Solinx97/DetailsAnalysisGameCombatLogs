@@ -23,9 +23,8 @@ export const UserApi = createApi({
         }),
         friendSearchByUserId: builder.query({
             query: (arg) => {
-                const { userId, targetUserId } = arg;
                 return {
-                    url: `/Friend/searchByUserId?userId=${userId}&targetUserId=${targetUserId}`,
+                    url: `/Friend/searchByUserId/${arg}`,
                 }
             },
             providesTags: (result, error, id) => [{ type: 'Friend', id }],
