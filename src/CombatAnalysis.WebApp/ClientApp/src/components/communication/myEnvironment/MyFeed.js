@@ -1,9 +1,10 @@
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
-import { useCreatePostAsyncMutation } from '../../../store/api/communication/Post.api';
+import { useLazyUserPostSearchByUserIdQuery } from '../../../store/api/ChatApi';
+import { useCreatePostAsyncMutation, useLazyGetPostByIdQuery } from '../../../store/api/communication/Post.api';
 import { useCreateUserPostAsyncMutation } from '../../../store/api/communication/UserPost.api';
-import UserPosts from '../UserPosts';
+import Post from '../Post';
 
 const MyFeed = () => {
     const { t } = useTranslation("communication/myEnvironment/myFeed");
@@ -13,9 +14,48 @@ const MyFeed = () => {
     const [createNewPostAsync] = useCreatePostAsyncMutation();
     const [createNewUserPostAsync] = useCreateUserPostAsyncMutation();
 
+    const [getUserPosts] = useLazyUserPostSearchByUserIdQuery();
+    const [getPostById] = useLazyGetPostByIdQuery();
+
     const postContentRef = useRef(null);
 
     const [showCreatePost, setShowCreatePost] = useState(false);
+    const [allPosts, setAllPosts] = useState([]);
+
+    useEffect(() => {
+        if (customer === null) {
+            return;
+        }
+
+        const getAllPosts = async () => {
+            await getAllPostsAsync();
+        }
+
+        getAllPosts();
+    }, [customer])
+
+    const getAllPostsAsync = async () => {
+        const userPosts = await getUserPosts(customer.id);
+
+        if (userPosts.data !== undefined) {
+            const userPersonalPosts = await getUserPostsAsync(userPosts.data);
+            setAllPosts(userPersonalPosts);
+        }
+    }
+
+    const getUserPostsAsync = async (userPosts) => {
+        const userPersonalPosts = [];
+
+        for (let i = 0; i < userPosts.length; i++) {
+            const post = await getPostById(userPosts[i].postId);
+
+            if (post.data !== undefined) {
+                userPersonalPosts.push(post.data);
+            }
+        }
+
+        return userPersonalPosts;
+    }
 
     const createPostAsync = async () => {
         const newPost = {
@@ -28,7 +68,10 @@ const MyFeed = () => {
         }
 
         const createdPost = await createNewPostAsync(newPost);
-        if (createdPost.status === 'fulfilled') {
+        if (createdPost.data !== undefined) {
+            setShowCreatePost(false);
+            postContentRef.current.value = "";
+
             const isCreated = await createUserPostAsync(createdPost.data.id);
             return isCreated;
         }
@@ -65,10 +108,15 @@ const MyFeed = () => {
                 <textarea rows="5" cols="100" ref={postContentRef} style={{ display: showCreatePost ? "flex" : "none" }} />
             </div>
             <ul className="posts">
-                <UserPosts
-                    customer={customer}
-                    userId={customer?.id}
-                />
+                {allPosts?.map(post => (
+                    <li key={post.id}>
+                        <Post
+                            customer={customer}
+                            postId={post.id}
+                            deletePostAsync={null}
+                        />
+                    </li>
+                ))}
             </ul>
         </div>
     );

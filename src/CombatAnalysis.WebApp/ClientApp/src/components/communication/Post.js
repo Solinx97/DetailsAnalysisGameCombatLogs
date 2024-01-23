@@ -1,6 +1,6 @@
 import { faHeart, faMessage, faThumbsDown } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useTranslation } from 'react-i18next';
 import { useGetPostByIdQuery, useUpdatePostAsyncMutation } from '../../store/api/communication/Post.api';
 import { useCreatePostCommentAsyncMutation } from '../../store/api/communication/PostComment.api';
@@ -11,10 +11,10 @@ import PostTitle from './PostTitle';
 
 import '../../styles/communication/post.scss';
 
-const Post = ({ customer, targetPostType, deletePostAsync }) => {
+const Post = ({ customer, postId, deletePostAsync }) => {
     const { t } = useTranslation("communication/post");
 
-    const { data: post, isLoading } = useGetPostByIdQuery(targetPostType.postId);
+    const { data: post, isLoading } = useGetPostByIdQuery(postId);
 
     const [updatePostAsyncMut] = useUpdatePostAsyncMutation();
     const [createPostLikeAsyncMut] = useCreatePostLikeAsyncMutation();
@@ -28,6 +28,15 @@ const Post = ({ customer, targetPostType, deletePostAsync }) => {
     const [showComments, setShowComments] = useState(false);
     const [postCommentContent, setPostCommentContent] = useState("");
     const [showAddComment, setShowAddComment] = useState(false);
+    const [isMyPost, setIsMyPost] = useState(false);
+
+    useEffect(() => {
+        if (post === undefined) {
+            return;
+        }
+
+        setIsMyPost(post.customerId === customer.id);
+    }, [post])
 
     const updatePostAsync = async (postId, likesCount, dislikesCount, commentsCount) => {
         const postForUpdate = {
@@ -228,6 +237,7 @@ const Post = ({ customer, targetPostType, deletePostAsync }) => {
                         post={post}
                         dateFormatting={dateFormatting}
                         deletePostAsync={deletePostAsync}
+                        isMyPost={isMyPost}
                     />
                     <li className="list-group-item">
                         <div className="card-text">{post?.content}</div>

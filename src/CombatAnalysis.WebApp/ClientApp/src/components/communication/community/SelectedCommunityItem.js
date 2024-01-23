@@ -8,25 +8,20 @@ const SelectedCommunityItem = ({ customer, communityId }) => {
     const { data: communityPosts, isLoading } = usePostSearchByCommunityIdAsyncQuery(communityId, {
         pollingInterval: getCommunityPostsInterval
     });
-    const [removeCommunityPostAsyncMutation] = useRemoveCommunityPostAsyncMutation();
-
-    const deleteCommunityPostAsync = async (communityPostId) => {
-        await removeCommunityPostAsyncMutation(communityPostId);
-    }
+    const [removeCommunityPostAsync] = useRemoveCommunityPostAsyncMutation();
 
     if (isLoading) {
-        return <></>;
+        return <div>Loading...</div>;
     }
 
     return (
         <ul className="posts">
-            {communityPosts?.map((item) => (
-                    <li key={item?.id}>
+            {communityPosts?.map((communityPost) => (
+                    <li key={communityPost?.id}>
                         <Post
-                            key={item?.id}
                             customer={customer}
-                            targetPostType={item}
-                            deletePostAsync={async () => await deleteCommunityPostAsync(item.id)}
+                            postId={communityPost.postId}
+                            deletePostAsync={async () => await removeCommunityPostAsync(communityPost.id)}
                         />
                     </li>
                 ))

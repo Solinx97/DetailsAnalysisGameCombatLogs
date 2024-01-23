@@ -2,24 +2,29 @@ import { faArrowsLeftRightToLine, faArrowsToCircle, faCheck, faComments, faEnvel
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useEffect, useState } from "react";
 import { useTranslation } from 'react-i18next';
+import { useLazyUserPostSearchByUserIdQuery } from '../../../store/api/ChatApi';
 import { useLazyGetCustomerByIdQuery } from '../../../store/api/Customer.api';
+import { useLazyGetPostByIdQuery } from '../../../store/api/communication/Post.api';
 import CommunicationMenu from "../CommunicationMenu";
-import UserPosts from '../UserPosts';
 import Friends from '../myEnvironment/Friends';
 import SelectedUserCommunities from './SelectedUserCommunities';
 import SelectedUserProfile from './SelectedUserProfile';
 
 import '../../../styles/communication/people/selectedUser.scss';
+import Post from '../Post';
 
 const SelectedUser = () => {
     const { t } = useTranslation("communication/people/user");
+
+    const [getUserPosts] = useLazyUserPostSearchByUserIdQuery();
+    const [getPostById] = useLazyGetPostByIdQuery();
+    const [getCustomerById] = useLazyGetCustomerByIdQuery();
 
     const [customerId, setCustomerId] = useState(0);
     const [customer, setCustomer] = useState(null);
     const [currentMenuItem, setMenuItem] = useState(0);
     const [shortMenu, setShortMenu] = useState(false);
-
-    const [getCustomerById] = useLazyGetCustomerByIdQuery();
+    const [allPosts, setAllPosts] = useState([]);
 
     useEffect(() => {
         const queryParams = new URLSearchParams(window.location.search);
@@ -40,9 +45,35 @@ const SelectedUser = () => {
 
     const getCustomerByIdAsync = async () => {
         const customer = await getCustomerById(customerId);
+
         if (customer.data !== undefined) {
             setCustomer(customer.data);
+
+            getAllPostsAsync(customer.data);
         }
+    }
+
+    const getAllPostsAsync = async (customer) => {
+        const userPosts = await getUserPosts(customer.id);
+
+        if (userPosts.data !== undefined) {
+            const userPersonalPosts = await getUserPostsAsync(userPosts.data);
+            setAllPosts(userPersonalPosts);
+        }
+    }
+
+    const getUserPostsAsync = async (userPosts) => {
+        const userPersonalPosts = [];
+
+        for (let i = 0; i < userPosts.length; i++) {
+            const post = await getPostById(userPosts[i].id);
+
+            if (post.data !== undefined) {
+                userPersonalPosts.push(post.data);
+            }
+        }
+
+        return userPersonalPosts;
     }
 
     return (
@@ -148,11 +179,16 @@ const SelectedUser = () => {
                             />
                         }
                         {currentMenuItem === 1 &&
-                            <ul>
-                                <UserPosts
-                                    customer={customer}
-                                    userId={customer?.id}
-                                />
+                            <ul className="posts">
+                                {allPosts?.map(post => (
+                                    <li key={post.id}>
+                                        <Post
+                                            customer={customer}
+                                            postId={post.id}
+                                            deletePostAsync={null}
+                                        />
+                                    </li>
+                                ))}
                             </ul>
                         }
                         {currentMenuItem === 2 &&

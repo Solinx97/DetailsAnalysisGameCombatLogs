@@ -53,6 +53,7 @@ export const {
     useGetCommunitiesQuery,
     useLazyGetCommunitiesQuery,
     useFindGroupChatMessageByChatIdQuery,
+    useLazyUserPostSearchByUserIdQuery,
     useUserPostSearchByUserIdQuery,
     useSearchByCommunityIdAsyncQuery,
     useLazySearchByCommunityIdAsyncQuery,

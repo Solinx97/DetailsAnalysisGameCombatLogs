@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { useGetCustomerByIdQuery } from '../../store/api/Customer.api';
 import User from './User';
 
-const PostTitle = ({ post, dateFormatting, deletePostAsync }) => {
+const PostTitle = ({ post, dateFormatting, deletePostAsync, isMyPost }) => {
     const { t } = useTranslation("communication/postTitle");
 
     const { data: targetCustomer, isLoading } = useGetCustomerByIdQuery(post?.customerId);
@@ -28,11 +28,13 @@ const PostTitle = ({ post, dateFormatting, deletePostAsync }) => {
                 </div>
                 <div className="posts__title-details">
                     <div>{dateFormatting(post?.when)}</div>
-                    <FontAwesomeIcon
-                        icon={faTrash}
-                        title={t("RemovePost")}
-                        onClick={deletePostAsync}
-                    />
+                    {isMyPost &&
+                        <FontAwesomeIcon
+                            icon={faTrash}
+                            title={t("RemovePost")}
+                            onClick={deletePostAsync}
+                        />
+                    }
                 </div>
             </li>
             {userInformation !== null &&

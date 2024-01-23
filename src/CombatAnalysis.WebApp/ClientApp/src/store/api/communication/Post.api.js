@@ -32,6 +32,7 @@ export const PostApi = ChatApi.injectEndpoints({
 export const {
     useCreatePostAsyncMutation,
     useUpdatePostAsyncMutation,
+    useLazyGetPostByIdQuery,
     useGetPostByIdQuery,
     useSearchByUserIdQuery
 } = PostApi;
