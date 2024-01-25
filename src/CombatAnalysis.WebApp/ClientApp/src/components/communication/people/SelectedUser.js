@@ -184,7 +184,7 @@ const SelectedUser = () => {
                                     <li key={post.id}>
                                         <Post
                                             customer={customer}
-                                            postId={post.id}
+                                            post={post}
                                             deletePostAsync={null}
                                         />
                                     </li>

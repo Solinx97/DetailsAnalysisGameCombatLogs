@@ -2,7 +2,7 @@ import { faHeart, faMessage, faThumbsDown } from '@fortawesome/free-solid-svg-ic
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useEffect, useState } from "react";
 import { useTranslation } from 'react-i18next';
-import { useGetPostByIdQuery, useUpdatePostAsyncMutation } from '../../store/api/communication/Post.api';
+import { useUpdatePostAsyncMutation } from '../../store/api/communication/Post.api';
 import { useCreatePostCommentAsyncMutation } from '../../store/api/communication/PostComment.api';
 import { useCreatePostDislikeAsyncMutation, useLazySearchPostDislikeByPostIdQuery, useRemovePostDislikeAsyncMutation } from '../../store/api/communication/PostDislike.api';
 import { useCreatePostLikeAsyncMutation, useLazySearchPostLikeByPostIdQuery, useRemovePostLikeAsyncMutation } from '../../store/api/communication/PostLike.api';
@@ -11,10 +11,8 @@ import PostTitle from './PostTitle';
 
 import '../../styles/communication/post.scss';
 
-const Post = ({ customer, postId, deletePostAsync }) => {
+const Post = ({ customer, post, deletePostAsync }) => {
     const { t } = useTranslation("communication/post");
-
-    const { data: post, isLoading } = useGetPostByIdQuery(postId);
 
     const [updatePostAsyncMut] = useUpdatePostAsyncMutation();
     const [createPostLikeAsyncMut] = useCreatePostLikeAsyncMutation();
@@ -31,12 +29,8 @@ const Post = ({ customer, postId, deletePostAsync }) => {
     const [isMyPost, setIsMyPost] = useState(false);
 
     useEffect(() => {
-        if (post === undefined) {
-            return;
-        }
-
         setIsMyPost(post.customerId === customer.id);
-    }, [post])
+    }, [])
 
     const updatePostAsync = async (postId, likesCount, dislikesCount, commentsCount) => {
         const postForUpdate = {
@@ -223,10 +217,6 @@ const Post = ({ customer, postId, deletePostAsync }) => {
         const formatted = `${date.getDate()} ${nameOfMonth}, ${date.getHours()}:${date.getMinutes()}`;
 
         return formatted;
-    }
-
-    if (isLoading) {
-        return <></>;
     }
 
     return (

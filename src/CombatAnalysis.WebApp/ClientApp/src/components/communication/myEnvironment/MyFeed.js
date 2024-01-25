@@ -89,8 +89,8 @@ const MyFeed = () => {
         return createdUserPost.data === undefined ? false : true;
     }
 
-    if (customer === undefined || customer === null) {
-        return <></>;
+    if (customer === null) {
+        return <div>Loading...</div>;
     }
 
     return (
@@ -112,7 +112,7 @@ const MyFeed = () => {
                     <li key={post.id}>
                         <Post
                             customer={customer}
-                            postId={post.id}
+                            post={post}
                             deletePostAsync={null}
                         />
                     </li>
