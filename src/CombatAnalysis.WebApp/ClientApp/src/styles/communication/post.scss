@@ -107,6 +107,27 @@
     }
 }
 
+.community-post {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    cursor: pointer;
+
+    svg {
+        opacity: 0.4;
+    }
+
+    &_active {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        cursor: pointer;
+
+        svg {
+            opacity: 1;
+        }
+    }
+}
 
 .svg-inline--fa.fa-message.post__reaction_active {
     box-shadow: 2px 2px 2px 2px gray;

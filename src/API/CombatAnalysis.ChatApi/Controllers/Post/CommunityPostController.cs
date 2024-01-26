@@ -47,6 +47,14 @@ public class CommunityPostController : ControllerBase
         return Ok(result);
     }
 
+    [HttpGet("searchByPostId/{id:int:min(1)}")]
+    public async Task<IActionResult> SearchByPostId(int id)
+    {
+        var result = await _service.GetByParamAsync(nameof(CommunityPostModel.PostId), id);
+
+        return Ok(result);
+    }
+
     [HttpPost]
     public async Task<IActionResult> Create(CommunityPostModel model)
     {

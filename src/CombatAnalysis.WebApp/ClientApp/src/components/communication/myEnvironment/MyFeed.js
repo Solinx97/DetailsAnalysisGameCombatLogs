@@ -6,6 +6,11 @@ import { useCreatePostAsyncMutation, useLazyGetPostByIdQuery } from '../../../st
 import { useCreateUserPostAsyncMutation } from '../../../store/api/communication/UserPost.api';
 import Post from '../Post';
 
+const postType = {
+    user: 0,
+    community: 1
+}
+
 const MyFeed = () => {
     const { t } = useTranslation("communication/myEnvironment/myFeed");
 
@@ -59,7 +64,9 @@ const MyFeed = () => {
 
     const createPostAsync = async () => {
         const newPost = {
+            owner: customer.username,
             content: postContentRef.current.value,
+            postType: postType["user"],
             when: new Date(),
             likeCount: 0,
             dislikeCount: 0,

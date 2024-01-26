@@ -63,6 +63,29 @@ public class CommunityPostController : ControllerBase
         return BadRequest();
     }
 
+    [HttpGet("searchByPostId/{id:int:min(1)}")]
+    public async Task<IActionResult> SearchByPostId(int id)
+    {
+        if (!HttpContext.Request.Cookies.TryGetValue("refreshToken", out var refreshToken))
+        {
+            return Unauthorized();
+        }
+
+        var responseMessage = await _httpClient.GetAsync($"CommunityPost/searchByPostId/{id}", refreshToken, Port.ChatApi);
+        if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+        {
+            return Unauthorized();
+        }
+        else if (responseMessage.IsSuccessStatusCode)
+        {
+            var communityPosts = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<CommunityPostModel>>();
+
+            return Ok(communityPosts);
+        }
+
+        return BadRequest();
+    }
+
     [HttpPut]
     public async Task<IActionResult> Update(CommunityPostModel model)
     {

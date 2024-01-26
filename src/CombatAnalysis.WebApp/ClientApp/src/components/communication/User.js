@@ -1,6 +1,8 @@
 import { faCircleXmark, faUser } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 import { useGetCustomerByIdQuery, useLazyGetCustomerByIdQuery } from '../../store/api/Customer.api';
 import { useRemoveFriendAsyncMutation } from '../../store/api/communication/myEnvironment/Friend.api';
 import UserInformation from './UserInformation';
@@ -10,9 +12,14 @@ import "../../styles/communication/user.scss";
 const User = ({ me, itIsMe, targetCustomerId, setUserInformation, allowRemoveFriend, actionAfterRequests = null }) => {
     const { t } = useTranslation("communication/myEnvironment/friends");
 
+    const navigate = useNavigate();
+
     const [removeFriendAsyncMut] = useRemoveFriendAsyncMutation();
     const [getCustomerById] = useLazyGetCustomerByIdQuery();
+
     const { data: targetCustomer, isLoading } = useGetCustomerByIdQuery(targetCustomerId);
+
+    const [userActive, setUserActive] = useState("");
 
     const removeFriendAsync = async () => {
         await removeFriendAsyncMut(targetCustomerId);
@@ -31,8 +38,20 @@ const User = ({ me, itIsMe, targetCustomerId, setUserInformation, allowRemoveFri
         );
     }
 
+    const userActiveHandler = (e) => {
+        setUserActive("_active");
+    }
+
+    const userInactiveHandler = (e) => {
+        setUserActive("");
+    }
+
     const closeUserInformation = () => {
         setUserInformation(null);
+    }
+
+    const goToUser = () => {
+        navigate(`/user?id=${targetCustomerId}`);
     }
 
     if (isLoading) {
@@ -40,14 +59,17 @@ const User = ({ me, itIsMe, targetCustomerId, setUserInformation, allowRemoveFri
     }
 
     return (
-        <div className={`special-user${itIsMe ? "__me" : "__another"}`}>
+        <div className={`special-user${itIsMe ? "__me" : "__another"}`}
+            onMouseOver={userActiveHandler}
+            onMouseLeave={userInactiveHandler}>
             <FontAwesomeIcon
                 icon={faUser}
                 title={t("ShowDetails")}
-                className="details"
+                className={`details${userActive}`}
                 onClick={async () => await openUserInformationAsync()}
             />
-            <div className="username" title={targetCustomer?.username}>{targetCustomer?.username}</div>
+            <div className="username" title={targetCustomer?.username}
+                onClick={goToUser}>{targetCustomer?.username}</div>
             {allowRemoveFriend &&
                 <FontAwesomeIcon
                     icon={faCircleXmark}

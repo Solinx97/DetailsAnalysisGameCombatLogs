@@ -6,6 +6,11 @@ import { useCreateUserPostAsyncMutation } from '../../store/api/communication/Us
 import CommunicationMenu from './CommunicationMenu';
 import FeedParticipants from './FeedParticipants';
 
+const postType = {
+    user: 0,
+    community: 1
+}
+
 const Feed = () => {
     const { t } = useTranslation("communication/feed");
 
@@ -20,7 +25,9 @@ const Feed = () => {
 
     const createPostAsync = async () => {
         const newPost = {
+            owner: customer.username,
             content: postContentRef.current.value,
+            postType: postType["user"],
             when: new Date(),
             likeCount: 0,
             dislikeCount: 0,

@@ -105,6 +105,12 @@ internal class PostService : IService<PostDto, int>
                 $"The property {nameof(PostDto.Content)} of the {nameof(PostDto)} object can't be null or empty");
         }
 
+        if (string.IsNullOrEmpty(item.Owner))
+        {
+            throw new ArgumentNullException(nameof(PostDto),
+                $"The property {nameof(PostDto.Owner)} of the {nameof(PostDto)} object can't be null or empty");
+        }
+
         var map = _mapper.Map<DAL.Entities.Post.Post>(item);
         var createdItem = await _repository.CreateAsync(map);
         var resultMap = _mapper.Map<PostDto>(createdItem);

@@ -15,6 +15,11 @@ import SelectedCommunityItem from './SelectedCommunityItem';
 
 import '../../../styles/communication/community/selectedCommunity.scss';
 
+const postType = {
+    user: 0,
+    community: 1
+}
+
 const SelectedCommunity = () => {
     const { t } = useTranslation("communication/community/selectedCommunity");
 
@@ -60,7 +65,9 @@ const SelectedCommunity = () => {
 
     const createPostAsync = async () => {
         const newPost = {
+            owner: community.name,
             content: postContentRef.current.value,
+            postType: postType["community"],
             when: new Date(),
             likeCount: 0,
             dislikeCount: 0,
