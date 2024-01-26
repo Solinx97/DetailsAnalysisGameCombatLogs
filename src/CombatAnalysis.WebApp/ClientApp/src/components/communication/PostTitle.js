@@ -69,10 +69,13 @@ const PostTitle = ({ post, dateFormatting, deletePostAsync, isMyPost }) => {
                                 onMouseLeave={communityPostLeaveHandler}
                                 onClick={goToCommunityAsync}
                                 title={t("GoToCommunity")}>
-                            <FontAwesomeIcon
-                                icon={faComments}
-                            />
-                            <div>{post.owner}</div>
+                            <div className="community-post type">community</div>
+                            <div className="community-post content">
+                                <FontAwesomeIcon
+                                    icon={faComments}
+                                />
+                                <div>{post.owner}</div>
+                            </div>
                           </div>
                     }
                 </div>

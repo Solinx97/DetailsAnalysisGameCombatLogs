@@ -3,25 +3,41 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    padding: 10px 50px;
+    padding: 10px;
     width: auto;
 
-    &__tool, &__create-tool {
+    textarea {
+        margin-top: 15px;
+        margin-left: 30px;
+        width: 790px;
+    }
+
+    &__tool {
         display: flex;
-        align-items: center;
+        width: 70%;
 
-        button {
-            margin: 10px;
-            width: 100px;
-        }
-        
-        svg {
-            margin: 0 10px;
-            cursor: pointer;
+        .open-create-post, .finish-create-post {
+            gap: 20px;
+
+            button {
+                margin: 10px;
+                width: 100px;
+            }
+
+            svg {
+                margin: 0 10px;
+                cursor: pointer;
+            }
+
+            svg:hover {
+                transform: scale(1.1);
+            }
         }
 
-        svg:hover {
-            transform: scale(1.1);
+        .open-create-post.container {
+            display: flex;
+            justify-content: flex-start;
+            width: 100%;
         }
     }
 }
@@ -109,8 +125,8 @@
 
 .community-post {
     display: flex;
-    flex-direction: row;
-    align-items: center;
+    flex-direction: column;
+    align-items: flex-start;
     cursor: pointer;
 
     svg {
@@ -118,15 +134,20 @@
     }
 
     &_active {
-        display: flex;
-        flex-direction: row;
-        align-items: center;
-        cursor: pointer;
-
         svg {
             opacity: 1;
         }
     }
+}
+
+.community-post.type {
+    font-size: 8px;
+}
+
+.community-post.content {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
 }
 
 .svg-inline--fa.fa-message.post__reaction_active {

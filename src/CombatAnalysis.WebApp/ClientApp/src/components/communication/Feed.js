@@ -1,3 +1,5 @@
+import { faBan, faCheck, faPlus } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
@@ -72,16 +74,33 @@ const Feed = () => {
             />
             <div className="communication__content">
                 <div className="create-post">
-                    <div>
-                        <div className="create-post__tool" style={{ display: !showCreatePost ? "flex" : "none" }}>
-                            <button type="button" className="btn btn-outline-info" onClick={() => setShowCreatePost((item) => !item)}>{t("NewPost")}</button>
+                    <div className="create-post__tool">
+                        <div className="open-create-post container" style={{ display: !showCreatePost ? "flex" : "none" }}>
+                            <div className="open-create-post">
+                                <div className="btn-shadow" title={t("NewPost")} onClick={() => setShowCreatePost((item) => !item)}>
+                                    <FontAwesomeIcon
+                                        icon={faPlus}
+                                    />
+                                    <div>{t("Create")}</div>
+                                </div>
+                            </div>
                         </div>
-                        <div style={{ display: showCreatePost ? "flex" : "none" }} className="create-post__create-tool">
-                            <button type="button" className="btn btn-outline-warning" onClick={() => setShowCreatePost((item) => !item)}>{t("Cancel")}</button>
-                            <button type="button" className="btn btn-outline-success" onClick={async () => await createPostAsync()}>{t("Create")}</button>
+                        <div style={{ display: showCreatePost ? "flex" : "none" }} className="finish-create-post">
+                            <div className="btn-shadow" onClick={async () => await createPostAsync()}>
+                                <FontAwesomeIcon
+                                    icon={faCheck}
+                                />
+                                <div>{t("Create")}</div>
+                            </div>
+                            <div className="btn-shadow" onClick={() => setShowCreatePost((item) => !item)}>
+                                <FontAwesomeIcon
+                                    icon={faBan}
+                                />
+                                <div>{t("Cancel")}</div>
+                            </div>
                         </div>
                     </div>
-                    <textarea rows="5" cols="100" ref={postContentRef} style={{ display: showCreatePost ? "flex" : "none" }} />
+                    <textarea className="form-control" rows="5" ref={postContentRef} style={{ display: showCreatePost ? "flex" : "none" }} />
                 </div>
                 <FeedParticipants
                     customer={customer}
