@@ -1,29 +1,38 @@
 import { useEffect, useState } from 'react';
 import { useLazyPostSearchByCommunityIdAsyncQuery, useLazyUserPostSearchByUserIdQuery } from '../../store/api/ChatApi';
-import { useFriendSearchByUserIdQuery } from '../../store/api/UserApi';
-import { useLazyGetPostByIdQuery } from '../../store/api/communication/Post.api';
+import { useLazyGetPostByIdQuery, useRemovePostMutation } from '../../store/api/communication/Post.api';
+import { useRemoveUserPostAsyncMutation, useLazyUserPostSearchByPostIdQuery } from '../../store/api/communication/UserPost.api';
 import { useLazySearchByUserIdAsyncQuery } from '../../store/api/communication/community/CommunityUser.api';
+import { useFriendSearchMyFriendsQuery } from '../../store/api/communication/myEnvironment/Friend.api';
 import Post from './Post';
 
+const postType = {
+    user: 0,
+    community: 1
+}
+
 const FeedParticipants = ({ customer }) => {
-    const { data: friends, isLoading } = useFriendSearchByUserIdQuery(customer?.id);
+    const { data: myFriends, isLoading } = useFriendSearchMyFriendsQuery(customer?.id);
 
     const [getUserPosts] = useLazyUserPostSearchByUserIdQuery();
     const [getCommunityUsers] = useLazySearchByUserIdAsyncQuery();
 
     const [getCommunityPosts] = useLazyPostSearchByCommunityIdAsyncQuery();
     const [getPostById] = useLazyGetPostByIdQuery();
+    const [getUserPostByPostId] = useLazyUserPostSearchByPostIdQuery();
+    const [removePost] = useRemovePostMutation();
+    const [removeUserPost] = useRemoveUserPostAsyncMutation();
 
     const [peopleId, setPeopleId] = useState([customer?.id]);
     const [allPosts, setAllPosts] = useState([]);
 
     useEffect(() => {
-        if (friends === undefined) {
+        if (myFriends === undefined) {
             return;
         }
 
         getPeopleId();
-    }, [friends])
+    }, [myFriends])
 
     useEffect(() => {
         const getAllPosts = async () => {
@@ -36,8 +45,8 @@ const FeedParticipants = ({ customer }) => {
     const getPeopleId = () => {
         const friendsId = [];
 
-        for (let i = 0; i < friends?.length; i++) {
-            const personId = friends[i].whoFriendId === customer?.id ? friends[i].forWhomId : friends[i].whoFriendId;
+        for (let i = 0; i < myFriends?.length; i++) {
+            const personId = myFriends[i].whoFriendId === customer?.id ? myFriends[i].forWhomId : myFriends[i].whoFriendId;
             friendsId.push(personId);
         }
 
@@ -48,20 +57,16 @@ const FeedParticipants = ({ customer }) => {
         let posts = [];
 
         for (let i = 0; i < peopleId.length; i++) {
-            let userPersonalPosts = [];
-            let userCommunityPosts = [];
-
             const userPosts = await getUserPosts(peopleId[i]);
             if (userPosts.data !== undefined) {
-                userPersonalPosts = await getUserPostsAsync(userPosts.data);
+                const userPersonalPosts = await getUserPostsAsync(userPosts.data);
+                posts = [...posts, ...userPersonalPosts];
             }
+        }
 
-            const communitiesUser = await getCommunityUsers(peopleId[i]);
-            if (communitiesUser.data !== undefined) {
-                userCommunityPosts = await getCommunityPostsAsync(communitiesUser.data);
-            }
-
-            posts = [...posts, ...userPersonalPosts];
+        const communitiesUser = await getCommunityUsers(customer.id);
+        if (communitiesUser.data !== undefined) {
+            const userCommunityPosts = await getCommunityPostsAsync(communitiesUser.data);
             posts = [...posts, ...userCommunityPosts];
         }
 
@@ -125,6 +130,18 @@ const FeedParticipants = ({ customer }) => {
         return posts;
     }
 
+    const removeUserPostAsync = async (postId) => {
+        const userPost = await getUserPostByPostId(postId);
+        if (userPost.data === undefined || userPost.data.length === 0) {
+            return;
+        }
+
+        const result = await removeUserPost(userPost.data[0].id);
+        if (result.error === undefined) {
+            await removePost(postId);
+        }
+    }
+
     if (isLoading) {
         return <div>Loading...</div>;
     }
@@ -136,7 +153,8 @@ const FeedParticipants = ({ customer }) => {
                     <Post
                         customer={customer}
                         post={post}
-                        deletePostAsync={null}
+                        deletePostAsync={async () => await removeUserPostAsync(post.id)}
+                        canBeRemoveFromUserFeed={post.postType === postType["user"]}
                     />
                 </li>
             ))}

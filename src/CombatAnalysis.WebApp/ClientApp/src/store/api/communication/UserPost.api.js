@@ -10,6 +10,10 @@ export const UserPostApi = ChatApi.injectEndpoints({
             }),
             invalidatesTags: (result, error) => [{ type: 'UserPost', result }],
         }),
+        userPostSearchByPostId: builder.query({
+            query: (id) => `/UserPost/searchByPostId/${id}`,
+            providesTags: (result, error, id) => [{ type: 'UserPost', id }],
+        }),
         removeUserPostAsync: builder.mutation({
             query: id => ({
                 url: `/UserPost/${id}`,
@@ -22,5 +26,6 @@ export const UserPostApi = ChatApi.injectEndpoints({
 
 export const {
     useCreateUserPostAsyncMutation,
+    useLazyUserPostSearchByPostIdQuery,
     useRemoveUserPostAsyncMutation,
 } = UserPostApi;

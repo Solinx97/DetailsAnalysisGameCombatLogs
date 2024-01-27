@@ -21,14 +21,6 @@ export const UserApi = createApi({
         getCustomers: builder.query({
             query: () => '/Customer'
         }),
-        friendSearchByUserId: builder.query({
-            query: (arg) => {
-                return {
-                    url: `/Friend/searchByUserId/${arg}`,
-                }
-            },
-            providesTags: (result, error, id) => [{ type: 'Friend', id }],
-        }),
         authenticationAsync: builder.query({
             query: () => '/Authentication',
             providesTags: (result, error, id) => [{ type: 'Authentication', id }]
@@ -40,7 +32,6 @@ export const {
     useGetUsersQuery,
     useGetCustomersQuery,
     useLazyGetCustomersQuery,
-    useFriendSearchByUserIdQuery,
     useAuthenticationAsyncQuery,
     useLazyAuthenticationAsyncQuery,
 } = UserApi;

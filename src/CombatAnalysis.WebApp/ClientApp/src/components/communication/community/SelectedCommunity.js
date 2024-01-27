@@ -3,7 +3,6 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { memo, useEffect, useRef, useState } from "react";
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
-import { useCreatePostAsyncMutation } from '../../../store/api/communication/Post.api';
 import { useLazyGetCommunityByIdQuery, useUpdateCommunityAsyncMutation } from '../../../store/api/communication/community/Community.api';
 import { useCreateCommunityPostAsyncMutation } from '../../../store/api/communication/community/CommunityPost.api';
 import CommunicationMenu from '../CommunicationMenu';
@@ -14,11 +13,7 @@ import Discussion from './Discussion';
 import SelectedCommunityItem from './SelectedCommunityItem';
 
 import '../../../styles/communication/community/selectedCommunity.scss';
-
-const postType = {
-    user: 0,
-    community: 1
-}
+import CreatePost from '../CreatePost';
 
 const SelectedCommunity = () => {
     const { t } = useTranslation("communication/community/selectedCommunity");
@@ -27,7 +22,6 @@ const SelectedCommunity = () => {
 
     const [isCommunityMember, setIsCommunityMember] = useState(false);
     const [showDescription, setShowDescription] = useState(true);
-    const [showCreatePost, setShowCreatePost] = useState(false);
     const [showMenu, setShowMenu] = useState(false);
     const [communityId, setCommunityId] = useState(0);
     const [community, setCommunity] = useState(null);
@@ -36,12 +30,10 @@ const SelectedCommunity = () => {
     const [showDiscussion, setShowDiscussion] = useState(false);
     const [discussion, setDiscussion] = useState(null);
 
-    const postContentRef = useRef(null);
     const communityNameInput = useRef(null);
     const communityDescriptionInput = useRef(null);
 
     const [getCommunityByIdAsync] = useLazyGetCommunityByIdQuery();
-    const [createNewPostAsync] = useCreatePostAsyncMutation();
     const [updateCommunityAsync] = useUpdateCommunityAsyncMutation();
     const [createNewCommunityPostAsync] = useCreateCommunityPostAsyncMutation();
 
@@ -62,30 +54,6 @@ const SelectedCommunity = () => {
 
         searchByCommunityId();
     }, [communityId])
-
-    const createPostAsync = async () => {
-        const newPost = {
-            owner: community.name,
-            content: postContentRef.current.value,
-            postType: postType["community"],
-            when: new Date(),
-            likeCount: 0,
-            dislikeCount: 0,
-            postComment: 0,
-            customerId: customer.id
-        }
-
-        const createdPost = await createNewPostAsync(newPost);
-        if (createdPost.data !== undefined) {
-            postContentRef.current.value = "";
-            setShowCreatePost(false);
-
-            const isCreated = await createCommunityPostAsync(createdPost.data?.id);
-            return isCreated;
-        }
-
-        return false;
-    }
 
     const createCommunityPostAsync = async (postId) => {
         const newComunityPost = {
@@ -231,18 +199,12 @@ const SelectedCommunity = () => {
                     }
                     <div>
                         {isCommunityMember &&
-                            <div className="create-post">
-                                <div>
-                                    <div className="create-post__tool" style={{ display: !showCreatePost ? "flex" : "none" }}>
-                                        <button type="button" className="btn btn-outline-info" onClick={() => setShowCreatePost((item) => !item)}>{t("NewPost")}</button>
-                                    </div>
-                                    <div style={{ display: showCreatePost ? "flex" : "none" }} className="create-post__create-tool">
-                                        <button type="button" className="btn btn-outline-warning" onClick={() => setShowCreatePost((item) => !item)}>{t("Cancel")}</button>
-                                        <button type="button" className="btn btn-outline-success" onClick={async () => await createPostAsync()}>{t("Create")}</button>
-                                    </div>
-                                </div>
-                                <textarea rows="5" cols="100" ref={postContentRef} style={{ display: showCreatePost ? "flex" : "none" }} />
-                            </div>
+                            <CreatePost
+                                customer={customer}
+                                owner={community.name}
+                                postTypeName="community"
+                                createTypeOfPostFunc={createCommunityPostAsync}
+                            />
                         }
                         <SelectedCommunityItem
                             customer={customer}

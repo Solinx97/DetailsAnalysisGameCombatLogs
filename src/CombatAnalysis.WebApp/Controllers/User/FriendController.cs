@@ -40,30 +40,6 @@ public class FriendController : ControllerBase
         return BadRequest();
     }
 
-    [HttpGet("searchByUserId/{userId}")]
-    public async Task<IActionResult> SearchByUserId(string userId)
-    {
-        if (!HttpContext.Request.Cookies.TryGetValue("refreshToken", out var refreshToken))
-        {
-            return Unauthorized();
-        }
-
-        var responseMessage = await _httpClient.GetAsync($"Friend/searchByUserId/{userId}", refreshToken, Port.UserApi);
-        if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
-        {
-            return Unauthorized();
-        }
-        else if (responseMessage.IsSuccessStatusCode)
-        {
-            var friendsCurrentUser = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<FriendModel>>();
-            var myFriends = friendsCurrentUser?.Where(x => x.WhoFriendId == userId || x.ForWhomId == userId);
-
-            return Ok(myFriends);
-        }
-
-        return BadRequest();
-    }
-
     [HttpGet("searchMyFriends/{id}")]
     public async Task<IActionResult> SearchMyFriends(string id)
     {

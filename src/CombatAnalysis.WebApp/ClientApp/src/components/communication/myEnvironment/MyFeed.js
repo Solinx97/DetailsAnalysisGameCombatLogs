@@ -1,30 +1,22 @@
-import { useEffect, useRef, useState } from 'react';
-import { useTranslation } from 'react-i18next';
+import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useLazyUserPostSearchByUserIdQuery } from '../../../store/api/ChatApi';
-import { useCreatePostAsyncMutation, useLazyGetPostByIdQuery } from '../../../store/api/communication/Post.api';
-import { useCreateUserPostAsyncMutation } from '../../../store/api/communication/UserPost.api';
+import { useLazyGetPostByIdQuery } from '../../../store/api/communication/Post.api';
+import { useCreateUserPostAsyncMutation, useLazyUserPostSearchByPostIdQuery, useRemoveUserPostAsyncMutation } from '../../../store/api/communication/UserPost.api';
+import { useRemovePostMutation } from '../../../store/api/communication/Post.api';
+import CreatePost from '../CreatePost';
 import Post from '../Post';
 
-const postType = {
-    user: 0,
-    community: 1
-}
-
 const MyFeed = () => {
-    const { t } = useTranslation("communication/myEnvironment/myFeed");
-
     const customer = useSelector((state) => state.customer.value);
-
-    const [createNewPostAsync] = useCreatePostAsyncMutation();
-    const [createNewUserPostAsync] = useCreateUserPostAsyncMutation();
 
     const [getUserPosts] = useLazyUserPostSearchByUserIdQuery();
     const [getPostById] = useLazyGetPostByIdQuery();
+    const [createNewUserPostAsync] = useCreateUserPostAsyncMutation();
+    const [getUserPostByPostId] = useLazyUserPostSearchByPostIdQuery();
+    const [removeUserPost] = useRemoveUserPostAsyncMutation();
+    const [removePost] = useRemovePostMutation();
 
-    const postContentRef = useRef(null);
-
-    const [showCreatePost, setShowCreatePost] = useState(false);
     const [allPosts, setAllPosts] = useState([]);
 
     useEffect(() => {
@@ -62,30 +54,6 @@ const MyFeed = () => {
         return userPersonalPosts;
     }
 
-    const createPostAsync = async () => {
-        const newPost = {
-            owner: customer.username,
-            content: postContentRef.current.value,
-            postType: postType["user"],
-            when: new Date(),
-            likeCount: 0,
-            dislikeCount: 0,
-            postComment: 0,
-            customerId: customer?.id
-        }
-
-        const createdPost = await createNewPostAsync(newPost);
-        if (createdPost.data !== undefined) {
-            setShowCreatePost(false);
-            postContentRef.current.value = "";
-
-            const isCreated = await createUserPostAsync(createdPost.data.id);
-            return isCreated;
-        }
-
-        return false;
-    }
-
     const createUserPostAsync = async (postId) => {
         const newUserPost = {
             userId: customer?.id,
@@ -96,31 +64,37 @@ const MyFeed = () => {
         return createdUserPost.data === undefined ? false : true;
     }
 
+    const removeUserPostAsync = async (postId) => {
+        const userPost = await getUserPostByPostId(postId);
+        if (userPost.data === undefined || userPost.data.length === 0) {
+            return;
+        }
+
+        const result = await removeUserPost(userPost.data[0].id);
+        if (result.error === undefined) {
+            await removePost(postId);
+        }
+    }
+
     if (customer === null) {
         return <div>Loading...</div>;
     }
 
     return (
         <div>
-            <div className="create-post">
-                <div>
-                    <div className="create-post__tool" style={{ display: !showCreatePost ? "flex" : "none" }}>
-                        <button type="button" className="btn btn-outline-info" onClick={() => setShowCreatePost((item) => !item)}>{t("NewPost")}</button>
-                    </div>
-                    <div style={{ display: showCreatePost ? "flex" : "none" }} className="create-post__create-tool">
-                        <button type="button" className="btn btn-outline-warning" onClick={() => setShowCreatePost((item) => !item)}>{t("Cancel")}</button>
-                        <button type="button" className="btn btn-outline-success" onClick={async () => await createPostAsync()}>{t("Create")}</button>
-                    </div>
-                </div>
-                <textarea rows="5" cols="100" ref={postContentRef} style={{ display: showCreatePost ? "flex" : "none" }} />
-            </div>
+            <CreatePost
+                customer={customer}
+                owner={customer?.username}
+                postTypeName="user"
+                createTypeOfPostFunc={createUserPostAsync}
+            />
             <ul className="posts">
                 {allPosts?.map(post => (
                     <li key={post.id}>
                         <Post
                             customer={customer}
                             post={post}
-                            deletePostAsync={null}
+                            deletePostAsync={async () => await removeUserPostAsync(post.id)}
                         />
                     </li>
                 ))}

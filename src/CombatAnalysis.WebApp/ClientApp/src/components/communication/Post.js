@@ -11,7 +11,7 @@ import PostTitle from './PostTitle';
 
 import '../../styles/communication/post.scss';
 
-const Post = ({ customer, post, deletePostAsync }) => {
+const Post = ({ customer, post, deletePostAsync, canBeRemoveFromUserFeed = true }) => {
     const { t } = useTranslation("communication/post");
 
     const [updatePostAsyncMut] = useUpdatePostAsyncMutation();
@@ -29,7 +29,7 @@ const Post = ({ customer, post, deletePostAsync }) => {
     const [isMyPost, setIsMyPost] = useState(false);
 
     useEffect(() => {
-        setIsMyPost(post.customerId === customer.id);
+        setIsMyPost(post.customerId === customer.id && canBeRemoveFromUserFeed);
     }, [])
 
     const updatePostAsync = async (postId, likesCount, dislikesCount, commentsCount) => {

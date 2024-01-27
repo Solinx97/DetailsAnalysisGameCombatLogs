@@ -1,10 +1,10 @@
-import { faComments, faTrash } from '@fortawesome/free-solid-svg-icons';
+import { faCircleXmark, faComments } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { useGetCustomerByIdQuery } from '../../store/api/Customer.api';
-import { useLazyGetCommunityPostByPostIdQuery } from '../../store/api/communication/community/Community.api';
+import { useLazyGetCommunityPostByPostIdQuery } from '../../store/api/communication/community/CommunityPost.api';
 import User from './User';
 
 const postType = {
@@ -57,34 +57,37 @@ const PostTitle = ({ post, dateFormatting, deletePostAsync, isMyPost }) => {
     return (
         <>
             <li className="posts__title list-group-item">
-                <div className="posts__title-username">
-                    {post.postType === postType["user"]
-                        ? <User
-                            targetCustomerId={targetCustomer?.id}
-                            setUserInformation={setUserInformation}
-                            allowRemoveFriend={false}
-                        />
-                        : <div className={`community-post${communityPostStyle}`}
+                <div className="posts__title content">
+                    <div className="posts__title-username">
+                        {post.postType === postType["user"]
+                            ? <User
+                                targetCustomerId={targetCustomer?.id}
+                                setUserInformation={setUserInformation}
+                                allowRemoveFriend={false}
+                            />
+                            : <div className={`community-post${communityPostStyle}`}
                                 onMouseOver={communityPostOverHandler}
                                 onMouseLeave={communityPostLeaveHandler}
                                 onClick={goToCommunityAsync}
                                 title={t("GoToCommunity")}>
-                            <div className="community-post type">community</div>
-                            <div className="community-post content">
-                                <FontAwesomeIcon
-                                    icon={faComments}
-                                />
-                                <div>{post.owner}</div>
+                                <div className="community-post type">community</div>
+                                <div className="community-post content">
+                                    <FontAwesomeIcon
+                                        icon={faComments}
+                                    />
+                                    <div>{post.owner}</div>
+                                </div>
                             </div>
-                          </div>
-                    }
+                        }
+                    </div>
+                    <div className="when">{dateFormatting(post?.when)}</div>
                 </div>
-                <div className="posts__title-details">
-                    <div>{dateFormatting(post?.when)}</div>
+                <div className="post-remove container">
                     {isMyPost &&
                         <FontAwesomeIcon
-                            icon={faTrash}
+                            icon={faCircleXmark}
                             title={t("RemovePost")}
+                            className="post-remove"
                             onClick={deletePostAsync}
                         />
                     }

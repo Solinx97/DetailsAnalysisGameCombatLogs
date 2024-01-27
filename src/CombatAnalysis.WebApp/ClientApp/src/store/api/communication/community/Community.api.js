@@ -14,10 +14,6 @@ export const CommunityApi = ChatApi.injectEndpoints({
             query: (id) => `/Community/${id}`,
             providesTags: (result, error, id) => [{ type: 'Community', id }]
         }),
-        getCommunityPostByPostId: builder.query({
-            query: (id) => `/CommunityPost/searchByPostId/${id}`,
-            providesTags: (result, error, id) => [{ type: 'CommunityPost', id }]
-        }),
         updateCommunityAsync: builder.mutation({
             query: community => ({
                 body: community,
@@ -40,7 +36,6 @@ export const {
     useCreateCommunityAsyncMutation,
     useGetCommunityByIdQuery,
     useLazyGetCommunityByIdQuery,
-    useLazyGetCommunityPostByPostIdQuery,
     useUpdateCommunityAsyncMutation,
     useRemoveCommunityAsyncMutation
 } = CommunityApi;

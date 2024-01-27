@@ -26,6 +26,13 @@ export const PostApi = ChatApi.injectEndpoints({
             query: (id) => `/Post/searchByUserId/${id}`,
             providesTags: (result, error, id) => [{ type: 'Post', id }],
         }),
+        removePost: builder.mutation({
+            query: id => ({
+                url: `/Post/${id}`,
+                method: 'DELETE'
+            }),
+            invalidatesTags: (result, error, arg) => [{ type: 'Post', arg }]
+        }),
     })
 })
 
@@ -34,5 +41,6 @@ export const {
     useUpdatePostAsyncMutation,
     useLazyGetPostByIdQuery,
     useGetPostByIdQuery,
-    useSearchByUserIdQuery
+    useSearchByUserIdQuery,
+    useRemovePostMutation
 } = PostApi;

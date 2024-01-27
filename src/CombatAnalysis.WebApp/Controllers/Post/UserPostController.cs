@@ -61,6 +61,29 @@ public class UserPostController : ControllerBase
         return BadRequest();
     }
 
+    [HttpGet("searchByPostId/{id:int:min(1)}")]
+    public async Task<IActionResult> SearchByPostId(int id)
+    {
+        if (!HttpContext.Request.Cookies.TryGetValue("refreshToken", out var refreshToken))
+        {
+            return Unauthorized();
+        }
+
+        var responseMessage = await _httpClient.GetAsync($"UserPost/searchByPostId/{id}", refreshToken, Port.ChatApi);
+        if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+        {
+            return Unauthorized();
+        }
+        else if (responseMessage.IsSuccessStatusCode)
+        {
+            var posts = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<UserPostModel>>();
+
+            return Ok(posts);
+        }
+
+        return BadRequest();
+    }
+
     [HttpPut]
     public async Task<IActionResult> Update(UserPostModel model)
     {

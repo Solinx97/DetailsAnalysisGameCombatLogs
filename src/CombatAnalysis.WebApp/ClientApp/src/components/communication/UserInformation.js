@@ -3,9 +3,9 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { memo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { useFriendSearchByUserIdQuery } from '../../store/api/UserApi';
 import { useCreatePersonalChatAsyncMutation, useLazyIsExistAsyncQuery } from '../../store/api/communication/chats/PersonalChat.api';
 import { useCreatePersonalChatMessageCountAsyncMutation } from '../../store/api/communication/chats/PersonalChatMessagCount.api';
+import { useFriendSearchMyFriendsQuery } from '../../store/api/communication/myEnvironment/Friend.api';
 import { useCreateRequestAsyncMutation, useLazyRequestIsExistQuery } from '../../store/api/communication/myEnvironment/RequestToConnect.api';
 import PeopleInvitesToCommunity from './people/PeopleInvitesToCommunity';
 import SelectedUserProfile from './people/SelectedUserProfile';
@@ -30,10 +30,7 @@ const UserInformation = ({ me, people, closeUserInformation, actionAfterRequests
     const [showFailedNotification, setShowFailedNotification] = useState(false);
     const [openInviteToCommunity, setOpenInviteToCommunity] = useState(false);
 
-    const { data: isFriend, isLoading } = useFriendSearchByUserIdQuery({
-        userId: me?.id,
-        targetUserId: people?.id
-    });
+    const { data: myFriends, isLoading } = useFriendSearchMyFriendsQuery(me?.id);
 
     const checkExistOfChatsAsync = async (targetCustomer) => {
         const queryParams = {
@@ -145,7 +142,7 @@ const UserInformation = ({ me, people, closeUserInformation, actionAfterRequests
     }
 
     if (isLoading) {
-        return <></>;
+        return <div>Loading...</div>;
     }
 
     return (
@@ -181,7 +178,7 @@ const UserInformation = ({ me, people, closeUserInformation, actionAfterRequests
                         />
                     </li>
                     <li className="list-group-item">
-                        {isFriend
+                        {myFriends.filter(friend => friend.whoFriendId === people.id || friend.forWhomId === people.id).length > 0
                             ? <FontAwesomeIcon
                                 icon={faUserPlus}
                                 title={t("AlreadyFriend")}

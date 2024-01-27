@@ -1,15 +1,17 @@
 import { useEffect, useState } from 'react';
 import { usePostSearchByCommunityIdAsyncQuery } from '../../../store/api/ChatApi';
-import { useLazyGetPostByIdQuery } from '../../../store/api/communication/Post.api';
-import { useRemoveCommunityPostAsyncMutation } from '../../../store/api/communication/community/CommunityPost.api';
+import { useLazyGetPostByIdQuery, useRemovePostMutation } from '../../../store/api/communication/Post.api';
+import { useLazyGetCommunityPostByPostIdQuery, useRemoveCommunityPostMutation } from '../../../store/api/communication/community/CommunityPost.api';
 import Post from '../Post';
 
 const SelectedCommunityItem = ({ customer, communityId }) => {
     const { data: communityPosts, isLoading } = usePostSearchByCommunityIdAsyncQuery(communityId);
 
     const [getPostById] = useLazyGetPostByIdQuery();
+    const [getCommunityPostByPostId] = useLazyGetCommunityPostByPostIdQuery();
+    const [removeCommunityPost] = useRemoveCommunityPostMutation();
+    const [removePost] = useRemovePostMutation();
 
-    const [removeCommunityPostAsync] = useRemoveCommunityPostAsyncMutation();
     const [posts, setPosts] = useState([]);
 
     useEffect(() => {
@@ -36,6 +38,18 @@ const SelectedCommunityItem = ({ customer, communityId }) => {
         }
 
         setPosts(allPosts);
+    }
+
+    const removeCommunityPostAsync = async (postId) => {
+        const communityPost = await getCommunityPostByPostId(postId);
+        if (communityPost.data === undefined || communityPost.data.length === 0) {
+            return;
+        }
+
+        const result = await removeCommunityPost(communityPost.data[0].id);
+        if (result.error === undefined) {
+            await removePost(postId);
+        }
     }
 
     if (isLoading) {

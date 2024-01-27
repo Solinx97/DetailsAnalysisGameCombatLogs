@@ -12,7 +12,7 @@ const Friends = ({ customer, requestsToConnect, allowRemoveFriend }) => {
     const [userInformation, setUserInformation] = useState(null);
 
     if (isLoading) {
-        return <></>;
+        return <div>Loading...</div>;
     }
 
     return (

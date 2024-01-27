@@ -14,7 +14,7 @@
 
     &__tool {
         display: flex;
-        width: 70%;
+        width: 75%;
 
         .open-create-post, .finish-create-post {
             gap: 20px;
@@ -56,7 +56,11 @@
     &__title.list-group-item {
         display: flex;
         flex-direction: row;
-        justify-content: space-between;
+        justify-content: space-around;
+    }
+
+    &__title.content {
+        width: 100%;
     }
 
     &__title-username, &__title-details {
@@ -83,6 +87,20 @@
                 gap: 5px;
             }
         }
+    }
+
+    .when {
+        font-size: 10px;
+    }
+
+    .post-remove:hover {
+        cursor: pointer;
+    }
+
+    .post-remove.container {
+        display: flex;
+        justify-content: flex-end;
+        margin: 0 -15px;
     }
 
     &__reaction.list-group-item {

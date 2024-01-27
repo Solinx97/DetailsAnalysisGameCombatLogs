@@ -10,7 +10,11 @@ export const CommunityPostApi = ChatApi.injectEndpoints({
             }),
             invalidatesTags: (result, error) => [{ type: 'CommunityPost', result }],
         }),
-        removeCommunityPostAsync: builder.mutation({
+        getCommunityPostByPostId: builder.query({
+            query: (id) => `/CommunityPost/searchByPostId/${id}`,
+            providesTags: (result, error, id) => [{ type: 'CommunityPost', id }]
+        }),
+        removeCommunityPost: builder.mutation({
             query: id => ({
                 url: `/CommunityPost/${id}`,
                 method: 'DELETE'
@@ -22,5 +26,6 @@ export const CommunityPostApi = ChatApi.injectEndpoints({
 
 export const {
     useCreateCommunityPostAsyncMutation,
-    useRemoveCommunityPostAsyncMutation,
+    useLazyGetCommunityPostByPostIdQuery,
+    useRemoveCommunityPostMutation,
 } = CommunityPostApi;
