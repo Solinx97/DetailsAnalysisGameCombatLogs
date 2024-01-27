@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useLazyPostSearchByCommunityIdAsyncQuery, useLazyUserPostSearchByUserIdQuery } from '../../store/api/ChatApi';
 import { useLazyGetPostByIdQuery, useRemovePostMutation } from '../../store/api/communication/Post.api';
-import { useRemoveUserPostAsyncMutation, useLazyUserPostSearchByPostIdQuery } from '../../store/api/communication/UserPost.api';
+import { useLazyUserPostSearchByPostIdQuery, useRemoveUserPostAsyncMutation } from '../../store/api/communication/UserPost.api';
 import { useLazySearchByUserIdAsyncQuery } from '../../store/api/communication/community/CommunityUser.api';
 import { useFriendSearchMyFriendsQuery } from '../../store/api/communication/myEnvironment/Friend.api';
 import Post from './Post';
@@ -11,12 +11,13 @@ const postType = {
     community: 1
 }
 
-const FeedParticipants = ({ customer }) => {
+let postsCount = 0;
+
+const FeedParticipants = ({ customer, showNewPosts, setShowNewPostsInform }) => {
     const { data: myFriends, isLoading } = useFriendSearchMyFriendsQuery(customer?.id);
 
     const [getUserPosts] = useLazyUserPostSearchByUserIdQuery();
     const [getCommunityUsers] = useLazySearchByUserIdAsyncQuery();
-
     const [getCommunityPosts] = useLazyPostSearchByCommunityIdAsyncQuery();
     const [getPostById] = useLazyGetPostByIdQuery();
     const [getUserPostByPostId] = useLazyUserPostSearchByPostIdQuery();
@@ -25,35 +26,37 @@ const FeedParticipants = ({ customer }) => {
 
     const [peopleId, setPeopleId] = useState([customer?.id]);
     const [allPosts, setAllPosts] = useState([]);
+    const [newPosts, setNewPosts] = useState([]);
 
     useEffect(() => {
         if (myFriends === undefined) {
             return;
         }
 
+        const getPeopleId = async () => {
+            const temporaryPeopleId = await getPeopleIdAsync();
+            await getAllPostsAsync(temporaryPeopleId);
+        }
+
         getPeopleId();
+
+        const checkNewPosts = async () => {
+            const temporaryPeopleId = await getPeopleIdAsync();
+            await checkNewPostsAsync(temporaryPeopleId);
+        }
+
+        setInterval(() => {
+            checkNewPosts();
+        }, 5000);
     }, [myFriends])
 
     useEffect(() => {
-        const getAllPosts = async () => {
-            await getAllPostsAsync();
+        if (showNewPosts) {
+            setAllPosts(newPosts);
         }
+    }, [showNewPosts])
 
-        getAllPosts();
-    }, [peopleId])
-
-    const getPeopleId = () => {
-        const friendsId = [];
-
-        for (let i = 0; i < myFriends?.length; i++) {
-            const personId = myFriends[i].whoFriendId === customer?.id ? myFriends[i].forWhomId : myFriends[i].whoFriendId;
-            friendsId.push(personId);
-        }
-
-        setPeopleId([...peopleId, ...friendsId]);
-    }
-
-    const getAllPostsAsync = async () => {
+    const loadingPostsAsync = async (peopleId = []) => {
         let posts = [];
 
         for (let i = 0; i < peopleId.length; i++) {
@@ -72,7 +75,36 @@ const FeedParticipants = ({ customer }) => {
 
         posts = posts.sort(postsSortByTime);
 
+        return posts;
+    }
+
+    const getPeopleIdAsync = async () => {
+        const friendsId = [];
+
+        for (let i = 0; i < myFriends?.length; i++) {
+            const personId = myFriends[i].whoFriendId === customer?.id ? myFriends[i].forWhomId : myFriends[i].whoFriendId;
+            friendsId.push(personId);
+        }
+
+        const temporaryPeopleId = [...peopleId, ...friendsId];
+        setPeopleId(temporaryPeopleId);
+
+        return temporaryPeopleId
+    }
+
+    const getAllPostsAsync = async (peopleId) => {
+        const posts = await loadingPostsAsync(peopleId);
+
         setAllPosts(posts);
+        postsCount = posts.length;
+    }
+
+    const checkNewPostsAsync = async (peopleId) => {
+        const posts = await loadingPostsAsync(peopleId);
+
+        setShowNewPostsInform(posts.length > postsCount);
+        setNewPosts(posts);
+        postsCount = posts.length;
     }
 
     const postsSortByTime = (a, b) => {

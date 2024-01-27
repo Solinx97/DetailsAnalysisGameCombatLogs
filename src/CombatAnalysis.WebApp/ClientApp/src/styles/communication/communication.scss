@@ -59,5 +59,21 @@
 
     &__content {
         margin-left: 190px;
+
+        .new-posts {
+            position: relative;
+            display: flex;
+            justify-content: center;
+            margin-top: -10px;
+            background: white;
+            z-index: 100;
+
+            &__content {
+                padding: 5px 10px;
+                cursor: pointer;
+                border: 1px solid gray;
+                border-radius: 10px;
+            }
+        }
     }
 }
