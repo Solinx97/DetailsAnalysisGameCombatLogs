@@ -30,8 +30,14 @@ var mappingConfig = new MapperConfiguration(mc =>
 var mapper = mappingConfig.CreateMapper();
 builder.Services.AddSingleton(mapper);
 builder.Services.AddSingleton<ILogger>(logger);
-builder.Services.AddAuthentication("Basic")
-    .AddScheme<BasicAuthenticationOptions, AuthenticationHandler>("Basic", null);
+builder.Services.AddAuthentication((options) =>
+{
+    options.DefaultChallengeScheme = "Basic";
+    options.AddScheme("Basic", (builder) =>
+    {
+        builder.HandlerType = typeof(AuthenticationHandler);
+    });
+});
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -48,14 +54,11 @@ builder.Services.AddSwaggerGen(options =>
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
+app.UseSwagger();
+app.UseSwaggerUI(options =>
 {
-    app.UseSwagger();
-    app.UseSwaggerUI(options =>
-    {
-        options.SwaggerEndpoint("/swagger/v1/swagger.json", "Chat API v1");
-    });
-}
+    options.SwaggerEndpoint("/swagger/v1/swagger.json", "Chat API v1");
+});
 
 app.UseHttpsRedirection();
 
