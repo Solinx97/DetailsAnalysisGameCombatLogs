@@ -30,6 +30,20 @@
                     gap: 10px;
                 }
 
+                &__menu {
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    width: 75px;
+
+                    .call_active {
+                        border: 2px solid gray;
+                        border-radius: 20px;
+                        padding: 5px;
+                        box-shadow: 2px 2px 2px 2px green;
+                    }
+                }
+
                 .name {
                     margin: 0 20px;
                     font-weight: bold;

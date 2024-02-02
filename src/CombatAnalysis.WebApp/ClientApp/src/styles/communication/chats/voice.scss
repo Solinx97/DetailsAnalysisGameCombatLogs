@@ -1,0 +1,91 @@
+.voice {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    margin-left: 75px;
+    gap: 20px;
+
+    &__title {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        width: 80%;
+
+        .tools {
+            display: flex;
+            gap: 10px;
+
+            .camera, .microphone {
+                width: 25px;
+                height: 25px;
+                margin: 10px;
+            }
+
+            .camera:hover, .microphone:hover {
+                cursor: pointer;
+                transform: scale(1.1);
+            }
+        }
+    }
+
+    &__content {
+        display: flex;
+        justify-content: space-around;
+        width: 85%;
+
+        ul {
+            padding: 0;
+            margin: 0;
+        }
+
+        .me {
+            width: 65%;
+            box-shadow: 5px 5px 5px 5px gray;
+            border-radius: 25px;
+        }
+
+        .video-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            overflow-y: auto;
+            border: 2px solid gray;
+            border-radius: 20px;
+            width: 25%;
+            gap: 5px;
+            height: 540px;
+
+            .video {
+                display: flex;
+                justify-content: center;
+
+                .another {
+                    width: 95%;
+                    border-radius: 20px;
+                    margin: 5px 0;
+                }
+            }
+        }
+    }
+}
+
+.joined-user-username {
+    position: absolute;
+    top: 18%;
+    right: 11%;
+    display: flex;
+    justify-content: end;
+    margin: 10px 0;
+    z-index: 100;
+
+    .username {
+        border: 2px solid blue;
+        padding: 10px;
+        border-radius: 20px;
+        background: white;
+        font-weight: 500;
+        cursor: default;
+    }
+}

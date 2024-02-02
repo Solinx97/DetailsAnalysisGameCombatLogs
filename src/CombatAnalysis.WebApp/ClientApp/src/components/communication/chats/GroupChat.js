@@ -1,7 +1,8 @@
-﻿import { faCloudArrowUp, faGear, faPaperPlane, faPen } from '@fortawesome/free-solid-svg-icons';
+﻿import { faCloudArrowUp, faGear, faPaperPlane, faPen, faPhone, faPhoneSlash } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { memo, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 import { useFindGroupChatMessageByChatIdQuery } from '../../../store/api/ChatApi';
 import { useUpdateGroupChatAsyncMutation } from '../../../store/api/communication/chats/GroupChat.api';
 import {
@@ -36,6 +37,8 @@ const messageType = {
 const GroupChat = ({ chat, me, setSelectedChat }) => {
     const { t } = useTranslation("communication/chats/groupChat");
 
+    const navigate = useNavigate();
+
     const [showAddPeople, setShowAddPeople] = useState(false);
     const [settingsIsShow, setSettingsIsShow] = useState(false);
     const [peopleToJoin, setPeopleToJoin] = useState([]);
@@ -43,6 +46,7 @@ const GroupChat = ({ chat, me, setSelectedChat }) => {
     const [userInformation, setUserInformation] = useState(null);
     const [editNameOn, setEditNameOn] = useState(false);
     const [myMessagesCount, setMyMessagesCount] = useState(null);
+    const [joinedToCall, setJoinedToCall] = useState(false);
 
     const messageInput = useRef(null);
     const chatNameInput = useRef(null);
@@ -247,6 +251,10 @@ const GroupChat = ({ chat, me, setSelectedChat }) => {
         }
     }
 
+    const call = () => {
+        navigate(`/chats/voice?roomId=${chat.id}`);
+    }
+
     if (isLoading || usersIsLoading || myUsersIsLoading) {
         return <></>;
     }
@@ -273,16 +281,32 @@ const GroupChat = ({ chat, me, setSelectedChat }) => {
                                     className={`settings-handler${settingsIsShow ? "_active" : ""}`}
                                     onClick={async () => await updateGroupChatNameAsync()}
                                 />
-                              </>
+                            </>
                             : <div className="name" title={chat.name}>{chat.name}</div>
                         }
                     </div>
-                    <FontAwesomeIcon
-                        icon={faGear}
-                        title={t("Settings")}
-                        className={`settings-handler${settingsIsShow ? "_active" : ""}`}
-                        onClick={() => setSettingsIsShow(!settingsIsShow)}
-                    />
+                    <div className="title__menu">
+                        {joinedToCall
+                            ? <FontAwesomeIcon
+                                icon={faPhoneSlash}
+                                title={t("FinishCall")}
+                                className="call_active"
+                                onClick={() => setJoinedToCall(false)}
+                            />
+                            : <FontAwesomeIcon
+                                icon={faPhone}
+                                title={t("Call")}
+                                className="call"
+                                onClick={call}
+                            />
+                        }
+                        <FontAwesomeIcon
+                            icon={faGear}
+                            title={t("Settings")}
+                            className={`settings-handler${settingsIsShow ? "_active" : ""}`}
+                            onClick={() => setSettingsIsShow(!settingsIsShow)}
+                        />
+                    </div>
                 </div>
                 <ul className="chat-messages">
                     {

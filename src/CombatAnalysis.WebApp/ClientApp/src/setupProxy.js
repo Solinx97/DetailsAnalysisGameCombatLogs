@@ -38,6 +38,7 @@ const context = [
     "/api/v1/CommunityPost",
     "/api/v1/UserPost",
     "/api/v1/InviteToCommunity",
+    "/api/v1/VoiceChat",
 ];
 
 const onError = (err, req, resp, target) => {

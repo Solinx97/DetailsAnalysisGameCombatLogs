@@ -7,6 +7,7 @@ import GeneralAnalysis from './components/combatDetails/GeneralAnalysis';
 import MainInformation from './components/combatDetails/MainInformation';
 import Feed from './components/communication/Feed';
 import Chats from './components/communication/chats/Chats';
+import VoiceChat from './components/communication/voiceChat/VoiceChat';
 import AllCommunities from './components/communication/community/AllCommunities';
 import SelectedCommunity from './components/communication/community/SelectedCommunity';
 import CreateCommunity from './components/communication/create/CreateCommunity';
@@ -31,6 +32,10 @@ const AppRoutes = [
     {
         path: '/chats',
         element: <Chats />
+    },
+    {
+        path: '/chats/voice',
+        element: <VoiceChat />
     },
     {
         path: '/chats/create',
