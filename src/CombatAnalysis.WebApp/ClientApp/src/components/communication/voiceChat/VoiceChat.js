@@ -54,6 +54,18 @@ const VoiceChat = () => {
 		}
 
 		userVideoRef.current.srcObject = myStream;
+
+		return () => {
+			console.log("Property myStream released!");
+
+			myStream?.getVideoTracks().forEach(track => {
+				track.stop();
+			});
+
+			myStream?.getAudioTracks().forEach(track => {
+				track.stop();
+			});
+		}
 	}, [myStream])
 
 	const createPeer = (userToSignal, callerId, stream) => {
@@ -63,7 +75,7 @@ const VoiceChat = () => {
 			stream,
 		});
 
-		peer.on("signal", (signal) => {
+		peer.on("signal", signal => {
 			socketRef.current.emit("sendingSignal", { userToSignal, callerId, signal })
 		});
 
@@ -89,30 +101,39 @@ const VoiceChat = () => {
 	const switchCameraAsync = async (cameraStatus) => {
 		setTurnOnCamera(cameraStatus);
 
-		if (cameraStatus === false || (cameraStatus === false && turnOnMicrophone === false)) {
-			myStream.getVideoTracks().forEach(track => {
-				track.stop();
+		if (!cameraStatus) {
+			myStream.getVideoTracks()[0].stop();
+		}
+		else {
+			const newStream = await navigator.mediaDevices.getUserMedia({ video: cameraStatus, audio: turnOnMicrophone });
+			peers.forEach(peer => {
+				const peerStream = peer.streams[0];
+
+				//peer.addTrack(newStream.getVideoTracks()[0], peerStream);
+				peer.replaceTrack(peerStream.getVideoTracks()[0], newStream.getVideoTracks()[0], peerStream);
 			});
 
-			return;
+			setMyStream(newStream);
 		}
 
-		const newStream = await navigator.mediaDevices.getUserMedia({ video: cameraStatus, audio: turnOnMicrophone });
-		setMyStream(newStream);
+		socketRef.current.emit("camerSwitching", { roomId: roomId, cameraStatus: cameraStatus });
 	}
 
 	const switchMicrophoneAsync = async (microphoneStatus) => {
 		setTurnOnMicrophone(microphoneStatus);
 
-		if (microphoneStatus === false || (turnOnCamera === false && microphoneStatus === false)) {
-			myStream.getAudioTracks().forEach(track => {
-				track.stop();
-			});
+		if (!microphoneStatus) {
+			myStream.getAudioTracks()[0].stop();
 
 			return;
 		}
 
 		const newStream = await navigator.mediaDevices.getUserMedia({ video: turnOnCamera, audio: microphoneStatus });
+		peers.forEach(peer => {
+			const peerStream = peer.streams[0];
+			peer.replaceTrack(peerStream.getAudioTracks()[0], newStream.getAudioTracks()[0], peerStream);
+		});
+
 		setMyStream(newStream);
 	}
 
@@ -141,6 +162,7 @@ const VoiceChat = () => {
 
 		socketRef.current.on("allUsers", users => {
 			const peers = [];
+
 			users.forEach(user => {
 				const peer = createPeer(user, socketRef.current.id, stream);
 				peersRef.current.push({
@@ -176,11 +198,11 @@ const VoiceChat = () => {
 		socketRef.current.emit("leaveFromRoom", { roomId: roomId, username: me?.username });
 
 		socketRef.current.on("userLeft", () => {
-			myStream.getVideoTracks().forEach(track => {
+			myStream?.getVideoTracks().forEach(track => {
 				track.stop();
 			});
 
-			myStream.getAudioTracks().forEach(track => {
+			myStream?.getAudioTracks().forEach(track => {
 				track.stop();
 			});
 
@@ -249,6 +271,7 @@ const VoiceChat = () => {
 							<li key={index} className="video">
 								<VoiceChatUser
 									peer={peer}
+									socket={socketRef.current}
 								/>
 							</li>
 						)}

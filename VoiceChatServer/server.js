@@ -53,6 +53,14 @@ io.on("connection", socket => {
         io.to(payload.callerId).emit("receivingReturnedSignal", { signal: payload.signal, id: socket.id });
     });
 
+    socket.on("camerSwitching", cameraData => {
+        const usersInThisRoom = users[cameraData.roomId].filter(user => user.socketId !== socket.id);
+
+        usersInThisRoom.forEach(user => {
+            io.to(user.socketId).emit("cameraSwitched", cameraData.cameraStatus);
+        });
+    });
+
     socket.on("leaveFromRoom", leavingUser => {
         const roomUsers = users[leavingUser.roomId];
 
