@@ -4,18 +4,15 @@ const VoiceChatUser = ({ peer, socket }) => {
     const streamRef = useRef(null);
 
     const [currentStream, setCurrentStream] = useState(null);
-    const [cameraTurnOn, setCameraTurnOn] = useState(true);
+    const [cameraTurnOn, setCameraTurnOn] = useState(false);
 
     useEffect(() => {
         peer.on("stream", stream => {
-            streamRef.current.srcObject = stream;
-            streamRef.current.play();
-
             setCurrentStream(stream);
         });
 
         socket.on("cameraSwitched", status => {
-            setCameraTurnOn(status);
+            setCameraTurnOn(status.cameraStatus);
         });
     }, []);
 
@@ -26,7 +23,7 @@ const VoiceChatUser = ({ peer, socket }) => {
 
         streamRef.current.srcObject = currentStream;
         streamRef.current.play();
-    }, [cameraTurnOn]);
+    }, [currentStream, cameraTurnOn]);
 
     return (
         <>

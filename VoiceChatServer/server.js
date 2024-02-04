@@ -57,7 +57,7 @@ io.on("connection", socket => {
         const usersInThisRoom = users[cameraData.roomId].filter(user => user.socketId !== socket.id);
 
         usersInThisRoom.forEach(user => {
-            io.to(user.socketId).emit("cameraSwitched", cameraData.cameraStatus);
+            io.to(user.socketId).emit("cameraSwitched", { socketId: cameraData.socketId, cameraStatus: cameraData.cameraStatus });
         });
     });
 
