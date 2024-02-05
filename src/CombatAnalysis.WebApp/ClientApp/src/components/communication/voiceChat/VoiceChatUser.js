@@ -1,6 +1,6 @@
 import { memo, useEffect, useRef, useState } from "react";
 
-const VoiceChatUser = ({ peer, socket }) => {
+const VoiceChatUser = ({ peer, socket, username }) => {
     const streamRef = useRef(null);
 
     const [currentStream, setCurrentStream] = useState(null);
@@ -29,7 +29,7 @@ const VoiceChatUser = ({ peer, socket }) => {
         <>
             {cameraTurnOn
                 ? <video className="another" playsInline ref={streamRef} />
-                : <div>STOP</div>
+                : <div>{username}</div>
             }
         </>
     );

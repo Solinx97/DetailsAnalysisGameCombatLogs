@@ -75,7 +75,7 @@ const VoiceChat = () => {
 		});
 
 		peer.on("signal", signal => {
-			socketRef.current.emit("sendingSignal", { userToSignal, callerId, signal })
+			socketRef.current.emit("sendingSignal", { userToSignal, callerId, signal, username: me.username });
 		});
 
 		return peer;
@@ -89,7 +89,7 @@ const VoiceChat = () => {
 		});
 
 		peer.on("signal", signal => {
-			socketRef.current.emit("returningSignal", { signal, callerId })
+			socketRef.current.emit("returningSignal", { signal, callerId });
 		});
 
 		peer.signal(incomingSignal);
@@ -97,27 +97,29 @@ const VoiceChat = () => {
 		return peer;
 	}
 
-	const switchCameraAsync = async (cameraStatus) => {
+	const switchCamera = (cameraStatus) => {
 		setTurnOnCamera(cameraStatus);
 
 		if (!cameraStatus) {
 			myStream.getVideoTracks()[0].stop();
-		}
-		else {
-			navigator.mediaDevices.getUserMedia({ video: cameraStatus, audio: turnOnMicrophone }).then(stream => {
-				peers.forEach(peer => {
-					const peerStream = peer.streams[0];
-					peer.replaceTrack(peerStream.getVideoTracks()[0], stream.getVideoTracks()[0], peerStream);
-				});
+			socketRef.current.emit("cameraSwitching", { roomId: roomId, cameraStatus: cameraStatus });
 
-				setMyStream(stream);
+			return;
+		}
+
+		navigator.mediaDevices.getUserMedia({ video: cameraStatus, audio: turnOnMicrophone }).then(stream => {
+			peers.forEach(peer => {
+				const peerStream = peer.streams[0];
+				peer.replaceTrack(peerStream.getVideoTracks()[0], stream.getVideoTracks()[0], peerStream);
 			});
-		}
 
-		socketRef.current.emit("camerSwitching", { roomId: roomId, cameraStatus: cameraStatus });
+			setMyStream(stream);
+		});
+
+		socketRef.current.emit("cameraSwitching", { roomId: roomId, cameraStatus: cameraStatus });
 	}
 
-	const switchMicrophoneAsync = async (microphoneStatus) => {
+	const switchMicrophone = (microphoneStatus) => {
 		setTurnOnMicrophone(microphoneStatus);
 
 		if (!microphoneStatus) {
@@ -126,13 +128,14 @@ const VoiceChat = () => {
 			return;
 		}
 
-		const newStream = await navigator.mediaDevices.getUserMedia({ video: turnOnCamera, audio: microphoneStatus });
-		peers.forEach(peer => {
-			const peerStream = peer.streams[0];
-			peer.replaceTrack(peerStream.getAudioTracks()[0], newStream.getAudioTracks()[0], peerStream);
-		});
+		navigator.mediaDevices.getUserMedia({ video: turnOnCamera, audio: microphoneStatus }).then(stream => {
+			peers.forEach(peer => {
+				const peerStream = peer.streams[0];
+				peer.replaceTrack(peerStream.getAudioTracks()[0], stream.getAudioTracks()[0], peerStream);
+			});
 
-		setMyStream(newStream);
+			setMyStream(stream);
+		});
 	}
 
 	const joinedUser = (username) => {
@@ -151,47 +154,61 @@ const VoiceChat = () => {
 	}
 
 	const joinToRoom = () => {
-		navigator.mediaDevices.getUserMedia({ video: true, audio: true }).then(stream => {
-			stream.getVideoTracks()[0].stop();
-			stream.getAudioTracks()[0].stop();
+		const stream = createDummyStream(50, 50);
+		setMyStream(stream);
 
-			setMyStream(stream);
+		socketRef.current.emit("joinToRoom", { roomId: roomId, userId: me?.id, username: me.username });
 
-			socketRef.current.emit("joinToRoom", { roomId: roomId, userId: me?.id, username: me?.username });
+		socketRef.current.on("allUsers", users => {
+			const peers = [];
 
-			socketRef.current.on("allUsers", users => {
-				const peers = [];
-
-				users.forEach(user => {
-					const peer = createPeer(user, socketRef.current.id, stream);
-					peersRef.current.push({
-						peerId: user.socketId,
-						peer,
-					});
-
-					peers.push(peer);
+			users.forEach(user => {
+				const peer = createPeer(user, socketRef.current.id, stream);
+				peersRef.current.push({
+					peerId: user.socketId,
+					username: user.username,
+					peer,
 				});
 
-				setPeers(peers);
+				peers.push(peer);
 			});
 
-			socketRef.current.on("userJoined", payload => {
-				joinedUser(payload.username);
-
-				const peer = addPeer(payload.signal, payload.callerId, stream);
-				peersRef.current.push({
-					peerId: payload.callerId,
-					peer,
-				})
-
-				setPeers(users => [...users, peer]);
-			});
-
-			socketRef.current.on("receivingReturnedSignal", payload => {
-				const item = peersRef.current.find(p => p.peerId === payload.id);
-				item.peer.signal(payload.signal);
-			});
+			setPeers(peers);
 		});
+
+		socketRef.current.on("userJoined", payload => {
+			joinedUser(payload.username);
+
+			const peer = addPeer(payload.signal, payload.callerId, stream);
+			peersRef.current.push({
+				peerId: payload.callerId,
+				username: payload.username,
+				peer,
+			})
+
+			setPeers(users => [...users, peer]);
+		});
+
+		socketRef.current.on("receivingReturnedSignal", payload => {
+			const item = peersRef.current.find(p => p.peerId === payload.id);
+			item.peer.signal(payload.signal);
+		});
+	}
+
+	const createDummyStream = (width, height) => {
+		let ctx = new AudioContext(), oscillator = ctx.createOscillator();
+		let dst = oscillator.connect(ctx.createMediaStreamDestination());
+		oscillator.start();
+		const audioTrack = Object.assign(dst.stream.getAudioTracks()[0], { enabled: false });
+
+		let canvas = Object.assign(document.createElement("canvas"), { width: width, height: height });
+		canvas.getContext('2d').fillRect(0, 0, width, height);
+		let stream = canvas.captureStream();
+		const videoTrack = Object.assign(stream.getVideoTracks()[0], { enabled: false });
+
+		const mediaStream = new MediaStream([videoTrack, audioTrack]);
+
+		return mediaStream;
 	}
 
 	const leave = () => {
@@ -230,13 +247,13 @@ const VoiceChat = () => {
 								icon={faVideo}
 								title={t("TurnOffCamera")}
 								className="camera"
-								onClick={async () => await switchCameraAsync(!turnOnCamera)}
+								onClick={() => switchCamera(!turnOnCamera)}
 							/>
 							: <FontAwesomeIcon
 								icon={faVideoSlash}
 								title={t("TurnOnCamera")}
 								className="camera"
-								onClick={async () => await switchCameraAsync(!turnOnCamera)}
+								onClick={() => switchCamera(!turnOnCamera)}
 							/>
 						}
 						{turnOnMicrophone
@@ -244,13 +261,13 @@ const VoiceChat = () => {
 								icon={faMicrophone}
 								title={t("TurnOffMicrophone")}
 								className="microphone"
-								onClick={async () => await switchMicrophoneAsync(!turnOnMicrophone)}
+								onClick={() => switchMicrophone(!turnOnMicrophone)}
 							/>
 							: <FontAwesomeIcon
 								icon={faMicrophoneSlash}
 								title={t("TurnOnMicrophone")}
 								className="microphone"
-								onClick={async () => await switchMicrophoneAsync(!turnOnMicrophone)}
+								onClick={() => switchMicrophone(!turnOnMicrophone)}
 							/>
 						}
 						<div className="btn-shadow" title={t("Leave")} onClick={leave}>
@@ -267,11 +284,12 @@ const VoiceChat = () => {
 						: <div>{me?.username}</div>
 					}
 					<ul className="video-container">
-						{peers.map((peer, index) =>
+						{peersRef.current.map((peer, index) =>
 							<li key={index} className="video">
 								<VoiceChatUser
-									peer={peer}
+									peer={peer.peer}
 									socket={socketRef.current}
+									username={peer.username}
 								/>
 							</li>
 						)}

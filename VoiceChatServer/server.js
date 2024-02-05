@@ -46,14 +46,14 @@ io.on("connection", socket => {
     });
 
     socket.on("sendingSignal", payload => {
-        io.to(payload.userToSignal.socketId).emit("userJoined", { signal: payload.signal, callerId: payload.callerId, username: payload.userToSignal.username });
+        io.to(payload.userToSignal.socketId).emit("userJoined", { signal: payload.signal, callerId: payload.callerId, username: payload.username });
     });
 
     socket.on("returningSignal", payload => {
         io.to(payload.callerId).emit("receivingReturnedSignal", { signal: payload.signal, id: socket.id });
     });
 
-    socket.on("camerSwitching", cameraData => {
+    socket.on("cameraSwitching", cameraData => {
         const usersInThisRoom = users[cameraData.roomId].filter(user => user.socketId !== socket.id);
 
         usersInThisRoom.forEach(user => {
