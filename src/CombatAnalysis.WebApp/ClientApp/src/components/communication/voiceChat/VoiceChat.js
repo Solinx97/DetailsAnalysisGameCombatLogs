@@ -45,6 +45,18 @@ const VoiceChat = () => {
 		}
 
 		joinToRoom();
+
+		const beforeunload = (event) => {
+			refreshPage();
+		}
+
+		window.addEventListener("beforeunload", beforeunload);
+
+		return () => {
+			window.removeEventListener("beforeunload", beforeunload);
+
+			leave();
+		}
 	}, [me, roomId])
 
 	useEffect(() => {
@@ -53,18 +65,6 @@ const VoiceChat = () => {
 		}
 
 		userVideoRef.current.srcObject = myStream;
-
-		return () => {
-			console.log("Property myStream released!");
-
-			myStream?.getVideoTracks().forEach(track => {
-				track.stop();
-			});
-
-			myStream?.getAudioTracks().forEach(track => {
-				track.stop();
-			});
-		}
 	}, [myStream])
 
 	const createPeer = (userToSignal, callerId, stream) => {
@@ -193,6 +193,18 @@ const VoiceChat = () => {
 			const item = peersRef.current.find(p => p.peerId === payload.id);
 			item.peer.signal(payload.signal);
 		});
+
+		socketRef.current.on("someUserLeft", socketId => {
+			if (peersRef.current.length === 0) {
+				return;
+			}
+
+			const peerRef = peersRef.current.filter(peer => peer.peerId === socketId)[0];
+			peerRef.peer.destroy();
+
+			const peerRefIndex = peersRef.current.indexOf(peerRef);
+			peersRef.current.splice(peerRefIndex, 1);
+		});
 	}
 
 	const createDummyStream = (width, height) => {
@@ -212,7 +224,7 @@ const VoiceChat = () => {
 	}
 
 	const leave = () => {
-		socketRef.current.emit("leaveFromRoom", { roomId: roomId, username: me?.username });
+		socketRef.current.emit("leavingFromRoom", { roomId: roomId, username: me?.username });
 
 		socketRef.current.on("userLeft", () => {
 			myStream?.getVideoTracks().forEach(track => {
@@ -223,8 +235,28 @@ const VoiceChat = () => {
 				track.stop();
 			});
 
-			socketRef.current.destroy();
+			peersRef.current.forEach(peerRef => {
+				peerRef.peer.destroy();;
+			});
+
+			socketRef.current.disconnect();
 			navigate(`/chats`);
+		});
+	}
+
+	const refreshPage = () => {
+		socketRef.current.emit("leavingFromRoom", { roomId: roomId, username: me?.username });
+
+		socketRef.current.on("userLeft", () => {
+			myStream?.getVideoTracks().forEach(track => {
+				track.stop();
+			});
+
+			myStream?.getAudioTracks().forEach(track => {
+				track.stop();
+			});
+
+			socketRef.current.disconnect();
 		});
 	}
 
