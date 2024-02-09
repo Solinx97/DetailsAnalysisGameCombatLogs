@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-const VoiceChatDeviceSettings = ({ isAudio = false, switchMicrophoneDevice, switchAudioOutputDevice }) => {
+const VoiceChatDeviceSettings = ({ isAudio = false, microphoneIsOn = false, setMicrophoneDeviceId, switchMicrophoneDevice, switchAudioOutputDevice }) => {
 	const [audioInputDevices, setAudioInputDevices] = useState([]);
 	const [audioOutputDevices, setAudioOutputDevices] = useState([]);
 	const [videoDevices, setVideoDevices] = useState([]);
@@ -25,7 +25,13 @@ const VoiceChatDeviceSettings = ({ isAudio = false, switchMicrophoneDevice, swit
 	}
 
 	const switchInputDevice = (index) => {
-		switchMicrophoneDevice(audioInputDevices[index].deviceId);
+		if (microphoneIsOn) {
+			switchMicrophoneDevice(audioInputDevices[index].deviceId);
+
+			return;
+		}
+
+		setMicrophoneDeviceId(audioInputDevices[index].deviceId);
 	}
 
 	const switchOutputDevice = (index) => {

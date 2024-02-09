@@ -31,6 +31,7 @@ const VoiceChat = () => {
 
 	const [openVideoSettings, setOpenVideoSettings] = useState(false);
 	const [openAudioSettings, setOpenAudioSettings] = useState(false);
+	const [microphoneDeviceId, setMicrophoneDeviceId] = useState("");
 
 	const socketRef = useRef(null);
 	const peersRef = useRef([]);
@@ -138,7 +139,16 @@ const VoiceChat = () => {
 			return;
 		}
 
-		navigator.mediaDevices.getUserMedia({ video: turnOnCamera, audio: microphoneStatus }).then(stream => {
+		const constraints = {
+			video: turnOnCamera,
+			audio: microphoneStatus
+		};
+
+		if (microphoneDeviceId !== "") {
+			constraints.audio = { deviceId: microphoneDeviceId };
+		}
+
+		navigator.mediaDevices.getUserMedia(constraints).then(stream => {
 			peers.forEach(peer => {
 				const peerStream = peer.streams[0];
 				peer.replaceTrack(peerStream.getAudioTracks()[0], stream.getAudioTracks()[0], peerStream);
@@ -390,8 +400,10 @@ const VoiceChat = () => {
 								{openAudioSettings &&
 									<VoiceChatDeviceSettings
 										isAudio={true}
+										setMicrophoneDeviceId={setMicrophoneDeviceId}
 										switchMicrophoneDevice={switchMicrophoneDevice}
 										switchAudioOutputDevice={switchAudioOutputDevice}
+										microphoneIsOn={turnOnMicrophone}
 									/>
 								}
 							</div>
@@ -419,8 +431,10 @@ const VoiceChat = () => {
 								{openAudioSettings &&
 									<VoiceChatDeviceSettings
 										isAudio={true}
+										setMicrophoneDeviceId={setMicrophoneDeviceId}
 										switchMicrophoneDevice={switchMicrophoneDevice}
 										switchAudioOutputDevice={switchAudioOutputDevice}
+										microphoneIsOn={turnOnMicrophone}
 									/>
 								}
 							</div>
