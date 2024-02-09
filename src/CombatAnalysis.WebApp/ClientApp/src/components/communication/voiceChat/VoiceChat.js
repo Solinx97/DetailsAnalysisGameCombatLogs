@@ -27,13 +27,15 @@ const VoiceChat = () => {
 	const [myStream, setMyStream] = useState(null);
 	const [roomId, setRoomId] = useState(0);
 	const [chatName, setChatName] = useState("");
+	const [anotherUsersAudio, setAnotherUsersAudio] = useState([]);
 
 	const [openVideoSettings, setOpenVideoSettings] = useState(false);
 	const [openAudioSettings, setOpenAudioSettings] = useState(false);
 
 	const socketRef = useRef(null);
 	const peersRef = useRef([]);
-	const userVideoRef = useRef(null);
+	const videoRef = useRef(null);
+	const audioRef = useRef(null);
 
 	useEffect(() => {
 		socketRef.current = io.connect("192.168.0.161:2000");
@@ -67,11 +69,11 @@ const VoiceChat = () => {
 	}, [me, roomId]);
 
 	useEffect(() => {
-		if (userVideoRef.current === null) {
+		if (videoRef.current === null) {
 			return;
 		}
 
-		userVideoRef.current.srcObject = myStream;
+		videoRef.current.srcObject = myStream;
 	}, [myStream]);
 
 	const createPeer = (userToSignal, callerId, stream) => {
@@ -146,6 +148,23 @@ const VoiceChat = () => {
 		});
 
 		socketRef.current.emit("microphoneSwitching", { roomId: roomId, microphoneStatus: microphoneStatus });
+	}
+
+	const switchMicrophoneDevice = (deviceId) => {
+		navigator.mediaDevices.getUserMedia({ video: turnOnCamera, audio: { deviceId: deviceId } }).then(stream => {
+			peers.forEach(peer => {
+				const peerStream = peer.streams[0];
+				peer.replaceTrack(peerStream.getAudioTracks()[0], stream.getAudioTracks()[0], peerStream);
+			});
+
+			setMyStream(stream);
+		});
+	}
+
+	const switchAudioOutputDevice = (deviceId) => {
+		for (let i = 0; i < anotherUsersAudio.length; i++) {
+			anotherUsersAudio[i].setSinkId(deviceId);
+        }
 	}
 
 	const joinedUser = (username) => {
@@ -371,6 +390,8 @@ const VoiceChat = () => {
 								{openAudioSettings &&
 									<VoiceChatDeviceSettings
 										isAudio={true}
+										switchMicrophoneDevice={switchMicrophoneDevice}
+										switchAudioOutputDevice={switchAudioOutputDevice}
 									/>
 								}
 							</div>
@@ -398,6 +419,8 @@ const VoiceChat = () => {
 								{openAudioSettings &&
 									<VoiceChatDeviceSettings
 										isAudio={true}
+										switchMicrophoneDevice={switchMicrophoneDevice}
+										switchAudioOutputDevice={switchAudioOutputDevice}
 									/>
 								}
 							</div>
@@ -410,9 +433,10 @@ const VoiceChat = () => {
 						</div>
 					</div>
 				</div>
+				<audio ref={audioRef} />
 				<div className="voice__content">
 					{turnOnCamera
-						? <video className="me" playsInline ref={userVideoRef} autoPlay />
+						? <video className="me" playsInline ref={videoRef} autoPlay />
 						: <div>{me?.username}</div>
 					}
 					<ul className="another-user-container">
@@ -422,6 +446,8 @@ const VoiceChat = () => {
 									peer={peer.peer}
 									socket={socketRef.current}
 									username={peer.username}
+									audio={anotherUsersAudio}
+									setAudio={setAnotherUsersAudio}
 								/>
 							</li>
 						)}

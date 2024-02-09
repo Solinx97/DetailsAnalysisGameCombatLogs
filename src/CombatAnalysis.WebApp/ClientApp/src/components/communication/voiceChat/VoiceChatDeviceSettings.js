@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-const VoiceChatDeviceSettings = ({ isAudio = false }) => {
+const VoiceChatDeviceSettings = ({ isAudio = false, switchMicrophoneDevice, switchAudioOutputDevice }) => {
 	const [audioInputDevices, setAudioInputDevices] = useState([]);
 	const [audioOutputDevices, setAudioOutputDevices] = useState([]);
 	const [videoDevices, setVideoDevices] = useState([]);
@@ -24,6 +24,14 @@ const VoiceChatDeviceSettings = ({ isAudio = false }) => {
 		});
 	}
 
+	const switchInputDevice = (index) => {
+		switchMicrophoneDevice(audioInputDevices[index].deviceId);
+	}
+
+	const switchOutputDevice = (index) => {
+		switchAudioOutputDevice(audioOutputDevices[index].deviceId);
+	}
+
 	return (
 		<div className="device-toolbar">
 			{isAudio
@@ -33,7 +41,7 @@ const VoiceChatDeviceSettings = ({ isAudio = false }) => {
 						{audioOutputDevices.map((device, index) =>
 							<li key={index} className="form-check">
 								<input className="form-check-input" type="radio" name="soundDevice" id={`soundDevice${index}`}
-									defaultChecked={index === 0 ? true : false} disabled={audioOutputDevices.length === 1} />
+									defaultChecked={index === 0 ? true : false} disabled={audioOutputDevices.length === 1} onClick={() => switchOutputDevice(index)} />
 								<label className="form-check-label" htmlFor={`soundDevice${index}`}>
 									{device.label.split("-")[0]}
 								</label>
@@ -45,7 +53,7 @@ const VoiceChatDeviceSettings = ({ isAudio = false }) => {
 						{audioInputDevices.map((device, index) =>
 							<li key={index} className="form-check">
 								<input className="form-check-input" type="radio" name="microphoneDevice" id={`microphoneDevice${index}`}
-									defaultChecked={index === 0 ? true : false} disabled={audioInputDevices.length === 1} />
+									defaultChecked={index === 0 ? true : false} disabled={audioInputDevices.length === 1} onClick={() => switchInputDevice(index)} />
 								<label className="form-check-label" htmlFor={`microphoneDevice${index}`}>
 									{device.label.split("-")[0]}
 								</label>

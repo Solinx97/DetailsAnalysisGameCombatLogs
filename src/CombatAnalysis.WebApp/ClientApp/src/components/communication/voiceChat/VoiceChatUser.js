@@ -2,7 +2,7 @@ import { memo, useEffect, useRef, useState } from "react";
 import { faMicrophone, faMicrophoneSlash } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
-const VoiceChatUser = ({ peer, socket, username }) => {
+const VoiceChatUser = ({ peer, socket, username, audio, setAudio }) => {
     const videoStreamRef = useRef(null);
     const audioStreamRef = useRef(null);
 
@@ -30,7 +30,7 @@ const VoiceChatUser = ({ peer, socket, username }) => {
         }
 
         const videoTracks = currentStream.getVideoTracks();
-        if (videoTracks.length > 0 && videoTracks[0].readyState !== "ended") {
+        if (videoTracks.length > 0 && turnOnCamera) {
             videoStreamRef.current.srcObject = currentStream;
             videoStreamRef.current.play();
         }
@@ -42,9 +42,14 @@ const VoiceChatUser = ({ peer, socket, username }) => {
         }
 
         const audioTracks = currentStream.getAudioTracks();
-        if (audioTracks.length > 0 && audioTracks[0].readyState !== "ended") {
+        if (audioTracks.length > 0 && turnOnMicrophone) {
             audioStreamRef.current.srcObject = currentStream;
             audioStreamRef.current.play();
+
+            const allAudio = audio;
+            allAudio.push(audioStreamRef.current);
+
+            setAudio(allAudio);
         }
     }, [currentStream, turnOnMicrophone]);
 
@@ -52,7 +57,7 @@ const VoiceChatUser = ({ peer, socket, username }) => {
         <div className="another">
             {turnOnCamera
                 ? <video className="another__video" playsInline ref={videoStreamRef} muted />
-                : turnOnMicrophone && <audio ref={audioStreamRef} hidden />
+                : turnOnMicrophone && <audio ref={audioStreamRef} />
             }
             <div className="information">
                 <div className="another__username">{username}</div>
