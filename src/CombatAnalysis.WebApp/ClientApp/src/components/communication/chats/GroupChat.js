@@ -252,7 +252,7 @@ const GroupChat = ({ chat, me, setSelectedChat }) => {
     }
 
     const call = () => {
-        navigate(`/chats/voice?roomId=${chat.id}`);
+        navigate(`/chats/voice?roomId=${chat.id}&chatName=${chat.name}`);
     }
 
     if (isLoading || usersIsLoading || myUsersIsLoading) {

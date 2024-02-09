@@ -1,4 +1,4 @@
-import { faMicrophone, faMicrophoneSlash, faRightFromBracket, faVideo, faVideoSlash } from '@fortawesome/free-solid-svg-icons';
+import { faAngleDown, faAngleUp, faMicrophone, faMicrophoneSlash, faRightFromBracket, faVideo, faVideoSlash } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { memo, useEffect, useRef, useState } from "react";
 import { useTranslation } from 'react-i18next';
@@ -6,6 +6,7 @@ import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import io from "socket.io-client";
 import CommunicationMenu from '../CommunicationMenu';
+import VoiceChatDeviceSettings from "./VoiceChatDeviceSettings";
 import VoiceChatUser from "./VoiceChatUser";
 
 import "../../../styles/communication/chats/voice.scss";
@@ -25,6 +26,10 @@ const VoiceChat = () => {
 	const [showJoinedUserTimeout, setShowJoinedUserTimeout] = useState(null);
 	const [myStream, setMyStream] = useState(null);
 	const [roomId, setRoomId] = useState(0);
+	const [chatName, setChatName] = useState("");
+
+	const [openVideoSettings, setOpenVideoSettings] = useState(false);
+	const [openAudioSettings, setOpenAudioSettings] = useState(false);
 
 	const socketRef = useRef(null);
 	const peersRef = useRef([]);
@@ -35,9 +40,11 @@ const VoiceChat = () => {
 
 		const queryParams = new URLSearchParams(window.location.search);
 		const targetRoomId = +queryParams.get("roomId");
+		const targetChatName = queryParams.get("chatName");
 
 		setRoomId(targetRoomId);
-	}, [])
+		setChatName(targetChatName);
+	}, []);
 
 	useEffect(() => {
 		if (me === null || roomId === 0) {
@@ -57,7 +64,7 @@ const VoiceChat = () => {
 
 			leave();
 		}
-	}, [me, roomId])
+	}, [me, roomId]);
 
 	useEffect(() => {
 		if (userVideoRef.current === null) {
@@ -65,7 +72,7 @@ const VoiceChat = () => {
 		}
 
 		userVideoRef.current.srcObject = myStream;
-	}, [myStream])
+	}, [myStream]);
 
 	const createPeer = (userToSignal, callerId, stream) => {
 		const peer = new window.SimplePeer({
@@ -124,6 +131,7 @@ const VoiceChat = () => {
 
 		if (!microphoneStatus) {
 			myStream.getAudioTracks()[0].stop();
+			socketRef.current.emit("microphoneSwitching", { roomId: roomId, microphoneStatus: microphoneStatus });
 
 			return;
 		}
@@ -136,6 +144,8 @@ const VoiceChat = () => {
 
 			setMyStream(stream);
 		});
+
+		socketRef.current.emit("microphoneSwitching", { roomId: roomId, microphoneStatus: microphoneStatus });
 	}
 
 	const joinedUser = (username) => {
@@ -211,7 +221,7 @@ const VoiceChat = () => {
 		let ctx = new AudioContext(), oscillator = ctx.createOscillator();
 		let dst = oscillator.connect(ctx.createMediaStreamDestination());
 		oscillator.start();
-		const audioTrack = Object.assign(dst.stream.getAudioTracks()[0], { enabled: false });
+		const audioTrack = Object.assign(dst.stream.getAudioTracks()[0], { enabled: true });
 
 		let canvas = Object.assign(document.createElement("canvas"), { width: width, height: height });
 		canvas.getContext('2d').fillRect(0, 0, width, height);
@@ -260,6 +270,16 @@ const VoiceChat = () => {
 		});
 	}
 
+	const handleOpenVideoSettings = () => {
+		setOpenAudioSettings(false);
+		setOpenVideoSettings(!openVideoSettings);
+	}
+
+	const handleOpenAudioSettings = () => {
+		setOpenVideoSettings(false);
+		setOpenAudioSettings(!openAudioSettings);
+	}
+
 	return (
 		<>
 			<CommunicationMenu
@@ -272,35 +292,115 @@ const VoiceChat = () => {
 			}
 			<div className="voice">
 				<div className="voice__title">
-					<div>Title</div>
+					<div>{chatName}</div>
 					<div className="tools">
 						{turnOnCamera
-							? <FontAwesomeIcon
-								icon={faVideo}
-								title={t("TurnOffCamera")}
-								className="camera"
-								onClick={() => switchCamera(!turnOnCamera)}
-							/>
-							: <FontAwesomeIcon
-								icon={faVideoSlash}
-								title={t("TurnOnCamera")}
-								className="camera"
-								onClick={() => switchCamera(!turnOnCamera)}
-							/>
+							? <div className="device">
+								<FontAwesomeIcon
+									icon={faVideo}
+									title={t("TurnOffCamera")}
+									className="device__camera"
+									onClick={() => switchCamera(!turnOnCamera)}
+								/>
+								{openVideoSettings
+									? <FontAwesomeIcon
+										icon={faAngleDown}
+										title={t("Setting")}
+										className="device__settings"
+										onClick={handleOpenVideoSettings}
+									/>
+									: <FontAwesomeIcon
+										icon={faAngleDown}
+										title={t("Setting")}
+										className="device__settings"
+										onClick={handleOpenVideoSettings}
+									/>
+								}
+								{openVideoSettings &&
+									<VoiceChatDeviceSettings />
+								}
+							</div>
+							: <div className="device">
+								<FontAwesomeIcon
+									icon={faVideoSlash}
+									title={t("TurnOnCamera")}
+									className="device__camera"
+									onClick={() => switchCamera(!turnOnCamera)}
+								/>
+								{openVideoSettings
+									? <FontAwesomeIcon
+										icon={faAngleUp}
+										title={t("Setting")}
+										className="device__settings"
+										onClick={handleOpenVideoSettings}
+									/>
+									: <FontAwesomeIcon
+										icon={faAngleDown}
+										title={t("Setting")}
+										className="device__settings"
+										onClick={handleOpenVideoSettings}
+									/>
+								}
+								{openVideoSettings &&
+									<VoiceChatDeviceSettings />
+								}
+							</div>
 						}
 						{turnOnMicrophone
-							? <FontAwesomeIcon
-								icon={faMicrophone}
-								title={t("TurnOffMicrophone")}
-								className="microphone"
-								onClick={() => switchMicrophone(!turnOnMicrophone)}
-							/>
-							: <FontAwesomeIcon
-								icon={faMicrophoneSlash}
-								title={t("TurnOnMicrophone")}
-								className="microphone"
-								onClick={() => switchMicrophone(!turnOnMicrophone)}
-							/>
+							? <div className="device">
+								<FontAwesomeIcon
+									icon={faMicrophone}
+									title={t("TurnOffMicrophone")}
+									className="device__microphone"
+									onClick={() => switchMicrophone(!turnOnMicrophone)}
+								/>
+								{openAudioSettings
+									? <FontAwesomeIcon
+										icon={faAngleUp}
+										title={t("Setting")}
+										className="device__settings"
+										onClick={handleOpenAudioSettings}
+									/>
+									: <FontAwesomeIcon
+										icon={faAngleDown}
+										title={t("Setting")}
+										className="device__settings"
+										onClick={handleOpenAudioSettings}
+									/>
+								}
+								{openAudioSettings &&
+									<VoiceChatDeviceSettings
+										isAudio={true}
+									/>
+								}
+							</div>
+							: <div className="device">
+								<FontAwesomeIcon
+									icon={faMicrophoneSlash}
+									title={t("TurnOnMicrophone")}
+									className="device__microphone"
+									onClick={() => switchMicrophone(!turnOnMicrophone)}
+								/>
+								{openAudioSettings
+									? <FontAwesomeIcon
+										icon={faAngleUp}
+										title={t("Setting")}
+										className="device__settings"
+										onClick={handleOpenAudioSettings}
+									/>
+									: <FontAwesomeIcon
+										icon={faAngleDown}
+										title={t("Setting")}
+										className="device__settings"
+										onClick={handleOpenAudioSettings}
+									/>
+								}
+								{openAudioSettings &&
+									<VoiceChatDeviceSettings
+										isAudio={true}
+									/>
+								}
+							</div>
 						}
 						<div className="btn-shadow" title={t("Leave")} onClick={leave}>
 							<FontAwesomeIcon
@@ -315,9 +415,9 @@ const VoiceChat = () => {
 						? <video className="me" playsInline ref={userVideoRef} autoPlay />
 						: <div>{me?.username}</div>
 					}
-					<ul className="video-container">
+					<ul className="another-user-container">
 						{peersRef.current.map((peer, index) =>
-							<li key={index} className="video">
+							<li key={index} className="user">
 								<VoiceChatUser
 									peer={peer.peer}
 									socket={socketRef.current}
@@ -329,7 +429,7 @@ const VoiceChat = () => {
 				</div>
 			</div>
 		</>
-	)
+	);
 }
 
 export default memo(VoiceChat);

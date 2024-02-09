@@ -61,6 +61,14 @@ io.on("connection", socket => {
         });
     });
 
+    socket.on("microphoneSwitching", microphoneData => {
+        const usersInThisRoom = users[microphoneData.roomId].filter(user => user.socketId !== socket.id);
+
+        usersInThisRoom.forEach(user => {
+            io.to(user.socketId).emit("microphoneSwitched", { socketId: microphoneData.socketId, microphoneStatus: microphoneData.microphoneStatus });
+        });
+    });
+
     socket.on("leavingFromRoom", leavingUser => {
         const roomUsers = users[leavingUser.roomId];
         if (roomUsers === undefined) {

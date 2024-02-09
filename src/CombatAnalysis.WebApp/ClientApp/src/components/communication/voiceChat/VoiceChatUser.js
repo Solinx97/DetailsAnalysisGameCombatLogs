@@ -1,10 +1,14 @@
 import { memo, useEffect, useRef, useState } from "react";
+import { faMicrophone, faMicrophoneSlash } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 const VoiceChatUser = ({ peer, socket, username }) => {
-    const streamRef = useRef(null);
+    const videoStreamRef = useRef(null);
+    const audioStreamRef = useRef(null);
 
     const [currentStream, setCurrentStream] = useState(null);
-    const [cameraTurnOn, setCameraTurnOn] = useState(false);
+    const [turnOnCamera, setTurnOnCamera] = useState(false);
+    const [turnOnMicrophone, setTurnOnMicrophone] = useState(false);
 
     useEffect(() => {
         peer.on("stream", stream => {
@@ -12,26 +16,58 @@ const VoiceChatUser = ({ peer, socket, username }) => {
         });
 
         socket.on("cameraSwitched", status => {
-            setCameraTurnOn(status.cameraStatus);
+            setTurnOnCamera(status.cameraStatus);
+        });
+
+        socket.on("microphoneSwitched", status => {
+            setTurnOnMicrophone(status.microphoneStatus);
         });
     }, []);
 
     useEffect(() => {
-        if (streamRef.current === null || currentStream === null) {
+        if (videoStreamRef.current === null || currentStream === null) {
             return;
         }
 
-        streamRef.current.srcObject = currentStream;
-        streamRef.current.play();
-    }, [currentStream, cameraTurnOn]);
+        const videoTracks = currentStream.getVideoTracks();
+        if (videoTracks.length > 0 && videoTracks[0].readyState !== "ended") {
+            videoStreamRef.current.srcObject = currentStream;
+            videoStreamRef.current.play();
+        }
+    }, [currentStream, turnOnCamera]);
+
+    useEffect(() => {
+        if (audioStreamRef.current === null || currentStream === null) {
+            return;
+        }
+
+        const audioTracks = currentStream.getAudioTracks();
+        if (audioTracks.length > 0 && audioTracks[0].readyState !== "ended") {
+            audioStreamRef.current.srcObject = currentStream;
+            audioStreamRef.current.play();
+        }
+    }, [currentStream, turnOnMicrophone]);
 
     return (
-        <>
-            {cameraTurnOn
-                ? <video className="another" playsInline ref={streamRef} />
-                : <div>{username}</div>
+        <div className="another">
+            {turnOnCamera
+                ? <video className="another__video" playsInline ref={videoStreamRef} muted />
+                : turnOnMicrophone && <audio ref={audioStreamRef} hidden />
             }
-        </>
+            <div className="information">
+                <div className="another__username">{username}</div>
+                {turnOnMicrophone
+                    ? <FontAwesomeIcon
+                        icon={faMicrophone}
+                        title="TurnOffMicrophone"
+                    />
+                    : <FontAwesomeIcon
+                        icon={faMicrophoneSlash}
+                        title="TurnOffMicrophone"
+                    />
+                }
+            </div>
+        </div>
     );
 }
 
