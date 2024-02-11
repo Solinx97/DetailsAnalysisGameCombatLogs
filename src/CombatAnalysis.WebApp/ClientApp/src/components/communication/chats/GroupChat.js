@@ -3,6 +3,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { memo, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
+import io from 'socket.io-client';
 import { useFindGroupChatMessageByChatIdQuery } from '../../../store/api/ChatApi';
 import { useUpdateGroupChatAsyncMutation } from '../../../store/api/communication/chats/GroupChat.api';
 import {
@@ -26,7 +27,7 @@ import AddPeople from '../../AddPeople';
 import GroupChatMenu from './GroupChatMenu';
 import GroupChatMessage from './GroupChatMessage';
 
-import "../../../styles/communication/chats/groupChat.scss";
+import '../../../styles/communication/chats/groupChat.scss';
 
 const getGroupChatMessagesInterval = 1000;
 const messageType = {
@@ -47,9 +48,11 @@ const GroupChat = ({ chat, me, setSelectedChat }) => {
     const [editNameOn, setEditNameOn] = useState(false);
     const [myMessagesCount, setMyMessagesCount] = useState(null);
     const [joinedToCall, setJoinedToCall] = useState(false);
+    const [usersOnCall, setUsersOnCall] = useState(0);
 
     const messageInput = useRef(null);
     const chatNameInput = useRef(null);
+    const socketRef = useRef(null);
 
     const { data: messages, isLoading } = useFindGroupChatMessageByChatIdQuery(chat.id, {
         pollingInterval: getGroupChatMessagesInterval
@@ -68,6 +71,16 @@ const GroupChat = ({ chat, me, setSelectedChat }) => {
     const [removeUnreadGroupChatMessageAsyncMut] = useRemoveUnreadGroupChatMessageAsyncMutation();
     const [findUnreadGroupChatMessageQ] = useLazyFindUnreadGroupChatMessageQuery();
     const [getMyMessageCountAsync] = useLazyFindGroupChatMessageCountQuery();
+
+    useEffect(() => {
+        socketRef.current = io.connect("192.168.0.161:2000");
+
+        socketRef.current.emit("checkUsersOnCall", chat.id);
+
+        socketRef.current.on("checkedUsersOnCall", count => {
+            setUsersOnCall(count);
+        });
+    }, []);
 
     useEffect(() => {
         if (groupChatUsers === undefined) {
@@ -285,21 +298,16 @@ const GroupChat = ({ chat, me, setSelectedChat }) => {
                             : <div className="name" title={chat.name}>{chat.name}</div>
                         }
                     </div>
+                    {usersOnCall > 0 &&
+                        <div className="title__call-started">Call started</div>
+                    }
                     <div className="title__menu">
-                        {joinedToCall
-                            ? <FontAwesomeIcon
-                                icon={faPhoneSlash}
-                                title={t("FinishCall")}
-                                className="call_active"
-                                onClick={() => setJoinedToCall(false)}
-                            />
-                            : <FontAwesomeIcon
-                                icon={faPhone}
-                                title={t("Call")}
-                                className="call"
-                                onClick={call}
-                            />
-                        }
+                        <FontAwesomeIcon
+                            icon={faPhone}
+                            title={t("Call")}
+                            className={`call${usersOnCall > 0 ? "_active" : ""}`}
+                            onClick={call}
+                        />
                         <FontAwesomeIcon
                             icon={faGear}
                             title={t("Settings")}

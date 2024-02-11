@@ -20,9 +20,25 @@ const ip = "192.168.0.161";
 const roomSize = 5;
 
 const users = {};
+const chatUsers = {};
 const socketToRoom = {};
 
 io.on("connection", socket => {
+    socket.on("checkUsersOnCall", roomId => {
+        if (chatUsers[roomId] === undefined ) {
+            chatUsers[roomId] = [socket.id];
+        }
+        else {
+            chatUsers[roomId].push(socket.id);
+        }
+
+        const count = users[roomId] === undefined ? 0 : users[roomId].length;
+
+        chatUsers[roomId].forEach(chatUserId => {
+            io.to(chatUserId).emit("checkedUsersOnCall", count);
+        });
+    });
+
     socket.on("joinToRoom", joinedUser => {
         if (users[joinedUser.roomId]) {
             const length = users[joinedUser.roomId].length;
@@ -43,6 +59,9 @@ io.on("connection", socket => {
         const usersInThisRoom = users[joinedUser.roomId].filter(user => user.userId !== joinedUser.userId);
 
         socket.emit("allUsers", usersInThisRoom);
+        chatUsers[joinedUser.roomId].forEach(chatUserId => {
+            io.to(chatUserId).emit("checkedUsersOnCall", users[joinedUser.roomId].length);
+        });
     });
 
     socket.on("sendingSignal", payload => {
@@ -80,19 +99,25 @@ io.on("connection", socket => {
 
         users[leavingUser.roomId].splice(targetUserIndex, 1);
 
-        if (users[leavingUser.roomId].indexOf(targetUser) < 0) {
-            socket.emit("userLeft", targetUser?.socketId);
-
-            users[leavingUser.roomId].forEach(element => {
-                io.to(element.socketId).emit("someUserLeft", targetUser?.socketId);
-
-                const usersInThisRoom = users[leavingUser.roomId].filter(user => user.socketId !== element.socketId);
-                io.to(element.socketId).emit("allUsers", usersInThisRoom);
-            });
+        if (users[leavingUser.roomId].indexOf(targetUser) >= 0) {
+            return;
         }
+
+        socket.emit("userLeft", targetUser?.socketId);
+
+        users[leavingUser.roomId].forEach(element => {
+            io.to(element.socketId).emit("someUserLeft", targetUser?.socketId);
+
+            const usersInThisRoom = users[leavingUser.roomId].filter(user => user.socketId !== element.socketId);
+            io.to(element.socketId).emit("allUsers", usersInThisRoom);
+        });
+
+        chatUsers[leavingUser.roomId].forEach(chatUserId => {
+            io.to(chatUserId).emit("checkedUsersOnCall", users[leavingUser.roomId].length);
+        });
     });
 
-    socket.on("disconnect", (reason) => {
+    socket.on("disconnect", () => {
         const roomId = socketToRoom[socket.id];
         let room = users[roomId];
 

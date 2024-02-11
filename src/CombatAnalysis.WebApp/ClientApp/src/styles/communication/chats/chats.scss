@@ -30,6 +30,12 @@
                     gap: 10px;
                 }
 
+                &__call-started {
+                    position: absolute;
+                    right: 10%;
+                    font-size: 10px;
+                }
+
                 &__menu {
                     display: flex;
                     justify-content: space-between;
@@ -37,10 +43,10 @@
                     width: 75px;
 
                     .call_active {
-                        border: 2px solid gray;
+                        border: 1px solid blue;
+                        padding: 10px;
                         border-radius: 20px;
-                        padding: 5px;
-                        box-shadow: 2px 2px 2px 2px green;
+                        box-shadow: 2px 2px 2px 2px blue;
                     }
                 }
 

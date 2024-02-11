@@ -4,12 +4,12 @@ import React, { memo, useEffect, useRef, useState } from "react";
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import io from "socket.io-client";
+import io from 'socket.io-client';
 import CommunicationMenu from '../CommunicationMenu';
-import VoiceChatDeviceSettings from "./VoiceChatDeviceSettings";
-import VoiceChatUser from "./VoiceChatUser";
+import VoiceChatDeviceSettings from './VoiceChatDeviceSettings';
+import VoiceChatUser from './VoiceChatUser';
 
-import "../../../styles/communication/chats/voice.scss";
+import '../../../styles/communication/chats/voice.scss';
 
 const VoiceChat = () => {
 	const { t } = useTranslation("communication/chats/groupChat");
