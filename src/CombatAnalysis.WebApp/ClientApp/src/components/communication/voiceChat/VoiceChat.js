@@ -279,6 +279,7 @@ const VoiceChat = () => {
 			});
 
 			socketRef.current.disconnect();
+			socketRef.current.destroy();
 			navigate(`/chats`);
 		});
 	}

@@ -1,4 +1,4 @@
-﻿import { faCloudArrowUp, faGear, faPaperPlane, faPen, faPhone, faPhoneSlash } from '@fortawesome/free-solid-svg-icons';
+﻿import { faCloudArrowUp, faGear, faPaperPlane, faPen, faPhone } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { memo, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -47,7 +47,6 @@ const GroupChat = ({ chat, me, setSelectedChat }) => {
     const [userInformation, setUserInformation] = useState(null);
     const [editNameOn, setEditNameOn] = useState(false);
     const [myMessagesCount, setMyMessagesCount] = useState(null);
-    const [joinedToCall, setJoinedToCall] = useState(false);
     const [usersOnCall, setUsersOnCall] = useState(0);
 
     const messageInput = useRef(null);
@@ -80,6 +79,12 @@ const GroupChat = ({ chat, me, setSelectedChat }) => {
         socketRef.current.on("checkedUsersOnCall", count => {
             setUsersOnCall(count);
         });
+
+        return () => {
+            socketRef.current.emit("removeUserFromChat", chat.id);
+
+            socketRef.current.destroy();
+        }
     }, []);
 
     useEffect(() => {
@@ -93,7 +98,7 @@ const GroupChat = ({ chat, me, setSelectedChat }) => {
         }
 
         setGroupChatUsersId(customersId);
-    }, [groupChatUsers])
+    }, [groupChatUsers]);
 
     useEffect(() => {
         if (meInChat === undefined) {
@@ -108,7 +113,7 @@ const GroupChat = ({ chat, me, setSelectedChat }) => {
         }
 
         getMyMessageCount();
-    }, [meInChat])
+    }, [meInChat]);
 
     const sendMessageAsync = async () => {
         if (messageInput.current.value.length === 0) {

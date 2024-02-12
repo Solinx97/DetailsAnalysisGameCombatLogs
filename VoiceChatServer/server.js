@@ -25,18 +25,27 @@ const socketToRoom = {};
 
 io.on("connection", socket => {
     socket.on("checkUsersOnCall", roomId => {
-        if (chatUsers[roomId] === undefined ) {
+        if (chatUsers[roomId] === undefined) {
             chatUsers[roomId] = [socket.id];
         }
         else {
             chatUsers[roomId].push(socket.id);
         }
-
+        
         const count = users[roomId] === undefined ? 0 : users[roomId].length;
 
         chatUsers[roomId].forEach(chatUserId => {
             io.to(chatUserId).emit("checkedUsersOnCall", count);
         });
+    });
+
+    socket.on("removeUserFromChat", roomId => {
+        if (chatUsers[roomId] === undefined) {
+            return;
+        }
+
+        const index = chatUsers[roomId].indexOf(socket.id);
+        chatUsers[roomId].splice(index, 1);
     });
 
     socket.on("joinToRoom", joinedUser => {
