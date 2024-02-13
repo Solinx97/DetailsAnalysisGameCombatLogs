@@ -21,7 +21,7 @@ const Home = () => {
     useEffect(() => {
         const queryParams = new URLSearchParams(window.location.search);
         setShouldBeAuthorize(queryParams.get("shouldBeAuthorize") !== null);
-    }, [])
+    }, []);
 
     useEffect(() => {
         if (!shouldBeAuthorize) {
@@ -31,7 +31,7 @@ const Home = () => {
         setTimeout(() => {
             setShouldBeAuthorize(false);
         }, shouldBeAutorizeTimeout)
-    }, [shouldBeAuthorize])
+    }, [shouldBeAuthorize]);
 
     return (
         <div className="home">

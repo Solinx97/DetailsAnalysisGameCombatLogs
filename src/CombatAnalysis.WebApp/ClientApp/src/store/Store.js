@@ -1,14 +1,16 @@
 ﻿import { combineReducers, configureStore } from '@reduxjs/toolkit';
+import authenticationMiddleware from '../middleware/authenticationMiddleware';
 import { ChatApi } from './api/ChatApi';
 import { CombatParserApi } from './api/CombatParserApi';
 import { UserApi } from './api/UserApi';
+import callReducer from './slicers/CallSlice';
 import customerReducer from './slicers/CustomerSlice';
 import userReducer from './slicers/UserSlice';
-import authenticationMiddleware from '../middleware/authenticationMiddleware';
 
 const reducers = combineReducers({
     customer: customerReducer,
     user: userReducer,
+    call: callReducer,
     [UserApi.reducerPath]: UserApi.reducer,
     [UserApi.reducerPath]: UserApi.reducer,
     [ChatApi.reducerPath]: ChatApi.reducer,

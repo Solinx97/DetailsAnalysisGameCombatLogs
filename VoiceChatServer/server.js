@@ -24,6 +24,13 @@ const chatUsers = {};
 const socketToRoom = {};
 
 io.on("connection", socket => {
+    socket.on("getSocketId", payload => {
+        const me = users[payload.roomId].filter(user => user.userId === payload.userId)[0];
+
+        socket.id = me.socketId;
+        socket.emit("gotSocketId", me.socketId);
+    });
+
     socket.on("checkUsersOnCall", roomId => {
         if (chatUsers[roomId] === undefined) {
             chatUsers[roomId] = [socket.id];
@@ -49,6 +56,14 @@ io.on("connection", socket => {
     });
 
     socket.on("joinToRoom", joinedUser => {
+        const user = { 
+            socketId: socket.id,
+            userId: joinedUser.userId,
+            username: joinedUser.username,
+            turnOnCamera: joinedUser.turnOnCamera,
+            turnOnMicrophone: joinedUser.turnOnMicrophone,
+        };
+
         if (users[joinedUser.roomId]) {
             const length = users[joinedUser.roomId].length;
             if (length === roomSize) {
@@ -58,42 +73,63 @@ io.on("connection", socket => {
             
             const userAlreadyJoined = users[joinedUser.roomId].filter(user => user.userId === joinedUser.userId);
             if (userAlreadyJoined.length === 0) {
-                users[joinedUser.roomId].push({ socketId: socket.id, userId: joinedUser.userId, username: joinedUser.username });
+                users[joinedUser.roomId].push(user);
             }
         } else {
-            users[joinedUser.roomId] = [{ socketId: socket.id, userId: joinedUser.userId, username: joinedUser.username }];
+            users[joinedUser.roomId] = [user];
         }
 
         socketToRoom[socket.id] = joinedUser.roomId;
         const usersInThisRoom = users[joinedUser.roomId].filter(user => user.userId !== joinedUser.userId);
 
         socket.emit("allUsers", usersInThisRoom);
+        if (chatUsers[joinedUser.roomId] === undefined) {
+            return;
+        }
+        
         chatUsers[joinedUser.roomId].forEach(chatUserId => {
             io.to(chatUserId).emit("checkedUsersOnCall", users[joinedUser.roomId].length);
         });
     });
 
     socket.on("sendingSignal", payload => {
-        io.to(payload.userToSignal.socketId).emit("userJoined", { signal: payload.signal, callerId: payload.callerId, username: payload.username });
+        const userToSignalData = users[payload.roomId].filter(user => user.socketId === payload.userToSignal.socketId)[0];
+
+        io.to(payload.userToSignal.socketId).emit("userJoined", { 
+            signal: payload.signal,
+            callerId: payload.callerId,
+            username: payload.username,
+            turnOnCamera: userToSignalData.turnOnCamera,
+            turnOnMicrophone: userToSignalData.turnOnMicrophone,
+        });
     });
 
     socket.on("returningSignal", payload => {
-        io.to(payload.callerId).emit("receivingReturnedSignal", { signal: payload.signal, id: socket.id });
+        io.to(payload.callerId).emit("receivingReturnedSignal", { 
+            signal: payload.signal,
+            id: socket.id,
+        });
     });
 
     socket.on("cameraSwitching", cameraData => {
+        const me = users[cameraData.roomId].filter(user => user.socketId === socket.id)[0];
+        me.turnOnCamera = cameraData.cameraStatus;
+
         const usersInThisRoom = users[cameraData.roomId].filter(user => user.socketId !== socket.id);
 
         usersInThisRoom.forEach(user => {
-            io.to(user.socketId).emit("cameraSwitched", { socketId: cameraData.socketId, cameraStatus: cameraData.cameraStatus });
+            io.to(user.socketId).emit("cameraSwitched", cameraData.cameraStatus);
         });
     });
 
     socket.on("microphoneSwitching", microphoneData => {
+        const me = users[microphoneData.roomId].filter(user => user.socketId === socket.id)[0];
+        me.turnOnMicrophone = microphoneData.microphoneStatus;
+
         const usersInThisRoom = users[microphoneData.roomId].filter(user => user.socketId !== socket.id);
 
         usersInThisRoom.forEach(user => {
-            io.to(user.socketId).emit("microphoneSwitched", { socketId: microphoneData.socketId, microphoneStatus: microphoneData.microphoneStatus });
+            io.to(user.socketId).emit("microphoneSwitched", microphoneData.cameraStatus);
         });
     });
 

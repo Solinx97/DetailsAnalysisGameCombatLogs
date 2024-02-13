@@ -1,0 +1,52 @@
+.voice-chat-minimazed, .voice-chat-minimazed_min {
+    position: absolute;
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+    top: 1%;
+    right: 40%;
+    z-index: 999;
+    width: auto;
+
+    .content {
+        display: flex;
+        justify-content: center;
+        gap: 25px;
+        border: 2px solid gray;
+        border-radius: 10px;
+        padding: 10px;
+        background: white;
+        width: 200px;
+    }
+
+    .show, .hide {
+        display: flex;
+        align-items: center;
+        margin-left: 55px;
+        margin-top: 15px;
+    }
+
+    &__tools {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+    }
+}
+
+.voice-chat-minimazed_min {
+    .content {
+        border: 1px solid gray;
+        border-radius: 10px;
+        background: white;
+        font-size: 10px;
+        padding: 5px;
+        width: 125px;
+    }
+
+    .show, .hide {
+        display: flex;
+        align-items: center;
+        margin-left: 45px;
+        margin-top: 5px;
+    }
+}

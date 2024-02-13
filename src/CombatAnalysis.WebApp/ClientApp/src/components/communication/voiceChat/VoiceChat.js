@@ -2,9 +2,11 @@ import { faAngleDown, faAngleUp, faMicrophone, faMicrophoneSlash, faRightFromBra
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { memo, useEffect, useRef, useState } from "react";
 import { useTranslation } from 'react-i18next';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import io from 'socket.io-client';
+import callMinimazedData from '../../../helpers/CallMinimazedData';
+import { updateCall } from '../../../store/slicers/CallSlice';
 import CommunicationMenu from '../CommunicationMenu';
 import VoiceChatDeviceSettings from './VoiceChatDeviceSettings';
 import VoiceChatUser from './VoiceChatUser';
@@ -17,6 +19,7 @@ const VoiceChat = () => {
 	const navigate = useNavigate();
 
 	const me = useSelector((state) => state.customer.value);
+	const dispatch = useDispatch();
 
 	const [peers, setPeers] = useState([]);
 	const [turnOnCamera, setTurnOnCamera] = useState(false);
@@ -33,6 +36,14 @@ const VoiceChat = () => {
 	const [openAudioSettings, setOpenAudioSettings] = useState(false);
 	const [microphoneDeviceId, setMicrophoneDeviceId] = useState("");
 
+	const [callData, setCallData] = useState({
+		useMinimaze: true,
+		roomId: 0,
+		roomName: "",
+		turnOnCamera: false,
+		turnOnMicrophone: false,
+	});
+
 	const socketRef = useRef(null);
 	const peersRef = useRef([]);
 	const videoRef = useRef(null);
@@ -44,6 +55,11 @@ const VoiceChat = () => {
 		const queryParams = new URLSearchParams(window.location.search);
 		const targetRoomId = +queryParams.get("roomId");
 		const targetChatName = queryParams.get("chatName");
+
+		const updateCallData = callData;
+		updateCallData.roomId = targetRoomId;
+		updateCallData.roomName = targetChatName;
+		setCallData(updateCallData);
 
 		setRoomId(targetRoomId);
 		setChatName(targetChatName);
@@ -65,7 +81,7 @@ const VoiceChat = () => {
 		return () => {
 			window.removeEventListener("beforeunload", beforeunload);
 
-			leave();
+			dispatch(updateCall(callData));
 		}
 	}, [me, roomId]);
 
@@ -77,6 +93,7 @@ const VoiceChat = () => {
 		videoRef.current.srcObject = myStream;
 	}, [myStream]);
 
+	// when user connected to call and on call already present another users: need create peer for this users
 	const createPeer = (userToSignal, callerId, stream) => {
 		const peer = new window.SimplePeer({
 			initiator: true,
@@ -85,12 +102,15 @@ const VoiceChat = () => {
 		});
 
 		peer.on("signal", signal => {
-			socketRef.current.emit("sendingSignal", { userToSignal, callerId, signal, username: me.username });
+			socketRef.current.emit("sendingSignal", { userToSignal, callerId, signal, username: me.username, roomId });
 		});
 
 		return peer;
 	}
 
+	// when:
+	//		1) user connected to call and on call don't present another users: need add peer for users, that will connect later
+	//		2) user connected to call and on call present another users: need add peer for users, that will connect later
 	const addPeer = (incomingSignal, callerId, stream) => {
 		const peer = new window.SimplePeer({
 			initiator: false,
@@ -110,9 +130,13 @@ const VoiceChat = () => {
 	const switchCamera = (cameraStatus) => {
 		setTurnOnCamera(cameraStatus);
 
+		const updateCallData = callData;
+		updateCallData.turnOnCamera = cameraStatus;
+		setCallData(updateCallData);
+
 		if (!cameraStatus) {
 			myStream.getVideoTracks()[0].stop();
-			socketRef.current.emit("cameraSwitching", { roomId: roomId, cameraStatus: cameraStatus });
+			socketRef.current.emit("cameraSwitching", { roomId: roomId, cameraStatus });
 
 			return;
 		}
@@ -123,18 +147,23 @@ const VoiceChat = () => {
 				peer.replaceTrack(peerStream.getVideoTracks()[0], stream.getVideoTracks()[0], peerStream);
 			});
 
+			callMinimazedData.stream = stream;
 			setMyStream(stream);
 		});
 
-		socketRef.current.emit("cameraSwitching", { roomId: roomId, cameraStatus: cameraStatus });
+		socketRef.current.emit("cameraSwitching", { roomId: roomId, cameraStatus });
 	}
 
 	const switchMicrophone = (microphoneStatus) => {
 		setTurnOnMicrophone(microphoneStatus);
 
+		const updateCallData = callData;
+		updateCallData.turnOnMicrophone = microphoneStatus;
+		setCallData(updateCallData);
+
 		if (!microphoneStatus) {
 			myStream.getAudioTracks()[0].stop();
-			socketRef.current.emit("microphoneSwitching", { roomId: roomId, microphoneStatus: microphoneStatus });
+			socketRef.current.emit("microphoneSwitching", { roomId: roomId, microphoneStatus });
 
 			return;
 		}
@@ -154,10 +183,11 @@ const VoiceChat = () => {
 				peer.replaceTrack(peerStream.getAudioTracks()[0], stream.getAudioTracks()[0], peerStream);
 			});
 
+			callMinimazedData.stream = stream;
 			setMyStream(stream);
 		});
 
-		socketRef.current.emit("microphoneSwitching", { roomId: roomId, microphoneStatus: microphoneStatus });
+		socketRef.current.emit("microphoneSwitching", { roomId: roomId, microphoneStatus });
 	}
 
 	const switchMicrophoneDevice = (deviceId) => {
@@ -167,6 +197,7 @@ const VoiceChat = () => {
 				peer.replaceTrack(peerStream.getAudioTracks()[0], stream.getAudioTracks()[0], peerStream);
 			});
 
+			callMinimazedData.stream = stream;
 			setMyStream(stream);
 		});
 	}
@@ -193,19 +224,21 @@ const VoiceChat = () => {
 	}
 
 	const joinToRoom = () => {
-		const stream = createDummyStream(50, 50);
-		setMyStream(stream);
+		callMinimazedData.stream = createDummyStream(1, 1);
+		setMyStream(callMinimazedData.stream);
 
-		socketRef.current.emit("joinToRoom", { roomId: roomId, userId: me?.id, username: me.username });
+		socketRef.current.emit("joinToRoom", { roomId: roomId, userId: me.id, username: me.username, turnOnCamera, turnOnMicrophone });
 
 		socketRef.current.on("allUsers", users => {
 			const peers = [];
 
 			users.forEach(user => {
-				const peer = createPeer(user, socketRef.current.id, stream);
+				const peer = createPeer(user, socketRef.current.id, callMinimazedData.stream);
 				peersRef.current.push({
 					peerId: user.socketId,
 					username: user.username,
+					turnOnCamera: user.turnOnCamera,
+					turnOnMicrophone: user.turnOnMicrophone,
 					peer,
 				});
 
@@ -213,12 +246,14 @@ const VoiceChat = () => {
 			});
 
 			setPeers(peers);
+			callMinimazedData.peers = peers;
+
 		});
 
 		socketRef.current.on("userJoined", payload => {
 			joinedUser(payload.username);
 
-			const peer = addPeer(payload.signal, payload.callerId, stream);
+			const peer = addPeer(payload.signal, payload.callerId, callMinimazedData.stream);
 			peersRef.current.push({
 				peerId: payload.callerId,
 				username: payload.username,
@@ -250,10 +285,10 @@ const VoiceChat = () => {
 		let ctx = new AudioContext(), oscillator = ctx.createOscillator();
 		let dst = oscillator.connect(ctx.createMediaStreamDestination());
 		oscillator.start();
-		const audioTrack = Object.assign(dst.stream.getAudioTracks()[0], { enabled: true });
+		const audioTrack = Object.assign(dst.stream.getAudioTracks()[0], { enabled: false });
 
 		let canvas = Object.assign(document.createElement("canvas"), { width: width, height: height });
-		canvas.getContext('2d').fillRect(0, 0, width, height);
+		canvas.getContext("2d").fillRect(0, 0, width, height);
 		let stream = canvas.captureStream();
 		const videoTrack = Object.assign(stream.getVideoTracks()[0], { enabled: false });
 
@@ -279,7 +314,6 @@ const VoiceChat = () => {
 			});
 
 			socketRef.current.disconnect();
-			socketRef.current.destroy();
 			navigate(`/chats`);
 		});
 	}
@@ -463,6 +497,8 @@ const VoiceChat = () => {
 									username={peer.username}
 									audio={anotherUsersAudio}
 									setAudio={setAnotherUsersAudio}
+									initTurnOnCamera={peer.turnOnCamera}
+									initTurnOnMicrophone={peer.turnOnMicrophone}
 								/>
 							</li>
 						)}
