@@ -7,7 +7,6 @@ const initialState = {
         roomName: "",
         turnOnCamera: false,
         turnOnMicrophone: false,
-        peers: [],
     }
 }
 

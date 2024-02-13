@@ -129,7 +129,7 @@ io.on("connection", socket => {
         const usersInThisRoom = users[microphoneData.roomId].filter(user => user.socketId !== socket.id);
 
         usersInThisRoom.forEach(user => {
-            io.to(user.socketId).emit("microphoneSwitched", microphoneData.cameraStatus);
+            io.to(user.socketId).emit("microphoneSwitched", microphoneData.microphoneStatus);
         });
     });
 

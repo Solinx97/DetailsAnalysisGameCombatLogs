@@ -32,7 +32,9 @@
     <Folder Include="ClientApp\public\locales\en\communication\myEnvironment\" />
     <Folder Include="ClientApp\public\locales\ru\communication\myEnvironment\" />
     <Folder Include="ClientApp\src\components\communication\events\" />
+    <Folder Include="ClientApp\src\hocHelpers\" />
     <Folder Include="ClientApp\src\middleware\" />
+    <Folder Include="ClientApp\src\context\" />
     <Folder Include="ClientApp\src\store\slicers\" />
   </ItemGroup>
 

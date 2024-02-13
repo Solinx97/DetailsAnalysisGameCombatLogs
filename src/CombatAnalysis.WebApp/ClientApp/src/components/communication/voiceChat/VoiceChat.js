@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import io from 'socket.io-client';
-import callMinimazedData from '../../../helpers/CallMinimazedData';
+import WithVoiceContext from '../../../hocHelpers/WithVoiceContext';
 import { updateCall } from '../../../store/slicers/CallSlice';
 import CommunicationMenu from '../CommunicationMenu';
 import VoiceChatDeviceSettings from './VoiceChatDeviceSettings';
@@ -13,7 +13,7 @@ import VoiceChatUser from './VoiceChatUser';
 
 import '../../../styles/communication/chats/voice.scss';
 
-const VoiceChat = () => {
+const VoiceChat = ({ callMinimazedData }) => {
 	const { t } = useTranslation("communication/chats/groupChat");
 
 	const navigate = useNavigate();
@@ -147,7 +147,7 @@ const VoiceChat = () => {
 				peer.replaceTrack(peerStream.getVideoTracks()[0], stream.getVideoTracks()[0], peerStream);
 			});
 
-			callMinimazedData.stream = stream;
+			callMinimazedData.current.stream = stream;
 			setMyStream(stream);
 		});
 
@@ -183,7 +183,7 @@ const VoiceChat = () => {
 				peer.replaceTrack(peerStream.getAudioTracks()[0], stream.getAudioTracks()[0], peerStream);
 			});
 
-			callMinimazedData.stream = stream;
+			callMinimazedData.current.stream = stream;
 			setMyStream(stream);
 		});
 
@@ -197,7 +197,7 @@ const VoiceChat = () => {
 				peer.replaceTrack(peerStream.getAudioTracks()[0], stream.getAudioTracks()[0], peerStream);
 			});
 
-			callMinimazedData.stream = stream;
+			callMinimazedData.current.stream = stream;
 			setMyStream(stream);
 		});
 	}
@@ -224,8 +224,8 @@ const VoiceChat = () => {
 	}
 
 	const joinToRoom = () => {
-		callMinimazedData.stream = createDummyStream(1, 1);
-		setMyStream(callMinimazedData.stream);
+		callMinimazedData.current.stream = createDummyStream(1, 1);
+		setMyStream(callMinimazedData.current.stream);
 
 		socketRef.current.emit("joinToRoom", { roomId: roomId, userId: me.id, username: me.username, turnOnCamera, turnOnMicrophone });
 
@@ -233,7 +233,7 @@ const VoiceChat = () => {
 			const peers = [];
 
 			users.forEach(user => {
-				const peer = createPeer(user, socketRef.current.id, callMinimazedData.stream);
+				const peer = createPeer(user, socketRef.current.id, callMinimazedData.current.stream);
 				peersRef.current.push({
 					peerId: user.socketId,
 					username: user.username,
@@ -246,14 +246,13 @@ const VoiceChat = () => {
 			});
 
 			setPeers(peers);
-			callMinimazedData.peers = peers;
-
+			callMinimazedData.current.peers = peers;
 		});
 
 		socketRef.current.on("userJoined", payload => {
 			joinedUser(payload.username);
 
-			const peer = addPeer(payload.signal, payload.callerId, callMinimazedData.stream);
+			const peer = addPeer(payload.signal, payload.callerId, callMinimazedData.current.stream);
 			peersRef.current.push({
 				peerId: payload.callerId,
 				username: payload.username,
@@ -261,6 +260,9 @@ const VoiceChat = () => {
 			})
 
 			setPeers(users => [...users, peer]);
+
+			callMinimazedData.current.peers = peers;
+			callMinimazedData.current.peers.push(peer);
 		});
 
 		socketRef.current.on("receivingReturnedSignal", payload => {
@@ -298,6 +300,10 @@ const VoiceChat = () => {
 	}
 
 	const leave = () => {
+		const updateCallData = callData;
+		updateCallData.useMinimaze = false;
+		setCallData(updateCallData);
+
 		socketRef.current.emit("leavingFromRoom", { roomId: roomId, username: me?.username });
 
 		socketRef.current.on("userLeft", () => {
@@ -509,4 +515,4 @@ const VoiceChat = () => {
 	);
 }
 
-export default memo(VoiceChat);
+export default memo(WithVoiceContext(VoiceChat));

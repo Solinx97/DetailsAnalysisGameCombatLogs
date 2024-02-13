@@ -1,13 +1,14 @@
-import { faAngleDown, faAngleUp, faMicrophone, faMicrophoneSlash, faVideo, faVideoSlash } from '@fortawesome/free-solid-svg-icons';
+import { faAngleDown, faAngleUp, faMicrophone, faMicrophoneSlash, faPhoneSlash, faVideo, faVideoSlash } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import io from 'socket.io-client';
-import callMinimazedData from '../../../helpers/CallMinimazedData';
+import WithVoiceContext from '../../../hocHelpers/WithVoiceContext';
+import { updateCall } from '../../../store/slicers/CallSlice';
 
 import '../../../styles/voiceChatMinimazed.scss';
 
-const VoiceChatMinimazed = () => {
+const VoiceChatMinimazed = ({ callMinimazedData }) => {
     const callData = useSelector((state) => state.call.value);
     const me = useSelector((state) => state.customer.value);
 
@@ -33,19 +34,19 @@ const VoiceChatMinimazed = () => {
         setTurnOnCamera(cameraStatus);
 
         if (!cameraStatus) {
-            callMinimazedData.stream.getVideoTracks()[0].stop();
+            callMinimazedData.current.stream.getVideoTracks()[0].stop();
             socketRef.current.emit("cameraSwitching", { roomId: callData.roomId, cameraStatus });
 
             return;
         }
 
         navigator.mediaDevices.getUserMedia({ video: cameraStatus, audio: turnOnMicrophone }).then(stream => {
-            callMinimazedData.peers.forEach(peer => {
+            callMinimazedData.current.peers.forEach(peer => {
                 const peerStream = peer.streams[0];
                 peer.replaceTrack(peerStream.getVideoTracks()[0], stream.getVideoTracks()[0], peerStream);
             });
 
-            callMinimazedData.stream = stream;
+            callMinimazedData.current.stream = stream;
         });
 
         socketRef.current.emit("cameraSwitching", { roomId: callData.roomId, cameraStatus });
@@ -55,7 +56,7 @@ const VoiceChatMinimazed = () => {
         setTurnOnMicrophone(microphoneStatus);
 
         if (!microphoneStatus) {
-            callMinimazedData.stream.getAudioTracks()[0].stop();
+            callMinimazedData.current.stream.getAudioTracks()[0].stop();
             socketRef.current.emit("microphoneSwitching", { roomId: callData.roomId, microphoneStatus });
 
             return;
@@ -67,15 +68,40 @@ const VoiceChatMinimazed = () => {
         };
 
         navigator.mediaDevices.getUserMedia(constraints).then(stream => {
-            callMinimazedData.peers.forEach(peer => {
+            callMinimazedData.current.peers.forEach(peer => {
                 const peerStream = peer.streams[0];
                 peer.replaceTrack(peerStream.getAudioTracks()[0], stream.getAudioTracks()[0], peerStream);
             });
 
-            callMinimazedData.stream = stream;
+            callMinimazedData.current.stream = stream;
         });
 
         socketRef.current.emit("microphoneSwitching", { roomId: callData.roomId, microphoneStatus });
+    }
+
+    const leave = () => {
+        socketRef.current.emit("leavingFromRoom", { roomId: callData.roomId, username: me.username });
+
+        socketRef.current.on("userLeft", () => {
+            callMinimazedData.current.stream.getVideoTracks().forEach(track => {
+                track.stop();
+            });
+
+            callMinimazedData.current.stream.getAudioTracks().forEach(track => {
+                track.stop();
+            });
+
+            console.log(callMinimazedData.current);
+            callMinimazedData.current.peers.forEach(peerRef => {
+                peerRef.destroy();
+            });
+
+            socketRef.current.disconnect();
+
+            const updateCallData = Object.assign({}, callData);
+            updateCallData.useMinimaze = false;
+            dispatch(updateCall(updateCallData));
+        });
     }
 
     return (
@@ -113,17 +139,22 @@ const VoiceChatMinimazed = () => {
                             {turnOnMicrophone
                                 ? <FontAwesomeIcon
                                     icon={faMicrophone}
-                                    title="TurnOnMicrophone"
+                                    title="TurnOffMicrophone"
                                     className="device__microphone"
                                     onClick={() => switchMicrophone(false)}
                                 />
                                 : <FontAwesomeIcon
                                     icon={faMicrophoneSlash}
-                                    title="TurnOffMicrophone"
+                                    title="TurnOnMicrophone"
                                     className="device__microphone"
                                     onClick={() => switchMicrophone(true)}
                                 />
                             }
+                            <FontAwesomeIcon
+                                icon={faPhoneSlash}
+                                title="Leave"
+                                onClick={leave}
+                            />
                         </div>
                     </div>
                     <FontAwesomeIcon
@@ -138,4 +169,4 @@ const VoiceChatMinimazed = () => {
     );
 }
 
-export default VoiceChatMinimazed;
+export default WithVoiceContext(VoiceChatMinimazed);
