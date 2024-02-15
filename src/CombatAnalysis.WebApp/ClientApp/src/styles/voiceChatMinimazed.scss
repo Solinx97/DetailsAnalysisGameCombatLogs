@@ -19,6 +19,14 @@
         width: 225px;
     }
 
+    .back-to-call {
+        display: flex;
+        position: absolute;
+        align-items: center;
+        margin-left: 90px;
+        margin-top: 5px;
+    }
+
     .show, .hide {
         display: flex;
         align-items: center;

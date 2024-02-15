@@ -4,6 +4,7 @@ const initialState = {
     value: {
         useMinimaze: false,
         roomId: 0,
+        socketId: "",
         roomName: "",
         turnOnCamera: false,
         turnOnMicrophone: false,
@@ -17,9 +18,12 @@ export const callSlice = createSlice({
         updateCall: (state, action) => {
             state.value = action.payload
         },
+        clear: (state) => {
+            state.value = initialState;
+        },
     },
 })
 
-export const { updateCall } = callSlice.actions
+export const { updateCall, clear } = callSlice.actions
 
 export default callSlice.reducer

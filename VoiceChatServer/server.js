@@ -24,11 +24,11 @@ const chatUsers = {};
 const socketToRoom = {};
 
 io.on("connection", socket => {
-    socket.on("getSocketId", payload => {
-        const me = users[payload.roomId].filter(user => user.userId === payload.userId)[0];
+    socket.on("updateSocketId", payload => {
+        const me = users[payload.roomId].filter(user => user.socketId === payload.socketId)[0];
 
-        socket.id = me.socketId;
-        socket.emit("gotSocketId", me.socketId);
+        socket.id = me?.socketId;
+        socket.emit("socketIdUpdated", me?.socketId);
     });
 
     socket.on("checkUsersOnCall", roomId => {
@@ -148,7 +148,7 @@ io.on("connection", socket => {
             return;
         }
 
-        socket.emit("userLeft", targetUser?.socketId);
+        socket.emit("userLeft");
 
         users[leavingUser.roomId].forEach(element => {
             io.to(element.socketId).emit("someUserLeft", targetUser?.socketId);
@@ -157,7 +157,7 @@ io.on("connection", socket => {
             io.to(element.socketId).emit("allUsers", usersInThisRoom);
         });
 
-        chatUsers[leavingUser.roomId].forEach(chatUserId => {
+        chatUsers[leavingUser.roomId]?.forEach(chatUserId => {
             io.to(chatUserId).emit("checkedUsersOnCall", users[leavingUser.roomId].length);
         });
     });

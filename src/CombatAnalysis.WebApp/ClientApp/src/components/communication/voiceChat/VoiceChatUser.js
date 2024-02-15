@@ -1,6 +1,6 @@
-import { memo, useEffect, useRef, useState } from "react";
 import { faMicrophone, faMicrophoneSlash } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { memo, useEffect, useRef, useState } from "react";
 
 const VoiceChatUser = ({ peer, socket, username, audio, setAudio, initTurnOnCamera, initTurnOnMicrophone }) => {
     const videoStreamRef = useRef(null);

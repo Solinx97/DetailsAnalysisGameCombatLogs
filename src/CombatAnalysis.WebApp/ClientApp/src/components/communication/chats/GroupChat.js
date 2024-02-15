@@ -2,8 +2,10 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { memo, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import io from 'socket.io-client';
+import WithVoiceContext from '../../../hocHelpers/WithVoiceContext';
 import { useFindGroupChatMessageByChatIdQuery } from '../../../store/api/ChatApi';
 import { useUpdateGroupChatAsyncMutation } from '../../../store/api/communication/chats/GroupChat.api';
 import {
@@ -35,8 +37,10 @@ const messageType = {
     system: 1
 };
 
-const GroupChat = ({ chat, me, setSelectedChat }) => {
+const GroupChat = ({ chat, me, setSelectedChat, callMinimazedData }) => {
     const { t } = useTranslation("communication/chats/groupChat");
+
+    const storeCallData = useSelector((state) => state.call.value);
 
     const navigate = useNavigate();
 
@@ -270,6 +274,8 @@ const GroupChat = ({ chat, me, setSelectedChat }) => {
     }
 
     const call = () => {
+        document.cookie = "callAlreadyStarted=true";
+
         navigate(`/chats/voice?roomId=${chat.id}&chatName=${chat.name}`);
     }
 
@@ -307,12 +313,19 @@ const GroupChat = ({ chat, me, setSelectedChat }) => {
                         <div className="title__call-started">Call started</div>
                     }
                     <div className="title__menu">
-                        <FontAwesomeIcon
-                            icon={faPhone}
-                            title={t("Call")}
-                            className={`call${usersOnCall > 0 ? "_active" : ""}`}
-                            onClick={call}
-                        />
+                        {(callMinimazedData.current.stream !== null && storeCallData.roomId !== chat.id)
+                            ? <FontAwesomeIcon
+                                icon={faPhone}
+                                title={t("Call move to minimaze")}
+                                className="call-minimazed"
+                            />
+                            : <FontAwesomeIcon
+                                icon={faPhone}
+                                title={t("Call")}
+                                className={`call${usersOnCall > 0 ? "_active" : ""}`}
+                                onClick={call}
+                            />
+                        }
                         <FontAwesomeIcon
                             icon={faGear}
                             title={t("Settings")}
@@ -376,4 +389,4 @@ const GroupChat = ({ chat, me, setSelectedChat }) => {
     );
 }
 
-export default memo(GroupChat);
+export default memo(WithVoiceContext(GroupChat));
