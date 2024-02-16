@@ -25,7 +25,7 @@ const socketToRoom = {};
 
 io.on("connection", socket => {
     socket.on("updateSocketId", payload => {
-        const me = users[payload.roomId].filter(user => user.socketId === payload.socketId)[0];
+        const me = users[payload.roomId]?.filter(user => user.socketId === payload.socketId)[0];
 
         socket.id = me?.socketId;
         socket.emit("socketIdUpdated", me?.socketId);
