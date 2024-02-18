@@ -276,7 +276,7 @@ const useVoice = (me, callMinimazedData, microphoneDeviceId, setUseMinimaze) => 
 			});
 
 			peersRef.current.forEach(peerRef => {
-				peerRef.peer.destroy();;
+				peerRef.peer.destroy();
 			});
 
 			socketRef.current.disconnect();

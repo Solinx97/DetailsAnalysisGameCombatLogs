@@ -43,6 +43,7 @@ const VoiceChat = ({ callMinimazedData, setUseMinimaze }) => {
 		voice.func.joinToRoom();
 
 		const beforeunload = (event) => {
+			voice.func.leave();
 			removeCookie();
 		}
 
