@@ -112,7 +112,11 @@ io.on("connection", socket => {
     });
 
     socket.on("cameraSwitching", cameraData => {
-        const me = users[cameraData.roomId].filter(user => user.socketId === socket.id)[0];
+        const me = users[cameraData.roomId]?.filter(user => user.socketId === socket.id)[0];
+        if (me === undefined) {
+            return;
+        }
+
         me.turnOnCamera = cameraData.cameraStatus;
 
         const usersInThisRoom = users[cameraData.roomId].filter(user => user.socketId !== socket.id);
@@ -123,7 +127,11 @@ io.on("connection", socket => {
     });
 
     socket.on("microphoneSwitching", microphoneData => {
-        const me = users[microphoneData.roomId].filter(user => user.socketId === socket.id)[0];
+        const me = users[microphoneData.roomId]?.filter(user => user.socketId === socket.id)[0];
+        if (me === undefined) {
+            return;
+        }
+        
         me.turnOnMicrophone = microphoneData.microphoneStatus;
 
         const usersInThisRoom = users[microphoneData.roomId].filter(user => user.socketId !== socket.id);

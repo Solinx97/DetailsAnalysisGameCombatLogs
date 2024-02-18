@@ -1,5 +1,4 @@
-import React, { useRef } from 'react';
-import { useSelector } from 'react-redux';
+import React, { useRef, useState } from 'react';
 import { Route, Routes } from 'react-router-dom';
 import AppRoutes from './AppRoutes';
 import Layout from './components/Layout';
@@ -11,14 +10,19 @@ import './custom.css';
 const App = () => {
     const callMinimazedData = useRef({
         stream: null,
-        peers: []
+        peers: [],
+        turnOnCamera: false,
+        turnOnMicrophone: false,
+        roomId: 0,
+        socketId: "",
+        roomName: "",
     });
 
-    const call = useSelector((state) => state.call.value);
+    const [useMinimaze, setUseMinimaze] = useState(false);
 
     const render = () => {
         return (
-            <VoiceServiceProvider value={callMinimazedData}>
+            <VoiceServiceProvider value={{ callMinimazedData, useMinimaze, setUseMinimaze }}>
                 <Layout>
                     <Routes>
                         {AppRoutes.map((route, index) => {
@@ -26,7 +30,7 @@ const App = () => {
                             return <Route key={index} {...rest} element={element} />;
                         })}
                     </Routes>
-                    {call.useMinimaze &&
+                    {useMinimaze &&
                         <VoiceChatMinimazed />
                     }
                 </Layout>

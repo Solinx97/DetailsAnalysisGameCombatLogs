@@ -1,27 +1,23 @@
 import { faAngleDown, faAngleUp, faMicrophone, faMicrophoneSlash, faRightFromBracket, faVideo, faVideoSlash } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import React, { memo, useEffect, useRef, useState } from "react";
+import React, { memo, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import WithVoiceContext from '../../../hocHelpers/WithVoiceContext';
 import useVoice from '../../../hooks/useVoice';
-import { updateCall } from '../../../store/slicers/CallSlice';
 import CommunicationMenu from '../CommunicationMenu';
 import VoiceChatDeviceSettings from './VoiceChatDeviceSettings';
 import VoiceChatUser from './VoiceChatUser';
 
 import '../../../styles/communication/chats/voice.scss';
 
-const VoiceChat = ({ callMinimazedData }) => {
+const VoiceChat = ({ callMinimazedData, setUseMinimaze }) => {
 	const { t } = useTranslation("communication/chats/groupChat");
 
 	const navigate = useNavigate();
 
-	const storeCallData = useSelector((state) => state.call.value);
 	const me = useSelector((state) => state.customer.value);
-
-	const dispatch = useDispatch();
 
 	const [openVideoSettings, setOpenVideoSettings] = useState(false);
 	const [openAudioSettings, setOpenAudioSettings] = useState(false);
@@ -29,7 +25,7 @@ const VoiceChat = ({ callMinimazedData }) => {
 
 	const audioRef = useRef(null);
 
-	const voice = useVoice(me, callMinimazedData, microphoneDeviceId);
+	const voice = useVoice(me, callMinimazedData, microphoneDeviceId, setUseMinimaze);
 
 	useEffect(() => {
 		if (!isCallStarted()) {
@@ -40,13 +36,11 @@ const VoiceChat = ({ callMinimazedData }) => {
 	}, []);
 
 	useEffect(() => {
-		if (me === null || voice.data.roomId === 0) {
+		if (me === null || callMinimazedData.current.roomId === 0) {
 			return;
 		}
 
-		if (storeCallData.socketId === "") {
-			voice.func.joinToRoom();
-		}
+		voice.func.joinToRoom();
 
 		const beforeunload = (event) => {
 			removeCookie();
@@ -57,9 +51,11 @@ const VoiceChat = ({ callMinimazedData }) => {
 		return () => {
 			window.removeEventListener("beforeunload", beforeunload);
 
-			dispatch(updateCall(voice.data.callData));
+			if (callMinimazedData.current.roomId > 0) {
+				setUseMinimaze(true);
+			}
 		}
-	}, [me, voice.data.roomId]);
+	}, [me, callMinimazedData.current.roomId]);
 
 	const isCallStarted = () => {
 		const allCokie = document.cookie.split(";");
@@ -90,13 +86,13 @@ const VoiceChat = ({ callMinimazedData }) => {
 				<div className="voice__title">
 					<div>{voice.data.chatName}</div>
 					<div className="tools">
-						{voice.data.turnOnCamera
+						{callMinimazedData.current.turnOnCamera
 							? <div className="device">
 								<FontAwesomeIcon
 									icon={faVideo}
 									title={t("TurnOffCamera")}
 									className="device__camera"
-									onClick={() => voice.func.switchCamera(!voice.data.turnOnCamera)}
+									onClick={() => voice.func.switchCamera(false)}
 								/>
 								{openVideoSettings
 									? <FontAwesomeIcon
@@ -121,7 +117,7 @@ const VoiceChat = ({ callMinimazedData }) => {
 									icon={faVideoSlash}
 									title={t("TurnOnCamera")}
 									className="device__camera"
-									onClick={() => voice.func.switchCamera(!voice.data.turnOnCamera)}
+									onClick={() => voice.func.switchCamera(true)}
 								/>
 								{openVideoSettings
 									? <FontAwesomeIcon
@@ -142,13 +138,13 @@ const VoiceChat = ({ callMinimazedData }) => {
 								}
 							</div>
 						}
-						{voice.data.turnOnMicrophone
+						{callMinimazedData.current.turnOnMicrophone
 							? <div className="device">
 								<FontAwesomeIcon
 									icon={faMicrophone}
 									title={t("TurnOffMicrophone")}
 									className="device__microphone"
-									onClick={() => voice.func.switchMicrophone(!voice.data.turnOnMicrophone)}
+									onClick={() => voice.func.switchMicrophone(false)}
 								/>
 								{openAudioSettings
 									? <FontAwesomeIcon
@@ -179,7 +175,7 @@ const VoiceChat = ({ callMinimazedData }) => {
 									icon={faMicrophoneSlash}
 									title={t("TurnOnMicrophone")}
 									className="device__microphone"
-									onClick={() => voice.func.switchMicrophone(!voice.data.turnOnMicrophone)}
+									onClick={() => voice.func.switchMicrophone(true)}
 								/>
 								{openAudioSettings
 									? <FontAwesomeIcon

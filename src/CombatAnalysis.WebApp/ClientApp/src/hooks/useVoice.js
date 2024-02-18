@@ -1,18 +1,13 @@
-import { useEffect, useRef, useState } from "react";
-import { useDispatch, useSelector } from 'react-redux';
+import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import io from 'socket.io-client';
-import { clear, updateCall } from '../store/slicers/CallSlice';
 
-const useVoice = (me, callMinimazedData, microphoneDeviceId) => {
+const useVoice = (me, callMinimazedData, microphoneDeviceId, setUseMinimaze) => {
 	const socketRef = useRef(null);
 	const peersRef = useRef([]);
 	const videoRef = useRef(null);
 
 	const navigate = useNavigate();
-
-	const storeCallData = useSelector((state) => state.call.value);
-	const dispatch = useDispatch();
 
 	const [turnOnCamera, setTurnOnCamera] = useState(false);
 	const [turnOnMicrophone, setTurnOnMicrophone] = useState(false);
@@ -22,15 +17,6 @@ const useVoice = (me, callMinimazedData, microphoneDeviceId) => {
 	const [peers, setPeers] = useState([]);
 
 	const [anotherUsersAudio, setAnotherUsersAudio] = useState([]);
-
-	const [callData, setCallData] = useState({
-		useMinimaze: true,
-		roomId: 0,
-		socketId: "",
-		roomName: "",
-		turnOnCamera: false,
-		turnOnMicrophone: false,
-	});
 
 	useEffect(() => {
 		if (videoRef.current === null) {
@@ -44,45 +30,48 @@ const useVoice = (me, callMinimazedData, microphoneDeviceId) => {
 		socketRef.current = io.connect("192.168.0.161:2000");
 
 		socketRef.current.on("connect", () => {
-			if (storeCallData.roomId > 0) {
+			if (callMinimazedData.current.roomId > 0) {
 				cameFromMinimazedCall();
 			}
 			else {
-				callData.socketId = socketRef.current.id;
+				callMinimazedData.current.socketId = socketRef.current.id;
 			}
+
+			const queryParams = new URLSearchParams(window.location.search);
+			const targetRoomId = +queryParams.get("roomId");
+			const targetChatName = queryParams.get("chatName");
+
+			callMinimazedData.current.roomId = targetRoomId;
+			callMinimazedData.current.roomName = targetChatName;
+
+			setRoomId(targetRoomId);
+			setChatName(targetChatName);
 		});
-
-		const queryParams = new URLSearchParams(window.location.search);
-		const targetRoomId = +queryParams.get("roomId");
-		const targetChatName = queryParams.get("chatName");
-
-		const updateCallData = callData;
-		updateCallData.roomId = targetRoomId;
-		updateCallData.roomName = targetChatName;
-		setCallData(updateCallData);
-
-		setRoomId(targetRoomId);
-		setChatName(targetChatName);
 	}
 
 	const cameFromMinimazedCall = () => {
-		const updateCallData = Object.assign({}, storeCallData);
-		updateCallData.useMinimaze = false;
-		dispatch(updateCall(updateCallData));
+		setUseMinimaze(false);
 
-		socketRef.current.emit("updateSocketId", { roomId: callData.roomId, socketId: storeCallData.socketId });
+		socketRef.current.emit("updateSocketId", { roomId: callMinimazedData.current.roomId, socketId: callMinimazedData.current.socketId });
 
 		socketRef.current.on("socketIdUpdated", socketId => {
 			socketRef.current.id = socketId;
-			callData.socketId = socketId;
 
-			setMyStream(callMinimazedData.current.stream);
-			setPeers(callMinimazedData.current.peers);
-			peersRef.current = callMinimazedData.current.peers;
+			callMinimazedData.current.socketId = socketId;
 
-			setTurnOnCamera(storeCallData.turnOnCamera);
-			setTurnOnMicrophone(storeCallData.turnOnMicrophone);
+			switchCallType();
 		});
+	}
+
+	const switchCallType = () => {
+		setMyStream(callMinimazedData.current.stream);
+		setPeers(callMinimazedData.current.peers);
+
+		peersRef.current = callMinimazedData.current.peers;
+
+		setTurnOnCamera(callMinimazedData.current.turnOnCamera);
+		setTurnOnMicrophone(callMinimazedData.current.turnOnMicrophone);
+		setRoomId(callMinimazedData.current.roomId);
 	}
 
 	const createPeer = (userToSignal, callerId, stream) => {
@@ -121,9 +110,7 @@ const useVoice = (me, callMinimazedData, microphoneDeviceId) => {
 	const switchCamera = (cameraStatus) => {
 		setTurnOnCamera(cameraStatus);
 
-		const updateCallData = callData;
-		updateCallData.turnOnCamera = cameraStatus;
-		setCallData(updateCallData);
+		callMinimazedData.current.turnOnCamera = cameraStatus;
 
 		if (!cameraStatus) {
 			myStream.getVideoTracks()[0].stop();
@@ -148,9 +135,7 @@ const useVoice = (me, callMinimazedData, microphoneDeviceId) => {
 	const switchMicrophone = (microphoneStatus) => {
 		setTurnOnMicrophone(microphoneStatus);
 
-		const updateCallData = callData;
-		updateCallData.turnOnMicrophone = microphoneStatus;
-		setCallData(updateCallData);
+		callMinimazedData.current.turnOnMicrophone = microphoneStatus;
 
 		if (!microphoneStatus) {
 			myStream.getAudioTracks()[0].stop();
@@ -277,9 +262,7 @@ const useVoice = (me, callMinimazedData, microphoneDeviceId) => {
 	}
 
 	const leave = (useRedirect = false) => {
-		const updateCallData = callData;
-		updateCallData.useMinimaze = false;
-		setCallData(updateCallData);
+		clear();
 
 		socketRef.current.emit("leavingFromRoom", { roomId: roomId, username: me?.username });
 
@@ -297,10 +280,6 @@ const useVoice = (me, callMinimazedData, microphoneDeviceId) => {
 			});
 
 			socketRef.current.disconnect();
-			dispatch(clear());
-
-			callMinimazedData.current.stream = null;
-			callMinimazedData.current.peers = [];
 
 			if (useRedirect) {
 				navigate(`/chats`);
@@ -308,10 +287,26 @@ const useVoice = (me, callMinimazedData, microphoneDeviceId) => {
 		});
 	}
 
+	const clear = () => {
+		callMinimazedData.current = {
+			stream: null,
+			peers: [],
+			turnOnCamera: false,
+			turnOnMicrophone: false,
+			roomId: 0,
+			socketId: "",
+			roomName: "",
+		};
+
+		setUseMinimaze(false);
+	}
+
 	return {
 		func: {
 			initConnection,
 			joinToRoom,
+			switchCallType,
+			listen,
 			switchCamera,
 			switchMicrophone,
 			switchMicrophoneDevice,
@@ -324,7 +319,6 @@ const useVoice = (me, callMinimazedData, microphoneDeviceId) => {
 			socketRef,
 			peersRef,
 			videoRef,
-			callData,
 			turnOnCamera,
 			turnOnMicrophone,
 			anotherUsersAudio,

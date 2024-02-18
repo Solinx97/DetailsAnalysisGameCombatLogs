@@ -2,7 +2,6 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { memo, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import io from 'socket.io-client';
 import WithVoiceContext from '../../../hocHelpers/WithVoiceContext';
@@ -39,8 +38,6 @@ const messageType = {
 
 const GroupChat = ({ chat, me, setSelectedChat, callMinimazedData }) => {
     const { t } = useTranslation("communication/chats/groupChat");
-
-    const storeCallData = useSelector((state) => state.call.value);
 
     const navigate = useNavigate();
 
@@ -313,7 +310,7 @@ const GroupChat = ({ chat, me, setSelectedChat, callMinimazedData }) => {
                         <div className="title__call-started">Call started</div>
                     }
                     <div className="title__menu">
-                        {(callMinimazedData.current.stream !== null && storeCallData.roomId !== chat.id)
+                        {(callMinimazedData.current.stream !== null && callMinimazedData.current.roomId !== chat.id)
                             ? <FontAwesomeIcon
                                 icon={faPhone}
                                 title={t("Call move to minimaze")}

@@ -5,11 +5,13 @@ const WithVoiceContext = (Wrapped) => {
         return (
             <VoiceServiceConsumer>
                 {
-                    (callMinimazedData) => {
+                    (call) => {
                         return (
                             <Wrapped
                                 {...props}
-                                callMinimazedData={callMinimazedData}
+                                callMinimazedData={call.callMinimazedData}
+                                useMinimaze={call.useMinimaze}
+                                setUseMinimaze={call.setUseMinimaze}
                             />
                         );
                     }
