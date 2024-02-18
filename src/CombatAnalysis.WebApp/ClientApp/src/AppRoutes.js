@@ -34,7 +34,7 @@ const AppRoutes = [
         element: <Chats />
     },
     {
-        path: '/chats/voice',
+        path: '/chats/voice/:roomId/:chatName',
         element: <VoiceChat />
     },
     {

@@ -273,7 +273,7 @@ const GroupChat = ({ chat, me, setSelectedChat, callMinimazedData }) => {
     const call = () => {
         document.cookie = "callAlreadyStarted=true";
 
-        navigate(`/chats/voice?roomId=${chat.id}&chatName=${chat.name}`);
+        navigate(`/chats/voice/${chat.id}/${chat.name}`);
     }
 
     if (isLoading || usersIsLoading || myUsersIsLoading) {
