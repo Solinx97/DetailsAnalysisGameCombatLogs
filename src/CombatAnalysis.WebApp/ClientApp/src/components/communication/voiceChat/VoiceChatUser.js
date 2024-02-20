@@ -2,7 +2,7 @@ import { faMicrophone, faMicrophoneSlash } from '@fortawesome/free-solid-svg-ico
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { memo, useEffect, useRef, useState } from "react";
 
-const VoiceChatUser = ({ peer, socket, username, audio, setAudio, initTurnOnCamera, initTurnOnMicrophone }) => {
+const VoiceChatUser = ({ peer, peerId, socket, username, audio, setAudio, initTurnOnCamera, initTurnOnMicrophone }) => {
     const videoStreamRef = useRef(null);
     const audioStreamRef = useRef(null);
 
@@ -15,12 +15,16 @@ const VoiceChatUser = ({ peer, socket, username, audio, setAudio, initTurnOnCame
             setCurrentStream(stream);
         });
 
-        socket.on("cameraSwitched", status => {
-            setTurnOnCamera(status);
+        socket.on("cameraSwitched", payload => {
+            if (payload.peerId === peerId) {
+                setTurnOnCamera(payload.status);
+            }
         });
 
-        socket.on("microphoneSwitched", status => {
-            setTurnOnMicrophone(status);
+        socket.on("microphoneSwitched", payload => {
+            if (payload.peerId === peerId) {
+                setTurnOnMicrophone(payload.status);
+            }
         });
     }, []);
 

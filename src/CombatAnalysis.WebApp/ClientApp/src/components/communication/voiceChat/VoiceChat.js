@@ -222,6 +222,7 @@ const VoiceChat = ({ callMinimazedData, setUseMinimaze }) => {
 							<li key={index} className="user">
 								<VoiceChatUser
 									peer={peer.peer}
+									peerId={peer.peerId}
 									socket={voice.data.socketRef.current}
 									username={peer?.username}
 									audio={voice.data.anotherUsersAudio}

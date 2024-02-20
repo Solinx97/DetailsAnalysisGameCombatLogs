@@ -93,7 +93,10 @@ io.on("connection", socket => {
     });
 
     socket.on("sendingSignal", payload => {
-        const userToSignalData = users[payload.roomId].filter(user => user.socketId === payload.userToSignal.socketId)[0];
+        const userToSignalData = users[payload.roomId]?.filter(user => user.socketId === payload.userToSignal.socketId)[0];
+        if (userToSignalData === undefined) {
+            return;
+        }
 
         io.to(payload.userToSignal.socketId).emit("userJoined", { 
             signal: payload.signal,
@@ -122,7 +125,7 @@ io.on("connection", socket => {
         const usersInThisRoom = users[cameraData.roomId].filter(user => user.socketId !== socket.id);
 
         usersInThisRoom.forEach(user => {
-            io.to(user.socketId).emit("cameraSwitched", cameraData.cameraStatus);
+            io.to(user.socketId).emit("cameraSwitched", { status: cameraData.cameraStatus, peerId: socket.id });
         });
     });
 
@@ -137,7 +140,7 @@ io.on("connection", socket => {
         const usersInThisRoom = users[microphoneData.roomId].filter(user => user.socketId !== socket.id);
 
         usersInThisRoom.forEach(user => {
-            io.to(user.socketId).emit("microphoneSwitched", microphoneData.microphoneStatus);
+            io.to(user.socketId).emit("microphoneSwitched",{ status: microphoneData.microphoneStatus, peerId: socket.id });
         });
     });
 

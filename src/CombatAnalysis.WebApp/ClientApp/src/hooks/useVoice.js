@@ -80,7 +80,7 @@ const useVoice = (me, callMinimazedData, microphoneDeviceId, setUseMinimaze) => 
 		});
 
 		peer.on("signal", signal => {
-			socketRef.current.emit("sendingSignal", { userToSignal, callerId, signal, username: me.username, renderRoomId });
+			socketRef.current.emit("sendingSignal", { userToSignal, callerId, signal, username: me.username, roomId: renderRoomId });
 		});
 
 		return peer;
