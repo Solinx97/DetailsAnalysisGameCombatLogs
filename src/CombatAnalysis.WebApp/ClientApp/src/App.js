@@ -13,6 +13,7 @@ const App = () => {
         peers: [],
         turnOnCamera: false,
         turnOnMicrophone: false,
+        screenSharing: false,
         roomId: 0,
         socketId: "",
         roomName: "",

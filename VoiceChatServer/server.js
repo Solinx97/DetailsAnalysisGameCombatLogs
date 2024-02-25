@@ -62,6 +62,7 @@ io.on("connection", socket => {
             username: joinedUser.username,
             turnOnCamera: joinedUser.turnOnCamera,
             turnOnMicrophone: joinedUser.turnOnMicrophone,
+            screenSharing: joinedUser.screenSharing
         };
 
         if (users[joinedUser.roomId]) {
@@ -104,6 +105,7 @@ io.on("connection", socket => {
             username: payload.username,
             turnOnCamera: userToSignalData.turnOnCamera,
             turnOnMicrophone: userToSignalData.turnOnMicrophone,
+            screenSharing: userToSignalData.screenSharing,
         });
     });
 
@@ -141,6 +143,21 @@ io.on("connection", socket => {
 
         usersInThisRoom.forEach(user => {
             io.to(user.socketId).emit("microphoneSwitched",{ status: microphoneData.microphoneStatus, peerId: socket.id });
+        });
+    });
+
+    socket.on("screenSharingSwitching", screenData => {
+        const me = users[screenData.roomId]?.filter(user => user.socketId === socket.id)[0];
+        if (me === undefined) {
+            return;
+        }
+
+        me.screenSharing = screenData.screenStatus;
+
+        const usersInThisRoom = users[screenData.roomId].filter(user => user.socketId !== socket.id);
+
+        usersInThisRoom.forEach(user => {
+            io.to(user.socketId).emit("screenSharingSwitched", { status: screenData.screenStatus, peerId: socket.id });
         });
     });
 

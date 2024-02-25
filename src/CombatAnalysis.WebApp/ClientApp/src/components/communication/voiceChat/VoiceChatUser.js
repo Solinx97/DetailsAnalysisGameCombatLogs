@@ -9,6 +9,7 @@ const VoiceChatUser = ({ peer, peerId, socket, username, audio, setAudio, initTu
     const [currentStream, setCurrentStream] = useState(null);
     const [turnOnCamera, setTurnOnCamera] = useState(initTurnOnCamera);
     const [turnOnMicrophone, setTurnOnMicrophone] = useState(initTurnOnMicrophone);
+    const [screenSharing, setScreenSharing] = useState(false);
 
     useEffect(() => {
         peer.on("stream", stream => {
@@ -26,6 +27,12 @@ const VoiceChatUser = ({ peer, peerId, socket, username, audio, setAudio, initTu
                 setTurnOnMicrophone(payload.status);
             }
         });
+
+        socket.on("screenSharingSwitched", payload => {
+            if (payload.peerId === peerId) {
+                setScreenSharing(payload.status);
+            }
+        });
     }, []);
 
     useEffect(() => {
@@ -34,11 +41,11 @@ const VoiceChatUser = ({ peer, peerId, socket, username, audio, setAudio, initTu
         }
 
         const videoTracks = currentStream.getVideoTracks();
-        if (videoTracks.length > 0 && turnOnCamera) {
+        if (videoTracks.length > 0 && (turnOnCamera || screenSharing)) {
             videoStreamRef.current.srcObject = currentStream;
             videoStreamRef.current.play();
         }
-    }, [currentStream, turnOnCamera]);
+    }, [currentStream, turnOnCamera, screenSharing]);
 
     useEffect(() => {
         if (audioStreamRef.current === null || currentStream === null) {
@@ -59,7 +66,7 @@ const VoiceChatUser = ({ peer, peerId, socket, username, audio, setAudio, initTu
 
     return (
         <div className="another">
-            {turnOnCamera
+            {(turnOnCamera || screenSharing)
                 ? <video className="another__video" playsInline ref={videoStreamRef} muted />
                 : turnOnMicrophone && <audio ref={audioStreamRef} />
             }

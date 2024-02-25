@@ -1,4 +1,4 @@
-import { faAngleDown, faAngleUp, faMicrophone, faMicrophoneSlash, faRightFromBracket, faVideo, faVideoSlash } from '@fortawesome/free-solid-svg-icons';
+import { faAngleDown, faAngleUp, faDisplay, faLinkSlash, faMicrophone, faMicrophoneSlash, faRightFromBracket, faVideo, faVideoSlash } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { memo, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -87,6 +87,25 @@ const VoiceChat = ({ callMinimazedData, setUseMinimaze }) => {
 				<div className="voice__title">
 					<div>{voice.data.chatName}</div>
 					<div className="tools">
+						{callMinimazedData.current.screenSharing
+							? <div className="device">
+								<FontAwesomeIcon
+									icon={faLinkSlash}
+									title={t("TurnOffScreenSharing")}
+									className="device__screen"
+									onClick={() => voice.func.shareScreen(false)}
+								/>
+							</div>
+							: <div className="device">
+								<FontAwesomeIcon
+									icon={faDisplay}
+									title={t("TurnOnScreenSharing")}
+									className="device__screen"
+									onClick={() => voice.func.shareScreen(true)}
+								/>
+							</div>
+						}
+
 						{callMinimazedData.current.turnOnCamera
 							? <div className="device">
 								<FontAwesomeIcon
@@ -213,7 +232,7 @@ const VoiceChat = ({ callMinimazedData, setUseMinimaze }) => {
 				</div>
 				<audio ref={audioRef} />
 				<div className="voice__content">
-					{voice.data.turnOnCamera
+					{(voice.data.turnOnCamera || voice.data.screenSharing)
 						? <video className="me" playsInline ref={voice.data.videoRef} autoPlay />
 						: <div>{me?.username}</div>
 					}

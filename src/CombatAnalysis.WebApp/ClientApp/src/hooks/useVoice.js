@@ -11,6 +11,7 @@ const useVoice = (me, callMinimazedData, microphoneDeviceId, setUseMinimaze) => 
 
 	const [turnOnCamera, setTurnOnCamera] = useState(false);
 	const [turnOnMicrophone, setTurnOnMicrophone] = useState(false);
+	const [screenSharing, setScreenSharing] = useState(false);
 	const [myStream, setMyStream] = useState(null);
 	const [renderRoomId, setRenderRoomId] = useState(0);
 	const [renderChatName, setRenderChatName] = useState("");
@@ -125,9 +126,10 @@ const useVoice = (me, callMinimazedData, microphoneDeviceId, setUseMinimaze) => 
 
 			callMinimazedData.current.stream = stream;
 			setMyStream(stream);
-		});
 
-		socketRef.current.emit("cameraSwitching", { roomId: renderRoomId, cameraStatus });
+
+			socketRef.current.emit("cameraSwitching", { roomId: renderRoomId, cameraStatus });
+		});
 	}
 
 	const switchMicrophone = (microphoneStatus) => {
@@ -159,9 +161,9 @@ const useVoice = (me, callMinimazedData, microphoneDeviceId, setUseMinimaze) => 
 
 			callMinimazedData.current.stream = stream;
 			setMyStream(stream);
-		});
 
-		socketRef.current.emit("microphoneSwitching", { roomId: renderRoomId, microphoneStatus });
+			socketRef.current.emit("microphoneSwitching", { roomId: renderRoomId, microphoneStatus });
+		});
 	}
 
 	const switchMicrophoneDevice = (deviceId) => {
@@ -182,11 +184,55 @@ const useVoice = (me, callMinimazedData, microphoneDeviceId, setUseMinimaze) => 
 		}
 	}
 
+	const shareScreen = (screenStatus) => {
+		setScreenSharing(screenStatus);
+		callMinimazedData.current.screenSharing = screenStatus;
+
+		if (!screenStatus) {
+			myStream.getVideoTracks()[0].stop();
+
+			socketRef.current.emit("screenSharingSwitching", { roomId: renderRoomId, screenStatus });
+
+			return;
+		}
+
+		const displayMediaOptions = {
+			video: {
+				displaySurface: "browser",
+			},
+			audio: {
+				suppressLocalAudioPlayback: false,
+			},
+			preferCurrentTab: false,
+			selfBrowserSurface: "exclude",
+			systemAudio: "include",
+			surfaceSwitching: "include",
+			monitorTypeSurfaces: "include",
+		};
+
+		navigator.mediaDevices.getDisplayMedia(displayMediaOptions).then(captureStream => {
+			const capture = captureStream.getVideoTracks()[0];
+			peersRef.current.forEach(peerRef => {
+				const peerStream = peerRef.peer.streams[0];
+				peerRef.peer.replaceTrack(peerStream.getVideoTracks()[0], capture, peerStream);
+			});
+
+			callMinimazedData.current.stream = captureStream;
+			setMyStream(captureStream);
+
+			capture.addEventListener("ended", () => {
+				shareScreen(false);
+			});
+
+			socketRef.current.emit("screenSharingSwitching", { roomId: renderRoomId, screenStatus });
+		});
+	}
+
 	const joinToRoom = () => {
 		callMinimazedData.current.stream = createDummyStream(1, 1);
 		setMyStream(callMinimazedData.current.stream);
 
-		socketRef.current.emit("joinToRoom", { roomId: renderRoomId, userId: me.id, username: me.username, turnOnCamera, turnOnMicrophone });
+		socketRef.current.emit("joinToRoom", { roomId: renderRoomId, userId: me.id, username: me.username, turnOnCamera, turnOnMicrophone, screenSharing });
 
 		listen();
 	}
@@ -309,6 +355,7 @@ const useVoice = (me, callMinimazedData, microphoneDeviceId, setUseMinimaze) => 
 			switchMicrophone,
 			switchMicrophoneDevice,
 			switchAudioOutputDevice,
+			shareScreen,
 			leave
 		},
 		data: {
@@ -321,6 +368,7 @@ const useVoice = (me, callMinimazedData, microphoneDeviceId, setUseMinimaze) => 
 			turnOnMicrophone,
 			anotherUsersAudio,
 			setAnotherUsersAudio,
+			screenSharing
 		},
 	};
 }
