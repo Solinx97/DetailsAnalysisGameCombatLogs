@@ -1,8 +1,9 @@
 import { faMicrophone, faMicrophoneSlash } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { memo, useEffect, useRef, useState } from "react";
+import WithVoiceContext from '../../../hocHelpers/WithVoiceContext';
 
-const VoiceChatUser = ({ peer, peerId, socket, username, audio, setAudio, initTurnOnCamera, initTurnOnMicrophone }) => {
+const VoiceChatUser = ({ callMinimazedData, itsMe, peer, peerId, socket, username, audio, setAudio, initTurnOnCamera, initTurnOnMicrophone, setSharingStatus }) => {
     const videoStreamRef = useRef(null);
     const audioStreamRef = useRef(null);
 
@@ -36,16 +37,41 @@ const VoiceChatUser = ({ peer, peerId, socket, username, audio, setAudio, initTu
     }, []);
 
     useEffect(() => {
+        if (!itsMe) {
+            return;
+        }
+
+        setCurrentStream(callMinimazedData.current.stream);
+    }, [itsMe]);
+
+    useEffect(() => {
         if (videoStreamRef.current === null || currentStream === null) {
             return;
         }
 
         const videoTracks = currentStream.getVideoTracks();
-        if (videoTracks.length > 0 && (turnOnCamera || screenSharing)) {
+        if (videoTracks.length > 0 && turnOnCamera) {
             videoStreamRef.current.srcObject = currentStream;
             videoStreamRef.current.play();
         }
-    }, [currentStream, turnOnCamera, screenSharing]);
+    }, [turnOnCamera]);
+
+    useEffect(() => {
+        if (currentStream === null) {
+            return;
+        }
+
+        const videoTracks = currentStream.getVideoTracks();
+        if (videoTracks.length > 0) {
+            const status = {
+                stream: currentStream,
+                itsMe: itsMe,
+                started: screenSharing
+            };
+
+            setSharingStatus(status);
+        }
+    }, [screenSharing]);
 
     useEffect(() => {
         if (audioStreamRef.current === null || currentStream === null) {
@@ -65,8 +91,8 @@ const VoiceChatUser = ({ peer, peerId, socket, username, audio, setAudio, initTu
     }, [currentStream, turnOnMicrophone]);
 
     return (
-        <div className="another">
-            {(turnOnCamera || screenSharing)
+        <>
+            {turnOnCamera
                 ? <video className="another__video" playsInline ref={videoStreamRef} muted />
                 : turnOnMicrophone && <audio ref={audioStreamRef} />
             }
@@ -83,8 +109,8 @@ const VoiceChatUser = ({ peer, peerId, socket, username, audio, setAudio, initTu
                     />
                 }
             </div>
-        </div>
+        </>
     );
 }
 
-export default memo(VoiceChatUser);
+export default memo(WithVoiceContext(VoiceChatUser));

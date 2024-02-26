@@ -57,58 +57,65 @@
 
     &__content {
         display: flex;
-        justify-content: space-around;
-        width: 85%;
+        justify-content: center;
+        gap: 10px;
+        width: 80%;
 
         ul {
             padding: 0;
             margin: 0;
         }
 
-        .me {
+        .sharing {
+            display: flex;
+            align-items: center;
+            flex-grow: 1.5;
             width: 65%;
             box-shadow: 5px 5px 5px 5px gray;
             border-radius: 25px;
+
+            video {
+                width: 100%;
+            }
+        }
+
+        .another-user-container {
+            flex-grow: 1;
+        }
+
+        .members, .another-user-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow-y: auto;
+            border: 2px solid gray;
+            border-radius: 20px;
+            width: 100%;
+            gap: 20px;
+            height: 540px;
+
+            .user {
+                display: flex;
+                justify-content: center;
+                box-shadow: 2px 2px 2px 2px gray;
+                border-radius: 20px;
+                width: 125px;
+                height: 125px;
+
+                .information {
+                    display: flex;
+                    justify-content: space-around;
+                    align-items: center;
+                }
+            }
         }
 
         .another-user-container {
             display: flex;
             flex-direction: column;
             align-items: center;
-            overflow-y: auto;
-            border: 2px solid gray;
-            border-radius: 20px;
-            width: 25%;
-            gap: 5px;
-            height: 540px;
-
-            .user {
-                display: flex;
-                justify-content: center;
-                width: 100%;
-                min-height: 30%;
-                height: auto;
-
-                .another {
-                    display: flex;
-                    flex-direction: column;
-                    justify-content: center;
-                    height: 100%;
-                    border-radius: 15px;
-                    margin: 5px;
-                    border: 2px solid gray;
-
-                    &__username {
-                        text-align: center;
-                    }
-
-                    .information {
-                        display: flex;
-                        justify-content: space-around;
-                        align-items: center;
-                    }
-                }
-            }
+            justify-content: center;
+            width: auto;
         }
     }
 }

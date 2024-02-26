@@ -7,8 +7,8 @@ import { useNavigate } from 'react-router-dom';
 import WithVoiceContext from '../../../hocHelpers/WithVoiceContext';
 import useVoice from '../../../hooks/useVoice';
 import CommunicationMenu from '../CommunicationMenu';
+import VoiceChatContentSharing from './VoiceChatContentSharing';
 import VoiceChatDeviceSettings from './VoiceChatDeviceSettings';
-import VoiceChatUser from './VoiceChatUser';
 
 import '../../../styles/communication/chats/voice.scss';
 
@@ -105,7 +105,6 @@ const VoiceChat = ({ callMinimazedData, setUseMinimaze }) => {
 								/>
 							</div>
 						}
-
 						{callMinimazedData.current.turnOnCamera
 							? <div className="device">
 								<FontAwesomeIcon
@@ -231,28 +230,9 @@ const VoiceChat = ({ callMinimazedData, setUseMinimaze }) => {
 					</div>
 				</div>
 				<audio ref={audioRef} />
-				<div className="voice__content">
-					{(voice.data.turnOnCamera || voice.data.screenSharing)
-						? <video className="me" playsInline ref={voice.data.videoRef} autoPlay />
-						: <div>{me?.username}</div>
-					}
-					<ul className="another-user-container">
-						{voice.data.peersRef.current?.map((peer, index) =>
-							<li key={index} className="user">
-								<VoiceChatUser
-									peer={peer.peer}
-									peerId={peer.peerId}
-									socket={voice.data.socketRef.current}
-									username={peer?.username}
-									audio={voice.data.anotherUsersAudio}
-									setAudio={voice.data.setAnotherUsersAudio}
-									initTurnOnCamera={peer?.turnOnCamera}
-									initTurnOnMicrophone={peer?.turnOnMicrophone}
-								/>
-							</li>
-						)}
-					</ul>
-				</div>
+				<VoiceChatContentSharing
+					voice={voice}
+				/>
 			</div>
 		</>
 	);

@@ -232,6 +232,21 @@ const useVoice = (me, callMinimazedData, microphoneDeviceId, setUseMinimaze) => 
 		callMinimazedData.current.stream = createDummyStream(1, 1);
 		setMyStream(callMinimazedData.current.stream);
 
+		const peer = new window.SimplePeer({
+			initiator: true,
+			trickle: false,
+			stream: callMinimazedData.current.stream,
+		});
+
+		peersRef.current.push({
+			peerId: socketRef.current.id,
+			username: me.username,
+			turnOnCamera: turnOnCamera,
+			turnOnMicrophone: turnOnMicrophone,
+			screenSharing: screenSharing,
+			peer,
+		});
+
 		socketRef.current.emit("joinToRoom", { roomId: renderRoomId, userId: me.id, username: me.username, turnOnCamera, turnOnMicrophone, screenSharing });
 
 		listen();
@@ -248,6 +263,7 @@ const useVoice = (me, callMinimazedData, microphoneDeviceId, setUseMinimaze) => 
 					username: user.username,
 					turnOnCamera: user.turnOnCamera,
 					turnOnMicrophone: user.turnOnMicrophone,
+					screenSharing: user.screenSharing,
 					peer,
 				});
 
@@ -368,7 +384,7 @@ const useVoice = (me, callMinimazedData, microphoneDeviceId, setUseMinimaze) => 
 			turnOnMicrophone,
 			anotherUsersAudio,
 			setAnotherUsersAudio,
-			screenSharing
+			screenSharing,
 		},
 	};
 }
