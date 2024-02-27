@@ -118,18 +118,25 @@ const useVoice = (me, callMinimazedData, microphoneDeviceId, setUseMinimaze) => 
 			return;
 		}
 
-		navigator.mediaDevices.getUserMedia({ video: cameraStatus, audio: turnOnMicrophone }).then(stream => {
-			peersRef.current.forEach(peerRef => {
-				const peerStream = peerRef.peer.streams[0];
-				peerRef.peer.replaceTrack(peerStream.getVideoTracks()[0], stream.getVideoTracks()[0], peerStream);
+		navigator.mediaDevices.getUserMedia({ video: cameraStatus, audio: turnOnMicrophone })
+			.then(stream => {
+				peersRef.current.forEach(peerRef => {
+					const peerStream = peerRef.peer.streams[0];
+					peerRef.peer.replaceTrack(peerStream.getVideoTracks()[0], stream.getVideoTracks()[0], peerStream);
+				});
+
+				callMinimazedData.current.stream = stream;
+				setMyStream(stream);
+
+
+				socketRef.current.emit("cameraSwitching", { roomId: renderRoomId, cameraStatus });
+			})
+			.catch((e) => {
+				setTurnOnCamera(false);
+				callMinimazedData.current.turnOnCamera = false;
+
+				console.log(e);
 			});
-
-			callMinimazedData.current.stream = stream;
-			setMyStream(stream);
-
-
-			socketRef.current.emit("cameraSwitching", { roomId: renderRoomId, cameraStatus });
-		});
 	}
 
 	const switchMicrophone = (microphoneStatus) => {
@@ -153,17 +160,24 @@ const useVoice = (me, callMinimazedData, microphoneDeviceId, setUseMinimaze) => 
 			constraints.audio = { deviceId: microphoneDeviceId };
 		}
 
-		navigator.mediaDevices.getUserMedia(constraints).then(stream => {
-			peersRef.current.forEach(peerRef => {
-				const peerStream = peerRef.peer.streams[0];
-				peerRef.peer.replaceTrack(peerStream.getAudioTracks()[0], stream.getAudioTracks()[0], peerStream);
+		navigator.mediaDevices.getUserMedia(constraints)
+			.then(stream => {
+				peersRef.current.forEach(peerRef => {
+					const peerStream = peerRef.peer.streams[0];
+					peerRef.peer.replaceTrack(peerStream.getAudioTracks()[0], stream.getAudioTracks()[0], peerStream);
+				});
+
+				callMinimazedData.current.stream = stream;
+				setMyStream(stream);
+
+				socketRef.current.emit("microphoneSwitching", { roomId: renderRoomId, microphoneStatus });
+			})
+			.catch((e) => {
+				setTurnOnMicrophone(false);
+				callMinimazedData.current.turnOnMicrophone = false;
+
+				console.log(e);
 			});
-
-			callMinimazedData.current.stream = stream;
-			setMyStream(stream);
-
-			socketRef.current.emit("microphoneSwitching", { roomId: renderRoomId, microphoneStatus });
-		});
 	}
 
 	const switchMicrophoneDevice = (deviceId) => {
@@ -210,22 +224,29 @@ const useVoice = (me, callMinimazedData, microphoneDeviceId, setUseMinimaze) => 
 			monitorTypeSurfaces: "include",
 		};
 
-		navigator.mediaDevices.getDisplayMedia(displayMediaOptions).then(captureStream => {
-			const capture = captureStream.getVideoTracks()[0];
-			peersRef.current.forEach(peerRef => {
-				const peerStream = peerRef.peer.streams[0];
-				peerRef.peer.replaceTrack(peerStream.getVideoTracks()[0], capture, peerStream);
+		navigator.mediaDevices.getDisplayMedia(displayMediaOptions)
+			.then(captureStream => {
+				const capture = captureStream.getVideoTracks()[0];
+				peersRef.current.forEach(peerRef => {
+					const peerStream = peerRef.peer.streams[0];
+					peerRef.peer.replaceTrack(peerStream.getVideoTracks()[0], capture, peerStream);
+				});
+
+				callMinimazedData.current.stream = captureStream;
+				setMyStream(captureStream);
+
+				capture.addEventListener("ended", () => {
+					shareScreen(false);
+				});
+
+				socketRef.current.emit("screenSharingSwitching", { roomId: renderRoomId, screenStatus });
+			})
+			.catch((e) => {
+				setScreenSharing(false);
+				callMinimazedData.current.screenSharing = false;
+
+				console.log(e);
 			});
-
-			callMinimazedData.current.stream = captureStream;
-			setMyStream(captureStream);
-
-			capture.addEventListener("ended", () => {
-				shareScreen(false);
-			});
-
-			socketRef.current.emit("screenSharingSwitching", { roomId: renderRoomId, screenStatus });
-		});
 	}
 
 	const joinToRoom = () => {
@@ -385,6 +406,7 @@ const useVoice = (me, callMinimazedData, microphoneDeviceId, setUseMinimaze) => 
 			anotherUsersAudio,
 			setAnotherUsersAudio,
 			screenSharing,
+			setScreenSharing,
 		},
 	};
 }

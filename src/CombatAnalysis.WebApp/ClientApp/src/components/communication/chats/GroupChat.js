@@ -310,7 +310,7 @@ const GroupChat = ({ chat, me, setSelectedChat, callMinimazedData }) => {
                         <div className="title__call-started">Call started</div>
                     }
                     <div className="title__menu">
-                        {(callMinimazedData.current.stream !== null && callMinimazedData.current.roomId !== chat.id)
+                        {(callMinimazedData.current.stream !== null && +callMinimazedData.current.roomId !== +chat.id)
                             ? <FontAwesomeIcon
                                 icon={faPhone}
                                 title={t("Call move to minimaze")}

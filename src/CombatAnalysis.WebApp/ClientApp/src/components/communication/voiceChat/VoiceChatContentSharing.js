@@ -8,7 +8,8 @@ const VoiceChatContentSharing = ({ callMinimazedData, voice }) => {
 	const [sharingStatus, setSharingStatus] = useState({
 		stream: null,
 		itsMe: false,
-		started: false
+		started: false,
+		username: ""
 	});
 
 	const getData = (stream, itsMe) => {
@@ -29,6 +30,7 @@ const VoiceChatContentSharing = ({ callMinimazedData, voice }) => {
 			{sharingStatus.started &&
 				<div className="sharing">
 					<video playsInline ref={videoRef} muted />
+					<div className="username">{sharingStatus.username}</div>
 				</div>
 			}
 			<ul className={`${sharingStatus.started ? "another-user-container" : "members"}`}>

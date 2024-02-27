@@ -1,20 +1,18 @@
-import { faAngleDown, faAngleUp, faMicrophone, faMicrophoneSlash, faPhoneSlash, faRightFromBracket, faVideo, faVideoSlash } from '@fortawesome/free-solid-svg-icons';
+import { faAngleDown, faDisplay, faLinkSlash } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
 import io from 'socket.io-client';
 import WithVoiceContext from '../../../hocHelpers/WithVoiceContext';
 import useVoice from '../../../hooks/useVoice';
+import VoiceChatMinimazedMain from './VoiceChatMinimazedMain';
 
 import '../../../styles/voiceChatMinimazed.scss';
 
 const VoiceChatMinimazed = ({ callMinimazedData, setUseMinimaze }) => {
     const me = useSelector((state) => state.customer.value);
 
-    const navigate = useNavigate();
-
-    const [hide, setHide] = useState(false);
+    const [simpleVersion, setSimpleVersion] = useState(false);
     const [microphoneDeviceId, setMicrophoneDeviceId] = useState("");
 
     const voice = useVoice(me, callMinimazedData, microphoneDeviceId, setUseMinimaze);
@@ -34,78 +32,47 @@ const VoiceChatMinimazed = ({ callMinimazedData, setUseMinimaze }) => {
         });
     }, []);
 
-    const backToCall = () => {
-        navigate(`/chats/voice?roomId=${callMinimazedData.current.roomId}&chatName=${callMinimazedData.current.roomName}`);
-    }
+    useEffect(() => {
+        if (voice.data.screenSharing !== callMinimazedData.current.screenSharing) {
+            voice.data.setScreenSharing(callMinimazedData.current.screenSharing);
+        }
+    }, [voice.data.screenSharing]);
 
     return (
-        <>
-            {hide
-                ? <div className="voice-chat-minimazed_min">
-                    <div className="voice-chat-minimazed_min content">
+        <div className="voice-chat-minimazed">
+            {simpleVersion
+                ? <div className="simple_version">
+                    <div className="content">
                         <div className="voice-chat-minimazed__name">{callMinimazedData.current.roomName}</div>
                     </div>
                     <FontAwesomeIcon
                         icon={faAngleDown}
                         title="Show"
                         className="show"
-                        onClick={() => setHide(!hide)}
+                        onClick={() => setSimpleVersion(false)}
                     />
                 </div>
-                : <div className="voice-chat-minimazed">
-                    <div className="voice-chat-minimazed content">
-                        <div className="voice-chat-minimazed__name">{callMinimazedData.current.roomName}</div>
-                        <div className="voice-chat-minimazed__tools">
-                            {callMinimazedData.current.turnOnCamera
-                                ? <FontAwesomeIcon
-                                    icon={faVideo}
-                                    title="TurnOffCamera"
-                                    className="device__camera"
-                                    onClick={() => voice.func.switchCamera(false)}
-                                />
-                                : <FontAwesomeIcon
-                                    icon={faVideoSlash}
-                                    title="TurnOnCamera"
-                                    className="device__camera"
-                                    onClick={() => voice.func.switchCamera(true)}
-                                />
-                            }
-                            {callMinimazedData.current.turnOnMicrophone
-                                ? <FontAwesomeIcon
-                                    icon={faMicrophone}
-                                    title="TurnOffMicrophone"
-                                    className="device__microphone"
-                                    onClick={() => voice.func.switchMicrophone(false)}
-                                />
-                                : <FontAwesomeIcon
-                                    icon={faMicrophoneSlash}
-                                    title="TurnOnMicrophone"
-                                    className="device__microphone"
-                                    onClick={() => voice.func.switchMicrophone(true)}
-                                />
-                            }
-                            <FontAwesomeIcon
-                                icon={faPhoneSlash}
-                                title="Leave"
-                                onClick={() => voice.func.leave()}
-                            />
-                        </div>
-                    </div>
-                    <div className="btn-shadow back-to-call" title="Back to call" onClick={backToCall}>
-                        <FontAwesomeIcon
-                            icon={faRightFromBracket}
-                        />
-                        <div>Back</div>
-                    </div>
-                    <FontAwesomeIcon
-                        icon={faAngleUp}
-                        title="Hide"
-                        className="hide"
-                        onClick={() => setHide(!hide)}
-                    />
-                </div>
+                : <VoiceChatMinimazedMain
+                    setUseMinimaze={setUseMinimaze}
+                    microphoneDeviceId={microphoneDeviceId}
+                    setSimpleVersion={setSimpleVersion}
+                />
             }
-        </>
+            {voice.data.screenSharing
+                ? <FontAwesomeIcon
+                    icon={faLinkSlash}
+                    className="sharing"
+                    title="Stop screen scharing"
+                    onClick={() => voice.func.shareScreen(false)}
+                />
+                : <FontAwesomeIcon
+                    icon={faDisplay}
+                    className="sharing"
+                    title="Screen scharing"
+                    onClick={() => voice.func.shareScreen(true)}
+                />
+            }
+        </div>
     );
 }
 

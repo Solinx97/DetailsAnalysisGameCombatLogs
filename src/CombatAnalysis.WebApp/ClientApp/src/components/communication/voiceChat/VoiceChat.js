@@ -33,6 +33,12 @@ const VoiceChat = ({ callMinimazedData, setUseMinimaze }) => {
 		}
 
 		voice.func.initConnection();
+
+		return () => {
+			if (!isCallStarted()) {
+				voice.func.leave();
+			}
+		}
 	}, []);
 
 	useEffect(() => {
@@ -85,7 +91,7 @@ const VoiceChat = ({ callMinimazedData, setUseMinimaze }) => {
 			/>
 			<div className="voice">
 				<div className="voice__title">
-					<div>{voice.data.chatName}</div>
+					<div>{voice.data.renderChatName}</div>
 					<div className="tools">
 						{callMinimazedData.current.screenSharing
 							? <div className="device">

@@ -68,14 +68,22 @@
 
         .sharing {
             display: flex;
+            flex-direction: column;
             align-items: center;
+            justify-content: center;
             flex-grow: 1.5;
             width: 65%;
             box-shadow: 5px 5px 5px 5px gray;
             border-radius: 25px;
 
             video {
+                flex-grow: 2;
                 width: 100%;
+            }
+
+            .username {
+                flex-grow: 0.5;
+                height: auto;
             }
         }
 

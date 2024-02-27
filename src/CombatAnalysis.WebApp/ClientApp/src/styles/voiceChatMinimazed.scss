@@ -1,60 +1,70 @@
-.voice-chat-minimazed, .voice-chat-minimazed_min {
+.voice-chat-minimazed {
     position: absolute;
+    top: 2%;
+    right: 36%;
     display: flex;
-    justify-content: space-between;
-    gap: 20px;
-    top: 1%;
-    right: 40%;
-    z-index: 999;
-    width: auto;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
 
-    .content {
+    .full-version, .simple_version {
         display: flex;
-        justify-content: center;
-        gap: 25px;
-        border: 2px solid gray;
-        border-radius: 10px;
-        padding: 10px;
-        background: white;
-        width: 225px;
-    }
-
-    .back-to-call {
-        display: flex;
-        position: absolute;
-        align-items: center;
-        margin-left: 90px;
-        margin-top: 5px;
-    }
-
-    .show, .hide {
-        display: flex;
-        align-items: center;
-        margin-left: 55px;
-        margin-top: 15px;
-    }
-
-    &__tools {
-        display: flex;
+        justify-content: space-between;
         align-items: center;
         gap: 20px;
-    }
-}
+        z-index: 999;
 
-.voice-chat-minimazed_min {
-    .content {
-        border: 1px solid gray;
-        border-radius: 10px;
-        background: white;
-        font-size: 10px;
-        padding: 5px;
-        width: 125px;
+        .content {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 25px;
+            box-shadow: 2px 2px 2px 2px gray;
+            border-radius: 10px;
+            padding: 10px;
+            background: white;
+            width: 250px;
+        }
+
+        .back-to-call {
+            display: flex;
+            align-items: center;
+            height: 40px;
+        }
+
+        .show, .hide {
+            display: flex;
+            align-items: center;
+        }
+
+        &__tools {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+
+            .leave {
+                margin-left: 10px;
+                border: 1px solid red;
+                border-radius: 20px;
+                padding: 5px;
+            }
+        }
     }
 
-    .show, .hide {
-        display: flex;
-        align-items: center;
-        margin-left: 45px;
-        margin-top: 5px;
+    .simple_version {
+        .content {
+            box-shadow: 2px 2px 2px 2px gray;
+            border-radius: 10px;
+            background: white;
+            font-size: 10px;
+            padding: 5px;
+            width: 125px;
+        }
+    }
+
+    .sharing svg {
+        width: 15px;
+        height: 15px;
     }
 }

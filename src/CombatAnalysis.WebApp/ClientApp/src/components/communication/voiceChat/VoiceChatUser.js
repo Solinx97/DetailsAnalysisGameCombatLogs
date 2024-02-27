@@ -66,7 +66,8 @@ const VoiceChatUser = ({ callMinimazedData, itsMe, peer, peerId, socket, usernam
             const status = {
                 stream: currentStream,
                 itsMe: itsMe,
-                started: screenSharing
+                started: screenSharing,
+                username
             };
 
             setSharingStatus(status);
