@@ -107,8 +107,26 @@
                 justify-content: center;
                 box-shadow: 2px 2px 2px 2px gray;
                 border-radius: 20px;
-                width: 125px;
-                height: 125px;
+                width: 150px;
+                height: 150px;
+
+                &_video {
+                    display: flex;
+                    flex-direction: column;
+                    justify-content: center;
+                    width: 150px;
+                    height: 150px;
+
+                    video {
+                        border-radius: 20px;
+                    }
+
+                    .information {
+                        display: flex;
+                        justify-content: space-around;
+                        align-items: center;
+                    }
+                }
 
                 .information {
                     display: flex;

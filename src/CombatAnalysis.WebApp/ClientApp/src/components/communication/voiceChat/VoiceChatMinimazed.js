@@ -1,4 +1,4 @@
-import { faAngleDown, faDisplay, faLinkSlash } from '@fortawesome/free-solid-svg-icons';
+import { faAngleDown, faDisplay } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
@@ -13,9 +13,8 @@ const VoiceChatMinimazed = ({ callMinimazedData, setUseMinimaze }) => {
     const me = useSelector((state) => state.customer.value);
 
     const [simpleVersion, setSimpleVersion] = useState(false);
-    const [microphoneDeviceId, setMicrophoneDeviceId] = useState("");
 
-    const voice = useVoice(me, callMinimazedData, microphoneDeviceId, setUseMinimaze);
+    const voice = useVoice(me, callMinimazedData, setUseMinimaze);
 
     useEffect(() => {
         voice.data.socketRef.current = io.connect("192.168.0.161:2000");
@@ -54,22 +53,15 @@ const VoiceChatMinimazed = ({ callMinimazedData, setUseMinimaze }) => {
                 </div>
                 : <VoiceChatMinimazedMain
                     setUseMinimaze={setUseMinimaze}
-                    microphoneDeviceId={microphoneDeviceId}
                     setSimpleVersion={setSimpleVersion}
                 />
             }
-            {voice.data.screenSharing
-                ? <FontAwesomeIcon
-                    icon={faLinkSlash}
+            {voice.data.screenSharing &&
+                <FontAwesomeIcon
+                    icon={faDisplay}
                     className="sharing"
                     title="Stop screen scharing"
                     onClick={() => voice.func.shareScreen(false)}
-                />
-                : <FontAwesomeIcon
-                    icon={faDisplay}
-                    className="sharing"
-                    title="Screen scharing"
-                    onClick={() => voice.func.shareScreen(true)}
                 />
             }
         </div>

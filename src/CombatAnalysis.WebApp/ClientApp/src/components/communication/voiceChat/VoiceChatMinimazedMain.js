@@ -5,12 +5,12 @@ import { useNavigate } from 'react-router-dom';
 import WithVoiceContext from '../../../hocHelpers/WithVoiceContext';
 import useVoice from '../../../hooks/useVoice';
 
-const VoiceChatMinimazedMain = ({ callMinimazedData, setUseMinimaze, microphoneDeviceId, setSimpleVersion }) => {
+const VoiceChatMinimazedMain = ({ callMinimazedData, setUseMinimaze, setSimpleVersion }) => {
     const me = useSelector((state) => state.customer.value);
 
     const navigate = useNavigate();
 
-    const voice = useVoice(me, callMinimazedData, microphoneDeviceId, setUseMinimaze);
+    const voice = useVoice(me, callMinimazedData, setUseMinimaze);
 
     const backToCall = () => {
         navigate(`/chats/voice/${callMinimazedData.current.roomId}/${callMinimazedData.current.roomName}`);

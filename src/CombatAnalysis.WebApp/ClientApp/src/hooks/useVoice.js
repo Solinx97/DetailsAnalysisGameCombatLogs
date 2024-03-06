@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import io from 'socket.io-client';
 
-const useVoice = (me, callMinimazedData, microphoneDeviceId, setUseMinimaze) => {
+const useVoice = (me, callMinimazedData, setUseMinimaze) => {
 	const socketRef = useRef(null);
 	const peersRef = useRef([]);
 	const videoRef = useRef(null);
@@ -16,6 +16,8 @@ const useVoice = (me, callMinimazedData, microphoneDeviceId, setUseMinimaze) => 
 	const [renderRoomId, setRenderRoomId] = useState(0);
 	const [renderChatName, setRenderChatName] = useState("");
 	const [peers, setPeers] = useState([]);
+
+	const [microphoneDeviceId, setMicrophoneDeviceId] = useState("");
 
 	const { roomId, chatName } = useParams();
 
@@ -127,7 +129,6 @@ const useVoice = (me, callMinimazedData, microphoneDeviceId, setUseMinimaze) => 
 
 				callMinimazedData.current.stream = stream;
 				setMyStream(stream);
-
 
 				socketRef.current.emit("cameraSwitching", { roomId: renderRoomId, cameraStatus });
 			})
@@ -297,6 +298,7 @@ const useVoice = (me, callMinimazedData, microphoneDeviceId, setUseMinimaze) => 
 
 		socketRef.current.on("userJoined", payload => {
 			const peer = addPeer(payload.signal, payload.callerId, callMinimazedData.current.stream);
+
 			peersRef.current.push({
 				peerId: payload.callerId,
 				username: payload.username,
@@ -393,7 +395,8 @@ const useVoice = (me, callMinimazedData, microphoneDeviceId, setUseMinimaze) => 
 			switchMicrophoneDevice,
 			switchAudioOutputDevice,
 			shareScreen,
-			leave
+			leave,
+			setMicrophoneDeviceId
 		},
 		data: {
 			renderRoomId,
@@ -407,6 +410,7 @@ const useVoice = (me, callMinimazedData, microphoneDeviceId, setUseMinimaze) => 
 			setAnotherUsersAudio,
 			screenSharing,
 			setScreenSharing,
+			microphoneDeviceId,
 		},
 	};
 }

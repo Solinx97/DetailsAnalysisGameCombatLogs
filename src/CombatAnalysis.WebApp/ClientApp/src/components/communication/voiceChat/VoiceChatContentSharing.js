@@ -35,7 +35,7 @@ const VoiceChatContentSharing = ({ callMinimazedData, voice }) => {
 			}
 			<ul className={`${sharingStatus.started ? "another-user-container" : "members"}`}>
 				{voice.data.peersRef.current?.map((peer, index) =>
-					<li key={index} className="user">
+					<li key={index}>
 						<VoiceChatUser
 							itsMe={index === 0}
 							peer={peer.peer}

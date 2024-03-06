@@ -37,23 +37,19 @@ const VoiceChatUser = ({ callMinimazedData, itsMe, peer, peerId, socket, usernam
     }, []);
 
     useEffect(() => {
-        if (!itsMe) {
+        if (!itsMe || callMinimazedData.current.stream === null) {
             return;
         }
 
-        setCurrentStream(callMinimazedData.current.stream);
-    }, [itsMe]);
+        setVideoStream(callMinimazedData.current.stream);
+    }, [turnOnCamera]);
 
     useEffect(() => {
-        if (videoStreamRef.current === null || currentStream === null) {
+        if (itsMe || (videoStreamRef.current === null || currentStream === null)) {
             return;
         }
 
-        const videoTracks = currentStream.getVideoTracks();
-        if (videoTracks.length > 0 && turnOnCamera) {
-            videoStreamRef.current.srcObject = currentStream;
-            videoStreamRef.current.play();
-        }
+        setVideoStream(currentStream);
     }, [turnOnCamera]);
 
     useEffect(() => {
@@ -91,8 +87,16 @@ const VoiceChatUser = ({ callMinimazedData, itsMe, peer, peerId, socket, usernam
         }
     }, [currentStream, turnOnMicrophone]);
 
+    const setVideoStream = (stream) => {
+        const videoTracks = stream.getVideoTracks();
+        if (videoTracks.length > 0 && turnOnCamera) {
+            videoStreamRef.current.srcObject = stream;
+            videoStreamRef.current.play();
+        }
+    }
+
     return (
-        <>
+        <div className={`user${turnOnCamera ? "_video" : ""}`}>
             {turnOnCamera
                 ? <video className="another__video" playsInline ref={videoStreamRef} muted />
                 : turnOnMicrophone && <audio ref={audioStreamRef} />
@@ -110,7 +114,7 @@ const VoiceChatUser = ({ callMinimazedData, itsMe, peer, peerId, socket, usernam
                     />
                 }
             </div>
-        </>
+        </div>
     );
 }
 

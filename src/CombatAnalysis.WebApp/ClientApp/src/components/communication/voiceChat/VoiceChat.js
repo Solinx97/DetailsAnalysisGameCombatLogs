@@ -7,8 +7,8 @@ import { useNavigate } from 'react-router-dom';
 import WithVoiceContext from '../../../hocHelpers/WithVoiceContext';
 import useVoice from '../../../hooks/useVoice';
 import CommunicationMenu from '../CommunicationMenu';
+import VoiceChatAudioDeviceSettings from './VoiceChatAudioDeviceSettings';
 import VoiceChatContentSharing from './VoiceChatContentSharing';
-import VoiceChatDeviceSettings from './VoiceChatDeviceSettings';
 
 import '../../../styles/communication/chats/voice.scss';
 
@@ -21,11 +21,10 @@ const VoiceChat = ({ callMinimazedData, setUseMinimaze }) => {
 
 	const [openVideoSettings, setOpenVideoSettings] = useState(false);
 	const [openAudioSettings, setOpenAudioSettings] = useState(false);
-	const [microphoneDeviceId, setMicrophoneDeviceId] = useState("");
 
 	const audioRef = useRef(null);
 
-	const voice = useVoice(me, callMinimazedData, microphoneDeviceId, setUseMinimaze);
+	const voice = useVoice(me, callMinimazedData, setUseMinimaze);
 
 	useEffect(() => {
 		if (!isCallStarted()) {
@@ -134,7 +133,7 @@ const VoiceChat = ({ callMinimazedData, setUseMinimaze }) => {
 									/>
 								}
 								{openVideoSettings &&
-									<VoiceChatDeviceSettings />
+									<VoiceChatAudioDeviceSettings />
 								}
 							</div>
 							: <div className="device">
@@ -144,23 +143,6 @@ const VoiceChat = ({ callMinimazedData, setUseMinimaze }) => {
 									className="device__camera"
 									onClick={() => voice.func.switchCamera(true)}
 								/>
-								{openVideoSettings
-									? <FontAwesomeIcon
-										icon={faAngleUp}
-										title={t("Setting")}
-										className="device__settings"
-										onClick={handleOpenVideoSettings}
-									/>
-									: <FontAwesomeIcon
-										icon={faAngleDown}
-										title={t("Setting")}
-										className="device__settings"
-										onClick={handleOpenVideoSettings}
-									/>
-								}
-								{openVideoSettings &&
-									<VoiceChatDeviceSettings />
-								}
 							</div>
 						}
 						{callMinimazedData.current.turnOnMicrophone
@@ -186,9 +168,8 @@ const VoiceChat = ({ callMinimazedData, setUseMinimaze }) => {
 									/>
 								}
 								{openAudioSettings &&
-									<VoiceChatDeviceSettings
-										isAudio={true}
-										setMicrophoneDeviceId={setMicrophoneDeviceId}
+									<VoiceChatAudioDeviceSettings
+										setMicrophoneDeviceId={voice.func.setMicrophoneDeviceId}
 										switchMicrophoneDevice={voice.func.switchMicrophoneDevice}
 										switchAudioOutputDevice={voice.func.switchAudioOutputDevice}
 										microphoneIsOn={voice.data.turnOnMicrophone}
@@ -217,9 +198,9 @@ const VoiceChat = ({ callMinimazedData, setUseMinimaze }) => {
 									/>
 								}
 								{openAudioSettings &&
-									<VoiceChatDeviceSettings
+									<VoiceChatAudioDeviceSettings
 										isAudio={true}
-										setMicrophoneDeviceId={setMicrophoneDeviceId}
+										setMicrophoneDeviceId={voice.func.setMicrophoneDeviceId}
 										switchMicrophoneDevice={voice.func.switchMicrophoneDevice}
 										switchAudioOutputDevice={voice.func.switchAudioOutputDevice}
 										microphoneIsOn={voice.data.turnOnMicrophone}
