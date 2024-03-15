@@ -250,6 +250,11 @@ const useVoice = (me, callMinimazedData, setUseMinimaze) => {
 			});
 	}
 
+	const stopSharing = () => {
+		setScreenSharing(false);
+		callMinimazedData.current.screenSharing = false;
+	}
+
 	const joinToRoom = () => {
 		callMinimazedData.current.stream = createDummyStream(1, 1);
 		setMyStream(callMinimazedData.current.stream);
@@ -396,7 +401,8 @@ const useVoice = (me, callMinimazedData, setUseMinimaze) => {
 			switchAudioOutputDevice,
 			shareScreen,
 			leave,
-			setMicrophoneDeviceId
+			setMicrophoneDeviceId,
+			stopSharing
 		},
 		data: {
 			renderRoomId,

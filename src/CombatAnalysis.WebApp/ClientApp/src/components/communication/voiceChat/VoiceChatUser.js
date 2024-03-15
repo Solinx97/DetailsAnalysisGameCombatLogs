@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { memo, useEffect, useRef, useState } from "react";
 import WithVoiceContext from '../../../hocHelpers/WithVoiceContext';
 
-const VoiceChatUser = ({ callMinimazedData, itsMe, peer, peerId, socket, username, audio, setAudio, initTurnOnCamera, initTurnOnMicrophone, setSharingStatus }) => {
+const VoiceChatUser = ({ callMinimazedData, itsMe, peer, peerId, socket, username, audio, setAudio, initTurnOnCamera, initTurnOnMicrophone, setSharingStatus, voice }) => {
     const videoStreamRef = useRef(null);
     const audioStreamRef = useRef(null);
 
@@ -29,6 +29,15 @@ const VoiceChatUser = ({ callMinimazedData, itsMe, peer, peerId, socket, usernam
             }
         });
 
+        socket.on("openingNewSharingScreen", payload => {
+            if (payload.peerId === peerId) {
+                const stream = itsMe ? callMinimazedData.current.stream : currentStream;
+                stream.getVideoTracks()[0].stop();
+
+                voice.func.stopSharing();
+            }
+        });
+
         socket.on("screenSharingSwitched", payload => {
             if (payload.peerId === peerId) {
                 setScreenSharing(payload.status);
@@ -37,7 +46,7 @@ const VoiceChatUser = ({ callMinimazedData, itsMe, peer, peerId, socket, usernam
     }, []);
 
     useEffect(() => {
-        if (!itsMe || callMinimazedData.current.stream === null) {
+        if (!itsMe || callMinimazedData.current.stream === null) { 
             return;
         }
 
@@ -53,11 +62,12 @@ const VoiceChatUser = ({ callMinimazedData, itsMe, peer, peerId, socket, usernam
     }, [turnOnCamera]);
 
     useEffect(() => {
-        if (currentStream === null) {
+        if (!itsMe && currentStream === null) {
             return;
         }
 
-        const videoTracks = currentStream.getVideoTracks();
+        const stream = itsMe ? callMinimazedData.current.stream : currentStream;
+        const videoTracks = stream.getVideoTracks();
         if (videoTracks.length > 0) {
             const status = {
                 stream: currentStream,

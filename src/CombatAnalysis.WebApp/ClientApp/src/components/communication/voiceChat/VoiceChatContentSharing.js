@@ -12,6 +12,10 @@ const VoiceChatContentSharing = ({ callMinimazedData, voice }) => {
 		username: ""
 	});
 
+	useEffect(() => {
+		getData(sharingStatus.stream, sharingStatus.itsMe);
+	}, [sharingStatus]);
+
 	const getData = (stream, itsMe) => {
 		if (videoRef.current === null) {
 			return;
@@ -20,10 +24,6 @@ const VoiceChatContentSharing = ({ callMinimazedData, voice }) => {
 		videoRef.current.srcObject = itsMe ? callMinimazedData.current.stream : stream;
 		videoRef.current.play();
 	}
-
-	useEffect(() => {
-		getData(sharingStatus.stream, sharingStatus.itsMe);
-	}, [sharingStatus]);
 
     return (
 		<div className="voice__content">
@@ -47,6 +47,7 @@ const VoiceChatContentSharing = ({ callMinimazedData, voice }) => {
 							initTurnOnCamera={peer?.turnOnCamera}
 							initTurnOnMicrophone={peer?.turnOnMicrophone}
 							setSharingStatus={setSharingStatus}
+							voice={voice}
 						/>
 					</li>
 				)}

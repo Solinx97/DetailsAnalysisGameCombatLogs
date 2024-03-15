@@ -153,6 +153,11 @@ io.on("connection", socket => {
         users[screenData.roomId].forEach(user => {
             io.to(user.socketId).emit("screenSharingSwitched", { status: screenData.screenStatus, peerId: socket.id });
         });
+
+        const anotherUsers = users[screenData.roomId]?.filter(user => user.socketId !== socket.id);
+        anotherUsers.forEach(user => {
+            io.to(user.socketId).emit("openingNewSharingScreen", { peerId: user.socketId });
+        });
     });
 
     socket.on("leavingFromRoom", leavingUser => {
