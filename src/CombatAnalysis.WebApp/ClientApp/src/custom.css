@@ -27,3 +27,19 @@ code {
     box-shadow: 3px 3px 3px 3px gray;
     cursor: pointer;
 }
+
+.btn-shadow_disabled {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 5px 10px;
+    border: 2px solid gray;
+    border-radius: 15px;
+    box-shadow: 3px 3px 3px 3px gray;
+    cursor: default;
+    opacity: 0.5;
+}
+
+.btn-shadow_disabled svg {
+    cursor: default;
+}

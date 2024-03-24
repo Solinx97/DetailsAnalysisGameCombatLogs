@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useLazyPostSearchByCommunityIdAsyncQuery, useLazyUserPostSearchByUserIdQuery } from '../../store/api/ChatApi';
-import { useLazyGetPostByIdQuery, useRemovePostMutation } from '../../store/api/communication/Post.api';
+import { useLazyGetPostByIdQuery } from '../../store/api/communication/Post.api';
 import { useLazyUserPostSearchByPostIdQuery, useRemoveUserPostAsyncMutation } from '../../store/api/communication/UserPost.api';
 import { useLazySearchByUserIdAsyncQuery } from '../../store/api/communication/community/CommunityUser.api';
 import { useFriendSearchMyFriendsQuery } from '../../store/api/communication/myEnvironment/Friend.api';
@@ -21,7 +21,6 @@ const FeedParticipants = ({ customer, showNewPosts, setShowNewPostsInform }) => 
     const [getCommunityPosts] = useLazyPostSearchByCommunityIdAsyncQuery();
     const [getPostById] = useLazyGetPostByIdQuery();
     const [getUserPostByPostId] = useLazyUserPostSearchByPostIdQuery();
-    const [removePost] = useRemovePostMutation();
     const [removeUserPost] = useRemoveUserPostAsyncMutation();
 
     const [peopleId, setPeopleId] = useState([customer?.id]);
@@ -29,10 +28,6 @@ const FeedParticipants = ({ customer, showNewPosts, setShowNewPostsInform }) => 
     const [newPosts, setNewPosts] = useState([]);
 
     useEffect(() => {
-        if (myFriends === undefined) {
-            return;
-        }
-
         const getPeopleId = async () => {
             const temporaryPeopleId = await getPeopleIdAsync();
             await getAllPostsAsync(temporaryPeopleId);
@@ -40,15 +35,13 @@ const FeedParticipants = ({ customer, showNewPosts, setShowNewPostsInform }) => 
 
         getPeopleId();
 
-        const checkNewPosts = async () => {
-            const temporaryPeopleId = await getPeopleIdAsync();
-            await checkNewPostsAsync(temporaryPeopleId);
-        }
+        //const checkNewPosts = async () => {
+        //    const temporaryPeopleId = await getPeopleIdAsync();
+        //    await checkNewPostsAsync(temporaryPeopleId);
+        //}
 
-        setInterval(() => {
-            checkNewPosts();
-        }, 5000);
-    }, [myFriends])
+        //checkNewPosts();
+    }, [])
 
     useEffect(() => {
         if (showNewPosts) {
@@ -99,13 +92,13 @@ const FeedParticipants = ({ customer, showNewPosts, setShowNewPostsInform }) => 
         postsCount = posts.length;
     }
 
-    const checkNewPostsAsync = async (peopleId) => {
-        const posts = await loadingPostsAsync(peopleId);
+    //const checkNewPostsAsync = async (peopleId) => {
+    //    const posts = await loadingPostsAsync(peopleId);
 
-        setShowNewPostsInform(posts.length > postsCount);
-        setNewPosts(posts);
-        postsCount = posts.length;
-    }
+    //    setShowNewPostsInform(posts.length > postsCount);
+    //    setNewPosts(posts);
+    //    postsCount = posts.length;
+    //}
 
     const postsSortByTime = (a, b) => {
         if (a.when > b.when) {
@@ -168,9 +161,16 @@ const FeedParticipants = ({ customer, showNewPosts, setShowNewPostsInform }) => 
             return;
         }
 
-        const result = await removeUserPost(userPost.data[0].id);
-        if (result.error === undefined) {
-            await removePost(postId);
+        const userPostData = userPost.data[0];
+        const result = await removeUserPost(userPostData.id);
+        if (result.error !== undefined) {
+            return;
+        }
+
+        const getRemovedPost = allPosts.filter(post => post.id === userPostData.postId);
+        if (getRemovedPost.length > 0) {
+            const indexOf = allPosts.indexOf(getRemovedPost[0]);
+            allPosts.splice(indexOf, 1);
         }
     }
 
