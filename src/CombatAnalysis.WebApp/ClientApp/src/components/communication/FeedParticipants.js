@@ -11,6 +11,8 @@ const postType = {
     community: 1
 }
 
+const pollingInterval = 5000;
+
 let postsCount = 0;
 
 const FeedParticipants = ({ customer, showNewPosts, setShowNewPostsInform }) => {
@@ -28,24 +30,31 @@ const FeedParticipants = ({ customer, showNewPosts, setShowNewPostsInform }) => 
     const [newPosts, setNewPosts] = useState([]);
 
     useEffect(() => {
-        const getPeopleId = async () => {
-            const temporaryPeopleId = await getPeopleIdAsync();
-            await getAllPostsAsync(temporaryPeopleId);
+        if (myFriends === undefined) {
+            return;
         }
 
-        getPeopleId();
+        const getAllPosts = async () => {
+            const userContactsId = await getPeopleIdAsync();
+            await getAllPostsAsync(userContactsId);
+        }
 
-        //const checkNewPosts = async () => {
-        //    const temporaryPeopleId = await getPeopleIdAsync();
-        //    await checkNewPostsAsync(temporaryPeopleId);
-        //}
+        getAllPosts();
 
-        //checkNewPosts();
-    }, [])
+        const checkNewPosts = async () => {
+            const userContactsId = await getPeopleIdAsync();
+            await checkNewPostsAsync(userContactsId);
+        }
+
+        setInterval(() => {
+            checkNewPosts();
+        }, pollingInterval);
+    }, [myFriends])
 
     useEffect(() => {
         if (showNewPosts) {
             setAllPosts(newPosts);
+            postsCount = newPosts.length;
         }
     }, [showNewPosts])
 
@@ -92,13 +101,12 @@ const FeedParticipants = ({ customer, showNewPosts, setShowNewPostsInform }) => 
         postsCount = posts.length;
     }
 
-    //const checkNewPostsAsync = async (peopleId) => {
-    //    const posts = await loadingPostsAsync(peopleId);
+    const checkNewPostsAsync = async (peopleId) => {
+        const posts = await loadingPostsAsync(peopleId);
 
-    //    setShowNewPostsInform(posts.length > postsCount);
-    //    setNewPosts(posts);
-    //    postsCount = posts.length;
-    //}
+        setShowNewPostsInform(posts.length > postsCount);
+        setNewPosts(posts);
+    }
 
     const postsSortByTime = (a, b) => {
         if (a.when > b.when) {
