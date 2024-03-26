@@ -18,7 +18,8 @@ const getPersonalChatMessagesInterval = 1000;
 const PersonalChat = ({ chat, me, setSelectedChat, companionId }) => {
     const { t } = useTranslation("communication/chats/personalChat");
 
-    const [showRemoveChatAlert, setShowRemoveChatAlert] = useState();
+    const [showRemoveChatAlert, setShowRemoveChatAlert] = useState(false);
+    const [isEmptyMessage, setIsEmptyMessage] = useState(false);
 
     const messageInput = useRef(null);
 
@@ -41,6 +42,11 @@ const PersonalChat = ({ chat, me, setSelectedChat, companionId }) => {
 
     const sendMessageAsync = async () => {
         if (messageInput.current?.value.length === 0) {
+            setIsEmptyMessage(true);
+            setTimeout(() => {
+                setIsEmptyMessage(false);
+            }, 3000);
+
             return;
         }
 
@@ -51,8 +57,16 @@ const PersonalChat = ({ chat, me, setSelectedChat, companionId }) => {
     }
 
     const sendMessageByKeyAsync = async (e) => {
-        if (messageInput.current.value.length === 0
-            || e.code !== "Enter") {
+        if (messageInput.current.value.length === 0 && e.code === "Enter") {
+            setIsEmptyMessage(true);
+            setTimeout(() => {
+                setIsEmptyMessage(false);
+            }, 3000);
+
+            return;
+        }
+
+        if (messageInput.current.value.length >= 0 && e.code !== "Enter") {
             return;
         }
 
@@ -138,6 +152,7 @@ const PersonalChat = ({ chat, me, setSelectedChat, companionId }) => {
                         ))
                     }
                 </ul>
+                <div className={`empty-message${isEmptyMessage ? "_show" : ""}`}>You can not send empty message</div>
                 <div className="form-group input-message">
                     <input type="text" className="form-control" placeholder={t("TypeYourMessage")}
                         ref={messageInput} onKeyDown={async (event) => await sendMessageByKeyAsync(event)} />

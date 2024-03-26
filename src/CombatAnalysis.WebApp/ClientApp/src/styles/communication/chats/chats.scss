@@ -65,6 +65,15 @@
                     border-radius: 10px;
                 }
             }
+
+            .empty-message {
+                display: none;
+
+                &_show {
+                    display: block;
+                    opacity: 0.5;
+                }
+            }
         }
     }
 

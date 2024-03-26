@@ -49,6 +49,7 @@ const GroupChat = ({ chat, me, setSelectedChat, callMinimazedData }) => {
     const [editNameOn, setEditNameOn] = useState(false);
     const [myMessagesCount, setMyMessagesCount] = useState(null);
     const [usersOnCall, setUsersOnCall] = useState(0);
+    const [isEmptyMessage, setIsEmptyMessage] = useState(false);
 
     const messageInput = useRef(null);
     const chatNameInput = useRef(null);
@@ -118,6 +119,11 @@ const GroupChat = ({ chat, me, setSelectedChat, callMinimazedData }) => {
 
     const sendMessageAsync = async () => {
         if (messageInput.current.value.length === 0) {
+            setIsEmptyMessage(true);
+            setTimeout(() => {
+                setIsEmptyMessage(false);
+            }, 3000);
+
             return;
         }
 
@@ -126,8 +132,16 @@ const GroupChat = ({ chat, me, setSelectedChat, callMinimazedData }) => {
     }
 
     const sendMessageByKeyAsync = async (e) => {
-        if (messageInput.current.value.length === 0
-            || e.code !== "Enter") {
+        if (messageInput.current.value.length === 0 && e.code === "Enter") {
+            setIsEmptyMessage(true);
+            setTimeout(() => {
+                setIsEmptyMessage(false);
+            }, 3000);
+
+            return;
+        }
+
+        if (messageInput.current.value.length >= 0 && e.code !== "Enter") {
             return;
         }
 
@@ -346,6 +360,7 @@ const GroupChat = ({ chat, me, setSelectedChat, callMinimazedData }) => {
                         ))
                     }
                 </ul>
+                <div className={`empty-message${isEmptyMessage ? "_show" : ""}`}>You can not send empty message</div>
                 <div className="form-group input-message">
                     <input type="text" className="form-control" placeholder={t("TypeYourMessage")}
                         ref={messageInput} onKeyDown={async (event) => await sendMessageByKeyAsync(event)} />
