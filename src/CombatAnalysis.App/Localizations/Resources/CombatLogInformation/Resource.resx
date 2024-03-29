@@ -141,9 +141,6 @@
   <data name="LoadingFailed" xml:space="preserve">
     <value>Loading failed</value>
   </data>
-  <data name="Lose" xml:space="preserve">
-    <value>Lose</value>
-  </data>
   <data name="PreparePets" xml:space="preserve">
     <value>Prepare pets</value>
   </data>
@@ -209,9 +206,6 @@
   </data>
   <data name="UploadFile" xml:space="preserve">
     <value>Upload file with combat data</value>
-  </data>
-  <data name="Win" xml:space="preserve">
-    <value>Win</value>
   </data>
   <data name="WithoutUser" xml:space="preserve">
     <value>Without user data</value>

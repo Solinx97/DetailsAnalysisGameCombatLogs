@@ -141,9 +141,6 @@
   <data name="LoadingFailed" xml:space="preserve">
     <value>Ошибка загрузки</value>
   </data>
-  <data name="Lose" xml:space="preserve">
-    <value>Поражение</value>
-  </data>
   <data name="PreparePets" xml:space="preserve">
     <value>Подготовка питомцев</value>
   </data>
@@ -209,9 +206,6 @@
   </data>
   <data name="UploadFile" xml:space="preserve">
     <value>Загрузить файл с данными о бое</value>
-  </data>
-  <data name="Win" xml:space="preserve">
-    <value>Победа</value>
   </data>
   <data name="WithoutUser" xml:space="preserve">
     <value>Без привязки к игроку</value>

@@ -31,7 +31,7 @@ builder.Services.AddScoped<ICombatDataHelper, CombatDataHelper>();
 
 builder.Services.Configure<KestrelServerOptions>(options =>
 {
-    options.Limits.MaxRequestBodySize = 100000000;
+    options.Limits.MaxRequestBodySize = 125000000;
 });
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

@@ -133,15 +133,6 @@ namespace CombatAnalysis.App.Localizations.Resources.CombatLogInformation {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Lose.
-        /// </summary>
-        public static string Lose {
-            get {
-                return ResourceManager.GetString("Lose", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Prepare pets.
         /// </summary>
         public static string PreparePets {
@@ -336,15 +327,6 @@ namespace CombatAnalysis.App.Localizations.Resources.CombatLogInformation {
         public static string UploadFile {
             get {
                 return ResourceManager.GetString("UploadFile", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Win.
-        /// </summary>
-        public static string Win {
-            get {
-                return ResourceManager.GetString("Win", resourceCulture);
             }
         }
         

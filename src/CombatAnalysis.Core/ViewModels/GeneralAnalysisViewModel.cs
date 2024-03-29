@@ -21,7 +21,6 @@ public class GeneralAnalysisViewModel : ParentTemplate<Tuple<List<CombatModel>, 
     private CombatModel _selectedCombat;
     private LoadingStatus _status;
     private LogType _logType;
-    private CombatLogModel _combatLog;
     private string _dungeonName;
     private string _name;
     private int _maxCombats;
@@ -68,7 +67,7 @@ public class GeneralAnalysisViewModel : ParentTemplate<Tuple<List<CombatModel>, 
         responseStatusObservable.AddObserver(this);
 
         ResponseStatus = ((BasicTemplateViewModel)BasicTemplate).ResponseStatus;
-        CombatLog = ((BasicTemplateViewModel)BasicTemplate).CombatLog;
+        CurrentCombatNumber = ((BasicTemplateViewModel)BasicTemplate).UploadedCombatsCount;
     }
 
     #region Commands
@@ -111,20 +110,6 @@ public class GeneralAnalysisViewModel : ParentTemplate<Tuple<List<CombatModel>, 
         set
         {
             SetProperty(ref _status, value);
-        }
-    }
-
-    public CombatLogModel CombatLog
-    {
-        get { return _combatLog; }
-        set
-        {
-            SetProperty(ref _combatLog, value);
-
-            if (value != null)
-            {
-                RefreshCommand.CanExecute(true);
-            }
         }
     }
 
@@ -355,7 +340,6 @@ public class GeneralAnalysisViewModel : ParentTemplate<Tuple<List<CombatModel>, 
 
         Combats = new ObservableCollection<CombatModel>(parameter.Item1);
         MaxCombats = Combats.Count;
-        CurrentCombatNumber = 0;
 
         _logType = parameter.Item2;
 
@@ -420,10 +404,12 @@ public class GeneralAnalysisViewModel : ParentTemplate<Tuple<List<CombatModel>, 
 
         var combatsForUploadAgain = Combats.Where(combat => !combat.IsReady).ToList();
 
-        var combatsAreUploaded = await _combatParserAPIService.SaveAsync(combatsForUploadAgain, CombatLog, _logType, CombatUploaded);
+        var combotLogToRepeat = ((BasicTemplateViewModel)BasicTemplate).CombatLog;
+        var combatsAreUploaded = await _combatParserAPIService.SaveAsync(combatsForUploadAgain, combotLogToRepeat, _logType, CombatUploaded);
         if (combatsAreUploaded == null)
         {
             BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, nameof(BasicTemplateViewModel.ResponseStatus), LoadingStatus.Failed);
+
             return;
         }
 
@@ -438,12 +424,13 @@ public class GeneralAnalysisViewModel : ParentTemplate<Tuple<List<CombatModel>, 
 
     public async Task RefreshAsync()
     {
-        if (CombatLog == null || CombatLog.Id == 0)
+        var combatLog = ((BasicTemplateViewModel)BasicTemplate).CombatLog;
+        if (combatLog == null || combatLog.Id == 0)
         {
             return;
         }
 
-        var loadedCombats = await _combatParserAPIService.LoadCombatsAsync(CombatLog.Id);
+        var loadedCombats = await _combatParserAPIService.LoadCombatsAsync(combatLog.Id);
         if (loadedCombats == null)
         {
             BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, nameof(BasicTemplateViewModel.ResponseStatus), LoadingStatus.Failed);
@@ -604,6 +591,7 @@ public class GeneralAnalysisViewModel : ParentTemplate<Tuple<List<CombatModel>, 
         if (!TimeSpan.TryParse(combat.Duration, out duration))
         {
             duration = TimeSpan.Zero;
+
             return;
         }
 

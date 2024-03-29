@@ -4,6 +4,7 @@ using CombatAnalysis.BL.Interfaces;
 using CombatAnalysis.CombatParserAPI.Interfaces;
 using CombatAnalysis.CombatParserAPI.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
 
 namespace CombatAnalysis.CombatParserAPI.Controllers;
 
@@ -65,6 +66,10 @@ public class CombatController : ControllerBase
             foreach (var player in model.Players)
             {
                 player.CombatId = createdCombat.Id;
+                if (string.IsNullOrEmpty(player.Username))
+                {
+                    continue;
+                }
 
                 var createdCombatPlayer = await UploadCombatPlayerAsync(player);
 

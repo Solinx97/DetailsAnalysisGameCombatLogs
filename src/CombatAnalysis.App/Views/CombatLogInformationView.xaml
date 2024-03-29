@@ -183,7 +183,7 @@
                 <StackPanel Orientation="Horizontal" Margin="115,0,0,0" Width="200" IsEnabled="{Binding IsAllowSaveLogs, Converter={StaticResource BoolToXAMLBool}, ConverterParameter=false}">
                     <CheckBox Name="isSaveCombatLog" VerticalAlignment="Center" VerticalContentAlignment="Center" Content="{loc:Loc SaveData}" 
                            HorizontalContentAlignment="Center" IsChecked="{Binding IsNeedSave}" FontSize="16"/>
-                    <Icon:PackIconMaterial Kind="ChatQuestion"  Foreground="Gray" Style="{StaticResource menuButtonIcon}" ToolTip="{loc:Loc SaveDataDescribe}"/>
+                    <Icon:PackIconMaterial Kind="ChatQuestion" Foreground="Gray" Style="{StaticResource menuButtonIcon}" ToolTip="{loc:Loc SaveDataDescribe}"/>
                 </StackPanel>
             </StackPanel>
             <TextBlock Name="workWithDataTitle" Width="175" Text="{loc:Loc Processing}" FontSize="16" TextAlignment="Center" Foreground="BlueViolet"
@@ -194,7 +194,7 @@
                        Visibility="{Binding FileIsNotCorrect, Converter={StaticResource BoolToVisibility}}" />
             <StackPanel Height="90" Visibility="{Binding IsParsing, Converter={StaticResource BoolToVisibility}, ConverterParameter=true}">
                 <StackPanel Visibility="{Binding IsPreparePets, Converter={StaticResource BoolToVisibility}, ConverterParameter=true}">
-                    <TextBlock Text="{loc:Loc PreparePets}" FontSize="18" TextAlignment="Center" TextWrapping="Wrap"
+                    <TextBlock Text="{loc:Loc PreparePets}" FontSize="16" TextAlignment="Center" TextWrapping="Wrap"
                            VerticalAlignment="Center" MaxWidth="650" FontFamily="Comic Sans MS" Foreground="Green" />
                 </StackPanel>
                 <StackPanel Visibility="{Binding IsPreparePets, Converter={StaticResource BoolToVisibility}, ConverterParameter=true:true}">
@@ -203,9 +203,10 @@
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                         <TextBlock Text="{Binding CombatName}" FontSize="17" TextAlignment="Center" TextWrapping="Wrap"
                            VerticalAlignment="Center" MaxWidth="650" FontWeight="Bold" Margin="5" FontFamily="Comic Sans MS"/>
-                        <TextBlock Text="{Binding CombatStatus}" FontSize="14" TextAlignment="Center" TextWrapping="Wrap"
-                           VerticalAlignment="Center" MaxWidth="650" Margin="25,0,0,0"
-                               FontFamily="Comic Sans MS" Foreground="CadetBlue"/>
+                        <Icon:PackIconMaterial Kind="Check" Foreground="Green" Style="{StaticResource menuButtonIcon}" 
+                                   Visibility="{Binding CombatStatus, Converter={StaticResource BoolToVisibility}, ConverterParameter=true:false}"/>
+                        <Icon:PackIconMaterial Kind="SwordCross" Foreground="Red" Style="{StaticResource menuButtonIcon}" 
+                                   Visibility="{Binding CombatStatus, Converter={StaticResource BoolToVisibility}, ConverterParameter=true:true}"/>
                     </StackPanel>
                 </StackPanel>
             </StackPanel>

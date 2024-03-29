@@ -169,7 +169,7 @@
     <value>Индекс смертей</value>
   </data>
   <data name="LoadingFailed" xml:space="preserve">
-    <value>Нам не удалось сохранить ваши данные. Повторить?</value>
+    <value>Не загружено</value>
   </data>
   <data name="MaxDamage" xml:space="preserve">
     <value>Макс. показатель урона</value>

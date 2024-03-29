@@ -4,7 +4,6 @@ using CombatAnalysis.CombatParser.Interfaces;
 using CombatAnalysis.Core.Enums;
 using CombatAnalysis.Core.Interfaces;
 using CombatAnalysis.Core.Interfaces.Observers;
-using CombatAnalysis.Core.Localizations;
 using CombatAnalysis.Core.Models;
 using CombatAnalysis.Core.Models.User;
 using CombatAnalysis.Core.Modelsl;
@@ -35,7 +34,7 @@ public class CombatLogInformationViewModel : ParentTemplate, CombatParser.Interf
     private bool _isShowSteps;
     private string _dungeonName;
     private string _combatName;
-    private string _combatStatus;
+    private bool _combatStatus;
     private string _combatLogPath;
     private int _combatListSelectedIndex;
     private int _selectedCombatLogTypeTabItem;
@@ -209,7 +208,7 @@ public class CombatLogInformationViewModel : ParentTemplate, CombatParser.Interf
         }
     }
 
-    public string CombatStatus
+    public bool CombatStatus
     {
         get { return _combatStatus; }
         set
@@ -333,12 +332,12 @@ public class CombatLogInformationViewModel : ParentTemplate, CombatParser.Interf
             return;
         }
 
-        var win = TranslationSource.Instance["CombatAnalysis.App.Localizations.Resources.CombatLogInformation.Resource.Win"];
-        var lose = TranslationSource.Instance["CombatAnalysis.App.Localizations.Resources.CombatLogInformation.Resource.Lose"];
+        //var win = TranslationSource.Instance["CombatAnalysis.App.Localizations.Resources.CombatLogInformation.Resource.Win"];
+        //var lose = TranslationSource.Instance["CombatAnalysis.App.Localizations.Resources.CombatLogInformation.Resource.Lose"];
 
         DungeonName = data.DungeonName;
         CombatName = data.Name;
-        CombatStatus = data.IsWin ? win : lose;
+        CombatStatus = data.IsWin;
     }
 
     public void GetLogType(int logType)
@@ -402,7 +401,6 @@ public class CombatLogInformationViewModel : ParentTemplate, CombatParser.Interf
     {
         DungeonName = string.Empty;
         CombatName = string.Empty;
-        CombatStatus = string.Empty;
         RemovingInProgress = true;
 
         var selectedCombatLogByUser = _combatLogsByUser.FirstOrDefault(x => x.CombatLogId == CombatLogsForTargetUser[CombatListSelectedIndex].Id);
@@ -438,9 +436,9 @@ public class CombatLogInformationViewModel : ParentTemplate, CombatParser.Interf
         await _parser.Parse(combatLogData);
         BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, nameof(BasicTemplateViewModel.PetsId), _parser.PetsId);
 
-        var combatModels = _mapper.Map<List<CombatModel>>(_parser.Combats);
+        var combatsList = _mapper.Map<List<CombatModel>>(_parser.Combats);
 
-        var dataForGeneralAnalysis = Tuple.Create(combatModels, LogType);
+        var dataForGeneralAnalysis = Tuple.Create(combatsList, LogType);
         if (!IsNeedSave)
         {
             BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, nameof(BasicTemplateViewModel.AllowStep), 1);
@@ -448,17 +446,18 @@ public class CombatLogInformationViewModel : ParentTemplate, CombatParser.Interf
 
             await _mvvmNavigation.Navigate<GeneralAnalysisViewModel, Tuple<List<CombatModel>, LogType>>(dataForGeneralAnalysis);
 
-            BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, nameof(BasicTemplateViewModel.Combats), combatModels);
+            BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, nameof(BasicTemplateViewModel.Combats), combatsList);
 
             return;
         }
 
-        await UploadingCombatLogAsync(combatModels, dataForGeneralAnalysis);
+        await UploadingCombatLogAsync(combatsList, dataForGeneralAnalysis);
     }
 
     private async Task UploadingCombatLogAsync(List<CombatModel> combatList, Tuple<List<CombatModel>, LogType> dataForGeneralAnalysis)
     {
         BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, nameof(BasicTemplateViewModel.ResponseStatus), LoadingStatus.Pending);
+        BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, nameof(BasicTemplateViewModel.UploadedCombatsCount), 0);
 
         var createdCombatLog = await _combatParserAPIService.SaveCombatLogAsync(combatList);
         if (createdCombatLog == null)

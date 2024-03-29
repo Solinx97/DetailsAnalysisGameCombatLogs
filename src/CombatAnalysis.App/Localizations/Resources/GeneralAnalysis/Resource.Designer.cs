@@ -214,7 +214,7 @@ namespace CombatAnalysis.App.Localizations.Resources.GeneralAnalysis {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to We couldn&apos;t save your data. Repeat?.
+        ///   Looks up a localized string similar to Did not uploaded.
         /// </summary>
         public static string LoadingFailed {
             get {

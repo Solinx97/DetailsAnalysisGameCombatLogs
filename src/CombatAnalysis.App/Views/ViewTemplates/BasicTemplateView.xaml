@@ -50,6 +50,15 @@
             </Grid>
         </Border>
 
+        <StackPanel Grid.Column="2" Orientation="Horizontal">
+            <Button Style="{StaticResource textBoxButton}" ToolTip="{loc:Loc Menu}">
+                <Icon:PackIconMaterial Kind="DotsVertical" Foreground="#88878e"/>
+            </Button>
+            <Button Style="{StaticResource textBoxButton}" ToolTip="{loc:Loc Notifications}">
+                <Icon:PackIconMaterial Kind="BellOutline" Foreground="#88878e"/>
+            </Button>
+        </StackPanel>
+        
         <Border Grid.Column="1" Grid.RowSpan="3" CornerRadius="0 20 20 0"
                 Panel.ZIndex="1" Margin="-25 0 0 0">
             <Border.Background>
@@ -127,8 +136,19 @@
 
         <Border Grid.Column="2" Grid.ColumnSpan="2" Background="Transparent" Margin="10 5" Height="65"
                 VerticalAlignment="Center" MouseDown="Border_MouseDown" Panel.ZIndex="2">
-            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                <StackPanel VerticalAlignment="Center">
+            <StackPanel HorizontalAlignment="Right">
+                <StackPanel Orientation="Horizontal">
+                    <Button Style="{StaticResource textBoxButton}" Click="Minimaze" ToolTip="{loc:Loc MinimazeWindow}">
+                        <Icon:PackIconMaterial Kind="WindowMinimize" Foreground="Gray" Width="15" Height="15"/>
+                    </Button>
+                    <Button Style="{StaticResource textBoxButton}" Click="Maximaze" ToolTip="{loc:Loc FullScreenWindow}">
+                        <Icon:PackIconMaterial Kind="WindowMaximize" Foreground="Gray" Width="15" Height="15"/>
+                    </Button>
+                    <Button Style="{StaticResource textBoxButton}" mvx:Bi.nd="Command CloseCommand" ToolTip="{loc:Loc CloseWindow}">
+                        <Icon:PackIconMaterial Kind="WindowClose" Foreground="Red" Width="15" Height="15"/>
+                    </Button>
+                </StackPanel>
+                <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Margin="5">
                     <TextBlock Margin="5" FontSize="13" FontWeight="Bold" Foreground="Gray" Text="{loc:Loc Loading}"
                                Visibility="{Binding ResponseStatus, Converter={StaticResource IntToVisibility}, ConverterParameter='true:1:='}"
                                ToolTip="{loc:Loc LoadingDescribe}"/>
@@ -141,25 +161,6 @@
                                    ToolTip="{loc:Loc LoadingSuccess}"/>
                     </StackPanel>
                 </StackPanel>
-                <StackPanel Margin="25 0" Orientation="Horizontal">
-                    <Button Style="{StaticResource textBoxButton}" ToolTip="{loc:Loc Notifications}">
-                        <Icon:PackIconMaterial Kind="BellOutline" Foreground="#88878e"/>
-                    </Button>
-                    <Button Style="{StaticResource textBoxButton}" ToolTip="{loc:Loc Menu}">
-                        <Icon:PackIconMaterial Kind="DotsVertical" Foreground="#88878e"/>
-                    </Button>
-                </StackPanel>
-                <StackPanel Orientation="Horizontal">
-                    <Button Style="{StaticResource textBoxButton}" Click="Minimaze" ToolTip="{loc:Loc MinimazeWindow}">
-                        <Icon:PackIconMaterial Kind="WindowMinimize" Foreground="Gray" Width="15" Height="15"/>
-                    </Button>
-                    <Button Style="{StaticResource textBoxButton}" Click="Maximaze" ToolTip="{loc:Loc FullScreenWindow}">
-                        <Icon:PackIconMaterial Kind="WindowMaximize" Foreground="Gray" Width="15" Height="15"/>
-                    </Button>
-                    <Button Style="{StaticResource textBoxButton}" mvx:Bi.nd="Command CloseCommand" ToolTip="{loc:Loc CloseWindow}">
-                        <Icon:PackIconMaterial Kind="WindowClose" Foreground="Red" Width="15" Height="15"/>
-                    </Button>
-                </StackPanel>
             </StackPanel>
         </Border>
 
@@ -168,9 +169,14 @@
             <TextBlock Text="  " FontSize="13" Foreground="White"/>
             <TextBlock Text="{Binding AppVersion}" FontSize="13" FontWeight="DemiBold" Foreground="White"/>
         </StackPanel>
-        
-        <StackPanel Grid.Row="2" Grid.Column="2" Grid.ColumnSpan="2" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="20 5"
+
+        <StackPanel Grid.Row="2" Grid.Column="2" Grid.ColumnSpan="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="10" mvx:Bi.nd="Command GeneralAnalysisCommand"
                     Visibility="{Binding ResponseStatus, Converter={StaticResource IntToVisibility}, ConverterParameter=true:1}">
+            <Icon:PackIconMaterial Kind="ChartTimelineVariantShimmer" Style="{StaticResource menuButtonIcon}" mvx:Bi.nd="Command GeneralAnalysisCommand">
+                <Icon:PackIconMaterial.InputBindings>
+                    <MouseBinding Command="{Binding GeneralAnalysisCommand}" Gesture="LeftClick"/>
+                </Icon:PackIconMaterial.InputBindings>
+            </Icon:PackIconMaterial>
             <ProgressBar Minimum="0" Maximum="{Binding UploadingCombatsCount}" Value="{Binding UploadedCombatsCount}" Height="10" Width="150">
                 <ProgressBar.ToolTip>
                     <StackPanel Orientation="Horizontal">

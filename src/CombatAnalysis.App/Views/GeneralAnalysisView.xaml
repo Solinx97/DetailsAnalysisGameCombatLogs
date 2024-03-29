@@ -41,8 +41,8 @@
             </ContentControl.Resources>
         </ContentControl>
 
-        <StackPanel Grid.Column="3" Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Center">
-            <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" TextAlignment="Center" MaxWidth="700" 
+        <StackPanel Grid.Column="3" Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+            <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" TextAlignment="Center" MaxWidth="700"
                        Text="{Binding DungeonNames}" FontSize="16" FontWeight="Bold"
                        Style="{StaticResource titleText}" TextWrapping="Wrap"/>
         </StackPanel>

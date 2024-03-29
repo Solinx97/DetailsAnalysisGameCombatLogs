@@ -169,7 +169,7 @@
     <value>Index of death</value>
   </data>
   <data name="LoadingFailed" xml:space="preserve">
-    <value>We couldn't save your data. Repeat?</value>
+    <value>Did not uploaded</value>
   </data>
   <data name="MaxDamage" xml:space="preserve">
     <value>Max. indicator damage</value>
