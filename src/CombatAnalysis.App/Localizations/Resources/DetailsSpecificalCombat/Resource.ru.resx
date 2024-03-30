@@ -129,7 +129,7 @@
   <data name="AverageHealPerSecond" xml:space="preserve">
     <value>Средне исцеление в сек.</value>
   </data>
-  <data name="AverageItemllvl" xml:space="preserve">
+  <data name="AverageItemLevel" xml:space="preserve">
     <value>Ср. ур. пр.</value>
   </data>
   <data name="AverageResources" xml:space="preserve">

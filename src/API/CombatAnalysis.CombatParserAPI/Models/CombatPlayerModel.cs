@@ -8,6 +8,8 @@ public class CombatPlayerModel
 
     public string PlayerId { get; set; }
 
+    public double AverageItemLevel { get; set; }
+
     public int EnergyRecovery { get; set; }
 
     public int DamageDone { get; set; }

@@ -67,33 +67,42 @@
                       CanUserAddRows="False" CanUserDeleteRows="False" AutoGenerateColumns="False" ItemsSource="{Binding Combats}"
                  Margin="20" SelectedItem="{Binding SelectedCombat}">
             <DataGrid.Columns>
-                <DataGridTemplateColumn SortMemberPath="DungeonSize" IsReadOnly="True" Width="70">
+                <DataGridTemplateColumn SortMemberPath="DungeonSize" IsReadOnly="True" Width="100">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <StackPanel Orientation="Horizontal">
-                                <TextBlock Text="{Binding Path=DungeonSize}" TextAlignment="Center" Margin="10" FontSize="14" />
-                                <TextBlock Text="{loc:Loc Normal}" TextAlignment="Center" Margin="0 10" FontSize="14" 
+                                <TextBlock Text="{Binding Path=DungeonSize}" TextAlignment="Center" VerticalAlignment="Center" Margin="5" FontSize="14" />
+                                <TextBlock Text="{loc:Loc Normal}" TextAlignment="Center" VerticalAlignment="Center" FontSize="14" 
                                            Visibility="{Binding Path=Difficulty, Converter={StaticResource IntToVisibility}, ConverterParameter=true:4}"/>
-                                <TextBlock Text="{loc:Loc Heroic}" TextAlignment="Center" Margin="0 10" FontSize="14" 
+                                <TextBlock Text="{loc:Loc Heroic}" TextAlignment="Center" VerticalAlignment="Center" FontSize="14" 
                                            Visibility="{Binding Path=Difficulty, Converter={StaticResource IntToVisibility}, ConverterParameter=true:5}"/>
+                                <Icon:PackIconMaterial Kind="Check" Foreground="Green" Style="{StaticResource menuButtonIcon}" 
+                                        Visibility="{Binding IsWin, Converter={StaticResource BoolToVisibility}, ConverterParameter=true:false}"/>
+                                <Icon:PackIconMaterial Kind="SwordCross" Foreground="Red" Style="{StaticResource menuButtonIcon}" 
+                                        Visibility="{Binding IsWin, Converter={StaticResource BoolToVisibility}, ConverterParameter=true:true}"/>
                             </StackPanel>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                     <DataGridTemplateColumn.HeaderTemplate>
                         <DataTemplate>
-                            <TextBlock Text="{loc:Loc Size}" Margin="5" TextAlignment="Center" FontSize="11" />
+                            <TextBlock Text="{loc:Loc Size}" Margin="5" TextAlignment="Center" FontSize="14" FontStyle="Oblique" FontWeight="Bold" />
                         </DataTemplate>
                     </DataGridTemplateColumn.HeaderTemplate>
                 </DataGridTemplateColumn>
                 <DataGridTemplateColumn SortMemberPath="Name" IsReadOnly="True" MinWidth="175">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <TextBlock Text="{Binding Path=Name}" TextAlignment="Center" Margin="10" FontSize="14" FontFamily="Comic Sans MS"/>
+                            <StackPanel>
+                                <TextBlock Text="{Binding Path=Name}" TextAlignment="Center" Margin="10" FontSize="14" FontFamily="Comic Sans MS" Opacity="0.5" 
+                                           Visibility="{Binding IsWin, Converter={StaticResource BoolToVisibility}, ConverterParameter=true:true}"/>
+                                <TextBlock Text="{Binding Path=Name}" TextAlignment="Center" Margin="10" FontSize="14" FontFamily="Comic Sans MS" 
+                                           Visibility="{Binding IsWin, Converter={StaticResource BoolToVisibility}, ConverterParameter=true:false}"/>
+                            </StackPanel>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                     <DataGridTemplateColumn.HeaderTemplate>
                         <DataTemplate>
-                            <TextBlock Text="{loc:Loc Enemy}" Margin="5" TextAlignment="Center" FontSize="14" FontStyle="Oblique"  FontWeight="Bold"/>
+                            <TextBlock Text="{loc:Loc Enemy}" Margin="5" TextAlignment="Center" FontSize="14" FontStyle="Oblique" FontWeight="Bold" />
                         </DataTemplate>
                     </DataGridTemplateColumn.HeaderTemplate>
                 </DataGridTemplateColumn>
@@ -101,12 +110,17 @@
                 <DataGridTemplateColumn SortMemberPath="DamageDone" IsReadOnly="True" MinWidth="140">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <TextBlock Text="{Binding Path=DamageDone}" TextAlignment="Center" Margin="10" FontSize="14" FontFamily="Comic Sans MS"/>
+                            <StackPanel>
+                                <TextBlock Text="{Binding Path=DamageDone}" TextAlignment="Center" Margin="10" FontSize="14" FontFamily="Comic Sans MS" Opacity="0.5" 
+                                           Visibility="{Binding IsWin, Converter={StaticResource BoolToVisibility}, ConverterParameter=true:true}"/>
+                                <TextBlock Text="{Binding Path=DamageDone}" TextAlignment="Center" Margin="10" FontSize="14" FontFamily="Comic Sans MS" 
+                                           Visibility="{Binding IsWin, Converter={StaticResource BoolToVisibility}, ConverterParameter=true:false}"/>
+                            </StackPanel>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                     <DataGridTemplateColumn.HeaderTemplate>
                         <DataTemplate>
-                            <TextBlock Text="{loc:Loc Damage}" Margin="5" TextAlignment="Center" FontSize="14" FontStyle="Oblique"  FontWeight="Bold"/>
+                            <TextBlock Text="{loc:Loc Damage}" Margin="5" TextAlignment="Center" FontSize="14" FontStyle="Oblique" FontWeight="Bold"/>
                         </DataTemplate>
                     </DataGridTemplateColumn.HeaderTemplate>
                 </DataGridTemplateColumn>
@@ -114,7 +128,12 @@
                 <DataGridTemplateColumn SortMemberPath="HealDone" IsReadOnly="True" MinWidth="140">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <TextBlock Text="{Binding Path=HealDone}" TextAlignment="Center" Margin="10" FontSize="14" FontFamily="Comic Sans MS"/>
+                            <StackPanel>
+                                <TextBlock Text="{Binding Path=HealDone}" TextAlignment="Center" Margin="10" FontSize="14" FontFamily="Comic Sans MS" Opacity="0.5" 
+                                           Visibility="{Binding IsWin, Converter={StaticResource BoolToVisibility}, ConverterParameter=true:true}"/>
+                                <TextBlock Text="{Binding Path=HealDone}" TextAlignment="Center" Margin="10" FontSize="14" FontFamily="Comic Sans MS" 
+                                           Visibility="{Binding IsWin, Converter={StaticResource BoolToVisibility}, ConverterParameter=true:false}"/>
+                            </StackPanel>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                     <DataGridTemplateColumn.HeaderTemplate>
@@ -127,7 +146,12 @@
                 <DataGridTemplateColumn SortMemberPath="DamageTaken" IsReadOnly="True" MinWidth="140">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <TextBlock Text="{Binding Path=DamageTaken}" TextAlignment="Center" Margin="10" FontSize="14" FontFamily="Comic Sans MS"/>
+                            <StackPanel>
+                                <TextBlock Text="{Binding Path=DamageTaken}" TextAlignment="Center" Margin="10" FontSize="14" FontFamily="Comic Sans MS" Opacity="0.5" 
+                                           Visibility="{Binding IsWin, Converter={StaticResource BoolToVisibility}, ConverterParameter=true:true}"/>
+                                <TextBlock Text="{Binding Path=DamageTaken}" TextAlignment="Center" Margin="10" FontSize="14" FontFamily="Comic Sans MS" 
+                                           Visibility="{Binding IsWin, Converter={StaticResource BoolToVisibility}, ConverterParameter=true:false}"/>
+                            </StackPanel>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                     <DataGridTemplateColumn.HeaderTemplate>
@@ -140,7 +164,12 @@
                 <DataGridTemplateColumn SortMemberPath="EnergyRecovery" IsReadOnly="True" MinWidth="125">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <TextBlock Text="{Binding Path=EnergyRecovery}" TextAlignment="Center" Margin="10" FontSize="14" FontFamily="Comic Sans MS"/>
+                            <StackPanel>
+                                <TextBlock Text="{Binding Path=EnergyRecovery}" TextAlignment="Center" Margin="10" FontSize="14" FontFamily="Comic Sans MS" Opacity="0.5" 
+                                           Visibility="{Binding IsWin, Converter={StaticResource BoolToVisibility}, ConverterParameter=true:true}"/>
+                                <TextBlock Text="{Binding Path=EnergyRecovery}" TextAlignment="Center" Margin="10" FontSize="14" FontFamily="Comic Sans MS" 
+                                           Visibility="{Binding IsWin, Converter={StaticResource BoolToVisibility}, ConverterParameter=true:false}"/>
+                            </StackPanel>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                     <DataGridTemplateColumn.HeaderTemplate>
@@ -153,35 +182,22 @@
                 <DataGridTemplateColumn SortMemberPath="DeathNumber" IsReadOnly="True" MinWidth="50">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <TextBlock Text="{Binding Path=DeathNumber}" TextAlignment="Center" Margin="10" FontSize="14" FontFamily="Comic Sans MS"/>
-                        </DataTemplate>
-                    </DataGridTemplateColumn.CellTemplate>
-                    <DataGridTemplateColumn.HeaderTemplate>
-                        <DataTemplate>
-                            <TextBlock Text="{loc:Loc Deaths}" Margin="5" TextAlignment="Center" FontSize="14" FontStyle="Oblique"  FontWeight="Bold"/>
-                        </DataTemplate>
-                    </DataGridTemplateColumn.HeaderTemplate>
-                </DataGridTemplateColumn>
-
-                <DataGridTemplateColumn SortMemberPath="IsWin" IsReadOnly="True" MinWidth="110">
-                    <DataGridTemplateColumn.CellTemplate>
-                        <DataTemplate>
                             <StackPanel>
-                                <TextBlock Text="{loc:Loc Win}" TextAlignment="Center" Margin="10" FontSize="14" FontFamily="Comic Sans MS" Foreground="Green"
-                                           Visibility="{Binding Path=IsWin, Converter={StaticResource BoolToVisibility}, ConverterParameter=true}"/>
-                                <TextBlock Text="{loc:Loc Defeat}" TextAlignment="Center" Margin="10" FontSize="14" FontFamily="Comic Sans MS" Foreground="Orange"
-                                           Visibility="{Binding Path=IsWin, Converter={StaticResource BoolToVisibility}, ConverterParameter=true:true}"/>
+                                <TextBlock Text="{Binding Path=DeathNumber}" TextAlignment="Center" Margin="10" FontSize="14" FontFamily="Comic Sans MS" Opacity="0.5" 
+                                           Visibility="{Binding IsWin, Converter={StaticResource BoolToVisibility}, ConverterParameter=true:true}"/>
+                                <TextBlock Text="{Binding Path=DeathNumber}" TextAlignment="Center" Margin="10" FontSize="14" FontFamily="Comic Sans MS" 
+                                           Visibility="{Binding IsWin, Converter={StaticResource BoolToVisibility}, ConverterParameter=true:false}"/>
                             </StackPanel>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                     <DataGridTemplateColumn.HeaderTemplate>
                         <DataTemplate>
-                            <TextBlock Text="{loc:Loc Status}" Margin="5" TextAlignment="Center" FontSize="14" FontStyle="Oblique"  FontWeight="Bold"/>
+                            <TextBlock Text="{loc:Loc Deaths}" Margin="5" TextAlignment="Center" FontSize="14" FontStyle="Oblique"  FontWeight="Bold" /> 
                         </DataTemplate>
                     </DataGridTemplateColumn.HeaderTemplate>
                 </DataGridTemplateColumn>
 
-                <DataGridTemplateColumn SortMemberPath="IsReady" IsReadOnly="True" MinWidth="50">
+                <DataGridTemplateColumn SortMemberPath="IsReady" IsReadOnly="True" MinWidth="50" >
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">

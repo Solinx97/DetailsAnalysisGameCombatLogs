@@ -332,9 +332,6 @@ public class CombatLogInformationViewModel : ParentTemplate, CombatParser.Interf
             return;
         }
 
-        //var win = TranslationSource.Instance["CombatAnalysis.App.Localizations.Resources.CombatLogInformation.Resource.Win"];
-        //var lose = TranslationSource.Instance["CombatAnalysis.App.Localizations.Resources.CombatLogInformation.Resource.Lose"];
-
         DungeonName = data.DungeonName;
         CombatName = data.Name;
         CombatStatus = data.IsWin;
@@ -439,7 +436,7 @@ public class CombatLogInformationViewModel : ParentTemplate, CombatParser.Interf
         var combatsList = _mapper.Map<List<CombatModel>>(_parser.Combats);
 
         var dataForGeneralAnalysis = Tuple.Create(combatsList, LogType);
-        if (!IsNeedSave)
+         if (!IsNeedSave)
         {
             BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, nameof(BasicTemplateViewModel.AllowStep), 1);
             BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, nameof(BasicTemplateViewModel.ResponseStatus), LoadingStatus.None);
