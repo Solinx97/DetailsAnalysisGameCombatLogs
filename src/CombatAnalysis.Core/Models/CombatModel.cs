@@ -44,4 +44,6 @@ public class CombatModel
     public bool IsReady { get; set; }
 
     public int CombatLogId { get; set; }
+
+    public bool IsSelected { get; set; }
 }

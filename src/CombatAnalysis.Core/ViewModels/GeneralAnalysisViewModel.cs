@@ -19,6 +19,7 @@ public class GeneralAnalysisViewModel : ParentTemplate<Tuple<List<CombatModel>, 
 
     private ObservableCollection<CombatModel> _combats;
     private CombatModel _selectedCombat;
+    private int _selectedCombatIndex = -1;
     private LoadingStatus _status;
     private LogType _logType;
     private string _dungeonName;
@@ -47,6 +48,13 @@ public class GeneralAnalysisViewModel : ParentTemplate<Tuple<List<CombatModel>, 
     private bool _showAverageInformation;
     private string _dungeonNames;
 
+    private int _sortedByName = -1;
+    private int _sortedByDamageDone = -1;
+    private int _sortedByHealDone = -1;
+    private int _sortedByDamageTaken = -1;
+    private int _sortedByResources = -1;
+    private int _sortedByDeaths = -1;
+
     public GeneralAnalysisViewModel(IMvxNavigationService mvvmNavigation, IHttpClientHelper httpClient, ILogger logger, IMemoryCache memoryCache)
     {
         _mvvmNavigation = mvvmNavigation;
@@ -55,6 +63,8 @@ public class GeneralAnalysisViewModel : ParentTemplate<Tuple<List<CombatModel>, 
 
         RepeatSaveCommand = new MvxAsyncCommand(RepeatSaveCombatDataDetailsAsync);
         RefreshCommand = new MvxAsyncCommand(RefreshAsync);
+        ShowDetailsCommand = new MvxCommand(ShowDetails);
+        SortCommand = new MvxCommand<int>(CombatsSort);
 
         LastCombatInfromationStep = new MvxCommand(LastStep);
         NextCombatInfromationStep = new MvxCommand(NextStep);
@@ -80,6 +90,10 @@ public class GeneralAnalysisViewModel : ParentTemplate<Tuple<List<CombatModel>, 
 
     public IMvxCommand NextCombatInfromationStep { get; set; }
 
+    public IMvxCommand ShowDetailsCommand { get; set; }
+
+    public IMvxCommand SortCommand { get; set; }
+
     #endregion
 
     #region Properties
@@ -100,7 +114,19 @@ public class GeneralAnalysisViewModel : ParentTemplate<Tuple<List<CombatModel>, 
         {
             SetProperty(ref _selectedCombat, value);
 
-            ShowDetails();
+            if (value != null)
+            {
+                ShowActions(value);
+            }
+        }
+    }
+
+    public int SelectedCombatIndex
+    {
+        get { return _selectedCombatIndex; }
+        set
+        {
+            SetProperty(ref _selectedCombatIndex, value);
         }
     }
 
@@ -331,6 +357,64 @@ public class GeneralAnalysisViewModel : ParentTemplate<Tuple<List<CombatModel>, 
 
     #endregion
 
+    #region Sort properties
+
+    public int SortedByName
+    {
+        get { return _sortedByName; }
+        set
+        {
+            SetProperty(ref _sortedByName, value);
+        }
+    }
+
+    public int SortedByDamageDone
+    {
+        get { return _sortedByDamageDone; }
+        set
+        {
+            SetProperty(ref _sortedByDamageDone, value);
+        }
+    }
+
+    public int SortedByHealDone
+    {
+        get { return _sortedByHealDone; }
+        set
+        {
+            SetProperty(ref _sortedByHealDone, value);
+        }
+    }
+
+    public int SortedByDamageTaken
+    {
+        get { return _sortedByDamageTaken; }
+        set
+        {
+            SetProperty(ref _sortedByDamageTaken, value);
+        }
+    }
+
+    public int SortedByResources
+    {
+        get { return _sortedByResources; }
+        set
+        {
+            SetProperty(ref _sortedByResources, value);
+        }
+    }
+
+    public int SortedByDeaths
+    {
+        get { return _sortedByDeaths; }
+        set
+        {
+            SetProperty(ref _sortedByDeaths, value);
+        }
+    }
+
+    #endregion
+
     protected override void ChildPrepare(Tuple<List<CombatModel>, LogType> parameter)
     {
         if (parameter == null)
@@ -451,6 +535,88 @@ public class GeneralAnalysisViewModel : ParentTemplate<Tuple<List<CombatModel>, 
         }
     }
 
+    public void CombatsSort(int sortNumber)
+    {
+        var sortedCollection = Combats.ToList();
+        switch (sortNumber)
+        {
+            case 0:
+                sortedCollection = SortedByName == 0
+                    ? Combats.OrderByDescending(x => x.Name).ToList()
+                    : Combats.OrderBy(x => x.Name).ToList();
+                SortedByName = SortedByName == 0 ? 1 : 0;
+
+                SortedByDamageDone = -1;
+                SortedByHealDone = -1;
+                SortedByDamageTaken = -1;
+                SortedByResources = -1;
+                SortedByDeaths = -1;
+                break;
+            case 1:
+                sortedCollection = SortedByDamageDone == 0
+                    ? Combats.OrderByDescending(x => x.DamageDone).ToList()
+                    : Combats.OrderBy(x => x.DamageDone).ToList();
+                SortedByDamageDone = SortedByDamageDone == 0 ? 1 : 0;
+
+                SortedByName = -1;
+                SortedByHealDone = -1;
+                SortedByDamageTaken = -1;
+                SortedByResources = -1;
+                SortedByDeaths = -1;
+                break;
+            case 2:
+                sortedCollection = SortedByHealDone == 0
+                    ? Combats.OrderByDescending(x => x.HealDone).ToList()
+                    : Combats.OrderBy(x => x.HealDone).ToList();
+                SortedByHealDone = SortedByHealDone == 0 ? 1 : 0;
+
+                SortedByName = -1;
+                SortedByDamageDone = -1;
+                SortedByDamageTaken = -1;
+                SortedByResources = -1;
+                SortedByDeaths = -1;
+                break;
+            case 3:
+                sortedCollection = SortedByDamageTaken == 0
+                    ? Combats.OrderByDescending(x => x.DamageTaken).ToList()
+                    : Combats.OrderBy(x => x.DamageTaken).ToList();
+                SortedByDamageTaken = SortedByDamageTaken == 0 ? 1 : 0;
+
+                SortedByName = SortedByName == -1 ? 0 : 1;
+                SortedByDamageDone = -1;
+                SortedByHealDone = -1;
+                SortedByResources = -1;
+                SortedByDeaths = -1;
+                break;
+            case 4:
+                sortedCollection = SortedByResources == 0
+                    ? Combats.OrderByDescending(x => x.EnergyRecovery).ToList()
+                    : Combats.OrderBy(x => x.EnergyRecovery).ToList();
+                SortedByResources = SortedByResources == 0 ? 1 : 0;
+
+                SortedByName = -1;
+                SortedByDamageDone = -1;
+                SortedByHealDone = -1;
+                SortedByDamageTaken = -1;
+                SortedByDeaths = -1;
+                break;
+            case 5:
+                sortedCollection = SortedByDeaths == 0
+                    ? Combats.OrderByDescending(x => x.DeathNumber).ToList()
+                    : Combats.OrderBy(x => x.DeathNumber).ToList();
+                SortedByDeaths = SortedByDeaths == 0 ? 1 : 0;
+
+                SortedByName = -1;
+                SortedByDamageDone = -1;
+                SortedByHealDone = -1;
+                SortedByDamageTaken = -1;
+                SortedByResources = -1;
+                break;
+        }
+
+        Combats = new ObservableCollection<CombatModel>(sortedCollection);
+    }
+
     private void GetUniqueDungeonNames(List<CombatModel> combats)
     {
         var uniqueDungenNames = combats.DistinctBy(x => x.DungeonName).Select(x => x.DungeonName).ToList();
@@ -493,8 +659,8 @@ public class GeneralAnalysisViewModel : ParentTemplate<Tuple<List<CombatModel>, 
         AverageResourcesPerSecond = averageRPS.Average();
         AverageDamageTakenPerSecond = averageDTPS.Average();
     }
-
     private void GetMaxInformationPerSecond(List<CombatModel> combats)
+
     {
         var maxDPS = new List<double>();
         var maxHPS = new List<double>();
@@ -602,5 +768,19 @@ public class GeneralAnalysisViewModel : ParentTemplate<Tuple<List<CombatModel>, 
             player.EnergyRecoveryPerSecond = player.EnergyRecovery / duration.TotalSeconds;
             player.DamageTakenPerSecond = player.DamageTaken / duration.TotalSeconds;
         }
+    }
+
+    private void ShowActions(CombatModel combat)
+    {
+        foreach (var item in Combats)
+        {
+            item.IsSelected = false;
+        }
+
+        var index = Combats.IndexOf(combat);
+        Combats[index].IsSelected = true;
+
+        RefreshCommand.Execute();
+        //Combats = new ObservableCollection<CombatModel>(Combats);
     }
 }

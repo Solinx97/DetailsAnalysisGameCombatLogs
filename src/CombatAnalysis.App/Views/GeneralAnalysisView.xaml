@@ -64,10 +64,34 @@
         </StackPanel>
 
         <DataGrid Grid.Row="2" Grid.Column="2" GridLinesVisibility="None"
-                      CanUserAddRows="False" CanUserDeleteRows="False" AutoGenerateColumns="False" ItemsSource="{Binding Combats}"
-                 Margin="20" SelectedItem="{Binding SelectedCombat}">
+                 CanUserAddRows="False" CanUserDeleteRows="False" AutoGenerateColumns="False" ItemsSource="{Binding Combats}"
+                 Margin="20" SelectedItem="{Binding SelectedCombat}" SelectedIndex="{Binding SelectedCombatIndex}">
+            <DataGrid.CellStyle>
+                <Style TargetType="DataGridCell">
+                    <Style.Triggers>
+                        <Trigger Property="IsSelected" Value="True">
+                            <Setter Property="Background" Value="White" />
+                            <Setter Property="Foreground" Value="Black" />
+                            <Setter Property="BorderBrush" Value="Aquamarine" />
+                        </Trigger>
+                    </Style.Triggers>
+                </Style>
+            </DataGrid.CellStyle>
+            
             <DataGrid.Columns>
-                <DataGridTemplateColumn SortMemberPath="DungeonSize" IsReadOnly="True" Width="100">
+                <DataGridTemplateColumn IsReadOnly="True">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center"
+                                        Visibility="{Binding IsSelected, Converter={StaticResource BoolToVisibility}, ConverterParameter=true:false}">
+                                <Button Content="Open" Width="50" Margin="0" Cursor="Hand" Command="{Binding DataContext.ShowDetailsCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}" 
+                                        Foreground="CadetBlue" Style="{StaticResource showButton}"/>
+                            </StackPanel>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                
+                <DataGridTemplateColumn IsReadOnly="True" Width="100">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <StackPanel Orientation="Horizontal">
@@ -89,7 +113,8 @@
                         </DataTemplate>
                     </DataGridTemplateColumn.HeaderTemplate>
                 </DataGridTemplateColumn>
-                <DataGridTemplateColumn SortMemberPath="Name" IsReadOnly="True" MinWidth="175">
+                
+                <DataGridTemplateColumn IsReadOnly="True" MinWidth="175">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <StackPanel>
@@ -102,12 +127,22 @@
                     </DataGridTemplateColumn.CellTemplate>
                     <DataGridTemplateColumn.HeaderTemplate>
                         <DataTemplate>
-                            <TextBlock Text="{loc:Loc Enemy}" Margin="5" TextAlignment="Center" FontSize="14" FontStyle="Oblique" FontWeight="Bold" />
+                            <StackPanel Orientation="Horizontal" Cursor="Hand">
+                                <StackPanel.InputBindings>
+                                    <MouseBinding Command="{Binding DataContext.SortCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}" CommandParameter="0" Gesture="LeftClick"/>
+                                </StackPanel.InputBindings>
+
+                                <Icon:PackIconMaterial Kind="ArrowDown" Style="{StaticResource menuButtonIcon}" Width="10"
+                                        Visibility="{Binding DataContext.SortedByName, RelativeSource={RelativeSource AncestorType=DataGrid}, Converter={StaticResource IntToVisibility}, ConverterParameter=true:0}"/>
+                                <Icon:PackIconMaterial Kind="ArrowUp" Style="{StaticResource menuButtonIcon}" Width="10"
+                                        Visibility="{Binding DataContext.SortedByName, RelativeSource={RelativeSource AncestorType=DataGrid}, Converter={StaticResource IntToVisibility}, ConverterParameter=true:1}"/>
+                                <TextBlock Text="{loc:Loc Enemy}" Margin="5" TextAlignment="Center" FontSize="14" FontStyle="Oblique" FontWeight="Bold" />
+                            </StackPanel>
                         </DataTemplate>
                     </DataGridTemplateColumn.HeaderTemplate>
                 </DataGridTemplateColumn>
 
-                <DataGridTemplateColumn SortMemberPath="DamageDone" IsReadOnly="True" MinWidth="140">
+                <DataGridTemplateColumn IsReadOnly="True" MinWidth="140">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <StackPanel>
@@ -120,12 +155,22 @@
                     </DataGridTemplateColumn.CellTemplate>
                     <DataGridTemplateColumn.HeaderTemplate>
                         <DataTemplate>
-                            <TextBlock Text="{loc:Loc Damage}" Margin="5" TextAlignment="Center" FontSize="14" FontStyle="Oblique" FontWeight="Bold"/>
+                            <StackPanel Orientation="Horizontal" Cursor="Hand">
+                                <StackPanel.InputBindings>
+                                    <MouseBinding Command="{Binding DataContext.SortCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}" CommandParameter="1" Gesture="LeftClick"/>
+                                </StackPanel.InputBindings>
+
+                                <Icon:PackIconMaterial Kind="ArrowDown" Style="{StaticResource menuButtonIcon}" Width="10"
+                                        Visibility="{Binding DataContext.SortedByDamageDone, RelativeSource={RelativeSource AncestorType=DataGrid}, Converter={StaticResource IntToVisibility}, ConverterParameter=true:0}"/>
+                                <Icon:PackIconMaterial Kind="ArrowUp" Style="{StaticResource menuButtonIcon}" Width="10"
+                                        Visibility="{Binding DataContext.SortedByDamageDone, RelativeSource={RelativeSource AncestorType=DataGrid}, Converter={StaticResource IntToVisibility}, ConverterParameter=true:1}"/>
+                                <TextBlock Text="{loc:Loc Damage}" Margin="5" TextAlignment="Center" FontSize="14" FontStyle="Oblique" FontWeight="Bold" />
+                            </StackPanel>
                         </DataTemplate>
                     </DataGridTemplateColumn.HeaderTemplate>
                 </DataGridTemplateColumn>
 
-                <DataGridTemplateColumn SortMemberPath="HealDone" IsReadOnly="True" MinWidth="140">
+                <DataGridTemplateColumn IsReadOnly="True" MinWidth="140">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <StackPanel>
@@ -138,12 +183,22 @@
                     </DataGridTemplateColumn.CellTemplate>
                     <DataGridTemplateColumn.HeaderTemplate>
                         <DataTemplate>
-                            <TextBlock Text="{loc:Loc Healing}" Margin="5" TextAlignment="Center" FontSize="14" FontStyle="Oblique"  FontWeight="Bold"/>
+                            <StackPanel Orientation="Horizontal" Cursor="Hand">
+                                <StackPanel.InputBindings>
+                                    <MouseBinding Command="{Binding DataContext.SortCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}" CommandParameter="2" Gesture="LeftClick"/>
+                                </StackPanel.InputBindings>
+
+                                <Icon:PackIconMaterial Kind="ArrowDown" Style="{StaticResource menuButtonIcon}" Width="10"
+                                        Visibility="{Binding DataContext.SortedByHealDone, RelativeSource={RelativeSource AncestorType=DataGrid}, Converter={StaticResource IntToVisibility}, ConverterParameter=true:0}"/>
+                                <Icon:PackIconMaterial Kind="ArrowUp" Style="{StaticResource menuButtonIcon}" Width="10"
+                                        Visibility="{Binding DataContext.SortedByHealDone, RelativeSource={RelativeSource AncestorType=DataGrid}, Converter={StaticResource IntToVisibility}, ConverterParameter=true:1}"/>
+                                <TextBlock Text="{loc:Loc Healing}" Margin="5" TextAlignment="Center" FontSize="14" FontStyle="Oblique" FontWeight="Bold" />
+                            </StackPanel>
                         </DataTemplate>
                     </DataGridTemplateColumn.HeaderTemplate>
                 </DataGridTemplateColumn>
 
-                <DataGridTemplateColumn SortMemberPath="DamageTaken" IsReadOnly="True" MinWidth="140">
+                <DataGridTemplateColumn IsReadOnly="True" MinWidth="140">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <StackPanel>
@@ -156,12 +211,22 @@
                     </DataGridTemplateColumn.CellTemplate>
                     <DataGridTemplateColumn.HeaderTemplate>
                         <DataTemplate>
-                            <TextBlock Text="{loc:Loc DamageTaken}" Margin="5" TextAlignment="Center" FontSize="14" FontStyle="Oblique"  FontWeight="Bold"/>
+                            <StackPanel Orientation="Horizontal" Cursor="Hand">
+                                <StackPanel.InputBindings>
+                                    <MouseBinding Command="{Binding DataContext.SortCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}" CommandParameter="3" Gesture="LeftClick"/>
+                                </StackPanel.InputBindings>
+
+                                <Icon:PackIconMaterial Kind="ArrowDown" Style="{StaticResource menuButtonIcon}" Width="10"
+                                        Visibility="{Binding DataContext.SortedByDamageTaken, RelativeSource={RelativeSource AncestorType=DataGrid}, Converter={StaticResource IntToVisibility}, ConverterParameter=true:0}"/>
+                                <Icon:PackIconMaterial Kind="ArrowUp" Style="{StaticResource menuButtonIcon}" Width="10"
+                                        Visibility="{Binding DataContext.SortedByDamageTaken, RelativeSource={RelativeSource AncestorType=DataGrid}, Converter={StaticResource IntToVisibility}, ConverterParameter=true:1}"/>
+                                <TextBlock Text="{loc:Loc DamageTaken}" Margin="5" TextAlignment="Center" FontSize="14" FontStyle="Oblique" FontWeight="Bold" />
+                            </StackPanel>
                         </DataTemplate>
                     </DataGridTemplateColumn.HeaderTemplate>
                 </DataGridTemplateColumn>
 
-                <DataGridTemplateColumn SortMemberPath="EnergyRecovery" IsReadOnly="True" MinWidth="125">
+                <DataGridTemplateColumn IsReadOnly="True" MinWidth="125">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <StackPanel>
@@ -174,12 +239,22 @@
                     </DataGridTemplateColumn.CellTemplate>
                     <DataGridTemplateColumn.HeaderTemplate>
                         <DataTemplate>
-                            <TextBlock Text="{loc:Loc Resources}" Margin="5" TextAlignment="Center" FontSize="14" FontStyle="Oblique"  FontWeight="Bold"/>
+                            <StackPanel Orientation="Horizontal" Cursor="Hand">
+                                <StackPanel.InputBindings>
+                                    <MouseBinding Command="{Binding DataContext.SortCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}" CommandParameter="4" Gesture="LeftClick"/>
+                                </StackPanel.InputBindings>
+
+                                <Icon:PackIconMaterial Kind="ArrowDown" Style="{StaticResource menuButtonIcon}" Width="10"
+                                        Visibility="{Binding DataContext.SortedByResources, RelativeSource={RelativeSource AncestorType=DataGrid}, Converter={StaticResource IntToVisibility}, ConverterParameter=true:0}"/>
+                                <Icon:PackIconMaterial Kind="ArrowUp" Style="{StaticResource menuButtonIcon}" Width="10"
+                                        Visibility="{Binding DataContext.SortedByResources, RelativeSource={RelativeSource AncestorType=DataGrid}, Converter={StaticResource IntToVisibility}, ConverterParameter=true:1}"/>
+                                <TextBlock Text="{loc:Loc Resources}" Margin="5" TextAlignment="Center" FontSize="14" FontStyle="Oblique" FontWeight="Bold" />
+                            </StackPanel>
                         </DataTemplate>
                     </DataGridTemplateColumn.HeaderTemplate>
                 </DataGridTemplateColumn>
 
-                <DataGridTemplateColumn SortMemberPath="DeathNumber" IsReadOnly="True" MinWidth="50">
+                <DataGridTemplateColumn IsReadOnly="True" MinWidth="50">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <StackPanel>
@@ -192,7 +267,17 @@
                     </DataGridTemplateColumn.CellTemplate>
                     <DataGridTemplateColumn.HeaderTemplate>
                         <DataTemplate>
-                            <TextBlock Text="{loc:Loc Deaths}" Margin="5" TextAlignment="Center" FontSize="14" FontStyle="Oblique"  FontWeight="Bold" /> 
+                            <StackPanel Orientation="Horizontal" Cursor="Hand">
+                                <StackPanel.InputBindings>
+                                    <MouseBinding Command="{Binding DataContext.SortCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}" CommandParameter="5" Gesture="LeftClick"/>
+                                </StackPanel.InputBindings>
+
+                                <Icon:PackIconMaterial Kind="ArrowDown" Style="{StaticResource menuButtonIcon}" Width="10"
+                                        Visibility="{Binding DataContext.SortedByDeaths, RelativeSource={RelativeSource AncestorType=DataGrid}, Converter={StaticResource IntToVisibility}, ConverterParameter=true:0}"/>
+                                <Icon:PackIconMaterial Kind="ArrowUp" Style="{StaticResource menuButtonIcon}" Width="10"
+                                        Visibility="{Binding DataContext.SortedByDeaths, RelativeSource={RelativeSource AncestorType=DataGrid}, Converter={StaticResource IntToVisibility}, ConverterParameter=true:1}"/>
+                                <TextBlock Text="{loc:Loc Deaths}" Margin="5" TextAlignment="Center" FontSize="14" FontStyle="Oblique" FontWeight="Bold" />
+                            </StackPanel>
                         </DataTemplate>
                     </DataGridTemplateColumn.HeaderTemplate>
                 </DataGridTemplateColumn>
@@ -329,7 +414,7 @@
                 <TextBlock HorizontalAlignment="Center" Text="{Binding DungeonName}" FontSize="15" Margin="0 5" />
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                     <TextBlock Text="{loc:Loc Uploading}" FontSize="12" Margin="20 0" />
-                    <ProgressBar Minimum="0" Maximum="{Binding MaxCombats}" Value="{Binding CurrentCombatNumber}" Height="20" Width="500"></ProgressBar>
+                    <ProgressBar Minimum="0" Maximum="{Binding MaxCombats}" Value="{Binding CurrentCombatNumber}" Height="20" Width="500"/>
                 </StackPanel>
                 <StackPanel Orientation="Horizontal" Margin="0 5" HorizontalAlignment="Center">
                     <TextBlock HorizontalAlignment="Center"
