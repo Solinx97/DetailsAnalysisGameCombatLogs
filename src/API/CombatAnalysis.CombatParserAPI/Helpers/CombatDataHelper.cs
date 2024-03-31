@@ -14,18 +14,18 @@ public class CombatDataHelper : ICombatDataHelper
 {
     private readonly IMapper _mapper;
     private readonly ILogger _logger;
-    private readonly IService<DamageDoneDto, int> _damageDoneService;
-    private readonly IService<DamageDoneGeneralDto, int> _damageDoneGeneralService;
-    private readonly IService<HealDoneDto, int> _healDoneService;
-    private readonly IService<HealDoneGeneralDto, int> _healDoneGeneralService;
-    private readonly IService<DamageTakenDto, int> _damageTakenService;
-    private readonly IService<DamageTakenGeneralDto, int> _damageTakenGeneralService;
-    private readonly IService<ResourceRecoveryDto, int> _resourceRecoveryService;
-    private readonly IService<ResourceRecoveryGeneralDto, int> _resourceRecoveryGeneralService;
+    private readonly IPlayerInfoService<DamageDoneDto, int> _damageDoneService;
+    private readonly IPlayerInfoService<DamageDoneGeneralDto, int> _damageDoneGeneralService;
+    private readonly IPlayerInfoService<HealDoneDto, int> _healDoneService;
+    private readonly IPlayerInfoService<HealDoneGeneralDto, int> _healDoneGeneralService;
+    private readonly IPlayerInfoService<DamageTakenDto, int> _damageTakenService;
+    private readonly IPlayerInfoService<DamageTakenGeneralDto, int> _damageTakenGeneralService;
+    private readonly IPlayerInfoService<ResourceRecoveryDto, int> _resourceRecoveryService;
+    private readonly IPlayerInfoService<ResourceRecoveryGeneralDto, int> _resourceRecoveryGeneralService;
 
-    public CombatDataHelper(IMapper mapper, ILogger logger, IService<DamageDoneDto, int> damageDoneService, IService<DamageDoneGeneralDto, int> damageDoneGeneralService, 
-        IService<HealDoneDto, int> healDoneService, IService<HealDoneGeneralDto, int> healDoneGeneralService, IService<DamageTakenDto, int> damageTakenService, 
-        IService<DamageTakenGeneralDto, int> damageTakenGeneralService, IService<ResourceRecoveryDto, int> resourceRecoveryService, IService<ResourceRecoveryGeneralDto, int> resourceRecoveryGeneralService)
+    public CombatDataHelper(IMapper mapper, ILogger logger, IPlayerInfoService<DamageDoneDto, int> damageDoneService, IPlayerInfoService<DamageDoneGeneralDto, int> damageDoneGeneralService,
+        IPlayerInfoService<HealDoneDto, int> healDoneService, IPlayerInfoService<HealDoneGeneralDto, int> healDoneGeneralService, IPlayerInfoService<DamageTakenDto, int> damageTakenService,
+        IPlayerInfoService<DamageTakenGeneralDto, int> damageTakenGeneralService, IPlayerInfoService<ResourceRecoveryDto, int> resourceRecoveryService, IPlayerInfoService<ResourceRecoveryGeneralDto, int> resourceRecoveryGeneralService)
     {
         _mapper = mapper;
         _logger = logger;

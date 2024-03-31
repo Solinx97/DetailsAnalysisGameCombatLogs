@@ -6,12 +6,12 @@ using CombatAnalysis.DAL.Interfaces;
 
 namespace CombatAnalysis.BL.Services;
 
-internal class DamageTakenService : IService<DamageTakenDto, int>
+internal class DamageTakenService : IPlayerInfoService<DamageTakenDto, int>
 {
-    private readonly IGenericRepository<DamageTaken, int> _repository;
+    private readonly ISQLPlayerInfoRepository<DamageTaken, int> _repository;
     private readonly IMapper _mapper;
 
-    public DamageTakenService(IGenericRepository<DamageTaken, int> repository, IMapper mapper)
+    public DamageTakenService(ISQLPlayerInfoRepository<DamageTaken, int> repository, IMapper mapper)
     {
         _repository = repository;
         _mapper = mapper;
@@ -46,6 +46,14 @@ internal class DamageTakenService : IService<DamageTakenDto, int>
     {
         var result = await _repository.GetByIdAsync(id);
         var resultMap = _mapper.Map<DamageTakenDto>(result);
+
+        return resultMap;
+    }
+
+    public async Task<IEnumerable<DamageTakenDto>> GetByCombatPlayerIdAsync(int combatPlayerId)
+    {
+        var result = await _repository.GetByCombatPlayerIdAsync(combatPlayerId);
+        var resultMap = _mapper.Map<List<DamageTakenDto>>(result);
 
         return resultMap;
     }

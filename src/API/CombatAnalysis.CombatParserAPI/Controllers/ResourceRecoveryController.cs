@@ -10,11 +10,11 @@ namespace CombatAnalysis.CombatParserAPI.Controllers;
 [ApiController]
 public class ResourceRecoveryController : ControllerBase
 {
-    private readonly IService<ResourceRecoveryDto, int> _service;
+    private readonly IPlayerInfoService<ResourceRecoveryDto, int> _service;
     private readonly IMapper _mapper;
     private readonly ILogger _logger;
 
-    public ResourceRecoveryController(IService<ResourceRecoveryDto, int> service, IMapper mapper, ILogger logger)
+    public ResourceRecoveryController(IPlayerInfoService<ResourceRecoveryDto, int> service, IMapper mapper, ILogger logger)
     {
         _service = service;
         _mapper = mapper;
@@ -24,7 +24,7 @@ public class ResourceRecoveryController : ControllerBase
     [HttpGet("findByCombatPlayerId/{combatPlayerId:int:min(1)}")]
     public async Task<IActionResult> Find(int combatPlayerId)
     {
-        var resourceRecoveryes = await _service.GetByParamAsync("CombatPlayerId", combatPlayerId);
+        var resourceRecoveryes = await _service.GetByCombatPlayerIdAsync(combatPlayerId);
 
         return Ok(resourceRecoveryes);
     }

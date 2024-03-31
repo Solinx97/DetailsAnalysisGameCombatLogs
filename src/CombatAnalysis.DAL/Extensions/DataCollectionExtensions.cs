@@ -1,4 +1,5 @@
 ﻿using CombatAnalysis.DAL.Data;
+using CombatAnalysis.DAL.Entities;
 using CombatAnalysis.DAL.Entities.Chat;
 using CombatAnalysis.DAL.Entities.Community;
 using CombatAnalysis.DAL.Entities.Post;
@@ -67,6 +68,15 @@ public static class DataCollectionExtensions
         services.AddScoped<IGenericRepository<CommunityPost, int>, SQLRepository<CommunityPost, int>>();
         services.AddScoped<IGenericRepository<CommunityUser, string>, SQLRepository<CommunityUser, string>>();
         services.AddScoped<IGenericRepository<InviteToCommunity, int>, SQLRepository<InviteToCommunity, int>>();
+
+        services.AddScoped<ISQLPlayerInfoRepository<DamageDone, int>, SQLPlayerInfoRepository<DamageDone, int>>();
+        services.AddScoped<ISQLPlayerInfoRepository<DamageDoneGeneral, int>, SQLPlayerInfoRepository<DamageDoneGeneral, int>>();
+        services.AddScoped<ISQLPlayerInfoRepository<HealDone, int>, SQLPlayerInfoRepository<HealDone, int>>();
+        services.AddScoped<ISQLPlayerInfoRepository<HealDoneGeneral, int>, SQLPlayerInfoRepository<HealDoneGeneral, int>>();
+        services.AddScoped<ISQLPlayerInfoRepository<DamageTaken, int>, SQLPlayerInfoRepository<DamageTaken, int>>();
+        services.AddScoped<ISQLPlayerInfoRepository<DamageTakenGeneral, int>, SQLPlayerInfoRepository<DamageTakenGeneral, int>>();
+        services.AddScoped<ISQLPlayerInfoRepository<ResourceRecovery, int>, SQLPlayerInfoRepository<ResourceRecovery, int>>();
+        services.AddScoped<ISQLPlayerInfoRepository<ResourceRecoveryGeneral, int>, SQLPlayerInfoRepository<ResourceRecoveryGeneral, int>>();
 
         var dataProcessingType = configuration.GetSection("Database:DataProcessingType").Value ?? string.Empty;
         switch (dataProcessingType)

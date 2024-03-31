@@ -61,6 +61,33 @@ public static class DbProcedureHelper
                           "\tWHERE Id = @id";
             dbContext.Database.ExecuteSqlRaw(query);
         }
+
+        GetDataByCombatPlayerId(dbContext);
+    }
+
+    private static void GetDataByCombatPlayerId(DbContext dbContext)
+    {
+        var types = new Type[]
+{
+            typeof(DamageDone),
+            typeof(DamageDoneGeneral),
+            typeof(HealDone),
+            typeof(HealDoneGeneral),
+            typeof(DamageTaken),
+            typeof(DamageTakenGeneral),
+            typeof(ResourceRecovery),
+            typeof(ResourceRecoveryGeneral),
+        };
+
+        foreach (var item in types)
+        {
+            var property = item.GetProperty("CombatPlayerId");
+            var query = $"CREATE PROCEDURE Get{item.Name}ByCombatPlayerId (@combatPlayerId {Converter(property.PropertyType.Name)})\n" +
+                          "\tAS SELECT * \n" +
+                          $"\tFROM {item.Name}\n" +
+                          "\tWHERE CombatPlayerId = @combatPlayerId";
+            dbContext.Database.ExecuteSqlRaw(query);
+        }
     }
 
     private static Tuple<string, string> InsertIntoParamsAndValues(Type type)

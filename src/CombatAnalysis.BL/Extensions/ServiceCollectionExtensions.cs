@@ -48,13 +48,14 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IService<CombatLogByUserDto, int>, CombatLogByUserService>();
         services.AddScoped<IService<CombatDto, int>, CombatService>();
         services.AddScoped<IService<CombatPlayerDto, int>, CombatPlayerService>();
-        services.AddScoped<IService<DamageDoneDto, int>, DamageDoneService>();
-        services.AddScoped<IService<DamageDoneGeneralDto, int>, DamageDoneGeneralService>();
-        services.AddScoped<IService<HealDoneDto, int>, HealDoneService>();
-        services.AddScoped<IService<HealDoneGeneralDto, int>, HealDoneGeneralService>();
-        services.AddScoped<IService<DamageTakenDto, int>, DamageTakenService>();
-        services.AddScoped<IService<DamageTakenGeneralDto, int>, DamageTakenGeneralService>();
-        services.AddScoped<IService<ResourceRecoveryDto, int>, ResourceRecoveryService>();
-        services.AddScoped<IService<ResourceRecoveryGeneralDto, int>, ResourceRecoveryGeneralService>();
+
+        services.AddScoped<IPlayerInfoService<DamageDoneDto, int>, DamageDoneService>();
+        services.AddScoped<IPlayerInfoService<DamageDoneGeneralDto, int>, DamageDoneGeneralService>();
+        services.AddScoped<IPlayerInfoService<HealDoneDto, int>, HealDoneService>();
+        services.AddScoped<IPlayerInfoService<HealDoneGeneralDto, int>, HealDoneGeneralService>();
+        services.AddScoped<IPlayerInfoService<DamageTakenDto, int>, DamageTakenService>();
+        services.AddScoped<IPlayerInfoService<DamageTakenGeneralDto, int>, DamageTakenGeneralService>();
+        services.AddScoped<IPlayerInfoService<ResourceRecoveryDto, int>, ResourceRecoveryService>();
+        services.AddScoped<IPlayerInfoService<ResourceRecoveryGeneralDto, int>, ResourceRecoveryGeneralService>();
     }
 }
