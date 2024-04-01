@@ -1,8 +1,8 @@
 ﻿using AutoMapper;
 using CombatAnalysis.CustomerBL.DTO;
 using CombatAnalysis.CustomerBL.Interfaces;
-using CombatAnalysis.DAL.Entities.User;
-using CombatAnalysis.DAL.Interfaces;
+using CombatAnalysis.CustomerDAL.Entities;
+using CombatAnalysis.CustomerDAL.Interfaces;
 
 namespace CombatAnalysis.CustomerBL.Services;
 

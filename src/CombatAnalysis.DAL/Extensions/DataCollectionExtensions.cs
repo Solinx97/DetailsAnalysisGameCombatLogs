@@ -3,7 +3,6 @@ using CombatAnalysis.DAL.Entities;
 using CombatAnalysis.DAL.Entities.Chat;
 using CombatAnalysis.DAL.Entities.Community;
 using CombatAnalysis.DAL.Entities.Post;
-using CombatAnalysis.DAL.Entities.User;
 using CombatAnalysis.DAL.Enums;
 using CombatAnalysis.DAL.Interfaces;
 using CombatAnalysis.DAL.Repositories.Firebase;
@@ -43,11 +42,6 @@ public static class DataCollectionExtensions
             options.UseSqlServer(connection);
         });
 
-        services.AddScoped<IUserRepository, SQLUserRepository>();
-        services.AddScoped<IGenericRepository<Customer, string>, SQLRepository<Customer, string>>();
-        services.AddScoped<IGenericRepository<Friend, int>, SQLRepository<Friend, int>>();
-        services.AddScoped<IGenericRepository<BannedUser, int>, SQLRepository<BannedUser, int>>();
-        services.AddScoped<IGenericRepository<RequestToConnect, int>, SQLRepository<RequestToConnect, int>>();
         services.AddScoped<IGenericRepository<PersonalChat, int>, SQLRepository<PersonalChat, int>>();
         services.AddScoped<IGenericRepository<PersonalChatMessage, int>, SQLRepository<PersonalChatMessage, int>>();
         services.AddScoped<IGenericRepository<PersonalChatMessageCount, int>, SQLRepository<PersonalChatMessageCount, int>>();
@@ -96,8 +90,6 @@ public static class DataCollectionExtensions
     private static void FirebaseDatabase(IServiceCollection services)
     {
         services.AddDbContext<FirebaseContext>();
-
-        services.AddScoped<IUserRepository, FIrebaseUserRepository>();
 
         services.AddScoped(typeof(IGenericRepository<,>), typeof(FirebaseRepositroy<,>));
     }

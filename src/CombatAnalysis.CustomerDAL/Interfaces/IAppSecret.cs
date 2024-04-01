@@ -1,6 +1,6 @@
-﻿using CombatAnalysis.DAL.Entities.Authentication;
+﻿using CombatAnalysis.CustomerDAL.Entities.Authentication;
 
-namespace CombatAnalysis.DAL.Interfaces;
+namespace CombatAnalysis.CustomerDAL.Interfaces;
 
 public interface IAppSecret
 {

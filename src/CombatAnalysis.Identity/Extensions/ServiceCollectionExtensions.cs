@@ -1,5 +1,5 @@
-﻿using CombatAnalysis.DAL.Interfaces;
-using CombatAnalysis.DAL.Repositories.SQL;
+﻿using CombatAnalysis.CustomerDAL.Interfaces;
+using CombatAnalysis.CustomerDAL.Repositories.SQL;
 using CombatAnalysis.Identity.Interfaces;
 using CombatAnalysis.Identity.Services;
 using Microsoft.Extensions.DependencyInjection;

@@ -1,9 +1,9 @@
-﻿using CombatAnalysis.DAL.Data;
-using CombatAnalysis.DAL.Entities.Authentication;
-using CombatAnalysis.DAL.Interfaces;
+﻿using CombatAnalysis.CustomerDAL.Data;
+using CombatAnalysis.CustomerDAL.Entities.Authentication;
+using CombatAnalysis.CustomerDAL.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
-namespace CombatAnalysis.DAL.Repositories.SQL;
+namespace CombatAnalysis.CustomerDAL.Repositories.SQL;
 
 public class SQLSecretRepository : IAppSecret
 {

@@ -1,4 +1,4 @@
-﻿namespace CombatAnalysis.DAL.Entities.Authentication;
+﻿namespace CombatAnalysis.CustomerDAL.Entities.Authentication;
 
 public class Secret
 {

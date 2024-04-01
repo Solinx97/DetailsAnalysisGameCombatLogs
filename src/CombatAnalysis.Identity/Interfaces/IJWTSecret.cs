@@ -4,5 +4,5 @@ public interface IJWTSecret
 {
     public Task GenerateSecretKeysAsync();
 
-    public Task<DAL.Entities.Authentication.Secret> GetSecretAsync();
+    public Task<CustomerDAL.Entities.Authentication.Secret> GetSecretAsync();
 }

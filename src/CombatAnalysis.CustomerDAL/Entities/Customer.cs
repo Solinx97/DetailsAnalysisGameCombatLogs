@@ -1,4 +1,4 @@
-﻿namespace CombatAnalysis.DAL.Entities.User;
+﻿namespace CombatAnalysis.CustomerDAL.Entities;
 
 public class Customer
 {

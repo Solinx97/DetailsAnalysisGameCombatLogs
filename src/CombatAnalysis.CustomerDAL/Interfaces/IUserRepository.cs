@@ -1,6 +1,6 @@
-﻿using CombatAnalysis.DAL.Entities.User;
+﻿using CombatAnalysis.CustomerDAL.Entities;
 
-namespace CombatAnalysis.DAL.Interfaces;
+namespace CombatAnalysis.CustomerDAL.Interfaces;
 
 public interface IUserRepository
 {

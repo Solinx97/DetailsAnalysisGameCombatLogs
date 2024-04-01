@@ -1,9 +1,9 @@
-﻿using CombatAnalysis.DAL.Data;
-using CombatAnalysis.DAL.Entities.User;
-using CombatAnalysis.DAL.Interfaces;
+﻿using CombatAnalysis.CustomerDAL.Data;
+using CombatAnalysis.CustomerDAL.Entities;
+using CombatAnalysis.CustomerDAL.Interfaces;
 using Firebase.Database.Query;
 
-namespace CombatAnalysis.DAL.Repositories.Firebase;
+namespace CombatAnalysis.CustomerDAL.Repositories.Firebase;
 
 public class FIrebaseUserRepository : IUserRepository
 {

@@ -1,9 +1,9 @@
-﻿using CombatAnalysis.DAL.Data;
-using CombatAnalysis.DAL.Entities.Authentication;
-using CombatAnalysis.DAL.Interfaces;
+﻿using CombatAnalysis.CustomerDAL.Data;
+using CombatAnalysis.CustomerDAL.Entities.Authentication;
+using CombatAnalysis.CustomerDAL.Interfaces;
 using Firebase.Database.Query;
 
-namespace CombatAnalysis.DAL.Repositories.Firebase;
+namespace CombatAnalysis.CustomerDAL.Repositories.Firebase;
 
 public class FirebaseSecretRepository : IAppSecret
 {
@@ -103,3 +103,4 @@ public class FirebaseSecretRepository : IAppSecret
         return checkResult != null ? 1 : 0;
     }
 }
+

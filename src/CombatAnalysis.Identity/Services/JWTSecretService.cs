@@ -1,4 +1,4 @@
-﻿using CombatAnalysis.DAL.Interfaces;
+﻿using CombatAnalysis.CustomerDAL.Interfaces;
 using CombatAnalysis.Identity.Interfaces;
 using System.Security.Cryptography;
 
@@ -21,7 +21,7 @@ public class JWTSecretService : IJWTSecret
         await UpdateSecretKeysAsync(resfreSecret, accessSecret);
     }
 
-    public async Task<DAL.Entities.Authentication.Secret> GetSecretAsync()
+    public async Task<CustomerDAL.Entities.Authentication.Secret> GetSecretAsync()
     {
         var secrets = await _secretRepository.GetAllAsync();
         if (!secrets.Any())
@@ -60,7 +60,7 @@ public class JWTSecretService : IJWTSecret
 
     private async Task SaveSecretKeysAsync(string accessSecretKey, string refreshSecretKey)
     {
-        var secret = new DAL.Entities.Authentication.Secret
+        var secret = new CustomerDAL.Entities.Authentication.Secret
         {
             AccessSecret = accessSecretKey,
             RefreshSecret = refreshSecretKey,
