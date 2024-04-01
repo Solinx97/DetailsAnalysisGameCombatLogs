@@ -7,5 +7,7 @@
         public static string UserApi { get; set; }
 
         public static string ChatApi { get; set; }
+
+        public static string CommunicationApi { get; set; }
     }
 }

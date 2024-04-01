@@ -25,7 +25,7 @@ public class InviteToCommunityController : ControllerBase
             return Unauthorized();
         }
 
-        var responseMessage = await _httpClient.PostAsync("InviteToCommunity", JsonContent.Create(chat), refreshToken, Port.ChatApi);
+        var responseMessage = await _httpClient.PostAsync("InviteToCommunity", JsonContent.Create(chat), refreshToken, Port.CommunicationApi);
         if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
         {
             return Unauthorized();
@@ -48,7 +48,7 @@ public class InviteToCommunityController : ControllerBase
             return Unauthorized();
         }
 
-        var responseMessage = await _httpClient.GetAsync("InviteToCommunity", refreshToken, Port.ChatApi);
+        var responseMessage = await _httpClient.GetAsync("InviteToCommunity", refreshToken, Port.CommunicationApi);
         if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
         {
             return Unauthorized();
@@ -71,7 +71,7 @@ public class InviteToCommunityController : ControllerBase
             return Unauthorized();
         }
 
-        var responseMessage = await _httpClient.GetAsync($"InviteToCommunity/{id}", refreshToken, Port.ChatApi);
+        var responseMessage = await _httpClient.GetAsync($"InviteToCommunity/{id}", refreshToken, Port.CommunicationApi);
         if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
         {
             return Unauthorized();
@@ -94,7 +94,7 @@ public class InviteToCommunityController : ControllerBase
             return Unauthorized();
         }
 
-        var responseMessage = await _httpClient.GetAsync($"InviteToCommunity/searchByUserId/{id}", refreshToken, Port.ChatApi);
+        var responseMessage = await _httpClient.GetAsync($"InviteToCommunity/searchByUserId/{id}", refreshToken, Port.CommunicationApi);
         if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
         {
             return Unauthorized();
@@ -117,7 +117,7 @@ public class InviteToCommunityController : ControllerBase
             return Unauthorized();
         }
 
-        var responseMessage = await _httpClient.GetAsync("InviteToCommunity", refreshToken, Port.ChatApi);
+        var responseMessage = await _httpClient.GetAsync("InviteToCommunity", refreshToken, Port.CommunicationApi);
         if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
         {
             return Unauthorized();
@@ -145,7 +145,7 @@ public class InviteToCommunityController : ControllerBase
             return Unauthorized();
         }
 
-        var responseMessage = await _httpClient.PutAsync("InviteToCommunity", JsonContent.Create(chat), refreshToken, Port.ChatApi);
+        var responseMessage = await _httpClient.PutAsync("InviteToCommunity", JsonContent.Create(chat), refreshToken, Port.CommunicationApi);
         if (responseMessage.StatusCode == System.Net.HttpStatusCode.OK)
         {
             return Ok();
@@ -162,7 +162,7 @@ public class InviteToCommunityController : ControllerBase
             return Unauthorized();
         }
 
-        var responseMessage = await _httpClient.DeletAsync($"InviteToCommunity/{id}", refreshToken, Port.ChatApi);
+        var responseMessage = await _httpClient.DeletAsync($"InviteToCommunity/{id}", refreshToken, Port.CommunicationApi);
         if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
         {
             return Unauthorized();

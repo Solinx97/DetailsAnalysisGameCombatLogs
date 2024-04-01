@@ -36,7 +36,6 @@
     <Folder Include="ClientApp\src\middleware\" />
     <Folder Include="ClientApp\src\context\" />
     <Folder Include="ClientApp\src\store\slicers\" />
-    <Folder Include="Patterns\" />
   </ItemGroup>
 
   <Target Name="DebugEnsureNodeEnv" BeforeTargets="Build" Condition=" '$(Configuration)' == 'Debug' And !Exists('$(SpaRoot)node_modules') ">

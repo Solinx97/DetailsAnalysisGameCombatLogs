@@ -25,7 +25,7 @@ public class CommunityPostController : ControllerBase
             return Unauthorized();
         }
 
-        var responseMessage = await _httpClient.GetAsync($"CommunityPost/{id}", refreshToken, Port.ChatApi);
+        var responseMessage = await _httpClient.GetAsync($"CommunityPost/{id}", refreshToken, Port.CommunicationApi);
         if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
         {
             return Unauthorized();
@@ -48,7 +48,7 @@ public class CommunityPostController : ControllerBase
             return Unauthorized();
         }
 
-        var responseMessage = await _httpClient.GetAsync($"CommunityPost/searchByCommunityId/{id}", refreshToken, Port.ChatApi);
+        var responseMessage = await _httpClient.GetAsync($"CommunityPost/searchByCommunityId/{id}", refreshToken, Port.CommunicationApi);
         if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
         {
             return Unauthorized();
@@ -71,7 +71,7 @@ public class CommunityPostController : ControllerBase
             return Unauthorized();
         }
 
-        var responseMessage = await _httpClient.GetAsync($"CommunityPost/searchByPostId/{id}", refreshToken, Port.ChatApi);
+        var responseMessage = await _httpClient.GetAsync($"CommunityPost/searchByPostId/{id}", refreshToken, Port.CommunicationApi);
         if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
         {
             return Unauthorized();
@@ -94,7 +94,7 @@ public class CommunityPostController : ControllerBase
             return Unauthorized();
         }
 
-        var responseMessage = await _httpClient.PutAsync("CommunityPost", JsonContent.Create(model), refreshToken, Port.ChatApi);
+        var responseMessage = await _httpClient.PutAsync("CommunityPost", JsonContent.Create(model), refreshToken, Port.CommunicationApi);
         if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
         {
             return Unauthorized();
@@ -115,7 +115,7 @@ public class CommunityPostController : ControllerBase
             return Unauthorized();
         }
 
-        var responseMessage = await _httpClient.PostAsync("CommunityPost", JsonContent.Create(model), refreshToken, Port.ChatApi);
+        var responseMessage = await _httpClient.PostAsync("CommunityPost", JsonContent.Create(model), refreshToken, Port.CommunicationApi);
         if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
         {
             return Unauthorized();
@@ -138,7 +138,7 @@ public class CommunityPostController : ControllerBase
             return Unauthorized();
         }
 
-        var responseMessage = await _httpClient.DeletAsync($"CommunityPost/{id}", refreshToken, Port.ChatApi);
+        var responseMessage = await _httpClient.DeletAsync($"CommunityPost/{id}", refreshToken, Port.CommunicationApi);
         if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
         {
             return Unauthorized();

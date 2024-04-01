@@ -16,7 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\CombatAnalysis.BL\CombatAnalysis.BL.csproj" />
+    <ProjectReference Include="..\..\CombatAnalysis.ChatBL\CombatAnalysis.ChatBL.csproj" />
     <ProjectReference Include="..\..\CombatAnalysis.CutomerBL\CombatAnalysis.CustomerBL.csproj" />
     <ProjectReference Include="..\..\CombatAnalysis.Identity\CombatAnalysis.Identity.csproj" />
   </ItemGroup>

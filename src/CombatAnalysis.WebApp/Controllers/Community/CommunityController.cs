@@ -25,7 +25,7 @@ public class CommunityController : ControllerBase
             return Unauthorized();
         }
 
-        var responseMessage = await _httpClient.PostAsync("Community", JsonContent.Create(newCommunity), refreshToken, Port.ChatApi);
+        var responseMessage = await _httpClient.PostAsync("Community", JsonContent.Create(newCommunity), refreshToken, Port.CommunicationApi);
         if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
         {
             return Unauthorized();
@@ -43,7 +43,7 @@ public class CommunityController : ControllerBase
     [HttpGet]
     public async Task<IActionResult> GetAll()
     {
-        var responseMessage = await _httpClient.GetAsync("Community", Port.ChatApi);
+        var responseMessage = await _httpClient.GetAsync("Community", Port.CommunicationApi);
         if (responseMessage.IsSuccessStatusCode)
         {
             var communities = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<CommunityModel>>();
@@ -57,7 +57,7 @@ public class CommunityController : ControllerBase
     [HttpGet("{id:int:min(1)}")]
     public async Task<IActionResult> GetById(int id)
     {
-        var responseMessage = await _httpClient.GetAsync($"Community/{id}", Port.ChatApi);
+        var responseMessage = await _httpClient.GetAsync($"Community/{id}", Port.CommunicationApi);
         if (responseMessage.IsSuccessStatusCode)
         {
             var community = await responseMessage.Content.ReadFromJsonAsync<CommunityModel>();
@@ -71,7 +71,7 @@ public class CommunityController : ControllerBase
     [HttpPut]
     public async Task<IActionResult> Update(CommunityModel chat)
     {
-        var responseMessage = await _httpClient.PutAsync("Community", JsonContent.Create(chat), Port.ChatApi);
+        var responseMessage = await _httpClient.PutAsync("Community", JsonContent.Create(chat), Port.CommunicationApi);
         if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
         {
             return Unauthorized();
@@ -87,7 +87,7 @@ public class CommunityController : ControllerBase
     [HttpDelete("{id:int:min(1)}")]
     public async Task<IActionResult> Delete(int id)
     {
-        var responseMessage = await _httpClient.DeletAsync($"Community/{id}", Port.ChatApi);
+        var responseMessage = await _httpClient.DeletAsync($"Community/{id}", Port.CommunicationApi);
         if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
         {
             return Unauthorized();

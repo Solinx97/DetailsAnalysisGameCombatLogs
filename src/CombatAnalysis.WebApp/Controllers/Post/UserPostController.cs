@@ -25,7 +25,7 @@ public class UserPostController : ControllerBase
             return Unauthorized();
         }
 
-        var responseMessage = await _httpClient.GetAsync($"UserPost/{id}", refreshToken, Port.ChatApi);
+        var responseMessage = await _httpClient.GetAsync($"UserPost/{id}", refreshToken, Port.CommunicationApi);
         if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
         {
             return Unauthorized();
@@ -47,7 +47,7 @@ public class UserPostController : ControllerBase
             return Unauthorized();
         }
 
-        var responseMessage = await _httpClient.GetAsync($"UserPost/searchByUserId/{id}", refreshToken, Port.ChatApi);
+        var responseMessage = await _httpClient.GetAsync($"UserPost/searchByUserId/{id}", refreshToken, Port.CommunicationApi);
         if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
         {
             return Unauthorized();
@@ -69,7 +69,7 @@ public class UserPostController : ControllerBase
             return Unauthorized();
         }
 
-        var responseMessage = await _httpClient.GetAsync($"UserPost/searchByPostId/{id}", refreshToken, Port.ChatApi);
+        var responseMessage = await _httpClient.GetAsync($"UserPost/searchByPostId/{id}", refreshToken, Port.CommunicationApi);
         if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
         {
             return Unauthorized();
@@ -92,7 +92,7 @@ public class UserPostController : ControllerBase
             return Unauthorized();
         }
 
-        var responseMessage = await _httpClient.PutAsync("UserPost", JsonContent.Create(model), refreshToken, Port.ChatApi);
+        var responseMessage = await _httpClient.PutAsync("UserPost", JsonContent.Create(model), refreshToken, Port.CommunicationApi);
         if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
         {
             return Unauthorized();
@@ -112,7 +112,7 @@ public class UserPostController : ControllerBase
             return Unauthorized();
         }
 
-        var responseMessage = await _httpClient.PostAsync("UserPost", JsonContent.Create(model), refreshToken, Port.ChatApi);
+        var responseMessage = await _httpClient.PostAsync("UserPost", JsonContent.Create(model), refreshToken, Port.CommunicationApi);
         if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
         {
             return Unauthorized();
@@ -135,7 +135,7 @@ public class UserPostController : ControllerBase
             return Unauthorized();
         }
 
-        var responseMessage = await _httpClient.DeletAsync($"UserPost/{id}", refreshToken, Port.ChatApi);
+        var responseMessage = await _httpClient.DeletAsync($"UserPost/{id}", refreshToken, Port.CommunicationApi);
         if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
         {
             return Unauthorized();

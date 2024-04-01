@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
-using CombatAnalysis.BL.DTO.Chat;
-using CombatAnalysis.BL.Interfaces;
+using CombatAnalysis.ChatBL.DTO;
+using CombatAnalysis.ChatBL.Interfaces;
 using CombatAnalysis.ChatApi.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

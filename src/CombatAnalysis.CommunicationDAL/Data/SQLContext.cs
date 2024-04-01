@@ -1,5 +1,4 @@
-﻿using CombatAnalysis.CommunicationDAL.Entities.Chat;
-using CombatAnalysis.CommunicationDAL.Entities.Community;
+﻿using CombatAnalysis.CommunicationDAL.Entities.Community;
 using CombatAnalysis.CommunicationDAL.Entities.Post;
 using Microsoft.EntityFrameworkCore;
 
@@ -39,28 +38,6 @@ public class SQLContext : DbContext
     public DbSet<CommunityPost>? CommunityPost { get; }
 
     public DbSet<UserPost>? UserPost { get; }
-
-    #endregion
-
-    #region Chat
-
-    public DbSet<PersonalChat>? PersonalChat { get; }
-
-    public DbSet<PersonalChatMessage>? PersonalChatMessage { get; }
-
-    public DbSet<PersonalChatMessageCount>? PersonalChatMessageCount { get; }
-
-    public DbSet<GroupChat>? GroupChat { get; }
-
-    public DbSet<GroupChatRules>? GroupChatRules { get; }
-
-    public DbSet<GroupChatMessage>? GroupChatMessage { get; }
-
-    public DbSet<UnreadGroupChatMessage>? UnreadGroupChatMessage { get; }
-
-    public DbSet<GroupChatMessageCount>? GroupChatMessageCount { get; }
-
-    public DbSet<GroupChatUser>? GroupChatUser { get; }
 
     #endregion
 }

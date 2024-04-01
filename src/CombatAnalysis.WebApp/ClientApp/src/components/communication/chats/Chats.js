@@ -25,12 +25,14 @@ const Chats = () => {
 
     const [personalChatsPollingInterval, setPersonalChatsPollingInterval] = useState(poolingInterval);
     const [groupChatsPollingInterval, setGroupChatsPollingInterval] = useState(poolingInterval);
+    const [isSkip, setIsSkip] = useState(true);
 
     const { data: personalChats, isError, isLoading, refetch: personalChatRefetch } = useGetByUserIdAsyncQuery(me?.id, {
         pollingInterval: personalChatsPollingInterval,
     });
     const { data: groupChatUsers, isError: groupChatError, isLoading: groupChatIsLoading, refetch: groupChatRefetch } = useFindGroupChatUserByUserIdQuery(me?.id, {
         pollingInterval: groupChatsPollingInterval,
+        skip: isSkip
     });
 
     const [selectedGroupChat, setSelectedGroupChat] = useState(null);
@@ -49,6 +51,12 @@ const Chats = () => {
             setSelectedGroupChat(null);
         }
     }, [selectedPersonalChat]);
+
+    useEffect(() => {
+        if (personalChats !== undefined) {
+            setIsSkip(false);
+        }
+    }, [personalChats]);
 
     const handleRefetchOne = () => {
         personalChatRefetch();
@@ -113,7 +121,7 @@ const Chats = () => {
                             }
                         </div>
                         <ul className={`group-chats${!groupChatsHidden ? "_active" : ""}`}>
-                            {groupChatUsers.length === 0
+                            {groupChatUsers?.length === 0
                                 ? <div className="group-chats__not-found">Not found</div>
                                 : groupChatUsers?.map((item) => (
                                     <li key={item.id} className={selectedGroupChat?.id === item?.groupChatId ? `selected` : ``}>
@@ -143,7 +151,7 @@ const Chats = () => {
                         </div>
                         <ul className={`personal-chats${!personalChatsHidden ? "_active" : ""}`}>
                             {
-                                personalChats.length === 0
+                                personalChats?.length === 0
                                 ? <div className="personal-chats__not-found">Not found</div>
                                 : personalChats?.map((item) => (
                                     <li key={item.id} className={selectedPersonalChat?.id === item?.id ? `selected` : ``}>

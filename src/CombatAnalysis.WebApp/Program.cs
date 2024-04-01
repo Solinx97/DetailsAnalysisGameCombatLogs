@@ -8,6 +8,7 @@ var builder = WebApplication.CreateBuilder(args);
 Port.CombatParserApi = builder.Configuration.GetValue<string>("CombatParserApiPort");
 Port.UserApi = builder.Configuration.GetValue<string>("UserApiPort");
 Port.ChatApi = builder.Configuration.GetValue<string>("ChatApiPort");
+Port.CommunicationApi = builder.Configuration.GetValue<string>("CommunicationApiPort");
 
 IHttpClientHelper httpClient = new HttpClientHelper();
 builder.Services.AddSingleton(httpClient);
@@ -28,7 +29,6 @@ if (!app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();
-
 
 app.MapControllerRoute(
     name: "default",

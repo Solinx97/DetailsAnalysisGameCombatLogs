@@ -1,6 +1,7 @@
 using AutoMapper;
-using CombatAnalysis.BL.Extensions;
-using CombatAnalysis.BL.Mapping;
+using CombatAnalysis.ChatBL.Extensions;
+using CombatAnalysis.CustomerBL.Extensions;
+using CombatAnalysis.ChatBL.Mapping;
 using CombatAnalysis.ChatApi.Mapping;
 using CombatAnalysis.ChatApi.Middleware;
 using CombatAnalysis.Identity.Extensions;
@@ -10,7 +11,8 @@ using Microsoft.OpenApi.Models;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.BLDependencies(builder.Configuration, "DefaultConnection");
+builder.Services.ChatBLDependencies(builder.Configuration, "DefaultConnection");
+builder.Services.CustomerBLDependencies(builder.Configuration, "UserConnection");
 builder.Services.RegisterIdentityDependencies();
 
 var settings = builder.Configuration.GetSection(nameof(TokenSettings));
@@ -24,7 +26,7 @@ var logger = new Logger<ILogger>(loggerFactory);
 var mappingConfig = new MapperConfiguration(mc =>
 {
     mc.AddProfile(new ChatMapper());
-    mc.AddProfile(new BLMapper());
+    mc.AddProfile(new ChatBLMapper());
 });
 
 var mapper = mappingConfig.CreateMapper();
