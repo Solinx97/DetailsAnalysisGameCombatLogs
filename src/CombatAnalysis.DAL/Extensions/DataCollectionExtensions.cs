@@ -1,8 +1,5 @@
 ﻿using CombatAnalysis.DAL.Data;
 using CombatAnalysis.DAL.Entities;
-using CombatAnalysis.DAL.Entities.Chat;
-using CombatAnalysis.DAL.Entities.Community;
-using CombatAnalysis.DAL.Entities.Post;
 using CombatAnalysis.DAL.Enums;
 using CombatAnalysis.DAL.Interfaces;
 using CombatAnalysis.DAL.Repositories.Firebase;
@@ -42,27 +39,6 @@ public static class DataCollectionExtensions
             options.UseSqlServer(connection);
         });
 
-        services.AddScoped<IGenericRepository<PersonalChat, int>, SQLRepository<PersonalChat, int>>();
-        services.AddScoped<IGenericRepository<PersonalChatMessage, int>, SQLRepository<PersonalChatMessage, int>>();
-        services.AddScoped<IGenericRepository<PersonalChatMessageCount, int>, SQLRepository<PersonalChatMessageCount, int>>();
-        services.AddScoped<IGenericRepository<GroupChat, int>, SQLRepository<GroupChat, int>>();
-        services.AddScoped<IGenericRepository<GroupChatRules, int>, SQLRepository<GroupChatRules, int>>();
-        services.AddScoped<IGenericRepository<GroupChatMessage, int>, SQLRepository<GroupChatMessage, int>>();
-        services.AddScoped<IGenericRepository<UnreadGroupChatMessage, int>, SQLRepository<UnreadGroupChatMessage, int>>();
-        services.AddScoped<IGenericRepository<GroupChatMessageCount, int>, SQLRepository<GroupChatMessageCount, int>>();
-        services.AddScoped<IGenericRepository<GroupChatUser, string>, SQLRepository<GroupChatUser, string>>();
-        services.AddScoped<IGenericRepository<Post, int>, SQLRepository<Post, int>>();
-        services.AddScoped<IGenericRepository<PostDislike, int>, SQLRepository<PostDislike, int>>();
-        services.AddScoped<IGenericRepository<PostLike, int>, SQLRepository<PostLike, int>>();
-        services.AddScoped<IGenericRepository<PostComment, int>, SQLRepository<PostComment, int>>();
-        services.AddScoped<IGenericRepository<UserPost, int>, SQLRepository<UserPost, int>>();
-        services.AddScoped<IGenericRepository<Community, int>, SQLRepository<Community, int>>();
-        services.AddScoped<IGenericRepository<CommunityDiscussion, int>, SQLRepository<CommunityDiscussion, int>>();
-        services.AddScoped<IGenericRepository<CommunityDiscussionComment, int>, SQLRepository<CommunityDiscussionComment, int>>();
-        services.AddScoped<IGenericRepository<CommunityPost, int>, SQLRepository<CommunityPost, int>>();
-        services.AddScoped<IGenericRepository<CommunityUser, string>, SQLRepository<CommunityUser, string>>();
-        services.AddScoped<IGenericRepository<InviteToCommunity, int>, SQLRepository<InviteToCommunity, int>>();
-
         services.AddScoped<ISQLPlayerInfoRepository<DamageDone, int>, SQLPlayerInfoRepository<DamageDone, int>>();
         services.AddScoped<ISQLPlayerInfoRepository<DamageDoneGeneral, int>, SQLPlayerInfoRepository<DamageDoneGeneral, int>>();
         services.AddScoped<ISQLPlayerInfoRepository<HealDone, int>, SQLPlayerInfoRepository<HealDone, int>>();
@@ -91,6 +67,6 @@ public static class DataCollectionExtensions
     {
         services.AddDbContext<FirebaseContext>();
 
-        services.AddScoped(typeof(IGenericRepository<,>), typeof(FirebaseRepositroy<,>));
+        services.AddScoped(typeof(IGenericRepository<,>), typeof(FirebaseRepository<,>));
     }
 }

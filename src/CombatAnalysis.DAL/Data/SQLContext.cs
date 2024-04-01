@@ -1,7 +1,4 @@
 ﻿using CombatAnalysis.DAL.Entities;
-using CombatAnalysis.DAL.Entities.Chat;
-using CombatAnalysis.DAL.Entities.Community;
-using CombatAnalysis.DAL.Entities.Post;
 using CombatAnalysis.DAL.Helpers;
 using Microsoft.EntityFrameworkCore;
 
@@ -17,58 +14,6 @@ public class SQLContext : DbContext
             DbProcedureHelper.CreateProcedures(this);
         }
     }
-
-    public DbSet<PersonalChat>? PersonalChat { get; }
-
-    #region Community
-
-    public DbSet<Community>? Community { get; }
-
-    public DbSet<CommunityDiscussion>? CommunityDiscussion { get; }
-
-    public DbSet<CommunityDiscussionComment>? CommunityDiscussionComment { get; }
-
-    public DbSet<CommunityUser>? CommunityUser { get; }
-
-    public DbSet<InviteToCommunity>? InviteToCommunity { get; }
-
-    #endregion
-
-    #region Post
-
-    public DbSet<Post>? Post { get; }
-
-    public DbSet<PostComment>? PostComment { get; }
-
-    public DbSet<PostLike>? PostLike { get; }
-
-    public DbSet<PostDislike>? PostDislike { get; }
-
-    public DbSet<CommunityPost>? CommunityPost { get; }
-
-    public DbSet<UserPost>? UserPost { get; }
-
-    #endregion
-
-    #region Chat
-
-    public DbSet<PersonalChatMessage>? PersonalChatMessage { get; }
-
-    public DbSet<PersonalChatMessageCount>? PersonalChatMessageCount { get; }
-
-    public DbSet<GroupChat>? GroupChat { get; }
-
-    public DbSet<GroupChatRules>? GroupChatRules { get; }
-
-    public DbSet<GroupChatMessage>? GroupChatMessage { get; }
-
-    public DbSet<UnreadGroupChatMessage>? UnreadGroupChatMessage { get; }
-
-    public DbSet<GroupChatMessageCount>? GroupChatMessageCount { get; }
-
-    public DbSet<GroupChatUser>? GroupChatUser { get; }
-
-    #endregion
 
     #region Combat details
 

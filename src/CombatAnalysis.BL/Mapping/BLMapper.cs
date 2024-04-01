@@ -1,12 +1,6 @@
 ﻿using AutoMapper;
 using CombatAnalysis.BL.DTO;
-using CombatAnalysis.BL.DTO.Chat;
-using CombatAnalysis.BL.DTO.Community;
-using CombatAnalysis.BL.DTO.Post;
 using CombatAnalysis.DAL.Entities;
-using CombatAnalysis.DAL.Entities.Chat;
-using CombatAnalysis.DAL.Entities.Community;
-using CombatAnalysis.DAL.Entities.Post;
 
 namespace CombatAnalysis.BL.Mapping;
 
@@ -14,15 +8,6 @@ public class BLMapper : Profile
 {
     public BLMapper()
     {
-        CreateMap<PersonalChatDto, PersonalChat>().ReverseMap();
-        CreateMap<PersonalChatMessageDto, PersonalChatMessage>().ReverseMap();
-        CreateMap<PersonalChatMessageCountDto, PersonalChatMessageCount>().ReverseMap();
-        CreateMap<GroupChatDto, GroupChat>().ReverseMap();
-        CreateMap<GroupChatRulesDto, GroupChatRules>().ReverseMap();
-        CreateMap<GroupChatMessageDto, GroupChatMessage>().ReverseMap();
-        CreateMap<UnreadGroupChatMessageDto, UnreadGroupChatMessage>().ReverseMap();
-        CreateMap<GroupChatMessageCountDto, GroupChatMessageCount>().ReverseMap();
-        CreateMap<GroupChatUserDto, GroupChatUser>().ReverseMap();
         CreateMap<CombatLogDto, CombatLog>().ReverseMap();
         CreateMap<CombatLogByUserDto, CombatLogByUser>().ReverseMap();
         CreateMap<CombatDto, Combat>().ReverseMap();
@@ -35,16 +20,5 @@ public class BLMapper : Profile
         CreateMap<DamageTakenGeneralDto, DamageTakenGeneral>().ReverseMap();
         CreateMap<ResourceRecoveryDto, ResourceRecovery>().ReverseMap();
         CreateMap<ResourceRecoveryGeneralDto, ResourceRecoveryGeneral>().ReverseMap();
-        CreateMap<CommunityDto, Community>().ReverseMap();
-        CreateMap<CommunityDiscussionDto, CommunityDiscussion>().ReverseMap();
-        CreateMap<CommunityDiscussionCommentDto, CommunityDiscussionComment>().ReverseMap();
-        CreateMap<CommunityPostDto, CommunityPost>().ReverseMap();
-        CreateMap<CommunityUserDto, CommunityUser>().ReverseMap();
-        CreateMap<InviteToCommunityDto, InviteToCommunity>().ReverseMap();
-        CreateMap<PostDto, Post>().ReverseMap();
-        CreateMap<PostLikeDto, PostLike>().ReverseMap();
-        CreateMap<PostDislikeDto, PostDislike>().ReverseMap();
-        CreateMap<PostCommentDto, PostComment>().ReverseMap();
-        CreateMap<UserPostDto, UserPost>().ReverseMap();
     }
 }

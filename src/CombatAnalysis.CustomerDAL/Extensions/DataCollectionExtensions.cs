@@ -51,6 +51,6 @@ public static class DataCollectionExtensions
 
         services.AddScoped<IUserRepository, FIrebaseUserRepository>();
 
-        services.AddScoped(typeof(IGenericRepository<,>), typeof(FirebaseRepositroy<,>));
+        services.AddScoped(typeof(IGenericRepository<,>), typeof(FirebaseRepository<,>));
     }
 }
