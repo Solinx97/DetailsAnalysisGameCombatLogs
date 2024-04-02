@@ -114,10 +114,11 @@ public class GeneralAnalysisViewModel : ParentTemplate<Tuple<List<CombatModel>, 
         {
             SetProperty(ref _selectedCombat, value);
 
-            if (value != null)
-            {
-                ShowActions(value);
-            }
+            ShowDetails();
+            //if (value != null)
+            //{
+            //    ShowActions(value);
+            //}
         }
     }
 
