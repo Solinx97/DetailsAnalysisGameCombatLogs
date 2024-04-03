@@ -4,7 +4,6 @@ using CombatAnalysis.BL.Interfaces;
 using CombatAnalysis.CombatParserAPI.Interfaces;
 using CombatAnalysis.CombatParserAPI.Models;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.IdentityModel.Tokens;
 
 namespace CombatAnalysis.CombatParserAPI.Controllers;
 

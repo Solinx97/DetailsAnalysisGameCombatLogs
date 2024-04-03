@@ -16,6 +16,9 @@ public class CombatParserService : IParser<Combat>
 
     private readonly TimeSpan _minCombatDuration = TimeSpan.Parse("00:00:20");
 
+    private Dictionary<string, string> _specs;
+    private Dictionary<string, string> _classes;
+
     private int _combatNumber = 0;
 
     public CombatParserService(IFileManager fileManager, ILogger logger)
@@ -90,6 +93,12 @@ public class CombatParserService : IParser<Combat>
         }
     }
 
+    public void GetPlayerInfo(Dictionary<string, string> specs, Dictionary<string, string> classes)
+    {
+        _specs = specs;
+        _classes = classes;
+    }
+
     private async Task<Dictionary<string, List<string>>> PreparePetsAsync(string combatLogPath)
     {
         Combats.Clear();
@@ -102,7 +111,7 @@ public class CombatParserService : IParser<Combat>
         return allPetsId;
     }
 
-    private async Task<Dictionary<string, List<string>>> GetPetsAsync(string combatLogPath)
+    private static async Task<Dictionary<string, List<string>>> GetPetsAsync(string combatLogPath)
     {
         object locker = new();
 
@@ -122,7 +131,7 @@ public class CombatParserService : IParser<Combat>
         return petsId;
     }
 
-    private void ParseGetPets(string data, Dictionary<string, List<string>> petsId)
+    private static void ParseGetPets(string data, Dictionary<string, List<string>> petsId)
     {
         var parseDateFromData = data.Split("  ");
         var parseData = parseDateFromData[1].Split(',');
@@ -149,7 +158,7 @@ public class CombatParserService : IParser<Combat>
         }
     }
 
-    private void ParseGetAdditionalPets(string data, Dictionary<string, List<string>> petsId)
+    private static void ParseGetAdditionalPets(string data, Dictionary<string, List<string>> petsId)
     {
         var parseDateFromData = data.Split("  ");
         var parseData = parseDateFromData[1].Split(',');
@@ -209,7 +218,7 @@ public class CombatParserService : IParser<Combat>
         }
     }
 
-    private string GetCombatName(string combatStart)
+    private static string GetCombatName(string combatStart)
     {
         var data = combatStart.Split("  ")[1];
         var name = data.Split(',')[2];
@@ -218,7 +227,7 @@ public class CombatParserService : IParser<Combat>
         return clearName;
     }
 
-    private int GetDifficulty(string combatStart)
+    private static int GetDifficulty(string combatStart)
     {
         var data = combatStart.Split("  ")[1];
         var difficulty = data.Split(',')[3];
@@ -231,7 +240,7 @@ public class CombatParserService : IParser<Combat>
         return 0;
     }
 
-    private int GetDungeonSize(string combatStart)
+    private static int GetDungeonSize(string combatStart)
     {
         var data = combatStart.Split("  ")[1];
         var capacity = data.Split(',')[4];
@@ -244,7 +253,7 @@ public class CombatParserService : IParser<Combat>
         return 0;
     }
 
-    private bool GetCombatResult(string combatFinish)
+    private static bool GetCombatResult(string combatFinish)
     {
         var data = combatFinish.Split("  ");
         var split = data[1].Split(',');
@@ -254,7 +263,7 @@ public class CombatParserService : IParser<Combat>
         return isWin;
     }
 
-    private DateTimeOffset GetTime(string combatStart)
+    private static DateTimeOffset GetTime(string combatStart)
     {
         var parse = combatStart.Split("  ")[0];
         var combatDate = parse.Split(' ');
@@ -273,7 +282,7 @@ public class CombatParserService : IParser<Combat>
         combat.Players = players;
     }
 
-    private void CalculatingCommonCombatDetails(Combat combat)
+    private static void CalculatingCommonCombatDetails(Combat combat)
     {
         foreach (var item in combat.Players)
         {
@@ -312,6 +321,8 @@ public class CombatParserService : IParser<Combat>
             playersIdAndStats.Add(playerCombatantInfoArray[1], combatantInfo);
         }
 
+        var playerClassInfo = new CombatDetailsClassInfo(_logger, _specs, _classes);
+
         var players = new List<CombatPlayer>();
         foreach (var item in playersIdAndStats)
         {
@@ -331,6 +342,8 @@ public class CombatParserService : IParser<Combat>
             var combatDetailsDamageTaken = new CombatDetailsDamageTaken(_logger);
             var combatDetailsResourceRecovery = new CombatDetailsResourceRecovery(_logger);
 
+            playerClassInfo.GetData(item.Key, combat.Data);
+
             var combatPlayerData = new CombatPlayer
             {
                 Username = username,
@@ -341,6 +354,8 @@ public class CombatParserService : IParser<Combat>
                 HealDone = combatDetailsHealDone.GetData(item.Key, combat.Data),
                 DamageTaken = combatDetailsDamageTaken.GetData(item.Key, combat.Data),
                 UsedBuffs = usedBuffs,
+                SpecId = playerClassInfo.PlayerInfo.SpecId,
+                ClassId = playerClassInfo.PlayerInfo.ClassId,
                 Stats = stats,
             };
 
@@ -367,7 +382,7 @@ public class CombatParserService : IParser<Combat>
         _zones.Add(zone);
     }
 
-    private string GetCombatPlayerUsernameById(List<string> combatInformation, string playerId)
+    private static string GetCombatPlayerUsernameById(List<string> combatInformation, string playerId)
     {
         var parsedUsername = string.Empty;
         for (var i = 1; i < combatInformation.Count; i++)
@@ -385,7 +400,7 @@ public class CombatParserService : IParser<Combat>
         return parsedUsername;
     }
 
-    private int GetUsedBuffs(string buffsInformation)
+    private static int GetUsedBuffs(string buffsInformation)
     {
         var splitInformations = buffsInformation.Split(",");
         var countOfBuffs = splitInformations.Length / 2;
@@ -393,7 +408,7 @@ public class CombatParserService : IParser<Combat>
         return countOfBuffs;
     }
 
-    private double GetAverageItemLevel(string equipmentsInformation)
+    private static double GetAverageItemLevel(string equipmentsInformation)
     {
         var splitEquipementsInformation = equipmentsInformation.Split("))");
         splitEquipementsInformation = splitEquipementsInformation.Select(x => x.TrimStart(',')).ToArray();
@@ -412,7 +427,7 @@ public class CombatParserService : IParser<Combat>
         return averageILvl;
     }
 
-    private PlayerStats GetPlayerStats(string playerCombatantInfo)
+    private static PlayerStats GetPlayerStats(string playerCombatantInfo)
     {
         var playerCombatInformation = playerCombatantInfo.Split(',');
 

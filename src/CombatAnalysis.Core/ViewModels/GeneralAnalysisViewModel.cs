@@ -113,12 +113,6 @@ public class GeneralAnalysisViewModel : ParentTemplate<Tuple<List<CombatModel>, 
         set
         {
             SetProperty(ref _selectedCombat, value);
-
-            ShowDetails();
-            //if (value != null)
-            //{
-            //    ShowActions(value);
-            //}
         }
     }
 
@@ -660,6 +654,7 @@ public class GeneralAnalysisViewModel : ParentTemplate<Tuple<List<CombatModel>, 
         AverageResourcesPerSecond = averageRPS.Average();
         AverageDamageTakenPerSecond = averageDTPS.Average();
     }
+
     private void GetMaxInformationPerSecond(List<CombatModel> combats)
 
     {
@@ -752,7 +747,7 @@ public class GeneralAnalysisViewModel : ParentTemplate<Tuple<List<CombatModel>, 
         IndexOfDeath = combats.Average(x => x.DeathNumber);
     }
 
-    private void GetCombatAverageInformation(CombatModel combat)
+    private static void GetCombatAverageInformation(CombatModel combat)
     {
         TimeSpan duration;
         if (!TimeSpan.TryParse(combat.Duration, out duration))
@@ -769,19 +764,5 @@ public class GeneralAnalysisViewModel : ParentTemplate<Tuple<List<CombatModel>, 
             player.EnergyRecoveryPerSecond = player.EnergyRecovery / duration.TotalSeconds;
             player.DamageTakenPerSecond = player.DamageTaken / duration.TotalSeconds;
         }
-    }
-
-    private void ShowActions(CombatModel combat)
-    {
-        foreach (var item in Combats)
-        {
-            item.IsSelected = false;
-        }
-
-        var index = Combats.IndexOf(combat);
-        Combats[index].IsSelected = true;
-
-        RefreshCommand.Execute();
-        //Combats = new ObservableCollection<CombatModel>(Combats);
     }
 }

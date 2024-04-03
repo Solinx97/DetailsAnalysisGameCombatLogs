@@ -48,16 +48,19 @@ public class CombatDetailsClassInfo : CombatDetailsTemplate
                 throw new ArgumentNullException(playerId);
             }
 
+            PlayerInfo = new PlayerInfo();
+
             var specId = GetSpecializationId(playerId, combatData);
-            var classId = GetPlayerClassInfo(specId);
-
-            PlayerInfo = new PlayerInfo
+            PlayerInfo.SpecId = specId;
+            if (specId < 0)
             {
-                SpecId = specId,
-                ClassId = classId,
-            };
+                return specId;
+            }
 
-            return specId;
+            var classId = GetPlayerClassInfo(specId);
+            PlayerInfo.ClassId = classId;
+
+            return classId;
         }
         catch (ArgumentNullException ex)
         {

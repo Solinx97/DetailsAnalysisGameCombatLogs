@@ -294,32 +294,6 @@
                  CanUserAddRows="False" CanUserDeleteRows="False" AutoGenerateColumns="False" Style="{StaticResource dataGridStyle}"
                  Margin="20" ItemsSource="{Binding PlayersCombat}" SelectedItem="{Binding SelectedPlayer}">
             <DataGrid.Columns>
-                <DataGridTemplateColumn IsReadOnly="True">
-                    <DataGridTemplateColumn.CellTemplate>
-                        <DataTemplate>
-                            <TextBlock Text="{Binding Path=ClassId}" VerticalAlignment="Center" TextAlignment="Center" Margin="10" FontSize="14" FontFamily="Comic Sans MS"/>
-                        </DataTemplate>
-                    </DataGridTemplateColumn.CellTemplate>
-                    <DataGridTemplateColumn.HeaderTemplate>
-                        <DataTemplate>
-                            <TextBlock Text="Class Id" Margin="5" TextAlignment="Center" FontSize="14" FontStyle="Oblique"  FontWeight="Bold"/>
-                        </DataTemplate>
-                    </DataGridTemplateColumn.HeaderTemplate>
-                </DataGridTemplateColumn>
-                
-                <DataGridTemplateColumn IsReadOnly="True">
-                    <DataGridTemplateColumn.CellTemplate>
-                        <DataTemplate>
-                            <TextBlock Text="{Binding Path=SpecId}" VerticalAlignment="Center" TextAlignment="Center" Margin="10" FontSize="14" FontFamily="Comic Sans MS"/>
-                        </DataTemplate>
-                    </DataGridTemplateColumn.CellTemplate>
-                    <DataGridTemplateColumn.HeaderTemplate>
-                        <DataTemplate>
-                            <TextBlock Text="Spec Id" Margin="5" TextAlignment="Center" FontSize="14" FontStyle="Oblique"  FontWeight="Bold"/>
-                        </DataTemplate>
-                    </DataGridTemplateColumn.HeaderTemplate>
-                </DataGridTemplateColumn>
-
                 <DataGridTemplateColumn SortMemberPath="Username" IsReadOnly="True" MinWidth="175">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>

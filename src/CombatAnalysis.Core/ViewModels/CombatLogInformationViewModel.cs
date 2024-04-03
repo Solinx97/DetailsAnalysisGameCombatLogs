@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using CombatAnalysis.CombatParser.Entities;
 using CombatAnalysis.CombatParser.Interfaces;
+using CombatAnalysis.Core.Consts;
 using CombatAnalysis.Core.Enums;
 using CombatAnalysis.Core.Interfaces;
 using CombatAnalysis.Core.Interfaces.Observers;
@@ -50,7 +51,7 @@ public class CombatLogInformationViewModel : ParentTemplate, CombatParser.Interf
     private LoadingStatus _combatLogByUserLoadingStatus;
     private bool _removingInProgress;
 
-    public CombatLogInformationViewModel(IMapper mapper, IMvxNavigationService mvvmNavigation, IHttpClientHelper httpClient, 
+    public CombatLogInformationViewModel(IMapper mapper, IMvxNavigationService mvvmNavigation, IHttpClientHelper httpClient,
         IParser<Combat> parser, ILogger logger, IMemoryCache memoryCache)
     {
         _mapper = mapper;
@@ -430,7 +431,9 @@ public class CombatLogInformationViewModel : ParentTemplate, CombatParser.Interf
 
     private async Task PrepareCombatData(string combatLogData)
     {
+        _parser.GetPlayerInfo(PlayerInfoConfiguration.Specs, PlayerInfoConfiguration.Classes);
         await _parser.Parse(combatLogData);
+
         BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, nameof(BasicTemplateViewModel.PetsId), _parser.PetsId);
 
         var combatsList = _mapper.Map<List<CombatModel>>(_parser.Combats);

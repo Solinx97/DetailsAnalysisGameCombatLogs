@@ -1,17 +1,12 @@
-﻿using CombatAnalysis.CombatParser.Patterns;
-using CombatAnalysis.Core.Consts;
-using CombatAnalysis.Core.Localizations;
+﻿using CombatAnalysis.Core.Localizations;
 using CombatAnalysis.Core.Models;
 using CombatAnalysis.Core.ViewModels.Base;
-using Microsoft.Extensions.Logging;
 using MvvmCross.Commands;
 
 namespace CombatAnalysis.Core.ViewModels;
 
 public class DetailsSpecificalCombatViewModel : ParentTemplate<CombatModel>
 {
-    private readonly ILogger _logger;
-
     private CombatModel _combat;
     private List<CombatPlayerModel> _playersCombat;
     private List<CombatPlayerModel> _mainPlayersCombat;
@@ -52,10 +47,8 @@ public class DetailsSpecificalCombatViewModel : ParentTemplate<CombatModel>
     private double _totalResourcesPerSecond;
     private TimeSpan _duration;
 
-    public DetailsSpecificalCombatViewModel(ILogger logger)
+    public DetailsSpecificalCombatViewModel()
     {
-        _logger = logger;
-
         BasicTemplate.Parent = this;
         BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, nameof(BasicTemplateViewModel.Step), 2);
 
@@ -707,20 +700,6 @@ public class DetailsSpecificalCombatViewModel : ParentTemplate<CombatModel>
         TotalDamagePerSecond = PlayersCombat.Sum(x => x.DamageDonePerSecond);
         TotalHealPerSecond = PlayersCombat.Sum(x => x.HealDonePerSecond);
         TotalResourcesPerSecond = PlayersCombat.Sum(x => x.EnergyRecoveryPerSecond);
-
-        GetPlayerInfo();
-    }
-
-    private void GetPlayerInfo()
-    {
-        var playerClassInfo = new CombatDetailsClassInfo(_logger, PlayerInfoConfiguration.Specs, PlayerInfoConfiguration.Classes);
-        foreach (var item in PlayersCombat)
-        {
-            playerClassInfo.GetData(item.PlayerId, Combat.Data);
-
-            item.SpecId = playerClassInfo.PlayerInfo.SpecId;
-            item.ClassId = playerClassInfo.PlayerInfo.ClassId;
-        }
     }
 
     private void GetTotalValueFiltersName()
