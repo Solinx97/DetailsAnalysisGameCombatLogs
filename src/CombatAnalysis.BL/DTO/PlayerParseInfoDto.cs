@@ -12,7 +12,9 @@ public class PlayerParseInfoDto
 
     public int Difficult { get; set; }
 
-    public int Efficiency { get; set; }
+    public int DamageEfficiency { get; set; }
+
+    public int HealEfficiency { get; set; }
 
     public int CombatPlayerId { get; set; }
 }

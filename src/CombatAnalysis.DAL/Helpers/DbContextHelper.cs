@@ -14,6 +14,7 @@ public static class DbProcedureHelper
             typeof(CombatLogByUser),
             typeof(CombatPlayer),
             typeof(PlayerParseInfo),
+            typeof(SpecializationScore),
             typeof(Combat),
             typeof(DamageDone),
             typeof(DamageDoneGeneral),
@@ -64,12 +65,13 @@ public static class DbProcedureHelper
         }
 
         GetDataByCombatPlayerId(dbContext);
+        GetSpecializationScore(dbContext);
     }
 
     private static void GetDataByCombatPlayerId(DbContext dbContext)
     {
         var types = new Type[]
-{
+        {
             typeof(DamageDone),
             typeof(DamageDoneGeneral),
             typeof(HealDone),
@@ -89,6 +91,22 @@ public static class DbProcedureHelper
                           "\tWHERE CombatPlayerId = @combatPlayerId";
             dbContext.Database.ExecuteSqlRaw(query);
         }
+    }
+
+    private static void GetSpecializationScore(DbContext dbContext)
+    {
+        var classType = typeof(SpecializationScore);
+
+        var propertySpecId = classType.GetProperty(nameof(SpecializationScore.SpecId));
+        var propertyBossId = classType.GetProperty(nameof(SpecializationScore.BossId));
+        var propertyDifficult= classType.GetProperty(nameof(SpecializationScore.Difficult));
+        var query = $"CREATE PROCEDURE Get{classType.Name}BySpecId (@specId {Converter(propertySpecId.PropertyType.Name)}, " +
+                                                                  $"@bossId {Converter(propertyBossId.PropertyType.Name)}, " +
+                                                                  $"@difficult {Converter(propertyDifficult.PropertyType.Name)})\n" +
+                      "\tAS SELECT * \n" +
+                      $"\tFROM {classType.Name}\n" +
+                      "\tWHERE SpecId = @specId AND BossId = @bossId AND Difficult = @difficult";
+        dbContext.Database.ExecuteSqlRaw(query);
     }
 
     private static Tuple<string, string> InsertIntoParamsAndValues(Type type)

@@ -20,6 +20,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IService<CombatDto, int>, CombatService>();
         services.AddScoped<IService<CombatPlayerDto, int>, CombatPlayerService>();
         services.AddScoped<IService<PlayerParseInfoDto, int>, PlayerParseInfoService>();
+        services.AddScoped<IService<SpecializationScoreDto, int>, SpecializationScoreService>();
 
         services.AddScoped<IPlayerInfoService<DamageDoneDto, int>, DamageDoneService>();
         services.AddScoped<IPlayerInfoService<DamageDoneGeneralDto, int>, DamageDoneGeneralService>();
@@ -29,5 +30,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IPlayerInfoService<DamageTakenGeneralDto, int>, DamageTakenGeneralService>();
         services.AddScoped<IPlayerInfoService<ResourceRecoveryDto, int>, ResourceRecoveryService>();
         services.AddScoped<IPlayerInfoService<ResourceRecoveryGeneralDto, int>, ResourceRecoveryGeneralService>();
+
+        services.AddScoped<ISpecScoreService<SpecializationScoreDto, int>, SpecializationScoreService>();
     }
 }

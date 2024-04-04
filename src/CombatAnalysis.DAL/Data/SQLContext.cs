@@ -15,7 +15,7 @@ public class SQLContext : DbContext
         }
     }
 
-    #region Combat details
+    #region Combat
 
     public DbSet<CombatLog>? CombatLog { get; }
 
@@ -26,6 +26,8 @@ public class SQLContext : DbContext
     public DbSet<CombatPlayer>? CombatPlayer { get; }
 
     public DbSet<PlayerParseInfo>? PlayerParseInfo { get; }
+
+    public DbSet<SpecializationScore>? SpecializationScore { get; }
 
     public DbSet<DamageDone>? DamageDone { get; }
 

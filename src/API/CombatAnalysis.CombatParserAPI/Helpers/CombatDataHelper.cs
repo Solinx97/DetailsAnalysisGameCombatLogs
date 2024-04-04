@@ -23,10 +23,12 @@ public class CombatDataHelper : ICombatDataHelper
     private readonly IPlayerInfoService<DamageTakenGeneralDto, int> _damageTakenGeneralService;
     private readonly IPlayerInfoService<ResourceRecoveryDto, int> _resourceRecoveryService;
     private readonly IPlayerInfoService<ResourceRecoveryGeneralDto, int> _resourceRecoveryGeneralService;
+    private readonly ISpecScoreService<SpecializationScoreDto, int> _specializationScoreService;
 
     public CombatDataHelper(IMapper mapper, ILogger logger, IService<PlayerParseInfoDto, int> playerParseService, IPlayerInfoService<DamageDoneDto, int> damageDoneService, IPlayerInfoService<DamageDoneGeneralDto, int> damageDoneGeneralService,
         IPlayerInfoService<HealDoneDto, int> healDoneService, IPlayerInfoService<HealDoneGeneralDto, int> healDoneGeneralService, IPlayerInfoService<DamageTakenDto, int> damageTakenService,
-        IPlayerInfoService<DamageTakenGeneralDto, int> damageTakenGeneralService, IPlayerInfoService<ResourceRecoveryDto, int> resourceRecoveryService, IPlayerInfoService<ResourceRecoveryGeneralDto, int> resourceRecoveryGeneralService)
+        IPlayerInfoService<DamageTakenGeneralDto, int> damageTakenGeneralService, IPlayerInfoService<ResourceRecoveryDto, int> resourceRecoveryService, 
+        IPlayerInfoService<ResourceRecoveryGeneralDto, int> resourceRecoveryGeneralService, ISpecScoreService<SpecializationScoreDto, int> specializationScoreService)
     {
         _mapper = mapper;
         _logger = logger;
@@ -39,6 +41,7 @@ public class CombatDataHelper : ICombatDataHelper
         _damageTakenGeneralService = damageTakenGeneralService;
         _resourceRecoveryService = resourceRecoveryService;
         _resourceRecoveryGeneralService = resourceRecoveryGeneralService;
+        _specializationScoreService = specializationScoreService;
     }
 
     public CombatLogModel CreateCombatLog(List<string> dungeonNames)
@@ -123,6 +126,11 @@ public class CombatDataHelper : ICombatDataHelper
         var playerClassInfo = new CombatDetailsClassInfo(_logger, PlayerInfoConfiguration.Specs, PlayerInfoConfiguration.Classes);
         playerClassInfo.GetData(combatPlayer.PlayerId, combatData);
 
+        if (playerClassInfo.PlayerParseInfo.SpecId < 0 || playerClassInfo.PlayerParseInfo.ClassId < 0)
+        {
+            return;
+        }
+
         playerClassInfo.PlayerParseInfo.Difficult = combat.Difficulty;
         foreach (var item in PlayerInfoConfiguration.Bosses)
         {
@@ -133,7 +141,68 @@ public class CombatDataHelper : ICombatDataHelper
             }
         }
 
+        if (!combat.IsWin)
+        {
+            return;
+        }
+
+        await EfficiencySpecializationAsync(combatPlayer, playerClassInfo.PlayerParseInfo);
+
         await UploadDataAsync(playerClassInfo.PlayerParseInfo, _playerParseService, combatPlayer.Id);
+    }
+
+    private async Task EfficiencySpecializationAsync(CombatPlayerDto combatPlayer, CombatParser.Entities.PlayerParseInfo playerParseInfo)
+    {
+        var score = await _specializationScoreService.GetBySpecIdAsync(playerParseInfo.SpecId, playerParseInfo.BossId, playerParseInfo.Difficult);
+
+        if (!score.Any())
+        {
+            var newSpecScore = new SpecializationScoreDto
+            {
+                SpecId = playerParseInfo.SpecId,
+                BossId = playerParseInfo.BossId,
+                Difficult = playerParseInfo.Difficult,
+                Damage = combatPlayer.DamageDone,
+                Heal = combatPlayer.HealDone,
+                Updated = DateTimeOffset.UtcNow,
+            };
+
+            await _specializationScoreService.CreateAsync(newSpecScore);
+
+            playerParseInfo.DamageEfficiency = 100;
+            playerParseInfo.HealEfficiency = 100;
+
+            return;
+        }
+
+        var specScore = score.FirstOrDefault();
+        double damageScore = combatPlayer.DamageDone / specScore.Damage;
+        if (damageScore > 1)
+        {
+            specScore.Damage = combatPlayer.DamageDone;
+
+            await _specializationScoreService.UpdateAsync(specScore);
+
+            playerParseInfo.DamageEfficiency = 100;
+        }
+        else
+        {
+            playerParseInfo.DamageEfficiency = (int)(damageScore * 100);
+        }
+
+        double healScore = combatPlayer.HealDone / specScore.Heal;
+        if (healScore > 1)
+        {
+            specScore.Heal = combatPlayer.HealDone;
+
+            await _specializationScoreService.UpdateAsync(specScore);
+
+            playerParseInfo.HealEfficiency = 100;
+        }
+        else
+        {
+            playerParseInfo.HealEfficiency = (int)(healScore * 100);
+        }
     }
 
     private async Task UploadDataAsync<TModel, TModelMap>(List<TModel> dataforUpload, IService<TModelMap, int> service, int combatPlayerId)
