@@ -14,7 +14,6 @@ using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
 using MvvmCross;
 using MvvmCross.ViewModels;
-using System.Collections;
 using System.Configuration;
 
 namespace CombatAnalysis.Core;
@@ -26,8 +25,6 @@ public class App : MvxApplication
         Port.CombatParserApi = ConfigurationManager.AppSettings.Get("combatParserApiPort");
         Port.UserApi = ConfigurationManager.AppSettings.Get("userApiPort");
         Port.ChatApi = ConfigurationManager.AppSettings.Get("chatApiPort");
-
-        GetPlayerInfo();
 
         AppInformation.Version = ConfigurationManager.AppSettings.Get("appVersion");
         Enum.TryParse(ConfigurationManager.AppSettings.Get("appVersionType"), out AppVersionType appVersionType);
@@ -55,20 +52,5 @@ public class App : MvxApplication
         Mvx.IoCProvider.RegisterSingleton<IMemoryCache>(memoryCache);
 
         RegisterAppStart<BasicTemplateViewModel>();
-    }
-
-    private static void GetPlayerInfo()
-    {
-        var specsSection = (Hashtable)ConfigurationManager.GetSection("players/specs");
-        var castToSpecsDictionary = specsSection.Cast<DictionaryEntry>()
-                 .ToDictionary(n => n.Key.ToString(), n => n.Value.ToString());
-
-        PlayerInfoConfiguration.Specs = castToSpecsDictionary;
-
-        var classesSection = (Hashtable)ConfigurationManager.GetSection("players/classes");
-        var castToClassesDictionary = classesSection.Cast<DictionaryEntry>()
-                 .ToDictionary(n => n.Key.ToString(), n => n.Value.ToString());
-
-        PlayerInfoConfiguration.Classes = castToClassesDictionary;
     }
 }

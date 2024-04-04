@@ -12,8 +12,6 @@ public class Combat
 
     public int Difficulty { get; set; }
 
-    public int DungeonSize { get; set; }
-
     public int DamageDone { get; set; }
 
     public int HealDone { get; set; }

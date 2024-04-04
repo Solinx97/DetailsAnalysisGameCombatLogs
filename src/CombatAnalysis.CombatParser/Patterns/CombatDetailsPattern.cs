@@ -12,7 +12,7 @@ public abstract class CombatDetailsTemplate
 
     public List<ResourceRecovery> ResourceRecovery { get; protected set; }
 
-    public PlayerInfo PlayerInfo { get; set; }
+    public PlayerParseInfo PlayerParseInfo { get; set; }
 
     public Dictionary<string, List<string>> PetsId { get; set; }
 

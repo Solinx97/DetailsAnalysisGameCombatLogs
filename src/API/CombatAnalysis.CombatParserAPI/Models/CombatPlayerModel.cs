@@ -20,9 +20,5 @@ public class CombatPlayerModel
 
     public int UsedBuffs { get; set; }
 
-    public int SpecId { get; set; }
-
-    public int ClassId { get; set; }
-
     public int CombatId { get; set; }
 }

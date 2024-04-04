@@ -12,8 +12,6 @@ public class CombatModel
 
     public int Difficulty { get; set; }
 
-    public int DungeonSize { get; set; }
-
     public List<string> Data { get; set; }
 
     public int EnergyRecovery { get; set; }

@@ -13,6 +13,7 @@ public static class DbProcedureHelper
             typeof(CombatLog),
             typeof(CombatLogByUser),
             typeof(CombatPlayer),
+            typeof(PlayerParseInfo),
             typeof(Combat),
             typeof(DamageDone),
             typeof(DamageDoneGeneral),

@@ -18,11 +18,11 @@ public class CombatDetailsClassInfo : CombatDetailsTemplate
         CombatLogKeyWords.SpellSummon,
     };
     private readonly string[] _healVariations = new string[]
-{
+    {
         CombatLogKeyWords.SpellHeal,
         CombatLogKeyWords.SpellPeriodicHeal,
         CombatLogKeyWords.SpellAbsorbed,
-};
+    };
     private readonly string[] _absorbVariations = new string[]
     {
         CombatLogKeyWords.SpellAbsorbed,
@@ -48,17 +48,17 @@ public class CombatDetailsClassInfo : CombatDetailsTemplate
                 throw new ArgumentNullException(playerId);
             }
 
-            PlayerInfo = new PlayerInfo();
+            PlayerParseInfo = new PlayerParseInfo();
 
             var specId = GetSpecializationId(playerId, combatData);
-            PlayerInfo.SpecId = specId;
+            PlayerParseInfo.SpecId = specId;
             if (specId < 0)
             {
                 return specId;
             }
 
             var classId = GetPlayerClassInfo(specId);
-            PlayerInfo.ClassId = classId;
+            PlayerParseInfo.ClassId = classId;
 
             return classId;
         }

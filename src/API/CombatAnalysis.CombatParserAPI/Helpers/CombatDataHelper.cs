@@ -1,9 +1,9 @@
 ﻿using AutoMapper;
 using CombatAnalysis.BL.DTO;
 using CombatAnalysis.BL.Interfaces;
-using CombatAnalysis.CombatParser.Entities;
 using CombatAnalysis.CombatParser.Extensions;
 using CombatAnalysis.CombatParser.Patterns;
+using CombatAnalysis.CombatParserAPI.Consts;
 using CombatAnalysis.CombatParserAPI.Interfaces;
 using CombatAnalysis.CombatParserAPI.Models;
 using System.Text;
@@ -14,6 +14,7 @@ public class CombatDataHelper : ICombatDataHelper
 {
     private readonly IMapper _mapper;
     private readonly ILogger _logger;
+    private readonly IService<PlayerParseInfoDto, int> _playerParseService;
     private readonly IPlayerInfoService<DamageDoneDto, int> _damageDoneService;
     private readonly IPlayerInfoService<DamageDoneGeneralDto, int> _damageDoneGeneralService;
     private readonly IPlayerInfoService<HealDoneDto, int> _healDoneService;
@@ -23,12 +24,13 @@ public class CombatDataHelper : ICombatDataHelper
     private readonly IPlayerInfoService<ResourceRecoveryDto, int> _resourceRecoveryService;
     private readonly IPlayerInfoService<ResourceRecoveryGeneralDto, int> _resourceRecoveryGeneralService;
 
-    public CombatDataHelper(IMapper mapper, ILogger logger, IPlayerInfoService<DamageDoneDto, int> damageDoneService, IPlayerInfoService<DamageDoneGeneralDto, int> damageDoneGeneralService,
+    public CombatDataHelper(IMapper mapper, ILogger logger, IService<PlayerParseInfoDto, int> playerParseService, IPlayerInfoService<DamageDoneDto, int> damageDoneService, IPlayerInfoService<DamageDoneGeneralDto, int> damageDoneGeneralService,
         IPlayerInfoService<HealDoneDto, int> healDoneService, IPlayerInfoService<HealDoneGeneralDto, int> healDoneGeneralService, IPlayerInfoService<DamageTakenDto, int> damageTakenService,
         IPlayerInfoService<DamageTakenGeneralDto, int> damageTakenGeneralService, IPlayerInfoService<ResourceRecoveryDto, int> resourceRecoveryService, IPlayerInfoService<ResourceRecoveryGeneralDto, int> resourceRecoveryGeneralService)
     {
         _mapper = mapper;
         _logger = logger;
+        _playerParseService = playerParseService;
         _damageDoneService = damageDoneService;
         _damageDoneGeneralService = damageDoneGeneralService;
         _healDoneService = healDoneService;
@@ -59,9 +61,11 @@ public class CombatDataHelper : ICombatDataHelper
         return combatLog;
     }
 
-    public async Task SaveCombatPlayerDataAsync(CombatDto combat, Dictionary<string, List<string>> petsId, CombatPlayerDto combatPlayer, List<string> combatData)
+    public async Task SaveCombatPlayerAsync(CombatDto combat, Dictionary<string, List<string>> petsId, CombatPlayerDto combatPlayer, List<string> combatData)
     {
-        var parsedCombat = _mapper.Map<Combat>(combat);
+        var parsedCombat = _mapper.Map<CombatParser.Entities.Combat>(combat);
+
+        await GetPlayerParseInfoAsync(combat, combatPlayer, combatData);
 
         var damageDoneDetails = new CombatDetailsDamageDone(_logger)
         {
@@ -114,6 +118,24 @@ public class CombatDataHelper : ICombatDataHelper
         await DeleteDataAsync(combatPlayer.Id, _resourceRecoveryGeneralService);
     }
 
+    private async Task GetPlayerParseInfoAsync(CombatDto combat, CombatPlayerDto combatPlayer, List<string> combatData)
+    {
+        var playerClassInfo = new CombatDetailsClassInfo(_logger, PlayerInfoConfiguration.Specs, PlayerInfoConfiguration.Classes);
+        playerClassInfo.GetData(combatPlayer.PlayerId, combatData);
+
+        playerClassInfo.PlayerParseInfo.Difficult = combat.Difficulty;
+        foreach (var item in PlayerInfoConfiguration.Bosses)
+        {
+            if (item.Value == combat.Name)
+            {
+                playerClassInfo.PlayerParseInfo.BossId = int.Parse(item.Key);
+                break;
+            }
+        }
+
+        await UploadDataAsync(playerClassInfo.PlayerParseInfo, _playerParseService, combatPlayer.Id);
+    }
+
     private async Task UploadDataAsync<TModel, TModelMap>(List<TModel> dataforUpload, IService<TModelMap, int> service, int combatPlayerId)
         where TModel : class
         where TModelMap : class
@@ -129,6 +151,21 @@ public class CombatDataHelper : ICombatDataHelper
             {
                 throw new ArgumentException("Did not created");
             }
+        }
+    }
+
+    private async Task UploadDataAsync<TModel, TModelMap>(TModel dataforUpload, IService<TModelMap, int> service, int combatPlayerId)
+        where TModel : class
+        where TModelMap : class
+    {
+        var map = _mapper.Map<TModelMap>(dataforUpload);
+        var property = map.GetType().GetProperty("CombatPlayerId");
+        property.SetValue(map, combatPlayerId);
+
+        var createdItem = await service.CreateAsync(map);
+        if (createdItem == null)
+        {
+            throw new ArgumentException("Did not created");
         }
     }
 

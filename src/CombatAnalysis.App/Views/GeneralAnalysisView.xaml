@@ -6,6 +6,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:converters="clr-namespace:CombatAnalysis.App.Converters"
+    xmlns:combatLogsConverters="clr-namespace:CombatAnalysis.App.Converters.CombatLogs"
     xmlns:loc="clr-namespace:CombatAnalysis.App.Localizations"
     xmlns:resx="clr-namespace:CombatAnalysis.App.Localizations.Resources.GeneralAnalysis"
     xmlns:local="clr-namespace:CombatAnalysis.App.Views.ViewTemplates"
@@ -31,6 +32,8 @@
         <Grid.Resources>
             <converters:TheNativeBoolToVisibilityConverter x:Key="BoolToVisibility" />
             <converters:TheNativeIntToVisibilityConverter x:Key="IntToVisibility" />
+            <combatLogsConverters:TheNativeDifficultyToVisibilityConverter x:Key="DifficultyToVisibilityConverter" />
+            <combatLogsConverters:TheNativeDifficultyToStringConverter x:Key="DifficultyToStringConverter" />
         </Grid.Resources>
         
         <ContentControl Grid.RowSpan="4" Grid.ColumnSpan="3" Content="{Binding BasicTemplate}">
@@ -86,12 +89,12 @@
                                 <StackPanel.InputBindings>
                                     <MouseBinding Command="{Binding DataContext.ShowDetailsCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}" Gesture="LeftDoubleClick"/>
                                 </StackPanel.InputBindings>
-                                
-                                <TextBlock Text="{Binding Path=DungeonSize}" TextAlignment="Center" VerticalAlignment="Center" Margin="5" FontSize="14" />
+
+                                <TextBlock Text="{Binding Path=Difficulty,Converter={StaticResource DifficultyToStringConverter}, ConverterParameter=3/5}" TextAlignment="Center" VerticalAlignment="Center" Margin="5" FontSize="14" />
                                 <TextBlock Text="{loc:Loc Normal}" TextAlignment="Center" VerticalAlignment="Center" FontSize="14" 
-                                           Visibility="{Binding Path=Difficulty, Converter={StaticResource IntToVisibility}, ConverterParameter=true:4}"/>
+                                           Visibility="{Binding Path=Difficulty,Converter={StaticResource DifficultyToVisibilityConverter}, ConverterParameter=true:3/4}"/>
                                 <TextBlock Text="{loc:Loc Heroic}" TextAlignment="Center" VerticalAlignment="Center" FontSize="14" 
-                                           Visibility="{Binding Path=Difficulty, Converter={StaticResource IntToVisibility}, ConverterParameter=true:5}"/>
+                                           Visibility="{Binding Path=Difficulty,Converter={StaticResource DifficultyToVisibilityConverter}, ConverterParameter=true:5/6}"/>
                                 <Icon:PackIconMaterial Kind="Check" Foreground="Green" Style="{StaticResource menuButtonIcon}" 
                                         Visibility="{Binding IsWin, Converter={StaticResource BoolToVisibility}, ConverterParameter=true:false}"/>
                                 <Icon:PackIconMaterial Kind="SwordCross" Foreground="Red" Style="{StaticResource menuButtonIcon}" 

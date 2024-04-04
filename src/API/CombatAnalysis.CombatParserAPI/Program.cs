@@ -1,6 +1,7 @@
 using AutoMapper;
 using CombatAnalysis.BL.Extensions;
 using CombatAnalysis.BL.Mapping;
+using CombatAnalysis.CombatParserAPI.Consts;
 using CombatAnalysis.CombatParserAPI.Helpers;
 using CombatAnalysis.CombatParserAPI.Interfaces;
 using CombatAnalysis.CombatParserAPI.Mapping;
@@ -11,6 +12,15 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.BLDependencies(builder.Configuration, "DefaultConnection");
+
+var specs = builder.Configuration.GetSection("Players:Specs").GetChildren();
+PlayerInfoConfiguration.Specs = specs?.ToDictionary(entry => entry.Key, entry => entry.Value);
+
+var classes = builder.Configuration.GetSection("Players:Classes").GetChildren();
+PlayerInfoConfiguration.Classes = classes?.ToDictionary(entry => entry.Key, entry => entry.Value);
+
+var bosses = builder.Configuration.GetSection("Players:Bosses").GetChildren();
+PlayerInfoConfiguration.Bosses = bosses?.ToDictionary(entry => entry.Key, entry => entry.Value);
 
 var loggerFactory = new LoggerFactory();
 var logger = new Logger<ILogger>(loggerFactory);

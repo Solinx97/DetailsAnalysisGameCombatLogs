@@ -12,6 +12,4 @@ public interface IParser<TModel> : IObservable<TModel>
     Task<bool> FileCheck(string combatLog);
 
     Task Parse(string combatLog);
-
-    void GetPlayerInfo(Dictionary<string, string> specs, Dictionary<string, string> classes);
 }

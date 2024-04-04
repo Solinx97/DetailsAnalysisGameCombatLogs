@@ -18,9 +18,7 @@ public class CombatPlayer
 
     public int UsedBuffs { get; set; }
 
-    public int SpecId { get; set; }
+    public PlayerParseInfo PlayerParseInfo { get; set; }
 
-    public int ClassId { get; set; }
-
-    public PlayerStats Stats { get; set; }
+    //public PlayerStats Stats { get; set; }
 }

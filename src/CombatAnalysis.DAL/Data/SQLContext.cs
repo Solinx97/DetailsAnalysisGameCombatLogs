@@ -25,6 +25,8 @@ public class SQLContext : DbContext
 
     public DbSet<CombatPlayer>? CombatPlayer { get; }
 
+    public DbSet<PlayerParseInfo>? PlayerParseInfo { get; }
+
     public DbSet<DamageDone>? DamageDone { get; }
 
     public DbSet<DamageDoneGeneral>? DamageDoneGeneral { get; }
