@@ -291,7 +291,7 @@
         </StackPanel>
 
         <StackPanel Grid.Row="2" Grid.Column="2" Grid.ColumnSpan="2" 
-                    Visibility="{Binding Combat.IsReady, Converter={StaticResource BoolToVisibility}, ConverterParameter=true:false}">
+                    Visibility="{Binding Combat.Id, Converter={StaticResource IntToVisibility}, ConverterParameter='true:0:>'}">
             <DataGrid GridLinesVisibility="None" CanUserAddRows="False" CanUserDeleteRows="False" AutoGenerateColumns="False" Style="{StaticResource dataGridStyle}"
                  Margin="20" ItemsSource="{Binding PlayersCombat}" SelectedItem="{Binding SelectedPlayer}"
                  Visibility="{Binding Combat.IsWin, Converter={StaticResource BoolToVisibility}, ConverterParameter=true:true}">
@@ -526,7 +526,7 @@
         <DataGrid Grid.Row="2" Grid.Column="2" Grid.ColumnSpan="2" GridLinesVisibility="None" 
                  CanUserAddRows="False" CanUserDeleteRows="False" AutoGenerateColumns="False" Style="{StaticResource dataGridStyle}"
                  Margin="20" ItemsSource="{Binding PlayersCombat}" SelectedItem="{Binding SelectedPlayer}"
-                 Visibility="{Binding Combat.IsReady, Converter={StaticResource BoolToVisibility}, ConverterParameter=true:true}">
+                 Visibility="{Binding Combat.Id, Converter={StaticResource IntToVisibility}, ConverterParameter='false:0:='}">
             <DataGrid.Columns>
                 <DataGridTemplateColumn SortMemberPath="Username" IsReadOnly="True" MinWidth="175">
                     <DataGridTemplateColumn.CellTemplate>
