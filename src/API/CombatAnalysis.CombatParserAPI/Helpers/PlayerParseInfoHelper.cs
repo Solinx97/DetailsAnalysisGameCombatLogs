@@ -100,6 +100,9 @@ internal class PlayerParseInfoHelper : IPlayerParseInfoHelper
 
         if (!score.Any())
         {
+            playerParseInfo.DamageEfficiency = 100;
+            playerParseInfo.HealEfficiency = 100;
+
             var newSpecScore = new SpecializationScoreDto
             {
                 SpecId = playerParseInfo.SpecId,
@@ -111,9 +114,6 @@ internal class PlayerParseInfoHelper : IPlayerParseInfoHelper
             };
 
             await _specializationScoreService.CreateAsync(newSpecScore);
-
-            playerParseInfo.DamageEfficiency = 100;
-            playerParseInfo.HealEfficiency = 100;
 
             return;
         }

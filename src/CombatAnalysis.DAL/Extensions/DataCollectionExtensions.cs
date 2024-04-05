@@ -39,6 +39,7 @@ public static class DataCollectionExtensions
             options.UseSqlServer(connection);
         });
 
+        services.AddScoped<ISQLPlayerInfoRepository<Combat, int>, SQLPlayerInfoRepository<Combat, int>>();
         services.AddScoped<ISQLPlayerInfoRepository<DamageDone, int>, SQLPlayerInfoRepository<DamageDone, int>>();
         services.AddScoped<ISQLPlayerInfoRepository<DamageDoneGeneral, int>, SQLPlayerInfoRepository<DamageDoneGeneral, int>>();
         services.AddScoped<ISQLPlayerInfoRepository<HealDone, int>, SQLPlayerInfoRepository<HealDone, int>>();

@@ -8,10 +8,10 @@ namespace CombatAnalysis.BL.Services;
 
 internal class CombatService : IService<CombatDto, int>
 {
-    private readonly IGenericRepository<Combat, int> _repository;
+    private readonly ISQLPlayerInfoRepository<Combat, int> _repository;
     private readonly IMapper _mapper;
 
-    public CombatService(IGenericRepository<Combat, int> repository, IMapper mapper)
+    public CombatService(ISQLPlayerInfoRepository<Combat, int> repository, IMapper mapper)
     {
         _repository = repository;
         _mapper = mapper;

@@ -1,0 +1,4 @@
+﻿CREATE PROCEDURE UpdateCombat (@Id INT,@LocallyNumber INT,@DungeonName NVARCHAR (MAX),@Name NVARCHAR (MAX),@Difficulty INT,@DamageDone INT,@HealDone INT,@DamageTaken INT,@EnergyRecovery INT,@DeathNumber INT,@IsWin BIT,@StartDate DATETIMEOFFSET (7),@FinishDate DATETIMEOFFSET (7),@IsReady BIT,@CombatLogId INT)
+	AS UPDATE Combat
+	SET LocallyNumber = @LocallyNumber,DungeonName = @DungeonName,Name = @Name,Difficulty = @Difficulty,DamageDone = @DamageDone,HealDone = @HealDone,DamageTaken = @DamageTaken,EnergyRecovery = @EnergyRecovery,DeathNumber = @DeathNumber,IsWin = @IsWin,StartDate = @StartDate,FinishDate = @FinishDate,IsReady = @IsReady,CombatLogId = @CombatLogId
+	WHERE Id = @Id

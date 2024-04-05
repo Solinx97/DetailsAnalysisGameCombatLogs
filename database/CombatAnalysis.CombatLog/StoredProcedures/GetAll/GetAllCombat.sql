@@ -1,0 +1,3 @@
+﻿CREATE PROCEDURE GetAllCombat
+	AS SELECT * 
+	FROM Combat
