@@ -50,7 +50,7 @@ public class CombatParserAPIService
                 combatUploaded(currentCombatNumber, item.DungeonName, item.Name);
             });
 
-            await SetReadyForCombatLog(combatLog);
+            await SetReadyForCombatLogAsync(combatLog);
 
             return combatsAreUploaded;
         }
@@ -177,6 +177,11 @@ public class CombatParserAPIService
         {
             var responseMessage = await _httpClient.GetAsync($"CombatPlayer/FindByCombatId/{combatId}");
             var combatPlayers = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<CombatPlayerModel>>();
+            foreach (var item in combatPlayers)
+            {
+                var playerParseInfo = await GetPlayerParseInfoAsync(item.Id);
+                item.PlayerParseInfo = playerParseInfo;
+            }
 
             return combatPlayers;
         }
@@ -258,7 +263,7 @@ public class CombatParserAPIService
         }
     }
 
-    private async Task SetReadyForCombatLog(CombatLogModel combatLog)
+    private async Task SetReadyForCombatLogAsync(CombatLogModel combatLog)
     {
         try
         {
@@ -270,5 +275,13 @@ public class CombatParserAPIService
         {
             _logger.LogError(ex, ex.Message);
         }
+    }
+
+    private async Task<PlayerParseInfoModel> GetPlayerParseInfoAsync(int combatPlayerId)
+    {
+        var responseMessage = await _httpClient.GetAsync($"PlayerParseInfo/FindByCombatPlayerId/{combatPlayerId}");
+        var playerParseInfo = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<PlayerParseInfoModel>>();
+
+        return playerParseInfo.FirstOrDefault();
     }
 }

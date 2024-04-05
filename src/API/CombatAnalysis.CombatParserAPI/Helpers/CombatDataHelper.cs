@@ -146,12 +146,12 @@ public class CombatDataHelper : ICombatDataHelper
             return;
         }
 
-        await EfficiencySpecializationAsync(combatPlayer, playerClassInfo.PlayerParseInfo);
+        await UploadEfficiencySpecializationAsync(combatPlayer, playerClassInfo.PlayerParseInfo);
 
         await UploadDataAsync(playerClassInfo.PlayerParseInfo, _playerParseService, combatPlayer.Id);
     }
 
-    private async Task EfficiencySpecializationAsync(CombatPlayerDto combatPlayer, CombatParser.Entities.PlayerParseInfo playerParseInfo)
+    private async Task UploadEfficiencySpecializationAsync(CombatPlayerDto combatPlayer, CombatParser.Entities.PlayerParseInfo playerParseInfo)
     {
         var score = await _specializationScoreService.GetBySpecIdAsync(playerParseInfo.SpecId, playerParseInfo.BossId, playerParseInfo.Difficult);
 

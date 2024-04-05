@@ -290,9 +290,243 @@
             </StackPanel>
         </StackPanel>
 
+        <StackPanel Grid.Row="2" Grid.Column="2" Grid.ColumnSpan="2" 
+                    Visibility="{Binding Combat.IsReady, Converter={StaticResource BoolToVisibility}, ConverterParameter=true:false}">
+            <DataGrid GridLinesVisibility="None" CanUserAddRows="False" CanUserDeleteRows="False" AutoGenerateColumns="False" Style="{StaticResource dataGridStyle}"
+                 Margin="20" ItemsSource="{Binding PlayersCombat}" SelectedItem="{Binding SelectedPlayer}"
+                 Visibility="{Binding Combat.IsWin, Converter={StaticResource BoolToVisibility}, ConverterParameter=true:true}">
+                <DataGrid.Columns>
+                    <DataGridTemplateColumn SortMemberPath="Username" IsReadOnly="True" MinWidth="175">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Path=Username}" VerticalAlignment="Center" TextAlignment="Center" Margin="10" FontSize="14" FontFamily="Comic Sans MS"/>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                        <DataGridTemplateColumn.HeaderTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{loc:Loc Player}" Margin="5" TextAlignment="Center" FontSize="14" FontStyle="Oblique"  FontWeight="Bold"/>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.HeaderTemplate>
+                    </DataGridTemplateColumn>
+
+                    <DataGridTemplateColumn SortMemberPath="DamageDone" IsReadOnly="True" Width="225">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <Grid>
+                                    <ProgressBar Height="25" Width="175" Name="pbStatus" Value="{Binding Path=DamageDone}" Minimum="0"
+                                         Maximum="{Binding ElementName=maxDamageDone, Path=Value}" Foreground="Blue" VerticalAlignment="Center"/>
+                                    <TextBlock Text="{Binding Path=DamageDone}" HorizontalAlignment="Center" FontSize="13" FontWeight="DemiBold" VerticalAlignment="Center"/>
+                                </Grid>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                        <DataGridTemplateColumn.HeaderTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{loc:Loc Damage}" TextAlignment="Center" FontSize="14" FontStyle="Oblique"  FontWeight="Bold"/>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.HeaderTemplate>
+                    </DataGridTemplateColumn>
+
+                    <DataGridTemplateColumn SortMemberPath="HealDone" IsReadOnly="True" Width="225">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <Grid>
+                                    <ProgressBar Height="25" Margin="10" Width="175" Name="pbStatus" Value="{Binding Path=HealDone}" Minimum="0"
+                                         Maximum="{Binding ElementName=maxHealDone, Path=Value}" Foreground="Green" />
+                                    <TextBlock Text="{Binding Path=HealDone}" HorizontalAlignment="Center" FontSize="13" FontWeight="DemiBold" VerticalAlignment="Center" />
+                                </Grid>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                        <DataGridTemplateColumn.HeaderTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{loc:Loc Healing}" TextAlignment="Center" FontSize="14" FontStyle="Oblique"  FontWeight="Bold"/>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.HeaderTemplate>
+                    </DataGridTemplateColumn>
+
+                    <DataGridTemplateColumn SortMemberPath="EnergyRecovery" IsReadOnly="True" Width="225">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <Grid>
+                                    <ProgressBar Height="25" Margin="10" Width="175" Name="pbStatus" Value="{Binding Path=EnergyRecovery}" Minimum="0"
+                                         Maximum="{Binding ElementName=maxEnergyRecovery, Path=Value}" Foreground="Brown" />
+                                    <TextBlock Text="{Binding Path=EnergyRecovery}" HorizontalAlignment="Center" FontSize="13" FontWeight="DemiBold" VerticalAlignment="Center" />
+                                </Grid>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                        <DataGridTemplateColumn.HeaderTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{loc:Loc Resources}" TextAlignment="Center" FontSize="14" FontStyle="Oblique"  FontWeight="Bold"/>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.HeaderTemplate>
+                    </DataGridTemplateColumn>
+
+                    <DataGridTemplateColumn SortMemberPath="UsedBufs" IsReadOnly="True" Width="100">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <Grid>
+                                    <TextBlock Text="{Binding Path=UsedBuffs}" HorizontalAlignment="Center" FontSize="14" FontWeight="DemiBold" VerticalAlignment="Center" />
+                                </Grid>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                        <DataGridTemplateColumn.HeaderTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{loc:Loc Buffs}" Margin="5" TextAlignment="Center" FontSize="14" FontStyle="Oblique"  FontWeight="Bold"/>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.HeaderTemplate>
+                    </DataGridTemplateColumn>
+
+                    <DataGridTemplateColumn SortMemberPath="AverageItemLevel" IsReadOnly="True" Width="125">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <Grid>
+                                    <TextBlock Text="{Binding Path=AverageItemLevel, StringFormat=0.00}" HorizontalAlignment="Center" FontSize="14" FontWeight="DemiBold" VerticalAlignment="Center" />
+                                </Grid>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                        <DataGridTemplateColumn.HeaderTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{loc:Loc AverageItemLevel}" Margin="5" TextAlignment="Center" FontSize="14" FontStyle="Oblique"  FontWeight="Bold"/>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.HeaderTemplate>
+                    </DataGridTemplateColumn>
+                </DataGrid.Columns>
+            </DataGrid>
+
+            <DataGrid GridLinesVisibility="None" CanUserAddRows="False" CanUserDeleteRows="False" AutoGenerateColumns="False" Style="{StaticResource dataGridStyle}"
+                Margin="20" ItemsSource="{Binding PlayersCombat}" SelectedItem="{Binding SelectedPlayer}"
+                Visibility="{Binding Combat.IsWin, Converter={StaticResource BoolToVisibility}, ConverterParameter=true:false}">
+                <DataGrid.Columns>
+                    <DataGridTemplateColumn SortMemberPath="Username" IsReadOnly="True" MinWidth="175">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Path=Username}" VerticalAlignment="Center" TextAlignment="Center" Margin="10" FontSize="14" FontFamily="Comic Sans MS"/>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                        <DataGridTemplateColumn.HeaderTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{loc:Loc Player}" Margin="5" TextAlignment="Center" FontSize="14" FontStyle="Oblique"  FontWeight="Bold"/>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.HeaderTemplate>
+                    </DataGridTemplateColumn>
+
+                    <DataGridTemplateColumn SortMemberPath="DamageDone" IsReadOnly="True" Width="225">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <Grid>
+                                    <ProgressBar Height="25" Width="175" Name="pbStatus" Value="{Binding Path=DamageDone}" Minimum="0"
+                             Maximum="{Binding ElementName=maxDamageDone, Path=Value}" Foreground="Blue" VerticalAlignment="Center"/>
+                                    <TextBlock Text="{Binding Path=DamageDone}" HorizontalAlignment="Center" FontSize="13" FontWeight="DemiBold" VerticalAlignment="Center"/>
+                                </Grid>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                        <DataGridTemplateColumn.HeaderTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{loc:Loc Damage}" TextAlignment="Center" FontSize="14" FontStyle="Oblique"  FontWeight="Bold"/>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.HeaderTemplate>
+                    </DataGridTemplateColumn>
+
+                    <DataGridTemplateColumn SortMemberPath="HealDone" IsReadOnly="True" Width="225">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <Grid>
+                                    <ProgressBar Height="25" Margin="10" Width="175" Name="pbStatus" Value="{Binding Path=HealDone}" Minimum="0"
+                             Maximum="{Binding ElementName=maxHealDone, Path=Value}" Foreground="Green" />
+                                    <TextBlock Text="{Binding Path=HealDone}" HorizontalAlignment="Center" FontSize="13" FontWeight="DemiBold" VerticalAlignment="Center" />
+                                </Grid>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                        <DataGridTemplateColumn.HeaderTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{loc:Loc Healing}" TextAlignment="Center" FontSize="14" FontStyle="Oblique"  FontWeight="Bold"/>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.HeaderTemplate>
+                    </DataGridTemplateColumn>
+
+                    <DataGridTemplateColumn SortMemberPath="EnergyRecovery" IsReadOnly="True" Width="225">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <Grid>
+                                    <ProgressBar Height="25" Margin="10" Width="175" Name="pbStatus" Value="{Binding Path=EnergyRecovery}" Minimum="0"
+                             Maximum="{Binding ElementName=maxEnergyRecovery, Path=Value}" Foreground="Brown" />
+                                    <TextBlock Text="{Binding Path=EnergyRecovery}" HorizontalAlignment="Center" FontSize="13" FontWeight="DemiBold" VerticalAlignment="Center" />
+                                </Grid>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                        <DataGridTemplateColumn.HeaderTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{loc:Loc Resources}" TextAlignment="Center" FontSize="14" FontStyle="Oblique"  FontWeight="Bold"/>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.HeaderTemplate>
+                    </DataGridTemplateColumn>
+
+                    <DataGridTemplateColumn SortMemberPath="UsedBufs" IsReadOnly="True" Width="100">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <Grid>
+                                    <TextBlock Text="{Binding Path=UsedBuffs}" HorizontalAlignment="Center" FontSize="14" FontWeight="DemiBold" VerticalAlignment="Center" />
+                                </Grid>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                        <DataGridTemplateColumn.HeaderTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{loc:Loc Buffs}" Margin="5" TextAlignment="Center" FontSize="14" FontStyle="Oblique"  FontWeight="Bold"/>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.HeaderTemplate>
+                    </DataGridTemplateColumn>
+
+                    <DataGridTemplateColumn IsReadOnly="True" Width="125">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <Grid>
+                                    <TextBlock Text="{Binding PlayerParseInfo.DamageEfficiency}" HorizontalAlignment="Center" FontSize="14" FontWeight="DemiBold" VerticalAlignment="Center" />
+                                </Grid>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                        <DataGridTemplateColumn.HeaderTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="Damage, %" Margin="5" TextAlignment="Center" FontSize="14" FontStyle="Oblique"  FontWeight="Bold"/>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.HeaderTemplate>
+                    </DataGridTemplateColumn>
+
+                    <DataGridTemplateColumn IsReadOnly="True" Width="125">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <Grid>
+                                    <TextBlock Text="{Binding PlayerParseInfo.HealEfficiency}" HorizontalAlignment="Center" FontSize="14" FontWeight="DemiBold" VerticalAlignment="Center" />
+                                </Grid>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                        <DataGridTemplateColumn.HeaderTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="Heal, %" Margin="5" TextAlignment="Center" FontSize="14" FontStyle="Oblique"  FontWeight="Bold"/>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.HeaderTemplate>
+                    </DataGridTemplateColumn>
+
+                    <DataGridTemplateColumn SortMemberPath="AverageItemLevel" IsReadOnly="True" Width="125">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <Grid>
+                                    <TextBlock Text="{Binding Path=AverageItemLevel, StringFormat=0.00}" HorizontalAlignment="Center" FontSize="14" FontWeight="DemiBold" VerticalAlignment="Center" />
+                                </Grid>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                        <DataGridTemplateColumn.HeaderTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{loc:Loc AverageItemLevel}" Margin="5" TextAlignment="Center" FontSize="14" FontStyle="Oblique"  FontWeight="Bold"/>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.HeaderTemplate>
+                    </DataGridTemplateColumn>
+                </DataGrid.Columns>
+            </DataGrid>
+        </StackPanel>
+
         <DataGrid Grid.Row="2" Grid.Column="2" Grid.ColumnSpan="2" GridLinesVisibility="None" 
                  CanUserAddRows="False" CanUserDeleteRows="False" AutoGenerateColumns="False" Style="{StaticResource dataGridStyle}"
-                 Margin="20" ItemsSource="{Binding PlayersCombat}" SelectedItem="{Binding SelectedPlayer}">
+                 Margin="20" ItemsSource="{Binding PlayersCombat}" SelectedItem="{Binding SelectedPlayer}"
+                 Visibility="{Binding Combat.IsReady, Converter={StaticResource BoolToVisibility}, ConverterParameter=true:true}">
             <DataGrid.Columns>
                 <DataGridTemplateColumn SortMemberPath="Username" IsReadOnly="True" MinWidth="175">
                     <DataGridTemplateColumn.CellTemplate>
@@ -312,7 +546,7 @@
                         <DataTemplate>
                             <Grid>
                                 <ProgressBar Height="25" Width="175" Name="pbStatus" Value="{Binding Path=DamageDone}" Minimum="0"
-                                         Maximum="{Binding ElementName=maxDamageDone, Path=Value}" Foreground="Blue" VerticalAlignment="Center"/>
+                                 Maximum="{Binding ElementName=maxDamageDone, Path=Value}" Foreground="Blue" VerticalAlignment="Center"/>
                                 <TextBlock Text="{Binding Path=DamageDone}" HorizontalAlignment="Center" FontSize="13" FontWeight="DemiBold" VerticalAlignment="Center"/>
                             </Grid>
                         </DataTemplate>
@@ -329,7 +563,7 @@
                         <DataTemplate>
                             <Grid>
                                 <ProgressBar Height="25" Margin="10" Width="175" Name="pbStatus" Value="{Binding Path=HealDone}" Minimum="0"
-                                         Maximum="{Binding ElementName=maxHealDone, Path=Value}" Foreground="Green" />
+                                 Maximum="{Binding ElementName=maxHealDone, Path=Value}" Foreground="Green" />
                                 <TextBlock Text="{Binding Path=HealDone}" HorizontalAlignment="Center" FontSize="13" FontWeight="DemiBold" VerticalAlignment="Center" />
                             </Grid>
                         </DataTemplate>
@@ -346,7 +580,7 @@
                         <DataTemplate>
                             <Grid>
                                 <ProgressBar Height="25" Margin="10" Width="175" Name="pbStatus" Value="{Binding Path=EnergyRecovery}" Minimum="0"
-                                         Maximum="{Binding ElementName=maxEnergyRecovery, Path=Value}" Foreground="Brown" />
+                                 Maximum="{Binding ElementName=maxEnergyRecovery, Path=Value}" Foreground="Brown" />
                                 <TextBlock Text="{Binding Path=EnergyRecovery}" HorizontalAlignment="Center" FontSize="13" FontWeight="DemiBold" VerticalAlignment="Center" />
                             </Grid>
                         </DataTemplate>
@@ -389,7 +623,7 @@
                 </DataGridTemplateColumn>
             </DataGrid.Columns>
         </DataGrid>
-
+        
         <DataGrid Grid.Row="2" Grid.Column="2" Grid.ColumnSpan="2" GridLinesVisibility="None" 
                 CanUserAddRows="False" CanUserDeleteRows="False" AutoGenerateColumns="False" Style="{StaticResource dataGridStyle}"
                 Margin="20" ItemsSource="{Binding PlayersCombat}" SelectedItem="{Binding SelectedPlayer}"

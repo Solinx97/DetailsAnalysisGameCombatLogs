@@ -20,5 +20,5 @@ public class CombatPlayer
 
     public PlayerParseInfo PlayerParseInfo { get; set; }
 
-    //public PlayerStats Stats { get; set; }
+    public int CombatId { get; set; }
 }
