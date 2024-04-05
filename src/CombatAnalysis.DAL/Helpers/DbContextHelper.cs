@@ -40,21 +40,21 @@ public static class DbProcedureHelper
                           "\tWHERE Id = @id";
             dbContext.Database.ExecuteSqlRaw(query);
 
-            var data = InsertIntoParamsAndValues(item);
-            var data1 = InsertIntoParamsAndValues1(item);
-            query = $"CREATE PROCEDURE InsertInto{item.Name} ({data.Item1})\n" +
+            var insertIntoParams = InsertIntoParams(item);
+            var insertIntoOutputParams = InsertIntoOutputParams(item);
+            query = $"CREATE PROCEDURE InsertInto{item.Name} ({insertIntoParams.Item1})\n" +
                           $"\tAS\n" +
-                          $"\tDECLARE @OutputTbl TABLE ({data1})\n" +
+                          $"\tDECLARE @OutputTbl TABLE ({insertIntoOutputParams})\n" +
                           $"\tINSERT INTO {item.Name}\n" +
                           $"\tOUTPUT INSERTED.* INTO @OutputTbl\n" +
-                          $"\tVALUES ({data.Item2})\n" +
+                          $"\tVALUES ({insertIntoParams.Item2})\n" +
                           "\tSELECT * FROM @OutputTbl";
             dbContext.Database.ExecuteSqlRaw(query);
 
-            data = UpdateParamsAndValues(item);
-            query = $"CREATE PROCEDURE Update{item.Name} ({data.Item1})\n" +
+            insertIntoParams = UpdateParamsAndValues(item);
+            query = $"CREATE PROCEDURE Update{item.Name} ({insertIntoParams.Item1})\n" +
                           $"\tAS UPDATE {item.Name}\n" +
-                          $"\tSET {data.Item2}\n" +
+                          $"\tSET {insertIntoParams.Item2}\n" +
                           "\tWHERE Id = @Id";
             dbContext.Database.ExecuteSqlRaw(query);
 
@@ -109,7 +109,7 @@ public static class DbProcedureHelper
         dbContext.Database.ExecuteSqlRaw(query);
     }
 
-    private static Tuple<string, string> InsertIntoParamsAndValues(Type type)
+    private static Tuple<string, string> InsertIntoParams(Type type)
     {
         var properties = type.GetProperties();
         var procedureParamNames = new StringBuilder();
@@ -137,7 +137,7 @@ public static class DbProcedureHelper
         return new Tuple<string, string>(procedureParamNamesWithPropertyTypes.ToString(), procedureParamNames.ToString());
     }
 
-    private static string InsertIntoParamsAndValues1(Type type)
+    private static string InsertIntoOutputParams(Type type)
     {
         var properties = type.GetProperties();
         var procedureParamNamesWithPropertyTypes = new StringBuilder();

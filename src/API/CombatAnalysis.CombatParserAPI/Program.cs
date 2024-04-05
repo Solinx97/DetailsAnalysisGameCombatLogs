@@ -38,6 +38,7 @@ builder.Services.AddSingleton<ILogger>(logger);
 builder.Services.AddTransient<IHttpClientHelper, HttpClientHelper>();
 
 builder.Services.AddScoped<ICombatDataHelper, CombatDataHelper>();
+builder.Services.AddScoped<IPlayerParseInfoHelper, PlayerParseInfoHelper>();
 
 builder.Services.Configure<KestrelServerOptions>(options =>
 {
