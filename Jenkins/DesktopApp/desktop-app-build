@@ -4,8 +4,8 @@ pipeline {
     stages {
         stage('Build') {
             steps {
-                bat "dotnet restore src/API/CombatAnalysis.UserApi/CombatAnalysis.UserApi.csproj"
-                bat "dotnet build src/API/CombatAnalysis.UserApi/CombatAnalysis.UserApi.csproj"
+                bat "dotnet restore src/CombatAnalysis.App/CombatAnalysis.App.csproj"
+                bat "dotnet build src/CombatAnalysis.App/CombatAnalysis.App.csproj"
             }
         }
         stage('Tests') {
