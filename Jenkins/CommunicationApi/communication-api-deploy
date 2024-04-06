@@ -6,10 +6,10 @@ pipeline {
         string defaultValue: "lucid-diode-391208", name: "PROJECT_ID"
         string defaultValue: "combat-analysis-cluster", name: "CLUSTER_NAME"
         string defaultValue: "us-central1", name: "LOCATION"
-        string defaultValue: "combat-analysis-user-api", name: "DOCKER_IMAGE"
+        string defaultValue: "combat-analysis-communication-api", name: "DOCKER_IMAGE"
         string defaultValue: "latest", name: "DOCKER_IMAGE_VERSION"
         string defaultValue: "solinx", name: "DOCKER_HUB_LOGIN"
-        string defaultValue: "user-api", name: "RELEASE_NAME"
+        string defaultValue: "chat-api", name: "RELEASE_NAME"
     }
 
     environment {
@@ -22,8 +22,8 @@ pipeline {
     stages {
         stage("Build") {
             steps {
-                bat "dotnet restore src/API/CombatAnalysis.UserApi/CombatAnalysis.UserApi.csproj"
-                bat "dotnet build src/API/CombatAnalysis.UserApi/CombatAnalysis.UserApi.csproj"
+                bat "dotnet restore src/API/CombatAnalysis.CommunicationApi/CombatAnalysis.CommunicationApi.csproj"
+                bat "dotnet build src/API/CombatAnalysis.CommunicationApi/CombatAnalysis.CommunicationApi.csproj"
             }
         }
         stage("Tests") {
@@ -33,7 +33,7 @@ pipeline {
         }
         stage("Docker image build") {
             steps {
-                bat "docker build -f src/API/CombatAnalysis.UserApi/Dockerfile --force-rm -t ${DOCKER_HUB_LOGIN}/${DOCKER_IMAGE}:${DOCKER_IMAGE_VERSION} ."
+                bat "docker build -f src/API/CombatAnalysis.CommunicationApi/Dockerfile --force-rm -t ${DOCKER_HUB_LOGIN}/${DOCKER_IMAGE}:${DOCKER_IMAGE_VERSION} ."
             }
         }
         stage("Docker image push") {
