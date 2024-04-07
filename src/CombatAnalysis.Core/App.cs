@@ -26,6 +26,15 @@ public class App : MvxApplication
         Port.UserApi = ConfigurationManager.AppSettings.Get("userApiPort");
         Port.ChatApi = ConfigurationManager.AppSettings.Get("chatApiPort");
 
+        var maxDegreeOfParallelism = ConfigurationManager.AppSettings.Get("maxDegreeOfParallelism");
+        if (!string.IsNullOrEmpty(maxDegreeOfParallelism))
+        {
+            if (int.TryParse(maxDegreeOfParallelism, out var maxDegreeOfParallelismValue))
+            {
+                ParallelismHelp.MaxDegreeOfParallelism = maxDegreeOfParallelismValue;
+            }
+        }
+
         AppInformation.Version = ConfigurationManager.AppSettings.Get("appVersion");
         Enum.TryParse(ConfigurationManager.AppSettings.Get("appVersionType"), out AppVersionType appVersionType);
         AppInformation.VersionType = appVersionType;

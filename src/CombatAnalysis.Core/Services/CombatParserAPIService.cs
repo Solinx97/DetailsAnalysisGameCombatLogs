@@ -39,7 +39,12 @@ public class CombatParserAPIService
                 await SaveCombatLogByUserAsync(combatLog.Id, logType);
             }
 
-            await Parallel.ForEachAsync(combats, async (item, token) =>
+            var parallelOptions = new ParallelOptions()
+            {
+                MaxDegreeOfParallelism = ParallelismHelp.MaxDegreeOfParallelism,
+            };
+
+            await Parallel.ForEachAsync(combats, parallelOptions, async (item, token) =>
             {
                 item.CombatLogId = combatLog.Id;
 

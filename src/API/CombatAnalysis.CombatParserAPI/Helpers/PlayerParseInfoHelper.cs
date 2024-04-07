@@ -96,6 +96,8 @@ internal class PlayerParseInfoHelper : IPlayerParseInfoHelper
 
     private async Task UploadEfficiencySpecializationAsync(CombatPlayerDto combatPlayer, PlayerParseInfoModel playerParseInfo)
     {
+        double damageScore = 0;
+        double healScore = 0;
         var score = await _specializationScoreService.GetBySpecIdAsync(playerParseInfo.SpecId, playerParseInfo.BossId, playerParseInfo.Difficult);
 
         if (!score.Any())
@@ -118,8 +120,13 @@ internal class PlayerParseInfoHelper : IPlayerParseInfoHelper
             return;
         }
 
+
         var specScore = score.FirstOrDefault();
-        double damageScore = combatPlayer.DamageDone / specScore.Damage;
+        if (combatPlayer.DamageDone != 0 && specScore.Damage != 0)
+        {
+            damageScore = combatPlayer.DamageDone / specScore.Damage;
+        }
+
         if (damageScore > 1)
         {
             specScore.Damage = combatPlayer.DamageDone;
@@ -133,7 +140,11 @@ internal class PlayerParseInfoHelper : IPlayerParseInfoHelper
             playerParseInfo.DamageEfficiency = (int)(damageScore * 100);
         }
 
-        double healScore = combatPlayer.HealDone / specScore.Heal;
+        if (combatPlayer.HealDone != 0 && specScore.Heal != 0)
+        {
+            healScore = combatPlayer.HealDone / specScore.Heal;
+        }
+
         if (healScore > 1)
         {
             specScore.Heal = combatPlayer.HealDone;

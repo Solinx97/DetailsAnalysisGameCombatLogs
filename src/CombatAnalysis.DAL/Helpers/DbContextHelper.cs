@@ -116,12 +116,12 @@ public static class DbProcedureHelper
         var procedureParamNamesWithPropertyTypes = new StringBuilder();
         if (type.GetProperty("Id")?.PropertyType != typeof(int))
         {
-            var propertTypeName = properties[0].PropertyType.Name;
-            procedureParamNamesWithPropertyTypes.Append($"@{properties[0].Name} {Converter(propertTypeName)},");
+            var propertyTypeName = properties[0].PropertyType.Name;
+            procedureParamNamesWithPropertyTypes.Append($"@{properties[0].Name} {Converter(propertyTypeName)},");
             procedureParamNames.Append($"@{properties[0].Name},");
         }
 
-        for (int i = 1; i < properties.Length; i++)
+        for (var i = 1; i < properties.Length; i++)
         {
             if (properties[i].CanWrite)
             {
