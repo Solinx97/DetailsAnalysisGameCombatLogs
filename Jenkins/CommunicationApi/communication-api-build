@@ -1,17 +1,25 @@
 pipeline {
     agent any
 
+    parameters {
+        string defaultValue: "CombatAnalysis.CommunicationApi", name: "PROJECT_NAME"
+        string defaultValue: "src/API", name: "PROJECT_PATH"
+        string defaultValue: "CombatAnalysis.Parser.Tests", name: "TEST_PROJECT_NAME"
+        string defaultValue: "tests", name: "TEST_PROJECT_PATH"
+    }
+
     stages {
         stage('Build') {
             steps {
-                bat "dotnet restore src/API/CombatAnalysis.CommunicationApi/CombatAnalysis.CommunicationApi.csproj"
-                bat "dotnet build src/API/CombatAnalysis.CommunicationApi/CombatAnalysis.CommunicationApi.csproj"
+                bat "dotnet restore ${PROJECT_PATH}/${PROJECT_NAME}/${PROJECT_NAME}.csproj"
+                bat "dotnet build ${PROJECT_PATH}/${PROJECT_NAME}/${PROJECT_NAME}.csproj"
             }
         }
         stage('Tests') {
             steps {
-                bat "dotnet test tests/CombatAnalysis.Parser.Tests/CombatAnalysis.Parser.Tests.csproj"
+                bat "dotnet test ${TEST_PROJECT_PATH}/${TEST_PROJECT_NAME}/${TEST_PROJECT_NAME}.csproj"
             }
         }
     }
 }
+

@@ -2,9 +2,9 @@ pipeline {
     agent any
 
     parameters {
-        string defaultValue: "UserApi", name: "IIS_SITE_NAME"
-        string defaultValue: "C:/inetpub/wwwroot/UserApi", name: "IIS_PATH"
-        string defaultValue: "src/API/CombatAnalysis.UserApi/CombatAnalysis.UserApi.csproj", name: "PROJECT_PATH"
+        string defaultValue: "CombatParserApi", name: "IIS_SITE_NAME"
+        string defaultValue: "C:/inetpub/wwwroot/CombatParserApi", name: "IIS_PATH"
+        string defaultValue: "src/API/CombatAnalysis.CombatParserAPI/CombatAnalysis.CombatParserAPI.csproj", name: "PROJECT_PATH"
     }
 
     stages {
