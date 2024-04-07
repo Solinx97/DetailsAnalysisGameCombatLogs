@@ -1,0 +1,17 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('Build') {
+            steps {
+                bat "dotnet restore src/API/CombatAnalysis.UserApi/CombatAnalysis.UserApi.csproj"
+                bat "dotnet build src/API/CombatAnalysis.UserApi/CombatAnalysis.UserApi.csproj"
+            }
+        }
+        stage('Deploy to IIS') {
+            steps {
+                bat "dotnet publish src/API/CombatAnalysis.UserApi/CombatAnalysis.UserApi.csproj --output C:/inetpub/wwwroot/UserApi"
+            }
+        }
+    }
+}
