@@ -9,9 +9,9 @@ namespace CombatAnalysis.BL.Extensions;
 
 public static class ServiceCollectionExtensions
 {
-    public static void BLDependencies(this IServiceCollection services, IConfiguration configuration, string connectionName)
+    public static void CombatParserBLDependencies(this IServiceCollection services, IConfiguration configuration, string connectionName)
     {
-        services.RegisterDependenciesForDAL(configuration, connectionName);
+        services.CombatParserDALDependencies(configuration, connectionName);
 
         services.AddScoped<ISqlContextService, SqlContextService>();
 

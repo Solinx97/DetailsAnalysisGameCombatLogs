@@ -13,9 +13,9 @@ namespace CombatAnalysis.DAL.Extensions;
 
 public static class DataCollectionExtensions
 {
-    public static void RegisterDependenciesForDAL(this IServiceCollection services, IConfiguration configuration, string connectionName)
+    public static void CombatParserDALDependencies(this IServiceCollection services, IConfiguration configuration, string connectionName)
     {
-        var databaseName = configuration.GetSection("Database:Name").Value??string.Empty;
+        var databaseName = configuration.GetSection("Database:Name").Value ?? string.Empty;
         switch (databaseName)
         {
             case nameof(DatabaseType.MSSQL):
@@ -34,7 +34,7 @@ public static class DataCollectionExtensions
     {
         var connection = configuration.GetConnectionString(connectionName);
 
-        services.AddDbContext<SQLContext>(options =>
+        services.AddDbContext<CombatParserSQLContext>(options =>
         {
             options.UseSqlServer(connection);
         });

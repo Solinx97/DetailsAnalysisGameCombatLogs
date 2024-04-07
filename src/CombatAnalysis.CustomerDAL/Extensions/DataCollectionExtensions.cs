@@ -12,7 +12,7 @@ namespace CombatAnalysis.CustomerDAL.Extensions;
 
 public static class DataCollectionExtensions
 {
-    public static void RegisterDependenciesForDAL(this IServiceCollection services, IConfiguration configuration, string connectionName)
+    public static void CustomerDALDependencies(this IServiceCollection services, IConfiguration configuration, string connectionName)
     {
         var databaseName = configuration.GetSection("Database:Name").Value ?? string.Empty;
         switch (databaseName)
@@ -33,7 +33,7 @@ public static class DataCollectionExtensions
     {
         var connection = configuration.GetConnectionString(connectionName);
 
-        services.AddDbContext<SQLContext>(options =>
+        services.AddDbContext<CustomerSQLContext>(options =>
         {
             options.UseSqlServer(connection);
         });

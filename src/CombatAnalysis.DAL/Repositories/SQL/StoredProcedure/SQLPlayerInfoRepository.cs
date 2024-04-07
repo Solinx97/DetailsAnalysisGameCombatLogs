@@ -10,9 +10,9 @@ public class SQLPlayerInfoRepository<TModel, TIdType> : ISQLPlayerInfoRepository
     where TModel : class
     where TIdType : notnull
 {
-    private readonly SQLContext _context;
+    private readonly CombatParserSQLContext _context;
 
-    public SQLPlayerInfoRepository(SQLContext context)
+    public SQLPlayerInfoRepository(CombatParserSQLContext context)
     {
         _context = context;
     }

@@ -49,6 +49,8 @@ public class CombatParserAPIService
                 item.CombatLogId = combatLog.Id;
 
                 var response = await _httpClient.PostAsync("Combat", JsonContent.Create(item));
+                item.IsReady = response.IsSuccessStatusCode;
+
                 combatsAreUploaded.Add(response.IsSuccessStatusCode);
 
                 currentCombatNumber++;

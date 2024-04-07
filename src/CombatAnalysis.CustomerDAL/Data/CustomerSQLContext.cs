@@ -4,12 +4,14 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CombatAnalysis.CustomerDAL.Data;
 
-public class SQLContext : DbContext
+public class CustomerSQLContext : DbContext
 {
-    public SQLContext(DbContextOptions<SQLContext> options) : base(options)
+    public CustomerSQLContext(DbContextOptions<CustomerSQLContext> options) : base(options)
     {
         Database.EnsureCreated();
     }
+
+    #region Customer
 
     public DbSet<Secret>? Secrets { get; }
 
@@ -22,4 +24,6 @@ public class SQLContext : DbContext
     public DbSet<Friend>? Friend { get; }
 
     public DbSet<RequestToConnect>? RequestToConnet { get; }
+
+    #endregion
 }

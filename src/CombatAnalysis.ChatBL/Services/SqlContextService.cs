@@ -7,10 +7,10 @@ namespace CombatAnalysis.ChatBL.Services;
 
 internal class SqlContextService : ISqlContextService
 {
-    private readonly SQLContext _context;
+    private readonly ChatSQLContext _context;
     private IDbContextTransaction _transaction;
 
-    public SqlContextService(SQLContext context)
+    public SqlContextService(ChatSQLContext context)
     {
         _context = context;
     }

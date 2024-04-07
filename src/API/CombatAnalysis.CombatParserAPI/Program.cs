@@ -11,7 +11,7 @@ using Microsoft.OpenApi.Models;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.BLDependencies(builder.Configuration, "DefaultConnection");
+builder.Services.CombatParserBLDependencies(builder.Configuration, "DefaultConnection");
 
 var specs = builder.Configuration.GetSection("Players:Specs").GetChildren();
 PlayerInfoConfiguration.Specs = specs?.ToDictionary(entry => entry.Key, entry => entry.Value);

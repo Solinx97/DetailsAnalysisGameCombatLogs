@@ -8,9 +8,9 @@ public class SQLRepository<TModel, TIdType> : IGenericRepository<TModel, TIdType
     where TModel : class
     where TIdType : notnull
 {
-    private readonly SQLContext _context;
+    private readonly CombatParserSQLContext _context;
 
-    public SQLRepository(SQLContext context)
+    public SQLRepository(CombatParserSQLContext context)
     {
         _context = context;
     }

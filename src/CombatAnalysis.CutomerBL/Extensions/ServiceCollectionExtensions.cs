@@ -12,7 +12,7 @@ public static class ServiceCollectionExtensions
 {
     public static void CustomerBLDependencies(this IServiceCollection services, IConfiguration configuration, string connectionName)
     {
-        services.RegisterDependenciesForDAL(configuration, connectionName);
+        services.CustomerDALDependencies(configuration, connectionName);
 
         services.AddScoped<IUserService<AppUserDto>, UserService>();
 

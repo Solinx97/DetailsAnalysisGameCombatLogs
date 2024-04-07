@@ -7,10 +7,10 @@ namespace CombatAnalysis.BL.Services;
 
 internal class SqlContextService : ISqlContextService
 {
-    private readonly SQLContext _context;
+    private readonly CombatParserSQLContext _context;
     private IDbContextTransaction _transaction;
 
-    public SqlContextService(SQLContext context)
+    public SqlContextService(CombatParserSQLContext context)
     {
         _context = context;
     }

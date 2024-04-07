@@ -33,7 +33,7 @@ public static class DataCollectionExtensions
     {
         var connection = configuration.GetConnectionString(connectionName);
 
-        services.AddDbContext<SQLContext>(options =>
+        services.AddDbContext<ChatSQLContext>(options =>
         {
             options.UseSqlServer(connection);
         });

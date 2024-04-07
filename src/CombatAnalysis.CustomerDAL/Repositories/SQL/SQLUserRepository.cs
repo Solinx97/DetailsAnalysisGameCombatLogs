@@ -7,9 +7,9 @@ namespace CombatAnalysis.CustomerDAL.Repositories.SQL;
 
 public class SQLUserRepository : IUserRepository
 {
-    private readonly SQLContext _context;
+    private readonly CustomerSQLContext _context;
 
-    public SQLUserRepository(SQLContext context)
+    public SQLUserRepository(CustomerSQLContext context)
     {
         _context = context;
     }

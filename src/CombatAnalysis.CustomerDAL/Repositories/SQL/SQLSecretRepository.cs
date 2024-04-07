@@ -7,9 +7,9 @@ namespace CombatAnalysis.CustomerDAL.Repositories.SQL;
 
 public class SQLSecretRepository : IAppSecret
 {
-    private readonly SQLContext _context;
+    private readonly CustomerSQLContext _context;
 
-    public SQLSecretRepository(SQLContext context)
+    public SQLSecretRepository(CustomerSQLContext context)
     {
         _context = context;
     }

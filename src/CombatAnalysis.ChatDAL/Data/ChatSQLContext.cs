@@ -3,9 +3,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CombatAnalysis.ChatDAL.Data;
 
-public class SQLContext : DbContext
+public class ChatSQLContext : DbContext
 {
-    public SQLContext(DbContextOptions<SQLContext> options) : base(options)
+    public ChatSQLContext(DbContextOptions<ChatSQLContext> options) : base(options)
     {
         Database.EnsureCreated();
     }

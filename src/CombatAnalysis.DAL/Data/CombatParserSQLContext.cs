@@ -4,9 +4,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CombatAnalysis.DAL.Data;
 
-public class SQLContext : DbContext
+public class CombatParserSQLContext : DbContext
 {
-    public SQLContext(DbContextOptions<SQLContext> options) : base(options)
+    public CombatParserSQLContext(DbContextOptions<CombatParserSQLContext> options) : base(options)
     {
         var isExists = Database.EnsureCreated();
         if (isExists)

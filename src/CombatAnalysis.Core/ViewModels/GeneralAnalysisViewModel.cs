@@ -62,7 +62,7 @@ public class GeneralAnalysisViewModel : ParentTemplate<Tuple<List<CombatModel>, 
         _combatParserAPIService = new CombatParserAPIService(httpClient, logger, memoryCache);
 
         RepeatSaveCommand = new MvxAsyncCommand(RepeatSaveCombatDataDetailsAsync);
-        RefreshCommand = new MvxAsyncCommand(RefreshAsync);
+        RefreshCommand = new MvxCommand(Refresh);
         ShowDetailsCommand = new MvxCommand(ShowDetails);
         SortCommand = new MvxCommand<int>(CombatsSort);
 
@@ -84,7 +84,7 @@ public class GeneralAnalysisViewModel : ParentTemplate<Tuple<List<CombatModel>, 
 
     public IMvxAsyncCommand RepeatSaveCommand { get; set; }
 
-    public IMvxAsyncCommand RefreshCommand { get; set; }
+    public IMvxCommand RefreshCommand { get; set; }
 
     public IMvxCommand LastCombatInfromationStep { get; set; }
 
@@ -501,7 +501,7 @@ public class GeneralAnalysisViewModel : ParentTemplate<Tuple<List<CombatModel>, 
         ResponseStatus = status;
     }
 
-    public async Task RefreshAsync()
+    public void Refresh()
     {
         var combatLog = ((BasicTemplateViewModel)BasicTemplate).CombatLog;
         if (combatLog == null || combatLog.Id == 0)
@@ -509,25 +509,7 @@ public class GeneralAnalysisViewModel : ParentTemplate<Tuple<List<CombatModel>, 
             return;
         }
 
-        var loadedCombats = await _combatParserAPIService.LoadCombatsAsync(combatLog.Id);
-        if (loadedCombats == null)
-        {
-            BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, nameof(BasicTemplateViewModel.ResponseStatus), LoadingStatus.Failed);
-
-            return;
-        }
-
-        foreach (var item in Combats)
-        {
-            var selectUploadedCombat = loadedCombats.FirstOrDefault(x => x.LocallyNumber == item.LocallyNumber);
-            if (selectUploadedCombat == null)
-            {
-                continue;
-            }
-
-            item.IsReady = selectUploadedCombat.IsReady;
-            Combats = new ObservableCollection<CombatModel>(Combats);
-        }
+        Combats = new ObservableCollection<CombatModel>(Combats);
     }
 
     public void CombatsSort(int sortNumber)

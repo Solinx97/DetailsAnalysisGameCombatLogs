@@ -10,9 +10,9 @@ public class SQLSpecScoreRepository<TModel, TIdType> : ISQLSpecScoreRepository<T
     where TModel : class
     where TIdType : notnull
 {
-    private readonly SQLContext _context;
+    private readonly CombatParserSQLContext _context;
 
-    public SQLSpecScoreRepository(SQLContext context)
+    public SQLSpecScoreRepository(CombatParserSQLContext context)
     {
         _context = context;
     }
