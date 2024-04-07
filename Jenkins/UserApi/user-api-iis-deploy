@@ -1,16 +1,21 @@
 pipeline {
     agent any
 
+    parameters {
+        string defaultValue: "C:/inetpub/wwwroot/UserApi", name: "IIS_PATH"
+        string defaultValue: "src/API/CombatAnalysis.UserApi/CombatAnalysis.UserApi.csproj", name: "PROJECT_PATH"
+    }
+
     stages {
         stage('Build') {
             steps {
-                bat "dotnet restore src/API/CombatAnalysis.UserApi/CombatAnalysis.UserApi.csproj"
-                bat "dotnet build src/API/CombatAnalysis.UserApi/CombatAnalysis.UserApi.csproj"
+                bat "dotnet restore ${PROJECT_PATH}"
+                bat "dotnet build ${PROJECT_PATH}"
             }
         }
         stage('Deploy to IIS') {
             steps {
-                bat "dotnet publish src/API/CombatAnalysis.UserApi/CombatAnalysis.UserApi.csproj --output C:/inetpub/wwwroot/UserApi"
+                bat "dotnet publish ${PROJECT_PATH} --output ${IIS_PATH}"
             }
         }
     }
