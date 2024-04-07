@@ -15,7 +15,7 @@ pipeline {
         }
         stage('Deploy to IIS') {
             steps {
-                bat "appcmd stop site UserApi"
+                bat "C:/Windows/System32/inetsrv/appcmd stop site UserApi"
                 bat "dotnet publish ${PROJECT_PATH} --output ${IIS_PATH}"
             }
         }
