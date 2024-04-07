@@ -636,16 +636,16 @@ public class GeneralAnalysisViewModel : ParentTemplate<Tuple<List<CombatModel>, 
         {
             GetCombatAverageInformation(combat);
 
-            var averageCombatPlayerDPS = combat.Players.Average(x => x.DamageDonePerSecond);
+            var averageCombatPlayerDPS = combat.Players.Any() ? combat.Players.Average(x => x.DamageDonePerSecond) : 0;
             averageDPS.Add(averageCombatPlayerDPS);
 
-            var averageCombatPlayerHPS = combat.Players.Average(x => x.HealDonePerSecond);
+            var averageCombatPlayerHPS = combat.Players.Any() ? combat.Players.Average(x => x.HealDonePerSecond) : 0;
             averageHPS.Add(averageCombatPlayerHPS);
 
-            var averageCombatPlayerRPS = combat.Players.Average(x => x.EnergyRecoveryPerSecond);
+            var averageCombatPlayerRPS = combat.Players.Any() ? combat.Players.Average(x => x.EnergyRecoveryPerSecond) : 0;
             averageRPS.Add(averageCombatPlayerRPS);
 
-            var averageCombatPlayerDTPS = combat.Players.Average(x => x.DamageTakenPerSecond);
+            var averageCombatPlayerDTPS = combat.Players.Any() ? combat.Players.Average(x => x.DamageTakenPerSecond) : 0;
             averageDTPS.Add(averageCombatPlayerDTPS);
         }
 
@@ -665,16 +665,16 @@ public class GeneralAnalysisViewModel : ParentTemplate<Tuple<List<CombatModel>, 
 
         foreach (var combat in combats)
         {
-            var maxCombatPlayerDPS = combat.Players.Max(x => x.DamageDonePerSecond);
+            var maxCombatPlayerDPS = combat.Players.Any() ? combat.Players.Max(x => x.DamageDonePerSecond) : 0;
             maxDPS.Add(maxCombatPlayerDPS);
 
-            var maxCombatPlayerHPS = combat.Players.Max(x => x.HealDonePerSecond);
+            var maxCombatPlayerHPS = combat.Players.Any() ? combat.Players.Max(x => x.HealDonePerSecond) : 0;
             maxHPS.Add(maxCombatPlayerHPS);
 
-            var maxCombatPlayerRPS = combat.Players.Max(x => x.EnergyRecoveryPerSecond);
+            var maxCombatPlayerRPS = combat.Players.Any() ? combat.Players.Max(x => x.EnergyRecoveryPerSecond) : 0;
             maxRPS.Add(maxCombatPlayerRPS);
 
-            var maxCombatPlayerDTPS = combat.Players.Max(x => x.DamageTakenPerSecond);
+            var maxCombatPlayerDTPS = combat.Players.Any() ? combat.Players.Max(x => x.DamageTakenPerSecond) : 0;
             maxDTPS.Add(maxCombatPlayerDTPS);
         }
 
@@ -693,16 +693,16 @@ public class GeneralAnalysisViewModel : ParentTemplate<Tuple<List<CombatModel>, 
 
         foreach (var combat in combats)
         {
-            var averageCombatPlayerDamage = combat.Players.Average(x => x.DamageDone);
+            var averageCombatPlayerDamage = combat.Players.Any() ? combat.Players.Average(x => x.DamageDone) :0;
             averageDamage.Add(averageCombatPlayerDamage);
 
-            var averageCombatPlayerHeal = combat.Players.Average(x => x.HealDone);
+            var averageCombatPlayerHeal = combat.Players.Any() ? combat.Players.Average(x => x.HealDone) : 0;
             averageHeal.Add(averageCombatPlayerHeal);
 
-            var averageCombatPlayerResources = combat.Players.Average(x => x.EnergyRecovery);
+            var averageCombatPlayerResources = combat.Players.Any() ? combat.Players.Average(x => x.EnergyRecovery) : 0;
             averageResources.Add(averageCombatPlayerResources);
 
-            var averageCombatPlayerDamageTaken = combat.Players.Average(x => x.DamageTaken);
+            var averageCombatPlayerDamageTaken = combat.Players.Any() ? combat.Players.Average(x => x.DamageTaken) : 0;
             averageDamageTaken.Add(averageCombatPlayerDamageTaken);
         }
 
@@ -723,16 +723,16 @@ public class GeneralAnalysisViewModel : ParentTemplate<Tuple<List<CombatModel>, 
         {
             GetCombatAverageInformation(combat);
 
-            var maxCombatPlayerDamage = combat.Players.Max(x => x.DamageDone);
+            var maxCombatPlayerDamage = combat.Players.Any() ? combat.Players.Max(x => x.DamageDone) : 0;
             maxDamage.Add(maxCombatPlayerDamage);
 
-            var maxCombatPlayerHeal = combat.Players.Max(x => x.HealDone);
+            var maxCombatPlayerHeal = combat.Players.Any() ? combat.Players.Max(x => x.HealDone) : 0;
             maxHeal.Add(maxCombatPlayerHeal);
 
-            var maxCombatPlayerResources = combat.Players.Max(x => x.EnergyRecovery);
+            var maxCombatPlayerResources = combat.Players.Any() ? combat.Players.Max(x => x.EnergyRecovery) : 0;
             maxResources.Add(maxCombatPlayerResources);
 
-            var maxCombatPlayerDamageTaken = combat.Players.Max(x => x.DamageTaken);
+            var maxCombatPlayerDamageTaken = combat.Players.Any() ? combat.Players.Max(x => x.DamageTaken) : 0;
             maxDamageTaken.Add(maxCombatPlayerDamageTaken);
         }
 

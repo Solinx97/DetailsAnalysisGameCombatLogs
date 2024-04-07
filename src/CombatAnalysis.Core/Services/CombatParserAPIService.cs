@@ -218,6 +218,7 @@ public class CombatParserAPIService
             var dungeonNames = combats
                  .GroupBy(group => group.DungeonName)
                  .Select(select => select.Key)
+                 .Where(name => !string.IsNullOrEmpty(name))
                  .ToList();
 
             var combatLogResponse = await _httpClient.PostAsync("CombatLog", JsonContent.Create(dungeonNames));

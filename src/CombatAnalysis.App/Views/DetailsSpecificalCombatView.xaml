@@ -292,11 +292,11 @@
 
         <StackPanel Grid.Row="2" Grid.Column="2" Grid.ColumnSpan="2" 
                     Visibility="{Binding Combat.Id, Converter={StaticResource IntToVisibility}, ConverterParameter='true:0:>'}">
-            <DataGrid GridLinesVisibility="None" CanUserAddRows="False" CanUserDeleteRows="False" AutoGenerateColumns="False" Style="{StaticResource dataGridStyle}"
+            <DataGrid GridLinesVisibility="None" CanUserAddRows="False" Height="500" CanUserDeleteRows="False" AutoGenerateColumns="False" Style="{StaticResource dataGridStyle}"
                  Margin="20" ItemsSource="{Binding PlayersCombat}" SelectedItem="{Binding SelectedPlayer}"
                  Visibility="{Binding Combat.IsWin, Converter={StaticResource BoolToVisibility}, ConverterParameter=true:true}">
                 <DataGrid.Columns>
-                    <DataGridTemplateColumn SortMemberPath="Username" IsReadOnly="True" MinWidth="175">
+                    <DataGridTemplateColumn SortMemberPath="Username" IsReadOnly="True">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
                                 <TextBlock Text="{Binding Path=Username}" VerticalAlignment="Center" TextAlignment="Center" Margin="10" FontSize="14" FontFamily="Comic Sans MS"/>
@@ -309,7 +309,7 @@
                         </DataGridTemplateColumn.HeaderTemplate>
                     </DataGridTemplateColumn>
 
-                    <DataGridTemplateColumn SortMemberPath="DamageDone" IsReadOnly="True" Width="225">
+                    <DataGridTemplateColumn SortMemberPath="DamageDone" IsReadOnly="True">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
                                 <Grid>
@@ -326,7 +326,7 @@
                         </DataGridTemplateColumn.HeaderTemplate>
                     </DataGridTemplateColumn>
 
-                    <DataGridTemplateColumn SortMemberPath="HealDone" IsReadOnly="True" Width="225">
+                    <DataGridTemplateColumn SortMemberPath="HealDone" IsReadOnly="True">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
                                 <Grid>
@@ -343,7 +343,7 @@
                         </DataGridTemplateColumn.HeaderTemplate>
                     </DataGridTemplateColumn>
 
-                    <DataGridTemplateColumn SortMemberPath="EnergyRecovery" IsReadOnly="True" Width="225">
+                    <DataGridTemplateColumn SortMemberPath="EnergyRecovery" IsReadOnly="True">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
                                 <Grid>
@@ -360,7 +360,7 @@
                         </DataGridTemplateColumn.HeaderTemplate>
                     </DataGridTemplateColumn>
 
-                    <DataGridTemplateColumn SortMemberPath="UsedBufs" IsReadOnly="True" Width="100">
+                    <DataGridTemplateColumn SortMemberPath="UsedBufs" IsReadOnly="True">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
                                 <Grid>
@@ -375,7 +375,7 @@
                         </DataGridTemplateColumn.HeaderTemplate>
                     </DataGridTemplateColumn>
 
-                    <DataGridTemplateColumn SortMemberPath="AverageItemLevel" IsReadOnly="True" Width="125">
+                    <DataGridTemplateColumn SortMemberPath="AverageItemLevel" IsReadOnly="True">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
                                 <Grid>
@@ -392,11 +392,11 @@
                 </DataGrid.Columns>
             </DataGrid>
 
-            <DataGrid GridLinesVisibility="None" CanUserAddRows="False" CanUserDeleteRows="False" AutoGenerateColumns="False" Style="{StaticResource dataGridStyle}"
+            <DataGrid GridLinesVisibility="None" CanUserAddRows="False" Height="500" CanUserDeleteRows="False" AutoGenerateColumns="False" Style="{StaticResource dataGridStyle}"
                 Margin="20" ItemsSource="{Binding PlayersCombat}" SelectedItem="{Binding SelectedPlayer}"
                 Visibility="{Binding Combat.IsWin, Converter={StaticResource BoolToVisibility}, ConverterParameter=true:false}">
                 <DataGrid.Columns>
-                    <DataGridTemplateColumn SortMemberPath="Username" IsReadOnly="True" MinWidth="175">
+                    <DataGridTemplateColumn SortMemberPath="Username" IsReadOnly="True">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
                                 <TextBlock Text="{Binding Path=Username}" VerticalAlignment="Center" TextAlignment="Center" Margin="10" FontSize="14" FontFamily="Comic Sans MS"/>
@@ -409,7 +409,7 @@
                         </DataGridTemplateColumn.HeaderTemplate>
                     </DataGridTemplateColumn>
 
-                    <DataGridTemplateColumn SortMemberPath="DamageDone" IsReadOnly="True" Width="225">
+                    <DataGridTemplateColumn SortMemberPath="DamageDone" IsReadOnly="True">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
                                 <Grid>
@@ -426,7 +426,7 @@
                         </DataGridTemplateColumn.HeaderTemplate>
                     </DataGridTemplateColumn>
 
-                    <DataGridTemplateColumn SortMemberPath="HealDone" IsReadOnly="True" Width="225">
+                    <DataGridTemplateColumn SortMemberPath="HealDone" IsReadOnly="True">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
                                 <Grid>
@@ -443,7 +443,7 @@
                         </DataGridTemplateColumn.HeaderTemplate>
                     </DataGridTemplateColumn>
 
-                    <DataGridTemplateColumn SortMemberPath="EnergyRecovery" IsReadOnly="True" Width="225">
+                    <DataGridTemplateColumn SortMemberPath="EnergyRecovery" IsReadOnly="True">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
                                 <Grid>
@@ -460,7 +460,7 @@
                         </DataGridTemplateColumn.HeaderTemplate>
                     </DataGridTemplateColumn>
 
-                    <DataGridTemplateColumn SortMemberPath="UsedBufs" IsReadOnly="True" Width="100">
+                    <DataGridTemplateColumn SortMemberPath="UsedBufs" IsReadOnly="True">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
                                 <Grid>
@@ -475,7 +475,7 @@
                         </DataGridTemplateColumn.HeaderTemplate>
                     </DataGridTemplateColumn>
 
-                    <DataGridTemplateColumn IsReadOnly="True" Width="125">
+                    <DataGridTemplateColumn IsReadOnly="True">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
                                 <Grid>
@@ -490,7 +490,7 @@
                         </DataGridTemplateColumn.HeaderTemplate>
                     </DataGridTemplateColumn>
 
-                    <DataGridTemplateColumn IsReadOnly="True" Width="125">
+                    <DataGridTemplateColumn IsReadOnly="True">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
                                 <Grid>
@@ -505,7 +505,7 @@
                         </DataGridTemplateColumn.HeaderTemplate>
                     </DataGridTemplateColumn>
 
-                    <DataGridTemplateColumn SortMemberPath="AverageItemLevel" IsReadOnly="True" Width="125">
+                    <DataGridTemplateColumn SortMemberPath="AverageItemLevel" IsReadOnly="True">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
                                 <Grid>
@@ -523,12 +523,12 @@
             </DataGrid>
         </StackPanel>
 
-        <DataGrid Grid.Row="2" Grid.Column="2" Grid.ColumnSpan="2" GridLinesVisibility="None" 
+        <DataGrid Grid.Row="2" Grid.Column="2" Grid.ColumnSpan="2" GridLinesVisibility="None" Height="500"
                  CanUserAddRows="False" CanUserDeleteRows="False" AutoGenerateColumns="False" Style="{StaticResource dataGridStyle}"
                  Margin="20" ItemsSource="{Binding PlayersCombat}" SelectedItem="{Binding SelectedPlayer}"
                  Visibility="{Binding Combat.Id, Converter={StaticResource IntToVisibility}, ConverterParameter='false:0:='}">
             <DataGrid.Columns>
-                <DataGridTemplateColumn SortMemberPath="Username" IsReadOnly="True" MinWidth="175">
+                <DataGridTemplateColumn SortMemberPath="Username" IsReadOnly="True">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <TextBlock Text="{Binding Path=Username}" VerticalAlignment="Center" TextAlignment="Center" Margin="10" FontSize="14" FontFamily="Comic Sans MS"/>
@@ -541,7 +541,7 @@
                     </DataGridTemplateColumn.HeaderTemplate>
                 </DataGridTemplateColumn>
 
-                <DataGridTemplateColumn SortMemberPath="DamageDone" IsReadOnly="True" Width="225">
+                <DataGridTemplateColumn SortMemberPath="DamageDone" IsReadOnly="True">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <Grid>
@@ -558,7 +558,7 @@
                     </DataGridTemplateColumn.HeaderTemplate>
                 </DataGridTemplateColumn>
 
-                <DataGridTemplateColumn SortMemberPath="HealDone" IsReadOnly="True" Width="225">
+                <DataGridTemplateColumn SortMemberPath="HealDone" IsReadOnly="True">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <Grid>
@@ -575,7 +575,7 @@
                     </DataGridTemplateColumn.HeaderTemplate>
                 </DataGridTemplateColumn>
 
-                <DataGridTemplateColumn SortMemberPath="EnergyRecovery" IsReadOnly="True" Width="225">
+                <DataGridTemplateColumn SortMemberPath="EnergyRecovery" IsReadOnly="True">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <Grid>
@@ -592,7 +592,7 @@
                     </DataGridTemplateColumn.HeaderTemplate>
                 </DataGridTemplateColumn>
 
-                <DataGridTemplateColumn SortMemberPath="UsedBufs" IsReadOnly="True" Width="100">
+                <DataGridTemplateColumn SortMemberPath="UsedBufs" IsReadOnly="True">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <Grid>
@@ -607,7 +607,7 @@
                     </DataGridTemplateColumn.HeaderTemplate>
                 </DataGridTemplateColumn>
 
-                <DataGridTemplateColumn SortMemberPath="AverageItemLevel" IsReadOnly="True" Width="125">
+                <DataGridTemplateColumn SortMemberPath="AverageItemLevel" IsReadOnly="True">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <Grid>
@@ -624,12 +624,12 @@
             </DataGrid.Columns>
         </DataGrid>
         
-        <DataGrid Grid.Row="2" Grid.Column="2" Grid.ColumnSpan="2" GridLinesVisibility="None" 
+        <DataGrid Grid.Row="2" Grid.Column="2" Grid.ColumnSpan="2" GridLinesVisibility="None" Height="500"
                 CanUserAddRows="False" CanUserDeleteRows="False" AutoGenerateColumns="False" Style="{StaticResource dataGridStyle}"
                 Margin="20" ItemsSource="{Binding PlayersCombat}" SelectedItem="{Binding SelectedPlayer}"
                 Visibility="{Binding CombatInformationType, Converter={StaticResource IntToVisibility}, ConverterParameter='false:1:='}">
             <DataGrid.Columns>
-                <DataGridTemplateColumn SortMemberPath="Username" IsReadOnly="True" MinWidth="175">
+                <DataGridTemplateColumn SortMemberPath="Username" IsReadOnly="True">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <TextBlock Text="{Binding Path=Username}" VerticalAlignment="Center" TextAlignment="Center" Margin="10" FontSize="14" FontFamily="Comic Sans MS"/>
@@ -642,7 +642,7 @@
                     </DataGridTemplateColumn.HeaderTemplate>
                 </DataGridTemplateColumn>
 
-                <DataGridTemplateColumn SortMemberPath="DamageDone" IsReadOnly="True" Width="225">
+                <DataGridTemplateColumn SortMemberPath="DamageDone" IsReadOnly="True">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <Grid>
@@ -657,7 +657,7 @@
                     </DataGridTemplateColumn.HeaderTemplate>
                 </DataGridTemplateColumn>
 
-                <DataGridTemplateColumn SortMemberPath="HealDone" IsReadOnly="True" Width="225">
+                <DataGridTemplateColumn SortMemberPath="HealDone" IsReadOnly="True">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <Grid>
@@ -672,7 +672,7 @@
                     </DataGridTemplateColumn.HeaderTemplate>
                 </DataGridTemplateColumn>
 
-                <DataGridTemplateColumn SortMemberPath="EnergyRecovery" IsReadOnly="True" Width="225">
+                <DataGridTemplateColumn SortMemberPath="EnergyRecovery" IsReadOnly="True">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <Grid>
@@ -687,7 +687,7 @@
                     </DataGridTemplateColumn.HeaderTemplate>
                 </DataGridTemplateColumn>
 
-                <DataGridTemplateColumn SortMemberPath="UsedBufs" IsReadOnly="True" Width="100">
+                <DataGridTemplateColumn SortMemberPath="UsedBufs" IsReadOnly="True">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <Grid>
@@ -702,7 +702,7 @@
                     </DataGridTemplateColumn.HeaderTemplate>
                 </DataGridTemplateColumn>
 
-                <DataGridTemplateColumn SortMemberPath="AverageItemLevel" IsReadOnly="True" Width="125">
+                <DataGridTemplateColumn SortMemberPath="AverageItemLevel" IsReadOnly="True">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <Grid>

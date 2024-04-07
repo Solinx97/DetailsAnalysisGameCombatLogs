@@ -59,6 +59,11 @@ public class CombatParserService : IParser<Combat>
         {
             lock (locker)
             {
+                if (line.Contains(CombatLogKeyWords.ZoneChange))
+                {
+                    GetDungeonName(line);
+                }
+
                 if (line.Contains(CombatLogKeyWords.EncounterStart))
                 {
                     newCombat = new List<string>
@@ -66,20 +71,19 @@ public class CombatParserService : IParser<Combat>
                         line
                     };
                 }
-                else if (line.Contains(CombatLogKeyWords.EncounterEnd))
+                else if (newCombat.Any())
                 {
-                    newCombat.Add(line);
+                    if (line.Contains(CombatLogKeyWords.EncounterEnd))
+                    {
+                        newCombat.Add(line);
 
-                    var builtCombat = new List<string>(newCombat);
-                    combats.Add(builtCombat);
-                }
-                else if (line.Contains(CombatLogKeyWords.ZoneChange))
-                {
-                    GetDungeonName(line);
-                }
-                else
-                {
-                    newCombat.Add(line);
+                        var builtCombat = new List<string>(newCombat);
+                        combats.Add(builtCombat);
+                    }
+                    else
+                    {
+                        newCombat.Add(line);
+                    }
                 }
             }
         }));
