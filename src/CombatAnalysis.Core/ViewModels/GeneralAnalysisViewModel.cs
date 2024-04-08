@@ -457,10 +457,11 @@ public class GeneralAnalysisViewModel : ParentTemplate<Tuple<List<CombatModel>, 
 
     public override void ViewDestroy(bool viewFinishing = true)
     {
-        ((BasicTemplateViewModel)BasicTemplate).Combats = Combats.ToList();
-
         var responseStatusObservable = (IResponseStatusObservable)BasicTemplate;
         responseStatusObservable.RemoveObserver(this);
+
+        Combats.Clear();
+        MaxCombats = 0;
 
         base.ViewDestroy(viewFinishing);
     }

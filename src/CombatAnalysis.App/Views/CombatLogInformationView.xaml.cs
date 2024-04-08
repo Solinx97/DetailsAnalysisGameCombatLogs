@@ -30,7 +30,7 @@ public partial class CombatLogInformationView : MvxWpfView
         viewModel.CombatLogPath = fileDialog.FileName;
     }
 
-    private static UserSettings ReadUserSettings(string settingsName)
+    private static UserSettings? ReadUserSettings(string settingsName)
     {
         var baseDirectory = AppDomain.CurrentDomain.BaseDirectory;
         using var fs = new FileStream($"{baseDirectory}{settingsName}", FileMode.OpenOrCreate);

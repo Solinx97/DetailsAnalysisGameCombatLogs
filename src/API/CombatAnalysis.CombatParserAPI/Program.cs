@@ -11,7 +11,10 @@ using Microsoft.OpenApi.Models;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.CombatParserBLDependencies(builder.Configuration, "DefaultConnection");
+var commandTimeoutValue = builder.Configuration.GetSection("Configuration:CommandTimeout").Value ?? "0";
+var commandTimeout = int.Parse(commandTimeoutValue);
+
+builder.Services.CombatParserBLDependencies(builder.Configuration, "DefaultConnection", commandTimeout);
 
 var specs = builder.Configuration.GetSection("Players:Specs").GetChildren();
 PlayerInfoConfiguration.Specs = specs?.ToDictionary(entry => entry.Key, entry => entry.Value);

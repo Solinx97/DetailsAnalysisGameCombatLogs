@@ -32,10 +32,11 @@ public class CombatParserService : IParser<Combat>
 
     public Dictionary<string, List<string>> PetsId { get; private set; }
 
-    public async Task<bool> FileCheck(string combatLog)
+    public async Task<bool> FileCheckAsync(string combatLog)
     {
-        using var reader = _fileManager.StreamReader(combatLog);
         var fileIsCorrect = true;
+
+        using var reader = _fileManager.StreamReader(combatLog);
         var line = await reader.ReadLineAsync();
         if (!line.Contains(CombatLogKeyWords.CombatLogVersion))
         {
@@ -45,85 +46,60 @@ public class CombatParserService : IParser<Combat>
         return fileIsCorrect;
     }
 
-    public async Task Parse(string combatLogPath)
+    public async Task ParseAsync(string combatLogPath)
     {
-        object locker = new();
-        var combats = new List<List<string>>();
         var newCombat = new List<string>();
+        var petsId = new Dictionary<string, List<string>>();
 
-        var allPetsId = await PreparePetsAsync(combatLogPath);
+        Clear();
 
-        Combats.Clear();
+        using var stream = new FileStream(combatLogPath, FileMode.Open, FileAccess.Read, FileShare.Read, 8192, FileOptions.Asynchronous);
+        using var reader = new StreamReader(stream);
 
-        await Task.Run(() => Parallel.ForEach(File.ReadLines(combatLogPath), (line) =>
+        string line;
+        while (!reader.EndOfStream)
         {
-            lock (locker)
+            line = await reader.ReadLineAsync();
+            if (line.Contains(CombatLogKeyWords.SpellSummon))
             {
-                if (line.Contains(CombatLogKeyWords.ZoneChange))
-                {
-                    GetDungeonName(line);
-                }
+                ParseGetPets(line, petsId);
+                ParseGetAdditionalPets(line, petsId);
+            }
 
-                if (line.Contains(CombatLogKeyWords.EncounterStart))
-                {
-                    newCombat = new List<string>
-                    {
-                        line
-                    };
-                }
-                else if (newCombat.Any())
-                {
-                    if (line.Contains(CombatLogKeyWords.EncounterEnd))
-                    {
-                        newCombat.Add(line);
+            if (line.Contains(CombatLogKeyWords.ZoneChange))
+            {
+                GetZoneName(line);
+            }
 
-                        var builtCombat = new List<string>(newCombat);
-                        combats.Add(builtCombat);
-                    }
-                    else
-                    {
-                        newCombat.Add(line);
-                    }
+            if (line.Contains(CombatLogKeyWords.EncounterStart))
+            {
+                newCombat = new List<string>
+                {
+                    line
+                };
+            }
+            else if (newCombat.Any())
+            {
+                if (line.Contains(CombatLogKeyWords.EncounterEnd))
+                {
+                    newCombat.Add(line);
+
+                    GetCombatInformation(newCombat, petsId);
+                }
+                else
+                {
+                    newCombat.Add(line);
                 }
             }
-        }));
-
-        foreach (var combat in combats)
-        {
-            await Task.Run(() => GetCombatInformation(combat, allPetsId));
         }
     }
 
-    private async Task<Dictionary<string, List<string>>> PreparePetsAsync(string combatLogPath)
+    public void Clear()
     {
         Combats.Clear();
-        Combats.Add(new Combat());
-
-        NotifyObservers();
-
-        var allPetsId = await GetPetsAsync(combatLogPath);
-
-        return allPetsId;
-    }
-
-    private static async Task<Dictionary<string, List<string>>> GetPetsAsync(string combatLogPath)
-    {
-        object locker = new();
-
-        var petsId = new Dictionary<string, List<string>>();
-        await Task.Run(() => Parallel.ForEach(File.ReadLines(combatLogPath), (line) =>
-        {
-            lock(locker)
-            {
-                if (line.Contains(CombatLogKeyWords.SpellSummon))
-                {
-                    ParseGetPets(line, petsId);
-                    ParseGetAdditionalPets(line, petsId);
-                }
-            }
-        }));
-
-        return petsId;
+        PetsId?.Clear();
+        _zones.Clear();
+        _combatNumber = 0;
     }
 
     private static void ParseGetPets(string data, Dictionary<string, List<string>> petsId)
@@ -132,24 +108,26 @@ public class CombatParserService : IParser<Combat>
         var parseData = parseDateFromData[1].Split(',');
 
         var playerId = parseData[1].Contains(CombatLogKeyWords.Player) ? parseData[1] : string.Empty;
+        if (string.IsNullOrEmpty(playerId))
+        {
+            return;
+        }
+
         var petId = parseData[1].Contains(CombatLogKeyWords.Player) ? parseData[5] : string.Empty;
-        if (petsId.Count == 0 && !string.IsNullOrEmpty(playerId) && !petsId.ContainsKey(playerId))
+        if (petsId.Count == 0 && !petsId.ContainsKey(playerId))
         {
             petsId.Add(playerId, new List<string> { petId });
 
             return;
         }
 
-        if (!string.IsNullOrEmpty(playerId))
+        if (petsId.TryGetValue(playerId, out var includedPetsId))
         {
-            if (petsId.TryGetValue(playerId, out var includedPetsId))
-            {
-                includedPetsId.Add(petId);
-            }
-            else if (!petsId.ContainsKey(playerId))
-            {
-                petsId.Add(playerId, new List<string> { petId });
-            }
+            includedPetsId.Add(petId);
+        }
+        else if (!petsId.ContainsKey(playerId))
+        {
+            petsId.Add(playerId, new List<string> { petId });
         }
     }
 
@@ -265,13 +243,12 @@ public class CombatParserService : IParser<Combat>
 
     private static void CalculatingCommonCombatDetails(Combat combat)
     {
-        foreach (var item in combat.Players)
-        {
-            combat.DamageDone += item.DamageDone;
-            combat.HealDone += item.HealDone;
-            combat.DamageTaken += item.DamageTaken;
-            combat.EnergyRecovery += item.EnergyRecovery;
-        }
+        var players = combat.Players;
+
+        combat.DamageDone = players.Sum(player => player.DamageDone);
+        combat.HealDone = players.Sum(player => player.HealDone);
+        combat.DamageTaken = players.Sum(player => player.DamageTaken);
+        combat.EnergyRecovery = players.Sum(player => player.EnergyRecovery);
     }
 
     private void AddNewCombat(Combat combat)
@@ -295,22 +272,26 @@ public class CombatParserService : IParser<Combat>
     private List<CombatPlayer> GetCombatPlayers(List<string> combatInformation, Combat combat, Dictionary<string, List<string>> petsId)
     {
         var playersIdAndStats = new Dictionary<string, string>();
-        for (var i = 1; i < combatInformation.Count && combatInformation[i].Contains(CombatLogKeyWords.CombatantInfo); i++)
+        var combatInfoByKeyWord = combatInformation
+            .Where(info => info.Contains(CombatLogKeyWords.CombatantInfo))
+            .ToList();
+
+        for (var i = 1; i < combatInfoByKeyWord.Count; i++)
         {
-            var combatantInfo = combatInformation[i].Split("  ")[1];
+            var combatantInfo = combatInfoByKeyWord[i].Split("  ")[1];
             var playerCombatantInfoArray = combatantInfo.Split(',');
+
             playersIdAndStats.Add(playerCombatantInfoArray[1], combatantInfo);
         }
 
         var players = new List<CombatPlayer>();
-        foreach (var item in playersIdAndStats)
+        Parallel.ForEach(playersIdAndStats, item =>
         {
             var playerCombatantInfoArray = item.Value.Split(new char[2] { '[', ']' });
 
             var username = GetCombatPlayerUsernameById(combatInformation, item.Key);
             var averageItemLevel = GetAverageItemLevel(playerCombatantInfoArray[1]);
             int usedBuffs = GetUsedBuffs(playerCombatantInfoArray[3]);
-            //var stats = GetPlayerStats(item.Value);
 
             var combatDetailsDamageDone = new CombatDetailsDamageDone(_logger)
             {
@@ -331,16 +312,46 @@ public class CombatParserService : IParser<Combat>
                 HealDone = combatDetailsHealDone.GetData(item.Key, combat.Data),
                 DamageTaken = combatDetailsDamageTaken.GetData(item.Key, combat.Data),
                 UsedBuffs = usedBuffs,
-                //Stats = stats,
             };
 
             players.Add(combatPlayerData);
-        }
+        });
+        //foreach (var item in playersIdAndStats)
+        //{
+        //    var playerCombatantInfoArray = item.Value.Split(new char[2] { '[', ']' });
+
+        //    var username = GetCombatPlayerUsernameById(combatInformation, item.Key);
+        //    var averageItemLevel = GetAverageItemLevel(playerCombatantInfoArray[1]);
+        //    int usedBuffs = GetUsedBuffs(playerCombatantInfoArray[3]);
+
+        //    var combatDetailsDamageDone = new CombatDetailsDamageDone(_logger)
+        //    {
+        //        PetsId = petsId
+        //    };
+
+        //    var combatDetailsHealDone = new CombatDetailsHealDone(_logger);
+        //    var combatDetailsDamageTaken = new CombatDetailsDamageTaken(_logger);
+        //    var combatDetailsResourceRecovery = new CombatDetailsResourceRecovery(_logger);
+
+        //    var combatPlayerData = new CombatPlayer
+        //    {
+        //        Username = username,
+        //        PlayerId = item.Key,
+        //        AverageItemLevel = double.Round(averageItemLevel, 2),
+        //        EnergyRecovery = combatDetailsResourceRecovery.GetData(item.Key, combat.Data),
+        //        DamageDone = combatDetailsDamageDone.GetData(item.Key, combat.Data),
+        //        HealDone = combatDetailsHealDone.GetData(item.Key, combat.Data),
+        //        DamageTaken = combatDetailsDamageTaken.GetData(item.Key, combat.Data),
+        //        UsedBuffs = usedBuffs,
+        //    };
+
+        //    players.Add(combatPlayerData);
+        //}
 
         return players;
     }
 
-    private void GetDungeonName(string combatLog)
+    private void GetZoneName(string combatLog)
     {
         var parse = combatLog.Split("  ")[1];
         var name = parse.Split(',')[2];
@@ -391,45 +402,18 @@ public class CombatParserService : IParser<Combat>
         splitEquipementsInformation = splitEquipementsInformation.Select(x => x.Insert(x.Length, ")")).ToArray();
 
         var ilvl = new List<int>();
-        for (int i = 0; i < splitEquipementsInformation.Length - 1; i++)
+        for (var i = 0; i < splitEquipementsInformation.Length - 1; i++)
         {
             var equipmentIlvlInformation = splitEquipementsInformation[i].Split(',')[1];
-            int.TryParse(equipmentIlvlInformation, out var equipmentIlvl);
-            ilvl.Add(equipmentIlvl);
+            if (int.TryParse(equipmentIlvlInformation, out var equipmentIlvl))
+            {
+                ilvl.Add(equipmentIlvl);
+            }
         }
 
         var averageILvl = ilvl.Average();
         return averageILvl;
     }
-
-    //private static PlayerStats GetPlayerStats(string playerCombatantInfo)
-    //{
-    //    var playerCombatInformation = playerCombatantInfo.Split(',');
-
-    //    var playerStats = new PlayerStats
-    //    {
-    //        Strength = int.Parse(playerCombatInformation[3]),
-    //        Agility = int.Parse(playerCombatInformation[4]),
-    //        Stamina = int.Parse(playerCombatInformation[5]),
-    //        Intelligence = int.Parse(playerCombatInformation[6]),
-    //        Spirit = int.Parse(playerCombatInformation[7]),
-    //        Dodge = int.Parse(playerCombatInformation[8]),
-    //        Parry = int.Parse(playerCombatInformation[9]),
-    //        CritMelee = int.Parse(playerCombatInformation[11]),
-    //        CritRanged = int.Parse(playerCombatInformation[12]),
-    //        CritSpell = int.Parse(playerCombatInformation[13]),
-    //        HasteMelee = int.Parse(playerCombatInformation[14]),
-    //        HasteRanged = int.Parse(playerCombatInformation[15]),
-    //        HasteSpell = int.Parse(playerCombatInformation[16]),
-    //        HitMelee = int.Parse(playerCombatInformation[17]),
-    //        HitRanged = int.Parse(playerCombatInformation[18]),
-    //        HitSpell = int.Parse(playerCombatInformation[19]),
-    //        Mastery = int.Parse(playerCombatInformation[20]),
-    //        Armor = int.Parse(playerCombatInformation[23]),
-    //    };
-
-    //    return playerStats;
-    //}
 
     public void AddObserver(Interfaces.IObserver<Combat> observer)
     {

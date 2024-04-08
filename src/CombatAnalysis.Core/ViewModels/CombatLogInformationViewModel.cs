@@ -25,7 +25,6 @@ public class CombatLogInformationViewModel : ParentTemplate, CombatParser.Interf
     private readonly CombatParserAPIService _combatParserAPIService;
     private readonly IMemoryCache _memoryCache;
 
-    private bool _isPreparePets;
     private string _combatLog;
     private bool _fileIsNotCorrect;
     private bool _isParsing;
@@ -98,15 +97,6 @@ public class CombatLogInformationViewModel : ParentTemplate, CombatParser.Interf
     #endregion
 
     #region Properties
-
-    public bool IsPreparePets
-    {
-        get { return _isPreparePets; }
-        set
-        {
-            SetProperty(ref _isPreparePets, value);
-        }
-    }
 
     public ObservableCollection<CombatLogModel> CombatLogs
     {
@@ -326,7 +316,6 @@ public class CombatLogInformationViewModel : ParentTemplate, CombatParser.Interf
 
     public void Update(Combat data)
     {
-        IsPreparePets = string.IsNullOrEmpty(data.Name);
         if (string.IsNullOrEmpty(data.Name))
         {
             return;
@@ -416,7 +405,7 @@ public class CombatLogInformationViewModel : ParentTemplate, CombatParser.Interf
     private async Task CombatLogFileValidateAsync(string combatLog)
     {
         _parser.AddObserver(this);
-        FileIsNotCorrect = !await _parser.FileCheck(combatLog);
+        FileIsNotCorrect = !await _parser.FileCheckAsync(combatLog);
 
         if (!FileIsNotCorrect)
         {
@@ -430,20 +419,26 @@ public class CombatLogInformationViewModel : ParentTemplate, CombatParser.Interf
 
     private async Task PrepareCombatData(string combatLogData)
     {
-        await _parser.Parse(combatLogData);
+        BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, nameof(BasicTemplateViewModel.Combats), null);
+        BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, nameof(BasicTemplateViewModel.PetsId), null);
+        BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, nameof(BasicTemplateViewModel.AllowStep), 0);
+
+        await _parser.ParseAsync(combatLogData);
 
         BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, nameof(BasicTemplateViewModel.PetsId), _parser.PetsId);
 
         var combatsList = _mapper.Map<List<CombatModel>>(_parser.Combats);
 
+        _parser.Clear();
+
         var dataForGeneralAnalysis = Tuple.Create(combatsList, LogType);
-         if (!IsNeedSave)
+
+        if (!IsNeedSave)
         {
             BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, nameof(BasicTemplateViewModel.AllowStep), 1);
             BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, nameof(BasicTemplateViewModel.ResponseStatus), LoadingStatus.None);
 
             await _mvvmNavigation.Navigate<GeneralAnalysisViewModel, Tuple<List<CombatModel>, LogType>>(dataForGeneralAnalysis);
-
             BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, nameof(BasicTemplateViewModel.Combats), combatsList);
 
             return;

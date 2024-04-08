@@ -9,7 +9,9 @@ public interface IParser<TModel> : IObservable<TModel>
 
     Dictionary<string, List<string>> PetsId { get; }
 
-    Task<bool> FileCheck(string combatLog);
+    Task<bool> FileCheckAsync(string combatLog);
 
-    Task Parse(string combatLog);
+    Task ParseAsync(string combatLog);
+
+    void Clear();
 }

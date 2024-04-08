@@ -1,4 +1,5 @@
-﻿using CombatAnalysis.DAL.Entities;
+﻿using CombatAnalysis.DAL.Consts;
+using CombatAnalysis.DAL.Entities;
 using CombatAnalysis.DAL.Helpers;
 using Microsoft.EntityFrameworkCore;
 
@@ -9,6 +10,8 @@ public class CombatParserSQLContext : DbContext
     public CombatParserSQLContext(DbContextOptions<CombatParserSQLContext> options) : base(options)
     {
         var isExists = Database.EnsureCreated();
+        Database.SetCommandTimeout(DBConfigurations.CommandTimeout);
+
         if (isExists)
         {
             DbProcedureHelper.CreateProcedures(this);

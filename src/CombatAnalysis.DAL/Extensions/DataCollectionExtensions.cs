@@ -1,4 +1,5 @@
-﻿using CombatAnalysis.DAL.Data;
+﻿using CombatAnalysis.DAL.Consts;
+using CombatAnalysis.DAL.Data;
 using CombatAnalysis.DAL.Entities;
 using CombatAnalysis.DAL.Enums;
 using CombatAnalysis.DAL.Interfaces;
@@ -13,8 +14,10 @@ namespace CombatAnalysis.DAL.Extensions;
 
 public static class DataCollectionExtensions
 {
-    public static void CombatParserDALDependencies(this IServiceCollection services, IConfiguration configuration, string connectionName)
+    public static void CombatParserDALDependencies(this IServiceCollection services, IConfiguration configuration, string connectionName, int commandTimeout)
     {
+        DBConfigurations.CommandTimeout = commandTimeout;
+
         var databaseName = configuration.GetSection("Database:Name").Value ?? string.Empty;
         switch (databaseName)
         {

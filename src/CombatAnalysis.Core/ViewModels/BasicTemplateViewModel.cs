@@ -23,8 +23,8 @@ public class BasicTemplateViewModel : ParentTemplate, IVMDataHandler<CombatPlaye
     private readonly IMemoryCache _memoryCache;
     private readonly IHttpClientHelper _httpClient;
 
-    private int _step = -1;
     private List<CombatModel> _combats;
+    private int _step = -1;
     private bool _isAuth;
     private bool _isLoginNotActivated = true;
     private bool _isRegistrationNotActivated = true;
@@ -71,6 +71,19 @@ public class BasicTemplateViewModel : ParentTemplate, IVMDataHandler<CombatPlaye
 
         CheckAuth();
         Task.Run(async () => await _mvvmNavigation.Navigate<HomeViewModel, bool>(IsAuth));
+    }
+
+    public List<CombatModel> Combats
+    {
+        set
+        {
+            _combats = value;
+            if (value != null)
+            {
+                _uploadingCombatsCount = value.Count;
+            }
+        }
+        get => _combats;
     }
 
     #region Commands
@@ -165,19 +178,6 @@ public class BasicTemplateViewModel : ParentTemplate, IVMDataHandler<CombatPlaye
         {
             SetProperty(ref _responseStatus, value);
             NotifyResponseStatusObservers();
-        }
-    }
-
-    public List<CombatModel> Combats
-    {
-        get { return _combats; }
-        set
-        {
-            SetProperty(ref _combats, value);
-            if (value != null)
-            {
-                _uploadingCombatsCount = value.Count;
-            }
         }
     }
 

@@ -25,7 +25,7 @@ internal class CombatParserServiceTests
         var mockLogger = new Mock<ILogger>();
 
         var parser = new CombatParserService(mockFileManager.Object, mockLogger.Object);
-        var fileIsCorrect = await parser.FileCheck(testCombatLog);
+        var fileIsCorrect = await parser.FileCheckAsync(testCombatLog);
         Assert.IsTrue(fileIsCorrect);
     }
 
@@ -44,7 +44,7 @@ internal class CombatParserServiceTests
         var mockLogger = new Mock<ILogger>();
 
         var parser = new CombatParserService(mockFileManager.Object, mockLogger.Object);
-        var fileIsCorrect = await parser.FileCheck(testCombatLog);
+        var fileIsCorrect = await parser.FileCheckAsync(testCombatLog);
         Assert.IsFalse(fileIsCorrect);
     }
 
@@ -63,7 +63,7 @@ internal class CombatParserServiceTests
         var mockLogger = new Mock<ILogger>();
 
         var parser = new CombatParserService(mockFileManager.Object, mockLogger.Object);
-        await parser.Parse(testCombatLog);
+        await parser.ParseAsync(testCombatLog);
 
         var combats = parser.Combats;
         Assert.IsNotEmpty(combats);
@@ -96,7 +96,7 @@ internal class CombatParserServiceTests
         var mockLogger = new Mock<ILogger>();
 
         var parser = new CombatParserService(mockFileManager.Object, mockLogger.Object);
-        await parser.Parse(testCombatLog);
+        await parser.ParseAsync(testCombatLog);
 
         var combats = parser.Combats;
         Assert.IsNotEmpty(combats);
@@ -145,7 +145,7 @@ internal class CombatParserServiceTests
         var mockLogger = new Mock<ILogger>();
 
         var parser = new CombatParserService(mockFileManager.Object, mockLogger.Object);
-        await parser.Parse(testCombatLog);
+        await parser.ParseAsync(testCombatLog);
 
         var combats = parser.Combats;
         Assert.IsEmpty(combats);
@@ -167,7 +167,7 @@ internal class CombatParserServiceTests
         var mockLogger = new Mock<ILogger>();
 
         var parser = new CombatParserService(mockFileManager.Object, mockLogger.Object);
-        await parser.Parse(testCombatLog);
+        await parser.ParseAsync(testCombatLog);
 
         var combats = parser.Combats;
         Assert.IsNotEmpty(combats);

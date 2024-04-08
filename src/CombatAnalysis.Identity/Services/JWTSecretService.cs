@@ -21,7 +21,7 @@ public class JWTSecretService : IJWTSecret
         await UpdateSecretKeysAsync(resfreSecret, accessSecret);
     }
 
-    public async Task<CustomerDAL.Entities.Authentication.Secret> GetSecretAsync()
+    public async Task<CustomerDAL.Entities.Authentication.Secret?> GetSecretAsync()
     {
         var secrets = await _secretRepository.GetAllAsync();
         if (!secrets.Any())
@@ -35,7 +35,7 @@ public class JWTSecretService : IJWTSecret
 
     private static string GenerateSecretKeys()
     {
-        using var rng = new RNGCryptoServiceProvider();
+        using var rng = RandomNumberGenerator.Create();
         byte[] data = new byte[32];
         rng.GetBytes(data);
 
