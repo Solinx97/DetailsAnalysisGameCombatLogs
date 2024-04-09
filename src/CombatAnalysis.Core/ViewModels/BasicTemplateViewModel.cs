@@ -80,7 +80,7 @@ public class BasicTemplateViewModel : ParentTemplate, IVMDataHandler<CombatPlaye
             _combats = value;
             if (value != null)
             {
-                _uploadingCombatsCount = value.Count;
+                UploadingCombatsCount = value.Count;
             }
         }
         get => _combats;

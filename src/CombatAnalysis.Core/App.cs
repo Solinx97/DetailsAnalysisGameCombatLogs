@@ -51,7 +51,7 @@ public class App : MvxApplication
         IFileManager fileManager = new FileManager();
         IParser<Combat> parser = new CombatParserService(fileManager, logger);
 
-        var memoryCacheOptions = new MemoryCacheOptions { SizeLimit = 1024 };
+        var memoryCacheOptions = new MemoryCacheOptions { SizeLimit = 2048 };
         var memoryCache = new MemoryCache(memoryCacheOptions);
 
         Mvx.IoCProvider.RegisterSingleton(mapper);

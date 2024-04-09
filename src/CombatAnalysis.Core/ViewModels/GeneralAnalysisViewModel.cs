@@ -480,7 +480,10 @@ public class GeneralAnalysisViewModel : ParentTemplate<Tuple<List<CombatModel>, 
 
     public async Task RepeatSaveCombatDataDetailsAsync()
     {
+        CurrentCombatNumber = 0;
+
         BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, nameof(BasicTemplateViewModel.ResponseStatus), LoadingStatus.Pending);
+        BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, nameof(BasicTemplateViewModel.UploadedCombatsCount), 0);
 
         var combatsForUploadAgain = Combats.Where(combat => !combat.IsReady).ToList();
 

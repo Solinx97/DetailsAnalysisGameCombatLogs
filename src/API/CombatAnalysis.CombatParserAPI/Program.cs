@@ -11,10 +11,9 @@ using Microsoft.OpenApi.Models;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-var commandTimeoutValue = builder.Configuration.GetSection("Configuration:CommandTimeout").Value ?? "0";
-var commandTimeout = int.Parse(commandTimeoutValue);
+var dbConfiguration = builder.Configuration.GetSection("DBConfiguration").Get<DBConfiguration>() ?? new DBConfiguration();
 
-builder.Services.CombatParserBLDependencies(builder.Configuration, "DefaultConnection", commandTimeout);
+builder.Services.CombatParserBLDependencies(builder.Configuration, "DefaultConnection", dbConfiguration.CommandTimeout);
 
 var specs = builder.Configuration.GetSection("Players:Specs").GetChildren();
 PlayerInfoConfiguration.Specs = specs?.ToDictionary(entry => entry.Key, entry => entry.Value);
@@ -45,7 +44,7 @@ builder.Services.AddScoped<IPlayerParseInfoHelper, PlayerParseInfoHelper>();
 
 builder.Services.Configure<KestrelServerOptions>(options =>
 {
-    options.Limits.MaxRequestBodySize = 125000000;
+    options.Limits.MaxRequestBodySize = dbConfiguration.MaxRequestBodySize;
 });
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
