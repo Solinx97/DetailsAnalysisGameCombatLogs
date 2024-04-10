@@ -2,14 +2,17 @@ pipeline {
     agent any
 
     parameters {
+        string defaultValue: "", name: "PROJECT_NAME"
+        string defaultValue: "", name: "PROJECT_PATH"
+        string defaultValue: "", name: "TEST_PROJECT_NAME"
         string defaultValue: "lucid-diode-391208", name: "CREDENTIALS_ID"
         string defaultValue: "lucid-diode-391208", name: "PROJECT_ID"
-        string defaultValue: "combat-analysis-cluster", name: "CLUSTER_NAME"
+        string defaultValue: "", name: "CLUSTER_NAME"
         string defaultValue: "us-central1", name: "LOCATION"
-        string defaultValue: "combat-analysis-web-app", name: "DOCKER_IMAGE"
+        string defaultValue: "", name: "DOCKER_IMAGE"
         string defaultValue: "latest", name: "DOCKER_IMAGE_VERSION"
         string defaultValue: "solinx", name: "DOCKER_HUB_LOGIN"
-        string defaultValue: "web-app", name: "RELEASE_NAME"
+        string defaultValue: "", name: "RELEASE_NAME"
     }
 
     environment {
@@ -20,20 +23,20 @@ pipeline {
     }
 
     stages {
-        stage('Build') {
+        stage("Build") {
             steps {
-                bat "dotnet restore src/CombatAnalysis.WebApp/CombatAnalysis.WebApp.csproj"
-                bat "dotnet build src/CombatAnalysis.WebApp/CombatAnalysis.WebApp.csproj"
+                bat "dotnet restore ${PROJECT_PATH}/${PROJECT_NAME}/${PROJECT_NAME}.csproj"
+                bat "dotnet build ${PROJECT_PATH}/${PROJECT_NAME}/${PROJECT_NAME}.csproj"
             }
         }
-        stage('Tests') {
+        stage("Tests") {
             steps {
-                bat "dotnet test tests/CombatAnalysis.Parser.Tests/CombatAnalysis.Parser.Tests.csproj"
+                bat "dotnet test ${TEST_PROJECT_PATH}/${TEST_PROJECT_NAME}/${TEST_PROJECT_NAME}.csproj"
             }
         }
         stage("Docker image build") {
             steps {
-                bat "docker build -f src/CombatAnalysis.WebApp/Dockerfile --force-rm -t ${DOCKER_HUB_LOGIN}/${DOCKER_IMAGE}:${DOCKER_IMAGE_VERSION} ."
+                bat "docker build -f ${PROJECT_PATH}/${PROJECT_NAME}/Dockerfile --force-rm -t ${DOCKER_HUB_LOGIN}/${DOCKER_IMAGE}:${DOCKER_IMAGE_VERSION} ."
             }
         }
         stage("Docker image push") {
@@ -45,7 +48,7 @@ pipeline {
             }
         }
         stage("Deploy to GKE") {
-            steps {
+            steps{
                 withCredentials([file(credentialsId: "google-cloud-key", variable: "googleCloudKey")]) {
                     bat "gcloud auth activate-service-account --key-file=${googleCloudKey}"
                     bat "gcloud container clusters get-credentials ${CLUSTER_NAME} --region ${LOCATION} --project ${PROJECT_ID}"

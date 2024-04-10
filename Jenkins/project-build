@@ -2,10 +2,10 @@ pipeline {
     agent any
 
     parameters {
-        string defaultValue: "CombatAnalysis.CombatParserAPI", name: "PROJECT_NAME"
-        string defaultValue: "src/API", name: "PROJECT_PATH"
-        string defaultValue: "CombatAnalysis.Parser.Tests", name: "TEST_PROJECT_NAME"
-        string defaultValue: "tests", name: "TEST_PROJECT_PATH"
+        string defaultValue: "", name: "PROJECT_NAME"
+        string defaultValue: "", name: "PROJECT_PATH"
+        string defaultValue: "", name: "TEST_PROJECT_NAME"
+        string defaultValue: "", name: "TEST_PROJECT_PATH"
     }
 
     stages {
