@@ -124,7 +124,7 @@ internal class PlayerParseInfoHelper : IPlayerParseInfoHelper
         var specScore = score.FirstOrDefault();
         if (combatPlayer.DamageDone != 0 && specScore.Damage != 0)
         {
-            damageScore = combatPlayer.DamageDone / specScore.Damage;
+            damageScore = (double)combatPlayer.DamageDone / (double)specScore.Damage;
         }
 
         if (damageScore > 1)
@@ -142,7 +142,7 @@ internal class PlayerParseInfoHelper : IPlayerParseInfoHelper
 
         if (combatPlayer.HealDone != 0 && specScore.Heal != 0)
         {
-            healScore = combatPlayer.HealDone / specScore.Heal;
+            healScore = (double)combatPlayer.HealDone / (double)specScore.Heal;
         }
 
         if (healScore > 1)
