@@ -6,7 +6,6 @@ pipeline {
         string defaultValue: "", name: "PROJECT_PATH"
         string defaultValue: "", name: "IIS_SITE_NAME"
         string defaultValue: "", name: "IIS_PATH"
-        string defaultValue: "", name: "PROJECT_NAME"
     }
 
     stages {
