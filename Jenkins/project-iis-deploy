@@ -2,16 +2,18 @@ pipeline {
     agent any
 
     parameters {
+        string defaultValue: "", name: "PROJECT_NAME"
+        string defaultValue: "", name: "PROJECT_PATH"
         string defaultValue: "", name: "IIS_SITE_NAME"
         string defaultValue: "", name: "IIS_PATH"
-        string defaultValue: "", name: "PROJECT_PATH"
+        string defaultValue: "", name: "PROJECT_NAME"
     }
 
     stages {
         stage('Build') {
             steps {
-                bat "dotnet restore ${PROJECT_PATH}"
-                bat "dotnet build ${PROJECT_PATH}"
+                bat "dotnet restore ${PROJECT_PATH}/${PROJECT_NAME}/${PROJECT_NAME}.csproj"
+                bat "dotnet build ${PROJECT_PATH}/${PROJECT_NAME}/${PROJECT_NAME}.csproj"
             }
         }
         stage('Stop IIS Site') {
@@ -21,7 +23,7 @@ pipeline {
         }
         stage('Deploy to IIS') {
             steps {
-                bat "dotnet publish ${PROJECT_PATH} --output ${IIS_PATH}"
+                bat "dotnet publish ${PROJECT_PATH}/${PROJECT_NAME}/${PROJECT_NAME}.csproj --output ${IIS_PATH}/${IIS_SITE_NAME}"
             }
         }
         stage('Start IIS Site') {
