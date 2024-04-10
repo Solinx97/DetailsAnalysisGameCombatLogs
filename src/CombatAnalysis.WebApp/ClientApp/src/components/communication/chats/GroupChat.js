@@ -146,7 +146,10 @@ const GroupChat = ({ chat, me, setSelectedChat, callMinimazedData }) => {
         }
 
         await createMessageAsync(messageInput.current.value, messageType["default"]);
-        messageInput.current.value = "";
+
+        if (messageInput.current !== null) {
+            messageInput.current.value = "";
+        }
     }
 
     const createGroupChatUserAsync = async () => {

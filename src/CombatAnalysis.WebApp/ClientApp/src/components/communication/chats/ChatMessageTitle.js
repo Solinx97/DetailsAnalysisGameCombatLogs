@@ -20,12 +20,13 @@ const ChatMessageTitle = ({ me, itIsMe, setEditModeIsOn, openMessageMenu, editMo
     }
 
     if (isLoading) {
-        return <></>;
+        return <div>Loading...</div>;
     }
 
     return (
         <div>
             <div className="message-title">
+                <div className="message-time">{getMessageTime()}</div>
                 <div className="username-container">
                     <User
                         me={me}
@@ -35,7 +36,6 @@ const ChatMessageTitle = ({ me, itIsMe, setEditModeIsOn, openMessageMenu, editMo
                         allowRemoveFriend={false}
                     />
                 </div>
-                <div className="message-time">{getMessageTime()}</div>
                 {openMessageMenu &&
                     <div className="message-menu">
                         <FontAwesomeIcon
