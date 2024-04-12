@@ -48,6 +48,7 @@ public class CombatLogInformationViewModel : ParentTemplate, CombatParser.Interf
     private LoadingStatus _combatLogLoadingStatus;
     private LoadingStatus _combatLogByUserLoadingStatus;
     private bool _removingInProgress;
+    private bool _uploadingLogs;
 
     public CombatLogInformationViewModel(IMapper mapper, IMvxNavigationService mvvmNavigation, IHttpClientHelper httpClient,
         IParser<Combat> parser, ILogger logger, IMemoryCache memoryCache)
@@ -97,6 +98,15 @@ public class CombatLogInformationViewModel : ParentTemplate, CombatParser.Interf
     #endregion
 
     #region Properties
+
+    public bool UploadingLogs
+    {
+        get { return _uploadingLogs; }
+        set
+        {
+            SetProperty(ref _uploadingLogs, value);
+        }
+    }
 
     public ObservableCollection<CombatLogModel> CombatLogs
     {
@@ -361,6 +371,8 @@ public class CombatLogInformationViewModel : ParentTemplate, CombatParser.Interf
 
     public async Task LoadCombatsAsync(ObservableCollection<CombatLogModel> combatCollection)
     {
+        UploadingLogs = true;
+
         var combatLog = combatCollection[CombatListSelectedIndex];
         var loadedCombats = await _combatParserAPIService.LoadCombatsAsync(combatLog.Id);
         if (loadedCombats == null)
