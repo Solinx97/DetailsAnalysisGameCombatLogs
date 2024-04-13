@@ -35,8 +35,8 @@
             <converters:TheNativeBoolToXAMLBoolConverter x:Key="BoolToXAMLBool" />
         </Grid.Resources>
 
-        <Border CornerRadius="0 20 20 0" Background="white" Grid.Column="2" Grid.ColumnSpan="2"
-                Margin="-25 0 0 0 " Grid.RowSpan="3"/>
+        <Border CornerRadius="0 20 20 0" Grid.Column="2" Grid.ColumnSpan="2"
+                Margin="-25 0 0 0 " Grid.RowSpan="3" Background="#283a4b" />
 
         <Border CornerRadius="20" Grid.RowSpan="3" Panel.ZIndex="2" Background="#6145e3">
             <Grid>
@@ -52,22 +52,15 @@
 
         <StackPanel Grid.Column="2" Orientation="Horizontal">
             <Button Style="{StaticResource textBoxButton}" ToolTip="{loc:Loc Menu}">
-                <Icon:PackIconMaterial Kind="DotsVertical" Foreground="#88878e"/>
+                <Icon:PackIconMaterial Kind="DotsVertical" Foreground="White"/>
             </Button>
             <Button Style="{StaticResource textBoxButton}" ToolTip="{loc:Loc Notifications}">
-                <Icon:PackIconMaterial Kind="BellOutline" Foreground="#88878e"/>
+                <Icon:PackIconMaterial Kind="BellOutline" Foreground="White"/>
             </Button>
         </StackPanel>
         
         <Border Grid.Column="1" Grid.RowSpan="3" CornerRadius="0 20 20 0"
-                Panel.ZIndex="1" Margin="-25 0 0 0">
-            <Border.Background>
-                <LinearGradientBrush>
-                    <GradientStop Color="#7AD5F5" Offset="0.1" />
-                    <GradientStop Color="#DB5577" Offset="0.35" />
-                    <GradientStop Color="#6f50ff" Offset="0.65" />
-                </LinearGradientBrush>
-            </Border.Background>
+                Panel.ZIndex="1" Margin="-25 0 0 0" Background="#283a4b" BorderThickness="2" BorderBrush="White">
             <StackPanel>
                 <StackPanel Margin="25 10" Visibility="{Binding IsAuth, Converter={StaticResource BoolToVisibility}, ConverterParameter=true:true}">
                     <Button Style="{StaticResource accountButton}" Margin="15 10" Content="{loc:Loc Login}"
@@ -139,17 +132,17 @@
             <StackPanel HorizontalAlignment="Right">
                 <StackPanel Orientation="Horizontal">
                     <Button Style="{StaticResource textBoxButton}" Click="Minimaze" ToolTip="{loc:Loc MinimazeWindow}">
-                        <Icon:PackIconMaterial Kind="WindowMinimize" Foreground="Gray" Width="15" Height="15"/>
+                        <Icon:PackIconMaterial Kind="WindowMinimize" Foreground="White" Width="15" Height="15"/>
                     </Button>
                     <Button Style="{StaticResource textBoxButton}" Click="Maximaze" ToolTip="{loc:Loc FullScreenWindow}">
-                        <Icon:PackIconMaterial Kind="WindowMaximize" Foreground="Gray" Width="15" Height="15"/>
+                        <Icon:PackIconMaterial Kind="WindowMaximize" Foreground="White" Width="15" Height="15"/>
                     </Button>
                     <Button Style="{StaticResource textBoxButton}" mvx:Bi.nd="Command CloseCommand" ToolTip="{loc:Loc CloseWindow}">
                         <Icon:PackIconMaterial Kind="WindowClose" Foreground="Red" Width="15" Height="15"/>
                     </Button>
                 </StackPanel>
                 <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Margin="5">
-                    <TextBlock Margin="5" FontSize="13" FontWeight="Bold" Foreground="Gray" Text="{loc:Loc Loading}"
+                    <TextBlock Margin="5" FontSize="13" FontWeight="Bold" Foreground="White" Text="{loc:Loc Loading}"
                                Visibility="{Binding ResponseStatus, Converter={StaticResource IntToVisibility}, ConverterParameter='true:1:='}"
                                ToolTip="{loc:Loc LoadingDescribe}"/>
                     <StackPanel Orientation="Horizontal">

@@ -26,7 +26,7 @@
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
-            <RowDefinition Height="0.25*"/>
+            <RowDefinition Height="0.5*"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="0.75*"/>
             <RowDefinition Height="0.05*"/>
@@ -40,43 +40,83 @@
             </ContentControl.Resources>
         </ContentControl>
 
-        <StackPanel Grid.Column="2" Grid.ColumnSpan="2" Grid.Row="1" Grid.RowSpan="3">
-            <StackPanel.Background>
-                <LinearGradientBrush>
-                    <GradientStop Color="#5AEB5F" Offset="0.2" />
-                    <GradientStop Color="#DB5577" Offset="0.5" />
-                    <GradientStop Color="#76AAEB" Offset="0.8" />
-                </LinearGradientBrush>
-            </StackPanel.Background>
-        </StackPanel>
-
-        <TextBlock Grid.Column="3" Grid.Row="1" Margin="0 20" Text="Details Analysis GCL" FontFamily="Comic Sans MS" FontWeight="Bold" FontSize="20"/>
+        <TextBlock Grid.Column="3" Grid.Row="0" Text="Details Analysis GCL" VerticalAlignment="Center" Foreground="White" FontSize="20"/>
         
-        <StackPanel Grid.Column="2" Grid.ColumnSpan="2" Grid.Row="0" Grid.RowSpan="3" Orientation="Horizontal" Margin="30 0">
-            <StackPanel VerticalAlignment="Center">
-                <TextBlock Text="{loc:Loc Communication}" HorizontalAlignment="Center" FontSize="18" FontFamily="Comic Sans MS"/>
-                <Image Name="openChat" IsEnabled="{Binding ChatIsEnabled, Converter={StaticResource BoolToXAMLBool}}" Style="{StaticResource homeItems}" Source="../Resource/Chat.jpg" Height="275" Margin="20" Panel.ZIndex="1" Cursor="Hand">
-                    <Image.InputBindings>
-                        <MouseBinding Gesture="LeftClick" Command="{Binding OpenChatCommand, Mode=OneTime}" />
-                    </Image.InputBindings>
-                </Image>
-                <TextBlock Text="{loc:Loc CommunicationDescribe}"
-                           TextWrapping="Wrap" HorizontalAlignment="Center" Margin="-200" FontSize="16" FontWeight="DemiBold" MaxWidth="400"/>
-                <TextBlock Text="{loc:Loc LoginRequired}" Foreground="White" Opacity="0.75" HorizontalAlignment="Center" FontStyle="Italic"
+        <Grid Grid.Column="2" Grid.ColumnSpan="2" Grid.Row="1" Grid.RowSpan="4">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+
+            <Border Grid.Column="0" Margin="40" CornerRadius="25" Padding="5">
+                <Border.Background>
+                    <LinearGradientBrush>
+                        <GradientStop Color="#cad044" Offset="0.2" />
+                        <GradientStop Color="#714dc6" Offset="0.6" />
+                    </LinearGradientBrush>
+                </Border.Background>
+                
+                <Grid VerticalAlignment="Center">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="0.5*" />
+                        <RowDefinition Height="2*" />
+                    </Grid.RowDefinitions>
+                    
+                    <TextBlock Grid.Row="0" Margin="0 10" Text="{loc:Loc Communication}" HorizontalAlignment="Center" FontSize="16" Foreground="Black" />
+                    <StackPanel Grid.Row="1">
+                        <TextBlock Text="{loc:Loc CommunicationDescribe}" Foreground="Black" TextWrapping="Wrap" HorizontalAlignment="Center" FontSize="14" />
+                        <TextBlock Text="{loc:Loc LoginRequired}" Foreground="Black" Opacity="0.7" HorizontalAlignment="Center" Margin="5"
                            Visibility="{Binding ChatIsEnabled, Converter={StaticResource BoolToVisibility}, ConverterParameter=true:true}"/>
-            </StackPanel>
-            <StackPanel VerticalAlignment="Center">
-                <TextBlock Text="{loc:Loc Analyzing}" HorizontalAlignment="Center" FontSize="18" FontFamily="Comic Sans MS"/>
-                <Image Name="openCombatLogInform" Style="{StaticResource homeItems}" Source="../Resource/CombatLogs.jpg" Height="275" Margin="20" Panel.ZIndex="1" Cursor="Hand">
-                    <Image.InputBindings>
-                        <MouseBinding Gesture="LeftClick" Command="{Binding OpenCombatAnalysisCommand, Mode=OneTime}" />
-                    </Image.InputBindings>
-                </Image>
-                <StackPanel Margin="-200">
-                    <TextBlock Text="{loc:Loc AnalyzingDescribe}"
-                           TextWrapping="Wrap" HorizontalAlignment="Center"  FontSize="16" FontWeight="DemiBold" MaxWidth="400"/>
-                </StackPanel>
-            </StackPanel>
-        </StackPanel>
+                    </StackPanel>
+
+                </Grid>
+            </Border>
+
+            <Button Grid.Row="1" VerticalAlignment="Top" Content="Communication" Width="145" Height="40" FontSize="14" Foreground="White" Cursor="Hand"
+                    Style="{StaticResource homeButton}">
+                <Button.Background>
+                    <LinearGradientBrush>
+                        <GradientStop Color="#c7486f" Offset="0.7" />
+                        <GradientStop Color="#94bbe9" Offset="0.35" />
+                    </LinearGradientBrush>
+                </Button.Background>
+            </Button>
+
+            <Border Grid.Column="1" Margin="40" CornerRadius="25" Padding="10">
+                <Border.Background>
+                    <LinearGradientBrush>
+                        <GradientStop Color="#714dc6" Offset="0.2" />
+                        <GradientStop Color="#cad044" Offset="0.6" />
+                    </LinearGradientBrush>
+                </Border.Background>
+                
+                <Grid Grid.Column="1" VerticalAlignment="Center">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="0.5*" />
+                        <RowDefinition Height="2*" />
+                    </Grid.RowDefinitions>
+
+                    <TextBlock Grid.Row="0" Margin="0 10" Text="{loc:Loc Analyzing}" HorizontalAlignment="Center" FontSize="16" Foreground="Black" />
+                    <StackPanel Grid.Row="1">
+                        <TextBlock Text="{loc:Loc AnalyzingDescribe}"
+                           TextWrapping="Wrap" HorizontalAlignment="Center" FontSize="14" Foreground="Black" MaxWidth="400"/>
+                    </StackPanel>
+                </Grid>
+            </Border>
+
+            <Button Grid.Column="1" Grid.Row="1" VerticalAlignment="Top" Content="Analyz" Width="145" Height="40" FontSize="14" Foreground="White" Cursor="Hand"
+                    Style="{StaticResource homeButton}">
+                <Button.Background>
+                    <LinearGradientBrush>
+                        <GradientStop Color="#94bbe9" Offset="0.7" />
+                        <GradientStop Color="#c7486f" Offset="0.35" />
+                    </LinearGradientBrush>
+                </Button.Background>
+            </Button>
+        </Grid>
     </Grid>
 </views:MvxWpfView>

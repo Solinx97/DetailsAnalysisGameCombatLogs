@@ -47,8 +47,9 @@
         </ContentControl>
 
         <TextBlock Name="combatLogInformTitle" Grid.Row="0" Grid.Column="2" Grid.ColumnSpan="2" HorizontalAlignment="Center" VerticalAlignment="Center"
-                   Text="{loc:Loc Title}" FontSize="18" FontFamily="Comic Snas MS" Margin="0 30" Style="{StaticResource titleText}"/>
-        <Grid Grid.Row="1" Grid.Column="3" Margin="0 50">
+                   Text="{loc:Loc Title}" FontSize="18" Foreground="White" Margin="0 30" Style="{StaticResource titleText}"/>
+        
+        <Grid Grid.Row="1" Grid.Column="2" Grid.ColumnSpan="2">
             <Grid.RowDefinitions>
                 <RowDefinition Height="*"/>
                 <RowDefinition Height="*"/>
@@ -56,25 +57,25 @@
             
             <StackPanel IsEnabled="{Binding IsParsing, Converter={StaticResource BoolToXAMLBool}, ConverterParameter=true}" Grid.Row="0"
                     HorizontalAlignment="Center" VerticalAlignment="Top" MinWidth="375">
-                <TextBlock HorizontalAlignment="Center" Text="{loc:Loc UploadFile}" Margin="0 20" FontSize="16" />
+                <TextBlock HorizontalAlignment="Center" Text="{loc:Loc UploadFile}" Margin="0 20" FontSize="16" Foreground="White" />
                 <Button Click="SelectCmbatLogFile" Content="{loc:Loc SelectFile}" Width="125" FontSize="16"
                     Margin="15 0" Style="{StaticResource showButton}" />
                 <StackPanel Orientation="Horizontal" Margin="20">
-                    <TextBlock Text="{loc:Loc File}" FontSize="16" />
-                    <TextBlock Text="{Binding CombatLog, Mode=TwoWay}" FontWeight="Bold" Margin="20 0" FontSize="14" />
+                    <TextBlock Text="{loc:Loc File}" FontSize="16" Foreground="White" />
+                    <TextBlock Text="{Binding CombatLog, Mode=TwoWay}" Foreground="White" FontWeight="Bold" Margin="20 0" FontSize="14" />
                 </StackPanel>
             </StackPanel>
             <StackPanel Grid.Row="1" IsEnabled="{Binding IsAuth, Converter={StaticResource BoolToXAMLBool}}" MaxWidth="500">
-                <TextBlock Text="{loc:Loc TypeOfLogs}" FontSize="16" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                <TextBlock Text="{loc:Loc TypeOfLogs}" FontSize="16" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="White"/>
                 <StackPanel Margin="10">
-                    <RadioButton Content="{loc:Loc WithoutUser}" mvx:Bi.nd="Command GetLogTypeCommand, CommandParameter=0"
+                    <RadioButton Content="{loc:Loc WithoutUser}" mvx:Bi.nd="Command GetLogTypeCommand, CommandParameter=0" Foreground="White"
                                  IsChecked="{Binding LogType, Converter={StaticResource IntToXAMLBool}, ConverterParameter=0}" Margin="5" />
-                    <RadioButton Content="{loc:Loc Public}" mvx:Bi.nd="Command GetLogTypeCommand, CommandParameter=1"
+                    <RadioButton Content="{loc:Loc Public}" mvx:Bi.nd="Command GetLogTypeCommand, CommandParameter=1" Foreground="White"
                                  IsChecked="{Binding LogType, Converter={StaticResource IntToXAMLBool}, ConverterParameter=1}" Margin="5" />
-                    <RadioButton Content="{loc:Loc Private}" mvx:Bi.nd="Command GetLogTypeCommand, CommandParameter=2"
+                    <RadioButton Content="{loc:Loc Private}" mvx:Bi.nd="Command GetLogTypeCommand, CommandParameter=2" Foreground="White"
                                  IsChecked="{Binding LogType, Converter={StaticResource IntToXAMLBool}, ConverterParameter=2}" Margin="5" />
                 </StackPanel>
-                <TextBlock Text="{loc:Loc TypeOfLogsLoginRequired}" TextWrapping="Wrap" Height="50"
+                <TextBlock Text="{loc:Loc TypeOfLogsLoginRequired}" TextWrapping="Wrap" Height="50" Foreground="White"
                            VerticalAlignment="Center" HorizontalAlignment="Center" Opacity="0.5"
                            Visibility="{Binding IsAuth, Converter={StaticResource BoolToVisibility}, ConverterParameter=true:true}"/>
             </StackPanel>
@@ -92,7 +93,7 @@
                                            Visibility="{Binding CombatLogLoadingStatus, Converter={StaticResource IntToVisibility}, ConverterParameter='true:3:='}"/>
                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                                 <TextBlock HorizontalAlignment="Center" Text="{loc:Loc PublicLogs}" Margin="0" FontSize="16" />
-                                <Button Style="{StaticResource userButton}" Margin="5 -10" mvx:Bi.nd="Command ReloadCombatsCommand" ToolTip="{Binding RefreshLogs}"
+                                <Button Style="{StaticResource userButton}" Margin="5 -10" mvx:Bi.nd="Command ReloadCombatsCommand"
                                             IsEnabled="{Binding IsParsing, Converter={StaticResource BoolToXAMLBool},ConverterParameter=true}">
                                     <Icon:PackIconMaterial Kind="Reload" Foreground="Gray"/>
                                 </Button>
@@ -134,7 +135,7 @@
                                            Visibility="{Binding CombatLogByUserLoadingStatus, Converter={StaticResource IntToVisibility}, ConverterParameter='true:3:='}"/>
                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                                 <TextBlock HorizontalAlignment="Center" Text="{loc:Loc PrivateLogs}" Margin="0" FontSize="16" />
-                                <Button Style="{StaticResource userButton}" Margin="5 -10" mvx:Bi.nd="Command ReloadCombatsByUserCommand" ToolTip="{loc:Loc RefreshLogs}">
+                                <Button Style="{StaticResource userButton}" Margin="5 -10" mvx:Bi.nd="Command ReloadCombatsByUserCommand">
                                     <Icon:PackIconMaterial Kind="Reload" Foreground="Gray"/>
                                 </Button>
                             </StackPanel>
@@ -187,9 +188,8 @@
                 <Button Name="combatLogFileAnalysis" Height="35" Content="{loc:Loc Analyzing}" Width="100" FontSize="16" Margin="0 20"
                     mvx:Bi.nd="Command OpenPlayerAnalysisCommand" Style="{StaticResource showButton}" />
                 <StackPanel Orientation="Horizontal" Margin="115,0,0,0" Width="200" IsEnabled="{Binding IsAllowSaveLogs, Converter={StaticResource BoolToXAMLBool}, ConverterParameter=false}">
-                    <CheckBox Name="isSaveCombatLog" VerticalAlignment="Center" VerticalContentAlignment="Center" Content="{loc:Loc SaveData}" 
-                           HorizontalContentAlignment="Center" IsChecked="{Binding IsNeedSave}" FontSize="16"/>
-                    <Icon:PackIconMaterial Kind="ChatQuestion" Foreground="Gray" Style="{StaticResource menuButtonIcon}" ToolTip="{loc:Loc SaveDataDescribe}"/>
+                    <CheckBox Style="{DynamicResource CheckBoxStyle1}" Name="isSaveCombatLog" VerticalAlignment="Center" VerticalContentAlignment="Center" Content="{loc:Loc SaveData}" 
+                           HorizontalContentAlignment="Center" IsChecked="{Binding IsNeedSave}" FontSize="16" Width="125" />
                 </StackPanel>
             </StackPanel>
             <TextBlock Name="workWithDataTitle" Width="175" Text="{loc:Loc Processing}" FontSize="16" TextAlignment="Center" Foreground="BlueViolet"
@@ -199,11 +199,11 @@
                        Margin="10" HorizontalAlignment="Center" VerticalAlignment="Center"
                        Visibility="{Binding FileIsNotCorrect, Converter={StaticResource BoolToVisibility}}" />
             <StackPanel Height="90" Visibility="{Binding IsParsing, Converter={StaticResource BoolToVisibility}, ConverterParameter=true}">
-                <StackPanel Visibility="{Binding IsPreparePets, Converter={StaticResource BoolToVisibility}, ConverterParameter=true:true}">
+                <StackPanel>
                     <TextBlock Text="{Binding DungeonName}" FontSize="14" TextAlignment="Center" TextWrapping="Wrap"
-                           VerticalAlignment="Center" MaxWidth="650" FontFamily="Comic Sans MS" />
+                           VerticalAlignment="Center" MaxWidth="650" Foreground="White" />
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                        <TextBlock Text="{Binding CombatName}" FontSize="17" TextAlignment="Center" TextWrapping="Wrap"
+                        <TextBlock Text="{Binding CombatName}" FontSize="17" TextAlignment="Center" TextWrapping="Wrap" Foreground="White"
                            VerticalAlignment="Center" MaxWidth="650" FontWeight="Bold" Margin="5" FontFamily="Comic Sans MS"/>
                         <Icon:PackIconMaterial Kind="Check" Foreground="Green" Style="{StaticResource menuButtonIcon}" 
                                    Visibility="{Binding CombatStatus, Converter={StaticResource BoolToVisibility}, ConverterParameter=true:false}"/>
@@ -213,6 +213,7 @@
                 </StackPanel>
             </StackPanel>
         </StackPanel>
+        
         <StackPanel Visibility="{Binding CombatLogUploadingFailed, Converter={StaticResource BoolToVisibility}}"  Grid.Row="2" Grid.Column="2" Grid.ColumnSpan="2" VerticalAlignment="Bottom">
             <TextBlock Text="{loc:Loc CombatLogUploadingFailed}" FontSize="16" TextAlignment="Center" TextWrapping="Wrap"
                        Margin="0" VerticalAlignment="Center" Height="60" MaxWidth="650" Foreground="Red" />

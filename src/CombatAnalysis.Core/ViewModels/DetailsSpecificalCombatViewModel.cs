@@ -685,9 +685,13 @@ public class DetailsSpecificalCombatViewModel : ParentTemplate<CombatModel>
             return;
         }
 
-        AverageDamage = PlayersCombat.Average(x => x.DamageDone);
-        AverageHeal = PlayersCombat.Average(x => x.HealDone);
-        AverageResources = PlayersCombat.Average(x => x.EnergyRecovery);
+        var damageDone = PlayersCombat.Average(x => x.DamageDone);
+        var healDone = PlayersCombat.Average(x => x.HealDone);
+        var energyRecovery = PlayersCombat.Average(x => x.EnergyRecovery);
+
+        AverageDamage = double.Round(damageDone, 2);
+        AverageHeal = double.Round(healDone, 2);
+        AverageResources = double.Round(energyRecovery, 2);
 
         AverageDamagePerSecond = PlayersCombat.Average(x => x.DamageDonePerSecond);
         AverageHealPerSecond = PlayersCombat.Average(x => x.HealDonePerSecond);
