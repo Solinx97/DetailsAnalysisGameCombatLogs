@@ -291,9 +291,9 @@ public class BasicTemplateViewModel : ParentTemplate, IVMDataHandler<CombatPlaye
         _httpClient.BaseAddress = Port.UserApi;
         await _httpClient.GetAsync($"Account/logout/{refreshToken}");
 
-        _memoryCache.Remove("refreshToken");
-        _memoryCache.Remove("accessToken");
-        _memoryCache.Remove("account");
+        _memoryCache.Remove(nameof(MemoryCacheValue.RefreshToken));
+        _memoryCache.Remove(nameof(MemoryCacheValue.User));
+        _memoryCache.Remove(nameof(MemoryCacheValue.Customer));
 
         IsAuth = false;
         Username = string.Empty;

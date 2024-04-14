@@ -77,6 +77,8 @@ public class CombatLogInformationViewModel : ParentTemplate, CombatParser.Interf
 
         var authObservable = (IAuthObservable)BasicTemplate;
         authObservable.AddObserver(this);
+
+        IsAuth = false;
     }
 
     #region Commands

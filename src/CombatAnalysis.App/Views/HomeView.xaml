@@ -90,12 +90,12 @@
                 <Button VerticalAlignment="Top" Content="Communication" Width="145" Height="40" FontSize="14" Foreground="White" Cursor="Hand"
                         Style="{StaticResource homeButton}" mvx:Bi.nd="Command OpenChatCommand"
                         Visibility="{Binding ChatIsEnabled, Converter={StaticResource BoolToVisibility}, ConverterParameter=true:false}">
-                    <Button.Background>
+                    <Button.BorderBrush>
                         <LinearGradientBrush>
                             <GradientStop Color="#c7486f" Offset="0.7" />
                             <GradientStop Color="#94bbe9" Offset="0.35" />
                         </LinearGradientBrush>
-                    </Button.Background>
+                    </Button.BorderBrush>
                 </Button>
 
                 <TextBlock Text="{loc:Loc LoginRequired}" Opacity="0.7" HorizontalAlignment="Center" Margin="5" Foreground="White"
