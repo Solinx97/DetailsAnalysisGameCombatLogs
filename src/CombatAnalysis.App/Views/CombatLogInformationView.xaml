@@ -48,7 +48,18 @@
 
         <TextBlock Name="combatLogInformTitle" Grid.Row="0" Grid.Column="2" Grid.ColumnSpan="2" HorizontalAlignment="Center" VerticalAlignment="Center"
                    Text="{loc:Loc Title}" FontSize="18" Foreground="White" Margin="0 30" Style="{StaticResource titleText}"/>
-        
+
+        <StackPanel Grid.Row="1" Grid.Column="2" Grid.ColumnSpan="2" Orientation="Horizontal" Cursor="Hand">
+            <StackPanel.InputBindings>
+                <MouseBinding Command="{Binding OpenUploadLogsCommand}" Gesture="LeftClick"/>
+            </StackPanel.InputBindings>
+            
+            <TextBlock  HorizontalAlignment="Left" VerticalAlignment="Top" 
+                   Text="Upload logs" FontSize="18" Foreground="White" Margin="10 0" Style="{StaticResource titleText}">
+            </TextBlock>
+            <Icon:PackIconMaterial Kind="Download" Foreground="Aquamarine" Margin="5" />
+        </StackPanel>
+
         <Grid Grid.Row="1" Grid.Column="2" Grid.ColumnSpan="2">
             <Grid.RowDefinitions>
                 <RowDefinition Height="*"/>
@@ -65,15 +76,15 @@
                     <TextBlock Text="{Binding CombatLog, Mode=TwoWay}" Foreground="White" FontWeight="Bold" Margin="20 0" FontSize="14" />
                 </StackPanel>
             </StackPanel>
-            <StackPanel Grid.Row="1" IsEnabled="{Binding IsAuth, Converter={StaticResource BoolToXAMLBool}}" MaxWidth="500">
+            <StackPanel Grid.Row="1" IsEnabled="{Binding IsAuth, Converter={StaticResource BoolToXAMLBool}}" MaxWidth="575">
                 <TextBlock Text="{loc:Loc TypeOfLogs}" FontSize="16" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="White"/>
-                <StackPanel Margin="10">
-                    <RadioButton Content="{loc:Loc WithoutUser}" mvx:Bi.nd="Command GetLogTypeCommand, CommandParameter=0" Foreground="White"
-                                 IsChecked="{Binding LogType, Converter={StaticResource IntToXAMLBool}, ConverterParameter=0}" Margin="5" />
-                    <RadioButton Content="{loc:Loc Public}" mvx:Bi.nd="Command GetLogTypeCommand, CommandParameter=1" Foreground="White"
-                                 IsChecked="{Binding LogType, Converter={StaticResource IntToXAMLBool}, ConverterParameter=1}" Margin="5" />
-                    <RadioButton Content="{loc:Loc Private}" mvx:Bi.nd="Command GetLogTypeCommand, CommandParameter=2" Foreground="White"
-                                 IsChecked="{Binding LogType, Converter={StaticResource IntToXAMLBool}, ConverterParameter=2}" Margin="5" />
+                <StackPanel Orientation="Horizontal" Margin="20">
+                    <RadioButton Style="{DynamicResource RadioButtonStyle1}" Content="{loc:Loc WithoutUser}" Width="140" Margin="20" mvx:Bi.nd="Command GetLogTypeCommand, CommandParameter=0"
+                                 IsChecked="{Binding LogType, Converter={StaticResource IntToXAMLBool}, ConverterParameter=0}" />
+                    <RadioButton Style="{DynamicResource RadioButtonStyle1}" Content="{loc:Loc Public}" Width="140" mvx:Bi.nd="Command GetLogTypeCommand, CommandParameter=1"
+                                 IsChecked="{Binding LogType, Converter={StaticResource IntToXAMLBool}, ConverterParameter=1}" Margin="20" />
+                    <RadioButton Style="{DynamicResource RadioButtonStyle1}" Content="{loc:Loc Private}" Width="140" mvx:Bi.nd="Command GetLogTypeCommand, CommandParameter=2"
+                                 IsChecked="{Binding LogType, Converter={StaticResource IntToXAMLBool}, ConverterParameter=2}" Margin="20" />
                 </StackPanel>
                 <TextBlock Text="{loc:Loc TypeOfLogsLoginRequired}" TextWrapping="Wrap" Height="50" Foreground="White"
                            VerticalAlignment="Center" HorizontalAlignment="Center" Opacity="0.5"
@@ -81,29 +92,36 @@
             </StackPanel>
         </Grid>
 
-        <StackPanel Grid.Row="1" Grid.Column="2">
-            <TabControl Background="Transparent" SelectedIndex="{Binding SelectedCombatLogTypeTabItem}">
-                <TabItem Header="{loc:Loc PublicLogs}" FontSize="15">
+        <StackPanel Grid.Row="1" Grid.Column="2" Grid.ColumnSpan="2" HorizontalAlignment="Left" Margin="10 45" Width="625" Background="Transparent"
+                    Visibility="{Binding OpenUploadLogs, Converter={StaticResource BoolToVisibility}, ConverterParameter=true:false}">
+            <TabControl Style="{DynamicResource TabControlStyle1}" SelectedIndex="{Binding SelectedCombatLogTypeTabItem}">
+                <TabItem Style="{DynamicResource TabItemStyle1}" Header="{loc:Loc PublicLogs}" FontSize="13">
                     <StackPanel Margin="10">
                         <StackPanel IsEnabled="{Binding IsParsing, Converter={StaticResource BoolToXAMLBool},ConverterParameter=true}" 
                                     HorizontalAlignment="Center" VerticalAlignment="Top" Margin="20">
-                            <TextBlock Text="{loc:Loc Loading}" Opacity="0.4" HorizontalAlignment="Center" Margin="0 10"
+                            <Icon:PackIconMaterial Kind="WindowClose" Foreground="Orange" HorizontalAlignment="Right" Cursor="Hand" Margin="-20 -25" Panel.ZIndex="10">
+                                <Icon:PackIconMaterial.InputBindings>
+                                    <MouseBinding Command="{Binding OpenUploadLogsCommand}" Gesture="LeftClick"/>
+                                </Icon:PackIconMaterial.InputBindings>
+                            </Icon:PackIconMaterial>
+
+                            <TextBlock Text="{loc:Loc Loading}" Opacity="0.6" HorizontalAlignment="Center" Margin="0 10" Foreground="White"
                                            Visibility="{Binding CombatLogLoadingStatus, Converter={StaticResource IntToVisibility}, ConverterParameter='true:1:='}"/>
                             <TextBlock Text="{loc:Loc LoadingFailed}" Foreground="Orange" HorizontalAlignment="Center" Margin="0 10"
                                            Visibility="{Binding CombatLogLoadingStatus, Converter={StaticResource IntToVisibility}, ConverterParameter='true:3:='}"/>
                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                                <TextBlock HorizontalAlignment="Center" Text="{loc:Loc PublicLogs}" Margin="0" FontSize="16" />
+                                <TextBlock HorizontalAlignment="Center" Text="{loc:Loc PublicLogs}" Margin="0" FontSize="16" Foreground="White" />
                                 <Button Style="{StaticResource userButton}" Margin="5 -10" mvx:Bi.nd="Command ReloadCombatsCommand"
                                             IsEnabled="{Binding IsParsing, Converter={StaticResource BoolToXAMLBool},ConverterParameter=true}">
-                                    <Icon:PackIconMaterial Kind="Reload" Foreground="Gray"/>
+                                    <Icon:PackIconMaterial Kind="Reload" Foreground="White"/>
                                 </Button>
                             </StackPanel>
                             <Button mvx:Bi.nd="Command LoadCombatsCommand" Content="{loc:Loc Upload}" Width="100" FontSize="16"
-                                        Margin="10,10" Style="{StaticResource showButton}" Foreground="Blue"
+                                        Margin="10,10" Style="{StaticResource showButton}" Foreground="Green"
                                         Visibility="{Binding CombatLogs.Count, Converter={StaticResource IntToVisibility}, ConverterParameter='true:0:>'}"
                                         IsEnabled="{Binding CombatListSelectedIndex, Converter={StaticResource IntToXAMLBool}, ConverterParameter='-1:>'}"/>
                             <ScrollViewer MaxHeight="200" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
-                                <ListBox Background="Transparent" ItemsSource="{Binding CombatLogs}" SelectedIndex="{Binding CombatListSelectedIndex}"
+                                <ListBox Style="{DynamicResource ListBoxStyle1}" ItemsSource="{Binding CombatLogs}" SelectedIndex="{Binding CombatListSelectedIndex}"
                                     Visibility="{Binding CombatLogs.Count, Converter={StaticResource IntToVisibility}, ConverterParameter='true:0:>'}">
                                     <ListBox.ItemTemplate>
                                         <DataTemplate>
@@ -116,27 +134,33 @@
                                 </ListBox>
                             </ScrollViewer>
                             <StackPanel Visibility="{Binding UploadingLogs, Converter={StaticResource BoolToVisibility}, ConverterParameter=true:false}">
-                                <TextBlock Text="Loading..." FontSize="13" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="Gray" Margin="0 5"/>
+                                <TextBlock Text="Loading..." FontSize="13" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="White" Margin="0 5"/>
                             </StackPanel>
                             <StackPanel Visibility="{Binding CombatLogLoadingStatus, Converter={StaticResource IntToVisibility}, ConverterParameter='true:2:='}">
-                                <TextBlock Text="{loc:Loc Empty}" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="Gray" Margin="5"
+                                <TextBlock Text="{loc:Loc Empty}" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="White" Margin="5"
                                            Visibility="{Binding CombatLogs.Count, Converter={StaticResource IntToVisibility}, ConverterParameter='true:0:='}"/>
                             </StackPanel>
                         </StackPanel>
                     </StackPanel>
                 </TabItem>
-                <TabItem Header="{loc:Loc PrivateLogs}" FontSize="15" IsEnabled="{Binding IsAuth, Converter={StaticResource BoolToXAMLBool}, ConverterParameter=false}">
+                <TabItem Style="{DynamicResource TabItemStyle1}" Header="{loc:Loc PrivateLogs}" FontSize="13" IsEnabled="{Binding IsAuth, Converter={StaticResource BoolToXAMLBool}, ConverterParameter=false}">
                     <StackPanel Margin="10">
                         <StackPanel IsEnabled="{Binding IsParsing, Converter={StaticResource BoolToXAMLBool},ConverterParameter=true}" 
                                     HorizontalAlignment="Center" VerticalAlignment="Top" Margin="20">
-                            <TextBlock Text="{loc:Loc Loading}" Opacity="0.4" HorizontalAlignment="Center" Margin="0 10"
+                            <Icon:PackIconMaterial Kind="WindowClose" Foreground="Orange" HorizontalAlignment="Right" Cursor="Hand" Margin="-20 -25" Panel.ZIndex="10">
+                                <Icon:PackIconMaterial.InputBindings>
+                                    <MouseBinding Command="{Binding OpenUploadLogsCommand}" Gesture="LeftClick"/>
+                                </Icon:PackIconMaterial.InputBindings>
+                            </Icon:PackIconMaterial>
+
+                            <TextBlock Text="{loc:Loc Loading}" Opacity="0.6" HorizontalAlignment="Center" Margin="0 10" Foreground="White"
                                            Visibility="{Binding CombatLogByUserLoadingStatus, Converter={StaticResource IntToVisibility}, ConverterParameter='true:1:='}"/>
                             <TextBlock Text="{loc:Loc LoadingFailed}" Foreground="Orange" HorizontalAlignment="Center" Margin="0 10"
                                            Visibility="{Binding CombatLogByUserLoadingStatus, Converter={StaticResource IntToVisibility}, ConverterParameter='true:3:='}"/>
                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                                <TextBlock HorizontalAlignment="Center" Text="{loc:Loc PrivateLogs}" Margin="0" FontSize="16" />
+                                <TextBlock HorizontalAlignment="Center" Text="{loc:Loc PrivateLogs}" Margin="0" FontSize="16" Foreground="White" />
                                 <Button Style="{StaticResource userButton}" Margin="5 -10" mvx:Bi.nd="Command ReloadCombatsByUserCommand">
-                                    <Icon:PackIconMaterial Kind="Reload" Foreground="Gray"/>
+                                    <Icon:PackIconMaterial Kind="Reload" Foreground="White"/>
                                 </Button>
                             </StackPanel>
                             <StackPanel Orientation="Horizontal" Width="250" IsEnabled="{Binding RemovingInProgress, Converter={StaticResource BoolToXAMLBool}, ConverterParameter=true}">
@@ -166,19 +190,19 @@
                                 </ListBox>
                             </ScrollViewer>
                             <StackPanel Visibility="{Binding UploadingLogs, Converter={StaticResource BoolToVisibility}, ConverterParameter=true:false}">
-                                <TextBlock Text="Loading..." FontSize="13" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="Gray" Margin="0 5"/>
+                                <TextBlock Text="Loading..." FontSize="13" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="White" Margin="0 5"/>
                             </StackPanel>
                             <StackPanel Visibility="{Binding CombatLogByUserLoadingStatus, Converter={StaticResource IntToVisibility}, ConverterParameter='true:2:='}">
-                                <TextBlock Text="{loc:Loc Empty}" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="Gray" Margin="5"
+                                <TextBlock Text="{loc:Loc Empty}" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="White" Margin="5"
                                            Visibility="{Binding CombatLogsForTargetUser.Count, Converter={StaticResource IntToVisibility}, ConverterParameter='true:0:='}"/>
                             </StackPanel>
-                            <TextBlock Text="{loc:Loc RemovingInProgress}" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="Gray" Margin="5"
+                            <TextBlock Text="{loc:Loc RemovingInProgress}" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="White" Margin="5"
                                             Visibility="{Binding RemovingInProgress, Converter={StaticResource BoolToVisibility}, ConverterParameter=true:false}"/>
                         </StackPanel>
                     </StackPanel>
                 </TabItem>
             </TabControl>
-            <TextBlock Text="{loc:Loc PrivateLogsLoginRequired}" TextAlignment="Center" Opacity="0.5"
+            <TextBlock Text="{loc:Loc PrivateLogsLoginRequired}" TextAlignment="Center" Opacity="0.5" Foreground="White"
                        Visibility="{Binding IsAuth, Converter={StaticResource BoolToVisibility}, ConverterParameter=true:true}"/>
         </StackPanel>
 

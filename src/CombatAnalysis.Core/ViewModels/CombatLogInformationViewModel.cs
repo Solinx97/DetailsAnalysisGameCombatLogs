@@ -25,6 +25,7 @@ public class CombatLogInformationViewModel : ParentTemplate, CombatParser.Interf
     private readonly CombatParserAPIService _combatParserAPIService;
     private readonly IMemoryCache _memoryCache;
 
+    private bool _openUploadLogs;
     private string _combatLog;
     private bool _fileIsNotCorrect;
     private bool _isParsing;
@@ -58,6 +59,7 @@ public class CombatLogInformationViewModel : ParentTemplate, CombatParser.Interf
         _parser = parser;
         _memoryCache = memoryCache;
 
+        OpenUploadLogsCommand = new MvxCommand(() => OpenUploadLogs = !OpenUploadLogs);
         OpenPlayerAnalysisCommand = new MvxAsyncCommand(OpenPlayerAnalysisAsync);
         LoadCombatsCommand = new MvxAsyncCommand(() => LoadCombatsAsync(CombatLogs));
         LoadCombatsByUserCommand = new MvxAsyncCommand(() => LoadCombatsAsync(CombatLogsForTargetUser));
@@ -79,6 +81,8 @@ public class CombatLogInformationViewModel : ParentTemplate, CombatParser.Interf
 
     #region Commands
 
+    public IMvxCommand OpenUploadLogsCommand { get; set; }
+
     public IMvxCommand GetCombatLogCommand { get; set; }
 
     public IMvxAsyncCommand LoadCombatsCommand { get; set; }
@@ -98,6 +102,15 @@ public class CombatLogInformationViewModel : ParentTemplate, CombatParser.Interf
     #endregion
 
     #region Properties
+
+    public bool OpenUploadLogs
+    {
+        get { return _openUploadLogs; }
+        set
+        {
+            SetProperty(ref _openUploadLogs, value);
+        }
+    }
 
     public bool UploadingLogs
     {

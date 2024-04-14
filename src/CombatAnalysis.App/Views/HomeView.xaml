@@ -10,6 +10,7 @@
     xmlns:local="clr-namespace:CombatAnalysis.App.Views.ViewTemplates"
     xmlns:viewModels="clr-namespace:CombatAnalysis.Core.ViewModels;assembly=CombatAnalysis.Core"
     xmlns:views="clr-namespace:MvvmCross.Platforms.Wpf.Views;assembly=MvvmCross.Platforms.Wpf"
+    xmlns:mvx="clr-namespace:MvvmCross.Platforms.Wpf.Binding;assembly=MvvmCross.Platforms.Wpf"
     loc:LocalizationObject.ResourceManager="{x:Static resx:Resource.ResourceManager}"
     mc:Ignorable="d">
 
@@ -77,7 +78,7 @@
             </Border>
 
             <Button Grid.Row="1" VerticalAlignment="Top" Content="Communication" Width="145" Height="40" FontSize="14" Foreground="White" Cursor="Hand"
-                    Style="{StaticResource homeButton}">
+                    Style="{StaticResource homeButton}" mvx:Bi.nd="Command OpenChatCommand">
                 <Button.Background>
                     <LinearGradientBrush>
                         <GradientStop Color="#c7486f" Offset="0.7" />
@@ -109,7 +110,7 @@
             </Border>
 
             <Button Grid.Column="1" Grid.Row="1" VerticalAlignment="Top" Content="Analyz" Width="145" Height="40" FontSize="14" Foreground="White" Cursor="Hand"
-                    Style="{StaticResource homeButton}">
+                    Style="{StaticResource homeButton}" mvx:Bi.nd="Command OpenCombatAnalysisCommand">
                 <Button.Background>
                     <LinearGradientBrush>
                         <GradientStop Color="#94bbe9" Offset="0.7" />
