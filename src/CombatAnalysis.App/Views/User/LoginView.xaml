@@ -14,11 +14,11 @@
     mc:Ignorable="d" d:DesignHeight="850" d:DesignWidth="1250">
 
     <Grid>
-        <Grid.RowDefinitions>
+        <!--<Grid.RowDefinitions>
             <RowDefinition Height="0.5*" />
             <RowDefinition Height="*" />
             <RowDefinition Height="0.5*" />
-        </Grid.RowDefinitions>
+        </Grid.RowDefinitions>-->
 
         <Grid.Resources>
             <converters:TheNativeBoolToVisibilityConverter x:Key="BoolToVisibility" />
@@ -32,37 +32,67 @@
             </ContentControl.Resources>
         </ContentControl>
 
-        <TextBlock Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="2" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="26" Text="Details Analysis GCL" Foreground="White"/>
-        <Grid Grid.Row="1">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="0.5*" />
-                <RowDefinition Height="1.2*" />
-                <RowDefinition Height="2*" />
-                <RowDefinition Height="*" />
-                <RowDefinition Height="0.2*" />
-            </Grid.RowDefinitions>
+        <Grid VerticalAlignment="Center" HorizontalAlignment="Center">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="0.5*"/>
                 <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="0.5*"/>
+                <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
 
-            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Column="1" Grid.Row="1">
-                <TextBlock VerticalAlignment="Center" HorizontalAlignment="Left" Text="{loc:Loc Email}" FontSize="14" Margin="0 10" Foreground="white"/>
-                <TextBox Style="{DynamicResource TextBoxStyle1}" Text="{Binding Email, UpdateSourceTrigger=PropertyChanged}" />
-            </StackPanel>
-            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Column="1" Grid.Row="2">
-                <TextBlock VerticalAlignment="Center" HorizontalAlignment="Left" Text="{loc:Loc Password}" FontSize="14" Margin="0 10" Foreground="White"/>
-                <PasswordBox Style="{DynamicResource PasswordBoxStyle1}" Name="password" PasswordChanged="PasswordBox_PasswordChanged" />
-                <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" Text="{loc:Loc IncorrectData}"
+            <Border Grid.Column="0" Margin="25" VerticalAlignment="Center" HorizontalAlignment="Center" BorderThickness="0 0 5 0">
+                <Border.BorderBrush>
+                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                        <GradientStop Color="#1c8a95" Offset="0.24"/>
+                        <GradientStop Color="#0d2f9c" Offset="0.74"/>
+                    </LinearGradientBrush>
+                </Border.BorderBrush>
+                
+                <StackPanel Margin="50">
+                    <TextBlock Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="2" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="26" 
+                           Text="Details Analysis GCL" Foreground="White" Margin="10" FontFamily="Comic Sans MS"/>
+
+                    <TextBlock Text="Account open new opportunities for you:" Foreground="White" FontFamily="Comic Sans MS" FontSize="16" Margin="10"/>
+                    
+                    <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Column="1" Grid.Row="1">
+                        <RadioButton Style="{DynamicResource RadioButtonStyle1}" GroupName="1" Content="Save logs as Private" Width="225" IsEnabled="False" 
+                                     IsChecked="True" Margin="20" FontSize="13" FontFamily="Comic Sans MS" />
+                        <RadioButton Style="{DynamicResource RadioButtonStyle1}" GroupName="2" Content="Change access level for Logs" Width="225" IsEnabled="False"
+                                     IsChecked="True" Margin="20" FontSize="13" FontFamily="Comic Sans MS" />
+                        <RadioButton Style="{DynamicResource RadioButtonStyle1}" GroupName="3" Content="Access to Chat" Width="225" IsEnabled="False"
+                                     IsChecked="True" Margin="20" FontSize="13" FontFamily="Comic Sans MS" />
+                        <RadioButton Style="{DynamicResource RadioButtonStyle1}" GroupName="4" Content="Create new Chats" Width="225" IsEnabled="False"
+                                     IsChecked="True" Margin="20" FontSize="13" FontFamily="Comic Sans MS" />
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+            
+            <StackPanel Grid.Column="1" Margin="25" VerticalAlignment="Center">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="0.5*" />
+                        <RowDefinition Height="1.2*" />
+                        <RowDefinition Height="2*" />
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="0.2*" />
+                    </Grid.RowDefinitions>
+
+                    <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Row="0" Margin="10">
+                        <TextBlock VerticalAlignment="Center" HorizontalAlignment="Left" Text="{loc:Loc Email}" FontSize="14" Margin="0 10" Foreground="white"/>
+                        <TextBox Style="{DynamicResource TextBoxStyle1}" Text="{Binding Email, UpdateSourceTrigger=PropertyChanged}" />
+                    </StackPanel>
+                    <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Row="1" Margin="10">
+                        <TextBlock VerticalAlignment="Center" HorizontalAlignment="Left" Text="{loc:Loc Password}" FontSize="14" Margin="0 10" Foreground="White"/>
+                        <PasswordBox Style="{DynamicResource PasswordBoxStyle1}" Name="password" PasswordChanged="PasswordBox_PasswordChanged" />
+                        <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" Text="{loc:Loc IncorrectData}"
                            FontSize="12" Foreground="Red" Margin="0 10" Visibility="{Binding AuthIsFailed, Converter={StaticResource BoolToVisibility}, ConverterParameter=true:false}"/>
-                <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" TextAlignment="Center" Width="250" Height="80" TextWrapping="Wrap" Text="{loc:Loc LoginFailed}"
+                        <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" TextAlignment="Center" Width="250" Height="80" TextWrapping="Wrap" Text="{loc:Loc LoginFailed}"
                            FontSize="12" Foreground="Red" Margin="0 10" Visibility="{Binding ServerIsNotAvailable, Converter={StaticResource BoolToVisibility}, ConverterParameter=true:false}"/>
+                    </StackPanel>
+                    <Button Grid.Row="2" Margin="25" Height="40" Width="125" Content="{loc:Loc Login}" Style="{StaticResource showButton}"
+                            Command="{Binding LoginCommand}" />
+                </Grid>
+                <Button Margin="25" Height="40" Width="125" Content="{loc:Loc Back}" Style="{StaticResource showButton}"
+                        Command="{Binding CancelCommand}" />
             </StackPanel>
-            <Button Grid.Column="1" Grid.Row="3" Height="40" Width="125" Content="{loc:Loc Login}" Style="{StaticResource showButton}"
-                    Command="{Binding LoginCommand}" />
         </Grid>
-        <Button VerticalAlignment="Center" HorizontalAlignment="Center" Grid.Column="1" Grid.Row="2" Height="40" Width="125" Content="{loc:Loc Back}" Style="{StaticResource showButton}"
-                    Command="{Binding CancelCommand}" />
     </Grid>
 </views:MvxWpfView>

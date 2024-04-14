@@ -74,11 +74,18 @@
                     <MouseBinding Command="{Binding SwitchBetweenValuesCommand}" CommandParameter="1" Gesture="LeftClick" />
                 </Icon:PackIconMaterial.InputBindings>
             </Icon:PackIconMaterial>
-            <Icon:PackIconMaterial Kind="ToggleSwitch" Width="125" Height="18" Cursor="Hand" Foreground="Green"
+            <Icon:PackIconMaterial Kind="ToggleSwitch" Width="125" Height="18" Cursor="Hand"
                                     VerticalAlignment="Bottom" Visibility="{Binding CombatInformationType, Converter={StaticResource IntToVisibility}, ConverterParameter='true:1:='}">
                 <Icon:PackIconMaterial.InputBindings>
                     <MouseBinding Command="{Binding SwitchBetweenValuesCommand}" CommandParameter="0" Gesture="LeftClick"/>
                 </Icon:PackIconMaterial.InputBindings>
+                <Icon:PackIconMaterial.Foreground>
+                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                        <GradientStop Color="#462ADB" Offset="0"/>
+                        <GradientStop Color="#DA34AE" Offset="0.75"/>
+                        <GradientStop Color="#8A16C1" Offset="1"/>
+                    </LinearGradientBrush>
+                </Icon:PackIconMaterial.Foreground>
             </Icon:PackIconMaterial>
             <StackPanel>
                 <TextBlock Text="{loc:Loc ValuePerSecond}" FontSize="16" Foreground="White"/>

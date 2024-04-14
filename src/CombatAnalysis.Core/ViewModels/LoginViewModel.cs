@@ -119,8 +119,6 @@ public class LoginViewModel : ParentTemplate
                 BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, nameof(BasicTemplateViewModel.IsAuth), true);
                 BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, nameof(BasicTemplateViewModel.Username), customer.Username);
 
-                BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, nameof(BasicTemplateViewModel.IsLoginNotActivated), true);
-
                 await _mvvmNavigation.Close(this);
             }
             catch (HttpRequestException)
@@ -132,10 +130,18 @@ public class LoginViewModel : ParentTemplate
         Task.Run(action);
     }
 
+    public override void ViewDisappeared()
+    {
+        BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, nameof(BasicTemplateViewModel.IsLoginNotActivated), true);
+
+        base.ViewDisappeared();
+    }
+
     public async Task CancelAsync()
     {
         BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, "IsLoginNotActivated", true);
         BasicTemplate.Parent = null;
+
         await _mvvmNavigation.Close(this);
     }
 

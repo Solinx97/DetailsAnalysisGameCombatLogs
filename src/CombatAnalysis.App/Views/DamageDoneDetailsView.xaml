@@ -83,7 +83,7 @@
                     </DataGridTemplateColumn.CellTemplate>
                     <DataGridTemplateColumn.HeaderTemplate>
                         <DataTemplate>
-                            <TextBlock Text="{loc:Loc Source}" Margin="5" TextAlignment="Center" FontSize="12" FontWeight="Bold" Foreground="White"/>
+                            <TextBlock Text="{loc:Loc Source}" Margin="5" TextAlignment="Center" FontSize="12" Foreground="White"/>
                         </DataTemplate>
                     </DataGridTemplateColumn.HeaderTemplate>
                 </DataGridTemplateColumn>
@@ -96,7 +96,7 @@
                     </DataGridTemplateColumn.CellTemplate>
                     <DataGridTemplateColumn.HeaderTemplate>
                         <DataTemplate>
-                            <TextBlock Text="{loc:Loc Damage}" Margin="5" TextAlignment="Center" FontSize="12" FontWeight="Bold" Foreground="White"/>
+                            <TextBlock Text="{loc:Loc Damage}" Margin="5" TextAlignment="Center" FontSize="12" Foreground="White"/>
                         </DataTemplate>
                     </DataGridTemplateColumn.HeaderTemplate>
                 </DataGridTemplateColumn>
@@ -109,7 +109,7 @@
                     </DataGridTemplateColumn.CellTemplate>
                     <DataGridTemplateColumn.HeaderTemplate>
                         <DataTemplate>
-                            <TextBlock Text="{loc:Loc CountOfSkills}" Margin="5" TextAlignment="Center" FontSize="12" FontWeight="Bold" Foreground="White"/>
+                            <TextBlock Text="{loc:Loc CountOfSkills}" Margin="5" TextAlignment="Center" FontSize="12" Foreground="White"/>
                         </DataTemplate>
                     </DataGridTemplateColumn.HeaderTemplate>
                 </DataGridTemplateColumn>
@@ -122,7 +122,7 @@
                     </DataGridTemplateColumn.CellTemplate>
                     <DataGridTemplateColumn.HeaderTemplate>
                         <DataTemplate>
-                            <TextBlock Text="{loc:Loc MinValue}" Margin="5" TextAlignment="Center" FontSize="12" FontWeight="Bold" Foreground="White"/>
+                            <TextBlock Text="{loc:Loc MinValue}" Margin="5" TextAlignment="Center" FontSize="12" Foreground="White"/>
                         </DataTemplate>
                     </DataGridTemplateColumn.HeaderTemplate>
                 </DataGridTemplateColumn>
@@ -135,7 +135,7 @@
                     </DataGridTemplateColumn.CellTemplate>
                     <DataGridTemplateColumn.HeaderTemplate>
                         <DataTemplate>
-                            <TextBlock Text="{loc:Loc MaxValue}" Margin="5" TextAlignment="Center" FontSize="12" FontWeight="Bold" Foreground="White"/>
+                            <TextBlock Text="{loc:Loc MaxValue}" Margin="5" TextAlignment="Center" FontSize="12" Foreground="White"/>
                         </DataTemplate>
                     </DataGridTemplateColumn.HeaderTemplate>
                 </DataGridTemplateColumn>
@@ -148,7 +148,7 @@
                     </DataGridTemplateColumn.CellTemplate>
                     <DataGridTemplateColumn.HeaderTemplate>
                         <DataTemplate>
-                            <TextBlock Text="{loc:Loc AverageValue}" Margin="5" TextAlignment="Center" FontSize="12" FontWeight="Bold" Foreground="White"/>
+                            <TextBlock Text="{loc:Loc AverageValue}" Margin="5" TextAlignment="Center" FontSize="12" Foreground="White"/>
                         </DataTemplate>
                     </DataGridTemplateColumn.HeaderTemplate>
                 </DataGridTemplateColumn>
@@ -161,7 +161,7 @@
                     </DataGridTemplateColumn.CellTemplate>
                     <DataGridTemplateColumn.HeaderTemplate>
                         <DataTemplate>
-                            <TextBlock Text="{loc:Loc DamagePerSec}" Margin="5" TextAlignment="Center" FontSize="12" FontWeight="Bold" Foreground="White"/>
+                            <TextBlock Text="{loc:Loc DamagePerSec}" Margin="5" TextAlignment="Center" FontSize="12" Foreground="White"/>
                         </DataTemplate>
                     </DataGridTemplateColumn.HeaderTemplate>
                 </DataGridTemplateColumn>
