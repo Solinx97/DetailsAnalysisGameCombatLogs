@@ -245,7 +245,7 @@
         <StackPanel Visibility="{Binding CombatLogUploadingFailed, Converter={StaticResource BoolToVisibility}}"  Grid.Row="2" Grid.Column="2" Grid.ColumnSpan="2" VerticalAlignment="Bottom">
             <TextBlock Text="{loc:Loc CombatLogUploadingFailed}" FontSize="16" TextAlignment="Center" TextWrapping="Wrap"
                        Margin="0" VerticalAlignment="Center" Height="60" MaxWidth="650" Foreground="Red" />
-            <Button Content="{loc:Loc Repeat}" FontSize="14" Width="100" Foreground="White" Style="{StaticResource showButton}" mvx:Bi.nd="Command OpenPlayerAnalysisCommand" />
+            <Button Content="{loc:Loc Repeat}" FontSize="14" Width="100" Style="{StaticResource showButton}" mvx:Bi.nd="Command OpenPlayerAnalysisCommand" />
         </StackPanel>
     </Grid>
 </views:MvxWpfView>

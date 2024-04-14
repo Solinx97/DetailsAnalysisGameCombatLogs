@@ -376,7 +376,7 @@ namespace CombatAnalysis.App.Localizations.Resources.GeneralAnalysis {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Analyzing.
+        ///   Looks up a localized string similar to Analysing.
         /// </summary>
         public static string Title {
             get {

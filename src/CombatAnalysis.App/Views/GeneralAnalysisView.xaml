@@ -52,18 +52,18 @@
         </StackPanel>
 
         <StackPanel Grid.Column="3" Grid.Row="1" Orientation="Horizontal"
-                    HorizontalAlignment="Center" VerticalAlignment="Bottom">
-            <Button Content="{loc:Loc Refresh}" FontSize="14" Width="100" Command="{Binding RefreshCommand}"
+                    HorizontalAlignment="Center" VerticalAlignment="Center">
+            <Button Content="{loc:Loc Refresh}" FontSize="14" Width="100" Height="35" Command="{Binding RefreshCommand}"
                     Style="{StaticResource showButton}"/>
             <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="White"
                        Text="{loc:Loc Title}" FontSize="18" FontWeight="Bold"
                        Margin="100 0" Style="{StaticResource titleText}"/>
-            <StackPanel Visibility="{Binding ResponseStatus, Converter={StaticResource IntToVisibility}, ConverterParameter=true:3}">
+            <StackPanel Visibility="{Binding ResponseStatus, Converter={StaticResource IntToVisibility}, ConverterParameter=true:3}" Margin="-5">
                 <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center"
-                       Text="{loc:Loc LoadingFailed}" Foreground="Brown" FontSize="13" FontWeight="Bold"
-                       TextWrapping="Wrap" Margin="10 0" Style="{StaticResource titleText}"/>
+                       Text="{loc:Loc LoadingFailed}" Foreground="Red" FontSize="12" FontWeight="Bold"
+                       TextWrapping="Wrap" Margin="5" Style="{StaticResource titleText}"/>
                 <Button Content="{loc:Loc Repeat}" FontSize="14" Width="100"
-                        mvx:Bi.nd="Command RepeatSaveCommand" Foreground="BlueViolet" Style="{StaticResource showButton}"/>
+                        mvx:Bi.nd="Command RepeatSaveCommand" Style="{StaticResource showButton}"/>
             </StackPanel>
         </StackPanel>
 
