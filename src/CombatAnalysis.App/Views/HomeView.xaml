@@ -53,23 +53,23 @@
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
 
-            <Border Grid.Column="0" Margin="40" CornerRadius="25" Padding="5">
-                <Border.Background>
+            <Border Grid.Column="0" Margin="40" CornerRadius="25" Padding="5" BorderThickness="2">
+                <Border.BorderBrush>
                     <LinearGradientBrush>
                         <GradientStop Color="#cad044" Offset="0.2" />
                         <GradientStop Color="#714dc6" Offset="0.6" />
                     </LinearGradientBrush>
-                </Border.Background>
+                </Border.BorderBrush>
                 
                 <Grid VerticalAlignment="Center">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="0.5*" />
                         <RowDefinition Height="2*" />
                     </Grid.RowDefinitions>
-                    
-                    <TextBlock Grid.Row="0" Margin="0 10" Text="{loc:Loc Communication}" HorizontalAlignment="Center" FontSize="16" Foreground="Black" />
+
+                    <TextBlock Grid.Row="0" Margin="0 10" Text="{loc:Loc Communication}" HorizontalAlignment="Center" FontSize="16" Foreground="White" />
                     <StackPanel Grid.Row="1">
-                        <TextBlock Text="{loc:Loc CommunicationDescribe}" Foreground="Black" TextWrapping="Wrap" HorizontalAlignment="Center" FontSize="14" />
+                        <TextBlock Text="{loc:Loc CommunicationDescribe}" Foreground="White" TextWrapping="Wrap" HorizontalAlignment="Center" FontSize="14" />
                     </StackPanel>
 
                 </Grid>
@@ -79,12 +79,12 @@
                 <Button VerticalAlignment="Top" Content="Communication" Width="145" Height="40" FontSize="14" Foreground="White" Cursor="Hand"
                         Style="{StaticResource homeButton}" mvx:Bi.nd="Command OpenLognCommand"
                         Visibility="{Binding ChatIsEnabled, Converter={StaticResource BoolToVisibility}, ConverterParameter=true:true}">
-                    <Button.Background>
+                    <Button.BorderBrush>
                         <LinearGradientBrush>
                             <GradientStop Color="#c7486f" Offset="0.7" />
                             <GradientStop Color="#94bbe9" Offset="0.35" />
                         </LinearGradientBrush>
-                    </Button.Background>
+                    </Button.BorderBrush>
                 </Button>
 
                 <Button VerticalAlignment="Top" Content="Communication" Width="145" Height="40" FontSize="14" Foreground="White" Cursor="Hand"
@@ -102,13 +102,13 @@
                            Visibility="{Binding ChatIsEnabled, Converter={StaticResource BoolToVisibility}, ConverterParameter=true:true}"/>
             </StackPanel>
 
-            <Border Grid.Column="1" Margin="40" CornerRadius="25" Padding="10">
-                <Border.Background>
+            <Border Grid.Column="1" Margin="40" CornerRadius="25" Padding="10" BorderThickness="2">
+                <Border.BorderBrush>
                     <LinearGradientBrush>
                         <GradientStop Color="#714dc6" Offset="0.2" />
                         <GradientStop Color="#cad044" Offset="0.6" />
                     </LinearGradientBrush>
-                </Border.Background>
+                </Border.BorderBrush>
                 
                 <Grid Grid.Column="1" VerticalAlignment="Center">
                     <Grid.RowDefinitions>
@@ -116,22 +116,22 @@
                         <RowDefinition Height="2*" />
                     </Grid.RowDefinitions>
 
-                    <TextBlock Grid.Row="0" Margin="0 10" Text="{loc:Loc Analyzing}" HorizontalAlignment="Center" FontSize="16" Foreground="Black" />
+                    <TextBlock Grid.Row="0" Margin="0 10" Text="{loc:Loc Analysing}" HorizontalAlignment="Center" FontSize="16" Foreground="White" />
                     <StackPanel Grid.Row="1">
-                        <TextBlock Text="{loc:Loc AnalyzingDescribe}"
-                           TextWrapping="Wrap" HorizontalAlignment="Center" FontSize="14" Foreground="Black" MaxWidth="400"/>
+                        <TextBlock Text="{loc:Loc AnalysingDescribe}"
+                           TextWrapping="Wrap" HorizontalAlignment="Center" FontSize="14" Foreground="White" MaxWidth="400"/>
                     </StackPanel>
                 </Grid>
             </Border>
 
-            <Button Grid.Column="1" Grid.Row="1" VerticalAlignment="Top" Content="Analyz" Width="145" Height="40" FontSize="14" Foreground="White" Cursor="Hand"
+            <Button Grid.Column="1" Grid.Row="1" VerticalAlignment="Top" Content="{loc:Loc Analysing}" Width="165" Height="40" FontSize="14" Foreground="White" Cursor="Hand"
                     Style="{StaticResource homeButton}" mvx:Bi.nd="Command OpenCombatAnalysisCommand">
-                <Button.Background>
+                <Button.BorderBrush>
                     <LinearGradientBrush>
                         <GradientStop Color="#94bbe9" Offset="0.7" />
                         <GradientStop Color="#c7486f" Offset="0.35" />
                     </LinearGradientBrush>
-                </Button.Background>
+                </Button.BorderBrush>
             </Button>
         </Grid>
     </Grid>

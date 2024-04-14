@@ -117,10 +117,10 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="Analyzing" xml:space="preserve">
+  <data name="Analysing" xml:space="preserve">
     <value>Анализ боев</value>
   </data>
-  <data name="AnalyzingDescribe" xml:space="preserve">
+  <data name="AnalysingDescribe" xml:space="preserve">
     <value>Загрузка или анализ ранее загруженых логов боев. Получение подробной информации о событиях, произошедших во время боя. Просмотр информации об игроках.</value>
   </data>
   <data name="Communication" xml:space="preserve">
