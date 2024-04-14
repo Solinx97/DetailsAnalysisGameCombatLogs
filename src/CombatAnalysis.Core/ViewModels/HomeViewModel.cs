@@ -17,6 +17,7 @@ public class HomeViewModel : ParentTemplate<bool>, IAuthObserver
         _mvvmNavigation = mvvmNavigation;
 
         OpenChatCommand = new MvxAsyncCommand(OpenChatAsync);
+        OpenLognCommand = new MvxAsyncCommand(OpenLoginAsync);
         OpenCombatAnalysisCommand = new MvxAsyncCommand(OpenCombatAnalysisAsync);
 
         BasicTemplate = ParentTemplate.Basic;
@@ -29,6 +30,8 @@ public class HomeViewModel : ParentTemplate<bool>, IAuthObserver
     #region Command
 
     public IMvxAsyncCommand OpenChatCommand { get; set; }
+
+    public IMvxAsyncCommand OpenLognCommand { get; set; }
 
     public IMvxAsyncCommand OpenCombatAnalysisCommand { get; set; }
 
@@ -55,6 +58,11 @@ public class HomeViewModel : ParentTemplate<bool>, IAuthObserver
     public async Task OpenChatAsync()
     {
         await _mvvmNavigation.Navigate<ChatViewModel>();
+    }
+
+    public async Task OpenLoginAsync()
+    {
+        await _mvvmNavigation.Navigate<LoginViewModel>();
     }
 
     public async Task OpenCombatAnalysisAsync()

@@ -19,6 +19,7 @@ public class ChatViewModel : ParentTemplate
     private readonly IHttpClientHelper _httpClientHelper;
     private readonly ILogger _logger;
 
+    private bool _isChatSelected;
     private IImprovedMvxViewModel _personalChatMessagesTemplate;
     private IImprovedMvxViewModel _groupChatMessagesTemplate;
     private IMemoryCache _memoryCache;
@@ -67,6 +68,16 @@ public class ChatViewModel : ParentTemplate
     #endregion
 
     #region Properties
+
+    public bool IsChatSelected
+    {
+        get { return _isChatSelected; }
+
+        set
+        {
+            SetProperty(ref _isChatSelected, value);
+        }
+    }
 
     public IImprovedMvxViewModel PersonalChatMessagesTemplate
     {
@@ -153,6 +164,7 @@ public class ChatViewModel : ParentTemplate
             if (value != null)
             {
                 SelectedPersonalChatIndex = -1;
+                IsChatSelected = true;
 
                 GroupChatMessagesTemplate.Handler.PropertyUpdate<GroupChatMessagesViewModel>(GroupChatMessagesTemplate, nameof(GroupChatMessagesViewModel.SelectedChat), value);
             }
@@ -178,6 +190,8 @@ public class ChatViewModel : ParentTemplate
             if (value != null)
             {
                 SelectedMyGroupChatIndex = -1;
+                IsChatSelected = true;
+
                 PersonalChatMessagesTemplate.Handler.PropertyUpdate<PersonalChatMessagesVewModel>(PersonalChatMessagesTemplate, nameof(PersonalChatMessagesVewModel.SelectedChat), value);
             }
         }
@@ -311,6 +325,7 @@ public class ChatViewModel : ParentTemplate
     private async Task LoadGroupChatsAsync()
     {
         GroupChatLoadingResponse = LoadingStatus.Pending;
+        IsChatSelected = false;
 
         try
         {
@@ -366,6 +381,7 @@ public class ChatViewModel : ParentTemplate
     private async Task LoadPersonalChatsAsync()
     {
         PersonalChatLoadingResponse = LoadingStatus.Pending;
+        IsChatSelected = false;
 
         try
         {

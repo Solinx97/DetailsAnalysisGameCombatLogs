@@ -5,7 +5,8 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d" Name="messageChat">
 
-    <Border CornerRadius="0 10 10 10" Background="{Binding ElementName=messageChat, Path=Color}" Padding="10 7" HorizontalAlignment="Left" Margin="45 5 0 0">
+    <Border CornerRadius="0 10 10 10" Padding="10 7" HorizontalAlignment="Left" Margin="45 5 0 0"
+            BorderBrush="{Binding ElementName=messageChat, Path=Color}" BorderThickness="2">
         <TextBlock Text="{Binding ElementName=messageChat, Path=Message}" FontSize="14" Foreground="#ffff" VerticalAlignment="Center" Margin="3 0 3 2"/>
     </Border>
 </UserControl>

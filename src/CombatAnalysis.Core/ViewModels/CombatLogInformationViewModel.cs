@@ -517,6 +517,8 @@ public class CombatLogInformationViewModel : ParentTemplate, CombatParser.Interf
         if (combatLogsData == null)
         {
             CombatLogLoadingStatus = LoadingStatus.Failed;
+            CombatLogs = new ObservableCollection<CombatLogModel>();
+
             return;
         }
 
@@ -545,6 +547,8 @@ public class CombatLogInformationViewModel : ParentTemplate, CombatParser.Interf
         if (combatLogsByUser == null)
         {
             CombatLogByUserLoadingStatus = LoadingStatus.Failed;
+            CombatLogs = new ObservableCollection<CombatLogModel>();
+
             return;
         }
 

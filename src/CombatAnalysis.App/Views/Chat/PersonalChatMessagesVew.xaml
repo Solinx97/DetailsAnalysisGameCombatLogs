@@ -37,7 +37,7 @@
                 <DropShadowEffect BlurRadius="20" ShadowDepth="1" Direction="-90" Opacity="0.1"/>
             </Grid.Effect>
 
-            <TextBlock Text="{Binding SelectedChatName}" FontSize="16" Margin="20 15" HorizontalAlignment="Left"/>
+            <TextBlock Text="{Binding SelectedChatName}" FontSize="16" Margin="20 15" HorizontalAlignment="Left" Foreground="White"/>
 
             <StackPanel Orientation="Horizontal" Margin="0 0 10 0" HorizontalAlignment="Right">
                 <TextBlock Text="and 3 others" VerticalAlignment="Center" Margin="7 0" Foreground="#8b8a8f" FontSize="11" />
@@ -48,12 +48,19 @@
             </StackPanel>
         </Grid>
         
-        <TextBlock Name="myCustomerId" Text="{Binding Customer.Id}" Visibility="Collapsed"/>
-        <ListBox Name="personalChat" Grid.Row="1" HorizontalContentAlignment="Stretch" Margin="0" ItemsSource="{Binding Messages}">
+        <TextBlock Name="myCustomerId" Text="{Binding Customer.Id}" Visibility="Hidden"/>
+        <ListBox Name="personalChat" Grid.Row="1" HorizontalContentAlignment="Stretch" Margin="0" ItemsSource="{Binding Messages}" Background="Transparent">
+            <ListBox.BorderBrush>
+                <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                    <GradientStop Color="#462ADB" Offset="0"/>
+                    <GradientStop Color="#DA34AE" Offset="0.75"/>
+                    <GradientStop Color="#8A16C1" Offset="1"/>
+                </LinearGradientBrush>
+            </ListBox.BorderBrush>
+            
             <ListBox.ItemTemplate>
                 <DataTemplate>
                     <Grid>
-                        <uc:ChatSeparator Title="{Binding Path=DayTimeType, Converter={StaticResource WhenTypeToString}}"/>
                         <StackPanel>
                             <StackPanel.Visibility>
                                 <MultiBinding Converter="{StaticResource MultiplyToVisibility}" ConverterParameter="true">
@@ -63,7 +70,7 @@
                             </StackPanel.Visibility>
 
                             <uc:UserChat UserName="{Binding Path=Username}"/>
-                            <uc:MessageChat Color="#ff82a3" Message="{Binding Path=Message}"/>
+                            <uc:MessageChat Color="#45B69C" Message="{Binding Path=Message}"/>
                             <StackPanel Orientation="Horizontal">
                                 <TextBlock Text="{Binding Path=Time, StringFormat=hh\\:mm}" Style="{StaticResource timeText}"/>
                             </StackPanel>
@@ -78,7 +85,7 @@
                             </StackPanel.Visibility>
                             
                             <uc:UserChat HorizontalAlignment="Right" UserName="{Binding Path=Username}"/>
-                            <uc:MyMessageChat Message="{Binding Path=Message}"/>
+                            <uc:MyMessageChat Color="#96CDFF" Message="{Binding Path=Message}"/>
                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
                                 <TextBlock Text="{Binding Path=Time, StringFormat=hh\\:mm}" Style="{StaticResource timeTextRight}"/>
                             </StackPanel>
@@ -95,25 +102,25 @@
             </Grid.ColumnDefinitions>
 
             <Grid>
-                <TextBlock Margin="15 0 120 0" VerticalAlignment="Center" Foreground="#868686" Panel.ZIndex="1"
+                <TextBlock Margin="15 0 120 0" VerticalAlignment="Center" Foreground="White" Panel.ZIndex="1"
                                    IsHitTestVisible="False" Text="{loc:Loc TypeMessage}" Visibility="{Binding ElementName=txtMessage, Path=Text.IsEmpty, Converter={StaticResource BoolToVisibility}}"/>
-                <TextBox Name="txtMessage" Style="{StaticResource messageTextBox}" Text="{Binding Message}"/>
+                <TextBox Name="txtMessage" Style="{StaticResource messageTextBox}" Text="{Binding Message}" Foreground="White"/>
 
                 <StackPanel Orientation="Horizontal" Margin="0 0 8 0" HorizontalAlignment="Right" VerticalAlignment="Center">
                     <Button Style="{StaticResource textBoxButton}" ToolTip="{loc:Loc Copy}">
-                        <Icon:PackIconMaterial Kind="BookmarkCheckOutline" Foreground="#a6a6a6"/>
+                        <Icon:PackIconMaterial Kind="BookmarkCheckOutline" Foreground="White"/>
                     </Button>
                     <Button Style="{StaticResource textBoxButton}" ToolTip="{loc:Loc AttachDocument}">
-                        <Icon:PackIconMaterial Kind="Paperclip" Foreground="#a6a6a6"/>
+                        <Icon:PackIconMaterial Kind="Paperclip" Foreground="White"/>
                     </Button>
                     <Button Style="{StaticResource textBoxButton}" ToolTip="{loc:Loc CreateVoiceMessage}">
-                        <Icon:PackIconMaterial Kind="Microphone" Foreground="#a6a6a6"/>
+                        <Icon:PackIconMaterial Kind="Microphone" Foreground="White"/>
                     </Button>
                 </StackPanel>
             </Grid>
 
             <Button Grid.Column="1" Margin="5 0 0 0" Style="{StaticResource textBoxButton}" Command="{Binding SendMessageCommand}" ToolTip="{loc:Loc SendMessage}">
-                <Icon:PackIconMaterial Kind="Send" Margin="3 0 0 2" Width="16" Foreground="#6f59d4">
+                <Icon:PackIconMaterial Kind="Send" Margin="3 0 0 2" Width="16" Foreground="#51A3A3">
                     <Icon:PackIconMaterial.LayoutTransform>
                         <RotateTransform Angle="-45"/>
                     </Icon:PackIconMaterial.LayoutTransform>

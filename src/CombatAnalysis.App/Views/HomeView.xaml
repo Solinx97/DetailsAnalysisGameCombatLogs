@@ -70,22 +70,37 @@
                     <TextBlock Grid.Row="0" Margin="0 10" Text="{loc:Loc Communication}" HorizontalAlignment="Center" FontSize="16" Foreground="Black" />
                     <StackPanel Grid.Row="1">
                         <TextBlock Text="{loc:Loc CommunicationDescribe}" Foreground="Black" TextWrapping="Wrap" HorizontalAlignment="Center" FontSize="14" />
-                        <TextBlock Text="{loc:Loc LoginRequired}" Foreground="Black" Opacity="0.7" HorizontalAlignment="Center" Margin="5"
-                           Visibility="{Binding ChatIsEnabled, Converter={StaticResource BoolToVisibility}, ConverterParameter=true:true}"/>
                     </StackPanel>
 
                 </Grid>
             </Border>
 
-            <Button Grid.Row="1" VerticalAlignment="Top" Content="Communication" Width="145" Height="40" FontSize="14" Foreground="White" Cursor="Hand"
-                    Style="{StaticResource homeButton}" mvx:Bi.nd="Command OpenChatCommand">
-                <Button.Background>
-                    <LinearGradientBrush>
-                        <GradientStop Color="#c7486f" Offset="0.7" />
-                        <GradientStop Color="#94bbe9" Offset="0.35" />
-                    </LinearGradientBrush>
-                </Button.Background>
-            </Button>
+            <StackPanel Grid.Row="1">
+                <Button VerticalAlignment="Top" Content="Communication" Width="145" Height="40" FontSize="14" Foreground="White" Cursor="Hand"
+                        Style="{StaticResource homeButton}" mvx:Bi.nd="Command OpenLognCommand"
+                        Visibility="{Binding ChatIsEnabled, Converter={StaticResource BoolToVisibility}, ConverterParameter=true:true}">
+                    <Button.Background>
+                        <LinearGradientBrush>
+                            <GradientStop Color="#c7486f" Offset="0.7" />
+                            <GradientStop Color="#94bbe9" Offset="0.35" />
+                        </LinearGradientBrush>
+                    </Button.Background>
+                </Button>
+
+                <Button VerticalAlignment="Top" Content="Communication" Width="145" Height="40" FontSize="14" Foreground="White" Cursor="Hand"
+                        Style="{StaticResource homeButton}" mvx:Bi.nd="Command OpenChatCommand"
+                        Visibility="{Binding ChatIsEnabled, Converter={StaticResource BoolToVisibility}, ConverterParameter=true:false}">
+                    <Button.Background>
+                        <LinearGradientBrush>
+                            <GradientStop Color="#c7486f" Offset="0.7" />
+                            <GradientStop Color="#94bbe9" Offset="0.35" />
+                        </LinearGradientBrush>
+                    </Button.Background>
+                </Button>
+
+                <TextBlock Text="{loc:Loc LoginRequired}" Opacity="0.7" HorizontalAlignment="Center" Margin="5" Foreground="White"
+                           Visibility="{Binding ChatIsEnabled, Converter={StaticResource BoolToVisibility}, ConverterParameter=true:true}"/>
+            </StackPanel>
 
             <Border Grid.Column="1" Margin="40" CornerRadius="25" Padding="10">
                 <Border.Background>

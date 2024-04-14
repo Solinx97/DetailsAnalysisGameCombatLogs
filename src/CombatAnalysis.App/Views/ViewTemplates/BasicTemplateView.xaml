@@ -16,7 +16,7 @@
 
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="auto"/>
+            <RowDefinition Height="0.15*"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="0.1*"/>
         </Grid.RowDefinitions>
@@ -35,51 +35,73 @@
             <converters:TheNativeBoolToXAMLBoolConverter x:Key="BoolToXAMLBool" />
         </Grid.Resources>
 
-        <Border CornerRadius="0 20 20 0" Grid.Column="2" Grid.ColumnSpan="2"
-                Margin="-25 0 0 0 " Grid.RowSpan="3" Background="#283a4b" />
-
-        <Border CornerRadius="20" Grid.RowSpan="3" Panel.ZIndex="2" Background="#6145e3">
-            <Grid>
-                <TextBlock Text="Details Analysis GCL" Foreground="White" FontSize="16"
-                           VerticalAlignment="Top" HorizontalAlignment="Center" FontWeight="SemiBold"
-                           Margin="0 30 0 0">
-                    <TextBlock.LayoutTransform>
-                        <RotateTransform Angle="90"/>
-                    </TextBlock.LayoutTransform>
-                </TextBlock>
-            </Grid>
+        <Border CornerRadius="25 25 25 25" BorderThickness="3" Grid.Column="2" Grid.ColumnSpan="2"
+                Margin="-55 0 0 0 " Grid.RowSpan="3" Background="#283a4b">
+            <Border.BorderBrush>
+                <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                    <GradientStop Color="#462ADB" Offset="0"/>
+                    <GradientStop Color="#DA34AE" Offset="0.75"/>
+                    <GradientStop Color="#8A16C1" Offset="1"/>
+                </LinearGradientBrush>
+            </Border.BorderBrush>
         </Border>
 
-        <StackPanel Grid.Column="2" Orientation="Horizontal">
-            <Button Style="{StaticResource textBoxButton}" ToolTip="{loc:Loc Menu}">
-                <Icon:PackIconMaterial Kind="DotsVertical" Foreground="White"/>
-            </Button>
-            <Button Style="{StaticResource textBoxButton}" ToolTip="{loc:Loc Notifications}">
-                <Icon:PackIconMaterial Kind="BellOutline" Foreground="White"/>
-            </Button>
-        </StackPanel>
-        
-        <Border Grid.Column="1" Grid.RowSpan="3" CornerRadius="0 20 20 0"
-                Panel.ZIndex="1" Margin="-25 0 0 0" Background="#283a4b" BorderThickness="2" BorderBrush="White">
+        <Border CornerRadius="20 0 0 20" Grid.RowSpan="3" Panel.ZIndex="2" Background="#2C5784">
+            <TextBlock Text="Details Analysis GCL" Foreground="White" FontSize="16"
+                           VerticalAlignment="Top" HorizontalAlignment="Center" FontWeight="SemiBold"
+                           Margin="0 30 0 0">
+                <TextBlock.LayoutTransform>
+                    <RotateTransform Angle="90"/>
+                </TextBlock.LayoutTransform>
+            </TextBlock>
+        </Border>
+
+        <Border Grid.Column="1" CornerRadius="0"
+                Panel.ZIndex="1" Margin="-25 0 0 0" Background="#283a4b" BorderThickness="0 3 0 0">
+            <Border.BorderBrush>
+                <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                    <GradientStop Color="#462ADB" Offset="0"/>
+                    <GradientStop Color="#DA34AE" Offset="0.75"/>
+                    <GradientStop Color="#8A16C1" Offset="1"/>
+                </LinearGradientBrush>
+            </Border.BorderBrush>
+
             <StackPanel>
-                <StackPanel Margin="25 10" Visibility="{Binding IsAuth, Converter={StaticResource BoolToVisibility}, ConverterParameter=true:true}">
-                    <Button Style="{StaticResource accountButton}" Margin="15 10" Content="{loc:Loc Login}"
-                            IsEnabled="{Binding IsLoginNotActivated}" mvx:Bi.nd="Command LoginCommand" TabIndex="10"/>
-                    <Button Style="{StaticResource accountButton}" Margin="15 10" Content="{loc:Loc Registration}"
-                            IsEnabled="{Binding IsRegistrationNotActivated}" mvx:Bi.nd="Command RegistrationCommand"/>
-                </StackPanel>
-
-                <StackPanel Margin="25 10" Visibility="{Binding IsAuth, Converter={StaticResource BoolToVisibility}, ConverterParameter=true:false}">
-                    <StackPanel>
-                        <Button Style="{StaticResource textBoxButton}" IsEnabled="False" Opacity="0.5" ToolTip="{loc:Loc Profile}">
-                            <Icon:PackIconMaterial Kind="NaturePeople" Foreground="White"/>
-                        </Button>
-                        <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Margin="15"
-                               FontFamily="Comic Sans MS" FontSize="16" Text="{Binding Username}" Foreground="White" />
+                <StackPanel Margin="5 10" Visibility="{Binding IsAuth, Converter={StaticResource BoolToVisibility}, ConverterParameter=true:true}">
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+                        <Icon:PackIconMaterial Kind="Account" Foreground="White" Width="15" Height="15" Margin="10 5"/>
+                        <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="16" Text="Account" Foreground="White" />
                     </StackPanel>
-                    <Button Style="{StaticResource accountButton}" Content="{loc:Loc Logout}" Width="100" Height="30" mvx:Bi.nd="Command LogoutCommand"/>
+                    <StackPanel Margin="25 0" Orientation="Horizontal" VerticalAlignment="Top">
+                        <Button Style="{StaticResource showButton}" Margin="5" Width="85" Height="35" FontSize="11" Content="{loc:Loc Login}"
+                            IsEnabled="{Binding IsLoginNotActivated}" mvx:Bi.nd="Command LoginCommand"/>
+                        <Button Style="{StaticResource showButton}" Margin="5" Width="85" Height="35" FontSize="11" Content="{loc:Loc Registration}"
+                            IsEnabled="{Binding IsRegistrationNotActivated}" mvx:Bi.nd="Command RegistrationCommand"/>
+                    </StackPanel>
                 </StackPanel>
 
+                <StackPanel Margin="5 10" Visibility="{Binding IsAuth, Converter={StaticResource BoolToVisibility}, ConverterParameter=true:false}">
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="5">
+                        <Icon:PackIconMaterial Kind="AccountCircle" Foreground="White" Width="15" Height="15" Margin="10 5"/>
+                        <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center"
+                               FontSize="16" Text="{Binding Username}" Foreground="White" />
+                    </StackPanel>
+                    <Button Style="{StaticResource showButton}" Content="{loc:Loc Logout}" Width="85" Height="35" mvx:Bi.nd="Command LogoutCommand"/>
+                </StackPanel>
+            </StackPanel>
+        </Border>
+
+        <Border Grid.Column="1" Grid.Row="1" Grid.RowSpan="3" CornerRadius="0 20 20 0"
+                Panel.ZIndex="1" Margin="-25 0 0 0" Background="#283a4b" BorderThickness="3">
+            <Border.BorderBrush>
+                <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                    <GradientStop Color="#462ADB" Offset="0"/>
+                    <GradientStop Color="#DA34AE" Offset="0.75"/>
+                    <GradientStop Color="#8A16C1" Offset="1"/>
+                </LinearGradientBrush>
+            </Border.BorderBrush>
+            
+            <StackPanel Margin="0 20">
                 <StackPanel Margin="10 5 0 0">
                     <uc:MenuButton Title="{loc:Loc Home}" Icon="HomeOutline" IsActive="{Binding Step, Converter={StaticResource IntToXAMLBool}, ConverterParameter=-1}"
                                    OnClick="{Binding ToHomeCommand}"/>
@@ -157,7 +179,7 @@
             </StackPanel>
         </Border>
 
-        <StackPanel Grid.Row="2" Grid.Column="1" VerticalAlignment="Bottom" Panel.ZIndex="3" Margin="5" Orientation="Horizontal">
+        <StackPanel Grid.Row="2" Grid.Column="1" VerticalAlignment="Bottom" Panel.ZIndex="3" Margin="10" Orientation="Horizontal">
             <TextBlock Text="{Binding AppVersionType}" FontSize="13" Foreground="White"/>
             <TextBlock Text="  " FontSize="13" Foreground="White"/>
             <TextBlock Text="{Binding AppVersion}" FontSize="13" FontWeight="DemiBold" Foreground="White"/>

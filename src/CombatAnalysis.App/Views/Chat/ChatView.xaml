@@ -59,7 +59,7 @@
 
                 <StackPanel Margin="30 0 15 0">
                     <StackPanel Orientation="Horizontal">
-                        <TextBlock Text="{loc:Loc GroupChats}" VerticalAlignment="Center" Margin="25 0 0 5" Style="{StaticResource titleText}"/>
+                        <TextBlock Text="{loc:Loc GroupChats}" FontSize="15" VerticalAlignment="Center" Margin="25 0 0 5" Style="{StaticResource titleText}" Foreground="White"/>
                         <Button Style="{StaticResource textBoxButton}" VerticalAlignment="Center" mvx:Bi.nd="Command RefreshGroupChatsCommand" ToolTip="{loc:Loc RefreshGroupChats}">
                             <Icon:PackIconMaterial Kind="Recycle" Margin="0" Foreground="#a6a6a6" Width="20" Height="20"/>
                         </Button>
@@ -68,12 +68,12 @@
                         </Button>
                     </StackPanel>
 
-                    <TextBlock Text="{loc:Loc Loading}" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="16"
+                    <TextBlock Text="{loc:Loc Loading}" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="12" Foreground="White" Margin="5"
                                Visibility="{Binding GroupChatLoadingResponse, Converter={StaticResource IntToVisibility}, ConverterParameter='true:1:='}"/>
-                    <TextBlock Text="{loc:Loc LoadingFailed}" Foreground="Brown" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="16"
+                    <TextBlock Text="{loc:Loc LoadingFailed}" Foreground="Red" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="12" Margin="5"
                                Visibility="{Binding GroupChatLoadingResponse, Converter={StaticResource IntToVisibility}, ConverterParameter='true:3:='}"/>
                     <StackPanel Visibility="{Binding GroupChatLoadingResponse, Converter={StaticResource IntToVisibility}, ConverterParameter='true:1:>'}">
-                        <TextBlock Text="{loc:Loc NoGroupChats}" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="16"
+                        <TextBlock Text="{loc:Loc NoGroupChats}" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="12" Foreground="White" Margin="5"
                                Visibility="{Binding IsShowEmptyMyGroupChat, Converter={StaticResource BoolToVisibility}, ConverterParameter='true:false'}"/>
                         <ListBox HorizontalContentAlignment="Stretch" Grid.Row="1" Margin="10 10 10 30"
                              ItemsSource="{Binding MyGroupChats}" SelectedIndex="{Binding SelectedMyGroupChatIndex}" 
@@ -87,21 +87,21 @@
                         </ListBox>
                     </StackPanel>
 
-                    <Button Content="{loc:Loc ShowAll}" Style="{StaticResource showButton}" IsEnabled="False"/>
+                    <Button Content="{loc:Loc ShowAll}" Style="{StaticResource showButton}" IsEnabled="False" Foreground="White" Width="100"/>
 
                     <StackPanel Orientation="Horizontal">
-                        <TextBlock Text="{loc:Loc PersonalMessages}" Margin="25 0 0 5" Style="{StaticResource titleText}" VerticalAlignment="Center"/>
+                        <TextBlock Text="{loc:Loc PersonalMessages}" FontSize="15" Margin="25 0 0 5" Style="{StaticResource titleText}" VerticalAlignment="Center" Foreground="White"/>
                         <Button Style="{StaticResource textBoxButton}" VerticalAlignment="Center" mvx:Bi.nd="Command RefreshPersonalChatsCommand" ToolTip="{loc:Loc RefreshPersonalMessages}">
                             <Icon:PackIconMaterial Kind="Recycle" Margin="0" Foreground="#a6a6a6" Width="20" Height="20"/>
                         </Button>
                     </StackPanel>
 
-                    <TextBlock Text="{loc:Loc Loading}" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="16"
+                    <TextBlock Text="{loc:Loc Loading}" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="12" Foreground="White" Margin="5"
                                Visibility="{Binding PersonalChatLoadingResponse, Converter={StaticResource IntToVisibility}, ConverterParameter='true:1:='}"/>
-                    <TextBlock Text="{loc:Loc LoadingFailed}" Foreground="Brown" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="16"
+                    <TextBlock Text="{loc:Loc LoadingFailed}" Foreground="Red" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="12" Margin="5"
                                Visibility="{Binding PersonalChatLoadingResponse, Converter={StaticResource IntToVisibility}, ConverterParameter='true:3:='}"/>
                     <StackPanel Visibility="{Binding PersonalChatLoadingResponse, Converter={StaticResource IntToVisibility}, ConverterParameter='true:1:>'}">
-                        <TextBlock Text="{loc:Loc NoPersonalMessages}" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="16"
+                        <TextBlock Text="{loc:Loc NoPersonalMessages}" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="12" Foreground="White" Margin="5"
                                Visibility="{Binding IsShowEmptyPersonalChat, Converter={StaticResource BoolToVisibility}, ConverterParameter='true:false'}"/>
                         
                         <TextBlock Name="myAccountId" Text="{Binding MyCustomer.Id}" Visibility="Collapsed"/>
@@ -135,33 +135,43 @@
                         </ListBox>
                     </StackPanel>
 
-                    <Button Content="{loc:Loc ShowAll}" Style="{StaticResource showButton}" IsEnabled="False"/>
+                    <Button Content="{loc:Loc ShowAll}" Style="{StaticResource showButton}" IsEnabled="False" Foreground="White" Width="100"/>
                 </StackPanel>
             </Grid>
         </Border>
 
         <StackPanel Grid.Row="0" Grid.Column="2" Grid.ColumnSpan="2" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="30 0">
             <StackPanel>
-                <TextBlock VerticalAlignment="Center" Text="{loc:Loc StartChatting}" FontSize="18"/>
+                <TextBlock VerticalAlignment="Center" Text="{loc:Loc StartChatting}" FontSize="16" Foreground="White"/>
                 <StackPanel Orientation="Horizontal">
-                    <ComboBox Height="30" Padding="5" Width="250" IsEditable="True" ItemsSource="{Binding Customers}" SelectedIndex="{Binding SelectedUsersIndex}"
-                          StaysOpenOnEdit="True" Text="{Binding InputedUsername}" DisplayMemberPath="Username"/>
+                    <ComboBox Style="{DynamicResource ComboBoxStyle1}" Width="170" VerticalAlignment="Center"
+                              ItemsSource="{Binding Customers}" SelectedIndex="{Binding SelectedUsersIndex}"
+                               StaysOpenOnEdit="True" Text="{Binding InputedUsername}" DisplayMemberPath="Username"/>
                     <StackPanel x:Name="usersEmail" Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center"
                                 IsEnabled="{Binding SelectedUsersIndex, Converter={StaticResource IntToXAMLBool}, ConverterParameter='0:>='}"
                                 Margin="25 0">
                         <Button Style="{StaticResource textBoxButton}" mvx:Bi.nd="Command CreatePersonalChatCommand" ToolTip="{loc:Loc StartDialog}">
-                            <Icon:PackIconMaterial Style="{StaticResource startDialogStyle}" Kind="Message"/>
+                            <Icon:PackIconMaterial Style="{StaticResource startDialogStyle}" Kind="Message" Foreground="White"/>
                         </Button>
                     </StackPanel>
                 </StackPanel>
             </StackPanel>
         </StackPanel>
 
-        <Border CornerRadius="15" Background="WhiteSmoke" Grid.Column="3" Grid.Row="1" Grid.RowSpan="3" 
+        <Border CornerRadius="20" Background="Transparent" Grid.Column="3" Grid.Row="1" Grid.RowSpan="3" BorderThickness="2"
                 Margin="0 -10 30 30" ClipToBounds="True">
+            <Border.BorderBrush>
+                <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                    <GradientStop Color="#462ADB" Offset="0"/>
+                    <GradientStop Color="#DA34AE" Offset="0.75"/>
+                    <GradientStop Color="#8A16C1" Offset="1"/>
+                </LinearGradientBrush>
+            </Border.BorderBrush>
+            
             <Grid>
                 <TextBlock Name="choiceChat" VerticalAlignment="Center" HorizontalAlignment="Center" Text="{loc:Loc SelectChatForTalking}"
-                           FontSize="18" FontStyle="Italic"/>
+                           FontSize="18" FontStyle="Italic" Foreground="White" 
+                           Visibility="{Binding IsChatSelected, Converter={StaticResource BoolToVisibility}, ConverterParameter=true:true}"/>
 
                 <ContentControl Visibility="{Binding SelectedMyGroupChatIndex, Converter={StaticResource IntToVisibility}, ConverterParameter='true:0:>='}"
                                 Content="{Binding GroupChatMessagesTemplate}">

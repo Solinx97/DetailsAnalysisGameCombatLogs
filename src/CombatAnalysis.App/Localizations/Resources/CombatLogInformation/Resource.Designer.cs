@@ -61,11 +61,11 @@ namespace CombatAnalysis.App.Localizations.Resources.CombatLogInformation {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Analyzing.
+        ///   Looks up a localized string similar to Analysing.
         /// </summary>
-        public static string Analyzing {
+        public static string Analysing {
             get {
-                return ResourceManager.GetString("Analyzing", resourceCulture);
+                return ResourceManager.GetString("Analysing", resourceCulture);
             }
         }
         
