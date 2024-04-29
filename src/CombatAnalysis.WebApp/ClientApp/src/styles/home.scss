@@ -1,7 +1,29 @@
 .home {
     display: flex;
-    flex-direction: column;
-    gap: 20px;
+    justify-content: center;
+    gap: 50px;
+
+    &__item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 25px;
+
+        .preview {
+            box-shadow: 2px 2px 2px 2px gray;
+            border-radius: 20px;
+            padding: 30px;
+            font-size: 17px;
+
+            &__responsibilities .form-check {
+                margin: 10px;
+
+                label {
+                    opacity: 1;
+                }
+            }
+        }
+    }
 
     .should-be-authorize {
         position: fixed;
@@ -13,10 +35,11 @@
         width: 500px;
     }
 
-    .communication-alert {
+    .title {
         display: flex;
         align-items: center;
         gap: 25px;
+        height: 35px;
 
         .authorize-alert {
             width: 40px;

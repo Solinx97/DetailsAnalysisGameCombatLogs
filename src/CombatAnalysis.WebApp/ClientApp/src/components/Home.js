@@ -35,8 +35,8 @@ const Home = () => {
 
     return (
         <div className="home">
-            <div>
-                <div className="communication-alert">
+            <div className="home__item">
+                <div className="title">
                     <div>{t("Communication")}</div>
                     {customer === null &&
                         <div className="btn-shadow authorize-alert" onClick={() => navigate("/login")} title={t("GoToLogin")}>
@@ -47,10 +47,48 @@ const Home = () => {
                         </div>
                     }
                 </div>
+                <div className="preview">
+                    <p>Communication is:</p>
+                    <div className="preview__responsibilities">
+                        <div className="form-check">
+                            <input className="form-check-input" type="checkbox" name="flexRadioDefault" id="flexRadioDefault1" checked disabled />
+                            <label className="form-check-label" htmlFor="flexRadioDefault1">Explore your feed</label>
+                        </div>
+                        <div className="form-check">
+                            <input className="form-check-input" type="checkbox" name="flexRadioDefault" id="flexRadioDefault1" checked disabled />
+                            <label className="form-check-label" htmlFor="flexRadioDefault1">Chatting with friends in chats</label>
+                        </div>
+                        <div className="form-check">
+                            <input className="form-check-input" type="checkbox" name="flexRadioDefault" id="flexRadioDefault1" checked disabled />
+                            <label className="form-check-label" htmlFor="flexRadioDefault1">Create or join to community</label>
+                        </div>
+                        <div className="form-check">
+                            <input className="form-check-input" type="checkbox" name="flexRadioDefault" id="flexRadioDefault1" checked disabled />
+                            <label className="form-check-label" htmlFor="flexRadioDefault1">Add users in friends and see friends activities</label>
+                        </div>
+                    </div>
+                </div>
                 <button className="btn btn-info" onClick={() => navigate("/feed")} disabled={customer == null}>{t("Open")}</button>
             </div>
-            <div>
-                <div>{t("Analyzing")}</div>
+            <div className="home__item">
+                <div className="title">{t("Analyzing")}</div>
+                <div className="preview">
+                    <p>Combat logs are:</p>
+                    <div className="preview__responsibilities">
+                        <div className="form-check">
+                            <input className="form-check-input" type="checkbox" name="flexRadioDefault" id="flexRadioDefault1" checked disabled />
+                            <label className="form-check-label" htmlFor="flexRadioDefault1">Save Combat logs</label>
+                        </div>
+                        <div className="form-check">
+                            <input className="form-check-input" type="checkbox" name="flexRadioDefault" id="flexRadioDefault1" checked disabled />
+                            <label className="form-check-label" htmlFor="flexRadioDefault1">Explore your or other users Combat logs</label>
+                        </div>
+                        <div className="form-check">
+                            <input className="form-check-input" type="checkbox" name="flexRadioDefault" id="flexRadioDefault1" checked disabled />
+                            <label className="form-check-label" htmlFor="flexRadioDefault1">Share link to Combat logs with friends</label>
+                        </div>
+                    </div>
+                </div>
                 <button className="btn btn-info" onClick={() => navigate("/main-information")}>{t("Open")}</button>
             </div>
             {shouldBeAuthorize &&

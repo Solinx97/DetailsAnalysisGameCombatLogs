@@ -1,4 +1,26 @@
-﻿.main-information__container {
+﻿.main-information {
+    &__container {
+        display: flex;
+        margin: 25px 0;
+        gap: 50px;
+
+        .preview {
+            box-shadow: 2px 2px 2px 2px gray;
+            border-radius: 20px;
+            padding: 30px;
+            margin: 0 50px;
+            font-size: 17px;
+
+            &__responsibilities .form-check {
+                margin: 10px;
+
+                label {
+                    opacity: 1;
+                }
+            }
+        }
+    }
+
     .title {
         display: flex;
         justify-content: space-between;
@@ -33,7 +55,10 @@
     }
 
     .card {
-        width: 45%;
+        .title {
+            display: flex;
+            gap: 20px;
+        }
 
         .card-body {
             display: flex;

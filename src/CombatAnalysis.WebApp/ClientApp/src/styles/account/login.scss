@@ -1,14 +1,37 @@
-﻿.login {
-    width: 300px;
+﻿.login-container {
+    display: flex;
+    justify-content: start;
+    margin: 50px 0;
+    gap: 50px;
 
-    &__error-message {
-        margin: 15px;
-        padding: 10px;
-        border-radius: 15px;
-        background: yellow;
+    .preview {
+        box-shadow: 2px 2px 2px 2px gray;
+        border-radius: 20px;
+        padding: 30px;
+        margin: 0 50px;
+        font-size: 17px;
+
+        &__responsibilities .form-check {
+            margin: 10px;
+
+            label {
+                opacity: 1;
+            }
+        }
     }
 
-    .remember {
-        margin: 15px 0;
+    .login {
+        width: 300px;
+
+        &__error-message {
+            margin: 15px;
+            padding: 10px;
+            border-radius: 15px;
+            background: yellow;
+        }
+
+        .remember {
+            margin: 15px 0;
+        }
     }
 }

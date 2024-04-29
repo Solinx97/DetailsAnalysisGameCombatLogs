@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { useGetCombatLogsQuery } from '../../store/api/CombatParserApi';
 import { useLazyAuthenticationAsyncQuery } from '../../store/api/UserApi';
 import CombatLogItem from './CombatLogItem';
+import MainInformationPreview from './MainInformationPreview';
 
 import "../../styles/mainInformation.scss";
 
@@ -28,18 +29,21 @@ const MainInformation = () => {
     }
 
     return (
-        <div className="main-information__container">
+        <div className="main-information">
             <h2>{t("Logs")}</h2>
-            <ul className="combats__container">
-                {combatLogs?.filter(log => log.isReady).map((item) => (
-                    <li key={item.id}>
-                        <CombatLogItem
-                            log={item}
-                            isAuth={isAuth}
-                        />
-                    </li>
-                ))}
-            </ul>
+            <div className="main-information__container">
+                <ul className="combats__container">
+                    {combatLogs?.filter(log => log.isReady).map((item) => (
+                        <li key={item.id}>
+                            <CombatLogItem
+                                log={item}
+                                isAuth={isAuth}
+                            />
+                        </li>
+                    ))}
+                </ul>
+                <MainInformationPreview />
+            </div>
         </div>
     );
 }
