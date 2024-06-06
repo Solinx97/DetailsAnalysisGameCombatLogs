@@ -19,7 +19,7 @@
                 flex-direction: row;
                 justify-content: space-between;
                 align-items: center;
-                box-shadow: 3px 3px 3px 3px black;
+                box-shadow: 2px 2px 2px 2px white;
                 border-radius: 10px;
                 padding: 10px 25px;
                 cursor: default;
@@ -59,7 +59,7 @@
                 .name {
                     margin: 0 20px;
                     font-weight: bold;
-                    background: linear-gradient(blue, 1%, gray);
+                    background: linear-gradient(blue, 1%, #57A6A1);
                     color: white;
                     padding: 5px 10px;
                     border-radius: 10px;
@@ -125,6 +125,10 @@
             }
 
             &_active {
+                .selected {
+                    box-shadow: 3px 3px 3px 3px #474F7A;
+                }
+
                 .last-message {
                     max-height: 20px;
                     max-width: 90%;
@@ -145,7 +149,7 @@
 
                         .unread-message-count {
                             padding: 5px;
-                            box-shadow: 2px 2px 2px 2px gray;
+                            box-shadow: 2px 2px 2px 2px #3AA6B9;
                             border-radius: 25px;
                             font-size: 10px;
                             width: 25px;
@@ -158,19 +162,15 @@
 
         li {
             cursor: pointer;
-            margin: 5px;
+            margin: 10px;
             padding: 10px;
-            box-shadow: 5px 5px gray;
+            box-shadow: 4px 4px 4px 4px #3AA6B9;
             overflow-x: hidden;
             margin-left: 10px;
+            border-radius: 10px;
 
             .username {
                 font-weight: bold;
-            }
-
-            div, strong {
-                position: relative;
-                z-index: -1;
             }
         }
     }

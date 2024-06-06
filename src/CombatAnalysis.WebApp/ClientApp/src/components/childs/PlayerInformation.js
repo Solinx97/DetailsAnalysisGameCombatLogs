@@ -82,8 +82,8 @@ const PlayerInformation = ({ combatPlayers, combatId, combatLogId }) => {
                                 <Radar
                                     name={item.userName}
                                     dataKey="A"
-                                    stroke="#8884d8"
-                                    fill="#8884d8"
+                                    stroke="white"
+                                    fill="yellow"
                                     fillOpacity={0.6}
                                 />
                             </RadarChart>

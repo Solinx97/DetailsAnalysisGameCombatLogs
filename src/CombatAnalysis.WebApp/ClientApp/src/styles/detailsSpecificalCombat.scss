@@ -2,8 +2,9 @@
     &__container {
         .card {
             width: 90%;
-            box-shadow: 10px 10px gray;
+            box-shadow: 10px 10px #3AA6B9;
             margin: 25px;
+            background: #135D66;
 
             .list-group {
                 display: flex;
@@ -14,8 +15,11 @@
                 display: flex;
                 align-items: center;
                 flex-direction: column;
-                gap: 20px;
+                gap: 10px;
+                margin: 5px;
                 width: 25%;
+                background: #135D66;
+                color: white;
 
                 .btn-shadow {
                     width: 45px;
@@ -25,7 +29,6 @@
                     white-space: nowrap;
 
                     &:hover {
-                        color: green;
                         animation-name: show-more;
                         animation-duration: 0.5s;
                         animation-fill-mode: forwards;
@@ -85,13 +88,21 @@
             }
         }
 
+        .form-check-input {
+            background: white;
+        }
+
         .form-check {
             margin: 20px;
         }
 
         &_general-details-charts {
             display: flex;
-            margin-left: -100px;
+            justify-content: center;
+
+            text {
+                color: white;
+            }
 
             .pie-chart-hook {
                 display: flex;

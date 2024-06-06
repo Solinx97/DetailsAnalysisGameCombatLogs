@@ -4,7 +4,7 @@
         top: 20%;
         margin: 0 0 0 -90px;
         padding: 10px;
-        box-shadow: 2px 2px 2px 2px gray;
+        box-shadow: 2px 2px 2px 2px #3AA6B9;
         border-radius: 15px;
         width: 250px;
         font-size: 13px;
@@ -39,12 +39,12 @@
         }
 
         .menu-item:hover {
-            border: 2px solid green;
+            border: 2px solid #4793AF;
             border-radius: 10px;
         }
 
         .menu-item.sub-menu:hover {
-            box-shadow: 2px 2px 2px 2px green;
+            box-shadow: 2px 2px 2px 2px #4D4C7D;
             border-radius: 10px;
         }
 

@@ -76,7 +76,7 @@ const CombatGeneralDetailsItem = ({ combatPlayerId, detailsType }) => {
                             <XAxis dataKey="name" />
                             <YAxis />
                             <Tooltip />
-                            <Line type="monotone" dataKey="uv" stroke="#8884d8" fill="#8884d8" />
+                            <Line type="monotone" dataKey="uv" stroke="#58A399" fill="#6196A6" />
                             <Brush />
                         </LineChart>
                     </ResponsiveContainer>

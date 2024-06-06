@@ -14,17 +14,17 @@ const GeneralDetailsChart = ({ combatPlayers }) => {
 
         setDamageDonePieChart({
             title: t("Damage"),
-            color: "blue",
+            color: "#83B4FF",
             data: data.damageDone
         });
         setHealDonePieChart({
             title: t("Healing"),
-            color: "green",
+            color: "#83B4FF",
             data: data.healDone
         });
         setDamageTakenPieChart({
             title: t("DamageTaken"),
-            color: "orange",
+            color: "#83B4FF",
             data: data.damageTaken
         });
     }, [])

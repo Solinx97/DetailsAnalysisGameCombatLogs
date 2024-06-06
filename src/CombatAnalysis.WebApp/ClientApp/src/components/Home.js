@@ -48,7 +48,7 @@ const Home = () => {
                     }
                 </div>
                 <div className="preview">
-                    <p>Communication is:</p>
+                    <div className="preview__title">Communication</div>
                     <div className="preview__responsibilities">
                         <div className="form-check">
                             <input className="form-check-input" type="checkbox" name="flexRadioDefault" id="flexRadioDefault1" checked disabled />
@@ -73,7 +73,7 @@ const Home = () => {
             <div className="home__item">
                 <div className="title">{t("Analyzing")}</div>
                 <div className="preview">
-                    <p>Combat logs are:</p>
+                    <div className="preview__title">Combat logs</div>
                     <div className="preview__responsibilities">
                         <div className="form-check">
                             <input className="form-check-input" type="checkbox" name="flexRadioDefault" id="flexRadioDefault1" checked disabled />

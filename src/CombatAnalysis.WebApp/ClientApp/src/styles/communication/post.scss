@@ -42,6 +42,12 @@
     &__card {
         width: 750px;
         margin: 5px;
+
+        li {
+            background: #3C5B6F;
+            z-index: 10000;
+            color: white;
+        }
     }
 
     &__title.list-group-item {

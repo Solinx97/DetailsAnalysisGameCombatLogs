@@ -90,7 +90,7 @@ const MyFeed = () => {
             />
             <ul className="posts">
                 {allPosts?.map(post => (
-                    <li key={post.id}>
+                    <li className="posts__item" key={post.id}>
                         <Post
                             customer={customer}
                             post={post}

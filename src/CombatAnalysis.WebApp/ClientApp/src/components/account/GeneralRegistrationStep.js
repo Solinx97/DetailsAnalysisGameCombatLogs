@@ -95,7 +95,7 @@ const GeneralRegistrationStep = ({ setStep, customer, updateGeneralInformation, 
                 </div>
             </div>
             <div className="actions">
-                <input type="button" className="btn btn-light" value={t("LastStep")} onClick={() => setStep(0)} />
+                <input type="button" className="btn btn-info" value={t("LastStep")} onClick={() => setStep(0)} />
                 <input type="submit" className="btn btn-success" value={t("Registration")} />
             </div>
             {showCustomerErrorMessage &&

@@ -1,21 +1,26 @@
 .general-analysis {
     &__container {
         .card {
-            width: 1000px;
-            box-shadow: 10px 10px gray;
+            box-shadow: 10px 10px #3AA6B9;
             margin: 25px;
+            background: #135D66;
 
             .list-group-item {
                 display: flex;
                 flex-direction: column;
+                justify-content: center;
                 align-items: center;
-                margin: 20px 10px 0 0;
+                border-radius: 35px;
+                width: 100px;
+                height: 100px;
+                background: #57A6A1;
+                color: white;
+                box-shadow: 3px 3px black;
 
                 div {
                     display: flex;
-                    align-items: center;
-                    width: auto;
-                    height: 75px;
+                    margin: 10px;
+                    font-size: 13px;
                 }
 
                 &__date {
@@ -44,7 +49,7 @@
                 }
 
                 &__death-number {
-                    color: red;
+                    color: firebrick;
                 }
 
                 &__status {
@@ -52,16 +57,15 @@
                 }
 
                 &__duration {
-                    color: cornflowerblue;
+                    color: rebeccapurple;
                 }
 
                 &__not-ready {
                     color: lightcoral;
                 }
 
-
                 &__ready {
-                    color: green;
+                    color: deepskyblue;
                 }
             }
 
@@ -127,7 +131,8 @@ ul {
     .status {
         display: flex;
         align-items: center;
-        border: 1px solid gray;
+        border: 1px solid #3AA6B9;
+        box-shadow: 2px 2px black;
         border-radius: 25px;
         margin: 10px;
 
@@ -136,7 +141,7 @@ ul {
         }
 
         .win {
-            color: green;
+            color: lightblue;
         }
     }
 

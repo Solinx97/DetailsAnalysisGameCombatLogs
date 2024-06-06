@@ -107,7 +107,7 @@ const ConfidentialRegistrationStep = ({ setStep, user, updateConfidentialInforma
                     onChange={handleConfirmPasswordChange} value={confirmPassword} required />
             </div>
             <div className="actions">
-                <input type="submit" className="btn btn-light" value={t("NextStep")} />
+                <input type="submit" className="btn btn-info" value={t("NextStep")} />
             </div>
             {showUserErrorMessage &&
                 <div className="registration__error-message">{t("EmailExist")}</div>

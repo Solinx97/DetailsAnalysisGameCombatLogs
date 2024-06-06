@@ -4,8 +4,35 @@
         margin: 25px 0;
         gap: 50px;
 
+        .combats {
+            &__container {
+                display: flex;
+                flex-direction: column;
+                gap: 20px;
+
+                .card {
+                    box-shadow: 10px 10px #3AA6B9;
+                    margin: 25px;
+                    background: #135D66;
+
+                    .title, .list-group-item {
+                        background: #135D66;
+                        color: white;
+                    }
+
+                    .card-body {
+                        display: flex;
+                    }
+                }
+            }
+
+            &__item {
+                border-radius: 20px;
+            }
+        }
+
         .preview {
-            box-shadow: 2px 2px 2px 2px gray;
+            box-shadow: 2px 2px 2px 2px #3AA6B9;
             border-radius: 20px;
             padding: 30px;
             margin: 0 50px;
@@ -54,17 +81,6 @@
         }
     }
 
-    .card {
-        .title {
-            display: flex;
-            gap: 20px;
-        }
-
-        .card-body {
-            display: flex;
-        }
-    }
-
     .chat-list {
         position: absolute;
         display: flex;
@@ -77,7 +93,6 @@
         padding: 20px;
         border: 2px solid green;
         border-radius: 20px;
-        background: white;
         z-index: 10;
 
         svg {
@@ -114,7 +129,7 @@
             justify-content: center;
             align-items: center;
             gap: 50px;
-            box-shadow: 3px 3px 3px 3px gray;
+            box-shadow: 3px 3px 3px 3px white;
             border: 2px solid black;
             border-radius: 20px;
             padding: 5px;
@@ -122,7 +137,7 @@
             font-size: 12px;
 
             .sent {
-                border: 2px solid gray;
+                border: 2px solid white;
                 border-radius: 15px;
                 padding: 5px 15px;
                 opacity: 0.5;

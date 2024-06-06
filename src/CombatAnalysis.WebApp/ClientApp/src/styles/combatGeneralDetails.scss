@@ -6,20 +6,29 @@
 
         .card {
             width: 75%;
-            box-shadow: 10px 10px gray;
+            box-shadow: 10px 10px #3AA6B9;
             margin: 25px;
+            background: #135D66;
 
             .list-group {
                 display: flex;
                 flex-direction: row;
+                justify-content: center;
+                gap: 20px;
             }
 
             .list-group-item {
                 display: flex;
                 align-items: center;
                 flex-direction: column;
-                width: 20%;
-                margin: 5px;
+                width: 90px;
+                margin: 10px 0;
+                height: 90px;
+                border-radius: 30px;
+                background: #57A6A1;
+                font-size: 12px;
+                box-shadow: 3px 3px black;
+                color: white;
 
                 div {
                     display: flex;
@@ -112,7 +121,6 @@
                 overflow: hidden;
 
                 &:hover {
-                    color: green;
                     animation-name: select-player;
                     animation-duration: 0.5s;
                     animation-fill-mode: forwards;
