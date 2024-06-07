@@ -1,5 +1,49 @@
 ﻿.details-specifical-combat {
     &__container {
+        .dashboard {
+            display: flex;
+
+            .damage-progress, .heal-progress {
+                display: flex;
+                flex-direction: column;
+                gap: 15px;
+                color: white;
+
+                li {
+                    display: flex;
+                    flex-direction: column;
+                    gap: 5px;
+                }
+
+                .title {
+                    display: flex;
+                    justify-content: space-between;
+
+                    .value {
+                        font-size: 13px;
+                    }
+                }
+
+                .player-statistics {
+                    display: flex;
+                    gap: 15px;
+
+                    .progress {
+                        width: 300px;
+                        height: 25px;
+                        box-shadow: 3px 3px 3px 3px #028391;
+                    }
+
+                    .player-contribution {
+                        border-radius: 10px;
+                        padding: 3px;
+                        box-shadow: 2px 2px 2px 2px #7AB2B2;
+                    }
+                }
+            }
+        }
+
+
         .card {
             width: 90%;
             box-shadow: 10px 10px #3AA6B9;
@@ -66,20 +110,10 @@
                     }
                 }
 
-                &__damage-done {
-                    color: saddlebrown;
-                }
-
-                &__heal-done {
-                    color: green;
-                }
-
-                &__damage-taken {
-                    color: darkorange;
-                }
-
-                &__energy-recovery {
-                    color: yellowgreen;
+                &__damage-done, &__heal-done, &__damage-taken, &__energy-recovery, &__used-buffs {
+                    padding: 5px;
+                    box-shadow: 3px 3px 3px 3px black;
+                    border-radius: 15px;
                 }
             }
 

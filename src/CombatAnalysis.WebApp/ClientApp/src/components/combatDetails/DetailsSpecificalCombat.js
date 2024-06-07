@@ -8,6 +8,7 @@ import PlayerInformation from '../childs/PlayerInformation';
 import GeneralDetailsChart from './GeneralDetailsChart';
 
 import "../../styles/detailsSpecificalCombat.scss";
+import Dashboard from './Dashboard';
 
 const DetailsSpecificalCombat = () => {
     const { t } = useTranslation("combatDetails/detailsSpecificalCombat");
@@ -111,11 +112,14 @@ const DetailsSpecificalCombat = () => {
                     combatPlayers={searchCombatPlayers}
                 />
             }
-            <PlayerInformationMemo
-                combatPlayers={searchCombatPlayers}
-                combatId={combatId}
-                combatLogId={combatLogId}
+            <Dashboard
+                players={searchCombatPlayers}
             />
+            {/*<PlayerInformationMemo*/}
+            {/*    combatPlayers={searchCombatPlayers}*/}
+            {/*    combatId={combatId}*/}
+            {/*    combatLogId={combatLogId}*/}
+            {/*/>*/}
         </div>
     );
 }

@@ -1,4 +1,4 @@
-﻿import { faCircleDown, faCircleUp, faGauge, faHandFist, faLocationCrosshairs, faMeteor, faShare, faStopwatch20 } from '@fortawesome/free-solid-svg-icons';
+﻿import { faCircleDown, faCircleUp, faGauge, faKhanda, faLocationCrosshairs, faMeteor, faShare, faStopwatch20 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
@@ -18,7 +18,7 @@ const DamageDoneGeneralHelper = ({ generalData }) => {
                     <ul className="list-group list-group-flush">
                         <li className="list-group-item">
                             <FontAwesomeIcon
-                                icon={faHandFist}
+                                icon={faKhanda}
                                 className="list-group-item__value"
                                 title={t("TotalDamage")}
                             />

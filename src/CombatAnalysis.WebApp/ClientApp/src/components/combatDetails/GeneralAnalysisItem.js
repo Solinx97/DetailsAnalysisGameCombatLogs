@@ -1,4 +1,4 @@
-import { faBolt, faBookSkull, faCheck, faCircleNodes, faCirclePlay, faClock, faFlagCheckered, faGraduationCap, faHandFist, faHourglassStart, faDatabase, faPlusCircle, faShieldHalved, faSkull } from '@fortawesome/free-solid-svg-icons';
+import { faBolt, faBookSkull, faCheck, faCircleNodes, faCirclePlay, faClock, faFlagCheckered, faGraduationCap, faKhanda, faHourglassStart, faDatabase, faPlusCircle, faShieldHalved, faSkull } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { format } from 'date-fns';
 import React from 'react';
@@ -47,7 +47,7 @@ const GeneralAnalysisItem = ({ combat, combatLogId }) => {
             <ul className="list-group list-group-flush information">
                 <li className="list-group-item">
                     <FontAwesomeIcon
-                        icon={faHandFist}
+                        icon={faKhanda}
                         className="list-group-item__damage-done"
                         title={t("Damage")}
                     />
@@ -88,6 +88,7 @@ const GeneralAnalysisItem = ({ combat, combatLogId }) => {
                 <li className="list-group-item">
                     <FontAwesomeIcon
                         icon={faCircleNodes}
+                        className="list-group-item__buffs"
                         title={t("Buffs")}
                     />
                     <div>{combat.usedBuffs}</div>
@@ -95,18 +96,20 @@ const GeneralAnalysisItem = ({ combat, combatLogId }) => {
                 <li className="list-group-item">
                     <FontAwesomeIcon
                         icon={faCirclePlay}
+                        className="list-group-item__start"
                         title={t("StartDate")}
                     />
-                    <div className="list-group-item__date">
+                    <div>
                         <div>{format(new Date(combat.startDate), 'HH:mm')}</div>
                     </div>
                 </li>
                 <li className="list-group-item">
                     <FontAwesomeIcon
                         icon={faFlagCheckered}
+                        className="list-group-item__finish"
                         title={t("FinishDate")}
                     />
-                    <div className="list-group-item__date">
+                    <div>
                         <div>{format(new Date(combat.finishDate), 'HH:mm')}</div>
                     </div>
                 </li>

@@ -14,20 +14,17 @@
                 display: flex;
                 flex-direction: row;
                 justify-content: center;
-                gap: 20px;
+                gap: 40px;
             }
 
             .list-group-item {
                 display: flex;
                 align-items: center;
+                justify-content: center;
                 flex-direction: column;
-                width: 90px;
-                margin: 10px 0;
-                height: 90px;
-                border-radius: 30px;
-                background: #57A6A1;
-                font-size: 12px;
-                box-shadow: 3px 3px black;
+                gap: 10px;
+                background: #135D66;
+                font-size: 14px;
                 color: white;
 
                 div {
@@ -52,20 +49,10 @@
                     }
                 }
 
-                &__damage-done {
-                    color: saddlebrown;
-                }
-
-                &__heal-done {
-                    color: green;
-                }
-
-                &__damage-taken {
-                    color: darkorange;
-                }
-
-                &__energy-recovery {
-                    color: yellowgreen;
+                &__value, &__average-value, &__damage-per-second, &__cast-number, &__crit-number, &__miss-number, &__max-value, &__min-value {
+                    padding: 5px;
+                    box-shadow: 3px 3px 3px 3px black;
+                    border-radius: 15px;
                 }
             }
 

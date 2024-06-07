@@ -1,26 +1,37 @@
-.general-analysis {
+﻿.general-analysis {
     &__container {
         .card {
             box-shadow: 10px 10px #3AA6B9;
             margin: 25px;
             background: #135D66;
 
+            .win, .lose {
+                padding: 5px;
+                box-shadow: 3px 3px 3px 3px black;
+                border-radius: 15px;
+                background: #496989;
+            }
+
+            .win {
+                background: #496989;
+            }
+
+            .lose {
+                background: #D04848;
+            }
+
             .list-group-item {
                 display: flex;
                 flex-direction: column;
                 justify-content: center;
                 align-items: center;
-                border-radius: 35px;
-                width: 100px;
-                height: 100px;
-                background: #57A6A1;
+                gap: 10px;
+                background: #135D66;
                 color: white;
-                box-shadow: 3px 3px black;
 
                 div {
                     display: flex;
-                    margin: 10px;
-                    font-size: 13px;
+                    font-size: 14px;
                 }
 
                 &__date {
@@ -32,40 +43,16 @@
                     height: 20px;
                 }
 
-                &__damage-done {
-                    color: saddlebrown;
-                }
 
-                &__heal-done {
-                    color: green;
-                }
-
-                &__damage-taken {
-                    color: darkorange;
-                }
-
-                &__energy-recovery {
-                    color: yellowgreen;
-                }
-
-                &__death-number {
-                    color: firebrick;
-                }
-
-                &__status {
-                    color: dimgray;
-                }
-
-                &__duration {
-                    color: rebeccapurple;
-                }
-
-                &__not-ready {
-                    color: lightcoral;
+                &__damage-done, &__heal-done, &__damage-taken, &__energy-recovery, &__death-number,
+                &__duration, &__not-ready, &__buffs, &__start, &__finish, &__ready {
+                    padding: 5px;
+                    box-shadow: 3px 3px 3px 3px black;
+                    border-radius: 15px;
                 }
 
                 &__ready {
-                    color: deepskyblue;
+                    background: #7F27FF;
                 }
             }
 
@@ -135,14 +122,6 @@ ul {
         box-shadow: 2px 2px black;
         border-radius: 25px;
         margin: 10px;
-
-        .lose {
-            color: darkorange;
-        }
-
-        .win {
-            color: lightblue;
-        }
     }
 
     svg {
