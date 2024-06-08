@@ -124,7 +124,7 @@ const GeneralAnalysisItem = ({ combat, combatLogId }) => {
             </ul>
             <div className="card-body details">
                 {combat.isReady
-                    ? <div className="btn-shadow" onClick={() => navigate(`/details-specifical-combat?id=${combat.id}&combatLogId=${combatLogId}`)}>
+                    ? <div className="btn-shadow" onClick={() => navigate(`/details-specifical-combat?id=${combat.id}&combatLogId=${combatLogId}&name=${combat.name}`)}>
                         <FontAwesomeIcon
                             icon={faDatabase}
                         />

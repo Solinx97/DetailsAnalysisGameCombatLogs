@@ -5,10 +5,11 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { useLazyGetCombatPlayersByCombatIdQuery } from '../../store/api/CombatParserApi';
 import PlayerInformation from '../childs/PlayerInformation';
+import PersonalTabs from '../common/PersonalTabs';
+import Dashboard from './Dashboard';
 import GeneralDetailsChart from './GeneralDetailsChart';
 
 import "../../styles/detailsSpecificalCombat.scss";
-import Dashboard from './Dashboard';
 
 const DetailsSpecificalCombat = () => {
     const { t } = useTranslation("combatDetails/detailsSpecificalCombat");
@@ -17,6 +18,7 @@ const DetailsSpecificalCombat = () => {
 
     const [combatId, setCombatId] = useState(0);
     const [combatLogId, setCombatLogId] = useState(0);
+    const [combatName, setCombatName] = useState("");
     const [combatPlayers, setCombatPlayers] = useState([]);
     const [searchCombatPlayers, setSearchCombatPlayers] = useState([]);
     const [showCommonDetails, setShowCommonDetails] = useState(false);
@@ -32,6 +34,7 @@ const DetailsSpecificalCombat = () => {
         const queryParams = new URLSearchParams(window.location.search);
         setCombatId(+queryParams.get("id"));
         setCombatLogId(+queryParams.get("combatLogId"));
+        setCombatName(queryParams.get("name"));
     }, [])
 
     useEffect(() => {
@@ -86,6 +89,7 @@ const DetailsSpecificalCombat = () => {
                     }
                     <div>{t("Search")}</div>
                 </div>
+                <div>{combatName}</div>
             </div>
             {showSearch &&
                 <div className="mb-3 search-people">
@@ -112,14 +116,10 @@ const DetailsSpecificalCombat = () => {
                     combatPlayers={searchCombatPlayers}
                 />
             }
-            <Dashboard
-                players={searchCombatPlayers}
-            />
-            {/*<PlayerInformationMemo*/}
-            {/*    combatPlayers={searchCombatPlayers}*/}
-            {/*    combatId={combatId}*/}
-            {/*    combatLogId={combatLogId}*/}
-            {/*/>*/}
+            <PersonalTabs tabs={[
+                { id: 0, header: "Dashboard", content: <Dashboard players={searchCombatPlayers} /> },
+                { id: 1, header: "Common", content: <PlayerInformationMemo combatPlayers={searchCombatPlayers} combatId={combatId} combatLogId={combatLogId} /> }
+            ]} />
         </div>
     );
 }

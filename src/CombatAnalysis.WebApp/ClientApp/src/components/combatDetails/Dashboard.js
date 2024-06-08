@@ -23,13 +23,16 @@ const Dashboard = ({ players }) => {
 
         let unblockedArray = Object.assign([], players);
 
-        const sorteredByDamage = quickSort(unblockedArray, 0);
+        let sorteredByDamage = quickSort(unblockedArray, 0);
+        sorteredByDamage = sorteredByDamage.slice(0, 5);
         setSortedByDamagePlayers(sorteredByDamage);
 
-        const sortedByHeal = quickSort(unblockedArray, 1);
+        let sortedByHeal = quickSort(unblockedArray, 1);
+        sortedByHeal = sortedByHeal.slice(0, 5);
         setSortedByHealPlayers(sortedByHeal);
 
-        const sortedByDamageTaken = quickSort(unblockedArray, 2);
+        let sortedByDamageTaken = quickSort(unblockedArray, 2);
+        sortedByDamageTaken = sortedByDamageTaken.slice(0, 5);
         setSortedByDamageTakenPlayers(sortedByDamageTaken);
     }, [players]);
 
@@ -160,57 +163,66 @@ const Dashboard = ({ players }) => {
 
     return (
         <div className="dashboard">
-            <ul className="damage-progress">
-                {sortedByDamagePlayers?.filter(player => player.damageDone >= minDamage).map((player) => (
-                    <li key={player.id}>
-                        <div className="title">
-                            <div className="username">{player.userName}</div>
-                            <div className="value">{player.damageDone}</div>
-                        </div>
-                        <div className="player-statistics">
-                            <div className="progress">
-                                <div className="progress-bar" role="progressbar" style={{ width: damageCalculation(player) + '%' }}
-                                    aria-valuenow={damageCalculation(player)} aria-valuemin="0" aria-valuemax="0"></div>
+            <div className="dashboard__statistics">
+                <div>Damage done</div>
+                <ul className="damage-progress">
+                    {sortedByDamagePlayers?.filter(player => player.damageDone >= minDamage).map((player) => (
+                        <li key={player.id}>
+                            <div className="title">
+                                <div className="username">{player.userName}</div>
+                                <div className="value">{player.damageDone}</div>
                             </div>
-                            <div className="player-contribution">{damageCalculation(player)}</div>
-                        </div>
-                    </li>
-                ))}
-            </ul>
-            <ul className="heal-progress">
-                {sortedByHealPlayers?.filter(player => player.healDone > minHeal).map((player) => (
-                    <li key={player.id}>
-                        <div className="title">
-                            <div className="username">{player.userName}</div>
-                            <div className="value">{player.healDone}</div>
-                        </div>
-                        <div className="player-statistics">
-                            <div className="progress">
-                                <div className="progress-bar" role="progressbar" style={{ width: healCalculation(player) + '%' }}
-                                    aria-valuenow={healCalculation(player)} aria-valuemin="0" aria-valuemax="0"></div>
+                            <div className="player-statistics">
+                                <div className="progress">
+                                    <div className="progress-bar" role="progressbar" style={{ width: damageCalculation(player) + '%' }}
+                                        aria-valuenow={damageCalculation(player)} aria-valuemin="0" aria-valuemax="0"></div>
+                                </div>
+                                <div className="player-contribution">{damageCalculation(player)}</div>
                             </div>
-                            <div className="player-contribution">{healCalculation(player)}</div>
-                        </div>
-                    </li>
-                ))}
-            </ul>
-            <ul className="heal-progress">
-                {sortedByDamageTakenPlayers?.filter(player => player.damageTaken > minDamageTaken).map((player) => (
-                    <li key={player.id}>
-                        <div className="title">
-                            <div className="username">{player.userName}</div>
-                            <div className="value">{player.damageTaken}</div>
-                        </div>
-                        <div className="player-statistics">
-                            <div className="progress">
-                                <div className="progress-bar" role="progressbar" style={{ width: damageTakenCalculation(player) + '%' }}
-                                    aria-valuenow={damageTakenCalculation(player)} aria-valuemin="0" aria-valuemax="0"></div>
+                        </li>
+                    ))}
+                </ul>
+            </div>
+            <div className="dashboard__statistics">
+                <div>Heal done</div>
+                <ul className="heal-progress">
+                    {sortedByHealPlayers?.filter(player => player.healDone > minHeal).map((player) => (
+                        <li key={player.id}>
+                            <div className="title">
+                                <div className="username">{player.userName}</div>
+                                <div className="value">{player.healDone}</div>
                             </div>
-                            <div className="player-contribution">{damageTakenCalculation(player)}</div>
-                        </div>
-                    </li>
-                ))}
-            </ul>
+                            <div className="player-statistics">
+                                <div className="progress">
+                                    <div className="progress-bar" role="progressbar" style={{ width: healCalculation(player) + '%' }}
+                                        aria-valuenow={healCalculation(player)} aria-valuemin="0" aria-valuemax="0"></div>
+                                </div>
+                                <div className="player-contribution">{healCalculation(player)}</div>
+                            </div>
+                        </li>
+                    ))}
+                </ul>
+            </div>
+            <div className="dashboard__statistics">
+                <div>Damage taken</div>
+                <ul className="damage-taken-progress">
+                    {sortedByDamageTakenPlayers?.filter(player => player.damageTaken > minDamageTaken).map((player) => (
+                        <li key={player.id}>
+                            <div className="title">
+                                <div className="username">{player.userName}</div>
+                                <div className="value">{player.damageTaken}</div>
+                            </div>
+                            <div className="player-statistics">
+                                <div className="progress">
+                                    <div className="progress-bar" role="progressbar" style={{ width: damageTakenCalculation(player) + '%' }}
+                                        aria-valuenow={damageTakenCalculation(player)} aria-valuemin="0" aria-valuemax="0"></div>
+                                </div>
+                                <div className="player-contribution">{damageTakenCalculation(player)}</div>
+                            </div>
+                        </li>
+                    ))}
+                </ul>
+            </div>
         </div>
     );
 }
