@@ -2,7 +2,7 @@
 import { useTranslation } from 'react-i18next';
 import CommonPlayerInform from './CommonPlayerInform';
 
-const PlayerInformation = ({ combatPlayers, combatId, combatLogId }) => {
+const PlayerInformation = ({ combatPlayers, combatId, combatLogId, combatName }) => {
     const { t } = useTranslation("childs/playerInformation");
 
     return (
@@ -16,6 +16,7 @@ const PlayerInformation = ({ combatPlayers, combatId, combatLogId }) => {
                             player={player}
                             combatId={combatId}
                             combatLogId={combatLogId}
+                            combatName={combatName}
                         />
                     </li>
                 ))}

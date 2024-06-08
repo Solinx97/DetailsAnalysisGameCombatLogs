@@ -17,6 +17,8 @@ const CombatGeneralDetails = () => {
     const [combatPlayerId, setCombatPlayerId] = useState(0);
     const [combatPlayer, setCombatPlayer] = useState(null);
     const [detailsType, setDetailsType] = useState("");
+    const [combatName, setCombatName] = useState("");
+    const [tab, setTab] = useState(0);
     const [combatId, setCombatId] = useState(0);
     const [combatLogId, setCombatLogId] = useState(0);
     const [tabIndex, setTabIndex] = useState(0);
@@ -29,6 +31,8 @@ const CombatGeneralDetails = () => {
         setDetailsType(queryParams.get("detailsType"));
         setCombatId(+queryParams.get("combatId"));
         setCombatLogId(+queryParams.get("combatLogId"));
+        setCombatName(queryParams.get("name"));
+        setTab(+queryParams.get("tab"));
     }, [])
 
     useEffect(() => {
@@ -73,7 +77,8 @@ const CombatGeneralDetails = () => {
         <div className="general-details__container">
             <div className="general-details__navigate">
                 <div className="player">
-                    <div className="btn-shadow select-another-player" onClick={() => navigate(`/details-specifical-combat?id=${combatId}&combatLogId=${combatLogId}`)}>
+                    <div className="btn-shadow select-another-player"
+                        onClick={() => navigate(`/details-specifical-combat?id=${combatId}&combatLogId=${combatLogId}&name=${combatName}&tab=${tab}`)}>
                         <FontAwesomeIcon
                             icon={faDeleteLeft}
                         />

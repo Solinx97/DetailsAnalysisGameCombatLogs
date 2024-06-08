@@ -19,6 +19,7 @@ const DetailsSpecificalCombat = () => {
     const [combatId, setCombatId] = useState(0);
     const [combatLogId, setCombatLogId] = useState(0);
     const [combatName, setCombatName] = useState("");
+    const [tab, setTab] = useState(0);
     const [combatPlayers, setCombatPlayers] = useState([]);
     const [searchCombatPlayers, setSearchCombatPlayers] = useState([]);
     const [showCommonDetails, setShowCommonDetails] = useState(false);
@@ -35,6 +36,7 @@ const DetailsSpecificalCombat = () => {
         setCombatId(+queryParams.get("id"));
         setCombatLogId(+queryParams.get("combatLogId"));
         setCombatName(queryParams.get("name"));
+        setTab(+queryParams.get("tab"));
     }, [])
 
     useEffect(() => {
@@ -116,10 +118,13 @@ const DetailsSpecificalCombat = () => {
                     combatPlayers={searchCombatPlayers}
                 />
             }
-            <PersonalTabs tabs={[
-                { id: 0, header: "Dashboard", content: <Dashboard players={searchCombatPlayers} /> },
-                { id: 1, header: "Common", content: <PlayerInformationMemo combatPlayers={searchCombatPlayers} combatId={combatId} combatLogId={combatLogId} /> }
-            ]} />
+            <PersonalTabs
+                tab={tab}
+                tabs={[
+                    { id: 0, header: "Dashboard", content: <Dashboard combatId={combatId} combatLogId={combatLogId} players={searchCombatPlayers} combatName={combatName} /> },
+                    { id: 1, header: "Common", content: <PlayerInformationMemo combatPlayers={searchCombatPlayers} combatId={combatId} combatLogId={combatLogId} combatName={combatName} /> }
+                ]}
+            />
         </div>
     );
 }

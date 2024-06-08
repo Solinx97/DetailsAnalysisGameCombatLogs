@@ -1,16 +1,21 @@
 ﻿import { useEffect, useState } from "react";
+import { useNavigate } from 'react-router-dom';
+
+import "../../styles/dashboard.scss";
 
 const minDamage = 15000;
 const minHeal = 15000;
 const minDamageTaken = 15000;
 
-const Dashboard = ({ players }) => {
+const Dashboard = ({ players, combatId, combatLogId, combatName }) => {
     const [damageSum, setDamageSum] = useState(0);
     const [healSum, setHealSum] = useState(0);
     const [damageTakenSum, setDamageTakenSum] = useState(0);
     const [sortedByDamagePlayers, setSortedByDamagePlayers] = useState([]);
     const [sortedByHealPlayers, setSortedByHealPlayers] = useState([]);
     const [sortedByDamageTakenPlayers, setSortedByDamageTakenPlayers] = useState([]);
+
+    const navigate = useNavigate();
 
     useEffect(() => {
         if (players.length === 0) {
@@ -173,7 +178,8 @@ const Dashboard = ({ players }) => {
                                 <div className="value">{player.damageDone}</div>
                             </div>
                             <div className="player-statistics">
-                                <div className="progress">
+                                <div className="progress"
+                                    onClick={() => navigate(`/combat-general-details?id=${player.id}&detailsType=DamageDone&combatId=${combatId}&combatLogId=${combatLogId}&name=${combatName}&tab=${0}`)}>
                                     <div className="progress-bar" role="progressbar" style={{ width: damageCalculation(player) + '%' }}
                                         aria-valuenow={damageCalculation(player)} aria-valuemin="0" aria-valuemax="0"></div>
                                 </div>
@@ -193,7 +199,8 @@ const Dashboard = ({ players }) => {
                                 <div className="value">{player.healDone}</div>
                             </div>
                             <div className="player-statistics">
-                                <div className="progress">
+                                <div className="progress"
+                                    onClick={() => navigate(`/combat-general-details?id=${player.id}&detailsType=HealDone&combatId=${combatId}&combatLogId=${combatLogId}&name=${combatName}&tab=${0}`)}>
                                     <div className="progress-bar" role="progressbar" style={{ width: healCalculation(player) + '%' }}
                                         aria-valuenow={healCalculation(player)} aria-valuemin="0" aria-valuemax="0"></div>
                                 </div>
@@ -213,7 +220,8 @@ const Dashboard = ({ players }) => {
                                 <div className="value">{player.damageTaken}</div>
                             </div>
                             <div className="player-statistics">
-                                <div className="progress">
+                                <div className="progress"
+                                    onClick={() => navigate(`/combat-general-details?id=${player.id}&detailsType=DamageTaken&combatId=${combatId}&combatLogId=${combatLogId}&name=${combatName}&tab=${0}`)}>
                                     <div className="progress-bar" role="progressbar" style={{ width: damageTakenCalculation(player) + '%' }}
                                         aria-valuenow={damageTakenCalculation(player)} aria-valuemin="0" aria-valuemax="0"></div>
                                 </div>

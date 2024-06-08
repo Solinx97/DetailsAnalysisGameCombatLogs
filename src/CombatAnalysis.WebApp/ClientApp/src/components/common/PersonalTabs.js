@@ -1,8 +1,12 @@
-﻿import { useState } from "react";
+﻿import { useState, useEffect } from "react";
 import "../../styles/common/tabs.scss";
 
-const PersonalTabs = ({ tabs }) => {
+const PersonalTabs = ({ tab, tabs }) => {
     const [selectedTabIndex, setSelectedTabIndex] = useState(0);
+
+    useEffect(() => {
+        setSelectedTabIndex(tab);
+    }, [tab])
 
     const selectTab = (index) => {
         setSelectedTabIndex(index);

@@ -1,57 +1,5 @@
 ﻿.details-specifical-combat {
     &__container {
-        .dashboard {
-            display: flex;
-
-            &__statistics {
-                display: flex;
-                align-items: center;
-                flex-direction: column;
-                min-width: 300px;
-                gap: 25px;
-
-                .damage-progress, .heal-progress, .damage-taken-progress {
-                    display: flex;
-                    flex-direction: column;
-                    gap: 15px;
-                    color: white;
-
-                    li {
-                        display: flex;
-                        flex-direction: column;
-                        gap: 5px;
-                    }
-
-                    .title {
-                        display: flex;
-                        justify-content: space-between;
-
-                        .value {
-                            font-size: 14px;
-                        }
-                    }
-
-                    .player-statistics {
-                        display: flex;
-                        gap: 15px;
-
-                        .progress {
-                            width: 300px;
-                            height: 25px;
-                            box-shadow: 3px 3px 3px 3px #028391;
-                        }
-
-                        .player-contribution {
-                            border-radius: 10px;
-                            padding: 3px;
-                            box-shadow: 2px 2px 2px 2px #7AB2B2;
-                        }
-                    }
-                }
-            }
-        }
-
-
         .card {
             width: 90%;
             box-shadow: 10px 10px #3AA6B9;
