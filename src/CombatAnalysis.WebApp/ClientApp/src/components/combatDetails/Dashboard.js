@@ -1,11 +1,14 @@
 ﻿import { useEffect, useState } from "react";
 import { useNavigate } from 'react-router-dom';
+import DashboardMinDetails from "./DashboardMinDetails";
 
 import "../../styles/dashboard.scss";
 
 const minDamage = 15000;
 const minHeal = 15000;
 const minDamageTaken = 15000;
+
+const timeout = 1000;
 
 const Dashboard = ({ players, combatId, combatLogId, combatName }) => {
     const [damageSum, setDamageSum] = useState(0);
@@ -14,6 +17,10 @@ const Dashboard = ({ players, combatId, combatLogId, combatName }) => {
     const [sortedByDamagePlayers, setSortedByDamagePlayers] = useState([]);
     const [sortedByHealPlayers, setSortedByHealPlayers] = useState([]);
     const [sortedByDamageTakenPlayers, setSortedByDamageTakenPlayers] = useState([]);
+    const [minDetails, setMinDetails] = useState(<></>);
+    const [selectedPlayerIndex, setSelectedPlayerIndex] = useState(0);
+    const [detailsType, setDetailsType] = useState(0);
+    const [showDetailsTimeout, setShowDetailsTimeout] = useState(null);
 
     const navigate = useNavigate();
 
@@ -162,75 +169,107 @@ const Dashboard = ({ players, combatId, combatLogId, combatName }) => {
         return sumRound;
     }
 
+    const fillMinDetailsHandle = (e, index, detailsType, combatPlayerId) => {
+        const timeoutHandler = setTimeout(() => {
+            setSelectedPlayerIndex(index);
+            setDetailsType(detailsType);
+            setMinDetails(<DashboardMinDetails combatPlayerId={combatPlayerId} closeHandle={closeMinDetailsHandle} detailsType={detailsType} />);
+        }, timeout);
+
+        setShowDetailsTimeout(timeoutHandler);
+    }
+
+    const closeMinDetailsHandle = (e) => {
+        setSelectedPlayerIndex(0);
+        setDetailsType(0);
+        setMinDetails(<></>);
+    }
+
+    const clearTimeoutHandle = (e) => {
+        clearTimeout(showDetailsTimeout);
+    }
+
     if (damageSum === 0) {
         return <div>Loading...</div>;
     }
 
     return (
         <div className="dashboard">
-            <div className="dashboard__statistics">
-                <div>Damage done</div>
-                <ul className="damage-progress">
-                    {sortedByDamagePlayers?.filter(player => player.damageDone >= minDamage).map((player) => (
-                        <li key={player.id}>
-                            <div className="title">
-                                <div className="username">{player.userName}</div>
-                                <div className="value">{player.damageDone}</div>
-                            </div>
-                            <div className="player-statistics">
-                                <div className="progress"
-                                    onClick={() => navigate(`/combat-general-details?id=${player.id}&detailsType=DamageDone&combatId=${combatId}&combatLogId=${combatLogId}&name=${combatName}&tab=${0}`)}>
-                                    <div className="progress-bar" role="progressbar" style={{ width: damageCalculation(player) + '%' }}
-                                        aria-valuenow={damageCalculation(player)} aria-valuemin="0" aria-valuemax="0"></div>
+            <div className="container">
+                <div className="dashboard__statistics">
+                    <div>Damage done</div>
+                    <ul className="damage-progress">
+                        {sortedByDamagePlayers?.filter(player => player.damageDone >= minDamage).map((player, index) => (
+                            <li key={player.id}>
+                                {(selectedPlayerIndex === index && detailsType === 0) &&
+                                    minDetails
+                                }
+                                <div className="title">
+                                    <div className="username">{player.userName}</div>
+                                    <div className="value">{player.damageDone}</div>
                                 </div>
-                                <div className="player-contribution">{damageCalculation(player)}</div>
-                            </div>
-                        </li>
-                    ))}
-                </ul>
-            </div>
-            <div className="dashboard__statistics">
-                <div>Heal done</div>
-                <ul className="heal-progress">
-                    {sortedByHealPlayers?.filter(player => player.healDone > minHeal).map((player) => (
-                        <li key={player.id}>
-                            <div className="title">
-                                <div className="username">{player.userName}</div>
-                                <div className="value">{player.healDone}</div>
-                            </div>
-                            <div className="player-statistics">
-                                <div className="progress"
-                                    onClick={() => navigate(`/combat-general-details?id=${player.id}&detailsType=HealDone&combatId=${combatId}&combatLogId=${combatLogId}&name=${combatName}&tab=${0}`)}>
-                                    <div className="progress-bar" role="progressbar" style={{ width: healCalculation(player) + '%' }}
-                                        aria-valuenow={healCalculation(player)} aria-valuemin="0" aria-valuemax="0"></div>
+                                <div className="player-statistics">
+                                    <div className="progress" onMouseOver={(e) => fillMinDetailsHandle(e, index, 0, player.id)} onMouseOut={clearTimeoutHandle}
+                                        onClick={() => navigate(`/combat-general-details?id=${player.id}&detailsType=DamageDone&combatId=${combatId}&combatLogId=${combatLogId}&name=${combatName}&tab=${0}`)}>
+                                        <div className="progress-bar" role="progressbar" style={{ width: damageCalculation(player) + '%' }}
+                                            aria-valuenow={damageCalculation(player)} aria-valuemin="0" aria-valuemax="0"></div>
+                                    </div>
+                                    <div className="player-contribution">{damageCalculation(player)}</div>
                                 </div>
-                                <div className="player-contribution">{healCalculation(player)}</div>
-                            </div>
-                        </li>
-                    ))}
-                </ul>
-            </div>
-            <div className="dashboard__statistics">
-                <div>Damage taken</div>
-                <ul className="damage-taken-progress">
-                    {sortedByDamageTakenPlayers?.filter(player => player.damageTaken > minDamageTaken).map((player) => (
-                        <li key={player.id}>
-                            <div className="title">
-                                <div className="username">{player.userName}</div>
-                                <div className="value">{player.damageTaken}</div>
-                            </div>
-                            <div className="player-statistics">
-                                <div className="progress"
-                                    onClick={() => navigate(`/combat-general-details?id=${player.id}&detailsType=DamageTaken&combatId=${combatId}&combatLogId=${combatLogId}&name=${combatName}&tab=${0}`)}>
-                                    <div className="progress-bar" role="progressbar" style={{ width: damageTakenCalculation(player) + '%' }}
-                                        aria-valuenow={damageTakenCalculation(player)} aria-valuemin="0" aria-valuemax="0"></div>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+                <div className="dashboard__statistics">
+                    <div>Heal done</div>
+                    <ul className="heal-progress">
+                        {sortedByHealPlayers?.filter(player => player.healDone > minHeal).map((player, index) => (
+                            <li key={player.id}>
+                                {(selectedPlayerIndex === index && detailsType === 1) &&
+                                    minDetails
+                                }
+                                <div className="title">
+                                    <div className="username">{player.userName}</div>
+                                    <div className="value">{player.healDone}</div>
                                 </div>
-                                <div className="player-contribution">{damageTakenCalculation(player)}</div>
-                            </div>
-                        </li>
-                    ))}
-                </ul>
+                                <div className="player-statistics">
+                                    <div className="progress" onMouseOver={(e) => fillMinDetailsHandle(e, index, 1, player.id)} onMouseOut={clearTimeoutHandle}
+                                        onClick={() => navigate(`/combat-general-details?id=${player.id}&detailsType=HealDone&combatId=${combatId}&combatLogId=${combatLogId}&name=${combatName}&tab=${0}`)}>
+                                        <div className="progress-bar" role="progressbar" style={{ width: healCalculation(player) + '%' }}
+                                            aria-valuenow={healCalculation(player)} aria-valuemin="0" aria-valuemax="0"></div>
+                                    </div>
+                                    <div className="player-contribution">{healCalculation(player)}</div>
+                                </div>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+                <div className="dashboard__statistics">
+                    <div>Damage taken</div>
+                    <ul className="damage-taken-progress">
+                        {sortedByDamageTakenPlayers?.filter(player => player.damageTaken > minDamageTaken).map((player, index) => (
+                            <li key={player.id}>
+                                {(selectedPlayerIndex === index && detailsType === 2) &&
+                                    minDetails
+                                }
+                                <div className="title">
+                                    <div className="username">{player.userName}</div>
+                                    <div className="value">{player.damageTaken}</div>
+                                </div>
+                                <div className="player-statistics">
+                                    <div className="progress" onMouseOver={(e) => fillMinDetailsHandle(e, index, 2, player.id)} onMouseOut={clearTimeoutHandle}
+                                        onClick={() => navigate(`/combat-general-details?id=${player.id}&detailsType=DamageTaken&combatId=${combatId}&combatLogId=${combatLogId}&name=${combatName}&tab=${0}`)}>
+                                        <div className="progress-bar" role="progressbar" style={{ width: damageTakenCalculation(player) + '%' }}
+                                            aria-valuenow={damageTakenCalculation(player)} aria-valuemin="0" aria-valuemax="0"></div>
+                                    </div>
+                                    <div className="player-contribution">{damageTakenCalculation(player)}</div>
+                                </div>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
             </div>
+            
         </div>
     );
 }

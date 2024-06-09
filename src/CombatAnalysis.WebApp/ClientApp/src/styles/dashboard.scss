@@ -1,5 +1,82 @@
 .dashboard {
     display: flex;
+    justify-content: center;
+
+    .container {
+        display: flex;
+        justify-content: center;
+    }
+
+    .min-details {
+        position: absolute;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        gap: 10px;
+        width: 405px;
+        padding: 15px;
+        border: 2px solid #028391;
+        border-radius: 10px;
+        background: #006989;
+        color: white;
+        margin-top: 65px;
+        margin-left: -35px;
+        z-index: 10;
+
+        ul {
+            width: 100%;
+        }
+
+        &__title {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+
+            svg {
+                box-shadow: 2px 2px 2px 2px black;
+                border-radius: 10px;
+                padding: 2px;
+                width: 15px;
+                height: 15px;
+            }
+
+            svg:hover {
+                cursor: pointer;
+            }
+        }
+
+        &__spells-items {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+
+            .value {
+                display: flex;
+                justify-content: center;
+                padding: 5px;
+                box-shadow: 4px 4px black;
+                border-radius: 10px;
+                min-width: 80px;
+            }
+        }
+
+        .information {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            gap: 10px;
+
+            li {
+                display: flex;
+                align-items: center;
+                box-shadow: 3px 3px 3px 3px #57A6A1;
+                border-radius: 10px;
+                padding: 5px 10px;
+            }
+        }
+    }
 
     &__statistics {
         display: flex;
