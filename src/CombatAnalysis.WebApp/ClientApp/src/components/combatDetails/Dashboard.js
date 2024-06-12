@@ -1,26 +1,19 @@
 ﻿import { useEffect, useState } from "react";
 import { useNavigate } from 'react-router-dom';
-import DashboardMinDetails from "./DashboardMinDetails";
+import DashboardItem from "./DashboardItem";
 
 import "../../styles/dashboard.scss";
 
-const minDamage = 15000;
-const minHeal = 15000;
-const minDamageTaken = 15000;
-
-const timeout = 1000;
-
 const Dashboard = ({ players, combatId, combatLogId, combatName }) => {
     const [damageSum, setDamageSum] = useState(0);
-    const [healSum, setHealSum] = useState(0);
+    const [healingSum, setHealSum] = useState(0);
     const [damageTakenSum, setDamageTakenSum] = useState(0);
+    const [resourcesRecoverySum, setResourcesRecoverySum] = useState(0);
+
     const [sortedByDamagePlayers, setSortedByDamagePlayers] = useState([]);
     const [sortedByHealPlayers, setSortedByHealPlayers] = useState([]);
     const [sortedByDamageTakenPlayers, setSortedByDamageTakenPlayers] = useState([]);
-    const [minDetails, setMinDetails] = useState(<></>);
-    const [selectedPlayerIndex, setSelectedPlayerIndex] = useState(0);
-    const [detailsType, setDetailsType] = useState(0);
-    const [showDetailsTimeout, setShowDetailsTimeout] = useState(null);
+    const [sortedByResourcesRecoveryPlayers, setSortedByResourcesRecoveryPlayers] = useState([]);
 
     const navigate = useNavigate();
 
@@ -30,22 +23,23 @@ const Dashboard = ({ players, combatId, combatLogId, combatName }) => {
         }
 
         getDamageSum();
-        getHealSum();
+        getHealingSum();
         getDamageTakenSum();
+        getResourcesRecoverySum();
 
         let unblockedArray = Object.assign([], players);
 
         let sorteredByDamage = quickSort(unblockedArray, 0);
-        sorteredByDamage = sorteredByDamage.slice(0, 5);
         setSortedByDamagePlayers(sorteredByDamage);
 
         let sortedByHeal = quickSort(unblockedArray, 1);
-        sortedByHeal = sortedByHeal.slice(0, 5);
         setSortedByHealPlayers(sortedByHeal);
 
         let sortedByDamageTaken = quickSort(unblockedArray, 2);
-        sortedByDamageTaken = sortedByDamageTaken.slice(0, 5);
         setSortedByDamageTakenPlayers(sortedByDamageTaken);
+
+        let sortedByResourcesRecovery = quickSort(unblockedArray, 3);
+        setSortedByResourcesRecoveryPlayers(sortedByResourcesRecovery);
     }, [players]);
 
     const quickSort = (array, type) => {
@@ -63,8 +57,11 @@ const Dashboard = ({ players, combatId, combatLogId, combatName }) => {
         else if (type === 1) {
             quickSortByHeal(array, left, right, pivot)
         }
-        else {
+        else if (type === 2) {
             quickSortByDamageTaken(array, left, right, pivot);
+        }
+        else {
+            quickSortByResourcesRecovery(array, left, right, pivot);
         }
 
         return [...quickSort(left, type), pivot, ...quickSort(right, type)];
@@ -103,6 +100,17 @@ const Dashboard = ({ players, combatId, combatLogId, combatName }) => {
         }
     }
 
+    const quickSortByResourcesRecovery = (array, left, right, pivot) => {
+        for (let i = 0; i < array.length - 1; i++) {
+            if (array[i].energyRecovery > pivot.energyRecovery) {
+                left.push(array[i]);
+            }
+            else {
+                right.push(array[i])
+            }
+        }
+    }
+
     const getDamageSum = () => {
         let sum = 0;
 
@@ -113,7 +121,7 @@ const Dashboard = ({ players, combatId, combatLogId, combatName }) => {
         setDamageSum(sum);
     }
 
-    const getHealSum = () => {
+    const getHealingSum = () => {
         let sum = 0;
 
         for (let i = 0; i < players.length; i++) {
@@ -133,143 +141,89 @@ const Dashboard = ({ players, combatId, combatLogId, combatName }) => {
         setDamageTakenSum(sum);
     }
 
-    const damageCalculation = (player) => {
-        if (player.damageDone === 0) {
-            return 0;
+    const getResourcesRecoverySum = () => {
+        let sum = 0;
+
+        for (let i = 0; i < players.length; i++) {
+            sum += players[i].energyRecovery;
         }
 
-        const playerContribution = player.damageDone / damageSum;
-        const precentOfContribution = playerContribution * 100;
-        const sumRound = precentOfContribution.toFixed(2);
-
-        return sumRound;
+        setResourcesRecoverySum(sum);
     }
 
-    const healCalculation = (player) => {
-        if (player.healDone === 0) {
-            return 0;
-        }
-
-        const playerContribution = player.healDone / healSum;
-        const precentOfContribution = playerContribution * 100;
-        const sumRound = precentOfContribution.toFixed(2);
-
-        return sumRound;
-    }
-
-    const damageTakenCalculation = (player) => {
+    const calculation = (player, typeOfResource, resourcesSum) => {
         if (player.damageTaken === 0) {
             return 0;
         }
 
-        const playerContribution = player.damageTaken / damageTakenSum;
+        let typeOfResourceValue = 0;
+        switch (typeOfResource) {
+            case 0:
+                typeOfResourceValue = player.damageDone;
+                break;
+            case 1:
+                typeOfResourceValue = player.healDone;
+                break;
+            case 2:
+                typeOfResourceValue = player.damageTaken;
+                break;
+            case 3:
+                typeOfResourceValue = player.energyRecovery;
+                break;
+            default:
+        }
+
+        const playerContribution = typeOfResourceValue / resourcesSum;
         const precentOfContribution = playerContribution * 100;
         const sumRound = precentOfContribution.toFixed(2);
 
         return sumRound;
     }
 
-    const fillMinDetailsHandle = (e, index, detailsType, combatPlayerId) => {
-        const timeoutHandler = setTimeout(() => {
-            setSelectedPlayerIndex(index);
-            setDetailsType(detailsType);
-            setMinDetails(<DashboardMinDetails combatPlayerId={combatPlayerId} closeHandle={closeMinDetailsHandle} detailsType={detailsType} />);
-        }, timeout);
-
-        setShowDetailsTimeout(timeoutHandler);
-    }
-
-    const closeMinDetailsHandle = (e) => {
-        setSelectedPlayerIndex(0);
-        setDetailsType(0);
-        setMinDetails(<></>);
-    }
-
-    const clearTimeoutHandle = (e) => {
-        clearTimeout(showDetailsTimeout);
+    const goToCombatGeneralDetails = (playerId) => {
+        navigate(`/combat-general-details?id=${playerId}&detailsType=DamageDone&combatId=${combatId}&combatLogId=${combatLogId}&name=${combatName}&tab=${0}`);
     }
 
     if (damageSum === 0) {
-        return <div>Loading...</div>;
+        return <div className="dashboard__loading">Loading...</div>;
     }
 
     return (
         <div className="dashboard">
             <div className="container">
-                <div className="dashboard__statistics">
-                    <div>Damage done</div>
-                    <ul className="damage-progress">
-                        {sortedByDamagePlayers?.filter(player => player.damageDone >= minDamage).map((player, index) => (
-                            <li key={player.id}>
-                                {(selectedPlayerIndex === index && detailsType === 0) &&
-                                    minDetails
-                                }
-                                <div className="title">
-                                    <div className="username">{player.userName}</div>
-                                    <div className="value">{player.damageDone}</div>
-                                </div>
-                                <div className="player-statistics">
-                                    <div className="progress" onMouseOver={(e) => fillMinDetailsHandle(e, index, 0, player.id)} onMouseOut={clearTimeoutHandle}
-                                        onClick={() => navigate(`/combat-general-details?id=${player.id}&detailsType=DamageDone&combatId=${combatId}&combatLogId=${combatLogId}&name=${combatName}&tab=${0}`)}>
-                                        <div className="progress-bar" role="progressbar" style={{ width: damageCalculation(player) + '%' }}
-                                            aria-valuenow={damageCalculation(player)} aria-valuemin="0" aria-valuemax="0"></div>
-                                    </div>
-                                    <div className="player-contribution">{damageCalculation(player)}</div>
-                                </div>
-                            </li>
-                        ))}
-                    </ul>
-                </div>
-                <div className="dashboard__statistics">
-                    <div>Heal done</div>
-                    <ul className="heal-progress">
-                        {sortedByHealPlayers?.filter(player => player.healDone > minHeal).map((player, index) => (
-                            <li key={player.id}>
-                                {(selectedPlayerIndex === index && detailsType === 1) &&
-                                    minDetails
-                                }
-                                <div className="title">
-                                    <div className="username">{player.userName}</div>
-                                    <div className="value">{player.healDone}</div>
-                                </div>
-                                <div className="player-statistics">
-                                    <div className="progress" onMouseOver={(e) => fillMinDetailsHandle(e, index, 1, player.id)} onMouseOut={clearTimeoutHandle}
-                                        onClick={() => navigate(`/combat-general-details?id=${player.id}&detailsType=HealDone&combatId=${combatId}&combatLogId=${combatLogId}&name=${combatName}&tab=${0}`)}>
-                                        <div className="progress-bar" role="progressbar" style={{ width: healCalculation(player) + '%' }}
-                                            aria-valuenow={healCalculation(player)} aria-valuemin="0" aria-valuemax="0"></div>
-                                    </div>
-                                    <div className="player-contribution">{healCalculation(player)}</div>
-                                </div>
-                            </li>
-                        ))}
-                    </ul>
-                </div>
-                <div className="dashboard__statistics">
-                    <div>Damage taken</div>
-                    <ul className="damage-taken-progress">
-                        {sortedByDamageTakenPlayers?.filter(player => player.damageTaken > minDamageTaken).map((player, index) => (
-                            <li key={player.id}>
-                                {(selectedPlayerIndex === index && detailsType === 2) &&
-                                    minDetails
-                                }
-                                <div className="title">
-                                    <div className="username">{player.userName}</div>
-                                    <div className="value">{player.damageTaken}</div>
-                                </div>
-                                <div className="player-statistics">
-                                    <div className="progress" onMouseOver={(e) => fillMinDetailsHandle(e, index, 2, player.id)} onMouseOut={clearTimeoutHandle}
-                                        onClick={() => navigate(`/combat-general-details?id=${player.id}&detailsType=DamageTaken&combatId=${combatId}&combatLogId=${combatLogId}&name=${combatName}&tab=${0}`)}>
-                                        <div className="progress-bar" role="progressbar" style={{ width: damageTakenCalculation(player) + '%' }}
-                                            aria-valuenow={damageTakenCalculation(player)} aria-valuemin="0" aria-valuemax="0"></div>
-                                    </div>
-                                    <div className="player-contribution">{damageTakenCalculation(player)}</div>
-                                </div>
-                            </li>
-                        ))}
-                    </ul>
-                </div>
+                <DashboardItem
+                    name="Damage"
+                    array={sortedByDamagePlayers}
+                    detailsType={0}
+                    calculation={calculation}
+                    goToCombatGeneralDetails={goToCombatGeneralDetails}
+                    resourcesSum={damageSum}
+                />
+                <DashboardItem
+                    name="Healing"
+                    array={sortedByHealPlayers}
+                    detailsType={1}
+                    calculation={calculation}
+                    goToCombatGeneralDetails={goToCombatGeneralDetails}
+                    resourcesSum={healingSum}
+                />
+                <DashboardItem
+                    name="Damage taken"
+                    array={sortedByDamageTakenPlayers}
+                    detailsType={2}
+                    calculation={calculation}
+                    goToCombatGeneralDetails={goToCombatGeneralDetails}
+                    resourcesSum={damageTakenSum}
+                />
+                <DashboardItem
+                    name="Resources"
+                    array={sortedByResourcesRecoveryPlayers}
+                    detailsType={3}
+                    calculation={calculation}
+                    goToCombatGeneralDetails={goToCombatGeneralDetails}
+                    resourcesSum={resourcesRecoverySum}
+                />
             </div>
-            
         </div>
     );
 }

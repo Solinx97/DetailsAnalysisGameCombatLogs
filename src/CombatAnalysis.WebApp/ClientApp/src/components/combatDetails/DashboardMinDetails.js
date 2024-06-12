@@ -9,6 +9,8 @@ import {
     useLazyGetResourceRecoveryGeneralyByPlayerIdQuery
 } from '../../store/api/CombatParserApi';
 
+const itemsMinCount = 5;
+
 const DashboardMinDetails = ({ combatPlayerId, closeHandle, detailsType }) => {
     const { t } = useTranslation("combatDetails/combatGeneralDetails");
 
@@ -17,6 +19,7 @@ const DashboardMinDetails = ({ combatPlayerId, closeHandle, detailsType }) => {
     const [getDamageTakenGeneralyByPlayerIdAsync] = useLazyGetDamageTakenGeneralyByPlayerIdQuery();
     const [getResourceRecoveryGeneralyByPlayerIdAsync] = useLazyGetResourceRecoveryGeneralyByPlayerIdQuery();
 
+    const [itemsCount, setItemsCount] = useState(itemsMinCount);
     const [data, setData] = useState([]);
     const [detailsTypeName, setDetailsTypeName] = useState("");
 
@@ -27,6 +30,7 @@ const DashboardMinDetails = ({ combatPlayerId, closeHandle, detailsType }) => {
 
         const getDamageDoneAsyn = async () => {
             const detailsResult = await getPlayerGeneralDetailsAsync();
+            console.log(detailsResult);
             setData(detailsResult);
         }
 
@@ -66,7 +70,7 @@ const DashboardMinDetails = ({ combatPlayerId, closeHandle, detailsType }) => {
     }
 
     if (data.length === 0) {
-        return <div>Loading...</div>;
+        return <></>;
     }
 
     return (
@@ -79,7 +83,7 @@ const DashboardMinDetails = ({ combatPlayerId, closeHandle, detailsType }) => {
                 />
             </div>
             <ul className="information"> 
-                {data?.filter(damage => damage.value > 0).map((damage, index) => (
+                {data?.slice(0, itemsCount).filter(damage => damage.value > 0).map((damage, index) => (
                     <li key={index}>
                         <div className="min-details__spells-items">
                             <div>{damage.spellOrItem}</div>
@@ -90,6 +94,12 @@ const DashboardMinDetails = ({ combatPlayerId, closeHandle, detailsType }) => {
                     </li>
                 ))}
             </ul>
+            {data.length > itemsMinCount
+                ? itemsCount === itemsMinCount
+                    ? < div className="extend" onClick={() => setItemsCount(data.length)}>More</div>
+                    : <div className="extend" onClick={() => setItemsCount(itemsMinCount)}>Less</div>
+                : null
+            }
         </div>
     );
 }

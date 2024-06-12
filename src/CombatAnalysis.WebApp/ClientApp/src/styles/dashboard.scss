@@ -4,7 +4,9 @@
 
     .container {
         display: flex;
-        justify-content: center;
+        justify-content: start;
+        flex-wrap: wrap;
+        gap: 50px 10px;
     }
 
     .min-details {
@@ -85,11 +87,20 @@
         min-width: 300px;
         gap: 25px;
 
+        .extend {
+            box-shadow: 3px 3px 3px 3px white;
+            border-radius: 10px;
+            padding: 10px 20px;
+            font-size: 12px;
+            cursor: pointer;
+        }
+
         .damage-progress, .heal-progress, .damage-taken-progress {
             display: flex;
             flex-direction: column;
             gap: 15px;
             color: white;
+            margin: 0;
 
             li {
                 display: flex;

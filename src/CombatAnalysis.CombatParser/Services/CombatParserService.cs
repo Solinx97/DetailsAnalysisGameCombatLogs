@@ -50,6 +50,7 @@ public class CombatParserService : IParser<Combat>
     {
         var newCombat = new List<string>();
         var petsId = new Dictionary<string, List<string>>();
+        var bossCombatStarted = false;
 
         Clear();
 
@@ -73,23 +74,28 @@ public class CombatParserService : IParser<Combat>
 
             if (line.Contains(CombatLogKeyWords.EncounterStart))
             {
-                newCombat = new List<string>
-                {
-                    line
-                };
+                bossCombatStarted = true;
+                newCombat.Add(line);
             }
-            else if (newCombat.Any())
-            {
-                if (line.Contains(CombatLogKeyWords.EncounterEnd))
-                {
-                    newCombat.Add(line);
 
-                    GetCombatInformation(newCombat, petsId);
-                }
-                else
-                {
-                    newCombat.Add(line);
-                }
+            if (!bossCombatStarted)
+            {
+                continue;
+            }
+
+            if (line.Contains(CombatLogKeyWords.EncounterEnd))
+            {
+                bossCombatStarted = false;
+
+                newCombat.Add(line);
+
+                GetCombatInformation(newCombat, petsId);
+
+                newCombat = new List<string>();
+            }
+            else
+            {
+                newCombat.Add(line);
             }
         }
     }
