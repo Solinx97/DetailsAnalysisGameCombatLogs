@@ -1,10 +1,11 @@
 ﻿import { useEffect, useState } from "react";
 import { useNavigate } from 'react-router-dom';
 import DashboardItem from "./DashboardItem";
+import DashboardDeathItem from "./DashboardDeathItem";
 
 import "../../styles/dashboard.scss";
 
-const Dashboard = ({ players, combatId, combatLogId, combatName }) => {
+const Dashboard = ({ players, combatId, combatLogId, combatName, playersDeath }) => {
     const [damageSum, setDamageSum] = useState(0);
     const [healingSum, setHealSum] = useState(0);
     const [damageTakenSum, setDamageTakenSum] = useState(0);
@@ -51,20 +52,23 @@ const Dashboard = ({ players, combatId, combatLogId, combatName }) => {
         const left = [];
         const right = [];
 
-        if (type === 0) {
-            quickSortByDamage(array, left, right, pivot)
+        switch (type) {
+            case 0:
+                quickSortByDamage(array, left, right, pivot);
+                return [...quickSort(left, type), pivot, ...quickSort(right, type)];
+            case 1:
+                quickSortByHeaing(array, left, right, pivot);
+                return [...quickSort(left, type), pivot, ...quickSort(right, type)];
+            case 2:
+                quickSortByDamageTaken(array, left, right, pivot);
+                return [...quickSort(left, type), pivot, ...quickSort(right, type)];
+            case 3:
+                quickSortByResourcesRecovery(array, left, right, pivot);
+                return [...quickSort(left, type), pivot, ...quickSort(right, type)];
+            default:
+                quickSortByDamage(array, left, right, pivot);
+                return [...quickSort(left, type), pivot, ...quickSort(right, type)];
         }
-        else if (type === 1) {
-            quickSortByHeal(array, left, right, pivot)
-        }
-        else if (type === 2) {
-            quickSortByDamageTaken(array, left, right, pivot);
-        }
-        else {
-            quickSortByResourcesRecovery(array, left, right, pivot);
-        }
-
-        return [...quickSort(left, type), pivot, ...quickSort(right, type)];
     }
 
     const quickSortByDamage = (array, left, right, pivot) => {
@@ -78,7 +82,7 @@ const Dashboard = ({ players, combatId, combatLogId, combatName }) => {
         }
     }
 
-    const quickSortByHeal = (array, left, right, pivot) => {
+    const quickSortByHeaing = (array, left, right, pivot) => {
         for (let i = 0; i < array.length - 1; i++) {
             if (array[i].healDone > pivot.healDone) {
                 left.push(array[i]);
@@ -222,6 +226,10 @@ const Dashboard = ({ players, combatId, combatLogId, combatName }) => {
                     calculation={calculation}
                     goToCombatGeneralDetails={goToCombatGeneralDetails}
                     resourcesSum={resourcesRecoverySum}
+                />
+                <DashboardDeathItem
+                    playersDeath={playersDeath}
+                    players={players}
                 />
             </div>
         </div>

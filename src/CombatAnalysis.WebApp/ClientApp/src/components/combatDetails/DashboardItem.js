@@ -2,7 +2,6 @@
 import DashboardMinDetails from "./DashboardMinDetails";
 
 const minCount = 4;
-const minValue = 25000;
 
 const timeout = 1000;
 
@@ -54,7 +53,7 @@ const DashboardItem = ({ name, array, detailsType, calculation, goToCombatGenera
     return (
         <div className="dashboard__statistics">
             <div>{name}</div>
-            <ul className="damage-progress">
+            <ul className="players-progress">
                 {array?.slice(0, itemCount).map((player, index) => (
                     <li key={player.id}>
                         {(selectedPlayerIndex === index) &&

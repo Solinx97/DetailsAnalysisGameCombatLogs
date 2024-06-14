@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { memo, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { useLazyGetCombatPlayersByCombatIdQuery } from '../../store/api/CombatParserApi';
+import { useLazyGetCombatPlayersByCombatIdQuery, useLazyGetPlayersDeathByPlayerIdQuery } from '../../store/api/CombatParserApi';
 import PlayerInformation from '../childs/PlayerInformation';
 import PersonalTabs from '../common/PersonalTabs';
 import Dashboard from './Dashboard';
@@ -21,11 +21,13 @@ const DetailsSpecificalCombat = () => {
     const [combatName, setCombatName] = useState("");
     const [tab, setTab] = useState(0);
     const [combatPlayers, setCombatPlayers] = useState([]);
+    const [playersDeath, setPlayersDeath] = useState([]);
     const [searchCombatPlayers, setSearchCombatPlayers] = useState([]);
     const [showCommonDetails, setShowCommonDetails] = useState(false);
     const [showSearch, setShowSearch] = useState(false);
 
     const [getCombatPlayersByCombatIdAsync] = useLazyGetCombatPlayersByCombatIdQuery();
+    const [getPlayersDeathByCombatIdAsync] = useLazyGetPlayersDeathByPlayerIdQuery();
 
     const filterContent = useRef(null);
 
@@ -44,11 +46,12 @@ const DetailsSpecificalCombat = () => {
             return;
         }
 
-        const getCombatPlayers = async () => {
-            await getCombatPlayersAsync();
+        const getExtraCombatDataAsync = async () => {
+            const players = await getCombatPlayersAsync();
+            await getPlayersDeathAsync(players);
         };
 
-        getCombatPlayers();
+        getExtraCombatDataAsync();
     }, [combatId])
 
     const handlerSearch = (e) => {
@@ -61,7 +64,24 @@ const DetailsSpecificalCombat = () => {
         if (combatPlayers.data !== undefined) {
             setCombatPlayers(combatPlayers.data);
             setSearchCombatPlayers(combatPlayers.data);
+
+            return combatPlayers.data;
         }
+
+        return [];
+    }
+
+    const getPlayersDeathAsync = async (players) => {
+        const deaths = [];
+        
+        for (let i = 0; i < players.length; i++) {
+            const playersDeath = await getPlayersDeathByCombatIdAsync(players[i].id);
+            if (playersDeath.data.length > 0 && playersDeath.data !== undefined) {
+                deaths.push(playersDeath.data[0]);
+            }
+        }
+
+        setPlayersDeath(deaths);
     }
 
     const cleanSearch = () => {
@@ -121,8 +141,16 @@ const DetailsSpecificalCombat = () => {
             <PersonalTabs
                 tab={tab}
                 tabs={[
-                    { id: 0, header: "Dashboard", content: <Dashboard combatId={combatId} combatLogId={combatLogId} players={searchCombatPlayers} combatName={combatName} /> },
-                    { id: 1, header: "Common", content: <PlayerInformationMemo combatPlayers={searchCombatPlayers} combatId={combatId} combatLogId={combatLogId} combatName={combatName} /> }
+                    {
+                        id: 0,
+                        header: "Dashboard",
+                        content: <Dashboard combatId={combatId} combatLogId={combatLogId} players={searchCombatPlayers} combatName={combatName} playersDeath={playersDeath} />
+                    },
+                    {
+                        id: 1,
+                        header: "Common",
+                        content: <PlayerInformationMemo combatPlayers={searchCombatPlayers} combatId={combatId} combatLogId={combatLogId} combatName={combatName} />
+                    }
                 ]}
             />
         </div>

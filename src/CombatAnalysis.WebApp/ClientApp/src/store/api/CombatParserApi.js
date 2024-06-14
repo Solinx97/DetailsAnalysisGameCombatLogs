@@ -41,6 +41,9 @@ export const CombatParserApi = createApi({
         getResourceRecoveryGeneralyByPlayerId: builder.query({
             query: (playerId) => `/ResourceRecoveryGeneral/${playerId}`
         }),
+        getPlayersDeathByPlayerId: builder.query({
+            query: (playerId) => `/PlayerDeath/${playerId}`
+        }),
         getGeneralAnalysisById: builder.query({
             query: (id) => `/GeneralAnalysis/${id}`
         }),
@@ -66,6 +69,7 @@ export const {
     useLazyGetHealDoneGeneralyByPlayerIdQuery,
     useLazyGetDamageTakenGeneralyByPlayerIdQuery,
     useLazyGetResourceRecoveryGeneralyByPlayerIdQuery,
+    useLazyGetPlayersDeathByPlayerIdQuery,
     useGetDamageDoneGeneralyByPlayerIdQuery,
     useGetGeneralAnalysisByIdQuery,
     useLazyGetGeneralAnalysisByIdQuery,

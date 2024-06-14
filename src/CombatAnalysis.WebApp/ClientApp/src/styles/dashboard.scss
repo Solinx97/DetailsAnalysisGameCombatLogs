@@ -95,7 +95,23 @@
             cursor: pointer;
         }
 
-        .damage-progress, .heal-progress, .damage-taken-progress {
+        .death-info {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+
+            &__details {
+                display: flex;
+                justify-content: space-between;
+                border-radius: 10px;
+                box-shadow: 3px 3px 3px 3px white;
+                padding: 10px;
+                font-size: 14px;
+                gap: 20px;
+            }
+        }
+
+        .players-progress {
             display: flex;
             flex-direction: column;
             gap: 15px;

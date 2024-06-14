@@ -78,15 +78,12 @@ public class CombatController : ControllerBase
                 await _saveCombatDataHelper.SaveCombatPlayerAsync(createdCombat, model.PetsId, createdCombatPlayer, model.Data);
             }
 
-            if (model.DeathInfo.Any())
+            foreach (var item in model.DeathInfo)
             {
-                foreach (var item in model.DeathInfo)
-                {
-                    var player = model.Players.FirstOrDefault(x => x.Username == item.Username);
-                    item.CombatPlayerId = player.Id;
+                var player = model.Players.FirstOrDefault(x => x.Username == item.Username);
+                item.CombatPlayerId = player.Id;
 
-                    await UploadPlayerDeathAsync(item);
-                }
+                await UploadPlayerDeathAsync(item);
             }
 
             createdCombat.IsReady = true;
