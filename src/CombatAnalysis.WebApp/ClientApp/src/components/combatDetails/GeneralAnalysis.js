@@ -14,6 +14,7 @@ const GeneralAnalysis = () => {
 
     const [combatLogId, setCombatLogId] = useState(0);
     const [combats, setCombats] = useState([]);
+    const [uniqueCombats, setUniqueCombats] = useState([]);
 
     const [generalAnalysisAsync] = useLazyGetGeneralAnalysisByIdQuery();
 
@@ -34,11 +35,60 @@ const GeneralAnalysis = () => {
         getCombats();
     }, [combatLogId]);
 
+    useEffect(() => {
+        if (combats.length === 0) {
+            return;
+        }
+
+        createListOfSimilarCombats();
+    }, [combats]);
+
     const getCombatsAsync = async () => {
         const combats = await generalAnalysisAsync(combatLogId);
         if (combats.data !== undefined) {
             setCombats(combats.data);
         }
+    }
+
+    const createListOfSimilarCombats = () => {
+        const uniqueCombatList = [];
+        const uniqueNames = [];
+
+        const sortedCombats = quickSortByFinishDate(combats);
+
+        for (let i = 0; i < sortedCombats.length; i++) {
+            if (uniqueNames.indexOf(sortedCombats[i].name) > -1) {
+                continue;
+            }
+
+            const foundCombats = sortedCombats.filter(x => x.name === sortedCombats[i].name);
+            uniqueCombatList.push(foundCombats);
+
+            uniqueNames.push(sortedCombats[i].name);
+        }
+
+        setUniqueCombats(uniqueCombatList);
+    }
+
+    const quickSortByFinishDate = (array) => {
+        if (array.length <= 1) {
+            return array;
+        }
+
+        const pivot = array[array.length - 1];
+        const left = [];
+        const right = [];
+
+        for (let i = 0; i < array.length - 1; i++) {
+            if (array[i].startDate < pivot.startDate) {
+                left.push(array[i]);
+            }
+            else {
+                right.push(array[i])
+            }
+        }
+
+        return [...quickSortByFinishDate(left), pivot, ...quickSortByFinishDate(right)];
     }
 
     return (
@@ -53,10 +103,10 @@ const GeneralAnalysis = () => {
                 <h3 className="title">{t("Combats")}</h3>
             </div>
             <ul className="combats__container">
-                {combats?.map((item) => (
-                        <li key={item.id}>
+                {uniqueCombats?.map((combats, index) => (
+                        <li key={index}>
                             <GeneralAnalysisItem
-                                combat={item}
+                                uniqueCombats={combats}
                                 combatLogId={combatLogId}
                             />
                         </li>

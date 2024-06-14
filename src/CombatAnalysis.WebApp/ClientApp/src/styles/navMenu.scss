@@ -28,8 +28,13 @@ html {
     padding: 0 25px;
 }
 
-.authorization button {
-    margin: 10px;
+.authorization {
+    display: flex;
+    gap: 20px;
+
+    .btn-primary {
+        background: #102C57;
+    }
 }
 
 .authorized {

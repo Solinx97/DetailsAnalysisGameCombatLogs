@@ -34,6 +34,19 @@ const DashboardDeathItem = ({ playersDeath, players }) => {
         getDetaAsync();
     }, [playersDeath]);
 
+    if (playersDeath === undefined) {
+        return (<div>Loading...</div>);
+    }
+
+    if (playersDeath.length === 0) {
+        return (
+            <div className="dashboard__statistics">
+                <div>Players died</div>
+                <div>Empty</div>
+            </div>
+        );
+    }
+
     return (
         <div className="dashboard__statistics">
             <div>Players death</div>

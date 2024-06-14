@@ -5,6 +5,71 @@
             margin: 25px;
             background: #135D66;
 
+            .unique-combats {
+                &__all, &__selected {
+                    .combat-number {
+                        font-size: 18px;
+                        margin: 0 10px;
+                    }
+                }
+
+                &__selected {
+                    .combat-number {
+                        color: white;
+                    }
+                }
+
+                &__all {
+                    position: absolute;
+                    display: flex;
+                    justify-content: start;
+                    top: -30%;
+                    font-size: 12px;
+                    gap: 20px;
+                    overflow: auto;
+                    width: 100%;
+
+                    li {
+                        display: flex;
+                        justify-content: center;
+                        align-items: center;
+                        border-radius: 20px;
+                        padding: 5px;
+                        margin: 5px;
+                        gap: 5px;
+                        cursor: pointer;
+
+                        .combat-time {
+                            margin: 0;
+                        }
+                    }
+
+                    .list-group-item {
+                        background: #0c192c;
+                    }
+
+                    li:hover {
+                        transform: scale(1.05);
+                    }
+                }
+
+                &__lose {
+                    box-shadow: 2px 2px 2px 2px red;
+
+                    .combat-number {
+                        color: red;
+                    }
+                }
+
+                &__win {
+                    box-shadow: 2px 2px 2px 2px green;
+
+                    .combat-number {
+                        color: green;
+                    }
+                }
+            }
+
             .win, .lose {
                 padding: 5px;
                 box-shadow: 3px 3px 3px 3px black;
@@ -18,6 +83,22 @@
 
             .lose {
                 background: #D04848;
+            }
+
+            .combat-time {
+                display: flex;
+                justify-content: start;
+                margin: 0 0 10px 10px;
+                gap: 25px;
+
+                &__range, &__lasts {
+                    display: flex;
+                    gap: 20px;
+                    padding: 10px;
+                    border-radius: 20px;
+                    box-shadow: 2px 2px 2px 2px black;
+                    font-size: 14px;
+                }
             }
 
             .list-group-item {
@@ -51,6 +132,12 @@
                     border-radius: 15px;
                 }
 
+                &__death-number-zero {
+                    padding: 5px;
+                    box-shadow: 2px 2px 2px 2px white;
+                    border-radius: 15px;
+                }
+
                 &__ready {
                     background: #7F27FF;
                 }
@@ -64,6 +151,11 @@
 
         .combats {
             &__container {
+                display: flex;
+                flex-direction: column;
+                gap: 75px;
+                margin-top: 80px;
+
                 .details {
                     display: flex;
                 }
@@ -119,9 +211,16 @@ ul {
         display: flex;
         align-items: center;
         border: 1px solid #3AA6B9;
-        box-shadow: 2px 2px black;
         border-radius: 25px;
         margin: 10px;
+    }
+
+    &__win {
+        box-shadow: 2px 2px 2px 2px green;
+    }
+
+    &__lose {
+        box-shadow: 2px 2px 2px 2px red;
     }
 
     svg {

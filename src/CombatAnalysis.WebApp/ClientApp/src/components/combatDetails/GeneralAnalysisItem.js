@@ -1,48 +1,123 @@
-import { faBolt, faBookSkull, faCheck, faCircleNodes, faCirclePlay, faClock, faFlagCheckered, faGraduationCap, faKhanda, faHourglassStart, faDatabase, faPlusCircle, faShieldHalved, faSkull } from '@fortawesome/free-solid-svg-icons';
+import { faBolt, faBookSkull, faCheck, faCircleNodes, faClock, faDatabase, faGraduationCap, faHourglassStart, faKhanda, faPlusCircle, faShieldHalved, faSkull } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { format } from 'date-fns';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 
-const GeneralAnalysisItem = ({ combat, combatLogId }) => {
+const GeneralAnalysisItem = ({ uniqueCombats, combatLogId }) => {
     const { t } = useTranslation("combatDetails/generalAnalysis");
 
     const navigate = useNavigate();
 
+    const [selectedCombat, setSelectedCombat] = useState(null);
+    const [otherCombats, setOtherCombats] = useState([]);
+    const [selectedCombatIndex, setSelectedCombatIndex] = useState(uniqueCombats.length - 1);
+
+    useEffect(() => {
+        selectCombat(uniqueCombats.length - 1);
+    }, [uniqueCombats]);
+
+    const selectCombat = (index) => {
+        setSelectedCombatIndex(index);
+
+        const lastCombatByTime = uniqueCombats[index];
+        setSelectedCombat(lastCombatByTime);
+
+        setOtherCombats(uniqueCombats);
+    }
+
+    if (selectedCombat === null) {
+        return (<div>Loading...</div>);
+    }
+
     return (
         <div className="card">
-            <div className="combat-title">
-                <div className="status">
-                    <div className="card-body">
-                        <h5 className="card-title">{combat.name}</h5>
-                        <p className="card-text">{combat.dungeonName}</p>
+            <ul className="unique-combats__all">
+                {otherCombats?.map((combat, index) => (
+                    <li key={combat.id + 2} className={`unique-combats__${combat.isWin ? 'win' : 'lose'}`} onClick={() => selectCombat(index)}>
+                        <div className="combat-number">{index + 1}</div>
+                        <div className="combat-time">
+                            <div className="combat-time__range">
+                                <div className="list-group-item">
+                                    <div>
+                                        <div>{format(new Date(combat.startDate), 'HH:mm')}</div>
+                                    </div>
+                                </div>
+                                <div className="list-group-item">
+                                    <div>
+                                        <div>{format(new Date(combat.finishDate), 'HH:mm')}</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="combat-time__lasts">
+                                <div>{combat.duration}</div>
+                                <FontAwesomeIcon
+                                    icon={faHourglassStart}
+                                    className="list-group-item__duration"
+                                    title={t("Duration")}
+                                />
+                            </div>
+                        </div>
+                    </li>
+                ))}
+            </ul>
+            <div className="unique-combats__selected">
+                <div className="combat-title">
+                    <div className={`status combat-title__${selectedCombat.isWin ? 'win' : 'lose'}`}>
+                        <div className="combat-number">{selectedCombatIndex + 1}</div>
+                        <div className="card-body">
+                            <h5 className="card-title">{selectedCombat.name}</h5>
+                            <p className="card-text">{selectedCombat.dungeonName}</p>
+                        </div>
+                        {selectedCombat.isWin
+                            ? <FontAwesomeIcon
+                                icon={faGraduationCap}
+                                className="win"
+                                title={t("Win")}
+                            />
+                            : <FontAwesomeIcon
+                                icon={faSkull}
+                                className="lose"
+                                title={t("Lose")}
+                            />
+                        }
                     </div>
-                    {combat.isWin
+                    {selectedCombat.isReady
                         ? <FontAwesomeIcon
-                            icon={faGraduationCap}
-                            className="win"
-                            title={t("Win")}
+                            icon={faCheck}
+                            className="list-group-item__ready"
+                            title={t("Ready")}
                         />
                         : <FontAwesomeIcon
-                            icon={faSkull}
-                            className="lose"
-                            title={t("Lose")}
+                            icon={faClock}
+                            className="list-group-item__not-ready"
+                            title={t("NotReady")}
                         />
                     }
                 </div>
-                {combat.isReady
-                    ? <FontAwesomeIcon
-                        icon={faCheck}
-                        className="list-group-item__ready"
-                        title={t("Ready")}
-                    />
-                    : <FontAwesomeIcon
-                        icon={faClock}
-                        className="list-group-item__not-ready"
-                        title={t("NotReady")}
-                    />
-                }
+                <div className="combat-time">
+                    <div className="combat-time__range">
+                        <div className="list-group-item">
+                            <div>
+                                <div>{format(new Date(selectedCombat?.startDate), 'HH:mm')}</div>
+                            </div>
+                        </div>
+                        <div className="list-group-item">
+                            <div>
+                                <div>{format(new Date(selectedCombat?.finishDate), 'HH:mm')}</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div className="combat-time__lasts">
+                        <div>{selectedCombat.duration}</div>
+                        <FontAwesomeIcon
+                            icon={faHourglassStart}
+                            className="list-group-item__duration"
+                            title={t("Duration")}
+                        />
+                    </div>
+                </div>
             </div>
             <ul className="list-group list-group-flush information">
                 <li className="list-group-item">
@@ -51,7 +126,7 @@ const GeneralAnalysisItem = ({ combat, combatLogId }) => {
                         className="list-group-item__damage-done"
                         title={t("Damage")}
                     />
-                    <div>{combat.damageDone}</div>
+                    <div>{uniqueCombats[selectedCombatIndex].damageDone}</div>
                 </li>
                 <li className="list-group-item">
                     <FontAwesomeIcon
@@ -59,7 +134,7 @@ const GeneralAnalysisItem = ({ combat, combatLogId }) => {
                         className="list-group-item__heal-done"
                         title={t("Healing")}
                     />
-                    <div>{combat.healDone}</div>
+                    <div>{uniqueCombats[selectedCombatIndex].healDone}</div>
                 </li>
                 <li className="list-group-item">
                     <FontAwesomeIcon
@@ -67,7 +142,7 @@ const GeneralAnalysisItem = ({ combat, combatLogId }) => {
                         className="list-group-item__damage-taken"
                         title={t("DamageTaken")}
                     />
-                    <div>{combat.damageTaken}</div>
+                    <div>{uniqueCombats[selectedCombatIndex].damageTaken}</div>
                 </li>
                 <li className="list-group-item">
                     <FontAwesomeIcon
@@ -75,15 +150,15 @@ const GeneralAnalysisItem = ({ combat, combatLogId }) => {
                         className="list-group-item__energy-recovery"
                         title={t("ResourcesRecovery")}
                     />
-                    <div>{combat.energyRecovery}</div>
+                    <div>{uniqueCombats[selectedCombatIndex].energyRecovery}</div>
                 </li>
                 <li className="list-group-item">
                     <FontAwesomeIcon
                         icon={faBookSkull}
-                        className="list-group-item__death-number"
+                        className={`list-group-item__death-number${uniqueCombats[selectedCombatIndex].deathNumber === 0 ? '-zero' : ''}`}
                         title={t("Deaths")}
                     />
-                    <div>{combat.deathNumber}</div>
+                    <div>{uniqueCombats[selectedCombatIndex].deathNumber}</div>
                 </li>
                 <li className="list-group-item">
                     <FontAwesomeIcon
@@ -91,40 +166,12 @@ const GeneralAnalysisItem = ({ combat, combatLogId }) => {
                         className="list-group-item__buffs"
                         title={t("Buffs")}
                     />
-                    <div>{combat.usedBuffs}</div>
-                </li>
-                <li className="list-group-item">
-                    <FontAwesomeIcon
-                        icon={faCirclePlay}
-                        className="list-group-item__start"
-                        title={t("StartDate")}
-                    />
-                    <div>
-                        <div>{format(new Date(combat.startDate), 'HH:mm')}</div>
-                    </div>
-                </li>
-                <li className="list-group-item">
-                    <FontAwesomeIcon
-                        icon={faFlagCheckered}
-                        className="list-group-item__finish"
-                        title={t("FinishDate")}
-                    />
-                    <div>
-                        <div>{format(new Date(combat.finishDate), 'HH:mm')}</div>
-                    </div>
-                </li>
-                <li className="list-group-item">
-                    <FontAwesomeIcon
-                        icon={faHourglassStart}
-                        className="list-group-item__duration"
-                        title={t("Duration")}
-                    />
-                    <div>{combat.duration}</div>
+                    <div>{uniqueCombats[selectedCombatIndex].usedBuffs}</div>
                 </li>
             </ul>
             <div className="card-body details">
-                {combat.isReady
-                    ? <div className="btn-shadow" onClick={() => navigate(`/details-specifical-combat?id=${combat.id}&combatLogId=${combatLogId}&name=${combat.name}`)}>
+                {uniqueCombats[selectedCombatIndex].isReady
+                    ? <div className="btn-shadow" onClick={() => navigate(`/details-specifical-combat?id=${uniqueCombats[selectedCombatIndex].id}&combatLogId=${combatLogId}&name=${uniqueCombats[selectedCombatIndex].name}`)}>
                         <FontAwesomeIcon
                             icon={faDatabase}
                         />
