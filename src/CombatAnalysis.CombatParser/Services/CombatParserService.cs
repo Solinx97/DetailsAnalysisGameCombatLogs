@@ -182,7 +182,7 @@ public class CombatParserService : IParser<Combat>
 
             GetCombatPlayersData(combat, petsId);
 
-            CombatDetailsTemplate combatDetailsDeaths = new CombatDetailsDeaths(_logger, combat.Players);
+            CombatDetailsTemplate combatDetailsDeaths = new CombatDetailsDeaths(_logger, combat.Players, combat);
             combat.DeathNumber = combatDetailsDeaths.GetData(string.Empty, combat.Data);
 
             CalculatingCommonCombatDetails(combat);
@@ -322,37 +322,6 @@ public class CombatParserService : IParser<Combat>
 
             players.Add(combatPlayerData);
         });
-        //foreach (var item in playersIdAndStats)
-        //{
-        //    var playerCombatantInfoArray = item.Value.Split(new char[2] { '[', ']' });
-
-        //    var username = GetCombatPlayerUsernameById(combatInformation, item.Key);
-        //    var averageItemLevel = GetAverageItemLevel(playerCombatantInfoArray[1]);
-        //    int usedBuffs = GetUsedBuffs(playerCombatantInfoArray[3]);
-
-        //    var combatDetailsDamageDone = new CombatDetailsDamageDone(_logger)
-        //    {
-        //        PetsId = petsId
-        //    };
-
-        //    var combatDetailsHealDone = new CombatDetailsHealDone(_logger);
-        //    var combatDetailsDamageTaken = new CombatDetailsDamageTaken(_logger);
-        //    var combatDetailsResourceRecovery = new CombatDetailsResourceRecovery(_logger);
-
-        //    var combatPlayerData = new CombatPlayer
-        //    {
-        //        Username = username,
-        //        PlayerId = item.Key,
-        //        AverageItemLevel = double.Round(averageItemLevel, 2),
-        //        EnergyRecovery = combatDetailsResourceRecovery.GetData(item.Key, combat.Data),
-        //        DamageDone = combatDetailsDamageDone.GetData(item.Key, combat.Data),
-        //        HealDone = combatDetailsHealDone.GetData(item.Key, combat.Data),
-        //        DamageTaken = combatDetailsDamageTaken.GetData(item.Key, combat.Data),
-        //        UsedBuffs = usedBuffs,
-        //    };
-
-        //    players.Add(combatPlayerData);
-        //}
 
         return players;
     }

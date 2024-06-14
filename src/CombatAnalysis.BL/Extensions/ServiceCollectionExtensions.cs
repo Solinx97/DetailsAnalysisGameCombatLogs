@@ -29,6 +29,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IPlayerInfoService<DamageTakenGeneralDto, int>, DamageTakenGeneralService>();
         services.AddScoped<IPlayerInfoService<ResourceRecoveryDto, int>, ResourceRecoveryService>();
         services.AddScoped<IPlayerInfoService<ResourceRecoveryGeneralDto, int>, ResourceRecoveryGeneralService>();
+        services.AddScoped<IPlayerInfoService<PlayerDeathDto, int>, PlayerDeathService>();
 
         services.AddScoped<ISpecScoreService<SpecializationScoreDto, int>, SpecializationScoreService>();
     }

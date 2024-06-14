@@ -13,13 +13,14 @@ public class CombatController : ControllerBase
 {
     private readonly IService<CombatDto, int> _service;
     private readonly IService<CombatPlayerDto, int> _combatPlayerService;
+    private readonly IPlayerInfoService<PlayerDeathDto, int> _plaнerDeathService;
     private readonly IMapper _mapper;
     private readonly ILogger _logger;
     private readonly ISqlContextService _sqlContextService;
     private readonly ICombatDataHelper _saveCombatDataHelper;
 
     public CombatController(IService<CombatDto, int> service, IMapper mapper, ILogger logger,
-        ISqlContextService sqlContextService, ICombatDataHelper saveCombatDataHelper, IService<CombatPlayerDto, int> combatPlayerService)
+        ISqlContextService sqlContextService, ICombatDataHelper saveCombatDataHelper, IService<CombatPlayerDto, int> combatPlayerService, IPlayerInfoService<PlayerDeathDto, int> plaнerDeathService)
     {
         _service = service;
         _mapper = mapper;
@@ -27,6 +28,7 @@ public class CombatController : ControllerBase
         _sqlContextService = sqlContextService;
         _saveCombatDataHelper = saveCombatDataHelper;
         _combatPlayerService = combatPlayerService;
+        _plaнerDeathService = plaнerDeathService;
     }
 
     [HttpGet("{id:int:min(1)}")]
@@ -71,8 +73,20 @@ public class CombatController : ControllerBase
                 }
 
                 var createdCombatPlayer = await UploadCombatPlayerAsync(player);
+                player.Id = createdCombatPlayer.Id;
 
                 await _saveCombatDataHelper.SaveCombatPlayerAsync(createdCombat, model.PetsId, createdCombatPlayer, model.Data);
+            }
+
+            if (model.DeathInfo.Any())
+            {
+                foreach (var item in model.DeathInfo)
+                {
+                    var player = model.Players.FirstOrDefault(x => x.Username == item.Username);
+                    item.CombatPlayerId = player.Id;
+
+                    await UploadPlayerDeathAsync(item);
+                }
             }
 
             createdCombat.IsReady = true;
@@ -156,6 +170,18 @@ public class CombatController : ControllerBase
         if (createdItem == null)
         {
             throw new ArgumentException("Combat player did not created");
+        }
+
+        return createdItem;
+    }
+
+    private async Task<PlayerDeathDto> UploadPlayerDeathAsync(PlayerDeathModel model)
+    {
+        var map = _mapper.Map<PlayerDeathDto>(model);
+        var createdItem = await _plaнerDeathService.CreateAsync(map);
+        if (createdItem == null)
+        {
+            throw new ArgumentException("Player death did not created");
         }
 
         return createdItem;

@@ -48,5 +48,7 @@ public class CombatParserSQLContext : DbContext
 
     public DbSet<ResourceRecoveryGeneral>? ResourceRecoveryGeneral { get; }
 
+    public DbSet<PlayerDeath>? PlayerDeath { get; }
+
     #endregion
 }

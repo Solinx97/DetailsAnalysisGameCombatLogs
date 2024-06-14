@@ -32,6 +32,8 @@ public class Combat
 
     public Dictionary<string, List<string>> PetsId { get; set; }
 
+    public List<PlayerDeath> DeathInfo { get; set; }
+
     public string Duration
     {
         get { return (FinishDate - StartDate).ToString(@"hh\:mm\:ss"); }

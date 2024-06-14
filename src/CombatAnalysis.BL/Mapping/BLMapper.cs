@@ -22,5 +22,6 @@ public class BLMapper : Profile
         CreateMap<DamageTakenGeneralDto, DamageTakenGeneral>().ReverseMap();
         CreateMap<ResourceRecoveryDto, ResourceRecovery>().ReverseMap();
         CreateMap<ResourceRecoveryGeneralDto, ResourceRecoveryGeneral>().ReverseMap();
+        CreateMap<PlayerDeathDto, PlayerDeath>().ReverseMap();
     }
 }

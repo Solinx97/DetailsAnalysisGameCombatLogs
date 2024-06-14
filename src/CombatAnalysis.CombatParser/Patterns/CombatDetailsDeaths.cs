@@ -8,11 +8,13 @@ public class CombatDetailsDeaths : CombatDetailsTemplate
 {
     private readonly ILogger _logger;
     private readonly List<CombatPlayer> _players;
+    private readonly Combat _combat;
 
-    public CombatDetailsDeaths(ILogger logger, List<CombatPlayer> players) : base()
+    public CombatDetailsDeaths(ILogger logger, List<CombatPlayer> players, Combat combat) : base()
     {
         _logger = logger;
         _players = players;
+        _combat = combat;
     }
 
     public override int GetData(string player, List<string> combatData)
@@ -22,6 +24,11 @@ public class CombatDetailsDeaths : CombatDetailsTemplate
         {
             if (item.Contains(CombatLogKeyWords.UnitDied))
             {
+                if (_combat.DeathInfo == null)
+                {
+                    _combat.DeathInfo = new List<PlayerDeath>();
+                }
+
                 deaths += GetPlayersStatus(item);
             }
         }
@@ -40,6 +47,14 @@ public class CombatDetailsDeaths : CombatDetailsTemplate
                 if (combatData.Contains(item.Username))
                 {
                     isFound = true;
+
+                    var getTime = combatData.Split(' ')[1];
+                    _combat.DeathInfo.Add(new PlayerDeath
+                    {
+                        Username = item.Username,
+                        Date = DateTimeOffset.Parse(getTime),
+                    });
+
                     break;
                 }
             }

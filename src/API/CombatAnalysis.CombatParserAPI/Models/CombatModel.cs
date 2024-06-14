@@ -16,11 +16,11 @@ public class CombatModel
 
     public int EnergyRecovery { get; set; }
 
-    public int DamageDone { get; set; }
+    public long DamageDone { get; set; }
 
-    public int HealDone { get; set; }
+    public long HealDone { get; set; }
 
-    public int DamageTaken { get; set; }
+    public long DamageTaken { get; set; }
 
     public int DeathNumber { get; set; }
 
@@ -33,6 +33,8 @@ public class CombatModel
     public List<CombatPlayerModel> Players { get; set; }
 
     public Dictionary<string, List<string>> PetsId { get; set; }
+
+    public List<PlayerDeathModel> DeathInfo { get; set; }
 
     public string Duration
     {

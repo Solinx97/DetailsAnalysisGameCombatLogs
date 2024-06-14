@@ -24,6 +24,7 @@ public static class DbProcedureHelper
             typeof(DamageTakenGeneral),
             typeof(ResourceRecovery),
             typeof(ResourceRecoveryGeneral),
+            typeof(PlayerDeath),
         };
 
         foreach (var item in types)

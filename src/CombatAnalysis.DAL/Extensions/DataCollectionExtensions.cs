@@ -51,6 +51,7 @@ public static class DataCollectionExtensions
         services.AddScoped<ISQLPlayerInfoRepository<DamageTakenGeneral, int>, SQLPlayerInfoRepository<DamageTakenGeneral, int>>();
         services.AddScoped<ISQLPlayerInfoRepository<ResourceRecovery, int>, SQLPlayerInfoRepository<ResourceRecovery, int>>();
         services.AddScoped<ISQLPlayerInfoRepository<ResourceRecoveryGeneral, int>, SQLPlayerInfoRepository<ResourceRecoveryGeneral, int>>();
+        services.AddScoped<ISQLPlayerInfoRepository<PlayerDeath, int>, SQLPlayerInfoRepository<PlayerDeath, int>>();
 
         services.AddScoped<ISQLSpecScoreRepository<SpecializationScore, int>, SQLSpecScoreRepository<SpecializationScore, int>>();
 
