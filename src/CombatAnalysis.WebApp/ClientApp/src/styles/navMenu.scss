@@ -36,7 +36,7 @@ html {
             border-radius: 10px;
             box-shadow: 2px 2px 2px 2px #5BBCFF;
             font-size: 14px;
-            cursor: pointer
+            cursor: pointer;
         }
 
         li:hover {
@@ -65,11 +65,11 @@ html {
     }
 
     &__login {
-        box-shadow: 3px 3px 3px 3px white;
+        box-shadow: 2px 2px 2px 2px white;
     }
 
     &__registration {
-        box-shadow: 3px 3px 3px 3px #028391;
+        box-shadow: 2px 2px 2px 2px #028391;
     }
 
     &__login:hover, &__registration:hover {
@@ -81,14 +81,20 @@ html {
     display: flex;
     justify-content: center;
     align-items: center;
+    gap: 20px;
 
     .username {
         font-weight: bold;
         font-family: 'Comic Sans MS';
     }
 
-    button {
-        margin: 0 25px;
+    &__logout {
+        padding: 5px 10px;
+        border-radius: 10px;
+        text-align: center;
+        margin: 0 5px;
+        box-shadow: 2px 2px 2px 2px #7776B3;
+        cursor: pointer;
     }
 }
 

@@ -30,7 +30,6 @@ const DashboardMinDetails = ({ combatPlayerId, closeHandle, detailsType }) => {
 
         const getDamageDoneAsyn = async () => {
             const detailsResult = await getPlayerGeneralDetailsAsync();
-            console.log(detailsResult);
             setData(detailsResult);
         }
 
@@ -70,7 +69,7 @@ const DashboardMinDetails = ({ combatPlayerId, closeHandle, detailsType }) => {
     }
 
     if (data.length === 0) {
-        return <></>;
+        return <div>Loading...</div>;
     }
 
     return (

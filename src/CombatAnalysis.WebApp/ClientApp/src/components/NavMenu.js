@@ -40,8 +40,6 @@ const NavMenu = () => {
         }
 
         checkAuth();
-
-        console.log(i18n);
     }, [])
 
     const checkAuthAsync = async () => {
@@ -116,7 +114,7 @@ const NavMenu = () => {
                     {customer !== null
                         ? <div className="authorized">
                             <div className="username">{customer?.username}</div>
-                            <button type="button" className="btn btn-primary" onClick={logoutAsync}>{t("Logout")}</button>
+                            <div className="authorized__logout" onClick={logoutAsync}>{t("Logout")}</div>
                           </div>
                         : <div className="authorization">
                             <div className="authorization__login" onClick={() => navigate('/login')}>{t("Login")}</div>

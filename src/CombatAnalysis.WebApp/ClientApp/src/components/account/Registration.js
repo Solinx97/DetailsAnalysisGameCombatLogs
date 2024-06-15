@@ -1,4 +1,4 @@
-﻿import React, { useState } from 'react';
+﻿import React, { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { useRegistrationAsyncMutation } from '../../store/api/Account.api';
@@ -7,6 +7,7 @@ import { updateCustomer } from '../../store/slicers/CustomerSlice';
 import { updateUser } from '../../store/slicers/UserSlice';
 import ConfidentialRegistrationStep from './ConfidentialRegistrationStep';
 import GeneralRegistrationStep from './GeneralRegistrationStep';
+import LoginPreview from './LoginPreview';
 
 import "../../styles/account/registration.scss";
 
@@ -35,6 +36,11 @@ const Registration = () => {
         gender: 0,
         appUserId: ""
     });
+    const [registrationContent, setRegistrationContent] = useState(null);
+
+    useEffect(() => {
+        getRegistrationContent();
+    }, [step]);
 
     const updateConfidentialInformation = (email, phoneNumber, birthday, password) => {
         const updateUser = user;
@@ -83,26 +89,45 @@ const Registration = () => {
         navigate("/");
     }
 
-    switch (step) {
-        case 0:
-            return <ConfidentialRegistrationStep
-                setStep={setStep}
-                user={user}
-                updateConfidentialInformation={updateConfidentialInformation}
-            />;
-        case 1:
-            return <GeneralRegistrationStep
-                setStep={setStep}
-                customer={customer}
-                updateGeneralInformation={updateGeneralInformation}
-                registrationAsync={registrationAsync}
-            />;
-        default:
-            return <ConfidentialRegistrationStep
-                setStep={setStep}
-                updateConfidentialInformation={updateConfidentialInformation}
-            />;
+    const getRegistrationContent = () => {
+        let content;
+
+        switch (step) {
+            case 0:
+                content = <ConfidentialRegistrationStep
+                    setStep={setStep}
+                    user={user}
+                    updateConfidentialInformation={updateConfidentialInformation}
+                />;
+                break;
+            case 1:
+                content = <GeneralRegistrationStep
+                    setStep={setStep}
+                    customer={customer}
+                    updateGeneralInformation={updateGeneralInformation}
+                    registrationAsync={registrationAsync}
+                />;
+                break;
+            default:
+                content = <ConfidentialRegistrationStep
+                    setStep={setStep}
+                    updateConfidentialInformation={updateConfidentialInformation}
+                />;
+                break;
+        }
+
+        setRegistrationContent(content);
     }
+
+    return (
+        <div className="registration">
+            <div className="registration__title">Registration</div>
+            <div className="registration__container">
+                <LoginPreview />
+                {registrationContent}
+            </div>
+        </div>
+    );
 }
 
 export default Registration;

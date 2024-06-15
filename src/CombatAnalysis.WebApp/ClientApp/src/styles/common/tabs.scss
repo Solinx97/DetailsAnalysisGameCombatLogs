@@ -7,27 +7,36 @@
     margin: 20px 0;
 
     &__header {
-        ul {
+        .title {
             display: flex;
             justify-content: center;
             gap: 35px;
+            padding: 20px 0;
 
             li {
-                border-radius: 10px;
-                padding: 10px;
-                font-size: 18px;
-                box-shadow: 3px 3px 3px 3px white;
-                cursor: pointer;
-            }
+                padding-bottom: 15px;
 
-            li:hover {
-                box-shadow: 3px 3px 3px 3px #3AA6B9;
+                div {
+                    border-radius: 10px;
+                    padding: 10px;
+                    font-size: 18px;
+                    box-shadow: 2px 2px 2px 2px white;
+                    cursor: pointer;
+                }
+
+                div:hover {
+                    box-shadow: 2px 2px 2px 2px #3AA6B9;
+                }
             }
 
             .tab-active {
-                color: #6DC5D1;
-                border: 1px solid white;
-                box-shadow: 7px 7px #6295A2;
+                border-bottom: 4px solid #8DECB4;
+
+                div {
+                    color: #6DC5D1;
+                    border: 1px solid white;
+                    box-shadow: 5px 5px #6295A2;
+                }
             }
         }
     }

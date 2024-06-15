@@ -30,22 +30,6 @@
                 border-radius: 20px;
             }
         }
-
-        .preview {
-            box-shadow: 2px 2px 2px 2px #3AA6B9;
-            border-radius: 20px;
-            padding: 30px;
-            margin: 0 50px;
-            font-size: 17px;
-
-            &__responsibilities .form-check {
-                margin: 10px;
-
-                label {
-                    opacity: 1;
-                }
-            }
-        }
     }
 
     .title {

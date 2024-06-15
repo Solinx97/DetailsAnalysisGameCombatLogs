@@ -1,10 +1,10 @@
 /* Provide sufficient contrast against white background */
 a {
-  color: #0366d6;
+    color: #0366d6;
 }
 
 .btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+    box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
 }
 
 .main {
@@ -21,8 +21,13 @@ a {
 }
 
 #root input[type=text], #root input[type=email], #root input[type=password], #root input[type=number], #root input[type=date], #root textarea {
-    background: #7AB2B2;
-    color: black;
+    background: #0c192c;
+    color: white;
+    border: 1px solid #028391;
+}
+
+#root input[type=text]::placeholder {
+    color: #57A6A1;
 }
 
 .card {
@@ -30,13 +35,13 @@ a {
 }
 
 code {
-  color: #E01A76;
+    color: #E01A76;
 }
 
 .btn-primary {
-  color: #fff;
-  background-color: #1b6ec2;
-  border-color: #1861ac;
+    color: #fff;
+    background-color: #1b6ec2;
+    border-color: #1861ac;
 }
 
 .btn-shadow {
@@ -48,6 +53,15 @@ code {
     border-radius: 15px;
     box-shadow: 2px 2px 2px 2px #3AA6B9;
     cursor: pointer;
+}
+
+.btn-border-shadow {
+    padding: 10px 15px;
+    border-radius: 10px;
+    box-shadow: 2px 2px 2px 2px #5BBCFF;
+    font-size: 14px;
+    cursor: pointer;
+    background: transparent;
 }
 
 .btn-shadow_disabled {
@@ -64,4 +78,24 @@ code {
 
 .btn-shadow_disabled svg {
     cursor: default;
+}
+
+.preview {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    box-shadow: 2px 2px 2px 2px #3AA6B9;
+    border-radius: 20px;
+    padding: 30px;
+    font-size: 17px;
+}
+
+.preview__responsibilities {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.preview__responsibilities .form-check-label {
+    opacity: 1!important;
 }

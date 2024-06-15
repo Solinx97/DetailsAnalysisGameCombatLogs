@@ -80,7 +80,7 @@ const ConfidentialRegistrationStep = ({ setStep, user, updateConfidentialInforma
     }
 
     return (
-        <form className="registration" onSubmit={async (event) => await handleSubmitAsync(event)}>
+        <form className="registration__submit" onSubmit={async (event) => await handleSubmitAsync(event)}>
             <div className="mb-3">
                 <label htmlFor="input-email" className="form-label">{t("Email")}</label>
                 <input type="email" className="form-control" id="input-email" aria-describedby="emailHelp"
@@ -107,7 +107,7 @@ const ConfidentialRegistrationStep = ({ setStep, user, updateConfidentialInforma
                     onChange={handleConfirmPasswordChange} value={confirmPassword} required />
             </div>
             <div className="actions">
-                <input type="submit" className="btn btn-info" value={t("NextStep")} />
+                <input type="submit" className="btn-border-shadow" value={t("NextStep")} />
             </div>
             {showUserErrorMessage &&
                 <div className="registration__error-message">{t("EmailExist")}</div>

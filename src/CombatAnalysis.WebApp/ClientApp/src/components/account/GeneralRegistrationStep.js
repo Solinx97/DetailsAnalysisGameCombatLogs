@@ -61,7 +61,7 @@ const GeneralRegistrationStep = ({ setStep, customer, updateGeneralInformation, 
     }
 
     return (
-        <form className="registration" onSubmit={async (event) => await handleSubmitAsync(event)}>
+        <form className="registration__submit" onSubmit={async (event) => await handleSubmitAsync(event)}>
             <div className="mb-3">
                 <label htmlFor="inputUsername" className="form-label">{t("Username")}</label>
                 <input type="text" className="form-control" id="inputUsername" aria-describedby="emailHelp"
@@ -90,13 +90,13 @@ const GeneralRegistrationStep = ({ setStep, customer, updateGeneralInformation, 
                 </div>
                 <div className="form-check form-check-inline">
                     <input className="form-check-input" type="radio" name="inlineRadioOptions" id="woman" value="1"
-                        onChange={handleWomanSelected} checked={gender === 1}/>
+                        onChange={handleWomanSelected} checked={gender === 1} />
                     <label className="form-check-label" htmlFor="woman">{t("Woman")}</label>
                 </div>
             </div>
             <div className="actions">
-                <input type="button" className="btn btn-info" value={t("LastStep")} onClick={() => setStep(0)} />
-                <input type="submit" className="btn btn-success" value={t("Registration")} />
+                <input type="button" className="btn-border-shadow" value={t("LastStep")} onClick={() => setStep(0)} />
+                <input type="submit" className="btn-border-shadow finish-registration" value={t("Registration")} />
             </div>
             {showCustomerErrorMessage &&
                 <div className="registration__error-message">{t("UsernameExist")}</div>

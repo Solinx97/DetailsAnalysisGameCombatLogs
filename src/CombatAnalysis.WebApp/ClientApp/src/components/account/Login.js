@@ -54,24 +54,27 @@ const Login = () => {
     }
 
     return (
-        <div className="login-container">
-            <LoginPreview />
-            <form className="login" onSubmit={handleSubmitAsync}>
-                <div className="mb-3">
-                    <label htmlFor="inputEmail" className="form-label">{t("Email")}</label>
-                    <input type="email" className="form-control" id="inputEmail" aria-describedby="emailHelp" ref={email} />
-                </div>
-                <div className="mb-3">
-                    <label htmlFor="inputPassword" className="form-label">{t("Password")}</label>
-                    <input type="password" className="form-control" id="inputPassword" ref={password} />
-                </div>
-                <div className="form-check remember">
-                    <label className="form-check-label" htmlFor="invalidCheck">{t("RememberMe")}</label>
-                    <input className="form-check-input" type="checkbox" id="invalidCheck" ref={dontLogout} />
-                </div>
-                <input type="submit" className="btn btn-primary" value={t("Login")} />
-                <div className="login__error-message" style={{ display: showErrorMessage ? "flex" : "none" }}>{t("IncorrectData")}</div>
-            </form>
+        <div className="login">
+            <div className="login__title">Login</div>
+            <div className="login__container">
+                <LoginPreview />
+                <form className="login__submit" onSubmit={handleSubmitAsync}>
+                    <div className="mb-3">
+                        <label htmlFor="inputEmail" className="form-label">{t("Email")}</label>
+                        <input type="email" className="form-control" id="inputEmail" aria-describedby="emailHelp" ref={email} />
+                    </div>
+                    <div className="mb-3">
+                        <label htmlFor="inputPassword" className="form-label">{t("Password")}</label>
+                        <input type="password" className="form-control" id="inputPassword" ref={password} />
+                    </div>
+                    <div className="form-check remember">
+                        <label className="form-check-label" htmlFor="invalidCheck">{t("RememberMe")}</label>
+                        <input className="form-check-input" type="checkbox" id="invalidCheck" ref={dontLogout} />
+                    </div>
+                    <input type="submit" className="btn-border-shadow finish-login" value={t("Login")} />
+                    <div className="login__error-message" style={{ display: showErrorMessage ? "flex" : "none" }}>{t("IncorrectData")}</div>
+                </form>
+            </div>
         </div>
     );
 }

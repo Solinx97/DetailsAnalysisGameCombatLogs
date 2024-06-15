@@ -14,25 +14,30 @@ const DashboardDeathItem = ({ playersDeath, players }) => {
             return;
         }
 
-        const getDetaAsync = async () => {
-            const unblockedArray = [];
-            for (let i = 0; i < playersDeath.length; i++) {
-                const player = players.filter(x => x.id === playersDeath[i].combatPlayerId)[0];
-                unblockedArray.push(Object.assign({}, playersDeath[i]));
-
-                const detailsResult = await getDamageTakenByPlayerIdAsync(player.id);
-                const lastHit = detailsResult.data[detailsResult.data.length - 1];
-
-                unblockedArray[i].username = player.userName;
-                unblockedArray[i].skill = lastHit.spellOrItem;
-                unblockedArray[i].value = lastHit.value;
-            }
-
-            setExtentedPlayersDeath(unblockedArray);
+        const getDataAsync = async () => {
+            await getUserInformationAsync();
         }
 
-        getDetaAsync();
+        getDataAsync();
     }, [playersDeath]);
+
+    const getUserInformationAsync = async () => {
+        const unblockedArray = [];
+
+        for (let i = 0; i < playersDeath.length; i++) {
+            const player = players.filter(x => x.id === playersDeath[i].combatPlayerId)[0];
+            unblockedArray.push(Object.assign({}, playersDeath[i]));
+
+            const detailsResult = await getDamageTakenByPlayerIdAsync(player.id);
+            const lastHit = detailsResult.data[detailsResult.data.length - 1];
+
+            unblockedArray[i].username = player.userName;
+            unblockedArray[i].skill = lastHit.spellOrItem;
+            unblockedArray[i].value = lastHit.value;
+        }
+
+        setExtentedPlayersDeath(unblockedArray);
+    }
 
     if (playersDeath === undefined) {
         return (<div>Loading...</div>);
@@ -49,7 +54,7 @@ const DashboardDeathItem = ({ playersDeath, players }) => {
 
     return (
         <div className="dashboard__statistics">
-            <div>Players death</div>
+            <div>Players died</div>
             <ul className="death-info">
                 {extentedPlayersDeath?.slice(0, itemCount).map((death, index) => (
                     <li key={index} className="death-info__details">

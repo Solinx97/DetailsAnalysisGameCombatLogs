@@ -1,4 +1,5 @@
 ﻿import { useState, useEffect } from "react";
+
 import "../../styles/common/tabs.scss";
 
 const PersonalTabs = ({ tab, tabs }) => {
@@ -15,10 +16,10 @@ const PersonalTabs = ({ tab, tabs }) => {
     return (
         <div className="tabs">
             <div className="tabs__header">
-                <ul>
+                <ul className="title">
                     {tabs.map((item, index) => (
                         <li key={index} onClick={() => selectTab(index)} className={`${item.id === selectedTabIndex ? 'tab-active' : ''}`}>
-                            {item.header}
+                            <div>{item.header}</div>
                         </li>
                     ))}
                 </ul>

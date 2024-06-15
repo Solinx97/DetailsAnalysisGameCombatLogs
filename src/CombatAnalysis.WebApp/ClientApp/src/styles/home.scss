@@ -9,25 +9,12 @@
         align-items: center;
         gap: 25px;
 
-        .preview {
-            box-shadow: 3px 3px 3px 3px #3AA6B9;
-            border-radius: 20px;
-            padding: 30px;
-            font-size: 17px;
-
-            &__title {
-                width: 100%;
-                text-align: center;
-                font-weight: bold;
-            }
-
-            &__responsibilities .form-check {
-                margin: 10px;
-
-                label {
-                    opacity: 1;
-                }
-            }
+        .go-to-communication, .go-to-combat-logs {
+            padding: 10px 20px;
+            border-radius: 10px;
+            box-shadow: 2px 2px 2px 2px #5BBCFF;
+            font-size: 14px;
+            cursor: pointer;
         }
     }
 

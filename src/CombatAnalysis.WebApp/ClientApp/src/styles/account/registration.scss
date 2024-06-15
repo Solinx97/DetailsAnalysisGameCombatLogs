@@ -1,20 +1,42 @@
 ﻿.registration {
-    width: 300px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
 
-    &__error-message {
-        margin: 15px;
-        padding: 10px;
-        border-radius: 15px;
-        background: yellow;
+    &__container {
+        display: flex;
+        justify-content: start;
+        gap: 50px;
     }
 
-    .actions {
-        display: flex;
-        gap: 25px;
-        margin: 15px 0;
+    &__title {
+        margin-left: 50px;
+        font-size: 18px;
+        font-weight: bold;
+    }
 
-        input {
-            color: black;
+    &__submit {
+        width: 300px;
+
+        &__error-message {
+            margin: 15px;
+            padding: 10px;
+            border-radius: 15px;
+            background: yellow;
+        }
+
+        .actions {
+            display: flex;
+            gap: 25px;
+            margin: 15px 0;
+
+            input {
+                color: black;
+            }
+        }
+
+        .finish-registration {
+            box-shadow: 2px 2px 2px 2px green;
         }
     }
 }
