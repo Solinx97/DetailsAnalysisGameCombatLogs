@@ -25,7 +25,7 @@ const MainInformation = () => {
     }, [])
 
     if (isLoading) {
-        return <></>;
+        return <div>Loading...</div>;
     }
 
     return (

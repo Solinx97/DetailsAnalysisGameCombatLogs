@@ -27,6 +27,14 @@ const GeneralAnalysisItem = ({ uniqueCombats, combatLogId }) => {
         setOtherCombats(uniqueCombats);
     }
 
+    const getCombatDuration = (duration) => {
+        const splitedDuration = duration.split(':');
+
+        const lasts = `${splitedDuration[1]}:${splitedDuration[2]}`;
+
+        return lasts;
+    }
+
     if (selectedCombat === null) {
         return (<div>Loading...</div>);
     }
@@ -44,6 +52,7 @@ const GeneralAnalysisItem = ({ uniqueCombats, combatLogId }) => {
                                         <div>{format(new Date(combat.startDate), 'HH:mm')}</div>
                                     </div>
                                 </div>
+                                <div>-</div>
                                 <div className="list-group-item">
                                     <div>
                                         <div>{format(new Date(combat.finishDate), 'HH:mm')}</div>
@@ -51,7 +60,7 @@ const GeneralAnalysisItem = ({ uniqueCombats, combatLogId }) => {
                                 </div>
                             </div>
                             <div className="combat-time__lasts">
-                                <div>{combat.duration}</div>
+                                <div>{getCombatDuration(combat.duration)}</div>
                                 <FontAwesomeIcon
                                     icon={faHourglassStart}
                                     className="list-group-item__duration"
@@ -103,6 +112,7 @@ const GeneralAnalysisItem = ({ uniqueCombats, combatLogId }) => {
                                 <div>{format(new Date(selectedCombat?.startDate), 'HH:mm')}</div>
                             </div>
                         </div>
+                        <div>-</div>
                         <div className="list-group-item">
                             <div>
                                 <div>{format(new Date(selectedCombat?.finishDate), 'HH:mm')}</div>
@@ -110,7 +120,7 @@ const GeneralAnalysisItem = ({ uniqueCombats, combatLogId }) => {
                         </div>
                     </div>
                     <div className="combat-time__lasts">
-                        <div>{selectedCombat.duration}</div>
+                        <div>{getCombatDuration(selectedCombat.duration)}</div>
                         <FontAwesomeIcon
                             icon={faHourglassStart}
                             className="list-group-item__duration"

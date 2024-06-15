@@ -24,16 +24,56 @@ html {
     display: flex;
 }
 
-.language.dropdown {
-    padding: 0 25px;
+.language {
+    &__select {
+        margin: 0;
+        margin-right: 10px;
+        display: flex;
+        gap: 15px;
+
+        li {
+            padding: 5px 10px;
+            border-radius: 10px;
+            box-shadow: 2px 2px 2px 2px #5BBCFF;
+            font-size: 14px;
+            cursor: pointer
+        }
+
+        li:hover {
+            transform: scale(1.1);
+            box-shadow: 2px 2px 2px 2px white;
+        }
+
+        .selected-lang {
+            box-shadow: 2px 2px 2px 2px #4CCD99;
+            border: 1px solid white;
+            transform: scale(1.05);
+        }
+    }
 }
 
 .authorization {
     display: flex;
     gap: 20px;
 
-    .btn-primary {
-        background: #102C57;
+    &__login, &__registration {
+        padding: 5px 10px;
+        border-radius: 10px;
+        text-align: center;
+        margin: 0 5px;
+        cursor: pointer;
+    }
+
+    &__login {
+        box-shadow: 3px 3px 3px 3px white;
+    }
+
+    &__registration {
+        box-shadow: 3px 3px 3px 3px #028391;
+    }
+
+    &__login:hover, &__registration:hover {
+        transform: scale(1.025);
     }
 }
 

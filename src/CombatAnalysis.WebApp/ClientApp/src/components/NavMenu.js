@@ -12,6 +12,11 @@ import Search from './Search';
 
 import '../styles/navMenu.scss';
 
+const supportedLanguages = [
+    "EN",
+    "RU"
+];
+
 const NavMenu = () => {
     const { t, i18n } = useTranslation("translate");
 
@@ -25,27 +30,18 @@ const NavMenu = () => {
 
     const navigate = useNavigate();
 
-    const [languageName, setLanguageName] = useState("English");
     const [collapsed, setCollapsed] = useState(true);
 
-    useEffect(() => {
-        switch (i18n.language) {
-            case "ru":
-                setLanguageName(t("RU"));
-                break;
-            case "en":
-                setLanguageName(t("EN"));
-                break;
-            default:
-                setLanguageName(t("EN"));
-                break;
-        }
+    const selectedLang = i18n.language;
 
+    useEffect(() => {
         const checkAuth = async () => {
             await checkAuthAsync();
         }
 
         checkAuth();
+
+        console.log(i18n);
     }, [])
 
     const checkAuthAsync = async () => {
@@ -67,8 +63,8 @@ const NavMenu = () => {
         }
     }
 
-    const changeLanguage = (language) => {
-        i18n.changeLanguage(language);
+    const changeLanguage = (lang) => {
+        i18n.changeLanguage(lang);
 
         window.location.reload(true);
     }
@@ -90,13 +86,11 @@ const NavMenu = () => {
                 className="navbar-expand-sm navbar-toggleable-sm ng-white border-bottom box-shadow mb-3"
                 light>
                 <div className="language dropdown">
-                    <div className="language__title">{t("Langugae")}</div>
-                    <button className="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
-                        {languageName}
-                    </button>
-                    <ul className="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                        <li><div className="dropdown-item" onClick={() => changeLanguage("ru")}>{t("RU")}</div></li>
-                        <li><div className="dropdown-item" onClick={() => changeLanguage("en")}>{t("EN")}</div></li>
+                    <ul className="language__select">
+                        {supportedLanguages.map((lang, index) => (
+                            <li key={index} className={`${lang === selectedLang ? 'selected-lang' : ''}`}
+                                onClick={() => changeLanguage(lang)}>{lang}</li>
+                        ))}
                     </ul>
                 </div>
                 <Container>
@@ -125,8 +119,8 @@ const NavMenu = () => {
                             <button type="button" className="btn btn-primary" onClick={logoutAsync}>{t("Logout")}</button>
                           </div>
                         : <div className="authorization">
-                            <button type="button" className="btn btn-primary" onClick={() => navigate('/registration')}>{t("Registration")}</button>
-                            <button type="button" className="btn btn-primary" onClick={() => navigate('/login')}>{t("Login")}</button>
+                            <div className="authorization__login" onClick={() => navigate('/login')}>{t("Login")}</div>
+                            <div className="authorization__registration" onClick={() => navigate('/registration')}>{t("Registration")}</div>
                         </div>
                     }
                 </Container>
