@@ -51,24 +51,26 @@ const Home = () => {
                     <div className="preview__title">Communication</div>
                     <div className="preview__responsibilities">
                         <div className="form-check">
-                            <input className="form-check-input" type="checkbox" name="flexRadioDefault" id="flexRadioDefault1" defaultChecked disabled />
-                            <label className="form-check-label" htmlFor="flexRadioDefault1">Explore your feed</label>
+                            <input className="form-check-input" type="checkbox" name="communication-reason-1" id="communication-reason-1" defaultChecked disabled />
+                            <label className="form-check-label" htmlFor="communication-reason-1">Explore your feed</label>
                         </div>
                         <div className="form-check">
-                            <input className="form-check-input" type="checkbox" name="flexRadioDefault" id="flexRadioDefault1" defaultChecked disabled />
-                            <label className="form-check-label" htmlFor="flexRadioDefault1">Chatting with friends in chats</label>
+                            <input className="form-check-input" type="checkbox" name="communication-reason-2" id="communication-reason-2" defaultChecked disabled />
+                            <label className="form-check-label" htmlFor="communication-reason-2">Chatting with friends in chats</label>
                         </div>
                         <div className="form-check">
-                            <input className="form-check-input" type="checkbox" name="flexRadioDefault" id="flexRadioDefault1" defaultChecked disabled />
-                            <label className="form-check-label" htmlFor="flexRadioDefault1">Create or join to community</label>
+                            <input className="form-check-input" type="checkbox" name="communication-reason-3" id="communication-reason-3" defaultChecked disabled />
+                            <label className="form-check-label" htmlFor="communication-reason-3">Create or join to community</label>
                         </div>
                         <div className="form-check">
-                            <input className="form-check-input" type="checkbox" name="flexRadioDefault" id="flexRadioDefault1" defaultChecked disabled />
-                            <label className="form-check-label" htmlFor="flexRadioDefault1">Add users in friends and see friends activities</label>
+                            <input className="form-check-input" type="checkbox" name="communication-reason-4" id="communication-reason-4" defaultChecked disabled />
+                            <label className="form-check-label" htmlFor="communication-reason-4">Add users in friends and see friends activities</label>
                         </div>
                     </div>
                 </div>
-                <div className="go-to-communication" onClick={() => navigate("/feed")}>{t("Open")}</div>
+                {customer !== null &&
+                    <div className="go-to-communication" onClick={() => navigate("/feed")}>{t("Open")}</div>
+                }
             </div>
             <div className="home__item">
                 <div className="title">{t("Analyzing")}</div>
@@ -76,16 +78,16 @@ const Home = () => {
                     <div className="preview__title">Combat logs</div>
                     <div className="preview__responsibilities">
                         <div className="form-check">
-                            <input className="form-check-input" type="checkbox" name="flexRadioDefault" id="flexRadioDefault1" defaultChecked disabled />
-                            <label className="form-check-label" htmlFor="flexRadioDefault1">Save Combat logs</label>
+                            <input className="form-check-input" type="checkbox" name="combat-logs-reason-1" id="combat-logs-reason-1" defaultChecked disabled />
+                            <label className="form-check-label" htmlFor="combat-logs-reason-1">Save Combat logs</label>
                         </div>
                         <div className="form-check">
-                            <input className="form-check-input" type="checkbox" name="flexRadioDefault" id="flexRadioDefault1" defaultChecked disabled />
-                            <label className="form-check-label" htmlFor="flexRadioDefault1">Explore your or other users Combat logs</label>
+                            <input className="form-check-input" type="checkbox" name="combat-logs-reason-2" id="combat-logs-reason-2" defaultChecked disabled />
+                            <label className="form-check-label" htmlFor="combat-logs-reason-2">Explore your or other users Combat logs</label>
                         </div>
                         <div className="form-check">
-                            <input className="form-check-input" type="checkbox" name="flexRadioDefault" id="flexRadioDefault1" defaultChecked disabled />
-                            <label className="form-check-label" htmlFor="flexRadioDefault1">Share link to Combat logs with friends</label>
+                            <input className="form-check-input" type="checkbox" name="combat-logs-reason-3" id="combat-logs-reason-3" defaultChecked disabled />
+                            <label className="form-check-label" htmlFor="combat-logs-reason-3">Share link to Combat logs with friends</label>
                         </div>
                     </div>
                 </div>

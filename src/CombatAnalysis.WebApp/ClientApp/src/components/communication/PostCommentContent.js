@@ -24,26 +24,28 @@ const PostCommentContent = ({ customerId, comment }) => {
     }
 
     return (
-        <li className="post-comments__content list-group-item">
+        <div className="post-comments__content">
             {editModeOn
                 ? <div>
                     <textarea className="form-control" rows="4" cols="65" ref={commentContent} defaultValue={comment.content} />
                     <div className="actions">
-                        <button type="button" className="btn btn-outline-info" onClick={async () => await updatePostCommentAsync()}>{t("Save")}</button>
-                        <button type="button" className="btn btn-light" onClick={() => setEditModeOne(false)}>{t("Cancel")}</button>
+                        <div className="save" onClick={async () => await updatePostCommentAsync()}>{t("Save")}</div>
+                        <div className="cancel" onClick={() => setEditModeOne(false)}>{t("Cancel")}</div>
                     </div>
                 </div>
                 : <div className="card-text">{comment.content}</div>
             }
             {comment.customerId === customerId &&
-                <FontAwesomeIcon
-                    icon={faPen}
-                    title={t("Edit")}
-                    className={`comment-edit${editModeOn ? "_active" : ""}`}
-                    onClick={() => setEditModeOne((item) => !item)}
-                />
+                <div className="post-comments__menu">
+                    <FontAwesomeIcon
+                        icon={faPen}
+                        title={t("Edit")}
+                        className={`comment-edit${editModeOn ? "_active" : ""}`}
+                        onClick={() => setEditModeOne((item) => !item)}
+                    />
+                </div>
             }
-        </li>
+        </div>
     );
 }
 

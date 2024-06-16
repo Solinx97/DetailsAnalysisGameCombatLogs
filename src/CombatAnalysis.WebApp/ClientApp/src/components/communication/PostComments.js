@@ -9,26 +9,24 @@ const PostComments = ({ dateFormatting, customerId, postId, updatePostAsync }) =
     const { data: postComments, isLoading } = useSearchPostCommentByPostIdQuery(postId);
 
     if (isLoading) {
-        return <></>;
+        return (<div>Loading...</div>);
     }
 
     return (
         <ul className="post-comments">
             {postComments?.map((item) => (
-                    <li key={item.id} className="post-comments__card card">
-                        <ul className="list-group list-group-flush">
-                            <PostCommentTitle
-                                customerId={customerId}
-                                comment={item}
-                                dateFormatting={dateFormatting}
-                                postId={postId}
-                                updatePostAsync={updatePostAsync}
-                            />
-                            <PostCommentContent
-                                customerId={customerId}
-                                comment={item}
-                            />
-                        </ul>
+                    <li key={item.id} className="post-comments__card">
+                        <PostCommentTitle
+                            customerId={customerId}
+                            comment={item}
+                            dateFormatting={dateFormatting}
+                            postId={postId}
+                            updatePostAsync={updatePostAsync}
+                        />
+                        <PostCommentContent
+                            customerId={customerId}
+                            comment={item}
+                        />
                     </li>
                 ))
             }

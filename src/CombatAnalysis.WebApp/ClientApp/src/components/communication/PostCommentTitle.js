@@ -23,9 +23,11 @@ const PostCommentTitle = ({ customerId, comment, dateFormatting, postId, updateP
     }
 
     return (
-        <li className="post-comments__title list-group-item">
-            <div className="card-title">{targetCustomer.username}</div>
-            <div className="card-title">{dateFormatting(comment.when)}</div>
+        <div className="post-comments__title">
+            <div className="user">
+                <div className="username">{targetCustomer.username}</div>
+                <div className="when">{dateFormatting(comment.when)}</div>
+            </div>
             {comment.customerId === customerId &&
                 <div className="post-comments__menu">
                     <FontAwesomeIcon
@@ -35,7 +37,7 @@ const PostCommentTitle = ({ customerId, comment, dateFormatting, postId, updateP
                     />
                 </div>
             }
-        </li>
+        </div>
     );
 }
 

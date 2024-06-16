@@ -56,9 +56,9 @@ const PostTitle = ({ post, dateFormatting, deletePostAsync, isMyPost }) => {
 
     return (
         <>
-            <li className="posts__title list-group-item">
-                <div className="posts__title content">
-                    <div className="posts__title-username">
+            <div className="posts__title">
+                <div className="content">
+                    <div className="username">
                         {post.postType === postType["user"]
                             ? <User
                                 targetCustomerId={targetCustomer?.id}
@@ -92,7 +92,7 @@ const PostTitle = ({ post, dateFormatting, deletePostAsync, isMyPost }) => {
                         />
                     }
                 </div>
-            </li>
+            </div>
             {userInformation !== null &&
                 <div className="community-user-information">{userInformation}</div>
             }

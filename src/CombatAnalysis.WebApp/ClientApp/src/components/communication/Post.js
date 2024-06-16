@@ -221,47 +221,45 @@ const Post = ({ customer, post, deletePostAsync, canBeRemoveFromUserFeed = true 
 
     return (
         <>
-            <div className="card posts__card">
-                <ul className="list-group list-group-flush">
-                    <PostTitle
-                        post={post}
-                        dateFormatting={dateFormatting}
-                        deletePostAsync={deletePostAsync}
-                        isMyPost={isMyPost}
-                    />
-                    <li className="list-group-item">
-                        <div className="card-text">{post?.content}</div>
-                    </li>
-                    <li className="posts__reaction list-group-item">
-                        <div className="posts__reaction item">
+            <div className="posts__card">
+                <PostTitle
+                    post={post}
+                    dateFormatting={dateFormatting}
+                    deletePostAsync={deletePostAsync}
+                    isMyPost={isMyPost}
+                />
+                <div className="posts__content">{post?.content}</div>
+                <div className="posts__reactions">
+                    <div className="container">
+                        <div className="item">
                             <FontAwesomeIcon
-                                className="post__reaction_like"
+                                className="item__like"
                                 icon={faHeart}
                                 title={t("Like")}
                                 onClick={async () => await createPostLikeAsync(post?.id)}
                             />
                             <div className="count">{post?.likeCount}</div>
                         </div>
-                        <div className="posts__reaction item">
+                        <div className="item">
                             <FontAwesomeIcon
-                                className="post__reaction_dislike"
+                                className="item__dislike"
                                 icon={faThumbsDown}
                                 title={t("Dislike")}
                                 onClick={async () => await createPostDislikeAsync(post?.id)}
                             />
                             <div className="count">{post?.dislikeCount}</div>
                         </div>
-                        <div className="posts__reaction item">
+                        <div className="item">
                             <FontAwesomeIcon
-                                className={`post__reaction${showComments && '_active'}`}
+                                className={`item__comment${showComments ? '_active' : ''}`}
                                 icon={faMessage}
                                 title={t("Comment")}
                                 onClick={postCommentsHandler}
                             />
                             <div className="count">{post?.commentCount}</div>
                         </div>
-                    </li>
-                </ul>
+                    </div>
+                </div>
             </div>
             {showComments &&
                 <>
@@ -275,15 +273,15 @@ const Post = ({ customer, post, deletePostAsync, canBeRemoveFromUserFeed = true 
                         <div className="add-new-comment__title">
                             {showAddComment
                                 ? <div>{t("AddComment")}</div>
-                                : <button type="button" className="btn btn-outline-info" onClick={() => setShowAddComment((item) => !item)}>{t("AddComment")}</button>
+                                : <div className="open-add-comment" onClick={() => setShowAddComment((item) => !item)}>{t("Add")}</div>
                             }
                         </div>
                         {showAddComment &&
                             <div className="add-new-comment__content">
                             <textarea className="form-control" rows="3" cols="60" onChange={e => setPostCommentContent(e.target.value)} value={postCommentContent} />
-                                <div className="actions">
-                                    <button type="button" className="btn btn-outline-info" onClick={async () => await createPostCommentAsync()}>{t("Add")}</button>
-                                    <button type="button" className="btn btn-light" onClick={() => setShowAddComment((item) => !item)}>{t("Hide")}</button>
+                            <div className="actions">
+                                    <div className="add-comment" onClick={async () => await createPostCommentAsync()}>{t("Add")}</div>
+                                    <div className="hide" onClick={() => setShowAddComment((item) => !item)}>{t("Hide")}</div>
                                 </div>
                             </div>
                         }

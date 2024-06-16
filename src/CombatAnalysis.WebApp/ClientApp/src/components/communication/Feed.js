@@ -30,9 +30,12 @@ const Feed = () => {
 
     if (customer === null) {
         return (
-            <CommunicationMenu
-                currentMenuItem={0}
-            />
+            <>
+                <CommunicationMenu
+                    currentMenuItem={0}
+                />
+                <div>Loading...</div>
+            </>
         );
     }
 

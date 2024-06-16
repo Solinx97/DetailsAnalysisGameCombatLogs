@@ -38,102 +38,98 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    gap: 25px;
 
     &__card {
-        width: 750px;
-        margin: 5px;
+        display: flex;
+        flex-direction: column;
+        width: 500px;
+        gap: 15px;
+        padding: 10px;
+        box-shadow: 4px 4px 4px 4px #58A399;
+        border-radius: 20px;
+        background: #0c192c;
+        border: 0px solid gray !important;
 
         li {
-            background: #3C5B6F;
+            background: #0c192c;
             z-index: 10000;
             color: white;
         }
     }
 
-    &__title.list-group-item {
+    &__title {
         display: flex;
-        flex-direction: row;
-        justify-content: space-around;
-    }
 
-    &__title.content {
-        width: 100%;
-    }
+        .content {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
 
-    &__title-username, &__title-details {
-        display: flex;
-        flex-direction: row;
-        align-items: center;
-
-        svg {
-            margin: 0 10px;
-        }
-
-        svg:hover {
-            cursor: pointer;
-            transform: scale(1.1);
-        }
-    }
-
-    &__title-username {
-        .special-user {
-            &__another {
+            .special-user__another {
                 display: flex;
-                justify-content: center;
                 align-items: center;
-                gap: 5px;
+                gap: 10px;
+                padding: 5px;
+                border-radius: 10px;
+                box-shadow: 1px 1px 1px 1px white;
             }
         }
-    }
 
-    .when {
-        font-size: 10px;
-    }
+        .when {
+            font-size: 10px;
+        }
 
-    .post-remove:hover {
-        cursor: pointer;
-    }
-
-    .post-remove.container {
-        display: flex;
-        justify-content: flex-end;
-        margin: 0 -15px;
-    }
-
-    &__reaction.list-group-item {
-        display: flex;
-        flex-direction: row;
-        align-items: center;
-        text-align: center;
-    }
-
-    &__reaction.item .count {
-        font-size: 11px;
-    }
-
-    &__reaction {
-        svg {
-            margin: 0 10px;
-            padding: 5px;
-            border-radius: 25px;
+        .post-remove:hover {
             cursor: pointer;
         }
 
-        svg:hover {
-            transform: scale(1.25);
+        .post-remove.container {
+            display: flex;
+            justify-content: flex-end;
+            margin: 0 -15px;
         }
     }
 
-    &__reaction_active {
-        svg {
-            margin: 0 10px;
-            padding: 5px;
-            border-radius: 25px;
-            cursor: pointer;
-        }
+    &__content {
+        cursor: default;
+        min-height: 70px;
+    }
 
-        svg:hover {
-            transform: scale(1.1);
+    &__reactions {
+        display: flex;
+        justify-content: center;
+        width: 100%;
+
+        .container {
+            display: flex;
+            justify-content: center;
+            box-shadow: 3px 3px 3px 3px green;
+            border-radius: 10px;
+            margin: 5px;
+            padding: 5px;
+            gap: 10px;
+            width: 200px;
+            font-size: 14px;
+
+            .item {
+                display: flex;
+
+                &__comment_active {
+                    color: yellow;
+                }
+            }
+
+            svg {
+                margin: 0 10px;
+                padding: 5px;
+                border-radius: 25px;
+                cursor: pointer;
+            }
+
+            svg:hover {
+                transform: scale(1.1);
+            }
         }
     }
 }
@@ -195,5 +191,24 @@
             flex-direction: column;
             gap: 10px;
         }
+    }
+
+    .open-add-comment, .add-comment, .hide {
+        padding: 10px 20px;
+        border-radius: 10px;
+        font-size: 12px;
+        cursor: pointer;
+    }
+
+    .open-add-comment {
+        box-shadow: 2px 2px 2px 2px yellow;
+    }
+
+    .add-comment {
+        box-shadow: 2px 2px 2px 2px #5BBCFF;
+    }
+
+     .hide {
+        box-shadow: 2px 2px 2px 2px white;
     }
 }

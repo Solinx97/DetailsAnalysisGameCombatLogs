@@ -3,21 +3,35 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    margin-top: 15px;
     padding: 0;
-    gap: 10px;
+    gap: 15px;
 
-    .card {
-        width: 600px;
+
+    &__card {
+        width: 450px;
+        padding: 10px;
+        box-shadow: 2px 2px 2px 2px white;
+        border-radius: 20px;
     }
 
-    &__title.list-group-item {
+    &__title {
         display: flex;
-        flex-direction: row;
         justify-content: space-between;
+        gpa: 10px;
+        margin: 10px;
+
+        .user {
+            font-size: 12px;
+        }
     }
 
     &__menu {
         svg {
+            box-shadow: 3px 3px red;
+            padding: 10px;
+            border-radius: 20px;
+            font-size: 12px;
             cursor: pointer;
         }
 
@@ -26,7 +40,7 @@
         }
     }
 
-    &__content.list-group-item {
+    &__content {
         display: flex;
         flex-direction: row;
         justify-content: space-between;
@@ -34,16 +48,27 @@
         gap: 15px;
         padding: 10px;
 
-        .card-text {
-            font-size: 13px;
-            overflow-x: hidden;
-            word-wrap: anywhere;
-        }
-
         .actions {
             display: flex;
             justify-content: center;
             margin: 5px 0;
+            gap: 10px;
+
+            .save, .cancel {
+                padding: 5px 10px;
+                border-radius: 10px;
+                font-size: 14px;
+                cursor: pointer;
+                font-size: 12px;
+            }
+
+            .save {
+                box-shadow: 2px 2px 2px 2px #1679AB;
+            }
+
+            .cancel {
+                box-shadow: 2px 2px 2px 2px gray;
+            }
         }
 
         .comment-edit {
