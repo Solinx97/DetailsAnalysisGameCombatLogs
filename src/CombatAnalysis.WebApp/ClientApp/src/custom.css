@@ -80,6 +80,11 @@ code {
     cursor: default;
 }
 
+.box-shadow {
+    box-shadow: 3px 3px 3px 3px gray;
+    background: #0c192c;
+}
+
 .preview {
     display: flex;
     flex-direction: column;

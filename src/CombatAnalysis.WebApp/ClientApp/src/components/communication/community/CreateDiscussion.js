@@ -30,7 +30,7 @@ const CreateDiscussion = ({ community, customer, setShowDiscussion }) => {
     }
 
     return (
-        <form className="discussion__create" onSubmit={async (event) => await createDiscussionAsync(event)}>
+        <form className="discussion__create box-shadow" onSubmit={async (event) => await createDiscussionAsync(event)}>
             <div className="menu">
                 <FontAwesomeIcon
                     icon={faCircleXmark}

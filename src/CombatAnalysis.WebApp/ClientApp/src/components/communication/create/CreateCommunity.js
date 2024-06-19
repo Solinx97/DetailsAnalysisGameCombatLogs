@@ -93,7 +93,7 @@ const CreateCommunity = () => {
             <CommunicationMenu
                 currentMenuItem={4}
             />
-            <div className="communication__content create-community">
+            <div className="communication__content create-community box-shadow">
                 <div className="create-community__content">
                     <ul className="create-community__menu">
                         <li className={`menu-item ${passedItemIndex >= 0 && "passed"}`} onClick={() => changeMenuItem(0)}>

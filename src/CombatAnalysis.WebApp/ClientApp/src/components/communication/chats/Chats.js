@@ -150,8 +150,7 @@ const Chats = () => {
                             }
                         </div>
                         <ul className={`personal-chats${!personalChatsHidden ? "_active" : ""}`}>
-                            {
-                                personalChats?.length === 0
+                            {personalChats?.length === 0
                                 ? <div className="personal-chats__not-found">Not found</div>
                                 : personalChats?.map((item) => (
                                     <li key={item.id} className={selectedPersonalChat?.id === item?.id ? `selected` : ``}>

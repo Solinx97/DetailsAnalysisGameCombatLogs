@@ -1,60 +1,48 @@
-import { faPen, faTrash } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import ChatMessageMenu from './ChatMessageMenu';
 import { useState } from 'react';
-import { useTranslation } from 'react-i18next';
 import { useGetCustomerByIdQuery } from '../../../store/api/Customer.api';
 import User from '../User';
 
 const ChatMessageTitle = ({ me, itIsMe, setEditModeIsOn, openMessageMenu, editModeIsOn, deleteMessageAsync, message }) => {
-    const { t } = useTranslation("communication/chats/chatMessage");
-
     const [userInformation, setUserInformation] = useState(null);
 
     const { data: user, isLoading } = useGetCustomerByIdQuery(message?.customerId);
 
     const getMessageTime = () => {
-        const timeItems = message?.time.split(":");
-        const time = `${timeItems[0]}:${timeItems[1]}`;
+        const getDate = new Date(message?.time);
+        const time = `${getDate.getHours()}:${getDate.getMinutes() }`;
 
         return time;
     }
 
     if (isLoading) {
-        return <div>Loading...</div>;
+        return <></>;
     }
 
     return (
-        <div>
-            <div className="message-title">
-                <div className="message-time">{getMessageTime()}</div>
-                <div className="username-container">
-                    <User
-                        me={me}
-                        itIsMe={itIsMe}
-                        targetCustomerId={user.id}
-                        setUserInformation={setUserInformation}
-                        allowRemoveFriend={false}
-                    />
-                </div>
+        <>
+            <div className={`message-title ${itIsMe ? 'me' : 'another'}`}>
                 {openMessageMenu &&
-                    <div className="message-menu">
-                        <FontAwesomeIcon
-                            icon={faPen}
-                            title={t("Edit")}
-                            className={`message-menu__handler${editModeIsOn && "_active"}`}
-                            onClick={() => setEditModeIsOn((item) => !item)}
-                        />
-                        <FontAwesomeIcon
-                            icon={faTrash}
-                            title={t("Delete")}
-                            className="message-menu__handler"
-                            onClick={async () => await deleteMessageAsync(message?.id)}
-                        />
-                    </div>
+                    <ChatMessageMenu
+                        editModeIsOn={editModeIsOn}
+                        setEditModeIsOn={setEditModeIsOn}
+                        deleteMessageAsync={deleteMessageAsync}
+                        message={message}
+                    />
                 }
+                <div className="message-time">
+                    <div>{getMessageTime()}</div>
+                </div>
+                <User
+                    me={me}
+                    itIsMe={itIsMe}
+                    targetCustomerId={user.id}
+                    setUserInformation={setUserInformation}
+                    allowRemoveFriend={false}
+                />
             </div>
             {userInformation}
-        </div>
+        </>
     );
 }
 

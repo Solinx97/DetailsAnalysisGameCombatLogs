@@ -113,7 +113,6 @@ html {
     &__content {
         display: none;
 
-
         &_active {
             position: absolute;
             display: flex;
@@ -121,10 +120,10 @@ html {
             align-items: center;
             text-align: center;
             top: 60px;
-            border: 1px solid black;
+            box-shadow: 2px 2px 2px 2px green;
             border-radius: 10px;
             padding: 5px;
-            background: white;
+            background: #0c192c;
             min-width: 205px;
             z-index: 100;
 

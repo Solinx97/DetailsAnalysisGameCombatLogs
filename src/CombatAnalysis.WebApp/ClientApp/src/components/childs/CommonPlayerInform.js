@@ -3,6 +3,7 @@ import { faBolt, faBookOpenReader, faCircleNodes, faKhanda, faPlusCircle, faShie
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import InDev from '../inDevNotes/InDev';
 
 const CommonPlayerInform = ({ player, combatId, combatLogId, combatName }) => {
     const { t } = useTranslation("childs/playerInformation");
@@ -82,19 +83,21 @@ const CommonPlayerInform = ({ player, combatId, combatLogId, combatName }) => {
                     </div>
                 }
             </li>
-            <li className="list-group-item">
-                <FontAwesomeIcon
-                    icon={faCircleNodes}
-                    className="list-group-item__used-buffs"
-                    title={t("Buffs")}
-                />
-                <div>{player.usedBuffs}</div>
-                {player.usedBuffs > 0 &&
-                    <div>
-                        <div>{t("Buffs")}</div>
-                    </div>
-                }
-            </li>
+            <InDev inDevItem={
+                <li className="list-group-item">
+                    <FontAwesomeIcon
+                        icon={faCircleNodes}
+                        className="list-group-item__used-buffs"
+                        title={t("Buffs")}
+                    />
+                    <div>{player.usedBuffs}</div>
+                    {player.usedBuffs > 0 &&
+                        <div>
+                            <div>{t("Buffs")}</div>
+                        </div>
+                    }
+                </li>}
+            />
         </ul>
     );
 }

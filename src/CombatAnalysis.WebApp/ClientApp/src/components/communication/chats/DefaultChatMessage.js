@@ -79,9 +79,7 @@ const DefaultChatMessage = ({ me, message, messageStatus, updateMessageAsync, de
     }
 
     return (
-        <div className="chat-messages__content"
-            onMouseOver={handleOpenMessageMenu}
-            onMouseOut={handleOpenMessageMenu}>
+        <div className={`chat-messages__content ${message?.customerId === me?.id ? 'my-message' : ''}`}>
             <ChatMessageTitle
                 me={me}
                 itIsMe={me?.id !== message?.customerId}
@@ -93,14 +91,15 @@ const DefaultChatMessage = ({ me, message, messageStatus, updateMessageAsync, de
             />
             {editModeIsOn && me?.id === message?.customerId
                 ? <div className="edit-message">
-                    <input className="form-control" defaultValue={message.message} ref={editMessageInput} />
+                    <input className="form-control" type="text" defaultValue={message.message} ref={editMessageInput} />
                     <FontAwesomeIcon
                         icon={faCloudArrowUp}
                         title={t("Save")}
                         onClick={async () => await handleUpdateMessageAsync()}
                     />
                 </div>
-                : <div className="message">
+                : <div className="message"
+                    onClick={handleOpenMessageMenu}>
                     {message?.customerId === me?.id
                         ? getMessageStatus()
                         : messageStatus === status["delivered"] &&

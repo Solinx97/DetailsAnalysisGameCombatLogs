@@ -72,6 +72,8 @@
                 &_show {
                     display: block;
                     opacity: 0.5;
+                    font-size: 12px;
+                    margin: 2px;
                 }
             }
         }
@@ -91,6 +93,7 @@
             align-items: center;
             justify-content: space-around;
             min-width: 200px;
+            margin: 10px 0;
 
             .main-content {
                 display: flex;

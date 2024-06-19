@@ -38,7 +38,7 @@ const Members = ({ me, users, communityItem, removeUsersAsync, setShowMembers, i
     }
 
     return (
-        <div className={`people-inspection${isPopup ? "__popup" : "__window"}`}>
+        <div className={`people-inspection${isPopup ? "__popup" : "__window"} ${isPopup ? "box-shadow" : ""}`}>
             <div className="title">
                 {showSearchPeople
                     ? <FontAwesomeIcon
@@ -103,10 +103,10 @@ const Members = ({ me, users, communityItem, removeUsersAsync, setShowMembers, i
             </ul>
             <div className="item-result">
                 {(canRemovePeople && showRemoveUser) &&
-                    <input type="button" value={t("Accept")} className="btn btn-success" onClick={async () => await removeUsersAsync(peopleToRemove)} />
+                    <div className="btn-border-shadow" onClick={async () => await removeUsersAsync(peopleToRemove)}>{t("Accept")}</div>
                 }
                 {isPopup &&
-                    <input type="button" value={t("Close")} className="btn btn-secondary" onClick={hidePeopleInspectionMode} />
+                    <div className="btn-border-shadow" onClick={hidePeopleInspectionMode}>{t("Close")}</div>
                 }
             </div>
         </div>

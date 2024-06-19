@@ -1,0 +1,27 @@
+.in-dev {
+    position: relative;
+    display: flex;
+    border-radius: 10px;
+    padding: 5px;
+
+    .btn-shadow {
+        cursor: default;
+    }
+
+    &__title {
+        position: absolute;
+        transform: rotate(30deg);
+        right: -10px;
+        margin-top: -20px;
+        box-shadow: 2px 2px 2px 2px red;
+        border-radius: 10px;
+        background: #0c192c;
+        padding: 5px;
+        font-size: 10px;
+    }
+
+    &__content {
+        opacity: 0.5;
+        cursor: default;
+    }
+}

@@ -149,7 +149,7 @@ const CommunityMembers = ({ community, customer, setIsCommunityMember }) => {
                 <input type="button" value={t("AllMembers")} className="btn btn-outline-success all-people" onClick={handleShowAllPeopleAsync} />
             }
             {showAddPeople &&
-                <div className="add-people-to-community">
+                <div className="add-people-to-community box-shadow">
                     <div className="add-people-to-community__menu"> 
                         <FontAwesomeIcon
                             icon={faCircleXmark}

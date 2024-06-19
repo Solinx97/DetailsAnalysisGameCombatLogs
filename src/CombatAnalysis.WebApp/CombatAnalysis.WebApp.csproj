@@ -37,6 +37,7 @@
     <Folder Include="ClientApp\src\context\" />
     <Folder Include="ClientApp\src\store\slicers\" />
     <Folder Include="ClientApp\src\styles\common\" />
+    <Folder Include="ClientApp\src\styles\inDevNotes\" />
   </ItemGroup>
 
   <Target Name="DebugEnsureNodeEnv" BeforeTargets="Build" Condition=" '$(Configuration)' == 'Debug' And !Exists('$(SpaRoot)node_modules') ">

@@ -374,7 +374,7 @@ const GroupChat = ({ chat, me, setSelectedChat, callMinimazedData }) => {
                     />
                 </div>
                 {showAddPeople &&
-                    <div className="add-people-to-chat">
+                    <div className="add-people-to-chat box-shadow">
                         <AddPeople
                             customer={me}
                             communityUsersId={groupChatUsersId}
@@ -382,8 +382,8 @@ const GroupChat = ({ chat, me, setSelectedChat, callMinimazedData }) => {
                             setPeopleToJoin={setPeopleToJoin}
                         />
                         <div className="item-result">
-                            <input type="button" value={t("Invite")} className="btn btn-success" onClick={async () => await createGroupChatUserAsync()} />
-                            <input type="button" value={t("Cancel")} className="btn btn-light" onClick={() => setShowAddPeople(false)} />
+                            <div className="btn-border-shadow invite" onClick={async () => await createGroupChatUserAsync()}>{t("Invite")}</div>
+                            <div className="btn-border-shadow" onClick={() => setShowAddPeople(false)}>{t("Close")}</div>
                         </div>
                     </div>
                 }

@@ -170,7 +170,7 @@ const PersonalChat = ({ chat, me, setSelectedChat, companionId }) => {
                 onClick={() => setShowRemoveChatAlert((item) => !item)}
             />
             {showRemoveChatAlert &&
-                <div className="remove-chat-alert">
+                <div className="remove-chat-alert box-shadow">
                     <p>{t("AreYouSureRemoveChat")}</p>
                     <p>{t("ThatWillBeRemoveChat")}</p>
                     <div className="remove-chat-alert__actions">

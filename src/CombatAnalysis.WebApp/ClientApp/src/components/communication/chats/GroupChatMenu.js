@@ -9,6 +9,7 @@ import {
 } from '../../../store/api/communication/chats/GroupChatUser.api';
 import Members from '../Members';
 import ChatRulesItem from '../create/ChatRulesItem';
+import InDev from '../../inDevNotes/InDev';
 
 const rulesEnum = {
     "owner": 0,
@@ -59,13 +60,15 @@ const GroupChatMenu = ({ me, setUserInformation, setSelectedChat, setShowAddPeop
         for (let i = 0; i < peopleToRemove.length; i++) {
             const removed = await removeGroupChatUserAsyncMut(peopleToRemove[i].id);
 
-            if (removed.data !== undefined) {
-                const customer = await getCustomerByIdAsync(peopleToRemove[i].customerId);
+            if (removed.data === undefined) {
+                continue;
+            }
 
-                if (customer.data !== undefined) {
-                    const systemMessage = `'${me?.username}' removed '${customer.data.username}' from chat`;
-                    await createMessageAsync(chat?.id, systemMessage);
-                }
+            const customer = await getCustomerByIdAsync(peopleToRemove[i].customerId);
+
+            if (customer.data !== undefined) {
+                const systemMessage = `'${me?.username}' removed '${customer.data.username}' from chat`;
+                await createMessageAsync(chat?.id, systemMessage);
             }
         }
 
@@ -142,20 +145,23 @@ const GroupChatMenu = ({ me, setUserInformation, setSelectedChat, setShowAddPeop
         <>
             <div className="settings__content">
                 <div className="main-settings">
-                    <input type="button" value={t("Members")} className="btn btn-light" onClick={() => setPeopleInspectionModeOn((item) => !item)} />
+                    <div className="btn-border-shadow" onClick={() => setPeopleInspectionModeOn((item) => !item)}>{t("Members")}</div>
                     {canInvitePeople() &&
-                        <input type="button" value={t("Invite")} className="btn btn-light" onClick={() => setShowAddPeople((item) => !item)} />
+                        <div className="btn-border-shadow" onClick={() => setShowAddPeople((item) => !item)}>{t("Invite")}</div>
                     }
                     {chat?.customerId === me?.id &&
-                        <input type="button" value={t("Rules")} className="btn btn-light" onClick={() => setRulesInspectionModeOn((item) => !item)} />
+                        <div className="btn-border-shadow" onClick={() => setRulesInspectionModeOn((item) => !item)}>{t("Rules")}</div>
                     }
-                    <input type="button" value={t("Documents")} className="btn btn-light" disabled />
+                    <InDev inDevItem={
+                            <div className="btn-border-shadow">{t("Documents")}</div>
+                        }
+                    />
                 </div>
                 <div className="danger-settings">
                     {me?.id === chat.customerId &&
-                        <input type="button" value={t("RemoveChat")} className="btn btn-danger" onClick={() => setShowRemoveChatAlert((item) => !item)} />
+                        <div className="btn-border-shadow" onClick={() => setShowRemoveChatAlert((item) => !item)}>{t("RemoveChat")}</div>
                     }
-                    <input type="button" value={t("Leave")} className="btn btn-warning" onClick={async () => await leaveFromChatAsync(meInChat?.id)} />
+                    <div className="btn-border-shadow" onClick={async () => await leaveFromChatAsync(meInChat?.id)}>{t("Leave")}</div>
                 </div>
             </div>
             {peopleInspectionModeOn &&
@@ -171,7 +177,7 @@ const GroupChatMenu = ({ me, setUserInformation, setSelectedChat, setShowAddPeop
                 />
             }
             {rulesInspectionModeOn &&
-                <div className="rules-container">
+                <div className="rules-container box-shadow">
                     <ChatRulesItem
                         setInvitePeople={setInvitePeople}
                         setRemovePeople={setRemovePeople}
@@ -180,18 +186,18 @@ const GroupChatMenu = ({ me, setUserInformation, setSelectedChat, setShowAddPeop
                         payload={payload}
                     />
                     <div className="item-result">
-                        <input type="button" value={t("SaveChanges")} className="btn btn-success" onClick={async () => await updateGroupChatRulesAsync()} />
-                        <input type="submit" value={t("Cancel")} className="btn btn-light" onClick={() => setRulesInspectionModeOn((item) => !item)} />
+                        <div className="btn-border-shadow save" onClick={async () => await updateGroupChatRulesAsync()}>{t("SaveChanges")}</div>
+                        <div className="btn-border-shadow" onClick={() => setRulesInspectionModeOn((item) => !item)}>{t("Cancel")}</div>
                     </div>
                 </div>
             }
             {showRemoveChatAlert &&
-                <div className="remove-chat-alert">
+                <div className="remove-chat-alert box-shadow">
                     <p>{t("AreYouSureRemoveChat")}</p>
                     <p>{t("ThatWillBeRemoveChat")}</p>
                     <div className="remove-chat-alert__actions">
-                        <input type="button" value={t("Remove")} className="btn btn-warning" onClick={async  () => await removeChatAsync()} />
-                        <input type="button" value={t("Cancel")} className="btn btn-light" onClick={() => setShowRemoveChatAlert((item) => !item)} />
+                        <div className="btn-border-shadow remove" onClick={async () => await removeChatAsync()}>{t("Remove")}</div>
+                        <div className="btn-border-shadow cancel" onClick={() => setShowRemoveChatAlert((item) => !item)}>{t("Cancel")}</div>
                     </div>
                 </div>
             }

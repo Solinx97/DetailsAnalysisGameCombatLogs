@@ -40,13 +40,15 @@
             align-items: center;
 
             .text-of-message {
+
                 &__unread, &__read {
                     padding: 5px 10px;
-                    width: 90%;
+                    max-width: 90%;
                     word-wrap: break-word;
                     border-radius: 10px;
                     cursor: default;
-                    padding: 3px;
+                    padding: 5px 10px;
+                    box-shadow: 2px 2px green;
                 }
 
                 &__unread {
@@ -71,90 +73,91 @@
 
         .message-title {
             display: flex;
-            flex-direction: column;
-            justify-content: start;
-            width: 90%;
+            align-items: center;
+            gap: 5px;
 
             .message-time {
+                display: flex;
+                justify-content: start;
                 font-size: 11px;
+            }
+
+            .special-user {
+                &__me, &__another {
+                    display: flex;
+                    align-items: center;
+                    padding: 10px 0;
+                    font-size: 12px;
+                    overflow-x: hidden;
+                    cursor: default;
+                    color: white;
+
+                    svg:hover {
+                        cursor: pointer;
+                        transform: scale(1.25);
+                    }
+                }
+            }
+
+            svg {
+                margin: 0 10px;
             }
 
             .message-menu {
                 display: flex;
-                flex-direction: row;
                 justify-content: center;
-                margin: 0 20px;
+                align-items: center;
 
                 svg {
                     margin: 5px 10px;
                     cursor: pointer;
+                    font-size: 12px;
+                    padding: 5px;
+                    border-radius: 10px;
                 }
 
-                &__handler {
-                    color: black;
+                svg:hover {
+                    transform: scale(1.05);
+                }
 
-                    &_active {
-                        color: orange;
-                        transform: scale(1.2);
-                    }
+                .delete {
+                    box-shadow: 2px 2px 2px 2px brown;
+                }
+
+                .edit {
+                    box-shadow: 2px 2px 2px 2px yellow;
                 }
             }
 
             .username-container {
-                .special-user {
-                    &__me {
-                        display: flex;
-                        align-items: center;
-                        margin: 5px 0;
-                        max-width: 150px;
-                        padding: 10px;
-                        border-radius: 10px;
-                        font-size: 12px;
-                        overflow-x: hidden;
-                        cursor: default;
-                        background: white;
-                        color: black;
-                        border: 2px solid gray;
-                    }
-
-                    &__another {
-                        display: flex;
-                        align-items: center;
-                        margin: 5px 0;
-                        max-width: 150px;
-                        padding: 10px;
-                        border-radius: 10px;
-                        font-size: 12px;
-                        overflow-x: hidden;
-                        cursor: default;
-                        background: linear-gradient(blue, 1%, gray);
-                        color: white;
-                    }
-
-                    &__me, &__another {
-                        svg:hover {
-                            cursor: pointer;
-                            transform: scale(1.25);
-                        }
-                    }
-                }
-
-                svg {
-                    margin: 0 10px;
-                }
+                display: flex;
+                align-items: center;
             }
+        }
+
+        .message-title.me {
+            justify-content: start;
+        }
+
+        .message-title.another {
+            justify-content: end;
         }
 
         .edit-message {
             display: flex;
             align-items: center;
+            margin: 5px 0;
 
             input {
                 width: 90%;
             }
 
             svg {
-                margin: 0 15px;
+                margin: 5px 10px;
+                cursor: pointer;
+                padding: 5px;
+                border-radius: 10px;
+                box-shadow: 2px 2px 2px 2px green;
             }
         }
 
@@ -185,6 +188,13 @@
             font-size: 13px;
             opacity: 0.75;
         }
+    }
+
+    .my-message {
+        display: flex;
+        flex-direction: column;
+        align-items: end;
+        width: 100%;
     }
 
     ul li {

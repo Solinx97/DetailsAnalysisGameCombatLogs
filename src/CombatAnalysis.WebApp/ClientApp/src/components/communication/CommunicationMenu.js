@@ -2,6 +2,7 @@ import { faCheck, faCircleArrowRight } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
+import InDev from '../inDevNotes/InDev';
 
 import '../../styles/communication/communication.scss';
 
@@ -88,14 +89,16 @@ const CommunicationMenu = ({ currentMenuItem, setMenuItem, selectedCommunityName
                     </>
                 }
             </div>
-            <li className="menu-item_disabled">
-                {currentMenuItem === 6 &&
-                    <FontAwesomeIcon
-                        icon={faCircleArrowRight}
-                    />
-                }
-                <div className="title">{t("Events")}</div>
-            </li>
+            <InDev inDevItem={
+                    <li className="menu-item_disabled">
+                        {currentMenuItem === 6 &&
+                            <FontAwesomeIcon
+                                icon={faCircleArrowRight}
+                            />
+                        }
+                        <div className="title">{t("Events")}</div>
+                    </li>}
+            />
             <li className="menu-item" onClick={() => navigate("/people")}>
                 {currentMenuItem === 7 &&
                     <FontAwesomeIcon
@@ -147,14 +150,16 @@ const CommunicationMenu = ({ currentMenuItem, setMenuItem, selectedCommunityName
                             }
                             <div className="title">{t("CreateCommunity")}</div>
                         </li>
-                        <li className="menu-item_disabled sub-menu">
-                            {currentMenuItem === 11 &&
-                                <FontAwesomeIcon
-                                    icon={faCheck}
-                                />
-                            }
-                            <div className="title">{t("Recomendations")}</div>
-                        </li>
+                        <InDev inDevItem={
+                            <li className="menu-item_disabled sub-menu">
+                                {currentMenuItem === 11 &&
+                                    <FontAwesomeIcon
+                                        icon={faCheck}
+                                    />
+                                }
+                                <div className="title">{t("Recomendations")}</div>
+                            </li>}
+                        />
                         <li className="menu-item sub-menu" onClick={() => setMenuItem(12)}>
                             {currentMenuItem === 12 &&
                                 <FontAwesomeIcon

@@ -155,7 +155,7 @@ const UserInformation = ({ me, people, closeUserInformation, actionAfterRequests
                 <div>{t("AlreadySentRequest")}</div>
                 <p>{people.username}</p>
             </div>
-            <div className="user-information__container">
+            <div className="user-information__container box-shadow">
                 <div className="user-information__menu">
                     <FontAwesomeIcon
                         icon={faCircleXmark}
@@ -169,15 +169,15 @@ const UserInformation = ({ me, people, closeUserInformation, actionAfterRequests
                 <SelectedUserProfile
                     customer={people}
                 />
-                <ul className="links list-group list-group-flush">
-                    <li className="list-group-item">
+                <ul className="links">
+                    <li>
                         <FontAwesomeIcon
                             icon={faCommentDots}
                             title={t("StartChat")}
                             onClick={async () => await createChatAsync(people)}
                         />
                     </li>
-                    <li className="list-group-item">
+                    <li>
                         {myFriends.filter(friend => friend.whoFriendId === people.id || friend.forWhomId === people.id).length > 0
                             ? <FontAwesomeIcon
                                 icon={faUserPlus}
@@ -191,7 +191,7 @@ const UserInformation = ({ me, people, closeUserInformation, actionAfterRequests
                             />
                         }
                     </li>
-                    <li className="list-group-item">
+                    <li>
                         <FontAwesomeIcon
                             icon={faSquarePlus}
                             title={t("InviteToCommunity")}

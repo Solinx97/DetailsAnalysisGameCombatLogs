@@ -1,4 +1,4 @@
-import { faArrowDown, faArrowUp, faCirclePlus, faCircleXmark, faMagnifyingGlassChart, faTriangleExclamation } from '@fortawesome/free-solid-svg-icons';
+import { faArrowDown, faArrowUp, faCircleXmark, faMagnifyingGlassChart, faTriangleExclamation } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { format } from 'date-fns';
 import React, { useState } from 'react';
@@ -7,6 +7,8 @@ import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { useLazyFindGroupChatUserByUserIdQuery } from '../../store/api/communication/chats/GroupChatUser.api';
 import { useLazyGetByUserIdAsyncQuery } from '../../store/api/communication/chats/PersonalChat.api';
+import InDev from '../inDevNotes/InDev';
+import CombatLogItemDiscussion from './CombatLogItemDiscussion';
 import GroupChatList from './GroupChatList';
 import PersonalChatList from './PersonalChatList';
 
@@ -56,20 +58,12 @@ const CombatLogItem = ({ log, isAuth }) => {
                                 title={t("ShouldAuthorize")}
                             />
                         }
-                        <div className={`communication ${isAuth ? "" : "disabled"}`}>
-                            <div className="btn-shadow" onClick={async () => await getChatsByUserIdAsync()}>
-                                <FontAwesomeIcon
-                                    icon={faCirclePlus}
-                                />
-                                <div>{t("Chat")}</div>
-                            </div>
-                            <div className="btn-shadow" style={{ opacity: "0.5"}}>
-                                <FontAwesomeIcon
-                                    icon={faCirclePlus}
-                                />
-                                <div>{t("Discussion")}</div>
-                            </div>
-                        </div>
+                        <InDev
+                            inDevItem={<CombatLogItemDiscussion
+                                isAuth={isAuth}
+                                getChatsByUserIdAsync={getChatsByUserIdAsync}
+                            />}
+                        />
                     </div>
                 </li>
                 <li className="list-group-item">{format(new Date(log.date), 'MM/dd/yyyy HH:mm')}</li>
