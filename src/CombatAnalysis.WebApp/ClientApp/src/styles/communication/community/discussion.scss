@@ -21,15 +21,17 @@
     &__content {
         display: flex;
         flex-direction: column;
-        gap: 5px;
+        gap: 10px;
         margin: 10px 0;
 
         li {
             cursor: pointer;
             font-weight: bold;
             max-width: 130px;
-            padding: 5px;
+            padding: 5px 10px;
             overflow: hidden;
+            border-radius: 10px;
+            box-shadow: 1px 1px 1px 1px brown;
 
             &:hover {
                 border: 1px solid gray;
@@ -64,6 +66,10 @@
             display: flex;
             justify-content: center;
             gap: 25px;
+
+            .create {
+                box-shadow: 2px 2px 2px 2px green;
+            }
         }
 
         .form-group {
@@ -105,7 +111,6 @@
                     overflow: hidden;
 
                     &:hover {
-                        color: green;
                         animation-name: details;
                         animation-duration: 0.5s;
                         animation-fill-mode: forwards;
@@ -145,6 +150,8 @@
             padding: 10px;
             word-wrap: anywhere;
             max-height: 500px;
+            background: #0c192c;
+            color: white;
 
             .select-add-new-discussion-comment {
                 display: flex;
@@ -175,6 +182,10 @@
                 justify-content: center;
                 width: 100%;
                 margin: 5px -15px;
+
+                .add-comment {
+                    box-shadow: 2px 2px 2px 2px yellow;
+                }
             }
 
             &__content {
@@ -187,6 +198,10 @@
                     flex-direction: column;
                     justify-content: center;
                     gap: 10px;
+
+                    .hide {
+                        box-shadow: 2px 2px 2px 2px gray;
+                    }
                 }
             }
         }
@@ -196,9 +211,10 @@
             flex-direction: column;
             margin: 0;
 
-            .card {
-                width: 475px;
-                margin: 5px 0 5px 75px;
+            &__comment {
+                width: 90%;
+                box-shadow: 2px 2px 2px 2px blue;
+                padding: 10px;
             }
 
             &__title.list-group-item {

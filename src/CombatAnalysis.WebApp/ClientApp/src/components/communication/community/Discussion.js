@@ -183,15 +183,15 @@ const Discussion = ({ discussionId, setShowDiscussion, customer }) => {
                             <div className="add-new-discussion-comment__title">
                             {showAddComment
                                 ? <div>{t("AddComment")}</div>
-                                : <button type="button" className="btn btn-outline-info" onClick={() => setAddShowComment((item) => !item)}>{t("AddComment")}</button>
+                                : <div className="btn-shadow add-comment" onClick={() => setAddShowComment((item) => !item)}>{t("AddComment")}</div>
                             }
                         </div>
                         {showAddComment &&
                             <div className="add-new-discussion-comment__content">
-                                <textarea class="form-control" rows="3" cols="60" onChange={e => setDiscussionCommentContent(e.target.value)} value={discussionCommentContent} />
+                                <textarea className="form-control" rows="3" cols="60" onChange={e => setDiscussionCommentContent(e.target.value)} value={discussionCommentContent} />
                                 <div className="actions">
-                                    <button type="button" className="btn btn-outline-info" onClick={async () => await createDiscussionCommentAsync()}>{t("Add")}</button>
-                                    <button type="button" className="btn btn-light" onClick={() => setAddShowComment((item) => !item)}>{t("Hide")}</button>
+                                    <div className="btn-shadow create" onClick={async () => await createDiscussionCommentAsync()}>{t("Add")}</div>
+                                    <div className="btn-shadow hide" onClick={() => setAddShowComment((item) => !item)}>{t("Hide")}</div>
                                 </div>
                             </div>
                         }
@@ -199,7 +199,7 @@ const Discussion = ({ discussionId, setShowDiscussion, customer }) => {
                     </>
                 }
                 <div className="actions">
-                    <input type="button" className="btn btn-light" value={t("Close")} onClick={() => setShowDiscussion(false)} />
+                    <div className="btn-shadow" onClick={() => setShowDiscussion(false)}>{t("Close")}</div>
                 </div>
             </div>
         );
@@ -229,7 +229,7 @@ const Discussion = ({ discussionId, setShowDiscussion, customer }) => {
     }
 
     return (
-        <div className="discussion__selected-discussion">
+        <div className="discussion__selected-discussion box-shadow">
             {editModeOne
                 ? edit()
                 : information()

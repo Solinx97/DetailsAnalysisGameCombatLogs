@@ -40,6 +40,14 @@
             &__passed {
                 color: green;
             }
+
+            &__leave {
+                margin: 20px 0;
+
+                .btn-shadow {
+                    box-shadow: 2px 2px 2px 2px red;
+                }
+            }
         }
 
         .menu-item:hover {
@@ -168,6 +176,10 @@
         .actions {
             display: flex;
             justify-content: center;
+
+            .btn-shadow {
+                box-shadow: 2px 2px 2px 2px green;
+            }
         }
     }
 

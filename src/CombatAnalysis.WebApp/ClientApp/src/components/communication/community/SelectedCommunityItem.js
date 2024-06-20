@@ -3,6 +3,7 @@ import { usePostSearchByCommunityIdAsyncQuery } from '../../../store/api/ChatApi
 import { useLazyGetPostByIdQuery, useRemovePostMutation } from '../../../store/api/communication/Post.api';
 import { useLazyGetCommunityPostByPostIdQuery, useRemoveCommunityPostMutation } from '../../../store/api/communication/community/CommunityPost.api';
 import Post from '../Post';
+import Loading from '../../Loading';
 
 const SelectedCommunityItem = ({ customer, communityId }) => {
     const { data: communityPosts, isLoading } = usePostSearchByCommunityIdAsyncQuery(communityId);
@@ -53,7 +54,7 @@ const SelectedCommunityItem = ({ customer, communityId }) => {
     }
 
     if (isLoading) {
-        return <div>Loading...</div>;
+        return (<Loading />);
     }
 
     return (
@@ -62,7 +63,7 @@ const SelectedCommunityItem = ({ customer, communityId }) => {
                     <li key={post?.id}>
                         <Post
                             customer={customer}
-                            post={post}
+                            data={post}
                             deletePostAsync={async () => await removeCommunityPostAsync(post.id)}
                         />
                     </li>

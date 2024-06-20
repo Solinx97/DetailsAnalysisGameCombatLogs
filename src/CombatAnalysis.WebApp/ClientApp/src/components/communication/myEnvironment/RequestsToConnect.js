@@ -2,6 +2,7 @@ import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import { useCreateFriendAsyncMutation } from '../../../store/api/communication/myEnvironment/Friend.api';
 import { useRemoveRequestAsyncMutation, useSearchByOwnerIdQuery, useSearchByToUserIdQuery } from '../../../store/api/communication/myEnvironment/RequestToConnect.api';
+import Loading from '../../Loading';
 import MyRequestItem from './MyRequestItem';
 import RequestItem from './RequestItem';
 
@@ -50,7 +51,7 @@ const RequestToConnect = () => {
     }
 
     if (reqIsLoading || myReqIsLoading) {
-        return <></>;
+        return (<Loading />);
     }
 
     return (
@@ -63,6 +64,7 @@ const RequestToConnect = () => {
                             allRequests?.map((item) => (
                                 <li key={item.id}>
                                     <RequestItem
+                                        me={customer}
                                         request={item}
                                         acceptRequestAsync={acceptRequestAsync}
                                         rejectRequestAsync={rejectRequestAsync}
@@ -81,6 +83,7 @@ const RequestToConnect = () => {
                             allMyRequests?.map((item) => (
                                 <li key={item.id}>
                                     <MyRequestItem
+                                        me={customer}
                                         request={item}
                                         cancelMyRequestAsync={cancelMyRequestAsync}
                                     />

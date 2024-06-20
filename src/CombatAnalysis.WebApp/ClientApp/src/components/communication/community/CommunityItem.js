@@ -32,8 +32,7 @@ const CommunityItem = ({ id, me }) => {
     }
 
     return (
-        <>
-            <div className="card">
+            <div className="card box-shadow">
                 <div className="card-body">
                     <h5 className="card-title">{community?.name}</h5>
                     <p className="card-text">{community?.description}</p>
@@ -57,7 +56,6 @@ const CommunityItem = ({ id, me }) => {
                     </div>
                 </div>
             </div>
-        </>
     );
 }
 

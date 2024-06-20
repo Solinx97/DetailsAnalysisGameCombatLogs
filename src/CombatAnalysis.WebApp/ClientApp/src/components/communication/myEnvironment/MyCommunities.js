@@ -3,6 +3,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useState } from "react";
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 import { useSearchByUserIdAsyncQuery } from '../../../store/api/communication/community/CommunityUser.api';
 import Loading from '../../Loading';
 import InvitesToCommunity from './InvitesToCommunity';
@@ -15,11 +16,15 @@ const MyCommunities = () => {
 
     const customer = useSelector((state) => state.customer.value);
 
+    const navigate = useNavigate();
+
     const [showMyCommunities, setShowMyCommunities] = useState(true);
     const [filterContent, setFilterContent] = useState("");
     const [showSearchCommunity, setShowSearchCommunity] = useState(false);
 
     const { data: myCommunities, isLoading} = useSearchByUserIdAsyncQuery(customer?.id);
+
+    const navigateToCreateCommunity = () => navigate("/communities/create");
 
     const searchHandler = (e) => {
         setFilterContent(e.target.value);
@@ -50,6 +55,7 @@ const MyCommunities = () => {
                             />
                         }
                         <div>{t("MyCommunitites")}</div>
+                        <div className="create-new-community" onClick={navigateToCreateCommunity}>{t("CreateNew")}</div>
                         {showMyCommunities
                             ? <FontAwesomeIcon
                                 icon={faEye}

@@ -5,6 +5,7 @@ import { useCreateInviteAsyncMutation, useLazyInviteIsExistQuery } from '../../.
 import TargetCommunity from './TargetCommunity';
 
 import '../../../styles/communication/people/peopleInvitesToCommunity.scss';
+import Loading from '../../Loading';
 
 const PeopleInvitesToCommunity = ({ customer, people, setOpenInviteToCommunity }) => {
     const { t } = useTranslation("communication/people/people");
@@ -51,7 +52,7 @@ const PeopleInvitesToCommunity = ({ customer, people, setOpenInviteToCommunity }
     }
 
     if (isLoading) {
-        return <></>;
+        return (<Loading />);
     }
 
     return (
@@ -71,8 +72,8 @@ const PeopleInvitesToCommunity = ({ customer, people, setOpenInviteToCommunity }
                 }
             </ul>
             <div className="actions">
-                <input type="button" value={t("Send")} className="btn btn-success" onClick={async () => await createInviteAsync()} />
-                <input type="button" value={t("Cancel")} className="btn btn-secondary" onClick={() => setOpenInviteToCommunity((item) => !item)} />
+                <div className="btn-shadow send" onClick={async () => await createInviteAsync()}>{t("Send")}</div>
+                <div className="btn-shadow" onClick={() => setOpenInviteToCommunity((item) => !item)}>{t("Cancel")}</div>
             </div>
         </div>
     );

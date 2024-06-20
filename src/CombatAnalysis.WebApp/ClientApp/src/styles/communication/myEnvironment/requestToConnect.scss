@@ -1,12 +1,26 @@
 .request-to-connect {
+    position: relative;
     display: flex;
-    flex-direction: row;
-    margin: 10px;
+    align-items: center;
+    margin: 10px 0;
+
+    &__username {
+        display: flex;
+        padding: 5px 10px;
+        border: 2px solid white;
+        border-radius: 10px;
+
+        .special-user__another {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+    }
 
     &__answer {
         display: flex;
-        flex-direction: row;
-        margin: 0 15px;
+        flex-direction: column;
+        gap: 5px;
 
         svg {
             margin: 0 10px;
@@ -15,17 +29,22 @@
 
         svg:hover {
             cursor: pointer;
-            transform: scale(1.25);
+            transform: scale(1.1);
             border-radius: 15px;
         }
 
         .accept svg:hover {
-            box-shadow: 3px 3px 3px 3px green;
+            box-shadow: 2px 2px 2px 2px green;
         }
 
         .reject svg:hover {
-            box-shadow: 3px 3px 3px 3px orange;
+            box-shadow: 2px 2px 2px 2px orange;
         }
+    }
+
+    .user-information {
+        position: absolute;
+        top: 40px;
     }
 }
 

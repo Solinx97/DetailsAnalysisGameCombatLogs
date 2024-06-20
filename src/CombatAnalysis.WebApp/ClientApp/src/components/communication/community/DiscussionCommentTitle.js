@@ -20,9 +20,11 @@ const DiscussionCommentTitle = ({ meId, comment, dateFormatting }) => {
     }
 
     return (
-        <li className="post-comments__title list-group-item">
-            <div className="card-title">{customer.username}</div>
-            <div className="card-title">{dateFormatting(comment.when)}</div>
+        <div className="post-comments__title">
+            <div className="user">
+                <div className="username">{customer.username}</div>
+                <div className="when">{dateFormatting(comment.when)}</div>
+            </div>
             {comment?.customerId === meId &&
                 <div className="post-comments__menu">
                     <FontAwesomeIcon
@@ -32,7 +34,7 @@ const DiscussionCommentTitle = ({ meId, comment, dateFormatting }) => {
                     />
                 </div>
             }
-        </li>
+        </div>
     );
 }
 

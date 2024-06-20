@@ -1,5 +1,3 @@
-import { faCircleCheck, faCircleQuestion } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useState } from "react";
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
@@ -9,6 +7,7 @@ import { useCreateCommunityUserAsyncMutation } from '../../../store/api/communic
 import AddPeople from '../../AddPeople';
 import CommunicationMenu from '../CommunicationMenu';
 import CommunityRulesItem from './CommunityRulesItem';
+import CreateGroupChatMenu from './CreateGroupChatMenu';
 import ItemConnector from './ItemConnector';
 
 import "../../../styles/communication/create.scss";
@@ -80,14 +79,6 @@ const CreateCommunity = () => {
         seItemIndex((index) => index - 1);
     }
 
-    const changeMenuItem = (index) => {
-        if (passedItemIndex < index) {
-            return;
-        }
-
-        seItemIndex(index);
-    }
-
     return (
         <>
             <CommunicationMenu
@@ -95,48 +86,12 @@ const CreateCommunity = () => {
             />
             <div className="communication__content create-community box-shadow">
                 <div>Create community</div>
+                <CreateGroupChatMenu
+                    passedItemIndex={passedItemIndex}
+                    seItemIndex={seItemIndex}
+                    itemIndex={itemIndex}
+                />
                 <div className="create-community__content">
-                    <ul className="create-community__menu">
-                        <li className={`menu-item ${passedItemIndex >= 0 && "passed"}`} onClick={() => changeMenuItem(0)}>
-                            {(passedItemIndex > 0 && itemIndex !== 0)
-                                ? <FontAwesomeIcon
-                                    className="menu-item__passed"
-                                    icon={faCircleCheck}
-                                />
-                                : itemIndex === 0 &&
-                                <FontAwesomeIcon
-                                    icon={faCircleQuestion}
-                                />
-                            }
-                            <div>{t("Description")}</div>
-                        </li>
-                        <li className={`menu-item ${passedItemIndex >= 1 && "passed"}`} onClick={() => changeMenuItem(1)}>
-                            {(passedItemIndex > 1 && itemIndex !== 1)
-                                ? <FontAwesomeIcon
-                                    className="menu-item__passed"
-                                    icon={faCircleCheck}
-                                />
-                                : itemIndex === 1 &&
-                                <FontAwesomeIcon
-                                    icon={faCircleQuestion}
-                                />
-                            }
-                            <div>{t("Rules")}</div>
-                        </li>
-                        <li className={`menu-item ${passedItemIndex >= 2 && "passed"}`} onClick={() => changeMenuItem(2)}>
-                            {(passedItemIndex > 2 && itemIndex !== 2)
-                                ? <FontAwesomeIcon
-                                    className="menu-item__passed"
-                                    icon={faCircleCheck}
-                                />
-                                : itemIndex === 2 &&
-                                <FontAwesomeIcon
-                                    icon={faCircleQuestion}
-                                />
-                            }
-                            <div>{t("InvitePeople")}</div>
-                        </li>
-                    </ul>
                     <div className="create-community__items">
                         {itemIndex === 0 &&
                             <div className="create-community__item">
@@ -193,8 +148,13 @@ const CreateCommunity = () => {
                         }
                     </div>
                 </div>
-                <div className="finish-create">
-                    <div className="btn-shadow" onClick={async () => await handleCreateNewCommunityAsync()}>{t("Create")}</div>
+                {((name.length === 0 || description.length === 0) && passedItemIndex > 0) &&
+                    <div className="chat-name-required">Community name and description required!</div>
+                }
+                <div className="actions">
+                    {(canFinishCreate && name.length > 0 && description.length > 0) &&
+                        <div className="btn-shadow create" onClick={async () => await handleCreateNewCommunityAsync()}>{t("Create")}</div>
+                    }
                     <div className="btn-shadow" onClick={() => navigate("/communities")}>{t("Cancel")}</div>
                 </div>
             </div>

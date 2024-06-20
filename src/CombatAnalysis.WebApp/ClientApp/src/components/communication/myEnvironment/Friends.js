@@ -4,6 +4,7 @@ import { useFriendSearchMyFriendsQuery } from '../../../store/api/communication/
 import User from '../User';
 
 import '../../../styles/communication/myEnvironment/friends.scss';
+import Loading from '../../Loading';
 
 const Friends = ({ customer, requestsToConnect, allowRemoveFriend }) => {
     const { t } = useTranslation("communication/myEnvironment/friends");
@@ -12,26 +13,28 @@ const Friends = ({ customer, requestsToConnect, allowRemoveFriend }) => {
     const [userInformation, setUserInformation] = useState(null);
 
     if (isLoading) {
-        return <div>Loading...</div>;
+        return (<Loading />);
     }
 
     return (
         <div className="friends">
             {requestsToConnect}
             <div>
-                <div>{t("Friends")}</div>
+                <div className="friends__title">{t("Friends")}</div>
             </div>
             <ul>
-                {
-                    myFriends?.map((item) => (
-                        <li key={item.id} className="friend">
+                {myFriends.length > 0
+                    ? myFriends?.map((friend) => (
+                        <li key={friend.id} className="friend">
                             <User
-                                targetCustomerId={item.forWhomId === customer?.id ? item.whoFriendId : item.forWhomId}
+                                targetCustomerId={friend.forWhomId === customer?.id ? friend.whoFriendId : friend.forWhomId}
                                 setUserInformation={setUserInformation}
                                 allowRemoveFriend={allowRemoveFriend}
+                                friendId={friend.id}
                             />
                         </li>
                     ))
+                    : <div className="friends__empty">Empty</div>
                 }
             </ul>
             {userInformation}

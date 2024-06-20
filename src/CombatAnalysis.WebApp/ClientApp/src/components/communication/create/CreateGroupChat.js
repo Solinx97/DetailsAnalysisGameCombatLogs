@@ -1,5 +1,3 @@
-import { faCircleCheck, faCircleQuestion } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useState } from "react";
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
@@ -12,6 +10,7 @@ import { useCreateGroupChatUserAsyncMutation } from '../../../store/api/communic
 import AddPeople from '../../AddPeople';
 import CommunicationMenu from '../CommunicationMenu';
 import ChatRulesItem from "./ChatRulesItem";
+import CreateGroupChatMenu from './CreateGroupChatMenu';
 import ItemConnector from './ItemConnector';
 
 import "../../../styles/communication/create.scss";
@@ -45,6 +44,8 @@ const CreateGroupChat = () => {
     const [createGroupChatUserMutAsync] = useCreateGroupChatUserAsyncMutation();
     const [createGroupChatCountAsyncMut] = useCreateGroupChatMessageCountAsyncMutation();
     const [createGroupChatMessageAsync] = useCreateGroupChatMessageAsyncMutation();
+
+    const menuItemsCount = 3;
 
     const createGroupChatAsync = async () => {
         const groupChat = {
@@ -109,14 +110,14 @@ const CreateGroupChat = () => {
         const today = new Date();
         const newMessage = {
             message: message,
-            when: `${today.getHours()}:${today.getMinutes()}`,
+            time: `${today.getHours()}:${today.getMinutes()}`,
             status: 0,
             type: 1,
             groupChatId: groupChatId,
             customerId: customer?.id
         };
 
-        await createGroupChatMessageAsync(newMessage);
+        const response = await createGroupChatMessageAsync(newMessage);
     }
 
     const handleCreateNewGroupChatAsync = async () => {
@@ -138,22 +139,15 @@ const CreateGroupChat = () => {
         seItemIndex(index);
         passedItemIndex < index && setPassedItemIndex((index) => index + 1);
 
-        if (index === 3) {
+        if (index === menuItemsCount) {
             setCanFinishCreate(true);
+
             return;
         }
     }
 
     const previouslyStep = () => {
         seItemIndex((index) => index - 1);
-    }
-
-    const changeMenuItem = (index) => {
-        if (passedItemIndex < index) {
-            return;
-        }
-
-        seItemIndex(index);
     }
 
     return (
@@ -163,59 +157,21 @@ const CreateGroupChat = () => {
             />
             <div className="communication__content create-community box-shadow">
                 <div>Create group chat</div>
+                <CreateGroupChatMenu
+                    passedItemIndex={passedItemIndex}
+                    seItemIndex={seItemIndex}
+                    itemIndex={itemIndex}
+                />
                 <div className="create-community__content">
-                    <ul className="create-community__menu">
-                        <li className={`menu-item ${passedItemIndex >= 0 && "passed"}`} onClick={() => changeMenuItem(0)}>
-                            {(passedItemIndex > 0 && itemIndex !== 0)
-                                ? <FontAwesomeIcon
-                                    className="menu-item__passed"
-                                    icon={faCircleCheck}
-                                />
-                                : itemIndex === 0 &&
-                                <FontAwesomeIcon
-                                    icon={faCircleQuestion}
-                                />
-                            }
-                            <div>{t("Description")}</div>
-                        </li>
-                        <li className={`menu-item ${passedItemIndex >= 1 && "passed"}`} onClick={() => changeMenuItem(1)}>
-                            {(passedItemIndex > 1 && itemIndex !== 1)
-                                ? <FontAwesomeIcon
-                                    className="menu-item__passed"
-                                    icon={faCircleCheck}
-                                />
-                                : itemIndex === 1 &&
-                                <FontAwesomeIcon
-                                    icon={faCircleQuestion}
-                                />
-                            }
-                            <div>{t("Rules")}</div>
-                        </li>
-                        <li className={`menu-item ${passedItemIndex >= 2 && "passed"}`} onClick={() => changeMenuItem(2)}>
-                            {(passedItemIndex > 2 && itemIndex !== 2)
-                                ? <FontAwesomeIcon
-                                    className="menu-item__passed"
-                                    icon={faCircleCheck}
-                                />
-                                : itemIndex === 2 &&
-                                <FontAwesomeIcon
-                                    icon={faCircleQuestion}
-                                />
-                            }
-                            <div>{t("InvitePeople")}</div>
-                        </li>
-                    </ul>
                     <div className="create-community__items">
                         {itemIndex === 0 &&
                             <div className="create-community__item">
                                 <div className="title">{t("Description")}</div>
                                 <div>
-                                    <div>
-                                        <div className="form-group">
-                                            <label htmlFor="name">{t("Name")}</label>
-                                            <input type="text" className="form-control" name="name" id="name"
-                                                onChange={(e) => setChatName(e.target.value)} defaultValue={chatName} required />
-                                        </div>
+                                    <div className="form-group">
+                                        <label htmlFor="name">{t("Name")}</label>
+                                        <input type="text" className="form-control" name="name" id="name"
+                                            onChange={(e) => setChatName(e.target.value)} defaultValue={chatName} required />
                                     </div>
                                     <ItemConnector
                                         connectorType={1}
@@ -260,8 +216,13 @@ const CreateGroupChat = () => {
                         }
                     </div>
                 </div>
-                <div className="finish-create">
-                    <div className="btn-shadow" onClick={async () => await handleCreateNewGroupChatAsync()}>{t("Create")}</div>
+                {(chatName.length === 0 && passedItemIndex > 0) &&
+                    <div className="chat-name-required">Chat name required!</div>
+                }
+                <div className="actions">
+                    {(canFinishCreate && chatName.length > 0) &&
+                        <div className="btn-shadow create" onClick={async () => await handleCreateNewGroupChatAsync()}>{t("Create")}</div>
+                    }
                     <div className="btn-shadow" onClick={() => navigate("/chats")}>{t("Cancel")}</div>
                 </div>
             </div>

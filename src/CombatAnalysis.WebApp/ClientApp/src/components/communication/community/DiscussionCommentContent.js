@@ -24,7 +24,7 @@ const DiscussionCommentContent = ({ customerId, comment }) => {
     }
 
     return (
-        <li className="discussion-comments__content list-group-item">
+        <div className="post-comments__content">
             {editModeOn
                 ? <div>
                     <textarea className="form-control" rows="3" cols="50" ref={commentContent} defaultValue={comment.content} />
@@ -36,13 +36,15 @@ const DiscussionCommentContent = ({ customerId, comment }) => {
                 : <div className="card-text">{comment.content}</div>
             }
             {comment.customerId === customerId &&
-                < FontAwesomeIcon
-                    icon={faPen}
-                    title={t("Edit")}
-                    onClick={() => setEditModeOne((item) => !item)}
-                />
+                <div className="post-comments__menu">
+                    <FontAwesomeIcon
+                        icon={faPen}
+                        title={t("Edit")}
+                        onClick={() => setEditModeOne((item) => !item)}
+                    />
+                </div>
             }
-        </li>
+        </div>
     );
 }
 

@@ -7,10 +7,6 @@ const CommunityList = ({ filterContent, communities }) => {
 
     const { data: userCommunities, isLoading } = useSearchByUserIdAsyncQuery(customer?.id);
 
-    if (isLoading) {
-        return <></>;
-    }
-
     const anotherCommunity = (community) => {
         if (customer == null) {
             return true;
@@ -18,6 +14,10 @@ const CommunityList = ({ filterContent, communities }) => {
 
         return userCommunities?.filter(userCommunity => userCommunity.communityId === community.id).length === 0
             || userCommunities?.length === 0;
+    }
+
+    if (isLoading) {
+        return <></>;
     }
 
     return (

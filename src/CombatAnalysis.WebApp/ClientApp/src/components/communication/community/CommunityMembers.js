@@ -164,8 +164,8 @@ const CommunityMembers = ({ community, customer, setIsCommunityMember }) => {
                         setPeopleToJoin={setPeopleToJoin}
                     />
                     <div className="item-result">
-                        <input type="button" value={t("Invite")} className="btn btn-success" onClick={async () => await createInviteAsync()} />
-                        <input type="button" value={t("Cancel")} className="btn btn-light" onClick={clearListOfInvites} />
+                        <div className="btn-shadow invite" onClick={async () => await createInviteAsync()}>{t("Invite")}</div>
+                        <div className="btn-shadow" onClick={clearListOfInvites}>{t("Cancel")}</div>
                     </div>
                 </div>
             }

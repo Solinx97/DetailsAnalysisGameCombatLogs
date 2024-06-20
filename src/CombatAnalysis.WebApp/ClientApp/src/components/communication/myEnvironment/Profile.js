@@ -29,7 +29,6 @@ const Profile = () => {
     const aboutMe = useRef(null);
     const firstName = useRef(null);
     const lastName = useRef(null);
-    const gender = useRef(null);
     const currentPassword = useRef(null);
     const password = useRef(null);
     const confirmPassword = useRef(null);
@@ -63,7 +62,6 @@ const Profile = () => {
         aboutMe.current.value = customer.aboutMe;
         firstName.current.value = customer.firstName;
         lastName.current.value = customer.lastName;
-        gender.current.value = customer.gender;
     }
 
     const editUserAsync = async () => {
@@ -98,7 +96,7 @@ const Profile = () => {
             aboutMe: aboutMe.current.value,
             firstName: firstName.current.value,
             lastName: lastName.current.value,
-            gender: +gender.current.value,
+            gender: customer.gender,
             appUserId: userId
         };
 
@@ -168,10 +166,6 @@ const Profile = () => {
                         <label htmlFor="inputLastName" className="form-label">{t("LastName")}</label>
                         <input type="text" className="form-control" id="inputLastName" ref={lastName} />
                     </div>
-                    <div className="mb-3">
-                        <label htmlFor="inputGender" className="form-label">{t("Gender")}</label>
-                        <input type="number" className="form-control" id="inputGender" ref={gender} />
-                    </div>
                 </div>
                 <input type="submit" className="btn btn-outline-primary" value={t("Save")} />
                 <input type="button" className="btn btn-outline-warning" value={t("Cancel")} onClick={() => setIsEditMode(false)} />
@@ -218,10 +212,6 @@ const Profile = () => {
                     <div className="mb-3">
                         <label htmlFor="inputLastName" className="form-label">{t("LastName")}</label>
                         <input type="text" className="form-control" id="inputLastName" ref={lastName} disabled />
-                    </div>
-                    <div className="mb-3">
-                        <label htmlFor="inputGender" className="form-label">{t("Gender")}</label>
-                        <input type="number" className="form-control" id="inputGender" ref={gender} disabled />
                     </div>
                 </div>
                 <input type="button" className="btn btn-outline-primary" value={t("Edit")} onClick={() => setIsEditMode(true)} />

@@ -2,6 +2,7 @@
     position: absolute;
     display: flex;
     flex-direction: column;
+    margin-top: 10px;
     z-index: 10;
 
     .alert-success, .alert-warning {

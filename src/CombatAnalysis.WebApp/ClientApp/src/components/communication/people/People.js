@@ -49,7 +49,7 @@ const People = () => {
             />
             <div className="communication__content people">
                 <div>
-                    <div>{t("People")}</div>
+                    <div className="people__title">{t("People")}</div>
                 </div>
                 <ul className="people__cards">
                     {

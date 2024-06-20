@@ -196,6 +196,10 @@
                 .item-result {
                     display: flex;
                     gap: 10px;
+
+                    .invite {
+                        box-shadow: 2px 2px 2px 2px green;
+                    }
                 }
             }
 

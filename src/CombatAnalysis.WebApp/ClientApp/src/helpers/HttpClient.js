@@ -1,84 +1,144 @@
 class HttpClient {
-    _baseAddressApi = "";
-
     set baseAddressApi(value) {
         this._baseAddressApi = value;
     }
 
     constructor() {
         this._baseAddressApi = "/api/v1";
+        this._maxRetries = 3;
+        this._interval = 1000;
     }
 
     async getAsync(requestUri) {
-        const response = await fetch(`${this._baseAddressApi}/${requestUri}`);
-        if (response.status !== 200 && response.status !== 204) {
-            throw new Error(`Could not fetch ${requestUri}, received ${response.status}`);
-        }
+        let attempts = 0;
+        while (attempts < this._maxRetries) {
+            try {
+                const response = await fetch(`${this._baseAddressApi}/${requestUri}`);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
 
-        const result = await response.json();
-        return result;
+                const result = await response.json();
+                return result;
+            } catch (error) {
+                attempts++;
+                if (attempts >= this._maxRetries) {
+                    throw new Error(`Request failed after ${this._maxRetries} attempts: ${error}`);
+                }
+
+                await this._sleep(this._initialBackoff * Math.pow(2, attempts - 1));
+            }
+        }
     }
 
     async postAsync(requestUri, content) {
-        const response = await fetch(`${this._baseAddressApi}/${requestUri}`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(content)
-        });
+        let attempts = 0;
+        while (attempts < this._maxRetries) {
+            try {
+                const response = await fetch(`${this._baseAddressApi}/${requestUri}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(content)
+                });
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
 
-        if (response.status !== 200) {
-            throw new Error(`Could not fetch ${requestUri}, received ${response.status}`);
+                const result = await response.json();
+                return result;
+            } catch (error) {
+                attempts++;
+                if (attempts >= this._maxRetries) {
+                    throw new Error(`Request failed after ${this._maxRetries} attempts: ${error}`);
+                }
+
+                await this._sleep(this._initialBackoff * Math.pow(2, attempts - 1));
+            }
         }
-
-        const result = await response.json();
-        return result;
     }
 
     async postEmptyAsync(requestUri) {
-        const response = await fetch(`${this._baseAddressApi}/${requestUri}`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
+        let attempts = 0;
+        while (attempts < this._maxRetries) {
+            try {
+                const response = await fetch(`${this._baseAddressApi}/${requestUri}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                return true;
+            } catch (error) {
+                attempts++;
+                if (attempts >= this._maxRetries) {
+                    throw new Error(`Request failed after ${this._maxRetries} attempts: ${error}`);
+                }
+
+                await this._sleep(this._initialBackoff * Math.pow(2, attempts - 1));
             }
-        });
-
-        if (response.status !== 200) {
-            throw new Error(`Could not fetch ${requestUri}, received ${response.status}`);
         }
-
-        return true;
     }
 
-    async putAsync(requestUri, content)  {
-        const response = await fetch(`${this._baseAddressApi}/${requestUri}`, {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(content)
-        });
+    async putAsync(requestUri, content) {
+        let attempts = 0;
+        while (attempts < this._maxRetries) {
+            try {
+                const response = await fetch(`${this._baseAddressApi}/${requestUri}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(content)
+                });
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
 
-        if (response.status !== 200) {
-            throw new Error(`Could not fetch ${requestUri}, received ${response.status}`);
+                const result = await response.json();
+                return result;
+            } catch (error) {
+                attempts++;
+                if (attempts >= this._maxRetries) {
+                    throw new Error(`Request failed after ${this._maxRetries} attempts: ${error}`);
+                }
+
+                await this._sleep(this._initialBackoff * Math.pow(2, attempts - 1));
+            }
         }
-
-        const result = await response.json();
-        return result;
     }
 
     async deleteAsync(requestUri) {
-        const response = await fetch(`${this._baseAddressApi}/${requestUri}`, {
-            method: 'DELETE'
-        });
+        let attempts = 0;
+        while (attempts < this._maxRetries) {
+            try {
+                const response = await fetch(`${this._baseAddressApi}/${requestUri}`, {
+                    method: 'DELETE'
+                });
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
 
-        if (response.status !== 200) {
-            throw new Error(`Could not fetch ${requestUri}, received ${response.status}`);
+                const result = await response.json();
+                return result;
+            } catch (error) {
+                attempts++;
+                if (attempts >= this._maxRetries) {
+                    throw new Error(`Request failed after ${this._maxRetries} attempts: ${error}`);
+                }
+
+                await this._sleep(this._initialBackoff * Math.pow(2, attempts - 1));
+            }
         }
+    }
 
-        const result = await response.json();
-        return result;
+    _sleep(ms) {
+        return new Promise(resolve => setTimeout(resolve, ms));
     }
 }
 

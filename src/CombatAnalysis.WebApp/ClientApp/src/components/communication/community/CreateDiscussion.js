@@ -30,7 +30,7 @@ const CreateDiscussion = ({ community, customer, setShowDiscussion }) => {
     }
 
     return (
-        <form className="discussion__create box-shadow" onSubmit={async (event) => await createDiscussionAsync(event)}>
+        <form className="discussion__create box-shadow">
             <div className="menu">
                 <FontAwesomeIcon
                     icon={faCircleXmark}
@@ -48,8 +48,8 @@ const CreateDiscussion = ({ community, customer, setShowDiscussion }) => {
                 <textarea className="form-control" id="Content" rows="8" ref={content} />
             </div>
             <div className="actions">
-                <input type="submit" className="btn btn-primary" value={t("Create")} />
-                <input type="button" className="btn btn-light" value={t("Cancel")} onClick={() => setShowDiscussion(false)} />
+                <div className="btn-shadow create" onClick={async (event) => await createDiscussionAsync(event)}>{t("Create")}</div>
+                <div className="btn-shadow" onClick={() => setShowDiscussion(false)}>{t("Cancel")}</div>
             </div>
         </form>
     );

@@ -14,6 +14,7 @@ import CommunityRulesItem from "../create/CommunityRulesItem";
 import ItemConnector from '../create/ItemConnector';
 
 import '../../../styles/communication/community/communityMenu.scss';
+import Loading from '../../Loading';
 
 const successNotificationTimeout = 2000;
 const failedNotificationTimeout = 2000;
@@ -129,7 +130,7 @@ const CommunityMenu = ({ setShowMenu, customer, community, setCommunity }) => {
     }
 
     if (isLoading) {
-        return <></>;
+        return (<Loading />);
     }
 
     return (
@@ -206,8 +207,8 @@ const CommunityMenu = ({ setShowMenu, customer, community, setCommunity }) => {
                             <div>{t("Rules")}</div>
                         </li>
                     }
-                    <li className="menu-item-leave">
-                        <button className="btn btn-outline-danger" onClick={() => setShowLeaveFromCommunity((item) => !item)}>{t("Leave")}</button>
+                    <li className="menu-item__leave">
+                        <div className="btn-shadow" onClick={() => setShowLeaveFromCommunity((item) => !item)}>{t("Leave")}</div>
                     </li>
                 </ul>
                 <div className="community-menu__items">
@@ -226,7 +227,7 @@ const CommunityMenu = ({ setShowMenu, customer, community, setCommunity }) => {
                                 }
                             />
                             <div className="actions">
-                                <input type="button" value={t("Update")} className="btn btn-success" onClick={async () => await updateCommunityAsync()} />
+                                <div className="btn-shadow" onClick={async () => await updateCommunityAsync()}>{t("Update")}</div>
                             </div>
                         </>
                     }
@@ -260,7 +261,7 @@ const CommunityMenu = ({ setShowMenu, customer, community, setCommunity }) => {
                                 {t("InviteFailed")}
                             </div>
                             <div className="actions">
-                                <input type="button" value={t("Apply")} className="btn btn-success" onClick={async () => await createInviteAsync()} />
+                                <div className="btn-shadow" onClick={async () => await createInviteAsync()}>{t("Apply")}</div>
                             </div>
                         </>
                     }
@@ -274,7 +275,7 @@ const CommunityMenu = ({ setShowMenu, customer, community, setCommunity }) => {
                                 }
                             />
                             <div className="actions">
-                                <input type="submit" value={t("Update")} className="btn btn-success" />
+                                <div className="btn-shadow">{t("Update")}</div>
                             </div>
                         </>
                     }
@@ -288,7 +289,7 @@ const CommunityMenu = ({ setShowMenu, customer, community, setCommunity }) => {
                 </div>
             </div>
             <div className="finish-create">
-                <input type="submit" value={t("Cancel")} className="btn btn-secondary" onClick={() => setShowMenu(false)} />
+                <div className="btn-shadow" onClick={() => setShowMenu(false)}>{t("Cancel")}</div>
             </div>
         </div>
     );

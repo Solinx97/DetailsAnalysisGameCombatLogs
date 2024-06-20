@@ -8,8 +8,9 @@ import { useRemoveFriendAsyncMutation } from '../../store/api/communication/myEn
 import UserInformation from './UserInformation';
 
 import "../../styles/communication/user.scss";
+import Loading from '../Loading';
 
-const User = ({ me, itIsMe, targetCustomerId, setUserInformation, allowRemoveFriend, actionAfterRequests = null }) => {
+const User = ({ me, itIsMe, targetCustomerId, setUserInformation, allowRemoveFriend, actionAfterRequests = null, friendId = 0 }) => {
     const { t } = useTranslation("communication/myEnvironment/friends");
 
     const navigate = useNavigate();
@@ -22,7 +23,7 @@ const User = ({ me, itIsMe, targetCustomerId, setUserInformation, allowRemoveFri
     const [userActive, setUserActive] = useState("");
 
     const removeFriendAsync = async () => {
-        await removeFriendAsyncMut(targetCustomerId);
+        await removeFriendAsyncMut(friendId);
     }
 
     const openUserInformationAsync = async () => {
@@ -55,7 +56,7 @@ const User = ({ me, itIsMe, targetCustomerId, setUserInformation, allowRemoveFri
     }
 
     if (isLoading) {
-        return <div>Loading...</div>;
+        return (<Loading />);
     }
 
     return (

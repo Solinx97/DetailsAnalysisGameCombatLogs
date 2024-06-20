@@ -5,47 +5,70 @@
     align-items: center;
     border-radius: 25px;
     width: 700px;
-    height: 500px;
+    height: 525px;
     padding: 10px;
+
+    .chat-name-required {
+        font-size: 13px;
+        color: red;
+    }
 
     &__content {
         display: flex;
         justify-content: space-between;
-        width: 100%;
     }
 
     &__menu {
         display: flex;
-        flex-direction: column;
-        align-items: start;
-        width: 25%;
-        margin: 10px 25px;
+        align-items: center;
         border-radius: 15px;
 
         .menu-item {
             display: flex;
             align-items: center;
-            opacity: 0.5;
-            margin: 5px;
-            cursor: pointer;
-            padding: 10px;
             border-radius: 10px;
 
             svg {
-                margin: 0 10px;
+                padding: 5px;
+                border-radius: 20px;
+                box-shadow: 1px 1px 1px 1px white;
+                background: #0c192c;
+            }
+
+            span {
+                width: 100px;
+                height: 5px;
+                background: white;
+                opacity: 0.5;
+            }
+
+            .move-to-next-step {
+                background: green;
+                opacity: 1;
+            }
+
+            &__not-passed {
+                opacity: 0.5;
             }
 
             &__passed {
                 color: green;
+                opacity: 1;
+            }
+
+            &__pased:hover {
+                transform: scale(1.1);
+                box-shadow: 2px 2px 2px 2px #1679AB;
+            }
+
+            .active {
+                opacity: 1;
+                box-shadow: 1px 1px 1px 1px red;
             }
         }
 
         .menu-item.passed {
             opacity: 1;
-        }
-
-        .menu-item:hover {
-            border: 2px solid blue;
         }
 
         .btn {
@@ -73,6 +96,10 @@
         display: flex;
         flex-direction: column;
         align-items: center;
+
+        .title {
+            font-weight: bold;
+        }
 
         .item-result {
             display: flex;
@@ -102,9 +129,13 @@
         }
     }
 
-    .finish-create {
+    .actions {
         display: flex;
         justify-content: center;
         gap: 100px;
+
+        .create {
+            box-shadow: 2px 2px 2px 2px green;
+        }
     }
 }

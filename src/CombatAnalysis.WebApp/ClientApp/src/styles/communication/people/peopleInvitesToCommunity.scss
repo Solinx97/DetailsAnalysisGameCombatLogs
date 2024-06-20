@@ -3,10 +3,9 @@
     flex-direction: column;
     align-items: center;
     gap: 10px;
-    padding: 5px;
-    border: 2px solid green;
+    padding: 10px;
+    border: 2px solid #219C90;
     border-radius: 10px;
-    background: white;
     z-index: 10;
     top: 28%;
     margin: 10px 0;
@@ -35,8 +34,8 @@
         display: flex;
         gap: 20px;
 
-        input {
-            font-size: 13px;
+        .send {
+            box-shadow: 2px 2px 2px 2px green;
         }
     }
 }

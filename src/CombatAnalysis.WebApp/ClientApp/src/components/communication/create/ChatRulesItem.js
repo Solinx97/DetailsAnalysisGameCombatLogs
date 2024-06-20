@@ -21,7 +21,7 @@ const ChatRulesItem = ({ setInvitePeople, setRemovePeople, setPinMessage, setAnn
 
     return (
         <div className="create-community__item">
-            <div>{t("Rules")}</div>
+            <div className="title">{t("Rules")}</div>
             <ul className="rules">
                 <li>
                     <div>{t("InviteAnotherPeople")}</div>
