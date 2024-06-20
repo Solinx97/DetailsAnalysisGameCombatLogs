@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import { useGetCustomerByIdQuery } from '../../store/api/Customer.api';
 import { useLazyGetCommunityPostByPostIdQuery } from '../../store/api/communication/community/CommunityPost.api';
 import User from './User';
+import Loading from '../Loading';
 
 const postType = {
     user: 0,
@@ -51,7 +52,7 @@ const PostTitle = ({ post, dateFormatting, deletePostAsync, isMyPost }) => {
     }
 
     if (isLoading) {
-        return <></>;
+        return (<Loading />);
     }
 
     return (
@@ -59,7 +60,7 @@ const PostTitle = ({ post, dateFormatting, deletePostAsync, isMyPost }) => {
             <div className="posts__title">
                 <div className="content">
                     <div className="username">
-                        {post.postType === postType["user"]
+                        {post?.postType === postType["user"]
                             ? <User
                                 targetCustomerId={targetCustomer?.id}
                                 setUserInformation={setUserInformation}
@@ -75,7 +76,7 @@ const PostTitle = ({ post, dateFormatting, deletePostAsync, isMyPost }) => {
                                     <FontAwesomeIcon
                                         icon={faComments}
                                     />
-                                    <div>{post.owner}</div>
+                                    <div>{post?.owner}</div>
                                 </div>
                             </div>
                         }

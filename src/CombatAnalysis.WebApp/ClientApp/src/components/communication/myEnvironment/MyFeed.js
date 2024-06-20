@@ -6,6 +6,7 @@ import { useCreateUserPostAsyncMutation, useLazyUserPostSearchByPostIdQuery, use
 import { useRemovePostMutation } from '../../../store/api/communication/Post.api';
 import CreatePost from '../CreatePost';
 import Post from '../Post';
+import Loading from '../../Loading';
 
 const MyFeed = () => {
     const customer = useSelector((state) => state.customer.value);
@@ -77,7 +78,7 @@ const MyFeed = () => {
     }
 
     if (customer === null) {
-        return <div>Loading...</div>;
+        return (<Loading />);
     }
 
     return (
@@ -93,7 +94,7 @@ const MyFeed = () => {
                     <li className="posts__item" key={post.id}>
                         <Post
                             customer={customer}
-                            post={post}
+                            data={post}
                             deletePostAsync={async () => await removeUserPostAsync(post.id)}
                         />
                     </li>

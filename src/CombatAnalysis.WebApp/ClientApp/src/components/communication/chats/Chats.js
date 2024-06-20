@@ -7,7 +7,7 @@ import { NavLink } from 'react-router-dom';
 import { useFindGroupChatUserByUserIdQuery } from '../../../store/api/communication/chats/GroupChatUser.api';
 import { useGetByUserIdAsyncQuery } from '../../../store/api/communication/chats/PersonalChat.api';
 import ErrorLoadingPage from '../../ErrorLoadingPage';
-import LoadingPage from '../../LoadingPage';
+import Loading from '../../Loading';
 import CommunicationMenu from '../CommunicationMenu';
 import GroupChat from './GroupChat';
 import MyGroupChat from './MyGroupChat';
@@ -69,7 +69,7 @@ const Chats = () => {
                 <CommunicationMenu
                     currentMenuItem={1}
                 />
-                <LoadingPage />
+                <Loading />
             </>
         );
     }

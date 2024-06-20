@@ -2,6 +2,7 @@ import { useCallback, useState } from "react";
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import { useGetCustomersQuery } from '../../../store/api/UserApi';
+import Loading from "../../Loading";
 import CommunicationMenu from '../CommunicationMenu';
 import PeopleItem from './PeopleItem';
 
@@ -30,10 +31,13 @@ const People = () => {
 
     if (isLoading) {
         return (
-            <CommunicationMenu
-                currentMenuItem={menuItem}
-                setMenuItem={setMenuItem}
-            />
+            <>
+                <CommunicationMenu
+                    currentMenuItem={menuItem}
+                    setMenuItem={setMenuItem}
+                />
+                <Loading />
+            </>
         );
     }
 

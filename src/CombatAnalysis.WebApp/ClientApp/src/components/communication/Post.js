@@ -11,7 +11,7 @@ import PostTitle from './PostTitle';
 
 import '../../styles/communication/post.scss';
 
-const Post = ({ customer, post, deletePostAsync, canBeRemoveFromUserFeed = true }) => {
+const Post = ({ customer, data, deletePostAsync, canBeRemoveFromUserFeed = true }) => {
     const { t } = useTranslation("communication/post");
 
     const [updatePostAsyncMut] = useUpdatePostAsyncMutation();
@@ -27,23 +27,41 @@ const Post = ({ customer, post, deletePostAsync, canBeRemoveFromUserFeed = true 
     const [postCommentContent, setPostCommentContent] = useState("");
     const [showAddComment, setShowAddComment] = useState(false);
     const [isMyPost, setIsMyPost] = useState(false);
+    const [post, setPost] = useState(data);
 
     useEffect(() => {
-        setIsMyPost(post.customerId === customer.id && canBeRemoveFromUserFeed);
+        setIsMyPost(post?.customerId === customer?.id && canBeRemoveFromUserFeed);
     }, [])
 
     const updatePostAsync = async (postId, likesCount, dislikesCount, commentsCount) => {
-        const postForUpdate = {
-            id: postId,
-            content: post.content,
-            when: post.when,
-            likeCount: post.likeCount + likesCount,
-            dislikeCount: post.dislikeCount + dislikesCount,
-            commentCount: post.commentCount + commentsCount,
-            customerId: post.customerId
-        }
+        try {
+            const postForUpdate = {
+                id: postId,
+                owner: post.owner,
+                content: post.content,
+                when: post.when,
+                likeCount: post.likeCount + likesCount,
+                dislikeCount: post.dislikeCount + dislikesCount,
+                commentCount: post.commentCount + commentsCount,
+                customerId: post.customerId
+            }
 
-        await updatePostAsyncMut(postForUpdate);
+            const response = await updatePostAsyncMut(postForUpdate);
+            if (response.error) {
+                console.error("Error updating post:", response.error);
+
+                return;
+            }
+
+            let updateReactions = Object.assign({}, post);
+            updateReactions.likeCount = post.likeCount + likesCount;
+            updateReactions.dislikeCount = post.dislikeCount + dislikesCount;
+            updateReactions.commentCount = post.commentCount + commentsCount;
+
+            setPost(updateReactions);
+        } catch (e) {
+            console.error("Failed to update post:", e);
+        }
     }
 
     const createPostLikeAsync = async (postId) => {

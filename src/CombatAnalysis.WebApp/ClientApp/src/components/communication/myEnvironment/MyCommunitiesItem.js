@@ -18,7 +18,7 @@ const MyCommunitiesItem = ({ userCommunity, filterContent }) => {
     return (
         myCommunity.name.toLowerCase().startsWith(filterContent.toLowerCase()) &&
         <div className="community">
-            <div className="card">
+            <div className="card box-shadow">
                 <div className="card-body">
                     <h5 className="card-title">{myCommunity?.name}</h5>
                     <p className="card-text">{myCommunity?.description}</p>

@@ -2,6 +2,7 @@
 import { useTranslation } from 'react-i18next';
 import { useGetCombatLogsQuery } from '../../store/api/CombatParserApi';
 import { useLazyAuthenticationAsyncQuery } from '../../store/api/UserApi';
+import Loading from '../Loading';
 import CombatLogItem from './CombatLogItem';
 import MainInformationPreview from './MainInformationPreview';
 
@@ -25,7 +26,7 @@ const MainInformation = () => {
     }, [])
 
     if (isLoading) {
-        return <div>Loading...</div>;
+        return (<Loading />);
     }
 
     return (

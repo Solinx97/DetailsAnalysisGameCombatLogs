@@ -6,8 +6,19 @@
         padding: 10px;
         box-shadow: 2px 2px 2px 2px #3AA6B9;
         border-radius: 15px;
-        width: 250px;
+        width: 270px;
         font-size: 13px;
+
+        .extended-menu-item {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            gap: 10px;
+
+            .create {
+                color: green;
+            }
+        }
 
         .menu-item {
             display: flex;
@@ -65,13 +76,13 @@
             display: flex;
             justify-content: center;
             margin-top: -10px;
-            background: white;
             z-index: 100;
 
             &__content {
                 padding: 5px 10px;
+                margin-top: 5px;
                 cursor: pointer;
-                border: 1px solid gray;
+                border: 2px solid white;
                 border-radius: 10px;
             }
         }

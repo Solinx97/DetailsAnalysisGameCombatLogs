@@ -94,6 +94,7 @@ const CreateCommunity = () => {
                 currentMenuItem={4}
             />
             <div className="communication__content create-community box-shadow">
+                <div>Create community</div>
                 <div className="create-community__content">
                     <ul className="create-community__menu">
                         <li className={`menu-item ${passedItemIndex >= 0 && "passed"}`} onClick={() => changeMenuItem(0)}>
@@ -193,9 +194,8 @@ const CreateCommunity = () => {
                     </div>
                 </div>
                 <div className="finish-create">
-                    <input type="button" value={t("Create")} className="btn btn-success"
-                        onClick={async () => await handleCreateNewCommunityAsync()} disabled={!canFinishCreate} />
-                    <input type="submit" value={t("Cancel")} className="btn btn-warning" onClick={() => navigate("/communities")} />
+                    <div className="btn-shadow" onClick={async () => await handleCreateNewCommunityAsync()}>{t("Create")}</div>
+                    <div className="btn-shadow" onClick={() => navigate("/communities")}>{t("Cancel")}</div>
                 </div>
             </div>
         </>

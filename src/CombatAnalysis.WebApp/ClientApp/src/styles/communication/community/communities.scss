@@ -67,9 +67,7 @@
                 .card {
                     width: 250px;
                     border-radius: 30px;
-                    box-shadow: 4px 4px white;
-                    background: #088395;
-                    color: white;
+                    background: #0c192c;
 
                     .links {
                         display: flex;
@@ -86,6 +84,10 @@
                             box-shadow: 3px 3px 3px 3px green;
                         }
                     }
+                }
+
+                .box-shadow {
+                    box-shadow: 3px 3px 3px 3px #1679AB;
                 }
             }
         }

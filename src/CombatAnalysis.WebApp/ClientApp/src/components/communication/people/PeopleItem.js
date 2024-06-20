@@ -6,7 +6,7 @@ const PeopleItem = ({ me, people, actionAfterRequests = null }) => {
 
     return (
         <div>
-            <div className="card">
+            <div className="card box-shadow">
                 <User
                     me={me}
                     targetCustomerId={people.id}

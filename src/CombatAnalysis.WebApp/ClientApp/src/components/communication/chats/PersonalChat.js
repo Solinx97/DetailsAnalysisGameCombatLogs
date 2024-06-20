@@ -128,7 +128,7 @@ const PersonalChat = ({ chat, me, setSelectedChat, companionId }) => {
 
     if (isLoading || companionIsLoading
         || messagesCountLoading || myMessagesCountLoading) {
-        return <></>;
+        return <div>Loading...</div>;
     }
 
     return (

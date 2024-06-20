@@ -6,14 +6,22 @@ import InDev from '../inDevNotes/InDev';
 
 import '../../styles/communication/communication.scss';
 
-const CommunicationMenu = ({ currentMenuItem, setMenuItem, selectedCommunityName }) => {
+const CommunicationMenu = ({ currentMenuItem, setMenuItem }) => {
     const { t } = useTranslation("communication/communication");
 
     const navigate = useNavigate();
 
+    const navigateToFeed = () => navigate("/feed");
+    const navigateToChats = () => navigate("/chats");
+    const navigateToCreateChat = () => navigate("/chats/create");
+    const navigateToCommunities = () => navigate("/communities");
+    const navigateToCreateCommunity = () => navigate("/communities/create");
+    const navigateToPeople = () => navigate("/people");
+    const navigateToEnvironment = () => navigate("/environment");
+
     return (
         <ul className="communication__menu">
-            <li className="menu-item" onClick={() => navigate("/feed")}>
+            <li className="menu-item" onClick={navigateToFeed}>
                 {currentMenuItem === 0 &&
                     <FontAwesomeIcon
                         icon={faCircleArrowRight}
@@ -21,76 +29,30 @@ const CommunicationMenu = ({ currentMenuItem, setMenuItem, selectedCommunityName
                 }
                 <div className="title">{t("Feed")}</div>
             </li>
-            <div>
-                <li className="menu-item" onClick={() => navigate("/chats")}>
-                    {(currentMenuItem === 1 || currentMenuItem === 2) &&
+            <li className="extended-menu-item">
+                <div className="menu-item" onClick={navigateToChats}>
+                    {(currentMenuItem === 1 || currentMenuItem === 2)&&
                         <FontAwesomeIcon
                             icon={faCircleArrowRight}
                         />
                     }
                     <div className="title">{t("Chats")}</div>
-                </li>
-                {(currentMenuItem === 1 || currentMenuItem === 2) &&
-                    <>
-                        <li className="menu-item sub-menu" onClick={() => navigate("/chats")}>
-                            {currentMenuItem === 1 &&
-                                <FontAwesomeIcon
-                                    icon={faCheck}
-                                />
-                            }
-                            <div className="title">{t("Chats")}</div>
-                        </li>
-                        <li className="menu-item sub-menu" onClick={() => navigate("/chats/create")}>
-                            {currentMenuItem === 2 &&
-                                <FontAwesomeIcon
-                                    icon={faCheck}
-                                />
-                            }
-                            <div className="title">{t("CreateChat")}</div>
-                        </li>
-                    </>
-                }
-            </div>
-            <div>
-                <li className="menu-item" onClick={() => navigate("/communities")}>
-                    {currentMenuItem === 3 &&
+                </div>
+                <div className="create" onClick={navigateToCreateChat}>{t("Create")}</div>
+            </li>
+            <li className="extended-menu-item">
+                <div className="menu-item" onClick={navigateToCommunities}>
+                    {(currentMenuItem === 3 || currentMenuItem === 4) &&
                         <FontAwesomeIcon
                             icon={faCircleArrowRight}
                         />
                     }
                     <div className="title">{t("Communities")}</div>
-                </li>
-                {(currentMenuItem >= 3 && currentMenuItem <= 5) &&
-                    <>
-                        <li className="menu-item sub-menu" onClick={() => navigate("/communities")}>
-                            {currentMenuItem === 3 &&
-                                <FontAwesomeIcon
-                                    icon={faCheck}
-                                />
-                            }
-                            <div className="title">{t("Communities")}</div>
-                        </li>
-                        <li className="menu-item sub-menu" onClick={() => navigate("/communities/create")}>
-                            {currentMenuItem === 4 &&
-                                <FontAwesomeIcon
-                                    icon={faCheck}
-                                />
-                            }
-                            <div className="title">{t("CreateCommunity")}</div>
-                        </li>
-                        {currentMenuItem === 5 &&
-                            <li className="menu-item sub-menu">
-                                <FontAwesomeIcon
-                                    icon={faCheck}
-                                />
-                                <div className="title">{selectedCommunityName}</div>
-                            </li>
-                        }
-                    </>
-                }
-            </div>
+                </div>
+                <div className="create" onClick={navigateToCreateCommunity}>{t("Create")}</div>
+            </li>
             <InDev inDevItem={
-                    <li className="menu-item_disabled">
+                <li className="menu-item_disabled">
                         {currentMenuItem === 6 &&
                             <FontAwesomeIcon
                                 icon={faCircleArrowRight}
@@ -99,7 +61,7 @@ const CommunicationMenu = ({ currentMenuItem, setMenuItem, selectedCommunityName
                         <div className="title">{t("Events")}</div>
                     </li>}
             />
-            <li className="menu-item" onClick={() => navigate("/people")}>
+            <li className="menu-item" onClick={navigateToPeople}>
                 {currentMenuItem === 7 &&
                     <FontAwesomeIcon
                         icon={faCircleArrowRight}
@@ -108,7 +70,7 @@ const CommunicationMenu = ({ currentMenuItem, setMenuItem, selectedCommunityName
                 <div className="title">{t("People")}</div>
             </li>
             <div>
-                <li className="menu-item" onClick={() => navigate("/environment")}>
+                <li className="menu-item" onClick={navigateToEnvironment}>
                     {currentMenuItem >= 8 &&
                         <FontAwesomeIcon
                             icon={faCircleArrowRight}
@@ -141,14 +103,6 @@ const CommunicationMenu = ({ currentMenuItem, setMenuItem, selectedCommunityName
                                 />
                             }
                             <div className="title">{t("Communities")}</div>
-                        </li>
-                        <li className="menu-item sub-menu" onClick={() => navigate("/communities/create")}>
-                            {currentMenuItem === 11 &&
-                                <FontAwesomeIcon
-                                    icon={faCheck}
-                                />
-                            }
-                            <div className="title">{t("CreateCommunity")}</div>
                         </li>
                         <InDev inDevItem={
                             <li className="menu-item_disabled sub-menu">

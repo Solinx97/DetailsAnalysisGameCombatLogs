@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import { useSearchByUserIdAsyncQuery } from '../../../store/api/communication/community/CommunityUser.api';
+import Loading from '../../Loading';
 import InvitesToCommunity from './InvitesToCommunity';
 import MyCommunitiesItem from './MyCommunitiesItem';
 
@@ -25,7 +26,7 @@ const MyCommunities = () => {
     }
 
     if (isLoading) {
-        return <></>;
+        return (<Loading />);
     }
 
     return (

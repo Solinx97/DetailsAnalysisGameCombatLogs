@@ -79,7 +79,7 @@ const DefaultChatMessage = ({ me, message, messageStatus, updateMessageAsync, de
     }
 
     return (
-        <div className={`chat-messages__content ${message?.customerId === me?.id ? 'my-message' : ''}`}>
+        <div className={`chat-messages__content${message?.customerId === me?.id ? ' my-message' : ''}`}>
             <ChatMessageTitle
                 me={me}
                 itIsMe={me?.id !== message?.customerId}

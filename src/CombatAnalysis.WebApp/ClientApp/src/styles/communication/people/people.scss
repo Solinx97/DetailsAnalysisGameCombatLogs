@@ -15,12 +15,16 @@
                 padding: 10px;
                 font-family: 'Comic Sans MS';
                 cursor: default;
-                background: #4793AF;
+                background: #0c192c;
 
                 svg {
                     cursor: pointer;
                 }
             }
+        }
+
+        .box-shadow {
+            box-shadow: 3px 3px 3px 3px #135D66;
         }
     }
 

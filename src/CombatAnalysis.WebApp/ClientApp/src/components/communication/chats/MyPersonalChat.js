@@ -6,7 +6,7 @@ const MyPersonalChat = ({ personalChat, setSelectedPersonalChat, companionId, me
     const { data: messagesCount, isLoading: messagesCountLoading } = useFindPersonalChatMessageCountQuery({ chatId: personalChat?.id, userId: meId });
 
     if (isLoading || messagesCountLoading) {
-        return <></>;
+        return <div>Loading...</div>;
     }
 
     return (

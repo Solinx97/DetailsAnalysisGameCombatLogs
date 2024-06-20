@@ -162,6 +162,7 @@ const CreateGroupChat = () => {
                 currentMenuItem={2}
             />
             <div className="communication__content create-community box-shadow">
+                <div>Create group chat</div>
                 <div className="create-community__content">
                     <ul className="create-community__menu">
                         <li className={`menu-item ${passedItemIndex >= 0 && "passed"}`} onClick={() => changeMenuItem(0)}>
@@ -260,9 +261,8 @@ const CreateGroupChat = () => {
                     </div>
                 </div>
                 <div className="finish-create">
-                    <input type="button" value={t("Create")} className="btn btn-success"
-                        onClick={async () => await handleCreateNewGroupChatAsync()} disabled={!canFinishCreate} />
-                    <input type="submit" value={t("Cancel")} className="btn btn-warning" onClick={() => navigate("/chats")} />
+                    <div className="btn-shadow" onClick={async () => await handleCreateNewGroupChatAsync()}>{t("Create")}</div>
+                    <div className="btn-shadow" onClick={() => navigate("/chats")}>{t("Cancel")}</div>
                 </div>
             </div>
         </>

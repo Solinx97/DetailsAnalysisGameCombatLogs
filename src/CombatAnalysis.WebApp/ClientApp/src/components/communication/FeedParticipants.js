@@ -192,7 +192,7 @@ const FeedParticipants = ({ customer, showNewPosts, setShowNewPostsInform }) => 
                 <li key={post.id}>
                     <Post
                         customer={customer}
-                        post={post}
+                        data={post}
                         deletePostAsync={async () => await removeUserPostAsync(post.id)}
                         canBeRemoveFromUserFeed={post.postType === postType["user"]}
                     />
