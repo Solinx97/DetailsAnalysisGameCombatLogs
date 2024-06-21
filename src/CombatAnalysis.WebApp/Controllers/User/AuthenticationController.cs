@@ -22,7 +22,7 @@ public class AuthenticationController : ControllerBase
     {
         if (!HttpContext.Request.Cookies.TryGetValue("refreshToken", out var refreshToken))
         {
-            return Unauthorized();
+            return Ok(false);
         }
 
         var email = HttpContext.User.Identity.Name;
@@ -33,6 +33,6 @@ public class AuthenticationController : ControllerBase
             return Ok(user);
         }
 
-        return Unauthorized();
+        return Ok(false);
     }
 }

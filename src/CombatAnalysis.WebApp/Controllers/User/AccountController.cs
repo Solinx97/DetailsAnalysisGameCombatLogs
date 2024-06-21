@@ -25,9 +25,9 @@ public class AccountController : ControllerBase
     public async Task<IActionResult> Login(LoginModel model)
     {
         var responseMessage = await _httpClient.PostAsync("Account", JsonContent.Create(model), Port.UserApi);
-        if (responseMessage.StatusCode != System.Net.HttpStatusCode.OK)
+        if (!responseMessage.IsSuccessStatusCode)
         {
-            return NotFound();
+            return BadRequest();
         }
 
         var response = await responseMessage.Content.ReadFromJsonAsync<ResponseFromAccount>();

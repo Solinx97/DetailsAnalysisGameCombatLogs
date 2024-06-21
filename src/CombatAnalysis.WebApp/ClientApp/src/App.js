@@ -1,10 +1,13 @@
 import React, { useRef, useState } from 'react';
 import { Route, Routes } from 'react-router-dom';
+import { ToastContainer } from 'react-toastify';
 import AppRoutes from './AppRoutes';
 import Layout from './components/Layout';
 import VoiceChatMinimazed from './components/communication/voiceChat/VoiceChatMinimazed';
+import { AuthProvider } from './context/AuthProvider';
 import { VoiceServiceProvider } from './context/VoiceServiceContext';
 
+import 'react-toastify/dist/ReactToastify.css';
 import './custom.css';
 
 const App = () => {
@@ -23,19 +26,22 @@ const App = () => {
 
     const render = () => {
         return (
-            <VoiceServiceProvider value={{ callMinimazedData, useMinimaze, setUseMinimaze }}>
-                <Layout>
-                    <Routes>
-                        {AppRoutes.map((route, index) => {
-                            const { element, ...rest } = route;
-                            return <Route key={index} {...rest} element={element} />;
-                        })}
-                    </Routes>
-                    {useMinimaze &&
-                        <VoiceChatMinimazed />
-                    }
-                </Layout>
-            </VoiceServiceProvider>
+            <AuthProvider children={
+                <VoiceServiceProvider value={{ callMinimazedData, useMinimaze, setUseMinimaze }}>
+                    <Layout>
+                        <Routes>
+                            {AppRoutes.map((route, index) => {
+                                const { element, ...rest } = route;
+                                return <Route key={index} {...rest} element={element} />;
+                            })}
+                        </Routes>
+                        {useMinimaze &&
+                            <VoiceChatMinimazed />
+                        }
+                        <ToastContainer />
+                    </Layout>
+                </VoiceServiceProvider>
+            } />
         );
     }
 

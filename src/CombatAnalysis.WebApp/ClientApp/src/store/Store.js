@@ -1,5 +1,6 @@
 ﻿import { combineReducers, configureStore } from '@reduxjs/toolkit';
 import authenticationMiddleware from '../middleware/authenticationMiddleware';
+import errorHandlingMiddleware from '../middleware/errorHandlingMiddleware';
 import { ChatApi } from './api/ChatApi';
 import { CombatParserApi } from './api/CombatParserApi';
 import { UserApi } from './api/UserApi';
@@ -23,6 +24,7 @@ const Store = configureStore({
             .concat(ChatApi.middleware)
             .concat(CombatParserApi.middleware)
             .concat(authenticationMiddleware)
+            .concat(errorHandlingMiddleware)
 });
 
 export default Store;

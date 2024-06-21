@@ -1,11 +1,6 @@
-﻿import React, { useRef, useState } from 'react';
+﻿import React, { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useDispatch } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
-import { useLoginAsyncMutation } from '../../store/api/Account.api';
-import { useLazySearchByUserIdAsyncQuery } from '../../store/api/Customer.api';
-import { updateCustomer } from '../../store/slicers/CustomerSlice';
-import { updateUser } from '../../store/slicers/UserSlice';
+import { useAuth } from '../../context/AuthProvider';
 import LoginPreview from './LoginPreview';
 
 import "../../styles/account/login.scss";
@@ -13,14 +8,7 @@ import "../../styles/account/login.scss";
 const Login = () => {
     const { t } = useTranslation("account/login");
 
-    const dispatch = useDispatch();
-
-    const [loginAsync] = useLoginAsyncMutation();
-    const [getCustomerAsync] = useLazySearchByUserIdAsyncQuery();
-
-    const navigate = useNavigate();
-
-    const [showErrorMessage, setShowErrorMessage] = useState(false);
+    const { loginAsync } = useAuth();
 
     const email = useRef(null);
     const password = useRef(null);
@@ -30,27 +18,7 @@ const Login = () => {
         document.cookie = `dontLogout=${dontLogout.current.checked}`;
         event.preventDefault();
 
-        setShowErrorMessage(false);
-
-        const data = {
-            email: email.current.value,
-            password: password.current.value
-        };
-
-        const user = await loginAsync(data);
-        if (user.data !== undefined) {
-            dispatch(updateUser(user.data));
-
-            const customer = await getCustomerAsync(user.data.id);
-            if (customer.data !== undefined) {
-                dispatch(updateCustomer(customer.data));
-
-                navigate("/");
-            }
-        }
-        else {
-            setShowErrorMessage(true);
-        }
+        await loginAsync(email.current.value, password.current.value);
     }
 
     return (
@@ -72,7 +40,6 @@ const Login = () => {
                         <input className="form-check-input" type="checkbox" id="invalidCheck" ref={dontLogout} />
                     </div>
                     <input type="submit" className="btn-border-shadow finish-login" value={t("Login")} />
-                    <div className="login__error-message" style={{ display: showErrorMessage ? "flex" : "none" }}>{t("IncorrectData")}</div>
                 </form>
             </div>
         </div>
