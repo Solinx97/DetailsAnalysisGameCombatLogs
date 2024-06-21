@@ -2,10 +2,10 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSearchByUserIdAsyncQuery } from '../../../store/api/communication/community/CommunityUser.api';
 import { useCreateInviteAsyncMutation, useLazyInviteIsExistQuery } from '../../../store/api/communication/community/InviteToCommunity.api';
+import Loading from '../../Loading';
 import TargetCommunity from './TargetCommunity';
 
 import '../../../styles/communication/people/peopleInvitesToCommunity.scss';
-import Loading from '../../Loading';
 
 const PeopleInvitesToCommunity = ({ customer, people, setOpenInviteToCommunity }) => {
     const { t } = useTranslation("communication/people/people");
@@ -42,7 +42,7 @@ const PeopleInvitesToCommunity = ({ customer, people, setOpenInviteToCommunity }
                 communityId: communityIdToInvite[i],
                 toCustomerId: people?.id,
                 when: new Date(),
-                customer: customer?.id
+                customerId: customer?.id
             }
 
             await createInviteAsyncMut(newInviteToCommunity);

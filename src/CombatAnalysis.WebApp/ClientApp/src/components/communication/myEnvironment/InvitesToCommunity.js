@@ -16,11 +16,11 @@ const InvitesToCommunity = ({ customer }) => {
             <div>{t("InvitesToCommunity")}</div>
             <ul>
                 {
-                    invitesToCommunity?.map((item) => (
-                        <li key={item.id}>
+                    invitesToCommunity?.map((invite) => (
+                        <li key={invite.id}>
                             <InvitesToCommunityItem
                                 customer={customer}
-                                inviteToCommunity={item}
+                                inviteToCommunity={invite}
                             />
                         </li>
                     ))

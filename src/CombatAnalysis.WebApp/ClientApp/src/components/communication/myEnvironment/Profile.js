@@ -1,3 +1,5 @@
+import { faArrowDown, faArrowUp } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
@@ -20,6 +22,8 @@ const Profile = () => {
     const [getCustomerById] = useLazyGetCustomerByIdQuery();
 
     const [isEditMode, setIsEditMode] = useState(false);
+    const [privacyHidden, setPrivacyHidden] = useState(false);
+    const [generalHidden, setGeneralHidden] = useState(false);
 
     const email = useRef(null);
     const phoneNumber = useRef(null);
@@ -36,12 +40,23 @@ const Profile = () => {
     useEffect(() => {
         getUserInformation(user);
         getCustomerInformation(customer);
-    }, [])
+    }, []);
 
     useEffect(() => {
+        if (email.current === null) {
+            return;
+        }
+
         getUserInformation(user);
+    }, [isEditMode, email.current, privacyHidden]);
+
+    useEffect(() => {
+        if (message.current === null) {
+            return;
+        }
+
         getCustomerInformation(customer);
-    }, [isEditMode])
+    }, [isEditMode, message.current, generalHidden]);
 
     const getUserInformation = (user) => {
         const date = new Date(user.birthday);
@@ -114,107 +129,171 @@ const Profile = () => {
         await editUserAsync();
     }
 
+    const openEditForm = () => {
+        setIsEditMode(false);
+    }
+
     const editForm = () => {
         return (
-            <form onSubmit={handleSubmitAsync}>
-                <div>{t("Privacy")}</div>
-                <div className="privacy">
-                    <div className="mb-3">
-                        <label htmlFor="inputEmail" className="form-label">Email</label>
-                        <input type="email" className="form-control" id="inputEmail" aria-describedby="emailHelp" ref={email} />
-                    </div>
-                    <div className="mb-3">
-                        <label htmlFor="inputPhoneNumber" className="form-label">{t("PhoneNumber")}</label>
-                        <input type="number" className="form-control" id="inputPhoneNumber" ref={phoneNumber} />
-                    </div>
-                    <div className="mb-3">
-                        <label htmlFor="inputBithdayl" className="form-label">{t("Birthday")}</label>
-                        <input type="date" className="form-control" id="inputBithdayl" ref={birthday} />
-                    </div>
-                    <div className="mb-3">
-                        <label htmlFor="inputCurrentPassword" className="form-label">{t("CurrentPassword")}</label>
-                        <input type="password" className="form-control" id="inputCurrentPassword" ref={currentPassword} />
-                    </div>
-                    <div className="mb-3">
-                        <label htmlFor="inputPassword" className="form-label">{t("NewPassword")}</label>
-                        <input type="password" className="form-control" id="inputPassword" ref={password} />
-                    </div>
-                    <div className="mb-3">
-                        <label htmlFor="inputConfirmPassword" className="form-label">{t("ConfirmNewPassword")}</label>
-                        <input type="password" className="form-control" id="inputConfirmPassword" ref={confirmPassword} />
-                    </div>
+            <form className="profile__edit-profile" onSubmit={handleSubmitAsync}>
+                <div className="title">
+                    <div>{t("Privacy")}</div>
+                    {privacyHidden
+                        ? <FontAwesomeIcon
+                            icon={faArrowDown}
+                            onClick={() => setPrivacyHidden(!privacyHidden)}
+                        />
+                        : <FontAwesomeIcon
+                            icon={faArrowUp}
+                            onClick={() => setPrivacyHidden(!privacyHidden)}
+                        />
+                    }
                 </div>
-                <div>{t("General")}</div>
-                <div className="general">
-                    <div className="mb-3">
-                        <label htmlFor="inputMessage" className="form-label">{t("Message")}</label>
-                        <input type="text" className="form-control" id="inputMessage" ref={message} />
+                {!privacyHidden &&
+                    <div className="privacy">
+                        <div className="mb-3">
+                            <label htmlFor="inputEmail" className="form-label">Email</label>
+                            <input type="email" className="form-control" id="inputEmail" aria-describedby="emailHelp" ref={email} />
+                        </div>
+                        <div className="mb-3">
+                            <label htmlFor="inputPhoneNumber" className="form-label">{t("PhoneNumber")}</label>
+                            <input type="number" className="form-control" id="inputPhoneNumber" ref={phoneNumber} />
+                        </div>
+                        <div className="mb-3">
+                            <label htmlFor="inputBithdayl" className="form-label">{t("Birthday")}</label>
+                            <input type="date" className="form-control" id="inputBithdayl" ref={birthday} />
+                        </div>
+                        <div className="mb-3">
+                            <label htmlFor="inputCurrentPassword" className="form-label">{t("CurrentPassword")}</label>
+                            <input type="password" className="form-control" id="inputCurrentPassword" ref={currentPassword} />
+                        </div>
+                        <div className="mb-3">
+                            <label htmlFor="inputPassword" className="form-label">{t("NewPassword")}</label>
+                            <input type="password" className="form-control" id="inputPassword" ref={password} />
+                        </div>
+                        <div className="mb-3">
+                            <label htmlFor="inputConfirmPassword" className="form-label">{t("ConfirmNewPassword")}</label>
+                            <input type="password" className="form-control" id="inputConfirmPassword" ref={confirmPassword} />
+                        </div>
                     </div>
-                    <div className="mb-3">
-                        <label htmlFor="inputUsername" className="form-label">{t("Username")}</label>
-                        <input type="text" className="form-control" id="inputUsername" ref={username} />
-                    </div>
-                    <div className="mb-3">
-                        <label htmlFor="inputAboutMe" className="form-label">{t("AboutMe")}</label>
-                        <input type="text" className="form-control" id="inputAboutMe" ref={aboutMe} />
-                    </div>
-                    <div className="mb-3">
-                        <label htmlFor="inutFirstName" className="form-label">{t("FirstName")}</label>
-                        <input type="text" className="form-control" id="inutFirstName" ref={firstName} />
-                    </div>
-                    <div className="mb-3">
-                        <label htmlFor="inputLastName" className="form-label">{t("LastName")}</label>
-                        <input type="text" className="form-control" id="inputLastName" ref={lastName} />
-                    </div>
+                }
+                <div className="title">
+                    <div>{t("General")}</div>
+                    {generalHidden
+                        ? <FontAwesomeIcon
+                            icon={faArrowDown}
+                            onClick={() => setGeneralHidden(!generalHidden)}
+                        />
+                        : <FontAwesomeIcon
+                            icon={faArrowUp}
+                            onClick={() => setGeneralHidden(!generalHidden)}
+                        />
+                    }
                 </div>
-                <input type="submit" className="btn btn-outline-primary" value={t("Save")} />
-                <input type="button" className="btn btn-outline-warning" value={t("Cancel")} onClick={() => setIsEditMode(false)} />
+                {!generalHidden &&
+                    <div className="general">
+                        <div className="mb-3">
+                            <label htmlFor="inputMessage" className="form-label">{t("Message")}</label>
+                            <input type="text" className="form-control" id="inputMessage" ref={message} />
+                        </div>
+                        <div className="mb-3">
+                            <label htmlFor="inputUsername" className="form-label">{t("Username")}</label>
+                            <input type="text" className="form-control" id="inputUsername" ref={username} />
+                        </div>
+                        <div className="mb-3">
+                            <label htmlFor="inputAboutMe" className="form-label">{t("AboutMe")}</label>
+                            <input type="text" className="form-control" id="inputAboutMe" ref={aboutMe} />
+                        </div>
+                        <div className="mb-3">
+                            <label htmlFor="inutFirstName" className="form-label">{t("FirstName")}</label>
+                            <input type="text" className="form-control" id="inutFirstName" ref={firstName} />
+                        </div>
+                        <div className="mb-3">
+                            <label htmlFor="inputLastName" className="form-label">{t("LastName")}</label>
+                            <input type="text" className="form-control" id="inputLastName" ref={lastName} />
+                        </div>
+                    </div>
+                }
+                <div className="actions">
+                    <div className="btn-shadow save" onClick={handleSubmitAsync}>{t("Save")}</div>
+                    <div className="btn-shadow" onClick={openEditForm}>{t("Cancel")}</div>
+                </div>
             </form>
         );
     }
 
     const information = () => {
         return (
-            <div>
-                <div>{t("Privacy")}</div>
-                <div className="privacy">
-                    <div className="mb-3">
-                        <label htmlFor="inputEmail" className="form-label">Email</label>
-                        <input type="email" className="form-control" id="inputEmail" aria-describedby="emailHelp" ref={email} disabled/>
-                    </div>
-                    <div className="mb-3">
-                        <label htmlFor="inputPhoneNumber" className="form-label">{t("PhoneNumber")}</label>
-                        <input type="number" className="form-control" id="inputPhoneNumber" ref={phoneNumber} disabled />
-                    </div>
-                    <div className="mb-3">
-                        <label htmlFor="inputBithdayl" className="form-label">{t("Birthday")}</label>
-                        <input type="date" className="form-control" id="inputBithdayl" ref={birthday} disabled />
-                    </div>
+            <div className="profile__information">
+                <div className="title">
+                    <div>{t("Privacy")}</div>
+                    {privacyHidden
+                        ? <FontAwesomeIcon
+                            icon={faArrowDown}
+                            onClick={() => setPrivacyHidden(!privacyHidden)}
+                        />
+                        : <FontAwesomeIcon
+                            icon={faArrowUp}
+                            onClick={() => setPrivacyHidden(!privacyHidden)}
+                        />
+                    }
                 </div>
-                <div>{t("General")}</div>
-                <div className="general">
-                    <div className="mb-3">
-                        <label htmlFor="inputMessage" className="form-label">{t("Message")}</label>
-                        <input type="text" className="form-control" id="inputMessage" ref={message} disabled />
+                {!privacyHidden &&
+                    <div className="privacy">
+                        <div className="mb-3">
+                            <label htmlFor="inputEmail" className="form-label">Email</label>
+                            <input type="email" className="form-control" id="inputEmail" aria-describedby="emailHelp" ref={email} disabled />
+                        </div>
+                        <div className="mb-3">
+                            <label htmlFor="inputPhoneNumber" className="form-label">{t("PhoneNumber")}</label>
+                            <input type="number" className="form-control" id="inputPhoneNumber" ref={phoneNumber} disabled />
+                        </div>
+                        <div className="mb-3">
+                            <label htmlFor="inputBithdayl" className="form-label">{t("Birthday")}</label>
+                            <input type="date" className="form-control" id="inputBithdayl" ref={birthday} disabled />
+                        </div>
                     </div>
-                    <div className="mb-3">
-                        <label htmlFor="inputUsername" className="form-label">{t("Username")}</label>
-                        <input type="text" className="form-control" id="inputUsername" ref={username} disabled />
-                    </div>
-                    <div className="mb-3">
-                        <label htmlFor="inputAboutMe" className="form-label">{t("AboutMe")}</label>
-                        <input type="text" className="form-control" id="inputAboutMe" ref={aboutMe} disabled />
-                    </div>
-                    <div className="mb-3">
-                        <label htmlFor="inutFirstName" className="form-label">{t("FirstName")}</label>
-                        <input type="text" className="form-control" id="inutFirstName" ref={firstName} disabled />
-                    </div>
-                    <div className="mb-3">
-                        <label htmlFor="inputLastName" className="form-label">{t("LastName")}</label>
-                        <input type="text" className="form-control" id="inputLastName" ref={lastName} disabled />
-                    </div>
+                }
+                <div className="title">
+                    <div>{t("General")}</div>
+                    {generalHidden
+                        ? <FontAwesomeIcon
+                            icon={faArrowDown}
+                            onClick={() => setGeneralHidden(!generalHidden)}
+                        />
+                        : <FontAwesomeIcon
+                            icon={faArrowUp}
+                            onClick={() => setGeneralHidden(!generalHidden)}
+                        />
+                    }
                 </div>
-                <input type="button" className="btn btn-outline-primary" value={t("Edit")} onClick={() => setIsEditMode(true)} />
+                {!generalHidden &&
+                    <div className="general">
+                        <div className="mb-3">
+                            <label htmlFor="inputMessage" className="form-label">{t("Message")}</label>
+                            <input type="text" className="form-control" id="inputMessage" ref={message} disabled />
+                        </div>
+                        <div className="mb-3">
+                            <label htmlFor="inputUsername" className="form-label">{t("Username")}</label>
+                            <input type="text" className="form-control" id="inputUsername" ref={username} disabled />
+                        </div>
+                        <div className="mb-3">
+                            <label htmlFor="inputAboutMe" className="form-label">{t("AboutMe")}</label>
+                            <input type="text" className="form-control" id="inputAboutMe" ref={aboutMe} disabled />
+                        </div>
+                        <div className="mb-3">
+                            <label htmlFor="inutFirstName" className="form-label">{t("FirstName")}</label>
+                            <input type="text" className="form-control" id="inutFirstName" ref={firstName} disabled />
+                        </div>
+                        <div className="mb-3">
+                            <label htmlFor="inputLastName" className="form-label">{t("LastName")}</label>
+                            <input type="text" className="form-control" id="inputLastName" ref={lastName} disabled />
+                        </div>
+                    </div>
+                }
+                <div className="actions">
+                    <div className="btn-shadow" onClick={() => setIsEditMode(true)}>{t("Edit")}</div>
+                </div>
             </div>
         );
     }

@@ -111,12 +111,12 @@
         .members {
             display: flex;
             flex-direction: column;
-            align-items: center;
+            align-items: stretch;
 
             &__title {
                 display: flex;
                 flex-direction: column;
-                justify-content: start;
+                justify-content: center;
 
                 .tool {
                     display: flex;
