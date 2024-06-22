@@ -1,42 +1,49 @@
 ﻿import { useEffect, useState } from "react";
+import { useTranslation } from 'react-i18next';
 import { useLazyGetDamageTakenByPlayerIdQuery } from '../../store/api/CombatParserApi';
 
 const minCount = 4;
 
 const DashboardDeathItem = ({ playersDeath, players }) => {
+    const { t } = useTranslation("combatDetails/dashboard");
+
     const [getDamageTakenByPlayerIdAsync] = useLazyGetDamageTakenByPlayerIdQuery();
 
     const [itemCount, setItemCount] = useState(minCount);
-    const [extentedPlayersDeath, setExtentedPlayersDeath] = useState([]);
+    const [extendedPlayersDeath, setExtendedPlayersDeath] = useState([]);
 
     useEffect(() => {
-        if (playersDeath.length === 0) {
+        if (!playersDeath || playersDeath.length === 0) {
             return;
         }
 
-        const getDataAsync = async () => {
-            await getUserInformationAsync();
+        const fetchPlayerDeaths = async () => {
+            await fetchPlayerDeathsAsync()
         }
 
-        getDataAsync();
-    }, [playersDeath]);
+        fetchPlayerDeaths();
+    }, [playersDeath, players, getDamageTakenByPlayerIdAsync]);
 
-    const getUserInformationAsync = async () => {
-        const unblockedArray = [];
+    const fetchPlayerDeathsAsync = async () => {
+        const deathDetailsPromises = playersDeath.map(async (death) => {
+            const player = players.find(player => player.id === death.combatPlayerId);
+            if (!player) {
+                return null;
+            }
 
-        for (let i = 0; i < playersDeath.length; i++) {
-            const player = players.filter(x => x.id === playersDeath[i].combatPlayerId)[0];
-            unblockedArray.push(Object.assign({}, playersDeath[i]));
+            const detailsResult = await getDamageTakenByPlayerIdAsync(player.id).unwrap();
+            const lastHit = detailsResult[detailsResult.length - 1];
 
-            const detailsResult = await getDamageTakenByPlayerIdAsync(player.id);
-            const lastHit = detailsResult.data[detailsResult.data.length - 1];
+            return {
+                ...death,
+                username: player.userName,
+                skill: lastHit.spellOrItem,
+                value: lastHit.value,
+            };
+        });
 
-            unblockedArray[i].username = player.userName;
-            unblockedArray[i].skill = lastHit.spellOrItem;
-            unblockedArray[i].value = lastHit.value;
-        }
-
-        setExtentedPlayersDeath(unblockedArray);
+        const deathDetails = (await Promise.all(deathDetailsPromises)).filter(Boolean);
+        setExtendedPlayersDeath(deathDetails);
     }
 
     if (playersDeath === undefined) {
@@ -46,17 +53,17 @@ const DashboardDeathItem = ({ playersDeath, players }) => {
     if (playersDeath.length === 0) {
         return (
             <div className="dashboard__statistics">
-                <div>Players died</div>
-                <div>Empty</div>
+                <div>{t("PlayersDied")}</div>
+                <div>{t("Empty")}</div>
             </div>
         );
     }
 
     return (
         <div className="dashboard__statistics">
-            <div>Players died</div>
+            <div>{t("PlayersDied")}</div>
             <ul className="death-info">
-                {extentedPlayersDeath?.slice(0, itemCount).map((death, index) => (
+                {extendedPlayersDeath?.slice(0, itemCount).map((death, index) => (
                     <li key={index} className="death-info__details">
                         <div>{death?.username}</div>
                         <div>{death?.skill}</div>
@@ -64,10 +71,9 @@ const DashboardDeathItem = ({ playersDeath, players }) => {
                     </li>
                 ))}
             </ul>
-            {itemCount === minCount
-                ? <div className="extend" onClick={() => setItemCount(extentedPlayersDeath.length)}>More</div>
-                : <div className="extend" onClick={() => setItemCount(minCount)}>Less</div>
-            }
+            <div className="extend" onClick={() => setItemCount(itemCount === minCount ? extendedPlayersDeath.length : minCount)}>
+                {itemCount === minCount ? t("More") : t("Less")}
+            </div>
         </div>
     );
 }

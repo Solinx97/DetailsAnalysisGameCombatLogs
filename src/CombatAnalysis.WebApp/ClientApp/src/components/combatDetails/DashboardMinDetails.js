@@ -12,61 +12,40 @@ import {
 const itemsMinCount = 5;
 
 const DashboardMinDetails = ({ combatPlayerId, closeHandle, detailsType }) => {
-    const { t } = useTranslation("combatDetails/combatGeneralDetails");
+    const { t } = useTranslation("combatDetails/dashboard");
 
-    const [getDamageDoneGeneralyByPlayerIdAsync] = useLazyGetDamageDoneGeneralyByPlayerIdQuery();
-    const [getHealDoneGeneralyByPlayerIdAsync] = useLazyGetHealDoneGeneralyByPlayerIdQuery();
-    const [getDamageTakenGeneralyByPlayerIdAsync] = useLazyGetDamageTakenGeneralyByPlayerIdQuery();
-    const [getResourceRecoveryGeneralyByPlayerIdAsync] = useLazyGetResourceRecoveryGeneralyByPlayerIdQuery();
+    const detailsTypeFunctions = [
+        useLazyGetDamageDoneGeneralyByPlayerIdQuery(),
+        useLazyGetHealDoneGeneralyByPlayerIdQuery(),
+        useLazyGetDamageTakenGeneralyByPlayerIdQuery(),
+        useLazyGetResourceRecoveryGeneralyByPlayerIdQuery()
+    ];
+
+    const detailsTypeNames = [
+        t("Damage"),
+        t("Healing"),
+        t("DamageTaken"),
+        t("ResourcesRecovery")
+    ];
+
+    const [getDetailsFunction] = detailsTypeFunctions[detailsType];
 
     const [itemsCount, setItemsCount] = useState(itemsMinCount);
     const [data, setData] = useState([]);
-    const [detailsTypeName, setDetailsTypeName] = useState("");
+    const [detailsTypeName] = useState(detailsTypeNames[detailsType]);
 
     useEffect(() => {
         if (combatPlayerId === undefined) {
             return;
         }
 
-        const getDamageDoneAsyn = async () => {
-            const detailsResult = await getPlayerGeneralDetailsAsync();
-            setData(detailsResult);
+        const fetchDataAsync = async () => {
+            const detailsResult = await getDetailsFunction(combatPlayerId).unwrap();
+            setData(detailsResult || []);
         }
 
-        getDamageDoneAsyn();
-    }, [combatPlayerId]);
-
-    const getPlayerGeneralDetailsAsync = async () => {
-        let detailsResult = null;
-        switch (detailsType) {
-            case 0:
-                setDetailsTypeName(t("Damage"));
-                detailsResult = await getDamageDoneGeneralyByPlayerIdAsync(combatPlayerId);
-                break;
-            case 1:
-                setDetailsTypeName(t("Healing"));
-                detailsResult = await getHealDoneGeneralyByPlayerIdAsync(combatPlayerId);
-                break;
-            case 2:
-                setDetailsTypeName(t("DamageTaken"));
-                detailsResult = await getDamageTakenGeneralyByPlayerIdAsync(combatPlayerId);
-                break;
-            case 3:
-                setDetailsTypeName(t("ResourcesRecovery"));
-                detailsResult = await getResourceRecoveryGeneralyByPlayerIdAsync(combatPlayerId);
-                break;
-            default:
-                setDetailsTypeName(t("Damage"));
-                detailsResult = await getDamageDoneGeneralyByPlayerIdAsync(combatPlayerId);
-                break;
-        }
-
-        if (detailsResult.data !== undefined) {
-            return detailsResult.data;
-        }
-
-        return [];
-    }
+        fetchDataAsync();
+    }, [combatPlayerId, getDetailsFunction]);
 
     if (data.length === 0) {
         return <div>Loading...</div>;
@@ -93,12 +72,11 @@ const DashboardMinDetails = ({ combatPlayerId, closeHandle, detailsType }) => {
                     </li>
                 ))}
             </ul>
-            {data.length > itemsMinCount
-                ? itemsCount === itemsMinCount
-                    ? < div className="extend" onClick={() => setItemsCount(data.length)}>More</div>
-                    : <div className="extend" onClick={() => setItemsCount(itemsMinCount)}>Less</div>
-                : null
-            }
+            {data.length > itemsMinCount && (
+                <div className="extend" onClick={() => setItemsCount(itemsCount === itemsMinCount ? data.length : itemsMinCount)}>
+                    {itemsCount === itemsMinCount ? t("More") : t("Less")}
+                </div>
+            )}
         </div>
     );
 }
