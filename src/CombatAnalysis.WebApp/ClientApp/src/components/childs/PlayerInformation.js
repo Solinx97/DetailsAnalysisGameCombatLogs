@@ -1,10 +1,7 @@
-﻿import React from "react";
-import { useTranslation } from 'react-i18next';
+﻿import React, { memo } from "react";
 import CommonPlayerInform from './CommonPlayerInform';
 
 const PlayerInformation = ({ combatPlayers, combatId, combatLogId, combatName }) => {
-    const { t } = useTranslation("childs/playerInformation");
-
     return (
         <ul>
             {combatPlayers?.map((player) => (
@@ -24,4 +21,4 @@ const PlayerInformation = ({ combatPlayers, combatId, combatLogId, combatName })
     );
 }
 
-export default PlayerInformation;
+export default memo(PlayerInformation);

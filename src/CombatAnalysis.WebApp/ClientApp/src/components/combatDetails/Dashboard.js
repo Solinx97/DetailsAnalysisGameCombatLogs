@@ -18,6 +18,7 @@ const Dashboard = ({ players, combatId, combatLogId, combatName, playersDeath })
     const [sortedByHealPlayers, setSortedByHealPlayers] = useState([]);
     const [sortedByDamageTakenPlayers, setSortedByDamageTakenPlayers] = useState([]);
     const [sortedByResourcesRecoveryPlayers, setSortedByResourcesRecoveryPlayers] = useState([]);
+    const [closedItems, setClosedItems] = useState([]);
 
     const navigate = useNavigate();
 
@@ -75,13 +76,32 @@ const Dashboard = ({ players, combatId, combatLogId, combatName, playersDeath })
         navigate(`/combat-general-details?id=${playerId}&detailsType=DamageDone&combatId=${combatId}&combatLogId=${combatLogId}&name=${combatName}&tab=${0}`);
     }
 
+    const openClosedItems = (closedItem) => {
+        const filteredItems = closedItems.filter(item => item.id !== closedItem.id);
+
+        setClosedItems(filteredItems);
+        closedItem.setItemClosed(false);
+    }
+
     if (damageSum === 0) {
         return (<Loading />);
     }
 
     return (
         <div className="dashboard">
-            <div className="container">
+            <div className="closed-items">
+                {closedItems.length > 0 &&
+                    <>
+                        <div>{t("ClosedItems")}</div>
+                        <ul>
+                            {closedItems.map((item, index) =>
+                                <li key={index} onClick={() => openClosedItems(item)}>{item.name}</li>
+                            )}
+                        </ul>
+                    </>
+                }
+            </div>
+            <div className="items">
                 <DashboardItem
                     name={t("Damage")}
                     array={sortedByDamagePlayers}
@@ -89,6 +109,8 @@ const Dashboard = ({ players, combatId, combatLogId, combatName, playersDeath })
                     calculation={calculation}
                     goToCombatGeneralDetails={goToCombatGeneralDetails}
                     resourcesSum={damageSum}
+                    closedItems={closedItems}
+                    setClosedItems={setClosedItems}
                 />
                 <DashboardItem
                     name={t("Healing")}
@@ -97,6 +119,8 @@ const Dashboard = ({ players, combatId, combatLogId, combatName, playersDeath })
                     calculation={calculation}
                     goToCombatGeneralDetails={goToCombatGeneralDetails}
                     resourcesSum={healingSum}
+                    closedItems={closedItems}
+                    setClosedItems={setClosedItems}
                 />
                 <DashboardItem
                     name={t("DamageTaken")}
@@ -105,6 +129,8 @@ const Dashboard = ({ players, combatId, combatLogId, combatName, playersDeath })
                     calculation={calculation}
                     goToCombatGeneralDetails={goToCombatGeneralDetails}
                     resourcesSum={damageTakenSum}
+                    closedItems={closedItems}
+                    setClosedItems={setClosedItems}
                 />
                 <DashboardItem
                     name={t("ResourcesRecovery")}
@@ -113,6 +139,8 @@ const Dashboard = ({ players, combatId, combatLogId, combatName, playersDeath })
                     calculation={calculation}
                     goToCombatGeneralDetails={goToCombatGeneralDetails}
                     resourcesSum={resourcesRecoverySum}
+                    closedItems={closedItems}
+                    setClosedItems={setClosedItems}
                 />
                 <DashboardDeathItem
                     playersDeath={playersDeath}

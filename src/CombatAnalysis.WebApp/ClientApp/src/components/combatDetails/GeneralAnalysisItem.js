@@ -6,35 +6,21 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import InDev from '../inDevNotes/InDev';
 
+const formatDate = (dateString) => format(new Date(dateString), 'HH:mm');
+const getCombatDuration = (duration) => duration.substring(3);
+
 const GeneralAnalysisItem = ({ uniqueCombats, combatLogId }) => {
     const { t } = useTranslation("combatDetails/generalAnalysis");
 
     const navigate = useNavigate();
 
-    const [selectedCombat, setSelectedCombat] = useState(null);
-    const [otherCombats, setOtherCombats] = useState([]);
     const [selectedCombatIndex, setSelectedCombatIndex] = useState(uniqueCombats.length - 1);
 
     useEffect(() => {
-        selectCombat(uniqueCombats.length - 1);
+        setSelectedCombatIndex(uniqueCombats.length - 1);
     }, [uniqueCombats]);
 
-    const selectCombat = (index) => {
-        setSelectedCombatIndex(index);
-
-        const lastCombatByTime = uniqueCombats[index];
-        setSelectedCombat(lastCombatByTime);
-
-        setOtherCombats(uniqueCombats);
-    }
-
-    const getCombatDuration = (duration) => {
-        const splitedDuration = duration.split(':');
-
-        const lasts = `${splitedDuration[1]}:${splitedDuration[2]}`;
-
-        return lasts;
-    }
+    const selectedCombat = uniqueCombats[selectedCombatIndex];
 
     if (selectedCombat === null) {
         return (<div>Loading...</div>);
@@ -43,20 +29,20 @@ const GeneralAnalysisItem = ({ uniqueCombats, combatLogId }) => {
     return (
         <div className="card">
             <ul className="unique-combats__all">
-                {otherCombats?.map((combat, index) => (
-                    <li key={combat.id + 2} className={`unique-combats__${combat.isWin ? 'win' : 'lose'}`} onClick={() => selectCombat(index)}>
+                {uniqueCombats?.map((combat, index) => (
+                    <li key={combat.id + 2} className={`unique-combats__${combat.isWin ? 'win' : 'lose'}`} onClick={() => setSelectedCombatIndex(index)}>
                         <div className="combat-number">{index + 1}</div>
                         <div className="combat-time">
                             <div className="combat-time__range">
-                                <div className="list-group-item">
+                                <div>
                                     <div>
-                                        <div>{format(new Date(combat.startDate), 'HH:mm')}</div>
+                                        <div>{formatDate(new Date(combat.startDate), 'HH:mm')}</div>
                                     </div>
                                 </div>
                                 <div>-</div>
-                                <div className="list-group-item">
+                                <div>
                                     <div>
-                                        <div>{format(new Date(combat.finishDate), 'HH:mm')}</div>
+                                        <div>{formatDate(new Date(combat.finishDate), 'HH:mm')}</div>
                                     </div>
                                 </div>
                             </div>
@@ -130,7 +116,7 @@ const GeneralAnalysisItem = ({ uniqueCombats, combatLogId }) => {
                     </div>
                 </div>
             </div>
-            <ul className="list-group list-group-flush information">
+            <ul className="information">
                 <li className="list-group-item">
                     <FontAwesomeIcon
                         icon={faKhanda}

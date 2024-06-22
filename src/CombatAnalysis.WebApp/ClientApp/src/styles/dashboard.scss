@@ -1,8 +1,48 @@
-.dashboard {
+$background-dark: #006989;
+$background-light: #028391;
+$shadow-color: #028391;
+$shadow-black: black;
+$shadow-white: white;
+$border-radius-standard: 10px;
+$flex-center: center;
+
+@mixin box-shadow($color, $spread: 2px) {
+    box-shadow: $spread $spread $spread $spread $color;
+}
+
+@mixin flex-center($direction: row) {
     display: flex;
     justify-content: center;
+    align-items: center;
+    flex-direction: $direction;
+}
 
-    .container {
+.dashboard {
+    @include flex-center(column);
+
+    .closed-items {
+        @include flex-center;
+        gap: 10px;
+        margin-bottom: 20px;
+
+        ul {
+            @include flex-center;
+            gap: 20px;
+            margin: 0;
+
+            li {
+                @include flex-center;
+                gap: 5px;
+                padding: 5px;
+                border-radius: $border-radius-standard;
+                @include box-shadow($shadow-color);
+                background: $background-dark;
+                cursor: pointer;
+            }
+        }
+    }
+
+    .items {
         display: flex;
         justify-content: start;
         flex-wrap: wrap;
@@ -13,14 +53,13 @@
         position: absolute;
         display: flex;
         flex-direction: column;
-        justify-content: center;
         align-items: center;
         gap: 10px;
         width: 405px;
         padding: 15px;
-        border: 2px solid #028391;
-        border-radius: 10px;
-        background: #006989;
+        border: 2px solid $background-light;
+        border-radius: $border-radius-standard;
+        background: $background-dark;
         color: white;
         margin-top: 65px;
         margin-left: -35px;
@@ -37,14 +76,11 @@
             width: 100%;
 
             svg {
-                box-shadow: 2px 2px 2px 2px black;
-                border-radius: 10px;
+                @include box-shadow($shadow-black);
+                border-radius: $border-radius-standard;
                 padding: 2px;
                 width: 15px;
                 height: 15px;
-            }
-
-            svg:hover {
                 cursor: pointer;
             }
         }
@@ -55,11 +91,10 @@
             width: 100%;
 
             .value {
-                display: flex;
-                justify-content: center;
+                @include flex-center;
                 padding: 5px;
-                box-shadow: 4px 4px black;
-                border-radius: 10px;
+                @include box-shadow($shadow-black, 2px);
+                border-radius: $border-radius-standard;
                 min-width: 80px;
             }
         }
@@ -71,10 +106,9 @@
             gap: 10px;
 
             li {
-                display: flex;
-                align-items: center;
-                box-shadow: 3px 3px 3px 3px #57A6A1;
-                border-radius: 10px;
+                @include flex-center;
+                @include box-shadow($shadow-white, 2px);
+                border-radius: $border-radius-standard;
                 padding: 5px 10px;
             }
         }
@@ -90,9 +124,30 @@
         border-radius: 20px;
         padding: 20px;
 
+        .title {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            width: 100%;
+
+            svg {
+                @include box-shadow(red, 1px);
+                padding: 3px 6px;
+                border-radius: 20px;
+                cursor: pointer;
+
+                &:hover {
+                    transform: scale(1.1);
+                }
+            }
+        }
+
+        .extend, .death-info__details {
+            @include box-shadow($shadow-white, 3px);
+            border-radius: $border-radius-standard;
+        }
+
         .extend {
-            box-shadow: 3px 3px 3px 3px white;
-            border-radius: 10px;
             padding: 10px 20px;
             font-size: 12px;
             cursor: pointer;
@@ -106,8 +161,6 @@
             &__details {
                 display: flex;
                 justify-content: space-between;
-                border-radius: 10px;
-                box-shadow: 3px 3px 3px 3px white;
                 padding: 10px;
                 font-size: 14px;
                 gap: 20px;
@@ -146,17 +199,17 @@
                     height: 25px;
                     box-shadow: 3px 3px 3px 3px #028391;
                     cursor: pointer;
-                }
 
-                .progress:hover {
-                    transform: scale(1.05);
+                    &:hover {
+                        transform: scale(1.05);
+                    }
                 }
 
                 .player-contribution {
-                    border-radius: 10px;
+                    border-radius: $border-radius-standard;
                     padding: 3px;
                     font-size: 13px;
-                    box-shadow: 2px 2px 2px 2px #7AB2B2;
+                    @include box-shadow(#7AB2B2);
                 }
             }
         }

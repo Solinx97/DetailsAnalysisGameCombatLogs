@@ -4,91 +4,65 @@ import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { useLazyGetGeneralAnalysisByIdQuery } from '../../store/api/CombatParserApi';
+import Loading from '../Loading';
 import GeneralAnalysisItem from './GeneralAnalysisItem';
 
 import "../../styles/generalAnalysis.scss";
 
 const GeneralAnalysis = () => {
-    const navigate = useNavigate();
     const { t } = useTranslation("combatDetails/generalAnalysis");
+    const navigate = useNavigate();
 
     const [combatLogId, setCombatLogId] = useState(0);
-    const [combats, setCombats] = useState([]);
     const [uniqueCombats, setUniqueCombats] = useState([]);
 
     const [generalAnalysisAsync] = useLazyGetGeneralAnalysisByIdQuery();
 
     useEffect(() => {
         const queryParams = new URLSearchParams(window.location.search);
-        setCombatLogId(+queryParams.get("id"));
-    }, []);
-
-    useEffect(() => {
-        if (combatLogId <= 0) {
-            return;
-        }
+        const id = +queryParams.get("id");
+        setCombatLogId(id);
 
         const getCombats = async () => {
-            await getCombatsAsync();
-        };
-
-        getCombats();
-    }, [combatLogId]);
-
-    useEffect(() => {
-        if (combats.length === 0) {
-            return;
+            await getCombatsAsync(id);
         }
 
-        createListOfSimilarCombats();
-    }, [combats]);
+        if (id > 0) {
+            getCombats();
+        }
+    }, []);
 
-    const getCombatsAsync = async () => {
-        const combats = await generalAnalysisAsync(combatLogId);
-        if (combats.data !== undefined) {
-            setCombats(combats.data);
+    const getCombatsAsync = async (id) => {
+        try {
+            const combats = await generalAnalysisAsync(id);
+            if (combats.data !== undefined) {
+                createListOfSimilarCombats(combats.data);
+            }
+        } catch (error) {
+            console.error("Failed to fetch combats:", error);
         }
     }
 
-    const createListOfSimilarCombats = () => {
+    const createListOfSimilarCombats = (combats) => {
         const uniqueCombatList = [];
-        const uniqueNames = [];
+        const uniqueNames = new Set();
 
-        const sortedCombats = quickSortByFinishDate(combats);
+        const umblockedCombatsArray = Object.assign([], combats);
+        const sortedCombats = umblockedCombatsArray.sort((a, b) => a.startDate.localeCompare(b.startDate));
 
-        for (let i = 0; i < sortedCombats.length; i++) {
-            if (uniqueNames.indexOf(sortedCombats[i].name) > -1) {
-                continue;
+        sortedCombats.forEach(combat => {
+            if (!uniqueNames.has(combat.name)) {
+                uniqueNames.add(combat.name);
+                const foundCombats = sortedCombats.filter(x => x.name === combat.name);
+                uniqueCombatList.push(foundCombats);
             }
-
-            const foundCombats = sortedCombats.filter(x => x.name === sortedCombats[i].name);
-            uniqueCombatList.push(foundCombats);
-
-            uniqueNames.push(sortedCombats[i].name);
-        }
+        });
 
         setUniqueCombats(uniqueCombatList);
     }
 
-    const quickSortByFinishDate = (array) => {
-        if (array.length <= 1) {
-            return array;
-        }
-
-        const pivot = array[array.length - 1];
-        const left = [];
-        const right = [];
-
-        for (let i = 0; i < array.length - 1; i++) {
-            if (array[i].startDate < pivot.startDate) {
-                left.push(array[i]);
-            }
-            else {
-                right.push(array[i])
-            }
-        }
-
-        return [...quickSortByFinishDate(left), pivot, ...quickSortByFinishDate(right)];
+    if (combatLogId === 0) {
+        return (<Loading />);
     }
 
     return (

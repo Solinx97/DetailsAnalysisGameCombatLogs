@@ -1,9 +1,26 @@
-﻿.general-analysis {
+﻿$box-shadow-standard: 2px 2px 2px 2px black;
+$box-shadow-highlight: 3px 3px 3px 3px black;
+$border-radius-standard: 15px;
+$background-dark: #135D66;
+$background-light: #496989;
+$combat-win: green;
+$combat-lose: red;
+
+@mixin box-shadow($type: 'standard') {
+    @if $type == 'standard' {
+        box-shadow: $box-shadow-standard;
+    }
+    @else if $type == 'highlight' {
+        box-shadow: $box-shadow-highlight;
+    }
+}
+
+.general-analysis {
     &__container {
         .card {
             box-shadow: 10px 10px #3AA6B9;
             margin: 25px;
-            background: #135D66;
+            background: $background-dark;
 
             .unique-combats {
                 &__all, &__selected {
@@ -39,6 +56,10 @@
                         gap: 5px;
                         cursor: pointer;
 
+                        &:hover {
+                            transform: scale(1.05)
+                        }
+
                         .combat-time {
                             margin: 0;
                         }
@@ -47,17 +68,13 @@
                     .list-group-item {
                         background: #0c192c;
                     }
-
-                    li:hover {
-                        transform: scale(1.05);
-                    }
                 }
 
                 &__lose {
                     box-shadow: 2px 2px 2px 2px red;
 
                     .combat-number {
-                        color: red;
+                        color: $combat-lose;
                     }
                 }
 
@@ -65,20 +82,16 @@
                     box-shadow: 2px 2px 2px 2px green;
 
                     .combat-number {
-                        color: green;
+                        color: $combat-win;
                     }
                 }
             }
 
             .win, .lose {
+                @include box-shadow('highlight');
+                border-radius: $border-radius-standard;
                 padding: 5px;
-                box-shadow: 3px 3px 3px 3px black;
-                border-radius: 15px;
-                background: #496989;
-            }
-
-            .win {
-                background: #496989;
+                background: $background-light;
             }
 
             .lose {
@@ -96,7 +109,7 @@
                     gap: 20px;
                     padding: 10px;
                     border-radius: 20px;
-                    box-shadow: 2px 2px 2px 2px black;
+                    box-shadow: $box-shadow-standard;
                     font-size: 14px;
                 }
             }
@@ -127,9 +140,9 @@
 
                 &__damage-done, &__heal-done, &__damage-taken, &__energy-recovery, &__death-number,
                 &__duration, &__not-ready, &__buffs, &__start, &__finish, &__ready {
+                    @include box-shadow('highlight');
+                    border-radius: $border-radius-standard;
                     padding: 5px;
-                    box-shadow: 3px 3px 3px 3px black;
-                    border-radius: 15px;
                 }
 
                 &__death-number-zero {
@@ -216,11 +229,11 @@ ul {
     }
 
     &__win {
-        box-shadow: 2px 2px 2px 2px green;
+        box-shadow: 2px 2px 2px 2px $combat-win;
     }
 
     &__lose {
-        box-shadow: 2px 2px 2px 2px red;
+        box-shadow: 2px 2px 2px 2px $combat-lose;
     }
 
     svg {

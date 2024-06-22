@@ -1,16 +1,19 @@
 ﻿import { useEffect, useState } from "react";
 import { useTranslation } from 'react-i18next';
 import DashboardMinDetails from "./DashboardMinDetails";
+import { faXmark } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 const minCount = 4;
 const timeout = 1000;
 
-const DashboardItem = ({ name, array, detailsType, calculation, goToCombatGeneralDetails, resourcesSum }) => {
+const DashboardItem = ({ name, array, detailsType, calculation, goToCombatGeneralDetails, resourcesSum, closedItems, setClosedItems }) => {
     const { t } = useTranslation("combatDetails/dashboard");
 
     const [itemCount, setItemCount] = useState(minCount);
     const [selectedPlayerIndex, setSelectedPlayerIndex] = useState(-1);
     const [showDetailsTimeout, setShowDetailsTimeout] = useState(null);
+    const [itemClosed, setItemClosed] = useState(false);
 
     const dashboardDetailsType = {
         0: "damageDone",
@@ -44,14 +47,38 @@ const DashboardItem = ({ name, array, detailsType, calculation, goToCombatGenera
     }
 
     const getDetailsValue = (player) => {
-        const detailsMapping = ['damageDone', 'healDone', 'damageTaken', 'energyRecovery'];
+        const detailsMapping = ["damageDone", "healDone", "damageTaken", "energyRecovery"];
 
         return player[detailsMapping[detailsType]] || 0;
     }
 
+    const closeItem = () => {
+        const allClosedItesm = Object.assign([], closedItems);
+        const itemClosedObject = {
+            id: allClosedItesm.length,
+            name: name,
+            setItemClosed: setItemClosed
+        };
+
+        allClosedItesm.push(itemClosedObject);
+
+        setClosedItems(allClosedItesm);
+        setItemClosed(true);
+    }
+
+    if (itemClosed) {
+        return (<></>);
+    }
+
     return (
         <div className="dashboard__statistics">
-            <div>{name}</div>
+            <div className="title">
+                <div>{name}</div>
+                <FontAwesomeIcon
+                    icon={faXmark}
+                    onClick={closeItem}
+                />
+            </div>
             <ul className="players-progress">
                 {array?.slice(0, itemCount).map((player, index) => (
                     <li key={player.id}>
