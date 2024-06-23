@@ -28,6 +28,7 @@ const FeedParticipants = ({ customer, showNewPosts, setShowNewPostsInform }) => 
     const [peopleId, setPeopleId] = useState([customer?.id]);
     const [allPosts, setAllPosts] = useState([]);
     const [newPosts, setNewPosts] = useState([]);
+    const [checkNewPostsInterval, setCheckNewPostsInterval] = useState(null);
 
     useEffect(() => {
         if (myFriends === undefined) {
@@ -46,17 +47,24 @@ const FeedParticipants = ({ customer, showNewPosts, setShowNewPostsInform }) => 
             await checkNewPostsAsync(userContactsId);
         }
 
-        setInterval(() => {
+        const interval = setInterval(() => {
             checkNewPosts();
         }, pollingInterval);
-    }, [myFriends])
+        setCheckNewPostsInterval(interval);
+    }, [myFriends]);
+
+    useEffect(() => {
+        return () => {
+            clearInterval(checkNewPostsInterval);
+        }
+    }, [checkNewPostsInterval]);
 
     useEffect(() => {
         if (showNewPosts) {
             setAllPosts(newPosts);
             postsCount = newPosts.length;
         }
-    }, [showNewPosts])
+    }, [showNewPosts]);
 
     const loadingPostsAsync = async (peopleId = []) => {
         let posts = [];

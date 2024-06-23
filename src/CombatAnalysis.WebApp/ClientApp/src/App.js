@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { StrictMode, useRef, useState } from 'react';
 import { Route, Routes } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
 import AppRoutes from './AppRoutes';
@@ -26,22 +26,24 @@ const App = () => {
 
     const render = () => {
         return (
-            <AuthProvider children={
-                <VoiceServiceProvider value={{ callMinimazedData, useMinimaze, setUseMinimaze }}>
-                    <Layout>
-                        <Routes>
-                            {AppRoutes.map((route, index) => {
-                                const { element, ...rest } = route;
-                                return <Route key={index} {...rest} element={element} />;
-                            })}
-                        </Routes>
-                        {useMinimaze &&
-                            <VoiceChatMinimazed />
-                        }
-                        <ToastContainer />
-                    </Layout>
-                </VoiceServiceProvider>
-            } />
+            <StrictMode>
+                <AuthProvider children={
+                    <VoiceServiceProvider value={{ callMinimazedData, useMinimaze, setUseMinimaze }}>
+                        <Layout>
+                            <Routes>
+                                {AppRoutes.map((route, index) => {
+                                    const { element, ...rest } = route;
+                                    return <Route key={index} {...rest} element={element} />;
+                                })}
+                            </Routes>
+                            {useMinimaze &&
+                                <VoiceChatMinimazed />
+                            }
+                            <ToastContainer />
+                        </Layout>
+                    </VoiceServiceProvider>
+                } />
+            </StrictMode>
         );
     }
 

@@ -1,7 +1,10 @@
-import { faCircleUp, faClock, faCloudArrowUp, faEye, faCircle } from '@fortawesome/free-solid-svg-icons';
+import { faCircle, faCircleUp, faClock, faCloudArrowUp, faEye } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import {
+    useUpdatePersonalChatMessageAsyncMutation
+} from '../../../store/api/communication/chats/PersonalChatMessage.api';
 import ChatMessageTitle from './ChatMessageTitle';
 
 import "../../../styles/communication/chats/chatMessage.scss";
@@ -12,8 +15,10 @@ const status = {
     read: 2
 };
 
-const DefaultChatMessage = ({ me, message, messageStatus, updateMessageAsync, deleteMessageAsync }) => {
+const DefaultChatMessage = ({ me, message, messageStatus, deleteMessageAsync }) => {
     const { t } = useTranslation("communication/chats/chatMessage");
+
+    const [updatePersonalChatMessageAsync] = useUpdatePersonalChatMessageAsyncMutation();
 
     const [openMessageMenu, setOpenMessageMenu] = useState(false);
     const [editModeIsOn, setEditModeIsOn] = useState(false);
@@ -24,7 +29,7 @@ const DefaultChatMessage = ({ me, message, messageStatus, updateMessageAsync, de
         const updateForMessage = Object.assign({}, message);
         updateForMessage.message = editMessageInput.current.value;
 
-        await updateMessageAsync(updateForMessage, 0);
+        await updatePersonalChatMessageAsync(updateForMessage);
 
         setEditModeIsOn(false);
         setOpenMessageMenu(false);
@@ -38,7 +43,7 @@ const DefaultChatMessage = ({ me, message, messageStatus, updateMessageAsync, de
         const updateForMessage = Object.assign({}, message);
         updateForMessage.status = 2;
 
-        await updateMessageAsync(updateForMessage, -1);
+        await updatePersonalChatMessageAsync(updateForMessage);
     }
 
     const handleOpenMessageMenu = () => {

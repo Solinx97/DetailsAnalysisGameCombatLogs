@@ -6,5 +6,6 @@
   "PersonalChats": "Messages",
   "SelectChat": "Select chat or",
   "Create": "create",
-  "NewChat": "new chat"
+  "NewChat": "new chat",
+  "PersonalChatsEmptyYet": "You don't have personal chats yet"
 }

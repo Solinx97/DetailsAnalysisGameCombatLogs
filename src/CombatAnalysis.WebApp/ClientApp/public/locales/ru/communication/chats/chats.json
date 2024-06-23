@@ -6,5 +6,6 @@
   "PersonalChats": "Сообщения",
   "SelectChat": "Выберите чат или",
   "Create": "создайте",
-  "NewChat": "новый чат"
+  "NewChat": "новый чат",
+  "PersonalChatsEmptyYet": "У вас еше нет личных чатов"
 }

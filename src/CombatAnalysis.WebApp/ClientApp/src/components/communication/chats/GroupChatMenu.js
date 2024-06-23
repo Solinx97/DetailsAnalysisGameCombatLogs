@@ -92,14 +92,14 @@ const GroupChatMenu = ({ me, setUserInformation, setSelectedChat, setShowAddPeop
     const leaveFromChatAsync = async (id) => {
         const deletedItem = await removeGroupChatUserAsyncMut(id);
         if (deletedItem.data !== undefined) {
-            setSelectedChat(null);
+            setSelectedChat({ type: null, chat: null });
         }
     }
 
     const removeChatAsync = async () => {
         const deletedItem = await removeGroupChatAsyncMut(chat?.id);
         if (deletedItem.data !== undefined) {
-            setSelectedChat(null);
+            setSelectedChat({ type: null, chat: null });
         }
     }
 

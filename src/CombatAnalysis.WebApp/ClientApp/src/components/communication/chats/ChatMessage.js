@@ -9,7 +9,7 @@ const messageType = {
     log: 2
 };
 
-const ChatMessage = ({ me, message, messageStatus, updateMessageAsync, deleteMessageAsync }) => {
+const ChatMessage = ({ me, message, messageStatus, deleteMessageAsync }) => {
     return (
         <>
             {message.type === messageType["default"]
@@ -17,7 +17,6 @@ const ChatMessage = ({ me, message, messageStatus, updateMessageAsync, deleteMes
                     me={me}
                     message={message}
                     messageStatus={messageStatus}
-                    updateMessageAsync={updateMessageAsync}
                     deleteMessageAsync={deleteMessageAsync}
                 />
                 : message.type === messageType["log"]

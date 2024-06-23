@@ -1,6 +1,4 @@
-﻿import { faArrowDown, faArrowUp } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import React, { useEffect, useState } from 'react';
+﻿import React, { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import { NavLink } from 'react-router-dom';
@@ -10,91 +8,57 @@ import ErrorLoadingPage from '../../ErrorLoadingPage';
 import Loading from '../../Loading';
 import CommunicationMenu from '../CommunicationMenu';
 import GroupChat from './GroupChat';
-import MyGroupChat from './MyGroupChat';
-import MyPersonalChat from './MyPersonalChat';
+import GroupChatList from './GroupChatList';
 import PersonalChat from './PersonalChat';
+import PersonalChatList from './PersonalChatList';
 
 import "../../../styles/communication/chats/chats.scss";
 
-const poolingInterval = 2000;
+const pollingInterval = 2000;
 
 const Chats = () => {
     const { t } = useTranslation("communication/chats/chats");
 
     const me = useSelector((state) => state.customer.value);
 
-    const [personalChatsPollingInterval, setPersonalChatsPollingInterval] = useState(poolingInterval);
-    const [groupChatsPollingInterval, setGroupChatsPollingInterval] = useState(poolingInterval);
-    const [isSkip, setIsSkip] = useState(true);
+    const [selectedChat, setSelectedChat] = useState({ type: null, chat: null });
+    const [chatsHidden, setChatsHidden] = useState({ group: false, personal: false });
 
-    const { data: personalChats, isError, isLoading, refetch: personalChatRefetch } = useGetByUserIdAsyncQuery(me?.id, {
-        pollingInterval: personalChatsPollingInterval,
+    const { data: personalChats, isError: personalChatError, isLoading: personalChatLoading, refetch: personalChatRefetch } = useGetByUserIdAsyncQuery(me?.id, {
+        pollingInterval,
     });
-    const { data: groupChatUsers, isError: groupChatError, isLoading: groupChatIsLoading, refetch: groupChatRefetch } = useFindGroupChatUserByUserIdQuery(me?.id, {
-        pollingInterval: groupChatsPollingInterval,
-        skip: isSkip
+    const { data: groupChatUsers, isError: groupChatError, isLoading: groupChatLoading, refetch: groupChatRefetch } = useFindGroupChatUserByUserIdQuery(me?.id, {
+        pollingInterval,
     });
 
-    const [selectedGroupChat, setSelectedGroupChat] = useState(null);
-    const [selectedPersonalChat, setSelectedPersonalChat] = useState(null);
-    const [groupChatsHidden, setGroupChatsHidden] = useState(false);
-    const [personalChatsHidden, setPersonalChatsHidden] = useState(false);
-
-    useEffect(() => {
-        if (selectedGroupChat !== null) {
-            setSelectedPersonalChat(null);
-        }
-    }, [selectedGroupChat]);
-
-    useEffect(() => {
-        if (selectedPersonalChat !== null) {
-            setSelectedGroupChat(null);
-        }
-    }, [selectedPersonalChat]);
-
-    useEffect(() => {
-        if (personalChats !== undefined) {
-            setIsSkip(false);
-        }
-    }, [personalChats]);
-
-    const handleRefetchOne = () => {
+    const handleRefetch = useCallback(() => {
         personalChatRefetch();
         groupChatRefetch();
-    }
+    }, [personalChatRefetch, groupChatRefetch]);
 
-    if (isLoading || groupChatIsLoading) {
+    const toggleChatsHidden = useCallback((type) => {
+        setChatsHidden(prevState => ({ ...prevState, [type]: !prevState[type] }));
+    }, []);
+
+    const isLoading = personalChatLoading || groupChatLoading;
+    const isError = personalChatError || groupChatError;
+
+    if (isLoading) {
         return (
             <>
-                <CommunicationMenu
-                    currentMenuItem={1}
-                />
+                <CommunicationMenu currentMenuItem={1} />
                 <Loading />
             </>
         );
     }
 
-    if (isError || groupChatError) {
-        if (personalChatsPollingInterval !== 0) {
-            setPersonalChatsPollingInterval(0);
-            setGroupChatsPollingInterval(0);
-        }
-
+    if (isError) {
         return (
             <>
-                <CommunicationMenu
-                    currentMenuItem={1}
-                />
-                <ErrorLoadingPage
-                    handleRefetch={handleRefetchOne}
-                />
+                <CommunicationMenu currentMenuItem={1} />
+                <ErrorLoadingPage handleRefetch={handleRefetch} />
             </>
         );
-    }
-
-    if (personalChatsPollingInterval === 0) {
-        setPersonalChatsPollingInterval(poolingInterval);
-        setGroupChatsPollingInterval(poolingInterval);
     }
 
     return (
@@ -105,84 +69,41 @@ const Chats = () => {
             <div className="communication__content">
                 <div className="chats">
                     <div className="chats__my-chats">
-                        <div className="chats__my-chats_title">
-                            <div>{t("GroupChats")}</div>
-                            {groupChatsHidden
-                                ? <FontAwesomeIcon
-                                    icon={faArrowDown}
-                                    title={t("ShowChats")}
-                                    onClick={() => setGroupChatsHidden(!groupChatsHidden)}
-                                />
-                                : <FontAwesomeIcon
-                                    icon={faArrowUp}
-                                    title={t("HideChats")}
-                                    onClick={() => setGroupChatsHidden(!groupChatsHidden)}
-                                />
-                            }
-                        </div>
-                        <ul className={`group-chats${!groupChatsHidden ? "_active" : ""}`}>
-                            {groupChatUsers?.length === 0
-                                ? <div className="group-chats__not-found">Not found</div>
-                                : groupChatUsers?.map((item) => (
-                                    <li key={item.id} className={selectedGroupChat?.id === item?.groupChatId ? `selected` : ``}>
-                                        <MyGroupChat
-                                            groupChatId={item.groupChatId}
-                                            setSelectedGroupChat={setSelectedGroupChat}
-                                            meId={me?.id}
-                                        />
-                                    </li>
-                                ))
-                            }
-                        </ul>
-                        <div className="chats__my-chats_title">
-                            <div>{t("PersonalChats")}</div>
-                            {personalChatsHidden
-                                ? <FontAwesomeIcon
-                                    icon={faArrowDown}
-                                    title={t("ShowChats")}
-                                    onClick={() => setPersonalChatsHidden((item) => !item)}
-                                />
-                                : <FontAwesomeIcon
-                                    icon={faArrowUp}
-                                    title={t("HideChats")}
-                                    onClick={() => setPersonalChatsHidden((item) => !item)}
-                                />
-                            }
-                        </div>
-                        <ul className={`personal-chats${!personalChatsHidden ? "_active" : ""}`}>
-                            {personalChats?.length === 0
-                                ? <div className="personal-chats__not-found">Not found</div>
-                                : personalChats?.map((item) => (
-                                    <li key={item.id} className={selectedPersonalChat?.id === item?.id ? `selected` : ``}>
-                                        <MyPersonalChat
-                                            personalChat={item}
-                                            selectedGroupChatId={selectedPersonalChat?.id}
-                                            setSelectedPersonalChat={setSelectedPersonalChat}
-                                            companionId={item.initiatorId === me?.id ? item.companionId : item.initiatorId}
-                                            meId={me?.id}
-                                        />
-                                    </li>
-                                ))
-                            }
-                        </ul>
+                        <GroupChatList
+                            meId={me?.id}
+                            t={t}
+                            groupChatUsers={groupChatUsers}
+                            selectedChat={selectedChat}
+                            setSelectedChat={setSelectedChat}
+                            chatsHidden={chatsHidden.group}
+                            toggleChatsHidden={() => toggleChatsHidden("group")}
+                        />
+                        <PersonalChatList
+                            meId={me?.id}
+                            t={t}
+                            personalChats={personalChats}
+                            selectedChat={selectedChat}
+                            setSelectedChat={setSelectedChat}
+                            chatsHidden={chatsHidden.personal}
+                            toggleChatsHidden={() => toggleChatsHidden("personal")}
+                        />
                     </div>
-                    {(selectedPersonalChat === null && selectedGroupChat === null)
-                        ? <div className="select-chat">
-                            {t("SelectChat")} <NavLink to="/chats/create">{t("Create")}</NavLink> {t("NewChat")}
-                        </div>
-                        : selectedGroupChat !== null
-                            ? <GroupChat
-                                chat={Object.assign({}, selectedGroupChat)}
+                    {selectedChat.type === "group"
+                        ? <GroupChat
+                            chat={selectedChat.chat}
+                            me={me}
+                            setSelectedChat={setSelectedChat}
+                        />
+                        : selectedChat.type === "personal"
+                            ? <PersonalChat
+                                chat={selectedChat.chat}
                                 me={me}
-                                setSelectedChat={setSelectedGroupChat}
+                                setSelectedChat={setSelectedChat}
+                                companionId={selectedChat.chat.initiatorId === me?.id ? selectedChat.chat.companionId : selectedChat.chat.initiatorId}
                             />
-                            : selectedPersonalChat !== null &&
-                            <PersonalChat
-                                chat={Object.assign({}, selectedPersonalChat)}
-                                me={me}
-                                setSelectedChat={setSelectedPersonalChat}
-                                companionId={selectedPersonalChat.initiatorId === me?.id ? selectedPersonalChat.companionId : selectedPersonalChat.initiatorId}
-                            />
+                            : <div className="select-chat">
+                                {t("SelectChat")} <NavLink to="/chats/create">{t("Create")}</NavLink> {t("NewChat")}
+                            </div>
                     }
                 </div>
             </div>
