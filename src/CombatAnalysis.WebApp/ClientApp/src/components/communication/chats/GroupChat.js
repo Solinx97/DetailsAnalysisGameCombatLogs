@@ -1,35 +1,25 @@
-﻿import { faCloudArrowUp, faGear, faPen, faPhone } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { memo, useEffect, useRef, useState } from 'react';
+﻿import { memo, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
 import io from 'socket.io-client';
 import WithVoiceContext from '../../../hocHelpers/WithVoiceContext';
-import { useFindGroupChatMessageByChatIdQuery } from '../../../store/api/ChatApi';
-import { useUpdateGroupChatAsyncMutation } from '../../../store/api/communication/chats/GroupChat.api';
+import useGroupChatData from '../../../hooks/useGroupChatData';
 import {
-    useCreateGroupChatMessageCountAsyncMutation, useLazyFindGroupChatMessageCountQuery,
+    useLazyFindGroupChatMessageCountQuery,
     useUpdateGroupChatMessageCountAsyncMutation
 } from '../../../store/api/communication/chats/GroupChatMessagCount.api';
 import {
-    useCreateGroupChatMessageAsyncMutation,
+    useRemoveGroupChatMessageAsyncMutation,
     useUpdateGroupChatMessageAsyncMutation
 } from '../../../store/api/communication/chats/GroupChatMessage.api';
-import {
-    useCreateGroupChatUserAsyncMutation, useFindGroupChatUserByChatIdQuery,
-    useFindGroupChatUserQuery
-} from '../../../store/api/communication/chats/GroupChatUser.api';
-import {
-    useCreateUnreadGroupChatMessageAsyncMutation
-} from '../../../store/api/communication/chats/UnreadGroupChatMessage.api';
-import AddPeople from '../../AddPeople';
+import Loading from '../../Loading';
+import ChatMessage from './ChatMessage';
+import GroupChatAddUser from './GroupChatAddUser';
 import GroupChatMenu from './GroupChatMenu';
-import GroupChatMessageList from './GroupChatMessageList';
+import GroupChatMessageInput from './GroupChatMessageInput';
+import GroupChatTitle from './GroupChatTitle';
 
 import '../../../styles/communication/chats/groupChat.scss';
-import SendGroupChatMessage from './SendGroupChatMessage';
 
-const getGroupChatMessagesInterval = 1000;
 const messageType = {
     default: 0,
     system: 1
@@ -38,47 +28,53 @@ const messageType = {
 const GroupChat = ({ chat, me, setSelectedChat, callMinimazedData }) => {
     const { t } = useTranslation("communication/chats/groupChat");
 
-    const navigate = useNavigate();
-
     const [showAddPeople, setShowAddPeople] = useState(false);
     const [settingsIsShow, setSettingsIsShow] = useState(false);
-    const [peopleToJoin, setPeopleToJoin] = useState([]);
     const [groupChatUsersId, setGroupChatUsersId] = useState([]);
     const [userInformation, setUserInformation] = useState(null);
-    const [editNameOn, setEditNameOn] = useState(false);
     const [usersOnCall, setUsersOnCall] = useState(0);
 
-    const chatNameInput = useRef(null);
     const socketRef = useRef(null);
 
-    const { data: messages, isLoading } = useFindGroupChatMessageByChatIdQuery(chat.id, {
-        pollingInterval: getGroupChatMessagesInterval
-    });
-    const { data: meInChat, isLoading: myUsersIsLoading } = useFindGroupChatUserQuery({ chatId: chat?.id, userId: me?.id });
-    const { data: groupChatUsers, isLoading: usersIsLoading } = useFindGroupChatUserByChatIdQuery(chat.id);
-    const [createGroupChatMessageAsync] = useCreateGroupChatMessageAsyncMutation();
-    const [updateGroupChatMessageAsync] = useUpdateGroupChatMessageAsyncMutation();
-    const [updateGroupChatAsyncMut] = useUpdateGroupChatAsyncMutation();
-    const [createGroupChatUserMutAsync] = useCreateGroupChatUserAsyncMutation();
+    const { messages, meInChat, groupChatUsers, isLoading } = useGroupChatData(chat.id, me.id);
+
     const [updateGroupChatMessageCountMut] = useUpdateGroupChatMessageCountAsyncMutation();
     const [getMessagesCount] = useLazyFindGroupChatMessageCountQuery();
-    const [createGroupChatCountAsyncMut] = useCreateGroupChatMessageCountAsyncMutation();
-    const [createUnreadGroupChatMessageAsyncMut] = useCreateUnreadGroupChatMessageAsyncMutation();
+    const [updateGroupChatMessageAsync] = useUpdateGroupChatMessageAsyncMutation();
+    const [removeGroupChatMessageAsync] = useRemoveGroupChatMessageAsyncMutation();
 
     useEffect(() => {
-        socketRef.current = io.connect("192.168.0.161:2000");
+        let socket;
 
-        socketRef.current.emit("checkUsersOnCall", chat.id);
+        const connectSocket = async () => {
+            try {
+                const socket = io.connect("192.168.0.161:2000");
 
-        socketRef.current.on("checkedUsersOnCall", count => {
-            setUsersOnCall(count);
-        });
+                socket.on("connect_error", (error) => {
+                    console.error("Socket connection error:", error);
+                });
+
+                socket.emit("checkUsersOnCall", chat.id);
+
+                socket.on("checkedUsersOnCall", (count) => {
+                    setUsersOnCall(count);
+                });
+
+                socketRef.current = socket;
+            } catch (error) {
+                console.error("Socket connection error:", error);
+            }
+        };
+
+        connectSocket();
 
         return () => {
-            socketRef.current.emit("removeUserFromChat", chat.id);
-
-            socketRef.current.destroy();
-        }
+            if (socket) {
+                socket.emit("removeUserFromChat", chat.id);
+                socket.off("checkedUsersOnCall");
+                socket.disconnect();
+            }
+        };
     }, []);
 
     useEffect(() => {
@@ -94,200 +90,69 @@ const GroupChat = ({ chat, me, setSelectedChat, callMinimazedData }) => {
         setGroupChatUsersId(customersId);
     }, [groupChatUsers]);
 
-    const createGroupChatUserAsync = async () => {
-        for (let i = 0; i < peopleToJoin.length; i++) {
-            const newGroupChatUser = {
-                id: " ",
-                username: peopleToJoin[i].username,
-                customerId: peopleToJoin[i].id,
-                groupChatId: chat.id,
-            };
+    const decreaseGroupChatMessagesCountAsync = async () => {
+        const myGroupChatUser = groupChatUsers.filter(x => x.customerId === me?.id)[0];
 
-            const created = await createGroupChatUserMutAsync(newGroupChatUser);
-            if (created.data !== undefined) {
-                await createGroupChatCountAsync(chat.id, created.data.id);
+        const messagesCount = await getMessagesCount({ chatId: chat?.id, userId: myGroupChatUser.id });
+        if (messagesCount.data !== undefined) {
+            const unblockedObject = Object.assign({}, messagesCount.data);
+            unblockedObject.count = --unblockedObject.count;
 
-                const systemMessage = `'${me?.username}' added '${peopleToJoin[i].username}' to chat`;
-                await createMessageAsync(systemMessage, messageType["system"]);
-            }
-        }
-
-        setPeopleToJoin([]);
-        setShowAddPeople(false);
-    }
-
-    const createGroupChatCountAsync = async (chatId, customerId) => {
-        const newMessagesCount = {
-            count: 0,
-            groupChatUserId: customerId,
-            groupChatId: +chatId,
-        };
-
-        const createdMessagesCount = await createGroupChatCountAsyncMut(newMessagesCount);
-        return createdMessagesCount.data !== undefined;
-    }
-
-    const createMessageAsync = async (message, type) => {
-        const today = new Date();
-        const newMessage = {
-            message: message,
-            time: `${today.getHours()}:${today.getMinutes()}`,
-            status: 0,
-            type: type,
-            groupChatId: chat.id,
-            customerId: me?.id
-        };
-
-        const createdMessage = await createGroupChatMessageAsync(newMessage);
-        if (createdMessage.data !== undefined && type !== messageType["system"]) {
-            await messageSentSuccessfulAsync(createdMessage.data);
+            await updateGroupChatMessageCountMut(unblockedObject);
         }
     }
 
-    const messageSentSuccessfulAsync = async (createdMessage) => {
-        await updateGroupChatLastMessageAsync(createdMessage.message);
-
-        const updateForMessage = Object.assign({}, createdMessage);
-        updateForMessage.status = 1;
-
-        await updateGroupChatMessageAsync(updateForMessage);
-
-        const increaseUnreadMessages = 1;
-        await updateGroupChatMessagesCountAsync(increaseUnreadMessages);
-
-        await createUnreadMessageAsync(createdMessage.id);
+    const deleteMessageAsync = async (messageId) => {
+        await removeGroupChatMessageAsync(messageId);
     }
 
-    const updateGroupChatLastMessageAsync = async (message) => {
-        chat.lastMessage = message;
-
-        await updateGroupChatAsyncMut(chat);
-    }
-
-    const updateGroupChatNameAsync = async () => {
-        setEditNameOn(false);
-
-        chat.name = chatNameInput.current.value;
-
-        await updateGroupChatAsyncMut(chat);
-    }
-
-    const updateGroupChatMessagesCountAsync = async (count) => {
-        for (let i = 0; i < groupChatUsers.length; i++) {
-            if (groupChatUsers[i].customerId === me?.id) {
-                continue;
-            }
-
-            const messagesCount = await getMessagesCount({ chatId: chat?.id, userId: groupChatUsers[i].id });
-            if (messagesCount.data !== undefined) {
-                const newMessagesCount = Object.assign({}, messagesCount.data);
-                newMessagesCount.count = newMessagesCount.count + count;
-
-                await updateGroupChatMessageCountMut(newMessagesCount);
-            }
-        }
-    }
-
-    const createUnreadMessageAsync = async (messageId) => {
-        for (let i = 0; i < groupChatUsers.length; i++) {
-            if (groupChatUsers[i].customerId === me?.id) {
-                continue;
-            }
-
-            const newUnreadMessage = {
-                groupChatUserId: groupChatUsers[i].id,
-                groupChatMessageId: messageId
-            }
-
-            await createUnreadGroupChatMessageAsyncMut(newUnreadMessage);
-        }
-    }
-
-    const call = () => {
-        document.cookie = "callAlreadyStarted=true";
-
-        navigate(`/chats/voice/${chat.id}/${chat.name}`);
-    }
-
-    if (isLoading || usersIsLoading || myUsersIsLoading) {
-        return <div>Loading...</div>;
+    if (isLoading) {
+        return (<Loading />);
     }
 
     return (
         <div className="chats__selected-chat">
             <div className="messages-container">
-                <div className="title">
-                    <div className="title__content">
-                        {chat?.customerId === me?.id &&
-                            <FontAwesomeIcon
-                                icon={faPen}
-                                title={t("EditName")}
-                                className={`settings-handler${editNameOn ? "_active" : ""}`}
-                                onClick={() => setEditNameOn((item) => !item)}
-                            />
-                        }
-                        {editNameOn
-                            ? <>
-                                <input className="form-control" type="text" defaultValue={chat.name} ref={chatNameInput} />
-                                <FontAwesomeIcon
-                                    icon={faCloudArrowUp}
-                                    title={t("Save")}
-                                    className={`settings-handler${settingsIsShow ? "_active" : ""}`}
-                                    onClick={async () => await updateGroupChatNameAsync()}
-                                />
-                            </>
-                            : <div className="name" title={chat.name}>{chat.name}</div>
-                        }
-                    </div>
-                    {usersOnCall > 0 &&
-                        <div className="title__call-started">Call started</div>
-                    }
-                    <div className="title__menu">
-                        {(callMinimazedData.current.stream !== null && +callMinimazedData.current.roomId !== +chat.id)
-                            ? <FontAwesomeIcon
-                                icon={faPhone}
-                                title={t("Call move to minimaze")}
-                                className="call-minimazed"
-                            />
-                            : <FontAwesomeIcon
-                                icon={faPhone}
-                                title={t("Call")}
-                                className={`call${usersOnCall > 0 ? "_active" : ""}`}
-                                onClick={call}
-                            />
-                        }
-                        <FontAwesomeIcon
-                            icon={faGear}
-                            title={t("Settings")}
-                            className={`settings-handler${settingsIsShow ? "_active" : ""}`}
-                            onClick={() => setSettingsIsShow(!settingsIsShow)}
-                        />
-                    </div>
-                </div>
-                <GroupChatMessageList
+                <GroupChatTitle
                     chat={chat}
-                    messages={messages}
                     me={me}
+                    usersOnCall={usersOnCall}
+                    callMinimazedData={callMinimazedData}
+                    settingsIsShow={settingsIsShow}
+                    setSettingsIsShow={setSettingsIsShow}
+                    t={t}
                 />
-                <SendGroupChatMessage
+                <ul className="chat-messages">
+                    {messages?.map((message) => (
+                        <li key={message.id}>
+                            <ChatMessage
+                                me={me}
+                                message={message}
+                                messageStatus={message.status}
+                                updateChatMessageAsync={updateGroupChatMessageAsync}
+                                deleteMessageAsync={deleteMessageAsync}
+                                decreaseChatMessagesCountAsync={decreaseGroupChatMessagesCountAsync}
+                            />
+                        </li>
+                    ))}
+                </ul>
+                <GroupChatMessageInput
                     chat={chat}
                     me={me}
                     groupChatUsers={groupChatUsers}
                     messageType={messageType}
+                    t={t}
                 />
                 {showAddPeople &&
-                    <div className="add-people-to-chat box-shadow">
-                        <AddPeople
-                            customer={me}
-                            communityUsersId={groupChatUsersId}
-                            peopleToJoin={peopleToJoin}
-                            setPeopleToJoin={setPeopleToJoin}
-                        />
-                        <div className="item-result">
-                            <div className="btn-border-shadow invite" onClick={async () => await createGroupChatUserAsync()}>{t("Invite")}</div>
-                            <div className="btn-border-shadow" onClick={() => setShowAddPeople(false)}>{t("Close")}</div>
-                        </div>
-                    </div>
+                    <GroupChatAddUser
+                        chat={chat}
+                        me={me}
+                        groupChatUsersId={groupChatUsersId}
+                        setShowAddPeople={setShowAddPeople}
+                        groupChatUsers={groupChatUsers}
+                        messageType={messageType}
+                        t={t}
+                    />
                 }
             </div>
             {settingsIsShow &&

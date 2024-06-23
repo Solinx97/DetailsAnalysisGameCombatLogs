@@ -1,10 +1,7 @@
-﻿import { faPaperPlane } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { useCallback, useRef, useState } from 'react';
-import { useTranslation } from 'react-i18next';
+﻿import { useState } from 'react';
 import { useUpdateGroupChatAsyncMutation } from '../../../store/api/communication/chats/GroupChat.api';
 import {
-    useLazyFindGroupChatMessageCountQuery,
+    useCreateGroupChatMessageCountAsyncMutation, useLazyFindGroupChatMessageCountQuery,
     useUpdateGroupChatMessageCountAsyncMutation
 } from '../../../store/api/communication/chats/GroupChatMessagCount.api';
 import {
@@ -12,22 +9,57 @@ import {
     useUpdateGroupChatMessageAsyncMutation
 } from '../../../store/api/communication/chats/GroupChatMessage.api';
 import {
+    useCreateGroupChatUserAsyncMutation
+} from '../../../store/api/communication/chats/GroupChatUser.api';
+import {
     useCreateUnreadGroupChatMessageAsyncMutation
 } from '../../../store/api/communication/chats/UnreadGroupChatMessage.api';
+import AddPeople from '../../AddPeople';
 
-const SendGroupChatMessage = ({ chat, me, groupChatUsers, messageType }) => {
-    const { t } = useTranslation("communication/chats/groupChat");
-
+const GroupChatAddUser = ({ chat, me, groupChatUsersId, groupChatUsers, messageType, setShowAddPeople, t }) => {
     const [createGroupChatMessageAsync] = useCreateGroupChatMessageAsyncMutation();
     const [updateGroupChatMessageAsync] = useUpdateGroupChatMessageAsyncMutation();
     const [updateGroupChatAsyncMut] = useUpdateGroupChatAsyncMutation();
+    const [createGroupChatUserMutAsync] = useCreateGroupChatUserAsyncMutation();
     const [updateGroupChatMessageCountMut] = useUpdateGroupChatMessageCountAsyncMutation();
     const [getMessagesCount] = useLazyFindGroupChatMessageCountQuery();
+    const [createGroupChatCountAsyncMut] = useCreateGroupChatMessageCountAsyncMutation();
     const [createUnreadGroupChatMessageAsyncMut] = useCreateUnreadGroupChatMessageAsyncMutation();
 
-    const [isEmptyMessage, setIsEmptyMessage] = useState(false);
+    const [peopleToJoin, setPeopleToJoin] = useState([]);
 
-    const messageInput = useRef(null);
+    const createGroupChatUserAsync = async () => {
+        for (let i = 0; i < peopleToJoin.length; i++) {
+            const newGroupChatUser = {
+                id: " ",
+                username: peopleToJoin[i].username,
+                customerId: peopleToJoin[i].id,
+                groupChatId: chat.id,
+            };
+
+            const created = await createGroupChatUserMutAsync(newGroupChatUser);
+            if (created.data !== undefined) {
+                await createGroupChatCountAsync(chat.id, created.data.id);
+
+                const systemMessage = `'${me?.username}' added '${peopleToJoin[i].username}' to chat`;
+                await createMessageAsync(systemMessage, messageType["system"]);
+            }
+        }
+
+        setPeopleToJoin([]);
+        setShowAddPeople(false);
+    }
+
+    const createGroupChatCountAsync = async (chatId, customerId) => {
+        const newMessagesCount = {
+            count: 0,
+            groupChatUserId: customerId,
+            groupChatId: +chatId,
+        };
+
+        const createdMessagesCount = await createGroupChatCountAsyncMut(newMessagesCount);
+        return createdMessagesCount.data !== undefined;
+    }
 
     const createMessageAsync = async (message, type) => {
         const today = new Date();
@@ -44,6 +76,20 @@ const SendGroupChatMessage = ({ chat, me, groupChatUsers, messageType }) => {
         if (createdMessage.data !== undefined && type !== messageType["system"]) {
             await messageSentSuccessfulAsync(createdMessage.data);
         }
+    }
+
+    const messageSentSuccessfulAsync = async (createdMessage) => {
+        await updateGroupChatLastMessageAsync(createdMessage.message);
+
+        const updateForMessage = Object.assign({}, createdMessage);
+        updateForMessage.status = 1;
+
+        await updateGroupChatMessageAsync(updateForMessage);
+
+        const increaseUnreadMessages = 1;
+        await updateGroupChatMessagesCountAsync(increaseUnreadMessages);
+
+        await createUnreadMessageAsync(createdMessage.id);
     }
 
     const updateGroupChatLastMessageAsync = async (message) => {
@@ -83,69 +129,20 @@ const SendGroupChatMessage = ({ chat, me, groupChatUsers, messageType }) => {
         }
     }
 
-    const messageSentSuccessfulAsync = async (createdMessage) => {
-        await updateGroupChatLastMessageAsync(createdMessage.message);
-
-        const updateForMessage = Object.assign({}, createdMessage);
-        updateForMessage.status = 1;
-
-        await updateGroupChatMessageAsync(updateForMessage);
-
-        const increaseUnreadMessages = 1;
-        await updateGroupChatMessagesCountAsync(increaseUnreadMessages);
-
-        await createUnreadMessageAsync(createdMessage.id);
-    }
-
-    const sendMessageAsync = useCallback(async () => {
-        if (messageInput.current.value.length === 0) {
-            setIsEmptyMessage(true);
-            setTimeout(() => {
-                setIsEmptyMessage(false);
-            }, 3000);
-
-            return;
-        }
-
-        await createMessageAsync(messageInput.current.value, messageType["default"]);
-        messageInput.current.value = "";
-    }, [messageInput]);
-
-    const sendMessageByKeyAsync = async (e) => {
-        if (messageInput.current.value.length === 0 && e.code === "Enter") {
-            setIsEmptyMessage(true);
-            setTimeout(() => {
-                setIsEmptyMessage(false);
-            }, 3000);
-
-            return;
-        }
-
-        if (messageInput.current.value.length >= 0 && e.code !== "Enter") {
-            return;
-        }
-
-        await createMessageAsync(messageInput.current.value, messageType["default"]);
-
-        if (messageInput.current !== null) {
-            messageInput.current.value = "";
-        }
-    }
-
     return (
-        <div className="send-message">
-            <div className={`empty-message${isEmptyMessage ? "_show" : ""}`}>You can not send empty message</div>
-            <div className="form-group input-message">
-                <input type="text" className="form-control" placeholder={t("TypeYourMessage")}
-                    ref={messageInput} onKeyDown={async (event) => await sendMessageByKeyAsync(event)} />
-                <FontAwesomeIcon
-                    icon={faPaperPlane}
-                    title={t("SendMessage")}
-                    onClick={async () => await sendMessageAsync()}
-                />
+        <div className="add-people-to-chat box-shadow">
+            <AddPeople
+                customer={me}
+                communityUsersId={groupChatUsersId}
+                peopleToJoin={peopleToJoin}
+                setPeopleToJoin={setPeopleToJoin}
+            />
+            <div className="item-result">
+                <div className="btn-border-shadow invite" onClick={async () => await createGroupChatUserAsync()}>{t("Invite")}</div>
+                <div className="btn-border-shadow" onClick={() => setShowAddPeople(false)}>{t("Close")}</div>
             </div>
         </div>
     );
 }
 
-export default SendGroupChatMessage;
+export default GroupChatAddUser;

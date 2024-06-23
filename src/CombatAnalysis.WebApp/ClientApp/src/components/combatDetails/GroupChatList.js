@@ -18,6 +18,7 @@ const GroupChatList = ({ groupChatId, log }) => {
 
     const me = useSelector((state) => state.customer.value);
     const { data: groupChat, isLoading } = useGetGroupChatByIdQuery(groupChatId);
+
     const [createGroupChatMessageAsync] = useCreateGroupChatMessageAsyncMutation();
 
     const [sent, showSent] = useState(false);

@@ -25,6 +25,11 @@ public class AccountController : ControllerBase
     public async Task<IActionResult> Login(LoginModel model)
     {
         var responseMessage = await _httpClient.PostAsync("Account", JsonContent.Create(model), Port.UserApi);
+        if (responseMessage.StatusCode == System.Net.HttpStatusCode.InternalServerError)
+        {
+            return StatusCode(500);
+        }
+
         if (!responseMessage.IsSuccessStatusCode)
         {
             return BadRequest();

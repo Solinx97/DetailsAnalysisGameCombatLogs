@@ -1,10 +1,10 @@
-﻿import { faArrowDown, faArrowUp } from '@fortawesome/free-solid-svg-icons';
+﻿import { faArrowDown, faArrowUp, faXmark } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import GroupChatListItem from './GroupChatListItem';
 
 const GroupChatList = ({ meId, t, groupChatUsers, selectedChat, setSelectedChat, chatsHidden, toggleChatsHidden }) => {
     return (
-        <div>
+        <div className="chat-list">
             <div className="chats__my-chats_title">
                 <div>{t("GroupChats")}</div>
                 {chatsHidden
@@ -20,15 +20,15 @@ const GroupChatList = ({ meId, t, groupChatUsers, selectedChat, setSelectedChat,
                     />
                 }
             </div>
-            <ul className={`group-chats${!chatsHidden ? "_active" : ""}`}>
+            <ul className={`chat-list__chats${!chatsHidden ? "_active" : ""}`}>
                 {groupChatUsers?.length === 0
-                    ? <div className="group-chats__not-found">Not found</div>
+                    ? <div className="group-chats__not-found">{t("GroupChatsEmptyYet")}</div>
                     : groupChatUsers?.map((groupChatUser) => (
-                        <li key={groupChatUser.id} className={selectedChat?.id === groupChatUser?.groupChatId ? `selected` : ``}>
+                        <li key={groupChatUser.id} className={selectedChat.type === "group" && selectedChat.chat?.id === groupChatUser?.groupChatId ? `selected` : ``}>
                             <GroupChatListItem
                                 chatId={groupChatUser.groupChatId}
                                 setSelectedGroupChat={setSelectedChat}
-                                meId={meId}
+                                groupChatUserId={groupChatUser.id}
                             />
                         </li>
                     ))

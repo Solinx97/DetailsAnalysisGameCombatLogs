@@ -1,12 +1,17 @@
 ﻿import { useTranslation } from 'react-i18next';
 import { useGetCustomerByIdQuery } from '../../../store/api/Customer.api';
 import {
-    useFindPersonalChatMessageByChatIdQuery, useRemovePersonalChatMessageAsyncMutation
+    useLazyFindPersonalChatMessageCountQuery,
+    useUpdatePersonalChatMessageCountAsyncMutation
+} from '../../../store/api/communication/chats/PersonalChatMessagCount.api';
+import {
+    useFindPersonalChatMessageByChatIdQuery, useRemovePersonalChatMessageAsyncMutation,
+    useUpdatePersonalChatMessageAsyncMutation
 } from '../../../store/api/communication/chats/PersonalChatMessage.api';
 import Loading from '../../Loading';
 import ChatMessage from './ChatMessage';
 import ChatRemoveNotification from './ChatRemoveNotification';
-import MessageInput from './MessageInput';
+import PersonalChatMessageInput from './PersonalChatMessageInput';
 
 import "../../../styles/communication/chats/personalChat.scss";
 
@@ -20,6 +25,19 @@ const PersonalChat = ({ chat, me, setSelectedChat, companionId }) => {
     });
     const { data: companion, isLoading: companionIsLoading } = useGetCustomerByIdQuery(companionId);
     const [removePersonalChatMessageAsync] = useRemovePersonalChatMessageAsyncMutation();
+    const [updateChatMessageAsync] = useUpdatePersonalChatMessageAsyncMutation();
+    const [updatePersonalChatMessageCountMut] = useUpdatePersonalChatMessageCountAsyncMutation();
+    const [getMessagesCount] = useLazyFindPersonalChatMessageCountQuery();
+
+    const decreasePersonalChatMessagesCountAsync = async () => {
+        const messagesCount = await getMessagesCount({ chatId: chat?.id, userId: me.id });
+        if (messagesCount.data !== undefined) {
+            const unblockedObject = Object.assign({}, messagesCount.data);
+            unblockedObject.count = --unblockedObject.count;
+
+            await updatePersonalChatMessageCountMut(unblockedObject);
+        }
+    }
 
     const deleteMessageAsync = async (messageId) => {
         await removePersonalChatMessageAsync(messageId);
@@ -36,20 +54,20 @@ const PersonalChat = ({ chat, me, setSelectedChat, companionId }) => {
                     <div className="name">{companion.username}</div>
                 </div>
                 <ul className="chat-messages">
-                    {
-                        messages?.map((item) => (
-                            <li key={item.id}>
+                    {messages?.map((message) => (
+                            <li key={message.id}>
                                 <ChatMessage
                                     me={me}
-                                    message={item}
-                                    messageStatus={item.status}
+                                    message={message}
+                                    messageStatus={message.status}
+                                    updateChatMessageAsync={updateChatMessageAsync}
                                     deleteMessageAsync={deleteMessageAsync}
+                                    decreaseChatMessagesCountAsync={decreasePersonalChatMessagesCountAsync}
                                 />
                             </li>
-                        ))
-                    }
+                    ))}
                 </ul>
-                <MessageInput
+                <PersonalChatMessageInput
                     chat={chat}
                     meId={me?.id}
                     companionId={companion?.id}

@@ -4,7 +4,7 @@ import PersonalChatListItem from './PersonalChatListItem';
 
 const PersonalChatList = ({ meId, t, personalChats, selectedChat, setSelectedChat, chatsHidden, toggleChatsHidden }) => {
     return (
-        <div>
+        <div className="chat-list">
             <div className="chats__my-chats_title">
                 <div>{t("PersonalChats")}</div>
                 {chatsHidden
@@ -20,11 +20,11 @@ const PersonalChatList = ({ meId, t, personalChats, selectedChat, setSelectedCha
                     />
                 }
             </div>
-            <ul className={`personal-chats${!chatsHidden ? "_active" : ""}`}>
+            <ul className={`chat-list__chats${!chatsHidden ? "_active" : ""}`}>
                 {personalChats?.length === 0
                     ? <div className="personal-chats__not-found">{t("PersonalChatsEmptyYet")}</div>
                     : personalChats?.map((chat) => (
-                        <li key={chat.id} className={selectedChat?.id === chat?.id ? `selected` : ``}>
+                        <li key={chat.id} className={selectedChat.type === "personal" && selectedChat.chat?.id === chat?.id ? `selected` : ``}>
                             <PersonalChatListItem
                                 chat={chat}
                                 setSelectedPersonalChat={setSelectedChat}

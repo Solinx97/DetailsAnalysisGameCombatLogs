@@ -1,9 +1,9 @@
 import { useGetGroupChatByIdQuery } from '../../../store/api/communication/chats/GroupChat.api';
 import { useFindGroupChatMessageCountQuery } from '../../../store/api/communication/chats/GroupChatMessagCount.api';
 
-const GroupChatListItem = ({ chatId, setSelectedGroupChat, meId }) => {
+const GroupChatListItem = ({ chatId, groupChatUserId, setSelectedGroupChat }) => {
     const { data: chat, isLoading } = useGetGroupChatByIdQuery(chatId);
-    const { data: messagesCount, isLoading: messagesCountLoading } = useFindGroupChatMessageCountQuery({ chatId: chatId, userId: meId });
+    const { data: messagesCount, isLoading: messagesCountLoading } = useFindGroupChatMessageCountQuery({ chatId: chatId, userId: groupChatUserId });
 
     if (isLoading || messagesCountLoading) {
         return (<></>);

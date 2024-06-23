@@ -17,6 +17,8 @@ const useCreatePersonalChatMessage = (messageInput, chat, meId, companionId) => 
     const [isEmptyMessage, setIsEmptyMessage] = useState(false);
     const [emptyMessageTimeout, setEmptyMessageTimeout] = useState(null);
 
+    const emptyMessageTimeoutNotification = 3000;
+
     useEffect(() => {
         return () => {
             clearTimeout(emptyMessageTimeout);
@@ -45,7 +47,7 @@ const useCreatePersonalChatMessage = (messageInput, chat, meId, companionId) => 
             setIsEmptyMessage(true);
             const timeout = setTimeout(() => {
                 setIsEmptyMessage(false);
-            }, 3000);
+            }, emptyMessageTimeoutNotification);
 
             setEmptyMessageTimeout(timeout);
 
@@ -66,7 +68,7 @@ const useCreatePersonalChatMessage = (messageInput, chat, meId, companionId) => 
             setIsEmptyMessage(true);
             const timeout = setTimeout(() => {
                 setIsEmptyMessage(false);
-            }, 3000);
+            }, emptyMessageTimeoutNotification);
 
             setEmptyMessageTimeout(timeout);
 

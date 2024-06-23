@@ -1,19 +1,15 @@
 ﻿import { faPaperPlane } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { memo, useRef } from "react";
-import useCreatePersonalChatMessage from '../../../hooks/useCreatePersonalChatMessage';
+import { useRef } from 'react';
+import useCreateGroupChatMessage from '../../../hooks/useCreateGroupChatMessage';
 
-const MessageInput = ({ chat, meId, companionId, t }) => {
+const GroupChatMessageInput = ({ chat, me, groupChatUsers, messageType, t }) => {
     const messageInput = useRef(null);
 
-    const { sendMessageAsync, sendMessageByKeyAsync, isEmptyMessage, messagesCountLoading } = useCreatePersonalChatMessage(messageInput, chat, meId, companionId);
-
-    if (messagesCountLoading) {
-        return (<></>);
-    }
+    const { sendMessageAsync, sendMessageByKeyAsync, isEmptyMessage } = useCreateGroupChatMessage(messageInput, chat, me?.id, groupChatUsers, messageType);
 
     return (
-        <div>
+        <div className="send-message">
             <div className={`empty-message${isEmptyMessage ? "_show" : ""}`}>{t("CanNotSendEmpty")}</div>
             <div className="form-group input-message">
                 <input type="text" className="form-control" placeholder={t("TypeYourMessage")}
@@ -28,4 +24,4 @@ const MessageInput = ({ chat, meId, companionId, t }) => {
     );
 }
 
-export default memo(MessageInput);
+export default GroupChatMessageInput;

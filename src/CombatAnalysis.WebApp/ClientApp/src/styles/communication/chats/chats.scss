@@ -1,10 +1,9 @@
 ﻿.chats {
-    position: relative;
     display: flex;
     flex-direction: row;
     align-items: start;
     justify-content: start;
-    gap: 15px;
+    gap: 10px;
 
     &__selected-chat {
         display: flex;
@@ -88,6 +87,7 @@
     &__my-chats {
         width: 30%;
 
+
         &_title {
             display: flex;
             align-items: center;
@@ -115,52 +115,59 @@
             }
         }
 
-        ul {
-            width: 90%;
-        }
-
-        .group-chats, .personal-chats {
-            display: none;
-
-            &__not-found {
-                opacity: 0.4;
-                text-align: center;
+        .chat-list {
+            &__chats, &__chats_active {
+                max-height: 50vh;
+                overflow-y: auto;
+                padding: 0;
             }
 
-            &_active {
-                .selected {
-                    box-shadow: 3px 3px 3px 3px #474F7A;
+            &__chats {
+                display: none;
+
+                &__not-found {
+                    opacity: 0.4;
+                    text-align: center;
                 }
 
-                .last-message {
-                    max-height: 20px;
-                    max-width: 90%;
-                    overflow: hidden;
-                    word-wrap: break-word;
-                    font-size: 12px;
-                }
+                &_active {
+                    .selected {
+                        box-shadow: 2px 2px 2px 2px white;
+                    }
 
-                .chat-card {
-                    display: flex;
-                    flex-direction: column;
-                    gap: 5px;
+                    .last-message {
+                        max-height: 20px;
+                        max-width: 90%;
+                        overflow: hidden;
+                        word-wrap: break-word;
+                        font-size: 12px;
+                    }
 
-                    .chat-tooltip {
+                    .chat-card {
                         display: flex;
-                        align-items: center;
-                        gap: 10px;
+                        flex-direction: column;
+                        gap: 5px;
 
-                        .unread-message-count {
-                            padding: 5px;
-                            box-shadow: 2px 2px 2px 2px #3AA6B9;
-                            border-radius: 25px;
-                            font-size: 10px;
-                            width: 25px;
-                            text-align: center;
+                        .chat-tooltip {
+                            display: flex;
+                            align-items: center;
+                            gap: 10px;
+
+                            .unread-message-count {
+                                padding: 5px;
+                                box-shadow: 2px 2px 2px 2px #3AA6B9;
+                                border-radius: 25px;
+                                font-size: 10px;
+                                width: 25px;
+                                text-align: center;
+                            }
                         }
                     }
                 }
             }
+        }
+
+        .group-chats, .personal-chats {
         }
 
         li {
