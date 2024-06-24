@@ -18,10 +18,10 @@ let postsCount = 0;
 const FeedParticipants = ({ customer, showNewPosts, setShowNewPostsInform }) => {
     const { data: myFriends, isLoading } = useFriendSearchMyFriendsQuery(customer?.id);
 
-    const [getUserPosts] = useLazyUserPostSearchByUserIdQuery();
+    const [getUserPostsAsync] = useLazyUserPostSearchByUserIdQuery();
     const [getCommunityUsers] = useLazySearchByUserIdAsyncQuery();
     const [getCommunityPosts] = useLazyPostSearchByCommunityIdAsyncQuery();
-    const [getPostById] = useLazyGetPostByIdQuery();
+    const [getPostByIdAsync] = useLazyGetPostByIdQuery();
     const [getUserPostByPostId] = useLazyUserPostSearchByPostIdQuery();
     const [removeUserPost] = useRemoveUserPostAsyncMutation();
 
@@ -70,9 +70,9 @@ const FeedParticipants = ({ customer, showNewPosts, setShowNewPostsInform }) => 
         let posts = [];
 
         for (let i = 0; i < peopleId.length; i++) {
-            const userPosts = await getUserPosts(peopleId[i]);
+            const userPosts = await getUserPostsAsync(peopleId[i]);
             if (userPosts.data !== undefined) {
-                const userPersonalPosts = await getUserPostsAsync(userPosts.data);
+                const userPersonalPosts = await getPostsAsync(userPosts.data);
                 posts = [...posts, ...userPersonalPosts];
             }
         }
@@ -128,11 +128,11 @@ const FeedParticipants = ({ customer, showNewPosts, setShowNewPostsInform }) => 
         return 0;
     }
 
-    const getUserPostsAsync = async (userPosts) => {
+    const getPostsAsync = async (userPosts) => {
         const userPersonalPosts = [];
 
         for (let i = 0; i < userPosts.length; i++) {
-            const post = await getPostById(userPosts[i].postId);
+            const post = await getPostByIdAsync(userPosts[i].postId);
 
             if (post.data !== undefined) {
                 userPersonalPosts.push(post.data);
@@ -161,7 +161,7 @@ const FeedParticipants = ({ customer, showNewPosts, setShowNewPostsInform }) => 
         const posts = [];
 
         for (let i = 0; i < communityPosts.length; i++) {
-            const post = await getPostById(communityPosts[i].postId);
+            const post = await getPostByIdAsync(communityPosts[i].postId);
 
             if (post.data !== undefined) {
                 posts.push(post.data);

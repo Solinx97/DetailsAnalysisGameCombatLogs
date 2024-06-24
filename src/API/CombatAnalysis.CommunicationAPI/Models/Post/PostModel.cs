@@ -10,6 +10,8 @@ public class PostModel
 
     public int PostType { get; set; }
 
+    public string Tags { get; set; }
+
     public DateTimeOffset When { get; set; }
 
     public int LikeCount { get; set; }

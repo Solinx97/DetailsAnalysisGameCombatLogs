@@ -71,7 +71,7 @@ const PostTitle = ({ post, dateFormatting, deletePostAsync, isMyPost }) => {
                                 onMouseLeave={communityPostLeaveHandler}
                                 onClick={goToCommunityAsync}
                                 title={t("GoToCommunity")}>
-                                <div className="community-post type">community</div>
+                                <div className="community-post type">{t("Community")}</div>
                                 <div className="community-post content">
                                     <FontAwesomeIcon
                                         icon={faComments}
@@ -83,7 +83,12 @@ const PostTitle = ({ post, dateFormatting, deletePostAsync, isMyPost }) => {
                     </div>
                     <div className="when">{dateFormatting(post?.when)}</div>
                 </div>
-                <div className="post-remove container">
+                <ul className="tags">
+                    {post?.tags?.split(';').filter(x => x.length > 0).map((tag, index) => (
+                        <li key={index} className="tag">{tag}</li>
+                    ))}
+                </ul>
+                <div className="post-remove">
                     {isMyPost &&
                         <FontAwesomeIcon
                             icon={faCircleXmark}

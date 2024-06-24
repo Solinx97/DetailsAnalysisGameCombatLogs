@@ -3,6 +3,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useCreatePostAsyncMutation } from '../../store/api/communication/Post.api';
+import Loading from '../Loading';
+import AddTagsToPost from './AddTagsToPost';
 
 const postType = {
     user: 0,
@@ -14,6 +16,7 @@ const CreatePost = ({ customer, owner, postTypeName, createTypeOfPostFunc }) => 
 
     const [showCreatePost, setShowCreatePost] = useState(false);
     const [postContent, setPostContent] = useState("");
+    const [postTags, setPostTags] = useState([]);
 
     const [createNewPostAsync] = useCreatePostAsyncMutation();
 
@@ -22,6 +25,7 @@ const CreatePost = ({ customer, owner, postTypeName, createTypeOfPostFunc }) => 
             owner: owner,
             content: postContent,
             postType: postType[postTypeName],
+            tags: postTags.join(';'),
             when: new Date(),
             likeCount: 0,
             dislikeCount: 0,
@@ -46,7 +50,7 @@ const CreatePost = ({ customer, owner, postTypeName, createTypeOfPostFunc }) => 
     }
 
     if (customer === null) {
-        return <div>Loading...</div>;
+        return (<Loading />);
     }
 
     return (
@@ -75,7 +79,16 @@ const CreatePost = ({ customer, owner, postTypeName, createTypeOfPostFunc }) => 
                     </div>
                 </div>
             </div>
-            <textarea className="form-control" rows="5" onChange={postContentHandle} style={{ display: showCreatePost ? "flex" : "none" }} />
+            {showCreatePost &&
+                <div className="create-post__input-area">
+                    <AddTagsToPost
+                        postTags={postTags}
+                        setPostTags={setPostTags}
+                        t={t}
+                    />
+                    <textarea className="form-control" rows="5" onChange={postContentHandle} />
+                </div>
+            }
         </div>
     );
 }

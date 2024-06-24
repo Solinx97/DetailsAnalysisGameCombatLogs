@@ -8,7 +8,7 @@ import User from '../User';
 const RequestItem = ({ me, request, acceptRequestAsync, rejectRequestAsync }) => {
     const { t } = useTranslation("communication/myEnvironment/requestItem");
 
-    const { data: user, isLoading } = useGetCustomerByIdQuery(request.toUserId);
+    const { data: user, isLoading } = useGetCustomerByIdQuery(request.customerId);
 
     const [userInformation, setUserInformation] = useState(null);
 

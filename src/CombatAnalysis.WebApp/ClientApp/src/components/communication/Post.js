@@ -1,12 +1,9 @@
-import { faHeart, faMessage, faThumbsDown } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useEffect, useState } from "react";
 import { useTranslation } from 'react-i18next';
-import { useUpdatePostAsyncMutation } from '../../store/api/communication/Post.api';
+import { useLazyGetPostByIdQuery, useUpdatePostAsyncMutation } from '../../store/api/communication/Post.api';
 import { useCreatePostCommentAsyncMutation } from '../../store/api/communication/PostComment.api';
-import { useCreatePostDislikeAsyncMutation, useLazySearchPostDislikeByPostIdQuery, useRemovePostDislikeAsyncMutation } from '../../store/api/communication/PostDislike.api';
-import { useCreatePostLikeAsyncMutation, useLazySearchPostLikeByPostIdQuery, useRemovePostLikeAsyncMutation } from '../../store/api/communication/PostLike.api';
 import PostComments from './PostComments';
+import PostReactions from './PostReactions';
 import PostTitle from './PostTitle';
 
 import '../../styles/communication/post.scss';
@@ -15,13 +12,9 @@ const Post = ({ customer, data, deletePostAsync, canBeRemoveFromUserFeed = true 
     const { t } = useTranslation("communication/post");
 
     const [updatePostAsyncMut] = useUpdatePostAsyncMutation();
-    const [createPostLikeAsyncMut] = useCreatePostLikeAsyncMutation();
-    const [removePostLikeAsyncMut] = useRemovePostLikeAsyncMutation();
-    const [searchPostLikeByPostIdAsync] = useLazySearchPostLikeByPostIdQuery();
-    const [createPostDislikeAsyncMut] = useCreatePostDislikeAsyncMutation();
-    const [removePostDislikeAsyncMut] = useRemovePostDislikeAsyncMutation();
-    const [searchPostDislikeByPostIdAsync] = useLazySearchPostDislikeByPostIdQuery();
+
     const [createPostCommentAsyncMut] = useCreatePostCommentAsyncMutation();
+    const [getPostByIdAsync] = useLazyGetPostByIdQuery();
 
     const [showComments, setShowComments] = useState(false);
     const [postCommentContent, setPostCommentContent] = useState("");
@@ -35,15 +28,24 @@ const Post = ({ customer, data, deletePostAsync, canBeRemoveFromUserFeed = true 
 
     const updatePostAsync = async (postId, likesCount, dislikesCount, commentsCount) => {
         try {
+            const getRefreshedPostResponse = await getPostByIdAsync(postId);
+            if (getRefreshedPostResponse.error) {
+                console.error("Error updating post:", getRefreshedPostResponse.error);
+
+                return;
+            }
+
             const postForUpdate = {
                 id: postId,
-                owner: post.owner,
-                content: post.content,
-                when: post.when,
-                likeCount: post.likeCount + likesCount,
-                dislikeCount: post.dislikeCount + dislikesCount,
-                commentCount: post.commentCount + commentsCount,
-                customerId: post.customerId
+                owner: getRefreshedPostResponse.data.owner,
+                content: getRefreshedPostResponse.data.content,
+                postType: getRefreshedPostResponse.data.postType,
+                tags: getRefreshedPostResponse.data.tags,
+                when: getRefreshedPostResponse.data.when,
+                likeCount: getRefreshedPostResponse.data.likeCount + likesCount,
+                dislikeCount: getRefreshedPostResponse.data.dislikeCount + dislikesCount,
+                commentCount: getRefreshedPostResponse.data.commentCount + commentsCount,
+                customerId: getRefreshedPostResponse.data.customerId
             }
 
             const response = await updatePostAsyncMut(postForUpdate);
@@ -53,116 +55,14 @@ const Post = ({ customer, data, deletePostAsync, canBeRemoveFromUserFeed = true 
                 return;
             }
 
-            let updateReactions = Object.assign({}, post);
-            updateReactions.likeCount = post.likeCount + likesCount;
-            updateReactions.dislikeCount = post.dislikeCount + dislikesCount;
-            updateReactions.commentCount = post.commentCount + commentsCount;
+            let updateReactions = Object.assign({}, getRefreshedPostResponse.data);
+            updateReactions.likeCount = getRefreshedPostResponse.data.likeCount + likesCount;
+            updateReactions.dislikeCount = getRefreshedPostResponse.data.dislikeCount + dislikesCount;
+            updateReactions.commentCount = getRefreshedPostResponse.data.commentCount + commentsCount;
 
             setPost(updateReactions);
         } catch (e) {
             console.error("Failed to update post:", e);
-        }
-    }
-
-    const createPostLikeAsync = async (postId) => {
-        const postLikeIsExist = await getPostLikesAsync(postId);
-        if (postLikeIsExist) {
-            return;
-        }
-
-        const postDislikeIsExist = await getPostDislikesAsync(postId)
-
-        const newPostLike = {
-            postId: postId,
-            customerId: customer.id
-        }
-
-        const createdPostLike = await createPostLikeAsyncMut(newPostLike);
-        if (createdPostLike.data !== undefined) {
-            if (postDislikeIsExist) {
-                await updatePostAsync(postId, 1, -1, 0);
-            }
-            else {
-                await updatePostAsync(postId, 1, 0, 0);
-            }
-        }
-    }
-
-    const getPostLikesAsync = async (postId) => {
-        const postLikes = await searchPostLikeByPostIdAsync(postId);
-        if (postLikes.data !== undefined) {
-            return await removePostLikeIfExistAsync(postLikes.data);
-        }
-
-        return false;
-    }
-
-    const removePostLikeIfExistAsync = async (postLikes) => {
-        for (let i = 0; i < postLikes.length; i++) {
-            if (postLikes[i].customerId === customer.id) {
-                await deletePostLikeAsync(postLikes[i].postId, postLikes[i].id);
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    const deletePostLikeAsync = async (postId, postLikeId) => {
-        const deletedItem = await removePostLikeAsyncMut(postLikeId);
-        if (deletedItem !== null) {
-            await updatePostAsync(postId, -1, 0, 0);
-        }
-    }
-
-    const createPostDislikeAsync = async (postId) => {
-        const postDislikeIsExist = await getPostDislikesAsync(postId);
-        if (postDislikeIsExist) {
-            return;
-        }
-
-        const postLikeIsExist = await getPostLikesAsync(postId);
-
-        const newPostDislike = {
-            postId: postId,
-            customerId: customer.id
-        }
-
-        const createdPostDislike = await createPostDislikeAsyncMut(newPostDislike);
-        if (createdPostDislike.data !== undefined) {
-            if (postLikeIsExist) {
-                await updatePostAsync(postId, -1, 1, 0);
-            }
-            else {
-                await updatePostAsync(postId, 0, 1, 0);
-            }
-        }
-    }
-
-    const getPostDislikesAsync = async (postId) => {
-        const postDislikes = await searchPostDislikeByPostIdAsync(postId);
-        if (postDislikes.data !== undefined) {
-            return await removePostDislikeIfExistAsync(postDislikes.data);
-        }
-
-        return false;
-    }
-
-    const removePostDislikeIfExistAsync = async (postDislikes) => {
-        for (let i = 0; i < postDislikes.length; i++) {
-            if (postDislikes[i].customerId === customer.id) {
-                await deletePostDislikeAsync(postDislikes[i].postId, postDislikes[i].id);
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    const deletePostDislikeAsync = async (postId, postDislikeId) => {
-        const deletedItem = await removePostDislikeAsyncMut(postDislikeId);
-        if (deletedItem.data !== undefined) {
-            await updatePostAsync(postId, 0, -1, 0);
         }
     }
 
@@ -180,10 +80,6 @@ const Post = ({ customer, data, deletePostAsync, canBeRemoveFromUserFeed = true 
 
             await updatePostAsync(post.id, 0, 0, 1);
         }
-    }
-
-    const postCommentsHandler = () => {
-        setShowComments((item) => !item);
     }
 
     const dateFormatting = (stringOfDate) => {
@@ -247,37 +143,14 @@ const Post = ({ customer, data, deletePostAsync, canBeRemoveFromUserFeed = true 
                     isMyPost={isMyPost}
                 />
                 <div className="posts__content">{post?.content}</div>
-                <div className="posts__reactions">
-                    <div className="container">
-                        <div className="item">
-                            <FontAwesomeIcon
-                                className="item__like"
-                                icon={faHeart}
-                                title={t("Like")}
-                                onClick={async () => await createPostLikeAsync(post?.id)}
-                            />
-                            <div className="count">{post?.likeCount}</div>
-                        </div>
-                        <div className="item">
-                            <FontAwesomeIcon
-                                className="item__dislike"
-                                icon={faThumbsDown}
-                                title={t("Dislike")}
-                                onClick={async () => await createPostDislikeAsync(post?.id)}
-                            />
-                            <div className="count">{post?.dislikeCount}</div>
-                        </div>
-                        <div className="item">
-                            <FontAwesomeIcon
-                                className={`item__comment${showComments ? '_active' : ''}`}
-                                icon={faMessage}
-                                title={t("Comment")}
-                                onClick={postCommentsHandler}
-                            />
-                            <div className="count">{post?.commentCount}</div>
-                        </div>
-                    </div>
-                </div>
+                <PostReactions
+                    customer={customer}
+                    post={post}
+                    updatePostAsync={updatePostAsync}
+                    setShowComments={setShowComments}
+                    showComments={showComments}
+                    t={t}
+                />
             </div>
             {showComments &&
                 <>
