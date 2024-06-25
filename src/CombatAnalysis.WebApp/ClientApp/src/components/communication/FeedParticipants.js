@@ -10,13 +10,13 @@ const postType = {
     community: 1
 }
 
-const FeedParticipants = ({ customer }) => {
+const FeedParticipants = ({ customer, t }) => {
     const { data: myFriends, isLoading } = useFriendSearchMyFriendsQuery(customer?.id);
 
     const [getUserPostByPostId] = useLazyUserPostSearchByPostIdQuery();
     const [removeUserPost] = useRemoveUserPostAsyncMutation();
 
-    const { allPosts } = useFetchFriendsPosts(customer?.id, myFriends);
+    const { allPosts, newPosts, insertNewPostsAsync } = useFetchFriendsPosts(customer?.id, myFriends);
 
     const removeUserPostAsync = async (postId) => {
         const userPost = await getUserPostByPostId(postId);
@@ -42,18 +42,25 @@ const FeedParticipants = ({ customer }) => {
     }
 
     return (
-        <ul className="posts">
-            {allPosts?.map(post => (
-                <li key={post.id}>
-                    <Post
-                        customer={customer}
-                        data={post}
-                        deletePostAsync={async () => await removeUserPostAsync(post.id)}
-                        canBeRemoveFromUserFeed={post.postType === postType["user"]}
-                    />
-                </li>
-            ))}
-        </ul>
+        <div>
+            {newPosts.length > 0 &&
+                <div onClick={async () => await insertNewPostsAsync()} className="new-posts">
+                    <div className="new-posts__content">{t("NewPosts")}</div>
+                </div>
+            }
+            <ul className="posts">
+                {allPosts?.map(post => (
+                    <li key={post.id}>
+                        <Post
+                            customer={customer}
+                            data={post}
+                            deletePostAsync={async () => await removeUserPostAsync(post.id)}
+                            canBeRemoveFromUserFeed={post.postType === postType["user"]}
+                        />
+                    </li>
+                ))}
+            </ul>
+        </div>
     );
 }
 

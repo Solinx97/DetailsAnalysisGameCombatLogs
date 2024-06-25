@@ -3,8 +3,12 @@ import { useLazyPostSearchByCommunityIdAsyncQuery, useLazyUserPostSearchByUserId
 import { useLazyGetPostByIdQuery } from '../store/api/communication/Post.api';
 import { useLazySearchByUserIdAsyncQuery } from '../store/api/communication/community/CommunityUser.api';
 
+const checkNewPostsInterval = 5000;
+
 const useFetchFriendsPosts = (customerId, myFriends) => {
     const [allPosts, setAllPosts] = useState([]);
+    const [newPosts, setNewPosts] = useState([]);
+    const [startDate, setStartDate] = useState(null);
 
     const [getUserPostsAsync] = useLazyUserPostSearchByUserIdQuery();
     const [getCommunityUsers] = useLazySearchByUserIdAsyncQuery();
@@ -12,13 +16,46 @@ const useFetchFriendsPosts = (customerId, myFriends) => {
     const [getPostByIdAsync] = useLazyGetPostByIdQuery();
 
     useEffect(() => {
+        setStartDate(new Date());
+    }, []);
+
+    useEffect(() => {
+        const checkNewPosts = async () => {
+            const peopleId = await getPeopleIdAsync();
+            await checkNewPostsAsync(peopleId);
+        }
+
+        const interval = setInterval(() => {
+            checkNewPosts();
+        }, [checkNewPostsInterval]);
+
+        return () => clearInterval(interval);
+    }, [startDate, myFriends]);
+
+    useEffect(() => {
         const getAllPosts = async () => {
             const peopleId = await getPeopleIdAsync();
             await getAllPostsAsync(peopleId);
-        };
+        }
 
         getAllPosts();
     }, [myFriends]);
+
+    const checkNewPostsAsync = async (peopleId) => {
+        const posts = await loadingPostsAsync(peopleId);
+
+        const newPosts = posts.filter(post => new Date(post.when)?.getTime() > startDate?.getTime());
+
+        setNewPosts(newPosts);
+    }
+
+    const insertNewPostsAsync = async () => {
+        const insertedNewPosts = [...newPosts, ...allPosts];
+
+        setAllPosts(insertedNewPosts);
+        setStartDate(new Date());
+        setNewPosts([]);
+    }
 
     const loadingPostsAsync = async (peopleId = []) => {
         let posts = [];
@@ -117,7 +154,7 @@ const useFetchFriendsPosts = (customerId, myFriends) => {
         return posts;
     }
 
-    return { getPeopleIdAsync, loadingPostsAsync, allPosts, setAllPosts };
+    return { getPeopleIdAsync, loadingPostsAsync, allPosts, setAllPosts, newPosts, insertNewPostsAsync };
 }
 
 export default useFetchFriendsPosts;

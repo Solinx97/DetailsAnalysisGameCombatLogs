@@ -71,6 +71,7 @@ const Feed = () => {
                 />
                 <FeedParticipants
                     customer={customer}
+                    t={t}
                 />
             </div>
         </>

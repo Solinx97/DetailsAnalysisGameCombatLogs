@@ -33,6 +33,10 @@
     }
 
     &__input-area {
+        textarea {
+            position: relative;
+        }
+
         .tags {
             display: flex;
             justify-content: start;

@@ -89,12 +89,10 @@
             position: relative;
             display: flex;
             justify-content: center;
-            margin-top: -10px;
-            z-index: 100;
+            bottom: 40px;
 
             &__content {
                 padding: 5px 10px;
-                margin-top: 5px;
                 cursor: pointer;
                 border: 2px solid white;
                 border-radius: 10px;
