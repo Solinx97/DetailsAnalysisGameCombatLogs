@@ -45,11 +45,6 @@ const Feed = () => {
         }
     }
 
-    const showNewPostsHandle = () => {
-        setShowNewPosts(true);
-        setShowNewPostsInform(false);
-    }
-
     if (customer === null) {
         return (
             <>
@@ -67,11 +62,6 @@ const Feed = () => {
                 currentMenuItem={0}
             />
             <div className="communication__content">
-                <div className="new-posts"
-                    style={{ display: showNewPostsInform ? "flex" : "none" }}
-                    onClick={showNewPostsHandle}>
-                    <div className="new-posts__content">{t("NewPosts")}</div>
-                </div>
                 <CreatePost
                     customer={customer}
                     owner={customer?.username}
@@ -82,6 +72,7 @@ const Feed = () => {
                     customer={customer}
                     setShowNewPostsInform={setShowNewPostsInform}
                     showNewPosts={showNewPosts}
+                    setShowNewPosts={setShowNewPosts}
                 />
             </div>
         </>
