@@ -68,6 +68,20 @@
         }
     }
 
+    &__recomendations {
+        position: fixed;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        right: 2%;
+        top: 20%;
+        padding: 10px;
+        box-shadow: 2px 2px 2px 2px #3AA6B9;
+        border-radius: 15px;
+        width: 270px;
+        font-size: 13px;
+    }
+
     &__content {
         margin-left: 200px;
 

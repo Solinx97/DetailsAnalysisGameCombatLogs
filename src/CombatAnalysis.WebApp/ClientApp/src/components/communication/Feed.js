@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import { useCreateUserPostAsyncMutation } from '../../store/api/communication/UserPost.api';
@@ -6,15 +5,13 @@ import Loading from '../Loading';
 import CommunicationMenu from './CommunicationMenu';
 import CreatePost from './CreatePost';
 import FeedParticipants from './FeedParticipants';
+import Recomendations from './Recomendations';
 
 const Feed = () => {
     const { t } = useTranslation("communication/feed");
     const customer = useSelector((state) => state.customer.value);
 
     const [createNewUserPostAsync] = useCreateUserPostAsyncMutation();
-
-    const [showNewPostsInform, setShowNewPostsInform] = useState(false);
-    const [showNewPosts, setShowNewPosts] = useState(false);
 
     const createUserPostAsync = async (postId) => {
         try {
@@ -61,18 +58,19 @@ const Feed = () => {
             <CommunicationMenu
                 currentMenuItem={0}
             />
+            <Recomendations
+                t={t}
+            />
             <div className="communication__content">
                 <CreatePost
                     customer={customer}
                     owner={customer?.username}
                     postTypeName="user"
                     createTypeOfPostFunc={createUserPostAsync}
+                    t={t}
                 />
                 <FeedParticipants
                     customer={customer}
-                    setShowNewPostsInform={setShowNewPostsInform}
-                    showNewPosts={showNewPosts}
-                    setShowNewPosts={setShowNewPosts}
                 />
             </div>
         </>

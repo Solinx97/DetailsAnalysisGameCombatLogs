@@ -4,7 +4,6 @@ import { format } from 'date-fns';
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import InDev from '../inDevNotes/InDev';
 
 const formatDate = (dateString) => format(new Date(dateString), 'HH:mm');
 const getCombatDuration = (duration) => duration.substring(3);
@@ -157,16 +156,14 @@ const GeneralAnalysisItem = ({ uniqueCombats, combatLogId }) => {
                     />
                     <div>{uniqueCombats[selectedCombatIndex].deathNumber}</div>
                 </li>
-                <InDev inDevItem={
-                    <li className="list-group-item">
-                        <FontAwesomeIcon
-                            icon={faCircleNodes}
-                            className="list-group-item__buffs"
-                            title={t("Buffs")}
-                        />
-                        <div>{uniqueCombats[selectedCombatIndex].usedBuffs}</div>
-                    </li>}
-                />
+                <li className="list-group-item">
+                    <FontAwesomeIcon
+                        icon={faCircleNodes}
+                        className="list-group-item__buffs"
+                        title={t("Buffs")}
+                    />
+                    <div>{uniqueCombats[selectedCombatIndex].usedBuffs}</div>
+                </li>
             </ul>
             <div className="card-body details">
                 {uniqueCombats[selectedCombatIndex].isReady

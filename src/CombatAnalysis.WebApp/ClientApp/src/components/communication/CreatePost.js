@@ -1,7 +1,6 @@
 import { faBan, faCheck, faPlus } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useState } from 'react';
-import { useTranslation } from 'react-i18next';
 import { useCreatePostAsyncMutation } from '../../store/api/communication/Post.api';
 import Loading from '../Loading';
 import AddTagsToPost from './AddTagsToPost';
@@ -11,9 +10,7 @@ const postType = {
     community: 1
 }
 
-const CreatePost = ({ customer, owner, postTypeName, createTypeOfPostFunc }) => {
-    const { t } = useTranslation("communication/feed");
-
+const CreatePost = ({ customer, owner, postTypeName, createTypeOfPostFunc, t }) => {
     const [showCreatePost, setShowCreatePost] = useState(false);
     const [postContent, setPostContent] = useState("");
     const [postTags, setPostTags] = useState([]);

@@ -9,7 +9,6 @@ import {
 } from '../../../store/api/communication/chats/GroupChatUser.api';
 import Members from '../Members';
 import ChatRulesItem from '../create/ChatRulesItem';
-import InDev from '../../inDevNotes/InDev';
 
 const rulesEnum = {
     "owner": 0,
@@ -152,10 +151,7 @@ const GroupChatMenu = ({ me, setUserInformation, setSelectedChat, setShowAddPeop
                     {chat?.customerId === me?.id &&
                         <div className="btn-border-shadow" onClick={() => setRulesInspectionModeOn((item) => !item)}>{t("Rules")}</div>
                     }
-                    <InDev inDevItem={
-                            <div className="btn-border-shadow">{t("Documents")}</div>
-                        }
-                    />
+                    <div className="btn-border-shadow">{t("Documents")}</div>
                 </div>
                 <div className="danger-settings">
                     {me?.id === chat.customerId &&

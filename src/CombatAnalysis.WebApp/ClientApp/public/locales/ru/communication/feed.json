@@ -2,5 +2,8 @@
   "NewPosts": "Новые посты",
   "Refresh": "Обновить",
   "Cancel": "Отмена",
-  "Create": "Создать"
+  "Create": "Создать",
+  "Recomendations": "Рекомендации",
+  "RecomendationsByTags": "Рекомендации по тегам",
+  "UseRecomendations": "Использовать рекомендации"
 }

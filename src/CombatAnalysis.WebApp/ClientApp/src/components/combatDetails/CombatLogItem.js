@@ -7,7 +7,6 @@ import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { useLazyFindGroupChatUserByUserIdQuery } from '../../store/api/communication/chats/GroupChatUser.api';
 import { useLazyGetByUserIdAsyncQuery } from '../../store/api/communication/chats/PersonalChat.api';
-import InDev from '../inDevNotes/InDev';
 import CombatLogItemDiscussion from './CombatLogItemDiscussion';
 import GroupChatList from './GroupChatList';
 import PersonalChatList from './PersonalChatList';
@@ -58,11 +57,9 @@ const CombatLogItem = ({ log, isAuth }) => {
                                 title={t("ShouldAuthorize")}
                             />
                         }
-                        <InDev
-                            inDevItem={<CombatLogItemDiscussion
-                                isAuth={isAuth}
-                                getChatsByUserIdAsync={getChatsByUserIdAsync}
-                            />}
+                        <CombatLogItemDiscussion
+                            isAuth={isAuth}
+                            getChatsByUserIdAsync={getChatsByUserIdAsync}
                         />
                     </div>
                 </li>

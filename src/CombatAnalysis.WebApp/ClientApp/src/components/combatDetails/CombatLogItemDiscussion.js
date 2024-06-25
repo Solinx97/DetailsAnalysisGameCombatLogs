@@ -6,7 +6,7 @@ const CombatLogItemDiscussion = ({ isAuth, getChatsByUserIdAsync }) => {
     const { t } = useTranslation("combatDetails/mainInformation");
 
     return (
-        <div className={`communication ${isAuth ? "" : "disabled"}`}>
+        <div className="communication disabled">
             <div className="btn-shadow">
                 <FontAwesomeIcon
                     icon={faCirclePlus}

@@ -2,5 +2,8 @@
   "NewPosts": "New posts",
   "Refresh": "Refresh",
   "Cancel": "Cancel",
-  "Create": "Create"
+  "Create": "Create",
+  "Recomendations": "Recomendations",
+  "RecomendationsByTags": "Recomendations by tags",
+  "UseRecomendations": "Use recomendations"
 }
