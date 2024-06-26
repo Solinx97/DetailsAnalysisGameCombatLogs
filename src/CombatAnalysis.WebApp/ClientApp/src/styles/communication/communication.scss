@@ -86,16 +86,24 @@
         margin-left: 200px;
 
         .new-posts {
-            position: relative;
+            position: fixed;
             display: flex;
             justify-content: center;
-            bottom: 40px;
+            top: 10px;
+            margin-left: -200px;
+            width: 100%;
 
             &__content {
                 padding: 5px 10px;
                 cursor: pointer;
                 border: 2px solid white;
+                box-shadow: 1px 1px 1px 1px white;
                 border-radius: 10px;
+
+                &:hover {
+                    border: 2px solid #4793AF;
+                    box-shadow: 1px 1px 1px 1px #4793AF;
+                }
             }
         }
     }
