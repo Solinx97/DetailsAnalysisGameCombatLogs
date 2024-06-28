@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using CombatAnalysis.CombatParser.Core;
-using CombatAnalysis.CombatParser.Entities;
 using CombatAnalysis.CombatParser.Interfaces;
 using CombatAnalysis.CombatParser.Services;
 using CombatAnalysis.Core.Consts;
@@ -49,7 +48,7 @@ public class App : MvxApplication
         var mapper = mappingConfig.CreateMapper();
         IHttpClientHelper httpClient = new HttpClientHelper();
         IFileManager fileManager = new FileManager();
-        IParser<Combat> parser = new CombatParserService(fileManager, logger);
+        var parser = new CombatParserService(fileManager, logger);
 
         var memoryCacheOptions = new MemoryCacheOptions { SizeLimit = 2048 };
         var memoryCache = new MemoryCache(memoryCacheOptions);

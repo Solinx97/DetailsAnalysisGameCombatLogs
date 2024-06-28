@@ -20,19 +20,26 @@ public class AuthenticationController : ControllerBase
     [HttpGet]
     public async Task<IActionResult> Refresh()
     {
-        if (!HttpContext.Request.Cookies.TryGetValue("refreshToken", out var refreshToken))
+        try
+        {
+            if (!HttpContext.Request.Cookies.TryGetValue("refreshToken", out var refreshToken))
+            {
+                return Ok(false);
+            }
+
+            var email = HttpContext.User.Identity.Name;
+            var responseMessage = await _httpClient.GetAsync($"account/find/{email}", refreshToken, Port.UserApi);
+            if (responseMessage.IsSuccessStatusCode)
+            {
+                var user = await responseMessage.Content.ReadFromJsonAsync<AppUserModel>();
+                return Ok(user);
+            }
+
+            return Ok(false);
+        }
+        catch (Exception ex)
         {
             return Ok(false);
         }
-
-        var email = HttpContext.User.Identity.Name;
-        var responseMessage = await _httpClient.GetAsync($"account/find/{email}", refreshToken, Port.UserApi);
-        if (responseMessage.IsSuccessStatusCode)
-        {
-            var user = await responseMessage.Content.ReadFromJsonAsync<AppUserModel>();
-            return Ok(user);
-        }
-
-        return Ok(false);
     }
 }

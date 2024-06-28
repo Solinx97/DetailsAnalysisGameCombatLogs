@@ -48,7 +48,7 @@ const GroupChat = ({ chat, me, setSelectedChat, callMinimazedData }) => {
 
         const connectSocket = async () => {
             try {
-                const socket = io.connect("192.168.0.161:2000");
+                socket = io.connect("192.168.0.161:2000");
 
                 socket.on("connect_error", (error) => {
                     console.error("Socket connection error:", error);

@@ -1,9 +1,13 @@
 import { useGetCustomerByIdQuery } from '../../../store/api/Customer.api';
 import { useFindPersonalChatMessageCountQuery } from '../../../store/api/communication/chats/PersonalChatMessagCount.api';
 
+const personalChatCountPollingInterval = 2000;
+
 const PersonalChatListItem = ({ chat, setSelectedPersonalChat, companionId, meId }) => {
     const { data: user, isLoading } = useGetCustomerByIdQuery(companionId);
-    const { data: messagesCount, isLoading: messagesCountLoading } = useFindPersonalChatMessageCountQuery({ chatId: chat?.id, userId: meId });
+    const { data: messagesCount, isLoading: messagesCountLoading } = useFindPersonalChatMessageCountQuery({ chatId: chat?.id, userId: meId }, {
+        pollingInterval: personalChatCountPollingInterval,
+    });
 
     if (isLoading || messagesCountLoading) {
         return (<></>);

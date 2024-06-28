@@ -37,6 +37,11 @@ const FeedParticipants = ({ customer, t }) => {
         }
     }
 
+    const insertNewPostsHandleAsync = async () => {
+        window.scroll(0, 0);
+        await insertNewPostsAsync();
+    }
+
     if (isLoading) {
         return (<Loading />);
     }
@@ -44,7 +49,7 @@ const FeedParticipants = ({ customer, t }) => {
     return (
         <div>
             {newPosts.length > 0 &&
-                <div onClick={async () => await insertNewPostsAsync()} className="new-posts">
+                <div onClick={async () => await insertNewPostsHandleAsync()} className="new-posts">
                     <div className="new-posts__content">{t("NewPosts")}</div>
                 </div>
             }

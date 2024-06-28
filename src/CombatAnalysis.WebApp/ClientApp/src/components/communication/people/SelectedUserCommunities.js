@@ -9,9 +9,9 @@ const SelectedUserCommunities = ({ customer }) => {
     }
 
     return (
-        <ul>
-            {
-                userCommunities?.map((item) => (
+        <div className="communities__list">
+            <ul>
+                {userCommunities?.map((item) => (
                     <li key={item.id} className="community">
                         <CommunityItem
                             community={item}
@@ -19,8 +19,9 @@ const SelectedUserCommunities = ({ customer }) => {
                         />
                     </li>
                 ))
-            }
-        </ul>
+                }
+            </ul>
+        </div>
     );
 }
 

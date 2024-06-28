@@ -226,20 +226,6 @@
             <TextBlock Width="250" TextWrapping="Wrap" Text="{loc:Loc ProcessingFailed}" FontSize="16" TextAlignment="Center" Foreground="Orange"
                        Margin="10" HorizontalAlignment="Center" VerticalAlignment="Center"
                        Visibility="{Binding FileIsNotCorrect, Converter={StaticResource BoolToVisibility}}" />
-            <StackPanel Height="90" Visibility="{Binding IsParsing, Converter={StaticResource BoolToVisibility}}">
-                <StackPanel>
-                    <TextBlock Text="{Binding DungeonName}" FontSize="14" TextAlignment="Center" TextWrapping="Wrap"
-                           VerticalAlignment="Center" MaxWidth="650" Foreground="White" />
-                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                        <TextBlock Text="{Binding CombatName}" FontSize="17" TextAlignment="Center" TextWrapping="Wrap" Foreground="White"
-                           VerticalAlignment="Center" MaxWidth="650" FontWeight="Bold" Margin="5" FontFamily="Comic Sans MS"/>
-                        <Icon:PackIconMaterial Kind="Check" Foreground="Green" Style="{StaticResource menuButtonIcon}" 
-                                   Visibility="{Binding CombatStatus, Converter={StaticResource BoolToVisibility}, ConverterParameter=true:false}"/>
-                        <Icon:PackIconMaterial Kind="SwordCross" Foreground="Red" Style="{StaticResource menuButtonIcon}" 
-                                   Visibility="{Binding CombatStatus, Converter={StaticResource BoolToVisibility}, ConverterParameter=true:true}"/>
-                    </StackPanel>
-                </StackPanel>
-            </StackPanel>
         </StackPanel>
         
         <StackPanel Visibility="{Binding CombatLogUploadingFailed, Converter={StaticResource BoolToVisibility}}"  Grid.Row="2" Grid.Column="2" Grid.ColumnSpan="2" VerticalAlignment="Bottom">

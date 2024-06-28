@@ -80,7 +80,7 @@ const MyCommunities = () => {
                         }
                         <ul>
                             {myCommunities?.map((item) => (
-                                    <li key={item.id}>
+                                    <li key={item.id} className="community">
                                         <MyCommunitiesItem
                                             userCommunity={item}
                                             filterContent={filterContent}

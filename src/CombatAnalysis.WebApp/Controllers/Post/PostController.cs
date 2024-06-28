@@ -52,7 +52,8 @@ public class PostController : ControllerBase
         if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
         {
             return Unauthorized();
-        } else if (responseMessage.IsSuccessStatusCode)
+        } 
+        else if (responseMessage.IsSuccessStatusCode)
         {
             var posts = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<PostModel>>();
 

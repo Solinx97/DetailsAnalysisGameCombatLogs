@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using CombatAnalysis.CombatParser.Entities;
 using CombatAnalysis.CombatParser.Interfaces;
+using CombatAnalysis.CombatParser.Services;
 using CombatAnalysis.Core.Enums;
 using CombatAnalysis.Core.Interfaces;
 using CombatAnalysis.Core.Interfaces.Observers;
@@ -21,7 +22,7 @@ public class CombatLogInformationViewModel : ParentTemplate, CombatParser.Interf
 {
     private readonly IMvxNavigationService _mvvmNavigation;
     private readonly IMapper _mapper;
-    private readonly IParser<Combat> _parser;
+    private readonly CombatParserService _parser;
     private readonly CombatParserAPIService _combatParserAPIService;
     private readonly IMemoryCache _memoryCache;
 
@@ -52,7 +53,7 @@ public class CombatLogInformationViewModel : ParentTemplate, CombatParser.Interf
     private bool _uploadingLogs;
 
     public CombatLogInformationViewModel(IMapper mapper, IMvxNavigationService mvvmNavigation, IHttpClientHelper httpClient,
-        IParser<Combat> parser, ILogger logger, IMemoryCache memoryCache)
+        CombatParserService parser, ILogger logger, IMemoryCache memoryCache)
     {
         _mapper = mapper;
         _mvvmNavigation = mvvmNavigation;
@@ -223,15 +224,6 @@ public class CombatLogInformationViewModel : ParentTemplate, CombatParser.Interf
         }
     }
 
-    public bool CombatStatus
-    {
-        get { return _combatStatus; }
-        set
-        {
-            SetProperty(ref _combatStatus, value);
-        }
-    }
-
     public int CombatListSelectedIndex
     {
         get { return _combatListSelectedIndex; }
@@ -348,7 +340,6 @@ public class CombatLogInformationViewModel : ParentTemplate, CombatParser.Interf
 
         DungeonName = data.DungeonName;
         CombatName = data.Name;
-        CombatStatus = data.IsWin;
     }
 
     public void GetLogType(int logType)
@@ -369,7 +360,7 @@ public class CombatLogInformationViewModel : ParentTemplate, CombatParser.Interf
 
     public override void ViewDestroy(bool viewFinishing = true)
     {
-        _parser.RemoveObserver(this);
+        //_parser.RemoveObserver(this);
 
         base.ViewDestroy(viewFinishing);
     }
@@ -431,7 +422,7 @@ public class CombatLogInformationViewModel : ParentTemplate, CombatParser.Interf
 
     private async Task CombatLogFileValidateAsync(string combatLog)
     {
-        _parser.AddObserver(this);
+        //_parser.AddObserver(this);
         FileIsNotCorrect = !await _parser.FileCheckAsync(combatLog);
 
         if (!FileIsNotCorrect)

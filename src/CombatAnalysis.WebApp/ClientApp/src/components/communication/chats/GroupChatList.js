@@ -1,8 +1,8 @@
-﻿import { faArrowDown, faArrowUp, faXmark } from '@fortawesome/free-solid-svg-icons';
+﻿import { faArrowDown, faArrowUp } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import GroupChatListItem from './GroupChatListItem';
 
-const GroupChatList = ({ meId, t, groupChatUsers, selectedChat, setSelectedChat, chatsHidden, toggleChatsHidden }) => {
+const GroupChatList = ({ t, groupChatUsers, selectedChat, setSelectedChat, chatsHidden, toggleChatsHidden }) => {
     return (
         <div className="chat-list">
             <div className="chats__my-chats_title">

@@ -204,6 +204,7 @@ const SelectedCommunity = () => {
                                 owner={community.name}
                                 postTypeName="community"
                                 createTypeOfPostFunc={createCommunityPostAsync}
+                                t={t}
                             />
                         }
                         <SelectedCommunityItem

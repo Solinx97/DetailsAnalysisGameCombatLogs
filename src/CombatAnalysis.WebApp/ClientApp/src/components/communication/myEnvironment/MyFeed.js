@@ -1,14 +1,15 @@
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import { useLazyUserPostSearchByUserIdQuery } from '../../../store/api/ChatApi';
-import { useLazyGetPostByIdQuery } from '../../../store/api/communication/Post.api';
+import { useLazyGetPostByIdQuery, useRemovePostMutation } from '../../../store/api/communication/Post.api';
 import { useCreateUserPostAsyncMutation, useLazyUserPostSearchByPostIdQuery, useRemoveUserPostAsyncMutation } from '../../../store/api/communication/UserPost.api';
-import { useRemovePostMutation } from '../../../store/api/communication/Post.api';
+import Loading from '../../Loading';
 import CreatePost from '../CreatePost';
 import Post from '../Post';
-import Loading from '../../Loading';
 
 const MyFeed = () => {
+    const { t } = useTranslation("communication/feed");
     const customer = useSelector((state) => state.customer.value);
 
     const [getUserPosts] = useLazyUserPostSearchByUserIdQuery();
@@ -88,6 +89,7 @@ const MyFeed = () => {
                 owner={customer?.username}
                 postTypeName="user"
                 createTypeOfPostFunc={createUserPostAsync}
+                t={t}
             />
             <ul className="posts">
                 {allPosts?.map(post => (

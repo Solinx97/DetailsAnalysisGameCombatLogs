@@ -17,18 +17,16 @@ const MyCommunitiesItem = ({ userCommunity, filterContent }) => {
 
     return (
         myCommunity.name.toLowerCase().startsWith(filterContent.toLowerCase()) &&
-        <div className="community">
-            <div className="card box-shadow">
-                <div className="card-body">
-                    <h5 className="card-title">{myCommunity?.name}</h5>
-                    <p className="card-text">{myCommunity?.description}</p>
-                    <div className="open-community">
-                        <div className="btn-shadow" onClick={() => navigate(`/community?id=${myCommunity?.id}`)}>
-                            <FontAwesomeIcon
-                                icon={faCommentDots}
-                            />
-                            <div>{t("Open")}</div>
-                        </div>
+        <div className="card box-shadow">
+            <div className="card-body">
+                <h5 className="card-title">{myCommunity?.name}</h5>
+                <p className="card-text">{myCommunity?.description}</p>
+                <div className="open-community">
+                    <div className="btn-shadow" onClick={() => navigate(`/community?id=${myCommunity?.id}`)}>
+                        <FontAwesomeIcon
+                            icon={faCommentDots}
+                        />
+                        <div>{t("Open")}</div>
                     </div>
                 </div>
             </div>

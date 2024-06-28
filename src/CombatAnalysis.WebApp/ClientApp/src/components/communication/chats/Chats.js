@@ -1,4 +1,4 @@
-﻿import React, { useCallback, useState } from 'react';
+﻿import React, { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import { NavLink } from 'react-router-dom';
@@ -13,7 +13,7 @@ import PersonalChatList from './PersonalChatList';
 
 import "../../../styles/communication/chats/chats.scss";
 
-const pollingInterval = 2000;
+const pollingInterval = 3000;
 
 const Chats = () => {
     const { t } = useTranslation("communication/chats/chats");
@@ -22,18 +22,20 @@ const Chats = () => {
 
     const [selectedChat, setSelectedChat] = useState({ type: null, chat: null });
     const [chatsHidden, setChatsHidden] = useState({ group: false, personal: false });
+    const [skipFetching, setSkipFetching] = useState(true);
 
-    const { data: personalChats, isError: personalChatError, isLoading: personalChatLoading, refetch: personalChatRefetch } = useGetByUserIdAsyncQuery(me?.id, {
+    const { data: personalChats, isError: personalChatError, isLoading: personalChatLoading } = useGetByUserIdAsyncQuery(me?.id, {
         pollingInterval,
+        skip: skipFetching
     });
-    const { data: groupChatUsers, isError: groupChatError, isLoading: groupChatLoading, refetch: groupChatRefetch } = useFindGroupChatUserByUserIdQuery(me?.id, {
+    const { data: groupChatUsers, isError: groupChatError, isLoading: groupChatLoading } = useFindGroupChatUserByUserIdQuery(me?.id, {
         pollingInterval,
+        skip: skipFetching
     });
 
-    const handleRefetch = useCallback(() => {
-        personalChatRefetch();
-        groupChatRefetch();
-    }, [personalChatRefetch, groupChatRefetch]);
+    useEffect(() => {
+        me !== null ? setSkipFetching(false) : setSkipFetching(true);
+    }, [me]);
 
     const toggleChatsHidden = useCallback((type) => {
         setChatsHidden(prevState => ({ ...prevState, [type]: !prevState[type] }));
@@ -42,16 +44,7 @@ const Chats = () => {
     const isLoading = personalChatLoading || groupChatLoading;
     const isError = personalChatError || groupChatError;
 
-    if (isLoading) {
-        return (
-            <>
-                <CommunicationMenu currentMenuItem={1} />
-                <Loading />
-            </>
-        );
-    }
-
-    if (isError) {
+    if (isLoading || isError) {
         return (
             <>
                 <CommunicationMenu currentMenuItem={1} />
@@ -69,7 +62,6 @@ const Chats = () => {
                 <div className="chats">
                     <div className="chats__my-chats">
                         <GroupChatList
-                            meId={me?.id}
                             t={t}
                             groupChatUsers={groupChatUsers}
                             selectedChat={selectedChat}

@@ -66,7 +66,7 @@ const SelectedUser = () => {
         const userPersonalPosts = [];
 
         for (let i = 0; i < userPosts.length; i++) {
-            const post = await getPostById(userPosts[i].id);
+            const post = await getPostById(userPosts[i].postId);
 
             if (post.data !== undefined) {
                 userPersonalPosts.push(post.data);
@@ -184,7 +184,7 @@ const SelectedUser = () => {
                                     <li key={post.id}>
                                         <Post
                                             customer={customer}
-                                            post={post}
+                                            data={post}
                                             deletePostAsync={null}
                                         />
                                     </li>
