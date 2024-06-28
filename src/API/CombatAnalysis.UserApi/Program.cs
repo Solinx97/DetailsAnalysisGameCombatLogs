@@ -63,8 +63,10 @@ app.UseSwagger();
 app.UseSwaggerUI(options =>
 {
     options.SwaggerEndpoint("/swagger/v1/swagger.json", "User API v1");
+    options.InjectStylesheet("/swagger-ui/swaggerDark.css");
 });
 
+app.UseStaticFiles();
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
