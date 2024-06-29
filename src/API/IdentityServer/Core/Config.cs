@@ -18,7 +18,7 @@ public class Config
             new Client
             {
                 ClientId = "client1",
-                AllowedGrantTypes = GrantTypes.ClientCredentials,
+                AllowedGrantTypes = GrantTypes.CodeAndClientCredentials,
                 ClientSecrets =
                 {
                     new Secret("secret1".Sha512())
@@ -28,7 +28,7 @@ public class Config
             new Client
             {
                 ClientId = "client2",
-                AllowedGrantTypes = GrantTypes.ClientCredentials,
+                AllowedGrantTypes = GrantTypes.CodeAndClientCredentials,
                 ClientSecrets =
                 {
                     new Secret("secret2".Sha512())

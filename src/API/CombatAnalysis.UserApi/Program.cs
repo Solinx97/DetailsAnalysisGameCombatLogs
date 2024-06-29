@@ -5,7 +5,7 @@ using CombatAnalysis.Identity.Extensions;
 using CombatAnalysis.Identity.Interfaces;
 using CombatAnalysis.Identity.Settings;
 using CombatAnalysis.UserApi.Mapping;
-using CombatAnalysis.UserApi.Middleware;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -31,12 +31,22 @@ var mappingConfig = new MapperConfiguration(mc =>
 var mapper = mappingConfig.CreateMapper();
 builder.Services.AddSingleton(mapper);
 builder.Services.AddSingleton<ILogger>(logger);
-builder.Services.AddAuthentication((options) =>
+builder.Services.AddAuthentication("Bearer")
+        .AddJwtBearer("Bearer", options =>
+        {
+            options.Authority = builder.Configuration["Authentication:identityServer"];
+            options.TokenValidationParameters = new TokenValidationParameters
+            {
+                ValidateAudience = false
+            };
+        });
+
+builder.Services.AddAuthorization(options =>
 {
-    options.DefaultChallengeScheme = "Basic";
-    options.AddScheme("Basic", (builder) =>
+    options.AddPolicy("ApiScope", builder =>
     {
-        builder.HandlerType = typeof(AuthenticationHandler);
+        builder.RequireAuthenticatedUser();
+        builder.RequireClaim("scope", "api1");
     });
 });
 
@@ -50,6 +60,37 @@ builder.Services.AddSwaggerGen(options =>
         Title = "User API",
         Version = "v1",
     });
+
+    options.AddSecurityDefinition("oauth2", new OpenApiSecurityScheme
+    {
+        Type = SecuritySchemeType.OAuth2,
+        Flows = new OpenApiOAuthFlows
+        {
+            ClientCredentials = new OpenApiOAuthFlow
+            {
+                TokenUrl = new Uri($"{builder.Configuration["Authentication:identityServer"]}/connect/token"),
+                Scopes = new Dictionary<string, string>
+                {
+                    { "api1", "Request API #1"}
+                }
+            }
+        }
+    });
+
+    options.AddSecurityRequirement(new OpenApiSecurityRequirement
+        {
+            {
+                new OpenApiSecurityScheme
+                {
+                    Reference = new OpenApiReference
+                    {
+                        Type = ReferenceType.SecurityScheme,
+                        Id = "oauth2"
+                    },
+                },
+                new[] { "api1" }
+            }
+        });
 });
 
 var app = builder.Build();
@@ -59,17 +100,21 @@ var jwtSecretService = scope.ServiceProvider.GetService<IJWTSecret>();
 await jwtSecretService.GenerateSecretKeysAsync();
 
 // Configure the HTTP request pipeline.
+app.UseAuthentication(); // Enable authentication middleware
+app.UseAuthorization();
+
 app.UseSwagger();
 app.UseSwaggerUI(options =>
 {
     options.SwaggerEndpoint("/swagger/v1/swagger.json", "User API v1");
     options.InjectStylesheet("/swagger-ui/swaggerDark.css");
+    options.OAuthClientId("client1"); // Replace with your client ID
+    options.OAuthClientSecret("secret1"); // Replace with your client secret
 });
 
 app.UseStaticFiles();
 app.UseHttpsRedirection();
 
-app.UseAuthorization();
-
 app.MapControllers();
+
 app.Run();

@@ -35,7 +35,7 @@ builder.Services.AddSingleton<ILogger>(logger);
 builder.Services.AddAuthentication("Bearer")
         .AddJwtBearer("Bearer", options =>
         {
-            options.Authority = "https://localhost:7282";
+            options.Authority = builder.Configuration["Authentication:identityServer"];
             options.TokenValidationParameters = new TokenValidationParameters
             {
                 ValidateAudience = false
@@ -48,11 +48,6 @@ builder.Services.AddAuthorization(options =>
     {
         builder.RequireAuthenticatedUser();
         builder.RequireClaim("scope", "api1");
-    });
-    options.AddPolicy("ApiScope2", builder =>
-    {
-        builder.RequireAuthenticatedUser();
-        builder.RequireClaim("scope", "api2");
     });
 });
 
@@ -74,11 +69,10 @@ builder.Services.AddSwaggerGen(options =>
         {
             ClientCredentials = new OpenApiOAuthFlow
             {
-                TokenUrl = new Uri("https://localhost:7282/connect/token"),
+                TokenUrl = new Uri($"{builder.Configuration["Authentication:identityServer"]}/connect/token"),
                 Scopes = new Dictionary<string, string>
                 {
-                    { "api1", "Request API #1"},
-                    { "api2", "Request API #2"}
+                    { "api1", "Request API #1"}
                 }
             }
         }
@@ -95,7 +89,7 @@ builder.Services.AddSwaggerGen(options =>
                         Id = "oauth2"
                     },
                 },
-                new[] { "api1", "api2" }
+                new[] { "api1" }
             }
         });
 });

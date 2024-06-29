@@ -15,11 +15,16 @@ import MyEnvironment from './components/communication/myEnvironment/MyEnvironmen
 import People from './components/communication/people/People';
 import SelectedUser from './components/communication/people/SelectedUser';
 import VoiceChat from './components/communication/voiceChat/VoiceChat';
+import AuthorizationCallback from './components/identity/AuthorizationCallback';
 
 const AppRoutes = [
     {
         index: true,
         element: <Home />
+    },
+    {
+        path: '/callback',
+        element: <AuthorizationCallback />
     },
     {
         path: '/main-information',

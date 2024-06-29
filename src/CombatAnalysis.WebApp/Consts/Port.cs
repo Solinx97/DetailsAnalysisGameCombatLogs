@@ -9,5 +9,7 @@
         public static string ChatApi { get; set; }
 
         public static string CommunicationApi { get; set; }
+
+        public static string Identity { get; set; }
     }
 }

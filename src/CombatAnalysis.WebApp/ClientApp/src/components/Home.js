@@ -40,7 +40,42 @@ const Home = () => {
         return () => clearTimeout(timeoutId);
     }, [shouldBeAuthorize]);
 
-    const naviagetToLogin = () => navigate("/login");
+    const generateCodeVerifier = () => {
+        const array = new Uint8Array(32);
+        window.crypto.getRandomValues(array);
+
+        const codeVerifier = base64UrlEncode(array);
+        return codeVerifier;
+    }
+
+    const generateCodeChallengeAsync = async (verifier) => {
+        const buffer = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(verifier));
+        const codeChalenge = base64UrlEncode(buffer);
+
+        return codeChalenge
+    }
+
+    const base64UrlEncode = (buffer) => {
+        const encodedCode = btoa(String.fromCharCode.apply(null, new Uint8Array(buffer)))
+            .replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+
+        return encodedCode;
+    }
+
+    const naviagetToLoginAsync = async () => {
+        const codeVerifier = generateCodeVerifier();
+        const codeChallenge = await generateCodeChallengeAsync(codeVerifier);
+
+        window.location.href = `https://localhost:7064/login?grant_type=code&client_id=clientId&redirect_uri=https://localhost:44479/callback&scope=api1&code_challenge_method=S256&code_challenge=${codeChallenge}`;
+    }
+
+    const naviagetToToken = async () => {
+        const codeVerifier = generateCodeVerifier();
+
+        const result = await fetch(`/api/v1/CombatAnalysisIdentity?codeVerifier=${codeVerifier}&authorizationCode=${codeVerifier}`);
+        console.log(result);
+    }
+
     const naviagetToFeed = () => navigate("/feed");
     const naviagetToMainInformation = () => navigate("/main-information");
 
@@ -50,7 +85,18 @@ const Home = () => {
                 <div className="title">
                     <div>{t("Communication")}</div>
                     {customer === null &&
-                        <div className="btn-shadow authorize-alert" onClick={naviagetToLogin} title={t("GoToLogin")}>
+                        <div className="btn-shadow authorize-alert" onClick={async () => await naviagetToLoginAsync()} title={t("GoToLogin")}>
+                            <FontAwesomeIcon
+                                icon={faTriangleExclamation}
+                            />
+                            <div>{t("ShouldAuthorize")}</div>
+                        </div>
+                    }
+                </div>
+                <div className="title">
+                    <div>{t("Communication")}</div>
+                    {customer === null &&
+                        <div className="btn-shadow authorize-alert" onClick={async () => await naviagetToToken()} title={t("Token")}>
                             <FontAwesomeIcon
                                 icon={faTriangleExclamation}
                             />

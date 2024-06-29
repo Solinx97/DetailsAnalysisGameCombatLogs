@@ -9,6 +9,7 @@ Port.CombatParserApi = builder.Configuration.GetValue<string>("CombatParserApiPo
 Port.UserApi = builder.Configuration.GetValue<string>("UserApiPort");
 Port.ChatApi = builder.Configuration.GetValue<string>("ChatApiPort");
 Port.CommunicationApi = builder.Configuration.GetValue<string>("CommunicationApiPort");
+Port.Identity = builder.Configuration.GetValue<string>("Identity");
 
 IHttpClientHelper httpClient = new HttpClientHelper();
 builder.Services.AddSingleton(httpClient);
