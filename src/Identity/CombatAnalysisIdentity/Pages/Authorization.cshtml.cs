@@ -18,21 +18,23 @@ namespace CombatAnalysisIdentity.Pages
             _identityUserService = identityUserService;
         }
 
-        public void OnGet()
+        public bool QueryIsValid { get; set; }
+
+        public async Task OnGetAsync()
         {
+            GetAuthorizationRequestData();
+
+            var clientIsValid = await ClientValidationAsync();
+
+            QueryIsValid = clientIsValid;
         }
 
-        public async Task<IActionResult> OnPostAsync(string returnUrl, string email, string password)
+        public async Task<IActionResult> OnPostAsync(string email, string password)
         {
             if (!ModelState.IsValid)
             {
                 ModelState.AddModelError(string.Empty, "Invalid login attempt.");
 
-                return Page();
-            }
-
-            if (string.IsNullOrEmpty(returnUrl))
-            {
                 return Page();
             }
 
@@ -44,7 +46,7 @@ namespace CombatAnalysisIdentity.Pages
                 var authorizationCode = await _oAuthCodeFlowService.GenerateAuthorizationCodeAsync(user.Id, _authorizationRequest.ClientTd, _authorizationRequest.CodeChallenge, _authorizationRequest.CodeChallengeMethod);
 
                 var encodedAuthorizationCode = Uri.EscapeDataString(authorizationCode);
-                var redirectUrl = $"{returnUrl}?code={encodedAuthorizationCode}&state=authorized";
+                var redirectUrl = $"{_authorizationRequest.RedirectUri}?code={encodedAuthorizationCode}&state={_authorizationRequest.State}";
 
                 return Redirect(redirectUrl);
             }
@@ -52,6 +54,13 @@ namespace CombatAnalysisIdentity.Pages
             ModelState.AddModelError(string.Empty, "Invalid login attempt.");
 
             return Page();
+        }
+
+        private async Task<bool> ClientValidationAsync()
+        {
+            var clientIsValid = await _oAuthCodeFlowService.ValidateClientAsync(_authorizationRequest.ClientTd, _authorizationRequest.RedirectUri, _authorizationRequest.Scope);
+            
+            return clientIsValid;
         }
 
         private void GetAuthorizationRequestData()
@@ -74,6 +83,11 @@ namespace CombatAnalysisIdentity.Pages
             if (Request.Query.TryGetValue(AuthorizationRequest.Scope.ToString(), out var scope))
             {
                 _authorizationRequest.Scope = scope;
+            }
+
+            if (Request.Query.TryGetValue(AuthorizationRequest.State.ToString(), out var state))
+            {
+                _authorizationRequest.State = state;
             }
 
             if (Request.Query.TryGetValue(AuthorizationRequest.CodeChallengeMethod.ToString(), out var codeChallengeMethod))

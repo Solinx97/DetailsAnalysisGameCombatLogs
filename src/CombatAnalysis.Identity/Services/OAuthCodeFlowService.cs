@@ -1,6 +1,9 @@
 ﻿using CombatAnalysis.Identity.Interfaces;
 using CombatAnalysis.Identity.Security;
 using CombatAnalysis.IdentityDAL.Interfaces;
+using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
 
@@ -9,10 +12,12 @@ namespace CombatAnalysis.Identity.Services;
 internal class OAuthCodeFlowService : IOAuthCodeFlowService
 {
     private readonly IPkeRepository _pkeRepository;
+    private readonly IClientRepository _clientRepository;
 
-    public OAuthCodeFlowService(IPkeRepository pkeRepository)
+    public OAuthCodeFlowService(IPkeRepository pkeRepository, IClientRepository clientRepository)
     {
         _pkeRepository = pkeRepository;
+        _clientRepository = clientRepository;
     }
 
     async Task<string> IOAuthCodeFlowService.GenerateAuthorizationCodeAsync(string userId, string clientId, string codeChallenge, string codeChallengeMethod)
@@ -22,23 +27,47 @@ internal class OAuthCodeFlowService : IOAuthCodeFlowService
 
         var encryptedAuthorizationCode = EncryptAuthorizationCode(authorizationCode, userId, Encryption.EnctyptionKey);
 
-        await _pkeRepository.SaveCodeChallengeAsync(clientId, encryptedAuthorizationCode, codeChallenge, codeChallengeMethod);
+        await _pkeRepository.CreateAsync(clientId, encryptedAuthorizationCode, codeChallenge, codeChallengeMethod);
 
         return encryptedAuthorizationCode;
     }
 
-    bool IOAuthCodeFlowService.ValidateCodeChallenge(string codeVerifier, string authorizationCode)
+    async Task<bool> IOAuthCodeFlowService.ValidateCodeChallengeAsync(string codeVerifier, string authorizationCode)
     {
-        if (string.IsNullOrEmpty(codeVerifier))
+        if (string.IsNullOrEmpty(codeVerifier) || string.IsNullOrEmpty(authorizationCode))
         {
             return false;
         }
 
-        var authorizationCodeChallenge = _pkeRepository.GetCodeChallenge(authorizationCode);
+        var authorizationCodeChallenge = await _pkeRepository.GetByIdAsync(authorizationCode);
         var generatedCodeChallenge = GenerateCodeChallenge(codeVerifier);
         var codeChallengeIsValidated = authorizationCodeChallenge.CodeChallenge == generatedCodeChallenge;
 
         return codeChallengeIsValidated;
+    }
+
+    async Task<bool> IOAuthCodeFlowService.ValidateClientAsync(string clientId, string redirectUri, string clientScope)
+    {
+        if (string.IsNullOrEmpty(clientId) || string.IsNullOrEmpty(redirectUri) || string.IsNullOrEmpty(clientScope))
+        {
+            return false;
+        }
+
+        var client = await _clientRepository.GetByIdAsync(clientId);
+        if (client == null)
+        {
+            return false;
+        }
+
+        var redirectUriIsValid = client.RedirectUrl == redirectUri;
+        if (!redirectUriIsValid)
+        {
+            return false;
+        }
+
+        var scopeIsValid = client.Scope == clientScope;
+
+        return scopeIsValid;
     }
 
     private static string EncryptAuthorizationCode(string authorizationCode, string customData, byte[] encryptionKey)
@@ -97,6 +126,30 @@ internal class OAuthCodeFlowService : IOAuthCodeFlowService
         var decryptedAuthorizationKey = (parts[0], parts.Length > 1 ? parts[1] : string.Empty);
 
         return decryptedAuthorizationKey;
+    }
+
+    string IOAuthCodeFlowService.GenerateAccessToken(string clientId, string userId)
+    {
+        var secretKey = GenerateAuthorizationCode();
+        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey));
+        var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+
+        var claims = new[]
+        {
+                new Claim(JwtRegisteredClaimNames.Sub, userId),
+                new Claim(JwtRegisteredClaimNames.Aud, clientId),
+            };
+
+        var token = new JwtSecurityToken(
+            issuer: "https://localhost:7064",
+            audience: clientId,
+            claims: claims,
+            expires: DateTime.Now.AddHours(1),
+            signingCredentials: creds
+        );
+
+        var accessToken = new JwtSecurityTokenHandler().WriteToken(token);
+        return accessToken;
     }
 
     private static string GenerateAuthorizationCode()

@@ -1,6 +1,7 @@
 ﻿using CombatAnalysis.IdentityDAL.Data;
 using CombatAnalysis.IdentityDAL.Entities;
 using CombatAnalysis.IdentityDAL.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
 namespace CombatAnalysis.IdentityDAL.Repositories;
 
@@ -13,7 +14,7 @@ public class PkeRepository : IPkeRepository
         _dbContext = dbContext;
     }
 
-    public async Task SaveCodeChallengeAsync(string clientId, string authorizationCode, string codeChallenge, string codeChallengeMethod)
+    public async Task CreateAsync(string clientId, string authorizationCode, string codeChallenge, string codeChallengeMethod)
     {
         var entry = new AuthorizationCodeChallenge
         {
@@ -27,13 +28,14 @@ public class PkeRepository : IPkeRepository
         };
 
         _dbContext.AuthorizationCodeChallenge.Add(entry);
+
         await _dbContext.SaveChangesAsync();
     }
 
-    public AuthorizationCodeChallenge GetCodeChallenge(string authorizationCode)
+    public async Task<AuthorizationCodeChallenge> GetByIdAsync(string id)
     {
-        var condeChallenge = _dbContext.AuthorizationCodeChallenge
-            .FirstOrDefault(c => c.Id == authorizationCode);
+        var condeChallenge = await _dbContext.AuthorizationCodeChallenge
+            .FirstOrDefaultAsync(c => c.Id == id);
 
         return condeChallenge;
     }

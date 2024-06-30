@@ -20,17 +20,18 @@ public class IdentityUserRepository : IIdentityUserRepository
         await _context.SaveChangesAsync();
     }
 
-    public IdentityUser Get(string id)
+    public async Task<IdentityUser> GetByIdAsync(string id)
     {
-        var identityUser = _context.IdentityUser
-            .FirstOrDefault(c => c.Id == id);
+        var identityUser = await _context.IdentityUser
+            .FirstOrDefaultAsync(c => c.Id == id);
 
         return identityUser;
     }
 
     public async Task<IdentityUser> GetAsync(string email, string password)
     {
-        var entity = await _context.Set<IdentityUser>().FirstOrDefaultAsync(x => x.Email == email && x.Password == password);
+        var entity = await _context.Set<IdentityUser>()
+            .FirstOrDefaultAsync(x => x.Email == email && x.Password == password);
 
         if (entity != null)
         {

@@ -1,4 +1,5 @@
-﻿const useAuthorization = () => {
+﻿
+const useAuthorization = () => {
     const generateCodeVerifier = () => {
         const array = new Uint8Array(32);
         window.crypto.getRandomValues(array);
@@ -24,21 +25,22 @@
         return encodedCode;
     }
 
-
     const navigateToAuthAsync = async () => {
         const codeVerifier = generateCodeVerifier();
+        const state = generateCodeVerifier();
         const codeChallenge = await generateCodeChallengeAsync(codeVerifier);
 
         window.sessionStorage.setItem("codeVerifier", codeVerifier);
+        window.sessionStorage.setItem("state", state);
 
         const codeChallengeMethod = process.env.REACT_APP_CODE_CHALLENGE_METHOD;
         const clientId = process.env.REACT_APP_CLIENT_ID;
         const clientScope = process.env.REACT_APP_CLIENT_SCOPE;
+        const redirectUri = process.env.REACT_APP_REDIRECT_URI;
         const identityServer = process.env.REACT_APP_IDENTITY_SERVER;
         const identityServerAuthPath = process.env.REACT_APP_IDENTITY_SERVER_AUTH_PATH;
-        const redirectUri = process.env.REACT_APP_REDIRECT_URI;
 
-        const uri = `${identityServer}/${identityServerAuthPath}?grantType=code&clientTd=${clientId}&redirectUri=${redirectUri}&scope=${clientScope}&codeChallengeMethod=${codeChallengeMethod}&codeChallenge=${codeChallenge}`;
+        const uri = `${identityServer}/${identityServerAuthPath}?grantType=code&clientTd=${clientId}&redirectUri=${redirectUri}&scope=${clientScope}&state=${state}&codeChallengeMethod=${codeChallengeMethod}&codeChallenge=${codeChallenge}`;
 
         window.location.href = uri;
     }

@@ -29,7 +29,7 @@ public class TokenController : ControllerBase
                 return BadRequest();
             }
 
-            var codeChallengeValidated = _oAuthCodeFlowService.ValidateCodeChallenge(codeVerifier, code);
+            var codeChallengeValidated = await _oAuthCodeFlowService.ValidateCodeChallengeAsync(codeVerifier, code);
             if (!codeChallengeValidated)
             {
                 return BadRequest();
@@ -37,9 +37,9 @@ public class TokenController : ControllerBase
 
             var (authorizationCode, userId) = _oAuthCodeFlowService.DecryptAuthorizationCode(code, Encryption.EnctyptionKey);
 
-            //var refreshToken = await _tokenService.GenerateTokensAsync(userId);
+            var refreshToken = _oAuthCodeFlowService.GenerateAccessToken(clientId, userId);
 
-            return Ok("");
+            return Ok(refreshToken);
         }
         catch (Exception ex)
         {

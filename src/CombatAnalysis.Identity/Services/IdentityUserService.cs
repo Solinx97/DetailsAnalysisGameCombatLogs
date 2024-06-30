@@ -24,9 +24,9 @@ internal class IdentityUserService : IIdentityUserService
         await _identityUserRepository.SaveAsync(map);
     }
 
-    public IdentityUserDto Get(string id)
+    public async Task<IdentityUserDto> GetByIdAsync(string id)
     {
-        var identityUser = _identityUserRepository.Get(id);
+        var identityUser = await _identityUserRepository.GetByIdAsync(id);
         var map = _mapper.Map<IdentityUserDto>(identityUser);
 
         return map;

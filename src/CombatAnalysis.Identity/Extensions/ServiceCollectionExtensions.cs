@@ -14,5 +14,6 @@ public static class ServiceCollectionExtensions
 
         services.AddScoped<IOAuthCodeFlowService, OAuthCodeFlowService>();
         services.AddScoped<IIdentityUserService, IdentityUserService>();
+        services.AddScoped<IClientService, ClientService>();
     }
 }

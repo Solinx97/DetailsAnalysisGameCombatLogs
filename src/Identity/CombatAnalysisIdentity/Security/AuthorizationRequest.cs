@@ -6,6 +6,7 @@ public enum AuthorizationRequest
     GrantType,
     ClientTd,
     Scope,
+    State,
     CodeChallengeMethod,
     CodeChallenge
 }
