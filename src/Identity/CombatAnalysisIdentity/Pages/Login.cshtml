@@ -2,7 +2,7 @@
 @model LoginModel
 
 <form method="post">
-    <input type="text" name="returnUrl" value=@Request.Query["redirect_uri"] hidden />
+    <input type="text" name="returnUrl" value=@Request.Query["redirectUri"] hidden />
     <input type="text" name="username" />
     <input type="password" name="password" />
     <input type="submit" value="Отправить" />

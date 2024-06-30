@@ -12,12 +12,12 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.CustomerBLDependencies(builder.Configuration, "DefaultConnection");
-builder.Services.RegisterIdentityDependencies();
+//builder.Services.RegisterIdentityDependencies();
 
-var settings = builder.Configuration.GetSection(nameof(TokenSettings));
-var scheme = settings.GetValue<string>(nameof(TokenSettings.AuthScheme));
+//var settings = builder.Configuration.GetSection(nameof(TokenSettings));
+//var scheme = settings.GetValue<string>(nameof(TokenSettings.AuthScheme));
 
-builder.Services.Configure<TokenSettings>(settings);
+//builder.Services.Configure<TokenSettings>(settings);
 
 var loggerFactory = new LoggerFactory();
 var logger = new Logger<ILogger>(loggerFactory);
@@ -43,15 +43,14 @@ builder.Services.AddAuthentication("Bearer")
 
 builder.Services.AddAuthorization(options =>
 {
-    options.AddPolicy("ApiScope", builder =>
+    options.AddPolicy("ApiScope", policyBuilder =>
     {
-        builder.RequireAuthenticatedUser();
-        builder.RequireClaim("scope", "api1");
+        policyBuilder.RequireAuthenticatedUser();
+        policyBuilder.RequireClaim("scope", builder.Configuration["Client:Scope"] ?? string.Empty);
     });
 });
 
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
 {
@@ -71,7 +70,7 @@ builder.Services.AddSwaggerGen(options =>
                 TokenUrl = new Uri($"{builder.Configuration["Authentication:identityServer"]}/connect/token"),
                 Scopes = new Dictionary<string, string>
                 {
-                    { "api1", "Request API #1"}
+                    { builder.Configuration["Client:Scope"] ?? string.Empty, "Request API #1"}
                 }
             }
         }
@@ -88,18 +87,17 @@ builder.Services.AddSwaggerGen(options =>
                         Id = "oauth2"
                     },
                 },
-                new[] { "api1" }
+                new[] { builder.Configuration["Client:Scope"] }
             }
         });
 });
 
 var app = builder.Build();
 
-var scope = app.Services.CreateScope();
-var jwtSecretService = scope.ServiceProvider.GetService<IJWTSecret>();
-await jwtSecretService.GenerateSecretKeysAsync();
+//var scope = app.Services.CreateScope();
+//var jwtSecretService = scope.ServiceProvider.GetService<IJWTSecret>();
+//await jwtSecretService.GenerateSecretKeysAsync();
 
-// Configure the HTTP request pipeline.
 app.UseAuthentication(); // Enable authentication middleware
 app.UseAuthorization();
 
@@ -108,8 +106,8 @@ app.UseSwaggerUI(options =>
 {
     options.SwaggerEndpoint("/swagger/v1/swagger.json", "User API v1");
     options.InjectStylesheet("/swagger-ui/swaggerDark.css");
-    options.OAuthClientId("client1"); // Replace with your client ID
-    options.OAuthClientSecret("secret1"); // Replace with your client secret
+    options.OAuthClientId(builder.Configuration["Client:ClientId"]);
+    options.OAuthClientSecret(builder.Configuration["Client:ClientSecret"]);
 });
 
 app.UseStaticFiles();

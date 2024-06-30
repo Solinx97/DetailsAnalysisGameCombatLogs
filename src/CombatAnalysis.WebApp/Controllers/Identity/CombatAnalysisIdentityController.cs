@@ -19,39 +19,31 @@ public class CombatAnalysisIdentityController : ControllerBase
     [HttpGet]
     public async Task<IActionResult> HandleAuthorizationResponse(string codeVerifier, string authorizationCode)
     {
-        try
+        var encodedAuthorizationCode = Uri.EscapeDataString(authorizationCode);
+        var url = $"Token?grantType=authorization_code&clientId=clientId&codeVerifier={codeVerifier}&code={encodedAuthorizationCode}&redirectUri=https://localhost:44479/";
+
+        var responseMessage = await _httpClient.GetAsync(url, Port.Identity);
+        if (responseMessage.StatusCode == System.Net.HttpStatusCode.InternalServerError)
         {
-            var url = $"Token?grantType=authorization_code&clientId=clientId&codeVerifier={codeVerifier}&code={authorizationCode}&redirectUri=https://localhost:44479/";
-
-            var responseMessage = await _httpClient.GetAsync(url, Port.Identity);
-            if (responseMessage.StatusCode == System.Net.HttpStatusCode.InternalServerError)
-            {
-                return StatusCode(500);
-            }
-
-            if (!responseMessage.IsSuccessStatusCode)
-            {
-                return BadRequest();
-            }
+            return StatusCode(500);
         }
-        catch (Exception ex)
+
+        if (!responseMessage.IsSuccessStatusCode)
         {
-            const string message = "Error while handling authorization response";
-            var t = 123;
+            return BadRequest();
         }
 
 
-        //var response = await responseMessage.Content.ReadFromJsonAsync<ResponseFromAccount>();
-        //HttpContext.Response.Cookies.Append("refreshToken", response.RefreshToken, new CookieOptions
-        //{
-        //    HttpOnly = true,
-        //    Secure = true,
-        //    SameSite = SameSiteMode.Lax,
-        //    Expires = DateTimeOffset.UtcNow.AddMinutes(TokenExpires.RefreshExpiresTimeInMinutes),
-        //});
+        var refreshToken = await responseMessage.Content.ReadAsStringAsync();
+        HttpContext.Response.Cookies.Append("refreshToken", refreshToken, new CookieOptions
+        {
+            HttpOnly = true,
+            Secure = true,
+            SameSite = SameSiteMode.Lax,
+            Expires = DateTimeOffset.UtcNow.AddMinutes(TokenExpires.RefreshExpiresTimeInMinutes),
+        });
 
         var dontLogoutValue = HttpContext.Request.Cookies?["dontLogout"];
-        //await Authenticate(response.User.Email, dontLogoutValue == "true");
 
         return Ok();
     }

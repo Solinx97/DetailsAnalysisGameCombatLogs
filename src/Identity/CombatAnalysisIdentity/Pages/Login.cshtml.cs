@@ -1,7 +1,9 @@
 using CombatAnalysis.CustomerBL.DTO;
 using CombatAnalysis.CustomerBL.Interfaces;
+using CombatAnalysisIdentity.Security;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using System.Security.Cryptography;
 
 namespace CombatAnalysisIdentity.Pages
 {
@@ -33,10 +35,11 @@ namespace CombatAnalysisIdentity.Pages
             {
                 if (!string.IsNullOrEmpty(returnUrl))
                 {
-                    var authorizationCode = GenerateAuthorizationCode();
-                    var redirectUrl = $"{returnUrl}?code={authorizationCode}&state=authorized";
+                    var authorizationCode = GenerateAuthorizationCode(user.Id);
+                    var encodedAuthorizationCode = Uri.EscapeDataString(authorizationCode);
+                    var redirectUrl = $"{returnUrl}?code={encodedAuthorizationCode}&state=authorized";
 
-                    return Redirect(returnUrl);
+                    return Redirect(redirectUrl);
                 }
 
                 return RedirectToAction("Index", "Home");
@@ -47,12 +50,60 @@ namespace CombatAnalysisIdentity.Pages
             return Page();
         }
 
-        private string GenerateAuthorizationCode()
+        private string GenerateAuthorizationCode(string userId)
         {
-            // Implement your logic here to generate a secure, high-entropy authorization code
-            // This is just a placeholder implementation
+            var authorizationCode = GenerateAuthorizationCode();
+            Encryption.EnctyptionKey = GenerateAesKey();
 
-            return Guid.NewGuid().ToString("N");
+            var encryptedAuthorizationCode = EncryptAuthorizationCodeWithCustomData(authorizationCode, userId, Encryption.EnctyptionKey);
+
+            return encryptedAuthorizationCode;
+        }
+
+        private static string GenerateAuthorizationCode()
+        {
+            using var randomNumberGenerator = RandomNumberGenerator.Create();
+            var randomBytes = new byte[32]; // 256 bits
+            randomNumberGenerator.GetBytes(randomBytes);
+
+            return Convert.ToBase64String(randomBytes);
+        }
+
+        private static byte[] GenerateAesKey()
+        {
+            using var aes = Aes.Create();
+            aes.GenerateKey();
+
+            return aes.Key;
+        }
+
+        private static string EncryptAuthorizationCodeWithCustomData(string authorizationCode, string customData, byte[] encryptionKey)
+        {
+            string combinedData = $"{authorizationCode}:{customData}";
+
+            using var aes = Aes.Create();
+            aes.Key = encryptionKey;
+            aes.GenerateIV();
+
+            var encryptor = aes.CreateEncryptor(aes.Key, aes.IV);
+
+            using var ms = new MemoryStream();
+            using (var cs = new CryptoStream(ms, encryptor, CryptoStreamMode.Write))
+            using (var sw = new StreamWriter(cs))
+            {
+                sw.Write(combinedData);
+            }
+
+            var iv = aes.IV;
+            var encrypted = ms.ToArray();
+
+            var result = new byte[iv.Length + encrypted.Length];
+            Buffer.BlockCopy(iv, 0, result, 0, iv.Length);
+            Buffer.BlockCopy(encrypted, 0, result, iv.Length, encrypted.Length);
+
+            var encryptedAuthorizationKey = Convert.ToBase64String(result);
+
+            return encryptedAuthorizationKey;
         }
     }
 }

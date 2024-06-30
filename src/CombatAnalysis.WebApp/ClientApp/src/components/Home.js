@@ -66,14 +66,7 @@ const Home = () => {
         const codeVerifier = generateCodeVerifier();
         const codeChallenge = await generateCodeChallengeAsync(codeVerifier);
 
-        window.location.href = `https://localhost:7064/login?grant_type=code&client_id=clientId&redirect_uri=https://localhost:44479/callback&scope=api1&code_challenge_method=S256&code_challenge=${codeChallenge}`;
-    }
-
-    const naviagetToToken = async () => {
-        const codeVerifier = generateCodeVerifier();
-
-        const result = await fetch(`/api/v1/CombatAnalysisIdentity?codeVerifier=${codeVerifier}&authorizationCode=${codeVerifier}`);
-        console.log(result);
+        window.location.href = `https://localhost:7064/login?grantType=code&clientTd=clientId&redirectUri=https://localhost:44479/callback&scope=api1&codeChallengeMethod=S256&codeChallenge=${codeChallenge}`;
     }
 
     const naviagetToFeed = () => navigate("/feed");
@@ -86,17 +79,6 @@ const Home = () => {
                     <div>{t("Communication")}</div>
                     {customer === null &&
                         <div className="btn-shadow authorize-alert" onClick={async () => await naviagetToLoginAsync()} title={t("GoToLogin")}>
-                            <FontAwesomeIcon
-                                icon={faTriangleExclamation}
-                            />
-                            <div>{t("ShouldAuthorize")}</div>
-                        </div>
-                    }
-                </div>
-                <div className="title">
-                    <div>{t("Communication")}</div>
-                    {customer === null &&
-                        <div className="btn-shadow authorize-alert" onClick={async () => await naviagetToToken()} title={t("Token")}>
                             <FontAwesomeIcon
                                 icon={faTriangleExclamation}
                             />

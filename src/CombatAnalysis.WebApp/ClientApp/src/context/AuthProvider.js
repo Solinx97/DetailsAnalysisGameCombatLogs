@@ -28,13 +28,12 @@ export const AuthProvider = ({ children }) => {
             return;
         }
 
-        await getUserDataAsync(auth.data);
+        dispatch(updateUser(auth.data));
+        await getCustomerDataAsync(auth.data?.id);
     }
 
-    const getUserDataAsync = async (user) => {
-        dispatch(updateUser(user));
-
-        const customer = await getCustomerAsync(user?.id);
+    const getCustomerDataAsync = async (userId) => {
+        const customer = await getCustomerAsync(userId);
         if (customer.data !== undefined) {
             dispatch(updateCustomer(customer.data));
 
@@ -75,7 +74,7 @@ export const AuthProvider = ({ children }) => {
     };
 
     return (
-        <AuthContext.Provider value={{ isAuthenticated, checkAuthAsync, loginAsync, logoutAsync }}>
+        <AuthContext.Provider value={{ isAuthenticated, checkAuthAsync, loginAsync, logoutAsync, getCustomerDataAsync }}>
             {children}
         </AuthContext.Provider>
     );
