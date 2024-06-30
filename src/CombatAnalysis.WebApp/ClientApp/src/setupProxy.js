@@ -40,7 +40,7 @@ const context = [
     "/api/v1/InviteToCommunity",
     "/api/v1/VoiceChat",
     "/api/v1/PlayerDeath",
-    "/api/v1/CombatAnalysisIdentity",
+    "/api/v1/Identity",
 ];
 
 const onError = (err, req, resp, target) => {

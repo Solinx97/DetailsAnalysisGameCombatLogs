@@ -1,18 +1,16 @@
 using AutoMapper;
-using CombatAnalysis.CustomerBL.Extensions;
-using CombatAnalysis.CustomerBL.Mapping;
 using CombatAnalysis.Identity.Extensions;
+using CombatAnalysis.Identity.Mapping;
 using CombatAnalysisIdentity.Core;
 using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.CustomerBLDependencies(builder.Configuration, "DefaultConnection");
-builder.Services.RegisterIdentityDependencies();
+builder.Services.RegisterIdentityDependencies(builder.Configuration, "DefaultConnection");
 
 var mappingConfig = new MapperConfiguration(mc =>
 {
-    mc.AddProfile(new CustomerBLMapper());
+    mc.AddProfile(new IdentityMapper());
 });
 var mapper = mappingConfig.CreateMapper();
 builder.Services.AddSingleton(mapper);

@@ -3,8 +3,6 @@ using CombatAnalysis.ChatApi.Mapping;
 using CombatAnalysis.ChatBL.Extensions;
 using CombatAnalysis.ChatBL.Mapping;
 using CombatAnalysis.CustomerBL.Extensions;
-using CombatAnalysis.Identity.Extensions;
-using CombatAnalysis.Identity.Settings;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 
@@ -13,12 +11,6 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.ChatBLDependencies(builder.Configuration, "DefaultConnection");
 builder.Services.CustomerBLDependencies(builder.Configuration, "UserConnection");
-builder.Services.RegisterIdentityDependencies();
-
-var settings = builder.Configuration.GetSection(nameof(TokenSettings));
-var scheme = settings.GetValue<string>(nameof(TokenSettings.AuthScheme));
-
-builder.Services.Configure<TokenSettings>(settings);
 
 var loggerFactory = new LoggerFactory();
 var logger = new Logger<ILogger>(loggerFactory);

@@ -7,17 +7,17 @@ namespace CombatAnalysis.WebApp.Controllers.Identity;
 
 [Route("api/v1/[controller]")]
 [ApiController]
-public class CombatAnalysisIdentityController : ControllerBase
+public class IdentityController : ControllerBase
 {
     private readonly IHttpClientHelper _httpClient;
 
-    public CombatAnalysisIdentityController(IHttpClientHelper httpClient)
+    public IdentityController(IHttpClientHelper httpClient)
     {
         _httpClient = httpClient;
     }
 
     [HttpGet]
-    public async Task<IActionResult> HandleAuthorizationResponse(string codeVerifier, string authorizationCode)
+    public async Task<IActionResult> AuthorizationCodeExchange(string codeVerifier, string authorizationCode)
     {
         var encodedAuthorizationCode = Uri.EscapeDataString(authorizationCode);
         var url = $"Token?grantType=authorization_code&clientId=clientId&codeVerifier={codeVerifier}&code={encodedAuthorizationCode}&redirectUri=https://localhost:44479/";

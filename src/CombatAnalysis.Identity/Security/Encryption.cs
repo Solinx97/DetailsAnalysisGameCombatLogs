@@ -1,4 +1,4 @@
-﻿namespace CombatAnalysisIdentity.Security;
+﻿namespace CombatAnalysis.Identity.Security;
 
 public static class Encryption
 {

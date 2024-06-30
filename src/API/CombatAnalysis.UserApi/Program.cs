@@ -1,9 +1,6 @@
 using AutoMapper;
 using CombatAnalysis.CustomerBL.Extensions;
 using CombatAnalysis.CustomerBL.Mapping;
-using CombatAnalysis.Identity.Extensions;
-using CombatAnalysis.Identity.Interfaces;
-using CombatAnalysis.Identity.Settings;
 using CombatAnalysis.UserApi.Mapping;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -12,12 +9,6 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.CustomerBLDependencies(builder.Configuration, "DefaultConnection");
-//builder.Services.RegisterIdentityDependencies();
-
-//var settings = builder.Configuration.GetSection(nameof(TokenSettings));
-//var scheme = settings.GetValue<string>(nameof(TokenSettings.AuthScheme));
-
-//builder.Services.Configure<TokenSettings>(settings);
 
 var loggerFactory = new LoggerFactory();
 var logger = new Logger<ILogger>(loggerFactory);
@@ -93,10 +84,6 @@ builder.Services.AddSwaggerGen(options =>
 });
 
 var app = builder.Build();
-
-//var scope = app.Services.CreateScope();
-//var jwtSecretService = scope.ServiceProvider.GetService<IJWTSecret>();
-//await jwtSecretService.GenerateSecretKeysAsync();
 
 app.UseAuthentication(); // Enable authentication middleware
 app.UseAuthorization();

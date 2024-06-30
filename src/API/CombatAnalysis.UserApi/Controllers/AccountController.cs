@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
 using CombatAnalysis.CustomerBL.DTO;
 using CombatAnalysis.CustomerBL.Interfaces;
-using CombatAnalysis.Identity.Interfaces;
 using CombatAnalysis.UserApi.Models;
 using CombatAnalysis.UserApi.Models.Response;
 using Microsoft.AspNetCore.Authorization;
@@ -14,14 +13,12 @@ namespace CombatAnalysis.UserApi.Controllers;
 public class AccountController : ControllerBase
 {
     private readonly IUserService<AppUserDto> _service;
-    private readonly IIdentityTokenService _tokenService;
     private readonly IMapper _mapper;
     private readonly ILogger _logger;
 
-    public AccountController(IUserService<AppUserDto> service, IIdentityTokenService tokenService, IMapper mapper, ILogger logger)
+    public AccountController(IUserService<AppUserDto> service, IMapper mapper, ILogger logger)
     {
         _service = service;
-        _tokenService = tokenService;
         _mapper = mapper;
         _logger = logger;
     }
@@ -36,9 +33,9 @@ public class AccountController : ControllerBase
             return NotFound();
         }
 
-        var refreshToken = await _tokenService.GenerateTokensAsync(user.Id);
+        //var refreshToken = await _tokenService.GenerateTokensAsync(user.Id);
         var map = _mapper.Map<AppUserModel>(user);
-        var response = new ResponseFromAccount(map, refreshToken);
+        var response = new ResponseFromAccount(map, "");
 
         return Ok(response);
     }
@@ -59,8 +56,8 @@ public class AccountController : ControllerBase
             var map = _mapper.Map<AppUserDto>(newUser);
             await _service.CreateAsync(map);
 
-            var refreshToken = await _tokenService.GenerateTokensAsync(newUser.Id);
-            var response = new ResponseFromAccount(newUser, refreshToken);
+            //var refreshToken = await _tokenService.GenerateTokensAsync(newUser.Id);
+            var response = new ResponseFromAccount(newUser, "");
 
             return Ok(response);
         }

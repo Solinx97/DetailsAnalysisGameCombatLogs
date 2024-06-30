@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import { NavLink, useLocation, useNavigate } from 'react-router-dom';
+import useAuthorization from '../hooks/useAuthorization';
 
 import '../styles/home.scss';
 
@@ -16,6 +17,8 @@ const Home = () => {
     const location = useLocation();
 
     const customer = useSelector((state) => state.customer.value);
+
+    const { navigateToAuthAsync } = useAuthorization();
 
     const [shouldBeAuthorize, setShouldBeAuthorize] = useState(false);
 
@@ -40,37 +43,8 @@ const Home = () => {
         return () => clearTimeout(timeoutId);
     }, [shouldBeAuthorize]);
 
-    const generateCodeVerifier = () => {
-        const array = new Uint8Array(32);
-        window.crypto.getRandomValues(array);
-
-        const codeVerifier = base64UrlEncode(array);
-        return codeVerifier;
-    }
-
-    const generateCodeChallengeAsync = async (verifier) => {
-        const buffer = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(verifier));
-        const codeChalenge = base64UrlEncode(buffer);
-
-        return codeChalenge
-    }
-
-    const base64UrlEncode = (buffer) => {
-        const encodedCode = btoa(String.fromCharCode.apply(null, new Uint8Array(buffer)))
-            .replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
-
-        return encodedCode;
-    }
-
-    const naviagetToLoginAsync = async () => {
-        const codeVerifier = generateCodeVerifier();
-        const codeChallenge = await generateCodeChallengeAsync(codeVerifier);
-
-        window.location.href = `https://localhost:7064/login?grantType=code&clientTd=clientId&redirectUri=https://localhost:44479/callback&scope=api1&codeChallengeMethod=S256&codeChallenge=${codeChallenge}`;
-    }
-
-    const naviagetToFeed = () => navigate("/feed");
-    const naviagetToMainInformation = () => navigate("/main-information");
+    const navigateToFeed = () => navigate("/feed");
+    const navigateToMainInformation = () => navigate("/main-information");
 
     return (
         <div className="home">
@@ -78,7 +52,7 @@ const Home = () => {
                 <div className="title">
                     <div>{t("Communication")}</div>
                     {customer === null &&
-                        <div className="btn-shadow authorize-alert" onClick={async () => await naviagetToLoginAsync()} title={t("GoToLogin")}>
+                        <div className="btn-shadow authorize-alert" onClick={async () => await navigateToAuthAsync()} title={t("GoToLogin")}>
                             <FontAwesomeIcon
                                 icon={faTriangleExclamation}
                             />
@@ -108,7 +82,7 @@ const Home = () => {
                     </div>
                 </div>
                 {customer !== null &&
-                    <div className="go-to-communication" onClick={naviagetToFeed}>{t("Open")}</div>
+                    <div className="go-to-communication" onClick={navigateToFeed}>{t("Open")}</div>
                 }
             </div>
             <div className="home__item">
@@ -130,7 +104,7 @@ const Home = () => {
                         </div>
                     </div>
                 </div>
-                <div className="go-to-combat-logs" onClick={naviagetToMainInformation}>{t("Open")}</div>
+                <div className="go-to-combat-logs" onClick={navigateToMainInformation}>{t("Open")}</div>
             </div>
             {shouldBeAuthorize &&
                 <div className="should-be-authorize">

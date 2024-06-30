@@ -15,7 +15,6 @@
   <ItemGroup>
     <ProjectReference Include="..\..\CombatAnalysis.CommunicationBL\CombatAnalysis.CommunicationBL.csproj" />
     <ProjectReference Include="..\..\CombatAnalysis.CutomerBL\CombatAnalysis.CustomerBL.csproj" />
-    <ProjectReference Include="..\..\CombatAnalysis.Identity\CombatAnalysis.Identity.csproj" />
   </ItemGroup>
 
 </Project>

@@ -1,17 +1,18 @@
-﻿using CombatAnalysis.CustomerDAL.Interfaces;
-using CombatAnalysis.CustomerDAL.Repositories.SQL;
-using CombatAnalysis.Identity.Interfaces;
+﻿using CombatAnalysis.Identity.Interfaces;
 using CombatAnalysis.Identity.Services;
+using CombatAnalysis.IdentityDAL.Extensions;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace CombatAnalysis.Identity.Extensions;
 
 public static class ServiceCollectionExtensions
 {
-    public static void RegisterIdentityDependencies(this IServiceCollection services)
+    public static void RegisterIdentityDependencies(this IServiceCollection services, IConfiguration configuration, string connectionName)
     {
-        services.AddScoped<IAppSecret, SQLSecretRepository>();
-        services.AddScoped<IJWTSecret, JWTSecretService>();
-        services.AddScoped<IIdentityTokenService, TokenService>();
+        services.RegisterDependenciesForDAL(configuration, connectionName);
+
+        services.AddScoped<IOAuthCodeFlowService, OAuthCodeFlowService>();
+        services.AddScoped<IIdentityUserService, IdentityUserService>();
     }
 }
