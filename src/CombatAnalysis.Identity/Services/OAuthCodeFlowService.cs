@@ -1,5 +1,6 @@
 ﻿using CombatAnalysis.Identity.Interfaces;
 using CombatAnalysis.Identity.Security;
+using CombatAnalysis.IdentityDAL.Entities;
 using CombatAnalysis.IdentityDAL.Interfaces;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
@@ -20,35 +21,67 @@ internal class OAuthCodeFlowService : IOAuthCodeFlowService
         _clientRepository = clientRepository;
     }
 
-    async Task<string> IOAuthCodeFlowService.GenerateAuthorizationCodeAsync(string userId, string clientId, string codeChallenge, string codeChallengeMethod)
+    async Task<string> IOAuthCodeFlowService.GenerateAuthorizationCodeAsync(string userId, string clientId, string codeChallenge, string codeChallengeMethod, string redirectUri)
     {
         var authorizationCode = GenerateAuthorizationCode();
-        Encryption.EnctyptionKey = GenerateAesKey();
 
         var encryptedAuthorizationCode = EncryptAuthorizationCode(authorizationCode, userId, Encryption.EnctyptionKey);
 
-        await _pkeRepository.CreateAsync(clientId, encryptedAuthorizationCode, codeChallenge, codeChallengeMethod);
+        await _pkeRepository.CreateAsync(clientId, encryptedAuthorizationCode, codeChallenge, codeChallengeMethod, redirectUri);
 
         return encryptedAuthorizationCode;
     }
 
-    async Task<bool> IOAuthCodeFlowService.ValidateCodeChallengeAsync(string codeVerifier, string authorizationCode)
+    async Task<bool> IOAuthCodeFlowService.ValidateCodeChallengeAsync(string clientId, string codeVerifier, string authorizationCode, string redirectUri)
     {
-        if (string.IsNullOrEmpty(codeVerifier) || string.IsNullOrEmpty(authorizationCode))
+        if (string.IsNullOrEmpty(clientId)
+            || string.IsNullOrEmpty(codeVerifier)
+            || string.IsNullOrEmpty(authorizationCode)
+            || string.IsNullOrEmpty(redirectUri))
         {
             return false;
         }
 
         var authorizationCodeChallenge = await _pkeRepository.GetByIdAsync(authorizationCode);
-        var generatedCodeChallenge = GenerateCodeChallenge(codeVerifier);
-        var codeChallengeIsValidated = authorizationCodeChallenge.CodeChallenge == generatedCodeChallenge;
+        if (authorizationCodeChallenge == null)
+        {
+            return false;
+        }
 
-        return codeChallengeIsValidated;
+        if (authorizationCodeChallenge.IsUsed)
+        {
+            return false;
+        }
+
+        var redirectUriIsValid = authorizationCodeChallenge.RedirectUrl == redirectUri;
+        if (!redirectUriIsValid)
+        {
+            return false;
+        }
+
+        var clientIdIsValid = authorizationCodeChallenge.ClientId == clientId;
+        if (!clientIdIsValid)
+        {
+            return false;
+        }
+
+        var generatedCodeChallenge = GenerateCodeChallenge(codeVerifier);
+        var codeChallengeIsValid = authorizationCodeChallenge.CodeChallenge == generatedCodeChallenge;
+        if (!codeChallengeIsValid)
+        {
+            return false;
+        }
+
+        await MarkCodeAsUsedAsync(authorizationCodeChallenge);
+
+        return true;
     }
 
     async Task<bool> IOAuthCodeFlowService.ValidateClientAsync(string clientId, string redirectUri, string clientScope)
     {
-        if (string.IsNullOrEmpty(clientId) || string.IsNullOrEmpty(redirectUri) || string.IsNullOrEmpty(clientScope))
+        if (string.IsNullOrEmpty(clientId)
+            || string.IsNullOrEmpty(clientScope)
+            || string.IsNullOrEmpty(redirectUri))
         {
             return false;
         }
@@ -128,17 +161,16 @@ internal class OAuthCodeFlowService : IOAuthCodeFlowService
         return decryptedAuthorizationKey;
     }
 
-    string IOAuthCodeFlowService.GenerateAccessToken(string clientId, string userId)
+    string IOAuthCodeFlowService.GenerateToken(string clientId, string userId)
     {
-        var secretKey = GenerateAuthorizationCode();
-        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey));
+        var key = new SymmetricSecurityKey(Encryption.EnctyptionKey);
         var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
         var claims = new[]
         {
-                new Claim(JwtRegisteredClaimNames.Sub, userId),
-                new Claim(JwtRegisteredClaimNames.Aud, clientId),
-            };
+            new Claim(JwtRegisteredClaimNames.Sub, userId),
+            new Claim(JwtRegisteredClaimNames.Aud, clientId),
+        };
 
         var token = new JwtSecurityToken(
             issuer: "https://localhost:7064",
@@ -158,15 +190,8 @@ internal class OAuthCodeFlowService : IOAuthCodeFlowService
         var randomBytes = new byte[32]; // 256 bits
         randomNumberGenerator.GetBytes(randomBytes);
 
-        return Convert.ToBase64String(randomBytes);
-    }
-
-    private static byte[] GenerateAesKey()
-    {
-        using var aes = Aes.Create();
-        aes.GenerateKey();
-
-        return aes.Key;
+        var code = Convert.ToBase64String(randomBytes);
+        return code;
     }
 
     private static string GenerateCodeChallenge(string verifier)
@@ -179,5 +204,14 @@ internal class OAuthCodeFlowService : IOAuthCodeFlowService
                       .Replace('/', '_');
 
         return codeChallenge;
+    }
+
+    private async Task<int> MarkCodeAsUsedAsync(AuthorizationCodeChallenge authorizationCodeChallenge)
+    {
+        authorizationCodeChallenge.IsUsed = true;
+
+        var affectedRows = await _pkeRepository.MarkCodeAsUsedAsync(authorizationCodeChallenge);
+
+        return affectedRows;
     }
 }

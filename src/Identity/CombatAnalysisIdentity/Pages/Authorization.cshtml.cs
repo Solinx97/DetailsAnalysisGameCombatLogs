@@ -43,7 +43,7 @@ namespace CombatAnalysisIdentity.Pages
             {
                 GetAuthorizationRequestData();
 
-                var authorizationCode = await _oAuthCodeFlowService.GenerateAuthorizationCodeAsync(user.Id, _authorizationRequest.ClientTd, _authorizationRequest.CodeChallenge, _authorizationRequest.CodeChallengeMethod);
+                var authorizationCode = await _oAuthCodeFlowService.GenerateAuthorizationCodeAsync(user.Id, _authorizationRequest.ClientTd, _authorizationRequest.CodeChallenge, _authorizationRequest.CodeChallengeMethod, _authorizationRequest.RedirectUri);
 
                 var encodedAuthorizationCode = Uri.EscapeDataString(authorizationCode);
                 var redirectUrl = $"{_authorizationRequest.RedirectUri}?code={encodedAuthorizationCode}&state={_authorizationRequest.State}";

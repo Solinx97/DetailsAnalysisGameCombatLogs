@@ -1,6 +1,6 @@
-﻿namespace CombatAnalysis.Identity.DTO;
+﻿namespace CombatAnalysis.WebApp.Models.Identity;
 
-public class AccessTokenDto
+public class AccessTokenModel
 {
     public string AccessToken { get; set; }
 

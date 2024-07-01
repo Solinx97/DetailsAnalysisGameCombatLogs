@@ -2,8 +2,11 @@ using AutoMapper;
 using CombatAnalysis.CustomerBL.Extensions;
 using CombatAnalysis.CustomerBL.Mapping;
 using CombatAnalysis.UserApi.Mapping;
+using CombatAnalysis.UserApi.Middleware;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -23,12 +26,17 @@ var mapper = mappingConfig.CreateMapper();
 builder.Services.AddSingleton(mapper);
 builder.Services.AddSingleton<ILogger>(logger);
 builder.Services.AddAuthentication("Bearer")
+        //.AddScheme<AuthenticationSchemeOptions, TokenAuthenticationHandler>("AccessToken", null)
         .AddJwtBearer("Bearer", options =>
         {
-            options.Authority = builder.Configuration["Authentication:identityServer"];
+            options.Authority = builder.Configuration["Authentication:IdentityServer"];
             options.TokenValidationParameters = new TokenValidationParameters
             {
-                ValidateAudience = false
+                ValidateIssuerSigningKey = true,
+                IssuerSigningKey = new SymmetricSecurityKey(Convert.FromBase64String(builder.Configuration["Authentication:IssuerSigningKey"])),
+                ValidateIssuer = false,
+                ValidateAudience = false,
+                ClockSkew = TimeSpan.Zero
             };
         });
 
@@ -58,7 +66,7 @@ builder.Services.AddSwaggerGen(options =>
         {
             ClientCredentials = new OpenApiOAuthFlow
             {
-                TokenUrl = new Uri($"{builder.Configuration["Authentication:identityServer"]}/connect/token"),
+                TokenUrl = new Uri($"{builder.Configuration["Authentication:IdentityServer"]}/connect/token"),
                 Scopes = new Dictionary<string, string>
                 {
                     { builder.Configuration["Client:Scope"] ?? string.Empty, "Request API #1"}

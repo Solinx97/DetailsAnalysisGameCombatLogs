@@ -12,9 +12,7 @@ public interface IUserRepository
 
     Task<AppUser> GetByIdAsync(string id);
 
-    Task<AppUser> GetAsync(string email, string password);
-
-    Task<AppUser> GetAsync(string email);
+    Task<AppUser> GetAsync(string identityUserId);
 
     Task<IEnumerable<AppUser>> GetAllAsync();
 }

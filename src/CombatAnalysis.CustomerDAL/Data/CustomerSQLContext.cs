@@ -1,5 +1,4 @@
 ﻿using CombatAnalysis.CustomerDAL.Entities;
-using CombatAnalysis.CustomerDAL.Entities.Authentication;
 using Microsoft.EntityFrameworkCore;
 
 namespace CombatAnalysis.CustomerDAL.Data;
@@ -12,8 +11,6 @@ public class CustomerSQLContext : DbContext
     }
 
     #region Customer
-
-    public DbSet<Secret>? Secrets { get; }
 
     public DbSet<AppUser>? AppUser { get; }
 

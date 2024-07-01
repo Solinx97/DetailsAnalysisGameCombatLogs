@@ -2,7 +2,6 @@
 using CombatAnalysis.CustomerBL.DTO;
 using CombatAnalysis.CustomerBL.Interfaces;
 using CombatAnalysis.UserApi.Models;
-using CombatAnalysis.UserApi.Models.Response;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -10,6 +9,8 @@ namespace CombatAnalysis.UserApi.Controllers;
 
 [Route("api/v1/[controller]")]
 [ApiController]
+//[Authorize(AuthenticationSchemes = "AccessToken")]
+[Authorize]
 public class AccountController : ControllerBase
 {
     private readonly IUserService<AppUserDto> _service;
@@ -23,62 +24,15 @@ public class AccountController : ControllerBase
         _logger = logger;
     }
 
-    [HttpPost]
-    [AllowAnonymous]
-    public async Task<IActionResult> Login(LoginModel model)
-    {
-        var user = await _service.GetAsync(model.Email, model.Password);
-        if (user == null)
-        {
-            return NotFound();
-        }
-
-        //var refreshToken = await _tokenService.GenerateTokensAsync(user.Id);
-        var map = _mapper.Map<AppUserModel>(user);
-        var response = new ResponseFromAccount(map, "");
-
-        return Ok(response);
-    }
-
-    [HttpPost("registration")]
-    [AllowAnonymous]
-    public async Task<IActionResult> Register(RegisterModel model)
-    {
-        try
-        {
-            var user = await _service.GetAsync(model.Email);
-            if (user != null)
-            {
-                return BadRequest();
-            }
-
-            var newUser = new AppUserModel { Id = Guid.NewGuid().ToString(), Email = model.Email, Password = model.Password, PhoneNumber = model.PhoneNumber, Birthday = model.Birthday };
-            var map = _mapper.Map<AppUserDto>(newUser);
-            await _service.CreateAsync(map);
-
-            //var refreshToken = await _tokenService.GenerateTokensAsync(newUser.Id);
-            var response = new ResponseFromAccount(newUser, "");
-
-            return Ok(response);
-        }
-        catch (ArgumentNullException ex)
-        {
-            _logger.LogError(ex, ex.Message);
-
-            return BadRequest();
-        }
-    }
-
     [HttpGet]
-    [Authorize]
     public async Task<IActionResult> GetAll()
     {
         try
         {
             var users = await _service.GetAllAsync();
-            if (!users.Any())
+            if (users == null)
             {
-                return NotFound();
+                return BadRequest();
             }
 
             return Ok(users);
@@ -90,7 +44,6 @@ public class AccountController : ControllerBase
     }
 
     [HttpGet("{id}")]
-    [Authorize]
     public async Task<IActionResult> GetById(string id)
     {
         try
@@ -110,7 +63,6 @@ public class AccountController : ControllerBase
     }
 
     [HttpPut]
-    [Authorize]
     public async Task<IActionResult> Edit(AppUserModel user)
     {
         var map = _mapper.Map<AppUserDto>(user);
@@ -121,32 +73,16 @@ public class AccountController : ControllerBase
         }
 
         var login = new LoginModel { Email = user.Email, Password = user.Password };
-        return await Login(login);
+        return Ok();
     }
 
     [HttpGet("find/{email}")]
-    [Authorize]
     public async Task<IActionResult> Find(string email)
     {
         try
         {
             var user = await _service.GetAsync(email);
             return Ok(user);
-        }
-        catch (Exception)
-        {
-            return BadRequest();
-        }
-    }
-
-    [HttpGet("checkIfUserExist/{email}")]
-    [AllowAnonymous]
-    public async Task<IActionResult> CheckIfUserExist(string email)
-    {
-        try
-        {
-            var user = await _service.GetAsync(email);
-            return Ok(user != null);
         }
         catch (Exception)
         {

@@ -1,8 +1,11 @@
 ﻿import { memo, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useLazyGetUsersQuery } from '../../store/api/UserApi';
 
 const AuthorizationCallback = () => {
     const navigate = useNavigate();
+
+    const [getUsersAsync] = useLazyGetUsersQuery();
 
     const [stateIsValid, setStateIsValid] = useState(true);
 
@@ -23,10 +26,6 @@ const AuthorizationCallback = () => {
         naviagetToToken();
     }, []);
 
-    useEffect(() => {
-        window.sessionStorage.removeItem("state");
-    }, [stateIsValid]);
-
     const navigateToTokenAsync = async (code) => {
         const codeVerifier = window.sessionStorage.getItem("codeVerifier");
 
@@ -34,6 +33,9 @@ const AuthorizationCallback = () => {
         const result = await fetch(`/api/v1/Identity?codeVerifier=${codeVerifier}&authorizationCode=${encodedAuthorizationCode}`);
         if (result.status === 200) {
             window.sessionStorage.removeItem("codeVerifier");
+            window.sessionStorage.removeItem("state");
+
+            await getUsersAsync();
 
             navigate("/");
         }

@@ -1,8 +1,10 @@
 using AutoMapper;
 using CombatAnalysis.Identity.Extensions;
 using CombatAnalysis.Identity.Mapping;
+using CombatAnalysis.Identity.Security;
 using CombatAnalysisIdentity.Core;
 using Serilog;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -42,6 +44,8 @@ Log.Logger = new LoggerConfiguration()
 builder.Host.UseSerilog();
 
 var app = builder.Build();
+
+Encryption.EnctyptionKey = Convert.FromBase64String(builder.Configuration["Authentication:IssuerSigningKey"]);
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())

@@ -64,7 +64,7 @@ public class FIrebaseUserRepository : IUserRepository
         return result;
     }
 
-    public async Task<AppUser> GetAsync(string email, string password)
+    public async Task<AppUser> GetAsync(string identityUserId)
     {
         var data = await _context.FirebaseClient
               .Child(nameof(AppUser))
@@ -72,21 +72,7 @@ public class FIrebaseUserRepository : IUserRepository
 
         var result = data.Select(x => x.Object)
             .AsEnumerable()
-            .FirstOrDefault(x => x.GetType().GetProperty(nameof(AppUser.Email)).GetValue(x).Equals(email)
-                    && x.GetType().GetProperty(nameof(AppUser.Password)).GetValue(x).Equals(password));
-
-        return result;
-    }
-
-    public async Task<AppUser> GetAsync(string email)
-    {
-        var data = await _context.FirebaseClient
-              .Child(nameof(AppUser))
-              .OnceAsync<AppUser>();
-
-        var result = data.Select(x => x.Object)
-            .AsEnumerable()
-            .FirstOrDefault(x => x.GetType().GetProperty(nameof(AppUser.Email)).GetValue(x).Equals(email));
+            .FirstOrDefault(x => x.GetType().GetProperty(nameof(AppUser.IdentityUserId)).GetValue(x).Equals(identityUserId));
 
         return result;
     }

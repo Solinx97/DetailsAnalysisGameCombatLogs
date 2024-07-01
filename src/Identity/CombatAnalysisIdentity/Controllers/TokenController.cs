@@ -1,6 +1,8 @@
-﻿using CombatAnalysis.Identity.Interfaces;
+﻿using CombatAnalysis.Identity.DTO;
+using CombatAnalysis.Identity.Interfaces;
 using CombatAnalysis.Identity.Security;
 using Microsoft.AspNetCore.Mvc;
+using System.Text;
 
 namespace CombatAnalysisIdentity.Controllers;
 
@@ -29,7 +31,7 @@ public class TokenController : ControllerBase
                 return BadRequest();
             }
 
-            var codeChallengeValidated = await _oAuthCodeFlowService.ValidateCodeChallengeAsync(codeVerifier, code);
+            var codeChallengeValidated = await _oAuthCodeFlowService.ValidateCodeChallengeAsync(clientId, codeVerifier, code, redirectUri);
             if (!codeChallengeValidated)
             {
                 return BadRequest();
@@ -37,13 +39,29 @@ public class TokenController : ControllerBase
 
             var (authorizationCode, userId) = _oAuthCodeFlowService.DecryptAuthorizationCode(code, Encryption.EnctyptionKey);
 
-            var refreshToken = _oAuthCodeFlowService.GenerateAccessToken(clientId, userId);
+            var token = GenerateAceessToken(clientId, userId);
 
-            return Ok(refreshToken);
+            return Ok(token);
         }
         catch (Exception ex)
         {
             return BadRequest(ex.Message);
         }
+    }
+
+    private AccessTokenDto GenerateAceessToken(string clientId, string userId)
+    {
+        var refreshToken = _oAuthCodeFlowService.GenerateToken(clientId, userId);
+        var accessToken = _oAuthCodeFlowService.GenerateToken(clientId, userId);
+
+        var token = new AccessTokenDto
+        {
+            AccessToken = accessToken,
+            TokenType = "Bearer",
+            ExpiresInMinutes = 60,
+            RefreshToken = refreshToken
+        };
+
+        return token;
     }
 }

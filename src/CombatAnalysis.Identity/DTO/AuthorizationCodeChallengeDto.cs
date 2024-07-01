@@ -1,6 +1,6 @@
-﻿namespace CombatAnalysis.IdentityDAL.Entities;
+﻿namespace CombatAnalysis.Identity.DTO;
 
-public class AuthorizationCodeChallenge
+public class AuthorizationCodeChallengeDto
 {
     public string Id { get; set; }
 

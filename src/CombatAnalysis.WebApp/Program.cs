@@ -11,6 +11,11 @@ Port.ChatApi = builder.Configuration.GetValue<string>("ChatApiPort");
 Port.CommunicationApi = builder.Configuration.GetValue<string>("CommunicationApiPort");
 Port.Identity = builder.Configuration.GetValue<string>("Identity");
 
+var settings = builder.Configuration.GetSection(nameof(Authorization));
+
+Authorization.ClientId = settings.GetValue<string>("ClientId");
+Authorization.RedirectUri = settings.GetValue<string>("RedirectUri");
+
 IHttpClientHelper httpClient = new HttpClientHelper();
 builder.Services.AddSingleton(httpClient);
 

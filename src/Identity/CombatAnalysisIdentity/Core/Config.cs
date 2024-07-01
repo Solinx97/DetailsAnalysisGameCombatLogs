@@ -17,7 +17,7 @@ public class Config
         {
             new Client
             {
-                ClientId = "combatAnalysisWeb",
+                ClientId = "client1",
                 AllowedGrantTypes = GrantTypes.CodeAndClientCredentials,
                 RedirectUris = { "https://localhost:44479/callback" },
                 PostLogoutRedirectUris = { "https://localhost:44479" },
@@ -27,7 +27,7 @@ public class Config
                 AllowedScopes = { "api1" },
                 ClientSecrets =
                 {
-                    new Secret("combatAnalysisWebSecret".Sha512())
+                    new Secret("secret1".Sha512())
                 },
             }
         };

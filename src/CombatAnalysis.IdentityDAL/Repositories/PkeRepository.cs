@@ -7,36 +7,53 @@ namespace CombatAnalysis.IdentityDAL.Repositories;
 
 public class PkeRepository : IPkeRepository
 {
-    private readonly CombatAnalysisIdentityContext _dbContext;
+    private readonly CombatAnalysisIdentityContext _context;
 
-    public PkeRepository(CombatAnalysisIdentityContext dbContext)
+    public PkeRepository(CombatAnalysisIdentityContext context)
     {
-        _dbContext = dbContext;
+        _context = context;
     }
 
-    public async Task CreateAsync(string clientId, string authorizationCode, string codeChallenge, string codeChallengeMethod)
+    public async Task CreateAsync(string clientId, string authorizationCode, string codeChallenge, string codeChallengeMethod, string redirectUri)
     {
         var entry = new AuthorizationCodeChallenge
         {
             Id = authorizationCode,
             CodeChallenge = codeChallenge,
-            RequestId = string.Empty,
-            SessionId = string.Empty,
             ClientId = clientId,
             CodeChallengeMethod = codeChallengeMethod,
-            CreatedAt = DateTime.UtcNow
+            CreatedAt = DateTime.UtcNow,
+            ExpiryTime = DateTime.UtcNow.AddMinutes(10),
+            RedirectUrl = redirectUri,
+            IsUsed = false
         };
 
-        _dbContext.AuthorizationCodeChallenge.Add(entry);
+        _context.AuthorizationCodeChallenge.Add(entry);
 
-        await _dbContext.SaveChangesAsync();
+        await _context.SaveChangesAsync();
     }
 
     public async Task<AuthorizationCodeChallenge> GetByIdAsync(string id)
     {
-        var condeChallenge = await _dbContext.AuthorizationCodeChallenge
+        var codeChallenge = await _context.AuthorizationCodeChallenge
             .FirstOrDefaultAsync(c => c.Id == id);
 
-        return condeChallenge;
+        return codeChallenge;
+    }
+
+    public async Task<AuthorizationCodeChallenge> MarkCodeAsUsed(string id)
+    {
+        var codeChallenge = await _context.AuthorizationCodeChallenge
+            .FirstOrDefaultAsync(c => c.Id == id);
+
+        return codeChallenge;
+    }
+
+    public async Task<int> MarkCodeAsUsedAsync(AuthorizationCodeChallenge code)
+    {
+        _context.Entry(code).State = EntityState.Modified;
+        var rowsAffected = await _context.SaveChangesAsync();
+
+        return rowsAffected;
     }
 }

@@ -44,21 +44,9 @@ public class SQLUserRepository : IUserRepository
         return entity;
     }
 
-    public async Task<AppUser> GetAsync(string email, string password)
+    public async Task<AppUser> GetAsync(string identityUserId)
     {
-        var entity = await _context.Set<AppUser>().FirstOrDefaultAsync(x => x.Email == email && x.Password == password);
-
-        if (entity != null)
-        {
-            _context.Entry(entity).State = EntityState.Detached;
-        }
-
-        return entity;
-    }
-
-    public async Task<AppUser> GetAsync(string email)
-    {
-        var entity = await _context.Set<AppUser>().FirstOrDefaultAsync(x => x.Email == email);
+        var entity = await _context.Set<AppUser>().FirstOrDefaultAsync(x => x.IdentityUserId == identityUserId);
 
         if (entity != null)
         {

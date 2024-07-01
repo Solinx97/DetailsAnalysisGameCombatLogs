@@ -30,6 +30,7 @@ export const UserApi = createApi({
 
 export const {
     useGetUsersQuery,
+    useLazyGetUsersQuery,
     useGetCustomersQuery,
     useLazyGetCustomersQuery,
     useAuthenticationAsyncQuery,
