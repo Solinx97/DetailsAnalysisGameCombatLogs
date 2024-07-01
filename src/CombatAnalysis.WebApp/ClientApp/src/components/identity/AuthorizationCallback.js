@@ -1,11 +1,8 @@
 ﻿import { memo, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useLazyGetUsersQuery } from '../../store/api/UserApi';
 
 const AuthorizationCallback = () => {
     const navigate = useNavigate();
-
-    const [getUsersAsync] = useLazyGetUsersQuery();
 
     const [stateIsValid, setStateIsValid] = useState(true);
 
@@ -34,8 +31,6 @@ const AuthorizationCallback = () => {
         if (result.status === 200) {
             window.sessionStorage.removeItem("codeVerifier");
             window.sessionStorage.removeItem("state");
-
-            await getUsersAsync();
 
             navigate("/");
         }

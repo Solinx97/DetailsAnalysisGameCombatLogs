@@ -45,7 +45,12 @@ builder.Host.UseSerilog();
 
 var app = builder.Build();
 
-Encryption.EnctyptionKey = Convert.FromBase64String(builder.Configuration["Authentication:IssuerSigningKey"]);
+Authentication.IssuerSigningKey = Convert.FromBase64String(builder.Configuration["Authentication:IssuerSigningKey"]);
+Authentication.Issuer = builder.Configuration["Authentication:Issuer"];
+if (int.TryParse(builder.Configuration["Authentication:TokenExpiresInMinutes"], out var tokenExpiresInMinutes))
+{
+    Authentication.TokenExpiresInMinutes = tokenExpiresInMinutes;
+}
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())

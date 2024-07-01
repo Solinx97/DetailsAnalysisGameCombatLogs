@@ -5,16 +5,16 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 
 var builder = WebApplication.CreateBuilder(args);
 
-Port.CombatParserApi = builder.Configuration.GetValue<string>("CombatParserApiPort");
-Port.UserApi = builder.Configuration.GetValue<string>("UserApiPort");
-Port.ChatApi = builder.Configuration.GetValue<string>("ChatApiPort");
-Port.CommunicationApi = builder.Configuration.GetValue<string>("CommunicationApiPort");
-Port.Identity = builder.Configuration.GetValue<string>("Identity");
+Port.CombatParserApi = builder.Configuration["CombatParserApiPort"];
+Port.UserApi = builder.Configuration["UserApiPort"];
+Port.ChatApi = builder.Configuration["ChatApiPort"];
+Port.CommunicationApi = builder.Configuration["CommunicationApiPort"];
+Port.Identity = builder.Configuration["Identity"];
 
-var settings = builder.Configuration.GetSection(nameof(Authorization));
+var settings = builder.Configuration.GetSection(nameof(Authentication));
 
-Authorization.ClientId = settings.GetValue<string>("ClientId");
-Authorization.RedirectUri = settings.GetValue<string>("RedirectUri");
+Authentication.ClientId = builder.Configuration["Authentication:ClientId"];
+Authentication.RedirectUri = builder.Configuration["Authentication:RedirectUri"];
 
 IHttpClientHelper httpClient = new HttpClientHelper();
 builder.Services.AddSingleton(httpClient);

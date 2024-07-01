@@ -5,6 +5,9 @@ export const AccountApi = UserApi.injectEndpoints({
         getUserById: builder.query({
             query: (id) => `/Account/${id}`
         }),
+        findByIdenityUserId: builder.query({
+            query: (identityUserId) => `/Account/find/${identityUserId}`
+        }),
         checkIfUserExist: builder.query({
             query: (email) => `/Account/checkIfUserExist/${email}`
         }),
@@ -43,6 +46,7 @@ export const AccountApi = UserApi.injectEndpoints({
 
 export const {
     useGetUserByIdQuery,
+    useLazyFindByIdenityUserIdQuery,
     useLazyCheckIfUserExistQuery,
     useLazyGetUserByIdQuery,
     useLoginAsyncMutation,

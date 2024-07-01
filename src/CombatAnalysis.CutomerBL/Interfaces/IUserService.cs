@@ -13,5 +13,5 @@ public interface IUserService<TModel>
 
     Task<TModel> GetByIdAsync(string id);
 
-    Task<TModel> GetAsync(string emil);
+    Task<TModel> GetAsync(string identityUserId);
 }

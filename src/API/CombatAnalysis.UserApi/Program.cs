@@ -2,11 +2,8 @@ using AutoMapper;
 using CombatAnalysis.CustomerBL.Extensions;
 using CombatAnalysis.CustomerBL.Mapping;
 using CombatAnalysis.UserApi.Mapping;
-using CombatAnalysis.UserApi.Middleware;
-using Microsoft.AspNetCore.Authentication;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
-using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -26,7 +23,6 @@ var mapper = mappingConfig.CreateMapper();
 builder.Services.AddSingleton(mapper);
 builder.Services.AddSingleton<ILogger>(logger);
 builder.Services.AddAuthentication("Bearer")
-        //.AddScheme<AuthenticationSchemeOptions, TokenAuthenticationHandler>("AccessToken", null)
         .AddJwtBearer("Bearer", options =>
         {
             options.Authority = builder.Configuration["Authentication:IdentityServer"];

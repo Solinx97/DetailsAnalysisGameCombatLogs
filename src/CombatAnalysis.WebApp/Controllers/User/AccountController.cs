@@ -1,12 +1,10 @@
 ﻿using CombatAnalysis.WebApp.Consts;
+using CombatAnalysis.WebApp.Enums;
 using CombatAnalysis.WebApp.Extensions;
 using CombatAnalysis.WebApp.Interfaces;
 using CombatAnalysis.WebApp.Models.Response;
 using CombatAnalysis.WebApp.Models.User;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
-using System.Security.Claims;
 
 namespace CombatAnalysis.WebApp.Controllers.User;
 
@@ -21,52 +19,10 @@ public class AccountController : ControllerBase
         _httpClient = httpClient;
     }
 
-    [HttpPost]
-    public async Task<IActionResult> Login(LoginModel model)
-    {
-        var responseMessage = await _httpClient.PostAsync("Account", JsonContent.Create(model), Port.UserApi);
-        if (responseMessage.StatusCode == System.Net.HttpStatusCode.InternalServerError)
-        {
-            return StatusCode(500);
-        }
-
-        if (!responseMessage.IsSuccessStatusCode)
-        {
-            return BadRequest();
-        }
-
-        var response = await responseMessage.Content.ReadFromJsonAsync<ResponseFromAccount>();
-        HttpContext.Response.Cookies.Append("refreshToken", response.RefreshToken, new CookieOptions
-        {
-            HttpOnly = true,
-            Secure = true,
-            SameSite = SameSiteMode.Lax,
-            Expires = DateTimeOffset.UtcNow.AddMinutes(TokenExpires.RefreshExpiresTimeInMinutes),
-        });
-
-        var dontLogoutValue = HttpContext.Request.Cookies?["dontLogout"];
-        await Authenticate(response.User.Email, dontLogoutValue == "true");
-
-        return Ok(response.User);
-    }
-
-    [HttpPost("registration")]
-    public async Task<IActionResult> Register(RegisterModel model)
-    {
-        var responseMessage = await _httpClient.PostAsync("Account/registration", JsonContent.Create(model), Port.UserApi);
-        if (!responseMessage.IsSuccessStatusCode)
-        {
-            return BadRequest();
-        }
-
-        var login = new LoginModel { Email = model.Email, Password = model.Password };
-        return await Login(login);
-    }
-
     [HttpPut]
     public async Task<IActionResult> Edit(AppUserModel model)
     {
-        if (!HttpContext.Request.Cookies.TryGetValue("refreshToken", out var refreshToken))
+        if (!HttpContext.Request.Cookies.TryGetValue(AuthenticationTokenType.AccessToken.ToString(), out var refreshToken))
         {
             return Unauthorized();
         }
@@ -88,7 +44,7 @@ public class AccountController : ControllerBase
     [HttpGet]
     public async Task<IActionResult> GetAll()
     {
-        if (!HttpContext.Request.Cookies.TryGetValue("accessToken", out var accessToken))
+        if (!HttpContext.Request.Cookies.TryGetValue(AuthenticationTokenType.AccessToken.ToString(), out var accessToken))
         {
             return Unauthorized();
         }
@@ -111,12 +67,12 @@ public class AccountController : ControllerBase
     [HttpGet("{id}")]
     public async Task<IActionResult> GetById(string id)
     {
-        if (!HttpContext.Request.Cookies.TryGetValue("refreshToken", out var refreshToken))
+        if (!HttpContext.Request.Cookies.TryGetValue(AuthenticationTokenType.AccessToken.ToString(), out var accessToken))
         {
             return Unauthorized();
         }
 
-        var responseMessage = await _httpClient.GetAsync($"Account/{id}", refreshToken, Port.UserApi);
+        var responseMessage = await _httpClient.GetAsync($"Account/{id}", accessToken, Port.UserApi);
         if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
         {
             return Unauthorized();
@@ -125,6 +81,29 @@ public class AccountController : ControllerBase
         {
             var user = await responseMessage.Content.ReadFromJsonAsync<AppUserModel>();
             
+            return Ok(user);
+        }
+
+        return BadRequest();
+    }
+
+    [HttpGet("find/{identityUserId}")]
+    public async Task<IActionResult> FindByIdentityUserId(string identityUserId)
+    {
+        if (!HttpContext.Request.Cookies.TryGetValue(AuthenticationTokenType.AccessToken.ToString(), out var accessToken))
+        {
+            return Unauthorized();
+        }
+
+        var responseMessage = await _httpClient.GetAsync($"Account/find/{identityUserId}", accessToken, Port.UserApi);
+        if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+        {
+            return Unauthorized();
+        }
+        else if (responseMessage.IsSuccessStatusCode)
+        {
+            var user = await responseMessage.Content.ReadFromJsonAsync<AppUserModel>();
+
             return Ok(user);
         }
 
@@ -146,28 +125,11 @@ public class AccountController : ControllerBase
     }
 
     [HttpPost("logout")]
-    public async Task<IActionResult> Logout()
+    public IActionResult Logout()
     {
-        await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-        HttpContext.Response.Cookies.Delete("refreshToken");
+        HttpContext.Response.Cookies.Delete(AuthenticationTokenType.RefreshToken.ToString());
+        HttpContext.Response.Cookies.Delete(AuthenticationTokenType.AccessToken.ToString());
 
         return Ok();
-    }
-
-    private async Task Authenticate(string email, bool dontLogout)
-    {
-        var claims = new List<Claim>
-        {
-            new Claim(ClaimsIdentity.DefaultNameClaimType, email)
-        };
-
-        var claimsIdentity = new ClaimsIdentity(claims, "ApplicationCookie", ClaimsIdentity.DefaultNameClaimType, ClaimsIdentity.DefaultRoleClaimType);
-        await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme,
-            new ClaimsPrincipal(claimsIdentity),
-            new AuthenticationProperties
-            {
-                IsPersistent = dontLogout,
-                ExpiresUtc = DateTimeOffset.UtcNow.AddMinutes(TokenExpires.RefreshExpiresTimeInMinutes)
-            });
     }
 }

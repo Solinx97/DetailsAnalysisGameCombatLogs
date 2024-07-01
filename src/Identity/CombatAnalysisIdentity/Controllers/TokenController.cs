@@ -2,7 +2,6 @@
 using CombatAnalysis.Identity.Interfaces;
 using CombatAnalysis.Identity.Security;
 using Microsoft.AspNetCore.Mvc;
-using System.Text;
 
 namespace CombatAnalysisIdentity.Controllers;
 
@@ -37,7 +36,7 @@ public class TokenController : ControllerBase
                 return BadRequest();
             }
 
-            var (authorizationCode, userId) = _oAuthCodeFlowService.DecryptAuthorizationCode(code, Encryption.EnctyptionKey);
+            var (authorizationCode, userId) = _oAuthCodeFlowService.DecryptAuthorizationCode(code, Authentication.IssuerSigningKey);
 
             var token = GenerateAceessToken(clientId, userId);
 
@@ -51,14 +50,14 @@ public class TokenController : ControllerBase
 
     private AccessTokenDto GenerateAceessToken(string clientId, string userId)
     {
-        var refreshToken = _oAuthCodeFlowService.GenerateToken(clientId, userId);
+        var refreshToken = _oAuthCodeFlowService.GenerateToken(clientId);
         var accessToken = _oAuthCodeFlowService.GenerateToken(clientId, userId);
 
         var token = new AccessTokenDto
         {
             AccessToken = accessToken,
             TokenType = "Bearer",
-            ExpiresInMinutes = 60,
+            ExpiresInMinutes = Authentication.TokenExpiresInMinutes,
             RefreshToken = refreshToken
         };
 

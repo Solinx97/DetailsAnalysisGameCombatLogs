@@ -10,5 +10,5 @@ public interface IOAuthCodeFlowService
 
     (string AuthorizationCode, string CustomData) DecryptAuthorizationCode(string encryptedDataWithCustomData, byte[] encryptionKey);
 
-    string GenerateToken(string clientId, string userId);
+    string GenerateToken(string clientId, string userId = "");
 }

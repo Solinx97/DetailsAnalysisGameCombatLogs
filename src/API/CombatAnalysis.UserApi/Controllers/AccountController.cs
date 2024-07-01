@@ -9,7 +9,6 @@ namespace CombatAnalysis.UserApi.Controllers;
 
 [Route("api/v1/[controller]")]
 [ApiController]
-//[Authorize(AuthenticationSchemes = "AccessToken")]
 [Authorize]
 public class AccountController : ControllerBase
 {
@@ -76,12 +75,12 @@ public class AccountController : ControllerBase
         return Ok();
     }
 
-    [HttpGet("find/{email}")]
-    public async Task<IActionResult> Find(string email)
+    [HttpGet("find/{identityUserId}")]
+    public async Task<IActionResult> Find(string identityUserId)
     {
         try
         {
-            var user = await _service.GetAsync(email);
+            var user = await _service.GetAsync(identityUserId);
             return Ok(user);
         }
         catch (Exception)

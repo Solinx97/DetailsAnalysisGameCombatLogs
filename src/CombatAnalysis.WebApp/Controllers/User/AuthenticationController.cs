@@ -1,5 +1,7 @@
 ﻿using CombatAnalysis.WebApp.Consts;
+using CombatAnalysis.WebApp.Enums;
 using CombatAnalysis.WebApp.Extensions;
+using CombatAnalysis.WebApp.Helpers;
 using CombatAnalysis.WebApp.Interfaces;
 using CombatAnalysis.WebApp.Models.User;
 using Microsoft.AspNetCore.Mvc;
@@ -22,24 +24,24 @@ public class AuthenticationController : ControllerBase
     {
         try
         {
-            if (!HttpContext.Request.Cookies.TryGetValue("refreshToken", out var refreshToken))
+            if (!HttpContext.Request.Cookies.TryGetValue(AuthenticationTokenType.AccessToken.ToString(), out var accessToken))
             {
-                return Ok(false);
+                return Unauthorized();
             }
 
-            var email = HttpContext.User.Identity.Name;
-            var responseMessage = await _httpClient.GetAsync($"account/find/{email}", refreshToken, Port.UserApi);
+            var identityUserId = AccessTokenHelper.GetUserIdFromToken(accessToken);
+            var responseMessage = await _httpClient.GetAsync($"Account/find/{identityUserId}", accessToken, Port.UserApi);
             if (responseMessage.IsSuccessStatusCode)
             {
                 var user = await responseMessage.Content.ReadFromJsonAsync<AppUserModel>();
                 return Ok(user);
             }
 
-            return Ok(false);
+            return BadRequest();
         }
         catch (Exception ex)
         {
-            return Ok(false);
+            return BadRequest(ex.Message);
         }
     }
 }

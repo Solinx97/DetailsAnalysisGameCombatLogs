@@ -4,6 +4,7 @@ import { useSelector } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
 import { Collapse, Container, Navbar, NavbarBrand, NavbarToggler } from 'reactstrap';
 import { useAuth } from '../context/AuthProvider';
+import useAuthorization from '../hooks/useAuthorization';
 import LanguageSelector from './LanguageSelector';
 import Search from './Search';
 
@@ -14,6 +15,7 @@ const NavMenu = () => {
 
     const customer = useSelector((state) => state.customer.value);
 
+    const { navigateToAuthAsync } = useAuthorization();
     const { isAuthenticated, checkAuthAsync, logoutAsync } = useAuth();
 
     const navigate = useNavigate();
@@ -36,7 +38,7 @@ const NavMenu = () => {
         setCollapsed((item) => !item);
     }, []);
 
-    const handleLoginClick = useCallback(() => navigate('/login'), [navigate]);
+    const handleLoginClick = useCallback(async () => await navigateToAuthAsync(), [navigate]);
     const handleRegistrationClick = useCallback(() => navigate('/registration'), [navigate]);
     const handleLogoutClick = useCallback(() => logoutAsync(), [logoutAsync]);
 

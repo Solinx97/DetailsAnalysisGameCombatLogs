@@ -1,7 +1,7 @@
 ﻿import React, { createContext, useContext, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { useLoginAsyncMutation, useLogoutAsyncMutation } from '../store/api/Account.api';
+import { useLogoutAsyncMutation } from '../store/api/Account.api';
 import { useLazySearchByUserIdAsyncQuery } from '../store/api/Customer.api';
 import { useLazyAuthenticationAsyncQuery } from '../store/api/UserApi';
 import { updateCustomer } from '../store/slicers/CustomerSlice';
@@ -18,7 +18,6 @@ export const AuthProvider = ({ children }) => {
     const [getAuthAsync] = useLazyAuthenticationAsyncQuery();
     const [logoutAsyncMut] = useLogoutAsyncMutation();
     const [getCustomerAsync] = useLazySearchByUserIdAsyncQuery();
-    const [loginAsyncMutation] = useLoginAsyncMutation();
 
     const checkAuthAsync = async () => {
         const auth = await getAuthAsync();
@@ -41,29 +40,6 @@ export const AuthProvider = ({ children }) => {
         }
     }
 
-    const loginAsync = async (email, password) => {
-        const data = {
-            email: email,
-            password: password
-        };
-
-        const user = await loginAsyncMutation(data);
-        if (user.data === undefined) {
-            return;
-        }
-
-        dispatch(updateUser(user.data));
-
-        const customer = await getCustomerAsync(user.data.id);
-        if (customer.data !== undefined) {
-            dispatch(updateCustomer(customer.data));
-
-            setIsAuthenticated(true);
-
-            navigate("/");
-        }
-    };
-
     const logoutAsync = async () => {
         setIsAuthenticated(false);
         dispatch(updateCustomer(null));
@@ -74,7 +50,7 @@ export const AuthProvider = ({ children }) => {
     };
 
     return (
-        <AuthContext.Provider value={{ isAuthenticated, checkAuthAsync, loginAsync, logoutAsync, getCustomerDataAsync }}>
+        <AuthContext.Provider value={{ isAuthenticated, checkAuthAsync, logoutAsync, getCustomerDataAsync }}>
             {children}
         </AuthContext.Provider>
     );

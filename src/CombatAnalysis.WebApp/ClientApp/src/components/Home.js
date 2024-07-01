@@ -109,7 +109,7 @@ const Home = () => {
             {shouldBeAuthorize &&
                 <div className="should-be-authorize">
                     <div className="alert alert-success" role="alert">
-                        {t("YouNeed")} <NavLink to="/login">{t("Login")}</NavLink> {t("InApp")}
+                        {t("YouNeed")} <NavLink onClick={async () => await navigateToAuthAsync()}>{t("Login")}</NavLink> {t("InApp")}
                     </div>
                 </div>
             }

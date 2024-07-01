@@ -25,7 +25,7 @@ internal class OAuthCodeFlowService : IOAuthCodeFlowService
     {
         var authorizationCode = GenerateAuthorizationCode();
 
-        var encryptedAuthorizationCode = EncryptAuthorizationCode(authorizationCode, userId, Encryption.EnctyptionKey);
+        var encryptedAuthorizationCode = EncryptAuthorizationCode(authorizationCode, userId, Authentication.IssuerSigningKey);
 
         await _pkeRepository.CreateAsync(clientId, encryptedAuthorizationCode, codeChallenge, codeChallengeMethod, redirectUri);
 
@@ -103,35 +103,6 @@ internal class OAuthCodeFlowService : IOAuthCodeFlowService
         return scopeIsValid;
     }
 
-    private static string EncryptAuthorizationCode(string authorizationCode, string customData, byte[] encryptionKey)
-    {
-        string combinedData = $"{authorizationCode}:{customData}";
-
-        using var aes = Aes.Create();
-        aes.Key = encryptionKey;
-        aes.GenerateIV();
-
-        var encryptor = aes.CreateEncryptor(aes.Key, aes.IV);
-
-        using var ms = new MemoryStream();
-        using (var cs = new CryptoStream(ms, encryptor, CryptoStreamMode.Write))
-        using (var sw = new StreamWriter(cs))
-        {
-            sw.Write(combinedData);
-        }
-
-        var iv = aes.IV;
-        var encrypted = ms.ToArray();
-
-        var result = new byte[iv.Length + encrypted.Length];
-        Buffer.BlockCopy(iv, 0, result, 0, iv.Length);
-        Buffer.BlockCopy(encrypted, 0, result, iv.Length, encrypted.Length);
-
-        var encryptedAuthorizationKey = Convert.ToBase64String(result);
-
-        return encryptedAuthorizationKey;
-    }
-
     (string AuthorizationCode, string CustomData) IOAuthCodeFlowService.DecryptAuthorizationCode(string encryptedDataWithCustomData, byte[] encryptionKey)
     {
         var fullCipher = Convert.FromBase64String(encryptedDataWithCustomData);
@@ -161,22 +132,50 @@ internal class OAuthCodeFlowService : IOAuthCodeFlowService
         return decryptedAuthorizationKey;
     }
 
-    string IOAuthCodeFlowService.GenerateToken(string clientId, string userId)
+    private static string EncryptAuthorizationCode(string authorizationCode, string customData, byte[] encryptionKey)
     {
-        var key = new SymmetricSecurityKey(Encryption.EnctyptionKey);
+        string combinedData = $"{authorizationCode}:{customData}";
+
+        using var aes = Aes.Create();
+        aes.Key = encryptionKey;
+        aes.GenerateIV();
+
+        var encryptor = aes.CreateEncryptor(aes.Key, aes.IV);
+
+        using var ms = new MemoryStream();
+        using (var cs = new CryptoStream(ms, encryptor, CryptoStreamMode.Write))
+        using (var sw = new StreamWriter(cs))
+        {
+            sw.Write(combinedData);
+        }
+
+        var iv = aes.IV;
+        var encrypted = ms.ToArray();
+
+        var result = new byte[iv.Length + encrypted.Length];
+        Buffer.BlockCopy(iv, 0, result, 0, iv.Length);
+        Buffer.BlockCopy(encrypted, 0, result, iv.Length, encrypted.Length);
+
+        var encryptedAuthorizationKey = Convert.ToBase64String(result);
+
+        return encryptedAuthorizationKey;
+    }
+
+    string IOAuthCodeFlowService.GenerateToken(string clientId, string userId = "")
+    {
+        var key = new SymmetricSecurityKey(Authentication.IssuerSigningKey);
         var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
         var claims = new[]
         {
             new Claim(JwtRegisteredClaimNames.Sub, userId),
-            new Claim(JwtRegisteredClaimNames.Aud, clientId),
         };
 
         var token = new JwtSecurityToken(
-            issuer: "https://localhost:7064",
+            issuer: Authentication.Issuer,
             audience: clientId,
-            claims: claims,
-            expires: DateTime.Now.AddHours(1),
+            claims: !string.IsNullOrEmpty(userId) ? claims : new Claim[0],
+            expires: DateTime.Now.AddMinutes(Authentication.TokenExpiresInMinutes),
             signingCredentials: creds
         );
 

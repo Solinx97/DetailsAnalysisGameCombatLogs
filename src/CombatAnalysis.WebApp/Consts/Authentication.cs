@@ -1,6 +1,6 @@
 ﻿namespace CombatAnalysis.WebApp.Consts;
 
-public static class Authorization
+public static class Authentication
 {
     public static string ClientId { get; set; }
 

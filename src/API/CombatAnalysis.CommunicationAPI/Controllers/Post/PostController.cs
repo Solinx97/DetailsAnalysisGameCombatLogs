@@ -9,7 +9,7 @@ namespace CombatAnalysis.CommunicationAPI.Controllers.Post;
 
 [Route("api/v1/[controller]")]
 [ApiController]
-[Authorize(Policy = "ApiScope")]
+[Authorize]
 public class PostController : ControllerBase
 {
     private readonly IService<PostDto, int> _service;

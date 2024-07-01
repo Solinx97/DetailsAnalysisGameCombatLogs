@@ -27,10 +27,14 @@ builder.Services.AddSingleton<ILogger>(logger);
 builder.Services.AddAuthentication("Bearer")
         .AddJwtBearer("Bearer", options =>
         {
-            options.Authority = builder.Configuration["Authentication:identityServer"];
+            options.Authority = builder.Configuration["Authentication:IdentityServer"];
             options.TokenValidationParameters = new TokenValidationParameters
             {
-                ValidateAudience = false
+                ValidateIssuerSigningKey = true,
+                IssuerSigningKey = new SymmetricSecurityKey(Convert.FromBase64String(builder.Configuration["Authentication:IssuerSigningKey"])),
+                ValidateIssuer = false,
+                ValidateAudience = false,
+                ClockSkew = TimeSpan.Zero
             };
         });
 
@@ -61,7 +65,7 @@ builder.Services.AddSwaggerGen(options =>
         {
             ClientCredentials = new OpenApiOAuthFlow
             {
-                TokenUrl = new Uri($"{builder.Configuration["Authentication:identityServer"]}/connect/token"),
+                TokenUrl = new Uri($"{builder.Configuration["Authentication:IdentityServer"]}/connect/token"),
                 Scopes = new Dictionary<string, string>
                 {
                     { "api1", "Request API #1"}
