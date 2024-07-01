@@ -1,4 +1,6 @@
-﻿using CombatAnalysis.WebApp.Consts;
+﻿using CombatAnalysis.WebApp.Attributes;
+using CombatAnalysis.WebApp.Consts;
+using CombatAnalysis.WebApp.Enums;
 using CombatAnalysis.WebApp.Extensions;
 using CombatAnalysis.WebApp.Interfaces;
 using CombatAnalysis.WebApp.Models.Chat;
@@ -6,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace CombatAnalysis.WebApp.Controllers.Chat;
 
+[RequireAccessToken]
 [Route("api/v1/[controller]")]
 [ApiController]
 public class GroupChatUserController : ControllerBase
@@ -20,12 +23,12 @@ public class GroupChatUserController : ControllerBase
     [HttpGet("find")]
     public async Task<IActionResult> Find(int chatId, string userId)
     {
-        if (!HttpContext.Request.Cookies.TryGetValue("refreshToken", out var refreshToken))
+        if (!Request.Cookies.TryGetValue(AuthenticationTokenType.AccessToken.ToString(), out var accessToken))
         {
             return Unauthorized();
         }
 
-        var responseMessage = await _httpClient.GetAsync("GroupChatUser", refreshToken, Port.ChatApi);
+        var responseMessage = await _httpClient.GetAsync("GroupChatUser", accessToken, Port.ChatApi);
         if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
         {
             return Unauthorized();
@@ -44,12 +47,12 @@ public class GroupChatUserController : ControllerBase
     [HttpGet("findByChatId/{id:int:min(1)}")]
     public async Task<IActionResult> FindByChatId(int id)
     {
-        if (!HttpContext.Request.Cookies.TryGetValue("refreshToken", out var refreshToken))
+        if (!Request.Cookies.TryGetValue(AuthenticationTokenType.AccessToken.ToString(), out var accessToken))
         {
             return Unauthorized();
         }
 
-        var responseMessage = await _httpClient.GetAsync($"GroupChatUser/findByChatId/{id}", refreshToken, Port.ChatApi);
+        var responseMessage = await _httpClient.GetAsync($"GroupChatUser/findByChatId/{id}", accessToken, Port.ChatApi);
         if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
         {
             return Unauthorized();
@@ -64,15 +67,16 @@ public class GroupChatUserController : ControllerBase
         return BadRequest();
     }
 
+
     [HttpGet("findByUserId/{id}")]
     public async Task<IActionResult> FindByUserId(string id)
     {
-        if (!HttpContext.Request.Cookies.TryGetValue("refreshToken", out var refreshToken))
+        if (!Request.Cookies.TryGetValue(AuthenticationTokenType.AccessToken.ToString(), out var accessToken))
         {
             return Unauthorized();
         }
 
-        var responseMessage = await _httpClient.GetAsync($"GroupChatUser/findByUserId/{id}", refreshToken, Port.ChatApi);
+        var responseMessage = await _httpClient.GetAsync($"GroupChatUser/findByUserId/{id}", accessToken, Port.ChatApi);
         if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
         {
             return Unauthorized();
@@ -90,12 +94,12 @@ public class GroupChatUserController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> Create(GroupChatUserModel user)
     {
-        if (!HttpContext.Request.Cookies.TryGetValue("refreshToken", out var refreshToken))
+        if (!Request.Cookies.TryGetValue(AuthenticationTokenType.AccessToken.ToString(), out var accessToken))
         {
             return Unauthorized();
         }
 
-        var responseMessage = await _httpClient.PostAsync("GroupChatUser", JsonContent.Create(user), refreshToken, Port.ChatApi);
+        var responseMessage = await _httpClient.PostAsync("GroupChatUser", JsonContent.Create(user), accessToken, Port.ChatApi);
         if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
         {
             return Unauthorized();
@@ -113,12 +117,12 @@ public class GroupChatUserController : ControllerBase
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(string id)
     {
-        if (!HttpContext.Request.Cookies.TryGetValue("refreshToken", out var refreshToken))
+        if (!Request.Cookies.TryGetValue(AuthenticationTokenType.AccessToken.ToString(), out var accessToken))
         {
             return Unauthorized();
         }
 
-        var responseMessage = await _httpClient.DeletAsync($"GroupChatUser/{id}", refreshToken, Port.ChatApi);
+        var responseMessage = await _httpClient.DeletAsync($"GroupChatUser/{id}", accessToken, Port.ChatApi);
         if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
         {
             return Unauthorized();

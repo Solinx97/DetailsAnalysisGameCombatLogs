@@ -1,4 +1,6 @@
-﻿using CombatAnalysis.WebApp.Consts;
+﻿using CombatAnalysis.WebApp.Attributes;
+using CombatAnalysis.WebApp.Consts;
+using CombatAnalysis.WebApp.Enums;
 using CombatAnalysis.WebApp.Extensions;
 using CombatAnalysis.WebApp.Interfaces;
 using CombatAnalysis.WebApp.Models.Post;
@@ -6,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace CombatAnalysis.WebApp.Controllers.Post;
 
+[RequireAccessToken]
 [Route("api/v1/[controller]")]
 [ApiController]
 public class PostCommentController : ControllerBase
@@ -20,12 +23,12 @@ public class PostCommentController : ControllerBase
     [HttpGet("{id:int:min(1)}")]
     public async Task<IActionResult> GetById(int id)
     {
-        if (!HttpContext.Request.Cookies.TryGetValue("refreshToken", out var refreshToken))
+        if (!Request.Cookies.TryGetValue(AuthenticationTokenType.AccessToken.ToString(), out var accessToken))
         {
             return Unauthorized();
         }
 
-        var responseMessage = await _httpClient.GetAsync($"PostComment/{id}", refreshToken, Port.CommunicationApi);
+        var responseMessage = await _httpClient.GetAsync($"PostComment/{id}", accessToken, Port.CommunicationApi);
         if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
         {
             return Unauthorized();
@@ -43,12 +46,12 @@ public class PostCommentController : ControllerBase
     [HttpGet("searchByPostId/{id:int:min(1)}")]
     public async Task<IActionResult> SearchByPostId(int id)
     {
-        if (!HttpContext.Request.Cookies.TryGetValue("refreshToken", out var refreshToken))
+        if (!Request.Cookies.TryGetValue(AuthenticationTokenType.AccessToken.ToString(), out var accessToken))
         {
             return Unauthorized();
         }
 
-        var responseMessage = await _httpClient.GetAsync($"PostComment/searchByPostId/{id}", refreshToken, Port.CommunicationApi);
+        var responseMessage = await _httpClient.GetAsync($"PostComment/searchByPostId/{id}", accessToken, Port.CommunicationApi);
         if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
         {
             return Unauthorized();
@@ -66,12 +69,12 @@ public class PostCommentController : ControllerBase
     [HttpPut]
     public async Task<IActionResult> Update(PostCommentModel model)
     {
-        if (!HttpContext.Request.Cookies.TryGetValue("refreshToken", out var refreshToken))
+        if (!Request.Cookies.TryGetValue(AuthenticationTokenType.AccessToken.ToString(), out var accessToken))
         {
             return Unauthorized();
         }
 
-        var responseMessage = await _httpClient.PutAsync("PostComment", JsonContent.Create(model), refreshToken, Port.CommunicationApi);
+        var responseMessage = await _httpClient.PutAsync("PostComment", JsonContent.Create(model), accessToken, Port.CommunicationApi);
         if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
         {
             return Unauthorized();
@@ -87,12 +90,12 @@ public class PostCommentController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> Create(PostCommentModel model)
     {
-        if (!HttpContext.Request.Cookies.TryGetValue("refreshToken", out var refreshToken))
+        if (!Request.Cookies.TryGetValue(AuthenticationTokenType.AccessToken.ToString(), out var accessToken))
         {
             return Unauthorized();
         }
 
-        var responseMessage = await _httpClient.PostAsync("PostComment", JsonContent.Create(model), refreshToken, Port.CommunicationApi);
+        var responseMessage = await _httpClient.PostAsync("PostComment", JsonContent.Create(model), accessToken, Port.CommunicationApi);
         if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
         {
             return Unauthorized();
@@ -110,12 +113,12 @@ public class PostCommentController : ControllerBase
     [HttpDelete("{id:int:min(1)}")]
     public async Task<IActionResult> Delete(int id)
     {
-        if (!HttpContext.Request.Cookies.TryGetValue("refreshToken", out var refreshToken))
+        if (!Request.Cookies.TryGetValue(AuthenticationTokenType.AccessToken.ToString(), out var accessToken))
         {
             return Unauthorized();
         }
 
-        var responseMessage = await _httpClient.DeletAsync($"PostComment/{id}", refreshToken, Port.CommunicationApi);
+        var responseMessage = await _httpClient.DeletAsync($"PostComment/{id}", accessToken, Port.CommunicationApi);
         if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
         {
             return Unauthorized();

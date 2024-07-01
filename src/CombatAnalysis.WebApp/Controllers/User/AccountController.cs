@@ -1,4 +1,5 @@
-﻿using CombatAnalysis.WebApp.Consts;
+﻿using CombatAnalysis.WebApp.Attributes;
+using CombatAnalysis.WebApp.Consts;
 using CombatAnalysis.WebApp.Enums;
 using CombatAnalysis.WebApp.Extensions;
 using CombatAnalysis.WebApp.Interfaces;
@@ -19,10 +20,11 @@ public class AccountController : ControllerBase
         _httpClient = httpClient;
     }
 
+    [RequireAccessToken]
     [HttpPut]
     public async Task<IActionResult> Edit(AppUserModel model)
     {
-        if (!HttpContext.Request.Cookies.TryGetValue(AuthenticationTokenType.AccessToken.ToString(), out var refreshToken))
+        if (!Request.Cookies.TryGetValue(AuthenticationTokenType.AccessToken.ToString(), out var refreshToken))
         {
             return Unauthorized();
         }
@@ -41,10 +43,11 @@ public class AccountController : ControllerBase
         return BadRequest();
     }
 
+    [RequireAccessToken]
     [HttpGet]
     public async Task<IActionResult> GetAll()
     {
-        if (!HttpContext.Request.Cookies.TryGetValue(AuthenticationTokenType.AccessToken.ToString(), out var accessToken))
+        if (!Request.Cookies.TryGetValue(AuthenticationTokenType.AccessToken.ToString(), out var accessToken))
         {
             return Unauthorized();
         }
@@ -64,10 +67,11 @@ public class AccountController : ControllerBase
         return BadRequest();
     }
 
+    [RequireAccessToken]
     [HttpGet("{id}")]
     public async Task<IActionResult> GetById(string id)
     {
-        if (!HttpContext.Request.Cookies.TryGetValue(AuthenticationTokenType.AccessToken.ToString(), out var accessToken))
+        if (!Request.Cookies.TryGetValue(AuthenticationTokenType.AccessToken.ToString(), out var accessToken))
         {
             return Unauthorized();
         }
@@ -87,10 +91,11 @@ public class AccountController : ControllerBase
         return BadRequest();
     }
 
+    [RequireAccessToken]
     [HttpGet("find/{identityUserId}")]
     public async Task<IActionResult> FindByIdentityUserId(string identityUserId)
     {
-        if (!HttpContext.Request.Cookies.TryGetValue(AuthenticationTokenType.AccessToken.ToString(), out var accessToken))
+        if (!Request.Cookies.TryGetValue(AuthenticationTokenType.AccessToken.ToString(), out var accessToken))
         {
             return Unauthorized();
         }

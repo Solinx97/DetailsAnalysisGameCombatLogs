@@ -1,4 +1,6 @@
-﻿using CombatAnalysis.WebApp.Consts;
+﻿using CombatAnalysis.WebApp.Attributes;
+using CombatAnalysis.WebApp.Consts;
+using CombatAnalysis.WebApp.Enums;
 using CombatAnalysis.WebApp.Extensions;
 using CombatAnalysis.WebApp.Interfaces;
 using CombatAnalysis.WebApp.Models.Community;
@@ -17,15 +19,16 @@ public class CommunityDiscussionController : ControllerBase
         _httpClient = httpClient;
     }
 
+    [RequireAccessToken]
     [HttpPost]
     public async Task<IActionResult> Create(CommunityDiscussionModel newCommunity)
     {
-        if (!HttpContext.Request.Cookies.TryGetValue("refreshToken", out var refreshToken))
+        if (!Request.Cookies.TryGetValue(AuthenticationTokenType.AccessToken.ToString(), out var accessToken))
         {
             return Unauthorized();
         }
 
-        var responseMessage = await _httpClient.PostAsync("CommunityDiscussion", JsonContent.Create(newCommunity), refreshToken, Port.CommunicationApi);
+        var responseMessage = await _httpClient.PostAsync("CommunityDiscussion", JsonContent.Create(newCommunity), accessToken, Port.CommunicationApi);
         if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
         {
             return Unauthorized();
@@ -40,15 +43,16 @@ public class CommunityDiscussionController : ControllerBase
         return BadRequest();
     }
 
+    [RequireAccessToken]
     [HttpGet]
     public async Task<IActionResult> GetAll()
     {
-        if (!HttpContext.Request.Cookies.TryGetValue("refreshToken", out var refreshToken))
+        if (!Request.Cookies.TryGetValue(AuthenticationTokenType.AccessToken.ToString(), out var accessToken))
         {
             return Unauthorized();
         }
 
-        var responseMessage = await _httpClient.GetAsync("CommunityDiscussion", refreshToken, Port.CommunicationApi);
+        var responseMessage = await _httpClient.GetAsync("CommunityDiscussion", accessToken, Port.CommunicationApi);
         if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
         {
             return Unauthorized();
@@ -63,15 +67,16 @@ public class CommunityDiscussionController : ControllerBase
         return BadRequest();
     }
 
+    [RequireAccessToken]
     [HttpGet("{id:int:min(1)}")]
     public async Task<IActionResult> GetById(int id)
     {
-        if (!HttpContext.Request.Cookies.TryGetValue("refreshToken", out var refreshToken))
+        if (!Request.Cookies.TryGetValue(AuthenticationTokenType.AccessToken.ToString(), out var accessToken))
         {
             return Unauthorized();
         }
 
-        var responseMessage = await _httpClient.GetAsync($"CommunityDiscussion/{id}", refreshToken, Port.CommunicationApi);
+        var responseMessage = await _httpClient.GetAsync($"CommunityDiscussion/{id}", accessToken, Port.CommunicationApi);
         if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
         {
             return Unauthorized();
@@ -86,15 +91,16 @@ public class CommunityDiscussionController : ControllerBase
         return BadRequest();
     }
 
+    [RequireAccessToken]
     [HttpGet("findByCommunityId/{id:int:min(1)}")]
     public async Task<IActionResult> FindByCommunityId(int id)
     {
-        if (!HttpContext.Request.Cookies.TryGetValue("refreshToken", out var refreshToken))
+        if (!Request.Cookies.TryGetValue(AuthenticationTokenType.AccessToken.ToString(), out var accessToken))
         {
             return Unauthorized();
         }
 
-        var responseMessage = await _httpClient.GetAsync($"CommunityDiscussion/findByCommunityId/{id}", refreshToken, Port.CommunicationApi);
+        var responseMessage = await _httpClient.GetAsync($"CommunityDiscussion/findByCommunityId/{id}", accessToken, Port.CommunicationApi);
         if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
         {
             return Unauthorized();

@@ -1,4 +1,6 @@
-﻿using CombatAnalysis.WebApp.Consts;
+﻿using CombatAnalysis.WebApp.Attributes;
+using CombatAnalysis.WebApp.Consts;
+using CombatAnalysis.WebApp.Enums;
 using CombatAnalysis.WebApp.Extensions;
 using CombatAnalysis.WebApp.Interfaces;
 using CombatAnalysis.WebApp.Models.Chat;
@@ -6,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace CombatAnalysis.WebApp.Controllers.Chat;
 
+[RequireAccessToken]
 [Route("api/v1/[controller]")]
 [ApiController]
 public class PersonalChatMessageCountController : ControllerBase
@@ -20,12 +23,12 @@ public class PersonalChatMessageCountController : ControllerBase
     [HttpGet("find")]
     public async Task<IActionResult> Find(int chatId, string userId)
     {
-        if (!HttpContext.Request.Cookies.TryGetValue("refreshToken", out var refreshToken))
+        if (!Request.Cookies.TryGetValue(AuthenticationTokenType.AccessToken.ToString(), out var accessToken))
         {
             return Unauthorized();
         }
 
-        var responseMessage = await _httpClient.GetAsync($"PersonalChatMessageCount", refreshToken, Port.ChatApi);
+        var responseMessage = await _httpClient.GetAsync($"PersonalChatMessageCount", accessToken, Port.ChatApi);
         if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
         {
             return Unauthorized();
@@ -44,12 +47,12 @@ public class PersonalChatMessageCountController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> Create(PersonalChatMessageCountModel message)
     {
-        if (!HttpContext.Request.Cookies.TryGetValue("refreshToken", out var refreshToken))
+        if (!Request.Cookies.TryGetValue(AuthenticationTokenType.AccessToken.ToString(), out var accessToken))
         {
             return Unauthorized();
         }
 
-        var responseMessage = await _httpClient.PostAsync("PersonalChatMessageCount", JsonContent.Create(message), refreshToken, Port.ChatApi);
+        var responseMessage = await _httpClient.PostAsync("PersonalChatMessageCount", JsonContent.Create(message), accessToken, Port.ChatApi);
         if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
         {
             return Unauthorized();
@@ -66,12 +69,12 @@ public class PersonalChatMessageCountController : ControllerBase
     [HttpPut]
     public async Task<IActionResult> Update(PersonalChatMessageCountModel message)
     {
-        if (!HttpContext.Request.Cookies.TryGetValue("refreshToken", out var refreshToken))
+        if (!Request.Cookies.TryGetValue(AuthenticationTokenType.AccessToken.ToString(), out var accessToken))
         {
             return Unauthorized();
         }
 
-        var responseMessage = await _httpClient.PutAsync("PersonalChatMessageCount", JsonContent.Create(message), refreshToken, Port.ChatApi);
+        var responseMessage = await _httpClient.PutAsync("PersonalChatMessageCount", JsonContent.Create(message), accessToken, Port.ChatApi);
         if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
         {
             return Unauthorized();
@@ -87,12 +90,12 @@ public class PersonalChatMessageCountController : ControllerBase
     [HttpDelete("{id:int:min(1)}")]
     public async Task<IActionResult> Delete(int id)
     {
-        if (!HttpContext.Request.Cookies.TryGetValue("refreshToken", out var refreshToken))
+        if (!Request.Cookies.TryGetValue(AuthenticationTokenType.AccessToken.ToString(), out var accessToken))
         {
             return Unauthorized();
         }
 
-        var responseMessage = await _httpClient.DeletAsync($"PersonalChatMessageCount/{id}", refreshToken, Port.ChatApi);
+        var responseMessage = await _httpClient.DeletAsync($"PersonalChatMessageCount/{id}", accessToken, Port.ChatApi);
         if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
         {
             return Unauthorized();

@@ -1,4 +1,5 @@
-﻿using CombatAnalysis.WebApp.Consts;
+﻿using CombatAnalysis.WebApp.Attributes;
+using CombatAnalysis.WebApp.Consts;
 using CombatAnalysis.WebApp.Enums;
 using CombatAnalysis.WebApp.Extensions;
 using CombatAnalysis.WebApp.Interfaces;
@@ -7,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace CombatAnalysis.WebApp.Controllers.Post;
 
+[RequireAccessToken]
 [Route("api/v1/[controller]")]
 [ApiController]
 public class UserPostController : ControllerBase
@@ -21,7 +23,7 @@ public class UserPostController : ControllerBase
     [HttpGet("{id:int:min(1)}")]
     public async Task<IActionResult> GetById(int id)
     {
-        if (!HttpContext.Request.Cookies.TryGetValue(AuthenticationTokenType.AccessToken.ToString(), out var accessToken))
+        if (!Request.Cookies.TryGetValue(AuthenticationTokenType.AccessToken.ToString(), out var accessToken))
         {
             return Unauthorized();
         }
@@ -30,7 +32,8 @@ public class UserPostController : ControllerBase
         if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
         {
             return Unauthorized();
-        } else if (responseMessage.IsSuccessStatusCode)
+        } 
+        else if (responseMessage.IsSuccessStatusCode)
         {
             var post = await responseMessage.Content.ReadFromJsonAsync<UserPostModel>();
 
@@ -43,7 +46,7 @@ public class UserPostController : ControllerBase
     [HttpGet("searchByUserId/{id}")]
     public async Task<IActionResult> SearchByUserId(string id)
     {
-        if (!HttpContext.Request.Cookies.TryGetValue(AuthenticationTokenType.AccessToken.ToString(), out var accessToken))
+        if (!Request.Cookies.TryGetValue(AuthenticationTokenType.AccessToken.ToString(), out var accessToken))
         {
             return Unauthorized();
         }
@@ -52,7 +55,8 @@ public class UserPostController : ControllerBase
         if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
         {
             return Unauthorized();
-        } else if (responseMessage.IsSuccessStatusCode)
+        }
+        else if (responseMessage.IsSuccessStatusCode)
         {
             var posts = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<UserPostModel>>();
 
@@ -65,7 +69,7 @@ public class UserPostController : ControllerBase
     [HttpGet("searchByPostId/{id:int:min(1)}")]
     public async Task<IActionResult> SearchByPostId(int id)
     {
-        if (!HttpContext.Request.Cookies.TryGetValue(AuthenticationTokenType.AccessToken.ToString(), out var accessToken))
+        if (!Request.Cookies.TryGetValue(AuthenticationTokenType.AccessToken.ToString(), out var accessToken))
         {
             return Unauthorized();
         }
@@ -88,7 +92,7 @@ public class UserPostController : ControllerBase
     [HttpPut]
     public async Task<IActionResult> Update(UserPostModel model)
     {
-        if (!HttpContext.Request.Cookies.TryGetValue(AuthenticationTokenType.AccessToken.ToString(), out var accessToken))
+        if (!Request.Cookies.TryGetValue(AuthenticationTokenType.AccessToken.ToString(), out var accessToken))
         {
             return Unauthorized();
         }
@@ -97,7 +101,8 @@ public class UserPostController : ControllerBase
         if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
         {
             return Unauthorized();
-        } else if (responseMessage.IsSuccessStatusCode)
+        } 
+        else if (responseMessage.IsSuccessStatusCode)
         {
             return Ok();
         }
@@ -108,7 +113,7 @@ public class UserPostController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> Create(UserPostModel model)
     {
-        if (!HttpContext.Request.Cookies.TryGetValue(AuthenticationTokenType.AccessToken.ToString(), out var accessToken))
+        if (!Request.Cookies.TryGetValue(AuthenticationTokenType.AccessToken.ToString(), out var accessToken))
         {
             return Unauthorized();
         }
@@ -131,7 +136,7 @@ public class UserPostController : ControllerBase
     [HttpDelete("{id:int:min(1)}")]
     public async Task<IActionResult> Delete(int id)
     {
-        if (!HttpContext.Request.Cookies.TryGetValue(AuthenticationTokenType.AccessToken.ToString(), out var accessToken))
+        if (!Request.Cookies.TryGetValue(AuthenticationTokenType.AccessToken.ToString(), out var accessToken))
         {
             return Unauthorized();
         }

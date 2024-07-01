@@ -1,4 +1,6 @@
-﻿using CombatAnalysis.WebApp.Consts;
+﻿using CombatAnalysis.WebApp.Attributes;
+using CombatAnalysis.WebApp.Consts;
+using CombatAnalysis.WebApp.Enums;
 using CombatAnalysis.WebApp.Extensions;
 using CombatAnalysis.WebApp.Interfaces;
 using CombatAnalysis.WebApp.Models.Community;
@@ -6,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace CombatAnalysis.WebApp.Controllers.Community;
 
+[RequireAccessToken]
 [Route("api/v1/[controller]")]
 [ApiController]
 public class InviteToCommunityController : ControllerBase
@@ -20,12 +23,12 @@ public class InviteToCommunityController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> Create(InviteToCommunityModel chat)
     {
-        if (!HttpContext.Request.Cookies.TryGetValue("refreshToken", out var refreshToken))
+        if (!Request.Cookies.TryGetValue(AuthenticationTokenType.AccessToken.ToString(), out var accessToken))
         {
             return Unauthorized();
         }
 
-        var responseMessage = await _httpClient.PostAsync("InviteToCommunity", JsonContent.Create(chat), refreshToken, Port.CommunicationApi);
+        var responseMessage = await _httpClient.PostAsync("InviteToCommunity", JsonContent.Create(chat), accessToken, Port.CommunicationApi);
         if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
         {
             return Unauthorized();
@@ -43,12 +46,12 @@ public class InviteToCommunityController : ControllerBase
     [HttpGet]
     public async Task<IActionResult> GetAll()
     {
-        if (!HttpContext.Request.Cookies.TryGetValue("refreshToken", out var refreshToken))
+        if (!Request.Cookies.TryGetValue(AuthenticationTokenType.AccessToken.ToString(), out var accessToken))
         {
             return Unauthorized();
         }
 
-        var responseMessage = await _httpClient.GetAsync("InviteToCommunity", refreshToken, Port.CommunicationApi);
+        var responseMessage = await _httpClient.GetAsync("InviteToCommunity", accessToken, Port.CommunicationApi);
         if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
         {
             return Unauthorized();
@@ -66,12 +69,12 @@ public class InviteToCommunityController : ControllerBase
     [HttpGet("{id:int:min(1)}")]
     public async Task<IActionResult> GetById(int id)
     {
-        if (!HttpContext.Request.Cookies.TryGetValue("refreshToken", out var refreshToken))
+        if (!Request.Cookies.TryGetValue(AuthenticationTokenType.AccessToken.ToString(), out var accessToken))
         {
             return Unauthorized();
         }
 
-        var responseMessage = await _httpClient.GetAsync($"InviteToCommunity/{id}", refreshToken, Port.CommunicationApi);
+        var responseMessage = await _httpClient.GetAsync($"InviteToCommunity/{id}", accessToken, Port.CommunicationApi);
         if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
         {
             return Unauthorized();
@@ -89,12 +92,12 @@ public class InviteToCommunityController : ControllerBase
     [HttpGet("searchByUserId/{id}")]
     public async Task<IActionResult> SearchByUserId(string id)
     {
-        if (!HttpContext.Request.Cookies.TryGetValue("refreshToken", out var refreshToken))
+        if (!Request.Cookies.TryGetValue(AuthenticationTokenType.AccessToken.ToString(), out var accessToken))
         {
             return Unauthorized();
         }
 
-        var responseMessage = await _httpClient.GetAsync($"InviteToCommunity/searchByUserId/{id}", refreshToken, Port.CommunicationApi);
+        var responseMessage = await _httpClient.GetAsync($"InviteToCommunity/searchByUserId/{id}", accessToken, Port.CommunicationApi);
         if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
         {
             return Unauthorized();
@@ -112,12 +115,12 @@ public class InviteToCommunityController : ControllerBase
     [HttpGet("isExist")]
     public async Task<IActionResult> IsExist(string peopleId, int communityId)
     {
-        if (!HttpContext.Request.Cookies.TryGetValue("refreshToken", out var refreshToken))
+        if (!Request.Cookies.TryGetValue(AuthenticationTokenType.AccessToken.ToString(), out var accessToken))
         {
             return Unauthorized();
         }
 
-        var responseMessage = await _httpClient.GetAsync("InviteToCommunity", refreshToken, Port.CommunicationApi);
+        var responseMessage = await _httpClient.GetAsync("InviteToCommunity", accessToken, Port.CommunicationApi);
         if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
         {
             return Unauthorized();
@@ -140,12 +143,12 @@ public class InviteToCommunityController : ControllerBase
     [HttpPut]
     public async Task<IActionResult> Update(InviteToCommunityModel chat)
     {
-        if (!HttpContext.Request.Cookies.TryGetValue("refreshToken", out var refreshToken))
+        if (!Request.Cookies.TryGetValue(AuthenticationTokenType.AccessToken.ToString(), out var accessToken))
         {
             return Unauthorized();
         }
 
-        var responseMessage = await _httpClient.PutAsync("InviteToCommunity", JsonContent.Create(chat), refreshToken, Port.CommunicationApi);
+        var responseMessage = await _httpClient.PutAsync("InviteToCommunity", JsonContent.Create(chat), accessToken, Port.CommunicationApi);
         if (responseMessage.StatusCode == System.Net.HttpStatusCode.OK)
         {
             return Ok();
@@ -157,12 +160,12 @@ public class InviteToCommunityController : ControllerBase
     [HttpDelete("{id:int:min(1)}")]
     public async Task<IActionResult> Delete(int id)
     {
-        if (!HttpContext.Request.Cookies.TryGetValue("refreshToken", out var refreshToken))
+        if (!Request.Cookies.TryGetValue(AuthenticationTokenType.AccessToken.ToString(), out var accessToken))
         {
             return Unauthorized();
         }
 
-        var responseMessage = await _httpClient.DeletAsync($"InviteToCommunity/{id}", refreshToken, Port.CommunicationApi);
+        var responseMessage = await _httpClient.DeletAsync($"InviteToCommunity/{id}", accessToken, Port.CommunicationApi);
         if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
         {
             return Unauthorized();

@@ -1,4 +1,6 @@
-﻿using CombatAnalysis.WebApp.Consts;
+﻿using CombatAnalysis.WebApp.Attributes;
+using CombatAnalysis.WebApp.Consts;
+using CombatAnalysis.WebApp.Enums;
 using CombatAnalysis.WebApp.Extensions;
 using CombatAnalysis.WebApp.Interfaces;
 using CombatAnalysis.WebApp.Models.Community;
@@ -6,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace CombatAnalysis.WebApp.Controllers.Community;
 
+[RequireAccessToken]
 [Route("api/v1/[controller]")]
 [ApiController]
 public class CommunityController : ControllerBase
@@ -20,12 +23,12 @@ public class CommunityController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> Create(CommunityModel newCommunity)
     {
-        if (!HttpContext.Request.Cookies.TryGetValue("refreshToken", out var refreshToken))
+        if (!Request.Cookies.TryGetValue(AuthenticationTokenType.AccessToken.ToString(), out var accessToken))
         {
             return Unauthorized();
         }
 
-        var responseMessage = await _httpClient.PostAsync("Community", JsonContent.Create(newCommunity), refreshToken, Port.CommunicationApi);
+        var responseMessage = await _httpClient.PostAsync("Community", JsonContent.Create(newCommunity), accessToken, Port.CommunicationApi);
         if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
         {
             return Unauthorized();

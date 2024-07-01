@@ -1,4 +1,6 @@
-﻿using CombatAnalysis.WebApp.Consts;
+﻿using CombatAnalysis.WebApp.Attributes;
+using CombatAnalysis.WebApp.Consts;
+using CombatAnalysis.WebApp.Enums;
 using CombatAnalysis.WebApp.Extensions;
 using CombatAnalysis.WebApp.Interfaces;
 using CombatAnalysis.WebApp.Models.User;
@@ -17,15 +19,16 @@ public class CustomerController : ControllerBase
         _httpClient = httpClient;
     }
 
+    [RequireAccessToken]
     [HttpGet]
     public async Task<IActionResult> GetAll()
     {
-        if (!HttpContext.Request.Cookies.TryGetValue("refreshToken", out var refreshToken))
+        if (!Request.Cookies.TryGetValue(AuthenticationTokenType.AccessToken.ToString(), out var accessToken))
         {
             return Unauthorized();
         }
 
-        var responseMessage = await _httpClient.GetAsync("Customer", refreshToken, Port.UserApi);
+        var responseMessage = await _httpClient.GetAsync("Customer", accessToken, Port.UserApi);
         if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
         {
             return Unauthorized();
@@ -40,15 +43,16 @@ public class CustomerController : ControllerBase
         return BadRequest();
     }
 
+    [RequireAccessToken]
     [HttpGet("{id}")]
     public async Task<IActionResult> GetById(string id)
     {
-        if (!HttpContext.Request.Cookies.TryGetValue("refreshToken", out var refreshToken))
+        if (!Request.Cookies.TryGetValue(AuthenticationTokenType.AccessToken.ToString(), out var accessToken))
         {
             return Unauthorized();
         }
 
-        var responseMessage = await _httpClient.GetAsync($"Customer/{id}", refreshToken, Port.UserApi);
+        var responseMessage = await _httpClient.GetAsync($"Customer/{id}", accessToken, Port.UserApi);
         if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
         {
             return Unauthorized();
@@ -68,15 +72,16 @@ public class CustomerController : ControllerBase
         return BadRequest();
     }
 
+    [RequireAccessToken]
     [HttpGet("searchByUserId/{id}")]
     public async Task<IActionResult> SearchByUserId(string id)
     {
-        if (!HttpContext.Request.Cookies.TryGetValue("refreshToken", out var refreshToken))
+        if (!Request.Cookies.TryGetValue(AuthenticationTokenType.AccessToken.ToString(), out var accessToken))
         {
             return Unauthorized();
         }
 
-        var responseMessage = await _httpClient.GetAsync($"Customer/searchByUserId/{id}", refreshToken, Port.UserApi);
+        var responseMessage = await _httpClient.GetAsync($"Customer/searchByUserId/{id}", accessToken, Port.UserApi);
         if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
         {
             return Unauthorized();
@@ -92,15 +97,16 @@ public class CustomerController : ControllerBase
         return BadRequest();
     }
 
+    [RequireAccessToken]
     [HttpPost]
     public async Task<IActionResult> Create(CustomerModel model)
     {
-        if (!HttpContext.Request.Cookies.TryGetValue("refreshToken", out var refreshToken))
+        if (!Request.Cookies.TryGetValue(AuthenticationTokenType.AccessToken.ToString(), out var accessToken))
         {
             return Unauthorized();
         }
 
-        var responseMessage = await _httpClient.PostAsync("Customer", JsonContent.Create(model), refreshToken, Port.UserApi);
+        var responseMessage = await _httpClient.PostAsync("Customer", JsonContent.Create(model), accessToken, Port.UserApi);
         if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
         {
             return Unauthorized();
@@ -115,15 +121,16 @@ public class CustomerController : ControllerBase
         return BadRequest();
     }
 
+    [RequireAccessToken]
     [HttpPut]
     public async Task<IActionResult> Edit(CustomerModel model)
     {
-        if (!HttpContext.Request.Cookies.TryGetValue("refreshToken", out var refreshToken))
+        if (!Request.Cookies.TryGetValue(AuthenticationTokenType.AccessToken.ToString(), out var accessToken))
         {
             return Unauthorized();
         }
 
-        var responseMessage = await _httpClient.PutAsync("Customer", JsonContent.Create(model), refreshToken, Port.UserApi);
+        var responseMessage = await _httpClient.PutAsync("Customer", JsonContent.Create(model), accessToken, Port.UserApi);
         if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
         {
             return Unauthorized();
