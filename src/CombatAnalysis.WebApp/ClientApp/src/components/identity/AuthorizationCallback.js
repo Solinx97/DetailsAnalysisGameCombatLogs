@@ -4,6 +4,8 @@ import { useAuth } from '../../context/AuthProvider';
 
 import '../../styles/identity/authorizationCallback.scss';
 
+const unauthorizedTimeout = 4000;
+
 const AuthorizationCallback = () => {
     const navigate = useNavigate();
 
@@ -27,6 +29,19 @@ const AuthorizationCallback = () => {
 
         naviagetToToken();
     }, []);
+
+    useEffect(() => {
+        let timeout;
+        if (!stateIsValid) {
+            timeout = setTimeout(() => {
+                navigate("/");
+            }, unauthorizedTimeout);
+        }
+
+        return () => {
+            clearTimeout(timeout);
+        }
+    }, [stateIsValid]);
 
     const navigateToTokenAsync = async (code) => {
         const codeVerifier = window.sessionStorage.getItem("codeVerifier");

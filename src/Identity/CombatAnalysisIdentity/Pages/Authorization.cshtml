@@ -20,18 +20,31 @@
                 </div>
             </form>
         </div>
-        <input type="button" class="btn-border-shadow finish-registration" onclick="goToRegistration()" value="Registration" />
+        <div class="login__cancel">
+            <input type="button" class="btn-border-shadow finish-registration" onclick="goToRegistration()" value="Registration" />
+            <input type="button" class="btn-border-shadow cancel" onclick="goToHome()" value="Cancel" />
+        </div>
     </div>
 }
 else
 {
-    <div>Request is incorrect.</div>
+    <div class="request-incorrect">
+        <div>Request is incorrect. Pls try one more time</div>
+    </div>
 }
 
 <script>
     function goToRegistration() {
-        var queryparams = window.location.search;
+        const queryString = window.location.search;
 
-        window.location.href = `https://localhost:7064/registration${queryparams}`;
+        window.location.href = `https://localhost:7064/registration${queryString}`;
+    }
+
+    function goToHome() {
+        const queryString = window.location.search;
+        const queryparams = new URLSearchParams(queryString);
+        const redirectUri = queryparams.get("redirectUri");
+
+        window.location.href = redirectUri;
     }
 </script>

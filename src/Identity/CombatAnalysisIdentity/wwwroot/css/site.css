@@ -1,11 +1,74 @@
-.login {
+body {
+  color: white;
+}
+
+#root {
+  position: fixed;
+  bottom: 0;
+  right: 0;
+  background: #0c192c;
+  height: 100vh;
+  width: 100vw;
+  z-index: -1;
+}
+
+header {
+  display: flex;
+  justify-content: center;
+  color: white;
+  margin: 30px;
+  font-size: 22px;
+  font-family: "Comic Sans MS";
+}
+
+input, label {
+  color: white;
+}
+
+.request-incorrect {
+  display: flex;
+  justify-content: center;
+  margin: 50px 0;
+  font-size: 18px;
+  animation: incorrect 3s linear infinite;
+}
+
+@keyframes incorrect {
+  0% {
+    color: white;
+  }
+  50% {
+    color: brown;
+  }
+  100% {
+    color: white;
+  }
+}
+.login, .registration {
+  position: absolute;
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 20px;
+  right: 40%;
+  top: 20%;
+  color: white;
+}
+.login__cancel, .registration__cancel {
+  display: flex;
+  justify-content: space-between;
+  margin: 10px 0;
+  width: 250px;
+}
+.login__cancel .cancel, .registration__cancel .cancel {
+  font-size: 11px;
+  box-shadow: 2px 2px 2px 2px gray;
+}
+
+.login {
+  right: 40%;
 }
 .login__title {
-  margin-left: 50px;
   font-size: 18px;
   font-weight: bold;
 }
@@ -35,10 +98,7 @@
 }
 
 .registration {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 20px;
+  right: 20%;
 }
 .registration__title {
   margin-left: 50px;
@@ -65,9 +125,6 @@
   justify-content: center;
   gap: 25px;
   margin: 15px 0;
-}
-.registration__submit .actions input {
-  color: black;
 }
 .registration__submit .finish-registration {
   box-shadow: 2px 2px 2px 2px green;

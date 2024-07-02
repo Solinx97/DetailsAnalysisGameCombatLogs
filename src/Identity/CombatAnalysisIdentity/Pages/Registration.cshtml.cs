@@ -17,8 +17,13 @@ public class RegistrationModel : PageModel
         _authorizationService = authorizationService;
     }
 
-    public void OnGet()
+    public bool QueryIsValid { get; set; }
+
+    public async Task OnGetAsync()
     {
+        var clientIsValid = await _authorizationService.ClientValidationAsync(Request);
+
+        QueryIsValid = clientIsValid;
     }
 
     public async Task<IActionResult> OnPostAsync(int step, string email, string password, string confirmPassword, int phoneNumber, DateTimeOffset birthday, string username, string firstName, string lastName, string aboutMe)
