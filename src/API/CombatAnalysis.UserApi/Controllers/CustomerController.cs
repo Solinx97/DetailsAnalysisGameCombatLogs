@@ -47,6 +47,7 @@ public class CustomerController : ControllerBase
         return Ok(result);
     }
 
+    [AllowAnonymous]
     [HttpPost]
     public async Task<IActionResult> Create(CustomerModel model)
     {
@@ -102,8 +103,8 @@ public class CustomerController : ControllerBase
         }
     }
 
-    [HttpGet("checkIfCustomerExist/{username}")]
     [AllowAnonymous]
+    [HttpGet("checkIfCustomerExist/{username}")]
     public async Task<IActionResult> CheckIfCustomerExist(string username)
     {
         try

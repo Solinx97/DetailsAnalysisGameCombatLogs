@@ -1,13 +1,12 @@
 ﻿@page
 @model AuthorizationModel
-@RenderMode.ServerPrerendered
 
-@if (!Model.QueryIsValid)
+@if (Model.QueryIsValid)
 {
     <div class="login">
         <div class="login__title">Login</div>
         <div class="login__container">
-            <form class="login__submit">
+            <form class="login__submit" method="post">
                 <div class="mb-3">
                     <label for="inputEmail" class="form-label">Email</label>
                     <input type="email" class="form-control" id="inputEmail" name="email" aria-describedby="emailHelp" required />

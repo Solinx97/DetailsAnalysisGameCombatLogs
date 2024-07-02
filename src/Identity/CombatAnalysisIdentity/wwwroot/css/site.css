@@ -33,12 +33,8 @@
 .registration {
   display: flex;
   flex-direction: column;
+  align-items: center;
   gap: 20px;
-}
-.registration__container {
-  display: flex;
-  justify-content: start;
-  gap: 50px;
 }
 .registration__title {
   margin-left: 50px;
@@ -46,6 +42,12 @@
   font-weight: bold;
 }
 .registration__submit {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  width: 1000px;
+}
+.registration__submit .confidential, .registration__submit .general {
   width: 300px;
 }
 .registration__submit__error-message {
@@ -56,6 +58,7 @@
 }
 .registration__submit .actions {
   display: flex;
+  justify-content: center;
   gap: 25px;
   margin: 15px 0;
 }
@@ -64,6 +67,11 @@
 }
 .registration__submit .finish-registration {
   box-shadow: 2px 2px 2px 2px green;
+}
+.registration__container {
+  display: flex;
+  justify-content: center;
+  gap: 50px;
 }
 
 .btn-border-shadow {

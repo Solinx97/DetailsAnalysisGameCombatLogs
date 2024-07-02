@@ -61,8 +61,29 @@ public class AccountController : ControllerBase
         }
     }
 
+    [AllowAnonymous]
+    [HttpPost]
+    public async Task<IActionResult> Create(AppUserModel model)
+    {
+        try
+        {
+            model.Id = Guid.NewGuid().ToString();
+
+            var map = _mapper.Map<AppUserDto>(model);
+            var result = await _service.CreateAsync(map);
+
+            return Ok(result);
+        }
+        catch (ArgumentNullException ex)
+        {
+            _logger.LogError(ex, ex.Message);
+
+            return BadRequest();
+        }
+    }
+
     [HttpPut]
-    public async Task<IActionResult> Edit(AppUserModel user)
+    public async Task<IActionResult> Update(AppUserModel user)
     {
         var map = _mapper.Map<AppUserDto>(user);
         var updatedUser = await _service.UpdateAsync(map);
@@ -71,7 +92,6 @@ public class AccountController : ControllerBase
             return BadRequest();
         }
 
-        var login = new LoginModel { Email = user.Email, Password = user.Password };
         return Ok();
     }
 

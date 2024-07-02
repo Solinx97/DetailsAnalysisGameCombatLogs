@@ -3,8 +3,10 @@ using CombatAnalysis.Identity.Extensions;
 using CombatAnalysis.Identity.Mapping;
 using CombatAnalysis.Identity.Security;
 using CombatAnalysisIdentity.Core;
+using CombatAnalysisIdentity.Interfaces;
+using CombatAnalysisIdentity.Mapping;
+using CombatAnalysisIdentity.Services;
 using Serilog;
-using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,9 +15,11 @@ builder.Services.RegisterIdentityDependencies(builder.Configuration, "DefaultCon
 var mappingConfig = new MapperConfiguration(mc =>
 {
     mc.AddProfile(new IdentityMapper());
+    mc.AddProfile(new CombatAnalysisIdentityMapper());
 });
 var mapper = mappingConfig.CreateMapper();
 builder.Services.AddSingleton(mapper);
+builder.Services.AddTransient<IUserAuthorizationService, UserAuthorizationService>();
 
 // Add services to the container.
 builder.Services.AddRazorPages()

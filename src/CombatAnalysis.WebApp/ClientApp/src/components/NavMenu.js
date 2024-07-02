@@ -15,7 +15,7 @@ const NavMenu = () => {
 
     const customer = useSelector((state) => state.customer.value);
 
-    const { navigateToAuthAsync } = useAuthorization();
+    const { navigateToAuthorizationAsync, navigateToRegistrationAsync } = useAuthorization();
     const { isAuthenticated, checkAuthAsync, logoutAsync } = useAuth();
 
     const navigate = useNavigate();
@@ -38,8 +38,8 @@ const NavMenu = () => {
         setCollapsed((item) => !item);
     }, []);
 
-    const handleLoginClick = useCallback(async () => await navigateToAuthAsync(), [navigate]);
-    const handleRegistrationClick = useCallback(() => navigate('/registration'), [navigate]);
+    const handleLoginClick = useCallback(async () => await navigateToAuthorizationAsync(), [navigate]);
+    const handleRegistrationClick = useCallback(async () => await navigateToRegistrationAsync(), [navigate]);
     const handleLogoutClick = useCallback(() => logoutAsync(), [logoutAsync]);
 
     return (

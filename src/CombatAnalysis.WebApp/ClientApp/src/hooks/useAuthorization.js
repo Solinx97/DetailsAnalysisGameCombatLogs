@@ -25,7 +25,23 @@ const useAuthorization = () => {
         return encodedCode;
     }
 
-    const navigateToAuthAsync = async () => {
+    const navigateToAuthorizationAsync = async () => {
+        const identityServerAuthPath = process.env.REACT_APP_IDENTITY_SERVER_AUTH_PATH;
+
+        const uri = await createIdentityServerUrlAsync(identityServerAuthPath);
+
+        window.location.href = uri;
+    }
+
+    const navigateToRegistrationAsync = async () => {
+        const identityServerRegistrationPath = process.env.REACT_APP_IDENTITY_SERVER_REGISTRY_PATH;
+
+        const uri = await createIdentityServerUrlAsync(identityServerRegistrationPath);
+
+        window.location.href = uri;
+    }
+
+    const createIdentityServerUrlAsync = async (identityServerPath) => {
         const codeVerifier = generateCodeVerifier();
         const state = generateCodeVerifier();
         const codeChallenge = await generateCodeChallengeAsync(codeVerifier);
@@ -38,14 +54,13 @@ const useAuthorization = () => {
         const clientScope = process.env.REACT_APP_CLIENT_SCOPE;
         const redirectUri = process.env.REACT_APP_REDIRECT_URI;
         const identityServer = process.env.REACT_APP_IDENTITY_SERVER;
-        const identityServerAuthPath = process.env.REACT_APP_IDENTITY_SERVER_AUTH_PATH;
 
-        const uri = `${identityServer}/${identityServerAuthPath}?grantType=code&clientTd=${clientId}&redirectUri=${redirectUri}&scope=${clientScope}&state=${state}&codeChallengeMethod=${codeChallengeMethod}&codeChallenge=${codeChallenge}`;
+        const uri = `${identityServer}/${identityServerPath}?grantType=code&clientTd=${clientId}&redirectUri=${redirectUri}&scope=${clientScope}&state=${state}&codeChallengeMethod=${codeChallengeMethod}&codeChallenge=${codeChallenge}`;
 
-        window.location.href = uri;
+        return uri;
     }
 
-    return { navigateToAuthAsync };
+    return { navigateToAuthorizationAsync, navigateToRegistrationAsync };
 }
 
 export default useAuthorization;

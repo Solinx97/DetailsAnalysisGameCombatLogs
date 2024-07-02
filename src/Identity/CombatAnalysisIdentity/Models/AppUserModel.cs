@@ -1,8 +1,8 @@
-﻿namespace CombatAnalysis.WebApp.Models.User;
+﻿namespace CombatAnalysisIdentity.Models;
 
 public class AppUserModel
 {
-    public string Id { get; set; }
+    public string Id { get; set; } = string.Empty;
 
     public string Username { get; set; }
 

@@ -18,7 +18,7 @@ const Home = () => {
 
     const customer = useSelector((state) => state.customer.value);
 
-    const { navigateToAuthAsync } = useAuthorization();
+    const { navigateToAuthorizationAsync } = useAuthorization();
 
     const [shouldBeAuthorize, setShouldBeAuthorize] = useState(false);
 
@@ -52,7 +52,7 @@ const Home = () => {
                 <div className="title">
                     <div>{t("Communication")}</div>
                     {customer === null &&
-                        <div className="btn-shadow authorize-alert" onClick={async () => await navigateToAuthAsync()} title={t("GoToLogin")}>
+                        <div className="btn-shadow authorize-alert" onClick={async () => await navigateToAuthorizationAsync()} title={t("GoToLogin")}>
                             <FontAwesomeIcon
                                 icon={faTriangleExclamation}
                             />
@@ -109,7 +109,7 @@ const Home = () => {
             {shouldBeAuthorize &&
                 <div className="should-be-authorize">
                     <div className="alert alert-success" role="alert">
-                        {t("YouNeed")} <NavLink onClick={async () => await navigateToAuthAsync()}>{t("Login")}</NavLink> {t("InApp")}
+                        {t("YouNeed")} <NavLink onClick={async () => await navigateToAuthorizationAsync()}>{t("Login")}</NavLink> {t("InApp")}
                     </div>
                 </div>
             }
