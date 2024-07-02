@@ -15,12 +15,23 @@
                     <label for="inputPassword" class="form-label">Password</label>
                     <input type="password" class="form-control" id="inputPassword" name="password" autoComplete="new-password" required />
                 </div>
-                <input type="submit" class="btn-border-shadow finish-login" value=Login />
+                <div class="actions">
+                    <input type="submit" class="btn-border-shadow finish-login" value=Login />
+                </div>
             </form>
         </div>
+        <input type="button" class="btn-border-shadow finish-registration" onclick="goToRegistration()" value="Registration" />
     </div>
 }
 else
 {
     <div>Request is incorrect.</div>
 }
+
+<script>
+    function goToRegistration() {
+        var queryparams = window.location.search;
+
+        window.location.href = `https://localhost:7064/registration${queryparams}`;
+    }
+</script>

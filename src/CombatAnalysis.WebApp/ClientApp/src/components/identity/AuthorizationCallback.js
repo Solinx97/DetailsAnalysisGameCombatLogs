@@ -2,6 +2,8 @@
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthProvider';
 
+import '../../styles/identity/authorizationCallback.scss';
+
 const AuthorizationCallback = () => {
     const navigate = useNavigate();
 
@@ -51,9 +53,12 @@ const AuthorizationCallback = () => {
     }
 
     return (
-        stateIsValid
-            ? <div>Authorization...</div>
-            : <div>Unauthorized. Pls try authorization one more time</div>
+        <div className="authorization-callback">
+            {stateIsValid
+                ? <div className="successful">Authorization</div>
+                : <div className="failed">Unauthorized. Pls try authorization one more time</div>
+            }
+        </div>
     );
 }
 

@@ -29,6 +29,10 @@
 .login__submit .finish-login {
   box-shadow: 2px 2px 2px 2px green;
 }
+.login .actions {
+  display: flex;
+  justify-content: center;
+}
 
 .registration {
   display: flex;
