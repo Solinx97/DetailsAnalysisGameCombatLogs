@@ -1,8 +1,11 @@
 ﻿import { memo, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../../context/AuthProvider';
 
 const AuthorizationCallback = () => {
     const navigate = useNavigate();
+
+    const { checkAuthAsync } = useAuth();
 
     const [stateIsValid, setStateIsValid] = useState(true);
 
@@ -31,6 +34,8 @@ const AuthorizationCallback = () => {
         if (result.status === 200) {
             window.sessionStorage.removeItem("codeVerifier");
             window.sessionStorage.removeItem("state");
+
+            await checkAuthAsync();
 
             navigate("/");
         }

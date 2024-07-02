@@ -67,7 +67,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Identity", "Identity", "{C0
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CombatAnalysisIdentity", "src\Identity\CombatAnalysisIdentity\CombatAnalysisIdentity.csproj", "{9BBE43EC-1F13-4D0A-A79A-75166F4DE19B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CombatAnalysis.IdentityDAL", "src\CombatAnalysis.IdentityDAL\CombatAnalysis.IdentityDAL.csproj", "{E067612D-CFF3-46BD-A2E3-FE0D4C8B689D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CombatAnalysis.IdentityDAL", "src\CombatAnalysis.IdentityDAL\CombatAnalysis.IdentityDAL.csproj", "{E067612D-CFF3-46BD-A2E3-FE0D4C8B689D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

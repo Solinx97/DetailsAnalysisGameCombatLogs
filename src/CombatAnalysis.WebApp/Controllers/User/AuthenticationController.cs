@@ -1,5 +1,4 @@
-﻿using CombatAnalysis.WebApp.Attributes;
-using CombatAnalysis.WebApp.Consts;
+﻿using CombatAnalysis.WebApp.Consts;
 using CombatAnalysis.WebApp.Enums;
 using CombatAnalysis.WebApp.Extensions;
 using CombatAnalysis.WebApp.Helpers;
@@ -20,7 +19,6 @@ public class AuthenticationController : ControllerBase
         _httpClient = httpClient;
     }
 
-    [RequireAccessToken]
     [HttpGet]
     public async Task<IActionResult> Refresh()
     {
@@ -28,7 +26,7 @@ public class AuthenticationController : ControllerBase
         {
             if (!Request.Cookies.TryGetValue(AuthenticationTokenType.AccessToken.ToString(), out var accessToken))
             {
-                return Unauthorized();
+                return Ok();
             }
 
             var identityUserId = AccessTokenHelper.GetUserIdFromToken(accessToken);

@@ -5,7 +5,7 @@ const statusCode = {
     notAuthorized: 401
 };
 
-const pageWithoutAuth = ["/", "/login", "/registration", "/main-information", "/general-analysis", "/details-specifical-combat", "/combat-general-details"];
+const pageWithoutAuth = ["/", "/login", "/registration", "/main-information", "/general-analysis", "/details-specifical-combat", "/combat-general-details", "/callback"];
 const unautorizedRedirectTo = "/";
 
 const authenticationMiddleware = (store) => (next) => (action) => {

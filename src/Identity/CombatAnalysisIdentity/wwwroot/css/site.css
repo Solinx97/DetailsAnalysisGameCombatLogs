@@ -1,22 +1,78 @@
-html {
+.login {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+}
+.login__title {
+  margin-left: 50px;
+  font-size: 18px;
+  font-weight: bold;
+}
+.login__container {
+  display: flex;
+  justify-content: start;
+  gap: 50px;
+}
+.login__submit {
+  width: 300px;
+}
+.login__submit__error-message {
+  margin: 15px;
+  padding: 10px;
+  border-radius: 15px;
+  background: yellow;
+}
+.login__submit .remember {
+  margin: 15px 0;
+}
+.login__submit .finish-login {
+  box-shadow: 2px 2px 2px 2px green;
+}
+
+.registration {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+.registration__container {
+  display: flex;
+  justify-content: start;
+  gap: 50px;
+}
+.registration__title {
+  margin-left: 50px;
+  font-size: 18px;
+  font-weight: bold;
+}
+.registration__submit {
+  width: 300px;
+}
+.registration__submit__error-message {
+  margin: 15px;
+  padding: 10px;
+  border-radius: 15px;
+  background: yellow;
+}
+.registration__submit .actions {
+  display: flex;
+  gap: 25px;
+  margin: 15px 0;
+}
+.registration__submit .actions input {
+  color: black;
+}
+.registration__submit .finish-registration {
+  box-shadow: 2px 2px 2px 2px green;
+}
+
+.btn-border-shadow {
+  padding: 10px 15px;
+  border-radius: 10px;
+  box-shadow: 2px 2px 2px 2px #5BBCFF;
   font-size: 14px;
+  cursor: pointer;
+  background: transparent;
 }
 
-@media (min-width: 768px) {
-  html {
-    font-size: 16px;
-  }
-}
-
-.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
-}
-
-html {
-  position: relative;
-  min-height: 100%;
-}
-
-body {
-  margin-bottom: 60px;
-}
+/*# sourceMappingURL=site.css.map */

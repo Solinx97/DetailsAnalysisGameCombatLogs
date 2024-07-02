@@ -1,0 +1,64 @@
+﻿@page
+@model CombatAnalysisIdentity.Pages.RegistrationModel
+
+<div class="registration">
+    <div class="registration__title">Registration</div>
+    <div class="registration__container">
+        <form class="registration__submit">
+            <div class="mb-3">
+                <label for="input-email" class="form-label">Email</label>
+                <input type="email" class="form-control" id="input-email" aria-describedby="emailHelp" required />
+            </div>
+            <div class="mb-3">
+                <label for="input-phone-number" class="form-label">Phone number</label>
+                <input type="number" class="form-control" id="input-phone-number" required />
+            </div>
+            <div class="mb-3">
+                <label for="input-birthday" class="form-label">Birthday</label>
+                <input type="date" class="form-control" id="input-birthday" required />
+            </div>
+            <div class="mb-3">
+                <label for="new-password" class="form-label">Password</label>
+                <input class="form-control" id="new-password" type="password" autoComplete="new-password" required />
+            </div>
+            <div class="mb-3">
+                <label for="confirm-password" class="form-label">Confirm password</label>
+                <input class="form-control" id="confirm-password" type="password" autoComplete="new-password" required />
+            </div>
+            <div class="actions">
+                <input type="submit" class="btn-border-shadow" value="Next step" />
+            </div>
+        </form>
+        <form class="registration__submit">
+            <div class="mb-3">
+                <label for="inputUsername" class="form-label">Username</label>
+                <input type="text" class="form-control" id="inputUsername" aria-describedby="emailHelp" required />
+            </div>
+            <div class="mb-3">
+                <label for="inputFirstName" class="form-label">FirstName</label>
+                <input type="text" class="form-control" id="inputFirstName" aria-describedby="emailHelp" required />
+            </div>
+            <div class="mb-3">
+                <label for="inputLastName" class="form-label">Last name</label>
+                <input type="text" class="form-control" id="inputLastName" required />
+            </div>
+            <div class="mb-3">
+                <label for="textareaAboutMe" class="form-label">About me</label>
+                <textarea class="form-control" id="textareaAboutMe" rows="4"></textarea>
+            </div>
+            <div>
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="inlineRadioOptions" id="man" value="0" />
+                    <label class="form-check-label" for="man">Man</label>
+                </div>
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="inlineRadioOptions" id="woman" value="1" />
+                    <label class="form-check-label" for="woman">Woman</label>
+                </div>
+            </div>
+            <div class="actions">
+                <input type="submit" class="btn-border-shadow finish-registration" value="Registration" />
+            </div>
+        </form>
+    </div>
+</div>
