@@ -7,6 +7,7 @@ using CombatAnalysisIdentity.Interfaces;
 using CombatAnalysisIdentity.Mapping;
 using CombatAnalysisIdentity.Services;
 using Serilog;
+using System.Security.Cryptography.X509Certificates;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -34,8 +35,9 @@ builder.Services.AddCors(options =>
     });
 });
 
+var certificate = new X509Certificate2(Path.Combine(Directory.GetCurrentDirectory(), "certs", "solinx.analysis.pfx"), builder.Configuration["Certificates:PWD"]);
 builder.Services.AddIdentityServer()
-            .AddDeveloperSigningCredential() // for Development purposes
+            .AddSigningCredential(certificate)
             .AddInMemoryApiResources(Config.GetApiResources())
             .AddInMemoryIdentityResources(Config.GetIdentityResources())
             .AddInMemoryClients(Config.GetClients())

@@ -9,7 +9,7 @@ Port.CombatParserApi = builder.Configuration["CombatParserApiPort"];
 Port.UserApi = builder.Configuration["UserApiPort"];
 Port.ChatApi = builder.Configuration["ChatApiPort"];
 Port.CommunicationApi = builder.Configuration["CommunicationApiPort"];
-Port.Identity = builder.Configuration["Identity"];
+Port.Identity = builder.Configuration["IdentityPort"];
 
 var settings = builder.Configuration.GetSection(nameof(Authentication));
 

@@ -6,7 +6,13 @@ internal class HttpClientHelper : IHttpClientHelper
 {
     public HttpClientHelper()
     {
-        Client = new HttpClient();
+        //Accept all Certifications (added for Local devployment)
+        var clientHandler = new HttpClientHandler
+        {
+            ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => { return true; }
+        };
+
+        Client = new HttpClient(clientHandler);
         BaseAddressApi = "api/v1/";
     }
 

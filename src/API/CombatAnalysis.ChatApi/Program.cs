@@ -27,7 +27,8 @@ builder.Services.AddSingleton<ILogger>(logger);
 builder.Services.AddAuthentication("Bearer")
         .AddJwtBearer("Bearer", options =>
         {
-            options.Authority = builder.Configuration["Authentication:IdentityServer"];
+            options.Authority = builder.Configuration["Authentication:Authority"];
+            options.Audience = builder.Configuration["Authentication:Audience"];
             options.TokenValidationParameters = new TokenValidationParameters
             {
                 ValidateIssuerSigningKey = true,
@@ -35,6 +36,11 @@ builder.Services.AddAuthentication("Bearer")
                 ValidateIssuer = false,
                 ValidateAudience = false,
                 ClockSkew = TimeSpan.Zero
+            };
+            // Allow all Certificates (added for Local deployment)
+            options.BackchannelHttpHandler = new HttpClientHandler
+            {
+                ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator
             };
         });
 
@@ -65,10 +71,10 @@ builder.Services.AddSwaggerGen(options =>
         {
             ClientCredentials = new OpenApiOAuthFlow
             {
-                TokenUrl = new Uri($"{builder.Configuration["Authentication:IdentityServer"]}/connect/token"),
+                TokenUrl = new Uri($"{builder.Configuration["Identity:Server"]}connect/token"),
                 Scopes = new Dictionary<string, string>
                 {
-                    { "api1", "Request API #1"}
+                    { builder.Configuration["Client:Scope"] ?? string.Empty, "Request API #1" }
                 }
             }
         }
@@ -85,7 +91,7 @@ builder.Services.AddSwaggerGen(options =>
                         Id = "oauth2"
                     },
                 },
-                new[] { "api1" }
+                new[] { builder.Configuration["Client:Scope"] }
             }
         });
 });
@@ -101,8 +107,8 @@ app.UseSwaggerUI(options =>
 {
     options.SwaggerEndpoint("/swagger/v1/swagger.json", "Chat API v1");
     options.InjectStylesheet("/swagger-ui/swaggerDark.css");
-    options.OAuthClientId("client1"); // Replace with your client ID
-    options.OAuthClientSecret("secret1"); // Replace with your client secret
+    options.OAuthClientId(builder.Configuration["Client:ClientId"]);
+    options.OAuthClientSecret(builder.Configuration["Client:ClientSecret"]);
 });
 
 app.UseStaticFiles();

@@ -57,6 +57,7 @@ const AuthorizationCallback = () => {
             navigate("/");
         }
 
+        console.log(await result.text());
         setStateIsValid(false);
     }
 
