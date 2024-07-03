@@ -25,7 +25,7 @@ const Profile = () => {
     const [privacyHidden, setPrivacyHidden] = useState(false);
     const [generalHidden, setGeneralHidden] = useState(false);
 
-    const email = useRef(null);
+    //const email = useRef(null);
     const phoneNumber = useRef(null);
     const birthday = useRef(null);
     const message = useRef(null);
@@ -33,7 +33,7 @@ const Profile = () => {
     const aboutMe = useRef(null);
     const firstName = useRef(null);
     const lastName = useRef(null);
-    const currentPassword = useRef(null);
+    //const currentPassword = useRef(null);
     const password = useRef(null);
     const confirmPassword = useRef(null);
 
@@ -43,12 +43,8 @@ const Profile = () => {
     }, []);
 
     useEffect(() => {
-        if (email.current === null) {
-            return;
-        }
-
         getUserInformation(user);
-    }, [isEditMode, email.current, privacyHidden]);
+    }, [isEditMode, privacyHidden]);
 
     useEffect(() => {
         if (message.current === null) {
@@ -66,7 +62,7 @@ const Profile = () => {
 
         const birthdayFromDate = `${date.getFullYear()}-${month}-${day}`;
 
-        email.current.value = user.email;
+        //email.current.value = user.email;
         phoneNumber.current.value = user.phoneNumber;
         birthday.current.value = birthdayFromDate;
     }
@@ -82,7 +78,7 @@ const Profile = () => {
     const editUserAsync = async () => {
         const updateForUser = {
             id: user?.id,
-            email: email.current.value,
+            //email: email.current.value,
             phoneNumber: phoneNumber.current.value,
             birthday: birthday.current.value,
             password: user?.password
@@ -224,10 +220,6 @@ const Profile = () => {
                 </div>
                 {!privacyHidden &&
                     <div className="privacy">
-                        <div className="mb-3">
-                            <label htmlFor="inputEmail" className="form-label">Email</label>
-                            <input type="email" className="form-control" id="inputEmail" aria-describedby="emailHelp" ref={email} disabled />
-                        </div>
                         <div className="mb-3">
                             <label htmlFor="inputPhoneNumber" className="form-label">{t("PhoneNumber")}</label>
                             <input type="number" className="form-control" id="inputPhoneNumber" ref={phoneNumber} disabled />
