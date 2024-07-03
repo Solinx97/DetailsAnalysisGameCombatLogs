@@ -56,6 +56,8 @@ const AuthorizationCallback = () => {
 
             navigate("/");
         }
+
+        setStateIsValid(false);
     }
 
     const validateState = (state) => {

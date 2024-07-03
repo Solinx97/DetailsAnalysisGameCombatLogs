@@ -44,7 +44,7 @@ const Chats = () => {
     const isLoading = personalChatLoading || groupChatLoading;
     const isError = personalChatError || groupChatError;
 
-    if (isLoading || isError) {
+    if (isLoading || isError || me === null) {
         return (
             <>
                 <CommunicationMenu currentMenuItem={1} />

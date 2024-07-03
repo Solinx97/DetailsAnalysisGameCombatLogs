@@ -152,28 +152,12 @@ const Profile = () => {
                 {!privacyHidden &&
                     <div className="privacy">
                         <div className="mb-3">
-                            <label htmlFor="inputEmail" className="form-label">Email</label>
-                            <input type="email" className="form-control" id="inputEmail" aria-describedby="emailHelp" ref={email} />
-                        </div>
-                        <div className="mb-3">
                             <label htmlFor="inputPhoneNumber" className="form-label">{t("PhoneNumber")}</label>
                             <input type="number" className="form-control" id="inputPhoneNumber" ref={phoneNumber} />
                         </div>
                         <div className="mb-3">
                             <label htmlFor="inputBithdayl" className="form-label">{t("Birthday")}</label>
                             <input type="date" className="form-control" id="inputBithdayl" ref={birthday} />
-                        </div>
-                        <div className="mb-3">
-                            <label htmlFor="inputCurrentPassword" className="form-label">{t("CurrentPassword")}</label>
-                            <input type="password" className="form-control" id="inputCurrentPassword" ref={currentPassword} />
-                        </div>
-                        <div className="mb-3">
-                            <label htmlFor="inputPassword" className="form-label">{t("NewPassword")}</label>
-                            <input type="password" className="form-control" id="inputPassword" ref={password} />
-                        </div>
-                        <div className="mb-3">
-                            <label htmlFor="inputConfirmPassword" className="form-label">{t("ConfirmNewPassword")}</label>
-                            <input type="password" className="form-control" id="inputConfirmPassword" ref={confirmPassword} />
                         </div>
                     </div>
                 }

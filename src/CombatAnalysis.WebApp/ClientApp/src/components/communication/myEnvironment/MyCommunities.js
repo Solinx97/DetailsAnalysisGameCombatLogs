@@ -1,6 +1,6 @@
 import { faEye, faEyeSlash, faMagnifyingGlassMinus, faMagnifyingGlassPlus } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
@@ -14,21 +14,28 @@ import '../../../styles/communication/community/communities.scss';
 const MyCommunities = () => {
     const { t } = useTranslation("communication/myEnvironment/myCommunities");
 
-    const customer = useSelector((state) => state.customer.value);
+    const me = useSelector((state) => state.customer.value);
 
     const navigate = useNavigate();
 
     const [showMyCommunities, setShowMyCommunities] = useState(true);
     const [filterContent, setFilterContent] = useState("");
     const [showSearchCommunity, setShowSearchCommunity] = useState(false);
+    const [skipFetching, setSkipFetching] = useState(true);
 
-    const { data: myCommunities, isLoading} = useSearchByUserIdAsyncQuery(customer?.id);
+    const { data: myCommunities, isLoading } = useSearchByUserIdAsyncQuery(me?.id, {
+        skip: skipFetching
+    });
 
     const navigateToCreateCommunity = () => navigate("/communities/create");
 
     const searchHandler = (e) => {
         setFilterContent(e.target.value);
     }
+
+    useEffect(() => {
+        me !== null ? setSkipFetching(false) : setSkipFetching(true);
+    }, [me]);
 
     if (isLoading) {
         return (<Loading />);
@@ -37,7 +44,7 @@ const MyCommunities = () => {
     return (
         <>
             <InvitesToCommunity
-                customer={customer}
+                customer={me}
             />
             <div className="communities__list">
                 <div className="title">

@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import { useGetCustomersQuery } from '../../../store/api/UserApi';
@@ -8,20 +8,26 @@ import PeopleItem from './PeopleItem';
 
 import '../../../styles/communication/people/people.scss';
 
-const peopleInterval = 5000;
+const peopleInterval = 3000;
 
 const People = () => {
     const { t } = useTranslation("communication/people/people");
 
     const me = useSelector((state) => state.customer.value);
     const [menuItem, setMenuItem] = useState(7);
+    const [skipFetching, setSkipFetching] = useState(true);
 
     const { people, isLoading } = useGetCustomersQuery(undefined, {
         pollingInterval: peopleInterval,
+        skip: skipFetching,
         selectFromResult: ({ data }) => ({
             people: data !== undefined ? data.filter((item) => item.id !== me?.id) : []
         }),
     });
+
+    useEffect(() => {
+        me !== null ? setSkipFetching(false) : setSkipFetching(true);
+    }, [me]);
 
     const peopleListFilter = useCallback((value) => {
         if (value.id !== me?.id) {
