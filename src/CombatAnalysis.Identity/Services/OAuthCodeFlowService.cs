@@ -92,7 +92,9 @@ internal class OAuthCodeFlowService : IOAuthCodeFlowService
             return false;
         }
 
-        var redirectUriIsValid = client.RedirectUrl == redirectUri;
+        var allowedRedirects = client.RedirectUrl.Split(';');
+        var getCleanRedirectUri = redirectUri.Split("https://");
+        var redirectUriIsValid = allowedRedirects.Contains(getCleanRedirectUri[1]);
         if (!redirectUriIsValid)
         {
             return false;

@@ -30,6 +30,7 @@ button {
     border-radius: 35px;
     opacity: 0.3;
     right: 10px;
+    z-index: 100;
 }
 
 .navigation:hover {
@@ -44,7 +45,7 @@ button {
     position: fixed;
     margin: 10px;
     width: 70px;
-    height: 350px;
+    height: 290px;
     background: white;
     border-radius: 35px;
     box-shadow: 0 15px 25px rgba(0,0,0,0.1);
@@ -62,24 +63,19 @@ button {
 
 .navigation ul li {
     position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
     list-style: none;
     width: 70px;
     height: 70px;
     z-index: 1;
-}
-
-.navigation ul li a {
-    position: relative;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 100%;
-    text-align: center;
     color: #333;
     font-weight: 500;
 }
 
-.navigation ul li a .icon {
+.navigation ul li .icon {
     position: relative;
     display: block;
     line-height: 75px;
@@ -87,15 +83,15 @@ button {
     transition: 0.5s;
 }
 
-.navigation ul li.active a .icon {
+.navigation ul li.active .icon {
     color: #fff;
 }
 
-.navigation ul li a .icon i {
+.navigation ul li .icon i {
     font-size: 24px;
 }
 
-.navigation ul li a .title {
+.navigation ul li .title {
     position: absolute;
     right: 85px;
     top: 50%;
@@ -110,13 +106,13 @@ button {
     visibility: hidden;
 }
 
-.navigation ul li:hover a .title {
+.navigation ul li:hover .title {
     opacity: 1;
     visibility: visible;
     transform: translateX(-25px) translateY(-50%);
 }
 
-.navigation ul li a .title::before {
+.navigation ul li .title::before {
     content: '';
     position: absolute;
     width: 12px;
@@ -307,7 +303,7 @@ button {
     font-size: 18px;
 }
 
-/* Navigate */
+/* Pet-project Navigate */
 
 .personal-project {
     display: none;

@@ -1,6 +1,4 @@
 import Home from './components/Home';
-import Login from './components/account/Login';
-import Registration from './components/account/Registration';
 import CombatGeneralDetails from './components/combatDetails/CombatGeneralDetails';
 import DetailsSpecificalCombat from './components/combatDetails/DetailsSpecificalCombat';
 import GeneralAnalysis from './components/combatDetails/GeneralAnalysis';
@@ -82,14 +80,6 @@ const AppRoutes = [
         path: '/combat-general-details',
         element: <CombatGeneralDetails />
     },
-    {
-        path: '/registration',
-        element: <Registration />
-    },
-    {
-        path: '/login',
-        element: <Login />
-    }
 ];
 
 export default AppRoutes;

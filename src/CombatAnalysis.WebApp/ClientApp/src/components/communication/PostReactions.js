@@ -1,8 +1,8 @@
 ﻿import { faHeart, faMessage, faThumbsDown } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { useCallback } from 'react';
 import { useCreatePostDislikeAsyncMutation, useLazySearchPostDislikeByPostIdQuery, useRemovePostDislikeAsyncMutation } from '../../store/api/communication/PostDislike.api';
 import { useCreatePostLikeAsyncMutation, useLazySearchPostLikeByPostIdQuery, useRemovePostLikeAsyncMutation } from '../../store/api/communication/PostLike.api';
-import { useCallback } from 'react';
 
 const PostReactions = ({ customer, post, updatePostAsync, setShowComments, showComments, t }) => {
     const [createPostLikeAsyncMut] = useCreatePostLikeAsyncMutation();
@@ -33,25 +33,18 @@ const PostReactions = ({ customer, post, updatePostAsync, setShowComments, showC
     const removePostLikeIfExistAsync = async (postLikes) => {
         for (let i = 0; i < postLikes.length; i++) {
             if (postLikes[i].customerId === customer.id) {
-                await removePostLikeAsync(postLikes[i].postId, postLikes[i].id);
+                await removePostLikeAsyncMut(postLikes[i].id);
                 return true;
             }
         }
 
         return false;
-    }
-
-    const removePostLikeAsync = async (postId, postLikeId) => {
-        const deletedItem = await removePostLikeAsyncMut(postLikeId);
-        if (deletedItem !== null) {
-            await updatePostAsync(postId, -1, 0, 0);
-        }
     }
 
     const removePostDislikeIfExistAsync = async (postDislikes) => {
         for (let i = 0; i < postDislikes.length; i++) {
             if (postDislikes[i].customerId === customer.id) {
-                await removePostDislikeAsync(postDislikes[i].postId, postDislikes[i].id);
+                await removePostDislikeAsyncMut(postDislikes[i].id);
                 return true;
             }
         }
@@ -59,16 +52,10 @@ const PostReactions = ({ customer, post, updatePostAsync, setShowComments, showC
         return false;
     }
 
-    const removePostDislikeAsync = async (postId, postDislikeId) => {
-        const deletedItem = await removePostDislikeAsyncMut(postDislikeId);
-        if (deletedItem.data !== undefined) {
-            await updatePostAsync(postId, 0, -1, 0);
-        }
-    }
-
     const createPostLikeAsync = useCallback(async () => {
         const postLikeIsExist = await getPostLikesAsync(post?.id);
         if (postLikeIsExist) {
+            await updatePostAsync(post?.id, -1, 0, 0);
             return;
         }
 
@@ -93,6 +80,7 @@ const PostReactions = ({ customer, post, updatePostAsync, setShowComments, showC
     const createPostDislikeAsync = useCallback(async () => {
         const postDislikeIsExist = await getPostDislikesAsync(post?.id);
         if (postDislikeIsExist) {
+            await updatePostAsync(post?.id, 0, -1, 0);
             return;
         }
 

@@ -1,3 +1,28 @@
+function sectionSwitch() {
+    let navigationItems = document.querySelectorAll(".navigation__container .list");
+
+    navigationItems.forEach((item, index) => {
+        item.addEventListener("click", (e) => {
+            let last = e.target.getAttribute("data-last");
+            let data = e.target.getAttribute("data-content");
+            let aboutMeItem = document.querySelector(`.about-me__${last}`);
+
+            aboutMeItem.classList.add("passed");
+
+            let aboutMeCollections = document.querySelector(".about-me");
+            aboutMeCollections.children[index].classList.add("start");
+            aboutMeCollections.children[index].classList.add("active");
+
+            setTimeout(() => {
+                aboutMeItem.classList.remove("active");
+                aboutMeCollections.children[index].classList.remove("start");
+            }, 1000);
+        });
+    });
+}
+
+sectionSwitch();
+
 function appSwitch() {
     let appSwitcher = document.querySelector("#app-switcher");
     let desktopApp = document.querySelector(".applications__desktop-application");

@@ -1,4 +1,4 @@
-﻿import { memo, useEffect, useState } from 'react';
+﻿import { memo, useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthProvider';
 
@@ -57,7 +57,6 @@ const AuthorizationCallback = () => {
             navigate("/");
         }
 
-        console.log(await result.text());
         setStateIsValid(false);
     }
 
