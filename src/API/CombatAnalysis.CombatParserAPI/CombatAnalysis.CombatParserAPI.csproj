@@ -18,6 +18,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\CombatAnalysis.BL\CombatAnalysis.BL.csproj" />
     <ProjectReference Include="..\..\CombatAnalysis.CombatParser\CombatAnalysis.CombatParser.csproj" />
+    <ProjectReference Include="..\CombatAnalysis.CommunicationAPI\CombatAnalysis.CommunicationAPI.csproj" />
   </ItemGroup>
 
 </Project>

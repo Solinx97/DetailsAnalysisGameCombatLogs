@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-{{ .Values.app3.name }}-deployment
+  labels:
+    app: {{ .Release.Name }}
+    env: {{ .Values.env }}
+    owner: OlegFedosov
+spec:
+  {{- if not .Values.app3.autoscaling.enabled }}
+  replicas: {{ .Values.app3.replicas }}
+  {{- end }}
+  selector:
+    matchLabels:
+      app: {{ .Release.Name }}-{{ .Values.app3.name }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Release.Name }}-{{ .Values.app3.name }}
+    spec:
+      containers:
+        - name: {{ .Values.app3.container.name }}
+          image: {{ .Values.app3.container.image }}:{{ .Values.app3.container.tag }}
+          ports:
+            - containerPort: {{ .Values.app3.container.port }}
