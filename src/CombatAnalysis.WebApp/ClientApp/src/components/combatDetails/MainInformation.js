@@ -11,7 +11,7 @@ import "../../styles/mainInformation.scss";
 const MainInformation = () => {
     const { t } = useTranslation("combatDetails/mainInformation");
 
-    const { data: combatLogs, isLoading } = useGetCombatLogsQuery();
+    const { data: combatLogs, isLoading, isError, error } = useGetCombatLogsQuery();
     const [getAuthAsync] = useLazyAuthenticationAsyncQuery();
 
     const [isAuth, setIsAuth] = useState(false);
@@ -27,6 +27,10 @@ const MainInformation = () => {
 
     if (isLoading) {
         return (<Loading />);
+    }
+
+    if (isError) {
+        console.log(error);
     }
 
     return (

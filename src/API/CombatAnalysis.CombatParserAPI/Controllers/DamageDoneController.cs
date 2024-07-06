@@ -12,9 +12,9 @@ public class DamageDoneController : ControllerBase
 {
     private readonly IPlayerInfoService<DamageDoneDto, int> _service;
     private readonly IMapper _mapper;
-    private readonly ILogger _logger;
+    private readonly ILogger<DamageDoneController> _logger;
 
-    public DamageDoneController(IPlayerInfoService<DamageDoneDto, int> service, IMapper mapper, ILogger logger)
+    public DamageDoneController(IPlayerInfoService<DamageDoneDto, int> service, IMapper mapper, ILogger<DamageDoneController> logger)
     {
         _service = service;
         _mapper = mapper;

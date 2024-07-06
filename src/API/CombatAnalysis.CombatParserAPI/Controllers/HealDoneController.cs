@@ -12,9 +12,9 @@ public class HealDoneController : ControllerBase
 {
     private readonly IPlayerInfoService<HealDoneDto, int> _service;
     private readonly IMapper _mapper;
-    private readonly ILogger _logger;
+    private readonly ILogger<HealDoneController> _logger;
 
-    public HealDoneController(IPlayerInfoService<HealDoneDto, int> service, IMapper mapper, ILogger logger)
+    public HealDoneController(IPlayerInfoService<HealDoneDto, int> service, IMapper mapper, ILogger<HealDoneController> logger)
     {
         _service = service;
         _mapper = mapper;

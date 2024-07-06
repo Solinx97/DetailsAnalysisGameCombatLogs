@@ -12,9 +12,9 @@ public class CombatPlayerController : ControllerBase
 {
     private readonly IService<CombatPlayerDto, int> _service;
     private readonly IMapper _mapper;
-    private readonly ILogger _logger;
+    private readonly ILogger<CombatPlayerController> _logger;
 
-    public CombatPlayerController(IService<CombatPlayerDto, int> service, IMapper mapper, ILogger logger)
+    public CombatPlayerController(IService<CombatPlayerDto, int> service, IMapper mapper, ILogger<CombatPlayerController> logger)
     {
         _service = service;
         _mapper = mapper;

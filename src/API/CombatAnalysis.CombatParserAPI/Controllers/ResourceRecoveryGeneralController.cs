@@ -12,9 +12,9 @@ public class ResourceRecoveryGeneralController : ControllerBase
 {
     private readonly IPlayerInfoService<ResourceRecoveryGeneralDto, int> _service;
     private readonly IMapper _mapper;
-    private readonly ILogger _logger;
+    private readonly ILogger<ResourceRecoveryGeneralController> _logger;
 
-    public ResourceRecoveryGeneralController(IPlayerInfoService<ResourceRecoveryGeneralDto, int> service, IMapper mapper, ILogger logger)
+    public ResourceRecoveryGeneralController(IPlayerInfoService<ResourceRecoveryGeneralDto, int> service, IMapper mapper, ILogger<ResourceRecoveryGeneralController> logger)
     {
         _service = service;
         _mapper = mapper;

@@ -27,9 +27,6 @@ PlayerInfoConfiguration.Classes = classes?.ToDictionary(entry => entry.Key, entr
 var bosses = builder.Configuration.GetSection("Players:Bosses").GetChildren();
 PlayerInfoConfiguration.Bosses = bosses?.ToDictionary(entry => entry.Key, entry => entry.Value);
 
-//var loggerFactory = new LoggerFactory();
-//var logger = new Logger<ILogger>(loggerFactory);
-
 var mappingConfig = new MapperConfiguration(mc =>
 {
     mc.AddProfile(new CombatParserApiMapper());
@@ -38,7 +35,6 @@ var mappingConfig = new MapperConfiguration(mc =>
 
 var mapper = mappingConfig.CreateMapper();
 builder.Services.AddSingleton(mapper);
-//builder.Services.AddSingleton<ILogger>(logger);
 
 builder.Services.AddTransient<IHttpClientHelper, HttpClientHelper>();
 

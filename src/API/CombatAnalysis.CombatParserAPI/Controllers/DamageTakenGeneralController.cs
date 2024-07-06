@@ -12,9 +12,9 @@ public class DamageTakenGeneralController : ControllerBase
 {
     private readonly IPlayerInfoService<DamageTakenGeneralDto, int> _service;
     private readonly IMapper _mapper;
-    private readonly ILogger _logger;
+    private readonly ILogger<DamageTakenGeneralController> _logger;
 
-    public DamageTakenGeneralController(IPlayerInfoService<DamageTakenGeneralDto, int> service, IMapper mapper, ILogger logger)
+    public DamageTakenGeneralController(IPlayerInfoService<DamageTakenGeneralDto, int> service, IMapper mapper, ILogger<DamageTakenGeneralController> logger)
     {
         _service = service;
         _mapper = mapper;

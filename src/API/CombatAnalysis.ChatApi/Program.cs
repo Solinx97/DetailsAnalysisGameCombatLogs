@@ -37,6 +37,8 @@ builder.Services.AddAuthentication("Bearer")
                 ValidateAudience = false,
                 ClockSkew = TimeSpan.Zero
             };
+            // Skip checking HTTPS (should be HTTPS in production)
+            options.RequireHttpsMetadata = false;
             // Allow all Certificates (added for Local deployment)
             options.BackchannelHttpHandler = new HttpClientHandler
             {

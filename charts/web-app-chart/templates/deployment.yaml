@@ -23,3 +23,11 @@ spec:
           image: {{ .Values.container.image }}:{{ .Values.container.tag }}
           ports:
             - containerPort: {{ .Values.container.port }}
+          volumeMounts:
+            - name: kube-root-ca-volume
+              mountPath: "/etc/ssl/certs/ca-cert"
+              readOnly: true
+      volumes:
+        - name: kube-root-ca-volume
+          configMap:
+            name: kube-root-ca.crt

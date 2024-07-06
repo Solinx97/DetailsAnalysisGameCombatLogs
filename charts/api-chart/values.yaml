@@ -26,7 +26,7 @@ app2:
     name: communication-api
     replicas: 2
     autoscaling: 
-        enabled: true
+        enabled: false
         min: 2
         max: 6
     container:
@@ -41,7 +41,7 @@ app3:
     name: chat-api
     replicas: 2
     autoscaling: 
-        enabled: true
+        enabled: false
         min: 2
         max: 6
     container:
@@ -56,7 +56,7 @@ app4:
     name: combat-parser-api
     replicas: 2
     autoscaling: 
-        enabled: true
+        enabled: false
         min: 2
         max: 6
     container:

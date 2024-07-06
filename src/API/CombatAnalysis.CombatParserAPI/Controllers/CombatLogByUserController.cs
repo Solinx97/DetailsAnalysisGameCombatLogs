@@ -16,11 +16,11 @@ public class CombatLogByUserController : ControllerBase
     private readonly IService<CombatDto, int> _combatService;
     private readonly IService<CombatPlayerDto, int> _combatPlayerService;
     private readonly IMapper _mapper;
-    private readonly ILogger _logger;
+    private readonly ILogger<CombatLogByUserController> _logger;
     private readonly ISqlContextService _sqlContextService;
     private readonly ICombatDataHelper _saveCombatDataHelper;
 
-    public CombatLogByUserController(IService<CombatLogByUserDto, int> service, IMapper mapper, ILogger logger,
+    public CombatLogByUserController(IService<CombatLogByUserDto, int> service, IMapper mapper, ILogger<CombatLogByUserController> logger,
         ISqlContextService sqlContextService, IService<CombatLogDto, int> combatLogService, IService<CombatDto, int> combatService,
         IService<CombatPlayerDto, int> combatPlayerService, ICombatDataHelper saveCombatDataHelper)
     {

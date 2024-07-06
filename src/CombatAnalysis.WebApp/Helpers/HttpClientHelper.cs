@@ -1,4 +1,6 @@
 ﻿using CombatAnalysis.WebApp.Interfaces;
+using System.Net.Security;
+using System.Security.Cryptography.X509Certificates;
 
 namespace CombatAnalysis.WebApp.Helpers;
 
@@ -7,12 +9,31 @@ internal class HttpClientHelper : IHttpClientHelper
     public HttpClientHelper()
     {
         //Accept all Certifications (added for Local devployment)
-        var clientHandler = new HttpClientHandler
+        //var handler = new HttpClientHandler
+        //{
+        //    ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => { return true; }
+        //};
+
+        var handler = new HttpClientHandler
         {
-            ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => { return true; }
+            ServerCertificateCustomValidationCallback = (httpRequestMessage, cert, cetChain, policyErrors) =>
+            {
+                if (policyErrors == SslPolicyErrors.None)
+                {
+                    return true; // If there's no error, proceed.
+                }
+
+                var caCert = new X509Certificate2("/etc/ssl/certs/ca-cert/ca.crt");
+                var chain = new X509Chain();
+                chain.ChainPolicy.ExtraStore.Add(caCert);
+                chain.ChainPolicy.VerificationFlags = X509VerificationFlags.AllowUnknownCertificateAuthority;
+                chain.ChainPolicy.RevocationMode = X509RevocationMode.NoCheck;
+
+                return chain.Build(cert); // Validate the certificate against the CA.
+            }
         };
 
-        Client = new HttpClient(clientHandler);
+        Client = new HttpClient(handler);
         BaseAddressApi = "api/v1/";
     }
 

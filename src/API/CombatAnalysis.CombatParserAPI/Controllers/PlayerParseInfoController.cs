@@ -12,9 +12,9 @@ public class PlayerParseInfoController : ControllerBase
 {
     private readonly IService<PlayerParseInfoDto, int> _service;
     private readonly IMapper _mapper;
-    private readonly ILogger _logger;
+    private readonly ILogger<PlayerParseInfoController> _logger;
 
-    public PlayerParseInfoController(IService<PlayerParseInfoDto, int> service, IMapper mapper, ILogger logger)
+    public PlayerParseInfoController(IService<PlayerParseInfoDto, int> service, IMapper mapper, ILogger<PlayerParseInfoController> logger)
     {
         _service = service;
         _mapper = mapper;

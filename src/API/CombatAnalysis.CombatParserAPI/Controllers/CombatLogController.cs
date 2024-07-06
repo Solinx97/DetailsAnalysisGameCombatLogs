@@ -13,10 +13,10 @@ public class CombatLogController : ControllerBase
 {
     private readonly IService<CombatLogDto, int> _service;
     private readonly IMapper _mapper;
-    private readonly ILogger _logger;
+    private readonly ILogger<CombatLogController> _logger;
     private readonly ICombatDataHelper _saveCombatDataHelper;
 
-    public CombatLogController(IService<CombatLogDto, int> service, IMapper mapper, ILogger logger, ICombatDataHelper saveCombatDataHelper)
+    public CombatLogController(IService<CombatLogDto, int> service, IMapper mapper, ILogger<CombatLogController> logger, ICombatDataHelper saveCombatDataHelper)
     {
         _service = service;
         _mapper = mapper;
@@ -44,9 +44,18 @@ public class CombatLogController : ControllerBase
     [HttpGet("{id:int:min(1)}")]
     public async Task<IActionResult> GetById(int id)
     {
-        var combatLog = await _service.GetByIdAsync(id);
+        try
+        {
+            var combatLog = await _service.GetByIdAsync(id);
 
-        return Ok(combatLog);
+            return Ok(combatLog);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, ex.Message);
+
+            return BadRequest();
+        }
     }
 
     [HttpPost]

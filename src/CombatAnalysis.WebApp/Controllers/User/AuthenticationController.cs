@@ -41,7 +41,7 @@ public class AuthenticationController : ControllerBase
         }
         catch (Exception ex)
         {
-            return BadRequest(ex.Message);
+            return BadRequest($"Authentication refresh was failed. Error: {ex.Message}");
         }
     }
 }

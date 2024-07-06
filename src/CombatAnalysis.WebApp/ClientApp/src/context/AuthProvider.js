@@ -24,6 +24,9 @@ export const AuthProvider = ({ children }) => {
         if (auth.error !== undefined || !auth.data) {
             dispatch(updateCustomer(null));
 
+            console.log("Auth fetch error:");
+            console.log(auth);
+
             return;
         }
 
@@ -33,11 +36,16 @@ export const AuthProvider = ({ children }) => {
 
     const getCustomerDataAsync = async (userId) => {
         const customer = await getCustomerAsync(userId);
-        if (customer.data !== undefined) {
-            dispatch(updateCustomer(customer.data));
+        if (customer.error !== undefined) {
+            console.log("Customer fetch error:");
+            console.log(customer);
 
-            setIsAuthenticated(true);
+            return;
         }
+
+        dispatch(updateCustomer(customer.data));
+
+        setIsAuthenticated(true);
     }
 
     const logoutAsync = async () => {
