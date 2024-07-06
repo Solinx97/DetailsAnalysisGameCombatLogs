@@ -5,8 +5,11 @@ using CombatAnalysis.CombatParserAPI.Consts;
 using CombatAnalysis.CombatParserAPI.Helpers;
 using CombatAnalysis.CombatParserAPI.Interfaces;
 using CombatAnalysis.CombatParserAPI.Mapping;
+using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.OpenApi.Models;
+using Newtonsoft.Json;
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -24,8 +27,8 @@ PlayerInfoConfiguration.Classes = classes?.ToDictionary(entry => entry.Key, entr
 var bosses = builder.Configuration.GetSection("Players:Bosses").GetChildren();
 PlayerInfoConfiguration.Bosses = bosses?.ToDictionary(entry => entry.Key, entry => entry.Value);
 
-var loggerFactory = new LoggerFactory();
-var logger = new Logger<ILogger>(loggerFactory);
+//var loggerFactory = new LoggerFactory();
+//var logger = new Logger<ILogger>(loggerFactory);
 
 var mappingConfig = new MapperConfiguration(mc =>
 {
@@ -35,7 +38,7 @@ var mappingConfig = new MapperConfiguration(mc =>
 
 var mapper = mappingConfig.CreateMapper();
 builder.Services.AddSingleton(mapper);
-builder.Services.AddSingleton<ILogger>(logger);
+//builder.Services.AddSingleton<ILogger>(logger);
 
 builder.Services.AddTransient<IHttpClientHelper, HttpClientHelper>();
 
@@ -58,6 +61,14 @@ builder.Services.AddSwaggerGen(options =>
     });
 });
 
+Log.Logger = new LoggerConfiguration()
+    .MinimumLevel.Debug()
+    .WriteTo.Console()
+    .WriteTo.File("logs/userAPILogs.txt", rollingInterval: RollingInterval.Day)
+    .CreateLogger();
+
+builder.Host.UseSerilog();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -67,6 +78,15 @@ app.UseSwaggerUI(options =>
     options.SwaggerEndpoint("/swagger/v1/swagger.json", "Combat parser API v1");
     options.InjectStylesheet("/swagger-ui/swaggerDark.css");
 });
+
+app.UseExceptionHandler(a => a.Run(async context =>
+{
+    var exception = context.Features.Get<IExceptionHandlerPathFeature>().Error;
+    var result = JsonConvert.SerializeObject(new { error = exception.Message });
+    context.Response.ContentType = "application/json";
+
+    await context.Response.WriteAsync(result);
+}));
 
 app.UseStaticFiles();
 app.UseHttpsRedirection();

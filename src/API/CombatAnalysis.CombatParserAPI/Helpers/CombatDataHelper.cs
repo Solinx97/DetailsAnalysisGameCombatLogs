@@ -12,7 +12,7 @@ namespace CombatAnalysis.CombatParserAPI.Helpers;
 public class CombatDataHelper : ICombatDataHelper
 {
     private readonly IMapper _mapper;
-    private readonly ILogger _logger;
+    private readonly ILogger<CombatDataHelper> _logger;
     private readonly IPlayerParseInfoHelper _playerParseInfoHelper;
     private readonly IPlayerInfoService<DamageDoneDto, int> _damageDoneService;
     private readonly IPlayerInfoService<DamageDoneGeneralDto, int> _damageDoneGeneralService;
@@ -23,7 +23,7 @@ public class CombatDataHelper : ICombatDataHelper
     private readonly IPlayerInfoService<ResourceRecoveryDto, int> _resourceRecoveryService;
     private readonly IPlayerInfoService<ResourceRecoveryGeneralDto, int> _resourceRecoveryGeneralService;
 
-    public CombatDataHelper(IMapper mapper, ILogger logger, IPlayerParseInfoHelper playerParseInfoHelper, 
+    public CombatDataHelper(IMapper mapper, ILogger<CombatDataHelper> logger, IPlayerParseInfoHelper playerParseInfoHelper, 
         IPlayerInfoService<DamageDoneDto, int> damageDoneService, IPlayerInfoService<DamageDoneGeneralDto, int> damageDoneGeneralService,
         IPlayerInfoService<HealDoneDto, int> healDoneService, IPlayerInfoService<HealDoneGeneralDto, int> healDoneGeneralService, IPlayerInfoService<DamageTakenDto, int> damageTakenService,
         IPlayerInfoService<DamageTakenGeneralDto, int> damageTakenGeneralService, IPlayerInfoService<ResourceRecoveryDto, int> resourceRecoveryService, 
