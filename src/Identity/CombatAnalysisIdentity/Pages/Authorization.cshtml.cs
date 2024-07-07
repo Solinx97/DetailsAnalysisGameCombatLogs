@@ -18,11 +18,13 @@ public class AuthorizationModel : PageModel
 
     public bool QueryIsValid { get; set; }
 
-    public async Task OnGetAsync()
+    public async Task<IActionResult> OnGetAsync()
     {
         var clientIsValid = await _authorizationService.ClientValidationAsync(Request);
 
         QueryIsValid = clientIsValid;
+
+        return Page();
     }
 
     public async Task<IActionResult> OnPostAsync(string email, string password)

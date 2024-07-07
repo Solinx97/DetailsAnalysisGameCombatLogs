@@ -24,6 +24,9 @@ public class App : MvxApplication
         Port.CombatParserApi = ConfigurationManager.AppSettings.Get("combatParserApiPort");
         Port.UserApi = ConfigurationManager.AppSettings.Get("userApiPort");
         Port.ChatApi = ConfigurationManager.AppSettings.Get("chatApiPort");
+        Port.Identity = ConfigurationManager.AppSettings.Get("identityPort");
+        Authentication.ClientId = ConfigurationManager.AppSettings.Get("clientId");
+        Authentication.RedirectUri = ConfigurationManager.AppSettings.Get("redirectUri");
 
         var maxDegreeOfParallelism = ConfigurationManager.AppSettings.Get("maxDegreeOfParallelism");
         if (!string.IsNullOrEmpty(maxDegreeOfParallelism))

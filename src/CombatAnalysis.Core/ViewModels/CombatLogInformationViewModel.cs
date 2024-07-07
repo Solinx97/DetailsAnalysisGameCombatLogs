@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using CombatAnalysis.CombatParser.Entities;
-using CombatAnalysis.CombatParser.Interfaces;
 using CombatAnalysis.CombatParser.Services;
 using CombatAnalysis.Core.Enums;
 using CombatAnalysis.Core.Interfaces;
@@ -360,8 +359,6 @@ public class CombatLogInformationViewModel : ParentTemplate, CombatParser.Interf
 
     public override void ViewDestroy(bool viewFinishing = true)
     {
-        //_parser.RemoveObserver(this);
-
         base.ViewDestroy(viewFinishing);
     }
 
@@ -422,7 +419,6 @@ public class CombatLogInformationViewModel : ParentTemplate, CombatParser.Interf
 
     private async Task CombatLogFileValidateAsync(string combatLog)
     {
-        //_parser.AddObserver(this);
         FileIsNotCorrect = !await _parser.FileCheckAsync(combatLog);
 
         if (!FileIsNotCorrect)

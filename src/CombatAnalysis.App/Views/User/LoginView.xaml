@@ -14,12 +14,6 @@
     mc:Ignorable="d" d:DesignHeight="850" d:DesignWidth="1250">
 
     <Grid>
-        <!--<Grid.RowDefinitions>
-            <RowDefinition Height="0.5*" />
-            <RowDefinition Height="*" />
-            <RowDefinition Height="0.5*" />
-        </Grid.RowDefinitions>-->
-
         <Grid.Resources>
             <converters:TheNativeBoolToVisibilityConverter x:Key="BoolToVisibility" />
         </Grid.Resources>

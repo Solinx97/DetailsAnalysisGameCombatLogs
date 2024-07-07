@@ -38,23 +38,23 @@ public class IdentityController : ControllerBase
                 return BadRequest();
             }
 
-            var accessToken = await responseMessage.Content.ReadFromJsonAsync<AccessTokenModel>();
-            HttpContext.Response.Cookies.Append(AuthenticationTokenType.AccessToken.ToString(), accessToken.AccessToken, new CookieOptions
+            var token = await responseMessage.Content.ReadFromJsonAsync<AccessTokenModel>();
+            HttpContext.Response.Cookies.Append(AuthenticationTokenType.AccessToken.ToString(), token.AccessToken, new CookieOptions
             {
                 HttpOnly = true,
                 Secure = true,
                 SameSite = SameSiteMode.Lax,
-                Expires = DateTimeOffset.UtcNow.AddMinutes(accessToken.ExpiresInMinutes),
+                Expires = DateTimeOffset.UtcNow.AddMinutes(token.ExpiresInMinutes),
             });
-            HttpContext.Response.Cookies.Append(AuthenticationTokenType.RefreshToken.ToString(), accessToken.RefreshToken, new CookieOptions
+            HttpContext.Response.Cookies.Append(AuthenticationTokenType.RefreshToken.ToString(), token.RefreshToken, new CookieOptions
             {
                 HttpOnly = true,
                 Secure = true,
                 SameSite = SameSiteMode.Lax,
-                Expires = DateTimeOffset.UtcNow.AddMinutes(accessToken.ExpiresInMinutes).AddDays(7)
+                Expires = DateTimeOffset.UtcNow.AddMinutes(token.ExpiresInMinutes).AddDays(7)
             });
 
-            var identityUserId = AccessTokenHelper.GetUserIdFromToken(accessToken.AccessToken);
+            var identityUserId = AccessTokenHelper.GetUserIdFromToken(token.AccessToken);
 
             return Ok(identityUserId);
         }

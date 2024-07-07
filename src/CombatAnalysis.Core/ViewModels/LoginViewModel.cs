@@ -1,13 +1,17 @@
 ﻿using CombatAnalysis.Core.Consts;
 using CombatAnalysis.Core.Enums;
 using CombatAnalysis.Core.Extensions;
+using CombatAnalysis.Core.Helpers;
 using CombatAnalysis.Core.Interfaces;
+using CombatAnalysis.Core.Models.Identity;
 using CombatAnalysis.Core.Models.Response;
 using CombatAnalysis.Core.Models.User;
+using CombatAnalysis.Core.Services;
 using CombatAnalysis.Core.ViewModels.Base;
 using Microsoft.Extensions.Caching.Memory;
 using MvvmCross.Commands;
 using MvvmCross.Navigation;
+using System.Diagnostics;
 using System.Net.Http.Json;
 
 namespace CombatAnalysis.Core.ViewModels;
@@ -18,10 +22,13 @@ public class LoginViewModel : ParentTemplate
     private readonly IHttpClientHelper _httpClientHelper;
     private readonly IMvxNavigationService _mvvmNavigation;
 
+    private HttpListenerService _httpListenerService;
+
     private string _email;
     private string _password;
     private bool _authIsFailed;
     private bool _serverIsNotAvailable;
+    private string _codeVerifier;
 
     public LoginViewModel(IMemoryCache memoryCache, IHttpClientHelper httpClient, IMvxNavigationService mvvmNavigation)
     {
@@ -143,6 +150,67 @@ public class LoginViewModel : ParentTemplate
         BasicTemplate.Parent = null;
 
         await _mvvmNavigation.Close(this);
+    }
+
+    public override void ViewAppeared()
+    {
+        Task.Run(SendAuthorizationRequestAsync);
+    }
+
+    private async Task SendAuthorizationRequestAsync()
+    {
+        _codeVerifier = PKCEHelper.GenerateCodeVerifier();
+        var state = PKCEHelper.GenerateCodeVerifier();
+        var codeChallenge = Task.Run(async () => await PKCEHelper.GenerateCodeChallengeAsync(_codeVerifier));
+
+        var authorizationUrl = $"{Port.Identity}authorization?" +
+            "grantType=code&" +
+            $"clientTd={Authentication.ClientId}&" +
+            $"redirectUri={Authentication.RedirectUri}&" +
+            "scope=client1scope&" +
+            $"state={state}&" +
+            "codeChallengeMethod=SHA-256&" +
+            $"codeChallenge={codeChallenge.Result}";
+
+        var psi = new ProcessStartInfo
+        {
+            FileName = authorizationUrl,
+            UseShellExecute = true,
+
+        };
+        Process.Start(psi);
+
+        _httpListenerService = new HttpListenerService("http://localhost:44479/");
+        await _httpListenerService.StartListeningAsync(OnCallbackReceived);
+    }
+
+    private void OnCallbackReceived(string authorizationCode, string incomingState)
+    {
+        Task.Run(async () => await SendTokenRequestAsync(authorizationCode));
+    }
+
+    private async Task SendTokenRequestAsync(string authorizationCode)
+    {
+        try
+        {
+            var encodedAuthorizationCode = Uri.EscapeDataString(authorizationCode);
+            var url = $"Token?grantType=authorization_code&clientId={Authentication.ClientId}&codeVerifier={_codeVerifier}&code={encodedAuthorizationCode}&redirectUri={Authentication.RedirectUri}";
+
+            var responseMessage = await _httpClientHelper.GetAsync(url, Port.Identity);
+            if (!responseMessage.IsSuccessStatusCode)
+            {
+                Console.WriteLine("Token request was faield");
+                return;
+            }
+
+            var token = await responseMessage.Content.ReadFromJsonAsync<AccessTokenModel>();
+            _memoryCache.Set(nameof(MemoryCacheValue.AccessToken), token.AccessToken, new MemoryCacheEntryOptions { Size = 10 });
+            _memoryCache.Set(nameof(MemoryCacheValue.RefreshToken), token.RefreshToken, new MemoryCacheEntryOptions { Size = 10 });
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error sending token request: {ex.Message}");
+        }
     }
 
     private async Task<CustomerModel> GetCustomerAsync(string refreshToken, string userId)
