@@ -2,6 +2,7 @@ using AutoMapper;
 using CombatAnalysis.Identity.Extensions;
 using CombatAnalysis.Identity.Mapping;
 using CombatAnalysis.Identity.Security;
+using CombatAnalysisIdentity.Consts;
 using CombatAnalysisIdentity.Core;
 using CombatAnalysisIdentity.Interfaces;
 using CombatAnalysisIdentity.Mapping;
@@ -10,6 +11,8 @@ using Serilog;
 using System.Security.Cryptography.X509Certificates;
 
 var builder = WebApplication.CreateBuilder(args);
+
+Port.UserApi = builder.Configuration["UserApiPort"];
 
 builder.Services.RegisterIdentityDependencies(builder.Configuration, "DefaultConnection");
 

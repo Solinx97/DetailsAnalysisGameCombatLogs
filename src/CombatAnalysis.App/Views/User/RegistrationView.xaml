@@ -4,27 +4,16 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:converters="clr-namespace:CombatAnalysis.App.Converters"
     xmlns:loc="clr-namespace:CombatAnalysis.App.Localizations"
     xmlns:resx="clr-namespace:CombatAnalysis.App.Localizations.Resources.Registration"
     xmlns:local="clr-namespace:CombatAnalysis.App.Views.ViewTemplates"
-    xmlns:viewModels="clr-namespace:CombatAnalysis.Core.ViewModels;assembly=CombatAnalysis.Core"
+    xmlns:userViewModels="clr-namespace:CombatAnalysis.Core.ViewModels.User;assembly=CombatAnalysis.Core"
     xmlns:views="clr-namespace:MvvmCross.Platforms.Wpf.Views;assembly=MvvmCross.Platforms.Wpf"
+    xmlns:viewModels="clr-namespace:CombatAnalysis.Core.ViewModels;assembly=CombatAnalysis.Core"
     loc:LocalizationObject.ResourceManager="{x:Static resx:Resource.ResourceManager}"
     mc:Ignorable="d" d:DesignHeight="850" d:DesignWidth="1250">
 
     <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="0.2*" />
-            <RowDefinition Height="*" />
-            <RowDefinition Height="0.05*" />
-        </Grid.RowDefinitions>
-
-        <Grid.Resources>
-            <converters:TheNativeBoolToVisibilityConverter x:Key="BoolToVisibility" />
-            <converters:TheNativeIntToXAMLBoolConverter x:Key="IntToXAMLBool" />
-        </Grid.Resources>
-
         <ContentControl Grid.RowSpan="4" Grid.ColumnSpan="4" Content="{Binding BasicTemplate}">
             <ContentControl.Resources>
                 <DataTemplate DataType="{x:Type viewModels:BasicTemplateViewModel}">
@@ -33,83 +22,17 @@
             </ContentControl.Resources>
         </ContentControl>
 
-        <TextBlock Grid.Row="0" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="26" Text="{loc:Loc Title}" Foreground="White"/>
-        <Grid Grid.Row="1">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="*" />
-                <RowDefinition Height="*" />
-                <RowDefinition Height="*" />
-                <RowDefinition Height="*" />
-                <RowDefinition Height="*" />
-                <RowDefinition Height="*" />
-                <RowDefinition Height="*" />
-                <RowDefinition Height="0.4*" />
-            </Grid.RowDefinitions>
+        <Grid>
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="0.75*"/>
                 <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="0.25*"/>
                 <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="0.25*"/>
             </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
 
-            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Column="1" Grid.Row="0">
-                <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" Text="{loc:Loc Email}" FontSize="14" Foreground="White"/>
-                <TextBox Style="{DynamicResource TextBoxStyle1}" Text="{Binding Email}" />
-            </StackPanel>
-            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Column="1" Grid.Row="1">
-                <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" Text="{loc:Loc PhoneNumber}" FontSize="14" Foreground="White" />
-                <TextBox Style="{DynamicResource TextBoxStyle1}" Text="{Binding PhoneNumber}" />
-            </StackPanel>
-            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Column="1" Grid.Row="2">
-                <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" Text="{loc:Loc Birthday}" FontSize="14" Foreground="White" />
-                <DatePicker Width="300" SelectedDate="{Binding Birthday}" Margin="0 10"/>
-            </StackPanel>
-            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Column="1" Grid.Row="3">
-                <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" Text="{loc:Loc Password}" FontSize="14" Foreground="White" />
-                <PasswordBox Style="{DynamicResource PasswordBoxStyle1}" PasswordChanged="PasswordBox_PasswordChanged"/>
-            </StackPanel>
-            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Column="1" Grid.Row="4">
-                <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" Text="{loc:Loc PasswordConfirmation}" FontSize="14" Foreground="White" />
-                <PasswordBox Style="{DynamicResource PasswordBoxStyle1}" PasswordChanged="ConfirmPasswordBox_PasswordChanged"/>
-            </StackPanel>
-
-            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Column="3" Grid.Row="0">
-                <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" Text="{loc:Loc Username}" FontSize="14" Foreground="White" />
-                <TextBox Style="{DynamicResource TextBoxStyle1}" Text="{Binding Username}" />
-            </StackPanel>
-            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Column="3" Grid.Row="1">
-                <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" Text="{loc:Loc FirstName}" FontSize="14" Foreground="White" />
-                <TextBox Style="{DynamicResource TextBoxStyle1}" Text="{Binding FirstName}" />
-            </StackPanel>
-            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Column="3" Grid.Row="2">
-                <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" Text="{loc:Loc LastName}" FontSize="16" Foreground="White" />
-                <TextBox Style="{DynamicResource TextBoxStyle1}" Text="{Binding LastName}" />
-            </StackPanel>
-            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Top" Grid.Column="3" Grid.RowSpan="2" Grid.Row="3">
-                <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" Text="{loc:Loc AboutMe}" FontSize="14" Foreground="White" />
-                <TextBox Style="{DynamicResource TextBoxStyle1}" Text="{Binding AboutMe}" />
-            </StackPanel>
-            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Bottom" Orientation="Horizontal" Grid.Column="3" Grid.Row="4" Margin="25 -10">
-                <RadioButton Style="{DynamicResource RadioButtonStyle1}" Content="{loc:Loc Man}" IsChecked="{Binding Gender, Converter={StaticResource IntToXAMLBool}, ConverterParameter='0:='}" FontSize="14" Margin="25 0" />
-                <RadioButton Style="{DynamicResource RadioButtonStyle1}" Content="{loc:Loc Woman}" IsChecked="{Binding Gender, Converter={StaticResource IntToXAMLBool}, ConverterParameter='1:='}" FontSize="14" Margin="25 0" />
-            </StackPanel>
-
-            <Button Grid.Column="1" Grid.ColumnSpan="4" Grid.Row="5" Height="40" Width="125" Content="{loc:Loc Registration}" Style="{StaticResource showButton}"
-                    Command="{Binding RegistrationCommand}" />
-            <Button Grid.Column="1" Grid.ColumnSpan="4" Grid.Row="6" Grid.RowSpan="2" Height="40" Width="125" VerticalAlignment="Bottom" Content="{loc:Loc Back}" Style="{StaticResource showButton}"
-                    Command="{Binding CancelCommand}" />
-            
-            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Column="1" Grid.ColumnSpan="4" Grid.Row="6">
-                <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" Text="{loc:Loc NeedAddData}"
-                           FontSize="12" Foreground="Brown" Visibility="{Binding InputDataIsEmpty, Converter={StaticResource BoolToVisibility}, ConverterParameter=true:false}"/>
-                <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" Text="{loc:Loc EmailIsAlready}"
-                           FontSize="12" Foreground="Brown" Visibility="{Binding AccountIsReady, Converter={StaticResource BoolToVisibility}, ConverterParameter=true:false}"/>
-                <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" Text="{loc:Loc PasswordNotConfirmated}"
-                           FontSize="12" Foreground="Brown" Visibility="{Binding ConfirmPasswordIsNotCorrect, Converter={StaticResource BoolToVisibility}, ConverterParameter=true:false}"/>
-                <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" TextAlignment="Center" Width="250" Height="80" TextWrapping="Wrap" Text="{loc:Loc RegistrationFailed}"
-                           FontSize="12" Foreground="Brown" Visibility="{Binding ServerIsNotAvailable, Converter={StaticResource BoolToVisibility}, ConverterParameter=true:false}"/>
-            </StackPanel>
+            <TextBlock Grid.Column="1" Grid.Row="1" Text="You will be redirected to Browser to finish Registration" Foreground="White" FontFamily="Comic Sans MS" FontSize="16" Margin="10" />
         </Grid>
     </Grid>
 </views:MvxWpfView>

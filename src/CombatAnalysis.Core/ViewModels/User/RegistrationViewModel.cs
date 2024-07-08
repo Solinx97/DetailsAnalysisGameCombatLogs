@@ -7,24 +7,24 @@ using MvvmCross.Navigation;
 
 namespace CombatAnalysis.Core.ViewModels.User;
 
-public class AuthorizationViewModel : ParentTemplate
+public class RegistrationViewModel : ParentTemplate
 {
     private readonly IMemoryCache _memoryCache;
     private readonly IMvxNavigationService _mvvmNavigation;
     private readonly IIdentityService _identityService;
 
-    public AuthorizationViewModel(IMemoryCache memoryCache, IMvxNavigationService mvvmNavigation, IIdentityService identityService)
+    public RegistrationViewModel(IMemoryCache memoryCache, IMvxNavigationService mvvmNavigation, IIdentityService identityService)
     {
         _memoryCache = memoryCache;
         _mvvmNavigation = mvvmNavigation;
         _identityService = identityService;
 
-        if (BasicTemplate.Parent is RegistrationViewModel)
+        if (BasicTemplate.Parent is AuthorizationViewModel)
         {
             _mvvmNavigation.Close(BasicTemplate.Parent).GetAwaiter().GetResult();
         }
 
-        BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, "IsRegistrationNotActivated", true);
+        BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, "IsLoginNotActivated", true);
         BasicTemplate.Parent = this;
     }
 
@@ -42,7 +42,7 @@ public class AuthorizationViewModel : ParentTemplate
 
     private async Task SendAuthorizationRequestAsync()
     {
-        await _identityService.SendAuthorizationRequestAsync("authorization");
+        await _identityService.SendAuthorizationRequestAsync("registration");
         await _identityService.SendTokenRequestAsync();
 
         var customer = _memoryCache.Get<CustomerModel>(nameof(MemoryCacheValue.Customer));

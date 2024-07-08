@@ -8,6 +8,7 @@ using CombatAnalysis.Core.Enums;
 using CombatAnalysis.Core.Helpers;
 using CombatAnalysis.Core.Interfaces;
 using CombatAnalysis.Core.Mapping;
+using CombatAnalysis.Core.Services;
 using CombatAnalysis.Core.ViewModels;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
@@ -52,6 +53,7 @@ public class App : MvxApplication
         var loggerFactory = new LoggerFactory();
         var logger = new Logger<ILogger>(loggerFactory);
         var mapper = mappingConfig.CreateMapper();
+
         IHttpClientHelper httpClient = new HttpClientHelper();
         IFileManager fileManager = new FileManager();
         var parser = new CombatParserService(fileManager, logger);
@@ -59,11 +61,14 @@ public class App : MvxApplication
         var memoryCacheOptions = new MemoryCacheOptions { SizeLimit = 2048 };
         var memoryCache = new MemoryCache(memoryCacheOptions);
 
+        IIdentityService identityService = new IdentityService(memoryCache, httpClient);
+
         Mvx.IoCProvider.RegisterSingleton(mapper);
         Mvx.IoCProvider.RegisterSingleton(httpClient);
         Mvx.IoCProvider.RegisterSingleton(parser);
         Mvx.IoCProvider.RegisterSingleton<ILogger>(logger);
         Mvx.IoCProvider.RegisterSingleton<IMemoryCache>(memoryCache);
+        Mvx.IoCProvider.RegisterSingleton(identityService);
 
         RegisterAppStart<BasicTemplateViewModel>();
     }

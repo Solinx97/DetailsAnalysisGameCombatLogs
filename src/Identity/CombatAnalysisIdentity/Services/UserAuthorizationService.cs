@@ -2,6 +2,7 @@
 using CombatAnalysis.Identity.DTO;
 using CombatAnalysis.Identity.Interfaces;
 using CombatAnalysis.Identity.Security;
+using CombatAnalysisIdentity.Consts;
 using CombatAnalysisIdentity.Interfaces;
 using CombatAnalysisIdentity.Models;
 using CombatAnalysisIdentity.Security;
@@ -55,7 +56,7 @@ internal class UserAuthorizationService : IUserAuthorizationService
         await _identityUserService.CreateAsync(identityUserMap);
 
         var httpClient = new HttpClient();
-        var responseMessage = await httpClient.PostAsync($"https://localhost:5003/api/v1/Account", JsonContent.Create(appUser));
+        var responseMessage = await httpClient.PostAsync($"{Port.UserApi}api/v1/Account", JsonContent.Create(appUser));
         if (responseMessage.IsSuccessStatusCode)
         {
             var response = await responseMessage.Content.ReadFromJsonAsync<AppUserModel>();
@@ -67,7 +68,7 @@ internal class UserAuthorizationService : IUserAuthorizationService
             return false;
         }
 
-        responseMessage = await httpClient.PostAsync($"https://localhost:5003/api/v1/Customer", JsonContent.Create(customer));
+        responseMessage = await httpClient.PostAsync($"{Port.UserApi}api/v1/Customer", JsonContent.Create(customer));
 
         return responseMessage.IsSuccessStatusCode;
     }
