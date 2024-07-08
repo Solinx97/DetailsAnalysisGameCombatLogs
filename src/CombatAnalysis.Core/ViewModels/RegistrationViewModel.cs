@@ -5,6 +5,7 @@ using CombatAnalysis.Core.Interfaces;
 using CombatAnalysis.Core.Models.Response;
 using CombatAnalysis.Core.Models.User;
 using CombatAnalysis.Core.ViewModels.Base;
+using CombatAnalysis.Core.ViewModels.User;
 using Microsoft.Extensions.Caching.Memory;
 using MvvmCross.Commands;
 using MvvmCross.Navigation;
@@ -42,7 +43,7 @@ public class RegistrationViewModel : ParentTemplate
         RegistrationCommand = new MvxAsyncCommand(ValidateAsync);
         CancelCommand = new MvxAsyncCommand(CancelAsync);
 
-        if (BasicTemplate.Parent is LoginViewModel)
+        if (BasicTemplate.Parent is AuthorizationViewModel)
         {
             _mvvmNavigation.Close(BasicTemplate.Parent).GetAwaiter().GetResult();
         }
@@ -257,7 +258,7 @@ public class RegistrationViewModel : ParentTemplate
             BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, nameof(BasicTemplateViewModel.Username), account.User.Email);
 
             BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, nameof(BasicTemplateViewModel.IsLoginNotActivated), true);
-            if (BasicTemplate.Parent is LoginViewModel)
+            if (BasicTemplate.Parent is AuthorizationViewModel)
             {
                 await _mvvmNavigation.Close(BasicTemplate.Parent);
             }

@@ -8,6 +8,7 @@ using CombatAnalysis.Core.Models;
 using CombatAnalysis.Core.Models.User;
 using CombatAnalysis.Core.ViewModels.Base;
 using CombatAnalysis.Core.ViewModels.Chat;
+using CombatAnalysis.Core.ViewModels.User;
 using CombatAnalysis.Core.ViewModels.ViewModelTemplates;
 using Microsoft.Extensions.Caching.Memory;
 using MvvmCross.Commands;
@@ -275,7 +276,7 @@ public class BasicTemplateViewModel : ParentTemplate, IVMDataHandler<CombatPlaye
     public async Task LoginAsync()
     {
         IsLoginNotActivated = false;
-        await _mvvmNavigation.Navigate<LoginViewModel>();
+        await _mvvmNavigation.Navigate<AuthorizationViewModel>();
     }
 
     public async Task RegistrationAsync()

@@ -17,5 +17,5 @@ service:
     port: 80
     targetPort: 80
 ingress:
-    appName: solinx.analysis.web
+    host: solinx.analysis.web
     port: 80

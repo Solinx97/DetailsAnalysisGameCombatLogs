@@ -4,14 +4,18 @@ metadata:
   name: {{ .Release.Name }}-ingress
 spec:
   ingressClassName: nginx
+  tls:
+  - hosts:
+    - {{ .Values.ingress.host }}
+    secretName: analysis-tls-secret
   rules:
-  - host: {{ .Values.ingress.appName }}
+  - host: {{ .Values.ingress.host }}
     http:
       paths:
-        - path: /
-          pathType: Prefix
-          backend:
-            service:
-              name: {{ .Release.Name }}-service
-              port:
-                number: {{ .Values.ingress.port }}
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: {{ .Release.Name }}-service
+            port:
+              number: {{ .Values.ingress.port }}

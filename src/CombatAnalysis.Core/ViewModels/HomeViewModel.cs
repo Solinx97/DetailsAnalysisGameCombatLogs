@@ -1,6 +1,7 @@
 ﻿using CombatAnalysis.Core.Interfaces.Observers;
 using CombatAnalysis.Core.ViewModels.Base;
 using CombatAnalysis.Core.ViewModels.Chat;
+using CombatAnalysis.Core.ViewModels.User;
 using MvvmCross.Commands;
 using MvvmCross.Navigation;
 
@@ -62,7 +63,7 @@ public class HomeViewModel : ParentTemplate<bool>, IAuthObserver
 
     public async Task OpenLoginAsync()
     {
-        await _mvvmNavigation.Navigate<LoginViewModel>();
+        await _mvvmNavigation.Navigate<AuthorizationViewModel>();
     }
 
     public async Task OpenCombatAnalysisAsync()
