@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using CombatAnalysis.Identity.DTO;
 using CombatAnalysis.Identity.Interfaces;
+using CombatAnalysis.Identity.Security;
 using CombatAnalysisIdentity.Interfaces;
 using CombatAnalysisIdentity.Models;
 using CombatAnalysisIdentity.Security;
@@ -24,19 +25,19 @@ internal class UserAuthorizationService : IUserAuthorizationService
     public async Task<string> AuthorizationAsync(HttpRequest request, string email, string password)
     {
         var user = await _identityUserService.GetAsync(email, password);
-        if (user != null)
+        if (user == null)
         {
-            GetAuthorizationRequestData(request);
-
-            var authorizationCode = await _oAuthCodeFlowService.GenerateAuthorizationCodeAsync(user.Id, _authorizationRequest.ClientTd, _authorizationRequest.CodeChallenge, _authorizationRequest.CodeChallengeMethod, _authorizationRequest.RedirectUri);
-
-            var encodedAuthorizationCode = Uri.EscapeDataString(authorizationCode);
-            var redirectUrl = $"{_authorizationRequest.RedirectUri}?code={encodedAuthorizationCode}&state={_authorizationRequest.State}";
-
-            return redirectUrl;
+            return string.Empty;
         }
 
-        return string.Empty;
+        GetAuthorizationRequestData(request);
+
+        var authorizationCode = await _oAuthCodeFlowService.GenerateAuthorizationCodeAsync(user.Id, _authorizationRequest.ClientTd, _authorizationRequest.CodeChallenge, _authorizationRequest.CodeChallengeMethod, _authorizationRequest.RedirectUri);
+
+        var encodedAuthorizationCode = Uri.EscapeDataString(authorizationCode);
+        var redirectUrl = $"{Authentication.Protocol}://{_authorizationRequest.RedirectUri}?code={encodedAuthorizationCode}&state={_authorizationRequest.State}";
+
+        return redirectUrl;
     }
 
     public async Task<bool> ClientValidationAsync(HttpRequest request)

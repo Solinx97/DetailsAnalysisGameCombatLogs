@@ -70,7 +70,7 @@ public class AuthorizationViewModel : ParentTemplate
             "grantType=code&" +
             $"clientTd={Authentication.ClientId}&" +
             $"redirectUri={Authentication.RedirectUri}&" +
-            "scope=client1scope&" +
+            $"scope={Authentication.Scope}&" +
             $"state={state}&" +
             "codeChallengeMethod=SHA-256&" +
             $"codeChallenge={codeChallenge}";
@@ -79,11 +79,10 @@ public class AuthorizationViewModel : ParentTemplate
         {
             FileName = authorizationUrl,
             UseShellExecute = true,
-
         };
         Process.Start(psi);
 
-        _httpListenerService = new HttpListenerService("http://localhost:44479/");
+        _httpListenerService = new HttpListenerService($"{Authentication.Protocol}://{Authentication.Listener}");
         await _httpListenerService.StartListeningAsync(OnCallbackReceived);
     }
 

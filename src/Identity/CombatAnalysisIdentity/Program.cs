@@ -54,6 +54,7 @@ var app = builder.Build();
 
 Authentication.IssuerSigningKey = Convert.FromBase64String(builder.Configuration["Authentication:IssuerSigningKey"]);
 Authentication.Issuer = builder.Configuration["Authentication:Issuer"];
+Authentication.Protocol = builder.Configuration["Authentication:Protocol"];
 if (int.TryParse(builder.Configuration["Authentication:TokenExpiresInMinutes"], out var tokenExpiresInMinutes))
 {
     Authentication.TokenExpiresInMinutes = tokenExpiresInMinutes;

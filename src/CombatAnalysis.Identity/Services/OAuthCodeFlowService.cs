@@ -97,15 +97,7 @@ internal class OAuthCodeFlowService : IOAuthCodeFlowService
             return false;
         }
 
-        var getCleanHTTPSRedirectUri = redirectUri.Split("https://");
-        var getCleanHTTPRedirectUri = redirectUri.Split("http://");
-        if (getCleanHTTPSRedirectUri.Length == 0 && getCleanHTTPRedirectUri.Length == 0)
-        {
-            return false;
-        }
-
-        var getCleanRedirectUri = getCleanHTTPSRedirectUri.Length < 2 ? getCleanHTTPRedirectUri : getCleanHTTPSRedirectUri;
-        var redirectUriIsValid = allowedRedirects.Contains(getCleanRedirectUri[1]);
+        var redirectUriIsValid = allowedRedirects.Contains(redirectUri);
         if (!redirectUriIsValid)
         {
             return false;

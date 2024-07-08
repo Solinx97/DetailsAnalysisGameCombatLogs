@@ -10,6 +10,8 @@ public static class Authentication
 
     public static int TokenExpiresInMinutes { get; set; }
 
+    public static string Protocol { get; set; }
+
     public static void GenerateAesKey()
     {
         using var aes = Aes.Create();
