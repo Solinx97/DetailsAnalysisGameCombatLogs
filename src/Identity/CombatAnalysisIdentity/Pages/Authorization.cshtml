@@ -5,21 +5,20 @@
 {
     <div class="login">
         <div class="login__title">Login</div>
-        <div class="login__container">
-            <form class="login__submit" method="post">
-                <div class="mb-3">
-                    <label for="inputEmail" class="form-label">Email</label>
-                    <input type="email" class="form-control" id="inputEmail" name="email" aria-describedby="emailHelp" required />
-                </div>
-                <div class="mb-3">
-                    <label for="inputPassword" class="form-label">Password</label>
-                    <input type="password" class="form-control" id="inputPassword" name="password" autoComplete="new-password" required />
-                </div>
-                <div class="actions">
-                    <input type="submit" class="btn-border-shadow finish-login" value=Login />
-                </div>
-            </form>
-        </div>
+        <form class="login__submit" method="post">
+            <div class="mb-3">
+                <label for="inputEmail" class="form-label">Email</label>
+                <input type="email" class="form-control" id="inputEmail" name="email" aria-describedby="emailHelp" required />
+            </div>
+            <div class="mb-3">
+                <label for="inputPassword" class="form-label">Password</label>
+                <input type="password" class="form-control" id="inputPassword" name="password" autoComplete="new-password" required />
+            </div>
+            <div class="actions">
+                <input type="submit" class="btn-border-shadow finish-login" value=Login />
+            </div>
+        </form>
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
         <div class="login__cancel">
             <input type="button" class="btn-border-shadow finish-registration" onclick="goToRegistration()" value="Registration" />
             <input type="button" class="btn-border-shadow cancel" onclick="goToHome()" value="Cancel" />
@@ -35,9 +34,10 @@ else
 
 <script>
     function goToRegistration() {
+        const registrationUrl = `@Model.RegistrationUrl`;
         const queryString = window.location.search;
 
-        window.location.href = `https://solinx.analysis.identity/registration${queryString}`;
+        window.location.href = `${registrationUrl}registration${queryString}`;
     }
 
     function goToHome() {

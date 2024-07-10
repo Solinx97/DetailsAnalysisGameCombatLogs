@@ -9,4 +9,8 @@ public interface IUserAuthorizationService
     Task<bool> ClientValidationAsync(HttpRequest request);
 
     Task<bool> CreateUserAsync(IdentityUserModel identityUser, AppUserModel appUser, CustomerModel customer);
+
+    Task<bool> CheckIfIdentityUserPresentAsync(string email);
+
+    Task<bool> CheckIfUsernameAlreadyUsedAsync(string username);
 }

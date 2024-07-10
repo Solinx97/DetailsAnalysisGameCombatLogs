@@ -28,6 +28,15 @@ public class IdentityUserRepository : IIdentityUserRepository
         return identityUser;
     }
 
+    public async Task<bool> CheckByEmailAsync(string email)
+    {
+        var identityUser = await _context.IdentityUser
+            .FirstOrDefaultAsync(c => c.Email == email);
+        var userPresent = identityUser != null;
+
+        return userPresent;
+    }
+
     public async Task<IdentityUser> GetAsync(string email, string password)
     {
         var entity = await _context.Set<IdentityUser>()

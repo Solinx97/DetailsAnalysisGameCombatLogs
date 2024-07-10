@@ -65,6 +65,7 @@
                 <input type="submit" class="btn-border-shadow finish-registration" value="Registration" />
             </div>
         </form>
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
         <div class="registration__cancel">
             <input type="button" class="btn-border-shadow" onclick="goToLogin()" value="Login" />
             <input type="button" class="btn-border-shadow cancel" onclick="goToHome()" value="Cancel" />
@@ -80,9 +81,10 @@ else
 
 <script>
     function goToLogin() {
+        const registrationUrl = `@Model.AuthorizationUrl`;
         const queryparams = window.location.search;
 
-        window.location.href = `https://localhost:7064/authorization${queryparams}`;
+        window.location.href = `${registrationUrl}authorization${queryparams}`;
     }
 
     function goToHome() {

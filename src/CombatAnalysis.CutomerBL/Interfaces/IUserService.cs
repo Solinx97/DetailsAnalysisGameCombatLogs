@@ -13,5 +13,7 @@ public interface IUserService<TModel>
 
     Task<TModel> GetByIdAsync(string id);
 
+    Task<bool> CheckByUsernameAsync(string username);
+
     Task<TModel> GetAsync(string identityUserId);
 }

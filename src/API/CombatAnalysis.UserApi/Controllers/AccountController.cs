@@ -108,4 +108,19 @@ public class AccountController : ControllerBase
             return BadRequest();
         }
     }
+
+    [HttpGet("check/{username}")]
+    [AllowAnonymous]
+    public async Task<IActionResult> CheckByUsername(string username)
+    {
+        try
+        {
+            var usernameAlreadyUsed = await _service.CheckByUsernameAsync(username);
+            return Ok(usernameAlreadyUsed);
+        }
+        catch (Exception)
+        {
+            return BadRequest();
+        }
+    }
 }

@@ -13,6 +13,7 @@ using System.Security.Cryptography.X509Certificates;
 var builder = WebApplication.CreateBuilder(args);
 
 Port.UserApi = builder.Configuration["UserApiPort"];
+Port.Identity = builder.Configuration["IdentityPort"];
 
 builder.Services.RegisterIdentityDependencies(builder.Configuration, "DefaultConnection");
 

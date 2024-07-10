@@ -39,6 +39,7 @@ internal class HttpListenerService
         catch (Exception ex)
         {
             Console.WriteLine($"Error starting HttpListener: {ex.Message}");
+            StopListening();
         }
     }
 

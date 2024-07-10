@@ -13,6 +13,8 @@ public class RegistrationViewModel : ParentTemplate
     private readonly IMvxNavigationService _mvvmNavigation;
     private readonly IIdentityService _identityService;
 
+    private bool _isVerification;
+
     public RegistrationViewModel(IMemoryCache memoryCache, IMvxNavigationService mvvmNavigation, IIdentityService identityService)
     {
         _memoryCache = memoryCache;
@@ -26,6 +28,15 @@ public class RegistrationViewModel : ParentTemplate
 
         BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, "IsLoginNotActivated", true);
         BasicTemplate.Parent = this;
+    }
+
+    public bool IsVerification
+    {
+        get { return _isVerification; }
+        set
+        {
+            SetProperty(ref _isVerification, value);
+        }
     }
 
     public override void ViewDisappeared()
@@ -43,6 +54,9 @@ public class RegistrationViewModel : ParentTemplate
     private async Task SendAuthorizationRequestAsync()
     {
         await _identityService.SendAuthorizationRequestAsync("registration");
+
+        IsVerification = true;
+
         await _identityService.SendTokenRequestAsync();
 
         var customer = _memoryCache.Get<CustomerModel>(nameof(MemoryCacheValue.Customer));

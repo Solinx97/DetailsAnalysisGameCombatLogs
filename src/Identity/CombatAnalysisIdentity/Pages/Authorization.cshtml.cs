@@ -1,3 +1,4 @@
+using CombatAnalysisIdentity.Consts;
 using CombatAnalysisIdentity.Interfaces;
 using CombatAnalysisIdentity.Models;
 using Microsoft.AspNetCore.Mvc;
@@ -18,18 +19,20 @@ public class AuthorizationModel : PageModel
 
     public bool QueryIsValid { get; set; }
 
+    public string RegistrationUrl { get; } = Port.Identity;
+
     public async Task OnGetAsync()
     {
-        var clientIsValid = await _authorizationService.ClientValidationAsync(Request);
-
-        QueryIsValid = clientIsValid;
+        await RequestValidationAsync();
     }
 
     public async Task<IActionResult> OnPostAsync(string email, string password)
     {
+        await RequestValidationAsync();
+
         if (!ModelState.IsValid)
         {
-            ModelState.AddModelError(string.Empty, "Invalid login attempt.");
+            ModelState.AddModelError(string.Empty, "Login data invalidate");
 
             return Page();
         }
@@ -40,8 +43,15 @@ public class AuthorizationModel : PageModel
             return Redirect(redirectUri);
         }
 
-        ModelState.AddModelError(string.Empty, "Invalid login attempt.");
+        ModelState.AddModelError(string.Empty, "Invalid login attempt");
 
         return Page();
+    }
+
+    private async Task RequestValidationAsync()
+    {
+        var clientIsValid = await _authorizationService.ClientValidationAsync(Request);
+
+        QueryIsValid = clientIsValid;
     }
 }

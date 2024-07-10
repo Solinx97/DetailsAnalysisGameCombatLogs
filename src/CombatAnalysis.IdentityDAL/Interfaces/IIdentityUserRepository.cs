@@ -8,5 +8,7 @@ public interface IIdentityUserRepository
 
     Task<IdentityUser> GetByIdAsync(string id);
 
+    Task<bool> CheckByEmailAsync(string email);
+
     Task<IdentityUser> GetAsync(string email, string password);
 }

@@ -20,7 +20,6 @@ internal class IdentityUserService : IIdentityUserService
     public async Task CreateAsync(IdentityUserDto user)
     {
         var map = _mapper.Map<IdentityUser>(user);
-
         await _identityUserRepository.SaveAsync(map);
     }
 
@@ -30,6 +29,13 @@ internal class IdentityUserService : IIdentityUserService
         var map = _mapper.Map<IdentityUserDto>(identityUser);
 
         return map;
+    }
+
+    public async Task<bool> CheckByEmailAsync(string email)
+    {
+        var userPresent = await _identityUserRepository.CheckByEmailAsync(email);
+
+        return userPresent;
     }
 
     public async Task<IdentityUserDto> GetAsync(string emil, string password)

@@ -53,6 +53,14 @@ internal class UserService : IUserService<AppUserDto>
         return resultMap;
     }
 
+    public async Task<bool> CheckByUsernameAsync(string username)
+    {
+        var users = await GetAllAsync();
+        var findByUsername = users.FirstOrDefault(x => x.Username == username);
+
+        return findByUsername != null;
+    }
+
     public async Task<AppUserDto> GetAsync(string identityUserId)
     {
         var result = await _repository.GetAsync(identityUserId);

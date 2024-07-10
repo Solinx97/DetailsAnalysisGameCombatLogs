@@ -1,3 +1,4 @@
+using CombatAnalysisIdentity.Consts;
 using CombatAnalysisIdentity.Interfaces;
 using CombatAnalysisIdentity.Models;
 using Microsoft.AspNetCore.Mvc;
@@ -19,17 +20,44 @@ public class RegistrationModel : PageModel
 
     public bool QueryIsValid { get; set; }
 
+    public string AuthorizationUrl { get; } = Port.Identity;
+
     public async Task OnGetAsync()
     {
-        var clientIsValid = await _authorizationService.ClientValidationAsync(Request);
-
-        QueryIsValid = clientIsValid;
+        await RequestValidationAsync();
     }
 
     public async Task<IActionResult> OnPostAsync(int step, string email, string password, string confirmPassword, int phoneNumber, DateTimeOffset birthday, string username, string firstName, string lastName, string aboutMe)
     {
+        await RequestValidationAsync();
+
+        if (!ModelState.IsValid)
+        {
+            ModelState.AddModelError(string.Empty, "Registration data invalidate");
+
+            return Page();
+        }
+
         if (!password.Equals(confirmPassword))
         {
+            ModelState.AddModelError(string.Empty, "Password and confirm password should be equal");
+
+            return Page();
+        }
+
+        var isPresent = await _authorizationService.CheckIfIdentityUserPresentAsync(email);
+        if (isPresent)
+        {
+            ModelState.AddModelError(string.Empty, "User with this Email already present");
+
+            return Page();
+        }
+
+        var usernameAlreadyUsed = await _authorizationService.CheckIfUsernameAlreadyUsedAsync(username);
+        if (usernameAlreadyUsed)
+        {
+            ModelState.AddModelError(string.Empty, "Username already used");
+
             return Page();
         }
 
@@ -92,5 +120,12 @@ public class RegistrationModel : PageModel
         }
 
         return Page();
+    }
+
+    private async Task RequestValidationAsync()
+    {
+        var clientIsValid = await _authorizationService.ClientValidationAsync(Request);
+
+        QueryIsValid = clientIsValid;
     }
 }

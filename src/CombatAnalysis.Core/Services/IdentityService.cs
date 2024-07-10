@@ -57,13 +57,14 @@ internal class IdentityService : IIdentityService
         try
         {
             var token = await GetTokenAsync();
-            var user= await GetUserAsync(token.AccessToken);
+            var user = await GetUserAsync(token.AccessToken);
             var customer = await GetCustomerAsync(token.AccessToken, user.Id);
 
             SetMemoryCache(token.AccessToken, token.RefreshToken, user, customer);
         }
         catch (Exception ex)
         {
+            Console.WriteLine(ex.Message);
         }
     }
 
@@ -74,18 +75,25 @@ internal class IdentityService : IIdentityService
 
     private async Task<AccessTokenModel> GetTokenAsync()
     {
-        var encodedAuthorizationCode = Uri.EscapeDataString(_code);
-        var url = $"Token?grantType=authorization_code&clientId={Authentication.ClientId}&codeVerifier={_codeVerifier}&code={encodedAuthorizationCode}&redirectUri={Authentication.RedirectUri}";
+        try
+        {
+            var encodedAuthorizationCode = Uri.EscapeDataString(_code);
+            var url = $"Token?grantType=authorization_code&clientId={Authentication.ClientId}&codeVerifier={_codeVerifier}&code={encodedAuthorizationCode}&redirectUri={Authentication.RedirectUri}";
 
-        var responseMessage = await _httpClientHelper.GetAsync(url, Port.Identity);
-        if (!responseMessage.IsSuccessStatusCode)
+            var responseMessage = await _httpClientHelper.GetAsync(url, Port.Identity);
+            if (!responseMessage.IsSuccessStatusCode)
+            {
+                return null;
+            }
+
+            var token = await responseMessage.Content.ReadFromJsonAsync<AccessTokenModel>();
+
+            return token;
+        }
+        catch (Exception ex)
         {
             return null;
         }
-
-        var token = await responseMessage.Content.ReadFromJsonAsync<AccessTokenModel>();
-
-        return token;
     }
 
     private async Task<AppUserModel> GetUserAsync(string accessToken)

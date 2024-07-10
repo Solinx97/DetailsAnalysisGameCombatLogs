@@ -73,6 +73,28 @@ internal class UserAuthorizationService : IUserAuthorizationService
         return responseMessage.IsSuccessStatusCode;
     }
 
+    public async Task<bool> CheckIfIdentityUserPresentAsync(string email)
+    {
+        var userPresent = await _identityUserService.CheckByEmailAsync(email);
+
+        return userPresent;
+    }
+
+    public async Task<bool> CheckIfUsernameAlreadyUsedAsync(string username)
+    {
+        var httpClient = new HttpClient();
+        var responseMessage = await httpClient.GetAsync($"{Port.UserApi}api/v1/Account/check/{username}");
+        if (responseMessage.IsSuccessStatusCode)
+        {
+            var usernameAlreadyUsed = await responseMessage.Content.ReadFromJsonAsync<bool>();
+            return usernameAlreadyUsed;
+        }
+        else
+        {
+            return true;
+        }
+    }
+
     private void GetAuthorizationRequestData(HttpRequest request)
     {
         if (request.Query.TryGetValue(AuthorizationRequest.RedirectUri.ToString(), out var redirectUri))
