@@ -45,8 +45,8 @@ const AuthorizationCallback = () => {
 
     const navigateToTokenAsync = async (code) => {
         const codeVerifier = window.sessionStorage.getItem("codeVerifier");
-
         const encodedAuthorizationCode = encodeURIComponent(code);
+
         const result = await fetch(`/api/v1/Identity?codeVerifier=${codeVerifier}&authorizationCode=${encodedAuthorizationCode}`);
         if (result.status === 200) {
             window.sessionStorage.removeItem("codeVerifier");

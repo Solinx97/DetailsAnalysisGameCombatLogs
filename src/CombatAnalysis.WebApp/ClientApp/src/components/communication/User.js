@@ -56,11 +56,11 @@ const User = ({ me, itIsMe, targetCustomerId, setUserInformation, allowRemoveFri
     }
 
     if (isLoading) {
-        return (<Loading />);
+        return (<div className="special-user__another">Loading...</div>);
     }
 
     return (
-        <div className={`special-user__${itIsMe ? "me" : "another"}`}
+        <div className="special-user__another"
             onMouseOver={userActiveHandler}
             onMouseLeave={userInactiveHandler}>
             <FontAwesomeIcon
