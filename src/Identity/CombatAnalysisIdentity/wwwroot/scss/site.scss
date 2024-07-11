@@ -53,7 +53,24 @@ input, label {
     gap: 20px;
     right: 40%;
     top: 20%;
-    color: white;
+
+    input[type="email"], input[type="text"], input[type="password"], input[type="number"], input[type="submit"], input[type="date"], textarea {
+        width: 300px;
+        padding: 10px;
+        border-radius: 10px;
+        color: white;
+    }
+
+    input[type="email"], input[type="password"], input[type="text"], input[type="number"], input[type="date"], textarea {
+        box-shadow: 4px 4px #009FBD;
+        border: 0 solid white;
+        background: linear-gradient(90deg, rgba(44,41,134,1) 11%, rgba(70,168,215,1) 88%);
+    }
+
+    input::placeholder, textarea::placeholder {
+        color: white;
+        font-family: 'Comic Sans MS';
+    }
 
     &__cancel {
         display: flex;
@@ -97,7 +114,12 @@ input, label {
         }
 
         .finish-login {
-            box-shadow: 2px 2px 2px 2px green;
+            box-shadow: 2px 2px 2px 2px yellow;
+
+            &:hover {
+                box-shadow: 2px 2px 2px 2px green;
+                background: radial-gradient(circle, rgba(41,32,170,1) 0%, rgba(27,251,237,1) 100%);
+            }
         }
     }
 
@@ -123,6 +145,9 @@ input, label {
         width: 1000px;
 
         .confidential, .general {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
             width: 300px;
         }
 
@@ -141,7 +166,12 @@ input, label {
         }
 
         .finish-registration {
-            box-shadow: 2px 2px 2px 2px green;
+            box-shadow: 2px 2px 2px 2px yellow;
+
+            &:hover {
+                box-shadow: 2px 2px 2px 2px green;
+                background: radial-gradient(circle, rgba(41,32,170,1) 0%, rgba(27,251,237,1) 100%);
+            }
         }
     }
 

@@ -7,15 +7,13 @@
         <div class="login__title">Login</div>
         <form class="login__submit" method="post">
             <div class="mb-3">
-                <label for="inputEmail" class="form-label">Email</label>
-                <input type="email" class="form-control" id="inputEmail" name="email" aria-describedby="emailHelp" required />
+                <input type="email" class="form-control" id="inputEmail" name="email" aria-describedby="emailHelp" placeholder="Email" required />
             </div>
             <div class="mb-3">
-                <label for="inputPassword" class="form-label">Password</label>
-                <input type="password" class="form-control" id="inputPassword" name="password" autoComplete="new-password" required />
+                <input type="password" class="form-control" id="inputPassword" name="password" autoComplete="new-password" placeholder="Password" required />
             </div>
             <div class="actions">
-                <input type="submit" class="btn-border-shadow finish-login" value=Login />
+                <input type="submit" class="btn-border-shadow finish-login" value="Sign in" />
             </div>
         </form>
         <div asp-validation-summary="ModelOnly" class="text-danger"></div>

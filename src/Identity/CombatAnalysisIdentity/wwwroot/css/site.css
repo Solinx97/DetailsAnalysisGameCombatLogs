@@ -52,7 +52,21 @@ input, label {
   gap: 20px;
   right: 40%;
   top: 20%;
+}
+.login input[type=email], .login input[type=text], .login input[type=password], .login input[type=number], .login input[type=submit], .login input[type=date], .login textarea, .registration input[type=email], .registration input[type=text], .registration input[type=password], .registration input[type=number], .registration input[type=submit], .registration input[type=date], .registration textarea {
+  width: 300px;
+  padding: 10px;
+  border-radius: 10px;
   color: white;
+}
+.login input[type=email], .login input[type=password], .login input[type=text], .login input[type=number], .login input[type=date], .login textarea, .registration input[type=email], .registration input[type=password], .registration input[type=text], .registration input[type=number], .registration input[type=date], .registration textarea {
+  box-shadow: 4px 4px #009FBD;
+  border: 0 solid white;
+  background: linear-gradient(90deg, rgb(44, 41, 134) 11%, rgb(70, 168, 215) 88%);
+}
+.login input::placeholder, .login textarea::placeholder, .registration input::placeholder, .registration textarea::placeholder {
+  color: white;
+  font-family: "Comic Sans MS";
 }
 .login__cancel, .registration__cancel {
   display: flex;
@@ -90,7 +104,11 @@ input, label {
   margin: 15px 0;
 }
 .login__submit .finish-login {
+  box-shadow: 2px 2px 2px 2px yellow;
+}
+.login__submit .finish-login:hover {
   box-shadow: 2px 2px 2px 2px green;
+  background: radial-gradient(circle, rgb(41, 32, 170) 0%, rgb(27, 251, 237) 100%);
 }
 .login .actions {
   display: flex;
@@ -112,6 +130,9 @@ input, label {
   width: 1000px;
 }
 .registration__submit .confidential, .registration__submit .general {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
   width: 300px;
 }
 .registration__submit__error-message {
@@ -127,7 +148,11 @@ input, label {
   margin: 15px 0;
 }
 .registration__submit .finish-registration {
+  box-shadow: 2px 2px 2px 2px yellow;
+}
+.registration__submit .finish-registration:hover {
   box-shadow: 2px 2px 2px 2px green;
+  background: radial-gradient(circle, rgb(41, 32, 170) 0%, rgb(27, 251, 237) 100%);
 }
 .registration__container {
   display: flex;
