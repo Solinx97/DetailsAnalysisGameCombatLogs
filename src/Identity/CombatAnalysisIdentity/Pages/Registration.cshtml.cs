@@ -62,6 +62,14 @@ public class RegistrationModel : PageModel
             return Page();
         }
 
+        var passwordIsStrong = _authorizationService.IsPasswordStrong(password);
+        if (!passwordIsStrong)
+        {
+            ModelState.AddModelError(string.Empty, "Password should have at least 8 characters, upper/lowercase character, digit and special symbol");
+
+            return Page();
+        }
+
         FillIdentityUser(email, password);
         FillAppUser(phoneNumber, birthday, username, firstName, lastName, aboutMe);
         FillCustomer(username, firstName, lastName, aboutMe);

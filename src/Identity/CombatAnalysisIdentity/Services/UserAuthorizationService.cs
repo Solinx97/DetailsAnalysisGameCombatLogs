@@ -6,6 +6,7 @@ using CombatAnalysisIdentity.Consts;
 using CombatAnalysisIdentity.Interfaces;
 using CombatAnalysisIdentity.Models;
 using CombatAnalysisIdentity.Security;
+using System.Text.RegularExpressions;
 
 namespace CombatAnalysisIdentity.Services;
 
@@ -25,7 +26,7 @@ internal class UserAuthorizationService : IUserAuthorizationService
         _logger = logger;
     }
 
-    public async Task<string> AuthorizationAsync(HttpRequest request, string email, string password)
+    async Task<string> IUserAuthorizationService.AuthorizationAsync(HttpRequest request, string email, string password)
     {
         var user = await _identityUserService.GetAsync(email);
         if (user == null)
@@ -49,7 +50,7 @@ internal class UserAuthorizationService : IUserAuthorizationService
         return redirectUrl;
     }
 
-    public async Task<bool> ClientValidationAsync(HttpRequest request)
+    async Task<bool> IUserAuthorizationService.ClientValidationAsync(HttpRequest request)
     {
         GetAuthorizationRequestData(request);
 
@@ -58,7 +59,7 @@ internal class UserAuthorizationService : IUserAuthorizationService
         return clientIsValid;
     }
 
-    public async Task<bool> CreateUserAsync(IdentityUserModel identityUser, AppUserModel appUser, CustomerModel customer)
+    async Task<bool> IUserAuthorizationService.CreateUserAsync(IdentityUserModel identityUser, AppUserModel appUser, CustomerModel customer)
     {
         var identityUserMap = _mapper.Map<IdentityUserDto>(identityUser);
         await _identityUserService.CreateAsync(identityUserMap);
@@ -81,14 +82,14 @@ internal class UserAuthorizationService : IUserAuthorizationService
         return responseMessage.IsSuccessStatusCode;
     }
 
-    public async Task<bool> CheckIfIdentityUserPresentAsync(string email)
+    async Task<bool> IUserAuthorizationService.CheckIfIdentityUserPresentAsync(string email)
     {
         var userPresent = await _identityUserService.CheckByEmailAsync(email);
 
         return userPresent;
     }
 
-    public async Task<bool> CheckIfUsernameAlreadyUsedAsync(string username)
+    async Task<bool> IUserAuthorizationService.CheckIfUsernameAlreadyUsedAsync(string username)
     {
         try
         {
@@ -110,6 +111,41 @@ internal class UserAuthorizationService : IUserAuthorizationService
 
             return true;
         }
+    }
+
+    bool IUserAuthorizationService.IsPasswordStrong(string password)
+    {
+        // Check if the password is at least 8 characters long
+        if (password.Length < 8)
+        {
+            return false;
+        }
+
+        // Check if the password contains at least one uppercase letter
+        if (!Regex.IsMatch(password, "[A-Z]"))
+        {
+            return false;
+        }
+
+        // Check if the password contains at least one lowercase letter
+        if (!Regex.IsMatch(password, "[a-z]"))
+        {
+            return false;
+        }
+
+        // Check if the password contains at least one digit
+        if (!Regex.IsMatch(password, "[0-9]"))
+        {
+            return false;
+        }
+
+        // Check if the password contains at least one special character
+        if (!Regex.IsMatch(password, "[^a-zA-Z0-9]"))
+        {
+            return false;
+        }
+
+        return true;
     }
 
     private void GetAuthorizationRequestData(HttpRequest request)

@@ -13,4 +13,6 @@ public interface IUserAuthorizationService
     Task<bool> CheckIfIdentityUserPresentAsync(string email);
 
     Task<bool> CheckIfUsernameAlreadyUsedAsync(string username);
+
+    bool IsPasswordStrong(string password);
 }
