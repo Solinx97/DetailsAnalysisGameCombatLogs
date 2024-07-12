@@ -10,5 +10,5 @@ public interface IIdentityUserRepository
 
     Task<bool> CheckByEmailAsync(string email);
 
-    Task<IdentityUser> GetAsync(string email, string password);
+    Task<IdentityUser> GetAsync(string email);
 }

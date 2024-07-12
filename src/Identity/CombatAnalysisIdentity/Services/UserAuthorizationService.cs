@@ -27,8 +27,14 @@ internal class UserAuthorizationService : IUserAuthorizationService
 
     public async Task<string> AuthorizationAsync(HttpRequest request, string email, string password)
     {
-        var user = await _identityUserService.GetAsync(email, password);
+        var user = await _identityUserService.GetAsync(email);
         if (user == null)
+        {
+            return string.Empty;
+        }
+
+        var passwordIsValid = PasswordHashing.VerifyPassword(password, user.PasswordHash, user.Salt);
+        if (!passwordIsValid)
         {
             return string.Empty;
         }

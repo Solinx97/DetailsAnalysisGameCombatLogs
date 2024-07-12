@@ -37,10 +37,10 @@ public class IdentityUserRepository : IIdentityUserRepository
         return userPresent;
     }
 
-    public async Task<IdentityUser> GetAsync(string email, string password)
+    public async Task<IdentityUser> GetAsync(string email)
     {
         var entity = await _context.Set<IdentityUser>()
-            .FirstOrDefaultAsync(x => x.Email == email && x.Password == password);
+            .FirstOrDefaultAsync(x => x.Email == email);
 
         if (entity != null)
         {

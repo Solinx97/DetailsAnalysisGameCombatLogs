@@ -1,6 +1,7 @@
 using CombatAnalysisIdentity.Consts;
 using CombatAnalysisIdentity.Interfaces;
 using CombatAnalysisIdentity.Models;
+using CombatAnalysisIdentity.Security;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
@@ -65,16 +66,18 @@ public class RegistrationModel : PageModel
         FillAppUser(phoneNumber, birthday, username, firstName, lastName, aboutMe);
         FillCustomer(username, firstName, lastName, aboutMe);
 
-        return await CreateUserAsync();
+        return await CreateUserAsync(password);
     }
 
     private void FillIdentityUser(string email, string password)
     {
+        var (hash, salt) = PasswordHashing.HashPasswordWithSalt(password);
         _identityUser = new IdentityUserModel
         {
             Id = Guid.NewGuid().ToString(),
             Email = email,
-            Password = password
+            PasswordHash = hash,
+            Salt = salt
         };
     }
 
@@ -105,7 +108,7 @@ public class RegistrationModel : PageModel
         };
     }
 
-    private async Task<IActionResult> CreateUserAsync()
+    private async Task<IActionResult> CreateUserAsync(string password)
     {
         var wasCreated = await _authorizationService.CreateUserAsync(_identityUser, _appUser, _customer);
         if (!wasCreated)
@@ -113,7 +116,7 @@ public class RegistrationModel : PageModel
             return Page();
         }
 
-        var redirectUri = await _authorizationService.AuthorizationAsync(Request, _identityUser.Email, _identityUser.Password);
+        var redirectUri = await _authorizationService.AuthorizationAsync(Request, _identityUser.Email, password);
         if (!string.IsNullOrEmpty(redirectUri))
         {
             return Redirect(redirectUri);
