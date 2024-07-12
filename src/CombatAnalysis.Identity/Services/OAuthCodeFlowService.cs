@@ -14,11 +14,13 @@ internal class OAuthCodeFlowService : IOAuthCodeFlowService
 {
     private readonly IPkeRepository _pkeRepository;
     private readonly IClientRepository _clientRepository;
+    private readonly ITokenRepository _tokenRepository;
 
-    public OAuthCodeFlowService(IPkeRepository pkeRepository, IClientRepository clientRepository)
+    public OAuthCodeFlowService(IPkeRepository pkeRepository, IClientRepository clientRepository, ITokenRepository tokenRepository)
     {
         _pkeRepository = pkeRepository;
         _clientRepository = clientRepository;
+        _tokenRepository = tokenRepository;
     }
 
     async Task<string> IOAuthCodeFlowService.GenerateAuthorizationCodeAsync(string userId, string clientId, string codeChallenge, string codeChallengeMethod, string redirectUri)
@@ -129,12 +131,45 @@ internal class OAuthCodeFlowService : IOAuthCodeFlowService
         using var cs = new CryptoStream(ms, decryptor, CryptoStreamMode.Read);
         using var sr = new StreamReader(cs);
         var decryptedData = sr.ReadToEnd();
-        // Assuming the authorization code and custom data were concatenated with a colon (":")
+
         var parts = decryptedData.Split(new[] { ':' }, 2);
 
         var decryptedAuthorizationKey = (parts[0], parts.Length > 1 ? parts[1] : string.Empty);
 
         return decryptedAuthorizationKey;
+    }
+
+    async Task IOAuthCodeFlowService.CreateRefreshTokenAsync(string token, int refreshTokenExpiresDays, string clientId, string userId)
+    {
+        await _tokenRepository.SaveAsync(token, refreshTokenExpiresDays, clientId, userId);
+    }
+
+    string IOAuthCodeFlowService.GenerateToken(string clientId, string userId = "")
+    {
+        var key = new SymmetricSecurityKey(Authentication.IssuerSigningKey);
+        var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+
+        var claims = new[]
+        {
+            new Claim(JwtRegisteredClaimNames.Sub, userId),
+        };
+
+        var token = new JwtSecurityToken(
+            issuer: Authentication.Issuer,
+            audience: clientId,
+            claims: !string.IsNullOrEmpty(userId) ? claims : new Claim[0],
+            expires: DateTime.Now.AddMinutes(Authentication.AccessTokenExpiresMins),
+            signingCredentials: creds
+        );
+
+        var accessToken = new JwtSecurityTokenHandler().WriteToken(token);
+        return accessToken;
+    }
+
+    async Task<string> IOAuthCodeFlowService.ValidateRefreshTokenAsync(string refreshToken, string clientId)
+    {
+        var userId = await _tokenRepository.ValidateRefreshTokenAsync(refreshToken, clientId);
+        return userId;
     }
 
     private static string EncryptAuthorizationCode(string authorizationCode, string customData, byte[] encryptionKey)
@@ -164,28 +199,6 @@ internal class OAuthCodeFlowService : IOAuthCodeFlowService
         var encryptedAuthorizationKey = Convert.ToBase64String(result);
 
         return encryptedAuthorizationKey;
-    }
-
-    string IOAuthCodeFlowService.GenerateToken(string clientId, string userId = "")
-    {
-        var key = new SymmetricSecurityKey(Authentication.IssuerSigningKey);
-        var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-
-        var claims = new[]
-        {
-            new Claim(JwtRegisteredClaimNames.Sub, userId),
-        };
-
-        var token = new JwtSecurityToken(
-            issuer: Authentication.Issuer,
-            audience: clientId,
-            claims: !string.IsNullOrEmpty(userId) ? claims : new Claim[0],
-            expires: DateTime.Now.AddMinutes(Authentication.TokenExpiresInMinutes),
-            signingCredentials: creds
-        );
-
-        var accessToken = new JwtSecurityTokenHandler().WriteToken(token);
-        return accessToken;
     }
 
     private static string GenerateAuthorizationCode()

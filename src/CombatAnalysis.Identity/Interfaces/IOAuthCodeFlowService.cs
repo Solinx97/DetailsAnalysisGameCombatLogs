@@ -10,5 +10,9 @@ public interface IOAuthCodeFlowService
 
     (string AuthorizationCode, string CustomData) DecryptAuthorizationCode(string encryptedDataWithCustomData, byte[] encryptionKey);
 
+    Task CreateRefreshTokenAsync(string token, int refreshTokenExpiresDays, string clientId, string userId);
+
     string GenerateToken(string clientId, string userId = "");
+
+    Task<string> ValidateRefreshTokenAsync(string refreshToken, string clientId);
 }

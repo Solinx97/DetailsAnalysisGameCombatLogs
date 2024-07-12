@@ -6,7 +6,7 @@ public class AccessTokenDto
 
     public string TokenType { get; set; }
 
-    public int ExpiresInMinutes { get; set; }
+    public DateTimeOffset Expires { get; set; }
 
     public string RefreshToken { get; set; }
 }

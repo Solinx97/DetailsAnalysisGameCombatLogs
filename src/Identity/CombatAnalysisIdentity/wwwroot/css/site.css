@@ -64,6 +64,9 @@ input, label {
   border: 0 solid white;
   background: linear-gradient(90deg, rgb(44, 41, 134) 11%, rgb(70, 168, 215) 88%);
 }
+.login textarea:focus, .registration textarea:focus {
+  color: white;
+}
 .login input::placeholder, .login textarea::placeholder, .registration input::placeholder, .registration textarea::placeholder {
   color: white;
   font-family: "Comic Sans MS";

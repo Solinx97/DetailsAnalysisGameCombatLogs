@@ -14,13 +14,15 @@ internal class UserAuthorizationService : IUserAuthorizationService
     private readonly IMapper _mapper;
     private readonly IOAuthCodeFlowService _oAuthCodeFlowService;
     private readonly IIdentityUserService _identityUserService;
+    private readonly ILogger<UserAuthorizationService> _logger;
     private AuthorizationRequestModel _authorizationRequest = new AuthorizationRequestModel();
 
-    public UserAuthorizationService(IMapper mapper, IOAuthCodeFlowService oAuthCodeFlowService, IIdentityUserService identityUserService)
+    public UserAuthorizationService(IMapper mapper, IOAuthCodeFlowService oAuthCodeFlowService, IIdentityUserService identityUserService, ILogger<UserAuthorizationService> logger)
     {
         _mapper = mapper;
         _oAuthCodeFlowService = oAuthCodeFlowService;
         _identityUserService = identityUserService;
+        _logger = logger;
     }
 
     public async Task<string> AuthorizationAsync(HttpRequest request, string email, string password)
@@ -82,15 +84,24 @@ internal class UserAuthorizationService : IUserAuthorizationService
 
     public async Task<bool> CheckIfUsernameAlreadyUsedAsync(string username)
     {
-        var httpClient = new HttpClient();
-        var responseMessage = await httpClient.GetAsync($"{Port.UserApi}api/v1/Account/check/{username}");
-        if (responseMessage.IsSuccessStatusCode)
+        try
         {
-            var usernameAlreadyUsed = await responseMessage.Content.ReadFromJsonAsync<bool>();
-            return usernameAlreadyUsed;
+            var httpClient = new HttpClient();
+            var responseMessage = await httpClient.GetAsync($"{Port.UserApi}api/v1/Account/check/{username}");
+            if (responseMessage.IsSuccessStatusCode)
+            {
+                var usernameAlreadyUsed = await responseMessage.Content.ReadFromJsonAsync<bool>();
+                return usernameAlreadyUsed;
+            }
+            else
+            {
+                return true;
+            }
         }
-        else
+        catch (Exception ex)
         {
+            _logger.LogError(ex.Message);
+
             return true;
         }
     }

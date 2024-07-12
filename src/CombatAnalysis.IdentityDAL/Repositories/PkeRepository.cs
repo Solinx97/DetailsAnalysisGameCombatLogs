@@ -14,7 +14,7 @@ public class PkeRepository : IPkeRepository
         _context = context;
     }
 
-    public async Task CreateAsync(string clientId, string authorizationCode, string codeChallenge, string codeChallengeMethod, string redirectUri)
+    public async Task CreateAsync(string clientId, string authorizationCode, string codeChallenge, string codeChallengeMethod, string redirectUri, int expiryTimeMins = 5)
     {
         var entry = new AuthorizationCodeChallenge
         {
@@ -23,7 +23,7 @@ public class PkeRepository : IPkeRepository
             ClientId = clientId,
             CodeChallengeMethod = codeChallengeMethod,
             CreatedAt = DateTime.UtcNow,
-            ExpiryTime = DateTime.UtcNow.AddMinutes(10),
+            ExpiryTime = DateTime.UtcNow.AddMinutes(expiryTimeMins),
             RedirectUrl = redirectUri,
             IsUsed = false
         };

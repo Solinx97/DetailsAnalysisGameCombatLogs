@@ -13,10 +13,12 @@ namespace CombatAnalysis.WebApp.Controllers.Identity;
 public class IdentityController : ControllerBase
 {
     private readonly IHttpClientHelper _httpClient;
+    private readonly ILogger<IdentityController> _logger;
 
-    public IdentityController(IHttpClientHelper httpClient)
+    public IdentityController(IHttpClientHelper httpClient, ILogger<IdentityController> logger)
     {
         _httpClient = httpClient;
+        _logger = logger;
     }
 
     [HttpGet]
@@ -39,19 +41,24 @@ public class IdentityController : ControllerBase
             }
 
             var token = await responseMessage.Content.ReadFromJsonAsync<AccessTokenModel>();
+            if (token == null)
+            {
+                return BadRequest();
+            }
+
             HttpContext.Response.Cookies.Append(AuthenticationTokenType.AccessToken.ToString(), token.AccessToken, new CookieOptions
             {
                 HttpOnly = true,
                 Secure = true,
                 SameSite = SameSiteMode.Lax,
-                Expires = DateTimeOffset.UtcNow.AddMinutes(token.ExpiresInMinutes),
+                Expires = token.Expires,
             });
             HttpContext.Response.Cookies.Append(AuthenticationTokenType.RefreshToken.ToString(), token.RefreshToken, new CookieOptions
             {
                 HttpOnly = true,
                 Secure = true,
                 SameSite = SameSiteMode.Lax,
-                Expires = DateTimeOffset.UtcNow.AddMinutes(token.ExpiresInMinutes).AddDays(7)
+                Expires = token.Expires.AddDays(Authentication.RefreshTokenExpiresDays)
             });
 
             var identityUserId = AccessTokenHelper.GetUserIdFromToken(token.AccessToken);
@@ -60,6 +67,8 @@ public class IdentityController : ControllerBase
         }
         catch (Exception ex)
         {
+            _logger.LogError(ex, "Error during authorization code exchange");
+
             return BadRequest(ex.Message);
         }
     }

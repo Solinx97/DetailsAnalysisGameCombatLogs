@@ -8,7 +8,9 @@ public static class Authentication
 
     public static string Issuer { get; set; }
 
-    public static int TokenExpiresInMinutes { get; set; }
+    public static int AccessTokenExpiresMins { get; set; }
+
+    public static int RefreshTokenExpiresDays { get; set; }
 
     public static string Protocol { get; set; }
 

@@ -12,6 +12,8 @@ public class CombatAnalysisIdentityContext : DbContext
 
     public DbSet<AuthorizationCodeChallenge> AuthorizationCodeChallenge { get; set; }
 
+    public DbSet<RefreshToken> RefreshToken { get; set; }
+
     public DbSet<IdentityUser> IdentityUser { get; set; }
 
     public DbSet<Client> Client { get; set; }

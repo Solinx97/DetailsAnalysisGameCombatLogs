@@ -14,6 +14,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 Port.UserApi = builder.Configuration["UserApiPort"];
 Port.Identity = builder.Configuration["IdentityPort"];
+Port.Identity = builder.Configuration["IdentityPort"];
 
 builder.Services.RegisterIdentityDependencies(builder.Configuration, "DefaultConnection");
 
@@ -39,7 +40,7 @@ builder.Services.AddCors(options =>
     });
 });
 
-var certificate = new X509Certificate2(Path.Combine(Directory.GetCurrentDirectory(), "certs", "solinx.analysis.pfx"), builder.Configuration["Certificates:PWD"]);
+var certificate = new X509Certificate2(Path.Combine(Directory.GetCurrentDirectory(), "certs", builder.Configuration["Certificates:Name"]), builder.Configuration["Certificates:PWD"]);
 builder.Services.AddIdentityServer()
             .AddSigningCredential(certificate)
             .AddInMemoryApiResources(Config.GetApiResources())
@@ -59,9 +60,14 @@ var app = builder.Build();
 Authentication.IssuerSigningKey = Convert.FromBase64String(builder.Configuration["Authentication:IssuerSigningKey"]);
 Authentication.Issuer = builder.Configuration["Authentication:Issuer"];
 Authentication.Protocol = builder.Configuration["Authentication:Protocol"];
-if (int.TryParse(builder.Configuration["Authentication:TokenExpiresInMinutes"], out var tokenExpiresInMinutes))
+
+if (int.TryParse(builder.Configuration["Authentication:AccessTokenExpiresMins"], out var accessTokenExpiresMins))
 {
-    Authentication.TokenExpiresInMinutes = tokenExpiresInMinutes;
+    Authentication.AccessTokenExpiresMins = accessTokenExpiresMins;
+}
+if (int.TryParse(builder.Configuration["Authentication:RefreshTokenExpiresDays"], out var refreshTokenExpiresDays))
+{
+    Authentication.RefreshTokenExpiresDays = refreshTokenExpiresDays;
 }
 
 // Configure the HTTP request pipeline.

@@ -12,4 +12,12 @@ internal static class AccessTokenHelper
 
         return userIdClaim?.Value;
     }
+
+    public static DateTime GetValidToFromToken(string token)
+    {
+        var handler = new JwtSecurityTokenHandler();
+        var jsonToken = handler.ReadToken(token) as JwtSecurityToken;
+
+        return jsonToken.ValidTo;
+    }
 }

@@ -67,6 +67,10 @@ input, label {
         background: linear-gradient(90deg, rgba(44,41,134,1) 11%, rgba(70,168,215,1) 88%);
     }
 
+    textarea:focus {
+        color: white;
+    }
+
     input::placeholder, textarea::placeholder {
         color: white;
         font-family: 'Comic Sans MS';

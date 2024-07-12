@@ -21,5 +21,6 @@ public static class DataCollectionExtensions
         services.AddScoped<IPkeRepository, PkeRepository>();
         services.AddScoped<IIdentityUserRepository, IdentityUserRepository>();
         services.AddScoped<IClientRepository, ClientRepository>();
+        services.AddScoped<ITokenRepository, TokenRepository>();
     }
 }

@@ -6,21 +6,23 @@ using CombatAnalysis.WebApp.Interfaces;
 using CombatAnalysis.WebApp.Models.User;
 using Microsoft.AspNetCore.Mvc;
 
-namespace CombatAnalysis.WebApp.Controllers.User;
+namespace CombatAnalysis.WebApp.Controllers.Identity;
 
 [Route("api/v1/[controller]")]
 [ApiController]
 public class AuthenticationController : ControllerBase
 {
     private readonly IHttpClientHelper _httpClient;
+    private readonly ILogger<AuthenticationController> _logger;
 
-    public AuthenticationController(IHttpClientHelper httpClient)
+    public AuthenticationController(IHttpClientHelper httpClient, ILogger<AuthenticationController> logger)
     {
         _httpClient = httpClient;
+        _logger = logger;
     }
 
     [HttpGet]
-    public async Task<IActionResult> Refresh()
+    public async Task<IActionResult> RefreshAccessToken()
     {
         try
         {
@@ -41,6 +43,8 @@ public class AuthenticationController : ControllerBase
         }
         catch (Exception ex)
         {
+            _logger.LogError(ex, "Authentication refresh was failed.");
+
             return BadRequest($"Authentication refresh was failed. Error: {ex.Message}");
         }
     }
