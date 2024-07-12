@@ -54,8 +54,9 @@ const useAuthorization = () => {
         const clientScope = process.env.REACT_APP_CLIENT_SCOPE;
         const redirectUri = process.env.REACT_APP_REDIRECT_URI;
         const identityServer = process.env.REACT_APP_IDENTITY_SERVER;
+        const grantType = process.env.REACT_APP_AUTHENTICATION_GRANT_TYPE;
 
-        const uri = `${identityServer}/${identityServerPath}?grantType=code&clientTd=${clientId}&redirectUri=${redirectUri}&scope=${clientScope}&state=${state}&codeChallengeMethod=${codeChallengeMethod}&codeChallenge=${codeChallenge}`;
+        const uri = `${identityServer}/${identityServerPath}?grantType=${grantType}&clientTd=${clientId}&redirectUri=${redirectUri}&scope=${clientScope}&state=${state}&codeChallengeMethod=${codeChallengeMethod}&codeChallenge=${codeChallenge}`;
 
         return uri;
     }

@@ -18,7 +18,7 @@ internal class TokenService : ITokenService
 
     public async Task<AccessTokenModel> RefreshAccessTokenAsync(string refreshToken)
     {
-        var response = await _httpClient.GetAsync($"Token/refresh?grantType=refresh_token&refreshToken={refreshToken}&clientId={Authentication.ClientId}", Port.Identity);
+        var response = await _httpClient.GetAsync($"Token/refresh?grantType={AuthenticationGrantType.RefreshToken}&refreshToken={refreshToken}&clientId={Authentication.ClientId}", Port.Identity);
         if (response.IsSuccessStatusCode)
         {
             var token = await response.Content.ReadFromJsonAsync<AccessTokenModel>();

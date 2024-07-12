@@ -1,6 +1,4 @@
-﻿using System.Security.Cryptography;
-
-namespace CombatAnalysis.Identity.Security;
+﻿namespace CombatAnalysis.Identity.Security;
 
 public static class Authentication
 {
@@ -13,12 +11,4 @@ public static class Authentication
     public static int RefreshTokenExpiresDays { get; set; }
 
     public static string Protocol { get; set; }
-
-    public static void GenerateAesKey()
-    {
-        using var aes = Aes.Create();
-        aes.GenerateKey();
-
-        IssuerSigningKey = aes.Key;
-    }
 }

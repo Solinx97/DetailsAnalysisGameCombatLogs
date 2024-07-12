@@ -16,7 +16,9 @@ Port.ChatApi = builder.Configuration["ChatApiPort"];
 Port.CommunicationApi = builder.Configuration["CommunicationApiPort"];
 Port.Identity = builder.Configuration["IdentityPort"];
 
-var settings = builder.Configuration.GetSection(nameof(Authentication));
+AuthenticationGrantType.Code = builder.Configuration["Authentication:GrantType:Code"];
+AuthenticationGrantType.Authorization = builder.Configuration["Authentication:GrantType:Authorization"];
+AuthenticationGrantType.RefreshToken = builder.Configuration["Authentication:GrantType:RefreshToken"];
 
 Authentication.ClientId = builder.Configuration["Authentication:ClientId"];
 Authentication.RedirectUri = builder.Configuration["Authentication:RedirectUri"];

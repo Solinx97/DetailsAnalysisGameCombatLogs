@@ -16,6 +16,22 @@ Port.UserApi = builder.Configuration["UserApiPort"];
 Port.Identity = builder.Configuration["IdentityPort"];
 Port.Identity = builder.Configuration["IdentityPort"];
 
+AuthenticationGrantType.Code = builder.Configuration["Authentication:GrantType:Code"];
+AuthenticationGrantType.Authorization = builder.Configuration["Authentication:GrantType:Authorization"];
+AuthenticationGrantType.RefreshToken = builder.Configuration["Authentication:GrantType:RefreshToken"];
+
+Authentication.IssuerSigningKey = Convert.FromBase64String(builder.Configuration["Authentication:IssuerSigningKey"]);
+Authentication.Issuer = builder.Configuration["Authentication:Issuer"];
+Authentication.Protocol = builder.Configuration["Authentication:Protocol"];
+if (int.TryParse(builder.Configuration["Authentication:AccessTokenExpiresMins"], out var accessTokenExpiresMins))
+{
+    Authentication.AccessTokenExpiresMins = accessTokenExpiresMins;
+}
+if (int.TryParse(builder.Configuration["Authentication:RefreshTokenExpiresDays"], out var refreshTokenExpiresDays))
+{
+    Authentication.RefreshTokenExpiresDays = refreshTokenExpiresDays;
+}
+
 builder.Services.RegisterIdentityDependencies(builder.Configuration, "DefaultConnection");
 
 var mappingConfig = new MapperConfiguration(mc =>
@@ -56,19 +72,6 @@ Log.Logger = new LoggerConfiguration()
 builder.Host.UseSerilog();
 
 var app = builder.Build();
-
-Authentication.IssuerSigningKey = Convert.FromBase64String(builder.Configuration["Authentication:IssuerSigningKey"]);
-Authentication.Issuer = builder.Configuration["Authentication:Issuer"];
-Authentication.Protocol = builder.Configuration["Authentication:Protocol"];
-
-if (int.TryParse(builder.Configuration["Authentication:AccessTokenExpiresMins"], out var accessTokenExpiresMins))
-{
-    Authentication.AccessTokenExpiresMins = accessTokenExpiresMins;
-}
-if (int.TryParse(builder.Configuration["Authentication:RefreshTokenExpiresDays"], out var refreshTokenExpiresDays))
-{
-    Authentication.RefreshTokenExpiresDays = refreshTokenExpiresDays;
-}
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())

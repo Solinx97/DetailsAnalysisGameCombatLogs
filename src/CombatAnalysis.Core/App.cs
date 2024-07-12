@@ -26,11 +26,16 @@ public class App : MvxApplication
         Port.UserApi = ConfigurationManager.AppSettings.Get("userApiPort");
         Port.ChatApi = ConfigurationManager.AppSettings.Get("chatApiPort");
         Port.Identity = ConfigurationManager.AppSettings.Get("identityPort");
+
         Authentication.ClientId = ConfigurationManager.AppSettings.Get("clientId");
         Authentication.Scope = ConfigurationManager.AppSettings.Get("scope");
         Authentication.RedirectUri = ConfigurationManager.AppSettings.Get("redirectUri");
         Authentication.Protocol = ConfigurationManager.AppSettings.Get("protocol");
         Authentication.Listener = ConfigurationManager.AppSettings.Get("listener");
+
+        AuthenticationGrantType.Code = ConfigurationManager.AppSettings.Get("grantTypeCode");
+        AuthenticationGrantType.Authorization = ConfigurationManager.AppSettings.Get("grantTypeAuthorization");
+        AuthenticationGrantType.RefreshToken = ConfigurationManager.AppSettings.Get("grantTypeRefreshToken");
 
         var maxDegreeOfParallelism = ConfigurationManager.AppSettings.Get("maxDegreeOfParallelism");
         if (!string.IsNullOrEmpty(maxDegreeOfParallelism))

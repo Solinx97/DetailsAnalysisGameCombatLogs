@@ -27,7 +27,7 @@ public class IdentityController : ControllerBase
         try
         {
             var encodedAuthorizationCode = Uri.EscapeDataString(authorizationCode);
-            var url = $"Token?grantType=authorization_code&clientId={Authentication.ClientId}&codeVerifier={codeVerifier}&code={encodedAuthorizationCode}&redirectUri={Authentication.RedirectUri}";
+            var url = $"Token?grantType={AuthenticationGrantType.Authorization}&clientId={Authentication.ClientId}&codeVerifier={codeVerifier}&code={encodedAuthorizationCode}&redirectUri={Authentication.RedirectUri}";
 
             var responseMessage = await _httpClient.GetAsync(url, Port.Identity);
             if (responseMessage.StatusCode == System.Net.HttpStatusCode.InternalServerError)

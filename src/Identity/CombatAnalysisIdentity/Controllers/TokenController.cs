@@ -1,6 +1,7 @@
 ﻿using CombatAnalysis.Identity.DTO;
 using CombatAnalysis.Identity.Interfaces;
 using CombatAnalysis.Identity.Security;
+using CombatAnalysisIdentity.Consts;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CombatAnalysisIdentity.Controllers;
@@ -32,6 +33,11 @@ public class TokenController : ControllerBase
                 return BadRequest();
             }
 
+            if (!grantType.Equals(AuthenticationGrantType.Authorization))
+            {
+                return BadRequest();
+            }
+
             var codeChallengeValidated = await _oAuthCodeFlowService.ValidateCodeChallengeAsync(clientId, codeVerifier, code, redirectUri);
             if (!codeChallengeValidated)
             {
@@ -58,7 +64,13 @@ public class TokenController : ControllerBase
         try
         {
             if (string.IsNullOrEmpty(grantType)
+                || string.IsNullOrEmpty(refreshToken)
                 || string.IsNullOrEmpty(clientId))
+            {
+                return BadRequest();
+            }
+
+            if (!grantType.Equals(AuthenticationGrantType.RefreshToken))
             {
                 return BadRequest();
             }
