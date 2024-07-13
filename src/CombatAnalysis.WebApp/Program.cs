@@ -51,11 +51,11 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 }
 
-app.UseMiddleware<TokenRefreshMiddleware>();
-
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();
+
+app.UseMiddleware<TokenRefreshMiddleware>();
 
 app.MapControllerRoute(
     name: "default",

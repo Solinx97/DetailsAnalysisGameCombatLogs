@@ -21,7 +21,7 @@ const People = () => {
         pollingInterval: peopleInterval,
         skip: skipFetching,
         selectFromResult: ({ data }) => ({
-            people: data !== undefined ? data.filter((item) => item.id !== me?.id) : []
+            people: data !== undefined ? data?.filter((item) => item.id !== me?.id) : []
         }),
     });
 
@@ -33,9 +33,9 @@ const People = () => {
         if (value.id !== me?.id) {
             return value;
         }
-    }, [])
+    }, []);
 
-    if (isLoading) {
+    if (isLoading || people === undefined) {
         return (
             <>
                 <CommunicationMenu
@@ -59,7 +59,7 @@ const People = () => {
                 </div>
                 <ul className="people__cards">
                     {
-                        people.filter(peopleListFilter).map((item) => (
+                        people?.filter(peopleListFilter).map((item) => (
                             <li key={item.id}>
                                 <PeopleItem
                                     me={me}

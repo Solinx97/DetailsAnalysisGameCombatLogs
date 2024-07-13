@@ -1,4 +1,5 @@
-﻿using CombatAnalysis.WebApp.Consts;
+﻿using CombatAnalysis.WebApp.Attributes;
+using CombatAnalysis.WebApp.Consts;
 using CombatAnalysis.WebApp.Enums;
 using CombatAnalysis.WebApp.Interfaces;
 
@@ -14,6 +15,23 @@ public class TokenRefreshMiddleware
     }
 
     public async Task InvokeAsync(HttpContext context, ITokenService tokenService)
+    {
+        //var endpoint = context.GetEndpoint();
+        //if (endpoint != null)
+        //{
+        //    var authorizeAttribute = endpoint.Metadata.GetMetadata<RequireAccessTokenAttribute>();
+        //    if (authorizeAttribute != null)
+        //    {
+        //        await _next(context);
+
+        //        return;
+        //    }
+        //}
+
+        await CheckAccessTokenAsync(context, tokenService);
+    }
+
+    private async Task CheckAccessTokenAsync(HttpContext context, ITokenService tokenService)
     {
         if (!context.Request.Cookies.TryGetValue(AuthenticationTokenType.RefreshToken.ToString(), out var refreshToken))
         {

@@ -12,14 +12,14 @@ const GroupChatListItem = ({ chatId, groupChatUserId, setSelectedGroupChat }) =>
         pollingInterval: groupChatCountPollingInterval,
     });
 
-    if (isLoading || messagesCountLoading) {
+    if (isLoading || messagesCountLoading || chat === null) {
         return (<div>Loading...</div>);
     }
 
     return (
         <span className="chat-card" onClick={() => setSelectedGroupChat({ type: "group", chat: chat })}>
             <div className="username">{chat?.name}</div>
-            {chat.lastMessage.length > 0 &&
+            {chat?.lastMessage.length > 0 &&
                 <div className="chat-tooltip">
                     {messagesCount?.count > 0 &&
                         <div className="unread-message-count">{messagesCount?.count > 99 ? "99+" : messagesCount?.count}</div>

@@ -66,7 +66,7 @@ const GroupChat = ({ chat, me, setSelectedChat, callMinimazedData }) => {
             }
         };
 
-        connectSocket();
+        //connectSocket();
 
         return () => {
             if (socket) {

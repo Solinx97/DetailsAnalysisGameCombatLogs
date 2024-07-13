@@ -1,6 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc.Filters;
+﻿using CombatAnalysis.WebApp.Enums;
 using Microsoft.AspNetCore.Mvc;
-using CombatAnalysis.WebApp.Enums;
+using Microsoft.AspNetCore.Mvc.Filters;
 
 namespace CombatAnalysis.WebApp.Attributes;
 
@@ -9,10 +9,17 @@ public class RequireAccessTokenAttribute : Attribute, IAsyncActionFilter
 {
     public async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
     {
-        if (!context.HttpContext.Request.Cookies.TryGetValue(AuthenticationTokenType.AccessToken.ToString(), out var accessToken) 
-            || string.IsNullOrEmpty(accessToken))
+        if (!context.HttpContext.Request.Cookies.TryGetValue(AuthenticationTokenType.AccessToken.ToString(), out var _) 
+            && !context.HttpContext.Request.Cookies.TryGetValue(AuthenticationTokenType.RefreshToken.ToString(), out var _))
         {
             context.Result = new UnauthorizedResult();
+
+            return;
+        }
+
+        if (!context.HttpContext.Request.Cookies.TryGetValue(AuthenticationTokenType.AccessToken.ToString(), out var _)
+            && context.HttpContext.Request.Cookies.TryGetValue(AuthenticationTokenType.RefreshToken.ToString(), out var _))
+        {
             return;
         }
 

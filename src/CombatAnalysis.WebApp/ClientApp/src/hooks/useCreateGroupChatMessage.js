@@ -87,6 +87,10 @@ const useCreateGroupChatMessage = (messageInput, chat, meId, groupChatUsers, mes
     }
 
     const messageSentSuccessfulAsync = async (createdMessage) => {
+        if (createdMessage === null) {
+            return;
+        }
+
         await updateGroupChatLastMessageAsync(createdMessage.message);
 
         const updateForMessage = Object.assign({}, createdMessage);

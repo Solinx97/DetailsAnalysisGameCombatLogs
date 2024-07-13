@@ -114,7 +114,7 @@ const useFetchFriendsPosts = (customerId, myFriends) => {
     const getPostsAsync = async (userPosts) => {
         const userPersonalPosts = [];
 
-        for (let i = 0; i < userPosts.length; i++) {
+        for (let i = 0; i < userPosts?.length; i++) {
             const post = await getPostByIdAsync(userPosts[i].postId);
 
             if (post.data !== undefined) {
