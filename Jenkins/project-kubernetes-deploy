@@ -2,6 +2,7 @@ pipeline {
     agent any
 
     parameters {
+        string defaultValue: "solinx", name: "DOCKER_HUB_LOGIN"
         string defaultValue: "", name: "DOCKER_FILE_PATH"
         string defaultValue: "", name: "DOCKER_NAME"
         string defaultValue: "", name: "HELM_NAME"
@@ -18,7 +19,10 @@ pipeline {
         }
         stage('Docker push') {
             steps {
-                bat "docker push ${DOCKER_NAME}:${VERSION}"
+                withCredentials([string(credentialsId: "docker-hub", variable: "dockerhubpwd")]) {
+                    bat "docker login -u ${DOCKER_HUB_LOGIN} -p ${dockerhubpwd}"
+                    bat "docker push ${DOCKER_NAME}:${VERSION}"
+                }
             }
         }
         stage('Helm upgrade') {
