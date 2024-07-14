@@ -7,13 +7,18 @@ pipeline {
         string defaultValue: "", name: "HELM_NAME"
         string defaultValue: "", name: "HELM_CHART_PATH"
         string defaultValue: "", name: "NAMESPACE"
+        string defaultValue: "latest", name: "VERSION"
     }
 
     stages {
-        stage('Docker Build') {
+        stage('Docker build') {
             steps {
                 bat "docker build -t ${DOCKER_NAME} -f ${DOCKER_FILE_PATH} ."
-                bat "docker push ${DOCKER_NAME}"
+            }
+        }
+        stage('Docker push') {
+            steps {
+                bat "docker push ${DOCKER_NAME}:${VERSION}"
             }
         }
         stage('Helm upgrade') {
