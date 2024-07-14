@@ -20,7 +20,7 @@ const VoiceChatMinimazed = ({ callMinimazedData, setUseMinimaze }) => {
         voice.data.socketRef.current = io.connect("192.168.0.161:2000");
 
         voice.data.socketRef.current.on("connect", () => {
-            voice.data.socketRef.current.emit("updateSocketId", { roomId: callMinimazedData.current.roomId, socketId: callMinimazedData.current.socketId });
+            voice.data.socketRef.current.emit("updateSocketId", { roomId: +callMinimazedData.current.roomId, socketId: callMinimazedData.current.socketId });
 
             voice.data.socketRef.current.on("socketIdUpdated", socketId => {
                 voice.data.socketRef.current.id = socketId;

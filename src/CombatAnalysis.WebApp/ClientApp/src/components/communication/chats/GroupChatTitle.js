@@ -52,23 +52,20 @@ const GroupChatTitle = ({ chat, me, usersOnCall, callMinimazedData, settingsIsSh
                     : <div className="name" title={chat.name}>{chat.name}</div>
                 }
             </div>
-            {usersOnCall > 0 &&
-                <div className="title__call-started">{t("CallStarted")}</div>
-            }
             <div className="title__menu">
-                {(callMinimazedData.current.stream !== null && +callMinimazedData.current.roomId !== +chat.id)
-                    ? <FontAwesomeIcon
-                        icon={faPhone}
-                        title={t("Call move to minimaze")}
-                        className="call-minimazed"
-                    />
-                    : <FontAwesomeIcon
-                        icon={faPhone}
-                        title={t("Call")}
-                        className={`call${usersOnCall > 0 ? "_active" : ""}`}
-                        onClick={call}
-                    />
-                }
+                {/*{(callMinimazedData.current.stream !== null && +callMinimazedData.current.roomId !== +chat.id)*/}
+                {/*    ? <FontAwesomeIcon*/}
+                {/*        icon={faPhone}*/}
+                {/*        title={t("Call move to minimaze")}*/}
+                {/*        className="call-minimazed"*/}
+                {/*    />*/}
+                {/*    : <FontAwesomeIcon*/}
+                {/*        icon={faPhone}*/}
+                {/*        title={t("Call")}*/}
+                {/*        className={`call${usersOnCall > 0 ? "_active" : ""}`}*/}
+                {/*        onClick={call}*/}
+                {/*    />*/}
+                {/*}*/}
                 <FontAwesomeIcon
                     icon={faGear}
                     title={t("Settings")}

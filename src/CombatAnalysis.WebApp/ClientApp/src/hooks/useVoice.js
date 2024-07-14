@@ -53,7 +53,7 @@ const useVoice = (me, callMinimazedData, setUseMinimaze) => {
 	const cameFromMinimazedCall = () => {
 		setUseMinimaze(false);
 
-		socketRef.current.emit("updateSocketId", { roomId: callMinimazedData.current.roomId, socketId: callMinimazedData.current.socketId });
+		socketRef.current.emit("updateSocketId", { roomId: +callMinimazedData.current.roomId, socketId: callMinimazedData.current.socketId });
 
 		socketRef.current.on("socketIdUpdated", socketId => {
 			socketRef.current.id = socketId;
@@ -115,7 +115,7 @@ const useVoice = (me, callMinimazedData, setUseMinimaze) => {
 
 		if (!cameraStatus) {
 			myStream.getVideoTracks()[0].stop();
-			socketRef.current.emit("cameraSwitching", { roomId: renderRoomId, cameraStatus });
+			socketRef.current.emit("cameraSwitching", { roomId: +renderRoomId, cameraStatus });
 
 			return;
 		}
@@ -130,7 +130,7 @@ const useVoice = (me, callMinimazedData, setUseMinimaze) => {
 				callMinimazedData.current.stream = stream;
 				setMyStream(stream);
 
-				socketRef.current.emit("cameraSwitching", { roomId: renderRoomId, cameraStatus });
+				socketRef.current.emit("cameraSwitching", { roomId: +renderRoomId, cameraStatus });
 			})
 			.catch((e) => {
 				setTurnOnCamera(false);
