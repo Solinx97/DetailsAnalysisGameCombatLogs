@@ -39,7 +39,7 @@
 
         .tags {
             display: flex;
-            justify-content: start;
+            justify-content: flex-start;
             align-items: center;
             margin: 10px 0;
             gap: 10px;
@@ -68,7 +68,7 @@
 
             &__list {
                 display: flex;
-                justify-content: start;
+                justify-content: flex-start;
                 margin: 0;
                 padding: 5px 0;
                 width: 600px;
@@ -150,7 +150,7 @@
 
         .tags {
             display: flex;
-            align-items: start;
+            align-items: flex-start;
             gap: 10px;
 
             li {

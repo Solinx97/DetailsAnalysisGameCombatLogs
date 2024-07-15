@@ -23,6 +23,9 @@ spec:
           image: {{ .Values.container.image }}:{{ .Values.container.tag }}
           ports:
             - containerPort: {{ .Values.container.port }}
+          env:
+          - name: ASPNETCORE_ENVIRONMENT
+            value: "Production"
           volumeMounts:
             - name: kube-root-ca-volume
               mountPath: "/etc/ssl/certs/ca-cert"

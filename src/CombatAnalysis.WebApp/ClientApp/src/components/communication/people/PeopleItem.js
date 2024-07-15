@@ -5,7 +5,7 @@ const PeopleItem = ({ me, people, actionAfterRequests = null }) => {
     const [userInformation, setUserInformation] = useState(null);
 
     return (
-        <div>
+        <>
             <div className="card box-shadow">
                 <User
                     me={me}
@@ -16,7 +16,7 @@ const PeopleItem = ({ me, people, actionAfterRequests = null }) => {
                 />
             </div>
             {userInformation}
-        </div>
+        </>
     );
 }
 

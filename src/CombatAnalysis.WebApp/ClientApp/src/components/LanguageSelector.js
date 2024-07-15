@@ -2,8 +2,8 @@
 import { useTranslation } from 'react-i18next';
 
 const supportedLanguages = [
-    "EN",
-    "RU"
+    "en",
+    "ru"
 ];
 
 const LanguageSelector = () => {

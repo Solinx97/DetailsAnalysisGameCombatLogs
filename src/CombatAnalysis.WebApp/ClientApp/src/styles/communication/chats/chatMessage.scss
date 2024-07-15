@@ -78,7 +78,7 @@
 
             .message-time {
                 display: flex;
-                justify-content: start;
+                justify-content: flex-start;
                 font-size: 11px;
             }
 
@@ -136,11 +136,11 @@
         }
 
         .message-title.me {
-            justify-content: start;
+            justify-content: flex-start;
         }
 
         .message-title.another {
-            justify-content: end;
+            justify-content: flex-end;
         }
 
         .edit-message {
@@ -193,7 +193,7 @@
     .my-message {
         display: flex;
         flex-direction: column;
-        align-items: end;
+        align-items: flex-end;
         width: 100%;
 
         .text-of-message {

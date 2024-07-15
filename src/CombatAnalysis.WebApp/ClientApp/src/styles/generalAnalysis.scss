@@ -39,7 +39,7 @@ $combat-lose: red;
                 &__all {
                     position: absolute;
                     display: flex;
-                    justify-content: start;
+                    justify-content: flex-start;
                     top: -30%;
                     font-size: 12px;
                     gap: 20px;
@@ -100,7 +100,7 @@ $combat-lose: red;
 
             .combat-time {
                 display: flex;
-                justify-content: start;
+                justify-content: flex-start;
                 margin: 0 0 10px 10px;
                 gap: 25px;
 

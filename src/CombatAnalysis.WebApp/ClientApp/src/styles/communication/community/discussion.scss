@@ -81,7 +81,7 @@
 
     .menu {
         display: flex;
-        justify-content: end;
+        justify-content: flex-end;
         width: 100%;
 
         svg {
@@ -101,7 +101,7 @@
 
             .actions {
                 display: flex;
-                justify-content: end;
+                justify-content: flex-end;
                 width: 100%;
                 gap: 25px;
                 font-size: 13px;
@@ -130,7 +130,7 @@
 
             .menu {
                 display: flex;
-                justify-content: end;
+                justify-content: flex-end;
                 width: 100%;
             }
 
@@ -155,7 +155,7 @@
 
             .select-add-new-discussion-comment {
                 display: flex;
-                justify-content: end;
+                justify-content: flex-end;
 
                 .btn-shadow.active {
                     box-shadow: 3px 3px 3px 3px green;

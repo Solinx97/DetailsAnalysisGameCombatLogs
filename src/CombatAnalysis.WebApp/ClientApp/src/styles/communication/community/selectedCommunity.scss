@@ -1,6 +1,6 @@
 .selected-community {
     display: flex;
-    justify-content: start;
+    justify-content: flex-start;
     gap: 20px;
 
     &__content {
@@ -65,7 +65,7 @@
 
             .title {
                 display: flex;
-                justify-content: start;
+                justify-content: flex-start;
                 align-items: center;
                 margin: 15px 0;
                 gap: 25px;
@@ -175,7 +175,7 @@
 
                 &__menu {
                     display: flex;
-                    justify-content: end;
+                    justify-content: flex-end;
                     width: 100%;
 
                     svg {

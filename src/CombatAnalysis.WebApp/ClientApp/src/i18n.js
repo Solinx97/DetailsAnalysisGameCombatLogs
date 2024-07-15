@@ -21,8 +21,10 @@ i18n
     // for all options read: https://www.i18next.com/overview/configuration-options
     .init({
         fallbackLng: 'en',
-        debug: false,
-
+        debug: true,
+        backend: {
+            loadPath: '/locales/{{lng}}/{{ns}}.json',
+        },
         interpolation: {
             escapeValue: false, // not needed for react as it escapes by default
         }

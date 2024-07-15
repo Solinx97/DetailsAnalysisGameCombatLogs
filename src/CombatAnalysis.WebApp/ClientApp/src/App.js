@@ -7,6 +7,8 @@ import VoiceChatMinimazed from './components/communication/voiceChat/VoiceChatMi
 import { AuthProvider } from './context/AuthProvider';
 import { VoiceServiceProvider } from './context/VoiceServiceContext';
 
+import './i18n';
+
 import 'react-toastify/dist/ReactToastify.css';
 import './custom.css';
 
@@ -26,24 +28,22 @@ const App = () => {
 
     const render = () => {
         return (
-            <StrictMode>
-                <AuthProvider children={
-                    <VoiceServiceProvider value={{ callMinimazedData, useMinimaze, setUseMinimaze }}>
-                        <Layout>
-                            <Routes>
-                                {AppRoutes.map((route, index) => {
-                                    const { element, ...rest } = route;
-                                    return <Route key={index} {...rest} element={element} />;
-                                })}
-                            </Routes>
-                            {useMinimaze &&
-                                <VoiceChatMinimazed />
-                            }
-                            <ToastContainer />
-                        </Layout>
-                    </VoiceServiceProvider>
-                } />
-            </StrictMode>
+            <AuthProvider children={
+                <VoiceServiceProvider value={{ callMinimazedData, useMinimaze, setUseMinimaze }}>
+                    <Layout>
+                        <Routes>
+                            {AppRoutes.map((route, index) => {
+                                const { element, ...rest } = route;
+                                return <Route key={index} {...rest} element={element} />;
+                            })}
+                        </Routes>
+                        {useMinimaze &&
+                            <VoiceChatMinimazed />
+                        }
+                        <ToastContainer />
+                    </Layout>
+                </VoiceServiceProvider>
+            } />
         );
     }
 
