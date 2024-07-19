@@ -6,7 +6,7 @@ public class CombatLogByUser
 
     public int CombatLogId { get; set; }
 
-    public string UserId { get; set; }
+    public string AppUserId { get; set; }
 
     public int PersonalLogType { get; set; }
 }

@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { useGetCustomerByIdQuery } from '../../store/api/Customer.api';
+import { useGetUserByIdQuery } from '../../store/api/Account.api';
 import { useLazyGetCommunityPostByPostIdQuery } from '../../store/api/communication/community/CommunityPost.api';
 import User from './User';
 import Loading from '../Loading';
@@ -20,7 +20,7 @@ const PostTitle = ({ post, dateFormatting, deletePostAsync, isMyPost }) => {
 
     const [getCommunityPostByPostId] = useLazyGetCommunityPostByPostIdQuery();
 
-    const { data: targetCustomer, isLoading } = useGetCustomerByIdQuery(post?.customerId);
+    const { data: taregtUser, isLoading } = useGetUserByIdQuery(post?.appUserId);
 
     const [userInformation, setUserInformation] = useState(null);
     const [communityPostStyle, setCommunityPostStyle] = useState("");
@@ -62,7 +62,7 @@ const PostTitle = ({ post, dateFormatting, deletePostAsync, isMyPost }) => {
                     <div className="username">
                         {post?.postType === postType["user"]
                             ? <User
-                                targetCustomerId={targetCustomer?.id}
+                                targetUserId={taregtUser?.id}
                                 setUserInformation={setUserInformation}
                                 allowRemoveFriend={false}
                             />

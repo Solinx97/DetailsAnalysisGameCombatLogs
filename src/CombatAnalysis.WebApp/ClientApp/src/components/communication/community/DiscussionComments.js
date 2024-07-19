@@ -3,7 +3,7 @@ import Loading from '../../Loading';
 import DiscussionCommentContent from './DiscussionCommentContent';
 import DiscussionCommentTitle from './DiscussionCommentTitle';
 
-const DiscussionComments = ({ dateFormatting, customerId, discussionId }) => {
+const DiscussionComments = ({ dateFormatting, userId, discussionId }) => {
     const { data: discussionComments, isLoading } = useGetCommunityDiscussionCommentByDiscussionIdQuery(discussionId);
 
     if (isLoading) {
@@ -15,12 +15,12 @@ const DiscussionComments = ({ dateFormatting, customerId, discussionId }) => {
             {discussionComments?.map((item) => (
                 <li key={item.id} className="post-comments__card">
                     <DiscussionCommentTitle
-                        meId={customerId}
+                        meId={userId}
                         comment={item}
                         dateFormatting={dateFormatting}
                     />
                     <DiscussionCommentContent
-                        customerId={customerId}
+                        userId={userId}
                         comment={item}
                     />
                 </li>

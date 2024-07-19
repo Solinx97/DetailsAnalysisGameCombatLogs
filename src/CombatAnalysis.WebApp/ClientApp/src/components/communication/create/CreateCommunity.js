@@ -13,7 +13,7 @@ import ItemConnector from './ItemConnector';
 import "../../../styles/communication/create.scss";
 
 const CreateCommunity = () => {
-    const customer = useSelector((state) => state.customer.value);
+    const user = useSelector((state) => state.user.value);
 
     const { t } = useTranslation("communication/create");
 
@@ -35,12 +35,12 @@ const CreateCommunity = () => {
             name: name,
             description: description,
             policyType: policy,
-            customerId: customer.id
+            appUserId: user?.id
         };
 
         const createdCommunity = await createCommunityAsyncMut(newCommunity);
         if (createdCommunity.data !== undefined) {
-            peopleToJoin.push(customer);
+            peopleToJoin.push(user);
 
             await createCommunityUserAsync(createdCommunity.data.id);
         }
@@ -51,7 +51,7 @@ const CreateCommunity = () => {
             const newCommunityUser = {
                 id: "",
                 username: peopleToJoin[i].username,
-                customerId: peopleToJoin[i].id,
+                appUserId: peopleToJoin[i].id,
                 communityId: communityId
             };
 
@@ -133,8 +133,8 @@ const CreateCommunity = () => {
                         {itemIndex >= 2 &&
                             <div className="create-community__item">
                                 <AddPeople
-                                    customer={customer}
-                                    communityUsersId={[customer.id]}
+                                    user={user}
+                                    communityUsersId={[user.id]}
                                     peopleToJoin={peopleToJoin}
                                     setPeopleToJoin={setPeopleToJoin}
                                 />

@@ -2,10 +2,10 @@ import { useTranslation } from 'react-i18next';
 import { useInviteSearchByUserIdQuery } from '../../../store/api/communication/community/InviteToCommunity.api';
 import InvitesToCommunityItem from './InvitesToCommunityItem';
 
-const InvitesToCommunity = ({ customer }) => {
+const InvitesToCommunity = ({ user }) => {
     const { t } = useTranslation("communication/myEnvironment/invitesToCommunity");
 
-    const { data: invitesToCommunity, isLoading } = useInviteSearchByUserIdQuery(customer?.id);
+    const { data: invitesToCommunity, isLoading } = useInviteSearchByUserIdQuery(user?.id);
 
     if (isLoading || invitesToCommunity?.length === 0) {
         return <></>;
@@ -19,7 +19,7 @@ const InvitesToCommunity = ({ customer }) => {
                     invitesToCommunity?.map((invite) => (
                         <li key={invite.id}>
                             <InvitesToCommunityItem
-                                customer={customer}
+                                user={user}
                                 inviteToCommunity={invite}
                             />
                         </li>

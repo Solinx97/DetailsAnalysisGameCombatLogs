@@ -10,5 +10,5 @@ public class CommunityModel
 
     public int PolicyType { get; set; }
 
-    public string CustomerId { get; set; }
+    public string AppUserId { get; set; }
 }

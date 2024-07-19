@@ -4,7 +4,7 @@ import { useCallback } from 'react';
 import { useCreatePostDislikeAsyncMutation, useLazySearchPostDislikeByPostIdQuery, useRemovePostDislikeAsyncMutation } from '../../store/api/communication/PostDislike.api';
 import { useCreatePostLikeAsyncMutation, useLazySearchPostLikeByPostIdQuery, useRemovePostLikeAsyncMutation } from '../../store/api/communication/PostLike.api';
 
-const PostReactions = ({ customer, post, updatePostAsync, setShowComments, showComments, t }) => {
+const PostReactions = ({ user, post, updatePostAsync, setShowComments, showComments, t }) => {
     const [createPostLikeAsyncMut] = useCreatePostLikeAsyncMutation();
     const [removePostLikeAsyncMut] = useRemovePostLikeAsyncMutation();
     const [searchPostLikeByPostIdAsync] = useLazySearchPostLikeByPostIdQuery();
@@ -32,7 +32,7 @@ const PostReactions = ({ customer, post, updatePostAsync, setShowComments, showC
 
     const removePostLikeIfExistAsync = async (postLikes) => {
         for (let i = 0; i < postLikes.length; i++) {
-            if (postLikes[i].customerId === customer.id) {
+            if (postLikes[i].appUserId === user.id) {
                 await removePostLikeAsyncMut(postLikes[i].id);
                 return true;
             }
@@ -43,7 +43,7 @@ const PostReactions = ({ customer, post, updatePostAsync, setShowComments, showC
 
     const removePostDislikeIfExistAsync = async (postDislikes) => {
         for (let i = 0; i < postDislikes.length; i++) {
-            if (postDislikes[i].customerId === customer.id) {
+            if (postDislikes[i].appUserId === user.id) {
                 await removePostDislikeAsyncMut(postDislikes[i].id);
                 return true;
             }
@@ -63,7 +63,7 @@ const PostReactions = ({ customer, post, updatePostAsync, setShowComments, showC
 
         const newPostLike = {
             postId: post?.id,
-            customerId: customer.id
+            appUserId: user.id
         }
 
         const createdPostLike = await createPostLikeAsyncMut(newPostLike);
@@ -88,7 +88,7 @@ const PostReactions = ({ customer, post, updatePostAsync, setShowComments, showC
 
         const newPostDislike = {
             postId: post?.id,
-            customerId: customer.id
+            appUserId: user.id
         }
 
         const createdPostDislike = await createPostDislikeAsyncMut(newPostDislike);

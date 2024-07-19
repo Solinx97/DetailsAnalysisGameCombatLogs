@@ -28,7 +28,7 @@ public class RegistrationModel : PageModel
         await RequestValidationAsync();
     }
 
-    public async Task<IActionResult> OnPostAsync(int step, string email, string password, string confirmPassword, int phoneNumber, DateTimeOffset birthday, string username, string firstName, string lastName, string aboutMe)
+    public async Task<IActionResult> OnPostAsync(string email, string password, string confirmPassword, int phoneNumber, DateTimeOffset birthday, string username, string firstName, string lastName, string country, string city, int postCode)
     {
         await RequestValidationAsync();
 
@@ -71,8 +71,8 @@ public class RegistrationModel : PageModel
         }
 
         FillIdentityUser(email, password);
-        FillAppUser(phoneNumber, birthday, username, firstName, lastName, aboutMe);
-        FillCustomer(username, firstName, lastName, aboutMe);
+        FillAppUser(phoneNumber, birthday, username, firstName, lastName);
+        FillCustomer(country, city, postCode);
 
         return await CreateUserAsync(password);
     }
@@ -89,7 +89,7 @@ public class RegistrationModel : PageModel
         };
     }
 
-    private void FillAppUser(int phoneNumber, DateTimeOffset birthday, string username, string firstName, string lastName, string aboutMe)
+    private void FillAppUser(int phoneNumber, DateTimeOffset birthday, string username, string firstName, string lastName)
     {
         _appUser = new AppUserModel
         {
@@ -98,21 +98,18 @@ public class RegistrationModel : PageModel
             LastName = lastName,
             PhoneNumber = phoneNumber,
             Birthday = birthday,
-            AboutMe = aboutMe,
             IdentityUserId = _identityUser.Id
         };
     }
 
-    private void FillCustomer(string username, string firstName, string lastName, string aboutMe)
+    private void FillCustomer(string country, string city, int postCode)
     {
         _customer = new CustomerModel
         {
-            Username = username,
-            FirstName = firstName,
-            LastName = lastName,
-            AboutMe = aboutMe,
+            Country = country,
+            City = city,
+            PostalCode = postCode,
             AppUserId = _appUser.Id,
-            Message = string.Empty
         };
     }
 

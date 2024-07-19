@@ -1,7 +1,7 @@
 import { useState } from "react";
 import User from "./User";
 
-const MembersItem = ({ me, user, communityItem, peopleToRemove, setPeopleToRemove, showRemoveUser }) => {
+const MembersItem = ({ me, member, communityItem, peopleToRemove, setPeopleToRemove, showRemoveUser }) => {
     const [userInformation, setUserInformation] = useState(null);
 
     const addPeopleForRemove = (user) => {
@@ -28,13 +28,13 @@ const MembersItem = ({ me, user, communityItem, peopleToRemove, setPeopleToRemov
             <div className="user-target-community__information">
                 <User
                     me={me}
-                    targetCustomerId={user.customerId}
+                    targetUserId={member.appUserId}
                     setUserInformation={setUserInformation}
                     allowRemoveFriend={false}
                 />
-                {(me?.id === communityItem.customerId && user.customerId !== communityItem.customerId
+                {(me?.id === communityItem.appUserId && member.id !== communityItem.appUserId
                     && showRemoveUser) &&
-                    <input className="form-check-input" type="checkbox" onChange={(e) => handleRemoveUser(e, user)} />
+                    <input className="form-check-input" type="checkbox" onChange={(e) => handleRemoveUser(e, member)} />
                 }
             </div>
             {userInformation !== null &&

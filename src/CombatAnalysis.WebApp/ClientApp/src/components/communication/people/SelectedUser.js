@@ -2,8 +2,8 @@ import { faArrowsLeftRightToLine, faArrowsToCircle, faCheck, faComments, faEnvel
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useEffect, useState } from "react";
 import { useTranslation } from 'react-i18next';
+import { useLazyGetUserByIdQuery } from '../../../store/api/Account.api';
 import { useLazyUserPostSearchByUserIdQuery } from '../../../store/api/ChatApi';
-import { useLazyGetCustomerByIdQuery } from '../../../store/api/Customer.api';
 import { useLazyGetPostByIdQuery } from '../../../store/api/communication/Post.api';
 import CommunicationMenu from "../CommunicationMenu";
 import Friends from '../myEnvironment/Friends';
@@ -18,21 +18,21 @@ const SelectedUser = () => {
 
     const [getUserPosts] = useLazyUserPostSearchByUserIdQuery();
     const [getPostById] = useLazyGetPostByIdQuery();
-    const [getCustomerById] = useLazyGetCustomerByIdQuery();
+    const [getUserById] = useLazyGetUserByIdQuery();
 
-    const [customerId, setCustomerId] = useState(0);
-    const [customer, setCustomer] = useState(null);
+    const [personId, setPersonId] = useState(0);
+    const [person, setPerson] = useState(null);
     const [currentMenuItem, setMenuItem] = useState(0);
     const [shortMenu, setShortMenu] = useState(false);
     const [allPosts, setAllPosts] = useState([]);
 
     useEffect(() => {
         const queryParams = new URLSearchParams(window.location.search);
-        setCustomerId(queryParams.get("id"));
+        setPersonId(queryParams.get("id"));
     }, [])
 
     useEffect(() => {
-        if (customerId === 0) {
+        if (personId === 0) {
             return;
         }
 
@@ -41,20 +41,20 @@ const SelectedUser = () => {
         }
 
         getCustomer();
-    }, [customerId])
+    }, [personId])
 
     const getCustomerByIdAsync = async () => {
-        const customer = await getCustomerById(customerId);
+        const user = await getUserById(personId);
 
-        if (customer.data !== undefined) {
-            setCustomer(customer.data);
+        if (user.data !== undefined) {
+            setPerson(user.data);
 
-            getAllPostsAsync(customer.data);
+            getAllPostsAsync(user.data.id);
         }
     }
 
-    const getAllPostsAsync = async (customer) => {
-        const userPosts = await getUserPosts(customer.id);
+    const getAllPostsAsync = async (userId) => {
+        const userPosts = await getUserPosts(userId);
 
         if (userPosts.data !== undefined) {
             const userPersonalPosts = await getUserPostsAsync(userPosts.data);
@@ -83,7 +83,7 @@ const SelectedUser = () => {
             />
             <div className="communication__content user">
                 <div className="user-information__username">
-                    {customer?.username}
+                    {person?.username}
                 </div>
                 <div className="user__container">
                     <ul className="user__menu">
@@ -175,7 +175,7 @@ const SelectedUser = () => {
                     <div className="user__content">
                         {currentMenuItem === 0 &&
                             <SelectedUserProfile
-                                customer={customer}
+                                person={person}
                             />
                         }
                         {currentMenuItem === 1 &&
@@ -183,7 +183,7 @@ const SelectedUser = () => {
                                 {allPosts?.map(post => (
                                     <li key={post.id}>
                                         <Post
-                                            customer={customer}
+                                            customer={person}
                                             data={post}
                                             deletePostAsync={null}
                                         />
@@ -193,7 +193,7 @@ const SelectedUser = () => {
                         }
                         {currentMenuItem === 2 &&
                             <Friends
-                                customer={customer}
+                                customer={person}
                                 requestsToConnect={null}
                                 allowRemoveFriend={false}
                             />
@@ -201,7 +201,7 @@ const SelectedUser = () => {
                     </div>
                     {currentMenuItem === 3 &&
                         <SelectedUserCommunities
-                            customer={customer}
+                            customer={person}
                         />
                     }
                 </div>

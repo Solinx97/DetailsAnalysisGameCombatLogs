@@ -18,7 +18,7 @@ const pollingInterval = 3000;
 const Chats = () => {
     const { t } = useTranslation("communication/chats/chats");
 
-    const me = useSelector((state) => state.customer.value);
+    const me = useSelector((state) => state.user.value);
 
     const [selectedChat, setSelectedChat] = useState({ type: null, chat: null });
     const [chatsHidden, setChatsHidden] = useState({ group: false, personal: false });

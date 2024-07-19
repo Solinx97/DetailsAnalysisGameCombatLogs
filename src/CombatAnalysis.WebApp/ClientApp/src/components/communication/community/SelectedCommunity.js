@@ -18,7 +18,7 @@ import CreatePost from '../CreatePost';
 const SelectedCommunity = () => {
     const { t } = useTranslation("communication/community/selectedCommunity");
 
-    const customer = useSelector((state) => state.customer.value);
+    const user = useSelector((state) => state.user.value);
 
     const [isCommunityMember, setIsCommunityMember] = useState(false);
     const [showDescription, setShowDescription] = useState(true);
@@ -109,7 +109,7 @@ const SelectedCommunity = () => {
                     <div className="header">
                         <div className="title">
                             <div className="title__content">
-                                {community?.customerId === customer?.id &&
+                                {community?.appUserId === user?.id &&
                                     <FontAwesomeIcon
                                         icon={faPen}
                                         title={t("EditName")}
@@ -153,7 +153,7 @@ const SelectedCommunity = () => {
                     <div className="description">
                         <div className="title">
                             <div className="title__content">
-                                {community?.customerId === customer?.id &&
+                                {community?.appUserId === user?.id &&
                                     <FontAwesomeIcon
                                         icon={faPen}
                                         title={t("EditDescription")}
@@ -194,13 +194,13 @@ const SelectedCommunity = () => {
                         <Discussion
                             discussionId={discussion?.id}
                             setShowDiscussion={setShowDiscussion}
-                            customer={customer}
+                            user={user}
                         />
                     }
                     <div>
                         {isCommunityMember &&
                             <CreatePost
-                                customer={customer}
+                                user={user}
                                 owner={community.name}
                                 postTypeName="community"
                                 createTypeOfPostFunc={createCommunityPostAsync}
@@ -208,7 +208,7 @@ const SelectedCommunity = () => {
                             />
                         }
                         <SelectedCommunityItem
-                            customer={customer}
+                            user={user}
                             communityId={communityId}
                         />
                     </div>
@@ -217,14 +217,14 @@ const SelectedCommunity = () => {
                     <li>
                         <CommunityMembers
                             community={community}
-                            customer={customer}
+                            user={user}
                             setIsCommunityMember={setIsCommunityMember}
                         />
                     </li>
                     <li>
                         <CommunityDiscussions
                             community={community}
-                            customer={customer}
+                            customer={user}
                             setShowDiscussion={setShowDiscussion}
                             setDiscussion={setDiscussion}
                             isCommunityMember={isCommunityMember}
@@ -235,7 +235,7 @@ const SelectedCommunity = () => {
             {showMenu &&
                 <CommunityMenu
                     setShowMenu={setShowMenu}
-                    customer={customer}
+                    customer={user}
                     community={community}
                     setCommunity={setCommunity}
                 />

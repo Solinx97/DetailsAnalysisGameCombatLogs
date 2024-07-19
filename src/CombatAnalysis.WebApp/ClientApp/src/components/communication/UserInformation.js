@@ -15,7 +15,7 @@ import './../../styles/communication/userInformation.scss';
 const successNotificationTimeout = 2000;
 const failedNotificationTimeout = 2000;
 
-const UserInformation = ({ me, people, closeUserInformation, actionAfterRequests = null }) => {
+const UserInformation = ({ me, person, closeUserInformation, actionAfterRequests = null }) => {
     const { t } = useTranslation("communication/userInformation");
 
     const navigate = useNavigate();
@@ -32,22 +32,22 @@ const UserInformation = ({ me, people, closeUserInformation, actionAfterRequests
 
     const { data: myFriends, isLoading } = useFriendSearchMyFriendsQuery(me?.id);
 
-    const checkExistOfChatsAsync = async (targetCustomer) => {
+    const checkExistOfChatsAsync = async (targetUserId) => {
         const queryParams = {
             userId: me?.id,
-            targetUserId: targetCustomer?.id
+            targetUserId: targetUserId?.id
         };
 
         const isExist = await isExistAsync(queryParams);
         return isExist.data !== undefined ? isExist.data : true;
     }
 
-    const createChatAsync = async (targetCustomer) => {
+    const createChatAsync = async (targetUser) => {
         if (actionAfterRequests !== null) {
             actionAfterRequests();
         }
 
-        const isExist = await checkExistOfChatsAsync(targetCustomer);
+        const isExist = await checkExistOfChatsAsync(targetUser);
         if (isExist) {
             navigate("/chats");
             return;
@@ -55,10 +55,10 @@ const UserInformation = ({ me, people, closeUserInformation, actionAfterRequests
 
         const newChat = {
             initiatorUsername: me?.username,
-            companionUsername: targetCustomer.username,
+            companionUsername: targetUser.username,
             lastMessage: " ",
             initiatorId: me?.id,
-            companionId: targetCustomer.id
+            companionId: targetUser.id
         };
 
         const createdChat = await createPersonalChatAsync(newChat);
@@ -68,7 +68,7 @@ const UserInformation = ({ me, people, closeUserInformation, actionAfterRequests
                 return;
             }
 
-            countIsCreated = await createPersonalChatCountAsync(createdChat.data.id, targetCustomer.id);
+            countIsCreated = await createPersonalChatCountAsync(createdChat.data.id, targetUser.id);
             if (countIsCreated) {
                 navigate("/chats");
             }
@@ -78,7 +78,7 @@ const UserInformation = ({ me, people, closeUserInformation, actionAfterRequests
     const createPersonalChatCountAsync = async (chatId, userId) => {
         const newMessagesCount = {
             count: 0,
-            customerId: userId,
+            appUSerId: userId,
             personalChatId: +chatId,
         };
 
@@ -120,7 +120,7 @@ const UserInformation = ({ me, people, closeUserInformation, actionAfterRequests
             username: me?.username,
             toUserId: people.id,
             when: new Date(),
-            customerId: me?.id,
+            appUserId: me?.id,
         };
 
         const createdRequest = await createRequestAsync(newRequest);
@@ -138,7 +138,7 @@ const UserInformation = ({ me, people, closeUserInformation, actionAfterRequests
             actionAfterRequests();
         }
 
-        navigate(`/user?id=${people.id}`)
+        navigate(`/user?id=${person.id}`)
     }
 
     if (isLoading) {
@@ -149,11 +149,11 @@ const UserInformation = ({ me, people, closeUserInformation, actionAfterRequests
         <div className="user-information">
             <div className={`alert alert-success sent-request${showSuccessNotification ? "_active" : ""}`} role="alert">
                 <div>{t("SentRequest")}</div>
-                <p>{people.username}</p>
+                <p>{person.username}</p>
             </div>
             <div className={`alert alert-warning sent-request${showFailedNotification ? "_active" : ""}`} role="alert">
                 <div>{t("AlreadySentRequest")}</div>
-                <p>{people.username}</p>
+                <p>{person.username}</p>
             </div>
             <div className="user-information__container box-shadow">
                 <div className="user-information__menu">
@@ -164,21 +164,21 @@ const UserInformation = ({ me, people, closeUserInformation, actionAfterRequests
                     />
                 </div>
                 <div className="user-information__username">
-                    {people.username}
+                    {person.username}
                 </div>
                 <SelectedUserProfile
-                    customer={people}
+                    person={person}
                 />
                 <ul className="links">
                     <li>
                         <FontAwesomeIcon
                             icon={faCommentDots}
                             title={t("StartChat")}
-                            onClick={async () => await createChatAsync(people)}
+                            onClick={async () => await createChatAsync(person)}
                         />
                     </li>
                     <li>
-                        {myFriends.filter(friend => friend.whoFriendId === people.id || friend.forWhomId === people.id).length > 0
+                        {myFriends.filter(friend => friend.whoFriendId === person.id || friend.forWhomId === person.id).length > 0
                             ? <FontAwesomeIcon
                                 icon={faUserPlus}
                                 title={t("AlreadyFriend")}
@@ -187,7 +187,7 @@ const UserInformation = ({ me, people, closeUserInformation, actionAfterRequests
                             : <FontAwesomeIcon
                                 icon={faUserPlus}
                                 title={t("RequestToConnect")}
-                                onClick={async () => await createRequestToConnectAsync(people)}
+                                onClick={async () => await createRequestToConnectAsync(person)}
                             />
                         }
                     </li>
@@ -213,7 +213,7 @@ const UserInformation = ({ me, people, closeUserInformation, actionAfterRequests
                     <PeopleInvitesToCommunity
                         customer={me}
                         setOpenInviteToCommunity={setOpenInviteToCommunity}
-                        people={people}
+                        people={person}
                     />
                 </div>
             }

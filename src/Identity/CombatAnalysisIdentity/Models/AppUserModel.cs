@@ -14,7 +14,7 @@ public class AppUserModel
 
     public DateTimeOffset Birthday { get; set; }
 
-    public string AboutMe { get; set; }
+    public string AboutMe { get; set; } = string.Empty;
 
     public int Gender { get; set; }
 

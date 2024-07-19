@@ -13,7 +13,7 @@ import '../styles/navMenu.scss';
 const NavMenu = () => {
     const { t } = useTranslation("translate");
 
-    const customer = useSelector((state) => state.customer.value);
+    const user = useSelector((state) => state.user.value);
 
     const { navigateToAuthorizationAsync, navigateToRegistrationAsync } = useAuthorization();
     const { isAuthenticated, checkAuthAsync, logoutAsync } = useAuth();
@@ -56,9 +56,9 @@ const NavMenu = () => {
                     <NavbarToggler
                         onClick={toggleNavbar} className="mr-2"
                     />
-                    {customer !== null &&
+                    {user !== null &&
                         <Search
-                            me={customer}
+                            me={user}
                         />
                     }
                     <Collapse
@@ -68,7 +68,7 @@ const NavMenu = () => {
                     />
                     {isAuthenticated
                         ? <div className="authorized">
-                            <div className="username">{customer?.username}</div>
+                            <div className="username">{user?.username}</div>
                             <div className="authorized__logout" onClick={handleLogoutClick}>{t("Logout")}</div>
                           </div>
                         : <div className="authorization">

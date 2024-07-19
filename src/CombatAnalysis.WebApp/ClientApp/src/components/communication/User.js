@@ -3,22 +3,22 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { useGetCustomerByIdQuery, useLazyGetCustomerByIdQuery } from '../../store/api/Customer.api';
+import { useGetUserByIdQuery } from '../../store/api/Account.api';
 import { useRemoveFriendAsyncMutation } from '../../store/api/communication/myEnvironment/Friend.api';
 import UserInformation from './UserInformation';
 
 import "../../styles/communication/user.scss";
-import Loading from '../Loading';
 
-const User = ({ me, itIsMe, targetCustomerId, setUserInformation, allowRemoveFriend, actionAfterRequests = null, friendId = 0 }) => {
+const User = ({ me, targetUserId, setUserInformation, allowRemoveFriend, actionAfterRequests = null, friendId = 0 }) => {
     const { t } = useTranslation("communication/myEnvironment/friends");
+
+    console.log(targetUserId);
 
     const navigate = useNavigate();
 
     const [removeFriendAsyncMut] = useRemoveFriendAsyncMutation();
-    const [getCustomerById] = useLazyGetCustomerByIdQuery();
 
-    const { data: targetCustomer, isLoading } = useGetCustomerByIdQuery(targetCustomerId);
+    const { data: targetUser, isLoading } = useGetUserByIdQuery(targetUserId);
 
     const [userActive, setUserActive] = useState("");
 
@@ -26,13 +26,11 @@ const User = ({ me, itIsMe, targetCustomerId, setUserInformation, allowRemoveFri
         await removeFriendAsyncMut(friendId);
     }
 
-    const openUserInformationAsync = async () => {
-        const targetCustomer = await getCustomerById(targetCustomerId);
-
+    const openUserInformation = () => {
         setUserInformation(
             <UserInformation
                 me={me}
-                people={targetCustomer.data}
+                person={targetUser}
                 closeUserInformation={closeUserInformation}
                 actionAfterRequests={actionAfterRequests}
             />
@@ -52,7 +50,7 @@ const User = ({ me, itIsMe, targetCustomerId, setUserInformation, allowRemoveFri
     }
 
     const goToUser = () => {
-        navigate(`/user?id=${targetCustomerId}`);
+        navigate(`/user?id=${targetUserId}`);
     }
 
     if (isLoading) {
@@ -67,10 +65,10 @@ const User = ({ me, itIsMe, targetCustomerId, setUserInformation, allowRemoveFri
                 icon={faUser}
                 title={t("ShowDetails")}
                 className={`details${userActive}`}
-                onClick={async () => await openUserInformationAsync()}
+                onClick={openUserInformation}
             />
-            <div className="username" title={targetCustomer?.username}
-                onClick={goToUser}>{targetCustomer?.username}</div>
+            <div className="username" title={targetUser?.username}
+                onClick={goToUser}>{targetUser?.username}</div>
             {allowRemoveFriend &&
                 <FontAwesomeIcon
                     icon={faCircleXmark}

@@ -91,7 +91,7 @@ const useCreatePersonalChatMessage = (messageInput, chat, meId, companionId) => 
             status: 0,
             type: 0,
             personalChatId: chat.id,
-            customerId: meId
+            appUserId: meId
         };
 
         const createdMessage = await createPersonalChatMessageAsync(newMessage);

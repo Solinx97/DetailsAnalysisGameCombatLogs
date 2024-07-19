@@ -31,7 +31,7 @@ const DefaultChatMessage = ({ me, message, messageStatus, updateChatMessageAsync
     }
 
     const updateMessageStatusAsync = async () => {
-        if (message.customerId === me?.id || messageStatus === status["read"]) {
+        if (message.appUserId === me?.id || messageStatus === status["read"]) {
             return;
         }
 
@@ -82,7 +82,7 @@ const DefaultChatMessage = ({ me, message, messageStatus, updateChatMessageAsync
     }
 
     return (
-        <div className={`chat-messages__content${message?.customerId === me?.id ? ' my-message' : ''}`}>
+        <div className={`chat-messages__content${message?.appUserId === me?.id ? ' my-message' : ''}`}>
             <ChatMessageTitle
                 me={me}
                 itIsMe={me?.id !== message?.customerId}
@@ -92,7 +92,7 @@ const DefaultChatMessage = ({ me, message, messageStatus, updateChatMessageAsync
                 editModeIsOn={editModeIsOn}
                 message={message}
             />
-            {editModeIsOn && me?.id === message?.customerId
+            {editModeIsOn && me?.id === message?.appUserId
                 ? <div className="edit-message">
                     <input className="form-control" type="text" defaultValue={message.message} ref={editMessageInput} />
                     <FontAwesomeIcon
@@ -103,7 +103,7 @@ const DefaultChatMessage = ({ me, message, messageStatus, updateChatMessageAsync
                 </div>
                 : <div className="message"
                     onClick={handleOpenMessageMenu}>
-                    {message?.customerId === me?.id
+                    {message?.appUserId === me?.id
                         ? getMessageStatus()
                         : messageStatus === status["delivered"] &&
                         <FontAwesomeIcon

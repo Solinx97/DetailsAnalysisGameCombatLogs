@@ -82,7 +82,7 @@ const GroupChatMenu = ({ me, setUserInformation, setSelectedChat, setShowAddPeop
             status: 0,
             type: 1,
             groupChatId: groupChatId,
-            customerId: me?.id
+            appUserId: me?.id
         };
 
         await createGroupChatMessageAsync(newMessage);

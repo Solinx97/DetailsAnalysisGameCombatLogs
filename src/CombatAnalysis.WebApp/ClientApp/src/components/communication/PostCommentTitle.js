@@ -1,13 +1,13 @@
 import { faTrash } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useTranslation } from 'react-i18next';
-import { useGetCustomerByIdQuery } from '../../store/api/Customer.api';
+import { useGetUserByIdQuery } from '../../store/api/Account.api';
 import { useRemovePostCommentAsyncMutation } from '../../store/api/communication/PostComment.api';
 
-const PostCommentTitle = ({ customerId, comment, dateFormatting, postId, updatePostAsync }) => {
+const PostCommentTitle = ({ userId, comment, dateFormatting, postId, updatePostAsync }) => {
     const { t } = useTranslation("communication/postCommentTitle");
 
-    const { data: targetCustomer, isLoading } = useGetCustomerByIdQuery(comment?.customerId);
+    const { data: targetUser, isLoading } = useGetUserByIdQuery(comment?.appUserId);
 
     const [removePostCommentAsyncMut] = useRemovePostCommentAsyncMutation();
 
@@ -25,10 +25,10 @@ const PostCommentTitle = ({ customerId, comment, dateFormatting, postId, updateP
     return (
         <div className="post-comments__title">
             <div className="user">
-                <div className="username">{targetCustomer.username}</div>
+                <div className="username">{targetUser.username}</div>
                 <div className="when">{dateFormatting(comment.when)}</div>
             </div>
-            {comment.customerId === customerId &&
+            {comment.appUserId === userId &&
                 <div className="post-comments__menu">
                     <FontAwesomeIcon
                         icon={faTrash}

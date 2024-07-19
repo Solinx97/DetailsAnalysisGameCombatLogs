@@ -5,7 +5,7 @@ import { useLazyGetCommunityPostByPostIdQuery, useRemoveCommunityPostMutation } 
 import Post from '../Post';
 import Loading from '../../Loading';
 
-const SelectedCommunityItem = ({ customer, communityId }) => {
+const SelectedCommunityItem = ({ user, communityId }) => {
     const { data: communityPosts, isLoading } = usePostSearchByCommunityIdAsyncQuery(communityId);
 
     const [getPostById] = useLazyGetPostByIdQuery();
@@ -62,7 +62,7 @@ const SelectedCommunityItem = ({ customer, communityId }) => {
             {posts?.map((post) => (
                     <li key={post?.id}>
                         <Post
-                            customer={customer}
+                            user={user}
                             data={post}
                             deletePostAsync={async () => await removeCommunityPostAsync(post.id)}
                         />

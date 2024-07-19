@@ -1,12 +1,12 @@
 import { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useLazyGetCustomersQuery } from '../store/api/UserApi';
+import { useLazyGetUsersQuery } from '../store/api/UserApi';
 import PeopleItem from './communication/people/PeopleItem';
 
 const Search = ({ me }) => {
     const { t } = useTranslation("translate");
 
-    const [loadingPeople] = useLazyGetCustomersQuery();
+    const [loadingPeople] = useLazyGetUsersQuery();
     const [people, setPeople] = useState([]);
     const [filteredPeople, setFilteredPeople] = useState([]);
     const [showSearch, setShowSearch] = useState(false);

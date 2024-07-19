@@ -5,9 +5,6 @@ export const CustomerApi = UserApi.injectEndpoints({
         getCustomerById: builder.query({
             query: (id) => `/Customer/${id}`,
         }),
-        checkIfCustomerExist: builder.query({
-            query: (username) => `/Customer/checkIfCustomerExist/${username}`
-        }),
         createAsync: builder.mutation({
             query: customer => ({
                 body: customer,
@@ -31,7 +28,6 @@ export const CustomerApi = UserApi.injectEndpoints({
 
 export const {
     useGetCustomerByIdQuery,
-    useLazyCheckIfCustomerExistQuery,
     useCreateAsyncMutation,
     useLazyGetCustomerByIdQuery,
     useEditCustomerAsyncMutation,

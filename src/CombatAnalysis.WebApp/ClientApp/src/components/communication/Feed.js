@@ -9,14 +9,14 @@ import Recomendations from './Recomendations';
 
 const Feed = () => {
     const { t } = useTranslation("communication/feed");
-    const customer = useSelector((state) => state.customer.value);
+    const user = useSelector((state) => state.user.value);
 
     const [createNewUserPostAsync] = useCreateUserPostAsyncMutation();
 
     const createUserPostAsync = async (postId) => {
         try {
             const newUserPost = {
-                userId: customer?.id,
+                appUserId: user?.id,
                 postId: postId
             }
 
@@ -42,7 +42,7 @@ const Feed = () => {
         }
     }
 
-    if (customer === null) {
+    if (user === null) {
         return (
             <>
                 <CommunicationMenu
@@ -63,14 +63,14 @@ const Feed = () => {
             />
             <div className="communication__content">
                 <CreatePost
-                    customer={customer}
-                    owner={customer?.username}
+                    user={user}
+                    owner={user?.username}
                     postTypeName="user"
                     createTypeOfPostFunc={createUserPostAsync}
                     t={t}
                 />
                 <FeedParticipants
-                    customer={customer}
+                    user={user}
                     t={t}
                 />
             </div>

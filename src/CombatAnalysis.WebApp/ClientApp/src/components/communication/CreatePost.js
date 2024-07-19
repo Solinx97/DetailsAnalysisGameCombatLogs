@@ -10,7 +10,7 @@ const postType = {
     community: 1
 }
 
-const CreatePost = ({ customer, owner, postTypeName, createTypeOfPostFunc, t }) => {
+const CreatePost = ({ user, owner, postTypeName, createTypeOfPostFunc, t }) => {
     const [showCreatePost, setShowCreatePost] = useState(false);
     const [postContent, setPostContent] = useState("");
     const [postTags, setPostTags] = useState([]);
@@ -27,7 +27,7 @@ const CreatePost = ({ customer, owner, postTypeName, createTypeOfPostFunc, t }) 
             likeCount: 0,
             dislikeCount: 0,
             postComment: 0,
-            customerId: customer?.id
+            appUserId: user?.id
         }
 
         const createdPost = await createNewPostAsync(newPost);
@@ -46,7 +46,7 @@ const CreatePost = ({ customer, owner, postTypeName, createTypeOfPostFunc, t }) 
         setPostContent(e.target.value);
     }
 
-    if (customer === null) {
+    if (user === null) {
         return (<Loading />);
     }
 

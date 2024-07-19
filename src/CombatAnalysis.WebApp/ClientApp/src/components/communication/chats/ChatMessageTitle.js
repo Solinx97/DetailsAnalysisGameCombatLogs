@@ -1,12 +1,12 @@
 import ChatMessageMenu from './ChatMessageMenu';
 import { useState } from 'react';
-import { useGetCustomerByIdQuery } from '../../../store/api/Customer.api';
+import { useGetUserByIdQuery } from '../../../store/api/Account.api';
 import User from '../User';
 
 const ChatMessageTitle = ({ me, itIsMe, setEditModeIsOn, openMessageMenu, editModeIsOn, deleteMessageAsync, message }) => {
     const [userInformation, setUserInformation] = useState(null);
 
-    const { data: user, isLoading } = useGetCustomerByIdQuery(message?.customerId);
+    const { data: user, isLoading } = useGetUserByIdQuery(message?.appUserId);
 
     const getMessageTime = () => {
         const getDate = new Date(message?.time);
@@ -36,7 +36,7 @@ const ChatMessageTitle = ({ me, itIsMe, setEditModeIsOn, openMessageMenu, editMo
                 <User
                     me={me}
                     itIsMe={itIsMe}
-                    targetCustomerId={user.id}
+                    targetUserId={user.id}
                     setUserInformation={setUserInformation}
                     allowRemoveFriend={false}
                 />

@@ -6,7 +6,7 @@ public class GroupChatUserDto
 
     public string Username { get; set; }
 
-    public string CustomerId { get; set; }
+    public string AppUserId { get; set; }
 
     public int GroupChatId { get; set; }
 }

@@ -14,5 +14,5 @@ public class GroupChatMessageDto
 
     public int GroupChatId { get; set; }
 
-    public string CustomerId { get; set; }
+    public string AppUserId { get; set; }
 }

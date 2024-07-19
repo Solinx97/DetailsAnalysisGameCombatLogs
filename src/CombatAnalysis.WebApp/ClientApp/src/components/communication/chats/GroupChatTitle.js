@@ -31,7 +31,7 @@ const GroupChatTitle = ({ chat, me, usersOnCall, callMinimazedData, settingsIsSh
     return (
         <div className="title">
             <div className="title__content">
-                {chat?.customerId === me?.id &&
+                {chat?.appUserId === me?.id &&
                     <FontAwesomeIcon
                         icon={faPen}
                         title={t("EditName")}

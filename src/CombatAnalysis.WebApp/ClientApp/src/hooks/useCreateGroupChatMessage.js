@@ -39,7 +39,7 @@ const useCreateGroupChatMessage = (messageInput, chat, meId, groupChatUsers, mes
             status: 0,
             type: type,
             groupChatId: chat.id,
-            customerId: meId
+            appUserId: meId
         };
 
         const createdMessage = await createGroupChatMessageAsync(newMessage);

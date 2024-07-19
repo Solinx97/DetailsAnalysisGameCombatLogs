@@ -2,17 +2,17 @@ import { faCircleCheck, faCircleXmark } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useGetCustomerByIdQuery } from '../../../store/api/Customer.api';
+import { useGetUserByIdQuery } from '../../../store/api/Account.api';
 import { useGetCommunityByIdQuery } from '../../../store/api/communication/community/Community.api';
 import { useCreateCommunityUserAsyncMutation } from '../../../store/api/communication/community/CommunityUser.api';
 import { useRemoveInviteAsyncMutation } from '../../../store/api/communication/community/InviteToCommunity.api';
 import User from '../User';
 
-const InvitesToCommunityItem = ({ customer, inviteToCommunity }) => {
+const InvitesToCommunityItem = ({ user, inviteToCommunity }) => {
     const { t } = useTranslation("communication/myEnvironment/invitesToCommunityItem");
 
     const { data: community, isLoading: communityIsLoading } = useGetCommunityByIdQuery(inviteToCommunity?.communityId);
-    const { data: inviteOwner, isLoading: targetUserIsLoading } = useGetCustomerByIdQuery(inviteToCommunity?.customerId);
+    const { data: inviteOwner, isLoading: targetUserIsLoading } = useGetUserByIdQuery(inviteToCommunity?.appUserId);
     const [createCommunityUserAsyn] = useCreateCommunityUserAsyncMutation();
     const [removeInviteAsync] = useRemoveInviteAsyncMutation();
 
@@ -21,9 +21,9 @@ const InvitesToCommunityItem = ({ customer, inviteToCommunity }) => {
     const acceptRequestAsync = async () => {
         const newCommunityUser = {
             id: " ",
-            username: customer?.username,
+            username: user?.username,
             communityId: community?.id,
-            customerId: customer?.id
+            appUserId: user?.id
         };
 
         const createdItem = await createCommunityUserAsyn(newCommunityUser);
@@ -46,9 +46,9 @@ const InvitesToCommunityItem = ({ customer, inviteToCommunity }) => {
         <div className="request-to-connect">
             <div className="request-to-connect__content">
                 <User
-                    me={customer}
+                    me={user}
                     itIsMe={false}
-                    targetCustomerId={inviteOwner.id}
+                    targetUserId={inviteOwner.id}
                     setUserInformation={setUserInformation}
                     allowRemoveFriend={false}
                 />

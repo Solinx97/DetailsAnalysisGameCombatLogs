@@ -5,7 +5,7 @@ import PostCommentTitle from './PostCommentTitle';
 
 import '../../styles/communication/postComments.scss';
 
-const PostComments = ({ dateFormatting, customerId, postId, updatePostAsync }) => {
+const PostComments = ({ dateFormatting, userId, postId, updatePostAsync }) => {
     const { data: postComments, isLoading } = useSearchPostCommentByPostIdQuery(postId);
 
     if (isLoading) {
@@ -17,14 +17,14 @@ const PostComments = ({ dateFormatting, customerId, postId, updatePostAsync }) =
             {postComments?.map((item) => (
                     <li key={item.id} className="post-comments__card">
                         <PostCommentTitle
-                            customerId={customerId}
+                            userId={userId}
                             comment={item}
                             dateFormatting={dateFormatting}
                             postId={postId}
                             updatePostAsync={updatePostAsync}
                         />
                         <PostCommentContent
-                            customerId={customerId}
+                            userId={userId}
                             comment={item}
                         />
                     </li>

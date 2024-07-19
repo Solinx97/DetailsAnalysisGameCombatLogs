@@ -4,7 +4,7 @@ import React, { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useUpdateCommunityDiscussionCommentAsyncMutation } from '../../../store/api/communication/community/CommunityDiscussionComment.api';
 
-const DiscussionCommentContent = ({ customerId, comment }) => {
+const DiscussionCommentContent = ({ userId, comment }) => {
     const { t } = useTranslation("communication/postCommentContent");
 
     const [updateDiscussionCommentAsyncMut] = useUpdateCommunityDiscussionCommentAsyncMutation();
@@ -35,7 +35,7 @@ const DiscussionCommentContent = ({ customerId, comment }) => {
                 </div>
                 : <div className="card-text">{comment.content}</div>
             }
-            {comment.customerId === customerId &&
+            {comment.appUserId === userId &&
                 <div className="post-comments__menu">
                     <FontAwesomeIcon
                         icon={faPen}

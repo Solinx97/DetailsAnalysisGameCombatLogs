@@ -23,7 +23,7 @@ const payload = {
 };
 
 const CreateGroupChat = () => {
-    const customer = useSelector((state) => state.customer.value);
+    const user = useSelector((state) => state.user.value);
 
     const { t } = useTranslation("communication/create");
 
@@ -51,7 +51,7 @@ const CreateGroupChat = () => {
         const groupChat = {
             name: chatName,
             lastMessage: " ",
-            customerId: customer?.id
+            appUserId: user?.id
         };
 
         const createdGroupChat = await createGroupChatMutAsync(groupChat);
@@ -90,7 +90,7 @@ const CreateGroupChat = () => {
             const newGroupChatUser = {
                 id: " ",
                 username: peopleToJoin[i].username,
-                customerId: peopleToJoin[i].id,
+                appUserId: peopleToJoin[i].id,
                 groupChatId: groupChatId,
             };
 
@@ -98,8 +98,8 @@ const CreateGroupChat = () => {
             if (createdGroupChatUser.data !== undefined) {
                 await createGroupChatCountAsync(groupChatId, createdGroupChatUser.data.id);
 
-                if (peopleToJoin[i].id !== customer?.id) {
-                    const systemMessage = `'${customer?.username}' added '${peopleToJoin[i].username}' to chat`;
+                if (peopleToJoin[i].id !== user?.id) {
+                    const systemMessage = `'${user?.username}' added '${peopleToJoin[i].username}' to chat`;
                     await createMessageAsync(groupChatId, systemMessage);
                 }
             }
@@ -114,10 +114,10 @@ const CreateGroupChat = () => {
             status: 0,
             type: 1,
             groupChatId: groupChatId,
-            customerId: customer?.id
+            appUserId: user?.id
         };
 
-        const response = await createGroupChatMessageAsync(newMessage);
+        await createGroupChatMessageAsync(newMessage);
     }
 
     const handleCreateNewGroupChatAsync = async () => {
@@ -126,7 +126,7 @@ const CreateGroupChat = () => {
         await createGroupChatRulesAsync(createdGroupChat.id);
 
         const people = peopleToJoin;
-        people.push(customer);
+        people.push(user);
 
         setPeopleToJoin(people);
 
@@ -201,8 +201,8 @@ const CreateGroupChat = () => {
                         {itemIndex >= 2 &&
                             <div className="create-community__item">
                                 <AddPeople
-                                    customer={customer}
-                                    communityUsersId={[customer.id]}
+                                    user={user}
+                                    communityUsersId={[user.id]}
                                     peopleToJoin={peopleToJoin}
                                     setPeopleToJoin={setPeopleToJoin}
                                 />

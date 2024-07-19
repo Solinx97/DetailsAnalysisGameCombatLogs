@@ -46,9 +46,9 @@ export const AccountApi = UserApi.injectEndpoints({
 
 export const {
     useGetUserByIdQuery,
+    useLazyGetUserByIdQuery,
     useLazyFindByIdenityUserIdQuery,
     useLazyCheckIfUserExistQuery,
-    useLazyGetUserByIdQuery,
     useLoginAsyncMutation,
     useRegistrationAsyncMutation,
     useEditAsyncMutation,

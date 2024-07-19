@@ -8,7 +8,7 @@ import PostTitle from './PostTitle';
 
 import '../../styles/communication/post.scss';
 
-const Post = ({ customer, data, deletePostAsync, canBeRemoveFromUserFeed = true }) => {
+const Post = ({ user, data, deletePostAsync, canBeRemoveFromUserFeed = true }) => {
     const { t } = useTranslation("communication/post");
 
     const [updatePostAsyncMut] = useUpdatePostAsyncMutation();
@@ -23,7 +23,7 @@ const Post = ({ customer, data, deletePostAsync, canBeRemoveFromUserFeed = true 
     const [post, setPost] = useState(data);
 
     useEffect(() => {
-        setIsMyPost(post?.customerId === customer?.id && canBeRemoveFromUserFeed);
+        setIsMyPost(post?.appUserId === user?.id && canBeRemoveFromUserFeed);
     }, [])
 
     const updatePostAsync = async (postId, likesCount, dislikesCount, commentsCount) => {
@@ -45,7 +45,7 @@ const Post = ({ customer, data, deletePostAsync, canBeRemoveFromUserFeed = true 
                 likeCount: getRefreshedPostResponse.data.likeCount + likesCount,
                 dislikeCount: getRefreshedPostResponse.data.dislikeCount + dislikesCount,
                 commentCount: getRefreshedPostResponse.data.commentCount + commentsCount,
-                customerId: getRefreshedPostResponse.data.customerId
+                appUserId: getRefreshedPostResponse.data.appUserId
             }
 
             const response = await updatePostAsyncMut(postForUpdate);
@@ -71,7 +71,7 @@ const Post = ({ customer, data, deletePostAsync, canBeRemoveFromUserFeed = true 
             content: postCommentContent,
             when: new Date(),
             postId: post.id,
-            customerId: customer.id
+            appUserId: user.id
         }
 
         const createdPostComment = await createPostCommentAsyncMut(newPostComment);
@@ -144,7 +144,7 @@ const Post = ({ customer, data, deletePostAsync, canBeRemoveFromUserFeed = true 
                 />
                 <div className="posts__content">{post?.content}</div>
                 <PostReactions
-                    customer={customer}
+                    user={user}
                     post={post}
                     updatePostAsync={updatePostAsync}
                     setShowComments={setShowComments}
@@ -156,7 +156,7 @@ const Post = ({ customer, data, deletePostAsync, canBeRemoveFromUserFeed = true 
                 <>
                     <PostComments
                         dateFormatting={dateFormatting}
-                        customerId={customer.id}
+                        userId={user.id}
                         postId={post.id}
                         updatePostAsync={updatePostAsync}
                     />

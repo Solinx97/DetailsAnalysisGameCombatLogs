@@ -6,5 +6,5 @@ public class BannedUser
 
     public string BannedCustomerId { get; set; }
 
-    public string CustomerId { get; set; }
+    public string AppUserId { get; set; }
 }

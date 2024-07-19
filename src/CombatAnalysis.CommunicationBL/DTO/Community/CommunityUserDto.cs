@@ -6,7 +6,7 @@ public class CommunityUserDto
 
     public string Username { get; set; }
 
-    public string CustomerId { get; set; }
+    public string AppUserId { get; set; }
 
     public int CommunityId { get; set; }
 }

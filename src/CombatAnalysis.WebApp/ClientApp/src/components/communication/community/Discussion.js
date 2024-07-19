@@ -8,7 +8,7 @@ import DiscussionComments from './DiscussionComments';
 
 import '../../../styles/communication/community/discussion.scss';
 
-const Discussion = ({ discussionId, setShowDiscussion, customer }) => {
+const Discussion = ({ user, discussionId, setShowDiscussion  }) => {
     const { t } = useTranslation("communication/community/discussion");
 
     const [title, setTitle] = useState("");
@@ -40,7 +40,7 @@ const Discussion = ({ discussionId, setShowDiscussion, customer }) => {
             title: title,
             content: content,
             when: discussion.when,
-            customerId: discussion.customerId,
+            appUserId: discussion.appUserId,
             communityId: discussion.communityId
         }
 
@@ -61,7 +61,7 @@ const Discussion = ({ discussionId, setShowDiscussion, customer }) => {
             content: discussionCommentContent,
             when: new Date(),
             communityDiscussionId: discussionId,
-            customerId: customer.id
+            appUserId: user.id
         }
 
         const created = await createCommunityDiscussionCommentAsyncMut(newDiscussionComment);
@@ -141,7 +141,7 @@ const Discussion = ({ discussionId, setShowDiscussion, customer }) => {
                         />
                     </div>
                     <div className="title">{discussion.title}</div>
-                    {discussion?.customerId === customer?.id &&
+                    {discussion?.customerId === user?.id &&
                         <div className="actions">
                             <div className={`btn-shadow ${showComments ? "active" : ""}`} onClick={() => setEditModeOne(true)}>
                                 <FontAwesomeIcon
@@ -176,7 +176,7 @@ const Discussion = ({ discussionId, setShowDiscussion, customer }) => {
                     <>
                         <DiscussionComments
                             dateFormatting={dateFormatting}
-                            customerId={customer?.id}
+                            userId={user?.id}
                             discussionId={discussionId}
                         />
                         <div className="add-new-discussion-comment">

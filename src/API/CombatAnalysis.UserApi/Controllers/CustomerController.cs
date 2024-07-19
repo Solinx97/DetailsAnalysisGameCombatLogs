@@ -102,19 +102,4 @@ public class CustomerController : ControllerBase
             return BadRequest();
         }
     }
-
-    [AllowAnonymous]
-    [HttpGet("checkIfCustomerExist/{username}")]
-    public async Task<IActionResult> CheckIfCustomerExist(string username)
-    {
-        try
-        {
-            var customer = await _service.GetByParamAsync(nameof(CustomerModel.Username), username);
-            return Ok(customer.Any());
-        }
-        catch (Exception)
-        {
-            return BadRequest();
-        }
-    }
 }

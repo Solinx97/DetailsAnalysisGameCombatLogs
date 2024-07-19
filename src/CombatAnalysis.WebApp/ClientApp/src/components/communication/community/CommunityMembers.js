@@ -11,7 +11,7 @@ import CommunityMemberItem from './CommunityMemberItem';
 
 const defaultMaxPeople = 5;
 
-const CommunityMembers = ({ community, customer, setIsCommunityMember }) => {
+const CommunityMembers = ({ community, user, setIsCommunityMember }) => {
     const { t } = useTranslation("communication/community/communityMembers");
 
     let communityUsersId = [];
@@ -27,7 +27,7 @@ const CommunityMembers = ({ community, customer, setIsCommunityMember }) => {
         selectFromResult: ({ data }) => {
             const idList = [];
             for (let i = 0; i < data?.length; i++) {
-                idList.push(data[i].customerId);
+                idList.push(data[i].appUserId);
             }
 
             communityUsersId = idList;
@@ -46,7 +46,7 @@ const CommunityMembers = ({ community, customer, setIsCommunityMember }) => {
             return;
         }
 
-        setIsCommunityMember(communityUsersId.includes(customer?.id));
+        setIsCommunityMember(communityUsersId.includes(user?.id));
     }, [communityUsersId])
 
     const checkIfRequestExistAsync = async (peopleId, communityId) => {
@@ -74,7 +74,7 @@ const CommunityMembers = ({ community, customer, setIsCommunityMember }) => {
                 communityId: community.id,
                 toCustomerId: peopleToJoin[i].id,
                 when: new Date(),
-                customerId: customer?.id
+                appUserId: user?.id
             }
 
             await createInviteAsyncMut(newInviteToCommunity);
@@ -118,14 +118,14 @@ const CommunityMembers = ({ community, customer, setIsCommunityMember }) => {
                 <div className="actions">
                     <div>{t("Members")}</div>
                     <div className="tool">
-                        {community.customerId === customer?.id &&
+                        {community.appUserID === user?.id &&
                             <FontAwesomeIcon
                                 icon={faRectangleXmark}
                                 title={t("RemovePeople")}
                                 onClick={handleShowAllPeopleAsync}
                             />
                         }
-                        {communityUsersId.includes(customer?.id) &&
+                        {communityUsersId.includes(user?.id) &&
                             <FontAwesomeIcon
                                 icon={faPlus}
                                 title={t("AddNewPeople")}
@@ -158,7 +158,7 @@ const CommunityMembers = ({ community, customer, setIsCommunityMember }) => {
                         />
                     </div>
                     <AddPeople
-                        customer={customer}
+                        user={user}
                         communityUsersId={communityUsersId}
                         peopleToJoin={peopleToJoin}
                         setPeopleToJoin={setPeopleToJoin}
@@ -171,13 +171,13 @@ const CommunityMembers = ({ community, customer, setIsCommunityMember }) => {
             }
             {showAllPeople &&
                 <Members
-                    me={customer}
+                    me={user}
                     users={allCommunityUsers}
                     communityItem={community}
                     removeUsersAsync={removeUsersAsync}
                     setShowMembers={setShowAllPeople}
                     isPopup={true}
-                    canRemovePeople={customer?.id === community?.customerId}
+                    canRemovePeople={user?.id === community?.customerId}
                 />
             }
         </span>

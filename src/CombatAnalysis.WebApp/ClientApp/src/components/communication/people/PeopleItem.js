@@ -9,7 +9,7 @@ const PeopleItem = ({ me, people, actionAfterRequests = null }) => {
             <div className="card box-shadow">
                 <User
                     me={me}
-                    targetCustomerId={people.id}
+                    targetUserId={people.id}
                     setUserInformation={setUserInformation}
                     allowRemoveFriend={false}
                     actionAfterRequests={actionAfterRequests}

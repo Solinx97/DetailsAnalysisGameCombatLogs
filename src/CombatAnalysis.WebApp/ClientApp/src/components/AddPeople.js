@@ -2,7 +2,7 @@ import { faEye, faEyeSlash, faMagnifyingGlassMinus, faMagnifyingGlassPlus, faPlu
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useGetCustomersQuery } from '../store/api/UserApi';
+import { useGetUsersQuery } from '../store/api/UserApi';
 import { useFriendSearchMyFriendsQuery } from '../store/api/communication/myEnvironment/Friend.api';
 import AddFriendItem from './AddFriendItem';
 
@@ -11,21 +11,21 @@ import '../styles/addPeople.scss';
 const defaultMaxPeopleItems = 5;
 const defaultMaxFriendsItems = 5;
 
-const AddPeople = ({ customer, communityUsersId, peopleToJoin, setPeopleToJoin }) => {
+const AddPeople = ({ user, communityUsersId, peopleToJoin, setPeopleToJoin }) => {
     const { t } = useTranslation("addPeople");
 
     const [maxPeopleItems, setMaxPeopleItems] = useState(defaultMaxPeopleItems);
     const [maxFriendsItems, setMaxFriendsItems] = useState(defaultMaxFriendsItems);
 
-    const { friends, isLoading: friendsIsLoading } = useFriendSearchMyFriendsQuery(customer?.id, {
+    const { friends, isLoading: friendsIsLoading } = useFriendSearchMyFriendsQuery(user?.id, {
         selectFromResult: ({ data }) => ({
             friends: data?.length <= defaultMaxFriendsItems
-                ? data?.filter((item) => !communityUsersId.includes(customer?.id === item.whoFriendId ? item.forWhomId : item.whoFriendId))
-                : data?.filter((item) => !communityUsersId.includes(customer?.id === item.whoFriendId ? item.forWhomId : item.whoFriendId))
+                ? data?.filter((item) => !communityUsersId.includes(user?.id === item.whoFriendId ? item.forWhomId : item.whoFriendId))
+                : data?.filter((item) => !communityUsersId.includes(user?.id === item.whoFriendId ? item.forWhomId : item.whoFriendId))
                     .slice(0, maxFriendsItems)
         }),
     });
-    const { people, isLoading: peopleIsLoading } = useGetCustomersQuery(undefined, {
+    const { people, isLoading: peopleIsLoading } = useGetUsersQuery(undefined, {
         selectFromResult: ({ data }) => ({
             people: data?.length <= defaultMaxPeopleItems
                 ? data?.filter((item) => !communityUsersId.includes(item.id))
@@ -135,7 +135,7 @@ const AddPeople = ({ customer, communityUsersId, peopleToJoin, setPeopleToJoin }
                             ? friends.map((item) => (
                                 <li key={item.id} className="person">
                                     <AddFriendItem
-                                        friendUserId={item.whoFriendId === customer.id ? item.forWhomId : item.whoFriendId}
+                                        friendUserId={item.whoFriendId === user.id ? item.forWhomId : item.whoFriendId}
                                         filterContent={filterContent.current === null ? "" : filterContent.current.value}
                                         addUserIdToList={handleAddUserToJoin}
                                         removeUserIdToList={handleRemoveUserFromToJoin}

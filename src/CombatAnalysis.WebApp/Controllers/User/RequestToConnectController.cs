@@ -108,13 +108,13 @@ public class RequestToConnectController : ControllerBase
         }
 
         var allRequestsToConnect = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<RequestToConnectModel>>();
-        var requestsToConnectToUser = allRequestsToConnect.Where(x => x.ToUserId == initiatorId && x.CustomerId == companionId).ToList();
+        var requestsToConnectToUser = allRequestsToConnect.Where(x => x.ToAppUserId == initiatorId && x.AppUserId == companionId).ToList();
         if (requestsToConnectToUser.Any())
         {
             return Ok(true);
         }
 
-        var requestsToConnectToOwner = allRequestsToConnect.Where(x => x.ToUserId == companionId && x.CustomerId == initiatorId).ToList();
+        var requestsToConnectToOwner = allRequestsToConnect.Where(x => x.ToAppUserId == companionId && x.AppUserId == initiatorId).ToList();
         if (requestsToConnectToOwner.Any())
         {
             return Ok(true);

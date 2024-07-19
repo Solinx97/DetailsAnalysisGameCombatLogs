@@ -8,7 +8,7 @@ public class CommunityDiscussionComment
 
     public DateTimeOffset When { get; set; }
 
-    public string CustomerId { get; set; }
+    public string AppUserId { get; set; }
 
     public int CommunityDiscussionId { get; set; }
 }

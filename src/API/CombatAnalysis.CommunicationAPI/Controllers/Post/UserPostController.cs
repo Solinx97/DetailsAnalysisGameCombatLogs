@@ -42,7 +42,7 @@ public class UserPostController : ControllerBase
     [HttpGet("searchByUserId/{id}")]
     public async Task<IActionResult> SearchByUserId(string id)
     {
-        var result = await _service.GetByParamAsync(nameof(UserPostModel.UserId), id);
+        var result = await _service.GetByParamAsync(nameof(UserPostModel.AppUserId), id);
 
         return Ok(result);
     }

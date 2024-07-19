@@ -6,5 +6,5 @@ public class PostDislikeModel
 
     public int PostId { get; set; }
 
-    public string CustomerId { get; set; }
+    public string AppUserId { get; set; }
 }

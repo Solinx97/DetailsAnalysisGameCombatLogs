@@ -1,11 +1,11 @@
 import { useState } from 'react';
-import { useGetCustomerByIdQuery } from '../../../store/api/Customer.api';
+import { useGetUserByIdQuery } from '../../../store/api/Account.api';
 import User from '../User';
 
 const CommunityMemberItem = ({ comunityUser }) => {
     const [userInformation, setUserInformation] = useState(null);
 
-    const { data: member, isLoading } = useGetCustomerByIdQuery(comunityUser.customerId);
+    const { data: member, isLoading } = useGetUserByIdQuery(comunityUser.appUserId);
 
     if (isLoading) {
         return <></>;
@@ -14,7 +14,7 @@ const CommunityMemberItem = ({ comunityUser }) => {
     return (
         <>
             <User
-                targetCustomerId={member?.id}
+                targetUserId={member?.id}
                 setUserInformation={setUserInformation}
                 allowRemoveFriend={false}
             />

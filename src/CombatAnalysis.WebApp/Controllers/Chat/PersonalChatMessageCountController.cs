@@ -39,7 +39,7 @@ public class PersonalChatMessageCountController : ControllerBase
         }
 
         var personalChatMessagesCount = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<PersonalChatMessageCountModel>>();
-        var myPersonalChatMessagesCount = personalChatMessagesCount.Where(x => x.PersonalChatId == chatId && x.CustomerId == userId).FirstOrDefault();
+        var myPersonalChatMessagesCount = personalChatMessagesCount.Where(x => x.PersonalChatId == chatId && x.AppUserId == userId).FirstOrDefault();
 
         return Ok(myPersonalChatMessagesCount);
     }

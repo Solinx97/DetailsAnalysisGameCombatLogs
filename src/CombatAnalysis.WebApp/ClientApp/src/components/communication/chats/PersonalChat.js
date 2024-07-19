@@ -1,5 +1,5 @@
 ﻿import { useTranslation } from 'react-i18next';
-import { useGetCustomerByIdQuery } from '../../../store/api/Customer.api';
+import { useGetUserByIdQuery } from '../../../store/api/Account.api';
 import {
     useLazyFindPersonalChatMessageCountQuery,
     useUpdatePersonalChatMessageCountAsyncMutation
@@ -23,7 +23,7 @@ const PersonalChat = ({ chat, me, setSelectedChat, companionId }) => {
     const { data: messages, isLoading } = useFindPersonalChatMessageByChatIdQuery(chat.id, {
         pollingInterval: getPersonalChatMessagesInterval
     });
-    const { data: companion, isLoading: companionIsLoading } = useGetCustomerByIdQuery(companionId);
+    const { data: companion, isLoading: companionIsLoading } = useGetUserByIdQuery(companionId);
     const [removePersonalChatMessageAsync] = useRemovePersonalChatMessageAsyncMutation();
     const [updateChatMessageAsync] = useUpdatePersonalChatMessageAsyncMutation();
     const [updatePersonalChatMessageCountMut] = useUpdatePersonalChatMessageCountAsyncMutation();

@@ -5,7 +5,7 @@ import { useLazySearchByUserIdAsyncQuery } from '../store/api/communication/comm
 
 const checkNewPostsInterval = 5000;
 
-const useFetchFriendsPosts = (customerId, myFriends) => {
+const useFetchFriendsPosts = (appUserId, myFriends) => {
     const [allPosts, setAllPosts] = useState([]);
     const [newPosts, setNewPosts] = useState([]);
     const [startDate, setStartDate] = useState(null);
@@ -68,7 +68,7 @@ const useFetchFriendsPosts = (customerId, myFriends) => {
             }
         }
 
-        const communitiesUser = await getCommunityUsers(customerId);
+        const communitiesUser = await getCommunityUsers(appUserId);
         if (communitiesUser.data !== undefined) {
             const userCommunityPosts = await getCommunityPostsAsync(communitiesUser.data);
             posts = [...posts, ...userCommunityPosts];
@@ -81,10 +81,10 @@ const useFetchFriendsPosts = (customerId, myFriends) => {
 
     const getPeopleIdAsync = async () => {
         const friendsId = [];
-        const allPeopleId = [customerId];
+        const allPeopleId = [appUserId];
 
         for (let i = 0; i < myFriends?.length; i++) {
-            const personId = myFriends[i].whoFriendId === customerId ? myFriends[i].forWhomId : myFriends[i].whoFriendId;
+            const personId = myFriends[i].whoFriendId === appUserId ? myFriends[i].forWhomId : myFriends[i].whoFriendId;
             friendsId.push(personId);
         }
 

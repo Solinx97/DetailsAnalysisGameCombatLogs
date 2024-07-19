@@ -84,14 +84,14 @@ const GroupChat = ({ chat, me, setSelectedChat, callMinimazedData }) => {
 
         const customersId = [];
         for (let i = 0; i < groupChatUsers.length; i++) {
-            customersId.push(groupChatUsers[i].customerId);
+            customersId.push(groupChatUsers[i].appUserId);
         }
 
         setGroupChatUsersId(customersId);
     }, [groupChatUsers]);
 
     const decreaseGroupChatMessagesCountAsync = async () => {
-        const myGroupChatUser = groupChatUsers.filter(x => x.customerId === me?.id)[0];
+        const myGroupChatUser = groupChatUsers.filter(x => x.appUserId === me?.id)[0];
 
         const messagesCount = await getMessagesCount({ chatId: chat?.id, userId: myGroupChatUser.id });
         if (messagesCount.data !== undefined) {

@@ -36,7 +36,7 @@ const LogChatMessage = ({ me, message }) => {
         <div className="chat-messages__content">
             <ChatMessageTitle
                 me={me}
-                itIsMe={me?.id !== message?.customerId}
+                itIsMe={me?.id !== message?.appUserId}
                 message={message}
             />
             <div className="log-message">

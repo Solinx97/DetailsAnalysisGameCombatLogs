@@ -14,7 +14,7 @@ import '../../../styles/communication/community/communities.scss';
 const MyCommunities = () => {
     const { t } = useTranslation("communication/myEnvironment/myCommunities");
 
-    const me = useSelector((state) => state.customer.value);
+    const me = useSelector((state) => state.user.value);
 
     const navigate = useNavigate();
 
@@ -44,7 +44,7 @@ const MyCommunities = () => {
     return (
         <>
             <InvitesToCommunity
-                customer={me}
+                user={me}
             />
             <div className="communities__list">
                 <div className="title">

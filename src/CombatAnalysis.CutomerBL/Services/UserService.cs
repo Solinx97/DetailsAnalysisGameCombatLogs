@@ -82,6 +82,24 @@ internal class UserService : IUserService<AppUserDto>
 
     private async Task<AppUserDto> CreateInternalAsync(AppUserDto item)
     {
+        if (string.IsNullOrEmpty(item.Username))
+        {
+            throw new ArgumentNullException(nameof(CustomerDto),
+                $"The property {nameof(AppUserDto.Username)} of the {nameof(AppUserDto)} object can't be null or empty");
+        }
+
+        if (string.IsNullOrEmpty(item.FirstName))
+        {
+            throw new ArgumentNullException(nameof(CustomerDto),
+                $"The property {nameof(AppUserDto.FirstName)} of the {nameof(AppUserDto)} object can't be null or empty");
+        }
+
+        if (string.IsNullOrEmpty(item.LastName))
+        {
+            throw new ArgumentNullException(nameof(CustomerDto),
+                $"The property {nameof(AppUserDto.LastName)} of the {nameof(AppUserDto)} object can't be null or empty");
+        }
+
         var map = _mapper.Map<AppUser>(item);
         var createdItem = await _repository.CreateAsync(map);
         var resultMap = _mapper.Map<AppUserDto>(createdItem);
@@ -99,6 +117,24 @@ internal class UserService : IUserService<AppUserDto>
 
     private async Task<int> UpdateInternalAsync(AppUserDto item)
     {
+        if (string.IsNullOrEmpty(item.Username))
+        {
+            throw new ArgumentNullException(nameof(CustomerDto),
+                $"The property {nameof(AppUserDto.Username)} of the {nameof(AppUserDto)} object can't be null or empty");
+        }
+
+        if (string.IsNullOrEmpty(item.FirstName))
+        {
+            throw new ArgumentNullException(nameof(CustomerDto),
+                $"The property {nameof(AppUserDto.FirstName)} of the {nameof(AppUserDto)} object can't be null or empty");
+        }
+
+        if (string.IsNullOrEmpty(item.LastName))
+        {
+            throw new ArgumentNullException(nameof(CustomerDto),
+                $"The property {nameof(AppUserDto.LastName)} of the {nameof(AppUserDto)} object can't be null or empty");
+        }
+
         var map = _mapper.Map<AppUser>(item);
         var rowsAffected = await _repository.UpdateAsync(map);
 

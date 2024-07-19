@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
-import { useGetCustomersQuery } from '../../../store/api/UserApi';
+import { useGetUsersQuery } from '../../../store/api/UserApi';
 import Loading from "../../Loading";
 import CommunicationMenu from '../CommunicationMenu';
 import PeopleItem from './PeopleItem';
@@ -13,11 +13,11 @@ const peopleInterval = 3000;
 const People = () => {
     const { t } = useTranslation("communication/people/people");
 
-    const me = useSelector((state) => state.customer.value);
+    const me = useSelector((state) => state.user.value);
     const [menuItem, setMenuItem] = useState(7);
     const [skipFetching, setSkipFetching] = useState(true);
 
-    const { people, isLoading } = useGetCustomersQuery(undefined, {
+    const { people, isLoading } = useGetUsersQuery(undefined, {
         pollingInterval: peopleInterval,
         skip: skipFetching,
         selectFromResult: ({ data }) => ({

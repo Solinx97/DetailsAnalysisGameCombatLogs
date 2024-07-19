@@ -10,13 +10,13 @@ const postType = {
     community: 1
 }
 
-const FeedParticipants = ({ customer, t }) => {
-    const { data: myFriends, isLoading } = useFriendSearchMyFriendsQuery(customer?.id);
+const FeedParticipants = ({ user, t }) => {
+    const { data: myFriends, isLoading } = useFriendSearchMyFriendsQuery(user?.id);
 
     const [getUserPostByPostId] = useLazyUserPostSearchByPostIdQuery();
     const [removeUserPost] = useRemoveUserPostAsyncMutation();
 
-    const { allPosts, newPosts, insertNewPostsAsync } = useFetchFriendsPosts(customer?.id, myFriends);
+    const { allPosts, newPosts, insertNewPostsAsync } = useFetchFriendsPosts(user?.id, myFriends);
 
     const removeUserPostAsync = async (postId) => {
         const userPost = await getUserPostByPostId(postId);
@@ -57,7 +57,7 @@ const FeedParticipants = ({ customer, t }) => {
                 {allPosts?.map(post => (
                     <li key={post.id}>
                         <Post
-                            customer={customer}
+                            user={user}
                             data={post}
                             deletePostAsync={async () => await removeUserPostAsync(post.id)}
                             canBeRemoveFromUserFeed={post.postType === postType["user"]}

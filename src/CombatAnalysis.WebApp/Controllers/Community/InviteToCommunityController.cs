@@ -131,7 +131,7 @@ public class InviteToCommunityController : ControllerBase
         }
 
         var allInvites = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<InviteToCommunityModel>>();
-        var existedInvites = allInvites.Where(x => x.ToCustomerId == peopleId && x.CommunityId == communityId).ToList();
+        var existedInvites = allInvites.Where(x => x.ToAppUserId == peopleId && x.CommunityId == communityId).ToList();
         if (existedInvites.Any())
         {
             return Ok(true);

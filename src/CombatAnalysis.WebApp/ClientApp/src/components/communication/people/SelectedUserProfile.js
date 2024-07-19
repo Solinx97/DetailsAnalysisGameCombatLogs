@@ -1,28 +1,22 @@
 import { useTranslation } from 'react-i18next';
 
-const SelectedUserProfile = ({ customer }) => {
+const SelectedUserProfile = ({ person }) => {
     const { t } = useTranslation("communication/people/user");
 
     return (
         <ul className="user-information__common-information">
-            {customer?.message !== " " &&
-                <li className="user-information-item">
-                    <div className="user-information-item__title">{t("Message")}</div>
-                    <div className="user-information-item__content">{customer?.message}</div>
-                </li>
-            }
             <li className="user-information-item">
                 <div className="user-information-item__title">{t("FirstName")}</div>
-                <div className="user-information-item__content">{customer?.firstName}</div>
+                <div className="user-information-item__content">{person?.firstName}</div>
             </li>
             <li className="user-information-item">
                 <div className="user-information-item__title">{t("LastName")}</div>
-                <div className="user-information-item__content">{customer?.lastName}</div>
+                <div className="user-information-item__content">{person?.lastName}</div>
             </li>
-            {customer?.aboutMe !== " " &&
+            {person?.aboutMe !== "" &&
                 <li className="user-information-item">
                     <div className="user-information-item__title">{t("AboutMe")}</div>
-                    <div className="user-information-item__content">{customer?.aboutMe}</div>
+                    <div className="user-information-item__content">{person?.aboutMe}</div>
                 </li>
             }
         </ul>
