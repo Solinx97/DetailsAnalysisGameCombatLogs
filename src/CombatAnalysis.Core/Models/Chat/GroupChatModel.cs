@@ -8,5 +8,5 @@ public class GroupChatModel
 
     public string LastMessage { get; set; }
 
-    public string CustomerId { get; set; }
+    public string AppUserId { get; set; }
 }

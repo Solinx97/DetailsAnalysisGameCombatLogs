@@ -63,9 +63,8 @@ internal class IdentityService : IIdentityService
             }
 
             var user = await GetUserAsync(token.AccessToken);
-            var customer = await GetCustomerAsync(token.AccessToken, user.Id);
 
-            SetMemoryCache(token.AccessToken, token.RefreshToken, user, customer);
+            SetMemoryCache(token.AccessToken, token.RefreshToken, user);
         }
         catch (Exception ex)
         {
@@ -120,23 +119,10 @@ internal class IdentityService : IIdentityService
         return user;
     }
 
-    private async Task<CustomerModel> GetCustomerAsync(string accessToken, string userId)
-    {
-        var response = await _httpClientHelper.GetAsync($"Customer/searchByUserId/{userId}", accessToken, Port.UserApi);
-        if (!response.IsSuccessStatusCode)
-        {
-            return null;
-        }
-
-        var customer = await response.Content.ReadFromJsonAsync<IEnumerable<CustomerModel>>();
-        return customer.FirstOrDefault();
-    }
-
-    private void SetMemoryCache(object aceessToken, object refreshToken, object user, object customer)
+    private void SetMemoryCache(object aceessToken, object refreshToken, object user)
     {
         _memoryCache.Set(nameof(MemoryCacheValue.AccessToken), refreshToken, new MemoryCacheEntryOptions { Size = 10 });
         _memoryCache.Set(nameof(MemoryCacheValue.RefreshToken), refreshToken, new MemoryCacheEntryOptions { Size = 10 });
         _memoryCache.Set(nameof(MemoryCacheValue.User), user, new MemoryCacheEntryOptions { Size = 50 });
-        _memoryCache.Set(nameof(MemoryCacheValue.Customer), customer, new MemoryCacheEntryOptions { Size = 50 });
     }
 }

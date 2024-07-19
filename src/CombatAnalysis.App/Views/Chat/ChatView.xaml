@@ -103,8 +103,8 @@
                     <StackPanel Visibility="{Binding PersonalChatLoadingResponse, Converter={StaticResource IntToVisibility}, ConverterParameter='true:1:>'}">
                         <TextBlock Text="{loc:Loc NoPersonalMessages}" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="12" Foreground="White" Margin="5"
                                Visibility="{Binding IsShowEmptyPersonalChat, Converter={StaticResource BoolToVisibility}, ConverterParameter='true:false'}"/>
-                        
-                        <TextBlock Name="myAccountId" Text="{Binding MyCustomer.Id}" Visibility="Collapsed"/>
+
+                        <TextBlock Name="myAccountId" Text="{Binding MyAccount.Id}" Visibility="Collapsed"/>
                         
                         <ListBox HorizontalContentAlignment="Stretch" Grid.Row="1" Margin="10 10 10 30"
                              ItemsSource="{Binding PersonalChats}" Background="Transparent"

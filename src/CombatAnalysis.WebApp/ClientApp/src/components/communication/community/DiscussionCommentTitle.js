@@ -1,13 +1,13 @@
 import { faTrash } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useTranslation } from 'react-i18next';
-import { useGetCustomerByIdQuery } from '../../../store/api/Customer.api';
+import { useGetUserByIdQuery } from '../../../store/api/Account.api';
 import { useRemoveCommunityDiscussionCommentAsyncMutation } from '../../../store/api/communication/community/CommunityDiscussionComment.api';
 
 const DiscussionCommentTitle = ({ meId, comment, dateFormatting }) => {
     const { t } = useTranslation("communication/community/discussion");
 
-    const { data: customer, isLoading } = useGetCustomerByIdQuery(comment?.customerId);
+    const { data: user, isLoading } = useGetUserByIdQuery(comment?.appUserId);
 
     const [removeDiscussionCommentAsyncMut] = useRemoveCommunityDiscussionCommentAsyncMutation();
 
@@ -22,7 +22,7 @@ const DiscussionCommentTitle = ({ meId, comment, dateFormatting }) => {
     return (
         <div className="post-comments__title">
             <div className="user">
-                <div className="username">{customer.username}</div>
+                <div className="username">{user.username}</div>
                 <div className="when">{dateFormatting(comment.when)}</div>
             </div>
             {comment?.customerId === meId &&

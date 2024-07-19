@@ -85,50 +85,22 @@ const Post = ({ user, data, deletePostAsync, canBeRemoveFromUserFeed = true }) =
     const dateFormatting = (stringOfDate) => {
         const date = new Date(stringOfDate);
         const month = date.getMonth();
-        let nameOfMonth = "";
+        const monthes = {
+            0: "January",
+            1: "February",
+            2: "March",
+            3: "April",
+            4: "May",
+            5: "June",
+            6: "July",
+            7: "August",
+            8: "September",
+            9: "October",
+            10: "November",
+            11: "December"
+        };
 
-        switch (month) {
-            case 0:
-                nameOfMonth = "January";
-                break;
-            case 1:
-                nameOfMonth = "February";
-                break;
-            case 2:
-                nameOfMonth = "March";
-                break;
-            case 3:
-                nameOfMonth = "April";
-                break;
-            case 4:
-                nameOfMonth = "May";
-                break;
-            case 5:
-                nameOfMonth = "June";
-                break;
-            case 6:
-                nameOfMonth = "July";
-                break;
-            case 7:
-                nameOfMonth = "August";
-                break;
-            case 8:
-                nameOfMonth = "September";
-                break;
-            case 9:
-                nameOfMonth = "October";
-                break;
-            case 10:
-                nameOfMonth = "November";
-                break;
-            case 11:
-                nameOfMonth = "December";
-                break;
-            default:
-                break;
-        }
-
-        const formatted = `${date.getDate()} ${nameOfMonth}, ${date.getHours()}:${date.getMinutes()}`;
+        const formatted = `${date.getDate()} ${monthes[month]}, ${date.getHours()}:${date.getMinutes()}`;
 
         return formatted;
     }

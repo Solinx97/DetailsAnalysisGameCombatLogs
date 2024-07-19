@@ -59,11 +59,11 @@ public class AuthorizationViewModel : ParentTemplate
 
         await _identityService.SendTokenRequestAsync();
 
-        var customer = _memoryCache.Get<CustomerModel>(nameof(MemoryCacheValue.Customer));
-        if (customer != null)
+        var user = _memoryCache.Get<AppUserModel>(nameof(MemoryCacheValue.User));
+        if (user != null)
         {
             BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, nameof(BasicTemplateViewModel.IsAuth), true);
-            BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, nameof(BasicTemplateViewModel.Username), customer.Username);
+            BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, nameof(BasicTemplateViewModel.Username), user.Username);
         }
 
         await _mvvmNavigation.Close(this);

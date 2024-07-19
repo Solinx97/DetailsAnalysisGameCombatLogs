@@ -400,13 +400,13 @@ public class BasicTemplateViewModel : ParentTemplate, IVMDataHandler<CombatPlaye
 
     public void CheckAuth()
     {
-        var customer = _memoryCache.Get<CustomerModel>(nameof(MemoryCacheValue.Customer));
-        if (customer == null)
+        var user = _memoryCache.Get<AppUserModel>(nameof(MemoryCacheValue.User));
+        if (user == null)
         {
             return;
         }
 
         IsAuth = true;
-        Username = customer.Username;
+        Username = user.Username;
     }
 }

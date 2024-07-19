@@ -1,4 +1,4 @@
-import { faPen, faSquarePlus, faTrash, faCircleXmark } from '@fortawesome/free-solid-svg-icons';
+import { faCircleXmark, faPen, faSquarePlus, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -81,50 +81,22 @@ const Discussion = ({ user, discussionId, setShowDiscussion  }) => {
     const dateFormatting = (stringOfDate) => {
         const date = new Date(stringOfDate);
         const month = date.getMonth();
-        let nameOfMonth = "";
+        const monthes = {
+            0: "January",
+            1: "February",
+            2: "March",
+            3: "April",
+            4: "May",
+            5: "June",
+            6: "July",
+            7: "August",
+            8: "September",
+            9: "October",
+            10: "November",
+            11: "December"
+        };
 
-        switch (month) {
-            case 0:
-                nameOfMonth = "January";
-                break;
-            case 1:
-                nameOfMonth = "February";
-                break;
-            case 2:
-                nameOfMonth = "March";
-                break;
-            case 3:
-                nameOfMonth = "April";
-                break;
-            case 4:
-                nameOfMonth = "May";
-                break;
-            case 5:
-                nameOfMonth = "June";
-                break;
-            case 6:
-                nameOfMonth = "July";
-                break;
-            case 7:
-                nameOfMonth = "August";
-                break;
-            case 8:
-                nameOfMonth = "September";
-                break;
-            case 9:
-                nameOfMonth = "October";
-                break;
-            case 10:
-                nameOfMonth = "November";
-                break;
-            case 11:
-                nameOfMonth = "December";
-                break;
-            default:
-                break;
-        }
-
-        const formatted = `${date.getDate()} ${nameOfMonth}, ${date.getHours()}:${date.getMinutes()}`;
+        const formatted = `${date.getDate()} ${monthes[month]}, ${date.getHours()}:${date.getMinutes()}`;
 
         return formatted;
     }
@@ -141,7 +113,7 @@ const Discussion = ({ user, discussionId, setShowDiscussion  }) => {
                         />
                     </div>
                     <div className="title">{discussion.title}</div>
-                    {discussion?.customerId === user?.id &&
+                    {discussion?.appUserId === user?.id &&
                         <div className="actions">
                             <div className={`btn-shadow ${showComments ? "active" : ""}`} onClick={() => setEditModeOne(true)}>
                                 <FontAwesomeIcon
@@ -225,7 +197,7 @@ const Discussion = ({ user, discussionId, setShowDiscussion  }) => {
     }
 
     if (isLoading) {
-        return <></>;
+        return <div>Loading...</div>;
     }
 
     return (

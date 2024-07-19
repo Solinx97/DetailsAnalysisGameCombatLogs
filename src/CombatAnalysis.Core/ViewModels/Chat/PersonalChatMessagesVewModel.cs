@@ -113,15 +113,6 @@ public class PersonalChatMessagesVewModel : MvxViewModel, IImprovedMvxViewModel
         }
     }
 
-    public CustomerModel Customer
-    {
-        get { return _customer; }
-        set
-        {
-            SetProperty(ref _customer, value);
-        }
-    }
-
     public IVMHandler Handler { get; set; }
 
     public IMvxViewModel Parent { get; set; }
@@ -150,7 +141,7 @@ public class PersonalChatMessagesVewModel : MvxViewModel, IImprovedMvxViewModel
             Time = TimeSpan.Parse($"{DateTimeOffset.UtcNow.Hour}:{DateTimeOffset.UtcNow.Minute}").ToString(),
             Status = 0,
             PersonalChatId = SelectedChat.Id,
-            CustomerId = Customer.Id,
+            AppUserId = MyAccount.Id,
         };
 
         Message = string.Empty;
@@ -208,19 +199,18 @@ public class PersonalChatMessagesVewModel : MvxViewModel, IImprovedMvxViewModel
             return;
         }
 
-        var response = await _httpClientHelper.GetAsync($"Customer/{personalChatMessages.CustomerId}", refreshToken, Port.UserApi);
+        var response = await _httpClientHelper.GetAsync($"Account/{personalChatMessages.AppUserId}", refreshToken, Port.UserApi);
         if (!response.IsSuccessStatusCode)
         {
             return;
         }
 
-        var companions = await response.Content.ReadFromJsonAsync<CustomerModel>();
+        var companions = await response.Content.ReadFromJsonAsync<AppUserModel>();
         personalChatMessages.Username = companions?.Username;
     }
 
     private void GetMyAccount()
     {
         MyAccount = _memoryCache.Get<AppUserModel>(nameof(MemoryCacheValue.User));
-        Customer = _memoryCache.Get<CustomerModel>(nameof(MemoryCacheValue.Customer));
     }
 }

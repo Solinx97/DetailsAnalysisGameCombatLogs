@@ -19,7 +19,7 @@ const CreateDiscussion = ({ community, customer, setShowDiscussion }) => {
             title: title.current.value,
             content: content.current.value,
             when: new Date(),
-            customerId: customer?.id,
+            appUserId: customer?.id,
             communityId: community?.id
         }
 

@@ -74,13 +74,13 @@ public class CreateGroupChatViewModel : MvxViewModel
 
     public async Task CreateAsync()
     {
-        var customer = _memoryCache.Get<CustomerModel>(nameof(MemoryCacheValue.Customer));
-        if (customer == null)
+        var user = _memoryCache.Get<AppUserModel>(nameof(MemoryCacheValue.User));
+        if (user == null)
         {
             return;
         }
 
-        UpdateGroupChatModel(customer);
+        UpdateGroupChatModel(user);
 
         var response = await CreateGroupChatAsync();
         if (response.IsSuccessStatusCode)
@@ -88,17 +88,17 @@ public class CreateGroupChatViewModel : MvxViewModel
             var groupChat = await response.Content.ReadFromJsonAsync<GroupChatModel>();
 
             await CreateGroupChatRulesAsync(groupChat.Id);
-            await CreateGroupChatUserAsync(groupChat.Id, customer.Id, customer.Username);
+            await CreateGroupChatUserAsync(groupChat.Id, user.Id, user.Username);
 
             CancelCommand.Execute();
         }
     }
 
-    private void UpdateGroupChatModel(CustomerModel customer)
+    private void UpdateGroupChatModel(AppUserModel user)
     {
         _groupChat.Name = string.IsNullOrEmpty(Name) ? " " : Name;
         _groupChat.LastMessage = " ";
-        _groupChat.CustomerId = customer.Id;
+        _groupChat.AppUserId = user.Id;
     }
 
     private async Task<HttpResponseMessage> CreateGroupChatAsync()
@@ -134,7 +134,7 @@ public class CreateGroupChatViewModel : MvxViewModel
         return response;
     }
 
-    private async Task CreateGroupChatUserAsync(int groupChatId, string customerId, string username)
+    private async Task CreateGroupChatUserAsync(int groupChatId, string userId, string username)
     {
         var refreshToken = _memoryCache.Get<string>(nameof(MemoryCacheValue.RefreshToken));
         if (string.IsNullOrEmpty(refreshToken))
@@ -147,7 +147,7 @@ public class CreateGroupChatViewModel : MvxViewModel
             Id = "",
             Username = username,
             GroupChatId = groupChatId,
-            CustomerId = customerId,
+            AppUserId = userId,
         };
 
         await _httpClientHelper.PostAsync("GroupChatUser", JsonContent.Create(groupChatUser), refreshToken, Port.ChatApi);
