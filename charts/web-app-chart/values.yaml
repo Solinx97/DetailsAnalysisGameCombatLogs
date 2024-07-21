@@ -17,5 +17,5 @@ service:
     port: 80
     targetPort: 80
 ingress:
-    host: solinx.analysis.web
+    host: encounters.analysis.com
     port: 80

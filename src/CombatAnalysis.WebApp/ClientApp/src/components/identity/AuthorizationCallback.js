@@ -1,4 +1,4 @@
-﻿import { memo, useCallback, useEffect, useState } from 'react';
+﻿import { memo, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthProvider';
 
@@ -44,13 +44,13 @@ const AuthorizationCallback = () => {
     }, [stateIsValid]);
 
     const navigateToTokenAsync = async (code) => {
-        const codeVerifier = window.sessionStorage.getItem("codeVerifier");
+        const codeVerifier = getCookie("codeVerifier");
         const encodedAuthorizationCode = encodeURIComponent(code);
 
         const result = await fetch(`/api/v1/Identity?codeVerifier=${codeVerifier}&authorizationCode=${encodedAuthorizationCode}`);
         if (result.status === 200) {
-            window.sessionStorage.removeItem("codeVerifier");
-            window.sessionStorage.removeItem("state");
+            document.cookie = "codeVerifier=; expires=Thu, 01 Jan 1970 00:00:00 UTC;";
+            document.cookie = "state=; expires=Thu, 01 Jan 1970 00:00:00 UTC;";
 
             await checkAuthAsync();
 
@@ -63,12 +63,32 @@ const AuthorizationCallback = () => {
     }
 
     const validateState = (state) => {
-        const storedState = window.sessionStorage.getItem("state");
+        const storedState = getCookie("state");
         const stateIsValid = state === storedState;
 
         setStateIsValid(stateIsValid);
 
         return stateIsValid;
+    }
+
+    const getCookie = (cookieName) => {
+        let name = cookieName + "=";
+        let decodedCookie = decodeURIComponent(document.cookie);
+        let ca = decodedCookie.split(';');
+
+        for (let i = 0; i < ca.length; i++) {
+            let targetCookie = ca[i];
+
+            while (targetCookie.charAt(0) === ' ') {
+                targetCookie = targetCookie.substring(1);
+            }
+
+            if (targetCookie.indexOf(name) === 0) {
+                return targetCookie.substring(name.length, targetCookie.length);
+            }
+        }
+
+        return "";
     }
 
     return (

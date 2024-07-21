@@ -17,5 +17,5 @@ service:
     port: 80
     targetPort: 80
 ingress:
-    appName: solinx.analysis.identity
+    appName: identity.analysis.com
     port: 80

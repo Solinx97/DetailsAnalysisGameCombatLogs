@@ -4,7 +4,7 @@ import { useSelector } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
 import { Collapse, Container, Navbar, NavbarBrand, NavbarToggler } from 'reactstrap';
 import { useAuth } from '../context/AuthProvider';
-import useAuthorization from '../hooks/useAuthorization';
+import { useLazyIdentityQuery } from '../store/api/UserApi';
 import LanguageSelector from './LanguageSelector';
 import Search from './Search';
 
@@ -15,8 +15,9 @@ const NavMenu = () => {
 
     const user = useSelector((state) => state.user.value);
 
-    const { navigateToAuthorizationAsync, navigateToRegistrationAsync } = useAuthorization();
     const { isAuthenticated, checkAuthAsync, logoutAsync } = useAuth();
+
+    const [identityAsyncQuery] = useLazyIdentityQuery();
 
     const navigate = useNavigate();
 
@@ -38,8 +39,29 @@ const NavMenu = () => {
         setCollapsed((item) => !item);
     }, []);
 
-    const handleLoginClick = useCallback(async () => await navigateToAuthorizationAsync(), [navigate]);
-    const handleRegistrationClick = useCallback(async () => await navigateToRegistrationAsync(), [navigate]);
+    const loginAsync = async () => {
+        const identityServerAuthPath = process.env.REACT_APP_IDENTITY_SERVER_AUTH_PATH;
+
+        await redirectToIdentityAsync(identityServerAuthPath);
+    }
+
+    const registrationAsync = async () => {
+        const identityServerRegistrationPath = process.env.REACT_APP_IDENTITY_SERVER_REGISTRY_PATH;
+
+        await redirectToIdentityAsync(identityServerRegistrationPath);
+    }
+
+    const redirectToIdentityAsync = async (identityPath) => {
+        const response = await identityAsyncQuery(identityPath);
+
+        if (response.data !== undefined) {
+            const uri = response.data.uri;
+            window.location.href = uri;
+        }
+    } 
+
+    const handleLoginClick = useCallback(async () => await loginAsync(), [navigate]);
+    const handleRegistrationClick = useCallback(async () => await registrationAsync(), [navigate]);
     const handleLogoutClick = useCallback(() => logoutAsync(), [logoutAsync]);
 
     return (

@@ -7,7 +7,7 @@ service:
     port: 80
     targetPort: 80
 app1:
-    hostName: solinx.analysis.api.user
+    hostName: api.analysis.user.com
     name: user-api
     replicas: 2
     autoscaling: 
@@ -22,7 +22,7 @@ app1:
     ingress:
         port: 80
 app2:
-    hostName: solinx.analysis.api.communication
+    hostName: api.analysis.communication.com
     name: communication-api
     replicas: 2
     autoscaling: 
@@ -37,7 +37,7 @@ app2:
     ingress:
         port: 80
 app3:
-    hostName: solinx.analysis.api.chat
+    hostName: api.analysis.chat.com
     name: chat-api
     replicas: 2
     autoscaling: 
@@ -52,7 +52,7 @@ app3:
     ingress:
         port: 80
 app4:
-    hostName: solinx.analysis.api.parser
+    hostName: api.analysis.parser.com
     name: combat-parser-api
     replicas: 2
     autoscaling: 

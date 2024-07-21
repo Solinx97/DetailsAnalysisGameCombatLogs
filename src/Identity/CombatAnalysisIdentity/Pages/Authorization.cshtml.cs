@@ -1,3 +1,4 @@
+using CombatAnalysis.Identity.Security;
 using CombatAnalysisIdentity.Consts;
 using CombatAnalysisIdentity.Interfaces;
 using CombatAnalysisIdentity.Models;
@@ -20,6 +21,8 @@ public class AuthorizationModel : PageModel
     public bool QueryIsValid { get; set; }
 
     public string RegistrationUrl { get; } = Port.Identity;
+
+    public string Protocol { get; } = Authentication.Protocol;
 
     public async Task OnGetAsync()
     {

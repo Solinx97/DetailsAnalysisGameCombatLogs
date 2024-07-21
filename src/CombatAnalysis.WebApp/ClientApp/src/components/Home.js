@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import { NavLink, useLocation, useNavigate } from 'react-router-dom';
-import useAuthorization from '../hooks/useAuthorization';
+import { useLazyIdentityQuery } from '../store/api/UserApi';
 
 import '../styles/home.scss';
 
@@ -18,7 +18,7 @@ const Home = () => {
 
     const customer = useSelector((state) => state.customer.value);
 
-    const { navigateToAuthorizationAsync } = useAuthorization();
+    const [identityAsyncQuery] = useLazyIdentityQuery();
 
     const [shouldBeAuthorize, setShouldBeAuthorize] = useState(false);
 
@@ -43,6 +43,17 @@ const Home = () => {
         return () => clearTimeout(timeoutId);
     }, [shouldBeAuthorize]);
 
+    const loginAsync = async () => {
+        const identityServerAuthPath = process.env.REACT_APP_IDENTITY_SERVER_AUTH_PATH;
+
+        const response = await identityAsyncQuery(identityServerAuthPath);
+
+        if (response.data !== undefined) {
+            const uri = response.data.uri;
+            window.location.href = uri;
+        }
+    }
+
     const navigateToFeed = () => navigate("/feed");
     const navigateToMainInformation = () => navigate("/main-information");
 
@@ -52,7 +63,7 @@ const Home = () => {
                 <div className="title">
                     <div>{t("Communication")}</div>
                     {customer === null &&
-                        <div className="btn-shadow authorize-alert" onClick={async () => await navigateToAuthorizationAsync()} title={t("GoToLogin")}>
+                        <div className="btn-shadow authorize-alert" onClick={async () => await loginAsync()} title={t("GoToLogin")}>
                             <FontAwesomeIcon
                                 icon={faTriangleExclamation}
                             />
@@ -109,7 +120,7 @@ const Home = () => {
             {shouldBeAuthorize &&
                 <div className="should-be-authorize">
                     <div className="alert alert-success" role="alert">
-                        {t("YouNeed")} <NavLink onClick={async () => await navigateToAuthorizationAsync()}>{t("Login")}</NavLink> {t("InApp")}
+                        {t("YouNeed")} <NavLink onClick={async () => await loginAsync()}>{t("Login")}</NavLink> {t("InApp")}
                     </div>
                 </div>
             }

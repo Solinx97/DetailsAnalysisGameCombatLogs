@@ -3,6 +3,7 @@ using CombatAnalysis.WebApp.Enums;
 using CombatAnalysis.WebApp.Extensions;
 using CombatAnalysis.WebApp.Helpers;
 using CombatAnalysis.WebApp.Interfaces;
+using CombatAnalysis.WebApp.Models.Authentication;
 using CombatAnalysis.WebApp.Models.User;
 using Microsoft.AspNetCore.Mvc;
 
@@ -47,5 +48,38 @@ public class AuthenticationController : ControllerBase
 
             return BadRequest($"Authentication refresh was failed. Error: {ex.Message}");
         }
+    }
+
+    [HttpGet("identity")]
+    public IActionResult Identity(string identityPath)
+    {
+        var codeVerifier = PKCEHelper.GenerateCodeVerifier();
+        var state = PKCEHelper.GenerateCodeVerifier();
+        var codeChallenge = PKCEHelper.GenerateCodeChallenge(codeVerifier);
+
+        var uri = $"{Authentication.IdentityServer}{identityPath}?grantType={AuthenticationGrantType.Code}" +
+            $"&clientTd={Authentication.ClientId}&redirectUri={Authentication.RedirectUri}" +
+            $"&scope={Authentication.ClientScope}&state={state}&codeChallengeMethod={Authentication.CodeChallengeMethod}" +
+            $"&codeChallenge={codeChallenge}";
+
+        var identityRedirect = new IdentityRedirect
+        {
+            Uri = uri
+        };
+
+        HttpContext.Response.Cookies.Append("codeVerifier", codeVerifier, new CookieOptions
+        {
+            HttpOnly = false,
+            Secure = false,
+            SameSite = SameSiteMode.Lax,
+        });
+        HttpContext.Response.Cookies.Append("state", state, new CookieOptions
+        {
+            HttpOnly = false,
+            Secure = false,
+            SameSite = SameSiteMode.Lax,
+        });
+
+        return Ok(identityRedirect);
     }
 }

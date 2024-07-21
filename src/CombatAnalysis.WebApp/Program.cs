@@ -21,7 +21,12 @@ AuthenticationGrantType.Authorization = builder.Configuration["Authentication:Gr
 AuthenticationGrantType.RefreshToken = builder.Configuration["Authentication:GrantType:RefreshToken"];
 
 Authentication.ClientId = builder.Configuration["Authentication:ClientId"];
+Authentication.ClientScope = builder.Configuration["Authentication:ClientScope"];
 Authentication.RedirectUri = builder.Configuration["Authentication:RedirectUri"];
+Authentication.IdentityServer = builder.Configuration["Authentication:IdentityServer"];
+Authentication.IdentityAuthPath = builder.Configuration["Authentication:IdentityAuthPath"];
+Authentication.IdentityRegistryPath = builder.Configuration["Authentication:IdentityRegistryPath"];
+Authentication.CodeChallengeMethod = builder.Configuration["Authentication:CodeChallengeMethod"];
 if (int.TryParse(builder.Configuration["Authentication:RefreshTokenExpiresDays"], out var refreshTokenExpiresDays))
 {
     Authentication.RefreshTokenExpiresDays = refreshTokenExpiresDays;

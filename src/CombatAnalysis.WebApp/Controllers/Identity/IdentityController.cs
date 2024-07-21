@@ -49,14 +49,14 @@ public class IdentityController : ControllerBase
             HttpContext.Response.Cookies.Append(AuthenticationTokenType.AccessToken.ToString(), token.AccessToken, new CookieOptions
             {
                 HttpOnly = true,
-                Secure = true,
+                Secure = false,
                 SameSite = SameSiteMode.Lax,
                 Expires = token.Expires,
             });
             HttpContext.Response.Cookies.Append(AuthenticationTokenType.RefreshToken.ToString(), token.RefreshToken, new CookieOptions
             {
                 HttpOnly = true,
-                Secure = true,
+                Secure = false,
                 SameSite = SameSiteMode.Lax,
                 Expires = token.Expires.AddDays(Authentication.RefreshTokenExpiresDays)
             });

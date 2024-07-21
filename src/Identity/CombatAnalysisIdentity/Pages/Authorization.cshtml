@@ -42,7 +42,8 @@ else
         const queryString = window.location.search;
         const queryparams = new URLSearchParams(queryString);
         const redirectUri = queryparams.get("redirectUri");
+        const protocol = `@Model.Protocol`;
 
-        window.location.href = redirectUri;
+        window.location.href = `${protocol}://${redirectUri}`;
     }
 </script>

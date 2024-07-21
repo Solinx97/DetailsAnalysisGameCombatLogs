@@ -8,8 +8,6 @@ export const UserApi = createApi({
         'Account',
         'Authentication',
         'Customer',
-        'Friend',
-        'RequestToConnect',
     ],
     baseQuery: fetchBaseQuery({
         baseUrl: apiURL
@@ -25,6 +23,9 @@ export const UserApi = createApi({
             query: () => '/Authentication',
             providesTags: (result, error, id) => [{ type: 'Authentication', id }]
         }),
+        identity: builder.query({
+            query: (identityPath) => `/Authentication/identity?identityPath=${identityPath}`
+        }),
     })
 })
 
@@ -35,4 +36,5 @@ export const {
     useLazyGetCustomersQuery,
     useAuthenticationAsyncQuery,
     useLazyAuthenticationAsyncQuery,
+    useLazyIdentityQuery,
 } = UserApi;
