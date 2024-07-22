@@ -159,6 +159,12 @@
     <Build Include="StoredProcedures\Update\UpdateResourceRecovery.sql" />
     <Build Include="StoredProcedures\Update\UpdateResourceRecoveryGeneral.sql" />
     <Build Include="StoredProcedures\Update\UpdateSpecializationScore.sql" />
+    <Build Include="Tables\PlayerDeath.sql" />
+    <Build Include="StoredProcedures\Insert\InsertIntoPlayerDeath.sql" />
+    <Build Include="StoredProcedures\Delete\DeletePlayerDeath.sql" />
+    <Build Include="StoredProcedures\GetAll\GetAllPlayerDeath.sql" />
+    <Build Include="StoredProcedures\GetById\GetPlayerDeathById.sql" />
+    <Build Include="StoredProcedures\Update\UpdatePlayerDeath.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="InitialData\InsertDeployment.sql" />
