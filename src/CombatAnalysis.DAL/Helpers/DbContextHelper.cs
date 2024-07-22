@@ -4,7 +4,7 @@ using System.Text;
 
 namespace CombatAnalysis.DAL.Helpers;
 
-public static class DbProcedureHelper
+internal static class DbProcedureHelper
 {
     public static void CreateProcedures(DbContext dbContext)
     {
