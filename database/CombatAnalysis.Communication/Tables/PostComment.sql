@@ -1,0 +1,8 @@
+﻿CREATE TABLE [dbo].[PostComment]
+(
+	[Id] INT NOT NULL PRIMARY KEY, 
+    [Content] NVARCHAR(MAX) NOT NULL, 
+    [When] DATETIMEOFFSET NOT NULL, 
+    [PostId] INT NOT NULL, 
+    [AppUserId] NVARCHAR(50) NOT NULL
+)
