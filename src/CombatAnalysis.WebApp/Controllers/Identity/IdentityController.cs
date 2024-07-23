@@ -1,7 +1,6 @@
 ﻿using CombatAnalysis.WebApp.Consts;
 using CombatAnalysis.WebApp.Enums;
 using CombatAnalysis.WebApp.Extensions;
-using CombatAnalysis.WebApp.Helpers;
 using CombatAnalysis.WebApp.Interfaces;
 using CombatAnalysis.WebApp.Models.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -22,10 +21,17 @@ public class IdentityController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<IActionResult> AuthorizationCodeExchange(string codeVerifier, string authorizationCode)
+    public async Task<IActionResult> AuthorizationCodeExchange(string authorizationCode)
     {
         try
         {
+            if (!HttpContext.Request.Cookies.TryGetValue(AuthenticationCookie.CodeVerifier.ToString(), out var codeVerifier))
+            {
+                return BadRequest();
+            }
+
+            HttpContext.Response.Cookies.Delete(AuthenticationCookie.CodeVerifier.ToString());
+
             var encodedAuthorizationCode = Uri.EscapeDataString(authorizationCode);
             var url = $"Token?grantType={AuthenticationGrantType.Authorization}&clientId={Authentication.ClientId}&codeVerifier={codeVerifier}&code={encodedAuthorizationCode}&redirectUri={Authentication.RedirectUri}";
 
@@ -46,14 +52,14 @@ public class IdentityController : ControllerBase
                 return BadRequest();
             }
 
-            HttpContext.Response.Cookies.Append(AuthenticationTokenType.AccessToken.ToString(), token.AccessToken, new CookieOptions
+            HttpContext.Response.Cookies.Append(AuthenticationCookie.AccessToken.ToString(), token.AccessToken, new CookieOptions
             {
                 HttpOnly = true,
                 Secure = false,
                 SameSite = SameSiteMode.Lax,
                 Expires = token.Expires,
             });
-            HttpContext.Response.Cookies.Append(AuthenticationTokenType.RefreshToken.ToString(), token.RefreshToken, new CookieOptions
+            HttpContext.Response.Cookies.Append(AuthenticationCookie.RefreshToken.ToString(), token.RefreshToken, new CookieOptions
             {
                 HttpOnly = true,
                 Secure = false,
@@ -61,9 +67,7 @@ public class IdentityController : ControllerBase
                 Expires = token.Expires.AddDays(Authentication.RefreshTokenExpiresDays)
             });
 
-            var identityUserId = AccessTokenHelper.GetUserIdFromToken(token.AccessToken);
-
-            return Ok(identityUserId);
+            return Ok();
         }
         catch (Exception ex)
         {

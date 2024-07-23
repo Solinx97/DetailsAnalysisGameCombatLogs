@@ -23,7 +23,7 @@ public class GroupChatMessageCountController : ControllerBase
     [HttpGet("find")]
     public async Task<IActionResult> Find(int chatId, string userId)
     {
-        if (!Request.Cookies.TryGetValue(AuthenticationTokenType.AccessToken.ToString(), out var accessToken))
+        if (!Request.Cookies.TryGetValue(AuthenticationCookie.AccessToken.ToString(), out var accessToken))
         {
             return Unauthorized();
         }
@@ -47,7 +47,7 @@ public class GroupChatMessageCountController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> Create(GroupChatMessageCountModel message)
     {
-        if (!Request.Cookies.TryGetValue(AuthenticationTokenType.AccessToken.ToString(), out var accessToken))
+        if (!Request.Cookies.TryGetValue(AuthenticationCookie.AccessToken.ToString(), out var accessToken))
         {
             return Unauthorized();
         }
@@ -69,7 +69,7 @@ public class GroupChatMessageCountController : ControllerBase
     [HttpPut]
     public async Task<IActionResult> Update(GroupChatMessageCountModel message)
     {
-        if (!Request.Cookies.TryGetValue(AuthenticationTokenType.AccessToken.ToString(), out var accessToken))
+        if (!Request.Cookies.TryGetValue(AuthenticationCookie.AccessToken.ToString(), out var accessToken))
         {
             return Unauthorized();
         }
@@ -90,7 +90,7 @@ public class GroupChatMessageCountController : ControllerBase
     [HttpDelete("{id:int:min(1)}")]
     public async Task<IActionResult> Delete(int id)
     {
-        if (!Request.Cookies.TryGetValue(AuthenticationTokenType.AccessToken.ToString(), out var accessToken))
+        if (!Request.Cookies.TryGetValue(AuthenticationCookie.AccessToken.ToString(), out var accessToken))
         {
             return Unauthorized();
         }

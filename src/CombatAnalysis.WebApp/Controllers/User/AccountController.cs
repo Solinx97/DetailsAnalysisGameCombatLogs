@@ -24,7 +24,7 @@ public class AccountController : ControllerBase
     [HttpPut]
     public async Task<IActionResult> Edit(AppUserModel model)
     {
-        if (!Request.Cookies.TryGetValue(AuthenticationTokenType.AccessToken.ToString(), out var refreshToken))
+        if (!Request.Cookies.TryGetValue(AuthenticationCookie.AccessToken.ToString(), out var refreshToken))
         {
             return Unauthorized();
         }
@@ -47,7 +47,7 @@ public class AccountController : ControllerBase
     [HttpGet]
     public async Task<IActionResult> GetAll()
     {
-        if (!Request.Cookies.TryGetValue(AuthenticationTokenType.AccessToken.ToString(), out var accessToken))
+        if (!Request.Cookies.TryGetValue(AuthenticationCookie.AccessToken.ToString(), out var accessToken))
         {
             return Unauthorized();
         }
@@ -71,7 +71,7 @@ public class AccountController : ControllerBase
     [HttpGet("{id}")]
     public async Task<IActionResult> GetById(string id)
     {
-        if (!Request.Cookies.TryGetValue(AuthenticationTokenType.AccessToken.ToString(), out var accessToken))
+        if (!Request.Cookies.TryGetValue(AuthenticationCookie.AccessToken.ToString(), out var accessToken))
         {
             return Unauthorized();
         }
@@ -95,7 +95,7 @@ public class AccountController : ControllerBase
     [HttpGet("find/{identityUserId}")]
     public async Task<IActionResult> FindByIdentityUserId(string identityUserId)
     {
-        if (!Request.Cookies.TryGetValue(AuthenticationTokenType.AccessToken.ToString(), out var accessToken))
+        if (!Request.Cookies.TryGetValue(AuthenticationCookie.AccessToken.ToString(), out var accessToken))
         {
             return Unauthorized();
         }
@@ -132,8 +132,8 @@ public class AccountController : ControllerBase
     [HttpPost("logout")]
     public IActionResult Logout()
     {
-        HttpContext.Response.Cookies.Delete(AuthenticationTokenType.RefreshToken.ToString());
-        HttpContext.Response.Cookies.Delete(AuthenticationTokenType.AccessToken.ToString());
+        HttpContext.Response.Cookies.Delete(AuthenticationCookie.RefreshToken.ToString());
+        HttpContext.Response.Cookies.Delete(AuthenticationCookie.AccessToken.ToString());
 
         return Ok();
     }

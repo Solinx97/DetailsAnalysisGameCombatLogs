@@ -23,7 +23,7 @@ public class CommunityDiscussionController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> Create(CommunityDiscussionModel newCommunity)
     {
-        if (!Request.Cookies.TryGetValue(AuthenticationTokenType.AccessToken.ToString(), out var accessToken))
+        if (!Request.Cookies.TryGetValue(AuthenticationCookie.AccessToken.ToString(), out var accessToken))
         {
             return Unauthorized();
         }
@@ -47,7 +47,7 @@ public class CommunityDiscussionController : ControllerBase
     [HttpGet]
     public async Task<IActionResult> GetAll()
     {
-        if (!Request.Cookies.TryGetValue(AuthenticationTokenType.AccessToken.ToString(), out var accessToken))
+        if (!Request.Cookies.TryGetValue(AuthenticationCookie.AccessToken.ToString(), out var accessToken))
         {
             return Unauthorized();
         }
@@ -71,7 +71,7 @@ public class CommunityDiscussionController : ControllerBase
     [HttpGet("{id:int:min(1)}")]
     public async Task<IActionResult> GetById(int id)
     {
-        if (!Request.Cookies.TryGetValue(AuthenticationTokenType.AccessToken.ToString(), out var accessToken))
+        if (!Request.Cookies.TryGetValue(AuthenticationCookie.AccessToken.ToString(), out var accessToken))
         {
             return Unauthorized();
         }
@@ -95,7 +95,7 @@ public class CommunityDiscussionController : ControllerBase
     [HttpGet("findByCommunityId/{id:int:min(1)}")]
     public async Task<IActionResult> FindByCommunityId(int id)
     {
-        if (!Request.Cookies.TryGetValue(AuthenticationTokenType.AccessToken.ToString(), out var accessToken))
+        if (!Request.Cookies.TryGetValue(AuthenticationCookie.AccessToken.ToString(), out var accessToken))
         {
             return Unauthorized();
         }

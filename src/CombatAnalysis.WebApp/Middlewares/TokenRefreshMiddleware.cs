@@ -33,14 +33,14 @@ public class TokenRefreshMiddleware
 
     private async Task CheckAccessTokenAsync(HttpContext context, ITokenService tokenService)
     {
-        if (!context.Request.Cookies.TryGetValue(AuthenticationTokenType.RefreshToken.ToString(), out var refreshToken))
+        if (!context.Request.Cookies.TryGetValue(AuthenticationCookie.RefreshToken.ToString(), out var refreshToken))
         {
             await _next(context);
 
             return;
         }
 
-        if (!context.Request.Cookies.TryGetValue(AuthenticationTokenType.AccessToken.ToString(), out var accessToken)
+        if (!context.Request.Cookies.TryGetValue(AuthenticationCookie.AccessToken.ToString(), out var accessToken)
             && string.IsNullOrEmpty(refreshToken))
         {
             await _next(context);
@@ -63,14 +63,14 @@ public class TokenRefreshMiddleware
             return;
         }
 
-        context.Response.Cookies.Append(AuthenticationTokenType.AccessToken.ToString(), token.AccessToken, new CookieOptions
+        context.Response.Cookies.Append(AuthenticationCookie.AccessToken.ToString(), token.AccessToken, new CookieOptions
         {
             HttpOnly = true,
             Secure = false,
             SameSite = SameSiteMode.Lax,
             Expires = token.Expires,
         });
-        context.Response.Cookies.Append(AuthenticationTokenType.RefreshToken.ToString(), token.RefreshToken, new CookieOptions
+        context.Response.Cookies.Append(AuthenticationCookie.RefreshToken.ToString(), token.RefreshToken, new CookieOptions
         {
             HttpOnly = true,
             Secure = false,

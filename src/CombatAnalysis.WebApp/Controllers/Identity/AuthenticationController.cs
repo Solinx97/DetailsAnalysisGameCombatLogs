@@ -27,7 +27,7 @@ public class AuthenticationController : ControllerBase
     {
         try
         {
-            if (!Request.Cookies.TryGetValue(AuthenticationTokenType.AccessToken.ToString(), out var accessToken))
+            if (!Request.Cookies.TryGetValue(AuthenticationCookie.AccessToken.ToString(), out var accessToken))
             {
                 return Ok();
             }
@@ -50,8 +50,8 @@ public class AuthenticationController : ControllerBase
         }
     }
 
-    [HttpGet("identity")]
-    public IActionResult Identity(string identityPath)
+    [HttpGet("authorization")]
+    public IActionResult Authorization(string identityPath)
     {
         var codeVerifier = PKCEHelper.GenerateCodeVerifier();
         var state = PKCEHelper.GenerateCodeVerifier();
@@ -67,19 +67,38 @@ public class AuthenticationController : ControllerBase
             Uri = uri
         };
 
-        HttpContext.Response.Cookies.Append("codeVerifier", codeVerifier, new CookieOptions
+        HttpContext.Response.Cookies.Append(AuthenticationCookie.CodeVerifier.ToString(), codeVerifier, new CookieOptions
         {
-            HttpOnly = false,
+            HttpOnly = true,
             Secure = false,
             SameSite = SameSiteMode.Lax,
         });
-        HttpContext.Response.Cookies.Append("state", state, new CookieOptions
+        HttpContext.Response.Cookies.Append(AuthenticationCookie.State.ToString(), state, new CookieOptions
         {
-            HttpOnly = false,
+            HttpOnly = true,
             Secure = false,
             SameSite = SameSiteMode.Lax,
         });
 
         return Ok(identityRedirect);
+    }
+
+    [HttpGet("stateValidate")]
+    public IActionResult StateValidate(string state)
+    {
+        if (!HttpContext.Request.Cookies.TryGetValue(AuthenticationCookie.State.ToString(), out var stateValue))
+        {
+            return BadRequest();
+        }
+
+        HttpContext.Response.Cookies.Delete(AuthenticationCookie.State.ToString());
+
+        if (stateValue == state)
+        {
+            
+            return Ok();
+        }
+
+        return BadRequest();
     }
 }

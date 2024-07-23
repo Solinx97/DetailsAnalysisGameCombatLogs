@@ -9,16 +9,16 @@ public class RequireAccessTokenAttribute : Attribute, IAsyncActionFilter
 {
     public async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
     {
-        if (!context.HttpContext.Request.Cookies.TryGetValue(AuthenticationTokenType.AccessToken.ToString(), out var _) 
-            && !context.HttpContext.Request.Cookies.TryGetValue(AuthenticationTokenType.RefreshToken.ToString(), out var _))
+        if (!context.HttpContext.Request.Cookies.TryGetValue(AuthenticationCookie.AccessToken.ToString(), out var _) 
+            && !context.HttpContext.Request.Cookies.TryGetValue(AuthenticationCookie.RefreshToken.ToString(), out var _))
         {
             context.Result = new UnauthorizedResult();
 
             return;
         }
 
-        if (!context.HttpContext.Request.Cookies.TryGetValue(AuthenticationTokenType.AccessToken.ToString(), out var _)
-            && context.HttpContext.Request.Cookies.TryGetValue(AuthenticationTokenType.RefreshToken.ToString(), out var _))
+        if (!context.HttpContext.Request.Cookies.TryGetValue(AuthenticationCookie.AccessToken.ToString(), out var _)
+            && context.HttpContext.Request.Cookies.TryGetValue(AuthenticationCookie.RefreshToken.ToString(), out var _))
         {
             return;
         }

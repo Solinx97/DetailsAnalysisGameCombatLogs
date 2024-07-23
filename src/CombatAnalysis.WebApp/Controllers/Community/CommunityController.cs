@@ -23,7 +23,7 @@ public class CommunityController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> Create(CommunityModel newCommunity)
     {
-        if (!Request.Cookies.TryGetValue(AuthenticationTokenType.AccessToken.ToString(), out var accessToken))
+        if (!Request.Cookies.TryGetValue(AuthenticationCookie.AccessToken.ToString(), out var accessToken))
         {
             return Unauthorized();
         }

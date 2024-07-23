@@ -23,7 +23,7 @@ public class UnreadGroupChatMessageController : ControllerBase
     [HttpGet("find")]
     public async Task<IActionResult> Find(int messageId, string groupChatUserId)
     {
-        if (!Request.Cookies.TryGetValue(AuthenticationTokenType.AccessToken.ToString(), out var accessToken))
+        if (!Request.Cookies.TryGetValue(AuthenticationCookie.AccessToken.ToString(), out var accessToken))
         {
             return Unauthorized();
         }
@@ -47,7 +47,7 @@ public class UnreadGroupChatMessageController : ControllerBase
     [HttpGet("findByMessageId/{id}")]
     public async Task<IActionResult> FindByMessageId(int id)
     {
-        if (!Request.Cookies.TryGetValue(AuthenticationTokenType.AccessToken.ToString(), out var accessToken))
+        if (!Request.Cookies.TryGetValue(AuthenticationCookie.AccessToken.ToString(), out var accessToken))
         {
             return Unauthorized();
         }
@@ -70,7 +70,7 @@ public class UnreadGroupChatMessageController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> Create(UnreadGroupChatMessageModel message)
     {
-        if (!Request.Cookies.TryGetValue(AuthenticationTokenType.AccessToken.ToString(), out var accessToken))
+        if (!Request.Cookies.TryGetValue(AuthenticationCookie.AccessToken.ToString(), out var accessToken))
         {
             return Unauthorized();
         }
@@ -92,7 +92,7 @@ public class UnreadGroupChatMessageController : ControllerBase
     [HttpPut]
     public async Task<IActionResult> Update(UnreadGroupChatMessageModel message)
     {
-        if (!Request.Cookies.TryGetValue(AuthenticationTokenType.AccessToken.ToString(), out var accessToken))
+        if (!Request.Cookies.TryGetValue(AuthenticationCookie.AccessToken.ToString(), out var accessToken))
         {
             return Unauthorized();
         }
@@ -113,7 +113,7 @@ public class UnreadGroupChatMessageController : ControllerBase
     [HttpDelete("{id:int:min(1)}")]
     public async Task<IActionResult> Delete(int id)
     {
-        if (!Request.Cookies.TryGetValue(AuthenticationTokenType.AccessToken.ToString(), out var accessToken))
+        if (!Request.Cookies.TryGetValue(AuthenticationCookie.AccessToken.ToString(), out var accessToken))
         {
             return Unauthorized();
         }

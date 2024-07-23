@@ -24,7 +24,10 @@ export const UserApi = createApi({
             providesTags: (result, error, id) => [{ type: 'Authentication', id }]
         }),
         identity: builder.query({
-            query: (identityPath) => `/Authentication/identity?identityPath=${identityPath}`
+            query: (identityPath) => `/Authentication/authorization?identityPath=${identityPath}`
+        }),
+        stateValidate: builder.query({
+            query: (state) => `/Authentication/stateValidate?state=${state}`
         }),
     })
 })
@@ -37,4 +40,5 @@ export const {
     useAuthenticationAsyncQuery,
     useLazyAuthenticationAsyncQuery,
     useLazyIdentityQuery,
+    useLazyStateValidateQuery,
 } = UserApi;

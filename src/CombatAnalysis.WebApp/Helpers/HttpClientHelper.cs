@@ -8,12 +8,6 @@ internal class HttpClientHelper : IHttpClientHelper
 {
     public HttpClientHelper()
     {
-        //Accept all Certifications (added for Local devployment)
-        //var handler = new HttpClientHandler
-        //{
-        //    ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => { return true; }
-        //};
-
         var handler = new HttpClientHandler
         {
             ServerCertificateCustomValidationCallback = (httpRequestMessage, cert, cetChain, policyErrors) =>

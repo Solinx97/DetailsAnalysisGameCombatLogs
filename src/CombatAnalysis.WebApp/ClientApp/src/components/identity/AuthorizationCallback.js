@@ -1,33 +1,36 @@
 ﻿import { memo, useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthProvider';
+import { useLazyAuthorizationCodeExchangeQuery } from '../../store/api/Identity.api';
+import { useLazyStateValidateQuery } from '../../store/api/UserApi';
 
 import '../../styles/identity/authorizationCallback.scss';
 
 const unauthorizedTimeout = 4000;
 
 const AuthorizationCallback = () => {
+    const { t } = useTranslation("identity/authorizationCallback");
+
     const navigate = useNavigate();
 
     const { checkAuthAsync } = useAuth();
 
     const [stateIsValid, setStateIsValid] = useState(true);
 
+    const [stateValidateQuery] = useLazyStateValidateQuery();
+    const [authorizationCodeExchangeQuery] = useLazyAuthorizationCodeExchangeQuery();
+
     useEffect(() => {
         const queryParams = new URLSearchParams(window.location.search);
         const code = queryParams.get("code");
         const state = queryParams.get("state");
 
-        const naviagetToToken = async () => {
-            const stateIsValid = validateState(state);
-            if (!stateIsValid) {
-                return;
-            }
-
-            await navigateToTokenAsync(code);
+        const validateState = async () => {
+            await validateStateAsync(state, code);
         }
 
-        naviagetToToken();
+        validateState();
     }, []);
 
     useEffect(() => {
@@ -44,58 +47,35 @@ const AuthorizationCallback = () => {
     }, [stateIsValid]);
 
     const navigateToTokenAsync = async (code) => {
-        const codeVerifier = getCookie("codeVerifier");
         const encodedAuthorizationCode = encodeURIComponent(code);
 
-        const result = await fetch(`/api/v1/Identity?codeVerifier=${codeVerifier}&authorizationCode=${encodedAuthorizationCode}`);
-        if (result.status === 200) {
-            document.cookie = "codeVerifier=; expires=Thu, 01 Jan 1970 00:00:00 UTC;";
-            document.cookie = "state=; expires=Thu, 01 Jan 1970 00:00:00 UTC;";
-
+        const response = await authorizationCodeExchangeQuery(encodedAuthorizationCode);
+        if (response.data !== undefined) {
             await checkAuthAsync();
 
             navigate("/");
         }
 
-        console.log(await result.text());
-
         setStateIsValid(false);
     }
 
-    const validateState = (state) => {
-        const storedState = getCookie("state");
-        const stateIsValid = state === storedState;
+    const validateStateAsync = async (state, code) => {
+        const response = await stateValidateQuery(state);
 
-        setStateIsValid(stateIsValid);
+        if (response.data !== undefined) {
+            await navigateToTokenAsync(code);
 
-        return stateIsValid;
-    }
-
-    const getCookie = (cookieName) => {
-        let name = cookieName + "=";
-        let decodedCookie = decodeURIComponent(document.cookie);
-        let ca = decodedCookie.split(';');
-
-        for (let i = 0; i < ca.length; i++) {
-            let targetCookie = ca[i];
-
-            while (targetCookie.charAt(0) === ' ') {
-                targetCookie = targetCookie.substring(1);
-            }
-
-            if (targetCookie.indexOf(name) === 0) {
-                return targetCookie.substring(name.length, targetCookie.length);
-            }
+            return;
         }
 
-        return "";
+        setStateIsValid(false);
     }
 
     return (
         <div className="authorization-callback">
             {stateIsValid
-                ? <div className="successful">Authorization</div>
-                : <div className="failed">Unauthorized. Pls try authorization one more time</div>
+                ? <div className="successful">{t("Authorization")}</div>
+                : <div className="failed">{t("Unauthorized")}</div>
             }
         </div>
     );

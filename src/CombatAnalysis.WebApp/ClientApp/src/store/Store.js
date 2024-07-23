@@ -1,6 +1,5 @@
 ﻿import { combineReducers, configureStore } from '@reduxjs/toolkit';
 import authenticationMiddleware from '../middleware/authenticationMiddleware';
-//import errorHandlingMiddleware from '../middleware/errorHandlingMiddleware';
 import { ChatApi } from './api/ChatApi';
 import { CombatParserApi } from './api/CombatParserApi';
 import { UserApi } from './api/UserApi';
@@ -10,7 +9,6 @@ import userReducer from './slicers/UserSlice';
 const reducers = combineReducers({
     customer: customerReducer,
     user: userReducer,
-    [UserApi.reducerPath]: UserApi.reducer,
     [UserApi.reducerPath]: UserApi.reducer,
     [ChatApi.reducerPath]: ChatApi.reducer,
     [CombatParserApi.reducerPath]: CombatParserApi.reducer,
@@ -24,7 +22,6 @@ const Store = configureStore({
             .concat(ChatApi.middleware)
             .concat(CombatParserApi.middleware)
             .concat(authenticationMiddleware)
-            //.concat(errorHandlingMiddleware)
 });
 
 export default Store;
