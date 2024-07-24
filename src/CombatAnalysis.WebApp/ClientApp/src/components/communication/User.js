@@ -12,8 +12,6 @@ import "../../styles/communication/user.scss";
 const User = ({ me, targetUserId, setUserInformation, allowRemoveFriend, actionAfterRequests = null, friendId = 0 }) => {
     const { t } = useTranslation("communication/myEnvironment/friends");
 
-    console.log(targetUserId);
-
     const navigate = useNavigate();
 
     const [removeFriendAsyncMut] = useRemoveFriendAsyncMutation();
