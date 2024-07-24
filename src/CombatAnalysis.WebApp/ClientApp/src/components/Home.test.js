@@ -1,5 +1,5 @@
 import '@testing-library/jest-dom';
-import { fireEvent, render, screen } from '@testing-library/react';
+import { fireEvent, render } from '@testing-library/react';
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { MemoryRouter, useNavigate } from 'react-router-dom';
@@ -12,120 +12,120 @@ jest.mock('react-router-dom', () => ({
 }));
 
 jest.mock('react-redux', () => ({
-  ...jest.requireActual('react-redux'),
-  useSelector: jest.fn(),
-  useDispatch: jest.fn(),
+    ...jest.requireActual('react-redux'),
+    useSelector: jest.fn(),
+    useDispatch: jest.fn(),
 }));
 
 jest.mock('../store/api/UserApi', () => ({
-  useLazyIdentityQuery: jest.fn(),
+    useLazyIdentityQuery: jest.fn(),
 }));
 
 jest.mock('react-i18next', () => ({
-  useTranslation: () => ({
-    t: (key) => key,  // Return the key as the translation
-    i18n: {
-      changeLanguage: jest.fn(),
+    useTranslation: () => ({
+        t: (key) => key,  // Return the key as the translation
+        i18n: {
+            changeLanguage: jest.fn(),
+        },
+    }),
+    initReactI18next: {
+        type: '3rdParty',
+        init: jest.fn(),
     },
-  }),
-  initReactI18next: {
-    type: '3rdParty',
-    init: jest.fn(),
-  },
 }));
 
 describe('Home Component', () => {
-  beforeEach(() => {
-    useSelector.mockReturnValue(null);
-    useDispatch.mockReturnValue(jest.fn());
-    useLazyIdentityQuery.mockReturnValue([jest.fn()]);
-  });
-
-  afterEach(() => {
-    jest.clearAllMocks();
-  });
-
-  test('renders the component', () => {
-    render(
-      <MemoryRouter>
-        <Home />
-      </MemoryRouter>
-    );
-
-    const communityElements = screen.getAllByText('Communication');
-    expect(communityElements.length).toBeGreaterThan(0);
-    communityElements.forEach(element => {
-      expect(element).toBeInTheDocument();
+    beforeEach(() => {
+        useSelector.mockReturnValue(null);
+        useDispatch.mockReturnValue(jest.fn());
+        useLazyIdentityQuery.mockReturnValue([jest.fn()]);
     });
 
-    const analyzingElements = screen.getAllByText('Analyzing');
-    expect(analyzingElements.length).toBeGreaterThan(0);
-    analyzingElements.forEach(element => {
-      expect(element).toBeInTheDocument();
-    });
-  });
-
-  test('renders the authorize alert when customer is null', () => {
-    useSelector.mockReturnValue(null);
-
-    render(
-      <MemoryRouter>
-        <Home />
-      </MemoryRouter>
-    );
-
-    expect(screen.getByText('ShouldAuthorize')).toBeInTheDocument();
-  });
-
-  test('does not render the authorize alert when customer is not null', () => {
-    useSelector.mockReturnValue({});
-
-    render(
-      <MemoryRouter>
-        <Home />
-      </MemoryRouter>
-    );
-
-    expect(screen.queryByText('ShouldAuthorize')).toBeNull();
-  });
-
-  test('navigates to feed when "Open" button is clicked', () => {
-    const navigateMock = jest.fn();
-    useNavigate.mockReturnValue(navigateMock);
-    useSelector.mockReturnValue({});
-
-    render(
-      <MemoryRouter>
-        <Home />
-      </MemoryRouter>
-    );
-
-    const openElements = screen.getAllByText('Open');
-    expect(openElements.length).toBeGreaterThan(0);
-    openElements.forEach(element => {
-      fireEvent.click(element);
+    afterEach(() => {
+        jest.clearAllMocks();
     });
 
-    expect(navigateMock).toHaveBeenCalledWith('/feed');
-  });
+    test('renders the component', () => {
+        const { getAllByText } = render(
+            <MemoryRouter>
+                <Home />
+            </MemoryRouter>
+        );
 
-  test('navigates to main information when "Open" button is clicked', () => {
-    const navigateMock = jest.fn();
-    useNavigate.mockReturnValue(navigateMock);
-    useSelector.mockReturnValue({});
+        const communityElements = getAllByText('Communication');
+        expect(communityElements.length).toBeGreaterThan(0);
+        communityElements.forEach(element => {
+            expect(element).toBeInTheDocument();
+        });
 
-    render(
-      <MemoryRouter>
-        <Home />
-      </MemoryRouter>
-    );
-
-    const openElements = screen.getAllByText('Open');
-    expect(openElements.length).toBeGreaterThan(0);
-    openElements.forEach(element => {
-      fireEvent.click(element);
+        const analyzingElements = getAllByText('Analyzing');
+        expect(analyzingElements.length).toBeGreaterThan(0);
+        analyzingElements.forEach(element => {
+            expect(element).toBeInTheDocument();
+        });
     });
 
-    expect(navigateMock).toHaveBeenCalledWith('/main-information');
-  });
+    test('renders the authorize alert when customer is null', () => {
+        useSelector.mockReturnValue(null);
+
+        const { getByText } = render(
+            <MemoryRouter>
+                <Home />
+            </MemoryRouter>
+        );
+
+        expect(getByText('ShouldAuthorize')).toBeInTheDocument();
+    });
+
+    test('does not render the authorize alert when customer is not null', () => {
+        useSelector.mockReturnValue({});
+
+        const { queryByText } = render(
+            <MemoryRouter>
+                <Home />
+            </MemoryRouter>
+        );
+
+        expect(queryByText('ShouldAuthorize')).toBeNull();
+    });
+
+    test('navigates to feed when "Open" button is clicked', () => {
+        const navigateMock = jest.fn();
+        useNavigate.mockReturnValue(navigateMock);
+        useSelector.mockReturnValue({});
+
+        const { getAllByText } = render(
+            <MemoryRouter>
+                <Home />
+            </MemoryRouter>
+        );
+
+        const openElements = getAllByText('Open');
+        expect(openElements.length).toBeGreaterThan(0);
+        openElements.forEach(element => {
+            fireEvent.click(element);
+        });
+
+        expect(navigateMock).toHaveBeenCalledWith('/feed');
+    });
+
+    test('navigates to main information when "Open" button is clicked', () => {
+        const navigateMock = jest.fn();
+        useNavigate.mockReturnValue(navigateMock);
+        useSelector.mockReturnValue({});
+
+        const { getAllByText } = render(
+            <MemoryRouter>
+                <Home />
+            </MemoryRouter>
+        );
+
+        const openElements = getAllByText('Open');
+        expect(openElements.length).toBeGreaterThan(0);
+        openElements.forEach(element => {
+            fireEvent.click(element);
+        });
+
+        expect(navigateMock).toHaveBeenCalledWith('/main-information');
+    });
 });

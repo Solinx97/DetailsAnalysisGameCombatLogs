@@ -81,7 +81,6 @@ const Members = ({ me, users, communityItem, removeUsersAsync, setShowMembers, i
                             <MembersItem
                                 me={me}
                                 user={item}
-                                communityItem={communityItem}
                                 peopleToRemove={peopleToRemove}
                                 setPeopleToRemove={setPeopleToRemove}
                                 showRemoveUser={showRemoveUser}

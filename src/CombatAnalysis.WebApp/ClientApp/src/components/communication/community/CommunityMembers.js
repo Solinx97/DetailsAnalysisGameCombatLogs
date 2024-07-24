@@ -72,7 +72,7 @@ const CommunityMembers = ({ community, user, setIsCommunityMember }) => {
 
             const newInviteToCommunity = {
                 communityId: community.id,
-                toCustomerId: peopleToJoin[i].id,
+                toAppUserId: peopleToJoin[i].id,
                 when: new Date(),
                 appUserId: user?.id
             }
@@ -109,7 +109,7 @@ const CommunityMembers = ({ community, user, setIsCommunityMember }) => {
     }
 
     if (isLoading) {
-        return <></>;
+        return <div>Loading...</div>;
     }
 
     return (
@@ -118,7 +118,7 @@ const CommunityMembers = ({ community, user, setIsCommunityMember }) => {
                 <div className="actions">
                     <div>{t("Members")}</div>
                     <div className="tool">
-                        {community.appUserID === user?.id &&
+                        {community.appUserId === user?.id &&
                             <FontAwesomeIcon
                                 icon={faRectangleXmark}
                                 title={t("RemovePeople")}
@@ -177,7 +177,7 @@ const CommunityMembers = ({ community, user, setIsCommunityMember }) => {
                     removeUsersAsync={removeUsersAsync}
                     setShowMembers={setShowAllPeople}
                     isPopup={true}
-                    canRemovePeople={user?.id === community?.customerId}
+                    canRemovePeople={user?.id === community?.appUserId}
                 />
             }
         </span>

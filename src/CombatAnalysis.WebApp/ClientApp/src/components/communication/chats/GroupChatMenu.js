@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useLazyGetCustomerByIdQuery } from '../../../store/api/Customer.api';
+import { useLazyGetUserByIdQuery } from '../../../store/api/Account.api';
 import { useRemoveGroupChatAsyncMutation } from '../../../store/api/communication/chats/GroupChat.api';
 import { useCreateGroupChatMessageAsyncMutation } from '../../../store/api/communication/chats/GroupChatMessage.api';
 import { useGetGroupChatRulesByIdQuery, useUpdateGroupChatRulesAsyncMutation } from '../../../store/api/communication/chats/GroupChatRules.api';
@@ -37,7 +37,7 @@ const GroupChatMenu = ({ me, setUserInformation, setSelectedChat, setShowAddPeop
     const [removeGroupChatAsyncMut] = useRemoveGroupChatAsyncMutation();
     const [removeGroupChatUserAsyncMut] = useRemoveGroupChatUserAsyncMutation();
     const [createGroupChatMessageAsync] = useCreateGroupChatMessageAsyncMutation();
-    const [getCustomerByIdAsync] = useLazyGetCustomerByIdQuery();
+    const [getUserByIdAsync] = useLazyGetUserByIdQuery();
     const [updateGroupChatRulesMutAsync] = useUpdateGroupChatRulesAsyncMutation();
 
     const { data: rules, isLoading } = useGetGroupChatRulesByIdQuery(chat?.id);
@@ -63,10 +63,9 @@ const GroupChatMenu = ({ me, setUserInformation, setSelectedChat, setShowAddPeop
                 continue;
             }
 
-            const customer = await getCustomerByIdAsync(peopleToRemove[i].customerId);
-
-            if (customer.data !== undefined) {
-                const systemMessage = `'${me?.username}' removed '${customer.data.username}' from chat`;
+            const user = await getUserByIdAsync(peopleToRemove[i].appUserId);
+            if (user.data !== undefined) {
+                const systemMessage = `'${me?.username}' removed '${user.data.username}' from chat`;
                 await createMessageAsync(chat?.id, systemMessage);
             }
         }
@@ -78,7 +77,7 @@ const GroupChatMenu = ({ me, setUserInformation, setSelectedChat, setShowAddPeop
         const today = new Date();
         const newMessage = {
             message: message,
-            when: `${today.getHours()}:${today.getMinutes()}`,
+            time: `${today.getHours()}:${today.getMinutes()}`,
             status: 0,
             type: 1,
             groupChatId: groupChatId,
@@ -124,7 +123,7 @@ const GroupChatMenu = ({ me, setUserInformation, setSelectedChat, setShowAddPeop
             return true;
         }
 
-        return chat?.customerId === me?.id;
+        return chat?.appUserId === me?.id;
     }
 
     const canRemovePeople = () => {
@@ -133,11 +132,11 @@ const GroupChatMenu = ({ me, setUserInformation, setSelectedChat, setShowAddPeop
             return true;
         }
 
-        return chat?.customerId === me?.id;
+        return chat?.appUserId === me?.id;
     }
 
     if (isLoading) {
-        return <></>;
+        return <div>Loading...</div>;
     }
 
     return (
@@ -145,7 +144,7 @@ const GroupChatMenu = ({ me, setUserInformation, setSelectedChat, setShowAddPeop
             <div className="settings__content">
                 <div className="main-settings">
                     <div className="btn-border-shadow" onClick={() => setPeopleInspectionModeOn((item) => !item)}>{t("Members")}</div>
-                    {canInvitePeople() &&
+                    {canInvitePeople()&&
                         <div className="btn-border-shadow" onClick={() => setShowAddPeople((item) => !item)}>{t("Invite")}</div>
                     }
                     {chat?.customerId === me?.id &&
@@ -154,7 +153,7 @@ const GroupChatMenu = ({ me, setUserInformation, setSelectedChat, setShowAddPeop
                     <div className="btn-border-shadow">{t("Documents")}</div>
                 </div>
                 <div className="danger-settings">
-                    {me?.id === chat.customerId &&
+                    {me?.id === chat.appUserId &&
                         <div className="btn-border-shadow" onClick={() => setShowRemoveChatAlert((item) => !item)}>{t("RemoveChat")}</div>
                     }
                     <div className="btn-border-shadow" onClick={async () => await leaveFromChatAsync(meInChat?.id)}>{t("Leave")}</div>

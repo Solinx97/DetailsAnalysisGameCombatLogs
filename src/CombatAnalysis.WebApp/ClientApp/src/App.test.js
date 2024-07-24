@@ -33,30 +33,36 @@ jest.mock('react-router-dom', () => ({
     useNavigate: jest.fn(),
 }));
 
-test('renders without crashing', () => {
-  render(
-    <Provider store={store}>
-      <MemoryRouter>
-        <App />
-      </MemoryRouter>
-    </Provider>
-  );
-});
+describe('App Component', () => {
+    afterEach(() => {
+        jest.clearAllMocks();
+    });
 
-test.skip('renders the voice chat minimazed component when useMinimaze is true', () => {
-  const { getByTestId } = render(<App />);
-  const voiceChatMinimazed = getByTestId('voice-chat-minimazed');
-  expect(voiceChatMinimazed).toBeInTheDocument();
-});
+    test('renders without crashing', () => {
+        render(
+            <Provider store={store}>
+                <MemoryRouter>
+                    <App />
+                </MemoryRouter>
+            </Provider>
+        );
+    });
 
-test.skip('does not render the voice chat minimazed component when useMinimaze is false', () => {
-  const { queryByTestId } = render(<App />);
-  const voiceChatMinimazed = queryByTestId('voice-chat-minimazed');
-  expect(voiceChatMinimazed).toBeNull();
-});
+    test.skip('renders the voice chat minimazed component when useMinimaze is true', () => {
+        const { getByTestId } = render(<App />);
+        const voiceChatMinimazed = getByTestId('voice-chat-minimazed');
+        expect(voiceChatMinimazed).toBeInTheDocument();
+    });
 
-test.skip('renders the toast container', () => {
-  const { getByTestId } = render(<App />);
-  const toastContainer = getByTestId('toast-container');
-  expect(toastContainer).toBeInTheDocument();
+    test.skip('does not render the voice chat minimazed component when useMinimaze is false', () => {
+        const { queryByTestId } = render(<App />);
+        const voiceChatMinimazed = queryByTestId('voice-chat-minimazed');
+        expect(voiceChatMinimazed).toBeNull();
+    });
+
+    test.skip('renders the toast container', () => {
+        const { getByTestId } = render(<App />);
+        const toastContainer = getByTestId('toast-container');
+        expect(toastContainer).toBeInTheDocument();
+    });
 });

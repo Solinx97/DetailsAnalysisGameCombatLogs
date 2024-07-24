@@ -13,41 +13,47 @@ jest.mock('react-i18next', () => ({
     }),
 }));
 
-describe('LanguageSelector', () => {
-  beforeAll(() => {
-    delete window.location;
-    window.location = { reload: jest.fn() };
-  });
-  beforeEach(() => {
-    jest.clearAllMocks();
-  });
+describe('LanguageSelector Component', () => {
+    beforeAll(() => {
+        delete window.location;
+        window.location = { reload: jest.fn() };
+    });
 
-  test('renders language options correctly', () => {
-    useTranslation.mockReturnValueOnce({ i18n: { language: 'en', changeLanguage: jest.fn() } });
-    const { getByText } = render(<LanguageSelector />);
-    const enLangOption = getByText('en');
-    const ruLangOption = getByText('ru');
+    afterEach(() => {
+        jest.clearAllMocks();
+    });
 
-    expect(enLangOption).toBeInTheDocument();
-    expect(ruLangOption).toBeInTheDocument();
-  });
+    test('renders language options correctly', () => {
+        useTranslation.mockReturnValueOnce({ i18n: { language: 'en', changeLanguage: jest.fn() } });
 
-  test('displays selected language correctly', () => {
-    useTranslation.mockReturnValueOnce({ i18n: { language: 'en', changeLanguage: jest.fn() } });
-    const { getByText } = render(<LanguageSelector />);
-    const selectedLang = getByText('en');
+        const { getByText } = render(<LanguageSelector />);
 
-    expect(selectedLang).toHaveClass('selected-lang');
-  });
+        const enLangOption = getByText('en');
+        const ruLangOption = getByText('ru');
 
-  test('calls changeLanguage function on language selection', () => {
-    const changeLanguageMock = jest.fn();
-    useTranslation.mockReturnValueOnce({ i18n: { language: 'en', changeLanguage: changeLanguageMock } });
-    const { getByText } = render(<LanguageSelector />);
-    const ruLangOption = getByText('ru');
+        expect(enLangOption).toBeInTheDocument();
+        expect(ruLangOption).toBeInTheDocument();
+    });
 
-    fireEvent.click(ruLangOption);
+    test('displays selected language correctly', () => {
+        useTranslation.mockReturnValueOnce({ i18n: { language: 'en', changeLanguage: jest.fn() } });
 
-    expect(changeLanguageMock).toHaveBeenCalledWith('ru');
-  });
+        const { getByText } = render(<LanguageSelector />);
+
+        const selectedLang = getByText('en');
+
+        expect(selectedLang).toHaveClass('selected-lang');
+    });
+
+    test('calls changeLanguage function on language selection', () => {
+        const changeLanguageMock = jest.fn();
+        useTranslation.mockReturnValueOnce({ i18n: { language: 'en', changeLanguage: changeLanguageMock } });
+
+        const { getByText } = render(<LanguageSelector />);
+
+        const ruLangOption = getByText('ru');
+        fireEvent.click(ruLangOption);
+
+        expect(changeLanguageMock).toHaveBeenCalledWith('ru');
+    });
 });

@@ -9,7 +9,7 @@ const AddFriendItem = ({ friendUserId, addUserIdToList, removeUserIdToList, filt
     const { data: user, isLoading } = useGetCustomerByIdQuery(friendUserId);
 
     if (isLoading) {
-        return <></>;
+        return <div>Loading...</div>;
     }
 
     return (
@@ -28,7 +28,6 @@ const AddFriendItem = ({ friendUserId, addUserIdToList, removeUserIdToList, filt
                     onClick={() => addUserIdToList(user?.id)}
                 />
             }
-
         </>
     );
 }

@@ -6,7 +6,7 @@ public class InviteToCommunityModel
 
     public int CommunityId { get; set; }
 
-    public string ToCustomerId { get; set; }
+    public string ToAppUserId { get; set; }
 
     public DateTimeOffset When { get; set; }
 

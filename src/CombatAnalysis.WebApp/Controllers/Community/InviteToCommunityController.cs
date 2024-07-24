@@ -21,14 +21,14 @@ public class InviteToCommunityController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<IActionResult> Create(InviteToCommunityModel chat)
+    public async Task<IActionResult> Create(InviteToCommunityModel invite)
     {
         if (!Request.Cookies.TryGetValue(AuthenticationCookie.AccessToken.ToString(), out var accessToken))
         {
             return Unauthorized();
         }
 
-        var responseMessage = await _httpClient.PostAsync("InviteToCommunity", JsonContent.Create(chat), accessToken, Port.CommunicationApi);
+        var responseMessage = await _httpClient.PostAsync("InviteToCommunity", JsonContent.Create(invite), accessToken, Port.CommunicationApi);
         if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
         {
             return Unauthorized();
@@ -141,14 +141,14 @@ public class InviteToCommunityController : ControllerBase
     }
 
     [HttpPut]
-    public async Task<IActionResult> Update(InviteToCommunityModel chat)
+    public async Task<IActionResult> Update(InviteToCommunityModel invite)
     {
         if (!Request.Cookies.TryGetValue(AuthenticationCookie.AccessToken.ToString(), out var accessToken))
         {
             return Unauthorized();
         }
 
-        var responseMessage = await _httpClient.PutAsync("InviteToCommunity", JsonContent.Create(chat), accessToken, Port.CommunicationApi);
+        var responseMessage = await _httpClient.PutAsync("InviteToCommunity", JsonContent.Create(invite), accessToken, Port.CommunicationApi);
         if (responseMessage.StatusCode == System.Net.HttpStatusCode.OK)
         {
             return Ok();
