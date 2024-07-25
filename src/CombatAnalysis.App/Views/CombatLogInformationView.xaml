@@ -128,9 +128,18 @@
                                     Visibility="{Binding CombatLogs.Count, Converter={StaticResource IntToVisibility}, ConverterParameter='true:0:>'}">
                                     <ListBox.ItemTemplate>
                                         <DataTemplate>
-                                            <StackPanel HorizontalAlignment="Center" Margin="10">
-                                                <TextBlock FontSize="10" Text="{Binding Path=Date, StringFormat=MM.dd.yyyy hh:mm}" Margin="5" />
-                                                <TextBlock FontSize="14" Text="{Binding Path=Name}" Margin="5" />
+                                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Width="300">
+                                                <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="10"
+                                                            Visibility="{Binding Path=CombatsInQueue, Converter={StaticResource IntToVisibility}, ConverterParameter='false:0:>'}">
+                                                    <Icon:PackIconMaterial Kind="ProgressDownload" Height="15" Width="15" VerticalAlignment="Center" Margin="5 0" />
+                                                    <TextBlock TextAlignment="Center" FontSize="12" Text="{Binding Path=NumberReadyCombats}" Margin="5" />
+                                                    <TextBlock TextAlignment="Center" FontSize="12" Text="/" Margin="0 5" />
+                                                    <TextBlock TextAlignment="Center" FontSize="12" Text="{Binding Path=CombatsInQueue}" Margin="5" />
+                                                </StackPanel>
+                                                <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Margin="10">
+                                                    <TextBlock TextAlignment="Center" FontSize="10" Text="{Binding Path=Date, StringFormat=MM.dd.yyyy hh:mm}" Margin="5" />
+                                                    <TextBlock TextAlignment="Center" FontSize="14" Text="{Binding Path=Name}" Margin="5" />
+                                                </StackPanel>
                                             </StackPanel>
                                         </DataTemplate>
                                     </ListBox.ItemTemplate>
@@ -138,6 +147,9 @@
                             </ScrollViewer>
                             <StackPanel Visibility="{Binding UploadingLogs, Converter={StaticResource BoolToVisibility}, ConverterParameter=true:false}">
                                 <TextBlock Text="Loading..." FontSize="13" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="White" Margin="0 5"/>
+                            </StackPanel>
+                            <StackPanel Visibility="{Binding NoCombatsUploaded, Converter={StaticResource BoolToVisibility}, ConverterParameter=true:false}">
+                                <TextBlock Text="No any uploaded combats" FontSize="13" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="White" Margin="0 5"/>
                             </StackPanel>
                             <StackPanel Visibility="{Binding CombatLogLoadingStatus, Converter={StaticResource IntToVisibility}, ConverterParameter='true:2:='}">
                                 <TextBlock Text="{loc:Loc Empty}" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="White" Margin="5"

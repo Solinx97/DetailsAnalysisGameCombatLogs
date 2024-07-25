@@ -1,4 +1,4 @@
-import { faArrowDown, faArrowUp, faCircleXmark, faMagnifyingGlassChart, faTriangleExclamation } from '@fortawesome/free-solid-svg-icons';
+import { faArrowDown, faArrowUp, faCircleXmark, faMagnifyingGlassChart, faTriangleExclamation, faSpinner } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { format } from 'date-fns';
 import React, { useState } from 'react';
@@ -48,6 +48,15 @@ const CombatLogItem = ({ log, isAuth }) => {
         <div className="card">
             <ul className="list-group list-group-flush">
                 <li className="list-group-item title">
+                    {log.combatsInQueue > 0 &&
+                        <>
+                            <FontAwesomeIcon
+                                icon={faSpinner}
+                                title={t("Uploading")}
+                            />
+                            <div>{log.numberReadyCombats} / {log.combatsInQueue}</div>
+                        </>
+                    }
                     <div>{log.name}</div>
                     <div className="actions">
                         {!isAuth &&
@@ -66,12 +75,14 @@ const CombatLogItem = ({ log, isAuth }) => {
                 <li className="list-group-item">{format(new Date(log.date), 'MM/dd/yyyy HH:mm')}</li>
             </ul>
             <div className="card-body">
-                <div className="btn-shadow" onClick={() => navigate(`/general-analysis?id=${log.id}`)}>
-                    <FontAwesomeIcon
-                        icon={faMagnifyingGlassChart}
-                    />
-                    <div>{t("Analyzing")}</div>
-                </div>
+                {log.numberReadyCombats > 0 &&
+                    <div className="btn-shadow" onClick={() => navigate(`/general-analysis?id=${log.id}`)}>
+                        <FontAwesomeIcon
+                            icon={faMagnifyingGlassChart}
+                        />
+                        <div>{t("Analyzing")}</div>
+                    </div>
+                }
             </div>
             {showChats &&
                 <div className="chat-list">
@@ -101,8 +112,7 @@ const CombatLogItem = ({ log, isAuth }) => {
                         </div>
                         {showGroupChats &&
                             <ul>
-                                {
-                                    groupChatsUser?.map((item) => (
+                                {groupChatsUser?.map((item) => (
                                         <li key={item.id} className="chat-list__group-chats">
                                             <GroupChatList
                                                 log={log}
@@ -130,8 +140,7 @@ const CombatLogItem = ({ log, isAuth }) => {
                         </div>
                         {showPersonalChats &&
                             <ul>
-                                {
-                                    personalChats?.map((item) => (
+                                {personalChats?.map((item) => (
                                         <li key={item.id} className="chat-list__personal-chats">
                                             <PersonalChatList
                                                 log={log}

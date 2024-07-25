@@ -50,6 +50,7 @@ public class CombatLogInformationViewModel : ParentTemplate, CombatParser.Interf
     private LoadingStatus _combatLogByUserLoadingStatus;
     private bool _removingInProgress;
     private bool _uploadingLogs;
+    private bool _noCombatsUploaded;
 
     public CombatLogInformationViewModel(IMapper mapper, IMvxNavigationService mvvmNavigation, IHttpClientHelper httpClient,
         CombatParserService parser, ILogger logger, IMemoryCache memoryCache)
@@ -111,6 +112,15 @@ public class CombatLogInformationViewModel : ParentTemplate, CombatParser.Interf
         set
         {
             SetProperty(ref _openUploadLogs, value);
+        }
+    }
+
+    public bool NoCombatsUploaded
+    {
+        get { return _noCombatsUploaded; }
+        set
+        {
+            SetProperty(ref _noCombatsUploaded, value);
         }
     }
 
@@ -374,9 +384,18 @@ public class CombatLogInformationViewModel : ParentTemplate, CombatParser.Interf
 
     public async Task LoadCombatsAsync(ObservableCollection<CombatLogModel> combatCollection)
     {
-        UploadingLogs = true;
+        NoCombatsUploaded = false;
 
         var combatLog = combatCollection[CombatListSelectedIndex];
+        if (combatLog.NumberReadyCombats == 0)
+        {
+            NoCombatsUploaded = true;
+
+            return;
+        }
+
+        UploadingLogs = true;
+
         var loadedCombats = await _combatParserAPIService.LoadCombatsAsync(combatLog.Id);
         if (loadedCombats == null)
         {
@@ -486,18 +505,20 @@ public class CombatLogInformationViewModel : ParentTemplate, CombatParser.Interf
         BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, nameof(BasicTemplateViewModel.CombatLog), createdCombatLog);
 
         var combatsAreUploaded = await _combatParserAPIService.SaveAsync(combatList, createdCombatLog, LogType, CombatUploaded);
-        if (combatsAreUploaded == null)
+        if (!combatsAreUploaded)
         {
             BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, nameof(BasicTemplateViewModel.ResponseStatus), LoadingStatus.Failed);
             return;
         }
 
-        var responseStatus = combatsAreUploaded.Any(uploaded => !uploaded) ? LoadingStatus.Failed : LoadingStatus.Successful;
+        var responseStatus = LoadingStatus.Successful;
         BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, nameof(BasicTemplateViewModel.ResponseStatus), responseStatus);
     }
 
     private async Task LoadCombatLogsAsync()
     {
+        NoCombatsUploaded = false;
+
         CombatLogLoadingStatus = LoadingStatus.Pending;
 
         _combatParserAPIService.SetUpPort();
