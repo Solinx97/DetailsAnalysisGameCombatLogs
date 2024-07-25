@@ -2,6 +2,7 @@ import { faCheck, faCircleArrowRight } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
+import { Fragment } from "react";
 
 import '../../styles/communication/communication.scss';
 
@@ -10,108 +11,67 @@ const CommunicationMenu = ({ currentMenuItem, setMenuItem }) => {
 
     const navigate = useNavigate();
 
-    const navigateToFeed = () => navigate("/feed");
-    const navigateToChats = () => navigate("/chats");
-    const navigateToCreateChat = () => navigate("/chats/create");
-    const navigateToCommunities = () => navigate("/communities");
-    const navigateToCreateCommunity = () => navigate("/communities/create");
-    const navigateToPeople = () => navigate("/people");
-    const navigateToEnvironment = () => navigate("/environment");
+    const menuItems = [
+        { id: 0, label: "Feed", navigateTo: "/feed" },
+        { id: 1, label: "Chats", navigateTo: "/chats", createLabel: "Create", createNavigateTo: "/chats/create" },
+        { id: 3, label: "Communities", navigateTo: "/communities", createLabel: "Create", createNavigateTo: "/communities/create" },
+        { id: 6, label: "Events", disabled: true },
+        { id: 7, label: "People", navigateTo: "/people" },
+        {
+            id: 8, label: "MyEnvironment", navigateTo: "/environment", subMenu: [
+                { id: 8, label: "MyPosts" },
+                { id: 9, label: "Friends" },
+                { id: 10, label: "Communities" },
+                { id: 12, label: "Profile" }
+            ]
+        }
+    ];
+    const renderMenuItem = (item) => (
+        <li className={`${item.createLabel ? "extended-" : ""}menu-item${item.disabled ? '_disabled' : ''}`}
+            onClick={!item.disabled && !item.createLabel ? () => navigate(item.navigateTo) : undefined}>
+            {item.createLabel &&
+                <div className="menu-item" onClick={() => navigate(item.navigateTo)}>
+                    {currentMenuItem === item.id &&
+                        <FontAwesomeIcon
+                            icon={faCircleArrowRight}
+                        />
+                    }
+                    <div className="title">{t(item.label)}</div>
+                </div>
+            }
+            {(currentMenuItem === item.id && !item.createLabel) &&
+                <FontAwesomeIcon
+                    icon={faCircleArrowRight}
+                />
+            }
+            {item.createLabel
+                ? <div className="create" onClick={() => navigate(item.createNavigateTo)}>{t(item.createLabel)}</div>
+                : <div className="title">{t(item.label)}</div>
+            }
+        </li>
+    )
+
+    const renderSubMenu = (subMenu) => (
+        subMenu.map(subItem => (
+            <li key={subItem.id} className="menu-item sub-menu" onClick={() => setMenuItem(subItem.id)}>
+                {currentMenuItem === subItem.id &&
+                    <FontAwesomeIcon
+                        icon={faCheck}
+                    />
+                }
+                <div className="title">{t(subItem.label)}</div>
+            </li>
+        ))
+    )
 
     return (
         <ul className="communication__menu">
-            <li className="menu-item" onClick={navigateToFeed}>
-                {currentMenuItem === 0 &&
-                    <FontAwesomeIcon
-                        icon={faCircleArrowRight}
-                    />
-                }
-                <div className="title">{t("Feed")}</div>
-            </li>
-            <li className="extended-menu-item">
-                <div className="menu-item" onClick={navigateToChats}>
-                    {(currentMenuItem === 1 || currentMenuItem === 2)&&
-                        <FontAwesomeIcon
-                            icon={faCircleArrowRight}
-                        />
-                    }
-                    <div className="title">{t("Chats")}</div>
-                </div>
-                <div className="create" onClick={navigateToCreateChat}>{t("Create")}</div>
-            </li>
-            <li className="extended-menu-item">
-                <div className="menu-item" onClick={navigateToCommunities}>
-                    {(currentMenuItem === 3 || currentMenuItem === 4) &&
-                        <FontAwesomeIcon
-                            icon={faCircleArrowRight}
-                        />
-                    }
-                    <div className="title">{t("Communities")}</div>
-                </div>
-                <div className="create" onClick={navigateToCreateCommunity}>{t("Create")}</div>
-            </li>
-            <li className="menu-item_disabled">
-                {currentMenuItem === 6 &&
-                    <FontAwesomeIcon
-                        icon={faCircleArrowRight}
-                    />
-                }
-                <div className="title">{t("Events")}</div>
-            </li>
-            <li className="menu-item" onClick={navigateToPeople}>
-                {currentMenuItem === 7 &&
-                    <FontAwesomeIcon
-                        icon={faCircleArrowRight}
-                    />
-                }
-                <div className="title">{t("People")}</div>
-            </li>
-            <div>
-                <li className="menu-item" onClick={navigateToEnvironment}>
-                    {currentMenuItem >= 8 &&
-                        <FontAwesomeIcon
-                            icon={faCircleArrowRight}
-                        />
-                    }
-                    <div className="title">{t("MyEnvironment")}</div>
-                </li>
-                {currentMenuItem >= 8 &&
-                    <>
-                        <li className="menu-item sub-menu" onClick={() => setMenuItem(8)}>
-                            {currentMenuItem === 8 &&
-                                <FontAwesomeIcon
-                                    icon={faCheck}
-                                />
-                            }
-                            <div className="title">{t("MyPosts")}</div>
-                        </li>
-                        <li className="menu-item sub-menu" onClick={() => setMenuItem(9)}>
-                            {currentMenuItem === 9 &&
-                                <FontAwesomeIcon
-                                    icon={faCheck}
-                                />
-                            }
-                            <div className="title">{t("Friends")}</div>
-                        </li>
-                        <li className="menu-item sub-menu" onClick={() => setMenuItem(10)}>
-                            {currentMenuItem === 10 &&
-                                <FontAwesomeIcon
-                                    icon={faCheck}
-                                />
-                            }
-                            <div className="title">{t("Communities")}</div>
-                        </li>
-                        <li className="menu-item sub-menu" onClick={() => setMenuItem(12)}>
-                            {currentMenuItem === 12 &&
-                                <FontAwesomeIcon
-                                    icon={faCheck}
-                                />
-                            }
-                            <div className="title">{t("Profile")}</div>
-                        </li>
-                    </>
-                }
-            </div>
+            {menuItems.map(item => (
+                <Fragment key={item.id}>
+                    {renderMenuItem(item)}
+                    {item.subMenu && currentMenuItem >= 8 && renderSubMenu(item.subMenu)}
+                </Fragment>
+            ))}
         </ul>
     );
 }

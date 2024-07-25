@@ -4,7 +4,6 @@ using CombatAnalysis.CustomerBL.Interfaces;
 using CombatAnalysis.UserApi.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Net.Http;
 
 namespace CombatAnalysis.UserApi.Controllers;
 
@@ -15,9 +14,9 @@ public class FriendController : ControllerBase
 {
     private readonly IService<FriendDto, int> _service;
     private readonly IMapper _mapper;
-    private readonly ILogger _logger;
+    private readonly ILogger<FriendController> _logger;
 
-    public FriendController(IService<FriendDto, int> service, IMapper mapper, ILogger logger)
+    public FriendController(IService<FriendDto, int> service, IMapper mapper, ILogger<FriendController> logger)
     {
         _service = service;
         _mapper = mapper;
@@ -45,8 +44,8 @@ public class FriendController : ControllerBase
     {
         var forWhomId = await _service.GetByParamAsync(nameof(FriendModel.ForWhomId), id);
         var whoFriendId = await _service.GetByParamAsync(nameof(FriendModel.WhoFriendId), id);
-
         var friends = forWhomId.Concat(whoFriendId);
+
         return Ok(friends);
     }
 
@@ -62,7 +61,13 @@ public class FriendController : ControllerBase
         }
         catch (ArgumentNullException ex)
         {
-            _logger.LogError(ex, ex.Message);
+            _logger.LogError(ex, $"Create Friend failed: ${ex.Message}", model);
+
+            return BadRequest();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, $"Create Friend failed: ${ex.Message}", model);
 
             return BadRequest();
         }
@@ -80,7 +85,13 @@ public class FriendController : ControllerBase
         }
         catch (ArgumentNullException ex)
         {
-            _logger.LogError(ex, ex.Message);
+            _logger.LogError(ex, $"Update Friend failed: ${ex.Message}", model);
+
+            return BadRequest();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, $"Update Friend failed: ${ex.Message}", model);
 
             return BadRequest();
         }
@@ -89,18 +100,9 @@ public class FriendController : ControllerBase
     [HttpDelete("{id:int:min(1)}")]
     public async Task<IActionResult> Delete(int id)
     {
-        try
-        {
-            var result = await _service.DeleteAsync(id);
+        var rowsAffected = await _service.DeleteAsync(id);
 
-            return Ok(result);
-        }
-        catch (ArgumentNullException ex)
-        {
-            _logger.LogError(ex, ex.Message);
-
-            return BadRequest();
-        }
+        return Ok(rowsAffected);
     }
 }
 

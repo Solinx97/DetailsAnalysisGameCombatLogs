@@ -5,15 +5,13 @@ using CombatAnalysis.CommunicationBL.Mapping;
 using CombatAnalysis.CustomerBL.Extensions;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.CommunicationBLDependencies(builder.Configuration, "DefaultConnection");
 builder.Services.CustomerBLDependencies(builder.Configuration, "UserConnection");
-
-var loggerFactory = new LoggerFactory();
-var logger = new Logger<ILogger>(loggerFactory);
 
 var mappingConfig = new MapperConfiguration(mc =>
 {
@@ -23,7 +21,6 @@ var mappingConfig = new MapperConfiguration(mc =>
 
 var mapper = mappingConfig.CreateMapper();
 builder.Services.AddSingleton(mapper);
-builder.Services.AddSingleton<ILogger>(logger);
 builder.Services.AddAuthentication("Bearer")
         .AddJwtBearer("Bearer", options =>
         {
@@ -96,6 +93,13 @@ builder.Services.AddSwaggerGen(options =>
             }
         });
 });
+
+Log.Logger = new LoggerConfiguration()
+    .MinimumLevel.Debug()
+    .WriteTo.Console()
+    .CreateLogger();
+
+builder.Host.UseSerilog();
 
 var app = builder.Build();
 

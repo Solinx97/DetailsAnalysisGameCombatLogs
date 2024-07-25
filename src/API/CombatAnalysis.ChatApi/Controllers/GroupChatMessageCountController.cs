@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
+using CombatAnalysis.ChatApi.Models;
 using CombatAnalysis.ChatBL.DTO;
 using CombatAnalysis.ChatBL.Interfaces;
-using CombatAnalysis.ChatApi.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -14,9 +14,9 @@ public class GroupChatMessageCountController : ControllerBase
 {
     private readonly IService<GroupChatMessageCountDto, int> _service;
     private readonly IMapper _mapper;
-    private readonly ILogger _logger;
+    private readonly ILogger<GroupChatMessageCountController> _logger;
 
-    public GroupChatMessageCountController(IService<GroupChatMessageCountDto, int> service, IMapper mapper, ILogger logger)
+    public GroupChatMessageCountController(IService<GroupChatMessageCountDto, int> service, IMapper mapper, ILogger<GroupChatMessageCountController> logger)
     {
         _service = service;
         _mapper = mapper;
@@ -54,7 +54,13 @@ public class GroupChatMessageCountController : ControllerBase
         }
         catch (ArgumentNullException ex)
         {
-            _logger.LogError(ex, ex.Message);
+            _logger.LogError(ex, $"Create Group Chat Message Count failed: ${ex.Message}", model);
+
+            return BadRequest();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, $"Create Group Chat Message Count failed: ${ex.Message}", model);
 
             return BadRequest();
         }
@@ -72,7 +78,13 @@ public class GroupChatMessageCountController : ControllerBase
         }
         catch (ArgumentNullException ex)
         {
-            _logger.LogError(ex, ex.Message);
+            _logger.LogError(ex, $"Update Group Chat Message Count failed: ${ex.Message}", model);
+
+            return BadRequest();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, $"Update Group Chat Message Count failed: ${ex.Message}", model);
 
             return BadRequest();
         }
@@ -81,17 +93,8 @@ public class GroupChatMessageCountController : ControllerBase
     [HttpDelete("{id:int:min(1)}")]
     public async Task<IActionResult> Delete(int id)
     {
-        try
-        {
-            var result = await _service.DeleteAsync(id);
+        var rowsAffected = await _service.DeleteAsync(id);
 
-            return Ok(result);
-        }
-        catch (ArgumentNullException ex)
-        {
-            _logger.LogError(ex, ex.Message);
-
-            return BadRequest();
-        }
+        return Ok(rowsAffected);
     }
 }

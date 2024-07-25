@@ -46,7 +46,7 @@ const AddTagsToPost = ({ postTags, setPostTags, t }) => {
                 <div className="title" onClick={() => setShowInputTag(!showInputTag)}>{t("Tags")}</div>
                 {showInputTag &&
                     <>
-                        <input type="text" onBlur={addTag} onKeyDown={addTagByKey} ref={tagInput} />
+                        <input type="text" onBlur={addTag} onKeyDown={addTagByKey} placeholder="Enter tag" ref={tagInput} />
                         <FontAwesomeIcon
                             icon={faBan}
                             onClick={() => setShowInputTag(!showInputTag)}
@@ -60,6 +60,7 @@ const AddTagsToPost = ({ postTags, setPostTags, t }) => {
                         <div>{tag}</div>
                         <FontAwesomeIcon
                             icon={faXmark}
+                            title={t("RemoveTag")}
                             onClick={() => removeTag(index)}
                         />
                     </li>

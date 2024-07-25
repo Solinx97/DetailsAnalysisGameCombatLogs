@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
+using CombatAnalysis.CommunicationAPI.Models.Community;
 using CombatAnalysis.CommunicationBL.DTO.Community;
 using CombatAnalysis.CommunicationBL.Interfaces;
-using CombatAnalysis.CommunicationAPI.Models.Community;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -14,9 +14,9 @@ public class CommunityDiscussionCommentController : ControllerBase
 {
     private readonly IService<CommunityDiscussionCommentDto, int> _service;
     private readonly IMapper _mapper;
-    private readonly ILogger _logger;
+    private readonly ILogger<CommunityDiscussionCommentController> _logger;
 
-    public CommunityDiscussionCommentController(IService<CommunityDiscussionCommentDto, int> service, IMapper mapper, ILogger logger)
+    public CommunityDiscussionCommentController(IService<CommunityDiscussionCommentDto, int> service, IMapper mapper, ILogger<CommunityDiscussionCommentController> logger)
     {
         _service = service;
         _mapper = mapper;
@@ -59,7 +59,13 @@ public class CommunityDiscussionCommentController : ControllerBase
         }
         catch (ArgumentNullException ex)
         {
-            _logger.LogError(ex, ex.Message);
+            _logger.LogError(ex, $"Create Community Discussion Comment failed: ${ex.Message}", model);
+
+            return BadRequest();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, $"Create Community Discussion Comment failed: ${ex.Message}", model);
 
             return BadRequest();
         }
@@ -77,7 +83,13 @@ public class CommunityDiscussionCommentController : ControllerBase
         }
         catch (ArgumentNullException ex)
         {
-            _logger.LogError(ex, ex.Message);
+            _logger.LogError(ex, $"Update Community Discussion Comment failed: ${ex.Message}", model);
+
+            return BadRequest();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, $"Update Community Discussion Comment failed: ${ex.Message}", model);
 
             return BadRequest();
         }
@@ -86,17 +98,8 @@ public class CommunityDiscussionCommentController : ControllerBase
     [HttpDelete("{id:int:min(1)}")]
     public async Task<IActionResult> Delete(int id)
     {
-        try
-        {
-            var result = await _service.DeleteAsync(id);
+        var rowsAffected = await _service.DeleteAsync(id);
 
-            return Ok(result);
-        }
-        catch (ArgumentNullException ex)
-        {
-            _logger.LogError(ex, ex.Message);
-
-            return BadRequest();
-        }
+        return Ok(rowsAffected);
     }
 }

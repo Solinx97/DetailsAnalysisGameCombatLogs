@@ -81,7 +81,7 @@ public class TokenController : ControllerBase
                 return BadRequest("Invalid refresh token");
             }
 
-            var token = GenerateAccessToken(clientId, userId, refreshToken);
+            var token = GenerateNewTokenWhenRefresh(clientId, userId, refreshToken);
 
             return Ok(token);
         }
@@ -110,7 +110,7 @@ public class TokenController : ControllerBase
         return token;
     }
 
-    private AccessTokenDto GenerateAccessToken(string clientId, string userId, string refreshToken)
+    private AccessTokenDto GenerateNewTokenWhenRefresh(string clientId, string userId, string refreshToken)
     {
         var accessToken = _oAuthCodeFlowService.GenerateToken(clientId, userId);
 

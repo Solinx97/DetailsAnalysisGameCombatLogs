@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
+using CombatAnalysis.ChatApi.Models;
 using CombatAnalysis.ChatBL.DTO;
 using CombatAnalysis.ChatBL.Interfaces;
-using CombatAnalysis.ChatApi.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -14,9 +14,9 @@ public class GroupChatMessageController : ControllerBase
 {
     private readonly IService<GroupChatMessageDto, int> _service;
     private readonly IMapper _mapper;
-    private readonly ILogger _logger;
+    private readonly ILogger<GroupChatMessageController> _logger;
 
-    public GroupChatMessageController(IService<GroupChatMessageDto, int> service, IMapper mapper, ILogger logger)
+    public GroupChatMessageController(IService<GroupChatMessageDto, int> service, IMapper mapper, ILogger<GroupChatMessageController> logger)
     {
         _service = service;
         _mapper = mapper;
@@ -45,7 +45,6 @@ public class GroupChatMessageController : ControllerBase
     public async Task<IActionResult> Find(int chatId)
     {
         var groupChatMessages = await _service.GetByParamAsync(nameof(GroupChatMessageModel.GroupChatId), chatId);
-
         return Ok(groupChatMessages);
     }
 
@@ -62,7 +61,13 @@ public class GroupChatMessageController : ControllerBase
         }
         catch (ArgumentNullException ex)
         {
-            _logger.LogError(ex, ex.Message);
+            _logger.LogError(ex, $"Create Group Chat Message failed: ${ex.Message}", model);
+
+            return BadRequest();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, $"Create Group Chat Message failed: ${ex.Message}", model);
 
             return BadRequest();
         }
@@ -80,7 +85,13 @@ public class GroupChatMessageController : ControllerBase
         }
         catch (ArgumentNullException ex)
         {
-            _logger.LogError(ex, ex.Message);
+            _logger.LogError(ex, $"Update Group Chat Message failed: ${ex.Message}", model);
+
+            return BadRequest();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, $"Update Group Chat Message failed: ${ex.Message}", model);
 
             return BadRequest();
         }
@@ -89,17 +100,8 @@ public class GroupChatMessageController : ControllerBase
     [HttpDelete("{id:int:min(1)}")]
     public async Task<IActionResult> Delete(int id)
     {
-        try
-        {
-            var result = await _service.DeleteAsync(id);
+        var affectedRows = await _service.DeleteAsync(id);
 
-            return Ok(result);
-        }
-        catch (ArgumentNullException ex)
-        {
-            _logger.LogError(ex, ex.Message);
-
-            return BadRequest();
-        }
+        return Ok(affectedRows);
     }
 }

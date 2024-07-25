@@ -14,9 +14,9 @@ public class CustomerController : ControllerBase
 {
     private readonly IService<CustomerDto, string> _service;
     private readonly IMapper _mapper;
-    private readonly ILogger _logger;
+    private readonly ILogger<CustomerController> _logger;
 
-    public CustomerController(IService<CustomerDto, string> service, IMapper mapper, ILogger logger)
+    public CustomerController(IService<CustomerDto, string> service, IMapper mapper, ILogger<CustomerController> logger)
     {
         _service = service;
         _mapper = mapper;
@@ -62,7 +62,13 @@ public class CustomerController : ControllerBase
         }
         catch (ArgumentNullException ex)
         {
-            _logger.LogError(ex, ex.Message);
+            _logger.LogError(ex, $"Create Customer failed: ${ex.Message}", model);
+
+            return BadRequest();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, $"Create Customer failed: ${ex.Message}", model);
 
             return BadRequest();
         }
@@ -80,7 +86,13 @@ public class CustomerController : ControllerBase
         }
         catch (ArgumentNullException ex)
         {
-            _logger.LogError(ex, ex.Message);
+            _logger.LogError(ex, $"Update Customer failed: ${ex.Message}", model);
+
+            return BadRequest();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, $"Update Customer failed: ${ex.Message}", model);
 
             return BadRequest();
         }
@@ -89,17 +101,8 @@ public class CustomerController : ControllerBase
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(string id)
     {
-        try
-        {
-            var result = await _service.DeleteAsync(id);
+        var rowsAffected = await _service.DeleteAsync(id);
 
-            return Ok(result);
-        }
-        catch (ArgumentNullException ex)
-        {
-            _logger.LogError(ex, ex.Message);
-
-            return BadRequest();
-        }
+        return Ok(rowsAffected);
     }
 }

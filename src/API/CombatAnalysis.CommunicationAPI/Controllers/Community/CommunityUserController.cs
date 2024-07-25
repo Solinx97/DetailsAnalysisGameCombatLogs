@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
+using CombatAnalysis.CommunicationAPI.Models.Community;
 using CombatAnalysis.CommunicationBL.DTO.Community;
 using CombatAnalysis.CommunicationBL.Interfaces;
-using CombatAnalysis.CommunicationAPI.Models.Community;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -14,9 +14,9 @@ public class CommunityUserController : ControllerBase
 {
     private readonly IService<CommunityUserDto, string> _service;
     private readonly IMapper _mapper;
-    private readonly ILogger _logger;
+    private readonly ILogger<CommunityUserController> _logger;
 
-    public CommunityUserController(IService<CommunityUserDto, string> service, IMapper mapper, ILogger logger)
+    public CommunityUserController(IService<CommunityUserDto, string> service, IMapper mapper, ILogger<CommunityUserController> logger)
     {
         _service = service;
         _mapper = mapper;
@@ -69,7 +69,13 @@ public class CommunityUserController : ControllerBase
         }
         catch (ArgumentNullException ex)
         {
-            _logger.LogError(ex, ex.Message);
+            _logger.LogError(ex, $"Create Community User failed: ${ex.Message}", model);
+
+            return BadRequest();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, $"Create Community User failed: ${ex.Message}", model);
 
             return BadRequest();
         }
@@ -87,7 +93,13 @@ public class CommunityUserController : ControllerBase
         }
         catch (ArgumentNullException ex)
         {
-            _logger.LogError(ex, ex.Message);
+            _logger.LogError(ex, $"Update Community User failed: ${ex.Message}", model);
+
+            return BadRequest();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, $"Update Community User failed: ${ex.Message}", model);
 
             return BadRequest();
         }
@@ -96,17 +108,8 @@ public class CommunityUserController : ControllerBase
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(string id)
     {
-        try
-        {
-            var result = await _service.DeleteAsync(id);
+        var rowsAffected = await _service.DeleteAsync(id);
 
-            return Ok(result);
-        }
-        catch (ArgumentNullException ex)
-        {
-            _logger.LogError(ex, ex.Message);
-
-            return BadRequest();
-        }
+        return Ok(rowsAffected);
     }
 }

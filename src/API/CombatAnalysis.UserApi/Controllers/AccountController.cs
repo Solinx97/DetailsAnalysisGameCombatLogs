@@ -14,9 +14,9 @@ public class AccountController : ControllerBase
 {
     private readonly IUserService<AppUserDto> _service;
     private readonly IMapper _mapper;
-    private readonly ILogger _logger;
+    private readonly ILogger<AccountController> _logger;
 
-    public AccountController(IUserService<AppUserDto> service, IMapper mapper, ILogger logger)
+    public AccountController(IUserService<AppUserDto> service, IMapper mapper, ILogger<AccountController> logger)
     {
         _service = service;
         _mapper = mapper;
@@ -26,39 +26,17 @@ public class AccountController : ControllerBase
     [HttpGet]
     public async Task<IActionResult> GetAll()
     {
-        try
-        {
-            var users = await _service.GetAllAsync();
-            if (users == null)
-            {
-                return BadRequest();
-            }
+        var results = await _service.GetAllAsync();
 
-            return Ok(users);
-        }
-        catch (Exception)
-        {
-            return BadRequest();
-        }
+        return Ok(results);
     }
 
     [HttpGet("{id}")]
     public async Task<IActionResult> GetById(string id)
     {
-        try
-        {
-            var user = await _service.GetByIdAsync(id);
-            if (user == null)
-            {
-                return NotFound();
-            }
+        var result = await _service.GetByIdAsync(id);
 
-            return Ok(user);
-        }
-        catch (Exception)
-        {
-            return BadRequest();
-        }
+        return Ok(result);
     }
 
     [AllowAnonymous]
@@ -76,51 +54,56 @@ public class AccountController : ControllerBase
         }
         catch (ArgumentNullException ex)
         {
-            _logger.LogError(ex, ex.Message);
+            _logger.LogError(ex, $"Create App User failed: ${ex.Message}", model);
+
+            return BadRequest();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, $"Create App User failed: ${ex.Message}", model);
 
             return BadRequest();
         }
     }
 
     [HttpPut]
-    public async Task<IActionResult> Update(AppUserModel user)
+    public async Task<IActionResult> Update(AppUserModel model)
     {
-        var map = _mapper.Map<AppUserDto>(user);
-        var updatedUser = await _service.UpdateAsync(map);
-        if (updatedUser == 0)
+        try
         {
+            var map = _mapper.Map<AppUserDto>(model);
+            var result = await _service.UpdateAsync(map);
+
+            return Ok(result);
+        }
+        catch (ArgumentNullException ex)
+        {
+            _logger.LogError(ex, $"Update App User failed: ${ex.Message}", model);
+
             return BadRequest();
         }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, $"Update App User failed: ${ex.Message}", model);
 
-        return Ok();
+            return BadRequest();
+        }
     }
 
     [HttpGet("find/{identityUserId}")]
     public async Task<IActionResult> Find(string identityUserId)
     {
-        try
-        {
-            var user = await _service.GetAsync(identityUserId);
-            return Ok(user);
-        }
-        catch (Exception)
-        {
-            return BadRequest();
-        }
+        var result = await _service.GetAsync(identityUserId);
+
+        return Ok(result);
     }
 
     [HttpGet("check/{username}")]
     [AllowAnonymous]
     public async Task<IActionResult> CheckByUsername(string username)
     {
-        try
-        {
-            var usernameAlreadyUsed = await _service.CheckByUsernameAsync(username);
-            return Ok(usernameAlreadyUsed);
-        }
-        catch (Exception)
-        {
-            return BadRequest();
-        }
+        var usernameAlreadyUsed = await _service.CheckByUsernameAsync(username);
+
+        return Ok(usernameAlreadyUsed);
     }
 }
