@@ -37,15 +37,6 @@ public class App : MvxApplication
         AuthenticationGrantType.Authorization = ConfigurationManager.AppSettings.Get("grantTypeAuthorization");
         AuthenticationGrantType.RefreshToken = ConfigurationManager.AppSettings.Get("grantTypeRefreshToken");
 
-        var maxDegreeOfParallelism = ConfigurationManager.AppSettings.Get("maxDegreeOfParallelism");
-        if (!string.IsNullOrEmpty(maxDegreeOfParallelism))
-        {
-            if (int.TryParse(maxDegreeOfParallelism, out var maxDegreeOfParallelismValue))
-            {
-                ParallelismHelp.MaxDegreeOfParallelism = maxDegreeOfParallelismValue;
-            }
-        }
-
         AppInformation.Version = ConfigurationManager.AppSettings.Get("appVersion");
         Enum.TryParse(ConfigurationManager.AppSettings.Get("appVersionType"), out AppVersionType appVersionType);
         AppInformation.VersionType = appVersionType;

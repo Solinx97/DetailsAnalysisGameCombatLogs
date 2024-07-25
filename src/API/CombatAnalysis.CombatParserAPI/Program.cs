@@ -5,10 +5,8 @@ using CombatAnalysis.CombatParserAPI.Consts;
 using CombatAnalysis.CombatParserAPI.Helpers;
 using CombatAnalysis.CombatParserAPI.Interfaces;
 using CombatAnalysis.CombatParserAPI.Mapping;
-using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.OpenApi.Models;
-using Newtonsoft.Json;
 using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -73,15 +71,6 @@ app.UseSwaggerUI(options =>
     options.SwaggerEndpoint("/swagger/v1/swagger.json", "Combat parser API v1");
     options.InjectStylesheet("/swagger-ui/swaggerDark.css");
 });
-
-app.UseExceptionHandler(a => a.Run(async context =>
-{
-    var exception = context.Features.Get<IExceptionHandlerPathFeature>().Error;
-    var result = JsonConvert.SerializeObject(new { error = exception.Message });
-    context.Response.ContentType = "application/json";
-
-    await context.Response.WriteAsync(result);
-}));
 
 app.UseStaticFiles();
 app.UseHttpsRedirection();

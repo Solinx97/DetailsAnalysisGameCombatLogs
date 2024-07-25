@@ -28,36 +28,30 @@ public class CombatParserAPIService
         _httpClient.BaseAddress = Port.CombatParserApi;
     }
 
-    public async Task<List<bool>> SaveAsync(List<CombatModel> combats, CombatLogModel combatLog, LogType logType, Action<int, string, string> combatUploaded)
+    public async Task<bool> SaveAsync(List<CombatModel> combats, CombatLogModel combatLog, LogType logType, Action<int, string, string> combatUploaded)
     {
         try
         {
             var currentCombatNumber = 0;
-            var combatsAreUploaded = new List<bool>();
+            var combatsAreUploaded = false;
             if (logType == LogType.Public || logType == LogType.Private)
             {
                 await SaveCombatLogByUserAsync(combatLog.Id, logType);
             }
 
-            var parallelOptions = new ParallelOptions()
-            {
-                MaxDegreeOfParallelism = ParallelismHelp.MaxDegreeOfParallelism,
-            };
-
-            await Parallel.ForEachAsync(combats, parallelOptions, async (item, token) =>
+            foreach (var item in combats)
             {
                 item.CombatLogId = combatLog.Id;
 
-                var response = await _httpClient.PostAsync("Combat", JsonContent.Create(item));
-                item.IsReady = response.IsSuccessStatusCode;
-
-                combatsAreUploaded.Add(response.IsSuccessStatusCode);
+                _ = _httpClient.PostAsync("Combat", JsonContent.Create(item));
 
                 currentCombatNumber++;
                 combatUploaded(currentCombatNumber, item.DungeonName, item.Name);
-            });
+            }
 
-            await SetReadyForCombatLogAsync(combatLog);
+            await SetReadyForCombatLogAsync(combatLog, combats.Count);
+
+            combatsAreUploaded = true;
 
             return combatsAreUploaded;
         }
@@ -65,7 +59,7 @@ public class CombatParserAPIService
         {
             _logger.LogError(ex, ex.Message);
 
-            return null;
+            return false;
         }
     }
 
@@ -258,7 +252,7 @@ public class CombatParserAPIService
 
             var combatLogByUser = new CombatLogByUserModel
             {
-                UserId = user.Id,
+                AppUserId = user.Id,
                 CombatLogId = combatLogId,
                 PersonalLogType = (int)logType
             };
@@ -271,11 +265,13 @@ public class CombatParserAPIService
         }
     }
 
-    private async Task SetReadyForCombatLogAsync(CombatLogModel combatLog)
+    private async Task SetReadyForCombatLogAsync(CombatLogModel combatLog, int numberCombats)
     {
         try
         {
             combatLog.IsReady = true;
+            combatLog.NumberReadyCombats = 0;
+            combatLog.CombatsInQueue = numberCombats;
 
             await _httpClient.PutAsync("CombatLog", JsonContent.Create(combatLog));
         }

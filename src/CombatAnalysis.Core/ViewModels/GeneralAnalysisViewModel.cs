@@ -489,14 +489,14 @@ public class GeneralAnalysisViewModel : ParentTemplate<Tuple<List<CombatModel>, 
 
         var combotLogToRepeat = ((BasicTemplateViewModel)BasicTemplate).CombatLog;
         var combatsAreUploaded = await _combatParserAPIService.SaveAsync(combatsForUploadAgain, combotLogToRepeat, _logType, CombatUploaded);
-        if (combatsAreUploaded == null)
+        if (!combatsAreUploaded)
         {
             BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, nameof(BasicTemplateViewModel.ResponseStatus), LoadingStatus.Failed);
 
             return;
         }
 
-        var responseStatus = combatsAreUploaded.Any(uploaded => !uploaded) ? LoadingStatus.Failed : LoadingStatus.Successful;
+        var responseStatus = LoadingStatus.Successful;
         BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, nameof(BasicTemplateViewModel.ResponseStatus), responseStatus);
     }
 

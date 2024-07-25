@@ -53,7 +53,7 @@ public class CombatLogByUserController : ControllerBase
     [HttpGet("byUserId/{id}")]
     public async Task<IActionResult> GetByUserId(string id)
     {
-        var result = await _service.GetByParamAsync(nameof(CombatLogByUserModel.UserId), id);
+        var result = await _service.GetByParamAsync(nameof(CombatLogByUserModel.AppUserId), id);
 
         return Ok(result);
     }

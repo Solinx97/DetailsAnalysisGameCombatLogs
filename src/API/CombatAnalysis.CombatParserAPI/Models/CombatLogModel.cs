@@ -8,5 +8,9 @@ public class CombatLogModel
 
     public DateTimeOffset Date { get; set; }
 
+    public int NumberReadyCombats { get; set; }
+
+    public int CombatsInQueue { get; set; }
+
     public bool IsReady { get; set; }
 }

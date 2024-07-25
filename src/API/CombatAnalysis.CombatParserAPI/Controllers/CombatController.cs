@@ -12,6 +12,7 @@ namespace CombatAnalysis.CombatParserAPI.Controllers;
 public class CombatController : ControllerBase
 {
     private readonly IService<CombatDto, int> _service;
+    private readonly IService<CombatLogDto, int> _combatLogService;
     private readonly IService<CombatPlayerDto, int> _combatPlayerService;
     private readonly IPlayerInfoService<PlayerDeathDto, int> _plaнerDeathService;
     private readonly IMapper _mapper;
@@ -19,10 +20,11 @@ public class CombatController : ControllerBase
     private readonly ISqlContextService _sqlContextService;
     private readonly ICombatDataHelper _saveCombatDataHelper;
 
-    public CombatController(IService<CombatDto, int> service, IMapper mapper, ILogger<CombatController> logger,
+    public CombatController(IService<CombatDto, int> service, IService<CombatLogDto, int> combatLogService, IMapper mapper, ILogger<CombatController> logger,
         ISqlContextService sqlContextService, ICombatDataHelper saveCombatDataHelper, IService<CombatPlayerDto, int> combatPlayerService, IPlayerInfoService<PlayerDeathDto, int> plaнerDeathService)
     {
         _service = service;
+        _combatLogService = combatLogService;
         _mapper = mapper;
         _logger = logger;
         _sqlContextService = sqlContextService;
@@ -88,6 +90,7 @@ public class CombatController : ControllerBase
         if (model == null)
         {
             _logger.LogError("Create combat called with null model.");
+
             return BadRequest("Model cannot be null.");
         }
 
@@ -100,9 +103,16 @@ public class CombatController : ControllerBase
 
             await UpdateCombatAsync(createdCombat);
 
+            var affectedRows = await UpdateCombatLog(createdCombat.CombatLogId);
+            if (affectedRows == 0) {
+                await transaction.RollbackAsync();
+
+                return BadRequest();
+            }
+
             await transaction.CommitAsync();
 
-            return Ok(createdCombat);
+            return Ok();
         }
         catch (ArgumentNullException ex)
         {
@@ -136,6 +146,7 @@ public class CombatController : ControllerBase
         if (model == null)
         {
             _logger.LogError("Update combat called with null model.");
+
             return BadRequest("Model cannot be null.");
         }
 
@@ -239,5 +250,16 @@ public class CombatController : ControllerBase
         {
             throw new InvalidOperationException("Failed to update combat");
         }
+    }
+
+    private async Task<int> UpdateCombatLog(int combatLogId)
+    {
+        var combatLog = await _combatLogService.GetByIdAsync(combatLogId);
+        combatLog.CombatsInQueue--;
+        combatLog.NumberReadyCombats++;
+
+        var affectedRows = await _combatLogService.UpdateAsync(combatLog);
+
+        return affectedRows;
     }
 }

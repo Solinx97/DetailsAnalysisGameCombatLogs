@@ -1,15 +1,16 @@
-﻿using System;
+﻿namespace CombatAnalysis.WebApp.Models;
 
-namespace CombatAnalysis.WebApp.Models
+public class CombatLogModel
 {
-    public class CombatLogModel
-    {
-        public int Id { get; set; }
+    public int Id { get; set; }
 
-        public string Name { get; set; }
+    public string Name { get; set; }
 
-        public DateTimeOffset Date { get; set; }
+    public DateTimeOffset Date { get; set; }
 
-        public bool IsReady { get; set; }
-    }
+    public int NumberReadyCombats { get; set; }
+
+    public int CombatsInQueue { get; set; }
+
+    public bool IsReady { get; set; }
 }
