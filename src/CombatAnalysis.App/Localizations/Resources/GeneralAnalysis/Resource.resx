@@ -117,8 +117,32 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="Buffs" xml:space="preserve">
-    <value>Buffs</value>
+  <data name="AllCombatsSaved" xml:space="preserve">
+    <value>All combats saved!</value>
+  </data>
+  <data name="AverageDamage" xml:space="preserve">
+    <value>Av. indicator damage</value>
+  </data>
+  <data name="AverageDamagePerSecond" xml:space="preserve">
+    <value>Av. indicator damage per sec.</value>
+  </data>
+  <data name="AverageDamageTaken" xml:space="preserve">
+    <value>Av. indicator damage taken</value>
+  </data>
+  <data name="AverageDamageTakenPerSecond" xml:space="preserve">
+    <value>Av. indicator damage taken per sec.</value>
+  </data>
+  <data name="AverageHeal" xml:space="preserve">
+    <value>Av. indicator heal</value>
+  </data>
+  <data name="AverageHealPerSecond" xml:space="preserve">
+    <value>Av. indicator heal per sec.</value>
+  </data>
+  <data name="AverageResources" xml:space="preserve">
+    <value>Av. indicator resources recovery</value>
+  </data>
+  <data name="AverageResourcesPerSecond" xml:space="preserve">
+    <value>Av. indicator resources recovery per sec.</value>
   </data>
   <data name="Damage" xml:space="preserve">
     <value>Damage</value>
@@ -138,8 +162,41 @@
   <data name="Healing" xml:space="preserve">
     <value>Healing</value>
   </data>
+  <data name="Heroic" xml:space="preserve">
+    <value>H</value>
+  </data>
+  <data name="IndexOfDeath" xml:space="preserve">
+    <value>Index of death</value>
+  </data>
   <data name="LoadingFailed" xml:space="preserve">
-    <value>We couldn't save your data. Repeat?</value>
+    <value>Did not uploaded</value>
+  </data>
+  <data name="MaxDamage" xml:space="preserve">
+    <value>Max. indicator damage</value>
+  </data>
+  <data name="MaxDamagePerSecond" xml:space="preserve">
+    <value>Max. indicator damage per sec.</value>
+  </data>
+  <data name="MaxDamageTaken" xml:space="preserve">
+    <value>Max. indicator damage taken</value>
+  </data>
+  <data name="MaxDamageTakenPerSecond" xml:space="preserve">
+    <value>Max. indicator damage taken per sec.</value>
+  </data>
+  <data name="MaxHeal" xml:space="preserve">
+    <value>Max. indicator heal</value>
+  </data>
+  <data name="MaxHealPerSecond" xml:space="preserve">
+    <value>Max. indicator heal per sec.</value>
+  </data>
+  <data name="MaxResources" xml:space="preserve">
+    <value>Max. indicator resources recovery</value>
+  </data>
+  <data name="MaxResourcesPerSecond" xml:space="preserve">
+    <value>Max. indicator resources recovery per sec.</value>
+  </data>
+  <data name="Normal" xml:space="preserve">
+    <value>N</value>
   </data>
   <data name="NotReady" xml:space="preserve">
     <value>Not ready</value>
@@ -156,11 +213,23 @@
   <data name="Resources" xml:space="preserve">
     <value>Resources</value>
   </data>
+  <data name="ShowAverageInform" xml:space="preserve">
+    <value>Show average information for all combats</value>
+  </data>
+  <data name="Size" xml:space="preserve">
+    <value>Size</value>
+  </data>
   <data name="Status" xml:space="preserve">
     <value>Status</value>
   </data>
   <data name="Title" xml:space="preserve">
-    <value>Analyzing</value>
+    <value>Analysing</value>
+  </data>
+  <data name="Uploaded" xml:space="preserve">
+    <value>Uploaded:</value>
+  </data>
+  <data name="Uploading" xml:space="preserve">
+    <value>Uploading...</value>
   </data>
   <data name="Win" xml:space="preserve">
     <value>Win</value>

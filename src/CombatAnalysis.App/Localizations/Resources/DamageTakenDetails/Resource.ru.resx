@@ -141,6 +141,9 @@
   <data name="DamageTaken" xml:space="preserve">
     <value>Пол. урон</value>
   </data>
+  <data name="DamageTakenA" xml:space="preserve">
+    <value>Пол. урон + П.</value>
+  </data>
   <data name="DamageTakenPerSec" xml:space="preserve">
     <value>Получ. урона в сек.</value>
   </data>

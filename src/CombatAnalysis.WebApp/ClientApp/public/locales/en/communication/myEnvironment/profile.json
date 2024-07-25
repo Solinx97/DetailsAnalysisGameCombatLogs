@@ -1,0 +1,18 @@
+{
+  "Privacy": "Privacy",
+  "PhoneNumber": "Phone number",
+  "Birthday": "Birthday",
+  "CurrentPassword": "Current password",
+  "NewPassword": "New password",
+  "ConfirmNewPassword": "Confirm new password",
+  "General": "General",
+  "Message": "Message",
+  "Username": "Username",
+  "AboutMe": "About me",
+  "FirstName": "First name",
+  "LastName": "Last name",
+  "Gender": "Gender",
+  "Save": "Save",
+  "Cancel": "Cancel",
+  "Edit": "Edit"
+}

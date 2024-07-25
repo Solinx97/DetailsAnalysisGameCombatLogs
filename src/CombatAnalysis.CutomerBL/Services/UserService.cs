@@ -1,8 +1,8 @@
 ﻿using AutoMapper;
 using CombatAnalysis.CustomerBL.DTO;
 using CombatAnalysis.CustomerBL.Interfaces;
-using CombatAnalysis.DAL.Entities.User;
-using CombatAnalysis.DAL.Interfaces;
+using CombatAnalysis.CustomerDAL.Entities;
+using CombatAnalysis.CustomerDAL.Interfaces;
 
 namespace CombatAnalysis.CustomerBL.Services.User;
 
@@ -53,17 +53,17 @@ internal class UserService : IUserService<AppUserDto>
         return resultMap;
     }
 
-    public async Task<AppUserDto> GetAsync(string emil, string password)
+    public async Task<bool> CheckByUsernameAsync(string username)
     {
-        var result = await _repository.GetAsync(emil, password);
-        var resultMap = _mapper.Map<AppUserDto>(result);
+        var users = await GetAllAsync();
+        var findByUsername = users.FirstOrDefault(x => x.Username == username);
 
-        return resultMap;
+        return findByUsername != null;
     }
 
-    public async Task<AppUserDto> GetAsync(string emil)
+    public async Task<AppUserDto> GetAsync(string identityUserId)
     {
-        var result = await _repository.GetAsync(emil);
+        var result = await _repository.GetAsync(identityUserId);
         var resultMap = _mapper.Map<AppUserDto>(result);
 
         return resultMap;
@@ -82,15 +82,22 @@ internal class UserService : IUserService<AppUserDto>
 
     private async Task<AppUserDto> CreateInternalAsync(AppUserDto item)
     {
-        if (string.IsNullOrEmpty(item.Email))
+        if (string.IsNullOrEmpty(item.Username))
         {
-            throw new ArgumentNullException(nameof(AppUserDto),
-                $"The property {nameof(AppUserDto.Email)} of the {nameof(AppUserDto)} object can't be null or empty");
+            throw new ArgumentNullException(nameof(CustomerDto),
+                $"The property {nameof(AppUserDto.Username)} of the {nameof(AppUserDto)} object can't be null or empty");
         }
-        if (string.IsNullOrEmpty(item.Password))
+
+        if (string.IsNullOrEmpty(item.FirstName))
         {
-            throw new ArgumentNullException(nameof(AppUserDto),
-                $"The property {nameof(AppUserDto.Password)} of the {nameof(AppUserDto)} object can't be null or empty");
+            throw new ArgumentNullException(nameof(CustomerDto),
+                $"The property {nameof(AppUserDto.FirstName)} of the {nameof(AppUserDto)} object can't be null or empty");
+        }
+
+        if (string.IsNullOrEmpty(item.LastName))
+        {
+            throw new ArgumentNullException(nameof(CustomerDto),
+                $"The property {nameof(AppUserDto.LastName)} of the {nameof(AppUserDto)} object can't be null or empty");
         }
 
         var map = _mapper.Map<AppUser>(item);
@@ -102,17 +109,6 @@ internal class UserService : IUserService<AppUserDto>
 
     private async Task<int> DeleteInternalAsync(AppUserDto item)
     {
-        if (string.IsNullOrEmpty(item.Email))
-        {
-            throw new ArgumentNullException(nameof(AppUserDto),
-                $"The property {nameof(AppUserDto.Email)} of the {nameof(AppUserDto)} object can't be null or empty");
-        }
-        if (string.IsNullOrEmpty(item.Password))
-        {
-            throw new ArgumentNullException(nameof(AppUserDto),
-                $"The property {nameof(AppUserDto.Password)} of the {nameof(AppUserDto)} object can't be null or empty");
-        }
-
         var map = _mapper.Map<AppUser>(item);
         var rowsAffected = await _repository.DeleteAsync(map);
 
@@ -121,15 +117,22 @@ internal class UserService : IUserService<AppUserDto>
 
     private async Task<int> UpdateInternalAsync(AppUserDto item)
     {
-        if (string.IsNullOrEmpty(item.Email))
+        if (string.IsNullOrEmpty(item.Username))
         {
-            throw new ArgumentNullException(nameof(AppUserDto),
-                $"The property {nameof(AppUserDto.Email)} of the {nameof(AppUserDto)} object can't be null or empty");
+            throw new ArgumentNullException(nameof(CustomerDto),
+                $"The property {nameof(AppUserDto.Username)} of the {nameof(AppUserDto)} object can't be null or empty");
         }
-        if (string.IsNullOrEmpty(item.Password))
+
+        if (string.IsNullOrEmpty(item.FirstName))
         {
-            throw new ArgumentNullException(nameof(AppUserDto),
-                $"The property {nameof(AppUserDto.Password)} of the {nameof(AppUserDto)} object can't be null or empty");
+            throw new ArgumentNullException(nameof(CustomerDto),
+                $"The property {nameof(AppUserDto.FirstName)} of the {nameof(AppUserDto)} object can't be null or empty");
+        }
+
+        if (string.IsNullOrEmpty(item.LastName))
+        {
+            throw new ArgumentNullException(nameof(CustomerDto),
+                $"The property {nameof(AppUserDto.LastName)} of the {nameof(AppUserDto)} object can't be null or empty");
         }
 
         var map = _mapper.Map<AppUser>(item);

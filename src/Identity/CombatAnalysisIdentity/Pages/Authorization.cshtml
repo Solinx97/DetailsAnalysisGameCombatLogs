@@ -1,0 +1,49 @@
+﻿@page
+@model AuthorizationModel
+
+@if (Model.QueryIsValid)
+{
+    <div class="login">
+        <div class="login__title">Login</div>
+        <form class="login__submit" method="post">
+            <div class="mb-3">
+                <input type="email" class="form-control" id="inputEmail" name="email" aria-describedby="emailHelp" placeholder="Email" required />
+            </div>
+            <div class="mb-3">
+                <input type="password" class="form-control" id="inputPassword" name="password" autoComplete="new-password" placeholder="Password" required />
+            </div>
+            <div class="actions">
+                <input type="submit" class="btn-border-shadow finish-login" value="Sign in" />
+            </div>
+        </form>
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <div class="login__cancel">
+            <input type="button" class="btn-border-shadow finish-registration" onclick="goToRegistration()" value="Registration" />
+            <input type="button" class="btn-border-shadow cancel" onclick="goToHome()" value="Cancel" />
+        </div>
+    </div>
+}
+else
+{
+    <div class="request-incorrect">
+        <div>Request is incorrect. Pls try one more time</div>
+    </div>
+}
+
+<script>
+    function goToRegistration() {
+        const registrationUrl = `@Model.RegistrationUrl`;
+        const queryString = window.location.search;
+
+        window.location.href = `${registrationUrl}registration${queryString}`;
+    }
+
+    function goToHome() {
+        const queryString = window.location.search;
+        const queryparams = new URLSearchParams(queryString);
+        const redirectUri = queryparams.get("redirectUri");
+        const protocol = `@Model.Protocol`;
+
+        window.location.href = `${protocol}://${redirectUri}`;
+    }
+</script>

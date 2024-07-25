@@ -1,20 +1,22 @@
 ﻿using AutoMapper;
-using CombatAnalysis.BL.DTO.Chat;
-using CombatAnalysis.BL.Interfaces;
 using CombatAnalysis.ChatApi.Models;
+using CombatAnalysis.ChatBL.DTO;
+using CombatAnalysis.ChatBL.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CombatAnalysis.ChatApi.Controllers;
 
 [Route("api/v1/[controller]")]
 [ApiController]
+[Authorize]
 public class PersonalChatController : ControllerBase
 {
     private readonly IService<PersonalChatDto, int> _service;
     private readonly IMapper _mapper;
-    private readonly ILogger _logger;
+    private readonly ILogger<PersonalChatController> _logger;
 
-    public PersonalChatController(IService<PersonalChatDto, int> service, IMapper mapper, ILogger logger)
+    public PersonalChatController(IService<PersonalChatDto, int> service, IMapper mapper, ILogger<PersonalChatController> logger)
     {
         _service = service;
         _mapper = mapper;
@@ -49,7 +51,13 @@ public class PersonalChatController : ControllerBase
         }
         catch (ArgumentNullException ex)
         {
-            _logger.LogError(ex, ex.Message);
+            _logger.LogError(ex, $"Create Personal Chat failed: ${ex.Message}", model);
+
+            return BadRequest();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, $"Create Personal Chat failed: ${ex.Message}", model);
 
             return BadRequest();
         }
@@ -83,7 +91,13 @@ public class PersonalChatController : ControllerBase
         }
         catch (ArgumentNullException ex)
         {
-            _logger.LogError(ex, ex.Message);
+            _logger.LogError(ex, $"Update Personal Chat failed: ${ex.Message}", model);
+
+            return BadRequest();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, $"Update Personal Chat failed: ${ex.Message}", model);
 
             return BadRequest();
         }
@@ -92,17 +106,8 @@ public class PersonalChatController : ControllerBase
     [HttpDelete("{id:int:min(1)}")]
     public async Task<IActionResult> Delete(int id)
     {
-        try
-        {
-            var result = await _service.DeleteAsync(id);
+        var rowsAffected = await _service.DeleteAsync(id);
 
-            return Ok(result);
-        }
-        catch (ArgumentNullException ex)
-        {
-            _logger.LogError(ex, ex.Message);
-
-            return BadRequest();
-        }
+        return Ok(rowsAffected);
     }
 }

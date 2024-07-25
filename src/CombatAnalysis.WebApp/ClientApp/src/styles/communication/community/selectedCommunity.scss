@@ -1,0 +1,256 @@
+.selected-community {
+    display: flex;
+    justify-content: flex-start;
+    gap: 20px;
+
+    &__content {
+        width: 100%;
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+
+            .title {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                width: 100%;
+
+                &__content {
+                    display: flex;
+                    align-items: center;
+                    gap: 10px;
+
+                    .name {
+                        display: flex;
+                        align-items: center;
+                        gap: 10px 20px;
+                        margin: 5px 10px;
+                        padding: 10px 20px;
+                        box-shadow: 3px 3px 3px 3px gray;
+                        border-radius: 20px;
+                        cursor: default;
+
+                        svg:hover {
+                            cursor: default;
+                        }
+                    }
+
+                    &__name:hover {
+                        cursor: default;
+                        box-shadow: 3px 3px 3px 3px green;
+                    }
+
+                    &__policy {
+                        opacity: 0.6;
+                        cursor: default;
+                    }
+                }
+
+                svg:hover {
+                    cursor: pointer;
+                    transform: scale(1.25);
+                }
+            }
+
+            .leave {
+                margin: 0 50px;
+            }
+        }
+
+        .description {
+            display: flex;
+            flex-direction: column;
+
+            .title {
+                display: flex;
+                justify-content: flex-start;
+                align-items: center;
+                margin: 15px 0;
+                gap: 25px;
+                cursor: default;
+
+                &__content {
+                    display: flex;
+                    align-items: center;
+                    gap: 5px;
+                }
+
+                svg {
+                    margin: 0 15px;
+                    cursor: pointer;
+                }
+
+                svg:hover {
+                    transform: scale(1.1);
+                }
+            }
+
+            &__content {
+                padding: 15px;
+                border: 2px solid gray;
+                border-radius: 20px;
+                width: 70%;
+                margin: 0 25px;
+            }
+        }
+
+        .edit {
+            &_active {
+                color: green;
+            }
+        }
+    }
+
+    &__actions {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+
+        .members {
+            display: flex;
+            flex-direction: column;
+            align-items: stretch;
+
+            &__title {
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+
+                .tool {
+                    display: flex;
+                    justify-content: space-around;
+                    align-items: center;
+                    margin: 0 10px;
+
+                    .remove_active {
+                        color: saddlebrown;
+                    }
+                }
+
+                .actions {
+                    display: flex;
+                    flex-direction: row;
+                }
+
+                .notification {
+                    font-size: 12px;
+                    text-align: center;
+                }
+
+                svg {
+                    margin: 0 10px;
+                    cursor: pointer;
+                }
+
+                svg:hover {
+                    transform: scale(1.2);
+                }
+            }
+
+            &__content {
+                display: flex;
+                flex-direction: column;
+                gap: 10px;
+                margin: 10px 0;
+            }
+
+            .all-people {
+                font-size: 12px;
+            }
+
+            .add-people-to-community {
+                position: fixed;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                border-radius: 25px;
+                top: 5%;
+                right: 35%;
+                padding: 10px;
+                width: 500px;
+                max-height: 600px;
+
+                &__menu {
+                    display: flex;
+                    justify-content: flex-end;
+                    width: 100%;
+
+                    svg {
+                        padding: 0 5px;
+
+                        &:hover {
+                            cursor: pointer;
+                            transform: scale(1.25);
+                        }
+                    }
+                }
+
+                .form-label {
+                    display: flex;
+                    justify-content: center;
+                }
+
+                .item-result {
+                    display: flex;
+                    gap: 10px;
+
+                    .invite {
+                        box-shadow: 2px 2px 2px 2px green;
+                    }
+                }
+            }
+
+            .member {
+                display: flex;
+                align-items: center;
+
+                &__username {
+                    display: flex;
+                    align-items: center;
+                    border-radius: 5px;
+                    align-items: center;
+                    font-weight: bold;
+                    cursor: default;
+
+                    svg {
+                        padding: 5px;
+                        border-radius: 25px;
+                    }
+
+                    svg:hover {
+                        cursor: pointer;
+                        transform: scale(1.1);
+                        background: green;
+                        color: white;
+                    }
+                }
+
+                svg {
+                    margin: 10px 20px;
+                }
+
+                svg:hover {
+                    cursor: pointer;
+                }
+            }
+
+            .special-user__another {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+
+                svg {
+                    cursor: pointer;
+                }
+            }
+        }
+    }
+
+    .community-user-information {
+        position: fixed;
+        right: 40%;
+    }
+}

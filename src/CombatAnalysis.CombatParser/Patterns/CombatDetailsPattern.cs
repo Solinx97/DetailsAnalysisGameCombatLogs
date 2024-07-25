@@ -12,7 +12,9 @@ public abstract class CombatDetailsTemplate
 
     public List<ResourceRecovery> ResourceRecovery { get; protected set; }
 
-    public abstract int GetData(string player, List<string> combatData);
+    public Dictionary<string, List<string>> PetsId { get; set; }
+
+    public abstract int GetData(string playerId, List<string> combatData);
 
     protected List<string> GetUsefulInformation(string combatData)
     {

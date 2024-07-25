@@ -1,9 +1,4 @@
 .about-me__qualification {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    width: 100vw;
     color: white;
     background: rgb(33,190,169);
     background: radial-gradient(circle, rgba(33,190,169,1) 0%, rgba(148,153,233,1) 100%);
@@ -15,7 +10,7 @@
 }
 
 .about-me__qualification .way {
-    height: 365px;
+    height: 585px;
     width: 2px;
     margin: 50px 0 115px 0;
     background: blueviolet;
@@ -118,6 +113,14 @@
     margin: 335px -7px;
 }
 
+.about-me__qualification .way .point:nth-child(5) {
+    margin: 445px -7px;
+}
+
+.about-me__qualification .way .point:nth-child(6) {
+    margin: 555px -7px;
+}
+
 .about-me__qualification .way .point:nth-child(1) .description {
     transform: translateX(-95%);
 }
@@ -134,3 +137,10 @@
     transform: translateX(15%);
 }
 
+.about-me__qualification .way .point:nth-child(5) .description {
+    transform: translateX(-95%);
+}
+
+.about-me__qualification .way .point:nth-child(6) .description {
+    transform: translateX(15%);
+}

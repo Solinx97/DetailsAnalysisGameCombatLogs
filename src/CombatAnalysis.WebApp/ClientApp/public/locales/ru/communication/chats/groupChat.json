@@ -1,0 +1,20 @@
+{
+  "AreYouSureRemoveChat": "Вы уверены, что хотите удалить чат?",
+  "ThatWillBeRemoveChat": "Будут удалены все сообщения и документы!",
+  "Settings": "Настройки",
+  "EditName": "Редактировать название чата",
+  "Save": "Сохранить изменения",
+  "Members": "Участники",
+  "Invite": "Пригласить",
+  "Documents": "Документы",
+  "LeaveFromChat": "Выйти из чата",
+  "SendMessage": "Отправить сообщение",
+  "TypeYourMessage": "Напишите ваше сообщение",
+  "RemoveChat": "Удалить чат",
+  "RomeFromChat": "Удалить из чата",
+  "Leave": "Уйти",
+  "Cancel": "Отмена",
+  "Rules": "Правила",
+  "SaveChanges": "Сохранить",
+  "Remove": "Удалить"
+}

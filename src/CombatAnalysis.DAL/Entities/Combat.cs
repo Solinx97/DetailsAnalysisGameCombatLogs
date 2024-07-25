@@ -4,9 +4,13 @@ public class Combat
 {
     public int Id { get; set; }
 
+    public int LocallyNumber { get; set; }
+
     public string DungeonName { get; set; }
 
     public string Name { get; set; }
+
+    public int Difficulty { get; set; }
 
     public int DamageDone { get; set; }
 
@@ -17,8 +21,6 @@ public class Combat
     public int EnergyRecovery { get; set; }
 
     public int DeathNumber { get; set; }
-
-    public int UsedBuffs { get; set; }
 
     public bool IsWin { get; set; }
 

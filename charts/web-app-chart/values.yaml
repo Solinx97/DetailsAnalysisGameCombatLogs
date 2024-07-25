@@ -1,0 +1,21 @@
+env: dev
+replicas: 2
+autoscaling: 
+    enabled: true
+    min: 2
+    max: 6
+resources:
+    cpu: 80
+    memory: 80
+container:
+    name: solinx-analysis-web-app
+    image: solinx/solinx-analysis-web-app
+    tag: latest
+    port: 80
+service:
+    protocol: TCP
+    port: 80
+    targetPort: 80
+ingress:
+    host: encounters.analysis.com
+    port: 80

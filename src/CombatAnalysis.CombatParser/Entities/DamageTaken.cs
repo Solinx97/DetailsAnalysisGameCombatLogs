@@ -4,6 +4,8 @@ public class DamageTaken : DetailsBase
 {
     public int Value { get; set; }
 
+    public int ActualValue { get; set; }
+
     public TimeSpan Time { get; set; }
 
     public string FromEnemy { get; set; }

@@ -25,7 +25,7 @@ internal class CombatParserServiceTests
         var mockLogger = new Mock<ILogger>();
 
         var parser = new CombatParserService(mockFileManager.Object, mockLogger.Object);
-        var fileIsCorrect = await parser.FileCheck(testCombatLog);
+        var fileIsCorrect = await parser.FileCheckAsync(testCombatLog);
         Assert.IsTrue(fileIsCorrect);
     }
 
@@ -44,7 +44,7 @@ internal class CombatParserServiceTests
         var mockLogger = new Mock<ILogger>();
 
         var parser = new CombatParserService(mockFileManager.Object, mockLogger.Object);
-        var fileIsCorrect = await parser.FileCheck(testCombatLog);
+        var fileIsCorrect = await parser.FileCheckAsync(testCombatLog);
         Assert.IsFalse(fileIsCorrect);
     }
 
@@ -63,7 +63,7 @@ internal class CombatParserServiceTests
         var mockLogger = new Mock<ILogger>();
 
         var parser = new CombatParserService(mockFileManager.Object, mockLogger.Object);
-        await parser.Parse(testCombatLog);
+        await parser.ParseAsync(testCombatLog);
 
         var combats = parser.Combats;
         Assert.IsNotEmpty(combats);
@@ -96,7 +96,7 @@ internal class CombatParserServiceTests
         var mockLogger = new Mock<ILogger>();
 
         var parser = new CombatParserService(mockFileManager.Object, mockLogger.Object);
-        await parser.Parse(testCombatLog);
+        await parser.ParseAsync(testCombatLog);
 
         var combats = parser.Combats;
         Assert.IsNotEmpty(combats);
@@ -105,7 +105,7 @@ internal class CombatParserServiceTests
 
         var expectedCombatPlayerData = new CombatPlayer
         {
-            UserName = "Oleg - Chrome",
+            Username = "Oleg - Chrome",
             DamageDone = 10,
             DamageTaken = 15,
             HealDone = 20,
@@ -127,7 +127,7 @@ internal class CombatParserServiceTests
         Assert.IsNotEmpty(firstCombat.Players);
 
         var firstCombatPlayerData = firstCombat.Players[0];
-        Assert.AreNotEqual(expectedCombatPlayerData.UserName, firstCombatPlayerData.UserName, "Combat players username isn't correct.");
+        Assert.AreNotEqual(expectedCombatPlayerData.Username, firstCombatPlayerData.Username, "Combat players username isn't correct.");
     }
 
     [Test]
@@ -145,7 +145,7 @@ internal class CombatParserServiceTests
         var mockLogger = new Mock<ILogger>();
 
         var parser = new CombatParserService(mockFileManager.Object, mockLogger.Object);
-        await parser.Parse(testCombatLog);
+        await parser.ParseAsync(testCombatLog);
 
         var combats = parser.Combats;
         Assert.IsEmpty(combats);
@@ -167,7 +167,7 @@ internal class CombatParserServiceTests
         var mockLogger = new Mock<ILogger>();
 
         var parser = new CombatParserService(mockFileManager.Object, mockLogger.Object);
-        await parser.Parse(testCombatLog);
+        await parser.ParseAsync(testCombatLog);
 
         var combats = parser.Combats;
         Assert.IsNotEmpty(combats);

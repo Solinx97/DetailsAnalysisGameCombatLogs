@@ -117,8 +117,32 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="Buffs" xml:space="preserve">
-    <value>Усилений</value>
+  <data name="AllCombatsSaved" xml:space="preserve">
+    <value>Все бои сохранены!</value>
+  </data>
+  <data name="AverageDamage" xml:space="preserve">
+    <value>Ср. показатель урона</value>
+  </data>
+  <data name="AverageDamagePerSecond" xml:space="preserve">
+    <value>Ср. показатель урона в сек.</value>
+  </data>
+  <data name="AverageDamageTaken" xml:space="preserve">
+    <value>Ср. показатель поченного урна</value>
+  </data>
+  <data name="AverageDamageTakenPerSecond" xml:space="preserve">
+    <value>Ср. показатель поченного урона в сек.</value>
+  </data>
+  <data name="AverageHeal" xml:space="preserve">
+    <value>Ср. показать исцеления</value>
+  </data>
+  <data name="AverageHealPerSecond" xml:space="preserve">
+    <value>Ср. показать исцеления в сек.</value>
+  </data>
+  <data name="AverageResources" xml:space="preserve">
+    <value>Ср. показатель восст. ресурсов</value>
+  </data>
+  <data name="AverageResourcesPerSecond" xml:space="preserve">
+    <value>Ср. показатель восст. ресурсов в сек.</value>
   </data>
   <data name="Damage" xml:space="preserve">
     <value>Урон</value>
@@ -138,8 +162,41 @@
   <data name="Healing" xml:space="preserve">
     <value>Исцеление</value>
   </data>
+  <data name="Heroic" xml:space="preserve">
+    <value>Г</value>
+  </data>
+  <data name="IndexOfDeath" xml:space="preserve">
+    <value>Индекс смертей</value>
+  </data>
   <data name="LoadingFailed" xml:space="preserve">
-    <value>Нам не удалось сохранить ваши данные. Повторить?</value>
+    <value>Не загружено</value>
+  </data>
+  <data name="MaxDamage" xml:space="preserve">
+    <value>Макс. показатель урона</value>
+  </data>
+  <data name="MaxDamagePerSecond" xml:space="preserve">
+    <value>Макс. показатель урона в сек.</value>
+  </data>
+  <data name="MaxDamageTaken" xml:space="preserve">
+    <value>Макс. показатель поченного урона</value>
+  </data>
+  <data name="MaxDamageTakenPerSecond" xml:space="preserve">
+    <value>Макс. показатель поченного урона в сек.</value>
+  </data>
+  <data name="MaxHeal" xml:space="preserve">
+    <value>Макс. показать исцеления</value>
+  </data>
+  <data name="MaxHealPerSecond" xml:space="preserve">
+    <value>Макс. показать исцеления в сек.</value>
+  </data>
+  <data name="MaxResources" xml:space="preserve">
+    <value>Макс. показатель восст. ресурсов</value>
+  </data>
+  <data name="MaxResourcesPerSecond" xml:space="preserve">
+    <value>Макс. показатель восст. ресурсов в сек.</value>
+  </data>
+  <data name="Normal" xml:space="preserve">
+    <value>Н</value>
   </data>
   <data name="NotReady" xml:space="preserve">
     <value>Не загружен</value>
@@ -156,11 +213,23 @@
   <data name="Resources" xml:space="preserve">
     <value>Ресурсы</value>
   </data>
+  <data name="ShowAverageInform" xml:space="preserve">
+    <value>Показать среднею информацию за все бои</value>
+  </data>
+  <data name="Size" xml:space="preserve">
+    <value>Размер</value>
+  </data>
   <data name="Status" xml:space="preserve">
     <value>Статус</value>
   </data>
   <data name="Title" xml:space="preserve">
     <value>Анализ</value>
+  </data>
+  <data name="Uploaded" xml:space="preserve">
+    <value>Загружено:</value>
+  </data>
+  <data name="Uploading" xml:space="preserve">
+    <value>Загрузка...</value>
   </data>
   <data name="Win" xml:space="preserve">
     <value>Победа</value>

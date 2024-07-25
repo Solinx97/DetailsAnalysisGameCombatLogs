@@ -1,0 +1,119 @@
+.post-comments {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin-top: 15px;
+    padding: 0;
+    gap: 15px;
+
+
+    &__card {
+        width: 450px;
+        padding: 10px;
+        box-shadow: 2px 2px 2px 2px white;
+        border-radius: 20px;
+    }
+
+    &__title {
+        display: flex;
+        justify-content: space-between;
+        gpa: 10px;
+        margin: 10px;
+
+        .user {
+            font-size: 12px;
+        }
+    }
+
+    &__menu {
+        svg {
+            box-shadow: 3px 3px red;
+            padding: 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            cursor: pointer;
+        }
+
+        svg:hover {
+            transform: scale(1.1);
+        }
+    }
+
+    &__content {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        gap: 15px;
+        padding: 10px;
+
+        .actions {
+            display: flex;
+            justify-content: center;
+            margin: 5px 0;
+            gap: 10px;
+
+            .save, .cancel {
+                padding: 5px 10px;
+                border-radius: 10px;
+                font-size: 14px;
+                cursor: pointer;
+                font-size: 12px;
+            }
+
+            .save {
+                box-shadow: 2px 2px 2px 2px #1679AB;
+            }
+
+            .cancel {
+                box-shadow: 2px 2px 2px 2px gray;
+            }
+        }
+
+        .comment-edit {
+            &_active {
+                color: green;
+            }
+        }
+
+        svg {
+            cursor: pointer;
+        }
+
+        svg:hover {
+            transform: scale(1.1);
+        }
+
+        button {
+            margin: 0 10px;
+            font-size: 12px;
+        }
+    }
+}
+
+/*.post-comments__content {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    overflow-x: hidden;
+
+    .card-text {*/
+        /*max-width: 200px;*/
+        /*font-size: 13px;
+    }
+
+    svg {
+        cursor: pointer;
+    }
+
+    svg:hover {
+        transform: scale(1.1);
+    }
+
+    button {
+        margin: 0 10px;
+        font-size: 12px;
+    }
+}*/

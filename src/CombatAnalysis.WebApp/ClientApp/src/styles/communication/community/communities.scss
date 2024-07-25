@@ -1,0 +1,106 @@
+.communities {
+    .invite-to-community {
+        width: 600px;
+        padding: 5px;
+    }
+
+    &__search {
+        display: flex;
+        align-items: center;
+
+        lbael, input {
+            margin: 5px 15px;
+        }
+
+        input {
+            width: 350px;
+        }
+    }
+
+    &__list {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+
+        .create-new-community {
+            margin: 0 20px;
+            font-size: 12px;
+            color: #7776B3;
+            cursor: pointer;
+        }
+
+        .create-new-community:hover {
+            transform: scale(1.1);
+        }
+
+        .title {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 10px 0;
+
+            .content {
+                display: flex;
+                justify-content: flex-start;
+                align-items: center;
+                width: 75%;
+            }
+
+            svg {
+                margin: 0 25px;
+            }
+
+            svg:hover {
+                cursor: pointer;
+                transform: scale(1.1);
+            }
+        }
+
+        ul {
+            display: flex;
+            flex-wrap: wrap;
+
+            .community {
+                margin: 10px;
+
+                &__member {
+                    position: relative;
+                    display: flex;
+                    justify-content: flex-end;
+                    z-index: 10;
+
+                    svg {
+                        position: absolute;
+                        margin: -5px;
+                    }
+                }
+
+                .card {
+                    width: 250px;
+                    border-radius: 30px;
+                    background: #0c192c;
+
+                    .links {
+                        display: flex;
+                        flex-direction: column;
+                        gap: 15px;
+                    }
+
+                    .open-community, .join-to-community {
+                        display: flex;
+                    }
+
+                    .join-to-community {
+                        &__content {
+                            box-shadow: 3px 3px 3px 3px green;
+                        }
+                    }
+                }
+
+                .box-shadow {
+                    box-shadow: 3px 3px 3px 3px #1679AB;
+                }
+            }
+        }
+    }
+}

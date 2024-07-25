@@ -1,0 +1,21 @@
+{
+  "Email": "Email address",
+  "Password": "Password",
+  "ConfirmPassword": "Confirm password",
+  "CheckMeOut": "Check me out",
+  "EmailExist": "This Email already exist",
+  "UsernameExist": "This Username already exist",
+  "Registration": "Registration",
+  "Username": "Username",
+  "PhoneNumber": "Phone number",
+  "Birthday": "Birthday",
+  "NextStep": "Next step",
+  "LastStep": "Last step",
+  "FirstName": "First name",
+  "LastName": "Last name",
+  "AboutMe": "About me",
+  "Man": "Man",
+  "Woman": "Woman",
+  "JoinToChats": "Join to chats",
+  "JoinToCommunities": "Join to communities"
+}

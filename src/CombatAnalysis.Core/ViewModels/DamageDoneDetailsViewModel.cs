@@ -18,6 +18,9 @@ public class DamageDoneDetailsViewModel : DetailsGenericTemplate<DamageDoneModel
 
     private ObservableCollection<DamageDoneModel> _damageDoneInformationsWithoutFilter;
     private ObservableCollection<DamageDoneModel> _damageDoneInformationsWithSkipDamage;
+    private Dictionary<string, List<string>> _petsId;
+    private List<DamageDoneGeneralModel> _allGeneralInformations;
+    private List<DamageDoneModel> _allDetailsInformations;
 
     private bool _isShowCrit = true;
     private bool _isShowDodge = true;
@@ -26,13 +29,16 @@ public class DamageDoneDetailsViewModel : DetailsGenericTemplate<DamageDoneModel
     private bool _isShowResist = true;
     private bool _isShowImmune = true;
     private bool _isShowDirectDamage;
+    private bool _isShowPets = true;
 
-    public DamageDoneDetailsViewModel(IHttpClientHelper httpClient, ILogger loger, IMemoryCache memoryCache, IMapper mapper) : base(httpClient, loger, memoryCache, mapper)
+    public DamageDoneDetailsViewModel(IHttpClientHelper httpClient, ILogger logger, IMemoryCache memoryCache, IMapper mapper) : base(httpClient, logger, memoryCache, mapper)
     {
         _powerUpInCombat = new PowerUpInCombat<DamageDoneModel>(_damageDoneInformationsWithSkipDamage);
 
         BasicTemplate.Parent = this;
         BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, nameof(BasicTemplateViewModel.Step), 3);
+
+        _petsId = ((BasicTemplateViewModel)BasicTemplate).PetsId;
     }
 
     #region Properties
@@ -136,21 +142,36 @@ public class DamageDoneDetailsViewModel : DetailsGenericTemplate<DamageDoneModel
         }
     }
 
+    public bool IsShowPets
+    {
+        get { return _isShowPets; }
+        set
+        {
+            SetProperty(ref _isShowPets, value);
+            ShowPets(value);
+        }
+    }
+
     #endregion
 
     protected override void ChildPrepare(CombatPlayerModel parameter)
     {
         var selectedCombatMap = _mapper.Map<Combat>(SelectedCombat);
 
-        var damageDpneDetails = new CombatDetailsDamageDone(_logger);
-        damageDpneDetails.GetData(parameter.UserName, SelectedCombat.Data);
+        var damageDpneDetails = new CombatDetailsDamageDone(_logger)
+        {
+            PetsId = _petsId,
+        };
+        damageDpneDetails.GetData(parameter.PlayerId, SelectedCombat.Data);
 
-        var healDoneMap = _mapper.Map<List<DamageDoneModel>>(damageDpneDetails.DamageDone);
-        DetailsInformations = new ObservableCollection<DamageDoneModel>(healDoneMap);
+        var damageDoneMap = _mapper.Map<List<DamageDoneModel>>(damageDpneDetails.DamageDone);
+        DetailsInformations = new ObservableCollection<DamageDoneModel>(damageDoneMap);
+        _allDetailsInformations = new List<DamageDoneModel>(damageDoneMap);
 
-        var healDoneGeneralData = damageDpneDetails.GetDamageDoneGeneral(damageDpneDetails.DamageDone, selectedCombatMap);
-        var healDoneGeneralMap = _mapper.Map<List<DamageDoneGeneralModel>>(healDoneGeneralData);
-        GeneralInformations = new ObservableCollection<DamageDoneGeneralModel>(healDoneGeneralMap);
+        var damageDoneGeneralData = damageDpneDetails.GetDamageDoneGeneral(damageDpneDetails.DamageDone, selectedCombatMap);
+        var damageDoneGeneralMap = _mapper.Map<List<DamageDoneGeneralModel>>(damageDoneGeneralData);
+        GeneralInformations = new ObservableCollection<DamageDoneGeneralModel>(damageDoneGeneralMap);
+        _allGeneralInformations = new List<DamageDoneGeneralModel>(damageDoneGeneralMap);
     }
 
     protected override void Filter()
@@ -192,5 +213,26 @@ public class DamageDoneDetailsViewModel : DetailsGenericTemplate<DamageDoneModel
         if (!IsShowParry) IsShowParry = true;
         if (!IsShowDodge) IsShowDodge = true;
         if (!IsShowCrit) IsShowCrit = true;
+    }
+
+    private void ShowPets(bool isShowPets)
+    {
+        if (!isShowPets)
+        {
+            var generalWithoutPets = _allGeneralInformations.Where(x => !x.IsPet);
+            GeneralInformations = new ObservableCollection<DamageDoneGeneralModel>(generalWithoutPets);
+
+            var detailsWithoutPets = _allDetailsInformations.Where(x => !x.IsPet);
+            DetailsInformations = new ObservableCollection<DamageDoneModel>(detailsWithoutPets);
+        }
+        else
+        {
+            GeneralInformations = new ObservableCollection<DamageDoneGeneralModel>(_allGeneralInformations);
+            DetailsInformations = new ObservableCollection<DamageDoneModel>(_allDetailsInformations);
+        }
+
+        TotalValue = GeneralInformations.Sum(x => x.Value);
+
+        GetSources();
     }
 }

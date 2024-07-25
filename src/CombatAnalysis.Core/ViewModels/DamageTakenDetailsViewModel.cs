@@ -28,6 +28,7 @@ public class DamageTakenDetailsViewModel : DetailsGenericTemplate<DamageTakenMod
     private bool _isShowCrushing = true;
     private bool _isShowAbsorb = true;
     private bool _isShowDamageInform = true;
+    private bool _IsShowAbsorbed = true;
 
     public DamageTakenDetailsViewModel(IHttpClientHelper httpClient, ILogger logger, IMemoryCache memoryCache, IMapper mapper) : base (httpClient, logger, memoryCache, mapper)
     {
@@ -163,6 +164,24 @@ public class DamageTakenDetailsViewModel : DetailsGenericTemplate<DamageTakenMod
         }
     }
 
+    public bool IsShowAbsorbed
+    {
+        get { return _IsShowAbsorbed; }
+        set
+        {
+            SetProperty(ref _IsShowAbsorbed, value);
+
+            if (value)
+            {
+                TotalValue = GeneralInformations.Sum(x => x.ActualValue);
+            }
+            else
+            {
+                TotalValue = GeneralInformations.Sum(x => x.Value);
+            }
+        }
+    }
+
     #endregion
 
     protected override void ChildPrepare(CombatPlayerModel parameter)
@@ -170,7 +189,7 @@ public class DamageTakenDetailsViewModel : DetailsGenericTemplate<DamageTakenMod
         var selectedCombatMap = _mapper.Map<Combat>(SelectedCombat);
 
         var damageTakenDetails = new CombatDetailsDamageTaken(_logger);
-        damageTakenDetails.GetData(parameter.UserName, SelectedCombat.Data);
+        damageTakenDetails.GetData(parameter.PlayerId, SelectedCombat.Data);
 
         var healDoneMap = _mapper.Map<List<DamageTakenModel>>(damageTakenDetails.DamageTaken);
         DetailsInformations = new ObservableCollection<DamageTakenModel>(healDoneMap);

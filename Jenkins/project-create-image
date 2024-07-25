@@ -1,0 +1,41 @@
+pipeline {
+    agent any
+
+    parameters {
+        string defaultValue: "", name: "PROJECT_NAME"
+        string defaultValue: "", name: "PROJECT_PATH"
+        string defaultValue: "", name: "TEST_PROJECT_NAME"
+        string defaultValue: "", name: "TEST_PROJECT_PATH"
+        string defaultValue: "", name: "DOCKER_FILE_NAME"
+        string defaultValue: "", name: "DOCKER_IMAGE"
+        string defaultValue: "latest", name: "DOCKER_IMAGE_VERSION"
+        string defaultValue: "solinx", name: "DOCKER_HUB_LOGIN"
+    }
+
+    stages {
+        stage('Build') {
+            steps {
+                bat "dotnet restore ${PROJECT_PATH}/${PROJECT_NAME}/${PROJECT_NAME}.csproj"
+                bat "dotnet build ${PROJECT_PATH}/${PROJECT_NAME}/${PROJECT_NAME}.csproj"
+            }
+        }
+        stage('Tests') {
+            steps {
+                bat "dotnet test ${TEST_PROJECT_PATH}/${TEST_PROJECT_NAME}/${TEST_PROJECT_NAME}.csproj"
+            }
+        }
+        stage("Docker image build") {
+            steps {
+                bat "docker build -f ${PROJECT_PATH}/${PROJECT_NAME}/${DOCKER_FILE_NAME} --force-rm -t ${DOCKER_HUB_LOGIN}/${DOCKER_IMAGE}:${DOCKER_IMAGE_VERSION} ."
+            }
+        }
+        stage("Docker image push") {
+            steps {
+                withCredentials([string(credentialsId: "docker-hub", variable: "dockerhubpwd")]) {
+                    bat "docker login -u ${DOCKER_HUB_LOGIN} -p ${dockerhubpwd}"
+                    bat "docker push ${DOCKER_HUB_LOGIN}/${DOCKER_IMAGE}:${DOCKER_IMAGE_VERSION}"
+                }
+            }
+        }
+    }
+}

@@ -1,43 +1,56 @@
 using AutoMapper;
-using CombatAnalysis.CustomerBL.Mapping;
 using CombatAnalysis.CustomerBL.Extensions;
-using CombatAnalysis.Identity.Extensions;
-using CombatAnalysis.Identity.Mapping;
-using CombatAnalysis.Identity.Security;
-using CombatAnalysis.Identity.Settings;
+using CombatAnalysis.CustomerBL.Mapping;
 using CombatAnalysis.UserApi.Mapping;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.CustomerBLDependencies(builder.Configuration, "DefaultConnection");
-builder.Services.RegisterIdentityDependencies();
-
-JWTSecret.GenerateAccessSecretKey();
-JWTSecret.GenerateRefreshSecretKey();
-
-var settings = builder.Configuration.GetSection(nameof(TokenSettings));
-var scheme = settings.GetValue<string>(nameof(TokenSettings.AuthScheme));
-
-builder.Services.Configure<TokenSettings>(settings);
-
-var loggerFactory = new LoggerFactory();
-var logger = new Logger<ILogger>(loggerFactory);
 
 var mappingConfig = new MapperConfiguration(mc =>
 {
     mc.AddProfile(new UserApiMapper());
     mc.AddProfile(new CustomerBLMapper());
-    mc.AddProfile(new IdentityMappingMapper());
 });
 
 var mapper = mappingConfig.CreateMapper();
 builder.Services.AddSingleton(mapper);
-builder.Services.AddSingleton<ILogger>(logger);
+builder.Services.AddAuthentication("Bearer")
+        .AddJwtBearer("Bearer", options =>
+        {
+            options.Authority = builder.Configuration["Authentication:Authority"];
+            options.Audience = builder.Configuration["Authentication:Audience"];
+            options.TokenValidationParameters = new TokenValidationParameters
+            {
+                ValidateIssuerSigningKey = true,
+                IssuerSigningKey = new SymmetricSecurityKey(Convert.FromBase64String(builder.Configuration["Authentication:IssuerSigningKey"])),
+                ValidateIssuer = false,
+                ValidateAudience = false,
+                ClockSkew = TimeSpan.Zero
+            };
+            // Skip checking HTTPS (should be HTTPS in production)
+            options.RequireHttpsMetadata = false;
+            // Allow all Certificates (added for Local deployment)
+            options.BackchannelHttpHandler = new HttpClientHandler
+            {
+                ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator
+            };
+        });
+
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("ApiScope", policyBuilder =>
+    {
+        policyBuilder.RequireAuthenticatedUser();
+        policyBuilder.RequireClaim("scope", builder.Configuration["Client:Scope"] ?? string.Empty);
+    });
+});
 
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
 {
@@ -46,23 +59,63 @@ builder.Services.AddSwaggerGen(options =>
         Title = "User API",
         Version = "v1",
     });
+
+    options.AddSecurityDefinition("oauth2", new OpenApiSecurityScheme
+    {
+        Type = SecuritySchemeType.OAuth2,
+        Flows = new OpenApiOAuthFlows
+        {
+            ClientCredentials = new OpenApiOAuthFlow
+            {
+                TokenUrl = new Uri($"{builder.Configuration["Identity:Server"]}connect/token"),
+                Scopes = new Dictionary<string, string>
+                {
+                    { builder.Configuration["Client:Scope"] ?? string.Empty, "Request API #1" }
+                }
+            }
+        }
+    });
+
+    options.AddSecurityRequirement(new OpenApiSecurityRequirement
+        {
+            {
+                new OpenApiSecurityScheme
+                {
+                    Reference = new OpenApiReference
+                    {
+                        Type = ReferenceType.SecurityScheme,
+                        Id = "oauth2"
+                    },
+                },
+                new[] { builder.Configuration["Client:Scope"] }
+            }
+        });
 });
+
+Log.Logger = new LoggerConfiguration()
+    .MinimumLevel.Debug()
+    .WriteTo.Console()
+    .CreateLogger();
+
+builder.Host.UseSerilog();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI(options =>
-    {
-        options.SwaggerEndpoint("/swagger/v1/swagger.json", "User API v1");
-    });
-}
-
-app.UseHttpsRedirection();
-
+app.UseAuthentication(); // Enable authentication middleware
 app.UseAuthorization();
 
+app.UseSwagger();
+app.UseSwaggerUI(options =>
+{
+    options.SwaggerEndpoint("/swagger/v1/swagger.json", "User API v1");
+    options.InjectStylesheet("/swagger-ui/swaggerDark.css");
+    options.OAuthClientId(builder.Configuration["Client:ClientId"]);
+    options.OAuthClientSecret(builder.Configuration["Client:ClientSecret"]);
+});
+
+app.UseStaticFiles();
+app.UseHttpsRedirection();
+
 app.MapControllers();
+
 app.Run();

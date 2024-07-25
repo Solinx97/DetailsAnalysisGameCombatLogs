@@ -9,8 +9,8 @@ public class CombatDetailsResourceRecovery : CombatDetailsTemplate
 {
     private readonly string[] _resourceVariations = new string[]
     {
-        CombatLogConsts.SpellPeriodicEnergize,
-        CombatLogConsts.SpellEnergize,
+        CombatLogKeyWords.SpellPeriodicEnergize,
+        CombatLogKeyWords.SpellEnergize,
     };
     private readonly ILogger _logger;
 
@@ -20,48 +20,67 @@ public class CombatDetailsResourceRecovery : CombatDetailsTemplate
         ResourceRecovery = new List<ResourceRecovery>();
     }
 
-    public override int GetData(string player, List<string> combatData)
+    public override int GetData(string playerId, List<string> combatData)
     {
-        int energyRecovery = 0;
         try
         {
-            if (player == null)
+            if (playerId == null)
             {
-                throw new ArgumentNullException(player);
+                throw new ArgumentNullException(playerId);
             }
 
-            foreach (var item in combatData)
-            {
-                var itemHasResourceVariation = _resourceVariations.Any(resourceVariation => item.Contains(resourceVariation));
-                if (itemHasResourceVariation && item.Contains(player))
-                {
-                    var usefulInformation = GetUsefulInformation(item);
-                    var energyRecoveryInformation = GetEnergyInformation(usefulInformation);
-                    energyRecovery += energyRecoveryInformation.Value;
+            var energyRecovery = GetSummaryEnergyRecovery(playerId, combatData);
 
-                    ResourceRecovery.Add(energyRecoveryInformation);
-                }
-            }
+            return energyRecovery;
         }
         catch (ArgumentNullException ex)
         {
-            _logger.LogError(ex, ex.Message, player);
+            _logger.LogError(ex, ex.Message, playerId);
+
+            return 0;
+        }
+    }
+
+    private int GetSummaryEnergyRecovery(string playerId, List<string> combatData)
+    {
+        int energyRecovery = 0;
+        foreach (var item in combatData)
+        {
+            var itemHasResourceVariation = _resourceVariations.Any(item.Contains);
+            if (itemHasResourceVariation && item.Contains(playerId))
+            {
+                var usefulInformation = GetUsefulInformation(item);
+                var energyRecoveryInformation = GetEnergyInformation(playerId, usefulInformation);
+                if (energyRecoveryInformation == null)
+                {
+                    continue;
+                }
+
+                energyRecovery += energyRecoveryInformation.Value;
+
+                ResourceRecovery.Add(energyRecoveryInformation);
+            }
         }
 
         return energyRecovery;
     }
 
-    private ResourceRecovery GetEnergyInformation(List<string> combatData)
+    private ResourceRecovery GetEnergyInformation(string playerId, List<string> combatData)
     {
-        int.TryParse(combatData[^4], NumberStyles.Number, CultureInfo.InvariantCulture, out var value4);
+        if (!combatData[6].Equals(playerId))
+        {
+            return null;
+        }
 
-        var spellOrItem = combatData[1].Contains("SPELL_ENERGIZE") ? combatData[11] : combatData[3];
+        int.TryParse(combatData[^4], NumberStyles.Number, CultureInfo.InvariantCulture, out var amoutOfResourcesRecovery);
+
+        var spellOrItem = combatData[1].Contains(CombatLogKeyWords.SpellEnergize) ? combatData[11] : combatData[3];
 
         var energyRecovery = new ResourceRecovery
         {
             Time = TimeSpan.Parse(combatData[0]),
-            Value = value4,
-            SpellOrItem = spellOrItem.Trim('"')
+            Value = amoutOfResourcesRecovery,
+            SpellOrItem = combatData[11].Trim('"')
         };
 
         return energyRecovery;

@@ -1,39 +1,110 @@
 .communication {
-    display: flex;
-    flex-direction: row;
-
     &__menu {
-        display: flex;
-        flex-direction: column;
-        margin: 10px 0 0 -75px;
-        width: 20%;
+        position: fixed;
+        top: 20%;
+        margin: 0 0 0 -90px;
+        padding: 10px;
+        box-shadow: 2px 2px 2px 2px #3AA6B9;
+        border-radius: 15px;
+        width: 270px;
+        font-size: 13px;
+
+        .extended-menu-item {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            gap: 10px;
+
+            .create {
+                color: green;
+            }
+        }
 
         .menu-item {
             display: flex;
             flex-direction: row;
-            justify-content: start;
+            justify-content: flex-start;
             align-items: center;
             padding: 0 5px;
-            width: 200px;
+            width: 175px;
+            cursor: pointer;
 
-            div {
+            .title {
                 margin: 10px;
             }
 
-            &_disabled div {
-                margin: 10px;
+            &_disabled {
+                display: flex;
+                flex-direction: row;
+                justify-content: flex-start;
+                align-items: center;
+                padding: 0 5px;
+                width: 175px;
+                cursor: default;
                 opacity: 0.5;
+
+                .title {
+                    margin: 10px;
+                }
             }
         }
 
         .menu-item:hover {
-            box-shadow: 5px 5px 5px 5px gray;
+            border: 2px solid #4793AF;
             border-radius: 10px;
-            cursor: pointer;
+        }
+
+        .menu-item.sub-menu:hover {
+            box-shadow: 2px 2px 2px 2px #4D4C7D;
+            border-radius: 10px;
+        }
+
+        .sub-menu {
+            margin: 0 30px;
+
+            &_disabled {
+                opacity: 0.5;
+            }
         }
     }
 
-    &__action {
-        width: 90%;
+    &__recomendations {
+        position: fixed;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        right: 2%;
+        top: 20%;
+        padding: 10px;
+        box-shadow: 2px 2px 2px 2px #3AA6B9;
+        border-radius: 15px;
+        width: 270px;
+        font-size: 13px;
+    }
+
+    &__content {
+        margin-left: 200px;
+
+        .new-posts {
+            position: fixed;
+            display: flex;
+            justify-content: center;
+            top: 10px;
+            margin-left: -200px;
+            width: 100%;
+
+            &__content {
+                padding: 5px 10px;
+                cursor: pointer;
+                border: 2px solid white;
+                box-shadow: 1px 1px 1px 1px white;
+                border-radius: 10px;
+
+                &:hover {
+                    border: 2px solid #4793AF;
+                    box-shadow: 1px 1px 1px 1px #4793AF;
+                }
+            }
+        }
     }
 }

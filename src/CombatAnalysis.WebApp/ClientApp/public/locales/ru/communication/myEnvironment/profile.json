@@ -1,0 +1,18 @@
+{
+  "Privacy": "Личные данные",
+  "PhoneNumber": "Номер телефона",
+  "Birthday": "День рождения",
+  "CurrentPassword": "Текущий пароль",
+  "NewPassword": "Новый прароль",
+  "ConfirmNewPassword": "Подтверждение нового пароля",
+  "General": "Общие данные",
+  "Message": "Сообщение",
+  "Username": "Имя пользователя",
+  "AboutMe": "Об мне",
+  "FirstName": "Имя",
+  "LastName": "Фамилия",
+  "Gender": "Гендерная принадлежность",
+  "Save": "Сохранить",
+  "Cancel": "Отмена",
+  "Edit": "Редактировать"
+}

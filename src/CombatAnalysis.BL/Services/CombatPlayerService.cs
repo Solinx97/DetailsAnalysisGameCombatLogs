@@ -70,10 +70,10 @@ internal class CombatPlayerService : IService<CombatPlayerDto, int>
 
     private async Task<CombatPlayerDto> CreateInternalAsync(CombatPlayerDto item)
     {
-        if (string.IsNullOrEmpty(item.UserName))
+        if (string.IsNullOrEmpty(item.Username))
         {
             throw new ArgumentNullException(nameof(CombatPlayerDto),
-                $"The property {nameof(CombatPlayerDto.UserName)} of the {nameof(CombatPlayerDto)} object can't be null or empty");
+                $"The property {nameof(CombatPlayerDto.Username)} of the {nameof(CombatPlayerDto)} object can't be null or empty");
         }
 
         var map = _mapper.Map<CombatPlayer>(item);
@@ -85,10 +85,10 @@ internal class CombatPlayerService : IService<CombatPlayerDto, int>
 
     private async Task<int> UpdateInternalAsync(CombatPlayerDto item)
     {
-        if (string.IsNullOrEmpty(item.UserName))
+        if (string.IsNullOrEmpty(item.Username))
         {
             throw new ArgumentNullException(nameof(CombatPlayerDto),
-                $"The property {nameof(CombatPlayerDto.UserName)} of the {nameof(CombatPlayerDto)} object can't be null or empty");
+                $"The property {nameof(CombatPlayerDto.Username)} of the {nameof(CombatPlayerDto)} object can't be null or empty");
         }
 
         var map = _mapper.Map<CombatPlayer>(item);

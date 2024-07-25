@@ -1,8 +1,8 @@
 ﻿using AutoMapper;
 using CombatAnalysis.CustomerBL.DTO;
 using CombatAnalysis.CustomerBL.Interfaces;
-using CombatAnalysis.DAL.Entities.User;
-using CombatAnalysis.DAL.Interfaces;
+using CombatAnalysis.CustomerDAL.Entities;
+using CombatAnalysis.CustomerDAL.Interfaces;
 
 namespace CombatAnalysis.CustomerBL.Services;
 
@@ -71,10 +71,16 @@ internal class CustomerService : IService<CustomerDto, string>
 
     private async Task<CustomerDto> CreateInternalAsync(CustomerDto item)
     {
-        if (string.IsNullOrEmpty(item.Username))
+        if (string.IsNullOrEmpty(item.City))
         {
             throw new ArgumentNullException(nameof(CustomerDto),
-                $"The property {nameof(CustomerDto.Username)} of the {nameof(CustomerDto)} object can't be null or empty");
+                $"The property {nameof(CustomerDto.City)} of the {nameof(CustomerDto)} object can't be null or empty");
+        }
+
+        if (string.IsNullOrEmpty(item.Country))
+        {
+            throw new ArgumentNullException(nameof(CustomerDto),
+                $"The property {nameof(CustomerDto.Country)} of the {nameof(CustomerDto)} object can't be null or empty");
         }
 
         var map = _mapper.Map<Customer>(item);
@@ -86,10 +92,16 @@ internal class CustomerService : IService<CustomerDto, string>
 
     private async Task<int> UpdateInternalAsync(CustomerDto item)
     {
-        if (string.IsNullOrEmpty(item.Username))
+        if (string.IsNullOrEmpty(item.City))
         {
             throw new ArgumentNullException(nameof(CustomerDto),
-                $"The property {nameof(CustomerDto.Username)} of the {nameof(CustomerDto)} object can't be null or empty");
+                $"The property {nameof(CustomerDto.City)} of the {nameof(CustomerDto)} object can't be null or empty");
+        }
+
+        if (string.IsNullOrEmpty(item.Country))
+        {
+            throw new ArgumentNullException(nameof(CustomerDto),
+                $"The property {nameof(CustomerDto.Country)} of the {nameof(CustomerDto)} object can't be null or empty");
         }
 
         var map = _mapper.Map<Customer>(item);

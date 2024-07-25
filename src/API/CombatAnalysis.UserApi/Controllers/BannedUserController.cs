@@ -2,19 +2,21 @@
 using CombatAnalysis.CustomerBL.DTO;
 using CombatAnalysis.CustomerBL.Interfaces;
 using CombatAnalysis.UserApi.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CombatAnalysis.UserApi.Controllers;
 
 [Route("api/v1/[controller]")]
 [ApiController]
+[Authorize]
 public class BannedUserController : ControllerBase
 {
     private readonly IService<BannedUserDto, int> _service;
     private readonly IMapper _mapper;
-    private readonly ILogger _logger;
+    private readonly ILogger<BannedUserController> _logger;
 
-    public BannedUserController(IService<BannedUserDto, int> service, IMapper mapper, ILogger logger)
+    public BannedUserController(IService<BannedUserDto, int> service, IMapper mapper, ILogger<BannedUserController> logger)
     {
         _service = service;
         _mapper = mapper;
@@ -49,7 +51,13 @@ public class BannedUserController : ControllerBase
         }
         catch (ArgumentNullException ex)
         {
-            _logger.LogError(ex, ex.Message);
+            _logger.LogError(ex, $"Create Banned User failed: ${ex.Message}", model);
+
+            return BadRequest();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, $"Create Banned User failed: ${ex.Message}", model);
 
             return BadRequest();
         }
@@ -67,7 +75,13 @@ public class BannedUserController : ControllerBase
         }
         catch (ArgumentNullException ex)
         {
-            _logger.LogError(ex, ex.Message);
+            _logger.LogError(ex, $"Update Banned User failed: ${ex.Message}", model);
+
+            return BadRequest();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, $"Update Banned User failed: ${ex.Message}", model);
 
             return BadRequest();
         }
@@ -76,17 +90,8 @@ public class BannedUserController : ControllerBase
     [HttpDelete("{id:int:min(1)}")]
     public async Task<IActionResult> Delete(int id)
     {
-        try
-        {
-            var result = await _service.DeleteAsync(id);
+        var rowsAffected = await _service.DeleteAsync(id);
 
-            return Ok(result);
-        }
-        catch (ArgumentNullException ex)
-        {
-            _logger.LogError(ex, ex.Message);
-
-            return BadRequest();
-        }
+        return Ok(rowsAffected);
     }
 }

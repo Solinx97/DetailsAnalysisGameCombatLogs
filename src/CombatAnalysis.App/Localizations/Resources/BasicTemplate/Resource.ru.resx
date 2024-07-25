@@ -177,8 +177,14 @@
   <data name="Logs" xml:space="preserve">
     <value>Логи</value>
   </data>
+  <data name="Menu" xml:space="preserve">
+    <value>Меню</value>
+  </data>
   <data name="MinimazeWindow" xml:space="preserve">
     <value>Свернуть</value>
+  </data>
+  <data name="Notifications" xml:space="preserve">
+    <value>Уведомления</value>
   </data>
   <data name="Profile" xml:space="preserve">
     <value>Профиль</value>

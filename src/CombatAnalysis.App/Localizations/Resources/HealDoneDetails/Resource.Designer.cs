@@ -97,6 +97,15 @@ namespace CombatAnalysis.App.Localizations.Resources.HealDoneDetails {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Damage absorb..
+        /// </summary>
+        public static string DamageAbsorbed {
+            get {
+                return ResourceManager.GetString("DamageAbsorbed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Healing.
         /// </summary>
         public static string Healing {

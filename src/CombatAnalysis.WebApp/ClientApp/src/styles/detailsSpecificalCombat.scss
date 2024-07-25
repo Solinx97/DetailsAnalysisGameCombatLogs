@@ -1,92 +1,176 @@
-﻿.details-specifical-combat__container {
-    .card {
-        width: 75%;
-        box-shadow: 10px 10px gray;
-        margin: 25px;
+﻿.details-specifical-combat {
+    &__container {
+        .card {
+            width: 90%;
+            box-shadow: 10px 10px #3AA6B9;
+            margin: 25px;
+            background: #135D66;
 
-        .list-group {
-            display: flex;
-            flex-direction: row;
-        }
+            .list-group {
+                display: flex;
+                flex-direction: row;
+            }
 
-        .list-group-item {
-            display: flex;
-            align-items: center;
-            flex-direction: column;
-            width: 20%;
-
-            div {
+            .list-group-item {
                 display: flex;
                 align-items: center;
-                width: auto;
-                height: 75px;
-            }
+                flex-direction: column;
+                gap: 10px;
+                margin: 5px;
+                width: 25%;
+                background: #135D66;
+                color: white;
 
-            svg {
-                height: 20px;
-            }
+                .btn-shadow {
+                    width: 45px;
+                    overflow: hidden;
+                    text-align: center;
+                    font-size: 13px;
+                    white-space: nowrap;
+
+                    &:hover {
+                        animation-name: show-more;
+                        animation-duration: 0.5s;
+                        animation-fill-mode: forwards;
+                    }
+                }
+
+                @keyframes show-more {
+                    from {
+                        width: 45px;
+                    }
+
+                    to {
+                        width: 175px;
+                    }
+                }
+
+                div {
+                    display: flex;
+                    align-items: center;
+                    width: auto;
+                }
+
+                svg {
+                    height: 20px;
+                }
 
 
-            &__details {
-                width: 25px;
-                color: gray;
+                &__details {
+                    width: 25px;
+                    color: gray;
 
-                :hover {
-                    cursor: pointer;
-                    transform: scale(1.25);
+                    :hover {
+                        cursor: pointer;
+                        transform: scale(1.25);
+                    }
+                }
+
+                &__damage-done, &__heal-done, &__damage-taken, &__energy-recovery, &__used-buffs {
+                    padding: 5px;
+                    box-shadow: 3px 3px 3px 3px black;
+                    border-radius: 15px;
                 }
             }
 
-            &__damage-done {
-                color: saddlebrown;
+            .form-check {
+                margin: 15px;
             }
+        }
 
-            &__heal-done {
-                color: green;
-            }
-
-            &__damage-taken {
-                color: darkorange;
-            }
-
-            &__energy-recovery {
-                color: yellowgreen;
-            }
+        .form-check-input {
+            background: white;
         }
 
         .form-check {
-            margin: 15px;
+            margin: 20px;
         }
-    }
 
-    .form-check {
-        margin: 20px;
-    }
+        &_general-details-charts {
+            display: flex;
+            justify-content: center;
 
-    &_navigate {
-        display: flex;
+            text {
+                color: white;
+            }
 
-        div, h3 {
-            margin: 5px;
+            .pie-chart-hook {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+
+                div {
+                    font-family: 'Comic Sans MS';
+                }
+
+                .title {
+                    font-size: 1.3em;
+                }
+            }
         }
-    }
 
-    &_general-details-charts {
-        display: flex;
-        margin-left: -100px;
+        .player-information {
+            display: flex;
+        }
 
-        .pie-chart-hook {
+        .search-people {
             display: flex;
             flex-direction: column;
-            align-items: center;
+            width: 325px;
+            margin: 10px 0;
+        }
 
-            div {
-                font-family: 'Comic Sans MS';
+        .select-combat {
+            width: 40px;
+            overflow: hidden;
+            white-space: nowrap;
+
+            &:hover {
+                animation-name: select-combat;
+                animation-duration: 0.5s;
+                animation-fill-mode: forwards;
+            }
+        }
+
+        @keyframes select-combat {
+            from {
+                width: 40px;
             }
 
-            .title {
-                font-size: 1.5em;
+            to {
+                width: 150px;
             }
+        }
+
+        .search-icon {
+            width: 40px;
+            overflow: hidden;
+
+            &:hover {
+                animation-name: search;
+                animation-duration: 0.5s;
+                animation-fill-mode: forwards;
+            }
+        }
+
+        @keyframes search {
+            from {
+                width: 40px;
+            }
+
+            to {
+                width: 110px;
+            }
+        }
+    }
+
+    &__navigate {
+        display: flex;
+        align-items: center;
+        gap: 25px;
+
+        button {
+            font-size: 13px;
         }
     }
 }

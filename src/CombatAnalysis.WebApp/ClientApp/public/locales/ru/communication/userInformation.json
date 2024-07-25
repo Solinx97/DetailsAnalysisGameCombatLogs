@@ -1,0 +1,15 @@
+{
+  "Close": "Закрыть",
+  "FirstName": "Имя",
+  "LastName": "Фамилия",
+  "AboutMe": "Обо мне",
+  "Friends": "Друзья",
+  "Communities": "Сообщества",
+  "MoreDetails": "Подробнее",
+  "StartChat": "Начать общение",
+  "RequestToConnect": "Запрос на дружбу",
+  "InviteToCommunity": "Пригласить в сообщество",
+  "AlreadyFriend": "Этот пользователь уже ваш друг",
+  "SentRequest": "Вы отправили запрос ",
+  "AlreadySentRequest": "Вы уже отправили запрос "
+}

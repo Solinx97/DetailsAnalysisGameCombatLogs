@@ -61,11 +61,83 @@ namespace CombatAnalysis.App.Localizations.Resources.GeneralAnalysis {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Buffs.
+        ///   Looks up a localized string similar to All combats saved!.
         /// </summary>
-        public static string Buffs {
+        public static string AllCombatsSaved {
             get {
-                return ResourceManager.GetString("Buffs", resourceCulture);
+                return ResourceManager.GetString("AllCombatsSaved", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Av. indicator damage.
+        /// </summary>
+        public static string AverageDamage {
+            get {
+                return ResourceManager.GetString("AverageDamage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Av. indicator damage per sec..
+        /// </summary>
+        public static string AverageDamagePerSecond {
+            get {
+                return ResourceManager.GetString("AverageDamagePerSecond", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Av. indicator damage taken.
+        /// </summary>
+        public static string AverageDamageTaken {
+            get {
+                return ResourceManager.GetString("AverageDamageTaken", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Av. indicator damage taken per sec..
+        /// </summary>
+        public static string AverageDamageTakenPerSecond {
+            get {
+                return ResourceManager.GetString("AverageDamageTakenPerSecond", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Av. indicator heal.
+        /// </summary>
+        public static string AverageHeal {
+            get {
+                return ResourceManager.GetString("AverageHeal", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Av. indicator heal per sec..
+        /// </summary>
+        public static string AverageHealPerSecond {
+            get {
+                return ResourceManager.GetString("AverageHealPerSecond", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Av. indicator resources recovery.
+        /// </summary>
+        public static string AverageResources {
+            get {
+                return ResourceManager.GetString("AverageResources", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Av. indicator resources recovery per sec..
+        /// </summary>
+        public static string AverageResourcesPerSecond {
+            get {
+                return ResourceManager.GetString("AverageResourcesPerSecond", resourceCulture);
             }
         }
         
@@ -124,11 +196,110 @@ namespace CombatAnalysis.App.Localizations.Resources.GeneralAnalysis {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to We couldn&apos;t save your data. Repeat?.
+        ///   Looks up a localized string similar to H.
+        /// </summary>
+        public static string Heroic {
+            get {
+                return ResourceManager.GetString("Heroic", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Index of death.
+        /// </summary>
+        public static string IndexOfDeath {
+            get {
+                return ResourceManager.GetString("IndexOfDeath", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Did not uploaded.
         /// </summary>
         public static string LoadingFailed {
             get {
                 return ResourceManager.GetString("LoadingFailed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Max. indicator damage.
+        /// </summary>
+        public static string MaxDamage {
+            get {
+                return ResourceManager.GetString("MaxDamage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Max. indicator damage per sec..
+        /// </summary>
+        public static string MaxDamagePerSecond {
+            get {
+                return ResourceManager.GetString("MaxDamagePerSecond", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Max. indicator damage taken.
+        /// </summary>
+        public static string MaxDamageTaken {
+            get {
+                return ResourceManager.GetString("MaxDamageTaken", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Max. indicator damage taken per sec..
+        /// </summary>
+        public static string MaxDamageTakenPerSecond {
+            get {
+                return ResourceManager.GetString("MaxDamageTakenPerSecond", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Max. indicator heal.
+        /// </summary>
+        public static string MaxHeal {
+            get {
+                return ResourceManager.GetString("MaxHeal", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Max. indicator heal per sec..
+        /// </summary>
+        public static string MaxHealPerSecond {
+            get {
+                return ResourceManager.GetString("MaxHealPerSecond", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Max. indicator resources recovery.
+        /// </summary>
+        public static string MaxResources {
+            get {
+                return ResourceManager.GetString("MaxResources", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Max. indicator resources recovery per sec..
+        /// </summary>
+        public static string MaxResourcesPerSecond {
+            get {
+                return ResourceManager.GetString("MaxResourcesPerSecond", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to N.
+        /// </summary>
+        public static string Normal {
+            get {
+                return ResourceManager.GetString("Normal", resourceCulture);
             }
         }
         
@@ -178,6 +349,24 @@ namespace CombatAnalysis.App.Localizations.Resources.GeneralAnalysis {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Show average information for all combats.
+        /// </summary>
+        public static string ShowAverageInform {
+            get {
+                return ResourceManager.GetString("ShowAverageInform", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Size.
+        /// </summary>
+        public static string Size {
+            get {
+                return ResourceManager.GetString("Size", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Status.
         /// </summary>
         public static string Status {
@@ -187,11 +376,29 @@ namespace CombatAnalysis.App.Localizations.Resources.GeneralAnalysis {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Analyzing.
+        ///   Looks up a localized string similar to Analysing.
         /// </summary>
         public static string Title {
             get {
                 return ResourceManager.GetString("Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Uploaded:.
+        /// </summary>
+        public static string Uploaded {
+            get {
+                return ResourceManager.GetString("Uploaded", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Uploading....
+        /// </summary>
+        public static string Uploading {
+            get {
+                return ResourceManager.GetString("Uploading", resourceCulture);
             }
         }
         

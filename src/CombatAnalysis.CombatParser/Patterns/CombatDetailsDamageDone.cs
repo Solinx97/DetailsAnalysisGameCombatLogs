@@ -8,13 +8,14 @@ public class CombatDetailsDamageDone : CombatDetailsTemplate
 {
     private readonly string[] _damageVariations = new string[]
     {
-        CombatLogConsts.SpellDamage,
-        CombatLogConsts.SwingDamage,
-        CombatLogConsts.SpellPeriodicDamage,
-        CombatLogConsts.SwingMissed,
-        CombatLogConsts.DamageShieldMissed,
-        CombatLogConsts.RangeDamage,
-        CombatLogConsts.SpellMissed,
+        CombatLogKeyWords.SpellDamage,
+        CombatLogKeyWords.SwingDamage,
+        CombatLogKeyWords.SpellPeriodicDamage,
+        CombatLogKeyWords.SwingMissed,
+        CombatLogKeyWords.DamageShieldMissed,
+        CombatLogKeyWords.RangeDamage,
+        CombatLogKeyWords.SpellMissed,
+        CombatLogKeyWords.SpellSummon,
     };
     private readonly ILogger _logger;
 
@@ -24,65 +25,93 @@ public class CombatDetailsDamageDone : CombatDetailsTemplate
         DamageDone = new List<DamageDone>();
     }
 
-    public override int GetData(string player, List<string> combatData)
+    public override int GetData(string playerId, List<string> combatData)
     {
-        int damageDone = 0;
         try
         {
-            if (player == null)
+            if (string.IsNullOrEmpty(playerId))
             {
-                throw new ArgumentNullException(player);
+                throw new ArgumentNullException(playerId);
             }
 
-            foreach (var item in combatData)
-            {
-                var itemHasDamageVariation = _damageVariations.Any(item.Contains);
-                if (itemHasDamageVariation && item.Contains(player))
-                {
-                    var succesfullCombatDataInformation = GetUsefulInformation(item);
-                    var damageDoneInformation = GetDamageDoneInformation(player, succesfullCombatDataInformation);
-
-                    if (damageDoneInformation != null)
-                    {
-                        damageDone += damageDoneInformation.Value;
-                        DamageDone.Add(damageDoneInformation);
-                    }
-                }
-            }
+            var damageDone = GetSummaryDamageDone(playerId, combatData);
 
             return damageDone;
         }
         catch (ArgumentNullException ex)
         {
-            _logger.LogError(ex, ex.Message, player);
+            _logger.LogError(ex, ex.Message, playerId);
 
-            return damageDone;
+            return 0;
         }
     }
 
-    private DamageDone GetDamageDoneInformation(string player, List<string> combatData)
+    private int GetSummaryDamageDone(string playerId, List<string> combatData)
     {
-        if (!combatData[3].Contains(player)
-            || string.Equals(combatData[1], CombatLogConsts.SwingDamageLanded, StringComparison.OrdinalIgnoreCase))
+        int damageDone = 0;
+        foreach (var item in combatData)
+        {
+            var itemHasDamageVariation = _damageVariations.Any(item.Contains);
+            var succesfullCombatDataInformation = GetUsefulInformation(item);
+
+            if (itemHasDamageVariation && item.Contains(playerId))
+            {
+                var damageDoneInformation = GetDamageDoneInformation(playerId, succesfullCombatDataInformation);
+                if (damageDoneInformation == null)
+                {
+                    continue;
+                }
+
+                damageDone += damageDoneInformation.Value;
+                DamageDone.Add(damageDoneInformation);
+            }
+
+            if (itemHasDamageVariation)
+            {
+                var damageDoneInformation = GetPetsDamageDoneInformation(playerId, succesfullCombatDataInformation);
+                if (damageDoneInformation != null)
+                {
+                    damageDone += damageDoneInformation.Value;
+                    DamageDone.Add(damageDoneInformation);
+                }
+            }
+        }
+
+        return damageDone;
+    }
+
+    private DamageDone GetDamageDoneInformation(string playerId, List<string> combatData)
+    {
+        if (string.Equals(combatData[1], CombatLogKeyWords.SpellSummon, StringComparison.OrdinalIgnoreCase)
+            || string.Equals(combatData[1], CombatLogKeyWords.SwingDamage, StringComparison.OrdinalIgnoreCase))
         {
             return null;
         }
 
-        int.TryParse(combatData[^10], out var value1);
-        string spellOrItem;
-
-        if (string.Equals(combatData[1], CombatLogConsts.SwingDamageLanded, StringComparison.OrdinalIgnoreCase))
+        if (!combatData[2].Contains(CombatLogKeyWords.Player))
         {
-            spellOrItem = "Ближ. бой";
+            return null;
+        }
+        else if (!combatData[2].Equals(playerId))
+        {
+            return null;
+        }
+
+        int.TryParse(combatData[^10], out var amountOfValue);
+
+        string spellOrItem;
+        if (string.Equals(combatData[1], CombatLogKeyWords.SwingDamageLanded, StringComparison.OrdinalIgnoreCase)
+            || string.Equals(combatData[1], CombatLogKeyWords.SwingMissed, StringComparison.OrdinalIgnoreCase))
+        {
+            spellOrItem = CombatLogKeyWords.MeleeDamage;
         }
         else
         {
-            spellOrItem = combatData[11].Contains("0000000000000000") || combatData[11].Contains("nil")
-                ? "Ближ. бой" : combatData[11].Trim('"');
+            spellOrItem = combatData[11].Trim('"');
         }
 
         var isPeriodicDamage = false;
-        if (combatData[1] == CombatLogConsts.SpellPeriodicDamage)
+        if (combatData[1] == CombatLogKeyWords.SpellPeriodicDamage)
         {
             isPeriodicDamage = true;
         }
@@ -93,33 +122,33 @@ public class CombatDetailsDamageDone : CombatDetailsTemplate
         var isDodge = false;
         var isMiss = false;
 
-        if (string.Equals(combatData[1], CombatLogConsts.DamageShieldMissed, StringComparison.OrdinalIgnoreCase))
+        if (string.Equals(combatData[1], CombatLogKeyWords.DamageShieldMissed, StringComparison.OrdinalIgnoreCase))
         {
-            isResist = string.Equals(combatData[13], "RESIST", StringComparison.OrdinalIgnoreCase);
-            isImmune = string.Equals(combatData[13], "IMMUNE", StringComparison.OrdinalIgnoreCase);
+            isResist = string.Equals(combatData[13], CombatLogKeyWords.Resist, StringComparison.OrdinalIgnoreCase);
+            isImmune = string.Equals(combatData[13], CombatLogKeyWords.Immune, StringComparison.OrdinalIgnoreCase);
         }
-        else if (string.Equals(combatData[1], CombatLogConsts.SpellMissed, StringComparison.OrdinalIgnoreCase))
+        else if (string.Equals(combatData[1], CombatLogKeyWords.SpellMissed, StringComparison.OrdinalIgnoreCase))
         {
-            isResist = string.Equals(combatData[13], "RESIST", StringComparison.OrdinalIgnoreCase);
-            isParry = string.Equals(combatData[13], "PARRY", StringComparison.OrdinalIgnoreCase);
-            isDodge = string.Equals(combatData[13], "DODGE", StringComparison.OrdinalIgnoreCase);
-            isImmune = string.Equals(combatData[13], "IMMUNE", StringComparison.OrdinalIgnoreCase);
-            isMiss = string.Equals(combatData[13], "MISS", StringComparison.OrdinalIgnoreCase);
+            isResist = string.Equals(combatData[13], CombatLogKeyWords.Resist, StringComparison.OrdinalIgnoreCase);
+            isParry = string.Equals(combatData[13], CombatLogKeyWords.Parry, StringComparison.OrdinalIgnoreCase);
+            isDodge = string.Equals(combatData[13], CombatLogKeyWords.Dodge, StringComparison.OrdinalIgnoreCase);
+            isImmune = string.Equals(combatData[13], CombatLogKeyWords.Immune, StringComparison.OrdinalIgnoreCase);
+            isMiss = string.Equals(combatData[13], CombatLogKeyWords.Miss, StringComparison.OrdinalIgnoreCase);
         }
-        else if (string.Equals(combatData[1], CombatLogConsts.SwingMissed, StringComparison.OrdinalIgnoreCase))
+        else if (string.Equals(combatData[1], CombatLogKeyWords.SwingMissed, StringComparison.OrdinalIgnoreCase))
         {
-            isResist = string.Equals(combatData[10], "RESIST", StringComparison.OrdinalIgnoreCase);
-            isParry = string.Equals(combatData[10], "PARRY", StringComparison.OrdinalIgnoreCase);
-            isDodge = string.Equals(combatData[10], "DODGE", StringComparison.OrdinalIgnoreCase);
-            isImmune = string.Equals(combatData[10], "IMMUNE", StringComparison.OrdinalIgnoreCase);
-            isMiss = string.Equals(combatData[10], "MISS", StringComparison.OrdinalIgnoreCase);
+            isResist = string.Equals(combatData[10], CombatLogKeyWords.Resist, StringComparison.OrdinalIgnoreCase);
+            isParry = string.Equals(combatData[10], CombatLogKeyWords.Parry, StringComparison.OrdinalIgnoreCase);
+            isDodge = string.Equals(combatData[10], CombatLogKeyWords.Dodge, StringComparison.OrdinalIgnoreCase);
+            isImmune = string.Equals(combatData[10], CombatLogKeyWords.Immune, StringComparison.OrdinalIgnoreCase);
+            isMiss = string.Equals(combatData[10], CombatLogKeyWords.Miss, StringComparison.OrdinalIgnoreCase);
         }
 
-        var isCrit = string.Equals(combatData[^3], "1", StringComparison.OrdinalIgnoreCase);
+        var isCrit = string.Equals(combatData[^3], CombatLogKeyWords.IsCrit, StringComparison.OrdinalIgnoreCase);
 
         var damageDone = new DamageDone
         {
-            Value = value1,
+            Value = amountOfValue,
             Time = TimeSpan.Parse(combatData[0]),
             FromPlayer = combatData[3].Trim('"'),
             ToEnemy = combatData[7].Trim('"'),
@@ -131,6 +160,111 @@ public class CombatDetailsDamageDone : CombatDetailsTemplate
             IsResist = isResist,
             IsImmune = isImmune,
             IsCrit = isCrit,
+        };
+
+        return damageDone;
+    }
+
+    private DamageDone GetPetsDamageDoneInformation(string playerId, List<string> combatData)
+    {
+        if (string.Equals(combatData[1], CombatLogKeyWords.SpellSummon, StringComparison.OrdinalIgnoreCase)
+            || string.Equals(combatData[1], CombatLogKeyWords.SwingDamage, StringComparison.OrdinalIgnoreCase))
+        {
+            return null;
+        }
+
+        if (combatData[2].Contains(CombatLogKeyWords.Player))
+        {
+            return null;
+        }
+        else if (!combatData[2].Contains(CombatLogKeyWords.Creature) && !combatData[2].Contains(CombatLogKeyWords.Pet))
+        {
+            return null;
+        }
+
+        var currentPet = string.Empty;
+        var petPlayer = string.Empty;
+        foreach (var item in PetsId)
+        {
+            var pets = item.Value;
+
+            currentPet = pets.Where(x => x.Equals(combatData[2])).FirstOrDefault();
+            if (!string.IsNullOrEmpty(currentPet))
+            {
+                petPlayer = item.Key;
+                break;
+            }
+        }
+
+        if (string.IsNullOrEmpty(petPlayer) || petPlayer != playerId)
+        {
+            return null;
+        }
+
+        int.TryParse(combatData[^10], out var amountOfValue);
+
+        var spellOrItem = $"{combatData[3].Trim('"')} - ";
+        if (string.Equals(combatData[1], CombatLogKeyWords.SwingDamageLanded, StringComparison.OrdinalIgnoreCase)
+            || string.Equals(combatData[1], CombatLogKeyWords.SwingMissed, StringComparison.OrdinalIgnoreCase))
+        {
+            spellOrItem += CombatLogKeyWords.MeleeDamage;
+        }
+        else
+        {
+            spellOrItem += combatData[11].Trim('"');
+        }
+
+        var isPeriodicDamage = false;
+        if (combatData[1] == CombatLogKeyWords.SpellPeriodicDamage)
+        {
+            isPeriodicDamage = true;
+        }
+
+        var isResist = false;
+        var isImmune = false;
+        var isParry = false;
+        var isDodge = false;
+        var isMiss = false;
+
+        if (string.Equals(combatData[1], CombatLogKeyWords.DamageShieldMissed, StringComparison.OrdinalIgnoreCase))
+        {
+            isResist = string.Equals(combatData[13], CombatLogKeyWords.Resist, StringComparison.OrdinalIgnoreCase);
+            isImmune = string.Equals(combatData[13], CombatLogKeyWords.Immune, StringComparison.OrdinalIgnoreCase);
+        }
+        else if (string.Equals(combatData[1], CombatLogKeyWords.SpellMissed, StringComparison.OrdinalIgnoreCase))
+        {
+            isResist = string.Equals(combatData[13], CombatLogKeyWords.Resist, StringComparison.OrdinalIgnoreCase);
+            isParry = string.Equals(combatData[13], CombatLogKeyWords.Parry, StringComparison.OrdinalIgnoreCase);
+            isDodge = string.Equals(combatData[13], CombatLogKeyWords.Dodge, StringComparison.OrdinalIgnoreCase);
+            isImmune = string.Equals(combatData[13], CombatLogKeyWords.Immune, StringComparison.OrdinalIgnoreCase);
+            isMiss = string.Equals(combatData[13], CombatLogKeyWords.Miss, StringComparison.OrdinalIgnoreCase);
+        }
+        else if (string.Equals(combatData[1], CombatLogKeyWords.SwingMissed, StringComparison.OrdinalIgnoreCase))
+        {
+            isResist = string.Equals(combatData[10], CombatLogKeyWords.Resist, StringComparison.OrdinalIgnoreCase);
+            isParry = string.Equals(combatData[10], CombatLogKeyWords.Parry, StringComparison.OrdinalIgnoreCase);
+            isDodge = string.Equals(combatData[10], CombatLogKeyWords.Dodge, StringComparison.OrdinalIgnoreCase);
+            isImmune = string.Equals(combatData[10], CombatLogKeyWords.Immune, StringComparison.OrdinalIgnoreCase);
+            isMiss = string.Equals(combatData[10], CombatLogKeyWords.Miss, StringComparison.OrdinalIgnoreCase);
+        }
+
+        var isCrit = string.Equals(combatData[^3], CombatLogKeyWords.IsCrit, StringComparison.OrdinalIgnoreCase);
+
+        var damageDone = new DamageDone
+        {
+            Value = amountOfValue,
+            Time = TimeSpan.Parse(combatData[0]),
+            FromPlayer = combatData[3].Trim('"'),
+            ToEnemy = combatData[7].Trim('"'),
+            SpellOrItem = spellOrItem,
+            IsPeriodicDamage = isPeriodicDamage,
+            IsDodge = isDodge,
+            IsMiss = isMiss,
+            IsParry = isParry,
+            IsResist = isResist,
+            IsImmune = isImmune,
+            IsCrit = isCrit,
+            IsPet = true,
         };
 
         return damageDone;

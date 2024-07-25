@@ -10,11 +10,11 @@ namespace CombatAnalysis.CombatParserAPI.Controllers;
 [ApiController]
 public class DamageDoneGeneralController : ControllerBase
 {
-    private readonly IService<DamageDoneGeneralDto, int> _service;
+    private readonly IPlayerInfoService<DamageDoneGeneralDto, int> _service;
     private readonly IMapper _mapper;
-    private readonly ILogger _logger;
+    private readonly ILogger<DamageDoneGeneralController> _logger;
 
-    public DamageDoneGeneralController(IService<DamageDoneGeneralDto, int> service, IMapper mapper, ILogger logger)
+    public DamageDoneGeneralController(IPlayerInfoService<DamageDoneGeneralDto, int> service, IMapper mapper, ILogger<DamageDoneGeneralController> logger)
     {
         _service = service;
         _mapper = mapper;
@@ -24,7 +24,7 @@ public class DamageDoneGeneralController : ControllerBase
     [HttpGet("findByCombatPlayerId/{combatPlayerId:int:min(1)}")]
     public async Task<IActionResult> Find(int combatPlayerId)
     {
-        var damageDoneGenerals = await _service.GetByParamAsync("CombatPlayerId", combatPlayerId);
+        var damageDoneGenerals = await _service.GetByCombatPlayerIdAsync(combatPlayerId);
 
         return Ok(damageDoneGenerals);
     }

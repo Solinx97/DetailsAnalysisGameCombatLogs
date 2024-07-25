@@ -34,7 +34,7 @@
         </ContentControl>
 
         <TextBlock Grid.Row="1" Grid.Column="2" HorizontalAlignment="Center" VerticalAlignment="Center" Text="{loc:Loc Title}"
-                       Width="350" TextAlignment="Center" Style="{StaticResource titleText}" Margin="25 0"/>
+                       Width="350" TextAlignment="Center" Style="{StaticResource titleText}" Margin="25 0" Foreground="White" />
         
         <Grid Grid.Row="2" Grid.Column="2" Margin="10">
             <Grid.RowDefinitions>
@@ -48,10 +48,17 @@
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
 
-            <StackPanel Grid.Row="0" Grid.Column="0">
-                <TextBlock Text="{loc:Loc Language}" FontSize="16" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="10"/>
-                <ComboBox Style="{DynamicResource ComboBoxStyle1}" ItemsSource="{Binding Languages}" HorizontalAlignment="Center" VerticalAlignment="Center"
-                          SelectedItem="{Binding SelectedLanguage}"/>
+            <StackPanel Grid.Row="0" Grid.Column="0" Margin="50 0">
+                <TextBlock Text="{loc:Loc Language}" FontSize="16" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="10" Foreground="White" />
+                <ComboBox Style="{DynamicResource ComboBoxStyle1}" ItemsSource="{Binding Languages}" HorizontalAlignment="Left" VerticalAlignment="Center"
+                          Margin="10 0" SelectedItem="{Binding SelectedLanguage}"/>
+            </StackPanel>
+
+            <StackPanel Grid.Row="1" Grid.Column="0" Margin="50 0">
+                <TextBlock Text="{loc:Loc LogsLocation}" FontSize="16" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="10" Foreground="White" />
+                <TextBlock Text="{Binding LogsLocation}" FontSize="16" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="10" Foreground="White" />
+                <Button Content="{loc:Loc ChangeLocationPath}" Click="SelectLocation" Width="125" FontSize="16" HorizontalAlignment="Left"
+                    Margin="15 0" Style="{StaticResource showButton}" />
             </StackPanel>
         </Grid>
     </Grid>

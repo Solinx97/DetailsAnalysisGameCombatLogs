@@ -1,0 +1,147 @@
+.create-community {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: center;
+    border-radius: 25px;
+    width: 700px;
+    height: 525px;
+    padding: 10px;
+
+    .chat-name-required {
+        font-size: 13px;
+        color: red;
+    }
+
+    &__content {
+        display: flex;
+        justify-content: space-between;
+    }
+
+    &__menu {
+        display: flex;
+        align-items: center;
+        border-radius: 15px;
+
+        .menu-item {
+            display: flex;
+            align-items: center;
+            border-radius: 10px;
+
+            svg {
+                padding: 5px;
+                border-radius: 20px;
+                box-shadow: 1px 1px 1px 1px white;
+                background: #0c192c;
+            }
+
+            span {
+                width: 100px;
+                height: 5px;
+                background: white;
+                opacity: 0.5;
+            }
+
+            .move-to-next-step {
+                background: green;
+                opacity: 1;
+            }
+
+            &__not-passed {
+                opacity: 0.5;
+            }
+
+            &__passed {
+                color: green;
+                opacity: 1;
+            }
+
+            &__pased:hover {
+                transform: scale(1.1);
+                box-shadow: 2px 2px 2px 2px #1679AB;
+            }
+
+            .active {
+                opacity: 1;
+                box-shadow: 1px 1px 1px 1px red;
+            }
+        }
+
+        .menu-item.passed {
+            opacity: 1;
+        }
+
+        .btn {
+            position: relative;
+            margin: 10px;
+            top: 100px;
+        }
+    }
+
+    ul {
+        padding: 0;
+    }
+
+    &__items {
+        flex-grow: 1;
+        margin: 5px;
+
+        .form-group {
+            margin: 10px;
+            width: 300px;
+        }
+    }
+
+    &__item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+
+        .title {
+            font-weight: bold;
+        }
+
+        .item-result {
+            display: flex;
+            justify-content: flex-end;
+            gap: 225px;
+
+            svg {
+                margin: 10px;
+                transform: scale(1.5);
+                cursor: pointer;
+            }
+
+            svg:hover {
+                transform: scale(1.75);
+                color: green;
+            }
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+    }
+
+    .rules {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+
+        &__content {
+            margin: 10px;
+        }
+    }
+
+    .actions {
+        display: flex;
+        justify-content: center;
+        gap: 100px;
+
+        .create {
+            box-shadow: 2px 2px 2px 2px green;
+        }
+    }
+}

@@ -1,0 +1,10 @@
+{
+  "AreYouSureRemoveChat": "Вы уверены, что хотите удалить чат?",
+  "ThatWillBeRemoveChat": "Будут удалены все сообщения и документы!",
+  "Remove": "Удалить",
+  "Cancel": "Отмена",
+  "RemoveChat": "Удалить чат",
+  "SendMessage": "Отправить сообщение",
+  "TypeYourMessage": "Напишите ваше сообщение",
+  "CanNotSendEmpty": "Вы не можете отправить пустое сообщение"
+}

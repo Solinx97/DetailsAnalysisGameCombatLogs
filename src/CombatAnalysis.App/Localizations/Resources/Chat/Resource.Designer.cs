@@ -151,15 +151,6 @@ namespace CombatAnalysis.App.Localizations.Resources.Chat {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Looking for a group chat.
-        /// </summary>
-        public static string LookingForGroupChat {
-            get {
-                return ResourceManager.GetString("LookingForGroupChat", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to You don&apos;t have any group chats.
         /// </summary>
         public static string NoGroupChats {
@@ -178,7 +169,7 @@ namespace CombatAnalysis.App.Localizations.Resources.Chat {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Personal messages.
+        ///   Looks up a localized string similar to Messages.
         /// </summary>
         public static string PersonalMessages {
             get {
@@ -223,15 +214,6 @@ namespace CombatAnalysis.App.Localizations.Resources.Chat {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Search user.
-        /// </summary>
-        public static string SearchUser {
-            get {
-                return ResourceManager.GetString("SearchUser", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Select any chat for chatting.
         /// </summary>
         public static string SelectChatForTalking {
@@ -264,6 +246,15 @@ namespace CombatAnalysis.App.Localizations.Resources.Chat {
         public static string ShowAll {
             get {
                 return ResourceManager.GetString("ShowAll", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Start chatting with user.
+        /// </summary>
+        public static string StartChatting {
+            get {
+                return ResourceManager.GetString("StartChatting", resourceCulture);
             }
         }
         

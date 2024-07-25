@@ -1,0 +1,41 @@
+.invites {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    padding: 10px;
+    border: 2px solid #219C90;
+    border-radius: 10px;
+    z-index: 10;
+    top: 28%;
+    margin: 10px 0;
+
+    ul {
+        padding: 0;
+        width: 95%;
+    }
+
+    .community {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 25px;
+
+        svg {
+            cursor: pointer;
+        }
+
+        svg:hover {
+            transform: scale(1.2);
+        }
+    }
+
+    .actions {
+        display: flex;
+        gap: 20px;
+
+        .send {
+            box-shadow: 2px 2px 2px 2px green;
+        }
+    }
+}

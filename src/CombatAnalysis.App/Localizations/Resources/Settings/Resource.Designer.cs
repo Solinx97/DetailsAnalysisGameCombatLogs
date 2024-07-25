@@ -61,11 +61,29 @@ namespace CombatAnalysis.App.Localizations.Resources.Settings {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Change.
+        /// </summary>
+        public static string ChangeLocationPath {
+            get {
+                return ResourceManager.GetString("ChangeLocationPath", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Language.
         /// </summary>
         public static string Language {
             get {
                 return ResourceManager.GetString("Language", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Logs path.
+        /// </summary>
+        public static string LogsLocation {
+            get {
+                return ResourceManager.GetString("LogsLocation", resourceCulture);
             }
         }
         

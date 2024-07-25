@@ -1,13 +1,10 @@
 ﻿using CombatAnalysis.DAL.Entities;
-using CombatAnalysis.DAL.Entities.Authentication;
-using CombatAnalysis.DAL.Entities.Chat;
-using CombatAnalysis.DAL.Entities.User;
 using Microsoft.EntityFrameworkCore;
 using System.Text;
 
 namespace CombatAnalysis.DAL.Helpers;
 
-public static class DbProcedureHelper
+internal static class DbProcedureHelper
 {
     public static void CreateProcedures(DbContext dbContext)
     {
@@ -16,6 +13,8 @@ public static class DbProcedureHelper
             typeof(CombatLog),
             typeof(CombatLogByUser),
             typeof(CombatPlayer),
+            typeof(PlayerParseInfo),
+            typeof(SpecializationScore),
             typeof(Combat),
             typeof(DamageDone),
             typeof(DamageDoneGeneral),
@@ -25,6 +24,7 @@ public static class DbProcedureHelper
             typeof(DamageTakenGeneral),
             typeof(ResourceRecovery),
             typeof(ResourceRecoveryGeneral),
+            typeof(PlayerDeath),
         };
 
         foreach (var item in types)
@@ -41,21 +41,21 @@ public static class DbProcedureHelper
                           "\tWHERE Id = @id";
             dbContext.Database.ExecuteSqlRaw(query);
 
-            var data = InsertIntoParamsAndValues(item);
-            var data1 = InsertIntoParamsAndValues1(item);
-            query = $"CREATE PROCEDURE InsertInto{item.Name} ({data.Item1})\n" +
+            var insertIntoParams = InsertIntoParams(item);
+            var insertIntoOutputParams = InsertIntoOutputParams(item);
+            query = $"CREATE PROCEDURE InsertInto{item.Name} ({insertIntoParams.Item1})\n" +
                           $"\tAS\n" +
-                          $"\tDECLARE @OutputTbl TABLE ({data1})\n" +
+                          $"\tDECLARE @OutputTbl TABLE ({insertIntoOutputParams})\n" +
                           $"\tINSERT INTO {item.Name}\n" +
                           $"\tOUTPUT INSERTED.* INTO @OutputTbl\n" +
-                          $"\tVALUES ({data.Item2})\n" +
+                          $"\tVALUES ({insertIntoParams.Item2})\n" +
                           "\tSELECT * FROM @OutputTbl";
             dbContext.Database.ExecuteSqlRaw(query);
 
-            data = UpdateParamsAndValues(item);
-            query = $"CREATE PROCEDURE Update{item.Name} ({data.Item1})\n" +
+            insertIntoParams = UpdateParamsAndValues(item);
+            query = $"CREATE PROCEDURE Update{item.Name} ({insertIntoParams.Item1})\n" +
                           $"\tAS UPDATE {item.Name}\n" +
-                          $"\tSET {data.Item2}\n" +
+                          $"\tSET {insertIntoParams.Item2}\n" +
                           "\tWHERE Id = @Id";
             dbContext.Database.ExecuteSqlRaw(query);
 
@@ -64,21 +64,66 @@ public static class DbProcedureHelper
                           "\tWHERE Id = @id";
             dbContext.Database.ExecuteSqlRaw(query);
         }
+
+        GetDataByCombatPlayerId(dbContext);
+        GetSpecializationScore(dbContext);
     }
 
-    private static Tuple<string, string> InsertIntoParamsAndValues(Type type)
+    private static void GetDataByCombatPlayerId(DbContext dbContext)
+    {
+        var types = new Type[]
+        {
+            typeof(DamageDone),
+            typeof(DamageDoneGeneral),
+            typeof(HealDone),
+            typeof(HealDoneGeneral),
+            typeof(DamageTaken),
+            typeof(DamageTakenGeneral),
+            typeof(ResourceRecovery),
+            typeof(ResourceRecoveryGeneral),
+            typeof(PlayerDeath),
+        };
+
+        foreach (var item in types)
+        {
+            var property = item.GetProperty("CombatPlayerId");
+            var query = $"CREATE PROCEDURE Get{item.Name}ByCombatPlayerId (@combatPlayerId {Converter(property.PropertyType.Name)})\n" +
+                          "\tAS SELECT * \n" +
+                          $"\tFROM {item.Name}\n" +
+                          "\tWHERE CombatPlayerId = @combatPlayerId";
+            dbContext.Database.ExecuteSqlRaw(query);
+        }
+    }
+
+    private static void GetSpecializationScore(DbContext dbContext)
+    {
+        var classType = typeof(SpecializationScore);
+
+        var propertySpecId = classType.GetProperty(nameof(SpecializationScore.SpecId));
+        var propertyBossId = classType.GetProperty(nameof(SpecializationScore.BossId));
+        var propertyDifficult= classType.GetProperty(nameof(SpecializationScore.Difficult));
+        var query = $"CREATE PROCEDURE Get{classType.Name}BySpecId (@specId {Converter(propertySpecId.PropertyType.Name)}, " +
+                                                                  $"@bossId {Converter(propertyBossId.PropertyType.Name)}, " +
+                                                                  $"@difficult {Converter(propertyDifficult.PropertyType.Name)})\n" +
+                      "\tAS SELECT * \n" +
+                      $"\tFROM {classType.Name}\n" +
+                      "\tWHERE SpecId = @specId AND BossId = @bossId AND Difficult = @difficult";
+        dbContext.Database.ExecuteSqlRaw(query);
+    }
+
+    private static Tuple<string, string> InsertIntoParams(Type type)
     {
         var properties = type.GetProperties();
         var procedureParamNames = new StringBuilder();
         var procedureParamNamesWithPropertyTypes = new StringBuilder();
         if (type.GetProperty("Id")?.PropertyType != typeof(int))
         {
-            var propertTypeName = properties[0].PropertyType.Name;
-            procedureParamNamesWithPropertyTypes.Append($"@{properties[0].Name} {Converter(propertTypeName)},");
+            var propertyTypeName = properties[0].PropertyType.Name;
+            procedureParamNamesWithPropertyTypes.Append($"@{properties[0].Name} {Converter(propertyTypeName)},");
             procedureParamNames.Append($"@{properties[0].Name},");
         }
 
-        for (int i = 1; i < properties.Length; i++)
+        for (var i = 1; i < properties.Length; i++)
         {
             if (properties[i].CanWrite)
             {
@@ -94,7 +139,7 @@ public static class DbProcedureHelper
         return new Tuple<string, string>(procedureParamNamesWithPropertyTypes.ToString(), procedureParamNames.ToString());
     }
 
-    private static string InsertIntoParamsAndValues1(Type type)
+    private static string InsertIntoOutputParams(Type type)
     {
         var properties = type.GetProperties();
         var procedureParamNamesWithPropertyTypes = new StringBuilder();

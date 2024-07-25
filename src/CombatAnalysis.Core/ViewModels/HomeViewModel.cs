@@ -1,6 +1,7 @@
 ﻿using CombatAnalysis.Core.Interfaces.Observers;
 using CombatAnalysis.Core.ViewModels.Base;
 using CombatAnalysis.Core.ViewModels.Chat;
+using CombatAnalysis.Core.ViewModels.User;
 using MvvmCross.Commands;
 using MvvmCross.Navigation;
 
@@ -17,6 +18,7 @@ public class HomeViewModel : ParentTemplate<bool>, IAuthObserver
         _mvvmNavigation = mvvmNavigation;
 
         OpenChatCommand = new MvxAsyncCommand(OpenChatAsync);
+        OpenLognCommand = new MvxAsyncCommand(OpenLoginAsync);
         OpenCombatAnalysisCommand = new MvxAsyncCommand(OpenCombatAnalysisAsync);
 
         BasicTemplate = ParentTemplate.Basic;
@@ -29,6 +31,8 @@ public class HomeViewModel : ParentTemplate<bool>, IAuthObserver
     #region Command
 
     public IMvxAsyncCommand OpenChatCommand { get; set; }
+
+    public IMvxAsyncCommand OpenLognCommand { get; set; }
 
     public IMvxAsyncCommand OpenCombatAnalysisCommand { get; set; }
 
@@ -55,6 +59,11 @@ public class HomeViewModel : ParentTemplate<bool>, IAuthObserver
     public async Task OpenChatAsync()
     {
         await _mvvmNavigation.Navigate<ChatViewModel>();
+    }
+
+    public async Task OpenLoginAsync()
+    {
+        await _mvvmNavigation.Navigate<AuthorizationViewModel>();
     }
 
     public async Task OpenCombatAnalysisAsync()

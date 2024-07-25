@@ -1,0 +1,43 @@
+.authorization-callback {
+    position: absolute;
+    right: 0;
+    top: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: #0c192c;
+    height: 100vh;
+    width: 100vw;
+    font-size: 23px;
+
+    .successful, .failed {
+        padding: 5px 10px;
+        border-radius: 10px;
+        animation: loading 3s linear infinite;
+    }
+
+    .successful {
+        border: 2px solid green;
+        box-shadow: 2px 2px 2px 2px yellow;
+    }
+
+    .failed {
+        border: 2px solid brown;
+        box-shadow: 2px 2px 2px 2px red;
+    }
+}
+
+@keyframes loading {
+    0% {
+        opacity: 0;
+    }
+
+    50% {
+        opacity: 1;
+
+    }
+
+    100% {
+        opacity: 0;
+    }
+}

@@ -1,12 +1,12 @@
 ﻿CREATE PROCEDURE [dbo].[InsertIntoGroupChatMessage]
-	@Username NVARCHAR (MAX),
 	@Message NVARCHAR (MAX),
 	@Time TIME (7),
-	@GroupChatId INT
+	@GroupChatId INT,
+	@OwnerId NVARCHAR (MAX)
 AS
-	DECLARE @OutputTbl TABLE (Id INT,Username NVARCHAR (MAX),Message NVARCHAR (MAX),Time TIME (7),GroupChatId INT)
+	DECLARE @OutputTbl TABLE (Id INT,Message NVARCHAR (MAX),Time TIME (7),GroupChatId INT, OwnerId NVARCHAR (MAX))
 	INSERT INTO GroupChatMessage
 	OUTPUT INSERTED.* INTO @OutputTbl
-	VALUES (@Username,@Message,@Time,@GroupChatId)
+	VALUES (@Message,@Time,@GroupChatId,@OwnerId)
 	SELECT * FROM @OutputTbl
 RETURN 0

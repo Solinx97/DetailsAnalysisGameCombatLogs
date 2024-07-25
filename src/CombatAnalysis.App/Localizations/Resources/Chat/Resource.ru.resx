@@ -147,9 +147,6 @@
   <data name="LoadingFailed" xml:space="preserve">
     <value>Ошибка загрузки</value>
   </data>
-  <data name="LookingForGroupChat" xml:space="preserve">
-    <value>Поиск группового чата</value>
-  </data>
   <data name="NoGroupChats" xml:space="preserve">
     <value>Вы не состоите в групповый чатах</value>
   </data>
@@ -171,9 +168,6 @@
   <data name="SaveEdit" xml:space="preserve">
     <value>Сохранить изменения</value>
   </data>
-  <data name="SearchUser" xml:space="preserve">
-    <value>Поиск игрока</value>
-  </data>
   <data name="SelectChatForTalking" xml:space="preserve">
     <value>Выберите чат для общения</value>
   </data>
@@ -185,6 +179,9 @@
   </data>
   <data name="ShowAll" xml:space="preserve">
     <value>Показать все</value>
+  </data>
+  <data name="StartChatting" xml:space="preserve">
+    <value>Начать общение с пользователем</value>
   </data>
   <data name="StartDialog" xml:space="preserve">
     <value>Начать диалог</value>

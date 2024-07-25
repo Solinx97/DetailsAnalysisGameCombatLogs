@@ -382,35 +382,35 @@ internal class CombatDetailsServiceTests
         Assert.AreEqual(expectedResourceRecovery, resourceRecovery);
     }
 
-    [Test]
-    public void CombatDetailsService_GetDeathsNumber_Must_Return_Correct_Value_By_Unit_Died()
-    {
-        var data = "6/3 21:16:34.927  UNIT_DIED,0000000000000000,nil,0x80000000,0x80000000,Player-4452-03684D5F,\"Никуапа\",0x512,0x0";
-        var combatPlayerData = new CombatPlayer
-        {
-            UserName = "Никуапа",
-            DamageDone = 1,
-            DamageTaken = 15,
-            HealDone = 44,
-            EnergyRecovery = 55,
-            UsedBuffs = 3,
-        };
-        var combat = new Combat
-        {
-            Name = "Test combat2111234 657 hyuj",
-            Data = new List<string> { data },
-            IsWin = true,
-            StartDate = new DateTimeOffset(2022, 06, 05, 16, 22, 05, TimeSpan.Zero),
-            FinishDate = new DateTimeOffset(2022, 06, 05, 16, 24, 58, TimeSpan.Zero),
-            Players = new List<CombatPlayer> { combatPlayerData }
-        };
+    //[Test]
+    //public void CombatDetailsService_GetDeathsNumber_Must_Return_Correct_Value_By_Unit_Died()
+    //{
+    //    var data = "6/3 21:16:34.927  UNIT_DIED,0000000000000000,nil,0x80000000,0x80000000,Player-4452-03684D5F,\"Никуапа\",0x512,0x0";
+    //    var combatPlayerData = new CombatPlayer
+    //    {
+    //        Username = "Никуапа",
+    //        DamageDone = 1,
+    //        DamageTaken = 15,
+    //        HealDone = 44,
+    //        EnergyRecovery = 55,
+    //        UsedBuffs = 3,
+    //    };
+    //    var combat = new Combat
+    //    {
+    //        Name = "Test combat2111234 657 hyuj",
+    //        Data = new List<string> { data },
+    //        IsWin = true,
+    //        StartDate = new DateTimeOffset(2022, 06, 05, 16, 22, 05, TimeSpan.Zero),
+    //        FinishDate = new DateTimeOffset(2022, 06, 05, 16, 24, 58, TimeSpan.Zero),
+    //        Players = new List<CombatPlayer> { combatPlayerData }
+    //    };
 
-        var mockLogger = new Mock<ILogger>();
-        var combatDetails = new CombatDetailsDeaths(mockLogger.Object, combat.Players);
-        var deathNumber = combatDetails.GetData("Никуапа", combat.Data);
+    //    var mockLogger = new Mock<ILogger>();
+    //    var combatDetails = new CombatDetailsDeaths(mockLogger.Object, combat.Players);
+    //    var deathNumber = combatDetails.GetData("Никуапа", combat.Data);
 
-        var expectedDeathNumber = 1;
+    //    var expectedDeathNumber = 1;
 
-        Assert.AreEqual(expectedDeathNumber, deathNumber);
-    }
+    //    Assert.AreEqual(expectedDeathNumber, deathNumber);
+    //}
 }

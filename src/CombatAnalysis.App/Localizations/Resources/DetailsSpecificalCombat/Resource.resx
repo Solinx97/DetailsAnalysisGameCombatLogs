@@ -117,11 +117,68 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="AverageDamage" xml:space="preserve">
+    <value>Average damage</value>
+  </data>
+  <data name="AverageDamagePerSecond" xml:space="preserve">
+    <value>Average damage per sec.</value>
+  </data>
+  <data name="AverageHeal" xml:space="preserve">
+    <value>Average heal</value>
+  </data>
+  <data name="AverageHealPerSecond" xml:space="preserve">
+    <value>Average heal per sec.</value>
+  </data>
+  <data name="AverageItemLevel" xml:space="preserve">
+    <value>Average ILvl</value>
+  </data>
+  <data name="AverageResources" xml:space="preserve">
+    <value>Average resources</value>
+  </data>
+  <data name="AverageResourcesPerSecond" xml:space="preserve">
+    <value>Average resources per sec.</value>
+  </data>
+  <data name="Buffs" xml:space="preserve">
+    <value>Buffs</value>
+  </data>
+  <data name="CLearFilters" xml:space="preserve">
+    <value>Clear all filters</value>
+  </data>
+  <data name="CombatName" xml:space="preserve">
+    <value>Combat name</value>
+  </data>
   <data name="Damage" xml:space="preserve">
     <value>Damage</value>
   </data>
+  <data name="DamagePerSecond" xml:space="preserve">
+    <value>Damage per sec.</value>
+  </data>
+  <data name="EditValue" xml:space="preserve">
+    <value>Edit value</value>
+  </data>
   <data name="Healing" xml:space="preserve">
     <value>Healing</value>
+  </data>
+  <data name="HealingPerSecond" xml:space="preserve">
+    <value>Healing per sec.</value>
+  </data>
+  <data name="MinDamage" xml:space="preserve">
+    <value>Min. damage</value>
+  </data>
+  <data name="MinDPS" xml:space="preserve">
+    <value>Min. damage per sec.</value>
+  </data>
+  <data name="MinHeal" xml:space="preserve">
+    <value>Min. heal</value>
+  </data>
+  <data name="MinHPS" xml:space="preserve">
+    <value>MIn. heal per sec.</value>
+  </data>
+  <data name="MinResources" xml:space="preserve">
+    <value>Min. resources</value>
+  </data>
+  <data name="MinRPS" xml:space="preserve">
+    <value>Min. resources per sec</value>
   </data>
   <data name="Player" xml:space="preserve">
     <value>Player</value>
@@ -129,10 +186,40 @@
   <data name="Resources" xml:space="preserve">
     <value>Resources</value>
   </data>
+  <data name="ResourcesPerSecond" xml:space="preserve">
+    <value>Resources per sec.</value>
+  </data>
   <data name="SelectedPlayer" xml:space="preserve">
     <value>Selected player: </value>
   </data>
+  <data name="ShowSummaryInform" xml:space="preserve">
+    <value>Show summary information</value>
+  </data>
   <data name="Title" xml:space="preserve">
     <value>Detailed information</value>
+  </data>
+  <data name="TotalDamage" xml:space="preserve">
+    <value>Total damage</value>
+  </data>
+  <data name="TotalDamagePerSecond" xml:space="preserve">
+    <value>Total damage per sec.</value>
+  </data>
+  <data name="TotalHeal" xml:space="preserve">
+    <value>Total heal</value>
+  </data>
+  <data name="TotalHealPerSecond" xml:space="preserve">
+    <value>Total heal per sec.</value>
+  </data>
+  <data name="TotalResourcesPerSecond" xml:space="preserve">
+    <value>Total resources per sec.</value>
+  </data>
+  <data name="TotalResoures" xml:space="preserve">
+    <value>Total resources</value>
+  </data>
+  <data name="TotalValue" xml:space="preserve">
+    <value>Total value</value>
+  </data>
+  <data name="ValuePerSecond" xml:space="preserve">
+    <value>Value per second</value>
   </data>
 </root>

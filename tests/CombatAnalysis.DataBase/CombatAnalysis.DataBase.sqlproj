@@ -58,7 +58,7 @@
     <Folder Include="Tables" />
     <Folder Include="Tables\Chat" />
     <Folder Include="Tables\User" />
-    <Folder Include="StartData" />
+    <Folder Include="InitialData" />
     <Folder Include="Scripts" />
     <Folder Include="DacpacData" />
     <Folder Include="Procedures" />
@@ -200,6 +200,6 @@
     <None Include="Scripts\DropDatabase.sql" />
   </ItemGroup>
   <ItemGroup>
-    <PostDeploy Include="StartData\Script.PostDeployment1.sql" />
+    <PostDeploy Include="InitialData\Script.PostDeployment1.sql" />
   </ItemGroup>
 </Project>

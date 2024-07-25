@@ -1,0 +1,131 @@
+﻿.chats__selected-chat {
+    .messages-container {
+        .add-people-to-chat {
+            position: fixed;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            border-radius: 25px;
+            right: 30%;
+            top: 5%;
+            padding: 10px;
+            width: 500px;
+            max-height: 600px;
+
+            .item-result {
+                display: flex;
+                gap: 10px;
+
+                .invite {
+                    box-shadow: 2px 2px 2px 2px green;
+                }
+            }
+        }
+
+        .settings-handler {
+            &_active {
+                color: green;
+                transform: scale(1.25);
+            }
+        }
+
+        svg {
+            cursor: pointer;
+        }
+    }
+
+    .input-message {
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        align-items: center;
+
+        svg {
+            margin: 0 10px;
+            width: 25px;
+            height: 25px;
+            cursor: pointer;
+
+            :hover {
+                transform: scale(1.1);
+                color: cornflowerblue;
+            }
+        }
+    }
+
+    .settings {
+        display: none;
+
+        &_active {
+            display: flex;
+            flex-direction: column;
+
+            svg {
+                cursor: pointer;
+                margin: 5px 15px;
+            }
+        }
+
+        .people-inspection-handler, .add-new-people-handler {
+            color: black;
+
+            &-active {
+                color: lightgreen;
+                transform: scale(1.2);
+            }
+        }
+
+        .leave-from-chat {
+            color: red;
+            transform: scale(1.4);
+        }
+
+        &__content {
+            display: flex;
+            flex-direction: column;
+            gap: 125px;
+
+            .main-settings, .danger-settings {
+                display: flex;
+                flex-direction: column;
+                gap: 30px;
+            }
+
+            .main-settings {
+                gap: 15px;
+            }
+
+            input {
+                font-size: 12px;
+            }
+        }
+    }
+
+    .rules-container {
+        position: fixed;
+        padding: 15px 10px;
+        border-radius: 25px;
+        min-width: 500px;
+
+        .create-community__item {
+            gap: 10px;
+
+            .rules {
+                display: flex;
+                flex-direction: column;
+                gap: 10px;
+            }
+        }
+
+        .item-result {
+            display: flex;
+            justify-content: center;
+            gap: 25px;
+
+            .save {
+                box-shadow: 2px 2px 2px 2px green;
+            }
+        }
+    }
+}

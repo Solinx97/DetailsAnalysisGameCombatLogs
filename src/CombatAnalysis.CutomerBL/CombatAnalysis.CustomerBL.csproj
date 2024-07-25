@@ -11,7 +11,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\CombatAnalysis.DAL\CombatAnalysis.DAL.csproj" />
+    <ProjectReference Include="..\CombatAnalysis.CustomerDAL\CombatAnalysis.CustomerDAL.csproj" />
   </ItemGroup>
 
 </Project>

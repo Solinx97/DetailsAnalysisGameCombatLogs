@@ -147,9 +147,6 @@
   <data name="LoadingFailed" xml:space="preserve">
     <value>Loading failed</value>
   </data>
-  <data name="LookingForGroupChat" xml:space="preserve">
-    <value>Looking for a group chat</value>
-  </data>
   <data name="NoGroupChats" xml:space="preserve">
     <value>You don't have any group chats</value>
   </data>
@@ -157,7 +154,7 @@
     <value>You don't have any personal messages</value>
   </data>
   <data name="PersonalMessages" xml:space="preserve">
-    <value>Personal messages</value>
+    <value>Messages</value>
   </data>
   <data name="RefreshGroupChats" xml:space="preserve">
     <value>Refresh the group chats</value>
@@ -171,9 +168,6 @@
   <data name="SaveEdit" xml:space="preserve">
     <value>Save edit</value>
   </data>
-  <data name="SearchUser" xml:space="preserve">
-    <value>Search user</value>
-  </data>
   <data name="SelectChatForTalking" xml:space="preserve">
     <value>Select any chat for chatting</value>
   </data>
@@ -185,6 +179,9 @@
   </data>
   <data name="ShowAll" xml:space="preserve">
     <value>Show all</value>
+  </data>
+  <data name="StartChatting" xml:space="preserve">
+    <value>Start chatting with user</value>
   </data>
   <data name="StartDialog" xml:space="preserve">
     <value>Start dialog</value>

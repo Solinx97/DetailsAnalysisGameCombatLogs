@@ -183,6 +183,9 @@
   <data name="ShowParry" xml:space="preserve">
     <value>Показать парирование</value>
   </data>
+  <data name="ShowPets" xml:space="preserve">
+    <value>Показать питомцев и существ</value>
+  </data>
   <data name="ShowResist" xml:space="preserve">
     <value>Показать сопр.</value>
   </data>

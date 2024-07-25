@@ -2,9 +2,13 @@
 
 public class Combat
 {
+    public int LocallyNumber { get; set; }
+
     public string DungeonName { get; set; }
 
     public string Name { get; set; }
+
+    public int Difficulty { get; set; }
 
     public List<string> Data { get; set; }
 
@@ -18,8 +22,6 @@ public class Combat
 
     public int DeathNumber { get; set; }
 
-    public int UsedBuffs { get; set; }
-
     public bool IsWin { get; set; }
 
     public DateTimeOffset StartDate { get; set; }
@@ -27,6 +29,10 @@ public class Combat
     public DateTimeOffset FinishDate { get; set; }
 
     public List<CombatPlayer> Players { get; set; }
+
+    public Dictionary<string, List<string>> PetsId { get; set; }
+
+    public List<PlayerDeath> DeathInfo { get; set; }
 
     public string Duration
     {

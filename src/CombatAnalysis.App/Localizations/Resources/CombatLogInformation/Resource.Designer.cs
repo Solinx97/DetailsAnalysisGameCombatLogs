@@ -61,11 +61,11 @@ namespace CombatAnalysis.App.Localizations.Resources.CombatLogInformation {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Analyzing.
+        ///   Looks up a localized string similar to Analysing.
         /// </summary>
-        public static string Analyzing {
+        public static string Analysing {
             get {
-                return ResourceManager.GetString("Analyzing", resourceCulture);
+                return ResourceManager.GetString("Analysing", resourceCulture);
             }
         }
         
@@ -75,6 +75,15 @@ namespace CombatAnalysis.App.Localizations.Resources.CombatLogInformation {
         public static string Combat {
             get {
                 return ResourceManager.GetString("Combat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Combat log uploading failed!.
+        /// </summary>
+        public static string CombatLogUploadingFailed {
+            get {
+                return ResourceManager.GetString("CombatLogUploadingFailed", resourceCulture);
             }
         }
         
@@ -120,6 +129,15 @@ namespace CombatAnalysis.App.Localizations.Resources.CombatLogInformation {
         public static string LoadingFailed {
             get {
                 return ResourceManager.GetString("LoadingFailed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Prepare pets.
+        /// </summary>
+        public static string PreparePets {
+            get {
+                return ResourceManager.GetString("PreparePets", resourceCulture);
             }
         }
         
@@ -205,6 +223,24 @@ namespace CombatAnalysis.App.Localizations.Resources.CombatLogInformation {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Removing....
+        /// </summary>
+        public static string RemovingInProgress {
+            get {
+                return ResourceManager.GetString("RemovingInProgress", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Repeat.
+        /// </summary>
+        public static string Repeat {
+            get {
+                return ResourceManager.GetString("Repeat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Result.
         /// </summary>
         public static string Result {
@@ -268,7 +304,7 @@ namespace CombatAnalysis.App.Localizations.Resources.CombatLogInformation {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to To select a type of logs you ned to login.
+        ///   Looks up a localized string similar to To select a type of logs you need to login.
         /// </summary>
         public static string TypeOfLogsLoginRequired {
             get {

@@ -1,0 +1,15 @@
+{
+  "Close": "Close",
+  "FirstName": "First name",
+  "LastName": "Last name",
+  "AboutMe": "About me",
+  "Friends": "Friends",
+  "Communities": "Communities",
+  "MoreDetails": "More details",
+  "RequestToConnect": "Request to connect",
+  "InviteToCommunity": "Invite to community",
+  "StartChat": "Start chat",
+  "AlreadyFriend": "This user already your friend",
+  "SentRequest": "You sent request to connect to ",
+  "AlreadySentRequest": "You already sent request to "
+}

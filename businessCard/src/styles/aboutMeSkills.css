@@ -2,16 +2,54 @@
     display: flex;
     flex-direction: column;
     align-items:  center;
+    width: 100vw;
+    height: 100vh;
 }
 
-.about-me__description {
+.about-me__description, .about-me__skills, .about-me__qualification, .about-me__what-is-project, .social-links {
+    display: none;
+}
+
+.about-me__description.active, .about-me__skills.active, .about-me__qualification.active, .about-me__what-is-project.active {
+    position: absolute;
     display: flex;
     flex-direction: column;
-    justify-content: flex-start;
-    align-items: flex-start;
-    width: 100vw;
-    background: rgb(108,190,124);
-    background: radial-gradient(circle, rgba(108,190,124,1) 0%, rgba(148,153,233,1) 100%);
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+}
+
+.about-me__description.passed, .about-me__skills.passed, .about-me__qualification.passed, .about-me__what-is-project.passed {
+    animation-iteration-count: 1;
+    animation-duration: 1s;
+    animation-name: nextItem;
+    animation-direction: normal;
+}
+
+.about-me__description.start, .about-me__skills.start, .about-me__qualification.start, .about-me__what-is-project.start {
+    animation-iteration-count: 1;
+    animation-duration: 1s;
+    animation-name: newItem;
+    animation-direction: normal;
+}
+
+
+@keyframes nextItem {
+    from {
+        top: 0;
+    }
+    to {
+        top: -100vh;
+    }
+}
+
+@keyframes newItem {
+    from {
+        top: 100vh;
+    }
+    to {
+        top: 0;
+    }
 }
 
 .about-me .title {
@@ -55,12 +93,6 @@
 }
 
 .about-me__skills {
-    width: 100vw;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    padding: 10px;
     background: rgb(195,143,88);
     background: radial-gradient(circle, rgba(195,143,88,1) 0%, rgba(148,153,233,1) 100%);
 }
@@ -143,10 +175,10 @@
 }
 
 .what-is-project {
-    display: flex;
+    /* display: flex;
     flex-direction: column;
     justify-content: center;
-    align-items: center;
+    align-items: center; */
     width: 100vw;
     background: rgb(185,98,168);
     background: radial-gradient(circle, rgba(185,98,168,1) 0%, rgba(148,153,233,1) 100%);

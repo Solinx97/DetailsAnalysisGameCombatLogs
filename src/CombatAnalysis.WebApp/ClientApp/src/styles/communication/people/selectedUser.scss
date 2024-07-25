@@ -1,0 +1,51 @@
+.user {
+    display: flex;
+    flex-direction: column;
+
+    &__container {
+        display: flex;
+
+    }
+
+    &__content {
+        display: flex;
+        align-items: center;
+        margin-left: 25px;
+    }
+
+    &__menu {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        padding: 10px;
+        box-shadow: 2px 2px 2px 2px gray;
+        border-radius: 15px;
+        gap: 20px;
+        height: 315px;
+
+        .sub-menu {
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            padding: 10px;
+            gap: 20px;
+            cursor: pointer;
+
+            .current {
+                &_active {
+                    color: cornflowerblue;
+                }
+            }
+        }
+
+        .sub-menu.control {
+            display: flex;
+            justify-content: center;
+        }
+
+        .sub-menu:hover {
+            box-shadow: 2px 2px 2px 2px green;
+            border-radius: 10px;
+        }
+    }
+}

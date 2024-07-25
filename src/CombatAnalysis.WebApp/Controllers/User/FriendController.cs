@@ -1,10 +1,14 @@
-﻿using CombatAnalysis.WebApp.Consts;
+﻿using CombatAnalysis.WebApp.Attributes;
+using CombatAnalysis.WebApp.Consts;
+using CombatAnalysis.WebApp.Enums;
+using CombatAnalysis.WebApp.Extensions;
 using CombatAnalysis.WebApp.Interfaces;
 using CombatAnalysis.WebApp.Models.User;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CombatAnalysis.WebApp.Controllers.User;
 
+[RequireAccessToken]
 [Route("api/v1/[controller]")]
 [ApiController]
 public class FriendController : ControllerBase
@@ -14,50 +18,95 @@ public class FriendController : ControllerBase
     public FriendController(IHttpClientHelper httpClient)
     {
         _httpClient = httpClient;
-        _httpClient.BaseAddress = Port.UserApi;
     }
 
     [HttpGet("{id}")]
     public async Task<IActionResult> GetById(string id)
     {
-        var responseMessage = await _httpClient.GetAsync($"Friend/{id}");
-        var friend = await responseMessage.Content.ReadFromJsonAsync<FriendModel>();
+        if (!Request.Cookies.TryGetValue(AuthenticationCookie.AccessToken.ToString(), out var accessToken))
+        {
+            return Unauthorized();
+        }
 
-        return Ok(friend);
+        var responseMessage = await _httpClient.GetAsync($"Friend/{id}", accessToken, Port.UserApi);
+        if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+        {
+            return Unauthorized();
+        }
+        else if (responseMessage.IsSuccessStatusCode)
+        {
+            var friend = await responseMessage.Content.ReadFromJsonAsync<FriendModel>();
+
+            return Ok(friend);
+        }
+
+        return BadRequest();
     }
 
-    [HttpGet("searchByForWhomId/{id}")]
-    public async Task<IActionResult> SearchByForWhomId(string id)
+    [HttpGet("searchMyFriends/{id}")]
+    public async Task<IActionResult> SearchMyFriends(string id)
     {
-        var responseMessage = await _httpClient.GetAsync($"Friend/searchByForWhomId/{id}");
-        var friends = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<FriendModel>>();
+        if (!Request.Cookies.TryGetValue(AuthenticationCookie.AccessToken.ToString(), out var accessToken))
+        {
+            return Unauthorized();
+        }
 
-        return Ok(friends);
-    }
+        var responseMessage = await _httpClient.GetAsync($"Friend/searchByUserId/{id}", accessToken, Port.UserApi);
+        if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+        {
+            return Unauthorized();
+        }
+        else if (responseMessage.IsSuccessStatusCode)
+        {
+            var friendsCurrentUser = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<FriendModel>>();
 
-    [HttpGet("searchByUserId/{id}")]
-    public async Task<IActionResult> SearchByUserId(string id)
-    {
-        var responseMessage = await _httpClient.GetAsync($"Friend/searchByUserId/{id}");
-        var friends = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<FriendModel>>();
+            return Ok(friendsCurrentUser);
+        }
 
-        return Ok(friends);
+        return BadRequest();
     }
 
     [HttpPost]
     public async Task<IActionResult> Create(FriendModel model)
     {
-        var responseMessage = await _httpClient.PostAsync("Friend", JsonContent.Create(model));
-        var friend = await responseMessage.Content.ReadFromJsonAsync<FriendModel>();
+        if (!Request.Cookies.TryGetValue(AuthenticationCookie.AccessToken.ToString(), out var accessToken))
+        {
+            return Unauthorized();
+        }
 
-        return Ok(friend);
+        var responseMessage = await _httpClient.PostAsync("Friend", JsonContent.Create(model), accessToken, Port.UserApi);
+        if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+        {
+            return Unauthorized();
+        }
+        else if (responseMessage.IsSuccessStatusCode)
+        {
+            var friend = await responseMessage.Content.ReadFromJsonAsync<FriendModel>();
+
+            return Ok(friend);
+        }
+
+        return BadRequest();
     }
 
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(int id)
     {
-        await _httpClient.DeletAsync($"Friend/{id}");
+        if (!Request.Cookies.TryGetValue(AuthenticationCookie.AccessToken.ToString(), out var accessToken))
+        {
+            return Unauthorized();
+        }
 
-        return Ok();
+        var responseMessage = await _httpClient.DeletAsync($"Friend/{id}", accessToken, Port.UserApi);
+        if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+        {
+            return Unauthorized();
+        }
+        else if (responseMessage.IsSuccessStatusCode)
+        {
+            return Ok();
+        }
+
+        return BadRequest();
     }
 }

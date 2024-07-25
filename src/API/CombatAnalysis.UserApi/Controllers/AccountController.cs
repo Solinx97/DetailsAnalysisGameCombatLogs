@@ -1,147 +1,109 @@
 ﻿using AutoMapper;
 using CombatAnalysis.CustomerBL.DTO;
 using CombatAnalysis.CustomerBL.Interfaces;
-using CombatAnalysis.Identity.Interfaces;
 using CombatAnalysis.UserApi.Models;
-using CombatAnalysis.UserApi.Models.Response;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CombatAnalysis.UserApi.Controllers;
 
 [Route("api/v1/[controller]")]
 [ApiController]
+[Authorize]
 public class AccountController : ControllerBase
 {
     private readonly IUserService<AppUserDto> _service;
-    private readonly IIdentityTokenService _tokenService;
     private readonly IMapper _mapper;
-    private readonly ILogger _logger;
+    private readonly ILogger<AccountController> _logger;
 
-    public AccountController(IUserService<AppUserDto> service, IIdentityTokenService tokenService, IMapper mapper, ILogger logger)
+    public AccountController(IUserService<AppUserDto> service, IMapper mapper, ILogger<AccountController> logger)
     {
         _service = service;
-        _tokenService = tokenService;
         _mapper = mapper;
         _logger = logger;
-    }
-
-    [HttpPost]
-    public async Task<IActionResult> Login(LoginModel model)
-    {
-        var user = await _service.GetAsync(model.Email, model.Password);
-        if (user == null)
-        {
-            return NotFound();
-        }
-
-        var tokens = await _tokenService.GenerateTokensAsync(HttpContext.Response.Cookies, user.Id);
-        var map = _mapper.Map<AppUserModel>(user);
-        var response = new ResponseFromAccount(map, tokens.Item1, tokens.Item2);
-
-        return Ok(response);
-    }
-
-    [HttpPost("registration")]
-    public async Task<IActionResult> Register(RegisterModel model)
-    {
-        try
-        {
-            var user = await _service.GetAsync(model.Email);
-            if (user != null)
-            {
-                return Ok();
-            }
-
-            var newUser = new AppUserModel { Id = Guid.NewGuid().ToString(), Email = model.Email, Password = model.Password, PhoneNumber = string.Empty, Birthday = DateTimeOffset.Now };
-            var map = _mapper.Map<AppUserDto>(newUser);
-            await _service.CreateAsync(map);
-
-            var tokens = await _tokenService.GenerateTokensAsync(HttpContext.Response.Cookies, newUser.Id);
-            var response = new ResponseFromAccount(newUser, tokens.Item1, tokens.Item2);
-
-            return Ok(response);
-        }
-        catch (ArgumentNullException ex)
-        {
-            _logger.LogError(ex, ex.Message);
-
-            return BadRequest();
-        }
     }
 
     [HttpGet]
     public async Task<IActionResult> GetAll()
     {
-        try
-        {
-            var users = await _service.GetAllAsync();
-            if (!users.Any())
-            {
-                return NotFound();
-            }
+        var results = await _service.GetAllAsync();
 
-            return Ok(users);
-        }
-        catch (Exception)
-        {
-            return BadRequest();
-        }
+        return Ok(results);
     }
 
     [HttpGet("{id}")]
     public async Task<IActionResult> GetById(string id)
     {
+        var result = await _service.GetByIdAsync(id);
+
+        return Ok(result);
+    }
+
+    [AllowAnonymous]
+    [HttpPost]
+    public async Task<IActionResult> Create(AppUserModel model)
+    {
         try
         {
-            var user = await _service.GetByIdAsync(id);
-            if (user == null)
-            {
-                return NotFound();
-            }
+            model.Id = Guid.NewGuid().ToString();
 
-            return Ok(user);
+            var map = _mapper.Map<AppUserDto>(model);
+            var result = await _service.CreateAsync(map);
+
+            return Ok(result);
         }
-        catch (Exception)
+        catch (ArgumentNullException ex)
         {
+            _logger.LogError(ex, $"Create App User failed: ${ex.Message}", model);
+
+            return BadRequest();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, $"Create App User failed: ${ex.Message}", model);
+
             return BadRequest();
         }
     }
 
     [HttpPut]
-    public async Task<IActionResult> Edit(AppUserModel user)
-    {
-        var map = _mapper.Map<AppUserDto>(user);
-        var updatedUser = await _service.UpdateAsync(map);
-
-        return Ok(updatedUser);
-    }
-
-    [HttpGet("logout/{refreshToken}")]
-    public async Task<IActionResult> Logout(string refreshToken)
-    {
-        var refreshTokenModel = await _tokenService.FindRefreshTokenAsync(refreshToken);
-        await _tokenService.RemoveRefreshTokenAsync(refreshTokenModel);
-
-        return Ok();
-    }
-
-    [HttpGet("find/{email}")]
-    public async Task<IActionResult> Find(string email)
+    public async Task<IActionResult> Update(AppUserModel model)
     {
         try
         {
-            var user = await _service.GetAsync(email);
-            if (user == null)
-            {
-                return NotFound();
-                
-            }
+            var map = _mapper.Map<AppUserDto>(model);
+            var result = await _service.UpdateAsync(map);
 
-            return Ok(user);
+            return Ok(result);
         }
-        catch (Exception)
+        catch (ArgumentNullException ex)
         {
+            _logger.LogError(ex, $"Update App User failed: ${ex.Message}", model);
+
             return BadRequest();
         }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, $"Update App User failed: ${ex.Message}", model);
+
+            return BadRequest();
+        }
+    }
+
+    [HttpGet("find/{identityUserId}")]
+    public async Task<IActionResult> Find(string identityUserId)
+    {
+        var result = await _service.GetAsync(identityUserId);
+
+        return Ok(result);
+    }
+
+    [HttpGet("check/{username}")]
+    [AllowAnonymous]
+    public async Task<IActionResult> CheckByUsername(string username)
+    {
+        var usernameAlreadyUsed = await _service.CheckByUsernameAsync(username);
+
+        return Ok(usernameAlreadyUsed);
     }
 }

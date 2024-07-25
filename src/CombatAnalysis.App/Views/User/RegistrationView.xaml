@@ -4,26 +4,21 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:converters="clr-namespace:CombatAnalysis.App.Converters"
     xmlns:loc="clr-namespace:CombatAnalysis.App.Localizations"
     xmlns:resx="clr-namespace:CombatAnalysis.App.Localizations.Resources.Registration"
     xmlns:local="clr-namespace:CombatAnalysis.App.Views.ViewTemplates"
-    xmlns:viewModels="clr-namespace:CombatAnalysis.Core.ViewModels;assembly=CombatAnalysis.Core"
+    xmlns:userViewModels="clr-namespace:CombatAnalysis.Core.ViewModels.User;assembly=CombatAnalysis.Core"
     xmlns:views="clr-namespace:MvvmCross.Platforms.Wpf.Views;assembly=MvvmCross.Platforms.Wpf"
+    xmlns:viewModels="clr-namespace:CombatAnalysis.Core.ViewModels;assembly=CombatAnalysis.Core"
+    xmlns:converters="clr-namespace:CombatAnalysis.App.Converters"
     loc:LocalizationObject.ResourceManager="{x:Static resx:Resource.ResourceManager}"
     mc:Ignorable="d" d:DesignHeight="850" d:DesignWidth="1250">
 
     <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="0.25*" />
-            <RowDefinition Height="*" />
-            <RowDefinition Height="0.5*" />
-        </Grid.RowDefinitions>
-
         <Grid.Resources>
             <converters:TheNativeBoolToVisibilityConverter x:Key="BoolToVisibility" />
         </Grid.Resources>
-
+        
         <ContentControl Grid.RowSpan="4" Grid.ColumnSpan="4" Content="{Binding BasicTemplate}">
             <ContentControl.Resources>
                 <DataTemplate DataType="{x:Type viewModels:BasicTemplateViewModel}">
@@ -32,49 +27,23 @@
             </ContentControl.Resources>
         </ContentControl>
 
-        <TextBlock Grid.Row="0" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="30" Text="{loc:Loc Title}"/>
-        <Grid Grid.Row="1">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="*" />
-                <RowDefinition Height="*" />
-                <RowDefinition Height="*" />
-                <RowDefinition Height="*" />
-                <RowDefinition Height="*" />
-            </Grid.RowDefinitions>
+        <Grid>
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="0.5*"/>
+                <ColumnDefinition Width="55"/>
+                <ColumnDefinition Width="220"/>
+                <ColumnDefinition Width="0.7*"/>
                 <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="0.5*"/>
             </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
 
-            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Column="1" Grid.Row="0">
-                <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" Text="{loc:Loc Email}" FontSize="18" Margin="0 20"/>
-                <TextBox Style="{StaticResource messageTextBox}" VerticalContentAlignment="Center" Height="35" Padding="5" Width="300" FontSize="16" Text="{Binding Email}" />
+            <StackPanel Grid.Column="2" Grid.ColumnSpan="2" Grid.Row="0" Grid.RowSpan="2" HorizontalAlignment="Center" VerticalAlignment="Center">
+                <TextBlock Text="Continue Registration in Browser" HorizontalAlignment="Center" Foreground="White" FontFamily="Comic Sans MS" FontSize="16" Margin="10" />
+                <TextBlock Visibility="{Binding IsVerification, Converter={StaticResource BoolToVisibility}, ConverterParameter=true:false}"
+                           Text="Verification" HorizontalAlignment="Center" Foreground="White" FontFamily="Comic Sans MS" FontSize="16" Margin="10" />
             </StackPanel>
-            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Column="1" Grid.Row="1">
-                <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" Text="{loc:Loc Password}" FontSize="18" Margin="0 20"/>
-                <PasswordBox Style="{StaticResource passwordTextBox}" VerticalContentAlignment="Center" Height="35" Width="300" FontSize="16"
-                             PasswordChanged="PasswordBox_PasswordChanged"/>
-            </StackPanel>
-            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Column="1" Grid.Row="2">
-                <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" Text="{loc:Loc PasswordConfirmation}" FontSize="18" Margin="0 20"/>
-                <PasswordBox Style="{StaticResource passwordTextBox}" VerticalContentAlignment="Center" Height="35" Width="300" FontSize="16"
-                             PasswordChanged="ConfirmPasswordBox_PasswordChanged"/>
-            </StackPanel>
-            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Column="1" Grid.Row="3">
-                <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" Text="{loc:Loc NeedAddData}"
-                           FontSize="12" Foreground="Brown" Visibility="{Binding InputDataIsEmpty, Converter={StaticResource BoolToVisibility}, ConverterParameter=true:false}"/>
-                <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" Text="{loc:Loc EmailIsAlready}"
-                           FontSize="12" Foreground="Brown" Visibility="{Binding AccountIsReady, Converter={StaticResource BoolToVisibility}, ConverterParameter=true:false}"/>
-                <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" Text="{loc:Loc PasswordNotConfirmated}"
-                           FontSize="12" Foreground="Brown" Visibility="{Binding ConfirmPasswordIsNotCorrect, Converter={StaticResource BoolToVisibility}, ConverterParameter=true:false}"/>
-                <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" TextAlignment="Center" Width="250" Height="80" TextWrapping="Wrap" Text="{loc:Loc RegistrationFailed}"
-                           FontSize="12" Foreground="Brown" Visibility="{Binding ServerIsNotAvailable, Converter={StaticResource BoolToVisibility}, ConverterParameter=true:false}"/>
-            </StackPanel>
-            <Button Grid.Column="1" Grid.Row="4" Height="30" Width="125" Content="{loc:Loc Registration}" Style="{StaticResource showButton}"
-                    Command="{Binding RegistrationCommand}" />
         </Grid>
-        <Button VerticalAlignment="Center" HorizontalAlignment="Center" Grid.Column="1" Grid.Row="2" Height="30" Width="125" Content="{loc:Loc Back}" Style="{StaticResource showButton}"
-                    Command="{Binding CancelCommand}" />
     </Grid>
 </views:MvxWpfView>

@@ -1,0 +1,49 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ .Release.Name }}-ingress
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: {{ .Values.app1.hostName }}
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ .Release.Name }}-{{ .Values.app1.name }}-service
+                port:
+                  number: {{ .Values.app2.ingress.port }}
+    - host: {{ .Values.app2.hostName }}
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ .Release.Name }}-{{ .Values.app2.name }}-service
+                port:
+                  number: {{ .Values.app2.ingress.port }}
+    - host: {{ .Values.app3.hostName }}
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ .Release.Name }}-{{ .Values.app3.name }}-service
+                port:
+                  number: {{ .Values.app3.ingress.port }}
+    - host: {{ .Values.app4.hostName }}
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ .Release.Name }}-{{ .Values.app4.name }}-service
+                port:
+                  number: {{ .Values.app4.ingress.port }}

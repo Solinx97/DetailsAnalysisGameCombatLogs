@@ -1,84 +1,211 @@
-.general-analysis__container {
-    .card {
-        width: 1000px;
-        box-shadow: 10px 10px gray;
-        margin: 25px;
+﻿$box-shadow-standard: 2px 2px 2px 2px black;
+$box-shadow-highlight: 3px 3px 3px 3px black;
+$border-radius-standard: 15px;
+$background-dark: #135D66;
+$background-light: #496989;
+$combat-win: green;
+$combat-lose: red;
 
-        .list-group-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            margin: 20px 10px 0 0;
+@mixin box-shadow($type: 'standard') {
+    @if $type == 'standard' {
+        box-shadow: $box-shadow-standard;
+    }
+    @else if $type == 'highlight' {
+        box-shadow: $box-shadow-highlight;
+    }
+}
 
-            div {
-                display: flex;
-                align-items: center;
-                width: auto;
-                height: 75px;
+.general-analysis {
+    &__container {
+        .card {
+            box-shadow: 10px 10px #3AA6B9;
+            margin: 25px;
+            background: $background-dark;
+
+            .unique-combats {
+                &__all, &__selected {
+                    .combat-number {
+                        font-size: 18px;
+                        margin: 0 10px;
+                    }
+                }
+
+                &__selected {
+                    .combat-number {
+                        color: white;
+                    }
+                }
+
+                &__all {
+                    position: absolute;
+                    display: flex;
+                    justify-content: flex-start;
+                    top: -30%;
+                    font-size: 12px;
+                    gap: 20px;
+                    overflow: auto;
+                    width: 100%;
+
+                    li {
+                        display: flex;
+                        justify-content: center;
+                        align-items: center;
+                        border-radius: 20px;
+                        padding: 5px;
+                        margin: 5px;
+                        gap: 5px;
+                        cursor: pointer;
+
+                        &:hover {
+                            transform: scale(1.05)
+                        }
+
+                        .combat-time {
+                            margin: 0;
+                        }
+                    }
+
+                    .list-group-item {
+                        background: #0c192c;
+                    }
+                }
+
+                &__lose {
+                    box-shadow: 2px 2px 2px 2px red;
+
+                    .combat-number {
+                        color: $combat-lose;
+                    }
+                }
+
+                &__win {
+                    box-shadow: 2px 2px 2px 2px green;
+
+                    .combat-number {
+                        color: $combat-win;
+                    }
+                }
             }
 
-            &__date {
+            .win, .lose {
+                @include box-shadow('highlight');
+                border-radius: $border-radius-standard;
+                padding: 5px;
+                background: $background-light;
+            }
+
+            .lose {
+                background: #D04848;
+            }
+
+            .combat-time {
+                display: flex;
+                justify-content: flex-start;
+                margin: 0 0 10px 10px;
+                gap: 25px;
+
+                &__range, &__lasts {
+                    display: flex;
+                    gap: 20px;
+                    padding: 10px;
+                    border-radius: 20px;
+                    box-shadow: $box-shadow-standard;
+                    font-size: 14px;
+                }
+            }
+
+            .list-group-item {
                 display: flex;
                 flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                gap: 10px;
+                background: #135D66;
+                color: white;
+
+                div {
+                    display: flex;
+                    font-size: 14px;
+                }
+
+                &__date {
+                    display: flex;
+                    flex-direction: column;
+                }
+
+                svg {
+                    height: 20px;
+                }
+
+
+                &__damage-done, &__heal-done, &__damage-taken, &__energy-recovery, &__death-number,
+                &__duration, &__not-ready, &__buffs, &__start, &__finish, &__ready {
+                    @include box-shadow('highlight');
+                    border-radius: $border-radius-standard;
+                    padding: 5px;
+                }
+
+                &__death-number-zero {
+                    padding: 5px;
+                    box-shadow: 2px 2px 2px 2px white;
+                    border-radius: 15px;
+                }
+
+                &__ready {
+                    background: #7F27FF;
+                }
             }
 
-            svg {
-                height: 20px;
-            }
-
-            &__damage-done {
-                color: saddlebrown;
-            }
-
-            &__heal-done {
-                color: green;
-            }
-
-            &__damage-taken {
-                color: darkorange;
-            }
-
-            &__energy-recovery {
-                color: yellowgreen;
-            }
-
-            &__death-number {
-                color: red;
-            }
-
-            &__status {
-                color: dimgray;
-            }
-
-            &__date-icon {
-                color: mediumpurple;
-            }
-
-            &__duration {
-                color: cornflowerblue;
-            }
-
-            &__not-ready {
-                color: lightcoral;
-            }
-
-
-            &__ready {
-                color: green;
+            .list-group {
+                display: flex;
+                flex-direction: row;
             }
         }
 
-        .list-group {
+        .combats {
+            &__container {
+                display: flex;
+                flex-direction: column;
+                gap: 75px;
+                margin-top: 80px;
+
+                .details {
+                    display: flex;
+                }
+            }
+        }
+
+        .information {
             display: flex;
-            flex-direction: row;
+            justify-content: space-around;
         }
     }
 
-    &_navigate {
+    &__navigate {
         display: flex;
+        align-items: center;
+        gap: 25px;
 
-        div, h3 {
-            margin: 5px;
+        .select-logs {
+            width: 40px;
+            overflow: hidden;
+            white-space: nowrap;
+
+            &:hover {
+                animation-name: select-logs;
+                animation-duration: 0.5s;
+                animation-fill-mode: forwards;
+            }
+        }
+
+        @keyframes select-logs {
+            from {
+                width: 40px;
+            }
+
+            to {
+                width: 100px;
+            }
         }
     }
 }
@@ -87,15 +214,27 @@ ul {
     list-style-type: none;
 }
 
-.combats__container {
-    width: auto;
-}
-
 .combat-title {
     display: flex;
     flex-direction: row;
-    justify-content: center;
+    justify-content: space-between;
     align-items: center;
+
+    .status {
+        display: flex;
+        align-items: center;
+        border: 1px solid #3AA6B9;
+        border-radius: 25px;
+        margin: 10px;
+    }
+
+    &__win {
+        box-shadow: 2px 2px 2px 2px $combat-win;
+    }
+
+    &__lose {
+        box-shadow: 2px 2px 2px 2px $combat-lose;
+    }
 
     svg {
         margin: 0 50px;

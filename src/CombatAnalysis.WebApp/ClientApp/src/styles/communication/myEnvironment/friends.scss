@@ -1,0 +1,48 @@
+.friends {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+
+    &__empty {
+        opacity: 0.5;
+    }
+
+    ul {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .friend {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+
+        .special-user__another {
+            display: flex;
+            align-items: center;
+            gap: 25px;
+            border: 2px solid white;
+            padding: 5px 10px;
+            border-radius: 10px;
+
+            svg {
+                cursor: pointer;
+            }
+        }
+
+        &__remove, &__details {
+            margin: 0 15px;
+
+            svg {
+                padding: 5px;
+                border-radius: 20px;
+            }
+
+            svg:hover {
+                cursor: pointer;
+                transform: scale(1.25);
+            }
+        }
+    }
+}

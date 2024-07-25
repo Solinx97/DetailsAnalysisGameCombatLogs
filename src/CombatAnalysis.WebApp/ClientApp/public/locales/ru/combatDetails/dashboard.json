@@ -1,0 +1,11 @@
+﻿{
+  "Damage": "Урон",
+  "Healing": "Исцеление",
+  "DamageTaken": "Получено урона",
+  "ResourcesRecovery": "Восстановлено ресурсов",
+  "More": "Больше",
+  "Less": "Меньше",
+  "PlayersDied": "Смерти игроков",
+  "Empty": "Пусто",
+  "ClosedItems":  "Скрытые элементы"
+}

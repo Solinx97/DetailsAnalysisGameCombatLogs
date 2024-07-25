@@ -1,0 +1,70 @@
+.voice-chat-minimazed {
+    position: absolute;
+    top: 2%;
+    right: 36%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+
+    .full-version, .simple_version {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 20px;
+        z-index: 999;
+
+        .content {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 25px;
+            box-shadow: 2px 2px 2px 2px gray;
+            border-radius: 10px;
+            padding: 10px;
+            background: white;
+            width: 250px;
+        }
+
+        .back-to-call {
+            display: flex;
+            align-items: center;
+            height: 40px;
+        }
+
+        .show, .hide {
+            display: flex;
+            align-items: center;
+        }
+
+        &__tools {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+
+            .leave {
+                margin-left: 10px;
+                border: 1px solid red;
+                border-radius: 20px;
+                padding: 5px;
+            }
+        }
+    }
+
+    .simple_version {
+        .content {
+            box-shadow: 2px 2px 2px 2px gray;
+            border-radius: 10px;
+            background: white;
+            font-size: 10px;
+            padding: 5px;
+            width: 125px;
+        }
+    }
+
+    .sharing svg {
+        width: 15px;
+        height: 15px;
+    }
+}

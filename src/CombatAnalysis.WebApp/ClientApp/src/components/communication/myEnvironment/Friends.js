@@ -1,91 +1,45 @@
-import { faCircleXmark, faWindowRestore } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
-import UserInformation from './../UserInformation';
+import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useFriendSearchMyFriendsQuery } from '../../../store/api/communication/myEnvironment/Friend.api';
+import User from '../User';
 
-import "../../../styles/communication/friends.scss";
+import '../../../styles/communication/myEnvironment/friends.scss';
+import Loading from '../../Loading';
 
-const Friends = () => {
-    const customer = useSelector((state) => state.customer.value);
+const Friends = ({ customer, requestsToConnect, allowRemoveFriend }) => {
+    const { t } = useTranslation("communication/myEnvironment/friends");
 
-    const [friends, setFriends] = useState(<></>);
-    const [userInformation, setUserInformation] = useState(<></>);
+    const { data: myFriends, isLoading } = useFriendSearchMyFriendsQuery(customer?.id);
+    const [userInformation, setUserInformation] = useState(null);
 
-    useEffect(() => {
-        let getFriends = async () => {
-            await getFriendsAsync();
-        }
-
-        getFriends();
-    }, [])
-
-    const getFriendsAsync = async () => {
-        const response = await fetch(`/api/v1/Friend/searchByUserId/${customer.id}`);
-        if (response.status !== 200) {
-            console.log("problem");
-
-            return;
-        }
-
-        const myFriends = await response.json();
-
-        fillFriends(myFriends);
+    if (isLoading) {
+        return (<Loading />);
     }
 
-    const removeFriendAsync = async (friendId) => {
-        let response = await fetch(`/api/v1/Friend/${friendId}`, {
-            method: 'DELETE',
-        });
-
-        if (response.status !== 200) {
-            console.log("problem");
-
-            return;
-        }
-
-        await getFriendsAsync();
-    }
-
-    const fillFriends = (myFriends) => {
-        const list = myFriends.length !== 0
-            ? myFriends.map((element) => createCard(element))
-            : (<div className="friends__empty">You don't have any friends</div>);
-
-        setFriends(list);
-    }
-
-    const openUserInformation = (customer) => {
-        setUserInformation(<UserInformation customer={customer} closeUserInformation={closeUserInformation} />);
-    }
-
-    const closeUserInformation = () => {
-        setUserInformation(<></>);
-    }
-
-    const createCard = (element) => {
-        return (<li key={element.id} className="friend">
-            <div className="friend__details">
-                <FontAwesomeIcon icon={faWindowRestore} title="Show details" onClick={() => openUserInformation(element)} />
-            </div>
-            <div>{element.username}</div>
-            <div className="friend__remove">
-                <FontAwesomeIcon icon={faCircleXmark} title="Remove" onClick={async () => await removeFriendAsync(element.id)} />
-            </div>
-        </li>);
-    }
-
-    const render = () => {
-        return (<div className="friends">
+    return (
+        <div className="friends">
+            {requestsToConnect}
             <div>
-                <div>Friends</div>
+                <div className="friends__title">{t("Friends")}</div>
             </div>
-            <ul>{friends}</ul>
+            <ul>
+                {myFriends.length > 0
+                    ? myFriends?.map((friend) => (
+                        <li key={friend.id} className="friend">
+                            <User
+                                targetCustomerId={friend.forWhomId === customer?.id ? friend.whoFriendId : friend.forWhomId}
+                                setUserInformation={setUserInformation}
+                                allowRemoveFriend={allowRemoveFriend}
+                                friendId={friend.id}
+                            />
+                        </li>
+                    ))
+                    : <div className="friends__empty">Empty</div>
+                }
+            </ul>
             {userInformation}
-        </div>);
-    }
-
-    return render();
+        </div>
+    );
 }
 
 export default Friends;

@@ -1,0 +1,39 @@
+pipeline {
+    agent any
+
+    parameters {
+        string defaultValue: "solinx", name: "DOCKER_HUB_LOGIN"
+        string defaultValue: "", name: "DOCKER_FILE_PATH"
+        string defaultValue: "", name: "DOCKER_NAME"
+        string defaultValue: "", name: "HELM_NAME"
+        string defaultValue: "", name: "HELM_CHART_PATH"
+        string defaultValue: "", name: "NAMESPACE"
+        string defaultValue: "latest", name: "VERSION"
+    }
+
+    stages {
+        stage('Docker build') {
+            steps {
+                bat "docker build -t ${DOCKER_NAME} -f ${DOCKER_FILE_PATH} ."
+            }
+        }
+        stage('Docker push') {
+            steps {
+                withCredentials([string(credentialsId: "docker-hub", variable: "dockerhubpwd")]) {
+                    bat "docker login -u ${DOCKER_HUB_LOGIN} -p ${dockerhubpwd}"
+                    bat "docker push ${DOCKER_NAME}:${VERSION}"
+                }
+            }
+        }
+        stage('Helm upgrade') {
+            steps {
+                bat "helm upgrade ${HELM_NAME} ${HELM_CHART_PATH} -n ${NAMESPACE}"
+            }
+        }
+        stage('Restart services') {
+            steps {
+                bat "kubectl rollout restart deploy -n ${NAMESPACE}"
+            }
+        }
+    }
+}

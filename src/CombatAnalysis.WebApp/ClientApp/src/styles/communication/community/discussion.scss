@@ -1,0 +1,272 @@
+.discussion {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    &__title .actions {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        width: 150px;
+
+        svg {
+            cursor: pointer;
+
+            &:hover {
+                transform: scale(1.25);
+            }
+        }
+    }
+
+    &__content {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        margin: 10px 0;
+
+        li {
+            cursor: pointer;
+            font-weight: bold;
+            max-width: 130px;
+            padding: 5px 10px;
+            overflow: hidden;
+            border-radius: 10px;
+            box-shadow: 1px 1px 1px 1px brown;
+
+            &:hover {
+                border: 1px solid gray;
+                border-radius: 10px;
+            }
+        }
+    }
+
+    &__selected-discussion, &__create {
+        position: fixed;
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+        right: 25%;
+        top: 5%;
+        padding: 15px;
+        border-radius: 20px;
+        width: 800px;
+        max-height: 90%;
+        z-index: 10;
+        overflow-y: auto;
+
+        .title {
+            display: flex;
+            justify-content: center;
+            border: 1px solid gray;
+            border-radius: 15px;
+            padding: 5px 10px;
+        }
+
+        .actions {
+            display: flex;
+            justify-content: center;
+            gap: 25px;
+
+            .create {
+                box-shadow: 2px 2px 2px 2px green;
+            }
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+    }
+
+    .menu {
+        display: flex;
+        justify-content: flex-end;
+        width: 100%;
+
+        svg {
+            &:hover {
+                cursor: pointer;
+                transform: scale(1.25);
+            }
+        }
+    }
+
+    &__selected-discussion {
+        .tool {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+
+            .actions {
+                display: flex;
+                justify-content: flex-end;
+                width: 100%;
+                gap: 25px;
+                font-size: 13px;
+
+                .btn-shadow {
+                    width: 35px;
+                    overflow: hidden;
+
+                    &:hover {
+                        animation-name: details;
+                        animation-duration: 0.5s;
+                        animation-fill-mode: forwards;
+                    }
+                }
+            }
+
+            @keyframes details {
+                from {
+                    width: 35px;
+                }
+
+                to {
+                    width: 145px;
+                }
+            }
+
+            .menu {
+                display: flex;
+                justify-content: flex-end;
+                width: 100%;
+            }
+
+            svg {
+                cursor: pointer;
+
+                &:hover {
+                    transform: scale(1.25);
+                }
+            }
+        }
+
+        .content {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            padding: 10px;
+            word-wrap: anywhere;
+            max-height: 500px;
+            background: #0c192c;
+            color: white;
+
+            .select-add-new-discussion-comment {
+                display: flex;
+                justify-content: flex-end;
+
+                .btn-shadow.active {
+                    box-shadow: 3px 3px 3px 3px green;
+                }
+            }
+        }
+
+        .edit, .information {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .add-new-discussion-comment {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+
+            &__title {
+                display: flex;
+                flex-direction: row;
+                justify-content: center;
+                width: 100%;
+                margin: 5px -15px;
+
+                .add-comment {
+                    box-shadow: 2px 2px 2px 2px yellow;
+                }
+            }
+
+            &__content {
+                display: flex;
+                align-items: center;
+                gap: 20px;
+
+                .actions {
+                    display: flex;
+                    flex-direction: column;
+                    justify-content: center;
+                    gap: 10px;
+
+                    .hide {
+                        box-shadow: 2px 2px 2px 2px gray;
+                    }
+                }
+            }
+        }
+
+        .discussion-comments {
+            display: flex;
+            flex-direction: column;
+            margin: 0;
+
+            &__comment {
+                width: 90%;
+                box-shadow: 2px 2px 2px 2px blue;
+                padding: 10px;
+            }
+
+            &__title.list-group-item {
+                display: flex;
+                flex-direction: row;
+                justify-content: space-between;
+            }
+
+            &__menu {
+                svg {
+                    cursor: pointer;
+                }
+
+                svg:hover {
+                    transform: scale(1.1);
+                }
+            }
+
+            &__content {
+                display: flex;
+                flex-direction: row;
+                justify-content: space-between;
+                align-items: center;
+                overflow-x: hidden;
+
+                .card-text {
+                    max-width: 90%;
+                    font-size: 13px;
+                }
+
+                .actions {
+                    display: flex;
+                    margin: 5px 0;
+                }
+
+                svg {
+                    cursor: pointer;
+
+                    &:hover {
+                        transform: scale(1.1);
+                    }
+                }
+
+                button {
+                    margin: 0 10px;
+                    font-size: 12px;
+                }
+            }
+        }
+    }
+
+    .all-discussion {
+        font-size: 12px;
+    }
+}

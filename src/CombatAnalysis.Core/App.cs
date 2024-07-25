@@ -8,6 +8,7 @@ using CombatAnalysis.Core.Enums;
 using CombatAnalysis.Core.Helpers;
 using CombatAnalysis.Core.Interfaces;
 using CombatAnalysis.Core.Mapping;
+using CombatAnalysis.Core.Services;
 using CombatAnalysis.Core.ViewModels;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
@@ -24,6 +25,26 @@ public class App : MvxApplication
         Port.CombatParserApi = ConfigurationManager.AppSettings.Get("combatParserApiPort");
         Port.UserApi = ConfigurationManager.AppSettings.Get("userApiPort");
         Port.ChatApi = ConfigurationManager.AppSettings.Get("chatApiPort");
+        Port.Identity = ConfigurationManager.AppSettings.Get("identityPort");
+
+        Authentication.ClientId = ConfigurationManager.AppSettings.Get("clientId");
+        Authentication.Scope = ConfigurationManager.AppSettings.Get("scope");
+        Authentication.RedirectUri = ConfigurationManager.AppSettings.Get("redirectUri");
+        Authentication.Protocol = ConfigurationManager.AppSettings.Get("protocol");
+        Authentication.Listener = ConfigurationManager.AppSettings.Get("listener");
+
+        AuthenticationGrantType.Code = ConfigurationManager.AppSettings.Get("grantTypeCode");
+        AuthenticationGrantType.Authorization = ConfigurationManager.AppSettings.Get("grantTypeAuthorization");
+        AuthenticationGrantType.RefreshToken = ConfigurationManager.AppSettings.Get("grantTypeRefreshToken");
+
+        var maxDegreeOfParallelism = ConfigurationManager.AppSettings.Get("maxDegreeOfParallelism");
+        if (!string.IsNullOrEmpty(maxDegreeOfParallelism))
+        {
+            if (int.TryParse(maxDegreeOfParallelism, out var maxDegreeOfParallelismValue))
+            {
+                ParallelismHelp.MaxDegreeOfParallelism = maxDegreeOfParallelismValue;
+            }
+        }
 
         AppInformation.Version = ConfigurationManager.AppSettings.Get("appVersion");
         Enum.TryParse(ConfigurationManager.AppSettings.Get("appVersionType"), out AppVersionType appVersionType);
@@ -37,18 +58,22 @@ public class App : MvxApplication
         var loggerFactory = new LoggerFactory();
         var logger = new Logger<ILogger>(loggerFactory);
         var mapper = mappingConfig.CreateMapper();
+
         IHttpClientHelper httpClient = new HttpClientHelper();
         IFileManager fileManager = new FileManager();
-        IParser parser = new CombatParserService(fileManager, logger);
+        var parser = new CombatParserService(fileManager, logger);
 
-        var memoryCacheOptions = new MemoryCacheOptions { SizeLimit = 1024 };
+        var memoryCacheOptions = new MemoryCacheOptions { SizeLimit = 2048 };
         var memoryCache = new MemoryCache(memoryCacheOptions);
+
+        IIdentityService identityService = new IdentityService(memoryCache, httpClient);
 
         Mvx.IoCProvider.RegisterSingleton(mapper);
         Mvx.IoCProvider.RegisterSingleton(httpClient);
         Mvx.IoCProvider.RegisterSingleton(parser);
         Mvx.IoCProvider.RegisterSingleton<ILogger>(logger);
         Mvx.IoCProvider.RegisterSingleton<IMemoryCache>(memoryCache);
+        Mvx.IoCProvider.RegisterSingleton(identityService);
 
         RegisterAppStart<BasicTemplateViewModel>();
     }

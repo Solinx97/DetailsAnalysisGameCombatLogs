@@ -1,0 +1,43 @@
+.profile {
+    margin: 10px 0;
+    width: 450px;
+
+    .privacy, .general {
+        margin-left: 25px;
+    }
+
+    .inactive {
+        visibility: hidden;
+        height: 0;
+    }
+
+    &__edit-profile, &__information {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+        margin: 20px 0;
+
+        .title {
+            display: flex;
+            align-items: center;
+            gap: 30px;
+
+            svg {
+                cursor: pointer;
+            }
+
+            svg:hover {
+                transform: scale(1.2);
+            }
+        }
+
+        .actions {
+            display: flex;
+            gap: 10px;
+
+            .save {
+                box-shadow: 2px 2px 2px 2px green;
+            }
+        }
+    }
+}

@@ -117,11 +117,11 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="Analyzing" xml:space="preserve">
-    <value>Analyzing of combats</value>
+  <data name="Analysing" xml:space="preserve">
+    <value>Analysing of combats</value>
   </data>
-  <data name="AnalyzingDescribe" xml:space="preserve">
-    <value>Uploading or analyzing the existing logs. Get more details information about the events, that happened during the combat. See information about the players, who were in the combats.</value>
+  <data name="AnalysingDescribe" xml:space="preserve">
+    <value>Uploading or analysing the existing logs. Get more details information about the events, that happened during the combat. See information about the players, who were in the combats.</value>
   </data>
   <data name="Communication" xml:space="preserve">
     <value>Communication</value>

@@ -1,0 +1,11 @@
+{
+  "Damage": "Damage",
+  "Healing": "Healing",
+  "DamageTaken": "Damage taken",
+  "ResourcesRecovery": "Resources recovery",
+  "More": "More",
+  "Less": "Less",
+  "PlayersDied": "Players died",
+  "Empty": "Empty",
+  "ClosedItems": "Closed items"
+}

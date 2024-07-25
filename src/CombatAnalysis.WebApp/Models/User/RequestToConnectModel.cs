@@ -4,11 +4,9 @@ public class RequestToConnectModel
 {
     public int Id { get; set; }
 
-    public string Username { get; set; }
-
-    public string ToUserId { get; set; }
+    public string ToAppUserId { get; set; }
 
     public DateTimeOffset When { get; set; }
 
-    public string OwnerId { get; set; }
+    public string AppUserId { get; set; }
 }

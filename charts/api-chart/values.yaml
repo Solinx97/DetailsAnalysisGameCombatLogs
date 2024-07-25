@@ -1,0 +1,68 @@
+env: dev
+resources:
+    cpu: 80
+    memory: 80
+service:
+    protocol: TCP
+    port: 80
+    targetPort: 80
+app1:
+    hostName: api.analysis.user.com
+    name: user-api
+    replicas: 2
+    autoscaling: 
+        enabled: true
+        min: 2
+        max: 6
+    container:
+        name: user-api
+        image: solinx/user-api
+        tag: latest
+        port: 80
+    ingress:
+        port: 80
+app2:
+    hostName: api.analysis.communication.com
+    name: communication-api
+    replicas: 2
+    autoscaling: 
+        enabled: false
+        min: 2
+        max: 6
+    container:
+        name: communication-api
+        image: solinx/communication-api
+        tag: latest
+        port: 80
+    ingress:
+        port: 80
+app3:
+    hostName: api.analysis.chat.com
+    name: chat-api
+    replicas: 2
+    autoscaling: 
+        enabled: false
+        min: 2
+        max: 6
+    container:
+        name: chat-api
+        image: solinx/chat-api
+        tag: latest
+        port: 80
+    ingress:
+        port: 80
+app4:
+    hostName: api.analysis.parser.com
+    name: combat-parser-api
+    replicas: 2
+    autoscaling: 
+        enabled: false
+        min: 2
+        max: 6
+    container:
+        name: combat-parser-api
+        image: solinx/combat-parser-api
+        tag: latest
+        port: 80
+    ingress:
+        port: 80

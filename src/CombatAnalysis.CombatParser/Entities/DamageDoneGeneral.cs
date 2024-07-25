@@ -19,4 +19,6 @@ public class DamageDoneGeneral : DetailsBase
     public int MaxValue { get; set; }
 
     public double AverageValue { get; set; }
+
+    public bool IsPet { get; set; }
 }

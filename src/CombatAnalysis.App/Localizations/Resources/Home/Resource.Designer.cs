@@ -61,20 +61,20 @@ namespace CombatAnalysis.App.Localizations.Resources.Home {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Analyzing of combats.
+        ///   Looks up a localized string similar to Analysing of combats.
         /// </summary>
-        public static string Analyzing {
+        public static string Analysing {
             get {
-                return ResourceManager.GetString("Analyzing", resourceCulture);
+                return ResourceManager.GetString("Analysing", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Uploading or analyzing the existing logs. Get more details information about the events, that happened during the combat. See information about the players, who were in the combats..
+        ///   Looks up a localized string similar to Uploading or analysing the existing logs. Get more details information about the events, that happened during the combat. See information about the players, who were in the combats..
         /// </summary>
-        public static string AnalyzingDescribe {
+        public static string AnalysingDescribe {
             get {
-                return ResourceManager.GetString("AnalyzingDescribe", resourceCulture);
+                return ResourceManager.GetString("AnalysingDescribe", resourceCulture);
             }
         }
         

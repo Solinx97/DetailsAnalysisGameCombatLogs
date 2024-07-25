@@ -2,8 +2,11 @@
   "Langugae": "Language",
   "RU": "Russian",
   "EN": "English",
-  "Welcome": "Welcome",
   "Registration": "Registration",
   "Login": "Login",
-  "Logout": "Logout"
+  "Logout": "Logout",
+  "Loading": "Loading...",
+  "People": "People",
+  "Empty": "Empty",
+  "Close": "Close"
 }

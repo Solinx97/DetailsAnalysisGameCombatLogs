@@ -1,0 +1,63 @@
+.home {
+    display: flex;
+    justify-content: center;
+    gap: 50px;
+
+    &__item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 25px;
+
+        .go-to-communication, .go-to-combat-logs {
+            padding: 10px 20px;
+            border-radius: 10px;
+            box-shadow: 2px 2px 2px 2px #5BBCFF;
+            font-size: 14px;
+            cursor: pointer;
+        }
+    }
+
+    .should-be-authorize {
+        position: fixed;
+        display: flex;
+        justify-content: center;
+        text-align: center;
+        left: 35%;
+        top: 0;
+        width: 500px;
+    }
+
+    .title {
+        display: flex;
+        align-items: center;
+        gap: 25px;
+        height: 35px;
+
+        .authorize-alert {
+            width: 35px;
+            overflow: hidden;
+            white-space: nowrap;
+
+            &:hover {
+                animation-name: need-be-authorize;
+                animation-duration: 0.5s;
+                animation-fill-mode: forwards;
+            }
+
+            svg {
+                color: orange;
+            }
+        }
+
+        @keyframes need-be-authorize {
+            from {
+                width: 35px;
+            }
+
+            to {
+                width: 275px;
+            }
+        }
+    }
+}

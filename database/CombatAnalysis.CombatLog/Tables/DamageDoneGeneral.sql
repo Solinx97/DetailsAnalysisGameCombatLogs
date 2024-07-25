@@ -1,0 +1,16 @@
+﻿CREATE TABLE [dbo].[DamageDoneGeneral] (
+    [Id]              INT            IDENTITY (1, 1) NOT NULL,
+    [Value]           INT            NOT NULL,
+    [DamagePerSecond] FLOAT (53)     NOT NULL,
+    [SpellOrItem]     NVARCHAR (MAX) NOT NULL,
+    [CritNumber]      INT            NOT NULL,
+    [MissNumber]      INT            NOT NULL,
+    [CastNumber]      INT            NOT NULL,
+    [MinValue]        INT            NOT NULL,
+    [MaxValue]        INT            NOT NULL,
+    [AverageValue]    FLOAT (53)     NOT NULL,
+    [IsPet]           BIT            NOT NULL,
+    [CombatPlayerId]  INT            NOT NULL,
+    CONSTRAINT [PK_DamageDoneGeneral] PRIMARY KEY CLUSTERED ([Id] ASC)
+);
+

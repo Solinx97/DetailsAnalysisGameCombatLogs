@@ -117,11 +117,68 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="AverageDamage" xml:space="preserve">
+    <value>Средний урон</value>
+  </data>
+  <data name="AverageDamagePerSecond" xml:space="preserve">
+    <value>Средний урон в сек.</value>
+  </data>
+  <data name="AverageHeal" xml:space="preserve">
+    <value>Среднее исцеление</value>
+  </data>
+  <data name="AverageHealPerSecond" xml:space="preserve">
+    <value>Средне исцеление в сек.</value>
+  </data>
+  <data name="AverageItemLevel" xml:space="preserve">
+    <value>Ср. ур. пр.</value>
+  </data>
+  <data name="AverageResources" xml:space="preserve">
+    <value>Средне знач. ресурсов</value>
+  </data>
+  <data name="AverageResourcesPerSecond" xml:space="preserve">
+    <value>Средне ресурсов в сек.</value>
+  </data>
+  <data name="Buffs" xml:space="preserve">
+    <value>Усиления</value>
+  </data>
+  <data name="CLearFilters" xml:space="preserve">
+    <value>Очистить все фильтры</value>
+  </data>
+  <data name="CombatName" xml:space="preserve">
+    <value>Название боя</value>
+  </data>
   <data name="Damage" xml:space="preserve">
     <value>Урон</value>
   </data>
+  <data name="DamagePerSecond" xml:space="preserve">
+    <value>Урон в сек.</value>
+  </data>
+  <data name="EditValue" xml:space="preserve">
+    <value>Редактировать значение</value>
+  </data>
   <data name="Healing" xml:space="preserve">
     <value>Исцеление</value>
+  </data>
+  <data name="HealingPerSecond" xml:space="preserve">
+    <value>Исцеление в сек.</value>
+  </data>
+  <data name="MinDamage" xml:space="preserve">
+    <value>Мин. урон</value>
+  </data>
+  <data name="MinDPS" xml:space="preserve">
+    <value>Мин. урон в сек.</value>
+  </data>
+  <data name="MinHeal" xml:space="preserve">
+    <value>Мин. исцеление</value>
+  </data>
+  <data name="MinHPS" xml:space="preserve">
+    <value>Мин. исцеление в сек.</value>
+  </data>
+  <data name="MinResources" xml:space="preserve">
+    <value>Мин. ресурсы</value>
+  </data>
+  <data name="MinRPS" xml:space="preserve">
+    <value>Мин. ресурсы в сек.</value>
   </data>
   <data name="Player" xml:space="preserve">
     <value>Игрок</value>
@@ -129,10 +186,40 @@
   <data name="Resources" xml:space="preserve">
     <value>Ресурсы</value>
   </data>
+  <data name="ResourcesPerSecond" xml:space="preserve">
+    <value>Ресурсы в сек.</value>
+  </data>
   <data name="SelectedPlayer" xml:space="preserve">
     <value>Выбранный игрок: </value>
   </data>
+  <data name="ShowSummaryInform" xml:space="preserve">
+    <value>Показать общую информацию</value>
+  </data>
   <data name="Title" xml:space="preserve">
     <value>Подробная информация</value>
+  </data>
+  <data name="TotalDamage" xml:space="preserve">
+    <value>Всего руона</value>
+  </data>
+  <data name="TotalDamagePerSecond" xml:space="preserve">
+    <value>Всего урон в сек.</value>
+  </data>
+  <data name="TotalHeal" xml:space="preserve">
+    <value>Всего исцеления</value>
+  </data>
+  <data name="TotalHealPerSecond" xml:space="preserve">
+    <value>Всего исцеление в сек.</value>
+  </data>
+  <data name="TotalResourcesPerSecond" xml:space="preserve">
+    <value>Всего ресурсов в сек.</value>
+  </data>
+  <data name="TotalResoures" xml:space="preserve">
+    <value>Всего ресурсов</value>
+  </data>
+  <data name="TotalValue" xml:space="preserve">
+    <value>Общее значение</value>
+  </data>
+  <data name="ValuePerSecond" xml:space="preserve">
+    <value>Значение в секунду</value>
   </data>
 </root>

@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using CombatAnalysis.BL.DTO;
 using CombatAnalysis.BL.Interfaces;
+using CombatAnalysis.CombatParserAPI.Interfaces;
 using CombatAnalysis.CombatParserAPI.Models;
 using Microsoft.AspNetCore.Mvc;
 
@@ -11,14 +12,26 @@ namespace CombatAnalysis.CombatParserAPI.Controllers;
 public class CombatLogByUserController : ControllerBase
 {
     private readonly IService<CombatLogByUserDto, int> _service;
+    private readonly IService<CombatLogDto, int> _combatLogService;
+    private readonly IService<CombatDto, int> _combatService;
+    private readonly IService<CombatPlayerDto, int> _combatPlayerService;
     private readonly IMapper _mapper;
-    private readonly ILogger _logger;
+    private readonly ILogger<CombatLogByUserController> _logger;
+    private readonly ISqlContextService _sqlContextService;
+    private readonly ICombatDataHelper _saveCombatDataHelper;
 
-    public CombatLogByUserController(IService<CombatLogByUserDto, int> service, IMapper mapper, ILogger logger)
+    public CombatLogByUserController(IService<CombatLogByUserDto, int> service, IMapper mapper, ILogger<CombatLogByUserController> logger,
+        ISqlContextService sqlContextService, IService<CombatLogDto, int> combatLogService, IService<CombatDto, int> combatService,
+        IService<CombatPlayerDto, int> combatPlayerService, ICombatDataHelper saveCombatDataHelper)
     {
         _service = service;
+        _combatLogService = combatLogService;
+        _combatService = combatService;
+        _combatPlayerService = combatPlayerService;
         _mapper = mapper;
         _logger = logger;
+        _sqlContextService = sqlContextService;
+        _saveCombatDataHelper = saveCombatDataHelper;
     }
 
     [HttpGet]
@@ -37,22 +50,12 @@ public class CombatLogByUserController : ControllerBase
         return Ok(combatLogByUser);
     }
 
-    [HttpGet("byUserId/{userId}")]
-    public async Task<IActionResult> GetByUserId(string userId)
+    [HttpGet("byUserId/{id}")]
+    public async Task<IActionResult> GetByUserId(string id)
     {
-        var combatLogsByUser = new List<CombatLogByUserModel>();
-        var allCombatLogsByUser = await _service.GetAllAsync();
-        var mapAllCombatLogsByUser = _mapper.Map<IEnumerable<CombatLogByUserModel>>(allCombatLogsByUser);
+        var result = await _service.GetByParamAsync(nameof(CombatLogByUserModel.UserId), id);
 
-        foreach (var item in mapAllCombatLogsByUser)
-        {
-            if (item.UserId == userId)
-            {
-                combatLogsByUser.Add(item);
-            }
-        }
-
-        return Ok(combatLogsByUser);
+        return Ok(result);
     }
 
     [HttpPost]
@@ -94,17 +97,65 @@ public class CombatLogByUserController : ControllerBase
     [HttpDelete("{id:int:min(1)}")]
     public async Task<IActionResult> Delete(int id)
     {
+        using var transaction = await _sqlContextService.BeginTransactionAsync(false);
         try
         {
+            await DeleteCombatLogAsync(id);
+
             var deletedId = await _service.DeleteAsync(id);
+
+            await transaction.CommitAsync();
 
             return Ok(deletedId);
         }
-        catch (ArgumentNullException ex)
+        catch (ArgumentException ex)
         {
             _logger.LogError(ex, ex.Message);
 
+            await transaction.RollbackAsync();
+
             return BadRequest();
+        }
+    }
+
+    private async Task DeleteCombatLogAsync(int combatLogId)
+    {
+        await DeleteCombatsAsync(combatLogId);
+
+        var rowsAffected = await _combatLogService.DeleteAsync(combatLogId);
+        if (rowsAffected == 0)
+        {
+            throw new ArgumentException("Combat log did not deleted");
+        }
+    }
+
+    private async Task DeleteCombatsAsync(int combatLogId)
+    {
+        var combats = await _combatService.GetByParamAsync(nameof(CombatModel.CombatLogId), combatLogId);
+        foreach (var item in combats)
+        {
+            await DeleteCombatPlayersAsync(item.Id);
+
+            var rowsAffected = await _combatService.DeleteAsync(item.Id);
+            if (rowsAffected == 0)
+            {
+                throw new ArgumentException("Combat did not deleted");
+            }
+        }
+    }
+
+    private async Task DeleteCombatPlayersAsync(int combatId)
+    {
+        var combatPlayers = await _combatPlayerService.GetByParamAsync(nameof(CombatPlayerModel.CombatId), combatId);
+        foreach (var item in combatPlayers)
+        {
+            await _saveCombatDataHelper.DeleteCombatPlayerDataAsync(item);
+
+            var rowsAffected = await _combatPlayerService.DeleteAsync(item.Id);
+            if (rowsAffected == 0)
+            {
+                throw new ArgumentException("Combat player did not deleted");
+            }
         }
     }
 }

@@ -4,6 +4,8 @@ public class DamageTakenGeneral : DetailsBase
 {
     public int Value { get; set; }
 
+    public int ActualValue { get; set; }
+
     public double DamageTakenPerSecond { get; set; }
 
     public string SpellOrItem { get; set; }

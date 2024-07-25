@@ -183,6 +183,9 @@
   <data name="ShowParry" xml:space="preserve">
     <value>Show parry</value>
   </data>
+  <data name="ShowPets" xml:space="preserve">
+    <value>Show pets and creatures</value>
+  </data>
   <data name="ShowResist" xml:space="preserve">
     <value>Show resist</value>
   </data>

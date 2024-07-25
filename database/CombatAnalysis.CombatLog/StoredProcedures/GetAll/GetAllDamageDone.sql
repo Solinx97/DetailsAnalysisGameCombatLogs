@@ -1,0 +1,3 @@
+﻿CREATE PROCEDURE GetAllDamageDone
+	AS SELECT * 
+	FROM DamageDone

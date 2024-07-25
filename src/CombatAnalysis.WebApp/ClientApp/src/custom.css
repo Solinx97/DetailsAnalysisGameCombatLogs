@@ -1,18 +1,105 @@
 /* Provide sufficient contrast against white background */
 a {
-  color: #0366d6;
+    color: #0366d6;
 }
 
 .btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+    box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+}
+
+.main {
+    position: fixed;
+    top: 0;
+    height: 1000px;
+    width: 100%;
+    background: #0c192c;
+    z-index: -1;
+}
+
+#root, #root .navbar-brand, #root input, #root .card, #root .card-body {
+    color: white;
+}
+
+#root input[type=text], #root input[type=email], #root input[type=password], #root input[type=number], #root input[type=date], #root textarea {
+    background: #0c192c;
+    color: white;
+    border: 1px solid #028391;
+}
+
+#root input[type=text]::placeholder {
+    color: #57A6A1;
+}
+
+.card {
+    background: #0c192c;
 }
 
 code {
-  color: #E01A76;
+    color: #E01A76;
 }
 
 .btn-primary {
-  color: #fff;
-  background-color: #1b6ec2;
-  border-color: #1861ac;
+    color: #fff;
+    background-color: #1b6ec2;
+    border-color: #1861ac;
+}
+
+.btn-shadow {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 5px 10px;
+    border-radius: 15px;
+    box-shadow: 2px 2px 2px 2px #3AA6B9;
+    cursor: pointer;
+}
+
+.btn-border-shadow {
+    padding: 10px 15px;
+    border-radius: 10px;
+    box-shadow: 2px 2px 2px 2px #5BBCFF;
+    font-size: 14px;
+    cursor: pointer;
+    background: transparent;
+}
+
+.btn-shadow_disabled {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 5px 10px;
+    border: 2px solid gray;
+    border-radius: 15px;
+    box-shadow: 2px 2px 2px 2px #3AA6B9;
+    cursor: default;
+    opacity: 0.5;
+}
+
+.btn-shadow_disabled svg {
+    cursor: default;
+}
+
+.box-shadow {
+    box-shadow: 3px 3px 3px 3px gray;
+    background: #0c192c;
+}
+
+.preview {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    box-shadow: 2px 2px 2px 2px #3AA6B9;
+    border-radius: 20px;
+    padding: 30px;
+    font-size: 17px;
+}
+
+.preview__responsibilities {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.preview__responsibilities .form-check-label {
+    opacity: 1!important;
 }

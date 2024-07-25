@@ -9,50 +9,33 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-iYQeCzEYFbKjA/T2uDLTpkwGzCiq6soy8tYaI1GyVh/UjpbCx/TYkiZhlZB6+fzT" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css" integrity="sha512-xh6O/CkQoPOWDdYTDqeRdPCVd1SpvCA9XXcUnZS2FmJNp1coAFzvtCN9BmamE+4aHK8yyUHUSCcJHgXloTyT2A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Oleg [Portfolio]</title>
+    <title>Portfolio</title>
 </head>
 <body>
     <div class="navigation">
-        <div class="navigation__container">
-            <ul>
-                <li class="list active">
-                    <a class="go-to" href="#about-me">
-                        <span class="icon"><i class="fa-solid fa-house"></i></span>
-                        <span class="title">About me</span>
-                    </a>
-                </li>
-                <li class="list">
-                    <a class="go-to" href="#skills">
-                        <span class="icon"><i class="fa-solid fa-earth-oceania"></i></span>
-                        <span class="title">Skills</span>
-                    </a>
-                </li>
-                <li class="list">
-                    <a class="go-to" href="#qualifications">
-                        <span class="icon"><i class="fa-solid fa-briefcase"></i></span>
-                        <span class="title">Qualifications</span>
-                    </a>
-                </li>
-                <li class="list">
-                    <a class="go-to" href="#what-is-project">
-                        <span class="icon"><i class="fa-solid fa-crop-simple"></i></span>
-                        <span class="title">What's project?</span>
-                    </a>
-                </li>
-                <li class="list">
-                    <a class="go-to" href="#social-links">
-                        <span class="icon"><i class="fa-solid fa-fire"></i></span>
-                        <span class="title">Social links</span>
-                    </a>
-                </li>
-                <div class="indicator"></div>
-            </ul>
-        </div>
+        <ul class="navigation__container">
+            <li class="list">
+                <span class="icon"><i data-last="what-is-project" data-next="description" class="fa-solid fa-solid fa-house"></i></span>
+                <div class="title">About me</div>
+            </li>
+            <li class="list">
+                <span class="icon"><i data-last="description" data-content="skills" class="fa-solid fa-earth-oceania"></i></span>
+                <div class="title">Skills</div>
+            </li>
+            <li class="list">
+                <span class="icon"><i data-last="skills" data-content="qualification" class="fa-solid fa-briefcase"></i></span>
+                <div class="title">Qualifications</div>
+            </li>
+            <li class="list">
+                <span class="icon"><i data-last="qualification" data-content="what-is-project" class="fa-solid fa-crop-simple"></i></span>
+                <div class="title">What's project?</div>
+            </li>
+            <div class="indicator"></div>
+        </ul>
     </div>
 
     <span class="about-me">
-        <span class="about-me__description">
-            <a name="about-me"></a>
+        <span class="about-me__description active">
             <span class="title">
                 <h3>Portfolio</h3>
             </span>
@@ -171,7 +154,7 @@
                         </span>
                     </li>
                     <li>
-                        <div class="skills-name">Native JS</div>
+                        <div class="skills-name">Java Script</div>
                         <span>
                             <div class="skill-level active">
                                 <p class="name">Novice</p>
@@ -193,7 +176,7 @@
                             <div class="skill-level active">
                                 <p class="name">Novice</p>
                             </div>
-                            <div class="skill-level">
+                            <div class="skill-level active">
                                 <p class="name">Intermediate</p>
                             </div>
                             <div class="skill-level">
@@ -227,7 +210,7 @@
                             <div class="skill-level active">
                                 <p class="name">Novice</p>
                             </div>
-                            <div class="skill-level">
+                            <div class="skill-level active">
                                 <p class="name">Intermediate</p>
                             </div>
                             <div class="skill-level">
@@ -280,16 +263,8 @@
                                 <p class="qualififcation-description">Information and technology of programming</p>
                             </span>
                             <span>
-                                <p class="qualififcation-name">Programming level: </p>
+                                <p class="qualififcation-name">Level: </p>
                                 <p class="qualififcation-description">Junior</p>
-                            </span>
-                            <span>
-                                <p class="qualififcation-name">Achievements: </p>
-                                <p class="qualififcation-description">Participation in the event of the university "Freshman"</p>
-                            </span>
-                            <span>
-                                <p class="qualififcation-name">Rewards: </p>
-                                <p class="qualififcation-description">None</p>
                             </span>
                         </div>
                         <p class="place-date">Gomel, 2017 - 2021</p>
@@ -305,19 +280,11 @@
                                 <p class="qualififcation-description">Software Engineer</p>
                             </span>
                             <span>
-                                <p class="qualififcation-name">Programming level: </p>
+                                <p class="qualififcation-name">Level: </p>
                                 <p class="qualififcation-description">Middle</p>
                             </span>
-                            <span>
-                                <p class="qualififcation-name">Achievements: </p>
-                                <p class="qualififcation-description">None</p>
-                            </span>
-                            <span>
-                                <p class="qualififcation-name">Rewards: </p>
-                                <p class="qualififcation-description">None</p>
-                            </span>
                         </div>
-                        <p class="place-date">Gomel, 2021 - 2022</p>
+                        <p class="place-date">Gomel, November 2021 - June 2022</p>
                     </div>
                 </div>
                 <div class="point">
@@ -330,24 +297,50 @@
                                 <p class="qualififcation-description">Software Engineer</p>
                             </span>
                             <span>
-                                <p class="qualififcation-name">Programming level: </p>
+                                <p class="qualififcation-name">Level: </p>
                                 <p class="qualififcation-description">Middle</p>
                             </span>
+                        </div>
+                        <p class="place-date">Gdansk, July 2022 - December 2022</p>
+                    </div>
+                </div>
+                <div class="point">
+                    <div class="point__selected"></div>
+                    <div class="description">
+                        <p class="name">Diebold Nixdorf</p>
+                        <div class="qualififcation">
                             <span>
-                                <p class="qualififcation-name">Achievements: </p>
-                                <p class="qualififcation-description">None</p>
+                                <p class="qualififcation-name">Position:</p>
+                                <p class="qualififcation-description">Software Engineer</p>
                             </span>
                             <span>
-                                <p class="qualififcation-name">Rewards: </p>
-                                <p class="qualififcation-description">None</p>
+                                <p class="qualififcation-name">Level: </p>
+                                <p class="qualififcation-description">Middle</p>
                             </span>
                         </div>
-                        <p class="place-date">Gdansk, 2022 - Now</p>
+                        <p class="place-date">Gdansk (Remotely), January 2023 - September 2023</p>
+                    </div>
+                </div>
+                <div class="point">
+                    <div class="point__selected"></div>
+                    <div class="description">
+                        <p class="name">Diebold Nixdorf</p>
+                        <div class="qualififcation">
+                            <span>
+                                <p class="qualififcation-name">Position:</p>
+                                <p class="qualififcation-description">DevOps Engineer</p>
+                            </span>
+                            <span>
+                                <p class="qualififcation-name">Level: </p>
+                                <p class="qualififcation-description">Middle</p>
+                            </span>
+                        </div>
+                        <p class="place-date">Gdansk (Remotely), October 2023 - July 2024</p>
                     </div>
                 </div>
             </div>
         </span>
-        <span class="what-is-project">
+        <span class="about-me__what-is-project">
             <a name="what-is-project"></a>
             <button type="button" class="open-personal-project active btn btn-primary btn-lg">What's project?</button>
             <button type="button" class="close-personal-project btn btn-info btn-lg">Close project</button>
@@ -399,13 +392,6 @@
                                 <div class="go-to">
                                     <span class="icon"><i class="fa-solid fa-fire"></i></span>
                                     <span class="title">Another features</span>
-                                    <div class="status"></div>
-                                </div>
-                            </li>
-                            <li class="list">
-                                <div class="go-to">
-                                    <span class="icon"><i class="fa-solid fa-circle-down"></i></span>
-                                    <span class="title">Donwload</span>
                                     <div class="status"></div>
                                 </div>
                             </li>
@@ -587,18 +573,6 @@
         <a name="social-links"></a>
         <h4>Social links</h4>
         <span class="social-links__container">
-            <span class="links">
-                <span class="icon">
-                    <a href="https://vk.com/pro_solinx" target="_blank"><i class="fa-brands fa-vk"></i></a>
-                    <div class="nickname">Олег Федосов</div>
-                </span>
-            </span>
-            <span class="links">
-                <span class="icon">
-                    <a href="https://twitter.com/_solinx_" target="_blank"><i class="fa-brands fa-twitter"></i></a>
-                    <div class="nickname">Олег Федосов</div>
-                </span>
-            </span>
             <span class="links">
                 <span class="icon">
                     <a href="https://www.linkedin.com/in/oleg-fedosov-a96345172/" target="_blank"><i class="fa-brands fa-linkedin"></i></a>

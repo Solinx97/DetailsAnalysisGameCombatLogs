@@ -1,0 +1,21 @@
+{
+  "Damage": "Damage",
+  "Healing": "Healing",
+  "DamageTaken": "Damage taken",
+  "ResourcesRecovery": "Resources recovery",
+  "Deaths": "Deaths",
+  "Buffs": "Buffs",
+  "CombatStatus": "Combat status",
+  "StartDate": "Start date",
+  "FinishDate": "Finish date",
+  "Duration": "Duration",
+  "MoreDetails": "More details",
+  "Logs": "Logs",
+  "Combats": "Combats",
+  "NeedToAddSomething": "Need to add at least 1 item.",
+  "Ready": "Ready",
+  "NotReady": "Not ready",
+  "Win": "Win",
+  "Lose": "Lose",
+  "NeedWait": "You have to wait until the fight is ready to inspection"
+}

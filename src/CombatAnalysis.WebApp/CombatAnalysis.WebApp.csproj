@@ -19,6 +19,9 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.SpaProxy" Version="7.0.0" />
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.18.1" />
+    <PackageReference Include="Serilog.AspNetCore" Version="7.0.0" />
+    <PackageReference Include="Serilog.Sinks.File" Version="6.0.0" />
+    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="7.6.2" />
   </ItemGroup>
 
   <ItemGroup>
@@ -29,12 +32,22 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\CombatAnalysis.BL\CombatAnalysis.BL.csproj" />
+    <Folder Include="ClientApp\public\locales\en\identity\" />
+    <Folder Include="ClientApp\public\locales\ru\identity\" />
+    <Folder Include="ClientApp\src\components\communication\events\" />
+    <Folder Include="ClientApp\src\hocHelpers\" />
+    <Folder Include="ClientApp\src\store\slicers\" />
+    <Folder Include="ClientApp\src\styles\common\" />
+    <Folder Include="ClientApp\src\styles\identity\" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="ClientApp\src\components\communication\events\" />
-    <Folder Include="ClientApp\src\components\general\" />
+    <None Update="certs\analysis.crt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="certs\analysiskey.key">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
   <Target Name="DebugEnsureNodeEnv" BeforeTargets="Build" Condition=" '$(Configuration)' == 'Debug' And !Exists('$(SpaRoot)node_modules') ">

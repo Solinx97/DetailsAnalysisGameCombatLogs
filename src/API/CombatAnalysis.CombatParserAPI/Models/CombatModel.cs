@@ -4,23 +4,25 @@ public class CombatModel
 {
     public int Id { get; set; }
 
+    public int LocallyNumber { get; set; }
+
     public string DungeonName { get; set; }
 
     public string Name { get; set; }
+
+    public int Difficulty { get; set; }
 
     public List<string> Data { get; set; }
 
     public int EnergyRecovery { get; set; }
 
-    public int DamageDone { get; set; }
+    public long DamageDone { get; set; }
 
-    public int HealDone { get; set; }
+    public long HealDone { get; set; }
 
-    public int DamageTaken { get; set; }
+    public long DamageTaken { get; set; }
 
     public int DeathNumber { get; set; }
-
-    public int UsedBuffs { get; set; }
 
     public bool IsWin { get; set; }
 
@@ -29,6 +31,10 @@ public class CombatModel
     public DateTimeOffset FinishDate { get; set; }
 
     public List<CombatPlayerModel> Players { get; set; }
+
+    public Dictionary<string, List<string>> PetsId { get; set; }
+
+    public List<PlayerDeathModel> DeathInfo { get; set; }
 
     public string Duration
     {

@@ -1,0 +1,166 @@
+.voice {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    margin-left: 75px;
+    gap: 20px;
+
+    &__title {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        width: 80%;
+
+        .tools {
+            display: flex;
+            gap: 10px;
+
+            .device {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                gap: 5px;
+
+                .device-toolbar {
+                    position: absolute;
+                    top: 7%;
+                    padding: 10px;
+                    border: 1px solid gray;
+                    background: black;
+                }
+
+                &__screen, &__camera, &__microphone {
+                    width: 25px;
+                    height: 25px;
+                    margin: 10px;
+                }
+
+                &__settings {
+                    width: 15px;
+                    height: 15px;
+                }
+
+                &__camera:hover, &__microphone:hover {
+                    cursor: pointer;
+                    transform: scale(1.1);
+                }
+
+                &__settings:hover {
+                    cursor: pointer;
+                    transform: scale(1.25);
+                }
+            }
+        }
+    }
+
+    &__content {
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+        width: 80%;
+
+        ul {
+            padding: 0;
+            margin: 0;
+        }
+
+        .sharing {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            flex-grow: 1.5;
+            width: 65%;
+            box-shadow: 5px 5px 5px 5px gray;
+            border-radius: 25px;
+
+            video {
+                flex-grow: 2;
+                width: 100%;
+            }
+
+            .username {
+                flex-grow: 0.5;
+                height: auto;
+            }
+        }
+
+        .another-user-container {
+            flex-grow: 1;
+        }
+
+        .members, .another-user-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow-y: auto;
+            border: 2px solid gray;
+            border-radius: 20px;
+            width: 100%;
+            gap: 20px;
+            height: 540px;
+
+            .user {
+                display: flex;
+                justify-content: center;
+                box-shadow: 2px 2px 2px 2px gray;
+                border-radius: 20px;
+                width: 150px;
+                height: 150px;
+
+                &_video {
+                    display: flex;
+                    flex-direction: column;
+                    justify-content: center;
+                    width: 150px;
+                    height: 150px;
+
+                    video {
+                        border-radius: 20px;
+                    }
+
+                    .information {
+                        display: flex;
+                        justify-content: space-around;
+                        align-items: center;
+                    }
+                }
+
+                .information {
+                    display: flex;
+                    justify-content: space-around;
+                    align-items: center;
+                }
+            }
+        }
+
+        .another-user-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: auto;
+        }
+    }
+}
+
+.joined-user-username {
+    position: absolute;
+    top: 18%;
+    right: 11%;
+    display: flex;
+    justify-content: flex-end;
+    margin: 10px 0;
+    z-index: 100;
+
+    .username {
+        border: 2px solid blue;
+        padding: 10px;
+        border-radius: 20px;
+        background: white;
+        font-weight: 500;
+        cursor: default;
+    }
+}

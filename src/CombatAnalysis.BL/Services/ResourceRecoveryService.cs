@@ -6,12 +6,12 @@ using CombatAnalysis.DAL.Interfaces;
 
 namespace CombatAnalysis.BL.Services;
 
-internal class ResourceRecoveryService : IService<ResourceRecoveryDto, int>
+internal class ResourceRecoveryService : IPlayerInfoService<ResourceRecoveryDto, int>
 {
-    private readonly IGenericRepository<ResourceRecovery, int> _repository;
+    private readonly ISQLPlayerInfoRepository<ResourceRecovery, int> _repository;
     private readonly IMapper _mapper;
 
-    public ResourceRecoveryService(IGenericRepository<ResourceRecovery, int> repository, IMapper mapper)
+    public ResourceRecoveryService(ISQLPlayerInfoRepository<ResourceRecovery, int> repository, IMapper mapper)
     {
         _repository = repository;
         _mapper = mapper;
@@ -46,6 +46,14 @@ internal class ResourceRecoveryService : IService<ResourceRecoveryDto, int>
     {
         var result = await _repository.GetByIdAsync(id);
         var resultMap = _mapper.Map<ResourceRecoveryDto>(result);
+
+        return resultMap;
+    }
+
+    public async Task<IEnumerable<ResourceRecoveryDto>> GetByCombatPlayerIdAsync(int combatPlayerId)
+    {
+        var result = await _repository.GetByCombatPlayerIdAsync(combatPlayerId);
+        var resultMap = _mapper.Map<List<ResourceRecoveryDto>>(result);
 
         return resultMap;
     }

@@ -1,20 +1,22 @@
 ﻿using AutoMapper;
-using CombatAnalysis.BL.DTO.Chat;
-using CombatAnalysis.BL.Interfaces;
 using CombatAnalysis.ChatApi.Models;
+using CombatAnalysis.ChatBL.DTO;
+using CombatAnalysis.ChatBL.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CombatAnalysis.ChatApi.Controllers;
 
 [Route("api/v1/[controller]")]
 [ApiController]
+[Authorize]
 public class GroupChatController : ControllerBase
 {
     private readonly IService<GroupChatDto, int> _service;
     private readonly IMapper _mapper;
-    private readonly ILogger _logger;
+    private readonly ILogger<GroupChatController> _logger;
 
-    public GroupChatController(IService<GroupChatDto, int> service, IMapper mapper, ILogger logger)
+    public GroupChatController(IService<GroupChatDto, int> service, IMapper mapper, ILogger<GroupChatController> logger)
     {
         _service = service;
         _mapper = mapper;
@@ -49,7 +51,13 @@ public class GroupChatController : ControllerBase
         }
         catch (ArgumentNullException ex)
         {
-            _logger.LogError(ex, ex.Message);
+            _logger.LogError(ex, $"Create Group Chat failed: ${ex.Message}", model);
+
+            return BadRequest();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, $"Create Group Chat failed: ${ex.Message}", model);
 
             return BadRequest();
         }
@@ -67,7 +75,13 @@ public class GroupChatController : ControllerBase
         }
         catch (ArgumentNullException ex)
         {
-            _logger.LogError(ex, ex.Message);
+            _logger.LogError(ex, $"Update Group Chat failed: ${ex.Message}", model);
+
+            return BadRequest();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, $"Update Group Chat failed: ${ex.Message}", model);
 
             return BadRequest();
         }
@@ -76,17 +90,8 @@ public class GroupChatController : ControllerBase
     [HttpDelete("{id:int:min(1)}")]
     public async Task<IActionResult> Delete(int id)
     {
-        try
-        {
-            var result = await _service.DeleteAsync(id);
+        var result = await _service.DeleteAsync(id);
 
-            return Ok(result);
-        }
-        catch (ArgumentNullException ex)
-        {
-            _logger.LogError(ex, ex.Message);
-
-            return BadRequest();
-        }
+        return Ok(result);
     }
 }

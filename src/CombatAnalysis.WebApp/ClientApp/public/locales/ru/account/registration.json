@@ -1,0 +1,21 @@
+{
+  "Email": "Email",
+  "Password": "Пароль",
+  "ConfirmPassword": "Подтверждение пароля",
+  "CheckMeOut": "Оставаться в системе",
+  "EmailExist": "Такой Email уже зарегистрирован",
+  "UsernameExist": "Такое имя пользователя уже зарегистрировано",
+  "Registration": "Регистрация",
+  "Username": "Имя пользователя",
+  "PhoneNumber": "Номер телефона",
+  "Birthday": "День рождения",
+  "NextStep": "Следующий шаг",
+  "LastStep": "Предыдущий шаг",
+  "FirstName": "Имя",
+  "LastName": "Фамилия",
+  "AboutMe": "Обо мне",
+  "Man": "Муж",
+  "Woman": "Жен",
+  "JoinToChats": "Присоединиться к чатам",
+  "JoinToCommunities": "Присоединиться к сообществам"
+}

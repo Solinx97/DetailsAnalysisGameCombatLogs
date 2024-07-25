@@ -10,6 +10,7 @@ public class CombatAnalysisMapper : Profile
     {
         CreateMap<CombatModel, Combat>().ReverseMap();
         CreateMap<CombatPlayerModel, CombatPlayer>().ReverseMap();
+        CreateMap<PlayerStatsModel, PlayerStats>().ReverseMap();
         CreateMap<DamageDoneModel, DamageDone>().ReverseMap();
         CreateMap<DamageDoneGeneralModel, DamageDoneGeneral>().ReverseMap();
         CreateMap<HealDoneModel, HealDone>().ReverseMap();
@@ -18,5 +19,6 @@ public class CombatAnalysisMapper : Profile
         CreateMap<DamageTakenGeneralModel, DamageTakenGeneral>().ReverseMap();
         CreateMap<ResourceRecoveryModel, ResourceRecovery>().ReverseMap();
         CreateMap<ResourceRecoveryGeneralModel, ResourceRecoveryGeneral>().ReverseMap();
+        CreateMap<PlayerDeathModel, PlayerDeath>().ReverseMap();
     }
 }

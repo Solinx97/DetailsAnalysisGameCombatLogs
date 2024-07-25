@@ -1,140 +1,107 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
 import { Collapse, Container, Navbar, NavbarBrand, NavbarToggler } from 'reactstrap';
-import { checkAuth } from '../features/AuthenticationReducer';
-import { userUpdate } from '../features/UserReducer';
-import { customerUpdate } from '../features/CustomerReducer';
+import { useAuth } from '../context/AuthProvider';
+import { useLazyIdentityQuery } from '../store/api/UserApi';
+import LanguageSelector from './LanguageSelector';
+import Search from './Search';
 
 import '../styles/navMenu.scss';
 
 const NavMenu = () => {
-    const isAuth = useSelector((state) => state.authentication.value);
+    const { t } = useTranslation("translate");
+
     const user = useSelector((state) => state.user.value);
-    const dispatch = useDispatch();
+
+    const { isAuthenticated, checkAuthAsync, logoutAsync } = useAuth();
+
+    const [identityAsyncQuery] = useLazyIdentityQuery();
+
     const navigate = useNavigate();
 
-    const { t, i18n } = useTranslation("translate");
-
-    const [languageName, setLanguageName] = useState("English");
     const [collapsed, setCollapsed] = useState(true);
 
     useEffect(() => {
-        switch (i18n.language) {
-            case "ru":
-                setLanguageName(t("RU"));
-                break;
-            case "en":
-                setLanguageName(t("EN"));
-                break;
-            default:
-                setLanguageName(t("EN"));
-                break;
-        }
-    }, [])
-
-    useEffect(() => {
-        if (user === null) {
-            return;
-        }
-
         const checkAuth = async () => {
-            await checkAuthAsync();
-        }
-
-        checkAuth().catch(console.error);
-    });
-
-    const changeLanguage = (language) => {
-        i18n.changeLanguage(language);
-
-        window.location.reload(true);
-    }
-
-    const checkAuthAsync = async () => {
-        const response = await fetch("api/v1/Authentication");
-
-        if (response.status === 200) {
-            const currentUser = await response.json();
-
-            dispatch(userUpdate(currentUser));
-            dispatch(checkAuth(true));
-
-            await getCustomerByUserIdAsync(currentUser.id);
-        }
-        else {
-            dispatch(checkAuth(false));
-        }
-    }
-
-    const getCustomerByUserIdAsync = async (userId) => {
-        const response = await fetch(`api/v1/Customer/searchByUserId/${userId}`);
-
-        if (response.status === 200
-            || response.status === 204) {
-            const customer = await response.json();
-
-            dispatch(customerUpdate(customer));
-        }
-        else {
-            dispatch(checkAuth(false));
-        }
-    }
-
-    const logoutAsync = async () => {
-        const response = await fetch("api/v1/Account/logout", {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
+            try {
+                await checkAuthAsync();
+            } catch (error) {
+                console.error("Authentication check failed:", error);
             }
-        });
-
-        if (response.status === 200) {
-            dispatch(checkAuth(false));
-            dispatch(userUpdate(null));
-
-            navigate("/");
         }
+
+        checkAuth();
+    }, []);
+
+    const toggleNavbar = useCallback(() => {
+        setCollapsed((item) => !item);
+    }, []);
+
+    const loginAsync = async () => {
+        const identityServerAuthPath = process.env.REACT_APP_IDENTITY_SERVER_AUTH_PATH;
+
+        await redirectToIdentityAsync(identityServerAuthPath);
     }
 
-    const toggleNavbar = () => {
-        setCollapsed(!collapsed);
+    const registrationAsync = async () => {
+        const identityServerRegistrationPath = process.env.REACT_APP_IDENTITY_SERVER_REGISTRY_PATH;
+
+        await redirectToIdentityAsync(identityServerRegistrationPath);
     }
 
-    const render = () => {
-        return (<header>
+    const redirectToIdentityAsync = async (identityPath) => {
+        const response = await identityAsyncQuery(identityPath);
+
+        if (response.data !== undefined) {
+            const uri = response.data.uri;
+            window.location.href = uri;
+        }
+    } 
+
+    const handleLoginClick = useCallback(async () => await loginAsync(), [navigate]);
+    const handleRegistrationClick = useCallback(async () => await registrationAsync(), [navigate]);
+    const handleLogoutClick = useCallback(() => logoutAsync(), [logoutAsync]);
+
+    return (
+        <header>
             <Navbar className="navbar-expand-sm navbar-toggleable-sm ng-white border-bottom box-shadow mb-3" light>
-                <div className="language dropdown">
-                    <div className="language__title">{t("Langugae")}</div>
-                    <button className="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
-                        {languageName}
-                    </button>
-                    <ul className="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                        <li><div className="dropdown-item" onClick={() => changeLanguage("ru")}>{t("RU")}</div></li>
-                        <li><div className="dropdown-item" onClick={() => changeLanguage("en")}>{t("EN")}</div></li>
-                    </ul>
-                </div>
+                <LanguageSelector />
                 <Container>
-                    <NavbarBrand tag={Link} to="/">Wow Analysis</NavbarBrand>
-                    <NavbarToggler onClick={toggleNavbar} className="mr-2" />
-                    <Collapse className="d-sm-inline-flex flex-sm-row-reverse" isOpen={!collapsed} navbar />
-                    {isAuth
+                    <NavbarBrand
+                        tag={Link}
+                        to="/"
+                    >
+                        Wow Analysis
+                    </NavbarBrand>
+                    <NavbarToggler
+                        onClick={toggleNavbar} className="mr-2"
+                    />
+                    {user !== null &&
+                        <Search
+                            me={user}
+                        />
+                    }
+                    <Collapse
+                        className="d-sm-inline-flex flex-sm-row-reverse"
+                        isOpen={!collapsed}
+                        navbar
+                    />
+                    {isAuthenticated
                         ? <div className="authorized">
-                            <div>{t("Welcome")}, <strong>{user.email}</strong></div>
-                            <button type="button" className="btn btn-primary" onClick={logoutAsync}>{t("Logout")}</button>
-                        </div>
+                            <div className="username">{user?.username}</div>
+                            <div className="authorized__logout" onClick={handleLogoutClick}>{t("Logout")}</div>
+                          </div>
                         : <div className="authorization">
-                            <button type="button" className="btn btn-primary" onClick={() => navigate('/registration')}>{t("Registration")}</button>
-                            <button type="button" className="btn btn-primary" onClick={() => navigate('/login')}>{t("Login")}</button>
+                            <div className="authorization__login" onClick={handleLoginClick}>{t("Login")}</div>
+                            <div className="authorization__registration" onClick={handleRegistrationClick}>{t("Registration")}</div>
                         </div>
                     }
                 </Container>
             </Navbar>
-        </header>);
-    }
-
-  return render();
+        </header>
+    );
 }
 
 export default NavMenu;

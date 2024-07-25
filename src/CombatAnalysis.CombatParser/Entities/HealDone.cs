@@ -16,7 +16,11 @@ public class HealDone : DetailsBase
 
     public string SpellOrItem { get; set; }
 
+    public string DamageAbsorbed { get; set; }
+
     public bool IsCrit { get; set; }
 
     public bool IsFullOverheal { get; set; }
+
+    public bool IsAbsorbed { get; set; }
 }

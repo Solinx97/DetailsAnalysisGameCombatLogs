@@ -259,6 +259,15 @@ namespace CombatAnalysis.App.Localizations.Resources.DamageDoneDetails {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Show pets and creatures.
+        /// </summary>
+        public static string ShowPets {
+            get {
+                return ResourceManager.GetString("ShowPets", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Show resist.
         /// </summary>
         public static string ShowResist {

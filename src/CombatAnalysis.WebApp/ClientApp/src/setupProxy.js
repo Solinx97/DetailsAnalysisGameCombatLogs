@@ -27,10 +27,20 @@ const context = [
     "/api/v1/ResourceRecovery",
     "/api/v1/ResourceRecoveryGeneral",
     "/api/v1/GroupChatMessage",
+    "/api/v1/UnreadGroupChatMessage",
     "/api/v1/GroupChatUser",
     "/api/v1/GroupChat",
     "/api/v1/PersonalChat",
     "/api/v1/PersonalChatMessage",
+    "/api/v1/PersonalChatMessageCount",
+    "/api/v1/Community",
+    "/api/v1/CommunityUser",
+    "/api/v1/CommunityPost",
+    "/api/v1/UserPost",
+    "/api/v1/InviteToCommunity",
+    "/api/v1/VoiceChat",
+    "/api/v1/PlayerDeath",
+    "/api/v1/Identity",
 ];
 
 const onError = (err, req, resp, target) => {

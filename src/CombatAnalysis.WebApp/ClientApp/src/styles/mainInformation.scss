@@ -1,5 +1,136 @@
-﻿.main-information__container {
-    .card {
-        width: 40%;
+﻿.main-information {
+    &__container {
+        display: flex;
+        margin: 25px 0;
+        gap: 50px;
+
+        .combats {
+            &__container {
+                display: flex;
+                flex-direction: column;
+                gap: 20px;
+
+                .card {
+                    box-shadow: 10px 10px #3AA6B9;
+                    margin: 25px;
+                    background: #135D66;
+
+                    .title, .list-group-item {
+                        background: #135D66;
+                        color: white;
+                    }
+
+                    .card-body {
+                        display: flex;
+                    }
+                }
+            }
+
+            &__item {
+                border-radius: 20px;
+            }
+        }
+    }
+
+    .title {
+        display: flex;
+        align-items: center;
+        gap: 25px;
+
+        .actions {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+
+            .communication {
+                display: flex;
+                gap: 15px;
+            }
+
+            .authorization {
+                color: orange;
+                transform: scale(1.25);
+            }
+        }
+
+        .disabled {
+            opacity: 0.5;
+            border: 1px solid gray;
+            border-radius: 25px;
+            padding: 10px 15px;
+
+            .btn-shadow {
+                cursor: default;
+            }
+        }
+    }
+
+    .chat-list {
+        position: absolute;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+        top: -35%;
+        left: 70%;
+        min-width: 350px;
+        padding: 20px;
+        border: 2px solid green;
+        border-radius: 20px;
+        z-index: 10;
+
+        svg {
+            cursor: pointer;
+        }
+
+        &__close {
+            display: flex;
+            justify-content: flex-end;
+            width: 100%;
+            margin: -10px;
+        }
+
+        &__chats {
+            ul {
+                padding: 0;
+                overflow: auto;
+                max-height: 230px;
+
+                li {
+                    margin: 0 20px;
+                }
+            }
+        }
+
+        .title {
+            display: flex;
+            justify-content: space-around;
+            gap: 25px;
+        }
+
+        .chat {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 50px;
+            box-shadow: 3px 3px 3px 3px white;
+            border: 2px solid black;
+            border-radius: 20px;
+            padding: 5px;
+            margin: 10px 0;
+            font-size: 12px;
+
+            .sent {
+                border: 2px solid white;
+                border-radius: 15px;
+                padding: 5px 15px;
+                opacity: 0.5;
+                cursor: default;
+            }
+
+            .btn-shadow {
+                box-shadow: 0 0 0 0;
+            }
+        }
     }
 }

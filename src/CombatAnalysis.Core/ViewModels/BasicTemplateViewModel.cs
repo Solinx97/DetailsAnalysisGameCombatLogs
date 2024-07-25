@@ -8,6 +8,7 @@ using CombatAnalysis.Core.Models;
 using CombatAnalysis.Core.Models.User;
 using CombatAnalysis.Core.ViewModels.Base;
 using CombatAnalysis.Core.ViewModels.Chat;
+using CombatAnalysis.Core.ViewModels.User;
 using CombatAnalysis.Core.ViewModels.ViewModelTemplates;
 using Microsoft.Extensions.Caching.Memory;
 using MvvmCross.Commands;
@@ -23,15 +24,18 @@ public class BasicTemplateViewModel : ParentTemplate, IVMDataHandler<CombatPlaye
     private readonly IMemoryCache _memoryCache;
     private readonly IHttpClientHelper _httpClient;
 
-    private int _step = -1;
     private List<CombatModel> _combats;
+    private int _step = -1;
     private bool _isAuth;
     private bool _isLoginNotActivated = true;
     private bool _isRegistrationNotActivated = true;
-    private string _email;
+    private string _username;
     private LogType _logType;
     private bool _logPanelStatusIsVisibly;
     private CombatModel _selectedCombat;
+    private CombatLogModel _combatLog;
+    private int _uploadingCombatsCount = 1;
+    private int _uploadedCombatsCount;
 
     private static LoadingStatus _responseStatus;
     private static int _allowStep;
@@ -68,6 +72,19 @@ public class BasicTemplateViewModel : ParentTemplate, IVMDataHandler<CombatPlaye
 
         CheckAuth();
         Task.Run(async () => await _mvvmNavigation.Navigate<HomeViewModel, bool>(IsAuth));
+    }
+
+    public List<CombatModel> Combats
+    {
+        set
+        {
+            _combats = value;
+            if (value != null)
+            {
+                UploadingCombatsCount = value.Count;
+            }
+        }
+        get => _combats;
     }
 
     #region Commands
@@ -107,6 +124,8 @@ public class BasicTemplateViewModel : ParentTemplate, IVMDataHandler<CombatPlaye
     #region Properties
 
     public CombatPlayerModel Data { get; set; }
+
+    public Dictionary<string, List<string>> PetsId { get; set; }
 
     public CombatModel SelectedCombat
     {
@@ -163,12 +182,12 @@ public class BasicTemplateViewModel : ParentTemplate, IVMDataHandler<CombatPlaye
         }
     }
 
-    public List<CombatModel> Combats
+    public CombatLogModel CombatLog
     {
-        get { return _combats; }
+        get { return _combatLog; }
         set
         {
-            SetProperty(ref _combats, value);
+            SetProperty(ref _combatLog, value);
         }
     }
 
@@ -202,12 +221,12 @@ public class BasicTemplateViewModel : ParentTemplate, IVMDataHandler<CombatPlaye
         }
     }
 
-    public string Email
+    public string Username
     {
-        get { return _email; }
+        get { return _username; }
         set
         {
-            SetProperty(ref _email, value);
+            SetProperty(ref _username, value);
         }
     }
 
@@ -229,6 +248,24 @@ public class BasicTemplateViewModel : ParentTemplate, IVMDataHandler<CombatPlaye
         }
     }
 
+    public int UploadingCombatsCount
+    {
+        get { return _uploadingCombatsCount; }
+        set
+        {
+            SetProperty(ref _uploadingCombatsCount, value);
+        }
+    }
+
+    public int UploadedCombatsCount
+    {
+        get { return _uploadedCombatsCount; }
+        set
+        {
+            SetProperty(ref _uploadedCombatsCount, value);
+        }
+    }
+
     #endregion
 
     public void CloseWindow()
@@ -239,7 +276,7 @@ public class BasicTemplateViewModel : ParentTemplate, IVMDataHandler<CombatPlaye
     public async Task LoginAsync()
     {
         IsLoginNotActivated = false;
-        await _mvvmNavigation.Navigate<LoginViewModel>();
+        await _mvvmNavigation.Navigate<AuthorizationViewModel>();
     }
 
     public async Task RegistrationAsync()
@@ -250,17 +287,17 @@ public class BasicTemplateViewModel : ParentTemplate, IVMDataHandler<CombatPlaye
 
     public async Task LogoutAsync()
     {
-        var refreshToken = _memoryCache.Get<string>("refreshToken");
+        var refreshToken = _memoryCache.Get<string>(nameof(MemoryCacheValue.RefreshToken));
 
         _httpClient.BaseAddress = Port.UserApi;
         await _httpClient.GetAsync($"Account/logout/{refreshToken}");
 
-        _memoryCache.Remove("refreshToken");
-        _memoryCache.Remove("accessToken");
-        _memoryCache.Remove("account");
+        _memoryCache.Remove(nameof(MemoryCacheValue.RefreshToken));
+        _memoryCache.Remove(nameof(MemoryCacheValue.User));
+        _memoryCache.Remove(nameof(MemoryCacheValue.Customer));
 
         IsAuth = false;
-        Email = string.Empty;
+        Username = string.Empty;
 
         if (Parent is ChatViewModel)
         {
@@ -321,6 +358,7 @@ public class BasicTemplateViewModel : ParentTemplate, IVMDataHandler<CombatPlaye
 
     public async Task SettingsAsync()
     {
+        Step = -3;
         await _mvvmNavigation.Navigate<SettingsViewModel>();
     }
 
@@ -362,13 +400,13 @@ public class BasicTemplateViewModel : ParentTemplate, IVMDataHandler<CombatPlaye
 
     public void CheckAuth()
     {
-        var user = _memoryCache.Get<AppUserModel>("account");
+        var user = _memoryCache.Get<AppUserModel>(nameof(MemoryCacheValue.User));
         if (user == null)
         {
             return;
         }
 
         IsAuth = true;
-        Email = user.Email;
+        Username = user.Username;
     }
 }

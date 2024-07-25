@@ -1,0 +1,52 @@
+﻿.chats__selected-chat {
+    .title {
+        &__content {
+            display: flex;
+            gap: 100px;
+        }
+    }
+
+    .remove-chat, .remove-chat_active {
+        margin: 15px 5px;
+        cursor: pointer;
+        transform: scale(1.25);
+
+        &_active {
+            color: orange;
+        }
+    }
+
+    .remove-chat :hover {
+        color: orange;
+    }
+}
+
+.personal-chat {
+    display: flex;
+    align-items: flex-start;
+}
+
+.remove-chat-alert {
+    position: fixed;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    left: 50%;
+    top: 25%;
+    padding: 20px;
+    border-radius: 25px;
+
+    &__actions {
+        display: flex;
+        gap: 25px;
+
+        .remove {
+            box-shadow: 2px 2px 2px 2px brown;
+        }
+
+        .cancel {
+            box-shadow: 2px 2px 2px 2px white;
+        }
+    }
+}

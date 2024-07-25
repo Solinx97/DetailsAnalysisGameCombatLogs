@@ -2,7 +2,11 @@
 
 public class CombatPlayer
 {
-    public string UserName { get; set; }
+    public string Username { get; set; }
+
+    public string PlayerId { get; set; }
+
+    public double AverageItemLevel { get; set; }
 
     public int EnergyRecovery { get; set; }
 
@@ -13,4 +17,8 @@ public class CombatPlayer
     public int DamageTaken { get; set; }
 
     public int UsedBuffs { get; set; }
+
+    public PlayerParseInfo PlayerParseInfo { get; set; }
+
+    public int CombatId { get; set; }
 }

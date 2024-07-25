@@ -2,11 +2,16 @@
 
 namespace CombatAnalysis.CombatParser.Interfaces;
 
-public interface IParser : IObservable
+public interface IParser<TModel> : IObservable<TModel>
+    where TModel : class
 {
     List<Combat> Combats { get; }
 
-    Task<bool> FileCheck(string combatLog);
+    Dictionary<string, List<string>> PetsId { get; }
 
-    Task Parse(string combatLog);
+    Task<bool> FileCheckAsync(string combatLog);
+
+    Task ParseAsync(string combatLog);
+
+    void Clear();
 }

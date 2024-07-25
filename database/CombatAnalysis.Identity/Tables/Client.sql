@@ -1,0 +1,10 @@
+﻿CREATE TABLE [dbo].[Client]
+(
+	[Id] NVARCHAR(50) NOT NULL PRIMARY KEY, 
+    [RedirectUrl] NVARCHAR(50) NOT NULL, 
+    [Scope] NVARCHAR(50) NOT NULL, 
+    [ClientName] NVARCHAR(50) NOT NULL, 
+    [ClientType] NVARCHAR(50) NOT NULL, 
+    [CreatedAt] DATETIMEOFFSET NOT NULL, 
+    [UpdatedAt] DATETIMEOFFSET NOT NULL
+)

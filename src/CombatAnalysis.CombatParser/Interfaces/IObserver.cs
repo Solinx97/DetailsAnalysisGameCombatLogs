@@ -1,8 +1,7 @@
-﻿using CombatAnalysis.CombatParser.Entities;
+﻿namespace CombatAnalysis.CombatParser.Interfaces;
 
-namespace CombatAnalysis.CombatParser.Interfaces;
-
-public interface IObserver
+public interface IObserver<TModel>
+    where TModel : class
 {
-    void Update(Combat data);
+    void Update(TModel data);
 }

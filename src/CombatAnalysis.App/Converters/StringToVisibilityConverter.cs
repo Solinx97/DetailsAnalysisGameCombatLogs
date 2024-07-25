@@ -10,7 +10,7 @@ public class StringToVisibilityConverter : MvxValueConverter<string, Visibility>
 {
     protected override Visibility Convert(string value, Type targetType, object parameter, CultureInfo culture)
     {
-        Visibility result = Visibility.Visible;
+        var result = Visibility.Visible;
         if (parameter != null)
         {
             var isEqual = value.Equals(parameter);

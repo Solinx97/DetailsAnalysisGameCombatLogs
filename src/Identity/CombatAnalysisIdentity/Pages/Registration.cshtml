@@ -1,0 +1,85 @@
+﻿@page
+@model CombatAnalysisIdentity.Pages.RegistrationModel
+
+@if (Model.QueryIsValid)
+{
+    <div class="registration">
+        <div class="registration__title">Registration</div>
+        <form class="registration__submit" method="post">
+            <div class="registration__container">
+                <div class="confidential">
+                    <div class="mb-3">
+                        <input type="email" class="form-control" name="email" aria-describedby="emailHelp" placeholder="Email" required />
+                    </div>
+                    <div class="mb-3">
+                        <input type="text" class="form-control" name="username" placeholder="Username" required />
+                    </div>
+                    <div class="mb-3">
+                        <input class="form-control" type="password" name="password" autoComplete="new-password" placeholder="Password" required />
+                    </div>
+                    <div class="mb-3">
+                        <input class="form-control" type="password" name="confirmPassword" autoComplete="new-password" placeholder="Confirm password" required />
+                    </div>
+                </div>
+                <div class="general">
+                    <div class="mb-3">
+                        <label for="input-birthday" class="form-label">Birthday</label>
+                        <input type="date" class="form-control" id="input-birthday" name="birthday" required />
+                    </div>
+                    <div class="mb-3">
+                        <input type="text" class="form-control" name="firstName" aria-describedby="emailHelp" placeholder="First name" required />
+                    </div>
+                    <div class="mb-3">
+                        <input type="text" class="form-control" name="lastName" placeholder="Last name" required />
+                    </div>
+                    <div class="mb-3">
+                        <input type="number" class="form-control" name="phoneNumber" placeholder="Phone number" required />
+                    </div>
+                </div>
+                <div class="general">
+                    <div class="mb-3">
+                        <input type="text" class="form-control" name="country" placeholder="Country" required />
+                    </div>
+                    <div class="mb-3">
+                        <input type="text" class="form-control" name="city" placeholder="City" required />
+                    </div>
+                    <div class="mb-3">
+                        <input type="number" class="form-control" name="postCode" placeholder="Post code" required />
+                    </div>
+                </div>
+            </div>
+            <div class="actions">
+                <input type="submit" class="btn-border-shadow finish-registration" value="Sign up" />
+            </div>
+        </form>
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <div class="registration__cancel">
+            <input type="button" class="btn-border-shadow" onclick="goToLogin()" value="Login" />
+            <input type="button" class="btn-border-shadow cancel" onclick="goToHome()" value="Cancel" />
+        </div>
+    </div>
+}
+else
+{
+    <div class="request-incorrect">
+        <div>Request is incorrect. Pls try one more time</div>
+    </div>
+}
+
+<script>
+    function goToLogin() {
+        const registrationUrl = `@Model.AuthorizationUrl`;
+        const queryparams = window.location.search;
+
+        window.location.href = `${registrationUrl}authorization${queryparams}`;
+    }
+
+    function goToHome() {
+        const queryString = window.location.search;
+        const queryparams = new URLSearchParams(queryString);
+        const redirectUri = queryparams.get("redirectUri");
+        const protocol = `@Model.Protocol`;
+
+        window.location.href = `${protocol}://${redirectUri}`;
+    }
+</script>

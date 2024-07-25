@@ -117,6 +117,9 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="Anyone" xml:space="preserve">
+    <value>Любой</value>
+  </data>
   <data name="Cancel" xml:space="preserve">
     <value>Отмена</value>
   </data>
@@ -129,11 +132,17 @@
   <data name="ChatName" xml:space="preserve">
     <value>Название чата</value>
   </data>
+  <data name="ChatOwner" xml:space="preserve">
+    <value>Владелец чата</value>
+  </data>
   <data name="ChatPrivacy" xml:space="preserve">
     <value>Приватность чата</value>
   </data>
   <data name="ChatRestrictions" xml:space="preserve">
     <value>Ограничения чата</value>
+  </data>
+  <data name="ChatRules" xml:space="preserve">
+    <value>Правила чата</value>
   </data>
   <data name="Create" xml:space="preserve">
     <value>Создать</value>
@@ -155,6 +164,18 @@
   </data>
   <data name="Title" xml:space="preserve">
     <value>Создание группового чата</value>
+  </data>
+  <data name="WhoCanInvite" xml:space="preserve">
+    <value>Кто может приглашать пользователей?</value>
+  </data>
+  <data name="WhoCanMakeAnnounces" xml:space="preserve">
+    <value>Кто может делть анонсы?</value>
+  </data>
+  <data name="WhoCanPinMessage" xml:space="preserve">
+    <value>Кто может зареплять сообщения?</value>
+  </data>
+  <data name="WhoCanRemove" xml:space="preserve">
+    <value>Кто может удалять пользователей?</value>
   </data>
   <data name="WithoutRestrictions" xml:space="preserve">
     <value>Без ограничения</value>

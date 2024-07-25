@@ -2,19 +2,21 @@
 using CombatAnalysis.CustomerBL.DTO;
 using CombatAnalysis.CustomerBL.Interfaces;
 using CombatAnalysis.UserApi.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CombatAnalysis.UserApi.Controllers;
 
 [Route("api/v1/[controller]")]
 [ApiController]
+[Authorize]
 public class RequestToConnectController : ControllerBase
 {
     private readonly IService<RequestToConnectDto, int> _service;
     private readonly IMapper _mapper;
-    private readonly ILogger _logger;
+    private readonly ILogger<RequestToConnectController> _logger;
 
-    public RequestToConnectController(IService<RequestToConnectDto, int> service, IMapper mapper, ILogger logger)
+    public RequestToConnectController(IService<RequestToConnectDto, int> service, IMapper mapper, ILogger<RequestToConnectController> logger)
     {
         _service = service;
         _mapper = mapper;
@@ -40,7 +42,7 @@ public class RequestToConnectController : ControllerBase
     [HttpGet("searchByOwnerId/{id}")]
     public async Task<IActionResult> SearchByOwnerId(string id)
     {
-        var result = await _service.GetByParamAsync(nameof(RequestToConnectModel.OwnerId), id);
+        var result = await _service.GetByParamAsync(nameof(RequestToConnectModel.CustomerId), id);
 
         return Ok(result);
     }
@@ -65,7 +67,13 @@ public class RequestToConnectController : ControllerBase
         }
         catch (ArgumentNullException ex)
         {
-            _logger.LogError(ex, ex.Message);
+            _logger.LogError(ex, $"Create Request to Connect failed: ${ex.Message}", model);
+
+            return BadRequest();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, $"Create Request to Connect failed: ${ex.Message}", model);
 
             return BadRequest();
         }
@@ -83,7 +91,13 @@ public class RequestToConnectController : ControllerBase
         }
         catch (ArgumentNullException ex)
         {
-            _logger.LogError(ex, ex.Message);
+            _logger.LogError(ex, $"Update Request to Connect failed: ${ex.Message}", model);
+
+            return BadRequest();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, $"Update Request to Connect failed: ${ex.Message}", model);
 
             return BadRequest();
         }
@@ -92,17 +106,8 @@ public class RequestToConnectController : ControllerBase
     [HttpDelete("{id:int:min(1)}")]
     public async Task<IActionResult> Delete(int id)
     {
-        try
-        {
-            var result = await _service.DeleteAsync(id);
+        var rowsAffected = await _service.DeleteAsync(id);
 
-            return Ok(result);
-        }
-        catch (ArgumentNullException ex)
-        {
-            _logger.LogError(ex, ex.Message);
-
-            return BadRequest();
-        }
+        return Ok(rowsAffected);
     }
 }

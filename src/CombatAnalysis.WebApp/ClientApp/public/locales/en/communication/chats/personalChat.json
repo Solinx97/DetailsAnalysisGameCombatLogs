@@ -1,0 +1,10 @@
+{
+  "AreYouSureRemoveChat": "Are you sure that you want to remove this chat?",
+  "ThatWillBeRemoveChat": "That's remove all messages and documents!",
+  "Remove": "Remove",
+  "Cancel": "Cancel",
+  "RemoveChat": "Remove chat",
+  "SendMessage": "Send message",
+  "TypeYourMessage": "Type your message",
+  "CanNotSendEmpty": "You can not send empty message"
+}

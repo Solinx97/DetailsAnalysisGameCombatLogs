@@ -133,6 +133,15 @@ namespace CombatAnalysis.App.Localizations.Resources.DamageTakenDetails {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Damage tak. + A..
+        /// </summary>
+        public static string DamageTakenA {
+            get {
+                return ResourceManager.GetString("DamageTakenA", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Damage taken per sec..
         /// </summary>
         public static string DamageTakenPerSec {

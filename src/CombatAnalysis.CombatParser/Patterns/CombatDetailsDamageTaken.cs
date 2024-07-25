@@ -8,13 +8,13 @@ public class CombatDetailsDamageTaken : CombatDetailsTemplate
 {
     private readonly string[] _damageVariations = new string[]
     {   
-        CombatLogConsts.SpellDamage,
-        CombatLogConsts.SwingDamage,
-        CombatLogConsts.SpellPeriodicDamage,
-        CombatLogConsts.SwingMissed,
-        CombatLogConsts.DamageShieldMissed,
-        CombatLogConsts.RangeDamage,
-        CombatLogConsts.SpellMissed,
+        CombatLogKeyWords.SpellDamage,
+        CombatLogKeyWords.SwingDamage,
+        CombatLogKeyWords.SpellPeriodicDamage,
+        CombatLogKeyWords.SwingMissed,
+        CombatLogKeyWords.DamageShieldMissed,
+        CombatLogKeyWords.RangeDamage,
+        CombatLogKeyWords.SpellMissed,
     };
     private readonly ILogger _logger;
 
@@ -24,35 +24,45 @@ public class CombatDetailsDamageTaken : CombatDetailsTemplate
         DamageTaken = new List<DamageTaken>();
     }
 
-    public override int GetData(string player, List<string> combatData)
+    public override int GetData(string playerId, List<string> combatData)
     {
-        int damageTaken = 0;
         try
         {
-            if (player == null)
+            if (playerId == null)
             {
-                throw new ArgumentNullException(player);
+                throw new ArgumentNullException(playerId);
             }
 
-            foreach (var item in combatData)
-            {
-                var itemHasDamageVariation = _damageVariations.Any(damagVariation => item.Contains(damagVariation));
-                if (itemHasDamageVariation && item.Contains(player))
-                {
-                    var usefulInformation = GetUsefulInformation(item);
-                    var damageTakenInformation = GetDamageTakenInformation(usefulInformation);
+            var damageTaken = GetSummaryDamageTaken(playerId, combatData);
 
-                    if (damageTakenInformation != null)
-                    {
-                        damageTaken += damageTakenInformation.Value;
-                        DamageTaken.Add(damageTakenInformation);
-                    }
-                }
-            }
+            return damageTaken;
         }
         catch (ArgumentNullException ex)
         {
-            _logger.LogError(ex, ex.Message, player);
+            _logger.LogError(ex, ex.Message, playerId);
+
+            return 0;
+        }
+    }
+
+    private int GetSummaryDamageTaken(string playerId, List<string> combatData)
+    {
+        int damageTaken = 0;
+        foreach (var item in combatData)
+        {
+            var itemHasDamageVariation = _damageVariations.Any(item.Contains);
+            if (itemHasDamageVariation && item.Contains(playerId))
+            {
+                var usefulInformation = GetUsefulInformation(item);
+                var damageTakenInformation = GetDamageTakenInformation(usefulInformation);
+                if (damageTakenInformation == null)
+                {
+                    continue;
+                }
+
+                damageTaken += damageTakenInformation.ActualValue;
+                DamageTaken.Add(damageTakenInformation);
+            }
         }
 
         return damageTaken;
@@ -60,13 +70,13 @@ public class CombatDetailsDamageTaken : CombatDetailsTemplate
 
     private DamageTaken GetDamageTakenInformation(List<string> combatData)
     {
-        if (string.Equals(combatData[1], CombatLogConsts.SwingDamageLanded, StringComparison.OrdinalIgnoreCase))
+        if (string.Equals(combatData[1], CombatLogKeyWords.SwingDamageLanded, StringComparison.OrdinalIgnoreCase))
         {
             return null;
         }
 
         if (combatData[2].Contains("0000000000000000")
-            || combatData[2].Contains("Creature"))
+            || combatData[2].Contains(CombatLogKeyWords.Creature))
         {
 
             var damageTaken = GetDamageTaken(combatData);
@@ -82,14 +92,14 @@ public class CombatDetailsDamageTaken : CombatDetailsTemplate
     {
         int.TryParse(combatData[^10], out var value);
 
-        var spellOrItem = combatData[11].Contains("0000000000000000") || combatData[11].Contains("nil")
-            ? "Ближ. бой" : combatData[11].Trim('"');
+        var spellOrItem = combatData[1].Equals(CombatLogKeyWords.SwingDamage) || combatData[1].Equals(CombatLogKeyWords.SwingMissed)
+            ? CombatLogKeyWords.MeleeDamage : combatData[11].Trim('"');
 
         var isResist = false;
         var isImmune = false;
         var isAbsorb = false;
 
-        var isCrushing = string.Equals(combatData[^1], "1", StringComparison.OrdinalIgnoreCase);
+        var isCrushing = string.Equals(combatData[^1], CombatLogKeyWords.IsCrushing, StringComparison.OrdinalIgnoreCase);
 
         int realDamage = 0;
         int mitigated = 0;
@@ -97,19 +107,19 @@ public class CombatDetailsDamageTaken : CombatDetailsTemplate
         int blocked = 0;
         int resist = 0;
 
-        if (string.Equals(combatData[1], CombatLogConsts.DamageShieldMissed, StringComparison.OrdinalIgnoreCase)
-            || string.Equals(combatData[1], CombatLogConsts.SpellMissed, StringComparison.OrdinalIgnoreCase))
+        if (string.Equals(combatData[1], CombatLogKeyWords.DamageShieldMissed, StringComparison.OrdinalIgnoreCase)
+            || string.Equals(combatData[1], CombatLogKeyWords.SpellMissed, StringComparison.OrdinalIgnoreCase))
         {
-            isResist = string.Equals(combatData[13], "RESIST", StringComparison.OrdinalIgnoreCase);
-            isImmune = string.Equals(combatData[13], "IMMUNE", StringComparison.OrdinalIgnoreCase);
-            isAbsorb = string.Equals(combatData[13], "ABSORB", StringComparison.OrdinalIgnoreCase);
+            isResist = string.Equals(combatData[13], CombatLogKeyWords.Resist, StringComparison.OrdinalIgnoreCase);
+            isImmune = string.Equals(combatData[13], CombatLogKeyWords.Immune, StringComparison.OrdinalIgnoreCase);
+            isAbsorb = string.Equals(combatData[13], CombatLogKeyWords.Absorb, StringComparison.OrdinalIgnoreCase);
 
             int.TryParse(combatData[^1], out realDamage);
             int.TryParse(combatData[^2], out absorb);
         }
-        else if (!string.Equals(combatData[1], CombatLogConsts.SwingMissed, StringComparison.OrdinalIgnoreCase) 
-            && !string.Equals(combatData[1], CombatLogConsts.SpellMissed, StringComparison.OrdinalIgnoreCase) 
-            && !string.Equals(combatData[1], CombatLogConsts.DamageShieldMissed, StringComparison.OrdinalIgnoreCase))
+        else if (!string.Equals(combatData[1], CombatLogKeyWords.SwingMissed, StringComparison.OrdinalIgnoreCase) 
+            && !string.Equals(combatData[1], CombatLogKeyWords.SpellMissed, StringComparison.OrdinalIgnoreCase) 
+            && !string.Equals(combatData[1], CombatLogKeyWords.DamageShieldMissed, StringComparison.OrdinalIgnoreCase))
         {
             int.TryParse(combatData[^9], out realDamage);
             int.TryParse(combatData[^4], out absorb);
@@ -130,6 +140,7 @@ public class CombatDetailsDamageTaken : CombatDetailsTemplate
         var damageTaken = new DamageTaken
         {
             Value = value,
+            ActualValue = value + absorb,
             Time = TimeSpan.Parse(combatData[0]),
             FromEnemy = enemy.Trim('"'),
             ToPlayer = combatData[7].Trim('"'),
@@ -140,9 +151,9 @@ public class CombatDetailsDamageTaken : CombatDetailsTemplate
             Blocked = blocked,
             RealDamage = realDamage,
             Mitigated = mitigated < 0 ? 0 : mitigated,
-            IsDodge = string.Equals(combatData[^2], "DODGE", StringComparison.OrdinalIgnoreCase),
-            IsParry = string.Equals(combatData[^2], "PARRY", StringComparison.OrdinalIgnoreCase),
-            IsMiss = string.Equals(combatData[^2], "MISS", StringComparison.OrdinalIgnoreCase),
+            IsDodge = string.Equals(combatData[^2], CombatLogKeyWords.Dodge, StringComparison.OrdinalIgnoreCase),
+            IsParry = string.Equals(combatData[^2], CombatLogKeyWords.Parry, StringComparison.OrdinalIgnoreCase),
+            IsMiss = string.Equals(combatData[^2], CombatLogKeyWords.Miss, StringComparison.OrdinalIgnoreCase),
             IsResist = isResist,
             IsImmune = isImmune,
             IsAbsorb = isAbsorb,

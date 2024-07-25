@@ -17,7 +17,7 @@ public class LocExtension : MarkupExtension
 
     public string ResourceName { get; }
 
-    private static ResourceManager GetResourceManager(object control)
+    private static ResourceManager? GetResourceManager(object control)
     {
         if (control is not DependencyObject dependencyObject)
         {

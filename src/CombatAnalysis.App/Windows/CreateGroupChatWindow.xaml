@@ -14,6 +14,4 @@
             <local:CreateGroupChatView />
         </DataTemplate>
     </Window.Resources>
-
-    <ContentPresenter Content="{Binding}"/>
 </views:MvxWindow>

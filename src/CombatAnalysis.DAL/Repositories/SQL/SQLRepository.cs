@@ -8,9 +8,9 @@ public class SQLRepository<TModel, TIdType> : IGenericRepository<TModel, TIdType
     where TModel : class
     where TIdType : notnull
 {
-    private readonly SQLContext _context;
+    private readonly CombatParserSQLContext _context;
 
-    public SQLRepository(SQLContext context)
+    public SQLRepository(CombatParserSQLContext context)
     {
         _context = context;
     }
@@ -49,7 +49,7 @@ public class SQLRepository<TModel, TIdType> : IGenericRepository<TModel, TIdType
 
     public IEnumerable<TModel> GetByParam(string paramName, object value)
     {
-        var collection = _context.Set<TModel>().AsEnumerable();
+        var collection = _context.Set<TModel>().AsNoTracking().AsEnumerable();
         var data = collection.Where(x => x.GetType().GetProperty(paramName).GetValue(x).Equals(value));
 
         return data;

@@ -6,12 +6,12 @@ using CombatAnalysis.DAL.Interfaces;
 
 namespace CombatAnalysis.BL.Services;
 
-internal class HealDoneGeneralService : IService<HealDoneGeneralDto, int>
+internal class HealDoneGeneralService : IPlayerInfoService<HealDoneGeneralDto, int>
 {
-    private readonly IGenericRepository<HealDoneGeneral, int> _repository;
+    private readonly ISQLPlayerInfoRepository<HealDoneGeneral, int> _repository;
     private readonly IMapper _mapper;
 
-    public HealDoneGeneralService(IGenericRepository<HealDoneGeneral, int> repository, IMapper mapper)
+    public HealDoneGeneralService(ISQLPlayerInfoRepository<HealDoneGeneral, int> repository, IMapper mapper)
     {
         _repository = repository;
         _mapper = mapper;
@@ -46,6 +46,14 @@ internal class HealDoneGeneralService : IService<HealDoneGeneralDto, int>
     {
         var result = await _repository.GetByIdAsync(id);
         var resultMap = _mapper.Map<HealDoneGeneralDto>(result);
+
+        return resultMap;
+    }
+
+    public async Task<IEnumerable<HealDoneGeneralDto>> GetByCombatPlayerIdAsync(int combatPlayerId)
+    {
+        var result = await _repository.GetByCombatPlayerIdAsync(combatPlayerId);
+        var resultMap = _mapper.Map<List<HealDoneGeneralDto>>(result);
 
         return resultMap;
     }

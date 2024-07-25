@@ -1,5 +1,6 @@
 ﻿using CombatAnalysis.Core.Consts;
 using CombatAnalysis.Core.Enums;
+using CombatAnalysis.Core.Extensions;
 using CombatAnalysis.Core.Helpers;
 using CombatAnalysis.Core.Interfaces;
 using CombatAnalysis.Core.Models.Chat;
@@ -32,6 +33,7 @@ public class GroupChatMessagesViewModel : MvxViewModel, IImprovedMvxViewModel
     private string _message;
     private bool _chatMenuIsVisibly;
     private AppUserModel _myAccount;
+    private CustomerModel _customer;
     private LoadingStatus _addUserToChatResponse;
     private bool _inviteToChatIsVisibly;
     private int _selectedUsersForInviteToGroupChatIndex = -1;
@@ -118,9 +120,9 @@ public class GroupChatMessagesViewModel : MvxViewModel, IImprovedMvxViewModel
 
                 SelectedChatName = value.Name;
 
-                Task.Run(LoadMessagesAsync);
-                AsyncDispatcher.ExecuteOnMainThreadAsync(() =>
+                AsyncDispatcher.ExecuteOnMainThreadAsync(async () =>
                 {
+                    await LoadMessagesAsync();
                     Fill();
                 });
 
@@ -225,7 +227,7 @@ public class GroupChatMessagesViewModel : MvxViewModel, IImprovedMvxViewModel
         set
         {
             SetProperty(ref _inputedUserEmailForInviteToChat, value);
-            LoadUsersEmailForInviteByStartChars(value);
+            LoadUsernamesForInviteByStartChars(value);
         }
     }
 
@@ -277,9 +279,10 @@ public class GroupChatMessagesViewModel : MvxViewModel, IImprovedMvxViewModel
         var newGroupChatMessage = new GroupChatMessageModel
         {
             Message = Message,
-            Time = TimeSpan.Parse($"{DateTimeOffset.UtcNow.Hour}:{DateTimeOffset.UtcNow.Minute}"),
-            Username = MyAccount.Email,
+            Time = TimeSpan.Parse($"{DateTimeOffset.UtcNow.Hour}:{DateTimeOffset.UtcNow.Minute}").ToString(),
+            Status = 0,
             GroupChatId = SelectedChat.Id,
+            AppUserId = MyAccount.Id,
         };
 
         Message = string.Empty;
@@ -302,7 +305,7 @@ public class GroupChatMessagesViewModel : MvxViewModel, IImprovedMvxViewModel
         }
 
         var groupChatUsers = await response.Content.ReadFromJsonAsync<IEnumerable<GroupChatUserModel>>();
-        _usersExcludingInvitees = Users.Where(x => !groupChatUsers.Any(y => x.Id == y.UserId)).ToList();
+        _usersExcludingInvitees = Users.Where(x => !groupChatUsers.Any(y => x.Id == y.AppUserId)).ToList();
 
         UsersToInviteToChat = new ObservableCollection<AppUserModel>(_usersExcludingInvitees);
 
@@ -321,7 +324,7 @@ public class GroupChatMessagesViewModel : MvxViewModel, IImprovedMvxViewModel
         var groupChatUser = new GroupChatUserModel
         {
             GroupChatId = SelectedChat.Id,
-            UserId = userId,
+            AppUserId = userId,
         };
 
         InputedUserEmailForInviteToChat = string.Empty;
@@ -334,7 +337,6 @@ public class GroupChatMessagesViewModel : MvxViewModel, IImprovedMvxViewModel
             if (response.StatusCode == System.Net.HttpStatusCode.OK)
             {
                 SwitchInviteToGroupChat();
-                //await OpenInviteToChatAsync();
 
                 AddUserToChatResponse = LoadingStatus.Successful;
             }
@@ -345,8 +347,6 @@ public class GroupChatMessagesViewModel : MvxViewModel, IImprovedMvxViewModel
         }
         catch (HttpRequestException ex)
         {
-            //_logger.LogError(ex, ex.Message);
-
             AddUserToChatResponse = LoadingStatus.Failed;
         }
     }
@@ -375,9 +375,9 @@ public class GroupChatMessagesViewModel : MvxViewModel, IImprovedMvxViewModel
 
     private void InitLoadMessages(object obj)
     {
-        Task.Run(LoadMessagesAsync).Wait();
-        AsyncDispatcher.ExecuteOnMainThreadAsync(() =>
+        AsyncDispatcher.ExecuteOnMainThreadAsync(async () =>
         {
+            await LoadMessagesAsync();
             Fill();
         });
 
@@ -386,10 +386,14 @@ public class GroupChatMessagesViewModel : MvxViewModel, IImprovedMvxViewModel
 
     private async Task LoadMessagesAsync()
     {
-        _httpClientHelper.BaseAddress = Port.ChatApi;
+        var refreshToken = _memoryCache.Get<string>(nameof(MemoryCacheValue.RefreshToken));
+        if (string.IsNullOrEmpty(refreshToken))
+        {
+            return;
+        }
 
-        var response = await _httpClientHelper.GetAsync($"GroupChatMessage/findByChatId/{SelectedChat?.Id}");
-        if (response.StatusCode != System.Net.HttpStatusCode.OK)
+        var response = await _httpClientHelper.GetAsync($"GroupChatMessage/findByChatId/{SelectedChat?.Id}", refreshToken, Port.ChatApi);
+        if (!response.IsSuccessStatusCode)
         {
             return;
         }
@@ -404,16 +408,14 @@ public class GroupChatMessagesViewModel : MvxViewModel, IImprovedMvxViewModel
         var response = await _httpClientHelper.GetAsync("Account");
         var users = await response.Content.ReadFromJsonAsync<IEnumerable<AppUserModel>>();
 
-        //_allUsers = users.Where(x => x.Id != MyAccount?.Id).ToList();
-
         Users = new ObservableCollection<AppUserModel>(users.Where(x => x.Id != MyAccount?.Id).ToList());
     }
 
-    private void LoadUsersEmailForInviteByStartChars(string startChars)
+    private void LoadUsernamesForInviteByStartChars(string startChars)
     {
         if (!string.IsNullOrEmpty(startChars))
         {
-            var usersEmailByStartChars = Users.Where(x => x.Email.StartsWith(startChars));
+            var usersEmailByStartChars = Users.Where(x => x.Username.StartsWith(startChars));
 
             UsersToInviteToChat = new ObservableCollection<AppUserModel>(usersEmailByStartChars);
         }
@@ -425,6 +427,6 @@ public class GroupChatMessagesViewModel : MvxViewModel, IImprovedMvxViewModel
 
     private void GetMyAccount()
     {
-        MyAccount = _memoryCache.Get<AppUserModel>("account");
+        MyAccount = _memoryCache.Get<AppUserModel>(nameof(MemoryCacheValue.User));
     }
 }

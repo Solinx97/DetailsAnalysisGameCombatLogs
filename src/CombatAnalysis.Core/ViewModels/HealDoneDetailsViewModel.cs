@@ -69,7 +69,7 @@ public class HealDoneDetailsViewModel : DetailsGenericTemplate<HealDoneModel, He
         var selectedCombatMap = _mapper.Map<Combat>(SelectedCombat);
 
         var healDoneDetails = new CombatDetailsHealDone(_logger);
-        healDoneDetails.GetData(parameter.UserName, SelectedCombat.Data);
+        healDoneDetails.GetData(parameter.PlayerId, SelectedCombat.Data);
 
         var healDoneMap = _mapper.Map<List<HealDoneModel>>(healDoneDetails.HealDone);
         DetailsInformations = new ObservableCollection<HealDoneModel>(healDoneMap);

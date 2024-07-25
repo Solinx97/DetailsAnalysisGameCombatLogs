@@ -117,14 +117,29 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="AboutMe" xml:space="preserve">
+    <value>About me</value>
+  </data>
   <data name="Back" xml:space="preserve">
     <value>Back</value>
+  </data>
+  <data name="Birthday" xml:space="preserve">
+    <value>Birthday</value>
   </data>
   <data name="Email" xml:space="preserve">
     <value>Email</value>
   </data>
   <data name="EmailIsAlready" xml:space="preserve">
     <value>Account with this Email is already</value>
+  </data>
+  <data name="FirstName" xml:space="preserve">
+    <value>First name</value>
+  </data>
+  <data name="LastName" xml:space="preserve">
+    <value>Last name</value>
+  </data>
+  <data name="Man" xml:space="preserve">
+    <value>Man</value>
   </data>
   <data name="NeedAddData" xml:space="preserve">
     <value>Need add data to registration form</value>
@@ -138,6 +153,9 @@
   <data name="PasswordNotConfirmated" xml:space="preserve">
     <value>Password confirmation must match the Password</value>
   </data>
+  <data name="PhoneNumber" xml:space="preserve">
+    <value>Phone number</value>
+  </data>
   <data name="Registration" xml:space="preserve">
     <value>Registration</value>
   </data>
@@ -146,5 +164,11 @@
   </data>
   <data name="Title" xml:space="preserve">
     <value>Registration</value>
+  </data>
+  <data name="Username" xml:space="preserve">
+    <value>Username</value>
+  </data>
+  <data name="Woman" xml:space="preserve">
+    <value>Woman</value>
   </data>
 </root>

@@ -10,11 +10,11 @@ namespace CombatAnalysis.CombatParserAPI.Controllers;
 [ApiController]
 public class HealDoneController : ControllerBase
 {
-    private readonly IService<HealDoneDto, int> _service;
+    private readonly IPlayerInfoService<HealDoneDto, int> _service;
     private readonly IMapper _mapper;
-    private readonly ILogger _logger;
+    private readonly ILogger<HealDoneController> _logger;
 
-    public HealDoneController(IService<HealDoneDto, int> service, IMapper mapper, ILogger logger)
+    public HealDoneController(IPlayerInfoService<HealDoneDto, int> service, IMapper mapper, ILogger<HealDoneController> logger)
     {
         _service = service;
         _mapper = mapper;
@@ -24,7 +24,7 @@ public class HealDoneController : ControllerBase
     [HttpGet("findByCombatPlayerId/{combatPlayerId:int:min(1)}")]
     public async Task<IActionResult> Find(int combatPlayerId)
     {
-        var healDones = await _service.GetByParamAsync("CombatPlayerId", combatPlayerId);
+        var healDones = await _service.GetByCombatPlayerIdAsync(combatPlayerId);
 
         return Ok(healDones);
     }

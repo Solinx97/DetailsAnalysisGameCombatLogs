@@ -20,6 +20,7 @@
             <RowDefinition Height="0.1*"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="0.15*"/>
+            <RowDefinition Height="0.15*"/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="55"/>
@@ -32,7 +33,7 @@
             <converters:TheNativeIntToVisibilityConverter x:Key="IntToVisibility" />
         </Grid.Resources>
         
-        <ContentControl Grid.ColumnSpan="3" Grid.RowSpan="4" Content="{Binding BasicTemplate}">
+        <ContentControl Grid.ColumnSpan="3" Grid.RowSpan="5" Content="{Binding BasicTemplate}">
             <ContentControl.Resources>
                 <DataTemplate DataType="{x:Type viewModels:BasicTemplateViewModel}">
                     <local:BasicTemplateView />
@@ -42,7 +43,7 @@
 
         <Grid Grid.Column="2" Grid.ColumnSpan="2" Margin="20" VerticalAlignment="Bottom" HorizontalAlignment="Center">
             <TextBlock HorizontalAlignment="Left" VerticalAlignment="Top"
-                   Text="{Binding SelectedPlayer}" FontSize="18"
+                   Text="{Binding SelectedPlayer}" FontSize="18" Foreground="White"
                    FontWeight="Bold" FontStyle="Italic" TextAlignment="Center" />
         </Grid>
 
@@ -50,19 +51,21 @@
                     HorizontalAlignment="Center" Panel.ZIndex="1">
             <StackPanel Orientation="Horizontal">
                 <TextBlock Text="{loc:Loc TypeOf}" FontSize="15" TextAlignment="Center" Padding="10" FontWeight="SemiBold"
-                           VerticalAlignment="Center" Margin="0" Width="100" Foreground="Gray"/>
+                           VerticalAlignment="Center" Margin="0" Width="100" Foreground="White"/>
                 <ComboBox Style="{DynamicResource ComboBoxStyle1}" VerticalAlignment="Center" Name="detailsType"
                           Width="135" SelectedIndex="{Binding DetailsTypeSelectedIndex}">
                     <ComboBoxItem Content="{loc:Loc Common}" IsSelected="True"/>
                     <ComboBoxItem Content="{loc:Loc MoreDetails}" />
                 </ComboBox>
             </StackPanel>
+            
             <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Text="{loc:Loc Title}"
-                       Width="350" TextAlignment="Center" Style="{StaticResource titleText}"
+                       Width="350" TextAlignment="Center" Style="{StaticResource titleText}" Foreground="White"
                        Margin="25 0"/>
+            
             <StackPanel Orientation="Horizontal" Visibility="{Binding IsShowFilters, Converter={StaticResource BoolToVisibility}, ConverterParameter=false}">
                 <TextBlock Text="{loc:Loc Source}" FontSize="15" TextAlignment="Center" Padding="10" FontWeight="SemiBold"
-                           Margin="0" Width="100" Foreground="Gray"/>
+                           Margin="0" Width="100" Foreground="White"/>
                 <ComboBox Name="sortingProperty" Style="{DynamicResource ComboBoxStyle1}" ItemsSource="{Binding Sources}"
                           VerticalAlignment="Center" Width="210" SelectedItem="{Binding SelectedSource}" SelectedIndex="0"/>
             </StackPanel>
@@ -70,32 +73,33 @@
 
         <StackPanel Grid.Row="2" Grid.Column="2" 
                     Visibility="{Binding ElementName=detailsType, Path=SelectedIndex, Converter={StaticResource IntToVisibility}, ConverterParameter=true:0}">
-            <DataGrid Margin="20 30 20 45" Height="450" VerticalAlignment="Top" Background="Transparent" 
-                      ItemsSource="{Binding GeneralInformations}" GridLinesVisibility="None" 
-                      CanUserAddRows="False" CanUserDeleteRows="False" AutoGenerateColumns="False">
+            <DataGrid CellStyle="{DynamicResource DataGridCellStyle1}" ColumnHeaderStyle="{DynamicResource DataGridColumnHeaderStyle1}" 
+                      RowStyle="{DynamicResource DataGridRowStyle1}" Style="{DynamicResource DataGridStyle1}"
+                      Margin="20 30 20 45" Height="450" VerticalAlignment="Top" ItemsSource="{Binding GeneralInformations}"
+                      Visibility="{Binding IsShowAbsorbed, Converter={StaticResource BoolToVisibility}, ConverterParameter=true:false}">
                 <DataGrid.Columns>
                     <DataGridTemplateColumn SortMemberPath="SpellOrItem" IsReadOnly="True" MinWidth="175">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
-                                <TextBlock Text="{Binding Path=SpellOrItem}" TextAlignment="Center" Margin="10" FontSize="14" FontFamily="Comic Sans MS"/>
+                                <TextBlock Text="{Binding Path=SpellOrItem}" TextAlignment="Center" Margin="10" FontSize="12" />
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                         <DataGridTemplateColumn.HeaderTemplate>
                             <DataTemplate>
-                                <TextBlock Text="{loc:Loc Source}" Margin="5" TextAlignment="Center" FontSize="14" FontStyle="Oblique"  FontWeight="Bold"/>
+                                <TextBlock Text="{loc:Loc Source}" Margin="5" TextAlignment="Center" FontSize="12" Foreground="White"/>
                             </DataTemplate>
                         </DataGridTemplateColumn.HeaderTemplate>
                     </DataGridTemplateColumn>
 
-                    <DataGridTemplateColumn SortMemberPath="Value" IsReadOnly="True" MinWidth="150">
+                    <DataGridTemplateColumn SortMemberPath="ActualValue" IsReadOnly="True" MinWidth="150">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
-                                <TextBlock Text="{Binding Path=Value}" TextAlignment="Center" Margin="10" FontSize="14" FontFamily="Comic Sans MS"/>
+                                <TextBlock Text="{Binding Path=ActualValue}" TextAlignment="Center" Margin="10" FontSize="12" />
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                         <DataGridTemplateColumn.HeaderTemplate>
                             <DataTemplate>
-                                <TextBlock Text="{loc:Loc DamageTaken}" Margin="5" TextAlignment="Center" FontSize="14" FontStyle="Oblique"  FontWeight="Bold"/>
+                                <TextBlock Text="{loc:Loc DamageTakenA}" Margin="5" TextAlignment="Center" FontSize="12" Foreground="White"/>
                             </DataTemplate>
                         </DataGridTemplateColumn.HeaderTemplate>
                     </DataGridTemplateColumn>
@@ -103,12 +107,12 @@
                     <DataGridTemplateColumn SortMemberPath="CastNumber" IsReadOnly="True" MinWidth="100">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
-                                <TextBlock Text="{Binding Path=CastNumber}" TextAlignment="Center" Margin="10" FontSize="14" FontFamily="Comic Sans MS"/>
+                                <TextBlock Text="{Binding Path=CastNumber}" TextAlignment="Center" Margin="10" FontSize="12" />
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                         <DataGridTemplateColumn.HeaderTemplate>
                             <DataTemplate>
-                                <TextBlock Text="{loc:Loc CountOfSkills}" Margin="5" TextAlignment="Center" FontSize="14" FontStyle="Oblique"  FontWeight="Bold"/>
+                                <TextBlock Text="{loc:Loc CountOfSkills}" Margin="5" TextAlignment="Center" FontSize="12" Foreground="White"/>
                             </DataTemplate>
                         </DataGridTemplateColumn.HeaderTemplate>
                     </DataGridTemplateColumn>
@@ -116,12 +120,12 @@
                     <DataGridTemplateColumn SortMemberPath="MinValue" IsReadOnly="True" MinWidth="150">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
-                                <TextBlock Text="{Binding Path=MinValue}" TextAlignment="Center" Margin="10" FontSize="14" FontFamily="Comic Sans MS"/>
+                                <TextBlock Text="{Binding Path=MinValue}" TextAlignment="Center" Margin="10" FontSize="12" />
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                         <DataGridTemplateColumn.HeaderTemplate>
                             <DataTemplate>
-                                <TextBlock Text="{loc:Loc MinValue}" Margin="5" TextAlignment="Center" FontSize="14" FontStyle="Oblique"  FontWeight="Bold"/>
+                                <TextBlock Text="{loc:Loc MinValue}" Margin="5" TextAlignment="Center" FontSize="12" Foreground="White"/>
                             </DataTemplate>
                         </DataGridTemplateColumn.HeaderTemplate>
                     </DataGridTemplateColumn>
@@ -129,12 +133,12 @@
                     <DataGridTemplateColumn SortMemberPath="MaxValue" IsReadOnly="True" MinWidth="150">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
-                                <TextBlock Text="{Binding Path=MaxValue}" TextAlignment="Center" Margin="10" FontSize="14" FontFamily="Comic Sans MS"/>
+                                <TextBlock Text="{Binding Path=MaxValue}" TextAlignment="Center" Margin="10" FontSize="12" />
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                         <DataGridTemplateColumn.HeaderTemplate>
                             <DataTemplate>
-                                <TextBlock Text="{loc:Loc MaxValue}" Margin="5" TextAlignment="Center" FontSize="14" FontStyle="Oblique"  FontWeight="Bold"/>
+                                <TextBlock Text="{loc:Loc MaxValue}" Margin="5" TextAlignment="Center" FontSize="12" Foreground="White"/>
                             </DataTemplate>
                         </DataGridTemplateColumn.HeaderTemplate>
                     </DataGridTemplateColumn>
@@ -142,12 +146,12 @@
                     <DataGridTemplateColumn SortMemberPath="AverageValue" IsReadOnly="True" MinWidth="150">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
-                                <TextBlock Text="{Binding Path=AverageValue, StringFormat=00.00}" TextAlignment="Center" Margin="10" FontSize="14" FontFamily="Comic Sans MS"/>
+                                <TextBlock Text="{Binding Path=AverageValue, StringFormat=00.00}" TextAlignment="Center" Margin="10" FontSize="12" />
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                         <DataGridTemplateColumn.HeaderTemplate>
                             <DataTemplate>
-                                <TextBlock Text="{loc:Loc AverageValue}" Margin="5" TextAlignment="Center" FontSize="14" FontStyle="Oblique"  FontWeight="Bold"/>
+                                <TextBlock Text="{loc:Loc AverageValue}" Margin="5" TextAlignment="Center" FontSize="12" Foreground="White"/>
                             </DataTemplate>
                         </DataGridTemplateColumn.HeaderTemplate>
                     </DataGridTemplateColumn>
@@ -155,12 +159,110 @@
                     <DataGridTemplateColumn SortMemberPath="DamageTakenPerSecond" IsReadOnly="True" MinWidth="150">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
-                                <TextBlock Text="{Binding Path=DamageTakenPerSecond, StringFormat=00.00}" TextAlignment="Center" Margin="10" FontSize="14" FontFamily="Comic Sans MS"/>
+                                <TextBlock Text="{Binding Path=DamageTakenPerSecond, StringFormat=00.00}" TextAlignment="Center" Margin="10" FontSize="12" />
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                         <DataGridTemplateColumn.HeaderTemplate>
                             <DataTemplate>
-                                <TextBlock Text="{loc:Loc DamageTakenPerSec}" Margin="5" TextAlignment="Center" FontSize="14" FontStyle="Oblique"  FontWeight="Bold"/>
+                                <TextBlock Text="{loc:Loc DamageTakenPerSec}" Margin="5" TextAlignment="Center" FontSize="12" Foreground="White"/>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.HeaderTemplate>
+                    </DataGridTemplateColumn>
+                </DataGrid.Columns>
+            </DataGrid>
+
+            <DataGrid CellStyle="{DynamicResource DataGridCellStyle1}" ColumnHeaderStyle="{DynamicResource DataGridColumnHeaderStyle1}" 
+                      RowStyle="{DynamicResource DataGridRowStyle1}" Style="{DynamicResource DataGridStyle1}"
+                      Margin="20 30 20 45" Height="450" VerticalAlignment="Top" ItemsSource="{Binding GeneralInformations}"
+                      Visibility="{Binding IsShowAbsorbed, Converter={StaticResource BoolToVisibility}, ConverterParameter=true:true}">
+                <DataGrid.Columns>
+                    <DataGridTemplateColumn SortMemberPath="SpellOrItem" IsReadOnly="True" MinWidth="175">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Path=SpellOrItem}" TextAlignment="Center" Margin="10" FontSize="12" />
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                        <DataGridTemplateColumn.HeaderTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{loc:Loc Source}" Margin="5" TextAlignment="Center" FontSize="12" Foreground="White"/>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.HeaderTemplate>
+                    </DataGridTemplateColumn>
+
+                    <DataGridTemplateColumn SortMemberPath="Value" IsReadOnly="True" MinWidth="150">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Path=Value}" TextAlignment="Center" Margin="10" FontSize="12" />
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                        <DataGridTemplateColumn.HeaderTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{loc:Loc DamageTaken}" Margin="5" TextAlignment="Center" FontSize="12" Foreground="White"/>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.HeaderTemplate>
+                    </DataGridTemplateColumn>
+
+                    <DataGridTemplateColumn SortMemberPath="CastNumber" IsReadOnly="True" MinWidth="100">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Path=CastNumber}" TextAlignment="Center" Margin="10" FontSize="12" />
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                        <DataGridTemplateColumn.HeaderTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{loc:Loc CountOfSkills}" Margin="5" TextAlignment="Center" FontSize="12" Foreground="White"/>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.HeaderTemplate>
+                    </DataGridTemplateColumn>
+
+                    <DataGridTemplateColumn SortMemberPath="MinValue" IsReadOnly="True" MinWidth="150">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Path=MinValue}" TextAlignment="Center" Margin="10" FontSize="12" />
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                        <DataGridTemplateColumn.HeaderTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{loc:Loc MinValue}" Margin="5" TextAlignment="Center" FontSize="12" Foreground="White"/>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.HeaderTemplate>
+                    </DataGridTemplateColumn>
+
+                    <DataGridTemplateColumn SortMemberPath="MaxValue" IsReadOnly="True" MinWidth="150">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Path=MaxValue}" TextAlignment="Center" Margin="10" FontSize="12" />
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                        <DataGridTemplateColumn.HeaderTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{loc:Loc MaxValue}" Margin="5" TextAlignment="Center" FontSize="12" Foreground="White"/>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.HeaderTemplate>
+                    </DataGridTemplateColumn>
+
+                    <DataGridTemplateColumn SortMemberPath="AverageValue" IsReadOnly="True" MinWidth="150">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Path=AverageValue, StringFormat=00.00}" TextAlignment="Center" Margin="10" FontSize="12" />
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                        <DataGridTemplateColumn.HeaderTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{loc:Loc AverageValue}" Margin="5" TextAlignment="Center" FontSize="12" Foreground="White"/>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.HeaderTemplate>
+                    </DataGridTemplateColumn>
+
+                    <DataGridTemplateColumn SortMemberPath="DamageTakenPerSecond" IsReadOnly="True" MinWidth="150">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Path=DamageTakenPerSecond, StringFormat=00.00}" TextAlignment="Center" Margin="10" FontSize="12" />
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                        <DataGridTemplateColumn.HeaderTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{loc:Loc DamageTakenPerSec}" Margin="5" TextAlignment="Center" FontSize="12" Foreground="White"/>
                             </DataTemplate>
                         </DataGridTemplateColumn.HeaderTemplate>
                     </DataGridTemplateColumn>
@@ -171,25 +273,25 @@
         <StackPanel Grid.Row="2" Grid.Column="3" Grid.ColumnSpan="2"
                     Visibility="{Binding ElementName=detailsType, Path=SelectedIndex, Converter={StaticResource IntToVisibility}, ConverterParameter=true:1}">
             <StackPanel Orientation="Horizontal">
-                <CheckBox Margin="25 5" VerticalContentAlignment="Center" Content="{loc:Loc ShowMoreInform}" IsChecked="{Binding IsShowDamageInfrom}"
-                  FontSize="16" VerticalAlignment="Center" FontWeight="SemiBold" />
-                <CheckBox Margin="25 5" VerticalContentAlignment="Center" Content="{loc:Loc ShowFilters}" IsChecked="{Binding IsShowFilters}"
-                  FontSize="16" VerticalAlignment="Center" FontWeight="SemiBold" />
+                <CheckBox Style="{DynamicResource CheckBoxStyle1}" VerticalContentAlignment="Center" 
+                  Content="{loc:Loc ShowMoreInform}" Width="200" Margin="40 0" IsChecked="{Binding IsShowDamageInfrom}" />
+                <CheckBox Style="{DynamicResource CheckBoxStyle1}" VerticalContentAlignment="Center" 
+                  Content="{loc:Loc ShowFilters}" Width="200" Margin="40 0" IsChecked="{Binding IsShowFilters}" />
             </StackPanel>
 
-            <DataGrid Margin="20 10" Background="Transparent" Height="450" GridLinesVisibility="None" 
-                      CanUserAddRows="False" CanUserDeleteRows="False" AutoGenerateColumns="False"
-                      VerticalAlignment="Top" ItemsSource="{Binding DetailsInformations}">
+            <DataGrid CellStyle="{DynamicResource DataGridCellStyle1}" ColumnHeaderStyle="{DynamicResource DataGridColumnHeaderStyle1}" 
+                      RowStyle="{DynamicResource DataGridRowStyle1}" Style="{DynamicResource DataGridStyle1}"
+                      Margin="20 10" Height="450" VerticalAlignment="Top" ItemsSource="{Binding DetailsInformations}">
                 <DataGrid.Columns>
                     <DataGridTemplateColumn SortMemberPath="Time" IsReadOnly="True" MinWidth="150">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
-                                <TextBlock Text="{Binding Path=Time, StringFormat=hh\\:mm\\:ss}" TextAlignment="Center" Margin="10" FontSize="14" FontFamily="Comic Sans MS"/>
+                                <TextBlock Text="{Binding Path=Time, StringFormat=hh\\:mm\\:ss}" TextAlignment="Center" Margin="10" FontSize="12" />
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                         <DataGridTemplateColumn.HeaderTemplate>
                             <DataTemplate>
-                                <TextBlock Text="{loc:Loc Time}" Margin="5" TextAlignment="Center" FontSize="14" FontStyle="Oblique"  FontWeight="Bold"/>
+                                <TextBlock Text="{loc:Loc Time}" Margin="5" TextAlignment="Center" FontSize="12" Foreground="White"/>
                             </DataTemplate>
                         </DataGridTemplateColumn.HeaderTemplate>
                     </DataGridTemplateColumn>
@@ -201,13 +303,13 @@
                                     <Icon:PackIconMaterial Visibility="{Binding Path=IsPeriodicDamage, Converter={StaticResource BoolToVisibility}, ConverterParameter=true}"
                                                    Kind="Delta" Foreground="Orange" Style="{StaticResource menuButtonIcon}" Width="10" Height="10" Margin="0"
                                                    HorizontalAlignment="Center" ToolTip="{loc:Loc PeriodicDamage}"/>
-                                    <TextBlock Text="{Binding Path=Value}" Margin="10" FontSize="14" TextAlignment="Center" FontFamily="Comic Sans MS"/>
+                                    <TextBlock Text="{Binding Path=Value}" Margin="10" FontSize="12" TextAlignment="Center" />
                                 </StackPanel>
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                         <DataGridTemplateColumn.HeaderTemplate>
                             <DataTemplate>
-                                <TextBlock Text="{loc:Loc DamageTaken}" Margin="5" TextAlignment="Center" FontSize="14" FontStyle="Oblique"  FontWeight="Bold"/>
+                                <TextBlock Text="{loc:Loc DamageTaken}" Margin="5" TextAlignment="Center" FontSize="12" Foreground="White"/>
                             </DataTemplate>
                         </DataGridTemplateColumn.HeaderTemplate>
                     </DataGridTemplateColumn>
@@ -242,7 +344,7 @@
                         </DataGridTemplateColumn.CellTemplate>
                         <DataGridTemplateColumn.HeaderTemplate>
                             <DataTemplate>
-                                <TextBlock Text="{loc:Loc Status}" Margin="5" TextAlignment="Center" FontSize="14" FontStyle="Oblique"  FontWeight="Bold"/>
+                                <TextBlock Text="{loc:Loc Status}" Margin="5" TextAlignment="Center" FontSize="12" Foreground="White"/>
                             </DataTemplate>
                         </DataGridTemplateColumn.HeaderTemplate>
                     </DataGridTemplateColumn>
@@ -250,12 +352,12 @@
                     <DataGridTemplateColumn SortMemberPath="FromEnemy" IsReadOnly="True" MinWidth="200">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
-                                <TextBlock Text="{Binding Path=FromEnemy}" Margin="10" FontSize="14" TextAlignment="Center" FontFamily="Comic Sans MS"/>
+                                <TextBlock Text="{Binding Path=FromEnemy}" Margin="10" FontSize="12" TextAlignment="Center" />
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                         <DataGridTemplateColumn.HeaderTemplate>
                             <DataTemplate>
-                                <TextBlock Text="{loc:Loc EnemyOrPerDamage}" Margin="5" TextAlignment="Center" FontSize="14" FontStyle="Oblique"  FontWeight="Bold"/>
+                                <TextBlock Text="{loc:Loc EnemyOrPerDamage}" Margin="5" TextAlignment="Center" FontSize="12" Foreground="White"/>
                             </DataTemplate>
                         </DataGridTemplateColumn.HeaderTemplate>
                     </DataGridTemplateColumn>
@@ -263,12 +365,12 @@
                     <DataGridTemplateColumn SortMemberPath="ToPlayer" IsReadOnly="True" MinWidth="200">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
-                                <TextBlock Text="{Binding Path=ToPlayer}" Margin="10" FontSize="14" TextAlignment="Center" FontFamily="Comic Sans MS"/>
+                                <TextBlock Text="{Binding Path=ToPlayer}" Margin="10" FontSize="12" TextAlignment="Center" />
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                         <DataGridTemplateColumn.HeaderTemplate>
                             <DataTemplate>
-                                <TextBlock Text="{loc:Loc Player}" Margin="5" TextAlignment="Center" FontSize="14" FontStyle="Oblique"  FontWeight="Bold"/>
+                                <TextBlock Text="{loc:Loc Player}" Margin="5" TextAlignment="Center" FontSize="12" Foreground="White"/>
                             </DataTemplate>
                         </DataGridTemplateColumn.HeaderTemplate>
                     </DataGridTemplateColumn>
@@ -276,12 +378,12 @@
                     <DataGridTemplateColumn SortMemberPath="SpellOrItem" IsReadOnly="True" MinWidth="200">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
-                                <TextBlock Text="{Binding Path=SpellOrItem}" Margin="10" FontSize="14" FontFamily="Comic Sans MS"/>
+                                <TextBlock Text="{Binding Path=SpellOrItem}" Margin="10" FontSize="12" />
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                         <DataGridTemplateColumn.HeaderTemplate>
                             <DataTemplate>
-                                <TextBlock Text="{loc:Loc Source}" Margin="5" TextAlignment="Center" FontSize="14" FontStyle="Oblique"  FontWeight="Bold"/>
+                                <TextBlock Text="{loc:Loc Source}" Margin="5" TextAlignment="Center" FontSize="12" Foreground="White"/>
                             </DataTemplate>
                         </DataGridTemplateColumn.HeaderTemplate>
                     </DataGridTemplateColumn>
@@ -323,35 +425,40 @@
             </DataGrid>
         </StackPanel>
 
-        <StackPanel Grid.Column="2" Grid.Row="2" VerticalAlignment="Bottom" HorizontalAlignment="Left" Margin="0 50"
+        <StackPanel Grid.Column="2" Grid.Row="3" Margin="0 -15" HorizontalAlignment="Left">
+            <CheckBox Style="{DynamicResource CheckBoxStyle1}" VerticalContentAlignment="Center" 
+                  Content="Show absorbed damage" Width="200" Margin="40 0" IsChecked="{Binding IsShowAbsorbed}" />
+        </StackPanel>
+
+        <StackPanel Grid.Column="2" Grid.Row="3" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="-30 0"
                     Orientation="Horizontal">
-            <TextBlock Margin="50 0" HorizontalAlignment="Center" VerticalAlignment="Center"
+            <TextBlock Margin="50 0" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="White"
                    Text="{loc:Loc Total}" FontSize="16" TextAlignment="Center"/>
-            <TextBlock Margin="50 0" HorizontalAlignment="Center" VerticalAlignment="Center"
+            <TextBlock Margin="50 0" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="White"
                    Text="{Binding TotalValue}" FontSize="18" TextAlignment="Center" FontWeight="Bold"/>
         </StackPanel>
         
-        <StackPanel Margin="5 -60" Grid.Row="3" Grid.Column="3" Orientation="Horizontal"
+        <StackPanel Margin="0 -85" Grid.Row="4" Grid.Column="3" Orientation="Horizontal" HorizontalAlignment="Right"
                     Visibility="{Binding IsShowFilters, Converter={StaticResource BoolToVisibility}, ConverterParameter=true}">
             <StackPanel Margin="20" MinWidth="400">
-                <CheckBox Margin="25 5" VerticalContentAlignment="Center" Content="{loc:Loc ShowDodge}" IsChecked="{Binding IsShowDodge}"
-                  FontSize="14" VerticalAlignment="Center" FontWeight="SemiBold" />
-                <CheckBox Margin="25 5" VerticalContentAlignment="Center" Content="{loc:Loc ShowParry}" IsChecked="{Binding IsShowParry}"
-                  FontSize="14" VerticalAlignment="Center" FontWeight="SemiBold" />
-                <CheckBox Margin="25 5" VerticalContentAlignment="Center" Content="{loc:Loc ShowMiss}" IsChecked="{Binding IsShowMiss}"
-                  FontSize="14" VerticalAlignment="Center" FontWeight="SemiBold" />
+                <CheckBox Style="{DynamicResource CheckBoxStyle1}" VerticalContentAlignment="Center" 
+                  Content="{loc:Loc ShowDodge}" Width="125" Margin="0 5" IsChecked="{Binding IsShowDodge}" />
+                <CheckBox Style="{DynamicResource CheckBoxStyle1}" VerticalContentAlignment="Center" 
+                  Content="{loc:Loc ShowParry}" Width="125" Margin="0 5" IsChecked="{Binding IsShowParry}" />
+                <CheckBox Style="{DynamicResource CheckBoxStyle1}" VerticalContentAlignment="Center" 
+                  Content="{loc:Loc ShowMiss}" Width="125" Margin="0 5" IsChecked="{Binding IsShowMiss}" />
             </StackPanel>
-            <StackPanel Margin="-50 20" MinWidth="400">
-                <CheckBox Margin="25 5" VerticalContentAlignment="Center" Content="{loc:Loc ShowResist}" IsChecked="{Binding IsShowResist}"
-                  FontSize="14" VerticalAlignment="Center" FontWeight="SemiBold" />
-                <CheckBox Margin="25 5" VerticalContentAlignment="Center" Content="{loc:Loc ShowImmune}" IsChecked="{Binding IsShowImmune}"
-                  FontSize="14" VerticalAlignment="Center" FontWeight="SemiBold" />
-                <CheckBox Margin="25 5" VerticalContentAlignment="Center" Content="{loc:Loc ShowCrushingDamage}" IsChecked="{Binding IsShowCrushing}"
-                  FontSize="14" VerticalAlignment="Center" FontWeight="SemiBold" />
+            <StackPanel Margin="-125 20" MinWidth="400">
+                <CheckBox Style="{DynamicResource CheckBoxStyle1}" VerticalContentAlignment="Center" 
+                  Content="{loc:Loc ShowResist}" Width="150" Margin="0 5" IsChecked="{Binding IsShowResist}" />
+                <CheckBox Style="{DynamicResource CheckBoxStyle1}" VerticalContentAlignment="Center" 
+                  Content="{loc:Loc ShowImmune}" Width="150" Margin="0 5" IsChecked="{Binding IsShowImmune}" />
+                <CheckBox Style="{DynamicResource CheckBoxStyle1}" VerticalContentAlignment="Center" 
+                  Content="{loc:Loc ShowCrushingDamage}" Width="150" Margin="0 5" IsChecked="{Binding IsShowCrushing}" />
             </StackPanel>
             <StackPanel Margin="-10 20" MinWidth="400">
-                <CheckBox Margin="25 5" VerticalContentAlignment="Center" Content="{loc:Loc ShowAbsorption}" IsChecked="{Binding IsShowAbsorb}"
-                  FontSize="14" VerticalAlignment="Center" FontWeight="SemiBold" />
+                <CheckBox Style="{DynamicResource CheckBoxStyle1}" VerticalContentAlignment="Center" 
+                  Content="{loc:Loc ShowAbsorption}" Width="150" Margin="0 5" IsChecked="{Binding IsShowAbsorb}" />
             </StackPanel>
         </StackPanel>
     </Grid>
