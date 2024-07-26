@@ -57,7 +57,7 @@ const useCreateGroupChatMessage = (messageInput, chat, meId, groupChatUsers, mes
 
     const increaseGroupChatMessagesCountAsync = async () => {
         for (let i = 0; i < groupChatUsers.length; i++) {
-            if (groupChatUsers[i].customerId === meId) {
+            if (groupChatUsers[i].appUserId === meId) {
                 continue;
             }
 
@@ -73,7 +73,7 @@ const useCreateGroupChatMessage = (messageInput, chat, meId, groupChatUsers, mes
 
     const createUnreadMessageAsync = async (messageId) => {
         for (let i = 0; i < groupChatUsers.length; i++) {
-            if (groupChatUsers[i].customerId === meId) {
+            if (groupChatUsers[i].appUserId === meId) {
                 continue;
             }
 
@@ -107,26 +107,29 @@ const useCreateGroupChatMessage = (messageInput, chat, meId, groupChatUsers, mes
         clearTimeout(emptyMessageTimeout);
         setIsEmptyMessage(false);
 
-        if (messageInput.current.value.length === 0) {
-            setIsEmptyMessage(true);
-            const timeout = setTimeout(() => {
-                setIsEmptyMessage(false);
-            }, emptyMessageTimeoutNotification);
+        const message = messageInput.current.value;
+        messageInput.current.value = "";
 
-            setEmptyMessageTimeout(timeout);
+        if (message.length !== 0) {
+            await createMessageAsync(message, messageType["default"]);
 
             return;
         }
 
-        await createMessageAsync(messageInput.current.value, messageType["default"]);
-        messageInput.current.value = "";
+        setIsEmptyMessage(true);
+        const timeout = setTimeout(() => {
+            setIsEmptyMessage(false);
+        }, emptyMessageTimeoutNotification);
+
+        setEmptyMessageTimeout(timeout);
     }
 
     const sendMessageByKeyAsync = async (e) => {
         clearTimeout(emptyMessageTimeout);
         setIsEmptyMessage(false);
 
-        if (messageInput.current.value.length === 0 && e.code === "Enter") {
+        const message = messageInput.current.value;
+        if (message.length === 0 && e.code === "Enter") {
             setIsEmptyMessage(true);
             const timeout = setTimeout(() => {
                 setIsEmptyMessage(false);
@@ -137,15 +140,13 @@ const useCreateGroupChatMessage = (messageInput, chat, meId, groupChatUsers, mes
             return;
         }
 
-        if (messageInput.current.value.length >= 0 && e.code !== "Enter") {
+        if (message.length >= 0 && e.code !== "Enter") {
             return;
         }
 
-        await createMessageAsync(messageInput.current.value, messageType["default"]);
+        messageInput.current.value = "";
 
-        if (messageInput.current !== null) {
-            messageInput.current.value = "";
-        }
+        await createMessageAsync(message, messageType["default"]);
     }
 
     return {

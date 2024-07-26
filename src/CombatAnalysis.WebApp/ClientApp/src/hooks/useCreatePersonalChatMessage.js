@@ -43,28 +43,29 @@ const useCreatePersonalChatMessage = (messageInput, chat, meId, companionId) => 
         clearTimeout(emptyMessageTimeout);
         setIsEmptyMessage(false);
 
-        if (messageInput?.current.value.length === 0) {
-            setIsEmptyMessage(true);
-            const timeout = setTimeout(() => {
-                setIsEmptyMessage(false);
-            }, emptyMessageTimeoutNotification);
+        const message = messageInput.current.value;
+        messageInput.current.value = "";
 
-            setEmptyMessageTimeout(timeout);
+        if (message.length !== 0) {
+            await createChatMessageAsync(message);
 
             return;
         }
 
-        await createChatMessageAsync(messageInput?.current.value);
-        if (messageInput?.current !== null) {
-            messageInput.current.value = "";
-        }
+        setIsEmptyMessage(true);
+        const timeout = setTimeout(() => {
+            setIsEmptyMessage(false);
+        }, emptyMessageTimeoutNotification);
+
+        setEmptyMessageTimeout(timeout);
     }
 
     const sendMessageByKeyAsync = async (e) => {
         clearTimeout(emptyMessageTimeout);
         setIsEmptyMessage(false);
 
-        if (messageInput?.current.value.length === 0 && e.code === "Enter") {
+        const message = messageInput.current.value;
+        if (message.length === 0 && e.code === "Enter") {
             setIsEmptyMessage(true);
             const timeout = setTimeout(() => {
                 setIsEmptyMessage(false);
@@ -75,12 +76,13 @@ const useCreatePersonalChatMessage = (messageInput, chat, meId, companionId) => 
             return;
         }
 
-        if (messageInput?.current.value.length >= 0 && e.code !== "Enter") {
+        if (message.length >= 0 && e.code !== "Enter") {
             return;
         }
 
-        await createChatMessageAsync(messageInput?.current.value);
         messageInput.current.value = "";
+
+        await createChatMessageAsync(message);
     }
 
     const createChatMessageAsync = async (message) => {
