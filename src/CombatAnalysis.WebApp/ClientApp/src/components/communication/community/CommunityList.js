@@ -3,12 +3,12 @@ import { useSearchByUserIdAsyncQuery } from '../../../store/api/communication/co
 import CommunityItem from './CommunityItem';
 
 const CommunityList = ({ filterContent, communities }) => {
-    const customer = useSelector((state) => state.customer.value);
+    const user = useSelector((state) => state.user.value);
 
-    const { data: userCommunities, isLoading } = useSearchByUserIdAsyncQuery(customer?.id);
+    const { data: userCommunities, isLoading } = useSearchByUserIdAsyncQuery(user?.id);
 
     const anotherCommunity = (community) => {
-        if (customer == null) {
+        if (user == null) {
             return true;
         }
 
@@ -27,7 +27,7 @@ const CommunityList = ({ filterContent, communities }) => {
                     <li key={item.id} className="community">
                         <CommunityItem
                             id={item.id}
-                            me={customer}
+                            me={user}
                         />
                     </li>
                 ))
