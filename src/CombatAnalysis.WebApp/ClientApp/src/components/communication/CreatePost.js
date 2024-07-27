@@ -53,28 +53,32 @@ const CreatePost = ({ user, owner, postTypeName, createTypeOfPostFunc, t }) => {
     return (
         <div className="create-post">
             <div className="create-post__tool">
-                <div className="open-create-post container" style={{ display: !showCreatePost ? "flex" : "none" }}>
-                    <div className="btn-shadow" title={t("NewPost")} onClick={() => setShowCreatePost((item) => !item)}>
-                        <FontAwesomeIcon
-                            icon={faPlus}
-                        />
-                        <div>{t("Create")}</div>
+                {!showCreatePost &&
+                    <div className="open-create-post container">
+                        <div className="btn-shadow" title={t("NewPost")} onClick={() => setShowCreatePost((item) => !item)}>
+                            <FontAwesomeIcon
+                                icon={faPlus}
+                            />
+                            <div>{t("Create")}</div>
+                        </div>
                     </div>
-                </div>
-                <div style={{ display: showCreatePost ? "flex" : "none" }} className="finish-create-post">
-                    <div className={`btn-shadow${postContent === "" ? "_disabled" : ""}`} onClick={postContent === "" ? null : async () => await createPostAsync()}>
-                        <FontAwesomeIcon
-                            icon={faCheck}
-                        />
-                        <div>{t("Save")}</div>
+                }
+                {showCreatePost &&
+                    <div className="finish-create-post">
+                        <div className={`btn-shadow${postContent === "" ? "_disabled" : ""}`} title={t("Save")} onClick={postContent === "" ? null : async () => await createPostAsync()}>
+                            <FontAwesomeIcon
+                                icon={faCheck}
+                            />
+                            <div>{t("Save")}</div>
+                        </div>
+                        <div className="btn-shadow" title={t("Cancel")} onClick={() => setShowCreatePost((item) => !item)}>
+                            <FontAwesomeIcon
+                                icon={faBan}
+                            />
+                            <div>{t("Cancel")}</div>
+                        </div>
                     </div>
-                    <div className="btn-shadow" onClick={() => setShowCreatePost((item) => !item)}>
-                        <FontAwesomeIcon
-                            icon={faBan}
-                        />
-                        <div>{t("Cancel")}</div>
-                    </div>
-                </div>
+                }
             </div>
             {showCreatePost &&
                 <div className="create-post__input-area">
@@ -83,7 +87,7 @@ const CreatePost = ({ user, owner, postTypeName, createTypeOfPostFunc, t }) => {
                         setPostTags={setPostTags}
                         t={t}
                     />
-                    <textarea className="form-control" rows="5" onChange={postContentHandle} />
+                    <textarea className="form-control" rows="5" title={t("PostContent")} onChange={postContentHandle} />
                 </div>
             }
         </div>

@@ -75,7 +75,7 @@ describe('AuthorizationCallback Component', () => {
 
     test('should navigate to home page when authorization code is exchanged', async () => {
         const mockResponse = { data: {} };
-        mockStateValidateQuery.mockResolvedValueOnce(mockResponse);
+        mockStateValidateQuery.mockResolvedValue(mockResponse);
         mockAuthorizationCodeExchangeQuery.mockResolvedValue(mockResponse);
 
         render(<AuthorizationCallback />);

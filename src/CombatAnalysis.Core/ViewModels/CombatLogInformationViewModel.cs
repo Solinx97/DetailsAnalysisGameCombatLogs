@@ -508,6 +508,7 @@ public class CombatLogInformationViewModel : ParentTemplate, CombatParser.Interf
         if (!combatsAreUploaded)
         {
             BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, nameof(BasicTemplateViewModel.ResponseStatus), LoadingStatus.Failed);
+
             return;
         }
 
