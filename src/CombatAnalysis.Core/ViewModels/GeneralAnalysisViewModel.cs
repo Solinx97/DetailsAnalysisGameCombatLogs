@@ -62,7 +62,7 @@ public class GeneralAnalysisViewModel : ParentTemplate<Tuple<List<CombatModel>, 
         _combatParserAPIService = new CombatParserAPIService(httpClient, logger, memoryCache);
 
         RepeatSaveCommand = new MvxAsyncCommand(RepeatSaveCombatDataDetailsAsync);
-        RefreshCommand = new MvxCommand(Refresh);
+        RefreshCommand = new MvxAsyncCommand(RefreshAsync);
         ShowDetailsCommand = new MvxCommand(ShowDetails);
         SortCommand = new MvxCommand<int>(CombatsSort);
 
@@ -84,7 +84,7 @@ public class GeneralAnalysisViewModel : ParentTemplate<Tuple<List<CombatModel>, 
 
     public IMvxAsyncCommand RepeatSaveCommand { get; set; }
 
-    public IMvxCommand RefreshCommand { get; set; }
+    public IMvxAsyncCommand RefreshCommand { get; set; }
 
     public IMvxCommand LastCombatInfromationStep { get; set; }
 
@@ -505,7 +505,7 @@ public class GeneralAnalysisViewModel : ParentTemplate<Tuple<List<CombatModel>, 
         ResponseStatus = status;
     }
 
-    public void Refresh()
+    public async Task RefreshAsync()
     {
         var combatLog = ((BasicTemplateViewModel)BasicTemplate).CombatLog;
         if (combatLog == null || combatLog.Id == 0)
@@ -513,7 +513,19 @@ public class GeneralAnalysisViewModel : ParentTemplate<Tuple<List<CombatModel>, 
             return;
         }
 
-        Combats = new ObservableCollection<CombatModel>(Combats);
+        var loadedCombats = await _combatParserAPIService.LoadCombatsAsync(combatLog.Id);
+        if (loadedCombats == null || !loadedCombats.Any())
+        {
+            return;
+        }
+
+        foreach (var item in loadedCombats)
+        {
+            var players = await _combatParserAPIService.LoadCombatPlayersAsync(item.Id);
+            item.Players = players.ToList();
+        }
+
+        Combats = new ObservableCollection<CombatModel>(loadedCombats);
     }
 
     public void CombatsSort(int sortNumber)

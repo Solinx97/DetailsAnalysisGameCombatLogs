@@ -4,7 +4,7 @@ values ('Dungeon #1', 'Boss #1', 3000, 2500, 4000, 500, 0, 0, 'TRUE', '09.26.202
 
 -- CombatLog
 insert into dbo.CombatLog
-values ('Combat #1', '09.27.2022 10:15:00', 'TRUE')
+values ('Combat #1', '09.27.2022 10:15:00', 1, 2, 'TRUE')
 
 -- CombatLogByUser
 insert into dbo.Combat

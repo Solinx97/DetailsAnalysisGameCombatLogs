@@ -1,4 +1,4 @@
-﻿CREATE PROCEDURE UpdateCombatLogByUser (@Id INT,@CombatLogId INT,@UserId NVARCHAR (MAX),@PersonalLogType INT)
+﻿CREATE PROCEDURE UpdateCombatLogByUser (@Id INT,@PersonalLogType INT,@NumberReadyCombats INT,@CombatsInQueue INT, @IsReady BIT,@CombatLogId INT, @AppUserId NVARCHAR (MAX))
 	AS UPDATE CombatLogByUser
-	SET CombatLogId = @CombatLogId,UserId = @UserId,PersonalLogType = @PersonalLogType
+	SET PersonalLogType = @PersonalLogType,NumberReadyCombats = @NumberReadyCombats,CombatsInQueue = @CombatsInQueue,IsReady = @IsReady,CombatLogId = @CombatLogId,AppUserId = @AppUserId
 	WHERE Id = @Id

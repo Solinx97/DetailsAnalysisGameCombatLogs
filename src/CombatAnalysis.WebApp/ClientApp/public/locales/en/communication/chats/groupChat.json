@@ -16,5 +16,6 @@
   "Cancel": "Cancel",
   "Rules": "Rules",
   "SaveChanges": "Save",
-  "Remove": "Remove"
+  "Remove": "Remove",
+  "CanNotSendEmpty": "You can not send empty message"
 }

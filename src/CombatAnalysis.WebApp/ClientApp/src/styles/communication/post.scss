@@ -17,6 +17,7 @@
         width: 75%;
 
         .open-create-post, .finish-create-post {
+            display: flex;
             gap: 20px;
 
             button {

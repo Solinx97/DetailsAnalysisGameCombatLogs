@@ -1,8 +1,8 @@
 import '@testing-library/jest-dom';
 import { fireEvent, render } from '@testing-library/react';
 import React from 'react';
-import AddTagsToPost from './AddTagsToPost';
 import { useTranslation } from 'react-i18next';
+import AddTagsToPost from './AddTagsToPost';
 
 jest.mock('react-i18next', () => ({
     useTranslation: () => ({
@@ -18,6 +18,8 @@ jest.mock('react-i18next', () => ({
 }));
 
 describe('AddTagsToPost Component', () => {
+    const { t } = useTranslation();
+
     afterEach(() => {
         jest.clearAllMocks();
     });
@@ -30,7 +32,7 @@ describe('AddTagsToPost Component', () => {
             <AddTagsToPost
                 postTags={postTags}
                 setPostTags={setPostTags}
-                t={jest.fn()}
+                t={t}
             />
         );
 
@@ -49,7 +51,7 @@ describe('AddTagsToPost Component', () => {
             <AddTagsToPost
                 postTags={postTags}
                 setPostTags={setPostTags}
-                t={jest.fn()}
+                t={t}
             />
         );
 
@@ -72,7 +74,7 @@ describe('AddTagsToPost Component', () => {
             <AddTagsToPost
                 postTags={postTags}
                 setPostTags={setPostTags}
-                t={jest.fn()}
+                t={t}
             />
         );
 
@@ -95,7 +97,7 @@ describe('AddTagsToPost Component', () => {
             <AddTagsToPost
                 postTags={postTags}
                 setPostTags={setPostTags}
-                t={jest.fn()}
+                t={t}
             />
         );
 
