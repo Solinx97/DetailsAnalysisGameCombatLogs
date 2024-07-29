@@ -27,5 +27,7 @@
   "Update": "Update",
   "Apply": "Apply",
   "NextStep": "Next step",
-  "PrevioslyStep": "Previosly step"
+  "PrevioslyStep": "Previosly step",
+  "CreateCommunity": "Create community",
+  "NameDescriptionRequired": "Name and description required"
 }

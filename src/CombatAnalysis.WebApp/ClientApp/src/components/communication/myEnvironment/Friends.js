@@ -1,10 +1,10 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useFriendSearchMyFriendsQuery } from '../../../store/api/communication/myEnvironment/Friend.api';
+import Loading from '../../Loading';
 import User from '../User';
 
 import '../../../styles/communication/myEnvironment/friends.scss';
-import Loading from '../../Loading';
 
 const Friends = ({ customer, requestsToConnect, allowRemoveFriend }) => {
     const { t } = useTranslation("communication/myEnvironment/friends");
@@ -34,7 +34,7 @@ const Friends = ({ customer, requestsToConnect, allowRemoveFriend }) => {
                             />
                         </li>
                     ))
-                    : <div className="friends__empty">Empty</div>
+                    : <div className="friends__empty">{t("Empty")}</div>
                 }
             </ul>
             {userInformation}

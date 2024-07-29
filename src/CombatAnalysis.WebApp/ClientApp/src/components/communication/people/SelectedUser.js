@@ -6,12 +6,12 @@ import { useLazyGetUserByIdQuery } from '../../../store/api/Account.api';
 import { useLazyUserPostSearchByUserIdQuery } from '../../../store/api/ChatApi';
 import { useLazyGetPostByIdQuery } from '../../../store/api/communication/Post.api';
 import CommunicationMenu from "../CommunicationMenu";
+import Post from '../Post';
 import Friends from '../myEnvironment/Friends';
 import SelectedUserCommunities from './SelectedUserCommunities';
 import SelectedUserProfile from './SelectedUserProfile';
 
 import '../../../styles/communication/people/selectedUser.scss';
-import Post from '../Post';
 
 const SelectedUser = () => {
     const { t } = useTranslation("communication/people/user");
@@ -36,14 +36,14 @@ const SelectedUser = () => {
             return;
         }
 
-        const getCustomer = async () => {
-            await getCustomerByIdAsync();
+        const getUser = async () => {
+            await getUserByIdAsync();
         }
 
-        getCustomer();
+        getUser();
     }, [personId])
 
-    const getCustomerByIdAsync = async () => {
+    const getUserByIdAsync = async () => {
         const user = await getUserById(personId);
 
         if (user.data !== undefined) {
@@ -180,15 +180,18 @@ const SelectedUser = () => {
                         }
                         {currentMenuItem === 1 &&
                             <ul className="posts">
-                                {allPosts?.map(post => (
-                                    <li key={post.id}>
-                                        <Post
-                                            customer={person}
-                                            data={post}
-                                            deletePostAsync={null}
-                                        />
-                                    </li>
-                                ))}
+                                {allPosts.length === 0
+                                    ? <div>{t("Empty")}</div>
+                                    : allPosts?.map(post => (
+                                        <li key={post.id}>
+                                            <Post
+                                                customer={person}
+                                                data={post}
+                                                deletePostAsync={null}
+                                            />
+                                        </li>
+                                    ))
+                                }
                             </ul>
                         }
                         {currentMenuItem === 2 &&
@@ -198,12 +201,13 @@ const SelectedUser = () => {
                                 allowRemoveFriend={false}
                             />
                         }
+                        {currentMenuItem === 3 &&
+                            <SelectedUserCommunities
+                                user={person}
+                                t={t}
+                            />
+                        }
                     </div>
-                    {currentMenuItem === 3 &&
-                        <SelectedUserCommunities
-                            customer={person}
-                        />
-                    }
                 </div>
             </div>
         </div>

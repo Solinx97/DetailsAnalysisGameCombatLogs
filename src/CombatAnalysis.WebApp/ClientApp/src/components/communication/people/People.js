@@ -58,8 +58,7 @@ const People = () => {
                     <div className="people__title">{t("People")}</div>
                 </div>
                 <ul className="people__cards">
-                    {
-                        people?.filter(peopleListFilter).map((item) => (
+                    {people?.filter(peopleListFilter).map((item) => (
                             <li key={item.id}>
                                 <PeopleItem
                                     me={me}

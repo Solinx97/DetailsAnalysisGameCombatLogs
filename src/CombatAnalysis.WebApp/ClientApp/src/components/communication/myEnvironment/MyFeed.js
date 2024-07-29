@@ -10,7 +10,7 @@ import Post from '../Post';
 
 const MyFeed = () => {
     const { t } = useTranslation("communication/feed");
-    const customer = useSelector((state) => state.customer.value);
+    const user = useSelector((state) => state.user.value);
 
     const [getUserPosts] = useLazyUserPostSearchByUserIdQuery();
     const [getPostById] = useLazyGetPostByIdQuery();
@@ -22,7 +22,7 @@ const MyFeed = () => {
     const [allPosts, setAllPosts] = useState([]);
 
     useEffect(() => {
-        if (customer === null) {
+        if (user === null) {
             return;
         }
 
@@ -31,10 +31,10 @@ const MyFeed = () => {
         }
 
         getAllPosts();
-    }, [customer])
+    }, [user])
 
     const getAllPostsAsync = async () => {
-        const userPosts = await getUserPosts(customer.id);
+        const userPosts = await getUserPosts(user.id);
 
         if (userPosts.data !== undefined) {
             const userPersonalPosts = await getUserPostsAsync(userPosts.data);
@@ -58,7 +58,7 @@ const MyFeed = () => {
 
     const createUserPostAsync = async (postId) => {
         const newUserPost = {
-            userId: customer?.id,
+            userId: user?.id,
             postId: postId
         }
 
@@ -78,15 +78,15 @@ const MyFeed = () => {
         }
     }
 
-    if (customer === null) {
+    if (user === null) {
         return (<Loading />);
     }
 
     return (
         <div>
             <CreatePost
-                customer={customer}
-                owner={customer?.username}
+                customer={user}
+                owner={user?.username}
                 postTypeName="user"
                 createTypeOfPostFunc={createUserPostAsync}
                 t={t}
@@ -95,7 +95,7 @@ const MyFeed = () => {
                 {allPosts?.map(post => (
                     <li className="posts__item" key={post.id}>
                         <Post
-                            customer={customer}
+                            customer={user}
                             data={post}
                             deletePostAsync={async () => await removeUserPostAsync(post.id)}
                         />

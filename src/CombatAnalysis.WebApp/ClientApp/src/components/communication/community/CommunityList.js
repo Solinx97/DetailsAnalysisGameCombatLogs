@@ -17,12 +17,12 @@ const CommunityList = ({ filterContent, communities }) => {
     }
 
     if (isLoading) {
-        return <></>;
+        return <div>Loading...</div>;
     }
 
     return (
         <ul>
-            {communities?.map((item) => (
+            {communities?.filter(community => community.policyType === 0).map((item) => (
                     (anotherCommunity(item) && item.name.toLowerCase().startsWith(filterContent.toLowerCase())) &&
                     <li key={item.id} className="community">
                         <CommunityItem

@@ -49,6 +49,8 @@ const User = ({ me, targetUserId, setUserInformation, allowRemoveFriend, actionA
 
     const goToUser = () => {
         navigate(`/user?id=${targetUserId}`);
+
+        window.location.reload();
     }
 
     if (isLoading) {

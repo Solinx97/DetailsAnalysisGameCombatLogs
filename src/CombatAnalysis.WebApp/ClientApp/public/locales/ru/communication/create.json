@@ -27,5 +27,7 @@
   "Update": "Обновить",
   "Apply": "Применить",
   "NextStep": "Следующий шаг",
-  "PrevioslyStep": "Предыдущий шаг"
+  "PrevioslyStep": "Предыдущий шаг",
+  "CreateCommunity": "Создать сообщество",
+  "NameDescriptionRequired": "Название и описание обязательны"
 }

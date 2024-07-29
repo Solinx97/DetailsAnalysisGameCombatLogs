@@ -71,6 +71,7 @@ const CreateCommunity = () => {
 
         if (index === 3) {
             setCanFinishCreate(true);
+
             return;
         }
     }
@@ -85,7 +86,7 @@ const CreateCommunity = () => {
                 currentMenuItem={4}
             />
             <div className="communication__content create-community box-shadow">
-                <div>Create community</div>
+                <div>{t("CreateCommunity")}</div>
                 <CreateGroupChatMenu
                     passedItemIndex={passedItemIndex}
                     seItemIndex={seItemIndex}
@@ -149,7 +150,7 @@ const CreateCommunity = () => {
                     </div>
                 </div>
                 {((name.length === 0 || description.length === 0) && passedItemIndex > 0) &&
-                    <div className="chat-name-required">Community name and description required!</div>
+                    <div className="chat-name-required">{t("NameDescriptionRequired")}</div>
                 }
                 <div className="actions">
                     {(canFinishCreate && name.length > 0 && description.length > 0) &&
