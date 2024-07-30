@@ -125,6 +125,8 @@ public class DetailsSpecificalCombatViewModel : ParentTemplate<CombatModel>
 
     #region Properties
 
+    public bool ShowEffeciency { get; set; }
+
     public List<CombatPlayerModel> PlayersCombat
     {
         get { return _playersCombat; }
@@ -679,6 +681,8 @@ public class DetailsSpecificalCombatViewModel : ParentTemplate<CombatModel>
         PlayersCombat = parameter.Players;
         Combat = parameter;
         _mainPlayersCombat = parameter.Players;
+
+        ShowEffeciency = PlayersCombat.Any(x => x.PlayerParseInfo != null);
 
         SelectedPlayer = PlayersCombat[0];
 
