@@ -59,7 +59,7 @@
             <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Text="{loc:Loc Title}" Foreground="White"
                        Margin="50 0" Style="{StaticResource titleText}"/>
             <StackPanel Orientation="Horizontal">
-                <Icon:PackIconMaterial Kind="Skull" Width="13" HorizontalAlignment="Center" Margin="10 0" VerticalAlignment="Center"/>
+                <Icon:PackIconMaterial Kind="Skull" Width="13" HorizontalAlignment="Center" Margin="10 0" VerticalAlignment="Center" Foreground="Red"/>
                 <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Text="{Binding Combat.Name}" FontSize="16" FontWeight="Bold" Foreground="White"/>
             </StackPanel>
         </StackPanel>
@@ -322,13 +322,13 @@
                                     <Grid>
                                         <ProgressBar Height="25" Width="175" Name="pbStatus" Value="{Binding Path=DamageDone}" Minimum="0"
                                          Maximum="{Binding ElementName=maxDamageDone, Path=Value}" Foreground="Blue" VerticalAlignment="Center"/>
-                                        <TextBlock Text="{Binding Path=DamageDone}" HorizontalAlignment="Center" FontSize="12" VerticalAlignment="Center"/>
+                                        <TextBlock Text="{Binding Path=DamageDone}" HorizontalAlignment="Center" FontSize="12" VerticalAlignment="Center" Foreground="Black"/>
                                     </Grid>
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
                             <DataGridTemplateColumn.HeaderTemplate>
                                 <DataTemplate>
-                                    <TextBlock Text="{loc:Loc Damage}" TextAlignment="Center" FontSize="12" Foreground="White" />
+                                    <TextBlock Text="{loc:Loc Damage}" TextAlignment="Center" FontSize="12"/>
                                 </DataTemplate>
                             </DataGridTemplateColumn.HeaderTemplate>
                         </DataGridTemplateColumn>
@@ -339,7 +339,7 @@
                                     <Grid>
                                         <ProgressBar Height="25" Margin="10" Width="175" Name="pbStatus" Value="{Binding Path=HealDone}" Minimum="0"
                                          Maximum="{Binding ElementName=maxHealDone, Path=Value}" Foreground="Green" />
-                                        <TextBlock Text="{Binding Path=HealDone}" HorizontalAlignment="Center" FontSize="12" VerticalAlignment="Center" />
+                                        <TextBlock Text="{Binding Path=HealDone}" HorizontalAlignment="Center" FontSize="12" VerticalAlignment="Center" Foreground="Black" />
                                     </Grid>
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
@@ -356,7 +356,7 @@
                                     <Grid>
                                         <ProgressBar Height="25" Margin="10" Width="175" Name="pbStatus" Value="{Binding Path=EnergyRecovery}" Minimum="0"
                                          Maximum="{Binding ElementName=maxEnergyRecovery, Path=Value}" Foreground="Brown" />
-                                        <TextBlock Text="{Binding Path=EnergyRecovery}" HorizontalAlignment="Center" FontSize="12" VerticalAlignment="Center" />
+                                        <TextBlock Text="{Binding Path=EnergyRecovery}" HorizontalAlignment="Center" FontSize="12" VerticalAlignment="Center" Foreground="Black" />
                                     </Grid>
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
@@ -377,7 +377,7 @@
                             </DataGridTemplateColumn.CellTemplate>
                             <DataGridTemplateColumn.HeaderTemplate>
                                 <DataTemplate>
-                                    <TextBlock Text="{loc:Loc Buffs}" Margin="5" TextAlignment="Center" FontSize="12" Foreground="White"/>
+                                    <TextBlock Text="{loc:Loc Buffs}" Margin="5" TextAlignment="Center" FontSize="12" Foreground="White" />
                                 </DataTemplate>
                             </DataGridTemplateColumn.HeaderTemplate>
                         </DataGridTemplateColumn>

@@ -129,9 +129,6 @@
   <data name="CloseWindow" xml:space="preserve">
     <value>Close a window</value>
   </data>
-  <data name="Combat" xml:space="preserve">
-    <value>Combat</value>
-  </data>
   <data name="Damage" xml:space="preserve">
     <value>Damage</value>
   </data>
@@ -185,6 +182,9 @@
   </data>
   <data name="Notifications" xml:space="preserve">
     <value>Notifications</value>
+  </data>
+  <data name="Players" xml:space="preserve">
+    <value>Players</value>
   </data>
   <data name="Profile" xml:space="preserve">
     <value>Profile</value>

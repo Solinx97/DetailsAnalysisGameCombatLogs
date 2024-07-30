@@ -117,7 +117,7 @@
                                    IsActive="{Binding Step, Converter={StaticResource IntToXAMLBool}, ConverterParameter= 0}" OnClick="{Binding UploadCombatsCommand}"/>
                     <uc:MenuButton Title="{loc:Loc AllCombats}" Icon="ChartTimelineVariantShimmer" IsEnabled="{Binding AllowStep, Converter={StaticResource IntToXAMLBoolExpress}, ConverterParameter='>,0'}"
                                    IsActive="{Binding Step, Converter={StaticResource IntToXAMLBool}, ConverterParameter=1}" OnClick="{Binding GeneralAnalysisCommand}"/>
-                    <uc:MenuButton Title="{loc:Loc Combat}" Icon="Details" IsEnabled="{Binding Step, Converter={StaticResource IntToXAMLBoolExpress}, ConverterParameter='>,2'}"
+                    <uc:MenuButton Title="{loc:Loc Players}" Icon="Details" IsEnabled="{Binding Step, Converter={StaticResource IntToXAMLBoolExpress}, ConverterParameter='>,2'}"
                                    IsActive="{Binding Step, Converter={StaticResource IntToXAMLBool}, ConverterParameter=2}" OnClick="{Binding CombatCommand}"/>
                     <uc:MenuButton Title="{loc:Loc Damage}" Icon="Sword" IsEnabled="{Binding Step, Converter={StaticResource IntToXAMLBool}, ConverterParameter=2}"
                                    IsActive="{Binding Step, Converter={StaticResource IntToXAMLBool}, ConverterParameter=3}" OnClick="{Binding DamageDoneDetailsCommand}"/>

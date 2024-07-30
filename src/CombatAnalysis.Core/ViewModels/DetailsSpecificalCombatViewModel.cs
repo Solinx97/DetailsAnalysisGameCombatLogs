@@ -147,6 +147,7 @@ public class DetailsSpecificalCombatViewModel : ParentTemplate<CombatModel>
             SetProperty(ref _selectedPlayer, value);
 
             (BasicTemplate as BasicTemplateViewModel).Data = value;
+            (BasicTemplate as BasicTemplateViewModel).PetsId = Combat != null ? Combat.PetsId : null;
         }
     }
 
@@ -678,6 +679,8 @@ public class DetailsSpecificalCombatViewModel : ParentTemplate<CombatModel>
         PlayersCombat = parameter.Players;
         Combat = parameter;
         _mainPlayersCombat = parameter.Players;
+
+        SelectedPlayer = PlayersCombat[0];
 
         if (!TimeSpan.TryParse(parameter.Duration, out _duration))
         {

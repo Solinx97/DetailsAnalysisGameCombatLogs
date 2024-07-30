@@ -5,7 +5,9 @@ import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import { useLazyGetCommunityByIdQuery, useUpdateCommunityAsyncMutation } from '../../../store/api/communication/community/Community.api';
 import { useCreateCommunityPostAsyncMutation } from '../../../store/api/communication/community/CommunityPost.api';
+import Loading from '../../Loading';
 import CommunicationMenu from '../CommunicationMenu';
+import CreatePost from '../CreatePost';
 import CommunityDiscussions from './CommunityDiscussions';
 import CommunityMembers from './CommunityMembers';
 import CommunityMenu from './CommunityMenu';
@@ -13,7 +15,6 @@ import Discussion from './Discussion';
 import SelectedCommunityItem from './SelectedCommunityItem';
 
 import '../../../styles/communication/community/selectedCommunity.scss';
-import CreatePost from '../CreatePost';
 
 const SelectedCommunity = () => {
     const { t } = useTranslation("communication/community/selectedCommunity");
@@ -91,10 +92,13 @@ const SelectedCommunity = () => {
 
     if (community === null) {
         return (
-            <CommunicationMenu
-                currentMenuItem={3}
-                selectedCommunityName={community?.name}
-            />
+            <>
+                <CommunicationMenu
+                    currentMenuItem={3}
+                    selectedCommunityName={community?.name}
+                />
+                <Loading />
+            </>
         );
     }
 

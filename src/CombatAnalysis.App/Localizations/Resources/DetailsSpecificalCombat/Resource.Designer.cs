@@ -135,9 +135,9 @@ namespace CombatAnalysis.App.Localizations.Resources.DetailsSpecificalCombat {
         /// <summary>
         ///   Looks up a localized string similar to Clear all filters.
         /// </summary>
-        public static string CLearFilters {
+        public static string ClearFilters {
             get {
-                return ResourceManager.GetString("CLearFilters", resourceCulture);
+                return ResourceManager.GetString("ClearFilters", resourceCulture);
             }
         }
         

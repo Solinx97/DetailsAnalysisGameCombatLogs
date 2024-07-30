@@ -141,7 +141,7 @@
   <data name="Buffs" xml:space="preserve">
     <value>Усиления</value>
   </data>
-  <data name="CLearFilters" xml:space="preserve">
+  <data name="ClearFilters" xml:space="preserve">
     <value>Очистить все фильтры</value>
   </data>
   <data name="CombatName" xml:space="preserve">

@@ -97,15 +97,6 @@ namespace CombatAnalysis.App.Localizations.Resources.BasicTemplate {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Combat.
-        /// </summary>
-        public static string Combat {
-            get {
-                return ResourceManager.GetString("Combat", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Damage.
         /// </summary>
         public static string Damage {
@@ -264,6 +255,15 @@ namespace CombatAnalysis.App.Localizations.Resources.BasicTemplate {
         public static string Notifications {
             get {
                 return ResourceManager.GetString("Notifications", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Players.
+        /// </summary>
+        public static string Players {
+            get {
+                return ResourceManager.GetString("Players", resourceCulture);
             }
         }
         

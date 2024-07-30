@@ -63,7 +63,7 @@ public class GeneralAnalysisViewModel : ParentTemplate<Tuple<List<CombatModel>, 
 
         RepeatSaveCommand = new MvxAsyncCommand(RepeatSaveCombatDataDetailsAsync);
         RefreshCommand = new MvxAsyncCommand(RefreshAsync);
-        ShowDetailsCommand = new MvxCommand(ShowDetails);
+        ShowDetailsCommand = new MvxAsyncCommand(ShowDetailsAsync);
         SortCommand = new MvxCommand<int>(CombatsSort);
 
         LastCombatInfromationStep = new MvxCommand(LastStep);
@@ -80,6 +80,8 @@ public class GeneralAnalysisViewModel : ParentTemplate<Tuple<List<CombatModel>, 
         CurrentCombatNumber = ((BasicTemplateViewModel)BasicTemplate).UploadedCombatsCount;
     }
 
+    public Dictionary<string, List<string>> PetsId { get; set; }
+
     #region Commands
 
     public IMvxAsyncCommand RepeatSaveCommand { get; set; }
@@ -90,7 +92,7 @@ public class GeneralAnalysisViewModel : ParentTemplate<Tuple<List<CombatModel>, 
 
     public IMvxCommand NextCombatInfromationStep { get; set; }
 
-    public IMvxCommand ShowDetailsCommand { get; set; }
+    public IMvxAsyncCommand ShowDetailsCommand { get; set; }
 
     public IMvxCommand SortCommand { get; set; }
 
@@ -466,7 +468,7 @@ public class GeneralAnalysisViewModel : ParentTemplate<Tuple<List<CombatModel>, 
         base.ViewDestroy(viewFinishing);
     }
 
-    public void ShowDetails()
+    public async Task ShowDetailsAsync()
     {
         if (SelectedCombat == null)
         {
@@ -475,7 +477,7 @@ public class GeneralAnalysisViewModel : ParentTemplate<Tuple<List<CombatModel>, 
 
         BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, nameof(BasicTemplateViewModel.SelectedCombat), SelectedCombat);
 
-        Task.Run(async () => await _mvvmNavigation.Navigate<DetailsSpecificalCombatViewModel, CombatModel>(SelectedCombat));
+        await _mvvmNavigation.Navigate<DetailsSpecificalCombatViewModel, CombatModel>(SelectedCombat);
     }
 
     public async Task RepeatSaveCombatDataDetailsAsync()

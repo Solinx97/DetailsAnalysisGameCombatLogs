@@ -141,7 +141,7 @@
   <data name="Buffs" xml:space="preserve">
     <value>Buffs</value>
   </data>
-  <data name="CLearFilters" xml:space="preserve">
+  <data name="ClearFilters" xml:space="preserve">
     <value>Clear all filters</value>
   </data>
   <data name="CombatName" xml:space="preserve">

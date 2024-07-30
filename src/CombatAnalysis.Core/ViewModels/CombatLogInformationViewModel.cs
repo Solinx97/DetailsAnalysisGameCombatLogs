@@ -458,8 +458,6 @@ public class CombatLogInformationViewModel : ParentTemplate, CombatParser.Interf
 
         await _parser.ParseAsync(combatLogData);
 
-        BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, nameof(BasicTemplateViewModel.PetsId), _parser.PetsId);
-
         var combatsList = _mapper.Map<List<CombatModel>>(_parser.Combats);
 
         _parser.Clear();
