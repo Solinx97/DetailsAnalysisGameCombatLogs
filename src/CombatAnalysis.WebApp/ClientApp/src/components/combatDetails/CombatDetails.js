@@ -19,6 +19,12 @@ const CombatDetails = ({ combatPlayerId, detailsType, detailsTypeName }) => {
     const [usedSingleFilter, setUsedSingleFilter] = useState(false);
     const [usedMultiplyFilter, setUsedMultiplyFilter] = useState(false);
 
+    const maxWidth = 425;
+    const screenSize = {
+        width: window.innerWidth,
+        height: window.innerHeight
+    };
+
     const [getCombatDataListAsync, getFilteredCombatDataList, getCombatData] = useCombatDetailsData(combatPlayerId, detailsType);
 
     useState(() => {
@@ -52,7 +58,7 @@ const CombatDetails = ({ combatPlayerId, detailsType, detailsTypeName }) => {
 
     return (
         <div className="details__container">
-            {detailsDataRender &&
+            {(detailsDataRender && screenSize.width > maxWidth) &&
                 <div className="form-check form-switch">
                     <input className="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckChecked" onChange={() => setShowGeneralDetailsChart((item) => !item)} />
                     <label className="form-check-label" htmlFor="flexSwitchCheckChecked">{t("ShowDiagram")}</label>

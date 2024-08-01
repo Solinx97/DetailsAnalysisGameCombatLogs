@@ -1,9 +1,9 @@
 ﻿.details-specifical-combat {
     &__container {
         .card {
-            width: 90%;
+            width: 100%;
             box-shadow: 10px 10px #3AA6B9;
-            margin: 25px;
+            margin: 25px 0;
             background: #135D66;
 
             .list-group {
@@ -111,6 +111,7 @@
 
         .player-information {
             display: flex;
+            padding: 0;
         }
 
         .search-people {

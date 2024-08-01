@@ -101,7 +101,7 @@ const CommonPlayerInform = ({ player, combatId, combatLogId, combatName }) => {
                         <div>{t("Buffs")}</div>
                     </div>
                 }
-            </li>}
+            </li>
         </ul>
     );
 }

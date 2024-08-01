@@ -48,16 +48,18 @@ const CombatLogItem = ({ log, isAuth }) => {
         <div className="card">
             <ul className="list-group list-group-flush">
                 <li className="list-group-item title">
-                    {log.combatsInQueue > 0 &&
-                        <>
-                            <FontAwesomeIcon
-                                icon={faSpinner}
-                                title={t("Uploading")}
-                            />
-                            <div>{log.numberReadyCombats} / {log.combatsInQueue}</div>
-                        </>
-                    }
-                    <div>{log.name}</div>
+                    <div className="title__main">
+                        {log.combatsInQueue > 0 &&
+                            <>
+                                <FontAwesomeIcon
+                                    icon={faSpinner}
+                                    title={t("Uploading")}
+                                />
+                                <div>{log.numberReadyCombats} / {log.combatsInQueue}</div>
+                            </>
+                        }
+                        <div>{log.name}</div>
+                    </div>
                     <div className="actions">
                         {!isAuth &&
                             <FontAwesomeIcon

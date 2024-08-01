@@ -75,11 +75,13 @@ const NavMenu = () => {
                             >
                                 Wow Analysis
                             </NavbarBrand>
-                            <FontAwesomeIcon
-                                icon={showSearchBar ? faMagnifyingGlassMinus : faMagnifyingGlassPlus}
-                                title={showSearchBar ? t("HideSearchCommunity") : t("ShowSearchCommunity")}
-                                onClick={() => setShowSearchBar(!showSearchBar)}
-                            />
+                            {user !== null &&
+                                <FontAwesomeIcon
+                                    icon={showSearchBar ? faMagnifyingGlassMinus : faMagnifyingGlassPlus}
+                                    title={showSearchBar ? t("HideSearchCommunity") : t("ShowSearchCommunity")}
+                                    onClick={() => setShowSearchBar(!showSearchBar)}
+                                />
+                            }
                         </div>
                         {(user !== null && showSearchBar) &&
                             <Search

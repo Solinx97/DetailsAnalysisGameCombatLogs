@@ -5,6 +5,7 @@ $background-dark: #135D66;
 $background-light: #496989;
 $combat-win: green;
 $combat-lose: red;
+$mobile-max-width: 425px;
 
 @mixin box-shadow($type: 'standard') {
     @if $type == 'standard' {
@@ -19,13 +20,14 @@ $combat-lose: red;
     &__container {
         .card {
             box-shadow: 10px 10px #3AA6B9;
-            margin: 25px;
+            margin: 15px 0;
             background: $background-dark;
+            width: 100%;
 
             .unique-combats {
                 &__all, &__selected {
                     .combat-number {
-                        font-size: 18px;
+                        font-size: 1em;
                         margin: 0 10px;
                     }
                 }
@@ -40,8 +42,8 @@ $combat-lose: red;
                     position: absolute;
                     display: flex;
                     justify-content: flex-start;
-                    top: -30%;
-                    font-size: 12px;
+                    top: -10vh;
+                    font-size: 1em;
                     gap: 20px;
                     overflow: auto;
                     width: 100%;
@@ -125,7 +127,6 @@ $combat-lose: red;
 
                 div {
                     display: flex;
-                    font-size: 14px;
                 }
 
                 &__date {
@@ -168,6 +169,7 @@ $combat-lose: red;
                 flex-direction: column;
                 gap: 75px;
                 margin-top: 80px;
+                padding: 0;
 
                 .details {
                     display: flex;
@@ -238,5 +240,31 @@ ul {
 
     svg {
         margin: 0 50px;
+    }
+}
+
+@media (max-width: $mobile-max-width) {
+    .general-analysis {
+        &__container {
+            .card {
+                box-shadow: none;
+
+                .information {
+                    flex-wrap: wrap;
+                    gap: 20px;
+                    justify-content: center;
+
+                    .list-group-item {
+                        min-width: 60px;
+                    }
+                }
+
+                .list-group-item {
+                    &__ready {
+                        display: none;
+                    }
+                }
+            }
+        }
     }
 }

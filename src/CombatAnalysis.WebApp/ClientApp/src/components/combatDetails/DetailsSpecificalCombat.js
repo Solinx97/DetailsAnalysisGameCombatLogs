@@ -1,6 +1,6 @@
 ﻿import { faDeleteLeft, faMagnifyingGlassMinus, faMagnifyingGlassPlus, faXmark } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import React, { memo, useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { useLazyGetCombatPlayersByCombatIdQuery, useLazyGetPlayersDeathByPlayerIdQuery } from '../../store/api/CombatParserApi';
@@ -22,6 +22,12 @@ const DetailsSpecificalCombat = () => {
     const [searchCombatPlayers, setSearchCombatPlayers] = useState([]);
     const [showCommonDetails, setShowCommonDetails] = useState(false);
     const [showSearch, setShowSearch] = useState(false);
+
+    const maxWidth = 425;
+    const screenSize = {
+        width: window.innerWidth,
+        height: window.innerHeight
+    };
 
     const [getCombatPlayersByCombatIdAsync] = useLazyGetCombatPlayersByCombatIdQuery();
     const [getPlayersDeathByCombatIdAsync] = useLazyGetPlayersDeathByPlayerIdQuery();
@@ -118,7 +124,7 @@ const DetailsSpecificalCombat = () => {
                     </div>
                 </div>
             }
-            {combatPlayers.length > 0 &&
+            {(combatPlayers.length > 0 && screenSize.width > maxWidth) &&
                 <div className="form-check form-switch">
                     <input className="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckChecked" onChange={() => setShowCommonDetails((item) => !item)} />
                     <label className="form-check-label" htmlFor="flexSwitchCheckChecked">{t("ShowCommonStatistics")}</label>

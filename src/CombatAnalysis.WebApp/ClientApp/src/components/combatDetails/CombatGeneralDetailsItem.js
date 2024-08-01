@@ -10,6 +10,12 @@ const CombatGeneralDetailsItem = ({ combatPlayerId, detailsType }) => {
     const [showGeneralChart, setShowGeneralChart] = useState(false);
     const [playerDataDetailsRender, setPlayerDataDetailsRender] = useState(<></>);
 
+    const maxWidth = 425;
+    const screenSize = {
+        width: window.innerWidth,
+        height: window.innerHeight
+    };
+
     const [getGeneralListAsync, getPlayerGeneralDetailsAsync] = useCombatGeneralData(combatPlayerId, detailsType);
 
     useEffect(() => {
@@ -51,7 +57,7 @@ const CombatGeneralDetailsItem = ({ combatPlayerId, detailsType }) => {
 
     return (
         <div>
-            {spells.length > 0 &&
+            {(spells.length > 0 && screenSize.width > maxWidth) &&
                 <div className="form-check form-switch">
                     <input className="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckChecked" onChange={() => setShowGeneralChart((item) => !item)} defaultChecked={showGeneralChart} />
                     <label className="form-check-label" htmlFor="flexSwitchCheckChecked">{t("ShowDiagram")}</label>

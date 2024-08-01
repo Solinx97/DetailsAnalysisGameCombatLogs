@@ -1,4 +1,8 @@
-﻿.main-information {
+﻿$mobile-max-width: 425px;
+
+.main-information {
+    width: 45vw;
+
     &__container {
         display: flex;
         margin: 25px 0;
@@ -9,15 +13,29 @@
                 display: flex;
                 flex-direction: column;
                 gap: 20px;
+                padding: 0;
+                width: 100%;
 
                 .card {
+                    width: 100%;
                     box-shadow: 10px 10px #3AA6B9;
-                    margin: 25px;
                     background: #135D66;
+                    width: 100%;
 
                     .title, .list-group-item {
+                        display: flex;
+                        flex-direction: column;
+                        justify-content: center;
+                        align-items: flex-start;
                         background: #135D66;
                         color: white;
+
+                        &__main {
+                            display: flex;
+                            justify-content: center;
+                            align-items: center;
+                            gap: 15px;
+                        }
                     }
 
                     .card-body {
@@ -132,5 +150,11 @@
                 box-shadow: 0 0 0 0;
             }
         }
+    }
+}
+
+@media (max-width: $mobile-max-width)  {
+    .main-information {
+        width: 95vw;
     }
 }

@@ -99,7 +99,7 @@ const DashboardItem = ({ name, array, detailsType, calculation, goToCombatGenera
                                 <div className="progress-bar" role="progressbar" style={{ width: calculation(player, dashboardDetailsType[detailsType], resourcesSum) + '%' }}
                                     aria-valuenow={calculation(player, detailsType, resourcesSum)} aria-valuemin="0" aria-valuemax="0"></div>
                             </div>
-                            <div className="player-contribution">{calculation(player, dashboardDetailsType[detailsType], resourcesSum)} %</div>
+                            <div className="player-contribution">{calculation(player, dashboardDetailsType[detailsType], resourcesSum)}%</div>
                         </div>
                     </li>
                 ))}

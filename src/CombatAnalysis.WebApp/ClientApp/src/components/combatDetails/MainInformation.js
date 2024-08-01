@@ -4,7 +4,6 @@ import { useGetCombatLogsQuery } from '../../store/api/CombatParserApi';
 import { useLazyAuthenticationAsyncQuery } from '../../store/api/UserApi';
 import Loading from '../Loading';
 import CombatLogItem from './CombatLogItem';
-import MainInformationPreview from './MainInformationPreview';
 
 import "../../styles/mainInformation.scss";
 
@@ -31,7 +30,7 @@ const MainInformation = () => {
 
     return (
         <div className="main-information">
-            <h2>{t("Logs")}</h2>
+            <div>{t("Logs")}</div>
             <div className="main-information__container">
                 <ul className="combats__container">
                     {combatLogs?.filter(log => log.isReady).map((item) => (
@@ -43,7 +42,6 @@ const MainInformation = () => {
                         </li>
                     ))}
                 </ul>
-                <MainInformationPreview />
             </div>
         </div>
     );
