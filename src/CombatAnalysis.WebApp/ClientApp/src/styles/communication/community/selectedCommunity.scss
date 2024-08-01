@@ -1,3 +1,5 @@
+$mobile-max-width: 425px;
+
 .selected-community {
     display: flex;
     flex-direction: row !important;
@@ -7,10 +9,6 @@
     &__content {
         width: 100%;
 
-        .posts {
-            margin: 5px 0;
-        }
-
         .header {
             display: flex;
             justify-content: space-between;
@@ -18,9 +16,9 @@
 
             .title {
                 display: flex;
-                justify-content: space-between;
                 align-items: center;
                 width: 100%;
+                gap: 20px;
 
                 &__content {
                     display: flex;
@@ -93,10 +91,10 @@
             }
 
             &__content {
-                padding: 15px;
+                padding: 5px 10px;
                 border: 2px solid gray;
                 border-radius: 20px;
-                width: 70%;
+                width: 45%;
                 margin: 0 25px;
             }
         }
@@ -109,6 +107,9 @@
     }
 
     &__actions {
+        position: fixed;
+        right: 1vw;
+        top: 40vh;
         display: flex;
         flex-direction: column;
         gap: 15px;
@@ -174,10 +175,10 @@
                 justify-content: center;
                 align-items: center;
                 border-radius: 25px;
-                top: 5%;
-                right: 35%;
+                top: 10vh;
+                right: 30vw;
                 padding: 10px;
-                width: 500px;
+                width: 35vw;
                 max-height: 600px;
 
                 &__menu {
@@ -259,5 +260,29 @@
     .community-user-information {
         position: fixed;
         right: 40%;
+    }
+}
+
+@media (max-width: $mobile-max-width) {
+    .selected-community {
+        &__content {
+            .description {
+                &__content {
+                    width: 75%;
+                }
+            }
+        }
+
+        &__actions {
+            .members {
+                .add-people-to-community {
+                    width: 95%;
+                    right: 3vw;
+                    box-shadow: none !important;
+                    border-radius: 20px;
+                    border: 2px solid gray;
+                }
+            }
+        }
     }
 }

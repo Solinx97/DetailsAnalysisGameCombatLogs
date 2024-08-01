@@ -25,6 +25,10 @@ $mobile-max-width: 425px;
 
 .communication-menu {
     left: 25vw;
+
+    &__container:hover {
+        background: #0c192c;
+    }
 }
 
 .communication-short-menu {
@@ -94,7 +98,6 @@ $mobile-max-width: 425px;
                     border: 2px solid $hover-color;
                     border-radius: 10px;
                     background: #0c192c;
-                    opacity: 1;
                 }
             }
 
@@ -162,10 +165,6 @@ $mobile-max-width: 425px;
     flex-direction: column;
     align-items: center;
     gap: 10px;
-
-    .posts {
-        width: 80%;
-    }
 
     .new-posts {
         position: fixed;

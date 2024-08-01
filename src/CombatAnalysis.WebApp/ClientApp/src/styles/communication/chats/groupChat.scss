@@ -1,4 +1,6 @@
-﻿.chats__selected-chat {
+﻿$mobile-max-width: 425px;
+
+.chats__selected-chat {
     .messages-container {
         .add-people-to-chat {
             position: fixed;
@@ -7,11 +9,10 @@
             justify-content: center;
             align-items: center;
             border-radius: 25px;
-            right: 30%;
-            top: 5%;
+            right: 35vw;
+            top: 15vh;
             padding: 10px;
-            width: 500px;
-            max-height: 600px;
+            width: 30vw;
 
             .item-result {
                 display: flex;
@@ -125,6 +126,18 @@
 
             .save {
                 box-shadow: 2px 2px 2px 2px green;
+            }
+        }
+    }
+}
+
+@media (max-width: $mobile-max-width) {
+    .chats__selected-chat {
+        .messages-container {
+            .add-people-to-chat {
+                right: 1vw;
+                top: 15vh;
+                width: 95%;
             }
         }
     }

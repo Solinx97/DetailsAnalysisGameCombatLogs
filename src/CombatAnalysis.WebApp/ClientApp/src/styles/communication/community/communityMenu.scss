@@ -1,18 +1,20 @@
+$mobile-max-width: 425px;
+
 .community-menu {
     position: fixed;
     display: flex;
     flex-direction: column;
     justify-content: space-around;
     border-radius: 25px;
-    top: 15%;
-    left: 15%;
-    width: 700px;
+    top: 15vh;
+    left: 25vw;
+    width: 40vw;
     padding: 10px;
     z-index: 2;
 
     &__content {
         display: flex;
-        flex-direction: row;
+        width: 100%;
     }
 
     &__menu {
@@ -21,13 +23,14 @@
         justify-content: flex-start;
         align-items: flex-start;
         width: 25%;
-        margin: 10px 15px;
+        margin: 10px;
+        padding: 0;
         border-radius: 15px;
+        font-size: 0.9em;
 
         .menu-item {
             display: flex;
             align-items: center;
-            margin: 5px;
             cursor: pointer;
             padding: 10px;
             border-radius: 10px;
@@ -60,10 +63,6 @@
         }
     }
 
-    ul {
-        padding: 0;
-    }
-
     .close {
         display: flex;
         align-items: flex-start;
@@ -83,19 +82,19 @@
         flex-direction: column;
         align-items: center;
         margin: 5px;
-
-
+        width: 55%;
 
         .form-group {
-            margin: 10px;
-            width: 300px;
+            margin: 5px;
+            width: 100%;
         }
 
         .members {
             display: flex;
             flex-direction: column;
             justify-content: center;
-            gap: 20px;
+            gap: 15px;
+            width: 100%;
 
             &__title {
                 display: flex;
@@ -160,7 +159,8 @@
         }
 
         .alert-success, .alert-warning {
-            display: none;
+            font-size: 0.7em;
+            padding: 5px 10px;
         }
 
         .alert-success.active, .alert-warning.active {
@@ -241,5 +241,22 @@
     svg:hover {
         cursor: pointer;
         transform: scale(1.25);
+    }
+}
+
+@media (max-width: $mobile-max-width)  {
+    .community-menu {
+        position: fixed;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-around;
+        border-radius: 25px;
+        top: 15vh;
+        left: 1vw;
+        width: 97vw;
+        padding: 10px;
+        z-index: 2;
+        box-shadow: none !important;
+        border: 2px solid gray;
     }
 }

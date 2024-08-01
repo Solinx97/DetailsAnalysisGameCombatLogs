@@ -243,7 +243,7 @@ const CommunityMenu = ({ setShowMenu, customer, community, setCommunity }) => {
                     }
                     {itemIndex === 2 &&
                         <>
-                            <div className="create-group-chat__item">
+                            <>
                                 <AddPeople
                                     customer={customer}
                                     communityUsersId={[customer?.id]}
@@ -253,13 +253,17 @@ const CommunityMenu = ({ setShowMenu, customer, community, setCommunity }) => {
                                 <ItemConnector
                                     connectorType={0}
                                 />
-                            </div>
-                            <div className={`alert alert-success ${showInvitesSuccess ? "active" : ""}`} role="alert">
-                                {t("InviteSuccess")}
-                            </div>
-                            <div className={`alert alert-warning ${showInvitesFailed ? "active" : ""}`} role="alert">
-                                {t("InviteFailed")}
-                            </div>
+                            </>
+                            {showInvitesSuccess &&
+                                <div className="alert alert-success" role="alert">
+                                    {t("InviteSuccess")}
+                                </div>
+                            }
+                            {showInvitesFailed &&
+                                <div className="alert alert-warning " role="alert">
+                                    {t("InviteFailed")}
+                                </div>
+                            }
                             <div className="actions">
                                 <div className="btn-shadow" onClick={async () => await createInviteAsync()}>{t("Apply")}</div>
                             </div>

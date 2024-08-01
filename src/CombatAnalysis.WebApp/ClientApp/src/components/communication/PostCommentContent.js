@@ -27,7 +27,7 @@ const PostCommentContent = ({ userId, comment }) => {
         <div className="post-comments__content">
             {editModeOn
                 ? <div>
-                    <textarea className="form-control" rows="4" cols="65" ref={commentContent} defaultValue={comment.content} />
+                    <textarea className="form-control" rows="2" cols="65" ref={commentContent} defaultValue={comment.content} />
                     <div className="actions">
                         <div className="save" onClick={async () => await updatePostCommentAsync()}>{t("Save")}</div>
                         <div className="cancel" onClick={() => setEditModeOne(false)}>{t("Cancel")}</div>

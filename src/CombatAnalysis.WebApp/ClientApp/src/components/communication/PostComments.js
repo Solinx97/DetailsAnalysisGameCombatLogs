@@ -12,6 +12,10 @@ const PostComments = ({ dateFormatting, userId, postId, updatePostAsync }) => {
         return (<div>Loading...</div>);
     }
 
+    if (postComments?.length === 0) {
+        return (<></>);
+    }
+
     return (
         <ul className="post-comments">
             {postComments?.map((item) => (

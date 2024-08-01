@@ -1,15 +1,18 @@
+$mobile-max-width: 425px;
+
 .post-comments {
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    margin-top: 15px;
+    margin-top: 10px;
     padding: 0;
     gap: 15px;
-
+    width: 90%;
 
     &__card {
-        width: 450px;
+        gap: 10px;
+        width: 100%;
         padding: 10px;
         box-shadow: 2px 2px 2px 2px white;
         border-radius: 20px;
@@ -18,15 +21,17 @@
     &__title {
         display: flex;
         justify-content: space-between;
-        gpa: 10px;
-        margin: 10px;
+        gap: 10px;
+        width: 100%;
 
         .user {
-            font-size: 12px;
+            font-size: 0.6em;
         }
     }
 
     &__menu {
+        transform: scale(0.8);
+
         svg {
             box-shadow: 3px 3px red;
             padding: 10px;
@@ -42,11 +47,10 @@
 
     &__content {
         display: flex;
-        flex-direction: row;
         justify-content: space-between;
         align-items: center;
+        width: 100%;
         gap: 15px;
-        padding: 10px;
 
         .actions {
             display: flex;
@@ -92,28 +96,12 @@
     }
 }
 
-/*.post-comments__content {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
-    overflow-x: hidden;
-
-    .card-text {*/
-        /*max-width: 200px;*/
-        /*font-size: 13px;
+@media (max-width: $mobile-max-width) {
+    .post-comments {
+        &__card {
+            padding: 10px;
+            box-shadow: none;
+            border: 1px solid gray;
+        }
     }
-
-    svg {
-        cursor: pointer;
-    }
-
-    svg:hover {
-        transform: scale(1.1);
-    }
-
-    button {
-        margin: 0 10px;
-        font-size: 12px;
-    }
-}*/
+}

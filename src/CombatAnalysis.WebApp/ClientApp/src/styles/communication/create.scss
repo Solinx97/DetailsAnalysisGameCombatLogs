@@ -1,11 +1,14 @@
+$mobile-max-width: 425px;
+
 .create-community {
+    position: fixed;
     display: flex;
     flex-direction: column;
     justify-content: space-around;
     align-items: center;
     border-radius: 25px;
-    width: 700px;
-    height: 525px;
+    width: 35vw;
+    right: 35vw;
     padding: 10px;
 
     .chat-name-required {
@@ -16,12 +19,16 @@
     &__content {
         display: flex;
         justify-content: space-between;
+        width: 70%;
     }
 
     &__menu {
         display: flex;
+        justify-content: space-around;
         align-items: center;
         border-radius: 15px;
+        padding: 0;
+        width: 100%;
 
         .menu-item {
             display: flex;
@@ -33,13 +40,6 @@
                 border-radius: 20px;
                 box-shadow: 1px 1px 1px 1px white;
                 background: #0c192c;
-            }
-
-            span {
-                width: 100px;
-                height: 5px;
-                background: white;
-                opacity: 0.5;
             }
 
             .move-to-next-step {
@@ -78,17 +78,13 @@
         }
     }
 
-    ul {
-        padding: 0;
-    }
-
     &__items {
         flex-grow: 1;
         margin: 5px;
 
         .form-group {
             margin: 10px;
-            width: 300px;
+            width: 100%;
         }
     }
 
@@ -96,6 +92,7 @@
         display: flex;
         flex-direction: column;
         align-items: center;
+        width: 100%;
 
         .title {
             font-weight: bold;
@@ -143,5 +140,15 @@
         .create {
             box-shadow: 2px 2px 2px 2px green;
         }
+    }
+}
+
+@media (max-width: $mobile-max-width) {
+    .create-community {
+        border-radius: 20px;
+        width: 95%;
+        right: 3vw;
+        box-shadow: none !important;
+        border: 2px solid gray;
     }
 }

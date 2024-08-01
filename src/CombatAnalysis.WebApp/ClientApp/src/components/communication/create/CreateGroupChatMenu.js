@@ -26,7 +26,6 @@ const CreateGroupChatMenu = ({ passedItemIndex, seItemIndex, itemIndex }) => {
                         icon={faCircleQuestion}
                     />
                 }
-                <span className={`${passedItemIndex > 0 ? "move-to-next-step" : ""}`}></span>
             </li>
             <li className={`menu-item ${passedItemIndex >= 1 ? "passed" : ""}`} onClick={() => changeMenuItem(1)}>
                 {(passedItemIndex > 1 && itemIndex !== 1)
@@ -39,7 +38,6 @@ const CreateGroupChatMenu = ({ passedItemIndex, seItemIndex, itemIndex }) => {
                         icon={faCircleQuestion}
                     />
                 }
-                <span className={`${passedItemIndex > 1 ? "move-to-next-step" : ""}`}></span>
             </li>
             <li className={`menu-item ${passedItemIndex >= 2 ? "passed" : ""}`} onClick={() => changeMenuItem(2)}>
                 {(passedItemIndex > 2 && itemIndex !== 2)

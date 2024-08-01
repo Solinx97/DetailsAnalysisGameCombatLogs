@@ -1,14 +1,19 @@
-import { faBars, faCalendar, faCheck, faComment, faLaptop, faPeopleLine, faPerson, faRss, faUser, faAddressBook, faComments } from '@fortawesome/free-solid-svg-icons';
+import { faAddressBook, faBars, faCalendar, faCheck, faComment, faComments, faLaptop, faPeopleLine, faPerson, faRss, faUser } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Fragment, useState } from "react";
+import { Fragment } from "react";
 import { useTranslation } from 'react-i18next';
+import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
+import { updateMenu } from '../../store/slicers/CommunityMenuSlice';
 
 import '../../styles/communication/communication.scss';
 
 const CommunicationMenu = ({ currentMenuItem, setMenuItem }) => {
     const { t } = useTranslation("communication/communication");
 
+    const menu = useSelector((state) => state.communityMenu.value);
+
+    const dispatch = useDispatch();
     const navigate = useNavigate();
 
     const maxWidth = 425;
@@ -16,8 +21,6 @@ const CommunicationMenu = ({ currentMenuItem, setMenuItem }) => {
         width: window.innerWidth,
         height: window.innerHeight
     };
-
-    const [useShortMenu, setUseShortMenu] = useState(false);
 
     const menuItems = [
         { id: 0, label: "Feed", navigateTo: "/feed", icon: faRss },
@@ -99,7 +102,7 @@ const CommunicationMenu = ({ currentMenuItem, setMenuItem }) => {
         );
     }
 
-    if (useShortMenu) {
+    if (menu) {
         return (
             <div className="communication-short-menu">
                 <div className="communication-short-menu__title">
@@ -107,7 +110,7 @@ const CommunicationMenu = ({ currentMenuItem, setMenuItem }) => {
                         <FontAwesomeIcon
                             icon={faBars}
                             title={t("Menu")}
-                            onClick={() => setUseShortMenu((prev) => !prev)}
+                            onClick={() => dispatch(updateMenu(!menu))}
                         />
                     </div>
                 </div>
@@ -138,7 +141,7 @@ const CommunicationMenu = ({ currentMenuItem, setMenuItem }) => {
                     <FontAwesomeIcon
                         icon={faBars}
                         title={t("Menu")}
-                        onClick={() => setUseShortMenu((prev) => !prev)}
+                        onClick={() => dispatch(updateMenu(!menu))}
                     />
                 </div>
             </div>

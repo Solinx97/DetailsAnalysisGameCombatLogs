@@ -189,7 +189,7 @@ const SelectedCommunity = () => {
                         </div>
                         {showDescription
                             ? editDescriptionOn
-                                ? <textarea className="form-control" rows="4" cols="50" ref={communityDescriptionInput} defaultValue={community?.description} />
+                                ? <textarea className="form-control" rows="2" cols="50" ref={communityDescriptionInput} defaultValue={community?.description} />
                                 : <div className="description__content">{community?.description}</div>
                             : null
                         }

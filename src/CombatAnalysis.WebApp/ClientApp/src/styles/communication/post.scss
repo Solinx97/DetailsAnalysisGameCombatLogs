@@ -3,7 +3,7 @@ $secondary-color: #58A399;
 $hover-color: #4793AF;
 $sub-menu-color: #4D4C7D;
 $background-dark: #0c192c;
-$font-size: 1em;
+$font-size: 0.8em;
 $font-size-small: 0.7em;
 $border-radius: 10px;
 $box-shadow-primary: 2px 2px 2px 2px $primary-color;
@@ -124,6 +124,13 @@ $mobile-max-width: 425px;
     align-items: center;
     gap: 25px;
     padding: 0;
+    margin-bottom: 75px;
+
+    li {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
 
     &__card {
         display: flex;
@@ -134,7 +141,6 @@ $mobile-max-width: 425px;
         box-shadow: $box-shadow-secondary;
         border-radius: 20px;
         background: $background-dark;
-        border: 0px solid gray !important;
 
         li {
             background: $background-dark;
@@ -274,7 +280,7 @@ $mobile-max-width: 425px;
     display: flex;
     flex-direction: column;
     align-items: center;
-    margin: $padding-medium 0;
+    margin-top: 5px;
 
     &__title {
         display: flex;
@@ -287,7 +293,8 @@ $mobile-max-width: 425px;
     &__content {
         display: flex;
         align-items: center;
-        gap: $gap-medium;
+        gap: $gap-small;
+        width: 95%;
 
         .actions {
             display: flex;
@@ -297,7 +304,7 @@ $mobile-max-width: 425px;
     }
 
     .open-add-comment, .add-comment, .hide {
-        padding: $padding-medium $gap-medium;
+        padding: 5px 15px;
         border-radius: $border-radius;
         font-size: $font-size;
         cursor: pointer;
@@ -411,28 +418,18 @@ $mobile-max-width: 425px;
     }
 
     .posts {
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        gap: 25px;
+        gap: $gap-small;
+        width: 100%;
+
+        li {
+            width: 100%;
+        }
 
         &__card {
-            display: flex;
-            flex-direction: column;
-            width: $mobile-posts-item-width;
-            gap: $gap-small;
-            padding: $padding-medium;
-            box-shadow: $box-shadow-secondary;
-            border-radius: 20px;
-            background: $background-dark;
-            border: 0px solid gray !important;
-
-            li {
-                background: $background-dark;
-                z-index: 200;
-                color: white;
-            }
+            box-shadow: none;
+            border: 2px solid gray;
+            border-radius: 0;
+            width: 100%;
         }
 
         &__title {
@@ -492,39 +489,8 @@ $mobile-max-width: 425px;
         }
 
         &__reactions {
-            display: flex;
-            justify-content: center;
-            width: 100%;
-
             .container {
-                display: flex;
-                justify-content: center;
-                box-shadow: 3px 3px 3px 3px green;
-                border-radius: $border-radius;
-                margin: $padding-small;
-                padding: $padding-small;
-                gap: $gap-small;
-                width: $width-reactions;
-                font-size: $font-size;
-
-                .item {
-                    display: flex;
-
-                    &__comment_active {
-                        color: yellow;
-                    }
-                }
-
-                svg {
-                    margin: 0 $gap-small;
-                    padding: $padding-small;
-                    border-radius: 25px;
-                    cursor: pointer;
-                }
-
-                svg:hover {
-                    transform: scale(1.1);
-                }
+                box-shadow: 1px 1px 1px 1px green;
             }
         }
     }
@@ -563,11 +529,6 @@ $mobile-max-width: 425px;
     }
 
     .add-new-comment {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        margin: $padding-medium 0;
-
         &__title {
             display: flex;
             flex-direction: row;
@@ -577,34 +538,11 @@ $mobile-max-width: 425px;
         }
 
         &__content {
-            display: flex;
-            align-items: center;
-            gap: $gap-medium;
-
             .actions {
                 display: flex;
                 flex-direction: column;
                 gap: $gap-small;
             }
-        }
-
-        .open-add-comment, .add-comment, .hide {
-            padding: $padding-medium $gap-medium;
-            border-radius: $border-radius;
-            font-size: $font-size;
-            cursor: pointer;
-        }
-
-        .open-add-comment {
-            box-shadow: 2px 2px 2px 2px yellow;
-        }
-
-        .add-comment {
-            box-shadow: $box-shadow-primary;
-        }
-
-        .hide {
-            box-shadow: 2px 2px 2px 2px white;
         }
     }
 
