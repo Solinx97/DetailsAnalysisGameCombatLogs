@@ -97,7 +97,7 @@ const CommunityItem = ({ id, me }) => {
                 </div>
             </div>
             {userInformation !== null &&
-                <div className="community-user-information">{userInformation}</div>
+                <div className="owner-user-information">{userInformation}</div>
             }
         </div>
     );

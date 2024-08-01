@@ -41,7 +41,9 @@ const ChatMessageTitle = ({ me, itIsMe, setEditModeIsOn, openMessageMenu, editMo
                     allowRemoveFriend={false}
                 />
             </div>
-            {userInformation}
+            <div className="chat-user-information">
+                {userInformation}
+            </div>
         </>
     );
 }

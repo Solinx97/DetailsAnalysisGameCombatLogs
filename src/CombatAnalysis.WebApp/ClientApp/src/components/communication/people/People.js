@@ -59,7 +59,7 @@ const People = () => {
                 </div>
                 <ul className="people__cards">
                     {people?.filter(peopleListFilter).map((item) => (
-                            <li key={item.id}>
+                            <li className="person" key={item.id}>
                                 <PeopleItem
                                     me={me}
                                     people={item}

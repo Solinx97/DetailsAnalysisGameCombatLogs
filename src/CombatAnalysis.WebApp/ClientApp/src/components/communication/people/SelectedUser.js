@@ -23,7 +23,6 @@ const SelectedUser = () => {
     const [personId, setPersonId] = useState(0);
     const [person, setPerson] = useState(null);
     const [currentMenuItem, setMenuItem] = useState(0);
-    const [shortMenu, setShortMenu] = useState(false);
     const [allPosts, setAllPosts] = useState([]);
 
     useEffect(() => {
@@ -86,92 +85,38 @@ const SelectedUser = () => {
                     {person?.username}
                 </div>
                 <div className="user__container">
-                    <ul className="user__menu">
-                        <li className="sub-menu" onClick={() => setMenuItem(0)}>
-                            <FontAwesomeIcon
-                                className={`current${currentMenuItem === 0 ? "_active" : ""}`}
-                                title={t("Profile")}
-                                icon={faUser}
-                            />
-                            {!shortMenu &&
-                                <>
-                                    <div className="title">{t("Profile")}</div>
-                                    {currentMenuItem === 0 &&
-                                        <FontAwesomeIcon
-                                            icon={faCheck}
-                                        />
-                                    }
-                                </>
-                            }
-                        </li>
-                        <li className="sub-menu" onClick={() => setMenuItem(1)}>
-                            <FontAwesomeIcon
-                                className={`current${currentMenuItem === 1 ? "_active" : ""}`}
-                                title={t("Posts")}
-                                icon={faEnvelopesBulk}
-                            />
-                            {!shortMenu &&
-                                <>
-                                    <div className="title">{t("Posts")}</div>
-                                    {currentMenuItem === 1 &&
-                                        <FontAwesomeIcon
-                                            icon={faCheck}
-                                        />
-                                    }
-                                </>
-                            }
-                        </li>
-                        <li className="sub-menu" onClick={() => setMenuItem(2)}>
-                            <FontAwesomeIcon
-                                className={`current${currentMenuItem === 2 ? "_active" : ""}`}
-                                title={t("Friends")}
-                                icon={faUserGroup}
-                            />
-                            {!shortMenu &&
-                                <>
-                                    <div className="title">{t("Friends")}</div>
-                                    {currentMenuItem === 2 &&
-                                        <FontAwesomeIcon
-                                            icon={faCheck}
-                                        />
-                                    }
-                                </>
-                            }
-                        </li>
-                        <li className="sub-menu" onClick={() => setMenuItem(3)}>
-                            <FontAwesomeIcon
-                                className={`current${currentMenuItem === 3 ? "_active" : ""}`}
-                                title={t("Communities")}
-                                icon={faComments}
-                            />
-                            {!shortMenu &&
-                                <>
-                                    <div className="title">{t("Communities")}</div>
-                                    {currentMenuItem === 3 &&
-                                        <FontAwesomeIcon
-                                            icon={faCheck}
-                                        />
-                                    }
-                                </>
-                            }
-                        </li>
-                        {shortMenu
-                            ? <li className="sub-menu control">
+                    <div className="menu-container">
+                        <ul className="user__menu">
+                            <li className="sub-menu" onClick={() => setMenuItem(0)}>
                                 <FontAwesomeIcon
-                                    icon={faArrowsLeftRightToLine}
-                                    title={t("FullMenu")}
-                                    onClick={() => setShortMenu((item) => !item)}
+                                    className={`current${currentMenuItem === 0 ? "_active" : ""}`}
+                                    title={t("Profile")}
+                                    icon={faUser}
                                 />
                             </li>
-                            : <li className="sub-menu control">
+                            <li className="sub-menu" onClick={() => setMenuItem(1)}>
                                 <FontAwesomeIcon
-                                    icon={faArrowsToCircle}
-                                    title={t("ShortMenu")}
-                                    onClick={() => setShortMenu((item) => !item)}
+                                    className={`current${currentMenuItem === 1 ? "_active" : ""}`}
+                                    title={t("Posts")}
+                                    icon={faEnvelopesBulk}
                                 />
                             </li>
-                        }
-                    </ul>
+                            <li className="sub-menu" onClick={() => setMenuItem(2)}>
+                                <FontAwesomeIcon
+                                    className={`current${currentMenuItem === 2 ? "_active" : ""}`}
+                                    title={t("Friends")}
+                                    icon={faUserGroup}
+                                />
+                            </li>
+                            <li className="sub-menu" onClick={() => setMenuItem(3)}>
+                                <FontAwesomeIcon
+                                    className={`current${currentMenuItem === 3 ? "_active" : ""}`}
+                                    title={t("Communities")}
+                                    icon={faComments}
+                                />
+                            </li>
+                        </ul>
+                    </div>
                     <div className="user__content">
                         {currentMenuItem === 0 &&
                             <SelectedUserProfile

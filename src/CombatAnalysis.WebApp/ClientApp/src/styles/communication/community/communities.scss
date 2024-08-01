@@ -1,3 +1,5 @@
+$mobile-max-width: 425px;
+
 .communities {
     margin-bottom: 75px;
 
@@ -89,6 +91,11 @@
                     }
                 }
 
+                .owner-user-information {
+                    position: absolute;
+                    z-index: 100;
+                }
+
                 &__member {
                     position: relative;
                     display: flex;
@@ -125,6 +132,20 @@
 
                 .box-shadow {
                     box-shadow: 3px 3px 3px 3px #1679AB;
+                }
+            }
+        }
+    }
+}
+
+@media (max-width: $mobile-max-width) {
+    .communities {
+        &__list {
+            ul {
+                .community {
+                    .owner-user-information {
+                        left: 3vw;
+                    }
                 }
             }
         }

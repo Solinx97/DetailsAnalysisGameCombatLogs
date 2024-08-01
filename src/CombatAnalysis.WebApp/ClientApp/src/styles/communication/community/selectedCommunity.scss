@@ -179,7 +179,6 @@ $mobile-max-width: 425px;
                 right: 30vw;
                 padding: 10px;
                 width: 35vw;
-                max-height: 600px;
 
                 &__menu {
                     display: flex;
@@ -258,8 +257,10 @@ $mobile-max-width: 425px;
     }
 
     .community-user-information {
-        position: fixed;
-        right: 40%;
+        position: absolute;
+        right: 3vw;
+        top: 5vh;
+        z-index: 100;
     }
 }
 
