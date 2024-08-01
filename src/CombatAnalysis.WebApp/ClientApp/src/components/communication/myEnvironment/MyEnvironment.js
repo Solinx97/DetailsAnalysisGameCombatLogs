@@ -21,8 +21,8 @@ const MyEnvironment = ({ openCommunity }) => {
                     currentMenuItem={menuItem}
                     setMenuItem={setMenuItem}
                 />
-                <div className="communication__content my-environment">
-                    <div>
+                <div className="communication-content my-environment">
+                    <>
                         {menuItem === 8 &&
                             <MyFeed />
                         }
@@ -41,7 +41,7 @@ const MyEnvironment = ({ openCommunity }) => {
                         {menuItem === 12 &&
                             <Profile />
                         }
-                    </div>
+                    </>
                 </div>
             </div>
         );

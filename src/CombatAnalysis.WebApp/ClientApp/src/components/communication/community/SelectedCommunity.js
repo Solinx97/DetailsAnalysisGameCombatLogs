@@ -108,7 +108,7 @@ const SelectedCommunity = () => {
                 currentMenuItem={3}
                 selectedCommunityName={community?.name}
             />
-            <div className="communication__content selected-community">
+            <div className="communication-content selected-community">
                 <div className="selected-community__content">
                     <div className="header">
                         <div className="title">
@@ -201,7 +201,7 @@ const SelectedCommunity = () => {
                             user={user}
                         />
                     }
-                    <div>
+                    <div className="posts">
                         {isCommunityMember &&
                             <CreatePost
                                 user={user}

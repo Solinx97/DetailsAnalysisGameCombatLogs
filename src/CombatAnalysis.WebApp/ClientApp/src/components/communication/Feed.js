@@ -5,7 +5,6 @@ import Loading from '../Loading';
 import CommunicationMenu from './CommunicationMenu';
 import CreatePost from './CreatePost';
 import FeedParticipants from './FeedParticipants';
-import Recomendations from './Recomendations';
 
 const Feed = () => {
     const { t } = useTranslation("communication/feed");
@@ -55,13 +54,7 @@ const Feed = () => {
 
     return (
         <>
-            <CommunicationMenu
-                currentMenuItem={0}
-            />
-            <Recomendations
-                t={t}
-            />
-            <div className="communication__content">
+            <div className="communication-content">
                 <CreatePost
                     user={user}
                     owner={user?.username}
@@ -74,6 +67,9 @@ const Feed = () => {
                     t={t}
                 />
             </div>
+            <CommunicationMenu
+                currentMenuItem={0}
+            />
         </>
     );
 }

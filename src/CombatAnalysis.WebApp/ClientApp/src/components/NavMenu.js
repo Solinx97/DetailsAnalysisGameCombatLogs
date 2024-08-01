@@ -1,8 +1,10 @@
+import { faMagnifyingGlassMinus, faMagnifyingGlassPlus } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
-import { Collapse, Container, Navbar, NavbarBrand, NavbarToggler } from 'reactstrap';
+import { Container, Navbar, NavbarBrand } from 'reactstrap';
 import { useAuth } from '../context/AuthProvider';
 import { useLazyIdentityQuery } from '../store/api/UserApi';
 import LanguageSelector from './LanguageSelector';
@@ -21,7 +23,7 @@ const NavMenu = () => {
 
     const navigate = useNavigate();
 
-    const [collapsed, setCollapsed] = useState(true);
+    const [showSearchBar, setShowSearchBar] = useState(false);
 
     useEffect(() => {
         const checkAuth = async () => {
@@ -33,10 +35,6 @@ const NavMenu = () => {
         }
 
         checkAuth();
-    }, []);
-
-    const toggleNavbar = useCallback(() => {
-        setCollapsed((item) => !item);
     }, []);
 
     const loginAsync = async () => {
@@ -67,27 +65,29 @@ const NavMenu = () => {
     return (
         <header>
             <Navbar className="navbar-expand-sm navbar-toggleable-sm ng-white border-bottom box-shadow mb-3" light>
-                <LanguageSelector />
                 <Container>
-                    <NavbarBrand
-                        tag={Link}
-                        to="/"
-                    >
-                        Wow Analysis
-                    </NavbarBrand>
-                    <NavbarToggler
-                        onClick={toggleNavbar} className="mr-2"
-                    />
-                    {user !== null &&
-                        <Search
-                            me={user}
-                        />
-                    }
-                    <Collapse
-                        className="d-sm-inline-flex flex-sm-row-reverse"
-                        isOpen={!collapsed}
-                        navbar
-                    />
+                    <div className="brand-container">
+                        <LanguageSelector />
+                        <div className="brand">
+                            <NavbarBrand
+                                tag={Link}
+                                to="/"
+                            >
+                                Wow Analysis
+                            </NavbarBrand>
+                            <FontAwesomeIcon
+                                icon={showSearchBar ? faMagnifyingGlassMinus : faMagnifyingGlassPlus}
+                                title={showSearchBar ? t("HideSearchCommunity") : t("ShowSearchCommunity")}
+                                onClick={() => setShowSearchBar(!showSearchBar)}
+                            />
+                        </div>
+                        {(user !== null && showSearchBar) &&
+                            <Search
+                                me={user}
+                                t={t}
+                            />
+                        }
+                    </div>
                     {isAuthenticated
                         ? <div className="authorized">
                             <div className="username">{user?.username}</div>

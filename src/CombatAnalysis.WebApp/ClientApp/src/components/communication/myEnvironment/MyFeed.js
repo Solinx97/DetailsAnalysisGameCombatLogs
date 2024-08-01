@@ -10,6 +10,7 @@ import Post from '../Post';
 
 const MyFeed = () => {
     const { t } = useTranslation("communication/feed");
+
     const user = useSelector((state) => state.user.value);
 
     const [getUserPosts] = useLazyUserPostSearchByUserIdQuery();

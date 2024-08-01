@@ -20,6 +20,9 @@ const ProfileInfo = ({ form, setIsEditMode, t }) => {
                         onClick={() => setPrivacyHidden(!privacyHidden)}
                     />
                 }
+                <div className="actions">
+                    <div className="btn-shadow" onClick={() => setIsEditMode(true)}>{t("Edit")}</div>
+                </div>
             </div>
             {!privacyHidden &&
                 <div className="privacy">
@@ -66,9 +69,6 @@ const ProfileInfo = ({ form, setIsEditMode, t }) => {
                     </div>
                 </div>
             }
-            <div className="actions">
-                <div className="btn-shadow" onClick={() => setIsEditMode(true)}>{t("Edit")}</div>
-            </div>
         </div>
     );
 }

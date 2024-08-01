@@ -81,7 +81,7 @@ const SelectedUser = () => {
             <CommunicationMenu
                 currentMenuItem={7}
             />
-            <div className="communication__content user">
+            <div className="communication-content user">
                 <div className="user-information__username">
                     {person?.username}
                 </div>

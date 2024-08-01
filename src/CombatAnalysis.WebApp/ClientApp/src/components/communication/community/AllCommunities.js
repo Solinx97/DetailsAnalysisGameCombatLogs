@@ -8,7 +8,7 @@ const AllCommunities = () => {
             <CommunicationMenu
                 currentMenuItem={3}
             />
-            <div className="communication__content communities">
+            <div className="communication-content communities">
                 <MyCommunities />
                 <Communities />
             </div>

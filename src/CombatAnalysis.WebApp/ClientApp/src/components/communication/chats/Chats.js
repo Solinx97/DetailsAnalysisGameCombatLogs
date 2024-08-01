@@ -1,4 +1,6 @@
-﻿import React, { useCallback, useEffect, useState } from 'react';
+﻿import { faArrowLeft, faBars } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import { NavLink } from 'react-router-dom';
@@ -23,6 +25,7 @@ const Chats = () => {
     const [selectedChat, setSelectedChat] = useState({ type: null, chat: null });
     const [chatsHidden, setChatsHidden] = useState({ group: false, personal: false });
     const [skipFetching, setSkipFetching] = useState(true);
+    const [showMenu, setShowMenu] = useState(false);
 
     const { data: personalChats, isError: personalChatError, isLoading: personalChatLoading } = useGetByUserIdAsyncQuery(me?.id, {
         pollingInterval,
@@ -32,6 +35,12 @@ const Chats = () => {
         pollingInterval,
         skip: skipFetching
     });
+
+    const maxWidth = 425;
+    const screenSize = {
+        width: window.innerWidth,
+        height: window.innerHeight
+    };
 
     useEffect(() => {
         me !== null ? setSkipFetching(false) : setSkipFetching(true);
@@ -53,12 +62,55 @@ const Chats = () => {
         );
     }
 
+    if (selectedChat.type !== null && screenSize.width <= maxWidth) {
+        return (
+            <>
+                {showMenu &&
+                    <CommunicationMenu
+                        currentMenuItem={1}
+                    />
+                }
+                <div className="communication-content">
+                    <div className="chats">
+                        <div className="chats__title">
+                            <FontAwesomeIcon
+                                icon={faArrowLeft}
+                                onClick={() => setSelectedChat({ type: null, chat: null })}
+                            />
+                            <FontAwesomeIcon
+                                icon={faBars}
+                                onClick={() => setShowMenu(!showMenu)}
+                            />
+                        </div>
+                        {selectedChat.type === "group"
+                            ? <GroupChat
+                                chat={selectedChat.chat}
+                                me={me}
+                                setSelectedChat={setSelectedChat}
+                            />
+                            : selectedChat.type === "personal"
+                                ? <PersonalChat
+                                    chat={selectedChat.chat}
+                                    me={me}
+                                    setSelectedChat={setSelectedChat}
+                                    companionId={selectedChat.chat.initiatorId === me?.id ? selectedChat.chat.companionId : selectedChat.chat.initiatorId}
+                                />
+                                : <div className="select-chat">
+                                    {t("SelectChat")} <NavLink to="/chats/create">{t("Create")}</NavLink> {t("NewChat")}
+                                </div>
+                        }
+                    </div>
+                </div>
+            </>
+        );
+    }
+
     return (
         <>
             <CommunicationMenu
                 currentMenuItem={1}
             />
-            <div className="communication__content">
+            <div className="communication-content">
                 <div className="chats">
                     <div className="chats__my-chats">
                         <GroupChatList

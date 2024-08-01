@@ -49,6 +49,10 @@ const ProfileEdit = ({ form, setForm, t, setIsEditMode }) => {
                         onClick={() => setPrivacyHidden(!privacyHidden)}
                     />
                 }
+                <div className="actions">
+                    <div className="btn-shadow save" onClick={handleSubmitAsync}>{t("Save")}</div>
+                    <div className="btn-shadow" onClick={() => setIsEditMode(false)}>{t("Cancel")}</div>
+                </div>
             </div>
             {!privacyHidden &&
                 <div className="privacy">
@@ -95,10 +99,6 @@ const ProfileEdit = ({ form, setForm, t, setIsEditMode }) => {
                     </div>
                 </div>
             }
-            <div className="actions">
-                <div className="btn-shadow save" onClick={handleSubmitAsync}>{t("Save")}</div>
-                <div className="btn-shadow" onClick={() => setIsEditMode(false)}>{t("Cancel")}</div>
-            </div>
         </form>
     );
 }

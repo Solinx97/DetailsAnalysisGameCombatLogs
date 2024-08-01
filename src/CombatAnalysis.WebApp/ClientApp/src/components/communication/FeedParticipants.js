@@ -47,7 +47,7 @@ const FeedParticipants = ({ user, t }) => {
     }
 
     return (
-        <div>
+        <>
             {newPosts.length > 0 &&
                 <div onClick={async () => await insertNewPostsHandleAsync()} className="new-posts">
                     <div className="new-posts__content">{t("NewPosts")}</div>
@@ -65,7 +65,7 @@ const FeedParticipants = ({ user, t }) => {
                     </li>
                 ))}
             </ul>
-        </div>
+        </>
     );
 }
 

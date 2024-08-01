@@ -134,7 +134,7 @@ const CommunityMenu = ({ setShowMenu, customer, community, setCommunity }) => {
     }
 
     return (
-        <div className="communication__content community-menu box-shadow">
+        <div className="communication-content community-menu box-shadow">
             {showLeaveFromCommunity &&
                 <div className="leave-from-community">
                     <div className="leave-from-community__title">{t("LeaveAlert")}</div>

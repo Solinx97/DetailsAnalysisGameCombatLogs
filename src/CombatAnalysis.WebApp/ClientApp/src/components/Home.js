@@ -16,7 +16,7 @@ const Home = () => {
     const navigate = useNavigate();
     const location = useLocation();
 
-    const customer = useSelector((state) => state.customer.value);
+    const user = useSelector((state) => state.user.value);
 
     const [identityAsyncQuery] = useLazyIdentityQuery();
 
@@ -62,7 +62,7 @@ const Home = () => {
             <div className="home__item">
                 <div className="title">
                     <div>{t("Communication")}</div>
-                    {customer === null &&
+                    {user === null &&
                         <div className="btn-shadow authorize-alert" onClick={async () => await loginAsync()} title={t("GoToLogin")}>
                             <FontAwesomeIcon
                                 icon={faTriangleExclamation}
@@ -92,7 +92,7 @@ const Home = () => {
                         </div>
                     </div>
                 </div>
-                {customer !== null &&
+                {user !== null &&
                     <div className="go-to-communication" onClick={navigateToFeed}>{t("Open")}</div>
                 }
             </div>

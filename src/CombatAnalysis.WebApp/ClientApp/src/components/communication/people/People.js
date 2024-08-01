@@ -53,7 +53,7 @@ const People = () => {
                 currentMenuItem={menuItem}
                 setMenuItem={setMenuItem}
             />
-            <div className="communication__content people">
+            <div className="communication-content people">
                 <div>
                     <div className="people__title">{t("People")}</div>
                 </div>

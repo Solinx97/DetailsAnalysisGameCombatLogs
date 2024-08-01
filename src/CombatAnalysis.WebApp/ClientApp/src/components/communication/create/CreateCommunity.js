@@ -85,7 +85,7 @@ const CreateCommunity = () => {
             <CommunicationMenu
                 currentMenuItem={4}
             />
-            <div className="communication__content create-community box-shadow">
+            <div className="communication-content create-community box-shadow">
                 <div>{t("CreateCommunity")}</div>
                 <CreateGroupChatMenu
                     passedItemIndex={passedItemIndex}
