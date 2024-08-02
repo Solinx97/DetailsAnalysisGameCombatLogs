@@ -2,13 +2,22 @@ body {
     color: white;
 }
 
+.container {
+    margin: 0;
+    padding: 0;
+    width: 100vw;
+}
+
+main {
+    padding: 10px;
+}
+
 #root {
     position: fixed;
-    bottom: 0;
-    right: 0;
+    top: 0;
     background: #0c192c;
-    height: 100vh;
-    width: 100vw;
+    height: 100%;
+    width: 100%;
     z-index: -1;
 }
 
@@ -46,13 +55,11 @@ input, label {
 }
 
 .login, .registration {
-    position: absolute;
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 20px;
-    right: 40%;
-    top: 20%;
+    width: 98vw;
 
     input[type="email"], input[type="text"], input[type="password"], input[type="number"], input[type="submit"], input[type="date"], textarea {
         width: 300px;
@@ -90,8 +97,6 @@ input, label {
 }
 
 .login {
-    right: 40%;
-
     &__title {
         font-size: 18px;
         font-weight: bold;
@@ -134,10 +139,7 @@ input, label {
 }
 
 .registration {
-    right: 20%;
-
     &__title {
-        margin-left: 50px;
         font-size: 18px;
         font-weight: bold;
     }
@@ -146,7 +148,7 @@ input, label {
         display: flex;
         flex-direction: column;
         justify-content: center;
-        width: 1000px;
+        width: 100%;
 
         .confidential, .general {
             display: flex;
@@ -183,6 +185,7 @@ input, label {
         display: flex;
         justify-content: center;
         gap: 50px;
+        flex-wrap: wrap;
     }
 }
 
