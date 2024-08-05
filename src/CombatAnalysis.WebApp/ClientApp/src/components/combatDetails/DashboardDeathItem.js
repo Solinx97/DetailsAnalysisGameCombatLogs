@@ -31,8 +31,12 @@ const DashboardDeathItem = ({ playersDeath, players }) => {
                 return null;
             }
 
-            const detailsResult = await getDamageTakenByPlayerIdAsync(player.id).unwrap();
-            const lastHit = detailsResult[detailsResult.length - 1];
+            const response = await getDamageTakenByPlayerIdAsync(player.id);
+            if (response.error !== undefined) {
+                return null;
+            } 
+
+            const lastHit = response.data[response.data.length - 1];
 
             return {
                 ...death,

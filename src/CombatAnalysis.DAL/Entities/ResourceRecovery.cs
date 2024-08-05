@@ -3,7 +3,7 @@
 namespace CombatAnalysis.DAL.Entities;
 
 [Index(nameof(CombatPlayerId))]
-public class ResourceRecovery
+public class ResourceRecovery : BasePlayerInfo
 {
     public int Id { get; set; }
 
@@ -13,5 +13,5 @@ public class ResourceRecovery
 
     public string SpellOrItem { get; set; }
 
-    public int CombatPlayerId { get; set; }
+    public override int CombatPlayerId { get; set; }
 }

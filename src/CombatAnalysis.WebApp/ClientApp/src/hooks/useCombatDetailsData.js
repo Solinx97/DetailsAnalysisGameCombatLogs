@@ -3,52 +3,56 @@ import DamageTakenHelper from '../components/helpers/DamageTakenHelper';
 import HealDoneHelper from '../components/helpers/HealDoneHelper';
 import ResourceRecoveryHelper from '../components/helpers/ResourceRecoveryHelper';
 import {
-    useLazyGetDamageDoneByPlayerIdQuery, useLazyGetHealDoneByPlayerIdQuery, useLazyGetDamageTakenByPlayerIdQuery, useLazyGetResourceRecoveryByPlayerIdQuery
+    useLazyGetDamageDoneByPlayerIdQuery,
+    useLazyGetDamageDoneCountByPlayerIdQuery,
+    useLazyGetDamageTakenByPlayerIdQuery,
+    useLazyGetDamageTakenCountByPlayerIdQuery,
+    useLazyGetHealDoneByPlayerIdQuery,
+    useLazyGetHealDoneCountByPlayerIdQuery,
+    useLazyGetResourceRecoveryByPlayerIdQuery,
+    useLazyGetResourceRecoveryCountByPlayerIdQuery,
 } from '../store/api/CombatParserApi';
 
-const useHealDoneHelper = (combatPlayerId, detailsType) => {
+const useCombatDetailsData = (combatPlayerId, detailsType, combatStartDate) => {
     const [getDamageDoneByPlayerIdAsync] = useLazyGetDamageDoneByPlayerIdQuery();
     const [getHealDoneByPlayerIdAsync] = useLazyGetHealDoneByPlayerIdQuery();
     const [getDamageTakenByPlayerIdAsync] = useLazyGetDamageTakenByPlayerIdQuery();
     const [getResourceRecoveryByPlayerIdAsync] = useLazyGetResourceRecoveryByPlayerIdQuery();
 
-    const getListAsync = async () => {
-        const data = await getPlayerDetailsAsync();
+    const [getDamageDoneCountByPlayerIdAsync] = useLazyGetDamageDoneCountByPlayerIdQuery();
+    const [getHealDoneCountByPlayerIdAsync] = useLazyGetHealDoneCountByPlayerIdQuery();
+    const [getDamageTakenCountByPlayerIdAsync] = useLazyGetDamageTakenCountByPlayerIdQuery();
+    const [getResourceRecoveryCountByPlayerIdAsync] = useLazyGetResourceRecoveryCountByPlayerIdQuery();
 
-        switch (detailsType) {
-            case "DamageDone":
-                return <DamageDoneHelper detailsData={data} />
-            case "HealDone":
-                return <HealDoneHelper detailsData={data} />
-            case "DamageTaken":
-                return <DamageTakenHelper detailsData={data} />
-            case "ResourceRecovery":
-                return <ResourceRecoveryHelper detailsData={data} />
-            default:
-                return <DamageDoneHelper detailsData={data} />
-        }
+    const helperComponents = {
+        "DamageDone": DamageDoneHelper,
+        "HealDone": HealDoneHelper,
+        "DamageTaken": DamageTakenHelper,
+        "ResourceRecovery": ResourceRecoveryHelper
+    };
+
+    const playersDetails = {
+        "DamageDone": getDamageDoneByPlayerIdAsync,
+        "HealDone": getHealDoneByPlayerIdAsync,
+        "DamageTaken": getDamageTakenByPlayerIdAsync,
+        "ResourceRecovery": getResourceRecoveryByPlayerIdAsync
     }
 
-    const getPlayerDetailsAsync = async () => {
-        let detailsResult = null;
-        switch (detailsType) {
-            case "DamageDone":
-                detailsResult = await getDamageDoneByPlayerIdAsync(combatPlayerId);
-                break;
-            case "HealDone":
-                detailsResult = await getHealDoneByPlayerIdAsync(combatPlayerId);
-                break;
-            case "DamageTaken":
-                detailsResult = await getDamageTakenByPlayerIdAsync(combatPlayerId);
-                break;
-            case "ResourceRecovery":
-                detailsResult = await getResourceRecoveryByPlayerIdAsync(combatPlayerId);
-                break;
-            default:
-                detailsResult = await getDamageDoneByPlayerIdAsync(combatPlayerId);
-                break;
-        }
+    const counts = {
+        "DamageDone": getDamageDoneCountByPlayerIdAsync,
+        "HealDone": getHealDoneCountByPlayerIdAsync,
+        "DamageTaken": getDamageTakenCountByPlayerIdAsync,
+        "ResourceRecovery": getResourceRecoveryCountByPlayerIdAsync
+    };
 
+    const getPlayerDetailsAsync = async (page, pageSize) => {
+        const arg = {
+            combatPlayerId,
+            page,
+            pageSize
+        };
+
+        const detailsResult = await playersDetails[detailsType](arg);
         if (detailsResult.data !== undefined) {
             return detailsResult.data;
         }
@@ -56,22 +60,30 @@ const useHealDoneHelper = (combatPlayerId, detailsType) => {
         return null;
     }
 
-    const getFilteredList = (data) => {
-        switch (detailsType) {
-            case "DamageDone":
-                return <DamageDoneHelper detailsData={data} />
-            case "HealDone":
-                return <HealDoneHelper detailsData={data} />
-            case "DamageTaken":
-                return <DamageTakenHelper detailsData={data} />
-            case "ResourceRecovery":
-                return <ResourceRecoveryHelper detailsData={data} />
-            default:
-                return <DamageDoneHelper detailsData={data} />
-        }
+    const getCombatDataListAsync = async (page = 1, pageSize = 10) => {
+        const data = await getPlayerDetailsAsync(page, pageSize);
+        const HelperComponent = helperComponents[detailsType] || DamageDoneHelper;
+
+        const date = new Date(combatStartDate);
+        const time = `${date.getUTCHours()}:${date.getUTCMinutes()}:${date.getUTCSeconds()}.${date.getUTCMilliseconds()}`;
+
+        return <HelperComponent
+            detailsData={data}
+            startDate={time}
+        />;
     }
 
-    return [getListAsync, getFilteredList, getPlayerDetailsAsync];
+    const getCountAsync = async () => {
+        const response = await counts[detailsType](combatPlayerId);
+
+        if (response.data !== undefined) {
+            return response.data;
+        }
+
+        return 0;
+    }
+
+    return [getCombatDataListAsync, getPlayerDetailsAsync, getCountAsync];
 }
 
-export default useHealDoneHelper;
+export default useCombatDetailsData;

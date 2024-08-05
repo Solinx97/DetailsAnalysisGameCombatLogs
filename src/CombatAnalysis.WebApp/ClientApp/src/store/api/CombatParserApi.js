@@ -18,16 +18,48 @@ export const CombatParserApi = createApi({
             query: () => '/MainInformation'
         }),
         getDamageDoneByPlayerId: builder.query({
-            query: (playerId) => `/DamageDone/${playerId}`
+            query: (arg) => {
+                const { combatPlayerId, page, pageSize } = arg;
+                return {
+                    url: `/DamageDone/getByCombatPlayerId?combatPlayerId=${combatPlayerId}&page=${page}&pageSize=${pageSize}`,
+                }
+            }
+        }),
+        getDamageDoneCountByPlayerId: builder.query({
+            query: (playerId) => `/DamageDone/count/${playerId}`
         }),
         getHealDoneByPlayerId: builder.query({
-            query: (playerId) => `/HealDone/${playerId}`
+            query: (arg) => {
+                const { combatPlayerId, page, pageSize } = arg;
+                return {
+                    url: `/HealDone/getByCombatPlayerId?combatPlayerId=${combatPlayerId}&page=${page}&pageSize=${pageSize}`,
+                }
+            }
+        }),
+        getHealDoneCountByPlayerId: builder.query({
+            query: (playerId) => `/HealDone/count/${playerId}`
         }),
         getDamageTakenByPlayerId: builder.query({
-            query: (playerId) => `/DamageTaken/${playerId}`
+            query: (arg) => {
+                const { combatPlayerId, page, pageSize } = arg;
+                return {
+                    url: `/DamageTaken/getByCombatPlayerId?combatPlayerId=${combatPlayerId}&page=${page}&pageSize=${pageSize}`,
+                }
+            }
+        }),
+        getDamageTakenCountByPlayerId: builder.query({
+            query: (playerId) => `/DamageTaken/count/${playerId}`
         }),
         getResourceRecoveryByPlayerId: builder.query({
-            query: (playerId) => `/ResourceRecovery/${playerId}`
+            query: (arg) => {
+                const { combatPlayerId, page, pageSize } = arg;
+                return {
+                    url: `/ResourceRecovery/getByCombatPlayerId?combatPlayerId=${combatPlayerId}&page=${page}&pageSize=${pageSize}`,
+                }
+            }
+        }),
+        getResourceRecoveryCountByPlayerId: builder.query({
+            query: (playerId) => `/ResourceRecovery/count/${playerId}`
         }),
         getDamageDoneGeneralyByPlayerId: builder.query({
             query: (playerId) => `/DamageDoneGeneral/${playerId}`
@@ -45,7 +77,7 @@ export const CombatParserApi = createApi({
             query: (playerId) => `/PlayerDeath/${playerId}`
         }),
         getGeneralAnalysisById: builder.query({
-            query: (id) => `/GeneralAnalysis/${id}`
+            query: (id) => `/GeneralAnalysis/findByCombatLogId/${id}`
         }),
         getCombatPlayersByCombatId: builder.query({
             query: (id) => `/DetailsSpecificalCombat/combatPlayersByCombatId/${id}`
@@ -62,15 +94,20 @@ export const CombatParserApi = createApi({
 export const {
     useGetCombatLogsQuery,
     useLazyGetDamageDoneByPlayerIdQuery,
+    useLazyGetDamageDoneCountByPlayerIdQuery,
     useLazyGetHealDoneByPlayerIdQuery,
+    useLazyGetHealDoneCountByPlayerIdQuery,
     useLazyGetDamageTakenByPlayerIdQuery,
+    useLazyGetDamageTakenCountByPlayerIdQuery,
     useLazyGetResourceRecoveryByPlayerIdQuery,
+    useLazyGetResourceRecoveryCountByPlayerIdQuery,
     useLazyGetDamageDoneGeneralyByPlayerIdQuery,
     useLazyGetHealDoneGeneralyByPlayerIdQuery,
     useLazyGetDamageTakenGeneralyByPlayerIdQuery,
     useLazyGetResourceRecoveryGeneralyByPlayerIdQuery,
     useLazyGetPlayersDeathByPlayerIdQuery,
     useGetDamageDoneGeneralyByPlayerIdQuery,
+    useLazyGetCombatById,
     useGetGeneralAnalysisByIdQuery,
     useLazyGetGeneralAnalysisByIdQuery,
     useLazyGetCombatPlayersByCombatIdQuery,

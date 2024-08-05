@@ -37,7 +37,7 @@ internal class CombatPlayerService : IService<CombatPlayerDto, int>
     public async Task<IEnumerable<CombatPlayerDto>> GetAllAsync()
     {
         var allData = await _repository.GetAllAsync();
-        var result = _mapper.Map<List<CombatPlayerDto>>(allData);
+        var result = _mapper.Map<IEnumerable<CombatPlayerDto>>(allData);
 
         return result;
     }

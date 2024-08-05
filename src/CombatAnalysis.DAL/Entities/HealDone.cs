@@ -3,7 +3,7 @@
 namespace CombatAnalysis.DAL.Entities;
 
 [Index(nameof(CombatPlayerId))]
-public class HealDone
+public class HealDone : BasePlayerInfo
 {
     public int Id { get; set; }
 
@@ -29,5 +29,5 @@ public class HealDone
 
     public bool IsAbsorbed { get; set; }
 
-    public int CombatPlayerId { get; set; }
+    public override int CombatPlayerId { get; set; }
 }

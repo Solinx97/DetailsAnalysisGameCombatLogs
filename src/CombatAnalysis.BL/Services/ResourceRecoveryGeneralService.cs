@@ -8,10 +8,10 @@ namespace CombatAnalysis.BL.Services;
 
 internal class ResourceRecoveryGeneralService : IPlayerInfoService<ResourceRecoveryGeneralDto, int>
 {
-    private readonly ISQLPlayerInfoRepository<ResourceRecoveryGeneral, int> _repository;
+    private readonly IPlayerInfo<ResourceRecoveryGeneral, int> _repository;
     private readonly IMapper _mapper;
 
-    public ResourceRecoveryGeneralService(ISQLPlayerInfoRepository<ResourceRecoveryGeneral, int> repository, IMapper mapper)
+    public ResourceRecoveryGeneralService(IPlayerInfo<ResourceRecoveryGeneral, int> repository, IMapper mapper)
     {
         _repository = repository;
         _mapper = mapper;
@@ -37,7 +37,7 @@ internal class ResourceRecoveryGeneralService : IPlayerInfoService<ResourceRecov
     public async Task<IEnumerable<ResourceRecoveryGeneralDto>> GetAllAsync()
     {
         var allData = await _repository.GetAllAsync();
-        var result = _mapper.Map<List<ResourceRecoveryGeneralDto>>(allData);
+        var result = _mapper.Map<IEnumerable<ResourceRecoveryGeneralDto>>(allData);
 
         return result;
     }
@@ -53,9 +53,22 @@ internal class ResourceRecoveryGeneralService : IPlayerInfoService<ResourceRecov
     public async Task<IEnumerable<ResourceRecoveryGeneralDto>> GetByCombatPlayerIdAsync(int combatPlayerId)
     {
         var result = await _repository.GetByCombatPlayerIdAsync(combatPlayerId);
-        var resultMap = _mapper.Map<List<ResourceRecoveryGeneralDto>>(result);
+        var resultMap = _mapper.Map<IEnumerable<ResourceRecoveryGeneralDto>>(result);
 
         return resultMap;
+    }
+
+    public async Task<IEnumerable<ResourceRecoveryGeneralDto>> GetByCombatPlayerIdAsync(int combatPlayerId, int page = 1, int pageSize = 10)
+    {
+        var result = await _repository.GetByCombatPlayerIdAsync(combatPlayerId);
+        var pagination = result
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
+            .ToList();
+
+        var map = _mapper.Map<IEnumerable<ResourceRecoveryGeneralDto>>(pagination);
+
+        return map;
     }
 
     public async Task<IEnumerable<ResourceRecoveryGeneralDto>> GetByParamAsync(string paramName, object value)

@@ -23,7 +23,7 @@ public class SQLSPRepository<TModel, TIdType> : IGenericRepository<TModel, TIdTy
         var procedureParams = new List<SqlParameter>();
         var procedureParamNames = new StringBuilder();
 
-        for (int i = 1; i < properties.Length; i++)
+        for (var i = 1; i < properties.Length; i++)
         {
             if (properties[i].CanWrite)
             {
@@ -31,6 +31,7 @@ public class SQLSPRepository<TModel, TIdType> : IGenericRepository<TModel, TIdTy
                 procedureParamNames.Append($"@{properties[i].Name},");
             }
         }
+
         procedureParamNames.Remove(procedureParamNames.Length - 1, 1);
 
         var data = await Task.Run(() => _context.Set<TModel>().FromSqlRaw($"InsertInto{item.GetType().Name} {procedureParamNames}", procedureParams.ToArray())
@@ -50,9 +51,9 @@ public class SQLSPRepository<TModel, TIdType> : IGenericRepository<TModel, TIdTy
 
     public async Task<IEnumerable<TModel>> GetAllAsync()
     {
-        var data = await _context.Set<TModel>()
+        var data = await Task.Run(() => _context.Set<TModel>()
                             .FromSqlRaw($"GetAll{typeof(TModel).Name}")
-                            .ToListAsync();
+                            .AsEnumerable());
 
         return data;
     }
@@ -73,6 +74,7 @@ public class SQLSPRepository<TModel, TIdType> : IGenericRepository<TModel, TIdTy
         var data = _context.Set<TModel>()
                             .FromSqlRaw($"GetAll{typeof(TModel).Name}")
                             .AsEnumerable();
+
         foreach (var item in data)
         {
             if (item.GetType().GetProperty(paramName).GetValue(item).Equals(value))

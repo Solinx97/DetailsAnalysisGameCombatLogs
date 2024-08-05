@@ -6,12 +6,12 @@ using CombatAnalysis.DAL.Interfaces;
 
 namespace CombatAnalysis.BL.Services;
 
-internal class DamageTakenService : IPlayerInfoService<DamageTakenDto, int>
+internal class DamageTakenService : IPlayerInfoCountService<DamageTakenDto, int>
 {
-    private readonly ISQLPlayerInfoRepository<DamageTaken, int> _repository;
+    private readonly IPlayerInfoCount<DamageTaken, int> _repository;
     private readonly IMapper _mapper;
 
-    public DamageTakenService(ISQLPlayerInfoRepository<DamageTaken, int> repository, IMapper mapper)
+    public DamageTakenService(IPlayerInfoCount<DamageTaken, int> repository, IMapper mapper)
     {
         _repository = repository;
         _mapper = mapper;
@@ -37,7 +37,7 @@ internal class DamageTakenService : IPlayerInfoService<DamageTakenDto, int>
     public async Task<IEnumerable<DamageTakenDto>> GetAllAsync()
     {
         var allData = await _repository.GetAllAsync();
-        var result = _mapper.Map<List<DamageTakenDto>>(allData);
+        var result = _mapper.Map<IEnumerable<DamageTakenDto>>(allData);
 
         return result;
     }
@@ -53,9 +53,22 @@ internal class DamageTakenService : IPlayerInfoService<DamageTakenDto, int>
     public async Task<IEnumerable<DamageTakenDto>> GetByCombatPlayerIdAsync(int combatPlayerId)
     {
         var result = await _repository.GetByCombatPlayerIdAsync(combatPlayerId);
-        var resultMap = _mapper.Map<List<DamageTakenDto>>(result);
+        var resultMap = _mapper.Map<IEnumerable<DamageTakenDto>>(result);
 
         return resultMap;
+    }
+
+    public async Task<IEnumerable<DamageTakenDto>> GetByCombatPlayerIdAsync(int combatPlayerId, int page = 1, int pageSize = 10)
+    {
+        var result = await _repository.GetByCombatPlayerIdAsync(combatPlayerId);
+        var pagination = result
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
+            .ToList();
+
+        var map = _mapper.Map<IEnumerable<DamageTakenDto>>(pagination);
+
+        return map;
     }
 
     public async Task<IEnumerable<DamageTakenDto>> GetByParamAsync(string paramName, object value)
@@ -64,6 +77,13 @@ internal class DamageTakenService : IPlayerInfoService<DamageTakenDto, int>
         var resultMap = _mapper.Map<IEnumerable<DamageTakenDto>>(result);
 
         return resultMap;
+    }
+
+    public async Task<int> CountByCombatPlayerIdAsync(int combatPlayerId)
+    {
+        var count = await _repository.CountByCombatPlayerIdAsync(combatPlayerId);
+
+        return count;
     }
 
     public Task<int> UpdateAsync(DamageTakenDto item)

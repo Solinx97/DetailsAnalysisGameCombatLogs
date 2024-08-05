@@ -6,12 +6,12 @@ using CombatAnalysis.DAL.Interfaces;
 
 namespace CombatAnalysis.BL.Services;
 
-internal class ResourceRecoveryService : IPlayerInfoService<ResourceRecoveryDto, int>
+internal class ResourceRecoveryService : IPlayerInfoCountService<ResourceRecoveryDto, int>
 {
-    private readonly ISQLPlayerInfoRepository<ResourceRecovery, int> _repository;
+    private readonly IPlayerInfoCount<ResourceRecovery, int> _repository;
     private readonly IMapper _mapper;
 
-    public ResourceRecoveryService(ISQLPlayerInfoRepository<ResourceRecovery, int> repository, IMapper mapper)
+    public ResourceRecoveryService(IPlayerInfoCount<ResourceRecovery, int> repository, IMapper mapper)
     {
         _repository = repository;
         _mapper = mapper;
@@ -37,7 +37,7 @@ internal class ResourceRecoveryService : IPlayerInfoService<ResourceRecoveryDto,
     public async Task<IEnumerable<ResourceRecoveryDto>> GetAllAsync()
     {
         var allData = await _repository.GetAllAsync();
-        var result = _mapper.Map<List<ResourceRecoveryDto>>(allData);
+        var result = _mapper.Map<IEnumerable<ResourceRecoveryDto>>(allData);
 
         return result;
     }
@@ -53,9 +53,22 @@ internal class ResourceRecoveryService : IPlayerInfoService<ResourceRecoveryDto,
     public async Task<IEnumerable<ResourceRecoveryDto>> GetByCombatPlayerIdAsync(int combatPlayerId)
     {
         var result = await _repository.GetByCombatPlayerIdAsync(combatPlayerId);
-        var resultMap = _mapper.Map<List<ResourceRecoveryDto>>(result);
+        var resultMap = _mapper.Map<IEnumerable<ResourceRecoveryDto>>(result);
 
         return resultMap;
+    }
+
+    public async Task<IEnumerable<ResourceRecoveryDto>> GetByCombatPlayerIdAsync(int combatPlayerId, int page = 1, int pageSize = 10)
+    {
+        var result = await _repository.GetByCombatPlayerIdAsync(combatPlayerId);
+        var pagination = result
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
+            .ToList();
+
+        var map = _mapper.Map<IEnumerable<ResourceRecoveryDto>>(pagination);
+
+        return map;
     }
 
     public async Task<IEnumerable<ResourceRecoveryDto>> GetByParamAsync(string paramName, object value)
@@ -64,6 +77,13 @@ internal class ResourceRecoveryService : IPlayerInfoService<ResourceRecoveryDto,
         var resultMap = _mapper.Map<IEnumerable<ResourceRecoveryDto>>(result);
 
         return resultMap;
+    }
+
+    public async Task<int> CountByCombatPlayerIdAsync(int combatPlayerId)
+    {
+        var count = await _repository.CountByCombatPlayerIdAsync(combatPlayerId);
+
+        return count;
     }
 
     public Task<int> UpdateAsync(ResourceRecoveryDto item)

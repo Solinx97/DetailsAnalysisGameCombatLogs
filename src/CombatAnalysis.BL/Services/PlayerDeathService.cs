@@ -8,10 +8,10 @@ namespace CombatAnalysis.BL.Services;
 
 internal class PlayerDeathService : IPlayerInfoService<PlayerDeathDto, int>
 {
-    private readonly ISQLPlayerInfoRepository<PlayerDeath, int> _repository;
+    private readonly IPlayerInfo<PlayerDeath, int> _repository;
     private readonly IMapper _mapper;
 
-    public PlayerDeathService(ISQLPlayerInfoRepository<PlayerDeath, int> repository, IMapper mapper)
+    public PlayerDeathService(IPlayerInfo<PlayerDeath, int> repository, IMapper mapper)
     {
         _repository = repository;
         _mapper = mapper;
@@ -37,7 +37,7 @@ internal class PlayerDeathService : IPlayerInfoService<PlayerDeathDto, int>
     public async Task<IEnumerable<PlayerDeathDto>> GetAllAsync()
     {
         var allData = await _repository.GetAllAsync();
-        var result = _mapper.Map<List<PlayerDeathDto>>(allData);
+        var result = _mapper.Map<IEnumerable<PlayerDeathDto>>(allData);
 
         return result;
     }
@@ -53,9 +53,22 @@ internal class PlayerDeathService : IPlayerInfoService<PlayerDeathDto, int>
     public async Task<IEnumerable<PlayerDeathDto>> GetByCombatPlayerIdAsync(int combatPlayerId)
     {
         var result = await _repository.GetByCombatPlayerIdAsync(combatPlayerId);
-        var resultMap = _mapper.Map<List<PlayerDeathDto>>(result);
+        var resultMap = _mapper.Map<IEnumerable<PlayerDeathDto>>(result);
 
         return resultMap;
+    }
+
+    public async Task<IEnumerable<PlayerDeathDto>> GetByCombatPlayerIdAsync(int combatPlayerId, int page = 1, int pageSize = 10)
+    {
+        var result = await _repository.GetByCombatPlayerIdAsync(combatPlayerId);
+        var pagination = result
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
+            .ToList();
+
+        var map = _mapper.Map<IEnumerable<PlayerDeathDto>>(pagination);
+
+        return map;
     }
 
     public async Task<IEnumerable<PlayerDeathDto>> GetByParamAsync(string paramName, object value)

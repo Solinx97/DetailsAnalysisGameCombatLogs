@@ -1,6 +1,6 @@
 ﻿namespace CombatAnalysis.BL.DTO;
 
-public class ResourceRecoveryDto
+public class ResourceRecoveryDto : BasePlayerInfoDto
 {
     public int Id { get; set; }
 
@@ -10,5 +10,5 @@ public class ResourceRecoveryDto
 
     public string SpellOrItem { get; set; }
 
-    public int CombatPlayerId { get; set; }
+    public override int CombatPlayerId { get; set; }
 }

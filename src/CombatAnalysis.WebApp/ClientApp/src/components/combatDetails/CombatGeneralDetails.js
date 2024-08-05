@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { useLazyGetCombatPlayerIdQuery } from '../../store/api/CombatParserApi';
+import { useLazyGetCombatByIdQuery, useLazyGetCombatPlayerIdQuery } from '../../store/api/CombatParserApi';
 import CombatDetails from './CombatDetails';
 import CombatGeneralDetailsItem from './CombatGeneralDetailsItem';
 
@@ -22,17 +22,30 @@ const CombatGeneralDetails = () => {
     const [combatId, setCombatId] = useState(0);
     const [combatLogId, setCombatLogId] = useState(0);
     const [tabIndex, setTabIndex] = useState(0);
+    const [combat, setCombat] = useState(null);
 
+    const [getCombatByIdAsync] = useLazyGetCombatByIdQuery();
     const [getCombatPlayerIdAsyncMut] = useLazyGetCombatPlayerIdQuery();
 
     useEffect(() => {
         const queryParams = new URLSearchParams(window.location.search);
+        const combatId = +queryParams.get("combatId");
+
         setCombatPlayerId(+queryParams.get("id"));
         setDetailsType(queryParams.get("detailsType"));
-        setCombatId(+queryParams.get("combatId"));
+        setCombatId(combatId);
         setCombatLogId(+queryParams.get("combatLogId"));
         setCombatName(queryParams.get("name"));
         setTab(+queryParams.get("tab"));
+
+        const getCombat = async () => {
+            const response = await getCombatByIdAsync(combatId);
+            const combat = response.error === undefined ? response.data : null;
+
+            setCombat(combat);
+        }
+
+        getCombat();
     }, [])
 
     useEffect(() => {
@@ -70,7 +83,7 @@ const CombatGeneralDetails = () => {
     }
 
     if (combatPlayerId <= 0) {
-        return <></>;
+        return <div>Loading...</div>;
     }
 
     return (
@@ -116,6 +129,7 @@ const CombatGeneralDetails = () => {
                 : <CombatDetails
                     combatPlayerId={combatPlayerId}
                     detailsType={detailsType}
+                    combatStartDate={combat.startDate}
                 />
             }
         </div>

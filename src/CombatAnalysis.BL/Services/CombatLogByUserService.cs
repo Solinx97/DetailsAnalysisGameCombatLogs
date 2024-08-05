@@ -37,7 +37,7 @@ internal class CombatLogByUserService : IService<CombatLogByUserDto, int>
     public async Task<IEnumerable<CombatLogByUserDto>> GetAllAsync()
     {
         var allData = await _repository.GetAllAsync();
-        var result = _mapper.Map<List<CombatLogByUserDto>>(allData);
+        var result = _mapper.Map<IEnumerable<CombatLogByUserDto>>(allData);
 
         return result;
     }

@@ -8,10 +8,10 @@ namespace CombatAnalysis.BL.Services;
 
 internal class SpecializationScoreService : ISpecScoreService<SpecializationScoreDto, int>
 {
-    private readonly ISQLSpecScoreRepository<SpecializationScore, int> _repository;
+    private readonly ISpecScore<SpecializationScore, int> _repository;
     private readonly IMapper _mapper;
 
-    public SpecializationScoreService(ISQLSpecScoreRepository<SpecializationScore, int> repository, IMapper mapper)
+    public SpecializationScoreService(ISpecScore<SpecializationScore, int> repository, IMapper mapper)
     {
         _repository = repository;
         _mapper = mapper;
@@ -37,7 +37,7 @@ internal class SpecializationScoreService : ISpecScoreService<SpecializationScor
     public async Task<IEnumerable<SpecializationScoreDto>> GetAllAsync()
     {
         var allData = await _repository.GetAllAsync();
-        var result = _mapper.Map<List<SpecializationScoreDto>>(allData);
+        var result = _mapper.Map<IEnumerable<SpecializationScoreDto>>(allData);
 
         return result;
     }

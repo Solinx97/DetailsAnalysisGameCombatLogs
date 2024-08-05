@@ -1,6 +1,8 @@
-﻿namespace CombatAnalysis.BL.Interfaces;
+﻿using CombatAnalysis.DAL.Entities;
 
-public interface IPlayerInfoService<TModel, TIdType> : IService<TModel, TIdType>
+namespace CombatAnalysis.DAL.Interfaces;
+
+public interface IPlayerInfo<TModel, TIdType> : IGenericRepository<TModel, TIdType>
     where TModel : class
     where TIdType : notnull
 {

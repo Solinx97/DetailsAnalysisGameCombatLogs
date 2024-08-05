@@ -10,23 +10,31 @@ namespace CombatAnalysis.CombatParserAPI.Controllers;
 [ApiController]
 public class DamageTakenController : ControllerBase
 {
-    private readonly IPlayerInfoService<DamageTakenDto, int> _service;
+    private readonly IPlayerInfoCountService<DamageTakenDto, int> _service;
     private readonly IMapper _mapper;
     private readonly ILogger<CombatPlayerController> _logger;
 
-    public DamageTakenController(IPlayerInfoService<DamageTakenDto, int> service, IMapper mapper, ILogger<CombatPlayerController> logger)
+    public DamageTakenController(IPlayerInfoCountService<DamageTakenDto, int> service, IMapper mapper, ILogger<CombatPlayerController> logger)
     {
         _service = service;
         _mapper = mapper;
         _logger = logger;
     }
 
-    [HttpGet("findByCombatPlayerId/{combatPlayerId:int:min(1)}")]
-    public async Task<IActionResult> Find(int combatPlayerId)
+    [HttpGet("getByCombatPlayerId")]
+    public async Task<IActionResult> GetByCombatPlayerId(int combatPlayerId, int page, int pageSize)
     {
-        var damageTakens = await _service.GetByCombatPlayerIdAsync(combatPlayerId);
+        var damageDones = await _service.GetByCombatPlayerIdAsync(combatPlayerId, page, pageSize);
 
-        return Ok(damageTakens);
+        return Ok(damageDones);
+    }
+
+    [HttpGet("{combatPlayerId}")]
+    public async Task<IActionResult> Count(int combatPlayerId)
+    {
+        var countByCombatPlayerId = await _service.CountByCombatPlayerIdAsync(combatPlayerId);
+
+        return Ok(countByCombatPlayerId);
     }
 
     [HttpPost]

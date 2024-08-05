@@ -8,10 +8,10 @@ namespace CombatAnalysis.BL.Services;
 
 internal class CombatService : IService<CombatDto, int>
 {
-    private readonly ISQLPlayerInfoRepository<Combat, int> _repository;
+    private readonly IPlayerInfo<Combat, int> _repository;
     private readonly IMapper _mapper;
 
-    public CombatService(ISQLPlayerInfoRepository<Combat, int> repository, IMapper mapper)
+    public CombatService(IPlayerInfo<Combat, int> repository, IMapper mapper)
     {
         _repository = repository;
         _mapper = mapper;
@@ -37,7 +37,7 @@ internal class CombatService : IService<CombatDto, int>
     public async Task<IEnumerable<CombatDto>> GetAllAsync()
     {
         var allData = await _repository.GetAllAsync();
-        var result = _mapper.Map<List<CombatDto>>(allData);
+        var result = _mapper.Map<IEnumerable<CombatDto>>(allData);
 
         return result;
     }

@@ -65,8 +65,34 @@ internal static class DbProcedureHelper
             dbContext.Database.ExecuteSqlRaw(query);
         }
 
+        CreateProceduresWithPaginations(dbContext);
+
         GetDataByCombatPlayerId(dbContext);
         GetSpecializationScore(dbContext);
+    }
+
+    public static void CreateProceduresWithPaginations(DbContext dbContext)
+    {
+        var types = new Type[]
+        {
+            typeof(DamageDone),
+            typeof(HealDone),
+            typeof(DamageTaken),
+            typeof(ResourceRecovery),
+        };
+
+        foreach (var item in types)
+        {
+            var property = item.GetProperty("CombatPlayerId");
+            var query = $"CREATE PROCEDURE Get{item.Name}ByCombatPlayerIdPagination (@combatPlayerId {Converter(property.PropertyType.Name)}, @page INT, @pageSize INT)\n" +
+                          "\tAS SELECT * \n" +
+                          $"\tFROM {item.Name}\n" +
+                          "\tWHERE CombatPlayerId = @combatPlayerId\n" +
+                          $"\tORDER BY Id\n" +
+                          "\tOFFSET (@page - 1) * @pageSize ROWS\n" +
+                          "\tFETCH NEXT @pageSize ROWS ONLY";
+            dbContext.Database.ExecuteSqlRaw(query);
+        }
     }
 
     private static void GetDataByCombatPlayerId(DbContext dbContext)

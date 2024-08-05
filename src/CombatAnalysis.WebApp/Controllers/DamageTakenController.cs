@@ -17,10 +17,19 @@ public class DamageTakenController : ControllerBase
         _httpClient.BaseAddress = Port.CombatParserApi;
     }
 
-    [HttpGet("{id}")]
-    public async Task<IActionResult> GetById(int id)
+    [HttpGet("count/{combatPlayerId}")]
+    public async Task<IActionResult> Count(int combatPlayerId)
     {
-        var responseMessage = await _httpClient.GetAsync($"DamageTaken/FindByCombatPlayerId/{id}");
+        var responseMessage = await _httpClient.GetAsync($"DamageTaken/{combatPlayerId}");
+        var count = await responseMessage.Content.ReadFromJsonAsync<int>();
+
+        return Ok(count);
+    }
+
+    [HttpGet("getByCombatPlayerId")]
+    public async Task<IActionResult> GetByCombatPlayerId(int combatPlayerId, int page, int pageSize)
+    {
+        var responseMessage = await _httpClient.GetAsync($"DamageTaken/getByCombatPlayerId?combatPlayerId={combatPlayerId}&page={page}&pageSize={pageSize}");
         var damageTakens = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<DamageTakenModel>>();
 
         return Ok(damageTakens);

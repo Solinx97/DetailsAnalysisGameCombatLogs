@@ -1,6 +1,6 @@
 ﻿namespace CombatAnalysis.BL.DTO;
 
-public class DamageDoneDto
+public class DamageDoneDto : BasePlayerInfoDto
 {
     public int Id { get; set; }
 
@@ -30,5 +30,5 @@ public class DamageDoneDto
 
     public bool IsPet { get; set; }
 
-    public int CombatPlayerId { get; set; }
+    public override int CombatPlayerId { get; set; }
 }

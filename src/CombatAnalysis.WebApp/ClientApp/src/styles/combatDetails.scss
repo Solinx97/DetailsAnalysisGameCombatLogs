@@ -3,6 +3,30 @@
         cursor: pointer;
     }
 
+    .pagination-controls {
+        position: fixed;
+        display: flex;
+        justify-content: center;
+        bottom: 1vh;
+        left: 0;
+        width: 100%;
+
+        &__container {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            box-shadow: 2px 2px 2px 2px red;
+            border-radius: 10px;
+            padding: 5px 10px;
+            background: #135D66;
+            font-size: 0.7em;
+
+            .prev, .next {
+                box-shadow: 2px 2px 2px 2px green;
+            }
+        }
+    }
+
     .filter {
         display: flex;
         flex-direction: column;

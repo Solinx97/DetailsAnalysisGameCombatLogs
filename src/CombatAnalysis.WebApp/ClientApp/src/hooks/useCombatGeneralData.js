@@ -6,7 +6,7 @@ import {
     useLazyGetDamageDoneGeneralyByPlayerIdQuery, useLazyGetDamageTakenGeneralyByPlayerIdQuery, useLazyGetHealDoneGeneralyByPlayerIdQuery, useLazyGetResourceRecoveryGeneralyByPlayerIdQuery
 } from '../store/api/CombatParserApi';
 
-const useHealDoneHelper = (combatPlayerId, detailsType) => {
+const useCombatGeneralData = (combatPlayerId, detailsType) => {
     const [getDamageDoneGeneralyByPlayerIdAsync] = useLazyGetDamageDoneGeneralyByPlayerIdQuery();
     const [getHealDoneGeneralyByPlayerIdAsync] = useLazyGetHealDoneGeneralyByPlayerIdQuery();
     const [getDamageTakenGeneralyByPlayerIdAsync] = useLazyGetDamageTakenGeneralyByPlayerIdQuery();
@@ -59,4 +59,4 @@ const useHealDoneHelper = (combatPlayerId, detailsType) => {
     return [getGeneralListAsync, getPlayerGeneralDetailsAsync];
 }
 
-export default useHealDoneHelper;
+export default useCombatGeneralData;

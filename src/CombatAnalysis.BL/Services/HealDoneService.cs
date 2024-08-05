@@ -6,12 +6,12 @@ using CombatAnalysis.DAL.Interfaces;
 
 namespace CombatAnalysis.BL.Services;
 
-internal class HealDoneService : IPlayerInfoService<HealDoneDto, int>
+internal class HealDoneService : IPlayerInfoCountService<HealDoneDto, int>
 {
-    private readonly ISQLPlayerInfoRepository<HealDone, int> _repository;
+    private readonly IPlayerInfoCount<HealDone, int> _repository;
     private readonly IMapper _mapper;
 
-    public HealDoneService(ISQLPlayerInfoRepository<HealDone, int> repository, IMapper mapper)
+    public HealDoneService(IPlayerInfoCount<HealDone, int> repository, IMapper mapper)
     {
         _repository = repository;
         _mapper = mapper;
@@ -37,7 +37,7 @@ internal class HealDoneService : IPlayerInfoService<HealDoneDto, int>
     public async Task<IEnumerable<HealDoneDto>> GetAllAsync()
     {
         var allData = await _repository.GetAllAsync();
-        var result = _mapper.Map<List<HealDoneDto>>(allData);
+        var result = _mapper.Map<IEnumerable<HealDoneDto>>(allData);
 
         return result;
     }
@@ -53,9 +53,22 @@ internal class HealDoneService : IPlayerInfoService<HealDoneDto, int>
     public async Task<IEnumerable<HealDoneDto>> GetByCombatPlayerIdAsync(int combatPlayerId)
     {
         var result = await _repository.GetByCombatPlayerIdAsync(combatPlayerId);
-        var resultMap = _mapper.Map<List<HealDoneDto>>(result);
+        var resultMap = _mapper.Map<IEnumerable<HealDoneDto>>(result);
 
         return resultMap;
+    }
+
+    public async Task<IEnumerable<HealDoneDto>> GetByCombatPlayerIdAsync(int combatPlayerId, int page = 1, int pageSize = 10)
+    {
+        var result = await _repository.GetByCombatPlayerIdAsync(combatPlayerId);
+        var pagination = result
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
+            .ToList();
+
+        var map = _mapper.Map<IEnumerable<HealDoneDto>>(pagination);
+
+        return map;
     }
 
     public async Task<IEnumerable<HealDoneDto>> GetByParamAsync(string paramName, object value)
@@ -64,6 +77,13 @@ internal class HealDoneService : IPlayerInfoService<HealDoneDto, int>
         var resultMap = _mapper.Map<IEnumerable<HealDoneDto>>(result);
 
         return resultMap;
+    }
+
+    public async Task<int> CountByCombatPlayerIdAsync(int combatPlayerId)
+    {
+        var count = await _repository.CountByCombatPlayerIdAsync(combatPlayerId);
+
+        return count;
     }
 
     public Task<int> UpdateAsync(HealDoneDto item)

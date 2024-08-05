@@ -42,18 +42,18 @@ public static class DataCollectionExtensions
             options.UseSqlServer(connection);
         });
 
-        services.AddScoped<ISQLPlayerInfoRepository<Combat, int>, SQLPlayerInfoRepository<Combat, int>>();
-        services.AddScoped<ISQLPlayerInfoRepository<DamageDone, int>, SQLPlayerInfoRepository<DamageDone, int>>();
-        services.AddScoped<ISQLPlayerInfoRepository<DamageDoneGeneral, int>, SQLPlayerInfoRepository<DamageDoneGeneral, int>>();
-        services.AddScoped<ISQLPlayerInfoRepository<HealDone, int>, SQLPlayerInfoRepository<HealDone, int>>();
-        services.AddScoped<ISQLPlayerInfoRepository<HealDoneGeneral, int>, SQLPlayerInfoRepository<HealDoneGeneral, int>>();
-        services.AddScoped<ISQLPlayerInfoRepository<DamageTaken, int>, SQLPlayerInfoRepository<DamageTaken, int>>();
-        services.AddScoped<ISQLPlayerInfoRepository<DamageTakenGeneral, int>, SQLPlayerInfoRepository<DamageTakenGeneral, int>>();
-        services.AddScoped<ISQLPlayerInfoRepository<ResourceRecovery, int>, SQLPlayerInfoRepository<ResourceRecovery, int>>();
-        services.AddScoped<ISQLPlayerInfoRepository<ResourceRecoveryGeneral, int>, SQLPlayerInfoRepository<ResourceRecoveryGeneral, int>>();
-        services.AddScoped<ISQLPlayerInfoRepository<PlayerDeath, int>, SQLPlayerInfoRepository<PlayerDeath, int>>();
+        services.AddScoped<IPlayerInfo<Combat, int>, SQLPlayerInfoRepository<Combat, int>>();
+        services.AddScoped<IPlayerInfoCount<DamageDone, int>, SQLPlayerInfoCountRepository<DamageDone, int>>();
+        services.AddScoped<IPlayerInfo<DamageDoneGeneral, int>, SQLPlayerInfoRepository<DamageDoneGeneral, int>>();
+        services.AddScoped<IPlayerInfoCount<HealDone, int>, SQLPlayerInfoCountRepository<HealDone, int>>();
+        services.AddScoped<IPlayerInfo<HealDoneGeneral, int>, SQLPlayerInfoRepository<HealDoneGeneral, int>>();
+        services.AddScoped<IPlayerInfoCount<DamageTaken, int>, SQLPlayerInfoCountRepository<DamageTaken, int>>();
+        services.AddScoped<IPlayerInfo<DamageTakenGeneral, int>, SQLPlayerInfoRepository<DamageTakenGeneral, int>>();
+        services.AddScoped<IPlayerInfoCount<ResourceRecovery, int>, SQLPlayerInfoCountRepository<ResourceRecovery, int>>();
+        services.AddScoped<IPlayerInfo<ResourceRecoveryGeneral, int>, SQLPlayerInfoRepository<ResourceRecoveryGeneral, int>>();
+        services.AddScoped<IPlayerInfo<PlayerDeath, int>, SQLPlayerInfoRepository<PlayerDeath, int>>();
 
-        services.AddScoped<ISQLSpecScoreRepository<SpecializationScore, int>, SQLSpecScoreRepository<SpecializationScore, int>>();
+        services.AddScoped<ISpecScore<SpecializationScore, int>, SQLSpecScoreRepository<SpecializationScore, int>>();
 
         var dataProcessingType = configuration.GetSection("Database:DataProcessingType").Value ?? string.Empty;
         switch (dataProcessingType)

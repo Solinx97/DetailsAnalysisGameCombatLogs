@@ -37,7 +37,7 @@ internal class PlayerParseInfoService : IService<PlayerParseInfoDto, int>
     public async Task<IEnumerable<PlayerParseInfoDto>> GetAllAsync()
     {
         var allData = await _repository.GetAllAsync();
-        var result = _mapper.Map<List<PlayerParseInfoDto>>(allData);
+        var result = _mapper.Map<IEnumerable<PlayerParseInfoDto>>(allData);
 
         return result;
     }

@@ -6,12 +6,12 @@ using CombatAnalysis.DAL.Interfaces;
 
 namespace CombatAnalysis.BL.Services;
 
-internal class DamageDoneService : IPlayerInfoService<DamageDoneDto, int>
+internal class DamageDoneService : IPlayerInfoCountService<DamageDoneDto, int>
 {
-    private readonly ISQLPlayerInfoRepository<DamageDone, int> _repository;
+    private readonly IPlayerInfoCount<DamageDone, int> _repository;
     private readonly IMapper _mapper;
 
-    public DamageDoneService(ISQLPlayerInfoRepository<DamageDone, int> repository, IMapper mapper)
+    public DamageDoneService(IPlayerInfoCount<DamageDone, int> repository, IMapper mapper)
     {
         _repository = repository;
         _mapper = mapper;
@@ -37,7 +37,7 @@ internal class DamageDoneService : IPlayerInfoService<DamageDoneDto, int>
     public async Task<IEnumerable<DamageDoneDto>> GetAllAsync()
     {
         var allData = await _repository.GetAllAsync();
-        var result = _mapper.Map<List<DamageDoneDto>>(allData);
+        var result = _mapper.Map<IEnumerable<DamageDoneDto>>(allData);
 
         return result;
     }
@@ -53,9 +53,17 @@ internal class DamageDoneService : IPlayerInfoService<DamageDoneDto, int>
     public async Task<IEnumerable<DamageDoneDto>> GetByCombatPlayerIdAsync(int combatPlayerId)
     {
         var result = await _repository.GetByCombatPlayerIdAsync(combatPlayerId);
-        var resultMap = _mapper.Map<List<DamageDoneDto>>(result);
+        var resultMap = _mapper.Map<IEnumerable<DamageDoneDto>>(result);
 
         return resultMap;
+    }
+
+    public async Task<IEnumerable<DamageDoneDto>> GetByCombatPlayerIdAsync(int combatPlayerId, int page = 1, int pageSize = 10)
+    {
+        var result = await _repository.GetByCombatPlayerIdAsync(combatPlayerId, page, pageSize);
+        var map = _mapper.Map<IEnumerable<DamageDoneDto>>(result);
+
+        return map;
     }
 
     public async Task<IEnumerable<DamageDoneDto>> GetByParamAsync(string paramName, object value)
@@ -64,6 +72,13 @@ internal class DamageDoneService : IPlayerInfoService<DamageDoneDto, int>
         var resultMap = _mapper.Map<IEnumerable<DamageDoneDto>>(result);
 
         return resultMap;
+    }
+
+    public async Task<int> CountByCombatPlayerIdAsync(int combatPlayerId)
+    {
+        var count = await _repository.CountByCombatPlayerIdAsync(combatPlayerId);
+
+        return count;
     }
 
     public Task<int> UpdateAsync(DamageDoneDto item)

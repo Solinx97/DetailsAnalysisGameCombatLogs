@@ -10,23 +10,31 @@ namespace CombatAnalysis.CombatParserAPI.Controllers;
 [ApiController]
 public class HealDoneController : ControllerBase
 {
-    private readonly IPlayerInfoService<HealDoneDto, int> _service;
+    private readonly IPlayerInfoCountService<HealDoneDto, int> _service;
     private readonly IMapper _mapper;
     private readonly ILogger<HealDoneController> _logger;
 
-    public HealDoneController(IPlayerInfoService<HealDoneDto, int> service, IMapper mapper, ILogger<HealDoneController> logger)
+    public HealDoneController(IPlayerInfoCountService<HealDoneDto, int> service, IMapper mapper, ILogger<HealDoneController> logger)
     {
         _service = service;
         _mapper = mapper;
         _logger = logger;
     }
 
-    [HttpGet("findByCombatPlayerId/{combatPlayerId:int:min(1)}")]
-    public async Task<IActionResult> Find(int combatPlayerId)
+    [HttpGet("getByCombatPlayerId")]
+    public async Task<IActionResult> GetByCombatPlayerId(int combatPlayerId, int page, int pageSize)
     {
-        var healDones = await _service.GetByCombatPlayerIdAsync(combatPlayerId);
+        var damageDones = await _service.GetByCombatPlayerIdAsync(combatPlayerId, page, pageSize);
 
-        return Ok(healDones);
+        return Ok(damageDones);
+    }
+
+    [HttpGet("{combatPlayerId}")]
+    public async Task<IActionResult> Count(int combatPlayerId)
+    {
+        var countByCombatPlayerId = await _service.CountByCombatPlayerIdAsync(combatPlayerId);
+
+        return Ok(countByCombatPlayerId);
     }
 
     [HttpPost]

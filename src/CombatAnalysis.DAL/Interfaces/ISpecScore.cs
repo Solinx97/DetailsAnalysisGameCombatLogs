@@ -1,6 +1,6 @@
 ﻿namespace CombatAnalysis.DAL.Interfaces;
 
-public interface ISQLSpecScoreRepository<TModel, TIdType> : IGenericRepository<TModel, TIdType>
+public interface ISpecScore<TModel, TIdType> : IGenericRepository<TModel, TIdType>
     where TModel : class
     where TIdType : notnull
 {

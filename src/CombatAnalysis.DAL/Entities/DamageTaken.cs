@@ -3,7 +3,7 @@
 namespace CombatAnalysis.DAL.Entities;
 
 [Index(nameof(CombatPlayerId))]
-public class DamageTaken
+public class DamageTaken : BasePlayerInfo
 {
     public int Id { get; set; }
 
@@ -45,5 +45,5 @@ public class DamageTaken
 
     public bool IsCrushing { get; set; }
 
-    public int CombatPlayerId { get; set; }
+    public override int CombatPlayerId { get; set; }
 }

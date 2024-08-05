@@ -8,10 +8,10 @@ namespace CombatAnalysis.BL.Services;
 
 internal class HealDoneGeneralService : IPlayerInfoService<HealDoneGeneralDto, int>
 {
-    private readonly ISQLPlayerInfoRepository<HealDoneGeneral, int> _repository;
+    private readonly IPlayerInfo<HealDoneGeneral, int> _repository;
     private readonly IMapper _mapper;
 
-    public HealDoneGeneralService(ISQLPlayerInfoRepository<HealDoneGeneral, int> repository, IMapper mapper)
+    public HealDoneGeneralService(IPlayerInfo<HealDoneGeneral, int> repository, IMapper mapper)
     {
         _repository = repository;
         _mapper = mapper;
@@ -37,7 +37,7 @@ internal class HealDoneGeneralService : IPlayerInfoService<HealDoneGeneralDto, i
     public async Task<IEnumerable<HealDoneGeneralDto>> GetAllAsync()
     {
         var allData = await _repository.GetAllAsync();
-        var result = _mapper.Map<List<HealDoneGeneralDto>>(allData);
+        var result = _mapper.Map<IEnumerable<HealDoneGeneralDto>>(allData);
 
         return result;
     }
@@ -53,9 +53,22 @@ internal class HealDoneGeneralService : IPlayerInfoService<HealDoneGeneralDto, i
     public async Task<IEnumerable<HealDoneGeneralDto>> GetByCombatPlayerIdAsync(int combatPlayerId)
     {
         var result = await _repository.GetByCombatPlayerIdAsync(combatPlayerId);
-        var resultMap = _mapper.Map<List<HealDoneGeneralDto>>(result);
+        var resultMap = _mapper.Map<IEnumerable<HealDoneGeneralDto>>(result);
 
         return resultMap;
+    }
+
+    public async Task<IEnumerable<HealDoneGeneralDto>> GetByCombatPlayerIdAsync(int combatPlayerId, int page = 1, int pageSize = 10)
+    {
+        var result = await _repository.GetByCombatPlayerIdAsync(combatPlayerId);
+        var pagination = result
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
+            .ToList();
+
+        var map = _mapper.Map<IEnumerable<HealDoneGeneralDto>>(pagination);
+
+        return map;
     }
 
     public async Task<IEnumerable<HealDoneGeneralDto>> GetByParamAsync(string paramName, object value)

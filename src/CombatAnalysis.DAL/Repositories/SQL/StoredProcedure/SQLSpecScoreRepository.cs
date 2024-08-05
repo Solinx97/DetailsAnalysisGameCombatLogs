@@ -6,7 +6,7 @@ using System.Text;
 
 namespace CombatAnalysis.DAL.Repositories.SQL.StoredProcedure;
 
-public class SQLSpecScoreRepository<TModel, TIdType> : ISQLSpecScoreRepository<TModel, TIdType>
+public class SQLSpecScoreRepository<TModel, TIdType> : ISpecScore<TModel, TIdType>
     where TModel : class
     where TIdType : notnull
 {

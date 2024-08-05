@@ -3,8 +3,10 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useTranslation } from 'react-i18next';
 import useTime from '../../hooks/useTime';
 
-const DamageTakenHelper = ({ detailsData }) => {
+const DamageTakenHelper = ({ detailsData, startDate }) => {
     const { t } = useTranslation("helpers/combatDetailsHelper");
+
+    console.log(startDate);
 
     const [getTimeWithoutMs, , getDuration] = useTime();
 
@@ -66,7 +68,7 @@ const DamageTakenHelper = ({ detailsData }) => {
                             className="list-group-item__value"
                             title={t("Time")}
                         />
-                        <div>{getDuration(getTimeWithoutMs(item.time), getTimeWithoutMs(detailsData[0].time))}</div>
+                        <div>{getDuration(getTimeWithoutMs(item.time), getTimeWithoutMs(startDate))}</div>
                     </li>
                     <li className="list-group-item">
                         <FontAwesomeIcon

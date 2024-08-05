@@ -14,19 +14,19 @@ public class CombatDataHelper : ICombatDataHelper
     private readonly IMapper _mapper;
     private readonly ILogger<CombatDataHelper> _logger;
     private readonly IPlayerParseInfoHelper _playerParseInfoHelper;
-    private readonly IPlayerInfoService<DamageDoneDto, int> _damageDoneService;
+    private readonly IPlayerInfoCountService<DamageDoneDto, int> _damageDoneService;
     private readonly IPlayerInfoService<DamageDoneGeneralDto, int> _damageDoneGeneralService;
-    private readonly IPlayerInfoService<HealDoneDto, int> _healDoneService;
+    private readonly IPlayerInfoCountService<HealDoneDto, int> _healDoneService;
     private readonly IPlayerInfoService<HealDoneGeneralDto, int> _healDoneGeneralService;
-    private readonly IPlayerInfoService<DamageTakenDto, int> _damageTakenService;
+    private readonly IPlayerInfoCountService<DamageTakenDto, int> _damageTakenService;
     private readonly IPlayerInfoService<DamageTakenGeneralDto, int> _damageTakenGeneralService;
-    private readonly IPlayerInfoService<ResourceRecoveryDto, int> _resourceRecoveryService;
+    private readonly IPlayerInfoCountService<ResourceRecoveryDto, int> _resourceRecoveryService;
     private readonly IPlayerInfoService<ResourceRecoveryGeneralDto, int> _resourceRecoveryGeneralService;
 
-    public CombatDataHelper(IMapper mapper, ILogger<CombatDataHelper> logger, IPlayerParseInfoHelper playerParseInfoHelper, 
-        IPlayerInfoService<DamageDoneDto, int> damageDoneService, IPlayerInfoService<DamageDoneGeneralDto, int> damageDoneGeneralService,
-        IPlayerInfoService<HealDoneDto, int> healDoneService, IPlayerInfoService<HealDoneGeneralDto, int> healDoneGeneralService, IPlayerInfoService<DamageTakenDto, int> damageTakenService,
-        IPlayerInfoService<DamageTakenGeneralDto, int> damageTakenGeneralService, IPlayerInfoService<ResourceRecoveryDto, int> resourceRecoveryService, 
+    public CombatDataHelper(IMapper mapper, ILogger<CombatDataHelper> logger, IPlayerParseInfoHelper playerParseInfoHelper,
+        IPlayerInfoCountService<DamageDoneDto, int> damageDoneService, IPlayerInfoService<DamageDoneGeneralDto, int> damageDoneGeneralService,
+        IPlayerInfoCountService<HealDoneDto, int> healDoneService, IPlayerInfoService<HealDoneGeneralDto, int> healDoneGeneralService, IPlayerInfoCountService<DamageTakenDto, int> damageTakenService,
+        IPlayerInfoService<DamageTakenGeneralDto, int> damageTakenGeneralService, IPlayerInfoCountService<ResourceRecoveryDto, int> resourceRecoveryService, 
         IPlayerInfoService<ResourceRecoveryGeneralDto, int> resourceRecoveryGeneralService)
     {
         _mapper = mapper;

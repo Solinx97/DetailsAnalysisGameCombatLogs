@@ -8,10 +8,10 @@ namespace CombatAnalysis.BL.Services;
 
 internal class DamageTakenGeneralService : IPlayerInfoService<DamageTakenGeneralDto, int>
 {
-    private readonly ISQLPlayerInfoRepository<DamageTakenGeneral, int> _repository;
+    private readonly IPlayerInfo<DamageTakenGeneral, int> _repository;
     private readonly IMapper _mapper;
 
-    public DamageTakenGeneralService(ISQLPlayerInfoRepository<DamageTakenGeneral, int> repository, IMapper mapper)
+    public DamageTakenGeneralService(IPlayerInfo<DamageTakenGeneral, int> repository, IMapper mapper)
     {
         _repository = repository;
         _mapper = mapper;
@@ -37,7 +37,7 @@ internal class DamageTakenGeneralService : IPlayerInfoService<DamageTakenGeneral
     public async Task<IEnumerable<DamageTakenGeneralDto>> GetAllAsync()
     {
         var allData = await _repository.GetAllAsync();
-        var result = _mapper.Map<List<DamageTakenGeneralDto>>(allData);
+        var result = _mapper.Map<IEnumerable<DamageTakenGeneralDto>>(allData);
 
         return result;
     }
@@ -53,9 +53,22 @@ internal class DamageTakenGeneralService : IPlayerInfoService<DamageTakenGeneral
     public async Task<IEnumerable<DamageTakenGeneralDto>> GetByCombatPlayerIdAsync(int combatPlayerId)
     {
         var result = await _repository.GetByCombatPlayerIdAsync(combatPlayerId);
-        var resultMap = _mapper.Map<List<DamageTakenGeneralDto>>(result);
+        var resultMap = _mapper.Map<IEnumerable<DamageTakenGeneralDto>>(result);
 
         return resultMap;
+    }
+
+    public async Task<IEnumerable<DamageTakenGeneralDto>> GetByCombatPlayerIdAsync(int combatPlayerId, int page = 1, int pageSize = 10)
+    {
+        var result = await _repository.GetByCombatPlayerIdAsync(combatPlayerId);
+        var pagination = result
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
+            .ToList();
+
+        var map = _mapper.Map<IEnumerable<DamageTakenGeneralDto>>(pagination);
+
+        return map;
     }
 
     public async Task<IEnumerable<DamageTakenGeneralDto>> GetByParamAsync(string paramName, object value)

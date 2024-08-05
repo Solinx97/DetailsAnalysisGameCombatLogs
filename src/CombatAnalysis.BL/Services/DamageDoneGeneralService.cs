@@ -8,10 +8,10 @@ namespace CombatAnalysis.BL.Services;
 
 internal class DamageDoneGeneralService : IPlayerInfoService<DamageDoneGeneralDto, int>
 {
-    private readonly ISQLPlayerInfoRepository<DamageDoneGeneral, int> _repository;
+    private readonly IPlayerInfo<DamageDoneGeneral, int> _repository;
     private readonly IMapper _mapper;
 
-    public DamageDoneGeneralService(ISQLPlayerInfoRepository<DamageDoneGeneral, int> repository, IMapper mapper)
+    public DamageDoneGeneralService(IPlayerInfo<DamageDoneGeneral, int> repository, IMapper mapper)
     {
         _repository = repository;
         _mapper = mapper;
@@ -37,7 +37,7 @@ internal class DamageDoneGeneralService : IPlayerInfoService<DamageDoneGeneralDt
     public async Task<IEnumerable<DamageDoneGeneralDto>> GetAllAsync()
     {
         var allData = await _repository.GetAllAsync();
-        var result = _mapper.Map<List<DamageDoneGeneralDto>>(allData);
+        var result = _mapper.Map<IEnumerable<DamageDoneGeneralDto>>(allData);
 
         return result;
     }
@@ -53,9 +53,22 @@ internal class DamageDoneGeneralService : IPlayerInfoService<DamageDoneGeneralDt
     public async Task<IEnumerable<DamageDoneGeneralDto>> GetByCombatPlayerIdAsync(int combatPlayerId)
     {
         var result = await _repository.GetByCombatPlayerIdAsync(combatPlayerId);
-        var resultMap = _mapper.Map<List<DamageDoneGeneralDto>>(result);
+        var resultMap = _mapper.Map<IEnumerable<DamageDoneGeneralDto>>(result);
 
         return resultMap;
+    }
+
+    public async Task<IEnumerable<DamageDoneGeneralDto>> GetByCombatPlayerIdAsync(int combatPlayerId, int page = 1, int pageSize = 10)
+    {
+        var result = await _repository.GetByCombatPlayerIdAsync(combatPlayerId);
+        var pagination = result
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
+            .ToList();
+
+        var map = _mapper.Map<IEnumerable<DamageDoneGeneralDto>>(pagination);
+
+        return map;
     }
 
     public async Task<IEnumerable<DamageDoneGeneralDto>> GetByParamAsync(string paramName, object value)
