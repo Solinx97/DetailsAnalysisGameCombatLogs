@@ -10,7 +10,7 @@ resources:
 container:
     name: identity
     image: solinx/identity
-    tag: latest
+    tag: 0.2.2
     port: 80
 service:
     protocol: TCP
