@@ -102,7 +102,7 @@ const CombatGeneralDetails = () => {
                     </div>
                 </div>
                 <div className="details-type">{getDetailsTypeName()}</div>
-                <ul className="nav nav-tabs">
+                <ul className="types">
                     <li className="nav-item">
                         <div className={`btn-shadow ${tabIndex === 0 ? "active" : ""}`} onClick={() => setTabIndex(0)}>
                             <FontAwesomeIcon

@@ -62,7 +62,7 @@ public class CombatDataHelper : ICombatDataHelper
         return combatLog;
     }
 
-    public async Task SaveCombatPlayerAsync(CombatDto combat, Dictionary<string, List<string>> petsId, CombatPlayerDto combatPlayer, List<string> combatData)
+    public async Task SaveCombatPlayerAsync(CombatDto combat, List<PlayerDeathModel> playersDeath, Dictionary<string, List<string>> petsId, CombatPlayerDto combatPlayer, List<string> combatData)
     {
         var parsedCombat = _mapper.Map<CombatParser.Entities.Combat>(combat);
 
@@ -94,6 +94,16 @@ public class CombatDataHelper : ICombatDataHelper
 
         await UploadDataAsync(damageTakenDetails.DamageTaken, _damageTakenService, combatPlayer.Id);
         await UploadDataAsync(damageTakenGeneralData.ToList(), _damageTakenGeneralService, combatPlayer.Id);
+
+        foreach (var item in playersDeath)
+        {
+            var lastDamageTaken = damageTakenDetails.DamageTaken.LastOrDefault(x => x.ToPlayer == item.Username);
+            if (lastDamageTaken != null)
+            {
+                item.LastHitValue = lastDamageTaken.Value;
+                item.LastHitSpellOrItem = lastDamageTaken.SpellOrItem;
+            }
+        }
 
         var resourceRecoveryDetails = new CombatDetailsResourceRecovery(_logger);
         resourceRecoveryDetails.GetData(combatPlayer.PlayerId, combatData);

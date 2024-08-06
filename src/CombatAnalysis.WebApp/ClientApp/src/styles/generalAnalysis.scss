@@ -39,10 +39,10 @@ $mobile-max-width: 425px;
                 }
 
                 &__all {
-                    position: absolute;
+                    position: relative;
                     display: flex;
                     justify-content: flex-start;
-                    top: -10vh;
+                    top: -70px;
                     font-size: 1em;
                     gap: 20px;
                     overflow: auto;

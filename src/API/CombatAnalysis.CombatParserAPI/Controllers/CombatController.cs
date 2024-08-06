@@ -228,7 +228,7 @@ public class CombatController : ControllerBase
             var createdCombatPlayer = await UploadCombatPlayerAsync(player);
             player.Id = createdCombatPlayer.Id;
 
-            await _saveCombatDataHelper.SaveCombatPlayerAsync(createdCombat, model.PetsId, createdCombatPlayer, model.Data);
+            await _saveCombatDataHelper.SaveCombatPlayerAsync(createdCombat, model.DeathInfo, model.PetsId, createdCombatPlayer, model.Data);
         }
     }
 

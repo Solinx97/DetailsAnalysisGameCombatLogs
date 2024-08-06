@@ -89,7 +89,7 @@ const CombatGeneralDetailsItem = ({ combatPlayerId, detailsType }) => {
                     <div className="title">{t("Skills")}</div>
                 </div>
             }
-            <ul>
+            <ul className="player-data-details">
                 {playerDataDetailsRender}
             </ul>
         </div>

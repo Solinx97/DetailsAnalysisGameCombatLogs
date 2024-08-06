@@ -1,4 +1,4 @@
-﻿import { fa0, faClock, faCopy, faFire, faFlask, faHandFist, faHands, faPooStorm, faRightToBracket, faUserTie } from '@fortawesome/free-solid-svg-icons';
+﻿import { faXmark, faClock, faCopy, faFire, faFlask, faHandFist, faHands, faPooStorm, faRightToBracket, faUserTie } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
@@ -20,7 +20,7 @@ const DamageDoneHelper = ({ detailsData, startDate }) => {
         <li key={item.id}>
             <div className="card">
                 <div className="card-body">
-                    <h5 className="card-title">{item.spellOrItem}</h5>
+                    <div className="card-title">{item.spellOrItem}</div>
                     <div className="card-body__extra-damage">
                         {item.isCrit &&
                             <FontAwesomeIcon
@@ -42,7 +42,7 @@ const DamageDoneHelper = ({ detailsData, startDate }) => {
                         }
                         {item.isParry &&
                             <FontAwesomeIcon
-                                icon={fa0}
+                                icon={faXmark}
                                 title={t("Parry")}
                             />
                         }
@@ -83,7 +83,7 @@ const DamageDoneHelper = ({ detailsData, startDate }) => {
                             className="list-group-item__value"
                             title={t("FromWho")}
                         />
-                        <div>{getUserNameWithoutRealm(item.fromPlayer)}</div>
+                        <div className="from-who">{getUserNameWithoutRealm(item.fromPlayer)}</div>
                     </li>
                     <li className="list-group-item">
                         <FontAwesomeIcon

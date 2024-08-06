@@ -44,19 +44,21 @@ public class CombatDetailsDeaths : CombatDetailsTemplate
         {
             foreach (var item in _players)
             {
-                if (combatData.Contains(item.Username))
+                if (!combatData.Contains(item.Username))
                 {
-                    isFound = true;
-
-                    var getTime = combatData.Split(' ')[1];
-                    _combat.DeathInfo.Add(new PlayerDeath
-                    {
-                        Username = item.Username,
-                        Date = DateTimeOffset.Parse(getTime),
-                    });
-
-                    break;
+                    continue;
                 }
+
+                isFound = true;
+
+                var getTime = combatData.Split(' ')[1];
+                _combat.DeathInfo.Add(new PlayerDeath
+                {
+                    Username = item.Username,
+                    Date = DateTimeOffset.Parse(getTime),
+                });
+
+                break;
             }
         }
         catch (ArgumentNullException ex)

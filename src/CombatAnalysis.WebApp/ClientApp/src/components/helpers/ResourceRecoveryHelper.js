@@ -35,17 +35,9 @@ const ResourceRecoveryHelper = ({ detailsData, startDate }) => {
                         <FontAwesomeIcon
                             icon={faUserTie}
                             className="list-group-item__value"
-                            title={t("FromWho")}
+                            title={t("SpellOrItem")}
                         />
                         <div>{item.spellOrItem}</div>
-                    </li>
-                    <li className="list-group-item">
-                        <FontAwesomeIcon
-                            icon={faRightToBracket}
-                            className="list-group-item__value"
-                            title={t("ToTarget")}
-                        />
-                        <div>{item.toEnemy}</div>
                     </li>
                 </ul>
             </div>

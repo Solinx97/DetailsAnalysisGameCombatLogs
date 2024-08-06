@@ -10,45 +10,12 @@ const DashboardDeathItem = ({ playersDeath, players }) => {
     const [getDamageTakenByPlayerIdAsync] = useLazyGetDamageTakenByPlayerIdQuery();
 
     const [itemCount, setItemCount] = useState(minCount);
-    const [extendedPlayersDeath, setExtendedPlayersDeath] = useState([]);
 
     useEffect(() => {
         if (!playersDeath || playersDeath.length === 0) {
             return;
         }
-
-        const fetchPlayerDeaths = async () => {
-            await fetchPlayerDeathsAsync()
-        }
-
-        fetchPlayerDeaths();
     }, [playersDeath, players, getDamageTakenByPlayerIdAsync]);
-
-    const fetchPlayerDeathsAsync = async () => {
-        const deathDetailsPromises = playersDeath.map(async (death) => {
-            const player = players.find(player => player.id === death.combatPlayerId);
-            if (!player) {
-                return null;
-            }
-
-            const response = await getDamageTakenByPlayerIdAsync(player.id);
-            if (response.error !== undefined) {
-                return null;
-            } 
-
-            const lastHit = response.data[response.data.length - 1];
-
-            return {
-                ...death,
-                username: player.userName,
-                skill: lastHit.spellOrItem,
-                value: lastHit.value,
-            };
-        });
-
-        const deathDetails = (await Promise.all(deathDetailsPromises)).filter(Boolean);
-        setExtendedPlayersDeath(deathDetails);
-    }
 
     if (playersDeath === undefined) {
         return (<div>Loading...</div>);
@@ -67,15 +34,15 @@ const DashboardDeathItem = ({ playersDeath, players }) => {
         <div className="dashboard__statistics">
             <div>{t("PlayersDied")}</div>
             <ul className="death-info">
-                {extendedPlayersDeath?.slice(0, itemCount).map((death, index) => (
+                {playersDeath?.slice(0, itemCount).map((death, index) => (
                     <li key={index} className="death-info__details">
                         <div>{death?.username}</div>
-                        <div>{death?.skill}</div>
-                        <div>{death?.value}</div>
+                        <div>{death?.lastHitSpellOrItme}</div>
+                        <div>{death?.lastHitValue}</div>
                     </li>
                 ))}
             </ul>
-            <div className="extend" onClick={() => setItemCount(itemCount === minCount ? extendedPlayersDeath.length : minCount)}>
+            <div className="extend" onClick={() => setItemCount(itemCount === minCount ? playersDeath.length : minCount)}>
                 {itemCount === minCount ? t("More") : t("Less")}
             </div>
         </div>
