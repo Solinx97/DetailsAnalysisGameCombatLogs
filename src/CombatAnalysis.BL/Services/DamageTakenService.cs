@@ -125,12 +125,12 @@ internal class DamageTakenService : IPlayerInfoCountService<DamageTakenDto, int>
     {
         if (string.IsNullOrEmpty(item.FromEnemy))
         {
-            throw new ArgumentNullException(nameof(DamageTakenDto), 
+            throw new ArgumentNullException(nameof(DamageTakenDto),
                 $"The property {nameof(DamageTakenDto.FromEnemy)} of the {nameof(DamageTakenDto)} object can't be null or empty");
         }
         if (string.IsNullOrEmpty(item.ToPlayer))
         {
-            throw new ArgumentNullException(nameof(DamageTakenDto), 
+            throw new ArgumentNullException(nameof(DamageTakenDto),
                 $"The property {nameof(DamageTakenDto.ToPlayer)} of the {nameof(DamageTakenDto)} object can't be null or empty");
         }
         if (string.IsNullOrEmpty(item.SpellOrItem))

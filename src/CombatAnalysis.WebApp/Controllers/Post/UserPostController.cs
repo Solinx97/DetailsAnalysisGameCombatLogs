@@ -32,7 +32,7 @@ public class UserPostController : ControllerBase
         if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
         {
             return Unauthorized();
-        } 
+        }
         else if (responseMessage.IsSuccessStatusCode)
         {
             var post = await responseMessage.Content.ReadFromJsonAsync<UserPostModel>();
@@ -101,7 +101,7 @@ public class UserPostController : ControllerBase
         if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
         {
             return Unauthorized();
-        } 
+        }
         else if (responseMessage.IsSuccessStatusCode)
         {
             return Ok();
@@ -131,7 +131,7 @@ public class UserPostController : ControllerBase
         }
 
         return BadRequest();
-    }   
+    }
 
     [HttpDelete("{id:int:min(1)}")]
     public async Task<IActionResult> Delete(int id)

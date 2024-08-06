@@ -104,7 +104,8 @@ public class CombatController : ControllerBase
             await UpdateCombatAsync(createdCombat);
 
             var affectedRows = await UpdateCombatLog(createdCombat.CombatLogId);
-            if (affectedRows == 0) {
+            if (affectedRows == 0)
+            {
                 await transaction.RollbackAsync();
 
                 return BadRequest();

@@ -95,7 +95,7 @@ public class AuthenticationController : ControllerBase
 
         if (stateValue == state)
         {
-            
+
             return Ok();
         }
 

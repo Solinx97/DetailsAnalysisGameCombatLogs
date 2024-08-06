@@ -30,7 +30,7 @@ public class DamageTakenDetailsViewModel : DetailsGenericTemplate<DamageTakenMod
     private bool _isShowDamageInform = true;
     private bool _IsShowAbsorbed = true;
 
-    public DamageTakenDetailsViewModel(IHttpClientHelper httpClient, ILogger logger, IMemoryCache memoryCache, IMapper mapper) : base (httpClient, logger, memoryCache, mapper)
+    public DamageTakenDetailsViewModel(IHttpClientHelper httpClient, ILogger logger, IMemoryCache memoryCache, IMapper mapper) : base(httpClient, logger, memoryCache, mapper)
     {
         _powerUpInCombat = new PowerUpInCombat<DamageTakenModel>(_damageTakenInformationsWithSkipDamage);
 

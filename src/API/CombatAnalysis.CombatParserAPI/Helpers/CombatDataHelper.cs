@@ -26,7 +26,7 @@ public class CombatDataHelper : ICombatDataHelper
     public CombatDataHelper(IMapper mapper, ILogger<CombatDataHelper> logger, IPlayerParseInfoHelper playerParseInfoHelper,
         IPlayerInfoCountService<DamageDoneDto, int> damageDoneService, IPlayerInfoService<DamageDoneGeneralDto, int> damageDoneGeneralService,
         IPlayerInfoCountService<HealDoneDto, int> healDoneService, IPlayerInfoService<HealDoneGeneralDto, int> healDoneGeneralService, IPlayerInfoCountService<DamageTakenDto, int> damageTakenService,
-        IPlayerInfoService<DamageTakenGeneralDto, int> damageTakenGeneralService, IPlayerInfoCountService<ResourceRecoveryDto, int> resourceRecoveryService, 
+        IPlayerInfoService<DamageTakenGeneralDto, int> damageTakenGeneralService, IPlayerInfoCountService<ResourceRecoveryDto, int> resourceRecoveryService,
         IPlayerInfoService<ResourceRecoveryGeneralDto, int> resourceRecoveryGeneralService)
     {
         _mapper = mapper;

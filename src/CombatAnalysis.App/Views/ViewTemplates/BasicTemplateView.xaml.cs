@@ -1,5 +1,4 @@
-﻿using CombatAnalysis.WinCore;
-using MvvmCross.Platforms.Wpf.Views;
+﻿using MvvmCross.Platforms.Wpf.Views;
 using System.Windows;
 
 namespace CombatAnalysis.App.Views.ViewTemplates;

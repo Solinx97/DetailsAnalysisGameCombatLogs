@@ -25,7 +25,7 @@ public class TokenController : ControllerBase
         try
         {
             if (string.IsNullOrEmpty(grantType)
-                || string.IsNullOrEmpty(clientId) 
+                || string.IsNullOrEmpty(clientId)
                 || string.IsNullOrEmpty(codeVerifier)
                 || string.IsNullOrEmpty(code)
                 || string.IsNullOrEmpty(redirectUri))

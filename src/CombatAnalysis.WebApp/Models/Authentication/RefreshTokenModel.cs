@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace CombatAnalysis.WebApp.Models.Authentication
+﻿namespace CombatAnalysis.WebApp.Models.Authentication
 {
     public class RefreshTokenModel
     {

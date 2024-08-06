@@ -8,7 +8,7 @@ public class FirebaseContext : DbContext
 {
     public FirebaseContext(DbContextOptions<FirebaseContext> options, IConfiguration configuration) : base(options)
     {
-        var databaseName = configuration.GetSection("Database:Name").Value??string.Empty;
+        var databaseName = configuration.GetSection("Database:Name").Value ?? string.Empty;
         var connection = configuration.GetConnectionString(databaseName);
 
         FirebaseClient = new FirebaseClient(connection);

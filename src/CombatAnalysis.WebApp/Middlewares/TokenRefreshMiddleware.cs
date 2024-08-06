@@ -1,5 +1,4 @@
-﻿using CombatAnalysis.WebApp.Attributes;
-using CombatAnalysis.WebApp.Consts;
+﻿using CombatAnalysis.WebApp.Consts;
 using CombatAnalysis.WebApp.Enums;
 using CombatAnalysis.WebApp.Interfaces;
 

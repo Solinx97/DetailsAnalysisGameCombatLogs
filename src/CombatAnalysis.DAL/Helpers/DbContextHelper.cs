@@ -127,7 +127,7 @@ internal static class DbProcedureHelper
 
         var propertySpecId = classType.GetProperty(nameof(SpecializationScore.SpecId));
         var propertyBossId = classType.GetProperty(nameof(SpecializationScore.BossId));
-        var propertyDifficult= classType.GetProperty(nameof(SpecializationScore.Difficult));
+        var propertyDifficult = classType.GetProperty(nameof(SpecializationScore.Difficult));
         var query = $"CREATE PROCEDURE Get{classType.Name}BySpecId (@specId {Converter(propertySpecId.PropertyType.Name)}, " +
                                                                   $"@bossId {Converter(propertyBossId.PropertyType.Name)}, " +
                                                                   $"@difficult {Converter(propertyDifficult.PropertyType.Name)})\n" +

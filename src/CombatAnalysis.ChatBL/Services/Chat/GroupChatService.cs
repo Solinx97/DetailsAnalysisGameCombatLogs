@@ -17,7 +17,7 @@ internal class GroupChatService : IService<GroupChatDto, int>
     private readonly IService<GroupChatRulesDto, int> _groupChatRulesService;
 
 
-    public GroupChatService(IGenericRepository<GroupChat, int> repository, IMapper mapper, 
+    public GroupChatService(IGenericRepository<GroupChat, int> repository, IMapper mapper,
         ISqlContextService sqlContextService, IService<GroupChatMessageDto, int> groupChatMessageService,
         IServiceTransaction<GroupChatUserDto, string> groupChatUserService, IService<GroupChatRulesDto, int> groupChatRulesService)
     {
@@ -109,12 +109,12 @@ internal class GroupChatService : IService<GroupChatDto, int>
     {
         if (string.IsNullOrEmpty(item.Name))
         {
-            throw new ArgumentNullException(nameof(GroupChatDto), 
+            throw new ArgumentNullException(nameof(GroupChatDto),
                 $"The property {nameof(GroupChatDto.Name)} of the {nameof(GroupChatDto)} object can't be null or empty");
         }
         if (string.IsNullOrEmpty(item.LastMessage))
         {
-            throw new ArgumentNullException(nameof(GroupChatDto), 
+            throw new ArgumentNullException(nameof(GroupChatDto),
                 $"The property {nameof(GroupChatDto.LastMessage)} of the {nameof(GroupChatDto)} object can't be null or empty");
         }
 
@@ -129,12 +129,12 @@ internal class GroupChatService : IService<GroupChatDto, int>
     {
         if (string.IsNullOrEmpty(item.Name))
         {
-            throw new ArgumentNullException(nameof(GroupChatDto), 
+            throw new ArgumentNullException(nameof(GroupChatDto),
                 $"The property {nameof(GroupChatDto.Name)} of the {nameof(GroupChatDto)} object can't be null or empty");
         }
         if (string.IsNullOrEmpty(item.LastMessage))
         {
-            throw new ArgumentNullException(nameof(GroupChatDto), 
+            throw new ArgumentNullException(nameof(GroupChatDto),
                 $"The property {nameof(GroupChatDto.LastMessage)} of the {nameof(GroupChatDto)} object can't be null or empty");
         }
 

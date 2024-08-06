@@ -71,7 +71,7 @@ internal class GroupChatMessageService : IService<GroupChatMessageDto, int>
     {
         if (string.IsNullOrEmpty(item.Message))
         {
-            throw new ArgumentNullException(nameof(GroupChatMessageDto), 
+            throw new ArgumentNullException(nameof(GroupChatMessageDto),
                 $"The property {nameof(GroupChatMessageDto.Message)} of the {nameof(GroupChatMessageDto)} object can't be null or empty");
         }
 
@@ -86,7 +86,7 @@ internal class GroupChatMessageService : IService<GroupChatMessageDto, int>
     {
         if (string.IsNullOrEmpty(item.Message))
         {
-            throw new ArgumentNullException(nameof(GroupChatMessageDto), 
+            throw new ArgumentNullException(nameof(GroupChatMessageDto),
                 $"The property {nameof(GroupChatMessageDto.Message)} of the {nameof(GroupChatMessageDto)} object can't be null or empty");
         }
 

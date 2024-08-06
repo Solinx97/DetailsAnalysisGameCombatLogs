@@ -93,7 +93,7 @@ internal class DamageDoneGeneralService : IPlayerInfoService<DamageDoneGeneralDt
     {
         if (string.IsNullOrEmpty(item.SpellOrItem))
         {
-            throw new ArgumentNullException(nameof(DamageDoneGeneralDto), 
+            throw new ArgumentNullException(nameof(DamageDoneGeneralDto),
                 $"The property {nameof(DamageDoneGeneralDto.SpellOrItem)} of the {nameof(DamageDoneGeneralDto)} object can't be null or empty");
         }
 
@@ -108,7 +108,7 @@ internal class DamageDoneGeneralService : IPlayerInfoService<DamageDoneGeneralDt
     {
         if (string.IsNullOrEmpty(item.SpellOrItem))
         {
-            throw new ArgumentNullException(nameof(DamageDoneGeneralDto), 
+            throw new ArgumentNullException(nameof(DamageDoneGeneralDto),
                 $"The property {nameof(DamageDoneGeneralDto.SpellOrItem)} of the {nameof(DamageDoneGeneralDto)} object can't be null or empty");
         }
 

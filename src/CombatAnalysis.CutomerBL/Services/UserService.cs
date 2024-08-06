@@ -4,7 +4,7 @@ using CombatAnalysis.CustomerBL.Interfaces;
 using CombatAnalysis.CustomerDAL.Entities;
 using CombatAnalysis.CustomerDAL.Interfaces;
 
-namespace CombatAnalysis.CustomerBL.Services.User;
+namespace CombatAnalysis.CustomerBL.Services;
 
 internal class UserService : IUserService<AppUserDto>
 {

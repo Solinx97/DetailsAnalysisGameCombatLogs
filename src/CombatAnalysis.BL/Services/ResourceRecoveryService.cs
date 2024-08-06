@@ -100,7 +100,7 @@ internal class ResourceRecoveryService : IPlayerInfoCountService<ResourceRecover
     {
         if (string.IsNullOrEmpty(item.SpellOrItem))
         {
-            throw new ArgumentNullException(nameof(ResourceRecoveryDto), 
+            throw new ArgumentNullException(nameof(ResourceRecoveryDto),
                 $"The property {nameof(ResourceRecoveryDto.SpellOrItem)} of the {nameof(ResourceRecoveryDto)} object can't be null or empty");
         }
 
@@ -115,7 +115,7 @@ internal class ResourceRecoveryService : IPlayerInfoCountService<ResourceRecover
     {
         if (string.IsNullOrEmpty(item.SpellOrItem))
         {
-            throw new ArgumentNullException(nameof(ResourceRecoveryDto), 
+            throw new ArgumentNullException(nameof(ResourceRecoveryDto),
                 $"The property {nameof(ResourceRecoveryDto.SpellOrItem)} of the {nameof(ResourceRecoveryDto)} object can't be null or empty");
         }
 

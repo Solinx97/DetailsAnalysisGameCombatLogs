@@ -52,7 +52,7 @@ internal class CombatService : IService<CombatDto, int>
 
     public async Task<IEnumerable<CombatDto>> GetByParamAsync(string paramName, object value)
     {
-        var result = await Task.Run(() =>_repository.GetByParam(paramName, value));
+        var result = await Task.Run(() => _repository.GetByParam(paramName, value));
         var resultMap = _mapper.Map<IEnumerable<CombatDto>>(result);
 
         return resultMap;
@@ -72,12 +72,12 @@ internal class CombatService : IService<CombatDto, int>
     {
         if (string.IsNullOrEmpty(item.Name))
         {
-            throw new ArgumentNullException(nameof(CombatDto), 
+            throw new ArgumentNullException(nameof(CombatDto),
                 $"The property {nameof(CombatDto.Name)} of the {nameof(CombatDto)} object can't be null or empty");
         }
         if (string.IsNullOrEmpty(item.DungeonName))
         {
-            throw new ArgumentNullException(nameof(CombatDto), 
+            throw new ArgumentNullException(nameof(CombatDto),
                 $"The property {nameof(CombatDto.DungeonName)} of the {nameof(CombatDto)} object can't be null or empty");
         }
 
@@ -92,12 +92,12 @@ internal class CombatService : IService<CombatDto, int>
     {
         if (string.IsNullOrEmpty(item.Name))
         {
-            throw new ArgumentNullException(nameof(CombatDto), 
+            throw new ArgumentNullException(nameof(CombatDto),
                 $"The property {nameof(CombatDto.Name)} of the {nameof(CombatDto)} object can't be null or empty");
         }
         if (string.IsNullOrEmpty(item.DungeonName))
         {
-            throw new ArgumentNullException(nameof(CombatDto), 
+            throw new ArgumentNullException(nameof(CombatDto),
                 $"The property {nameof(CombatDto.DungeonName)} of the {nameof(CombatDto)} object can't be null or empty");
         }
 

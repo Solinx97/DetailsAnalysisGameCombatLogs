@@ -1,6 +1,6 @@
 ﻿using System.Windows;
 
-namespace CombatAnalysis.WinCore;
+namespace CombatAnalysis.App;
 
 public static class WindowManager
 {

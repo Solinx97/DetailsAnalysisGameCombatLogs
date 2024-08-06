@@ -1,5 +1,4 @@
-﻿using CombatAnalysis.WinCore;
-using MvvmCross.Platforms.Wpf.Views;
+﻿using MvvmCross.Platforms.Wpf.Views;
 
 namespace CombatAnalysis.App.Views.Chat;
 

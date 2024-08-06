@@ -1,7 +1,6 @@
 ﻿using CombatAnalysis.CustomerBL.DTO;
 using CombatAnalysis.CustomerBL.Interfaces;
 using CombatAnalysis.CustomerBL.Services;
-using CombatAnalysis.CustomerBL.Services.User;
 using CombatAnalysis.CustomerDAL.Extensions;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;

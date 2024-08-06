@@ -14,7 +14,7 @@ public class SettingsViewModel : ParentTemplate
     private string _logsLocation;
 
     public SettingsViewModel()
-	{
+    {
         BasicTemplate.Parent = this;
 
         var userSettings = ReadUserSettings("user.json");

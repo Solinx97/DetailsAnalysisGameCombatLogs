@@ -14,7 +14,7 @@ internal class PostService : IService<PostDto, int>
     private readonly ISqlContextService _sqlContextService;
     private readonly IMapper _mapper;
 
-    public PostService(IGenericRepository<CommunicationDAL.Entities.Post.Post, int> repository, IMapper mapper, 
+    public PostService(IGenericRepository<CommunicationDAL.Entities.Post.Post, int> repository, IMapper mapper,
         IService<PostLikeDto, int> postLikeService, IService<PostDislikeDto, int> postDislikeService,
         IService<PostCommentDto, int> postCommentService, ISqlContextService sqlContextService)
     {

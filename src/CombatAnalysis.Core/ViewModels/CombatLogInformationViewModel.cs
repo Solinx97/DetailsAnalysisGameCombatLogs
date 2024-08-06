@@ -6,7 +6,6 @@ using CombatAnalysis.Core.Interfaces;
 using CombatAnalysis.Core.Interfaces.Observers;
 using CombatAnalysis.Core.Models;
 using CombatAnalysis.Core.Models.User;
-using CombatAnalysis.Core.Modelsl;
 using CombatAnalysis.Core.Services;
 using CombatAnalysis.Core.ViewModels.Base;
 using Microsoft.Extensions.Caching.Memory;

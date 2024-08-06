@@ -1,6 +1,4 @@
-﻿using CombatAnalysis.DAL.Entities;
-
-namespace CombatAnalysis.DAL.Interfaces;
+﻿namespace CombatAnalysis.DAL.Interfaces;
 
 public interface IPlayerInfo<TModel, TIdType> : IGenericRepository<TModel, TIdType>
     where TModel : class

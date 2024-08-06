@@ -106,7 +106,7 @@ public class HealDoneDetailsViewModel : DetailsGenericTemplate<HealDoneModel, He
 
     protected override void SetTotalValue(CombatPlayerModel parameter)
     {
-        TotalValue= parameter.HealDone;
+        TotalValue = parameter.HealDone;
     }
 
     protected override void TurnOnAllFilters()

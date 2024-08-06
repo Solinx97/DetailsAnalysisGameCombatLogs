@@ -37,7 +37,7 @@ public static class HttpClientHelperExtensions
         return result;
     }
 
-    public static async Task<HttpResponseMessage> PutAsync(this IHttpClientHelper clientHelper, string requestUri,JsonContent content, string baseAddress)
+    public static async Task<HttpResponseMessage> PutAsync(this IHttpClientHelper clientHelper, string requestUri, JsonContent content, string baseAddress)
     {
         var result = await clientHelper.Client.PutAsync($"{baseAddress}{clientHelper.BaseAddressApi}{requestUri}", content);
 

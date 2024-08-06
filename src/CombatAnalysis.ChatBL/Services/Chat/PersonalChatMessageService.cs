@@ -72,7 +72,7 @@ internal class PersonalChatMessageService : IService<PersonalChatMessageDto, int
     {
         if (string.IsNullOrEmpty(item.Message))
         {
-            throw new ArgumentNullException(nameof(PersonalChatMessageDto), 
+            throw new ArgumentNullException(nameof(PersonalChatMessageDto),
                 $"The property {nameof(PersonalChatMessageDto.Message)} of the {nameof(PersonalChatMessageDto)} object can't be null or empty");
         }
 
@@ -87,7 +87,7 @@ internal class PersonalChatMessageService : IService<PersonalChatMessageDto, int
     {
         if (string.IsNullOrEmpty(item.Message))
         {
-            throw new ArgumentNullException(nameof(PersonalChatMessageDto), 
+            throw new ArgumentNullException(nameof(PersonalChatMessageDto),
                 $"The property {nameof(PersonalChatMessageDto.Message)} of the {nameof(PersonalChatMessageDto)} object can't be null or empty");
         }
 

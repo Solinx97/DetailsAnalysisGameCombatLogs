@@ -100,12 +100,12 @@ internal class DamageDoneService : IPlayerInfoCountService<DamageDoneDto, int>
         }
         if (string.IsNullOrEmpty(item.ToEnemy))
         {
-            throw new ArgumentNullException(nameof(DamageDoneDto), 
+            throw new ArgumentNullException(nameof(DamageDoneDto),
                 $"The property {nameof(DamageDoneDto.ToEnemy)} of the {nameof(DamageDoneDto)} object can't be null or empty");
         }
         if (string.IsNullOrEmpty(item.SpellOrItem))
         {
-            throw new ArgumentNullException(nameof(DamageDoneDto), 
+            throw new ArgumentNullException(nameof(DamageDoneDto),
                 $"The property {nameof(DamageDoneDto.SpellOrItem)} of the {nameof(DamageDoneDto)} object can't be null or empty");
         }
 
@@ -120,17 +120,17 @@ internal class DamageDoneService : IPlayerInfoCountService<DamageDoneDto, int>
     {
         if (string.IsNullOrEmpty(item.FromPlayer))
         {
-            throw new ArgumentNullException(nameof(DamageDoneDto), 
+            throw new ArgumentNullException(nameof(DamageDoneDto),
                 $"The property {nameof(DamageDoneDto.FromPlayer)} of the {nameof(DamageDoneDto)} object can't be null or empty");
         }
         if (string.IsNullOrEmpty(item.ToEnemy))
         {
-            throw new ArgumentNullException(nameof(DamageDoneDto), 
+            throw new ArgumentNullException(nameof(DamageDoneDto),
                 $"The property {nameof(DamageDoneDto.ToEnemy)} of the {nameof(DamageDoneDto)} object can't be null or empty");
         }
         if (string.IsNullOrEmpty(item.SpellOrItem))
         {
-            throw new ArgumentNullException(nameof(DamageDoneDto), 
+            throw new ArgumentNullException(nameof(DamageDoneDto),
                 $"The property {nameof(DamageDoneDto.SpellOrItem)} of the {nameof(DamageDoneDto)} object can't be null or empty");
         }
 

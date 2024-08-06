@@ -7,7 +7,7 @@ namespace CombatAnalysis.CombatParser.Patterns;
 public class CombatDetailsDamageTaken : CombatDetailsTemplate
 {
     private readonly string[] _damageVariations = new string[]
-    {   
+    {
         CombatLogKeyWords.SpellDamage,
         CombatLogKeyWords.SwingDamage,
         CombatLogKeyWords.SpellPeriodicDamage,
@@ -117,8 +117,8 @@ public class CombatDetailsDamageTaken : CombatDetailsTemplate
             int.TryParse(combatData[^1], out realDamage);
             int.TryParse(combatData[^2], out absorb);
         }
-        else if (!string.Equals(combatData[1], CombatLogKeyWords.SwingMissed, StringComparison.OrdinalIgnoreCase) 
-            && !string.Equals(combatData[1], CombatLogKeyWords.SpellMissed, StringComparison.OrdinalIgnoreCase) 
+        else if (!string.Equals(combatData[1], CombatLogKeyWords.SwingMissed, StringComparison.OrdinalIgnoreCase)
+            && !string.Equals(combatData[1], CombatLogKeyWords.SpellMissed, StringComparison.OrdinalIgnoreCase)
             && !string.Equals(combatData[1], CombatLogKeyWords.DamageShieldMissed, StringComparison.OrdinalIgnoreCase))
         {
             int.TryParse(combatData[^9], out realDamage);

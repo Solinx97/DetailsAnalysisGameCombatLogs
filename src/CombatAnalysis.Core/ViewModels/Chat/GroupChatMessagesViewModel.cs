@@ -356,7 +356,7 @@ public class GroupChatMessagesViewModel : MvxViewModel, IImprovedMvxViewModel
         _httpClientHelper.BaseAddress = Port.ChatApi;
         await _httpClientHelper.PutAsync("GroupChatMessage", JsonContent.Create(SelectedMessage));
 
-        IsEditMode= false;
+        IsEditMode = false;
     }
 
     public async Task RemoveMessageAsync()

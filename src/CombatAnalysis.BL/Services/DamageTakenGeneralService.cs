@@ -93,7 +93,7 @@ internal class DamageTakenGeneralService : IPlayerInfoService<DamageTakenGeneral
     {
         if (string.IsNullOrEmpty(item.SpellOrItem))
         {
-            throw new ArgumentNullException(nameof(DamageTakenGeneralDto), 
+            throw new ArgumentNullException(nameof(DamageTakenGeneralDto),
                 $"The property {nameof(DamageTakenGeneralDto.SpellOrItem)} of the {nameof(DamageTakenGeneralDto)} object can't be null or empty");
         }
 

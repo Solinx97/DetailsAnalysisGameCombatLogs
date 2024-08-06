@@ -203,7 +203,7 @@ public class CombatParserService
     {
         var data = combatStart.Split("  ")[1];
         var difficulty = data.Split(',')[3];
-        
+
         if (int.TryParse(difficulty, out var diff))
         {
             return diff;

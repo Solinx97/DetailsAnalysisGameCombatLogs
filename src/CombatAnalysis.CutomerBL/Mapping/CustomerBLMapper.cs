@@ -8,7 +8,7 @@ public class CustomerBLMapper : Profile
 {
     public CustomerBLMapper()
     {
-        CreateMap<AppUserDto, AppUser>().ReverseMap();;
+        CreateMap<AppUserDto, AppUser>().ReverseMap(); ;
         CreateMap<BannedUserDto, BannedUser>().ReverseMap();
         CreateMap<CustomerDto, Customer>().ReverseMap();
         CreateMap<FriendDto, Friend>().ReverseMap();

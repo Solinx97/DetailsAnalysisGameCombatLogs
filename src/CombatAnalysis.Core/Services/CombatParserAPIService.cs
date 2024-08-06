@@ -3,7 +3,6 @@ using CombatAnalysis.Core.Enums;
 using CombatAnalysis.Core.Interfaces;
 using CombatAnalysis.Core.Models;
 using CombatAnalysis.Core.Models.User;
-using CombatAnalysis.Core.Modelsl;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
 using System.Net.Http.Json;

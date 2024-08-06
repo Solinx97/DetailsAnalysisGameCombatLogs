@@ -1,5 +1,5 @@
-﻿using CombatAnalysis.ChatDAL.Interfaces;
-using CombatAnalysis.ChatDAL.Data;
+﻿using CombatAnalysis.ChatDAL.Data;
+using CombatAnalysis.ChatDAL.Interfaces;
 using Firebase.Database.Query;
 
 namespace CombatAnalysis.ChatDAL.Repositories.Firebase;

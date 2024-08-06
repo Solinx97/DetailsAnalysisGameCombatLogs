@@ -84,7 +84,7 @@ public class AccountController : ControllerBase
         else if (responseMessage.IsSuccessStatusCode)
         {
             var user = await responseMessage.Content.ReadFromJsonAsync<AppUserModel>();
-            
+
             return Ok(user);
         }
 

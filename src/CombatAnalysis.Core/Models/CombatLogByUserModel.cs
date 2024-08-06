@@ -1,4 +1,4 @@
-﻿namespace CombatAnalysis.Core.Modelsl;
+﻿namespace CombatAnalysis.Core.Models;
 
 public class CombatLogByUserModel
 {

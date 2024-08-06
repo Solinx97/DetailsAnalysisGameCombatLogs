@@ -13,7 +13,7 @@ internal class PersonalChatService : IService<PersonalChatDto, int>
     private readonly IMapper _mapper;
     private readonly ISqlContextService _sqlContextService;
 
-    public PersonalChatService(IGenericRepository<PersonalChat, int> repository, IMapper mapper, 
+    public PersonalChatService(IGenericRepository<PersonalChat, int> repository, IMapper mapper,
         ISqlContextService sqlContextService, IService<PersonalChatMessageDto, int> personalChatMessageService)
     {
         _repository = repository;
@@ -98,7 +98,7 @@ internal class PersonalChatService : IService<PersonalChatDto, int>
     {
         if (string.IsNullOrEmpty(item.LastMessage))
         {
-            throw new ArgumentNullException(nameof(PersonalChatDto), 
+            throw new ArgumentNullException(nameof(PersonalChatDto),
                 $"The property {nameof(PersonalChatDto.LastMessage)} of the {nameof(PersonalChatDto)} object can't be null or empty");
         }
 
@@ -113,7 +113,7 @@ internal class PersonalChatService : IService<PersonalChatDto, int>
     {
         if (string.IsNullOrEmpty(item.LastMessage))
         {
-            throw new ArgumentNullException(nameof(PersonalChatDto), 
+            throw new ArgumentNullException(nameof(PersonalChatDto),
                 $"The property {nameof(PersonalChatDto.LastMessage)} of the {nameof(PersonalChatDto)} object can't be null or empty");
         }
 

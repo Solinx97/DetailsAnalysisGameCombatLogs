@@ -95,7 +95,8 @@ internal class OAuthCodeFlowService : IOAuthCodeFlowService
         }
 
         var allowedRedirects = client.RedirectUrl.Split(';');
-        if (allowedRedirects.Length == 0) {
+        if (allowedRedirects.Length == 0)
+        {
             return false;
         }
 

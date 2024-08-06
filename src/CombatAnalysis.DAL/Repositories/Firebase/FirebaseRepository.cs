@@ -79,7 +79,7 @@ public class FirebaseRepository<TModel, TIdType> : IGenericRepository<TModel, TI
 
     public IEnumerable<TModel> GetByParam(string paramName, object value)
     {
-        var data =  _context.FirebaseClient
+        var data = _context.FirebaseClient
               .Child(typeof(TModel).Name)
               .OnceAsync<TModel>()
               .GetAwaiter()

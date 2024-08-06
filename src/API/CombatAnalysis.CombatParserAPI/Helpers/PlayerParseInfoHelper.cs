@@ -14,7 +14,7 @@ internal class PlayerParseInfoHelper : IPlayerParseInfoHelper
     private readonly IService<PlayerParseInfoDto, int> _playerParseService;
     private readonly ISpecScoreService<SpecializationScoreDto, int> _specializationScoreService;
 
-    public PlayerParseInfoHelper(IMapper mapper, IService<PlayerParseInfoDto, int> playerParseService, 
+    public PlayerParseInfoHelper(IMapper mapper, IService<PlayerParseInfoDto, int> playerParseService,
         ISpecScoreService<SpecializationScoreDto, int> specializationScoreService)
     {
         _mapper = mapper;

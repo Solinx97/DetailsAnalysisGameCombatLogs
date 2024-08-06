@@ -693,7 +693,7 @@ public class GeneralAnalysisViewModel : ParentTemplate<Tuple<List<CombatModel>, 
 
         foreach (var combat in combats)
         {
-            var averageCombatPlayerDamage = combat.Players.Any() ? combat.Players.Average(x => x.DamageDone) :0;
+            var averageCombatPlayerDamage = combat.Players.Any() ? combat.Players.Average(x => x.DamageDone) : 0;
             averageDamage.Add(averageCombatPlayerDamage);
 
             var averageCombatPlayerHeal = combat.Players.Any() ? combat.Players.Average(x => x.HealDone) : 0;

@@ -106,7 +106,7 @@ public class CommunityUserController : ControllerBase
         {
             return Ok();
         }
-        
+
         return BadRequest();
     }
 

@@ -12,7 +12,7 @@ internal class CommunityPostService : IService<CommunityPostDto, int>
     private readonly IService<PostDto, int> _postService;
     private readonly IMapper _mapper;
 
-    public CommunityPostService(IGenericRepository<CommunityPost, int> repository, IService<PostDto, int> postService, 
+    public CommunityPostService(IGenericRepository<CommunityPost, int> repository, IService<PostDto, int> postService,
         IMapper mapper)
     {
         _repository = repository;

@@ -1,5 +1,4 @@
 ﻿using CombatAnalysis.App.Windows;
-using CombatAnalysis.WinCore;
 using MvvmCross.Platforms.Wpf.Views;
 using System.Windows;
 

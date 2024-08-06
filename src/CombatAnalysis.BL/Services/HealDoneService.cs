@@ -100,7 +100,7 @@ internal class HealDoneService : IPlayerInfoCountService<HealDoneDto, int>
     {
         if (string.IsNullOrEmpty(item.SpellOrItem))
         {
-            throw new ArgumentNullException(nameof(HealDoneDto), 
+            throw new ArgumentNullException(nameof(HealDoneDto),
                 $"The property {nameof(HealDoneDto.SpellOrItem)} of the {nameof(HealDoneDto)} object can't be null or empty");
         }
 
@@ -115,7 +115,7 @@ internal class HealDoneService : IPlayerInfoCountService<HealDoneDto, int>
     {
         if (string.IsNullOrEmpty(item.SpellOrItem))
         {
-            throw new ArgumentNullException(nameof(HealDoneDto), 
+            throw new ArgumentNullException(nameof(HealDoneDto),
                 $"The property {nameof(HealDoneDto.SpellOrItem)} of the {nameof(HealDoneDto)} object can't be null or empty");
         }
 

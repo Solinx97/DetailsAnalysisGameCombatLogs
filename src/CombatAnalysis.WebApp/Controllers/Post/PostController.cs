@@ -55,7 +55,7 @@ public class PostController : ControllerBase
         if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
         {
             return Unauthorized();
-        } 
+        }
         else if (responseMessage.IsSuccessStatusCode)
         {
             var posts = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<PostModel>>();
@@ -78,7 +78,8 @@ public class PostController : ControllerBase
         if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
         {
             return Unauthorized();
-        } else if (responseMessage.IsSuccessStatusCode)
+        }
+        else if (responseMessage.IsSuccessStatusCode)
         {
             return Ok();
         }
@@ -98,7 +99,8 @@ public class PostController : ControllerBase
         if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
         {
             return Unauthorized();
-        } else if (responseMessage.IsSuccessStatusCode)
+        }
+        else if (responseMessage.IsSuccessStatusCode)
         {
             var post = await responseMessage.Content.ReadFromJsonAsync<PostModel>();
 
@@ -120,7 +122,8 @@ public class PostController : ControllerBase
         if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
         {
             return Unauthorized();
-        } else if (responseMessage.IsSuccessStatusCode)
+        }
+        else if (responseMessage.IsSuccessStatusCode)
         {
             return Ok();
         }

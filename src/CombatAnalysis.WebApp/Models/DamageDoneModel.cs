@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace CombatAnalysis.WebApp.Models
+﻿namespace CombatAnalysis.WebApp.Models
 {
     public class DamageDoneModel
     {
