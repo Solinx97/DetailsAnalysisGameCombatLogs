@@ -142,7 +142,7 @@ const CombatDetails = ({ combatPlayerId, detailsType, combatStartDate }) => {
             {/*        <div>{t("StartOfInterval")}: {startTime}, {t("FinishOfInterval")}: {finishTime}</div>*/}
             {/*    </div>*/}
             {/*}*/}
-            <ul>
+            <ul className="player-data-details">
                 {detailsDataRender}
             </ul>
             <div className="pagination-controls">
