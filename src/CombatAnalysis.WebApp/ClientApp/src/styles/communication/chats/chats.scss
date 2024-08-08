@@ -59,6 +59,7 @@ $mobile-max-width: 425px;
                     display: flex;
                     justify-content: space-between;
                     align-items: center;
+                    gap: 25px;
 
                     .call_active {
                         border: 1px solid $blue;
@@ -159,10 +160,21 @@ $mobile-max-width: 425px;
                         font-size: 12px;
                     }
 
+                    .chat-loading-yet, .chat-card {
+                        margin: 10px;
+                    }
+
+                    .chat-loading-yet {
+                        position: relative;
+                        cursor: default;
+                        opacity: 0.4;
+                    }
+
                     .chat-card {
                         display: flex;
                         flex-direction: column;
                         gap: 5px;
+                        cursor: pointer;
 
                         .chat-tooltip {
                             display: flex;
@@ -186,7 +198,6 @@ $mobile-max-width: 425px;
         li {
             cursor: pointer;
             margin: $padding-small;
-            padding: $padding-small;
             box-shadow: 4px 4px $primary-color;
             border: 1px solid $primary-color;
             overflow-x: hidden;

@@ -1,6 +1,5 @@
 ﻿import { memo, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import io from 'socket.io-client';
 import WithVoiceContext from '../../../hocHelpers/WithVoiceContext';
 import useGroupChatData from '../../../hooks/useGroupChatData';
 import {
@@ -32,9 +31,6 @@ const GroupChat = ({ chat, me, setSelectedChat, callMinimazedData }) => {
     const [settingsIsShow, setSettingsIsShow] = useState(false);
     const [groupChatUsersId, setGroupChatUsersId] = useState([]);
     const [userInformation, setUserInformation] = useState(null);
-    const [usersOnCall, setUsersOnCall] = useState(0);
-
-    const socketRef = useRef(null);
 
     const { messages, meInChat, groupChatUsers, isLoading } = useGroupChatData(chat.id, me.id);
 
@@ -42,40 +38,6 @@ const GroupChat = ({ chat, me, setSelectedChat, callMinimazedData }) => {
     const [getMessagesCount] = useLazyFindGroupChatMessageCountQuery();
     const [updateGroupChatMessageAsync] = useUpdateGroupChatMessageAsyncMutation();
     const [removeGroupChatMessageAsync] = useRemoveGroupChatMessageAsyncMutation();
-
-    useEffect(() => {
-        let socket;
-
-        const connectSocket = async () => {
-            try {
-                socket = io.connect("192.168.0.161:2000");
-
-                socket.on("connect_error", (error) => {
-                    console.error("Socket connection error:", error);
-                });
-
-                socket.emit("checkUsersOnCall", chat.id);
-
-                socket.on("checkedUsersOnCall", (count) => {
-                    setUsersOnCall(count);
-                });
-
-                socketRef.current = socket;
-            } catch (error) {
-                console.error("Socket connection error:", error);
-            }
-        };
-
-        //connectSocket();
-
-        return () => {
-            if (socket) {
-                socket.emit("removeUserFromChat", chat.id);
-                socket.off("checkedUsersOnCall");
-                socket.disconnect();
-            }
-        };
-    }, []);
 
     useEffect(() => {
         if (groupChatUsers === undefined) {
@@ -116,7 +78,7 @@ const GroupChat = ({ chat, me, setSelectedChat, callMinimazedData }) => {
                 <GroupChatTitle
                     chat={chat}
                     me={me}
-                    usersOnCall={usersOnCall}
+                    usersOnCall={0}
                     callMinimazedData={callMinimazedData}
                     settingsIsShow={settingsIsShow}
                     setSettingsIsShow={setSettingsIsShow}

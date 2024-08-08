@@ -13,7 +13,7 @@ const GroupChatListItem = ({ chatId, groupChatUserId, setSelectedGroupChat }) =>
     });
 
     if (isLoading || messagesCountLoading || chat === null) {
-        return (<div>Loading...</div>);
+        return (<div className="chat-loading-yet">Loading...</div>);
     }
 
     return (
