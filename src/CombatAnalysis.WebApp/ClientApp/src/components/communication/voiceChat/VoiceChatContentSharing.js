@@ -41,6 +41,14 @@ const VoiceChatContentSharing = ({ me, socketRef, micStatus }) => {
 		}
 	}, [socketRef, usersId]);
 
+	useEffect(() => {
+		if (socketRef.current === null) {
+			return;
+		}
+
+		socketRef.current.send("REQUEST_MIC_STATUS");
+	}, [socketRef, usersId]);
+
 	const callConnectedUsersAsync = async () => {
 		try {
 			const response = await fetch(`/api/v1/Signaling/connected`);

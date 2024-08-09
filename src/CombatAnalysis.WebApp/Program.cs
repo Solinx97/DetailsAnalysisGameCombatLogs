@@ -42,7 +42,6 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
 Log.Logger = new LoggerConfiguration()
     .MinimumLevel.Debug()
     .WriteTo.Console()
-    .WriteTo.File("logs/webApp.txt", rollingInterval: RollingInterval.Day)
     .CreateLogger();
 
 builder.Host.UseSerilog();

@@ -17,7 +17,7 @@ const VoiceChatUser = ({ itIsMe, userId, socketRef, micStatus }) => {
         }
 
         callUser();
-    }, [micStatus]);
+    }, [micStatus, userId, itIsMe]);
 
     useEffect(() => {
         if (socketRef.current === null) {
@@ -29,6 +29,12 @@ const VoiceChatUser = ({ itIsMe, userId, socketRef, micStatus }) => {
             const message = event.data;
             if (message instanceof Blob) {
                 return;
+            }
+
+            if (message.startsWith("requestedMicStatus")) {
+                const message = `MIC_STATUS;${micStatus ? "on" : "off"}`;
+
+                socket.send(message);
             }
 
             if (message.startsWith("microphoneStatus")) {
@@ -47,7 +53,7 @@ const VoiceChatUser = ({ itIsMe, userId, socketRef, micStatus }) => {
         return () => {
             socket.removeEventListener('message', handleMessageAsync);
         }
-    }, [socketRef, userId]);
+    }, [socketRef, userId, micStatus]);
 
     const callUserAsync = async (userId) => {
         try {
@@ -67,7 +73,7 @@ const VoiceChatUser = ({ itIsMe, userId, socketRef, micStatus }) => {
     return (
         <div className="user">
             <div className="information">
-                <div className="another__username">{user?.username}</div>
+                <div className="another__username">{userId}</div>
                 <FontAwesomeIcon
                     icon={turnOnMicrophone ? faMicrophone : faMicrophoneSlash}
                     title="TurnOffMicrophone"

@@ -52,7 +52,7 @@ const VoiceChat = () => {
 
 		switchMicrophoneStatus();
 		sendMicrophoneStatus();
-	}, [turnOnMicrophone]);
+	}, [socketRef, turnOnMicrophone]);
 
 	const sendMicrophoneStatus = useCallback(() => {
 		const message = `MIC_STATUS;${turnOnMicrophone ? "on" : "off"}`;

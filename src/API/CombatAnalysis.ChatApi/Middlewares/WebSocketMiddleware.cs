@@ -87,9 +87,12 @@ public class WebSocketMiddleware
 
         switch (command)
         {
+            case "REQUEST_MIC_STATUS":
+                await WebSocketConnectionManager.BroadcastMessageAsync("requestedMicStatus", userId);
+                break;
             case "MIC_STATUS":
                 var isOn = parts[1] == "on";
-                await WebSocketConnectionManager.BroadcastMessageAsync($"microphoneStatus;{userId};{isOn}", userId, true);
+                await WebSocketConnectionManager.BroadcastMessageAsync($"microphoneStatus;{userId};{isOn}", userId);
                 break;
             case "JOINED":
                 await WebSocketConnectionManager.BroadcastMessageAsync($"joined;{userId};User {userId} has joined the chat", userId);

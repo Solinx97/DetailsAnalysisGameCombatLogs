@@ -1,6 +1,6 @@
 ﻿import { useRef } from 'react';
 
-const useWebSocket = ({ turnOnMicrophone }) => {
+const useWebSocket = (turnOnMicrophone) => {
 	const audioContextRef = useRef(new (window.AudioContext || window.webkitAudioContext)());
 	const audioBufferQueueRef = useRef([]);
 	const scriptProcessorRef = useRef(null);
@@ -138,7 +138,7 @@ const useWebSocket = ({ turnOnMicrophone }) => {
 			const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
 			streamRef.current = stream;
 
-			startRecording(stream);
+			startRecording(socketRef.current, stream);
 
 			return;
 		}
