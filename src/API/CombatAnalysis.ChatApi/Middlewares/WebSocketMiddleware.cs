@@ -1,5 +1,4 @@
 ﻿using CombatAnalysis.ChatApi.Core;
-using System;
 using System.Net.WebSockets;
 using System.Text;
 
@@ -30,10 +29,8 @@ public class WebSocketMiddleware
                 WebSocket webSocket = await context.WebSockets.AcceptWebSocketAsync();
                 WebSocketConnectionManager.AddUser(userId, webSocket);
 
-                await NotifyAboutJoinAsync(userId);
-
                 await HandleStreamWebSocketAsync(context, webSocket, userId);
-                WebSocketConnectionManager.RemoveUser(userId, webSocket);
+                WebSocketConnectionManager.RemoveUser(userId);
             }
             else
             {
@@ -69,7 +66,7 @@ public class WebSocketMiddleware
             }
             else if (result.MessageType == WebSocketMessageType.Binary)
             {
-                await webSocket.SendAsync(new ArraySegment<byte>(buffer, 0, result.Count), result.MessageType, result.EndOfMessage, CancellationToken.None);
+                await WebSocketConnectionManager.BroadcastBinaryAsync(buffer, result, userId);
             }
             else if (result.MessageType == WebSocketMessageType.Close)
             {
@@ -79,8 +76,8 @@ public class WebSocketMiddleware
             result = await webSocket.ReceiveAsync(new ArraySegment<byte>(buffer), CancellationToken.None);
         }
 
-        WebSocketConnectionManager.RemoveUser(userId, webSocket);
         await webSocket.CloseAsync(result.CloseStatus.Value, result.CloseStatusDescription, CancellationToken.None);
+        WebSocketConnectionManager.RemoveUser(userId);
     }
 
     private static async Task HandleCommandAsync(string message, string userId)
@@ -92,11 +89,14 @@ public class WebSocketMiddleware
         {
             case "MIC_STATUS":
                 var isOn = parts[1] == "on";
-                await WebSocketConnectionManager.BroadcastMessageAsync($"microphoneStatus;{userId};{isOn}");
+                await WebSocketConnectionManager.BroadcastMessageAsync($"microphoneStatus;{userId};{isOn}", userId, true);
                 break;
-
-            // Add more cases for other commands as needed
-
+            case "JOINED":
+                await WebSocketConnectionManager.BroadcastMessageAsync($"joined;{userId};User {userId} has joined the chat", userId);
+                break;
+            case "LEAVED":
+                await WebSocketConnectionManager.BroadcastMessageAsync($"leaved;{userId};User {userId} leaved from chat", userId);
+                break;
             default:
                 // Handle unknown commands if necessary
                 break;
@@ -105,14 +105,7 @@ public class WebSocketMiddleware
 
     private static async Task NotifyAboutJoinAsync(string userId)
     {
-        var notificationMessage = Encoding.UTF8.GetBytes($"joined;{userId};User {userId} has joined the chat.");
-        var sockets = WebSocketConnectionManager.GetConnectedSockets();
-        foreach (var kvp in sockets)
-        {
-            if (kvp.Value.State == WebSocketState.Open)
-            {
-                await kvp.Value.SendAsync(new ArraySegment<byte>(notificationMessage), WebSocketMessageType.Text, true, CancellationToken.None);
-            }
-        }
+        var notificationMessage = $"joined;{userId};User {userId} has joined the chat.";
+        await WebSocketConnectionManager.BroadcastMessageAsync(notificationMessage, userId);
     }
 }

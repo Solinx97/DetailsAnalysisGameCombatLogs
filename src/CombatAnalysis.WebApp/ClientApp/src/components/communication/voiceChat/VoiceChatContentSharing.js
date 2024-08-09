@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import WithVoiceContext from '../../../hocHelpers/WithVoiceContext';
 import VoiceChatUser from "./VoiceChatUser";
 
-const VoiceChatContentSharing = ({ socket }) => {
+const VoiceChatContentSharing = ({ me, socketRef, micStatus }) => {
 	const [usersId, setUsersId] = useState([]);
 
 	useEffect(() => {
@@ -14,10 +14,11 @@ const VoiceChatContentSharing = ({ socket }) => {
 	}, []);
 
 	useEffect(() => {
-		if (socket === null) {
+		if (socketRef.current === null) {
 			return;
 		}
 
+		const socket = socketRef.current;
 		const handleMessageAsync = async (event) => {
 			const message = event.data;
 			if (message instanceof Blob) {
@@ -27,6 +28,10 @@ const VoiceChatContentSharing = ({ socket }) => {
 			if (message.startsWith("joined")) {
 				await callConnectedUsersAsync();
 			}
+
+			if (message.startsWith("leaved")) {
+				await callConnectedUsersAsync();
+			}
 		}
 
 		socket.addEventListener("message", handleMessageAsync);
@@ -34,7 +39,7 @@ const VoiceChatContentSharing = ({ socket }) => {
 		return () => {
 			socket.removeEventListener('message', handleMessageAsync);
 		}
-	}, [socket]);
+	}, [socketRef, usersId]);
 
 	const callConnectedUsersAsync = async () => {
 		try {
@@ -50,11 +55,13 @@ const VoiceChatContentSharing = ({ socket }) => {
     return (
 		<div className="voice__content">
 			<ul className="another-user-container">
-				{usersId.map((userId, index) =>
-					<li key={index}>
+				{usersId.map((userId) =>
+					<li key={userId}>
 						<VoiceChatUser
+							itIsMe={me.id === userId}
 							userId={userId}
-							socket={socket}
+							socketRef={socketRef}
+							micStatus={micStatus}
 						/>
 					</li>
 				)}

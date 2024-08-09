@@ -6,12 +6,10 @@ namespace CombatAnalysis.ChatApi.Core;
 
 public class WebSocketConnectionManager
 {
-    //private static ConcurrentDictionary<WebSocket> _sockets = new ConcurrentDictionary<WebSocket>();
     private static ConcurrentDictionary<string, WebSocket> _connectedUsers = new ConcurrentDictionary<string, WebSocket>();
 
     public static void AddUser(string userId, WebSocket webSocket)
     {
-        //_sockets.Add(webSocket);
         _connectedUsers.TryAdd(userId, webSocket);
     }
 
@@ -25,19 +23,12 @@ public class WebSocketConnectionManager
         return _connectedUsers.Keys.AsEnumerable();
     }
 
-    public static void RemoveUser(string userId, WebSocket webSocket)
+    public static void RemoveUser(string userId)
     {
-        //_sockets.Remove(webSocket);
         _connectedUsers.TryRemove(userId, out _);
     }
 
-    public static async Task NotifyMicrophoneStatusChangeAsync(string userId, bool isMicrophoneOn)
-    {
-        string message = $"microphoneStatus;{userId};{isMicrophoneOn};User {userId} has turned their microphone {(isMicrophoneOn ? "on" : "off")}.";
-        await BroadcastMessageAsync(message);
-    }
-
-    public static async Task BroadcastMessageAsync(string message)
+    public static async Task BroadcastMessageAsync(string message, string userId, bool sendToMeToo = false)
     {
         var buffer = Encoding.UTF8.GetBytes(message);
         var segment = new ArraySegment<byte>(buffer);
@@ -46,7 +37,26 @@ public class WebSocketConnectionManager
         {
             if (socket.Value.State == WebSocketState.Open)
             {
-                await socket.Value.SendAsync(segment, WebSocketMessageType.Text, true, CancellationToken.None);
+                if ((!sendToMeToo && socket.Key != userId) || sendToMeToo)
+                {
+                    await socket.Value.SendAsync(segment, WebSocketMessageType.Text, true, CancellationToken.None);
+                }
+            }
+        }
+    }
+
+    public static async Task BroadcastBinaryAsync(byte[] data, WebSocketReceiveResult result, string userId, bool sendToMeToo = false)
+    {
+        var messageSegment = new ArraySegment<byte>(data, 0, result.Count);
+
+        foreach (var socket in _connectedUsers)
+        {
+            if (socket.Value.State == WebSocketState.Open)
+            {
+                if ((!sendToMeToo && socket.Key != userId) || sendToMeToo)
+                {
+                    await socket.Value.SendAsync(messageSegment, result.MessageType, result.EndOfMessage, CancellationToken.None);
+                }
             }
         }
     }
