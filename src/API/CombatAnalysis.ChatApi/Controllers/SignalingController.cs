@@ -7,10 +7,10 @@ namespace CombatAnalysis.ChatApi.Controllers;
 [ApiController]
 public class SignalingController : ControllerBase
 {
-    [HttpGet("connected")]
-    public IActionResult GetConnectedUsers()
+    [HttpGet("connected/{roomId}")]
+    public IActionResult GetConnectedUsers(int roomId)
     {
-        var connectedUsers = WebSocketConnectionManager.GetOnlyConnectedUsers();
+        var connectedUsers = WebSocketConnectionManager.GetConnectedUsers(roomId);
 
         return Ok(connectedUsers);
     }

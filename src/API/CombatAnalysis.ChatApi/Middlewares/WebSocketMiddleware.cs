@@ -15,35 +15,47 @@ public class WebSocketMiddleware
 
     public async Task InvokeAsync(HttpContext context)
     {
-        if (context.Request.Path == "/ws")
+        if (context.Request.Path != "/ws")
         {
-            var userId = context.Request.Query["userId"].ToString();
-            if (string.IsNullOrEmpty(userId))
-            {
-                context.Response.StatusCode = 400;
-                return;
-            }
+            await _next.Invoke(context);
+            return;
+        }
 
-            if (context.WebSockets.IsWebSocketRequest)
-            {
-                WebSocket webSocket = await context.WebSockets.AcceptWebSocketAsync();
-                WebSocketConnectionManager.AddUser(userId, webSocket);
+        var userId = context.Request.Query["userId"].ToString();
+        if (string.IsNullOrEmpty(userId))
+        {
+            context.Response.StatusCode = 400;
+            return;
+        }
 
-                await HandleStreamWebSocketAsync(context, webSocket, userId);
-                WebSocketConnectionManager.RemoveUser(userId);
-            }
-            else
-            {
-                context.Response.StatusCode = 400;
-            }
+        var roomId = context.Request.Query["roomId"].ToString();
+        if (string.IsNullOrEmpty(roomId))
+        {
+            context.Response.StatusCode = 400;
+            return;
+        }
+
+        if (!int.TryParse(roomId, out var roomIdInt))
+        {
+            context.Response.StatusCode = 400;
+            return;
+        }
+
+        if (context.WebSockets.IsWebSocketRequest)
+        {
+            WebSocket webSocket = await context.WebSockets.AcceptWebSocketAsync();
+            WebSocketConnectionManager.AddUser(roomIdInt, userId, webSocket);
+
+            await HandleStreamWebSocketAsync(context, webSocket, roomIdInt, userId);
+            WebSocketConnectionManager.RemoveUser(roomIdInt, userId);
         }
         else
         {
-            await _next.Invoke(context);
+            context.Response.StatusCode = 400;
         }
     }
 
-    private static async Task HandleStreamWebSocketAsync(HttpContext context, WebSocket webSocket, string userId)
+    private static async Task HandleStreamWebSocketAsync(HttpContext context, WebSocket webSocket, int roomId, string userId)
     {
         var buffer = new byte[1024 * 4];
         WebSocketReceiveResult result = await webSocket.ReceiveAsync(new ArraySegment<byte>(buffer), CancellationToken.None);
@@ -59,14 +71,14 @@ public class WebSocketMiddleware
                 {
                     var message = messageBuilder.ToString();
 
-                    await HandleCommandAsync(message, userId);
+                    await HandleCommandAsync(message, roomId, userId);
 
                     messageBuilder.Clear();
                 }
             }
             else if (result.MessageType == WebSocketMessageType.Binary)
             {
-                await WebSocketConnectionManager.BroadcastBinaryAsync(buffer, result, userId);
+                await WebSocketConnectionManager.BroadcastBinaryAsync(buffer, result, roomId, userId);
             }
             else if (result.MessageType == WebSocketMessageType.Close)
             {
@@ -77,10 +89,10 @@ public class WebSocketMiddleware
         }
 
         await webSocket.CloseAsync(result.CloseStatus.Value, result.CloseStatusDescription, CancellationToken.None);
-        WebSocketConnectionManager.RemoveUser(userId);
+        WebSocketConnectionManager.RemoveUser(roomId, userId);
     }
 
-    private static async Task HandleCommandAsync(string message, string userId)
+    private static async Task HandleCommandAsync(string message, int roomId, string userId)
     {
         var parts = message.Split(';');
         var command = parts[0];
@@ -88,27 +100,21 @@ public class WebSocketMiddleware
         switch (command)
         {
             case "REQUEST_MIC_STATUS":
-                await WebSocketConnectionManager.BroadcastMessageAsync("requestedMicStatus", userId);
+                await WebSocketConnectionManager.BroadcastMessageAsync("requestedMicStatus", roomId, userId);
                 break;
             case "MIC_STATUS":
                 var isOn = parts[1] == "on";
-                await WebSocketConnectionManager.BroadcastMessageAsync($"microphoneStatus;{userId};{isOn}", userId);
+                await WebSocketConnectionManager.BroadcastMessageAsync($"microphoneStatus;{userId};{isOn}", roomId, userId);
                 break;
             case "JOINED":
-                await WebSocketConnectionManager.BroadcastMessageAsync($"joined;{userId};User {userId} has joined the chat", userId);
+                await WebSocketConnectionManager.BroadcastMessageAsync($"joined;{userId};User {userId} has joined the chat", roomId, userId);
                 break;
             case "LEAVED":
-                await WebSocketConnectionManager.BroadcastMessageAsync($"leaved;{userId};User {userId} leaved from chat", userId);
+                await WebSocketConnectionManager.BroadcastMessageAsync($"leaved;{userId};User {userId} leaved from chat", roomId, userId);
                 break;
             default:
                 // Handle unknown commands if necessary
                 break;
         }
-    }
-
-    private static async Task NotifyAboutJoinAsync(string userId)
-    {
-        var notificationMessage = $"joined;{userId};User {userId} has joined the chat.";
-        await WebSocketConnectionManager.BroadcastMessageAsync(notificationMessage, userId);
     }
 }

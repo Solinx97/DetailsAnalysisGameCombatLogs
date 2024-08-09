@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { memo, useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import useWebSocket from '../../../hooks/useWebSocket';
 //import useVoice from '../../../hooks/useVoice';
 import CommunicationMenu from '../CommunicationMenu';
@@ -26,6 +26,8 @@ const VoiceChat = () => {
 	const [turnOnCamera, setTurnOnCamera] = useState(false);
 	const [screenSharing, setScreenSharing] = useState(false);
 
+	const { roomId, chatName } = useParams();
+
 	const [socketRef, connectToChat, cleanupAudioResources, switchMicrophoneStatusAsync] = useWebSocket(turnOnMicrophone);
 	//const voice = useVoice(me?.id);
 
@@ -34,7 +36,8 @@ const VoiceChat = () => {
 			return;
 		}
 
-		connectToChat(me?.id);
+		const serverUrl = `https://localhost:5007/ws?userId=${me?.id}&roomId=${+roomId}`;
+		connectToChat(serverUrl);
 
 		return () => {
 			cleanupAudioResources();
@@ -152,6 +155,7 @@ const VoiceChat = () => {
 					me={me}
 					socketRef={socketRef}
 					micStatus={turnOnMicrophone}
+					roomId={roomId}
 				/>
 			</div>
 		</>

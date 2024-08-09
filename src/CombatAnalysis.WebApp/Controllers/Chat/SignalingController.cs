@@ -17,15 +17,15 @@ public class SignalingController : ControllerBase
         _httpClient = httpClient;
     }
 
-    [HttpGet("connected")]
-    public async Task<IActionResult> GetConnectedUsers()
+    [HttpGet("connected/{roomId}")]
+    public async Task<IActionResult> GetConnectedUsers(int roomId)
     {
         if (!Request.Cookies.TryGetValue(AuthenticationCookie.AccessToken.ToString(), out var accessToken))
         {
             return Unauthorized();
         }
 
-        var responseMessage = await _httpClient.GetAsync("Signaling/connected", accessToken, Port.ChatApi);
+        var responseMessage = await _httpClient.GetAsync($"Signaling/connected/{roomId}", accessToken, Port.ChatApi);
         if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
         {
             return Unauthorized();

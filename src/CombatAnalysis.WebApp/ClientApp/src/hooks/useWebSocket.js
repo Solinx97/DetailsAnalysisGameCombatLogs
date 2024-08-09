@@ -7,9 +7,9 @@ const useWebSocket = (turnOnMicrophone) => {
 	const socketRef = useRef(null);
 	const streamRef = useRef(null);
 
-	const connectToChat = (meId) => {
+	const connectToChat = (serverUrl) => {
 		try {
-			const socket = new WebSocket(`https://localhost:5007/ws?userId=${meId}`);
+			const socket = new WebSocket(serverUrl);
 			socketRef.current = socket;
 
 			socket.addEventListener("open", async () => {

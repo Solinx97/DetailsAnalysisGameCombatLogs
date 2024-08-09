@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import WithVoiceContext from '../../../hocHelpers/WithVoiceContext';
 import VoiceChatUser from "./VoiceChatUser";
 
-const VoiceChatContentSharing = ({ me, socketRef, micStatus }) => {
+const VoiceChatContentSharing = ({ me, socketRef, micStatus, roomId }) => {
 	const [usersId, setUsersId] = useState([]);
 
 	useEffect(() => {
@@ -51,7 +51,7 @@ const VoiceChatContentSharing = ({ me, socketRef, micStatus }) => {
 
 	const callConnectedUsersAsync = async () => {
 		try {
-			const response = await fetch(`/api/v1/Signaling/connected`);
+			const response = await fetch(`/api/v1/Signaling/connected/${+roomId}`);
 			const data = await response.json();
 
 			setUsersId(data);
