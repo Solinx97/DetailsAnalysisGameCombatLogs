@@ -1,4 +1,4 @@
-﻿using CombatAnalysis.ChatApi.Middlewares;
+﻿using CombatAnalysis.ChatApi.Core;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CombatAnalysis.ChatApi.Controllers;
@@ -7,11 +7,11 @@ namespace CombatAnalysis.ChatApi.Controllers;
 [ApiController]
 public class SignalingController : ControllerBase
 {
-    [HttpPost("broadcast")]
-    public async Task<IActionResult> BroadcastMessage([FromBody] string message)
+    [HttpGet("connected")]
+    public IActionResult GetConnectedUsers()
     {
-        await WebSocketMiddleware.BroadcastMessageAsync(message);
+        var connectedUsers = WebSocketConnectionManager.GetOnlyConnectedUsers();
 
-        return Ok();
+        return Ok(connectedUsers);
     }
 }

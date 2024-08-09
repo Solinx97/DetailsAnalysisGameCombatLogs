@@ -1,53 +1,60 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import WithVoiceContext from '../../../hocHelpers/WithVoiceContext';
 import VoiceChatUser from "./VoiceChatUser";
 
-const VoiceChatContentSharing = ({ callMinimazedData, voice }) => {
-	const videoRef = useRef(null);
-
-	const [sharingStatus, setSharingStatus] = useState({
-		stream: null,
-		itsMe: false,
-		started: false,
-		username: ""
-	});
+const VoiceChatContentSharing = ({ socket }) => {
+	const [usersId, setUsersId] = useState([]);
 
 	useEffect(() => {
-		getData(sharingStatus.stream, sharingStatus.itsMe);
-	}, [sharingStatus]);
+		const fetchUsers = async () => {
+			await callConnectedUsersAsync();
+		}
 
-	const getData = (stream, itsMe) => {
-		if (videoRef.current === null) {
+		fetchUsers();
+	}, []);
+
+	useEffect(() => {
+		if (socket === null) {
 			return;
 		}
 
-		videoRef.current.srcObject = itsMe ? callMinimazedData.current.stream : stream;
-		videoRef.current.play();
+		const handleMessageAsync = async (event) => {
+			const message = event.data;
+			if (message instanceof Blob) {
+				return;
+			}
+
+			if (message.startsWith("joined")) {
+				await callConnectedUsersAsync();
+			}
+		}
+
+		socket.addEventListener("message", handleMessageAsync);
+
+		return () => {
+			socket.removeEventListener('message', handleMessageAsync);
+		}
+	}, [socket]);
+
+	const callConnectedUsersAsync = async () => {
+		try {
+			const response = await fetch(`/api/v1/Signaling/connected`);
+			const data = await response.json();
+
+			setUsersId(data);
+		} catch (error) {
+			console.error('Error fetching users:', error);
+		}
 	}
 
     return (
 		<div className="voice__content">
-			{sharingStatus.started &&
-				<div className="sharing">
-					<video playsInline ref={videoRef} muted />
-					<div className="username">{sharingStatus.username}</div>
-				</div>
-			}
-			<ul className={`${sharingStatus.started ? "another-user-container" : "members"}`}>
-				{voice.data.peersRef.current?.map((peer, index) =>
+			<ul className="another-user-container">
+				{usersId.map((userId, index) =>
 					<li key={index}>
 						<VoiceChatUser
-							itsMe={index === 0}
-							peer={peer.peer}
-							peerId={peer.peerId}
-							socket={voice.data.socketRef.current}
-							username={peer?.username}
-							audio={voice.data.anotherUsersAudio}
-							setAudio={voice.data.setAnotherUsersAudio}
-							initTurnOnCamera={peer?.turnOnCamera}
-							initTurnOnMicrophone={peer?.turnOnMicrophone}
-							setSharingStatus={setSharingStatus}
-							voice={voice}
+							userId={userId}
+							socket={socket}
 						/>
 					</li>
 				)}

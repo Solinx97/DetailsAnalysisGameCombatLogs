@@ -1,8 +1,9 @@
- import { faAngleDown, faAngleUp, faDisplay, faLinkSlash, faMicrophone, faMicrophoneSlash, faRightFromBracket, faVideo, faVideoSlash } from '@fortawesome/free-solid-svg-icons';
+﻿ import { faAngleDown, faAngleUp, faDisplay, faLinkSlash, faMicrophone, faMicrophoneSlash, faRightFromBracket, faVideo, faVideoSlash } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import React, { memo, useEffect, useRef, useState } from 'react';
+import React, { memo, useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 import WithVoiceContext from '../../../hocHelpers/WithVoiceContext';
 import useVoice from '../../../hooks/useVoice';
 import CommunicationMenu from '../CommunicationMenu';
@@ -14,78 +15,145 @@ import '../../../styles/communication/chats/voice.scss';
 const VoiceChat = ({ callMinimazedData, setUseMinimaze }) => {
 	const { t } = useTranslation("communication/chats/groupChat");
 
-	const mediaRecorderRef = useRef(null);
+	const navigate = useNavigate();
+
 	const audioContextRef = useRef(new (window.AudioContext || window.webkitAudioContext)());
 	const audioBufferQueueRef = useRef([]);
 	const scriptProcessorRef = useRef(null);
+	const socketRef = useRef(null);
+	const streamRef = useRef(null);
 
 	const me = useSelector((state) => state.customer.value);
 
 	const [openVideoSettings, setOpenVideoSettings] = useState(false);
 	const [openAudioSettings, setOpenAudioSettings] = useState(false);
 
-	const audioRef = useRef(null);
+	const [turnOnMicrophone, setTurnOnMicrophone] = useState(true);
+	const [turnOnCamera, setTurnOnCamera] = useState(false);
+	const [screenSharing, setScreenSharing] = useState(false);
 
 	const voice = useVoice(me, callMinimazedData, setUseMinimaze);
 
 	useEffect(() => {
-		const socket = new WebSocket('https://localhost:5007/ws');
+        try {
+			const socket = new WebSocket(`https://localhost:5007/ws?userId=${me?.id}`);
+			socketRef.current = socket;
 
-		socket.onopen = () => {
-			console.log('WebSocket connection established');
-			startRecording(socket);
-		}
+			socket.addEventListener("open", async () => {
+				console.log('WebSocket connection established');
+			});
 
-		socket.onmessage = async (event) => {
-			try {
-				const arrayBuffer = await event.data.arrayBuffer();
-				const audioBuffer = await audioContextRef.current.decodeAudioData(arrayBuffer);
-				audioBufferQueueRef.current.push(audioBuffer);
+			socket.addEventListener("message", async (event) => {
+				try {
+					if (event.data instanceof Blob) {
+						const arrayBuffer = await event.data.arrayBuffer();
+						const audioBuffer = await audioContextRef.current.decodeAudioData(arrayBuffer);
+						audioBufferQueueRef.current.push(audioBuffer);
 
-				playAudioQueue();
-			} catch (error) {
-				console.error('Error decoding audio data:', error);
+						playAudioQueue();
+					} else {
+						console.warn('Received data is not a Blob:', event.data);
+					}
+				} catch (error) {
+					console.error('Error decoding audio data:', error);
+				}
+			})
+
+			socket.onerror = (error) => {
+				console.error('WebSocket error:', error);
 			}
-		}
 
-		socket.onerror = (error) => {
-			console.error('WebSocket error:', error);
-		}
-
-		socket.onclose = () => {
-			console.log('WebSocket connection closed');
-			if (mediaRecorderRef.current) {
-				mediaRecorderRef.current.stop();
+			socket.onclose = () => {
+				console.log('WebSocket connection closed');
 			}
-		}
+		} catch (e) {
+			console.log("error 12333");
+        }
 
 		return () => {
-			socket.close();
+			cleanupAudioResources();
 		}
-	}, []);
+	}, [socketRef]);
 
 	useEffect(() => {
-		if (me === null || callMinimazedData.current.roomId === 0) {
+		if (socketRef.current === null) {
 			return;
 		}
 
-		voice.func.joinToRoom();
+		const switchMicrophoneStatus = async () => {
+			if (turnOnMicrophone) {
+				await turnOnRecordingAsync();
 
-		const beforeunload = (event) => {
-			voice.func.leave();
-			removeCookie();
-		}
-
-		window.addEventListener("beforeunload", beforeunload);
-
-		return () => {
-			window.removeEventListener("beforeunload", beforeunload);
-
-			if (callMinimazedData.current.roomId > 0) {
-				setUseMinimaze(true);
+				return;
 			}
+
+			if (streamRef.current) {
+				streamRef.current.getTracks().forEach(track => track.stop());
+				streamRef.current = null;
+			}
+
+			if (scriptProcessorRef.current) {
+				scriptProcessorRef.current.disconnect();
+				scriptProcessorRef.current.onaudioprocess = null;
+				scriptProcessorRef.current = null;
+			}
+
+			audioBufferQueueRef.current = [];
+			audioContextRef.current = new (window.AudioContext || window.webkitAudioContext)();
 		}
-	}, [me, callMinimazedData.current.roomId]);
+
+		switchMicrophoneStatus();
+		sendMicrophoneStatus();
+	}, [turnOnMicrophone]);
+
+	const sendMicrophoneStatus = useCallback(() => {
+		const message = `MIC_STATUS;${turnOnMicrophone ? "on" : "off"}`;
+
+		// Check if the WebSocket is open before sending the messageЦ
+		if (socketRef.current.readyState === WebSocket.OPEN) {
+			socketRef.current.send(message);
+		} else {
+			// Wait for the WebSocket to open before sending the message
+			socketRef.current.addEventListener("open", () => {
+				socketRef.current.send(message);
+			}, { once: true });
+		}
+	}, [turnOnMicrophone]);
+	
+	const leaveFromCallAsync = async () => {
+		cleanupAudioResources();
+
+		navigate("/chats");
+	}
+
+	const cleanupAudioResources = () => {
+		// Stop the scriptProcessor
+		if (scriptProcessorRef.current) {
+			scriptProcessorRef.current.disconnect();
+			scriptProcessorRef.current.onaudioprocess = null;
+			scriptProcessorRef.current = null;
+		}
+
+		// Stop the media stream tracks
+		if (streamRef.current) {
+			streamRef.current.getTracks().forEach(track => track.stop());
+			streamRef.current = null;
+		}
+
+		// Close the audio context
+		if (audioContextRef.current && audioContextRef.current.state !== 'closed') {
+			audioContextRef.current.close().catch(error => console.error('Error closing audio context:', error));
+		}
+
+		// Close the WebSocket connection
+		if (socketRef.current) {
+			socketRef.current.close();
+			socketRef.current = null;
+		}
+
+		audioBufferQueueRef.current = [];
+		audioContextRef.current = new (window.AudioContext || window.webkitAudioContext)();
+	}
 
 	const convertToWav = (buffer) => {
 		const numOfChannels = buffer.numberOfChannels;
@@ -140,14 +208,24 @@ const VoiceChat = ({ callMinimazedData, setUseMinimaze }) => {
 		}
 	}
 
-	const startRecording = async (socket) => {
+	const turnOnRecordingAsync = async () => {
+		if (socketRef.current === null) {
+			return;
+		}
+
+		const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+		streamRef.current = stream;
+
+		startRecording(socketRef.current, stream);
+	}
+
+	const startRecording = (socket, stream) => {
 		try {
-			const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
 			const audioContext = audioContextRef.current;
 			const source = audioContext.createMediaStreamSource(stream);
 			const scriptProcessor = audioContext.createScriptProcessor(4096, 1, 1);
 
-			scriptProcessor.onaudioprocess = (event) => {
+			scriptProcessor.addEventListener("audioprocess", (event) => {
 				const inputBuffer = event.inputBuffer;
 
 				// Convert to WAV format
@@ -157,7 +235,7 @@ const VoiceChat = ({ callMinimazedData, setUseMinimaze }) => {
 				if (socket && socket.readyState === WebSocket.OPEN) {
 					socket.send(wavData);
 				}
-			};
+			});
 
 			source.connect(scriptProcessor);
 			scriptProcessor.connect(audioContext.destination);
@@ -166,7 +244,7 @@ const VoiceChat = ({ callMinimazedData, setUseMinimaze }) => {
 		} catch (error) {
 			console.error('Error starting audio recording:', error);
 		}
-	};
+	}
 
 	const playAudioQueue = () => {
 		if (audioBufferQueueRef.current.length === 0) {
@@ -179,16 +257,6 @@ const VoiceChat = ({ callMinimazedData, setUseMinimaze }) => {
 		source.connect(audioContextRef.current.destination);
 		source.start();
 		source.onended = playAudioQueue;
-	};
-
-	const isCallStarted = () => {
-		const allCokie = document.cookie.split(";");
-		const calStartedCookie = allCokie.filter(cookie => cookie.includes("callAlreadyStarted"));
-		return calStartedCookie.length > 0;
-	}
-
-	const removeCookie = () => {
-		document.cookie = "callAlreadyStarted=true;expires=Thu, 01 Jan 1970 00:00:00 UTC";
 	}
 
 	const handleOpenVideoSettings = () => {
@@ -210,123 +278,54 @@ const VoiceChat = ({ callMinimazedData, setUseMinimaze }) => {
 				<div className="voice__title">
 					<div>{voice.data.renderChatName}</div>
 					<div className="tools">
-						{callMinimazedData.current.screenSharing
-							? <div className="device">
-								<FontAwesomeIcon
-									icon={faLinkSlash}
-									title={t("TurnOffScreenSharing")}
-									className="device__screen"
-									onClick={() => voice.func.shareScreen(false)}
+						<div className="device">
+							<FontAwesomeIcon
+								icon={screenSharing ? faDisplay : faLinkSlash}
+								title={screenSharing ? t("TurnOffScreenSharing") : t("TurnOnScreenSharing")}
+								className="device__screen"
+								onClick={() => setScreenSharing(!screenSharing)}
+							/>
+						</div>
+						<div className="device">
+							<FontAwesomeIcon
+								icon={turnOnCamera ? faVideo : faVideoSlash}
+								title={turnOnCamera ? t("TurnOffCamera") : t("TurnOnCamera")}
+								className="device__camera"
+								onClick={() => setTurnOnCamera(!turnOnCamera)}
+							/>
+							<FontAwesomeIcon
+								icon={openVideoSettings ? faAngleDown : faAngleUp}
+								title={t("Setting")}
+								className="device__settings"
+								onClick={handleOpenVideoSettings}
+							/>
+							{openVideoSettings &&
+								<VoiceChatAudioDeviceSettings />
+							}
+						</div>
+						<div className="device">
+							<FontAwesomeIcon
+								icon={turnOnMicrophone ? faMicrophone : faMicrophoneSlash}
+								title={turnOnMicrophone ? t("TurnOffMicrophone") : t("TurnOnMicrophone")}
+								className="device__microphone"
+								onClick={() => setTurnOnMicrophone(!turnOnMicrophone)}
+							/>
+							<FontAwesomeIcon
+								icon={openAudioSettings ? faAngleDown : faAngleUp}
+								title={t("Setting")}
+								className="device__settings"
+								onClick={handleOpenAudioSettings}
+							/>
+							{openAudioSettings &&
+								<VoiceChatAudioDeviceSettings
+									setMicrophoneDeviceId={voice.func.setMicrophoneDeviceId}
+									switchMicrophoneDevice={voice.func.switchMicrophoneDevice}
+									switchAudioOutputDevice={voice.func.switchAudioOutputDevice}
+									microphoneIsOn={voice.data.turnOnMicrophone}
 								/>
-							</div>
-							: <div className="device">
-								<FontAwesomeIcon
-									icon={faDisplay}
-									title={t("TurnOnScreenSharing")}
-									className="device__screen"
-									onClick={() => voice.func.shareScreen(true)}
-								/>
-							</div>
-						}
-						{callMinimazedData.current.turnOnCamera
-							? <div className="device">
-								<FontAwesomeIcon
-									icon={faVideo}
-									title={t("TurnOffCamera")}
-									className="device__camera"
-									onClick={() => voice.func.switchCamera(false)}
-								/>
-								{openVideoSettings
-									? <FontAwesomeIcon
-										icon={faAngleDown}
-										title={t("Setting")}
-										className="device__settings"
-										onClick={handleOpenVideoSettings}
-									/>
-									: <FontAwesomeIcon
-										icon={faAngleDown}
-										title={t("Setting")}
-										className="device__settings"
-										onClick={handleOpenVideoSettings}
-									/>
-								}
-								{openVideoSettings &&
-									<VoiceChatAudioDeviceSettings />
-								}
-							</div>
-							: <div className="device">
-								<FontAwesomeIcon
-									icon={faVideoSlash}
-									title={t("TurnOnCamera")}
-									className="device__camera"
-									onClick={() => voice.func.switchCamera(true)}
-								/>
-							</div>
-						}
-						{callMinimazedData.current.turnOnMicrophone
-							? <div className="device">
-								<FontAwesomeIcon
-									icon={faMicrophone}
-									title={t("TurnOffMicrophone")}
-									className="device__microphone"
-									onClick={() => voice.func.switchMicrophone(false)}
-								/>
-								{openAudioSettings
-									? <FontAwesomeIcon
-										icon={faAngleUp}
-										title={t("Setting")}
-										className="device__settings"
-										onClick={handleOpenAudioSettings}
-									/>
-									: <FontAwesomeIcon
-										icon={faAngleDown}
-										title={t("Setting")}
-										className="device__settings"
-										onClick={handleOpenAudioSettings}
-									/>
-								}
-								{openAudioSettings &&
-									<VoiceChatAudioDeviceSettings
-										setMicrophoneDeviceId={voice.func.setMicrophoneDeviceId}
-										switchMicrophoneDevice={voice.func.switchMicrophoneDevice}
-										switchAudioOutputDevice={voice.func.switchAudioOutputDevice}
-										microphoneIsOn={voice.data.turnOnMicrophone}
-									/>
-								}
-							</div>
-							: <div className="device">
-								<FontAwesomeIcon
-									icon={faMicrophoneSlash}
-									title={t("TurnOnMicrophone")}
-									className="device__microphone"
-									onClick={() => voice.func.switchMicrophone(true)}
-								/>
-								{openAudioSettings
-									? <FontAwesomeIcon
-										icon={faAngleUp}
-										title={t("Setting")}
-										className="device__settings"
-										onClick={handleOpenAudioSettings}
-									/>
-									: <FontAwesomeIcon
-										icon={faAngleDown}
-										title={t("Setting")}
-										className="device__settings"
-										onClick={handleOpenAudioSettings}
-									/>
-								}
-								{openAudioSettings &&
-									<VoiceChatAudioDeviceSettings
-										isAudio={true}
-										setMicrophoneDeviceId={voice.func.setMicrophoneDeviceId}
-										switchMicrophoneDevice={voice.func.switchMicrophoneDevice}
-										switchAudioOutputDevice={voice.func.switchAudioOutputDevice}
-										microphoneIsOn={voice.data.turnOnMicrophone}
-									/>
-								}
-							</div>
-						}
-						<div className="btn-shadow" title={t("Leave")} onClick={() => voice.func.leave(true)}>
+							}
+						</div>
+						<div className="btn-shadow" title={t("Leave")} onClick={async () => await leaveFromCallAsync()}>
 							<FontAwesomeIcon
 								icon={faRightFromBracket}
 							/>
@@ -334,9 +333,8 @@ const VoiceChat = ({ callMinimazedData, setUseMinimaze }) => {
 						</div>
 					</div>
 				</div>
-				<audio ref={audioRef} />
 				<VoiceChatContentSharing
-					voice={voice}
+					socket={socketRef.current}
 				/>
 			</div>
 		</>
