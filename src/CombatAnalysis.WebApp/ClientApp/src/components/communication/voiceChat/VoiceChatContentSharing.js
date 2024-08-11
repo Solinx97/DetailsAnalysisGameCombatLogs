@@ -2,62 +2,29 @@ import { useEffect, useState } from "react";
 import WithVoiceContext from '../../../hocHelpers/WithVoiceContext';
 import VoiceChatUser from "./VoiceChatUser";
 
-const VoiceChatContentSharing = ({ me, socketRef, micStatus, roomId }) => {
+const VoiceChatContentSharing = ({ me, connection, micStatus, roomId, peerConnection }) => {
 	const [usersId, setUsersId] = useState([]);
 
 	useEffect(() => {
-		const fetchUsers = async () => {
-			await callConnectedUsersAsync();
-		}
-
-		fetchUsers();
-	}, []);
-
-	useEffect(() => {
-		if (socketRef.current === null) {
+		if (connection === null) {
 			return;
 		}
 
-		const socket = socketRef.current;
-		const handleMessageAsync = async (event) => {
-			const message = event.data;
-			if (message instanceof Blob) {
-				return;
-			}
+		callConnectedUsers();
+	}, [connection]);
 
-			if (message.startsWith("joined")) {
-				await callConnectedUsersAsync();
-			}
+	const callConnectedUsers = () => {
+		connection.on("UserJoined", async () => {
+			await connection.invoke("RequestConnectedUsers", roomId);
+		});
 
-			if (message.startsWith("leaved")) {
-				await callConnectedUsersAsync();
-			}
-		}
+		connection.on("UserLeft", async () => {
+			await connection.invoke("RequestConnectedUsers", roomId);
+		});
 
-		socket.addEventListener("message", handleMessageAsync);
-
-		return () => {
-			socket.removeEventListener('message', handleMessageAsync);
-		}
-	}, [socketRef, usersId]);
-
-	useEffect(() => {
-		if (socketRef.current === null) {
-			return;
-		}
-
-		socketRef.current.send("REQUEST_MIC_STATUS");
-	}, [socketRef, usersId]);
-
-	const callConnectedUsersAsync = async () => {
-		try {
-			const response = await fetch(`/api/v1/Signaling/connected/${+roomId}`);
-			const data = await response.json();
-
-			setUsersId(data);
-		} catch (error) {
-			console.error('Error fetching users:', error);
-		}
+		connection.on("ReceiveConnectedUsers", (connectedUsers) => {
+			setUsersId(connectedUsers);
+		});
 	}
 
     return (
@@ -68,8 +35,9 @@ const VoiceChatContentSharing = ({ me, socketRef, micStatus, roomId }) => {
 						<VoiceChatUser
 							itIsMe={me.id === userId}
 							userId={userId}
-							socketRef={socketRef}
+							connection={connection}
 							micStatus={micStatus}
+							peerConnection={peerConnection}
 						/>
 					</li>
 				)}

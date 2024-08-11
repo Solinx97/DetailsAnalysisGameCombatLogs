@@ -1,11 +1,10 @@
 ﻿ import { faAngleDown, faAngleUp, faDisplay, faLinkSlash, faMicrophone, faMicrophoneSlash, faRightFromBracket, faVideo, faVideoSlash } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import React, { memo, useCallback, useEffect, useState } from 'react';
+import React, { memo, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
-import useWebSocket from '../../../hooks/useWebSocket';
-//import useVoice from '../../../hooks/useVoice';
+import useRTCVoiceChat from '../../../hooks/useRTCVoiceChat';
 import CommunicationMenu from '../CommunicationMenu';
 import VoiceChatAudioDeviceSettings from './VoiceChatAudioDeviceSettings';
 import VoiceChatContentSharing from './VoiceChatContentSharing';
@@ -26,18 +25,23 @@ const VoiceChat = () => {
 	const [turnOnCamera, setTurnOnCamera] = useState(false);
 	const [screenSharing, setScreenSharing] = useState(false);
 
+	const videosRef = useRef(null);
+
 	const { roomId, chatName } = useParams();
 
-	const [socketRef, connectToChat, cleanupAudioResources, switchMicrophoneStatusAsync] = useWebSocket(turnOnMicrophone);
-	//const voice = useVoice(me?.id);
+	const [connection, peerConnection, connectToChatAsync, cleanupAudioResources, switchMicrophoneStatusAsync, switchCameraStatusAsync] = useRTCVoiceChat(roomId, turnOnMicrophone);
 
 	useEffect(() => {
 		if (me === undefined) {
 			return;
 		}
 
-		const serverUrl = `https://localhost:5007/ws?userId=${me?.id}&roomId=${+roomId}`;
-		connectToChat(serverUrl);
+		const connectToChat = async () => {
+			const signalingAddress = "/voiceChatHub";
+			await connectToChatAsync(signalingAddress, videosRef.current);
+		}
+
+		connectToChat();
 
 		return () => {
 			cleanupAudioResources();
@@ -45,32 +49,21 @@ const VoiceChat = () => {
 	}, [me]);
 
 	useEffect(() => {
-		if (socketRef.current === null) {
-			return;
-		}
-
 		const switchMicrophoneStatus = async () => {
-			await switchMicrophoneStatusAsync();
+			await switchMicrophoneStatusAsync(turnOnMicrophone);
 		}
 
 		switchMicrophoneStatus();
-		sendMicrophoneStatus();
-	}, [socketRef, turnOnMicrophone]);
-
-	const sendMicrophoneStatus = useCallback(() => {
-		const message = `MIC_STATUS;${turnOnMicrophone ? "on" : "off"}`;
-
-		// Check if the WebSocket is open before sending the messageЦ
-		if (socketRef.current.readyState === WebSocket.OPEN) {
-			socketRef.current.send(message);
-		} else {
-			// Wait for the WebSocket to open before sending the message
-			socketRef.current.addEventListener("open", () => {
-				socketRef.current.send(message);
-			}, { once: true });
-		}
 	}, [turnOnMicrophone]);
-	
+
+	useEffect(() => {
+		const switchCameraStatus = async () => {
+			await switchCameraStatusAsync(turnOnCamera);
+		}
+
+		switchCameraStatus();
+	}, [turnOnCamera]);
+
 	const leaveFromCallAsync = async () => {
 		cleanupAudioResources();
 
@@ -143,6 +136,7 @@ const VoiceChat = () => {
 							{/*	/>*/}
 							{/*}*/}
 						</div>
+						<div ref={videosRef}></div>
 						<div className="btn-shadow" title={t("Leave")} onClick={async () => await leaveFromCallAsync()}>
 							<FontAwesomeIcon
 								icon={faRightFromBracket}
@@ -153,9 +147,10 @@ const VoiceChat = () => {
 				</div>
 				<VoiceChatContentSharing
 					me={me}
-					socketRef={socketRef}
+					connection={connection}
 					micStatus={turnOnMicrophone}
 					roomId={roomId}
+					peerConnection={peerConnection}
 				/>
 			</div>
 		</>

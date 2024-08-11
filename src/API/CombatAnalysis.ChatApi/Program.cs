@@ -1,6 +1,5 @@
 using AutoMapper;
 using CombatAnalysis.ChatApi.Mapping;
-using CombatAnalysis.ChatApi.Middlewares;
 using CombatAnalysis.ChatBL.Extensions;
 using CombatAnalysis.ChatBL.Mapping;
 using CombatAnalysis.CustomerBL.Extensions;
@@ -104,9 +103,6 @@ Log.Logger = new LoggerConfiguration()
 builder.Host.UseSerilog();
 
 var app = builder.Build();
-
-app.UseWebSockets();
-app.UseMiddleware<WebSocketMiddleware>();
 
 app.UseAuthentication(); // Enable authentication middleware
 app.UseAuthorization();

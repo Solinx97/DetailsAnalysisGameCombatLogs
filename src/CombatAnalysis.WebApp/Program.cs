@@ -1,5 +1,6 @@
 using CombatAnalysis.WebApp.Consts;
 using CombatAnalysis.WebApp.Helpers;
+using CombatAnalysis.WebApp.Hubs;
 using CombatAnalysis.WebApp.Interfaces;
 using CombatAnalysis.WebApp.Middlewares;
 using CombatAnalysis.WebApp.Services;
@@ -34,6 +35,7 @@ if (int.TryParse(builder.Configuration["Authentication:RefreshTokenExpiresDays"]
 
 IHttpClientHelper httpClient = new HttpClientHelper();
 builder.Services.AddSingleton(httpClient);
+builder.Services.AddSignalR();
 
 builder.Services.AddControllersWithViews();
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
@@ -55,7 +57,7 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 }
 
-//app.UseHttpsRedirection();
+app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();
 
@@ -64,6 +66,8 @@ app.UseMiddleware<TokenRefreshMiddleware>();
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller}/{action=Index}/{id?}");
+
+app.MapHub<VoiceChatHub>("/voiceChatHub");
 
 app.MapFallbackToFile("index.html");
 

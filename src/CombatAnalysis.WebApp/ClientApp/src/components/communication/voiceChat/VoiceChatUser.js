@@ -1,74 +1,47 @@
 import { faMicrophone, faMicrophoneSlash } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { memo, useEffect, useState } from "react";
+import { memo, useEffect, useState, useRef } from "react";
 import WithVoiceContext from '../../../hocHelpers/WithVoiceContext';
 
-const VoiceChatUser = ({ itIsMe, userId, socketRef, micStatus }) => {
+const VoiceChatUser = ({ userId, connection, peerConnection }) => {
     const [turnOnMicrophone, setTurnOnMicrophone] = useState(false);
-    const [user, setUser] = useState(null);
+    const [turnOnCamera, setTurnOnCamera] = useState(false);
+
+    const videosRef = useRef(null);
 
     useEffect(() => {
-        if (itIsMe) {
-            setTurnOnMicrophone(micStatus);
-        }
-
-        const callUser = async () => {
-            await callUserAsync(userId);
-        }
-
-        callUser();
-    }, [micStatus, userId, itIsMe]);
-
-    useEffect(() => {
-        if (socketRef.current === null) {
+        if (peerConnection === null) {
             return;
         }
 
-        const socket = socketRef.current;
-        const handleMessageAsync = async (event) => {
-            const message = event.data;
-            if (message instanceof Blob) {
-                return;
+        connection.on("ReceiveMicrophoneStatus", async (from, status) => {
+            if (from === userId) {
+                setTurnOnMicrophone(status);
             }
+        });
 
-            if (message.startsWith("requestedMicStatus")) {
-                const message = `MIC_STATUS;${micStatus ? "on" : "off"}`;
-
-                socket.send(message);
+        connection.on("ReceiveCameraStatus", async (from, status) => {
+            if (from === userId) {
+                setTurnOnCamera(status);
             }
+        });
+    }, [peerConnection]);
 
-            if (message.startsWith("microphoneStatus")) {
-                const messageData = message.split(";");
-                const updatedMicrophoneUserId = messageData[1];
-                const status = messageData[2];
-
-                if (updatedMicrophoneUserId === userId) {
-                    setTurnOnMicrophone(status === "True");
-                }
+    useEffect(() => {
+        const addVideoTrack = (event) => {
+            if (event.track.kind === "video") {
+                videosRef.current.srcObject = event.streams[0];
+                videosRef.current.play();
             }
         }
 
-        socket.addEventListener("message", handleMessageAsync);
-
-        return () => {
-            socket.removeEventListener('message', handleMessageAsync);
+        if (turnOnCamera) {
+            peerConnection.addEventListener("track", addVideoTrack);
         }
-    }, [socketRef, userId, micStatus]);
-
-    const callUserAsync = async (userId) => {
-        try {
-            const response = await fetch(`/api/v1/Account/${userId}`);
-            const data = await response.json();
-
-            setUser(data);
-        } catch (error) {
-            console.error('Error fetching users:', error);
+        else {
+            peerConnection.removeEventListener("track", addVideoTrack);
         }
-    }
-
-    if (user === null) {
-        return (<div>Loading...</div>);
-    }
+    }, [turnOnCamera]);
 
     return (
         <div className="user">
@@ -79,6 +52,9 @@ const VoiceChatUser = ({ itIsMe, userId, socketRef, micStatus }) => {
                     title="TurnOffMicrophone"
                 />
             </div>
+            {turnOnCamera &&
+                <video ref={videosRef}></video>
+            }
         </div>
     );
 }
