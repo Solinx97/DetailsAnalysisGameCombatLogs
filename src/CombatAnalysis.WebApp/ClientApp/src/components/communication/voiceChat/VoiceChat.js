@@ -29,7 +29,7 @@ const VoiceChat = () => {
 
 	const { roomId, chatName } = useParams();
 
-	const [connection, peerConnection, connectToChatAsync, cleanupAudioResources, switchMicrophoneStatusAsync, switchCameraStatusAsync] = useRTCVoiceChat(roomId, turnOnMicrophone);
+	const [connection, streamRef, peerConnection, connectToChatAsync, cleanupAudioResources, switchMicrophoneStatusAsync, switchCameraStatusAsync] = useRTCVoiceChat(roomId);
 
 	useEffect(() => {
 		if (me === undefined) {
@@ -38,7 +38,7 @@ const VoiceChat = () => {
 
 		const connectToChat = async () => {
 			const signalingAddress = "/voiceChatHub";
-			await connectToChatAsync(signalingAddress, videosRef.current);
+			await connectToChatAsync(signalingAddress, videosRef.current, me.id);
 		}
 
 		connectToChat();
@@ -146,9 +146,11 @@ const VoiceChat = () => {
 					</div>
 				</div>
 				<VoiceChatContentSharing
-					me={me}
+					meId={me?.id}
 					connection={connection}
 					micStatus={turnOnMicrophone}
+					cameraStatus={turnOnCamera}
+					localStream={streamRef.current}
 					roomId={roomId}
 					peerConnection={peerConnection}
 				/>

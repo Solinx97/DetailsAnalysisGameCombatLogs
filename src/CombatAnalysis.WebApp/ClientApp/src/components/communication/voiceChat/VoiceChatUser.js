@@ -1,7 +1,6 @@
 import { faMicrophone, faMicrophoneSlash } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { memo, useEffect, useState, useRef } from "react";
-import WithVoiceContext from '../../../hocHelpers/WithVoiceContext';
+import { memo, useEffect, useRef, useState } from "react";
 
 const VoiceChatUser = ({ userId, connection, peerConnection }) => {
     const [turnOnMicrophone, setTurnOnMicrophone] = useState(false);
@@ -14,18 +13,26 @@ const VoiceChatUser = ({ userId, connection, peerConnection }) => {
             return;
         }
 
-        connection.on("ReceiveMicrophoneStatus", async (from, status) => {
+        const handleReceiveMicrophoneStatus = async (from, status) => {
             if (from === userId) {
                 setTurnOnMicrophone(status);
             }
-        });
+        };
 
-        connection.on("ReceiveCameraStatus", async (from, status) => {
+        const handleReceiveCameraStatus = async (from, status) => {
             if (from === userId) {
-                setTurnOnCamera(status);
+                cameraSwitch(status);
             }
-        });
-    }, [peerConnection]);
+        };
+
+        connection.on("ReceiveMicrophoneStatus", handleReceiveMicrophoneStatus);
+        connection.on("ReceiveCameraStatus", handleReceiveCameraStatus);
+
+        return () => {
+            connection.off("ReceiveMicrophoneStatus", handleReceiveMicrophoneStatus);
+            connection.off("ReceiveCameraStatus", handleReceiveCameraStatus);
+        };
+    }, [connection, userId, peerConnection]);
 
     useEffect(() => {
         const addVideoTrack = (event) => {
@@ -33,30 +40,50 @@ const VoiceChatUser = ({ userId, connection, peerConnection }) => {
                 videosRef.current.srcObject = event.streams[0];
                 videosRef.current.play();
             }
-        }
+        };
 
         if (turnOnCamera) {
             peerConnection.addEventListener("track", addVideoTrack);
-        }
-        else {
+        } else {
             peerConnection.removeEventListener("track", addVideoTrack);
+            if (videosRef.current) {
+                videosRef.current.srcObject = null;
+            }
+        }
+
+        return () => {
+            peerConnection.removeEventListener("track", addVideoTrack);
+            if (videosRef.current) {
+                videosRef.current.srcObject = null;
+            }
         }
     }, [turnOnCamera]);
+
+    const cameraSwitch = async (status) => {
+        if (videosRef.current !== null && !status) {
+            videosRef.current.pause();
+            videosRef.current.currentTime = 0;
+
+            videosRef.current = null;
+        }
+
+        setTurnOnCamera(status);
+    }
 
     return (
         <div className="user">
             <div className="information">
-                <div className="another__username">{userId}</div>
+                {/*<div className="another__username">{userId}</div>*/}
                 <FontAwesomeIcon
                     icon={turnOnMicrophone ? faMicrophone : faMicrophoneSlash}
                     title="TurnOffMicrophone"
                 />
             </div>
             {turnOnCamera &&
-                <video ref={videosRef}></video>
+                <video autoPlay ref={videosRef}></video>
             }
         </div>
     );
 }
 
-export default memo(WithVoiceContext(VoiceChatUser));
+export default memo(VoiceChatUser);

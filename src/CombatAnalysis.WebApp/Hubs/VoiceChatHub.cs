@@ -48,7 +48,7 @@ public class VoiceChatHub : Hub
     {
         if (_groupUsers.TryGetValue(room, out var users))
         {
-            await Clients.Caller.SendAsync("ReceiveConnectedUsers", users.ToList());
+            await Clients.Caller.SendAsync("ReceiveConnectedUsers", users);
         }
     }
 

@@ -5,15 +5,13 @@ const useRTCVoiceChat = (roomId) => {
 	const [connection, setConnection] = useState(null);
 	const [peerConnection, setPeerConnection] = useState(null);
 
-	//const connectionRef = useRef(null);
 	const streamRef = useRef(null);
-	//const peerConnectionRef = useRef(null);
 
 	const config = {
 		iceServers: [{ urls: 'stun:stun.l.google.com:19302' }]
 	};
 
-	const connectToChatAsync = async (signalingAddress, videos) => {
+	const connectToChatAsync = async (signalingAddress, videos, meId) => {
         try {
 			const connection = new signalR.HubConnectionBuilder()
 				.withUrl(signalingAddress)
@@ -104,7 +102,7 @@ const useRTCVoiceChat = (roomId) => {
 	}
 
 	const switchCameraStatusAsync = async (cameraStatus) => {
-		if (streamRef.current === null) {
+		if (streamRef.current === null || peerConnection.signalingState === "closed") {
 			return;
 		}
 
@@ -152,7 +150,7 @@ const useRTCVoiceChat = (roomId) => {
 		}
 	}
 
-	return [connection, peerConnection, connectToChatAsync, cleanupAudioResources, switchMicrophoneStatusAsync, switchCameraStatusAsync];
+	return [connection, streamRef, peerConnection, connectToChatAsync, cleanupAudioResources, switchMicrophoneStatusAsync, switchCameraStatusAsync];
 }
 
 export default useRTCVoiceChat;

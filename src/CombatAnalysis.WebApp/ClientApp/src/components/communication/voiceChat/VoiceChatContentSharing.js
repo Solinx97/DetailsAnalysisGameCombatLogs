@@ -1,9 +1,11 @@
 import { useEffect, useState } from "react";
 import WithVoiceContext from '../../../hocHelpers/WithVoiceContext';
+import MeInVoiceChat from "./MeInVoiceChat";
 import VoiceChatUser from "./VoiceChatUser";
 
-const VoiceChatContentSharing = ({ me, connection, micStatus, roomId, peerConnection }) => {
+const VoiceChatContentSharing = ({ connection, micStatus, cameraStatus, localStream, roomId, peerConnection }) => {
 	const [usersId, setUsersId] = useState([]);
+	const [meId, setmMeId] = useState("");
 
 	useEffect(() => {
 		if (connection === null) {
@@ -13,30 +15,45 @@ const VoiceChatContentSharing = ({ me, connection, micStatus, roomId, peerConnec
 		callConnectedUsers();
 	}, [connection]);
 
+	useEffect(() => {
+		if (meId === "") {
+			return;
+		}
+
+		connection.on("ReceiveConnectedUsers", (connectedUsers) => {
+			const anotherUser = connectedUsers.filter((user) => user !== meId);
+			setUsersId(anotherUser);
+		});
+	}, [meId]);
+
 	const callConnectedUsers = () => {
-		connection.on("UserJoined", async () => {
+		connection.on("UserJoined", async (user) => {
+			setmMeId(user);
+
 			await connection.invoke("RequestConnectedUsers", roomId);
 		});
 
 		connection.on("UserLeft", async () => {
 			await connection.invoke("RequestConnectedUsers", roomId);
 		});
-
-		connection.on("ReceiveConnectedUsers", (connectedUsers) => {
-			setUsersId(connectedUsers);
-		});
 	}
 
     return (
 		<div className="voice__content">
 			<ul className="another-user-container">
+				<li>
+					<MeInVoiceChat
+						meId={meId}
+						micStatus={micStatus}
+						cameraStatus={cameraStatus}
+						localStream={localStream}
+					/>
+				</li>
 				{usersId.map((userId) =>
 					<li key={userId}>
 						<VoiceChatUser
-							itIsMe={me.id === userId}
 							userId={userId}
 							connection={connection}
-							micStatus={micStatus}
 							peerConnection={peerConnection}
 						/>
 					</li>
