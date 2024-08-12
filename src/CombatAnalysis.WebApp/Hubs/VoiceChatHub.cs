@@ -16,7 +16,13 @@ public class VoiceChatHub : Hub
         }
 
         await Groups.AddToGroupAsync(Context.ConnectionId, room);
+
         await Clients.Group(room).SendAsync("UserJoined", Context.ConnectionId);
+    }
+
+    public async Task RequestConnectionId(string room)
+    {
+        await Clients.Caller.SendAsync("ReceiveConnectionId", Context.ConnectionId);
     }
 
     public async Task SendOffer(string room, string offer)
@@ -39,9 +45,19 @@ public class VoiceChatHub : Hub
         await Clients.OthersInGroup(room).SendAsync("ReceiveMicrophoneStatus", Context.ConnectionId, status);
     }
 
+    public async Task RequestMicrophoneStatus(string room)
+    {
+        await Clients.OthersInGroup(room).SendAsync("ReceiveRequestMicrophoneStatus", Context.ConnectionId);
+    }
+
     public async Task SendCameraStatus(string room, bool status)
     {
         await Clients.OthersInGroup(room).SendAsync("ReceiveCameraStatus", Context.ConnectionId, status);
+    }
+
+    public async Task RequestCameraStatus(string room)
+    {
+        await Clients.OthersInGroup(room).SendAsync("ReceiveRequestCameraStatus", Context.ConnectionId);
     }
 
     public async Task RequestConnectedUsers(string room)

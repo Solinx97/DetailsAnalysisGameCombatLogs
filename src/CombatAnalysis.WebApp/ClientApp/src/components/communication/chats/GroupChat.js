@@ -1,4 +1,4 @@
-﻿import { memo, useEffect, useRef, useState } from 'react';
+﻿import { memo, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import WithVoiceContext from '../../../hocHelpers/WithVoiceContext';
 import useGroupChatData from '../../../hooks/useGroupChatData';
@@ -69,7 +69,11 @@ const GroupChat = ({ chat, me, setSelectedChat, callMinimazedData }) => {
     }
 
     if (isLoading) {
-        return (<Loading />);
+        return (
+            <div className="chats__selected-chat_loading">
+                <Loading />
+            </div>
+        );
     }
 
     return (

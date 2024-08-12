@@ -9,21 +9,21 @@ const VoiceChatUser = ({ userId, connection, peerConnection }) => {
     const videosRef = useRef(null);
 
     useEffect(() => {
-        if (peerConnection === null) {
+        if (connection === null || peerConnection === null) {
             return;
         }
 
-        const handleReceiveMicrophoneStatus = async (from, status) => {
+        const handleReceiveMicrophoneStatus = (from, status) => {
             if (from === userId) {
                 setTurnOnMicrophone(status);
             }
-        };
+        }
 
-        const handleReceiveCameraStatus = async (from, status) => {
+        const handleReceiveCameraStatus = (from, status) => {
             if (from === userId) {
                 cameraSwitch(status);
             }
-        };
+        }
 
         connection.on("ReceiveMicrophoneStatus", handleReceiveMicrophoneStatus);
         connection.on("ReceiveCameraStatus", handleReceiveCameraStatus);
@@ -57,7 +57,7 @@ const VoiceChatUser = ({ userId, connection, peerConnection }) => {
                 videosRef.current.srcObject = null;
             }
         }
-    }, [turnOnCamera]);
+    }, [turnOnCamera, peerConnection]);
 
     const cameraSwitch = async (status) => {
         if (videosRef.current !== null && !status) {
@@ -73,7 +73,7 @@ const VoiceChatUser = ({ userId, connection, peerConnection }) => {
     return (
         <div className="user">
             <div className="information">
-                {/*<div className="another__username">{userId}</div>*/}
+                <div className="another__username">{userId}</div>
                 <FontAwesomeIcon
                     icon={turnOnMicrophone ? faMicrophone : faMicrophoneSlash}
                     title="TurnOffMicrophone"

@@ -7,7 +7,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import useRTCVoiceChat from '../../../hooks/useRTCVoiceChat';
 import CommunicationMenu from '../CommunicationMenu';
 import VoiceChatAudioDeviceSettings from './VoiceChatAudioDeviceSettings';
-import VoiceChatContentSharing from './VoiceChatContentSharing';
+import VoiceChatMembers from './VoiceChatMembers';
 
 import '../../../styles/communication/chats/voice.scss';
 
@@ -25,11 +25,9 @@ const VoiceChat = () => {
 	const [turnOnCamera, setTurnOnCamera] = useState(false);
 	const [screenSharing, setScreenSharing] = useState(false);
 
-	const videosRef = useRef(null);
-
 	const { roomId, chatName } = useParams();
 
-	const [connection, streamRef, peerConnection, connectToChatAsync, cleanupAudioResources, switchMicrophoneStatusAsync, switchCameraStatusAsync] = useRTCVoiceChat(roomId);
+	const [connection, peerConnection, streamRef, connectToChatAsync, cleanupResources, createOfferAsync, switchMicrophoneStatusAsync, switchCameraStatusAsync] = useRTCVoiceChat(roomId);
 
 	useEffect(() => {
 		if (me === undefined) {
@@ -38,13 +36,13 @@ const VoiceChat = () => {
 
 		const connectToChat = async () => {
 			const signalingAddress = "/voiceChatHub";
-			await connectToChatAsync(signalingAddress, videosRef.current, me.id);
+			await connectToChatAsync(signalingAddress);
 		}
 
 		connectToChat();
 
 		return () => {
-			cleanupAudioResources();
+			cleanupResources();
 		}
 	}, [me]);
 
@@ -65,7 +63,7 @@ const VoiceChat = () => {
 	}, [turnOnCamera]);
 
 	const leaveFromCallAsync = async () => {
-		cleanupAudioResources();
+		cleanupResources();
 
 		navigate("/chats");
 	}
@@ -87,7 +85,7 @@ const VoiceChat = () => {
 			/>
 			<div className="voice">
 				<div className="voice__title">
-					{/*<div>{voice.data.renderChatName}</div>*/}
+					<div>{chatName}</div>
 					<div className="tools">
 						<div className="device">
 							<FontAwesomeIcon
@@ -136,7 +134,6 @@ const VoiceChat = () => {
 							{/*	/>*/}
 							{/*}*/}
 						</div>
-						<div ref={videosRef}></div>
 						<div className="btn-shadow" title={t("Leave")} onClick={async () => await leaveFromCallAsync()}>
 							<FontAwesomeIcon
 								icon={faRightFromBracket}
@@ -145,14 +142,14 @@ const VoiceChat = () => {
 						</div>
 					</div>
 				</div>
-				<VoiceChatContentSharing
-					meId={me?.id}
+				<VoiceChatMembers
+					roomId={roomId}
 					connection={connection}
+					peerConnection={peerConnection}
 					micStatus={turnOnMicrophone}
 					cameraStatus={turnOnCamera}
 					localStream={streamRef.current}
-					roomId={roomId}
-					peerConnection={peerConnection}
+					createOfferAsync={createOfferAsync}
 				/>
 			</div>
 		</>

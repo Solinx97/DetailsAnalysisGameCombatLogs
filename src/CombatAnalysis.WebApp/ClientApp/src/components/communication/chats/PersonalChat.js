@@ -44,7 +44,11 @@ const PersonalChat = ({ chat, me, setSelectedChat, companionId }) => {
     }
 
     if (isLoading || companionIsLoading) {
-        return (<Loading />);
+        return (
+            <div className="chats__selected-chat_loading">
+                <Loading />
+            </div>
+        );
     }
 
     return (

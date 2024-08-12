@@ -18,7 +18,7 @@ const MeInVoiceChat = ({ meId, micStatus, cameraStatus, localStream }) => {
     return (
         <div className="user">
             <div className="information">
-                {/*<div className="another__username">{meId}</div>*/}
+                <div className="another__username">{meId}</div>
                 <FontAwesomeIcon
                     icon={micStatus ? faMicrophone : faMicrophoneSlash}
                     title="TurnOffMicrophone"

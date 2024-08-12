@@ -11,7 +11,7 @@ const useRTCVoiceChat = (roomId) => {
 		iceServers: [{ urls: 'stun:stun.l.google.com:19302' }]
 	};
 
-	const connectToChatAsync = async (signalingAddress, videos, meId) => {
+	const connectToChatAsync = async (signalingAddress) => {
         try {
 			const connection = new signalR.HubConnectionBuilder()
 				.withUrl(signalingAddress)
@@ -20,16 +20,17 @@ const useRTCVoiceChat = (roomId) => {
 			setConnection(connection);
 
 			await connection.start();
+
 			await connection.invoke("JoinRoom", roomId);
 
-			await startStreamAsync(connection, videos);
+			await startStreamAsync(connection);
 		} catch (e) {
 			console.log(e);
         }
 	}
 
-	const startStreamAsync = async (connection, videos) => {
-		const peerConnection = await initializationAsync(connection, videos);
+	const startStreamAsync = async (connection) => {
+		const peerConnection = await initializationAsync(connection);
 
 		connection.on("ReceiveOffer", async (offer) => {
 			await peerConnection.setRemoteDescription(new RTCSessionDescription(JSON.parse(offer)));
@@ -47,16 +48,24 @@ const useRTCVoiceChat = (roomId) => {
 			await peerConnection.addIceCandidate(new RTCIceCandidate(JSON.parse(candidate)));
 		});
 
+		connection.on("ReceiveRequestCameraStatus", () => {
+			if (peerConnection) {
+				peerConnection.close();
+			}
+		});
+
 		connection.on("UserLeft", () => {
 			if (peerConnection) {
 				peerConnection.close();
 			}
 		});
 
-		await createOfferAsync(connection, peerConnection);
+		//connection.on("UserJoined", async () => {
+		//	await createOfferAsync(connection, peerConnection);
+		//});
 	}
 
-	const initializationAsync = async (connection, videos) => {
+	const initializationAsync = async (connection) => {
 		const peerConnection = new RTCPeerConnection(config);
 		setPeerConnection(peerConnection);
 
@@ -130,7 +139,7 @@ const useRTCVoiceChat = (roomId) => {
 		await connection.invoke("SendCameraStatus", roomId, cameraStatus);
 	}
 
-	const cleanupAudioResources = () => {
+	const cleanupResources = () => {
 		// Stop the media stream tracks
 		if (streamRef.current) {
 			streamRef.current.getTracks().forEach(track => track.stop());
@@ -145,12 +154,17 @@ const useRTCVoiceChat = (roomId) => {
 
 		// Stop the SignalR connection
 		if (connection) {
+			connection.off("ReceiveOffer");
+			connection.off("ReceiveAnswer");
+			connection.off("ReceiveCandidate");
+			connection.off("UserLeft");
+
 			connection.stop();
 			setConnection(null);
 		}
 	}
 
-	return [connection, streamRef, peerConnection, connectToChatAsync, cleanupAudioResources, switchMicrophoneStatusAsync, switchCameraStatusAsync];
+	return [connection, peerConnection, streamRef, connectToChatAsync, cleanupResources, createOfferAsync, switchMicrophoneStatusAsync, switchCameraStatusAsync];
 }
 
 export default useRTCVoiceChat;
