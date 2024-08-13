@@ -1,6 +1,6 @@
 ﻿ import { faAngleDown, faAngleUp, faDisplay, faLinkSlash, faMicrophone, faMicrophoneSlash, faRightFromBracket, faVideo, faVideoSlash } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import React, { memo, useEffect, useRef, useState } from 'react';
+import React, { memo, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -22,12 +22,15 @@ const VoiceChat = () => {
 	const [openAudioSettings, setOpenAudioSettings] = useState(false);
 
 	const [turnOnMicrophone, setTurnOnMicrophone] = useState(true);
+	const [turnOnCameraActive, setTurnOnCameraActive] = useState(false);
+	const [cameraExecute, setCameraExecute] = useState(false);
 	const [turnOnCamera, setTurnOnCamera] = useState(false);
 	const [screenSharing, setScreenSharing] = useState(false);
+	const [screenSharingActive, setScreenSharingActive] = useState(false);
 
 	const { roomId, chatName } = useParams();
 
-	const [connection, peerConnection, streamRef, connectToChatAsync, cleanupResources, createOfferAsync, switchMicrophoneStatusAsync, switchCameraStatusAsync] = useRTCVoiceChat(roomId);
+	const [connection, peerConnection, stream, connectToChatAsync, cleanupResources, createOfferAsync, switchMicrophoneStatusAsync, switchCameraStatusAsync] = useRTCVoiceChat(roomId);
 
 	useEffect(() => {
 		if (me === undefined) {
@@ -47,20 +50,39 @@ const VoiceChat = () => {
 	}, [me]);
 
 	useEffect(() => {
+		if (connection === null) {
+			return;
+		}
+
+		connection.on("Connected", async () => {
+			setTurnOnCameraActive(true);
+			setScreenSharingActive(true);
+		});
+	}, [connection]);
+
+	useEffect(() => {
+		if (connection === null) {
+			return;
+		}
+
 		const switchMicrophoneStatus = async () => {
 			await switchMicrophoneStatusAsync(turnOnMicrophone);
 		}
 
 		switchMicrophoneStatus();
-	}, [turnOnMicrophone]);
+	}, [connection, peerConnection, turnOnMicrophone]);
 
 	useEffect(() => {
+		if (connection === null) {
+			return;
+		}
+
 		const switchCameraStatus = async () => {
-			await switchCameraStatusAsync(turnOnCamera);
+			await switchCameraStatusAsync(turnOnCamera, setCameraExecute);
 		}
 
 		switchCameraStatus();
-	}, [turnOnCamera]);
+	}, [connection, peerConnection, turnOnCamera]);
 
 	const leaveFromCallAsync = async () => {
 		cleanupResources();
@@ -87,31 +109,35 @@ const VoiceChat = () => {
 				<div className="voice__title">
 					<div>{chatName}</div>
 					<div className="tools">
-						<div className="device">
-							<FontAwesomeIcon
-								icon={screenSharing ? faDisplay : faLinkSlash}
-								title={screenSharing ? t("TurnOffScreenSharing") : t("TurnOnScreenSharing")}
-								className="device__screen"
-								onClick={() => setScreenSharing(!screenSharing)}
-							/>
-						</div>
-						<div className="device">
-							<FontAwesomeIcon
-								icon={turnOnCamera ? faVideo : faVideoSlash}
-								title={turnOnCamera ? t("TurnOffCamera") : t("TurnOnCamera")}
-								className="device__camera"
-								onClick={() => setTurnOnCamera(!turnOnCamera)}
-							/>
-							<FontAwesomeIcon
-								icon={openVideoSettings ? faAngleDown : faAngleUp}
-								title={t("Setting")}
-								className="device__settings"
-								onClick={handleOpenVideoSettings}
-							/>
-							{openVideoSettings &&
-								<VoiceChatAudioDeviceSettings />
-							}
-						</div>
+						{screenSharingActive &&
+							<div className="device">
+								<FontAwesomeIcon
+									icon={screenSharing ? faDisplay : faLinkSlash}
+									title={screenSharing ? t("TurnOffScreenSharing") : t("TurnOnScreenSharing")}
+									className="device__screen"
+									onClick={() => setScreenSharing(!screenSharing)}
+								/>
+							</div>
+						}
+						{turnOnCameraActive &&
+							<div className="device" style={{ opacity: cameraExecute ? 0.4 : 1 }}>
+								<FontAwesomeIcon
+									icon={turnOnCamera ? faVideo : faVideoSlash}
+									title={turnOnCamera ? t("TurnOffCamera") : t("TurnOnCamera")}
+									className="device__camera"
+									onClick={cameraExecute ? null : () => setTurnOnCamera(!turnOnCamera)}
+								/>
+								<FontAwesomeIcon
+									icon={openVideoSettings ? faAngleDown : faAngleUp}
+									title={t("Setting")}
+									className="device__settings"
+									onClick={handleOpenVideoSettings}
+								/>
+								{openVideoSettings &&
+									<VoiceChatAudioDeviceSettings />
+								}
+							</div>
+						}
 						<div className="device">
 							<FontAwesomeIcon
 								icon={turnOnMicrophone ? faMicrophone : faMicrophoneSlash}
@@ -148,8 +174,10 @@ const VoiceChat = () => {
 					peerConnection={peerConnection}
 					micStatus={turnOnMicrophone}
 					cameraStatus={turnOnCamera}
-					localStream={streamRef.current}
+					localStream={stream}
 					createOfferAsync={createOfferAsync}
+					switchCameraStatusAsync={switchCameraStatusAsync}
+					setCameraExecute={setCameraExecute}
 				/>
 			</div>
 		</>

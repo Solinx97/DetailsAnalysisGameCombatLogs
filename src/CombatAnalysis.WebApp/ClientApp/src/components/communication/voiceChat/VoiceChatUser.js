@@ -6,7 +6,7 @@ const VoiceChatUser = ({ userId, connection, peerConnection }) => {
     const [turnOnMicrophone, setTurnOnMicrophone] = useState(false);
     const [turnOnCamera, setTurnOnCamera] = useState(false);
 
-    const videosRef = useRef(null);
+    const contentRef = useRef(null);
 
     useEffect(() => {
         if (connection === null || peerConnection === null) {
@@ -21,7 +21,7 @@ const VoiceChatUser = ({ userId, connection, peerConnection }) => {
 
         const handleReceiveCameraStatus = (from, status) => {
             if (from === userId) {
-                cameraSwitch(status);
+                setTurnOnCamera(status);
             }
         }
 
@@ -37,8 +37,15 @@ const VoiceChatUser = ({ userId, connection, peerConnection }) => {
     useEffect(() => {
         const addVideoTrack = (event) => {
             if (event.track.kind === "video") {
-                videosRef.current.srcObject = event.streams[0];
-                videosRef.current.play();
+                const video = document.createElement("video");
+                video.srcObject = event.streams[0];
+                video.autoplay = true;
+                video.playsInline = true;
+
+                if (contentRef.current) {
+                    contentRef.current.innerHTML = ""; // Clear any existing content
+                    contentRef.current.appendChild(video);
+                }
             }
         };
 
@@ -46,29 +53,18 @@ const VoiceChatUser = ({ userId, connection, peerConnection }) => {
             peerConnection.addEventListener("track", addVideoTrack);
         } else {
             peerConnection.removeEventListener("track", addVideoTrack);
-            if (videosRef.current) {
-                videosRef.current.srcObject = null;
+            if (contentRef.current) {
+                contentRef.current.innerHTML = "";
             }
         }
 
         return () => {
             peerConnection.removeEventListener("track", addVideoTrack);
-            if (videosRef.current) {
-                videosRef.current.srcObject = null;
+            if (contentRef.current) {
+                contentRef.current.innerHTML = "";
             }
         }
     }, [turnOnCamera, peerConnection]);
-
-    const cameraSwitch = async (status) => {
-        if (videosRef.current !== null && !status) {
-            videosRef.current.pause();
-            videosRef.current.currentTime = 0;
-
-            videosRef.current = null;
-        }
-
-        setTurnOnCamera(status);
-    }
 
     return (
         <div className="user">
@@ -79,9 +75,7 @@ const VoiceChatUser = ({ userId, connection, peerConnection }) => {
                     title="TurnOffMicrophone"
                 />
             </div>
-            {turnOnCamera &&
-                <video autoPlay ref={videosRef}></video>
-            }
+            <div className="content" ref={contentRef}></div>
         </div>
     );
 }

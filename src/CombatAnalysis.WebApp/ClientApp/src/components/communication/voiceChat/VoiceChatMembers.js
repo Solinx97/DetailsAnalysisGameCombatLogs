@@ -3,7 +3,7 @@ import WithVoiceContext from '../../../hocHelpers/WithVoiceContext';
 import MeInVoiceChat from "./MeInVoiceChat";
 import VoiceChatUser from "./VoiceChatUser";
 
-const VoiceChatMembers = ({ roomId, connection, peerConnection, micStatus, cameraStatus, localStream  }) => {
+const VoiceChatMembers = ({ roomId, connection, peerConnection, micStatus, cameraStatus, localStream, switchCameraStatusAsync, setCameraExecute  }) => {
 	const [usersId, setUsersId] = useState([]);
 	const [meId, setmMeId] = useState("");
 
@@ -18,8 +18,6 @@ const VoiceChatMembers = ({ roomId, connection, peerConnection, micStatus, camer
 			connection.off("ReceiveConnectionId");
 			connection.off("UserJoined");
 			connection.off("UserLeft");
-			connection.off("ReceiveRequestMicrophoneStatus");
-			connection.off("ReceiveRequestCameraStatus");
 		};
 	}, [connection, micStatus, cameraStatus, roomId]);
 
@@ -41,7 +39,23 @@ const VoiceChatMembers = ({ roomId, connection, peerConnection, micStatus, camer
 		return () => {
 			connection.off("ReceiveConnectedUsers", handleReceiveConnectedUsers);
 		};
-	}, [connection, meId]);
+	}, [connection, meId, roomId]);
+
+	useEffect(() => {
+		if (connection === null || peerConnection === null || localStream === null) {
+			return;
+		}
+
+		const handleReceiveRequestCameraStatus = async () => {
+			await switchCameraStatusAsync(cameraStatus, setCameraExecute);
+		}
+
+		connection.on("ReceiveRequestCameraStatus", handleReceiveRequestCameraStatus);
+
+		return () => {
+			connection.off("ReceiveRequestCameraStatus", handleReceiveRequestCameraStatus);
+		};
+	}, [connection, cameraStatus]);
 
 	const callConnectedUsers = () => {
 		connection.on("ReceiveConnectionId", (connectionId) => {
@@ -60,10 +74,6 @@ const VoiceChatMembers = ({ roomId, connection, peerConnection, micStatus, camer
 		connection.on("ReceiveRequestMicrophoneStatus", async () => {
 			await connection.invoke("SendMicrophoneStatus", roomId, micStatus);
 		});
-
-		//connection.on("ReceiveRequestCameraStatus", async () => {
-		//	await connection.invoke("SendCameraStatus", roomId, cameraStatus);
-		//});
 	}
 
     return (
