@@ -21,7 +21,7 @@ const VoiceChat = () => {
 	const [openVideoSettings, setOpenVideoSettings] = useState(false);
 	const [openAudioSettings, setOpenAudioSettings] = useState(false);
 
-	const [turnOnMicrophone, setTurnOnMicrophone] = useState(true);
+	const [turnOnMicrophone, setTurnOnMicrophone] = useState(false);
 	const [turnOnCameraActive, setTurnOnCameraActive] = useState(false);
 	const [cameraExecute, setCameraExecute] = useState(false);
 	const [turnOnCamera, setTurnOnCamera] = useState(false);
@@ -30,7 +30,7 @@ const VoiceChat = () => {
 
 	const { roomId, chatName } = useParams();
 
-	const [connection, peerConnection, stream, connectToChatAsync, cleanupResources, createOfferAsync, switchMicrophoneStatusAsync, switchCameraStatusAsync] = useRTCVoiceChat(roomId);
+	const [connection, peerConnection, stream, connectToChatAsync, cleanup, switchMicrophoneStatusAsync, switchCameraStatusAsync] = useRTCVoiceChat(roomId);
 
 	useEffect(() => {
 		if (me === undefined) {
@@ -39,13 +39,13 @@ const VoiceChat = () => {
 
 		const connectToChat = async () => {
 			const signalingAddress = "/voiceChatHub";
-			await connectToChatAsync(signalingAddress);
+			await connectToChatAsync(signalingAddress, turnOnMicrophone);
 		}
 
 		connectToChat();
 
 		return () => {
-			cleanupResources();
+			cleanup();
 		}
 	}, [me]);
 
@@ -70,7 +70,7 @@ const VoiceChat = () => {
 		}
 
 		switchMicrophoneStatus();
-	}, [connection, peerConnection, turnOnMicrophone]);
+	}, [connection, peerConnection, stream, turnOnMicrophone]);
 
 	useEffect(() => {
 		if (connection === null) {
@@ -82,10 +82,18 @@ const VoiceChat = () => {
 		}
 
 		switchCameraStatus();
-	}, [connection, peerConnection, turnOnCamera]);
+
+		connection.on("ReceiveRequestCameraStatus", async () => {
+			await switchCameraStatusAsync(turnOnCamera, setCameraExecute);
+		});
+
+		return () => {
+			connection.off("ReceiveRequestCameraStatus", switchCameraStatus);
+		};
+	}, [connection, peerConnection, stream, turnOnCamera]);
 
 	const leaveFromCallAsync = async () => {
-		cleanupResources();
+		cleanup();
 
 		navigate("/chats");
 	}
@@ -174,8 +182,7 @@ const VoiceChat = () => {
 					peerConnection={peerConnection}
 					micStatus={turnOnMicrophone}
 					cameraStatus={turnOnCamera}
-					localStream={stream}
-					createOfferAsync={createOfferAsync}
+					stream={stream}
 					switchCameraStatusAsync={switchCameraStatusAsync}
 					setCameraExecute={setCameraExecute}
 				/>

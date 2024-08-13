@@ -6,14 +6,19 @@ const MeInVoiceChat = ({ meId, micStatus, cameraStatus, localStream }) => {
     const videosRef = useRef(null);
 
     useEffect(() => {
+        if (localStream === null) {
+            return;
+        }
+
         if (cameraStatus) {
             videosRef.current.srcObject = localStream;
+            videosRef.current.muted = true;
             videosRef.current.play();
         }
         else {
             videosRef.current= null;
         }
-    }, [cameraStatus]);
+    }, [cameraStatus, localStream]);
 
     return (
         <div className="user">

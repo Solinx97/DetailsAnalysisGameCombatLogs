@@ -10,7 +10,7 @@ const useRTCVoiceChat = (roomId) => {
 		iceServers: [{ urls: 'stun:stun.l.google.com:19302' }]
 	};
 
-	const connectToChatAsync = async (signalingAddress) => {
+	const connectToChatAsync = async (signalingAddress, microphoneStatus) => {
         try {
 			const connection = new signalR.HubConnectionBuilder()
 				.withUrl(signalingAddress)
@@ -22,14 +22,14 @@ const useRTCVoiceChat = (roomId) => {
 
 			await connection.invoke("JoinRoom", roomId);
 
-			await startStreamAsync(connection);
+			await startStreamAsync(connection, microphoneStatus);
 		} catch (e) {
 			console.log(e);
         }
 	}
 
-	const startStreamAsync = async (connection) => {
-		const peerConnection = await initializationAsync(connection);
+	const startStreamAsync = async (connection, microphoneStatus) => {
+		const peerConnection = await initAsync(connection, microphoneStatus);
 
 		connection.on("ReceiveOffer", async (offer) => {
 			await peerConnection.setRemoteDescription(new RTCSessionDescription(JSON.parse(offer)));
@@ -46,22 +46,16 @@ const useRTCVoiceChat = (roomId) => {
 		connection.on("ReceiveCandidate", async (candidate) => {
 			await peerConnection.addIceCandidate(new RTCIceCandidate(JSON.parse(candidate)));
 		});
-
-		connection.on("UserLeft", () => {
-			if (peerConnection) {
-				peerConnection.close();
-			}
-		});
 	}
 
-	const initializationAsync = async (connection) => {
+	const initAsync = async (connection, microphoneStatus, cameraStatus) => {
 		const peerConnection = new RTCPeerConnection(config);
 		setPeerConnection(peerConnection);
 
-		const stream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
+		const stream = await navigator.mediaDevices.getUserMedia({ audio: true, video: cameraStatus });
 		setStream(stream);
 
-		stream.getTracks().forEach(track => peerConnection.addTrack(track, stream));
+		await microphoneStatusInit(stream, peerConnection, microphoneStatus);
 
 		peerConnection.addEventListener("icecandidate", async (event) => {
 			if (event.candidate) {
@@ -80,6 +74,16 @@ const useRTCVoiceChat = (roomId) => {
 		return peerConnection;
 	}
 
+	const microphoneStatusInit = async (stream, peerConnection, microphoneStatus) => {
+		stream.getAudioTracks().forEach(track => {
+			track.enabled = microphoneStatus;
+			const hasAudioTrack = peerConnection.getSenders().some(sender => sender.track && sender.track.kind === "audio");
+			if (!hasAudioTrack) {
+				peerConnection.addTrack(track, stream);
+			}
+		});
+	}
+
 	const createOfferAsync = async (connection, peerConnection) => {
 		const offer = await peerConnection.createOffer();
 		await peerConnection.setLocalDescription(offer);
@@ -88,7 +92,7 @@ const useRTCVoiceChat = (roomId) => {
 	}
 
 	const switchMicrophoneStatusAsync = async (microphoneStatus) => {
-		if (stream === null) {
+		if (stream === null || peerConnection?.signalingState === "closed") {
 			return;
 		}
 
@@ -97,10 +101,12 @@ const useRTCVoiceChat = (roomId) => {
 		});
 
 		await connection.invoke("SendMicrophoneStatus", roomId, microphoneStatus);
+
+		await createOfferAsync(connection, peerConnection);
 	}
 
 	const switchCameraStatusAsync = async (cameraStatus, setCameraExecuted) => {
-		if (stream === null || peerConnection.signalingState === "closed") {
+		if (stream === null || peerConnection?.signalingState === "closed") {
 			return;
 		}
 
@@ -108,10 +114,14 @@ const useRTCVoiceChat = (roomId) => {
 			// Turn on the camera
 			setCameraExecuted(true);
 
-			const localStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+			const localStream = await navigator.mediaDevices.getUserMedia({ audio: true, video: cameraStatus });
 			const videoTrack = localStream.getVideoTracks()[0];
 			stream.addTrack(videoTrack);
-			peerConnection.addTrack(videoTrack, stream);
+			
+			const hasVideoTrack = peerConnection.getSenders().some(sender => sender.track && sender.track.kind === "video");
+			if (!hasVideoTrack) {
+				peerConnection.addTrack(videoTrack, stream);
+			}
 
 			setCameraExecuted(false);
 		} else {
@@ -119,6 +129,7 @@ const useRTCVoiceChat = (roomId) => {
 			stream.getVideoTracks().forEach(track => {
 				track.stop();
 				stream.removeTrack(track);
+
 				peerConnection.getSenders().forEach(sender => {
 					if (sender.track && sender.track.kind === "video") {
 						peerConnection.removeTrack(sender);
@@ -127,12 +138,12 @@ const useRTCVoiceChat = (roomId) => {
 			});
 		}
 
-		createOfferAsync(connection, peerConnection);
+		await connection.invoke("SendCameraStatus", roomId, cameraStatus);
 
-		connection.invoke("SendCameraStatus", roomId, cameraStatus);
+		await createOfferAsync(connection, peerConnection);
 	}
 
-	const cleanupResources = () => {
+	const cleanup = () => {
 		// Stop the media stream tracks
 		if (stream) {
 			stream.getTracks().forEach(track => track.stop());
@@ -150,14 +161,13 @@ const useRTCVoiceChat = (roomId) => {
 			connection.off("ReceiveOffer");
 			connection.off("ReceiveAnswer");
 			connection.off("ReceiveCandidate");
-			connection.off("UserLeft");
 
 			connection.stop();
 			setConnection(null);
 		}
 	}
 
-	return [connection, peerConnection, stream, connectToChatAsync, cleanupResources, createOfferAsync, switchMicrophoneStatusAsync, switchCameraStatusAsync];
+	return [connection, peerConnection, stream, connectToChatAsync, cleanup, switchMicrophoneStatusAsync, switchCameraStatusAsync];
 }
 
 export default useRTCVoiceChat;

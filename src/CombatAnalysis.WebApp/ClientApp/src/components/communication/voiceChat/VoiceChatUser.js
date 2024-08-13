@@ -9,7 +9,7 @@ const VoiceChatUser = ({ userId, connection, peerConnection }) => {
     const contentRef = useRef(null);
 
     useEffect(() => {
-        if (connection === null || peerConnection === null) {
+        if (connection === null) {
             return;
         }
 
@@ -32,13 +32,18 @@ const VoiceChatUser = ({ userId, connection, peerConnection }) => {
             connection.off("ReceiveMicrophoneStatus", handleReceiveMicrophoneStatus);
             connection.off("ReceiveCameraStatus", handleReceiveCameraStatus);
         };
-    }, [connection, userId, peerConnection]);
+    }, [connection, peerConnection, turnOnCamera, userId]);
 
     useEffect(() => {
+        if (!turnOnCamera) {
+            return;
+        }
+
         const addVideoTrack = (event) => {
             if (event.track.kind === "video") {
                 const video = document.createElement("video");
                 video.srcObject = event.streams[0];
+                video.muted = true;
                 video.autoplay = true;
                 video.playsInline = true;
 
@@ -47,7 +52,7 @@ const VoiceChatUser = ({ userId, connection, peerConnection }) => {
                     contentRef.current.appendChild(video);
                 }
             }
-        };
+        }
 
         if (turnOnCamera) {
             peerConnection.addEventListener("track", addVideoTrack);
@@ -59,12 +64,12 @@ const VoiceChatUser = ({ userId, connection, peerConnection }) => {
         }
 
         return () => {
-            peerConnection.removeEventListener("track", addVideoTrack);
+            peerConnection.addEventListener("track", addVideoTrack);
             if (contentRef.current) {
                 contentRef.current.innerHTML = "";
             }
-        }
-    }, [turnOnCamera, peerConnection]);
+        };
+    }, [turnOnCamera, userId]);
 
     return (
         <div className="user">
