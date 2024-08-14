@@ -2,7 +2,7 @@ import { faMicrophone, faMicrophoneSlash } from '@fortawesome/free-solid-svg-ico
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { memo, useEffect, useRef, useState } from "react";
 
-const VoiceChatUser = ({ userId, connection, peerConnection }) => {
+const VoiceChatUser = ({ userId, connection }) => {
     const [turnOnMicrophone, setTurnOnMicrophone] = useState(false);
     const [turnOnCamera, setTurnOnCamera] = useState(false);
 
@@ -32,7 +32,7 @@ const VoiceChatUser = ({ userId, connection, peerConnection }) => {
             connection.off("ReceiveMicrophoneStatus", handleReceiveMicrophoneStatus);
             connection.off("ReceiveCameraStatus", handleReceiveCameraStatus);
         };
-    }, [connection, peerConnection, turnOnCamera, userId]);
+    }, [connection, turnOnCamera, userId]);
 
     useEffect(() => {
         if (!turnOnCamera) {
@@ -54,21 +54,21 @@ const VoiceChatUser = ({ userId, connection, peerConnection }) => {
             }
         }
 
-        if (turnOnCamera) {
-            peerConnection.addEventListener("track", addVideoTrack);
-        } else {
-            peerConnection.removeEventListener("track", addVideoTrack);
-            if (contentRef.current) {
-                contentRef.current.innerHTML = "";
-            }
-        }
+        //if (turnOnCamera) {
+        //    peerConnection.addEventListener("track", addVideoTrack);
+        //} else {
+        //    peerConnection.removeEventListener("track", addVideoTrack);
+        //    if (contentRef.current) {
+        //        contentRef.current.innerHTML = "";
+        //    }
+        //}
 
-        return () => {
-            peerConnection.addEventListener("track", addVideoTrack);
-            if (contentRef.current) {
-                contentRef.current.innerHTML = "";
-            }
-        };
+        //return () => {
+        //    peerConnection.addEventListener("track", addVideoTrack);
+        //    if (contentRef.current) {
+        //        contentRef.current.innerHTML = "";
+        //    }
+        //};
     }, [turnOnCamera, userId]);
 
     return (

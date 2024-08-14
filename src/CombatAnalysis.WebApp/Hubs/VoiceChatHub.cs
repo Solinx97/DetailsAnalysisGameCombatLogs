@@ -17,8 +17,8 @@ public class VoiceChatHub : Hub
 
         await Groups.AddToGroupAsync(Context.ConnectionId, room);
 
-        await Clients.Group(room).SendAsync("UserJoined", Context.ConnectionId);
-        await Clients.Caller.SendAsync("Connected");
+        await Clients.Caller.SendAsync("Connected", Context.ConnectionId);
+        await Clients.OthersInGroup(room).SendAsync("UserJoined", Context.ConnectionId);
     }
 
     public async Task RequestConnectionId(string room)
@@ -26,40 +26,40 @@ public class VoiceChatHub : Hub
         await Clients.Caller.SendAsync("ReceiveConnectionId", Context.ConnectionId);
     }
 
-    public async Task SendOffer(string room, string offer)
+    public async Task SendOffer(string room, string userId, string offer)
     {
-        await Clients.OthersInGroup(room).SendAsync("ReceiveOffer", offer);
+        await Clients.OthersInGroup(room).SendAsync("ReceiveOffer", userId, offer);
     }
 
-    public async Task SendAnswer(string room, string answer)
+    public async Task SendAnswer(string room, string userId, string answer)
     {
-        await Clients.OthersInGroup(room).SendAsync("ReceiveAnswer", answer);
+        await Clients.OthersInGroup(room).SendAsync("ReceiveAnswer", userId, answer);
     }
 
-    public async Task SendCandidate(string room, string candidate)
+    public async Task SendCandidate(string room, string userId, string candidate)
     {
-        await Clients.OthersInGroup(room).SendAsync("ReceiveCandidate", candidate);
+        await Clients.OthersInGroup(room).SendAsync("ReceiveCandidate", userId, candidate);
     }
 
-    public async Task SendMicrophoneStatus(string room, bool status)
-    {
-        await Clients.OthersInGroup(room).SendAsync("ReceiveMicrophoneStatus", Context.ConnectionId, status);
-    }
+    //public async Task SendMicrophoneStatus(string room, bool status)
+    //{
+    //    await Clients.OthersInGroup(room).SendAsync("ReceiveMicrophoneStatus", Context.ConnectionId, status);
+    //}
 
-    public async Task RequestMicrophoneStatus(string room)
-    {
-        await Clients.OthersInGroup(room).SendAsync("ReceiveRequestMicrophoneStatus");
-    }
+    //public async Task RequestMicrophoneStatus(string room)
+    //{
+    //    await Clients.OthersInGroup(room).SendAsync("ReceiveRequestMicrophoneStatus");
+    //}
 
-    public async Task SendCameraStatus(string room, bool status)
-    {
-        await Clients.OthersInGroup(room).SendAsync("ReceiveCameraStatus", Context.ConnectionId, status);
-    }
+    //public async Task SendCameraStatus(string room, bool status)
+    //{
+    //    await Clients.OthersInGroup(room).SendAsync("ReceiveCameraStatus", Context.ConnectionId, status);
+    //}
 
-    public async Task RequestCameraStatus(string room)
-    {
-        await Clients.OthersInGroup(room).SendAsync("ReceiveRequestCameraStatus");
-    }
+    //public async Task RequestCameraStatus(string room)
+    //{
+    //    await Clients.OthersInGroup(room).SendAsync("ReceiveRequestCameraStatus");
+    //}
 
     public async Task RequestConnectedUsers(string room)
     {

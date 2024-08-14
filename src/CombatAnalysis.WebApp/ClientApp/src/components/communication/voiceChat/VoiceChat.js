@@ -21,7 +21,7 @@ const VoiceChat = () => {
 	const [openVideoSettings, setOpenVideoSettings] = useState(false);
 	const [openAudioSettings, setOpenAudioSettings] = useState(false);
 
-	const [turnOnMicrophone, setTurnOnMicrophone] = useState(false);
+	const [turnOnMicrophone, setTurnOnMicrophone] = useState(true);
 	const [turnOnCameraActive, setTurnOnCameraActive] = useState(false);
 	const [cameraExecute, setCameraExecute] = useState(false);
 	const [turnOnCamera, setTurnOnCamera] = useState(false);
@@ -30,7 +30,7 @@ const VoiceChat = () => {
 
 	const { roomId, chatName } = useParams();
 
-	const [connection, peerConnection, stream, connectToChatAsync, cleanup, switchMicrophoneStatusAsync, switchCameraStatusAsync] = useRTCVoiceChat(roomId);
+	const [connection, connectToChatAsync, cleanupAsync, switchMicrophoneStatusAsync, switchCameraStatusAsync] = useRTCVoiceChat(roomId);
 
 	useEffect(() => {
 		if (me === undefined) {
@@ -43,11 +43,13 @@ const VoiceChat = () => {
 		}
 
 		connectToChat();
-
-		return () => {
-			cleanup();
-		}
 	}, [me]);
+
+	useEffect(() => {
+		return () => {
+			cleanupAsync();
+		}
+	}, [connection]);
 
 	useEffect(() => {
 		if (connection === null) {
@@ -66,11 +68,11 @@ const VoiceChat = () => {
 		}
 
 		const switchMicrophoneStatus = async () => {
-			await switchMicrophoneStatusAsync(turnOnMicrophone);
+			//await switchMicrophoneStatusAsync(turnOnMicrophone);
 		}
 
 		switchMicrophoneStatus();
-	}, [connection, peerConnection, stream, turnOnMicrophone]);
+	}, [connection, turnOnMicrophone]);
 
 	useEffect(() => {
 		if (connection === null) {
@@ -78,23 +80,21 @@ const VoiceChat = () => {
 		}
 
 		const switchCameraStatus = async () => {
-			await switchCameraStatusAsync(turnOnCamera, setCameraExecute);
+			//await switchCameraStatusAsync(turnOnCamera, setCameraExecute);
 		}
 
 		switchCameraStatus();
 
 		connection.on("ReceiveRequestCameraStatus", async () => {
-			await switchCameraStatusAsync(turnOnCamera, setCameraExecute);
+			//await switchCameraStatusAsync(turnOnCamera, setCameraExecute);
 		});
 
 		return () => {
 			connection.off("ReceiveRequestCameraStatus", switchCameraStatus);
 		};
-	}, [connection, peerConnection, stream, turnOnCamera]);
+	}, [connection, turnOnCamera]);
 
 	const leaveFromCallAsync = async () => {
-		cleanup();
-
 		navigate("/chats");
 	}
 
@@ -176,16 +176,15 @@ const VoiceChat = () => {
 						</div>
 					</div>
 				</div>
-				<VoiceChatMembers
-					roomId={roomId}
-					connection={connection}
-					peerConnection={peerConnection}
-					micStatus={turnOnMicrophone}
-					cameraStatus={turnOnCamera}
-					stream={stream}
-					switchCameraStatusAsync={switchCameraStatusAsync}
-					setCameraExecute={setCameraExecute}
-				/>
+				{/*<VoiceChatMembers*/}
+				{/*	roomId={roomId}*/}
+				{/*	connection={connection}*/}
+				{/*	micStatus={turnOnMicrophone}*/}
+				{/*	cameraStatus={turnOnCamera}*/}
+				{/*	stream={stream}*/}
+				{/*	switchCameraStatusAsync={switchCameraStatusAsync}*/}
+				{/*	setCameraExecute={setCameraExecute}*/}
+				{/*/>*/}
 			</div>
 		</>
 	);

@@ -3,7 +3,7 @@ import WithVoiceContext from '../../../hocHelpers/WithVoiceContext';
 import MeInVoiceChat from "./MeInVoiceChat";
 import VoiceChatUser from "./VoiceChatUser";
 
-const VoiceChatMembers = ({ roomId, connection, peerConnection, micStatus, cameraStatus, stream, switchCameraStatusAsync, setCameraExecute  }) => {
+const VoiceChatMembers = ({ roomId, connection, micStatus, cameraStatus, stream, switchCameraStatusAsync, setCameraExecute  }) => {
 	const [usersId, setUsersId] = useState([]);
 	const [meId, setmMeId] = useState("");
 
@@ -77,7 +77,6 @@ const VoiceChatMembers = ({ roomId, connection, peerConnection, micStatus, camer
 						<VoiceChatUser
 							userId={userId}
 							connection={connection}
-							peerConnection={peerConnection}
 						/>
 					</li>
 				)}
