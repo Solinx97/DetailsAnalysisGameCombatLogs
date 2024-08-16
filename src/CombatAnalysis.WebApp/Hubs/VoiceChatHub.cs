@@ -28,38 +28,38 @@ public class VoiceChatHub : Hub
 
     public async Task SendOffer(string room, string userId, string offer)
     {
-        await Clients.OthersInGroup(room).SendAsync("ReceiveOffer", userId, offer);
+        await Clients.Client(userId).SendAsync("ReceiveOffer", Context.ConnectionId, offer);
     }
 
     public async Task SendAnswer(string room, string userId, string answer)
     {
-        await Clients.OthersInGroup(room).SendAsync("ReceiveAnswer", userId, answer);
+        await Clients.Client(userId).SendAsync("ReceiveAnswer", Context.ConnectionId, answer);
     }
 
     public async Task SendCandidate(string room, string userId, string candidate)
     {
-        await Clients.OthersInGroup(room).SendAsync("ReceiveCandidate", userId, candidate);
+        await Clients.Client(room).SendAsync("ReceiveCandidate", Context.ConnectionId, candidate);
     }
 
-    //public async Task SendMicrophoneStatus(string room, bool status)
-    //{
-    //    await Clients.OthersInGroup(room).SendAsync("ReceiveMicrophoneStatus", Context.ConnectionId, status);
-    //}
+    public async Task SendMicrophoneStatus(string room, bool status)
+    {
+        await Clients.OthersInGroup(room).SendAsync("ReceiveMicrophoneStatus", Context.ConnectionId, status);
+    }
 
-    //public async Task RequestMicrophoneStatus(string room)
-    //{
-    //    await Clients.OthersInGroup(room).SendAsync("ReceiveRequestMicrophoneStatus");
-    //}
+    public async Task RequestMicrophoneStatus(string room)
+    {
+        await Clients.OthersInGroup(room).SendAsync("ReceiveRequestMicrophoneStatus");
+    }
 
-    //public async Task SendCameraStatus(string room, bool status)
-    //{
-    //    await Clients.OthersInGroup(room).SendAsync("ReceiveCameraStatus", Context.ConnectionId, status);
-    //}
+    public async Task SendCameraStatus(string room, bool status)
+    {
+        await Clients.OthersInGroup(room).SendAsync("ReceiveCameraStatus", Context.ConnectionId, status);
+    }
 
-    //public async Task RequestCameraStatus(string room)
-    //{
-    //    await Clients.OthersInGroup(room).SendAsync("ReceiveRequestCameraStatus");
-    //}
+    public async Task RequestCameraStatus(string room)
+    {
+        await Clients.OthersInGroup(room).SendAsync("ReceiveRequestCameraStatus");
+    }
 
     public async Task RequestConnectedUsers(string room)
     {

@@ -3,7 +3,7 @@ import WithVoiceContext from '../../../hocHelpers/WithVoiceContext';
 import MeInVoiceChat from "./MeInVoiceChat";
 import VoiceChatUser from "./VoiceChatUser";
 
-const VoiceChatMembers = ({ roomId, connection, micStatus, cameraStatus, stream, switchCameraStatusAsync, setCameraExecute  }) => {
+const VoiceChatMembers = ({ roomId, connection, peerConnectionsRef, micStatus, cameraStatus, stream  }) => {
 	const [usersId, setUsersId] = useState([]);
 	const [meId, setmMeId] = useState("");
 
@@ -16,20 +16,18 @@ const VoiceChatMembers = ({ roomId, connection, micStatus, cameraStatus, stream,
 
 		return () => {
 			connection.off("ReceiveConnectionId");
-			connection.off("UserJoined");
-			connection.off("UserLeft");
-			connection.off("ReceiveRequestMicrophoneStatus");
+			connection.off("Connected");
 		};
-	}, [connection, micStatus, cameraStatus, roomId]);
+	}, [connection, roomId]);
 
 	useEffect(() => {
-		if (meId === "" || connection === null) {
+		if (meId === "" || connection === null || usersId === []) {
 			return;
 		}
 
 		const handleReceiveConnectedUsers = async (connectedUsers) => {
-			const anotherUser = connectedUsers.filter((user) => user !== meId);
-			setUsersId(anotherUser);
+			const anotherUsers = connectedUsers.filter((user) => user !== meId);
+			setUsersId(anotherUsers);
 
 			await connection.invoke("RequestMicrophoneStatus", roomId);
 			await connection.invoke("RequestCameraStatus", roomId);
@@ -40,24 +38,13 @@ const VoiceChatMembers = ({ roomId, connection, micStatus, cameraStatus, stream,
 		return () => {
 			connection.off("ReceiveConnectedUsers", handleReceiveConnectedUsers);
 		};
-	}, [connection, meId, roomId]);
+	}, [connection, meId, usersId, roomId]);
 
 	const callConnectedUsers = () => {
-		connection.on("ReceiveConnectionId", (connectionId) => {
-			setmMeId(connectionId);
-		});
+		connection.on("Connected", async (userId) => {
+			setmMeId(userId);
 
-		connection.on("UserJoined", async () => {
-			await connection.invoke("RequestConnectionId", roomId);
 			await connection.invoke("RequestConnectedUsers", roomId);
-		});
-
-		connection.on("UserLeft", async () => {
-			await connection.invoke("RequestConnectedUsers", roomId);
-		});
-
-		connection.on("ReceiveRequestMicrophoneStatus", async () => {
-			await connection.invoke("SendMicrophoneStatus", roomId, micStatus);
 		});
 	}
 
@@ -77,6 +64,7 @@ const VoiceChatMembers = ({ roomId, connection, micStatus, cameraStatus, stream,
 						<VoiceChatUser
 							userId={userId}
 							connection={connection}
+							peerConnection={peerConnectionsRef.current.get(userId)}
 						/>
 					</li>
 				)}

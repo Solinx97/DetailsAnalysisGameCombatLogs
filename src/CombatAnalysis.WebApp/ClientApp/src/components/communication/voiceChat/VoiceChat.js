@@ -30,7 +30,7 @@ const VoiceChat = () => {
 
 	const { roomId, chatName } = useParams();
 
-	const [connection, connectToChatAsync, cleanupAsync, switchMicrophoneStatusAsync, switchCameraStatusAsync] = useRTCVoiceChat(roomId);
+	const [connection, peerConnectionsRef, stream, connectToChatAsync, cleanupAsync, switchMicrophoneStatusAsync, switchCameraStatusAsync] = useRTCVoiceChat(roomId);
 
 	useEffect(() => {
 		if (me === undefined) {
@@ -39,7 +39,7 @@ const VoiceChat = () => {
 
 		const connectToChat = async () => {
 			const signalingAddress = "/voiceChatHub";
-			await connectToChatAsync(signalingAddress, turnOnMicrophone);
+			await connectToChatAsync(signalingAddress);
 		}
 
 		connectToChat();
@@ -68,11 +68,11 @@ const VoiceChat = () => {
 		}
 
 		const switchMicrophoneStatus = async () => {
-			//await switchMicrophoneStatusAsync(turnOnMicrophone);
+			await switchMicrophoneStatusAsync(turnOnMicrophone);
 		}
 
 		switchMicrophoneStatus();
-	}, [connection, turnOnMicrophone]);
+	}, [connection, stream, turnOnMicrophone]);
 
 	useEffect(() => {
 		if (connection === null) {
@@ -80,21 +80,13 @@ const VoiceChat = () => {
 		}
 
 		const switchCameraStatus = async () => {
-			//await switchCameraStatusAsync(turnOnCamera, setCameraExecute);
+			await switchCameraStatusAsync(turnOnCamera, setCameraExecute);
 		}
 
 		switchCameraStatus();
+	}, [connection, stream, turnOnCamera]);
 
-		connection.on("ReceiveRequestCameraStatus", async () => {
-			//await switchCameraStatusAsync(turnOnCamera, setCameraExecute);
-		});
-
-		return () => {
-			connection.off("ReceiveRequestCameraStatus", switchCameraStatus);
-		};
-	}, [connection, turnOnCamera]);
-
-	const leaveFromCallAsync = async () => {
+	const leaveFromCall = () => {
 		navigate("/chats");
 	}
 
@@ -168,7 +160,7 @@ const VoiceChat = () => {
 							{/*	/>*/}
 							{/*}*/}
 						</div>
-						<div className="btn-shadow" title={t("Leave")} onClick={async () => await leaveFromCallAsync()}>
+						<div className="btn-shadow" title={t("Leave")} onClick={leaveFromCall}>
 							<FontAwesomeIcon
 								icon={faRightFromBracket}
 							/>
@@ -176,15 +168,14 @@ const VoiceChat = () => {
 						</div>
 					</div>
 				</div>
-				{/*<VoiceChatMembers*/}
-				{/*	roomId={roomId}*/}
-				{/*	connection={connection}*/}
-				{/*	micStatus={turnOnMicrophone}*/}
-				{/*	cameraStatus={turnOnCamera}*/}
-				{/*	stream={stream}*/}
-				{/*	switchCameraStatusAsync={switchCameraStatusAsync}*/}
-				{/*	setCameraExecute={setCameraExecute}*/}
-				{/*/>*/}
+				<VoiceChatMembers
+					roomId={roomId}
+					connection={connection}
+					peerConnectionsRef={peerConnectionsRef}
+					micStatus={turnOnMicrophone}
+					cameraStatus={turnOnCamera}
+					stream={stream}
+				/>
 			</div>
 		</>
 	);
