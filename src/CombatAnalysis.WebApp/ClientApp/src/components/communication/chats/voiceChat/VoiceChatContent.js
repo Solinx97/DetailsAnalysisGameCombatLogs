@@ -1,14 +1,16 @@
-import { useEffect, useState } from "react";
-import WithVoiceContext from '../../../hocHelpers/WithVoiceContext';
+import { useEffect, useRef, useState } from "react";
 import MeInVoiceChat from "./MeInVoiceChat";
 import VoiceChatUser from "./VoiceChatUser";
 
-const VoiceChatMembers = ({ roomId, connection, peerConnectionsRef, micStatus, cameraStatus, stream  }) => {
+const VoiceChatContent = ({ roomId, connection, peerConnectionsRef, stream, micStatus, cameraStatus, screenSharing, setScreenSharing, screenSharingVideoRef  }) => {
 	const [usersId, setUsersId] = useState([]);
-	const [meId, setmMeId] = useState("");
+	const [myId, setMyId] = useState("");
+	const [otherScreenSharing, setOtherScreenSharing] = useState(false);
+
+	const otherScreenSharingVideoRef = useRef(null);
 
 	useEffect(() => {
-		if (connection === null) {
+		if (!connection) {
 			return;
 		}
 
@@ -17,16 +19,16 @@ const VoiceChatMembers = ({ roomId, connection, peerConnectionsRef, micStatus, c
 		return () => {
 			connection.off("ReceiveConnectionId");
 			connection.off("Connected");
-		};
+		}
 	}, [connection, roomId]);
 
 	useEffect(() => {
-		if (meId === "" || connection === null || usersId === []) {
+		if (!myId || !connection) {
 			return;
 		}
 
 		const handleReceiveConnectedUsers = async (connectedUsers) => {
-			const anotherUsers = connectedUsers.filter((user) => user !== meId);
+			const anotherUsers = connectedUsers.filter((user) => user !== myId);
 			setUsersId(anotherUsers);
 
 			await connection.invoke("RequestMicrophoneStatus", roomId);
@@ -37,12 +39,18 @@ const VoiceChatMembers = ({ roomId, connection, peerConnectionsRef, micStatus, c
 
 		return () => {
 			connection.off("ReceiveConnectedUsers", handleReceiveConnectedUsers);
-		};
-	}, [connection, meId, usersId, roomId]);
+		}
+	}, [connection, myId, roomId]);
+
+	useEffect(() => {
+		if (otherScreenSharing) {
+			setScreenSharing(false);
+		}
+	}, [otherScreenSharing]);
 
 	const callConnectedUsers = () => {
 		connection.on("Connected", async (userId) => {
-			setmMeId(userId);
+			setMyId(userId);
 
 			await connection.invoke("RequestConnectedUsers", roomId);
 		});
@@ -50,10 +58,20 @@ const VoiceChatMembers = ({ roomId, connection, peerConnectionsRef, micStatus, c
 
     return (
 		<div className="voice__content">
-			<ul className="another-user-container">
+			{screenSharing &&
+				<div className="sharing">
+					<video ref={screenSharingVideoRef}></video>
+				</div>
+			}
+			{otherScreenSharing &&
+				<div className="sharing">
+					<video ref={otherScreenSharingVideoRef}></video>
+				</div>
+			}
+			<ul className="users">
 				<li>
 					<MeInVoiceChat
-						meId={meId}
+						myId={myId}
 						micStatus={micStatus}
 						cameraStatus={cameraStatus}
 						localStream={stream}
@@ -65,6 +83,9 @@ const VoiceChatMembers = ({ roomId, connection, peerConnectionsRef, micStatus, c
 							userId={userId}
 							connection={connection}
 							peerConnection={peerConnectionsRef.current.get(userId)}
+							otherScreenSharingVideoRef={otherScreenSharingVideoRef}
+							otherScreenSharing={otherScreenSharing}
+							setOtherScreenSharing={setOtherScreenSharing}
 						/>
 					</li>
 				)}
@@ -73,4 +94,4 @@ const VoiceChatMembers = ({ roomId, connection, peerConnectionsRef, micStatus, c
     );
 }
 
-export default WithVoiceContext(VoiceChatMembers);
+export default VoiceChatContent;

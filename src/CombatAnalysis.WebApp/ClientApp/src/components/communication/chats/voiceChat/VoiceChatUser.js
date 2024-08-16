@@ -2,7 +2,7 @@ import { faMicrophone, faMicrophoneSlash } from '@fortawesome/free-solid-svg-ico
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { memo, useEffect, useRef, useState } from "react";
 
-const VoiceChatUser = ({ userId, connection, peerConnection }) => {
+const VoiceChatUser = ({ userId, connection, peerConnection, otherScreenSharingVideoRef, otherScreenSharing, setOtherScreenSharing }) => {
     const [turnOnMicrophone, setTurnOnMicrophone] = useState(false);
     const [turnOnCamera, setTurnOnCamera] = useState(false);
 
@@ -14,15 +14,16 @@ const VoiceChatUser = ({ userId, connection, peerConnection }) => {
             let media = null;
             const track = event.track;
 
-            if (track.kind === "video") {
+            if (track.kind === "video" && !otherScreenSharing) {
                 media = videoContentRef.current;
+                media.srcObject = new MediaStream([track]);
                 media.muted = true;
+                media.autoplay = true;
             } else if (track.kind === "audio") {
                 media = audioContentRef.current;
+                media.srcObject = new MediaStream([track]);
+                media.autoplay = true;
             }
-
-            media.srcObject = new MediaStream([track]);
-            media.autoplay = true;
         }
 
         peerConnection.addEventListener("track", createAudioElement);
@@ -32,10 +33,29 @@ const VoiceChatUser = ({ userId, connection, peerConnection }) => {
                 peerConnection.removeEventListener("track", createAudioElement);
             }
         }
-    }, []);
+    }, [otherScreenSharing]);
 
     useEffect(() => {
-        if (connection === null) {
+        const createAudioElement = (event) => {
+            const track = event.track;
+
+            if (track.kind === "video" && otherScreenSharing) {
+                otherScreenSharingVideoRef.current.srcObject = new MediaStream([track]);
+                otherScreenSharingVideoRef.current.autoplay = true;
+            }
+        }
+
+        peerConnection.addEventListener("track", createAudioElement);
+
+        return () => {
+            if (peerConnection) {
+                peerConnection.removeEventListener("track", createAudioElement);
+            }
+        }
+    }, [otherScreenSharing]);
+
+    useEffect(() => {
+        if (!connection) {
             return;
         }
 
@@ -51,12 +71,20 @@ const VoiceChatUser = ({ userId, connection, peerConnection }) => {
             }
         }
 
+        const handleReceiveScreenSharingtatus = (from, status) => {
+            if (from === userId) {
+                setOtherScreenSharing(status);
+            }
+        }
+
         connection.on("ReceiveMicrophoneStatus", handleReceiveMicrophoneStatus);
         connection.on("ReceiveCameraStatus", handleReceiveCameraStatus);
+        connection.on("ReceiveScreenSharingStatus", handleReceiveScreenSharingtatus);
 
         return () => {
             connection.off("ReceiveMicrophoneStatus", handleReceiveMicrophoneStatus);
-            connection.off("ReceiveCameraStatus", handleReceiveCameraStatus);
+            connection.off("ReceiveScreenSharingStatus", handleReceiveCameraStatus);
+            connection.off("ReceiveScreenSharingStatus", handleReceiveScreenSharingtatus);
         };
     }, [connection, userId]);
 

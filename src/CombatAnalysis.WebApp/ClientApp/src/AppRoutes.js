@@ -12,7 +12,7 @@ import CreateGroupChat from './components/communication/create/CreateGroupChat';
 import MyEnvironment from './components/communication/myEnvironment/MyEnvironment';
 import People from './components/communication/people/People';
 import SelectedUser from './components/communication/people/SelectedUser';
-import VoiceChat from './components/communication/voiceChat/VoiceChat';
+import VoiceChat from './components/communication/chats/voiceChat/VoiceChat';
 import AuthorizationCallback from './components/identity/AuthorizationCallback';
 
 const AppRoutes = [

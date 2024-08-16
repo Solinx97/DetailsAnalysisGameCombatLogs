@@ -4,6 +4,7 @@
     flex-direction: column;
     align-items: center;
     width: 100%;
+    height: 500px;
     gap: 20px;
 
     &__title {
@@ -14,20 +15,20 @@
 
         .tools {
             display: flex;
-            gap: 10px;
+            gap: 20px;
 
             .device {
                 display: flex;
                 justify-content: center;
                 align-items: center;
-                gap: 5px;
+                gap: 10px;
 
                 .device-toolbar {
                     position: absolute;
                     display: flex;
                     flex-direction: column;
                     gap: 10px;
-                    top: 7%;
+                    top: 8%;
                     width: 20vw;
                     padding: 15px;
                     box-shadow: 1px 1px 1px 1px yellow;
@@ -45,9 +46,15 @@
                 }
 
                 &__screen, &__camera, &__microphone {
-                    width: 25px;
-                    height: 25px;
-                    margin: 10px;
+                    width: 20px;
+                    height: 20px;
+                    padding: 5px 10px;
+                    border-radius: 10px;
+                    box-shadow: 1px 1px 1px 1px red;
+                }
+
+                .device-use {
+                    box-shadow: 1px 1px 1px 1px green;
                 }
 
                 &__settings {
@@ -57,12 +64,12 @@
 
                 &__camera:hover, &__microphone:hover {
                     cursor: pointer;
-                    transform: scale(1.1);
+                    transform: scale(1.05);
                 }
 
                 &__settings:hover {
                     cursor: pointer;
-                    transform: scale(1.25);
+                    transform: scale(1.15);
                 }
             }
         }
@@ -73,24 +80,24 @@
         justify-content: center;
         gap: 10px;
         width: 100%;
+        height: 100%;
 
         ul {
-            padding: 0;
             margin: 0;
         }
 
         .sharing {
             display: flex;
-            flex-direction: column;
             align-items: center;
             justify-content: center;
-            flex-grow: 1.5;
-            width: 65%;
+            flex-basis: 70%;
+            flex-grow: 3;
             box-shadow: 5px 5px 5px 5px gray;
             border-radius: 25px;
+            height: 100%;
 
             video {
-                flex-grow: 2;
+                height: 100%;
                 width: 100%;
             }
 
@@ -100,45 +107,32 @@
             }
         }
 
-        .another-user-container {
-            flex-grow: 1;
-        }
-
-        .members, .another-user-container {
+        .users {
             display: flex;
             align-items: center;
             justify-content: center;
-            overflow-y: auto;
             border: 2px solid gray;
             border-radius: 20px;
-            width: 100%;
             gap: 20px;
-            height: 540px;
+            flex-basis: 30%;
+            flex-grow: 1;
+            padding: 10px;
+            height: 100%;
+            flex-wrap: wrap;
+            overflow-y: auto;
 
             .user {
                 display: flex;
                 justify-content: center;
                 box-shadow: 2px 2px 2px 2px gray;
                 border-radius: 20px;
-                width: 150px;
-                height: 150px;
+                height: 40vh;
+                width: 20vw;
 
                 &_video {
-                    display: flex;
-                    flex-direction: column;
-                    justify-content: center;
-                    width: 150px;
-                    height: 150px;
-
-                    video {
-                        border-radius: 20px;
-                    }
-
-                    .information {
-                        display: flex;
-                        justify-content: space-around;
-                        align-items: center;
-                    }
+                    width: 100%;
+                    height: 100%;
+                    border-radius: 20px;
                 }
 
                 .information {
@@ -147,29 +141,9 @@
                     align-items: center;
                 }
             }
-        }
 
-        .another-user-container {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-wrap: wrap;
-            padding: 10px !important;
-
-            li {
-                display: flex;
-                justify-content: center;
-
-                .user {
-                    height: 40vh;
-                    width: 20vw;
-
-                    video {
-                        width: 100%;
-                        height: 100%;
-                        border-radius: 20px;
-                    }
-                }
+            .me {
+                box-shadow: 2px 2px 2px 2px green;
             }
         }
     }

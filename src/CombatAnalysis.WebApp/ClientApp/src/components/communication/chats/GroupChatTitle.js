@@ -4,7 +4,7 @@ import { useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useUpdateGroupChatAsyncMutation } from '../../../store/api/communication/chats/GroupChat.api';
 
-const GroupChatTitle = ({ chat, me, usersOnCall, callMinimazedData, settingsIsShow, setSettingsIsShow, t }) => {
+const GroupChatTitle = ({ chat, me, settingsIsShow, setSettingsIsShow, t }) => {
     const navigate = useNavigate();
 
     const [editNameOn, setEditNameOn] = useState(false);
@@ -53,19 +53,12 @@ const GroupChatTitle = ({ chat, me, usersOnCall, callMinimazedData, settingsIsSh
                 }
             </div>
             <div className="title__menu">
-                {(callMinimazedData.current.stream !== null && +callMinimazedData.current.roomId !== +chat.id)
-                    ? <FontAwesomeIcon
-                        icon={faPhone}
-                        title={t("Call move to minimaze")}
-                        className="call-minimazed"
-                    />
-                    : <FontAwesomeIcon
-                        icon={faPhone}
-                        title={t("Call")}
-                        className={`call${usersOnCall > 0 ? "_active" : ""}`}
-                        onClick={call}
-                    />
-                }
+                <FontAwesomeIcon
+                    icon={faPhone}
+                    title={t("Call")}
+                    className="call"
+                    onClick={call}
+                />
                 <FontAwesomeIcon
                     icon={faGear}
                     title={t("Settings")}

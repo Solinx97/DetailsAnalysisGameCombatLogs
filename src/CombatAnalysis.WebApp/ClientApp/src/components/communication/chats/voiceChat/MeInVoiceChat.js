@@ -2,11 +2,11 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useEffect, useRef } from "react";
 
-const MeInVoiceChat = ({ meId, micStatus, cameraStatus, localStream }) => {
+const MeInVoiceChat = ({ myId, micStatus, cameraStatus, localStream }) => {
     const videosRef = useRef(null);
 
     useEffect(() => {
-        if (localStream === null) {
+        if (!localStream) {
             return;
         }
 
@@ -21,9 +21,9 @@ const MeInVoiceChat = ({ meId, micStatus, cameraStatus, localStream }) => {
     }, [cameraStatus, localStream]);
 
     return (
-        <div className="user">
+        <div className="user me">
             <div className="information">
-                <div className="another__username">{meId}</div>
+                <div className="another__username">{myId}</div>
                 <FontAwesomeIcon
                     icon={micStatus ? faMicrophone : faMicrophoneSlash}
                     title="TurnOffMicrophone"

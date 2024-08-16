@@ -1,6 +1,5 @@
 ﻿import { memo, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import WithVoiceContext from '../../../hocHelpers/WithVoiceContext';
 import useGroupChatData from '../../../hooks/useGroupChatData';
 import {
     useLazyFindGroupChatMessageCountQuery,
@@ -24,7 +23,7 @@ const messageType = {
     system: 1
 };
 
-const GroupChat = ({ chat, me, setSelectedChat, callMinimazedData }) => {
+const GroupChat = ({ chat, me, setSelectedChat }) => {
     const { t } = useTranslation("communication/chats/groupChat");
 
     const [showAddPeople, setShowAddPeople] = useState(false);
@@ -82,8 +81,6 @@ const GroupChat = ({ chat, me, setSelectedChat, callMinimazedData }) => {
                 <GroupChatTitle
                     chat={chat}
                     me={me}
-                    usersOnCall={0}
-                    callMinimazedData={callMinimazedData}
                     settingsIsShow={settingsIsShow}
                     setSettingsIsShow={setSettingsIsShow}
                     t={t}
@@ -137,4 +134,4 @@ const GroupChat = ({ chat, me, setSelectedChat, callMinimazedData }) => {
     );
 }
 
-export default memo(WithVoiceContext(GroupChat));
+export default memo(GroupChat);
