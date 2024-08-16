@@ -1,6 +1,6 @@
 ﻿ import { faAngleDown, faAngleUp, faDisplay, faLinkSlash, faMicrophone, faMicrophoneSlash, faRightFromBracket, faVideo, faVideoSlash } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import React, { memo, useEffect, useState } from 'react';
+import React, { memo, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -21,6 +21,7 @@ const VoiceChat = () => {
 	const [openVideoSettings, setOpenVideoSettings] = useState(false);
 	const [openAudioSettings, setOpenAudioSettings] = useState(false);
 
+	const [canLeave, setCanLeave] = useState(false);
 	const [turnOnMicrophone, setTurnOnMicrophone] = useState(true);
 	const [turnOnCameraActive, setTurnOnCameraActive] = useState(false);
 	const [cameraExecute, setCameraExecute] = useState(false);
@@ -28,28 +29,25 @@ const VoiceChat = () => {
 	const [screenSharing, setScreenSharing] = useState(false);
 	const [screenSharingActive, setScreenSharingActive] = useState(false);
 
+	const audioInputDeviceIdRef = useRef(null);
+	const audioOutputDeviceIdRef = useRef(null);
+
 	const { roomId, chatName } = useParams();
 
-	const [connection, peerConnectionsRef, stream, connectToChatAsync, cleanupAsync, switchMicrophoneStatusAsync, switchCameraStatusAsync] = useRTCVoiceChat(roomId);
+	const [connection, peerConnectionsRef, stream, connectToChatAsync, stopMediaData, cleanupAsync, switchMicrophoneStatusAsync, switchCameraStatusAsync] = useRTCVoiceChat(roomId);
 
 	useEffect(() => {
-		if (me === undefined) {
+		if (!me) {
 			return;
 		}
 
 		const connectToChat = async () => {
 			const signalingAddress = "/voiceChatHub";
-			await connectToChatAsync(signalingAddress);
+			await connectToChatAsync(signalingAddress, setCanLeave);
 		}
 
 		connectToChat();
 	}, [me]);
-
-	useEffect(() => {
-		return () => {
-			cleanupAsync();
-		}
-	}, [connection]);
 
 	useEffect(() => {
 		if (connection === null) {
@@ -60,6 +58,15 @@ const VoiceChat = () => {
 			setTurnOnCameraActive(true);
 			setScreenSharingActive(true);
 		});
+
+		return () => {
+			const cleanup = async () => {
+				stopMediaData();
+				await cleanupAsync();
+			}
+
+			cleanup();
+		}
 	}, [connection]);
 
 	useEffect(() => {
@@ -87,6 +94,8 @@ const VoiceChat = () => {
 	}, [connection, stream, turnOnCamera]);
 
 	const leaveFromCall = () => {
+		stopMediaData();
+
 		navigate("/chats");
 	}
 
@@ -100,6 +109,30 @@ const VoiceChat = () => {
 		setOpenAudioSettings(!openAudioSettings);
 	}
 
+	if (!canLeave) {
+		return (
+			<>
+				<CommunicationMenu
+					currentMenuItem={1}
+				/>
+				<div className="voice">
+					<div className="voice__title">
+						<div>{chatName}</div>
+						<div className="tools">{t("Connecting")}</div>
+					</div>
+					<VoiceChatMembers
+						roomId={roomId}
+						connection={connection}
+						peerConnectionsRef={peerConnectionsRef}
+						micStatus={turnOnMicrophone}
+						cameraStatus={turnOnCamera}
+						stream={stream}
+					/>
+				</div>
+			</>
+		);
+	}
+
 	return (
 		<>
 			<CommunicationMenu
@@ -109,16 +142,16 @@ const VoiceChat = () => {
 				<div className="voice__title">
 					<div>{chatName}</div>
 					<div className="tools">
-						{screenSharingActive &&
-							<div className="device">
-								<FontAwesomeIcon
-									icon={screenSharing ? faDisplay : faLinkSlash}
-									title={screenSharing ? t("TurnOffScreenSharing") : t("TurnOnScreenSharing")}
-									className="device__screen"
-									onClick={() => setScreenSharing(!screenSharing)}
-								/>
-							</div>
-						}
+						{/*{screenSharingActive &&*/}
+						{/*	<div className="device">*/}
+						{/*		<FontAwesomeIcon*/}
+						{/*			icon={screenSharing ? faDisplay : faLinkSlash}*/}
+						{/*			title={screenSharing ? t("TurnOffScreenSharing") : t("TurnOnScreenSharing")}*/}
+						{/*			className="device__screen"*/}
+						{/*			onClick={() => setScreenSharing(!screenSharing)}*/}
+						{/*		/>*/}
+						{/*	</div>*/}
+						{/*}*/}
 						{turnOnCameraActive &&
 							<div className="device" style={{ opacity: cameraExecute ? 0.4 : 1 }}>
 								<FontAwesomeIcon
@@ -127,15 +160,15 @@ const VoiceChat = () => {
 									className="device__camera"
 									onClick={cameraExecute ? null : () => setTurnOnCamera(!turnOnCamera)}
 								/>
-								<FontAwesomeIcon
-									icon={openVideoSettings ? faAngleDown : faAngleUp}
-									title={t("Setting")}
-									className="device__settings"
-									onClick={handleOpenVideoSettings}
-								/>
-								{openVideoSettings &&
-									<VoiceChatAudioDeviceSettings />
-								}
+								{/*<FontAwesomeIcon*/}
+								{/*	icon={openVideoSettings ? faAngleDown : faAngleUp}*/}
+								{/*	title={t("Setting")}*/}
+								{/*	className="device__settings"*/}
+								{/*	onClick={handleOpenVideoSettings}*/}
+								{/*/>*/}
+								{/*{openVideoSettings &&*/}
+								{/*	<VoiceChatAudioDeviceSettings />*/}
+								{/*}*/}
 							</div>
 						}
 						<div className="device">
@@ -151,14 +184,16 @@ const VoiceChat = () => {
 								className="device__settings"
 								onClick={handleOpenAudioSettings}
 							/>
-							{/*{openAudioSettings &&*/}
-							{/*	<VoiceChatAudioDeviceSettings*/}
-							{/*		setMicrophoneDeviceId={voice.func.setMicrophoneDeviceId}*/}
-							{/*		switchMicrophoneDevice={voice.func.switchMicrophoneDevice}*/}
-							{/*		switchAudioOutputDevice={voice.func.switchAudioOutputDevice}*/}
-							{/*		microphoneIsOn={voice.data.turnOnMicrophone}*/}
-							{/*	/>*/}
-							{/*}*/}
+							{openAudioSettings &&
+								<VoiceChatAudioDeviceSettings
+									t={t}
+									peerConnectionsRef={peerConnectionsRef}
+									turnOnMicrophone={turnOnMicrophone}
+									stream={stream}
+									audioInputDeviceIdRef={audioInputDeviceIdRef}
+									audioOutputDeviceIdRef={audioOutputDeviceIdRef}
+								/>
+							}
 						</div>
 						<div className="btn-shadow" title={t("Leave")} onClick={leaveFromCall}>
 							<FontAwesomeIcon

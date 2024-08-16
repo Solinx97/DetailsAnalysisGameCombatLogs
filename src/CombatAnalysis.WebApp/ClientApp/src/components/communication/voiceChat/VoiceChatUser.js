@@ -16,7 +16,7 @@ const VoiceChatUser = ({ userId, connection, peerConnection }) => {
 
             if (track.kind === "video") {
                 media = videoContentRef.current;
-                media.current.muted = true;
+                media.muted = true;
             } else if (track.kind === "audio") {
                 media = audioContentRef.current;
             }

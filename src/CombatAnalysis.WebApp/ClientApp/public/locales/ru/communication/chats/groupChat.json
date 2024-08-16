@@ -17,5 +17,8 @@
   "Rules": "Правила",
   "SaveChanges": "Сохранить",
   "Remove": "Удалить",
-  "CanNotSendEmpty": "Вы не можете отправить пустое сообщение"
+  "CanNotSendEmpty": "Вы не можете отправить пустое сообщение",
+  "Connecting": "Соединение...",
+  "SoundSettings": "Настройки звука:",
+  "MicrophoneSettings": "Настройки микрофона:"
 }

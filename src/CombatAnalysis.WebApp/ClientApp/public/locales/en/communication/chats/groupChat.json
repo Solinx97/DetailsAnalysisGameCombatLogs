@@ -17,5 +17,8 @@
   "Rules": "Rules",
   "SaveChanges": "Save",
   "Remove": "Remove",
-  "CanNotSendEmpty": "You can not send empty message"
+  "CanNotSendEmpty": "You can not send empty message",
+  "Connecting": "Connecting...",
+  "SoundSettings": "Sound settings:",
+  "MicrophoneSettings": "Microphone settings:"
 }
