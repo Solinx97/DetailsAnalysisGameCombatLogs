@@ -33,7 +33,7 @@ const VoiceChat = () => {
 
 		return () => {
 			const cleanup = async () => {
-				methods.stopMediaData();
+				await methods.stopMediaDataAsync();
 				await methods.cleanupAsync();
 			}
 
@@ -83,7 +83,7 @@ const VoiceChat = () => {
 		}
 
 		handleScreenSharing();
-	}, [properties.connection, properties.stream, screenSharing]);
+	}, [properties.stream, screenSharing]);
 
 	const renderVoiceChatContent = () => (
 		<VoiceChatContent

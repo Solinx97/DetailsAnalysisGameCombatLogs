@@ -2,7 +2,7 @@ import { faMicrophone, faMicrophoneSlash } from '@fortawesome/free-solid-svg-ico
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { memo, useEffect, useRef, useState } from "react";
 
-const VoiceChatUser = ({ userId, connection, peerConnection, otherScreenSharingVideoRef, otherScreenSharing, setOtherScreenSharing }) => {
+const VoiceChatUser = ({ userId, connection, peerConnection, otherScreenSharingVideoRef, otherScreenSharingUserIdRef, otherScreenSharing, setOtherScreenSharing }) => {
     const [turnOnMicrophone, setTurnOnMicrophone] = useState(false);
     const [turnOnCamera, setTurnOnCamera] = useState(false);
 
@@ -27,7 +27,7 @@ const VoiceChatUser = ({ userId, connection, peerConnection, otherScreenSharingV
             }
         }
 
-        peerConnection.addEventListener("track", createVideoElement);
+        peerConnection?.addEventListener("track", createVideoElement);
 
         return () => {
             if (peerConnection) {
@@ -50,7 +50,7 @@ const VoiceChatUser = ({ userId, connection, peerConnection, otherScreenSharingV
             }
         }
 
-        peerConnection.addEventListener("track", createVideoFromCamera);
+        peerConnection?.addEventListener("track", createVideoFromCamera);
 
         return () => {
             if (peerConnection) {
@@ -73,7 +73,7 @@ const VoiceChatUser = ({ userId, connection, peerConnection, otherScreenSharingV
             }
         }
 
-        peerConnection.addEventListener("track", createVideoFromScreenSharing);
+        peerConnection?.addEventListener("track", createVideoFromScreenSharing);
 
         return () => {
             if (peerConnection) {
@@ -101,7 +101,13 @@ const VoiceChatUser = ({ userId, connection, peerConnection, otherScreenSharingV
 
         const handleReceiveScreenSharingStatus = (from, status) => {
             if (from === userId) {
-                setOtherScreenSharing(status);
+                if (status && !otherScreenSharing) {
+                    otherScreenSharingUserIdRef.current = from;
+                    setOtherScreenSharing(true);
+                }
+                else if (!status && otherScreenSharing && otherScreenSharingUserIdRef.current === from) {
+                    setOtherScreenSharing(false);
+                }
             }
         }
 

@@ -1,6 +1,6 @@
 ﻿import { faAngleDown, faAngleUp, faDisplay, faLinkSlash, faMicrophone, faMicrophoneSlash, faRightFromBracket, faVideo, faVideoSlash } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import React, { useRef, useState, useEffect } from 'react';
+import React, { memo, useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import VoiceChatAudioDeviceSettings from './VoiceChatAudioDeviceSettings';
 
@@ -31,18 +31,22 @@ const VoiceChatToolsBar = ({ t, properties, methods, screenSharing, setScreenSha
 		}
 
 		const switchCameraStatus = async () => {
+			setCameraExecute(true);
+
 			await methods.switchCameraStatusAsync(turnOnCamera, setCameraExecute);
 
 			if (turnOnCamera) {
 				setScreenSharing(false);
 			}
+
+			setCameraExecute(false);
 		}
 
 		switchCameraStatus();
 	}, [properties.connection, properties.stream, turnOnCamera]);
 
-	const leaveFromCall = () => {
-		methods.stopMediaData();
+	const leaveFromCallAsync = async () => {
+		await methods.stopMediaDataAsync();
 
 		navigate("/chats");
 	}
@@ -93,7 +97,7 @@ const VoiceChatToolsBar = ({ t, properties, methods, screenSharing, setScreenSha
 					/>
 				}
 			</div>
-			<div className="btn-shadow" title={t("Leave")} onClick={leaveFromCall}>
+			<div className="btn-shadow" title={t("Leave")} onClick={leaveFromCallAsync}>
 				<FontAwesomeIcon
 					icon={faRightFromBracket}
 				/>
@@ -103,4 +107,4 @@ const VoiceChatToolsBar = ({ t, properties, methods, screenSharing, setScreenSha
     );
 }
 
-export default VoiceChatToolsBar;
+export default memo(VoiceChatToolsBar);

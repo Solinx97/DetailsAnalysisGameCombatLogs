@@ -1,6 +1,5 @@
 ﻿import * as signalR from '@microsoft/signalr';
 import { useRef, useState } from 'react';
-import { connect } from 'react-redux';
 
 const useRTCVoiceChat = (roomId) => {
 	const [connection, setConnection] = useState(null);
@@ -13,6 +12,7 @@ const useRTCVoiceChat = (roomId) => {
 	const signalingAddressRef = useRef(null);
 	const setCanLeaveRef = useRef(null);
 	const turnOnCameraRef = useRef(null);
+	const connectionIsActiveRef = useRef(false);
 
 	const config = {
 		iceServers: [{ urls: 'stun:stun.l.google.com:19302' }]
@@ -36,10 +36,12 @@ const useRTCVoiceChat = (roomId) => {
 
 			await connection.start();
 
+			connectionIsActiveRef.current = true;
+
 			listeningSignalMessages(connection, setCanLeaveRef.current, turnOnCameraRef.current);
 
-			await connection.invoke("JoinRoom", roomId);
-			await connection.invoke("RequestConnectedUsers", roomId);
+			await sendSignalAsync(connection, "JoinRoom");
+			await sendSignalAsync(connection, "RequestConnectedUsers");
 
 			await prepareAnswerAsync(connection, turnOnCameraRef.current);
 		} catch (e) {
@@ -52,14 +54,14 @@ const useRTCVoiceChat = (roomId) => {
 			meIdRef.current = userId;
 			setCanLeave(true);
 
-			await connection.invoke("RequestConnectedUsers", roomId);
+			await sendSignalAsync(connection, "RequestConnectedUsers");
 		});
 
 		connection.on("UserJoined", async (userId) => {
-			const newPeer = await getOrCreatePeerConnection(userId, connection, turnOnCamera);
+			const newPeer = await getOrCreatePeerConnectionAsync(userId, connection, turnOnCamera);
 			await createOfferAsync(userId, connection, newPeer);
 
-			await connection.invoke("RequestConnectedUsers", roomId);
+			await sendSignalAsync(connection, "RequestConnectedUsers");
 		});
 
 		connection.on("UserLeft", async (userId) => {
@@ -69,13 +71,13 @@ const useRTCVoiceChat = (roomId) => {
 				peerConnectionsRef.current.delete(userId);
 			}
 
-			await connection.invoke("RequestConnectedUsers", roomId);
+			await sendSignalAsync(connection, "RequestConnectedUsers");
 		});
 
 		connection.on("ReceiveConnectedUsers", async (connectedUsers) => {
 			for (const userId of connectedUsers) {
 				if (userId !== meIdRef.current) {
-					const newPeer = await getOrCreatePeerConnection(userId, connection, turnOnCamera);
+					const newPeer = await getOrCreatePeerConnectionAsync(userId, connection, turnOnCamera);
 					await createOfferAsync(userId, connection, newPeer);
 				}
 			}
@@ -84,12 +86,12 @@ const useRTCVoiceChat = (roomId) => {
 
 	const prepareAnswerAsync = async (connection, turnOnCamera) => {
 		connection.on("ReceiveOffer", async (fromConnectionId, offer) => {
-			const peerConnection = await getOrCreatePeerConnection(fromConnectionId, connection, turnOnCamera);
+			const peerConnection = await getOrCreatePeerConnectionAsync(fromConnectionId, connection, turnOnCamera);
 			await peerConnection.setRemoteDescription(new RTCSessionDescription(JSON.parse(offer)));
 			const answer = await peerConnection.createAnswer();
 			await peerConnection.setLocalDescription(answer);
 
-			await connection.invoke("SendAnswer", roomId, fromConnectionId, JSON.stringify(peerConnection.localDescription));
+			await sendSignalAsync(connection, "SendAnswer", fromConnectionId, JSON.stringify(peerConnection.localDescription));
 		});
 
 		connection.on("ReceiveAnswer", async (fromConnectionId, answer) => {
@@ -107,7 +109,7 @@ const useRTCVoiceChat = (roomId) => {
 		});
 	}
 
-	const getOrCreatePeerConnection = async (userId, connection, turnOnCamera) => {
+	const getOrCreatePeerConnectionAsync = async (userId, connection, turnOnCamera) => {
 		let peerConnection = peerConnectionsRef.current.get(userId);
 		if (peerConnection) {
 			return peerConnection;
@@ -121,9 +123,8 @@ const useRTCVoiceChat = (roomId) => {
 				if (connection._connectionState === "Connected") {
 					await event.currentTarget.setLocalDescription();
 
-					await connection.invoke("SendOffer", roomId, userId, JSON.stringify(event.currentTarget.localDescription));
-
-					await connection.invoke("RequestConnectedUsers", roomId);
+					await sendSignalAsync(connection, "SendAnswer", userId, JSON.stringify(event.currentTarget.localDescription));
+					await sendSignalAsync(connection, "RequestConnectedUsers");
 				}
 			} catch (e) {
 				console.log(e);
@@ -139,7 +140,7 @@ const useRTCVoiceChat = (roomId) => {
 
 		peerConnection.addEventListener("icecandidate", async (event) => {
 			if (event.candidate) {
-				await connection.invoke("SendCandidate", roomId, userId, JSON.stringify(event.candidate));
+				await sendSignalAsync(connection, "SendCandidate", userId, JSON.stringify(event.candidate));
 			}
 		});
 
@@ -150,7 +151,7 @@ const useRTCVoiceChat = (roomId) => {
 		const offer = await peerConnection.createOffer();
 		await peerConnection.setLocalDescription(offer);
 
-		await connection.invoke("SendOffer", roomId, targetConnectionId, JSON.stringify(peerConnection.localDescription));
+		await sendSignalAsync(connection, "SendOffer", targetConnectionId, JSON.stringify(peerConnection.localDescription));
 	}
 
 	const switchMicrophoneStatusAsync = async (microphoneStatus) => {
@@ -162,7 +163,7 @@ const useRTCVoiceChat = (roomId) => {
 			track.enabled = microphoneStatus;
 		});
 
-		await connection.invoke("SendMicrophoneStatus", roomId, microphoneStatus);
+		await sendSignalAsync(connection, "SendMicrophoneStatus", microphoneStatus);
 	}
 
 	const switchCameraStatusAsync = async (cameraStatus, setCameraExecuted) => {
@@ -170,23 +171,23 @@ const useRTCVoiceChat = (roomId) => {
 			return;
 		}
 
+		setCameraExecuted(true);
+
 		if (cameraStatus) {
-			setCameraExecuted(true);
-
 			const localStream = await navigator.mediaDevices.getUserMedia({ video: true });
-			const videoTrack = localStream.getVideoTracks()[0];
-			stream.addTrack(videoTrack);
 
-			for (const peerConnection of peerConnectionsRef.current.values()) {
-				const sender = peerConnection.getSenders().find(s => s.track && s.track.kind === "video");
-				if (sender) {
-					sender.replaceTrack(videoTrack);
-				} else {
-					peerConnection.addTrack(videoTrack, stream);
+			localStream.getVideoTracks().forEach(track => {
+				stream.addTrack(track);
+
+				for (const peerConnection of peerConnectionsRef.current.values()) {
+					const sender = peerConnection.getSenders().find(s => s.track && s.track.kind === "video");
+					if (sender) {
+						sender.replaceTrack(track);
+					} else {
+						peerConnection.addTrack(track, stream);
+					}
 				}
-			}
-
-			setCameraExecuted(false);
+			});
 		} else {
 			stream.getVideoTracks().forEach(track => {
 				track.stop();
@@ -201,7 +202,9 @@ const useRTCVoiceChat = (roomId) => {
 			});
 		}
 
-		await connection.invoke("SendCameraStatus", roomId, cameraStatus);
+		await sendSignalAsync(connection, "SendCameraStatus", null, null, cameraStatus);
+
+		setCameraExecuted(false);
 	}
 
 	const startScreenSharingAsync = async (screenSharingStatus) => {
@@ -221,7 +224,7 @@ const useRTCVoiceChat = (roomId) => {
 				newScreenStream = screenStream;
 			}
 
-			await connection.invoke("SendScreenSharingStatus", roomId, true);
+			await sendSignalAsync(connection, "SendScreenSharingStatus", null, null, true);
 
 			newScreenStream.getVideoTracks().forEach(track => {
 				for (const peerConnection of peerConnectionsRef.current.values()) {
@@ -249,27 +252,25 @@ const useRTCVoiceChat = (roomId) => {
 	const stopScreenSharingAsync = async () => {
 		screenStream?.getTracks().forEach(track => {
 			track.stop();
+			screenStream.removeTrack(track);
 		});
 
 		setScreenStream(null);
 
-		await connection?.invoke("SendScreenSharingStatus", roomId, false);
+		await sendSignalAsync(connection, "SendScreenSharingStatus", null, null, false);
 
 		// Remove screen tracks from peer connections
 		for (const peerConnection of peerConnectionsRef.current.values()) {
-			const senders = peerConnection.getSenders().filter(sender => sender.track && sender.track.kind === "video" && sender.track.label.includes("screen"));
+			const senders = peerConnection.getSenders().filter(sender => sender.track && sender.track.kind === "video");
 			senders.forEach(sender => {
 				peerConnection.removeTrack(sender);
 			});
 		}
 	}
 
-	const stopMediaData = () => {
+	const stopMediaDataAsync = async () => {
 		// Stop and remove all video tracks
-		stream?.getVideoTracks().forEach(track => {
-			track.stop();
-			stream.removeTrack(track);
-		});
+		connectionIsActiveRef.current = false;
 
 		// Stop and remove all audio tracks
 		stream?.getAudioTracks().forEach(track => {
@@ -277,34 +278,79 @@ const useRTCVoiceChat = (roomId) => {
 			stream.removeTrack(track);
 		});
 
+		stream?.getVideoTracks().forEach(track => {
+			track.stop();
+			stream.removeTrack(track);
+		});
+
 		setStream(null);
 
-		stopScreenSharingAsync();
+		await stopScreenSharingAsync();
 	}
 
 	const cleanupAsync = async () => {
-		//for (const [userId, peerConnection] of peerConnectionsRef.current) {
-		//	const senders = peerConnection?.getSenders().filter(sender => sender.track);
-		//	senders?.forEach(sender => {
-		//		if (sender.track) {
-		//			sender.track.stop();
-		//		}
+		try {
+			// Close all peer connections
+			for (const peerConnection of peerConnectionsRef.current.values()) {
+				const senders = peerConnection.getSenders();
+				senders.forEach(sender => {
+					const track = sender.track;
+					if (track) {
+						track.stop();
+					}
 
-		//		peerConnection?.removeTrack(sender);
-		//	});
-		//}
+					peerConnection.removeTrack(sender);
+				});
 
-		if (connection) {
-			//await connection.invoke("LeaveRoom", roomId);
+				peerConnection.close();
+			}
 
-			//await connection.stop();
+			// Clear peer connections map
+			peerConnectionsRef.current.clear();
 
-			setConnection(null);
+			// Leave the room and stop the connection
+			if (connection) {
+				await connection.stop();
+				setConnection(null);
+			}
+
+			// Clear other references
+			meIdRef.current = null;
+			signalingAddressRef.current = null;
+			setCanLeaveRef.current = null;
+			turnOnCameraRef.current = null;
+		} catch (error) {
+			console.error("Error during cleanup:", error);
 		}
+	}
 
-		peerConnectionsRef.current.clear();
+	const sendSignalAsync = async (connection, message, userId, content, status = null) => {
+		try {
+			if (!connection || !connectionIsActiveRef.current) {
+				return;
+			}
 
-		meIdRef.current = null;
+			if (userId && content && status !== null) {
+				await connection.invoke(message, roomId, userId, content, status);
+			}
+			else if (userId && content && status === null) {
+				await connection.invoke(message, roomId, userId, content);
+			}
+			else if (userId && status !== null) {
+				await connection.invoke(message, roomId, userId, status);
+			}
+			else if (userId) {
+				await connection.invoke(message, roomId, userId);
+			}
+			else if (status !== null) {
+				await connection.invoke(message, roomId, status);
+			}
+			else {
+				await connection.invoke(message, roomId);
+			}
+		} catch (e) {
+			console.log(e);
+        }
 	}
 
 	return {
@@ -316,7 +362,7 @@ const useRTCVoiceChat = (roomId) => {
 		},
 		methods: {
             connectToChatAsync,
-            stopMediaData,
+            stopMediaDataAsync,
             cleanupAsync,
             switchMicrophoneStatusAsync,
             switchCameraStatusAsync,

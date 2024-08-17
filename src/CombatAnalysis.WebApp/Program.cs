@@ -37,7 +37,7 @@ IHttpClientHelper httpClient = new HttpClientHelper();
 builder.Services.AddSingleton(httpClient);
 builder.Services.AddSignalR(options =>
 {
-    options.MaximumReceiveMessageSize = 1024 * 1024;
+    options.MaximumReceiveMessageSize = 1024 * 1024 * 2;
 });
 
 builder.Services.AddControllersWithViews();

@@ -8,6 +8,7 @@ const VoiceChatContent = ({ roomId, connection, peerConnectionsRef, stream, micS
 	const [otherScreenSharing, setOtherScreenSharing] = useState(false);
 
 	const otherScreenSharingVideoRef = useRef(null);
+	const otherScreenSharingUserIdRef = useRef("");
 
 	useEffect(() => {
 		if (!connection) {
@@ -32,7 +33,15 @@ const VoiceChatContent = ({ roomId, connection, peerConnectionsRef, stream, micS
 			setUsersId(anotherUsers);
 		}
 
+		const handleUserLeft = async (userId) => {
+			if (userId === otherScreenSharingUserIdRef.current) {
+				setOtherScreenSharing(false);
+				otherScreenSharingUserIdRef.current = "";
+			}
+		}
+
 		connection.on("ReceiveConnectedUsers", handleReceiveConnectedUsers);
+		connection.on("UserLeft", handleUserLeft);
 
 		return () => {
 			connection.off("ReceiveConnectedUsers", handleReceiveConnectedUsers);
@@ -81,6 +90,7 @@ const VoiceChatContent = ({ roomId, connection, peerConnectionsRef, stream, micS
 							connection={connection}
 							peerConnection={peerConnectionsRef.current.get(userId)}
 							otherScreenSharingVideoRef={otherScreenSharingVideoRef}
+							otherScreenSharingUserIdRef={otherScreenSharingUserIdRef}
 							otherScreenSharing={otherScreenSharing}
 							setOtherScreenSharing={setOtherScreenSharing}
 						/>
