@@ -1,5 +1,6 @@
 ﻿import * as signalR from '@microsoft/signalr';
 import { useRef, useState } from 'react';
+import { connect } from 'react-redux';
 
 const useRTCVoiceChat = (roomId) => {
 	const [connection, setConnection] = useState(null);
@@ -21,6 +22,7 @@ const useRTCVoiceChat = (roomId) => {
 				.build();
 			setConnection(connection);
 
+			console.log(connection);
 			await connection.start();
 
 			listeningSignalMessages(connection, setCanLeave, turnOnCamera);
@@ -104,11 +106,13 @@ const useRTCVoiceChat = (roomId) => {
 		peerConnectionsRef.current.set(userId, peerConnection);
 
 		peerConnection.addEventListener("negotiationneeded", async (event) => {
-			await peerConnection.setLocalDescription();
+			if (connection._connectionState === "Connected") {
+				await event.currentTarget.setLocalDescription();
 
-			await connection.invoke("SendOffer", roomId, userId, JSON.stringify(peerConnection.localDescription));
+				await connection.invoke("SendOffer", roomId, userId, JSON.stringify(event.currentTarget.localDescription));
 
-			await connection.invoke("RequestConnectedUsers", roomId);
+				await connection.invoke("RequestConnectedUsers", roomId);
+			}
 		});
 
 		const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
@@ -185,24 +189,41 @@ const useRTCVoiceChat = (roomId) => {
 		await connection.invoke("SendCameraStatus", roomId, cameraStatus);
 	}
 
-	const startScreenSharingAsync = async () => {
+	const startScreenSharingAsync = async (screenSharingStatus) => {
 		try {
-			const screenStream = await navigator.mediaDevices.getDisplayMedia({ video: true });
-			setScreenStream(screenStream);
+			if (!screenSharingStatus) {
+				await stopScreenSharingAsync();
+
+				return null;
+			}
+
+			let newScreenStream = null;
+			if (!screenStream) {
+				newScreenStream = await navigator.mediaDevices.getDisplayMedia({ video: true });
+				setScreenStream(newScreenStream);
+			}
+			else {
+				newScreenStream = screenStream;
+			}
 
 			await connection.invoke("SendScreenSharingStatus", roomId, true);
 
-			screenStream.getVideoTracks().forEach(track => {
+			newScreenStream.getVideoTracks().forEach(track => {
 				for (const peerConnection of peerConnectionsRef.current.values()) {
-					peerConnection.addTrack(track, screenStream);
+					const sender = peerConnection.getSenders().find(s => s.track && s.track.kind === "video");
+					if (sender) {
+						sender.replaceTrack(track);
+					} else {
+						peerConnection.addTrack(track, stream);
+					}
 				}
 			});
 
-			screenStream.getVideoTracks()[0].addEventListener("ended", () => {
-				stopScreenSharingAsync();
+			newScreenStream.getVideoTracks()[0].addEventListener("ended", async () => {
+				await stopScreenSharingAsync();
 			});
 
-			return screenStream;
+			return newScreenStream;
 		} catch (e) {
 			console.log(e);
 
@@ -211,11 +232,7 @@ const useRTCVoiceChat = (roomId) => {
 	}
 
 	const stopScreenSharingAsync = async () => {
-		if (!screenStream) {
-			return;
-		}
-
-		screenStream.getTracks().forEach(track => {
+		screenStream?.getTracks().forEach(track => {
 			track.stop();
 		});
 
@@ -233,18 +250,14 @@ const useRTCVoiceChat = (roomId) => {
 	}
 
 	const stopMediaData = () => {
-		if (!stream) {
-			return;
-		}
-
 		// Stop and remove all video tracks
-		stream.getVideoTracks().forEach(track => {
+		stream?.getVideoTracks().forEach(track => {
 			track.stop();
 			stream.removeTrack(track);
 		});
 
 		// Stop and remove all audio tracks
-		stream.getAudioTracks().forEach(track => {
+		stream?.getAudioTracks().forEach(track => {
 			track.stop();
 			stream.removeTrack(track);
 		});
@@ -255,19 +268,23 @@ const useRTCVoiceChat = (roomId) => {
 	}
 
 	const cleanupAsync = async () => {
+		//for (const [userId, peerConnection] of peerConnectionsRef.current) {
+		//	const senders = peerConnection?.getSenders().filter(sender => sender.track);
+		//	senders?.forEach(sender => {
+		//		if (sender.track) {
+		//			sender.track.stop();
+		//		}
+
+		//		peerConnection?.removeTrack(sender);
+		//	});
+		//}
+
 		if (connection) {
 			await connection.invoke("LeaveRoom", roomId);
 
-			connection.off("ReceiveOffer");
-			connection.off("ReceiveAnswer");
-			connection.off("ReceiveCandidate");
 			connection.stop();
 
 			setConnection(null);
-		}
-
-		for (const peerConnection of peerConnectionsRef.current.values()) {
-			peerConnection.close();
 		}
 
 		peerConnectionsRef.current.clear();
@@ -289,7 +306,6 @@ const useRTCVoiceChat = (roomId) => {
             switchMicrophoneStatusAsync,
             switchCameraStatusAsync,
 			startScreenSharingAsync,
-			stopScreenSharingAsync
         }
 	};
 }

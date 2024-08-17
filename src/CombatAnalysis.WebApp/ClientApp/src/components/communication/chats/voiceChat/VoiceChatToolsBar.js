@@ -32,6 +32,10 @@ const VoiceChatToolsBar = ({ t, properties, methods, screenSharing, setScreenSha
 
 		const switchCameraStatus = async () => {
 			await methods.switchCameraStatusAsync(turnOnCamera, setCameraExecute);
+
+			if (turnOnCamera) {
+				setScreenSharing(false);
+			}
 		}
 
 		switchCameraStatus();

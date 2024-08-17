@@ -30,9 +30,6 @@ const VoiceChatContent = ({ roomId, connection, peerConnectionsRef, stream, micS
 		const handleReceiveConnectedUsers = async (connectedUsers) => {
 			const anotherUsers = connectedUsers.filter((user) => user !== myId);
 			setUsersId(anotherUsers);
-
-			await connection.invoke("RequestMicrophoneStatus", roomId);
-			await connection.invoke("RequestCameraStatus", roomId);
 		}
 
 		connection.on("ReceiveConnectedUsers", handleReceiveConnectedUsers);

@@ -19,7 +19,6 @@ const VoiceChat = () => {
 	const [turnOnCamera, setTurnOnCamera] = useState(false);
 
 	const [screenSharing, setScreenSharing] = useState(false);
-	const [screenSharingActive, setScreenSharingActive] = useState(false);
 
 	const screenSharingVideoRef = useRef(null);
 
@@ -56,36 +55,35 @@ const VoiceChat = () => {
 	}, [me]);
 
 	useEffect(() => {
-		setScreenSharingActive(screenSharing);
-
-		if (!properties.connection || screenSharingActive) {
+		if (!properties.connection || !properties.stream) {
 			return;
 		}
 
+		if (screenSharing) {
+			setTurnOnCamera(false);
+		}
+
 		const handleScreenSharing = async () => {
-			if (screenSharing) {
-				const screenSharingStream = await methods.startScreenSharingAsync();
-				if (!screenSharingStream) {
-					screenSharingVideoRef.current = null;
-					setScreenSharing(false);
+			const screenSharingStream = await methods.startScreenSharingAsync(screenSharing);
+			if (!screenSharingStream) {
+				screenSharingVideoRef.current = null;
+				setScreenSharing(false);
 
-					return;
-				}
-
-				screenSharingVideoRef.current.srcObject = screenSharingStream;
-				screenSharingVideoRef.current.autoplay = true;
-
-				screenSharingStream.getVideoTracks()[0].addEventListener("ended", () => {
-					screenSharingVideoRef.current = null;
-					setScreenSharing(false);
-				});
-			} else {
-				await methods.stopScreenSharingAsync();
+				return;
 			}
+
+
+			screenSharingVideoRef.current.srcObject = screenSharingStream;
+			screenSharingVideoRef.current.autoplay = true;
+
+			screenSharingStream.getVideoTracks()[0].addEventListener("ended", () => {
+				screenSharingVideoRef.current = null;
+				setScreenSharing(false);
+			});
 		}
 
 		handleScreenSharing();
-	}, [properties.connection, screenSharing, screenSharingActive]);
+	}, [properties.connection, properties.stream, screenSharing]);
 
 	const renderVoiceChatContent = () => (
 		<VoiceChatContent

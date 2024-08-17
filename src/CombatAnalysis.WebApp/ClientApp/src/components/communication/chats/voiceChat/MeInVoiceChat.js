@@ -30,7 +30,9 @@ const MeInVoiceChat = ({ myId, micStatus, cameraStatus, localStream }) => {
                 />
             </div>
             {cameraStatus &&
-                <video ref={videosRef} muted></video>
+                <div className="media-content">
+                    <video ref={videosRef} muted></video>
+                </div>
             }
         </div>
     );
