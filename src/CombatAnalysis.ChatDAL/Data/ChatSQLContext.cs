@@ -12,6 +12,8 @@ public class ChatSQLContext : DbContext
 
     #region Chat
 
+    public DbSet<VoiceChat>? VoiceChat { get; }
+
     public DbSet<PersonalChat>? PersonalChat { get; }
 
     public DbSet<PersonalChatMessage>? PersonalChatMessage { get; }

@@ -16,6 +16,7 @@ public static class ServiceCollectionExtensions
 
         services.AddScoped<ISqlContextService, SqlContextService>();
 
+        services.AddScoped<IService<VoiceChatDto, string>, VoiceChatService>();
         services.AddScoped<IService<PersonalChatDto, int>, PersonalChatService>();
         services.AddScoped<IService<PersonalChatMessageDto, int>, PersonalChatMessageService>();
         services.AddScoped<IService<PersonalChatMessageCountDto, int>, PersonalChatMessageCountService>();

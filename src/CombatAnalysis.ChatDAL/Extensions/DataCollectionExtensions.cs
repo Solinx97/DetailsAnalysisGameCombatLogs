@@ -38,6 +38,7 @@ public static class DataCollectionExtensions
             options.UseSqlServer(connection);
         });
 
+        services.AddScoped<IGenericRepository<VoiceChat, string>, SQLRepository<VoiceChat, string>>();
         services.AddScoped<IGenericRepository<PersonalChat, int>, SQLRepository<PersonalChat, int>>();
         services.AddScoped<IGenericRepository<PersonalChatMessage, int>, SQLRepository<PersonalChatMessage, int>>();
         services.AddScoped<IGenericRepository<PersonalChatMessageCount, int>, SQLRepository<PersonalChatMessageCount, int>>();

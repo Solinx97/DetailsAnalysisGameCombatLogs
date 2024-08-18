@@ -8,6 +8,7 @@ public class ChatBLMapper : Profile
 {
     public ChatBLMapper()
     {
+        CreateMap<VoiceChatDto, VoiceChat>().ReverseMap();
         CreateMap<PersonalChatDto, PersonalChat>().ReverseMap();
         CreateMap<PersonalChatMessageDto, PersonalChatMessage>().ReverseMap();
         CreateMap<PersonalChatMessageCountDto, PersonalChatMessageCount>().ReverseMap();

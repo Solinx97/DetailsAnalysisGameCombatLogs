@@ -100,7 +100,13 @@ const VoiceChatUser = ({ userId, hubConnection, peerConnection, otherScreenShari
 
         const handleReceiveScreenSharingStatus = (from, status) => {
             if (from === userId) {
-                setOtherScreenSharing(status);
+                if (status && !otherScreenSharing) {
+                    otherScreenSharingUserIdRef.current = from;
+                    setOtherScreenSharing(true);
+                }
+                else if (!status && otherScreenSharing && otherScreenSharingUserIdRef.current === from) {
+                    setOtherScreenSharing(false);
+                }
             }
         }
 
