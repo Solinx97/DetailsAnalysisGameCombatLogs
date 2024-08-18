@@ -23,38 +23,38 @@
                 align-items: center;
                 gap: 10px;
 
-                .device-toolbar {
+                .warning {
                     position: absolute;
-                    display: flex;
-                    flex-direction: column;
-                    gap: 10px;
-                    top: 8%;
-                    width: 20vw;
-                    padding: 15px;
-                    box-shadow: 1px 1px 1px 1px yellow;
-                    font-size: 0.9em;
-                    border-radius: 20px;
-                    background: #0c192c;
-
-                    ul {
-                        display: flex;
-                        flex-direction: column;
-                        gap: 5px;
-                        margin-left: 10px !important;
-                        margin: 0;
-                    }
+                    width: 0;
+                    height: 0;
+                    margin-bottom: 40px;
+                    border-left: 8px solid transparent;
+                    border-right: 8px solid transparent;
+                    border-top: 8px solid yellow;
                 }
 
-                &__screen, &__camera, &__microphone {
+                &__screen-sharing, &__camera, &__microphone {
                     width: 20px;
                     height: 20px;
                     padding: 5px 10px;
                     border-radius: 10px;
                     box-shadow: 1px 1px 1px 1px red;
+
+                    :hover {
+                        cursor: pointer;
+                    }
                 }
 
                 .device-use {
                     box-shadow: 1px 1px 1px 1px green;
+                }
+
+                .busy {
+                    box-shadow: 1px 1px 1px 1px yellow;
+
+                    :hover {
+                        cursor: not-allowed;
+                    }
                 }
 
                 &__settings {
@@ -62,15 +62,14 @@
                     height: 15px;
                 }
 
-                &__camera:hover, &__microphone:hover {
-                    cursor: pointer;
-                    transform: scale(1.05);
-                }
-
                 &__settings:hover {
                     cursor: pointer;
                     transform: scale(1.15);
                 }
+            }
+
+            .disabled {
+                opacity: 0.4;
             }
         }
     }

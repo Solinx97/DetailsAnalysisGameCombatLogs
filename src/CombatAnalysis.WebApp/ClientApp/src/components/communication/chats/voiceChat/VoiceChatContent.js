@@ -18,22 +18,11 @@ const VoiceChatContent = ({ roomId, hubConnection, peerConnections, stream, micS
 			return;
 		}
 
-		setup(hubConnection);
+		setup(hubConnection, roomId);
 		start();
-	}, [hubConnection]);
-
-	useEffect(() => {
-		if (!hubConnection) {
-			return;
-		}
 
 		callConnectedUsers();
-
-		return () => {
-			hubConnection.off("ReceiveConnectionId");
-			hubConnection.off("Connected");
-		}
-	}, [hubConnection, roomId]);
+	}, [hubConnection]);
 
 	useEffect(() => {
 		if (!myId || !hubConnection) {
@@ -44,6 +33,7 @@ const VoiceChatContent = ({ roomId, hubConnection, peerConnections, stream, micS
 			const anotherUsers = connectedUsers.filter((user) => user !== myId);
 			setUsersId(anotherUsers);
 
+			await sendSignalAsync("SendRequestMicrophoneStatus");
 			await sendSignalAsync("SendRequestCameraStatus");
 		}
 
@@ -72,6 +62,12 @@ const VoiceChatContent = ({ roomId, hubConnection, peerConnections, stream, micS
 	const callConnectedUsers = () => {
 		hubConnection.on("Connected", async (userId) => {
 			setMyId(userId);
+
+			await sendSignalAsync("RequestConnectedUsers");
+		});
+
+		hubConnection.on("UserJoined", async (userId) => {
+			await sendSignalAsync("RequestConnectedUsers");
 		});
 	}
 

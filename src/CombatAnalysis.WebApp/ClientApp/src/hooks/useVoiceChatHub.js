@@ -10,7 +10,7 @@ const useVoiceChatHub = (roomId) => {
 	const peerConnectionsRef = useRef(new Map());
 	const connectionIsActiveRef = useRef(false);
 
-	const { setup, start, listeningSignalMessages, listeningAnswersAsync, sendSignalAsync, cleanupAsync, addTrackToPeer, listeningMediaRequestsMessages } = useRTCConnection();
+	const { setup, start, listeningSignalMessages, listeningAnswersAsync, sendSignalAsync, cleanupAsync, addTrackToPeer } = useRTCConnection();
 
 	const connectToChatAsync = async (signalingAddress, canLeave, setCanLeave) => {
 		try {
@@ -46,6 +46,10 @@ const useVoiceChatHub = (roomId) => {
 			track.enabled = microphoneStatus;
 		});
 
+		hubConnection.on("ReceiveRequestMicrophoneStatus", async (userId) => {
+			await sendSignalAsync("SendMicrophoneStatus", null, null, microphoneStatus);
+		});
+
 		await sendSignalAsync("SendMicrophoneStatus", null, null, microphoneStatus);
 	}
 
@@ -53,17 +57,17 @@ const useVoiceChatHub = (roomId) => {
 		if (!stream) {
 			return;
 		}
-		 
+
 		if (cameraStatus) {
 			const localStream = await navigator.mediaDevices.getUserMedia({ video: true });
 
-			localStream.getVideoTracks().forEach(track => {
+			localStream.getVideoTracks().forEach(async (track) => {
 				stream.addTrack(track);
 
 				for (const peerConnection of peerConnectionsRef.current.values()) {
 					const sender = peerConnection.getSenders().find(s => s.track && s.track.kind === "video");
 					if (sender) {
-						sender.replaceTrack(track);
+						await sender.replaceTrack(track);
 					} else {
 						addTrackToPeer(peerConnection, track, stream);
 					}
@@ -82,6 +86,10 @@ const useVoiceChatHub = (roomId) => {
 				}
 			});
 		}
+
+		hubConnection.on("ReceiveRequestCameraStatus", async (userId) => {
+			await sendSignalAsync("SendCameraStatus", null, null, cameraStatus);
+		});
 
 		await sendSignalAsync("SendCameraStatus", null, null, cameraStatus);
 	}
@@ -105,11 +113,11 @@ const useVoiceChatHub = (roomId) => {
 
 			await sendSignalAsync("SendScreenSharingStatus", null, null, true);
 
-			newScreenStream.getVideoTracks().forEach(track => {
+			newScreenStream.getVideoTracks().forEach(async (track) => {
 				for (const peerConnection of peerConnectionsRef.current.values()) {
 					const sender = peerConnection.getSenders().find(s => s.track && s.track.kind === "video");
 					if (sender) {
-						sender.replaceTrack(track);
+						await sender.replaceTrack(track);
 					} else {
 						addTrackToPeer(peerConnection, track, newScreenStream);
 					}
@@ -181,7 +189,6 @@ const useVoiceChatHub = (roomId) => {
             switchCameraStatusAsync,
 			startScreenSharingAsync,
 			cleanupAsync,
-			listeningMediaRequestsMessages
         }
 	};
 }

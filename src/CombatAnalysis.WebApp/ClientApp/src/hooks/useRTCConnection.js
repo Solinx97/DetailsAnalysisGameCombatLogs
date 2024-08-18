@@ -38,11 +38,12 @@ const useRTCConnection = () => {
 
 			const newPeer = await getOrCreatePeerConnectionAsync(userId);
 			await createOfferAsync(userId, newPeer);
-
-			await sendSignalAsync("RequestConnectedUsers");
 		});
 
 		hubConnectionRef.current.on("UserJoined", async (userId) => {
+			const newPeer = await getOrCreatePeerConnectionAsync(userId);
+			await createOfferAsync(userId, newPeer);
+
 			await sendSignalAsync("RequestConnectedUsers");
 		});
 
@@ -63,26 +64,6 @@ const useRTCConnection = () => {
 					await createOfferAsync(userId, newPeer);
 				}
 			}
-		});
-	}
-
-	const listeningMediaRequestsMessages = (stream, status) => {
-		hubConnectionRef.current.on("ReceiveRequestCameraStatus", async (userId) => {
-			if (!status || !stream) {
-				return;
-			}
-
-			stream.getVideoTracks().forEach(track => {
-				let peerConnection = peerConnectionsRef.current.get(userId);
-				const sender = peerConnection.getSenders().find(s => s.track && s.track.kind === "video");
-				if (sender) {
-					sender.replaceTrack(track);
-				} else {
-					addTrackToPeer(peerConnection, track, stream);
-				}
-			});
-
-			await sendSignalAsync("SendCameraStatus", null, null, status);
 		});
 	}
 
@@ -122,10 +103,9 @@ const useRTCConnection = () => {
 
 		peerConnection.addEventListener("negotiationneeded", async (event) => {
 			try {
-				await event.currentTarget.setLocalDescription();
+				await peerConnection.setLocalDescription();
 
-				await sendSignalAsync("SendAnswer", userId, JSON.stringify(event.currentTarget.localDescription));
-				await sendSignalAsync("RequestConnectedUsers");
+				await sendSignalAsync("SendOffer", userId, JSON.stringify(peerConnection.localDescription));
 			} catch (e) {
 				console.log(e);
 			}
@@ -228,17 +208,10 @@ const useRTCConnection = () => {
 	}
 
 	const addTrackToPeer = (peerConnection, track, stream) => {
-		const user = getKeyByValue(peerConnectionsRef.current, peerConnection);
-
-		peerConnection.addEventListener("track", (event) => {
-			const track = event.track;
-			console.log(`New track (${track.kind}) for user: ${user}`);
-		});
-
 		peerConnection.addTrack(track, stream);
 	}
 
-	return { setup, start, listeningSignalMessages, listeningAnswersAsync, sendSignalAsync, cleanupAsync, addTrackToPeer, listeningMediaRequestsMessages };
+	return { setup, start, listeningSignalMessages, listeningAnswersAsync, sendSignalAsync, cleanupAsync, addTrackToPeer };
 }
 
 export default useRTCConnection;

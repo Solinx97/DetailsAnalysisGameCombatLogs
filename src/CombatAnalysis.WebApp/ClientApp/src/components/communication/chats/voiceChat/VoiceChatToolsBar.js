@@ -7,6 +7,7 @@ import VoiceChatAudioDeviceSettings from './VoiceChatAudioDeviceSettings';
 const VoiceChatToolsBar = ({ t, properties, methods, screenSharing, setScreenSharing, turnOnCamera, setTurnOnCamera, turnOnMicrophone, setTurnOnMicrophone, audioOutputDeviceIdRef }) => {
 	const [openAudioSettings, setOpenAudioSettings] = useState(false);
 	const [cameraExecute, setCameraExecute] = useState(false);
+	const [showWarning, setShowWarning] = useState(false);
 
 	const audioInputDeviceIdRef = useRef(null);
 
@@ -42,8 +43,6 @@ const VoiceChatToolsBar = ({ t, properties, methods, screenSharing, setScreenSha
 		}
 
 		switchCameraStatus();
-
-		methods.listeningMediaRequestsMessages(properties.stream, turnOnCamera);
 	}, [properties.hubConnection, properties.stream, turnOnCamera]);
 
 	const leaveFromCallAsync = async () => {
@@ -58,20 +57,30 @@ const VoiceChatToolsBar = ({ t, properties, methods, screenSharing, setScreenSha
 
     return (
 		<div className="tools">
-			<div className="device">
+			<div className={`device ${turnOnCamera ? 'disabled' : ''}`}>
+				{(screenSharing && showWarning) &&
+					<div className="warning"></div>
+				}
 				<FontAwesomeIcon
 					icon={screenSharing ? faDisplay : faLinkSlash}
 					title={screenSharing ? t("TurnOffScreenSharing") : t("TurnOnScreenSharing")}
-					className={`device__screen ${screenSharing ? 'device-use' : ''}`}
-					onClick={() => setScreenSharing(!screenSharing)}
+					className={`device__screen-sharing ${turnOnCamera ? 'busy' : ''} ${screenSharing ? 'device-use' : ''}`}
+					onClick={turnOnCamera ? null : () => setScreenSharing(!screenSharing)}
+					onMouseEnter={turnOnCamera ? () => setShowWarning(true) : null}
+					onMouseLeave={turnOnCamera ? () => setShowWarning(false) : null}
 				/>
 			</div>
-			<div className="device" style={{ opacity: cameraExecute ? 0.4 : 1 }}>
+			<div className={`device ${cameraExecute || screenSharing ? 'disabled' : ''}`}>
+				{(turnOnCamera && showWarning) && 
+					<div className="warning"></div>
+				}
 				<FontAwesomeIcon
 					icon={turnOnCamera ? faVideo : faVideoSlash}
 					title={turnOnCamera ? t("TurnOffCamera") : t("TurnOnCamera")}
-					className={`device__camera ${turnOnCamera ? 'device-use' : ''}`}
-					onClick={cameraExecute ? null : () => setTurnOnCamera(!turnOnCamera)}
+					className={`device__camera ${cameraExecute || screenSharing ? 'busy' : ''} ${turnOnCamera ? 'device-use' : ''}`}
+					onClick={cameraExecute || screenSharing ? null : () => setTurnOnCamera(!turnOnCamera)}
+					onMouseEnter={screenSharing ? () => setShowWarning(true) : null}
+					onMouseLeave={screenSharing ? () => setShowWarning(false) : null}
 				/>
 			</div>
 			<div className="device">

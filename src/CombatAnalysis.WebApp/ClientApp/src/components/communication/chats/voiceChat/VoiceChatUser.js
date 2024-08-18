@@ -8,22 +8,13 @@ const VoiceChatUser = ({ userId, hubConnection, peerConnection, otherScreenShari
 
     const videoContentRef = useRef(null);
     const audioContentRef = useRef(null);
-    const videoStreamRef = useRef(null);
-
-    useEffect(() => {
-        if (turnOnCamera && videoContentRef && videoStreamRef.current) {
-            videoContentRef.current.srcObject = videoStreamRef.current;
-            videoContentRef.current.muted = true;
-            videoContentRef.current.autoplay = true;
-        }
-    }, [peerConnection, turnOnMicrophone]);
 
     useEffect(() => {
         if (!peerConnection) {
             return;
         }
 
-        const createVideoElementAsync = async (event) => {
+        const createAudio = async (event) => {
             const track = event.track;
             if (track.kind === "audio") {
                 audioContentRef.current.id = "active";
@@ -36,30 +27,27 @@ const VoiceChatUser = ({ userId, hubConnection, peerConnection, otherScreenShari
             }
         }
 
-        peerConnection.addEventListener("track", createVideoElementAsync);
+        peerConnection.addEventListener("track", createAudio);
 
         return () => {
             if (peerConnection) {
-                peerConnection.removeEventListener("track", createVideoElementAsync);
+                peerConnection.removeEventListener("track", createAudio);
             }
         }
     }, [peerConnection, turnOnMicrophone]);
 
     useEffect(() => {
-        if (!peerConnection) {
+        if (!peerConnection || !turnOnCamera) {
             return;
         }
 
         const createVideoFromCamera = (event) => {
             const track = event.track;
-            if (track.kind === "video") {
-                videoStreamRef.current = event.streams[0];
 
-                if (videoContentRef.current) {
-                    videoContentRef.current.srcObject = event.streams[0];
-                    videoContentRef.current.muted = true;
-                    videoContentRef.current.autoplay = true;
-                }
+            if (track.kind === "video") {
+                videoContentRef.current.srcObject = new MediaStream([track]);
+                videoContentRef.current.muted = true;
+                videoContentRef.current.autoplay = true;
             }
         }
 
@@ -69,23 +57,19 @@ const VoiceChatUser = ({ userId, hubConnection, peerConnection, otherScreenShari
                 peerConnection.removeEventListener("track", createVideoFromCamera);
             }
         }
-    }, [hubConnection, peerConnection, turnOnCamera]);
+    }, [peerConnection, turnOnCamera]);
 
     useEffect(() => {
-        if (!peerConnection) {
+        if (!peerConnection || !otherScreenSharing) {
             return;
         }
 
         const createVideoFromScreenSharing = (event) => {
             const track = event.track;
             if (track.kind === "video") {
-                videoStreamRef.current = event.streams[0];
-
-                if (otherScreenSharingVideoRef.current) {
-                    otherScreenSharingVideoRef.current.srcObject = event.streams[0];
-                    otherScreenSharingVideoRef.current.muted = true;
-                    otherScreenSharingVideoRef.current.autoplay = true;
-                }
+                otherScreenSharingVideoRef.current.srcObject = new MediaStream([track]);
+                otherScreenSharingVideoRef.current.muted = true;
+                otherScreenSharingVideoRef.current.autoplay = true;
             }
         }
 
@@ -116,13 +100,7 @@ const VoiceChatUser = ({ userId, hubConnection, peerConnection, otherScreenShari
 
         const handleReceiveScreenSharingStatus = (from, status) => {
             if (from === userId) {
-                if (status && !otherScreenSharing) {
-                    otherScreenSharingUserIdRef.current = from;
-                    setOtherScreenSharing(true);
-                }
-                else if (!status && otherScreenSharing && otherScreenSharingUserIdRef.current === from) {
-                    setOtherScreenSharing(false);
-                }
+                setOtherScreenSharing(status);
             }
         }
 
@@ -156,4 +134,4 @@ const VoiceChatUser = ({ userId, hubConnection, peerConnection, otherScreenShari
     );
 }
 
-export default VoiceChatUser;
+export default memo(VoiceChatUser);
