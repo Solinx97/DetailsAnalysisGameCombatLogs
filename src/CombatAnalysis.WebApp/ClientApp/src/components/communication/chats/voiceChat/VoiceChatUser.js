@@ -2,7 +2,7 @@ import { faMicrophone, faMicrophoneSlash } from '@fortawesome/free-solid-svg-ico
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { memo, useEffect, useRef, useState } from "react";
 
-const VoiceChatUser = ({ userId, connection, peerConnection, otherScreenSharingVideoRef, otherScreenSharingUserIdRef, otherScreenSharing, setOtherScreenSharing }) => {
+const VoiceChatUser = ({ userId, hubConnection, peerConnection, otherScreenSharingVideoRef, otherScreenSharingUserIdRef, otherScreenSharing, setOtherScreenSharing, audioOutputDeviceIdRef }) => {
     const [turnOnMicrophone, setTurnOnMicrophone] = useState(false);
     const [turnOnCamera, setTurnOnCamera] = useState(false);
 
@@ -19,24 +19,37 @@ const VoiceChatUser = ({ userId, connection, peerConnection, otherScreenSharingV
     }, [peerConnection, turnOnMicrophone]);
 
     useEffect(() => {
-        const createVideoElement = (event) => {
+        if (!peerConnection) {
+            return;
+        }
+
+        const createVideoElementAsync = async (event) => {
             const track = event.track;
             if (track.kind === "audio") {
+                audioContentRef.current.id = "active";
                 audioContentRef.current.srcObject = event.streams[0];
                 audioContentRef.current.autoplay = true;
+
+                if (audioOutputDeviceIdRef.current) {
+                    await audioContentRef.current.setSinkId(audioOutputDeviceIdRef.current);
+                }
             }
         }
 
-        peerConnection?.addEventListener("track", createVideoElement);
+        peerConnection.addEventListener("track", createVideoElementAsync);
 
         return () => {
             if (peerConnection) {
-                peerConnection.removeEventListener("track", createVideoElement);
+                peerConnection.removeEventListener("track", createVideoElementAsync);
             }
         }
     }, [peerConnection, turnOnMicrophone]);
 
     useEffect(() => {
+        if (!peerConnection) {
+            return;
+        }
+
         const createVideoFromCamera = (event) => {
             const track = event.track;
             if (track.kind === "video") {
@@ -50,16 +63,19 @@ const VoiceChatUser = ({ userId, connection, peerConnection, otherScreenSharingV
             }
         }
 
-        peerConnection?.addEventListener("track", createVideoFromCamera);
-
+        peerConnection.addEventListener("track", createVideoFromCamera);
         return () => {
             if (peerConnection) {
                 peerConnection.removeEventListener("track", createVideoFromCamera);
             }
         }
-    }, [peerConnection, turnOnCamera]);
+    }, [hubConnection, peerConnection, turnOnCamera]);
 
     useEffect(() => {
+        if (!peerConnection) {
+            return;
+        }
+
         const createVideoFromScreenSharing = (event) => {
             const track = event.track;
             if (track.kind === "video") {
@@ -73,8 +89,7 @@ const VoiceChatUser = ({ userId, connection, peerConnection, otherScreenSharingV
             }
         }
 
-        peerConnection?.addEventListener("track", createVideoFromScreenSharing);
-
+        peerConnection.addEventListener("track", createVideoFromScreenSharing);
         return () => {
             if (peerConnection) {
                 peerConnection.removeEventListener("track", createVideoFromScreenSharing);
@@ -83,7 +98,7 @@ const VoiceChatUser = ({ userId, connection, peerConnection, otherScreenSharingV
     }, [peerConnection, otherScreenSharing]);
 
     useEffect(() => {
-        if (!connection) {
+        if (!hubConnection) {
             return;
         }
 
@@ -111,16 +126,16 @@ const VoiceChatUser = ({ userId, connection, peerConnection, otherScreenSharingV
             }
         }
 
-        connection.on("ReceiveMicrophoneStatus", handleReceiveMicrophoneStatus);
-        connection.on("ReceiveCameraStatus", handleReceiveCameraStatus);
-        connection.on("ReceiveScreenSharingStatus", handleReceiveScreenSharingStatus);
+        hubConnection.on("ReceiveMicrophoneStatus", handleReceiveMicrophoneStatus);
+        hubConnection.on("ReceiveCameraStatus", handleReceiveCameraStatus);
+        hubConnection.on("ReceiveScreenSharingStatus", handleReceiveScreenSharingStatus);
 
         return () => {
-            connection.off("ReceiveMicrophoneStatus", handleReceiveMicrophoneStatus);
-            connection.off("ReceiveScreenSharingStatus", handleReceiveCameraStatus);
-            connection.off("ReceiveScreenSharingStatus", handleReceiveScreenSharingStatus);
+            hubConnection.off("ReceiveMicrophoneStatus", handleReceiveMicrophoneStatus);
+            hubConnection.off("ReceiveCameraStatus", handleReceiveCameraStatus);
+            hubConnection.off("ReceiveScreenSharingStatus", handleReceiveScreenSharingStatus);
         };
-    }, [connection, userId]);
+    }, [hubConnection, userId, otherScreenSharing]);
 
     return (
         <div className="user">
@@ -132,7 +147,7 @@ const VoiceChatUser = ({ userId, connection, peerConnection, otherScreenSharingV
                 />
             </div>
             <div className="media-content">
-                <audio ref={audioContentRef}></audio>
+                <audio ref={audioContentRef} autoPlay></audio>
                 {turnOnCamera &&
                     <video ref={videoContentRef} muted></video>
                 }
@@ -141,4 +156,4 @@ const VoiceChatUser = ({ userId, connection, peerConnection, otherScreenSharingV
     );
 }
 
-export default memo(VoiceChatUser);
+export default VoiceChatUser;

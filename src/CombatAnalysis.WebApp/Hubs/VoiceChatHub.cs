@@ -51,6 +51,11 @@ public class VoiceChatHub : Hub
         await Clients.OthersInGroup(room).SendAsync("ReceiveCameraStatus", Context.ConnectionId, status);
     }
 
+    public async Task SendRequestCameraStatus(string room)
+    {
+        await Clients.OthersInGroup(room).SendAsync("ReceiveRequestCameraStatus", Context.ConnectionId);
+    }
+
     public async Task SendScreenSharingStatus(string room, bool status)
     {
         await Clients.OthersInGroup(room).SendAsync("ReceiveScreenSharingStatus", Context.ConnectionId, status);

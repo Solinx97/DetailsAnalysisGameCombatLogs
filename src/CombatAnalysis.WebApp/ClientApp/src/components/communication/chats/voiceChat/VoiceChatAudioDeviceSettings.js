@@ -60,13 +60,6 @@ const VoiceChatAudioDeviceSettings = ({ t, peerConnectionsRef, turnOnMicrophone,
 	}
 
 	const switchAudioOutputDevice = async (deviceId) => {
-		//const audioElement = document.getElementById('audioElement');
-		//try {
-		//	await audioElement.setSinkId(deviceId);
-		//} catch (error) {
-		//	console.error('Error setting audio output device: ', error);
-		//}
-
 		audioOutputDeviceIdRef.current = deviceId;
 	}
 

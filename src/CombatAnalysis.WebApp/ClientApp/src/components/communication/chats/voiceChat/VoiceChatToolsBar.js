@@ -4,17 +4,16 @@ import React, { memo, useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import VoiceChatAudioDeviceSettings from './VoiceChatAudioDeviceSettings';
 
-const VoiceChatToolsBar = ({ t, properties, methods, screenSharing, setScreenSharing, turnOnCamera, setTurnOnCamera, turnOnMicrophone, setTurnOnMicrophone }) => {
+const VoiceChatToolsBar = ({ t, properties, methods, screenSharing, setScreenSharing, turnOnCamera, setTurnOnCamera, turnOnMicrophone, setTurnOnMicrophone, audioOutputDeviceIdRef }) => {
 	const [openAudioSettings, setOpenAudioSettings] = useState(false);
 	const [cameraExecute, setCameraExecute] = useState(false);
 
 	const audioInputDeviceIdRef = useRef(null);
-	const audioOutputDeviceIdRef = useRef(null);
 
 	const navigate = useNavigate();
 
 	useEffect(() => {
-		if (!properties.connection) {
+		if (!properties.hubConnection) {
 			return;
 		}
 
@@ -23,17 +22,17 @@ const VoiceChatToolsBar = ({ t, properties, methods, screenSharing, setScreenSha
 		}
 
 		switchMicrophoneStatus();
-	}, [properties.connection, properties.stream, turnOnMicrophone]);
+	}, [properties.hubConnection, properties.stream, turnOnMicrophone]);
 
 	useEffect(() => {
-		if (!properties.connection) {
+		if (!properties.hubConnection) {
 			return;
 		}
 
 		const switchCameraStatus = async () => {
 			setCameraExecute(true);
 
-			await methods.switchCameraStatusAsync(turnOnCamera, setCameraExecute);
+			await methods.switchCameraStatusAsync(turnOnCamera);
 
 			if (turnOnCamera) {
 				setScreenSharing(false);
@@ -43,7 +42,9 @@ const VoiceChatToolsBar = ({ t, properties, methods, screenSharing, setScreenSha
 		}
 
 		switchCameraStatus();
-	}, [properties.connection, properties.stream, turnOnCamera]);
+
+		methods.listeningMediaRequestsMessages(properties.stream, turnOnCamera);
+	}, [properties.hubConnection, properties.stream, turnOnCamera]);
 
 	const leaveFromCallAsync = async () => {
 		await methods.stopMediaDataAsync();
@@ -91,7 +92,7 @@ const VoiceChatToolsBar = ({ t, properties, methods, screenSharing, setScreenSha
 						t={t}
 						peerConnectionsRef={properties.peerConnectionsRef}
 						turnOnMicrophone={turnOnMicrophone}
-					stream={properties.stream}
+						stream={properties.stream}
 						audioInputDeviceIdRef={audioInputDeviceIdRef}
 						audioOutputDeviceIdRef={audioOutputDeviceIdRef}
 					/>

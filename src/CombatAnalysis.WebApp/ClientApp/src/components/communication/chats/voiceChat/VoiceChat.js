@@ -2,7 +2,7 @@
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
-import useRTCVoiceChat from '../../../../hooks/useRTCVoiceChat';
+import useVoiceChatHub from '../../../../hooks/useVoiceChatHub';
 import CommunicationMenu from '../../CommunicationMenu';
 import VoiceChatContent from './VoiceChatContent';
 import VoiceChatToolsBar from './VoiceChatToolsBar';
@@ -21,25 +21,25 @@ const VoiceChat = () => {
 	const [screenSharing, setScreenSharing] = useState(false);
 
 	const screenSharingVideoRef = useRef(null);
+	const audioOutputDeviceIdRef = useRef(null);
 
 	const { roomId, chatName } = useParams();
 
-	const { properties, methods } = useRTCVoiceChat(roomId);
+	const { properties, methods } = useVoiceChatHub(roomId);
 
 	useEffect(() => {
-		if (!properties.connection) {
+		if (!properties.hubConnection) {
 			return;
 		}
 
 		return () => {
 			const cleanup = async () => {
 				await methods.stopMediaDataAsync();
-				await methods.cleanupAsync();
 			}
 
 			cleanup();
 		}
-	}, [properties.connection]);
+	}, [properties.hubConnection]);
 
 	useEffect(() => {
 		if (!me) {
@@ -48,14 +48,14 @@ const VoiceChat = () => {
 
 		const connectToChat = async () => {
 			const signalingAddress = "/voiceChatHub";
-			await methods.connectToChatAsync(signalingAddress, setHaveControllBar);
+			await methods.connectToChatAsync(signalingAddress, haveControllBar, setHaveControllBar);
 		}
 
 		connectToChat();
 	}, [me]);
 
 	useEffect(() => {
-		if (!properties.connection || !properties.stream) {
+		if (!properties.hubConnection || !properties.stream) {
 			return;
 		}
 
@@ -88,14 +88,15 @@ const VoiceChat = () => {
 	const renderVoiceChatContent = () => (
 		<VoiceChatContent
 			roomId={roomId}
-			connection={properties.connection}
-			peerConnectionsRef={properties.peerConnectionsRef}
+			hubConnection={properties.hubConnection}
+			peerConnections={properties.peerConnectionsRef.current}
 			stream={properties.stream}
 			micStatus={turnOnMicrophone}
 			cameraStatus={turnOnCamera}
 			screenSharing={screenSharing}
 			setScreenSharing={setScreenSharing}
 			screenSharingVideoRef={screenSharingVideoRef}
+			audioOutputDeviceIdRef={audioOutputDeviceIdRef}
 		/>
 	)
 
@@ -110,6 +111,7 @@ const VoiceChat = () => {
 			setTurnOnCamera={setTurnOnCamera}
 			turnOnMicrophone={turnOnMicrophone}
 			setTurnOnMicrophone={setTurnOnMicrophone}
+			audioOutputDeviceIdRef={audioOutputDeviceIdRef}
 		/>
 	)
 
