@@ -23,6 +23,28 @@
                 align-items: center;
                 gap: 10px;
 
+                .device-toolbar {
+                    position: absolute;
+                    display: flex;
+                    flex-direction: column;
+                    gap: 10px;
+                    top: 8%;
+                    width: 20vw;
+                    padding: 15px;
+                    box-shadow: 1px 1px 1px 1px yellow;
+                    font-size: 0.9em;
+                    border-radius: 20px;
+                    background: #0c192c;
+
+                    ul {
+                        display: flex;
+                        flex-direction: column;
+                        gap: 5px;
+                        margin-left: 10px !important;
+                        margin: 0;
+                    }
+                }
+
                 .warning {
                     position: absolute;
                     width: 0;

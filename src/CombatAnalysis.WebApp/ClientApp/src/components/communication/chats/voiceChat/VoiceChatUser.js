@@ -51,7 +51,7 @@ const VoiceChatUser = ({ userId, hubConnection, peerConnection, otherScreenShari
         const createVideoFromCamera = (event) => {
             const track = event.track;
 
-            if (track.kind === "video") {
+            if (track.kind === "video" && videoContentRef.current) {
                 videoContentRef.current.srcObject = new MediaStream([track]);
                 videoContentRef.current.muted = true;
                 videoContentRef.current.autoplay = true;
@@ -73,7 +73,7 @@ const VoiceChatUser = ({ userId, hubConnection, peerConnection, otherScreenShari
 
         const createVideoFromScreenSharing = (event) => {
             const track = event.track;
-            if (track.kind === "video") {
+            if (track.kind === "video" && otherScreenSharingVideoRef.current) {
                 otherScreenSharingVideoRef.current.srcObject = new MediaStream([track]);
                 otherScreenSharingVideoRef.current.muted = true;
                 otherScreenSharingVideoRef.current.autoplay = true;

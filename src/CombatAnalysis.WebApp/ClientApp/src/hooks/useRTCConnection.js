@@ -36,13 +36,11 @@ const useRTCConnection = () => {
 			myConnectionIdRef.current = userId;
 			setCanLeaveRef.current(true);
 
-			const newPeer = await getOrCreatePeerConnectionAsync(userId);
-			await createOfferAsync(userId, newPeer);
+			await getOrCreatePeerConnectionAsync(userId);
 		});
 
 		hubConnectionRef.current.on("UserJoined", async (userId) => {
-			const newPeer = await getOrCreatePeerConnectionAsync(userId);
-			await createOfferAsync(userId, newPeer);
+			await getOrCreatePeerConnectionAsync(userId);
 		});
 
 		hubConnectionRef.current.on("UserLeft", async (userId) => {
@@ -56,8 +54,7 @@ const useRTCConnection = () => {
 		hubConnectionRef.current.on("ReceiveConnectedUsers", async (connectedUsers) => {
 			for (const userId of connectedUsers) {
 				if (myConnectionIdRef.current && userId !== myConnectionIdRef.current) {
-					const newPeer = await getOrCreatePeerConnectionAsync(userId);
-					await createOfferAsync(userId, newPeer);
+					await getOrCreatePeerConnectionAsync(userId);
 				}
 			}
 		});
@@ -99,25 +96,24 @@ const useRTCConnection = () => {
 
 		peerConnection.addEventListener("negotiationneeded", async (event) => {
 			try {
-				await peerConnection.setLocalDescription();
-
-				await sendSignalAsync("SendOffer", userId, JSON.stringify(peerConnection.localDescription));
+				await createOfferAsync(userId, peerConnection);
 			} catch (e) {
 				console.log(e);
 			}
-		});
-
-		const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-		setStreamRef.current(stream);
-
-		stream.getAudioTracks().forEach(track => {
-			addTrackToPeer(peerConnection, track, stream);
 		});
 
 		peerConnection.addEventListener("icecandidate", async (event) => {
 			if (event.candidate) {
 				await sendSignalAsync("SendCandidate", userId, JSON.stringify(event.candidate));
 			}
+		});
+
+		navigator.mediaDevices.getUserMedia({ audio: true }).then(steam => {
+			steam.getAudioTracks().forEach(track => {
+				addTrackToPeer(peerConnection, track, steam);
+			});
+
+			setStreamRef.current(steam);
 		});
 
 		return peerConnection;
