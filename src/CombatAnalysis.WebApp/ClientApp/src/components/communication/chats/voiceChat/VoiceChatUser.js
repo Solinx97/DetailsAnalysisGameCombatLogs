@@ -4,7 +4,7 @@ import { memo, useEffect, useRef, useState } from "react";
 import { useGetCallByIdQuery } from '../../../../store/api/communication/chats/VoiceChat.api';
 import { useLazyGetUserByIdQuery } from '../../../../store/api/Account.api';
 
-const VoiceChatUser = ({ userId, hubConnection, peerConnection, otherScreenSharingVideoRef, otherScreenSharingUserIdRef, otherScreenSharing, setOtherScreenSharing, audioOutputDeviceIdRef }) => {
+const VoiceChatUser = ({ userId, hubConnection, peerConnection, otherScreenSharingVideoRef, otherScreenSharingUserIdRef, otherScreenSharing, setOtherScreenSharing, audioOutputDeviceId }) => {
     const { data: voice } = useGetCallByIdQuery(userId);
 
     const [getUserByIdAsync] = useLazyGetUserByIdQuery();
@@ -28,8 +28,8 @@ const VoiceChatUser = ({ userId, hubConnection, peerConnection, otherScreenShari
                 audioContentRef.current.srcObject = event.streams[0];
                 audioContentRef.current.autoplay = true;
 
-                if (audioOutputDeviceIdRef.current) {
-                    await audioContentRef.current.setSinkId(audioOutputDeviceIdRef.current);
+                if (audioOutputDeviceId) {
+                    await audioContentRef.current.setSinkId(audioOutputDeviceId);
                 }
             }
         }
@@ -142,6 +142,18 @@ const VoiceChatUser = ({ userId, hubConnection, peerConnection, otherScreenShari
 
         getUserById();
     }, [voice]);
+
+    useEffect(() => {
+        if (!audioOutputDeviceId || !audioContentRef.current) {
+            return;
+        }
+
+        const setSinkId = async () => {
+            await audioContentRef.current.setSinkId(audioOutputDeviceId);
+        }
+
+        setSinkId();
+    }, [audioOutputDeviceId]);
 
     return (
         <div className="user">

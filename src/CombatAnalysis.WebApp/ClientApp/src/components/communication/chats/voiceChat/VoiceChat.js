@@ -17,11 +17,11 @@ const VoiceChat = () => {
 	const [haveControllBar, setHaveControllBar] = useState(false);
 	const [turnOnMicrophone, setTurnOnMicrophone] = useState(true);
 	const [turnOnCamera, setTurnOnCamera] = useState(false);
+	const [audioOutputDeviceId, setAudioOutputDeviceId] = useState("");
 
 	const [screenSharing, setScreenSharing] = useState(false);
 
 	const screenSharingVideoRef = useRef(null);
-	const audioOutputDeviceIdRef = useRef(null);
 
 	const { roomId, chatName } = useParams();
 
@@ -96,7 +96,7 @@ const VoiceChat = () => {
 			screenSharing={screenSharing}
 			setScreenSharing={setScreenSharing}
 			screenSharingVideoRef={screenSharingVideoRef}
-			audioOutputDeviceIdRef={audioOutputDeviceIdRef}
+			audioOutputDeviceId={audioOutputDeviceId}
 		/>
 	)
 
@@ -111,7 +111,8 @@ const VoiceChat = () => {
 			setTurnOnCamera={setTurnOnCamera}
 			turnOnMicrophone={turnOnMicrophone}
 			setTurnOnMicrophone={setTurnOnMicrophone}
-			audioOutputDeviceIdRef={audioOutputDeviceIdRef}
+			audioOutputDeviceId={audioOutputDeviceId}
+			setAudioOutputDeviceId={setAudioOutputDeviceId}
 		/>
 	)
 

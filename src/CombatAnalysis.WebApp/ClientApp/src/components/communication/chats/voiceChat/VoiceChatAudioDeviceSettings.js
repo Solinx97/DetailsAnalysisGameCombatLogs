@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-const VoiceChatAudioDeviceSettings = ({ t, peerConnectionsRef, turnOnMicrophone, stream, audioInputDeviceIdRef, audioOutputDeviceIdRef }) => {
+const VoiceChatAudioDeviceSettings = ({ t, peerConnectionsRef, turnOnMicrophone, stream, audioInputDeviceIdRef, audioOutputDeviceId, setAudioOutputDeviceId }) => {
 	const [audioInputDevices, setAudioInputDevices] = useState([]);
 	const [audioOutputDevices, setAudioOutputDevices] = useState([]);
 
@@ -11,9 +11,9 @@ const VoiceChatAudioDeviceSettings = ({ t, peerConnectionsRef, turnOnMicrophone,
 			audioInputDeviceIdRef.current = !audioInputDeviceIdRef.current
 				? audioInputs[0].deviceId
 				: audioInputDeviceIdRef.current;
-			audioOutputDeviceIdRef.current = !audioOutputDeviceIdRef.current
+			setAudioOutputDeviceId(!audioOutputDeviceId
 				? audioOutputs[0].deviceId
-				: audioOutputDeviceIdRef.current;
+				: audioOutputDeviceId);
 
 			setAudioInputDevices(audioInputs);
 			setAudioOutputDevices(audioOutputs);
@@ -60,7 +60,7 @@ const VoiceChatAudioDeviceSettings = ({ t, peerConnectionsRef, turnOnMicrophone,
 	}
 
 	const switchAudioOutputDevice = async (deviceId) => {
-		audioOutputDeviceIdRef.current = deviceId;
+		setAudioOutputDeviceId(deviceId);
 	}
 
 	return (
@@ -70,7 +70,7 @@ const VoiceChatAudioDeviceSettings = ({ t, peerConnectionsRef, turnOnMicrophone,
 				{audioOutputDevices.map((device, index) =>
 					<li key={index} className="form-check">
 						<input className="form-check-input" type="radio" name="soundDevice" id={`soundDevice${index}`}
-							defaultChecked={device.deviceId === audioOutputDeviceIdRef.current} onClick={() => switchAudioOutputDevice(device.deviceId)} />
+							defaultChecked={device.deviceId === audioOutputDeviceId} onClick={() => switchAudioOutputDevice(device.deviceId)} />
 						<label className="form-check-label" htmlFor={`soundDevice${index}`}>
 							{device.label.split("-")[0]}
 						</label>

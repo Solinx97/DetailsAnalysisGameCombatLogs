@@ -4,7 +4,7 @@ import React, { memo, useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import VoiceChatAudioDeviceSettings from './VoiceChatAudioDeviceSettings';
 
-const VoiceChatToolsBar = ({ t, properties, methods, screenSharing, setScreenSharing, turnOnCamera, setTurnOnCamera, turnOnMicrophone, setTurnOnMicrophone, audioOutputDeviceIdRef }) => {
+const VoiceChatToolsBar = ({ t, properties, methods, screenSharing, setScreenSharing, turnOnCamera, setTurnOnCamera, turnOnMicrophone, setTurnOnMicrophone, audioOutputDeviceId, setAudioOutputDeviceId }) => {
 	const [openAudioSettings, setOpenAudioSettings] = useState(false);
 	const [cameraExecute, setCameraExecute] = useState(false);
 	const [showWarning, setShowWarning] = useState(false);
@@ -103,7 +103,8 @@ const VoiceChatToolsBar = ({ t, properties, methods, screenSharing, setScreenSha
 						turnOnMicrophone={turnOnMicrophone}
 						stream={properties.stream}
 						audioInputDeviceIdRef={audioInputDeviceIdRef}
-						audioOutputDeviceIdRef={audioOutputDeviceIdRef}
+						audioOutputDeviceId={audioOutputDeviceId}
+						setAudioOutputDeviceId={setAudioOutputDeviceId}
 					/>
 				}
 			</div>

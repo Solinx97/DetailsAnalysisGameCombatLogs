@@ -3,7 +3,7 @@ import MeInVoiceChat from "./MeInVoiceChat";
 import VoiceChatUser from "./VoiceChatUser";
 import useRTCConnection from '../../../../hooks/useRTCConnection';
 
-const VoiceChatContent = ({ roomId, hubConnection, peerConnections, stream, micStatus, cameraStatus, screenSharing, setScreenSharing, screenSharingVideoRef, audioOutputDeviceIdRef  }) => {
+const VoiceChatContent = ({ roomId, hubConnection, peerConnections, stream, micStatus, cameraStatus, screenSharing, setScreenSharing, screenSharingVideoRef, audioOutputDeviceId  }) => {
 	const [usersId, setUsersId] = useState([]);
 	const [myId, setMyId] = useState("");
 	const [otherScreenSharing, setOtherScreenSharing] = useState(false);
@@ -116,7 +116,7 @@ const VoiceChatContent = ({ roomId, hubConnection, peerConnections, stream, micS
 							otherScreenSharingUserIdRef={otherScreenSharingUserIdRef}
 							otherScreenSharing={otherScreenSharing}
 							setOtherScreenSharing={setOtherScreenSharing}
-							audioOutputDeviceIdRef={audioOutputDeviceIdRef}
+							audioOutputDeviceId={audioOutputDeviceId}
 						/>
 					</li>
 				)}
