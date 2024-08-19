@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, memo } from "react";
 import MeInVoiceChat from "./MeInVoiceChat";
 import VoiceChatUser from "./VoiceChatUser";
 import useRTCConnection from '../../../../hooks/useRTCConnection';
@@ -42,16 +42,28 @@ const VoiceChatContent = ({ roomId, hubConnection, peerConnections, stream, micS
 				setOtherScreenSharing(false);
 				otherScreenSharingUserIdRef.current = "";
 			}
+
+			const anotherUsers = usersId.filter(element => element !== userId);
+			setUsersId(anotherUsers);
+		}
+
+		const handleUserJoined = async (userId) => {
+			const joinedUsers = Object.assign([], usersId);
+			joinedUsers.push(userId);
+
+			setUsersId(joinedUsers);
 		}
 
 		hubConnection.on("ReceiveConnectedUsers", handleReceiveConnectedUsers);
+		hubConnection.on("UserJoined", handleUserJoined);
 		hubConnection.on("UserLeft", handleUserLeft);
 
 		return () => {
 			hubConnection.off("ReceiveConnectedUsers", handleReceiveConnectedUsers);
+			hubConnection.off("UserJoined", handleUserJoined);
 			hubConnection.off("UserLeft", handleUserLeft);
 		}
-	}, [hubConnection, myId]);
+	}, [hubConnection, myId, usersId]);
 
 	useEffect(() => {
 		if (otherScreenSharing) {
@@ -63,10 +75,6 @@ const VoiceChatContent = ({ roomId, hubConnection, peerConnections, stream, micS
 		hubConnection.on("Connected", async (userId) => {
 			setMyId(userId);
 
-			await sendSignalAsync("RequestConnectedUsers");
-		});
-
-		hubConnection.on("UserJoined", async (userId) => {
 			await sendSignalAsync("RequestConnectedUsers");
 		});
 	}

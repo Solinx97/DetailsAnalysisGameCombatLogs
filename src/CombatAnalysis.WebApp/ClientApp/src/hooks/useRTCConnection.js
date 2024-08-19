@@ -43,8 +43,6 @@ const useRTCConnection = () => {
 		hubConnectionRef.current.on("UserJoined", async (userId) => {
 			const newPeer = await getOrCreatePeerConnectionAsync(userId);
 			await createOfferAsync(userId, newPeer);
-
-			await sendSignalAsync("RequestConnectedUsers");
 		});
 
 		hubConnectionRef.current.on("UserLeft", async (userId) => {
@@ -53,8 +51,6 @@ const useRTCConnection = () => {
 				peerConnection.close();
 				peerConnectionsRef.current.delete(userId);
 			}
-
-			await sendSignalAsync("RequestConnectedUsers");
 		});
 
 		hubConnectionRef.current.on("ReceiveConnectedUsers", async (connectedUsers) => {
