@@ -38,6 +38,7 @@ const CreateGroupChat = () => {
     const [announcements, setAnnouncements] = useState(1);
     const [canFinishCreate, setCanFinishCreate] = useState(false);
     const [peopleToJoin, setPeopleToJoin] = useState([]);
+    const [isCreating, setIsCreating] = useState(false);
 
     const [createGroupChatMutAsync] = useCreateGroupChatAsyncMutation();
     const [createGroupChatRulesMutAsync] = useCreateGroupChatRulesAsyncMutation();
@@ -121,6 +122,8 @@ const CreateGroupChat = () => {
     }
 
     const handleCreateNewGroupChatAsync = async () => {
+        setIsCreating(true);
+
         const createdGroupChat = await createGroupChatAsync();
 
         await createGroupChatRulesAsync(createdGroupChat.id);
@@ -131,6 +134,8 @@ const CreateGroupChat = () => {
         setPeopleToJoin(people);
 
         await joinPeopleAsync(createdGroupChat?.id);
+
+        setIsCreating(false);
 
         navigate("/chats");
     }
@@ -225,6 +230,12 @@ const CreateGroupChat = () => {
                     }
                     <div className="btn-shadow" onClick={() => navigate("/chats")}>{t("Cancel")}</div>
                 </div>
+                {isCreating &&
+                    <>
+                        <span className="creating"></span>
+                        <div className="notify">Creating...</div>
+                    </>
+                }
             </div>
         </>
     );

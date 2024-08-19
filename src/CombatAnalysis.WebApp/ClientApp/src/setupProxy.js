@@ -42,6 +42,7 @@ const context = [
     "/api/v1/PlayerDeath",
     "/api/v1/Identity",
     "/api/v1/Signaling",
+    "/api/v1/VoiceChat",
 ];
 
 const onError = (err, req, resp, target) => {

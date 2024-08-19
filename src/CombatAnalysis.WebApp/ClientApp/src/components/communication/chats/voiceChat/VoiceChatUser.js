@@ -1,10 +1,17 @@
 import { faMicrophone, faMicrophoneSlash } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { memo, useEffect, useRef, useState } from "react";
+import { useGetCallByIdQuery } from '../../../../store/api/communication/chats/VoiceChat.api';
+import { useLazyGetUserByIdQuery } from '../../../../store/api/Account.api';
 
 const VoiceChatUser = ({ userId, hubConnection, peerConnection, otherScreenSharingVideoRef, otherScreenSharingUserIdRef, otherScreenSharing, setOtherScreenSharing, audioOutputDeviceIdRef }) => {
+    const { data: voice } = useGetCallByIdQuery(userId);
+
+    const [getUserByIdAsync] = useLazyGetUserByIdQuery();
+
     const [turnOnMicrophone, setTurnOnMicrophone] = useState(false);
     const [turnOnCamera, setTurnOnCamera] = useState(false);
+    const [user, setUser] = useState(null);
 
     const videoContentRef = useRef(null);
     const audioContentRef = useRef(null);
@@ -16,7 +23,7 @@ const VoiceChatUser = ({ userId, hubConnection, peerConnection, otherScreenShari
 
         const createAudio = async (event) => {
             const track = event.track;
-            if (track.kind === "audio") {
+            if (track.kind === "audio" && audioContentRef.current) {
                 audioContentRef.current.id = "active";
                 audioContentRef.current.srcObject = event.streams[0];
                 audioContentRef.current.autoplay = true;
@@ -100,7 +107,7 @@ const VoiceChatUser = ({ userId, hubConnection, peerConnection, otherScreenShari
 
         const handleReceiveScreenSharingStatus = (from, status) => {
             if (from === userId) {
-                if (status && !otherScreenSharing) {
+                if (status) {
                     otherScreenSharingUserIdRef.current = from;
                     setOtherScreenSharing(true);
                 }
@@ -121,14 +128,36 @@ const VoiceChatUser = ({ userId, hubConnection, peerConnection, otherScreenShari
         };
     }, [hubConnection, userId, otherScreenSharing]);
 
+    useEffect(() => {
+        if (!voice) {
+            return;
+        }
+
+        const getUserById = async () => {
+            const response = await getUserByIdAsync(voice?.userId);
+            if (response.data) {
+                setUser(response.data);
+            }
+        }
+
+        getUserById();
+    }, [voice]);
+
     return (
         <div className="user">
             <div className="information">
-                <div className="another__username">{userId}</div>
-                <FontAwesomeIcon
-                    icon={turnOnMicrophone ? faMicrophone : faMicrophoneSlash}
-                    title="TurnOffMicrophone"
-                />
+                {user
+                    ? <>
+                        <div className="another__username">{user.username}</div>
+                        <FontAwesomeIcon
+                            icon={turnOnMicrophone ? faMicrophone : faMicrophoneSlash}
+                            title="TurnOffMicrophone"
+                        />
+                    </>
+                    : <>
+                        <div className="another__username">Loading...</div>
+                    </>
+                }
             </div>
             <div className="media-content">
                 <audio ref={audioContentRef} autoPlay></audio>

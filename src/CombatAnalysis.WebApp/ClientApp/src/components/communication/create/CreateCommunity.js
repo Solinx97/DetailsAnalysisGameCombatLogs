@@ -26,6 +26,7 @@ const CreateCommunity = () => {
     const [policy, setPolicy] = useState(0);
     const [canFinishCreate, setCanFinishCreate] = useState(false);
     const [peopleToJoin, setPeopleToJoin] = useState([]);
+    const [isCreating, setIsCreating] = useState(false);
 
     const [createCommunityAsyncMut] = useCreateCommunityAsyncMutation();
     const [createCommunityUserAsyncMut] = useCreateCommunityUserAsyncMutation();
@@ -60,7 +61,11 @@ const CreateCommunity = () => {
     }
 
     const handleCreateNewCommunityAsync = async () => {
+        setIsCreating(true);
+
         await createCommunityAsync();
+
+        setIsCreating(false);
 
         navigate("/communities");
     }
@@ -154,6 +159,12 @@ const CreateCommunity = () => {
                     }
                     <div className="btn-shadow" onClick={() => navigate("/communities")}>{t("Cancel")}</div>
                 </div>
+                {isCreating &&
+                    <>
+                        <span className="creating"></span>
+                        <div className="notify">Creating...</div>
+                    </>
+                }
             </div>
         </>
     );

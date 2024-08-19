@@ -7,7 +7,7 @@ const useRTCConnection = () => {
 
 	const peerConnectionsRef = useRef(new Map());
 
-	const myIdRef = useRef(null);
+	const myConnectionIdRef = useRef(null);
 	const canLeaveRef = useRef(false);
 	const setCanLeaveRef = useRef(false);
 	const connectionIsActiveRef = useRef(false);
@@ -33,7 +33,7 @@ const useRTCConnection = () => {
 
 	const listeningSignalMessages = () => {
 		hubConnectionRef.current.on("Connected", async (userId) => {
-			myIdRef.current = userId;
+			myConnectionIdRef.current = userId;
 			setCanLeaveRef.current(true);
 
 			const newPeer = await getOrCreatePeerConnectionAsync(userId);
@@ -55,7 +55,7 @@ const useRTCConnection = () => {
 
 		hubConnectionRef.current.on("ReceiveConnectedUsers", async (connectedUsers) => {
 			for (const userId of connectedUsers) {
-				if (myIdRef.current && userId !== myIdRef.current) {
+				if (myConnectionIdRef.current && userId !== myConnectionIdRef.current) {
 					const newPeer = await getOrCreatePeerConnectionAsync(userId);
 					await createOfferAsync(userId, newPeer);
 				}
@@ -187,7 +187,7 @@ const useRTCConnection = () => {
 			}
 
 			// Clear other references
-			myIdRef.current = null;
+			myConnectionIdRef.current = null;
 		} catch (error) {
 			console.error("Error during cleanup:", error);
 		}

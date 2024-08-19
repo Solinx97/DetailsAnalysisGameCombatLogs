@@ -2,13 +2,31 @@ import { ChatApi } from "../../ChatApi";
 
 export const VoiceChatApi = ChatApi.injectEndpoints({
     endpoints: builder => ({
+        createCall: builder.mutation({
+            query: groupChat => ({
+                body: groupChat,
+                url: '/VoiceChat',
+                method: 'POST'
+            }),
+        }),
+        removeCall: builder.mutation({
+            query: id => ({
+                url: `/VoiceChat/${id}`,
+                method: 'DELETE'
+            }),
+        }),
         getCall: builder.query({
-            query: () => `VoiceChat`,
-            providesTags: (result, error) => [{ type: 'VoiceChat'}],
+            query: () => `/VoiceChat`,
+        }),
+        getCallById: builder.query({
+            query: (id) => `/VoiceChat/${id}`,
         }),
     })
 })
 
 export const {
-    useLazyGetCallQuery,
+    useCreateCallMutation,
+    useRemoveCallMutation,
+    useGetCallQuery,
+    useGetCallByIdQuery,
 } = VoiceChatApi;

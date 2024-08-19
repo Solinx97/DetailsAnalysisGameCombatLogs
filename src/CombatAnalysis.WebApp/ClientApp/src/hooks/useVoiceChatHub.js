@@ -12,7 +12,7 @@ const useVoiceChatHub = (roomId) => {
 
 	const { setup, start, listeningSignalMessages, listeningAnswersAsync, sendSignalAsync, cleanupAsync, addTrackToPeer } = useRTCConnection();
 
-	const connectToChatAsync = async (signalingAddress, canLeave, setCanLeave) => {
+	const connectToChatAsync = async (myId, signalingAddress, canLeave, setCanLeave) => {
 		try {
 			const hubConnection = new signalR.HubConnectionBuilder()
 				.withUrl(signalingAddress)
@@ -29,7 +29,7 @@ const useVoiceChatHub = (roomId) => {
 
 			listeningSignalMessages();
 
-			await sendSignalAsync("JoinRoom");
+			await sendSignalAsync("JoinRoom", myId);
 
 			await listeningAnswersAsync();
 		} catch (e) {

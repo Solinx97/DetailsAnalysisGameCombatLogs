@@ -48,7 +48,7 @@ const VoiceChat = () => {
 
 		const connectToChat = async () => {
 			const signalingAddress = "/voiceChatHub";
-			await methods.connectToChatAsync(signalingAddress, haveControllBar, setHaveControllBar);
+			await methods.connectToChatAsync(me?.id, signalingAddress, haveControllBar, setHaveControllBar);
 		}
 
 		connectToChat();

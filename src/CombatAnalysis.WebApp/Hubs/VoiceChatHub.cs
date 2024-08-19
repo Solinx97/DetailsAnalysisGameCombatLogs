@@ -1,14 +1,32 @@
-﻿using Microsoft.AspNetCore.SignalR;
+﻿using CombatAnalysis.WebApp.Consts;
+using CombatAnalysis.WebApp.Extensions;
+using CombatAnalysis.WebApp.Interfaces;
+using CombatAnalysis.WebApp.Models.Chat;
+using Microsoft.AspNetCore.SignalR;
 using System.Collections.Concurrent;
 
 namespace CombatAnalysis.WebApp.Hubs;
 
 public class VoiceChatHub : Hub
 {
+    private readonly IHttpClientHelper _httpClient;
     private static readonly ConcurrentDictionary<string, HashSet<string>> _groupUsers = new();
-    
-    public async Task JoinRoom(string room)
+
+    public VoiceChatHub(IHttpClientHelper httpClient)
     {
+        _httpClient = httpClient;
+    }
+
+    public async Task JoinRoom(string room, string userId)
+    {
+        var voiceChat = new VoiceChatModel
+        {
+            Id = Context.ConnectionId,
+            UserId = userId
+        };
+
+        await _httpClient.PostAsync("VoiceChat", JsonContent.Create(voiceChat), Port.ChatApi);
+        
         var users = _groupUsers.GetOrAdd(room, _ => new HashSet<string>());
         lock (users)
         {
@@ -19,11 +37,6 @@ public class VoiceChatHub : Hub
 
         await Clients.Caller.SendAsync("Connected", Context.ConnectionId);
         await Clients.OthersInGroup(room).SendAsync("UserJoined", Context.ConnectionId);
-    }
-
-    public async Task RequestConnectionId(string room)
-    {
-        await Clients.Caller.SendAsync("ReceiveConnectionId", Context.ConnectionId);
     }
 
     public async Task SendOffer(string room, string userId, string offer)
@@ -82,6 +95,8 @@ public class VoiceChatHub : Hub
             {
                 users.Remove(Context.ConnectionId);
             }
+
+            await _httpClient.DeletAsync($"VoiceChat/{Context.ConnectionId}", Port.ChatApi);
         }
 
         await Groups.RemoveFromGroupAsync(Context.ConnectionId, room);
