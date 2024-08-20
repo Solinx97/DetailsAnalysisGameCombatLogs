@@ -6,5 +6,8 @@
   "TurnOnCamera": "Включить Камеру",
   "TurnOffMicrophone": "Выключить Микрофон",
   "TurnOnMicrophone": "Включить Микрофон",
-  "Leave": "Уйти"
+  "Leave": "Уйти",
+  "TurnOnScreenSharing": "Поделиться экраном",
+  "TurnOffScreenSharing": "Перестать делиться экраном",
+  "ExperimentalFunctions": "Эксперементальные функции"
 }

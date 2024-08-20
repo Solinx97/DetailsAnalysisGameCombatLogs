@@ -6,5 +6,8 @@
   "TurnOnCamera": "Turn on Camera",
   "TurnOffMicrophone": "Turn off Microphone",
   "TurnOnMicrophone": "Turn on Microphone",
-  "Leave": "Leave"
+  "Leave": "Leave",
+  "TurnOnScreenSharing": "Turn on screen sharing",
+  "TurnOffScreenSharing": "Turn off screen sharing",
+  "ExperimentalFunctions": "Experimental functions"
 }

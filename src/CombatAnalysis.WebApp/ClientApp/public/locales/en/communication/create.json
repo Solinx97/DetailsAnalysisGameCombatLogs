@@ -1,5 +1,5 @@
 {
-  "CreateNewGroupChat": "Create new group chat",
+  "CreateGroupChat": "Create group chat",
   "Name": "Name",
   "MembersNumber": "Members number",
   "ChatPolicy": "Chat policy",
@@ -29,5 +29,6 @@
   "NextStep": "Next step",
   "PrevioslyStep": "Previosly step",
   "CreateCommunity": "Create community",
+  "NameRequired": "Name required",
   "NameDescriptionRequired": "Name and description required"
 }

@@ -60,31 +60,36 @@ const VoiceChatToolsBar = ({ t, properties, methods, screenSharing, setScreenSha
 
     return (
 		<div className="tools">
-			<div className={`device ${turnOnCamera ? 'disabled' : ''}`}>
-				{(screenSharing && showWarning) &&
-					<div className="warning"></div>
-				}
-				<FontAwesomeIcon
-					icon={screenSharing ? faDisplay : faLinkSlash}
-					title={screenSharing ? t("TurnOffScreenSharing") : t("TurnOnScreenSharing")}
-					className={`device__screen-sharing ${turnOnCamera ? 'busy' : ''} ${screenSharing ? 'device-use' : ''}`}
-					onClick={turnOnCamera ? null : handleSwicthScreenSharing}
-					onMouseEnter={turnOnCamera ? () => setShowWarning(true) : null}
-					onMouseLeave={turnOnCamera ? () => setShowWarning(false) : null}
-				/>
-			</div>
-			<div className={`device ${cameraExecute || screenSharing ? 'disabled' : ''}`}>
-				{(turnOnCamera && showWarning) && 
-					<div className="warning"></div>
-				}
-				<FontAwesomeIcon
-					icon={turnOnCamera ? faVideo : faVideoSlash}
-					title={turnOnCamera ? t("TurnOffCamera") : t("TurnOnCamera")}
-					className={`device__camera ${cameraExecute || screenSharing ? 'busy' : ''} ${turnOnCamera ? 'device-use' : ''}`}
-					onClick={cameraExecute || screenSharing ? null : () => setTurnOnCamera(!turnOnCamera)}
-					onMouseEnter={screenSharing ? () => setShowWarning(true) : null}
-					onMouseLeave={screenSharing ? () => setShowWarning(false) : null}
-				/>
+			<div className="experimental-functions">
+				<div className="experimental-functions__indicator">{t("ExperimentalFunctions")}</div>
+				<div className="experimental-functions__content">
+					<div className={`device ${turnOnCamera ? 'disabled' : ''}`}>
+						{(screenSharing && showWarning) &&
+							<div className="warning"></div>
+						}
+						<FontAwesomeIcon
+							icon={screenSharing ? faDisplay : faLinkSlash}
+							title={screenSharing ? t("TurnOffScreenSharing") : t("TurnOnScreenSharing")}
+							className={`device__screen-sharing ${turnOnCamera ? 'busy' : ''} ${screenSharing ? 'device-use' : ''}`}
+							onClick={turnOnCamera ? null : handleSwicthScreenSharing}
+							onMouseEnter={turnOnCamera ? () => setShowWarning(true) : null}
+							onMouseLeave={turnOnCamera ? () => setShowWarning(false) : null}
+						/>
+					</div>
+					<div className={`device ${cameraExecute || screenSharing ? 'disabled' : ''}`}>
+						{(turnOnCamera && showWarning) &&
+							<div className="warning"></div>
+						}
+						<FontAwesomeIcon
+							icon={turnOnCamera ? faVideo : faVideoSlash}
+							title={turnOnCamera ? t("TurnOffCamera") : t("TurnOnCamera")}
+							className={`device__camera ${cameraExecute || screenSharing ? 'busy' : ''} ${turnOnCamera ? 'device-use' : ''}`}
+							onClick={cameraExecute || screenSharing ? null : () => setTurnOnCamera(!turnOnCamera)}
+							onMouseEnter={screenSharing ? () => setShowWarning(true) : null}
+							onMouseLeave={screenSharing ? () => setShowWarning(false) : null}
+						/>
+					</div>
+				</div>
 			</div>
 			<div className="device">
 				<FontAwesomeIcon

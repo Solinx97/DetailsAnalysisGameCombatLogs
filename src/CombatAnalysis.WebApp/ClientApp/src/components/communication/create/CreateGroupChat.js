@@ -161,7 +161,7 @@ const CreateGroupChat = () => {
                 currentMenuItem={2}
             />
             <div className="communication-content create-community box-shadow">
-                <div>Create group chat</div>
+                <div>{t("CreateGroupChat")}</div>
                 <CreateGroupChatMenu
                     passedItemIndex={passedItemIndex}
                     seItemIndex={seItemIndex}
@@ -222,7 +222,7 @@ const CreateGroupChat = () => {
                     </div>
                 </div>
                 {(chatName.length === 0 && passedItemIndex > 0) &&
-                    <div className="chat-name-required">Chat name required!</div>
+                    <div className="chat-name-required">{t("NameRequired")}</div>
                 }
                 <div className="actions">
                     {(canFinishCreate && chatName.length > 0) &&

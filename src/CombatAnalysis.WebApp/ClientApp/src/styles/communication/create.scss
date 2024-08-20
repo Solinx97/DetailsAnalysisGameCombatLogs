@@ -10,7 +10,8 @@ $mobile-max-width: 425px;
     width: 35vw;
     right: 35vw;
     padding: 10px;
-    top: 20%;
+    top: 10vh;
+    margin-bottom: 50px;
 
     .chat-name-required {
         font-size: 13px;
@@ -20,7 +21,6 @@ $mobile-max-width: 425px;
     &__content {
         display: flex;
         justify-content: space-between;
-        width: 70%;
     }
 
     &__menu {

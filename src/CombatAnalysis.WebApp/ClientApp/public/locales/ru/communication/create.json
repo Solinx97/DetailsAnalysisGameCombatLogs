@@ -1,5 +1,5 @@
 {
-  "CreateNewGroupChat": "Создать новый групповой чат",
+  "CreateGroupChat": "Создать групповой чат",
   "Name": "Название",
   "MembersNumber": "Количство участником",
   "ChatPolicy": "Политика чата",
@@ -29,5 +29,6 @@
   "NextStep": "Следующий шаг",
   "PrevioslyStep": "Предыдущий шаг",
   "CreateCommunity": "Создать сообщество",
+  "NameRequired": "Название обязательно",
   "NameDescriptionRequired": "Название и описание обязательны"
 }
