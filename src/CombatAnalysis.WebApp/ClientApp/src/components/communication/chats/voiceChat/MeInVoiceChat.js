@@ -16,7 +16,7 @@ const MeInVoiceChat = ({ micStatus, cameraStatus, localStream }) => {
         if (cameraStatus) {
             videosRef.current.srcObject = localStream;
             videosRef.current.muted = true;
-            videosRef.current.play();
+            videosRef.current.autoplay = true;
         }
         else {
             videosRef.current= null;

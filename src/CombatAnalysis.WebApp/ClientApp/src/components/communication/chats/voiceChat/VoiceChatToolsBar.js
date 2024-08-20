@@ -1,6 +1,6 @@
 ﻿import { faAngleDown, faAngleUp, faDisplay, faLinkSlash, faMicrophone, faMicrophoneSlash, faRightFromBracket, faVideo, faVideoSlash } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import React, { memo, useEffect, useRef, useState } from 'react';
+import React, { memo, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import VoiceChatAudioDeviceSettings from './VoiceChatAudioDeviceSettings';
 
@@ -8,8 +8,7 @@ const VoiceChatToolsBar = ({ t, properties, methods, screenSharing, setScreenSha
 	const [openAudioSettings, setOpenAudioSettings] = useState(false);
 	const [cameraExecute, setCameraExecute] = useState(false);
 	const [showWarning, setShowWarning] = useState(false);
-
-	const audioInputDeviceIdRef = useRef(null);
+	const [audioInputDeviceId, setAudioInputDeviceId] = useState("");
 
 	const navigate = useNavigate();
 
@@ -23,7 +22,7 @@ const VoiceChatToolsBar = ({ t, properties, methods, screenSharing, setScreenSha
 		}
 
 		switchMicrophoneStatus();
-	}, [properties.hubConnection, properties.stream, turnOnMicrophone]);
+	}, [properties.hubConnection, turnOnMicrophone]);
 
 	useEffect(() => {
 		if (!properties.hubConnection) {
@@ -43,7 +42,7 @@ const VoiceChatToolsBar = ({ t, properties, methods, screenSharing, setScreenSha
 		}
 
 		switchCameraStatus();
-	}, [properties.hubConnection, properties.stream, turnOnCamera]);
+	}, [properties.hubConnection, turnOnCamera]);
 
 	const leaveFromCallAsync = async () => {
 		await methods.stopMediaDataAsync();
@@ -53,6 +52,10 @@ const VoiceChatToolsBar = ({ t, properties, methods, screenSharing, setScreenSha
 
 	const handleOpenAudioSettings = () => {
 		setOpenAudioSettings(!openAudioSettings);
+	}
+
+	const handleSwicthScreenSharing = () => {
+		setScreenSharing(!screenSharing);
 	}
 
     return (
@@ -65,7 +68,7 @@ const VoiceChatToolsBar = ({ t, properties, methods, screenSharing, setScreenSha
 					icon={screenSharing ? faDisplay : faLinkSlash}
 					title={screenSharing ? t("TurnOffScreenSharing") : t("TurnOnScreenSharing")}
 					className={`device__screen-sharing ${turnOnCamera ? 'busy' : ''} ${screenSharing ? 'device-use' : ''}`}
-					onClick={turnOnCamera ? null : () => setScreenSharing(!screenSharing)}
+					onClick={turnOnCamera ? null : handleSwicthScreenSharing}
 					onMouseEnter={turnOnCamera ? () => setShowWarning(true) : null}
 					onMouseLeave={turnOnCamera ? () => setShowWarning(false) : null}
 				/>
@@ -102,7 +105,8 @@ const VoiceChatToolsBar = ({ t, properties, methods, screenSharing, setScreenSha
 						peerConnectionsRef={properties.peerConnectionsRef}
 						turnOnMicrophone={turnOnMicrophone}
 						stream={properties.stream}
-						audioInputDeviceIdRef={audioInputDeviceIdRef}
+						audioInputDeviceId={audioInputDeviceId}
+						setAudioInputDeviceId={setAudioInputDeviceId}
 						audioOutputDeviceId={audioOutputDeviceId}
 						setAudioOutputDeviceId={setAudioOutputDeviceId}
 					/>

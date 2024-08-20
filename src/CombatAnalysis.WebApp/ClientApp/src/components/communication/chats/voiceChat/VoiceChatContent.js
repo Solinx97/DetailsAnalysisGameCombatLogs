@@ -1,9 +1,8 @@
-import { useEffect, useRef, useState, memo } from "react";
+import { useEffect, useRef, useState } from "react";
 import MeInVoiceChat from "./MeInVoiceChat";
 import VoiceChatUser from "./VoiceChatUser";
-import useRTCConnection from '../../../../hooks/useRTCConnection';
 
-const VoiceChatContent = ({ roomId, hubConnection, peerConnections, stream, micStatus, cameraStatus, screenSharing, setScreenSharing, screenSharingVideoRef, audioOutputDeviceId  }) => {
+const VoiceChatContent = ({ hubConnection, peerConnections, stream, mediaRequestsAsync, micStatus, cameraStatus, screenSharing, setScreenSharing, screenSharingVideoRef, audioOutputDeviceId  }) => {
 	const [usersId, setUsersId] = useState([]);
 	const [myId, setMyId] = useState("");
 	const [otherScreenSharing, setOtherScreenSharing] = useState(false);
@@ -12,15 +11,10 @@ const VoiceChatContent = ({ roomId, hubConnection, peerConnections, stream, micS
 	const otherScreenSharingVideoRef = useRef(null);
 	const otherScreenSharingUserIdRef = useRef("");
 
-	const { setup, start, sendSignalAsync } = useRTCConnection();
-
 	useEffect(() => {
 		if (!hubConnection) {
 			return;
 		}
-
-		setup(hubConnection, roomId);
-		start();
 
 		callConnectedUsers();
 	}, [hubConnection]);
@@ -42,11 +36,10 @@ const VoiceChatContent = ({ roomId, hubConnection, peerConnections, stream, micS
 			const anotherUsers = connectedUsers.filter((user) => user !== myId);
 			setUsersId(anotherUsers);
 
-			await sendSignalAsync("SendRequestMicrophoneStatus");
-			await sendSignalAsync("SendRequestCameraStatus");
+			await mediaRequestsAsync();
 		}
 
-		const handleUserLeft = async (userId) => {
+		const handleUserLeft = (userId) => {
 			if (userId === otherScreenSharingUserIdRef.current) {
 				setOtherScreenSharing(false);
 				otherScreenSharingUserIdRef.current = "";
@@ -56,7 +49,7 @@ const VoiceChatContent = ({ roomId, hubConnection, peerConnections, stream, micS
 			setUsersId(anotherUsers);
 		}
 
-		const handleUserJoined = async (userId) => {
+		const handleUserJoined = (userId) => {
 			const joinedUsers = Object.assign([], usersId);
 			joinedUsers.push(userId);
 
@@ -75,10 +68,8 @@ const VoiceChatContent = ({ roomId, hubConnection, peerConnections, stream, micS
 	}, [hubConnection, myId, usersId]);
 
 	const callConnectedUsers = () => {
-		hubConnection.on("Connected", async (userId) => {
+		hubConnection.on("Connected", (userId) => {
 			setMyId(userId);
-
-			await sendSignalAsync("RequestConnectedUsers");
 		});
 	}
 

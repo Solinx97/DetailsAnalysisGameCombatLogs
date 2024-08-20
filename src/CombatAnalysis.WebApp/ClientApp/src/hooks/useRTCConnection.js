@@ -3,7 +3,7 @@
 const useRTCConnection = () => {
 	const hubConnectionRef = useRef(null);
 	const roomIdRef = useRef(null);
-	const setStreamRef = useRef(null);
+	const localStreamRef = useRef(null);
 
 	const peerConnectionsRef = useRef(new Map());
 
@@ -16,10 +16,9 @@ const useRTCConnection = () => {
 		iceServers: [{ urls: 'stun:stun.l.google.com:19302' }]
 	};
 
-	const setup = (hubConnection, roomId, setStream, peerConnections, canLeave = true, setCanLeave = () => {}) => {
+	const setup = (hubConnection, roomId, peerConnections, canLeave = true, setCanLeave = () => {}) => {
 		hubConnectionRef.current = hubConnection;
 		roomIdRef.current = roomId;
-		setStreamRef.current = setStream;
 		peerConnectionsRef.current = peerConnections;
 		canLeaveRef.current = canLeave;
 		setCanLeaveRef.current = setCanLeave;
@@ -28,22 +27,28 @@ const useRTCConnection = () => {
 	}
 
 	const start = () => {
+		createStream();
+
 		connectionIsActiveRef.current = true;
 	}
 
+	const createStream = () => {
+		navigator.mediaDevices.getUserMedia({ audio: true }).then(stream => {
+			localStreamRef.current = stream;
+		})
+	}
+
 	const listeningSignalMessages = () => {
-		hubConnectionRef.current.on("Connected", async (userId) => {
+		hubConnectionRef.current.on("Connected", (userId) => {
 			myConnectionIdRef.current = userId;
 			setCanLeaveRef.current(true);
-
-			await getOrCreatePeerConnectionAsync(userId);
 		});
 
-		hubConnectionRef.current.on("UserJoined", async (userId) => {
-			await getOrCreatePeerConnectionAsync(userId);
+		hubConnectionRef.current.on("UserJoined", (userId) => {
+			getOrCreatePeerConnection(userId);
 		});
 
-		hubConnectionRef.current.on("UserLeft", async (userId) => {
+		hubConnectionRef.current.on("UserLeft", (userId) => {
 			const peerConnection = peerConnectionsRef.current.get(userId);
 			if (peerConnection) {
 				peerConnection.close();
@@ -51,10 +56,10 @@ const useRTCConnection = () => {
 			}
 		});
 
-		hubConnectionRef.current.on("ReceiveConnectedUsers", async (connectedUsers) => {
+		hubConnectionRef.current.on("ReceiveConnectedUsers", (connectedUsers) => {
 			for (const userId of connectedUsers) {
 				if (myConnectionIdRef.current && userId !== myConnectionIdRef.current) {
-					await getOrCreatePeerConnectionAsync(userId);
+					getOrCreatePeerConnection(userId);
 				}
 			}
 		});
@@ -62,7 +67,7 @@ const useRTCConnection = () => {
 
 	const listeningAnswersAsync = async () => {
 		hubConnectionRef.current.on("ReceiveOffer", async (fromConnectionId, offer) => {
-			const peerConnection = await getOrCreatePeerConnectionAsync(fromConnectionId);
+			const peerConnection = getOrCreatePeerConnection(fromConnectionId);
 			await peerConnection.setRemoteDescription(new RTCSessionDescription(JSON.parse(offer)));
 			const answer = await peerConnection.createAnswer();
 			await peerConnection.setLocalDescription(answer);
@@ -85,7 +90,7 @@ const useRTCConnection = () => {
 		});
 	}
 
-	const getOrCreatePeerConnectionAsync = async (userId) => {
+	const getOrCreatePeerConnection = (userId) => {
 		let peerConnection = peerConnectionsRef.current.get(userId);
 		if (peerConnection) {
 			return peerConnection;
@@ -95,11 +100,12 @@ const useRTCConnection = () => {
 		peerConnectionsRef.current.set(userId, peerConnection);
 
 		peerConnection.addEventListener("negotiationneeded", async (event) => {
-			try {
-				await createOfferAsync(userId, peerConnection);
-			} catch (e) {
-				console.log(e);
-			}
+			const pc = event.currentTarget;
+
+			const offer = await pc.createOffer();
+			await pc.setLocalDescription(offer);
+
+			await sendSignalAsync("SendOffer", userId, JSON.stringify(pc.localDescription));
 		});
 
 		peerConnection.addEventListener("icecandidate", async (event) => {
@@ -108,22 +114,20 @@ const useRTCConnection = () => {
 			}
 		});
 
-		navigator.mediaDevices.getUserMedia({ audio: true }).then(steam => {
-			steam.getAudioTracks().forEach(track => {
-				addTrackToPeer(peerConnection, track, steam);
+		navigator.mediaDevices.getUserMedia({ audio: true }).then(stream => {
+			localStreamRef.current.getAudioTracks().forEach(track => {
+				track.stop();
+				localStreamRef.current.removeTrack(track);
 			});
 
-			setStreamRef.current(steam);
-		});
+			stream.getAudioTracks().forEach(track => {
+				localStreamRef.current.addTrack(track);
+
+				addTrackToPeer(peerConnection, track, localStreamRef.current);
+			});
+		})
 
 		return peerConnection;
-	}
-
-	const createOfferAsync = async (targetConnectionId, peerConnection) => {
-		const offer = await peerConnection.createOffer();
-		await peerConnection.setLocalDescription(offer);
-
-		await sendSignalAsync("SendOffer", targetConnectionId, JSON.stringify(peerConnection.localDescription));
 	}
 
 	const sendSignalAsync = async (message, userId, content, status = null) => {
@@ -189,21 +193,11 @@ const useRTCConnection = () => {
 		}
 	}
 
-	const getKeyByValue = (map, searchValue) => {
-		for (let [key, value] of map.entries()) {
-			if (value === searchValue) {
-				return key;
-			}
-		}
-
-		return undefined;
-	}
-
 	const addTrackToPeer = (peerConnection, track, stream) => {
 		peerConnection.addTrack(track, stream);
 	}
 
-	return { setup, start, listeningSignalMessages, listeningAnswersAsync, sendSignalAsync, cleanupAsync, addTrackToPeer };
+	return { localStreamRef, setup, start, listeningSignalMessages, listeningAnswersAsync, sendSignalAsync, cleanupAsync, addTrackToPeer };
 }
 
 export default useRTCConnection;

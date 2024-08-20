@@ -23,9 +23,10 @@ const VoiceChatUser = ({ userId, hubConnection, peerConnection, otherScreenShari
 
         const createAudio = async (event) => {
             const track = event.track;
-            if (track.kind === "audio" && audioContentRef.current) {
+
+            if (track.kind === "audio") {
                 audioContentRef.current.id = "active";
-                audioContentRef.current.srcObject = event.streams[0];
+                audioContentRef.current.srcObject = new MediaStream([track]);
                 audioContentRef.current.autoplay = true;
 
                 if (audioOutputDeviceId) {
@@ -41,10 +42,10 @@ const VoiceChatUser = ({ userId, hubConnection, peerConnection, otherScreenShari
                 peerConnection.removeEventListener("track", createAudio);
             }
         }
-    }, [peerConnection, turnOnMicrophone]);
+    }, [peerConnection, turnOnMicrophone, audioOutputDeviceId]);
 
     useEffect(() => {
-        if (!peerConnection || !turnOnCamera) {
+        if (!peerConnection) {
             return;
         }
 
@@ -73,8 +74,9 @@ const VoiceChatUser = ({ userId, hubConnection, peerConnection, otherScreenShari
 
         const createVideoFromScreenSharing = (event) => {
             const track = event.track;
+
             if (track.kind === "video" && otherScreenSharingVideoRef.current) {
-                otherScreenSharingVideoRef.current.srcObject = new MediaStream([track]);
+                otherScreenSharingVideoRef.current.srcObject = new MediaStream([track])
                 otherScreenSharingVideoRef.current.muted = true;
                 otherScreenSharingVideoRef.current.autoplay = true;
             }
@@ -126,7 +128,7 @@ const VoiceChatUser = ({ userId, hubConnection, peerConnection, otherScreenShari
             hubConnection.off("ReceiveCameraStatus", handleReceiveCameraStatus);
             hubConnection.off("ReceiveScreenSharingStatus", handleReceiveScreenSharingStatus);
         };
-    }, [hubConnection, userId, otherScreenSharing]);
+    }, [hubConnection, otherScreenSharing]);
 
     useEffect(() => {
         if (!voice) {

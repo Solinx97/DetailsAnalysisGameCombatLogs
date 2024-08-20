@@ -20,6 +20,7 @@ const VoiceChat = () => {
 	const [audioOutputDeviceId, setAudioOutputDeviceId] = useState("");
 
 	const [screenSharing, setScreenSharing] = useState(false);
+	const [screenSharingIsActivated, setScreenSharingIsActivated] = useState(false);
 
 	const screenSharingVideoRef = useRef(null);
 
@@ -55,42 +56,43 @@ const VoiceChat = () => {
 	}, [me]);
 
 	useEffect(() => {
-		if (!properties.hubConnection || !properties.stream) {
+		if (!properties.hubConnection) {
 			return;
 		}
 
-		if (screenSharing) {
-			setTurnOnCamera(false);
+		const startScreenSharing = async () => {
+			await methods.startScreenSharingAsync(screenSharing, setScreenSharingIsActivated);
 		}
 
-		const handleScreenSharing = async () => {
-			const screenSharingStream = await methods.startScreenSharingAsync(screenSharing);
-			if (!screenSharingStream) {
-				screenSharingVideoRef.current = null;
-				setScreenSharing(false);
+		startScreenSharing();
+	}, [properties.hubConnection, screenSharing]);
 
-				return;
-			}
-
-
-			screenSharingVideoRef.current.srcObject = screenSharingStream;
-			screenSharingVideoRef.current.autoplay = true;
-
-			screenSharingStream.getVideoTracks()[0].addEventListener("ended", () => {
-				screenSharingVideoRef.current = null;
-				setScreenSharing(false);
-			});
+	useEffect(() => {
+		if (!screenSharing) {
+			return;
 		}
 
-		handleScreenSharing();
-	}, [properties.stream, screenSharing]);
+		screenSharingVideoRef.current.srcObject = properties.localStreamRef.current;
+		screenSharingVideoRef.current.muted = true;
+		screenSharingVideoRef.current.autoplay = true;
+	}, [screenSharing]);
+
+	useEffect(() => {
+		if (screenSharingIsActivated) {
+			return;
+		}
+
+		screenSharingVideoRef.current = null;
+		setScreenSharing(false);
+	}, [screenSharingIsActivated]);
 
 	const renderVoiceChatContent = () => (
 		<VoiceChatContent
 			roomId={roomId}
 			hubConnection={properties.hubConnection}
 			peerConnections={properties.peerConnectionsRef.current}
-			stream={properties.stream}
+			stream={properties.localStreamRef.current}
+			mediaRequestsAsync={methods.mediaRequestsAsync}
 			micStatus={turnOnMicrophone}
 			cameraStatus={turnOnCamera}
 			screenSharing={screenSharing}
