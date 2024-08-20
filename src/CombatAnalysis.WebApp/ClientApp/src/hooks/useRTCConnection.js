@@ -122,7 +122,9 @@ const useRTCConnection = () => {
 
 			stream.getAudioTracks().forEach(track => {
 				localStreamRef.current.addTrack(track);
+			});
 
+			localStreamRef.current.getTracks().forEach(track => {
 				addTrackToPeer(peerConnection, track, localStreamRef.current);
 			});
 		})
@@ -160,7 +162,7 @@ const useRTCConnection = () => {
 		}
 	}
 
-	const cleanupAsync = async () => {
+	const cleanup = () => {
 		try {
 			// Close all peer connections
 			for (const peerConnection of peerConnectionsRef.current.values()) {
@@ -182,8 +184,9 @@ const useRTCConnection = () => {
 
 			// Leave the room and stop the connection
 			if (hubConnectionRef.current) {
-				await hubConnectionRef.current.stop();
-				hubConnectionRef.current = null;
+				hubConnectionRef.current.stop().then(() => {
+					hubConnectionRef.current = null;
+				});
 			}
 
 			// Clear other references
@@ -197,7 +200,7 @@ const useRTCConnection = () => {
 		peerConnection.addTrack(track, stream);
 	}
 
-	return { localStreamRef, setup, start, listeningSignalMessages, listeningAnswersAsync, sendSignalAsync, cleanupAsync, addTrackToPeer };
+	return { localStreamRef, setup, start, listeningSignalMessages, listeningAnswersAsync, sendSignalAsync, cleanup, addTrackToPeer };
 }
 
 export default useRTCConnection;

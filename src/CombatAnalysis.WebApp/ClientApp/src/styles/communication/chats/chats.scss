@@ -146,10 +146,7 @@ $mobile-max-width: 425px;
             &__chats {
                 display: none;
 
-                &__not-found {
-                    opacity: 0.4;
-                    text-align: center;
-                }
+
 
                 &_active {
                     .selected {
@@ -196,6 +193,12 @@ $mobile-max-width: 425px;
                         }
                     }
                 }
+            }
+
+            .not-found {
+                opacity: 0.6;
+                text-align: center;
+                margin: 5px 0;
             }
         }
 

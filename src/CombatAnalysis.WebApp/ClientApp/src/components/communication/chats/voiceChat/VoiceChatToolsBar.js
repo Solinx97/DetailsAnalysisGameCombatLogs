@@ -44,8 +44,8 @@ const VoiceChatToolsBar = ({ t, properties, methods, screenSharing, setScreenSha
 		switchCameraStatus();
 	}, [properties.hubConnection, turnOnCamera]);
 
-	const leaveFromCallAsync = async () => {
-		await methods.stopMediaDataAsync();
+	const leaveFromCallAsync = () => {
+		methods.stopMediaData();
 
 		navigate("/chats");
 	}

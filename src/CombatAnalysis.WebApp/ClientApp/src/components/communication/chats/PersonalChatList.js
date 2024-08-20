@@ -22,7 +22,9 @@ const PersonalChatList = ({ meId, t, personalChats, selectedChat, setSelectedCha
             </div>
             <ul className={`chat-list__chats${!chatsHidden ? "_active" : ""}`}>
                 {personalChats?.length === 0
-                    ? <div className="personal-chats__not-found">{t("PersonalChatsEmptyYet")}</div>
+                    ? <div className="personal-chats not-found">
+                        {t("PersonalChatsEmptyYet")}
+                    </div>
                     : personalChats?.map((chat) => (
                         <li key={chat.id} className={selectedChat.type === "personal" && selectedChat.chat?.id === chat?.id ? `selected` : ``}>
                             <PersonalChatListItem

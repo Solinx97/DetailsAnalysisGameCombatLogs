@@ -12,7 +12,7 @@ const GroupChatListItem = ({ chatId, groupChatUserId, setSelectedGroupChat }) =>
         pollingInterval: groupChatCountPollingInterval,
     });
 
-    if (isLoading || messagesCountLoading || chat === null) {
+    if (isLoading || messagesCountLoading || !chat) {
         return (<div className="chat-loading-yet">Loading...</div>);
     }
 

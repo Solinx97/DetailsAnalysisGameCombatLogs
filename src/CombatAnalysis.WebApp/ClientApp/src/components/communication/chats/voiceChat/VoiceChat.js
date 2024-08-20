@@ -35,7 +35,7 @@ const VoiceChat = () => {
 
 		return () => {
 			const cleanup = async () => {
-				await methods.stopMediaDataAsync();
+				methods.stopMediaData();
 			}
 
 			cleanup();

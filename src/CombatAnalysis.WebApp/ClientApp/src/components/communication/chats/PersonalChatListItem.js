@@ -10,7 +10,7 @@ const PersonalChatListItem = ({ chat, setSelectedPersonalChat, companionId, meId
     });
 
     if (isLoading || messagesCountLoading) {
-        return (<div>Loading...</div>)
+        return (<div className="chat-loading-yet">Loading...</div>)
     }
 
     return (

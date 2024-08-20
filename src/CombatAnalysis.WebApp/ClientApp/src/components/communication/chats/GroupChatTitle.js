@@ -8,23 +8,25 @@ const GroupChatTitle = ({ chat, me, settingsIsShow, setSettingsIsShow, t }) => {
     const navigate = useNavigate();
 
     const [editNameOn, setEditNameOn] = useState(false);
+    const [chatName, setChatName] = useState(chat.name);
 
     const chatNameInput = useRef(null);
 
     const [updateGroupChatAsyncMut] = useUpdateGroupChatAsyncMutation();
 
     const updateGroupChatNameAsync = async () => {
-        setEditNameOn(false);
-
         const unblockedObject = Object.assign({}, chat);
         unblockedObject.name = chatNameInput.current.value;
 
-        await updateGroupChatAsyncMut(unblockedObject);
+        const response = await updateGroupChatAsyncMut(unblockedObject);
+        if (!response.error) {
+            setChatName(chatNameInput.current.value);
+
+            setEditNameOn(false);
+        }
     }
 
     const call = () => {
-        document.cookie = "callAlreadyStarted=true";
-
         navigate(`/chats/voice/${chat.id}/${chat.name}`);
     }
 
@@ -41,7 +43,7 @@ const GroupChatTitle = ({ chat, me, settingsIsShow, setSettingsIsShow, t }) => {
                 }
                 {editNameOn
                     ? <>
-                        <input className="form-control" type="text" defaultValue={chat.name} ref={chatNameInput} />
+                        <input className="form-control" type="text" defaultValue={chatName} ref={chatNameInput} />
                         <FontAwesomeIcon
                             icon={faCloudArrowUp}
                             title={t("Save")}
@@ -49,7 +51,7 @@ const GroupChatTitle = ({ chat, me, settingsIsShow, setSettingsIsShow, t }) => {
                             onClick={async () => await updateGroupChatNameAsync()}
                         />
                     </>
-                    : <div className="name" title={chat.name}>{chat.name}</div>
+                    : <div className="name" title={chatName}>{chatName}</div>
                 }
             </div>
             <div className="title__menu">
