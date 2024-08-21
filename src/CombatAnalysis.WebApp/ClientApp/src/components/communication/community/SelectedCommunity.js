@@ -1,4 +1,4 @@
-import { faBars, faCloudArrowUp, faEarthEurope, faEye, faEyeSlash, faPen, faShieldHalved } from '@fortawesome/free-solid-svg-icons';
+import { faBars, faCloudArrowUp, faEarthEurope, faEye, faEyeSlash, faPen, faShieldHalved, faChevronRight, faChevronLeft } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { memo, useEffect, useRef, useState } from "react";
 import { useTranslation } from 'react-i18next';
@@ -30,6 +30,7 @@ const SelectedCommunity = () => {
     const [editDescriptionOn, setEditDescriptionOn] = useState(false);
     const [showDiscussion, setShowDiscussion] = useState(false);
     const [discussion, setDiscussion] = useState(null);
+    const [showActions, setShowActions] = useState(true);
 
     const communityNameInput = useRef(null);
     const communityDescriptionInput = useRef(null);
@@ -145,7 +146,7 @@ const SelectedCommunity = () => {
                                     </div>
                                 }
                             </div>
-                            {isCommunityMember &&
+                            {(isCommunityMember && community.appUserId === user?.id) &&
                                 <FontAwesomeIcon
                                     icon={faBars}
                                     title={t("Menu")}
@@ -217,24 +218,33 @@ const SelectedCommunity = () => {
                         />
                     </div>
                 </div>
-                <ul className="selected-community__actions">
-                    <li>
-                        <CommunityMembers
-                            community={community}
-                            user={user}
-                            setIsCommunityMember={setIsCommunityMember}
-                        />
-                    </li>
-                    <li>
-                        <CommunityDiscussions
-                            community={community}
-                            customer={user}
-                            setShowDiscussion={setShowDiscussion}
-                            setDiscussion={setDiscussion}
-                            isCommunityMember={isCommunityMember}
-                        />
-                    </li>
-                </ul>
+                <div className="selected-community__actions-container">
+                    <FontAwesomeIcon
+                        icon={showActions ? faChevronRight : faChevronLeft}
+                        title={showActions ? t("HideActions") : t("ShowActions")}
+                        onClick={() => setShowActions((item) => !item)}
+                    />
+                    {showActions &&
+                        <div className="selected-community__actions">
+                            <div>
+                                <CommunityMembers
+                                    community={community}
+                                    user={user}
+                                    setIsCommunityMember={setIsCommunityMember}
+                                />
+                            </div>
+                            <div>
+                                <CommunityDiscussions
+                                    community={community}
+                                    customer={user}
+                                    setShowDiscussion={setShowDiscussion}
+                                    setDiscussion={setDiscussion}
+                                    isCommunityMember={isCommunityMember}
+                                />
+                            </div>
+                        </div>
+                    }
+                </div>
             </div>
             {showMenu &&
                 <CommunityMenu

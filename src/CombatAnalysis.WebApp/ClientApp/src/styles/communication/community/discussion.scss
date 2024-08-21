@@ -5,32 +5,38 @@ $mobile-max-width: 425px;
     flex-direction: column;
     align-items: center;
 
-    &__title .actions {
+    &__title {
         display: flex;
         justify-content: space-between;
-        align-items: center;
-        width: 150px;
 
-        svg {
-            cursor: pointer;
+        .actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 150px;
 
-            &:hover {
-                transform: scale(1.25);
+            svg {
+                cursor: pointer;
+
+                &:hover {
+                    transform: scale(1.25);
+                }
             }
         }
     }
 
     &__content {
-        display: flex;
-        flex-direction: column;
-        gap: 10px;
-        margin: 10px 0;
+        max-height: 200px;
+        overflow-y: auto;
+        width: 100%;
+        padding: 5px 10px !important;
 
         li {
             cursor: pointer;
-            font-weight: bold;
-            max-width: 130px;
             padding: 5px 10px;
+            margin: 5px 0;
+            white-space: nowrap;
+            text-overflow: ellipsis;
             overflow: hidden;
             border-radius: 10px;
             box-shadow: 1px 1px 1px 1px brown;

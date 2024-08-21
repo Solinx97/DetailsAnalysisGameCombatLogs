@@ -106,15 +106,33 @@ $mobile-max-width: 425px;
         }
     }
 
-    &__actions {
+    &__actions-container {
         position: fixed;
         right: 1vw;
-        top: 40vh;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        min-height: 250px;
+
+        svg {
+            cursor: pointer;
+
+            :hover {
+                transform: scale(1.2);
+            }
+        }
+    }
+
+    &__actions {
         display: flex;
         flex-direction: column;
         gap: 15px;
-        padding: 0;
+        padding: 5px 10px !important;
         margin: 10px;
+        background: #0c192c;
+        box-shadow: 1px 1px 1px 1px yellow;
+        border-radius: 10px;
+        z-index: 1000;
 
         .members {
             display: flex;
@@ -124,13 +142,13 @@ $mobile-max-width: 425px;
             &__title {
                 display: flex;
                 flex-direction: column;
-                justify-content: center;
+                justify-content: space-between;
+                align-items: center;
 
                 .tool {
                     display: flex;
                     justify-content: space-around;
                     align-items: center;
-                    margin: 0 10px;
 
                     .remove_active {
                         color: saddlebrown;
@@ -139,7 +157,8 @@ $mobile-max-width: 425px;
 
                 .actions {
                     display: flex;
-                    flex-direction: row;
+                    justify-content: space-around;
+                    width: 100%;
                 }
 
                 .notification {
@@ -162,6 +181,10 @@ $mobile-max-width: 425px;
                 flex-direction: column;
                 gap: 10px;
                 margin: 10px 0;
+                padding: 5px 10px !important;
+                max-height: 200px;
+                width: 100%;
+                overflow-y: auto;
             }
 
             .all-people {
@@ -187,11 +210,6 @@ $mobile-max-width: 425px;
 
                     svg {
                         padding: 0 5px;
-
-                        &:hover {
-                            cursor: pointer;
-                            transform: scale(1.25);
-                        }
                     }
                 }
 
@@ -228,8 +246,6 @@ $mobile-max-width: 425px;
                     }
 
                     svg:hover {
-                        cursor: pointer;
-                        transform: scale(1.1);
                         background: green;
                         color: white;
                     }
@@ -238,20 +254,12 @@ $mobile-max-width: 425px;
                 svg {
                     margin: 10px 20px;
                 }
-
-                svg:hover {
-                    cursor: pointer;
-                }
             }
 
             .special-user__another {
                 display: flex;
                 align-items: center;
                 gap: 10px;
-
-                svg {
-                    cursor: pointer;
-                }
             }
         }
     }
