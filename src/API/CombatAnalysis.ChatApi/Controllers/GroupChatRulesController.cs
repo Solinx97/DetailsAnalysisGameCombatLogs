@@ -42,7 +42,7 @@ public class GroupChatRulesController : ControllerBase
     [HttpGet("findByChatId/{id:int:min(1)}")]
     public async Task<IActionResult> FindByChatId(int id)
     {
-        var result = await _service.GetByParamAsync(nameof(GroupChatRulesModel.GroupChatId), id);
+        var result = await _service.GetByParamAsync(nameof(GroupChatRulesModel.ChatId), id);
 
         return Ok(result);
     }

@@ -14,7 +14,7 @@ public class CombatParserSQLContext : DbContext
 
         if (isExists)
         {
-            DbProcedureHelper.CreateProcedures(this);
+            DbContextHelper.CreateProcedures(this);
         }
     }
 

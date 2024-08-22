@@ -4,7 +4,7 @@ using System.Text;
 
 namespace CombatAnalysis.DAL.Helpers;
 
-internal static class DbProcedureHelper
+internal static class DbContextHelper
 {
     public static void CreateProcedures(DbContext dbContext)
     {
@@ -30,38 +30,42 @@ internal static class DbProcedureHelper
         foreach (var item in types)
         {
             var query = $"CREATE PROCEDURE GetAll{item.Name}\n" +
-                          "\tAS SELECT * \n" +
-                          $"\tFROM {item.Name}";
+                         "\tAS\n" +
+                         "\tSELECT * \n" +
+                        $"\tFROM {item.Name}";
             dbContext.Database.ExecuteSqlRaw(query);
 
             var property = item.GetProperty("Id");
             query = $"CREATE PROCEDURE Get{item.Name}ById (@id {Converter(property.PropertyType.Name)})\n" +
-                          "\tAS SELECT * \n" +
-                          $"\tFROM {item.Name}\n" +
-                          "\tWHERE Id = @id";
+                     "\tAS\n" +
+                     "\tSELECT * \n" +
+                    $"\tFROM {item.Name}\n" +
+                     "\tWHERE Id = @id";
             dbContext.Database.ExecuteSqlRaw(query);
 
             var insertIntoParams = InsertIntoParams(item);
             var insertIntoOutputParams = InsertIntoOutputParams(item);
             query = $"CREATE PROCEDURE InsertInto{item.Name} ({insertIntoParams.Item1})\n" +
-                          $"\tAS\n" +
-                          $"\tDECLARE @OutputTbl TABLE ({insertIntoOutputParams})\n" +
-                          $"\tINSERT INTO {item.Name}\n" +
-                          $"\tOUTPUT INSERTED.* INTO @OutputTbl\n" +
-                          $"\tVALUES ({insertIntoParams.Item2})\n" +
-                          "\tSELECT * FROM @OutputTbl";
+                    $"\tAS\n" +
+                    $"\tDECLARE @OutputTbl TABLE ({insertIntoOutputParams})\n" +
+                    $"\tINSERT INTO {item.Name}\n" +
+                    $"\tOUTPUT INSERTED.* INTO @OutputTbl\n" +
+                    $"\tVALUES ({insertIntoParams.Item2})\n" +
+                     "\tSELECT * FROM @OutputTbl";
             dbContext.Database.ExecuteSqlRaw(query);
 
             insertIntoParams = UpdateParamsAndValues(item);
             query = $"CREATE PROCEDURE Update{item.Name} ({insertIntoParams.Item1})\n" +
-                          $"\tAS UPDATE {item.Name}\n" +
-                          $"\tSET {insertIntoParams.Item2}\n" +
-                          "\tWHERE Id = @Id";
+                    $"\tAS\n" +
+                    $"\tUPDATE {item.Name}\n" +
+                    $"\tSET {insertIntoParams.Item2}\n" +
+                     "\tWHERE Id = @Id";
             dbContext.Database.ExecuteSqlRaw(query);
 
             query = $"CREATE PROCEDURE Delete{item.Name}ById (@id {Converter(property.PropertyType.Name)})\n" +
-                          $"\tAS DELETE FROM {item.Name}\n" +
-                          "\tWHERE Id = @id";
+                    $"\tAS\n" +
+                    $"\tDELETE FROM {item.Name}\n" +
+                     "\tWHERE Id = @id";
             dbContext.Database.ExecuteSqlRaw(query);
         }
 
@@ -84,11 +88,12 @@ internal static class DbProcedureHelper
         foreach (var item in types)
         {
             var property = item.GetProperty("CombatPlayerId");
-            var query = $"CREATE PROCEDURE Get{item.Name}ByCombatPlayerIdPagination (@combatPlayerId {Converter(property.PropertyType.Name)}, @page INT, @pageSize INT)\n" +
-                          "\tAS SELECT * \n" +
-                          $"\tFROM {item.Name}\n" +
+            var query =  $"CREATE PROCEDURE Get{item.Name}ByCombatPlayerIdPagination (@combatPlayerId {Converter(property.PropertyType.Name)}, @page INT, @pageSize INT)\n" +
+                          "\tAS\n" +
+                          "\tSELECT * \n" +
+                         $"\tFROM {item.Name}\n" +
                           "\tWHERE CombatPlayerId = @combatPlayerId\n" +
-                          $"\tORDER BY Id\n" +
+                         $"\tORDER BY Id\n" +
                           "\tOFFSET (@page - 1) * @pageSize ROWS\n" +
                           "\tFETCH NEXT @pageSize ROWS ONLY";
             dbContext.Database.ExecuteSqlRaw(query);
@@ -113,9 +118,10 @@ internal static class DbProcedureHelper
         foreach (var item in types)
         {
             var property = item.GetProperty("CombatPlayerId");
-            var query = $"CREATE PROCEDURE Get{item.Name}ByCombatPlayerId (@combatPlayerId {Converter(property.PropertyType.Name)})\n" +
-                          "\tAS SELECT * \n" +
-                          $"\tFROM {item.Name}\n" +
+            var query =  $"CREATE PROCEDURE Get{item.Name}ByCombatPlayerId (@combatPlayerId {Converter(property.PropertyType.Name)})\n" +
+                          "\tAS\n" +
+                          "\tSELECT * \n" +
+                         $"\tFROM {item.Name}\n" +
                           "\tWHERE CombatPlayerId = @combatPlayerId";
             dbContext.Database.ExecuteSqlRaw(query);
         }
@@ -128,11 +134,12 @@ internal static class DbProcedureHelper
         var propertySpecId = classType.GetProperty(nameof(SpecializationScore.SpecId));
         var propertyBossId = classType.GetProperty(nameof(SpecializationScore.BossId));
         var propertyDifficult = classType.GetProperty(nameof(SpecializationScore.Difficult));
-        var query = $"CREATE PROCEDURE Get{classType.Name}BySpecId (@specId {Converter(propertySpecId.PropertyType.Name)}, " +
+        var query =  $"CREATE PROCEDURE Get{classType.Name}BySpecId (@specId {Converter(propertySpecId.PropertyType.Name)}, " +
                                                                   $"@bossId {Converter(propertyBossId.PropertyType.Name)}, " +
                                                                   $"@difficult {Converter(propertyDifficult.PropertyType.Name)})\n" +
-                      "\tAS SELECT * \n" +
-                      $"\tFROM {classType.Name}\n" +
+                      "\tAS\n" +
+                      "\tSELECT * \n" +
+                     $"\tFROM {classType.Name}\n" +
                       "\tWHERE SpecId = @specId AND BossId = @bossId AND Difficult = @difficult";
         dbContext.Database.ExecuteSqlRaw(query);
     }
@@ -149,7 +156,7 @@ internal static class DbProcedureHelper
             procedureParamNames.Append($"@{properties[0].Name},");
         }
 
-        for (var i = 1; i < properties.Length; i++)
+        for (int i = 1; i < properties.Length; i++)
         {
             if (properties[i].CanWrite)
             {

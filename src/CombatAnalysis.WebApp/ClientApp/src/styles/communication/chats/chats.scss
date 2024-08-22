@@ -44,7 +44,7 @@ $mobile-max-width: 425px;
                 align-items: center;
                 box-shadow: $box-shadow $white;
                 border-radius: $border-radius;
-                padding: $padding-small $padding-large;
+                padding: 5px 20px;
                 cursor: default;
 
                 &__content {
@@ -87,6 +87,13 @@ $mobile-max-width: 425px;
                     padding: 5px $padding-small;
                     border-radius: $border-radius;
                 }
+            }
+
+            .load-more {
+                position: fixed;
+                margin-top: 15px;
+                left: 55vw;
+                z-index: 100;
             }
 
             .empty-message {

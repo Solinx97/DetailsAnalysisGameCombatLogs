@@ -12,15 +12,23 @@ namespace CombatAnalysis.ChatApi.Controllers;
 [Authorize]
 public class PersonalChatMessageController : ControllerBase
 {
-    private readonly IService<PersonalChatMessageDto, int> _service;
+    private readonly IChatMessageService<PersonalChatMessageDto, int> _service;
     private readonly IMapper _mapper;
     private readonly ILogger<PersonalChatMessageController> _logger;
 
-    public PersonalChatMessageController(IService<PersonalChatMessageDto, int> service, IMapper mapper, ILogger<PersonalChatMessageController> logger)
+    public PersonalChatMessageController(IChatMessageService<PersonalChatMessageDto, int> service, IMapper mapper, ILogger<PersonalChatMessageController> logger)
     {
         _service = service;
         _mapper = mapper;
         _logger = logger;
+    }
+
+    [HttpGet("count/{chatId}")]
+    public async Task<IActionResult> Count(int chatId)
+    {
+        var countByCombatPlayerId = await _service.CountByChatIdAsync(chatId);
+
+        return Ok(countByCombatPlayerId);
     }
 
     [HttpGet]
@@ -41,12 +49,12 @@ public class PersonalChatMessageController : ControllerBase
         return Ok(map);
     }
 
-    [HttpGet("findByChatId/{chatId:int:min(1)}")]
-    public async Task<IActionResult> Find(int chatId)
+    [HttpGet("getByChatId")]
+    public async Task<IActionResult> GetByChatId(int chatId, int pageSize)
     {
-        var groupChatMessages = await _service.GetByParamAsync("PersonalChatId", chatId);
+        var messages = await _service.GetByChatIdAsyn(chatId, pageSize);
 
-        return Ok(groupChatMessages);
+        return Ok(messages);
     }
 
     [HttpPost]

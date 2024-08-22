@@ -5,12 +5,13 @@ using CombatAnalysis.ChatDAL.Entities;
 using CombatAnalysis.ChatDAL.Interfaces;
 
 namespace CombatAnalysis.ChatBL.Services.Chat;
-internal class GroupChatMessageService : IService<GroupChatMessageDto, int>
+
+internal class GroupChatMessageService : IChatMessageService<GroupChatMessageDto, int>
 {
-    private readonly IGenericRepository<GroupChatMessage, int> _repository;
+    private readonly IChatMessageRepository<GroupChatMessage, int> _repository;
     private readonly IMapper _mapper;
 
-    public GroupChatMessageService(IGenericRepository<GroupChatMessage, int> repository, IMapper mapper)
+    public GroupChatMessageService(IChatMessageRepository<GroupChatMessage, int> repository, IMapper mapper)
     {
         _repository = repository;
         _mapper = mapper;
@@ -55,6 +56,21 @@ internal class GroupChatMessageService : IService<GroupChatMessageDto, int>
         var resultMap = _mapper.Map<IEnumerable<GroupChatMessageDto>>(result);
 
         return resultMap;
+    }
+
+    public async Task<IEnumerable<GroupChatMessageDto>> GetByChatIdAsyn(int chatId, int pageSize = 100)
+    {
+        var result = await _repository.GetByChatIdAsyn(chatId, pageSize);
+        var map = _mapper.Map<IEnumerable<GroupChatMessageDto>>(result);
+
+        return map;
+    }
+
+    public async Task<int> CountByChatIdAsync(int chatId)
+    {
+        var count = await _repository.CountByChatIdAsync(chatId);
+
+        return count;
     }
 
     public Task<int> UpdateAsync(GroupChatMessageDto item)

@@ -18,11 +18,11 @@ public static class ServiceCollectionExtensions
 
         services.AddScoped<IService<VoiceChatDto, string>, VoiceChatService>();
         services.AddScoped<IService<PersonalChatDto, int>, PersonalChatService>();
-        services.AddScoped<IService<PersonalChatMessageDto, int>, PersonalChatMessageService>();
+        services.AddScoped<IChatMessageService<PersonalChatMessageDto, int>, PersonalChatMessageService>();
         services.AddScoped<IService<PersonalChatMessageCountDto, int>, PersonalChatMessageCountService>();
         services.AddScoped<IService<GroupChatDto, int>, GroupChatService>();
         services.AddScoped<IService<GroupChatRulesDto, int>, GroupChatRulesService>();
-        services.AddScoped<IService<GroupChatMessageDto, int>, GroupChatMessageService>();
+        services.AddScoped<IChatMessageService<GroupChatMessageDto, int>, GroupChatMessageService>();
         services.AddScoped<IService<UnreadGroupChatMessageDto, int>, UnreadGroupChatMessageService>();
         services.AddScoped<IService<GroupChatMessageCountDto, int>, GroupChatMessageCountService>();
         services.AddScoped<IServiceTransaction<GroupChatUserDto, string>, GroupChatUserService>();

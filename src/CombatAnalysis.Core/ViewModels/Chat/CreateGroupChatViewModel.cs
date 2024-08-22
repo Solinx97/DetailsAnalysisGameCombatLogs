@@ -113,7 +113,7 @@ public class CreateGroupChatViewModel : MvxViewModel
         return response;
     }
 
-    private async Task<HttpResponseMessage> CreateGroupChatRulesAsync(int groupChatId)
+    private async Task<HttpResponseMessage> CreateGroupChatRulesAsync(int chatId)
     {
         var refreshToken = _memoryCache.Get<string>(nameof(MemoryCacheValue.RefreshToken));
         if (string.IsNullOrEmpty(refreshToken))
@@ -123,7 +123,7 @@ public class CreateGroupChatViewModel : MvxViewModel
 
         var groupChatUser = new GroupChatRulesModel
         {
-            GroupChatId = groupChatId,
+            ChatId = chatId,
             Announcements = _whoCanMakeAnounces,
             InvitePeople = _whoCanInvitePeople,
             RemovePeople = _whoCanRemovePeople,
@@ -134,7 +134,7 @@ public class CreateGroupChatViewModel : MvxViewModel
         return response;
     }
 
-    private async Task CreateGroupChatUserAsync(int groupChatId, string userId, string username)
+    private async Task CreateGroupChatUserAsync(int chatId, string userId, string username)
     {
         var refreshToken = _memoryCache.Get<string>(nameof(MemoryCacheValue.RefreshToken));
         if (string.IsNullOrEmpty(refreshToken))
@@ -146,7 +146,7 @@ public class CreateGroupChatViewModel : MvxViewModel
         {
             Id = "",
             Username = username,
-            GroupChatId = groupChatId,
+            ChatId = chatId,
             AppUserId = userId,
         };
 

@@ -9,12 +9,12 @@ namespace CombatAnalysis.ChatBL.Services.Chat;
 internal class PersonalChatService : IService<PersonalChatDto, int>
 {
     private readonly IGenericRepository<PersonalChat, int> _repository;
-    private readonly IService<PersonalChatMessageDto, int> _personalChatMessageService;
+    private readonly IChatMessageService<PersonalChatMessageDto, int> _personalChatMessageService;
     private readonly IMapper _mapper;
     private readonly ISqlContextService _sqlContextService;
 
     public PersonalChatService(IGenericRepository<PersonalChat, int> repository, IMapper mapper,
-        ISqlContextService sqlContextService, IService<PersonalChatMessageDto, int> personalChatMessageService)
+        ISqlContextService sqlContextService, IChatMessageService<PersonalChatMessageDto, int> personalChatMessageService)
     {
         _repository = repository;
         _mapper = mapper;
@@ -125,7 +125,7 @@ internal class PersonalChatService : IService<PersonalChatDto, int>
 
     private async Task DeletePersonalChatMessagesAsync(int chatId)
     {
-        var perosnalChatMessages = await _personalChatMessageService.GetByParamAsync(nameof(PersonalChatMessageDto.PersonalChatId), chatId);
+        var perosnalChatMessages = await _personalChatMessageService.GetByParamAsync(nameof(PersonalChatMessageDto.ChatId), chatId);
         foreach (var item in perosnalChatMessages)
         {
             var rowsAffected = await _personalChatMessageService.DeleteAsync(item.Id);

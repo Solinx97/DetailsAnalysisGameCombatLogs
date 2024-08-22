@@ -32,7 +32,7 @@ const PersonalChatList = ({ chat, companionId, log }) => {
             time: `${today.getHours()}:${today.getMinutes()}`,
             status: 0,
             type: messageType["log"],
-            personalChatId: chat.id,
+            chatId: chat.id,
             customerId: me?.id
         };
 

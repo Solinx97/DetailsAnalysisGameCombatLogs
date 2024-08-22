@@ -8,5 +8,5 @@ public class GroupChatUserDto
 
     public string AppUserId { get; set; }
 
-    public int GroupChatId { get; set; }
+    public int ChatId { get; set; }
 }

@@ -8,5 +8,5 @@ public class PersonalChatMessageCountModel
 
     public string AppUserId { get; set; }
 
-    public int PersonalChatId { get; set; }
+    public int ChatId { get; set; }
 }

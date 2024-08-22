@@ -2,6 +2,9 @@ import { ChatApi } from "../../ChatApi";
 
 export const PersonalChatMessageApi = ChatApi.injectEndpoints({
     endpoints: builder => ({
+        getPersonalChatMessageCountByChatId: builder.query({
+            query: (chatId) => `/PersonalChatMessage/count/${chatId}`
+        }),
         createPersonalChatMessageAsync: builder.mutation({
             query: message => ({
                 body: message,
@@ -32,17 +35,13 @@ export const PersonalChatMessageApi = ChatApi.injectEndpoints({
             }),
             invalidatesTags: (result, error) => [{ type: 'PersonalChatMessage', result }],
         }),
-        findPersonalChatMessageByChatId: builder.query({
-            query: (id) => `/PersonalChatMessage/findByChatId/${id}`,
-            providesTags: (result, error, id) => [{ type: 'PersonalChatMessage', id }],
-        }),
     })
 })
 
 export const {
+    useGetPersonalChatMessageCountByChatIdQuery,
     useCreatePersonalChatMessageAsyncMutation,
     useUpdatePersonalChatMessageAsyncMutation,
     useRemovePersonalChatMessageAsyncMutation,
     useRemovePersonalChatMessageByChatIdAsyncMutation,
-    useFindPersonalChatMessageByChatIdQuery,
 } = PersonalChatMessageApi;

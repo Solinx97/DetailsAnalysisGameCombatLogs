@@ -261,7 +261,7 @@ public class GroupChatMessagesViewModel : MvxViewModel, IImprovedMvxViewModel
     {
         foreach (var item in _allMessages)
         {
-            if (item.GroupChatId == SelectedChat?.Id
+            if (item.ChatId == SelectedChat?.Id
                 && !Messages.Any(x => x.Id == item.Id))
             {
                 Messages.Add(item);
@@ -281,7 +281,7 @@ public class GroupChatMessagesViewModel : MvxViewModel, IImprovedMvxViewModel
             Message = Message,
             Time = TimeSpan.Parse($"{DateTimeOffset.UtcNow.Hour}:{DateTimeOffset.UtcNow.Minute}").ToString(),
             Status = 0,
-            GroupChatId = SelectedChat.Id,
+            ChatId = SelectedChat.Id,
             AppUserId = MyAccount.Id,
         };
 
@@ -323,7 +323,7 @@ public class GroupChatMessagesViewModel : MvxViewModel, IImprovedMvxViewModel
 
         var groupChatUser = new GroupChatUserModel
         {
-            GroupChatId = SelectedChat.Id,
+            ChatId = SelectedChat.Id,
             AppUserId = userId,
         };
 

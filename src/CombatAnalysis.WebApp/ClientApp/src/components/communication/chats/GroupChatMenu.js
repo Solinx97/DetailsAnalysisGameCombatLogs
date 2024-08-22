@@ -73,14 +73,14 @@ const GroupChatMenu = ({ me, setUserInformation, setSelectedChat, setShowAddPeop
         setPeopleInspectionModeOn(false);
     }
 
-    const createMessageAsync = async (groupChatId, message) => {
+    const createMessageAsync = async (chatId, message) => {
         const today = new Date();
         const newMessage = {
             message: message,
             time: `${today.getHours()}:${today.getMinutes()}`,
             status: 0,
             type: 1,
-            groupChatId: groupChatId,
+            chatId: chatId,
             appUserId: me?.id
         };
 
@@ -108,7 +108,7 @@ const GroupChatMenu = ({ me, setUserInformation, setSelectedChat, setShowAddPeop
             removePeople: +removePeople,
             pinMessage: +pinMessage,
             announcements: +announcements,
-            groupChatId: rules.groupChatId
+            chatId: rules.chatId
         };
 
         const updated = await updateGroupChatRulesMutAsync(groupChatRules);

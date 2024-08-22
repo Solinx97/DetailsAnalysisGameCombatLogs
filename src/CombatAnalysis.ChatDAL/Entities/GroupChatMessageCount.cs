@@ -8,5 +8,5 @@ public class GroupChatMessageCount
 
     public string GroupChatUserId { get; set; }
 
-    public int GroupChatId { get; set; }
+    public int ChatId { get; set; }
 }

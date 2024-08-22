@@ -1,6 +1,6 @@
 ﻿namespace CombatAnalysis.ChatDAL.Entities;
 
-public class GroupChatMessage
+public class GroupChatMessage : BaseChatMessage
 {
     public int Id { get; set; }
 
@@ -12,7 +12,7 @@ public class GroupChatMessage
 
     public int Type { get; set; }
 
-    public int GroupChatId { get; set; }
+    public override int ChatId { get; set; }
 
     public string AppUserId { get; set; }
 }

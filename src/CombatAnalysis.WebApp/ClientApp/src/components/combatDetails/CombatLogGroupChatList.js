@@ -13,11 +13,11 @@ const messageType = {
     log: 2
 };
 
-const GroupChatList = ({ groupChatId, log }) => {
+const CombatLogGroupChatList = ({ log, chatId }) => {
     const { t } = useTranslation("combatDetails/mainInformation");
 
     const me = useSelector((state) => state.customer.value);
-    const { data: groupChat, isLoading } = useGetGroupChatByIdQuery(groupChatId);
+    const { data: groupChat, isLoading } = useGetGroupChatByIdQuery(chatId);
 
     const [createGroupChatMessageAsync] = useCreateGroupChatMessageAsyncMutation();
 
@@ -33,7 +33,7 @@ const GroupChatList = ({ groupChatId, log }) => {
             time: `${today.getHours()}:${today.getMinutes()}`,
             status: 0,
             type: messageType["log"],
-            groupChatId: groupChat.id,
+            chatId: groupChat.id,
             customerId: me?.id
         };
 
@@ -65,4 +65,4 @@ const GroupChatList = ({ groupChatId, log }) => {
     );
 }
 
-export default GroupChatList;
+export default CombatLogGroupChatList;

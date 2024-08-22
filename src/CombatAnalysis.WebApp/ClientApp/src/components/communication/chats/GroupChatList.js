@@ -28,9 +28,9 @@ const GroupChatList = ({ t, groupChatUsers, selectedChat, setSelectedChat, chats
                         <NavLink to="/chats/create">{t("Create")}</NavLink> 
                     </div>
                     : groupChatUsers?.map((groupChatUser) => (
-                        <li key={groupChatUser.id} className={selectedChat.type === "group" && selectedChat.chat?.id === groupChatUser?.groupChatId ? `selected` : ``}>
+                        <li key={groupChatUser.id} className={selectedChat.type === "group" && selectedChat.chat?.id === groupChatUser?.chatId ? `selected` : ``}>
                             <GroupChatListItem
-                                chatId={groupChatUser.groupChatId}
+                                chatId={groupChatUser.chatId}
                                 setSelectedGroupChat={setSelectedChat}
                                 groupChatUserId={groupChatUser.id}
                             />

@@ -92,7 +92,7 @@ const useCreatePersonalChatMessage = (messageInput, chat, meId, companionId) => 
             time: `${today.getHours()}:${today.getMinutes()}`,
             status: 0,
             type: 0,
-            personalChatId: chat.id,
+            chatId: chat.id,
             appUserId: meId
         };
 

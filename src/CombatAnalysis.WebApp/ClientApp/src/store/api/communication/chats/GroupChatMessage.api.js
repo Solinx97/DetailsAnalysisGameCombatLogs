@@ -2,6 +2,9 @@ import { ChatApi } from "../../ChatApi";
 
 export const GroupChatMessageApi = ChatApi.injectEndpoints({
     endpoints: builder => ({
+        getGroupChatMessageCountByChatId: builder.query({
+            query: (chatId) => `/GroupChatMessage/count/${chatId}`
+        }),
         createGroupChatMessageAsync: builder.mutation({
             query: message => ({
                 body: message,
@@ -36,6 +39,7 @@ export const GroupChatMessageApi = ChatApi.injectEndpoints({
 })
 
 export const {
+    useGetGroupChatMessageCountByChatIdQuery,
     useCreateGroupChatMessageAsyncMutation,
     useUpdateGroupChatMessageAsyncMutation,
     useRemoveGroupChatMessageAsyncMutation,

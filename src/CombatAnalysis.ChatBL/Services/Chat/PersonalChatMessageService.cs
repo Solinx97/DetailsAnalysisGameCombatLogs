@@ -6,12 +6,12 @@ using CombatAnalysis.ChatDAL.Interfaces;
 
 namespace CombatAnalysis.ChatBL.Services.Chat;
 
-internal class PersonalChatMessageService : IService<PersonalChatMessageDto, int>
+internal class PersonalChatMessageService : IChatMessageService<PersonalChatMessageDto, int>
 {
-    private readonly IGenericRepository<PersonalChatMessage, int> _repository;
+    private readonly IChatMessageRepository<PersonalChatMessage, int> _repository;
     private readonly IMapper _mapper;
 
-    public PersonalChatMessageService(IGenericRepository<PersonalChatMessage, int> repository, IMapper mapper)
+    public PersonalChatMessageService(IChatMessageRepository<PersonalChatMessage, int> repository, IMapper mapper)
     {
         _repository = repository;
         _mapper = mapper;
@@ -56,6 +56,21 @@ internal class PersonalChatMessageService : IService<PersonalChatMessageDto, int
         var resultMap = _mapper.Map<IEnumerable<PersonalChatMessageDto>>(result);
 
         return resultMap;
+    }
+
+    public async Task<IEnumerable<PersonalChatMessageDto>> GetByChatIdAsyn(int chatId, int pageSize = 100)
+    {
+        var result = await _repository.GetByChatIdAsyn(chatId, pageSize);
+        var map = _mapper.Map<IEnumerable<PersonalChatMessageDto>>(result);
+
+        return map;
+    }
+
+    public async Task<int> CountByChatIdAsync(int chatId)
+    {
+        var count = await _repository.CountByChatIdAsync(chatId);
+
+        return count;
     }
 
     public Task<int> UpdateAsync(PersonalChatMessageDto item)

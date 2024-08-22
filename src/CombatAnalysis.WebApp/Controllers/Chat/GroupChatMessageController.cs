@@ -20,27 +20,18 @@ public class GroupChatMessageController : ControllerBase
         _httpClient = httpClient;
     }
 
-    [HttpGet("findByChatId/{chatId:int:min(1)}")]
-    public async Task<IActionResult> Find(int chatId)
+    [HttpGet("count/{chatId}")]
+    public async Task<IActionResult> Count(int chatId)
     {
         if (!Request.Cookies.TryGetValue(AuthenticationCookie.AccessToken.ToString(), out var accessToken))
         {
             return Unauthorized();
         }
 
-        var responseMessage = await _httpClient.GetAsync($"GroupChatMessage/findByChatId/{chatId}", accessToken, Port.ChatApi);
-        if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
-        {
-            return Unauthorized();
-        }
-        else if (responseMessage.IsSuccessStatusCode)
-        {
-            var groupChatMessages = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<GroupChatMessageModel>>();
+        var responseMessage = await _httpClient.GetAsync($"GroupChatMessage/count/{chatId}", accessToken, Port.ChatApi);
+        var count = await responseMessage.Content.ReadFromJsonAsync<int>();
 
-            return Ok(groupChatMessages);
-        }
-
-        return BadRequest();
+        return Ok(count);
     }
 
     [HttpPost]
@@ -60,6 +51,29 @@ public class GroupChatMessageController : ControllerBase
         {
             var groupChatMessage = await responseMessage.Content.ReadFromJsonAsync<GroupChatMessageModel>();
             return Ok(groupChatMessage);
+        }
+
+        return BadRequest();
+    }
+
+    [HttpGet("getByChatId")]
+    public async Task<IActionResult> GetByChatId(int chatId, int pageSize)
+    {
+        if (!Request.Cookies.TryGetValue(AuthenticationCookie.AccessToken.ToString(), out var accessToken))
+        {
+            return Unauthorized();
+        }
+
+        var responseMessage = await _httpClient.GetAsync($"GroupChatMessage/getByChatId?chatId={chatId}&pageSize={pageSize}", accessToken, Port.ChatApi);
+        if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+        {
+            return Unauthorized();
+        }
+        else if (responseMessage.IsSuccessStatusCode)
+        {
+            var messages = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<GroupChatMessageModel>>();
+
+            return Ok(messages);
         }
 
         return BadRequest();
@@ -85,6 +99,7 @@ public class GroupChatMessageController : ControllerBase
 
         return BadRequest();
     }
+
 
     [HttpDelete("{messageId:int:min(1)}")]
     public async Task<IActionResult> Delete(int messageId)

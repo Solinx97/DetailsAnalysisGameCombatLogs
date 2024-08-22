@@ -34,7 +34,7 @@ const GroupChatAddUser = ({ chat, me, groupChatUsersId, groupChatUsers, messageT
                 id: " ",
                 username: peopleToJoin[i].username,
                 appUserId: peopleToJoin[i].id,
-                groupChatId: chat.id,
+                chatId: chat.id,
             };
 
             const created = await createGroupChatUserMutAsync(newGroupChatUser);
@@ -54,7 +54,7 @@ const GroupChatAddUser = ({ chat, me, groupChatUsersId, groupChatUsers, messageT
         const newMessagesCount = {
             count: 0,
             groupChatUserId: customerId,
-            groupChatId: +chatId,
+            chatId: +chatId,
         };
 
         await createGroupChatCountAsyncMut(newMessagesCount);
@@ -67,7 +67,7 @@ const GroupChatAddUser = ({ chat, me, groupChatUsersId, groupChatUsers, messageT
             time: `${today.getHours()}:${today.getMinutes()}`,
             status: 0,
             type: type,
-            groupChatId: chat.id,
+            chatId: chat.id,
             appUserId: me?.id
         };
 

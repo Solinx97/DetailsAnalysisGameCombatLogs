@@ -38,7 +38,7 @@ const useCreateGroupChatMessage = (messageInput, chat, meId, groupChatUsers, mes
             time: `${today.getHours()}:${today.getMinutes()}`,
             status: 0,
             type: type,
-            groupChatId: chat.id,
+            chatId: chat.id,
             appUserId: meId
         };
 

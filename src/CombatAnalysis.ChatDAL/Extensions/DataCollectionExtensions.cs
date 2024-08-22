@@ -4,6 +4,7 @@ using CombatAnalysis.ChatDAL.Enums;
 using CombatAnalysis.ChatDAL.Interfaces;
 using CombatAnalysis.ChatDAL.Repositories.Firebase;
 using CombatAnalysis.ChatDAL.Repositories.SQL;
+using CombatAnalysis.ChatDAL.Repositories.SQL.StoredProcedure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -40,11 +41,11 @@ public static class DataCollectionExtensions
 
         services.AddScoped<IGenericRepository<VoiceChat, string>, SQLRepository<VoiceChat, string>>();
         services.AddScoped<IGenericRepository<PersonalChat, int>, SQLRepository<PersonalChat, int>>();
-        services.AddScoped<IGenericRepository<PersonalChatMessage, int>, SQLRepository<PersonalChatMessage, int>>();
+        services.AddScoped<IChatMessageRepository<PersonalChatMessage, int>, SQLSPChatMessageRepository<PersonalChatMessage, int>>();
         services.AddScoped<IGenericRepository<PersonalChatMessageCount, int>, SQLRepository<PersonalChatMessageCount, int>>();
         services.AddScoped<IGenericRepository<GroupChat, int>, SQLRepository<GroupChat, int>>();
         services.AddScoped<IGenericRepository<GroupChatRules, int>, SQLRepository<GroupChatRules, int>>();
-        services.AddScoped<IGenericRepository<GroupChatMessage, int>, SQLRepository<GroupChatMessage, int>>();
+        services.AddScoped<IChatMessageRepository<GroupChatMessage, int>, SQLSPChatMessageRepository<GroupChatMessage, int>>();
         services.AddScoped<IGenericRepository<UnreadGroupChatMessage, int>, SQLRepository<UnreadGroupChatMessage, int>>();
         services.AddScoped<IGenericRepository<GroupChatMessageCount, int>, SQLRepository<GroupChatMessageCount, int>>();
         services.AddScoped<IGenericRepository<GroupChatUser, string>, SQLRepository<GroupChatUser, string>>();

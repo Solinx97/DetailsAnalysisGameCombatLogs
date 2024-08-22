@@ -125,7 +125,7 @@ public class PersonalChatMessagesVewModel : MvxViewModel, IImprovedMvxViewModel
     {
         foreach (var item in _allMessages)
         {
-            if (item.PersonalChatId == SelectedChat?.Id
+            if (item.ChatId == SelectedChat?.Id
                 && !Messages.Any(x => x.Id == item.Id))
             {
                 Messages.Add(item);
@@ -140,7 +140,7 @@ public class PersonalChatMessagesVewModel : MvxViewModel, IImprovedMvxViewModel
             Message = Message,
             Time = TimeSpan.Parse($"{DateTimeOffset.UtcNow.Hour}:{DateTimeOffset.UtcNow.Minute}").ToString(),
             Status = 0,
-            PersonalChatId = SelectedChat.Id,
+            ChatId = SelectedChat.Id,
             AppUserId = MyAccount.Id,
         };
 

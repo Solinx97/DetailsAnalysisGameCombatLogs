@@ -7,7 +7,7 @@
     border-radius: 5px;
     box-shadow: 3px 3px 3px 3px white;
     gap: 5px;
-    padding: 15px;
+    padding: 10px !important;
     overflow: auto;
 
     &__list {
@@ -209,10 +209,6 @@
                 background: #26355D;
             }
         }
-    }
-
-    ul li {
-        width: 90%;
     }
 }
 

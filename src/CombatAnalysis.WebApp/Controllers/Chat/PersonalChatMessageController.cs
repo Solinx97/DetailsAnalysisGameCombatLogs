@@ -20,27 +20,18 @@ public class PersonalChatMessageController : ControllerBase
         _httpClient = httpClient;
     }
 
-    [HttpGet("findByChatId/{chatId:int:min(1)}")]
-    public async Task<IActionResult> Find(int chatId)
+    [HttpGet("count/{chatId}")]
+    public async Task<IActionResult> Count(int chatId)
     {
         if (!Request.Cookies.TryGetValue(AuthenticationCookie.AccessToken.ToString(), out var accessToken))
         {
             return Unauthorized();
         }
 
-        var responseMessage = await _httpClient.GetAsync($"PersonalChatMessage/findByChatId/{chatId}", accessToken, Port.ChatApi);
-        if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
-        {
-            return Unauthorized();
-        }
-        else if (responseMessage.IsSuccessStatusCode)
-        {
-            var personalChatMessages = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<PersonalChatMessageModel>>();
+        var responseMessage = await _httpClient.GetAsync($"PersonalChatMessage/count/{chatId}", accessToken, Port.ChatApi);
+        var count = await responseMessage.Content.ReadFromJsonAsync<int>();
 
-            return Ok(personalChatMessages);
-        }
-
-        return BadRequest();
+        return Ok(count);
     }
 
     [HttpPost]
@@ -60,6 +51,29 @@ public class PersonalChatMessageController : ControllerBase
         {
             var personalChatMessage = await responseMessage.Content.ReadFromJsonAsync<PersonalChatMessageModel>();
             return Ok(personalChatMessage);
+        }
+
+        return BadRequest();
+    }
+
+    [HttpGet("getByChatId")]
+    public async Task<IActionResult> GetByChatId(int chatId, int pageSize)
+    {
+        if (!Request.Cookies.TryGetValue(AuthenticationCookie.AccessToken.ToString(), out var accessToken))
+        {
+            return Unauthorized();
+        }
+
+        var responseMessage = await _httpClient.GetAsync($"PersonalChatMessage/getByChatId?chatId={chatId}&pageSize={pageSize}", accessToken, Port.ChatApi);
+        if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+        {
+            return Unauthorized();
+        }
+        else if (responseMessage.IsSuccessStatusCode)
+        {
+            var messages = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<PersonalChatMessageModel>>();
+
+            return Ok(messages);
         }
 
         return BadRequest();

@@ -297,11 +297,11 @@ public class ChatViewModel : ParentTemplate
         }
 
         var response = await _httpClientHelper.PostAsync("PersonalChat/personalChatIsAlreadyExists", JsonContent.Create(personalChat), refreshToken, Port.ChatApi);
-        var personalChatId = await response.Content.ReadFromJsonAsync<int>();
+        var chatId = await response.Content.ReadFromJsonAsync<int>();
 
-        if (personalChatId > 0)
+        if (chatId > 0)
         {
-            var existPersonChat = PersonalChats?.FirstOrDefault(x => x.Id == personalChatId);
+            var existPersonChat = PersonalChats?.FirstOrDefault(x => x.Id == chatId);
             if (existPersonChat != null)
             {
                 SelectedPersonalChatIndex = PersonalChats.IndexOf(existPersonChat);
@@ -358,7 +358,7 @@ public class ChatViewModel : ParentTemplate
         var myGroupChats = new List<GroupChatModel>();
         foreach (var item in myGroupChatUsers)
         {
-            var response = await _httpClientHelper.GetAsync($"GroupChat/{item.GroupChatId}", refreshToken, Port.ChatApi);
+            var response = await _httpClientHelper.GetAsync($"GroupChat/{item.ChatId}", refreshToken, Port.ChatApi);
             if (response.StatusCode == System.Net.HttpStatusCode.OK)
             {
                 var groupChat = await response.Content.ReadFromJsonAsync<GroupChatModel>();

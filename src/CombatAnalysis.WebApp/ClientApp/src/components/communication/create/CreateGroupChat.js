@@ -63,13 +63,13 @@ const CreateGroupChat = () => {
         return createdGroupChat.data;
     }
 
-    const createGroupChatRulesAsync = async (groupChatId) => {
+    const createGroupChatRulesAsync = async (chatId) => {
         const groupChatRules = {
             invitePeople: invitePeople,
             removePeople: removePeople,
             pinMessage: pinMessage,
             announcements: announcements,
-            groupChatId: groupChatId
+            chatId: chatId
         };
 
         await createGroupChatRulesMutAsync(groupChatRules);
@@ -79,42 +79,42 @@ const CreateGroupChat = () => {
         const newMessagesCount = {
             count: 0,
             groupChatUserId: groupChatUserId,
-            groupChatId: +chatId,
+            chatId: +chatId,
         };
 
         const createdMessagesCount = await createGroupChatCountAsyncMut(newMessagesCount);
         return createdMessagesCount.data !== undefined;
     }
 
-    const joinPeopleAsync = async (groupChatId) => {
+    const joinPeopleAsync = async (chatId) => {
         for (let i = 0; i < peopleToJoin.length; i++) {
             const newGroupChatUser = {
                 id: " ",
                 username: peopleToJoin[i].username,
                 appUserId: peopleToJoin[i].id,
-                groupChatId: groupChatId,
+                chatId: chatId,
             };
 
             const createdGroupChatUser = await createGroupChatUserMutAsync(newGroupChatUser);
             if (createdGroupChatUser.data !== undefined) {
-                await createGroupChatCountAsync(groupChatId, createdGroupChatUser.data.id);
+                await createGroupChatCountAsync(chatId, createdGroupChatUser.data.id);
 
                 if (peopleToJoin[i].id !== user?.id) {
                     const systemMessage = `'${user?.username}' added '${peopleToJoin[i].username}' to chat`;
-                    await createMessageAsync(groupChatId, systemMessage);
+                    await createMessageAsync(chatId, systemMessage);
                 }
             }
         }
     }
 
-    const createMessageAsync = async (groupChatId, message) => {
+    const createMessageAsync = async (chatId, message) => {
         const today = new Date();
         const newMessage = {
             message: message,
             time: `${today.getHours()}:${today.getMinutes()}`,
             status: 0,
             type: 1,
-            groupChatId: groupChatId,
+            chatId: chatId,
             appUserId: user?.id
         };
 

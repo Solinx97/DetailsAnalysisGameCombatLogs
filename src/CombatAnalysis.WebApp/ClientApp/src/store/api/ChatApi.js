@@ -11,6 +11,7 @@ export const ChatApi = createApi({
         'CommunityUser',
         'PersonalChat',
         'GroupChatMessage',
+        'PersonalChatMessage',
         'UserPost',
         'RequestToConnect',
         'InviteToCommunity'
@@ -33,9 +34,29 @@ export const ChatApi = createApi({
             query: (id) => `/CommunityUser/searchByCommunityId/${id}`,
             providesTags: (result, error, id) => [{ type: 'CommunityUser', id }]
         }),
-        findGroupChatMessageByChatId: builder.query({
-            query: (id) => `/GroupChatMessage/findByChatId/${id}`,
+        getMessagesByGroupChatId: builder.query({
+            query: (arg) => {
+                const { chatId, pageSize } = arg;
+                return {
+                    url: `/GroupChatMessage/getByChatId?chatId=${chatId}&pageSize=${pageSize}`,
+                }
+            },
+            transformResponse: (response) => {
+                return response.reverse();
+            },
             providesTags: (result, error, id) => [{ type: 'GroupChatMessage', id }],
+        }),
+        getMessagesByPersonalChatId: builder.query({
+            query: (arg) => {
+                const { chatId, pageSize } = arg;
+                return {
+                    url: `/PersonalChatMessage/getByChatId?chatId=${chatId}&pageSize=${pageSize}`,
+                }
+            },
+            transformResponse: (response) => {
+                return response.reverse();
+            },
+            providesTags: (result, error, id) => [{ type: 'PersonalChatMessage', id }],
         }),
         userPostSearchByUserId: builder.query({
             query: (id) => `/UserPost/searchByUserId/${id}`,
@@ -52,7 +73,8 @@ export const {
     useGetPostQuery,
     useGetCommunitiesQuery,
     useLazyGetCommunitiesQuery,
-    useFindGroupChatMessageByChatIdQuery,
+    useGetMessagesByGroupChatIdQuery,
+    useGetMessagesByPersonalChatIdQuery,
     useLazyUserPostSearchByUserIdQuery,
     useUserPostSearchByUserIdQuery,
     useSearchByCommunityIdAsyncQuery,

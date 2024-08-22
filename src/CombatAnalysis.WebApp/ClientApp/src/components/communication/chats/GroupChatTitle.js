@@ -4,7 +4,7 @@ import { useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useUpdateGroupChatAsyncMutation } from '../../../store/api/communication/chats/GroupChat.api';
 
-const GroupChatTitle = ({ chat, me, settingsIsShow, setSettingsIsShow, t }) => {
+const GroupChatTitle = ({ chat, me, settingsIsShow, setSettingsIsShow, haveMoreMessages, setHaveMoreMessage, messagePageRef, t }) => {
     const navigate = useNavigate();
 
     const [editNameOn, setEditNameOn] = useState(false);
@@ -30,45 +30,56 @@ const GroupChatTitle = ({ chat, me, settingsIsShow, setSettingsIsShow, t }) => {
         navigate(`/chats/voice/${chat.id}/${chat.name}`);
     }
 
+    const handleLoadMoreMessages = () => {
+        setHaveMoreMessage(false);
+
+        messagePageRef.current++;
+    }
+
     return (
-        <div className="title">
-            <div className="title__content">
-                {chat?.appUserId === me?.id &&
-                    <FontAwesomeIcon
-                        icon={faPen}
-                        title={t("EditName")}
-                        className={`settings-handler${editNameOn ? "_active" : ""}`}
-                        onClick={() => setEditNameOn((item) => !item)}
-                    />
-                }
-                {editNameOn
-                    ? <>
-                        <input className="form-control" type="text" defaultValue={chatName} ref={chatNameInput} />
+        <>
+            <div className="title">
+                <div className="title__content">
+                    {chat?.appUserId === me?.id &&
                         <FontAwesomeIcon
-                            icon={faCloudArrowUp}
-                            title={t("Save")}
-                            className={`settings-handler${settingsIsShow ? "_active" : ""}`}
-                            onClick={async () => await updateGroupChatNameAsync()}
+                            icon={faPen}
+                            title={t("EditName")}
+                            className={`settings-handler${editNameOn ? "_active" : ""}`}
+                            onClick={() => setEditNameOn((item) => !item)}
                         />
-                    </>
-                    : <div className="name" title={chatName}>{chatName}</div>
-                }
+                    }
+                    {editNameOn
+                        ? <>
+                            <input className="form-control" type="text" defaultValue={chatName} ref={chatNameInput} />
+                            <FontAwesomeIcon
+                                icon={faCloudArrowUp}
+                                title={t("Save")}
+                                className={`settings-handler${settingsIsShow ? "_active" : ""}`}
+                                onClick={async () => await updateGroupChatNameAsync()}
+                            />
+                        </>
+                        : <div className="name" title={chatName}>{chatName}</div>
+                    }
+                </div>
+                <div className="title__menu">
+                    <FontAwesomeIcon
+                        icon={faPhone}
+                        title={t("Call")}
+                        className="call"
+                        onClick={call}
+                    />
+                    <FontAwesomeIcon
+                        icon={faGear}
+                        title={t("Settings")}
+                        className={`settings-handler${settingsIsShow ? "_active" : ""}`}
+                        onClick={() => setSettingsIsShow(!settingsIsShow)}
+                    />
+                </div>
             </div>
-            <div className="title__menu">
-                <FontAwesomeIcon
-                    icon={faPhone}
-                    title={t("Call")}
-                    className="call"
-                    onClick={call}
-                />
-                <FontAwesomeIcon
-                    icon={faGear}
-                    title={t("Settings")}
-                    className={`settings-handler${settingsIsShow ? "_active" : ""}`}
-                    onClick={() => setSettingsIsShow(!settingsIsShow)}
-                />
-            </div>
-        </div>
+            {haveMoreMessages &&
+                <div className="load-more" onClick={handleLoadMoreMessages}>Load more...</div>
+            }
+        </>
     );
 }
 

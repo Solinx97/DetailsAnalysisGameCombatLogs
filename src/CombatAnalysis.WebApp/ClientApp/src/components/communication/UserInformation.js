@@ -79,7 +79,7 @@ const UserInformation = ({ me, person, closeUserInformation, actionAfterRequests
         const newMessagesCount = {
             count: 0,
             appUSerId: userId,
-            personalChatId: +chatId,
+            chatId: +chatId,
         };
 
         const createdMessagesCount = await createPersonalChatCountAsyncMut(newMessagesCount);

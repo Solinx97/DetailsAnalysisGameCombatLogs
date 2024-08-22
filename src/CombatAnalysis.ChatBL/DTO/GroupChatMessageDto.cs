@@ -12,7 +12,7 @@ public class GroupChatMessageDto
 
     public int Type { get; set; }
 
-    public int GroupChatId { get; set; }
+    public int ChatId { get; set; }
 
     public string AppUserId { get; set; }
 }

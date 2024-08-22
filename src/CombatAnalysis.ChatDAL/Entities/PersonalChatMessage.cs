@@ -1,6 +1,6 @@
 ﻿namespace CombatAnalysis.ChatDAL.Entities;
 
-public class PersonalChatMessage
+public class PersonalChatMessage : BaseChatMessage
 {
     public int Id { get; set; }
 
@@ -12,7 +12,7 @@ public class PersonalChatMessage
 
     public int Type { get; set; }
 
-    public int PersonalChatId { get; set; }
+    public override int ChatId { get; set; }
 
     public string AppUserId { get; set; }
 }

@@ -8,7 +8,7 @@ import { useNavigate } from 'react-router-dom';
 import { useLazyFindGroupChatUserByUserIdQuery } from '../../store/api/communication/chats/GroupChatUser.api';
 import { useLazyGetByUserIdAsyncQuery } from '../../store/api/communication/chats/PersonalChat.api';
 import CombatLogItemDiscussion from './CombatLogItemDiscussion';
-import GroupChatList from './GroupChatList';
+import CombatLogGroupChatList from './CombatLogGroupChatList';
 import PersonalChatList from './PersonalChatList';
 
 const CombatLogItem = ({ log, isAuth }) => {
@@ -116,9 +116,9 @@ const CombatLogItem = ({ log, isAuth }) => {
                             <ul>
                                 {groupChatsUser?.map((item) => (
                                         <li key={item.id} className="chat-list__group-chats">
-                                            <GroupChatList
+                                            <CombatLogGroupChatList
                                                 log={log}
-                                                groupChatId={item.groupChatId}
+                                                chatId={item.chatId}
                                             />
                                         </li>
                                     ))
