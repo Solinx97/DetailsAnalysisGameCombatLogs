@@ -6,5 +6,7 @@ public interface IChatMessageService<TModel, TIdType> : IService<TModel, TIdType
 {
     Task<IEnumerable<TModel>> GetByChatIdAsyn(int chatId, int pageSize);
 
+    Task<IEnumerable<TModel>> GetMoreByChatIdAsyn(int chatId, int offset, int pageSize);
+
     Task<int> CountByChatIdAsync(int chatId);
 }

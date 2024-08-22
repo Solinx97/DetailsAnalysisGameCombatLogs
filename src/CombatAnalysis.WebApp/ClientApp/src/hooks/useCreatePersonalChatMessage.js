@@ -60,31 +60,6 @@ const useCreatePersonalChatMessage = (messageInput, chat, meId, companionId) => 
         setEmptyMessageTimeout(timeout);
     }
 
-    const sendMessageByKeyAsync = async (e) => {
-        clearTimeout(emptyMessageTimeout);
-        setIsEmptyMessage(false);
-
-        const message = messageInput.current.value;
-        if (message.length === 0 && e.code === "Enter") {
-            setIsEmptyMessage(true);
-            const timeout = setTimeout(() => {
-                setIsEmptyMessage(false);
-            }, emptyMessageTimeoutNotification);
-
-            setEmptyMessageTimeout(timeout);
-
-            return;
-        }
-
-        if (message.length >= 0 && e.code !== "Enter") {
-            return;
-        }
-
-        messageInput.current.value = "";
-
-        await createChatMessageAsync(message);
-    }
-
     const createChatMessageAsync = async (message) => {
         const today = new Date();
         const newMessage = {
@@ -114,7 +89,6 @@ const useCreatePersonalChatMessage = (messageInput, chat, meId, companionId) => 
 
     return {
         sendMessageAsync,
-        sendMessageByKeyAsync,
         isEmptyMessage,
         messagesCountLoading,
     }

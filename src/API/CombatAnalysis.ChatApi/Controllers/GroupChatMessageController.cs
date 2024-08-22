@@ -57,6 +57,14 @@ public class GroupChatMessageController : ControllerBase
         return Ok(messages);
     }
 
+    [HttpGet("getMoreByChatId")]
+    public async Task<IActionResult> GetMoreByChatId(int chatId, int offset, int pageSize)
+    {
+        var messages = await _service.GetMoreByChatIdAsyn(chatId, offset, pageSize);
+
+        return Ok(messages);
+    }
+
     [HttpPost]
     public async Task<IActionResult> Create(GroupChatMessageModel model)
     {

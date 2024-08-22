@@ -66,6 +66,14 @@ internal class PersonalChatMessageService : IChatMessageService<PersonalChatMess
         return map;
     }
 
+    public async Task<IEnumerable<PersonalChatMessageDto>> GetMoreByChatIdAsyn(int chatId, int offset = 0, int pageSize = 100)
+    {
+        var result = await _repository.GetMoreByChatIdAsyn(chatId, offset, pageSize);
+        var map = _mapper.Map<IEnumerable<PersonalChatMessageDto>>(result);
+
+        return map;
+    }
+
     public async Task<int> CountByChatIdAsync(int chatId)
     {
         var count = await _repository.CountByChatIdAsync(chatId);

@@ -1,7 +1,7 @@
 ﻿import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useGetUserByIdQuery } from '../../../store/api/Account.api';
-import { useGetMessagesByPersonalChatIdQuery } from '../../../store/api/ChatApi';
+import { useGetMessagesByPersonalChatIdQuery, useLazyGetMoreMessagesByPersonalChatIdQuery } from '../../../store/api/ChatApi';
 import {
     useLazyFindPersonalChatMessageCountQuery,
     useUpdatePersonalChatMessageCountAsyncMutation
@@ -21,24 +21,26 @@ import "../../../styles/communication/chats/personalChat.scss";
 const getPersonalChatMessagesInterval = 500;
 
 const PersonalChat = ({ chat, me, setSelectedChat, companionId }) => {
-    const pageSize = 10;
-
     const { t } = useTranslation("communication/chats/personalChat");
 
     const chatContainerRef = useRef(null);
-    const messagePageRef = useRef(1);
+    const pageSizeRef = useRef(1);
 
     const [haveMoreMessages, setHaveMoreMessage] = useState(false);
     const [currentMessages, setCurrentMessages] = useState([]);
+    const [messagesIsLoaded, setMessagesIsLoaded] = useState(false);
+    const [areLoadingOldMessages, setAreLoadingOldMessages] = useState(true);
 
     const { data: count, isLoading: countIsLoading } = useGetPersonalChatMessageCountByChatIdQuery(chat.id);
     const { data: messages, isLoading } = useGetMessagesByPersonalChatIdQuery({
         chatId: chat.id,
-        pageSize
+        pageSize: pageSizeRef.current
     }, {
         pollingInterval: getPersonalChatMessagesInterval,
         refetchOnMountOrArgChange: true
     });
+    const [getMoreMessagesByPersonalChatIdAsync] = useLazyGetMoreMessagesByPersonalChatIdQuery();
+
     const { data: companion, isLoading: companionIsLoading } = useGetUserByIdQuery(companionId);
     const [removePersonalChatMessageAsync] = useRemovePersonalChatMessageAsyncMutation();
     const [updateChatMessageAsync] = useUpdatePersonalChatMessageAsyncMutation();
@@ -46,28 +48,55 @@ const PersonalChat = ({ chat, me, setSelectedChat, companionId }) => {
     const [getMessagesCount] = useLazyFindPersonalChatMessageCountQuery();
 
     useEffect(() => {
+        pageSizeRef.current = process.env.REACT_APP_CHAT_PAGE_SIZE;
+    }, []);
+
+    useEffect(() => {
         if (!messages || messages.length === 0) {
             return;
         }
 
-        saveScrollState();
-        //scrollToBottom();
+        const newMessages = addUniqueElements(currentMessages, messages);
+        setCurrentMessages(newMessages);
+    }, [messages]);
+
+    useEffect(() => {
+        if (!messages || messages.length === 0) {
+            return;
+        }
 
         const handleScroll = () => {
             if (chatContainerRef.current.scrollTop === 0) {
-                const moreMessagesCount = count - (messagePageRef.current * 10);
-
+                const moreMessagesCount = count - currentMessages.length + messages.length - pageSizeRef.current;
                 setHaveMoreMessage(moreMessagesCount > 0);
             }
         }
 
         const scrollContainer = chatContainerRef.current;
-        scrollContainer.addEventListener("scroll", handleScroll);
+        scrollContainer?.addEventListener("scroll", handleScroll);
 
         return () => {
-            scrollContainer.removeEventListener("scroll", handleScroll);
+            scrollContainer?.removeEventListener("scroll", handleScroll);
         };
-    }, [messages]);
+    }, [currentMessages, messages]);
+
+    useEffect(() => {
+        if (currentMessages.length === 0 || messagesIsLoaded) {
+            return;
+        }
+
+        scrollToBottom();
+
+        setMessagesIsLoaded(true);
+    }, [currentMessages]);
+
+    useEffect(() => {
+        if (currentMessages.length === 0 || areLoadingOldMessages) {
+            return;
+        }
+
+        scrollToBottom();
+    }, [currentMessages]);
 
     const decreasePersonalChatMessagesCountAsync = async () => {
         const messagesCount = await getMessagesCount({ chatId: chat?.id, userId: me.id });
@@ -88,8 +117,6 @@ const PersonalChat = ({ chat, me, setSelectedChat, companionId }) => {
         const previousScrollHeight = chatContainer.scrollHeight;
         const previousScrollTop = chatContainer.scrollTop;
 
-        setCurrentMessages(prevMessages => [...messages, ...prevMessages]);
-
         setTimeout(() => {
             chatContainer.scrollTop = chatContainer.scrollHeight - previousScrollHeight + previousScrollTop;
         }, 0);
@@ -98,6 +125,39 @@ const PersonalChat = ({ chat, me, setSelectedChat, companionId }) => {
     const scrollToBottom = () => {
         const chatContainer = chatContainerRef.current;
         chatContainer.scrollTop = chatContainer.scrollHeight;
+    }
+
+    const addUniqueElements = (oldArray, newArray) => {
+        const oldSet = new Set(oldArray.map(item => item.id));
+        const uniqueNewElements = newArray.filter(item => !oldSet.has(item.id));
+        const refreshedArray = oldArray.concat(uniqueNewElements);
+
+        return refreshedArray;
+    }
+
+    const getMoreMessagesAsync = async (offset) => {
+        const arg = {
+            chatId: chat.id,
+            offset,
+            pageSize: pageSizeRef.current
+        };
+
+        const response = await getMoreMessagesByPersonalChatIdAsync(arg);
+        if (response.data) {
+            return response.data;
+        }
+
+        return [];
+    }
+
+    const handleLoadMoreMessagesAsync = async () => {
+        setAreLoadingOldMessages(true);
+
+        const moreMessages = await getMoreMessagesAsync(currentMessages.length);
+
+        setCurrentMessages(prevMessages => [...moreMessages, ...prevMessages]);
+
+        saveScrollState();
     }
 
     if (isLoading || companionIsLoading || countIsLoading) {
@@ -111,17 +171,15 @@ const PersonalChat = ({ chat, me, setSelectedChat, companionId }) => {
     return (
         <div className="chats__selected-chat personal-chat">
             <div className="messages-container">
-                <div className="title">
-                    <div className="name">{companion.username}</div>
-                    <PersonalChatTitle
-                        chat={chat}
-                        setSelectedChat={setSelectedChat}
-                        haveMoreMessages={haveMoreMessages}
-                        setHaveMoreMessage={setHaveMoreMessage}
-                        messagePageRef={messagePageRef}
-                        t={t}
-                    />
-                </div>
+                <PersonalChatTitle
+                    chat={chat}
+                    companionUsername={companion.username}
+                    setSelectedChat={setSelectedChat}
+                    haveMoreMessages={haveMoreMessages}
+                    setHaveMoreMessage={setHaveMoreMessage}
+                    loadMoreMessagesAsync={handleLoadMoreMessagesAsync}
+                    t={t}
+                />
                 <ul className="chat-messages" ref={chatContainerRef}>
                     {currentMessages?.map((message) => (
                             <li key={message.id}>
@@ -140,6 +198,7 @@ const PersonalChat = ({ chat, me, setSelectedChat, companionId }) => {
                     chat={chat}
                     meId={me?.id}
                     companionId={companion?.id}
+                    setAreLoadingOldMessages={setAreLoadingOldMessages}
                     t={t}
                 />
             </div>

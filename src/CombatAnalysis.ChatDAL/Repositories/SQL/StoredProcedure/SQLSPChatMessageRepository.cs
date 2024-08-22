@@ -30,6 +30,20 @@ public class SQLSPChatMessageRepository<TModel, TIdType> : SQLRepository<TModel,
         return data;
     }
 
+    public async Task<IEnumerable<TModel>> GetMoreByChatIdAsyn(int chatId, int offset, int pageSize)
+    {
+        var chatIdParam = new SqlParameter("ChatId", chatId);
+        var offsetParam = new SqlParameter("Offset", offset);
+        var pageSizeParam = new SqlParameter("PageSize", pageSize);
+
+        var data = await Task.Run(() => _context.Set<TModel>()
+                            .FromSqlRaw($"Get{typeof(TModel).Name}ByChatIdMore @chatId, @offset, @pageSize",
+                                            chatIdParam, offsetParam, pageSizeParam)
+                            .AsEnumerable());
+
+        return data;
+    }
+
     public async Task<int> CountByChatIdAsync(int chatId)
     {
         var count = await _context.Set<TModel>()

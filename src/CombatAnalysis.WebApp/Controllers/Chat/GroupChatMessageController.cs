@@ -79,6 +79,29 @@ public class GroupChatMessageController : ControllerBase
         return BadRequest();
     }
 
+    [HttpGet("getMoreByChatId")]
+    public async Task<IActionResult> GetMoreByChatId(int chatId, int offset, int pageSize)
+    {
+        if (!Request.Cookies.TryGetValue(AuthenticationCookie.AccessToken.ToString(), out var accessToken))
+        {
+            return Unauthorized();
+        }
+
+        var responseMessage = await _httpClient.GetAsync($"GroupChatMessage/getMoreByChatId?chatId={chatId}&offset={offset}&pageSize={pageSize}", accessToken, Port.ChatApi);
+        if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+        {
+            return Unauthorized();
+        }
+        else if (responseMessage.IsSuccessStatusCode)
+        {
+            var messages = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<GroupChatMessageModel>>();
+
+            return Ok(messages);
+        }
+
+        return BadRequest();
+    }
+
     [HttpPut]
     public async Task<IActionResult> Update(GroupChatMessageModel message)
     {

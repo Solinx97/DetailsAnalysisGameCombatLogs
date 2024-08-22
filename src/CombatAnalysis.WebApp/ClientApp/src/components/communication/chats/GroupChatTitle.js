@@ -4,7 +4,7 @@ import { useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useUpdateGroupChatAsyncMutation } from '../../../store/api/communication/chats/GroupChat.api';
 
-const GroupChatTitle = ({ chat, me, settingsIsShow, setSettingsIsShow, haveMoreMessages, setHaveMoreMessage, messagePageRef, t }) => {
+const GroupChatTitle = ({ chat, me, settingsIsShow, setSettingsIsShow, haveMoreMessages, setHaveMoreMessage, loadMoreMessagesAsync, t }) => {
     const navigate = useNavigate();
 
     const [editNameOn, setEditNameOn] = useState(false);
@@ -30,10 +30,10 @@ const GroupChatTitle = ({ chat, me, settingsIsShow, setSettingsIsShow, haveMoreM
         navigate(`/chats/voice/${chat.id}/${chat.name}`);
     }
 
-    const handleLoadMoreMessages = () => {
+    const handleLoadMoreMessagesAsync = async () => {
         setHaveMoreMessage(false);
 
-        messagePageRef.current++;
+        await loadMoreMessagesAsync();
     }
 
     return (
@@ -77,7 +77,7 @@ const GroupChatTitle = ({ chat, me, settingsIsShow, setSettingsIsShow, haveMoreM
                 </div>
             </div>
             {haveMoreMessages &&
-                <div className="load-more" onClick={handleLoadMoreMessages}>Load more...</div>
+                <div className="load-more" onClick={handleLoadMoreMessagesAsync}>Load more...</div>
             }
         </>
     );

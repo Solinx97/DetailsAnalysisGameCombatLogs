@@ -124,34 +124,8 @@ const useCreateGroupChatMessage = (messageInput, chat, meId, groupChatUsers, mes
         setEmptyMessageTimeout(timeout);
     }
 
-    const sendMessageByKeyAsync = async (e) => {
-        clearTimeout(emptyMessageTimeout);
-        setIsEmptyMessage(false);
-
-        const message = messageInput.current.value;
-        if (message.length === 0 && e.code === "Enter") {
-            setIsEmptyMessage(true);
-            const timeout = setTimeout(() => {
-                setIsEmptyMessage(false);
-            }, emptyMessageTimeoutNotification);
-
-            setEmptyMessageTimeout(timeout);
-
-            return;
-        }
-
-        if (message.length >= 0 && e.code !== "Enter") {
-            return;
-        }
-
-        messageInput.current.value = "";
-
-        await createMessageAsync(message, messageType["default"]);
-    }
-
     return {
         sendMessageAsync,
-        sendMessageByKeyAsync,
         isEmptyMessage,
     }
 }

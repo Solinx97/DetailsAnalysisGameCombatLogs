@@ -1,4 +1,4 @@
-﻿import { memo, useEffect, useState, useRef } from 'react';
+﻿import { memo, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import useGroupChatData from '../../../hooks/useGroupChatData';
 import {
@@ -30,13 +30,16 @@ const GroupChat = ({ chat, me, setSelectedChat }) => {
     const [settingsIsShow, setSettingsIsShow] = useState(false);
     const [groupChatUsersId, setGroupChatUsersId] = useState([]);
     const [userInformation, setUserInformation] = useState(null);
+
     const [haveMoreMessages, setHaveMoreMessage] = useState(false);
     const [currentMessages, setCurrentMessages] = useState([]);
+    const [messagesIsLoaded, setMessagesIsLoaded] = useState(false);
+    const [areLoadingOldMessages, setAreLoadingOldMessages] = useState(true);
 
     const chatContainerRef = useRef(null);
-    const messagePageRef = useRef(1);
+    const pageSizeRef = useRef(1);
 
-    const { messages, count, meInChat, groupChatUsers, isLoading } = useGroupChatData(chat.id, me.id, messagePageRef);
+    const { groupChatData, getMoreMessagesAsync } = useGroupChatData(chat.id, me.id, pageSizeRef);
 
     const [updateGroupChatMessageCountMut] = useUpdateGroupChatMessageCountAsyncMutation();
     const [getMessagesCount] = useLazyFindGroupChatMessageCountQuery();
@@ -44,46 +47,72 @@ const GroupChat = ({ chat, me, setSelectedChat }) => {
     const [removeGroupChatMessageAsync] = useRemoveGroupChatMessageAsyncMutation();
 
     useEffect(() => {
-        if (messages.length === 0) {
+        pageSizeRef.current = process.env.REACT_APP_CHAT_PAGE_SIZE;
+    }, []);
+
+    useEffect(() => {
+        if (groupChatData.messages.length === 0) {
             return;
         }
 
-        saveScrollState();
-
-        const newMessages = addUniqueElements(currentMessages, messages);
+        const newMessages = addUniqueElements(currentMessages, groupChatData.messages);
         setCurrentMessages(newMessages);
+    }, [groupChatData.messages]);
+
+    useEffect(() => {
+        if (groupChatData.messages.length === 0) {
+            return;
+        }
 
         const handleScroll = () => {
             if (chatContainerRef.current.scrollTop === 0) {
-                const moreMessagesCount = count - (messagePageRef.current * 10);
+                const moreMessagesCount = groupChatData.count - currentMessages.length + groupChatData.messages.length - pageSizeRef.current;
 
                 setHaveMoreMessage(moreMessagesCount > 0);
             }
         }
 
         const scrollContainer = chatContainerRef.current;
-        scrollContainer.addEventListener("scroll", handleScroll);
+        scrollContainer?.addEventListener("scroll", handleScroll);
 
         return () => {
-            scrollContainer.removeEventListener("scroll", handleScroll);
+            scrollContainer?.removeEventListener("scroll", handleScroll);
         };
-    }, [messages]);
+    }, [currentMessages, groupChatData.messages]);
 
     useEffect(() => {
-        if (!groupChatUsers) {
+        if (currentMessages.length === 0 || messagesIsLoaded) {
+            return;
+        }
+
+        scrollToBottom();
+
+        setMessagesIsLoaded(true);
+    }, [currentMessages]);
+
+    useEffect(() => {
+        if (currentMessages.length === 0 || areLoadingOldMessages) {
+            return;
+        }
+
+        scrollToBottom();
+    }, [currentMessages]);
+
+    useEffect(() => {
+        if (!groupChatData.groupChatUsers) {
             return;
         }
 
         const customersId = [];
-        for (let i = 0; i < groupChatUsers.length; i++) {
-            customersId.push(groupChatUsers[i].appUserId);
+        for (let i = 0; i < groupChatData.groupChatUsers.length; i++) {
+            customersId.push(groupChatData.groupChatUsers[i].appUserId);
         }
 
         setGroupChatUsersId(customersId);
-    }, [groupChatUsers]);
+    }, [groupChatData.groupChatUsers]);
 
     const decreaseGroupChatMessagesCountAsync = async () => {
-        const myGroupChatUser = groupChatUsers.filter(x => x.appUserId === me?.id)[0];
+        const myGroupChatUser = groupChatData.groupChatUsers.filter(x => x.appUserId === me?.id)[0];
 
         const messagesCount = await getMessagesCount({ chatId: chat?.id, userId: myGroupChatUser.id });
         if (messagesCount.data !== undefined) {
@@ -103,9 +132,6 @@ const GroupChat = ({ chat, me, setSelectedChat }) => {
         const previousScrollHeight = chatContainer.scrollHeight;
         const previousScrollTop = chatContainer.scrollTop;
 
-        //const newMessages = addUniqueElements(currentMessages, messages);
-        //setCurrentMessages(prevMessages => [...messages, ...prevMessages]);
-
         setTimeout(() => {
             chatContainer.scrollTop = chatContainer.scrollHeight - previousScrollHeight + previousScrollTop;
         }, 0);
@@ -124,7 +150,17 @@ const GroupChat = ({ chat, me, setSelectedChat }) => {
         return refreshedArray;
     }
 
-    if (isLoading) {
+    const handleLoadMoreMessagesAsync = async () => {
+        setAreLoadingOldMessages(true);
+
+        const moreMessages = await getMoreMessagesAsync(currentMessages.length);
+
+        setCurrentMessages(prevMessages => [...moreMessages, ...prevMessages]);
+
+        saveScrollState();
+    }
+
+    if (groupChatData.isLoading) {
         return (
             <div className="chats__selected-chat_loading">
                 <Loading />
@@ -142,7 +178,7 @@ const GroupChat = ({ chat, me, setSelectedChat }) => {
                     setSettingsIsShow={setSettingsIsShow}
                     haveMoreMessages={haveMoreMessages}
                     setHaveMoreMessage={setHaveMoreMessage}
-                    messagePageRef={messagePageRef}
+                    loadMoreMessagesAsync={handleLoadMoreMessagesAsync}
                     t={t}
                 />
                 <ul className="chat-messages" ref={chatContainerRef}>
@@ -162,8 +198,9 @@ const GroupChat = ({ chat, me, setSelectedChat }) => {
                 <GroupChatMessageInput
                     chat={chat}
                     me={me}
-                    groupChatUsers={groupChatUsers}
+                    groupChatUsers={groupChatData.groupChatUsers}
                     messageType={messageType}
+                    setAreLoadingOldMessages={setAreLoadingOldMessages}
                     t={t}
                 />
                 {showAddPeople &&
@@ -172,7 +209,7 @@ const GroupChat = ({ chat, me, setSelectedChat }) => {
                         me={me}
                         groupChatUsersId={groupChatUsersId}
                         setShowAddPeople={setShowAddPeople}
-                        groupChatUsers={groupChatUsers}
+                    groupChatUsers={groupChatData.groupChatUsers}
                         messageType={messageType}
                         t={t}
                     />
@@ -184,8 +221,8 @@ const GroupChat = ({ chat, me, setSelectedChat }) => {
                     setUserInformation={setUserInformation}
                     setSelectedChat={setSelectedChat}
                     setShowAddPeople={setShowAddPeople}
-                    groupChatUsers={groupChatUsers}
-                    meInChat={meInChat}
+                    groupChatUsers={groupChatData.groupChatUsers}
+                    meInChat={groupChatData.meInChat}
                     chat={chat}
                 />
             }

@@ -46,11 +46,35 @@ export const ChatApi = createApi({
             },
             providesTags: (result, error, id) => [{ type: 'GroupChatMessage', id }],
         }),
+        getMoreMessagesByGroupChatId: builder.query({
+            query: (arg) => {
+                const { chatId, offset, pageSize } = arg;
+                return {
+                    url: `/GroupChatMessage/getMoreByChatId?chatId=${chatId}&offset=${offset}&pageSize=${pageSize}`,
+                }
+            },
+            transformResponse: (response) => {
+                return response.reverse();
+            },
+            providesTags: (result, error, id) => [{ type: 'GroupChatMessage', id }],
+        }),
         getMessagesByPersonalChatId: builder.query({
             query: (arg) => {
                 const { chatId, pageSize } = arg;
                 return {
                     url: `/PersonalChatMessage/getByChatId?chatId=${chatId}&pageSize=${pageSize}`,
+                }
+            },
+            transformResponse: (response) => {
+                return response.reverse();
+            },
+            providesTags: (result, error, id) => [{ type: 'PersonalChatMessage', id }],
+        }),
+        getMoreMessagesByPersonalChatId: builder.query({
+            query: (arg) => {
+                const { chatId, offset, pageSize } = arg;
+                return {
+                    url: `/PersonalChatMessage/getMoreByChatId?chatId=${chatId}&offset=${offset}&pageSize=${pageSize}`,
                 }
             },
             transformResponse: (response) => {
@@ -74,7 +98,9 @@ export const {
     useGetCommunitiesQuery,
     useLazyGetCommunitiesQuery,
     useGetMessagesByGroupChatIdQuery,
+    useLazyGetMoreMessagesByGroupChatIdQuery,
     useGetMessagesByPersonalChatIdQuery,
+    useLazyGetMoreMessagesByPersonalChatIdQuery,
     useLazyUserPostSearchByUserIdQuery,
     useUserPostSearchByUserIdQuery,
     useSearchByCommunityIdAsyncQuery,

@@ -20,7 +20,17 @@ internal static class DbContextHelper
                           "\tSELECT TOP (@pageSize) * \n" +
                          $"\tFROM {item.Name}\n" +
                           "\tWHERE ChatId = @chatId\n" +
-                         $"\tORDER BY Id\n DESC";
+                          "\tORDER BY Id DESC";
+            dbContext.Database.ExecuteSqlRaw(query);
+
+            query = $"CREATE PROCEDURE Get{item.Name}ByChatIdMore (@chatId INT, @offset INT, @pageSize INT)\n" +
+                     "\tAS\n" +
+                     "\tSELECT * \n" +
+                    $"\tFROM {item.Name}\n" +
+                     "\tWHERE ChatId = @chatId\n" +
+                     "\tORDER BY Id DESC\n" +
+                     "\tOFFSET @offset ROWS\n" +
+                     "\tFETCH NEXT @pageSize ROWS ONLY";
             dbContext.Database.ExecuteSqlRaw(query);
         }
     }

@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useState } from 'react';
 import { useRemovePersonalChatAsyncMutation } from '../../../store/api/communication/chats/PersonalChat.api';
 
-const PersonalChatTitle = ({ chat, setSelectedChat, haveMoreMessages, setHaveMoreMessage, messagePageRef, t }) => {
+const PersonalChatTitle = ({ chat, companionUsername, setSelectedChat, haveMoreMessages, setHaveMoreMessage, loadMoreMessagesAsync, t }) => {
     const [removePersonalChatAsync] = useRemovePersonalChatAsyncMutation();
 
     const [showRemoveChatAlert, setShowRemoveChatAlert] = useState(false);
@@ -15,15 +15,16 @@ const PersonalChatTitle = ({ chat, setSelectedChat, haveMoreMessages, setHaveMor
         }
     }
 
-    const handleLoadMoreMessages = () => {
+    const handleLoadMoreMessagesAsync = async () => {
         setHaveMoreMessage(false);
 
-        messagePageRef.current++;
+        await loadMoreMessagesAsync();
     }
 
     return (
         <>
-            <div>
+            <div className="title">
+                <div className="name">{companionUsername}</div>
                 <FontAwesomeIcon
                     icon={faUserXmark}
                     title={t("RemoveChat")}
@@ -42,7 +43,7 @@ const PersonalChatTitle = ({ chat, setSelectedChat, haveMoreMessages, setHaveMor
                 }
             </div>
             {haveMoreMessages &&
-                <div className="load-more" onClick={handleLoadMoreMessages}>Load more...</div>
+                <div className="load-more" onClick={handleLoadMoreMessagesAsync}>Load more...</div>
             }
         </>
     );
