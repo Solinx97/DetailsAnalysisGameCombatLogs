@@ -58,7 +58,7 @@ internal class GroupChatMessageService : IChatMessageService<GroupChatMessageDto
         return resultMap;
     }
 
-    public async Task<IEnumerable<GroupChatMessageDto>> GetByChatIdAsyn(int chatId, int pageSize = 100)
+    public async Task<IEnumerable<GroupChatMessageDto>> GetByChatIdAsync(int chatId, int pageSize = 100)
     {
         var result = await _repository.GetByChatIdAsyn(chatId, pageSize);
         var map = _mapper.Map<IEnumerable<GroupChatMessageDto>>(result);
@@ -66,7 +66,7 @@ internal class GroupChatMessageService : IChatMessageService<GroupChatMessageDto
         return map;
     }
 
-    public async Task<IEnumerable<GroupChatMessageDto>> GetMoreByChatIdAsyn(int chatId, int offset = 0, int pageSize = 100)
+    public async Task<IEnumerable<GroupChatMessageDto>> GetMoreByChatIdAsync(int chatId, int offset = 0, int pageSize = 100)
     {
         var result = await _repository.GetMoreByChatIdAsyn(chatId, offset, pageSize);
         var map = _mapper.Map<IEnumerable<GroupChatMessageDto>>(result);

@@ -1,10 +1,10 @@
 ﻿namespace CombatAnalysis.CommunicationDAL.Entities.Post;
 
-public class PostDislike
+public class UserPostLike
 {
     public int Id { get; set; }
 
-    public int PostId { get; set; }
+    public int UserPostId { get; set; }
 
     public string AppUserId { get; set; }
 }

@@ -58,7 +58,7 @@ internal class PersonalChatMessageService : IChatMessageService<PersonalChatMess
         return resultMap;
     }
 
-    public async Task<IEnumerable<PersonalChatMessageDto>> GetByChatIdAsyn(int chatId, int pageSize = 100)
+    public async Task<IEnumerable<PersonalChatMessageDto>> GetByChatIdAsync(int chatId, int pageSize = 100)
     {
         var result = await _repository.GetByChatIdAsyn(chatId, pageSize);
         var map = _mapper.Map<IEnumerable<PersonalChatMessageDto>>(result);
@@ -66,7 +66,7 @@ internal class PersonalChatMessageService : IChatMessageService<PersonalChatMess
         return map;
     }
 
-    public async Task<IEnumerable<PersonalChatMessageDto>> GetMoreByChatIdAsyn(int chatId, int offset = 0, int pageSize = 100)
+    public async Task<IEnumerable<PersonalChatMessageDto>> GetMoreByChatIdAsync(int chatId, int offset = 0, int pageSize = 100)
     {
         var result = await _repository.GetMoreByChatIdAsyn(chatId, offset, pageSize);
         var map = _mapper.Map<IEnumerable<PersonalChatMessageDto>>(result);

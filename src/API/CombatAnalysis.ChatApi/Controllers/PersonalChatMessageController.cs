@@ -52,7 +52,7 @@ public class PersonalChatMessageController : ControllerBase
     [HttpGet("getByChatId")]
     public async Task<IActionResult> GetByChatId(int chatId, int pageSize)
     {
-        var messages = await _service.GetByChatIdAsyn(chatId, pageSize);
+        var messages = await _service.GetByChatIdAsync(chatId, pageSize);
 
         return Ok(messages);
     }
@@ -60,7 +60,7 @@ public class PersonalChatMessageController : ControllerBase
     [HttpGet("getMoreByChatId")]
     public async Task<IActionResult> GetMoreByChatId(int chatId, int offset, int pageSize)
     {
-        var messages = await _service.GetMoreByChatIdAsyn(chatId, offset, pageSize);
+        var messages = await _service.GetMoreByChatIdAsync(chatId, offset, pageSize);
 
         return Ok(messages);
     }

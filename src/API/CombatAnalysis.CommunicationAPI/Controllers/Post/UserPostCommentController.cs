@@ -10,13 +10,13 @@ namespace CombatAnalysis.CommunicationAPI.Controllers.Post;
 [Route("api/v1/[controller]")]
 [ApiController]
 [Authorize]
-public class PostLikeController : ControllerBase
+public class UserPostCommentController : ControllerBase
 {
-    private readonly IService<PostLikeDto, int> _service;
+    private readonly IService<UserPostCommentDto, int> _service;
     private readonly IMapper _mapper;
-    private readonly ILogger<PostLikeController> _logger;
+    private readonly ILogger<UserPostCommentController> _logger;
 
-    public PostLikeController(IService<PostLikeDto, int> service, IMapper mapper, ILogger<PostLikeController> logger)
+    public UserPostCommentController(IService<UserPostCommentDto, int> service, IMapper mapper, ILogger<UserPostCommentController> logger)
     {
         _service = service;
         _mapper = mapper;
@@ -39,57 +39,57 @@ public class PostLikeController : ControllerBase
         return Ok(result);
     }
 
-    [HttpGet("searchByPostId/{id:int:min(1)}")]
+    [HttpGet("searchByPostId/{id}")]
     public async Task<IActionResult> SearchByPostId(int id)
     {
-        var result = await _service.GetByParamAsync(nameof(PostLikeModel.PostId), id);
+        var result = await _service.GetByParamAsync(nameof(UserPostCommentModel.UserPostId), id);
 
         return Ok(result);
     }
 
     [HttpPost]
-    public async Task<IActionResult> Create(PostLikeModel model)
+    public async Task<IActionResult> Create(UserPostCommentModel model)
     {
         try
         {
-            var map = _mapper.Map<PostLikeDto>(model);
+            var map = _mapper.Map<UserPostCommentDto>(model);
             var result = await _service.CreateAsync(map);
 
             return Ok(result);
         }
         catch (ArgumentNullException ex)
         {
-            _logger.LogError(ex, ex.Message);
+            _logger.LogError(ex, $"Create Post Comment failed: ${ex.Message}", model);
 
             return BadRequest();
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, $"Create Post Dislike failed: ${ex.Message}", model);
+            _logger.LogError(ex, $"Create Post Comment failed: ${ex.Message}", model);
 
             return BadRequest();
         }
     }
 
     [HttpPut]
-    public async Task<IActionResult> Update(PostLikeModel model)
+    public async Task<IActionResult> Update(UserPostCommentModel model)
     {
         try
         {
-            var map = _mapper.Map<PostLikeDto>(model);
+            var map = _mapper.Map<UserPostCommentDto>(model);
             var result = await _service.UpdateAsync(map);
 
             return Ok(result);
         }
         catch (ArgumentNullException ex)
         {
-            _logger.LogError(ex, $"Update Post Like failed: ${ex.Message}", model);
+            _logger.LogError(ex, $"Update Post Comment failed: ${ex.Message}", model);
 
             return BadRequest();
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, $"Update Post Like failed: ${ex.Message}", model);
+            _logger.LogError(ex, $"Update Post Comment failed: ${ex.Message}", model);
 
             return BadRequest();
         }

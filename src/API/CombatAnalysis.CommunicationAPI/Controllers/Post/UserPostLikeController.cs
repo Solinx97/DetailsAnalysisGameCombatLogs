@@ -10,13 +10,13 @@ namespace CombatAnalysis.CommunicationAPI.Controllers.Post;
 [Route("api/v1/[controller]")]
 [ApiController]
 [Authorize]
-public class PostDislikeController : ControllerBase
+public class UserPostLikeController : ControllerBase
 {
-    private readonly IService<PostDislikeDto, int> _service;
+    private readonly IService<UserPostLikeDto, int> _service;
     private readonly IMapper _mapper;
-    private readonly ILogger<PostDislikeController> _logger;
+    private readonly ILogger<UserPostLikeController> _logger;
 
-    public PostDislikeController(IService<PostDislikeDto, int> service, IMapper mapper, ILogger<PostDislikeController> logger)
+    public UserPostLikeController(IService<UserPostLikeDto, int> service, IMapper mapper, ILogger<UserPostLikeController> logger)
     {
         _service = service;
         _mapper = mapper;
@@ -42,24 +42,24 @@ public class PostDislikeController : ControllerBase
     [HttpGet("searchByPostId/{id:int:min(1)}")]
     public async Task<IActionResult> SearchByPostId(int id)
     {
-        var result = await _service.GetByParamAsync(nameof(PostDislikeModel.PostId), id);
+        var result = await _service.GetByParamAsync(nameof(UserPostLikeModel.UserPostId), id);
 
         return Ok(result);
     }
 
     [HttpPost]
-    public async Task<IActionResult> Create(PostDislikeModel model)
+    public async Task<IActionResult> Create(UserPostLikeModel model)
     {
         try
         {
-            var map = _mapper.Map<PostDislikeDto>(model);
+            var map = _mapper.Map<UserPostLikeDto>(model);
             var result = await _service.CreateAsync(map);
 
             return Ok(result);
         }
         catch (ArgumentNullException ex)
         {
-            _logger.LogError(ex, $"Create Post Dislike failed: ${ex.Message}", model);
+            _logger.LogError(ex, ex.Message);
 
             return BadRequest();
         }
@@ -72,24 +72,24 @@ public class PostDislikeController : ControllerBase
     }
 
     [HttpPut]
-    public async Task<IActionResult> Update(PostDislikeModel model)
+    public async Task<IActionResult> Update(UserPostLikeModel model)
     {
         try
         {
-            var map = _mapper.Map<PostDislikeDto>(model);
+            var map = _mapper.Map<UserPostLikeDto>(model);
             var result = await _service.UpdateAsync(map);
 
             return Ok(result);
         }
         catch (ArgumentNullException ex)
         {
-            _logger.LogError(ex, $"Update Post Dislike failed: ${ex.Message}", model);
+            _logger.LogError(ex, $"Update Post Like failed: ${ex.Message}", model);
 
             return BadRequest();
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, $"Update Post Dislike failed: ${ex.Message}", model);
+            _logger.LogError(ex, $"Update Post Like failed: ${ex.Message}", model);
 
             return BadRequest();
         }

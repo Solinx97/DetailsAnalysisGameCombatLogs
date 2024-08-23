@@ -12,11 +12,11 @@ namespace CombatAnalysis.CommunicationAPI.Controllers.Post;
 [Authorize]
 public class CommunityPostController : ControllerBase
 {
-    private readonly IService<CommunityPostDto, int> _service;
+    private readonly ICommunityPostService _service;
     private readonly IMapper _mapper;
     private readonly ILogger<CommunityPostController> _logger;
 
-    public CommunityPostController(IService<CommunityPostDto, int> service, IMapper mapper, ILogger<CommunityPostController> logger)
+    public CommunityPostController(ICommunityPostService service, IMapper mapper, ILogger<CommunityPostController> logger)
     {
         _service = service;
         _mapper = mapper;
@@ -39,18 +39,10 @@ public class CommunityPostController : ControllerBase
         return Ok(result);
     }
 
-    [HttpGet("searchByCommunityId/{id:int:min(1)}")]
-    public async Task<IActionResult> SearchByCommunityId(int id)
+    [HttpGet("searchByCommunityId/{id}")]
+    public async Task<IActionResult> SearchByOwnerId(int id)
     {
         var result = await _service.GetByParamAsync(nameof(CommunityPostModel.CommunityId), id);
-
-        return Ok(result);
-    }
-
-    [HttpGet("searchByPostId/{id:int:min(1)}")]
-    public async Task<IActionResult> SearchByPostId(int id)
-    {
-        var result = await _service.GetByParamAsync(nameof(CommunityPostModel.PostId), id);
 
         return Ok(result);
     }
@@ -67,13 +59,13 @@ public class CommunityPostController : ControllerBase
         }
         catch (ArgumentNullException ex)
         {
-            _logger.LogError(ex, $"Create Community Post failed: ${ex.Message}", model);
+            _logger.LogError(ex, $"Create Post failed: ${ex.Message}", model);
 
             return BadRequest();
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, $"Create Community Post failed: ${ex.Message}", model);
+            _logger.LogError(ex, $"Create Post failed: ${ex.Message}", model);
 
             return BadRequest();
         }
@@ -91,13 +83,13 @@ public class CommunityPostController : ControllerBase
         }
         catch (ArgumentNullException ex)
         {
-            _logger.LogError(ex, $"Update Community Post failed: ${ex.Message}", model);
+            _logger.LogError(ex, $"Update Post failed: ${ex.Message}", model);
 
             return BadRequest();
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, $"Update Community Post failed: ${ex.Message}", model);
+            _logger.LogError(ex, $"Update Post failed: ${ex.Message}", model);
 
             return BadRequest();
         }

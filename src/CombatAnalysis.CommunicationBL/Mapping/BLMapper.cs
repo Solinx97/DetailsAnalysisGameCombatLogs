@@ -16,10 +16,13 @@ public class BLMapper : Profile
         CreateMap<CommunityPostDto, CommunityPost>().ReverseMap();
         CreateMap<CommunityUserDto, CommunityUser>().ReverseMap();
         CreateMap<InviteToCommunityDto, InviteToCommunity>().ReverseMap();
-        CreateMap<PostDto, Post>().ReverseMap();
-        CreateMap<PostLikeDto, PostLike>().ReverseMap();
-        CreateMap<PostDislikeDto, PostDislike>().ReverseMap();
-        CreateMap<PostCommentDto, PostComment>().ReverseMap();
         CreateMap<UserPostDto, UserPost>().ReverseMap();
+        CreateMap<UserPostLikeDto, UserPostLike>().ReverseMap();
+        CreateMap<UserPostDislikeDto, UserPostDislike>().ReverseMap();
+        CreateMap<UserPostCommentDto, UserPostComment>().ReverseMap();
+        CreateMap<CommunityPostDto, CommunityPost>().ReverseMap();
+        CreateMap<CommunityPostCommentDto, CommunityPostComment>().ReverseMap();
+        CreateMap<CommunityPostLikeDto, CommunityPostLike>().ReverseMap();
+        CreateMap<CommunityPostDislikeDto, CommunityPostDislike>().ReverseMap();
     }
 }

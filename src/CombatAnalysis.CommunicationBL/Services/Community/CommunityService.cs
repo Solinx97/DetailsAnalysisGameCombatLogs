@@ -11,23 +11,28 @@ internal class CommunityService : IService<CommunityDto, int>
     private readonly IGenericRepository<CommunicationDAL.Entities.Community.Community, int> _repository;
     private readonly IService<CommunityUserDto, string> _communityUserService;
     private readonly IService<InviteToCommunityDto, int> _inviteToCommunityService;
-    private readonly IService<CommunityPostDto, int> _communityPostService;
+    private readonly ICommunityPostService _postService;
+    private readonly IService<CommunityPostCommentDto, int> _postCommentService;
+    private readonly IService<CommunityPostLikeDto, int> _postLikeService;
+    private readonly IService<CommunityPostDislikeDto, int> _postDislikeService;
     private readonly IService<CommunityDiscussionDto, int> _communityDiscussionService;
-    private readonly IService<PostDto, int> _postService;
     private readonly ISqlContextService _sqlContextService;
     private readonly IMapper _mapper;
 
     public CommunityService(IGenericRepository<CommunicationDAL.Entities.Community.Community, int> communityRepository, ISqlContextService sqlContextService,
         IService<InviteToCommunityDto, int> inviteToCommunityService, IService<CommunityUserDto, string> communityUserService,
-        IService<CommunityPostDto, int> communityPostService, IService<PostDto, int> postService,
+        ICommunityPostService postService, IService<CommunityPostCommentDto, int> postCommentService,
+        IService<CommunityPostLikeDto, int> postLikeService, IService<CommunityPostDislikeDto, int> postDislikeService,
         IService<CommunityDiscussionDto, int> communityDiscussionService, IMapper mapper)
     {
         _repository = communityRepository;
         _sqlContextService = sqlContextService;
         _inviteToCommunityService = inviteToCommunityService;
         _communityUserService = communityUserService;
-        _communityPostService = communityPostService;
         _postService = postService;
+        _postCommentService = postCommentService;
+        _postLikeService = postLikeService;
+        _postDislikeService = postDislikeService;
         _communityDiscussionService = communityDiscussionService;
         _mapper = mapper;
     }
@@ -47,7 +52,6 @@ internal class CommunityService : IService<CommunityDto, int>
         using var transaction = await _sqlContextService.BeginTransactionAsync(true);
         try
         {
-            await DeletePostsAsync(id);
             await DeleteCommunityPostsAsync(id);
             await DeleteCommunityDiscussionsAsync(id);
             await DeleteInvitesToCommunityAsync(id);
@@ -148,28 +152,58 @@ internal class CommunityService : IService<CommunityDto, int>
         return rowsAffected;
     }
 
-    private async Task DeletePostsAsync(int communityId)
+    private async Task DeleteCommunityPostsAsync(int communityId)
     {
-        var communityPosts = await _communityPostService.GetByParamAsync(nameof(CommunityPostDto.CommunityId), communityId);
-        foreach (var item in communityPosts)
+        var posts = await _postService.GetByParamAsync(nameof(CommunityPostDto.CommunityId), communityId);
+        foreach (var item in posts)
         {
-            var rowsAffected = await _postService.DeleteAsync(item.PostId);
+            await DeleteCommunityPostCommentsAsync(item.Id);
+            await DeleteCommunityPostLikesAsync(item.Id);
+            await DeleteCommunityPostDislikesAsync(item.Id);
+
+            var rowsAffected = await _postService.DeleteAsync(item.Id);
             if (rowsAffected == 0)
             {
-                throw new ArgumentException("Post didn't removed");
+                throw new ArgumentException($"{nameof(CommunityPostDto)} didn't removed");
             }
         }
     }
 
-    private async Task DeleteCommunityPostsAsync(int communityId)
+    private async Task DeleteCommunityPostCommentsAsync(int communityPostId)
     {
-        var communityPosts = await _communityPostService.GetByParamAsync(nameof(CommunityPostDto.CommunityId), communityId);
-        foreach (var item in communityPosts)
+        var postComments = await _postCommentService.GetByParamAsync(nameof(CommunityPostCommentDto.CommunityPostId), communityPostId);
+        foreach (var item in postComments)
         {
-            var rowsAffected = await _communityPostService.DeleteAsync(item.Id);
+            var rowsAffected = await _postService.DeleteAsync(item.Id);
             if (rowsAffected == 0)
             {
-                throw new ArgumentException("Community post didn't removed");
+                throw new ArgumentException($"{nameof(CommunityPostCommentDto)} didn't removed");
+            }
+        }
+    }
+
+    private async Task DeleteCommunityPostLikesAsync(int communityPostId)
+    {
+        var postLikes = await _postLikeService.GetByParamAsync(nameof(CommunityPostLikeDto.CommunityPostId), communityPostId);
+        foreach (var item in postLikes)
+        {
+            var rowsAffected = await _postService.DeleteAsync(item.Id);
+            if (rowsAffected == 0)
+            {
+                throw new ArgumentException($"{nameof(CommunityPostLikeDto)} didn't removed");
+            }
+        }
+    }
+
+    private async Task DeleteCommunityPostDislikesAsync(int communityPostId)
+    {
+        var postDislikes = await _postDislikeService.GetByParamAsync(nameof(CommunityPostDislikeDto.CommunityPostId), communityPostId);
+        foreach (var item in postDislikes)
+        {
+            var rowsAffected = await _postService.DeleteAsync(item.Id);
+            if (rowsAffected == 0)
+            {
+                throw new ArgumentException($"{nameof(CommunityPostDislikeDto)} didn't removed");
             }
         }
     }
@@ -182,7 +216,7 @@ internal class CommunityService : IService<CommunityDto, int>
             var rowsAffected = await _communityDiscussionService.DeleteAsync(item.Id);
             if (rowsAffected == 0)
             {
-                throw new ArgumentException("Community discussion didn't removed");
+                throw new ArgumentException($"{nameof(CommunityDiscussionDto)} didn't removed");
             }
         }
     }
@@ -195,7 +229,7 @@ internal class CommunityService : IService<CommunityDto, int>
             var rowsAffected = await _inviteToCommunityService.DeleteAsync(item.Id);
             if (rowsAffected == 0)
             {
-                throw new ArgumentException("Invite to community didn't removed");
+                throw new ArgumentException($"{nameof(InviteToCommunityDto)} didn't removed");
             }
         }
     }
@@ -208,7 +242,7 @@ internal class CommunityService : IService<CommunityDto, int>
             var rowsAffected = await _communityUserService.DeleteAsync(item.Id);
             if (rowsAffected == 0)
             {
-                throw new ArgumentException("Community user didn't removed");
+                throw new ArgumentException($"{nameof(CommunityUserDto)} didn't removed");
             }
         }
     }

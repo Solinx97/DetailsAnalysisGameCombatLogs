@@ -1,10 +1,10 @@
 ﻿namespace CombatAnalysis.CommunicationAPI.Models.Post;
 
-public class PostDislikeModel
+public class UserPostLikeModel
 {
     public int Id { get; set; }
 
-    public int PostId { get; set; }
+    public int UserPostId { get; set; }
 
     public string AppUserId { get; set; }
 }

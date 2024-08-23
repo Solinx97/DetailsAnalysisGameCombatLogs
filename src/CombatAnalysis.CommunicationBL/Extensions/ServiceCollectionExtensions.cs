@@ -24,11 +24,13 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IService<CommunityUserDto, string>, CommunityUserService>();
         services.AddScoped<IService<InviteToCommunityDto, int>, InviteToCommunityService>();
 
-        services.AddScoped<IService<PostDto, int>, PostService>();
-        services.AddScoped<IService<PostCommentDto, int>, PostCommentService>();
-        services.AddScoped<IService<PostLikeDto, int>, PostLikeService>();
-        services.AddScoped<IService<PostDislikeDto, int>, PostDislikeService>();
-        services.AddScoped<IService<CommunityPostDto, int>, CommunityPostService>();
-        services.AddScoped<IService<UserPostDto, int>, UserPostService>();
+        services.AddScoped<IUserPostService, UserPostService>();
+        services.AddScoped<IService<UserPostCommentDto, int>, UserPostCommentService>();
+        services.AddScoped<IService<UserPostLikeDto, int>, UserPostLikeService>();
+        services.AddScoped<IService<UserPostDislikeDto, int>, UserPostDislikeService>();
+        services.AddScoped<ICommunityPostService, CommunityPostService>();
+        services.AddScoped<IService<CommunityPostCommentDto, int>, CommunityPostCommentService>();
+        services.AddScoped<IService<CommunityPostLikeDto, int>, CommunityPostLikeService>();
+        services.AddScoped<IService<CommunityPostDislikeDto, int>, CommunityPostDislikeService>();
     }
 }
