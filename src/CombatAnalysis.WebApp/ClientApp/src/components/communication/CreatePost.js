@@ -31,7 +31,7 @@ const CreatePost = ({ user, owner, postTypeName, createTypeOfPostFunc, t }) => {
         }
 
         const createdPost = await createNewPostAsync(newPost);
-        if (createdPost.data !== undefined) {
+        if (createdPost.data) {
             setShowCreatePost(false);
             setPostContent("");
 
@@ -46,7 +46,7 @@ const CreatePost = ({ user, owner, postTypeName, createTypeOfPostFunc, t }) => {
         setPostContent(e.target.value);
     }
 
-    if (user === null) {
+    if (!user) {
         return (<Loading />);
     }
 

@@ -65,10 +65,14 @@ const GroupChat = ({ chat, me, setSelectedChat }) => {
         }
 
         const handleScroll = () => {
-            if (chatContainerRef.current.scrollTop === 0) {
+            const chatContainer = chatContainerRef.current;
+            if (chatContainer.scrollTop === 0) {
                 const moreMessagesCount = groupChatData.count - currentMessages.length + groupChatData.messages.length - pageSizeRef.current;
 
                 setHaveMoreMessage(moreMessagesCount > 0);
+            }
+            else if (chatContainer.scrollHeight - chatContainer.scrollTop === chatContainer.clientHeight) {
+                setHaveMoreMessage(false);
             }
         }
 
@@ -77,7 +81,7 @@ const GroupChat = ({ chat, me, setSelectedChat }) => {
 
         return () => {
             scrollContainer?.removeEventListener("scroll", handleScroll);
-        };
+        }
     }, [currentMessages, groupChatData.messages]);
 
     useEffect(() => {

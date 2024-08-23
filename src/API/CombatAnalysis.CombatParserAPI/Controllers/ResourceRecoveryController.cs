@@ -29,7 +29,7 @@ public class ResourceRecoveryController : ControllerBase
         return Ok(damageDones);
     }
 
-    [HttpGet("{combatPlayerId}")]
+    [HttpGet("count/{combatPlayerId}")]
     public async Task<IActionResult> Count(int combatPlayerId)
     {
         var countByCombatPlayerId = await _service.CountByCombatPlayerIdAsync(combatPlayerId);

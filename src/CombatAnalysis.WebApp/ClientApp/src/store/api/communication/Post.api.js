@@ -19,8 +19,7 @@ export const PostApi = ChatApi.injectEndpoints({
             invalidatesTags: (result, error) => [{ type: 'Post', result }],
         }),
         getPostById: builder.query({
-            query: (id) => `/Post/${id}`,
-            providesTags: (result, error, id) => [{ type: 'Post', id }],
+            query: (id) => `/Post/${id}`
         }),
         searchByUserId: builder.query({
             query: (id) => `/Post/searchByUserId/${id}`,

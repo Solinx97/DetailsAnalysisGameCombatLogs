@@ -190,7 +190,8 @@ $mobile-max-width: 425px;
         position: fixed;
         display: flex;
         justify-content: center;
-        top: $top-new-posts;
+        top: 70px;
+        right: 46vw;
 
         &__content {
             padding: 5px 10px;

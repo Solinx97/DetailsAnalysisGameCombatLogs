@@ -66,9 +66,13 @@ const PersonalChat = ({ chat, me, setSelectedChat, companionId }) => {
         }
 
         const handleScroll = () => {
-            if (chatContainerRef.current.scrollTop === 0) {
+            const chatContainer = chatContainerRef.current;
+            if (chatContainer.scrollTop === 0) {
                 const moreMessagesCount = count - currentMessages.length + messages.length - pageSizeRef.current;
                 setHaveMoreMessage(moreMessagesCount > 0);
+            }
+            else if (chatContainer.scrollHeight - chatContainer.scrollTop === chatContainer.clientHeight) {
+                setHaveMoreMessage(false);
             }
         }
 
@@ -77,7 +81,7 @@ const PersonalChat = ({ chat, me, setSelectedChat, companionId }) => {
 
         return () => {
             scrollContainer?.removeEventListener("scroll", handleScroll);
-        };
+        }
     }, [currentMessages, messages]);
 
     useEffect(() => {

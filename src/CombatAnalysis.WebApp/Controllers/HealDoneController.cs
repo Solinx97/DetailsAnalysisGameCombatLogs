@@ -20,7 +20,7 @@ public class HealDoneController : ControllerBase
     [HttpGet("count/{combatPlayerId}")]
     public async Task<IActionResult> Count(int combatPlayerId)
     {
-        var responseMessage = await _httpClient.GetAsync($"HealDone/{combatPlayerId}");
+        var responseMessage = await _httpClient.GetAsync($"HealDone/count/{combatPlayerId}");
         var count = await responseMessage.Content.ReadFromJsonAsync<int>();
 
         return Ok(count);
