@@ -2,7 +2,7 @@ import { faArrowsRotate, faEye, faEyeSlash, faMagnifyingGlassMinus, faMagnifying
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useEffect, useState } from "react";
 import { useTranslation } from 'react-i18next';
-import { useLazyGetCommunitiesQuery } from '../../../store/api/ChatApi';
+import { useLazyGetCommunitiesQuery } from '../../../store/api/CommunityApi';
 import CommunityList from './CommunityList';
 
 import '../../../styles/communication/community/communities.scss';

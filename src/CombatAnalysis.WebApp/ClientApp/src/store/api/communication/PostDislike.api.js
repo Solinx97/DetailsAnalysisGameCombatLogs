@@ -5,18 +5,22 @@ export const PostDislikeApi = ChatApi.injectEndpoints({
         createPostDislikeAsync: builder.mutation({
             query: postDislike => ({
                 body: postDislike,
-                url: '/PostDislike',
+                url: '/UserPostDislike',
                 method: 'POST'
             })
         }),
         removePostDislikeAsync: builder.mutation({
             query: id => ({
-                url: `/PostDislike/${id}`,
+                url: `/UserPostDislike/${id}`,
                 method: 'DELETE'
             })
         }),
         searchPostDislikeByPostId: builder.query({
-            query: (id) => `/PostDislike/searchByPostId/${id}`
+            query: (id) => `/UserPostDislike/searchByPostId/${id}`,
+            providesTags: (result, error, arg) =>
+                result
+                    ? [...result.map(({ id }) => ({ type: 'UserPostDislike', id })), { type: 'UserPostDislike' }]
+                    : [{ type: 'UserPostDislike' }]
         }),
     })
 })

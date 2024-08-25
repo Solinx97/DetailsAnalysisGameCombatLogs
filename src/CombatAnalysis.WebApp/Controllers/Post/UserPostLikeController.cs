@@ -11,11 +11,11 @@ namespace CombatAnalysis.WebApp.Controllers.Post;
 [RequireAccessToken]
 [Route("api/v1/[controller]")]
 [ApiController]
-public class PostDislikeController : ControllerBase
+public class UserPostLikeController : ControllerBase
 {
     private readonly IHttpClientHelper _httpClient;
 
-    public PostDislikeController(IHttpClientHelper httpClient)
+    public UserPostLikeController(IHttpClientHelper httpClient)
     {
         _httpClient = httpClient;
     }
@@ -28,16 +28,16 @@ public class PostDislikeController : ControllerBase
             return Unauthorized();
         }
 
-        var responseMessage = await _httpClient.GetAsync($"PostDislike/{id}", accessToken, Port.CommunicationApi);
+        var responseMessage = await _httpClient.GetAsync($"UserPostLike/{id}", accessToken, Port.CommunicationApi);
         if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
         {
             return Unauthorized();
         }
         else if (responseMessage.IsSuccessStatusCode)
         {
-            var postDislike = await responseMessage.Content.ReadFromJsonAsync<PostDislikeModel>();
+            var postLike = await responseMessage.Content.ReadFromJsonAsync<UserPostLikeModel>();
 
-            return Ok(postDislike);
+            return Ok(postLike);
         }
 
         return BadRequest();
@@ -51,30 +51,30 @@ public class PostDislikeController : ControllerBase
             return Unauthorized();
         }
 
-        var responseMessage = await _httpClient.GetAsync($"PostDislike/searchByPostId/{id}", accessToken, Port.CommunicationApi);
+        var responseMessage = await _httpClient.GetAsync($"UserPostLike/searchByPostId/{id}", accessToken, Port.CommunicationApi);
         if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
         {
             return Unauthorized();
         }
         else if (responseMessage.IsSuccessStatusCode)
         {
-            var postDislikes = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<PostDislikeModel>>();
+            var postLikes = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<UserPostLikeModel>>();
 
-            return Ok(postDislikes);
+            return Ok(postLikes);
         }
 
         return BadRequest();
     }
 
     [HttpPut]
-    public async Task<IActionResult> Update(PostLikeModel model)
+    public async Task<IActionResult> Update(UserPostLikeModel model)
     {
         if (!Request.Cookies.TryGetValue(AuthenticationCookie.AccessToken.ToString(), out var accessToken))
         {
             return Unauthorized();
         }
 
-        var responseMessage = await _httpClient.PutAsync("PostDislike", JsonContent.Create(model), accessToken, Port.CommunicationApi);
+        var responseMessage = await _httpClient.PutAsync("UserPostLike", JsonContent.Create(model), accessToken, Port.CommunicationApi);
         if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
         {
             return Unauthorized();
@@ -88,23 +88,23 @@ public class PostDislikeController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<IActionResult> Create(PostLikeModel model)
+    public async Task<IActionResult> Create(UserPostLikeModel model)
     {
         if (!Request.Cookies.TryGetValue(AuthenticationCookie.AccessToken.ToString(), out var accessToken))
         {
             return Unauthorized();
         }
 
-        var responseMessage = await _httpClient.PostAsync("PostDislike", JsonContent.Create(model), accessToken, Port.CommunicationApi);
+        var responseMessage = await _httpClient.PostAsync("UserPostLike", JsonContent.Create(model), accessToken, Port.CommunicationApi);
         if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
         {
             return Unauthorized();
         }
         else if (responseMessage.IsSuccessStatusCode)
         {
-            var postDislike = await responseMessage.Content.ReadFromJsonAsync<PostDislikeModel>();
+            var postLike = await responseMessage.Content.ReadFromJsonAsync<UserPostLikeModel>();
 
-            return Ok(postDislike);
+            return Ok(postLike);
         }
 
         return BadRequest();
@@ -118,7 +118,7 @@ public class PostDislikeController : ControllerBase
             return Unauthorized();
         }
 
-        var responseMessage = await _httpClient.DeletAsync($"PostDislike/{id}", accessToken, Port.CommunicationApi);
+        var responseMessage = await _httpClient.DeletAsync($"UserPostLike/{id}", accessToken, Port.CommunicationApi);
         if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
         {
             return Unauthorized();

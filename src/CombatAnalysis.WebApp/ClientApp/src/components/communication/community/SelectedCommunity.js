@@ -4,10 +4,10 @@ import { memo, useEffect, useRef, useState } from "react";
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import { useLazyGetCommunityByIdQuery, useUpdateCommunityAsyncMutation } from '../../../store/api/communication/community/Community.api';
-import { useCreateCommunityPostAsyncMutation } from '../../../store/api/communication/community/CommunityPost.api';
+import { useCreateCommunityPostMutation } from '../../../store/api/communication/CommunityPost.api';
 import Loading from '../../Loading';
 import CommunicationMenu from '../CommunicationMenu';
-import CreatePost from '../CreatePost';
+import CreateCommunityPost from '../CreateCommunityPost';
 import CommunityDiscussions from './CommunityDiscussions';
 import CommunityMembers from './CommunityMembers';
 import CommunityMenu from './CommunityMenu';
@@ -37,7 +37,7 @@ const SelectedCommunity = () => {
 
     const [getCommunityByIdAsync] = useLazyGetCommunityByIdQuery();
     const [updateCommunityAsync] = useUpdateCommunityAsyncMutation();
-    const [createNewCommunityPostAsync] = useCreateCommunityPostAsyncMutation();
+    const [createNewCommunityPostAsync] = useCreateCommunityPostMutation();
 
     useEffect(() => {
         const queryParams = new URLSearchParams(window.location.search);
@@ -64,7 +64,7 @@ const SelectedCommunity = () => {
         }
 
         const createdUserPost = await createNewCommunityPostAsync(newComunityPost);
-        return createdUserPost.data === undefined ? false : true;
+        return createdUserPost.data !== undefined;
     }
 
     const updateCommunityNameAsync = async () => {
@@ -74,7 +74,7 @@ const SelectedCommunity = () => {
         communityForUpdate.name = communityNameInput.current.value;
 
         const updated = await updateCommunityAsync(communityForUpdate);
-        if (updated.data !== undefined) {
+        if (updated.data) {
             setCommunity(communityForUpdate);
         }
     }
@@ -86,12 +86,12 @@ const SelectedCommunity = () => {
         communityForUpdate.description = communityDescriptionInput.current.value;
 
         const updated = await updateCommunityAsync(communityForUpdate);
-        if (updated.data !== undefined) {
+        if (updated.data) {
             setCommunity(communityForUpdate);
         }
     }
 
-    if (community === null) {
+    if (!community) {
         return (
             <>
                 <CommunicationMenu
@@ -204,11 +204,10 @@ const SelectedCommunity = () => {
                     }
                     <div className="posts">
                         {isCommunityMember &&
-                            <CreatePost
+                            <CreateCommunityPost
                                 user={user}
-                                owner={community.name}
-                                postTypeName="community"
-                                createTypeOfPostFunc={createCommunityPostAsync}
+                                communityName={community.name}
+                                communityId={community.id}
                                 t={t}
                             />
                         }

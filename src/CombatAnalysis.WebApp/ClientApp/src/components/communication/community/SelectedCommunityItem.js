@@ -1,56 +1,15 @@
-import { useEffect, useState } from 'react';
-import { usePostSearchByCommunityIdAsyncQuery } from '../../../store/api/ChatApi';
-import { useLazyGetPostByIdQuery, useRemovePostMutation } from '../../../store/api/communication/Post.api';
-import { useLazyGetCommunityPostByPostIdQuery, useRemoveCommunityPostMutation } from '../../../store/api/communication/community/CommunityPost.api';
-import Post from '../Post';
+import { useCommunityPostSearchByCommunityIdAsyncQuery } from '../../../store/api/CommunityApi';
+import { useRemoveCommunityPostMutation } from '../../../store/api/communication/CommunityPost.api';
 import Loading from '../../Loading';
+import Post from '../Post';
 
 const SelectedCommunityItem = ({ user, communityId }) => {
-    const { data: communityPosts, isLoading } = usePostSearchByCommunityIdAsyncQuery(communityId);
+    const { data: communityPosts, isLoading } = useCommunityPostSearchByCommunityIdAsyncQuery(communityId);
 
-    const [getPostById] = useLazyGetPostByIdQuery();
-    const [getCommunityPostByPostId] = useLazyGetCommunityPostByPostIdQuery();
     const [removeCommunityPost] = useRemoveCommunityPostMutation();
-    const [removePost] = useRemovePostMutation();
 
-    const [posts, setPosts] = useState([]);
-
-    useEffect(() => {
-        if (communityPosts === undefined) {
-            return;
-        }
-
-        const getPosts = async () => {
-            await getPostsAsync();
-        }
-
-        getPosts();
-    }, [communityPosts])
-
-    const getPostsAsync = async () => {
-        const allPosts = [];
-
-        for (let i = 0; i < communityPosts.length; i++) {
-            const post = await getPostById(communityPosts[i].postId);
-
-            if (post.data !== undefined) {
-                allPosts.push(post.data);
-            }
-        }
-
-        setPosts(allPosts);
-    }
-
-    const removeCommunityPostAsync = async (postId) => {
-        const communityPost = await getCommunityPostByPostId(postId);
-        if (communityPost.data === undefined || communityPost.data.length === 0) {
-            return;
-        }
-
-        const result = await removeCommunityPost(communityPost.data[0].id);
-        if (result.error === undefined) {
-            await removePost(postId);
-        }
+    const removeCommunityPostAsync = async (communityPostId) => {
+        await removeCommunityPost(communityPostId);
     }
 
     if (isLoading) {
@@ -59,7 +18,7 @@ const SelectedCommunityItem = ({ user, communityId }) => {
 
     return (
         <ul className="posts">
-            {posts?.map((post) => (
+            {communityPosts?.map((post) => (
                     <li key={post?.id}>
                         <Post
                             user={user}

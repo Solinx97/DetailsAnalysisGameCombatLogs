@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useTranslation } from 'react-i18next';
-import { useLazyGetPostByIdQuery, useUpdatePostAsyncMutation } from '../../store/api/communication/Post.api';
+import { useLazyGetUserPostByIdQuery, useUpdateUserPostMutation } from '../../store/api/communication/UserPost.api';
 import { useCreatePostCommentAsyncMutation } from '../../store/api/communication/PostComment.api';
 import PostComments from './PostComments';
 import PostReactions from './PostReactions';
@@ -8,13 +8,13 @@ import PostTitle from './PostTitle';
 
 import '../../styles/communication/post.scss';
 
-const Post = ({ user, data, deletePostAsync, canBeRemoveFromUserFeed = true }) => {
+const Post = ({ user, data, deletePostAsync }) => {
     const { t } = useTranslation("communication/post");
 
-    const [updatePostAsyncMut] = useUpdatePostAsyncMutation();
+    const [updatePostAsyncMut] = useUpdateUserPostMutation();
 
     const [createPostCommentAsyncMut] = useCreatePostCommentAsyncMutation();
-    const [getPostByIdAsync] = useLazyGetPostByIdQuery();
+    const [getPostByIdAsync] = useLazyGetUserPostByIdQuery();
 
     const [showComments, setShowComments] = useState(false);
     const [postCommentContent, setPostCommentContent] = useState("");
@@ -23,7 +23,7 @@ const Post = ({ user, data, deletePostAsync, canBeRemoveFromUserFeed = true }) =
     const [post, setPost] = useState(data);
 
     useEffect(() => {
-        setIsMyPost(post?.appUserId === user?.id && canBeRemoveFromUserFeed);
+        setIsMyPost(post?.appUserId === user?.id);
     }, [])
 
     const updatePostAsync = async (postId, likesCount, dislikesCount, commentsCount) => {
@@ -69,13 +69,13 @@ const Post = ({ user, data, deletePostAsync, canBeRemoveFromUserFeed = true }) =
     const createPostCommentAsync = async () => {
         const newPostComment = {
             content: postCommentContent,
-            when: new Date(),
-            postId: post.id,
+            createdAt: new Date(),
+            userPostId: post.id,
             appUserId: user.id
         }
 
         const createdPostComment = await createPostCommentAsyncMut(newPostComment);
-        if (createdPostComment.data !== undefined) {
+        if (createdPostComment.data) {
             setPostCommentContent("");
 
             await updatePostAsync(post.id, 0, 0, 1);
@@ -143,7 +143,7 @@ const Post = ({ user, data, deletePostAsync, canBeRemoveFromUserFeed = true }) =
                             <div className="add-new-comment__content">
                             <textarea className="form-control" rows="3" cols="60" onChange={e => setPostCommentContent(e.target.value)} value={postCommentContent} />
                             <div className="actions">
-                                    <div className="add-comment" onClick={async () => await createPostCommentAsync()}>{t("Add")}</div>
+                                <div className="add-comment" onClick={createPostCommentAsync}>{t("Add")}</div>
                                     <div className="hide" onClick={() => setShowAddComment((item) => !item)}>{t("Hide")}</div>
                                 </div>
                             </div>

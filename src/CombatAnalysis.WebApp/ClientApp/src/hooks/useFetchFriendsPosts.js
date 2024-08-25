@@ -1,6 +1,6 @@
 ﻿import { useEffect, useState } from 'react';
-import { useLazyPostSearchByCommunityIdAsyncQuery, useLazyUserPostSearchByUserIdQuery } from '../store/api/ChatApi';
-import { useLazyGetPostByIdQuery } from '../store/api/communication/Post.api';
+import { useLazyCommunityPostSearchByCommunityIdAsyncQuery, useLazyUserPostSearchByOwnerIdQuery } from '../store/api/CommunityApi';
+import { useLazyGetUserPostByIdQuery } from '../store/api/communication/UserPost.api';
 import { useLazySearchByUserIdAsyncQuery } from '../store/api/communication/community/CommunityUser.api';
 
 const checkNewPostsInterval = 1000;
@@ -10,10 +10,10 @@ const useFetchFriendsPosts = (appUserId, myFriends) => {
     const [allMyPersonalPosts, setAllMyPersonalPosts] = useState([]);
     const [postsAreLoading, setPostsAreLoading] = useState([]);
 
-    const [getUserPostsAsync] = useLazyUserPostSearchByUserIdQuery();
+    const [getUserPostsAsync] = useLazyUserPostSearchByOwnerIdQuery();
     const [getCommunityUsers] = useLazySearchByUserIdAsyncQuery();
-    const [getCommunityPosts] = useLazyPostSearchByCommunityIdAsyncQuery();
-    const [getPostByIdAsync] = useLazyGetPostByIdQuery();
+    const [getCommunityPosts] = useLazyCommunityPostSearchByCommunityIdAsyncQuery();
+    const [getPostByIdAsync] = useLazyGetUserPostByIdQuery();
 
     useEffect(() => {
         setPostsAreLoading(true);
@@ -30,32 +30,34 @@ const useFetchFriendsPosts = (appUserId, myFriends) => {
     }, [appUserId]);
 
     useEffect(() => {
-        const interval = setInterval(getAllPosts, checkNewPostsInterval);
+        const interval = setInterval(getAllUsersPostsAsync, checkNewPostsInterval);
 
         return () => clearInterval(interval);
     }, [myFriends]);
 
+
     const getAllMyPersonalPostsAsync = async () => {
-        const userPosts = await getUserPostsAsync(appUserId);
-        if (userPosts.data) {
-            const userPersonalPosts = await getPostsAsync(userPosts.data);
-            setAllMyPersonalPosts(userPersonalPosts);
-        }
+        await getAllPostsAsync([appUserId]);
     }
 
-    const getAllPosts = async () => {
+    const getAllUsersPostsAsync = async () => {
         const peopleId = await getPeopleIdAsync();
         await getAllPostsAsync(peopleId);
     }
 
-    const loadingPostsAsync = async (peopleId = []) => {
+    const getAllPostsAsync = async (peopleId) => {
+        const posts = await loadingPostsAsync(peopleId);
+
+        setAllPosts(posts);
+    }
+
+    const loadingPostsAsync = async (peopleId) => {
         let posts = [];
 
         for (let i = 0; i < peopleId.length; i++) {
             const userPosts = await getUserPostsAsync(peopleId[i]);
             if (userPosts.data) {
-                const userPersonalPosts = await getPostsAsync(userPosts.data);
-                posts = [...posts, ...userPersonalPosts];
+                posts = [...posts, ...userPosts.data];
             }
         }
 
@@ -84,35 +86,16 @@ const useFetchFriendsPosts = (appUserId, myFriends) => {
         return temporaryPeopleId
     }
 
-    const getAllPostsAsync = async (peopleId) => {
-        const posts = await loadingPostsAsync(peopleId);
-
-        setAllPosts(posts);
-    }
-
-    const postsSortByTime = (a, b) => {
-        if (a.when > b.when) {
+    const postsSortByTime = (postA, postB) => {
+        if (postA.createdAt > postB.createdAt) {
             return -1;
         }
 
-        if (a.when < b.when) {
+        if (postA.createdAt < postB.createdAt) {
             return 1;
         }
 
         return 0;
-    }
-
-    const getPostsAsync = async (userPosts) => {
-        const userPersonalPosts = [];
-
-        for (let i = 0; i < userPosts?.length; i++) {
-            const post = await getPostByIdAsync(userPosts[i].postId);
-            if (post.data) {
-                userPersonalPosts.push(post.data);
-            }
-        }
-
-        return userPersonalPosts;
     }
 
     const getCommunityPostsAsync = async (communitiesUser) => {

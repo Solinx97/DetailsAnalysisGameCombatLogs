@@ -13,7 +13,7 @@ const PostCommentTitle = ({ userId, comment, dateFormatting, postId, updatePostA
 
     const deletePostCommentAsync = async (postCommentId) => {
         const deletedItem = await removePostCommentAsyncMut(postCommentId);
-        if (deletedItem.data !== undefined) {
+        if (deletedItem.data) {
             await updatePostAsync(postId, 0, 0, -1);
         }
     }
@@ -26,7 +26,7 @@ const PostCommentTitle = ({ userId, comment, dateFormatting, postId, updatePostA
         <div className="post-comments__title">
             <div className="user">
                 <div className="username">{targetUser.username}</div>
-                <div className="when">{dateFormatting(comment.when)}</div>
+                <div className="when">{dateFormatting(comment.createdAt)}</div>
             </div>
             {comment.appUserId === userId &&
                 <div className="post-comments__menu">

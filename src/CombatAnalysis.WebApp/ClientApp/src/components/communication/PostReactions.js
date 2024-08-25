@@ -62,7 +62,7 @@ const PostReactions = ({ user, post, updatePostAsync, setShowComments, showComme
         const postDislikeIsExist = await getPostDislikesAsync(post?.id)
 
         const newPostLike = {
-            postId: post?.id,
+            userPostId: post?.id,
             appUserId: user.id
         }
 
@@ -87,12 +87,12 @@ const PostReactions = ({ user, post, updatePostAsync, setShowComments, showComme
         const postLikeIsExist = await getPostLikesAsync(post?.id);
 
         const newPostDislike = {
-            postId: post?.id,
+            userPostId: post?.id,
             appUserId: user.id
         }
 
         const createdPostDislike = await createPostDislikeAsyncMut(newPostDislike);
-        if (createdPostDislike.data !== undefined) {
+        if (createdPostDislike.data) {
             if (postLikeIsExist) {
                 await updatePostAsync(post?.id, -1, 1, 0);
             }
@@ -114,7 +114,7 @@ const PostReactions = ({ user, post, updatePostAsync, setShowComments, showComme
                         className="item__like"
                         icon={faHeart}
                         title={t("Like")}
-                        onClick={async () => await createPostLikeAsync()}
+                        onClick={createPostLikeAsync}
                     />
                     <div className="count">{post?.likeCount}</div>
                 </div>
@@ -123,7 +123,7 @@ const PostReactions = ({ user, post, updatePostAsync, setShowComments, showComme
                         className="item__dislike"
                         icon={faThumbsDown}
                         title={t("Dislike")}
-                        onClick={async () => await createPostDislikeAsync()}
+                        onClick={createPostDislikeAsync}
                     />
                     <div className="count">{post?.dislikeCount}</div>
                 </div>

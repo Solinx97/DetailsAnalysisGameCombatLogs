@@ -1,6 +1,6 @@
-import { memo, useState, useEffect } from 'react';
+import { memo, useEffect, useState } from 'react';
 import useFetchFriendsPosts from '../../hooks/useFetchFriendsPosts';
-import { useLazyUserPostSearchByPostIdQuery, useRemoveUserPostAsyncMutation } from '../../store/api/communication/UserPost.api';
+import { useRemoveUserPostMutation } from '../../store/api/communication/UserPost.api';
 import { useFriendSearchMyFriendsQuery } from '../../store/api/communication/myEnvironment/Friend.api';
 import Loading from '../Loading';
 import Post from './Post';
@@ -17,8 +17,7 @@ const FeedParticipants = ({ user, t }) => {
 
     const { data: myFriends, isLoading } = useFriendSearchMyFriendsQuery(user?.id);
 
-    const [getUserPostByPostId] = useLazyUserPostSearchByPostIdQuery();
-    const [removeUserPost] = useRemoveUserPostAsyncMutation();
+    const [removeUserPost] = useRemoveUserPostMutation();
 
     const { allMyPersonalPosts, allPosts, postsAreLoading } = useFetchFriendsPosts(user?.id, myFriends);
 
@@ -52,19 +51,14 @@ const FeedParticipants = ({ user, t }) => {
         setHaveNewPosts(allPosts.length > currentPosts.length);
     }, [allPosts]);
 
-    const removeUserPostAsync = async (postId) => {
-        const userPost = await getUserPostByPostId(postId);
-        if (!userPost.data || userPost.data.length === 0) {
+    const removeUserPostAsync = async (userPostId) => {
+        console.log(userPostId);
+        const response = await removeUserPost(userPostId);
+        if (response.error) {
             return;
         }
 
-        const userPostData = userPost.data[0];
-        const result = await removeUserPost(userPostData.id);
-        if (result.error) {
-            return;
-        }
-
-        const getRemovedPost = allPosts.filter(post => post.id === userPostData.postId);
+        const getRemovedPost = allPosts.filter(post => post.id === userPostId);
         if (getRemovedPost.length > 0) {
             const indexOf = allPosts.indexOf(getRemovedPost[0]);
             allPosts.splice(indexOf, 1);
@@ -103,7 +97,6 @@ const FeedParticipants = ({ user, t }) => {
                             user={user}
                             data={post}
                             deletePostAsync={async () => await removeUserPostAsync(post.id)}
-                            canBeRemoveFromUserFeed={post.postType === postType["user"]}
                         />
                     </li>
                 ))}

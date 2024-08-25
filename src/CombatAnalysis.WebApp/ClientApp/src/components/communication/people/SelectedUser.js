@@ -1,10 +1,10 @@
-import { faArrowsLeftRightToLine, faArrowsToCircle, faCheck, faComments, faEnvelopesBulk, faUser, faUserGroup } from '@fortawesome/free-solid-svg-icons';
+import { faComments, faEnvelopesBulk, faUser, faUserGroup } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useEffect, useState } from "react";
 import { useTranslation } from 'react-i18next';
 import { useLazyGetUserByIdQuery } from '../../../store/api/Account.api';
-import { useLazyUserPostSearchByUserIdQuery } from '../../../store/api/ChatApi';
-import { useLazyGetPostByIdQuery } from '../../../store/api/communication/Post.api';
+import { useLazyUserPostSearchByOwnerIdQuery } from '../../../store/api/CommunityApi';
+import { useLazyGetUserPostByIdQuery } from '../../../store/api/communication/UserPost.api';
 import CommunicationMenu from "../CommunicationMenu";
 import Post from '../Post';
 import Friends from '../myEnvironment/Friends';
@@ -16,8 +16,8 @@ import '../../../styles/communication/people/selectedUser.scss';
 const SelectedUser = () => {
     const { t } = useTranslation("communication/people/user");
 
-    const [getUserPosts] = useLazyUserPostSearchByUserIdQuery();
-    const [getPostById] = useLazyGetPostByIdQuery();
+    const [getUserPosts] = useLazyUserPostSearchByOwnerIdQuery();
+    const [getPostById] = useLazyGetUserPostByIdQuery();
     const [getUserById] = useLazyGetUserByIdQuery();
 
     const [personId, setPersonId] = useState(0);

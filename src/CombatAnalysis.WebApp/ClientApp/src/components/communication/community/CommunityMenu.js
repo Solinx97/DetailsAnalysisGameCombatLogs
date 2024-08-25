@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useState } from "react";
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { useSearchByCommunityIdAsyncQuery } from '../../../store/api/ChatApi';
+import { useCommunityUserSearchByCommunityIdAsyncQuery } from '../../../store/api/CommunityApi';
 import { useRemoveCommunityAsyncMutation, useUpdateCommunityAsyncMutation } from '../../../store/api/communication/community/Community.api';
 import { useLazySearchByUserIdAsyncQuery, useRemoveCommunityUserAsyncMutation } from '../../../store/api/communication/community/CommunityUser.api';
 import { useCreateInviteAsyncMutation, useLazyInviteIsExistQuery } from '../../../store/api/communication/community/InviteToCommunity.api';
@@ -38,7 +38,7 @@ const CommunityMenu = ({ setShowMenu, customer, community, setCommunity }) => {
     const [createInviteAsyncMut] = useCreateInviteAsyncMutation();
     const [isInviteExistAsync] = useLazyInviteIsExistQuery();
     const [updateCommunityAsyncMut] = useUpdateCommunityAsyncMutation();
-    const { data: communityUsers, isLoading } = useSearchByCommunityIdAsyncQuery(community?.id);
+    const { data: communityUsers, isLoading } = useCommunityUserSearchByCommunityIdAsyncQuery(community?.id);
 
     const leaveFromCommunityAsync = async () => {
         const myCommunityUserId = await searchByUserIdAsync(customer?.id);

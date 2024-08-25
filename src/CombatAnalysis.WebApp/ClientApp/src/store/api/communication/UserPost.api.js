@@ -1,8 +1,15 @@
-import { ChatApi } from "../ChatApi";
+import { CommunityApi } from "../CommunityApi";
 
-export const UserPostApi = ChatApi.injectEndpoints({
+export const UserPostApi = CommunityApi.injectEndpoints({
     endpoints: builder => ({
-        createUserPostAsync: builder.mutation({
+        getUserPostById: builder.query({
+            query: (id) => `/UserPost/${id}`,
+            providesTags: (result, error, arg) =>
+                result
+                    ? [{ type: 'UserPost', id: result.id }]
+                    : [{ type: 'UserPost' }]
+        }),
+        createUserPost: builder.mutation({
             query: post => ({
                 body: post,
                 url: '/UserPost',
@@ -10,22 +17,28 @@ export const UserPostApi = ChatApi.injectEndpoints({
             }),
             invalidatesTags: (result, error) => [{ type: 'UserPost', result }],
         }),
-        userPostSearchByPostId: builder.query({
-            query: (id) => `/UserPost/searchByPostId/${id}`,
-            providesTags: (result, error, id) => [{ type: 'UserPost', id }],
+        updateUserPost: builder.mutation({
+            query: post => ({
+                body: post,
+                url: '/UserPost',
+                method: 'PUT'
+            }),
+            invalidatesTags: (result, error) => [{ type: 'UserPost', result }],
         }),
-        removeUserPostAsync: builder.mutation({
+        removeUserPost: builder.mutation({
             query: id => ({
                 url: `/UserPost/${id}`,
                 method: 'DELETE'
             }),
-            invalidatesTags: (result, error) => [{ type: 'UserPost', result }],
+            invalidatesTags: (result, error, arg) => [{ type: 'UserPost', arg }]
         }),
     })
 })
 
 export const {
-    useCreateUserPostAsyncMutation,
-    useLazyUserPostSearchByPostIdQuery,
-    useRemoveUserPostAsyncMutation,
+    useGetUserPostByIdQuery,
+    useLazyGetUserPostByIdQuery,
+    useCreateUserPostMutation,
+    useUpdateUserPostMutation,
+    useRemoveUserPostMutation
 } = UserPostApi;

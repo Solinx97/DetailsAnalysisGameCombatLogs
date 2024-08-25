@@ -2,7 +2,7 @@ import { faPlus, faRectangleXmark, faCircleXmark } from '@fortawesome/free-solid
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { memo, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useLazySearchByCommunityIdAsyncQuery, useSearchByCommunityIdAsyncQuery } from '../../../store/api/ChatApi';
+import { useLazyCommunityUserSearchByCommunityIdAsyncQuery, useCommunityUserSearchByCommunityIdAsyncQuery } from '../../../store/api/CommunityApi';
 import { useRemoveCommunityUserAsyncMutation } from '../../../store/api/communication/community/CommunityUser.api';
 import { useCreateInviteAsyncMutation, useLazyInviteIsExistQuery } from '../../../store/api/communication/community/InviteToCommunity.api';
 import AddPeople from '../../AddPeople';
@@ -23,7 +23,7 @@ const CommunityMembers = ({ community, user, setIsCommunityMember }) => {
 
     const [createInviteAsyncMut] = useCreateInviteAsyncMutation();
 
-    const { communityUsers, isLoading } = useSearchByCommunityIdAsyncQuery(community?.id, {
+    const { communityUsers, isLoading } = useCommunityUserSearchByCommunityIdAsyncQuery(community?.id, {
         selectFromResult: ({ data }) => {
             const idList = [];
             for (let i = 0; i < data?.length; i++) {
@@ -37,7 +37,7 @@ const CommunityMembers = ({ community, user, setIsCommunityMember }) => {
             };
         }
     });
-    const [getAllCommunityUsersAsync] = useLazySearchByCommunityIdAsyncQuery();
+    const [getAllCommunityUsersAsync] = useLazyCommunityUserSearchByCommunityIdAsyncQuery();
     const [isInviteExistAsync] = useLazyInviteIsExistQuery();
     const [removeCommunityUserAsync] = useRemoveCommunityUserAsyncMutation();
 

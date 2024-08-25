@@ -1,42 +1,36 @@
 import { faBan, faCheck, faPlus } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useState } from 'react';
-import { useCreatePostAsyncMutation } from '../../store/api/communication/Post.api';
+import { useCreateUserPostMutation } from '../../store/api/communication/UserPost.api';
 import Loading from '../Loading';
 import AddTagsToPost from './AddTagsToPost';
 
-const postType = {
-    user: 0,
-    community: 1
-}
-
-const CreatePost = ({ user, owner, postTypeName, createTypeOfPostFunc, t }) => {
+const CreateUserPost = ({ user, owner, t }) => {
     const [showCreatePost, setShowCreatePost] = useState(false);
     const [postContent, setPostContent] = useState("");
     const [postTags, setPostTags] = useState([]);
 
-    const [createNewPostAsync] = useCreatePostAsyncMutation();
+    const [createNewUserPostAsync] = useCreateUserPostMutation();
 
-    const createPostAsync = async () => {
+    const createUserPostAsync = async () => {
         const newPost = {
             owner: owner,
             content: postContent,
-            postType: postType[postTypeName],
+            publicType: 0,
             tags: postTags.join(';'),
-            when: new Date(),
+            createdAt: new Date(),
             likeCount: 0,
             dislikeCount: 0,
             postComment: 0,
             appUserId: user?.id
         }
 
-        const createdPost = await createNewPostAsync(newPost);
-        if (createdPost.data) {
+        const response = await createNewUserPostAsync(newPost);
+        if (response.data) {
             setShowCreatePost(false);
             setPostContent("");
 
-            const isCreated = await createTypeOfPostFunc(createdPost.data.id);
-            return isCreated;
+            return true;
         }
 
         return false;
@@ -65,7 +59,7 @@ const CreatePost = ({ user, owner, postTypeName, createTypeOfPostFunc, t }) => {
                 }
                 {showCreatePost &&
                     <div className="finish-create-post">
-                        <div className={`btn-shadow${postContent === "" ? "_disabled" : ""}`} title={t("Save")} onClick={postContent === "" ? null : async () => await createPostAsync()}>
+                        <div className={`btn-shadow${postContent === "" ? "_disabled" : ""}`} title={t("Save")} onClick={postContent === "" ? null : async () => await createUserPostAsync()}>
                             <FontAwesomeIcon
                                 icon={faCheck}
                             />
@@ -94,4 +88,4 @@ const CreatePost = ({ user, owner, postTypeName, createTypeOfPostFunc, t }) => {
     );
 }
 
-export default CreatePost;
+export default CreateUserPost;

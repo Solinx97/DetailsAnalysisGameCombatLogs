@@ -5,29 +5,32 @@ export const PostCommentApi = ChatApi.injectEndpoints({
         createPostCommentAsync: builder.mutation({
             query: postComment => ({
                 body: postComment,
-                url: '/PostComment',
+                url: '/UserPostComment',
                 method: 'POST'
             }),
-            invalidatesTags: (result, error) => [{ type: 'PostComment', result }],
+            invalidatesTags: (result, error) => [{ type: 'UserPostComment', result }],
         }),
         updatePostCommentAsync: builder.mutation({
             query: postComment => ({
                 body: postComment,
-                url: '/PostComment',
+                url: '/UserPostComment',
                 method: 'PUT'
             }),
-            invalidatesTags: (result, error) => [{ type: 'PostComment', result }],
+            invalidatesTags: (result, error) => [{ type: 'UserPostComment', result }],
         }),
         removePostCommentAsync: builder.mutation({
             query: id => ({
-                url: `/PostComment/${id}`,
+                url: `/UserPostComment/${id}`,
                 method: 'DELETE'
             }),
-            invalidatesTags: (result, error) => [{ type: 'PostComment', result }],
+            invalidatesTags: (result, error) => [{ type: 'UserPostComment', result }],
         }),
         searchPostCommentByPostId: builder.query({
-            query: (id) => `/PostComment/searchByPostId/${id}`,
-            providesTags: (result, error, id) => [{ type: 'PostComment', id }],
+            query: (id) => `/UserPostComment/searchByPostId/${id}`,
+            providesTags: (result, error, arg) =>
+                result
+                    ? [...result.map(({ id }) => ({ type: 'UserPostComment', id })), { type: 'UserPostComment' }]
+                    : [{ type: 'UserPostComment' }]
         }),
     })
 })

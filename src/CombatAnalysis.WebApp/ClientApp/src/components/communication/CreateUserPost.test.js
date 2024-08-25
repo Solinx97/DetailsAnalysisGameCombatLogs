@@ -22,7 +22,7 @@ jest.mock('react-i18next', () => ({
     },
 }));
 
-describe('CreatePost Component', () => {
+describe('CreateUserPost Component', () => {
     const user = {
         id: '123',
     };

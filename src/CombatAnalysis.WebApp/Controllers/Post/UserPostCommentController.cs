@@ -11,11 +11,11 @@ namespace CombatAnalysis.WebApp.Controllers.Post;
 [RequireAccessToken]
 [Route("api/v1/[controller]")]
 [ApiController]
-public class UserPostController : ControllerBase
+public class UserPostCommentController : ControllerBase
 {
     private readonly IHttpClientHelper _httpClient;
 
-    public UserPostController(IHttpClientHelper httpClient)
+    public UserPostCommentController(IHttpClientHelper httpClient)
     {
         _httpClient = httpClient;
     }
@@ -28,16 +28,16 @@ public class UserPostController : ControllerBase
             return Unauthorized();
         }
 
-        var responseMessage = await _httpClient.GetAsync("UserPost", accessToken, Port.CommunicationApi);
+        var responseMessage = await _httpClient.GetAsync("UserPostComment", accessToken, Port.CommunicationApi);
         if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
         {
             return Unauthorized();
         }
         else if (responseMessage.IsSuccessStatusCode)
         {
-            var post = await responseMessage.Content.ReadFromJsonAsync<UserPostModel>();
+            var postComment = await responseMessage.Content.ReadFromJsonAsync<UserPostCommentModel>();
 
-            return Ok(post);
+            return Ok(postComment);
         }
 
         return BadRequest();
@@ -51,53 +51,53 @@ public class UserPostController : ControllerBase
             return Unauthorized();
         }
 
-        var responseMessage = await _httpClient.GetAsync($"UserPost/{id}", accessToken, Port.CommunicationApi);
+        var responseMessage = await _httpClient.GetAsync($"UserPostComment/{id}", accessToken, Port.CommunicationApi);
         if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
         {
             return Unauthorized();
         }
         else if (responseMessage.IsSuccessStatusCode)
         {
-            var post = await responseMessage.Content.ReadFromJsonAsync<UserPostModel>();
+            var postComment = await responseMessage.Content.ReadFromJsonAsync<UserPostCommentModel>();
 
-            return Ok(post);
+            return Ok(postComment);
         }
 
         return BadRequest();
     }
 
-    [HttpGet("searchByOwnerId/{id}")]
-    public async Task<IActionResult> SearchByOwnerId(string id)
+    [HttpGet("searchByPostId/{id:int:min(1)}")]
+    public async Task<IActionResult> SearchByPostId(int id)
     {
         if (!Request.Cookies.TryGetValue(AuthenticationCookie.AccessToken.ToString(), out var accessToken))
         {
             return Unauthorized();
         }
 
-        var responseMessage = await _httpClient.GetAsync($"UserPost/searchByOwnerId/{id}", accessToken, Port.CommunicationApi);
+        var responseMessage = await _httpClient.GetAsync($"UserPostComment/searchByPostId/{id}", accessToken, Port.CommunicationApi);
         if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
         {
             return Unauthorized();
         }
         else if (responseMessage.IsSuccessStatusCode)
         {
-            var posts = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<UserPostModel>>();
+            var postComments = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<UserPostCommentModel>>();
 
-            return Ok(posts);
+            return Ok(postComments);
         }
 
         return BadRequest();
     }
 
     [HttpPut]
-    public async Task<IActionResult> Update(UserPostModel model)
+    public async Task<IActionResult> Update(UserPostCommentModel model)
     {
         if (!Request.Cookies.TryGetValue(AuthenticationCookie.AccessToken.ToString(), out var accessToken))
         {
             return Unauthorized();
         }
 
-        var responseMessage = await _httpClient.PutAsync("UserPost", JsonContent.Create(model), accessToken, Port.CommunicationApi);
+        var responseMessage = await _httpClient.PutAsync("UserPostComment", JsonContent.Create(model), accessToken, Port.CommunicationApi);
         if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
         {
             return Unauthorized();
@@ -111,23 +111,23 @@ public class UserPostController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<IActionResult> Create(UserPostModel model)
+    public async Task<IActionResult> Create(UserPostCommentModel model)
     {
         if (!Request.Cookies.TryGetValue(AuthenticationCookie.AccessToken.ToString(), out var accessToken))
         {
             return Unauthorized();
         }
 
-        var responseMessage = await _httpClient.PostAsync("UserPost", JsonContent.Create(model), accessToken, Port.CommunicationApi);
+        var responseMessage = await _httpClient.PostAsync("UserPostComment", JsonContent.Create(model), accessToken, Port.CommunicationApi);
         if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
         {
             return Unauthorized();
         }
         else if (responseMessage.IsSuccessStatusCode)
         {
-            var post = await responseMessage.Content.ReadFromJsonAsync<UserPostModel>();
+            var postComment = await responseMessage.Content.ReadFromJsonAsync<UserPostCommentModel>();
 
-            return Ok(post);
+            return Ok(postComment);
         }
 
         return BadRequest();
@@ -141,7 +141,7 @@ public class UserPostController : ControllerBase
             return Unauthorized();
         }
 
-        var responseMessage = await _httpClient.DeletAsync($"UserPost/{id}", accessToken, Port.CommunicationApi);
+        var responseMessage = await _httpClient.DeletAsync($"UserPostComment/{id}", accessToken, Port.CommunicationApi);
         if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
         {
             return Unauthorized();

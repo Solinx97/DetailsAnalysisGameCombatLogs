@@ -1,46 +1,22 @@
-﻿using CombatAnalysis.WebApp.Attributes;
-using CombatAnalysis.WebApp.Consts;
+﻿using CombatAnalysis.WebApp.Consts;
 using CombatAnalysis.WebApp.Enums;
 using CombatAnalysis.WebApp.Extensions;
 using CombatAnalysis.WebApp.Interfaces;
 using CombatAnalysis.WebApp.Models.Post;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CombatAnalysis.WebApp.Controllers.Post;
 
-[RequireAccessToken]
 [Route("api/v1/[controller]")]
 [ApiController]
-public class UserPostController : ControllerBase
+public class CommunityPostDislikeController : ControllerBase
 {
     private readonly IHttpClientHelper _httpClient;
 
-    public UserPostController(IHttpClientHelper httpClient)
+    public CommunityPostDislikeController(IHttpClientHelper httpClient)
     {
         _httpClient = httpClient;
-    }
-
-    [HttpGet]
-    public async Task<IActionResult> GetAll()
-    {
-        if (!Request.Cookies.TryGetValue(AuthenticationCookie.AccessToken.ToString(), out var accessToken))
-        {
-            return Unauthorized();
-        }
-
-        var responseMessage = await _httpClient.GetAsync("UserPost", accessToken, Port.CommunicationApi);
-        if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
-        {
-            return Unauthorized();
-        }
-        else if (responseMessage.IsSuccessStatusCode)
-        {
-            var post = await responseMessage.Content.ReadFromJsonAsync<UserPostModel>();
-
-            return Ok(post);
-        }
-
-        return BadRequest();
     }
 
     [HttpGet("{id:int:min(1)}")]
@@ -51,53 +27,53 @@ public class UserPostController : ControllerBase
             return Unauthorized();
         }
 
-        var responseMessage = await _httpClient.GetAsync($"UserPost/{id}", accessToken, Port.CommunicationApi);
+        var responseMessage = await _httpClient.GetAsync($"CommunityPostDislike/{id}", accessToken, Port.CommunicationApi);
         if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
         {
             return Unauthorized();
         }
         else if (responseMessage.IsSuccessStatusCode)
         {
-            var post = await responseMessage.Content.ReadFromJsonAsync<UserPostModel>();
+            var postDislike = await responseMessage.Content.ReadFromJsonAsync<CommunityPostDislikeModel>();
 
-            return Ok(post);
+            return Ok(postDislike);
         }
 
         return BadRequest();
     }
 
-    [HttpGet("searchByOwnerId/{id}")]
-    public async Task<IActionResult> SearchByOwnerId(string id)
+    [HttpGet("searchByPostId/{id:int:min(1)}")]
+    public async Task<IActionResult> SearchByPostId(int id)
     {
         if (!Request.Cookies.TryGetValue(AuthenticationCookie.AccessToken.ToString(), out var accessToken))
         {
             return Unauthorized();
         }
 
-        var responseMessage = await _httpClient.GetAsync($"UserPost/searchByOwnerId/{id}", accessToken, Port.CommunicationApi);
+        var responseMessage = await _httpClient.GetAsync($"CommunityPostDislike/searchByPostId/{id}", accessToken, Port.CommunicationApi);
         if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
         {
             return Unauthorized();
         }
         else if (responseMessage.IsSuccessStatusCode)
         {
-            var posts = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<UserPostModel>>();
+            var postDislikes = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<CommunityPostDislikeModel>>();
 
-            return Ok(posts);
+            return Ok(postDislikes);
         }
 
         return BadRequest();
     }
 
     [HttpPut]
-    public async Task<IActionResult> Update(UserPostModel model)
+    public async Task<IActionResult> Update(UserPostLikeModel model)
     {
         if (!Request.Cookies.TryGetValue(AuthenticationCookie.AccessToken.ToString(), out var accessToken))
         {
             return Unauthorized();
         }
 
-        var responseMessage = await _httpClient.PutAsync("UserPost", JsonContent.Create(model), accessToken, Port.CommunicationApi);
+        var responseMessage = await _httpClient.PutAsync("CommunityPostDislike", JsonContent.Create(model), accessToken, Port.CommunicationApi);
         if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
         {
             return Unauthorized();
@@ -111,23 +87,23 @@ public class UserPostController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<IActionResult> Create(UserPostModel model)
+    public async Task<IActionResult> Create(UserPostLikeModel model)
     {
         if (!Request.Cookies.TryGetValue(AuthenticationCookie.AccessToken.ToString(), out var accessToken))
         {
             return Unauthorized();
         }
 
-        var responseMessage = await _httpClient.PostAsync("UserPost", JsonContent.Create(model), accessToken, Port.CommunicationApi);
+        var responseMessage = await _httpClient.PostAsync("CommunityPostDislike", JsonContent.Create(model), accessToken, Port.CommunicationApi);
         if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
         {
             return Unauthorized();
         }
         else if (responseMessage.IsSuccessStatusCode)
         {
-            var post = await responseMessage.Content.ReadFromJsonAsync<UserPostModel>();
+            var postDislike = await responseMessage.Content.ReadFromJsonAsync<CommunityPostDislikeModel>();
 
-            return Ok(post);
+            return Ok(postDislike);
         }
 
         return BadRequest();
@@ -141,7 +117,7 @@ public class UserPostController : ControllerBase
             return Unauthorized();
         }
 
-        var responseMessage = await _httpClient.DeletAsync($"UserPost/{id}", accessToken, Port.CommunicationApi);
+        var responseMessage = await _httpClient.DeletAsync($"CommunityPostDislike/{id}", accessToken, Port.CommunicationApi);
         if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
         {
             return Unauthorized();

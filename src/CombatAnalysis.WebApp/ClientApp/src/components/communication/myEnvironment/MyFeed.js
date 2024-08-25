@@ -1,11 +1,13 @@
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
-import { useLazyUserPostSearchByUserIdQuery } from '../../../store/api/ChatApi';
-import { useLazyGetPostByIdQuery, useRemovePostMutation } from '../../../store/api/communication/Post.api';
-import { useCreateUserPostAsyncMutation, useLazyUserPostSearchByPostIdQuery, useRemoveUserPostAsyncMutation } from '../../../store/api/communication/UserPost.api';
+import { useLazyUserPostSearchByOwnerIdQuery } from '../../../store/api/CommunityApi';
+import {
+    useLazyGetUserPostByIdQuery,
+    useRemoveUserPostMutation
+} from '../../../store/api/communication/UserPost.api';
 import Loading from '../../Loading';
-import CreatePost from '../CreatePost';
+import CreateUserPost from '../CreateUserPost';
 import Post from '../Post';
 
 const MyFeed = () => {
@@ -13,12 +15,9 @@ const MyFeed = () => {
 
     const user = useSelector((state) => state.user.value);
 
-    const [getUserPosts] = useLazyUserPostSearchByUserIdQuery();
-    const [getPostById] = useLazyGetPostByIdQuery();
-    const [createNewUserPostAsync] = useCreateUserPostAsyncMutation();
-    const [getUserPostByPostId] = useLazyUserPostSearchByPostIdQuery();
-    const [removeUserPost] = useRemoveUserPostAsyncMutation();
-    const [removePost] = useRemovePostMutation();
+    const [getUserPosts] = useLazyUserPostSearchByOwnerIdQuery();
+    const [getUserPostById] = useLazyGetUserPostByIdQuery();
+    const [removeUserPost] = useRemoveUserPostMutation();
 
     const [allPosts, setAllPosts] = useState([]);
 
@@ -47,7 +46,7 @@ const MyFeed = () => {
         const userPersonalPosts = [];
 
         for (let i = 0; i < userPosts.length; i++) {
-            const post = await getPostById(userPosts[i].postId);
+            const post = await getUserPostById(userPosts[i].postId);
 
             if (post.data !== undefined) {
                 userPersonalPosts.push(post.data);
@@ -57,39 +56,19 @@ const MyFeed = () => {
         return userPersonalPosts;
     }
 
-    const createUserPostAsync = async (postId) => {
-        const newUserPost = {
-            userId: user?.id,
-            postId: postId
-        }
-
-        const createdUserPost = await createNewUserPostAsync(newUserPost);
-        return createdUserPost.data === undefined ? false : true;
+    const removeUserPostAsync = async (userPostId) => {
+        await removeUserPost(userPostId);
     }
 
-    const removeUserPostAsync = async (postId) => {
-        const userPost = await getUserPostByPostId(postId);
-        if (userPost.data === undefined || userPost.data.length === 0) {
-            return;
-        }
-
-        const result = await removeUserPost(userPost.data[0].id);
-        if (result.error === undefined) {
-            await removePost(postId);
-        }
-    }
-
-    if (user === null) {
+    if (!user) {
         return (<Loading />);
     }
 
     return (
         <div>
-            <CreatePost
-                customer={user}
+            <CreateUserPost
+                user={user}
                 owner={user?.username}
-                postTypeName="user"
-                createTypeOfPostFunc={createUserPostAsync}
                 t={t}
             />
             <ul className="posts">
