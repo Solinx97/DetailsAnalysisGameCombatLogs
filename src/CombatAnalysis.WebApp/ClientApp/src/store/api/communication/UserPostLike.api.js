@@ -1,21 +1,21 @@
 import { CommunityApi } from "../CommunityApi";
 
-export const PostLikeApi = CommunityApi.injectEndpoints({
+export const UserPostLikeApi = CommunityApi.injectEndpoints({
     endpoints: builder => ({
-        createPostLikeAsync: builder.mutation({
-            query: postLike => ({
-                body: postLike,
+        createUserPostLike: builder.mutation({
+            query: userPostLike => ({
+                body: userPostLike,
                 url: '/UserPostLike',
                 method: 'POST'
             })
         }),
-        removePostLikeAsync: builder.mutation({
+        removeUserPostLike: builder.mutation({
             query: id => ({
                 url: `/UserPostLike/${id}`,
                 method: 'DELETE'
             })
         }),
-        searchPostLikeByPostId: builder.query({
+        searchUserPostLikeByPostId: builder.query({
             query: (id) => `/UserPostLike/searchByPostId/${id}`,
             providesTags: (result, error, arg) =>
                 result
@@ -26,7 +26,7 @@ export const PostLikeApi = CommunityApi.injectEndpoints({
 })
 
 export const {
-    useCreatePostLikeAsyncMutation,
-    useRemovePostLikeAsyncMutation,
-    useLazySearchPostLikeByPostIdQuery,
-} = PostLikeApi;
+    useCreateUserPostLikeMutation,
+    useRemoveUserPostLikeMutation,
+    useLazySearchUserPostLikeByPostIdQuery,
+} = UserPostLikeApi;

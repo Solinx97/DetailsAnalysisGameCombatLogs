@@ -1,8 +1,8 @@
 ﻿import { faBan, faCheck, faPlus } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useState } from 'react';
-import { useCreateCommunityPostMutation } from '../../store/api/communication/CommunityPost.api';
-import Loading from '../Loading';
+import { useCreateCommunityPostMutation } from '../../../store/api/communication/CommunityPost.api';
+import Loading from '../../Loading';
 import AddTagsToPost from './AddTagsToPost';
 
 const CreateCommunityPost = ({ user, communityName, communityId, t }) => {

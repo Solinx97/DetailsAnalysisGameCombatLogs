@@ -2,12 +2,12 @@ import { faPen } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useUpdatePostCommentAsyncMutation } from '../../store/api/communication/PostComment.api';
+import { useUpdateUserPostCommentMutation } from '../../../store/api/communication/UserPostComment.api';
 
-const PostCommentContent = ({ userId, comment }) => {
+const UserPostCommentContent = ({ userId, comment }) => {
     const { t } = useTranslation("communication/postCommentContent");
 
-    const [updatePostCommentAsyncMut] = useUpdatePostCommentAsyncMutation();
+    const [updatePostComment] = useUpdateUserPostCommentMutation();
 
     const [editModeOn, setEditModeOne] = useState(false);
 
@@ -17,8 +17,8 @@ const PostCommentContent = ({ userId, comment }) => {
         const postCommentForUpdate = Object.assign({}, comment);
         postCommentForUpdate.content = commentContent.current.value;
 
-        const updatedItem = await updatePostCommentAsyncMut(postCommentForUpdate);
-        if (updatedItem.data !== undefined) {
+        const response = await updatePostComment(postCommentForUpdate);
+        if (response.data) {
             setEditModeOne(false);
         }
     }
@@ -29,7 +29,7 @@ const PostCommentContent = ({ userId, comment }) => {
                 ? <div>
                     <textarea className="form-control" rows="2" cols="65" ref={commentContent} defaultValue={comment.content} />
                     <div className="actions">
-                        <div className="save" onClick={async () => await updatePostCommentAsync()}>{t("Save")}</div>
+                        <div className="save" onClick={updatePostCommentAsync}>{t("Save")}</div>
                         <div className="cancel" onClick={() => setEditModeOne(false)}>{t("Cancel")}</div>
                     </div>
                 </div>
@@ -49,4 +49,4 @@ const PostCommentContent = ({ userId, comment }) => {
     );
 }
 
-export default PostCommentContent;
+export default UserPostCommentContent;

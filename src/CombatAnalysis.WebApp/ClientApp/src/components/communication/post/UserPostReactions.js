@@ -1,20 +1,20 @@
 ﻿import { faHeart, faMessage, faThumbsDown } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useCallback } from 'react';
-import { useCreatePostDislikeAsyncMutation, useLazySearchPostDislikeByPostIdQuery, useRemovePostDislikeAsyncMutation } from '../../store/api/communication/PostDislike.api';
-import { useCreatePostLikeAsyncMutation, useLazySearchPostLikeByPostIdQuery, useRemovePostLikeAsyncMutation } from '../../store/api/communication/PostLike.api';
+import { useCreateUserPostDislikeMutation, useLazySearchUserPostDislikeByPostIdQuery, useRemoveUserPostDislikeMutation } from '../../../store/api/communication/UserPostDislike.api';
+import { useCreateUserPostLikeMutation, useLazySearchUserPostLikeByPostIdQuery, useRemoveUserPostLikeMutation } from '../../../store/api/communication/UserPostLike.api';
 
-const PostReactions = ({ user, post, updatePostAsync, setShowComments, showComments, t }) => {
-    const [createPostLikeAsyncMut] = useCreatePostLikeAsyncMutation();
-    const [removePostLikeAsyncMut] = useRemovePostLikeAsyncMutation();
-    const [searchPostLikeByPostIdAsync] = useLazySearchPostLikeByPostIdQuery();
-    const [createPostDislikeAsyncMut] = useCreatePostDislikeAsyncMutation();
-    const [removePostDislikeAsyncMut] = useRemovePostDislikeAsyncMutation();
-    const [searchPostDislikeByPostIdAsync] = useLazySearchPostDislikeByPostIdQuery();
+const UserPostReactions = ({ user, post, updatePostAsync, setShowComments, showComments, t }) => {
+    const [createPostLike] = useCreateUserPostLikeMutation();
+    const [removePostLike] = useRemoveUserPostLikeMutation();
+    const [searchPostLikeByPostId] = useLazySearchUserPostLikeByPostIdQuery();
+    const [createPostDislike] = useCreateUserPostDislikeMutation();
+    const [removePostDislike] = useRemoveUserPostDislikeMutation();
+    const [searchPostDislikeByPostId] = useLazySearchUserPostDislikeByPostIdQuery();
 
     const getPostLikesAsync = async (postId) => {
-        const postLikes = await searchPostLikeByPostIdAsync(postId);
-        if (postLikes.data !== undefined) {
+        const postLikes = await searchPostLikeByPostId(postId);
+        if (postLikes.data) {
             return await removePostLikeIfExistAsync(postLikes.data);
         }
 
@@ -22,8 +22,8 @@ const PostReactions = ({ user, post, updatePostAsync, setShowComments, showComme
     }
 
     const getPostDislikesAsync = async (postId) => {
-        const postDislikes = await searchPostDislikeByPostIdAsync(postId);
-        if (postDislikes.data !== undefined) {
+        const postDislikes = await searchPostDislikeByPostId(postId);
+        if (postDislikes.data) {
             return await removePostDislikeIfExistAsync(postDislikes.data);
         }
 
@@ -33,7 +33,7 @@ const PostReactions = ({ user, post, updatePostAsync, setShowComments, showComme
     const removePostLikeIfExistAsync = async (postLikes) => {
         for (let i = 0; i < postLikes.length; i++) {
             if (postLikes[i].appUserId === user.id) {
-                await removePostLikeAsyncMut(postLikes[i].id);
+                await removePostLike(postLikes[i].id);
                 return true;
             }
         }
@@ -44,7 +44,7 @@ const PostReactions = ({ user, post, updatePostAsync, setShowComments, showComme
     const removePostDislikeIfExistAsync = async (postDislikes) => {
         for (let i = 0; i < postDislikes.length; i++) {
             if (postDislikes[i].appUserId === user.id) {
-                await removePostDislikeAsyncMut(postDislikes[i].id);
+                await removePostDislike(postDislikes[i].id);
                 return true;
             }
         }
@@ -66,8 +66,8 @@ const PostReactions = ({ user, post, updatePostAsync, setShowComments, showComme
             appUserId: user.id
         }
 
-        const createdPostLike = await createPostLikeAsyncMut(newPostLike);
-        if (createdPostLike.data !== undefined) {
+        const createdPostLike = await createPostLike(newPostLike);
+        if (createdPostLike.data) {
             if (postDislikeIsExist) {
                 await updatePostAsync(post?.id, 1, -1, 0);
             }
@@ -91,7 +91,7 @@ const PostReactions = ({ user, post, updatePostAsync, setShowComments, showComme
             appUserId: user.id
         }
 
-        const createdPostDislike = await createPostDislikeAsyncMut(newPostDislike);
+        const createdPostDislike = await createPostDislike(newPostDislike);
         if (createdPostDislike.data) {
             if (postLikeIsExist) {
                 await updatePostAsync(post?.id, -1, 1, 0);
@@ -141,4 +141,4 @@ const PostReactions = ({ user, post, updatePostAsync, setShowComments, showComme
     );
 }
 
-export default PostReactions;
+export default UserPostReactions;

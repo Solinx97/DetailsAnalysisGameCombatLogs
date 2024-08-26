@@ -1,31 +1,31 @@
-import { ChatApi } from "../ChatApi";
+import { CommunityApi } from "../CommunityApi";
 
-export const PostCommentApi = ChatApi.injectEndpoints({
+export const UserPostCommentApi = CommunityApi.injectEndpoints({
     endpoints: builder => ({
-        createPostCommentAsync: builder.mutation({
-            query: postComment => ({
-                body: postComment,
+        createUserPostComment: builder.mutation({
+            query: userPostComment => ({
+                body: userPostComment,
                 url: '/UserPostComment',
                 method: 'POST'
             }),
             invalidatesTags: (result, error) => [{ type: 'UserPostComment', result }],
         }),
-        updatePostCommentAsync: builder.mutation({
-            query: postComment => ({
-                body: postComment,
+        updateUserPostComment: builder.mutation({
+            query: userPostComment => ({
+                body: userPostComment,
                 url: '/UserPostComment',
                 method: 'PUT'
             }),
             invalidatesTags: (result, error) => [{ type: 'UserPostComment', result }],
         }),
-        removePostCommentAsync: builder.mutation({
+        removeUserPostComment: builder.mutation({
             query: id => ({
                 url: `/UserPostComment/${id}`,
                 method: 'DELETE'
             }),
             invalidatesTags: (result, error) => [{ type: 'UserPostComment', result }],
         }),
-        searchPostCommentByPostId: builder.query({
+        searchUserPostCommentByPostId: builder.query({
             query: (id) => `/UserPostComment/searchByPostId/${id}`,
             providesTags: (result, error, arg) =>
                 result
@@ -33,11 +33,11 @@ export const PostCommentApi = ChatApi.injectEndpoints({
                     : [{ type: 'UserPostComment' }]
         }),
     })
-})
+});
 
 export const {
-    useCreatePostCommentAsyncMutation,
-    useUpdatePostCommentAsyncMutation,
-    useRemovePostCommentAsyncMutation,
-    useSearchPostCommentByPostIdQuery,
-} = PostCommentApi;
+    useCreateUserPostCommentMutation,
+    useUpdateUserPostCommentMutation,
+    useRemoveUserPostCommentMutation,
+    useSearchUserPostCommentByPostIdQuery,
+} = UserPostCommentApi;

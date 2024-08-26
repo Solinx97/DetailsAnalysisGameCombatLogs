@@ -3,12 +3,11 @@ import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import { useLazyUserPostSearchByOwnerIdQuery } from '../../../store/api/CommunityApi';
 import {
-    useLazyGetUserPostByIdQuery,
-    useRemoveUserPostMutation
+    useLazyGetUserPostByIdQuery
 } from '../../../store/api/communication/UserPost.api';
 import Loading from '../../Loading';
-import CreateUserPost from '../CreateUserPost';
-import Post from '../Post';
+import CreateUserPost from '../post/CreateUserPost';
+import UserPost from '../post/UserPost';
 
 const MyFeed = () => {
     const { t } = useTranslation("communication/feed");
@@ -17,12 +16,11 @@ const MyFeed = () => {
 
     const [getUserPosts] = useLazyUserPostSearchByOwnerIdQuery();
     const [getUserPostById] = useLazyGetUserPostByIdQuery();
-    const [removeUserPost] = useRemoveUserPostMutation();
 
     const [allPosts, setAllPosts] = useState([]);
 
     useEffect(() => {
-        if (user === null) {
+        if (!user) {
             return;
         }
 
@@ -36,7 +34,7 @@ const MyFeed = () => {
     const getAllPostsAsync = async () => {
         const userPosts = await getUserPosts(user.id);
 
-        if (userPosts.data !== undefined) {
+        if (userPosts.data) {
             const userPersonalPosts = await getUserPostsAsync(userPosts.data);
             setAllPosts(userPersonalPosts);
         }
@@ -48,16 +46,12 @@ const MyFeed = () => {
         for (let i = 0; i < userPosts.length; i++) {
             const post = await getUserPostById(userPosts[i].postId);
 
-            if (post.data !== undefined) {
+            if (post.data) {
                 userPersonalPosts.push(post.data);
             }
         }
 
         return userPersonalPosts;
-    }
-
-    const removeUserPostAsync = async (userPostId) => {
-        await removeUserPost(userPostId);
     }
 
     if (!user) {
@@ -74,10 +68,9 @@ const MyFeed = () => {
             <ul className="posts">
                 {allPosts?.map(post => (
                     <li className="posts__item" key={post.id}>
-                        <Post
-                            customer={user}
-                            data={post}
-                            deletePostAsync={async () => await removeUserPostAsync(post.id)}
+                        <UserPost
+                            user={user}
+                            post={post}
                         />
                     </li>
                 ))}

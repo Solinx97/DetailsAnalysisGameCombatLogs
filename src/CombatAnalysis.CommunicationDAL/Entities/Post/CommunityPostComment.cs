@@ -13,4 +13,6 @@ public class CommunityPostComment
     public int CommunityPostId { get; set; }
 
     public int CommunityId { get; set; }
+
+    public string AppUserId { get; set; }
 }

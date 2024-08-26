@@ -1,66 +1,67 @@
 import { useEffect, useState } from "react";
 import { useTranslation } from 'react-i18next';
-import { useLazyGetUserPostByIdQuery, useUpdateUserPostMutation } from '../../store/api/communication/UserPost.api';
-import { useCreatePostCommentAsyncMutation } from '../../store/api/communication/PostComment.api';
-import PostComments from './PostComments';
-import PostReactions from './PostReactions';
-import PostTitle from './PostTitle';
+import { useCreateUserPostCommentMutation } from '../../../store/api/communication/UserPostComment.api';
+import { useLazyGetUserPostByIdQuery, useUpdateUserPostMutation } from '../../../store/api/communication/UserPost.api';
+import UserPostComments from './UserPostComments';
+import UserPostReactions from './UserPostReactions';
+import UserPostTitle from './UserPostTitle';
 
-import '../../styles/communication/post.scss';
+import '../../../styles/communication/post.scss';
 
-const Post = ({ user, data, deletePostAsync }) => {
+const UserPost = ({ user, post }) => {
     const { t } = useTranslation("communication/post");
 
-    const [updatePostAsyncMut] = useUpdateUserPostMutation();
+    const [updatePost] = useUpdateUserPostMutation();
 
-    const [createPostCommentAsyncMut] = useCreatePostCommentAsyncMutation();
+    const [createPostComment] = useCreateUserPostCommentMutation();
     const [getPostByIdAsync] = useLazyGetUserPostByIdQuery();
 
     const [showComments, setShowComments] = useState(false);
     const [postCommentContent, setPostCommentContent] = useState("");
     const [showAddComment, setShowAddComment] = useState(false);
     const [isMyPost, setIsMyPost] = useState(false);
-    const [post, setPost] = useState(data);
+    const [postData, setPostData] = useState(post);
 
     useEffect(() => {
-        setIsMyPost(post?.appUserId === user?.id);
-    }, [])
+        setIsMyPost(postData?.appUserId === user?.id);
+    }, []);
 
     const updatePostAsync = async (postId, likesCount, dislikesCount, commentsCount) => {
         try {
-            const getRefreshedPostResponse = await getPostByIdAsync(postId);
-            if (getRefreshedPostResponse.error) {
-                console.error("Error updating post:", getRefreshedPostResponse.error);
-
-                return;
-            }
-
-            const postForUpdate = {
-                id: postId,
-                owner: getRefreshedPostResponse.data.owner,
-                content: getRefreshedPostResponse.data.content,
-                postType: getRefreshedPostResponse.data.postType,
-                tags: getRefreshedPostResponse.data.tags,
-                when: getRefreshedPostResponse.data.when,
-                likeCount: getRefreshedPostResponse.data.likeCount + likesCount,
-                dislikeCount: getRefreshedPostResponse.data.dislikeCount + dislikesCount,
-                commentCount: getRefreshedPostResponse.data.commentCount + commentsCount,
-                appUserId: getRefreshedPostResponse.data.appUserId
-            }
-
-            const response = await updatePostAsyncMut(postForUpdate);
+            let response = await getPostByIdAsync(postId);
             if (response.error) {
                 console.error("Error updating post:", response.error);
 
                 return;
             }
 
-            let updateReactions = Object.assign({}, getRefreshedPostResponse.data);
-            updateReactions.likeCount = getRefreshedPostResponse.data.likeCount + likesCount;
-            updateReactions.dislikeCount = getRefreshedPostResponse.data.dislikeCount + dislikesCount;
-            updateReactions.commentCount = getRefreshedPostResponse.data.commentCount + commentsCount;
+            let userPost = response.data;
+            const postForUpdate = {
+                id: postId,
+                owner: userPost.owner,
+                content: userPost.content,
+                publicType: userPost.publicType,
+                tags: userPost.tags,
+                createdAt: userPost.createdAt,
+                likeCount: userPost.likeCount + likesCount,
+                dislikeCount: userPost.dislikeCount + dislikesCount,
+                commentCount: userPost.commentCount + commentsCount,
+                appUserId: userPost.appUserId
+            }
 
-            setPost(updateReactions);
+            response = await updatePost(postForUpdate);
+            if (response.error) {
+                console.error("Error updating post:", response.error);
+
+                return;
+            }
+
+            const updatedPost = Object.assign({}, userPost);
+            updatedPost.likeCount = userPost.likeCount + likesCount;
+            updatedPost.dislikeCount = userPost.dislikeCount + dislikesCount;
+            updatedPost.commentCount = userPost.commentCount + commentsCount;
+
+            setPostData(updatedPost);
         } catch (e) {
             console.error("Failed to update post:", e);
         }
@@ -70,15 +71,15 @@ const Post = ({ user, data, deletePostAsync }) => {
         const newPostComment = {
             content: postCommentContent,
             createdAt: new Date(),
-            userPostId: post.id,
+            userPostId: postData.id,
             appUserId: user.id
         }
 
-        const createdPostComment = await createPostCommentAsyncMut(newPostComment);
-        if (createdPostComment.data) {
+        const response = await createPostComment(newPostComment);
+        if (response.data) {
             setPostCommentContent("");
 
-            await updatePostAsync(post.id, 0, 0, 1);
+            await updatePostAsync(postData.id, 0, 0, 1);
         }
     }
 
@@ -108,16 +109,15 @@ const Post = ({ user, data, deletePostAsync }) => {
     return (
         <>
             <div className="posts__card">
-                <PostTitle
-                    post={post}
+                <UserPostTitle
+                    post={postData}
                     dateFormatting={dateFormatting}
-                    deletePostAsync={deletePostAsync}
                     isMyPost={isMyPost}
                 />
-                <div className="posts__content">{post?.content}</div>
-                <PostReactions
+                <div className="posts__content">{postData?.content}</div>
+                <UserPostReactions
                     user={user}
-                    post={post}
+                    post={postData}
                     updatePostAsync={updatePostAsync}
                     setShowComments={setShowComments}
                     showComments={showComments}
@@ -126,10 +126,10 @@ const Post = ({ user, data, deletePostAsync }) => {
             </div>
             {showComments &&
                 <>
-                    <PostComments
+                    <UserPostComments
                         dateFormatting={dateFormatting}
                         userId={user.id}
-                        postId={post.id}
+                        postId={postData.id}
                         updatePostAsync={updatePostAsync}
                     />
                     <div className="add-new-comment">
@@ -155,4 +155,4 @@ const Post = ({ user, data, deletePostAsync }) => {
     );
 }
 
-export default Post;
+export default UserPost;

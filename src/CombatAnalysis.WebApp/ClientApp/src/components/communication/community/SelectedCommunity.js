@@ -7,7 +7,7 @@ import { useLazyGetCommunityByIdQuery, useUpdateCommunityAsyncMutation } from '.
 import { useCreateCommunityPostMutation } from '../../../store/api/communication/CommunityPost.api';
 import Loading from '../../Loading';
 import CommunicationMenu from '../CommunicationMenu';
-import CreateCommunityPost from '../CreateCommunityPost';
+import CreateCommunityPost from '../post/CreateCommunityPost';
 import CommunityDiscussions from './CommunityDiscussions';
 import CommunityMembers from './CommunityMembers';
 import CommunityMenu from './CommunityMenu';

@@ -3,7 +3,6 @@ using CombatAnalysis.WebApp.Enums;
 using CombatAnalysis.WebApp.Extensions;
 using CombatAnalysis.WebApp.Interfaces;
 using CombatAnalysis.WebApp.Models.Post;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CombatAnalysis.WebApp.Controllers.Post;
@@ -66,7 +65,7 @@ public class CommunityPostDislikeController : ControllerBase
     }
 
     [HttpPut]
-    public async Task<IActionResult> Update(UserPostLikeModel model)
+    public async Task<IActionResult> Update(CommunityPostDislikeModel model)
     {
         if (!Request.Cookies.TryGetValue(AuthenticationCookie.AccessToken.ToString(), out var accessToken))
         {
@@ -87,7 +86,7 @@ public class CommunityPostDislikeController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<IActionResult> Create(UserPostLikeModel model)
+    public async Task<IActionResult> Create(CommunityPostDislikeModel model)
     {
         if (!Request.Cookies.TryGetValue(AuthenticationCookie.AccessToken.ToString(), out var accessToken))
         {

@@ -1,8 +1,8 @@
 import { faBan, faCheck, faPlus } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useState } from 'react';
-import { useCreateUserPostMutation } from '../../store/api/communication/UserPost.api';
-import Loading from '../Loading';
+import { useCreateUserPostMutation } from '../../../store/api/communication/UserPost.api';
+import Loading from '../../Loading';
 import AddTagsToPost from './AddTagsToPost';
 
 const CreateUserPost = ({ user, owner, t }) => {

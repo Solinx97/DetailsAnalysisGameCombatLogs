@@ -2,16 +2,22 @@ import { faCircleXmark } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useGetUserByIdQuery } from '../../store/api/Account.api';
-import Loading from '../Loading';
-import User from './User';
+import { useGetUserByIdQuery } from '../../../store/api/Account.api';
+import { useRemoveUserPostMutation } from '../../../store/api/communication/UserPost.api';
+import Loading from '../../Loading';
+import User from '../User';
 
-const PostTitle = ({ post, dateFormatting, deletePostAsync, isMyPost }) => {
+const UserPostTitle = ({ post, dateFormatting, isMyPost }) => {
     const { t } = useTranslation("communication/postTitle");
 
-    const { data: taregtUser, isLoading } = useGetUserByIdQuery(post?.appUserId);
+    const { data: targetUser, isLoading } = useGetUserByIdQuery(post?.appUserId);
+    const [removeUserPost] = useRemoveUserPostMutation();
 
     const [userInformation, setUserInformation] = useState(null);
+
+    const removeUserPostAsync = async () => {
+        await removeUserPost(post.id);
+    }
 
     if (isLoading) {
         return (<Loading />);
@@ -23,7 +29,7 @@ const PostTitle = ({ post, dateFormatting, deletePostAsync, isMyPost }) => {
                 <div className="content">
                     <div className="username">
                         <User
-                            targetUserId={taregtUser?.id}
+                            targetUserId={targetUser?.id}
                             setUserInformation={setUserInformation}
                             allowRemoveFriend={false}
                         />
@@ -41,7 +47,7 @@ const PostTitle = ({ post, dateFormatting, deletePostAsync, isMyPost }) => {
                             icon={faCircleXmark}
                             title={t("RemovePost")}
                             className="post-remove"
-                            onClick={deletePostAsync}
+                            onClick={removeUserPostAsync}
                         />
                     }
                 </div>
@@ -53,4 +59,4 @@ const PostTitle = ({ post, dateFormatting, deletePostAsync, isMyPost }) => {
     );
 }
 
-export default PostTitle;
+export default UserPostTitle;

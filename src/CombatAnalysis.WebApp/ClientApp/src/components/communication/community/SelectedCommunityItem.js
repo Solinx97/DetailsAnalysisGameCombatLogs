@@ -1,7 +1,7 @@
 import { useCommunityPostSearchByCommunityIdAsyncQuery } from '../../../store/api/CommunityApi';
 import { useRemoveCommunityPostMutation } from '../../../store/api/communication/CommunityPost.api';
 import Loading from '../../Loading';
-import Post from '../Post';
+import CommunityPost from '../post/CommunityPost';
 
 const SelectedCommunityItem = ({ user, communityId }) => {
     const { data: communityPosts, isLoading } = useCommunityPostSearchByCommunityIdAsyncQuery(communityId);
@@ -20,10 +20,10 @@ const SelectedCommunityItem = ({ user, communityId }) => {
         <ul className="posts">
             {communityPosts?.map((post) => (
                     <li key={post?.id}>
-                        <Post
+                        <CommunityPost
                             user={user}
-                            data={post}
-                            deletePostAsync={async () => await removeCommunityPostAsync(post.id)}
+                            post={post}
+                            communityId={communityId}
                         />
                     </li>
                 ))

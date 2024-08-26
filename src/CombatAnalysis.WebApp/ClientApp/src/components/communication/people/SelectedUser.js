@@ -6,7 +6,7 @@ import { useLazyGetUserByIdQuery } from '../../../store/api/Account.api';
 import { useLazyUserPostSearchByOwnerIdQuery } from '../../../store/api/CommunityApi';
 import { useLazyGetUserPostByIdQuery } from '../../../store/api/communication/UserPost.api';
 import CommunicationMenu from "../CommunicationMenu";
-import Post from '../Post';
+import UserPost from '../post/UserPost';
 import Friends from '../myEnvironment/Friends';
 import SelectedUserCommunities from './SelectedUserCommunities';
 import SelectedUserProfile from './SelectedUserProfile';
@@ -129,10 +129,9 @@ const SelectedUser = () => {
                                     ? <div>{t("Empty")}</div>
                                     : allPosts?.map(post => (
                                         <li key={post.id}>
-                                            <Post
-                                                customer={person}
-                                                data={post}
-                                                deletePostAsync={null}
+                                            <UserPost
+                                                user={person}
+                                                post={post}
                                             />
                                         </li>
                                     ))

@@ -26,7 +26,7 @@ public class CommunityPostLikeController : ControllerBase
             return Unauthorized();
         }
 
-        var responseMessage = await _httpClient.GetAsync($"CommmunityPostLike/{id}", accessToken, Port.CommunicationApi);
+        var responseMessage = await _httpClient.GetAsync($"CommunityPostLike/{id}", accessToken, Port.CommunicationApi);
         if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
         {
             return Unauthorized();
@@ -49,7 +49,7 @@ public class CommunityPostLikeController : ControllerBase
             return Unauthorized();
         }
 
-        var responseMessage = await _httpClient.GetAsync($"CommmunityPostLike/searchByPostId/{id}", accessToken, Port.CommunicationApi);
+        var responseMessage = await _httpClient.GetAsync($"CommunityPostLike/searchByPostId/{id}", accessToken, Port.CommunicationApi);
         if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
         {
             return Unauthorized();
@@ -72,7 +72,7 @@ public class CommunityPostLikeController : ControllerBase
             return Unauthorized();
         }
 
-        var responseMessage = await _httpClient.PutAsync("CommmunityPostLike", JsonContent.Create(model), accessToken, Port.CommunicationApi);
+        var responseMessage = await _httpClient.PutAsync("CommunityPostLike", JsonContent.Create(model), accessToken, Port.CommunicationApi);
         if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
         {
             return Unauthorized();
@@ -93,7 +93,7 @@ public class CommunityPostLikeController : ControllerBase
             return Unauthorized();
         }
 
-        var responseMessage = await _httpClient.PostAsync("CommmunityPostLike", JsonContent.Create(model), accessToken, Port.CommunicationApi);
+        var responseMessage = await _httpClient.PostAsync("CommunityPostLike", JsonContent.Create(model), accessToken, Port.CommunicationApi);
         if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
         {
             return Unauthorized();
@@ -116,7 +116,7 @@ public class CommunityPostLikeController : ControllerBase
             return Unauthorized();
         }
 
-        var responseMessage = await _httpClient.DeletAsync($"CommmunityPostLike/{id}", accessToken, Port.CommunicationApi);
+        var responseMessage = await _httpClient.DeletAsync($"CommunityPostLike/{id}", accessToken, Port.CommunicationApi);
         if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
         {
             return Unauthorized();

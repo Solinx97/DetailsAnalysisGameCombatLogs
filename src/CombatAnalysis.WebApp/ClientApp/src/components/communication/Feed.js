@@ -2,7 +2,7 @@ import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import Loading from '../Loading';
 import CommunicationMenu from './CommunicationMenu';
-import CreateUserPost from './CreateUserPost';
+import CreateUserPost from './post/CreateUserPost';
 import FeedParticipants from './FeedParticipants';
 
 const Feed = () => {

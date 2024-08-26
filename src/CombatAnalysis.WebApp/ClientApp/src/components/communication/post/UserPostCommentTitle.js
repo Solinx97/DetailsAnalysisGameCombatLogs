@@ -1,15 +1,15 @@
 import { faTrash } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useTranslation } from 'react-i18next';
-import { useGetUserByIdQuery } from '../../store/api/Account.api';
-import { useRemovePostCommentAsyncMutation } from '../../store/api/communication/PostComment.api';
+import { useGetUserByIdQuery } from '../../../store/api/Account.api';
+import { useRemoveUserPostCommentMutation } from '../../../store/api/communication/UserPostComment.api';
 
-const PostCommentTitle = ({ userId, comment, dateFormatting, postId, updatePostAsync }) => {
+const UserPostCommentTitle = ({ userId, comment, dateFormatting, postId, updatePostAsync }) => {
     const { t } = useTranslation("communication/postCommentTitle");
 
     const { data: targetUser, isLoading } = useGetUserByIdQuery(comment?.appUserId);
 
-    const [removePostCommentAsyncMut] = useRemovePostCommentAsyncMutation();
+    const [removePostCommentAsyncMut] = useRemoveUserPostCommentMutation();
 
     const deletePostCommentAsync = async (postCommentId) => {
         const deletedItem = await removePostCommentAsyncMut(postCommentId);
@@ -41,4 +41,4 @@ const PostCommentTitle = ({ userId, comment, dateFormatting, postId, updatePostA
     );
 }
 
-export default PostCommentTitle;
+export default UserPostCommentTitle;
