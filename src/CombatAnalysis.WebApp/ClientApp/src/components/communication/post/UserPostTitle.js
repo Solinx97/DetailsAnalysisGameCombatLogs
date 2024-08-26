@@ -16,7 +16,7 @@ const UserPostTitle = ({ post, dateFormatting, isMyPost }) => {
     const [userInformation, setUserInformation] = useState(null);
 
     const removeUserPostAsync = async () => {
-        await removeUserPost(post.id);
+        await removeUserPost(post.id);  
     }
 
     if (isLoading) {
@@ -41,19 +41,19 @@ const UserPostTitle = ({ post, dateFormatting, isMyPost }) => {
                         <li key={index} className="tag">{tag}</li>
                     ))}
                 </ul>
-                <div className="post-remove">
-                    {isMyPost &&
+                {isMyPost &&
+                    <div className="post-remove">
                         <FontAwesomeIcon
                             icon={faCircleXmark}
                             title={t("RemovePost")}
                             className="post-remove"
                             onClick={removeUserPostAsync}
                         />
-                    }
-                </div>
+                    </div>
+                }
             </div>
-            {userInformation !== null &&
-                <div className="community-user-information">{userInformation}</div>
+            {userInformation &&
+                <div className="posts__user-information">{userInformation}</div>
             }
         </>
     );

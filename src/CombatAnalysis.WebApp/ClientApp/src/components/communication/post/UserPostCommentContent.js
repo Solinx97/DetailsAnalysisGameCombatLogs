@@ -18,7 +18,7 @@ const UserPostCommentContent = ({ userId, comment }) => {
         postCommentForUpdate.content = commentContent.current.value;
 
         const response = await updatePostComment(postCommentForUpdate);
-        if (response.data) {
+        if (!response.error) {
             setEditModeOne(false);
         }
     }

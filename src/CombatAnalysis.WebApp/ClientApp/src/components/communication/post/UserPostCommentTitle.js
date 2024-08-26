@@ -12,8 +12,8 @@ const UserPostCommentTitle = ({ userId, comment, dateFormatting, postId, updateP
     const [removePostCommentAsyncMut] = useRemoveUserPostCommentMutation();
 
     const deletePostCommentAsync = async (postCommentId) => {
-        const deletedItem = await removePostCommentAsyncMut(postCommentId);
-        if (deletedItem.data) {
+        const response = await removePostCommentAsyncMut(postCommentId);
+        if (!response.error) {
             await updatePostAsync(postId, 0, 0, -1);
         }
     }

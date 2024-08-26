@@ -48,6 +48,9 @@ internal class UserPostService : IUserPostService
             transaction.CreateSavepoint("BeforeDeletePost");
 
             var rowsAffected = await _repository.DeleteAsync(id);
+
+            await transaction.CommitAsync();
+
             return rowsAffected;
         }
         catch (ArgumentException ex)

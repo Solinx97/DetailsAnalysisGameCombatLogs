@@ -28,6 +28,7 @@ const CommunityPostComments = ({ dateFormatting, userId, postId, updatePostAsync
                         updatePostAsync={updatePostAsync}
                     />
                     <CommunityPostCommentContent
+                        userId={userId}
                         comment={comment}
                     />
                 </li>

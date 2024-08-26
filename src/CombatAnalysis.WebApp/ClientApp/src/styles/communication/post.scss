@@ -241,6 +241,12 @@ $mobile-max-width: 425px;
             }
         }
     }
+
+    &__user-information {
+        position: absolute;
+        margin-top: 40px;
+        z-index: 100;
+    }
 }
 
 .community-post {

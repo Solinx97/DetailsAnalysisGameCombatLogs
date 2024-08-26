@@ -1,4 +1,4 @@
-﻿import { useState } from "react";
+﻿import { useState, useEffect } from "react";
 import { useTranslation } from 'react-i18next';
 import { useLazyGetCommunityPostByIdQuery, useUpdateCommunityPostMutation } from '../../../store/api/communication/CommunityPost.api';
 import { useCreateCommunityPostCommentMutation } from '../../../store/api/communication/CommunityPostComment.api';
@@ -19,7 +19,12 @@ const CommunityPost = ({ user, communityId, post }) => {
     const [showComments, setShowComments] = useState(false);
     const [postCommentContent, setPostCommentContent] = useState("");
     const [showAddComment, setShowAddComment] = useState(false);
+    const [isMyPost, setIsMyPost] = useState(false);
     const [postData, setPostData] = useState(post);
+
+    useEffect(() => {
+        setIsMyPost(postData?.appUserId === user?.id);
+    }, []);
 
     const updatePostAsync = async (postId, likesCount, dislikesCount, commentsCount) => {
         try {
@@ -113,6 +118,7 @@ const CommunityPost = ({ user, communityId, post }) => {
                 <CommunityPostTitle
                     post={postData}
                     dateFormatting={dateFormatting}
+                    isMyPost={isMyPost}
                 />
                 <div className="posts__content">{postData?.content}</div>
                 <CommunityPostReactions
@@ -129,7 +135,7 @@ const CommunityPost = ({ user, communityId, post }) => {
                 <>
                     <CommunityPostComments
                         dateFormatting={dateFormatting}
-                        userId={communityId}
+                        userId={user?.id}
                         postId={postData.id}
                         updatePostAsync={updatePostAsync}
                     />

@@ -1,12 +1,19 @@
-﻿import { faComments } from '@fortawesome/free-solid-svg-icons';
+﻿import { faComments, faCircleXmark } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
+import { useRemoveCommunityPostMutation } from '../../../store/api/communication/CommunityPost.api';
 
-const CommunityPostTitle = ({ post, dateFormatting }) => {
+const CommunityPostTitle = ({ post, dateFormatting, isMyPost }) => {
     const { t } = useTranslation("communication/postTitle");
 
     const navigate = useNavigate();
+
+    const [removeCommunityPost] = useRemoveCommunityPostMutation();
+
+    const removeCommunityPostAsync = async () => {
+        await removeCommunityPost(post.id);
+    }
 
     const goToCommunityAsync = async () => {
         navigate(`/community?id=${post.communityId}`);
@@ -35,6 +42,16 @@ const CommunityPostTitle = ({ post, dateFormatting }) => {
                     <li key={index} className="tag">{tag}</li>
                 ))}
             </ul>
+            {isMyPost &&
+                <div className="post-remove">
+                    <FontAwesomeIcon
+                        icon={faCircleXmark}
+                        title={t("RemovePost")}
+                        className="post-remove"
+                        onClick={removeCommunityPostAsync}
+                    />
+                </div>
+            }
         </div>
     );
 }

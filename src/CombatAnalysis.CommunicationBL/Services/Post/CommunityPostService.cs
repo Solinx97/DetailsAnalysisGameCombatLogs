@@ -48,6 +48,9 @@ internal class CommunityPostService : ICommunityPostService
             transaction.CreateSavepoint("BeforeDeletePost");
 
             var rowsAffected = await _repository.DeleteAsync(id);
+
+            await transaction.CommitAsync();
+
             return rowsAffected;
         }
         catch (ArgumentException ex)

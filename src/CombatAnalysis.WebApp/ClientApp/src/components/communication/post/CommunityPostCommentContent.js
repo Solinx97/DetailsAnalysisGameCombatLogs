@@ -1,8 +1,10 @@
-﻿import React, { useRef, useState } from 'react';
+﻿import { faPen } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import React, { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useUpdateCommunityPostCommentMutation } from '../../../store/api/communication/CommunityPostComment.api';
 
-const CommunityPostCommentContent = ({ comment }) => {
+const CommunityPostCommentContent = ({ userId, comment }) => {
     const { t } = useTranslation("communication/postCommentContent");
 
     const [updatePostComment] = useUpdateCommunityPostCommentMutation();
@@ -16,7 +18,7 @@ const CommunityPostCommentContent = ({ comment }) => {
         postCommentForUpdate.content = commentContent.current.value;
 
         const response = await updatePostComment(postCommentForUpdate);
-        if (response.data) {
+        if (!response.error) {
             setEditModeOne(false);
         }
     }
@@ -32,6 +34,16 @@ const CommunityPostCommentContent = ({ comment }) => {
                     </div>
                 </div>
                 : <div className="card-text">{comment.content}</div>
+            }
+            {comment.appUserId === userId &&
+                <div className="post-comments__menu">
+                    <FontAwesomeIcon
+                        icon={faPen}
+                        title={t("Edit")}
+                        className={`comment-edit${editModeOn ? "_active" : ""}`}
+                        onClick={() => setEditModeOne((item) => !item)}
+                    />
+                </div>
             }
         </div>
     );
