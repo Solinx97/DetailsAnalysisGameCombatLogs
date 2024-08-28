@@ -30,7 +30,7 @@ const Feed = () => {
                     t={t}
                 />
                 <FeedParticipants
-                    user={user}
+                    userId={user?.id}
                     t={t}
                 />
             </div>

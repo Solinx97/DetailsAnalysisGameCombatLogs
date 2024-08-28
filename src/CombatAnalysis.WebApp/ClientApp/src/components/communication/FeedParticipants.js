@@ -1,47 +1,47 @@
 import { memo, useEffect, useState } from 'react';
-import useFetchFriendsPosts from '../../hooks/useFetchFriendsPosts';
-import { useFriendSearchMyFriendsQuery } from '../../store/api/communication/myEnvironment/Friend.api';
 import Loading from '../Loading';
 import UserPost from './post/UserPost';
+import useFetchCommunityPosts from '../../hooks/useFetchUsersPosts';
 
-const FeedParticipants = ({ user, t }) => {
+const FeedParticipants = ({ userId, t }) => {
     const [currentPosts, setCurrentPosts] = useState([]);
-    const [firstTimeLoaded, setFirstTimeLoaded] = useState(false);
     const [haveNewPosts, setHaveNewPosts] = useState(false);
 
-    const { data: myFriends, isLoading } = useFriendSearchMyFriendsQuery(user?.id);
-
-    const { allMyPersonalPosts, allPosts, postsAreLoading } = useFetchFriendsPosts(user?.id, myFriends);
+    const { posts, newPosts, count, isLoading, getMoreUserPostsAsync, currentDateRef, skipCheckNewPostsRef } = useFetchCommunityPosts(userId);
 
     useEffect(() => {
-        if (allMyPersonalPosts.length === 0 || firstTimeLoaded) {
+        if (!posts) {
             return;
         }
 
-        const newPosts = getUniqueElements(currentPosts, allMyPersonalPosts);
-        setCurrentPosts(prevPosts => [...newPosts, ...prevPosts]);
+        setCurrentPosts(posts);
 
-        setFirstTimeLoaded(true);
-    }, [allMyPersonalPosts]);
+        skipCheckNewPostsRef.current = false;
+    }, [posts]);
 
     useEffect(() => {
-        if (!allPosts || allPosts.length === 0 || firstTimeLoaded) {
+        if (!newPosts || newPosts.length === 0) {
             return;
         }
 
-        const newPosts = getUniqueElements(currentPosts, allPosts);
-        setCurrentPosts(prevPosts => [...newPosts, ...prevPosts]);
+        const uniqNewPosts = getUniqueElements(currentPosts, newPosts);
+        setHaveNewPosts(uniqNewPosts.length > 0);
+    }, [newPosts]);
 
-        setFirstTimeLoaded(true);
-    }, [allPosts]);
+    const loadingMoreUserPostsAsync = async () => {
+        const newPosts = await getMoreUserPostsAsync(currentPosts.length);
 
-    useEffect(() => {
-        if (!allPosts || allPosts.length === 0 || !firstTimeLoaded) {
-            return;
-        }
+        setCurrentPosts(prevPosts => [...prevPosts, ...newPosts]);
+    }
 
-        setHaveNewPosts(allPosts.length > currentPosts.length);
-    }, [allPosts]);
+    const loadingNewUserPostsAsync = async () => {
+        currentDateRef.current = (new Date()).toISOString();
+
+        const uniqNewPosts = getUniqueElements(currentPosts, newPosts);
+        setCurrentPosts(prevPosts => [...uniqNewPosts, ...prevPosts]);
+
+        setHaveNewPosts(false);
+    }
 
     const getUniqueElements = (oldArray, newArray) => {
         const oldSet = new Set(oldArray.map(item => item.id));
@@ -50,21 +50,14 @@ const FeedParticipants = ({ user, t }) => {
         return uniqueNewElements;
     }
 
-    const handleShowNewPosts = () => {
-        const newPosts = getUniqueElements(currentPosts, allPosts);
-        setCurrentPosts(prevPosts => [...newPosts, ...prevPosts]);
-
-        setHaveNewPosts(false);
-    }
-
-    if (isLoading || (!firstTimeLoaded && postsAreLoading)) {
+    if (isLoading) {
         return (<Loading />);
     }
 
     return (
         <>
             {haveNewPosts &&
-                <div onClick={handleShowNewPosts} className="new-posts">
+                <div onClick={loadingNewUserPostsAsync} className="new-posts">
                     <div className="new-posts__content">{t("NewPosts")}</div>
                 </div>
             }
@@ -72,11 +65,14 @@ const FeedParticipants = ({ user, t }) => {
                 {currentPosts?.map(post => (
                     <li key={post.id}>
                         <UserPost
-                            user={user}
+                            user={userId}
                             post={post}
                         />
                     </li>
                 ))}
+                {currentPosts.length < count &&
+                    <li onClick={loadingMoreUserPostsAsync}>Loading more...</li>
+                }
             </ul>
         </>
     );

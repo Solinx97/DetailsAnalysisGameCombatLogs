@@ -110,7 +110,7 @@ internal class UserPostService : IUserPostService
     public async Task<IEnumerable<UserPostDto>> GetNewByAppUserIdAsync(string appUserId, DateTimeOffset checkFrom)
     {
         var result = await _repository.GetNewByAppUserIdAsync(appUserId, checkFrom);
-        var map = _mapper.Map<IEnumerable<UserPostDto>>(result);
+        var map = _mapper.Map<List<UserPostDto>>(result);
 
         return map;
     }

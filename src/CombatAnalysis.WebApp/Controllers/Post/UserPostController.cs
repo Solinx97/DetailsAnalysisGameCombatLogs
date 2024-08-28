@@ -127,14 +127,14 @@ public class UserPostController : ControllerBase
     }
 
     [HttpGet("getNewPosts")]
-    public async Task<IActionResult> GetNewPosts(string appUSerId, DateTimeOffset checkFrom)
+    public async Task<IActionResult> GetNewPosts(string appUserId, string checkFrom)
     {
         if (!Request.Cookies.TryGetValue(AuthenticationCookie.AccessToken.ToString(), out var accessToken))
         {
             return Unauthorized();
         }
 
-        var responseMessage = await _httpClient.GetAsync($"UserPost/getNewPosts?communityId={appUSerId}&checkFrom={checkFrom}", accessToken, Port.CommunicationApi);
+        var responseMessage = await _httpClient.GetAsync($"UserPost/getNewPosts?appUserId={appUserId}&checkFrom={checkFrom}", accessToken, Port.CommunicationApi);
         if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
         {
             return Unauthorized();

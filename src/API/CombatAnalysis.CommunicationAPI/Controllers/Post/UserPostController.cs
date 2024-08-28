@@ -64,9 +64,10 @@ public class UserPostController : ControllerBase
     }
 
     [HttpGet("getNewPosts")]
-    public async Task<IActionResult> GetNewPosts(string appUserId, DateTimeOffset checkFrom)
+    public async Task<IActionResult> GetNewPosts(string appUserId, string checkFrom)
     {
-        var posts = await _service.GetNewByAppUserIdAsync(appUserId, checkFrom);
+        var checkFromData = DateTimeOffset.Parse(checkFrom);
+        var posts = await _service.GetNewByAppUserIdAsync(appUserId, checkFromData);
 
         return Ok(posts);
     }

@@ -7,29 +7,29 @@ const SelectedCommunityItem = ({ user, communityId, t }) => {
     const [currentPosts, setCurrentPosts] = useState([]);
     const [haveNewPosts, setHaveNewPosts] = useState(false);
 
-    const { communityPosts, newCommunityPosts, count, isLoading, getMoreCommunityPostsAsync, currentDateRef, skipCheckNewPostsRef } = useFetchCommunityPosts(communityId);
+    const { posts, newPosts, count, isLoading, getMoreCommunityPostsAsync, currentDateRef, skipCheckNewPostsRef } = useFetchCommunityPosts(communityId);
 
     useEffect(() => {
-        if (!communityPosts) {
+        if (!posts) {
             return;
         }
 
-        setCurrentPosts(communityPosts);
+        setCurrentPosts(posts);
 
         skipCheckNewPostsRef.current = false;
-    }, [communityPosts]);
+    }, [posts]);
 
     useEffect(() => {
-        if (!newCommunityPosts || newCommunityPosts.length === 0) {
+        if (!newPosts || newPosts.length === 0) {
             return;
         }
 
-        const newPosts = getUniqueElements(currentPosts, newCommunityPosts);
-        setHaveNewPosts(newPosts.length > 0);
-    }, [newCommunityPosts]);
+        const uniqNewPosts = getUniqueElements(currentPosts, newPosts);
+        setHaveNewPosts(uniqNewPosts.length > 0);
+    }, [newPosts]);
 
     const loadingMoreCommunityPostsAsync = async () => {
-        const newPosts = await getMoreCommunityPostsAsync();
+        const newPosts = await getMoreCommunityPostsAsync(currentPosts.length);
 
         setCurrentPosts(prevPosts => [...prevPosts, ...newPosts]);
     }
@@ -37,8 +37,8 @@ const SelectedCommunityItem = ({ user, communityId, t }) => {
     const loadingNewCommunityPostsAsync = async () => {
         currentDateRef.current = (new Date()).toISOString();
 
-        const newPosts = getUniqueElements(currentPosts, newCommunityPosts);
-        setCurrentPosts(prevPosts => [...newPosts, ...prevPosts]);
+        const uniqNewPosts = getUniqueElements(currentPosts, newPosts);
+        setCurrentPosts(prevPosts => [...uniqNewPosts, ...prevPosts]);
 
         setHaveNewPosts(false);
     }
@@ -70,7 +70,7 @@ const SelectedCommunityItem = ({ user, communityId, t }) => {
                             communityId={communityId}
                         />
                     </li>
-                ))
+                    ))
                 }
                 {currentPosts.length < count &&
                     <li onClick={loadingMoreCommunityPostsAsync}>Loading more...</li>

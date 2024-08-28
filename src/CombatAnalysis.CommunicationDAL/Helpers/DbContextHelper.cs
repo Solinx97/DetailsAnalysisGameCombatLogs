@@ -29,7 +29,7 @@ internal static class DbContextHelper
                       "\tAS\n" +
                       "\tSELECT * \n" +
                      $"\tFROM {nameof(CommunityPost)}\n" +
-                      "\tWHERE CreatedAt > @checkFrom\n" +
+                      "\tWHERE CommunityId = @communityId AND CreatedAt > @checkFrom\n" +
                       "\tORDER BY CreatedAt DESC";
         dbContext.Database.ExecuteSqlRaw(query);
 
@@ -51,11 +51,11 @@ internal static class DbContextHelper
                  "\tFETCH NEXT @pageSize ROWS ONLY";
         dbContext.Database.ExecuteSqlRaw(query);
 
-        query = $"CREATE PROCEDURE GetNew{nameof(UserPost)}ByAppUserId (@communityId INT, @checkFrom DATETIME)\n" +
+        query = $"CREATE PROCEDURE GetNew{nameof(UserPost)}ByAppUserId (@appUserId NVARCHAR (MAX), @checkFrom DATETIME)\n" +
               "\tAS\n" +
               "\tSELECT * \n" +
              $"\tFROM {nameof(UserPost)}\n" +
-              "\tWHERE CreatedAt > @checkFrom\n" +
+              "\tWHERE AppUserId = @appUserId AND CreatedAt > @checkFrom\n" +
               "\tORDER BY CreatedAt DESC";
         dbContext.Database.ExecuteSqlRaw(query);
     }

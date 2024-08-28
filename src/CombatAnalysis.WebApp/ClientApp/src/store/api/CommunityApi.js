@@ -46,6 +46,15 @@ export const CommunityApi = createApi({
                     ? [...result.map(({ id }) => ({ type: 'UserPost', id })), { type: 'UserPost' }]
                     : [{ type: 'UserPost' }]
         }),
+        getNewUserPostsByUserId: builder.query({
+            query: ({ appUserId, checkFrom }) => ({
+                url: `/UserPost/getNewPosts?appUserId=${appUserId}&checkFrom=${checkFrom}`,
+            }),
+            providesTags: (result, error, arg) =>
+                result
+                    ? [...result.map(({ id }) => ({ type: 'UserPost', id })), { type: 'UserPost' }]
+                    : [{ type: 'UserPost' }]
+        }),
         getCommunities: builder.query({
             query: () => '/Community',
             providesTags: (result, error, arg) =>
@@ -104,6 +113,8 @@ export const {
     useLazyGetUserPostsByUserIdQuery,
     useGetMoreUserPostsByUserIdQuery,
     useLazyGetMoreUserPostsByUserIdQuery,
+    useGetNewUserPostsByUserIdQuery,
+    useLazyGetNewUserPostsByUserIdQuery,
     useGetCommunitiesQuery,
     useLazyGetCommunitiesQuery,
     useGetCommunityPostsByCommunityIdQuery,
