@@ -26,9 +26,9 @@ public class PersonalChatMessageController : ControllerBase
     [HttpGet("count/{chatId}")]
     public async Task<IActionResult> Count(int chatId)
     {
-        var countByCombatPlayerId = await _service.CountByChatIdAsync(chatId);
+        var count = await _service.CountByChatIdAsync(chatId);
 
-        return Ok(countByCombatPlayerId);
+        return Ok(count);
     }
 
     [HttpGet]

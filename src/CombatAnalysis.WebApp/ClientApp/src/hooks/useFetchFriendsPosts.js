@@ -1,5 +1,5 @@
 ﻿import { useEffect, useState } from 'react';
-import { useLazyCommunityPostSearchByCommunityIdAsyncQuery, useLazyUserPostSearchByOwnerIdQuery } from '../store/api/CommunityApi';
+import { useLazyGetCommunityPostsByCommunityIdQuery, useLazyGetUserPostsByUserIdQuery } from '../store/api/CommunityApi';
 import { useLazyGetUserPostByIdQuery } from '../store/api/communication/UserPost.api';
 import { useLazySearchByUserIdAsyncQuery } from '../store/api/communication/community/CommunityUser.api';
 
@@ -10,9 +10,9 @@ const useFetchFriendsPosts = (appUserId, myFriends) => {
     const [allMyPersonalPosts, setAllMyPersonalPosts] = useState([]);
     const [postsAreLoading, setPostsAreLoading] = useState([]);
 
-    const [getUserPostsAsync] = useLazyUserPostSearchByOwnerIdQuery();
+    const [getUserPostsAsync] = useLazyGetUserPostsByUserIdQuery();
     const [getCommunityUsers] = useLazySearchByUserIdAsyncQuery();
-    const [getCommunityPosts] = useLazyCommunityPostSearchByCommunityIdAsyncQuery();
+    const [getCommunityPosts] = useLazyGetCommunityPostsByCommunityIdQuery();
     const [getPostByIdAsync] = useLazyGetUserPostByIdQuery();
 
     useEffect(() => {
@@ -55,7 +55,7 @@ const useFetchFriendsPosts = (appUserId, myFriends) => {
         let posts = [];
 
         for (let i = 0; i < peopleId.length; i++) {
-            const userPosts = await getUserPostsAsync(peopleId[i]);
+            const userPosts = await getUserPostsAsync({ appUserId: peopleId[i], pageSize: 50 });
             if (userPosts.data) {
                 posts = [...posts, ...userPosts.data];
             }

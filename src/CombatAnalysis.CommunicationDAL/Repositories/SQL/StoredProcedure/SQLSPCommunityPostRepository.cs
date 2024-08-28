@@ -15,7 +15,7 @@ public class SQLSPCommunityPostRepository : SQLRepository<CommunityPost, int>, I
         _context = context;
     }
 
-    public async Task<IEnumerable<CommunityPost>> GetByCommunityIdAsyn(int communityId, int pageSize)
+    public async Task<IEnumerable<CommunityPost>> GetByCommunityIdAsync(int communityId, int pageSize)
     {
         var communityIdParam = new SqlParameter("CommunityId", communityId);
         var pageSizeParam = new SqlParameter("PageSize", pageSize);
@@ -28,15 +28,28 @@ public class SQLSPCommunityPostRepository : SQLRepository<CommunityPost, int>, I
         return data;
     }
 
-    public async Task<IEnumerable<CommunityPost>> GetMoreByCommunityIdAsyn(int communityId, int offset, int pageSize)
+    public async Task<IEnumerable<CommunityPost>> GetMoreByCommunityIdAsync(int communityId, int offset, int pageSize)
     {
         var communityIdParam = new SqlParameter("CommunityId", communityId);
         var offsetParam = new SqlParameter("Offset", offset);
         var pageSizeParam = new SqlParameter("PageSize", pageSize);
 
         var data = await Task.Run(() => _context.Set<CommunityPost>()
-                            .FromSqlRaw($"Get{nameof(CommunityPost)}ByCommunityIdMore @communityId, @offset, @pageSize",
+                            .FromSqlRaw($"GetMore{nameof(CommunityPost)}ByCommunityId @communityId, @offset, @pageSize",
                                             communityIdParam, offsetParam, pageSizeParam)
+                            .AsEnumerable());
+
+        return data;
+    }
+
+    public async Task<IEnumerable<CommunityPost>> GetNewByCommunityIdAsync(int communityId, DateTimeOffset checkFrom)
+    {
+        var communityIdParam = new SqlParameter("CommunityId", communityId);
+        var checkFromParam = new SqlParameter("CheckFrom", checkFrom);
+
+        var data = await Task.Run(() => _context.Set<CommunityPost>()
+                            .FromSqlRaw($"GetNew{nameof(CommunityPost)}ByCommunityId @communityId, @checkFrom",
+                                            communityIdParam, checkFromParam)
                             .AsEnumerable());
 
         return data;

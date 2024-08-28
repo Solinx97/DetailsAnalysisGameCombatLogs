@@ -1,10 +1,9 @@
-import { faBars, faCloudArrowUp, faEarthEurope, faEye, faEyeSlash, faPen, faShieldHalved, faChevronRight, faChevronLeft } from '@fortawesome/free-solid-svg-icons';
+import { faBars, faChevronLeft, faChevronRight, faCloudArrowUp, faEarthEurope, faEye, faEyeSlash, faPen, faShieldHalved } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { memo, useEffect, useRef, useState } from "react";
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import { useLazyGetCommunityByIdQuery, useUpdateCommunityAsyncMutation } from '../../../store/api/communication/community/Community.api';
-import { useCreateCommunityPostMutation } from '../../../store/api/communication/CommunityPost.api';
 import Loading from '../../Loading';
 import CommunicationMenu from '../CommunicationMenu';
 import CreateCommunityPost from '../post/CreateCommunityPost';
@@ -37,12 +36,11 @@ const SelectedCommunity = () => {
 
     const [getCommunityByIdAsync] = useLazyGetCommunityByIdQuery();
     const [updateCommunityAsync] = useUpdateCommunityAsyncMutation();
-    const [createNewCommunityPostAsync] = useCreateCommunityPostMutation();
 
     useEffect(() => {
         const queryParams = new URLSearchParams(window.location.search);
         setCommunityId(+queryParams.get("id"));
-    }, [])
+    }, []);
 
     useEffect(() => {
         if (communityId === 0) {
@@ -55,17 +53,7 @@ const SelectedCommunity = () => {
         }
 
         searchByCommunityId();
-    }, [communityId])
-
-    const createCommunityPostAsync = async (postId) => {
-        const newComunityPost = {
-            communityId: community.id,
-            postId: postId
-        }
-
-        const createdUserPost = await createNewCommunityPostAsync(newComunityPost);
-        return createdUserPost.data !== undefined;
-    }
+    }, [communityId]);
 
     const updateCommunityNameAsync = async () => {
         setEditNameOn(false);
@@ -214,6 +202,7 @@ const SelectedCommunity = () => {
                         <SelectedCommunityItem
                             user={user}
                             communityId={communityId}
+                            t={t}
                         />
                     </div>
                 </div>

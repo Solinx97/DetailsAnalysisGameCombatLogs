@@ -23,6 +23,14 @@ public class UserPostController : ControllerBase
         _logger = logger;
     }
 
+    [HttpGet("count/{appUserId}")]
+    public async Task<IActionResult> Count(string appUserId)
+    {
+        var count = await _service.CountByAppUserIdAsync(appUserId);
+
+        return Ok(count);
+    }
+
     [HttpGet]
     public async Task<IActionResult> GetAll()
     {
@@ -39,12 +47,28 @@ public class UserPostController : ControllerBase
         return Ok(result);
     }
 
-    [HttpGet("searchByOwnerId/{id}")]
-    public async Task<IActionResult> SearchByOwnerId(string id)
+    [HttpGet("getByUserId")]
+    public async Task<IActionResult> GetByUserId(string appUserId, int pageSize)
     {
-        var result = await _service.GetByParamAsync(nameof(UserPostModel.AppUserId), id);
+        var posts = await _service.GetByAppUserIdAsync(appUserId, pageSize);
 
-        return Ok(result);
+        return Ok(posts);
+    }
+
+    [HttpGet("getMoreByUserId")]
+    public async Task<IActionResult> GetMoreByUserId(string appUserId, int offset, int pageSize)
+    {
+        var posts = await _service.GetMoreByAppUserIdAsync(appUserId, offset, pageSize);
+
+        return Ok(posts);
+    }
+
+    [HttpGet("getNewPosts")]
+    public async Task<IActionResult> GetNewPosts(string appUserId, DateTimeOffset checkFrom)
+    {
+        var posts = await _service.GetNewByAppUserIdAsync(appUserId, checkFrom);
+
+        return Ok(posts);
     }
 
     [HttpPost]

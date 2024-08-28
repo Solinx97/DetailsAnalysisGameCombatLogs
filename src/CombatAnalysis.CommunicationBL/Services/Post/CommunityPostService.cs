@@ -93,7 +93,7 @@ internal class CommunityPostService : ICommunityPostService
 
     public async Task<IEnumerable<CommunityPostDto>> GetByCommunityIdAsync(int communityId, int pageSize = 100)
     {
-        var result = await _repository.GetByCommunityIdAsyn(communityId, pageSize);
+        var result = await _repository.GetByCommunityIdAsync(communityId, pageSize);
         var map = _mapper.Map<IEnumerable<CommunityPostDto>>(result);
 
         return map;
@@ -101,7 +101,15 @@ internal class CommunityPostService : ICommunityPostService
 
     public async Task<IEnumerable<CommunityPostDto>> GetMoreByCommunityIdAsync(int communityId, int offset = 0, int pageSize = 100)
     {
-        var result = await _repository.GetMoreByCommunityIdAsyn(communityId, offset, pageSize);
+        var result = await _repository.GetMoreByCommunityIdAsync(communityId, offset, pageSize);
+        var map = _mapper.Map<IEnumerable<CommunityPostDto>>(result);
+
+        return map;
+    }
+
+    public async Task<IEnumerable<CommunityPostDto>> GetNewByCommunityIdAsync(int communityId, DateTimeOffset checkFrom)
+    {
+        var result = await _repository.GetNewByCommunityIdAsync(communityId, checkFrom);
         var map = _mapper.Map<IEnumerable<CommunityPostDto>>(result);
 
         return map;

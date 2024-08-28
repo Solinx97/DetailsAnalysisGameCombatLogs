@@ -23,6 +23,14 @@ public class CommunityPostController : ControllerBase
         _logger = logger;
     }
 
+    [HttpGet("count/{communityId}")]
+    public async Task<IActionResult> Count(int communityId)
+    {
+        var count = await _service.CountByCommunityIdAsync(communityId);
+
+        return Ok(count);
+    }
+
     [HttpGet]
     public async Task<IActionResult> GetAll()
     {
@@ -39,12 +47,29 @@ public class CommunityPostController : ControllerBase
         return Ok(result);
     }
 
-    [HttpGet("searchByCommunityId/{id}")]
-    public async Task<IActionResult> SearchByOwnerId(int id)
+    [HttpGet("getByCommunityId")]
+    public async Task<IActionResult> GetByCommunityId(int communityId, int pageSize)
     {
-        var result = await _service.GetByParamAsync(nameof(CommunityPostModel.CommunityId), id);
+        var posts = await _service.GetByCommunityIdAsync(communityId, pageSize);
 
-        return Ok(result);
+        return Ok(posts);
+    }
+
+    [HttpGet("getMoreByCommunityId")]
+    public async Task<IActionResult> GetMoreByCommunityId(int communityId, int offset, int pageSize)
+    {
+        var posts = await _service.GetMoreByCommunityIdAsync(communityId, offset, pageSize);
+
+        return Ok(posts);
+    }
+
+    [HttpGet("getNewPosts")]
+    public async Task<IActionResult> GetNewPosts(int communityId, string checkFrom)
+    {
+        var checkFromData = DateTimeOffset.Parse(checkFrom);
+        var posts = await _service.GetNewByCommunityIdAsync(communityId, checkFromData);
+
+        return Ok(posts);
     }
 
     [HttpPost]

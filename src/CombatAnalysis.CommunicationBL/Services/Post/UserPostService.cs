@@ -93,7 +93,7 @@ internal class UserPostService : IUserPostService
 
     public async Task<IEnumerable<UserPostDto>> GetByAppUserIdAsync(string appUserId, int pageSize = 100)
     {
-        var result = await _repository.GetByAppUserIdAsyn(appUserId, pageSize);
+        var result = await _repository.GetByAppUserIdAsync(appUserId, pageSize);
         var map = _mapper.Map<IEnumerable<UserPostDto>>(result);
 
         return map;
@@ -101,7 +101,15 @@ internal class UserPostService : IUserPostService
 
     public async Task<IEnumerable<UserPostDto>> GetMoreByAppUserIdAsync(string appUserId, int offset = 0, int pageSize = 100)
     {
-        var result = await _repository.GetMoreByAppUserIdAsyn(appUserId, offset, pageSize);
+        var result = await _repository.GetMoreByAppUserIdAsync(appUserId, offset, pageSize);
+        var map = _mapper.Map<IEnumerable<UserPostDto>>(result);
+
+        return map;
+    }
+
+    public async Task<IEnumerable<UserPostDto>> GetNewByAppUserIdAsync(string appUserId, DateTimeOffset checkFrom)
+    {
+        var result = await _repository.GetNewByAppUserIdAsync(appUserId, checkFrom);
         var map = _mapper.Map<IEnumerable<UserPostDto>>(result);
 
         return map;

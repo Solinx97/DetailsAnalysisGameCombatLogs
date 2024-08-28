@@ -5,6 +5,8 @@ using CombatAnalysis.WebApp.Extensions;
 using CombatAnalysis.WebApp.Interfaces;
 using CombatAnalysis.WebApp.Models.Post;
 using Microsoft.AspNetCore.Mvc;
+using System;
+using System.Globalization;
 
 namespace CombatAnalysis.WebApp.Controllers.Post;
 
@@ -18,6 +20,20 @@ public class CommunityPostController : ControllerBase
     public CommunityPostController(IHttpClientHelper httpClient)
     {
         _httpClient = httpClient;
+    }
+
+    [HttpGet("count/{communityId}")]
+    public async Task<IActionResult> Count(int communityId)
+    {
+        if (!Request.Cookies.TryGetValue(AuthenticationCookie.AccessToken.ToString(), out var accessToken))
+        {
+            return Unauthorized();
+        }
+
+        var responseMessage = await _httpClient.GetAsync($"CommunityPost/count/{communityId}", accessToken, Port.CommunicationApi);
+        var count = await responseMessage.Content.ReadFromJsonAsync<int>();
+
+        return Ok(count);
     }
 
     [HttpGet("{id:int:min(1)}")]
@@ -43,47 +59,70 @@ public class CommunityPostController : ControllerBase
         return BadRequest();
     }
 
-    [HttpGet("searchByCommunityId/{id:int:min(1)}")]
-    public async Task<IActionResult> SearchByCommunityId(int id)
+    [HttpGet("getByCommunityId")]
+    public async Task<IActionResult> GetByCommunityId(int communityId, int pageSize)
     {
         if (!Request.Cookies.TryGetValue(AuthenticationCookie.AccessToken.ToString(), out var accessToken))
         {
             return Unauthorized();
         }
 
-        var responseMessage = await _httpClient.GetAsync($"CommunityPost/searchByCommunityId/{id}", accessToken, Port.CommunicationApi);
+        var responseMessage = await _httpClient.GetAsync($"CommunityPost/getByCommunityId?communityId={communityId}&pageSize={pageSize}", accessToken, Port.CommunicationApi);
         if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
         {
             return Unauthorized();
         }
         else if (responseMessage.IsSuccessStatusCode)
         {
-            var communityPosts = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<CommunityPostModel>>();
+            var posts = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<CommunityPostModel>>();
 
-            return Ok(communityPosts);
+            return Ok(posts);
         }
 
         return BadRequest();
     }
 
-    [HttpGet("searchByPostId/{id:int:min(1)}")]
-    public async Task<IActionResult> SearchByPostId(int id)
+    [HttpGet("getMoreByCommunityId")]
+    public async Task<IActionResult> GetMoreByCommunityId(int communityId, int offset, int pageSize)
     {
         if (!Request.Cookies.TryGetValue(AuthenticationCookie.AccessToken.ToString(), out var accessToken))
         {
             return Unauthorized();
         }
 
-        var responseMessage = await _httpClient.GetAsync($"CommunityPost/searchByPostId/{id}", accessToken, Port.CommunicationApi);
+        var responseMessage = await _httpClient.GetAsync($"CommunityPost/getMoreByCommunityId?communityId={communityId}&offset={offset}&pageSize={pageSize}", accessToken, Port.CommunicationApi);
         if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
         {
             return Unauthorized();
         }
         else if (responseMessage.IsSuccessStatusCode)
         {
-            var communityPosts = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<CommunityPostModel>>();
+            var posts = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<CommunityPostModel>>();
 
-            return Ok(communityPosts);
+            return Ok(posts);
+        }
+
+        return BadRequest();
+    }
+
+    [HttpGet("getNewPosts")]
+    public async Task<IActionResult> GetNewPosts(int communityId, string checkFrom)
+    {
+        if (!Request.Cookies.TryGetValue(AuthenticationCookie.AccessToken.ToString(), out var accessToken))
+        {
+            return Unauthorized();
+        }
+
+        var responseMessage = await _httpClient.GetAsync($"CommunityPost/getNewPosts?communityId={communityId}&checkFrom={checkFrom}", accessToken, Port.CommunicationApi);
+        if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+        {
+            return Unauthorized();
+        }
+        else if (responseMessage.IsSuccessStatusCode)
+        {
+            var posts = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<CommunityPostModel>>();
+
+            return Ok(posts);
         }
 
         return BadRequest();

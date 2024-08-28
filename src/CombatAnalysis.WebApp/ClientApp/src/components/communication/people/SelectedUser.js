@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useEffect, useState } from "react";
 import { useTranslation } from 'react-i18next';
 import { useLazyGetUserByIdQuery } from '../../../store/api/Account.api';
-import { useLazyUserPostSearchByOwnerIdQuery } from '../../../store/api/CommunityApi';
+import { useLazyGetUserPostsByUserIdQuery } from '../../../store/api/CommunityApi';
 import { useLazyGetUserPostByIdQuery } from '../../../store/api/communication/UserPost.api';
 import CommunicationMenu from "../CommunicationMenu";
 import UserPost from '../post/UserPost';
@@ -16,7 +16,7 @@ import '../../../styles/communication/people/selectedUser.scss';
 const SelectedUser = () => {
     const { t } = useTranslation("communication/people/user");
 
-    const [getUserPosts] = useLazyUserPostSearchByOwnerIdQuery();
+    const [getUserPosts] = useLazyGetUserPostsByUserIdQuery();
     const [getPostById] = useLazyGetUserPostByIdQuery();
     const [getUserById] = useLazyGetUserByIdQuery();
 

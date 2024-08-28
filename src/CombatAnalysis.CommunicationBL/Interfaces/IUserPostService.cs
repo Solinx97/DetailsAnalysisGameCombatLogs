@@ -8,5 +8,7 @@ public interface IUserPostService : IService<UserPostDto, int>
 
     Task<IEnumerable<UserPostDto>> GetMoreByAppUserIdAsync(string appUserId, int offset, int pageSize);
 
+    Task<IEnumerable<UserPostDto>> GetNewByAppUserIdAsync(string appUserId, DateTimeOffset checkFrom);
+
     Task<int> CountByAppUserIdAsync(string appUserId);
 }

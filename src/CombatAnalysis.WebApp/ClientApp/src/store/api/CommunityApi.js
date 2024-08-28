@@ -11,6 +11,9 @@ export const CommunityApi = createApi({
         'UserPostComment',
         'Community',
         'CommunityPost',
+        'CommunityPostLike',
+        'CommunityPostDislike',
+        'CommunityPostComment',
         'CommunityUser',
         'InviteToCommunity'
     ],
@@ -25,8 +28,19 @@ export const CommunityApi = createApi({
                     ? [...result.map(({ id }) => ({ type: 'UserPost', id })), { type: 'UserPost' }]
                     : [{ type: 'UserPost' }]
         }),
-        userPostSearchByOwnerId: builder.query({
-            query: (id) => `/UserPost/searchByOwnerId/${id}`,
+        getUserPostsByUserId: builder.query({
+            query: ({ appUserId, pageSize }) => ({
+                url: `/UserPost/getByUserId?appUserId=${appUserId}&pageSize=${pageSize}`,
+            }),
+            providesTags: (result, error, arg) =>
+                result
+                    ? [...result.map(({ id }) => ({ type: 'UserPost', id })), { type: 'UserPost' }]
+                    : [{ type: 'UserPost' }]
+        }),
+        getMoreUserPostsByUserId: builder.query({
+            query: ({ appUserId, offset, pageSize }) => ({
+                url: `/UserPost/getMoreByUserId?appUserId=${appUserId}&offset=${offset}&pageSize=${pageSize}`,
+            }),
             providesTags: (result, error, arg) =>
                 result
                     ? [...result.map(({ id }) => ({ type: 'UserPost', id })), { type: 'UserPost' }]
@@ -39,8 +53,28 @@ export const CommunityApi = createApi({
                     ? [...result.map(({ id }) => ({ type: 'Community', id })), { type: 'Community' }]
                     : [{ type: 'Community' }]
         }),
-        communityPostSearchByCommunityIdAsync: builder.query({
-            query: (id) => `/CommunityPost/searchByCommunityId/${id}`,
+        getCommunityPostsByCommunityId: builder.query({
+            query: ({ communityId, pageSize }) => ({
+                url: `/CommunityPost/getByCommunityId?communityId=${communityId}&pageSize=${pageSize}`,
+            }),
+            providesTags: (result, error, arg) =>
+                result
+                    ? [...result.map(({ id }) => ({ type: 'CommunityPost', id })), { type: 'CommunityPost' }]
+                    : [{ type: 'CommunityPost' }]
+        }),
+        getMoreCommunityPostsByCommunityId: builder.query({
+            query: ({ communityId, offset, pageSize }) => ({
+                url: `/CommunityPost/getMoreByCommunityId?communityId=${communityId}&offset=${offset}&pageSize=${pageSize}`,
+            }),
+            providesTags: (result, error, arg) =>
+                result
+                    ? [...result.map(({ id }) => ({ type: 'CommunityPost', id })), { type: 'CommunityPost' }]
+                    : [{ type: 'CommunityPost' }]
+        }),
+        getNewCommunityPostsByCommunityId: builder.query({
+            query: ({ communityId, checkFrom }) => ({
+                url: `/CommunityPost/getNewPosts?communityId=${communityId}&checkFrom=${checkFrom}`,
+            }),
             providesTags: (result, error, arg) =>
                 result
                     ? [...result.map(({ id }) => ({ type: 'CommunityPost', id })), { type: 'CommunityPost' }]
@@ -66,14 +100,20 @@ export const CommunityApi = createApi({
 export const {
     useGetUserPostsQuery,
     useLazyGetUserPostsQuery,
+    useGetUserPostsByUserIdQuery,
+    useLazyGetUserPostsByUserIdQuery,
+    useGetMoreUserPostsByUserIdQuery,
+    useLazyGetMoreUserPostsByUserIdQuery,
     useGetCommunitiesQuery,
     useLazyGetCommunitiesQuery,
-    useCommunityPostSearchByCommunityIdAsyncQuery,
-    useLazyCommunityPostSearchByCommunityIdAsyncQuery,
+    useGetCommunityPostsByCommunityIdQuery,
+    useLazyGetCommunityPostsByCommunityIdQuery,
+    useGetMoreCommunityPostsByCommunityIdQuery,
+    useLazyGetMoreCommunityPostsByCommunityIdQuery,
+    useGetNewCommunityPostsByCommunityIdQuery,
+    useLazyGetNewCommunityPostsByCommunityIdQuery,
     useCommunityUserSearchByCommunityIdAsyncQuery,
     useLazyCommunityUserSearchByCommunityIdAsyncQuery,
-    useUserPostSearchByOwnerIdQuery,
-    useLazyUserPostSearchByOwnerIdQuery,
     useGetInviteToCommunityByIdQuery,
     useLazyGetInviteToCommunityByIdQuery,
 } = CommunityApi;

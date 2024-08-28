@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
-import { useLazyUserPostSearchByOwnerIdQuery } from '../../../store/api/CommunityApi';
+import { useLazyGetUserPostsByUserIdQuery } from '../../../store/api/CommunityApi';
 import {
     useLazyGetUserPostByIdQuery
 } from '../../../store/api/communication/UserPost.api';
@@ -14,7 +14,7 @@ const MyFeed = () => {
 
     const user = useSelector((state) => state.user.value);
 
-    const [getUserPosts] = useLazyUserPostSearchByOwnerIdQuery();
+    const [getUserPosts] = useLazyGetUserPostsByUserIdQuery();
     const [getUserPostById] = useLazyGetUserPostByIdQuery();
 
     const [allPosts, setAllPosts] = useState([]);

@@ -2,6 +2,9 @@ import { CommunityApi } from "../CommunityApi";
 
 export const UserPostApi = CommunityApi.injectEndpoints({
     endpoints: builder => ({
+        getUserPostCountByUserId: builder.query({
+            query: (appUserId) => `/UserPost/count/${appUserId}`
+        }),
         getUserPostById: builder.query({
             query: (id) => `/UserPost/${id}`,
             providesTags: (result, error, arg) =>
@@ -36,6 +39,8 @@ export const UserPostApi = CommunityApi.injectEndpoints({
 })
 
 export const {
+    useGetUserPostCountByUserIdQuery,
+    useLazyGetUserPostCountByUserId,
     useGetUserPostByIdQuery,
     useLazyGetUserPostByIdQuery,
     useCreateUserPostMutation,
