@@ -31,6 +31,15 @@ public class CommunityPostController : ControllerBase
         return Ok(count);
     }
 
+    [HttpGet("countByListOfCommunities/{communityIds}")]
+    public async Task<IActionResult> CountByListOfAppUsers(string communityIds)
+    {
+        var communityIdList = communityIds.Split(',').Select(int.Parse).ToArray();
+        var count = await _service.CountByListOfCommunityIdAsync(communityIdList);
+
+        return Ok(count);
+    }
+
     [HttpGet]
     public async Task<IActionResult> GetAll()
     {
@@ -68,6 +77,31 @@ public class CommunityPostController : ControllerBase
     {
         var checkFromData = DateTimeOffset.Parse(checkFrom);
         var posts = await _service.GetNewByCommunityIdAsync(communityId, checkFromData);
+
+        return Ok(posts);
+    }
+
+    [HttpGet("getByListOfCommunityIds")]
+    public async Task<IActionResult> GetByListOfCommunityIds(string communityIds, int pageSize)
+    {
+        var posts = await _service.GetByListOfCommunityIdAsync(communityIds, pageSize);
+
+        return Ok(posts);
+    }
+
+    [HttpGet("getMoreByListOfCommunityIds")]
+    public async Task<IActionResult> GetMoreByListOfCommunityIds(string communityIds, int offset, int pageSize)
+    {
+        var posts = await _service.GetMoreByListOfCommunityIdAsync(communityIds, offset, pageSize);
+
+        return Ok(posts);
+    }
+
+    [HttpGet("getNewByListOfCommunityIds")]
+    public async Task<IActionResult> GetNewByListOfCommunityIds(string communityIds, string checkFrom)
+    {
+        var checkFromData = DateTimeOffset.Parse(checkFrom);
+        var posts = await _service.GetNewByListOfCommunityIdAsync(communityIds, checkFromData);
 
         return Ok(posts);
     }

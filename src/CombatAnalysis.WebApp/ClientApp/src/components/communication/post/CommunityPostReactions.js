@@ -4,7 +4,7 @@ import { useCallback } from 'react';
 import { useCreateCommunityPostDislikeMutation, useLazySearchCommunityPostDislikeByPostIdQuery, useRemoveCommunityPostDislikeMutation } from '../../../store/api/communication/CommunityPostDislike.api';
 import { useCreateCommunityPostLikeMutation, useLazySearchCommunityPostLikeByPostIdQuery, useRemoveCommunityPostLikeMutation } from '../../../store/api/communication/CommunityPostLike.api';
 
-const CommunityPostReactions = ({ user, communityId, post, updatePostAsync, setShowComments, showComments, t }) => {
+const CommunityPostReactions = ({ userId, communityId, post, updatePostAsync, setShowComments, showComments, t }) => {
     const [createPostLike] = useCreateCommunityPostLikeMutation();
     const [removePostLike] = useRemoveCommunityPostLikeMutation();
     const [searchPostLikeByPostId] = useLazySearchCommunityPostLikeByPostIdQuery();
@@ -32,7 +32,7 @@ const CommunityPostReactions = ({ user, communityId, post, updatePostAsync, setS
 
     const removePostLikeIfExistAsync = async (postLikes) => {
         for (let i = 0; i < postLikes.length; i++) {
-            if (postLikes[i].appUserId === user?.id) {
+            if (postLikes[i].appUserId === userId) {
                 await removePostLike(postLikes[i].id);
                 return true;
             }
@@ -43,7 +43,7 @@ const CommunityPostReactions = ({ user, communityId, post, updatePostAsync, setS
 
     const removePostDislikeIfExistAsync = async (postDislikes) => {
         for (let i = 0; i < postDislikes.length; i++) {
-            if (postDislikes[i].appUserId === user?.id) {
+            if (postDislikes[i].appUserId === userId) {
                 await removePostDislike(postDislikes[i].id);
                 return true;
             }
@@ -65,7 +65,7 @@ const CommunityPostReactions = ({ user, communityId, post, updatePostAsync, setS
             createdAt: new Date(),
             communityPostId: post?.id,
             communityId: communityId,
-            appUserId: user?.id
+            appUserId: userId
         }
 
         const createdPostLike = await createPostLike(newPostLike);
@@ -92,7 +92,7 @@ const CommunityPostReactions = ({ user, communityId, post, updatePostAsync, setS
             createdAt: new Date(),
             communityPostId: post?.id,
             communityId: communityId,
-            appUserId: user?.id
+            appUserId: userId
         }
 
         const createdPostDislike = await createPostDislike(newPostDislike);

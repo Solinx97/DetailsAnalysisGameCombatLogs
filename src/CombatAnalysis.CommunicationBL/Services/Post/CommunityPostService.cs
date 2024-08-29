@@ -115,9 +115,40 @@ internal class CommunityPostService : ICommunityPostService
         return map;
     }
 
+    public async Task<IEnumerable<CommunityPostDto>> GetByListOfCommunityIdAsync(string communityIds, int pageSize = 100)
+    {
+        var result = await _repository.GetByListOfCommunityIdAsync(communityIds, pageSize);
+        var map = _mapper.Map<IEnumerable<CommunityPostDto>>(result);
+
+        return map;
+    }
+
+    public async Task<IEnumerable<CommunityPostDto>> GetMoreByListOfCommunityIdAsync(string communityIds, int offset = 0, int pageSize = 100)
+    {
+        var result = await _repository.GetMoreByListOfCommunityIdAsync(communityIds, offset, pageSize);
+        var map = _mapper.Map<IEnumerable<CommunityPostDto>>(result);
+
+        return map;
+    }
+
+    public async Task<IEnumerable<CommunityPostDto>> GetNewByListOfCommunityIdAsync(string communityIds, DateTimeOffset checkFrom)
+    {
+        var result = await _repository.GetNewByListOfCommunityIdAsync(communityIds, checkFrom);
+        var map = _mapper.Map<List<CommunityPostDto>>(result);
+
+        return map;
+    }
+
     public async Task<int> CountByCommunityIdAsync(int communityId)
     {
         var count = await _repository.CountByCommunityIdAsync(communityId);
+
+        return count;
+    }
+
+    public async Task<int> CountByListOfCommunityIdAsync(int[] communityIds)
+    {
+        var count = await _repository.CountByListOfCommunityIdAsync(communityIds);
 
         return count;
     }

@@ -116,6 +116,33 @@ export const CommunityApi = createApi({
                     ? [...result.map(({ id }) => ({ type: 'CommunityPost', id })), { type: 'CommunityPost' }]
                     : [{ type: 'CommunityPost' }]
         }),
+        getCommunityPostByListOfCommunityIds: builder.query({
+            query: ({ communityIds, pageSize }) => ({
+                url: `/CommunityPost/getByListOfCommunityIds?communityIds=${communityIds}&pageSize=${pageSize}`,
+            }),
+            providesTags: (result, error, arg) =>
+                result
+                    ? [...result.map(({ id }) => ({ type: 'UserPost', id })), { type: 'UserPost' }]
+                    : [{ type: 'UserPost' }]
+        }),
+        getMoreCommunityPostByListOfCommunityIds: builder.query({
+            query: ({ communityIds, offset, pageSize }) => ({
+                url: `/CommunityPost/getMoreByListOfCommunityIds?communityIds=${communityIds}&offset=${offset}&pageSize=${pageSize}`,
+            }),
+            providesTags: (result, error, arg) =>
+                result
+                    ? [...result.map(({ id }) => ({ type: 'UserPost', id })), { type: 'UserPost' }]
+                    : [{ type: 'UserPost' }]
+        }),
+        getNewCommunityPostByListOfCommunityIds: builder.query({
+            query: ({ communityIds, checkFrom }) => ({
+                url: `/CommunityPost/getNewByListOfCommunityIds?communityIds=${communityIds}&checkFrom=${checkFrom}`,
+            }),
+            providesTags: (result, error, arg) =>
+                result
+                    ? [...result.map(({ id }) => ({ type: 'UserPost', id })), { type: 'UserPost' }]
+                    : [{ type: 'UserPost' }]
+        }),
         communityUserSearchByCommunityIdAsync: builder.query({
             query: (id) => `/CommunityUser/searchByCommunityId/${id}`,
             providesTags: (result, error, arg) =>
@@ -156,6 +183,12 @@ export const {
     useLazyGetMoreCommunityPostsByCommunityIdQuery,
     useGetNewCommunityPostsByCommunityIdQuery,
     useLazyGetNewCommunityPostsByCommunityIdQuery,
+    useGetCommunityPostByListOfCommunityIdsQuery,
+    useLazyGetCommunityPostByListOfCommunityIdsQuery,
+    useGetMoreCommunityPostByListOfCommunityIdsQuery,
+    useLazyGetMoreCommunityPostByListOfCommunityIdsQuery,
+    useGetNewCommunityPostByListOfCommunityIdsQuery,
+    useLazyGetNewCommunityPostByListOfCommunityIdsQuery,
     useCommunityUserSearchByCommunityIdAsyncQuery,
     useLazyCommunityUserSearchByCommunityIdAsyncQuery,
     useGetInviteToCommunityByIdQuery,

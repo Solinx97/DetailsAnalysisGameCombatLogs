@@ -3,7 +3,7 @@ import useFetchCommunityPosts from '../../../hooks/useFetchCommunityPosts';
 import Loading from '../../Loading';
 import CommunityPost from '../post/CommunityPost';
 
-const SelectedCommunityItem = ({ user, communityId, t }) => {
+const SelectedCommunityItem = ({ userId, communityId, t }) => {
     const [currentPosts, setCurrentPosts] = useState([]);
     const [haveNewPosts, setHaveNewPosts] = useState(false);
 
@@ -65,7 +65,7 @@ const SelectedCommunityItem = ({ user, communityId, t }) => {
                 {currentPosts.map((post) => (
                     <li key={post?.id}>
                         <CommunityPost
-                            user={user}
+                            userId={userId}
                             post={post}
                             communityId={communityId}
                         />

@@ -10,5 +10,13 @@ public interface ICommunityPostRepository : IGenericRepository<CommunityPost, in
 
     Task<IEnumerable<CommunityPost>> GetNewByCommunityIdAsync(int communityId, DateTimeOffset checkFrom);
 
+    Task<IEnumerable<CommunityPost>> GetByListOfCommunityIdAsync(string communityIds, int pageSize);
+
+    Task<IEnumerable<CommunityPost>> GetMoreByListOfCommunityIdAsync(string communityIds, int offset, int pageSize);
+
+    Task<IEnumerable<CommunityPost>> GetNewByListOfCommunityIdAsync(string communityIds, DateTimeOffset checkFrom);
+
     Task<int> CountByCommunityIdAsync(int communityId);
+
+    Task<int> CountByListOfCommunityIdAsync(int[] communityIds);
 }

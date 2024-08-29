@@ -200,7 +200,7 @@ const SelectedCommunity = () => {
                             />
                         }
                         <SelectedCommunityItem
-                            user={user}
+                            userId={user?.id}
                             communityId={communityId}
                             t={t}
                         />

@@ -10,5 +10,13 @@ public interface ICommunityPostService : IService<CommunityPostDto, int>
 
     Task<IEnumerable<CommunityPostDto>> GetNewByCommunityIdAsync(int communityId, DateTimeOffset checkFrom);
 
+    Task<IEnumerable<CommunityPostDto>> GetByListOfCommunityIdAsync(string communityIds, int pageSize);
+
+    Task<IEnumerable<CommunityPostDto>> GetMoreByListOfCommunityIdAsync(string communityIds, int offset, int pageSize);
+
+    Task<IEnumerable<CommunityPostDto>> GetNewByListOfCommunityIdAsync(string communityIds, DateTimeOffset checkFrom);
+
     Task<int> CountByCommunityIdAsync(int communityId);
+
+    Task<int> CountByListOfCommunityIdAsync(int[] communityIds);
 }

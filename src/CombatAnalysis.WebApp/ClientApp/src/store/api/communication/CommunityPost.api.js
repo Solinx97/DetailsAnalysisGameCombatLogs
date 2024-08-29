@@ -5,6 +5,9 @@ export const CommunityPostApi = CommunityApi.injectEndpoints({
         getCommunityPostCountByCommunityId: builder.query({
             query: (communityId) => `/CommunityPost/count/${communityId}`
         }),
+        getCommunityPostCountByListOfCommunityId: builder.query({
+            query: (communityIds) => `/CommunityPost/countByListOfCommunities/${communityIds}`
+        }),
         getCommunityPostById: builder.query({
             query: (id) => `/CommunityPost/${id}`,
             providesTags: (result, error, arg) =>
@@ -41,6 +44,8 @@ export const CommunityPostApi = CommunityApi.injectEndpoints({
 export const {
     useGetCommunityPostCountByCommunityIdQuery,
     useLazyGetCommunityPostCountByCommunityIdQuery,
+    useGetCommunityPostCountByListOfCommunityIdQuery,
+    useLazyGetCommunityPostCountByListOfCommunityIdQuery,
     useGetCommunityPostByIdQuery,
     useLazyGetCommunityPostByIdQuery,
     useCreateCommunityPostMutation,

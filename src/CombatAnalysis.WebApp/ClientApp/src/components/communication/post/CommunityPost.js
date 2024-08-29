@@ -8,7 +8,7 @@ import CommunityPostTitle from './CommunityPostTitle';
 
 import '../../../styles/communication/post.scss';
 
-const CommunityPost = ({ user, communityId, post }) => {
+const CommunityPost = ({ userId, communityId, post }) => {
     const { t } = useTranslation("communication/post");
 
     const [updatePost] = useUpdateCommunityPostMutation();
@@ -23,7 +23,7 @@ const CommunityPost = ({ user, communityId, post }) => {
     const [postData, setPostData] = useState(post);
 
     useEffect(() => {
-        setIsMyPost(postData?.appUserId === user?.id);
+        setIsMyPost(postData?.appUserId === userId);
     }, []);
 
     const updatePostAsync = async (postId, likesCount, dislikesCount, commentsCount) => {
@@ -78,7 +78,7 @@ const CommunityPost = ({ user, communityId, post }) => {
             createdAt: new Date(),
             communityPostId: postData.id,
             communityId: communityId,
-            appUserId: user?.id
+            appUserId: userId
         }
 
         const response = await createPostComment(newPostComment);
@@ -122,7 +122,7 @@ const CommunityPost = ({ user, communityId, post }) => {
                 />
                 <div className="posts__content">{postData?.content}</div>
                 <CommunityPostReactions
-                    user={user}
+                    userId={userId}
                     communityId={communityId}
                     post={postData}
                     updatePostAsync={updatePostAsync}
@@ -135,7 +135,7 @@ const CommunityPost = ({ user, communityId, post }) => {
                 <>
                     <CommunityPostComments
                         dateFormatting={dateFormatting}
-                        userId={user?.id}
+                        userId={userId}
                         postId={postData.id}
                         updatePostAsync={updatePostAsync}
                     />

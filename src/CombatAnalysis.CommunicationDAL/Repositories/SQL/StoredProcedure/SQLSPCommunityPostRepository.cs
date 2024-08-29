@@ -55,10 +55,58 @@ public class SQLSPCommunityPostRepository : SQLRepository<CommunityPost, int>, I
         return data;
     }
 
+    public async Task<IEnumerable<CommunityPost>> GetByListOfCommunityIdAsync(string communityIds, int pageSize)
+    {
+        var communityIdsParam = new SqlParameter("CommunityIds", communityIds);
+        var pageSizeParam = new SqlParameter("PageSize", pageSize);
+
+        var data = await Task.Run(() => _context.Set<CommunityPost>()
+                            .FromSqlRaw($"Get{nameof(CommunityPost)}ByListOfCommunityIdPagination @communityIds, @pageSize",
+                                            communityIdsParam, pageSizeParam)
+                            .AsEnumerable());
+
+        return data;
+    }
+
+    public async Task<IEnumerable<CommunityPost>> GetMoreByListOfCommunityIdAsync(string communityIds, int offset, int pageSize)
+    {
+        var communityIdsParam = new SqlParameter("CommunityIds", communityIds);
+        var offsetParam = new SqlParameter("Offset", offset);
+        var pageSizeParam = new SqlParameter("PageSize", pageSize);
+
+        var data = await Task.Run(() => _context.Set<CommunityPost>()
+                            .FromSqlRaw($"GetMore{nameof(CommunityPost)}ByListOfCommunityId @communityIds, @offset, @pageSize",
+                                            communityIdsParam, offsetParam, pageSizeParam)
+                            .AsEnumerable());
+
+        return data;
+    }
+
+    public async Task<IEnumerable<CommunityPost>> GetNewByListOfCommunityIdAsync(string communityIds, DateTimeOffset checkFrom)
+    {
+        var communityIdsParam = new SqlParameter("CommunityIds", communityIds);
+        var checkFromParam = new SqlParameter("CheckFrom", checkFrom);
+
+        var data = await Task.Run(() => _context.Set<CommunityPost>()
+                            .FromSqlRaw($"GetNew{nameof(CommunityPost)}ByListOfCommunityId @communityIds, @checkFrom",
+                                            communityIdsParam, checkFromParam)
+                            .AsEnumerable());
+
+        return data;
+    }
+
     public async Task<int> CountByCommunityIdAsync(int communityId)
     {
         var count = await _context.Set<CommunityPost>()
                      .CountAsync(cl => cl.CommunityId == communityId);
+
+        return count;
+    }
+
+    public async Task<int> CountByListOfCommunityIdAsync(int[] communityIds)
+    {
+        var count = await _context.Set<CommunityPost>()
+                     .CountAsync(cl => communityIds.Contains(cl.CommunityId));
 
         return count;
     }

@@ -25,8 +25,8 @@ export const CommunityUserApi = ChatApi.injectEndpoints({
 })
 
 export const {
-    useLazySearchByUserIdAsyncQuery,
     useSearchByUserIdAsyncQuery,
+    useLazySearchByUserIdAsyncQuery,
     useCreateCommunityUserAsyncMutation,
     useRemoveCommunityUserAsyncMutation
 } = CommunityUserApi;
