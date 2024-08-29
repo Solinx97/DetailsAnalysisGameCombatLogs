@@ -11,18 +11,17 @@ import "../../../styles/communication/myEnvironment/requestToConnect.scss";
 const RequestToConnect = () => {
     const { t } = useTranslation("communication/myEnvironment/requestsToConnect");
 
-    const customer = useSelector((state) => state.customer.value);
+    const user = useSelector((state) => state.user.value);
 
-    const { data: allRequests, isLoading: reqIsLoading } = useSearchByToUserIdQuery(customer?.id);
-    const { data: allMyRequests, isLoading: myReqIsLoading } = useSearchByOwnerIdQuery(customer?.id);
+    const { data: allRequests, isLoading: reqIsLoading } = useSearchByToUserIdQuery(user?.id);
+    const { data: allMyRequests, isLoading: myReqIsLoading } = useSearchByOwnerIdQuery(user?.id);
     const [createFriendAsync] = useCreateFriendAsyncMutation();
     const [removeRequestAsync] = useRemoveRequestAsyncMutation();
 
     const acceptRequestAsync = async (request) => {
         const newFriend = {
-            username: request.username,
-            whoFriendId: request.toUserId,
-            forWhomId: request.customerId
+            whoFriendId: request.toAppUserId,
+            forWhomId: request.appUserId
         };
 
         const creadetFriend = await createFriendAsync(newFriend);
@@ -60,11 +59,10 @@ const RequestToConnect = () => {
                 <div>
                     <div>{t("Requests")}</div>
                     <ul>
-                        {
-                            allRequests?.map((item) => (
+                        {allRequests?.map((item) => (
                                 <li key={item.id}>
                                     <RequestItem
-                                        me={customer}
+                                        me={user}
                                         request={item}
                                         acceptRequestAsync={acceptRequestAsync}
                                         rejectRequestAsync={rejectRequestAsync}
@@ -79,11 +77,10 @@ const RequestToConnect = () => {
                 <div>
                     <div>{t("MyRequests")}</div>
                     <ul>
-                        {
-                            allMyRequests?.map((item) => (
+                        {allMyRequests?.map((item) => (
                                 <li key={item.id}>
                                     <MyRequestItem
-                                        me={customer}
+                                        me={user}
                                         request={item}
                                         cancelMyRequestAsync={cancelMyRequestAsync}
                                     />

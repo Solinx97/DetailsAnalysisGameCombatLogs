@@ -7,7 +7,7 @@ const FeedParticipants = ({ userId, t }) => {
     const [currentPosts, setCurrentPosts] = useState([]);
     const [haveNewPosts, setHaveNewPosts] = useState(false);
 
-    const { posts, newPosts, count, isLoading, getMoreUserPostsAsync, currentDateRef, skipCheckNewPostsRef } = useFetchCommunityPosts(userId);
+    const { posts, newPosts, count, isLoading, getMoreUserPostsAsync, currentDateRef } = useFetchCommunityPosts(userId, false);
 
     useEffect(() => {
         if (!posts) {
@@ -15,8 +15,6 @@ const FeedParticipants = ({ userId, t }) => {
         }
 
         setCurrentPosts(posts);
-
-        skipCheckNewPostsRef.current = false;
     }, [posts]);
 
     useEffect(() => {

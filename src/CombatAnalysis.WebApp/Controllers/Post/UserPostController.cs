@@ -34,6 +34,20 @@ public class UserPostController : ControllerBase
         return Ok(count);
     }
 
+    [HttpGet("countByListOfAppUsers/{appUserIds}")]
+    public async Task<IActionResult> CountByListOfAppUsers(string appUserIds)
+    {
+        if (!Request.Cookies.TryGetValue(AuthenticationCookie.AccessToken.ToString(), out var accessToken))
+        {
+            return Unauthorized();
+        }
+
+        var responseMessage = await _httpClient.GetAsync($"UserPost/countByListOfAppUsers/{appUserIds}", accessToken, Port.CommunicationApi);
+        var count = await responseMessage.Content.ReadFromJsonAsync<int>();
+
+        return Ok(count);
+    }
+
     [HttpGet]
     public async Task<IActionResult> GetAll()
     {
@@ -81,7 +95,7 @@ public class UserPostController : ControllerBase
     }
 
     [HttpGet("getByUserId")]
-    public async Task<IActionResult> GetByChatId(string appUserId, int pageSize)
+    public async Task<IActionResult> GetByUserId(string appUserId, int pageSize)
     {
         if (!Request.Cookies.TryGetValue(AuthenticationCookie.AccessToken.ToString(), out var accessToken))
         {
@@ -104,7 +118,7 @@ public class UserPostController : ControllerBase
     }
 
     [HttpGet("getMoreByUserId")]
-    public async Task<IActionResult> GetMoreByChatId(string appUserId, int offset, int pageSize)
+    public async Task<IActionResult> GetMoreByUserId(string appUserId, int offset, int pageSize)
     {
         if (!Request.Cookies.TryGetValue(AuthenticationCookie.AccessToken.ToString(), out var accessToken))
         {
@@ -135,6 +149,75 @@ public class UserPostController : ControllerBase
         }
 
         var responseMessage = await _httpClient.GetAsync($"UserPost/getNewPosts?appUserId={appUserId}&checkFrom={checkFrom}", accessToken, Port.CommunicationApi);
+        if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+        {
+            return Unauthorized();
+        }
+        else if (responseMessage.IsSuccessStatusCode)
+        {
+            var posts = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<UserPostModel>>();
+
+            return Ok(posts);
+        }
+
+        return BadRequest();
+    }
+
+    [HttpGet("getByListOfUserIds")]
+    public async Task<IActionResult> GetByListOfUserIds(string appUserIds, int pageSize)
+    {
+        if (!Request.Cookies.TryGetValue(AuthenticationCookie.AccessToken.ToString(), out var accessToken))
+        {
+            return Unauthorized();
+        }
+
+        var responseMessage = await _httpClient.GetAsync($"UserPost/getByListOfUserIds?appUserIds={appUserIds}&pageSize={pageSize}", accessToken, Port.CommunicationApi);
+        if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+        {
+            return Unauthorized();
+        }
+        else if (responseMessage.IsSuccessStatusCode)
+        {
+            var posts = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<UserPostModel>>();
+
+            return Ok(posts);
+        }
+
+        return BadRequest();
+    }
+
+    [HttpGet("getMoreByListOfUserIds")]
+    public async Task<IActionResult> GetMoreByListOfUserIds(string appUserIds, int offset, int pageSize)
+    {
+        if (!Request.Cookies.TryGetValue(AuthenticationCookie.AccessToken.ToString(), out var accessToken))
+        {
+            return Unauthorized();
+        }
+
+        var responseMessage = await _httpClient.GetAsync($"UserPost/getMoreByListOfUserIds?appUserIds={appUserIds}&offset={offset}&pageSize={pageSize}", accessToken, Port.CommunicationApi);
+        if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+        {
+            return Unauthorized();
+        }
+        else if (responseMessage.IsSuccessStatusCode)
+        {
+            var posts = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<UserPostModel>>();
+
+            return Ok(posts);
+        }
+
+        return BadRequest();
+    }
+
+    [HttpGet("getNewByListOfUserIds")]
+    public async Task<IActionResult> GetNewByListOfUserIds(string appUserIds, string checkFrom)
+    {
+        if (!Request.Cookies.TryGetValue(AuthenticationCookie.AccessToken.ToString(), out var accessToken))
+        {
+            return Unauthorized();
+        }
+
+        var responseMessage = await _httpClient.GetAsync($"UserPost/getNewByListOfUserIds?appUserIds={appUserIds}&checkFrom={checkFrom}", accessToken, Port.CommunicationApi);
         if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
         {
             return Unauthorized();

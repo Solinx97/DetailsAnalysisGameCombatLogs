@@ -1,10 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
-import { useLazyGetUserPostsByUserIdQuery } from '../../../store/api/CommunityApi';
-import {
-    useLazyGetUserPostByIdQuery
-} from '../../../store/api/communication/UserPost.api';
+import useFetchCommunityPosts from '../../../hooks/useFetchUsersPosts';
 import Loading from '../../Loading';
 import CreateUserPost from '../post/CreateUserPost';
 import UserPost from '../post/UserPost';
@@ -14,47 +11,25 @@ const MyFeed = () => {
 
     const user = useSelector((state) => state.user.value);
 
-    const [getUserPosts] = useLazyGetUserPostsByUserIdQuery();
-    const [getUserPostById] = useLazyGetUserPostByIdQuery();
+    const [currentPosts, setCurrentPosts] = useState([]);
 
-    const [allPosts, setAllPosts] = useState([]);
+    const { posts, count, isLoading, getMoreUserPostsAsync } = useFetchCommunityPosts(user?.id, true);
 
     useEffect(() => {
-        if (!user) {
+        if (!posts) {
             return;
         }
 
-        const getAllPosts = async () => {
-            await getAllPostsAsync();
-        }
+        setCurrentPosts(posts);
+    }, [posts]);
 
-        getAllPosts();
-    }, [user])
+    const loadingMoreUserPostsAsync = async () => {
+        const newPosts = await getMoreUserPostsAsync(currentPosts.length);
 
-    const getAllPostsAsync = async () => {
-        const userPosts = await getUserPosts(user.id);
-
-        if (userPosts.data) {
-            const userPersonalPosts = await getUserPostsAsync(userPosts.data);
-            setAllPosts(userPersonalPosts);
-        }
+        setCurrentPosts(prevPosts => [...prevPosts, ...newPosts]);
     }
 
-    const getUserPostsAsync = async (userPosts) => {
-        const userPersonalPosts = [];
-
-        for (let i = 0; i < userPosts.length; i++) {
-            const post = await getUserPostById(userPosts[i].postId);
-
-            if (post.data) {
-                userPersonalPosts.push(post.data);
-            }
-        }
-
-        return userPersonalPosts;
-    }
-
-    if (!user) {
+    if (isLoading) {
         return (<Loading />);
     }
 
@@ -66,7 +41,7 @@ const MyFeed = () => {
                 t={t}
             />
             <ul className="posts">
-                {allPosts?.map(post => (
+                {currentPosts?.map(post => (
                     <li className="posts__item" key={post.id}>
                         <UserPost
                             user={user}
@@ -74,6 +49,9 @@ const MyFeed = () => {
                         />
                     </li>
                 ))}
+                {currentPosts.length < count &&
+                    <li onClick={loadingMoreUserPostsAsync}>Loading more...</li>
+                }
             </ul>
         </div>
     );

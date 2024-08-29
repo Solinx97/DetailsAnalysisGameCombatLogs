@@ -115,9 +115,40 @@ internal class UserPostService : IUserPostService
         return map;
     }
 
+    public async Task<IEnumerable<UserPostDto>> GetByListOfAppUserIdAsync(string appUserIds, int pageSize = 100)
+    {
+        var result = await _repository.GetByListOfAppUserIdAsync(appUserIds, pageSize);
+        var map = _mapper.Map<IEnumerable<UserPostDto>>(result);
+
+        return map;
+    }
+
+    public async Task<IEnumerable<UserPostDto>> GetMoreByListOfAppUserIdAsync(string appUserIds, int offset = 0, int pageSize = 100)
+    {
+        var result = await _repository.GetMoreByListOfAppUserIdAsync(appUserIds, offset, pageSize);
+        var map = _mapper.Map<IEnumerable<UserPostDto>>(result);
+
+        return map;
+    }
+
+    public async Task<IEnumerable<UserPostDto>> GetNewByListOfAppUserIdAsync(string appUserIds, DateTimeOffset checkFrom)
+    {
+        var result = await _repository.GetNewByListOfAppUserIdAsync(appUserIds, checkFrom);
+        var map = _mapper.Map<List<UserPostDto>>(result);
+
+        return map;
+    }
+
     public async Task<int> CountByAppUserIdAsync(string appUserId)
     {
         var count = await _repository.CountByAppUserIdAsync(appUserId);
+
+        return count;
+    }
+
+    public async Task<int> CountByListOfAppUserIdAsync(string[] appUserIds)
+    {
+        var count = await _repository.CountByListOfAppUserIdAsync(appUserIds);
 
         return count;
     }

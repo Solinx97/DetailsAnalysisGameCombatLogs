@@ -1,7 +1,7 @@
-import { useGetCustomerByIdQuery } from '../../../store/api/Customer.api';
+import { useGetUserByIdQuery } from '../../../store/api/Account.api';
 
 const FriendUsername = ({ friendId }) => {
-    const { data: customer, isLoading } = useGetCustomerByIdQuery(friendId);
+    const { data: customer, isLoading } = useGetUserByIdQuery(friendId);
 
     if (isLoading) {
         return <></>;

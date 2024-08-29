@@ -12,7 +12,7 @@ import '../../../styles/communication/myEnvironment/myEnvironment.scss';
 const MyEnvironment = ({ openCommunity }) => {
     const [menuItem, setMenuItem] = useState(8);
 
-    const customer = useSelector((state) => state.customer.value);
+    const user = useSelector((state) => state.user.value);
 
     const render = () => {
         return (
@@ -28,7 +28,7 @@ const MyEnvironment = ({ openCommunity }) => {
                         }
                         {menuItem === 9 &&
                             <Friends
-                                customer={customer}
+                                user={user}
                                 requestsToConnect={<RequestsToConnect />}
                                 allowRemoveFriend={true}
                             />

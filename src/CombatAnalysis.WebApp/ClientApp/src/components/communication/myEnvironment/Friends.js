@@ -6,10 +6,10 @@ import User from '../User';
 
 import '../../../styles/communication/myEnvironment/friends.scss';
 
-const Friends = ({ customer, requestsToConnect, allowRemoveFriend }) => {
+const Friends = ({ user, requestsToConnect, allowRemoveFriend }) => {
     const { t } = useTranslation("communication/myEnvironment/friends");
 
-    const { data: myFriends, isLoading } = useFriendSearchMyFriendsQuery(customer?.id);
+    const { data: myFriends, isLoading } = useFriendSearchMyFriendsQuery(user?.id);
     const [userInformation, setUserInformation] = useState(null);
 
     if (isLoading) {
@@ -27,7 +27,7 @@ const Friends = ({ customer, requestsToConnect, allowRemoveFriend }) => {
                     ? myFriends?.map((friend) => (
                         <li key={friend.id} className="friend">
                             <User
-                                targetCustomerId={friend.forWhomId === customer?.id ? friend.whoFriendId : friend.forWhomId}
+                                targetUserId={friend.forWhomId === user?.id ? friend.whoFriendId : friend.forWhomId}
                                 setUserInformation={setUserInformation}
                                 allowRemoveFriend={allowRemoveFriend}
                                 friendId={friend.id}

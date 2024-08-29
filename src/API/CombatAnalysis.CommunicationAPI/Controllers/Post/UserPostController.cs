@@ -31,6 +31,15 @@ public class UserPostController : ControllerBase
         return Ok(count);
     }
 
+    [HttpGet("countByListOfAppUsers/{appUserIds}")]
+    public async Task<IActionResult> CountByListOfAppUsers(string appUserIds)
+    {
+        var appUserIdList = appUserIds.Split(',');
+        var count = await _service.CountByListOfAppUserIdAsync(appUserIdList);
+
+        return Ok(count);
+    }
+
     [HttpGet]
     public async Task<IActionResult> GetAll()
     {
@@ -68,6 +77,31 @@ public class UserPostController : ControllerBase
     {
         var checkFromData = DateTimeOffset.Parse(checkFrom);
         var posts = await _service.GetNewByAppUserIdAsync(appUserId, checkFromData);
+
+        return Ok(posts);
+    }
+
+    [HttpGet("getByListOfUserIds")]
+    public async Task<IActionResult> GetByListOfUserIds(string appUserIds, int pageSize)
+    {
+        var posts = await _service.GetByListOfAppUserIdAsync(appUserIds, pageSize);
+
+        return Ok(posts);
+    }
+
+    [HttpGet("getMoreByListOfUserIds")]
+    public async Task<IActionResult> GetMoreByListOfUserIds(string appUserIds, int offset, int pageSize)
+    {
+        var posts = await _service.GetMoreByListOfAppUserIdAsync(appUserIds, offset, pageSize);
+
+        return Ok(posts);
+    }
+
+    [HttpGet("getNewByListOfUserIds")]
+    public async Task<IActionResult> GetNewByListOfUserIds(string appUserIds, string checkFrom)
+    {
+        var checkFromData = DateTimeOffset.Parse(checkFrom);
+        var posts = await _service.GetNewByListOfAppUserIdAsync(appUserIds, checkFromData);
 
         return Ok(posts);
     }

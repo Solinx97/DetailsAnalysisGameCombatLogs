@@ -5,6 +5,9 @@ export const UserPostApi = CommunityApi.injectEndpoints({
         getUserPostCountByUserId: builder.query({
             query: (appUserId) => `/UserPost/count/${appUserId}`
         }),
+        getUserPostCountByListOfUserId: builder.query({
+            query: (appUserIds) => `/UserPost/countByListOfAppUsers/${appUserIds}`
+        }),
         getUserPostById: builder.query({
             query: (id) => `/UserPost/${id}`,
             providesTags: (result, error, arg) =>
@@ -40,7 +43,9 @@ export const UserPostApi = CommunityApi.injectEndpoints({
 
 export const {
     useGetUserPostCountByUserIdQuery,
-    useLazyGetUserPostCountByUserId,
+    useLazyGetUserPostCountByUserIdQuery,
+    useGetUserPostCountByListOfUserIdQuery,
+    useLazyGetUserPostCountByListOfUserIdQuery,
     useGetUserPostByIdQuery,
     useLazyGetUserPostByIdQuery,
     useCreateUserPostMutation,

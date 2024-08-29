@@ -101,7 +101,7 @@ const UserInformation = ({ me, person, closeUserInformation, actionAfterRequests
     }
 
     const createRequestToConnectAsync = async (people) => {
-        if (actionAfterRequests !== null) {
+        if (actionAfterRequests) {
             actionAfterRequests();
         }
 
@@ -117,8 +117,7 @@ const UserInformation = ({ me, person, closeUserInformation, actionAfterRequests
         }
 
         const newRequest = {
-            username: me?.username,
-            toUserId: people.id,
+            toAppUserId: people.id,
             when: new Date(),
             appUserId: me?.id,
         };

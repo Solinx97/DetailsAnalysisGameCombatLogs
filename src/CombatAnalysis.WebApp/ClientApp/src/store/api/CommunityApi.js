@@ -55,6 +55,33 @@ export const CommunityApi = createApi({
                     ? [...result.map(({ id }) => ({ type: 'UserPost', id })), { type: 'UserPost' }]
                     : [{ type: 'UserPost' }]
         }),
+        getUserPostByListOfUserIds: builder.query({
+            query: ({ appUserIds, pageSize }) => ({
+                url: `/UserPost/getByListOfUserIds?appUserIds=${appUserIds}&pageSize=${pageSize}`,
+            }),
+            providesTags: (result, error, arg) =>
+                result
+                    ? [...result.map(({ id }) => ({ type: 'UserPost', id })), { type: 'UserPost' }]
+                    : [{ type: 'UserPost' }]
+        }),
+        getMoreUserPostByListOfUserIds: builder.query({
+            query: ({ appUserIds, offset, pageSize }) => ({
+                url: `/UserPost/getMoreByListOfUserIds?appUserIds=${appUserIds}&offset=${offset}&pageSize=${pageSize}`,
+            }),
+            providesTags: (result, error, arg) =>
+                result
+                    ? [...result.map(({ id }) => ({ type: 'UserPost', id })), { type: 'UserPost' }]
+                    : [{ type: 'UserPost' }]
+        }),
+        getNewUserPostByListOfUserIds: builder.query({
+            query: ({ appUserIds, checkFrom }) => ({
+                url: `/UserPost/getNewByListOfUserIds?appUserIds=${appUserIds}&checkFrom=${checkFrom}`,
+            }),
+            providesTags: (result, error, arg) =>
+                result
+                    ? [...result.map(({ id }) => ({ type: 'UserPost', id })), { type: 'UserPost' }]
+                    : [{ type: 'UserPost' }]
+        }),
         getCommunities: builder.query({
             query: () => '/Community',
             providesTags: (result, error, arg) =>
@@ -115,6 +142,12 @@ export const {
     useLazyGetMoreUserPostsByUserIdQuery,
     useGetNewUserPostsByUserIdQuery,
     useLazyGetNewUserPostsByUserIdQuery,
+    useGetUserPostByListOfUserIdsQuery,
+    useLazyGetUserPostByListOfUserIdsQuery,
+    useGetMoreUserPostByListOfUserIdsQuery,
+    useLazyGetMoreUserPostByListOfUserIdsQuery,
+    useGetNewUserPostByListOfUserIdsQuery,
+    useLazyGetNewUserPostByListOfUserIdsQuery,
     useGetCommunitiesQuery,
     useLazyGetCommunitiesQuery,
     useGetCommunityPostsByCommunityIdQuery,
