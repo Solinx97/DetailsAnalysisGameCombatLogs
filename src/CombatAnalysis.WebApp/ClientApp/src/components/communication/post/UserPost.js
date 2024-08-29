@@ -8,7 +8,7 @@ import UserPostTitle from './UserPostTitle';
 
 import '../../../styles/communication/post.scss';
 
-const UserPost = ({ user, post }) => {
+const UserPost = ({ userId, post }) => {
     const { t } = useTranslation("communication/post");
 
     const [updatePost] = useUpdateUserPostMutation();
@@ -23,7 +23,7 @@ const UserPost = ({ user, post }) => {
     const [postData, setPostData] = useState(post);
 
     useEffect(() => {
-        setIsMyPost(postData?.appUserId === user?.id);
+        setIsMyPost(postData?.appUserId === userId);
     }, []);
 
     const updatePostAsync = async (postId, likesCount, dislikesCount, commentsCount) => {
@@ -72,7 +72,7 @@ const UserPost = ({ user, post }) => {
             content: postCommentContent,
             createdAt: new Date(),
             userPostId: postData.id,
-            appUserId: user.id
+            appUserId: userId
         }
 
         const response = await createPostComment(newPostComment);
@@ -116,7 +116,7 @@ const UserPost = ({ user, post }) => {
                 />
                 <div className="posts__content">{postData?.content}</div>
                 <UserPostReactions
-                    user={user}
+                    userId={userId}
                     post={postData}
                     updatePostAsync={updatePostAsync}
                     setShowComments={setShowComments}
@@ -128,7 +128,7 @@ const UserPost = ({ user, post }) => {
                 <>
                     <UserPostComments
                         dateFormatting={dateFormatting}
-                        userId={user.id}
+                        userId={userId}
                         postId={postData.id}
                         updatePostAsync={updatePostAsync}
                     />

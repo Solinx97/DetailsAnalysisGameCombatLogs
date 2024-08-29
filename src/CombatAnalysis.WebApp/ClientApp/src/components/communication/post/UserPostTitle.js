@@ -1,6 +1,6 @@
 import { faCircleXmark } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { useState } from 'react';
+import { memo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useGetUserByIdQuery } from '../../../store/api/Account.api';
 import { useRemoveUserPostMutation } from '../../../store/api/communication/UserPost.api';
@@ -59,4 +59,4 @@ const UserPostTitle = ({ post, dateFormatting, isMyPost }) => {
     );
 }
 
-export default UserPostTitle;
+export default memo(UserPostTitle);

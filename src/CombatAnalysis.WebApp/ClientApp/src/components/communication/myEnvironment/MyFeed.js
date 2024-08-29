@@ -79,7 +79,7 @@ const MyFeed = () => {
                                 communityId={post.communityId}
                             />
                             : <UserPost
-                                user={user?.id}
+                                userId={user?.id}
                                 post={post}
                             />
                         }

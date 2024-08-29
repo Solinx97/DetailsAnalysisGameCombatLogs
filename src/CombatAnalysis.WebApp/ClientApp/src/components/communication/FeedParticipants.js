@@ -15,7 +15,7 @@ const FeedParticipants = ({ userId, t }) => {
     const { posts, communityPosts, newPosts, newCommunityPosts, count, communityCount, isLoading, getMoreUserPostsAsync, getMoreCommunityPostsAsync, currentDateRef } = useFetchCommunityPosts(userId, false);
 
     useEffect(() => {
-        if (!posts) {
+        if (!posts || posts.length === 0) {
             return;
         }
 
@@ -28,7 +28,7 @@ const FeedParticipants = ({ userId, t }) => {
     }, [posts]);
 
     useEffect(() => {
-        if (!communityPosts) {
+        if (!communityPosts || communityPosts.length === 0) {
             return;
         }
 
@@ -45,8 +45,7 @@ const FeedParticipants = ({ userId, t }) => {
             return;
         }
 
-        const uniqNewPosts = getUniqueElements(currentPosts, newPosts);
-        setHaveNewPosts(uniqNewPosts.length > 0);
+        setHaveNewPosts(newPosts.length > 0);
     }, [newPosts]);
 
     useEffect(() => {
@@ -54,8 +53,7 @@ const FeedParticipants = ({ userId, t }) => {
             return;
         }
 
-        const uniqNewPosts = getUniqueElements(currentPosts, newCommunityPosts);
-        setHaveNewPosts(uniqNewPosts.length > 0);
+        setHaveNewPosts(newCommunityPosts.length > 0);
     }, [newCommunityPosts]);
 
     const loadingMoreUserPostsAsync = async () => {
@@ -73,20 +71,13 @@ const FeedParticipants = ({ userId, t }) => {
     const loadingNewUserPostsAsync = async () => {
         currentDateRef.current = (new Date()).toISOString();
 
-        let uniqNewPosts = getUniqueElements(currentPosts, newPosts);
-        setCurrentPosts(prevPosts => [...uniqNewPosts, ...prevPosts]);
+        newPosts.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+        setCurrentPosts(prevPosts => [...newPosts, ...prevPosts]);
 
-        uniqNewPosts = getUniqueElements(currentPosts, newCommunityPosts);
-        setCurrentPosts(prevPosts => [...uniqNewPosts, ...prevPosts]);
+        newCommunityPosts.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+        setCurrentPosts(prevPosts => [...newCommunityPosts, ...prevPosts]);
 
         setHaveNewPosts(false);
-    }
-
-    const getUniqueElements = (oldArray, newArray) => {
-        const oldSet = new Set(oldArray.map(item => item.id));
-        const uniqueNewElements = newArray.filter(item => !oldSet.has(item.id));
-
-        return uniqueNewElements;
     }
 
     if (isLoading) {
@@ -110,7 +101,7 @@ const FeedParticipants = ({ userId, t }) => {
                                 communityId={post.communityId}
                             />
                             : <UserPost
-                                user={userId}
+                                userId={userId}
                                 post={post}
                             />
                         }

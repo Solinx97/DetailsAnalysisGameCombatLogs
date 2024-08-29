@@ -33,10 +33,12 @@ const useFetchUsersPosts = (appUserId, skipFriendPosts) => {
     const { data: newPosts } = useGetNewUserPostByListOfUserIdsQuery({ appUserIds: appUserIdsRef.current, checkFrom: currentDateRef.current }, {
         pollingInterval: getUserPostsInterval,
         skip: skipCheckNewPostsRef.current || skipFriendPosts,
+        selectFromResult: ({ data }) => ({ data }),
     });
     const { data: newCommunityPosts } = useGetNewCommunityPostByListOfCommunityIdsQuery({ communityIds: communityIdsRef.current, checkFrom: currentDateRef.current }, {
         pollingInterval: getUserPostsInterval,
         skip: skipCheckNewPostsRef.current || skipFriendPosts,
+        selectFromResult: ({ data }) => ({ data }),
     });
 
     const [getPostsCountAsync] = useLazyGetUserPostCountByListOfUserIdQuery();
