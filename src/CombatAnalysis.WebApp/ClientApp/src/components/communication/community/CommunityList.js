@@ -1,11 +1,36 @@
+import { useEffect, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
+import { useLazyGetCommunitiesWithPaginationQuery, useLazyGetMoreCommunitiesWithPaginationQuery } from '../../../store/api/CommunityApi';
+import { useGetCommunitiesCountQuery } from '../../../store/api/communication/community/Community.api';
 import { useSearchByUserIdAsyncQuery } from '../../../store/api/communication/community/CommunityUser.api';
 import CommunityItem from './CommunityItem';
 
-const CommunityList = ({ filterContent, communities }) => {
+const CommunityList = ({ filterContent }) => {
     const user = useSelector((state) => state.user.value);
 
+    const pageSizeRef = useRef(1);
+
+    const [communities, setCommunities] = useState([]);
+
+    const { data: count, isLoading: countIsLoading } = useGetCommunitiesCountQuery();
     const { data: userCommunities, isLoading } = useSearchByUserIdAsyncQuery(user?.id);
+
+    const [getCommunities] = useLazyGetCommunitiesWithPaginationQuery();
+    const [getMoreCommunities] = useLazyGetMoreCommunitiesWithPaginationQuery();
+
+    useEffect(() => {
+        pageSizeRef.current = process.env.REACT_APP_COMMUNITY_PAGE_SIZE;
+
+        const getCommunitiesAsync = async () => {
+            const response = await getCommunities(pageSizeRef.current);
+
+            if (!response.error) {
+                setCommunities(response.data);
+            }
+        }
+
+        getCommunitiesAsync();
+    }, []);
 
     const anotherCommunity = (community) => {
         if (user == null) {
@@ -16,13 +41,26 @@ const CommunityList = ({ filterContent, communities }) => {
             || userCommunities?.length === 0;
     }
 
-    if (isLoading) {
-        return <div>Loading...</div>;
+    const getMoreCommunitiesAsync = async () => {
+        const arg = {
+            offset: communities.length,
+            pageSize: pageSizeRef.current 
+        };
+
+        const response = await getMoreCommunities(arg);
+        if (!response.error) {
+            setCommunities(prevCom => [...prevCom, ...response.data]);
+        }
+    }
+
+    if (countIsLoading || isLoading) {
+        return (<div>Loading...</div>);
     }
 
     return (
-        <ul>
-            {communities?.filter(community => community.policyType === 0).map((item) => (
+        <>
+            <ul>
+                {communities?.filter(community => community.policyType === 0).map((item) => (
                     (anotherCommunity(item) && item.name.toLowerCase().startsWith(filterContent.toLowerCase())) &&
                     <li key={item.id} className="community">
                         <CommunityItem
@@ -31,8 +69,14 @@ const CommunityList = ({ filterContent, communities }) => {
                         />
                     </li>
                 ))
+                }
+            </ul>
+            {communities.length < count &&
+                <div className="load-more" onClick={getMoreCommunitiesAsync}>
+                    <div className="load-more__content">Load more</div>
+                </div>
             }
-        </ul>
+        </>
     );
 }
 

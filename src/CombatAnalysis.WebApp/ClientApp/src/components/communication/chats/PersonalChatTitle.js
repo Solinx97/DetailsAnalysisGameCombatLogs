@@ -43,7 +43,7 @@ const PersonalChatTitle = ({ chat, companionUsername, setSelectedChat, haveMoreM
                 }
             </div>
             {haveMoreMessages &&
-                <div className="load-more" onClick={handleLoadMoreMessagesAsync}>Load more...</div>
+                <div className="load-more" onClick={handleLoadMoreMessagesAsync}>Load more</div>
             }
         </>
     );

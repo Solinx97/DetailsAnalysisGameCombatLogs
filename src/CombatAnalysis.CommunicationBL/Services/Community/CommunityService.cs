@@ -6,9 +6,9 @@ using CombatAnalysis.CommunicationDAL.Interfaces;
 
 namespace CombatAnalysis.CommunicationBL.Services.Community;
 
-internal class CommunityService : IService<CommunityDto, int>
+internal class CommunityService : ICommunityService
 {
-    private readonly IGenericRepository<CommunicationDAL.Entities.Community.Community, int> _repository;
+    private readonly ICommunityRepository _repository;
     private readonly IService<CommunityUserDto, string> _communityUserService;
     private readonly IService<InviteToCommunityDto, int> _inviteToCommunityService;
     private readonly ICommunityPostService _postService;
@@ -19,7 +19,7 @@ internal class CommunityService : IService<CommunityDto, int>
     private readonly ISqlContextService _sqlContextService;
     private readonly IMapper _mapper;
 
-    public CommunityService(IGenericRepository<CommunicationDAL.Entities.Community.Community, int> communityRepository, ISqlContextService sqlContextService,
+    public CommunityService(ICommunityRepository communityRepository, ISqlContextService sqlContextService,
         IService<InviteToCommunityDto, int> inviteToCommunityService, IService<CommunityUserDto, string> communityUserService,
         ICommunityPostService postService, IService<CommunityPostCommentDto, int> postCommentService,
         IService<CommunityPostLikeDto, int> postLikeService, IService<CommunityPostDislikeDto, int> postDislikeService,
@@ -111,6 +111,29 @@ internal class CommunityService : IService<CommunityDto, int>
         }
 
         return UpdateInternalAsync(item);
+    }
+
+    public async Task<IEnumerable<CommunityDto>> GetAllWithPaginationAsync(int pageSize)
+    {
+        var result = await _repository.GetAllWithPaginationAsync(pageSize);
+        var map = _mapper.Map<IEnumerable<CommunityDto>>(result);
+
+        return map;
+    }
+
+    public async Task<IEnumerable<CommunityDto>> GetMoreWithPaginationAsync(int offset, int pageSize)
+    {
+        var result = await _repository.GetMoreWithPaginationAsync(offset, pageSize);
+        var map = _mapper.Map<IEnumerable<CommunityDto>>(result);
+
+        return map;
+    }
+
+    public async Task<int> CountAsync()
+    {
+        var result = await _repository.CountAsync();
+
+        return result;
     }
 
     private async Task<CommunityDto> CreateInternalAsync(CommunityDto item)

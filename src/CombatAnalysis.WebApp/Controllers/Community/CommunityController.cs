@@ -102,4 +102,46 @@ public class CommunityController : ControllerBase
 
         return BadRequest();
     }
+
+    [HttpGet("getWithPagination")]
+    public async Task<IActionResult> GetWithPaginationAsync(int pageSize)
+    {
+        var responseMessage = await _httpClient.GetAsync($"Community/getWithPagination?&pageSize={pageSize}", Port.CommunicationApi);
+        if (responseMessage.IsSuccessStatusCode)
+        {
+            var communities = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<CommunityModel>>();
+
+            return Ok(communities);
+        }
+
+        return BadRequest();
+    }
+
+    [HttpGet("getMoreWithPagination")]
+    public async Task<IActionResult> GetMoreWithPaginationAsync(int offset, int pageSize)
+    {
+        var responseMessage = await _httpClient.GetAsync($"Community/getMoreWithPagination?offset={offset}&pageSize={pageSize}", Port.CommunicationApi);
+        if (responseMessage.IsSuccessStatusCode)
+        {
+            var communities = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<CommunityModel>>();
+
+            return Ok(communities);
+        }
+
+        return BadRequest();
+    }
+
+    [HttpGet("count")]
+    public async Task<IActionResult> Count()
+    {
+        var responseMessage = await _httpClient.GetAsync("Community/count", Port.CommunicationApi);
+        if (responseMessage.IsSuccessStatusCode)
+        {
+            var count = await responseMessage.Content.ReadFromJsonAsync<int>();
+
+            return Ok(count);
+        }
+
+        return BadRequest();
+    }
 }

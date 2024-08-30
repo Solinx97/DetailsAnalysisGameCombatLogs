@@ -89,6 +89,20 @@ export const CommunityApi = createApi({
                     ? [...result.map(({ id }) => ({ type: 'Community', id })), { type: 'Community' }]
                     : [{ type: 'Community' }]
         }),
+        getCommunitiesWithPagination: builder.query({
+            query: (pageSize) => `/Community/getWithPagination?pageSize=${pageSize}`,
+            providesTags: (result, error, arg) =>
+                result
+                    ? [...result.map(({ id }) => ({ type: 'Community', id })), { type: 'Community' }]
+                    : [{ type: 'Community' }]
+        }),
+        getMoreCommunitiesWithPagination: builder.query({
+            query: ({ offset, pageSize }) => `/Community/getMoreWithPagination?offset=${offset}&pageSize=${pageSize}`,
+            providesTags: (result, error, arg) =>
+                result
+                    ? [...result.map(({ id }) => ({ type: 'Community', id })), { type: 'Community' }]
+                    : [{ type: 'Community' }]
+        }),
         getCommunityPostsByCommunityId: builder.query({
             query: ({ communityId, pageSize }) => ({
                 url: `/CommunityPost/getByCommunityId?communityId=${communityId}&pageSize=${pageSize}`,
@@ -177,6 +191,10 @@ export const {
     useLazyGetNewUserPostByListOfUserIdsQuery,
     useGetCommunitiesQuery,
     useLazyGetCommunitiesQuery,
+    useGetCommunitiesWithPaginationQuery,
+    useLazyGetCommunitiesWithPaginationQuery,
+    useGetMoreCommunitiesWithPaginationQuery,
+    useLazyGetMoreCommunitiesWithPaginationQuery,
     useGetCommunityPostsByCommunityIdQuery,
     useLazyGetCommunityPostsByCommunityIdQuery,
     useGetMoreCommunityPostsByCommunityIdQuery,

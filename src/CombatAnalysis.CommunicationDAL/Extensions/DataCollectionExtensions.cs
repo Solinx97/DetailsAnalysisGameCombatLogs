@@ -40,7 +40,7 @@ public static class DataCollectionExtensions
             options.UseSqlServer(connection);
         });
 
-        services.AddScoped<IGenericRepository<Community, int>, SQLRepository<Community, int>>();
+        services.AddScoped<ICommunityRepository, SQLCommunityRepository>();
         services.AddScoped<IGenericRepository<CommunityDiscussion, int>, SQLRepository<CommunityDiscussion, int>>();
         services.AddScoped<IGenericRepository<CommunityDiscussionComment, int>, SQLRepository<CommunityDiscussionComment, int>>();
         services.AddScoped<IGenericRepository<CommunityUser, string>, SQLRepository<CommunityUser, string>>();

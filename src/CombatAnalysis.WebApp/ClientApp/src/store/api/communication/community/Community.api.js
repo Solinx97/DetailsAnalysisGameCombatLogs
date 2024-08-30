@@ -2,6 +2,9 @@ import { ChatApi } from "../../ChatApi";
 
 export const CommunityApi = ChatApi.injectEndpoints({
     endpoints: builder => ({
+        getCommunitiesCount: builder.query({
+            query: () => '/Community/count'
+        }),
         createCommunityAsync: builder.mutation({
             query: community => ({
                 body: community,
@@ -33,6 +36,8 @@ export const CommunityApi = ChatApi.injectEndpoints({
 })
 
 export const {
+    useGetCommunitiesCountQuery,
+    useLazyGetCommunitiesCountQuery,
     useCreateCommunityAsyncMutation,
     useGetCommunityByIdQuery,
     useLazyGetCommunityByIdQuery,

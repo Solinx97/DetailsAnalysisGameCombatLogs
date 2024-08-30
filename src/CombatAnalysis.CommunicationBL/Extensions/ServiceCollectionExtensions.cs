@@ -18,7 +18,7 @@ public static class ServiceCollectionExtensions
 
         services.AddScoped<ISqlContextService, SqlContextService>();
 
-        services.AddScoped<IService<CommunityDto, int>, CommunityService>();
+        services.AddScoped<ICommunityService, CommunityService>();
         services.AddScoped<IService<CommunityDiscussionDto, int>, CommunityDiscussionService>();
         services.AddScoped<IService<CommunityDiscussionCommentDto, int>, CommunityDiscussionCommentService>();
         services.AddScoped<IService<CommunityUserDto, string>, CommunityUserService>();

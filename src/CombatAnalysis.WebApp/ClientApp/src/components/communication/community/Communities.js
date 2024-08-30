@@ -1,8 +1,7 @@
-import { faArrowsRotate, faEye, faEyeSlash, faMagnifyingGlassMinus, faMagnifyingGlassPlus } from '@fortawesome/free-solid-svg-icons';
+import { faEye, faEyeSlash, faMagnifyingGlassMinus, faMagnifyingGlassPlus } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useTranslation } from 'react-i18next';
-import { useLazyGetCommunitiesQuery } from '../../../store/api/CommunityApi';
 import CommunityList from './CommunityList';
 
 import '../../../styles/communication/community/communities.scss';
@@ -12,65 +11,27 @@ const Communities = ({ showCommunitiesAtStart = false }) => {
 
     const [showCommunities, setShowCommunities] = useState(showCommunitiesAtStart);
     const [filterContent, setFilterContent] = useState("");
-    const [communities, setCommunities] = useState(null);
     const [showSearchCommunity, setShowSearchCommunity] = useState(false);
-
-    const [getCommunitiesAsync] = useLazyGetCommunitiesQuery();
-
-    useEffect(() => {
-        const getCommunities = async () => {
-            await refreshAsync();
-        }
-
-        getCommunities();
-    }, [])
 
     const searchHandler = (e) => {
         setFilterContent(e.target.value);
-    }
-
-    const refreshAsync = async () => {
-        const result = await getCommunitiesAsync();
-
-        if (result.data !== undefined) {
-            setCommunities(result.data);
-        }
     }
 
     return (
         <div className="communities__list">
             <div className="title">
                 <div className="content">
-                    {showSearchCommunity
-                        ? <FontAwesomeIcon
-                            icon={faMagnifyingGlassMinus}
-                            title={t("HideSearchCommunity")}
-                            onClick={() => setShowSearchCommunity(false)}
-                        />
-                        : <FontAwesomeIcon
-                            icon={faMagnifyingGlassPlus}
-                            title={t("ShowSearchCommunity")}
-                            onClick={() => setShowSearchCommunity(true)}
-                        />
-                    }
                     <FontAwesomeIcon
-                        icon={faArrowsRotate}
-                        title={t("Refresh")}
-                        onClick={async () => await refreshAsync()}
+                        icon={showSearchCommunity ? faMagnifyingGlassMinus : faMagnifyingGlassPlus}
+                        title={showSearchCommunity ? t("HideSearchCommunity") : t("ShowSearchCommunity")}
+                        onClick={() => setShowSearchCommunity((item) => !item)}
                     />
                     <div>{t("Communities")}</div>
-                    {showCommunities
-                        ? <FontAwesomeIcon
-                            icon={faEye}
-                            title={t("Hide")}
-                            onClick={() => setShowCommunities((item) => !item)}
-                        />
-                        : <FontAwesomeIcon
-                            icon={faEyeSlash}
-                            title={t("Show")}
-                            onClick={() => setShowCommunities((item) => !item)}
-                        />
-                    }
+                    <FontAwesomeIcon
+                        icon={showCommunities ? faEye : faEyeSlash}
+                        title={showCommunities ? t("Hide") : t("Show")}
+                        onClick={() => setShowCommunities((item) => !item)}
+                    />
                 </div>
             </div>
             {showCommunities &&
@@ -83,7 +44,6 @@ const Communities = ({ showCommunitiesAtStart = false }) => {
                     }
                     <CommunityList
                         filterContent={filterContent}
-                        communities={communities}
                     />
                 </>
             }

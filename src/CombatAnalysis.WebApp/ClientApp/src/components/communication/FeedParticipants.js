@@ -108,7 +108,9 @@ const FeedParticipants = ({ userId, t }) => {
                     </li>
                 ))}
                 {(currentPosts.length < (count + communityCount) && currentPosts.length > 0) &&
-                    <li onClick={loadingMoreUserPostsAsync}>Loading more...</li>
+                    <li className="load-more" onClick={loadingMoreUserPostsAsync}>
+                        <div className="load-more__content">Load more</div>
+                    </li>
                 }
             </ul>
         </>

@@ -73,7 +73,9 @@ const SelectedCommunityItem = ({ userId, communityId, t }) => {
                     ))
                 }
                 {currentPosts.length < count &&
-                    <li onClick={loadingMoreCommunityPostsAsync}>Loading more...</li>
+                    <li className="load-more" onClick={loadingMoreCommunityPostsAsync}>
+                        <div className="load-more__content">Load more</div>
+                    </li>
                 }
             </ul>
         </>

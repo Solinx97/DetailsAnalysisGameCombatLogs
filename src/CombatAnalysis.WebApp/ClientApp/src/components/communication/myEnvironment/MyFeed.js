@@ -69,6 +69,7 @@ const MyFeed = () => {
                 owner={user?.username}
                 t={t}
             />
+
             <ul className="posts">
                 {currentPosts?.map(post => (
                     <li className="posts__item" key={uuidv4()}>
@@ -86,7 +87,9 @@ const MyFeed = () => {
                     </li>
                 ))}
                 {(currentPosts.length < (count + communityCount) && currentPosts.length > 0) &&
-                    <li onClick={loadingMoreUserPostsAsync}>Loading more...</li>
+                    <li className="load-more" onClick={loadingMoreUserPostsAsync}>
+                        <div className="load-more__content">Load more</div>
+                    </li>
                 }
             </ul>
         </div>

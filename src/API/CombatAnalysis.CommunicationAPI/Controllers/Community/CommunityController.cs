@@ -12,11 +12,11 @@ namespace CombatAnalysis.CommunicationAPI.Controllers.Community;
 [Authorize]
 public class CommunityController : ControllerBase
 {
-    private readonly IService<CommunityDto, int> _service;
+    private readonly ICommunityService _service;
     private readonly IMapper _mapper;
     private readonly ILogger<CommunityController> _logger;
 
-    public CommunityController(IService<CommunityDto, int> service, IMapper mapper, ILogger<CommunityController> logger)
+    public CommunityController(ICommunityService service, IMapper mapper, ILogger<CommunityController> logger)
     {
         _service = service;
         _mapper = mapper;
@@ -95,5 +95,29 @@ public class CommunityController : ControllerBase
         var rowsAffected = await _service.DeleteAsync(id);
 
         return Ok(rowsAffected);
+    }
+
+    [HttpGet("getWithPagination")]
+    public async Task<IActionResult> GetWithPaginationAsync(int pageSize)
+    {
+        var communitites = await _service.GetAllWithPaginationAsync(pageSize);
+
+        return Ok(communitites);
+    }
+
+    [HttpGet("getMoreWithPagination")]
+    public async Task<IActionResult> GetMoreWithPaginationAsync(int offset, int pageSize)
+    {
+        var communitites = await _service.GetMoreWithPaginationAsync(offset, pageSize);
+
+        return Ok(communitites);
+    }
+
+    [HttpGet("count")]
+    public async Task<IActionResult> Count()
+    {
+        var count = await _service.CountAsync();
+
+        return Ok(count);
     }
 }

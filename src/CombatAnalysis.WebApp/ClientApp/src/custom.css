@@ -103,3 +103,15 @@ code {
 .preview__responsibilities .form-check-label {
     opacity: 1!important;
 }
+
+.load-more {
+    display: flex;
+    justify-content: flex-start;
+}
+
+.load-more__content {
+    cursor: pointer;
+    box-shadow: 1px 1px 1px 1px gray;
+    padding: 5px 10px;
+    border-radius: 10px;
+}
