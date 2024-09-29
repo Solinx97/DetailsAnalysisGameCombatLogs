@@ -56,4 +56,12 @@ public class PkeRepository : IPkeRepository
 
         return rowsAffected;
     }
+
+    public async Task RemoveExpiredCodesAsync()
+    {
+        var expiredCodes = _context.AuthorizationCodeChallenge.Where(t => t.ExpiryTime < DateTime.UtcNow);
+        _context.AuthorizationCodeChallenge.RemoveRange(expiredCodes);
+
+        await _context.SaveChangesAsync();
+    }
 }

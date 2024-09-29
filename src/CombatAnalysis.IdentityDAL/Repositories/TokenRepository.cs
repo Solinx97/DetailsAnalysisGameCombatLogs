@@ -41,4 +41,12 @@ public class TokenRepository : ITokenRepository
 
         return null;
     }
+
+    public async Task RemoveExpiredTokensAsync()
+    {
+        var expiredTokens = _context.RefreshToken.Where(t => t.ExpiryTime < DateTime.UtcNow);
+        _context.RefreshToken.RemoveRange(expiredTokens);
+
+        await _context.SaveChangesAsync();
+    }
 }
