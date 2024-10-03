@@ -2,5 +2,5 @@
 
 public interface ITokenService
 {
-    Task RemoveExpiredTokensAsync();
+    void RemoveExpiredTokens();
 }

@@ -5,6 +5,7 @@ namespace HealthAPI.Services;
 public class AuthCodeCleanupService : IHostedService, IDisposable
 {
     private readonly IServiceProvider _serviceProvider;
+    private readonly TimeSpan _interval = TimeSpan.FromMinutes(15);
     private Timer _timer;
 
     public AuthCodeCleanupService(IServiceProvider serviceProvider)
@@ -14,7 +15,7 @@ public class AuthCodeCleanupService : IHostedService, IDisposable
 
     public Task StartAsync(CancellationToken cancellationToken)
     {
-        _timer = new Timer(DoCleanup, null, TimeSpan.Zero, TimeSpan.FromHours(1));
+        _timer = new Timer(DoCleanup, null, TimeSpan.Zero, _interval);
 
         return Task.CompletedTask;
     }
@@ -24,7 +25,7 @@ public class AuthCodeCleanupService : IHostedService, IDisposable
         using var scope = _serviceProvider.CreateScope();
         var authCodeService = scope.ServiceProvider.GetRequiredService<IAuthCodeService>();
 
-        authCodeService.RemoveExpiredCodesAsync().Wait();
+        authCodeService.RemoveExpiredCodes();
     }
 
     public Task StopAsync(CancellationToken cancellationToken)

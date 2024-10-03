@@ -66,7 +66,7 @@ const SelectedCommunityItem = ({ userId, communityId, t }) => {
                     <li key={post?.id}>
                         <CommunityPost
                             userId={userId}
-                            post={post}
+                            postId={post.id}
                             communityId={communityId}
                         />
                     </li>

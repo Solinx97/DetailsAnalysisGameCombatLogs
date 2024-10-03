@@ -12,8 +12,8 @@ internal class TokenService : ITokenService
         _tokenRepository = tokenRepository;
     }
 
-    public async Task RemoveExpiredTokensAsync()
+    public void RemoveExpiredTokens()
     {
-        await _tokenRepository.RemoveExpiredTokensAsync();
+        _tokenRepository.RemoveExpiredTokensAsync().Wait();
     }
 }

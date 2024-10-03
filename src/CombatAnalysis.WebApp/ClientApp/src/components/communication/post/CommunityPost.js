@@ -1,6 +1,6 @@
-﻿import { useState, useEffect } from "react";
+﻿import { useEffect, useState } from "react";
 import { useTranslation } from 'react-i18next';
-import { useLazyGetCommunityPostByIdQuery, useUpdateCommunityPostMutation } from '../../../store/api/communication/CommunityPost.api';
+import { useGetCommunityPostByIdQuery, useLazyGetCommunityPostByIdQuery, useUpdateCommunityPostMutation } from '../../../store/api/communication/CommunityPost.api';
 import { useCreateCommunityPostCommentMutation } from '../../../store/api/communication/CommunityPostComment.api';
 import CommunityPostComments from './CommunityPostComments';
 import CommunityPostReactions from './CommunityPostReactions';
@@ -8,7 +8,7 @@ import CommunityPostTitle from './CommunityPostTitle';
 
 import '../../../styles/communication/post.scss';
 
-const CommunityPost = ({ userId, communityId, post }) => {
+const CommunityPost = ({ userId, communityId, postId }) => {
     const { t } = useTranslation("communication/post");
 
     const [updatePost] = useUpdateCommunityPostMutation();
@@ -16,14 +16,15 @@ const CommunityPost = ({ userId, communityId, post }) => {
     const [createPostComment] = useCreateCommunityPostCommentMutation();
     const [getPostByIdAsync] = useLazyGetCommunityPostByIdQuery();
 
+    const { data: post, isLoading } = useGetCommunityPostByIdQuery(postId);
+
     const [showComments, setShowComments] = useState(false);
     const [postCommentContent, setPostCommentContent] = useState("");
     const [showAddComment, setShowAddComment] = useState(false);
     const [isMyPost, setIsMyPost] = useState(false);
-    const [postData, setPostData] = useState(post);
 
     useEffect(() => {
-        setIsMyPost(postData?.appUserId === userId);
+        setIsMyPost(post?.appUserId === userId);
     }, []);
 
     const updatePostAsync = async (postId, likesCount, dislikesCount, commentsCount) => {
@@ -37,21 +38,11 @@ const CommunityPost = ({ userId, communityId, post }) => {
 
             let communityPost = response.data;
             const postForUpdate = {
-                id: postId,
-                communityName: communityPost.communityName,
-                owner: communityPost.owner,
-                content: communityPost.content,
-                postType: communityPost.postType,
-                publicType: communityPost.publicType,
-                restrictions: communityPost.restrictions,
-                tags: communityPost.tags,
-                createdAt: communityPost.createdAt,
+                ...communityPost,
                 likeCount: communityPost.likeCount + likesCount,
                 dislikeCount: communityPost.dislikeCount + dislikesCount,
-                commentCount: communityPost.commentCount + commentsCount,
-                communityId: communityPost.communityId,
-                appUserId: communityPost.appUserId
-            }
+                commentCount: communityPost.commentCount + commentsCount
+            };
 
             response = await updatePost(postForUpdate);
             if (response.error) {
@@ -59,13 +50,6 @@ const CommunityPost = ({ userId, communityId, post }) => {
 
                 return;
             }
-
-            const updatedPost = Object.assign({}, communityPost);
-            updatedPost.likeCount = communityPost.likeCount + likesCount;
-            updatedPost.dislikeCount = communityPost.dislikeCount + dislikesCount;
-            updatedPost.commentCount = communityPost.commentCount + commentsCount;
-
-            setPostData(updatedPost);
         } catch (e) {
             console.error("Failed to update post:", e);
         }
@@ -76,7 +60,7 @@ const CommunityPost = ({ userId, communityId, post }) => {
             content: postCommentContent,
             commentType: 0,
             createdAt: new Date(),
-            communityPostId: postData.id,
+            communityPostId: postId,
             communityId: communityId,
             appUserId: userId
         }
@@ -85,7 +69,7 @@ const CommunityPost = ({ userId, communityId, post }) => {
         if (response.data) {
             setPostCommentContent("");
 
-            await updatePostAsync(postData.id, 0, 0, 1);
+            await updatePostAsync(postId, 0, 0, 1);
         }
     }
 
@@ -112,19 +96,23 @@ const CommunityPost = ({ userId, communityId, post }) => {
         return formatted;
     }
 
+    if (isLoading) {
+        return (<></>);
+    }
+
     return (
         <>
             <div className="posts__card">
                 <CommunityPostTitle
-                    post={postData}
+                    post={post}
                     dateFormatting={dateFormatting}
                     isMyPost={isMyPost}
                 />
-                <div className="posts__content">{postData?.content}</div>
+                <div className="posts__content">{post?.content}</div>
                 <CommunityPostReactions
                     userId={userId}
                     communityId={communityId}
-                    post={postData}
+                    post={post}
                     updatePostAsync={updatePostAsync}
                     setShowComments={setShowComments}
                     showComments={showComments}
@@ -136,7 +124,7 @@ const CommunityPost = ({ userId, communityId, post }) => {
                     <CommunityPostComments
                         dateFormatting={dateFormatting}
                         userId={userId}
-                        postId={postData.id}
+                        postId={postId}
                         updatePostAsync={updatePostAsync}
                     />
                     <div className="add-new-comment">

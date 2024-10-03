@@ -6,7 +6,7 @@
         display: flex;
         flex-direction: column;
         justify-content: center;
-        gap: 5vw;
+        gap: 25px;
         width: 100%;
 
         .menu-container {
@@ -24,7 +24,7 @@
     &__menu {
         display: flex;
         justify-content: center;
-        padding: 5px;
+        padding: 5px !important;
         box-shadow: 2px 2px 2px 2px gray;
         border-radius: 15px;
         gap: 25px;
@@ -50,7 +50,7 @@
         }
 
         .sub-menu:hover {
-            box-shadow: 2px 2px 2px 2px green;
+            box-shadow: 1px 1px 1px 1px green;
             border-radius: 10px;
         }
     }

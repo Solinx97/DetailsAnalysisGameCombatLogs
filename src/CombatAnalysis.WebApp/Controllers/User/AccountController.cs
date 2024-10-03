@@ -77,7 +77,11 @@ public class AccountController : ControllerBase
         }
 
         var responseMessage = await _httpClient.GetAsync($"Account/{id}", accessToken, Port.UserApi);
-        if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+        if (responseMessage.StatusCode == System.Net.HttpStatusCode.NoContent)
+        {
+            return NoContent();
+        }
+        else if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
         {
             return Unauthorized();
         }

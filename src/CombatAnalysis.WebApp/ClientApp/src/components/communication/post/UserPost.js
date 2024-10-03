@@ -1,14 +1,14 @@
-import { useEffect, useState } from "react";
+import { memo, useEffect, useState } from "react";
 import { useTranslation } from 'react-i18next';
+import { useGetUserPostByIdQuery, useLazyGetUserPostByIdQuery, useUpdateUserPostMutation } from '../../../store/api/communication/UserPost.api';
 import { useCreateUserPostCommentMutation } from '../../../store/api/communication/UserPostComment.api';
-import { useLazyGetUserPostByIdQuery, useUpdateUserPostMutation } from '../../../store/api/communication/UserPost.api';
 import UserPostComments from './UserPostComments';
 import UserPostReactions from './UserPostReactions';
 import UserPostTitle from './UserPostTitle';
 
 import '../../../styles/communication/post.scss';
 
-const UserPost = ({ userId, post }) => {
+const UserPost = ({ userId, postId }) => {
     const { t } = useTranslation("communication/post");
 
     const [updatePost] = useUpdateUserPostMutation();
@@ -16,14 +16,15 @@ const UserPost = ({ userId, post }) => {
     const [createPostComment] = useCreateUserPostCommentMutation();
     const [getPostByIdAsync] = useLazyGetUserPostByIdQuery();
 
+    const { data: post, isLoading } = useGetUserPostByIdQuery(postId);
+
     const [showComments, setShowComments] = useState(false);
     const [postCommentContent, setPostCommentContent] = useState("");
     const [showAddComment, setShowAddComment] = useState(false);
     const [isMyPost, setIsMyPost] = useState(false);
-    const [postData, setPostData] = useState(post);
 
     useEffect(() => {
-        setIsMyPost(postData?.appUserId === userId);
+        setIsMyPost(post?.appUserId === userId);
     }, []);
 
     const updatePostAsync = async (postId, likesCount, dislikesCount, commentsCount) => {
@@ -37,17 +38,11 @@ const UserPost = ({ userId, post }) => {
 
             let userPost = response.data;
             const postForUpdate = {
-                id: postId,
-                owner: userPost.owner,
-                content: userPost.content,
-                publicType: userPost.publicType,
-                tags: userPost.tags,
-                createdAt: userPost.createdAt,
+                ...userPost,
                 likeCount: userPost.likeCount + likesCount,
                 dislikeCount: userPost.dislikeCount + dislikesCount,
-                commentCount: userPost.commentCount + commentsCount,
-                appUserId: userPost.appUserId
-            }
+                commentCount: userPost.commentCount + commentsCount
+            };
 
             response = await updatePost(postForUpdate);
             if (response.error) {
@@ -55,15 +50,10 @@ const UserPost = ({ userId, post }) => {
 
                 return;
             }
-
-            const updatedPost = Object.assign({}, userPost);
-            updatedPost.likeCount = userPost.likeCount + likesCount;
-            updatedPost.dislikeCount = userPost.dislikeCount + dislikesCount;
-            updatedPost.commentCount = userPost.commentCount + commentsCount;
-
-            setPostData(updatedPost);
         } catch (e) {
             console.error("Failed to update post:", e);
+
+            return post;
         }
     }
 
@@ -71,7 +61,7 @@ const UserPost = ({ userId, post }) => {
         const newPostComment = {
             content: postCommentContent,
             createdAt: new Date(),
-            userPostId: postData.id,
+            userPostId: postId,
             appUserId: userId
         }
 
@@ -79,7 +69,7 @@ const UserPost = ({ userId, post }) => {
         if (response.data) {
             setPostCommentContent("");
 
-            await updatePostAsync(postData.id, 0, 0, 1);
+            await updatePostAsync(postId, 0, 0, 1);
         }
     }
 
@@ -106,18 +96,22 @@ const UserPost = ({ userId, post }) => {
         return formatted;
     }
 
+    if (isLoading) {
+        return (<></>);
+    }
+
     return (
         <>
             <div className="posts__card">
                 <UserPostTitle
-                    post={postData}
+                    post={post}
                     dateFormatting={dateFormatting}
                     isMyPost={isMyPost}
                 />
-                <div className="posts__content">{postData?.content}</div>
+                <div className="posts__content">{post?.content}</div>
                 <UserPostReactions
                     userId={userId}
-                    post={postData}
+                    post={post}
                     updatePostAsync={updatePostAsync}
                     setShowComments={setShowComments}
                     showComments={showComments}
@@ -129,7 +123,7 @@ const UserPost = ({ userId, post }) => {
                     <UserPostComments
                         dateFormatting={dateFormatting}
                         userId={userId}
-                        postId={postData.id}
+                        postId={postId}
                         updatePostAsync={updatePostAsync}
                     />
                     <div className="add-new-comment">
@@ -155,4 +149,4 @@ const UserPost = ({ userId, post }) => {
     );
 }
 
-export default UserPost;
+export default memo(UserPost);

@@ -2,5 +2,5 @@
 
 public interface IAuthCodeService
 {
-    Task RemoveExpiredCodesAsync();
+    void RemoveExpiredCodes();
 }

@@ -4,7 +4,6 @@ import { memo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useGetUserByIdQuery } from '../../../store/api/Account.api';
 import { useRemoveUserPostMutation } from '../../../store/api/communication/UserPost.api';
-import Loading from '../../Loading';
 import User from '../User';
 
 const UserPostTitle = ({ post, dateFormatting, isMyPost }) => {
@@ -16,11 +15,10 @@ const UserPostTitle = ({ post, dateFormatting, isMyPost }) => {
     const [userInformation, setUserInformation] = useState(null);
 
     const removeUserPostAsync = async () => {
-        await removeUserPost(post.id);  
-    }
-
-    if (isLoading) {
-        return (<Loading />);
+        const response = await removeUserPost(post.id);
+        if (!response.error) {
+            window.location.reload();
+        }
     }
 
     return (
@@ -29,7 +27,7 @@ const UserPostTitle = ({ post, dateFormatting, isMyPost }) => {
                 <div className="content">
                     <div className="username">
                         <User
-                            targetUserId={targetUser?.id}
+                            targetUserId={targetUser ? targetUser.id : "0"}
                             setUserInformation={setUserInformation}
                             allowRemoveFriend={false}
                         />

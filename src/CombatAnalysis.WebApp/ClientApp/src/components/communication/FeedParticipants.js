@@ -1,6 +1,6 @@
 import { memo, useEffect, useRef, useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
-import useFetchCommunityPosts from '../../hooks/useFetchUsersPosts';
+import useFetchUsersPosts from '../../hooks/useFetchUsersPosts';
 import Loading from '../Loading';
 import CommunityPost from './post/CommunityPost';
 import UserPost from './post/UserPost';
@@ -12,7 +12,7 @@ const FeedParticipants = ({ userId, t }) => {
     const [currentPosts, setCurrentPosts] = useState([]);
     const [haveNewPosts, setHaveNewPosts] = useState(false);
 
-    const { posts, communityPosts, newPosts, newCommunityPosts, count, communityCount, isLoading, getMoreUserPostsAsync, getMoreCommunityPostsAsync, currentDateRef } = useFetchCommunityPosts(userId, false);
+    const { posts, communityPosts, newPosts, newCommunityPosts, count, communityCount, isLoading, getMoreUserPostsAsync, getMoreCommunityPostsAsync, currentDateRef } = useFetchUsersPosts(userId, false);
 
     useEffect(() => {
         if (!posts || posts.length === 0) {
@@ -71,10 +71,10 @@ const FeedParticipants = ({ userId, t }) => {
     const loadingNewUserPostsAsync = async () => {
         currentDateRef.current = (new Date()).toISOString();
 
-        newPosts.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+        newPosts?.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
         setCurrentPosts(prevPosts => [...newPosts, ...prevPosts]);
 
-        newCommunityPosts.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+        newCommunityPosts?.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
         setCurrentPosts(prevPosts => [...newCommunityPosts, ...prevPosts]);
 
         setHaveNewPosts(false);
@@ -97,19 +97,19 @@ const FeedParticipants = ({ userId, t }) => {
                         {post.communityId
                             ? <CommunityPost
                                 userId={userId}
-                                post={post}
+                                postId={post.id}
                                 communityId={post.communityId}
                             />
                             : <UserPost
                                 userId={userId}
-                                post={post}
+                                postId={post.id}
                             />
                         }
                     </li>
                 ))}
                 {(currentPosts.length < (count + communityCount) && currentPosts.length > 0) &&
                     <li className="load-more" onClick={loadingMoreUserPostsAsync}>
-                        <div className="load-more__content">Load more</div>
+                        <div className="load-more__content">{t("LoadMore")}</div>
                     </li>
                 }
             </ul>

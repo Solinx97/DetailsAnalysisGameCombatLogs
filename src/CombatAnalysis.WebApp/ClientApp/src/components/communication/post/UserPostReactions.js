@@ -1,6 +1,5 @@
 ﻿import { faHeart, faMessage, faThumbsDown } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { useCallback } from 'react';
 import { useCreateUserPostDislikeMutation, useLazySearchUserPostDislikeByPostIdQuery, useRemoveUserPostDislikeMutation } from '../../../store/api/communication/UserPostDislike.api';
 import { useCreateUserPostLikeMutation, useLazySearchUserPostLikeByPostIdQuery, useRemoveUserPostLikeMutation } from '../../../store/api/communication/UserPostLike.api';
 
@@ -12,7 +11,7 @@ const UserPostReactions = ({ userId, post, updatePostAsync, setShowComments, sho
     const [removePostDislike] = useRemoveUserPostDislikeMutation();
     const [searchPostDislikeByPostId] = useLazySearchUserPostDislikeByPostIdQuery();
 
-    const getPostLikesAsync = async (postId) => {
+    const checkPostLikesAsync = async (postId) => {
         const postLikes = await searchPostLikeByPostId(postId);
         if (postLikes.data) {
             return await removePostLikeIfExistAsync(postLikes.data);
@@ -21,7 +20,7 @@ const UserPostReactions = ({ userId, post, updatePostAsync, setShowComments, sho
         return false;
     }
 
-    const getPostDislikesAsync = async (postId) => {
+    const checkPostDislikesAsync = async (postId) => {
         const postDislikes = await searchPostDislikeByPostId(postId);
         if (postDislikes.data) {
             return await removePostDislikeIfExistAsync(postDislikes.data);
@@ -52,14 +51,14 @@ const UserPostReactions = ({ userId, post, updatePostAsync, setShowComments, sho
         return false;
     }
 
-    const createPostLikeAsync = useCallback(async () => {
-        const postLikeIsExist = await getPostLikesAsync(post?.id);
+    const createPostLikeAsync = async () => {
+        const postLikeIsExist = await checkPostLikesAsync(post?.id);
         if (postLikeIsExist) {
             await updatePostAsync(post?.id, -1, 0, 0);
             return;
         }
 
-        const postDislikeIsExist = await getPostDislikesAsync(post?.id)
+        const postDislikeIsExist = await checkPostDislikesAsync(post?.id)
 
         const newPostLike = {
             userPostId: post?.id,
@@ -75,16 +74,16 @@ const UserPostReactions = ({ userId, post, updatePostAsync, setShowComments, sho
                 await updatePostAsync(post?.id, 1, 0, 0);
             }
         }
-    }, [post]);
+    }
 
-    const createPostDislikeAsync = useCallback(async () => {
-        const postDislikeIsExist = await getPostDislikesAsync(post?.id);
+    const createPostDislikeAsync = async () => {
+        const postDislikeIsExist = await checkPostDislikesAsync(post?.id);
         if (postDislikeIsExist) {
             await updatePostAsync(post?.id, 0, -1, 0);
             return;
         }
 
-        const postLikeIsExist = await getPostLikesAsync(post?.id);
+        const postLikeIsExist = await checkPostLikesAsync(post?.id);
 
         const newPostDislike = {
             userPostId: post?.id,
@@ -100,7 +99,7 @@ const UserPostReactions = ({ userId, post, updatePostAsync, setShowComments, sho
                 await updatePostAsync(post?.id, 0, 1, 0);
             }
         }
-    }, [post]);
+    }
 
     const postCommentsHandler = () => {
         setShowComments((item) => !item);
@@ -116,7 +115,7 @@ const UserPostReactions = ({ userId, post, updatePostAsync, setShowComments, sho
                         title={t("Like")}
                         onClick={createPostLikeAsync}
                     />
-                    <div className="count">{post?.likeCount}</div>
+                    <div className="count">{post.likeCount}</div>
                 </div>
                 <div className="item">
                     <FontAwesomeIcon
@@ -125,7 +124,7 @@ const UserPostReactions = ({ userId, post, updatePostAsync, setShowComments, sho
                         title={t("Dislike")}
                         onClick={createPostDislikeAsync}
                     />
-                    <div className="count">{post?.dislikeCount}</div>
+                    <div className="count">{post.dislikeCount}</div>
                 </div>
                 <div className="item">
                     <FontAwesomeIcon
@@ -134,7 +133,7 @@ const UserPostReactions = ({ userId, post, updatePostAsync, setShowComments, sho
                         title={t("Comment")}
                         onClick={postCommentsHandler}
                     />
-                    <div className="count">{post?.commentCount}</div>
+                    <div className="count">{post.commentCount}</div>
                 </div>
             </div>
         </div>

@@ -19,7 +19,7 @@ const useFetchUsersPosts = (appUserId, skipFriendPosts) => {
     const currentDateRef = useRef((new Date()).toISOString());
     const skipCheckNewPostsRef = useRef(true);
     const appUserIdsRef = useRef("");
-    const communityIdsRef = useRef("");
+    const communityIdsRef = useRef("0");
 
     const [posts, setPosts] = useState([]);
     const [communityPosts, setCommunityPosts] = useState([]);
