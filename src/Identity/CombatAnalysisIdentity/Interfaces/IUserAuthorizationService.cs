@@ -10,6 +10,8 @@ public interface IUserAuthorizationService
 
     Task<bool> CreateUserAsync(IdentityUserModel identityUser, AppUserModel appUser, CustomerModel customer);
 
+    Task<string> UpdateUserAsync(IdentityUserModel identityUser);
+
     Task<bool> CheckIfIdentityUserPresentAsync(string email);
 
     Task<bool> CheckIfUsernameAlreadyUsedAsync(string username);

@@ -55,7 +55,7 @@ input, label {
     }
 }
 
-.login, .registration {
+.login, .registration, .restore, .new-password {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -84,10 +84,40 @@ input, label {
         font-family: 'Comic Sans MS';
     }
 
+    .help {
+        display: flex;
+        justify-content: center;
+        font-size: 0.9em;
+        color: yellow;
+        cursor: pointer;
+    }
+
+    .actions {
+        display: flex;
+        justify-content: center;
+
+        input {
+            width: 100px;
+        }
+    }
+
     &__cancel {
         display: flex;
         justify-content: space-between;
         margin: 10px 0;
+        width: 250px;
+
+        .cancel {
+            font-size: 11px;
+            box-shadow: 2px 2px 2px 2px gray;
+        }
+    }
+}
+
+.restore,  .new-password {
+    &__cancel {
+        display: flex;
+        justify-content: center;
         width: 250px;
 
         .cancel {

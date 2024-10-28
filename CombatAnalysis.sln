@@ -73,7 +73,7 @@ Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "CombatAnalysis.User", "data
 EndProject
 Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "CombatAnalysis.Identity", "database\CombatAnalysis.Identity\CombatAnalysis.Identity.sqlproj", "{D6B3BEDE-F37F-42EC-BFC1-F4AEBC9E393F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HealthAPI", "src\API\HealthAPI\HealthAPI.csproj", "{C2FCC9EE-FE2C-4AB5-A859-7C88619A332A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HealthAPI", "src\API\HealthAPI\HealthAPI.csproj", "{C2FCC9EE-FE2C-4AB5-A859-7C88619A332A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -1,0 +1,30 @@
+﻿@page
+@model CombatAnalysisIdentity.Pages.RestoreModel
+@{
+    <div class="restore">
+        <div class="restore__title">Restore access</div>
+        <form class="restore__submit" method="post">
+            <div class="mb-3">
+                <input type="email" class="form-control" id="inputEmail" name="email" aria-describedby="emailHelp" placeholder="Email" required />
+            </div>
+            <div class="actions">
+                <input type="submit" class="btn-border-shadow finish-login" value="Send" />
+            </div>
+        </form>
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <div class="restore__cancel">
+            <input type="button" class="btn-border-shadow cancel" onclick="goToHome()" value="Cancel" />
+        </div>
+    </div>
+}
+
+<script>
+    function goToHome() {
+        const queryString = window.location.search;
+        const queryparams = new URLSearchParams(queryString);
+        const redirectUri = queryparams.get("redirectUri");
+        const protocol = `@Model.Protocol`;
+
+        window.location.href = `${protocol}://${redirectUri}`;
+    }
+</script>

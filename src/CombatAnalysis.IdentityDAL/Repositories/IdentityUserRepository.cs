@@ -49,4 +49,10 @@ public class IdentityUserRepository : IIdentityUserRepository
 
         return entity;
     }
+
+    public async Task UpdateAsync(IdentityUser identityUser)
+    {
+        _context.IdentityUser.Update(identityUser);
+        await _context.SaveChangesAsync();
+    }
 }

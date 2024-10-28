@@ -68,10 +68,10 @@ else
 
 <script>
     function goToLogin() {
-        const registrationUrl = `@Model.AuthorizationUrl`;
+        const appUrl = `@Model.AppUrl`;
         const queryparams = window.location.search;
 
-        window.location.href = `${registrationUrl}authorization${queryparams}`;
+        window.location.href = `${appUrl}authorization${queryparams}`;
     }
 
     function goToHome() {

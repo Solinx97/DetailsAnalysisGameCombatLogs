@@ -20,7 +20,7 @@ public class AuthorizationModel : PageModel
 
     public bool QueryIsValid { get; set; }
 
-    public string RegistrationUrl { get; } = Port.Identity;
+    public string AppUrl { get; } = Port.Identity;
 
     public string Protocol { get; } = Authentication.Protocol;
 

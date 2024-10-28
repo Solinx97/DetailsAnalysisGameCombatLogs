@@ -16,6 +16,9 @@
                 <input type="submit" class="btn-border-shadow finish-login" value="Sign in" />
             </div>
         </form>
+        <div class="help">
+            <div onclick="goToRestore()">Forgot password?</div>
+        </div>
         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
         <div class="login__cancel">
             <input type="button" class="btn-border-shadow finish-registration" onclick="goToRegistration()" value="Registration" />
@@ -32,10 +35,10 @@ else
 
 <script>
     function goToRegistration() {
-        const registrationUrl = `@Model.RegistrationUrl`;
+        const appUrl = `@Model.AppUrl`;
         const queryString = window.location.search;
 
-        window.location.href = `${registrationUrl}registration${queryString}`;
+        window.location.href = `${appUrl}registration${queryString}`;
     }
 
     function goToHome() {
@@ -45,5 +48,12 @@ else
         const protocol = `@Model.Protocol`;
 
         window.location.href = `${protocol}://${redirectUri}`;
+    }
+
+    function goToRestore() {
+        const appUrl = `@Model.AppUrl`;
+        const queryString = window.location.search;
+
+        window.location.href = `${appUrl}restore${queryString}`;
     }
 </script>

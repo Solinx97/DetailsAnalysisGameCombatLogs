@@ -45,4 +45,10 @@ internal class IdentityUserService : IIdentityUserService
 
         return map;
     }
+
+    public async Task UpdateAsync(IdentityUserDto user)
+    {
+        var map = _mapper.Map<IdentityUser>(user);
+        await _identityUserRepository.UpdateAsync(map);
+    }
 }

@@ -22,7 +22,7 @@ public class RegistrationModel : PageModel
 
     public bool QueryIsValid { get; set; }
 
-    public string AuthorizationUrl { get; } = Port.Identity;
+    public string AppUrl { get; } = Port.Identity;
 
     public string Protocol { get; } = Authentication.Protocol;
 

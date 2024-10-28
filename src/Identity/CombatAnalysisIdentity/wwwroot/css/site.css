@@ -54,38 +54,62 @@ input, label {
     color: white;
   }
 }
-.login, .registration {
+.login, .registration, .restore, .new-password {
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 20px;
   width: 98vw;
 }
-.login input[type=email], .login input[type=text], .login input[type=password], .login input[type=number], .login input[type=submit], .login input[type=date], .login textarea, .registration input[type=email], .registration input[type=text], .registration input[type=password], .registration input[type=number], .registration input[type=submit], .registration input[type=date], .registration textarea {
+.login input[type=email], .login input[type=text], .login input[type=password], .login input[type=number], .login input[type=submit], .login input[type=date], .login textarea, .registration input[type=email], .registration input[type=text], .registration input[type=password], .registration input[type=number], .registration input[type=submit], .registration input[type=date], .registration textarea, .restore input[type=email], .restore input[type=text], .restore input[type=password], .restore input[type=number], .restore input[type=submit], .restore input[type=date], .restore textarea, .new-password input[type=email], .new-password input[type=text], .new-password input[type=password], .new-password input[type=number], .new-password input[type=submit], .new-password input[type=date], .new-password textarea {
   width: 300px;
   padding: 10px;
   border-radius: 10px;
   color: white;
 }
-.login input[type=email], .login input[type=password], .login input[type=text], .login input[type=number], .login input[type=date], .login textarea, .registration input[type=email], .registration input[type=password], .registration input[type=text], .registration input[type=number], .registration input[type=date], .registration textarea {
+.login input[type=email], .login input[type=password], .login input[type=text], .login input[type=number], .login input[type=date], .login textarea, .registration input[type=email], .registration input[type=password], .registration input[type=text], .registration input[type=number], .registration input[type=date], .registration textarea, .restore input[type=email], .restore input[type=password], .restore input[type=text], .restore input[type=number], .restore input[type=date], .restore textarea, .new-password input[type=email], .new-password input[type=password], .new-password input[type=text], .new-password input[type=number], .new-password input[type=date], .new-password textarea {
   box-shadow: 4px 4px #009FBD;
   border: 0 solid white;
   background: linear-gradient(90deg, rgb(44, 41, 134) 11%, rgb(70, 168, 215) 88%);
 }
-.login textarea:focus, .registration textarea:focus {
+.login textarea:focus, .registration textarea:focus, .restore textarea:focus, .new-password textarea:focus {
   color: white;
 }
-.login input::placeholder, .login textarea::placeholder, .registration input::placeholder, .registration textarea::placeholder {
+.login input::placeholder, .login textarea::placeholder, .registration input::placeholder, .registration textarea::placeholder, .restore input::placeholder, .restore textarea::placeholder, .new-password input::placeholder, .new-password textarea::placeholder {
   color: white;
   font-family: "Comic Sans MS";
 }
-.login__cancel, .registration__cancel {
+.login .help, .registration .help, .restore .help, .new-password .help {
+  display: flex;
+  justify-content: center;
+  font-size: 0.9em;
+  color: yellow;
+  cursor: pointer;
+}
+.login .actions, .registration .actions, .restore .actions, .new-password .actions {
+  display: flex;
+  justify-content: center;
+}
+.login .actions input, .registration .actions input, .restore .actions input, .new-password .actions input {
+  width: 100px;
+}
+.login__cancel, .registration__cancel, .restore__cancel, .new-password__cancel {
   display: flex;
   justify-content: space-between;
   margin: 10px 0;
   width: 250px;
 }
-.login__cancel .cancel, .registration__cancel .cancel {
+.login__cancel .cancel, .registration__cancel .cancel, .restore__cancel .cancel, .new-password__cancel .cancel {
+  font-size: 11px;
+  box-shadow: 2px 2px 2px 2px gray;
+}
+
+.restore__cancel, .new-password__cancel {
+  display: flex;
+  justify-content: center;
+  width: 250px;
+}
+.restore__cancel .cancel, .new-password__cancel .cancel {
   font-size: 11px;
   box-shadow: 2px 2px 2px 2px gray;
 }
