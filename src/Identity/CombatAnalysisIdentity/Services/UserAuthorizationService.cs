@@ -7,7 +7,6 @@ using CombatAnalysisIdentity.Interfaces;
 using CombatAnalysisIdentity.Models;
 using CombatAnalysisIdentity.Security;
 using System.Text.RegularExpressions;
-using static IdentityServer4.Models.IdentityResources;
 
 namespace CombatAnalysisIdentity.Services;
 
@@ -81,23 +80,6 @@ internal class UserAuthorizationService : IUserAuthorizationService
         responseMessage = await httpClient.PostAsync($"{Port.UserApi}api/v1/Customer", JsonContent.Create(customer));
 
         return responseMessage.IsSuccessStatusCode;
-    }
-
-    async Task<string> IUserAuthorizationService.UpdateUserAsync(IdentityUserModel identityUser)
-    {
-        var user = await _identityUserService.GetAsync(identityUser.Email);
-        if (user == null)
-        {
-            return string.Empty;
-        }
-
-        identityUser.Id = user.Id;
-        var identityUserMap = _mapper.Map<IdentityUserDto>(identityUser);
-        await _identityUserService.UpdateAsync(identityUserMap);
-
-        var redirectUrl = $"{Authentication.Protocol}://{_authorizationRequest.RedirectUri}";
-
-        return redirectUrl;
     }
 
     async Task<bool> IUserAuthorizationService.CheckIfIdentityUserPresentAsync(string email)

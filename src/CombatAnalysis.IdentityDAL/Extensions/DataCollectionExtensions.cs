@@ -22,5 +22,7 @@ public static class DataCollectionExtensions
         services.AddScoped<IIdentityUserRepository, IdentityUserRepository>();
         services.AddScoped<IClientRepository, ClientRepository>();
         services.AddScoped<ITokenRepository, TokenRepository>();
+
+        services.AddScoped<IResetTokenRepository, ResetTokenRepository>();
     }
 }

@@ -25,9 +25,16 @@ const AuthorizationCallback = () => {
         const queryParams = new URLSearchParams(window.location.search);
         const code = queryParams.get("code");
         const state = queryParams.get("state");
+        const accessRestored = queryParams.get("accessRestored");
 
         const validateState = async () => {
             await validateStateAsync(state, code);
+        }
+
+        if (accessRestored) {
+            navigate("/");
+
+            return
         }
 
         validateState();

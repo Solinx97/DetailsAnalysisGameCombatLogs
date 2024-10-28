@@ -16,6 +16,8 @@ public class CombatAnalysisIdentityContext : DbContext
 
     public DbSet<IdentityUser> IdentityUser { get; set; }
 
+    public DbSet<ResetToken> ResetToken { get; set; }
+
     public DbSet<Client> Client { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)

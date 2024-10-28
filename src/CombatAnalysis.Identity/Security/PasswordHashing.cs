@@ -1,9 +1,9 @@
 ﻿using Microsoft.AspNetCore.Cryptography.KeyDerivation;
 using System.Security.Cryptography;
 
-namespace CombatAnalysisIdentity.Security;
+namespace CombatAnalysis.Identity.Security;
 
-internal static class PasswordHashing
+public static class PasswordHashing
 {
     public static (string hash, string salt) HashPasswordWithSalt(string password)
     {

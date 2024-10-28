@@ -1,3 +1,4 @@
+using CombatAnalysis.Identity.Interfaces;
 using CombatAnalysis.Identity.Security;
 using CombatAnalysisIdentity.Consts;
 using CombatAnalysisIdentity.Interfaces;
@@ -9,10 +10,12 @@ namespace CombatAnalysisIdentity.Pages;
 public class RestoreModel : PageModel
 {
     private readonly IUserAuthorizationService _authorizationService;
+    private readonly IResetPasswordService _resetPasswordService;
 
-    public RestoreModel(IUserAuthorizationService authorizationService)
+    public RestoreModel(IUserAuthorizationService authorizationService, IResetPasswordService resetPasswordService)
     {
         _authorizationService = authorizationService;
+        _resetPasswordService = resetPasswordService;
     }
 
     public string AppUrl { get; } = Port.Identity;
@@ -29,8 +32,10 @@ public class RestoreModel : PageModel
             return Page();
         }
 
-        var redirectUri = $"{AppUrl}newPassword?state={email}";
+        var token = await _resetPasswordService.GeneratePasswordResetTokenAsync(email);
 
-        return RedirectToPage("NewPassword", new { email });
+        var redirectUri = Request.Query["redirectUri"];
+
+        return RedirectToPage("newPassword", new { token, email, redirectUri });
     }
 }
