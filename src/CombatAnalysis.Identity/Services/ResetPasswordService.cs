@@ -34,7 +34,7 @@ internal class ResetPasswordService : IResetPasswordService
         return token;
     }
 
-    public async Task<bool> ResetPasswordAsync(string token, string email, string password)
+    public async Task<bool> ResetPasswordAsync(string token, string password)
     {
         var resetToken = await _resetTokenRepository.GetByTokenAsync(token);
         if (resetToken == null || resetToken.IsUsed || resetToken.ExpirationTime < DateTime.UtcNow)
@@ -44,7 +44,7 @@ internal class ResetPasswordService : IResetPasswordService
 
         var (hash, salt) = PasswordHashing.HashPasswordWithSalt(password);
 
-        var identityUser = await _identityUserService.GetAsync(email);
+        var identityUser = await _identityUserService.GetAsync(resetToken.Email);
         identityUser.PasswordHash = hash;
         identityUser.Salt = salt;
 

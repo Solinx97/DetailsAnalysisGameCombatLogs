@@ -26,29 +26,20 @@ public class NewPasswordModel : PageModel
 
     public string Protocol { get; } = Authentication.Protocol;
 
-    public IActionResult OnGet(string token, string email)
+    public IActionResult OnGet(string token)
     {
         PasswordReset = new PasswordResetModel
         {
             Token = token,
-            Email = email
         };
 
         return Page();
     }
 
-    public async Task<IActionResult> OnPostAsync(string token, string email)
+    public async Task<IActionResult> OnPostAsync(string token)
     {
         if (!ModelState.IsValid)
         {
-            return Page();
-        }
-
-        var isPresent = await _authorizationService.CheckIfIdentityUserPresentAsync(email);
-        if (!isPresent)
-        {
-            ModelState.AddModelError(string.Empty, "User with this Email not present");
-
             return Page();
         }
 
@@ -60,7 +51,7 @@ public class NewPasswordModel : PageModel
             return Page();
         }
 
-        var wasReseted = await _resetPasswordService.ResetPasswordAsync(token, email, PasswordReset.Password);
+        var wasReseted = await _resetPasswordService.ResetPasswordAsync(token, PasswordReset.Password);
         if (wasReseted)
         {
             var redirectUri = $"{Authentication.Protocol}://{Request.Query["redirectUri"]}?accessRestored=true";

@@ -4,5 +4,5 @@ public interface IResetPasswordService
 {
     Task<string> GeneratePasswordResetTokenAsync(string email);
 
-    Task<bool> ResetPasswordAsync(string token, string email, string password);
+    Task<bool> ResetPasswordAsync(string token, string password);
 }
