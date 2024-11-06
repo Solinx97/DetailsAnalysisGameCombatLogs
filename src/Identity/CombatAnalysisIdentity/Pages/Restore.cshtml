@@ -12,6 +12,10 @@
             </div>
         </form>
         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        @if(Model.SendEmailRespond == 1)
+        {
+            <dev>Restore link sent to your email. Please, check your email</dev>
+        }
         <div class="restore__cancel">
             <input type="button" class="btn-border-shadow cancel" onclick="goToHome()" value="Cancel" />
         </div>

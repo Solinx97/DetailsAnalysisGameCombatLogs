@@ -40,6 +40,8 @@ public class NewPasswordModel : PageModel
     {
         if (!ModelState.IsValid)
         {
+            ModelState.AddModelError(string.Empty, "Confirm password should be equal Password");
+
             return Page();
         }
 

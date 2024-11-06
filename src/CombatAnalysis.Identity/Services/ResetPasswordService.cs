@@ -62,7 +62,11 @@ internal class ResetPasswordService : IResetPasswordService
         var randomBytes = new byte[32]; // 256 bits
         randomNumberGenerator.GetBytes(randomBytes);
 
-        var code = Convert.ToBase64String(randomBytes);
+        var code = Convert.ToBase64String(randomBytes)
+            .Replace('+', '-')
+            .Replace('/', '_')
+            .Replace("=", "");
+
         return code;
     }
 }
