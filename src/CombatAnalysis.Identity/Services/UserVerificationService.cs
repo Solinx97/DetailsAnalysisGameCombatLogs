@@ -6,18 +6,20 @@ using System.Security.Cryptography;
 
 namespace CombatAnalysis.Identity.Services;
 
-internal class ResetPasswordService : IResetPasswordService
+internal class UserVerificationService : IUserVerification
 {
     private readonly IResetTokenRepository _resetTokenRepository;
+    private readonly IVerifyEmailTokenRepository _verifyEmailRepository;
     private readonly IIdentityUserService _identityUserService;
 
-    public ResetPasswordService(IResetTokenRepository resetTokenRepository, IIdentityUserService identityUserService)
+    public UserVerificationService(IResetTokenRepository resetTokenRepository, IVerifyEmailTokenRepository verifyEmailRepository, IIdentityUserService identityUserService)
     {
         _resetTokenRepository = resetTokenRepository;
+        _verifyEmailRepository = verifyEmailRepository;
         _identityUserService = identityUserService;
     }
 
-    public async Task<string> GeneratePasswordResetTokenAsync(string email)
+    public async Task<string> GenerateResetTokenAsync(string email)
     {
         var token = GenerateToken();
 
@@ -34,6 +36,23 @@ internal class ResetPasswordService : IResetPasswordService
         return token;
     }
 
+    public async Task<string> GenerateVerifyEmailTokenAsync(string email)
+    {
+        var token = GenerateToken();
+
+        var verifyEmailToken = new VerifyEmailToken
+        {
+            Email = email,
+            Token = token,
+            ExpirationTime = DateTime.UtcNow.AddMinutes(10),
+            IsUsed = false
+        };
+
+        await _verifyEmailRepository.CreateAsync(verifyEmailToken);
+
+        return token;
+    }
+
     public async Task<bool> ResetPasswordAsync(string token, string password)
     {
         var resetToken = await _resetTokenRepository.GetByTokenAsync(token);
@@ -44,7 +63,7 @@ internal class ResetPasswordService : IResetPasswordService
 
         var (hash, salt) = PasswordHashing.HashPasswordWithSalt(password);
 
-        var identityUser = await _identityUserService.GetAsync(resetToken.Email);
+        var identityUser = await _identityUserService.GetByEmailAsync(resetToken.Email);
         identityUser.PasswordHash = hash;
         identityUser.Salt = salt;
 
@@ -52,6 +71,29 @@ internal class ResetPasswordService : IResetPasswordService
 
         resetToken.IsUsed = true;
         await _resetTokenRepository.UpdateAsync(resetToken);
+
+        return true;
+    }
+
+    public async Task<bool> VerifyEmailAsync(string token)
+    {
+        var verifyToken = await _verifyEmailRepository.GetByTokenAsync(token);
+        if (verifyToken == null || verifyToken.IsUsed || verifyToken.ExpirationTime < DateTime.UtcNow)
+        {
+            return false;
+        }
+
+        verifyToken.IsUsed = true;
+        await _verifyEmailRepository.UpdateAsync(verifyToken);
+
+        var identityUser = await _identityUserService.GetByEmailAsync(verifyToken.Email);
+        if (identityUser == null)
+        {
+            return false;
+        }
+
+        identityUser.EmailVerified = true;
+        await _identityUserService.UpdateAsync(identityUser);
 
         return true;
     }

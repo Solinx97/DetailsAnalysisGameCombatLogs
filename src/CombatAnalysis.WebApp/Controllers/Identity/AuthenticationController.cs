@@ -83,6 +83,19 @@ public class AuthenticationController : ControllerBase
         return Ok(identityRedirect);
     }
 
+    [HttpGet("verifyEmail")]
+    public IActionResult VerifyEmail(string identityPath, string email)
+    {
+        var uri = $"{Authentication.IdentityServer}{identityPath}?email={email}&redirectUri={Authentication.RedirectUri}";
+
+        var identityRedirect = new IdentityRedirect
+        {
+            Uri = uri
+        };
+
+        return Ok(identityRedirect);
+    }
+
     [HttpGet("stateValidate")]
     public IActionResult StateValidate(string state)
     {

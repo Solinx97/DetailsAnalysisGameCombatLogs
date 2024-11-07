@@ -1,4 +1,6 @@
 {
   "Authorization": "Authorization",
-  "Unauthorized": "Unauthorized. Pls try authorization one more time"
+  "Unauthorized": "Unauthorized. Pls try authorization one more time",
+  "Verified": "Email verified",
+  "AccessRestored": "Access to account restored"
 }

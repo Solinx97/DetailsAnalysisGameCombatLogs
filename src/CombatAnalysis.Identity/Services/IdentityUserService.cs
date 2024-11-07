@@ -38,7 +38,7 @@ internal class IdentityUserService : IIdentityUserService
         return userPresent;
     }
 
-    public async Task<IdentityUserDto> GetAsync(string emil)
+    public async Task<IdentityUserDto> GetByEmailAsync(string emil)
     {
         var identityUser = await _identityUserRepository.GetAsync(emil);
         var map = _mapper.Map<IdentityUserDto>(identityUser);

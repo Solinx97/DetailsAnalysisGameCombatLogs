@@ -69,7 +69,7 @@ internal class UserService : IUserService<AppUserDto>
         return resultMap;
     }
 
-    public Task<int> UpdateAsync(AppUserDto item)
+    public Task<AppUserDto> UpdateAsync(AppUserDto item)
     {
         if (item == null)
         {
@@ -115,7 +115,7 @@ internal class UserService : IUserService<AppUserDto>
         return rowsAffected;
     }
 
-    private async Task<int> UpdateInternalAsync(AppUserDto item)
+    private async Task<AppUserDto> UpdateInternalAsync(AppUserDto item)
     {
         if (string.IsNullOrEmpty(item.Username))
         {
@@ -136,8 +136,9 @@ internal class UserService : IUserService<AppUserDto>
         }
 
         var map = _mapper.Map<AppUser>(item);
-        var rowsAffected = await _repository.UpdateAsync(map);
+        var result = await _repository.UpdateAsync(map);
+        var mapToStartModel = _mapper.Map<AppUserDto>(result);
 
-        return rowsAffected;
+        return mapToStartModel;
     }
 }

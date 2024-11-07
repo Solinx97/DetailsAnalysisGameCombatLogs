@@ -19,7 +19,7 @@ const NavMenu = () => {
 
     const { isAuthenticated, checkAuthAsync, logoutAsync } = useAuth();
 
-    const [identityAsyncQuery] = useLazyIdentityQuery();
+    const [identityAsync] = useLazyIdentityQuery();
 
     const navigate = useNavigate();
 
@@ -50,7 +50,7 @@ const NavMenu = () => {
     }
 
     const redirectToIdentityAsync = async (identityPath) => {
-        const response = await identityAsyncQuery(identityPath);
+        const response = await identityAsync(identityPath);
 
         if (response.data !== undefined) {
             const uri = response.data.uri;

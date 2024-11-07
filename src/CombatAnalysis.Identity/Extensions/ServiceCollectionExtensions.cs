@@ -19,6 +19,6 @@ public static class ServiceCollectionExtensions
         services.AddScoped<ITokenService, TokenService>();
         services.AddScoped<IAuthCodeService, AuthCodeService>();
 
-        services.AddScoped<IResetPasswordService, ResetPasswordService>();
+        services.AddScoped<IUserVerification, UserVerificationService>();
     }
 }

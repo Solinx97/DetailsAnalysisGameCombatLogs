@@ -2,6 +2,7 @@ using CombatAnalysis.Identity.Interfaces;
 using CombatAnalysis.Identity.Security;
 using CombatAnalysisIdentity.Consts;
 using CombatAnalysisIdentity.Interfaces;
+using CombatAnalysisIdentity.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using System.Net.Mail;
@@ -11,13 +12,13 @@ namespace CombatAnalysisIdentity.Pages;
 public class RestoreModel : PageModel
 {
     private readonly IUserAuthorizationService _authorizationService;
-    private readonly IResetPasswordService _resetPasswordService;
+    private readonly IUserVerification _userVerification;
     private readonly ILogger<RestoreModel> _logger;
 
-    public RestoreModel(IUserAuthorizationService authorizationService, IResetPasswordService resetPasswordService, ILogger<RestoreModel> logger)
+    public RestoreModel(IUserAuthorizationService authorizationService, IUserVerification userVerification, ILogger<RestoreModel> logger)
     {
         _authorizationService = authorizationService;
-        _resetPasswordService = resetPasswordService;
+        _userVerification = userVerification;
         _logger = logger;
     }
 
@@ -39,12 +40,12 @@ public class RestoreModel : PageModel
                 return Page();
             }
 
-            var token = await _resetPasswordService.GeneratePasswordResetTokenAsync(email);
+            var token = await _userVerification.GenerateResetTokenAsync(email);
 
             var redirectUri = Request.Query["redirectUri"];
             var resetLink = $"{Request.Scheme}://{Request.Host}/newPassword?token={token}&redirectUri={redirectUri}";
 
-            await SendResetPasswordEmailAsync(email, resetLink);
+            await SendResetPasswordToEmailAsync(email, resetLink);
 
             SendEmailRespond = 1;
 
@@ -66,29 +67,11 @@ public class RestoreModel : PageModel
         }
     }
 
-    private static async Task SendResetPasswordEmailAsync(string email, string resetLink)
+    private static async Task SendResetPasswordToEmailAsync(string email, string resetLink)
     {
-        var fromAddress = new MailAddress("no-reply@combat.analysis.com", "Combat Analysis");
-        var toAddress = new MailAddress(email);
         const string subject = "Password Reset";
-        string body = $"<p>Click on <a href=\"{resetLink}\">Reset link</a> to reset your password.</p>";
+        string body = $"<p>Click on <a href=\"{resetLink}\">Restore link</a> to reset your password.</p>";
 
-        var smtp = new SmtpClient
-        {
-            Host = "localhost",
-            Port = 25,
-            EnableSsl = false,
-            DeliveryMethod = SmtpDeliveryMethod.Network,
-            UseDefaultCredentials = true,
-        };
-
-        using var message = new MailMessage(fromAddress, toAddress)
-        {
-            Subject = subject,
-            Body = body,
-            IsBodyHtml = true,
-        };
-
-        await smtp.SendMailAsync(message);
+        await EmailService.SendResetPasswordEmailAsync(email, subject, body);
     }
 }

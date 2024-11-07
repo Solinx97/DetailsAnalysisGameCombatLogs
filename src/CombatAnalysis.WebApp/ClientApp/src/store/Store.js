@@ -1,16 +1,18 @@
 ﻿import { combineReducers, configureStore } from '@reduxjs/toolkit';
 import authenticationMiddleware from '../middleware/authenticationMiddleware';
 import { ChatApi } from './api/ChatApi';
-import { CommunityApi } from './api/CommunityApi';
 import { CombatParserApi } from './api/CombatParserApi';
+import { CommunityApi } from './api/CommunityApi';
 import { UserApi } from './api/UserApi';
-import customerReducer from './slicers/CustomerSlice';
-import userReducer from './slicers/UserSlice';
 import communityMenuReducer from './slicers/CommunityMenuSlice';
+import customerReducer from './slicers/CustomerSlice';
+import userPrivacyReducer from './slicers/UserPrivacySlice';
+import userReducer from './slicers/UserSlice';
 
 const reducers = combineReducers({
     customer: customerReducer,
     user: userReducer,
+    userPrivacy: userPrivacyReducer,
     communityMenu: communityMenuReducer,
     [UserApi.reducerPath]: UserApi.reducer,
     [ChatApi.reducerPath]: ChatApi.reducer,

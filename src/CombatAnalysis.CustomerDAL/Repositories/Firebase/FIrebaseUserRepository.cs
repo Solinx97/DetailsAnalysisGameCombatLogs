@@ -90,27 +90,27 @@ public class FIrebaseUserRepository : IUserRepository
         return result;
     }
 
-    public async Task<int> UpdateAsync(AppUser item)
+    public async Task<AppUser> UpdateAsync(AppUser item)
     {
         var data = await _context.FirebaseClient
               .Child(nameof(AppUser))
               .OnceAsync<AppUser>();
 
         var id = item.GetType().GetProperty(nameof(AppUser.Id)).GetValue(item);
-        var result = data.Select(x => new KeyValuePair<string, AppUser>(x.Key, x.Object))
+        var model = data.Select(x => new KeyValuePair<string, AppUser>(x.Key, x.Object))
             .AsEnumerable()
             .FirstOrDefault(x => x.Value.GetType().GetProperty(nameof(AppUser.Id)).GetValue(x.Value).Equals(id));
 
         await _context.FirebaseClient
                      .Child(item.GetType().Name)
-                     .Child(result.Key)
+                     .Child(model.Key)
                      .PutAsync(item);
 
-        var checkResult = await _context.FirebaseClient
+        var result = await _context.FirebaseClient
               .Child(nameof(AppUser))
-              .Child(result.Key)
+              .Child(model.Key)
               .OnceSingleAsync<AppUser>();
 
-        return checkResult != null ? 1 : 0;
+        return result;
     }
 }

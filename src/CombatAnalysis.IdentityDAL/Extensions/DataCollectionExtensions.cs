@@ -24,5 +24,6 @@ public static class DataCollectionExtensions
         services.AddScoped<ITokenRepository, TokenRepository>();
 
         services.AddScoped<IResetTokenRepository, ResetTokenRepository>();
+        services.AddScoped<IVerifyEmailTokenRepository, VerifyEmailTokenRepository>();
     }
 }

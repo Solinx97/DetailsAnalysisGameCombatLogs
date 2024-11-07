@@ -6,7 +6,7 @@ public interface IUserRepository
 {
     Task<AppUser> CreateAsync(AppUser item);
 
-    Task<int> UpdateAsync(AppUser item);
+    Task<AppUser> UpdateAsync(AppUser item);
 
     Task<int> DeleteAsync(AppUser item);
 

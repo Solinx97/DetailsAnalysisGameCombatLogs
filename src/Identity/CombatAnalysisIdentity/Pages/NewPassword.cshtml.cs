@@ -11,12 +11,12 @@ namespace CombatAnalysisIdentity.Pages;
 public class NewPasswordModel : PageModel
 {
     private readonly IUserAuthorizationService _authorizationService;
-    private readonly IResetPasswordService _resetPasswordService;
+    private readonly IUserVerification _userVerification;
 
-    public NewPasswordModel(IUserAuthorizationService authorizationService, IResetPasswordService resetPasswordService)
+    public NewPasswordModel(IUserAuthorizationService authorizationService, IUserVerification userVerification)
     {
         _authorizationService = authorizationService;
-        _resetPasswordService = resetPasswordService;
+        _userVerification = userVerification;
     }
 
     public string AppUrl { get; } = Port.Identity;
@@ -36,7 +36,7 @@ public class NewPasswordModel : PageModel
         return Page();
     }
 
-    public async Task<IActionResult> OnPostAsync(string token)
+    public async Task<IActionResult> OnPostAsync()
     {
         if (!ModelState.IsValid)
         {
@@ -53,7 +53,7 @@ public class NewPasswordModel : PageModel
             return Page();
         }
 
-        var wasReseted = await _resetPasswordService.ResetPasswordAsync(token, PasswordReset.Password);
+        var wasReseted = await _userVerification.ResetPasswordAsync(PasswordReset.Token, PasswordReset.Password);
         if (wasReseted)
         {
             var redirectUri = $"{Authentication.Protocol}://{Request.Query["redirectUri"]}?accessRestored=true";

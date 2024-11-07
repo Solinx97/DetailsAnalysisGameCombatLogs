@@ -28,7 +28,7 @@ internal class UserAuthorizationService : IUserAuthorizationService
 
     async Task<string> IUserAuthorizationService.AuthorizationAsync(HttpRequest request, string email, string password)
     {
-        var user = await _identityUserService.GetAsync(email);
+        var user = await _identityUserService.GetByEmailAsync(email);
         if (user == null)
         {
             return string.Empty;

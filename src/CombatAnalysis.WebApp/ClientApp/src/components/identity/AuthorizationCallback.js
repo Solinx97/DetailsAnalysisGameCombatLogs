@@ -7,7 +7,8 @@ import { useLazyStateValidateQuery } from '../../store/api/UserApi';
 
 import '../../styles/identity/authorizationCallback.scss';
 
-const unauthorizedTimeout = 4000;
+const unauthorizedTimeoutLimit = 4000;
+const verificationTimeoutLimit = 3000;
 
 const AuthorizationCallback = () => {
     const { t } = useTranslation("identity/authorizationCallback");
@@ -17,6 +18,8 @@ const AuthorizationCallback = () => {
     const { checkAuthAsync } = useAuth();
 
     const [stateIsValid, setStateIsValid] = useState(true);
+    const [accessRestored, setAcessRestored] = useState(false);
+    const [verified, setVerified] = useState(false);
 
     const [stateValidateQuery] = useLazyStateValidateQuery();
     const [authorizationCodeExchangeQuery] = useLazyAuthorizationCodeExchangeQuery();
@@ -25,19 +28,31 @@ const AuthorizationCallback = () => {
         const queryParams = new URLSearchParams(window.location.search);
         const code = queryParams.get("code");
         const state = queryParams.get("state");
+
         const accessRestored = queryParams.get("accessRestored");
+        setAcessRestored(accessRestored);
+
+        const verified = queryParams.get("verified");
+        setVerified(verified);
+
+        let verificationTimeout;
+        if (accessRestored || verified) {
+            verificationTimeout = setTimeout(() => {
+                navigate("/");
+            }, verificationTimeoutLimit);
+
+            return;
+        }
 
         const validateState = async () => {
             await validateStateAsync(state, code);
         }
 
-        if (accessRestored) {
-            navigate("/");
-
-            return
-        }
-
         validateState();
+
+        return () => {
+            clearTimeout(verificationTimeout);
+        }
     }, []);
 
     useEffect(() => {
@@ -45,7 +60,7 @@ const AuthorizationCallback = () => {
         if (!stateIsValid) {
             timeout = setTimeout(() => {
                 navigate("/");
-            }, unauthorizedTimeout);
+            }, unauthorizedTimeoutLimit);
         }
 
         return () => {
@@ -76,6 +91,22 @@ const AuthorizationCallback = () => {
         }
 
         setStateIsValid(false);
+    }
+
+    if (accessRestored) {
+        return (
+            <div className="authorization-callback">
+                <div className="successful">{t("AccessRestored")}</div>
+            </div>
+        );
+    }
+
+    if (verified) {
+        return (
+            <div className="authorization-callback">
+                <div className="successful">{t("Verified")}</div>
+            </div>
+        );
     }
 
     return (

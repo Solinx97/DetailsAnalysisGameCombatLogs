@@ -3,7 +3,6 @@ using CombatAnalysis.WebApp.Consts;
 using CombatAnalysis.WebApp.Enums;
 using CombatAnalysis.WebApp.Extensions;
 using CombatAnalysis.WebApp.Interfaces;
-using CombatAnalysis.WebApp.Models.Response;
 using CombatAnalysis.WebApp.Models.User;
 using Microsoft.AspNetCore.Mvc;
 
@@ -36,8 +35,9 @@ public class AccountController : ControllerBase
         }
         else if (responseMessage.IsSuccessStatusCode)
         {
-            var response = await responseMessage.Content.ReadFromJsonAsync<ResponseFromAccount>();
-            return Ok(response.User);
+            var user = await responseMessage.Content.ReadFromJsonAsync<AppUserModel>();
+
+            return Ok(user);
         }
 
         return BadRequest();

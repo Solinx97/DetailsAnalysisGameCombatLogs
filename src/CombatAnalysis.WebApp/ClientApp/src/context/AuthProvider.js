@@ -4,8 +4,10 @@ import { useNavigate } from 'react-router-dom';
 import { useLogoutAsyncMutation } from '../store/api/Account.api';
 import { useLazySearchByUserIdAsyncQuery } from '../store/api/Customer.api';
 import { useLazyAuthenticationAsyncQuery } from '../store/api/UserApi';
+import { useLazyGetUserPrivacyQuery } from '../store/api/Identity.api';
 import { updateCustomer } from '../store/slicers/CustomerSlice';
 import { updateUser } from '../store/slicers/UserSlice';
+import { updateUserPrivacy } from '../store/slicers/UserPrivacySlice';
 
 const AuthContext = createContext();
 
@@ -19,27 +21,40 @@ export const AuthProvider = ({ children }) => {
     const [logoutAsyncMut] = useLogoutAsyncMutation();
     const [getCustomerAsync] = useLazySearchByUserIdAsyncQuery();
 
+    const [getUserPrivacyAsyncMut] = useLazyGetUserPrivacyQuery();
+
     const checkAuthAsync = async () => {
-        const auth = await getAuthAsync();
-        if (auth.error !== undefined || !auth.data) {
+        const response = await getAuthAsync();
+        if (response.error !== undefined || !response.data) {
             dispatch(updateCustomer(null));
 
             return;
         }
 
-        dispatch(updateUser(auth.data));
-        await getCustomerDataAsync(auth.data?.id);
+        dispatch(updateUser(response.data));
+        await getCustomerDataAsync(response.data?.id);
+
+        await getUserPrivacyAsync(response.data.identityUserId);
     }
 
     const getCustomerDataAsync = async (userId) => {
-        const customer = await getCustomerAsync(userId);
-        if (customer.error !== undefined) {
+        const response = await getCustomerAsync(userId);
+        if (response.error !== undefined) {
             return;
         }
 
-        dispatch(updateCustomer(customer.data));
+        dispatch(updateCustomer(response.data));
 
         setIsAuthenticated(true);
+    }
+
+    const getUserPrivacyAsync = async (id) => {
+        const response = await getUserPrivacyAsyncMut(id);
+        if (response.error !== undefined) {
+            return;
+        }
+
+        dispatch(updateUserPrivacy(response.data));
     }
 
     const logoutAsync = async () => {

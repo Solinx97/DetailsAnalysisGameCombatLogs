@@ -40,8 +40,7 @@ public class IdentityController : ControllerBase
             {
                 return StatusCode(500);
             }
-
-            if (!responseMessage.IsSuccessStatusCode)
+            else if (!responseMessage.IsSuccessStatusCode)
             {
                 return BadRequest();
             }
@@ -75,5 +74,23 @@ public class IdentityController : ControllerBase
 
             return BadRequest(ex.Message);
         }
+    }
+
+    [HttpGet("userPrivacy/{id}")]
+    public async Task<IActionResult> GetUserPrivacy(string id)
+    {
+        var responseMessage = await _httpClient.GetAsync($"Identity/{id}", Port.Identity);
+        if (responseMessage.StatusCode == System.Net.HttpStatusCode.InternalServerError)
+        {
+            return StatusCode(500);
+        }
+        else if (!responseMessage.IsSuccessStatusCode)
+        {
+            return BadRequest();
+        }
+
+        var email = await responseMessage.Content.ReadAsStringAsync();
+
+        return Ok(email);
     }
 }

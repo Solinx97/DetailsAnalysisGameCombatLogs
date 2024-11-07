@@ -56,11 +56,11 @@ public class SQLUserRepository : IUserRepository
         return entity;
     }
 
-    public async Task<int> UpdateAsync(AppUser item)
+    public async Task<AppUser> UpdateAsync(AppUser item)
     {
-        _context.Entry(item).State = EntityState.Modified;
-        var rowsAffected = await _context.SaveChangesAsync();
+        var entity = _context.Update(item);
+        await _context.SaveChangesAsync();
 
-        return rowsAffected;
+        return entity.Entity;
     }
 }

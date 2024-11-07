@@ -18,6 +18,8 @@ public class CombatAnalysisIdentityContext : DbContext
 
     public DbSet<ResetToken> ResetToken { get; set; }
 
+    public DbSet<VerifyEmailToken> VerifyEmailToken { get; set; }
+
     public DbSet<Client> Client { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
