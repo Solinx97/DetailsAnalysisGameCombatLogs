@@ -65,6 +65,7 @@ $mobile-max-width: 425px;
         .description {
             display: flex;
             flex-direction: column;
+            width: 45%;
 
             .title {
                 display: flex;
@@ -94,7 +95,6 @@ $mobile-max-width: 425px;
                 padding: 5px 10px;
                 border: 2px solid gray;
                 border-radius: 20px;
-                width: 45%;
                 margin: 0 25px;
             }
         }

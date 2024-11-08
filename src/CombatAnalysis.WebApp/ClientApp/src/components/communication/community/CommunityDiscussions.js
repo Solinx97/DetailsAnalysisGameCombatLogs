@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { useGetCommunityDiscussionByCommunityIdQuery, useLazyGetCommunityDiscussionByCommunityIdQuery } from '../../../store/api/communication/community/CommunityDiscussion.api';
 import CreateDiscussion from './CreateDiscussion';
 import DiscussionList from './DiscussionList';
+import { useSelector } from 'react-redux';
 
 import '../../../styles/communication/community/discussion.scss';
 
@@ -12,6 +13,8 @@ const defaultMaxDiscussions = 5;
 
 const CommunityDiscussions = ({ community, customer, setShowDiscussion, setDiscussion, isCommunityMember }) => {
     const { t } = useTranslation("communication/community/discussion");
+
+    const userPrivacy = useSelector((state) => state.userPrivacy.value);
 
     const [showCreateDiscussion, setShowCreateDiscussion] = useState(false);
     const [showAllDiscussions, setShowAllDiscussions] = useState(false);
@@ -46,7 +49,7 @@ const CommunityDiscussions = ({ community, customer, setShowDiscussion, setDiscu
             <div className="discussion__title">
                 <div className="actions">
                     <div>{t("Discussion")}</div>
-                    {isCommunityMember &&
+                    {(isCommunityMember && userPrivacy?.emailVerified) &&
                         <div className="tool">
                             <FontAwesomeIcon
                                 icon={faPlus}

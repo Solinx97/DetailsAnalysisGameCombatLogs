@@ -28,13 +28,12 @@ $mobile-max-width: 425px;
 
         .create-new-community {
             margin: 0 20px;
-            font-size: 12px;
-            color: yellow;
+            font-size: 0.8em;
             cursor: pointer;
-        }
 
-        .create-new-community:hover {
-            transform: scale(1.1);
+            .fa-plus {
+                margin: 0;
+            }
         }
 
         .title {

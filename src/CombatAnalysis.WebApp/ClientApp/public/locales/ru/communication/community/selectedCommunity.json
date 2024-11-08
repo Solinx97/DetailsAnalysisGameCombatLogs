@@ -23,5 +23,6 @@
   "Discussions": "Обсуждения",
   "Friends": "Друзья",
   "Contacts": "Контакты",
-  "Menu": "Меню"
+  "Menu": "Меню",
+  "VerificationCreateCommunityPost": "Для создания нового поста в Сообществе, необходимо подвердить email в Профиле"
 }

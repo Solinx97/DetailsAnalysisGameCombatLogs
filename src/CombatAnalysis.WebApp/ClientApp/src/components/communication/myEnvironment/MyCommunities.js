@@ -1,4 +1,4 @@
-import { faEye, faEyeSlash, faMagnifyingGlassMinus, faMagnifyingGlassPlus } from '@fortawesome/free-solid-svg-icons';
+import { faEye, faEyeSlash, faMagnifyingGlassMinus, faMagnifyingGlassPlus, faPlus } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useEffect, useState } from "react";
 import { useTranslation } from 'react-i18next';
@@ -6,6 +6,7 @@ import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { useSearchByUserIdAsyncQuery } from '../../../store/api/communication/community/CommunityUser.api';
 import Loading from '../../Loading';
+import VerificationRestriction from '../../common/VerificationRestriction';
 import InvitesToCommunity from './InvitesToCommunity';
 import MyCommunitiesItem from './MyCommunitiesItem';
 
@@ -15,6 +16,7 @@ const MyCommunities = () => {
     const { t } = useTranslation("communication/myEnvironment/myCommunities");
 
     const me = useSelector((state) => state.user.value);
+    const userPrivacy = useSelector((state) => state.userPrivacy.value);
 
     const navigate = useNavigate();
 
@@ -37,7 +39,7 @@ const MyCommunities = () => {
         me !== null ? setSkipFetching(false) : setSkipFetching(true);
     }, [me]);
 
-    if (isLoading) {
+    if (isLoading || !userPrivacy) {
         return (<Loading />);
     }
 
@@ -62,7 +64,18 @@ const MyCommunities = () => {
                             />
                         }
                         <div>{t("MyCommunitites")}</div>
-                        <div className="create-new-community" onClick={navigateToCreateCommunity}>{t("CreateNew")}</div>
+                        {userPrivacy.emailVerified 
+                            ? <div className="btn-shadow create-new-community" onClick={navigateToCreateCommunity}>
+                                <FontAwesomeIcon
+                                    icon={faPlus}
+                                />
+                                <div>{t("CreateNew")}</div>
+                            </div>
+                            : <VerificationRestriction
+                                contentText={t("CreateNew")}
+                                infoText={t("VerificationCreateCommunity")}
+                            />
+                        }
                         {showMyCommunities
                             ? <FontAwesomeIcon
                                 icon={faEye}

@@ -1,10 +1,14 @@
 ﻿import { faHeart, faMessage, faThumbsDown } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useCallback } from 'react';
+import { useSelector } from 'react-redux';
 import { useCreateCommunityPostDislikeMutation, useLazySearchCommunityPostDislikeByPostIdQuery, useRemoveCommunityPostDislikeMutation } from '../../../store/api/communication/CommunityPostDislike.api';
 import { useCreateCommunityPostLikeMutation, useLazySearchCommunityPostLikeByPostIdQuery, useRemoveCommunityPostLikeMutation } from '../../../store/api/communication/CommunityPostLike.api';
+import VerificationRestriction from '../../common/VerificationRestriction';
 
 const CommunityPostReactions = ({ userId, communityId, post, updatePostAsync, setShowComments, showComments, t }) => {
+    const userPrivacy = useSelector((state) => state.userPrivacy.value);
+
     const [createPostLike] = useCreateCommunityPostLikeMutation();
     const [removePostLike] = useRemoveCommunityPostLikeMutation();
     const [searchPostLikeByPostId] = useLazySearchCommunityPostLikeByPostIdQuery();
@@ -113,33 +117,41 @@ const CommunityPostReactions = ({ userId, communityId, post, updatePostAsync, se
     return (
         <div className="posts__reactions">
             <div className="container">
-                <div className="item">
-                    <FontAwesomeIcon
-                        className="item__like"
-                        icon={faHeart}
-                        title={t("Like")}
-                        onClick={createPostLikeAsync}
+                {userPrivacy.emailVerified
+                    ? <>
+                        <div className="item">
+                            <FontAwesomeIcon
+                                className="item__like"
+                                icon={faHeart}
+                                title={t("Like")}
+                                onClick={createPostLikeAsync}
+                            />
+                            <div className="count">{post?.likeCount}</div>
+                        </div>
+                        <div className="item">
+                            <FontAwesomeIcon
+                                className="item__dislike"
+                                icon={faThumbsDown}
+                                title={t("Dislike")}
+                                onClick={createPostDislikeAsync}
+                            />
+                            <div className="count">{post?.dislikeCount}</div>
+                        </div>
+                        <div className="item">
+                            <FontAwesomeIcon
+                                className={`item__comment${showComments ? '_active' : ''}`}
+                                icon={faMessage}
+                                title={t("Comment")}
+                                onClick={postCommentsHandler}
+                            />
+                            <div className="count">{post?.commentCount}</div>
+                        </div>
+                    </>
+                    : <VerificationRestriction
+                        contentText={t("ReactionsForbidden")}
+                        infoText={t("VerificationReactions")}
                     />
-                    <div className="count">{post?.likeCount}</div>
-                </div>
-                <div className="item">
-                    <FontAwesomeIcon
-                        className="item__dislike"
-                        icon={faThumbsDown}
-                        title={t("Dislike")}
-                        onClick={createPostDislikeAsync}
-                    />
-                    <div className="count">{post?.dislikeCount}</div>
-                </div>
-                <div className="item">
-                    <FontAwesomeIcon
-                        className={`item__comment${showComments ? '_active' : ''}`}
-                        icon={faMessage}
-                        title={t("Comment")}
-                        onClick={postCommentsHandler}
-                    />
-                    <div className="count">{post?.commentCount}</div>
-                </div>
+                }
             </div>
         </div>
     );

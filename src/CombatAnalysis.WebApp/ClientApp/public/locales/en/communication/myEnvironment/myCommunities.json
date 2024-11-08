@@ -8,5 +8,6 @@
   "TypeCommunityName": "Сommunity name",
   "ShowSearchCommunity": "Show search communities",
   "HideSearchCommunity": "Hide search communities",
-  "CreateNew": "Create new"
+  "CreateNew": "Create new",
+  "VerificationCreateCommunity": "To create Community, you should verify your email in Profile"
 }

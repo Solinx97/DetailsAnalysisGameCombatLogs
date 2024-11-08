@@ -1,11 +1,15 @@
 ﻿import { faBan, faCheck, faPlus } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useState } from 'react';
+import { useSelector } from 'react-redux';
 import { useCreateCommunityPostMutation } from '../../../store/api/communication/CommunityPost.api';
 import Loading from '../../Loading';
 import AddTagsToPost from './AddTagsToPost';
+import VerificationRestriction from '../../common/VerificationRestriction';
 
 const CreateCommunityPost = ({ user, communityName, communityId, t }) => {
+    const userPrivacy = useSelector((state) => state.userPrivacy.value);
+
     const [showCreatePost, setShowCreatePost] = useState(false);
     const [postContent, setPostContent] = useState("");
     const [postTags, setPostTags] = useState([]);
@@ -53,12 +57,18 @@ const CreateCommunityPost = ({ user, communityName, communityId, t }) => {
             <div className="create-post__tool">
                 {!showCreatePost &&
                     <div className="open-create-post container">
-                        <div className="btn-shadow" title={t("NewPost")} onClick={() => setShowCreatePost((item) => !item)}>
-                            <FontAwesomeIcon
-                                icon={faPlus}
+                        {userPrivacy?.emailVerified
+                            ? <div className="btn-shadow" title={t("NewPost")} onClick={() => setShowCreatePost((item) => !item)}>
+                                <FontAwesomeIcon
+                                    icon={faPlus}
+                                />
+                                <div>{t("Create")}</div>
+                            </div>
+                            : <VerificationRestriction
+                                contentText={t("Create")}
+                                infoText={t("VerificationCreateCommunityPost")}
                             />
-                            <div>{t("Create")}</div>
-                        </div>
+                        }
                     </div>
                 }
                 {showCreatePost &&
