@@ -3,7 +3,7 @@ using CombatAnalysis.ChatBL.DTO;
 using CombatAnalysis.ChatBL.Interfaces;
 using CombatAnalysis.ChatDAL.Entities;
 using CombatAnalysis.ChatDAL.Interfaces;
-using Microsoft.EntityFrameworkCore.Storage;
+using System.Transactions;
 
 namespace CombatAnalysis.ChatBL.Services.Chat;
 
@@ -11,19 +11,16 @@ internal class GroupChatService : IService<GroupChatDto, int>
 {
     private readonly IGenericRepository<GroupChat, int> _repository;
     private readonly IMapper _mapper;
-    private readonly ISqlContextService _sqlContextService;
     private readonly IChatMessageService<GroupChatMessageDto, int> _groupChatMessageService;
     private readonly IServiceTransaction<GroupChatUserDto, string> _groupChatUserService;
     private readonly IService<GroupChatRulesDto, int> _groupChatRulesService;
 
 
-    public GroupChatService(IGenericRepository<GroupChat, int> repository, IMapper mapper,
-        ISqlContextService sqlContextService, IChatMessageService<GroupChatMessageDto, int> groupChatMessageService,
+    public GroupChatService(IGenericRepository<GroupChat, int> repository, IMapper mapper, IChatMessageService<GroupChatMessageDto, int> groupChatMessageService,
         IServiceTransaction<GroupChatUserDto, string> groupChatUserService, IService<GroupChatRulesDto, int> groupChatRulesService)
     {
         _repository = repository;
         _mapper = mapper;
-        _sqlContextService = sqlContextService;
         _groupChatMessageService = groupChatMessageService;
         _groupChatUserService = groupChatUserService;
         _groupChatRulesService = groupChatRulesService;
@@ -42,31 +39,26 @@ internal class GroupChatService : IService<GroupChatDto, int>
 
     public async Task<int> DeleteAsync(int id)
     {
-        using var transaction = await _sqlContextService.BeginTransactionAsync(false);
         try
         {
-            await DeleteGroupChatMessagesAsync(id);
-            await DeleteGroupChatUsersAsync(transaction, id);
-            await DeleteGroupChatRulesAsync(id);
+            using var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
 
-            transaction.CreateSavepoint("BeforeDeleteGroupChat");
+            await DeleteGroupChatMessagesAsync(id);
+            await DeleteGroupChatUsersAsync(id);
+            await DeleteGroupChatRulesAsync(id);
 
             var rowsAffected = await _repository.DeleteAsync(id);
 
-            await transaction.CommitAsync();
+            scope.Complete();
 
             return rowsAffected;
         }
         catch (ArgumentException ex)
         {
-            await transaction.RollbackToSavepointAsync("BeforeDeleteGroupChat");
-
             return 0;
         }
         catch (Exception ex)
         {
-            await transaction.RollbackToSavepointAsync("BeforeDeleteGroupChat");
-
             return 0;
         }
     }
@@ -157,12 +149,12 @@ internal class GroupChatService : IService<GroupChatDto, int>
         }
     }
 
-    private async Task DeleteGroupChatUsersAsync(IDbContextTransaction transaction, int chatId)
+    private async Task DeleteGroupChatUsersAsync(int chatId)
     {
         var groupChatUsers = await _groupChatUserService.GetByParamAsync(nameof(GroupChatUserDto.ChatId), chatId);
         foreach (var item in groupChatUsers)
         {
-            var rowsAffected = await _groupChatUserService.DeleteUseExistTransactionAsync(transaction, item.Id);
+            var rowsAffected = await _groupChatUserService.DeleteUseExistTransactionAsync(item.Id);
             if (rowsAffected == 0)
             {
                 throw new ArgumentException("Group chat user didn't removed");

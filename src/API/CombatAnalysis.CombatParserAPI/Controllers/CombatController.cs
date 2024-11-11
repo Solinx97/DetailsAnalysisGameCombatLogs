@@ -4,6 +4,7 @@ using CombatAnalysis.BL.Interfaces;
 using CombatAnalysis.CombatParserAPI.Interfaces;
 using CombatAnalysis.CombatParserAPI.Models;
 using Microsoft.AspNetCore.Mvc;
+using System.Transactions;
 
 namespace CombatAnalysis.CombatParserAPI.Controllers;
 
@@ -17,17 +18,15 @@ public class CombatController : ControllerBase
     private readonly IPlayerInfoService<PlayerDeathDto, int> _plaнerDeathService;
     private readonly IMapper _mapper;
     private readonly ILogger<CombatController> _logger;
-    private readonly ISqlContextService _sqlContextService;
     private readonly ICombatDataHelper _saveCombatDataHelper;
 
     public CombatController(IService<CombatDto, int> service, IService<CombatLogDto, int> combatLogService, IMapper mapper, ILogger<CombatController> logger,
-        ISqlContextService sqlContextService, ICombatDataHelper saveCombatDataHelper, IService<CombatPlayerDto, int> combatPlayerService, IPlayerInfoService<PlayerDeathDto, int> plaнerDeathService)
+        ICombatDataHelper saveCombatDataHelper, IService<CombatPlayerDto, int> combatPlayerService, IPlayerInfoService<PlayerDeathDto, int> plaнerDeathService)
     {
         _service = service;
         _combatLogService = combatLogService;
         _mapper = mapper;
         _logger = logger;
-        _sqlContextService = sqlContextService;
         _saveCombatDataHelper = saveCombatDataHelper;
         _combatPlayerService = combatPlayerService;
         _plaнerDeathService = plaнerDeathService;
@@ -94,9 +93,10 @@ public class CombatController : ControllerBase
             return BadRequest("Model cannot be null.");
         }
 
-        using var transaction = await _sqlContextService.BeginTransactionAsync(false);
         try
         {
+            using var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
+
             var createdCombat = await CreateCombatAsync(model);
             await CreateCombatPlayersAsync(model, createdCombat);
             await CreatePlayerDeathsAsync(model);
@@ -106,12 +106,10 @@ public class CombatController : ControllerBase
             var affectedRows = await UpdateCombatLog(createdCombat.CombatLogId);
             if (affectedRows == 0)
             {
-                await transaction.RollbackAsync();
-
                 return BadRequest();
             }
 
-            await transaction.CommitAsync();
+            scope.Complete();
 
             return Ok();
         }
@@ -119,23 +117,17 @@ public class CombatController : ControllerBase
         {
             _logger.LogError(ex, "Argument(s) should not have a null value while Creating combat: {Message}", ex.Message);
 
-            await transaction.RollbackAsync();
-
             return BadRequest();
         }
         catch (ArgumentException ex)
         {
             _logger.LogError(ex, "Argument(s) incorrect while Creating combat: {Message}", ex.Message);
 
-            await transaction.RollbackAsync();
-
             return BadRequest();
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error creating combat: {Message}", ex.Message);
-
-            await transaction.RollbackAsync();
 
             return BadRequest();
         }

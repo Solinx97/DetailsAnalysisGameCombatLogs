@@ -4,21 +4,17 @@ using CombatAnalysis.ChatBL.Interfaces;
 using CombatAnalysis.ChatDAL.Entities;
 using CombatAnalysis.ChatDAL.Interfaces;
 
-
 namespace CombatAnalysis.ChatBL.Services.Chat;
 
 internal class VoiceChatService : IService<VoiceChatDto, string>
 {
     private readonly IGenericRepository<VoiceChat, string> _repository;
     private readonly IMapper _mapper;
-    private readonly ISqlContextService _sqlContextService;
 
-    public VoiceChatService(IGenericRepository<VoiceChat, string> repository, IMapper mapper,
-        ISqlContextService sqlContextService)
+    public VoiceChatService(IGenericRepository<VoiceChat, string> repository, IMapper mapper)
     {
         _repository = repository;
         _mapper = mapper;
-        _sqlContextService = sqlContextService;
     }
 
     public Task<VoiceChatDto> CreateAsync(VoiceChatDto item)

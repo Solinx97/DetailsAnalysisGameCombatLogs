@@ -2,7 +2,6 @@
 using CombatAnalysis.Identity.Security;
 using CombatAnalysis.IdentityDAL.Entities;
 using CombatAnalysis.IdentityDAL.Interfaces;
-using Microsoft.Data.SqlClient;
 using System.Security.Cryptography;
 using System.Transactions;
 

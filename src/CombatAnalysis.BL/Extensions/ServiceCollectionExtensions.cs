@@ -13,8 +13,6 @@ public static class ServiceCollectionExtensions
     {
         services.CombatParserDALDependencies(configuration, connectionName, commandTimeout);
 
-        services.AddScoped<ISqlContextService, SqlContextService>();
-
         services.AddScoped<IService<CombatLogDto, int>, CombatLogService>();
         services.AddScoped<IService<CombatLogByUserDto, int>, CombatLogByUserService>();
         services.AddScoped<IService<CombatDto, int>, CombatService>();

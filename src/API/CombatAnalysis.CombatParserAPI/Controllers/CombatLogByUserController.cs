@@ -4,6 +4,7 @@ using CombatAnalysis.BL.Interfaces;
 using CombatAnalysis.CombatParserAPI.Interfaces;
 using CombatAnalysis.CombatParserAPI.Models;
 using Microsoft.AspNetCore.Mvc;
+using System.Transactions;
 
 namespace CombatAnalysis.CombatParserAPI.Controllers;
 
@@ -17,11 +18,10 @@ public class CombatLogByUserController : ControllerBase
     private readonly IService<CombatPlayerDto, int> _combatPlayerService;
     private readonly IMapper _mapper;
     private readonly ILogger<CombatLogByUserController> _logger;
-    private readonly ISqlContextService _sqlContextService;
     private readonly ICombatDataHelper _saveCombatDataHelper;
 
     public CombatLogByUserController(IService<CombatLogByUserDto, int> service, IMapper mapper, ILogger<CombatLogByUserController> logger,
-        ISqlContextService sqlContextService, IService<CombatLogDto, int> combatLogService, IService<CombatDto, int> combatService,
+        IService<CombatLogDto, int> combatLogService, IService<CombatDto, int> combatService,
         IService<CombatPlayerDto, int> combatPlayerService, ICombatDataHelper saveCombatDataHelper)
     {
         _service = service;
@@ -30,7 +30,6 @@ public class CombatLogByUserController : ControllerBase
         _combatPlayerService = combatPlayerService;
         _mapper = mapper;
         _logger = logger;
-        _sqlContextService = sqlContextService;
         _saveCombatDataHelper = saveCombatDataHelper;
     }
 
@@ -97,22 +96,21 @@ public class CombatLogByUserController : ControllerBase
     [HttpDelete("{id:int:min(1)}")]
     public async Task<IActionResult> Delete(int id)
     {
-        using var transaction = await _sqlContextService.BeginTransactionAsync(false);
         try
         {
+            using var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
+
             await DeleteCombatLogAsync(id);
 
             var deletedId = await _service.DeleteAsync(id);
 
-            await transaction.CommitAsync();
+            scope.Complete();
 
             return Ok(deletedId);
         }
         catch (ArgumentException ex)
         {
             _logger.LogError(ex, ex.Message);
-
-            await transaction.RollbackAsync();
 
             return BadRequest();
         }

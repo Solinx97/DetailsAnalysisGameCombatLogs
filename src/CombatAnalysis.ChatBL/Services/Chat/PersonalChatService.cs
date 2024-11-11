@@ -3,6 +3,7 @@ using CombatAnalysis.ChatBL.DTO;
 using CombatAnalysis.ChatBL.Interfaces;
 using CombatAnalysis.ChatDAL.Entities;
 using CombatAnalysis.ChatDAL.Interfaces;
+using System.Transactions;
 
 namespace CombatAnalysis.ChatBL.Services.Chat;
 
@@ -11,14 +12,12 @@ internal class PersonalChatService : IService<PersonalChatDto, int>
     private readonly IGenericRepository<PersonalChat, int> _repository;
     private readonly IChatMessageService<PersonalChatMessageDto, int> _personalChatMessageService;
     private readonly IMapper _mapper;
-    private readonly ISqlContextService _sqlContextService;
 
     public PersonalChatService(IGenericRepository<PersonalChat, int> repository, IMapper mapper,
-        ISqlContextService sqlContextService, IChatMessageService<PersonalChatMessageDto, int> personalChatMessageService)
+        IChatMessageService<PersonalChatMessageDto, int> personalChatMessageService)
     {
         _repository = repository;
         _mapper = mapper;
-        _sqlContextService = sqlContextService;
         _personalChatMessageService = personalChatMessageService;
     }
 
@@ -34,28 +33,24 @@ internal class PersonalChatService : IService<PersonalChatDto, int>
 
     public async Task<int> DeleteAsync(int id)
     {
-        using var transaction = await _sqlContextService.BeginTransactionAsync(false);
         try
         {
+            using var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
+
             await DeletePersonalChatMessagesAsync(id);
-            transaction.CreateSavepoint("BeforeDeletePersonalChat");
 
             var rowsAffected = await _repository.DeleteAsync(id);
 
-            await transaction.CommitAsync();
+            scope.Complete();
 
             return rowsAffected;
         }
         catch (ArgumentException ex)
         {
-            await transaction.RollbackToSavepointAsync("BeforeDeletePersonalChat");
-
             return 0;
         }
         catch (Exception ex)
         {
-            await transaction.RollbackToSavepointAsync("BeforeDeletePersonalChat");
-
             return 0;
         }
     }
