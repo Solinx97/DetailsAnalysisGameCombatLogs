@@ -1,5 +1,11 @@
 ﻿@page
 @model CombatAnalysisIdentity.Pages.InitVerificationModel
 @{
-    <div class="new-password">We sent Verification link to your email. You can close this tab.</div>
+    <div class="send-email-verification">
+        @if (ModelState.ErrorCount == 0)
+        {
+            <div>We sent Verification link to your email. You can close this tab.</div>
+        }
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    </div>
 }

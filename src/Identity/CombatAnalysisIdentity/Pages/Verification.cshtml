@@ -1,5 +1,11 @@
 ﻿@page
 @model CombatAnalysisIdentity.Pages.VerificationModel
 @{
-    <div>Verification in progres...</div>
+    <div class="verification">
+        @if (ModelState.ErrorCount == 0)
+        {
+            <div>Verification in progres...</div>
+        }
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    </div>
 }

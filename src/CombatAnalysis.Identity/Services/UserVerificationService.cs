@@ -2,7 +2,9 @@
 using CombatAnalysis.Identity.Security;
 using CombatAnalysis.IdentityDAL.Entities;
 using CombatAnalysis.IdentityDAL.Interfaces;
+using Microsoft.Data.SqlClient;
 using System.Security.Cryptography;
+using System.Transactions;
 
 namespace CombatAnalysis.Identity.Services;
 
@@ -55,6 +57,8 @@ internal class UserVerificationService : IUserVerification
 
     public async Task<bool> ResetPasswordAsync(string token, string password)
     {
+        using var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
+
         var resetToken = await _resetTokenRepository.GetByTokenAsync(token);
         if (resetToken == null || resetToken.IsUsed || resetToken.ExpirationTime < DateTime.UtcNow)
         {
@@ -72,11 +76,15 @@ internal class UserVerificationService : IUserVerification
         resetToken.IsUsed = true;
         await _resetTokenRepository.UpdateAsync(resetToken);
 
+        scope.Complete();
+
         return true;
     }
 
     public async Task<bool> VerifyEmailAsync(string token)
     {
+        using var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
+
         var verifyToken = await _verifyEmailRepository.GetByTokenAsync(token);
         if (verifyToken == null || verifyToken.IsUsed || verifyToken.ExpirationTime < DateTime.UtcNow)
         {
@@ -94,6 +102,8 @@ internal class UserVerificationService : IUserVerification
 
         identityUser.EmailVerified = true;
         await _identityUserService.UpdateAsync(identityUser);
+
+        scope.Complete();
 
         return true;
     }

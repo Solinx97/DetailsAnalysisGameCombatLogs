@@ -76,12 +76,12 @@ const MyFeed = () => {
                         {post.communityId
                             ? <CommunityPost
                                 userId={user?.id}
-                                post={post}
+                                postId={post.id}
                                 communityId={post.communityId}
                             />
                             : <UserPost
                                 userId={user?.id}
-                                post={post}
+                                postId={post.id}
                             />
                         }
                     </li>

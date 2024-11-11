@@ -189,6 +189,11 @@ input, label {
   flex-wrap: wrap;
 }
 
+.verification, .send-email-verification {
+  display: flex;
+  justify-content: center;
+}
+
 .btn-border-shadow {
   padding: 10px 15px;
   border-radius: 10px;

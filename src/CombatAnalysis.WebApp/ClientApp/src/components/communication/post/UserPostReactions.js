@@ -115,7 +115,7 @@ const UserPostReactions = ({ userId, post, updatePostAsync, setShowComments, sho
                         title={t("Like")}
                         onClick={createPostLikeAsync}
                     />
-                    <div className="count">{post.likeCount}</div>
+                    <div className="count">{post?.likeCount}</div>
                 </div>
                 <div className="item">
                     <FontAwesomeIcon
@@ -124,7 +124,7 @@ const UserPostReactions = ({ userId, post, updatePostAsync, setShowComments, sho
                         title={t("Dislike")}
                         onClick={createPostDislikeAsync}
                     />
-                    <div className="count">{post.dislikeCount}</div>
+                    <div className="count">{post?.dislikeCount}</div>
                 </div>
                 <div className="item">
                     <FontAwesomeIcon
@@ -133,7 +133,7 @@ const UserPostReactions = ({ userId, post, updatePostAsync, setShowComments, sho
                         title={t("Comment")}
                         onClick={postCommentsHandler}
                     />
-                    <div className="count">{post.commentCount}</div>
+                    <div className="count">{post?.commentCount}</div>
                 </div>
             </div>
         </div>
