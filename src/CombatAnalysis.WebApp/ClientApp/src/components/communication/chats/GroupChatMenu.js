@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react';
-import { useTranslation } from 'react-i18next';
 import { useLazyGetUserByIdQuery } from '../../../store/api/Account.api';
 import { useRemoveGroupChatAsyncMutation } from '../../../store/api/communication/chats/GroupChat.api';
 import { useCreateGroupChatMessageAsyncMutation } from '../../../store/api/communication/chats/GroupChatMessage.api';
@@ -7,6 +6,7 @@ import { useGetGroupChatRulesByIdQuery, useUpdateGroupChatRulesAsyncMutation } f
 import {
     useRemoveGroupChatUserAsyncMutation
 } from '../../../store/api/communication/chats/GroupChatUser.api';
+import VerificationRestriction from '../../common/VerificationRestriction';
 import Members from '../Members';
 import ChatRulesItem from '../create/ChatRulesItem';
 
@@ -22,9 +22,7 @@ const defaultPayload = {
     announcements: 1,
 };
 
-const GroupChatMenu = ({ me, setUserInformation, setSelectedChat, setShowAddPeople, groupChatUsers, meInChat, chat }) => {
-    const { t } = useTranslation("communication/chats/groupChat");
-
+const GroupChatMenu = ({ me, setUserInformation, setSelectedChat, setShowAddPeople, groupChatUsers, meInChat, chat, t }) => {
     const [peopleInspectionModeOn, setPeopleInspectionModeOn] = useState(false);
     const [rulesInspectionModeOn, setRulesInspectionModeOn] = useState(false);
     const [showRemoveChatAlert, setShowRemoveChatAlert] = useState(false);
@@ -156,7 +154,13 @@ const GroupChatMenu = ({ me, setUserInformation, setSelectedChat, setShowAddPeop
                     {me?.id === chat.appUserId &&
                         <div className="btn-border-shadow" onClick={() => setShowRemoveChatAlert((item) => !item)}>{t("RemoveChat")}</div>
                     }
-                    <div className="btn-border-shadow" onClick={async () => await leaveFromChatAsync(meInChat?.id)}>{t("Leave")}</div>
+                    {me?.id === chat.appUserId
+                        ? <VerificationRestriction
+                            contentText={t("Leave")}
+                            infoText={t("YouShouldTransferRights")}
+                        />
+                        : <div className="btn-border-shadow" onClick={async () => await leaveFromChatAsync(meInChat?.id)}>{t("Leave")}</div>
+                    }
                 </div>
             </div>
             {peopleInspectionModeOn &&

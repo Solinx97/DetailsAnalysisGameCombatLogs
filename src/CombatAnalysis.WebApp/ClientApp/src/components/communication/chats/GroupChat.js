@@ -213,7 +213,7 @@ const GroupChat = ({ chat, me, setSelectedChat }) => {
                         me={me}
                         groupChatUsersId={groupChatUsersId}
                         setShowAddPeople={setShowAddPeople}
-                    groupChatUsers={groupChatData.groupChatUsers}
+                        groupChatUsers={groupChatData.groupChatUsers}
                         messageType={messageType}
                         t={t}
                     />
@@ -228,6 +228,7 @@ const GroupChat = ({ chat, me, setSelectedChat }) => {
                     groupChatUsers={groupChatData.groupChatUsers}
                     meInChat={groupChatData.meInChat}
                     chat={chat}
+                    t={t}
                 />
             }
             {userInformation}
