@@ -23,10 +23,7 @@ public class InviteToCommunityController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> Create(InviteToCommunityModel invite)
     {
-        if (!Request.Cookies.TryGetValue(AuthenticationCookie.AccessToken.ToString(), out var accessToken))
-        {
-            return Unauthorized();
-        }
+        var accessToken = HttpContext.Items[AuthenticationCookie.AccessToken.ToString()] as string;
 
         var responseMessage = await _httpClient.PostAsync("InviteToCommunity", JsonContent.Create(invite), accessToken, Port.CommunicationApi);
         if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
@@ -46,10 +43,7 @@ public class InviteToCommunityController : ControllerBase
     [HttpGet]
     public async Task<IActionResult> GetAll()
     {
-        if (!Request.Cookies.TryGetValue(AuthenticationCookie.AccessToken.ToString(), out var accessToken))
-        {
-            return Unauthorized();
-        }
+        var accessToken = HttpContext.Items[AuthenticationCookie.AccessToken.ToString()] as string;
 
         var responseMessage = await _httpClient.GetAsync("InviteToCommunity", accessToken, Port.CommunicationApi);
         if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
@@ -69,10 +63,7 @@ public class InviteToCommunityController : ControllerBase
     [HttpGet("{id:int:min(1)}")]
     public async Task<IActionResult> GetById(int id)
     {
-        if (!Request.Cookies.TryGetValue(AuthenticationCookie.AccessToken.ToString(), out var accessToken))
-        {
-            return Unauthorized();
-        }
+        var accessToken = HttpContext.Items[AuthenticationCookie.AccessToken.ToString()] as string;
 
         var responseMessage = await _httpClient.GetAsync($"InviteToCommunity/{id}", accessToken, Port.CommunicationApi);
         if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
@@ -92,10 +83,7 @@ public class InviteToCommunityController : ControllerBase
     [HttpGet("searchByUserId/{id}")]
     public async Task<IActionResult> SearchByUserId(string id)
     {
-        if (!Request.Cookies.TryGetValue(AuthenticationCookie.AccessToken.ToString(), out var accessToken))
-        {
-            return Unauthorized();
-        }
+        var accessToken = HttpContext.Items[AuthenticationCookie.AccessToken.ToString()] as string;
 
         var responseMessage = await _httpClient.GetAsync($"InviteToCommunity/searchByUserId/{id}", accessToken, Port.CommunicationApi);
         if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
@@ -115,10 +103,7 @@ public class InviteToCommunityController : ControllerBase
     [HttpGet("isExist")]
     public async Task<IActionResult> IsExist(string peopleId, int communityId)
     {
-        if (!Request.Cookies.TryGetValue(AuthenticationCookie.AccessToken.ToString(), out var accessToken))
-        {
-            return Unauthorized();
-        }
+        var accessToken = HttpContext.Items[AuthenticationCookie.AccessToken.ToString()] as string;
 
         var responseMessage = await _httpClient.GetAsync("InviteToCommunity", accessToken, Port.CommunicationApi);
         if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
@@ -143,10 +128,7 @@ public class InviteToCommunityController : ControllerBase
     [HttpPut]
     public async Task<IActionResult> Update(InviteToCommunityModel invite)
     {
-        if (!Request.Cookies.TryGetValue(AuthenticationCookie.AccessToken.ToString(), out var accessToken))
-        {
-            return Unauthorized();
-        }
+        var accessToken = HttpContext.Items[AuthenticationCookie.AccessToken.ToString()] as string;
 
         var responseMessage = await _httpClient.PutAsync("InviteToCommunity", JsonContent.Create(invite), accessToken, Port.CommunicationApi);
         if (responseMessage.StatusCode == System.Net.HttpStatusCode.OK)
@@ -160,10 +142,7 @@ public class InviteToCommunityController : ControllerBase
     [HttpDelete("{id:int:min(1)}")]
     public async Task<IActionResult> Delete(int id)
     {
-        if (!Request.Cookies.TryGetValue(AuthenticationCookie.AccessToken.ToString(), out var accessToken))
-        {
-            return Unauthorized();
-        }
+        var accessToken = HttpContext.Items[AuthenticationCookie.AccessToken.ToString()] as string;
 
         var responseMessage = await _httpClient.DeletAsync($"InviteToCommunity/{id}", accessToken, Port.CommunicationApi);
         if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)

@@ -23,10 +23,7 @@ public class CommunityDiscussionCommentController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> Create(CommunityDiscussionCommentModel newCommunity)
     {
-        if (!Request.Cookies.TryGetValue(AuthenticationCookie.AccessToken.ToString(), out var accessToken))
-        {
-            return Unauthorized();
-        }
+        var accessToken = HttpContext.Items[AuthenticationCookie.AccessToken.ToString()] as string;
 
         var responseMessage = await _httpClient.PostAsync("CommunityDiscussionComment", JsonContent.Create(newCommunity), accessToken, Port.CommunicationApi);
         if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
@@ -46,10 +43,7 @@ public class CommunityDiscussionCommentController : ControllerBase
     [HttpGet]
     public async Task<IActionResult> GetAll()
     {
-        if (!Request.Cookies.TryGetValue(AuthenticationCookie.AccessToken.ToString(), out var accessToken))
-        {
-            return Unauthorized();
-        }
+        var accessToken = HttpContext.Items[AuthenticationCookie.AccessToken.ToString()] as string;
 
         var responseMessage = await _httpClient.GetAsync("CommunityDiscussionComment", accessToken, Port.CommunicationApi);
         if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
@@ -69,10 +63,7 @@ public class CommunityDiscussionCommentController : ControllerBase
     [HttpGet("{id:int:min(1)}")]
     public async Task<IActionResult> GetById(int id)
     {
-        if (!Request.Cookies.TryGetValue(AuthenticationCookie.AccessToken.ToString(), out var accessToken))
-        {
-            return Unauthorized();
-        }
+        var accessToken = HttpContext.Items[AuthenticationCookie.AccessToken.ToString()] as string;
 
         var responseMessage = await _httpClient.GetAsync($"CommunityDiscussionComment/{id}", accessToken, Port.CommunicationApi);
         if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
@@ -92,10 +83,7 @@ public class CommunityDiscussionCommentController : ControllerBase
     [HttpGet("findByDiscussionId/{id:int:min(1)}")]
     public async Task<IActionResult> FindByDiscussionId(int id)
     {
-        if (!Request.Cookies.TryGetValue(AuthenticationCookie.AccessToken.ToString(), out var accessToken))
-        {
-            return Unauthorized();
-        }
+        var accessToken = HttpContext.Items[AuthenticationCookie.AccessToken.ToString()] as string;
 
         var responseMessage = await _httpClient.GetAsync($"CommunityDiscussionComment/findByDiscussionId/{id}", accessToken, Port.CommunicationApi);
         if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
@@ -115,7 +103,9 @@ public class CommunityDiscussionCommentController : ControllerBase
     [HttpPut]
     public async Task<IActionResult> Update(CommunityDiscussionCommentModel chat)
     {
-        var responseMessage = await _httpClient.PutAsync("CommunityDiscussionComment", JsonContent.Create(chat), Port.CommunicationApi);
+        var accessToken = HttpContext.Items[AuthenticationCookie.AccessToken.ToString()] as string;
+
+        var responseMessage = await _httpClient.PutAsync("CommunityDiscussionComment", JsonContent.Create(chat), accessToken, Port.CommunicationApi);
         if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
         {
             return Unauthorized();
@@ -131,7 +121,9 @@ public class CommunityDiscussionCommentController : ControllerBase
     [HttpDelete("{id:int:min(1)}")]
     public async Task<IActionResult> Delete(int id)
     {
-        var responseMessage = await _httpClient.DeletAsync($"CommunityDiscussionComment/{id}", Port.CommunicationApi);
+        var accessToken = HttpContext.Items[AuthenticationCookie.AccessToken.ToString()] as string;
+
+        var responseMessage = await _httpClient.DeletAsync($"CommunityDiscussionComment/{id}", accessToken, Port.CommunicationApi);
         if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
         {
             return Unauthorized();

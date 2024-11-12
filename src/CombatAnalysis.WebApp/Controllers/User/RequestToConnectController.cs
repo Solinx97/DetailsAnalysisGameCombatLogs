@@ -23,10 +23,7 @@ public class RequestToConnectController : ControllerBase
     [HttpGet("{id}")]
     public async Task<IActionResult> GetById(int id)
     {
-        if (!Request.Cookies.TryGetValue(AuthenticationCookie.AccessToken.ToString(), out var accessToken))
-        {
-            return Unauthorized();
-        }
+        var accessToken = HttpContext.Items[AuthenticationCookie.AccessToken.ToString()] as string;
 
         var responseMessage = await _httpClient.GetAsync($"RequestToConnect/{id}", accessToken, Port.UserApi);
         if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
@@ -46,10 +43,7 @@ public class RequestToConnectController : ControllerBase
     [HttpGet("searchByOwnerId/{id}")]
     public async Task<IActionResult> SearchByOwnerId(string id)
     {
-        if (!Request.Cookies.TryGetValue(AuthenticationCookie.AccessToken.ToString(), out var accessToken))
-        {
-            return Unauthorized();
-        }
+        var accessToken = HttpContext.Items[AuthenticationCookie.AccessToken.ToString()] as string;
 
         var responseMessage = await _httpClient.GetAsync($"RequestToConnect/searchByOwnerId/{id}", accessToken, Port.UserApi);
         if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
@@ -69,10 +63,7 @@ public class RequestToConnectController : ControllerBase
     [HttpGet("searchByToUserId/{id}")]
     public async Task<IActionResult> SearchByToUserId(string id)
     {
-        if (!Request.Cookies.TryGetValue(AuthenticationCookie.AccessToken.ToString(), out var accessToken))
-        {
-            return Unauthorized();
-        }
+        var accessToken = HttpContext.Items[AuthenticationCookie.AccessToken.ToString()] as string;
 
         var responseMessage = await _httpClient.GetAsync($"RequestToConnect/searchByToUserId/{id}", accessToken, Port.UserApi);
         if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
@@ -92,10 +83,7 @@ public class RequestToConnectController : ControllerBase
     [HttpGet("isExist")]
     public async Task<IActionResult> IsExist(string initiatorId, string companionId)
     {
-        if (!Request.Cookies.TryGetValue(AuthenticationCookie.AccessToken.ToString(), out var accessToken))
-        {
-            return Unauthorized();
-        }
+        var accessToken = HttpContext.Items[AuthenticationCookie.AccessToken.ToString()] as string;
 
         var responseMessage = await _httpClient.GetAsync("RequestToConnect", accessToken, Port.UserApi);
         if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
@@ -126,10 +114,7 @@ public class RequestToConnectController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> Create(RequestToConnectModel model)
     {
-        if (!Request.Cookies.TryGetValue(AuthenticationCookie.AccessToken.ToString(), out var accessToken))
-        {
-            return Unauthorized();
-        }
+        var accessToken = HttpContext.Items[AuthenticationCookie.AccessToken.ToString()] as string;
 
         var responseMessage = await _httpClient.PostAsync("RequestToConnect", JsonContent.Create(model), accessToken, Port.UserApi);
         if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
@@ -149,10 +134,7 @@ public class RequestToConnectController : ControllerBase
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(int id)
     {
-        if (!Request.Cookies.TryGetValue(AuthenticationCookie.AccessToken.ToString(), out var accessToken))
-        {
-            return Unauthorized();
-        }
+        var accessToken = HttpContext.Items[AuthenticationCookie.AccessToken.ToString()] as string;
 
         var responseMessage = await _httpClient.DeletAsync($"RequestToConnect/{id}", accessToken, Port.UserApi);
         if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)

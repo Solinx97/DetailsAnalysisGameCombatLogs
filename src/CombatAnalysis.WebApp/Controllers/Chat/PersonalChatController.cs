@@ -23,10 +23,7 @@ public class PersonalChatController : ControllerBase
     [HttpGet("{id}")]
     public async Task<IActionResult> GetByUserId(string id)
     {
-        if (!Request.Cookies.TryGetValue(AuthenticationCookie.AccessToken.ToString(), out var accessToken))
-        {
-            return Unauthorized();
-        }
+        var accessToken = HttpContext.Items[AuthenticationCookie.AccessToken.ToString()] as string;
 
         var responseMessage = await _httpClient.GetAsync($"PersonalChat", accessToken, Port.ChatApi);
         if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
@@ -47,10 +44,7 @@ public class PersonalChatController : ControllerBase
     [HttpGet("isExist")]
     public async Task<IActionResult> IsExist(string initiatorId, string companionId)
     {
-        if (!Request.Cookies.TryGetValue(AuthenticationCookie.AccessToken.ToString(), out var accessToken))
-        {
-            return Unauthorized();
-        }
+        var accessToken = HttpContext.Items[AuthenticationCookie.AccessToken.ToString()] as string;
 
         var responseMessage = await _httpClient.GetAsync($"PersonalChat", accessToken, Port.ChatApi);
         if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
@@ -79,10 +73,7 @@ public class PersonalChatController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> Create(PersonalChatModel chat)
     {
-        if (!Request.Cookies.TryGetValue(AuthenticationCookie.AccessToken.ToString(), out var accessToken))
-        {
-            return Unauthorized();
-        }
+        var accessToken = HttpContext.Items[AuthenticationCookie.AccessToken.ToString()] as string;
 
         var responseMessage = await _httpClient.PostAsync("PersonalChat", JsonContent.Create(chat), accessToken, Port.ChatApi);
         if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
@@ -101,10 +92,7 @@ public class PersonalChatController : ControllerBase
     [HttpPut]
     public async Task<IActionResult> Update(PersonalChatModel chat)
     {
-        if (!Request.Cookies.TryGetValue(AuthenticationCookie.AccessToken.ToString(), out var accessToken))
-        {
-            return Unauthorized();
-        }
+        var accessToken = HttpContext.Items[AuthenticationCookie.AccessToken.ToString()] as string;
 
         var responseMessage = await _httpClient.PutAsync("PersonalChat", JsonContent.Create(chat), accessToken, Port.ChatApi);
         if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
@@ -122,10 +110,7 @@ public class PersonalChatController : ControllerBase
     [HttpDelete("{chatId:int:min(1)}")]
     public async Task<IActionResult> Delete(int chatId)
     {
-        if (!Request.Cookies.TryGetValue(AuthenticationCookie.AccessToken.ToString(), out var accessToken))
-        {
-            return Unauthorized();
-        }
+        var accessToken = HttpContext.Items[AuthenticationCookie.AccessToken.ToString()] as string;
 
         var responseMessage = await _httpClient.DeletAsync($"PersonalChat/{chatId}", accessToken, Port.ChatApi);
         if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)

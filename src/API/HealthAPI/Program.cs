@@ -17,6 +17,7 @@ builder.Services.AddSingleton(mapper);
 
 builder.Services.AddHostedService<RefreshTokenCleanupService>();
 builder.Services.AddHostedService<AuthCodeCleanupService>();
+builder.Services.AddHostedService<VerificationEmailService>();
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

@@ -9,4 +9,6 @@ public interface IUserVerification
     Task<bool> ResetPasswordAsync(string token, string password);
 
     Task<bool> VerifyEmailAsync(string token);
+
+    void RemoveExpiredVerification();
 }

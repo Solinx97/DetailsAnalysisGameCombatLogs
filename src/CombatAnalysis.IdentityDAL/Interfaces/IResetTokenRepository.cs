@@ -11,4 +11,6 @@ public interface IResetTokenRepository
     Task UpdateAsync(ResetToken resetCode);
 
     Task<ResetToken> GetByTokenAsync(string token);
+
+    Task RemoveExpiredResetTokenAsync();
 }

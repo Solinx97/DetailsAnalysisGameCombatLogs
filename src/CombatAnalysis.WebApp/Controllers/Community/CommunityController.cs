@@ -23,10 +23,7 @@ public class CommunityController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> Create(CommunityModel newCommunity)
     {
-        if (!Request.Cookies.TryGetValue(AuthenticationCookie.AccessToken.ToString(), out var accessToken))
-        {
-            return Unauthorized();
-        }
+        var accessToken = HttpContext.Items[AuthenticationCookie.AccessToken.ToString()] as string;
 
         var responseMessage = await _httpClient.PostAsync("Community", JsonContent.Create(newCommunity), accessToken, Port.CommunicationApi);
         if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
@@ -46,7 +43,9 @@ public class CommunityController : ControllerBase
     [HttpGet]
     public async Task<IActionResult> GetAll()
     {
-        var responseMessage = await _httpClient.GetAsync("Community", Port.CommunicationApi);
+        var accessToken = HttpContext.Items[AuthenticationCookie.AccessToken.ToString()] as string;
+
+        var responseMessage = await _httpClient.GetAsync("Community", accessToken, Port.CommunicationApi);
         if (responseMessage.IsSuccessStatusCode)
         {
             var communities = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<CommunityModel>>();
@@ -60,7 +59,9 @@ public class CommunityController : ControllerBase
     [HttpGet("{id:int:min(1)}")]
     public async Task<IActionResult> GetById(int id)
     {
-        var responseMessage = await _httpClient.GetAsync($"Community/{id}", Port.CommunicationApi);
+        var accessToken = HttpContext.Items[AuthenticationCookie.AccessToken.ToString()] as string;
+
+        var responseMessage = await _httpClient.GetAsync($"Community/{id}", accessToken, Port.CommunicationApi);
         if (responseMessage.IsSuccessStatusCode)
         {
             var community = await responseMessage.Content.ReadFromJsonAsync<CommunityModel>();
@@ -74,7 +75,9 @@ public class CommunityController : ControllerBase
     [HttpPut]
     public async Task<IActionResult> Update(CommunityModel chat)
     {
-        var responseMessage = await _httpClient.PutAsync("Community", JsonContent.Create(chat), Port.CommunicationApi);
+        var accessToken = HttpContext.Items[AuthenticationCookie.AccessToken.ToString()] as string;
+
+        var responseMessage = await _httpClient.PutAsync("Community", JsonContent.Create(chat), accessToken, Port.CommunicationApi);
         if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
         {
             return Unauthorized();
@@ -90,7 +93,9 @@ public class CommunityController : ControllerBase
     [HttpDelete("{id:int:min(1)}")]
     public async Task<IActionResult> Delete(int id)
     {
-        var responseMessage = await _httpClient.DeletAsync($"Community/{id}", Port.CommunicationApi);
+        var accessToken = HttpContext.Items[AuthenticationCookie.AccessToken.ToString()] as string;
+
+        var responseMessage = await _httpClient.DeletAsync($"Community/{id}", accessToken, Port.CommunicationApi);
         if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
         {
             return Unauthorized();
@@ -106,7 +111,9 @@ public class CommunityController : ControllerBase
     [HttpGet("getWithPagination")]
     public async Task<IActionResult> GetWithPaginationAsync(int pageSize)
     {
-        var responseMessage = await _httpClient.GetAsync($"Community/getWithPagination?&pageSize={pageSize}", Port.CommunicationApi);
+        var accessToken = HttpContext.Items[AuthenticationCookie.AccessToken.ToString()] as string;
+
+        var responseMessage = await _httpClient.GetAsync($"Community/getWithPagination?&pageSize={pageSize}", accessToken, Port.CommunicationApi);
         if (responseMessage.IsSuccessStatusCode)
         {
             var communities = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<CommunityModel>>();
@@ -120,7 +127,9 @@ public class CommunityController : ControllerBase
     [HttpGet("getMoreWithPagination")]
     public async Task<IActionResult> GetMoreWithPaginationAsync(int offset, int pageSize)
     {
-        var responseMessage = await _httpClient.GetAsync($"Community/getMoreWithPagination?offset={offset}&pageSize={pageSize}", Port.CommunicationApi);
+        var accessToken = HttpContext.Items[AuthenticationCookie.AccessToken.ToString()] as string;
+
+        var responseMessage = await _httpClient.GetAsync($"Community/getMoreWithPagination?offset={offset}&pageSize={pageSize}", accessToken, Port.CommunicationApi);
         if (responseMessage.IsSuccessStatusCode)
         {
             var communities = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<CommunityModel>>();
@@ -134,7 +143,9 @@ public class CommunityController : ControllerBase
     [HttpGet("count")]
     public async Task<IActionResult> Count()
     {
-        var responseMessage = await _httpClient.GetAsync("Community/count", Port.CommunicationApi);
+        var accessToken = HttpContext.Items[AuthenticationCookie.AccessToken.ToString()] as string;
+
+        var responseMessage = await _httpClient.GetAsync("Community/count", accessToken, Port.CommunicationApi);
         if (responseMessage.IsSuccessStatusCode)
         {
             var count = await responseMessage.Content.ReadFromJsonAsync<int>();

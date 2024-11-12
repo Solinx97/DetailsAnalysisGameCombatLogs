@@ -23,10 +23,7 @@ public class UserPostController : ControllerBase
     [HttpGet("count/{appUserId}")]
     public async Task<IActionResult> Count(string appUserId)
     {
-        if (!Request.Cookies.TryGetValue(AuthenticationCookie.AccessToken.ToString(), out var accessToken))
-        {
-            return Unauthorized();
-        }
+        var accessToken = HttpContext.Items[AuthenticationCookie.AccessToken.ToString()] as string;
 
         var responseMessage = await _httpClient.GetAsync($"UserPost/count/{appUserId}", accessToken, Port.CommunicationApi);
         var count = await responseMessage.Content.ReadFromJsonAsync<int>();
@@ -37,10 +34,7 @@ public class UserPostController : ControllerBase
     [HttpGet("countByListOfAppUsers/{appUserIds}")]
     public async Task<IActionResult> CountByListOfAppUsers(string appUserIds)
     {
-        if (!Request.Cookies.TryGetValue(AuthenticationCookie.AccessToken.ToString(), out var accessToken))
-        {
-            return Unauthorized();
-        }
+        var accessToken = HttpContext.Items[AuthenticationCookie.AccessToken.ToString()] as string;
 
         var responseMessage = await _httpClient.GetAsync($"UserPost/countByListOfAppUsers/{appUserIds}", accessToken, Port.CommunicationApi);
         var count = await responseMessage.Content.ReadFromJsonAsync<int>();
@@ -51,10 +45,7 @@ public class UserPostController : ControllerBase
     [HttpGet]
     public async Task<IActionResult> GetAll()
     {
-        if (!Request.Cookies.TryGetValue(AuthenticationCookie.AccessToken.ToString(), out var accessToken))
-        {
-            return Unauthorized();
-        }
+        var accessToken = HttpContext.Items[AuthenticationCookie.AccessToken.ToString()] as string;
 
         var responseMessage = await _httpClient.GetAsync("UserPost", accessToken, Port.CommunicationApi);
         if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
@@ -74,10 +65,7 @@ public class UserPostController : ControllerBase
     [HttpGet("{id:int:min(1)}")]
     public async Task<IActionResult> GetById(int id)
     {
-        if (!Request.Cookies.TryGetValue(AuthenticationCookie.AccessToken.ToString(), out var accessToken))
-        {
-            return Unauthorized();
-        }
+        var accessToken = HttpContext.Items[AuthenticationCookie.AccessToken.ToString()] as string;
 
         var responseMessage = await _httpClient.GetAsync($"UserPost/{id}", accessToken, Port.CommunicationApi);
         if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
@@ -97,10 +85,7 @@ public class UserPostController : ControllerBase
     [HttpGet("getByUserId")]
     public async Task<IActionResult> GetByUserId(string appUserId, int pageSize)
     {
-        if (!Request.Cookies.TryGetValue(AuthenticationCookie.AccessToken.ToString(), out var accessToken))
-        {
-            return Unauthorized();
-        }
+        var accessToken = HttpContext.Items[AuthenticationCookie.AccessToken.ToString()] as string;
 
         var responseMessage = await _httpClient.GetAsync($"UserPost/getByUserId?appUserId={appUserId}&pageSize={pageSize}", accessToken, Port.CommunicationApi);
         if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
@@ -120,10 +105,7 @@ public class UserPostController : ControllerBase
     [HttpGet("getMoreByUserId")]
     public async Task<IActionResult> GetMoreByUserId(string appUserId, int offset, int pageSize)
     {
-        if (!Request.Cookies.TryGetValue(AuthenticationCookie.AccessToken.ToString(), out var accessToken))
-        {
-            return Unauthorized();
-        }
+        var accessToken = HttpContext.Items[AuthenticationCookie.AccessToken.ToString()] as string;
 
         var responseMessage = await _httpClient.GetAsync($"UserPost/getMoreByUserId?appUserId={appUserId}&offset={offset}&pageSize={pageSize}", accessToken, Port.CommunicationApi);
         if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
@@ -143,10 +125,7 @@ public class UserPostController : ControllerBase
     [HttpGet("getNewPosts")]
     public async Task<IActionResult> GetNewPosts(string appUserId, string checkFrom)
     {
-        if (!Request.Cookies.TryGetValue(AuthenticationCookie.AccessToken.ToString(), out var accessToken))
-        {
-            return Unauthorized();
-        }
+        var accessToken = HttpContext.Items[AuthenticationCookie.AccessToken.ToString()] as string;
 
         var responseMessage = await _httpClient.GetAsync($"UserPost/getNewPosts?appUserId={appUserId}&checkFrom={checkFrom}", accessToken, Port.CommunicationApi);
         if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
@@ -166,10 +145,7 @@ public class UserPostController : ControllerBase
     [HttpGet("getByListOfUserIds")]
     public async Task<IActionResult> GetByListOfUserIds(string appUserIds, int pageSize)
     {
-        if (!Request.Cookies.TryGetValue(AuthenticationCookie.AccessToken.ToString(), out var accessToken))
-        {
-            return Unauthorized();
-        }
+        var accessToken = HttpContext.Items[AuthenticationCookie.AccessToken.ToString()] as string;
 
         var responseMessage = await _httpClient.GetAsync($"UserPost/getByListOfUserIds?appUserIds={appUserIds}&pageSize={pageSize}", accessToken, Port.CommunicationApi);
         if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
@@ -189,10 +165,7 @@ public class UserPostController : ControllerBase
     [HttpGet("getMoreByListOfUserIds")]
     public async Task<IActionResult> GetMoreByListOfUserIds(string appUserIds, int offset, int pageSize)
     {
-        if (!Request.Cookies.TryGetValue(AuthenticationCookie.AccessToken.ToString(), out var accessToken))
-        {
-            return Unauthorized();
-        }
+        var accessToken = HttpContext.Items[AuthenticationCookie.AccessToken.ToString()] as string;
 
         var responseMessage = await _httpClient.GetAsync($"UserPost/getMoreByListOfUserIds?appUserIds={appUserIds}&offset={offset}&pageSize={pageSize}", accessToken, Port.CommunicationApi);
         if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
@@ -212,10 +185,7 @@ public class UserPostController : ControllerBase
     [HttpGet("getNewByListOfUserIds")]
     public async Task<IActionResult> GetNewByListOfUserIds(string appUserIds, string checkFrom)
     {
-        if (!Request.Cookies.TryGetValue(AuthenticationCookie.AccessToken.ToString(), out var accessToken))
-        {
-            return Unauthorized();
-        }
+        var accessToken = HttpContext.Items[AuthenticationCookie.AccessToken.ToString()] as string;
 
         var responseMessage = await _httpClient.GetAsync($"UserPost/getNewByListOfUserIds?appUserIds={appUserIds}&checkFrom={checkFrom}", accessToken, Port.CommunicationApi);
         if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
@@ -235,10 +205,7 @@ public class UserPostController : ControllerBase
     [HttpPut]
     public async Task<IActionResult> Update(UserPostModel model)
     {
-        if (!Request.Cookies.TryGetValue(AuthenticationCookie.AccessToken.ToString(), out var accessToken))
-        {
-            return Unauthorized();
-        }
+        var accessToken = HttpContext.Items[AuthenticationCookie.AccessToken.ToString()] as string;
 
         var responseMessage = await _httpClient.PutAsync("UserPost", JsonContent.Create(model), accessToken, Port.CommunicationApi);
         if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
@@ -256,10 +223,7 @@ public class UserPostController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> Create(UserPostModel model)
     {
-        if (!Request.Cookies.TryGetValue(AuthenticationCookie.AccessToken.ToString(), out var accessToken))
-        {
-            return Unauthorized();
-        }
+        var accessToken = HttpContext.Items[AuthenticationCookie.AccessToken.ToString()] as string;
 
         var responseMessage = await _httpClient.PostAsync("UserPost", JsonContent.Create(model), accessToken, Port.CommunicationApi);
         if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
@@ -279,10 +243,7 @@ public class UserPostController : ControllerBase
     [HttpDelete("{id:int:min(1)}")]
     public async Task<IActionResult> Delete(int id)
     {
-        if (!Request.Cookies.TryGetValue(AuthenticationCookie.AccessToken.ToString(), out var accessToken))
-        {
-            return Unauthorized();
-        }
+        var accessToken = HttpContext.Items[AuthenticationCookie.AccessToken.ToString()] as string;
 
         var responseMessage = await _httpClient.DeletAsync($"UserPost/{id}", accessToken, Port.CommunicationApi);
         if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)

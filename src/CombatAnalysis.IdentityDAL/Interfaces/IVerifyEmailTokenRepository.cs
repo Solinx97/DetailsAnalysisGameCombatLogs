@@ -11,4 +11,6 @@ public interface IVerifyEmailTokenRepository
     Task UpdateAsync(VerifyEmailToken verifyCode);
 
     Task<VerifyEmailToken> GetByTokenAsync(string token);
+
+    Task RemoveExpiredVerifyEmailTokenAsync();
 }

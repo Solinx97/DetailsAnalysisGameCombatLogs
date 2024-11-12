@@ -1,4 +1,5 @@
-﻿using CombatAnalysis.WebApp.Consts;
+﻿using CombatAnalysis.WebApp.Attributes;
+using CombatAnalysis.WebApp.Consts;
 using CombatAnalysis.WebApp.Enums;
 using CombatAnalysis.WebApp.Extensions;
 using CombatAnalysis.WebApp.Helpers;
@@ -22,15 +23,13 @@ public class AuthenticationController : ControllerBase
         _logger = logger;
     }
 
+    [RequireAccessToken]
     [HttpGet]
     public async Task<IActionResult> RefreshAccessToken()
     {
         try
         {
-            if (!Request.Cookies.TryGetValue(AuthenticationCookie.AccessToken.ToString(), out var accessToken))
-            {
-                return Ok();
-            }
+            var accessToken = HttpContext.Items[AuthenticationCookie.AccessToken.ToString()] as string;
 
             var identityUserId = AccessTokenHelper.GetUserIdFromToken(accessToken);
             var responseMessage = await _httpClient.GetAsync($"Account/find/{identityUserId}", accessToken, Port.UserApi);

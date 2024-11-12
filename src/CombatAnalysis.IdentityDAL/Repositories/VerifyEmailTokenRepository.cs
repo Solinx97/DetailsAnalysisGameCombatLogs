@@ -41,4 +41,12 @@ public class VerifyEmailTokenRepository : IVerifyEmailTokenRepository
         _context.VerifyEmailToken.Update(verifyCode);
         await _context.SaveChangesAsync();
     }
+
+    public async Task RemoveExpiredVerifyEmailTokenAsync()
+    {
+        var tokens = _context.VerifyEmailToken.Where(t => t.ExpirationTime < DateTime.UtcNow);
+        _context.VerifyEmailToken.RemoveRange(tokens);
+
+        await _context.SaveChangesAsync();
+    }
 }

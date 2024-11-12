@@ -41,4 +41,12 @@ public class ResetTokenRepository : IResetTokenRepository
         _context.ResetToken.Update(resetCode);
         await _context.SaveChangesAsync();
     }
+
+    public async Task RemoveExpiredResetTokenAsync()
+    {
+        var tokens = _context.ResetToken.Where(t => t.ExpirationTime < DateTime.UtcNow);
+        _context.ResetToken.RemoveRange(tokens);
+
+        await _context.SaveChangesAsync();
+    }
 }

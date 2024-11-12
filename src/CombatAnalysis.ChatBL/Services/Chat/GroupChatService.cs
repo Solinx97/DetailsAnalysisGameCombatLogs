@@ -3,6 +3,7 @@ using CombatAnalysis.ChatBL.DTO;
 using CombatAnalysis.ChatBL.Interfaces;
 using CombatAnalysis.ChatDAL.Entities;
 using CombatAnalysis.ChatDAL.Interfaces;
+using Microsoft.Extensions.Logging;
 using System.Transactions;
 
 namespace CombatAnalysis.ChatBL.Services.Chat;
@@ -14,23 +15,24 @@ internal class GroupChatService : IService<GroupChatDto, int>
     private readonly IChatMessageService<GroupChatMessageDto, int> _groupChatMessageService;
     private readonly IServiceTransaction<GroupChatUserDto, string> _groupChatUserService;
     private readonly IService<GroupChatRulesDto, int> _groupChatRulesService;
-
+    private readonly ILogger<GroupChatService> _logger;
 
     public GroupChatService(IGenericRepository<GroupChat, int> repository, IMapper mapper, IChatMessageService<GroupChatMessageDto, int> groupChatMessageService,
-        IServiceTransaction<GroupChatUserDto, string> groupChatUserService, IService<GroupChatRulesDto, int> groupChatRulesService)
+        IServiceTransaction<GroupChatUserDto, string> groupChatUserService, IService<GroupChatRulesDto, int> groupChatRulesService, ILogger<GroupChatService> logger)
     {
         _repository = repository;
         _mapper = mapper;
         _groupChatMessageService = groupChatMessageService;
         _groupChatUserService = groupChatUserService;
         _groupChatRulesService = groupChatRulesService;
-
+        _logger = logger;
     }
 
     public Task<GroupChatDto> CreateAsync(GroupChatDto item)
     {
         if (item == null)
         {
+            _logger.LogError("CreateAsync: GroupChatDto is null");
             throw new ArgumentNullException(nameof(GroupChatDto), $"The {nameof(GroupChatDto)} can't be null");
         }
 
@@ -55,10 +57,14 @@ internal class GroupChatService : IService<GroupChatDto, int>
         }
         catch (ArgumentException ex)
         {
+            _logger.LogWarning(ex, "ArgumentException occurred while deleting group chat with ID: {Id}", id);
+
             return 0;
         }
         catch (Exception ex)
         {
+            _logger.LogWarning(ex, "Exception occurred while deleting group chat with ID: {Id}", id);
+
             return 0;
         }
     }
@@ -91,6 +97,8 @@ internal class GroupChatService : IService<GroupChatDto, int>
     {
         if (item == null)
         {
+            _logger.LogError("UpdateAsync: GroupChatDto is null");
+            
             throw new ArgumentNullException(nameof(GroupChatDto), $"The {nameof(GroupChatDto)} can't be null");
         }
 
@@ -101,11 +109,15 @@ internal class GroupChatService : IService<GroupChatDto, int>
     {
         if (string.IsNullOrEmpty(item.Name))
         {
+            _logger.LogError("CreateInternalAsync: GroupChatDto.Name is null or empty");
+            
             throw new ArgumentNullException(nameof(GroupChatDto),
                 $"The property {nameof(GroupChatDto.Name)} of the {nameof(GroupChatDto)} object can't be null or empty");
         }
         if (string.IsNullOrEmpty(item.LastMessage))
         {
+            _logger.LogError("CreateInternalAsync: GroupChatDto.LastMessage is null or empty");
+            
             throw new ArgumentNullException(nameof(GroupChatDto),
                 $"The property {nameof(GroupChatDto.LastMessage)} of the {nameof(GroupChatDto)} object can't be null or empty");
         }
@@ -121,11 +133,15 @@ internal class GroupChatService : IService<GroupChatDto, int>
     {
         if (string.IsNullOrEmpty(item.Name))
         {
+            _logger.LogError("UpdateInternalAsync: GroupChatDto.Name is null or empty");
+            
             throw new ArgumentNullException(nameof(GroupChatDto),
                 $"The property {nameof(GroupChatDto.Name)} of the {nameof(GroupChatDto)} object can't be null or empty");
         }
         if (string.IsNullOrEmpty(item.LastMessage))
         {
+            _logger.LogError("UpdateInternalAsync: GroupChatDto.LastMessage is null or empty");
+            
             throw new ArgumentNullException(nameof(GroupChatDto),
                 $"The property {nameof(GroupChatDto.LastMessage)} of the {nameof(GroupChatDto)} object can't be null or empty");
         }
@@ -144,6 +160,8 @@ internal class GroupChatService : IService<GroupChatDto, int>
             var rowsAffected = await _groupChatMessageService.DeleteAsync(item.Id);
             if (rowsAffected == 0)
             {
+                _logger.LogWarning("Failed to delete message with ID: {UserId} for group chat with ID: {ChatId}", item.Id, chatId);
+                
                 throw new ArgumentException("Group chat message didn't removed");
             }
         }
@@ -157,6 +175,8 @@ internal class GroupChatService : IService<GroupChatDto, int>
             var rowsAffected = await _groupChatUserService.DeleteUseExistTransactionAsync(item.Id);
             if (rowsAffected == 0)
             {
+                _logger.LogWarning("Failed to delete user with ID: {UserId} for group chat with ID: {ChatId}", item.Id, chatId);
+                
                 throw new ArgumentException("Group chat user didn't removed");
             }
         }
@@ -170,6 +190,8 @@ internal class GroupChatService : IService<GroupChatDto, int>
             var rowsAffected = await _groupChatRulesService.DeleteAsync(item.Id);
             if (rowsAffected == 0)
             {
+                _logger.LogWarning("Failed to delete rule with ID: {RuleId} for group chat with ID: {ChatId}", item.Id, chatId);
+                
                 throw new ArgumentException("Group chat rules didn't removed");
             }
         }
