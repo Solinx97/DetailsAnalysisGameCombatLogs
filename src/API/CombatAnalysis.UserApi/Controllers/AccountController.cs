@@ -98,8 +98,8 @@ public class AccountController : ControllerBase
         return Ok(result);
     }
 
-    [HttpGet("check/{username}")]
     [AllowAnonymous]
+    [HttpGet("check/{username}")]
     public async Task<IActionResult> CheckByUsername(string username)
     {
         var usernameAlreadyUsed = await _service.CheckByUsernameAsync(username);

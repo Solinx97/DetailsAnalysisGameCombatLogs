@@ -17,7 +17,7 @@ app1:
     container:
         name: user-api
         image: solinx/user-api
-        tag: 0.2.2
+        tag: 0.2.5
         port: 80
     ingress:
         port: 80
@@ -32,7 +32,7 @@ app2:
     container:
         name: communication-api
         image: solinx/communication-api
-        tag: 0.2.2
+        tag: 0.2.5
         port: 80
     ingress:
         port: 80
@@ -47,7 +47,7 @@ app3:
     container:
         name: chat-api
         image: solinx/chat-api
-        tag: 0.2.2
+        tag: 0.2.5
         port: 80
     ingress:
         port: 80
@@ -62,7 +62,7 @@ app4:
     container:
         name: combat-parser-api
         image: solinx/combat-parser-api
-        tag: 0.2.2
+        tag: 0.2.5
         port: 80
     ingress:
         port: 80
