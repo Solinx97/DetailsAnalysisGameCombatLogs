@@ -7,10 +7,10 @@
         <div class="login__title">Login</div>
         <form class="login__submit" method="post">
             <div class="mb-3">
-                <input type="email" class="form-control" id="inputEmail" name="email" aria-describedby="emailHelp" placeholder="Email" required />
+                <input class="form-control" asp-for="Authorization.Email" placeholder="Email" required />
             </div>
             <div class="mb-3">
-                <input type="password" class="form-control" id="inputPassword" name="password" autoComplete="new-password" placeholder="Password" required />
+                <input class="form-control" asp-for="Authorization.Password" placeholder="Password" required />
             </div>
             <div class="actions">
                 <input type="submit" class="btn-border-shadow finish-login" value="Sign in" />

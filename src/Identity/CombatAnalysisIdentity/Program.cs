@@ -1,4 +1,6 @@
 using AutoMapper;
+using CombatAnalysis.CustomerBL.Extensions;
+using CombatAnalysis.CustomerBL.Mapping;
 using CombatAnalysis.Identity.Extensions;
 using CombatAnalysis.Identity.Mapping;
 using CombatAnalysis.Identity.Security;
@@ -33,10 +35,12 @@ if (int.TryParse(builder.Configuration["Authentication:RefreshTokenExpiresDays"]
 }
 
 builder.Services.RegisterIdentityDependencies(builder.Configuration, "DefaultConnection");
+builder.Services.CustomerBLDependencies(builder.Configuration, "UserConnection");
 
 var mappingConfig = new MapperConfiguration(mc =>
 {
     mc.AddProfile(new IdentityMapper());
+    mc.AddProfile(new CustomerBLMapper());
     mc.AddProfile(new CombatAnalysisIdentityMapper());
 });
 var mapper = mappingConfig.CreateMapper();

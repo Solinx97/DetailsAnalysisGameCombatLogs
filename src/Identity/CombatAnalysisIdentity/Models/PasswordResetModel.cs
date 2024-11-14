@@ -13,6 +13,6 @@ public class PasswordResetModel
 
     [Required]
     [DataType(DataType.Password)]
-    [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
+    [Compare("Password", ErrorMessage = "Password and confirm password should be equal")]
     public string ConfirmPassword { get; set; }
 }

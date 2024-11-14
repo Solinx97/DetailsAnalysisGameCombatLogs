@@ -12,6 +12,8 @@ public static class ServiceCollectionExtensions
     {
         services.RegisterDependenciesForDAL(configuration, connectionName);
 
+        services.AddScoped<IIdentityTransactionService, IdentityTransactionService>();
+
         services.AddScoped<IOAuthCodeFlowService, OAuthCodeFlowService>();
         services.AddScoped<IIdentityUserService, IdentityUserService>();
         services.AddScoped<IClientService, ClientService>();

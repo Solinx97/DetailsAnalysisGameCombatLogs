@@ -39,33 +39,6 @@ public class AccountController : ControllerBase
         return Ok(result);
     }
 
-    [AllowAnonymous]
-    [HttpPost]
-    public async Task<IActionResult> Create(AppUserModel model)
-    {
-        try
-        {
-            model.Id = Guid.NewGuid().ToString();
-
-            var map = _mapper.Map<AppUserDto>(model);
-            var result = await _service.CreateAsync(map);
-
-            return Ok(result);
-        }
-        catch (ArgumentNullException ex)
-        {
-            _logger.LogError(ex, $"Create App User failed: ${ex.Message}", model);
-
-            return BadRequest();
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, $"Create App User failed: ${ex.Message}", model);
-
-            return BadRequest();
-        }
-    }
-
     [HttpPut]
     public async Task<IActionResult> Update(AppUserModel model)
     {

@@ -4,6 +4,7 @@ using CombatAnalysis.CustomerDAL.Enums;
 using CombatAnalysis.CustomerDAL.Interfaces;
 using CombatAnalysis.CustomerDAL.Repositories.Firebase;
 using CombatAnalysis.CustomerDAL.Repositories.SQL;
+using CombatAnalysis.CustomerDAL.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -37,6 +38,8 @@ public static class DataCollectionExtensions
         {
             options.UseSqlServer(connection);
         });
+
+        services.AddScoped<IContextService, ContextService>();
 
         services.AddScoped<IUserRepository, SQLUserRepository>();
         services.AddScoped<IGenericRepository<Customer, string>, SQLRepository<Customer, string>>();

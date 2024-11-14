@@ -2,6 +2,7 @@ using CombatAnalysis.Identity.Interfaces;
 using CombatAnalysis.Identity.Security;
 using CombatAnalysisIdentity.Consts;
 using CombatAnalysisIdentity.Interfaces;
+using CombatAnalysisIdentity.Models;
 using CombatAnalysisIdentity.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -26,13 +27,16 @@ public class RestoreModel : PageModel
 
     public string Protocol { get; } = Authentication.Protocol;
 
-    public int SendEmailRespond { get; private set;  }
+    public int SendEmailRespond { get; private set; }
 
-    public async Task<IActionResult> OnPostAsync(string email)
+    [BindProperty]
+    public RestoreDataModel Restore { get; set; }
+
+    public async Task<IActionResult> OnPostAsync()
     {
         try
         {
-            var isPresent = await _authorizationService.CheckIfIdentityUserPresentAsync(email);
+            var isPresent = await _authorizationService.CheckIfIdentityUserPresentAsync(Restore.Email);
             if (!isPresent)
             {
                 ModelState.AddModelError(string.Empty, "User with this Email not present");
@@ -40,12 +44,12 @@ public class RestoreModel : PageModel
                 return Page();
             }
 
-            var token = await _userVerification.GenerateResetTokenAsync(email);
+            var token = await _userVerification.GenerateResetTokenAsync(Restore.Email);
 
             var redirectUri = Request.Query["redirectUri"];
             var resetLink = $"{Request.Scheme}://{Request.Host}/newPassword?token={token}&redirectUri={redirectUri}";
 
-            await SendResetPasswordToEmailAsync(email, resetLink);
+            await SendResetPasswordToEmailAsync(Restore.Email, resetLink);
 
             SendEmailRespond = 1;
 

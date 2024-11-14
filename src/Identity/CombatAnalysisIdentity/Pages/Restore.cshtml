@@ -5,7 +5,7 @@
         <div class="restore__title">Restore access</div>
         <form class="restore__submit" method="post">
             <div class="mb-3">
-                <input type="email" class="form-control" id="inputEmail" name="email" aria-describedby="emailHelp" placeholder="Email" required />
+                <input class="form-control" asp-for="Restore.Email" placeholder="Email" required />
             </div>
             <div class="actions">
                 <input type="submit" class="btn-border-shadow finish-login" value="Send" />

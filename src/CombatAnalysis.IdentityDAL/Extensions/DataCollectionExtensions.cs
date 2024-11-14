@@ -1,6 +1,7 @@
 ﻿using CombatAnalysis.IdentityDAL.Data;
 using CombatAnalysis.IdentityDAL.Interfaces;
 using CombatAnalysis.IdentityDAL.Repositories;
+using CombatAnalysis.IdentityDAL.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -17,6 +18,8 @@ public static class DataCollectionExtensions
         {
             options.UseSqlServer(connection);
         });
+
+        services.AddScoped<IContextService, ContextService>();
 
         services.AddScoped<IPkeRepository, PkeRepository>();
         services.AddScoped<IIdentityUserRepository, IdentityUserRepository>();

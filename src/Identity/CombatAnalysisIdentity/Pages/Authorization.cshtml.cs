@@ -24,23 +24,26 @@ public class AuthorizationModel : PageModel
 
     public string Protocol { get; } = Authentication.Protocol;
 
+    [BindProperty]
+    public AuthorizationDataModel Authorization { get; set; }
+
     public async Task OnGetAsync()
     {
         await RequestValidationAsync();
     }
 
-    public async Task<IActionResult> OnPostAsync(string email, string password)
+    public async Task<IActionResult> OnPostAsync()
     {
         await RequestValidationAsync();
 
         if (!ModelState.IsValid)
         {
-            ModelState.AddModelError(string.Empty, "Login data invalidate");
+            ModelState.AddModelError(string.Empty, "Invalid login attempt");
 
             return Page();
         }
 
-        var redirectUri = await _authorizationService.AuthorizationAsync(Request, email, password);
+        var redirectUri = await _authorizationService.AuthorizationAsync(Request, Authorization.Email, Authorization.Password);
         if (!string.IsNullOrEmpty(redirectUri))
         {
             return Redirect(redirectUri);

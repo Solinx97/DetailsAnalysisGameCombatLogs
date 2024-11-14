@@ -47,33 +47,6 @@ public class CustomerController : ControllerBase
         return Ok(result);
     }
 
-    [AllowAnonymous]
-    [HttpPost]
-    public async Task<IActionResult> Create(CustomerModel model)
-    {
-        try
-        {
-            model.Id = Guid.NewGuid().ToString();
-
-            var map = _mapper.Map<CustomerDto>(model);
-            var result = await _service.CreateAsync(map);
-
-            return Ok(result);
-        }
-        catch (ArgumentNullException ex)
-        {
-            _logger.LogError(ex, $"Create Customer failed: ${ex.Message}", model);
-
-            return BadRequest();
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, $"Create Customer failed: ${ex.Message}", model);
-
-            return BadRequest();
-        }
-    }
-
     [HttpPut]
     public async Task<IActionResult> Update(CustomerModel model)
     {

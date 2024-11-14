@@ -9,42 +9,42 @@
             <div class="registration__container">
                 <div class="confidential">
                     <div class="mb-3">
-                        <input type="email" class="form-control" name="email" aria-describedby="emailHelp" placeholder="Email" required />
+                        <input class="form-control" asp-for="Registration.Email" placeholder="Email" required />
                     </div>
                     <div class="mb-3">
-                        <input type="text" class="form-control" name="username" placeholder="Username" required />
+                        <input class="form-control" asp-for="Registration.Username" placeholder="Username" required />
                     </div>
                     <div class="mb-3">
-                        <input class="form-control" type="password" name="password" autoComplete="new-password" placeholder="Password" required />
+                        <input class="form-control" asp-for="Registration.Password" placeholder="Password" required />
                     </div>
                     <div class="mb-3">
-                        <input class="form-control" type="password" name="confirmPassword" autoComplete="new-password" placeholder="Confirm password" required />
+                        <input class="form-control" asp-for="Registration.ConfirmPassword" placeholder="Confirm password" required />
                     </div>
                 </div>
                 <div class="general">
                     <div class="mb-3">
                         <label for="input-birthday" class="form-label">Birthday</label>
-                        <input type="date" class="form-control" id="input-birthday" name="birthday" required />
+                        <input class="form-control" asp-for="Registration.Birthday" required />
                     </div>
                     <div class="mb-3">
-                        <input type="text" class="form-control" name="firstName" aria-describedby="emailHelp" placeholder="First name" required />
+                        <input class="form-control" asp-for="Registration.FirstName" placeholder="First name" required />
                     </div>
                     <div class="mb-3">
-                        <input type="text" class="form-control" name="lastName" placeholder="Last name" required />
+                        <input class="form-control" asp-for="Registration.LastName" placeholder="Last name" required />
                     </div>
                     <div class="mb-3">
-                        <input type="number" class="form-control" name="phoneNumber" placeholder="Phone number" required />
+                        <input class="form-control" asp-for="Registration.PhoneNumber" placeholder="Phone number" required />
                     </div>
                 </div>
                 <div class="general">
                     <div class="mb-3">
-                        <input type="text" class="form-control" name="country" placeholder="Country" required />
+                        <input class="form-control" asp-for="Registration.Country" placeholder="Country" required />
                     </div>
                     <div class="mb-3">
-                        <input type="text" class="form-control" name="city" placeholder="City" required />
+                        <input class="form-control" asp-for="Registration.City" placeholder="City" required />
                     </div>
                     <div class="mb-3">
-                        <input type="number" class="form-control" name="postCode" placeholder="Post code" required />
+                        <input class="form-control" asp-for="Registration.PostalCode" placeholder="Post code" required />
                     </div>
                 </div>
             </div>

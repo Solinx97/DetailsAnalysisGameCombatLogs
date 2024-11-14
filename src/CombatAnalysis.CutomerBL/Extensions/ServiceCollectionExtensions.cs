@@ -13,6 +13,8 @@ public static class ServiceCollectionExtensions
     {
         services.CustomerDALDependencies(configuration, connectionName);
 
+        services.AddScoped<ICustomerTransactionService, CustomerTransactionService>();
+
         services.AddScoped<IUserService<AppUserDto>, UserService>();
 
         services.AddScoped<IService<CustomerDto, string>, CustomerService>();

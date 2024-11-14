@@ -1,4 +1,6 @@
 ﻿using AutoMapper;
+using CombatAnalysis.CustomerBL.DTO;
+using CombatAnalysis.CustomerBL.Interfaces;
 using CombatAnalysis.Identity.DTO;
 using CombatAnalysis.Identity.Interfaces;
 using CombatAnalysis.Identity.Security;
@@ -15,15 +17,24 @@ internal class UserAuthorizationService : IUserAuthorizationService
     private readonly IMapper _mapper;
     private readonly IOAuthCodeFlowService _oAuthCodeFlowService;
     private readonly IIdentityUserService _identityUserService;
+    private readonly IUserService<AppUserDto> _appUserService;
+    private readonly IService<CustomerDto, string> _customerService;
+    private readonly ICustomerTransactionService _customerTransactionService;
+    private readonly IIdentityTransactionService _identityTransactionService;
     private readonly ILogger<UserAuthorizationService> _logger;
     private AuthorizationRequestModel _authorizationRequest = new AuthorizationRequestModel();
 
-    public UserAuthorizationService(IMapper mapper, IOAuthCodeFlowService oAuthCodeFlowService, IIdentityUserService identityUserService, ILogger<UserAuthorizationService> logger)
+    public UserAuthorizationService(IMapper mapper, IOAuthCodeFlowService oAuthCodeFlowService, IIdentityUserService identityUserService, ILogger<UserAuthorizationService> logger,
+        IUserService<AppUserDto> appUserService, IService<CustomerDto, string> customerService, ICustomerTransactionService customerTransactionService, IIdentityTransactionService identityTransactionService)
     {
         _mapper = mapper;
         _oAuthCodeFlowService = oAuthCodeFlowService;
         _identityUserService = identityUserService;
+        _appUserService = appUserService;
+        _customerService = customerService;
         _logger = logger;
+        _customerTransactionService = customerTransactionService;
+        _identityTransactionService = identityTransactionService;
     }
 
     async Task<string> IUserAuthorizationService.AuthorizationAsync(HttpRequest request, string email, string password)
@@ -61,25 +72,43 @@ internal class UserAuthorizationService : IUserAuthorizationService
 
     async Task<bool> IUserAuthorizationService.CreateUserAsync(IdentityUserModel identityUser, AppUserModel appUser, CustomerModel customer)
     {
-        var identityUserMap = _mapper.Map<IdentityUserDto>(identityUser);
-        await _identityUserService.CreateAsync(identityUserMap);
-
-        var httpClient = new HttpClient();
-        var responseMessage = await httpClient.PostAsync($"{Port.UserApi}api/v1/Account", JsonContent.Create(appUser));
-        if (responseMessage.IsSuccessStatusCode)
+        try
         {
-            var response = await responseMessage.Content.ReadFromJsonAsync<AppUserModel>();
+            await _customerTransactionService.BeginTransactionAsync();
+            await _identityTransactionService.BeginTransactionAsync();
 
-            customer.AppUserId = response.Id ?? string.Empty;
+            var identityUserMap = _mapper.Map<IdentityUserDto>(identityUser);
+            await _identityUserService.CreateAsync(identityUserMap);
+
+            var appUserMap = _mapper.Map<AppUserDto>(appUser);
+            await _appUserService.CreateAsync(appUserMap);
+
+            var customerMap = _mapper.Map<CustomerDto>(customer);
+            await _customerService.CreateAsync(customerMap);
+
+            await _customerTransactionService.CommitTransactionAsync();
+            await _identityTransactionService.CommitTransactionAsync();
+
+            return true;
         }
-        else
+        catch (ArgumentNullException ex)
         {
+            _logger.LogError(ex.Message);
+
+            await _customerTransactionService.RollbackTransactionAsync();
+            await _identityTransactionService.RollbackTransactionAsync();
+
             return false;
         }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex.Message);
 
-        responseMessage = await httpClient.PostAsync($"{Port.UserApi}api/v1/Customer", JsonContent.Create(customer));
+            await _customerTransactionService.RollbackTransactionAsync();
+            await _identityTransactionService.RollbackTransactionAsync();
 
-        return responseMessage.IsSuccessStatusCode;
+            return false;
+        }
     }
 
     async Task<bool> IUserAuthorizationService.CheckIfIdentityUserPresentAsync(string email)
