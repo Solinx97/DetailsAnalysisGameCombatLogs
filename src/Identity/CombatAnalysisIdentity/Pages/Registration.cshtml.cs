@@ -3,6 +3,7 @@ using CombatAnalysisIdentity.Consts;
 using CombatAnalysisIdentity.Interfaces;
 using CombatAnalysisIdentity.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace CombatAnalysisIdentity.Pages;
@@ -70,7 +71,13 @@ public class RegistrationModel : PageModel
 
         if (!ModelState.IsValid)
         {
-            ModelState.AddModelError(string.Empty, "Registration data invalidate");
+            foreach (var modelStateValue in ModelState.Values) 
+            {
+                if (modelStateValue.ValidationState == ModelValidationState.Invalid)
+                {
+                    ModelState.AddModelError(string.Empty, modelStateValue.Errors[0].ErrorMessage);
+                }
+            }
 
             return Page();
         }
@@ -125,6 +132,8 @@ public class RegistrationModel : PageModel
         var wasCreated = await _authorizationService.CreateUserAsync(_identityUser, _appUser, _customer);
         if (!wasCreated)
         {
+            ModelState.AddModelError(string.Empty, "Some problems during Registration. Please, try one more time late");
+
             return Page();
         }
 

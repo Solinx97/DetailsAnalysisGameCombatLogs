@@ -22,6 +22,7 @@ public class RegistrationDataModel
 
     [Required]
     [DataType(DataType.Date)]
+    [Attributes.MinDate(ErrorMessage = $"Birthday should be before today")]
     public DateTimeOffset Birthday { get; set; }
 
     [Required]
