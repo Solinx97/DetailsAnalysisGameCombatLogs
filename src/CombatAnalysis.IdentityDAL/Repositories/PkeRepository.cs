@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CombatAnalysis.IdentityDAL.Repositories;
 
-public class PkeRepository : IPkeRepository
+internal class PkeRepository : IPkeRepository
 {
     private readonly CombatAnalysisIdentityContext _context;
 

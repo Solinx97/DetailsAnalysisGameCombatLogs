@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CombatAnalysis.CommunicationDAL.Repositories.SQL;
 
-public class SQLCommunityRepository : SQLRepository<Community, int>, ICommunityRepository
+internal class SQLCommunityRepository : SQLRepository<Community, int>, ICommunityRepository
 {
     private readonly SQLContext _context;
 

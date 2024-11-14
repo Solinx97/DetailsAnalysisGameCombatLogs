@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CombatAnalysis.CustomerDAL.Repositories.SQL;
 
-public class SQLUserRepository : IUserRepository
+internal class SQLUserRepository : IUserRepository
 {
     private readonly CustomerSQLContext _context;
 

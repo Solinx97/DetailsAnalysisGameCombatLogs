@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CombatAnalysis.IdentityDAL.Repositories;
 
-public class VerifyEmailTokenRepository : IVerifyEmailTokenRepository
+internal class VerifyEmailTokenRepository : IVerifyEmailTokenRepository
 {
     private readonly CombatAnalysisIdentityContext _context;
 

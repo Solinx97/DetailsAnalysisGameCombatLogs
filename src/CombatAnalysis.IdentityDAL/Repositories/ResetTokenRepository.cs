@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CombatAnalysis.IdentityDAL.Repositories;
 
-public class ResetTokenRepository : IResetTokenRepository
+internal class ResetTokenRepository : IResetTokenRepository
 {
     private readonly CombatAnalysisIdentityContext _context;
 

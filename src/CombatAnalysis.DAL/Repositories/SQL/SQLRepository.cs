@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CombatAnalysis.DAL.Repositories.SQL;
 
-public class SQLRepository<TModel, TIdType> : IGenericRepository<TModel, TIdType>
+internal class SQLRepository<TModel, TIdType> : IGenericRepository<TModel, TIdType>
     where TModel : class
     where TIdType : notnull
 {

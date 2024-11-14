@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CombatAnalysis.IdentityDAL.Repositories;
 
-public class TokenRepository : ITokenRepository
+internal class TokenRepository : ITokenRepository
 {
     private readonly CombatAnalysisIdentityContext _context;
 

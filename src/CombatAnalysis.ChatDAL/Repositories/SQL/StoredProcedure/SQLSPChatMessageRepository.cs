@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CombatAnalysis.ChatDAL.Repositories.SQL.StoredProcedure;
 
-public class SQLSPChatMessageRepository<TModel, TIdType> : SQLRepository<TModel, TIdType>, IChatMessageRepository<TModel, TIdType>
+internal class SQLSPChatMessageRepository<TModel, TIdType> : SQLRepository<TModel, TIdType>, IChatMessageRepository<TModel, TIdType>
     where TModel : BaseChatMessage
     where TIdType : notnull
 {

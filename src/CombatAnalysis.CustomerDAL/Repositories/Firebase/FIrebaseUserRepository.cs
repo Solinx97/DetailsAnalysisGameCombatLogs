@@ -5,7 +5,7 @@ using Firebase.Database.Query;
 
 namespace CombatAnalysis.CustomerDAL.Repositories.Firebase;
 
-public class FIrebaseUserRepository : IUserRepository
+internal class FIrebaseUserRepository : IUserRepository
 {
     private readonly FirebaseContext _context;
 

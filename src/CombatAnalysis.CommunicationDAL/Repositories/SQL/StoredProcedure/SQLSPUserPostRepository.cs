@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CombatAnalysis.CommunicationDAL.Repositories.SQL.StoredProcedure;
 
-public class SQLSPUserPostRepository : SQLRepository<UserPost, int>, IUserPostRepository
+internal class SQLSPUserPostRepository : SQLRepository<UserPost, int>, IUserPostRepository
 {
     private readonly SQLContext _context;
 

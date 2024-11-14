@@ -6,7 +6,7 @@ using System.Text;
 
 namespace CombatAnalysis.DAL.Repositories.SQL.StoredProcedure;
 
-public class SQLSPRepository<TModel, TIdType> : IGenericRepository<TModel, TIdType>
+internal class SQLSPRepository<TModel, TIdType> : IGenericRepository<TModel, TIdType>
     where TModel : class
     where TIdType : notnull
 {

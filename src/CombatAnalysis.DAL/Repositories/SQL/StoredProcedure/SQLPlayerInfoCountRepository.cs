@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CombatAnalysis.DAL.Repositories.SQL.StoredProcedure;
 
-public class SQLPlayerInfoCountRepository<TModel, TIdType> : SQLPlayerInfoRepository<TModel, TIdType>, IPlayerInfoCount<TModel, TIdType>
+internal class SQLPlayerInfoCountRepository<TModel, TIdType> : SQLPlayerInfoRepository<TModel, TIdType>, IPlayerInfoCount<TModel, TIdType>
     where TModel : BasePlayerInfo
     where TIdType : notnull
 {
