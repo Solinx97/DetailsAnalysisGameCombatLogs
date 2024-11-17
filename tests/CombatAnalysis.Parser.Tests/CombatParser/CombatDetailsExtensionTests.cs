@@ -51,7 +51,7 @@ internal class CombatDetailsExtensionTests
         };
 
         var mockLogger = new Mock<ILogger>();
-        CombatDetailsTemplate combatDetails = new CombatDetailsDamageDone(mockLogger.Object);
+        BaseCombatDetails combatDetails = new CombatDetailsDamageDone(mockLogger.Object);
         var damageDoneGenerals = combatDetails.GetDamageDoneGeneral(damageDones, combat);
         Assert.IsNotNull(damageDoneGenerals);
 

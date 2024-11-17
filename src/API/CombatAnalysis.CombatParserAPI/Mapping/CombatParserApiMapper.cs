@@ -36,6 +36,7 @@ public class CombatParserApiMapper : Profile
 
         CreateMap<PlayerParseInfoDto, PlayerParseInfoModel>().ReverseMap();
 
+        CreateMap<CombatPlayerPositionDto, CombatPlayerPosition>().ReverseMap();
         CreateMap<DamageDoneDto, DamageDone>().ReverseMap();
         CreateMap<DamageDoneGeneralDto, DamageDoneGeneral>().ReverseMap();
         CreateMap<HealDoneDto, HealDone>().ReverseMap();

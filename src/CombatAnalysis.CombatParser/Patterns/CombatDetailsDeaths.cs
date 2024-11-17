@@ -4,7 +4,7 @@ using Microsoft.Extensions.Logging;
 
 namespace CombatAnalysis.CombatParser.Patterns;
 
-public class CombatDetailsDeaths : CombatDetailsTemplate
+public class CombatDetailsDeaths : BaseCombatDetails
 {
     private readonly ILogger _logger;
     private readonly List<CombatPlayer> _players;

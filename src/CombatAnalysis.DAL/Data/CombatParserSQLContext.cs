@@ -28,6 +28,8 @@ public class CombatParserSQLContext : DbContext
 
     public DbSet<CombatPlayer>? CombatPlayer { get; }
 
+    public DbSet<CombatPlayerPosition>? CombatPlayerPosition { get; }
+
     public DbSet<PlayerParseInfo>? PlayerParseInfo { get; }
 
     public DbSet<SpecializationScore>? SpecializationScore { get; }

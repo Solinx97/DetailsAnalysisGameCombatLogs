@@ -5,7 +5,7 @@ using System.Globalization;
 
 namespace CombatAnalysis.CombatParser.Patterns;
 
-public class CombatDetailsResourceRecovery : CombatDetailsTemplate
+public class CombatDetailsResourceRecovery : BaseCombatDetails
 {
     private readonly string[] _resourceVariations = new string[]
     {

@@ -14,6 +14,7 @@ public class CombatDataHelper : ICombatDataHelper
     private readonly IMapper _mapper;
     private readonly ILogger<CombatDataHelper> _logger;
     private readonly IPlayerParseInfoHelper _playerParseInfoHelper;
+    private readonly IPlayerInfoService<CombatPlayerPositionDto, int> _combatPlayerPositionService;
     private readonly IPlayerInfoCountService<DamageDoneDto, int> _damageDoneService;
     private readonly IPlayerInfoService<DamageDoneGeneralDto, int> _damageDoneGeneralService;
     private readonly IPlayerInfoCountService<HealDoneDto, int> _healDoneService;
@@ -27,7 +28,7 @@ public class CombatDataHelper : ICombatDataHelper
         IPlayerInfoCountService<DamageDoneDto, int> damageDoneService, IPlayerInfoService<DamageDoneGeneralDto, int> damageDoneGeneralService,
         IPlayerInfoCountService<HealDoneDto, int> healDoneService, IPlayerInfoService<HealDoneGeneralDto, int> healDoneGeneralService, IPlayerInfoCountService<DamageTakenDto, int> damageTakenService,
         IPlayerInfoService<DamageTakenGeneralDto, int> damageTakenGeneralService, IPlayerInfoCountService<ResourceRecoveryDto, int> resourceRecoveryService,
-        IPlayerInfoService<ResourceRecoveryGeneralDto, int> resourceRecoveryGeneralService)
+        IPlayerInfoService<ResourceRecoveryGeneralDto, int> resourceRecoveryGeneralService, IPlayerInfoService<CombatPlayerPositionDto, int> combatPlayerPositionService)
     {
         _mapper = mapper;
         _logger = logger;
@@ -40,6 +41,7 @@ public class CombatDataHelper : ICombatDataHelper
         _damageTakenGeneralService = damageTakenGeneralService;
         _resourceRecoveryService = resourceRecoveryService;
         _resourceRecoveryGeneralService = resourceRecoveryGeneralService;
+        _combatPlayerPositionService = combatPlayerPositionService;
     }
 
     public CombatLogModel CreateCombatLog(List<string> dungeonNames)
@@ -65,6 +67,11 @@ public class CombatDataHelper : ICombatDataHelper
     public async Task SaveCombatPlayerAsync(CombatDto combat, List<PlayerDeathModel> playersDeath, Dictionary<string, List<string>> petsId, CombatPlayerDto combatPlayer, List<string> combatData)
     {
         var parsedCombat = _mapper.Map<CombatParser.Entities.Combat>(combat);
+
+        var positionsDetails = new CombatDetailsPositions(_logger);
+        positionsDetails.GetData(combatPlayer.PlayerId, combatData);
+
+        await UploadDataAsync(positionsDetails.Positions, _combatPlayerPositionService, combatPlayer.Id);
 
         var damageDoneDetails = new CombatDetailsDamageDone(_logger)
         {

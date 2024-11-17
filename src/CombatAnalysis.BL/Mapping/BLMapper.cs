@@ -12,6 +12,7 @@ public class BLMapper : Profile
         CreateMap<CombatLogByUserDto, CombatLogByUser>().ReverseMap();
         CreateMap<CombatDto, Combat>().ReverseMap();
         CreateMap<CombatPlayerDto, CombatPlayer>().ReverseMap();
+        CreateMap<CombatPlayerPositionDto, CombatPlayerPosition>().ReverseMap();
         CreateMap<PlayerParseInfoDto, PlayerParseInfo>().ReverseMap();
         CreateMap<SpecializationScoreDto, SpecializationScore>().ReverseMap();
         CreateMap<DamageDoneDto, DamageDone>().ReverseMap();

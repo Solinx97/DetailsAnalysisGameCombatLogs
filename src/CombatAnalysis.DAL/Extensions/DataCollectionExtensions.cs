@@ -6,6 +6,7 @@ using CombatAnalysis.DAL.Interfaces;
 using CombatAnalysis.DAL.Repositories.Firebase;
 using CombatAnalysis.DAL.Repositories.SQL;
 using CombatAnalysis.DAL.Repositories.SQL.StoredProcedure;
+using CombatAnalysis.DAL.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -42,6 +43,9 @@ public static class DataCollectionExtensions
             options.UseSqlServer(connection);
         });
 
+        services.AddScoped<IContextService, ContextService>();
+
+        services.AddScoped<IPlayerInfo<CombatPlayerPosition, int>, SQLPlayerInfoRepository<CombatPlayerPosition, int>>();
         services.AddScoped<IPlayerInfo<Combat, int>, SQLPlayerInfoRepository<Combat, int>>();
         services.AddScoped<IPlayerInfoCount<DamageDone, int>, SQLPlayerInfoCountRepository<DamageDone, int>>();
         services.AddScoped<IPlayerInfo<DamageDoneGeneral, int>, SQLPlayerInfoRepository<DamageDoneGeneral, int>>();

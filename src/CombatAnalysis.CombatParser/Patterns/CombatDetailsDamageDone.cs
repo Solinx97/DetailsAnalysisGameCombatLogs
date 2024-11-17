@@ -4,7 +4,7 @@ using Microsoft.Extensions.Logging;
 
 namespace CombatAnalysis.CombatParser.Patterns;
 
-public class CombatDetailsDamageDone : CombatDetailsTemplate
+public class CombatDetailsDamageDone : BaseCombatDetails
 {
     private readonly string[] _damageVariations = new string[]
     {

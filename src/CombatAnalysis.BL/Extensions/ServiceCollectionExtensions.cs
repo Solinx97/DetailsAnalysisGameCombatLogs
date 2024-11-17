@@ -13,12 +13,15 @@ public static class ServiceCollectionExtensions
     {
         services.CombatParserDALDependencies(configuration, connectionName, commandTimeout);
 
+        services.AddScoped<ICombatTransactionService, CombatTransactionService>();
+
         services.AddScoped<IService<CombatLogDto, int>, CombatLogService>();
         services.AddScoped<IService<CombatLogByUserDto, int>, CombatLogByUserService>();
         services.AddScoped<IService<CombatDto, int>, CombatService>();
         services.AddScoped<IService<CombatPlayerDto, int>, CombatPlayerService>();
         services.AddScoped<IService<PlayerParseInfoDto, int>, PlayerParseInfoService>();
 
+        services.AddScoped<IPlayerInfoService<CombatPlayerPositionDto, int>, CombatPlayerPositionService>();
         services.AddScoped<IPlayerInfoCountService<DamageDoneDto, int>, DamageDoneService>();
         services.AddScoped<IPlayerInfoService<DamageDoneGeneralDto, int>, DamageDoneGeneralService>();
         services.AddScoped<IPlayerInfoCountService<HealDoneDto, int>, HealDoneService>();

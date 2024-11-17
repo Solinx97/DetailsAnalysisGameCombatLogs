@@ -176,7 +176,7 @@ public class CombatParserService
 
             GetCombatPlayersData(combat, petsId);
 
-            CombatDetailsTemplate combatDetailsDeaths = new CombatDetailsDeaths(_logger, combat.Players, combat);
+            BaseCombatDetails combatDetailsDeaths = new CombatDetailsDeaths(_logger, combat.Players, combat);
             combat.DeathNumber = combatDetailsDeaths.GetData(string.Empty, combat.Data);
 
             CalculatingCommonCombatDetails(combat);

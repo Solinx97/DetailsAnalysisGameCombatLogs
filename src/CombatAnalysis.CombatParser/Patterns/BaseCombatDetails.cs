@@ -2,7 +2,7 @@
 
 namespace CombatAnalysis.CombatParser.Patterns;
 
-public abstract class CombatDetailsTemplate
+public abstract class BaseCombatDetails
 {
     public List<DamageDone> DamageDone { get; protected set; }
 
@@ -11,6 +11,8 @@ public abstract class CombatDetailsTemplate
     public List<DamageTaken> DamageTaken { get; protected set; }
 
     public List<ResourceRecovery> ResourceRecovery { get; protected set; }
+
+    public List<CombatPlayerPosition> Positions { get; protected set; }
 
     public Dictionary<string, List<string>> PetsId { get; set; }
 

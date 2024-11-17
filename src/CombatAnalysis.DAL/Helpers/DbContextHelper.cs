@@ -13,6 +13,7 @@ internal static class DbContextHelper
             typeof(CombatLog),
             typeof(CombatLogByUser),
             typeof(CombatPlayer),
+            typeof(CombatPlayerPosition),
             typeof(PlayerParseInfo),
             typeof(SpecializationScore),
             typeof(Combat),
