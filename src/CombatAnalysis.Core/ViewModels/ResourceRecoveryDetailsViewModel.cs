@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using CombatAnalysis.CombatParser.Entities;
 using CombatAnalysis.CombatParser.Extensions;
-using CombatAnalysis.CombatParser.Patterns;
+using CombatAnalysis.CombatParser.Details;
 using CombatAnalysis.Core.Interfaces;
 using CombatAnalysis.Core.Models;
 using CombatAnalysis.Core.ViewModels.ViewModelTemplates;
@@ -25,13 +25,13 @@ public class ResourceRecoveryDetailsViewModel : DetailsGenericTemplate<ResourceR
     {
         var selectedCombatMap = _mapper.Map<Combat>(SelectedCombat);
 
-        var resourceRecovery = new CombatDetailsResourceRecovery(_logger);
-        resourceRecovery.GetData(parameter.PlayerId, SelectedCombat.Data);
+        var combatDetails = new CombatDetails(_logger);
+        combatDetails.Calculate(parameter.PlayerId, SelectedCombat.Data);
 
-        var healDoneMap = _mapper.Map<List<ResourceRecoveryModel>>(resourceRecovery.ResourceRecovery);
+        var healDoneMap = _mapper.Map<List<ResourceRecoveryModel>>(combatDetails.ResourcesRecovery);
         DetailsInformations = new ObservableCollection<ResourceRecoveryModel>(healDoneMap);
 
-        var healDoneGeneralData = resourceRecovery.GetResourceRecoveryGeneral(resourceRecovery.ResourceRecovery, selectedCombatMap);
+        var healDoneGeneralData = combatDetails.GetResourceRecoveryGeneral(combatDetails.ResourcesRecovery, selectedCombatMap);
         var healDoneGeneralMap = _mapper.Map<List<ResourceRecoveryGeneralModel>>(healDoneGeneralData);
         GeneralInformations = new ObservableCollection<ResourceRecoveryGeneralModel>(healDoneGeneralMap);
     }
@@ -62,7 +62,7 @@ public class ResourceRecoveryDetailsViewModel : DetailsGenericTemplate<ResourceR
 
     protected override void SetTotalValue(CombatPlayerModel parameter)
     {
-        TotalValue = parameter.EnergyRecovery;
+        TotalValue = parameter.ResourcesRecovery;
     }
 
     protected override void TurnOnAllFilters()

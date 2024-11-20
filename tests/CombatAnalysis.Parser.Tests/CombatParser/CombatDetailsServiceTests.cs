@@ -1,5 +1,5 @@
 ﻿using CombatAnalysis.CombatParser.Entities;
-using CombatAnalysis.CombatParser.Patterns;
+using CombatAnalysis.CombatParser.Details;
 using Microsoft.Extensions.Logging;
 using Moq;
 
@@ -22,8 +22,10 @@ internal class CombatDetailsServiceTests
         };
 
         var mockLogger = new Mock<ILogger>();
-        var combatDetails = new CombatDetailsDamageDone(mockLogger.Object);
-        var damageDone = combatDetails.GetData("Волако", combat.Data);
+        var combatDetails = new CombatDetails(mockLogger.Object);
+        combatDetails.Calculate("Волако", combat.Data);
+
+        var damageDone = combatDetails.DamageDone.Sum(x => x.Value);
 
         var expectedDamageDone = 1330;
 
@@ -44,8 +46,10 @@ internal class CombatDetailsServiceTests
         };
 
         var mockLogger = new Mock<ILogger>();
-        var combatDetails = new CombatDetailsDamageDone(mockLogger.Object);
-        var damageDone = combatDetails.GetData("Воларн", combat.Data);
+        var combatDetails = new CombatDetails(mockLogger.Object);
+        combatDetails.Calculate("Воларн", combat.Data);
+
+        var damageDone = combatDetails.DamageDone.Sum(x => x.Value);
 
         var expectedDamageDone = 446;
 
@@ -66,8 +70,10 @@ internal class CombatDetailsServiceTests
         };
 
         var mockLogger = new Mock<ILogger>();
-        var combatDetails = new CombatDetailsDamageDone(mockLogger.Object);
-        var damageDone = combatDetails.GetData("Протоп", combat.Data);
+        var combatDetails = new CombatDetails(mockLogger.Object);
+        combatDetails.Calculate("Протоп", combat.Data);
+
+        var damageDone = combatDetails.DamageDone.Sum(x => x.Value);
 
         var expectedDamageDone = 178;
 
@@ -88,8 +94,10 @@ internal class CombatDetailsServiceTests
         };
 
         var mockLogger = new Mock<ILogger>();
-        var combatDetails = new CombatDetailsDamageDone(mockLogger.Object);
-        var damageDone = combatDetails.GetData("Коян", combat.Data);
+        var combatDetails = new CombatDetails(mockLogger.Object);
+        combatDetails.Calculate("Коян", combat.Data);
+
+        var damageDone = combatDetails.DamageDone.Sum(x => x.Value);
 
         var expectedDamageDone = 0;
 
@@ -110,8 +118,10 @@ internal class CombatDetailsServiceTests
         };
 
         var mockLogger = new Mock<ILogger>();
-        var combatDetails = new CombatDetailsDamageDone(mockLogger.Object);
-        var damageDone = combatDetails.GetData("Форит", combat.Data);
+        var combatDetails = new CombatDetails(mockLogger.Object);
+        combatDetails.Calculate("Форит", combat.Data);
+
+        var damageDone = combatDetails.DamageDone.Sum(x => x.Value);
 
         var expectedDamageDone = 0;
 
@@ -132,8 +142,10 @@ internal class CombatDetailsServiceTests
         };
 
         var mockLogger = new Mock<ILogger>();
-        var combatDetails = new CombatDetailsDamageDone(mockLogger.Object);
-        var damageDone = combatDetails.GetData("Хунтер", combat.Data);
+        var combatDetails = new CombatDetails(mockLogger.Object);
+        combatDetails.Calculate("Хунтер", combat.Data);
+
+        var damageDone = combatDetails.DamageDone.Sum(x => x.Value);
 
         var expectedDamageDone = 1665;
 
@@ -154,8 +166,10 @@ internal class CombatDetailsServiceTests
         };
 
         var mockLogger = new Mock<ILogger>();
-        var combatDetails = new CombatDetailsDamageDone(mockLogger.Object);
-        var damageDone = combatDetails.GetData("Волибир", combat.Data);
+        var combatDetails = new CombatDetails(mockLogger.Object);
+        combatDetails.Calculate("Волибир", combat.Data);
+
+        var damageDone = combatDetails.DamageDone.Sum(x => x.Value);
 
         var expectedDamageDone = 0;
 
@@ -176,8 +190,10 @@ internal class CombatDetailsServiceTests
         };
 
         var mockLogger = new Mock<ILogger>();
-        var combatDetails = new CombatDetailsHealDone(mockLogger.Object);
-        var healDone = combatDetails.GetData("Шопи", combat.Data);
+        var combatDetails = new CombatDetails(mockLogger.Object);
+        combatDetails.Calculate("Шопи", combat.Data);
+
+        var healDone = combatDetails.HealDone.Sum(x => x.Value);
 
         var expectedHealDone = 861;
 
@@ -198,8 +214,10 @@ internal class CombatDetailsServiceTests
         };
 
         var mockLogger = new Mock<ILogger>();
-        var combatDetails = new CombatDetailsHealDone(mockLogger.Object);
-        var healDone = combatDetails.GetData("Дру", combat.Data);
+        var combatDetails = new CombatDetails(mockLogger.Object);
+        combatDetails.Calculate("Дру", combat.Data);
+
+        var healDone = combatDetails.HealDone.Sum(x => x.Value);
 
         var expectedHealDone = 816;
 
@@ -220,8 +238,10 @@ internal class CombatDetailsServiceTests
         };
 
         var mockLogger = new Mock<ILogger>();
-        var combatDetails = new CombatDetailsDamageTaken(mockLogger.Object);
-        var damageTaken = combatDetails.GetData("Протоппе", combat.Data);
+        var combatDetails = new CombatDetails(mockLogger.Object);
+        combatDetails.Calculate("Протоппе", combat.Data);
+
+        var damageTaken = combatDetails.DamageTaken.Sum(x => x.Value);
 
         var expectedDamageTaken = 19;
 
@@ -242,8 +262,10 @@ internal class CombatDetailsServiceTests
         };
 
         var mockLogger = new Mock<ILogger>();
-        var combatDetails = new CombatDetailsDamageTaken(mockLogger.Object);
-        var damageTaken = combatDetails.GetData("Волирнв", combat.Data);
+        var combatDetails = new CombatDetails(mockLogger.Object);
+        combatDetails.Calculate("Волирнв", combat.Data);
+
+        var damageTaken = combatDetails.DamageTaken.Sum(x => x.Value);
 
         var expectedDamageTaken = 2114;
 
@@ -264,8 +286,10 @@ internal class CombatDetailsServiceTests
         };
 
         var mockLogger = new Mock<ILogger>();
-        var combatDetails = new CombatDetailsDamageTaken(mockLogger.Object);
-        var damageTaken = combatDetails.GetData("Протопвр", combat.Data);
+        var combatDetails = new CombatDetails(mockLogger.Object);
+        combatDetails.Calculate("Протопвр", combat.Data);
+
+        var damageTaken = combatDetails.DamageTaken.Sum(x => x.Value);
 
         var expectedDamageTaken = 1624;
 
@@ -286,8 +310,10 @@ internal class CombatDetailsServiceTests
         };
 
         var mockLogger = new Mock<ILogger>();
-        var combatDetails = new CombatDetailsDamageTaken(mockLogger.Object);
-        var damageTaken = combatDetails.GetData("Протопен", combat.Data);
+        var combatDetails = new CombatDetails(mockLogger.Object);
+        combatDetails.Calculate("Протопен", combat.Data);
+
+        var damageTaken = combatDetails.DamageTaken.Sum(x => x.Value);
 
         var expectedDamageTaken = 0;
 
@@ -308,8 +334,10 @@ internal class CombatDetailsServiceTests
         };
 
         var mockLogger = new Mock<ILogger>();
-        var combatDetails = new CombatDetailsDamageTaken(mockLogger.Object);
-        var damageTaken = combatDetails.GetData("Форит", combat.Data);
+        var combatDetails = new CombatDetails(mockLogger.Object);
+        combatDetails.Calculate("Форит", combat.Data);
+
+        var damageTaken = combatDetails.DamageTaken.Sum(x => x.Value);
 
         var expectedDamageTaken = 0;
 
@@ -330,8 +358,10 @@ internal class CombatDetailsServiceTests
         };
 
         var mockLogger = new Mock<ILogger>();
-        var combatDetails = new CombatDetailsDamageTaken(mockLogger.Object);
-        var damageDone = combatDetails.GetData("Хунтер", combat.Data);
+        var combatDetails = new CombatDetails(mockLogger.Object);
+        combatDetails.Calculate("Хунтер", combat.Data);
+
+        var damageDone = combatDetails.DamageDone.Sum(x => x.Value);
 
         var expectedDamageDone = 0;
 
@@ -352,8 +382,10 @@ internal class CombatDetailsServiceTests
         };
 
         var mockLogger = new Mock<ILogger>();
-        var combatDetails = new CombatDetailsDamageTaken(mockLogger.Object);
-        var damageTaken = combatDetails.GetData("Волибир", combat.Data);
+        var combatDetails = new CombatDetails(mockLogger.Object);
+        combatDetails.Calculate("Волибир", combat.Data);
+
+        var damageTaken = combatDetails.DamageTaken.Sum(x => x.Value);
 
         var expectedDamageTaken = 0;
 
@@ -374,8 +406,10 @@ internal class CombatDetailsServiceTests
         };
 
         var mockLogger = new Mock<ILogger>();
-        var combatDetails = new CombatDetailsResourceRecovery(mockLogger.Object);
-        var resourceRecovery = combatDetails.GetData("Пратоапуы", combat.Data);
+        var combatDetails = new CombatDetails(mockLogger.Object);
+        combatDetails.Calculate("Пратоапуы", combat.Data);
+
+        var resourceRecovery = combatDetails.ResourcesRecovery.Sum(x => x.Value);
 
         var expectedResourceRecovery = 28;
 
@@ -407,7 +441,7 @@ internal class CombatDetailsServiceTests
 
     //    var mockLogger = new Mock<ILogger>();
     //    var combatDetails = new CombatDetailsDeaths(mockLogger.Object, combat.Players);
-    //    var deathNumber = combatDetails.GetData("Никуапа", combat.Data);
+    //    var deathNumber = combatDetails.Calculate("Никуапа", combat.Data);
 
     //    var expectedDeathNumber = 1;
 

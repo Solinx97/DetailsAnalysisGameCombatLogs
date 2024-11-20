@@ -1,7 +1,7 @@
 ﻿using CombatAnalysis.CombatParser.Core;
 using CombatAnalysis.CombatParser.Entities;
 using CombatAnalysis.CombatParser.Interfaces;
-using CombatAnalysis.CombatParser.Patterns;
+using CombatAnalysis.CombatParser.Details;
 using Microsoft.Extensions.Logging;
 using System.Collections.Concurrent;
 using System.Globalization;
@@ -11,7 +11,6 @@ namespace CombatAnalysis.CombatParser.Services;
 
 public class CombatParserService
 {
-    private readonly IList<Interfaces.IObserver<Combat>> _combatObservers;
     private readonly IList<PlaceInformation> _zones;
     private readonly IFileManager _fileManager;
     private readonly ILogger _logger;
@@ -26,7 +25,6 @@ public class CombatParserService
         _logger = logger;
 
         Combats = new List<Combat>();
-        _combatObservers = new List<Interfaces.IObserver<Combat>>();
         _zones = new List<PlaceInformation>();
     }
 
@@ -176,7 +174,7 @@ public class CombatParserService
 
             GetCombatPlayersData(combat, petsId);
 
-            BaseCombatDetails combatDetailsDeaths = new CombatDetailsDeaths(_logger, combat.Players, combat);
+            var combatDetailsDeaths = new CombatDetailsDeaths(_logger, combat.Players, combat);
             combat.DeathNumber = combatDetailsDeaths.GetData(string.Empty, combat.Data);
 
             CalculatingCommonCombatDetails(combat);
@@ -248,7 +246,7 @@ public class CombatParserService
         combat.DamageDone = players.Sum(player => player.DamageDone);
         combat.HealDone = players.Sum(player => player.HealDone);
         combat.DamageTaken = players.Sum(player => player.DamageTaken);
-        combat.EnergyRecovery = players.Sum(player => player.EnergyRecovery);
+        combat.EnergyRecovery = players.Sum(player => player.ResourcesRecovery);
     }
 
     private void AddNewCombat(Combat combat)
@@ -290,24 +288,18 @@ public class CombatParserService
             var averageItemLevel = GetAverageItemLevel(playerCombatantInfoArray[1]);
             int usedBuffs = GetUsedBuffs(playerCombatantInfoArray[3]);
 
-            var combatDetailsDamageDone = new CombatDetailsDamageDone(_logger)
-            {
-                PetsId = petsId
-            };
-
-            var combatDetailsHealDone = new CombatDetailsHealDone(_logger);
-            var combatDetailsDamageTaken = new CombatDetailsDamageTaken(_logger);
-            var combatDetailsResourceRecovery = new CombatDetailsResourceRecovery(_logger);
+            var combatDetails = new CombatDetails(_logger, petsId);
+            combatDetails.Calculate(item.Key, combat.Data);
 
             var combatPlayerData = new CombatPlayer
             {
                 Username = username,
                 PlayerId = item.Key,
                 AverageItemLevel = double.Round(averageItemLevel, 2),
-                EnergyRecovery = combatDetailsResourceRecovery.GetData(item.Key, combat.Data),
-                DamageDone = combatDetailsDamageDone.GetData(item.Key, combat.Data),
-                HealDone = combatDetailsHealDone.GetData(item.Key, combat.Data),
-                DamageTaken = combatDetailsDamageTaken.GetData(item.Key, combat.Data),
+                ResourcesRecovery = combatDetails.ResourcesRecovery.Sum(x => x.Value),
+                DamageDone = combatDetails.DamageDone.Sum(x => x.Value),
+                HealDone = combatDetails.HealDone.Sum(x => x.Value),
+                DamageTaken = combatDetails.DamageTaken.Sum(x => x.Value),
                 UsedBuffs = usedBuffs,
             };
 

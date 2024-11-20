@@ -1,18 +1,21 @@
 ﻿using CombatAnalysis.CombatParser.Entities;
-using CombatAnalysis.CombatParser.Patterns;
+using CombatAnalysis.CombatParser.Details;
 using System.Collections.ObjectModel;
 
 namespace CombatAnalysis.CombatParser.Extensions;
 
 public static class CombatDetailsExtension
 {
-    public static ObservableCollection<DamageDoneGeneral> GetDamageDoneGeneral(this BaseCombatDetails extension, List<DamageDone> collection, Combat combat)
+    public static ObservableCollection<DamageDoneGeneral> GetDamageDoneGeneral(this CombatDetails _, List<DamageDone> collection, Combat combat)
     {
         var spells = collection
             .GroupBy(group => group.SpellOrItem)
             .Select(select => select.ToList()).ToList();
 
-        TimeSpan.TryParse(combat.Duration, out var durationTime);
+        if (TimeSpan.TryParse(combat.Duration, out var durationTime))
+        {
+            return null;
+        }
 
         var lessDetails = new List<DamageDoneGeneral>();
         foreach (var item in spells)
@@ -42,13 +45,16 @@ public static class CombatDetailsExtension
         return damageDoneGroupBySpellOrItem;
     }
 
-    public static ObservableCollection<HealDoneGeneral> GetHealDoneGeneral(this BaseCombatDetails extension, List<HealDone> collection, Combat combat)
+    public static ObservableCollection<HealDoneGeneral> GetHealDoneGeneral(this CombatDetails _, List<HealDone> collection, Combat combat)
     {
         var spells = collection
             .GroupBy(group => group.SpellOrItem)
             .Select(select => select.ToList());
 
-        TimeSpan.TryParse(combat.Duration, out var durationTime);
+        if (TimeSpan.TryParse(combat.Duration, out var durationTime))
+        {
+            return null;
+        }
 
         var lessDetails = new List<HealDoneGeneral>();
         foreach (var item in spells)
@@ -78,13 +84,16 @@ public static class CombatDetailsExtension
         return healDoneGroupBySpellOrItem;
     }
 
-    public static ObservableCollection<DamageTakenGeneral> GetDamageTakenGeneral(this BaseCombatDetails extension, List<DamageTaken> collection, Combat combat)
+    public static ObservableCollection<DamageTakenGeneral> GetDamageTakenGeneral(this CombatDetails _, List<DamageTaken> collection, Combat combat)
     {
         var spells = collection
             .GroupBy(group => group.SpellOrItem)
             .Select(select => select.ToList());
 
-        TimeSpan.TryParse(combat.Duration, out var durationTime);
+        if (TimeSpan.TryParse(combat.Duration, out var durationTime))
+        {
+            return null;
+        }
 
         var lessDetails = new List<DamageTakenGeneral>();
         foreach (var item in spells)
@@ -114,13 +123,16 @@ public static class CombatDetailsExtension
         return damageTakenGroupBySpellOrItem;
     }
 
-    public static ObservableCollection<ResourceRecoveryGeneral> GetResourceRecoveryGeneral(this BaseCombatDetails extension, List<ResourceRecovery> collection, Combat combat)
+    public static ObservableCollection<ResourceRecoveryGeneral> GetResourceRecoveryGeneral(this CombatDetails _, List<ResourceRecovery> collection, Combat combat)
     {
         var spells = collection
             .GroupBy(group => group.SpellOrItem)
             .Select(select => select.ToList());
 
-        TimeSpan.TryParse(combat.Duration, out var durationTime);
+        if (TimeSpan.TryParse(combat.Duration, out var durationTime))
+        {
+            return null;
+        }
 
         var lessDetails = new List<ResourceRecoveryGeneral>();
         foreach (var item in spells)

@@ -694,7 +694,7 @@ public class DetailsSpecificalCombatViewModel : ParentTemplate<CombatModel>
 
         var damageDone = PlayersCombat.Average(x => x.DamageDone);
         var healDone = PlayersCombat.Average(x => x.HealDone);
-        var energyRecovery = PlayersCombat.Average(x => x.EnergyRecovery);
+        var energyRecovery = PlayersCombat.Average(x => x.ResourcesRecovery);
 
         AverageDamage = double.Round(damageDone, 2);
         AverageHeal = double.Round(healDone, 2);
@@ -706,7 +706,7 @@ public class DetailsSpecificalCombatViewModel : ParentTemplate<CombatModel>
 
         TotalDamage = PlayersCombat.Sum(x => x.DamageDone);
         TotalHeal = PlayersCombat.Sum(x => x.HealDone);
-        TotalResoures = PlayersCombat.Sum(x => x.EnergyRecovery);
+        TotalResoures = PlayersCombat.Sum(x => x.ResourcesRecovery);
 
         TotalDamagePerSecond = PlayersCombat.Sum(x => x.DamageDonePerSecond);
         TotalHealPerSecond = PlayersCombat.Sum(x => x.HealDonePerSecond);
@@ -816,7 +816,7 @@ public class DetailsSpecificalCombatViewModel : ParentTemplate<CombatModel>
         var temporaryPlayersCombat = new List<CombatPlayerModel>();
         foreach (var player in PlayersCombat)
         {
-            if (player.EnergyRecovery >= minEnergyRecovery)
+            if (player.ResourcesRecovery >= minEnergyRecovery)
             {
                 temporaryPlayersCombat.Add(player);
             }

@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using CombatAnalysis.CombatParser.Entities;
 using CombatAnalysis.CombatParser.Extensions;
-using CombatAnalysis.CombatParser.Patterns;
+using CombatAnalysis.CombatParser.Details;
 using CombatAnalysis.Core.Core;
 using CombatAnalysis.Core.Interfaces;
 using CombatAnalysis.Core.Models;
@@ -158,17 +158,14 @@ public class DamageDoneDetailsViewModel : DetailsGenericTemplate<DamageDoneModel
     {
         var selectedCombatMap = _mapper.Map<Combat>(SelectedCombat);
 
-        var damageDpneDetails = new CombatDetailsDamageDone(_logger)
-        {
-            PetsId = _petsId,
-        };
-        damageDpneDetails.GetData(parameter.PlayerId, SelectedCombat.Data);
+        var combatDetails = new CombatDetails(_logger, _petsId);
+        combatDetails.Calculate(parameter.PlayerId, SelectedCombat.Data);
 
-        var damageDoneMap = _mapper.Map<List<DamageDoneModel>>(damageDpneDetails.DamageDone);
+        var damageDoneMap = _mapper.Map<List<DamageDoneModel>>(combatDetails.DamageDone);
         DetailsInformations = new ObservableCollection<DamageDoneModel>(damageDoneMap);
         _allDetailsInformations = new List<DamageDoneModel>(damageDoneMap);
 
-        var damageDoneGeneralData = damageDpneDetails.GetDamageDoneGeneral(damageDpneDetails.DamageDone, selectedCombatMap);
+        var damageDoneGeneralData = combatDetails.GetDamageDoneGeneral(combatDetails.DamageDone, selectedCombatMap);
         var damageDoneGeneralMap = _mapper.Map<List<DamageDoneGeneralModel>>(damageDoneGeneralData);
         GeneralInformations = new ObservableCollection<DamageDoneGeneralModel>(damageDoneGeneralMap);
         _allGeneralInformations = new List<DamageDoneGeneralModel>(damageDoneGeneralMap);

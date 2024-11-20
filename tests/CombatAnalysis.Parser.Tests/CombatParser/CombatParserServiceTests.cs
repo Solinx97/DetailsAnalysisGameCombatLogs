@@ -109,7 +109,7 @@ internal class CombatParserServiceTests
             DamageDone = 10,
             DamageTaken = 15,
             HealDone = 20,
-            EnergyRecovery = 25,
+            ResourcesRecovery = 25,
             UsedBuffs = 2,
         };
         var expectedCombat = new Combat

@@ -1,4 +1,4 @@
-import { faBolt, faBookSkull, faCheck, faCircleNodes, faClock, faDatabase, faGraduationCap, faHourglassStart, faKhanda, faPlusCircle, faShieldHalved, faSkull } from '@fortawesome/free-solid-svg-icons';
+import { faBolt, faBookSkull, faCheck, faCircleNodes, faClock, faDatabase, faGraduationCap, faHourglassStart, faKhanda, faPlusCircle, faShieldHalved, faSkull, faGlobe } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { format } from 'date-fns';
 import React, { useEffect, useState } from 'react';
@@ -90,6 +90,11 @@ const GeneralAnalysisItem = ({ uniqueCombats, combatLogId }) => {
                             title={t("NotReady")}
                         />
                     }
+                    <FontAwesomeIcon
+                        icon={faGlobe}
+                        title={t("PlayerMovements")}
+                        onClick={() => navigate(`/player-movements`)}
+                    />
                 </div>
                 <div className="combat-time">
                     <div className="combat-time__range">
@@ -146,7 +151,7 @@ const GeneralAnalysisItem = ({ uniqueCombats, combatLogId }) => {
                         className="list-group-item__energy-recovery"
                         title={t("ResourcesRecovery")}
                     />
-                    <div>{uniqueCombats[selectedCombatIndex].energyRecovery}</div>
+                    <div>{uniqueCombats[selectedCombatIndex].resourcesRecovery}</div>
                 </li>
                 <li className="list-group-item">
                     <FontAwesomeIcon

@@ -2,9 +2,9 @@
 using CombatAnalysis.CombatParser.Entities;
 using Microsoft.Extensions.Logging;
 
-namespace CombatAnalysis.CombatParser.Patterns;
+namespace CombatAnalysis.CombatParser.Details;
 
-public class CombatDetailsDeaths : BaseCombatDetails
+public class CombatDetailsDeaths
 {
     private readonly ILogger _logger;
     private readonly List<CombatPlayer> _players;
@@ -17,7 +17,7 @@ public class CombatDetailsDeaths : BaseCombatDetails
         _combat = combat;
     }
 
-    public override int GetData(string player, List<string> combatData)
+    public int GetData(string player, List<string> combatData)
     {
         int deaths = 0;
         foreach (var item in combatData)

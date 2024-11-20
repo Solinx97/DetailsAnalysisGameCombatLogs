@@ -6,7 +6,7 @@ public class CombatPlayerModel
 
     public string UserName { get; set; }
 
-    public int EnergyRecovery { get; set; }
+    public int ResourcesRecovery { get; set; }
 
     public int DamageDone { get; set; }
 

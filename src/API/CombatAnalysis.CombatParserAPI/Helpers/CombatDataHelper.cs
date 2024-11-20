@@ -2,7 +2,7 @@
 using CombatAnalysis.BL.DTO;
 using CombatAnalysis.BL.Interfaces;
 using CombatAnalysis.CombatParser.Extensions;
-using CombatAnalysis.CombatParser.Patterns;
+using CombatAnalysis.CombatParser.Details;
 using CombatAnalysis.CombatParserAPI.Interfaces;
 using CombatAnalysis.CombatParserAPI.Models;
 using System.Text;
@@ -68,43 +68,17 @@ public class CombatDataHelper : ICombatDataHelper
     {
         var parsedCombat = _mapper.Map<CombatParser.Entities.Combat>(combat);
 
-        var positionsDetails = new CombatDetailsPositions(_logger);
-        positionsDetails.GetData(combatPlayer.PlayerId, combatData);
+        var combatDetails = new CombatDetails(_logger, petsId);
 
-        await UploadDataAsync(positionsDetails.Positions, _combatPlayerPositionService, combatPlayer.Id);
+        combatDetails.Calculate(combatPlayer.PlayerId, combatData);
 
-        var damageDoneDetails = new CombatDetailsDamageDone(_logger)
-        {
-            PetsId = petsId,
-        };
-        damageDoneDetails.GetData(combatPlayer.PlayerId, combatData);
-
-        var damageDoneGeneralData = damageDoneDetails.GetDamageDoneGeneral(damageDoneDetails.DamageDone, parsedCombat);
-        var damageDoneGeneralList = damageDoneGeneralData.ToList();
-
-        await UploadDataAsync(damageDoneDetails.DamageDone, _damageDoneService, combatPlayer.Id);
-        await UploadDataAsync(damageDoneGeneralList, _damageDoneGeneralService, combatPlayer.Id);
-
-        var healDoneDetails = new CombatDetailsHealDone(_logger);
-        healDoneDetails.GetData(combatPlayer.PlayerId, combatData);
-
-        var healDoneGeneralData = healDoneDetails.GetHealDoneGeneral(healDoneDetails.HealDone, parsedCombat);
-        var healDoneGeneralList = healDoneGeneralData.ToList();
-
-        await UploadDataAsync(healDoneDetails.HealDone, _healDoneService, combatPlayer.Id);
-        await UploadDataAsync(healDoneGeneralList, _healDoneGeneralService, combatPlayer.Id);
-
-        var damageTakenDetails = new CombatDetailsDamageTaken(_logger);
-        damageTakenDetails.GetData(combatPlayer.PlayerId, combatData);
-
-        var damageTakenGeneralData = damageTakenDetails.GetDamageTakenGeneral(damageTakenDetails.DamageTaken, parsedCombat);
-
-        await UploadDataAsync(damageTakenDetails.DamageTaken, _damageTakenService, combatPlayer.Id);
-        await UploadDataAsync(damageTakenGeneralData.ToList(), _damageTakenGeneralService, combatPlayer.Id);
+        var damageDoneGeneralData = combatDetails.GetDamageDoneGeneral(combatDetails.DamageDone, parsedCombat);
+        var healDoneGeneralData = combatDetails.GetHealDoneGeneral(combatDetails.HealDone, parsedCombat);
+        var damageTakenGeneralData = combatDetails.GetDamageTakenGeneral(combatDetails.DamageTaken, parsedCombat);
 
         foreach (var item in playersDeath)
         {
-            var lastDamageTaken = damageTakenDetails.DamageTaken.LastOrDefault(x => x.ToPlayer == item.Username);
+            var lastDamageTaken = combatDetails.DamageTaken.LastOrDefault(x => x.ToPlayer == item.Username);
             if (lastDamageTaken != null)
             {
                 item.LastHitValue = lastDamageTaken.Value;
@@ -112,17 +86,25 @@ public class CombatDataHelper : ICombatDataHelper
             }
         }
 
-        var resourceRecoveryDetails = new CombatDetailsResourceRecovery(_logger);
-        resourceRecoveryDetails.GetData(combatPlayer.PlayerId, combatData);
+        var resourceRecoveryGeneralData = combatDetails.GetResourceRecoveryGeneral(combatDetails.ResourcesRecovery, parsedCombat);
 
-        var resourceRecoveryGeneralData = resourceRecoveryDetails.GetResourceRecoveryGeneral(resourceRecoveryDetails.ResourceRecovery, parsedCombat);
+        await UploadDataAsync(combatDetails.Positions, _combatPlayerPositionService, combatPlayer.Id);
 
-        await UploadDataAsync(resourceRecoveryDetails.ResourceRecovery, _resourceRecoveryService, combatPlayer.Id);
+        await UploadDataAsync(combatDetails.DamageDone, _damageDoneService, combatPlayer.Id);
+        await UploadDataAsync(damageDoneGeneralData.ToList(), _damageDoneGeneralService, combatPlayer.Id);
+
+        await UploadDataAsync(combatDetails.HealDone, _healDoneService, combatPlayer.Id);
+        await UploadDataAsync(healDoneGeneralData.ToList(), _healDoneGeneralService, combatPlayer.Id);
+
+        await UploadDataAsync(combatDetails.DamageTaken, _damageTakenService, combatPlayer.Id);
+        await UploadDataAsync(damageTakenGeneralData.ToList(), _damageTakenGeneralService, combatPlayer.Id);
+
+        await UploadDataAsync(combatDetails.ResourcesRecovery, _resourceRecoveryService, combatPlayer.Id);
         await UploadDataAsync(resourceRecoveryGeneralData.ToList(), _resourceRecoveryGeneralService, combatPlayer.Id);
 
         if (combat.IsWin)
         {
-            await _playerParseInfoHelper.UploadPlayerParseInfoAsync(combat, combatPlayer, damageDoneGeneralList, healDoneGeneralList);
+            await _playerParseInfoHelper.UploadPlayerParseInfoAsync(combat, combatPlayer, damageDoneGeneralData.ToList(), healDoneGeneralData.ToList());
         }
     }
 

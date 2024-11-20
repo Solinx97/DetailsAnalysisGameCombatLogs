@@ -699,7 +699,7 @@ public class GeneralAnalysisViewModel : ParentTemplate<Tuple<List<CombatModel>, 
             var averageCombatPlayerHeal = combat.Players.Any() ? combat.Players.Average(x => x.HealDone) : 0;
             averageHeal.Add(averageCombatPlayerHeal);
 
-            var averageCombatPlayerResources = combat.Players.Any() ? combat.Players.Average(x => x.EnergyRecovery) : 0;
+            var averageCombatPlayerResources = combat.Players.Any() ? combat.Players.Average(x => x.ResourcesRecovery) : 0;
             averageResources.Add(averageCombatPlayerResources);
 
             var averageCombatPlayerDamageTaken = combat.Players.Any() ? combat.Players.Average(x => x.DamageTaken) : 0;
@@ -729,7 +729,7 @@ public class GeneralAnalysisViewModel : ParentTemplate<Tuple<List<CombatModel>, 
             var maxCombatPlayerHeal = combat.Players.Any() ? combat.Players.Max(x => x.HealDone) : 0;
             maxHeal.Add(maxCombatPlayerHeal);
 
-            var maxCombatPlayerResources = combat.Players.Any() ? combat.Players.Max(x => x.EnergyRecovery) : 0;
+            var maxCombatPlayerResources = combat.Players.Any() ? combat.Players.Max(x => x.ResourcesRecovery) : 0;
             maxResources.Add(maxCombatPlayerResources);
 
             var maxCombatPlayerDamageTaken = combat.Players.Any() ? combat.Players.Max(x => x.DamageTaken) : 0;
@@ -761,7 +761,7 @@ public class GeneralAnalysisViewModel : ParentTemplate<Tuple<List<CombatModel>, 
         {
             player.DamageDonePerSecond = player.DamageDone / duration.TotalSeconds;
             player.HealDonePerSecond = player.HealDone / duration.TotalSeconds;
-            player.EnergyRecoveryPerSecond = player.EnergyRecovery / duration.TotalSeconds;
+            player.EnergyRecoveryPerSecond = player.ResourcesRecovery / duration.TotalSeconds;
             player.DamageTakenPerSecond = player.DamageTaken / duration.TotalSeconds;
         }
     }

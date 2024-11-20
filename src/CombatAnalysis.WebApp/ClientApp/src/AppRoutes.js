@@ -14,6 +14,7 @@ import People from './components/communication/people/People';
 import SelectedUser from './components/communication/people/SelectedUser';
 import VoiceChat from './components/communication/chats/voiceChat/VoiceChat';
 import AuthorizationCallback from './components/identity/AuthorizationCallback';
+import PlayerMovements from './components/combatDetails/actions/PlayerMovements';
 
 const AppRoutes = [
     {
@@ -79,6 +80,10 @@ const AppRoutes = [
     {
         path: '/combat-general-details',
         element: <CombatGeneralDetails />
+    },
+    {
+        path: '/player-movements',
+        element: <PlayerMovements />
     },
 ];
 

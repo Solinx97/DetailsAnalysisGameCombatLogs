@@ -10,7 +10,7 @@ public class CombatPlayerModel
 
     public double AverageItemLevel { get; set; }
 
-    public int EnergyRecovery { get; set; }
+    public int ResourcesRecovery { get; set; }
 
     public int DamageDone { get; set; }
 

@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using CombatAnalysis.CombatParser.Entities;
 using CombatAnalysis.CombatParser.Extensions;
-using CombatAnalysis.CombatParser.Patterns;
+using CombatAnalysis.CombatParser.Details;
 using CombatAnalysis.Core.Core;
 using CombatAnalysis.Core.Interfaces;
 using CombatAnalysis.Core.Models;
@@ -188,13 +188,13 @@ public class DamageTakenDetailsViewModel : DetailsGenericTemplate<DamageTakenMod
     {
         var selectedCombatMap = _mapper.Map<Combat>(SelectedCombat);
 
-        var damageTakenDetails = new CombatDetailsDamageTaken(_logger);
-        damageTakenDetails.GetData(parameter.PlayerId, SelectedCombat.Data);
+        var combatDetails = new CombatDetails(_logger);
+        combatDetails.Calculate(parameter.PlayerId, SelectedCombat.Data);
 
-        var healDoneMap = _mapper.Map<List<DamageTakenModel>>(damageTakenDetails.DamageTaken);
+        var healDoneMap = _mapper.Map<List<DamageTakenModel>>(combatDetails.DamageTaken);
         DetailsInformations = new ObservableCollection<DamageTakenModel>(healDoneMap);
 
-        var healDoneGeneralData = damageTakenDetails.GetDamageTakenGeneral(damageTakenDetails.DamageTaken, selectedCombatMap);
+        var healDoneGeneralData = combatDetails.GetDamageTakenGeneral(combatDetails.DamageTaken, selectedCombatMap);
         var healDoneGeneralMap = _mapper.Map<List<DamageTakenGeneralModel>>(healDoneGeneralData);
         GeneralInformations = new ObservableCollection<DamageTakenGeneralModel>(healDoneGeneralMap);
     }
