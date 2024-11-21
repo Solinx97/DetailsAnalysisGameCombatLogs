@@ -155,8 +155,12 @@ internal static class CombatDetailsManager
 
     public static DamageTaken GetDamageTaken(List<string> combatDataLine)
     {
-        if (string.Equals(combatDataLine[1], CombatLogKeyWords.SwingDamageLanded, StringComparison.OrdinalIgnoreCase)
-            || !combatDataLine[2].Contains("0000000000000000") || !combatDataLine[2].Contains(CombatLogKeyWords.Creature))
+        if (string.Equals(combatDataLine[1], CombatLogKeyWords.SwingDamageLanded, StringComparison.OrdinalIgnoreCase))
+        {
+            return null;
+        }
+
+        if (!combatDataLine[2].Contains("0000000000000000") && !combatDataLine[2].Contains(CombatLogKeyWords.Creature))
         {
             return null;
         }

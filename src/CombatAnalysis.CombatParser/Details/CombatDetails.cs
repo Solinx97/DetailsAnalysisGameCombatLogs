@@ -17,9 +17,23 @@ public class CombatDetails
     private readonly string[] _damageVariations = new string[]
     {
         CombatLogKeyWords.SpellDamage,
-        CombatLogKeyWords.RangeDamage,
         CombatLogKeyWords.SwingDamage,
-        CombatLogKeyWords.SwingDamageLanded,
+        CombatLogKeyWords.SpellPeriodicDamage,
+        CombatLogKeyWords.SwingMissed,
+        CombatLogKeyWords.DamageShieldMissed,
+        CombatLogKeyWords.RangeDamage,
+        CombatLogKeyWords.SpellMissed,
+        CombatLogKeyWords.SpellSummon,
+    };
+    private readonly string[] _damageTakenVariations = new string[]
+    {
+        CombatLogKeyWords.SpellDamage,
+        CombatLogKeyWords.SwingDamage,
+        CombatLogKeyWords.SpellPeriodicDamage,
+        CombatLogKeyWords.SwingMissed,
+        CombatLogKeyWords.DamageShieldMissed,
+        CombatLogKeyWords.RangeDamage,
+        CombatLogKeyWords.SpellMissed,
     };
     private readonly string[] _resourceVariations = new string[]
     {
@@ -78,6 +92,7 @@ public class CombatDetails
                 var itemHasDamageVariation = _damageVariations.Any(item.Contains);
                 var itemHasAbsorbVariation = _absorbVariations.Any(item.Contains);
                 var itemHasResourceVariation = _resourceVariations.Any(item.Contains);
+                var itemHasDamageTakenVariation = _damageTakenVariations.Any(item.Contains);
 
                 var clearCombatData = RemoveTime(item);
 
@@ -113,21 +128,11 @@ public class CombatDetails
                     {
                         DamageDone.Add(damageDoneInformation);
                     }
-                }
-                else if (itemHasDamageVariation)
-                {
-                    var damageDoneInformation = CombatDetailsManager.GetPetsDamageDone(playerId, clearCombatData, _petsId);
+
+                    damageDoneInformation = CombatDetailsManager.GetPetsDamageDone(playerId, clearCombatData, _petsId);
                     if (damageDoneInformation != null)
                     {
                         DamageDone.Add(damageDoneInformation);
-                    }
-                }
-                else if (itemHasDamageVariation)
-                {
-                    var damageTakenInformation = CombatDetailsManager.GetDamageTaken(clearCombatData);
-                    if (damageTakenInformation != null)
-                    {
-                        DamageTaken.Add(damageTakenInformation);
                     }
                 }
                 else if (itemHasResourceVariation)
@@ -136,6 +141,15 @@ public class CombatDetails
                     if (energyRecoveryInformation != null)
                     {
                         ResourcesRecovery.Add(energyRecoveryInformation);
+                    }
+                }
+
+                if (itemHasDamageTakenVariation)
+                {
+                    var damageTakenInformation = CombatDetailsManager.GetDamageTaken(clearCombatData);
+                    if (damageTakenInformation != null)
+                    {
+                        DamageTaken.Add(damageTakenInformation);
                     }
                 }
             }

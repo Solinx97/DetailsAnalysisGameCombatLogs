@@ -12,7 +12,7 @@ public static class CombatDetailsExtension
             .GroupBy(group => group.SpellOrItem)
             .Select(select => select.ToList()).ToList();
 
-        if (TimeSpan.TryParse(combat.Duration, out var durationTime))
+        if (!TimeSpan.TryParse(combat.Duration, out var durationTime))
         {
             return null;
         }
@@ -51,7 +51,7 @@ public static class CombatDetailsExtension
             .GroupBy(group => group.SpellOrItem)
             .Select(select => select.ToList());
 
-        if (TimeSpan.TryParse(combat.Duration, out var durationTime))
+        if (!TimeSpan.TryParse(combat.Duration, out var durationTime))
         {
             return null;
         }
@@ -90,7 +90,7 @@ public static class CombatDetailsExtension
             .GroupBy(group => group.SpellOrItem)
             .Select(select => select.ToList());
 
-        if (TimeSpan.TryParse(combat.Duration, out var durationTime))
+        if (!TimeSpan.TryParse(combat.Duration, out var durationTime))
         {
             return null;
         }
@@ -129,7 +129,7 @@ public static class CombatDetailsExtension
             .GroupBy(group => group.SpellOrItem)
             .Select(select => select.ToList());
 
-        if (TimeSpan.TryParse(combat.Duration, out var durationTime))
+        if (!TimeSpan.TryParse(combat.Duration, out var durationTime))
         {
             return null;
         }
