@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
+using CombatAnalysis.CombatParser.Details;
 using CombatAnalysis.CombatParser.Entities;
 using CombatAnalysis.CombatParser.Services;
+using CombatAnalysis.Core.Consts;
 using CombatAnalysis.Core.Enums;
 using CombatAnalysis.Core.Interfaces;
 using CombatAnalysis.Core.Interfaces.Observers;
@@ -20,6 +22,7 @@ public class CombatLogInformationViewModel : ParentTemplate, CombatParser.Interf
 {
     private readonly IMvxNavigationService _mvvmNavigation;
     private readonly IMapper _mapper;
+    private readonly ICacheService _cacheService;
     private readonly CombatParserService _parser;
     private readonly CombatParserAPIService _combatParserAPIService;
     private readonly IMemoryCache _memoryCache;
@@ -51,12 +54,13 @@ public class CombatLogInformationViewModel : ParentTemplate, CombatParser.Interf
     private bool _noCombatsUploaded;
 
     public CombatLogInformationViewModel(IMapper mapper, IMvxNavigationService mvvmNavigation, IHttpClientHelper httpClient,
-        CombatParserService parser, ILogger logger, IMemoryCache memoryCache)
+        CombatParserService parser, ILogger logger, IMemoryCache memoryCache, ICacheService cacheService)
     {
         _mapper = mapper;
         _mvvmNavigation = mvvmNavigation;
         _parser = parser;
         _memoryCache = memoryCache;
+        _cacheService = cacheService;
 
         OpenUploadLogsCommand = new MvxCommand(() => OpenUploadLogs = !OpenUploadLogs);
         OpenPlayerAnalysisCommand = new MvxAsyncCommand(OpenPlayerAnalysisAsync);
@@ -456,6 +460,12 @@ public class CombatLogInformationViewModel : ParentTemplate, CombatParser.Interf
 
         await _parser.ParseAsync(combatLogData);
 
+        ClearCache();
+
+        AppStaticData.PreparedCombatsCount = _parser.Combats.Count;
+
+        SaveDataInCache(_parser.CombatDetails, _parser.Combats);
+
         var combatsList = _mapper.Map<List<CombatModel>>(_parser.Combats);
 
         _parser.Clear();
@@ -474,6 +484,38 @@ public class CombatLogInformationViewModel : ParentTemplate, CombatParser.Interf
         }
 
         await UploadingCombatLogAsync(combatsList, dataForGeneralAnalysis);
+    }
+
+    private void ClearCache()
+    {
+        for (int i = 0; i < AppStaticData.PreparedCombatsCount; i++)
+        {
+            _cacheService.RemoveDataFromCache($"{AppCacheKeys.CombatDetails_DamageDone}_{i}");
+            _cacheService.RemoveDataFromCache($"{AppCacheKeys.CombatDetails_DamageDoneGeneral}_{i}");
+            _cacheService.RemoveDataFromCache($"{AppCacheKeys.CombatDetails_HealDone}_{i}");
+            _cacheService.RemoveDataFromCache($"{AppCacheKeys.CombatDetails_HealDoneGeneral}_{i}");
+            _cacheService.RemoveDataFromCache($"{AppCacheKeys.CombatDetails_DamageTaken}_{i}");
+            _cacheService.RemoveDataFromCache($"{AppCacheKeys.CombatDetails_DamageTakenGeneral}_{i}");
+            _cacheService.RemoveDataFromCache($"{AppCacheKeys.CombatDetails_ResourcesRecovery}_{i}");
+            _cacheService.RemoveDataFromCache($"{AppCacheKeys.CombatDetails_ResourcesRecoveryGeneral}_{i}");
+        }
+    }
+
+    private void SaveDataInCache(List<CombatDetails> combatDetails, List<Combat> combats)
+    {
+        for (var i = 0; i < combatDetails.Count; i++)
+        {
+            var currentCombatDetails = combatDetails[i];
+
+            _cacheService.SaveDataToCache($"{AppCacheKeys.CombatDetails_DamageDone}_{i}", currentCombatDetails.DamageDone);
+            _cacheService.SaveDataToCache($"{AppCacheKeys.CombatDetails_DamageDoneGeneral}_{i}", currentCombatDetails.DamageDoneGeneral);
+            _cacheService.SaveDataToCache($"{AppCacheKeys.CombatDetails_HealDone}_{i}", currentCombatDetails.HealDone);
+            _cacheService.SaveDataToCache($"{AppCacheKeys.CombatDetails_HealDoneGeneral}_{i}", currentCombatDetails.HealDoneGeneral);
+            _cacheService.SaveDataToCache($"{AppCacheKeys.CombatDetails_DamageTaken}_{i}", currentCombatDetails.DamageTaken);
+            _cacheService.SaveDataToCache($"{AppCacheKeys.CombatDetails_DamageTakenGeneral}_{i}", currentCombatDetails.DamageTakenGeneral);
+            _cacheService.SaveDataToCache($"{AppCacheKeys.CombatDetails_ResourcesRecovery}_{i}", currentCombatDetails.ResourcesRecovery);
+            _cacheService.SaveDataToCache($"{AppCacheKeys.CombatDetails_ResourcesRecoveryGeneral}_{i}", currentCombatDetails.ResourcesRecoveryGeneral);
+        }
     }
 
     private async Task UploadingCombatLogAsync(List<CombatModel> combatList, Tuple<List<CombatModel>, LogType> dataForGeneralAnalysis)

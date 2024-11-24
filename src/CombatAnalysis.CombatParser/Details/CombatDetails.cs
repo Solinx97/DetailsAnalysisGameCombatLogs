@@ -40,27 +40,43 @@ public class CombatDetails
         CombatLogKeyWords.SpellEnergize,
     };
 
-    private readonly ILogger _logger;
     private readonly Dictionary<string, List<string>> _petsId;
+
+    public ILogger Logger { get; private set; }
 
     public Dictionary<string, List<CombatPlayerPosition>> Positions { get; private set; }
 
     public Dictionary<string, List<DamageDone>> DamageDone { get; private set; }
 
+    public Dictionary<string, List<DamageDoneGeneral>> DamageDoneGeneral { get; private set; }
+
     public Dictionary<string, List<HealDone>> HealDone { get; private set; }
+
+    public Dictionary<string, List<HealDoneGeneral>> HealDoneGeneral { get; private set; }
 
     public Dictionary<string, List<DamageTaken>> DamageTaken { get; private set; }
 
+    public Dictionary<string, List<DamageTakenGeneral>> DamageTakenGeneral { get; private set; }
+
     public Dictionary<string, List<ResourceRecovery>> ResourcesRecovery { get; private set; }
+
+    public Dictionary<string, List<ResourceRecoveryGeneral>> ResourcesRecoveryGeneral { get; private set; }
 
     public CombatDetails(ILogger logger)
     {
-        _logger = logger;
+        Logger = logger;
+
         Positions = new Dictionary<string, List<CombatPlayerPosition>>();
+
         DamageDone = new Dictionary<string, List<DamageDone>>();
         HealDone = new Dictionary<string, List<HealDone>>();
         DamageTaken = new Dictionary<string, List<DamageTaken>>();
         ResourcesRecovery = new Dictionary<string, List<ResourceRecovery>>();
+
+        DamageDoneGeneral = new Dictionary<string, List<DamageDoneGeneral>>();
+        HealDoneGeneral = new Dictionary<string, List<HealDoneGeneral>>();
+        DamageTakenGeneral = new Dictionary<string, List<DamageTakenGeneral>>();
+        ResourcesRecoveryGeneral = new Dictionary<string, List<ResourceRecoveryGeneral>>();
     }
 
     public CombatDetails(ILogger logger, Dictionary<string, List<string>> petsId) : this(logger)
@@ -90,11 +106,11 @@ public class CombatDetails
         }
         catch (ArgumentNullException ex)
         {
-            _logger.LogError(ex, ex.Message, ex.ParamName);
+            Logger.LogError(ex, ex.Message, ex.ParamName);
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, ex.Message);
+            Logger.LogError(ex, ex.Message);
         }
     }
 
@@ -102,11 +118,12 @@ public class CombatDetails
     {
         foreach(var playerId in playersId)
         {
-            Positions.Add(playerId, new List<CombatPlayerPosition>());
-            DamageDone.Add(playerId, new List<DamageDone>());
-            HealDone.Add(playerId, new List<HealDone>());
-            DamageTaken.Add(playerId, new List<DamageTaken>());
-            ResourcesRecovery.Add(playerId, new List<ResourceRecovery>());
+            Positions.TryAdd(playerId, new List<CombatPlayerPosition>());
+
+            DamageDone.TryAdd(playerId, new List<DamageDone>());
+            HealDone.TryAdd(playerId, new List<HealDone>());
+            DamageTaken.TryAdd(playerId, new List<DamageTaken>());
+            ResourcesRecovery.TryAdd(playerId, new List<ResourceRecovery>());
         }
     }
 

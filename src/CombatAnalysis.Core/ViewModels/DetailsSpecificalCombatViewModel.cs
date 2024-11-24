@@ -45,7 +45,6 @@ public class DetailsSpecificalCombatViewModel : ParentTemplate<CombatModel>
     private double _totalDamagePerSecond;
     private double _totalHealPerSecond;
     private double _totalResourcesPerSecond;
-    private TimeSpan _duration;
 
     public DetailsSpecificalCombatViewModel()
     {
@@ -685,12 +684,6 @@ public class DetailsSpecificalCombatViewModel : ParentTemplate<CombatModel>
         ShowEffeciency = PlayersCombat.Any(x => x.PlayerParseInfo != null);
 
         SelectedPlayer = PlayersCombat[0];
-
-        if (!TimeSpan.TryParse(parameter.Duration, out _duration))
-        {
-            _duration = TimeSpan.Zero;
-            return;
-        }
 
         var damageDone = PlayersCombat.Average(x => x.DamageDone);
         var healDone = PlayersCombat.Average(x => x.HealDone);

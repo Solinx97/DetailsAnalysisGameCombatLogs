@@ -17,6 +17,7 @@ abstract public class DetailsGenericTemplate<T, T1> : ParentTemplate<CombatPlaye
 {
     protected readonly ILogger _logger;
     protected readonly IMapper _mapper;
+    protected readonly ICacheService _cacheService;
     protected readonly CombatParserAPIService _combatParserAPIService;
 
     private bool _isShowFilters;
@@ -28,12 +29,19 @@ abstract public class DetailsGenericTemplate<T, T1> : ParentTemplate<CombatPlaye
     private ObservableCollection<string> _sources;
     private int _detailsTypeSelectedIndex;
 
-    public DetailsGenericTemplate(IHttpClientHelper httpClient, ILogger logger, IMemoryCache memoryCache, IMapper mapper)
+    public DetailsGenericTemplate(IHttpClientHelper httpClient, ILogger logger, IMemoryCache memoryCache,
+        IMapper mapper)
     {
         _logger = logger;
         _mapper = mapper;
 
         _combatParserAPIService = new CombatParserAPIService(httpClient, logger, memoryCache);
+    }
+
+    public DetailsGenericTemplate(IHttpClientHelper httpClient, ILogger logger, IMemoryCache memoryCache,
+        IMapper mapper, ICacheService cacheService) : this(httpClient, logger, memoryCache, mapper)
+    {
+        _cacheService = cacheService;
     }
 
     #region Properties

@@ -2,7 +2,7 @@
 
 namespace CombatAnalysis.Core.Core;
 
-public class PowerUpInCombat<T>
+internal class PowerUpInCombat<T>
     where T : class
 {
     private string _propertyName = string.Empty;

@@ -57,14 +57,16 @@ public class App : MvxApplication
         var memoryCacheOptions = new MemoryCacheOptions { SizeLimit = 2048 };
         var memoryCache = new MemoryCache(memoryCacheOptions);
 
-        IIdentityService identityService = new IdentityService(memoryCache, httpClient);
+        var identityService = new IdentityService(memoryCache, httpClient);
+        var cacheService = new CacheService();
 
         Mvx.IoCProvider.RegisterSingleton(mapper);
         Mvx.IoCProvider.RegisterSingleton(httpClient);
         Mvx.IoCProvider.RegisterSingleton(parser);
         Mvx.IoCProvider.RegisterSingleton<ILogger>(logger);
         Mvx.IoCProvider.RegisterSingleton<IMemoryCache>(memoryCache);
-        Mvx.IoCProvider.RegisterSingleton(identityService);
+        Mvx.IoCProvider.RegisterSingleton<IIdentityService>(identityService);
+        Mvx.IoCProvider.RegisterSingleton<ICacheService>(cacheService);
 
         RegisterAppStart<BasicTemplateViewModel>();
     }

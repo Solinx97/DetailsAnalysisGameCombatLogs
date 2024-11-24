@@ -2,7 +2,7 @@
 
 namespace CombatAnalysis.Core.Helpers;
 
-public class VMHandler : IVMHandler
+internal class VMHandler : IVMHandler
 {
     public void PropertyUpdate<T1>(object context, string propertyName, object value)
         where T1 : class

@@ -1,8 +1,7 @@
 ﻿using AutoMapper;
 using CombatAnalysis.CombatParser.Entities;
-using CombatAnalysis.CombatParser.Extensions;
-using CombatAnalysis.CombatParser.Details;
 using CombatAnalysis.Core.Core;
+using CombatAnalysis.Core.Enums;
 using CombatAnalysis.Core.Interfaces;
 using CombatAnalysis.Core.Models;
 using CombatAnalysis.Core.ViewModels.ViewModelTemplates;
@@ -18,7 +17,6 @@ public class DamageDoneDetailsViewModel : DetailsGenericTemplate<DamageDoneModel
 
     private ObservableCollection<DamageDoneModel> _damageDoneInformationsWithoutFilter;
     private ObservableCollection<DamageDoneModel> _damageDoneInformationsWithSkipDamage;
-    private Dictionary<string, List<string>> _petsId;
     private List<DamageDoneGeneralModel> _allGeneralInformations;
     private List<DamageDoneModel> _allDetailsInformations;
 
@@ -31,14 +29,13 @@ public class DamageDoneDetailsViewModel : DetailsGenericTemplate<DamageDoneModel
     private bool _isShowDirectDamage;
     private bool _isShowPets = true;
 
-    public DamageDoneDetailsViewModel(IHttpClientHelper httpClient, ILogger logger, IMemoryCache memoryCache, IMapper mapper) : base(httpClient, logger, memoryCache, mapper)
+    public DamageDoneDetailsViewModel(IHttpClientHelper httpClient, ILogger logger, IMemoryCache memoryCache,
+        IMapper mapper, ICacheService cacheService) : base(httpClient, logger, memoryCache, mapper, cacheService)
     {
         _powerUpInCombat = new PowerUpInCombat<DamageDoneModel>(_damageDoneInformationsWithSkipDamage);
 
         BasicTemplate.Parent = this;
         BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, nameof(BasicTemplateViewModel.Step), 3);
-
-        _petsId = ((BasicTemplateViewModel)BasicTemplate).PetsId;
     }
 
     #region Properties
@@ -156,19 +153,15 @@ public class DamageDoneDetailsViewModel : DetailsGenericTemplate<DamageDoneModel
 
     protected override void ChildPrepare(CombatPlayerModel parameter)
     {
-        var selectedCombatMap = _mapper.Map<Combat>(SelectedCombat);
+        var damageDoneCollection = _cacheService.GetDataFromCache<Dictionary<string, List<DamageDone>>>($"{AppCacheKeys.CombatDetails_DamageDone}_{SelectedCombat.LocallyNumber}");
+        var damageDoneCollectionMap = _mapper.Map<List<DamageDoneModel>>(damageDoneCollection[parameter.PlayerId]);
+        DetailsInformations = new ObservableCollection<DamageDoneModel>(damageDoneCollectionMap);
+        _allDetailsInformations = new List<DamageDoneModel>(damageDoneCollectionMap);
 
-        var combatDetails = new CombatDetails(_logger, _petsId);
-        //combatDetails.Calculate(parameter.PlayerId, SelectedCombat.Data);
-
-        var damageDoneMap = _mapper.Map<List<DamageDoneModel>>(combatDetails.DamageDone);
-        DetailsInformations = new ObservableCollection<DamageDoneModel>(damageDoneMap);
-        _allDetailsInformations = new List<DamageDoneModel>(damageDoneMap);
-
-        //var damageDoneGeneralData = combatDetails.GetDamageDoneGeneral(combatDetails.DamageDone, selectedCombatMap);
-        //var damageDoneGeneralMap = _mapper.Map<List<DamageDoneGeneralModel>>(damageDoneGeneralData);
-        //GeneralInformations = new ObservableCollection<DamageDoneGeneralModel>(damageDoneGeneralMap);
-        //_allGeneralInformations = new List<DamageDoneGeneralModel>(damageDoneGeneralMap);
+        var damageDoneGeneralCollection = _cacheService.GetDataFromCache<Dictionary<string, List<DamageDoneGeneral>>>($"{AppCacheKeys.CombatDetails_DamageDoneGeneral}_{SelectedCombat.LocallyNumber}");
+        var damageDoneGeneralCollectionMap = _mapper.Map<List<DamageDoneGeneralModel>>(damageDoneGeneralCollection[parameter.PlayerId]);
+        GeneralInformations = new ObservableCollection<DamageDoneGeneralModel>(damageDoneGeneralCollectionMap);
+        _allGeneralInformations = new List<DamageDoneGeneralModel>(damageDoneGeneralCollectionMap);
     }
 
     protected override void Filter()

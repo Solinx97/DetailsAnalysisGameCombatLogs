@@ -1,8 +1,7 @@
 ﻿using AutoMapper;
 using CombatAnalysis.CombatParser.Entities;
-using CombatAnalysis.CombatParser.Extensions;
-using CombatAnalysis.CombatParser.Details;
 using CombatAnalysis.Core.Core;
+using CombatAnalysis.Core.Enums;
 using CombatAnalysis.Core.Interfaces;
 using CombatAnalysis.Core.Models;
 using CombatAnalysis.Core.ViewModels.ViewModelTemplates;
@@ -22,7 +21,8 @@ public class HealDoneDetailsViewModel : DetailsGenericTemplate<HealDoneModel, He
     private bool _isShowOverheal = true;
     private bool _isShowCrit = true;
 
-    public HealDoneDetailsViewModel(IHttpClientHelper httpClient, ILogger logger, IMemoryCache memoryCache, IMapper mapper) : base(httpClient, logger, memoryCache, mapper)
+    public HealDoneDetailsViewModel(IHttpClientHelper httpClient, ILogger logger, IMemoryCache memoryCache, 
+        IMapper mapper, ICacheService cacheService) : base(httpClient, logger, memoryCache, mapper, cacheService)
     {
         _powerUpInCombat = new PowerUpInCombat<HealDoneModel>(_healDoneInformationsWithOverheal);
 
@@ -66,17 +66,13 @@ public class HealDoneDetailsViewModel : DetailsGenericTemplate<HealDoneModel, He
 
     protected override void ChildPrepare(CombatPlayerModel parameter)
     {
-        //var selectedCombatMap = _mapper.Map<Combat>(SelectedCombat);
+        var healDoneCollection = _cacheService.GetDataFromCache<Dictionary<string, List<HealDone>>>($"{AppCacheKeys.CombatDetails_HealDone}_{SelectedCombat.LocallyNumber}");
+        var healDoneCollectionMap = _mapper.Map<List<HealDoneModel>>(healDoneCollection[parameter.PlayerId]);
+        DetailsInformations = new ObservableCollection<HealDoneModel>(healDoneCollectionMap);
 
-        //var combatDetails = new CombatDetails(_logger);
-        //combatDetails.Calculate(parameter.PlayerId, SelectedCombat.Data);
-
-        //var healDoneMap = _mapper.Map<List<HealDoneModel>>(combatDetails.HealDone);
-        //DetailsInformations = new ObservableCollection<HealDoneModel>(healDoneMap);
-
-        //var healDoneGeneralData = combatDetails.GetHealDoneGeneral(combatDetails.HealDone, selectedCombatMap);
-        //var healDoneGeneralMap = _mapper.Map<List<HealDoneGeneralModel>>(healDoneGeneralData);
-        //GeneralInformations = new ObservableCollection<HealDoneGeneralModel>(healDoneGeneralMap);
+        var healDoneGeneralCollection = _cacheService.GetDataFromCache<Dictionary<string, List<HealDoneGeneral>>>($"{AppCacheKeys.CombatDetails_HealDoneGeneral}_{SelectedCombat.LocallyNumber}");
+        var healDoneGeneralCollectionMap = _mapper.Map<List<HealDoneGeneralModel>>(healDoneGeneralCollection[parameter.PlayerId]);
+        GeneralInformations = new ObservableCollection<HealDoneGeneralModel>(healDoneGeneralCollectionMap);
     }
 
     protected override void Filter()

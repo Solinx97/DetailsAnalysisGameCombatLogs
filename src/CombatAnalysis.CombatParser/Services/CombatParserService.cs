@@ -1,6 +1,7 @@
 ﻿using CombatAnalysis.CombatParser.Core;
 using CombatAnalysis.CombatParser.Details;
 using CombatAnalysis.CombatParser.Entities;
+using CombatAnalysis.CombatParser.Extensions;
 using CombatAnalysis.CombatParser.Interfaces;
 using Microsoft.Extensions.Logging;
 using System.Globalization;
@@ -18,16 +19,19 @@ public class CombatParserService
 
     private int _combatNumber = 0;
 
+    public List<Combat> Combats { get; private set; }
+
+    public List<CombatDetails> CombatDetails { get; private set; }
+
     public CombatParserService(IFileManager fileManager, ILogger logger)
     {
         _fileManager = fileManager;
         _logger = logger;
 
         Combats = new List<Combat>();
+        CombatDetails = new List<CombatDetails>();
         _zones = new List<PlaceInformation>();
     }
-
-    public List<Combat> Combats { get; }
 
     public async Task<bool> FileCheckAsync(string combatLog)
     {
@@ -255,6 +259,8 @@ public class CombatParserService
 
         combat.LocallyNumber = _combatNumber;
         Combats.Add(combat);
+
+        _combatNumber++;
     }
 
     private List<CombatPlayer> GetCombatPlayers(Combat combat, Dictionary<string, List<string>> petsId)
@@ -272,7 +278,6 @@ public class CombatParserService
 
             var username = GetCombatPlayerUsernameById(combat.Data, combatInfoToArray[4]);
             var averageItemLevel = GetAverageItemLevel(combatEquipmentsInfoToArray[1]);
-            //int usedBuffs = GetUsedBuffs(combatInfoToArray[3]);
 
             var combatPlayerData = new CombatPlayer
             {
@@ -289,6 +294,9 @@ public class CombatParserService
 
         var combatDetails = new CombatDetails(_logger, petsId);
         combatDetails.Calculate(playersId, combat.Data);
+        combatDetails.CalculateGeneralData(playersId, combat.Duration);
+
+        CombatDetails.Add(combatDetails);
 
         foreach (var item in players)
         {
@@ -296,6 +304,7 @@ public class CombatParserService
             item.HealDone = combatDetails.HealDone[item.PlayerId].Sum(x => x.Value);
             item.DamageTaken = combatDetails.DamageTaken[item.PlayerId].Sum(x => x.Value);
             item.ResourcesRecovery = combatDetails.ResourcesRecovery[item.PlayerId].Sum(x => x.Value);
+
         }
 
         return players;
@@ -335,14 +344,6 @@ public class CombatParserService
 
         return parsedUsername;
     }
-
-    //private static int GetUsedBuffs(string buffsInformation)
-    //{
-    //    var splitInformations = buffsInformation.Split(",");
-    //    var countOfBuffs = splitInformations.Length / 2;
-
-    //    return countOfBuffs;
-    //}
 
     private static double GetAverageItemLevel(string equipmentsInformation)
     {

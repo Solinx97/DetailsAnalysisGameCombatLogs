@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
 using CombatAnalysis.CombatParser.Entities;
-using CombatAnalysis.CombatParser.Extensions;
-using CombatAnalysis.CombatParser.Details;
+using CombatAnalysis.Core.Enums;
 using CombatAnalysis.Core.Interfaces;
 using CombatAnalysis.Core.Models;
 using CombatAnalysis.Core.ViewModels.ViewModelTemplates;
@@ -15,7 +14,8 @@ public class ResourceRecoveryDetailsViewModel : DetailsGenericTemplate<ResourceR
 {
     private ObservableCollection<ResourceRecoveryModel> _resourceRecoveryInformationsWithoutFilter;
 
-    public ResourceRecoveryDetailsViewModel(IHttpClientHelper httpClient, ILogger logger, IMemoryCache memoryCache, IMapper mapper) : base(httpClient, logger, memoryCache, mapper)
+    public ResourceRecoveryDetailsViewModel(IHttpClientHelper httpClient, ILogger logger, IMemoryCache memoryCache, 
+        IMapper mapper, ICacheService cacheService) : base(httpClient, logger, memoryCache, mapper, cacheService)
     {
         BasicTemplate.Parent = this;
         BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, nameof(BasicTemplateViewModel.Step), 6);
@@ -23,17 +23,13 @@ public class ResourceRecoveryDetailsViewModel : DetailsGenericTemplate<ResourceR
 
     protected override void ChildPrepare(CombatPlayerModel parameter)
     {
-        var selectedCombatMap = _mapper.Map<Combat>(SelectedCombat);
+        var resourcesRecoveryCollection = _cacheService.GetDataFromCache<Dictionary<string, List<ResourceRecovery>>>($"{AppCacheKeys.CombatDetails_ResourcesRecovery}_{SelectedCombat.LocallyNumber}");
+        var resourcesRecoveryCollectionMap = _mapper.Map<List<ResourceRecoveryModel>>(resourcesRecoveryCollection[parameter.PlayerId]);
+        DetailsInformations = new ObservableCollection<ResourceRecoveryModel>(resourcesRecoveryCollectionMap);
 
-        var combatDetails = new CombatDetails(_logger);
-        //combatDetails.Calculate(parameter.PlayerId, SelectedCombat.Data);
-
-        var healDoneMap = _mapper.Map<List<ResourceRecoveryModel>>(combatDetails.ResourcesRecovery);
-        DetailsInformations = new ObservableCollection<ResourceRecoveryModel>(healDoneMap);
-
-        //var healDoneGeneralData = combatDetails.GetResourceRecoveryGeneral(combatDetails.ResourcesRecovery, selectedCombatMap);
-        //var healDoneGeneralMap = _mapper.Map<List<ResourceRecoveryGeneralModel>>(healDoneGeneralData);
-        //GeneralInformations = new ObservableCollection<ResourceRecoveryGeneralModel>(healDoneGeneralMap);
+        var resourcesRecoveryGeneralCollection = _cacheService.GetDataFromCache<Dictionary<string, List<ResourceRecoveryGeneral>>>($"{AppCacheKeys.CombatDetails_ResourcesRecoveryGeneral}_{SelectedCombat.LocallyNumber}");
+        var resourcesRecoveryGeneralCollectionMap = _mapper.Map<List<ResourceRecoveryGeneralModel>>(resourcesRecoveryGeneralCollection[parameter.PlayerId]);
+        GeneralInformations = new ObservableCollection<ResourceRecoveryGeneralModel>(resourcesRecoveryGeneralCollectionMap);
     }
 
     protected override void Filter()
