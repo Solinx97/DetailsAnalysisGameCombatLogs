@@ -66,17 +66,17 @@ public class HealDoneDetailsViewModel : DetailsGenericTemplate<HealDoneModel, He
 
     protected override void ChildPrepare(CombatPlayerModel parameter)
     {
-        var selectedCombatMap = _mapper.Map<Combat>(SelectedCombat);
+        //var selectedCombatMap = _mapper.Map<Combat>(SelectedCombat);
 
-        var combatDetails = new CombatDetails(_logger);
-        combatDetails.Calculate(parameter.PlayerId, SelectedCombat.Data);
+        //var combatDetails = new CombatDetails(_logger);
+        //combatDetails.Calculate(parameter.PlayerId, SelectedCombat.Data);
 
-        var healDoneMap = _mapper.Map<List<HealDoneModel>>(combatDetails.HealDone);
-        DetailsInformations = new ObservableCollection<HealDoneModel>(healDoneMap);
+        //var healDoneMap = _mapper.Map<List<HealDoneModel>>(combatDetails.HealDone);
+        //DetailsInformations = new ObservableCollection<HealDoneModel>(healDoneMap);
 
-        var healDoneGeneralData = combatDetails.GetHealDoneGeneral(combatDetails.HealDone, selectedCombatMap);
-        var healDoneGeneralMap = _mapper.Map<List<HealDoneGeneralModel>>(healDoneGeneralData);
-        GeneralInformations = new ObservableCollection<HealDoneGeneralModel>(healDoneGeneralMap);
+        //var healDoneGeneralData = combatDetails.GetHealDoneGeneral(combatDetails.HealDone, selectedCombatMap);
+        //var healDoneGeneralMap = _mapper.Map<List<HealDoneGeneralModel>>(healDoneGeneralData);
+        //GeneralInformations = new ObservableCollection<HealDoneGeneralModel>(healDoneGeneralMap);
     }
 
     protected override void Filter()

@@ -1,9 +1,8 @@
 ﻿using CombatAnalysis.CombatParser.Core;
+using CombatAnalysis.CombatParser.Details;
 using CombatAnalysis.CombatParser.Entities;
 using CombatAnalysis.CombatParser.Interfaces;
-using CombatAnalysis.CombatParser.Details;
 using Microsoft.Extensions.Logging;
-using System.Collections.Concurrent;
 using System.Globalization;
 using System.Text;
 
@@ -29,8 +28,6 @@ public class CombatParserService
     }
 
     public List<Combat> Combats { get; }
-
-    public Dictionary<string, List<string>> PetsId { get; private set; }
 
     public async Task<bool> FileCheckAsync(string combatLog)
     {
@@ -69,7 +66,6 @@ public class CombatParserService
     public void Clear()
     {
         Combats.Clear();
-        PetsId?.Clear();
         _zones.Clear();
         _combatNumber = 0;
     }
@@ -170,18 +166,22 @@ public class CombatParserService
                 return;
             }
 
-            PetsId = petsId;
-
-            GetCombatPlayersData(combat, petsId);
+            var players = GetCombatPlayers(combat, petsId);
+            combat.Players = players;
 
             var combatDetailsDeaths = new CombatDetailsDeaths(_logger, combat.Players, combat);
-            combat.DeathNumber = combatDetailsDeaths.GetData(string.Empty, combat.Data);
+            combat.DeathNumber = combatDetailsDeaths.GetDeathNumber(combat.Data);
 
             CalculatingCommonCombatDetails(combat);
 
             AddNewCombat(combat);
         }
         catch (IndexOutOfRangeException ex)
+        {
+            var message = $"Error parsing data from file: {ex.Message}";
+            _logger.LogError(message);
+        }
+        catch (Exception ex)
         {
             var message = $"Error parsing data from file: {ex.Message}";
             _logger.LogError(message);
@@ -233,12 +233,6 @@ public class CombatParserService
         return date.UtcDateTime;
     }
 
-    private void GetCombatPlayersData(Combat combat, Dictionary<string, List<string>> petsId)
-    {
-        var players = GetCombatPlayers(combat.Data, combat, petsId);
-        combat.Players = players;
-    }
-
     private static void CalculatingCommonCombatDetails(Combat combat)
     {
         var players = combat.Players;
@@ -263,50 +257,48 @@ public class CombatParserService
         Combats.Add(combat);
     }
 
-    private List<CombatPlayer> GetCombatPlayers(List<string> combatInformation, Combat combat, Dictionary<string, List<string>> petsId)
+    private List<CombatPlayer> GetCombatPlayers(Combat combat, Dictionary<string, List<string>> petsId)
     {
-        var playersIdAndStats = new ConcurrentDictionary<string, string>();
-        var combatInfoByKeyWord = combatInformation
+        var combatInformations = combat.Data
             .Where(info => info.Contains(CombatLogKeyWords.CombatantInfo))
             .ToList();
 
-        foreach (var info in combatInfoByKeyWord)
+        var players = new List<CombatPlayer>();
+
+        foreach (var item in combatInformations)
         {
-            var combatantInfo = info.Split("  ")[1];
-            var playerCombatantInfoArray = combatantInfo.Split(',');
+            var combatInfoToArray = item.Split(new char[2] { ' ', ',' });
+            var combatEquipmentsInfoToArray = item.Split(new char[2] { '[', ']' });
 
-            playersIdAndStats.TryAdd(playerCombatantInfoArray[1], combatantInfo);
-        }
-
-        var players = new ConcurrentBag<CombatPlayer>();
-
-        Parallel.ForEach(playersIdAndStats, item =>
-        {
-            var playerCombatantInfoArray = item.Value.Split(new char[2] { '[', ']' });
-
-            var username = GetCombatPlayerUsernameById(combatInformation, item.Key);
-            var averageItemLevel = GetAverageItemLevel(playerCombatantInfoArray[1]);
-            int usedBuffs = GetUsedBuffs(playerCombatantInfoArray[3]);
-
-            var combatDetails = new CombatDetails(_logger, petsId);
-            combatDetails.Calculate(item.Key, combat.Data);
+            var username = GetCombatPlayerUsernameById(combat.Data, combatInfoToArray[4]);
+            var averageItemLevel = GetAverageItemLevel(combatEquipmentsInfoToArray[1]);
+            //int usedBuffs = GetUsedBuffs(combatInfoToArray[3]);
 
             var combatPlayerData = new CombatPlayer
             {
                 Username = username,
-                PlayerId = item.Key,
+                PlayerId = combatInfoToArray[4],
                 AverageItemLevel = double.Round(averageItemLevel, 2),
-                ResourcesRecovery = combatDetails.ResourcesRecovery.Sum(x => x.Value),
-                DamageDone = combatDetails.DamageDone.Sum(x => x.Value),
-                HealDone = combatDetails.HealDone.Sum(x => x.Value),
-                DamageTaken = combatDetails.DamageTaken.Sum(x => x.Value),
-                UsedBuffs = usedBuffs,
+                UsedBuffs = 0,
             };
 
             players.Add(combatPlayerData);
-        });
+        }
 
-        return players.ToList();
+        var playersId = players.Select(x => x.PlayerId).ToList();
+
+        var combatDetails = new CombatDetails(_logger, petsId);
+        combatDetails.Calculate(playersId, combat.Data);
+
+        foreach (var item in players)
+        {
+            item.DamageDone = combatDetails.DamageDone[item.PlayerId].Sum(x => x.Value);
+            item.HealDone = combatDetails.HealDone[item.PlayerId].Sum(x => x.Value);
+            item.DamageTaken = combatDetails.DamageTaken[item.PlayerId].Sum(x => x.Value);
+            item.ResourcesRecovery = combatDetails.ResourcesRecovery[item.PlayerId].Sum(x => x.Value);
+        }
+
+        return players;
     }
 
     private void GetZoneName(string combatLog)
@@ -344,26 +336,23 @@ public class CombatParserService
         return parsedUsername;
     }
 
-    private static int GetUsedBuffs(string buffsInformation)
-    {
-        var splitInformations = buffsInformation.Split(",");
-        var countOfBuffs = splitInformations.Length / 2;
+    //private static int GetUsedBuffs(string buffsInformation)
+    //{
+    //    var splitInformations = buffsInformation.Split(",");
+    //    var countOfBuffs = splitInformations.Length / 2;
 
-        return countOfBuffs;
-    }
+    //    return countOfBuffs;
+    //}
 
     private static double GetAverageItemLevel(string equipmentsInformation)
     {
         var splitEquipementsInformation = equipmentsInformation.Split("))");
-        splitEquipementsInformation = splitEquipementsInformation.Select(x => x.TrimStart(',')).ToArray();
-        splitEquipementsInformation = splitEquipementsInformation.Select(x => x.TrimStart('(')).ToArray();
-        splitEquipementsInformation = splitEquipementsInformation.Select(x => x.Insert(x.Length, ")")).ToArray();
 
         var ilvl = new List<int>();
         for (var i = 0; i < splitEquipementsInformation.Length - 1; i++)
         {
             var equipmentIlvlInformation = splitEquipementsInformation[i].Split(',')[1];
-            if (int.TryParse(equipmentIlvlInformation, out var equipmentIlvl))
+            if (int.TryParse(equipmentIlvlInformation, out var equipmentIlvl) && equipmentIlvl > 0)
             {
                 ilvl.Add(equipmentIlvl);
             }

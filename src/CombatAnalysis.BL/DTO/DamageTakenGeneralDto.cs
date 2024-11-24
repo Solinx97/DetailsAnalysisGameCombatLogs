@@ -1,6 +1,6 @@
 ﻿namespace CombatAnalysis.BL.DTO;
 
-public class DamageTakenGeneralDto
+public class DamageTakenGeneralDto : CombatDataBase
 {
     public int Id { get; set; }
 
@@ -23,6 +23,4 @@ public class DamageTakenGeneralDto
     public int MaxValue { get; set; }
 
     public double AverageValue { get; set; }
-
-    public int CombatPlayerId { get; set; }
 }

@@ -1,6 +1,6 @@
 ﻿namespace CombatAnalysis.CombatParser.Entities;
 
-public class ResourceRecoveryGeneral : DetailsBase
+public class ResourceRecoveryGeneral : CombatDataBase
 {
     public int Value { get; set; }
 

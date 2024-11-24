@@ -86,9 +86,9 @@ public class CombatController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<IActionResult> Create(CombatModel model)
+    public async Task<IActionResult> Create(CombatModel combat)
     {
-        if (model == null)
+        if (combat == null)
         {
             _logger.LogError("Create combat called with null model.");
 
@@ -99,9 +99,11 @@ public class CombatController : ControllerBase
         {
             await _combatTransactionService.BeginTransactionAsync();
 
-            var createdCombat = await CreateCombatAsync(model);
-            await CreateCombatPlayersAsync(model, createdCombat);
-            await CreatePlayerDeathsAsync(model);
+            var createdCombat = await CreateCombatAsync(combat);
+            combat.Id = createdCombat.Id;
+
+            await CreateCombatPlayersAsync(combat);
+            await CreatePlayerDeathsAsync(combat);
 
             await UpdateCombatAsync(createdCombat);
 
@@ -215,11 +217,11 @@ public class CombatController : ControllerBase
         return combat;
     }
 
-    private async Task CreateCombatPlayersAsync(CombatModel model, CombatDto createdCombat)
+    private async Task CreateCombatPlayersAsync(CombatModel combat)
     {
-        foreach (var player in model.Players)
+        foreach (var player in combat.Players)
         {
-            player.CombatId = createdCombat.Id;
+            player.CombatId = combat.Id;
             if (string.IsNullOrEmpty(player.Username))
             {
                 continue;
@@ -227,9 +229,9 @@ public class CombatController : ControllerBase
 
             var createdCombatPlayer = await UploadCombatPlayerAsync(player);
             player.Id = createdCombatPlayer.Id;
-
-            await _saveCombatDataHelper.SaveCombatPlayerAsync(createdCombat, model.DeathInfo, model.PetsId, createdCombatPlayer, model.Data);
         }
+
+        await _saveCombatDataHelper.SaveCombatPlayerAsync(combat);
     }
 
     private async Task CreatePlayerDeathsAsync(CombatModel model)

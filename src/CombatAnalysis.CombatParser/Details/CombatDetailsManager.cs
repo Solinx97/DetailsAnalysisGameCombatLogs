@@ -4,13 +4,21 @@ using System.Globalization;
 
 namespace CombatAnalysis.CombatParser.Details;
 
-internal static class CombatDetailsManager
+internal class CombatDetailsManager
 {
-    public static CombatPlayerPosition GetPositions(string playerId, List<string> combatDataLine)
+    private readonly List<string> _playersId;
+
+    public CombatDetailsManager(List<string> playersId)
     {
-        if (!combatDataLine[2].Equals(playerId))
+        _playersId = playersId;
+    }
+
+    public (string, CombatPlayerPosition) GetPositions(List<string> combatDataLine)
+    {
+        if (!_playersId.Any(playerId => playerId.Equals(combatDataLine[2]))
+            || combatDataLine.Count <= 25)
         {
-            return null;
+            return (string.Empty, null);
         }
 
         var pos1Index = 25;
@@ -32,42 +40,31 @@ internal static class CombatDetailsManager
                 PositionY = position2
             };
 
-            return position;
+            return (combatDataLine[2], position);
         }
 
-        return null;
+        return (string.Empty, null);
     }
 
-    public static DamageDone GetPlayerDamageDone(string playerId, List<string> combatDataLine)
+    public (string, DamageDone) GetPlayerDamageDone(List<string> combatDataLine)
     {
-        if (string.Equals(combatDataLine[1], CombatLogKeyWords.SpellSummon, StringComparison.OrdinalIgnoreCase)
-            || string.Equals(combatDataLine[1], CombatLogKeyWords.SwingDamage, StringComparison.OrdinalIgnoreCase))
+        if (!_playersId.Any(playerId => playerId.Equals(combatDataLine[2]))
+            || combatDataLine[6].Contains("0000000000000000"))
         {
-            return null;
+            return (string.Empty, null);
         }
 
-        if (!combatDataLine[2].Contains(CombatLogKeyWords.Player) || !combatDataLine[2].Equals(playerId))
-        {
-            return null;
-        }
+        var damageDone = GetDamageDone(combatDataLine);
 
-        var damageDone = GetDamageDone(playerId, combatDataLine);
-
-        return damageDone;
+        return (combatDataLine[2], damageDone);
     }
 
-    public static DamageDone GetPetsDamageDone(string playerId, List<string> combatDataLine, Dictionary<string, List<string>> petsId)
+    public (string, DamageDone) GetPetsDamageDone(List<string> combatDataLine, Dictionary<string, List<string>> petsId)
     {
-        if (string.Equals(combatDataLine[1], CombatLogKeyWords.SpellSummon, StringComparison.OrdinalIgnoreCase)
-            || string.Equals(combatDataLine[1], CombatLogKeyWords.SwingDamage, StringComparison.OrdinalIgnoreCase))
-        {
-            return null;
-        }
-
         if (combatDataLine[2].Contains(CombatLogKeyWords.Player) ||
             (!combatDataLine[2].Contains(CombatLogKeyWords.Creature) && !combatDataLine[2].Contains(CombatLogKeyWords.Pet)))
         {
-            return null;
+            return (string.Empty, null);
         }
 
         var currentPet = string.Empty;
@@ -84,22 +81,22 @@ internal static class CombatDetailsManager
             }
         }
 
-        if (string.IsNullOrEmpty(petPlayerId) || petPlayerId != playerId)
+        if (string.IsNullOrEmpty(petPlayerId) || !_playersId.Any(playerId => playerId.Equals(petPlayerId)))
         {
-            return null;
+            return (string.Empty, null);
         }
 
         var spellOrItem = $"{combatDataLine[3].Trim('"')} - ";
-        var damageDone = GetDamageDone(playerId, combatDataLine, spellOrItem);
+        var damageDone = GetDamageDone(combatDataLine, spellOrItem);
 
-        return damageDone;
+        return (petPlayerId, damageDone);
     }
 
-    public static HealDone GetHealDone(string playerId, List<string> combatDataLine)
+    public (string, HealDone) GetHealDone(List<string> combatDataLine)
     {
-        if (!combatDataLine[2].Equals(playerId))
+        if (!_playersId.Any(playerId => playerId.Equals(combatDataLine[2])))
         {
-            return null;
+            return (string.Empty, null);
         }
 
         int.TryParse(combatDataLine[^4], out var value3);
@@ -121,14 +118,15 @@ internal static class CombatDetailsManager
             IsCrit = isCrit
         };
 
-        return healDone;
+        return (combatDataLine[2], healDone);
     }
 
-    public static HealDone GetAbsorb(string playerId, List<string> combatDataLine)
+    public (string, HealDone) GetAbsorb(List<string> combatDataLine)
     {
-        if (!combatDataLine[10].Equals(playerId) && !combatDataLine[13].Equals(playerId))
+        if (!_playersId.Any(playerId => playerId.Equals(combatDataLine[10])) 
+            && !_playersId.Any(playerId => playerId.Equals(combatDataLine[13])))
         {
-            return null;
+            return (string.Empty, null);
         }
 
         var countDataWithMeleeDamage = 19;
@@ -150,19 +148,26 @@ internal static class CombatDetailsManager
             IsAbsorbed = true
         };
 
-        return absorbeDone;
+        var playerId = _playersId.Any(playerId => playerId.Equals(combatDataLine[10])) ? combatDataLine[10] : combatDataLine[13];
+
+        return (playerId, absorbeDone);
     }
 
-    public static DamageTaken GetDamageTaken(List<string> combatDataLine)
+    public (string, DamageTaken) GetDamageTaken(List<string> combatDataLine)
     {
         if (string.Equals(combatDataLine[1], CombatLogKeyWords.SwingDamageLanded, StringComparison.OrdinalIgnoreCase))
         {
-            return null;
+            return (string.Empty, null);
         }
 
         if (!combatDataLine[2].Contains("0000000000000000") && !combatDataLine[2].Contains(CombatLogKeyWords.Creature))
         {
-            return null;
+            return (string.Empty, null);
+        }
+
+        if (!_playersId.Any(playerId => playerId.Equals(combatDataLine[6])))
+        {
+            return (string.Empty, null);
         }
 
         int.TryParse(combatDataLine[^10], out var value);
@@ -230,14 +235,14 @@ internal static class CombatDetailsManager
             IsCrushing = isCrushing,
         };
 
-        return damageTaken;
+        return (combatDataLine[6], damageTaken);
     }
 
-    public static ResourceRecovery GetEnergyRecovery(string playerId, List<string> combatDataLine)
+    public (string, ResourceRecovery) GetEnergyRecovery(List<string> combatDataLine)
     {
-        if (!combatDataLine[6].Equals(playerId))
+        if (!_playersId.Any(playerId => playerId.Equals(combatDataLine[6])))
         {
-            return null;
+            return (string.Empty, null);
         }
 
         int.TryParse(combatDataLine[^4], NumberStyles.Number, CultureInfo.InvariantCulture, out var amoutOfResourcesRecovery);
@@ -251,21 +256,21 @@ internal static class CombatDetailsManager
             SpellOrItem = spellOrItem.Trim('"')
         };
 
-        return energyRecovery;
+        return (combatDataLine[6], energyRecovery);
     }
 
-    private static DamageDone GetDamageDone(string playerId, List<string> combatDataLine, string spellOrItem = "")
+    private static DamageDone GetDamageDone(List<string> combatDataLine, string spellOrItem = "")
     {
         int.TryParse(combatDataLine[^10], out var amountOfValue);
 
         if (string.Equals(combatDataLine[1], CombatLogKeyWords.SwingDamageLanded, StringComparison.OrdinalIgnoreCase)
             || string.Equals(combatDataLine[1], CombatLogKeyWords.SwingMissed, StringComparison.OrdinalIgnoreCase))
         {
-            spellOrItem = CombatLogKeyWords.MeleeDamage;
+            spellOrItem += CombatLogKeyWords.MeleeDamage;
         }
         else
         {
-            spellOrItem = combatDataLine[11].Trim('"');
+            spellOrItem += combatDataLine[11].Trim('"');
         }
 
         var isPeriodicDamage = false;

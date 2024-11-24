@@ -1,6 +1,6 @@
 ﻿namespace CombatAnalysis.CombatParser.Entities;
 
-public class HealDone : DetailsBase
+public class HealDone : CombatDataBase
 {
     public int ValueWithOverheal { get; set; }
 

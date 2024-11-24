@@ -1,6 +1,6 @@
 ﻿namespace CombatAnalysis.BL.DTO;
 
-public class PlayerDeathDto
+public class PlayerDeathDto : CombatDataBase
 {
     public int Id { get; set; }
 
@@ -11,6 +11,4 @@ public class PlayerDeathDto
     public string LastHitSpellOrItem { get; set; }
 
     public int LastHitValue { get; set; }
-
-    public int CombatPlayerId { get; set; }
 }

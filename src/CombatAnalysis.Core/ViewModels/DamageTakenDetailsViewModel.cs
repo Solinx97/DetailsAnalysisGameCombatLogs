@@ -189,14 +189,14 @@ public class DamageTakenDetailsViewModel : DetailsGenericTemplate<DamageTakenMod
         var selectedCombatMap = _mapper.Map<Combat>(SelectedCombat);
 
         var combatDetails = new CombatDetails(_logger);
-        combatDetails.Calculate(parameter.PlayerId, SelectedCombat.Data);
+        //combatDetails.Calculate(parameter.PlayerId, SelectedCombat.Data);
 
         var healDoneMap = _mapper.Map<List<DamageTakenModel>>(combatDetails.DamageTaken);
         DetailsInformations = new ObservableCollection<DamageTakenModel>(healDoneMap);
 
-        var healDoneGeneralData = combatDetails.GetDamageTakenGeneral(combatDetails.DamageTaken, selectedCombatMap);
-        var healDoneGeneralMap = _mapper.Map<List<DamageTakenGeneralModel>>(healDoneGeneralData);
-        GeneralInformations = new ObservableCollection<DamageTakenGeneralModel>(healDoneGeneralMap);
+        //var healDoneGeneralData = combatDetails.GetDamageTakenGeneral(combatDetails.DamageTaken, selectedCombatMap);
+        //var healDoneGeneralMap = _mapper.Map<List<DamageTakenGeneralModel>>(healDoneGeneralData);
+        //GeneralInformations = new ObservableCollection<DamageTakenGeneralModel>(healDoneGeneralMap);
     }
 
     protected override void Filter()

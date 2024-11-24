@@ -1,6 +1,6 @@
 ﻿namespace CombatAnalysis.CombatParser.Entities;
 
-public class DamageDone : DetailsBase
+public class DamageDone : CombatDataBase
 {
     public int Value { get; set; }
 

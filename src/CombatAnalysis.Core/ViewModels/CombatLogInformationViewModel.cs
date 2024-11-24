@@ -33,7 +33,6 @@ public class CombatLogInformationViewModel : ParentTemplate, CombatParser.Interf
     private bool _isShowSteps;
     private string _dungeonName;
     private string _combatName;
-    private bool _combatStatus;
     private string _combatLogPath;
     private int _combatListSelectedIndex;
     private int _selectedCombatLogTypeTabItem;

@@ -1,6 +1,6 @@
 ﻿namespace CombatAnalysis.CombatParser.Entities;
 
-public class CombatPlayerPosition : DetailsBase
+public class CombatPlayerPosition : CombatDataBase
 {
     public double PositionX { get; set; }
 

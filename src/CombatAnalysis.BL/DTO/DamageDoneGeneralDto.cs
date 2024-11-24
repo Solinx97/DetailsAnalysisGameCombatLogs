@@ -1,6 +1,6 @@
 ﻿namespace CombatAnalysis.BL.DTO;
 
-public class DamageDoneGeneralDto
+public class DamageDoneGeneralDto : CombatDataBase
 {
     public int Id { get; set; }
 
@@ -23,6 +23,4 @@ public class DamageDoneGeneralDto
     public double AverageValue { get; set; }
 
     public bool IsPet { get; set; }
-
-    public int CombatPlayerId { get; set; }
 }

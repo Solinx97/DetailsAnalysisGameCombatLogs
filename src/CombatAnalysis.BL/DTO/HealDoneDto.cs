@@ -1,6 +1,6 @@
 ﻿namespace CombatAnalysis.BL.DTO;
 
-public class HealDoneDto : BasePlayerInfoDto
+public class HealDoneDto : CombatDataBase
 {
     public int Id { get; set; }
 
@@ -25,6 +25,4 @@ public class HealDoneDto : BasePlayerInfoDto
     public bool IsFullOverheal { get; set; }
 
     public bool IsAbsorbed { get; set; }
-
-    public override int CombatPlayerId { get; set; }
 }

@@ -38,17 +38,17 @@ public class CombatParserAPIService
                 await SaveCombatLogByUserAsync(combatLog.Id, logType);
             }
 
+            await SetReadyForCombatLogAsync(combatLog, combats.Count);
+
             foreach (var item in combats)
             {
                 item.CombatLogId = combatLog.Id;
 
-                _ = _httpClient.PostAsync("Combat", JsonContent.Create(item));
+                await _httpClient.PostAsync("Combat", JsonContent.Create(item));
 
                 currentCombatNumber++;
                 combatUploaded(currentCombatNumber, item.DungeonName, item.Name);
             }
-
-            await SetReadyForCombatLogAsync(combatLog, combats.Count);
 
             combatsAreUploaded = true;
 

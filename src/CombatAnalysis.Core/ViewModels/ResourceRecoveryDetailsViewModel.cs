@@ -26,14 +26,14 @@ public class ResourceRecoveryDetailsViewModel : DetailsGenericTemplate<ResourceR
         var selectedCombatMap = _mapper.Map<Combat>(SelectedCombat);
 
         var combatDetails = new CombatDetails(_logger);
-        combatDetails.Calculate(parameter.PlayerId, SelectedCombat.Data);
+        //combatDetails.Calculate(parameter.PlayerId, SelectedCombat.Data);
 
         var healDoneMap = _mapper.Map<List<ResourceRecoveryModel>>(combatDetails.ResourcesRecovery);
         DetailsInformations = new ObservableCollection<ResourceRecoveryModel>(healDoneMap);
 
-        var healDoneGeneralData = combatDetails.GetResourceRecoveryGeneral(combatDetails.ResourcesRecovery, selectedCombatMap);
-        var healDoneGeneralMap = _mapper.Map<List<ResourceRecoveryGeneralModel>>(healDoneGeneralData);
-        GeneralInformations = new ObservableCollection<ResourceRecoveryGeneralModel>(healDoneGeneralMap);
+        //var healDoneGeneralData = combatDetails.GetResourceRecoveryGeneral(combatDetails.ResourcesRecovery, selectedCombatMap);
+        //var healDoneGeneralMap = _mapper.Map<List<ResourceRecoveryGeneralModel>>(healDoneGeneralData);
+        //GeneralInformations = new ObservableCollection<ResourceRecoveryGeneralModel>(healDoneGeneralMap);
     }
 
     protected override void Filter()

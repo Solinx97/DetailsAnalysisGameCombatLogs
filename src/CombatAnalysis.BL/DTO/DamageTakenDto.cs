@@ -1,6 +1,6 @@
 ﻿namespace CombatAnalysis.BL.DTO;
 
-public class DamageTakenDto : BasePlayerInfoDto
+public class DamageTakenDto : CombatDataBase
 {
     public int Id { get; set; }
 
@@ -41,6 +41,4 @@ public class DamageTakenDto : BasePlayerInfoDto
     public bool IsAbsorb { get; set; }
 
     public bool IsCrushing { get; set; }
-
-    public override int CombatPlayerId { get; set; }
 }

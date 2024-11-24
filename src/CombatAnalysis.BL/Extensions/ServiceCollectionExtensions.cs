@@ -22,15 +22,20 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IService<PlayerParseInfoDto, int>, PlayerParseInfoService>();
 
         services.AddScoped<IPlayerInfoService<CombatPlayerPositionDto, int>, CombatPlayerPositionService>();
-        services.AddScoped<IPlayerInfoCountService<DamageDoneDto, int>, DamageDoneService>();
+        services.AddScoped<IPlayerInfoService<DamageDoneDto, int>, DamageDoneService>();
         services.AddScoped<IPlayerInfoService<DamageDoneGeneralDto, int>, DamageDoneGeneralService>();
-        services.AddScoped<IPlayerInfoCountService<HealDoneDto, int>, HealDoneService>();
+        services.AddScoped<IPlayerInfoService<HealDoneDto, int>, HealDoneService>();
         services.AddScoped<IPlayerInfoService<HealDoneGeneralDto, int>, HealDoneGeneralService>();
-        services.AddScoped<IPlayerInfoCountService<DamageTakenDto, int>, DamageTakenService>();
+        services.AddScoped<IPlayerInfoService<DamageTakenDto, int>, DamageTakenService>();
         services.AddScoped<IPlayerInfoService<DamageTakenGeneralDto, int>, DamageTakenGeneralService>();
-        services.AddScoped<IPlayerInfoCountService<ResourceRecoveryDto, int>, ResourceRecoveryService>();
+        services.AddScoped<IPlayerInfoService<ResourceRecoveryDto, int>, ResourceRecoveryService>();
         services.AddScoped<IPlayerInfoService<ResourceRecoveryGeneralDto, int>, ResourceRecoveryGeneralService>();
         services.AddScoped<IPlayerInfoService<PlayerDeathDto, int>, PlayerDeathService>();
+
+        services.AddScoped<IPlayerInfoCountService<DamageDoneDto, int>, DamageDoneService>();
+        services.AddScoped<IPlayerInfoCountService<HealDoneDto, int>, HealDoneService>();
+        services.AddScoped<IPlayerInfoCountService<DamageTakenDto, int>, DamageTakenService>();
+        services.AddScoped<IPlayerInfoCountService<ResourceRecoveryDto, int>, ResourceRecoveryService>();
 
         services.AddScoped<ISpecScoreService<SpecializationScoreDto, int>, SpecializationScoreService>();
     }

@@ -11,18 +11,15 @@ namespace CombatAnalysis.CombatParserAPI.Helpers;
 internal class PlayerParseInfoHelper : IPlayerParseInfoHelper
 {
     private readonly IMapper _mapper;
-    private readonly IService<PlayerParseInfoDto, int> _playerParseService;
-    private readonly ISpecScoreService<SpecializationScoreDto, int> _specializationScoreService;
+    private readonly IServiceScopeFactory _serviceScopeFactory;
 
-    public PlayerParseInfoHelper(IMapper mapper, IService<PlayerParseInfoDto, int> playerParseService,
-        ISpecScoreService<SpecializationScoreDto, int> specializationScoreService)
+    public PlayerParseInfoHelper(IMapper mapper, IServiceScopeFactory serviceScopeFactory)
     {
         _mapper = mapper;
-        _playerParseService = playerParseService;
-        _specializationScoreService = specializationScoreService;
+        _serviceScopeFactory = serviceScopeFactory;
     }
 
-    public async Task UploadPlayerParseInfoAsync(CombatDto combat, CombatPlayerDto combatPlayer, List<DamageDoneGeneral> damageDoneGeneralList, List<HealDoneGeneral> healDoneGeneralList)
+    public async Task UploadPlayerParseInfoAsync(Combat combat, CombatPlayerModel combatPlayer, List<DamageDoneGeneral> damageDoneGeneralList, List<HealDoneGeneral> healDoneGeneralList)
     {
         var playerParseInfo = new PlayerParseInfoModel
         {
@@ -55,9 +52,10 @@ internal class PlayerParseInfoHelper : IPlayerParseInfoHelper
             }
         }
 
-        await UploadEfficiencySpecializationAsync(combatPlayer, playerParseInfo);
+        var mapData = _mapper.Map<CombatPlayerDto>(combatPlayer);
 
-        await UploadPlayerParseInfoAsync(playerParseInfo, combatPlayer.Id);
+        await UploadEfficiencySpecializationAsync(mapData, playerParseInfo);
+        await UploadPlayerParseInfoAsync(playerParseInfo, mapData.Id);
     }
 
     private static int GetSpecializationId(List<DamageDoneGeneral> damageDoneGeneralList, List<HealDoneGeneral> healDoneGeneralList)
@@ -98,7 +96,11 @@ internal class PlayerParseInfoHelper : IPlayerParseInfoHelper
     {
         double damageScore = 0;
         double healScore = 0;
-        var score = await _specializationScoreService.GetBySpecIdAsync(playerParseInfo.SpecId, playerParseInfo.BossId, playerParseInfo.Difficult);
+
+        using var scope = _serviceScopeFactory.CreateScope();
+        var scopedService = scope.ServiceProvider.GetRequiredService<ISpecScoreService<SpecializationScoreDto, int>>();
+
+        var score = await scopedService.GetBySpecIdAsync(playerParseInfo.SpecId, playerParseInfo.BossId, playerParseInfo.Difficult);
 
         if (!score.Any())
         {
@@ -115,7 +117,7 @@ internal class PlayerParseInfoHelper : IPlayerParseInfoHelper
                 Updated = DateTimeOffset.UtcNow,
             };
 
-            await _specializationScoreService.CreateAsync(newSpecScore);
+            await scopedService.CreateAsync(newSpecScore);
 
             return;
         }
@@ -131,7 +133,7 @@ internal class PlayerParseInfoHelper : IPlayerParseInfoHelper
         {
             specScore.Damage = combatPlayer.DamageDone;
 
-            await _specializationScoreService.UpdateAsync(specScore);
+            await scopedService.UpdateAsync(specScore);
 
             playerParseInfo.DamageEfficiency = 100;
         }
@@ -149,7 +151,7 @@ internal class PlayerParseInfoHelper : IPlayerParseInfoHelper
         {
             specScore.Heal = combatPlayer.HealDone;
 
-            await _specializationScoreService.UpdateAsync(specScore);
+            await scopedService.UpdateAsync(specScore);
 
             playerParseInfo.HealEfficiency = 100;
         }
@@ -164,6 +166,9 @@ internal class PlayerParseInfoHelper : IPlayerParseInfoHelper
         var mapData = _mapper.Map<PlayerParseInfoDto>(playerParseInfo);
         mapData.CombatPlayerId = combatPlayerId;
 
-        await _playerParseService.CreateAsync(mapData);
+        using var scope = _serviceScopeFactory.CreateScope();
+        var scopedService = scope.ServiceProvider.GetRequiredService<IService<PlayerParseInfoDto, int>>();
+
+        await scopedService.CreateAsync(mapData);
     }
 }

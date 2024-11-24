@@ -6,6 +6,16 @@ namespace CombatAnalysis.CombatParser.Details;
 
 public class CombatDetails
 {
+    private readonly string[] _positions = new string[]
+    {
+        CombatLogKeyWords.SpellHeal,
+        CombatLogKeyWords.SpellDamage,
+        CombatLogKeyWords.SpellCastSuccess,
+        CombatLogKeyWords.SwingDamage,
+        CombatLogKeyWords.SpellPeriodicDamage,
+        CombatLogKeyWords.DamageShieldMissed,
+        CombatLogKeyWords.RangeDamage,
+    };
     private readonly string[] _healVariations = new string[]
     {
         CombatLogKeyWords.SpellHeal,
@@ -23,44 +33,34 @@ public class CombatDetails
         CombatLogKeyWords.DamageShieldMissed,
         CombatLogKeyWords.RangeDamage,
         CombatLogKeyWords.SpellMissed,
-        CombatLogKeyWords.SpellSummon,
-    };
-    private readonly string[] _damageTakenVariations = new string[]
-    {
-        CombatLogKeyWords.SpellDamage,
-        CombatLogKeyWords.SwingDamage,
-        CombatLogKeyWords.SpellPeriodicDamage,
-        CombatLogKeyWords.SwingMissed,
-        CombatLogKeyWords.DamageShieldMissed,
-        CombatLogKeyWords.RangeDamage,
-        CombatLogKeyWords.SpellMissed,
     };
     private readonly string[] _resourceVariations = new string[]
     {
         CombatLogKeyWords.SpellPeriodicEnergize,
         CombatLogKeyWords.SpellEnergize,
     };
+
     private readonly ILogger _logger;
     private readonly Dictionary<string, List<string>> _petsId;
 
-    public List<CombatPlayerPosition> Positions { get; private set; }
+    public Dictionary<string, List<CombatPlayerPosition>> Positions { get; private set; }
 
-    public List<DamageDone> DamageDone { get; private set; }
+    public Dictionary<string, List<DamageDone>> DamageDone { get; private set; }
 
-    public List<HealDone> HealDone { get; private set; }
+    public Dictionary<string, List<HealDone>> HealDone { get; private set; }
 
-    public List<DamageTaken> DamageTaken { get; private set; }
+    public Dictionary<string, List<DamageTaken>> DamageTaken { get; private set; }
 
-    public List<ResourceRecovery> ResourcesRecovery { get; private set; }
+    public Dictionary<string, List<ResourceRecovery>> ResourcesRecovery { get; private set; }
 
     public CombatDetails(ILogger logger)
     {
         _logger = logger;
-        Positions = new List<CombatPlayerPosition>();
-        DamageDone = new List<DamageDone>();
-        HealDone = new List<HealDone>();
-        DamageTaken = new List<DamageTaken>();
-        ResourcesRecovery = new List<ResourceRecovery>();
+        Positions = new Dictionary<string, List<CombatPlayerPosition>>();
+        DamageDone = new Dictionary<string, List<DamageDone>>();
+        HealDone = new Dictionary<string, List<HealDone>>();
+        DamageTaken = new Dictionary<string, List<DamageTaken>>();
+        ResourcesRecovery = new Dictionary<string, List<ResourceRecovery>>();
     }
 
     public CombatDetails(ILogger logger, Dictionary<string, List<string>> petsId) : this(logger)
@@ -68,90 +68,24 @@ public class CombatDetails
         _petsId = petsId;
     }
 
-    public void Calculate(string playerId, List<string> combatData)
+    public void Calculate(List<string> playersId, List<string> combatData)
     {
         try
         {
-            if (string.IsNullOrEmpty(playerId))
+            if (playersId == null || playersId.Count == 0)
             {
-                throw new ArgumentNullException(nameof(playerId));
+                throw new ArgumentNullException(nameof(playersId));
             }
             else if (combatData == null || combatData.Count == 0)
             {
                 throw new ArgumentNullException(nameof(combatData));
             }
 
+            PrepareCollections(playersId);
+
             foreach (var item in combatData)
             {
-                if (!item.Contains(playerId))
-                {
-                    continue;
-                }
-
-                var itemHasHealVariation = _healVariations.Any(item.Contains);
-                var itemHasDamageVariation = _damageVariations.Any(item.Contains);
-                var itemHasAbsorbVariation = _absorbVariations.Any(item.Contains);
-                var itemHasResourceVariation = _resourceVariations.Any(item.Contains);
-                var itemHasDamageTakenVariation = _damageTakenVariations.Any(item.Contains);
-
-                var clearCombatData = RemoveTime(item);
-
-                if ((itemHasHealVariation || itemHasDamageVariation))
-                {
-                    var positions = CombatDetailsManager.GetPositions(playerId, clearCombatData);
-                    if (positions != null)
-                    {
-                        Positions.Add(positions);
-                    }
-                }
-
-                if (itemHasHealVariation)
-                {
-                    var healDoneInformation = CombatDetailsManager.GetHealDone(playerId, clearCombatData);
-                    if (healDoneInformation != null)
-                    {
-                        HealDone.Add(healDoneInformation);
-                    }
-                }
-                else if (itemHasAbsorbVariation)
-                {
-                    var absorbInformation = CombatDetailsManager.GetAbsorb(playerId, clearCombatData);
-                    if (absorbInformation != null)
-                    {
-                        HealDone.Add(absorbInformation);
-                    }
-                }
-                else if (itemHasDamageVariation)
-                {
-                    var damageDoneInformation = CombatDetailsManager.GetPlayerDamageDone(playerId, clearCombatData);
-                    if (damageDoneInformation != null)
-                    {
-                        DamageDone.Add(damageDoneInformation);
-                    }
-
-                    damageDoneInformation = CombatDetailsManager.GetPetsDamageDone(playerId, clearCombatData, _petsId);
-                    if (damageDoneInformation != null)
-                    {
-                        DamageDone.Add(damageDoneInformation);
-                    }
-                }
-                else if (itemHasResourceVariation)
-                {
-                    var energyRecoveryInformation = CombatDetailsManager.GetEnergyRecovery(playerId, clearCombatData);
-                    if (energyRecoveryInformation != null)
-                    {
-                        ResourcesRecovery.Add(energyRecoveryInformation);
-                    }
-                }
-
-                if (itemHasDamageTakenVariation)
-                {
-                    var damageTakenInformation = CombatDetailsManager.GetDamageTaken(clearCombatData);
-                    if (damageTakenInformation != null)
-                    {
-                        DamageTaken.Add(damageTakenInformation);
-                    }
-                }
+                Parse(playersId, item);
             }
         }
         catch (ArgumentNullException ex)
@@ -161,6 +95,113 @@ public class CombatDetails
         catch (Exception ex)
         {
             _logger.LogError(ex, ex.Message);
+        }
+    }
+
+    private void PrepareCollections(List<string> playersId)
+    {
+        foreach(var playerId in playersId)
+        {
+            Positions.Add(playerId, new List<CombatPlayerPosition>());
+            DamageDone.Add(playerId, new List<DamageDone>());
+            HealDone.Add(playerId, new List<HealDone>());
+            DamageTaken.Add(playerId, new List<DamageTaken>());
+            ResourcesRecovery.Add(playerId, new List<ResourceRecovery>());
+        }
+    }
+
+    private void Parse(List<string> playersId, string combatDataLine)
+    {
+        var hasPositions = _positions.Any(combatDataLine.Contains);
+        var hasHeal = _healVariations.Any(combatDataLine.Contains);
+        var hasDamage = _damageVariations.Any(combatDataLine.Contains);
+        var hasAbsorb = _absorbVariations.Any(combatDataLine.Contains);
+        var hasResources = _resourceVariations.Any(combatDataLine.Contains);
+
+        if (!hasPositions && !hasHeal && !hasDamage && !hasAbsorb && !hasResources)
+        {
+            return;
+        }
+
+        var clearCombatData = RemoveTime(combatDataLine);
+        var combatDetailsManager = new CombatDetailsManager(playersId);
+
+        if (hasPositions)
+        {
+            var (playerId, positionsInformation) = combatDetailsManager.GetPositions(clearCombatData);
+            if (!string.IsNullOrEmpty(playerId) || positionsInformation != null)
+            {
+                if (Positions.TryGetValue(playerId, out var collection))
+                {
+                    collection.Add(positionsInformation);
+                }
+            }
+        }
+
+        if (hasHeal)
+        {
+            var (playerId, healDoneInformation) = combatDetailsManager.GetHealDone(clearCombatData);
+            if (!string.IsNullOrEmpty(playerId) || healDoneInformation != null)
+            {
+                if (HealDone.TryGetValue(playerId, out var collection))
+                {
+                    collection.Add(healDoneInformation);
+                }
+            }
+        }
+        else if (hasAbsorb)
+        {
+            var (playerId, absorbInformation) = combatDetailsManager.GetAbsorb(clearCombatData);
+            if (absorbInformation != null)
+            {
+                if (HealDone.TryGetValue(playerId, out var collection))
+                {
+                    collection.Add(absorbInformation);
+                }
+            }
+        }
+        else if (hasDamage)
+        {
+            var (playerId, damageDoneInformation) = combatDetailsManager.GetPlayerDamageDone(clearCombatData);
+            if (!string.IsNullOrEmpty(playerId) || damageDoneInformation != null)
+            {
+                if (DamageDone.TryGetValue(playerId, out var collection))
+                {
+                    collection.Add(damageDoneInformation);
+                }
+            }
+
+            (playerId, damageDoneInformation) = combatDetailsManager.GetPetsDamageDone(clearCombatData, _petsId);
+            if (!string.IsNullOrEmpty(playerId) || damageDoneInformation != null)
+            {
+                if (DamageDone.TryGetValue(playerId, out var colelction))
+                {
+                    colelction.Add(damageDoneInformation);
+                }
+            }
+        }
+        else if (hasResources)
+        {
+            var (playerId, energyRecoveryInformation) = combatDetailsManager.GetEnergyRecovery(clearCombatData);
+            if (!string.IsNullOrEmpty(playerId) || energyRecoveryInformation != null)
+            {
+                if (ResourcesRecovery.TryGetValue(playerId, out var collection))
+                {
+                    collection.Add(energyRecoveryInformation);
+                }
+            }
+        }
+
+        if (hasDamage)
+        {
+            var (playerId, damageTakenInformation) = combatDetailsManager.GetDamageTaken(clearCombatData);
+            if (!string.IsNullOrEmpty(playerId) || damageTakenInformation != null)
+            {
+                if (DamageTaken.TryGetValue(playerId, out var collection))
+                {
+                    collection.Add(damageTakenInformation);
+                }
+            }
         }
     }
 

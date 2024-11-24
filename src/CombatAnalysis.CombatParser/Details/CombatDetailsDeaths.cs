@@ -17,7 +17,7 @@ public class CombatDetailsDeaths
         _combat = combat;
     }
 
-    public int GetData(string player, List<string> combatData)
+    public int GetDeathNumber(List<string> combatData)
     {
         int deaths = 0;
         foreach (var item in combatData)
