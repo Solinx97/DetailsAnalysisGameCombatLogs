@@ -2,9 +2,9 @@
 
 namespace CombatAnalysis.App.Views;
 
-public partial class GeneralAnalysisView : MvxWpfView
+public partial class CombatsView : MvxWpfView
 {
-    public GeneralAnalysisView()
+    public CombatsView()
     {
         InitializeComponent();
     }

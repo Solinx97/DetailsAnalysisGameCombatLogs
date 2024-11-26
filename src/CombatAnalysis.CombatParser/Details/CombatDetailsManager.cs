@@ -264,6 +264,7 @@ internal class CombatDetailsManager
         int.TryParse(combatDataLine[^10], out var amountOfValue);
 
         if (string.Equals(combatDataLine[1], CombatLogKeyWords.SwingDamageLanded, StringComparison.OrdinalIgnoreCase)
+            || string.Equals(combatDataLine[1], CombatLogKeyWords.SwingDamage, StringComparison.OrdinalIgnoreCase)
             || string.Equals(combatDataLine[1], CombatLogKeyWords.SwingMissed, StringComparison.OrdinalIgnoreCase))
         {
             spellOrItem += CombatLogKeyWords.MeleeDamage;

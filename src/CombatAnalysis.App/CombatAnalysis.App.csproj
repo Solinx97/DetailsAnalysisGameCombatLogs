@@ -74,12 +74,12 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Resource.resx</DependentUpon>
     </Compile>
-    <Compile Update="Localizations\Resources\DetailsSpecificalCombat\Resource.Designer.cs">
+    <Compile Update="Localizations\Resources\CombatPlayers\Resource.Designer.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
       <DependentUpon>Resource.resx</DependentUpon>
     </Compile>
-    <Compile Update="Localizations\Resources\GeneralAnalysis\Resource.Designer.cs">
+    <Compile Update="Localizations\Resources\Combats\Resource.Designer.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
       <DependentUpon>Resource.resx</DependentUpon>
@@ -167,18 +167,18 @@
     <EmbeddedResource Update="Localizations\Resources\DetailsGeneralTemplate\Resource.ru.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
     </EmbeddedResource>
-    <EmbeddedResource Update="Localizations\Resources\DetailsSpecificalCombat\Resource.resx">
+    <EmbeddedResource Update="Localizations\Resources\CombatPlayers\Resource.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>Resource.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <EmbeddedResource Update="Localizations\Resources\DetailsSpecificalCombat\Resource.ru.resx">
+    <EmbeddedResource Update="Localizations\Resources\CombatPlayers\Resource.ru.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
     </EmbeddedResource>
-    <EmbeddedResource Update="Localizations\Resources\GeneralAnalysis\Resource.resx">
+    <EmbeddedResource Update="Localizations\Resources\Combats\Resource.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>Resource.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <EmbeddedResource Update="Localizations\Resources\GeneralAnalysis\Resource.ru.resx">
+    <EmbeddedResource Update="Localizations\Resources\Combats\Resource.ru.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
     </EmbeddedResource>
     <EmbeddedResource Update="Localizations\Resources\HealDoneDetails\Resource.resx">

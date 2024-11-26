@@ -24,7 +24,7 @@ public class CombatPlayerModel
 
     public double DamageTakenPerSecond { get; set; }
 
-    public double EnergyRecoveryPerSecond { get; set; }
+    public double ResourcesRecoveryPerSecond { get; set; }
 
     public int UsedBuffs { get; set; }
 

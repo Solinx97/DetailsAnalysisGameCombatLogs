@@ -4,9 +4,9 @@ using System.Windows.Controls;
 
 namespace CombatAnalysis.App.Views;
 
-public partial class DetailsSpecificalCombatView : MvxWpfView
+public partial class CombatPlayersView : MvxWpfView
 {
-    public DetailsSpecificalCombatView()
+    public CombatPlayersView()
     {
         InitializeComponent();
 
@@ -15,7 +15,7 @@ public partial class DetailsSpecificalCombatView : MvxWpfView
 
     private void DetailsSpecificalCombatView_DataContextChanged(object sender, System.Windows.DependencyPropertyChangedEventArgs e)
     {
-        var view = (DetailsSpecificalCombatViewModel)ViewModel;
+        var view = (CombatPlayersViewModel)ViewModel;
 
         UpdateColumnVisibility(view.ShowEffeciency);
     }

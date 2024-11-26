@@ -181,7 +181,7 @@
     <value>Результат</value>
   </data>
   <data name="SaveData" xml:space="preserve">
-    <value>Сохранить данные</value>
+    <value>Сохранить</value>
   </data>
   <data name="SaveDataDescribe" xml:space="preserve">
     <value>Сохранение данных позволяет просматривать данные в будущем и делиться с другими пользователями.</value>

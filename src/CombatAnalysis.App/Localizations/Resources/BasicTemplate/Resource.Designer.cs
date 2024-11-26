@@ -61,15 +61,6 @@ namespace CombatAnalysis.App.Localizations.Resources.BasicTemplate {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to All combats.
-        /// </summary>
-        public static string AllCombats {
-            get {
-                return ResourceManager.GetString("AllCombats", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Chat.
         /// </summary>
         public static string Chat {
@@ -93,6 +84,15 @@ namespace CombatAnalysis.App.Localizations.Resources.BasicTemplate {
         public static string CloseWindow {
             get {
                 return ResourceManager.GetString("CloseWindow", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Combats.
+        /// </summary>
+        public static string Combats {
+            get {
+                return ResourceManager.GetString("Combats", resourceCulture);
             }
         }
         

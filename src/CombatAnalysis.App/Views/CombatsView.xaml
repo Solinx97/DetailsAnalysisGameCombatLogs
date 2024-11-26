@@ -1,5 +1,5 @@
 ﻿<views:MvxWpfView
-    x:Class="CombatAnalysis.App.Views.GeneralAnalysisView"
+    x:Class="CombatAnalysis.App.Views.CombatsView"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:Icon="http://metro.mahapps.com/winfx/xaml/iconpacks"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -8,7 +8,7 @@
     xmlns:converters="clr-namespace:CombatAnalysis.App.Converters"
     xmlns:combatLogsConverters="clr-namespace:CombatAnalysis.App.Converters.CombatLogs"
     xmlns:loc="clr-namespace:CombatAnalysis.App.Localizations"
-    xmlns:resx="clr-namespace:CombatAnalysis.App.Localizations.Resources.GeneralAnalysis"
+    xmlns:resx="clr-namespace:CombatAnalysis.App.Localizations.Resources.Combats"
     xmlns:local="clr-namespace:CombatAnalysis.App.Views.ViewTemplates"
     xmlns:viewModels="clr-namespace:CombatAnalysis.Core.ViewModels;assembly=CombatAnalysis.Core"
     xmlns:mvx="clr-namespace:MvvmCross.Platforms.Wpf.Binding;assembly=MvvmCross.Platforms.Wpf"

@@ -12,7 +12,7 @@ using System.Collections.ObjectModel;
 
 namespace CombatAnalysis.Core.ViewModels;
 
-public class GeneralAnalysisViewModel : ParentTemplate<Tuple<List<CombatModel>, LogType>>, IResponseStatusObserver
+public class CombatsViewModel : ParentTemplate<Tuple<List<CombatModel>, LogType>>, IResponseStatusObserver
 {
     private readonly IMvxNavigationService _mvvmNavigation;
     private readonly CombatParserAPIService _combatParserAPIService;
@@ -55,7 +55,7 @@ public class GeneralAnalysisViewModel : ParentTemplate<Tuple<List<CombatModel>, 
     private int _sortedByResources = -1;
     private int _sortedByDeaths = -1;
 
-    public GeneralAnalysisViewModel(IMvxNavigationService mvvmNavigation, IHttpClientHelper httpClient, ILogger logger, IMemoryCache memoryCache)
+    public CombatsViewModel(IMvxNavigationService mvvmNavigation, IHttpClientHelper httpClient, ILogger logger, IMemoryCache memoryCache)
     {
         _mvvmNavigation = mvvmNavigation;
 
@@ -477,7 +477,7 @@ public class GeneralAnalysisViewModel : ParentTemplate<Tuple<List<CombatModel>, 
 
         BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, nameof(BasicTemplateViewModel.SelectedCombat), SelectedCombat);
 
-        await _mvvmNavigation.Navigate<DetailsSpecificalCombatViewModel, CombatModel>(SelectedCombat);
+        await _mvvmNavigation.Navigate<CombatPlayersViewModel, CombatModel>(SelectedCombat);
     }
 
     public async Task RepeatSaveCombatDataDetailsAsync()
@@ -642,7 +642,7 @@ public class GeneralAnalysisViewModel : ParentTemplate<Tuple<List<CombatModel>, 
             var averageCombatPlayerHPS = combat.Players.Any() ? combat.Players.Average(x => x.HealDonePerSecond) : 0;
             averageHPS.Add(averageCombatPlayerHPS);
 
-            var averageCombatPlayerRPS = combat.Players.Any() ? combat.Players.Average(x => x.EnergyRecoveryPerSecond) : 0;
+            var averageCombatPlayerRPS = combat.Players.Any() ? combat.Players.Average(x => x.ResourcesRecoveryPerSecond) : 0;
             averageRPS.Add(averageCombatPlayerRPS);
 
             var averageCombatPlayerDTPS = combat.Players.Any() ? combat.Players.Average(x => x.DamageTakenPerSecond) : 0;
@@ -671,7 +671,7 @@ public class GeneralAnalysisViewModel : ParentTemplate<Tuple<List<CombatModel>, 
             var maxCombatPlayerHPS = combat.Players.Any() ? combat.Players.Max(x => x.HealDonePerSecond) : 0;
             maxHPS.Add(maxCombatPlayerHPS);
 
-            var maxCombatPlayerRPS = combat.Players.Any() ? combat.Players.Max(x => x.EnergyRecoveryPerSecond) : 0;
+            var maxCombatPlayerRPS = combat.Players.Any() ? combat.Players.Max(x => x.ResourcesRecoveryPerSecond) : 0;
             maxRPS.Add(maxCombatPlayerRPS);
 
             var maxCombatPlayerDTPS = combat.Players.Any() ? combat.Players.Max(x => x.DamageTakenPerSecond) : 0;
@@ -761,7 +761,7 @@ public class GeneralAnalysisViewModel : ParentTemplate<Tuple<List<CombatModel>, 
         {
             player.DamageDonePerSecond = player.DamageDone / duration.TotalSeconds;
             player.HealDonePerSecond = player.HealDone / duration.TotalSeconds;
-            player.EnergyRecoveryPerSecond = player.ResourcesRecovery / duration.TotalSeconds;
+            player.ResourcesRecoveryPerSecond = player.ResourcesRecovery / duration.TotalSeconds;
             player.DamageTakenPerSecond = player.DamageTaken / duration.TotalSeconds;
         }
     }

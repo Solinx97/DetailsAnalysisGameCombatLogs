@@ -5,7 +5,7 @@ using MvvmCross.Commands;
 
 namespace CombatAnalysis.Core.ViewModels;
 
-public class DetailsSpecificalCombatViewModel : ParentTemplate<CombatModel>
+public class CombatPlayersViewModel : ParentTemplate<CombatModel>
 {
     private CombatModel _combat;
     private List<CombatPlayerModel> _playersCombat;
@@ -46,7 +46,7 @@ public class DetailsSpecificalCombatViewModel : ParentTemplate<CombatModel>
     private double _totalHealPerSecond;
     private double _totalResourcesPerSecond;
 
-    public DetailsSpecificalCombatViewModel()
+    public CombatPlayersViewModel()
     {
         BasicTemplate.Parent = this;
         BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, nameof(BasicTemplateViewModel.Step), 2);
@@ -695,7 +695,7 @@ public class DetailsSpecificalCombatViewModel : ParentTemplate<CombatModel>
 
         AverageDamagePerSecond = PlayersCombat.Average(x => x.DamageDonePerSecond);
         AverageHealPerSecond = PlayersCombat.Average(x => x.HealDonePerSecond);
-        AverageResourcesPerSecond = PlayersCombat.Average(x => x.EnergyRecoveryPerSecond);
+        AverageResourcesPerSecond = PlayersCombat.Average(x => x.ResourcesRecoveryPerSecond);
 
         TotalDamage = PlayersCombat.Sum(x => x.DamageDone);
         TotalHeal = PlayersCombat.Sum(x => x.HealDone);
@@ -703,7 +703,7 @@ public class DetailsSpecificalCombatViewModel : ParentTemplate<CombatModel>
 
         TotalDamagePerSecond = PlayersCombat.Sum(x => x.DamageDonePerSecond);
         TotalHealPerSecond = PlayersCombat.Sum(x => x.HealDonePerSecond);
-        TotalResourcesPerSecond = PlayersCombat.Sum(x => x.EnergyRecoveryPerSecond);
+        TotalResourcesPerSecond = PlayersCombat.Sum(x => x.ResourcesRecoveryPerSecond);
     }
 
     private void GetTotalValueFiltersName()
@@ -851,7 +851,7 @@ public class DetailsSpecificalCombatViewModel : ParentTemplate<CombatModel>
         var temporaryPlayersCombat = new List<CombatPlayerModel>();
         foreach (var player in PlayersCombat)
         {
-            if (player.EnergyRecoveryPerSecond >= minRPS)
+            if (player.ResourcesRecoveryPerSecond >= minRPS)
             {
                 temporaryPlayersCombat.Add(player);
             }

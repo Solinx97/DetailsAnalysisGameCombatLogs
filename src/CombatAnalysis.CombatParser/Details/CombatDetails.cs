@@ -10,15 +10,15 @@ public class CombatDetails
     {
         CombatLogKeyWords.SpellHeal,
         CombatLogKeyWords.SpellDamage,
+        CombatLogKeyWords.SwingDamageLanded,
         CombatLogKeyWords.SpellCastSuccess,
-        CombatLogKeyWords.SwingDamage,
-        CombatLogKeyWords.SpellPeriodicDamage,
         CombatLogKeyWords.DamageShieldMissed,
         CombatLogKeyWords.RangeDamage,
     };
     private readonly string[] _healVariations = new string[]
     {
         CombatLogKeyWords.SpellHeal,
+        CombatLogKeyWords.SpellPeriodicHeal,
     };
     private readonly string[] _absorbVariations = new string[]
     {
@@ -27,7 +27,7 @@ public class CombatDetails
     private readonly string[] _damageVariations = new string[]
     {
         CombatLogKeyWords.SpellDamage,
-        CombatLogKeyWords.SwingDamage,
+        CombatLogKeyWords.SwingDamageLanded,
         CombatLogKeyWords.SpellPeriodicDamage,
         CombatLogKeyWords.SwingMissed,
         CombatLogKeyWords.DamageShieldMissed,

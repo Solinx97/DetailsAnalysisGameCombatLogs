@@ -86,12 +86,17 @@ public class CombatParserService
     {
         if (line.Contains(CombatLogKeyWords.SpellSummon))
         {
-            ParseGetPets(line, petsId);
+            ParsePlayerCreatures(line, petsId);
+        }
+
+        if (line.Contains($"{CombatLogKeyWords.SwingDamage},") && line.Contains(CombatLogKeyWords.Pet))
+        {
+            ParsePlayerPets(line, petsId);
         }
 
         if (line.Contains(CombatLogKeyWords.ZoneChange))
         {
-            GetZoneName(line);
+            ZoneName(line);
         }
 
         if (line.Contains(CombatLogKeyWords.EncounterStart))
@@ -117,6 +122,7 @@ public class CombatParserService
             GetCombatInformation(combatInformationList, petsId);
 
             newCombatFromLogs.Clear();
+            petsId.Clear();
         }
         else
         {
@@ -124,24 +130,69 @@ public class CombatParserService
         }
     }
 
-    private static void ParseGetPets(string data, Dictionary<string, List<string>> petsId)
+    private static void ParsePlayerCreatures(string data, Dictionary<string, List<string>> creaturesId)
     {
         var combatLogParts = data.Split("  ")[1].Split(',');
-        var playerId = combatLogParts[1].Contains(CombatLogKeyWords.Player) ? combatLogParts[1] : string.Empty;
+        var playerId = combatLogParts[1].Contains(CombatLogKeyWords.Player) 
+            ? combatLogParts[1]
+            : string.Empty;
+        var friendlyCreatureId = combatLogParts[1].Contains(CombatLogKeyWords.Creature)
+            ? combatLogParts[1]
+            : string.Empty;
+
+        if (string.IsNullOrEmpty(playerId) && string.IsNullOrEmpty(friendlyCreatureId))
+        {
+            return;
+        }
+
+        var creatureId = combatLogParts[5];
+        var friendCreaturePlayerId = creaturesId.FirstOrDefault(x => x.Value.Contains(friendlyCreatureId)).Key;
+        if (!string.IsNullOrEmpty(friendCreaturePlayerId))
+        {
+            if (creaturesId.TryGetValue(friendCreaturePlayerId, out var petList))
+            {
+                petList.Add(creatureId);
+            }
+        }
+        else
+        {
+            if (!creaturesId.TryGetValue(playerId, out var petList))
+            {
+                petList = new List<string>();
+                creaturesId[playerId] = petList;
+            }
+
+            petList.Add(creatureId);
+        }
+    }
+
+    private static void ParsePlayerPets(string data, Dictionary<string, List<string>> petsId)
+    {
+        var combatLogParts = data.Split("  ")[1].Split(',');
+
+        if (combatLogParts[3].Contains("0x10a48"))
+        {
+            return;
+        }
+
+        var playerId = combatLogParts[10].Contains(CombatLogKeyWords.Player) ? combatLogParts[10] : string.Empty;
 
         if (string.IsNullOrEmpty(playerId))
         {
             return;
         }
 
-        var petId = combatLogParts[1].Contains(CombatLogKeyWords.Player) ? combatLogParts[5] : string.Empty;
+        var petId = combatLogParts[1];
         if (!petsId.TryGetValue(playerId, out var petList))
         {
             petList = new List<string>();
             petsId[playerId] = petList;
         }
 
-        petList.Add(petId);
+        if (!petList.Any(x => x.Equals(petId)))
+        {
+            petList.Add(petId);
+        }
     }
 
     private void GetCombatInformation(List<string> builtCombat, Dictionary<string, List<string>> petsId)
@@ -310,7 +361,7 @@ public class CombatParserService
         return players;
     }
 
-    private void GetZoneName(string combatLog)
+    private void ZoneName(string combatLog)
     {
         var parse = combatLog.Split("  ")[1];
         var name = parse.Split(',')[2];

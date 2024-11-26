@@ -413,7 +413,7 @@ public class CombatLogInformationViewModel : ParentTemplate, CombatParser.Interf
         BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, nameof(BasicTemplateViewModel.AllowStep), 1);
 
         var dataForGeneralAnalysis = Tuple.Create(loadedCombats.ToList(), LogType);
-        await _mvvmNavigation.Navigate<GeneralAnalysisViewModel, Tuple<List<CombatModel>, LogType>>(dataForGeneralAnalysis);
+        await _mvvmNavigation.Navigate<CombatsViewModel, Tuple<List<CombatModel>, LogType>>(dataForGeneralAnalysis);
 
         BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, nameof(BasicTemplateViewModel.CombatLog), combatLog);
         BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, nameof(BasicTemplateViewModel.Combats), loadedCombats.ToList());
@@ -477,7 +477,7 @@ public class CombatLogInformationViewModel : ParentTemplate, CombatParser.Interf
             BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, nameof(BasicTemplateViewModel.AllowStep), 1);
             BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, nameof(BasicTemplateViewModel.ResponseStatus), LoadingStatus.None);
 
-            await _mvvmNavigation.Navigate<GeneralAnalysisViewModel, Tuple<List<CombatModel>, LogType>>(dataForGeneralAnalysis);
+            await _mvvmNavigation.Navigate<CombatsViewModel, Tuple<List<CombatModel>, LogType>>(dataForGeneralAnalysis);
             BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, nameof(BasicTemplateViewModel.Combats), combatsList);
 
             return;
@@ -535,9 +535,9 @@ public class CombatLogInformationViewModel : ParentTemplate, CombatParser.Interf
 
         BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, nameof(BasicTemplateViewModel.AllowStep), 1);
 
-        await _mvvmNavigation.Navigate<GeneralAnalysisViewModel, Tuple<List<CombatModel>, LogType>>(dataForGeneralAnalysis);
+        await _mvvmNavigation.Navigate<CombatsViewModel, Tuple<List<CombatModel>, LogType>>(dataForGeneralAnalysis);
 
-        BasicTemplate.Handler.PropertyUpdate<GeneralAnalysisViewModel>(BasicTemplate.SavedViewModel, nameof(GeneralAnalysisViewModel.ResponseStatus), LoadingStatus.Pending);
+        BasicTemplate.Handler.PropertyUpdate<CombatsViewModel>(BasicTemplate.SavedViewModel, nameof(CombatsViewModel.ResponseStatus), LoadingStatus.Pending);
 
         BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, nameof(BasicTemplateViewModel.Combats), combatList);
         BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, nameof(BasicTemplateViewModel.CombatLog), createdCombatLog);
@@ -626,9 +626,9 @@ public class CombatLogInformationViewModel : ParentTemplate, CombatParser.Interf
 
     private void CombatUploaded(int number, string dungeonName, string name)
     {
-        BasicTemplate.Handler.PropertyUpdate<GeneralAnalysisViewModel>(BasicTemplate.SavedViewModel, nameof(GeneralAnalysisViewModel.CurrentCombatNumber), number);
-        BasicTemplate.Handler.PropertyUpdate<GeneralAnalysisViewModel>(BasicTemplate.SavedViewModel, nameof(GeneralAnalysisViewModel.DungeonName), dungeonName);
-        BasicTemplate.Handler.PropertyUpdate<GeneralAnalysisViewModel>(BasicTemplate.SavedViewModel, nameof(GeneralAnalysisViewModel.Name), name);
+        BasicTemplate.Handler.PropertyUpdate<CombatsViewModel>(BasicTemplate.SavedViewModel, nameof(CombatsViewModel.CurrentCombatNumber), number);
+        BasicTemplate.Handler.PropertyUpdate<CombatsViewModel>(BasicTemplate.SavedViewModel, nameof(CombatsViewModel.DungeonName), dungeonName);
+        BasicTemplate.Handler.PropertyUpdate<CombatsViewModel>(BasicTemplate.SavedViewModel, nameof(CombatsViewModel.Name), name);
 
         var uploaded = ((BasicTemplateViewModel)BasicTemplate).UploadedCombatsCount;
         BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, nameof(BasicTemplateViewModel.UploadedCombatsCount), ++uploaded);

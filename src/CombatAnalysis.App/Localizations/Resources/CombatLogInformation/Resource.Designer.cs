@@ -250,7 +250,7 @@ namespace CombatAnalysis.App.Localizations.Resources.CombatLogInformation {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Save data.
+        ///   Looks up a localized string similar to Save.
         /// </summary>
         public static string SaveData {
             get {
