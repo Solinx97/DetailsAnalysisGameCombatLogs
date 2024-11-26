@@ -1,6 +1,8 @@
 ﻿namespace CombatAnalysis.Core.Consts;
 
-internal static class AppStaticData
+public static class AppStaticData
 {
     public static int PreparedCombatsCount { get; set; }
+
+    public static string SelectedCombatLogFilePath { get; set; } = string.Empty;
 }

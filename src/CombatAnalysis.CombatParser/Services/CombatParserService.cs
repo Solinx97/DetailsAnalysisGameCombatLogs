@@ -47,7 +47,7 @@ public class CombatParserService
         return fileIsCorrect;
     }
 
-    public async Task ParseAsync(string combatLogPath)
+    public async Task ParseAsync(string combatLogPath, CancellationToken cancellationToken)
     {
         var newCombatFromLogs = new StringBuilder();
         var petsId = new Dictionary<string, List<string>>();
@@ -57,7 +57,7 @@ public class CombatParserService
 
         try
         {
-            var lines = await File.ReadAllLinesAsync(combatLogPath);
+            var lines = await File.ReadAllLinesAsync(combatLogPath, cancellationToken);
             ProcessCombatLogLines(lines, petsId, ref bossCombatStarted, newCombatFromLogs);
         }
         catch (Exception ex)

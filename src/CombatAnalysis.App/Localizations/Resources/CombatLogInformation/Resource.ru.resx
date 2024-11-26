@@ -120,6 +120,9 @@
   <data name="Analysing" xml:space="preserve">
     <value>Анализ</value>
   </data>
+  <data name="Cancel" xml:space="preserve">
+    <value>Отмена</value>
+  </data>
   <data name="Combat" xml:space="preserve">
     <value>Бой</value>
   </data>

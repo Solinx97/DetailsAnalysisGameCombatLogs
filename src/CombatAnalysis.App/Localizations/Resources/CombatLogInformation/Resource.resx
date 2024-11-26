@@ -120,6 +120,9 @@
   <data name="Analysing" xml:space="preserve">
     <value>Analysing</value>
   </data>
+  <data name="Cancel" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
   <data name="Combat" xml:space="preserve">
     <value>Combat</value>
   </data>

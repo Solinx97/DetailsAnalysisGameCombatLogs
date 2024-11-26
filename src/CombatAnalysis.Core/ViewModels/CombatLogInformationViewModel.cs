@@ -53,6 +53,9 @@ public class CombatLogInformationViewModel : ParentTemplate, CombatParser.Interf
     private bool _uploadingLogs;
     private bool _noCombatsUploaded;
 
+    private CancellationTokenSource _cancellationTokenSource;
+    private bool _processAborted;
+
     public CombatLogInformationViewModel(IMapper mapper, IMvxNavigationService mvvmNavigation, IHttpClientHelper httpClient,
         CombatParserService parser, ILogger logger, IMemoryCache memoryCache, ICacheService cacheService)
     {
@@ -69,6 +72,7 @@ public class CombatLogInformationViewModel : ParentTemplate, CombatParser.Interf
         ReloadCombatsCommand = new MvxAsyncCommand(LoadCombatLogsAsync);
         ReloadCombatsByUserCommand = new MvxAsyncCommand(LoadCombatLogsByUserAsync);
         DeleteCombatCommand = new MvxAsyncCommand(DeleteAsync);
+        CancelParsingCommand = new MvxCommand(CancelParsing);
 
         GetLogTypeCommand = new MvxCommand<int>(GetLogType);
 
@@ -103,6 +107,8 @@ public class CombatLogInformationViewModel : ParentTemplate, CombatParser.Interf
     public IMvxAsyncCommand OpenPlayerAnalysisCommand { get; set; }
 
     public IMvxCommand<int> GetLogTypeCommand { get; set; }
+
+    public IMvxCommand CancelParsingCommand { get; set; }
 
     #endregion
 
@@ -432,6 +438,19 @@ public class CombatLogInformationViewModel : ParentTemplate, CombatParser.Interf
         RemovingInProgress = false;
     }
 
+    public void CancelParsing()
+    {
+        _processAborted = true;
+        _cancellationTokenSource?.Cancel();
+    }
+
+    public override void Prepare()
+    {
+        CombatLogPath = AppStaticData.SelectedCombatLogFilePath;
+
+        base.Prepare();
+    }
+
     private void CheckAuth()
     {
         var user = _memoryCache.Get<AppUserModel>(nameof(MemoryCacheValue.User));
@@ -454,11 +473,13 @@ public class CombatLogInformationViewModel : ParentTemplate, CombatParser.Interf
 
     private async Task PrepareCombatData(string combatLogData)
     {
+        _cancellationTokenSource = new CancellationTokenSource();
+
         BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, nameof(BasicTemplateViewModel.Combats), null);
         BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, nameof(BasicTemplateViewModel.PetsId), null);
         BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, nameof(BasicTemplateViewModel.AllowStep), 0);
 
-        await _parser.ParseAsync(combatLogData);
+        await _parser.ParseAsync(combatLogData, _cancellationTokenSource.Token);
 
         ClearCache();
 
@@ -471,6 +492,13 @@ public class CombatLogInformationViewModel : ParentTemplate, CombatParser.Interf
         _parser.Clear();
 
         var dataForGeneralAnalysis = Tuple.Create(combatsList, LogType);
+
+        if (_processAborted)
+        {
+            _processAborted = false;
+
+            return;
+        }
 
         if (!IsNeedSave)
         {
