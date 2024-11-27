@@ -144,6 +144,9 @@
   <data name="AverageResourcesPerSecond" xml:space="preserve">
     <value>Av. indicator resources recovery per sec.</value>
   </data>
+  <data name="Cancel" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
   <data name="Damage" xml:space="preserve">
     <value>Damage</value>
   </data>

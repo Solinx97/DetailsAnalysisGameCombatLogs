@@ -156,8 +156,8 @@
   <data name="Loading" xml:space="preserve">
     <value>Загрузка...</value>
   </data>
-  <data name="LoadingDiscribe" xml:space="preserve">
-    <value>Выполняется загрузка данных. Это может занять некоторое время. Вы можете продолжить работу с приложением.</value>
+  <data name="LoadingDescribe" xml:space="preserve">
+    <value>Выполняется загрузка данных. Это может занять некоторое время. Вы можете продолжить пользоваться приложением.</value>
   </data>
   <data name="LoadingFail" xml:space="preserve">
     <value>Загрузка была завершена с ошибкой. Возможно проблемы с соединением или сервер временно не доступен. Вы можете продолжить работать с текущими данными, но они не будут сохранены.</value>

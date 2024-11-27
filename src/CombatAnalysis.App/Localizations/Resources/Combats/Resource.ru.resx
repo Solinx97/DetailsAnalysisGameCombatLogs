@@ -144,6 +144,9 @@
   <data name="AverageResourcesPerSecond" xml:space="preserve">
     <value>Ср. показатель восст. ресурсов в сек.</value>
   </data>
+  <data name="Cancel" xml:space="preserve">
+    <value>Отмена</value>
+  </data>
   <data name="Damage" xml:space="preserve">
     <value>Урон</value>
   </data>

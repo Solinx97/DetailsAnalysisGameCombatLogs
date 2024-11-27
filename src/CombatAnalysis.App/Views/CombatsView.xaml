@@ -58,12 +58,18 @@
             <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="White"
                        Text="{loc:Loc Title}" FontSize="18" FontWeight="Bold"
                        Margin="100 0" Style="{StaticResource titleText}"/>
-            <StackPanel Visibility="{Binding ResponseStatus, Converter={StaticResource IntToVisibility}, ConverterParameter=true:3}" Margin="-5">
+            <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" 
+                        Visibility="{Binding ResponseStatus, Converter={StaticResource IntToVisibility}, ConverterParameter=true:3}" Margin="-5">
                 <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center"
                        Text="{loc:Loc LoadingFailed}" Foreground="Red" FontSize="12" FontWeight="Bold"
                        TextWrapping="Wrap" Margin="5" Style="{StaticResource titleText}"/>
                 <Button Content="{loc:Loc Repeat}" FontSize="14" Width="100"
                         mvx:Bi.nd="Command RepeatSaveCommand" Style="{StaticResource showButton}"/>
+            </StackPanel>
+            <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" 
+                        Visibility="{Binding ResponseStatus, Converter={StaticResource IntToVisibility}, ConverterParameter=true:1}" Margin="-5">
+                <Button Content="{loc:Loc Cancel}" FontSize="14" Width="100"
+                        mvx:Bi.nd="Command CancelCommand" Style="{StaticResource showButton}"/>
             </StackPanel>
         </StackPanel>
 

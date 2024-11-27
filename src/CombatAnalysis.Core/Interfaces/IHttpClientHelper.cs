@@ -10,11 +10,11 @@ public interface IHttpClientHelper
 
     public string BaseAddress { get; set; }
 
-    Task<HttpResponseMessage> PostAsync(string requestAddress, JsonContent content);
+    Task<HttpResponseMessage> PostAsync(string requestAddress, JsonContent content, CancellationToken cancellationToken);
 
-    Task<HttpResponseMessage> GetAsync(string requestAddress);
+    Task<HttpResponseMessage> GetAsync(string requestAddress, CancellationToken cancellationToken);
 
-    Task<HttpResponseMessage> PutAsync(string requestAddress, JsonContent content);
+    Task<HttpResponseMessage> PutAsync(string requestAddress, JsonContent content, CancellationToken cancellationToken);
 
-    Task<HttpResponseMessage> DeletAsync(string requestAddress);
+    Task<HttpResponseMessage> DeletAsync(string requestAddress, CancellationToken cancellationToken);
 }

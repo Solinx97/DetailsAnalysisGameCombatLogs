@@ -62,6 +62,7 @@ public class CombatsViewModel : ParentTemplate<Tuple<List<CombatModel>, LogType>
         _combatParserAPIService = new CombatParserAPIService(httpClient, logger, memoryCache);
 
         RepeatSaveCommand = new MvxAsyncCommand(RepeatSaveCombatDataDetailsAsync);
+        CancelCommand = new MvxCommand(UploadingCancel);
         RefreshCommand = new MvxAsyncCommand(RefreshAsync);
         ShowDetailsCommand = new MvxAsyncCommand(ShowDetailsAsync);
         SortCommand = new MvxCommand<int>(CombatsSort);
@@ -85,6 +86,8 @@ public class CombatsViewModel : ParentTemplate<Tuple<List<CombatModel>, LogType>
     #region Commands
 
     public IMvxAsyncCommand RepeatSaveCommand { get; set; }
+
+    public IMvxCommand CancelCommand { get; set; }
 
     public IMvxAsyncCommand RefreshCommand { get; set; }
 
@@ -482,6 +485,8 @@ public class CombatsViewModel : ParentTemplate<Tuple<List<CombatModel>, LogType>
 
     public async Task RepeatSaveCombatDataDetailsAsync()
     {
+        var token = ((BasicTemplateViewModel)BasicTemplate).RequestCancelationToken();
+
         CurrentCombatNumber = 0;
 
         BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, nameof(BasicTemplateViewModel.ResponseStatus), LoadingStatus.Pending);
@@ -490,7 +495,7 @@ public class CombatsViewModel : ParentTemplate<Tuple<List<CombatModel>, LogType>
         var combatsForUploadAgain = Combats.Where(combat => !combat.IsReady).ToList();
 
         var combotLogToRepeat = ((BasicTemplateViewModel)BasicTemplate).CombatLog;
-        var combatsAreUploaded = await _combatParserAPIService.SaveAsync(combatsForUploadAgain, combotLogToRepeat, _logType, CombatUploaded);
+        var combatsAreUploaded = await _combatParserAPIService.SaveAsync(combatsForUploadAgain, combotLogToRepeat, _logType, CombatUploaded, token);
         if (!combatsAreUploaded)
         {
             BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, nameof(BasicTemplateViewModel.ResponseStatus), LoadingStatus.Failed);
@@ -515,6 +520,7 @@ public class CombatsViewModel : ParentTemplate<Tuple<List<CombatModel>, LogType>
             return;
         }
 
+        _combatParserAPIService.SetUpPort();
         var loadedCombats = await _combatParserAPIService.LoadCombatsAsync(combatLog.Id);
         if (loadedCombats == null || !loadedCombats.Any())
         {
@@ -610,6 +616,11 @@ public class CombatsViewModel : ParentTemplate<Tuple<List<CombatModel>, LogType>
         }
 
         Combats = new ObservableCollection<CombatModel>(sortedCollection);
+    }
+
+    public void UploadingCancel()
+    {
+        ((BasicTemplateViewModel)BasicTemplate).RequestCancel();
     }
 
     private void GetUniqueDungeonNames(List<CombatModel> combats)

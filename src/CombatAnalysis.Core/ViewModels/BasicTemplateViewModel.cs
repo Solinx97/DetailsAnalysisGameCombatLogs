@@ -87,6 +87,8 @@ public class BasicTemplateViewModel : ParentTemplate, IVMDataHandler<CombatPlaye
         get => _combats;
     }
 
+    public CancellationTokenSource CancellationTokenSource { get; set; }
+
     #region Commands
 
     public IMvxCommand CloseCommand { get; set; }
@@ -270,7 +272,22 @@ public class BasicTemplateViewModel : ParentTemplate, IVMDataHandler<CombatPlaye
 
     public void CloseWindow()
     {
+        RequestCancel();
+
         Environment.Exit(0);
+    }
+
+    public CancellationToken RequestCancelationToken()
+    {
+        CancellationTokenSource = new CancellationTokenSource();
+        var token = CancellationTokenSource.Token;
+
+        return token;
+    }
+
+    public void RequestCancel()
+    {
+        CancellationTokenSource?.Cancel();
     }
 
     public async Task LoginAsync()
@@ -290,7 +307,7 @@ public class BasicTemplateViewModel : ParentTemplate, IVMDataHandler<CombatPlaye
         var refreshToken = _memoryCache.Get<string>(nameof(MemoryCacheValue.RefreshToken));
 
         _httpClient.BaseAddress = Port.UserApi;
-        await _httpClient.GetAsync($"Account/logout/{refreshToken}");
+        await _httpClient.GetAsync($"Account/logout/{refreshToken}", CancellationToken.None);
 
         _memoryCache.Remove(nameof(MemoryCacheValue.RefreshToken));
         _memoryCache.Remove(nameof(MemoryCacheValue.User));

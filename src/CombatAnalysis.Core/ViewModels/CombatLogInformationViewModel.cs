@@ -404,6 +404,7 @@ public class CombatLogInformationViewModel : ParentTemplate, CombatParser.Interf
 
         UploadingLogs = true;
 
+        _combatParserAPIService.SetUpPort();
         var loadedCombats = await _combatParserAPIService.LoadCombatsAsync(combatLog.Id);
         if (loadedCombats == null)
         {
@@ -548,10 +549,12 @@ public class CombatLogInformationViewModel : ParentTemplate, CombatParser.Interf
 
     private async Task UploadingCombatLogAsync(List<CombatModel> combatList, Tuple<List<CombatModel>, LogType> dataForGeneralAnalysis)
     {
+        var token = ((BasicTemplateViewModel)BasicTemplate).RequestCancelationToken();
+
         BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, nameof(BasicTemplateViewModel.ResponseStatus), LoadingStatus.Pending);
         BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, nameof(BasicTemplateViewModel.UploadedCombatsCount), 0);
 
-        var createdCombatLog = await _combatParserAPIService.SaveCombatLogAsync(combatList);
+        var createdCombatLog = await _combatParserAPIService.SaveCombatLogAsync(combatList, CancellationToken.None);
         if (createdCombatLog == null)
         {
             BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, nameof(BasicTemplateViewModel.ResponseStatus), LoadingStatus.Failed);
@@ -570,7 +573,7 @@ public class CombatLogInformationViewModel : ParentTemplate, CombatParser.Interf
         BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, nameof(BasicTemplateViewModel.Combats), combatList);
         BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, nameof(BasicTemplateViewModel.CombatLog), createdCombatLog);
 
-        var combatsAreUploaded = await _combatParserAPIService.SaveAsync(combatList, createdCombatLog, LogType, CombatUploaded);
+        var combatsAreUploaded = await _combatParserAPIService.SaveAsync(combatList, createdCombatLog, LogType, CombatUploaded, token);
         if (!combatsAreUploaded)
         {
             BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, nameof(BasicTemplateViewModel.ResponseStatus), LoadingStatus.Failed);
@@ -658,7 +661,6 @@ public class CombatLogInformationViewModel : ParentTemplate, CombatParser.Interf
         BasicTemplate.Handler.PropertyUpdate<CombatsViewModel>(BasicTemplate.SavedViewModel, nameof(CombatsViewModel.DungeonName), dungeonName);
         BasicTemplate.Handler.PropertyUpdate<CombatsViewModel>(BasicTemplate.SavedViewModel, nameof(CombatsViewModel.Name), name);
 
-        var uploaded = ((BasicTemplateViewModel)BasicTemplate).UploadedCombatsCount;
-        BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, nameof(BasicTemplateViewModel.UploadedCombatsCount), ++uploaded);
+        ((BasicTemplateViewModel)BasicTemplate).UploadedCombatsCount++;
     }
 }

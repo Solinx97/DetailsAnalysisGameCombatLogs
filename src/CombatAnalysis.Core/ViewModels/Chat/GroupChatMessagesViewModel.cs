@@ -288,8 +288,8 @@ public class GroupChatMessagesViewModel : MvxViewModel, IImprovedMvxViewModel
         Message = string.Empty;
 
         _httpClientHelper.BaseAddress = Port.ChatApi;
-        await _httpClientHelper.PostAsync("GroupChatMessage", JsonContent.Create(newGroupChatMessage));
-        await _httpClientHelper.PutAsync("GroupChat", JsonContent.Create(SelectedChat));
+        await _httpClientHelper.PostAsync("GroupChatMessage", JsonContent.Create(newGroupChatMessage), CancellationToken.None);
+        await _httpClientHelper.PutAsync("GroupChat", JsonContent.Create(SelectedChat), CancellationToken.None);
     }
 
     public async Task OpenInviteToChatAsync()
@@ -297,7 +297,7 @@ public class GroupChatMessagesViewModel : MvxViewModel, IImprovedMvxViewModel
         AddUserToChatResponse = LoadingStatus.None;
         UsersToInviteToChat?.Clear();
 
-        var response = await _httpClientHelper.GetAsync("GroupChatUser");
+        var response = await _httpClientHelper.GetAsync("GroupChatUser", CancellationToken.None);
 
         if (response.StatusCode != System.Net.HttpStatusCode.OK)
         {
@@ -333,7 +333,7 @@ public class GroupChatMessagesViewModel : MvxViewModel, IImprovedMvxViewModel
         {
             AddUserToChatResponse = LoadingStatus.Pending;
 
-            var response = await _httpClientHelper.PostAsync("GroupChatUser", JsonContent.Create(groupChatUser));
+            var response = await _httpClientHelper.PostAsync("GroupChatUser", JsonContent.Create(groupChatUser), CancellationToken.None);
             if (response.StatusCode == System.Net.HttpStatusCode.OK)
             {
                 SwitchInviteToGroupChat();
@@ -354,7 +354,7 @@ public class GroupChatMessagesViewModel : MvxViewModel, IImprovedMvxViewModel
     public async Task EditMessageAsync()
     {
         _httpClientHelper.BaseAddress = Port.ChatApi;
-        await _httpClientHelper.PutAsync("GroupChatMessage", JsonContent.Create(SelectedMessage));
+        await _httpClientHelper.PutAsync("GroupChatMessage", JsonContent.Create(SelectedMessage), CancellationToken.None);
 
         IsEditMode = false;
     }
@@ -362,7 +362,7 @@ public class GroupChatMessagesViewModel : MvxViewModel, IImprovedMvxViewModel
     public async Task RemoveMessageAsync()
     {
         _httpClientHelper.BaseAddress = Port.ChatApi;
-        var response = await _httpClientHelper.DeletAsync($"GroupChatMessage/{SelectedMessage.Id}");
+        var response = await _httpClientHelper.DeletAsync($"GroupChatMessage/{SelectedMessage.Id}", CancellationToken.None);
         if (response.StatusCode == System.Net.HttpStatusCode.OK)
         {
             await AsyncDispatcher.ExecuteOnMainThreadAsync(() =>
@@ -405,7 +405,7 @@ public class GroupChatMessagesViewModel : MvxViewModel, IImprovedMvxViewModel
     {
         _httpClientHelper.BaseAddress = Port.UserApi;
 
-        var response = await _httpClientHelper.GetAsync("Account");
+        var response = await _httpClientHelper.GetAsync("Account", CancellationToken.None);
         var users = await response.Content.ReadFromJsonAsync<IEnumerable<AppUserModel>>();
 
         Users = new ObservableCollection<AppUserModel>(users.Where(x => x.Id != MyAccount?.Id).ToList());
