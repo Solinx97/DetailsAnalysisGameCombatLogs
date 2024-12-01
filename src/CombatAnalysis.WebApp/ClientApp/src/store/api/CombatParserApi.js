@@ -9,6 +9,7 @@ export const CombatParserApi = createApi({
         'DamageDone',
         'GeneralAnalysis',
         'DetailsSpecificalCombat',
+        'CombatPlayerPosition',
     ],
     baseQuery: fetchBaseQuery({
         baseUrl: apiURL
@@ -88,6 +89,9 @@ export const CombatParserApi = createApi({
         getCombatById: builder.query({
             query: (id) => `/DetailsSpecificalCombat/combatById/${id}`
         }),
+        getCombatPlayerPositionByCombatId: builder.query({
+            query: (id) => `/CombatPlayerPosition/findByCombatId/${id}`
+        }),
     })
 })
 
@@ -114,4 +118,5 @@ export const {
     useGetCombatPlayerIdQuery,
     useLazyGetCombatPlayerIdQuery,
     useLazyGetCombatByIdQuery,
+    useLazyGetCombatPlayerPositionByCombatIdQuery,
 } = CombatParserApi;

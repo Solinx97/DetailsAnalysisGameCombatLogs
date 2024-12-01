@@ -45,7 +45,6 @@ public static class DataCollectionExtensions
 
         services.AddScoped<IContextService, ContextService>();
 
-        services.AddScoped<IPlayerInfo<CombatPlayerPosition, int>, SQLPlayerInfoRepository<CombatPlayerPosition, int>>();
         services.AddScoped<IPlayerInfo<Combat, int>, SQLPlayerInfoRepository<Combat, int>>();
         services.AddScoped<IPlayerInfoCount<DamageDone, int>, SQLPlayerInfoCountRepository<DamageDone, int>>();
         services.AddScoped<IPlayerInfo<DamageDoneGeneral, int>, SQLPlayerInfoRepository<DamageDoneGeneral, int>>();

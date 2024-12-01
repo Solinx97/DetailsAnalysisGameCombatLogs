@@ -1,7 +1,7 @@
-import { faBolt, faBookSkull, faCheck, faCircleNodes, faClock, faDatabase, faGraduationCap, faHourglassStart, faKhanda, faPlusCircle, faShieldHalved, faSkull, faGlobe } from '@fortawesome/free-solid-svg-icons';
+import { faBolt, faBookSkull, faCheck, faCircleNodes, faClock, faDatabase, faGlobe, faGraduationCap, faHourglassStart, faKhanda, faPlusCircle, faShieldHalved, faSkull } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { format } from 'date-fns';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 
@@ -13,11 +13,7 @@ const GeneralAnalysisItem = ({ uniqueCombats, combatLogId }) => {
 
     const navigate = useNavigate();
 
-    const [selectedCombatIndex, setSelectedCombatIndex] = useState(uniqueCombats.length - 1);
-
-    useEffect(() => {
-        setSelectedCombatIndex(uniqueCombats.length - 1);
-    }, [uniqueCombats]);
+    const [selectedCombatIndex, setSelectedCombatIndex] = useState(0);
 
     const selectedCombat = uniqueCombats[selectedCombatIndex];
 
@@ -65,7 +61,7 @@ const GeneralAnalysisItem = ({ uniqueCombats, combatLogId }) => {
                             <h5 className="card-title">{selectedCombat.name}</h5>
                             <p className="card-text">{selectedCombat.dungeonName}</p>
                         </div>
-                        {selectedCombat.isWin
+                        {selectedCombat?.isWin
                             ? <FontAwesomeIcon
                                 icon={faGraduationCap}
                                 className="win"
@@ -93,7 +89,7 @@ const GeneralAnalysisItem = ({ uniqueCombats, combatLogId }) => {
                     <FontAwesomeIcon
                         icon={faGlobe}
                         title={t("PlayerMovements")}
-                        onClick={() => navigate(`/player-movements`)}
+                        onClick={() => navigate(`/player-movements?combatId=${selectedCombat.id}`)}
                     />
                 </div>
                 <div className="combat-time">

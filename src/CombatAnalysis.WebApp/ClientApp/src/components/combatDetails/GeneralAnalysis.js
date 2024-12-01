@@ -14,7 +14,7 @@ const GeneralAnalysis = () => {
     const navigate = useNavigate();
 
     const [combatLogId, setCombatLogId] = useState(0);
-    const [uniqueCombats, setUniqueCombats] = useState([]);
+    const [allUniqueCombats, setUniqueCombats] = useState([]);
 
     const [generalAnalysisAsync] = useLazyGetGeneralAnalysisByIdQuery();
 
@@ -77,10 +77,10 @@ const GeneralAnalysis = () => {
                 <div className="title">{t("Combats")}</div>
             </div>
             <ul className="combats__container">
-                {uniqueCombats?.map((combats, index) => (
+                {allUniqueCombats?.map((uniqueCombats, index) => (
                         <li key={index}>
                             <GeneralAnalysisItem
-                                uniqueCombats={combats}
+                                uniqueCombats={uniqueCombats}
                                 combatLogId={combatLogId}
                             />
                         </li>

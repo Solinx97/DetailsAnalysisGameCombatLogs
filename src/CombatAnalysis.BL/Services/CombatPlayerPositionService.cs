@@ -6,12 +6,12 @@ using CombatAnalysis.DAL.Interfaces;
 
 namespace CombatAnalysis.BL.Services;
 
-internal class CombatPlayerPositionService : IPlayerInfoService<CombatPlayerPositionDto, int>
+internal class CombatPlayerPositionService : IService<CombatPlayerPositionDto, int>
 {
-    private readonly IPlayerInfo<CombatPlayerPosition, int> _repository;
+    private readonly IGenericRepository<CombatPlayerPosition, int> _repository;
     private readonly IMapper _mapper;
 
-    public CombatPlayerPositionService(IPlayerInfo<CombatPlayerPosition, int> repository, IMapper mapper)
+    public CombatPlayerPositionService(IGenericRepository<CombatPlayerPosition, int> repository, IMapper mapper)
     {
         _repository = repository;
         _mapper = mapper;
@@ -48,22 +48,6 @@ internal class CombatPlayerPositionService : IPlayerInfoService<CombatPlayerPosi
         var resultMap = _mapper.Map<CombatPlayerPositionDto>(result);
 
         return resultMap;
-    }
-
-    public async Task<IEnumerable<CombatPlayerPositionDto>> GetByCombatPlayerIdAsync(int combatPlayerId)
-    {
-        var result = await _repository.GetByCombatPlayerIdAsync(combatPlayerId);
-        var resultMap = _mapper.Map<IEnumerable<CombatPlayerPositionDto>>(result);
-
-        return resultMap;
-    }
-
-    public async Task<IEnumerable<CombatPlayerPositionDto>> GetByCombatPlayerIdAsync(int combatPlayerId, int page = 1, int pageSize = 10)
-    {
-        var result = await _repository.GetByCombatPlayerIdAsync(combatPlayerId, page, pageSize);
-        var map = _mapper.Map<IEnumerable<CombatPlayerPositionDto>>(result);
-
-        return map;
     }
 
     public async Task<IEnumerable<CombatPlayerPositionDto>> GetByParamAsync(string paramName, object value)

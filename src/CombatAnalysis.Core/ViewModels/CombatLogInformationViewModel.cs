@@ -536,6 +536,8 @@ public class CombatLogInformationViewModel : ParentTemplate, CombatParser.Interf
         {
             var currentCombatDetails = combatDetails[i];
 
+            _cacheService.SaveDataToCache($"{AppCacheKeys.CombatDetails_Positions}_{i}", currentCombatDetails.Positions);
+
             _cacheService.SaveDataToCache($"{AppCacheKeys.CombatDetails_DamageDone}_{i}", currentCombatDetails.DamageDone);
             _cacheService.SaveDataToCache($"{AppCacheKeys.CombatDetails_DamageDoneGeneral}_{i}", currentCombatDetails.DamageDoneGeneral);
             _cacheService.SaveDataToCache($"{AppCacheKeys.CombatDetails_HealDone}_{i}", currentCombatDetails.HealDone);

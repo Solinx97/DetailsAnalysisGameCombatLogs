@@ -21,7 +21,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IService<CombatPlayerDto, int>, CombatPlayerService>();
         services.AddScoped<IService<PlayerParseInfoDto, int>, PlayerParseInfoService>();
 
-        services.AddScoped<IPlayerInfoService<CombatPlayerPositionDto, int>, CombatPlayerPositionService>();
+        services.AddScoped<IService<CombatPlayerPositionDto, int>, CombatPlayerPositionService>();
         services.AddScoped<IPlayerInfoService<DamageDoneDto, int>, DamageDoneService>();
         services.AddScoped<IPlayerInfoService<DamageDoneGeneralDto, int>, DamageDoneGeneralService>();
         services.AddScoped<IPlayerInfoService<HealDoneDto, int>, HealDoneService>();

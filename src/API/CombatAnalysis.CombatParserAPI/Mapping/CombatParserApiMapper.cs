@@ -12,9 +12,8 @@ public class CombatParserApiMapper : Profile
         CreateMap<CombatLogDto, CombatLogModel>().ReverseMap();
         CreateMap<CombatLogByUserDto, CombatLogByUserModel>().ReverseMap();
         CreateMap<CombatDto, CombatModel>().ReverseMap();
-        CreateMap<CombatDto, Combat>().ReverseMap();
         CreateMap<CombatPlayerDto, CombatPlayerModel>().ReverseMap();
-        CreateMap<CombatPlayer, CombatPlayerModel>().ReverseMap();
+        CreateMap<CombatPlayerPositionDto, CombatPlayerPositionModel>().ReverseMap();
         CreateMap<DamageDoneDto, DamageDoneModel>().ReverseMap();
         CreateMap<DamageDoneGeneralDto, DamageDoneGeneralModel>().ReverseMap();
         CreateMap<HealDoneDto, HealDoneModel>().ReverseMap();
@@ -24,9 +23,11 @@ public class CombatParserApiMapper : Profile
         CreateMap<ResourceRecoveryDto, ResourceRecoveryModel>().ReverseMap();
         CreateMap<ResourceRecoveryGeneralDto, ResourceRecoveryGeneralModel>().ReverseMap();
         CreateMap<PlayerDeathDto, PlayerDeathModel>().ReverseMap();
-        CreateMap<PlayerDeath, PlayerDeathModel>().ReverseMap();
+        CreateMap<PlayerParseInfoDto, PlayerParseInfoModel>().ReverseMap();
 
+        CreateMap<PlayerDeath, PlayerDeathModel>().ReverseMap();
         CreateMap<Combat, CombatModel>().ReverseMap();
+        CreateMap<CombatPlayer, CombatPlayerModel>().ReverseMap();
         CreateMap<DamageDone, DamageDoneModel>().ReverseMap();
         CreateMap<DamageDoneGeneral, DamageDoneGeneralModel>().ReverseMap();
         CreateMap<HealDone, HealDoneModel>().ReverseMap();
@@ -36,8 +37,7 @@ public class CombatParserApiMapper : Profile
         CreateMap<ResourceRecovery, ResourceRecoveryModel>().ReverseMap();
         CreateMap<ResourceRecoveryGeneral, ResourceRecoveryGeneralModel>().ReverseMap();
 
-        CreateMap<PlayerParseInfoDto, PlayerParseInfoModel>().ReverseMap();
-
+        CreateMap<CombatDto, Combat>().ReverseMap();
         CreateMap<CombatPlayerPositionDto, CombatPlayerPosition>().ReverseMap();
         CreateMap<DamageDoneDto, DamageDone>().ReverseMap();
         CreateMap<DamageDoneGeneralDto, DamageDoneGeneral>().ReverseMap();

@@ -8,13 +8,13 @@ namespace CombatAnalysis.CombatParserAPI.Controllers;
 
 [Route("api/v1/[controller]")]
 [ApiController]
-public class CombatPlayerController : ControllerBase
+public class CombatPlayerPositionController : ControllerBase
 {
-    private readonly IService<CombatPlayerDto, int> _service;
+    private readonly IService<CombatPlayerPositionDto, int> _service;
     private readonly IMapper _mapper;
     private readonly ILogger<CombatPlayerController> _logger;
 
-    public CombatPlayerController(IService<CombatPlayerDto, int> service, IMapper mapper, ILogger<CombatPlayerController> logger)
+    public CombatPlayerPositionController(IService<CombatPlayerPositionDto, int> service, IMapper mapper, ILogger<CombatPlayerController> logger)
     {
         _service = service;
         _mapper = mapper;
@@ -24,25 +24,25 @@ public class CombatPlayerController : ControllerBase
     [HttpGet("findByCombatId/{combatId:int:min(1)}")]
     public async Task<IActionResult> Find(int combatId)
     {
-        var players = await _service.GetByParamAsync(nameof(CombatPlayerModel.CombatId), combatId);
+        var combatPlayerPositions = await _service.GetByParamAsync(nameof(CombatPlayerPositionModel.CombatId), combatId);
 
-        return Ok(players);
+        return Ok(combatPlayerPositions);
     }
 
     [HttpGet("{id:int:min(1)}")]
     public async Task<IActionResult> GetById(int id)
     {
-        var combatLog = await _service.GetByIdAsync(id);
+        var combatPlayerPosition = await _service.GetByIdAsync(id);
 
-        return Ok(combatLog);
+        return Ok(combatPlayerPosition);
     }
 
     [HttpPost]
-    public async Task<IActionResult> Create(CombatPlayerModel model)
+    public async Task<IActionResult> Create(CombatPlayerPositionModel model)
     {
         try
         {
-            var map = _mapper.Map<CombatPlayerDto>(model);
+            var map = _mapper.Map<CombatPlayerPositionDto>(model);
             var createdItem = await _service.CreateAsync(map);
 
             return Ok(createdItem);

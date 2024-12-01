@@ -75,7 +75,7 @@ public class CombatDataHelper : ICombatDataHelper
         combatDetails.Calculate(playersId, combat.Data);
         combatDetails.CalculateGeneralData(playersId, combat.Duration);
 
-        var uploadTasks = combat.Players.Select(item => UploadAsync(parsedCombat, item, combatDetails)).ToList();
+        var uploadTasks = combat.Players.Select(item => UploadAsync(parsedCombat, item, combatDetails, combat.Id)).ToList();
 
         await Task.WhenAll(uploadTasks);
     }
@@ -95,7 +95,7 @@ public class CombatDataHelper : ICombatDataHelper
         await DeleteDataAsync(combatPlayer.Id, _resourceRecoveryGeneralService);
     }
 
-    private async Task UploadAsync(Combat combat, CombatPlayerModel combatPlayer, CombatDetails combatDetails)
+    private async Task UploadAsync(Combat combat, CombatPlayerModel combatPlayer, CombatDetails combatDetails, int combatId)
     {
         foreach (var item in combat.DeathInfo)
         {
@@ -109,15 +109,16 @@ public class CombatDataHelper : ICombatDataHelper
 
         var uploadTasks = new List<Task>
         {
-            UploadDataAsync<CombatPlayerPosition, CombatPlayerPositionDto>(combatDetails.Positions[combatPlayer.PlayerId], combatPlayer.Id),
-            UploadDataAsync<DamageDone, DamageDoneDto>(combatDetails.DamageDone[combatPlayer.PlayerId], combatPlayer.Id),
-            UploadDataAsync<DamageDoneGeneral, DamageDoneGeneralDto>(combatDetails.DamageDoneGeneral[combatPlayer.PlayerId], combatPlayer.Id),
-            UploadDataAsync<HealDone, HealDoneDto>(combatDetails.HealDone[combatPlayer.PlayerId], combatPlayer.Id),
-            UploadDataAsync<HealDoneGeneral, HealDoneGeneralDto>(combatDetails.HealDoneGeneral[combatPlayer.PlayerId], combatPlayer.Id),
-            UploadDataAsync<DamageTaken, DamageTakenDto>(combatDetails.DamageTaken[combatPlayer.PlayerId], combatPlayer.Id),
-            UploadDataAsync<DamageTakenGeneral, DamageTakenGeneralDto>(combatDetails.DamageTakenGeneral[combatPlayer.PlayerId], combatPlayer.Id),
-            UploadDataAsync<ResourceRecovery, ResourceRecoveryDto>(combatDetails.ResourcesRecovery[combatPlayer.PlayerId], combatPlayer.Id),
-            UploadDataAsync<ResourceRecoveryGeneral, ResourceRecoveryGeneralDto>(combatDetails.ResourcesRecoveryGeneral[combatPlayer.PlayerId], combatPlayer.Id),
+            UploadCombatPlayerPositionData(combatDetails.Positions[combatPlayer.PlayerId], combatPlayer.Id, combatId),
+            
+            UploadPlayerInfoData<DamageDone, DamageDoneDto>(combatDetails.DamageDone[combatPlayer.PlayerId], combatPlayer.Id),
+            UploadPlayerInfoData<DamageDoneGeneral, DamageDoneGeneralDto>(combatDetails.DamageDoneGeneral[combatPlayer.PlayerId], combatPlayer.Id),
+            UploadPlayerInfoData<HealDone, HealDoneDto>(combatDetails.HealDone[combatPlayer.PlayerId], combatPlayer.Id),
+            UploadPlayerInfoData<HealDoneGeneral, HealDoneGeneralDto>(combatDetails.HealDoneGeneral[combatPlayer.PlayerId], combatPlayer.Id),
+            UploadPlayerInfoData<DamageTaken, DamageTakenDto>(combatDetails.DamageTaken[combatPlayer.PlayerId], combatPlayer.Id),
+            UploadPlayerInfoData<DamageTakenGeneral, DamageTakenGeneralDto>(combatDetails.DamageTakenGeneral[combatPlayer.PlayerId], combatPlayer.Id),
+            UploadPlayerInfoData<ResourceRecovery, ResourceRecoveryDto>(combatDetails.ResourcesRecovery[combatPlayer.PlayerId], combatPlayer.Id),
+            UploadPlayerInfoData<ResourceRecoveryGeneral, ResourceRecoveryGeneralDto>(combatDetails.ResourcesRecoveryGeneral[combatPlayer.PlayerId], combatPlayer.Id),
         };
 
         await Task.WhenAll(uploadTasks);
@@ -128,7 +129,7 @@ public class CombatDataHelper : ICombatDataHelper
         }
     }
 
-    private async Task UploadDataAsync<TModel, TModelMap>(List<TModel> dataforUpload, int combatPlayerId)
+    private async Task UploadPlayerInfoData<TModel, TModelMap>(List<TModel> dataforUpload, int combatPlayerId)
         where TModel : CombatParser.Entities.CombatDataBase
         where TModelMap : BL.DTO.CombatDataBase
     {
@@ -141,6 +142,25 @@ public class CombatDataHelper : ICombatDataHelper
             map.CombatPlayerId = combatPlayerId;
 
             var createdItem = await scopedService.CreateAsync(map);
+            if (createdItem == null)
+            {
+                throw new ArgumentException("Did not created");
+            }
+        }
+    }
+
+    private async Task UploadCombatPlayerPositionData(List<CombatPlayerPosition> dataforUpload, int combatPlayerId, int combatId)
+    {
+        using var scope = _serviceScopeFactory.CreateScope();
+        var scopedService = scope.ServiceProvider.GetRequiredService<IService<CombatPlayerPositionDto, int>>();
+
+        foreach (var item in dataforUpload)
+        {
+            var combatPlayerPositionMap = _mapper.Map<CombatPlayerPositionDto>(item);
+            combatPlayerPositionMap.CombatId = combatId;
+            combatPlayerPositionMap.CombatPlayerId = combatPlayerId;
+
+            var createdItem = await scopedService.CreateAsync(combatPlayerPositionMap);
             if (createdItem == null)
             {
                 throw new ArgumentException("Did not created");

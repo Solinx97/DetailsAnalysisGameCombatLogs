@@ -2,6 +2,7 @@
 
 internal enum AppCacheKeys
 {
+    CombatDetails_Positions,
     CombatDetails_DamageDone,
     CombatDetails_DamageDoneGeneral,
     CombatDetails_HealDone,

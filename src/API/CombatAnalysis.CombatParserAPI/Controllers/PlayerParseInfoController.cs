@@ -24,7 +24,7 @@ public class PlayerParseInfoController : ControllerBase
     [HttpGet("findByCombatPlayerId/{combatPlayerId:int:min(1)}")]
     public async Task<IActionResult> Find(int combatPlayerId)
     {
-        var playerParseInfo = await _service.GetByParamAsync("CombatPlayerId", combatPlayerId);
+        var playerParseInfo = await _service.GetByParamAsync(nameof(PlayerParseInfoModel.CombatPlayerId), combatPlayerId);
 
         return Ok(playerParseInfo);
     }

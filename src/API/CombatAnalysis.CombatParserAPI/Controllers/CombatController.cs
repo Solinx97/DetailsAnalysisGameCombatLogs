@@ -73,7 +73,7 @@ public class CombatController : ControllerBase
     {
         try
         {
-            var combats = await _service.GetByParamAsync("CombatLogId", combatLogId);
+            var combats = await _service.GetByParamAsync(nameof(CombatModel.CombatLogId), combatLogId);
 
             return Ok(combats);
         }

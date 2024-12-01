@@ -21,14 +21,14 @@ internal class CombatDetailsManager
             return (string.Empty, null);
         }
 
-        var pos1Index = 25;
-        var pos2Index = 24;
+        var pos1Index = 24;
+        var pos2Index = 25;
 
         if (combatDataLine[1].Equals(CombatLogKeyWords.SwingDamage)
             || combatDataLine[1].Equals(CombatLogKeyWords.SwingDamageLanded))
         {
-            pos1Index = 22;
-            pos2Index = 21;
+            pos1Index = 21;
+            pos2Index = 22;
         }
 
         if (double.TryParse(combatDataLine[pos1Index], out var position1)
@@ -36,8 +36,8 @@ internal class CombatDetailsManager
         {
             var position = new CombatPlayerPosition
             {
-                PositionX = -position1,
-                PositionY = position2
+                PositionX = -position2,
+                PositionY = position1
             };
 
             return (combatDataLine[2], position);
