@@ -14,6 +14,7 @@ public class CombatDetails
         CombatLogKeyWords.SpellCastSuccess,
         CombatLogKeyWords.DamageShieldMissed,
         CombatLogKeyWords.RangeDamage,
+        CombatLogKeyWords.SpellPeriodicDamage,
     };
     private readonly string[] _healVariations = new string[]
     {

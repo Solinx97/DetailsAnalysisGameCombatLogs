@@ -86,11 +86,11 @@ const GeneralAnalysisItem = ({ uniqueCombats, combatLogId }) => {
                             title={t("NotReady")}
                         />
                     }
-                    <FontAwesomeIcon
-                        icon={faGlobe}
-                        title={t("PlayerMovements")}
-                        onClick={() => navigate(`/player-movements?combatId=${selectedCombat.id}`)}
-                    />
+                    {/*<FontAwesomeIcon*/}
+                    {/*    icon={faGlobe}*/}
+                    {/*    title={t("PlayerMovements")}*/}
+                    {/*    onClick={() => navigate(`/player-movements?combatId=${selectedCombat.id}`)}*/}
+                    {/*/>*/}
                 </div>
                 <div className="combat-time">
                     <div className="combat-time__range">

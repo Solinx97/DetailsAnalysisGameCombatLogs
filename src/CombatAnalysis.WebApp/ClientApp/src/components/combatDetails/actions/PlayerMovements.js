@@ -46,7 +46,7 @@ const PlayerMovements = () => {
     }, [combatId]);
 
     useEffect(() => {
-        if (combatPlayers.length === 0 || combatPlayerPositions.length === 0) {
+        if (combatPlayerPositions.length === 0) {
             return;
         }
 
@@ -54,12 +54,13 @@ const PlayerMovements = () => {
     }, [combatPlayerPositions]);
 
     useEffect(() => {
-        if (sortedPositions.size === 0) {
+        if (sortedPositions.size === 0 || canvasRef.current === null) {
             return;
         }
 
+        const maxFrames = Math.max(...Array.from(sortedPositions.values()).map(positions => positions.length));
         const context = prepareCanvas();
-        drawPlayers(context);
+        drawPlayers(context, maxFrames);
     }, [sortedPositions]);
 
     const assignColors = (players) => {
@@ -94,51 +95,53 @@ const PlayerMovements = () => {
         canvas.width = window.innerWidth;
         canvas.height = window.innerHeight;
 
+        const scaleX = 3; // Adjust this value to control horizontal spacing
+        const scaleY = 3; // Adjust this value to control vertical spacing
+        context.scale(scaleX, scaleY);
+
         return context;
     }
 
     const draw = (context, posX, posY, color) => {
-        const canvas = canvasRef.current;
-
-        // Move the origin to the bottom-left corner
-        context.translate(0, canvas.height);
-        // Flip the Y-axis
-        context.scale(1, -1);
+        context.save(); // Save the current state of the context
 
         context.fillStyle = color; // Set the color for the point
 
         context.beginPath();
-
-        if (posX < canvas.width && posY < canvas.height) {
-            context.arc(posX, posY, 5, 0, 2 * Math.PI);
-            context.fill();
-        }
-
+        context.arc(posX + 300, posY / 5, 5, 0, 2 * Math.PI); // Adjust the radius as needed
+        context.fill();
         context.stroke();
 
-        context.setTransform(1, 0, 0, 1, 0, 0);
+        context.restore(); // Restore the context to its original state
     }
 
-    const drawPlayers = (context) => {
+    const drawPlayers = (context, maxFrames) => {
         let frame = 0;
-        const maxFrames = Math.max(...Array.from(sortedPositions.values()).map(positions => positions.length));
-        const speed = 250; // Speed in milliseconds
+        const speed = 350; // Speed in milliseconds
         let lastTimestamp = 0;
 
         const animate = (timestamp) => {
-            if (!lastTimestamp) lastTimestamp = timestamp;
+            if (canvasRef.current == null) {
+                return;
+            }
+
+            if (!lastTimestamp) {
+                lastTimestamp = timestamp;
+            }
+
             const elapsed = timestamp - lastTimestamp;
 
             if (elapsed > speed) {
                 context.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
 
                 sortedPositions.forEach((positions, playerId) => {
-                    const posX = positions.length > frame
-                        ? Math.abs(positions[frame].positionX)
-                        : Math.abs(positions[positions.length - 1].positionX);
-                    const posY = positions.length > frame
-                        ? Math.abs(positions[frame].positionY)
-                        : Math.abs(positions[positions.length - 1].positionY);
+                    const startX = positions.length > frame ? positions[frame].positionX : positions[positions.length - 1].positionX;
+                    const startY = positions.length > frame ? positions[frame].positionY : positions[positions.length - 1].positionY;
+                    const endX = positions.length > frame + 1 ? positions[frame + 1].positionX : startX;
+                    const endY = positions.length > frame + 1 ? positions[frame + 1].positionY : startY;
+
+                    const posX = startX + (endX - startX) * (elapsed / speed);
+                    const posY = startY + (endY - startY) * (elapsed / speed);
 
                     draw(context, posX, posY, playerColors[playerId]);
                 });
@@ -152,11 +155,14 @@ const PlayerMovements = () => {
             }
         }
 
+
         requestAnimationFrame(animate);
     }
 
     return (
-        <canvas ref={canvasRef} className="drawing-canvas"></canvas>
+        <div>
+            <canvas ref={canvasRef} className="drawing-canvas"></canvas>
+        </div>
     );
 }
 

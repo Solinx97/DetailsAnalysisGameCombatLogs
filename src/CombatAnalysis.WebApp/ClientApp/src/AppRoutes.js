@@ -81,10 +81,10 @@ const AppRoutes = [
         path: '/combat-general-details',
         element: <CombatGeneralDetails />
     },
-    {
-        path: '/player-movements',
-        element: <PlayerMovements />
-    },
+    //{
+    //    path: '/player-movements',
+    //    element: <PlayerMovements />
+    //},
 ];
 
 export default AppRoutes;
