@@ -6,6 +6,12 @@ namespace CombatAnalysis.CombatParser.Details;
 
 public class CombatDetails
 {
+    private readonly string[] _auras = new string[]
+    {
+        CombatLogKeyWords.AuraApplied,
+        CombatLogKeyWords.AuraAppliedDose,
+        CombatLogKeyWords.AuraRemoved,
+    };
     private readonly string[] _positions = new string[]
     {
         CombatLogKeyWords.SpellHeal,
@@ -63,11 +69,14 @@ public class CombatDetails
 
     public Dictionary<string, List<ResourceRecoveryGeneral>> ResourcesRecoveryGeneral { get; private set; }
 
+    public Dictionary<string, List<CombatAura>> Auras { get; private set; }
+
     public CombatDetails(ILogger logger)
     {
         Logger = logger;
 
         Positions = new Dictionary<string, List<CombatPlayerPosition>>();
+        Auras = new Dictionary<string, List<CombatAura>>();
 
         DamageDone = new Dictionary<string, List<DamageDone>>();
         HealDone = new Dictionary<string, List<HealDone>>();
@@ -120,6 +129,7 @@ public class CombatDetails
         foreach(var playerId in playersId)
         {
             Positions.TryAdd(playerId, new List<CombatPlayerPosition>());
+            Auras.TryAdd(playerId, new List<CombatAura>());
 
             DamageDone.TryAdd(playerId, new List<DamageDone>());
             HealDone.TryAdd(playerId, new List<HealDone>());
@@ -131,12 +141,14 @@ public class CombatDetails
     private void Parse(List<string> playersId, string combatDataLine)
     {
         var hasPositions = _positions.Any(combatDataLine.Contains);
+        var hasAuras = _auras.Any(combatDataLine.Contains);
         var hasHeal = _healVariations.Any(combatDataLine.Contains);
         var hasDamage = _damageVariations.Any(combatDataLine.Contains);
         var hasAbsorb = _absorbVariations.Any(combatDataLine.Contains);
         var hasResources = _resourceVariations.Any(combatDataLine.Contains);
 
-        if (!hasPositions && !hasHeal && !hasDamage && !hasAbsorb && !hasResources)
+        if (!hasAuras && !hasPositions && !hasHeal 
+            && !hasDamage && !hasAbsorb && !hasResources)
         {
             return;
         }
@@ -156,7 +168,22 @@ public class CombatDetails
             }
         }
 
-        if (hasHeal)
+        if (hasAuras)
+        {
+            var (creatorId, buffs) = combatDetailsManager.GetAuras(clearCombatData, Auras);
+            if (!string.IsNullOrEmpty(creatorId) || buffs != null)
+            {
+                if (Auras.TryGetValue(creatorId, out var collection))
+                {
+                    collection.Add(buffs);
+                }
+                else
+                {
+                    Auras.Add(creatorId, new List<CombatAura> { buffs });
+                }
+            }
+        }
+        else if (hasHeal)
         {
             var (playerId, healDoneInformation) = combatDetailsManager.GetHealDone(clearCombatData);
             if (!string.IsNullOrEmpty(playerId) || healDoneInformation != null)

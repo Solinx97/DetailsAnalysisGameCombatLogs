@@ -1,5 +1,6 @@
 ﻿using CombatAnalysis.CombatParser.Core;
 using CombatAnalysis.CombatParser.Entities;
+using CombatAnalysis.CombatParser.Enums;
 using System.Globalization;
 
 namespace CombatAnalysis.CombatParser.Details;
@@ -11,6 +12,39 @@ internal class CombatDetailsManager
     public CombatDetailsManager(List<string> playersId)
     {
         _playersId = playersId;
+    }
+
+    public (string, CombatAura) GetAuras(List<string> combatDataLine, Dictionary<string, List<CombatAura>> auras)
+    {
+        if (combatDataLine[1].Equals(CombatLogKeyWords.AuraRemoved)
+            && auras.TryGetValue(combatDataLine[2], out var playerBuffs))
+        {
+            RemoveAura(combatDataLine, playerBuffs);
+
+            return (string.Empty, null);
+        }
+
+        var buff = new CombatAura
+        {
+            Name = combatDataLine[11],
+            Creator = combatDataLine[3].Trim('"'),
+            Target = combatDataLine[7].Trim('"')
+        };
+
+        var auraType = SelectAuraType(combatDataLine);
+        buff.AuraType = auraType;
+
+        if (DateTimeOffset.TryParse(combatDataLine[0], out var startTime))
+        {
+            buff.Start = startTime;
+        }
+
+        if (combatDataLine[1].Equals(CombatLogKeyWords.AuraAppliedDose) && int.TryParse(combatDataLine[14], out var stacks))
+        {
+            buff.Stacks = stacks;
+        }
+
+        return (combatDataLine[2], buff);
     }
 
     public (string, CombatPlayerPosition) GetPositions(List<string> combatDataLine)
@@ -317,5 +351,58 @@ internal class CombatDetailsManager
         };
 
         return damageDone;
+    }
+
+    private static void RemoveAura(List<string> combatDataLine, List<CombatAura> auras)
+    {
+        var playerBuffFound = auras.FirstOrDefault(x => x.Name.Equals(combatDataLine[11]));
+        if (playerBuffFound != null)
+        {
+            if (DateTimeOffset.TryParse(combatDataLine[0], out var endTime))
+            {
+                playerBuffFound.End = endTime;
+            }
+        }
+    }
+
+    private static AuraType SelectAuraType(List<string> combatDataLine)
+    {
+        if (combatDataLine[2].Equals(combatDataLine[6]))
+        {
+            if (combatDataLine[13].Contains(CombatLogKeyWords.Debuff))
+            {
+                return AuraType.MyselfDebuff;
+            }
+
+            return AuraType.MyselfBuff;
+        }
+        else if (combatDataLine[6].StartsWith(CombatLogKeyWords.Pet))
+        {
+            if (combatDataLine[13].Contains(CombatLogKeyWords.Debuff))
+            {
+                return AuraType.PetDebuff;
+            }
+
+            return AuraType.PetBuff;
+        }
+        else if (combatDataLine[2].StartsWith(CombatLogKeyWords.Player) 
+            && combatDataLine[6].StartsWith(CombatLogKeyWords.Creature))
+        {
+            if (combatDataLine[13].Contains(CombatLogKeyWords.Debuff))
+            {
+                return AuraType.EnemyDebuff;
+            }
+
+            return AuraType.AllyCreatureBuff;
+        }
+        else
+        {
+            if (combatDataLine[13].Contains(CombatLogKeyWords.Debuff))
+            {
+                return AuraType.AllyDebuff;
+            }
+
+            return AuraType.AllyBuff;
+        }
     }
 }

@@ -28,6 +28,18 @@ internal static class CombatLogKeyWords
 
     #endregion
 
+    #region Auras
+
+    public static string AuraApplied { get; } = "SPELL_AURA_APPLIED";
+
+    public static string AuraRemoved { get; } = "SPELL_AURA_REMOVED";
+
+    public static string AuraAppliedDose { get; } = "SPELL_AURA_APPLIED_DOSE";
+
+    public static string Debuff { get; } = "DEBUFF";
+
+    #endregion
+
     #region Damage done
 
     public static string SpellDamage { get; } = "SPELL_DAMAGE";
