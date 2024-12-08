@@ -433,7 +433,6 @@ public class CombatsViewModel : ParentTemplate<Tuple<List<CombatModel>, LogType>
         GetMaxInformationPerSecond(parameter.Item1);
         GetAverageInformation(parameter.Item1);
         GetMaxInformation(parameter.Item1);
-        GetDeathInformation(parameter.Item1);
     }
 
     public void NextStep()
@@ -601,18 +600,6 @@ public class CombatsViewModel : ParentTemplate<Tuple<List<CombatModel>, LogType>
                 SortedByDamageTaken = -1;
                 SortedByDeaths = -1;
                 break;
-            case 5:
-                sortedCollection = SortedByDeaths == 0
-                    ? Combats.OrderByDescending(x => x.DeathNumber).ToList()
-                    : Combats.OrderBy(x => x.DeathNumber).ToList();
-                SortedByDeaths = SortedByDeaths == 0 ? 1 : 0;
-
-                SortedByName = -1;
-                SortedByDamageDone = -1;
-                SortedByHealDone = -1;
-                SortedByDamageTaken = -1;
-                SortedByResources = -1;
-                break;
         }
 
         Combats = new ObservableCollection<CombatModel>(sortedCollection);
@@ -751,11 +738,6 @@ public class CombatsViewModel : ParentTemplate<Tuple<List<CombatModel>, LogType>
         MaxHeal = maxHeal.Max();
         MaxResources = maxResources.Max();
         MaxDamageTaken = maxDamageTaken.Max();
-    }
-
-    private void GetDeathInformation(List<CombatModel> combats)
-    {
-        IndexOfDeath = combats.Average(x => x.DeathNumber);
     }
 
     private static void GetCombatAverageInformation(CombatModel combat)

@@ -266,38 +266,6 @@
                     </DataGridTemplateColumn.HeaderTemplate>
                 </DataGridTemplateColumn>
 
-                <DataGridTemplateColumn IsReadOnly="True" Width="105">
-                    <DataGridTemplateColumn.CellTemplate>
-                        <DataTemplate>
-                            <StackPanel>
-                                <StackPanel.InputBindings>
-                                    <MouseBinding Command="{Binding DataContext.ShowDetailsCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}" Gesture="LeftDoubleClick"/>
-                                </StackPanel.InputBindings>
-
-                                <TextBlock Text="{Binding Path=DeathNumber}" TextAlignment="Center" Margin="10" FontSize="12" Opacity="0.5"
-                                           Visibility="{Binding IsWin, Converter={StaticResource BoolToVisibility}, ConverterParameter=true:true}"/>
-                                <TextBlock Text="{Binding Path=DeathNumber}" TextAlignment="Center" Margin="10" FontSize="12"
-                                           Visibility="{Binding IsWin, Converter={StaticResource BoolToVisibility}, ConverterParameter=true:false}"/>
-                            </StackPanel>
-                        </DataTemplate>
-                    </DataGridTemplateColumn.CellTemplate>
-                    <DataGridTemplateColumn.HeaderTemplate>
-                        <DataTemplate>
-                            <StackPanel Orientation="Horizontal" Cursor="Hand">
-                                <StackPanel.InputBindings>
-                                    <MouseBinding Command="{Binding DataContext.SortCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}" CommandParameter="5" Gesture="LeftClick"/>
-                                </StackPanel.InputBindings>
-
-                                <Icon:PackIconMaterial Kind="ArrowDown" Style="{StaticResource menuButtonIcon}" Width="10" Margin="5 0"
-                                        Visibility="{Binding DataContext.SortedByDeaths, RelativeSource={RelativeSource AncestorType=DataGrid}, Converter={StaticResource IntToVisibility}, ConverterParameter=true:0}"/>
-                                <Icon:PackIconMaterial Kind="ArrowUp" Style="{StaticResource menuButtonIcon}" Width="10" Margin="5 0"
-                                        Visibility="{Binding DataContext.SortedByDeaths, RelativeSource={RelativeSource AncestorType=DataGrid}, Converter={StaticResource IntToVisibility}, ConverterParameter=true:1}"/>
-                                <TextBlock Text="{loc:Loc Deaths}" Margin="5" TextAlignment="Center" FontSize="14" Foreground="White" />
-                            </StackPanel>
-                        </DataTemplate>
-                    </DataGridTemplateColumn.HeaderTemplate>
-                </DataGridTemplateColumn>
-
                 <DataGridTemplateColumn IsReadOnly="True" MinWidth="50" >
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>

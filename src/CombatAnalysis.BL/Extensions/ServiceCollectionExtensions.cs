@@ -19,6 +19,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IService<CombatLogByUserDto>, CombatLogByUserService>();
         services.AddScoped<IService<CombatDto>, CombatService>();
         services.AddScoped<IService<CombatPlayerDto>, CombatPlayerService>();
+        services.AddScoped<IService<CombatAuraDto>, CombatAuraService>();
         services.AddScoped<IService<PlayerParseInfoDto>, PlayerParseInfoService>();
 
         services.AddScoped<IService<CombatPlayerPositionDto>, CombatPlayerPositionService>();

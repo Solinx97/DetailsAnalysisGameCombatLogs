@@ -22,8 +22,6 @@ public class CombatModel
 
     public long DamageTaken { get; set; }
 
-    public int DeathNumber { get; set; }
-
     public bool IsWin { get; set; }
 
     public DateTimeOffset StartDate { get; set; }
@@ -33,8 +31,6 @@ public class CombatModel
     public List<CombatPlayerModel> Players { get; set; }
 
     public Dictionary<string, List<string>> PetsId { get; set; }
-
-    public List<PlayerDeathModel> DeathInfo { get; set; }
 
     public string Duration
     {

@@ -1,7 +1,11 @@
-﻿namespace CombatAnalysis.CombatParser.Entities;
+﻿using CombatAnalysis.DAL.Interfaces.Entities;
 
-public class CombatAura
+namespace CombatAnalysis.DAL.Entities;
+
+public class CombatAura : IEntity
 {
+    public int Id { get; set; }
+
     public string Name { get; set; }
 
     public string Creator { get; set; }

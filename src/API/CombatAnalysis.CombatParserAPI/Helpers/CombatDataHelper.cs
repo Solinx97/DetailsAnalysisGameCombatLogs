@@ -72,12 +72,14 @@ public class CombatDataHelper : ICombatDataHelper
         var playersId = combat.Players.Select(x => x.PlayerId).ToList();
 
         var combatDetails = new CombatDetails(_logger, combat.PetsId);
-        combatDetails.Calculate(playersId, combat.Data);
+        combatDetails.Calculate(playersId, combat.Data, combat.StartDate);
         combatDetails.CalculateGeneralData(playersId, combat.Duration);
 
         var uploadTasks = combat.Players.Select(item => UploadAsync(parsedCombat, item, combatDetails, combat.Id)).ToList();
-
         await Task.WhenAll(uploadTasks);
+
+        var uploadCombatAuraTasks = combatDetails.Auras.Select(item => UploadCombatAuraData(item.Value, combat.Id)).ToList();
+        await Task.WhenAll(uploadCombatAuraTasks);
     }
 
     public async Task DeleteCombatPlayerDataAsync(CombatPlayerDto combatPlayer)
@@ -97,7 +99,7 @@ public class CombatDataHelper : ICombatDataHelper
 
     private async Task UploadAsync(Combat combat, CombatPlayerModel combatPlayer, CombatDetails combatDetails, int combatId)
     {
-        foreach (var item in combat.DeathInfo)
+        foreach (var item in combatDetails.PlayersDeath[combatPlayer.PlayerId])
         {
             var lastDamageTaken = combatDetails.DamageTaken[combatPlayer.PlayerId].LastOrDefault(x => x.ToPlayer == item.Username);
             if (lastDamageTaken != null)
@@ -110,7 +112,7 @@ public class CombatDataHelper : ICombatDataHelper
         var uploadTasks = new List<Task>
         {
             UploadCombatPlayerPositionData(combatDetails.Positions[combatPlayer.PlayerId], combatPlayer.Id, combatId),
-            
+
             UploadPlayerInfoData<DamageDone, DamageDoneDto>(combatDetails.DamageDone[combatPlayer.PlayerId], combatPlayer.Id),
             UploadPlayerInfoData<DamageDoneGeneral, DamageDoneGeneralDto>(combatDetails.DamageDoneGeneral[combatPlayer.PlayerId], combatPlayer.Id),
             UploadPlayerInfoData<HealDone, HealDoneDto>(combatDetails.HealDone[combatPlayer.PlayerId], combatPlayer.Id),
@@ -119,6 +121,7 @@ public class CombatDataHelper : ICombatDataHelper
             UploadPlayerInfoData<DamageTakenGeneral, DamageTakenGeneralDto>(combatDetails.DamageTakenGeneral[combatPlayer.PlayerId], combatPlayer.Id),
             UploadPlayerInfoData<ResourceRecovery, ResourceRecoveryDto>(combatDetails.ResourcesRecovery[combatPlayer.PlayerId], combatPlayer.Id),
             UploadPlayerInfoData<ResourceRecoveryGeneral, ResourceRecoveryGeneralDto>(combatDetails.ResourcesRecoveryGeneral[combatPlayer.PlayerId], combatPlayer.Id),
+            UploadPlayerInfoData<PlayerDeath, PlayerDeathDto>(combatDetails.PlayersDeath[combatPlayer.PlayerId], combatPlayer.Id),
         };
 
         await Task.WhenAll(uploadTasks);
@@ -149,18 +152,36 @@ public class CombatDataHelper : ICombatDataHelper
         }
     }
 
-    private async Task UploadCombatPlayerPositionData(List<CombatPlayerPosition> dataforUpload, int combatPlayerId, int combatId)
+    private async Task UploadCombatPlayerPositionData(List<CombatPlayerPosition> combatPlayerPositions, int combatPlayerId, int combatId)
     {
         using var scope = _serviceScopeFactory.CreateScope();
         var scopedService = scope.ServiceProvider.GetRequiredService<IService<CombatPlayerPositionDto>>();
 
-        foreach (var item in dataforUpload)
+        foreach (var item in combatPlayerPositions)
         {
             var combatPlayerPositionMap = _mapper.Map<CombatPlayerPositionDto>(item);
             combatPlayerPositionMap.CombatId = combatId;
             combatPlayerPositionMap.CombatPlayerId = combatPlayerId;
 
             var createdItem = await scopedService.CreateAsync(combatPlayerPositionMap);
+            if (createdItem == null)
+            {
+                throw new ArgumentException("Did not created");
+            }
+        }
+    }
+
+    private async Task UploadCombatAuraData(List<CombatAura> combatAuras, int combatId)
+    {
+        using var scope = _serviceScopeFactory.CreateScope();
+        var scopedService = scope.ServiceProvider.GetRequiredService<IService<CombatAuraDto>>();
+
+        foreach (var item in combatAuras)
+        {
+            var combatAuraMap = _mapper.Map<CombatAuraDto>(item);
+            combatAuraMap.CombatId = combatId;
+
+            var createdItem = await scopedService.CreateAsync(combatAuraMap);
             if (createdItem == null)
             {
                 throw new ArgumentException("Did not created");

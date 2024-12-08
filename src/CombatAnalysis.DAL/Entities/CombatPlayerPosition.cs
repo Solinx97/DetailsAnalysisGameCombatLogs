@@ -10,7 +10,9 @@ public class CombatPlayerPosition : ICombatPlayerEntity
 
     public double PositionY { get; set; }
 
-    public int CombatId { get; set; }
+    public TimeSpan Time { get; set; }
 
     public int CombatPlayerId { get; set; }
+
+    public int CombatId { get; set; }
 }

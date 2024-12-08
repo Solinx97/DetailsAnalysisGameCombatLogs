@@ -1,7 +1,9 @@
-﻿namespace CombatAnalysis.CombatParser.Entities;
+﻿namespace CombatAnalysis.BL.DTO;
 
-public class CombatAura
+public class CombatAuraDto
 {
+    public int Id { get; set; }
+
     public string Name { get; set; }
 
     public string Creator { get; set; }

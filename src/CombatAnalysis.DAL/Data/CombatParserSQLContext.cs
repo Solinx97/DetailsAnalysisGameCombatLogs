@@ -26,6 +26,8 @@ public class CombatParserSQLContext : DbContext
 
     public DbSet<Combat>? Combat { get; }
 
+    public DbSet<CombatAura>? CombatAura { get; }
+
     public DbSet<CombatPlayer>? CombatPlayer { get; }
 
     public DbSet<CombatPlayerPosition>? CombatPlayerPosition { get; }

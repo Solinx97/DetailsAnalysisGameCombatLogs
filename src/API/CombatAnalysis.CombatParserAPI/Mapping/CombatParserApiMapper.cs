@@ -12,6 +12,7 @@ public class CombatParserApiMapper : Profile
         CreateMap<CombatLogDto, CombatLogModel>().ReverseMap();
         CreateMap<CombatLogByUserDto, CombatLogByUserModel>().ReverseMap();
         CreateMap<CombatDto, CombatModel>().ReverseMap();
+        CreateMap<CombatAuraDto, CombatAuraModel>().ReverseMap();
         CreateMap<CombatPlayerDto, CombatPlayerModel>().ReverseMap();
         CreateMap<CombatPlayerPositionDto, CombatPlayerPositionModel>().ReverseMap();
         CreateMap<DamageDoneDto, DamageDoneModel>().ReverseMap();
@@ -37,7 +38,9 @@ public class CombatParserApiMapper : Profile
         CreateMap<ResourceRecovery, ResourceRecoveryModel>().ReverseMap();
         CreateMap<ResourceRecoveryGeneral, ResourceRecoveryGeneralModel>().ReverseMap();
 
+        CreateMap<PlayerDeathDto, PlayerDeath>().ReverseMap();
         CreateMap<CombatDto, Combat>().ReverseMap();
+        CreateMap<CombatAuraDto, CombatAura>().ReverseMap();
         CreateMap<CombatPlayerPositionDto, CombatPlayerPosition>().ReverseMap();
         CreateMap<DamageDoneDto, DamageDone>().ReverseMap();
         CreateMap<DamageDoneGeneralDto, DamageDoneGeneral>().ReverseMap();

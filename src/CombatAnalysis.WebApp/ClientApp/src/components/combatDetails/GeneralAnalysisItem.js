@@ -1,4 +1,4 @@
-import { faBolt, faBookSkull, faCheck, faCircleNodes, faClock, faDatabase, faGlobe, faGraduationCap, faHourglassStart, faKhanda, faPlusCircle, faShieldHalved, faSkull } from '@fortawesome/free-solid-svg-icons';
+import { faBolt, faCheck, faCircleNodes, faClock, faDatabase, faGraduationCap, faHourglassStart, faKhanda, faPlusCircle, faShieldHalved, faSkull } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { format } from 'date-fns';
 import React, { useState } from 'react';
@@ -145,17 +145,9 @@ const GeneralAnalysisItem = ({ uniqueCombats, combatLogId }) => {
                     <FontAwesomeIcon
                         icon={faBolt}
                         className="list-group-item__energy-recovery"
-                        title={t("ResourcesRecovery")}
+                        title={t("EnergyRecovery")}
                     />
-                    <div>{uniqueCombats[selectedCombatIndex].resourcesRecovery}</div>
-                </li>
-                <li className="list-group-item">
-                    <FontAwesomeIcon
-                        icon={faBookSkull}
-                        className={`list-group-item__death-number${uniqueCombats[selectedCombatIndex].deathNumber === 0 ? '-zero' : ''}`}
-                        title={t("Deaths")}
-                    />
-                    <div>{uniqueCombats[selectedCombatIndex].deathNumber}</div>
+                    <div>{uniqueCombats[selectedCombatIndex].energyRecovery}</div>
                 </li>
                 <li className="list-group-item">
                     <FontAwesomeIcon

@@ -20,8 +20,6 @@ public class CombatDto
 
     public int DamageTaken { get; set; }
 
-    public int DeathNumber { get; set; }
-
     public bool IsWin { get; set; }
 
     public DateTimeOffset StartDate { get; set; }

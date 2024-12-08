@@ -1,7 +1,9 @@
-﻿namespace CombatAnalysis.CombatParser.Entities;
+﻿namespace CombatAnalysis.CombatParserAPI.Models;
 
-public class CombatAura
+public class CombatAuraModel
 {
+    public int Id { get; set; }
+
     public string Name { get; set; }
 
     public string Creator { get; set; }

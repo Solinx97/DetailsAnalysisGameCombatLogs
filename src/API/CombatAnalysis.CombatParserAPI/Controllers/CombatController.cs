@@ -103,7 +103,6 @@ public class CombatController : ControllerBase
             combat.Id = createdCombat.Id;
 
             await CreateCombatPlayersAsync(combat);
-            await CreatePlayerDeathsAsync(combat);
 
             await UpdateCombatAsync(createdCombat);
 
@@ -197,18 +196,6 @@ public class CombatController : ControllerBase
         return createdItem;
     }
 
-    private async Task<PlayerDeathDto> UploadPlayerDeathAsync(PlayerDeathModel model)
-    {
-        var map = _mapper.Map<PlayerDeathDto>(model);
-        var createdItem = await _plaнerDeathService.CreateAsync(map);
-        if (createdItem == null)
-        {
-            throw new ArgumentException("Player death did not created");
-        }
-
-        return createdItem;
-    }
-
     private async Task<CombatDto> CreateCombatAsync(CombatModel model)
     {
         var map = _mapper.Map<CombatDto>(model);
@@ -232,17 +219,6 @@ public class CombatController : ControllerBase
         }
 
         await _saveCombatDataHelper.SaveCombatPlayerAsync(combat);
-    }
-
-    private async Task CreatePlayerDeathsAsync(CombatModel model)
-    {
-        foreach (var item in model.DeathInfo)
-        {
-            var player = model.Players.FirstOrDefault(x => x.Username == item.Username);
-            item.CombatPlayerId = player.Id;
-
-            await UploadPlayerDeathAsync(item);
-        }
     }
 
     private async Task UpdateCombatAsync(CombatDto combat)

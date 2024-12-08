@@ -224,9 +224,6 @@ public class CombatParserService
             var players = GetCombatPlayers(combat, petsId);
             combat.Players = players;
 
-            var combatDetailsDeaths = new CombatDetailsDeaths(_logger, combat.Players, combat);
-            combat.DeathNumber = combatDetailsDeaths.GetDeathNumber(combat.Data);
-
             CalculatingCommonCombatDetails(combat);
 
             AddNewCombat(combat);
@@ -283,9 +280,12 @@ public class CombatParserService
         var time = combatDate[1].Split('.')[0];
         var clearDate = $"{dateWithoutTime[0]}/{dateWithoutTime[1]}/{DateTimeOffset.UtcNow.Year} {time}";
 
-        DateTimeOffset.TryParse(clearDate, CultureInfo.GetCultureInfo("en-EN"), DateTimeStyles.AssumeUniversal, out var date);
+        if (DateTimeOffset.TryParse(clearDate, CultureInfo.GetCultureInfo("en-EN"), DateTimeStyles.AssumeUniversal, out var date))
+        {
+            return date.UtcDateTime;
+        }
 
-        return date.UtcDateTime;
+        return DateTimeOffset.MinValue;
     }
 
     private static void CalculatingCommonCombatDetails(Combat combat)
@@ -344,7 +344,7 @@ public class CombatParserService
         var playersId = players.Select(x => x.PlayerId).ToList();
 
         var combatDetails = new CombatDetails(_logger, petsId);
-        combatDetails.Calculate(playersId, combat.Data);
+        combatDetails.Calculate(playersId, combat.Data, combat.StartDate);
         combatDetails.CalculateGeneralData(playersId, combat.Duration);
 
         CombatDetails.Add(combatDetails);

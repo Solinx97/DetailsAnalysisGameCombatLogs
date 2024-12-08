@@ -18,8 +18,6 @@ public class CombatModel
 
     public long DamageTaken { get; set; }
 
-    public int DeathNumber { get; set; }
-
     public int UsedBuffs { get; set; }
 
     public bool IsWin { get; set; }

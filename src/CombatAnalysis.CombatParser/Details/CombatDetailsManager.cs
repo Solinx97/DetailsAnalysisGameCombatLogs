@@ -8,10 +8,12 @@ namespace CombatAnalysis.CombatParser.Details;
 internal class CombatDetailsManager
 {
     private readonly List<string> _playersId;
+    private readonly DateTimeOffset _combatStarted;
 
-    public CombatDetailsManager(List<string> playersId)
+    public CombatDetailsManager(List<string> playersId, DateTimeOffset combatStarted)
     {
         _playersId = playersId;
+        _combatStarted = combatStarted;
     }
 
     public (string, CombatAura) GetAuras(List<string> combatDataLine, Dictionary<string, List<CombatAura>> auras)
@@ -32,12 +34,8 @@ internal class CombatDetailsManager
         };
 
         var auraType = SelectAuraType(combatDataLine);
-        buff.AuraType = auraType;
-
-        if (DateTimeOffset.TryParse(combatDataLine[0], out var startTime))
-        {
-            buff.Start = startTime;
-        }
+        buff.AuraType = (int)auraType;
+        buff.StartTime = GetTimeFromStart(combatDataLine[0]);
 
         if (combatDataLine[1].Equals(CombatLogKeyWords.AuraAppliedDose) && int.TryParse(combatDataLine[14], out var stacks))
         {
@@ -71,7 +69,8 @@ internal class CombatDetailsManager
             var position = new CombatPlayerPosition
             {
                 PositionX = -position2,
-                PositionY = position1
+                PositionY = position1,
+                Time = GetTimeFromStart(combatDataLine[0])
             };
 
             return (combatDataLine[2], position);
@@ -140,7 +139,7 @@ internal class CombatDetailsManager
 
         var healDone = new HealDone
         {
-            Time = TimeSpan.Parse(combatDataLine[0]),
+            Time = GetTimeFromStart(combatDataLine[0]),
             FromPlayer = combatDataLine[3].Trim('"'),
             ToPlayer = combatDataLine[7].Trim('"'),
             SpellOrItem = combatDataLine[11].Trim('"'),
@@ -165,22 +164,24 @@ internal class CombatDetailsManager
 
         var countDataWithMeleeDamage = 19;
 
-        int.TryParse(combatDataLine[^2], out var amountOfHeal);
-
         var absorbeDone = new HealDone
         {
-            Time = TimeSpan.Parse(combatDataLine[0]),
+            Time = GetTimeFromStart(combatDataLine[0]),
             FromPlayer = combatDataLine[^8].Trim('"'),
             ToPlayer = combatDataLine[7].Trim('"'),
             SpellOrItem = combatDataLine[^4].Trim('"'),
             DamageAbsorbed = combatDataLine.Count > countDataWithMeleeDamage ? combatDataLine[11].Trim('"') : CombatLogKeyWords.MeleeDamage,
-            ValueWithOverheal = amountOfHeal,
             Overheal = 0,
-            Value = amountOfHeal,
             IsFullOverheal = false,
             IsCrit = false,
             IsAbsorbed = true
         };
+
+        if (int.TryParse(combatDataLine[^2], out var amountOfHeal))
+        {
+            absorbeDone.ValueWithOverheal = amountOfHeal;
+            absorbeDone.Value = amountOfHeal;
+        }
 
         var playerId = _playersId.Any(playerId => playerId.Equals(combatDataLine[10])) ? combatDataLine[10] : combatDataLine[13];
 
@@ -250,7 +251,7 @@ internal class CombatDetailsManager
         {
             Value = value,
             ActualValue = value + absorb,
-            Time = TimeSpan.Parse(combatDataLine[0]),
+            Time = GetTimeFromStart(combatDataLine[0]),
             FromEnemy = enemy.Trim('"'),
             ToPlayer = combatDataLine[7].Trim('"'),
             SpellOrItem = spellOrItem,
@@ -279,24 +280,40 @@ internal class CombatDetailsManager
             return (string.Empty, null);
         }
 
-        int.TryParse(combatDataLine[^4], NumberStyles.Number, CultureInfo.InvariantCulture, out var amoutOfResourcesRecovery);
-
         var spellOrItem = combatDataLine[1].Contains(CombatLogKeyWords.SpellEnergize) ? combatDataLine[11] : combatDataLine[3];
 
         var energyRecovery = new ResourceRecovery
         {
-            Time = TimeSpan.Parse(combatDataLine[0]),
-            Value = amoutOfResourcesRecovery,
+            Time = GetTimeFromStart(combatDataLine[0]),
             SpellOrItem = spellOrItem.Trim('"')
         };
+
+        if (int.TryParse(combatDataLine[^4], NumberStyles.Number, CultureInfo.InvariantCulture, out var amoutOfResourcesRecovery))
+        {
+            energyRecovery.Value = amoutOfResourcesRecovery;
+        }
 
         return (combatDataLine[6], energyRecovery);
     }
 
-    private static DamageDone GetDamageDone(List<string> combatDataLine, string spellOrItem = "")
+    public (string, PlayerDeath) GetPlayerDeath(List<string> combatDataLine)
     {
-        int.TryParse(combatDataLine[^10], out var amountOfValue);
+        if (!_playersId.Any(playerId => playerId.Equals(combatDataLine[6])))
+        {
+            return (string.Empty, null);
+        }
 
+        var userDeath = new PlayerDeath
+        {
+            Username = combatDataLine[7].Trim('"'),
+            Time = GetTimeFromStart(combatDataLine[0]),
+        };
+
+        return (combatDataLine[6], userDeath);
+    }
+
+    private DamageDone GetDamageDone(List<string> combatDataLine, string spellOrItem = "")
+    {
         if (string.Equals(combatDataLine[1], CombatLogKeyWords.SwingDamageLanded, StringComparison.OrdinalIgnoreCase)
             || string.Equals(combatDataLine[1], CombatLogKeyWords.SwingDamage, StringComparison.OrdinalIgnoreCase)
             || string.Equals(combatDataLine[1], CombatLogKeyWords.SwingMissed, StringComparison.OrdinalIgnoreCase))
@@ -335,8 +352,7 @@ internal class CombatDetailsManager
 
         var damageDone = new DamageDone
         {
-            Value = amountOfValue,
-            Time = TimeSpan.Parse(combatDataLine[0]),
+            Time = GetTimeFromStart(combatDataLine[0]),
             FromPlayer = combatDataLine[3].Trim('"'),
             ToEnemy = combatDataLine[7].Trim('"'),
             SpellOrItem = spellOrItem,
@@ -350,18 +366,20 @@ internal class CombatDetailsManager
             IsPet = true,
         };
 
+        if (int.TryParse(combatDataLine[^10], out var amountOfValue))
+        {
+            damageDone.Value = amountOfValue;
+        }
+
         return damageDone;
     }
 
-    private static void RemoveAura(List<string> combatDataLine, List<CombatAura> auras)
+    private void RemoveAura(List<string> combatDataLine, List<CombatAura> auras)
     {
         var playerBuffFound = auras.FirstOrDefault(x => x.Name.Equals(combatDataLine[11]));
         if (playerBuffFound != null)
         {
-            if (DateTimeOffset.TryParse(combatDataLine[0], out var endTime))
-            {
-                playerBuffFound.End = endTime;
-            }
+            playerBuffFound.FinishTime = GetTimeFromStart(combatDataLine[0]);
         }
     }
 
@@ -404,5 +422,17 @@ internal class CombatDetailsManager
 
             return AuraType.AllyBuff;
         }
+    }
+
+    private TimeSpan GetTimeFromStart(string time)
+    {
+        if (DateTimeOffset.TryParse(time, CultureInfo.GetCultureInfo("en-EN"), DateTimeStyles.AssumeUniversal, out var startTime))
+        {
+            var timeFromStart = startTime - _combatStarted;
+
+            return timeFromStart;
+        }
+
+        return TimeSpan.Zero;
     }
 }

@@ -8,5 +8,7 @@ public class CombatPlayerPositionDto : CombatDataBase
 
     public double PositionY { get; set; }
 
+    public TimeSpan Time { get; set; }
+
     public int CombatId { get; set; }
 }

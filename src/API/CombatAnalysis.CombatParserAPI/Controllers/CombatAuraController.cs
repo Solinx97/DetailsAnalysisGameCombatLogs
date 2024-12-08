@@ -8,13 +8,13 @@ namespace CombatAnalysis.CombatParserAPI.Controllers;
 
 [Route("api/v1/[controller]")]
 [ApiController]
-public class CombatPlayerController : ControllerBase
+public class CombatAuraController : ControllerBase
 {
-    private readonly IService<CombatPlayerDto> _service;
+    private readonly IService<CombatAuraDto> _service;
     private readonly IMapper _mapper;
-    private readonly ILogger<CombatPlayerController> _logger;
+    private readonly ILogger<CombatAuraController> _logger;
 
-    public CombatPlayerController(IService<CombatPlayerDto> service, IMapper mapper, ILogger<CombatPlayerController> logger)
+    public CombatAuraController(IService<CombatAuraDto> service, IMapper mapper, ILogger<CombatAuraController> logger)
     {
         _service = service;
         _mapper = mapper;
@@ -24,25 +24,25 @@ public class CombatPlayerController : ControllerBase
     [HttpGet("findByCombatId/{combatId:int:min(1)}")]
     public async Task<IActionResult> Find(int combatId)
     {
-        var players = await _service.GetByParamAsync(nameof(CombatPlayerModel.CombatId), combatId);
+        var combatAuras = await _service.GetByParamAsync(nameof(CombatAuraModel.CombatId), combatId);
 
-        return Ok(players);
+        return Ok(combatAuras);
     }
 
     [HttpGet("{id:int:min(1)}")]
     public async Task<IActionResult> GetById(int id)
     {
-        var player = await _service.GetByIdAsync(id);
+        var combatAura = await _service.GetByIdAsync(id);
 
-        return Ok(player);
+        return Ok(combatAura);
     }
 
     [HttpPost]
-    public async Task<IActionResult> Create(CombatPlayerModel model)
+    public async Task<IActionResult> Create(CombatAuraModel model)
     {
         try
         {
-            var map = _mapper.Map<CombatPlayerDto>(model);
+            var map = _mapper.Map<CombatAuraDto>(model);
             var createdItem = await _service.CreateAsync(map);
 
             return Ok(createdItem);

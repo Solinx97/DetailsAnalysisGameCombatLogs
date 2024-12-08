@@ -22,8 +22,6 @@ public class Combat : IEntity
 
     public int EnergyRecovery { get; set; }
 
-    public int DeathNumber { get; set; }
-
     public bool IsWin { get; set; }
 
     public DateTimeOffset StartDate { get; set; }
