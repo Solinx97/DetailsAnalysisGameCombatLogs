@@ -6,12 +6,12 @@ using CombatAnalysis.DAL.Interfaces;
 
 namespace CombatAnalysis.BL.Services;
 
-internal class SpecializationScoreService : ISpecScoreService<SpecializationScoreDto, int>
+internal class SpecializationScoreService : ISpecScoreService
 {
-    private readonly ISpecScore<SpecializationScore, int> _repository;
+    private readonly ISpecScore _repository;
     private readonly IMapper _mapper;
 
-    public SpecializationScoreService(ISpecScore<SpecializationScore, int> repository, IMapper mapper)
+    public SpecializationScoreService(ISpecScore repository, IMapper mapper)
     {
         _repository = repository;
         _mapper = mapper;

@@ -1,8 +1,7 @@
 ﻿namespace CombatAnalysis.BL.Interfaces;
 
-public interface IPlayerInfoCountService<TModel, TIdType> : IPlayerInfoService<TModel, TIdType>
+public interface IPlayerInfoCountService<TModel> : IPlayerInfoService<TModel>
     where TModel : class
-    where TIdType : notnull
 {
     Task<int> CountByCombatPlayerIdAsync(int combatPlayerId);
 }

@@ -1,12 +1,12 @@
 ﻿using CombatAnalysis.DAL.Data;
 using CombatAnalysis.DAL.Interfaces;
+using CombatAnalysis.DAL.Interfaces.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace CombatAnalysis.DAL.Repositories.SQL;
 
-internal class SQLRepository<TModel, TIdType> : IGenericRepository<TModel, TIdType>
-    where TModel : class
-    where TIdType : notnull
+internal class SQLRepository<TModel> : IGenericRepository<TModel>
+    where TModel : class, IEntity
 {
     private readonly CombatParserSQLContext _context;
 
@@ -23,10 +23,10 @@ internal class SQLRepository<TModel, TIdType> : IGenericRepository<TModel, TIdTy
         return entityEntry.Entity;
     }
 
-    public async Task<int> DeleteAsync(TIdType id)
+    public async Task<int> DeleteAsync(int id)
     {
         var model = Activator.CreateInstance<TModel>();
-        model.GetType().GetProperty("Id").SetValue(model, id);
+        model.Id = id;
 
         _context.Set<TModel>().Remove(model);
         var rowsAffected = await _context.SaveChangesAsync();
@@ -36,7 +36,7 @@ internal class SQLRepository<TModel, TIdType> : IGenericRepository<TModel, TIdTy
 
     public async Task<IEnumerable<TModel>> GetAllAsync() => await _context.Set<TModel>().AsNoTracking().ToListAsync();
 
-    public async Task<TModel> GetByIdAsync(TIdType id)
+    public async Task<TModel> GetByIdAsync(int id)
     {
         var entity = await _context.Set<TModel>().FindAsync(id);
         if (entity != null)

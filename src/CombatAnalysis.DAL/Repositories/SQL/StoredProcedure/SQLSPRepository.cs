@@ -1,14 +1,14 @@
 ﻿using CombatAnalysis.DAL.Data;
 using CombatAnalysis.DAL.Interfaces;
+using CombatAnalysis.DAL.Interfaces.Entities;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using System.Text;
 
 namespace CombatAnalysis.DAL.Repositories.SQL.StoredProcedure;
 
-internal class SQLSPRepository<TModel, TIdType> : IGenericRepository<TModel, TIdType>
-    where TModel : class
-    where TIdType : notnull
+internal class SQLSPRepository<TModel> : IGenericRepository<TModel>
+    where TModel : class, IEntity
 {
     private readonly CombatParserSQLContext _context;
 
@@ -41,7 +41,7 @@ internal class SQLSPRepository<TModel, TIdType> : IGenericRepository<TModel, TId
         return data;
     }
 
-    public async Task<int> DeleteAsync(TIdType id)
+    public async Task<int> DeleteAsync(int id)
     {
         var rowsAffected = await _context.Database
                             .ExecuteSqlRawAsync($"Delete{typeof(TModel).Name}ById @Id", new SqlParameter("Id", id));
@@ -58,7 +58,7 @@ internal class SQLSPRepository<TModel, TIdType> : IGenericRepository<TModel, TId
         return data;
     }
 
-    public async Task<TModel> GetByIdAsync(TIdType id)
+    public async Task<TModel> GetByIdAsync(int id)
     {
         var data = await Task.Run(() => _context.Set<TModel>()
                             .FromSqlRaw($"Get{typeof(TModel).Name}ById @Id", new SqlParameter("Id", id))

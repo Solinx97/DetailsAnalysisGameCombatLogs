@@ -1,8 +1,7 @@
 ﻿namespace CombatAnalysis.BL.Interfaces;
 
-public interface IPlayerInfoService<TModel, TIdType> : IService<TModel, TIdType>
+public interface IPlayerInfoService<TModel> : IService<TModel>
     where TModel : class
-    where TIdType : notnull
 {
     Task<IEnumerable<TModel>> GetByCombatPlayerIdAsync(int combatPlayerId);
 

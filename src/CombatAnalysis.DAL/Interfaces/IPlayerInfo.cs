@@ -1,8 +1,9 @@
-﻿namespace CombatAnalysis.DAL.Interfaces;
+﻿using CombatAnalysis.DAL.Interfaces.Entities;
 
-public interface IPlayerInfo<TModel, TIdType> : IGenericRepository<TModel, TIdType>
-    where TModel : class
-    where TIdType : notnull
+namespace CombatAnalysis.DAL.Interfaces;
+
+public interface IPlayerInfo<TModel> : IGenericRepository<TModel>
+    where TModel : class, IEntity
 {
     Task<IEnumerable<TModel>> GetByCombatPlayerIdAsync(int combatPlayerId);
 

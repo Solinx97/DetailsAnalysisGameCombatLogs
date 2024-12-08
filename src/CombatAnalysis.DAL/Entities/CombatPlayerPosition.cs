@@ -1,6 +1,8 @@
-﻿namespace CombatAnalysis.DAL.Entities;
+﻿using CombatAnalysis.DAL.Interfaces.Entities;
 
-public class CombatPlayerPosition
+namespace CombatAnalysis.DAL.Entities;
+
+public class CombatPlayerPosition : ICombatPlayerEntity
 {
     public int Id { get; set; }
 
@@ -8,7 +10,7 @@ public class CombatPlayerPosition
 
     public double PositionY { get; set; }
 
-    public int CombatPlayerId { get; set; }
-
     public int CombatId { get; set; }
+
+    public int CombatPlayerId { get; set; }
 }

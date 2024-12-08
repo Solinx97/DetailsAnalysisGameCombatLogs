@@ -6,12 +6,12 @@ using CombatAnalysis.DAL.Interfaces;
 
 namespace CombatAnalysis.BL.Services;
 
-internal class PlayerDeathService : IPlayerInfoService<PlayerDeathDto, int>
+internal class PlayerDeathService : IPlayerInfoService<PlayerDeathDto>
 {
-    private readonly IPlayerInfo<PlayerDeath, int> _repository;
+    private readonly IPlayerInfo<PlayerDeath> _repository;
     private readonly IMapper _mapper;
 
-    public PlayerDeathService(IPlayerInfo<PlayerDeath, int> repository, IMapper mapper)
+    public PlayerDeathService(IPlayerInfo<PlayerDeath> repository, IMapper mapper)
     {
         _repository = repository;
         _mapper = mapper;

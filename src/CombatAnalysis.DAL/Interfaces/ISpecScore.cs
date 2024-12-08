@@ -1,8 +1,8 @@
-﻿namespace CombatAnalysis.DAL.Interfaces;
+﻿using CombatAnalysis.DAL.Entities;
 
-public interface ISpecScore<TModel, TIdType> : IGenericRepository<TModel, TIdType>
-    where TModel : class
-    where TIdType : notnull
+namespace CombatAnalysis.DAL.Interfaces;
+
+public interface ISpecScore : IGenericRepository<SpecializationScore>
 {
-    Task<IEnumerable<TModel>> GetBySpecIdAsync(int specId, int bossId, int difficult);
+    Task<IEnumerable<SpecializationScore>> GetBySpecIdAsync(int specId, int bossId, int difficult);
 }

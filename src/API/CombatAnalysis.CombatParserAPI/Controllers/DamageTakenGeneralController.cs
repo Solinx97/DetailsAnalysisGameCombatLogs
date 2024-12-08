@@ -10,11 +10,11 @@ namespace CombatAnalysis.CombatParserAPI.Controllers;
 [ApiController]
 public class DamageTakenGeneralController : ControllerBase
 {
-    private readonly IPlayerInfoService<DamageTakenGeneralDto, int> _service;
+    private readonly IPlayerInfoService<DamageTakenGeneralDto> _service;
     private readonly IMapper _mapper;
     private readonly ILogger<DamageTakenGeneralController> _logger;
 
-    public DamageTakenGeneralController(IPlayerInfoService<DamageTakenGeneralDto, int> service, IMapper mapper, ILogger<DamageTakenGeneralController> logger)
+    public DamageTakenGeneralController(IPlayerInfoService<DamageTakenGeneralDto> service, IMapper mapper, ILogger<DamageTakenGeneralController> logger)
     {
         _service = service;
         _mapper = mapper;

@@ -1,6 +1,8 @@
-﻿namespace CombatAnalysis.DAL.Entities;
+﻿using CombatAnalysis.DAL.Interfaces.Entities;
 
-public class PlayerDeath
+namespace CombatAnalysis.DAL.Entities;
+
+public class PlayerDeath : ICombatPlayerEntity
 {
     public int Id { get; set; }
 

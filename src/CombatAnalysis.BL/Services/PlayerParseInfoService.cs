@@ -6,12 +6,12 @@ using CombatAnalysis.DAL.Interfaces;
 
 namespace CombatAnalysis.BL.Services;
 
-internal class PlayerParseInfoService : IService<PlayerParseInfoDto, int>
+internal class PlayerParseInfoService : IService<PlayerParseInfoDto>
 {
-    private readonly IGenericRepository<PlayerParseInfo, int> _repository;
+    private readonly IGenericRepository<PlayerParseInfo> _repository;
     private readonly IMapper _mapper;
 
-    public PlayerParseInfoService(IGenericRepository<PlayerParseInfo, int> repository, IMapper mapper)
+    public PlayerParseInfoService(IGenericRepository<PlayerParseInfo> repository, IMapper mapper)
     {
         _repository = repository;
         _mapper = mapper;

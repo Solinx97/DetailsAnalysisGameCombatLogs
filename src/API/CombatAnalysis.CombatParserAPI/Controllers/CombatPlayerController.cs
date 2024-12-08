@@ -10,11 +10,11 @@ namespace CombatAnalysis.CombatParserAPI.Controllers;
 [ApiController]
 public class CombatPlayerController : ControllerBase
 {
-    private readonly IService<CombatPlayerDto, int> _service;
+    private readonly IService<CombatPlayerDto> _service;
     private readonly IMapper _mapper;
     private readonly ILogger<CombatPlayerController> _logger;
 
-    public CombatPlayerController(IService<CombatPlayerDto, int> service, IMapper mapper, ILogger<CombatPlayerController> logger)
+    public CombatPlayerController(IService<CombatPlayerDto> service, IMapper mapper, ILogger<CombatPlayerController> logger)
     {
         _service = service;
         _mapper = mapper;

@@ -15,21 +15,21 @@ public class CombatDataHelper : ICombatDataHelper
     private readonly IMapper _mapper;
     private readonly ILogger<CombatDataHelper> _logger;
     private readonly IPlayerParseInfoHelper _playerParseInfoHelper;
-    private readonly IPlayerInfoService<DamageDoneDto, int> _damageDoneService;
-    private readonly IPlayerInfoService<DamageDoneGeneralDto, int> _damageDoneGeneralService;
-    private readonly IPlayerInfoService<HealDoneDto, int> _healDoneService;
-    private readonly IPlayerInfoService<HealDoneGeneralDto, int> _healDoneGeneralService;
-    private readonly IPlayerInfoService<DamageTakenDto, int> _damageTakenService;
-    private readonly IPlayerInfoService<DamageTakenGeneralDto, int> _damageTakenGeneralService;
-    private readonly IPlayerInfoService<ResourceRecoveryDto, int> _resourceRecoveryService;
-    private readonly IPlayerInfoService<ResourceRecoveryGeneralDto, int> _resourceRecoveryGeneralService;
+    private readonly IPlayerInfoService<DamageDoneDto> _damageDoneService;
+    private readonly IPlayerInfoService<DamageDoneGeneralDto> _damageDoneGeneralService;
+    private readonly IPlayerInfoService<HealDoneDto> _healDoneService;
+    private readonly IPlayerInfoService<HealDoneGeneralDto> _healDoneGeneralService;
+    private readonly IPlayerInfoService<DamageTakenDto> _damageTakenService;
+    private readonly IPlayerInfoService<DamageTakenGeneralDto> _damageTakenGeneralService;
+    private readonly IPlayerInfoService<ResourceRecoveryDto> _resourceRecoveryService;
+    private readonly IPlayerInfoService<ResourceRecoveryGeneralDto> _resourceRecoveryGeneralService;
     private readonly IServiceScopeFactory _serviceScopeFactory;
 
     public CombatDataHelper(IMapper mapper, ILogger<CombatDataHelper> logger, IPlayerParseInfoHelper playerParseInfoHelper,
-        IPlayerInfoCountService<DamageDoneDto, int> damageDoneService, IPlayerInfoService<DamageDoneGeneralDto, int> damageDoneGeneralService,
-        IPlayerInfoCountService<HealDoneDto, int> healDoneService, IPlayerInfoService<HealDoneGeneralDto, int> healDoneGeneralService, IPlayerInfoCountService<DamageTakenDto, int> damageTakenService,
-        IPlayerInfoService<DamageTakenGeneralDto, int> damageTakenGeneralService, IPlayerInfoCountService<ResourceRecoveryDto, int> resourceRecoveryService,
-        IPlayerInfoService<ResourceRecoveryGeneralDto, int> resourceRecoveryGeneralService, IServiceScopeFactory serviceScopeFactory)
+        IPlayerInfoCountService<DamageDoneDto> damageDoneService, IPlayerInfoService<DamageDoneGeneralDto> damageDoneGeneralService,
+        IPlayerInfoCountService<HealDoneDto> healDoneService, IPlayerInfoService<HealDoneGeneralDto> healDoneGeneralService, IPlayerInfoCountService<DamageTakenDto> damageTakenService,
+        IPlayerInfoService<DamageTakenGeneralDto> damageTakenGeneralService, IPlayerInfoCountService<ResourceRecoveryDto> resourceRecoveryService,
+        IPlayerInfoService<ResourceRecoveryGeneralDto> resourceRecoveryGeneralService, IServiceScopeFactory serviceScopeFactory)
     {
         _mapper = mapper;
         _logger = logger;
@@ -134,7 +134,7 @@ public class CombatDataHelper : ICombatDataHelper
         where TModelMap : BL.DTO.CombatDataBase
     {
         using var scope = _serviceScopeFactory.CreateScope();
-        var scopedService = scope.ServiceProvider.GetRequiredService<IPlayerInfoService<TModelMap, int>>();
+        var scopedService = scope.ServiceProvider.GetRequiredService<IPlayerInfoService<TModelMap>>();
 
         foreach (var item in dataforUpload)
         {
@@ -152,7 +152,7 @@ public class CombatDataHelper : ICombatDataHelper
     private async Task UploadCombatPlayerPositionData(List<CombatPlayerPosition> dataforUpload, int combatPlayerId, int combatId)
     {
         using var scope = _serviceScopeFactory.CreateScope();
-        var scopedService = scope.ServiceProvider.GetRequiredService<IService<CombatPlayerPositionDto, int>>();
+        var scopedService = scope.ServiceProvider.GetRequiredService<IService<CombatPlayerPositionDto>>();
 
         foreach (var item in dataforUpload)
         {
@@ -168,7 +168,7 @@ public class CombatDataHelper : ICombatDataHelper
         }
     }
 
-    private static async Task DeleteDataAsync<TServiceModel>(int combatPlayerId, IService<TServiceModel, int> service)
+    private static async Task DeleteDataAsync<TServiceModel>(int combatPlayerId, IService<TServiceModel> service)
         where TServiceModel : class
     {
         var dataForRemove = await service.GetByParamAsync("CombatPlayerId", combatPlayerId);

@@ -1,6 +1,8 @@
-﻿namespace CombatAnalysis.DAL.Entities;
+﻿using CombatAnalysis.DAL.Interfaces.Entities;
 
-public class HealDoneGeneral
+namespace CombatAnalysis.DAL.Entities;
+
+public class HealDoneGeneral : ICombatPlayerEntity
 {
     public int Id { get; set; }
 

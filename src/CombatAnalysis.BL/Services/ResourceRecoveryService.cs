@@ -6,12 +6,12 @@ using CombatAnalysis.DAL.Interfaces;
 
 namespace CombatAnalysis.BL.Services;
 
-internal class ResourceRecoveryService : IPlayerInfoCountService<ResourceRecoveryDto, int>
+internal class ResourceRecoveryService : IPlayerInfoCountService<ResourceRecoveryDto>
 {
-    private readonly IPlayerInfoCount<ResourceRecovery, int> _repository;
+    private readonly IPlayerInfoCount<ResourceRecovery> _repository;
     private readonly IMapper _mapper;
 
-    public ResourceRecoveryService(IPlayerInfoCount<ResourceRecovery, int> repository, IMapper mapper)
+    public ResourceRecoveryService(IPlayerInfoCount<ResourceRecovery> repository, IMapper mapper)
     {
         _repository = repository;
         _mapper = mapper;

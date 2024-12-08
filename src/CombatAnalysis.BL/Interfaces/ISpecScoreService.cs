@@ -1,8 +1,8 @@
-﻿namespace CombatAnalysis.BL.Interfaces;
+﻿using CombatAnalysis.BL.DTO;
 
-public interface ISpecScoreService<TModel, TIdType> : IService<TModel, TIdType>
-    where TModel : class
-    where TIdType : notnull
+namespace CombatAnalysis.BL.Interfaces;
+
+public interface ISpecScoreService : IService<SpecializationScoreDto>
 {
-    Task<IEnumerable<TModel>> GetBySpecIdAsync(int specId, int bossId, int difficult);
+    Task<IEnumerable<SpecializationScoreDto>> GetBySpecIdAsync(int specId, int bossId, int difficult);
 }

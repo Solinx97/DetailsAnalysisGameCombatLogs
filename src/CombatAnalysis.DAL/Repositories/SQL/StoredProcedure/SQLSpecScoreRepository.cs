@@ -1,4 +1,5 @@
 ﻿using CombatAnalysis.DAL.Data;
+using CombatAnalysis.DAL.Entities;
 using CombatAnalysis.DAL.Interfaces;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
@@ -6,9 +7,7 @@ using System.Text;
 
 namespace CombatAnalysis.DAL.Repositories.SQL.StoredProcedure;
 
-internal class SQLSpecScoreRepository<TModel, TIdType> : ISpecScore<TModel, TIdType>
-    where TModel : class
-    where TIdType : notnull
+internal class SQLSpecScoreRepository : ISpecScore
 {
     private readonly CombatParserSQLContext _context;
 
@@ -17,7 +16,7 @@ internal class SQLSpecScoreRepository<TModel, TIdType> : ISpecScore<TModel, TIdT
         _context = context;
     }
 
-    public async Task<TModel> CreateAsync(TModel item)
+    public async Task<SpecializationScore> CreateAsync(SpecializationScore item)
     {
         var properties = item.GetType().GetProperties();
         var procedureParams = new List<SqlParameter>();
@@ -33,60 +32,60 @@ internal class SQLSpecScoreRepository<TModel, TIdType> : ISpecScore<TModel, TIdT
         }
         procedureParamNames.Remove(procedureParamNames.Length - 1, 1);
 
-        var data = await Task.Run(() => _context.Set<TModel>().FromSqlRaw($"InsertInto{item.GetType().Name} {procedureParamNames}", procedureParams.ToArray())
+        var data = await Task.Run(() => _context.Set<SpecializationScore>().FromSqlRaw($"InsertInto{item.GetType().Name} {procedureParamNames}", procedureParams.ToArray())
                                             .AsEnumerable()
                                             .FirstOrDefault());
 
         return data;
     }
 
-    public async Task<int> DeleteAsync(TIdType id)
+    public async Task<int> DeleteAsync(int id)
     {
         var rowsAffected = await _context.Database
-                            .ExecuteSqlRawAsync($"Delete{typeof(TModel).Name}ById @Id", new SqlParameter("Id", id));
+                            .ExecuteSqlRawAsync($"Delete{typeof(SpecializationScore).Name}ById @Id", new SqlParameter("Id", id));
 
         return rowsAffected;
     }
 
-    public async Task<IEnumerable<TModel>> GetAllAsync()
+    public async Task<IEnumerable<SpecializationScore>> GetAllAsync()
     {
-        var data = await _context.Set<TModel>()
-                            .FromSqlRaw($"GetAll{typeof(TModel).Name}")
+        var data = await _context.Set<SpecializationScore>()
+                            .FromSqlRaw($"GetAll{typeof(SpecializationScore).Name}")
                             .ToListAsync();
 
         return data;
     }
 
-    public async Task<TModel> GetByIdAsync(TIdType id)
+    public async Task<SpecializationScore> GetByIdAsync(int id)
     {
-        var data = await Task.Run(() => _context.Set<TModel>()
-                            .FromSqlRaw($"Get{typeof(TModel).Name}ById @Id", new SqlParameter("Id", id))
+        var data = await Task.Run(() => _context.Set<SpecializationScore>()
+                            .FromSqlRaw($"Get{typeof(SpecializationScore).Name}ById @Id", new SqlParameter("Id", id))
                             .AsEnumerable()
                             .FirstOrDefault());
 
         return data;
     }
 
-    public async Task<IEnumerable<TModel>> GetBySpecIdAsync(int specId, int bossId, int difficult)
+    public async Task<IEnumerable<SpecializationScore>> GetBySpecIdAsync(int specId, int bossId, int difficult)
     {
         var sqlParameters = new SqlParameter[]
         {
-            new SqlParameter("SpecId", specId),
-            new SqlParameter("BossId", bossId),
-            new SqlParameter("Difficult", difficult),
+            new SqlParameter(nameof(SpecializationScore.SpecId), specId),
+            new SqlParameter(nameof(SpecializationScore.BossId), bossId),
+            new SqlParameter(nameof(SpecializationScore.Difficult), difficult),
         };
-        var data = await _context.Set<TModel>()
-                            .FromSqlRaw($"Get{typeof(TModel).Name}BySpecId @SpecId, @BossId, @Difficult", sqlParameters)
+        var data = await _context.Set<SpecializationScore>()
+                            .FromSqlRaw($"Get{typeof(SpecializationScore).Name}BySpecId @{nameof(SpecializationScore.SpecId)}, @{nameof(SpecializationScore.BossId)}, @{nameof(SpecializationScore.Difficult)}", sqlParameters)
                             .ToListAsync();
 
         return data;
     }
 
-    public IEnumerable<TModel> GetByParam(string paramName, object value)
+    public IEnumerable<SpecializationScore> GetByParam(string paramName, object value)
     {
-        var result = new List<TModel>();
-        var data = _context.Set<TModel>()
-                            .FromSqlRaw($"GetAll{typeof(TModel).Name}")
+        var result = new List<SpecializationScore>();
+        var data = _context.Set<SpecializationScore>()
+                            .FromSqlRaw($"GetAll{typeof(SpecializationScore).Name}")
                             .AsEnumerable();
         foreach (var item in data)
         {
@@ -99,7 +98,7 @@ internal class SQLSpecScoreRepository<TModel, TIdType> : ISpecScore<TModel, TIdT
         return result;
     }
 
-    public async Task<int> UpdateAsync(TModel item)
+    public async Task<int> UpdateAsync(SpecializationScore item)
     {
         var properties = item.GetType().GetProperties();
         var procedureParams = new List<SqlParameter>();

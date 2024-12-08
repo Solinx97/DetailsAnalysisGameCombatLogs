@@ -1,6 +1,8 @@
-﻿namespace CombatAnalysis.DAL.Entities;
+﻿using CombatAnalysis.DAL.Interfaces.Entities;
 
-public class PlayerParseInfo
+namespace CombatAnalysis.DAL.Entities;
+
+public class PlayerParseInfo : ICombatPlayerEntity
 {
     public int Id { get; set; }
 

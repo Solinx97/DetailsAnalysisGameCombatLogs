@@ -1,6 +1,8 @@
-﻿namespace CombatAnalysis.DAL.Entities;
+﻿using CombatAnalysis.DAL.Interfaces.Entities;
 
-public class Combat
+namespace CombatAnalysis.DAL.Entities;
+
+public class Combat : IEntity
 {
     public int Id { get; set; }
 

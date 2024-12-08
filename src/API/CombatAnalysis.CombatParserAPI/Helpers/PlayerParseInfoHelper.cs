@@ -98,7 +98,7 @@ internal class PlayerParseInfoHelper : IPlayerParseInfoHelper
         double healScore = 0;
 
         using var scope = _serviceScopeFactory.CreateScope();
-        var scopedService = scope.ServiceProvider.GetRequiredService<ISpecScoreService<SpecializationScoreDto, int>>();
+        var scopedService = scope.ServiceProvider.GetRequiredService<ISpecScoreService>();
 
         var score = await scopedService.GetBySpecIdAsync(playerParseInfo.SpecId, playerParseInfo.BossId, playerParseInfo.Difficult);
 
@@ -167,7 +167,7 @@ internal class PlayerParseInfoHelper : IPlayerParseInfoHelper
         mapData.CombatPlayerId = combatPlayerId;
 
         using var scope = _serviceScopeFactory.CreateScope();
-        var scopedService = scope.ServiceProvider.GetRequiredService<IService<PlayerParseInfoDto, int>>();
+        var scopedService = scope.ServiceProvider.GetRequiredService<IService<PlayerParseInfoDto>>();
 
         await scopedService.CreateAsync(mapData);
     }

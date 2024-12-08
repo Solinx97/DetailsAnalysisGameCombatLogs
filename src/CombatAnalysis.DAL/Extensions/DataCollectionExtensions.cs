@@ -45,30 +45,30 @@ public static class DataCollectionExtensions
 
         services.AddScoped<IContextService, ContextService>();
 
-        services.AddScoped<IPlayerInfo<Combat, int>, SQLPlayerInfoRepository<Combat, int>>();
-        services.AddScoped<IPlayerInfoCount<DamageDone, int>, SQLPlayerInfoCountRepository<DamageDone, int>>();
-        services.AddScoped<IPlayerInfo<DamageDoneGeneral, int>, SQLPlayerInfoRepository<DamageDoneGeneral, int>>();
-        services.AddScoped<IPlayerInfoCount<HealDone, int>, SQLPlayerInfoCountRepository<HealDone, int>>();
-        services.AddScoped<IPlayerInfo<HealDoneGeneral, int>, SQLPlayerInfoRepository<HealDoneGeneral, int>>();
-        services.AddScoped<IPlayerInfoCount<DamageTaken, int>, SQLPlayerInfoCountRepository<DamageTaken, int>>();
-        services.AddScoped<IPlayerInfo<DamageTakenGeneral, int>, SQLPlayerInfoRepository<DamageTakenGeneral, int>>();
-        services.AddScoped<IPlayerInfoCount<ResourceRecovery, int>, SQLPlayerInfoCountRepository<ResourceRecovery, int>>();
-        services.AddScoped<IPlayerInfo<ResourceRecoveryGeneral, int>, SQLPlayerInfoRepository<ResourceRecoveryGeneral, int>>();
-        services.AddScoped<IPlayerInfo<PlayerDeath, int>, SQLPlayerInfoRepository<PlayerDeath, int>>();
+        services.AddScoped<IPlayerInfo<Combat>, SQLPlayerInfoRepository<Combat>>();
+        services.AddScoped<IPlayerInfoCount<DamageDone>, SQLPlayerInfoCountRepository<DamageDone>>();
+        services.AddScoped<IPlayerInfo<DamageDoneGeneral>, SQLPlayerInfoRepository<DamageDoneGeneral>>();
+        services.AddScoped<IPlayerInfoCount<HealDone>, SQLPlayerInfoCountRepository<HealDone>>();
+        services.AddScoped<IPlayerInfo<HealDoneGeneral>, SQLPlayerInfoRepository<HealDoneGeneral>>();
+        services.AddScoped<IPlayerInfoCount<DamageTaken>, SQLPlayerInfoCountRepository<DamageTaken>>();
+        services.AddScoped<IPlayerInfo<DamageTakenGeneral>, SQLPlayerInfoRepository<DamageTakenGeneral>>();
+        services.AddScoped<IPlayerInfoCount<ResourceRecovery>, SQLPlayerInfoCountRepository<ResourceRecovery>>();
+        services.AddScoped<IPlayerInfo<ResourceRecoveryGeneral>, SQLPlayerInfoRepository<ResourceRecoveryGeneral>>();
+        services.AddScoped<IPlayerInfo<PlayerDeath>, SQLPlayerInfoRepository<PlayerDeath>>();
 
-        services.AddScoped<ISpecScore<SpecializationScore, int>, SQLSpecScoreRepository<SpecializationScore, int>>();
+        services.AddScoped<ISpecScore, SQLSpecScoreRepository>();
 
         var dataProcessingType = configuration.GetSection("Database:DataProcessingType").Value ?? string.Empty;
         switch (dataProcessingType)
         {
             case nameof(DataProcessingType.Default):
-                services.AddScoped(typeof(IGenericRepository<,>), typeof(SQLRepository<,>));
+                services.AddScoped(typeof(IGenericRepository<>), typeof(SQLRepository<>));
                 break;
             case nameof(DataProcessingType.StoredProcedure):
-                services.AddScoped(typeof(IGenericRepository<,>), typeof(SQLSPRepository<,>));
+                services.AddScoped(typeof(IGenericRepository<>), typeof(SQLSPRepository<>));
                 break;
             default:
-                services.AddScoped(typeof(IGenericRepository<,>), typeof(SQLRepository<,>));
+                services.AddScoped(typeof(IGenericRepository<>), typeof(SQLRepository<>));
                 break;
         }
     }
@@ -77,6 +77,6 @@ public static class DataCollectionExtensions
     {
         services.AddDbContext<FirebaseContext>();
 
-        services.AddScoped(typeof(IGenericRepository<,>), typeof(FirebaseRepository<,>));
+        services.AddScoped(typeof(IGenericRepository<>), typeof(FirebaseRepository<>));
     }
 }

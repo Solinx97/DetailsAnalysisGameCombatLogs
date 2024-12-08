@@ -6,12 +6,12 @@ using CombatAnalysis.DAL.Interfaces;
 
 namespace CombatAnalysis.BL.Services;
 
-internal class DamageTakenService : IPlayerInfoCountService<DamageTakenDto, int>
+internal class DamageTakenService : IPlayerInfoCountService<DamageTakenDto>
 {
-    private readonly IPlayerInfoCount<DamageTaken, int> _repository;
+    private readonly IPlayerInfoCount<DamageTaken> _repository;
     private readonly IMapper _mapper;
 
-    public DamageTakenService(IPlayerInfoCount<DamageTaken, int> repository, IMapper mapper)
+    public DamageTakenService(IPlayerInfoCount<DamageTaken> repository, IMapper mapper)
     {
         _repository = repository;
         _mapper = mapper;

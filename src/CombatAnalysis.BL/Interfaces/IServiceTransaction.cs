@@ -2,9 +2,8 @@
 
 namespace CombatAnalysis.BL.Interfaces;
 
-public interface IServiceTransaction<TModel, TIdType> : IService<TModel, TIdType>
+public interface IServiceTransaction<TModel> : IService<TModel>
     where TModel : class
-    where TIdType : notnull
 {
-    Task<int> DeleteUseExistTransactionAsync(IDbContextTransaction transaction, TIdType id);
+    Task<int> DeleteUseExistTransactionAsync(IDbContextTransaction transaction, int id);
 }

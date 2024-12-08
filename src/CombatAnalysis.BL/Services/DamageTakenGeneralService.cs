@@ -6,12 +6,12 @@ using CombatAnalysis.DAL.Interfaces;
 
 namespace CombatAnalysis.BL.Services;
 
-internal class DamageTakenGeneralService : IPlayerInfoService<DamageTakenGeneralDto, int>
+internal class DamageTakenGeneralService : IPlayerInfoService<DamageTakenGeneralDto>
 {
-    private readonly IPlayerInfo<DamageTakenGeneral, int> _repository;
+    private readonly IPlayerInfo<DamageTakenGeneral> _repository;
     private readonly IMapper _mapper;
 
-    public DamageTakenGeneralService(IPlayerInfo<DamageTakenGeneral, int> repository, IMapper mapper)
+    public DamageTakenGeneralService(IPlayerInfo<DamageTakenGeneral> repository, IMapper mapper)
     {
         _repository = repository;
         _mapper = mapper;

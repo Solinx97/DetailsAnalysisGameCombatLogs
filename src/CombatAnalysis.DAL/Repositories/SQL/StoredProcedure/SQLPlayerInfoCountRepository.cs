@@ -1,13 +1,12 @@
 ﻿using CombatAnalysis.DAL.Data;
-using CombatAnalysis.DAL.Entities;
 using CombatAnalysis.DAL.Interfaces;
+using CombatAnalysis.DAL.Interfaces.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace CombatAnalysis.DAL.Repositories.SQL.StoredProcedure;
 
-internal class SQLPlayerInfoCountRepository<TModel, TIdType> : SQLPlayerInfoRepository<TModel, TIdType>, IPlayerInfoCount<TModel, TIdType>
-    where TModel : BasePlayerInfo
-    where TIdType : notnull
+internal class SQLPlayerInfoCountRepository<TModel> : SQLPlayerInfoRepository<TModel>, IPlayerInfoCount<TModel>
+    where TModel : class, ICombatPlayerEntity
 {
     private readonly CombatParserSQLContext _context;
 

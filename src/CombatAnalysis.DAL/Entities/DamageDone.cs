@@ -1,9 +1,8 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using CombatAnalysis.DAL.Interfaces.Entities;
 
 namespace CombatAnalysis.DAL.Entities;
 
-[Index(nameof(CombatPlayerId))]
-public class DamageDone : BasePlayerInfo
+public class DamageDone : ICombatPlayerEntity
 {
     public int Id { get; set; }
 
@@ -33,5 +32,5 @@ public class DamageDone : BasePlayerInfo
 
     public bool IsPet { get; set; }
 
-    public override int CombatPlayerId { get; set; }
+    public int CombatPlayerId { get; set; }
 }

@@ -10,11 +10,11 @@ namespace CombatAnalysis.CombatParserAPI.Controllers;
 [ApiController]
 public class ResourceRecoveryGeneralController : ControllerBase
 {
-    private readonly IPlayerInfoService<ResourceRecoveryGeneralDto, int> _service;
+    private readonly IPlayerInfoService<ResourceRecoveryGeneralDto> _service;
     private readonly IMapper _mapper;
     private readonly ILogger<ResourceRecoveryGeneralController> _logger;
 
-    public ResourceRecoveryGeneralController(IPlayerInfoService<ResourceRecoveryGeneralDto, int> service, IMapper mapper, ILogger<ResourceRecoveryGeneralController> logger)
+    public ResourceRecoveryGeneralController(IPlayerInfoService<ResourceRecoveryGeneralDto> service, IMapper mapper, ILogger<ResourceRecoveryGeneralController> logger)
     {
         _service = service;
         _mapper = mapper;

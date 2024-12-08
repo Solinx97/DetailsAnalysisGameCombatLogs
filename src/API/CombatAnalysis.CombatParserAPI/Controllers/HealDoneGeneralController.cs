@@ -10,11 +10,11 @@ namespace CombatAnalysis.CombatParserAPI.Controllers;
 [ApiController]
 public class HealDoneGeneralController : ControllerBase
 {
-    private readonly IPlayerInfoService<HealDoneGeneralDto, int> _service;
+    private readonly IPlayerInfoService<HealDoneGeneralDto> _service;
     private readonly IMapper _mapper;
     private readonly ILogger<CombatPlayerController> _logger;
 
-    public HealDoneGeneralController(IPlayerInfoService<HealDoneGeneralDto, int> service, IMapper mapper, ILogger<CombatPlayerController> logger)
+    public HealDoneGeneralController(IPlayerInfoService<HealDoneGeneralDto> service, IMapper mapper, ILogger<CombatPlayerController> logger)
     {
         _service = service;
         _mapper = mapper;

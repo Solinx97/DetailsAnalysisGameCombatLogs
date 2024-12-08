@@ -1,13 +1,13 @@
 ﻿using CombatAnalysis.DAL.Data;
 using CombatAnalysis.DAL.Interfaces;
+using CombatAnalysis.DAL.Interfaces.Entities;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 
 namespace CombatAnalysis.DAL.Repositories.SQL.StoredProcedure;
 
-internal class SQLPlayerInfoRepository<TModel, TIdType> : SQLSPRepository<TModel, TIdType>, IPlayerInfo<TModel, TIdType>
-    where TModel : class
-    where TIdType : notnull
+internal class SQLPlayerInfoRepository<TModel> : SQLSPRepository<TModel>, IPlayerInfo<TModel>
+    where TModel : class, IEntity
 {
     private readonly CombatParserSQLContext _context;
 
