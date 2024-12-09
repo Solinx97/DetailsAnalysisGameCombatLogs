@@ -10,6 +10,8 @@ public class CombatAuraModel
 
     public string Target { get; set; }
 
+    public int AuraCreatorType { get; set; }
+
     public int AuraType { get; set; }
 
     public TimeSpan StartTime { get; set; }

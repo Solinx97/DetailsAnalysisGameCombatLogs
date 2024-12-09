@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { useLazyGetCombatByIdQuery, useLazyGetCombatPlayerIdQuery } from '../../store/api/CombatParserApi';
+import { useLazyGetCombatByIdQuery, useLazyGetCombatPlayerByIdQuery } from '../../store/api/CombatParserApi';
 import CombatDetails from './CombatDetails';
 import CombatGeneralDetailsItem from './CombatGeneralDetailsItem';
 
@@ -25,7 +25,7 @@ const CombatGeneralDetails = () => {
     const [combat, setCombat] = useState(null);
 
     const [getCombatByIdAsync] = useLazyGetCombatByIdQuery();
-    const [getCombatPlayerIdAsyncMut] = useLazyGetCombatPlayerIdQuery();
+    const [getCombatPlayerById] = useLazyGetCombatPlayerByIdQuery();
 
     useEffect(() => {
         const queryParams = new URLSearchParams(window.location.search);
@@ -61,7 +61,7 @@ const CombatGeneralDetails = () => {
     }, [combatPlayerId])
 
     const getCombatPlayerByIdAsync = async (combatPlayerId) => {
-        const combatPlayer = await getCombatPlayerIdAsyncMut(combatPlayerId);
+        const combatPlayer = await getCombatPlayerById(combatPlayerId);
         if (combatPlayer.data !== undefined) {
             setCombatPlayer(combatPlayer.data);
         }

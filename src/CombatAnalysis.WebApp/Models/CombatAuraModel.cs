@@ -1,8 +1,6 @@
-﻿using CombatAnalysis.DAL.Interfaces.Entities;
+﻿namespace CombatAnalysis.WebApp.Models;
 
-namespace CombatAnalysis.DAL.Entities;
-
-public class CombatAura : IEntity
+public class CombatAuraModel
 {
     public int Id { get; set; }
 

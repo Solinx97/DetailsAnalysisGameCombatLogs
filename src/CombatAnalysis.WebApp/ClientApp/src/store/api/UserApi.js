@@ -14,14 +14,23 @@ export const UserApi = createApi({
     }),
     endpoints: builder => ({
         getUsers: builder.query({
-            query: () => '/Account'
+            query: () => '/Account',
+            providesTags: (result, error, arg) =>
+                result
+                    ? [...result.map(({ id }) => ({ type: 'Account', id })), 'Account']
+                    : ['Account'],
         }),
         getCustomers: builder.query({
-            query: () => '/Customer'
+            query: () => '/Customer',
+            providesTags: (result, error, arg) =>
+                result
+                    ? [...result.map(({ id }) => ({ type: 'Customer', id })), 'Customer']
+                    : ['Customer'],
         }),
         authenticationAsync: builder.query({
             query: () => '/Authentication',
-            providesTags: (result, error, id) => [{ type: 'Authentication', id }]
+            providesTags: (result, error, id) =>
+                result ? [{ type: 'Authentication', id: result.id }] : ['Authentication'],
         }),
         identity: builder.query({
             query: (identityPath) => `/Authentication/authorization?identityPath=${identityPath}`

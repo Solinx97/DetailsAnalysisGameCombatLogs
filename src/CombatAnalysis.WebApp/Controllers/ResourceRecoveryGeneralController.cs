@@ -17,10 +17,10 @@ public class ResourceRecoveryGeneralController : ControllerBase
         _httpClient.BaseAddress = Port.CombatParserApi;
     }
 
-    [HttpGet("{id}")]
-    public async Task<IActionResult> GetById(int id)
+    [HttpGet("findByCombatPlayerId/{combatPlayerId:int:min(1)}")]
+    public async Task<IActionResult> GetByCombatPlayerId(int combatPlayerId)
     {
-        var responseMessage = await _httpClient.GetAsync($"ResourceRecoveryGeneral/FindByCombatPlayerId/{id}");
+        var responseMessage = await _httpClient.GetAsync($"ResourceRecoveryGeneral/FindByCombatPlayerId/{combatPlayerId}");
         var resourceRecoveryGenerals = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<ResourceRecoveryGeneralModel>>();
 
         return Ok(resourceRecoveryGenerals);

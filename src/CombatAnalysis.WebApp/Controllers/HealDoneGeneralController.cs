@@ -17,10 +17,10 @@ public class HealDoneGeneralController : ControllerBase
         _httpClient.BaseAddress = Port.CombatParserApi;
     }
 
-    [HttpGet("{id}")]
-    public async Task<IActionResult> GetById(int id)
+    [HttpGet("findByCombatPlayerId/{combatPlayerId:int:min(1)}")]
+    public async Task<IActionResult> GetByCombatPlayerId(int combatPlayerId)
     {
-        var responseMessage = await _httpClient.GetAsync($"HealDoneGeneral/FindByCombatPlayerId/{id}");
+        var responseMessage = await _httpClient.GetAsync($"HealDoneGeneral/findByCombatPlayerId/{combatPlayerId}");
         var healDoneGenerals = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<HealDoneGeneralModel>>();
 
         return Ok(healDoneGenerals);

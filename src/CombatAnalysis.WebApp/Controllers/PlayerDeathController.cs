@@ -17,10 +17,10 @@ public class PlayerDeathController : ControllerBase
         _httpClient.BaseAddress = Port.CombatParserApi;
     }
 
-    [HttpGet("{id}")]
-    public async Task<IActionResult> GetById(int id)
+    [HttpGet("findByCombatPlayerId/{combatPlayerId:int:min(1)}")]
+    public async Task<IActionResult> GetByCombatPlayerId(int combatPlayerId)
     {
-        var responseMessage = await _httpClient.GetAsync($"PlayerDeath/FindByCombatPlayerId/{id}");
+        var responseMessage = await _httpClient.GetAsync($"PlayerDeath/FindByCombatPlayerId/{combatPlayerId}");
         var damageDones = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<PlayerDeathModel>>();
 
         return Ok(damageDones);

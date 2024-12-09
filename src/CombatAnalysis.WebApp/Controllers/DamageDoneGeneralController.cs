@@ -17,10 +17,10 @@ public class DamageDoneGeneralController : ControllerBase
         _httpClient.BaseAddress = Port.CombatParserApi;
     }
 
-    [HttpGet("{id}")]
-    public async Task<IEnumerable<DamageDoneGeneralModel>> GetById(int id)
+    [HttpGet("findByCombatPlayerId/{combatPlayerId:int:min(1)}")]
+    public async Task<IEnumerable<DamageDoneGeneralModel>> GetByCombatPlayerId(int combatPlayerId)
     {
-        var responseMessage = await _httpClient.GetAsync($"DamageDoneGeneral/FindByCombatPlayerId/{id}");
+        var responseMessage = await _httpClient.GetAsync($"DamageDoneGeneral/findByCombatPlayerId/{combatPlayerId}");
         var damageDoneGenerals = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<DamageDoneGeneralModel>>();
 
         return damageDoneGenerals;

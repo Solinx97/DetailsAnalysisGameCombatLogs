@@ -1,0 +1,17 @@
+.creator-auras {
+    display: flex;
+    flex-direction: column;
+
+    &__details {
+        display: flex;
+        justify-content: flex-start;
+        gap: 25px;
+
+        .times {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.8em;
+        }
+    }
+}

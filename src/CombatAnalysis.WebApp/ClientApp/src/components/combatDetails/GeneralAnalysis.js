@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { useLazyGetGeneralAnalysisByIdQuery } from '../../store/api/CombatParserApi';
+import { useLazyGetCombatsByCombatLogIdQuery } from '../../store/api/CombatParserApi';
 import Loading from '../Loading';
 import GeneralAnalysisItem from './GeneralAnalysisItem';
 
@@ -16,7 +16,7 @@ const GeneralAnalysis = () => {
     const [combatLogId, setCombatLogId] = useState(0);
     const [allUniqueCombats, setUniqueCombats] = useState([]);
 
-    const [generalAnalysisAsync] = useLazyGetGeneralAnalysisByIdQuery();
+    const [getCombatsByCombatLogId] = useLazyGetCombatsByCombatLogIdQuery();
 
     useEffect(() => {
         const queryParams = new URLSearchParams(window.location.search);
@@ -34,7 +34,7 @@ const GeneralAnalysis = () => {
 
     const getCombatsAsync = async (id) => {
         try {
-            const combats = await generalAnalysisAsync(id);
+            const combats = await getCombatsByCombatLogId(id);
             if (combats.data !== undefined) {
                 createListOfSimilarCombats(combats.data);
             }

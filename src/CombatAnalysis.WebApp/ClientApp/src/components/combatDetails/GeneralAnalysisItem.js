@@ -1,7 +1,7 @@
 import { faBolt, faCheck, faCircleNodes, faClock, faDatabase, faGraduationCap, faHourglassStart, faKhanda, faPlusCircle, faShieldHalved, faSkull } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { format } from 'date-fns';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 
@@ -14,8 +14,11 @@ const GeneralAnalysisItem = ({ uniqueCombats, combatLogId }) => {
     const navigate = useNavigate();
 
     const [selectedCombatIndex, setSelectedCombatIndex] = useState(0);
+    const [selectedCombat, setSelectedCombat] = useState(uniqueCombats[selectedCombatIndex]);
 
-    const selectedCombat = uniqueCombats[selectedCombatIndex];
+    useEffect(() => {
+        setSelectedCombat(uniqueCombats[selectedCombatIndex]);
+    }, [selectedCombatIndex]);
 
     if (selectedCombat === null) {
         return (<div>Loading...</div>);
@@ -155,7 +158,7 @@ const GeneralAnalysisItem = ({ uniqueCombats, combatLogId }) => {
                         className="list-group-item__buffs"
                         title={t("Buffs")}
                     />
-                    <div>{uniqueCombats[selectedCombatIndex].usedBuffs}</div>
+                    <div onClick={() => navigate(`/general-analysis/auras?combat=${selectedCombat.id}`)}>More...</div>
                 </li>
             </ul>
             <div className="card-body details">

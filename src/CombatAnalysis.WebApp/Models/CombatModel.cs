@@ -8,8 +8,6 @@ public class CombatModel
 
     public string Name { get; set; }
 
-    public List<string> Data { get; set; }
-
     public int EnergyRecovery { get; set; }
 
     public long DamageDone { get; set; }
@@ -18,15 +16,11 @@ public class CombatModel
 
     public long DamageTaken { get; set; }
 
-    public int UsedBuffs { get; set; }
-
     public bool IsWin { get; set; }
 
     public DateTimeOffset StartDate { get; set; }
 
     public DateTimeOffset FinishDate { get; set; }
-
-    public List<CombatPlayerModel> Players { get; set; }
 
     public string Duration
     {

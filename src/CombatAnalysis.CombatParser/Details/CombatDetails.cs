@@ -202,7 +202,8 @@ public class CombatDetails
         }
         else if (hasAuras)
         {
-            var (creatorId, buffs) = combatDetailsManager.GetAuras(clearCombatData, Auras);
+            var allPetsId = _petsId.SelectMany(x => x.Value).ToList();
+            var (creatorId, buffs) = combatDetailsManager.GetAuras(clearCombatData, Auras, allPetsId);
             if (!string.IsNullOrEmpty(creatorId) || buffs != null)
             {
                 if (Auras.TryGetValue(creatorId, out var collection))

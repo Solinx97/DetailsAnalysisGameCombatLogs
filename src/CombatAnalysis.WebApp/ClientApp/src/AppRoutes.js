@@ -14,7 +14,8 @@ import People from './components/communication/people/People';
 import SelectedUser from './components/communication/people/SelectedUser';
 import VoiceChat from './components/communication/chats/voiceChat/VoiceChat';
 import AuthorizationCallback from './components/identity/AuthorizationCallback';
-import PlayerMovements from './components/combatDetails/actions/PlayerMovements';
+//import PlayerMovements from './components/combatDetails/actions/PlayerMovements';
+import CombatAuras from './components/combatDetails/actions/CombatAuras';
 
 const AppRoutes = [
     {
@@ -72,6 +73,10 @@ const AppRoutes = [
     {
         path: '/general-analysis',
         element: <GeneralAnalysis />
+    },
+    {
+        path: '/general-analysis/auras',
+        element: <CombatAuras />
     },
     {
         path: '/details-specifical-combat',

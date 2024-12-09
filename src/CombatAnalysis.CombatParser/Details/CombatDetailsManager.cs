@@ -16,7 +16,7 @@ internal class CombatDetailsManager
         _combatStarted = combatStarted;
     }
 
-    public (string, CombatAura) GetAuras(List<string> combatDataLine, Dictionary<string, List<CombatAura>> auras)
+    public (string, CombatAura) GetAuras(List<string> combatDataLine, Dictionary<string, List<CombatAura>> auras, List<string> petsId)
     {
         if (combatDataLine[1].Equals(CombatLogKeyWords.AuraRemoved)
             && auras.TryGetValue(combatDataLine[2], out var playerBuffs))
@@ -26,17 +26,20 @@ internal class CombatDetailsManager
             return (string.Empty, null);
         }
 
+        var startTime = GetTimeFromStart(combatDataLine[0]);
+        var auraType = SelectAuraType(combatDataLine);
+        var auraCreatorType = SelectAuraCreatorType(combatDataLine[2], petsId);
+
         var buff = new CombatAura
         {
             Name = combatDataLine[11],
             Creator = combatDataLine[3].Trim('"'),
-            Target = combatDataLine[7].Trim('"')
+            Target = combatDataLine[7].Trim('"'),
+            StartTime = startTime,
+            AuraCreatorType = (int)auraCreatorType,
+            AuraType = (int)auraType
         };
-
-        var auraType = SelectAuraType(combatDataLine);
-        buff.AuraType = (int)auraType;
-        buff.StartTime = GetTimeFromStart(combatDataLine[0]);
-
+ 
         if (combatDataLine[1].Equals(CombatLogKeyWords.AuraAppliedDose) && int.TryParse(combatDataLine[14], out var stacks))
         {
             buff.Stacks = stacks;
@@ -421,6 +424,26 @@ internal class CombatDetailsManager
             }
 
             return AuraType.AllyBuff;
+        }
+    }
+
+    private static AuraCreatorType SelectAuraCreatorType(string creatorId, List<string> petsId)
+    {
+        if (creatorId.Contains(CombatLogKeyWords.Player))
+        {
+            return AuraCreatorType.Player;
+        }
+        else if (creatorId.Contains(CombatLogKeyWords.Pet))
+        {
+            return AuraCreatorType.Pet;
+        }
+        else if (petsId.Contains(creatorId))
+        {
+            return AuraCreatorType.AllyCreature;
+        }
+        else
+        {
+            return AuraCreatorType.EnemyCreature;
         }
     }
 

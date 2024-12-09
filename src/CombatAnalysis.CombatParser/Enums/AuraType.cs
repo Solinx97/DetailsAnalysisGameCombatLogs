@@ -1,6 +1,6 @@
 ﻿namespace CombatAnalysis.CombatParser.Enums;
 
-public enum AuraType
+internal enum AuraType
 {
     MyselfBuff,
     AllyBuff,

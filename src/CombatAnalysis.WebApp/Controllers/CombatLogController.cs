@@ -7,12 +7,12 @@ namespace CombatAnalysis.WebApp.Controllers;
 
 [Route("api/v1/[controller]")]
 [ApiController]
-public class MainInformationController : ControllerBase
+public class CombatLogController : ControllerBase
 {
     private readonly IHttpClientHelper _httpClient;
-    private readonly ILogger<MainInformationController> _logger;
+    private readonly ILogger<CombatLogController> _logger;
 
-    public MainInformationController(IHttpClientHelper httpClient, ILogger<MainInformationController> logger)
+    public CombatLogController(IHttpClientHelper httpClient, ILogger<CombatLogController> logger)
     {
         _httpClient = httpClient;
         _logger = logger;
@@ -20,7 +20,7 @@ public class MainInformationController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<IActionResult> Get()
+    public async Task<IActionResult> GetAll()
     {
         var content = string.Empty;
         try
