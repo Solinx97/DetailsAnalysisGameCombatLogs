@@ -1,10 +1,13 @@
-﻿import React, { useEffect, useState } from 'react';
+﻿import { faPlus, faRotate } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import React, { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useLazyGetCombatAurasByCombatIdQuery, useLazyGetCombatByIdQuery } from '../../../store/api/CombatParserApi';
 import CombatAuraItem from './CombatAuraItem';
 
 import "../../../styles/combatAuras.scss";
 
-const auraTypes = {
+const auraType = {
     myselfBuff: 0,
     allyBuff: 1,
     petBuff: 2,
@@ -17,11 +20,23 @@ const auraTypes = {
     enemyAllyBuff: 9,
 };
 
+const auraCreatorType = {
+    player: 0,
+    pet: 1,
+    allyCreature: 2,
+    enemyCreature: 3
+};
+
 const CombatAuras = () => {
+    const { t } = useTranslation("combatDetails/generalAnalysis");
+
     const [combatId, setCombatId] = useState(0);
+    const [showFilters, setShowFilters] = useState(false);
     const [combat, setCombat] = useState(null);
     const [combatAuras, setCombatAuras] = useState([]);
+    const [allCombatAuras, setAllCombatAuras] = useState([]);
     const [creators, setCreators] = useState([]);
+    const [allCreators, setAllCreators] = useState([]);
     const [creatorCombatAuras, setCreatorCombatAuras] = useState(new Map());
     const [selectedCreator, setSelectedCreator] = useState("All");
 
@@ -58,6 +73,7 @@ const CombatAuras = () => {
             const response = await getCombatAurasByCombatId(combat?.id);
             if (response.data !== undefined) {
                 setCombatAuras(response.data);
+                setAllCombatAuras(response.data);
             }
         }
 
@@ -71,55 +87,122 @@ const CombatAuras = () => {
         }
 
         getAuraCreators();
-        getUniqueCombatAuras();
     }, [combatAuras]);
+
+    useEffect(() => {
+        if (creators.length === 0) {
+            return;
+        }
+
+        getUniqueCombatAuras(-1);
+    }, [creators]);
 
     const getAuraCreators = () => {
         const uniqueCreators = new Set();
-        const creators = ["All"];
+        const creators = [{ creator: "None" }];
 
         combatAuras.forEach(aura => {
             if (!uniqueCreators.has(aura.creator)) {
                 uniqueCreators.add(aura.creator);
-                creators.push(aura.creator);
+                creators.push(aura);
             }
         });
 
+        setAllCreators(creators);
         setCreators(creators);
     }
 
-    const getUniqueCombatAuras = () => {
-        const auraMap = new Map();
-        auraMap.set("All", combatAuras);
+    const getUniqueCombatAuras = (auraType) => {
+        const auraMap = prepareCombatAuraMap(creators);
 
-        combatAuras.forEach(aura => {
-            if (auraMap.has(aura.creator)) {
-                const creatorAuras = auraMap.get(aura.creator);
-                creatorAuras.push(aura);
+        allCombatAuras.forEach(aura => {
+            if (auraType < 0 || aura.auraType === auraType) {
+                if (auraMap.has(aura.creator)) {
+                    const creatorAuras = auraMap.get(aura.creator);
+                    creatorAuras.push(aura);
 
-                auraMap.set(aura.creator, creatorAuras);
-            } else {
-                auraMap.set(aura.creator, [aura]);
+                    auraMap.set(aura.creator, creatorAuras);
+                }
             }
         });
 
         setCreatorCombatAuras(auraMap);
     }
 
-    if (combat === null || creators.length === 0 || creatorCombatAuras.size === 0) {
+    const prepareCombatAuraMap = (creators) => {
+        const auraMap = new Map();
+        auraMap.set("None", combatAuras);
+
+        creators.forEach(creator => {
+            auraMap.set(creator.creator, []);
+        });
+
+        setCreatorCombatAuras(auraMap);
+
+        return auraMap;
+    }
+
+    const applyCreatorTypeFilter = (number) => {
+        const newCreators = [{ creator: "None" }];
+        const filteredCreators = allCreators.filter(creator => creator.auraCreatorType === number);
+
+        setCreators(newCreators.concat(filteredCreators));
+        setSelectedCreator({ creator: "None" });
+    }
+
+    const restartFiltersToDefault = () => {
+        setCreators(allCreators);
+        getUniqueCombatAuras(-1);
+    }
+
+    if (combat === null || creatorCombatAuras.size === 0) {
         return (<div>Loading...</div>);
     }
 
     return (
         <div>
-            <select value={selectedCreator} onChange={(e) => setSelectedCreator(e.target.value)}>
-                {creators.map((creator, index) => (
-                    <option key={index + 1} value={creator}>{creator}</option>
-                ))}
-            </select>
-            <CombatAuraItem
-                combatAuras={creatorCombatAuras.get(selectedCreator)}
-            />
+            <div className="creators">
+                <select className="form-control" value={selectedCreator} onChange={(e) => setSelectedCreator(e.target.value)}>
+                    {creators.map((creator, index) => (
+                        <option key={index} value={creator.creator}>{creator.creator}</option>
+                    ))}
+                </select>
+                <div className="btn-shadow select-logs" onClick={() => setShowFilters(prev => !prev)}>
+                    <FontAwesomeIcon
+                        icon={faPlus}
+                    />
+                    <div>{t("Filters")}</div>
+                </div>
+                <div className="creators__clear">
+                    <FontAwesomeIcon
+                        icon={faRotate}
+                        onClick={restartFiltersToDefault}
+                    />
+                </div>
+                <div className={`creators__aura-filters${showFilters ? '_show' : ''}`}>
+                    <div className="creators__aura-type-filter">
+                        <div>Aura types:</div>
+                        <ul>
+                            {Object.entries(auraType).map(([key, value]) => (
+                                <li key={key} onClick={() => getUniqueCombatAuras(value)}>{key}</li>
+                            ))}
+                        </ul>
+                    </div>
+                    <div className="creators__aura-type-filter">
+                        <div>Aura creator types:</div>
+                        <ul>
+                            {Object.entries(auraCreatorType).map(([key, value]) => (
+                                <li key={key} onClick={() => applyCreatorTypeFilter(value)}>{key}</li>
+                            ))}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            {combatAuras.length > 0 &&
+                <CombatAuraItem
+                    combatAuras={creatorCombatAuras.get(selectedCreator) === undefined ? combatAuras : creatorCombatAuras.get(selectedCreator)}
+                />
+            }
         </div>
     )
 }

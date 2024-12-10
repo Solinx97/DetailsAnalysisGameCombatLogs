@@ -15,3 +15,53 @@
         }
     }
 }
+
+.creators {
+    display: flex;
+    align-items: flex-start;
+    gap: 25px;
+
+    .form-control {
+        width: 275px;
+    }
+
+    &__clear {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    &__aura-filters, &__aura-filters_show {
+        position: absolute;
+        display: none;
+        flex-direction: column;
+        gap: 10px;
+        left: 33%;
+
+        li {
+            padding: 5px 10px;
+            border-radius: 10px;
+            box-shadow: 1px 1px 1px 1px green;
+            cursor: pointer;
+        }
+
+        &_show {
+            display: flex;
+        }
+    }
+
+    &__aura-type-filter {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        width: 400px;
+        flex-wrap: wrap;
+        font-size: 0.8em;
+
+        ul {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+    }
+}

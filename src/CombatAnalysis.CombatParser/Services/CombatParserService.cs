@@ -122,7 +122,7 @@ public class CombatParserService
             GetCombatInformation(combatInformationList, petsId);
 
             newCombatFromLogs.Clear();
-            petsId.Clear();
+            petsId = new Dictionary<string, List<string>>();
         }
         else
         {
@@ -221,7 +221,7 @@ public class CombatParserService
                 return;
             }
 
-            var players = GetCombatPlayers(combat, petsId);
+            var players = GetCombatPlayers(combat);
             combat.Players = players;
 
             CalculatingCommonCombatDetails(combat);
@@ -314,7 +314,7 @@ public class CombatParserService
         _combatNumber++;
     }
 
-    private List<CombatPlayer> GetCombatPlayers(Combat combat, Dictionary<string, List<string>> petsId)
+    private List<CombatPlayer> GetCombatPlayers(Combat combat)
     {
         var combatInformations = combat.Data
             .Where(info => info.Contains(CombatLogKeyWords.CombatantInfo))
@@ -343,8 +343,8 @@ public class CombatParserService
 
         var playersId = players.Select(x => x.PlayerId).ToList();
 
-        var combatDetails = new CombatDetails(_logger, petsId);
-        combatDetails.Calculate(playersId, combat.Data, combat.StartDate);
+        var combatDetails = new CombatDetails(_logger, combat.PetsId);
+        combatDetails.Calculate(playersId, combat.Data, combat.StartDate, combat.FinishDate);
         combatDetails.CalculateGeneralData(playersId, combat.Duration);
 
         CombatDetails.Add(combatDetails);

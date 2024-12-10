@@ -10,7 +10,7 @@ const CombatAuraItem = ({ combatAuras }) => {
     const getCreatorAurasCount = () => {
         const auraMap = new Map();
 
-        combatAuras.forEach(aura => {
+        combatAuras?.forEach(aura => {
             const time = clearTime(aura.startTime.split('.')[0]);
 
             if (auraMap.has(aura.name)) {
@@ -35,21 +35,17 @@ const CombatAuraItem = ({ combatAuras }) => {
         return time;
     }
 
-    if (selectedCreatorAuras.size === 0) {
-        return (<div>Loading...</div>);
-    }
-
     return (
         <ul className="creator-auras">
             {Array.from(selectedCreatorAuras.entries()).map(([key, value]) => (
                 <li key={key} className="creator-auras__details">
                     <div>{key}</div>
                     <div>{value.count}</div>
-                    <ul className="times">
-                        {value.times.map((time, index) => (
-                            <li ket={index}>{time}</li>
-                        ))}
-                    </ul>
+                    {/*<ul className="times">*/}
+                    {/*    {value.times.map((time, index) => (*/}
+                    {/*        <li ket={index}>{time}</li>*/}
+                    {/*    ))}*/}
+                    {/*</ul>*/}
                 </li>
             ))}
         </ul>

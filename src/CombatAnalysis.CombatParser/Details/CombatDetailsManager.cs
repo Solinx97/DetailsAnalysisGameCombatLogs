@@ -9,11 +9,13 @@ internal class CombatDetailsManager
 {
     private readonly List<string> _playersId;
     private readonly DateTimeOffset _combatStarted;
+    private readonly DateTimeOffset _combatFinished;
 
-    public CombatDetailsManager(List<string> playersId, DateTimeOffset combatStarted)
+    public CombatDetailsManager(List<string> playersId, DateTimeOffset combatStarted, DateTimeOffset combatFinished)
     {
         _playersId = playersId;
         _combatStarted = combatStarted;
+        _combatFinished = combatFinished;
     }
 
     public (string, CombatAura) GetAuras(List<string> combatDataLine, Dictionary<string, List<CombatAura>> auras, List<string> petsId)
@@ -27,6 +29,7 @@ internal class CombatDetailsManager
         }
 
         var startTime = GetTimeFromStart(combatDataLine[0]);
+        var finishTime = GetTimeFromStart(_combatFinished.ToString());
         var auraType = SelectAuraType(combatDataLine);
         var auraCreatorType = SelectAuraCreatorType(combatDataLine[2], petsId);
 
@@ -36,6 +39,7 @@ internal class CombatDetailsManager
             Creator = combatDataLine[3].Trim('"'),
             Target = combatDataLine[7].Trim('"'),
             StartTime = startTime,
+            FinishTime = finishTime,
             AuraCreatorType = (int)auraCreatorType,
             AuraType = (int)auraType
         };

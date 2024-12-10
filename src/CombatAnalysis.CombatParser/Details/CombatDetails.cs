@@ -101,7 +101,7 @@ public class CombatDetails
         _petsId = petsId;
     }
 
-    public void Calculate(List<string> playersId, List<string> combatData, DateTimeOffset combatStarted)
+    public void Calculate(List<string> playersId, List<string> combatData, DateTimeOffset combatStarted, DateTimeOffset combatFinished)
     {
         try
         {
@@ -118,7 +118,7 @@ public class CombatDetails
 
             foreach (var item in combatData)
             {
-                Parse(playersId, item, combatStarted);
+                Parse(playersId, item, combatStarted, combatFinished);
             }
         }
         catch (ArgumentNullException ex)
@@ -146,7 +146,7 @@ public class CombatDetails
         }
     }
 
-    private void Parse(List<string> playersId, string combatDataLine, DateTimeOffset combatStarted)
+    private void Parse(List<string> playersId, string combatDataLine, DateTimeOffset combatStarted, DateTimeOffset combatFinished)
     {
         var hasPositions = _positions.Any(combatDataLine.Contains);
         var hasDieds = _dieds.Any(combatDataLine.Contains);
@@ -163,7 +163,7 @@ public class CombatDetails
         }
 
         var clearCombatData = RemoveTime(combatDataLine);
-        var combatDetailsManager = new CombatDetailsManager(playersId, combatStarted);
+        var combatDetailsManager = new CombatDetailsManager(playersId, combatStarted, combatFinished);
 
         if (hasPositions)
         {

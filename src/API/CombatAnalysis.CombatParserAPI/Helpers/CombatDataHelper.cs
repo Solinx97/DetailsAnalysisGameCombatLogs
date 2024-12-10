@@ -72,7 +72,7 @@ public class CombatDataHelper : ICombatDataHelper
         var playersId = combat.Players.Select(x => x.PlayerId).ToList();
 
         var combatDetails = new CombatDetails(_logger, combat.PetsId);
-        combatDetails.Calculate(playersId, combat.Data, combat.StartDate);
+        combatDetails.Calculate(playersId, combat.Data, combat.StartDate, combat.FinishDate);
         combatDetails.CalculateGeneralData(playersId, combat.Duration);
 
         var uploadTasks = combat.Players.Select(item => UploadAsync(parsedCombat, item, combatDetails, combat.Id)).ToList();
