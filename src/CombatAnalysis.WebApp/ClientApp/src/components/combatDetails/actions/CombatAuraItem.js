@@ -1,51 +1,68 @@
-﻿import { useEffect, useState } from "react";
+﻿import { faEye } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { useEffect, useState } from "react";
+import CombatAuraTargets from './CombatAuraTargets';
 
-const CombatAuraItem = ({ combatAuras }) => {
-    const [selectedCreatorAuras, setSelectedCreatorAuras] = useState(new Map());
+const CombatAuraItem = ({ t, selectedCreatorAuras }) => {
+    const [informationSelectedCreatorAuras, setInformationSelectedCreatorAuras] = useState(new Map());
+    const [selectedAura, setSelectedAura] = useState("");
+    const [showTargets, setShowTargets] = useState(false);
 
     useEffect(() => {
         getCreatorAurasCount();
-    }, [combatAuras]);
+    }, [selectedCreatorAuras]);
 
     const getCreatorAurasCount = () => {
         const auraMap = new Map();
 
-        combatAuras?.forEach(aura => {
-            const time = clearTime(aura.startTime.split('.')[0]);
-
+        selectedCreatorAuras?.forEach(aura => {
             if (auraMap.has(aura.name)) {
                 const creatorAurasCount = auraMap.get(aura.name).count;
-                const creatorAurasTimes = auraMap.get(aura.name).times;
-                creatorAurasTimes.push(time);
+                const creatorAuras = auraMap.get(aura.name).data;
+                creatorAuras.push(aura);
 
-                auraMap.set(aura.name, { count: creatorAurasCount + 1, times: creatorAurasTimes });
+                auraMap.set(aura.name, { count: creatorAurasCount + 1, data: creatorAuras });
             } else {
-                auraMap.set(aura.name, { count: 1, times: [time] });
+                auraMap.set(aura.name, { count: 1, data: [aura] });
             }
         });
 
-        setSelectedCreatorAuras(auraMap);
+        setInformationSelectedCreatorAuras(auraMap);
     }
 
-    const clearTime = (timeString) => {
-        const splitedTime = timeString.split(':');
-        let time = +splitedTime[0] > 0 ? `${splitedTime[0]}:` : "";
-        time += `${splitedTime[1]}:${splitedTime[2]}`;
+    const handleSelectAura = (auraName) => {
+        if (selectedAura === auraName && showTargets) {
+            setShowTargets(false);
+            setSelectedAura("");
 
-        return time;
+            return;
+        }
+
+        setShowTargets(true);
+        setSelectedAura(auraName);
     }
 
     return (
         <ul className="creator-auras">
-            {Array.from(selectedCreatorAuras.entries()).map(([key, value]) => (
+            {Array.from(informationSelectedCreatorAuras.entries()).map(([key, value]) => (
                 <li key={key} className="creator-auras__details">
-                    <div>{key}</div>
-                    <div>{value.count}</div>
-                    {/*<ul className="times">*/}
-                    {/*    {value.times.map((time, index) => (*/}
-                    {/*        <li ket={index}>{time}</li>*/}
-                    {/*    ))}*/}
-                    {/*</ul>*/}
+                    <ul className="details-collection">
+                        <li>{key}</li>
+                        <li>{value.count}</li>
+                        <li>
+                            <div className={`btn-shadow ${selectedAura === key ? 'details-opened' : ''}`} onClick={() => handleSelectAura(key)}>
+                                <FontAwesomeIcon
+                                    icon={faEye}
+                                />
+                                <div>{t("Targets")}</div>
+                            </div>
+                            {(showTargets && selectedAura === key) &&
+                                <CombatAuraTargets
+                                    combatAuras={value.data}
+                                />
+                            }
+                        </li>
+                    </ul>
                 </li>
             ))}
         </ul>

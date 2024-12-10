@@ -1,67 +1,124 @@
 .creator-auras {
     display: flex;
     flex-direction: column;
+    font-size: 0.8em;
+    gap: 15px;
 
     &__details {
         display: flex;
         justify-content: flex-start;
+        align-items: center;
         gap: 25px;
 
-        .times {
+        .details-collection {
             display: flex;
-            align-items: center;
+            gap: 20px;
+            width: 100vw;
+
+            li {
+                position: relative;
+                display: flex;
+                gap: 20px;
+                width: 25%;
+            }
+        }
+
+        .details-opened {
+            box-shadow: 2px 2px 2px 2px green;
+        }
+
+        .targets {
+            position: absolute;
+            display: flex;
+            flex-direction: column;
+            left: 35%;
+            padding: 10px 15px !important;
+            box-shadow: 1px 1px 1px 1px gray;
+            border-radius: 20px;
             gap: 10px;
-            font-size: 0.8em;
         }
     }
 }
 
 .creators {
     display: flex;
-    align-items: flex-start;
+    flex-direction: column;
     gap: 25px;
 
     .form-control {
         width: 275px;
     }
 
-    &__clear {
+    &__select-creator {
         display: flex;
-        justify-content: center;
-        align-items: center;
-    }
+        gap: 20px;
 
-    &__aura-filters, &__aura-filters_show {
-        position: absolute;
-        display: none;
-        flex-direction: column;
-        gap: 10px;
-        left: 33%;
-
-        li {
-            padding: 5px 10px;
-            border-radius: 10px;
-            box-shadow: 1px 1px 1px 1px green;
-            cursor: pointer;
-        }
-
-        &_show {
-            display: flex;
+        .filter-applied {
+            box-shadow: 2px 2px 2px 2px green;
         }
     }
 
-    &__aura-type-filter {
-        display: flex;
-        flex-direction: column;
-        gap: 10px;
-        width: 400px;
-        flex-wrap: wrap;
+    .filters, .times {
+        position: relative;
         font-size: 0.8em;
 
-        ul {
+        &__controll-panel {
             display: flex;
+            gap: 15px;
+        }
+
+        &__clear {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        &__aura-filters, &__aura-filters_show, &__aura-times, &__aura-times_show {
+            position: absolute;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            box-shadow: 2px 2px 2px 2px green;
+            border-radius: 20px;
+            padding: 5px 10px;
+            top: 125%;
+            gap: 5px;
+            background: #0c192c;
+            z-index: 100;
+
+            li {
+                padding: 5px 10px;
+                border-radius: 10px;
+                box-shadow: 1px 1px 1px 1px green;
+                cursor: pointer;
+            }
+
+            &_show {
+                display: flex;
+            }
+
+            .filter-selected {
+                box-shadow: 1px 1px 1px 1px blue;
+            }
+
+            .btn-shadow {
+                margin: 5px 0;
+            }
+        }
+
+        &__aura-type-filter {
+            display: flex;
+            flex-direction: column;
             gap: 10px;
+            width: 400px;
             flex-wrap: wrap;
+
+
+            ul {
+                display: flex;
+                gap: 10px;
+                flex-wrap: wrap;
+            }
         }
     }
 }
