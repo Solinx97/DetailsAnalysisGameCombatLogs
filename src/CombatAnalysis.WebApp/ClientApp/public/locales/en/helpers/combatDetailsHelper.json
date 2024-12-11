@@ -25,5 +25,8 @@
   "ToTarget": "ToTarget",
   "CritHealing": "Crit healing",
   "AllToOverHeal": "All to over heal",
-  "Crushing": "Crushing"
+  "Crushing": "Crushing",
+  "Skill": "Skill",
+  "Target": "Target",
+  "WhoDamage": "Who damage"
 }

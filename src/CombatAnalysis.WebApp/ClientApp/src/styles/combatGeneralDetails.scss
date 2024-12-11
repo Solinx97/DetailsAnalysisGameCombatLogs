@@ -6,28 +6,56 @@
         flex-direction: column;
         gap: 20px;
 
-        .details__container {
-            ul {
-                display: flex;
-                justify-content: center;
-                flex-wrap: wrap;
-                width: 100%;
-                gap: 2vw;
-
-                li {
-                    width: 30%;
-                }
-            }
-        }
-
-        .player-general-data-details {
+        .player-general-data-details, .player-data-details {
             display: flex;
             flex-direction: column;
-            gap: 3vh;
-        }
+            gap: 25px;
+            width: 100%;
 
-        .player-data-details {
-            margin-bottom: 60px;
+            &__title ul {
+                li {
+                    display: flex;
+                    justify-content: center;
+                    text-align: center;
+                    box-shadow: 2px 2px 2px 2px green;
+                    border-radius: 10px;
+                    padding: 5px 10px;
+                    width: 15%;
+                    font-size: 0.8em;
+                }
+
+                li:first-child {
+                    min-width: 20%;
+                }
+            }
+
+            &__item ul, &__title ul {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 15px;
+            }
+
+
+            &__item {
+                li {
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    width: 15%;
+                }
+
+                li:first-child {
+                    display: flex;
+                    justify-content: flex-start;
+                    min-width: 20%;
+                    gap: 15px;
+
+                    svg {
+                        color: orange;
+                    }
+                }
+            }
         }
 
         .card {

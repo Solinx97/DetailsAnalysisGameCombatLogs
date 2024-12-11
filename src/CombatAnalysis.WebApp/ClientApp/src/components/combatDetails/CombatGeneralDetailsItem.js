@@ -56,7 +56,7 @@ const CombatGeneralDetailsItem = ({ combatPlayerId, detailsType }) => {
     }
 
     return (
-        <div>
+        <div className="details__container">
             {(spells.length > 0 && screenSize.width > maxWidth) &&
                 <div className="form-check form-switch">
                     <input className="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckChecked" onChange={() => setShowGeneralChart((item) => !item)} defaultChecked={showGeneralChart} />
@@ -86,7 +86,6 @@ const CombatGeneralDetailsItem = ({ combatPlayerId, detailsType }) => {
                             <Brush />
                         </LineChart>
                     </ResponsiveContainer>
-                    <div className="title">{t("Skills")}</div>
                 </div>
             }
             <ul className="player-general-data-details">

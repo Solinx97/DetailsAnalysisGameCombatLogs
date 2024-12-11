@@ -1,79 +1,79 @@
-﻿import { faCircleDown, faCircleUp, faGauge, faHandFist, faLocationCrosshairs, faMeteor, faStopwatch20 } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { useTranslation } from 'react-i18next';
+﻿import { useTranslation } from 'react-i18next';
 
 const fixedNumberUntil = 2;
 
 const HealDoneGemeralHelper = ({ generalData }) => {
     const { t } = useTranslation("helpers/combatDetailsHelper");
 
-    return generalData?.map((item) => (
-        <li key={item.id}>
-            <div className="card">
-                <div className="card-body">
-                    <h5 className="card-title">{item.spellOrItem}</h5>
-                </div>
-                <ul className="list-group list-group-flush">
-                    <li className="list-group-item">
-                        <FontAwesomeIcon
-                            icon={faHandFist}
-                            className="list-group-item__value"
-                            title={t("TotalHealing")}
-                        />
-                        <div>{item.value}</div>
+    const tableTitle = () => {
+        return (
+            <li className="player-general-data-details__title" key="0">
+                <ul>
+                    <li>
+                        {t("Skill")}
                     </li>
-                    <li className="list-group-item">
-                        <FontAwesomeIcon
-                            icon={faGauge}
-                            className="list-group-item__average-value"
-                            title={t("AverageValue")}
-                        />
-                        <div>{item.averageValue.toFixed(fixedNumberUntil)}</div>
+                    <li>
+                        {t("TotalHealing")}
                     </li>
-                    <li className="list-group-item">
-                        <FontAwesomeIcon
-                            icon={faStopwatch20}
-                            className="list-group-item__damage-per-second"
-                            title={t("HealingPerSec")}
-                        />
-                        <div>{item.healPerSecond.toFixed(fixedNumberUntil)}</div>
+                    <li>
+                        {t("AverageValue")}
                     </li>
-                    <li className="list-group-item">
-                        <FontAwesomeIcon
-                            icon={faLocationCrosshairs}
-                            className="list-group-item__cast-number"
-                            title={t("CountOfSkills")}
-                        />
-                        <div>{item.castNumber}</div>
+                    <li>
+                        {t("HealingPerSec")}
                     </li>
-                    <li className="list-group-item">
-                        <FontAwesomeIcon
-                            icon={faMeteor}
-                            className="list-group-item__crit-number"
-                            title={t("CountOfCrits")}
-                        />
-                        <div>{item.critNumber}</div>
+                    <li>
+                        {t("CountOfSkills")}
                     </li>
-                    <li className="list-group-item">
-                        <FontAwesomeIcon
-                            icon={faCircleUp}
-                            className="list-group-item__max-value"
-                            title={t("MaxValue")}
-                        />
-                        <div>{item.maxValue}</div>
+                    <li>
+                        {t("CountOfCrits")}
                     </li>
-                    <li className="list-group-item">
-                        <FontAwesomeIcon
-                            icon={faCircleDown}
-                            className="list-group-item__min-value"
-                            title={t("MinValue")}
-                        />
-                        <div>{item.minValue}</div>
+                    <li>
+                        {t("MaxValue")}
+                    </li>
+                    <li>
+                        {t("MinValue")}
                     </li>
                 </ul>
-            </div>
-        </li>
-    ));
+            </li>
+        );
+    }
+
+    return (
+        <>
+            {tableTitle()}
+            {generalData?.map((item) => (
+                    <li className="player-general-data-details__item" key={item.id}>
+                        <ul>
+                            <li>
+                                {item.spellOrItem}
+                            </li>
+                            <li>
+                                {item.value}
+                            </li>
+                            <li>
+                                {item.averageValue.toFixed(fixedNumberUntil)}
+                            </li>
+                            <li>
+                                {item.healPerSecond.toFixed(fixedNumberUntil)}
+                            </li>
+                            <li>
+                                {item.castNumber}
+                            </li>
+                            <li>
+                                {item.critNumber}
+                            </li>
+                            <li>
+                                {item.maxValue}
+                            </li>
+                            <li>
+                                {item.minValue}
+                            </li>
+                        </ul>
+                    </li>
+                ))
+            }
+        </>
+    );
 }
 
 export default HealDoneGemeralHelper;

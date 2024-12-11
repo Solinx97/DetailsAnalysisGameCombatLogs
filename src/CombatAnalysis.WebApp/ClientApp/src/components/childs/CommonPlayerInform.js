@@ -77,8 +77,8 @@ const CommonPlayerInform = ({ player, combatId, combatLogId, combatName }) => {
                     className="list-group-item__energy-recovery"
                     title={t("ResourcesRecovery")}
                 />
-                <div>{player.energyRecovery}</div>
-                {player.energyRecovery > 0 &&
+                <div>{player.resourcesRecovery}</div>
+                {player.resourcesRecovery > 0 &&
                     <div className="btn-shadow"
                         onClick={() => navigateToDetails(detailsTypes[3])}
                         title={t("OpenResourcesRecoveryAnalyzing")}>

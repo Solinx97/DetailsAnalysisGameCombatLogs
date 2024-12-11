@@ -1,48 +1,49 @@
-﻿import { faClock, faHandFist, faRightToBracket, faUserTie } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { useTranslation } from 'react-i18next';
+﻿import { useTranslation } from 'react-i18next';
 import useTime from '../../hooks/useTime';
 
-const ResourceRecoveryHelper = ({ detailsData, startDate }) => {
+const ResourceRecoveryHelper = ({ detailsData }) => {
     const { t } = useTranslation("helpers/combatDetailsHelper");
 
-    const [getTimeWithoutMs, , getDuration] = useTime();
+    const { getTimeWithoutMs } = useTime();
 
-    return detailsData.map((item) => (
-        <li key={item.id}>
-            <div className="card">
-                <div className="card-body">
-                    <h5 className="card-title">{item.spellOrItem}</h5>
-                </div>
-                <ul className="list-group list-group-flush">
-                    <li className="list-group-item">
-                        <FontAwesomeIcon
-                            icon={faClock}
-                            className="list-group-item__value"
-                            title={t("Time")}
-                        />
-                        <div>{getDuration(getTimeWithoutMs(item.time), getTimeWithoutMs(startDate))}</div>
+    const tableTitle = () => {
+        return (
+            <li className="player-data-details__title" key="0">
+                <ul>
+                    <li>
+                        {t("Skill")}
                     </li>
-                    <li className="list-group-item">
-                        <FontAwesomeIcon
-                            icon={faHandFist}
-                            className="list-group-item__value"
-                            title={t("Value")}
-                        />
-                        <div>{item.value}</div>
+                    <li>
+                        {t("Time")}
                     </li>
-                    <li className="list-group-item">
-                        <FontAwesomeIcon
-                            icon={faUserTie}
-                            className="list-group-item__value"
-                            title={t("SpellOrItem")}
-                        />
-                        <div>{item.spellOrItem}</div>
+                    <li>
+                        {t("Value")}
                     </li>
                 </ul>
-            </div>
-        </li>
-    ));
+            </li>
+        );
+    }
+
+    return (
+        <>
+            {tableTitle()}
+            {detailsData.map((item) => (
+                <li className="player-data-details__item" key={item.id}>
+                    <ul>
+                        <li>
+                            {item.spellOrItem}
+                        </li>
+                        <li>
+                            <div>{getTimeWithoutMs(item.time)}</div>
+                        </li>
+                        <li>
+                            {item.value}
+                        </li>
+                    </ul>
+                </li>
+            ))}
+        </>
+    );
 }
 
 export default ResourceRecoveryHelper;

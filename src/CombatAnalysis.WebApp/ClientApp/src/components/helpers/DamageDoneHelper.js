@@ -1,102 +1,96 @@
-﻿import { faXmark, faClock, faCopy, faFire, faFlask, faHandFist, faHands, faPooStorm, faRightToBracket, faUserTie } from '@fortawesome/free-solid-svg-icons';
+﻿import { faCopy, faFire, faFlask, faHands, faPooStorm, faXmark } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import useTime from '../../hooks/useTime';
 
-const DamageDoneHelper = ({ detailsData, startDate }) => {
+const DamageDoneHelper = ({ detailsData }) => {
     const { t } = useTranslation("helpers/combatDetailsHelper");
 
-    const [getTimeWithoutMs, , getDuration] = useTime();
+    const { getTimeWithoutMs } = useTime();
 
-    const getUserNameWithoutRealm = (userName) => {
-        let realmNameIndex = userName.indexOf('-');
-        let userNameWithOutRealm = userName.substr(0, realmNameIndex);
-
-        return userNameWithOutRealm;
-    }
-
-    return detailsData?.map((item) => (
-        <li key={item.id}>
-            <div className="card">
-                <div className="card-body">
-                    <div className="card-title">{item.spellOrItem}</div>
-                    <div className="card-body__extra-damage">
-                        {item.isCrit &&
-                            <FontAwesomeIcon
-                                icon={faFire}
-                                title={t("CritDamage")}
-                            />
-                        }
-                        {item.isDodge &&
-                            <FontAwesomeIcon
-                                icon={faCopy}
-                                title={t("Dodge")}
-                            />
-                        }
-                        {item.isMiss &&
-                            <FontAwesomeIcon
-                                icon={faHands}
-                                title={t("Miss")}
-                            />
-                        }
-                        {item.isParry &&
-                            <FontAwesomeIcon
-                                icon={faXmark}
-                                title={t("Parry")}
-                            />
-                        }
-                        {item.isImmune &&
-                            <FontAwesomeIcon
-                                icon={faPooStorm}
-                                title={t("Immune")}
-                            />
-                        }
-                        {item.isResist &&
-                            <FontAwesomeIcon
-                                icon={faFlask}
-                                title={t("Resist")}
-                            />
-                        }
-                    </div>
-                </div>
-                <ul className="list-group list-group-flush">
-                    <li className="list-group-item">
-                        <FontAwesomeIcon
-                            icon={faClock}
-                            className="list-group-item__value"
-                            title={t("Time")}
-                        />
-                        <div>{getDuration(getTimeWithoutMs(item.time), getTimeWithoutMs(startDate))}</div>
+    const tableTitle = () => {
+        return (
+            <li className="player-data-details__title" key="0">
+                <ul>
+                    <li>
+                        {t("Skill")}
                     </li>
-                    <li className="list-group-item">
-                        <FontAwesomeIcon
-                            icon={faHandFist}
-                            className="list-group-item__value"
-                            title={t("Value")}
-                        />
-                        <div>{item.value}</div>
+                    <li>
+                        {t("Time")}
                     </li>
-                    <li className="list-group-item">
-                        <FontAwesomeIcon
-                            icon={faUserTie}
-                            className="list-group-item__value"
-                            title={t("FromWho")}
-                        />
-                        <div className="from-who">{getUserNameWithoutRealm(item.fromPlayer)}</div>
+                    <li>
+                        {t("Value")}
                     </li>
-                    <li className="list-group-item">
-                        <FontAwesomeIcon
-                            icon={faRightToBracket}
-                            className="list-group-item__value"
-                            title={t("ToTarget")}
-                        />
-                        <div>{item.toEnemy}</div>
+                    <li>
+                        {t("Target")}
                     </li>
                 </ul>
-            </div>
-        </li>
-    ));
+            </li>
+        );
+    }
+
+    return (
+        <>
+            {tableTitle()}
+            {detailsData?.map((item) => (
+                <li className="player-data-details__item" key={item.id}>
+                    <ul>
+                        <li>
+                            <div>{item.spellOrItem}</div>
+                            <div>
+                                {item.isCrit &&
+                                    <FontAwesomeIcon
+                                        icon={faFire}
+                                        title={t("CritDamage")}
+                                    />
+                                }
+                                {item.isDodge &&
+                                    <FontAwesomeIcon
+                                        icon={faCopy}
+                                        title={t("Dodge")}
+                                    />
+                                }
+                                {item.isMiss &&
+                                    <FontAwesomeIcon
+                                        icon={faHands}
+                                        title={t("Miss")}
+                                    />
+                                }
+                                {item.isParry &&
+                                    <FontAwesomeIcon
+                                        icon={faXmark}
+                                        title={t("Parry")}
+                                    />
+                                }
+                                {item.isImmune &&
+                                    <FontAwesomeIcon
+                                        icon={faPooStorm}
+                                        title={t("Immune")}
+                                    />
+                                }
+                                {item.isResist &&
+                                    <FontAwesomeIcon
+                                        icon={faFlask}
+                                        title={t("Resist")}
+                                    />
+                                }
+                            </div>
+                        </li>
+                        <li>
+                            {getTimeWithoutMs(item.time)}
+                        </li>
+                        <li>
+                            {item.value}
+                        </li>
+                        <li>
+                            {item.toEnemy}
+                        </li>
+                    </ul>
+                </li>
+            ))}
+        </>
+    );
 }
 
 export default DamageDoneHelper;

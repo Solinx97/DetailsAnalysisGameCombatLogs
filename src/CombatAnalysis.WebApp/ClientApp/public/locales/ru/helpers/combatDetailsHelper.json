@@ -25,5 +25,8 @@
   "ToTarget": "К цели",
   "CritHealing": "Крит. исцеление",
   "AllToOverHeal": "Все исцеление в оверхил",
-  "Crushing": "Сокр. урон"
+  "Crushing": "Сокр. урон",
+  "Skill": "Заклинание",
+  "Target": "Цель",
+  "WhoDamage": "Кто ударил"
 }

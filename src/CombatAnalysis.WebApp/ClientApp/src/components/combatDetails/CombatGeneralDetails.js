@@ -98,7 +98,7 @@ const CombatGeneralDetails = () => {
                         <div>{t("SelectPlayer")}</div>
                     </div>
                     <div className="btn-shadow username">
-                        <div>{combatPlayer?.userName}</div>
+                        <div>{combatPlayer?.username}</div>
                     </div>
                 </div>
                 <div className="details-type">{getDetailsTypeName()}</div>

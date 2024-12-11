@@ -64,13 +64,9 @@ const useCombatDetailsData = (combatPlayerId, detailsType, combatStartDate) => {
         const data = await getPlayerDetailsAsync(page, pageSize);
         const HelperComponent = helperComponents[detailsType] || DamageDoneHelper;
 
-        const date = new Date(combatStartDate);
-        const time = `${date.getUTCHours()}:${date.getUTCMinutes()}:${date.getUTCSeconds()}.${date.getUTCMilliseconds()}`;
-
-        return <HelperComponent
+        return (<HelperComponent
             detailsData={data}
-            startDate={time}
-        />;
+        />);
     }
 
     const getCountAsync = async () => {
@@ -83,7 +79,7 @@ const useCombatDetailsData = (combatPlayerId, detailsType, combatStartDate) => {
         return 0;
     }
 
-    return [getCombatDataListAsync, getPlayerDetailsAsync, getCountAsync];
+    return { getCombatDataListAsync, getPlayerDetailsAsync, getCountAsync };
 }
 
 export default useCombatDetailsData;
