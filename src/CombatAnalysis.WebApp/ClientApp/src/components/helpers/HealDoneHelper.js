@@ -24,7 +24,7 @@ const HealDoneHelper = ({ detailsData }) => {
             <li className="player-data-details__title" key="0">
                 <ul>
                     <li>
-                        {t("Skill")}
+                        {t("Spell")}
                     </li>
                     <li>
                         {t("Time")}
@@ -47,18 +47,20 @@ const HealDoneHelper = ({ detailsData }) => {
                 <li className="player-data-details__item" key={item.id}>
                     <ul>
                         <li>
-                            <div>{item.spellOrItem}</div>
-                            <div>
+                            <div>{item.spell}</div>
+                            <div className="extra-details">
                                 {item.isCrit &&
                                     <FontAwesomeIcon
                                         icon={faFire}
                                         title={t("CritHealing")}
+                                        className="crit"
                                     />
                                 }
-                                {item.isFullOverheal &&
+                                {(item.value === item.overheal) &&
                                     <FontAwesomeIcon
                                         icon={faFlask}
                                         title={t("AllToOverHeal")}
+                                        className="overvalue"
                                     />
                                 }
                             </div>
@@ -66,11 +68,17 @@ const HealDoneHelper = ({ detailsData }) => {
                         <li>
                             {getTimeWithoutMs(item.time)}
                         </li>
-                        <li>
-                            {item.value}
+                        <li className="extra-details">
+                            {(item.value === item.overheal) 
+                                ? <div className="value-equal-zero">
+                                    <div>0</div>
+                                    <div className="overvalue">({item.value})</div>
+                                 </div>
+                                : <div className={item.isCrit ? 'crit' : ''}>{item.value}</div>
+                            }
                         </li>
                         <li>
-                            {getUserNameWithoutRealm(item.toPlayer)}
+                            {getUserNameWithoutRealm(item.target)}
                         </li>
                     </ul>
                 </li>

@@ -91,10 +91,10 @@ internal class ResourceRecoveryGeneralService : IPlayerInfoService<ResourceRecov
 
     private async Task<ResourceRecoveryGeneralDto> CreateInternalAsync(ResourceRecoveryGeneralDto item)
     {
-        if (string.IsNullOrEmpty(item.SpellOrItem))
+        if (string.IsNullOrEmpty(item.Spell))
         {
             throw new ArgumentNullException(nameof(ResourceRecoveryGeneralDto),
-                $"The property {nameof(ResourceRecoveryGeneralDto.SpellOrItem)} of the {nameof(ResourceRecoveryGeneralDto)} object can't be null or empty");
+                $"The property {nameof(ResourceRecoveryGeneralDto.Spell)} of the {nameof(ResourceRecoveryGeneralDto)} object can't be null or empty");
         }
 
         var map = _mapper.Map<ResourceRecoveryGeneral>(item);
@@ -106,10 +106,10 @@ internal class ResourceRecoveryGeneralService : IPlayerInfoService<ResourceRecov
 
     private async Task<int> UpdateInternalAsync(ResourceRecoveryGeneralDto item)
     {
-        if (string.IsNullOrEmpty(item.SpellOrItem))
+        if (string.IsNullOrEmpty(item.Spell))
         {
             throw new ArgumentNullException(nameof(ResourceRecoveryGeneralDto),
-                $"The property {nameof(ResourceRecoveryGeneralDto.SpellOrItem)} of the {nameof(ResourceRecoveryGeneralDto)} object can't be null or empty");
+                $"The property {nameof(ResourceRecoveryGeneralDto.Spell)} of the {nameof(ResourceRecoveryGeneralDto)} object can't be null or empty");
         }
 
         var map = _mapper.Map<ResourceRecoveryGeneral>(item);

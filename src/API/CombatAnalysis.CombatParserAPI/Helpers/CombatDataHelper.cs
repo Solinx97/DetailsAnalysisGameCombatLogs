@@ -101,11 +101,11 @@ public class CombatDataHelper : ICombatDataHelper
     {
         foreach (var item in combatDetails.PlayersDeath[combatPlayer.PlayerId])
         {
-            var lastDamageTaken = combatDetails.DamageTaken[combatPlayer.PlayerId].LastOrDefault(x => x.ToPlayer == item.Username);
+            var lastDamageTaken = combatDetails.DamageTaken[combatPlayer.PlayerId].LastOrDefault(x => x.Target == item.Username);
             if (lastDamageTaken != null)
             {
                 item.LastHitValue = lastDamageTaken.Value;
-                item.LastHitSpellOrItem = lastDamageTaken.SpellOrItem;
+                item.LastHitSpellOrItem = lastDamageTaken.Spell;
             }
         }
 

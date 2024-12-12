@@ -12,6 +12,32 @@
             gap: 25px;
             width: 100%;
 
+            .value-equal-zero {
+                color: orange;
+            }
+
+            .extra-details {
+                display: flex;
+                gap: 10px;
+
+                .value-equal-zero {
+                    display: flex;
+                    gap: 10px;
+                }
+
+                .value-equal-zero:first-child {
+                    color: white;
+                } 
+                
+                .crit {
+                    color: green;
+                }
+
+                .overvalue {
+                    color: orange;
+                }
+            }
+
             &__title ul {
                 li {
                     display: flex;
@@ -50,10 +76,6 @@
                     justify-content: flex-start;
                     min-width: 20%;
                     gap: 15px;
-
-                    svg {
-                        color: orange;
-                    }
                 }
             }
         }

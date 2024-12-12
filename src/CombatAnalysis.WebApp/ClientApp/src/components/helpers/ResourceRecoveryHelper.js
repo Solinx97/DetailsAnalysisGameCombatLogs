@@ -11,7 +11,7 @@ const ResourceRecoveryHelper = ({ detailsData }) => {
             <li className="player-data-details__title" key="0">
                 <ul>
                     <li>
-                        {t("Skill")}
+                        {t("Spell")}
                     </li>
                     <li>
                         {t("Time")}
@@ -31,7 +31,7 @@ const ResourceRecoveryHelper = ({ detailsData }) => {
                 <li className="player-data-details__item" key={item.id}>
                     <ul>
                         <li>
-                            {item.spellOrItem}
+                            {item.spell}
                         </li>
                         <li>
                             <div>{getTimeWithoutMs(item.time)}</div>

@@ -166,8 +166,8 @@ public class DamageDoneDetailsViewModel : DetailsGenericTemplate<DamageDoneModel
 
     protected override void Filter()
     {
-        DetailsInformations = _damageDoneInformationsWithoutFilter.Any(x => x.SpellOrItem == SelectedSource)
-            ? new ObservableCollection<DamageDoneModel>(_damageDoneInformationsWithoutFilter.Where(x => x.SpellOrItem == SelectedSource))
+        DetailsInformations = _damageDoneInformationsWithoutFilter.Any(x => x.Spell == SelectedSource)
+            ? new ObservableCollection<DamageDoneModel>(_damageDoneInformationsWithoutFilter.Where(x => x.Spell == SelectedSource))
             : _damageDoneInformationsWithoutFilter;
     }
 

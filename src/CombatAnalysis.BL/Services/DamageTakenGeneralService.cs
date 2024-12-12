@@ -91,10 +91,10 @@ internal class DamageTakenGeneralService : IPlayerInfoService<DamageTakenGeneral
 
     private async Task<DamageTakenGeneralDto> CreateInternalAsync(DamageTakenGeneralDto item)
     {
-        if (string.IsNullOrEmpty(item.SpellOrItem))
+        if (string.IsNullOrEmpty(item.Spell))
         {
             throw new ArgumentNullException(nameof(DamageTakenGeneralDto),
-                $"The property {nameof(DamageTakenGeneralDto.SpellOrItem)} of the {nameof(DamageTakenGeneralDto)} object can't be null or empty");
+                $"The property {nameof(DamageTakenGeneralDto.Spell)} of the {nameof(DamageTakenGeneralDto)} object can't be null or empty");
         }
 
         var map = _mapper.Map<DamageTakenGeneral>(item);
@@ -106,10 +106,10 @@ internal class DamageTakenGeneralService : IPlayerInfoService<DamageTakenGeneral
 
     private async Task<int> UpdateInternalAsync(DamageTakenGeneralDto item)
     {
-        if (string.IsNullOrEmpty(item.SpellOrItem))
+        if (string.IsNullOrEmpty(item.Spell))
         {
             throw new ArgumentNullException(nameof(DamageTakenGeneralDto),
-                $"The property {nameof(DamageTakenGeneralDto.SpellOrItem)} of the {nameof(DamageTakenGeneralDto)} object can't be null or empty");
+                $"The property {nameof(DamageTakenGeneralDto.Spell)} of the {nameof(DamageTakenGeneralDto)} object can't be null or empty");
         }
 
         var map = _mapper.Map<DamageTakenGeneral>(item);

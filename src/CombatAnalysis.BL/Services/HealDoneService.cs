@@ -98,10 +98,10 @@ internal class HealDoneService : IPlayerInfoCountService<HealDoneDto>
 
     private async Task<HealDoneDto> CreateInternalAsync(HealDoneDto item)
     {
-        if (string.IsNullOrEmpty(item.SpellOrItem))
+        if (string.IsNullOrEmpty(item.Spell))
         {
             throw new ArgumentNullException(nameof(HealDoneDto),
-                $"The property {nameof(HealDoneDto.SpellOrItem)} of the {nameof(HealDoneDto)} object can't be null or empty");
+                $"The property {nameof(HealDoneDto.Spell)} of the {nameof(HealDoneDto)} object can't be null or empty");
         }
 
         var map = _mapper.Map<HealDone>(item);
@@ -113,10 +113,10 @@ internal class HealDoneService : IPlayerInfoCountService<HealDoneDto>
 
     private async Task<int> UpdateInternalAsync(HealDoneDto item)
     {
-        if (string.IsNullOrEmpty(item.SpellOrItem))
+        if (string.IsNullOrEmpty(item.Spell))
         {
             throw new ArgumentNullException(nameof(HealDoneDto),
-                $"The property {nameof(HealDoneDto.SpellOrItem)} of the {nameof(HealDoneDto)} object can't be null or empty");
+                $"The property {nameof(HealDoneDto.Spell)} of the {nameof(HealDoneDto)} object can't be null or empty");
         }
 
         var map = _mapper.Map<HealDone>(item);

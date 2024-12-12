@@ -4,13 +4,11 @@ public class HealDoneGeneralModel
 {
     public int Id { get; set; }
 
+    public string Spell { get; set; }
+
     public int Value { get; set; }
 
     public double HealPerSecond { get; set; }
-
-    public string SpellOrItem { get; set; }
-
-    public string DamageAbsorbed { get; set; }
 
     public int CritNumber { get; set; }
 

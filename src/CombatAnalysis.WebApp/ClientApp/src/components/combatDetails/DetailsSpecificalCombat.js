@@ -96,7 +96,7 @@ const DetailsSpecificalCombat = () => {
                     />
                     <div>{t("SelectCombat")}</div>
                 </div>
-                <h3>{t("Players")}</h3>
+                <h4>{t("Players")}</h4>
                 <div className="btn-shadow search-icon" onClick={() => setShowSearch((item) => !item)}>
                     {showSearch
                         ? <FontAwesomeIcon

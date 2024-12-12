@@ -6,7 +6,7 @@ public class DamageDoneGeneral : CombatDataBase
 
     public double DamagePerSecond { get; set; }
 
-    public string SpellOrItem { get; set; }
+    public string Spell { get; set; }
 
     public int CritNumber { get; set; }
 

@@ -1,25 +1,24 @@
-﻿namespace CombatAnalysis.WebApp.Models
+﻿namespace CombatAnalysis.WebApp.Models;
+
+public class HealDoneGeneralModel
 {
-    public class HealDoneGeneralModel
-    {
-        public int Id { get; set; }
+    public int Id { get; set; }
 
-        public int Value { get; set; }
+    public string Spell { get; set; }
 
-        public double HealPerSecond { get; set; }
+    public int Value { get; set; }
 
-        public string SpellOrItem { get; set; }
+    public double HealPerSecond { get; set; }
 
-        public int CritNumber { get; set; }
+    public int CritNumber { get; set; }
 
-        public int CastNumber { get; set; }
+    public int CastNumber { get; set; }
 
-        public int MinValue { get; set; }
+    public int MinValue { get; set; }
 
-        public int MaxValue { get; set; }
+    public int MaxValue { get; set; }
 
-        public double AverageValue { get; set; }
+    public double AverageValue { get; set; }
 
-        public int CombatPlayerId { get; set; }
-    }
+    public int CombatPlayerId { get; set; }
 }

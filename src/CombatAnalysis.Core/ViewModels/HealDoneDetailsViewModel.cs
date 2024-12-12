@@ -77,8 +77,8 @@ public class HealDoneDetailsViewModel : DetailsGenericTemplate<HealDoneModel, He
 
     protected override void Filter()
     {
-        DetailsInformations = _healDoneInformationsWithoutFilter.Any(x => x.SpellOrItem == SelectedSource)
-            ? new ObservableCollection<HealDoneModel>(_healDoneInformationsWithoutFilter.Where(x => x.SpellOrItem == SelectedSource))
+        DetailsInformations = _healDoneInformationsWithoutFilter.Any(x => x.Spell == SelectedSource)
+            ? new ObservableCollection<HealDoneModel>(_healDoneInformationsWithoutFilter.Where(x => x.Spell == SelectedSource))
             : _healDoneInformationsWithoutFilter;
     }
 

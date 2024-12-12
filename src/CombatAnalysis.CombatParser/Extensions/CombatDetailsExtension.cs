@@ -1,5 +1,6 @@
 ﻿using CombatAnalysis.CombatParser.Details;
 using CombatAnalysis.CombatParser.Entities;
+using CombatAnalysis.CombatParser.Enums;
 using Microsoft.Extensions.Logging;
 
 namespace CombatAnalysis.CombatParser.Extensions;
@@ -39,8 +40,8 @@ public static class CombatDetailsExtension
 
     private static List<DamageDoneGeneral> GetDamageDoneGeneral(List<DamageDone> collection, string duration)
     {
-        var spells = collection
-            .GroupBy(group => group.SpellOrItem)
+        var damageDoneCollection = collection
+            .GroupBy(group => group.Spell)
             .Select(select => select.ToList()).ToList();
 
         if (!TimeSpan.TryParse(duration, out var durationTime))
@@ -49,21 +50,25 @@ public static class CombatDetailsExtension
         }
 
         var lessDetails = new List<DamageDoneGeneral>();
-        foreach (var item in spells)
+        foreach (var item in damageDoneCollection)
         {
             var averageValue = double.Round(item.Average(x => x.Value), 2);
             var damagePerSecond = item.Sum(x => x.Value) / durationTime.TotalSeconds;
             var damagePerSecondRound = double.Round(damagePerSecond, 2);
+            var critNumber = item.Where(x => x.DamageType == (int)DamageType.Crit).Count();
+            var missNumber = item.Where(x => x.DamageType != (int)DamageType.Crit && x.DamageType != (int)DamageType.Normal).Count();
 
             var damageDoneGeneral = new DamageDoneGeneral
             {
                 Value = item.Sum(x => x.Value),
                 DamagePerSecond = damagePerSecondRound,
-                AverageValue = averageValue,
+                Spell = item[0].Spell,
+                CritNumber = critNumber,
+                MissNumber = missNumber,
+                CastNumber = item.Count,
                 MinValue = item.Min(x => x.Value),
                 MaxValue = item.Max(x => x.Value),
-                SpellOrItem = item[0].SpellOrItem,
-                CastNumber = item.Count,
+                AverageValue = averageValue,
                 IsPet = item.FirstOrDefault().IsPet
             };
 
@@ -78,7 +83,7 @@ public static class CombatDetailsExtension
     private static List<HealDoneGeneral> GetHealDoneGeneral(List<HealDone> collection, string duration)
     {
         var spells = collection
-            .GroupBy(group => group.SpellOrItem)
+            .GroupBy(group => group.Spell)
             .Select(select => select.ToList());
 
         if (!TimeSpan.TryParse(duration, out var durationTime))
@@ -92,6 +97,7 @@ public static class CombatDetailsExtension
             var averageValue = double.Round(item.Average(x => x.Value), 2);
             var healPerSecond = item.Sum(x => x.Value) / durationTime.TotalSeconds;
             var healPerSecondRound = double.Round(healPerSecond, 2);
+            var critNumber = item.Where(x => x.IsCrit).Count();
 
             var healDoneGeneral = new HealDoneGeneral
             {
@@ -100,9 +106,9 @@ public static class CombatDetailsExtension
                 AverageValue = averageValue,
                 MinValue = item.Min(x => x.Value),
                 MaxValue = item.Max(x => x.Value),
-                SpellOrItem = item[0].SpellOrItem,
+                Spell = item[0].Spell,
                 CastNumber = item.Count,
-                DamageAbsorbed = string.Empty
+                CritNumber = critNumber,
             };
 
             lessDetails.Add(healDoneGeneral);
@@ -116,7 +122,7 @@ public static class CombatDetailsExtension
     private static List<DamageTakenGeneral> GetDamageTakenGeneral(List<DamageTaken> collection, string duration)
     {
         var spells = collection
-            .GroupBy(group => group.SpellOrItem)
+            .GroupBy(group => group.Spell)
             .Select(select => select.ToList());
 
         if (!TimeSpan.TryParse(duration, out var durationTime))
@@ -139,7 +145,7 @@ public static class CombatDetailsExtension
                 AverageValue = averageValue,
                 MinValue = item.Min(x => x.Value),
                 MaxValue = item.Max(x => x.Value),
-                SpellOrItem = item[0].SpellOrItem,
+                Spell = item[0].Spell,
                 CastNumber = item.Count,
             };
 
@@ -154,7 +160,7 @@ public static class CombatDetailsExtension
     private static List<ResourceRecoveryGeneral> GetResourceRecoveryGeneral(List<ResourceRecovery> collection, string duration)
     {
         var spells = collection
-            .GroupBy(group => group.SpellOrItem)
+            .GroupBy(group => group.Spell)
             .Select(select => select.ToList());
 
         if (!TimeSpan.TryParse(duration, out var durationTime))
@@ -176,7 +182,7 @@ public static class CombatDetailsExtension
                 AverageValue = averageValue,
                 MinValue = item.Min(x => x.Value),
                 MaxValue = item.Max(x => x.Value),
-                SpellOrItem = item[0].SpellOrItem,
+                Spell = item[0].Spell,
                 CastNumber = item.Count,
             };
 

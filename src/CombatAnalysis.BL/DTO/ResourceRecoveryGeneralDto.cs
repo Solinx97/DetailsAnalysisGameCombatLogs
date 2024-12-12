@@ -4,11 +4,11 @@ public class ResourceRecoveryGeneralDto : CombatDataBase
 {
     public int Id { get; set; }
 
+    public string Spell { get; set; }
+
     public int Value { get; set; }
 
     public double ResourcePerSecond { get; set; }
-
-    public string SpellOrItem { get; set; }
 
     public int CastNumber { get; set; }
 

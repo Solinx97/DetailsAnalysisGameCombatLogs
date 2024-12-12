@@ -10,7 +10,7 @@ const ResourceRecoveryGeneralHelper = ({ generalData }) => {
             <li className="player-general-data-details__title" key="0">
                 <ul>
                     <li>
-                        {t("Skill")}
+                        {t("Spell")}
                     </li>
                     <li>
                         {t("TotalResourcesRecovery")}
@@ -42,7 +42,7 @@ const ResourceRecoveryGeneralHelper = ({ generalData }) => {
                 <li className="player-general-data-details__item" key={item.id}>
                     <ul>
                         <li>
-                            {item.spellOrItem}
+                            {item.spell}
                         </li>
                         <li>
                             {item.value}

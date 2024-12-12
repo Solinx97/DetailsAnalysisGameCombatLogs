@@ -94,7 +94,7 @@ internal class CombatDetailsManager
             return (string.Empty, null);
         }
 
-        var damageDone = GetDamageDone(combatDataLine);
+        var damageDone = GetDamageDone(combatDataLine, false);
 
         return (combatDataLine[2], damageDone);
     }
@@ -127,7 +127,7 @@ internal class CombatDetailsManager
         }
 
         var spellOrItem = $"{combatDataLine[3].Trim('"')} - ";
-        var damageDone = GetDamageDone(combatDataLine, spellOrItem);
+        var damageDone = GetDamageDone(combatDataLine, true, spellOrItem);
 
         return (petPlayerId, damageDone);
     }
@@ -142,19 +142,16 @@ internal class CombatDetailsManager
         int.TryParse(combatDataLine[^4], out var value3);
         int.TryParse(combatDataLine[^3], out var value4);
 
-        var isCrit = string.Equals(combatDataLine[^1], CombatLogKeyWords.IsCrit, StringComparison.OrdinalIgnoreCase);
+        var isCrit = combatDataLine[^1].Contains(CombatLogKeyWords.IsCrit);
 
         var healDone = new HealDone
         {
-            Time = GetTimeFromStart(combatDataLine[0]),
-            FromPlayer = combatDataLine[3].Trim('"'),
-            ToPlayer = combatDataLine[7].Trim('"'),
-            SpellOrItem = combatDataLine[11].Trim('"'),
-            DamageAbsorbed = string.Empty,
-            ValueWithOverheal = value3,
+            Spell = combatDataLine[11].Trim('"'),
+            Value = value3,
             Overheal = value4,
-            Value = value3 - value4,
-            IsFullOverheal = value3 - value4 == 0,
+            Time = GetTimeFromStart(combatDataLine[0]),
+            Creator = combatDataLine[3].Trim('"'),
+            Target = combatDataLine[7].Trim('"'),
             IsCrit = isCrit
         };
 
@@ -174,19 +171,16 @@ internal class CombatDetailsManager
         var absorbeDone = new HealDone
         {
             Time = GetTimeFromStart(combatDataLine[0]),
-            FromPlayer = combatDataLine[^8].Trim('"'),
-            ToPlayer = combatDataLine[7].Trim('"'),
-            SpellOrItem = combatDataLine[^4].Trim('"'),
-            DamageAbsorbed = combatDataLine.Count > countDataWithMeleeDamage ? combatDataLine[11].Trim('"') : CombatLogKeyWords.MeleeDamage,
+            Creator = combatDataLine[^8].Trim('"'),
+            Target = combatDataLine[7].Trim('"'),
+            Spell = combatDataLine[^4].Trim('"'),
             Overheal = 0,
-            IsFullOverheal = false,
             IsCrit = false,
             IsAbsorbed = true
         };
 
         if (int.TryParse(combatDataLine[^2], out var amountOfHeal))
         {
-            absorbeDone.ValueWithOverheal = amountOfHeal;
             absorbeDone.Value = amountOfHeal;
         }
 
@@ -242,9 +236,20 @@ internal class CombatDetailsManager
             mitigated = realDamage - value;
         }
 
+        var isDodge = string.Equals(combatDataLine[^2], CombatLogKeyWords.Dodge, StringComparison.OrdinalIgnoreCase);
+        var isParry = string.Equals(combatDataLine[^2], CombatLogKeyWords.Parry, StringComparison.OrdinalIgnoreCase);
+        var isMiss = string.Equals(combatDataLine[^2], CombatLogKeyWords.Miss, StringComparison.OrdinalIgnoreCase);
         var isResist = index >= 0 && string.Equals(combatDataLine[index], CombatLogKeyWords.Resist, StringComparison.OrdinalIgnoreCase);
         var isImmune = index >= 0 && string.Equals(combatDataLine[index], CombatLogKeyWords.Immune, StringComparison.OrdinalIgnoreCase);
         var isAbsorb = index >= 0 && string.Equals(combatDataLine[index], CombatLogKeyWords.Absorb, StringComparison.OrdinalIgnoreCase);
+
+        var damageTakenType = isCrushing ? DamageTakenType.Crushing : DamageTakenType.Normal;
+        damageTakenType = isDodge ? DamageTakenType.Dodge : damageTakenType;
+        damageTakenType = isParry ? DamageTakenType.Parry : damageTakenType;
+        damageTakenType = isMiss ? DamageTakenType.Miss : damageTakenType;
+        damageTakenType = index >= 0 && isResist ? DamageTakenType.Resist : damageTakenType;
+        damageTakenType = index >= 0 && isImmune ? DamageTakenType.Immune : damageTakenType;
+        damageTakenType = index >= 0 && isMiss ? DamageTakenType.Miss : damageTakenType;
 
         var isPeriodicDamage = false;
         var enemy = combatDataLine[3];
@@ -259,22 +264,16 @@ internal class CombatDetailsManager
             Value = value,
             ActualValue = value + absorb,
             Time = GetTimeFromStart(combatDataLine[0]),
-            FromEnemy = enemy.Trim('"'),
-            ToPlayer = combatDataLine[7].Trim('"'),
-            SpellOrItem = spellOrItem,
+            Creator = enemy.Trim('"'),
+            Target = combatDataLine[7].Trim('"'),
+            Spell = spellOrItem,
             IsPeriodicDamage = isPeriodicDamage,
             Resisted = resist,
             Absorbed = absorb,
             Blocked = blocked,
             RealDamage = realDamage,
             Mitigated = mitigated < 0 ? 0 : mitigated,
-            IsDodge = string.Equals(combatDataLine[^2], CombatLogKeyWords.Dodge, StringComparison.OrdinalIgnoreCase),
-            IsParry = string.Equals(combatDataLine[^2], CombatLogKeyWords.Parry, StringComparison.OrdinalIgnoreCase),
-            IsMiss = string.Equals(combatDataLine[^2], CombatLogKeyWords.Miss, StringComparison.OrdinalIgnoreCase),
-            IsResist = isResist,
-            IsImmune = isImmune,
-            IsAbsorb = isAbsorb,
-            IsCrushing = isCrushing,
+            DamageTakenType = (int)damageTakenType,
         };
 
         return (combatDataLine[6], damageTaken);
@@ -292,7 +291,7 @@ internal class CombatDetailsManager
         var energyRecovery = new ResourceRecovery
         {
             Time = GetTimeFromStart(combatDataLine[0]),
-            SpellOrItem = spellOrItem.Trim('"')
+            Spell = spellOrItem.Trim('"')
         };
 
         if (int.TryParse(combatDataLine[^4], NumberStyles.Number, CultureInfo.InvariantCulture, out var amoutOfResourcesRecovery))
@@ -319,7 +318,7 @@ internal class CombatDetailsManager
         return (combatDataLine[6], userDeath);
     }
 
-    private DamageDone GetDamageDone(List<string> combatDataLine, string spellOrItem = "")
+    private DamageDone GetDamageDone(List<string> combatDataLine, bool isPet, string spellOrItem = "")
     {
         if (string.Equals(combatDataLine[1], CombatLogKeyWords.SwingDamageLanded, StringComparison.OrdinalIgnoreCase)
             || string.Equals(combatDataLine[1], CombatLogKeyWords.SwingDamage, StringComparison.OrdinalIgnoreCase)
@@ -333,7 +332,7 @@ internal class CombatDetailsManager
         }
 
         var isPeriodicDamage = false;
-        if (combatDataLine[1] == CombatLogKeyWords.SpellPeriodicDamage)
+        if (string.Equals(combatDataLine[1], CombatLogKeyWords.SpellPeriodicDamage, StringComparison.OrdinalIgnoreCase))
         {
             isPeriodicDamage = true;
         }
@@ -349,28 +348,30 @@ internal class CombatDetailsManager
             index = 10;
         }
 
+        var isCrit = string.Equals(combatDataLine[^3], CombatLogKeyWords.IsCrit, StringComparison.OrdinalIgnoreCase);
+
         var isResist = index >= 0 && string.Equals(combatDataLine[index], CombatLogKeyWords.Resist, StringComparison.OrdinalIgnoreCase);
         var isParry = index >= 0 && string.Equals(combatDataLine[index], CombatLogKeyWords.Parry, StringComparison.OrdinalIgnoreCase);
         var isDodge = index >= 0 && string.Equals(combatDataLine[index], CombatLogKeyWords.Dodge, StringComparison.OrdinalIgnoreCase);
         var isImmune = index >= 0 && string.Equals(combatDataLine[index], CombatLogKeyWords.Immune, StringComparison.OrdinalIgnoreCase);
         var isMiss = index >= 0 && string.Equals(combatDataLine[index], CombatLogKeyWords.Miss, StringComparison.OrdinalIgnoreCase);
 
-        var isCrit = string.Equals(combatDataLine[^3], CombatLogKeyWords.IsCrit, StringComparison.OrdinalIgnoreCase);
+        var damageType = isCrit ? DamageType.Crit : DamageType.Normal;
+        damageType = isResist ? DamageType.Resist : damageType;
+        damageType = isParry ? DamageType.Parry : damageType;
+        damageType = isDodge ? DamageType.Dodge : damageType;
+        damageType = isImmune ? DamageType.Immune : damageType;
+        damageType = isMiss ? DamageType.Miss : damageType;
 
         var damageDone = new DamageDone
         {
             Time = GetTimeFromStart(combatDataLine[0]),
-            FromPlayer = combatDataLine[3].Trim('"'),
-            ToEnemy = combatDataLine[7].Trim('"'),
-            SpellOrItem = spellOrItem,
+            Creator = combatDataLine[3].Trim('"'),
+            Target = combatDataLine[7].Trim('"'),
+            Spell = spellOrItem,
             IsPeriodicDamage = isPeriodicDamage,
-            IsDodge = isDodge,
-            IsMiss = isMiss,
-            IsParry = isParry,
-            IsResist = isResist,
-            IsImmune = isImmune,
-            IsCrit = isCrit,
-            IsPet = true,
+            DamageType = (int)damageType,
+            IsPet = isPet,
         };
 
         if (int.TryParse(combatDataLine[^10], out var amountOfValue))

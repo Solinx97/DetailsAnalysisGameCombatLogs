@@ -60,7 +60,7 @@ internal class PlayerParseInfoHelper : IPlayerParseInfoHelper
 
     private static int GetSpecializationId(List<DamageDoneGeneral> damageDoneGeneralList, List<HealDoneGeneral> healDoneGeneralList)
     {
-        var damageSpells = damageDoneGeneralList.Select(damageDone => damageDone.SpellOrItem).ToList();
+        var damageSpells = damageDoneGeneralList.Select(damageDone => damageDone.Spell).ToList();
         var specs = PlayerInfoConfiguration.Specs;
         foreach (var item in specs)
         {
@@ -71,7 +71,7 @@ internal class PlayerParseInfoHelper : IPlayerParseInfoHelper
             }
         }
 
-        var healSpells = healDoneGeneralList.Select(healDone => healDone.SpellOrItem).ToList();
+        var healSpells = healDoneGeneralList.Select(healDone => healDone.Spell).ToList();
         foreach (var item in specs)
         {
             var isUseThisSpec = healSpells.Contains(item.Value);

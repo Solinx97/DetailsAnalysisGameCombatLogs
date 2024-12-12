@@ -4,13 +4,13 @@ public class DamageTakenGeneralDto : CombatDataBase
 {
     public int Id { get; set; }
 
+    public string Spell { get; set; }
+
     public int Value { get; set; }
 
     public int ActualValue { get; set; }
 
     public double DamageTakenPerSecond { get; set; }
-
-    public string SpellOrItem { get; set; }
 
     public int CritNumber { get; set; }
 

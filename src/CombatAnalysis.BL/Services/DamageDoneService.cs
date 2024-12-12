@@ -93,20 +93,20 @@ internal class DamageDoneService : IPlayerInfoCountService<DamageDoneDto>
 
     private async Task<DamageDoneDto> CreateInternalAsync(DamageDoneDto item)
     {
-        if (string.IsNullOrEmpty(item.FromPlayer))
+        if (string.IsNullOrEmpty(item.Creator))
         {
             throw new ArgumentNullException(nameof(DamageDoneDto),
-                $"The property {nameof(DamageDoneDto.FromPlayer)} of the {nameof(DamageDoneDto)} object can't be null or empty");
+                $"The property {nameof(DamageDoneDto.Creator)} of the {nameof(DamageDoneDto)} object can't be null or empty");
         }
-        if (string.IsNullOrEmpty(item.ToEnemy))
+        if (string.IsNullOrEmpty(item.Target))
         {
             throw new ArgumentNullException(nameof(DamageDoneDto),
-                $"The property {nameof(DamageDoneDto.ToEnemy)} of the {nameof(DamageDoneDto)} object can't be null or empty");
+                $"The property {nameof(DamageDoneDto.Target)} of the {nameof(DamageDoneDto)} object can't be null or empty");
         }
-        if (string.IsNullOrEmpty(item.SpellOrItem))
+        if (string.IsNullOrEmpty(item.Spell))
         {
             throw new ArgumentNullException(nameof(DamageDoneDto),
-                $"The property {nameof(DamageDoneDto.SpellOrItem)} of the {nameof(DamageDoneDto)} object can't be null or empty");
+                $"The property {nameof(DamageDoneDto.Spell)} of the {nameof(DamageDoneDto)} object can't be null or empty");
         }
 
         var map = _mapper.Map<DamageDone>(item);
@@ -118,20 +118,20 @@ internal class DamageDoneService : IPlayerInfoCountService<DamageDoneDto>
 
     private async Task<int> UpdateInternalAsync(DamageDoneDto item)
     {
-        if (string.IsNullOrEmpty(item.FromPlayer))
+        if (string.IsNullOrEmpty(item.Creator))
         {
             throw new ArgumentNullException(nameof(DamageDoneDto),
-                $"The property {nameof(DamageDoneDto.FromPlayer)} of the {nameof(DamageDoneDto)} object can't be null or empty");
+                $"The property {nameof(DamageDoneDto.Creator)} of the {nameof(DamageDoneDto)} object can't be null or empty");
         }
-        if (string.IsNullOrEmpty(item.ToEnemy))
+        if (string.IsNullOrEmpty(item.Target))
         {
             throw new ArgumentNullException(nameof(DamageDoneDto),
-                $"The property {nameof(DamageDoneDto.ToEnemy)} of the {nameof(DamageDoneDto)} object can't be null or empty");
+                $"The property {nameof(DamageDoneDto.Target)} of the {nameof(DamageDoneDto)} object can't be null or empty");
         }
-        if (string.IsNullOrEmpty(item.SpellOrItem))
+        if (string.IsNullOrEmpty(item.Spell))
         {
             throw new ArgumentNullException(nameof(DamageDoneDto),
-                $"The property {nameof(DamageDoneDto.SpellOrItem)} of the {nameof(DamageDoneDto)} object can't be null or empty");
+                $"The property {nameof(DamageDoneDto.Spell)} of the {nameof(DamageDoneDto)} object can't be null or empty");
         }
 
         var map = _mapper.Map<DamageDone>(item);
