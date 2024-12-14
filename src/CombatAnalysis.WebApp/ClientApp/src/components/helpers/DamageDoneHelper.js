@@ -1,8 +1,10 @@
 ﻿import { faCopy, faFire, faFlask, faHands, faPooStorm, faXmark } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import React from 'react';
-import { useTranslation } from 'react-i18next';
+import React, { useEffect, useState } from 'react';
 import useTime from '../../hooks/useTime';
+import { useGetDamageDoneByPlayerIdQuery } from '../../store/api/CombatParserApi';
+import DetailsFilter from './DetailsFilter';
+import PaginationHelper from './PaginationHelper';
 
 const damageType =
 {
@@ -15,10 +17,24 @@ const damageType =
     Immune: 6,
 }
 
-const DamageDoneHelper = ({ detailsData }) => {
-    const { t } = useTranslation("helpers/combatDetailsHelper");
-
+const DamageDoneHelper = ({ combatPlayerId, pageSize, getCountAsync, t }) => {
     const { getTimeWithoutMs } = useTime();
+
+    const [page, setPage] = useState(1);
+    const [count, setCount] = useState(1);
+
+    const { data, isLoading } = useGetDamageDoneByPlayerIdQuery({ combatPlayerId, page, pageSize });
+
+    const totalPages = Math.ceil(count / pageSize);
+
+    useEffect(() => {
+        const getCount = async () => {
+            const count = await getCountAsync();
+            setCount(count);
+        }
+
+        getCount();
+    }, []);
 
     const getIcon = (type) => {
         switch (type) {
@@ -96,25 +112,38 @@ const DamageDoneHelper = ({ detailsData }) => {
         );
     }
 
+    if (isLoading) {
+        return (<div>Loading...</div>);
+    }
+
     return (
-        <>
-            {tableTitle()}
-            {detailsData?.map((item) => (
-                <li className="player-data-details__item" key={item.id}>
-                    <ul>
-                        <li>
-                            <div>{item.spell}</div>
-                            <div className="extra-details">{getIcon(item.damageType)}</div>
-                        </li>
-                        <li>{getTimeWithoutMs(item.time)}</li>
-                        <li className="extra-details">
-                            <div className={getClassNameByDamageType(item)}>{item.value}</div>
-                        </li>
-                        <li>{item.target}</li>
-                    </ul>
-                </li>
-            ))}
-        </>
+        <div>
+            <DetailsFilter />
+            <ul className="player-data-details">
+                {tableTitle()}
+                {data?.map((item) => (
+                    <li className="player-data-details__item" key={item.id}>
+                        <ul>
+                            <li>
+                                <div>{item.spell}</div>
+                                <div className="extra-details">{getIcon(item.damageType)}</div>
+                            </li>
+                            <li>{getTimeWithoutMs(item.time)}</li>
+                            <li className="extra-details">
+                                <div className={getClassNameByDamageType(item)}>{item.value}</div>
+                            </li>
+                            <li>{item.target}</li>
+                        </ul>
+                    </li>
+                ))}
+            </ul>
+            <PaginationHelper
+                setPage={setPage}
+                page={page}
+                totalPages={totalPages}
+                t={t}
+            />
+        </div>
     );
 }
 

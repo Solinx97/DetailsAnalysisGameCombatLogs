@@ -1,92 +1,125 @@
-﻿import React, { useState } from 'react';
+﻿import { faCalendarDay, faDeleteLeft, faSitemap } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import useCombatDetailsData from '../../hooks/useCombatDetailsData';
+import { useNavigate } from 'react-router-dom';
+import { useLazyGetCombatPlayerByIdQuery } from '../../store/api/CombatParserApi';
+import CombatGeneralDetails from './CombatGeneralDetails';
+import CombatMoreDetails from './CombatMoreDetails';
 
-import "../../styles/combatDetails.scss";
+import "../../styles/combatGeneralDetails.scss";
 
-const CombatDetails = ({ combatPlayerId, detailsType, combatStartDate }) => {
-    const { t } = useTranslation("combatDetails/combatDetails");
+const CombatDetails = () => {
+    const { t } = useTranslation("combatDetails/combatGeneralDetails");
 
-    const [count, setCount] = useState(1);
-    const [detailsDataRender, setDetailsDataRender] = useState(<></>);
+    const navigate = useNavigate();
 
-    const [currentPage, setCurrentPage] = useState(1);
-    const itemsPerPage = 20;
+    const [combatPlayerId, setCombatPlayerId] = useState(0);
+    const [combatPlayer, setCombatPlayer] = useState(null);
+    const [detailsType, setDetailsType] = useState("");
+    const [combatName, setCombatName] = useState("");
+    const [tab, setTab] = useState(0);
+    const [combatId, setCombatId] = useState(0);
+    const [combatLogId, setCombatLogId] = useState(0);
+    const [tabIndex, setTabIndex] = useState(0);
 
-    const { getCombatDataListAsync, getCountAsync } = useCombatDetailsData(combatPlayerId, detailsType, combatStartDate);
+    const [getCombatPlayerById] = useLazyGetCombatPlayerByIdQuery();
 
-    const totalPages = Math.ceil(count / itemsPerPage);
+    useEffect(() => {
+        const queryParams = new URLSearchParams(window.location.search);
+        const combatId = +queryParams.get("combatId");
 
-    useState(() => {
-        const getCombatDataComponent = async () => {
-            const count = await getCountAsync();
-            setCount(count);
+        setCombatPlayerId(+queryParams.get("id"));
+        setDetailsType(queryParams.get("detailsType"));
+        setCombatId(combatId);
+        setCombatLogId(+queryParams.get("combatLogId"));
+        setCombatName(queryParams.get("name"));
+        setTab(+queryParams.get("tab"));
+    }, [])
 
-            await getNewDataAsync(currentPage);
+    useEffect(() => {
+        if (combatPlayerId <= 0) {
+            return;
         }
 
-        getCombatDataComponent();
-    }, []);
-
-    const getNewDataAsync = async (currentPage) => {
-        const combatDataComponent = await getCombatDataListAsync(currentPage, itemsPerPage);
-        setDetailsDataRender(combatDataComponent);
-    }
-
-    const handleFirstPageAsync = async () => {
-        if (currentPage > 1) {
-            setCurrentPage(1);
-
-            await getNewDataAsync(1);
+        const getGeneralDetails = async () => {
+            await getCombatPlayerByIdAsync(combatPlayerId);
         }
-    }
 
-    const handleNextPageAsync = async () => {
-        if (currentPage < totalPages) {
-            setCurrentPage(currentPage + 1);
+        getGeneralDetails();
+    }, [combatPlayerId])
 
-            await getNewDataAsync(currentPage + 1);
-        }
-    }
-
-    const handlePreviousPageAsymc = async () => {
-        if (currentPage > 1) {
-            setCurrentPage(currentPage - 1);
-
-            await getNewDataAsync(currentPage - 1);
+    const getCombatPlayerByIdAsync = async (combatPlayerId) => {
+        const combatPlayer = await getCombatPlayerById(combatPlayerId);
+        if (combatPlayer.data !== undefined) {
+            setCombatPlayer(combatPlayer.data);
         }
     }
 
-    const handleLastPageAsync = async () => {
-        if (currentPage < totalPages) {
-            setCurrentPage(totalPages);
-
-            await getNewDataAsync(totalPages);
+    const getDetailsTypeName = () => {
+        switch (detailsType) {
+            case "DamageDone":
+                return t("Damage");
+            case "HealDone":
+                return t("Healing");
+            case "DamageTaken":
+                return t("DamageTaken");
+            case "ResourceRecovery":
+                return t("ResourcesRecovery");
+            default:
+                return "";
         }
+    }
+
+    if (combatPlayerId <= 0) {
+        return <div>Loading...</div>;
     }
 
     return (
-        <div className="details__container">
-            <ul className="player-data-details">
-                {detailsDataRender}
-            </ul>
-            <div className="pagination-controls">
-                <div className="pagination-controls__container">
-                    <button className="btn-shadow" onClick={async () => await handleFirstPageAsync()} disabled={currentPage === 1}>
-                        {t("First")}
-                    </button>
-                    <button className="btn-shadow prev" onClick={async () => await handlePreviousPageAsymc()} disabled={currentPage === 1}>
-                        {t("Previous")}
-                    </button>
-                    <span>{currentPage} / {totalPages}</span>
-                    <button className="btn-shadow next" onClick={async () => await handleNextPageAsync()} disabled={currentPage === totalPages}>
-                        {t("Next")}
-                    </button>
-                    <button className="btn-shadow last" onClick={async () => await handleLastPageAsync()} disabled={currentPage === totalPages}>
-                        {t("Last")}
-                    </button>
+        <div className="general-details__container">
+            <div className="general-details__navigate">
+                <div className="player">
+                    <div className="btn-shadow select-another-player"
+                        onClick={() => navigate(`/details-specifical-combat?id=${combatId}&combatLogId=${combatLogId}&name=${combatName}&tab=${tab}`)}>
+                        <FontAwesomeIcon
+                            icon={faDeleteLeft}
+                        />
+                        <div>{t("SelectPlayer")}</div>
+                    </div>
+                    <div className="btn-shadow username">
+                        <div>{combatPlayer?.username}</div>
+                    </div>
                 </div>
+                <div className="details-type">{getDetailsTypeName()}</div>
+                <ul className="types">
+                    <li className="nav-item">
+                        <div className={`btn-shadow ${tabIndex === 0 ? "active" : ""}`} onClick={() => setTabIndex(0)}>
+                            <FontAwesomeIcon
+                                icon={faSitemap}
+                            />
+                            <div>{t("CommonInform")}</div>
+                        </div>
+                    </li>
+                    <li className="nav-item">
+                        <div className={`btn-shadow ${tabIndex === 1 ? "active" : ""}`} onClick={() => setTabIndex(1)}>
+                            <FontAwesomeIcon
+                                icon={faCalendarDay}
+                            />
+                            <div>{t("DetailsInform")}</div>
+                        </div>
+                    </li>
+                </ul>
             </div>
+            {tabIndex === 0
+                ? <CombatGeneralDetails
+                    combatPlayerId={combatPlayerId}
+                    detailsType={detailsType}
+                />
+                : <CombatMoreDetails
+                    combatPlayerId={combatPlayerId}
+                    detailsType={detailsType}
+                />
+            }
         </div>
     );
 }

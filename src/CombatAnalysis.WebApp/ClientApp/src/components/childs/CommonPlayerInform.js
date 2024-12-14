@@ -12,7 +12,7 @@ const CommonPlayerInform = ({ player, combatId, combatLogId, combatName }) => {
     const detailsTypes = ["DamageDone", "HealDone", "DamageTaken", "ResourceRecovery"];
 
     const navigateToDetails = (detailsType) => {
-        navigate(`/combat-general-details?id=${player.id}&detailsType=${detailsType}&combatId=${combatId}&combatLogId=${combatLogId}&name=${combatName}&tab=${1}`);
+        navigate(`/combat-details?id=${player.id}&detailsType=${detailsType}&combatId=${combatId}&combatLogId=${combatLogId}&name=${combatName}&tab=${1}`);
     }
 
     return (

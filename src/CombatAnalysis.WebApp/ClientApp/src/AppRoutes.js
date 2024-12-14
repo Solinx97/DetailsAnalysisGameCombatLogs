@@ -1,5 +1,5 @@
 import Home from './components/Home';
-import CombatGeneralDetails from './components/combatDetails/CombatGeneralDetails';
+import CombatDetails from './components/combatDetails/CombatDetails';
 import DetailsSpecificalCombat from './components/combatDetails/DetailsSpecificalCombat';
 import GeneralAnalysis from './components/combatDetails/GeneralAnalysis';
 import MainInformation from './components/combatDetails/MainInformation';
@@ -83,8 +83,8 @@ const AppRoutes = [
         element: <DetailsSpecificalCombat />
     },
     {
-        path: '/combat-general-details',
-        element: <CombatGeneralDetails />
+        path: '/combat-details',
+        element: <CombatDetails />
     },
     //{
     //    path: '/player-movements',

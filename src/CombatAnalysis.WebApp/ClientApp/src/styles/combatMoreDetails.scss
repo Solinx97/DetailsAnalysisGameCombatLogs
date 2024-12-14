@@ -10,22 +10,22 @@
         position: fixed;
         display: flex;
         justify-content: flex-end;
-        bottom: 2vh;
-        right: 1vw;
-        font-size: 0.9em;
+        bottom: 1vh;
+        right: 0.5vw;
+        font-size: 0.55em;
 
         &__container {
             display: flex;
             align-items: center;
-            gap: 15px;
-            box-shadow: 2px 2px 2px 2px red;
-            border-radius: 10px;
+            gap: 10px;
+            box-shadow: 1px 1px 1px 1px red;
+            border-radius: 15px;
             padding: 5px 10px;
             background: #135D66;
-            font-size: 0.7em;
+            font-size: 1em;
 
             .prev, .next {
-                box-shadow: 2px 2px 2px 2px green;
+                box-shadow: 1px 1px 1px 1px green;
             }
         }
     }

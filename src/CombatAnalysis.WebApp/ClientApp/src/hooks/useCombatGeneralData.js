@@ -17,15 +17,25 @@ const useCombatGeneralData = (combatPlayerId, detailsType) => {
 
         switch (detailsType) {
             case "DamageDone":
-                return <DamageDoneGeneralHelper generalData={data} />
+                return <DamageDoneGeneralHelper
+                    generalData={data}
+                />
             case "HealDone":
-                return <HealDoneGeneralHelper generalData={data} />
+                return <HealDoneGeneralHelper
+                    generalData={data}
+                />
             case "DamageTaken":
-                return <DamageTakenGeneralHelper generalData={data} />
+                return <DamageTakenGeneralHelper
+                    generalData={data}
+                />
             case "ResourceRecovery":
-                return <ResourceRecoveryGeneralHelper generalData={data} />
+                return <ResourceRecoveryGeneralHelper
+                    generalData={data}
+                />
             default:
-                return <DamageDoneGeneralHelper generalData={data} />
+                return <DamageDoneGeneralHelper
+                    generalData={data}
+                />
         }
     }
 

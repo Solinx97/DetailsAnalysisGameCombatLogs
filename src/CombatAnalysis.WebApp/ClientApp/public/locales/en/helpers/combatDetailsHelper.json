@@ -28,5 +28,9 @@
   "Crushing": "Crushing",
   "Spell": "Spell",
   "Target": "Target",
-  "WhoDamage": "Who damage"
+  "WhoDamage": "Who damage",
+  "First": "First",
+  "Previous": "Previous",
+  "Next": "Next",
+  "Last": "Last"
 }
