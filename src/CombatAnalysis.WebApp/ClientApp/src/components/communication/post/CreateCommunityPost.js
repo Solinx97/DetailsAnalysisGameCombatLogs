@@ -2,10 +2,10 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useState } from 'react';
 import { useSelector } from 'react-redux';
-import { useCreateCommunityPostMutation } from '../../../store/api/communication/CommunityPost.api';
+import { useCreateCommunityPostMutation } from '../../../store/api/post/CommunityPost.api';
 import Loading from '../../Loading';
-import AddTagsToPost from './AddTagsToPost';
 import VerificationRestriction from '../../common/VerificationRestriction';
+import AddTagsToPost from './AddTagsToPost';
 
 const CreateCommunityPost = ({ user, communityName, communityId, t }) => {
     const userPrivacy = useSelector((state) => state.userPrivacy.value);

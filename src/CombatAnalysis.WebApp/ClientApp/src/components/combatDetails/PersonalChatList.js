@@ -4,8 +4,8 @@ import { format } from 'date-fns';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
-import { useCreatePersonalChatMessageAsyncMutation } from '../../store/api/communication/chats/PersonalChatMessage.api';
-import { useGetCustomerByIdQuery } from '../../store/api/Customer.api';
+import { useCreatePersonalChatMessageAsyncMutation } from '../../store/api/chat/PersonalChatMessage.api';
+import { useGetCustomerByIdQuery } from '../../store/api/user/Customer.api';
 
 const messageType = {
     default: 0,

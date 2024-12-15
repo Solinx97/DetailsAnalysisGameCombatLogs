@@ -2,8 +2,8 @@ import { faCircleXmark, faPen, faSquarePlus, faTrash } from '@fortawesome/free-s
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useGetCommunityDiscussionByIdQuery, useRemoveCommunityDiscussionAsyncMutation, useUpdateCommunityDiscussionAsyncMutation } from '../../../store/api/communication/community/CommunityDiscussion.api';
-import { useCreateCommunityDiscussionCommentAsyncMutation } from '../../../store/api/communication/community/CommunityDiscussionComment.api';
+import { useGetCommunityDiscussionByIdQuery, useRemoveCommunityDiscussionAsyncMutation, useUpdateCommunityDiscussionAsyncMutation } from '../../../store/api/community/CommunityDiscussion.api';
+import { useCreateCommunityDiscussionCommentAsyncMutation } from '../../../store/api/community/CommunityDiscussionComment.api';
 import DiscussionComments from './DiscussionComments';
 
 import '../../../styles/communication/community/discussion.scss';

@@ -1,5 +1,5 @@
-import { useGetUserByIdQuery } from '../../../store/api/Account.api';
-import { useFindPersonalChatMessageCountQuery } from '../../../store/api/communication/chats/PersonalChatMessagCount.api';
+import { useGetUserByIdQuery } from '../../../store/api/user/Account.api';
+import { useFindPersonalChatMessageCountQuery } from '../../../store/api/chat/PersonalChatMessagCount.api';
 
 const personalChatCountPollingInterval = 2000;
 

@@ -2,7 +2,7 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useUpdateGroupChatAsyncMutation } from '../../../store/api/communication/chats/GroupChat.api';
+import { useUpdateGroupChatAsyncMutation } from '../../../store/api/chat/GroupChat.api';
 
 const GroupChatTitle = ({ chat, me, settingsIsShow, setSettingsIsShow, haveMoreMessages, setHaveMoreMessage, loadMoreMessagesAsync, t }) => {
     const navigate = useNavigate();

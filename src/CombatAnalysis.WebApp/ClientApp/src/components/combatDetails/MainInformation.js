@@ -1,7 +1,7 @@
 ﻿import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useGetCombatLogsQuery } from '../../store/api/CombatParserApi';
-import { useLazyAuthenticationAsyncQuery } from '../../store/api/UserApi';
+import { useGetCombatLogsQuery } from '../../store/api/core/CombatParser.api';
+import { useLazyAuthenticationAsyncQuery } from '../../store/api/core/User.api';
 import Loading from '../Loading';
 import CombatLogItem from './CombatLogItem';
 

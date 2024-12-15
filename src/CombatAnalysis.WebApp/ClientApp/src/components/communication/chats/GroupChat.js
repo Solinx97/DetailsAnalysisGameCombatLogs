@@ -4,11 +4,11 @@ import useGroupChatData from '../../../hooks/useGroupChatData';
 import {
     useLazyFindGroupChatMessageCountQuery,
     useUpdateGroupChatMessageCountAsyncMutation
-} from '../../../store/api/communication/chats/GroupChatMessagCount.api';
+} from '../../../store/api/chat/GroupChatMessagCount.api';
 import {
     useRemoveGroupChatMessageAsyncMutation,
     useUpdateGroupChatMessageAsyncMutation
-} from '../../../store/api/communication/chats/GroupChatMessage.api';
+} from '../../../store/api/chat/GroupChatMessage.api';
 import Loading from '../../Loading';
 import ChatMessage from './ChatMessage';
 import GroupChatAddUser from './GroupChatAddUser';

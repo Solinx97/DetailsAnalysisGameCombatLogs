@@ -2,7 +2,7 @@ import { faPlus } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useGetCommunityDiscussionByCommunityIdQuery, useLazyGetCommunityDiscussionByCommunityIdQuery } from '../../../store/api/communication/community/CommunityDiscussion.api';
+import { useGetCommunityDiscussionByCommunityIdQuery, useLazyGetCommunityDiscussionByCommunityIdQuery } from '../../../store/api/community/CommunityDiscussion.api';
 import CreateDiscussion from './CreateDiscussion';
 import DiscussionList from './DiscussionList';
 import { useSelector } from 'react-redux';

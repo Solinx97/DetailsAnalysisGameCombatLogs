@@ -2,7 +2,7 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useEffect, useState } from 'react';
 import useTime from '../../hooks/useTime';
-import { useGetDamageTakenByPlayerIdQuery } from '../../store/api/CombatParserApi';
+import { useGetDamageTakenByPlayerIdQuery } from '../../store/api/combatParser/DamageTaken.api';
 import PaginationHelper from './PaginationHelper';
 
 const damageTakenType =

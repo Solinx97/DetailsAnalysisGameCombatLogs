@@ -1,8 +1,8 @@
 ﻿import { faTrash } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useTranslation } from 'react-i18next';
-import { useGetUserByIdQuery } from '../../../store/api/Account.api';
-import { useRemoveCommunityPostCommentMutation } from '../../../store/api/communication/CommunityPostComment.api';
+import { useGetUserByIdQuery } from '../../../store/api/user/Account.api';
+import { useRemoveCommunityPostCommentMutation } from '../../../store/api/post/CommunityPostComment.api';
 
 const CommunityPostCommentTitle = ({ userId, comment, dateFormatting, postId, updatePostAsync }) => {
     const { t } = useTranslation("communication/postCommentTitle");

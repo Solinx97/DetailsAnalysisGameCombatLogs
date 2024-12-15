@@ -1,5 +1,5 @@
 import { useRef, useState } from 'react';
-import { useLazyGetUsersQuery } from '../store/api/UserApi';
+import { useLazyGetUsersQuery } from '../store/api/core/User.api';
 import PeopleItem from './communication/people/PeopleItem';
 
 const Search = ({ me, t }) => {

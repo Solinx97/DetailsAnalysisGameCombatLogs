@@ -2,8 +2,8 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useCallback } from 'react';
 import { useSelector } from 'react-redux';
-import { useCreateCommunityPostDislikeMutation, useLazySearchCommunityPostDislikeByPostIdQuery, useRemoveCommunityPostDislikeMutation } from '../../../store/api/communication/CommunityPostDislike.api';
-import { useCreateCommunityPostLikeMutation, useLazySearchCommunityPostLikeByPostIdQuery, useRemoveCommunityPostLikeMutation } from '../../../store/api/communication/CommunityPostLike.api';
+import { useCreateCommunityPostDislikeMutation, useLazySearchCommunityPostDislikeByPostIdQuery, useRemoveCommunityPostDislikeMutation } from '../../../store/api/post/CommunityPostDislike.api';
+import { useCreateCommunityPostLikeMutation, useLazySearchCommunityPostLikeByPostIdQuery, useRemoveCommunityPostLikeMutation } from '../../../store/api/post/CommunityPostLike.api';
 import VerificationRestriction from '../../common/VerificationRestriction';
 
 const CommunityPostReactions = ({ userId, communityId, post, updatePostAsync, setShowComments, showComments, t }) => {

@@ -1,5 +1,5 @@
 import React from 'react';
-import { useSearchUserPostCommentByPostIdQuery } from '../../../store/api/communication/UserPostComment.api';
+import { useSearchUserPostCommentByPostIdQuery } from '../../../store/api/post/UserPostComment.api';
 import UserPostCommentContent from './UserPostCommentContent';
 import UserPostCommentTitle from './UserPostCommentTitle';
 

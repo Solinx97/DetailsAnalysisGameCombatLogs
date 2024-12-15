@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { useLazyGetCombatPlayerByIdQuery } from '../../store/api/CombatParserApi';
+import { useLazyGetCombatPlayerByIdQuery } from '../../store/api/core/CombatParser.api';
 import CombatGeneralDetails from './CombatGeneralDetails';
 import CombatMoreDetails from './CombatMoreDetails';
 

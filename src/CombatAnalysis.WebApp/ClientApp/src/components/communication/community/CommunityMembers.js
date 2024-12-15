@@ -1,10 +1,9 @@
-import { faPlus, faRectangleXmark, faCircleXmark } from '@fortawesome/free-solid-svg-icons';
+import { faCircleXmark, faPlus, faRectangleXmark } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { memo, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useLazyCommunityUserSearchByCommunityIdAsyncQuery, useCommunityUserSearchByCommunityIdAsyncQuery } from '../../../store/api/CommunityApi';
-import { useRemoveCommunityUserAsyncMutation } from '../../../store/api/communication/community/CommunityUser.api';
-import { useCreateInviteAsyncMutation, useLazyInviteIsExistQuery } from '../../../store/api/communication/community/InviteToCommunity.api';
+import { useCommunityUserSearchByCommunityIdQuery, useLazyCommunityUserSearchByCommunityIdQuery, useRemoveCommunityUserMutation } from '../../../store/api/community/CommunityUser.api';
+import { useCreateInviteAsyncMutation, useLazyInviteIsExistQuery } from '../../../store/api/community/InviteToCommunity.api';
 import AddPeople from '../../AddPeople';
 import Members from '../Members';
 import CommunityMemberItem from './CommunityMemberItem';
@@ -23,7 +22,7 @@ const CommunityMembers = ({ community, user, setIsCommunityMember }) => {
 
     const [createInviteAsyncMut] = useCreateInviteAsyncMutation();
 
-    const { communityUsers, isLoading } = useCommunityUserSearchByCommunityIdAsyncQuery(community?.id, {
+    const { communityUsers, isLoading } = useCommunityUserSearchByCommunityIdQuery(community?.id, {
         selectFromResult: ({ data }) => {
             const idList = [];
             for (let i = 0; i < data?.length; i++) {
@@ -37,9 +36,9 @@ const CommunityMembers = ({ community, user, setIsCommunityMember }) => {
             };
         }
     });
-    const [getAllCommunityUsersAsync] = useLazyCommunityUserSearchByCommunityIdAsyncQuery();
+    const [getAllCommunityUsersAsync] = useLazyCommunityUserSearchByCommunityIdQuery();
     const [isInviteExistAsync] = useLazyInviteIsExistQuery();
-    const [removeCommunityUserAsync] = useRemoveCommunityUserAsyncMutation();
+    const [removeCommunityUserAsync] = useRemoveCommunityUserMutation();
 
     useEffect(() => {
         if (communityUsersId.length === 0) {

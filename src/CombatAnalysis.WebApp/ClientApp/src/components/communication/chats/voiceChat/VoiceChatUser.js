@@ -1,8 +1,8 @@
 import { faMicrophone, faMicrophoneSlash } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { memo, useEffect, useRef, useState } from "react";
-import { useGetCallByIdQuery } from '../../../../store/api/communication/chats/VoiceChat.api';
-import { useLazyGetUserByIdQuery } from '../../../../store/api/Account.api';
+import { useGetCallByIdQuery } from '../../../../store/api/chat/VoiceChat.api';
+import { useLazyGetUserByIdQuery } from '../../../../store/api/user/Account.api';
 
 const VoiceChatUser = ({ userId, hubConnection, peerConnection, otherScreenSharingVideoRef, otherScreenSharingUserIdRef, otherScreenSharing, setOtherScreenSharing, audioOutputDeviceId }) => {
     const { data: voice } = useGetCallByIdQuery(userId);

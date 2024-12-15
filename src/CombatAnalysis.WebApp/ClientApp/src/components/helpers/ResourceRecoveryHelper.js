@@ -1,6 +1,6 @@
 ﻿import React, { useEffect, useState } from 'react';
 import useTime from '../../hooks/useTime';
-import { useGetResourceRecoveryByPlayerIdQuery } from '../../store/api/CombatParserApi';
+import { useGetResourceRecoveryByPlayerIdQuery } from '../../store/api/combatParser/ResourcesRecovery.api';
 import PaginationHelper from './PaginationHelper';
 
 const ResourceRecoveryHelper = ({ combatPlayerId, pageSize, getCountAsync, t }) => {

@@ -2,7 +2,7 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { useRemoveCommunityPostMutation } from '../../../store/api/communication/CommunityPost.api';
+import { useRemoveCommunityPostMutation } from '../../../store/api/post/CommunityPost.api';
 
 const CommunityPostTitle = ({ post, dateFormatting, isMyPost }) => {
     const { t } = useTranslation("communication/postTitle");

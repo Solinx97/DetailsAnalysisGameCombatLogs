@@ -2,7 +2,7 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useEffect, useState } from 'react';
 import useTime from '../../hooks/useTime';
-import { useGetHealDoneByPlayerIdQuery } from '../../store/api/CombatParserApi';
+import { useGetHealDoneByPlayerIdQuery } from '../../store/api/combatParser/HealDone.api';
 import PaginationHelper from './PaginationHelper';
 
 const HealDoneHelper = ({ combatPlayerId, pageSize, getCountAsync, t }) => {

@@ -2,8 +2,8 @@ import { faEye, faEyeSlash, faMagnifyingGlassMinus, faMagnifyingGlassPlus, faPlu
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useGetUsersQuery } from '../store/api/UserApi';
-import { useFriendSearchMyFriendsQuery } from '../store/api/communication/myEnvironment/Friend.api';
+import { useGetUsersQuery } from '../store/api/core/User.api';
+import { useFriendSearchMyFriendsQuery } from '../store/api/user/Friend.api';
 import AddFriendItem from './AddFriendItem';
 
 import '../styles/addPeople.scss';

@@ -3,10 +3,10 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { memo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { useCreatePersonalChatAsyncMutation, useLazyIsExistAsyncQuery } from '../../store/api/communication/chats/PersonalChat.api';
-import { useCreatePersonalChatMessageCountAsyncMutation } from '../../store/api/communication/chats/PersonalChatMessagCount.api';
-import { useFriendSearchMyFriendsQuery } from '../../store/api/communication/myEnvironment/Friend.api';
-import { useCreateRequestAsyncMutation, useLazyRequestIsExistQuery } from '../../store/api/communication/myEnvironment/RequestToConnect.api';
+import { useCreatePersonalChatAsyncMutation, useLazyIsExistAsyncQuery } from '../../store/api/chat/PersonalChat.api';
+import { useCreatePersonalChatMessageCountAsyncMutation } from '../../store/api/chat/PersonalChatMessagCount.api';
+import { useFriendSearchMyFriendsQuery } from '../../store/api/user/Friend.api';
+import { useCreateRequestAsyncMutation, useLazyRequestIsExistQuery } from '../../store/api/user/RequestToConnect.api';
 import PeopleInvitesToCommunity from './people/PeopleInvitesToCommunity';
 import SelectedUserProfile from './people/SelectedUserProfile';
 

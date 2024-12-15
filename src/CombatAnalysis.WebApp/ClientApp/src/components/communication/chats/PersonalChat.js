@@ -1,16 +1,16 @@
 ﻿import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useGetUserByIdQuery } from '../../../store/api/Account.api';
-import { useGetMessagesByPersonalChatIdQuery, useLazyGetMoreMessagesByPersonalChatIdQuery } from '../../../store/api/ChatApi';
+import { useGetUserByIdQuery } from '../../../store/api/user/Account.api';
+import { useGetMessagesByPersonalChatIdQuery, useLazyGetMoreMessagesByPersonalChatIdQuery } from '../../../store/api/core/Chat.api';
 import {
     useLazyFindPersonalChatMessageCountQuery,
     useUpdatePersonalChatMessageCountAsyncMutation
-} from '../../../store/api/communication/chats/PersonalChatMessagCount.api';
+} from '../../../store/api/chat/PersonalChatMessagCount.api';
 import {
     useGetPersonalChatMessageCountByChatIdQuery,
     useRemovePersonalChatMessageAsyncMutation,
     useUpdatePersonalChatMessageAsyncMutation
-} from '../../../store/api/communication/chats/PersonalChatMessage.api';
+} from '../../../store/api/chat/PersonalChatMessage.api';
 import Loading from '../../Loading';
 import ChatMessage from './ChatMessage';
 import PersonalChatMessageInput from './PersonalChatMessageInput';

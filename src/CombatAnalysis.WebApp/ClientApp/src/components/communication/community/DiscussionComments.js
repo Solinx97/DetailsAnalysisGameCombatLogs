@@ -1,4 +1,4 @@
-import { useGetCommunityDiscussionCommentByDiscussionIdQuery } from '../../../store/api/communication/community/CommunityDiscussionComment.api';
+import { useGetCommunityDiscussionCommentByDiscussionIdQuery } from '../../../store/api/community/CommunityDiscussionComment.api';
 import Loading from '../../Loading';
 import DiscussionCommentContent from './DiscussionCommentContent';
 import DiscussionCommentTitle from './DiscussionCommentTitle';

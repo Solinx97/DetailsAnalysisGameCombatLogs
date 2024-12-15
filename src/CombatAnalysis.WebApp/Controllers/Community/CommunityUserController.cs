@@ -40,12 +40,12 @@ public class CommunityUserController : ControllerBase
         return BadRequest();
     }
 
-    [HttpGet("searchByCommunityId/{id:int:min(1)}")]
-    public async Task<IActionResult> SearchByCommunityId(int id)
+    [HttpGet("searchByCommunityId/{communityId:int:min(1)}")]
+    public async Task<IActionResult> SearchByCommunityId(int communityId)
     {
         var accessToken = HttpContext.Items[AuthenticationCookie.AccessToken.ToString()] as string;
 
-        var responseMessage = await _httpClient.GetAsync($"CommunityUser/searchByCommunityId/{id}", accessToken, Port.CommunicationApi);
+        var responseMessage = await _httpClient.GetAsync($"CommunityUser/searchByCommunityId/{communityId}", accessToken, Port.CommunicationApi);
         if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
         {
             return Unauthorized();
@@ -60,12 +60,12 @@ public class CommunityUserController : ControllerBase
         return BadRequest();
     }
 
-    [HttpGet("searchByUserId/{id}")]
-    public async Task<IActionResult> SearchByUserId(string id)
+    [HttpGet("searchByUserId/{userId}")]
+    public async Task<IActionResult> SearchByUserId(string userId)
     {
         var accessToken = HttpContext.Items[AuthenticationCookie.AccessToken.ToString()] as string;
 
-        var responseMessage = await _httpClient.GetAsync($"CommunityUser/searchByUserId/{id}", accessToken, Port.CommunicationApi);
+        var responseMessage = await _httpClient.GetAsync($"CommunityUser/searchByUserId/{userId}", accessToken, Port.CommunicationApi);
         if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
         {
             return Unauthorized();

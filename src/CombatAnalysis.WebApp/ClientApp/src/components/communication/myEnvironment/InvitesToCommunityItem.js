@@ -2,10 +2,10 @@ import { faCircleCheck, faCircleXmark } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useGetUserByIdQuery } from '../../../store/api/Account.api';
-import { useGetCommunityByIdQuery } from '../../../store/api/communication/community/Community.api';
-import { useCreateCommunityUserAsyncMutation } from '../../../store/api/communication/community/CommunityUser.api';
-import { useRemoveInviteAsyncMutation } from '../../../store/api/communication/community/InviteToCommunity.api';
+import { useGetUserByIdQuery } from '../../../store/api/user/Account.api';
+import { useGetCommunityByIdQuery } from '../../../store/api/core/Community.api';
+import { useCreateCommunityUserMutation } from '../../../store/api/community/CommunityUser.api';
+import { useRemoveCommunityInviteMutation } from '../../../store/api/community/InviteToCommunity.api';
 import User from '../User';
 
 const InvitesToCommunityItem = ({ user, inviteToCommunity }) => {
@@ -13,8 +13,8 @@ const InvitesToCommunityItem = ({ user, inviteToCommunity }) => {
 
     const { data: community, isLoading: communityIsLoading } = useGetCommunityByIdQuery(inviteToCommunity?.communityId);
     const { data: inviteOwner, isLoading: targetUserIsLoading } = useGetUserByIdQuery(inviteToCommunity?.appUserId);
-    const [createCommunityUserAsyn] = useCreateCommunityUserAsyncMutation();
-    const [removeInviteAsync] = useRemoveInviteAsyncMutation();
+    const [createCommunityUserAsyn] = useCreateCommunityUserMutation();
+    const [removeInviteAsync] = useRemoveCommunityInviteMutation();
 
     const [userInformation, setUserInformation] = useState(null);
 

@@ -3,11 +3,17 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { memo, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
-    useLazyGetDamageDoneGeneralyByPlayerIdQuery,
-    useLazyGetDamageTakenGeneralyByPlayerIdQuery,
-    useLazyGetHealDoneGeneralyByPlayerIdQuery,
     useLazyGetResourceRecoveryGeneralyByPlayerIdQuery
-} from '../../store/api/CombatParserApi';
+} from '../../store/api/combatParser/ResourcesRecovery.api';
+import {
+    useLazyGetDamageDoneGeneralyByPlayerIdQuery,
+} from '../../store/api/combatParser/DamageDone.api';
+import {
+    useLazyGetDamageTakenGeneralyByPlayerIdQuery,
+} from '../../store/api/combatParser/DamageTaken.api';
+import {
+    useLazyGetHealDoneGeneralyByPlayerIdQuery,
+} from '../../store/api/combatParser/HealDone.api';
 
 const itemsMinCount = 5;
 

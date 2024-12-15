@@ -1,19 +1,19 @@
 ﻿import { useState } from 'react';
-import { useUpdateGroupChatAsyncMutation } from '../../../store/api/communication/chats/GroupChat.api';
+import { useUpdateGroupChatAsyncMutation } from '../../../store/api/chat/GroupChat.api';
 import {
     useCreateGroupChatMessageCountAsyncMutation, useLazyFindGroupChatMessageCountQuery,
     useUpdateGroupChatMessageCountAsyncMutation
-} from '../../../store/api/communication/chats/GroupChatMessagCount.api';
+} from '../../../store/api/chat/GroupChatMessagCount.api';
 import {
     useCreateGroupChatMessageAsyncMutation,
     useUpdateGroupChatMessageAsyncMutation
-} from '../../../store/api/communication/chats/GroupChatMessage.api';
+} from '../../../store/api/chat/GroupChatMessage.api';
 import {
     useCreateGroupChatUserAsyncMutation
-} from '../../../store/api/communication/chats/GroupChatUser.api';
+} from '../../../store/api/chat/GroupChatUser.api';
 import {
     useCreateUnreadGroupChatMessageAsyncMutation
-} from '../../../store/api/communication/chats/UnreadGroupChatMessage.api';
+} from '../../../store/api/chat/UnreadGroupChatMessage.api';
 import AddPeople from '../../AddPeople';
 
 const GroupChatAddUser = ({ chat, me, groupChatUsersId, groupChatUsers, messageType, setShowAddPeople, t }) => {

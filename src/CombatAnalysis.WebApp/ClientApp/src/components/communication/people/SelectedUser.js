@@ -2,9 +2,9 @@ import { faComments, faEnvelopesBulk, faUser, faUserGroup } from '@fortawesome/f
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useEffect, useState } from "react";
 import { useTranslation } from 'react-i18next';
-import { useLazyGetUserByIdQuery } from '../../../store/api/Account.api';
-import { useLazyGetUserPostsByUserIdQuery } from '../../../store/api/CommunityApi';
-import { useLazyGetUserPostByIdQuery } from '../../../store/api/communication/UserPost.api';
+import { useLazyGetUserByIdQuery } from '../../../store/api/user/Account.api';
+import { useLazyGetUserPostsByUserIdQuery } from '../../../store/api/core/Post.api';
+import { useLazyGetUserPostByIdQuery } from '../../../store/api/post/UserPost.api';
 import CommunicationMenu from "../CommunicationMenu";
 import UserPost from '../post/UserPost';
 import Friends from '../myEnvironment/Friends';

@@ -1,6 +1,6 @@
 ﻿import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useLazyGetCombatAurasByCombatIdQuery, useLazyGetCombatByIdQuery } from '../../../store/api/CombatParserApi';
+import { useLazyGetCombatAurasByCombatIdQuery, useLazyGetCombatByIdQuery } from '../../../store/api/core/CombatParser.api';
 import CombatAuraFilters from './CombatAuraFilters';
 import CombatAuraItem from './CombatAuraItem';
 import CombatAuraTimes from './CombatAuraTimes';

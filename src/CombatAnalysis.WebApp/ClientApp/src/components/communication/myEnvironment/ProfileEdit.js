@@ -2,7 +2,7 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useState, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
-import { useEditAsyncMutation } from '../../../store/api/Account.api';
+import { useEditAsyncMutation } from '../../../store/api/user/Account.api';
 import { updateUser } from '../../../store/slicers/UserSlice';
 import { useSelector } from 'react-redux';
 

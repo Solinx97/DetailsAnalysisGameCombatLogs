@@ -1,8 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { useLazyGetCommunitiesWithPaginationQuery, useLazyGetMoreCommunitiesWithPaginationQuery } from '../../../store/api/CommunityApi';
-import { useGetCommunitiesCountQuery } from '../../../store/api/communication/community/Community.api';
-import { useSearchByUserIdAsyncQuery } from '../../../store/api/communication/community/CommunityUser.api';
+import { useCommunityUserSearchByUserIdQuery } from '../../../store/api/community/CommunityUser.api';
+import { useGetCommunitiesCountQuery, useLazyGetCommunitiesWithPaginationQuery, useLazyGetMoreCommunitiesWithPaginationQuery } from '../../../store/api/core/Community.api';
 import CommunityItem from './CommunityItem';
 
 const CommunityList = ({ filterContent }) => {
@@ -13,7 +12,7 @@ const CommunityList = ({ filterContent }) => {
     const [communities, setCommunities] = useState([]);
 
     const { data: count, isLoading: countIsLoading } = useGetCommunitiesCountQuery();
-    const { data: userCommunities, isLoading } = useSearchByUserIdAsyncQuery(user?.id);
+    const { data: userCommunities, isLoading } = useCommunityUserSearchByUserIdQuery(user?.id);
 
     const [getCommunities] = useLazyGetCommunitiesWithPaginationQuery();
     const [getMoreCommunities] = useLazyGetMoreCommunitiesWithPaginationQuery();

@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import { NavLink, useLocation, useNavigate } from 'react-router-dom';
-import { useLazyIdentityQuery } from '../store/api/UserApi';
+import { useLazyIdentityQuery } from '../store/api/core/User.api';
 
 import '../styles/home.scss';
 

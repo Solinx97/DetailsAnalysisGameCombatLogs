@@ -1,11 +1,11 @@
 import { useEffect, useState } from 'react';
-import { useLazyGetUserByIdQuery } from '../../../store/api/Account.api';
-import { useRemoveGroupChatAsyncMutation } from '../../../store/api/communication/chats/GroupChat.api';
-import { useCreateGroupChatMessageAsyncMutation } from '../../../store/api/communication/chats/GroupChatMessage.api';
-import { useGetGroupChatRulesByIdQuery, useUpdateGroupChatRulesAsyncMutation } from '../../../store/api/communication/chats/GroupChatRules.api';
+import { useLazyGetUserByIdQuery } from '../../../store/api/user/Account.api';
+import { useRemoveGroupChatAsyncMutation } from '../../../store/api/chat/GroupChat.api';
+import { useCreateGroupChatMessageAsyncMutation } from '../../../store/api/chat/GroupChatMessage.api';
+import { useGetGroupChatRulesByIdQuery, useUpdateGroupChatRulesAsyncMutation } from '../../../store/api/chat/GroupChatRules.api';
 import {
     useRemoveGroupChatUserAsyncMutation
-} from '../../../store/api/communication/chats/GroupChatUser.api';
+} from '../../../store/api/chat/GroupChatUser.api';
 import VerificationRestriction from '../../common/VerificationRestriction';
 import Members from '../Members';
 import ChatRulesItem from '../create/ChatRulesItem';

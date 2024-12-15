@@ -1,6 +1,6 @@
 ﻿import { useEffect, useState } from "react";
 import { useTranslation } from 'react-i18next';
-import { useLazyGetDamageTakenByPlayerIdQuery } from '../../store/api/CombatParserApi';
+import { useLazyGetDamageTakenByPlayerIdQuery } from '../../store/api/combatParser/DamageTaken.api';
 
 const minCount = 4;
 

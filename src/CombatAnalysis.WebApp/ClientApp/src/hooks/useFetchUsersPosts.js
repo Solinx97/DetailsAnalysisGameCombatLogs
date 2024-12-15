@@ -1,4 +1,5 @@
 ﻿import { useEffect, useRef, useState } from 'react';
+import { useCommunityUserSearchByUserIdQuery } from '../store/api/community/CommunityUser.api';
 import {
     useGetNewCommunityPostByListOfCommunityIdsQuery,
     useGetNewUserPostByListOfUserIdsQuery,
@@ -6,11 +7,10 @@ import {
     useLazyGetMoreCommunityPostByListOfCommunityIdsQuery,
     useLazyGetMoreUserPostByListOfUserIdsQuery,
     useLazyGetUserPostByListOfUserIdsQuery
-} from '../store/api/CommunityApi';
-import { useLazyGetCommunityPostCountByListOfCommunityIdQuery } from '../store/api/communication/CommunityPost.api';
-import { useLazyGetUserPostCountByListOfUserIdQuery } from '../store/api/communication/UserPost.api';
-import { useSearchByUserIdAsyncQuery } from '../store/api/communication/community/CommunityUser.api';
-import { useFriendSearchMyFriendsQuery } from '../store/api/communication/myEnvironment/Friend.api';
+} from '../store/api/core/Post.api';
+import { useLazyGetCommunityPostCountByListOfCommunityIdQuery } from '../store/api/post/CommunityPost.api';
+import { useLazyGetUserPostCountByUserIdQuery } from '../store/api/post/UserPost.api';
+import { useFriendSearchMyFriendsQuery } from '../store/api/user/Friend.api';
 
 const getUserPostsInterval = 2000;
 
@@ -29,7 +29,7 @@ const useFetchUsersPosts = (appUserId, skipFriendPosts) => {
     const { data: myFriends, isLoading: friendsAreLoading } = useFriendSearchMyFriendsQuery(appUserId, {
         skip: skipFriendPosts,
     });
-    const { data: myCommunitiesUsers, isLoading: communitiesAreLoading } = useSearchByUserIdAsyncQuery(appUserId);
+    const { data: myCommunitiesUsers, isLoading: communitiesAreLoading } = useCommunityUserSearchByUserIdQuery(appUserId);
     const { data: newPosts } = useGetNewUserPostByListOfUserIdsQuery({ appUserIds: appUserIdsRef.current, checkFrom: currentDateRef.current }, {
         pollingInterval: getUserPostsInterval,
         skip: skipCheckNewPostsRef.current || skipFriendPosts,
@@ -41,7 +41,7 @@ const useFetchUsersPosts = (appUserId, skipFriendPosts) => {
         selectFromResult: ({ data }) => ({ data }),
     });
 
-    const [getPostsCountAsync] = useLazyGetUserPostCountByListOfUserIdQuery();
+    const [getUserPostCountByUserId] = useLazyGetUserPostCountByUserIdQuery();
     const [getCommunityPostsCountAsync] = useLazyGetCommunityPostCountByListOfCommunityIdQuery();
     const [getUserPostByListOfUserIdsAsync] = useLazyGetUserPostByListOfUserIdsQuery();
     const [getCommunityPostByListOfCommunityIdsAsync] = useLazyGetCommunityPostByListOfCommunityIdsQuery();
@@ -56,7 +56,7 @@ const useFetchUsersPosts = (appUserId, skipFriendPosts) => {
         const getUserPostByListOfUserIds = async () => {
             appUserIdsRef.current = appUserId;
 
-            let response = await getPostsCountAsync(appUserIdsRef.current);
+            let response = await getUserPostCountByUserId('6277bb1f-e1e0-41c1-948f-c91cf98da709');
             if (!response.error) {
                 setCount(response.data);
             }
@@ -90,7 +90,7 @@ const useFetchUsersPosts = (appUserId, skipFriendPosts) => {
 
             appUserIdsRef.current = appUserIds.join(',');
 
-            let response = await getPostsCountAsync(appUserIdsRef.current);
+            let response = await getUserPostCountByUserId(appUserIdsRef.current);
             if (!response.error) {
                 setCount(response.data);
             }

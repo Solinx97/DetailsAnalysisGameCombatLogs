@@ -1,7 +1,7 @@
 ﻿import { useEffect, useState } from "react";
 import { useTranslation } from 'react-i18next';
-import { useGetCommunityPostByIdQuery, useLazyGetCommunityPostByIdQuery, useUpdateCommunityPostMutation } from '../../../store/api/communication/CommunityPost.api';
-import { useCreateCommunityPostCommentMutation } from '../../../store/api/communication/CommunityPostComment.api';
+import { useGetCommunityPostByIdQuery, useLazyGetCommunityPostByIdQuery, useUpdateCommunityPostMutation } from '../../../store/api/post/CommunityPost.api';
+import { useCreateCommunityPostCommentMutation } from '../../../store/api/post/CommunityPostComment.api';
 import CommunityPostComments from './CommunityPostComments';
 import CommunityPostReactions from './CommunityPostReactions';
 import CommunityPostTitle from './CommunityPostTitle';

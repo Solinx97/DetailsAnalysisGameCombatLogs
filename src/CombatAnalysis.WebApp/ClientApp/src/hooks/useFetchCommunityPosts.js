@@ -3,8 +3,8 @@ import {
     useGetCommunityPostsByCommunityIdQuery,
     useGetNewCommunityPostsByCommunityIdQuery,
     useLazyGetMoreCommunityPostsByCommunityIdQuery
-} from '../store/api/CommunityApi';
-import { useGetCommunityPostCountByCommunityIdQuery } from '../store/api/communication/CommunityPost.api';
+} from '../store/api/core/Post.api';
+import { useGetCommunityPostCountByCommunityIdQuery } from '../store/api/post/CommunityPost.api';
 
 const getCommunityPostsInterval = 2000;
 

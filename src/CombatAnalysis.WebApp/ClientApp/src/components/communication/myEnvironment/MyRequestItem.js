@@ -2,7 +2,7 @@ import { faCircleXmark } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useGetUserByIdQuery } from '../../../store/api/Account.api';
+import { useGetUserByIdQuery } from '../../../store/api/user/Account.api';
 import User from '../User';
 
 const MyRequestItem = ({ me, request, cancelMyRequestAsync }) => {

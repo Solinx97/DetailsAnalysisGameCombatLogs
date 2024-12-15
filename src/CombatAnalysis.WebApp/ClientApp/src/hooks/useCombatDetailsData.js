@@ -3,11 +3,17 @@ import DamageTakenHelper from '../components/helpers/DamageTakenHelper';
 import HealDoneHelper from '../components/helpers/HealDoneHelper';
 import ResourceRecoveryHelper from '../components/helpers/ResourceRecoveryHelper';
 import {
-    useLazyGetDamageDoneCountByPlayerIdQuery,
-    useLazyGetDamageTakenCountByPlayerIdQuery,
-    useLazyGetHealDoneCountByPlayerIdQuery,
     useLazyGetResourceRecoveryCountByPlayerIdQuery
-} from '../store/api/CombatParserApi';
+} from '../store/api/combatParser/ResourcesRecovery.api';
+import {
+    useLazyGetDamageDoneCountByPlayerIdQuery,
+} from '../store/api/combatParser/DamageDone.api';
+import {
+    useLazyGetDamageTakenCountByPlayerIdQuery,
+} from '../store/api/combatParser/DamageTaken.api';
+import {
+    useLazyGetHealDoneCountByPlayerIdQuery,
+} from '../store/api/combatParser/HealDone.api';
 
 const useCombatDetailsData = (combatPlayerId, pageSize, detailsType, t) => {
     const [getDamageDoneCountByPlayerIdAsync] = useLazyGetDamageDoneCountByPlayerIdQuery();
@@ -44,7 +50,6 @@ const useCombatDetailsData = (combatPlayerId, pageSize, detailsType, t) => {
 
     const getCountAsync = async () => {
         const response = await counts[detailsType](combatPlayerId);
-
         if (response.data !== undefined) {
             return response.data;
         }

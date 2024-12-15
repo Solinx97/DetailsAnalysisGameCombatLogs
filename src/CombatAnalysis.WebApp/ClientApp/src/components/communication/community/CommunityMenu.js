@@ -3,18 +3,17 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useState } from "react";
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { useCommunityUserSearchByCommunityIdAsyncQuery } from '../../../store/api/CommunityApi';
-import { useRemoveCommunityAsyncMutation, useUpdateCommunityAsyncMutation } from '../../../store/api/communication/community/Community.api';
-import { useLazySearchByUserIdAsyncQuery, useRemoveCommunityUserAsyncMutation } from '../../../store/api/communication/community/CommunityUser.api';
-import { useCreateInviteAsyncMutation, useLazyInviteIsExistQuery } from '../../../store/api/communication/community/InviteToCommunity.api';
+import { useCommunityUserSearchByCommunityIdQuery, useLazyCommunityUserSearchByUserIdQuery, useRemoveCommunityUserMutation } from '../../../store/api/community/CommunityUser.api';
+import { useCreateInviteAsyncMutation, useLazyInviteIsExistQuery } from '../../../store/api/community/InviteToCommunity.api';
+import { useRemoveCommunityAsyncMutation, useUpdateCommunityAsyncMutation } from '../../../store/api/core/Community.api';
 import AddPeople from '../../AddPeople';
+import Loading from '../../Loading';
 import Members from '../Members';
 import CommonItem from "../create/CommonItem";
 import CommunityRulesItem from "../create/CommunityRulesItem";
 import ItemConnector from '../create/ItemConnector';
 
 import '../../../styles/communication/community/communityMenu.scss';
-import Loading from '../../Loading';
 
 const successNotificationTimeout = 2000;
 const failedNotificationTimeout = 2000;
@@ -33,12 +32,12 @@ const CommunityMenu = ({ setShowMenu, customer, community, setCommunity }) => {
     const [showInvitesFailed, setShowInvitesFailed] = useState(false);
 
     const [removeCommunityAsync] = useRemoveCommunityAsyncMutation();
-    const [searchByUserIdAsync] = useLazySearchByUserIdAsyncQuery();
-    const [removeCommunityUserAsync] = useRemoveCommunityUserAsyncMutation();
+    const [searchByUserIdAsync] = useLazyCommunityUserSearchByUserIdQuery();
+    const [removeCommunityUserAsync] = useRemoveCommunityUserMutation();
     const [createInviteAsyncMut] = useCreateInviteAsyncMutation();
     const [isInviteExistAsync] = useLazyInviteIsExistQuery();
     const [updateCommunityAsyncMut] = useUpdateCommunityAsyncMutation();
-    const { data: communityUsers, isLoading } = useCommunityUserSearchByCommunityIdAsyncQuery(community?.id);
+    const { data: communityUsers, isLoading } = useCommunityUserSearchByCommunityIdQuery(community?.id);
 
     const leaveFromCommunityAsync = async () => {
         const myCommunityUserId = await searchByUserIdAsync(customer?.id);

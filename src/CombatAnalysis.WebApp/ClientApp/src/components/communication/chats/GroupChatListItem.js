@@ -1,5 +1,5 @@
-import { useGetGroupChatByIdQuery } from '../../../store/api/communication/chats/GroupChat.api';
-import { useFindGroupChatMessageCountQuery } from '../../../store/api/communication/chats/GroupChatMessagCount.api';
+import { useGetGroupChatByIdQuery } from '../../../store/api/chat/GroupChat.api';
+import { useFindGroupChatMessageCountQuery } from '../../../store/api/chat/GroupChatMessagCount.api';
 
 const groupChatCountPollingInterval = 2000;
 const groupChatPollingInterval = 2000;

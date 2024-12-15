@@ -3,8 +3,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { useGetCommunityByIdQuery } from '../../../store/api/communication/community/Community.api';
-import { useCreateCommunityUserAsyncMutation, useSearchByUserIdAsyncQuery } from '../../../store/api/communication/community/CommunityUser.api';
+import { useGetCommunityByIdQuery } from '../../../store/api/core/Community.api';
+import { useCreateCommunityUserMutation, useCommunityUserSearchByUserIdQuery } from '../../../store/api/community/CommunityUser.api';
 import User from '../User';
 
 const CommunityItem = ({ id, me }) => {
@@ -13,12 +13,12 @@ const CommunityItem = ({ id, me }) => {
     const navigate = useNavigate();
 
     const { data: community, isLoading } = useGetCommunityByIdQuery(id);
-    const { data: myCommunities, isLoading: myCommutiesIsLoading } = useSearchByUserIdAsyncQuery(me?.id);
+    const { data: myCommunities, isLoading: myCommutiesIsLoading } = useCommunityUserSearchByUserIdQuery(me?.id);
 
     const [canJoin, setCanJoin] = useState(true);
     const [userInformation, setUserInformation] = useState(null);
 
-    const [createCommunityUserAsyncMut] = useCreateCommunityUserAsyncMutation();
+    const [createCommunityUserAsyncMut] = useCreateCommunityUserMutation();
 
     useEffect(() => {
         if (myCommunities?.length === 0) {

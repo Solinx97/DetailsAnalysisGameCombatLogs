@@ -4,8 +4,8 @@ import { format } from 'date-fns';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
-import { useGetGroupChatByIdQuery } from '../../store/api/communication/chats/GroupChat.api';
-import { useCreateGroupChatMessageAsyncMutation } from '../../store/api/communication/chats/GroupChatMessage.api';
+import { useGetGroupChatByIdQuery } from '../../store/api/chat/GroupChat.api';
+import { useCreateGroupChatMessageAsyncMutation } from '../../store/api/chat/GroupChatMessage.api';
 
 const messageType = {
     default: 0,

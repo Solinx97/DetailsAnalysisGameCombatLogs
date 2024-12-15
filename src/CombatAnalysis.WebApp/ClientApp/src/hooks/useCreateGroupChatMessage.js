@@ -1,16 +1,16 @@
 ﻿import { useEffect, useState } from 'react';
-import { useUpdateGroupChatAsyncMutation } from '../store/api/communication/chats/GroupChat.api';
+import { useUpdateGroupChatAsyncMutation } from '../store/api/chat/GroupChat.api';
 import {
     useLazyFindGroupChatMessageCountQuery,
     useUpdateGroupChatMessageCountAsyncMutation
-} from '../store/api/communication/chats/GroupChatMessagCount.api';
+} from '../store/api/chat/GroupChatMessagCount.api';
 import {
     useCreateGroupChatMessageAsyncMutation,
     useUpdateGroupChatMessageAsyncMutation
-} from '../store/api/communication/chats/GroupChatMessage.api';
+} from '../store/api/chat/GroupChatMessage.api';
 import {
     useCreateUnreadGroupChatMessageAsyncMutation
-} from '../store/api/communication/chats/UnreadGroupChatMessage.api';
+} from '../store/api/chat/UnreadGroupChatMessage.api';
 
 const useCreateGroupChatMessage = (messageInput, chat, meId, groupChatUsers, messageType) => {
     const [createGroupChatMessageAsync] = useCreateGroupChatMessageAsyncMutation();

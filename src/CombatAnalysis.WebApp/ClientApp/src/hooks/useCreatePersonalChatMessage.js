@@ -1,10 +1,10 @@
 ﻿import { useEffect, useState } from "react";
-import { useUpdatePersonalChatAsyncMutation } from '../store/api/communication/chats/PersonalChat.api';
-import { useFindPersonalChatMessageCountQuery, useUpdatePersonalChatMessageCountAsyncMutation } from '../store/api/communication/chats/PersonalChatMessagCount.api';
+import { useUpdatePersonalChatAsyncMutation } from '../store/api/chat/PersonalChat.api';
+import { useFindPersonalChatMessageCountQuery, useUpdatePersonalChatMessageCountAsyncMutation } from '../store/api/chat/PersonalChatMessagCount.api';
 import {
     useCreatePersonalChatMessageAsyncMutation,
     useUpdatePersonalChatMessageAsyncMutation
-} from '../store/api/communication/chats/PersonalChatMessage.api';
+} from '../store/api/chat/PersonalChatMessage.api';
 
 const useCreatePersonalChatMessage = (messageInput, chat, meId, companionId) => {
     const [createPersonalChatMessageAsync] = useCreatePersonalChatMessageAsyncMutation();

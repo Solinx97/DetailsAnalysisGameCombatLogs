@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useSearchByUserIdAsyncQuery } from '../../../store/api/communication/community/CommunityUser.api';
-import { useCreateInviteAsyncMutation, useLazyInviteIsExistQuery } from '../../../store/api/communication/community/InviteToCommunity.api';
+import { useCommunityUserSearchByUserIdQuery } from '../../../store/api/community/CommunityUser.api';
+import { useCreateInviteAsyncMutation, useLazyInviteIsExistQuery } from '../../../store/api/community/InviteToCommunity.api';
 import Loading from '../../Loading';
 import TargetCommunity from './TargetCommunity';
 
@@ -10,7 +10,7 @@ import '../../../styles/communication/people/peopleInvitesToCommunity.scss';
 const PeopleInvitesToCommunity = ({ customer, people, setOpenInviteToCommunity }) => {
     const { t } = useTranslation("communication/people/people");
 
-    const { data: communityUsers, isLoading } = useSearchByUserIdAsyncQuery(customer?.id);
+    const { data: communityUsers, isLoading } = useCommunityUserSearchByUserIdQuery(customer?.id);
 
     const [communityIdToInvite, setCommunityIdToInvite] = useState([]);
 

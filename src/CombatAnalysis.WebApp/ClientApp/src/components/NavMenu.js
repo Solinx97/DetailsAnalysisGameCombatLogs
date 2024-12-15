@@ -6,7 +6,7 @@ import { useSelector } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
 import { Container, Navbar, NavbarBrand } from 'reactstrap';
 import { useAuth } from '../context/AuthProvider';
-import { useLazyIdentityQuery } from '../store/api/UserApi';
+import { useLazyIdentityQuery } from '../store/api/core/User.api';
 import LanguageSelector from './LanguageSelector';
 import Search from './Search';
 

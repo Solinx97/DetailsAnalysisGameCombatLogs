@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { useSearchByUserIdAsyncQuery } from '../../../store/api/communication/community/CommunityUser.api';
+import { useCommunityUserSearchByUserIdQuery } from '../../../store/api/community/CommunityUser.api';
 import Loading from '../../Loading';
 import VerificationRestriction from '../../common/VerificationRestriction';
 import InvitesToCommunity from './InvitesToCommunity';
@@ -25,7 +25,7 @@ const MyCommunities = () => {
     const [showSearchCommunity, setShowSearchCommunity] = useState(false);
     const [skipFetching, setSkipFetching] = useState(true);
 
-    const { data: myCommunities, isLoading } = useSearchByUserIdAsyncQuery(me?.id, {
+    const { data: myCommunities, isLoading } = useCommunityUserSearchByUserIdQuery(me?.id, {
         skip: skipFetching
     });
 

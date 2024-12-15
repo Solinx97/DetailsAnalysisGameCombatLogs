@@ -1,10 +1,10 @@
 ﻿import React, { createContext, useContext, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { useLogoutAsyncMutation } from '../store/api/Account.api';
-import { useLazySearchByUserIdAsyncQuery } from '../store/api/Customer.api';
-import { useLazyAuthenticationAsyncQuery } from '../store/api/UserApi';
-import { useLazyGetUserPrivacyQuery } from '../store/api/Identity.api';
+import { useLogoutAsyncMutation } from '../store/api/user/Account.api';
+import { useLazySearchByUserIdAsyncQuery } from '../store/api/user/Customer.api';
+import { useLazyAuthenticationAsyncQuery } from '../store/api/core/User.api';
+import { useLazyGetUserPrivacyQuery } from '../store/api/user/Identity.api';
 import { updateCustomer } from '../store/slicers/CustomerSlice';
 import { updateUser } from '../store/slicers/UserSlice';
 import { updateUserPrivacy } from '../store/slicers/UserPrivacySlice';

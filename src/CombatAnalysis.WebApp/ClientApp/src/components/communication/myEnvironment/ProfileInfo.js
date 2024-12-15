@@ -2,7 +2,7 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useState } from 'react';
 import { useSelector } from 'react-redux';
-import { useLazyVerifyEmailQuery } from '../../../store/api/UserApi';
+import { useLazyVerifyEmailQuery } from '../../../store/api/core/User.api';
 
 const ProfileInfo = ({ setIsEditMode, getDate, t }) => {
     const privacy = useSelector((state) => state.userPrivacy.value);

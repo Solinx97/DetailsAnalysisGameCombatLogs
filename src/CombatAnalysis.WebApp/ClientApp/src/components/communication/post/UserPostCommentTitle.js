@@ -1,8 +1,8 @@
 import { faTrash } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useTranslation } from 'react-i18next';
-import { useGetUserByIdQuery } from '../../../store/api/Account.api';
-import { useRemoveUserPostCommentMutation } from '../../../store/api/communication/UserPostComment.api';
+import { useGetUserByIdQuery } from '../../../store/api/user/Account.api';
+import { useRemoveUserPostCommentMutation } from '../../../store/api/post/UserPostComment.api';
 
 const UserPostCommentTitle = ({ userId, comment, dateFormatting, postId, updatePostAsync }) => {
     const { t } = useTranslation("communication/postCommentTitle");

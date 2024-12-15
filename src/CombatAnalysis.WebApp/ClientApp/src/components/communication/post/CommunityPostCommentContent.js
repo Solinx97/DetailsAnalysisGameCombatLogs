@@ -2,7 +2,7 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useUpdateCommunityPostCommentMutation } from '../../../store/api/communication/CommunityPostComment.api';
+import { useUpdateCommunityPostCommentMutation } from '../../../store/api/post/CommunityPostComment.api';
 
 const CommunityPostCommentContent = ({ userId, comment }) => {
     const { t } = useTranslation("communication/postCommentContent");

@@ -1,7 +1,7 @@
-﻿import { useEffect, useState, useRef } from 'react';
-import { useGetMessagesByGroupChatIdQuery, useLazyGetMoreMessagesByGroupChatIdQuery } from '../store/api/ChatApi';
-import { useGetGroupChatMessageCountByChatIdQuery } from '../store/api/communication/chats/GroupChatMessage.api';
-import { useFindGroupChatUserByChatIdQuery, useFindGroupChatUserQuery } from '../store/api/communication/chats/GroupChatUser.api';
+﻿import { useEffect, useState } from 'react';
+import { useGetMessagesByGroupChatIdQuery, useLazyGetMoreMessagesByGroupChatIdQuery } from '../store/api/core/Chat.api';
+import { useGetGroupChatMessageCountByChatIdQuery } from '../store/api/chat/GroupChatMessage.api';
+import { useFindGroupChatUserByChatIdQuery, useFindGroupChatUserQuery } from '../store/api/chat/GroupChatUser.api';
 
 const getGroupChatMessagesInterval = 500;
 

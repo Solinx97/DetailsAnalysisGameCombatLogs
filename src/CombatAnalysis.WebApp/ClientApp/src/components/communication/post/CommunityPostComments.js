@@ -1,5 +1,5 @@
 ﻿import React from 'react';
-import { useSearchCommunityPostCommentByPostIdQuery } from '../../../store/api/communication/CommunityPostComment.api';
+import { useSearchCommunityPostCommentByPostIdQuery } from '../../../store/api/post/CommunityPostComment.api';
 import CommunityPostCommentContent from './CommunityPostCommentContent';
 import CommunityPostCommentTitle from './CommunityPostCommentTitle';
 

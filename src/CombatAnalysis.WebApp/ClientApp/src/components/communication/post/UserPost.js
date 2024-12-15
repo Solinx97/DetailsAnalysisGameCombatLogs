@@ -1,7 +1,7 @@
 import { memo, useEffect, useState } from "react";
 import { useTranslation } from 'react-i18next';
-import { useGetUserPostByIdQuery, useLazyGetUserPostByIdQuery, useUpdateUserPostMutation } from '../../../store/api/communication/UserPost.api';
-import { useCreateUserPostCommentMutation } from '../../../store/api/communication/UserPostComment.api';
+import { useGetUserPostByIdQuery, useLazyGetUserPostByIdQuery, useUpdateUserPostMutation } from '../../../store/api/post/UserPost.api';
+import { useCreateUserPostCommentMutation } from '../../../store/api/post/UserPostComment.api';
 import UserPostComments from './UserPostComments';
 import UserPostReactions from './UserPostReactions';
 import UserPostTitle from './UserPostTitle';

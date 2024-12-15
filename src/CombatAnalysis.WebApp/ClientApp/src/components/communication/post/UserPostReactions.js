@@ -1,7 +1,7 @@
 ﻿import { faHeart, faMessage, faThumbsDown } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { useCreateUserPostDislikeMutation, useLazySearchUserPostDislikeByPostIdQuery, useRemoveUserPostDislikeMutation } from '../../../store/api/communication/UserPostDislike.api';
-import { useCreateUserPostLikeMutation, useLazySearchUserPostLikeByPostIdQuery, useRemoveUserPostLikeMutation } from '../../../store/api/communication/UserPostLike.api';
+import { useCreateUserPostDislikeMutation, useLazySearchUserPostDislikeByPostIdQuery, useRemoveUserPostDislikeMutation } from '../../../store/api/post/UserPostDislike.api';
+import { useCreateUserPostLikeMutation, useLazySearchUserPostLikeByPostIdQuery, useRemoveUserPostLikeMutation } from '../../../store/api/post/UserPostLike.api';
 
 const UserPostReactions = ({ userId, post, updatePostAsync, setShowComments, showComments, t }) => {
     const [createPostLike] = useCreateUserPostLikeMutation();

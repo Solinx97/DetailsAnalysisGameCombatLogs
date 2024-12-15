@@ -1,11 +1,11 @@
 import { useSelector } from 'react-redux';
-import { useSearchByUserIdAsyncQuery } from '../../../store/api/communication/community/CommunityUser.api';
+import { useCommunityUserSearchByUserIdQuery } from '../../../store/api/community/CommunityUser.api';
 import CommunityItem from "../community/CommunityItem";
 
 const SelectedUserCommunities = ({ user, t}) => {
     const me = useSelector((state) => state.user.value);
 
-    const { data: userCommunities, isLoading } = useSearchByUserIdAsyncQuery(user?.id);
+    const { data: userCommunities, isLoading } = useCommunityUserSearchByUserIdQuery(user?.id);
 
     if (isLoading) {
         return <div>Loading...</div>;

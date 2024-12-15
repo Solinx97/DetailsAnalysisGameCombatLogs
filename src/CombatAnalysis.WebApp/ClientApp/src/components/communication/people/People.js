@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
-import { useGetUsersQuery } from '../../../store/api/UserApi';
+import { useGetUsersQuery } from '../../../store/api/core/User.api';
 import Loading from "../../Loading";
 import CommunicationMenu from '../CommunicationMenu';
 import PeopleItem from './PeopleItem';

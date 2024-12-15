@@ -2,8 +2,8 @@ import { useState } from "react";
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { useCreateCommunityAsyncMutation } from '../../../store/api/communication/community/Community.api';
-import { useCreateCommunityUserAsyncMutation } from '../../../store/api/communication/community/CommunityUser.api';
+import { useCreateCommunityMutation } from '../../../store/api/core/Community.api';
+import { useCreateCommunityUserMutation } from '../../../store/api/community/CommunityUser.api';
 import AddPeople from '../../AddPeople';
 import CommunicationMenu from '../CommunicationMenu';
 import CommunityRulesItem from './CommunityRulesItem';
@@ -28,8 +28,8 @@ const CreateCommunity = () => {
     const [peopleToJoin, setPeopleToJoin] = useState([]);
     const [isCreating, setIsCreating] = useState(false);
 
-    const [createCommunityAsyncMut] = useCreateCommunityAsyncMutation();
-    const [createCommunityUserAsyncMut] = useCreateCommunityUserAsyncMutation();
+    const [createCommunityAsyncMut] = useCreateCommunityMutation();
+    const [createCommunityUserAsyncMut] = useCreateCommunityUserMutation();
 
     const createCommunityAsync = async () => {
         const newCommunity = {

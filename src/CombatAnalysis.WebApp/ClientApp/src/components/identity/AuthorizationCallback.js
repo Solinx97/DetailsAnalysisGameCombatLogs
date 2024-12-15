@@ -2,8 +2,8 @@
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthProvider';
-import { useLazyAuthorizationCodeExchangeQuery } from '../../store/api/Identity.api';
-import { useLazyStateValidateQuery } from '../../store/api/UserApi';
+import { useLazyAuthorizationCodeExchangeQuery } from '../../store/api/user/Identity.api';
+import { useLazyStateValidateQuery } from '../../store/api/core/User.api';
 
 import '../../styles/identity/authorizationCallback.scss';
 

@@ -1,6 +1,6 @@
 import ChatMessageMenu from './ChatMessageMenu';
 import { useState } from 'react';
-import { useGetUserByIdQuery } from '../../../store/api/Account.api';
+import { useGetUserByIdQuery } from '../../../store/api/user/Account.api';
 import User from '../User';
 
 const ChatMessageTitle = ({ me, itIsMe, setEditModeIsOn, openMessageMenu, editModeIsOn, deleteMessageAsync, message }) => {

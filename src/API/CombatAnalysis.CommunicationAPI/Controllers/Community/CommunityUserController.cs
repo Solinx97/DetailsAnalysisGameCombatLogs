@@ -39,18 +39,18 @@ public class CommunityUserController : ControllerBase
         return Ok(result);
     }
 
-    [HttpGet("searchByCommunityId/{id:int:min(1)}")]
-    public async Task<IActionResult> SearchByCommunityId(int id)
+    [HttpGet("searchByCommunityId/{communityId:int:min(1)}")]
+    public async Task<IActionResult> SearchByCommunityId(int communityId)
     {
-        var result = await _service.GetByParamAsync(nameof(CommunityUserModel.CommunityId), id);
+        var result = await _service.GetByParamAsync(nameof(CommunityUserModel.CommunityId), communityId);
 
         return Ok(result);
     }
 
-    [HttpGet("searchByUserId/{id}")]
-    public async Task<IActionResult> SearchByUserId(string id)
+    [HttpGet("searchByUserId/{userId}")]
+    public async Task<IActionResult> SearchByUserId(string userId)
     {
-        var result = await _service.GetByParamAsync(nameof(CommunityUserModel.AppUserId), id);
+        var result = await _service.GetByParamAsync(nameof(CommunityUserModel.AppUserId), userId);
 
         return Ok(result);
     }
