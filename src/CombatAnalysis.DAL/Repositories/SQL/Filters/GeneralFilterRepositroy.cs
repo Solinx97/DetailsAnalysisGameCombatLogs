@@ -40,7 +40,7 @@ internal class GeneralFilterRepositroy<TModel> : IGeneralFilter<TModel>
         var values = await _context.Set<TModel>()
                      .Where(x => x.CombatPlayerId == combatPlayerId && x.Target.Equals(target))
                      .OrderBy(x => x.Id)
-                     .Skip(page * pageSize)
+                     .Skip((page - 1) * pageSize)
                      .Take(pageSize)
                      .ToListAsync();
 

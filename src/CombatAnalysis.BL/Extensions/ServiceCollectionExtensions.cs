@@ -30,10 +30,13 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IGeneralFilterService<DamageDoneDto>, GeneralFilterService<DamageDoneDto, DamageDone>>();
         services.AddScoped<IPlayerInfoService<DamageDoneGeneralDto>, DamageDoneGeneralService>();
         services.AddScoped<IPlayerInfoService<HealDoneDto>, HealDoneService>();
+        services.AddScoped<IGeneralFilterService<HealDoneDto>, GeneralFilterService<HealDoneDto, HealDone>>();
         services.AddScoped<IPlayerInfoService<HealDoneGeneralDto>, HealDoneGeneralService>();
         services.AddScoped<IPlayerInfoService<DamageTakenDto>, DamageTakenService>();
+        services.AddScoped<IGeneralFilterService<DamageTakenDto>, GeneralFilterService<DamageTakenDto, DamageTaken>>();
         services.AddScoped<IPlayerInfoService<DamageTakenGeneralDto>, DamageTakenGeneralService>();
         services.AddScoped<IPlayerInfoService<ResourceRecoveryDto>, ResourceRecoveryService>();
+        services.AddScoped<IGeneralFilterService<ResourceRecoveryDto>, GeneralFilterService<ResourceRecoveryDto, ResourceRecovery>>();
         services.AddScoped<IPlayerInfoService<ResourceRecoveryGeneralDto>, ResourceRecoveryGeneralService>();
         services.AddScoped<IPlayerInfoService<PlayerDeathDto>, PlayerDeathService>();
 

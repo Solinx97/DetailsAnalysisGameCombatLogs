@@ -47,6 +47,11 @@ public class DamageDoneController : ControllerBase
     [HttpGet("countByTarget")]
     public async Task<IActionResult> CountByTarget(int combatPlayerId, string target)
     {
+        if (target.Equals("-1"))
+        {
+            return await Count(combatPlayerId);
+        }
+
         var responseMessage = await _httpClient.GetAsync($"DamageDone/countByTarget?combatPlayerId={combatPlayerId}&target={target}");
         var count = await responseMessage.Content.ReadFromJsonAsync<int>();
 

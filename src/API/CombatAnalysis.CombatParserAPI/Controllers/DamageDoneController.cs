@@ -27,25 +27,52 @@ public class DamageDoneController : ControllerBase
     [HttpGet("getByCombatPlayerId")]
     public async Task<IActionResult> GetByCombatPlayerId(int combatPlayerId, int page, int pageSize)
     {
-        var damageDones = await _service.GetByCombatPlayerIdAsync(combatPlayerId, page, pageSize);
+        try
+        {
+            var damageDones = await _service.GetByCombatPlayerIdAsync(combatPlayerId, page, pageSize);
 
-        return Ok(damageDones);
+            return Ok(damageDones);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error get damage done by combat player id: {Message}", ex.Message);
+
+            return BadRequest();
+        }
     }
 
     [HttpGet("getUniqueTargets/{combatPlayerId}")]
     public async Task<IActionResult> GetUniqueTargets(int combatPlayerId)
     {
-        var uniqueTargets = await _filterService.GetTargetNamesByCombatPlayerIdAsync(combatPlayerId);
+        try
+        {
+            var uniqueTargets = await _filterService.GetTargetNamesByCombatPlayerIdAsync(combatPlayerId);
 
-        return Ok(uniqueTargets);
+            return Ok(uniqueTargets);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error get unique damage done targets: {Message}", ex.Message);
+
+            return BadRequest();
+        }
     }
 
     [HttpGet("count/{combatPlayerId}")]
     public async Task<IActionResult> Count(int combatPlayerId)
     {
-        var count = await _service.CountByCombatPlayerIdAsync(combatPlayerId);
+        try
+        {
+            var count = await _service.CountByCombatPlayerIdAsync(combatPlayerId);
 
-        return Ok(count);
+            return Ok(count);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error get damage done count by target: {Message}", ex.Message);
+
+            return BadRequest();
+        }
     }
 
     [HttpGet("getByTarget")]
@@ -59,7 +86,7 @@ public class DamageDoneController : ControllerBase
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error find Combat byt combat log Id: {Message}", ex.Message);
+            _logger.LogError(ex, "Error find damage done by target: {Message}", ex.Message);
 
             return BadRequest();
         }
@@ -68,9 +95,18 @@ public class DamageDoneController : ControllerBase
     [HttpGet("countByTarget")]
     public async Task<IActionResult> CountByTarget(int combatPlayerId, string target)
     {
-        var count = await _filterService.CountTargetsByCombatPlayerIdAsync(combatPlayerId, target);
+        try
+        {
+            var count = await _filterService.CountTargetsByCombatPlayerIdAsync(combatPlayerId, target);
 
-        return Ok(count);
+            return Ok(count);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error get damage done count by target: {Message}", ex.Message);
+
+            return BadRequest();
+        }
     }
 
     [HttpPost]
@@ -89,6 +125,12 @@ public class DamageDoneController : ControllerBase
 
             return BadRequest();
         }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, ex.Message);
+
+            return BadRequest();
+        }
     }
 
     [HttpDelete("{id:int:min(1)}")]
@@ -101,6 +143,12 @@ public class DamageDoneController : ControllerBase
             return Ok(deletedId);
         }
         catch (ArgumentNullException ex)
+        {
+            _logger.LogError(ex, ex.Message);
+
+            return BadRequest();
+        }
+        catch (Exception ex)
         {
             _logger.LogError(ex, ex.Message);
 

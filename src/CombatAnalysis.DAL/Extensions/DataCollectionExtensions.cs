@@ -52,10 +52,13 @@ public static class DataCollectionExtensions
         services.AddScoped<IGeneralFilter<DamageDone>, GeneralFilterRepositroy<DamageDone>>();
         services.AddScoped<IPlayerInfo<DamageDoneGeneral>, SQLSPPlayerInfoRepository<DamageDoneGeneral>>();
         services.AddScoped<IPlayerInfoCount<HealDone>, SQLPlayerInfoCountRepository<HealDone>>();
+        services.AddScoped<IGeneralFilter<HealDone>, GeneralFilterRepositroy<HealDone>>();
         services.AddScoped<IPlayerInfo<HealDoneGeneral>, SQLSPPlayerInfoRepository<HealDoneGeneral>>();
         services.AddScoped<IPlayerInfoCount<DamageTaken>, SQLPlayerInfoCountRepository<DamageTaken>>();
+        services.AddScoped<IGeneralFilter<DamageTaken>, GeneralFilterRepositroy<DamageTaken>>();
         services.AddScoped<IPlayerInfo<DamageTakenGeneral>, SQLSPPlayerInfoRepository<DamageTakenGeneral>>();
         services.AddScoped<IPlayerInfoCount<ResourceRecovery>, SQLPlayerInfoCountRepository<ResourceRecovery>>();
+        services.AddScoped<IGeneralFilter<ResourceRecovery>, GeneralFilterRepositroy<ResourceRecovery>>();
         services.AddScoped<IPlayerInfo<ResourceRecoveryGeneral>, SQLSPPlayerInfoRepository<ResourceRecoveryGeneral>>();
         services.AddScoped<IPlayerInfo<PlayerDeath>, SQLSPPlayerInfoRepository<PlayerDeath>>();
 

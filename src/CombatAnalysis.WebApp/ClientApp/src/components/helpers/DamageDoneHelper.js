@@ -2,8 +2,8 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useEffect, useState } from 'react';
 import useTime from '../../hooks/useTime';
-import { useGetDamageDoneByPlayerIdQuery } from '../../store/api/combatParser/DamageDone.api';
-import DetailsFilter from './DetailsFilter';
+import { useGetDamageDoneCountTargetsByPlayerIdQuery, useGetDamageDoneTargetByPlayerIdQuery } from '../../store/api/combatParser/DamageDone.api';
+import DamageDoneDetailsFilter from './DamageDoneDetailsFilter';
 import PaginationHelper from './PaginationHelper';
 
 const damageType =
@@ -17,26 +17,17 @@ const damageType =
     Immune: 6,
 };
 
-const DamageDoneHelper = ({ combatPlayerId, pageSize, getCountAsync, t }) => {
+const DamageDoneHelper = ({ combatPlayerId, pageSize, t }) => {
     const { getTimeWithoutMs } = useTime();
 
     const [page, setPage] = useState(1);
-    const [count, setCount] = useState(1);
     const [damageDone, setDamageDone] = useState([]);
     const [selectedTarget, setSelectedTarget] = useState("All");
 
-    const { data, isLoading } = useGetDamageDoneByPlayerIdQuery({ combatPlayerId, page, pageSize });
+    const { data: count, isLoading: countIsLoading } = useGetDamageDoneCountTargetsByPlayerIdQuery({ combatPlayerId, target: selectedTarget === "All" ? "-1" : selectedTarget });
+    const { data, isLoading } = useGetDamageDoneTargetByPlayerIdQuery({ combatPlayerId, target: selectedTarget === "All" ? "-1" : selectedTarget, page, pageSize });
 
     const totalPages = Math.ceil(count / pageSize);
-
-    useEffect(() => {
-        const getCount = async () => {
-            const count = await getCountAsync();
-            setCount(count);
-        }
-
-        getCount();
-    }, []);
 
     useEffect(() => {
         if (data === undefined) {
@@ -45,6 +36,10 @@ const DamageDoneHelper = ({ combatPlayerId, pageSize, getCountAsync, t }) => {
 
         setDamageDone(data);
     }, [data]);
+
+    useEffect(() => {
+        setPage(1);
+    }, [selectedTarget]);
 
     const getIcon = (type) => {
         switch (type) {
@@ -122,20 +117,16 @@ const DamageDoneHelper = ({ combatPlayerId, pageSize, getCountAsync, t }) => {
         );
     }
 
-    if (isLoading) {
+    if (isLoading || countIsLoading) {
         return (<div>Loading...</div>);
     }
 
     return (
         <div>
-            <DetailsFilter
+            <DamageDoneDetailsFilter
                 combatPlayerId={combatPlayerId}
                 selectedTarget={selectedTarget}
                 setSelectedTarget={setSelectedTarget}
-                setCount={setCount}
-                setDamageDone={setDamageDone}
-                page={page}
-                pageSize={pageSize}
             />
             <ul className="player-data-details">
                 {tableTitle()}

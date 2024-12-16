@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using CombatAnalysis.BL.DTO;
 using CombatAnalysis.BL.Interfaces;
+using CombatAnalysis.BL.Interfaces.Filters;
 using CombatAnalysis.CombatParserAPI.Models;
 using Microsoft.AspNetCore.Mvc;
 
@@ -11,12 +12,14 @@ namespace CombatAnalysis.CombatParserAPI.Controllers;
 public class HealDoneController : ControllerBase
 {
     private readonly IPlayerInfoCountService<HealDoneDto> _service;
+    private readonly IGeneralFilterService<HealDoneDto> _filterService;
     private readonly IMapper _mapper;
     private readonly ILogger<HealDoneController> _logger;
 
-    public HealDoneController(IPlayerInfoCountService<HealDoneDto> service, IMapper mapper, ILogger<HealDoneController> logger)
+    public HealDoneController(IPlayerInfoCountService<HealDoneDto> service, IGeneralFilterService<HealDoneDto> filterService, IMapper mapper, ILogger<HealDoneController> logger)
     {
         _service = service;
+        _filterService = filterService;
         _mapper = mapper;
         _logger = logger;
     }
@@ -24,17 +27,87 @@ public class HealDoneController : ControllerBase
     [HttpGet("getByCombatPlayerId")]
     public async Task<IActionResult> GetByCombatPlayerId(int combatPlayerId, int page, int pageSize)
     {
-        var damageDones = await _service.GetByCombatPlayerIdAsync(combatPlayerId, page, pageSize);
+        try
+        {
+            var healDones = await _service.GetByCombatPlayerIdAsync(combatPlayerId, page, pageSize);
 
-        return Ok(damageDones);
+            return Ok(healDones);
+
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error get heal done by combat player id: {Message}", ex.Message);
+
+            return BadRequest();
+        }
+    }
+
+    [HttpGet("getUniqueTargets/{combatPlayerId}")]
+    public async Task<IActionResult> GetUniqueTargets(int combatPlayerId)
+    {
+        try
+        {
+            var uniqueTargets = await _filterService.GetTargetNamesByCombatPlayerIdAsync(combatPlayerId);
+
+            return Ok(uniqueTargets);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error get unique heal done targets: {Message}", ex.Message);
+
+            return BadRequest();
+        }
     }
 
     [HttpGet("count/{combatPlayerId}")]
     public async Task<IActionResult> Count(int combatPlayerId)
     {
-        var countByCombatPlayerId = await _service.CountByCombatPlayerIdAsync(combatPlayerId);
+        try
+        {
+            var count = await _service.CountByCombatPlayerIdAsync(combatPlayerId);
 
-        return Ok(countByCombatPlayerId);
+            return Ok(count);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error get heal done count by target: {Message}", ex.Message);
+
+            return BadRequest();
+        }
+    }
+
+    [HttpGet("getByTarget")]
+    public async Task<IActionResult> GetByTarget(int combatPlayerId, string target, int page, int pageSize)
+    {
+        try
+        {
+            var healDones = await _filterService.GetTargetsByCombatPlayerIdAsync(combatPlayerId, target, page, pageSize);
+
+            return Ok(healDones);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error find heal done by target: {Message}", ex.Message);
+
+            return BadRequest();
+        }
+    }
+
+    [HttpGet("countByTarget")]
+    public async Task<IActionResult> CountByTarget(int combatPlayerId, string target)
+    {
+        try
+        {
+            var count = await _filterService.CountTargetsByCombatPlayerIdAsync(combatPlayerId, target);
+
+            return Ok(count);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error get heal done count by target: {Message}", ex.Message);
+
+            return BadRequest();
+        }
     }
 
     [HttpPost]
@@ -53,6 +126,12 @@ public class HealDoneController : ControllerBase
 
             return BadRequest();
         }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, ex.Message);
+
+            return BadRequest();
+        }
     }
 
     [HttpDelete("{id:int:min(1)}")]
@@ -65,6 +144,12 @@ public class HealDoneController : ControllerBase
             return Ok(deletedId);
         }
         catch (ArgumentNullException ex)
+        {
+            _logger.LogError(ex, ex.Message);
+
+            return BadRequest();
+        }
+        catch (Exception ex)
         {
             _logger.LogError(ex, ex.Message);
 
