@@ -1,6 +1,8 @@
-﻿namespace CombatAnalysis.BL.DTO;
+﻿using CombatAnalysis.DAL.Interfaces.Entities;
 
-public class DamageTakenDto : CombatDataBase
+namespace CombatAnalysis.BL.DTO;
+
+public class DamageTakenDto : Interfaces.Entity.ICombatPlayerEntity, IGeneralFilterEntity
 {
     public int Id { get; set; }
 
@@ -29,4 +31,6 @@ public class DamageTakenDto : CombatDataBase
     public int Mitigated { get; set; }
 
     public int DamageTakenType { get; set; }
+
+    public int CombatPlayerId { get; set; }
 }

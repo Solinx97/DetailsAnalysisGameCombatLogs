@@ -208,7 +208,7 @@ internal class CombatDetailsManager
 
         int.TryParse(combatDataLine[^10], out var value);
 
-        var spellOrItem = combatDataLine[1].Equals(CombatLogKeyWords.SwingDamage) || combatDataLine[1].Equals(CombatLogKeyWords.SwingMissed)
+        var spell = combatDataLine[1].Equals(CombatLogKeyWords.SwingDamage) || combatDataLine[1].Equals(CombatLogKeyWords.SwingMissed)
             ? CombatLogKeyWords.MeleeDamage : combatDataLine[11].Trim('"');
 
         var isCrushing = string.Equals(combatDataLine[^1], CombatLogKeyWords.IsCrushing, StringComparison.OrdinalIgnoreCase);
@@ -266,7 +266,7 @@ internal class CombatDetailsManager
             Time = GetTimeFromStart(combatDataLine[0]),
             Creator = enemy.Trim('"'),
             Target = combatDataLine[7].Trim('"'),
-            Spell = spellOrItem,
+            Spell = spell,
             IsPeriodicDamage = isPeriodicDamage,
             Resisted = resist,
             Absorbed = absorb,
@@ -286,12 +286,12 @@ internal class CombatDetailsManager
             return (string.Empty, null);
         }
 
-        var spellOrItem = combatDataLine[1].Contains(CombatLogKeyWords.SpellEnergize) ? combatDataLine[11] : combatDataLine[3];
-
         var energyRecovery = new ResourceRecovery
         {
             Time = GetTimeFromStart(combatDataLine[0]),
-            Spell = spellOrItem.Trim('"')
+            Spell = combatDataLine[11].Trim('"'),
+            Creator = combatDataLine[3],
+            Target = combatDataLine[7]
         };
 
         if (int.TryParse(combatDataLine[^4], NumberStyles.Number, CultureInfo.InvariantCulture, out var amoutOfResourcesRecovery))

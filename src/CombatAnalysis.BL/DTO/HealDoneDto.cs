@@ -1,6 +1,8 @@
-﻿namespace CombatAnalysis.BL.DTO;
+﻿using CombatAnalysis.DAL.Interfaces.Entities;
 
-public class HealDoneDto : CombatDataBase
+namespace CombatAnalysis.BL.DTO;
+
+public class HealDoneDto : Interfaces.Entity.ICombatPlayerEntity, IGeneralFilterEntity
 {
     public int Id { get; set; }
 
@@ -19,4 +21,6 @@ public class HealDoneDto : CombatDataBase
     public bool IsCrit { get; set; }
 
     public bool IsAbsorbed { get; set; }
+
+    public int CombatPlayerId { get; set; }
 }

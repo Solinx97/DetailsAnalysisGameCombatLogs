@@ -1,6 +1,8 @@
-﻿namespace CombatAnalysis.CombatParser.Entities;
+﻿using CombatAnalysis.CombatParser.Interfaces.Entities;
 
-public class HealDoneGeneral : CombatDataBase
+namespace CombatAnalysis.CombatParser.Entities;
+
+public class HealDoneGeneral : ICombatPlayerEntity
 {
     public string Spell { get; set; }
 
@@ -17,4 +19,6 @@ public class HealDoneGeneral : CombatDataBase
     public int MaxValue { get; set; }
 
     public double AverageValue { get; set; }
+
+    public int CombatPlayerId { get; set; }
 }

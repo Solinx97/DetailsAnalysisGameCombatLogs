@@ -13,7 +13,7 @@ public interface IGenericRepository<TModel>
 
     Task<TModel> GetByIdAsync(int id);
 
-    IEnumerable<TModel> GetByParam(string paramName, object value);
+    Task<IEnumerable<TModel>> GetByParamAsync(string paramName, object value);
 
     Task<IEnumerable<TModel>> GetAllAsync();
 }

@@ -2,7 +2,7 @@
 
 namespace CombatAnalysis.DAL.Entities;
 
-public class DamageDone : ICombatPlayerEntity
+public class DamageDone : ICombatPlayerEntity, IGeneralFilterEntity
 {
     public int Id { get; set; }
 

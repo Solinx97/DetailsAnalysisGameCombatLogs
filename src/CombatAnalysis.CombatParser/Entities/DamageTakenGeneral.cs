@@ -1,6 +1,8 @@
-﻿namespace CombatAnalysis.CombatParser.Entities;
+﻿using CombatAnalysis.CombatParser.Interfaces.Entities;
 
-public class DamageTakenGeneral : CombatDataBase
+namespace CombatAnalysis.CombatParser.Entities;
+
+public class DamageTakenGeneral : ICombatPlayerEntity
 {
     public string Spell { get; set; }
 
@@ -21,4 +23,6 @@ public class DamageTakenGeneral : CombatDataBase
     public int MaxValue { get; set; }
 
     public double AverageValue { get; set; }
+
+    public int CombatPlayerId { get; set; }
 }

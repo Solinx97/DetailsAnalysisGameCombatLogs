@@ -1,6 +1,8 @@
-﻿namespace CombatAnalysis.BL.DTO;
+﻿using CombatAnalysis.BL.Interfaces.Entity;
 
-public class CombatPlayerPositionDto : CombatDataBase
+namespace CombatAnalysis.BL.DTO;
+
+public class CombatPlayerPositionDto : ICombatPlayerEntity
 {
     public int Id { get; set; }
 
@@ -11,4 +13,6 @@ public class CombatPlayerPositionDto : CombatDataBase
     public TimeSpan Time { get; set; }
 
     public int CombatId { get; set; }
+
+    public int CombatPlayerId { get; set; }
 }

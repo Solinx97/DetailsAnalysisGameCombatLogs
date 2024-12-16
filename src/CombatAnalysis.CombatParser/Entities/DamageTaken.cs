@@ -1,6 +1,8 @@
-﻿namespace CombatAnalysis.CombatParser.Entities;
+﻿using CombatAnalysis.CombatParser.Interfaces.Entities;
 
-public class DamageTaken : CombatDataBase
+namespace CombatAnalysis.CombatParser.Entities;
+
+public class DamageTaken : ICombatPlayerEntity
 {
     public string Spell { get; set; }
 
@@ -27,4 +29,6 @@ public class DamageTaken : CombatDataBase
     public int Mitigated { get; set; }
 
     public int DamageTakenType { get; set; }
+
+    public int CombatPlayerId { get; set; }
 }

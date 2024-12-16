@@ -2,6 +2,7 @@
 using CombatAnalysis.DAL.Interfaces;
 using CombatAnalysis.DAL.Interfaces.Entities;
 using Firebase.Database.Query;
+using Microsoft.EntityFrameworkCore;
 
 namespace CombatAnalysis.DAL.Repositories.Firebase;
 
@@ -69,17 +70,15 @@ internal class FirebaseRepository<TModel> : IGenericRepository<TModel>
         return result;
     }
 
-    public IEnumerable<TModel> GetByParam(string paramName, object value)
+    public async Task<IEnumerable<TModel>> GetByParamAsync(string paramName, object value)
     {
-        var data = _context.FirebaseClient
+        var data = await _context.FirebaseClient
               .Child(typeof(TModel).Name)
-              .OnceAsync<TModel>()
-              .GetAwaiter()
-              .GetResult();
+              .OnceAsync<TModel>();
 
-        var result = data.Select(x => x.Object)
-            .AsEnumerable()
-            .Where(x => x.GetType().GetProperty(paramName).GetValue(x).Equals(value));
+        var result = await Task.Run(() => data.Select(x => x.Object)
+                    .Where(x => EF.Property<object>(x, paramName).Equals(value))
+                    .ToList());
 
         return result;
     }

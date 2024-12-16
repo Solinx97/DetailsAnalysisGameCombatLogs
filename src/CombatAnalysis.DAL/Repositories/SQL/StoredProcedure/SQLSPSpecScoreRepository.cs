@@ -7,11 +7,11 @@ using System.Text;
 
 namespace CombatAnalysis.DAL.Repositories.SQL.StoredProcedure;
 
-internal class SQLSpecScoreRepository : ISpecScore
+internal class SQLSPSpecScoreRepository : ISpecScore
 {
     private readonly CombatParserSQLContext _context;
 
-    public SQLSpecScoreRepository(CombatParserSQLContext context)
+    public SQLSPSpecScoreRepository(CombatParserSQLContext context)
     {
         _context = context;
     }
@@ -81,21 +81,13 @@ internal class SQLSpecScoreRepository : ISpecScore
         return data;
     }
 
-    public IEnumerable<SpecializationScore> GetByParam(string paramName, object value)
+    public async Task<IEnumerable<SpecializationScore>> GetByParamAsync(string paramName, object value)
     {
-        var result = new List<SpecializationScore>();
-        var data = _context.Set<SpecializationScore>()
-                            .FromSqlRaw($"GetAll{typeof(SpecializationScore).Name}")
-                            .AsEnumerable();
-        foreach (var item in data)
-        {
-            if (item.GetType().GetProperty(paramName).GetValue(item).Equals(value))
-            {
-                result.Add(item);
-            }
-        }
+        var data = await _context.Set<SpecializationScore>()
+                    .Where(x => EF.Property<object>(x, paramName).Equals(value))
+                    .ToListAsync();
 
-        return result;
+        return data;
     }
 
     public async Task<int> UpdateAsync(SpecializationScore item)

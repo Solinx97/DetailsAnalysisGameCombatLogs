@@ -2,7 +2,7 @@
 
 namespace CombatAnalysis.DAL.Entities;
 
-public class HealDone : ICombatPlayerEntity
+public class HealDone : ICombatPlayerEntity, IGeneralFilterEntity
 {
     public int Id { get; set; }
 
@@ -10,13 +10,13 @@ public class HealDone : ICombatPlayerEntity
 
     public int Value { get; set; }
 
-    public int Overheal { get; set; }
-
     public TimeSpan Time { get; set; }
 
     public string Creator { get; set; }
 
     public string Target { get; set; }
+
+    public int Overheal { get; set; }
 
     public bool IsCrit { get; set; }
 

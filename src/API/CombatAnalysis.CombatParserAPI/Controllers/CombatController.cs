@@ -11,26 +11,23 @@ namespace CombatAnalysis.CombatParserAPI.Controllers;
 [ApiController]
 public class CombatController : ControllerBase
 {
-    private readonly IService<CombatDto> _service;
+    private readonly IService<CombatDto> _combatService;
     private readonly IService<CombatLogDto> _combatLogService;
     private readonly IService<CombatPlayerDto> _combatPlayerService;
-    private readonly IPlayerInfoService<PlayerDeathDto> _plaнerDeathService;
     private readonly IMapper _mapper;
     private readonly ILogger<CombatController> _logger;
     private readonly ICombatDataHelper _saveCombatDataHelper;
     private readonly ICombatTransactionService _combatTransactionService;
 
-    public CombatController(IService<CombatDto> service, IService<CombatLogDto> combatLogService, IMapper mapper, ILogger<CombatController> logger,
-        ICombatDataHelper saveCombatDataHelper, IService<CombatPlayerDto> combatPlayerService, IPlayerInfoService<PlayerDeathDto> plaнerDeathService,
-        ICombatTransactionService combatTransactionService)
+    public CombatController(IService<CombatDto> combatService, IService<CombatLogDto> combatLogService, IMapper mapper, ILogger<CombatController> logger,
+        ICombatDataHelper saveCombatDataHelper, IService<CombatPlayerDto> combatPlayerService, ICombatTransactionService combatTransactionService)
     {
-        _service = service;
+        _combatService = combatService;
         _combatLogService = combatLogService;
         _mapper = mapper;
         _logger = logger;
         _saveCombatDataHelper = saveCombatDataHelper;
         _combatPlayerService = combatPlayerService;
-        _plaнerDeathService = plaнerDeathService;
         _combatTransactionService = combatTransactionService;
     }
 
@@ -39,7 +36,7 @@ public class CombatController : ControllerBase
     {
         try
         {
-            var combat = await _service.GetByIdAsync(id);
+            var combat = await _combatService.GetByIdAsync(id);
 
             return Ok(combat);
         }
@@ -56,7 +53,7 @@ public class CombatController : ControllerBase
     {
         try
         {
-            var combat = await _service.GetAllAsync();
+            var combat = await _combatService.GetAllAsync();
 
             return Ok(combat);
         }
@@ -73,7 +70,7 @@ public class CombatController : ControllerBase
     {
         try
         {
-            var combats = await _service.GetByParamAsync(nameof(CombatModel.CombatLogId), combatLogId);
+            var combats = await _combatService.GetByParamAsync(nameof(CombatModel.CombatLogId), combatLogId);
 
             return Ok(combats);
         }
@@ -155,7 +152,7 @@ public class CombatController : ControllerBase
         try
         {
             var map = _mapper.Map<CombatDto>(model);
-            var rowsAffected = await _service.UpdateAsync(map);
+            var rowsAffected = await _combatService.UpdateAsync(map);
 
             return Ok(rowsAffected);
         }
@@ -172,7 +169,7 @@ public class CombatController : ControllerBase
     {
         try
         {
-            var deletedId = await _service.DeleteAsync(id);
+            var deletedId = await _combatService.DeleteAsync(id);
 
             return Ok(deletedId);
         }
@@ -199,7 +196,7 @@ public class CombatController : ControllerBase
     private async Task<CombatDto> CreateCombatAsync(CombatModel model)
     {
         var map = _mapper.Map<CombatDto>(model);
-        var combat = await _service.CreateAsync(map);
+        var combat = await _combatService.CreateAsync(map);
 
         return combat;
     }
@@ -224,7 +221,7 @@ public class CombatController : ControllerBase
     private async Task UpdateCombatAsync(CombatDto combat)
     {
         combat.IsReady = true;
-        var rowsAffected = await _service.UpdateAsync(combat);
+        var rowsAffected = await _combatService.UpdateAsync(combat);
         if (rowsAffected == 0)
         {
             throw new InvalidOperationException("Failed to update combat");

@@ -1,6 +1,8 @@
-﻿namespace CombatAnalysis.CombatParser.Entities;
+﻿using CombatAnalysis.CombatParser.Interfaces.Entities;
 
-public class PlayerDeath : CombatDataBase
+namespace CombatAnalysis.CombatParser.Entities;
+
+public class PlayerDeath : ICombatPlayerEntity
 {
     public string Username { get; set; }
 
@@ -9,4 +11,6 @@ public class PlayerDeath : CombatDataBase
     public int LastHitValue { get; set; }
 
     public TimeSpan Time { get; set; }
+
+    public int CombatPlayerId { get; set; }
 }

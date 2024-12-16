@@ -68,22 +68,13 @@ internal class SQLSPRepository<TModel> : IGenericRepository<TModel>
         return data;
     }
 
-    public IEnumerable<TModel> GetByParam(string paramName, object value)
+    public async Task<IEnumerable<TModel>> GetByParamAsync(string paramName, object value)
     {
-        var result = new List<TModel>();
-        var data = _context.Set<TModel>()
-                            .FromSqlRaw($"GetAll{typeof(TModel).Name}")
-                            .AsEnumerable();
+        var data = await _context.Set<TModel>()
+                    .Where(x => EF.Property<object>(x, paramName).Equals(value))
+                    .ToListAsync();
 
-        foreach (var item in data)
-        {
-            if (item.GetType().GetProperty(paramName).GetValue(item).Equals(value))
-            {
-                result.Add(item);
-            }
-        }
-
-        return result;
+        return data;
     }
 
     public async Task<int> UpdateAsync(TModel item)
@@ -91,7 +82,7 @@ internal class SQLSPRepository<TModel> : IGenericRepository<TModel>
         var properties = item.GetType().GetProperties();
         var procedureParams = new List<SqlParameter>();
         var procedureParamNames = new StringBuilder();
-        for (int i = 0; i < properties.Length; i++)
+        for (var i = 0; i < properties.Length; i++)
         {
             if (properties[i].CanWrite)
             {
@@ -99,6 +90,7 @@ internal class SQLSPRepository<TModel> : IGenericRepository<TModel>
                 procedureParamNames.Append($"@{properties[i].Name},");
             }
         }
+
         procedureParamNames.Remove(procedureParamNames.Length - 1, 1);
 
         var rowsAffected = await _context.Database

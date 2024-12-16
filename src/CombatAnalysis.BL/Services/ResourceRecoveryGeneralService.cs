@@ -73,7 +73,7 @@ internal class ResourceRecoveryGeneralService : IPlayerInfoService<ResourceRecov
 
     public async Task<IEnumerable<ResourceRecoveryGeneralDto>> GetByParamAsync(string paramName, object value)
     {
-        var result = await Task.Run(() => _repository.GetByParam(paramName, value));
+        var result = await _repository.GetByParamAsync(paramName, value);
         var resultMap = _mapper.Map<IEnumerable<ResourceRecoveryGeneralDto>>(result);
 
         return resultMap;

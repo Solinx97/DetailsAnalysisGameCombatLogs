@@ -15,13 +15,15 @@ const damageType =
     Miss: 4,
     Resist: 5,
     Immune: 6,
-}
+};
 
 const DamageDoneHelper = ({ combatPlayerId, pageSize, getCountAsync, t }) => {
     const { getTimeWithoutMs } = useTime();
 
     const [page, setPage] = useState(1);
     const [count, setCount] = useState(1);
+    const [damageDone, setDamageDone] = useState([]);
+    const [selectedTarget, setSelectedTarget] = useState("All");
 
     const { data, isLoading } = useGetDamageDoneByPlayerIdQuery({ combatPlayerId, page, pageSize });
 
@@ -35,6 +37,14 @@ const DamageDoneHelper = ({ combatPlayerId, pageSize, getCountAsync, t }) => {
 
         getCount();
     }, []);
+
+    useEffect(() => {
+        if (data === undefined) {
+            return;
+        }
+
+        setDamageDone(data);
+    }, [data]);
 
     const getIcon = (type) => {
         switch (type) {
@@ -118,10 +128,18 @@ const DamageDoneHelper = ({ combatPlayerId, pageSize, getCountAsync, t }) => {
 
     return (
         <div>
-            <DetailsFilter />
+            <DetailsFilter
+                combatPlayerId={combatPlayerId}
+                selectedTarget={selectedTarget}
+                setSelectedTarget={setSelectedTarget}
+                setCount={setCount}
+                setDamageDone={setDamageDone}
+                page={page}
+                pageSize={pageSize}
+            />
             <ul className="player-data-details">
                 {tableTitle()}
-                {data?.map((item) => (
+                {damageDone?.map((item) => (
                     <li className="player-data-details__item" key={item.id}>
                         <ul>
                             <li>

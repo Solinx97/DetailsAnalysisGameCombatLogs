@@ -1,11 +1,12 @@
 ﻿using CombatAnalysis.DAL.Data;
 using CombatAnalysis.DAL.Interfaces;
 using CombatAnalysis.DAL.Interfaces.Entities;
+using CombatAnalysis.DAL.Repositories.SQL.StoredProcedure;
 using Microsoft.EntityFrameworkCore;
 
-namespace CombatAnalysis.DAL.Repositories.SQL.StoredProcedure;
+namespace CombatAnalysis.DAL.Repositories.SQL;
 
-internal class SQLPlayerInfoCountRepository<TModel> : SQLPlayerInfoRepository<TModel>, IPlayerInfoCount<TModel>
+internal class SQLPlayerInfoCountRepository<TModel> : SQLSPPlayerInfoRepository<TModel>, IPlayerInfoCount<TModel>
     where TModel : class, ICombatPlayerEntity
 {
     private readonly CombatParserSQLContext _context;
@@ -18,7 +19,7 @@ internal class SQLPlayerInfoCountRepository<TModel> : SQLPlayerInfoRepository<TM
     public async Task<int> CountByCombatPlayerIdAsync(int combatPlayerId)
     {
         var count = await _context.Set<TModel>()
-                     .CountAsync(cl => cl.CombatPlayerId == combatPlayerId);
+                     .CountAsync(x => x.CombatPlayerId == combatPlayerId);
 
         return count;
     }

@@ -2,7 +2,7 @@
 
 namespace CombatAnalysis.DAL.Entities;
 
-public class DamageTaken : ICombatPlayerEntity
+public class DamageTaken : ICombatPlayerEntity, IGeneralFilterEntity
 {
     public int Id { get; set; }
 
@@ -10,13 +10,15 @@ public class DamageTaken : ICombatPlayerEntity
 
     public int Value { get; set; }
 
-    public int ActualValue { get; set; }
-
     public TimeSpan Time { get; set; }
 
     public string Creator { get; set; }
 
     public string Target { get; set; }
+
+    public int DamageTakenType { get; set; }
+
+    public int ActualValue { get; set; }
 
     public bool IsPeriodicDamage { get; set; }
 
@@ -29,8 +31,6 @@ public class DamageTaken : ICombatPlayerEntity
     public int RealDamage { get; set; }
 
     public int Mitigated { get; set; }
-
-    public int DamageTakenType { get; set; }
 
     public int CombatPlayerId { get; set; }
 }

@@ -1,6 +1,8 @@
-﻿namespace CombatAnalysis.CombatParser.Entities;
+﻿using CombatAnalysis.CombatParser.Interfaces.Entities;
 
-public class ResourceRecoveryGeneral : CombatDataBase
+namespace CombatAnalysis.CombatParser.Entities;
+
+public class ResourceRecoveryGeneral : ICombatPlayerEntity
 {
     public string Spell { get; set; }
 
@@ -15,4 +17,6 @@ public class ResourceRecoveryGeneral : CombatDataBase
     public int MaxValue { get; set; }
 
     public double AverageValue { get; set; }
+
+    public int CombatPlayerId { get; set; }
 }

@@ -52,7 +52,7 @@ internal class CombatAuraService : IService<CombatAuraDto>
 
     public async Task<IEnumerable<CombatAuraDto>> GetByParamAsync(string paramName, object value)
     {
-        var result = await Task.Run(() => _repository.GetByParam(paramName, value));
+        var result = await _repository.GetByParamAsync(paramName, value);
         var resultMap = _mapper.Map<IEnumerable<CombatAuraDto>>(result);
 
         return resultMap;

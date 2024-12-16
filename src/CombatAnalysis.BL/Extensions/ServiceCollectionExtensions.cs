@@ -1,6 +1,9 @@
 ﻿using CombatAnalysis.BL.DTO;
 using CombatAnalysis.BL.Interfaces;
+using CombatAnalysis.BL.Interfaces.Filters;
 using CombatAnalysis.BL.Services;
+using CombatAnalysis.BL.Services.Filters;
+using CombatAnalysis.DAL.Entities;
 using CombatAnalysis.DAL.Extensions;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -24,6 +27,7 @@ public static class ServiceCollectionExtensions
 
         services.AddScoped<IService<CombatPlayerPositionDto>, CombatPlayerPositionService>();
         services.AddScoped<IPlayerInfoService<DamageDoneDto>, DamageDoneService>();
+        services.AddScoped<IGeneralFilterService<DamageDoneDto>, GeneralFilterService<DamageDoneDto, DamageDone>>();
         services.AddScoped<IPlayerInfoService<DamageDoneGeneralDto>, DamageDoneGeneralService>();
         services.AddScoped<IPlayerInfoService<HealDoneDto>, HealDoneService>();
         services.AddScoped<IPlayerInfoService<HealDoneGeneralDto>, HealDoneGeneralService>();

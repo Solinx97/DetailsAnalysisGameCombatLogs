@@ -1,6 +1,8 @@
-﻿namespace CombatAnalysis.CombatParser.Entities;
+﻿using CombatAnalysis.CombatParser.Interfaces.Entities;
 
-public class DamageDoneGeneral : CombatDataBase
+namespace CombatAnalysis.CombatParser.Entities;
+
+public class DamageDoneGeneral : ICombatPlayerEntity
 {
     public int Value { get; set; }
 
@@ -21,4 +23,6 @@ public class DamageDoneGeneral : CombatDataBase
     public double AverageValue { get; set; }
 
     public bool IsPet { get; set; }
+
+    public int CombatPlayerId { get; set; }
 }

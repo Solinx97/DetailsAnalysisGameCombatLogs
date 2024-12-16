@@ -8,7 +8,11 @@ public class ResourceRecoveryModel
 
     public int Value { get; set; }
 
-    public string Time { get; set; }
+    public TimeSpan Time { get; set; }
+
+    public string Creator { get; set; }
+
+    public string Target { get; set; }
 
     public int CombatPlayerId { get; set; }
 }

@@ -46,5 +46,11 @@ public class CombatLogController : ControllerBase
 
             return BadRequest(ex.Message);
         }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, $"Error get all Combats Logs. Error: {ex.Message}");
+
+            return BadRequest(ex.Message);
+        }
     }
 }

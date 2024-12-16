@@ -1,6 +1,8 @@
-﻿namespace CombatAnalysis.CombatParser.Entities;
+﻿using CombatAnalysis.CombatParser.Interfaces.Entities;
 
-public class HealDone : CombatDataBase
+namespace CombatAnalysis.CombatParser.Entities;
+
+public class HealDone : ICombatPlayerEntity
 {
     public string Spell { get; set; }
 
@@ -17,4 +19,6 @@ public class HealDone : CombatDataBase
     public bool IsCrit { get; set; }
 
     public bool IsAbsorbed { get; set; }
+
+    public int CombatPlayerId { get; set; }
 }

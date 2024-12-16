@@ -73,7 +73,7 @@ internal class HealDoneService : IPlayerInfoCountService<HealDoneDto>
 
     public async Task<IEnumerable<HealDoneDto>> GetByParamAsync(string paramName, object value)
     {
-        var result = await Task.Run(() => _repository.GetByParam(paramName, value));
+        var result = await _repository.GetByParamAsync(paramName, value);
         var resultMap = _mapper.Map<IEnumerable<HealDoneDto>>(result);
 
         return resultMap;

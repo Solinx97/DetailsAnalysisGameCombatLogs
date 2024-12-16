@@ -15,8 +15,29 @@ export const DamageDoneApi = CombatParserApi.injectEndpoints({
                     ? [...result.map(({ id }) => ({ type: 'DamageDone', id })), 'DamageDone']
                     : ['DamageDone'],
         }),
+        getDamageDoneTargetByPlayerId: builder.query({
+            query: ({ combatPlayerId, target, page, pageSize }) => ({
+                url: `/DamageDone/getByTarget?combatPlayerId=${combatPlayerId}&target=${target}&page=${page}&pageSize=${pageSize}`,
+            }),
+            providesTags: result =>
+                result
+                    ? [...result.map(({ id }) => ({ type: 'DamageDone', id })), 'DamageDone']
+                    : ['DamageDone'],
+        }),
+        getUniqueTargets: builder.query({
+            query: (combatPlayerId) => ({
+                url: `/DamageDone/getUniqueTargets/${combatPlayerId}`,
+            }),
+            providesTags: result =>
+                result
+                    ? [...result.map(({ id }) => ({ type: 'DamageDone', id })), 'DamageDone']
+                    : ['DamageDone'],
+        }),
         getDamageDoneCountByPlayerId: builder.query({
-            query: (playerId) => `/DamageDone/count/${playerId}`,
+            query: (combatPlayerId) => `/DamageDone/count/${combatPlayerId}`,
+        }),
+        getDamageDoneCountTargetsByPlayerId: builder.query({
+            query: ({ combatPlayerId, target }) => `/DamageDone/countByTarget?combatPlayerId=${combatPlayerId}&target=${target}`,
         }),
         getDamageDoneGeneralyByPlayerId: builder.query({
             query: (combatPlayerId) => `/DamageDoneGeneral/findByCombatPlayerId/${combatPlayerId}`,
@@ -30,7 +51,10 @@ export const DamageDoneApi = CombatParserApi.injectEndpoints({
 
 export const {
     useGetDamageDoneByPlayerIdQuery,
+    useGetDamageDoneTargetByPlayerIdQuery,
+    useGetUniqueTargetsQuery,
     useLazyGetDamageDoneCountByPlayerIdQuery,
+    useGetDamageDoneCountTargetsByPlayerIdQuery,
     useGetDamageDoneGeneralyByPlayerIdQuery,
     useLazyGetDamageDoneGeneralyByPlayerIdQuery,
 } = DamageDoneApi;

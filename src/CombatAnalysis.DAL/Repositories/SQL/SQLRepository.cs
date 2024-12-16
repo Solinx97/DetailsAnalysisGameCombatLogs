@@ -47,10 +47,11 @@ internal class SQLRepository<TModel> : IGenericRepository<TModel>
         return entity;
     }
 
-    public IEnumerable<TModel> GetByParam(string paramName, object value)
+    public async Task<IEnumerable<TModel>> GetByParamAsync(string paramName, object value)
     {
-        var collection = _context.Set<TModel>().AsNoTracking().AsEnumerable();
-        var data = collection.Where(x => x.GetType().GetProperty(paramName).GetValue(x).Equals(value));
+        var data = await _context.Set<TModel>()
+                    .Where(x => EF.Property<object>(x, paramName).Equals(value))
+                    .ToListAsync();
 
         return data;
     }

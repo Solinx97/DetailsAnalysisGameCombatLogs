@@ -4,6 +4,7 @@ using CombatAnalysis.BL.Interfaces;
 using CombatAnalysis.CombatParser.Details;
 using CombatAnalysis.CombatParser.Entities;
 using CombatAnalysis.CombatParser.Extensions;
+using CombatAnalysis.CombatParser.Interfaces.Entities;
 using CombatAnalysis.CombatParserAPI.Interfaces;
 using CombatAnalysis.CombatParserAPI.Models;
 using System.Text;
@@ -133,8 +134,8 @@ public class CombatDataHelper : ICombatDataHelper
     }
 
     private async Task UploadPlayerInfoData<TModel, TModelMap>(List<TModel> dataforUpload, int combatPlayerId)
-        where TModel : CombatParser.Entities.CombatDataBase
-        where TModelMap : BL.DTO.CombatDataBase
+        where TModel :class,  ICombatPlayerEntity
+        where TModelMap : class, BL.Interfaces.Entity.ICombatPlayerEntity
     {
         using var scope = _serviceScopeFactory.CreateScope();
         var scopedService = scope.ServiceProvider.GetRequiredService<IPlayerInfoService<TModelMap>>();

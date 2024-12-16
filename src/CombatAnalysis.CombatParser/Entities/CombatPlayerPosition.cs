@@ -1,6 +1,8 @@
-﻿namespace CombatAnalysis.CombatParser.Entities;
+﻿using CombatAnalysis.CombatParser.Interfaces.Entities;
 
-public class CombatPlayerPosition : CombatDataBase
+namespace CombatAnalysis.CombatParser.Entities;
+
+public class CombatPlayerPosition : ICombatPlayerEntity
 {
     public double PositionX { get; set; }
 
@@ -9,4 +11,6 @@ public class CombatPlayerPosition : CombatDataBase
     public TimeSpan Time { get; set; }
 
     public int CombatId { get; set; }
+
+    public int CombatPlayerId { get; set; }
 }

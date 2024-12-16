@@ -1,6 +1,8 @@
-﻿namespace CombatAnalysis.BL.DTO;
+﻿using CombatAnalysis.BL.Interfaces.Entity;
 
-public class PlayerParseInfoDto : CombatDataBase
+namespace CombatAnalysis.BL.DTO;
+
+public class PlayerParseInfoDto : ICombatPlayerEntity
 {
     public int Id { get; set; }
 
@@ -15,4 +17,6 @@ public class PlayerParseInfoDto : CombatDataBase
     public int DamageEfficiency { get; set; }
 
     public int HealEfficiency { get; set; }
+
+    public int CombatPlayerId { get; set; }
 }

@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using CombatAnalysis.BL.DTO;
 using CombatAnalysis.BL.Interfaces;
+using CombatAnalysis.BL.Interfaces.Filters;
 using CombatAnalysis.CombatParserAPI.Models;
 using Microsoft.AspNetCore.Mvc;
 
@@ -11,12 +12,14 @@ namespace CombatAnalysis.CombatParserAPI.Controllers;
 public class DamageDoneController : ControllerBase
 {
     private readonly IPlayerInfoCountService<DamageDoneDto> _service;
+    private readonly IGeneralFilterService<DamageDoneDto> _filterService;
     private readonly IMapper _mapper;
     private readonly ILogger<DamageDoneController> _logger;
 
-    public DamageDoneController(IPlayerInfoCountService<DamageDoneDto> service, IMapper mapper, ILogger<DamageDoneController> logger)
+    public DamageDoneController(IPlayerInfoCountService<DamageDoneDto> service, IGeneralFilterService<DamageDoneDto> filterService, IMapper mapper, ILogger<DamageDoneController> logger)
     {
         _service = service;
+        _filterService = filterService;
         _mapper = mapper;
         _logger = logger;
     }
@@ -29,12 +32,45 @@ public class DamageDoneController : ControllerBase
         return Ok(damageDones);
     }
 
+    [HttpGet("getUniqueTargets/{combatPlayerId}")]
+    public async Task<IActionResult> GetUniqueTargets(int combatPlayerId)
+    {
+        var uniqueTargets = await _filterService.GetTargetNamesByCombatPlayerIdAsync(combatPlayerId);
+
+        return Ok(uniqueTargets);
+    }
+
     [HttpGet("count/{combatPlayerId}")]
     public async Task<IActionResult> Count(int combatPlayerId)
     {
-        var countByCombatPlayerId = await _service.CountByCombatPlayerIdAsync(combatPlayerId);
+        var count = await _service.CountByCombatPlayerIdAsync(combatPlayerId);
 
-        return Ok(countByCombatPlayerId);
+        return Ok(count);
+    }
+
+    [HttpGet("getByTarget")]
+    public async Task<IActionResult> GetByTarget(int combatPlayerId, string target, int page, int pageSize)
+    {
+        try
+        {
+            var damageDones = await _filterService.GetTargetsByCombatPlayerIdAsync(combatPlayerId, target, page, pageSize);
+
+            return Ok(damageDones);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error find Combat byt combat log Id: {Message}", ex.Message);
+
+            return BadRequest();
+        }
+    }
+
+    [HttpGet("countByTarget")]
+    public async Task<IActionResult> CountByTarget(int combatPlayerId, string target)
+    {
+        var count = await _filterService.CountTargetsByCombatPlayerIdAsync(combatPlayerId, target);
+
+        return Ok(count);
     }
 
     [HttpPost]

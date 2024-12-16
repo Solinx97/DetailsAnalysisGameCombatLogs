@@ -1,6 +1,8 @@
-﻿namespace CombatAnalysis.BL.DTO;
+﻿using CombatAnalysis.BL.Interfaces.Entity;
 
-public class HealDoneGeneralDto : CombatDataBase
+namespace CombatAnalysis.BL.DTO;
+
+public class HealDoneGeneralDto : ICombatPlayerEntity
 {
     public int Id { get; set; }
 
@@ -19,4 +21,6 @@ public class HealDoneGeneralDto : CombatDataBase
     public int MaxValue { get; set; }
 
     public double AverageValue { get; set; }
+
+    public int CombatPlayerId { get; set; }
 }

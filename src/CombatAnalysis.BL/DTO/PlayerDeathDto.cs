@@ -1,6 +1,6 @@
-﻿namespace CombatAnalysis.BL.DTO;
+﻿using CombatAnalysis.BL.Interfaces.Entity;
 
-public class PlayerDeathDto : CombatDataBase
+public class PlayerDeathDto : ICombatPlayerEntity
 {
     public int Id { get; set; }
 
@@ -11,4 +11,6 @@ public class PlayerDeathDto : CombatDataBase
     public int LastHitValue { get; set; }
 
     public TimeSpan Time { get; set; }
+
+    public int CombatPlayerId { get; set; }
 }

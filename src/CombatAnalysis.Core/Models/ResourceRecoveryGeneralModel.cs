@@ -8,7 +8,7 @@ public class ResourceRecoveryGeneralModel
 
     public double ResourcePerSecond { get; set; }
 
-    public string SpellOrItem { get; set; }
+    public string Spell { get; set; }
 
     public int CastNumber { get; set; }
 

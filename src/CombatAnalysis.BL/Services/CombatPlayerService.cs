@@ -52,7 +52,7 @@ internal class CombatPlayerService : IService<CombatPlayerDto>
 
     public async Task<IEnumerable<CombatPlayerDto>> GetByParamAsync(string paramName, object value)
     {
-        var result = await Task.Run(() => _repository.GetByParam(paramName, value));
+        var result = await _repository.GetByParamAsync(paramName, value);
         var resultMap = _mapper.Map<IEnumerable<CombatPlayerDto>>(result);
 
         return resultMap;

@@ -1,4 +1,4 @@
-﻿namespace CombatAnalysis.BL.Interfaces;
+﻿namespace CombatAnalysis.BL.Interfaces.Entity;
 
 public interface ICombatEntity
 {

@@ -3,8 +3,10 @@ using CombatAnalysis.DAL.Data;
 using CombatAnalysis.DAL.Entities;
 using CombatAnalysis.DAL.Enums;
 using CombatAnalysis.DAL.Interfaces;
+using CombatAnalysis.DAL.Interfaces.Filters;
 using CombatAnalysis.DAL.Repositories.Firebase;
 using CombatAnalysis.DAL.Repositories.SQL;
+using CombatAnalysis.DAL.Repositories.SQL.Filters;
 using CombatAnalysis.DAL.Repositories.SQL.StoredProcedure;
 using CombatAnalysis.DAL.Services;
 using Microsoft.EntityFrameworkCore;
@@ -45,18 +47,19 @@ public static class DataCollectionExtensions
 
         services.AddScoped<IContextService, ContextService>();
 
-        services.AddScoped<IPlayerInfo<Combat>, SQLPlayerInfoRepository<Combat>>();
+        services.AddScoped<IPlayerInfo<Combat>, SQLSPPlayerInfoRepository<Combat>>();
         services.AddScoped<IPlayerInfoCount<DamageDone>, SQLPlayerInfoCountRepository<DamageDone>>();
-        services.AddScoped<IPlayerInfo<DamageDoneGeneral>, SQLPlayerInfoRepository<DamageDoneGeneral>>();
+        services.AddScoped<IGeneralFilter<DamageDone>, GeneralFilterRepositroy<DamageDone>>();
+        services.AddScoped<IPlayerInfo<DamageDoneGeneral>, SQLSPPlayerInfoRepository<DamageDoneGeneral>>();
         services.AddScoped<IPlayerInfoCount<HealDone>, SQLPlayerInfoCountRepository<HealDone>>();
-        services.AddScoped<IPlayerInfo<HealDoneGeneral>, SQLPlayerInfoRepository<HealDoneGeneral>>();
+        services.AddScoped<IPlayerInfo<HealDoneGeneral>, SQLSPPlayerInfoRepository<HealDoneGeneral>>();
         services.AddScoped<IPlayerInfoCount<DamageTaken>, SQLPlayerInfoCountRepository<DamageTaken>>();
-        services.AddScoped<IPlayerInfo<DamageTakenGeneral>, SQLPlayerInfoRepository<DamageTakenGeneral>>();
+        services.AddScoped<IPlayerInfo<DamageTakenGeneral>, SQLSPPlayerInfoRepository<DamageTakenGeneral>>();
         services.AddScoped<IPlayerInfoCount<ResourceRecovery>, SQLPlayerInfoCountRepository<ResourceRecovery>>();
-        services.AddScoped<IPlayerInfo<ResourceRecoveryGeneral>, SQLPlayerInfoRepository<ResourceRecoveryGeneral>>();
-        services.AddScoped<IPlayerInfo<PlayerDeath>, SQLPlayerInfoRepository<PlayerDeath>>();
+        services.AddScoped<IPlayerInfo<ResourceRecoveryGeneral>, SQLSPPlayerInfoRepository<ResourceRecoveryGeneral>>();
+        services.AddScoped<IPlayerInfo<PlayerDeath>, SQLSPPlayerInfoRepository<PlayerDeath>>();
 
-        services.AddScoped<ISpecScore, SQLSpecScoreRepository>();
+        services.AddScoped<ISpecScore, SQLSPSpecScoreRepository>();
 
         var dataProcessingType = configuration.GetSection("Database:DataProcessingType").Value ?? string.Empty;
         switch (dataProcessingType)

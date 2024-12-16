@@ -1,6 +1,8 @@
-﻿namespace CombatAnalysis.BL.DTO;
+﻿using CombatAnalysis.DAL.Interfaces.Entities;
 
-public class ResourceRecoveryDto : CombatDataBase
+namespace CombatAnalysis.BL.DTO;
+
+public class ResourceRecoveryDto : Interfaces.Entity.ICombatPlayerEntity, IGeneralFilterEntity
 {
     public int Id { get; set; }
 
@@ -8,5 +10,11 @@ public class ResourceRecoveryDto : CombatDataBase
 
     public int Value { get; set; }
 
-    public string Time { get; set; }
+    public TimeSpan Time { get; set; }
+
+    public string Creator { get; set; }
+
+    public string Target { get; set; }
+
+    public int CombatPlayerId { get; set; }
 }

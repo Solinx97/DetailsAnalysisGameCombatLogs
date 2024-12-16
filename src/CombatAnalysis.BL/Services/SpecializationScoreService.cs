@@ -60,7 +60,7 @@ internal class SpecializationScoreService : ISpecScoreService
 
     public async Task<IEnumerable<SpecializationScoreDto>> GetByParamAsync(string paramName, object value)
     {
-        var result = await Task.Run(() => _repository.GetByParam(paramName, value));
+        var result = await _repository.GetByParamAsync(paramName, value);
         var resultMap = _mapper.Map<IEnumerable<SpecializationScoreDto>>(result);
 
         return resultMap;

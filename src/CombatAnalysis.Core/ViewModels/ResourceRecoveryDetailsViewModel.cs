@@ -34,8 +34,8 @@ public class ResourceRecoveryDetailsViewModel : DetailsGenericTemplate<ResourceR
 
     protected override void Filter()
     {
-        DetailsInformations = _resourceRecoveryInformationsWithoutFilter.Any(x => x.SpellOrItem == SelectedSource)
-            ? new ObservableCollection<ResourceRecoveryModel>(_resourceRecoveryInformationsWithoutFilter.Where(x => x.SpellOrItem == SelectedSource))
+        DetailsInformations = _resourceRecoveryInformationsWithoutFilter.Any(x => x.Spell == SelectedSource)
+            ? new ObservableCollection<ResourceRecoveryModel>(_resourceRecoveryInformationsWithoutFilter.Where(x => x.Spell == SelectedSource))
             : _resourceRecoveryInformationsWithoutFilter;
     }
 
