@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useEffect, useState } from "react";
 import CombatAuraTargets from './CombatAuraTargets';
 
-const CombatAuraItem = ({ t, selectedCreatorAuras }) => {
+const CombatAuraItem = ({ selectedCreatorAuras, t }) => {
     const [informationSelectedCreatorAuras, setInformationSelectedCreatorAuras] = useState(new Map());
     const [selectedAura, setSelectedAura] = useState("");
     const [showTargets, setShowTargets] = useState(false);

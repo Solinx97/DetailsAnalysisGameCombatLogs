@@ -7,6 +7,7 @@ using CombatAnalysis.Core.Models;
 using CombatAnalysis.Core.ViewModels.ViewModelTemplates;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
+using MvvmCross.Commands;
 using System.Collections.ObjectModel;
 
 namespace CombatAnalysis.Core.ViewModels;
@@ -171,15 +172,25 @@ public class DamageDoneDetailsViewModel : DetailsGenericTemplate<DamageDoneModel
             : _damageDoneInformationsWithoutFilter;
     }
 
-    protected override async Task LoadDetailsAsync(int combatPlayerId)
+    protected override async Task LoadCountAsync()
     {
-        var details = await _combatParserAPIService.LoadCombatDetailsByCombatPlayerId<DamageDoneModel>("DamageDone/FindByCombatPlayerId", combatPlayerId);
+        var count = await _combatParserAPIService.LoadCountAsync($"DamageDone/count/{SelectedPlayerId}");
+        Count = count;
+
+        var pages = (double)count / (double)_pageSize;
+        var maxPages = (int)Math.Ceiling(pages);
+        MaxPages = maxPages;
+    }
+
+    protected override async Task LoadDetailsAsync(int page, int pageSize)
+    {
+        var details = await _combatParserAPIService.LoadCombatDetailsAsync<DamageDoneModel>($"DamageDone/getByCombatPlayerId?combatPlayerId={SelectedPlayerId}&page={page}&pageSize={pageSize}");
         DetailsInformations = new ObservableCollection<DamageDoneModel>(details.ToList());
     }
 
-    protected override async Task LoadGenericDetailsAsync(int combatPlayerId)
+    protected override async Task LoadGenericDetailsAsync()
     {
-        var generalDetails = await _combatParserAPIService.LoadCombatDetailsByCombatPlayerId<DamageDoneGeneralModel>("DamageDoneGeneral/FindByCombatPlayerId", combatPlayerId);
+        var generalDetails = await _combatParserAPIService.LoadCombatDetailsAsync<DamageDoneGeneralModel>($"DamageDoneGeneral/findByCombatPlayerId/{SelectedPlayerId}");
         GeneralInformations = new ObservableCollection<DamageDoneGeneralModel>(generalDetails.ToList());
     }
 

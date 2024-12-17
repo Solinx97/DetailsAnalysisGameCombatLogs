@@ -17,5 +17,16 @@
   "NotReady": "Not ready",
   "Win": "Win",
   "Lose": "Lose",
-  "NeedWait": "You have to wait until the fight is ready to inspection"
+  "NeedWait": "You have to wait until the fight is ready to inspection",
+  "All": "All",
+  "Filters": "Filters",
+  "Include": "Include",
+  "Exclude": "Exclude",
+  "Creator": "Creator",
+  "Times": "Times",
+  "Apply": "Apply",
+  "When": "When",
+  "FiltersReset": "Filters reset",
+  "TimesReset": "Times reset",
+  "SelectCombat": "Select combat"
 }

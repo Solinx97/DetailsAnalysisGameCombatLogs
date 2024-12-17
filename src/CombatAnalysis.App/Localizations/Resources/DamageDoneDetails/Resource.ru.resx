@@ -138,8 +138,14 @@
   <data name="Dodge" xml:space="preserve">
     <value>Уклонение</value>
   </data>
+  <data name="First" xml:space="preserve">
+    <value>Первая</value>
+  </data>
   <data name="Immune" xml:space="preserve">
     <value>Иммун</value>
+  </data>
+  <data name="Last" xml:space="preserve">
+    <value>Последняя</value>
   </data>
   <data name="MaxValue" xml:space="preserve">
     <value>Макс. значение</value>
@@ -153,6 +159,9 @@
   <data name="MoreDetails" xml:space="preserve">
     <value>Подробнее</value>
   </data>
+  <data name="Next" xml:space="preserve">
+    <value>Сл.</value>
+  </data>
   <data name="Parry" xml:space="preserve">
     <value>Парирование</value>
   </data>
@@ -162,32 +171,35 @@
   <data name="Player" xml:space="preserve">
     <value>Игрок</value>
   </data>
+  <data name="Prev" xml:space="preserve">
+    <value>Пред.</value>
+  </data>
   <data name="Resist" xml:space="preserve">
     <value>Сопротивление</value>
   </data>
   <data name="ShowCritDamage" xml:space="preserve">
-    <value>Показать крит</value>
+    <value>Крит</value>
   </data>
   <data name="ShowDodge" xml:space="preserve">
-    <value>Показать уклонение</value>
+    <value>Уклонение</value>
   </data>
   <data name="ShowFilters" xml:space="preserve">
-    <value>Показать фильтры</value>
+    <value>Фильтры</value>
   </data>
   <data name="ShowImmune" xml:space="preserve">
-    <value>Показать иммун</value>
+    <value>Иммун</value>
   </data>
   <data name="ShowMiss" xml:space="preserve">
-    <value>Показать промахи</value>
+    <value>Промах</value>
   </data>
   <data name="ShowParry" xml:space="preserve">
-    <value>Показать парирование</value>
+    <value>Парирование</value>
   </data>
   <data name="ShowPets" xml:space="preserve">
-    <value>Показать питомцев и существ</value>
+    <value>Питомцы и существа</value>
   </data>
   <data name="ShowResist" xml:space="preserve">
-    <value>Показать сопр.</value>
+    <value>Сопротивление</value>
   </data>
   <data name="Source" xml:space="preserve">
     <value>Источник</value>

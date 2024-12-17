@@ -124,11 +124,29 @@ namespace CombatAnalysis.App.Localizations.Resources.DamageDoneDetails {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to First.
+        /// </summary>
+        public static string First {
+            get {
+                return ResourceManager.GetString("First", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Immune.
         /// </summary>
         public static string Immune {
             get {
                 return ResourceManager.GetString("Immune", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Last.
+        /// </summary>
+        public static string Last {
+            get {
+                return ResourceManager.GetString("Last", resourceCulture);
             }
         }
         
@@ -169,6 +187,15 @@ namespace CombatAnalysis.App.Localizations.Resources.DamageDoneDetails {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Next.
+        /// </summary>
+        public static string Next {
+            get {
+                return ResourceManager.GetString("Next", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Parry.
         /// </summary>
         public static string Parry {
@@ -196,6 +223,15 @@ namespace CombatAnalysis.App.Localizations.Resources.DamageDoneDetails {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Prev.
+        /// </summary>
+        public static string Prev {
+            get {
+                return ResourceManager.GetString("Prev", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Resist.
         /// </summary>
         public static string Resist {
@@ -205,7 +241,7 @@ namespace CombatAnalysis.App.Localizations.Resources.DamageDoneDetails {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Show crit. damage.
+        ///   Looks up a localized string similar to Crit.
         /// </summary>
         public static string ShowCritDamage {
             get {
@@ -214,7 +250,7 @@ namespace CombatAnalysis.App.Localizations.Resources.DamageDoneDetails {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Show dodge.
+        ///   Looks up a localized string similar to Dodge.
         /// </summary>
         public static string ShowDodge {
             get {
@@ -223,7 +259,7 @@ namespace CombatAnalysis.App.Localizations.Resources.DamageDoneDetails {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Show filters.
+        ///   Looks up a localized string similar to Filters.
         /// </summary>
         public static string ShowFilters {
             get {
@@ -232,7 +268,7 @@ namespace CombatAnalysis.App.Localizations.Resources.DamageDoneDetails {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Show immune.
+        ///   Looks up a localized string similar to Immune.
         /// </summary>
         public static string ShowImmune {
             get {
@@ -241,7 +277,7 @@ namespace CombatAnalysis.App.Localizations.Resources.DamageDoneDetails {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Show miss.
+        ///   Looks up a localized string similar to Miss.
         /// </summary>
         public static string ShowMiss {
             get {
@@ -250,7 +286,7 @@ namespace CombatAnalysis.App.Localizations.Resources.DamageDoneDetails {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Show parry.
+        ///   Looks up a localized string similar to Parry.
         /// </summary>
         public static string ShowParry {
             get {
@@ -259,7 +295,7 @@ namespace CombatAnalysis.App.Localizations.Resources.DamageDoneDetails {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Show pets and creatures.
+        ///   Looks up a localized string similar to Pets and creatures.
         /// </summary>
         public static string ShowPets {
             get {
@@ -268,7 +304,7 @@ namespace CombatAnalysis.App.Localizations.Resources.DamageDoneDetails {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Show resist.
+        ///   Looks up a localized string similar to Resist.
         /// </summary>
         public static string ShowResist {
             get {

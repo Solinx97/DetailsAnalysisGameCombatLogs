@@ -160,11 +160,29 @@ namespace CombatAnalysis.App.Localizations.Resources.DamageTakenDetails {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Enemy/Periodic damage.
+        ///   Looks up a localized string similar to Enemy.
         /// </summary>
-        public static string EnemyOrPerDamage {
+        public static string Enemy {
             get {
-                return ResourceManager.GetString("EnemyOrPerDamage", resourceCulture);
+                return ResourceManager.GetString("Enemy", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to First.
+        /// </summary>
+        public static string First {
+            get {
+                return ResourceManager.GetString("First", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Last.
+        /// </summary>
+        public static string Last {
+            get {
+                return ResourceManager.GetString("Last", resourceCulture);
             }
         }
         
@@ -214,6 +232,15 @@ namespace CombatAnalysis.App.Localizations.Resources.DamageTakenDetails {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Next.
+        /// </summary>
+        public static string Next {
+            get {
+                return ResourceManager.GetString("Next", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Parry.
         /// </summary>
         public static string Parry {
@@ -237,6 +264,15 @@ namespace CombatAnalysis.App.Localizations.Resources.DamageTakenDetails {
         public static string Player {
             get {
                 return ResourceManager.GetString("Player", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Prev.
+        /// </summary>
+        public static string Prev {
+            get {
+                return ResourceManager.GetString("Prev", resourceCulture);
             }
         }
         

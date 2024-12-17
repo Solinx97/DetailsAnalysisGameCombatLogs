@@ -153,6 +153,9 @@
   <data name="DamagePerSecond" xml:space="preserve">
     <value>Урон в сек.</value>
   </data>
+  <data name="DamageTaken" xml:space="preserve">
+    <value>Пол. урона</value>
+  </data>
   <data name="EditValue" xml:space="preserve">
     <value>Редактировать значение</value>
   </data>

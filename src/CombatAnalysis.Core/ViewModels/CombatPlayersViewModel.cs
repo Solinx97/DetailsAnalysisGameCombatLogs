@@ -708,18 +708,18 @@ public class CombatPlayersViewModel : ParentTemplate<CombatModel>
 
     private void GetTotalValueFiltersName()
     {
-        var minDamage = TranslationSource.Instance["CombatAnalysis.App.Localizations.Resources.DetailsSpecificalCombat.Resource.MinDamage"];
-        var minHeal = TranslationSource.Instance["CombatAnalysis.App.Localizations.Resources.DetailsSpecificalCombat.Resource.MinHeal"];
-        var minResurces = TranslationSource.Instance["CombatAnalysis.App.Localizations.Resources.DetailsSpecificalCombat.Resource.MinResources"];
+        var minDamage = TranslationSource.Instance["CombatAnalysis.App.Localizations.Resources.CombatPlayers.Resource.MinDamage"];
+        var minHeal = TranslationSource.Instance["CombatAnalysis.App.Localizations.Resources.CombatPlayers.Resource.MinHeal"];
+        var minResurces = TranslationSource.Instance["CombatAnalysis.App.Localizations.Resources.CombatPlayers.Resource.MinResources"];
 
         FilterList = new List<string> { "", minDamage, minHeal, minResurces };
     }
 
     private void GetValuePerSecondFiltersName()
     {
-        var minDPS = TranslationSource.Instance["CombatAnalysis.App.Localizations.Resources.DetailsSpecificalCombat.Resource.MinDPS"];
-        var minHPS = TranslationSource.Instance["CombatAnalysis.App.Localizations.Resources.DetailsSpecificalCombat.Resource.MinHPS"];
-        var minRPS = TranslationSource.Instance["CombatAnalysis.App.Localizations.Resources.DetailsSpecificalCombat.Resource.MinRPS"];
+        var minDPS = TranslationSource.Instance["CombatAnalysis.App.Localizations.Resources.CombatPlayers.Resource.MinDPS"];
+        var minHPS = TranslationSource.Instance["CombatAnalysis.App.Localizations.Resources.CombatPlayers.Resource.MinHPS"];
+        var minRPS = TranslationSource.Instance["CombatAnalysis.App.Localizations.Resources.CombatPlayers.Resource.MinRPS"];
 
         FilterList = new List<string> { "", minDPS, minHPS, minRPS };
     }

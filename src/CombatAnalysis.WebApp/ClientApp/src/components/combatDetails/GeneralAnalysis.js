@@ -74,7 +74,7 @@ const GeneralAnalysis = () => {
                     />
                     <div>{t("Logs")}</div>
                 </div>
-                <div className="title">{t("Combats")}</div>
+                <h5>{t("Combats")}</h5>
             </div>
             <ul className="combats__container">
                 {allUniqueCombats?.map((uniqueCombats, index) => (

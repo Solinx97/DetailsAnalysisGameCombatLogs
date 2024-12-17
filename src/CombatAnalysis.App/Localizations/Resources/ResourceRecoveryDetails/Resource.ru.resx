@@ -126,6 +126,12 @@
   <data name="CountOfSkills" xml:space="preserve">
     <value>Примен. закл.</value>
   </data>
+  <data name="First" xml:space="preserve">
+    <value>Первая</value>
+  </data>
+  <data name="Last" xml:space="preserve">
+    <value>Последняя</value>
+  </data>
   <data name="MaxValue" xml:space="preserve">
     <value>Макс. значение</value>
   </data>
@@ -134,6 +140,15 @@
   </data>
   <data name="MoreDetails" xml:space="preserve">
     <value>Подробнее</value>
+  </data>
+  <data name="Next" xml:space="preserve">
+    <value>Сл.</value>
+  </data>
+  <data name="Player" xml:space="preserve">
+    <value>Игрок</value>
+  </data>
+  <data name="Prev" xml:space="preserve">
+    <value>Пред.</value>
   </data>
   <data name="Resources" xml:space="preserve">
     <value>Ресурсы</value>

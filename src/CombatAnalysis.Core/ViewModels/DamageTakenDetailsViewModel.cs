@@ -202,15 +202,25 @@ public class DamageTakenDetailsViewModel : DetailsGenericTemplate<DamageTakenMod
             : _damageTakenInformationsWithoutFilter;
     }
 
-    protected override async Task LoadDetailsAsync(int combatPlayerId)
+    protected override async Task LoadCountAsync()
     {
-        var details = await _combatParserAPIService.LoadCombatDetailsByCombatPlayerId<DamageTakenModel>("DamageTaken/FindByCombatPlayerId", combatPlayerId);
+        var count = await _combatParserAPIService.LoadCountAsync($"DamageTaken/count/{SelectedPlayerId}");
+        Count = count;
+
+        var pages = (double)count / (double)_pageSize;
+        var maxPages = (int)Math.Ceiling(pages);
+        MaxPages = maxPages;
+    }
+
+    protected override async Task LoadDetailsAsync(int page, int pageSize)
+    {
+        var details = await _combatParserAPIService.LoadCombatDetailsAsync<DamageTakenModel>($"DamageTaken/getByCombatPlayerId?combatPlayerId={SelectedPlayerId}&page={page}&pageSize={pageSize}");
         DetailsInformations = new ObservableCollection<DamageTakenModel>(details.ToList());
     }
 
-    protected override async Task LoadGenericDetailsAsync(int combatPlayerId)
+    protected override async Task LoadGenericDetailsAsync()
     {
-        var generalDetails = await _combatParserAPIService.LoadCombatDetailsByCombatPlayerId<DamageTakenGeneralModel>("DamageTakenGeneral/FindByCombatPlayerId", combatPlayerId);
+        var generalDetails = await _combatParserAPIService.LoadCombatDetailsAsync<DamageTakenGeneralModel>($"DamageTakenGeneral/findByCombatPlayerId/{SelectedPlayerId}");
         GeneralInformations = new ObservableCollection<DamageTakenGeneralModel>(generalDetails.ToList());
     }
 

@@ -20,7 +20,5 @@ public class CombatPlayer : IEntity
 
     public int DamageTaken { get; set; }
 
-    public int UsedBuffs { get; set; }
-
     public int CombatId { get; set; }
 }

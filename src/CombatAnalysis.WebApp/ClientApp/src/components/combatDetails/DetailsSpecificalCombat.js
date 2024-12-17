@@ -58,7 +58,7 @@ const DetailsSpecificalCombat = () => {
     }, [combatDetails.combatId])
 
     const handlerSearch = (e) => {
-        const filteredPeople = combatPlayers.filter((item) => item.userName.toLowerCase().startsWith(e.target.value.toLowerCase()));
+        const filteredPeople = combatPlayers.filter((item) => item.username.toLowerCase().startsWith(e.target.value.toLowerCase()));
         setSearchCombatPlayers(filteredPeople);
     }
 
@@ -96,7 +96,7 @@ const DetailsSpecificalCombat = () => {
                     />
                     <div>{t("SelectCombat")}</div>
                 </div>
-                <h4>{t("Players")}</h4>
+                <h5>{t("Players")}</h5>
                 <div className="btn-shadow search-icon" onClick={() => setShowSearch((item) => !item)}>
                     {showSearch
                         ? <FontAwesomeIcon
@@ -140,12 +140,12 @@ const DetailsSpecificalCombat = () => {
                 tabs={[
                     {
                         id: 0,
-                        header: "Dashboard",
+                        header: t("Dashboard"),
                         content: <Dashboard combatId={combatDetails.combatId} combatLogId={combatDetails.combatLogId} players={searchCombatPlayers} combatName={combatDetails.combatName} playersDeath={playersDeath} />
                     },
                     {
                         id: 1,
-                        header: "Common",
+                        header: t("Details"),
                         content: <PlayerInformation combatPlayers={searchCombatPlayers} combatId={combatDetails.combatId} combatLogId={combatDetails.combatLogId} combatName={combatDetails.combatName} />
                     }
                 ]}

@@ -57,7 +57,7 @@
             
             <StackPanel Orientation="Horizontal">
                 <TextBlock HorizontalAlignment="Left" VerticalAlignment="Top" 
-                           Text="Load Logs" FontSize="16" Foreground="White" Margin="10 5" Style="{StaticResource titleText}" />
+                           Text="{loc:Loc ShowLogs}" FontSize="16" Foreground="White" Margin="10 5" Style="{StaticResource titleText}" />
                 <Icon:PackIconMaterial Kind="Download" Foreground="Aquamarine" Margin="10" />
             </StackPanel>
         </Border>

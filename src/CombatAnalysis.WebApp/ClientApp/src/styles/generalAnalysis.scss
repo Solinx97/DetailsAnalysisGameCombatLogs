@@ -139,8 +139,7 @@ $mobile-max-width: 425px;
                 }
 
 
-                &__damage-done, &__heal-done, &__damage-taken, &__energy-recovery, &__death-number,
-                &__duration, &__not-ready, &__buffs, &__start, &__finish, &__ready {
+                &__player-statistic-item {
                     @include box-shadow('highlight');
                     border-radius: $border-radius-standard;
                     padding: 5px;
@@ -180,6 +179,10 @@ $mobile-max-width: 425px;
         .information {
             display: flex;
             justify-content: space-around;
+
+            .auras-details {
+                cursor: pointer;
+            }
         }
     }
 

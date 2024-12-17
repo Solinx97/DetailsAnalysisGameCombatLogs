@@ -169,6 +169,15 @@ namespace CombatAnalysis.App.Localizations.Resources.CombatPlayers {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Damage taken.
+        /// </summary>
+        public static string DamageTaken {
+            get {
+                return ResourceManager.GetString("DamageTaken", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Edit value.
         /// </summary>
         public static string EditValue {

@@ -22,7 +22,7 @@ const auraCreatorType = {
     enemyCreature: 3
 };
 
-const CombatAuraFilters = ({ t, setCreators, selectedCreator, setSelectedCreator, allCreators, setSelectedCreatorAuras, getAuraCreators, defaultSelectedCreatorAuras }) => {
+const CombatAuraFilters = ({ setCreators, selectedCreator, handleSelectCreator, allCreators, setSelectedCreatorAuras, getAuraCreators, defaultSelectedCreatorAuras, t }) => {
     const [selectedIncludeToFilter, setSelectedIncludeToFilter] = useState(-1);
     const [selectedExcludeFromFilter, setSelectedExcludeFromFilter] = useState(-1);
     const [selectedAuraCreatorType, setSelectedAuraCreatorType] = useState(-1);
@@ -31,12 +31,11 @@ const CombatAuraFilters = ({ t, setCreators, selectedCreator, setSelectedCreator
     const [showFilters, setShowFilters] = useState(false);
 
     const applyFilterCreatorAuraType = (number) => {
-        const newCreators = [{ creator: "None" }];
+        const newCreators = [];
         const filteredCreators = allCreators.filter(creator => creator.auraCreatorType === number);
 
         setCreators(newCreators.concat(filteredCreators));
-        setSelectedCreator({ creator: "None" });
-        setSelectedCreatorAuras([]);
+        handleSelectCreator("All");
     }
 
     const applyFilterAuraType = (auraType, include = true) => {
@@ -47,7 +46,7 @@ const CombatAuraFilters = ({ t, setCreators, selectedCreator, setSelectedCreator
                 ? aura.auraType === auraType
                 : aura.auraType !== auraType;
 
-            if ((auraType < 0 || condition) && aura.creator === selectedCreator) {
+            if ((auraType < 0 || condition) && (aura.creator === selectedCreator || selectedCreator === "All")) {
                 auras.push(aura);
             }
         });
@@ -124,12 +123,13 @@ const CombatAuraFilters = ({ t, setCreators, selectedCreator, setSelectedCreator
                     <FontAwesomeIcon
                         icon={faRotate}
                         onClick={restoreFiltersToDefault}
+                        title={t("FiltersReset")}
                     />
                 </div>
             </div>
             <div className={`filters__aura-filters${showFilters ? '_show' : ''}`}>
                 <div className="filters__aura-type-filter">
-                    <div>Include:</div>
+                    <div>{t("Include")}</div>
                     <ul>
                         {Object.entries(auraType).map(([key, value]) => (
                             <li className={selectedIncludeToFilter === value ? 'filter-selected' : ''} key={key}
@@ -138,7 +138,7 @@ const CombatAuraFilters = ({ t, setCreators, selectedCreator, setSelectedCreator
                     </ul>
                 </div>
                 <div className="filters__aura-type-filter">
-                    <div>Exclude:</div>
+                    <div>{t("Exclude")}</div>
                     <ul>
                         {Object.entries(auraType).map(([key, value]) => (
                             <li className={selectedExcludeFromFilter === value ? 'filter-selected' : ''} key={key}
@@ -147,7 +147,7 @@ const CombatAuraFilters = ({ t, setCreators, selectedCreator, setSelectedCreator
                     </ul>
                 </div>
                 <div className="filters__aura-type-filter">
-                    <div>Creator:</div>
+                    <div>{t("Creator")}</div>
                     <ul>
                         {Object.entries(auraCreatorType).map(([key, value]) => (
                             <li className={selectedAuraCreatorType === value ? 'filter-selected' : ''} key={key}

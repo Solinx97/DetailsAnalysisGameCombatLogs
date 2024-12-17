@@ -2,7 +2,7 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useEffect, useState } from 'react';
 
-const CombatAuraTimes = ({ t, setSelectedCreatorAuras, defaultSelectedCreatorAuras }) => {
+const CombatAuraTimes = ({ setSelectedCreatorAuras, defaultSelectedCreatorAuras, t }) => {
     const defaultStartTime = "00:00:00";
     const defaultFinishTime = "00:00:01";
 
@@ -62,11 +62,12 @@ const CombatAuraTimes = ({ t, setSelectedCreatorAuras, defaultSelectedCreatorAur
                     <FontAwesomeIcon
                         icon={faRotate}
                         onClick={restoreFiltersToDefault}
+                        title={t("TimesReset")}
                     />
                 </div>
             </div>
             <div className={`times__aura-times${showTime ? '_show' : ''}`}>
-                <div>When:</div>
+                <div>{t("When")}</div>
                 <input type="text" value={startTime} placeholder="Start time" onChange={handleStartTimeChange} />
                 <input type="text" value={finishTime} placeholder="Finish time" onChange={handleFinishTimeChange} />
                 <div className="btn-shadow" onClick={() => setTimeApplied(true)}>

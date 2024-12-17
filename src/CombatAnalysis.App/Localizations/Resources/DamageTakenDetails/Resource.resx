@@ -150,8 +150,14 @@
   <data name="Dodge" xml:space="preserve">
     <value>Dodge</value>
   </data>
-  <data name="EnemyOrPerDamage" xml:space="preserve">
-    <value>Enemy/Periodic damage</value>
+  <data name="Enemy" xml:space="preserve">
+    <value>Enemy</value>
+  </data>
+  <data name="First" xml:space="preserve">
+    <value>First</value>
+  </data>
+  <data name="Last" xml:space="preserve">
+    <value>Last</value>
   </data>
   <data name="MaxValue" xml:space="preserve">
     <value>Max. value</value>
@@ -168,6 +174,9 @@
   <data name="MoreDetails" xml:space="preserve">
     <value>More details</value>
   </data>
+  <data name="Next" xml:space="preserve">
+    <value>Next</value>
+  </data>
   <data name="Parry" xml:space="preserve">
     <value>Parry</value>
   </data>
@@ -176,6 +185,9 @@
   </data>
   <data name="Player" xml:space="preserve">
     <value>Player</value>
+  </data>
+  <data name="Prev" xml:space="preserve">
+    <value>Prev</value>
   </data>
   <data name="RealDamageDetails" xml:space="preserve">
     <value>Real damage: </value>

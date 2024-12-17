@@ -132,11 +132,17 @@
   <data name="DamageAbsorbed" xml:space="preserve">
     <value>Погл. урон</value>
   </data>
+  <data name="First" xml:space="preserve">
+    <value>Первая</value>
+  </data>
   <data name="Healing" xml:space="preserve">
     <value>Исцеление</value>
   </data>
   <data name="HealingPerSec" xml:space="preserve">
     <value>Исцеление в сек.</value>
+  </data>
+  <data name="Last" xml:space="preserve">
+    <value>Последняя</value>
   </data>
   <data name="MaxValue" xml:space="preserve">
     <value>Макс. значение</value>
@@ -147,11 +153,17 @@
   <data name="MoreDetails" xml:space="preserve">
     <value>Подробнее</value>
   </data>
+  <data name="Next" xml:space="preserve">
+    <value>Сл.</value>
+  </data>
   <data name="OverHealing" xml:space="preserve">
     <value>Оверхил</value>
   </data>
   <data name="Player" xml:space="preserve">
     <value>Игрок</value>
+  </data>
+  <data name="Prev" xml:space="preserve">
+    <value>Пред.</value>
   </data>
   <data name="ShowCrit" xml:space="preserve">
     <value>Показать крит. исцеление</value>

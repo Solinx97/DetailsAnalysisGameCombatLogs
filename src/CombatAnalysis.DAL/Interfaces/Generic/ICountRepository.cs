@@ -1,6 +1,9 @@
-﻿namespace CombatAnalysis.DAL.Interfaces.Generic;
+﻿using CombatAnalysis.DAL.Interfaces.Entities;
 
-public interface ICountRepository
+namespace CombatAnalysis.DAL.Interfaces.Generic;
+
+public interface ICountRepository<TModel>
+    where TModel : class, IEntity
 {
     Task<int> CountByCombatPlayerIdAsync(int combatPlayerId);
 }

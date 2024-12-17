@@ -1,5 +1,8 @@
-﻿import React, { useEffect, useState } from 'react';
+﻿import { faDeleteLeft } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useLazyGetCombatAurasByCombatIdQuery, useLazyGetCombatByIdQuery } from '../../../store/api/core/CombatParser.api';
 import CombatAuraFilters from './CombatAuraFilters';
 import CombatAuraItem from './CombatAuraItem';
@@ -10,7 +13,11 @@ import "../../../styles/combatAuras.scss";
 const CombatAuras = () => {
     const { t } = useTranslation("combatDetails/generalAnalysis");
 
+    const navigate = useNavigate();
+    const location = useLocation();
+
     const [combatId, setCombatId] = useState(0);
+    const [combatLogId, setCombatLogId] = useState(0);
     const [combat, setCombat] = useState(null);
     const [combatAuras, setCombatAuras] = useState([]);
     const [allCombatAuras, setAllCombatAuras] = useState([]);
@@ -18,15 +25,18 @@ const CombatAuras = () => {
     const [allCreators, setAllCreators] = useState([]);
     const [selectedCreatorAuras, setSelectedCreatorAuras] = useState([]);
     const [defaultSelectedCreatorAuras, setDefaultSelectedCreatorAuras] = useState([]);
-    const [selectedCreator, setSelectedCreator] = useState("None");
+    const [selectedCreator, setSelectedCreator] = useState("All");
 
     const [getCombatById] = useLazyGetCombatByIdQuery();
     const [getCombatAurasByCombatId] = useLazyGetCombatAurasByCombatIdQuery();
 
     useEffect(() => {
-        const queryParams = new URLSearchParams(window.location.search);
-        const combatId = +queryParams.get("combat");
+        const searchParams = new URLSearchParams(location.search);
+        const combatId = +searchParams.get("combat");
+        const combatLogId = +searchParams.get("combatLog");
+
         setCombatId(combatId);
+        setCombatLogId(combatLogId);
     }, []);
 
     useEffect(() => {
@@ -70,7 +80,7 @@ const CombatAuras = () => {
 
     const getAuraCreators = () => {
         const uniqueCreators = new Set();
-        const creators = [{ creator: "None" }];
+        const creators = [];
 
         combatAuras.forEach(aura => {
             if (!uniqueCreators.has(aura.creator)) {
@@ -81,13 +91,15 @@ const CombatAuras = () => {
 
         setAllCreators(creators);
         setCreators(creators);
+
+        initSelectedCreatorCombatAuras("All");
     }
 
     const initSelectedCreatorCombatAuras = (creator) => {
         const auras = [];
 
         allCombatAuras.forEach(aura => {
-            if (aura.creator === creator) {
+            if (creator === "All" || aura.creator === creator) {
                 auras.push(aura);
             }
         });
@@ -107,33 +119,41 @@ const CombatAuras = () => {
 
     return (
         <div className="creators">
+            <div className="details-specifical-combat__navigate">
+                <div className="btn-shadow select-combat" onClick={() => navigate(`/general-analysis?id=${combatLogId}`)}>
+                    <FontAwesomeIcon
+                        icon={faDeleteLeft}
+                    />
+                    <div>{t("SelectCombat")}</div>
+                </div>
+            </div>
             <div className="creators__select-creator">
                 <select className="form-control" value={selectedCreator} onChange={(e) => handleSelectCreator(e.target.value)}>
+                    <option key="-1" value="All">{t("All")}</option>
                     {creators.map((creator, index) => (
                         <option key={index} value={creator.creator}>{creator.creator}</option>
                     ))}
                 </select>
                 <CombatAuraFilters
-                    t={t}
                     setCreators={setCreators}
                     selectedCreator={selectedCreator}
-                    setSelectedCreator={setSelectedCreator}
+                    handleSelectCreator={handleSelectCreator}
                     allCreators={allCreators}
                     setSelectedCreatorAuras={setSelectedCreatorAuras}
                     getAuraCreators={getAuraCreators}
                     defaultSelectedCreatorAuras={defaultSelectedCreatorAuras}
+                    t={t}
                 />
                 <CombatAuraTimes
-                    t={t}
                     setSelectedCreatorAuras={setSelectedCreatorAuras}
                     defaultSelectedCreatorAuras={defaultSelectedCreatorAuras}
+                    t={t}
                 />
             </div>
             {combatAuras.length > 0 &&
                 <CombatAuraItem
-                    t={t}
                     selectedCreatorAuras={selectedCreatorAuras}
-                    defaultSelectedCreatorAuras={defaultSelectedCreatorAuras}
+                    t={t}
                 />
             }
         </div>

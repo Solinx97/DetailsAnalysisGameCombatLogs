@@ -335,7 +335,6 @@ public class CombatParserService
                 Username = username,
                 PlayerId = combatInfoToArray[4],
                 AverageItemLevel = double.Round(averageItemLevel, 2),
-                UsedBuffs = 0,
             };
 
             players.Add(combatPlayerData);

@@ -126,6 +126,12 @@
   <data name="CountOfSkills" xml:space="preserve">
     <value>Count of skills</value>
   </data>
+  <data name="First" xml:space="preserve">
+    <value>First</value>
+  </data>
+  <data name="Last" xml:space="preserve">
+    <value>Last</value>
+  </data>
   <data name="MaxValue" xml:space="preserve">
     <value>Max. value</value>
   </data>
@@ -134,6 +140,15 @@
   </data>
   <data name="MoreDetails" xml:space="preserve">
     <value>More details</value>
+  </data>
+  <data name="Next" xml:space="preserve">
+    <value>Next</value>
+  </data>
+  <data name="Player" xml:space="preserve">
+    <value>Player</value>
+  </data>
+  <data name="Prev" xml:space="preserve">
+    <value>Prev</value>
   </data>
   <data name="Resources" xml:space="preserve">
     <value>Resources</value>

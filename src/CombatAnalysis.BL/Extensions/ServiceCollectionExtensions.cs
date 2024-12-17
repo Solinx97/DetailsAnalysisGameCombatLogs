@@ -22,22 +22,22 @@ public static class ServiceCollectionExtensions
 
         services.AddScoped<IPlayerInfoService<DamageDoneGeneralDto>, PlayerInfoService<DamageDoneGeneralDto, DamageDoneGeneral>>();
         services.AddScoped<IPlayerInfoService<DamageDoneDto>, PlayerInfoService<DamageDoneDto, DamageDone>>();
-        services.AddScoped<ICountService<DamageDoneDto>, CountService<DamageDoneDto>>();
+        services.AddScoped<ICountService<DamageDoneDto>, CountService<DamageDoneDto, DamageDone>>();
         services.AddScoped<IGeneralFilterService<DamageDoneDto>, GeneralFilterService<DamageDoneDto, DamageDone>>();
 
         services.AddScoped<IPlayerInfoService<HealDoneGeneralDto>, PlayerInfoService<HealDoneGeneralDto, HealDoneGeneral>>();
         services.AddScoped<IPlayerInfoService<HealDoneDto>, PlayerInfoService<HealDoneDto, HealDone>>();
-        services.AddScoped<ICountService<HealDoneDto>, CountService<HealDoneDto>>();
+        services.AddScoped<ICountService<HealDoneDto>, CountService<HealDoneDto, HealDone>>();
         services.AddScoped<IGeneralFilterService<HealDoneDto>, GeneralFilterService<HealDoneDto, HealDone>>();
 
         services.AddScoped<IPlayerInfoService<DamageTakenGeneralDto>, PlayerInfoService<DamageTakenGeneralDto, DamageTakenGeneral>>();
         services.AddScoped<IPlayerInfoService<DamageTakenDto>, PlayerInfoService<DamageTakenDto, DamageTaken>>();
-        services.AddScoped<ICountService<DamageTakenDto>, CountService<DamageTakenDto>>();
+        services.AddScoped<ICountService<DamageTakenDto>, CountService<DamageTakenDto, DamageTaken>>();
         services.AddScoped<IGeneralFilterService<DamageTakenDto>, GeneralFilterService<DamageTakenDto, DamageTaken>>();
 
         services.AddScoped<IPlayerInfoService<ResourceRecoveryGeneralDto>, PlayerInfoService<ResourceRecoveryGeneralDto, ResourceRecoveryGeneral>>();
         services.AddScoped<IPlayerInfoService<ResourceRecoveryDto>, PlayerInfoService<ResourceRecoveryDto, ResourceRecovery>>();
-        services.AddScoped<ICountService<ResourceRecoveryDto>, CountService<ResourceRecoveryDto>>();
+        services.AddScoped<ICountService<ResourceRecoveryDto>, CountService<ResourceRecoveryDto, ResourceRecovery>>();
         services.AddScoped<IGeneralFilterService<ResourceRecoveryDto>, GeneralFilterService<ResourceRecoveryDto, ResourceRecovery>>();
 
         services.AddScoped<IPlayerInfoService<PlayerDeathDto>, PlayerInfoService<PlayerDeathDto, PlayerDeath>>();

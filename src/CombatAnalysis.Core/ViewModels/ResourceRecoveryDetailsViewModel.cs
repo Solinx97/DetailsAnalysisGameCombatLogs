@@ -39,15 +39,25 @@ public class ResourceRecoveryDetailsViewModel : DetailsGenericTemplate<ResourceR
             : _resourceRecoveryInformationsWithoutFilter;
     }
 
-    protected override async Task LoadDetailsAsync(int combatPlayerId)
+    protected override async Task LoadCountAsync()
     {
-        var details = await _combatParserAPIService.LoadCombatDetailsByCombatPlayerId<ResourceRecoveryModel>("ResourceRecovery/FindByCombatPlayerId", combatPlayerId);
+        var count = await _combatParserAPIService.LoadCountAsync($"ResourceRecovery/count/{SelectedPlayerId}");
+        Count = count;
+
+        var pages = (double)count / (double)_pageSize;
+        var maxPages = (int)Math.Ceiling(pages);
+        MaxPages = maxPages;
+    }
+
+    protected override async Task LoadDetailsAsync(int page, int pageSize)
+    {
+        var details = await _combatParserAPIService.LoadCombatDetailsAsync<ResourceRecoveryModel>($"ResourceRecovery/getByCombatPlayerId?combatPlayerId={SelectedPlayerId}&page={page}&pageSize={pageSize}");
         DetailsInformations = new ObservableCollection<ResourceRecoveryModel>(details.ToList());
     }
 
-    protected override async Task LoadGenericDetailsAsync(int combatPlayerId)
+    protected override async Task LoadGenericDetailsAsync()
     {
-        var generalDetails = await _combatParserAPIService.LoadCombatDetailsByCombatPlayerId<ResourceRecoveryGeneralModel>("ResourceRecoveryGeneral/FindByCombatPlayerId", combatPlayerId);
+        var generalDetails = await _combatParserAPIService.LoadCombatDetailsAsync<ResourceRecoveryGeneralModel>($"ResourceRecoveryGeneral/FindByCombatPlayerId/{SelectedPlayerId}");
         GeneralInformations = new ObservableCollection<ResourceRecoveryGeneralModel>(generalDetails.ToList());
     }
 

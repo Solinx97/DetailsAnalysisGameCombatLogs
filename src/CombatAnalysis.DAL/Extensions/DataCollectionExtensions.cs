@@ -49,19 +49,19 @@ public static class DataCollectionExtensions
         services.AddScoped<IContextService, ContextService>();
 
         services.AddScoped<IPlayerInfoRepository<Combat>, SQLSPPlayerInfoRepository<Combat>>();
-        services.AddScoped<ICountRepository, SQLCountRepository<DamageDone>>();
+        services.AddScoped<ICountRepository<DamageDone>, SQLCountRepository<DamageDone>>();
         services.AddScoped<IGeneralFilter<DamageDone>, GeneralFilterRepositroy<DamageDone>>();
         services.AddScoped<IPlayerInfoRepository<DamageDoneGeneral>, SQLSPPlayerInfoRepository<DamageDoneGeneral>>();
         services.AddScoped<IPlayerInfoRepository<DamageDone>, SQLSPPlayerInfoRepository<DamageDone>>();
-        services.AddScoped<ICountRepository, SQLCountRepository<HealDone>>();
+        services.AddScoped<ICountRepository<HealDone>, SQLCountRepository<HealDone>>();
         services.AddScoped<IGeneralFilter<HealDone>, GeneralFilterRepositroy<HealDone>>();
         services.AddScoped<IPlayerInfoRepository<HealDoneGeneral>, SQLSPPlayerInfoRepository<HealDoneGeneral>>();
         services.AddScoped<IPlayerInfoRepository<HealDone>, SQLSPPlayerInfoRepository<HealDone>>();
-        services.AddScoped<ICountRepository, SQLCountRepository<DamageTaken>>();
+        services.AddScoped<ICountRepository<DamageTaken>, SQLCountRepository<DamageTaken>>();
         services.AddScoped<IGeneralFilter<DamageTaken>, GeneralFilterRepositroy<DamageTaken>>();
         services.AddScoped<IPlayerInfoRepository<DamageTakenGeneral>, SQLSPPlayerInfoRepository<DamageTakenGeneral>>();
         services.AddScoped<IPlayerInfoRepository<DamageTaken>, SQLSPPlayerInfoRepository<DamageTaken>>();
-        services.AddScoped<ICountRepository, SQLCountRepository<ResourceRecovery>>();
+        services.AddScoped<ICountRepository<ResourceRecovery>, SQLCountRepository<ResourceRecovery>>();
         services.AddScoped<IGeneralFilter<ResourceRecovery>, GeneralFilterRepositroy<ResourceRecovery>>();
         services.AddScoped<IPlayerInfoRepository<ResourceRecoveryGeneral>, SQLSPPlayerInfoRepository<ResourceRecoveryGeneral>>();
         services.AddScoped<IPlayerInfoRepository<ResourceRecovery>, SQLSPPlayerInfoRepository<ResourceRecovery>>();

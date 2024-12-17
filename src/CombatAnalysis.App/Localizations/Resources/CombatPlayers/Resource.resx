@@ -153,6 +153,9 @@
   <data name="DamagePerSecond" xml:space="preserve">
     <value>Damage per sec.</value>
   </data>
+  <data name="DamageTaken" xml:space="preserve">
+    <value>Damage taken</value>
+  </data>
   <data name="EditValue" xml:space="preserve">
     <value>Edit value</value>
   </data>

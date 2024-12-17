@@ -25,6 +25,8 @@ const DamageDoneHelper = ({ combatPlayerId, pageSize, t }) => {
     const { data: count, isLoading: countIsLoading } = useGetDamageDoneCountTargetsByPlayerIdQuery({ combatPlayerId, target: selectedTarget === "All" ? "-1" : selectedTarget });
     const { data, isLoading } = useGetDamageDoneTargetByPlayerIdQuery({ combatPlayerId, target: selectedTarget === "All" ? "-1" : selectedTarget, page, pageSize });
 
+    console.log(count);
+
     const totalPages = Math.ceil(count / pageSize);
 
     useEffect(() => {

@@ -11,5 +11,6 @@
   "OpenDamageTakenAnalyzing": "Открыть анализ полученного урона",
   "OpenHealingAnalyzing": "Открыть анализ исцеления",
   "OpenResourcesRecoveryAnalyzing": "Открыть анализ восстановленных ресурсов",
-  "OpenBuffsAnalyzing": "Открыть анализ усилений"
+  "OpenBuffsAnalyzing": "Открыть анализ усилений",
+  "AverageItemLevel": "Средний уровень предмета игрока"
 }

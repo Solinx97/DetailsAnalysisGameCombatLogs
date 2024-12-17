@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace CombatAnalysis.App.Localizations.Resources.HealDoneDetails {
+namespace CombatAnalysis.App.Localizations.Resources.DamageDoneDetails {
     using System;
     
     
@@ -22,14 +22,14 @@ namespace CombatAnalysis.App.Localizations.Resources.HealDoneDetails {
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    public class Resource {
+    public class Resource___Copy {
         
         private static global::System.Resources.ResourceManager resourceMan;
         
         private static global::System.Globalization.CultureInfo resourceCulture;
         
         [global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-        internal Resource() {
+        internal Resource___Copy() {
         }
         
         /// <summary>
@@ -39,7 +39,7 @@ namespace CombatAnalysis.App.Localizations.Resources.HealDoneDetails {
         public static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("CombatAnalysis.App.Localizations.Resources.HealDoneDetails.Resource", typeof(Resource).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("CombatAnalysis.App.Localizations.Resources.DamageDoneDetails.Resource - Copy", typeof(Resource___Copy).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -88,20 +88,38 @@ namespace CombatAnalysis.App.Localizations.Resources.HealDoneDetails {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Crit healing.
+        ///   Looks up a localized string similar to Crit damage.
         /// </summary>
-        public static string CritHealing {
+        public static string CritDamage {
             get {
-                return ResourceManager.GetString("CritHealing", resourceCulture);
+                return ResourceManager.GetString("CritDamage", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Damage absorb..
+        ///   Looks up a localized string similar to Damage.
         /// </summary>
-        public static string DamageAbsorbed {
+        public static string Damage {
             get {
-                return ResourceManager.GetString("DamageAbsorbed", resourceCulture);
+                return ResourceManager.GetString("Damage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Damage per sec..
+        /// </summary>
+        public static string DamagePerSec {
+            get {
+                return ResourceManager.GetString("DamagePerSec", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Dodge.
+        /// </summary>
+        public static string Dodge {
+            get {
+                return ResourceManager.GetString("Dodge", resourceCulture);
             }
         }
         
@@ -115,20 +133,11 @@ namespace CombatAnalysis.App.Localizations.Resources.HealDoneDetails {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Healing.
+        ///   Looks up a localized string similar to Immune.
         /// </summary>
-        public static string Healing {
+        public static string Immune {
             get {
-                return ResourceManager.GetString("Healing", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Healing per sec..
-        /// </summary>
-        public static string HealingPerSec {
-            get {
-                return ResourceManager.GetString("HealingPerSec", resourceCulture);
+                return ResourceManager.GetString("Immune", resourceCulture);
             }
         }
         
@@ -142,7 +151,7 @@ namespace CombatAnalysis.App.Localizations.Resources.HealDoneDetails {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Max value.
+        ///   Looks up a localized string similar to Max. value.
         /// </summary>
         public static string MaxValue {
             get {
@@ -151,11 +160,20 @@ namespace CombatAnalysis.App.Localizations.Resources.HealDoneDetails {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Min value.
+        ///   Looks up a localized string similar to Min. value.
         /// </summary>
         public static string MinValue {
             get {
                 return ResourceManager.GetString("MinValue", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Miss.
+        /// </summary>
+        public static string Miss {
+            get {
+                return ResourceManager.GetString("Miss", resourceCulture);
             }
         }
         
@@ -178,11 +196,20 @@ namespace CombatAnalysis.App.Localizations.Resources.HealDoneDetails {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Over healing.
+        ///   Looks up a localized string similar to Parry.
         /// </summary>
-        public static string OverHealing {
+        public static string Parry {
             get {
-                return ResourceManager.GetString("OverHealing", resourceCulture);
+                return ResourceManager.GetString("Parry", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Periodic damage.
+        /// </summary>
+        public static string PeriodicDamage {
+            get {
+                return ResourceManager.GetString("PeriodicDamage", resourceCulture);
             }
         }
         
@@ -205,16 +232,34 @@ namespace CombatAnalysis.App.Localizations.Resources.HealDoneDetails {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Show crit.
+        ///   Looks up a localized string similar to Resist.
         /// </summary>
-        public static string ShowCrit {
+        public static string Resist {
             get {
-                return ResourceManager.GetString("ShowCrit", resourceCulture);
+                return ResourceManager.GetString("Resist", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Show filters.
+        ///   Looks up a localized string similar to Crit.
+        /// </summary>
+        public static string ShowCritDamage {
+            get {
+                return ResourceManager.GetString("ShowCritDamage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Dodge.
+        /// </summary>
+        public static string ShowDodge {
+            get {
+                return ResourceManager.GetString("ShowDodge", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Filters.
         /// </summary>
         public static string ShowFilters {
             get {
@@ -223,11 +268,47 @@ namespace CombatAnalysis.App.Localizations.Resources.HealDoneDetails {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Show over heal.
+        ///   Looks up a localized string similar to Immune.
         /// </summary>
-        public static string ShowOverHealing {
+        public static string ShowImmune {
             get {
-                return ResourceManager.GetString("ShowOverHealing", resourceCulture);
+                return ResourceManager.GetString("ShowImmune", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Miss.
+        /// </summary>
+        public static string ShowMiss {
+            get {
+                return ResourceManager.GetString("ShowMiss", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Parry.
+        /// </summary>
+        public static string ShowParry {
+            get {
+                return ResourceManager.GetString("ShowParry", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Pets and creatures.
+        /// </summary>
+        public static string ShowPets {
+            get {
+                return ResourceManager.GetString("ShowPets", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Resist.
+        /// </summary>
+        public static string ShowResist {
+            get {
+                return ResourceManager.GetString("ShowResist", resourceCulture);
             }
         }
         
@@ -268,7 +349,7 @@ namespace CombatAnalysis.App.Localizations.Resources.HealDoneDetails {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Analyzing of heal done.
+        ///   Looks up a localized string similar to Analyzing of damage done.
         /// </summary>
         public static string Title {
             get {
@@ -277,7 +358,7 @@ namespace CombatAnalysis.App.Localizations.Resources.HealDoneDetails {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Total: .
+        ///   Looks up a localized string similar to Total:.
         /// </summary>
         public static string Total {
             get {

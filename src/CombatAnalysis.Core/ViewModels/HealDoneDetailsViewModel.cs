@@ -82,15 +82,25 @@ public class HealDoneDetailsViewModel : DetailsGenericTemplate<HealDoneModel, He
             : _healDoneInformationsWithoutFilter;
     }
 
-    protected override async Task LoadDetailsAsync(int combatPlayerId)
+    protected override async Task LoadCountAsync()
     {
-        var details = await _combatParserAPIService.LoadCombatDetailsByCombatPlayerId<HealDoneModel>("HealDone/FindByCombatPlayerId", combatPlayerId);
+        var count = await _combatParserAPIService.LoadCountAsync($"HealDone/count/{SelectedPlayerId}");
+        Count = count;
+
+        var pages = (double)count / (double)_pageSize;
+        var maxPages = (int)Math.Ceiling(pages);
+        MaxPages = maxPages;
+    }
+
+    protected override async Task LoadDetailsAsync(int page, int pageSize)
+    {
+        var details = await _combatParserAPIService.LoadCombatDetailsAsync<HealDoneModel>($"HealDone/getByCombatPlayerId?combatPlayerId={SelectedPlayerId}&page={page}&pageSize={pageSize}");
         DetailsInformations = new ObservableCollection<HealDoneModel>(details.ToList());
     }
 
-    protected override async Task LoadGenericDetailsAsync(int combatPlayerId)
+    protected override async Task LoadGenericDetailsAsync()
     {
-        var generalDetails = await _combatParserAPIService.LoadCombatDetailsByCombatPlayerId<HealDoneGeneralModel>("HealDoneGeneral/FindByCombatPlayerId", combatPlayerId);
+        var generalDetails = await _combatParserAPIService.LoadCombatDetailsAsync<HealDoneGeneralModel>($"HealDoneGeneral/FindByCombatPlayerId/{SelectedPlayerId}");
         GeneralInformations = new ObservableCollection<HealDoneGeneralModel>(generalDetails.ToList());
     }
 

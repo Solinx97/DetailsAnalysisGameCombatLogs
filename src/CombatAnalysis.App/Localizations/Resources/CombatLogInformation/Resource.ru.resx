@@ -144,6 +144,9 @@
   <data name="LoadingFailed" xml:space="preserve">
     <value>Ошибка загрузки</value>
   </data>
+  <data name="ShowLogs" xml:space="preserve">
+    <value>Показать логи</value>
+  </data>
   <data name="PreparePets" xml:space="preserve">
     <value>Подготовка питомцев</value>
   </data>

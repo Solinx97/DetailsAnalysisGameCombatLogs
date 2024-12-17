@@ -78,10 +78,10 @@
                       Margin="20 30 20 45" Height="450" VerticalAlignment="Top" ItemsSource="{Binding GeneralInformations}"
                       Visibility="{Binding IsShowAbsorbed, Converter={StaticResource BoolToVisibility}, ConverterParameter=true:false}">
                 <DataGrid.Columns>
-                    <DataGridTemplateColumn SortMemberPath="SpellOrItem" IsReadOnly="True" MinWidth="175">
+                    <DataGridTemplateColumn SortMemberPath="Spell" IsReadOnly="True" MinWidth="175">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
-                                <TextBlock Text="{Binding Path=SpellOrItem}" TextAlignment="Center" Margin="10" FontSize="12" />
+                                <TextBlock Text="{Binding Path=Spell}" TextAlignment="Center" Margin="10" FontSize="12" />
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                         <DataGridTemplateColumn.HeaderTemplate>
@@ -176,10 +176,10 @@
                       Margin="20 30 20 45" Height="450" VerticalAlignment="Top" ItemsSource="{Binding GeneralInformations}"
                       Visibility="{Binding IsShowAbsorbed, Converter={StaticResource BoolToVisibility}, ConverterParameter=true:true}">
                 <DataGrid.Columns>
-                    <DataGridTemplateColumn SortMemberPath="SpellOrItem" IsReadOnly="True" MinWidth="175">
+                    <DataGridTemplateColumn SortMemberPath="Spell" IsReadOnly="True" MinWidth="175">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
-                                <TextBlock Text="{Binding Path=SpellOrItem}" TextAlignment="Center" Margin="10" FontSize="12" />
+                                <TextBlock Text="{Binding Path=Spell}" TextAlignment="Center" Margin="10" FontSize="12" />
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                         <DataGridTemplateColumn.HeaderTemplate>
@@ -318,25 +318,25 @@
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
                                 <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-                                    <Icon:PackIconMaterial Visibility="{Binding Path=IsCrushing, Converter={StaticResource BoolToVisibility}, ConverterParameter=true}"
+                                    <Icon:PackIconMaterial Visibility="{Binding Path=DamageTakenType, Converter={StaticResource IntToVisibility}, ConverterParameter=true:1}"
                                                    Kind="ShieldAirplane" Foreground="Black" Style="{StaticResource menuButtonIcon}"
                                                    HorizontalAlignment="Center" ToolTip="{loc:Loc CrushingDamage}"/>
-                                    <Icon:PackIconMaterial Visibility="{Binding Path=IsParry, Converter={StaticResource BoolToVisibility}, ConverterParameter=true}"
-                                                   Kind="SwordCross" Foreground="Black" Style="{StaticResource menuButtonIcon}"
-                                                   HorizontalAlignment="Center" ToolTip="{loc:Loc Parry}"/>
-                                    <Icon:PackIconMaterial Visibility="{Binding Path=IsDodge, Converter={StaticResource BoolToVisibility}, ConverterParameter=true}"
+                                    <Icon:PackIconMaterial Visibility="{Binding Path=DamageTakenType, Converter={StaticResource IntToVisibility}, ConverterParameter=true:2}"
                                                    Kind="StarCheck" Foreground="Black" Style="{StaticResource menuButtonIcon}"
                                                    HorizontalAlignment="Center" ToolTip="{loc:Loc Dodge}"/>
-                                    <Icon:PackIconMaterial Visibility="{Binding Path=IsMiss, Converter={StaticResource BoolToVisibility}, ConverterParameter=true}"
+                                    <Icon:PackIconMaterial Visibility="{Binding Path=DamageTakenType, Converter={StaticResource IntToVisibility}, ConverterParameter=true:3}"
+                                                   Kind="SwordCross" Foreground="Black" Style="{StaticResource menuButtonIcon}"
+                                                   HorizontalAlignment="Center" ToolTip="{loc:Loc Parry}"/>
+                                    <Icon:PackIconMaterial Visibility="{Binding Path=DamageTakenType, Converter={StaticResource IntToVisibility}, ConverterParameter=true:4}"
                                                    Kind="CallMissed" Foreground="Black" Style="{StaticResource menuButtonIcon}"
                                                    HorizontalAlignment="Center" ToolTip="{loc:Loc Miss}"/>
-                                    <Icon:PackIconMaterial Visibility="{Binding Path=IsImmune, Converter={StaticResource BoolToVisibility}, ConverterParameter=true}"
-                                                   Kind="CarLightDimmed" Foreground="Black" Style="{StaticResource menuButtonIcon}"
-                                                   HorizontalAlignment="Center" ToolTip="{loc:Loc Immune}"/>
-                                    <Icon:PackIconMaterial Visibility="{Binding Path=IsResist, Converter={StaticResource BoolToVisibility}, ConverterParameter=true}"
+                                    <Icon:PackIconMaterial Visibility="{Binding Path=DamageTakenType, Converter={StaticResource IntToVisibility}, ConverterParameter=true:5}"
                                                    Kind="Resistor" Foreground="Black" Style="{StaticResource menuButtonIcon}"
                                                    HorizontalAlignment="Center" ToolTip="{loc:Loc Resist}"/>
-                                    <Icon:PackIconMaterial Visibility="{Binding Path=IsAbsorb, Converter={StaticResource BoolToVisibility}, ConverterParameter=true}"
+                                    <Icon:PackIconMaterial Visibility="{Binding Path=DamageTakenType, Converter={StaticResource IntToVisibility}, ConverterParameter=true:6}"
+                                                   Kind="CarLightDimmed" Foreground="Black" Style="{StaticResource menuButtonIcon}"
+                                                   HorizontalAlignment="Center" ToolTip="{loc:Loc Immune}"/>
+                                    <Icon:PackIconMaterial Visibility="{Binding Path=DamageTakenType, Converter={StaticResource IntToVisibility}, ConverterParameter=true:7}"
                                                    Kind="Shield" Foreground="Black" Style="{StaticResource menuButtonIcon}"
                                                    HorizontalAlignment="Center" ToolTip="{loc:Loc Absorption}"/>
                                 </StackPanel>
@@ -349,36 +349,23 @@
                         </DataGridTemplateColumn.HeaderTemplate>
                     </DataGridTemplateColumn>
 
-                    <DataGridTemplateColumn SortMemberPath="FromEnemy" IsReadOnly="True" MinWidth="200">
+                    <DataGridTemplateColumn SortMemberPath="Creator" IsReadOnly="True" MinWidth="200">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
-                                <TextBlock Text="{Binding Path=FromEnemy}" Margin="10" FontSize="12" TextAlignment="Center" />
+                                <TextBlock Text="{Binding Path=Creator}" Margin="10" FontSize="12" TextAlignment="Center" />
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                         <DataGridTemplateColumn.HeaderTemplate>
                             <DataTemplate>
-                                <TextBlock Text="{loc:Loc EnemyOrPerDamage}" Margin="5" TextAlignment="Center" FontSize="12" Foreground="White"/>
+                                <TextBlock Text="{loc:Loc Enemy}" Margin="5" TextAlignment="Center" FontSize="12" Foreground="White"/>
                             </DataTemplate>
                         </DataGridTemplateColumn.HeaderTemplate>
                     </DataGridTemplateColumn>
 
-                    <DataGridTemplateColumn SortMemberPath="ToPlayer" IsReadOnly="True" MinWidth="200">
+                    <DataGridTemplateColumn SortMemberPath="Spell" IsReadOnly="True" MinWidth="200">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
-                                <TextBlock Text="{Binding Path=ToPlayer}" Margin="10" FontSize="12" TextAlignment="Center" />
-                            </DataTemplate>
-                        </DataGridTemplateColumn.CellTemplate>
-                        <DataGridTemplateColumn.HeaderTemplate>
-                            <DataTemplate>
-                                <TextBlock Text="{loc:Loc Player}" Margin="5" TextAlignment="Center" FontSize="12" Foreground="White"/>
-                            </DataTemplate>
-                        </DataGridTemplateColumn.HeaderTemplate>
-                    </DataGridTemplateColumn>
-
-                    <DataGridTemplateColumn SortMemberPath="SpellOrItem" IsReadOnly="True" MinWidth="200">
-                        <DataGridTemplateColumn.CellTemplate>
-                            <DataTemplate>
-                                <TextBlock Text="{Binding Path=SpellOrItem}" Margin="10" FontSize="12" />
+                                <TextBlock Text="{Binding Path=Spell}" Margin="10" FontSize="12" />
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                         <DataGridTemplateColumn.HeaderTemplate>
@@ -425,6 +412,39 @@
             </DataGrid>
         </StackPanel>
 
+        <StackPanel Grid.Column="2" Grid.Row="3" VerticalAlignment="Top" HorizontalAlignment="Right" Orientation="Horizontal"
+                    Visibility="{Binding ElementName=detailsType, Path=SelectedIndex, Converter={StaticResource IntToVisibility}, ConverterParameter=true:1}">
+            <StackPanel Margin="0 0" Orientation="Horizontal">
+                <TextBlock Foreground="White" Text="{loc:Loc First}" FontSize="12">
+                    <TextBlock.InputBindings>
+                        <MouseBinding Command="{Binding FirstPageCommand}" Gesture="LeftClick"/>
+                    </TextBlock.InputBindings>
+                </TextBlock>
+                <TextBlock Margin="15 0" Foreground="White" Text="{loc:Loc Prev}" FontSize="12" Cursor="Hand">
+                    <TextBlock.InputBindings>
+                        <MouseBinding Command="{Binding PrevPageCommand}" Gesture="LeftClick"/>
+                    </TextBlock.InputBindings>
+                </TextBlock>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Foreground="White" Text="{Binding Page}" FontSize="12" />
+                <TextBlock Margin="5 0" Foreground="White" Text="/" FontSize="12" />
+                <TextBlock Foreground="White" Text="{Binding MaxPages}" FontSize="12" />
+            </StackPanel>
+            <StackPanel Margin="15 0 20 0" Orientation="Horizontal">
+                <TextBlock Foreground="White" Text="{loc:Loc Next}" FontSize="12">
+                    <TextBlock.InputBindings>
+                        <MouseBinding Command="{Binding NextPageCommand}" Gesture="LeftClick"/>
+                    </TextBlock.InputBindings>
+                </TextBlock>
+                <TextBlock Margin="15 0" Foreground="White" Text="{loc:Loc Last}" FontSize="12">
+                    <TextBlock.InputBindings>
+                        <MouseBinding Command="{Binding LastPageCommand}" Gesture="LeftClick"/>
+                    </TextBlock.InputBindings>
+                </TextBlock>
+            </StackPanel>
+        </StackPanel>
+        
         <StackPanel Grid.Column="2" Grid.Row="3" Margin="0 -15" HorizontalAlignment="Left">
             <CheckBox Style="{DynamicResource CheckBoxStyle1}" VerticalContentAlignment="Center" 
                   Content="Show absorbed damage" Width="200" Margin="40 0" IsChecked="{Binding IsShowAbsorbed}" />

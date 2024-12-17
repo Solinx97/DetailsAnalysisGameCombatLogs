@@ -26,8 +26,6 @@ public class CombatPlayerModel
 
     public double ResourcesRecoveryPerSecond { get; set; }
 
-    public int UsedBuffs { get; set; }
-
     public PlayerParseInfoModel PlayerParseInfo { get; set; }
 
     public int CombatId { get; set; }

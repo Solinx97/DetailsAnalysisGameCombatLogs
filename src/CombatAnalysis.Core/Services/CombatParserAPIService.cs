@@ -240,12 +240,37 @@ public class CombatParserAPIService
         }
     }
 
-    public async Task<IEnumerable<T>> LoadCombatDetailsByCombatPlayerId<T>(string address, int combatPlayerId)
+    public async Task<int> LoadCountAsync(string address)
+    {
+        try
+        {
+            var response = await _httpClient.GetAsync(address, CancellationToken.None);
+            response.EnsureSuccessStatusCode();
+
+            var details = await response.Content.ReadFromJsonAsync<int>();
+
+            return details;
+        }
+        catch (HttpRequestException ex)
+        {
+            _logger.LogError(ex, "HTTP request error: {Message}", ex.Message);
+
+            return 0;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "An unexpected error occurred: {Message}", ex.Message);
+
+            return 0;
+        }
+    }
+
+    public async Task<IEnumerable<T>> LoadCombatDetailsAsync<T>(string address)
         where T : class
     {
         try
         {
-            var response = await _httpClient.GetAsync($"{address}/{combatPlayerId}", CancellationToken.None);
+            var response = await _httpClient.GetAsync(address, CancellationToken.None);
             response.EnsureSuccessStatusCode();
 
             var details = await response.Content.ReadFromJsonAsync<IEnumerable<T>>();

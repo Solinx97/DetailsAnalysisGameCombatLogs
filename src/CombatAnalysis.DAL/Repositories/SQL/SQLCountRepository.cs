@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CombatAnalysis.DAL.Repositories.SQL;
 
-internal class SQLCountRepository<TModel> : ICountRepository
+internal class SQLCountRepository<TModel> : ICountRepository<TModel>
     where TModel : class, ICombatPlayerEntity
 {
     private readonly CombatParserSQLContext _context;
