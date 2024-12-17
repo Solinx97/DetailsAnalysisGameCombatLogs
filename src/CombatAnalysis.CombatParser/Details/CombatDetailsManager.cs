@@ -279,7 +279,7 @@ internal class CombatDetailsManager
         return (combatDataLine[6], damageTaken);
     }
 
-    public (string, ResourceRecovery) GetEnergyRecovery(List<string> combatDataLine)
+    public (string, ResourceRecovery) GetResourceRecovery(List<string> combatDataLine)
     {
         if (!_playersId.Any(playerId => playerId.Equals(combatDataLine[6])))
         {
@@ -290,8 +290,8 @@ internal class CombatDetailsManager
         {
             Time = GetTimeFromStart(combatDataLine[0]),
             Spell = combatDataLine[11].Trim('"'),
-            Creator = combatDataLine[3],
-            Target = combatDataLine[7]
+            Creator = combatDataLine[3].Trim('"'),
+            Target = combatDataLine[7].Trim('"')
         };
 
         if (int.TryParse(combatDataLine[^4], NumberStyles.Number, CultureInfo.InvariantCulture, out var amoutOfResourcesRecovery))

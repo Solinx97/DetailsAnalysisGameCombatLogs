@@ -27,14 +27,36 @@ internal class GeneralFilterService<TModel, TModelMap> : IGeneralFilterService<T
 
     public async Task<int> CountTargetsByCombatPlayerIdAsync(int combatPlayerId, string target)
     {
-        var count = await _repository.CountTargetsByCombatPlayerIdAsync(combatPlayerId, target);
+        var count = await _repository.CountTargetByCombatPlayerIdAsync(combatPlayerId, target);
 
         return count;
     }
 
     public async Task<IEnumerable<TModel>> GetTargetsByCombatPlayerIdAsync(int combatPlayerId, string target, int page, int pageSize)
     {
-        var result = await _repository.GetTargetsByCombatPlayerIdAsync(combatPlayerId, target, page, pageSize);
+        var result = await _repository.GetTargetByCombatPlayerIdAsync(combatPlayerId, target, page, pageSize);
+        var resultMap = _mapper.Map<IEnumerable<TModel>>(result);
+
+        return resultMap;
+    }
+
+    public async Task<IEnumerable<string>> GetCreatorNamesByCombatPlayerIdAsync(int combatPlayerId)
+    {
+        var result = await _repository.GetCreatorNamesByCombatPlayerIdAsync(combatPlayerId);
+
+        return result;
+    }
+
+    public async Task<int> CountCreatorByCombatPlayerIdAsync(int combatPlayerId, string creator)
+    {
+        var count = await _repository.CountCreatorByCombatPlayerIdAsync(combatPlayerId, creator);
+
+        return count;
+    }
+
+    public async Task<IEnumerable<TModel>> GetCreatorByCombatPlayerIdAsync(int combatPlayerId, string creator, int page, int pageSize)
+    {
+        var result = await _repository.GetCreatorByCombatPlayerIdAsync(combatPlayerId, creator, page, pageSize);
         var resultMap = _mapper.Map<IEnumerable<TModel>>(result);
 
         return resultMap;

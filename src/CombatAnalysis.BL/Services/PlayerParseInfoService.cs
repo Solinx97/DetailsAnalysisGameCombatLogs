@@ -1,17 +1,18 @@
 ﻿using AutoMapper;
 using CombatAnalysis.BL.DTO;
-using CombatAnalysis.BL.Interfaces;
+using CombatAnalysis.BL.Interfaces.General;
+using CombatAnalysis.BL.Services.General;
 using CombatAnalysis.DAL.Entities;
-using CombatAnalysis.DAL.Interfaces;
+using CombatAnalysis.DAL.Interfaces.Generic;
 
 namespace CombatAnalysis.BL.Services;
 
-internal class PlayerParseInfoService : IService<PlayerParseInfoDto>
+internal class PlayerParseInfoService : QueryService<PlayerParseInfoDto, PlayerParseInfo>, IMutationService<PlayerParseInfoDto>
 {
     private readonly IGenericRepository<PlayerParseInfo> _repository;
     private readonly IMapper _mapper;
 
-    public PlayerParseInfoService(IGenericRepository<PlayerParseInfo> repository, IMapper mapper)
+    public PlayerParseInfoService(IGenericRepository<PlayerParseInfo> repository, IMapper mapper) : base(repository, mapper)
     {
         _repository = repository;
         _mapper = mapper;
@@ -27,37 +28,6 @@ internal class PlayerParseInfoService : IService<PlayerParseInfoDto>
         return CreateInternalAsync(item);
     }
 
-    public async Task<int> DeleteAsync(int id)
-    {
-        var rowsAffected = await _repository.DeleteAsync(id);
-
-        return rowsAffected;
-    }
-
-    public async Task<IEnumerable<PlayerParseInfoDto>> GetAllAsync()
-    {
-        var allData = await _repository.GetAllAsync();
-        var result = _mapper.Map<IEnumerable<PlayerParseInfoDto>>(allData);
-
-        return result;
-    }
-
-    public async Task<PlayerParseInfoDto> GetByIdAsync(int id)
-    {
-        var result = await _repository.GetByIdAsync(id);
-        var resultMap = _mapper.Map<PlayerParseInfoDto>(result);
-
-        return resultMap;
-    }
-
-    public async Task<IEnumerable<PlayerParseInfoDto>> GetByParamAsync(string paramName, object value)
-    {
-        var result = await _repository.GetByParamAsync(paramName, value);
-        var resultMap = _mapper.Map<IEnumerable<PlayerParseInfoDto>>(result);
-
-        return resultMap;
-    }
-
     public Task<int> UpdateAsync(PlayerParseInfoDto item)
     {
         if (item == null)
@@ -66,6 +36,16 @@ internal class PlayerParseInfoService : IService<PlayerParseInfoDto>
         }
 
         return UpdateInternalAsync(item);
+    }
+
+    public Task<int> DeleteAsync(PlayerParseInfoDto item)
+    {
+        if (item == null)
+        {
+            throw new ArgumentNullException(nameof(PlayerParseInfoDto), $"The {nameof(PlayerParseInfoDto)} can't be null");
+        }
+
+        return DeleteInternalAsync(item);
     }
 
     private async Task<PlayerParseInfoDto> CreateInternalAsync(PlayerParseInfoDto item)
@@ -83,5 +63,24 @@ internal class PlayerParseInfoService : IService<PlayerParseInfoDto>
         var rowsAffected = await _repository.UpdateAsync(map);
 
         return rowsAffected;
+    }
+
+    private async Task<int> DeleteInternalAsync(PlayerParseInfoDto item)
+    {
+        CheckParams(item);
+
+        var map = _mapper.Map<PlayerParseInfo>(item);
+        var affectedRows = await _repository.DeleteAsync(map);
+
+        return affectedRows;
+    }
+
+    private void CheckParams(PlayerParseInfoDto item)
+    {
+        if (item.Difficult < 0)
+        {
+            throw new ArgumentNullException(nameof(PlayerParseInfoDto.Difficult),
+                $"The property {nameof(PlayerParseInfoDto.Difficult)} of the {nameof(PlayerParseInfoDto)} should be positive");
+        }
     }
 }

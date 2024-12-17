@@ -2,38 +2,24 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useEffect, useState } from 'react';
 import useTime from '../../hooks/useTime';
-import { useGetHealDoneByPlayerIdQuery } from '../../store/api/combatParser/HealDone.api';
+import { useGetHealDoneTargetByPlayerIdQuery, useGetHealDoneCountTargetsByPlayerIdQuery, useGetHealDoneUniqueTargetsQuery } from '../../store/api/combatParser/HealDone.api';
+import DetailsFilter from './DetailsFilter';
 import PaginationHelper from './PaginationHelper';
 
-const HealDoneHelper = ({ combatPlayerId, pageSize, getCountAsync, t }) => {
+const HealDoneHelper = ({ combatPlayerId, pageSize, getUserNameWithoutRealm, t }) => {
     const { getTimeWithoutMs } = useTime();
 
     const [page, setPage] = useState(1);
-    const [count, setCount] = useState(1);
+    const [selectedTarget, setSelectedTarget] = useState("All");
 
-    const { data, isLoading } = useGetHealDoneByPlayerIdQuery({ combatPlayerId, page, pageSize });
+    const { data: count, isLoading: countIsLoading } = useGetHealDoneCountTargetsByPlayerIdQuery({ combatPlayerId, target: selectedTarget === "All" ? "-1" : selectedTarget });
+    const { data, isLoading } = useGetHealDoneTargetByPlayerIdQuery({ combatPlayerId, target: selectedTarget === "All" ? "-1" : selectedTarget, page, pageSize });
 
     const totalPages = Math.ceil(count / pageSize);
 
     useEffect(() => {
-        const getCount = async () => {
-            const count = await getCountAsync();
-            setCount(count);
-        }
-
-        getCount();
-    }, []);
-
-    const getUserNameWithoutRealm = (username) => {
-        if (!username.includes('-')) {
-            return username;
-        }
-
-        const realmNameIndex = username.indexOf('-');
-        const userNameWithoutRealm = username.substr(0, realmNameIndex);
-
-        return userNameWithoutRealm;
-    }
+        setPage(1);
+    }, [selectedTarget]);
 
     const tableTitle = () => {
         return (
@@ -56,12 +42,19 @@ const HealDoneHelper = ({ combatPlayerId, pageSize, getCountAsync, t }) => {
         );
     }
 
-    if (isLoading) {
+    if (isLoading || countIsLoading) {
         return (<div>Loading...</div>);
     }
 
     return (
         <div>
+            <DetailsFilter
+                combatPlayerId={combatPlayerId}
+                selectedTarget={selectedTarget}
+                setSelectedTarget={setSelectedTarget}
+                useGetUniqueTargetsQuery={useGetHealDoneUniqueTargetsQuery}
+                t={t}
+            />
             <ul className="player-data-details">
                 {tableTitle()}
                 {data.map((item) => (

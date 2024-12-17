@@ -6,12 +6,12 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CombatAnalysis.DAL.Repositories.SQL.StoredProcedure;
 
-internal class SQLSPPlayerInfoRepository<TModel> : SQLSPRepository<TModel>, IPlayerInfo<TModel>
+internal class SQLSPPlayerInfoRepository<TModel> : IPlayerInfoRepository<TModel>
     where TModel : class, IEntity
 {
     private readonly CombatParserSQLContext _context;
 
-    public SQLSPPlayerInfoRepository(CombatParserSQLContext context) : base(context)
+    public SQLSPPlayerInfoRepository(CombatParserSQLContext context)
     {
         _context = context;
     }

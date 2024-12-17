@@ -1,6 +1,6 @@
 ﻿using CombatAnalysis.DAL.Interfaces.Entities;
 
-namespace CombatAnalysis.DAL.Interfaces;
+namespace CombatAnalysis.DAL.Interfaces.Generic;
 
 public interface IGenericRepository<TModel>
     where TModel : class, IEntity
@@ -9,7 +9,7 @@ public interface IGenericRepository<TModel>
 
     Task<int> UpdateAsync(TModel item);
 
-    Task<int> DeleteAsync(int id);
+    Task<int> DeleteAsync(TModel item);
 
     Task<TModel> GetByIdAsync(int id);
 

@@ -2,12 +2,11 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useEffect, useState } from 'react';
 import useTime from '../../hooks/useTime';
-import { useGetDamageDoneCountTargetsByPlayerIdQuery, useGetDamageDoneTargetByPlayerIdQuery } from '../../store/api/combatParser/DamageDone.api';
-import DamageDoneDetailsFilter from './DamageDoneDetailsFilter';
+import { useGetDamageDoneCountTargetsByPlayerIdQuery, useGetDamageDoneTargetByPlayerIdQuery, useGetDamageDoneUniqueTargetsQuery } from '../../store/api/combatParser/DamageDone.api';
+import DetailsFilter from './DetailsFilter';
 import PaginationHelper from './PaginationHelper';
 
-const damageType =
-{
+const damageType = {
     Normal: 0,
     Crit: 1,
     Dodge: 2,
@@ -21,21 +20,12 @@ const DamageDoneHelper = ({ combatPlayerId, pageSize, t }) => {
     const { getTimeWithoutMs } = useTime();
 
     const [page, setPage] = useState(1);
-    const [damageDone, setDamageDone] = useState([]);
     const [selectedTarget, setSelectedTarget] = useState("All");
 
     const { data: count, isLoading: countIsLoading } = useGetDamageDoneCountTargetsByPlayerIdQuery({ combatPlayerId, target: selectedTarget === "All" ? "-1" : selectedTarget });
     const { data, isLoading } = useGetDamageDoneTargetByPlayerIdQuery({ combatPlayerId, target: selectedTarget === "All" ? "-1" : selectedTarget, page, pageSize });
 
     const totalPages = Math.ceil(count / pageSize);
-
-    useEffect(() => {
-        if (data === undefined) {
-            return;
-        }
-
-        setDamageDone(data);
-    }, [data]);
 
     useEffect(() => {
         setPage(1);
@@ -123,14 +113,16 @@ const DamageDoneHelper = ({ combatPlayerId, pageSize, t }) => {
 
     return (
         <div>
-            <DamageDoneDetailsFilter
+            <DetailsFilter
                 combatPlayerId={combatPlayerId}
                 selectedTarget={selectedTarget}
                 setSelectedTarget={setSelectedTarget}
+                useGetUniqueTargetsQuery={useGetDamageDoneUniqueTargetsQuery}
+                t={t}
             />
             <ul className="player-data-details">
                 {tableTitle()}
-                {damageDone?.map((item) => (
+                {data?.map((item) => (
                     <li className="player-data-details__item" key={item.id}>
                         <ul>
                             <li>

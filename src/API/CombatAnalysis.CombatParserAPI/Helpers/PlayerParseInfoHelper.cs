@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using CombatAnalysis.BL.DTO;
 using CombatAnalysis.BL.Interfaces;
+using CombatAnalysis.BL.Interfaces.General;
 using CombatAnalysis.CombatParser.Entities;
 using CombatAnalysis.CombatParserAPI.Consts;
 using CombatAnalysis.CombatParserAPI.Interfaces;
@@ -102,6 +103,7 @@ internal class PlayerParseInfoHelper : IPlayerParseInfoHelper
 
         var score = await scopedService.GetBySpecIdAsync(playerParseInfo.SpecId, playerParseInfo.BossId, playerParseInfo.Difficult);
 
+        var scopedMutationService = scope.ServiceProvider.GetRequiredService<IMutationService<SpecializationScoreDto>>();
         if (!score.Any())
         {
             playerParseInfo.DamageEfficiency = 100;
@@ -117,7 +119,7 @@ internal class PlayerParseInfoHelper : IPlayerParseInfoHelper
                 Updated = DateTimeOffset.UtcNow,
             };
 
-            await scopedService.CreateAsync(newSpecScore);
+            await scopedMutationService.CreateAsync(newSpecScore);
 
             return;
         }
@@ -133,7 +135,7 @@ internal class PlayerParseInfoHelper : IPlayerParseInfoHelper
         {
             specScore.Damage = combatPlayer.DamageDone;
 
-            await scopedService.UpdateAsync(specScore);
+            await scopedMutationService.UpdateAsync(specScore);
 
             playerParseInfo.DamageEfficiency = 100;
         }
@@ -151,7 +153,7 @@ internal class PlayerParseInfoHelper : IPlayerParseInfoHelper
         {
             specScore.Heal = combatPlayer.HealDone;
 
-            await scopedService.UpdateAsync(specScore);
+            await scopedMutationService.UpdateAsync(specScore);
 
             playerParseInfo.HealEfficiency = 100;
         }
@@ -167,7 +169,7 @@ internal class PlayerParseInfoHelper : IPlayerParseInfoHelper
         mapData.CombatPlayerId = combatPlayerId;
 
         using var scope = _serviceScopeFactory.CreateScope();
-        var scopedService = scope.ServiceProvider.GetRequiredService<IService<PlayerParseInfoDto>>();
+        var scopedService = scope.ServiceProvider.GetRequiredService<IMutationService<PlayerParseInfoDto>>();
 
         await scopedService.CreateAsync(mapData);
     }

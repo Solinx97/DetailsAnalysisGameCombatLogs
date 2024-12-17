@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using CombatAnalysis.BL.DTO;
-using CombatAnalysis.BL.Interfaces;
+using CombatAnalysis.BL.Interfaces.General;
 using CombatAnalysis.CombatParserAPI.Models;
 using Microsoft.AspNetCore.Mvc;
 
@@ -10,13 +10,16 @@ namespace CombatAnalysis.CombatParserAPI.Controllers;
 [ApiController]
 public class CombatAuraController : ControllerBase
 {
-    private readonly IService<CombatAuraDto> _service;
+    private readonly IQueryService<CombatAuraDto> _queryService;
+    private readonly IMutationService<CombatAuraDto> _mutationService;
     private readonly IMapper _mapper;
     private readonly ILogger<CombatAuraController> _logger;
 
-    public CombatAuraController(IService<CombatAuraDto> service, IMapper mapper, ILogger<CombatAuraController> logger)
+    public CombatAuraController(IQueryService<CombatAuraDto> queryService, IMutationService<CombatAuraDto> mutationService, 
+        IMapper mapper, ILogger<CombatAuraController> logger)
     {
-        _service = service;
+        _queryService = queryService;
+        _mutationService = mutationService;
         _mapper = mapper;
         _logger = logger;
     }
@@ -24,7 +27,7 @@ public class CombatAuraController : ControllerBase
     [HttpGet("findByCombatId/{combatId:int:min(1)}")]
     public async Task<IActionResult> Find(int combatId)
     {
-        var combatAuras = await _service.GetByParamAsync(nameof(CombatAuraModel.CombatId), combatId);
+        var combatAuras = await _queryService.GetByParamAsync(nameof(CombatAuraModel.CombatId), combatId);
 
         return Ok(combatAuras);
     }
@@ -32,7 +35,7 @@ public class CombatAuraController : ControllerBase
     [HttpGet("{id:int:min(1)}")]
     public async Task<IActionResult> GetById(int id)
     {
-        var combatAura = await _service.GetByIdAsync(id);
+        var combatAura = await _queryService.GetByIdAsync(id);
 
         return Ok(combatAura);
     }
@@ -43,7 +46,7 @@ public class CombatAuraController : ControllerBase
         try
         {
             var map = _mapper.Map<CombatAuraDto>(model);
-            var createdItem = await _service.CreateAsync(map);
+            var createdItem = await _mutationService.CreateAsync(map);
 
             return Ok(createdItem);
         }
@@ -66,7 +69,10 @@ public class CombatAuraController : ControllerBase
     {
         try
         {
-            var deletedId = await _service.DeleteAsync(id);
+            var item = await GetById(id);
+            var map = _mapper.Map<CombatAuraDto>(item);
+
+            var deletedId = await _mutationService.DeleteAsync(map);
 
             return Ok(deletedId);
         }

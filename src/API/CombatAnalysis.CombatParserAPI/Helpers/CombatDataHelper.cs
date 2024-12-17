@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using CombatAnalysis.BL.DTO;
-using CombatAnalysis.BL.Interfaces;
+using CombatAnalysis.BL.Interfaces.General;
 using CombatAnalysis.CombatParser.Details;
 using CombatAnalysis.CombatParser.Entities;
 using CombatAnalysis.CombatParser.Extensions;
@@ -16,33 +16,13 @@ public class CombatDataHelper : ICombatDataHelper
     private readonly IMapper _mapper;
     private readonly ILogger<CombatDataHelper> _logger;
     private readonly IPlayerParseInfoHelper _playerParseInfoHelper;
-    private readonly IPlayerInfoService<DamageDoneDto> _damageDoneService;
-    private readonly IPlayerInfoService<DamageDoneGeneralDto> _damageDoneGeneralService;
-    private readonly IPlayerInfoService<HealDoneDto> _healDoneService;
-    private readonly IPlayerInfoService<HealDoneGeneralDto> _healDoneGeneralService;
-    private readonly IPlayerInfoService<DamageTakenDto> _damageTakenService;
-    private readonly IPlayerInfoService<DamageTakenGeneralDto> _damageTakenGeneralService;
-    private readonly IPlayerInfoService<ResourceRecoveryDto> _resourceRecoveryService;
-    private readonly IPlayerInfoService<ResourceRecoveryGeneralDto> _resourceRecoveryGeneralService;
     private readonly IServiceScopeFactory _serviceScopeFactory;
 
-    public CombatDataHelper(IMapper mapper, ILogger<CombatDataHelper> logger, IPlayerParseInfoHelper playerParseInfoHelper,
-        IPlayerInfoCountService<DamageDoneDto> damageDoneService, IPlayerInfoService<DamageDoneGeneralDto> damageDoneGeneralService,
-        IPlayerInfoCountService<HealDoneDto> healDoneService, IPlayerInfoService<HealDoneGeneralDto> healDoneGeneralService, IPlayerInfoCountService<DamageTakenDto> damageTakenService,
-        IPlayerInfoService<DamageTakenGeneralDto> damageTakenGeneralService, IPlayerInfoCountService<ResourceRecoveryDto> resourceRecoveryService,
-        IPlayerInfoService<ResourceRecoveryGeneralDto> resourceRecoveryGeneralService, IServiceScopeFactory serviceScopeFactory)
+    public CombatDataHelper(IMapper mapper, ILogger<CombatDataHelper> logger, IPlayerParseInfoHelper playerParseInfoHelper, IServiceScopeFactory serviceScopeFactory)
     {
         _mapper = mapper;
         _logger = logger;
         _playerParseInfoHelper = playerParseInfoHelper;
-        _damageDoneService = damageDoneService;
-        _damageDoneGeneralService = damageDoneGeneralService;
-        _healDoneService = healDoneService;
-        _healDoneGeneralService = healDoneGeneralService;
-        _damageTakenService = damageTakenService;
-        _damageTakenGeneralService = damageTakenGeneralService;
-        _resourceRecoveryService = resourceRecoveryService;
-        _resourceRecoveryGeneralService = resourceRecoveryGeneralService;
         _serviceScopeFactory = serviceScopeFactory;
     }
 
@@ -85,17 +65,17 @@ public class CombatDataHelper : ICombatDataHelper
 
     public async Task DeleteCombatPlayerDataAsync(CombatPlayerDto combatPlayer)
     {
-        await DeleteDataAsync(combatPlayer.Id, _damageDoneService);
-        await DeleteDataAsync(combatPlayer.Id, _damageDoneGeneralService);
+        //await DeleteDataAsync(combatPlayer.Id, _damageDoneService);
+        //await DeleteDataAsync(combatPlayer.Id, _damageDoneGeneralService);
 
-        await DeleteDataAsync(combatPlayer.Id, _healDoneService);
-        await DeleteDataAsync(combatPlayer.Id, _healDoneGeneralService);
+        //await DeleteDataAsync(combatPlayer.Id, _healDoneService);
+        //await DeleteDataAsync(combatPlayer.Id, _healDoneGeneralService);
 
-        await DeleteDataAsync(combatPlayer.Id, _damageTakenService);
-        await DeleteDataAsync(combatPlayer.Id, _damageTakenGeneralService);
+        //await DeleteDataAsync(combatPlayer.Id, _damageTakenService);
+        //await DeleteDataAsync(combatPlayer.Id, _damageTakenGeneralService);
 
-        await DeleteDataAsync(combatPlayer.Id, _resourceRecoveryService);
-        await DeleteDataAsync(combatPlayer.Id, _resourceRecoveryGeneralService);
+        //await DeleteDataAsync(combatPlayer.Id, _resourceRecoveryService);
+        //await DeleteDataAsync(combatPlayer.Id, _resourceRecoveryGeneralService);
     }
 
     private async Task UploadAsync(Combat combat, CombatPlayerModel combatPlayer, CombatDetails combatDetails, int combatId)
@@ -138,7 +118,7 @@ public class CombatDataHelper : ICombatDataHelper
         where TModelMap : class, BL.Interfaces.Entity.ICombatPlayerEntity
     {
         using var scope = _serviceScopeFactory.CreateScope();
-        var scopedService = scope.ServiceProvider.GetRequiredService<IPlayerInfoService<TModelMap>>();
+        var scopedService = scope.ServiceProvider.GetRequiredService<IMutationService<TModelMap>>();
 
         foreach (var item in dataforUpload)
         {
@@ -156,7 +136,7 @@ public class CombatDataHelper : ICombatDataHelper
     private async Task UploadCombatPlayerPositionData(List<CombatPlayerPosition> combatPlayerPositions, int combatPlayerId, int combatId)
     {
         using var scope = _serviceScopeFactory.CreateScope();
-        var scopedService = scope.ServiceProvider.GetRequiredService<IService<CombatPlayerPositionDto>>();
+        var scopedService = scope.ServiceProvider.GetRequiredService<IMutationService<CombatPlayerPositionDto>>();
 
         foreach (var item in combatPlayerPositions)
         {
@@ -175,7 +155,7 @@ public class CombatDataHelper : ICombatDataHelper
     private async Task UploadCombatAuraData(List<CombatAura> combatAuras, int combatId)
     {
         using var scope = _serviceScopeFactory.CreateScope();
-        var scopedService = scope.ServiceProvider.GetRequiredService<IService<CombatAuraDto>>();
+        var scopedService = scope.ServiceProvider.GetRequiredService<IMutationService<CombatAuraDto>>();
 
         foreach (var item in combatAuras)
         {
@@ -190,20 +170,20 @@ public class CombatDataHelper : ICombatDataHelper
         }
     }
 
-    private static async Task DeleteDataAsync<TServiceModel>(int combatPlayerId, IService<TServiceModel> service)
-        where TServiceModel : class
-    {
-        var dataForRemove = await service.GetByParamAsync("CombatPlayerId", combatPlayerId);
-        foreach (var item in dataForRemove)
-        {
-            var property = item.GetType().GetProperty("Id");
-            var propertyValue = (int)property.GetValue(item);
+    //private static async Task DeleteDataAsync<TServiceModel>(int combatPlayerId, IMutationService<TServiceModel> service)
+    //    where TServiceModel : class
+    //{
+    //    var dataForRemove = await service.GetByParamAsync("CombatPlayerId", combatPlayerId);
+    //    foreach (var item in dataForRemove)
+    //    {
+    //        var property = item.GetType().GetProperty("Id");
+    //        var propertyValue = (int)property.GetValue(item);
 
-            var rowsAffected = await service.DeleteAsync(propertyValue);
-            if (rowsAffected == 0)
-            {
-                throw new ArgumentException($"Did not deleted");
-            }
-        }
-    }
+    //        var rowsAffected = await service.DeleteAsync(propertyValue);
+    //        if (rowsAffected == 0)
+    //        {
+    //            throw new ArgumentException($"Did not deleted");
+    //        }
+    //    }
+    //}
 }

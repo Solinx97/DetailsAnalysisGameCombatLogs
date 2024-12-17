@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using CombatAnalysis.BL.DTO;
 using CombatAnalysis.BL.Interfaces;
+using CombatAnalysis.BL.Interfaces.General;
 using CombatAnalysis.CombatParserAPI.Models;
 using Microsoft.AspNetCore.Mvc;
 
@@ -10,13 +11,16 @@ namespace CombatAnalysis.CombatParserAPI.Controllers;
 [ApiController]
 public class ResourceRecoveryGeneralController : ControllerBase
 {
-    private readonly IPlayerInfoService<ResourceRecoveryGeneralDto> _service;
+    private readonly IMutationService<ResourceRecoveryGeneralDto> _mutationService;
+    private readonly IPlayerInfoService<ResourceRecoveryGeneralDto> _playerInfoService;
     private readonly IMapper _mapper;
     private readonly ILogger<ResourceRecoveryGeneralController> _logger;
 
-    public ResourceRecoveryGeneralController(IPlayerInfoService<ResourceRecoveryGeneralDto> service, IMapper mapper, ILogger<ResourceRecoveryGeneralController> logger)
+    public ResourceRecoveryGeneralController(IMutationService<ResourceRecoveryGeneralDto> mutationService, IPlayerInfoService<ResourceRecoveryGeneralDto> playerInfoService,
+        IMapper mapper, ILogger<ResourceRecoveryGeneralController> logger)
     {
-        _service = service;
+        _mutationService = mutationService;
+        _playerInfoService = playerInfoService;
         _mapper = mapper;
         _logger = logger;
     }
@@ -24,7 +28,7 @@ public class ResourceRecoveryGeneralController : ControllerBase
     [HttpGet("findByCombatPlayerId/{combatPlayerId:int:min(1)}")]
     public async Task<IActionResult> Find(int combatPlayerId)
     {
-        var resourceRecoveryGenerals = await _service.GetByCombatPlayerIdAsync(combatPlayerId);
+        var resourceRecoveryGenerals = await _playerInfoService.GetByCombatPlayerIdAsync(combatPlayerId);
 
         return Ok(resourceRecoveryGenerals);
     }
@@ -35,26 +39,9 @@ public class ResourceRecoveryGeneralController : ControllerBase
         try
         {
             var map = _mapper.Map<ResourceRecoveryGeneralDto>(model);
-            var createdItem = await _service.CreateAsync(map);
+            var createdItem = await _mutationService.CreateAsync(map);
 
             return Ok(createdItem);
-        }
-        catch (ArgumentNullException ex)
-        {
-            _logger.LogError(ex, ex.Message);
-
-            return BadRequest();
-        }
-    }
-
-    [HttpDelete("{id:int:min(1)}")]
-    public async Task<IActionResult> Delete(int id)
-    {
-        try
-        {
-            var deletedId = await _service.DeleteAsync(id);
-
-            return Ok(deletedId);
         }
         catch (ArgumentNullException ex)
         {

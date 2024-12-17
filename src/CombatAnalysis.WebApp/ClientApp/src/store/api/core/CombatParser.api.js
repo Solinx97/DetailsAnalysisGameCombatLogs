@@ -6,12 +6,6 @@ export const CombatParserApi = createApi({
     reducerPath: 'combatParserAPi',
     tagTyes: [
         'CombatLog',
-        'HealDone',
-        'DamageTaken',
-        'ResourceRecovery',
-        'HealDoneGeneral',
-        'DamageTakenGeneral',
-        'ResourceRecoveryGeneral',
         'PlayerDeath',
         'Combat',
         'CombatPlayer',

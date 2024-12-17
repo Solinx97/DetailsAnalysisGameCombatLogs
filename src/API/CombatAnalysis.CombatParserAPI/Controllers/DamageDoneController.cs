@@ -2,6 +2,7 @@
 using CombatAnalysis.BL.DTO;
 using CombatAnalysis.BL.Interfaces;
 using CombatAnalysis.BL.Interfaces.Filters;
+using CombatAnalysis.BL.Interfaces.General;
 using CombatAnalysis.CombatParserAPI.Models;
 using Microsoft.AspNetCore.Mvc;
 
@@ -11,14 +12,20 @@ namespace CombatAnalysis.CombatParserAPI.Controllers;
 [ApiController]
 public class DamageDoneController : ControllerBase
 {
-    private readonly IPlayerInfoCountService<DamageDoneDto> _service;
+    private readonly IMutationService<DamageDoneDto> _mutationService;
+    private readonly IPlayerInfoService<DamageDoneDto> _playerInfoService;
+    private readonly ICountService<DamageDoneDto> _countService;
     private readonly IGeneralFilterService<DamageDoneDto> _filterService;
     private readonly IMapper _mapper;
     private readonly ILogger<DamageDoneController> _logger;
 
-    public DamageDoneController(IPlayerInfoCountService<DamageDoneDto> service, IGeneralFilterService<DamageDoneDto> filterService, IMapper mapper, ILogger<DamageDoneController> logger)
+    public DamageDoneController(IMutationService<DamageDoneDto> mutationService, IPlayerInfoService<DamageDoneDto> playerInfoService, 
+        ICountService<DamageDoneDto> countService, IGeneralFilterService<DamageDoneDto> filterService,
+        IMapper mapper, ILogger<DamageDoneController> logger)
     {
-        _service = service;
+        _mutationService = mutationService;
+        _playerInfoService = playerInfoService;
+        _countService = countService;
         _filterService = filterService;
         _mapper = mapper;
         _logger = logger;
@@ -29,7 +36,7 @@ public class DamageDoneController : ControllerBase
     {
         try
         {
-            var damageDones = await _service.GetByCombatPlayerIdAsync(combatPlayerId, page, pageSize);
+            var damageDones = await _playerInfoService.GetByCombatPlayerIdAsync(combatPlayerId, page, pageSize);
 
             return Ok(damageDones);
         }
@@ -63,7 +70,7 @@ public class DamageDoneController : ControllerBase
     {
         try
         {
-            var count = await _service.CountByCombatPlayerIdAsync(combatPlayerId);
+            var count = await _countService.CountByCombatPlayerIdAsync(combatPlayerId);
 
             return Ok(count);
         }
@@ -115,32 +122,9 @@ public class DamageDoneController : ControllerBase
         try
         {
             var map = _mapper.Map<DamageDoneDto>(model);
-            var createdItem = await _service.CreateAsync(map);
+            var createdItem = await _mutationService.CreateAsync(map);
 
             return Ok(createdItem);
-        }
-        catch (ArgumentNullException ex)
-        {
-            _logger.LogError(ex, ex.Message);
-
-            return BadRequest();
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, ex.Message);
-
-            return BadRequest();
-        }
-    }
-
-    [HttpDelete("{id:int:min(1)}")]
-    public async Task<IActionResult> Delete(int id)
-    {
-        try
-        {
-            var deletedId = await _service.DeleteAsync(id);
-
-            return Ok(deletedId);
         }
         catch (ArgumentNullException ex)
         {

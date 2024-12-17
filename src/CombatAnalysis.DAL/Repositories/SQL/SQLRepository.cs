@@ -1,6 +1,6 @@
 ﻿using CombatAnalysis.DAL.Data;
-using CombatAnalysis.DAL.Interfaces;
 using CombatAnalysis.DAL.Interfaces.Entities;
+using CombatAnalysis.DAL.Interfaces.Generic;
 using Microsoft.EntityFrameworkCore;
 
 namespace CombatAnalysis.DAL.Repositories.SQL;
@@ -23,12 +23,9 @@ internal class SQLRepository<TModel> : IGenericRepository<TModel>
         return entityEntry.Entity;
     }
 
-    public async Task<int> DeleteAsync(int id)
+    public async Task<int> DeleteAsync(TModel item)
     {
-        var model = Activator.CreateInstance<TModel>();
-        model.Id = id;
-
-        _context.Set<TModel>().Remove(model);
+        _context.Set<TModel>().Remove(item);
         var rowsAffected = await _context.SaveChangesAsync();
 
         return rowsAffected;

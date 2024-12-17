@@ -2,7 +2,7 @@
 
 namespace CombatAnalysis.BL.Interfaces;
 
-public interface ISpecScoreService : IService<SpecializationScoreDto>
+public interface ISpecScoreService
 {
     Task<IEnumerable<SpecializationScoreDto>> GetBySpecIdAsync(int specId, int bossId, int difficult);
 }

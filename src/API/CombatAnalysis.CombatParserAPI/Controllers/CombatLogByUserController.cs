@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using CombatAnalysis.BL.DTO;
-using CombatAnalysis.BL.Interfaces;
+using CombatAnalysis.BL.Interfaces.General;
 using CombatAnalysis.CombatParserAPI.Interfaces;
 using CombatAnalysis.CombatParserAPI.Models;
 using Microsoft.AspNetCore.Mvc;
@@ -12,22 +12,33 @@ namespace CombatAnalysis.CombatParserAPI.Controllers;
 [ApiController]
 public class CombatLogByUserController : ControllerBase
 {
-    private readonly IService<CombatLogByUserDto> _service;
-    private readonly IService<CombatLogDto> _combatLogService;
-    private readonly IService<CombatDto> _combatService;
-    private readonly IService<CombatPlayerDto> _combatPlayerService;
+    private readonly IQueryService<CombatLogByUserDto> _queryCombatLogByUserService;
+    private readonly IMutationService<CombatLogByUserDto> _mutationCombatLogByUserService;
+    private readonly IQueryService<CombatLogDto> _queryCombatLogService;
+    private readonly IMutationService<CombatLogDto> _mutationCombatLogService;
+    private readonly IQueryService<CombatDto> _queryCombatService;
+    private readonly IMutationService<CombatDto> _mutationCombatService;
+    private readonly IQueryService<CombatPlayerDto> _queryCombatPlayerService;
+    private readonly IMutationService<CombatPlayerDto> _mutationCombatPlayerService;
     private readonly IMapper _mapper;
     private readonly ILogger<CombatLogByUserController> _logger;
     private readonly ICombatDataHelper _saveCombatDataHelper;
 
-    public CombatLogByUserController(IService<CombatLogByUserDto> service, IMapper mapper, ILogger<CombatLogByUserController> logger,
-        IService<CombatLogDto> combatLogService, IService<CombatDto> combatService,
-        IService<CombatPlayerDto> combatPlayerService, ICombatDataHelper saveCombatDataHelper)
+    public CombatLogByUserController(IQueryService<CombatLogByUserDto> queryCombatLogByUserService, IMutationService<CombatLogByUserDto> mutationCombatLogByUserService, 
+        IQueryService<CombatLogDto> queryCombatLogService, IMutationService<CombatLogDto> mutationCombatLogService, 
+        IQueryService<CombatDto> queryCombatService, IMutationService<CombatDto> mutationCombatService,
+        IQueryService<CombatPlayerDto> queryCombatPlayerService, IMutationService<CombatPlayerDto> mutationCombatPlayerService, 
+        IMapper mapper, ILogger<CombatLogByUserController> logger,
+        ICombatDataHelper saveCombatDataHelper)
     {
-        _service = service;
-        _combatLogService = combatLogService;
-        _combatService = combatService;
-        _combatPlayerService = combatPlayerService;
+        _queryCombatLogByUserService = queryCombatLogByUserService;
+        _mutationCombatLogByUserService = mutationCombatLogByUserService;
+        _queryCombatLogService = queryCombatLogService;
+        _mutationCombatLogService = mutationCombatLogService;
+        _queryCombatService = queryCombatService;
+        _mutationCombatService = mutationCombatService;
+        _queryCombatPlayerService = queryCombatPlayerService;
+        _mutationCombatPlayerService = mutationCombatPlayerService;
         _mapper = mapper;
         _logger = logger;
         _saveCombatDataHelper = saveCombatDataHelper;
@@ -36,7 +47,7 @@ public class CombatLogByUserController : ControllerBase
     [HttpGet]
     public async Task<IActionResult> GetAll()
     {
-        var combatLogsByUser = await _service.GetAllAsync();
+        var combatLogsByUser = await _queryCombatLogByUserService.GetAllAsync();
 
         return Ok(combatLogsByUser);
     }
@@ -44,7 +55,7 @@ public class CombatLogByUserController : ControllerBase
     [HttpGet("{id:int:min(1)}")]
     public async Task<IActionResult> GetById(int id)
     {
-        var combatLogByUser = await _service.GetByIdAsync(id);
+        var combatLogByUser = await _queryCombatLogByUserService.GetByIdAsync(id);
 
         return Ok(combatLogByUser);
     }
@@ -52,7 +63,7 @@ public class CombatLogByUserController : ControllerBase
     [HttpGet("byUserId/{id}")]
     public async Task<IActionResult> GetByUserId(string id)
     {
-        var result = await _service.GetByParamAsync(nameof(CombatLogByUserModel.AppUserId), id);
+        var result = await _queryCombatLogByUserService.GetByParamAsync(nameof(CombatLogByUserModel.AppUserId), id);
 
         return Ok(result);
     }
@@ -63,7 +74,7 @@ public class CombatLogByUserController : ControllerBase
         try
         {
             var map = _mapper.Map<CombatLogByUserDto>(model);
-            var createdItem = await _service.CreateAsync(map);
+            var createdItem = await _mutationCombatLogByUserService.CreateAsync(map);
 
             return Ok(createdItem);
         }
@@ -81,7 +92,7 @@ public class CombatLogByUserController : ControllerBase
         try
         {
             var map = _mapper.Map<CombatLogByUserDto>(value);
-            var rowsAffected = await _service.UpdateAsync(map);
+            var rowsAffected = await _mutationCombatLogByUserService.UpdateAsync(map);
 
             return Ok(rowsAffected);
         }
@@ -102,7 +113,10 @@ public class CombatLogByUserController : ControllerBase
 
             await DeleteCombatLogAsync(id);
 
-            var deletedId = await _service.DeleteAsync(id);
+            var item = await GetById(id);
+            var map = _mapper.Map<CombatLogByUserDto>(item);
+
+            var deletedId = await _mutationCombatLogByUserService.DeleteAsync(map);
 
             scope.Complete();
 
@@ -116,11 +130,14 @@ public class CombatLogByUserController : ControllerBase
         }
     }
 
-    private async Task DeleteCombatLogAsync(int combatLogId)
+    private async Task DeleteCombatLogAsync(int id)
     {
-        await DeleteCombatsAsync(combatLogId);
+        await DeleteCombatsAsync(id);
 
-        var rowsAffected = await _combatLogService.DeleteAsync(combatLogId);
+        var item = await _queryCombatLogService.GetByIdAsync(id);
+        var map = _mapper.Map<CombatLogDto>(item);
+
+        var rowsAffected = await _mutationCombatLogService.DeleteAsync(map);
         if (rowsAffected == 0)
         {
             throw new ArgumentException("Combat log did not deleted");
@@ -129,12 +146,12 @@ public class CombatLogByUserController : ControllerBase
 
     private async Task DeleteCombatsAsync(int combatLogId)
     {
-        var combats = await _combatService.GetByParamAsync(nameof(CombatModel.CombatLogId), combatLogId);
+        var combats = await _queryCombatService.GetByParamAsync(nameof(CombatModel.CombatLogId), combatLogId);
         foreach (var item in combats)
         {
             await DeleteCombatPlayersAsync(item.Id);
 
-            var rowsAffected = await _combatService.DeleteAsync(item.Id);
+            var rowsAffected = await _mutationCombatService.DeleteAsync(item);
             if (rowsAffected == 0)
             {
                 throw new ArgumentException("Combat did not deleted");
@@ -144,12 +161,12 @@ public class CombatLogByUserController : ControllerBase
 
     private async Task DeleteCombatPlayersAsync(int combatId)
     {
-        var combatPlayers = await _combatPlayerService.GetByParamAsync(nameof(CombatPlayerModel.CombatId), combatId);
+        var combatPlayers = await _queryCombatPlayerService.GetByParamAsync(nameof(CombatPlayerModel.CombatId), combatId);
         foreach (var item in combatPlayers)
         {
             await _saveCombatDataHelper.DeleteCombatPlayerDataAsync(item);
 
-            var rowsAffected = await _combatPlayerService.DeleteAsync(item.Id);
+            var rowsAffected = await _mutationCombatPlayerService.DeleteAsync(item);
             if (rowsAffected == 0)
             {
                 throw new ArgumentException("Combat player did not deleted");

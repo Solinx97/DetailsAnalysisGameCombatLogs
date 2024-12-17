@@ -1,17 +1,18 @@
 ﻿using AutoMapper;
 using CombatAnalysis.BL.DTO;
-using CombatAnalysis.BL.Interfaces;
+using CombatAnalysis.BL.Interfaces.General;
+using CombatAnalysis.BL.Services.General;
 using CombatAnalysis.DAL.Entities;
-using CombatAnalysis.DAL.Interfaces;
+using CombatAnalysis.DAL.Interfaces.Generic;
 
 namespace CombatAnalysis.BL.Services;
 
-internal class ResourceRecoveryGeneralService : IPlayerInfoService<ResourceRecoveryGeneralDto>
+internal class ResourceRecoveryGeneralService : QueryService<ResourceRecoveryGeneralDto, ResourceRecoveryGeneral>, IMutationService<ResourceRecoveryGeneralDto>
 {
-    private readonly IPlayerInfo<ResourceRecoveryGeneral> _repository;
+    private readonly IGenericRepository<ResourceRecoveryGeneral> _repository;
     private readonly IMapper _mapper;
 
-    public ResourceRecoveryGeneralService(IPlayerInfo<ResourceRecoveryGeneral> repository, IMapper mapper)
+    public ResourceRecoveryGeneralService(IGenericRepository<ResourceRecoveryGeneral> repository, IMapper mapper) : base(repository, mapper)
     {
         _repository = repository;
         _mapper = mapper;
@@ -27,58 +28,6 @@ internal class ResourceRecoveryGeneralService : IPlayerInfoService<ResourceRecov
         return CreateInternalAsync(item);
     }
 
-    public async Task<int> DeleteAsync(int id)
-    {
-        var rowsAffected = await _repository.DeleteAsync(id);
-
-        return rowsAffected;
-    }
-
-    public async Task<IEnumerable<ResourceRecoveryGeneralDto>> GetAllAsync()
-    {
-        var allData = await _repository.GetAllAsync();
-        var result = _mapper.Map<IEnumerable<ResourceRecoveryGeneralDto>>(allData);
-
-        return result;
-    }
-
-    public async Task<ResourceRecoveryGeneralDto> GetByIdAsync(int id)
-    {
-        var result = await _repository.GetByIdAsync(id);
-        var resultMap = _mapper.Map<ResourceRecoveryGeneralDto>(result);
-
-        return resultMap;
-    }
-
-    public async Task<IEnumerable<ResourceRecoveryGeneralDto>> GetByCombatPlayerIdAsync(int combatPlayerId)
-    {
-        var result = await _repository.GetByCombatPlayerIdAsync(combatPlayerId);
-        var resultMap = _mapper.Map<IEnumerable<ResourceRecoveryGeneralDto>>(result);
-
-        return resultMap;
-    }
-
-    public async Task<IEnumerable<ResourceRecoveryGeneralDto>> GetByCombatPlayerIdAsync(int combatPlayerId, int page = 1, int pageSize = 10)
-    {
-        var result = await _repository.GetByCombatPlayerIdAsync(combatPlayerId);
-        var pagination = result
-            .Skip((page - 1) * pageSize)
-            .Take(pageSize)
-            .ToList();
-
-        var map = _mapper.Map<IEnumerable<ResourceRecoveryGeneralDto>>(pagination);
-
-        return map;
-    }
-
-    public async Task<IEnumerable<ResourceRecoveryGeneralDto>> GetByParamAsync(string paramName, object value)
-    {
-        var result = await _repository.GetByParamAsync(paramName, value);
-        var resultMap = _mapper.Map<IEnumerable<ResourceRecoveryGeneralDto>>(result);
-
-        return resultMap;
-    }
-
     public Task<int> UpdateAsync(ResourceRecoveryGeneralDto item)
     {
         if (item == null)
@@ -87,6 +36,16 @@ internal class ResourceRecoveryGeneralService : IPlayerInfoService<ResourceRecov
         }
 
         return UpdateInternalAsync(item);
+    }
+
+    public Task<int> DeleteAsync(ResourceRecoveryGeneralDto item)
+    {
+        if (item == null)
+        {
+            throw new ArgumentNullException(nameof(ResourceRecoveryGeneralDto), $"The {nameof(ResourceRecoveryGeneralDto)} can't be null");
+        }
+
+        return DeleteInternalAsync(item);
     }
 
     private async Task<ResourceRecoveryGeneralDto> CreateInternalAsync(ResourceRecoveryGeneralDto item)
@@ -116,5 +75,24 @@ internal class ResourceRecoveryGeneralService : IPlayerInfoService<ResourceRecov
         var rowsAffected = await _repository.UpdateAsync(map);
 
         return rowsAffected;
+    }
+
+    private async Task<int> DeleteInternalAsync(ResourceRecoveryGeneralDto item)
+    {
+        CheckParams(item);
+
+        var map = _mapper.Map<ResourceRecoveryGeneral>(item);
+        var affectedRows = await _repository.DeleteAsync(map);
+
+        return affectedRows;
+    }
+
+    private void CheckParams(ResourceRecoveryGeneralDto item)
+    {
+        if (string.IsNullOrEmpty(item.Spell))
+        {
+            throw new ArgumentNullException(nameof(ResourceRecoveryGeneralDto.Spell),
+                $"The property {nameof(ResourceRecoveryGeneralDto.Spell)} of the {nameof(ResourceRecoveryGeneralDto)} object can't be null or empty");
+        }
     }
 }

@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using CombatAnalysis.BL.DTO;
-using CombatAnalysis.BL.Interfaces;
+using CombatAnalysis.BL.Interfaces.General;
 using CombatAnalysis.CombatParserAPI.Models;
 using Microsoft.AspNetCore.Mvc;
 
@@ -10,13 +10,16 @@ namespace CombatAnalysis.CombatParserAPI.Controllers;
 [ApiController]
 public class CombatPlayerPositionController : ControllerBase
 {
-    private readonly IService<CombatPlayerPositionDto> _service;
+    private readonly IQueryService<CombatPlayerPositionDto> _queryCombatPlayerPosition;
+    private readonly IMutationService<CombatPlayerPositionDto> _mutationCombatPlayerService;
     private readonly IMapper _mapper;
     private readonly ILogger<CombatPlayerController> _logger;
 
-    public CombatPlayerPositionController(IService<CombatPlayerPositionDto> service, IMapper mapper, ILogger<CombatPlayerController> logger)
+    public CombatPlayerPositionController(IQueryService<CombatPlayerPositionDto> queryCombatPlayerPosition, IMutationService<CombatPlayerPositionDto> mutationCombatPlayerService,
+        IMapper mapper, ILogger<CombatPlayerController> logger)
     {
-        _service = service;
+        _queryCombatPlayerPosition = queryCombatPlayerPosition;
+        _mutationCombatPlayerService = mutationCombatPlayerService;
         _mapper = mapper;
         _logger = logger;
     }
@@ -24,7 +27,7 @@ public class CombatPlayerPositionController : ControllerBase
     [HttpGet("findByCombatId/{combatId:int:min(1)}")]
     public async Task<IActionResult> Find(int combatId)
     {
-        var combatPlayerPositions = await _service.GetByParamAsync(nameof(CombatPlayerPositionModel.CombatId), combatId);
+        var combatPlayerPositions = await _queryCombatPlayerPosition.GetByParamAsync(nameof(CombatPlayerPositionModel.CombatId), combatId);
 
         return Ok(combatPlayerPositions);
     }
@@ -32,7 +35,7 @@ public class CombatPlayerPositionController : ControllerBase
     [HttpGet("{id:int:min(1)}")]
     public async Task<IActionResult> GetById(int id)
     {
-        var combatPlayerPosition = await _service.GetByIdAsync(id);
+        var combatPlayerPosition = await _queryCombatPlayerPosition.GetByIdAsync(id);
 
         return Ok(combatPlayerPosition);
     }
@@ -43,7 +46,7 @@ public class CombatPlayerPositionController : ControllerBase
         try
         {
             var map = _mapper.Map<CombatPlayerPositionDto>(model);
-            var createdItem = await _service.CreateAsync(map);
+            var createdItem = await _mutationCombatPlayerService.CreateAsync(map);
 
             return Ok(createdItem);
         }
@@ -66,7 +69,10 @@ public class CombatPlayerPositionController : ControllerBase
     {
         try
         {
-            var deletedId = await _service.DeleteAsync(id);
+            var item = await GetById(id);
+            var map = _mapper.Map<CombatPlayerPositionDto>(item);
+
+            var deletedId = await _mutationCombatPlayerService.DeleteAsync(map);
 
             return Ok(deletedId);
         }

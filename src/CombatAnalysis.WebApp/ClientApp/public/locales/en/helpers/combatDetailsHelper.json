@@ -32,5 +32,7 @@
   "First": "First",
   "Previous": "Previous",
   "Next": "Next",
-  "Last": "Last"
+  "Last": "Last",
+  "All": "All",
+  "Creator": "Creator"
 }

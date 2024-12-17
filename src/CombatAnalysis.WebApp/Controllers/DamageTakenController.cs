@@ -26,6 +26,15 @@ public class DamageTakenController : ControllerBase
         return Ok(damageTakens);
     }
 
+    [HttpGet("getUniqueCreators/{combatPlayerId}")]
+    public async Task<IActionResult> GetUniqueCreators(int combatPlayerId)
+    {
+        var responseMessage = await _httpClient.GetAsync($"DamageTaken/getUniqueCreators/{combatPlayerId}");
+        var uniqueTargets = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<string>>();
+
+        return Ok(uniqueTargets);
+    }
+
     [HttpGet("count/{combatPlayerId}")]
     public async Task<IActionResult> Count(int combatPlayerId)
     {
@@ -35,40 +44,31 @@ public class DamageTakenController : ControllerBase
         return Ok(count);
     }
 
-    [HttpGet("getUniqueTargets/{combatPlayerId}")]
-    public async Task<IActionResult> GetUniqueTargets(int combatPlayerId)
+    [HttpGet("getByCreator")]
+    public async Task<IActionResult> GetByCreator(int combatPlayerId, string creator, int page, int pageSize)
     {
-        var responseMessage = await _httpClient.GetAsync($"DamageTaken/getUniqueTargets/{combatPlayerId}");
-        var uniqueTargets = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<string>>();
-
-        return Ok(uniqueTargets);
-    }
-
-    [HttpGet("countByTarget")]
-    public async Task<IActionResult> CountByTarget(int combatPlayerId, string target)
-    {
-        if (target.Equals("-1"))
-        {
-            return await Count(combatPlayerId);
-        }
-
-        var responseMessage = await _httpClient.GetAsync($"DamageTaken/countByTarget?combatPlayerId={combatPlayerId}&target={target}");
-        var count = await responseMessage.Content.ReadFromJsonAsync<int>();
-
-        return Ok(count);
-    }
-
-    [HttpGet("getByTarget")]
-    public async Task<IActionResult> GetByTarget(int combatPlayerId, string target, int page, int pageSize)
-    {
-        if (target.Equals("-1"))
+        if (creator.Equals("-1"))
         {
             return await GetByCombatPlayerId(combatPlayerId, page, pageSize);
         }
 
-        var responseMessage = await _httpClient.GetAsync($"DamageTaken/getByTarget?combatPlayerId={combatPlayerId}&target={target}&page={page}&pageSize={pageSize}");
+        var responseMessage = await _httpClient.GetAsync($"DamageTaken/getByCreator?combatPlayerId={combatPlayerId}&creator={creator}&page={page}&pageSize={pageSize}");
         var damageDones = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<DamageDoneModel>>();
 
         return Ok(damageDones);
+    }
+
+    [HttpGet("countByCreator")]
+    public async Task<IActionResult> CountByCreator(int combatPlayerId, string creator)
+    {
+        if (creator.Equals("-1"))
+        {
+            return await Count(combatPlayerId);
+        }
+
+        var responseMessage = await _httpClient.GetAsync($"DamageTaken/countByCreator?combatPlayerId={combatPlayerId}&creator={creator}");
+        var count = await responseMessage.Content.ReadFromJsonAsync<int>();
+
+        return Ok(count);
     }
 }

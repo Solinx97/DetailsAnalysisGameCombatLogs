@@ -260,7 +260,7 @@ public class CombatDetails
         }
         else if (hasResources)
         {
-            var (playerId, energyRecoveryInformation) = combatDetailsManager.GetEnergyRecovery(clearCombatData);
+            var (playerId, energyRecoveryInformation) = combatDetailsManager.GetResourceRecovery(clearCombatData);
             if (!string.IsNullOrEmpty(playerId) || energyRecoveryInformation != null)
             {
                 if (ResourcesRecovery.TryGetValue(playerId, out var collection))

@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using CombatAnalysis.BL.DTO;
-using CombatAnalysis.BL.Interfaces;
+using CombatAnalysis.BL.Interfaces.General;
 using CombatAnalysis.CombatParserAPI.Interfaces;
 using CombatAnalysis.CombatParserAPI.Models;
 using Microsoft.AspNetCore.Mvc;
@@ -11,14 +11,18 @@ namespace CombatAnalysis.CombatParserAPI.Controllers;
 [ApiController]
 public class CombatLogController : ControllerBase
 {
-    private readonly IService<CombatLogDto> _service;
+    private readonly IQueryService<CombatLogDto> _queryCombatLogService;
+    private readonly IMutationService<CombatLogDto> _mutationCombatLogService;
     private readonly IMapper _mapper;
     private readonly ILogger<CombatLogController> _logger;
     private readonly ICombatDataHelper _saveCombatDataHelper;
 
-    public CombatLogController(IService<CombatLogDto> service, IMapper mapper, ILogger<CombatLogController> logger, ICombatDataHelper saveCombatDataHelper)
+    public CombatLogController(IQueryService<CombatLogDto> queryCombatLogService, IMutationService<CombatLogDto> mutationCombatLogService, 
+        IMapper mapper, ILogger<CombatLogController> logger, 
+        ICombatDataHelper saveCombatDataHelper)
     {
-        _service = service;
+        _queryCombatLogService = queryCombatLogService;
+        _mutationCombatLogService = mutationCombatLogService;
         _mapper = mapper;
         _logger = logger;
         _saveCombatDataHelper = saveCombatDataHelper;
@@ -29,7 +33,7 @@ public class CombatLogController : ControllerBase
     {
         try
         {
-            var combatLogs = await _service.GetAllAsync();
+            var combatLogs = await _queryCombatLogService.GetAllAsync();
 
             return Ok(combatLogs);
         }
@@ -46,7 +50,7 @@ public class CombatLogController : ControllerBase
     {
         try
         {
-            var combatLog = await _service.GetByIdAsync(id);
+            var combatLog = await _queryCombatLogService.GetByIdAsync(id);
 
             return Ok(combatLog);
         }
@@ -66,7 +70,7 @@ public class CombatLogController : ControllerBase
             var combatLog = _saveCombatDataHelper.CreateCombatLog(dungeonNames);
 
             var map = _mapper.Map<CombatLogDto>(combatLog);
-            var createdItem = await _service.CreateAsync(map);
+            var createdItem = await _mutationCombatLogService.CreateAsync(map);
 
             return Ok(createdItem);
         }
@@ -90,7 +94,7 @@ public class CombatLogController : ControllerBase
         try
         {
             var map = _mapper.Map<CombatLogDto>(value);
-            var rowsAffected = await _service.UpdateAsync(map);
+            var rowsAffected = await _mutationCombatLogService.UpdateAsync(map);
 
             return Ok(rowsAffected);
         }
@@ -107,7 +111,10 @@ public class CombatLogController : ControllerBase
     {
         try
         {
-            var deletedId = await _service.DeleteAsync(id);
+            var item = await GetById(id);
+            var map = _mapper.Map<CombatLogDto>(item);
+
+            var deletedId = await _mutationCombatLogService.DeleteAsync(map);
 
             return Ok(deletedId);
         }

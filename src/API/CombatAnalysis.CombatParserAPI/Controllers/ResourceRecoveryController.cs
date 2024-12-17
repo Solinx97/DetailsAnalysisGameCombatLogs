@@ -2,6 +2,7 @@
 using CombatAnalysis.BL.DTO;
 using CombatAnalysis.BL.Interfaces;
 using CombatAnalysis.BL.Interfaces.Filters;
+using CombatAnalysis.BL.Interfaces.General;
 using CombatAnalysis.CombatParserAPI.Models;
 using Microsoft.AspNetCore.Mvc;
 
@@ -11,14 +12,20 @@ namespace CombatAnalysis.CombatParserAPI.Controllers;
 [ApiController]
 public class ResourceRecoveryController : ControllerBase
 {
-    private readonly IPlayerInfoCountService<ResourceRecoveryDto> _service;
+    private readonly IMutationService<ResourceRecoveryDto> _mutationService;
+    private readonly IPlayerInfoService<ResourceRecoveryDto> _playerInfoService;
+    private readonly ICountService<ResourceRecoveryDto> _countService;
     private readonly IGeneralFilterService<ResourceRecoveryDto> _filterService;
     private readonly IMapper _mapper;
     private readonly ILogger<ResourceRecoveryController> _logger;
 
-    public ResourceRecoveryController(IPlayerInfoCountService<ResourceRecoveryDto> service, IGeneralFilterService<ResourceRecoveryDto> filterService, IMapper mapper, ILogger<ResourceRecoveryController> logger)
+    public ResourceRecoveryController(IMutationService<ResourceRecoveryDto> mutationService, IPlayerInfoService<ResourceRecoveryDto> playerInfoService,
+        ICountService<ResourceRecoveryDto> countService, IGeneralFilterService<ResourceRecoveryDto> filterService,
+        IMapper mapper, ILogger<ResourceRecoveryController> logger)
     {
-        _service = service;
+        _mutationService = mutationService;
+        _playerInfoService = playerInfoService;
+        _countService = countService;
         _filterService = filterService;
         _mapper = mapper;
         _logger = logger;
@@ -29,7 +36,7 @@ public class ResourceRecoveryController : ControllerBase
     {
         try
         {
-            var resourcesRecoveries = await _service.GetByCombatPlayerIdAsync(combatPlayerId, page, pageSize);
+            var resourcesRecoveries = await _playerInfoService.GetByCombatPlayerIdAsync(combatPlayerId, page, pageSize);
 
             return Ok(resourcesRecoveries);
 
@@ -42,18 +49,18 @@ public class ResourceRecoveryController : ControllerBase
         }
     }
 
-    [HttpGet("getUniqueTargets/{combatPlayerId}")]
-    public async Task<IActionResult> GetUniqueTargets(int combatPlayerId)
+    [HttpGet("getUniqueCreators/{combatPlayerId}")]
+    public async Task<IActionResult> GetUniqueCreators(int combatPlayerId)
     {
         try
         {
-            var uniqueTargets = await _filterService.GetTargetNamesByCombatPlayerIdAsync(combatPlayerId);
+            var uniqueTargets = await _filterService.GetCreatorNamesByCombatPlayerIdAsync(combatPlayerId);
 
             return Ok(uniqueTargets);
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error get unique resource recovery targets: {Message}", ex.Message);
+            _logger.LogError(ex, "Error get unique resource recovery creators: {Message}", ex.Message);
 
             return BadRequest();
         }
@@ -64,47 +71,47 @@ public class ResourceRecoveryController : ControllerBase
     {
         try
         {
-            var count = await _service.CountByCombatPlayerIdAsync(combatPlayerId);
+            var count = await _countService.CountByCombatPlayerIdAsync(combatPlayerId);
 
             return Ok(count);
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error get resource recovery count by target: {Message}", ex.Message);
+            _logger.LogError(ex, "Error get resource recovery count: {Message}", ex.Message);
 
             return BadRequest();
         }
     }
 
-    [HttpGet("getByTarget")]
-    public async Task<IActionResult> GetByTarget(int combatPlayerId, string target, int page, int pageSize)
+    [HttpGet("getByCreator")]
+    public async Task<IActionResult> GetByCreator(int combatPlayerId, string creator, int page, int pageSize)
     {
         try
         {
-            var resourceRecoveries = await _filterService.GetTargetsByCombatPlayerIdAsync(combatPlayerId, target, page, pageSize);
+            var resourceRecoveries = await _filterService.GetCreatorByCombatPlayerIdAsync(combatPlayerId, creator, page, pageSize);
 
             return Ok(resourceRecoveries);
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error find resource recovery by target: {Message}", ex.Message);
+            _logger.LogError(ex, "Error find resource recovery by creator: {Message}", ex.Message);
 
             return BadRequest();
         }
     }
 
-    [HttpGet("countByTarget")]
-    public async Task<IActionResult> CountByTarget(int combatPlayerId, string target)
+    [HttpGet("countByCreator")]
+    public async Task<IActionResult> CountByCreator(int combatPlayerId, string creator)
     {
         try
         {
-            var count = await _filterService.CountTargetsByCombatPlayerIdAsync(combatPlayerId, target);
+            var count = await _filterService.CountCreatorByCombatPlayerIdAsync(combatPlayerId, creator);
 
             return Ok(count);
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error get resource recovery count by target: {Message}", ex.Message);
+            _logger.LogError(ex, "Error get resource recovery count by creator: {Message}", ex.Message);
 
             return BadRequest();
         }
@@ -116,32 +123,9 @@ public class ResourceRecoveryController : ControllerBase
         try
         {
             var map = _mapper.Map<ResourceRecoveryDto>(model);
-            var createdItem = await _service.CreateAsync(map);
+            var createdItem = await _mutationService.CreateAsync(map);
 
             return Ok(_mapper);
-        }
-        catch (ArgumentNullException ex)
-        {
-            _logger.LogError(ex, ex.Message);
-
-            return BadRequest();
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, ex.Message);
-
-            return BadRequest();
-        }
-    }
-
-    [HttpDelete("{id:int:min(1)}")]
-    public async Task<IActionResult> Delete(int id)
-    {
-        try
-        {
-            var deletedId = await _service.DeleteAsync(id);
-
-            return Ok(deletedId);
         }
         catch (ArgumentNullException ex)
         {

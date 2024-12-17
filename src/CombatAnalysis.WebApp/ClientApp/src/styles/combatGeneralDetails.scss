@@ -6,6 +6,12 @@
         flex-direction: column;
         gap: 20px;
 
+        .player-filter-details {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
         .player-general-data-details, .player-data-details {
             display: flex;
             flex-direction: column;

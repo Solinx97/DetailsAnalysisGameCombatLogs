@@ -10,4 +10,10 @@ public interface IGeneralFilterService<TModel>
     Task<int> CountTargetsByCombatPlayerIdAsync(int combatPlayerId, string target);
 
     Task<IEnumerable<TModel>> GetTargetsByCombatPlayerIdAsync(int combatPlayerId, string target, int page, int pageSize);
+
+    Task<IEnumerable<string>> GetCreatorNamesByCombatPlayerIdAsync(int combatPlayerId);
+
+    Task<int> CountCreatorByCombatPlayerIdAsync(int combatPlayerId, string creator);
+
+    Task<IEnumerable<TModel>> GetCreatorByCombatPlayerIdAsync(int combatPlayerId, string creator, int page, int pageSize);
 }

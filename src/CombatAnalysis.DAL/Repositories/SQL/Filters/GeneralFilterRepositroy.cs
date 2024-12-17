@@ -20,14 +20,14 @@ internal class GeneralFilterRepositroy<TModel> : IGeneralFilter<TModel>
         var uniqueValues = await _context.Set<TModel>()
                      .Where(x => x.CombatPlayerId == combatPlayerId)
                      .Select(x => x.Target)
-                     .OrderBy(x => x)
                      .Distinct()
+                     .OrderBy(x => x)
                      .ToListAsync();
 
         return uniqueValues;
     }
 
-    public async Task<int> CountTargetsByCombatPlayerIdAsync(int combatPlayerId, string target)
+    public async Task<int> CountTargetByCombatPlayerIdAsync(int combatPlayerId, string target)
     {
         var count = await _context.Set<TModel>()
                      .CountAsync(x => x.CombatPlayerId == combatPlayerId && x.Target.Equals(target));
@@ -35,10 +35,42 @@ internal class GeneralFilterRepositroy<TModel> : IGeneralFilter<TModel>
         return count;
     }
 
-    public async Task<IEnumerable<TModel>> GetTargetsByCombatPlayerIdAsync(int combatPlayerId, string target, int page, int pageSize)
+    public async Task<IEnumerable<TModel>> GetTargetByCombatPlayerIdAsync(int combatPlayerId, string target, int page, int pageSize)
     {
         var values = await _context.Set<TModel>()
                      .Where(x => x.CombatPlayerId == combatPlayerId && x.Target.Equals(target))
+                     .OrderBy(x => x.Id)
+                     .Skip((page - 1) * pageSize)
+                     .Take(pageSize)
+                     .ToListAsync();
+
+        return values;
+    }
+
+    public async Task<IEnumerable<string>> GetCreatorNamesByCombatPlayerIdAsync(int combatPlayerId)
+    {
+        var uniqueValues = await _context.Set<TModel>()
+                     .Where(x => x.CombatPlayerId == combatPlayerId)
+                     .Select(x => x.Creator)
+                     .Distinct()
+                     .OrderBy(x => x)
+                     .ToListAsync();
+
+        return uniqueValues;
+    }
+
+    public async Task<int> CountCreatorByCombatPlayerIdAsync(int combatPlayerId, string creator)
+    {
+        var count = await _context.Set<TModel>()
+                     .CountAsync(x => x.CombatPlayerId == combatPlayerId && x.Creator.Equals(creator));
+
+        return count;
+    }
+
+    public async Task<IEnumerable<TModel>> GetCreatorByCombatPlayerIdAsync(int combatPlayerId, string creator, int page, int pageSize)
+    {
+        var values = await _context.Set<TModel>()
+                     .Where(x => x.CombatPlayerId == combatPlayerId && x.Creator.Equals(creator))
                      .OrderBy(x => x.Id)
                      .Skip((page - 1) * pageSize)
                      .Take(pageSize)

@@ -1,17 +1,17 @@
 ﻿using AutoMapper;
-using CombatAnalysis.BL.DTO;
-using CombatAnalysis.BL.Interfaces;
+using CombatAnalysis.BL.Interfaces.General;
+using CombatAnalysis.BL.Services.General;
 using CombatAnalysis.DAL.Entities;
-using CombatAnalysis.DAL.Interfaces;
+using CombatAnalysis.DAL.Interfaces.Generic;
 
 namespace CombatAnalysis.BL.Services;
 
-internal class PlayerDeathService : IPlayerInfoService<PlayerDeathDto>
+internal class PlayerDeathService : QueryService<PlayerDeathDto, PlayerDeath>, IMutationService<PlayerDeathDto>
 {
-    private readonly IPlayerInfo<PlayerDeath> _repository;
+    private readonly IGenericRepository<PlayerDeath> _repository;
     private readonly IMapper _mapper;
 
-    public PlayerDeathService(IPlayerInfo<PlayerDeath> repository, IMapper mapper)
+    public PlayerDeathService(IGenericRepository<PlayerDeath> repository, IMapper mapper) : base(repository, mapper)
     {
         _repository = repository;
         _mapper = mapper;
@@ -27,58 +27,6 @@ internal class PlayerDeathService : IPlayerInfoService<PlayerDeathDto>
         return CreateInternalAsync(item);
     }
 
-    public async Task<int> DeleteAsync(int id)
-    {
-        var rowsAffected = await _repository.DeleteAsync(id);
-
-        return rowsAffected;
-    }
-
-    public async Task<IEnumerable<PlayerDeathDto>> GetAllAsync()
-    {
-        var allData = await _repository.GetAllAsync();
-        var result = _mapper.Map<IEnumerable<PlayerDeathDto>>(allData);
-
-        return result;
-    }
-
-    public async Task<PlayerDeathDto> GetByIdAsync(int id)
-    {
-        var result = await _repository.GetByIdAsync(id);
-        var resultMap = _mapper.Map<PlayerDeathDto>(result);
-
-        return resultMap;
-    }
-
-    public async Task<IEnumerable<PlayerDeathDto>> GetByCombatPlayerIdAsync(int combatPlayerId)
-    {
-        var result = await _repository.GetByCombatPlayerIdAsync(combatPlayerId);
-        var resultMap = _mapper.Map<IEnumerable<PlayerDeathDto>>(result);
-
-        return resultMap;
-    }
-
-    public async Task<IEnumerable<PlayerDeathDto>> GetByCombatPlayerIdAsync(int combatPlayerId, int page = 1, int pageSize = 10)
-    {
-        var result = await _repository.GetByCombatPlayerIdAsync(combatPlayerId);
-        var pagination = result
-            .Skip((page - 1) * pageSize)
-            .Take(pageSize)
-            .ToList();
-
-        var map = _mapper.Map<IEnumerable<PlayerDeathDto>>(pagination);
-
-        return map;
-    }
-
-    public async Task<IEnumerable<PlayerDeathDto>> GetByParamAsync(string paramName, object value)
-    {
-        var result = await _repository.GetByParamAsync(paramName, value);
-        var resultMap = _mapper.Map<IEnumerable<PlayerDeathDto>>(result);
-
-        return resultMap;
-    }
-
     public Task<int> UpdateAsync(PlayerDeathDto item)
     {
         if (item == null)
@@ -89,8 +37,20 @@ internal class PlayerDeathService : IPlayerInfoService<PlayerDeathDto>
         return UpdateInternalAsync(item);
     }
 
+    public Task<int> DeleteAsync(PlayerDeathDto item)
+    {
+        if (item == null)
+        {
+            throw new ArgumentNullException(nameof(PlayerDeathDto), $"The {nameof(PlayerDeathDto)} can't be null");
+        }
+
+        return DeleteInternalAsync(item);
+    }
+
     private async Task<PlayerDeathDto> CreateInternalAsync(PlayerDeathDto item)
     {
+        CheckParams(item);
+
         var map = _mapper.Map<PlayerDeath>(item);
         var createdItem = await _repository.CreateAsync(map);
         var resultMap = _mapper.Map<PlayerDeathDto>(createdItem);
@@ -100,9 +60,30 @@ internal class PlayerDeathService : IPlayerInfoService<PlayerDeathDto>
 
     private async Task<int> UpdateInternalAsync(PlayerDeathDto item)
     {
+        CheckParams(item);
+
         var map = _mapper.Map<PlayerDeath>(item);
         var rowsAffected = await _repository.UpdateAsync(map);
 
         return rowsAffected;
+    }
+
+    private async Task<int> DeleteInternalAsync(PlayerDeathDto item)
+    {
+        CheckParams(item);
+
+        var map = _mapper.Map<PlayerDeath>(item);
+        var affectedRows = await _repository.DeleteAsync(map);
+
+        return affectedRows;
+    }
+
+    private void CheckParams(PlayerDeathDto item)
+    {
+        if (string.IsNullOrEmpty(item.Username))
+        {
+            throw new ArgumentNullException(nameof(PlayerDeathDto.Username),
+                $"The property {nameof(PlayerDeathDto.Username)} of the {nameof(PlayerDeathDto)} object can't be null or empty");
+        }
     }
 }

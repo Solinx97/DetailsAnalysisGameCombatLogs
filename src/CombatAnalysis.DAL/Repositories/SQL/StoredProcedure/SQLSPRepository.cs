@@ -1,6 +1,6 @@
 ﻿using CombatAnalysis.DAL.Data;
-using CombatAnalysis.DAL.Interfaces;
 using CombatAnalysis.DAL.Interfaces.Entities;
+using CombatAnalysis.DAL.Interfaces.Generic;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using System.Text;
@@ -41,10 +41,10 @@ internal class SQLSPRepository<TModel> : IGenericRepository<TModel>
         return data;
     }
 
-    public async Task<int> DeleteAsync(int id)
+    public async Task<int> DeleteAsync(TModel item)
     {
         var rowsAffected = await _context.Database
-                            .ExecuteSqlRawAsync($"Delete{typeof(TModel).Name}ById @Id", new SqlParameter("Id", id));
+                            .ExecuteSqlRawAsync($"Delete{typeof(TModel).Name}ById @Id", new SqlParameter("Id", item.Id));
 
         return rowsAffected;
     }

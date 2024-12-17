@@ -70,7 +70,7 @@ const DashboardMinDetails = ({ combatPlayerId, closeHandle, detailsType }) => {
                 {data?.slice(0, itemsCount).filter(damage => damage.value > 0).map((damage, index) => (
                     <li key={index}>
                         <div className="min-details__spells-items">
-                            <div>{damage.spellOrItem}</div>
+                            <div>{damage.spell}</div>
                             <div className="value">
                                 <div>{damage.value}</div>
                             </div>

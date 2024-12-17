@@ -1,6 +1,6 @@
 ﻿using CombatAnalysis.DAL.Data;
-using CombatAnalysis.DAL.Interfaces;
 using CombatAnalysis.DAL.Interfaces.Entities;
+using CombatAnalysis.DAL.Interfaces.Generic;
 using Firebase.Database.Query;
 using Microsoft.EntityFrameworkCore;
 
@@ -24,7 +24,7 @@ internal class FirebaseRepository<TModel> : IGenericRepository<TModel>
         return result.Object;
     }
 
-    public async Task<int> DeleteAsync(int id)
+    public async Task<int> DeleteAsync(TModel item)
     {
         var data = await _context.FirebaseClient
               .Child(typeof(TModel).Name)
@@ -32,7 +32,7 @@ internal class FirebaseRepository<TModel> : IGenericRepository<TModel>
 
         var result = data.Select(x => new KeyValuePair<string, TModel>(x.Key, x.Object))
             .AsEnumerable()
-            .FirstOrDefault(x => x.Value.Id == id);
+            .FirstOrDefault(x => x.Value.Id == item.Id);
 
         await _context.FirebaseClient
                      .Child(typeof(TModel).Name)
