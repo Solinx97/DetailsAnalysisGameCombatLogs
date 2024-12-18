@@ -4,7 +4,7 @@ using CombatAnalysis.ChatBL.DTO;
 
 namespace CombatAnalysis.ChatApi.Mapping;
 
-public class ChatMapper : Profile
+internal class ChatMapper : Profile
 {
     public ChatMapper()
     {

@@ -19,19 +19,21 @@ internal class HttpListenerService
             while (_listener.IsListening)
             {
                 var context = await _listener.GetContextAsync();
-                var authorizationCode = context.Request.QueryString["code"];
-                var incomingState = context.Request.QueryString["state"];
-
-                onCallbackReceived?.Invoke(authorizationCode, incomingState);
-
+                var request = context.Request;
                 var response = context.Response;
+
+                var authorizationCode = request.QueryString["code"];
+                var state = request.QueryString["state"];
+
+                onCallbackReceived(authorizationCode, state);
+
                 string responseString = "<html><body>You can close this window.</body></html>";
                 byte[] buffer = System.Text.Encoding.UTF8.GetBytes(responseString);
                 response.ContentLength64 = buffer.Length;
 
-                var output = response.OutputStream;
-                output.Write(buffer, 0, buffer.Length);
-                output.Close();
+                var responseOutput = response.OutputStream;
+                responseOutput.Write(buffer, 0, buffer.Length);
+                responseOutput.Close();
 
                 StopListening();
             }
@@ -39,6 +41,7 @@ internal class HttpListenerService
         catch (Exception ex)
         {
             Console.WriteLine($"Error starting HttpListener: {ex.Message}");
+
             StopListening();
         }
     }

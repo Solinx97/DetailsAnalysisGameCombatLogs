@@ -178,7 +178,7 @@ public class PersonalChatMessagesVewModel : MvxViewModel, IImprovedMvxViewModel
             return;
         }
 
-        var response = await _httpClientHelper.GetAsync($"PersonalChatMessage/findByChatId/{SelectedChat?.Id}", refreshToken, Port.ChatApi);
+        var response = await _httpClientHelper.GetAsync($"PersonalChatMessage/getByChatId?chatId={SelectedChat?.Id}&pageSize=20", refreshToken, Port.ChatApi);
         if (!response.IsSuccessStatusCode)
         {
             return;

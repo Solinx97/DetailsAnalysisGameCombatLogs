@@ -4,7 +4,7 @@ using CombatAnalysis.Core.Models;
 
 namespace CombatAnalysis.Core.Mapping;
 
-public class CombatAnalysisMapper : Profile
+internal class CombatAnalysisMapper : Profile
 {
     public CombatAnalysisMapper()
     {

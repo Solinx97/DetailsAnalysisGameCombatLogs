@@ -4,7 +4,7 @@ using CombatAnalysis.UserApi.Models;
 
 namespace CombatAnalysis.UserApi.Mapping;
 
-public class UserApiMapper : Profile
+internal class UserApiMapper : Profile
 {
     public UserApiMapper()
     {

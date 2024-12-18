@@ -5,7 +5,7 @@ using CombatAnalysis.CombatParserAPI.Models;
 
 namespace CombatAnalysis.CombatParserAPI.Mapping;
 
-public class CombatParserApiMapper : Profile
+internal class CombatParserApiMapper : Profile
 {
     public CombatParserApiMapper()
     {

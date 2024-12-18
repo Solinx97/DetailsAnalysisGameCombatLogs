@@ -10,6 +10,7 @@ using Serilog;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddScoped<ITokenService, TokenService>();
+builder.Services.AddScoped<IHttpClientHelper, HttpClientHelper>();
 
 Port.CombatParserApi = builder.Configuration["CombatParserApiPort"];
 Port.UserApi = builder.Configuration["UserApiPort"];
@@ -28,13 +29,12 @@ Authentication.IdentityServer = builder.Configuration["Authentication:IdentitySe
 Authentication.IdentityAuthPath = builder.Configuration["Authentication:IdentityAuthPath"];
 Authentication.IdentityRegistryPath = builder.Configuration["Authentication:IdentityRegistryPath"];
 Authentication.CodeChallengeMethod = builder.Configuration["Authentication:CodeChallengeMethod"];
+
 if (int.TryParse(builder.Configuration["Authentication:RefreshTokenExpiresDays"], out var refreshTokenExpiresDays))
 {
     Authentication.RefreshTokenExpiresDays = refreshTokenExpiresDays;
 }
 
-IHttpClientHelper httpClient = new HttpClientHelper();
-builder.Services.AddSingleton(httpClient);
 builder.Services.AddSignalR(options =>
 {
     options.MaximumReceiveMessageSize = 1024 * 1024 * 2;

@@ -6,7 +6,7 @@ using CombatAnalysis.CommunicationBL.DTO.Post;
 
 namespace CombatAnalysis.CommunicationAPI.Mapping;
 
-public class CommunicationMapper : Profile
+internal class CommunicationMapper : Profile
 {
     public CommunicationMapper()
     {

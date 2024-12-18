@@ -5,7 +5,7 @@ using CombatAnalysisIdentity.Models;
 
 namespace CombatAnalysisIdentity.Mapping;
 
-public class CombatAnalysisIdentityMapper : Profile
+internal class CombatAnalysisIdentityMapper : Profile
 {
     public CombatAnalysisIdentityMapper()
     {

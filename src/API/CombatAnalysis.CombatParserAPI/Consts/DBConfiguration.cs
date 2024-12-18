@@ -1,8 +1,8 @@
 ﻿namespace CombatAnalysis.CombatParserAPI.Consts;
 
-public class DBConfiguration
+internal class DBConfiguration
 {
-    public int CommandTimeout { get; set; } = 102;
+    public int CommandTimeout { get; set; } = 180;
 
     public int MaxRequestBodySize { get; set; } = 150000000;
 }

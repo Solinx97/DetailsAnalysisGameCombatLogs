@@ -2,7 +2,7 @@
 
 namespace CombatAnalysisIdentity.Core;
 
-public class Config
+internal class Config
 {
     public static IEnumerable<ApiScope> ApiScopes =>
         new List<ApiScope>

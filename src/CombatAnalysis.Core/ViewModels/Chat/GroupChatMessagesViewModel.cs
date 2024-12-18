@@ -392,7 +392,7 @@ public class GroupChatMessagesViewModel : MvxViewModel, IImprovedMvxViewModel
             return;
         }
 
-        var response = await _httpClientHelper.GetAsync($"GroupChatMessage/findByChatId/{SelectedChat?.Id}", refreshToken, Port.ChatApi);
+        var response = await _httpClientHelper.GetAsync($"GroupChatMessage/getByChatId?chatId={SelectedChat?.Id}&pageSize=20", refreshToken, Port.ChatApi);
         if (!response.IsSuccessStatusCode)
         {
             return;
