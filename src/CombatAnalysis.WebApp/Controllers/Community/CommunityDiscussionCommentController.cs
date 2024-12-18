@@ -1,14 +1,12 @@
 ﻿using CombatAnalysis.WebApp.Attributes;
 using CombatAnalysis.WebApp.Consts;
-using CombatAnalysis.WebApp.Enums;
-using CombatAnalysis.WebApp.Extensions;
 using CombatAnalysis.WebApp.Interfaces;
 using CombatAnalysis.WebApp.Models.Community;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CombatAnalysis.WebApp.Controllers.Community;
 
-[RequireAccessToken]
+[ServiceFilter(typeof(RequireAccessTokenAttribute))]
 [Route("api/v1/[controller]")]
 [ApiController]
 public class CommunityDiscussionCommentController : ControllerBase
@@ -18,34 +16,13 @@ public class CommunityDiscussionCommentController : ControllerBase
     public CommunityDiscussionCommentController(IHttpClientHelper httpClient)
     {
         _httpClient = httpClient;
-    }
-
-    [HttpPost]
-    public async Task<IActionResult> Create(CommunityDiscussionCommentModel newCommunity)
-    {
-        var accessToken = HttpContext.Items[AuthenticationCookie.AccessToken.ToString()] as string;
-
-        var responseMessage = await _httpClient.PostAsync("CommunityDiscussionComment", JsonContent.Create(newCommunity), accessToken, Port.CommunicationApi);
-        if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
-        {
-            return Unauthorized();
-        }
-        else if (responseMessage.IsSuccessStatusCode)
-        {
-            var community = await responseMessage.Content.ReadFromJsonAsync<CommunityDiscussionCommentModel>();
-
-            return Ok(community);
-        }
-
-        return BadRequest();
+        _httpClient.BaseAddress = Port.CommunicationApi;
     }
 
     [HttpGet]
     public async Task<IActionResult> GetAll()
     {
-        var accessToken = HttpContext.Items[AuthenticationCookie.AccessToken.ToString()] as string;
-
-        var responseMessage = await _httpClient.GetAsync("CommunityDiscussionComment", accessToken, Port.CommunicationApi);
+        var responseMessage = await _httpClient.GetAsync("CommunityDiscussionComment");
         if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
         {
             return Unauthorized();
@@ -63,9 +40,7 @@ public class CommunityDiscussionCommentController : ControllerBase
     [HttpGet("{id:int:min(1)}")]
     public async Task<IActionResult> GetById(int id)
     {
-        var accessToken = HttpContext.Items[AuthenticationCookie.AccessToken.ToString()] as string;
-
-        var responseMessage = await _httpClient.GetAsync($"CommunityDiscussionComment/{id}", accessToken, Port.CommunicationApi);
+        var responseMessage = await _httpClient.GetAsync($"CommunityDiscussionComment/{id}");
         if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
         {
             return Unauthorized();
@@ -83,9 +58,7 @@ public class CommunityDiscussionCommentController : ControllerBase
     [HttpGet("findByDiscussionId/{id:int:min(1)}")]
     public async Task<IActionResult> FindByDiscussionId(int id)
     {
-        var accessToken = HttpContext.Items[AuthenticationCookie.AccessToken.ToString()] as string;
-
-        var responseMessage = await _httpClient.GetAsync($"CommunityDiscussionComment/findByDiscussionId/{id}", accessToken, Port.CommunicationApi);
+        var responseMessage = await _httpClient.GetAsync($"CommunityDiscussionComment/findByDiscussionId/{id}");
         if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
         {
             return Unauthorized();
@@ -100,12 +73,28 @@ public class CommunityDiscussionCommentController : ControllerBase
         return BadRequest();
     }
 
+    [HttpPost]
+    public async Task<IActionResult> Create(CommunityDiscussionCommentModel newCommunity)
+    {
+        var responseMessage = await _httpClient.PostAsync("CommunityDiscussionComment", JsonContent.Create(newCommunity));
+        if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+        {
+            return Unauthorized();
+        }
+        else if (responseMessage.IsSuccessStatusCode)
+        {
+            var community = await responseMessage.Content.ReadFromJsonAsync<CommunityDiscussionCommentModel>();
+
+            return Ok(community);
+        }
+
+        return BadRequest();
+    }
+
     [HttpPut]
     public async Task<IActionResult> Update(CommunityDiscussionCommentModel chat)
     {
-        var accessToken = HttpContext.Items[AuthenticationCookie.AccessToken.ToString()] as string;
-
-        var responseMessage = await _httpClient.PutAsync("CommunityDiscussionComment", JsonContent.Create(chat), accessToken, Port.CommunicationApi);
+        var responseMessage = await _httpClient.PutAsync("CommunityDiscussionComment", JsonContent.Create(chat));
         if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
         {
             return Unauthorized();
@@ -121,9 +110,7 @@ public class CommunityDiscussionCommentController : ControllerBase
     [HttpDelete("{id:int:min(1)}")]
     public async Task<IActionResult> Delete(int id)
     {
-        var accessToken = HttpContext.Items[AuthenticationCookie.AccessToken.ToString()] as string;
-
-        var responseMessage = await _httpClient.DeletAsync($"CommunityDiscussionComment/{id}", accessToken, Port.CommunicationApi);
+        var responseMessage = await _httpClient.DeletAsync($"CommunityDiscussionComment/{id}");
         if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
         {
             return Unauthorized();

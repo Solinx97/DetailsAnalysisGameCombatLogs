@@ -1,6 +1,6 @@
 ﻿using CombatAnalysis.Core.Consts;
+using CombatAnalysis.Core.Settings;
 using CombatAnalysis.Core.ViewModels;
-using CombatAnalysis.Core.ViewModels.Settings;
 using Microsoft.Win32;
 using MvvmCross.Platforms.Wpf.Views;
 using System;

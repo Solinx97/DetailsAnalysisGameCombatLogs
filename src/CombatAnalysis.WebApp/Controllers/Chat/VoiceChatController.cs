@@ -1,14 +1,12 @@
 ﻿using CombatAnalysis.WebApp.Attributes;
 using CombatAnalysis.WebApp.Consts;
-using CombatAnalysis.WebApp.Enums;
-using CombatAnalysis.WebApp.Extensions;
 using CombatAnalysis.WebApp.Interfaces;
 using CombatAnalysis.WebApp.Models.Chat;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CombatAnalysis.WebApp.Controllers.Chat;
 
-[RequireAccessToken]
+[ServiceFilter(typeof(RequireAccessTokenAttribute))]
 [Route("api/v1/[controller]")]
 [ApiController]
 public class VoiceChatController : ControllerBase
@@ -18,34 +16,13 @@ public class VoiceChatController : ControllerBase
     public VoiceChatController(IHttpClientHelper httpClient)
     {
         _httpClient = httpClient;
-    }
-
-    [HttpPost]
-    public async Task<IActionResult> Create(VoiceChatModel chat)
-    {
-        var accessToken = HttpContext.Items[AuthenticationCookie.AccessToken.ToString()] as string;
-
-        var responseMessage = await _httpClient.PostAsync("VoiceChat", JsonContent.Create(chat), accessToken, Port.ChatApi);
-        if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
-        {
-            return Unauthorized();
-        }
-        else if (responseMessage.IsSuccessStatusCode)
-        {
-            var groupChat = await responseMessage.Content.ReadFromJsonAsync<VoiceChatModel>();
-
-            return Ok(groupChat);
-        }
-
-        return BadRequest();
+        _httpClient.BaseAddress = Port.ChatApi;
     }
 
     [HttpGet]
     public async Task<IActionResult> GetAll()
     {
-        var accessToken = HttpContext.Items[AuthenticationCookie.AccessToken.ToString()] as string;
-
-        var responseMessage = await _httpClient.GetAsync("VoiceChat", accessToken, Port.ChatApi);
+        var responseMessage = await _httpClient.GetAsync("VoiceChat");
         if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
         {
             return Unauthorized();
@@ -63,9 +40,25 @@ public class VoiceChatController : ControllerBase
     [HttpGet("{id}")]
     public async Task<IActionResult> GetById(string id)
     {
-        var accessToken = HttpContext.Items[AuthenticationCookie.AccessToken.ToString()] as string;
+        var responseMessage = await _httpClient.GetAsync($"VoiceChat/{id}");
+        if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+        {
+            return Unauthorized();
+        }
+        else if (responseMessage.IsSuccessStatusCode)
+        {
+            var groupChat = await responseMessage.Content.ReadFromJsonAsync<VoiceChatModel>();
 
-        var responseMessage = await _httpClient.GetAsync($"VoiceChat/{id}", accessToken, Port.ChatApi);
+            return Ok(groupChat);
+        }
+
+        return BadRequest();
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> Create(VoiceChatModel chat)
+    {
+        var responseMessage = await _httpClient.PostAsync("VoiceChat", JsonContent.Create(chat));
         if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
         {
             return Unauthorized();
@@ -83,9 +76,7 @@ public class VoiceChatController : ControllerBase
     [HttpPut]
     public async Task<IActionResult> Update(VoiceChatModel chat)
     {
-        var accessToken = HttpContext.Items[AuthenticationCookie.AccessToken.ToString()] as string;
-
-        var responseMessage = await _httpClient.PutAsync("VoiceChat", JsonContent.Create(chat), accessToken, Port.ChatApi);
+        var responseMessage = await _httpClient.PutAsync("VoiceChat", JsonContent.Create(chat));
         if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
         {
             return Unauthorized();
@@ -101,9 +92,7 @@ public class VoiceChatController : ControllerBase
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(string id)
     {
-        var accessToken = HttpContext.Items[AuthenticationCookie.AccessToken.ToString()] as string;
-
-        var responseMessage = await _httpClient.DeletAsync($"VoiceChat/{id}", accessToken, Port.ChatApi);
+        var responseMessage = await _httpClient.DeletAsync($"VoiceChat/{id}");
         if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
         {
             return Unauthorized();

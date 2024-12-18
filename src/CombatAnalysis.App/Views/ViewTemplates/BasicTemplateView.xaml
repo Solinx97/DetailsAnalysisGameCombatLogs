@@ -36,7 +36,7 @@
         </Grid.Resources>
 
         <Border CornerRadius="25 25 25 25" BorderThickness="3" Grid.Column="2" Grid.ColumnSpan="2"
-                Margin="-55 0 0 0 " Grid.RowSpan="3" Background="#283a4b">
+                Margin="-55 0 0 0" Grid.RowSpan="3" Background="#283a4b">
             <Border.BorderBrush>
                 <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
                     <GradientStop Color="#462ADB" Offset="0"/>

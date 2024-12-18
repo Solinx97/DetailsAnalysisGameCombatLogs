@@ -1,7 +1,5 @@
 ﻿using CombatAnalysis.WebApp.Attributes;
 using CombatAnalysis.WebApp.Consts;
-using CombatAnalysis.WebApp.Enums;
-using CombatAnalysis.WebApp.Extensions;
 using CombatAnalysis.WebApp.Interfaces;
 using CombatAnalysis.WebApp.Models.User;
 using Microsoft.AspNetCore.Mvc;
@@ -17,15 +15,14 @@ public class CustomerController : ControllerBase
     public CustomerController(IHttpClientHelper httpClient)
     {
         _httpClient = httpClient;
+        _httpClient.BaseAddress = Port.UserApi;
     }
 
-    [RequireAccessToken]
+    [ServiceFilter(typeof(RequireAccessTokenAttribute))]
     [HttpGet]
     public async Task<IActionResult> GetAll()
     {
-        var accessToken = HttpContext.Items[AuthenticationCookie.AccessToken.ToString()] as string;
-
-        var responseMessage = await _httpClient.GetAsync("Customer", accessToken, Port.UserApi);
+        var responseMessage = await _httpClient.GetAsync("Customer");
         if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
         {
             return Unauthorized();
@@ -40,13 +37,11 @@ public class CustomerController : ControllerBase
         return BadRequest();
     }
 
-    [RequireAccessToken]
+    [ServiceFilter(typeof(RequireAccessTokenAttribute))]
     [HttpGet("{id}")]
     public async Task<IActionResult> GetById(string id)
     {
-        var accessToken = HttpContext.Items[AuthenticationCookie.AccessToken.ToString()] as string;
-
-        var responseMessage = await _httpClient.GetAsync($"Customer/{id}", accessToken, Port.UserApi);
+        var responseMessage = await _httpClient.GetAsync($"Customer/{id}");
         if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
         {
             return Unauthorized();
@@ -66,13 +61,11 @@ public class CustomerController : ControllerBase
         return BadRequest();
     }
 
-    [RequireAccessToken]
+    [ServiceFilter(typeof(RequireAccessTokenAttribute))]
     [HttpGet("searchByUserId/{id}")]
     public async Task<IActionResult> SearchByUserId(string id)
     {
-        var accessToken = HttpContext.Items[AuthenticationCookie.AccessToken.ToString()] as string;
-
-        var responseMessage = await _httpClient.GetAsync($"Customer/searchByUserId/{id}", accessToken, Port.UserApi);
+        var responseMessage = await _httpClient.GetAsync($"Customer/searchByUserId/{id}");
         if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
         {
             return Unauthorized();
@@ -88,13 +81,11 @@ public class CustomerController : ControllerBase
         return BadRequest();
     }
 
-    [RequireAccessToken]
+    [ServiceFilter(typeof(RequireAccessTokenAttribute))]
     [HttpPost]
     public async Task<IActionResult> Create(CustomerModel model)
     {
-        var accessToken = HttpContext.Items[AuthenticationCookie.AccessToken.ToString()] as string;
-
-        var responseMessage = await _httpClient.PostAsync("Customer", JsonContent.Create(model), accessToken, Port.UserApi);
+        var responseMessage = await _httpClient.PostAsync("Customer", JsonContent.Create(model));
         if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
         {
             return Unauthorized();
@@ -109,13 +100,11 @@ public class CustomerController : ControllerBase
         return BadRequest();
     }
 
-    [RequireAccessToken]
+    [ServiceFilter(typeof(RequireAccessTokenAttribute))]
     [HttpPut]
     public async Task<IActionResult> Edit(CustomerModel model)
     {
-        var accessToken = HttpContext.Items[AuthenticationCookie.AccessToken.ToString()] as string;
-
-        var responseMessage = await _httpClient.PutAsync("Customer", JsonContent.Create(model), accessToken, Port.UserApi);
+        var responseMessage = await _httpClient.PutAsync("Customer", JsonContent.Create(model));
         if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
         {
             return Unauthorized();
@@ -131,7 +120,7 @@ public class CustomerController : ControllerBase
     [HttpGet("checkIfCustomerExist/{username}")]
     public async Task<IActionResult> CheckIfCustomerExist(string username)
     {
-        var responseMessage = await _httpClient.GetAsync($"Customer/checkIfCustomerExist/{username}", Port.UserApi);
+        var responseMessage = await _httpClient.GetAsync($"Customer/checkIfCustomerExist/{username}");
         if (responseMessage.IsSuccessStatusCode)
         {
             var customerIsExist = await responseMessage.Content.ReadFromJsonAsync<bool>();

@@ -7,7 +7,6 @@ using CombatAnalysis.Core.Models;
 using CombatAnalysis.Core.ViewModels.ViewModelTemplates;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
-using MvvmCross.Commands;
 using System.Collections.ObjectModel;
 
 namespace CombatAnalysis.Core.ViewModels;

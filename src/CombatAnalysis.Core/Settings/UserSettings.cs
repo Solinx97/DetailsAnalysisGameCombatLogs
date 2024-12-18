@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace CombatAnalysis.Core.ViewModels.Settings;
+namespace CombatAnalysis.Core.Settings;
 
 public class UserSettings
 {

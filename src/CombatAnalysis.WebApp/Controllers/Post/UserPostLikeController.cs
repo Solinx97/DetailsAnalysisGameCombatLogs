@@ -1,14 +1,12 @@
 ﻿using CombatAnalysis.WebApp.Attributes;
 using CombatAnalysis.WebApp.Consts;
-using CombatAnalysis.WebApp.Enums;
-using CombatAnalysis.WebApp.Extensions;
 using CombatAnalysis.WebApp.Interfaces;
 using CombatAnalysis.WebApp.Models.Post;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CombatAnalysis.WebApp.Controllers.Post;
 
-[RequireAccessToken]
+[ServiceFilter(typeof(RequireAccessTokenAttribute))]
 [Route("api/v1/[controller]")]
 [ApiController]
 public class UserPostLikeController : ControllerBase
@@ -18,14 +16,13 @@ public class UserPostLikeController : ControllerBase
     public UserPostLikeController(IHttpClientHelper httpClient)
     {
         _httpClient = httpClient;
+        _httpClient.BaseAddress = Port.CommunicationApi;
     }
 
     [HttpGet("{id:int:min(1)}")]
     public async Task<IActionResult> GetById(int id)
     {
-        var accessToken = HttpContext.Items[AuthenticationCookie.AccessToken.ToString()] as string;
-
-        var responseMessage = await _httpClient.GetAsync($"UserPostLike/{id}", accessToken, Port.CommunicationApi);
+        var responseMessage = await _httpClient.GetAsync($"UserPostLike/{id}");
         if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
         {
             return Unauthorized();
@@ -43,9 +40,7 @@ public class UserPostLikeController : ControllerBase
     [HttpGet("searchByPostId/{id:int:min(1)}")]
     public async Task<IActionResult> SearchByPostId(int id)
     {
-        var accessToken = HttpContext.Items[AuthenticationCookie.AccessToken.ToString()] as string;
-
-        var responseMessage = await _httpClient.GetAsync($"UserPostLike/searchByPostId/{id}", accessToken, Port.CommunicationApi);
+        var responseMessage = await _httpClient.GetAsync($"UserPostLike/searchByPostId/{id}");
         if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
         {
             return Unauthorized();
@@ -60,30 +55,10 @@ public class UserPostLikeController : ControllerBase
         return BadRequest();
     }
 
-    [HttpPut]
-    public async Task<IActionResult> Update(UserPostLikeModel model)
-    {
-        var accessToken = HttpContext.Items[AuthenticationCookie.AccessToken.ToString()] as string;
-
-        var responseMessage = await _httpClient.PutAsync("UserPostLike", JsonContent.Create(model), accessToken, Port.CommunicationApi);
-        if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
-        {
-            return Unauthorized();
-        }
-        else if (responseMessage.IsSuccessStatusCode)
-        {
-            return Ok();
-        }
-
-        return BadRequest();
-    }
-
     [HttpPost]
     public async Task<IActionResult> Create(UserPostLikeModel model)
     {
-        var accessToken = HttpContext.Items[AuthenticationCookie.AccessToken.ToString()] as string;
-
-        var responseMessage = await _httpClient.PostAsync("UserPostLike", JsonContent.Create(model), accessToken, Port.CommunicationApi);
+        var responseMessage = await _httpClient.PostAsync("UserPostLike", JsonContent.Create(model));
         if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
         {
             return Unauthorized();
@@ -98,12 +73,26 @@ public class UserPostLikeController : ControllerBase
         return BadRequest();
     }
 
+    [HttpPut]
+    public async Task<IActionResult> Update(UserPostLikeModel model)
+    {
+        var responseMessage = await _httpClient.PutAsync("UserPostLike", JsonContent.Create(model));
+        if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+        {
+            return Unauthorized();
+        }
+        else if (responseMessage.IsSuccessStatusCode)
+        {
+            return Ok();
+        }
+
+        return BadRequest();
+    }
+
     [HttpDelete("{id:int:min(1)}")]
     public async Task<IActionResult> Delete(int id)
     {
-        var accessToken = HttpContext.Items[AuthenticationCookie.AccessToken.ToString()] as string;
-
-        var responseMessage = await _httpClient.DeletAsync($"UserPostLike/{id}", accessToken, Port.CommunicationApi);
+        var responseMessage = await _httpClient.DeletAsync($"UserPostLike/{id}");
         if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
         {
             return Unauthorized();

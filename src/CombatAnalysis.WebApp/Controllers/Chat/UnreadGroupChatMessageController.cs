@@ -1,14 +1,12 @@
 ﻿using CombatAnalysis.WebApp.Attributes;
 using CombatAnalysis.WebApp.Consts;
-using CombatAnalysis.WebApp.Enums;
-using CombatAnalysis.WebApp.Extensions;
 using CombatAnalysis.WebApp.Interfaces;
 using CombatAnalysis.WebApp.Models.Chat;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CombatAnalysis.WebApp.Controllers.Chat;
 
-[RequireAccessToken]
+[ServiceFilter(typeof(RequireAccessTokenAttribute))]
 [Route("api/v1/[controller]")]
 [ApiController]
 public class UnreadGroupChatMessageController : ControllerBase
@@ -18,14 +16,13 @@ public class UnreadGroupChatMessageController : ControllerBase
     public UnreadGroupChatMessageController(IHttpClientHelper httpClient)
     {
         _httpClient = httpClient;
+        _httpClient.BaseAddress = Port.ChatApi;
     }
 
     [HttpGet("find")]
     public async Task<IActionResult> Find(int messageId, string groupChatUserId)
     {
-        var accessToken = HttpContext.Items[AuthenticationCookie.AccessToken.ToString()] as string;
-
-        var responseMessage = await _httpClient.GetAsync("UnreadGroupChatMessage", accessToken, Port.ChatApi);
+        var responseMessage = await _httpClient.GetAsync("UnreadGroupChatMessage");
         if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
         {
             return Unauthorized();
@@ -41,12 +38,10 @@ public class UnreadGroupChatMessageController : ControllerBase
         return Ok(myGroupChatMessagesCount);
     }
 
-    [HttpGet("findByMessageId/{id}")]
-    public async Task<IActionResult> FindByMessageId(int id)
+    [HttpGet("findByMessageId/{messageId:int:min(1)}")]
+    public async Task<IActionResult> FindByMessageId(int messageId)
     {
-        var accessToken = HttpContext.Items[AuthenticationCookie.AccessToken.ToString()] as string;
-
-        var responseMessage = await _httpClient.GetAsync($"UnreadGroupChatMessage/findByMessageId/{id}", accessToken, Port.ChatApi);
+        var responseMessage = await _httpClient.GetAsync($"UnreadGroupChatMessage/findByMessageId/{messageId}");
         if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
         {
             return Unauthorized();
@@ -64,9 +59,7 @@ public class UnreadGroupChatMessageController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> Create(UnreadGroupChatMessageModel message)
     {
-        var accessToken = HttpContext.Items[AuthenticationCookie.AccessToken.ToString()] as string;
-
-        var responseMessage = await _httpClient.PostAsync("UnreadGroupChatMessage", JsonContent.Create(message), accessToken, Port.ChatApi);
+        var responseMessage = await _httpClient.PostAsync("UnreadGroupChatMessage", JsonContent.Create(message));
         if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
         {
             return Unauthorized();
@@ -83,9 +76,7 @@ public class UnreadGroupChatMessageController : ControllerBase
     [HttpPut]
     public async Task<IActionResult> Update(UnreadGroupChatMessageModel message)
     {
-        var accessToken = HttpContext.Items[AuthenticationCookie.AccessToken.ToString()] as string;
-
-        var responseMessage = await _httpClient.PutAsync("UnreadGroupChatMessage", JsonContent.Create(message), accessToken, Port.ChatApi);
+        var responseMessage = await _httpClient.PutAsync("UnreadGroupChatMessage", JsonContent.Create(message));
         if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
         {
             return Unauthorized();
@@ -101,9 +92,7 @@ public class UnreadGroupChatMessageController : ControllerBase
     [HttpDelete("{id:int:min(1)}")]
     public async Task<IActionResult> Delete(int id)
     {
-        var accessToken = HttpContext.Items[AuthenticationCookie.AccessToken.ToString()] as string;
-
-        var responseMessage = await _httpClient.DeletAsync($"UnreadGroupChatMessage/{id}", accessToken, Port.ChatApi);
+        var responseMessage = await _httpClient.DeletAsync($"UnreadGroupChatMessage/{id}");
         if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
         {
             return Unauthorized();

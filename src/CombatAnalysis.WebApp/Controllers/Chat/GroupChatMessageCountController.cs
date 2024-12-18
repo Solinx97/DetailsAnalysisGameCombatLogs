@@ -1,14 +1,12 @@
 ﻿using CombatAnalysis.WebApp.Attributes;
 using CombatAnalysis.WebApp.Consts;
-using CombatAnalysis.WebApp.Enums;
-using CombatAnalysis.WebApp.Extensions;
 using CombatAnalysis.WebApp.Interfaces;
 using CombatAnalysis.WebApp.Models.Chat;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CombatAnalysis.WebApp.Controllers.Chat;
 
-[RequireAccessToken]
+[ServiceFilter(typeof(RequireAccessTokenAttribute))]
 [Route("api/v1/[controller]")]
 [ApiController]
 public class GroupChatMessageCountController : ControllerBase
@@ -18,14 +16,13 @@ public class GroupChatMessageCountController : ControllerBase
     public GroupChatMessageCountController(IHttpClientHelper httpClient)
     {
         _httpClient = httpClient;
+        _httpClient.BaseAddress = Port.ChatApi;
     }
 
     [HttpGet("find")]
     public async Task<IActionResult> Find(int chatId, string userId)
     {
-        var accessToken = HttpContext.Items[AuthenticationCookie.AccessToken.ToString()] as string;
-
-        var responseMessage = await _httpClient.GetAsync("GroupChatMessageCount", accessToken, Port.ChatApi);
+        var responseMessage = await _httpClient.GetAsync("GroupChatMessageCount");
         if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
         {
             return Unauthorized();
@@ -44,9 +41,7 @@ public class GroupChatMessageCountController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> Create(GroupChatMessageCountModel message)
     {
-        var accessToken = HttpContext.Items[AuthenticationCookie.AccessToken.ToString()] as string;
-
-        var responseMessage = await _httpClient.PostAsync("GroupChatMessageCount", JsonContent.Create(message), accessToken, Port.ChatApi);
+        var responseMessage = await _httpClient.PostAsync("GroupChatMessageCount", JsonContent.Create(message));
         if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
         {
             return Unauthorized();
@@ -63,9 +58,7 @@ public class GroupChatMessageCountController : ControllerBase
     [HttpPut]
     public async Task<IActionResult> Update(GroupChatMessageCountModel message)
     {
-        var accessToken = HttpContext.Items[AuthenticationCookie.AccessToken.ToString()] as string;
-
-        var responseMessage = await _httpClient.PutAsync("GroupChatMessageCount", JsonContent.Create(message), accessToken, Port.ChatApi);
+        var responseMessage = await _httpClient.PutAsync("GroupChatMessageCount", JsonContent.Create(message));
         if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
         {
             return Unauthorized();
@@ -81,9 +74,7 @@ public class GroupChatMessageCountController : ControllerBase
     [HttpDelete("{id:int:min(1)}")]
     public async Task<IActionResult> Delete(int id)
     {
-        var accessToken = HttpContext.Items[AuthenticationCookie.AccessToken.ToString()] as string;
-
-        var responseMessage = await _httpClient.DeletAsync($"GroupChatMessageCount/{id}", accessToken, Port.ChatApi);
+        var responseMessage = await _httpClient.DeletAsync($"GroupChatMessageCount/{id}");
         if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
         {
             return Unauthorized();

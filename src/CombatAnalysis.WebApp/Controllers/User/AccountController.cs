@@ -1,7 +1,6 @@
 ﻿using CombatAnalysis.WebApp.Attributes;
 using CombatAnalysis.WebApp.Consts;
 using CombatAnalysis.WebApp.Enums;
-using CombatAnalysis.WebApp.Extensions;
 using CombatAnalysis.WebApp.Interfaces;
 using CombatAnalysis.WebApp.Models.User;
 using Microsoft.AspNetCore.Mvc;
@@ -17,36 +16,14 @@ public class AccountController : ControllerBase
     public AccountController(IHttpClientHelper httpClient)
     {
         _httpClient = httpClient;
+        _httpClient.BaseAddress = Port.UserApi;
     }
 
-    [RequireRefreshTokenAttribute]
-    [HttpPut]
-    public async Task<IActionResult> Edit(AppUserModel model)
-    {
-        var refreshToken = HttpContext.Items[AuthenticationCookie.RefreshToken.ToString()] as string;
-
-        var responseMessage = await _httpClient.PutAsync("Account", JsonContent.Create(model), refreshToken, Port.UserApi);
-        if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
-        {
-            return Unauthorized();
-        }
-        else if (responseMessage.IsSuccessStatusCode)
-        {
-            var user = await responseMessage.Content.ReadFromJsonAsync<AppUserModel>();
-
-            return Ok(user);
-        }
-
-        return BadRequest();
-    }
-
-    [RequireAccessToken]
+    [ServiceFilter(typeof(RequireAccessTokenAttribute))]
     [HttpGet]
     public async Task<IActionResult> GetAll()
     {
-        var accessToken = HttpContext.Items[AuthenticationCookie.AccessToken.ToString()] as string;
-
-        var responseMessage = await _httpClient.GetAsync("Account", accessToken, Port.UserApi);
+        var responseMessage = await _httpClient.GetAsync("Account");
         if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
         {
             return Unauthorized();
@@ -61,13 +38,11 @@ public class AccountController : ControllerBase
         return BadRequest();
     }
 
-    [RequireAccessToken]
+    [ServiceFilter(typeof(RequireAccessTokenAttribute))]
     [HttpGet("{id}")]
     public async Task<IActionResult> GetById(string id)
     {
-        var accessToken = HttpContext.Items[AuthenticationCookie.AccessToken.ToString()] as string;
-
-        var responseMessage = await _httpClient.GetAsync($"Account/{id}", accessToken, Port.UserApi);
+        var responseMessage = await _httpClient.GetAsync($"Account/{id}");
         if (responseMessage.StatusCode == System.Net.HttpStatusCode.NoContent)
         {
             return NoContent();
@@ -86,13 +61,11 @@ public class AccountController : ControllerBase
         return BadRequest();
     }
 
-    [RequireAccessToken]
+    [ServiceFilter(typeof(RequireAccessTokenAttribute))]
     [HttpGet("find/{identityUserId}")]
     public async Task<IActionResult> FindByIdentityUserId(string identityUserId)
     {
-        var accessToken = HttpContext.Items[AuthenticationCookie.AccessToken.ToString()] as string;
-
-        var responseMessage = await _httpClient.GetAsync($"Account/find/{identityUserId}", accessToken, Port.UserApi);
+        var responseMessage = await _httpClient.GetAsync($"Account/find/{identityUserId}");
         if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
         {
             return Unauthorized();
@@ -110,7 +83,7 @@ public class AccountController : ControllerBase
     [HttpGet("checkIfUserExist/{email}")]
     public async Task<IActionResult> CheckIfUserExist(string email)
     {
-        var responseMessage = await _httpClient.GetAsync($"Account/checkIfUserExist/{email}", Port.UserApi);
+        var responseMessage = await _httpClient.GetAsync($"Account/checkIfUserExist/{email}");
         if (responseMessage.IsSuccessStatusCode)
         {
             var userIsExist = await responseMessage.Content.ReadFromJsonAsync<bool>();
@@ -128,5 +101,24 @@ public class AccountController : ControllerBase
         HttpContext.Response.Cookies.Delete(AuthenticationCookie.AccessToken.ToString());
 
         return Ok();
+    }
+
+    [ServiceFilter(typeof(RequireRefreshTokenAttribute))]
+    [HttpPut]
+    public async Task<IActionResult> Update(AppUserModel model)
+    {
+        var responseMessage = await _httpClient.PutAsync("Account", JsonContent.Create(model));
+        if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+        {
+            return Unauthorized();
+        }
+        else if (responseMessage.IsSuccessStatusCode)
+        {
+            var user = await responseMessage.Content.ReadFromJsonAsync<AppUserModel>();
+
+            return Ok(user);
+        }
+
+        return BadRequest();
     }
 }

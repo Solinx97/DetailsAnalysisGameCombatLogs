@@ -1,3 +1,4 @@
+using CombatAnalysis.WebApp.Attributes;
 using CombatAnalysis.WebApp.Consts;
 using CombatAnalysis.WebApp.Helpers;
 using CombatAnalysis.WebApp.Hubs;
@@ -11,6 +12,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<IHttpClientHelper, HttpClientHelper>();
+builder.Services.AddScoped<RequireAccessTokenAttribute>();
 
 Port.CombatParserApi = builder.Configuration["CombatParserApiPort"];
 Port.UserApi = builder.Configuration["UserApiPort"];

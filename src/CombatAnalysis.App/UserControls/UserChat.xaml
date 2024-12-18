@@ -13,6 +13,6 @@
             </Border.Background>
         </Border>
 
-        <TextBlock Text="{Binding ElementName=userChat, Path=UserName}" Margin="10 0 0 0" FontSize="12" FontWeight="SemiBold" Foreground="White" VerticalAlignment="Center"/>
+        <TextBlock Text="{Binding ElementName=userChat, Path=Username}" Margin="10 0 0 0" FontSize="12" FontWeight="SemiBold" Foreground="White" VerticalAlignment="Center"/>
     </StackPanel>
 </UserControl>

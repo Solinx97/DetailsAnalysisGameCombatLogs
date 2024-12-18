@@ -1,6 +1,5 @@
 ﻿using CombatAnalysis.WebApp.Consts;
 using CombatAnalysis.WebApp.Enums;
-using CombatAnalysis.WebApp.Extensions;
 using CombatAnalysis.WebApp.Interfaces;
 using CombatAnalysis.WebApp.Models.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -18,6 +17,7 @@ public class IdentityController : ControllerBase
     {
         _httpClient = httpClient;
         _logger = logger;
+        _httpClient.BaseAddress = Port.Identity;
     }
 
     [HttpGet]
@@ -35,7 +35,7 @@ public class IdentityController : ControllerBase
             var encodedAuthorizationCode = Uri.EscapeDataString(authorizationCode);
             var url = $"Token?grantType={AuthenticationGrantType.Authorization}&clientId={Authentication.ClientId}&codeVerifier={codeVerifier}&code={encodedAuthorizationCode}&redirectUri={Authentication.RedirectUri}";
 
-            var responseMessage = await _httpClient.GetAsync(url, Port.Identity);
+            var responseMessage = await _httpClient.GetAsync(url);
             if (responseMessage.StatusCode == System.Net.HttpStatusCode.InternalServerError)
             {
                 return StatusCode(500);
@@ -79,7 +79,7 @@ public class IdentityController : ControllerBase
     [HttpGet("userPrivacy/{id}")]
     public async Task<IActionResult> GetUserPrivacy(string id)
     {
-        var responseMessage = await _httpClient.GetAsync($"Identity/{id}", Port.Identity);
+        var responseMessage = await _httpClient.GetAsync($"Identity/{id}");
         if (responseMessage.StatusCode == System.Net.HttpStatusCode.InternalServerError)
         {
             return StatusCode(500);

@@ -81,7 +81,7 @@
                              Visibility="{Binding IsLoadMyGroupChatList, Converter={StaticResource BoolToVisibility}, ConverterParameter='true:false'}">
                             <ListBox.ItemTemplate>
                                 <DataTemplate>
-                                    <uc:Item Title="{Binding Path=Name}" Message="{Binding Path=LastMessage}" Color="#73afff" TagName="{Binding Path=ShortName}" MessageCount="0" />
+                                    <uc:Item Title="{Binding Path=Name}" Message="{Binding Path=LastMessage}" Color="#73afff" TagName="{Binding Path=Name}" MessageCount="0" />
                                 </DataTemplate>
                             </ListBox.ItemTemplate>
                         </ListBox>
@@ -145,7 +145,7 @@
                 <TextBlock VerticalAlignment="Center" Text="{loc:Loc StartChatting}" FontSize="16" Foreground="White"/>
                 <StackPanel Orientation="Horizontal">
                     <ComboBox Style="{DynamicResource ComboBoxStyle1}" Width="170" VerticalAlignment="Center"
-                              ItemsSource="{Binding Customers}" SelectedIndex="{Binding SelectedUsersIndex}"
+                              ItemsSource="{Binding Users}" SelectedIndex="{Binding SelectedUsersIndex}"
                                StaysOpenOnEdit="True" Text="{Binding InputedUsername}" DisplayMemberPath="Username"/>
                     <StackPanel x:Name="usersEmail" Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center"
                                 IsEnabled="{Binding SelectedUsersIndex, Converter={StaticResource IntToXAMLBool}, ConverterParameter='0:>='}"

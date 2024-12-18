@@ -40,15 +40,13 @@
             <TextBlock Text="{Binding SelectedChatName}" FontSize="16" Margin="20 15" HorizontalAlignment="Left" Foreground="White"/>
 
             <StackPanel Orientation="Horizontal" Margin="0 0 10 0" HorizontalAlignment="Right">
-                <TextBlock Text="and 3 others" VerticalAlignment="Center" Margin="7 0" Foreground="#8b8a8f" FontSize="11" />
-
                 <Button Style="{StaticResource textBoxButton}" mvx:Bi.nd="Command ShowGroupChatMenuCommand">
                     <Icon:PackIconMaterial Kind="DotsVertical" Width="14" Height="14" Foreground="#88878e"/>
                 </Button>
             </StackPanel>
         </Grid>
-        
-        <TextBlock Name="myCustomerId" Text="{Binding Customer.Id}" Visibility="Hidden"/>
+
+        <TextBlock Name="myAccountId" Text="{Binding MyAccount.Id}" Visibility="Hidden"/>
         <ListBox Name="personalChat" Grid.Row="1" HorizontalContentAlignment="Stretch" Margin="0" ItemsSource="{Binding Messages}" Background="Transparent">
             <ListBox.BorderBrush>
                 <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
@@ -64,12 +62,12 @@
                         <StackPanel>
                             <StackPanel.Visibility>
                                 <MultiBinding Converter="{StaticResource MultiplyToVisibility}" ConverterParameter="true">
-                                    <Binding Path="CustomerId" />
-                                    <Binding ElementName="myCustomerId" Path="Text" />
+                                    <Binding Path="AppUserId" />
+                                    <Binding ElementName="myAccountId" Path="Text" />
                                 </MultiBinding>
                             </StackPanel.Visibility>
 
-                            <uc:UserChat UserName="{Binding Path=Username}"/>
+                            <uc:UserChat Username="{Binding Path=Username}"/>
                             <uc:MessageChat Color="#45B69C" Message="{Binding Path=Message}"/>
                             <StackPanel Orientation="Horizontal">
                                 <TextBlock Text="{Binding Path=Time, StringFormat=hh\\:mm}" Style="{StaticResource timeText}"/>
@@ -79,12 +77,12 @@
                         <StackPanel>
                             <StackPanel.Visibility>
                                 <MultiBinding Converter="{StaticResource MultiplyToVisibility}">
-                                    <Binding Path="CustomerId" />
-                                    <Binding ElementName="myCustomerId" Path="Text" />
+                                    <Binding Path="AppUserId" />
+                                    <Binding ElementName="myAccountId" Path="Text" />
                                 </MultiBinding>
                             </StackPanel.Visibility>
-                            
-                            <uc:UserChat HorizontalAlignment="Right" UserName="{Binding Path=Username}"/>
+
+                            <uc:UserChat HorizontalAlignment="Right" Username="{Binding Path=Username}"/>
                             <uc:MyMessageChat Color="#96CDFF" Message="{Binding Path=Message}"/>
                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
                                 <TextBlock Text="{Binding Path=Time, StringFormat=hh\\:mm}" Style="{StaticResource timeTextRight}"/>
@@ -107,14 +105,14 @@
                 <TextBox Name="txtMessage" Style="{StaticResource messageTextBox}" Text="{Binding Message}" Foreground="White"/>
 
                 <StackPanel Orientation="Horizontal" Margin="0 0 8 0" HorizontalAlignment="Right" VerticalAlignment="Center">
-                    <Button Style="{StaticResource textBoxButton}" ToolTip="{loc:Loc Copy}">
-                        <Icon:PackIconMaterial Kind="BookmarkCheckOutline" Foreground="White"/>
+                    <Button IsEnabled="False" Style="{StaticResource textBoxButton}" ToolTip="{loc:Loc Copy}">
+                        <Icon:PackIconMaterial Kind="BookmarkCheckOutline" />
                     </Button>
-                    <Button Style="{StaticResource textBoxButton}" ToolTip="{loc:Loc AttachDocument}">
-                        <Icon:PackIconMaterial Kind="Paperclip" Foreground="White"/>
+                    <Button IsEnabled="False" Style="{StaticResource textBoxButton}" ToolTip="{loc:Loc AttachDocument}">
+                        <Icon:PackIconMaterial Kind="Paperclip" />
                     </Button>
-                    <Button Style="{StaticResource textBoxButton}" ToolTip="{loc:Loc CreateVoiceMessage}">
-                        <Icon:PackIconMaterial Kind="Microphone" Foreground="White"/>
+                    <Button IsEnabled="False" Style="{StaticResource textBoxButton}" ToolTip="{loc:Loc CreateVoiceMessage}">
+                        <Icon:PackIconMaterial Kind="Microphone" />
                     </Button>
                 </StackPanel>
             </Grid>

@@ -1,6 +1,6 @@
 ﻿using CombatAnalysis.Core.Localizations;
+using CombatAnalysis.Core.Settings;
 using CombatAnalysis.Core.ViewModels.Base;
-using CombatAnalysis.Core.ViewModels.Settings;
 using System.Collections.ObjectModel;
 using System.Globalization;
 using System.Text.Json;
@@ -17,7 +17,7 @@ public class SettingsViewModel : ParentTemplate
     {
         BasicTemplate.Parent = this;
 
-        var userSettings = ReadUserSettings("user.json");
+        var userSettings = ReadUserSettings("User.json");
         _logsLocation = userSettings.Location;
 
         LanguageInit();

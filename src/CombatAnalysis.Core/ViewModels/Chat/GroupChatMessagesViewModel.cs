@@ -15,12 +15,9 @@ namespace CombatAnalysis.Core.ViewModels.Chat;
 
 public class GroupChatMessagesViewModel : MvxViewModel, IImprovedMvxViewModel
 {
-    private const int MessagesUpdateTimeIsMs = 500;
-
     private readonly IHttpClientHelper _httpClientHelper;
     private readonly IMemoryCache _memoryCache;
 
-    private Timer _messagesUpdateTimer;
     private ObservableCollection<GroupChatMessageModel> _messages;
     private IEnumerable<GroupChatMessageModel> _allMessages;
     private ObservableCollection<AppUserModel> _usersToInviteToChat;
@@ -33,7 +30,6 @@ public class GroupChatMessagesViewModel : MvxViewModel, IImprovedMvxViewModel
     private string _message;
     private bool _chatMenuIsVisibly;
     private AppUserModel _myAccount;
-    private CustomerModel _customer;
     private LoadingStatus _addUserToChatResponse;
     private bool _inviteToChatIsVisibly;
     private int _selectedUsersForInviteToGroupChatIndex = -1;
@@ -113,20 +109,7 @@ public class GroupChatMessagesViewModel : MvxViewModel, IImprovedMvxViewModel
 
             if (value != null)
             {
-                AsyncDispatcher.ExecuteOnMainThreadAsync(() =>
-                {
-                    Messages.Clear();
-                });
-
-                SelectedChatName = value.Name;
-
-                AsyncDispatcher.ExecuteOnMainThreadAsync(async () =>
-                {
-                    await LoadMessagesAsync();
-                    Fill();
-                });
-
-                _messagesUpdateTimer = new Timer(InitLoadMessages, null, MessagesUpdateTimeIsMs, Timeout.Infinite);
+                LoadMessagesForSelectedChatAsync(value.Name);
             }
         }
     }
@@ -259,14 +242,17 @@ public class GroupChatMessagesViewModel : MvxViewModel, IImprovedMvxViewModel
 
     public void Fill()
     {
-        foreach (var item in _allMessages)
+        AsyncDispatcher.ExecuteOnMainThreadAsync(() =>
         {
-            if (item.ChatId == SelectedChat?.Id
-                && !Messages.Any(x => x.Id == item.Id))
+            foreach (var item in _allMessages)
             {
-                Messages.Add(item);
+                if (item.ChatId == SelectedChat?.Id
+                    && !Messages.Any(x => x.Id == item.Id))
+                {
+                    Messages.Add(item);
+                }
             }
-        }
+        });
     }
 
     public void ShowChatMenu()
@@ -373,15 +359,13 @@ public class GroupChatMessagesViewModel : MvxViewModel, IImprovedMvxViewModel
         }
     }
 
-    private void InitLoadMessages(object obj)
+    private async Task LoadMessagesForSelectedChatAsync(string chatName)
     {
-        AsyncDispatcher.ExecuteOnMainThreadAsync(async () =>
-        {
-            await LoadMessagesAsync();
-            Fill();
-        });
+        Messages.Clear();
 
-        _messagesUpdateTimer.Change(MessagesUpdateTimeIsMs, Timeout.Infinite);
+        SelectedChatName = chatName;
+
+        await LoadMessagesAsync();
     }
 
     private async Task LoadMessagesAsync()
@@ -399,6 +383,34 @@ public class GroupChatMessagesViewModel : MvxViewModel, IImprovedMvxViewModel
         }
 
         _allMessages = await response.Content.ReadFromJsonAsync<IEnumerable<GroupChatMessageModel>>();
+
+        var tasks = new List<Task>();
+        foreach (var item in _allMessages)
+        {
+            tasks.Add(GetGroupChatCompanionAsync(item));
+        }
+
+        await Task.WhenAll(tasks);
+
+        Fill();
+    }
+
+    private async Task GetGroupChatCompanionAsync(GroupChatMessageModel message)
+    {
+        var refreshToken = _memoryCache.Get<string>(nameof(MemoryCacheValue.RefreshToken));
+        if (string.IsNullOrEmpty(refreshToken))
+        {
+            return;
+        }
+
+        var response = await _httpClientHelper.GetAsync($"Account/{message.AppUserId}", refreshToken, Port.UserApi);
+        if (!response.IsSuccessStatusCode)
+        {
+            return;
+        }
+
+        var companions = await response.Content.ReadFromJsonAsync<AppUserModel>();
+        message.Username = companions?.Username;
     }
 
     private async Task LoadUsersAsync()

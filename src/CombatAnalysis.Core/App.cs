@@ -22,24 +22,26 @@ public class App : MvxApplication
 {
     public override void Initialize()
     {
-        Port.CombatParserApi = ConfigurationManager.AppSettings.Get("combatParserApiPort");
-        Port.UserApi = ConfigurationManager.AppSettings.Get("userApiPort");
-        Port.ChatApi = ConfigurationManager.AppSettings.Get("chatApiPort");
-        Port.Identity = ConfigurationManager.AppSettings.Get("identityPort");
+        Port.CombatParserApi = ConfigurationManager.AppSettings.Get("combatParserApiPort") ?? string.Empty;
+        Port.UserApi = ConfigurationManager.AppSettings.Get("userApiPort") ?? string.Empty;
+        Port.ChatApi = ConfigurationManager.AppSettings.Get("chatApiPort") ?? string.Empty;
+        Port.Identity = ConfigurationManager.AppSettings.Get("identityPort") ?? string.Empty;
 
-        Authentication.ClientId = ConfigurationManager.AppSettings.Get("clientId");
-        Authentication.Scope = ConfigurationManager.AppSettings.Get("scope");
-        Authentication.RedirectUri = ConfigurationManager.AppSettings.Get("redirectUri");
-        Authentication.Protocol = ConfigurationManager.AppSettings.Get("protocol");
-        Authentication.Listener = ConfigurationManager.AppSettings.Get("listener");
+        Authentication.ClientId = ConfigurationManager.AppSettings.Get("clientId") ?? string.Empty;
+        Authentication.Scope = ConfigurationManager.AppSettings.Get("scope") ?? string.Empty;
+        Authentication.RedirectUri = ConfigurationManager.AppSettings.Get("redirectUri") ?? string.Empty;
+        Authentication.Protocol = ConfigurationManager.AppSettings.Get("protocol") ?? string.Empty;
+        Authentication.Listener = ConfigurationManager.AppSettings.Get("listener") ?? string.Empty;
 
-        AuthenticationGrantType.Code = ConfigurationManager.AppSettings.Get("grantTypeCode");
-        AuthenticationGrantType.Authorization = ConfigurationManager.AppSettings.Get("grantTypeAuthorization");
-        AuthenticationGrantType.RefreshToken = ConfigurationManager.AppSettings.Get("grantTypeRefreshToken");
+        AuthenticationGrantType.Code = ConfigurationManager.AppSettings.Get("grantTypeCode") ?? string.Empty;
+        AuthenticationGrantType.Authorization = ConfigurationManager.AppSettings.Get("grantTypeAuthorization") ?? string.Empty;
+        AuthenticationGrantType.RefreshToken = ConfigurationManager.AppSettings.Get("grantTypeRefreshToken") ?? string.Empty;
 
-        AppInformation.Version = ConfigurationManager.AppSettings.Get("appVersion");
-        Enum.TryParse(ConfigurationManager.AppSettings.Get("appVersionType"), out AppVersionType appVersionType);
-        AppInformation.VersionType = appVersionType;
+        AppInformation.Version = ConfigurationManager.AppSettings.Get("appVersion") ?? string.Empty;
+        if (Enum.TryParse(ConfigurationManager.AppSettings.Get("appVersionType"), out AppVersionType appVersionType))
+        {
+            AppInformation.VersionType = appVersionType;
+        }
 
         var mappingConfig = new MapperConfiguration(mc =>
         {

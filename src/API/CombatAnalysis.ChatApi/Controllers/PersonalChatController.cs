@@ -69,8 +69,8 @@ public class PersonalChatController : ControllerBase
         var allData = await _service.GetAllAsync();
         foreach (var item in allData)
         {
-            if ((item.InitiatorId == model.InitiatorId || item.InitiatorId == model.CompanionId)
-                || (item.CompanionId == model.InitiatorId || item.CompanionId == model.CompanionId))
+            if ((item.InitiatorId == model.InitiatorId && item.CompanionId == model.CompanionId)
+                || (item.InitiatorId == model.CompanionId && item.CompanionId == model.InitiatorId))
             {
                 return Ok(item.Id);
             }

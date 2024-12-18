@@ -1,14 +1,12 @@
 ﻿using CombatAnalysis.WebApp.Attributes;
 using CombatAnalysis.WebApp.Consts;
-using CombatAnalysis.WebApp.Enums;
-using CombatAnalysis.WebApp.Extensions;
 using CombatAnalysis.WebApp.Interfaces;
 using CombatAnalysis.WebApp.Models.Chat;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CombatAnalysis.WebApp.Controllers.Chat;
 
-[RequireAccessToken]
+[ServiceFilter(typeof(RequireAccessTokenAttribute))]
 [Route("api/v1/[controller]")]
 [ApiController]
 public class PersonalChatMessageController : ControllerBase
@@ -18,44 +16,22 @@ public class PersonalChatMessageController : ControllerBase
     public PersonalChatMessageController(IHttpClientHelper httpClient)
     {
         _httpClient = httpClient;
+        _httpClient.BaseAddress = Port.ChatApi;
     }
 
     [HttpGet("count/{chatId}")]
     public async Task<IActionResult> Count(int chatId)
     {
-        var accessToken = HttpContext.Items[AuthenticationCookie.AccessToken.ToString()] as string;
-
-        var responseMessage = await _httpClient.GetAsync($"PersonalChatMessage/count/{chatId}", accessToken, Port.ChatApi);
+        var responseMessage = await _httpClient.GetAsync($"PersonalChatMessage/count/{chatId}");
         var count = await responseMessage.Content.ReadFromJsonAsync<int>();
 
         return Ok(count);
     }
 
-    [HttpPost]
-    public async Task<IActionResult> Create(PersonalChatMessageModel message)
-    {
-        var accessToken = HttpContext.Items[AuthenticationCookie.AccessToken.ToString()] as string;
-
-        var responseMessage = await _httpClient.PostAsync("PersonalChatMessage", JsonContent.Create(message), accessToken, Port.ChatApi);
-        if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
-        {
-            return Unauthorized();
-        }
-        else if (responseMessage.IsSuccessStatusCode)
-        {
-            var personalChatMessage = await responseMessage.Content.ReadFromJsonAsync<PersonalChatMessageModel>();
-            return Ok(personalChatMessage);
-        }
-
-        return BadRequest();
-    }
-
     [HttpGet("getByChatId")]
     public async Task<IActionResult> GetByChatId(int chatId, int pageSize)
     {
-        var accessToken = HttpContext.Items[AuthenticationCookie.AccessToken.ToString()] as string;
-
-        var responseMessage = await _httpClient.GetAsync($"PersonalChatMessage/getByChatId?chatId={chatId}&pageSize={pageSize}", accessToken, Port.ChatApi);
+        var responseMessage = await _httpClient.GetAsync($"PersonalChatMessage/getByChatId?chatId={chatId}&pageSize={pageSize}");
         if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
         {
             return Unauthorized();
@@ -73,9 +49,7 @@ public class PersonalChatMessageController : ControllerBase
     [HttpGet("getMoreByChatId")]
     public async Task<IActionResult> GetMoreByChatId(int chatId, int offset, int pageSize)
     {
-        var accessToken = HttpContext.Items[AuthenticationCookie.AccessToken.ToString()] as string;
-
-        var responseMessage = await _httpClient.GetAsync($"PersonalChatMessage/getMoreByChatId?chatId={chatId}&offset={offset}&pageSize={pageSize}", accessToken, Port.ChatApi);
+        var responseMessage = await _httpClient.GetAsync($"PersonalChatMessage/getMoreByChatId?chatId={chatId}&offset={offset}&pageSize={pageSize}");
         if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
         {
             return Unauthorized();
@@ -90,12 +64,27 @@ public class PersonalChatMessageController : ControllerBase
         return BadRequest();
     }
 
+    [HttpPost]
+    public async Task<IActionResult> Create(PersonalChatMessageModel message)
+    {
+        var responseMessage = await _httpClient.PostAsync("PersonalChatMessage", JsonContent.Create(message));
+        if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+        {
+            return Unauthorized();
+        }
+        else if (responseMessage.IsSuccessStatusCode)
+        {
+            var personalChatMessage = await responseMessage.Content.ReadFromJsonAsync<PersonalChatMessageModel>();
+            return Ok(personalChatMessage);
+        }
+
+        return BadRequest();
+    }
+
     [HttpPut]
     public async Task<IActionResult> Update(PersonalChatMessageModel message)
     {
-        var accessToken = HttpContext.Items[AuthenticationCookie.AccessToken.ToString()] as string;
-
-        var responseMessage = await _httpClient.PutAsync("PersonalChatMessage", JsonContent.Create(message), accessToken, Port.ChatApi);
+        var responseMessage = await _httpClient.PutAsync("PersonalChatMessage", JsonContent.Create(message));
         if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
         {
             return Unauthorized();
@@ -111,9 +100,7 @@ public class PersonalChatMessageController : ControllerBase
     [HttpDelete("{messageId:int:min(1)}")]
     public async Task<IActionResult> Delete(int messageId)
     {
-        var accessToken = HttpContext.Items[AuthenticationCookie.AccessToken.ToString()] as string;
-
-        var responseMessage = await _httpClient.DeletAsync($"PersonalChatMessage/{messageId}", accessToken, Port.ChatApi);
+        var responseMessage = await _httpClient.DeletAsync($"PersonalChatMessage/{messageId}");
         if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
         {
             return Unauthorized();
@@ -129,9 +116,7 @@ public class PersonalChatMessageController : ControllerBase
     [HttpDelete("deleteByChatId/{chatId:int:min(1)}")]
     public async Task<IActionResult> DeleteByChatId(int chatId)
     {
-        var accessToken = HttpContext.Items[AuthenticationCookie.AccessToken.ToString()] as string;
-
-        var responseMessage = await _httpClient.GetAsync($"PersonalChatMessage/findByChatId/{chatId}", accessToken, Port.ChatApi);
+        var responseMessage = await _httpClient.GetAsync($"PersonalChatMessage/findByChatId/{chatId}");
         if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
         {
             return Unauthorized();

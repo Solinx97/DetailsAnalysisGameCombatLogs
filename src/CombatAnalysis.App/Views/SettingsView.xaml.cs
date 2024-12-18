@@ -1,5 +1,5 @@
 ﻿using CombatAnalysis.Core.ViewModels;
-using CombatAnalysis.Core.ViewModels.Settings;
+using CombatAnalysis.Core.Settings;
 using MvvmCross.Platforms.Wpf.Views;
 using System;
 using System.IO;
@@ -31,10 +31,10 @@ public partial class SettingsView : MvxWpfView
         }
 
         viewModel.LogsLocation = folderDialog.SelectedPath;
-        WriteUserSettings(folderDialog.SelectedPath, "user.json");
+        ApplyUserSettings(folderDialog.SelectedPath, "User.json");
     }
 
-    private static void WriteUserSettings(string locationPath, string settingsName)
+    private static void ApplyUserSettings(string locationPath, string settingsName)
     {
         var baseDirectory = AppDomain.CurrentDomain.BaseDirectory;
         using var fs = new FileStream($"{baseDirectory}{settingsName}", FileMode.Create);

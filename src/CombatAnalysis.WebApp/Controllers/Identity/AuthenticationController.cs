@@ -1,7 +1,6 @@
 ﻿using CombatAnalysis.WebApp.Attributes;
 using CombatAnalysis.WebApp.Consts;
 using CombatAnalysis.WebApp.Enums;
-using CombatAnalysis.WebApp.Extensions;
 using CombatAnalysis.WebApp.Helpers;
 using CombatAnalysis.WebApp.Interfaces;
 using CombatAnalysis.WebApp.Models.Authentication;
@@ -21,9 +20,10 @@ public class AuthenticationController : ControllerBase
     {
         _httpClient = httpClient;
         _logger = logger;
+        _httpClient.BaseAddress = Port.UserApi;
     }
 
-    [RequireAccessToken]
+    [ServiceFilter(typeof(RequireAccessTokenAttribute))]
     [HttpGet]
     public async Task<IActionResult> RefreshAccessToken()
     {
@@ -32,7 +32,7 @@ public class AuthenticationController : ControllerBase
             var accessToken = HttpContext.Items[AuthenticationCookie.AccessToken.ToString()] as string;
 
             var identityUserId = AccessTokenHelper.GetUserIdFromToken(accessToken);
-            var responseMessage = await _httpClient.GetAsync($"Account/find/{identityUserId}", accessToken, Port.UserApi);
+            var responseMessage = await _httpClient.GetAsync($"Account/find/{identityUserId}");
             if (responseMessage.IsSuccessStatusCode)
             {
                 var user = await responseMessage.Content.ReadFromJsonAsync<AppUserModel>();

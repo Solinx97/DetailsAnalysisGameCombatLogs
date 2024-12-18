@@ -477,28 +477,13 @@
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <Grid>
-                                <TextBlock Text="{Binding Path=EnergyRecoveryPerSecond, StringFormat=0.00}" HorizontalAlignment="Center" FontSize="12" VerticalAlignment="Center" />
+                                <TextBlock Text="{Binding Path=ResourcesRecoveryPerSecond, StringFormat=0.00}" HorizontalAlignment="Center" FontSize="12" VerticalAlignment="Center" />
                             </Grid>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                     <DataGridTemplateColumn.HeaderTemplate>
                         <DataTemplate>
                             <TextBlock Text="{loc:Loc ResourcesPerSecond}" Margin="5" TextAlignment="Center" FontSize="12" Foreground="White"/>
-                        </DataTemplate>
-                    </DataGridTemplateColumn.HeaderTemplate>
-                </DataGridTemplateColumn>
-
-                <DataGridTemplateColumn SortMemberPath="UsedBufs" IsReadOnly="True">
-                    <DataGridTemplateColumn.CellTemplate>
-                        <DataTemplate>
-                            <Grid>
-                                <TextBlock Text="{Binding Path=UsedBuffs}" HorizontalAlignment="Center" FontSize="12" VerticalAlignment="Center" />
-                            </Grid>
-                        </DataTemplate>
-                    </DataGridTemplateColumn.CellTemplate>
-                    <DataGridTemplateColumn.HeaderTemplate>
-                        <DataTemplate>
-                            <TextBlock Text="{loc:Loc Buffs}" Margin="5" TextAlignment="Center" FontSize="12" Foreground="White"/>
                         </DataTemplate>
                     </DataGridTemplateColumn.HeaderTemplate>
                 </DataGridTemplateColumn>

@@ -2,7 +2,7 @@
 
 namespace CombatAnalysis.App;
 
-public static class WindowManager
+internal static class WindowManager
 {
     public static Window? MainWindow { get; set; }
 

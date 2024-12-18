@@ -4,7 +4,7 @@ using CombatAnalysis.WebApp.Interfaces;
 
 namespace CombatAnalysis.WebApp.Middlewares;
 
-public class TokenRefreshMiddleware
+internal class TokenRefreshMiddleware
 {
     private readonly RequestDelegate _next;
 
@@ -15,18 +15,6 @@ public class TokenRefreshMiddleware
 
     public async Task InvokeAsync(HttpContext context, ITokenService tokenService)
     {
-        //var endpoint = context.GetEndpoint();
-        //if (endpoint != null)
-        //{
-        //    var authorizeAttribute = endpoint.Metadata.GetMetadata<RequireAccessTokenAttribute>();
-        //    if (authorizeAttribute != null)
-        //    {
-        //        await _next(context);
-
-        //        return;
-        //    }
-        //}
-
         await CheckAccessTokenAsync(context, tokenService);
     }
 
