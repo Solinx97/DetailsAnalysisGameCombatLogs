@@ -13,10 +13,10 @@ public class CombatPlayerPositionController : ControllerBase
     private readonly IQueryService<CombatPlayerPositionDto> _queryCombatPlayerPosition;
     private readonly IMutationService<CombatPlayerPositionDto> _mutationCombatPlayerService;
     private readonly IMapper _mapper;
-    private readonly ILogger<CombatPlayerController> _logger;
+    private readonly ILogger<CombatPlayerPositionController> _logger;
 
     public CombatPlayerPositionController(IQueryService<CombatPlayerPositionDto> queryCombatPlayerPosition, IMutationService<CombatPlayerPositionDto> mutationCombatPlayerService,
-        IMapper mapper, ILogger<CombatPlayerController> logger)
+        IMapper mapper, ILogger<CombatPlayerPositionController> logger)
     {
         _queryCombatPlayerPosition = queryCombatPlayerPosition;
         _mutationCombatPlayerService = mutationCombatPlayerService;
@@ -24,20 +24,38 @@ public class CombatPlayerPositionController : ControllerBase
         _logger = logger;
     }
 
-    [HttpGet("findByCombatId/{combatId:int:min(1)}")]
-    public async Task<IActionResult> Find(int combatId)
+    [HttpGet("getByCombatId/{combatId:int:min(1)}")]
+    public async Task<IActionResult> GetByCombatId(int combatId)
     {
-        var combatPlayerPositions = await _queryCombatPlayerPosition.GetByParamAsync(nameof(CombatPlayerPositionModel.CombatId), combatId);
+        try
+        {
+            var combatPlayerPositions = await _queryCombatPlayerPosition.GetByParamAsync(nameof(CombatPlayerPositionModel.CombatId), combatId);
 
-        return Ok(combatPlayerPositions);
+            return Ok(combatPlayerPositions);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error get combat player positions by combat id: {Message}", ex.Message);
+
+            return BadRequest();
+        }
     }
 
     [HttpGet("{id:int:min(1)}")]
     public async Task<IActionResult> GetById(int id)
     {
-        var combatPlayerPosition = await _queryCombatPlayerPosition.GetByIdAsync(id);
+        try
+        {
+            var combatPlayerPosition = await _queryCombatPlayerPosition.GetByIdAsync(id);
 
-        return Ok(combatPlayerPosition);
+            return Ok(combatPlayerPosition);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error get combat player positions by id: {Message}", ex.Message);
+
+            return BadRequest();
+        }
     }
 
     [HttpPost]
@@ -72,9 +90,9 @@ public class CombatPlayerPositionController : ControllerBase
             var item = await GetById(id);
             var map = _mapper.Map<CombatPlayerPositionDto>(item);
 
-            var deletedId = await _mutationCombatPlayerService.DeleteAsync(map);
+            var rowsAffected = await _mutationCombatPlayerService.DeleteAsync(map);
 
-            return Ok(deletedId);
+            return Ok(rowsAffected);
         }
         catch (ArgumentNullException ex)
         {

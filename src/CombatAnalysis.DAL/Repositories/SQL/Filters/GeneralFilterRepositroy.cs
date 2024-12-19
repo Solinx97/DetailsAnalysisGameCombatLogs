@@ -78,4 +78,36 @@ internal class GeneralFilterRepositroy<TModel> : IGeneralFilter<TModel>
 
         return values;
     }
+
+    public async Task<IEnumerable<string>> GetSpellNamesByCombatPlayerIdAsync(int combatPlayerId)
+    {
+        var uniqueValues = await _context.Set<TModel>()
+                     .Where(x => x.CombatPlayerId == combatPlayerId)
+                     .Select(x => x.Spell)
+                     .Distinct()
+                     .OrderBy(x => x)
+                     .ToListAsync();
+
+        return uniqueValues;
+    }
+
+    public async Task<int> CountSpellByCombatPlayerIdAsync(int combatPlayerId, string spell)
+    {
+        var count = await _context.Set<TModel>()
+                     .CountAsync(x => x.CombatPlayerId == combatPlayerId && x.Spell.Equals(spell));
+
+        return count;
+    }
+
+    public async Task<IEnumerable<TModel>> GetSpellByCombatPlayerIdAsync(int combatPlayerId, string spell, int page, int pageSize)
+    {
+        var values = await _context.Set<TModel>()
+                     .Where(x => x.CombatPlayerId == combatPlayerId && x.Spell.Equals(spell))
+                     .OrderBy(x => x.Id)
+                     .Skip((page - 1) * pageSize)
+                     .Take(pageSize)
+                     .ToListAsync();
+
+        return values;
+    }
 }

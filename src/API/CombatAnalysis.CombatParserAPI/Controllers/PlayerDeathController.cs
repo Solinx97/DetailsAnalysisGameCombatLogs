@@ -24,7 +24,7 @@ public class PlayerDeathController : ControllerBase
         _logger = logger;
     }
 
-    [HttpGet("findByCombatPlayerId/{combatPlayerId:int:min(1)}")]
+    [HttpGet("getByCombatPlayerId/{combatPlayerId:int:min(1)}")]
     public async Task<IActionResult> Find(int combatPlayerId)
     {
         var damageTakens = await _playerInfoService.GetByCombatPlayerIdAsync(combatPlayerId);

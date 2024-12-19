@@ -220,7 +220,7 @@ public class DamageTakenDetailsViewModel : DetailsGenericTemplate<DamageTakenMod
 
     protected override async Task LoadGenericDetailsAsync()
     {
-        var generalDetails = await _combatParserAPIService.LoadCombatDetailsAsync<DamageTakenGeneralModel>($"DamageTakenGeneral/findByCombatPlayerId/{SelectedPlayerId}");
+        var generalDetails = await _combatParserAPIService.LoadCombatDetailsAsync<DamageTakenGeneralModel>($"DamageTakenGeneral/getByCombatPlayerId/{SelectedPlayerId}");
         GeneralInformations = new ObservableCollection<DamageTakenGeneralModel>(generalDetails.ToList());
     }
 

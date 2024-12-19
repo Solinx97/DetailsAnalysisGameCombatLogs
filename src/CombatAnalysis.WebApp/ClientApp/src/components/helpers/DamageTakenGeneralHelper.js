@@ -2,7 +2,7 @@
 
 const fixedNumberUntil = 2;
 
-const DamageTakenGeneralHelper = ({ generalData }) => {
+const DamageTakenGeneralHelper = ({ generalData, getProcentage }) => {
     const { t } = useTranslation("helpers/combatDetailsHelper");
 
     const tableTitle = () => {
@@ -13,7 +13,7 @@ const DamageTakenGeneralHelper = ({ generalData }) => {
                         {t("Spell")}
                     </li>
                     <li>
-                        {t("TotalDamageTaken")}
+                        {t("Total")}
                     </li>
                     <li>
                         {t("AverageValue")}
@@ -25,10 +25,10 @@ const DamageTakenGeneralHelper = ({ generalData }) => {
                         {t("CountOfSkills")}
                     </li>
                     <li>
-                        {t("CountOfCrits")}
+                        {t("Crit")}, %
                     </li>
                     <li>
-                        {t("CountOfMiss")}
+                        {t("Miss")}, %
                     </li>
                     <li>
                         {t("MaxValue")}
@@ -63,10 +63,10 @@ const DamageTakenGeneralHelper = ({ generalData }) => {
                             {item.castNumber}
                         </li>
                         <li>
-                            {item.critNumber}
+                            {getProcentage(item.critNumber, item.castNumber)}%
                         </li>
                         <li>
-                            {item.missNumber}
+                            {getProcentage(item.missNumber, item.castNumber)}%
                         </li>
                         <li>
                             {item.maxValue}

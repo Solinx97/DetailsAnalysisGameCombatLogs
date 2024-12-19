@@ -48,6 +48,23 @@ public class ResourceRecoveryController : ControllerBase
             return BadRequest();
         }
     }
+    
+    [HttpGet("count/{combatPlayerId}")]
+    public async Task<IActionResult> Count(int combatPlayerId)
+    {
+        try
+        {
+            var count = await _countService.CountByCombatPlayerIdAsync(combatPlayerId);
+
+            return Ok(count);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error get resource recovery count: {Message}", ex.Message);
+
+            return BadRequest();
+        }
+    }
 
     [HttpGet("getUniqueCreators/{combatPlayerId}")]
     public async Task<IActionResult> GetUniqueCreators(int combatPlayerId)
@@ -61,23 +78,6 @@ public class ResourceRecoveryController : ControllerBase
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error get unique resource recovery creators: {Message}", ex.Message);
-
-            return BadRequest();
-        }
-    }
-
-    [HttpGet("count/{combatPlayerId}")]
-    public async Task<IActionResult> Count(int combatPlayerId)
-    {
-        try
-        {
-            var count = await _countService.CountByCombatPlayerIdAsync(combatPlayerId);
-
-            return Ok(count);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error get resource recovery count: {Message}", ex.Message);
 
             return BadRequest();
         }
@@ -112,6 +112,57 @@ public class ResourceRecoveryController : ControllerBase
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error get resource recovery count by creator: {Message}", ex.Message);
+
+            return BadRequest();
+        }
+    }
+
+    [HttpGet("getUniqueSpells/{combatPlayerId}")]
+    public async Task<IActionResult> GetUniqueSpells(int combatPlayerId)
+    {
+        try
+        {
+            var uniqueSpells = await _filterService.GetSpellNamesByCombatPlayerIdAsync(combatPlayerId);
+
+            return Ok(uniqueSpells);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error get unique resource recovery spells: {Message}", ex.Message);
+
+            return BadRequest();
+        }
+    }
+
+    [HttpGet("getBySpell")]
+    public async Task<IActionResult> GetBySpell(int combatPlayerId, string spell, int page, int pageSize)
+    {
+        try
+        {
+            var healDones = await _filterService.GetSpellByCombatPlayerIdAsync(combatPlayerId, spell, page, pageSize);
+
+            return Ok(healDones);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error find resource recovery by spell: {Message}", ex.Message);
+
+            return BadRequest();
+        }
+    }
+
+    [HttpGet("countBySpell")]
+    public async Task<IActionResult> CountBySpell(int combatPlayerId, string spell)
+    {
+        try
+        {
+            var count = await _filterService.CountSpellByCombatPlayerIdAsync(combatPlayerId, spell);
+
+            return Ok(count);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error get resource recovery count by spell: {Message}", ex.Message);
 
             return BadRequest();
         }

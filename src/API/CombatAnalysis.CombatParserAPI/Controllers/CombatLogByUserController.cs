@@ -47,25 +47,52 @@ public class CombatLogByUserController : ControllerBase
     [HttpGet]
     public async Task<IActionResult> GetAll()
     {
-        var combatLogsByUser = await _queryCombatLogByUserService.GetAllAsync();
+        try
+        {
+            var combatLogsByUser = await _queryCombatLogByUserService.GetAllAsync();
 
-        return Ok(combatLogsByUser);
+            return Ok(combatLogsByUser);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, ex.Message);
+
+            return BadRequest();
+        }
     }
 
     [HttpGet("{id:int:min(1)}")]
     public async Task<IActionResult> GetById(int id)
     {
-        var combatLogByUser = await _queryCombatLogByUserService.GetByIdAsync(id);
+        try
+        {
+            var combatLogByUser = await _queryCombatLogByUserService.GetByIdAsync(id);
 
-        return Ok(combatLogByUser);
+            return Ok(combatLogByUser);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, ex.Message);
+
+            return BadRequest();
+        }
     }
 
-    [HttpGet("byUserId/{id}")]
+    [HttpGet("getByUserId/{id}")]
     public async Task<IActionResult> GetByUserId(string id)
     {
-        var result = await _queryCombatLogByUserService.GetByParamAsync(nameof(CombatLogByUserModel.AppUserId), id);
+        try
+        {
+            var combatLogsByUser = await _queryCombatLogByUserService.GetByParamAsync(nameof(CombatLogByUserModel.AppUserId), id);
 
-        return Ok(result);
+            return Ok(combatLogsByUser);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, ex.Message);
+
+            return BadRequest();
+        }
     }
 
     [HttpPost]

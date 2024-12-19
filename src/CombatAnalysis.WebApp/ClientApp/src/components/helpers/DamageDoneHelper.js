@@ -2,7 +2,10 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useEffect, useState } from 'react';
 import useTime from '../../hooks/useTime';
-import { useGetDamageDoneCountTargetsByPlayerIdQuery, useGetDamageDoneTargetByPlayerIdQuery, useGetDamageDoneUniqueTargetsQuery } from '../../store/api/combatParser/DamageDone.api';
+import {
+    useGetDamageDoneCountByFilterQuery, useGetDamageDoneByFilterQuery,
+    useGetDamageDoneUniqueFilterValuesQuery
+} from '../../store/api/combatParser/DamageDone.api';
 import DetailsFilter from './DetailsFilter';
 import PaginationHelper from './PaginationHelper';
 
@@ -20,18 +23,20 @@ const DamageDoneHelper = ({ combatPlayerId, pageSize, t }) => {
     const { getTimeWithoutMs } = useTime();
 
     const [page, setPage] = useState(1);
-    const [selectedTarget, setSelectedTarget] = useState("All");
+    const [selectedFilter, setSelectedFilter] = useState({ filter: "None", value: -1});
 
-    const { data: count, isLoading: countIsLoading } = useGetDamageDoneCountTargetsByPlayerIdQuery({ combatPlayerId, target: selectedTarget === "All" ? "-1" : selectedTarget });
-    const { data, isLoading } = useGetDamageDoneTargetByPlayerIdQuery({ combatPlayerId, target: selectedTarget === "All" ? "-1" : selectedTarget, page, pageSize });
-
-    console.log(count);
+    const { data: count, isLoading: countIsLoading } = useGetDamageDoneCountByFilterQuery(
+        { combatPlayerId, filter: selectedFilter.filter, filterValue: selectedFilter.value }
+    );
+    const { data, isLoading: dataIsLoading } = useGetDamageDoneByFilterQuery(
+        { combatPlayerId, filter: selectedFilter.filter, filterValue: selectedFilter.value, page, pageSize }
+    );
 
     const totalPages = Math.ceil(count / pageSize);
 
     useEffect(() => {
         setPage(1);
-    }, [selectedTarget]);
+    }, [selectedFilter]);
 
     const getIcon = (type) => {
         switch (type) {
@@ -109,19 +114,32 @@ const DamageDoneHelper = ({ combatPlayerId, pageSize, t }) => {
         );
     }
 
-    if (isLoading || countIsLoading) {
+    if (countIsLoading || dataIsLoading) {
         return (<div>Loading...</div>);
     }
 
     return (
         <div>
-            <DetailsFilter
-                combatPlayerId={combatPlayerId}
-                selectedTarget={selectedTarget}
-                setSelectedTarget={setSelectedTarget}
-                useGetUniqueTargetsQuery={useGetDamageDoneUniqueTargetsQuery}
-                t={t}
-            />
+            <div className="player-filter-details">
+                <DetailsFilter
+                    combatPlayerId={combatPlayerId}
+                    setSelectedFilter={setSelectedFilter}
+                    selectedFilter={selectedFilter}
+                    filter="Target"
+                    filterName={t("Target")}
+                    useGetUniqueFilterValuesQuery={useGetDamageDoneUniqueFilterValuesQuery}
+                    t={t}
+                />
+                <DetailsFilter
+                    combatPlayerId={combatPlayerId}
+                    setSelectedFilter={setSelectedFilter}
+                    selectedFilter={selectedFilter}
+                    filter="Spell"
+                    filterName={t("Spell")}
+                    useGetUniqueFilterValuesQuery={useGetDamageDoneUniqueFilterValuesQuery}
+                    t={t}
+                />
+            </div>
             <ul className="player-data-details">
                 {tableTitle()}
                 {data?.map((item) => (

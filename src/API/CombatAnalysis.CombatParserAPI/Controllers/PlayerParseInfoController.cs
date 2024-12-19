@@ -24,20 +24,38 @@ public class PlayerParseInfoController : ControllerBase
         _logger = logger;
     }
 
-    [HttpGet("findByCombatPlayerId/{combatPlayerId:int:min(1)}")]
-    public async Task<IActionResult> Find(int combatPlayerId)
+    [HttpGet("getByCombatPlayerId/{combatPlayerId:int:min(1)}")]
+    public async Task<IActionResult> GetByCombatPlayerId(int combatPlayerId)
     {
-        var playerParseInfo = await _queryService.GetByParamAsync(nameof(PlayerParseInfoModel.CombatPlayerId), combatPlayerId);
+        try
+        {
+            var playerParseInfo = await _queryService.GetByParamAsync(nameof(PlayerParseInfoModel.CombatPlayerId), combatPlayerId);
 
-        return Ok(playerParseInfo);
+            return Ok(playerParseInfo);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error get player parse info by combat player id: {Message}", ex.Message);
+
+            return BadRequest();
+        }
     }
 
     [HttpGet("{id:int:min(1)}")]
     public async Task<IActionResult> GetById(int id)
     {
-        var combatLog = await _queryService.GetByIdAsync(id);
+        try
+        {
+            var playerParseInfo = await _queryService.GetByIdAsync(id);
 
-        return Ok(combatLog);
+            return Ok(playerParseInfo);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error get player parse info by id: {Message}", ex.Message);
+
+            return BadRequest();
+        }
     }
 
     [HttpPost]

@@ -2,7 +2,7 @@
 
 const fixedNumberUntil = 2;
 
-const HealDoneGemeralHelper = ({ generalData }) => {
+const HealDoneGemeralHelper = ({ generalData, getProcentage }) => {
     const { t } = useTranslation("helpers/combatDetailsHelper");
 
     const tableTitle = () => {
@@ -13,7 +13,7 @@ const HealDoneGemeralHelper = ({ generalData }) => {
                         {t("Spell")}
                     </li>
                     <li>
-                        {t("TotalHealing")}
+                        {t("Total")}
                     </li>
                     <li>
                         {t("AverageValue")}
@@ -25,7 +25,7 @@ const HealDoneGemeralHelper = ({ generalData }) => {
                         {t("CountOfSkills")}
                     </li>
                     <li>
-                        {t("CountOfCrits")}
+                        {t("Crit")}, %
                     </li>
                     <li>
                         {t("MaxValue")}
@@ -60,7 +60,7 @@ const HealDoneGemeralHelper = ({ generalData }) => {
                                 {item.castNumber}
                             </li>
                             <li>
-                                {item.critNumber}
+                            {getProcentage(item.critNumber, item.castNumber)}%
                             </li>
                             <li>
                                 {item.maxValue}

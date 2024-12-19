@@ -57,7 +57,7 @@ public class ResourceRecoveryDetailsViewModel : DetailsGenericTemplate<ResourceR
 
     protected override async Task LoadGenericDetailsAsync()
     {
-        var generalDetails = await _combatParserAPIService.LoadCombatDetailsAsync<ResourceRecoveryGeneralModel>($"ResourceRecoveryGeneral/FindByCombatPlayerId/{SelectedPlayerId}");
+        var generalDetails = await _combatParserAPIService.LoadCombatDetailsAsync<ResourceRecoveryGeneralModel>($"ResourceRecoveryGeneral/getByCombatPlayerId/{SelectedPlayerId}");
         GeneralInformations = new ObservableCollection<ResourceRecoveryGeneralModel>(generalDetails.ToList());
     }
 

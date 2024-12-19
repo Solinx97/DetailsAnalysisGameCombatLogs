@@ -44,13 +44,13 @@ public class CombatController : ControllerBase
     {
         try
         {
-            var combat = await _queryCombatService.GetAllAsync();
+            var combats = await _queryCombatService.GetAllAsync();
 
-            return Ok(combat);
+            return Ok(combats);
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error get all Combats: {Message}", ex.Message);
+            _logger.LogError(ex, ex.Message);
 
             return BadRequest();
         }
@@ -67,14 +67,14 @@ public class CombatController : ControllerBase
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error get Combat byt Id: {Message}", ex.Message);
+            _logger.LogError(ex, ex.Message);
 
             return BadRequest();
         }
     }
 
-    [HttpGet("findByCombatLogId/{combatLogId:int:min(1)}")]
-    public async Task<IActionResult> Find(int combatLogId)
+    [HttpGet("getByCombatLogId/{combatLogId:int:min(1)}")]
+    public async Task<IActionResult> GetByCombatLogId(int combatLogId)
     {
         try
         {

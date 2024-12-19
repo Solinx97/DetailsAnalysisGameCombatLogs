@@ -2,18 +2,10 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { memo, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import {
-    useLazyGetResourceRecoveryGeneralyByPlayerIdQuery
-} from '../../store/api/combatParser/ResourcesRecovery.api';
-import {
-    useLazyGetDamageDoneGeneralyByPlayerIdQuery,
-} from '../../store/api/combatParser/DamageDone.api';
-import {
-    useLazyGetDamageTakenGeneralyByPlayerIdQuery,
-} from '../../store/api/combatParser/DamageTaken.api';
-import {
-    useLazyGetHealDoneGeneralyByPlayerIdQuery,
-} from '../../store/api/combatParser/HealDone.api';
+import { useLazyGetDamageDoneGeneralByCombatPlayerIdQuery } from '../../store/api/combatParser/DamageDone.api';
+import { useLazyGetDamageTakenGeneralByCombatPlayerIdQuery } from '../../store/api/combatParser/DamageTaken.api';
+import { useLazyGetHealDoneGeneralByCombatPlayerIdQuery } from '../../store/api/combatParser/HealDone.api';
+import { useLazyGetResourceRecoveryGeneralByCombatPlayerIdQuery } from '../../store/api/combatParser/ResourcesRecovery.api';
 
 const itemsMinCount = 5;
 
@@ -21,10 +13,10 @@ const DashboardMinDetails = ({ combatPlayerId, closeHandle, detailsType }) => {
     const { t } = useTranslation("combatDetails/dashboard");
 
     const detailsTypeFunctions = [
-        useLazyGetDamageDoneGeneralyByPlayerIdQuery(),
-        useLazyGetHealDoneGeneralyByPlayerIdQuery(),
-        useLazyGetDamageTakenGeneralyByPlayerIdQuery(),
-        useLazyGetResourceRecoveryGeneralyByPlayerIdQuery()
+        useLazyGetDamageDoneGeneralByCombatPlayerIdQuery(),
+        useLazyGetHealDoneGeneralByCombatPlayerIdQuery(),
+        useLazyGetDamageTakenGeneralByCombatPlayerIdQuery(),
+        useLazyGetResourceRecoveryGeneralByCombatPlayerIdQuery()
     ];
 
     const detailsTypeNames = [

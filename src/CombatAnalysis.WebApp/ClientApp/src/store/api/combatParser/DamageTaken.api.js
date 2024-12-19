@@ -6,7 +6,7 @@ export const DamageTakenApi = CombatParserApi.injectEndpoints({
         'DamageTakenGeneral',
     ],
     endpoints: builder => ({
-        getDamageTakenByPlayerId: builder.query({
+        getDamageTakenByCombatPlayerId: builder.query({
             query: ({ combatPlayerId, page, pageSize }) => ({
                 url: `/DamageTaken/getByCombatPlayerId?combatPlayerId=${combatPlayerId}&page=${page}&pageSize=${pageSize}`,
             }),
@@ -15,32 +15,32 @@ export const DamageTakenApi = CombatParserApi.injectEndpoints({
                     ? [...result.map(({ id }) => ({ type: 'DamageTaken', id })), 'DamageTaken']
                     : ['DamageTaken'],
         }),
-        getDamageTakenCreatorByPlayerId: builder.query({
-            query: ({ combatPlayerId, creator, page, pageSize }) => ({
-                url: `/DamageTaken/getByCreator?combatPlayerId=${combatPlayerId}&creator=${creator}&page=${page}&pageSize=${pageSize}`,
-            }),
-            providesTags: result =>
-                result
-                    ? [...result.map(({ id }) => ({ type: 'DamageTaken', id })), 'DamageTaken']
-                    : ['DamageTaken'],
-        }),
-        getDamageTakenUniqueCreators: builder.query({
-            query: (combatPlayerId) => ({
-                url: `/DamageTaken/getUniqueCreators/${combatPlayerId}`,
-            }),
-            providesTags: result =>
-                result
-                    ? [...result.map(({ id }) => ({ type: 'DamageTaken', id })), 'DamageTaken']
-                    : ['DamageTaken'],
-        }),
-        getDamageTakenCountByPlayerId: builder.query({
+        getDamageTakenCountByCombatPlayerId: builder.query({
             query: (combatPlayerId) => `/DamageTaken/count/${combatPlayerId}`,
         }),
-        getDamageTakenCountCreatorByPlayerId: builder.query({
-            query: ({ combatPlayerId, creator }) => `/DamageTaken/countByCreator?combatPlayerId=${combatPlayerId}&creator=${creator}`,
+        getDamageTakenUniqueFilterValues: builder.query({
+            query: ({ combatPlayerId, filter }) => ({
+                url: `/DamageTaken/getUniqueFilterValues?combatPlayerId=${combatPlayerId}&filter=${filter}`,
+            }),
+            providesTags: result =>
+                result
+                    ? [...result.map(({ id }) => ({ type: 'DamageTaken', id })), 'DamageTaken']
+                    : ['DamageTaken'],
         }),
-        getDamageTakenGeneralyByPlayerId: builder.query({
-            query: (combatPlayerId) => `/DamageTakenGeneral/findByCombatPlayerId/${combatPlayerId}`,
+        getDamageTakenByFilter: builder.query({
+            query: ({ combatPlayerId, filter, filterValue, page, pageSize }) => ({
+                url: `/DamageTaken/getByFilter?combatPlayerId=${combatPlayerId}&filter=${filter}&filterValue=${filterValue}&page=${page}&pageSize=${pageSize}`,
+            }),
+            providesTags: result =>
+                result
+                    ? [...result.map(({ id }) => ({ type: 'DamageTaken', id })), 'DamageTaken']
+                    : ['DamageTaken'],
+        }),
+        getDamageTakenCountByFilter: builder.query({
+            query: ({ combatPlayerId, filter, filterValue }) => `/DamageTaken/countByFilter?combatPlayerId=${combatPlayerId}&filter=${filter}&filterValue=${filterValue}`,
+        }),
+        getDamageTakenGeneralByCombatPlayerId: builder.query({
+            query: (combatPlayerId) => `/DamageTakenGeneral/getByCombatPlayerId/${combatPlayerId}`,
             providesTags: result =>
                 result
                     ? [...result.map(({ id }) => ({ type: 'DamageTakenGeneral', id })), 'DamageTakenGeneral']
@@ -50,12 +50,12 @@ export const DamageTakenApi = CombatParserApi.injectEndpoints({
 })
 
 export const {
-    useLazyGetDamageTakenByPlayerIdQuery,
-    useGetDamageTakenByPlayerIdQuery,
-    useGetDamageTakenCreatorByPlayerIdQuery,
-    useGetDamageTakenUniqueCreatorsQuery,
-    useLazyGetDamageTakenCountByPlayerIdQuery,
-    useGetDamageTakenCountCreatorByPlayerIdQuery,
-    useGetDamageTakenGeneralyByPlayerIdQuery,
-    useLazyGetDamageTakenGeneralyByPlayerIdQuery,
+    useGetDamageTakenByCombatPlayerIdQuery,
+    useLazyGetDamageTakenByCombatPlayerIdQuery,
+    useLazyGetDamageTakenCountByCombatPlayerIdQuery,
+    useGetDamageTakenUniqueFilterValuesQuery,
+    useGetDamageTakenByFilterQuery,
+    useGetDamageTakenCountByFilterQuery,
+    useGetDamageTakenGeneralByCombatPlayerIdQuery,
+    useLazyGetDamageTakenGeneralByCombatPlayerIdQuery,
 } = DamageTakenApi;

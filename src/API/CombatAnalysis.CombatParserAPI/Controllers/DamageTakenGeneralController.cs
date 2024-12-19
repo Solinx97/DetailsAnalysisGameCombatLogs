@@ -26,8 +26,8 @@ public class DamageTakenGeneralController : ControllerBase
         _logger = logger;
     }
 
-    [HttpGet("findByCombatPlayerId/{combatPlayerId:int:min(1)}")]
-    public async Task<IActionResult> Find(int combatPlayerId)
+    [HttpGet("getByCombatPlayerId/{combatPlayerId:int:min(1)}")]
+    public async Task<IActionResult> GetByCombatPlayerId(int combatPlayerId)
     {
         var damageTakenGenerals = await _playerInfoService.GetByCombatPlayerIdAsync(combatPlayerId);
 

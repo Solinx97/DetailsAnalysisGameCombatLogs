@@ -1,17 +1,13 @@
 {
-  "TotalDamage": "Всего урона",
+  "Total": "Всего",
   "AverageValue": "Ср. значение",
   "DamagePerSec": "Урон в сек.",
   "CountOfSkills": "Применено закл.",
-  "CountOfCrits": "Сделано критов",
-  "CountOfMiss": "Сделано промахов",
+  "Crit": "Крит",
   "MaxValue": "Макс. значение",
   "MinValue": "Мин. значение",
-  "TotalHealing": "Всего исцеления",
   "HealingPerSec": "Исцеление в сек.",
-  "TotalDamageTaken": "Всего получено урона",
   "DamageTakenPerSec": "Получено урона в сек.",
-  "TotalResourcesRecovery": "Всего восстановлено ресурсов",
   "ResourcesRecoveryPerSec": "Восст. ресурсов в сек.",
   "CritDamage": "Крит. урон",
   "Dodge": "Уклонение",
@@ -34,5 +30,6 @@
   "Next": "Следующая",
   "Last": "Последняя",
   "All": "Все",
-  "Creator": "Инициатор"
+  "Creator": "Инициатор",
+  "FiltersReset": "Сброс фильтров"
 }

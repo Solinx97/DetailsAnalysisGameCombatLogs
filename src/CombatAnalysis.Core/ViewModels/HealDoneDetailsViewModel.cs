@@ -100,7 +100,7 @@ public class HealDoneDetailsViewModel : DetailsGenericTemplate<HealDoneModel, He
 
     protected override async Task LoadGenericDetailsAsync()
     {
-        var generalDetails = await _combatParserAPIService.LoadCombatDetailsAsync<HealDoneGeneralModel>($"HealDoneGeneral/FindByCombatPlayerId/{SelectedPlayerId}");
+        var generalDetails = await _combatParserAPIService.LoadCombatDetailsAsync<HealDoneGeneralModel>($"HealDoneGeneral/getByCombatPlayerId/{SelectedPlayerId}");
         GeneralInformations = new ObservableCollection<HealDoneGeneralModel>(generalDetails.ToList());
     }
 

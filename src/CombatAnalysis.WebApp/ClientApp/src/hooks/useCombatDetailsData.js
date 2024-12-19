@@ -18,8 +18,8 @@ const useCombatDetailsData = (combatPlayerId, pageSize, detailsType, t) => {
             <HelperComponent
                 combatPlayerId={combatPlayerId}
                 pageSize={pageSize}
-                getUserNameWithoutRealm={getUserNameWithoutRealm}
                 t={t}
+                getUserNameWithoutRealm={getUserNameWithoutRealm}
             />
         );
     }

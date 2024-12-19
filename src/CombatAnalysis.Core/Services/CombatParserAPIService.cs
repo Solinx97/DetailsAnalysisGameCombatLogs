@@ -158,7 +158,7 @@ public class CombatParserAPIService
                 throw new ArgumentNullException(nameof(user));
             }
 
-            var response = await _httpClient.GetAsync($"CombatLogByUser/byUserId/{user.Id}", CancellationToken.None);
+            var response = await _httpClient.GetAsync($"CombatLogByUser/getByUserId/{user.Id}", CancellationToken.None);
             response.EnsureSuccessStatusCode();
 
             var combatLogsByUser = await response.Content.ReadFromJsonAsync<IEnumerable<CombatLogByUserModel>>();
@@ -189,7 +189,7 @@ public class CombatParserAPIService
     {
         try
         {
-            var response = await _httpClient.GetAsync($"Combat/FindByCombatLogId/{combatLogId}", CancellationToken.None);
+            var response = await _httpClient.GetAsync($"Combat/getByCombatLogId/{combatLogId}", CancellationToken.None);
             response.EnsureSuccessStatusCode();
 
             var combats = await response.Content.ReadFromJsonAsync<IEnumerable<CombatModel>>();
@@ -214,7 +214,7 @@ public class CombatParserAPIService
     {
         try
         {
-            var response = await _httpClient.GetAsync($"CombatPlayer/FindByCombatId/{combatId}", CancellationToken.None);
+            var response = await _httpClient.GetAsync($"CombatPlayer/getByCombatId/{combatId}", CancellationToken.None);
             response.EnsureSuccessStatusCode();
 
             var combatPlayers = await response.Content.ReadFromJsonAsync<IEnumerable<CombatPlayerModel>>();
@@ -389,7 +389,7 @@ public class CombatParserAPIService
     {
         try
         {
-            var response = await _httpClient.GetAsync($"PlayerParseInfo/FindByCombatPlayerId/{combatPlayerId}", CancellationToken.None);
+            var response = await _httpClient.GetAsync($"PlayerParseInfo/getByCombatPlayerId/{combatPlayerId}", CancellationToken.None);
             response.EnsureSuccessStatusCode();
 
             var playerParseInfoCollection = await response.Content.ReadFromJsonAsync<IEnumerable<PlayerParseInfoModel>>();

@@ -24,20 +24,38 @@ public class CombatPlayerController : ControllerBase
         _logger = logger;
     }
 
-    [HttpGet("findByCombatId/{combatId:int:min(1)}")]
-    public async Task<IActionResult> Find(int combatId)
+    [HttpGet("getByCombatId/{combatId:int:min(1)}")]
+    public async Task<IActionResult> GetByCombatId(int combatId)
     {
-        var players = await _queryCombatPlayerService.GetByParamAsync(nameof(CombatPlayerModel.CombatId), combatId);
+        try
+        {
+            var combatPlayers = await _queryCombatPlayerService.GetByParamAsync(nameof(CombatPlayerModel.CombatId), combatId);
 
-        return Ok(players);
+            return Ok(combatPlayers);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error get combat player by combat id: {Message}", ex.Message);
+
+            return BadRequest();
+        }
     }
 
     [HttpGet("{id:int:min(1)}")]
     public async Task<IActionResult> GetById(int id)
     {
-        var player = await _queryCombatPlayerService.GetByIdAsync(id);
+        try
+        {
+            var combatPlayer = await _queryCombatPlayerService.GetByIdAsync(id);
 
-        return Ok(player);
+            return Ok(combatPlayer);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error get combat player by id: {Message}", ex.Message);
+
+            return BadRequest();
+        }
     }
 
     [HttpPost]
@@ -72,9 +90,9 @@ public class CombatPlayerController : ControllerBase
             var item = await GetById(id);
             var map = _mapper.Map<CombatPlayerDto>(item);
 
-            var deletedId = await _mutationCombatPlayerService.DeleteAsync(map);
+            var rowsAffected = await _mutationCombatPlayerService.DeleteAsync(map);
 
-            return Ok(deletedId);
+            return Ok(rowsAffected);
         }
         catch (ArgumentNullException ex)
         {

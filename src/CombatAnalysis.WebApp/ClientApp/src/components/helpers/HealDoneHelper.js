@@ -2,7 +2,10 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useEffect, useState } from 'react';
 import useTime from '../../hooks/useTime';
-import { useGetHealDoneTargetByPlayerIdQuery, useGetHealDoneCountTargetsByPlayerIdQuery, useGetHealDoneUniqueTargetsQuery } from '../../store/api/combatParser/HealDone.api';
+import {
+    useGetHealDoneCountByFilterQuery, useGetHealDoneByFilterQuery,
+    useGetHealDoneUniqueFilterValuesQuery
+} from '../../store/api/combatParser/HealDone.api';
 import DetailsFilter from './DetailsFilter';
 import PaginationHelper from './PaginationHelper';
 
@@ -10,16 +13,20 @@ const HealDoneHelper = ({ combatPlayerId, pageSize, getUserNameWithoutRealm, t }
     const { getTimeWithoutMs } = useTime();
 
     const [page, setPage] = useState(1);
-    const [selectedTarget, setSelectedTarget] = useState("All");
+    const [selectedFilter, setSelectedFilter] = useState({ filter: "None", value: -1 });
 
-    const { data: count, isLoading: countIsLoading } = useGetHealDoneCountTargetsByPlayerIdQuery({ combatPlayerId, target: selectedTarget === "All" ? "-1" : selectedTarget });
-    const { data, isLoading } = useGetHealDoneTargetByPlayerIdQuery({ combatPlayerId, target: selectedTarget === "All" ? "-1" : selectedTarget, page, pageSize });
+    const { data: count, isLoading: countIsLoading } = useGetHealDoneCountByFilterQuery(
+        { combatPlayerId, filter: selectedFilter.filter, filterValue: selectedFilter.value }
+    );
+    const { data, isLoading } = useGetHealDoneByFilterQuery(
+        { combatPlayerId, filter: selectedFilter.filter, filterValue: selectedFilter.value, page, pageSize }
+    );
 
     const totalPages = Math.ceil(count / pageSize);
 
     useEffect(() => {
         setPage(1);
-    }, [selectedTarget]);
+    }, [selectedFilter]);
 
     const tableTitle = () => {
         return (
@@ -48,13 +55,26 @@ const HealDoneHelper = ({ combatPlayerId, pageSize, getUserNameWithoutRealm, t }
 
     return (
         <div>
-            <DetailsFilter
-                combatPlayerId={combatPlayerId}
-                selectedTarget={selectedTarget}
-                setSelectedTarget={setSelectedTarget}
-                useGetUniqueTargetsQuery={useGetHealDoneUniqueTargetsQuery}
-                t={t}
-            />
+            <div className="player-filter-details">
+                <DetailsFilter
+                    combatPlayerId={combatPlayerId}
+                    setSelectedFilter={setSelectedFilter}
+                    selectedFilter={selectedFilter}
+                    filter="Target"
+                    filterName={t("Target")}
+                    useGetUniqueFilterValuesQuery={useGetHealDoneUniqueFilterValuesQuery}
+                    t={t}
+                />
+                <DetailsFilter
+                    combatPlayerId={combatPlayerId}
+                    setSelectedFilter={setSelectedFilter}
+                    selectedFilter={selectedFilter}
+                    filter="Spell"
+                    filterName={t("Spell")}
+                    useGetUniqueFilterValuesQuery={useGetHealDoneUniqueFilterValuesQuery}
+                    t={t}
+                />
+            </div>
             <ul className="player-data-details">
                 {tableTitle()}
                 {data.map((item) => (

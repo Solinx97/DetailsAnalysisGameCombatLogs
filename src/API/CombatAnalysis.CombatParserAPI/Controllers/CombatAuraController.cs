@@ -24,20 +24,38 @@ public class CombatAuraController : ControllerBase
         _logger = logger;
     }
 
-    [HttpGet("findByCombatId/{combatId:int:min(1)}")]
-    public async Task<IActionResult> Find(int combatId)
+    [HttpGet("getByCombatId/{combatId:int:min(1)}")]
+    public async Task<IActionResult> GetByCombatId(int combatId)
     {
-        var combatAuras = await _queryService.GetByParamAsync(nameof(CombatAuraModel.CombatId), combatId);
+        try
+        {
+            var combatAuras = await _queryService.GetByParamAsync(nameof(CombatAuraModel.CombatId), combatId);
 
-        return Ok(combatAuras);
+            return Ok(combatAuras);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, ex.Message);
+
+            return BadRequest();
+        }
     }
 
     [HttpGet("{id:int:min(1)}")]
     public async Task<IActionResult> GetById(int id)
     {
-        var combatAura = await _queryService.GetByIdAsync(id);
+        try
+        {
+            var combatAura = await _queryService.GetByIdAsync(id);
 
-        return Ok(combatAura);
+            return Ok(combatAura);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, ex.Message);
+
+            return BadRequest();
+        }
     }
 
     [HttpPost]
@@ -72,9 +90,9 @@ public class CombatAuraController : ControllerBase
             var item = await GetById(id);
             var map = _mapper.Map<CombatAuraDto>(item);
 
-            var deletedId = await _mutationService.DeleteAsync(map);
+            var rowsAffected = await _mutationService.DeleteAsync(map);
 
-            return Ok(deletedId);
+            return Ok(rowsAffected);
         }
         catch (ArgumentNullException ex)
         {

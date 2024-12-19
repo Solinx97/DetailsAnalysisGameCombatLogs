@@ -1,4 +1,5 @@
 ﻿using CombatAnalysis.WebApp.Consts;
+using CombatAnalysis.WebApp.Enums;
 using CombatAnalysis.WebApp.Interfaces;
 using CombatAnalysis.WebApp.Models;
 using Microsoft.AspNetCore.Mvc;
@@ -10,65 +11,193 @@ namespace CombatAnalysis.WebApp.Controllers;
 public class HealDoneController : ControllerBase
 {
     private readonly IHttpClientHelper _httpClient;
+    private readonly ILogger<HealDoneController> _logger;
 
-    public HealDoneController(IHttpClientHelper httpClient)
+    public HealDoneController(IHttpClientHelper httpClient, ILogger<HealDoneController> logger)
     {
         _httpClient = httpClient;
+        _logger = logger;
         _httpClient.BaseAddress = Port.CombatParserApi;
     }
 
     [HttpGet("getByCombatPlayerId")]
     public async Task<IActionResult> GetByCombatPlayerId(int combatPlayerId, int page, int pageSize)
     {
-        var responseMessage = await _httpClient.GetAsync($"HealDone/getByCombatPlayerId?combatPlayerId={combatPlayerId}&page={page}&pageSize={pageSize}");
-        var healDones = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<HealDoneModel>>();
+        try
+        {
+            var response = await _httpClient.GetAsync($"HealDone/getByCombatPlayerId?combatPlayerId={combatPlayerId}&page={page}&pageSize={pageSize}");
+            response.EnsureSuccessStatusCode();
 
-        return Ok(healDones);
+            var healDones = await response.Content.ReadFromJsonAsync<IEnumerable<HealDoneModel>>();
+
+            return Ok(healDones);
+        }
+        catch (HttpRequestException ex)
+        {
+            _logger.LogError(ex, "HTTP request error: {Message}", ex.Message);
+
+            return BadRequest();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "An unexpected error occurred: {Message}", ex.Message);
+
+            return BadRequest();
+        }
     }
 
     [HttpGet("count/{combatPlayerId}")]
     public async Task<IActionResult> Count(int combatPlayerId)
     {
-        var responseMessage = await _httpClient.GetAsync($"HealDone/count/{combatPlayerId}");
-        var count = await responseMessage.Content.ReadFromJsonAsync<int>();
-
-        return Ok(count);
-    }
-
-    [HttpGet("getUniqueTargets/{combatPlayerId}")]
-    public async Task<IActionResult> GetUniqueTargets(int combatPlayerId)
-    {
-        var responseMessage = await _httpClient.GetAsync($"HealDone/getUniqueTargets/{combatPlayerId}");
-        var uniqueTargets = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<string>>();
-
-        return Ok(uniqueTargets);
-    }
-
-    [HttpGet("countByTarget")]
-    public async Task<IActionResult> CountByTarget(int combatPlayerId, string target)
-    {
-        if (target.Equals("-1"))
+        try
         {
-            return await Count(combatPlayerId);
+            var response = await _httpClient.GetAsync($"HealDone/count/{combatPlayerId}");
+            response.EnsureSuccessStatusCode();
+
+            var count = await response.Content.ReadFromJsonAsync<int>();
+
+            return Ok(count);
         }
+        catch (HttpRequestException ex)
+        {
+            _logger.LogError(ex, "HTTP request error: {Message}", ex.Message);
 
-        var responseMessage = await _httpClient.GetAsync($"HealDone/countByTarget?combatPlayerId={combatPlayerId}&target={target}");
-        var count = await responseMessage.Content.ReadFromJsonAsync<int>();
+            return BadRequest();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "An unexpected error occurred: {Message}", ex.Message);
 
-        return Ok(count);
+            return BadRequest();
+        }
     }
 
-    [HttpGet("getByTarget")]
-    public async Task<IActionResult> GetByTarget(int combatPlayerId, string target, int page, int pageSize)
+    [HttpGet("getUniqueFilterValues")]
+    public async Task<IActionResult> GetUniqueFilterValues(int combatPlayerId, DetailsFilterType filter)
     {
-        if (target.Equals("-1"))
+        try
         {
-            return await GetByCombatPlayerId(combatPlayerId, page, pageSize);
+            string filterActionName;
+            switch (filter)
+            {
+                case DetailsFilterType.None:
+                    return BadRequest();
+                case DetailsFilterType.Target:
+                    filterActionName = "getUniqueTargets";
+                    break;
+                case DetailsFilterType.Spell:
+                    filterActionName = "getUniqueSpells";
+                    break;
+                default:
+                    return BadRequest();
+            }
+
+            var response = await _httpClient.GetAsync($"HealDone/{filterActionName}/{combatPlayerId}");
+            response.EnsureSuccessStatusCode();
+
+            var uniqueFilterValues = await response.Content.ReadFromJsonAsync<IEnumerable<string>>();
+
+            return Ok(uniqueFilterValues);
         }
+        catch (HttpRequestException ex)
+        {
+            _logger.LogError(ex, "HTTP request error: {Message}", ex.Message);
 
-        var responseMessage = await _httpClient.GetAsync($"HealDone/getByTarget?combatPlayerId={combatPlayerId}&target={target}&page={page}&pageSize={pageSize}");
-        var damageDones = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<DamageDoneModel>>();
+            return BadRequest();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "An unexpected error occurred: {Message}", ex.Message);
 
-        return Ok(damageDones);
+            return BadRequest();
+        }
+    }
+
+    [HttpGet("getByFilter")]
+    public async Task<IActionResult> GetByFilter(int combatPlayerId, DetailsFilterType filter, string filterValue, int page, int pageSize)
+    {
+        try
+        {
+            string filterName;
+            string filterActionName;
+            switch (filter)
+            {
+                case DetailsFilterType.None:
+                    return await GetByCombatPlayerId(combatPlayerId, page, pageSize);
+                case DetailsFilterType.Target:
+                    filterName = "target";
+                    filterActionName = "getByTarget";
+                    break;
+                case DetailsFilterType.Spell:
+                    filterName = "spell";
+                    filterActionName = "getBySpell";
+                    break;
+                default:
+                    return BadRequest();
+            }
+
+            var response = await _httpClient.GetAsync($"HealDone/{filterActionName}?combatPlayerId={combatPlayerId}&{filterName}={filterValue}&page={page}&pageSize={pageSize}");
+            response.EnsureSuccessStatusCode();
+
+            var healDones = await response.Content.ReadFromJsonAsync<IEnumerable<HealDoneModel>>();
+
+            return Ok(healDones);
+        }
+        catch (HttpRequestException ex)
+        {
+            _logger.LogError(ex, "HTTP request error: {Message}", ex.Message);
+
+            return BadRequest();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "An unexpected error occurred: {Message}", ex.Message);
+
+            return BadRequest();
+        }
+    }
+
+    [HttpGet("countByFilter")]
+    public async Task<IActionResult> CountByFilter(int combatPlayerId, DetailsFilterType filter, string filterValue)
+    {
+        try
+        {
+            string filterName;
+            string filterActionName;
+            switch (filter)
+            {
+                case DetailsFilterType.None:
+                    return await Count(combatPlayerId);
+                case DetailsFilterType.Target:
+                    filterName = "target";
+                    filterActionName = "countByTarget";
+                    break;
+                case DetailsFilterType.Spell:
+                    filterName = "spell";
+                    filterActionName = "countBySpell";
+                    break;
+                default:
+                    return BadRequest();
+            }
+
+            var response = await _httpClient.GetAsync($"HealDone/{filterActionName}?combatPlayerId={combatPlayerId}&{filterName}={filterValue}");
+            response.EnsureSuccessStatusCode();
+
+            var count = await response.Content.ReadFromJsonAsync<int>();
+
+            return Ok(count);
+        }
+        catch (HttpRequestException ex)
+        {
+            _logger.LogError(ex, "HTTP request error: {Message}", ex.Message);
+
+            return BadRequest();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "An unexpected error occurred: {Message}", ex.Message);
+
+            return BadRequest();
+        }
     }
 }

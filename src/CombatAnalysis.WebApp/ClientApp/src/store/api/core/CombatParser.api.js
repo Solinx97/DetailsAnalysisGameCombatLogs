@@ -24,21 +24,21 @@ export const CombatParserApi = createApi({
                     : ['CombatLog'],
         }),
         getPlayersDeathByPlayerId: builder.query({
-            query: (combatPlayerId) => `/PlayerDeath/findByCombatPlayerId/${combatPlayerId}`,
+            query: (combatPlayerId) => `/PlayerDeath/getByCombatPlayerId/${combatPlayerId}`,
             providesTags: result =>
                 result
                     ? [...result.map(({ id }) => ({ type: 'PlayerDeath', id })), 'PlayerDeath']
                     : ['PlayerDeath'],
         }),
         getCombatsByCombatLogId: builder.query({
-            query: (combatLogId) => `/Combat/findByCombatLogId/${combatLogId}`,
+            query: (combatLogId) => `/Combat/getByCombatLogId/${combatLogId}`,
             providesTags: result =>
                 result
                     ? [...result.map(({ id }) => ({ type: 'Combat', id })), 'Combat']
                     : ['Combat'],
         }),
         getCombatPlayersByCombatId: builder.query({
-            query: (combatId) => `/CombatPlayer/findByCombatId/${combatId}`,
+            query: (combatId) => `/CombatPlayer/getByCombatId/${combatId}`,
             providesTags: result =>
                 result
                     ? [...result.map(({ id }) => ({ type: 'CombatPlayer', id })), 'CombatPlayer']
@@ -55,14 +55,14 @@ export const CombatParserApi = createApi({
                 result ? [{ type: 'Combat', id: result.id }] : ['Combat'],
         }),
         getCombatPlayerPositionByCombatId: builder.query({
-            query: (combatId) => `/CombatPlayerPosition/findByCombatId/${combatId}`,
+            query: (combatId) => `/CombatPlayerPosition/getByCombatId/${combatId}`,
             providesTags: result =>
                 result
                     ? [...result.map(({ id }) => ({ type: 'CombatPlayerPosition', id })), 'CombatPlayerPosition']
                     : ['CombatPlayerPosition'],
         }),
         getCombatAurasByCombatId: builder.query({
-            query: (combatId) => `/CombatAura/findByCombatId/${combatId}`,
+            query: (combatId) => `/CombatAura/getByCombatId/${combatId}`,
             providesTags: result =>
                 result
                     ? [...result.map(({ id }) => ({ type: 'CombatAura', id })), 'CombatAura']

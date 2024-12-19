@@ -17,11 +17,11 @@ public class DamageTakenController : ControllerBase
     private readonly ICountService<DamageTakenDto> _countService;
     private readonly IGeneralFilterService<DamageTakenDto> _filterService;
     private readonly IMapper _mapper;
-    private readonly ILogger<CombatPlayerController> _logger;
+    private readonly ILogger<DamageTakenController> _logger;
 
     public DamageTakenController(IMutationService<DamageTakenDto> mutationService, IPlayerInfoService<DamageTakenDto> playerInfoService, 
         ICountService<DamageTakenDto> countService, IGeneralFilterService<DamageTakenDto> filterService, 
-        IMapper mapper, ILogger<CombatPlayerController> logger)
+        IMapper mapper, ILogger<DamageTakenController> logger)
     {
         _mutationService = mutationService;
         _playerInfoService = playerInfoService;
@@ -49,6 +49,23 @@ public class DamageTakenController : ControllerBase
         }
     }
 
+    [HttpGet("count/{combatPlayerId}")]
+    public async Task<IActionResult> Count(int combatPlayerId)
+    {
+        try
+        {
+            var count = await _countService.CountByCombatPlayerIdAsync(combatPlayerId);
+
+            return Ok(count);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error get damage taken count: {Message}", ex.Message);
+
+            return BadRequest();
+        }
+    }
+
     [HttpGet("getUniqueCreators/{combatPlayerId}")]
     public async Task<IActionResult> GetUniqueCreators(int combatPlayerId)
     {
@@ -61,23 +78,6 @@ public class DamageTakenController : ControllerBase
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error get unique damage taken creators: {Message}", ex.Message);
-
-            return BadRequest();
-        }
-    }
-
-    [HttpGet("count/{combatPlayerId}")]
-    public async Task<IActionResult> Count(int combatPlayerId)
-    {
-        try
-        {
-            var count = await _countService.CountByCombatPlayerIdAsync(combatPlayerId);
-
-            return Ok(count);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error get damage taken count by target: {Message}", ex.Message);
 
             return BadRequest();
         }
@@ -112,6 +112,57 @@ public class DamageTakenController : ControllerBase
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error get damage taken count by creator: {Message}", ex.Message);
+
+            return BadRequest();
+        }
+    }
+
+    [HttpGet("getUniqueSpells/{combatPlayerId}")]
+    public async Task<IActionResult> GetUniqueSpells(int combatPlayerId)
+    {
+        try
+        {
+            var uniqueSpells = await _filterService.GetSpellNamesByCombatPlayerIdAsync(combatPlayerId);
+
+            return Ok(uniqueSpells);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error get unique damage taken spells: {Message}", ex.Message);
+
+            return BadRequest();
+        }
+    }
+
+    [HttpGet("getBySpell")]
+    public async Task<IActionResult> GetBySpell(int combatPlayerId, string spell, int page, int pageSize)
+    {
+        try
+        {
+            var daamgeTakens = await _filterService.GetSpellByCombatPlayerIdAsync(combatPlayerId, spell, page, pageSize);
+
+            return Ok(daamgeTakens);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error find damage taken by spell: {Message}", ex.Message);
+
+            return BadRequest();
+        }
+    }
+
+    [HttpGet("countBySpell")]
+    public async Task<IActionResult> CountBySpell(int combatPlayerId, string spell)
+    {
+        try
+        {
+            var count = await _filterService.CountSpellByCombatPlayerIdAsync(combatPlayerId, spell);
+
+            return Ok(count);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error get damage taken count by spell: {Message}", ex.Message);
 
             return BadRequest();
         }

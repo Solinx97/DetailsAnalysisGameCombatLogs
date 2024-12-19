@@ -17,10 +17,10 @@ public class CombatController : ControllerBase
         _httpClient.BaseAddress = Port.CombatParserApi;
     }
 
-    [HttpGet("findByCombatLogId/{combatLogId:int:min(1)}")]
-    public async Task<IActionResult> GetCombatsByCombatLogId(int combatLogId)
+    [HttpGet("getByCombatLogId/{combatLogId:int:min(1)}")]
+    public async Task<IActionResult> GetByCombatLogId(int combatLogId)
     {
-        var responseMessage = await _httpClient.GetAsync($"Combat/findByCombatLogId/{combatLogId}");
+        var responseMessage = await _httpClient.GetAsync($"Combat/GetByCombatLogId/{combatLogId}");
         var combats = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<CombatModel>>();
 
         return Ok(combats);

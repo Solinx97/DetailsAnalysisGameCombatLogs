@@ -32,7 +32,7 @@ internal class GeneralFilterService<TModel, TModelMap> : IGeneralFilterService<T
         return count;
     }
 
-    public async Task<IEnumerable<TModel>> GetTargetsByCombatPlayerIdAsync(int combatPlayerId, string target, int page, int pageSize)
+    public async Task<IEnumerable<TModel>> GetTargetByCombatPlayerIdAsync(int combatPlayerId, string target, int page, int pageSize)
     {
         var result = await _repository.GetTargetByCombatPlayerIdAsync(combatPlayerId, target, page, pageSize);
         var resultMap = _mapper.Map<IEnumerable<TModel>>(result);
@@ -57,6 +57,28 @@ internal class GeneralFilterService<TModel, TModelMap> : IGeneralFilterService<T
     public async Task<IEnumerable<TModel>> GetCreatorByCombatPlayerIdAsync(int combatPlayerId, string creator, int page, int pageSize)
     {
         var result = await _repository.GetCreatorByCombatPlayerIdAsync(combatPlayerId, creator, page, pageSize);
+        var resultMap = _mapper.Map<IEnumerable<TModel>>(result);
+
+        return resultMap;
+    }
+
+    public async Task<IEnumerable<string>> GetSpellNamesByCombatPlayerIdAsync(int combatPlayerId)
+    {
+        var result = await _repository.GetSpellNamesByCombatPlayerIdAsync(combatPlayerId);
+
+        return result;
+    }
+
+    public async Task<int> CountSpellByCombatPlayerIdAsync(int combatPlayerId, string spell)
+    {
+        var count = await _repository.CountSpellByCombatPlayerIdAsync(combatPlayerId, spell);
+
+        return count;
+    }
+
+    public async Task<IEnumerable<TModel>> GetSpellByCombatPlayerIdAsync(int combatPlayerId, string spell, int page, int pageSize)
+    {
+        var result = await _repository.GetSpellByCombatPlayerIdAsync(combatPlayerId, spell, page, pageSize);
         var resultMap = _mapper.Map<IEnumerable<TModel>>(result);
 
         return resultMap;

@@ -114,9 +114,9 @@ public class CombatLogController : ControllerBase
             var item = await GetById(id);
             var map = _mapper.Map<CombatLogDto>(item);
 
-            var deletedId = await _mutationCombatLogService.DeleteAsync(map);
+            var rowsAffected = await _mutationCombatLogService.DeleteAsync(map);
 
-            return Ok(deletedId);
+            return Ok(rowsAffected);
         }
         catch (ArgumentNullException ex)
         {

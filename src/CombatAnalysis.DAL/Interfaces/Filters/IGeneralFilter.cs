@@ -16,4 +16,10 @@ public interface IGeneralFilter<TModel>
     Task<int> CountCreatorByCombatPlayerIdAsync(int combatPlayerId, string creator);
 
     Task<IEnumerable<TModel>> GetCreatorByCombatPlayerIdAsync(int combatPlayerId, string creator, int page, int pageSize);
+
+    Task<IEnumerable<string>> GetSpellNamesByCombatPlayerIdAsync(int combatPlayerId);
+
+    Task<int> CountSpellByCombatPlayerIdAsync(int combatPlayerId, string spell);
+
+    Task<IEnumerable<TModel>> GetSpellByCombatPlayerIdAsync(int combatPlayerId, string spell, int page, int pageSize);
 }

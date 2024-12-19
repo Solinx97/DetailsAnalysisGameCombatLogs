@@ -6,7 +6,7 @@ export const HealDoneApi = CombatParserApi.injectEndpoints({
         'HealDoneGeneral',
     ],
     endpoints: builder => ({
-        getHealDoneByPlayerId: builder.query({
+        getHealDoneByCombatPlayerId: builder.query({
             query: ({ combatPlayerId, page, pageSize }) => ({
                 url: `/HealDone/getByCombatPlayerId?combatPlayerId=${combatPlayerId}&page=${page}&pageSize=${pageSize}`,
             }),
@@ -15,32 +15,32 @@ export const HealDoneApi = CombatParserApi.injectEndpoints({
                     ? [...result.map(({ id }) => ({ type: 'HealDone', id })), 'HealDone']
                     : ['HealDone'],
         }),
-        getHealDoneTargetByPlayerId: builder.query({
-            query: ({ combatPlayerId, target, page, pageSize }) => ({
-                url: `/HealDone/getByTarget?combatPlayerId=${combatPlayerId}&target=${target}&page=${page}&pageSize=${pageSize}`,
-            }),
-            providesTags: result =>
-                result
-                    ? [...result.map(({ id }) => ({ type: 'HealDone', id })), 'HealDone']
-                    : ['HealDone'],
-        }),
-        getHealDoneUniqueTargets: builder.query({
-            query: (combatPlayerId) => ({
-                url: `/HealDone/getUniqueTargets/${combatPlayerId}`,
-            }),
-            providesTags: result =>
-                result
-                    ? [...result.map(({ id }) => ({ type: 'HealDone', id })), 'HealDone']
-                    : ['HealDone'],
-        }),
-        getHealDoneCountByPlayerId: builder.query({
+        getHealDoneCountByCombatPlayerId: builder.query({
             query: (combatPlayerId) => `/HealDone/count/${combatPlayerId}`,
         }),
-        getHealDoneCountTargetsByPlayerId: builder.query({
-            query: ({ combatPlayerId, target }) => `/HealDone/countByTarget?combatPlayerId=${combatPlayerId}&target=${target}`,
+        getHealDoneUniqueFilterValues: builder.query({
+            query: ({ combatPlayerId, filter }) => ({
+                url: `/HealDone/getUniqueFilterValues?combatPlayerId=${combatPlayerId}&filter=${filter}`,
+            }),
+            providesTags: result =>
+                result
+                    ? [...result.map(({ id }) => ({ type: 'HealDone', id })), 'HealDone']
+                    : ['HealDone'],
         }),
-        getHealDoneGeneralyByPlayerId: builder.query({
-            query: (combatPlayerId) => `/HealDoneGeneral/findByCombatPlayerId/${combatPlayerId}`,
+        getHealDoneByFilter: builder.query({
+            query: ({ combatPlayerId, filter, filterValue, page, pageSize }) => ({
+                url: `/HealDone/getByFilter?combatPlayerId=${combatPlayerId}&filter=${filter}&filterValue=${filterValue}&page=${page}&pageSize=${pageSize}`,
+            }),
+            providesTags: result =>
+                result
+                    ? [...result.map(({ id }) => ({ type: 'HealDone', id })), 'HealDone']
+                    : ['HealDone'],
+        }),
+        getHealDoneCountByFilter: builder.query({
+            query: ({ combatPlayerId, filter, filterValue }) => `/HealDone/countByFilter?combatPlayerId=${combatPlayerId}&filter=${filter}&filterValue=${filterValue}`,
+        }),
+        getHealDoneGeneralByCombatPlayerId: builder.query({
+            query: (combatPlayerId) => `/HealDoneGeneral/getByCombatPlayerId/${combatPlayerId}`,
             providesTags: result =>
                 result
                     ? [...result.map(({ id }) => ({ type: 'HealDoneGeneral', id })), 'HealDoneGeneral']
@@ -50,11 +50,11 @@ export const HealDoneApi = CombatParserApi.injectEndpoints({
 })
 
 export const {
-    useGetHealDoneByPlayerIdQuery,
-    useGetHealDoneTargetByPlayerIdQuery,
-    useGetHealDoneUniqueTargetsQuery,
-    useLazyGetHealDoneCountByPlayerIdQuery,
-    useGetHealDoneCountTargetsByPlayerIdQuery,
-    useGetHealDoneGeneralyByPlayerIdQuery,
-    useLazyGetHealDoneGeneralyByPlayerIdQuery,
+    useGetHealDoneByCombatPlayerIdQuery,
+    useLazyGetHealDoneCountByCombatPlayerIdQuery,
+    useGetHealDoneUniqueFilterValuesQuery,
+    useGetHealDoneByFilterQuery,
+    useGetHealDoneCountByFilterQuery,
+    useGetHealDoneGeneralByCombatPlayerIdQuery,
+    useLazyGetHealDoneGeneralByCombatPlayerIdQuery,
 } = HealDoneApi;

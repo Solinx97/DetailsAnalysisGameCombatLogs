@@ -13,7 +13,7 @@ const ResourceRecoveryGeneralHelper = ({ generalData }) => {
                         {t("Spell")}
                     </li>
                     <li>
-                        {t("TotalResourcesRecovery")}
+                        {t("Total")}
                     </li>
                     <li>
                         {t("AverageValue")}

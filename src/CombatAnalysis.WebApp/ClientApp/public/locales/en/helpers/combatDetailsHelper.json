@@ -1,17 +1,13 @@
 {
-  "TotalDamage": "Total damage",
+  "Total": "Total",
   "AverageValue": "Average value",
   "DamagePerSec": "Damage per sec",
   "CountOfSkills": "Count of skills",
-  "CountOfCrits": "Count of crits",
-  "CountOfMiss": "Count of miss",
+  "Crit": "Crit",
   "MaxValue": "Max value",
   "MinValue": "Min value",
-  "TotalHealing": "Total healing",
   "HealingPerSec": "Healing per sec",
-  "TotalDamageTaken": "Total damage taken",
   "DamageTakenPerSec": "Total taken per sec",
-  "TotalResourcesRecovery": "Total resources recovery",
   "ResourcesRecoveryPerSec": "Resources recovery per sec",
   "CritDamage": "Crit damage",
   "Dodge": "Dodge",
@@ -34,5 +30,6 @@
   "Next": "Next",
   "Last": "Last",
   "All": "All",
-  "Creator": "Creator"
+  "Creator": "Creator",
+  "FiltersReset": "Filters reset"
 }

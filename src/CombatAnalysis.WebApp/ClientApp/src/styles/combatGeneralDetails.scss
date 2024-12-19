@@ -9,7 +9,25 @@
         .player-filter-details {
             display: flex;
             justify-content: center;
+            gap: 25px;
             margin-bottom: 20px;
+            font-size: 1em;
+
+            select {
+                font-size: 0.9em;
+            }
+
+            &__filter {
+                display: flex;
+                flex-direction: column;
+                gap: 5px;
+
+                :first-child {
+                    display: flex;
+                    align-items: center;
+                    gap: 20px;
+                }
+            }
         }
 
         .player-general-data-details, .player-data-details {
@@ -33,8 +51,8 @@
 
                 .value-equal-zero:first-child {
                     color: white;
-                } 
-                
+                }
+
                 .crit {
                     color: green;
                 }

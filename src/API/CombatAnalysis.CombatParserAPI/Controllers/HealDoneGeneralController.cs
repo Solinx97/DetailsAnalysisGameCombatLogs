@@ -25,8 +25,8 @@ public class HealDoneGeneralController : ControllerBase
         _logger = logger;
     }
 
-    [HttpGet("findByCombatPlayerId/{combatPlayerId:int:min(1)}")]
-    public async Task<IActionResult> Find(int combatPlayerId)
+    [HttpGet("getByCombatPlayerId/{combatPlayerId:int:min(1)}")]
+    public async Task<IActionResult> GetByCombatPlayerId(int combatPlayerId)
     {
         var healDoneGenerals = await _playerInfoService.GetByCombatPlayerIdAsync(combatPlayerId);
 

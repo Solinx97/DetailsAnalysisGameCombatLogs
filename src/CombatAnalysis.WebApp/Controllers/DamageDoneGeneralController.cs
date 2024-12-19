@@ -10,19 +10,38 @@ namespace CombatAnalysis.WebApp.Controllers;
 public class DamageDoneGeneralController : ControllerBase
 {
     private readonly IHttpClientHelper _httpClient;
+    private readonly ILogger<DamageDoneGeneralController> _logger;
 
-    public DamageDoneGeneralController(IHttpClientHelper httpClient)
+    public DamageDoneGeneralController(IHttpClientHelper httpClient, ILogger<DamageDoneGeneralController> logger)
     {
         _httpClient = httpClient;
+        _logger = logger;
         _httpClient.BaseAddress = Port.CombatParserApi;
     }
 
-    [HttpGet("findByCombatPlayerId/{combatPlayerId:int:min(1)}")]
-    public async Task<IEnumerable<DamageDoneGeneralModel>> GetByCombatPlayerId(int combatPlayerId)
+    [HttpGet("getByCombatPlayerId/{combatPlayerId:int:min(1)}")]
+    public async Task<IActionResult> GetByCombatPlayerId(int combatPlayerId)
     {
-        var responseMessage = await _httpClient.GetAsync($"DamageDoneGeneral/findByCombatPlayerId/{combatPlayerId}");
-        var damageDoneGenerals = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<DamageDoneGeneralModel>>();
+        try
+        {
+            var response = await _httpClient.GetAsync($"DamageDoneGeneral/getByCombatPlayerId/{combatPlayerId}");
+            response.EnsureSuccessStatusCode();
 
-        return damageDoneGenerals;
+            var damageDoneGenerals = await response.Content.ReadFromJsonAsync<IEnumerable<DamageDoneGeneralModel>>();
+
+            return Ok(damageDoneGenerals);
+        }
+        catch (HttpRequestException ex)
+        {
+            _logger.LogError(ex, "HTTP request error: {Message}", ex.Message);
+
+            return BadRequest();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "An unexpected error occurred: {Message}", ex.Message);
+
+            return BadRequest();
+        }
     }
 }

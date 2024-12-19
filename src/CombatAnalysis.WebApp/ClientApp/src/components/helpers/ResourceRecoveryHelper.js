@@ -1,6 +1,9 @@
 ﻿import React, { useEffect, useState } from 'react';
 import useTime from '../../hooks/useTime';
-import { useGetResourceRecoveryCountCreatorByPlayerIdQuery, useGetResourceRecoveryCreatorByPlayerIdQuery, useGetResourceRecoveryUniqueCreatorsQuery } from '../../store/api/combatParser/ResourcesRecovery.api';
+import {
+    useGetResourceRecoveryCountByFilterQuery, useGetResourceRecoveryByFilterQuery,
+    useGetResourceRecoveryUniqueFilterValuesQuery
+} from '../../store/api/combatParser/ResourcesRecovery.api';
 import DetailsFilter from './DetailsFilter';
 import PaginationHelper from './PaginationHelper';
 
@@ -8,24 +11,25 @@ const ResourceRecoveryHelper = ({ combatPlayerId, pageSize, getUserNameWithoutRe
     const { getTimeWithoutMs } = useTime();
 
     const [page, setPage] = useState(1);
-    const [selectedTarget, setSelectedTarget] = useState("All");
+    const [selectedFilter, setSelectedFilter] = useState({ filter: "None", value: -1 });
 
-    const { data: count, isLoading: countIsLoading } = useGetResourceRecoveryCountCreatorByPlayerIdQuery({ combatPlayerId, creator: selectedTarget === "All" ? "-1" : selectedTarget });
-    const { data, isLoading } = useGetResourceRecoveryCreatorByPlayerIdQuery({ combatPlayerId, creator: selectedTarget === "All" ? "-1" : selectedTarget, page, pageSize });
+    const { data: count, isLoading: countIsLoading } = useGetResourceRecoveryCountByFilterQuery(
+        { combatPlayerId, filter: selectedFilter.filter, filterValue: selectedFilter.value }
+    );
+    const { data, isLoading } = useGetResourceRecoveryByFilterQuery(
+        { combatPlayerId, filter: selectedFilter.filter, filterValue: selectedFilter.value, page, pageSize }
+    );
 
     const totalPages = Math.ceil(count / pageSize);
 
     useEffect(() => {
         setPage(1);
-    }, [selectedTarget]);
+    }, [selectedFilter]);
 
     const tableTitle = () => {
         return (
             <li className="player-data-details__title" key="0">
                 <ul>
-                    <li>
-                        {t("Creator")}
-                    </li>
                     <li>
                         {t("Spell")}
                     </li>
@@ -34,6 +38,9 @@ const ResourceRecoveryHelper = ({ combatPlayerId, pageSize, getUserNameWithoutRe
                     </li>
                     <li>
                         {t("Value")}
+                    </li>
+                    <li>
+                        {t("Creator")}
                     </li>
                 </ul>
             </li>
@@ -46,24 +53,37 @@ const ResourceRecoveryHelper = ({ combatPlayerId, pageSize, getUserNameWithoutRe
 
     return (
         <div>
-            <DetailsFilter
-                combatPlayerId={combatPlayerId}
-                selectedTarget={selectedTarget}
-                setSelectedTarget={setSelectedTarget}
-                useGetUniqueTargetsQuery={useGetResourceRecoveryUniqueCreatorsQuery}
-                t={t}
-            />
+            <div className="player-filter-details">
+                <DetailsFilter
+                    combatPlayerId={combatPlayerId}
+                    setSelectedFilter={setSelectedFilter}
+                    selectedFilter={selectedFilter}
+                    filter="Creator"
+                    filterName={t("Creator")}
+                    useGetUniqueFilterValuesQuery={useGetResourceRecoveryUniqueFilterValuesQuery}
+                    t={t}
+                />
+                <DetailsFilter
+                    combatPlayerId={combatPlayerId}
+                    setSelectedFilter={setSelectedFilter}
+                    selectedFilter={selectedFilter}
+                    filter="Spell"
+                    filterName={t("Spell")}
+                    useGetUniqueFilterValuesQuery={useGetResourceRecoveryUniqueFilterValuesQuery}
+                    t={t}
+                />
+            </div>
             <ul className="player-data-details">
                 {tableTitle()}
                 {data.map((item) => (
                     <li className="player-data-details__item" key={item.id}>
                         <ul>
-                            <li>{getUserNameWithoutRealm(item.creator)}</li>
                             <li>{item.spell}</li>
                             <li>
                                 <div>{getTimeWithoutMs(item.time)}</div>
                             </li>
                             <li>{item.value}</li>
+                            <li>{getUserNameWithoutRealm(item.creator)}</li>
                         </ul>
                     </li>
                 ))}

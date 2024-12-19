@@ -1,13 +1,13 @@
 ﻿import { useEffect, useState } from "react";
 import { useTranslation } from 'react-i18next';
-import { useLazyGetDamageTakenByPlayerIdQuery } from '../../store/api/combatParser/DamageTaken.api';
+import { useLazyGetDamageTakenByCombatPlayerIdQuery } from '../../store/api/combatParser/DamageTaken.api';
 
 const minCount = 4;
 
 const DashboardDeathItem = ({ playersDeath, players }) => {
     const { t } = useTranslation("combatDetails/dashboard");
 
-    const [getDamageTakenByPlayerIdAsync] = useLazyGetDamageTakenByPlayerIdQuery();
+    const [getDamageTakenByCombatPlayerId] = useLazyGetDamageTakenByCombatPlayerIdQuery();
 
     const [itemCount, setItemCount] = useState(minCount);
 
@@ -15,7 +15,7 @@ const DashboardDeathItem = ({ playersDeath, players }) => {
         if (!playersDeath || playersDeath.length === 0) {
             return;
         }
-    }, [playersDeath, players, getDamageTakenByPlayerIdAsync]);
+    }, [playersDeath, players, getDamageTakenByCombatPlayerId]);
 
     if (playersDeath === undefined) {
         return (<div>Loading...</div>);

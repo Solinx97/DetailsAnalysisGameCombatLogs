@@ -49,6 +49,23 @@ public class HealDoneController : ControllerBase
         }
     }
 
+    [HttpGet("count/{combatPlayerId}")]
+    public async Task<IActionResult> Count(int combatPlayerId)
+    {
+        try
+        {
+            var count = await _countService.CountByCombatPlayerIdAsync(combatPlayerId);
+
+            return Ok(count);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error get heal done count: {Message}", ex.Message);
+
+            return BadRequest();
+        }
+    }
+
     [HttpGet("getUniqueTargets/{combatPlayerId}")]
     public async Task<IActionResult> GetUniqueTargets(int combatPlayerId)
     {
@@ -66,29 +83,12 @@ public class HealDoneController : ControllerBase
         }
     }
 
-    [HttpGet("count/{combatPlayerId}")]
-    public async Task<IActionResult> Count(int combatPlayerId)
-    {
-        try
-        {
-            var count = await _countService.CountByCombatPlayerIdAsync(combatPlayerId);
-
-            return Ok(count);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error get heal done count by target: {Message}", ex.Message);
-
-            return BadRequest();
-        }
-    }
-
     [HttpGet("getByTarget")]
     public async Task<IActionResult> GetByTarget(int combatPlayerId, string target, int page, int pageSize)
     {
         try
         {
-            var healDones = await _filterService.GetTargetsByCombatPlayerIdAsync(combatPlayerId, target, page, pageSize);
+            var healDones = await _filterService.GetTargetByCombatPlayerIdAsync(combatPlayerId, target, page, pageSize);
 
             return Ok(healDones);
         }
@@ -112,6 +112,57 @@ public class HealDoneController : ControllerBase
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error get heal done count by target: {Message}", ex.Message);
+
+            return BadRequest();
+        }
+    }
+
+    [HttpGet("getUniqueSpells/{combatPlayerId}")]
+    public async Task<IActionResult> GetUniqueSpells(int combatPlayerId)
+    {
+        try
+        {
+            var uniqueSpells = await _filterService.GetSpellNamesByCombatPlayerIdAsync(combatPlayerId);
+
+            return Ok(uniqueSpells);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error get unique heal done spells: {Message}", ex.Message);
+
+            return BadRequest();
+        }
+    }
+
+    [HttpGet("getBySpell")]
+    public async Task<IActionResult> GetBySpell(int combatPlayerId, string spell, int page, int pageSize)
+    {
+        try
+        {
+            var healDones = await _filterService.GetSpellByCombatPlayerIdAsync(combatPlayerId, spell, page, pageSize);
+
+            return Ok(healDones);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error find heal done by spell: {Message}", ex.Message);
+
+            return BadRequest();
+        }
+    }
+
+    [HttpGet("countBySpell")]
+    public async Task<IActionResult> CountBySpell(int combatPlayerId, string spell)
+    {
+        try
+        {
+            var count = await _filterService.CountSpellByCombatPlayerIdAsync(combatPlayerId, spell);
+
+            return Ok(count);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error get heal done count by spell: {Message}", ex.Message);
 
             return BadRequest();
         }

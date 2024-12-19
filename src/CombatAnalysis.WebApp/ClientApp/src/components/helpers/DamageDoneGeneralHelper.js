@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 
 const fixedNumberUntil = 2;
 
-const DamageDoneGeneralHelper = ({ generalData }) => {
+const DamageDoneGeneralHelper = ({ generalData, getProcentage }) => {
     const { t } = useTranslation("helpers/combatDetailsHelper");
 
     const tableTitle = () => {
@@ -14,7 +14,7 @@ const DamageDoneGeneralHelper = ({ generalData }) => {
                         {t("Spell")}
                     </li>
                     <li>
-                        {t("TotalDamage")}
+                        {t("Total")}
                     </li>
                     <li>
                         {t("AverageValue")}
@@ -26,10 +26,10 @@ const DamageDoneGeneralHelper = ({ generalData }) => {
                         {t("CountOfSkills")}
                     </li>
                     <li>
-                        {t("CountOfCrits")}
+                        {t("Crit")}, %
                     </li>
                     <li>
-                        {t("CountOfMiss")}
+                        {t("Miss")}, %
                     </li>
                     <li>
                         {t("MaxValue")}
@@ -64,10 +64,10 @@ const DamageDoneGeneralHelper = ({ generalData }) => {
                             {item.castNumber}
                         </li>
                         <li>
-                            {item.critNumber}
+                            {getProcentage(item.critNumber, item.castNumber)}%
                         </li>
                         <li>
-                            {item.missNumber}
+                            {getProcentage(item.missNumber, item.castNumber)}%
                         </li>
                         <li>
                             {item.maxValue}

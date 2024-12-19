@@ -10,19 +10,38 @@ namespace CombatAnalysis.WebApp.Controllers;
 public class PlayerDeathController : ControllerBase
 {
     private readonly IHttpClientHelper _httpClient;
+    private readonly ILogger<PlayerDeathController> _logger;
 
-    public PlayerDeathController(IHttpClientHelper httpClient)
+    public PlayerDeathController(IHttpClientHelper httpClient, ILogger<PlayerDeathController> logger)
     {
         _httpClient = httpClient;
+        _logger = logger;
         _httpClient.BaseAddress = Port.CombatParserApi;
     }
 
-    [HttpGet("findByCombatPlayerId/{combatPlayerId:int:min(1)}")]
+    [HttpGet("getByCombatPlayerId/{combatPlayerId:int:min(1)}")]
     public async Task<IActionResult> GetByCombatPlayerId(int combatPlayerId)
     {
-        var responseMessage = await _httpClient.GetAsync($"PlayerDeath/FindByCombatPlayerId/{combatPlayerId}");
-        var damageDones = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<PlayerDeathModel>>();
+        try
+        {
+            var response = await _httpClient.GetAsync($"PlayerDeath/getByCombatPlayerId/{combatPlayerId}");
+            response.EnsureSuccessStatusCode();
 
-        return Ok(damageDones);
+            var playerDeaths = await response.Content.ReadFromJsonAsync<IEnumerable<PlayerDeathModel>>();
+
+            return Ok(playerDeaths);
+        }
+        catch (HttpRequestException ex)
+        {
+            _logger.LogError(ex, "HTTP request error: {Message}", ex.Message);
+
+            return BadRequest();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "An unexpected error occurred: {Message}", ex.Message);
+
+            return BadRequest();
+        }
     }
 }

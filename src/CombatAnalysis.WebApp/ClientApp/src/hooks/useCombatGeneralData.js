@@ -2,24 +2,24 @@
 import DamageTakenGeneralHelper from '../components/helpers/DamageTakenGeneralHelper';
 import HealDoneGeneralHelper from '../components/helpers/HealDoneGeneralHelper';
 import ResourceRecoveryGeneralHelper from '../components/helpers/ResourceRecoveryGeneralHelper';
-import {
-    useLazyGetResourceRecoveryGeneralyByPlayerIdQuery
-} from '../store/api/combatParser/ResourcesRecovery.api';
-import {
-    useLazyGetDamageDoneGeneralyByPlayerIdQuery,
-} from '../store/api/combatParser/DamageDone.api';
-import {
-    useLazyGetDamageTakenGeneralyByPlayerIdQuery,
-} from '../store/api/combatParser/DamageTaken.api';
-import {
-    useLazyGetHealDoneGeneralyByPlayerIdQuery,
-} from '../store/api/combatParser/HealDone.api';
+import { useLazyGetDamageDoneGeneralByCombatPlayerIdQuery } from '../store/api/combatParser/DamageDone.api';
+import { useLazyGetDamageTakenGeneralByCombatPlayerIdQuery } from '../store/api/combatParser/DamageTaken.api';
+import { useLazyGetHealDoneGeneralByCombatPlayerIdQuery } from '../store/api/combatParser/HealDone.api';
+import { useLazyGetResourceRecoveryGeneralByCombatPlayerIdQuery } from '../store/api/combatParser/ResourcesRecovery.api';
 
 const useCombatGeneralData = (combatPlayerId, detailsType) => {
-    const [getDamageDoneGeneralyByPlayerIdAsync] = useLazyGetDamageDoneGeneralyByPlayerIdQuery();
-    const [getHealDoneGeneralyByPlayerIdAsync] = useLazyGetHealDoneGeneralyByPlayerIdQuery();
-    const [getDamageTakenGeneralyByPlayerIdAsync] = useLazyGetDamageTakenGeneralyByPlayerIdQuery();
-    const [getResourceRecoveryGeneralyByPlayerIdAsync] = useLazyGetResourceRecoveryGeneralyByPlayerIdQuery();
+    const [getDamageDoneGeneralByCombatPlayerIdAsync] = useLazyGetDamageDoneGeneralByCombatPlayerIdQuery();
+    const [getDamageTakenGeneralByCombatPlayerIdAsync] = useLazyGetDamageTakenGeneralByCombatPlayerIdQuery();
+    const [getHealDoneGeneralByCombatPlayerIdAsync] = useLazyGetHealDoneGeneralByCombatPlayerIdQuery();
+    const [getResourceRecoveryGeneralByCombatPlayerIdAsync] = useLazyGetResourceRecoveryGeneralByCombatPlayerIdQuery();
+
+    const getProcentage = (firstValue, secondValue) => {
+        const number = firstValue / secondValue;
+        const procentage = number * 100;
+        const round = procentage.toFixed(2);
+
+        return round;
+    }
 
     const getGeneralListAsync = async () => {
         const data = await getPlayerGeneralDetailsAsync();
@@ -28,14 +28,17 @@ const useCombatGeneralData = (combatPlayerId, detailsType) => {
             case "DamageDone":
                 return <DamageDoneGeneralHelper
                     generalData={data}
+                    getProcentage={getProcentage}
                 />
             case "HealDone":
                 return <HealDoneGeneralHelper
                     generalData={data}
+                    getProcentage={getProcentage}
                 />
             case "DamageTaken":
                 return <DamageTakenGeneralHelper
                     generalData={data}
+                    getProcentage={getProcentage}
                 />
             case "ResourceRecovery":
                 return <ResourceRecoveryGeneralHelper
@@ -52,19 +55,19 @@ const useCombatGeneralData = (combatPlayerId, detailsType) => {
         let detailsResult = null;
         switch (detailsType) {
             case "DamageDone":
-                detailsResult = await getDamageDoneGeneralyByPlayerIdAsync(combatPlayerId);
+                detailsResult = await getDamageDoneGeneralByCombatPlayerIdAsync(combatPlayerId);
                 break;
             case "HealDone":
-                detailsResult = await getHealDoneGeneralyByPlayerIdAsync(combatPlayerId);
+                detailsResult = await getHealDoneGeneralByCombatPlayerIdAsync(combatPlayerId);
                 break;
             case "DamageTaken":
-                detailsResult = await getDamageTakenGeneralyByPlayerIdAsync(combatPlayerId);
+                detailsResult = await getDamageTakenGeneralByCombatPlayerIdAsync(combatPlayerId);
                 break;
             case "ResourceRecovery":
-                detailsResult = await getResourceRecoveryGeneralyByPlayerIdAsync(combatPlayerId);
+                detailsResult = await getResourceRecoveryGeneralByCombatPlayerIdAsync(combatPlayerId);
                 break;
             default:
-                detailsResult = await getDamageDoneGeneralyByPlayerIdAsync(combatPlayerId);
+                detailsResult = await getDamageDoneGeneralByCombatPlayerIdAsync(combatPlayerId);
                 break;
         }
 

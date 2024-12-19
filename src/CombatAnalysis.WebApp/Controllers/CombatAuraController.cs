@@ -17,10 +17,10 @@ public class CombatAuraController : ControllerBase
         _httpClient.BaseAddress = Port.CombatParserApi;
     }
 
-    [HttpGet("findByCombatId/{combatId:int:min(1)}")]
-    public async Task<IActionResult> Find(int combatId)
+    [HttpGet("getByCombatId/{combatId:int:min(1)}")]
+    public async Task<IActionResult> GetByCombatId(int combatId)
     {
-        var response = await _httpClient.GetAsync($"CombatAura/findByCombatId/{combatId}");
+        var response = await _httpClient.GetAsync($"CombatAura/getByCombatId/{combatId}");
         var combatAuras = await response.Content.ReadFromJsonAsync<IEnumerable<CombatAuraModel>>();
 
         return Ok(combatAuras);
