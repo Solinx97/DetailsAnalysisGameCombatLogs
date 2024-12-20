@@ -62,20 +62,64 @@
                 }
             }
 
-            &__title ul {
-                li {
-                    display: flex;
-                    justify-content: center;
-                    text-align: center;
-                    box-shadow: 2px 2px 2px 2px green;
-                    border-radius: 10px;
+            &__inherit {
+                display: flex;
+                align-items: center;
+                gap: 20px;
+                margin-top: 10px;
+
+                .show-pets {
+                    box-shadow: 3px 3px 3px 3px green;
+                    border-radius: 20px;
                     padding: 5px 10px;
-                    width: 15%;
+                    width: 175px;
                     font-size: 0.8em;
                 }
 
-                li:first-child {
-                    min-width: 20%;
+                .hidden-columns {
+                    display: flex;
+                    gap: 20px;
+                    font-size: 0.8em;
+
+                    li {
+                        box-shadow: 1px 1px 1px 1px orange;
+                        padding: 5px 10px;
+                        border-radius: 20px;
+                        cursor: pointer;
+                    }
+                }
+            }
+
+            &__title {
+                .allow-hide-column {
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    gap: 5px;
+
+                    svg {
+                        border: 1px solid orange;
+                        padding: 2px;
+                        border-radius: 20px;
+                        font-size: 0.8em;
+                    }
+                }
+
+                ul {
+                    li {
+                        display: flex;
+                        justify-content: center;
+                        text-align: center;
+                        box-shadow: 2px 2px 2px 2px green;
+                        border-radius: 10px;
+                        padding: 5px 10px;
+                        width: 15%;
+                        font-size: 0.8em;
+                    }
+
+                    li:first-child {
+                        min-width: 20%;
+                    }
                 }
             }
 
@@ -85,7 +129,6 @@
                 justify-content: center;
                 gap: 15px;
             }
-
 
             &__item {
                 li {
@@ -162,10 +205,6 @@
                     border-radius: 15px;
                 }
             }
-
-            .form-check {
-                margin: 15px;
-            }
         }
 
         &_radial-chart {
@@ -182,10 +221,6 @@
                 font-size: 1.5em;
                 margin-left: -200px;
             }
-        }
-
-        .form-check {
-            margin: 20px;
         }
 
         .btn-shadow.active {

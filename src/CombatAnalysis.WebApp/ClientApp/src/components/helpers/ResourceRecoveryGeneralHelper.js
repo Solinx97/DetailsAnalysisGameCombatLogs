@@ -1,9 +1,28 @@
 ﻿import { useTranslation } from 'react-i18next';
+import { faXmark } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import React, { useState } from 'react';
 
 const fixedNumberUntil = 2;
 
 const ResourceRecoveryGeneralHelper = ({ generalData }) => {
     const { t } = useTranslation("helpers/combatDetailsHelper");
+
+    const [hideColumns, setHideColumns] = useState([]);
+
+    const handleAddToHideColumns = (columnName) => {
+        const hiddenCollumns = hideColumns;
+        hiddenCollumns.push(columnName);
+
+        setHideColumns(Array.from(hiddenCollumns));
+    }
+
+    const handleRemoveFromHideColumns = (columnName) => {
+        const hiddenCollumns = hideColumns;
+        const newArray = hiddenCollumns.filter(item => item !== columnName);
+
+        setHideColumns(Array.from(newArray));
+    }
 
     const tableTitle = () => {
         return (
@@ -15,21 +34,78 @@ const ResourceRecoveryGeneralHelper = ({ generalData }) => {
                     <li>
                         {t("Total")}
                     </li>
+                    {!hideColumns.includes("Average") &&
+                        <li className="allow-hide-column">
+                            {t("Average")}
+                            <FontAwesomeIcon
+                                icon={faXmark}
+                                title={t("Hide")}
+                                onClick={() => handleAddToHideColumns("Average")}
+                            />
+                        </li>
+                    }
                     <li>
-                        {t("AverageValue")}
+                        {t("RRPS")}
                     </li>
-                    <li>
-                        {t("ResourcesRecoveryPerSec")}
-                    </li>
-                    <li>
-                        {t("CountOfSkills")}
-                    </li>
-                    <li>
-                        {t("MaxValue")}
-                    </li>
-                    <li>
-                        {t("MinValue")}
-                    </li>
+                    {!hideColumns.includes("Count") &&
+                        <li className="allow-hide-column">
+                            {t("Count")}
+                            <FontAwesomeIcon
+                                icon={faXmark}
+                                title={t("Hide")}
+                                onClick={() => handleAddToHideColumns("Count")}
+                            />
+                        </li>
+                    }
+                    {!hideColumns.includes("Max") &&
+                        <li className="allow-hide-column">
+                            {t("Max")}
+                            <FontAwesomeIcon
+                                icon={faXmark}
+                                title={t("Hide")}
+                                onClick={() => handleAddToHideColumns("Max")}
+                            />
+                        </li>
+                    }
+                    {!hideColumns.includes("Min") &&
+                        <li className="allow-hide-column">
+                            {t("Min")}
+                            <FontAwesomeIcon
+                                icon={faXmark}
+                                title={t("Hide")}
+                                onClick={() => handleAddToHideColumns("Min")}
+                            />
+                        </li>
+                    }
+                </ul>
+            </li>
+        );
+    }
+
+    const hiddenColumns = () => {
+        return (
+            <li className="hidden-columns" key="-1">
+                <ul>
+                    {hideColumns.includes("Average") &&
+                        <li className="allow-hide-column" onClick={() => handleRemoveFromHideColumns("Average")}>
+                            {t("Average")}
+                        </li>
+                    }
+                    {hideColumns.includes("Count") &&
+                        <li className="allow-hide-column" onClick={() => handleRemoveFromHideColumns("Count")}>
+                            {t("Count")}
+                        </li>
+                    }
+                    {hideColumns.includes("Max") &&
+                        <li className="allow-hide-column" onClick={() => handleRemoveFromHideColumns("Max")}>
+                            {t("Max")}
+                        </li>
+                    }
+                    {hideColumns.includes("Min") &&
+                        <li className="allow-hide-column" onClick={() => handleRemoveFromHideColumns("Min")}>
+                            {t("Min")}
+                        </li>
+                    }
                 </ul>
             </li>
         );
@@ -37,6 +113,11 @@ const ResourceRecoveryGeneralHelper = ({ generalData }) => {
 
     return (
         <>
+            {hideColumns.length > 0 &&
+                <li className="player-general-data-details__inherit">
+                    {hiddenColumns()}
+                </li>
+            }
             {tableTitle()}
             {generalData.map((item) => (
                 <li className="player-general-data-details__item" key={item.id}>
@@ -47,21 +128,29 @@ const ResourceRecoveryGeneralHelper = ({ generalData }) => {
                         <li>
                             {item.value}
                         </li>
-                        <li>
-                            {item.averageValue.toFixed(fixedNumberUntil)}
-                        </li>
+                        {!hideColumns.includes("Average") &&
+                            <li>
+                                {item.averageValue.toFixed(fixedNumberUntil)}
+                            </li>
+                        }
                         <li>
                             {item.resourcePerSecond.toFixed(fixedNumberUntil)}
                         </li>
-                        <li>
-                            {item.castNumber}
-                        </li>
-                        <li>
-                            {item.maxValue}
-                        </li>
-                        <li>
-                            {item.minValue}
-                        </li>
+                        {!hideColumns.includes("Count") &&
+                            <li>
+                                {item.castNumber}
+                            </li>
+                        }
+                        {!hideColumns.includes("Max") &&
+                            <li>
+                                {item.maxValue}
+                            </li>
+                        }
+                        {!hideColumns.includes("Min") &&
+                            <li>
+                                {item.minValue}
+                            </li>
+                        }
                     </ul>
                 </li>
             ))}

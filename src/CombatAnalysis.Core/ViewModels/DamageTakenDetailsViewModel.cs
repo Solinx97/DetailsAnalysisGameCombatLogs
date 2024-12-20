@@ -16,7 +16,6 @@ public class DamageTakenDetailsViewModel : DetailsGenericTemplate<DamageTakenMod
 {
     private readonly PowerUpInCombat<DamageTakenModel> _powerUpInCombat;
 
-    private ObservableCollection<DamageTakenModel> _damageTakenInformationsWithoutFilter;
     private ObservableCollection<DamageTakenModel> _damageTakenInformationsWithSkipDamage;
 
     private bool _isShowDodge = true;
@@ -186,53 +185,20 @@ public class DamageTakenDetailsViewModel : DetailsGenericTemplate<DamageTakenMod
 
     protected override void ChildPrepare(CombatPlayerModel parameter)
     {
-        var damageDoneCollection = _cacheService.GetDataFromCache<Dictionary<string, List<DamageTaken>>>($"{AppCacheKeys.CombatDetails_DamageTaken}_{SelectedCombat.LocallyNumber}");
-        var damageDoneCollectionMap = _mapper.Map<List<DamageTakenModel>>(damageDoneCollection[parameter.PlayerId]);
-        DetailsInformations = new ObservableCollection<DamageTakenModel>(damageDoneCollectionMap);
+        var damageTakenCollection = _cacheService.GetDataFromCache<Dictionary<string, List<DamageTaken>>>($"{AppCacheKeys.CombatDetails_DamageTaken}_{SelectedCombat.LocallyNumber}");
+        var damageTakenCollectionMap = _mapper.Map<List<DamageTakenModel>>(damageTakenCollection[parameter.PlayerId]);
+        DetailsInformations = new ObservableCollection<DamageTakenModel>(damageTakenCollectionMap);
+        _allDetailsInformations = new List<DamageTakenModel>(damageTakenCollectionMap);
 
-        var damageDoneGeneralCollection = _cacheService.GetDataFromCache<Dictionary<string, List<DamageTakenGeneral>>>($"{AppCacheKeys.CombatDetails_DamageTakenGeneral}_{SelectedCombat.LocallyNumber}");
-        var damageDoneGeneralCollectionMap = _mapper.Map<List<DamageTakenGeneralModel>>(damageDoneGeneralCollection[parameter.PlayerId]);
-        GeneralInformations = new ObservableCollection<DamageTakenGeneralModel>(damageDoneGeneralCollectionMap);
-    }
-
-    protected override void Filter()
-    {
-        DetailsInformations = _damageTakenInformationsWithoutFilter.Any(x => x.Spell == SelectedSource)
-            ? new ObservableCollection<DamageTakenModel>(_damageTakenInformationsWithoutFilter.Where(x => x.Spell == SelectedSource))
-            : _damageTakenInformationsWithoutFilter;
-    }
-
-    protected override async Task LoadCountAsync()
-    {
-        var count = await _combatParserAPIService.LoadCountAsync($"DamageTaken/count/{SelectedPlayerId}");
-        Count = count;
-
-        var pages = (double)count / (double)_pageSize;
-        var maxPages = (int)Math.Ceiling(pages);
-        MaxPages = maxPages;
-    }
-
-    protected override async Task LoadDetailsAsync(int page, int pageSize)
-    {
-        var details = await _combatParserAPIService.LoadCombatDetailsAsync<DamageTakenModel>($"DamageTaken/getByCombatPlayerId?combatPlayerId={SelectedPlayerId}&page={page}&pageSize={pageSize}");
-        DetailsInformations = new ObservableCollection<DamageTakenModel>(details.ToList());
-    }
-
-    protected override async Task LoadGenericDetailsAsync()
-    {
-        var generalDetails = await _combatParserAPIService.LoadCombatDetailsAsync<DamageTakenGeneralModel>($"DamageTakenGeneral/getByCombatPlayerId/{SelectedPlayerId}");
-        GeneralInformations = new ObservableCollection<DamageTakenGeneralModel>(generalDetails.ToList());
+        var damageTakenGeneralCollection = _cacheService.GetDataFromCache<Dictionary<string, List<DamageTakenGeneral>>>($"{AppCacheKeys.CombatDetails_DamageTakenGeneral}_{SelectedCombat.LocallyNumber}");
+        var damageTakenGeneralCollectionMap = _mapper.Map<List<DamageTakenGeneralModel>>(damageTakenGeneralCollection[parameter.PlayerId]);
+        GeneralInformations = new ObservableCollection<DamageTakenGeneralModel>(damageTakenGeneralCollectionMap);
+        _allGeneralInformations = new List<DamageTakenGeneralModel>(damageTakenGeneralCollectionMap);
     }
 
     protected override void SetUpFilteredCollection()
     {
         _damageTakenInformationsWithSkipDamage = new ObservableCollection<DamageTakenModel>(DetailsInformations);
-        _damageTakenInformationsWithoutFilter = new ObservableCollection<DamageTakenModel>(DetailsInformations);
-    }
-
-    protected override void SetTotalValue(CombatPlayerModel parameter)
-    {
-        TotalValue = parameter.DamageTaken;
     }
 
     protected override void TurnOnAllFilters()

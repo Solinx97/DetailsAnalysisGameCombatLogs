@@ -1,6 +1,8 @@
-﻿namespace CombatAnalysis.Core.Models;
+﻿using CombatAnalysis.Core.Interfaces.Entities;
 
-public class DamageTakenModel
+namespace CombatAnalysis.Core.Models;
+
+public class DamageTakenModel : IDetailsEntity
 {
     public string Spell { get; set; }
 

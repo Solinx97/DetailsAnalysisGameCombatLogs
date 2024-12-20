@@ -15,7 +15,6 @@ public class HealDoneDetailsViewModel : DetailsGenericTemplate<HealDoneModel, He
 {
     private readonly PowerUpInCombat<HealDoneModel> _powerUpInCombat;
 
-    private ObservableCollection<HealDoneModel> _healDoneInformationsWithoutFilter;
     private ObservableCollection<HealDoneModel> _healDoneInformationsWithOverheal;
 
     private bool _isShowOverheal = true;
@@ -69,50 +68,17 @@ public class HealDoneDetailsViewModel : DetailsGenericTemplate<HealDoneModel, He
         var healDoneCollection = _cacheService.GetDataFromCache<Dictionary<string, List<HealDone>>>($"{AppCacheKeys.CombatDetails_HealDone}_{SelectedCombat.LocallyNumber}");
         var healDoneCollectionMap = _mapper.Map<List<HealDoneModel>>(healDoneCollection[parameter.PlayerId]);
         DetailsInformations = new ObservableCollection<HealDoneModel>(healDoneCollectionMap);
+        _allDetailsInformations = new List<HealDoneModel>(healDoneCollectionMap);
 
         var healDoneGeneralCollection = _cacheService.GetDataFromCache<Dictionary<string, List<HealDoneGeneral>>>($"{AppCacheKeys.CombatDetails_HealDoneGeneral}_{SelectedCombat.LocallyNumber}");
         var healDoneGeneralCollectionMap = _mapper.Map<List<HealDoneGeneralModel>>(healDoneGeneralCollection[parameter.PlayerId]);
         GeneralInformations = new ObservableCollection<HealDoneGeneralModel>(healDoneGeneralCollectionMap);
-    }
-
-    protected override void Filter()
-    {
-        DetailsInformations = _healDoneInformationsWithoutFilter.Any(x => x.Spell == SelectedSource)
-            ? new ObservableCollection<HealDoneModel>(_healDoneInformationsWithoutFilter.Where(x => x.Spell == SelectedSource))
-            : _healDoneInformationsWithoutFilter;
-    }
-
-    protected override async Task LoadCountAsync()
-    {
-        var count = await _combatParserAPIService.LoadCountAsync($"HealDone/count/{SelectedPlayerId}");
-        Count = count;
-
-        var pages = (double)count / (double)_pageSize;
-        var maxPages = (int)Math.Ceiling(pages);
-        MaxPages = maxPages;
-    }
-
-    protected override async Task LoadDetailsAsync(int page, int pageSize)
-    {
-        var details = await _combatParserAPIService.LoadCombatDetailsAsync<HealDoneModel>($"HealDone/getByCombatPlayerId?combatPlayerId={SelectedPlayerId}&page={page}&pageSize={pageSize}");
-        DetailsInformations = new ObservableCollection<HealDoneModel>(details.ToList());
-    }
-
-    protected override async Task LoadGenericDetailsAsync()
-    {
-        var generalDetails = await _combatParserAPIService.LoadCombatDetailsAsync<HealDoneGeneralModel>($"HealDoneGeneral/getByCombatPlayerId/{SelectedPlayerId}");
-        GeneralInformations = new ObservableCollection<HealDoneGeneralModel>(generalDetails.ToList());
+        _allGeneralInformations = new List<HealDoneGeneralModel>(healDoneGeneralCollectionMap);
     }
 
     protected override void SetUpFilteredCollection()
     {
-        _healDoneInformationsWithoutFilter = new ObservableCollection<HealDoneModel>(DetailsInformations);
         _healDoneInformationsWithOverheal = new ObservableCollection<HealDoneModel>(DetailsInformations);
-    }
-
-    protected override void SetTotalValue(CombatPlayerModel parameter)
-    {
-        TotalValue = parameter.HealDone;
     }
 
     protected override void TurnOnAllFilters()

@@ -8,5 +8,5 @@ public interface ICombatDataHelper
 
     Task SaveCombatPlayerAsync(CombatModel combat);
 
-    Task DeleteCombatPlayerDataAsync(CombatPlayerDto combatPlayer);
+    //Task DeleteCombatPlayerDataAsync(CombatPlayerDto combatPlayer);
 }

@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using CombatAnalysis.Core.Interfaces;
+using CombatAnalysis.Core.Interfaces.Entities;
 using CombatAnalysis.Core.Models;
 using CombatAnalysis.Core.Services;
 using CombatAnalysis.Core.ViewModels.Base;
@@ -12,28 +13,33 @@ using System.Resources;
 
 namespace CombatAnalysis.Core.ViewModels.ViewModelTemplates;
 
-abstract public class DetailsGenericTemplate<T, T1> : ParentTemplate<CombatPlayerModel>
-    where T : class
-    where T1 : class
+abstract public class DetailsGenericTemplate<DetailsModel, GeneralDetailsModel> : ParentTemplate<CombatPlayerModel>
+    where DetailsModel : class, IDetailsEntity
+    where GeneralDetailsModel : class, IDetailsEntity
 {
     protected readonly ILogger _logger;
     protected readonly IMapper _mapper;
     protected readonly ICacheService _cacheService;
     protected readonly CombatParserAPIService _combatParserAPIService;
 
+    protected List<GeneralDetailsModel> _allGeneralInformations;
+    protected List<DetailsModel> _allDetailsInformations;
+
     protected readonly int _pageSize = 20;
 
     private int _page = 1;
     private int _count;
     private int _maxPages;
+    private string _apiName;
+    private string _generalApiName;
 
     private bool _isShowFilters;
     private string _selectedDamageDoneSource;
     private string _selectedPlayer;
     private int _selectedPlayerId;
     private long _totalValue;
-    private ObservableCollection<T> _detailsInformations;
-    private ObservableCollection<T1> _generalInformations;
+    private ObservableCollection<DetailsModel> _detailsInformations;
+    private ObservableCollection<GeneralDetailsModel> _generalInformations;
     private ObservableCollection<string> _sources;
     private int _detailsTypeSelectedIndex;
 
@@ -168,7 +174,7 @@ abstract public class DetailsGenericTemplate<T, T1> : ParentTemplate<CombatPlaye
         }
     }
 
-    public ObservableCollection<T> DetailsInformations
+    public ObservableCollection<DetailsModel> DetailsInformations
     {
         get { return _detailsInformations; }
         set
@@ -177,7 +183,7 @@ abstract public class DetailsGenericTemplate<T, T1> : ParentTemplate<CombatPlaye
         }
     }
 
-    public ObservableCollection<T1> GeneralInformations
+    public ObservableCollection<GeneralDetailsModel> GeneralInformations
     {
         get { return _generalInformations; }
         set
@@ -213,6 +219,9 @@ abstract public class DetailsGenericTemplate<T, T1> : ParentTemplate<CombatPlaye
         {
             Task.Run(async () =>
             {
+                GetAPINameFromDetailsModelName();
+                GetAPINameFromGeneralDetailsModelName();
+
                 await LoadCountAsync();
 
                 await LoadDetailsAsync(Page, _pageSize);
@@ -224,15 +233,20 @@ abstract public class DetailsGenericTemplate<T, T1> : ParentTemplate<CombatPlaye
         else
         {
             ChildPrepare(parameter);
+
             GetSources();
         }
     }
+
+    protected abstract void TurnOnAllFilters();
+
+    protected abstract void SetUpFilteredCollection();
 
     public void GetSources()
     {
         SetUpFilteredCollection();
 
-        var sources = DetailsInformations.Select(x => x.GetType().GetProperty("Spell").GetValue(x).ToString()).Distinct().ToList();
+        var sources = DetailsInformations.Select(x => x.Spell).Distinct().ToList();
         var resourceMangaer = new ResourceManager("CombatAnalysis.App.Localizations.Resources.DetailsGeneralTemplate.Resource", Assembly.Load("CombatAnalysis.App"));
         var allSourcesName = resourceMangaer.GetString("All");
         sources.Insert(0, allSourcesName);
@@ -270,17 +284,49 @@ abstract public class DetailsGenericTemplate<T, T1> : ParentTemplate<CombatPlaye
         await LoadDetailsAsync(Page, _pageSize);
     }
 
-    protected abstract void Filter();
+    private async Task LoadCountAsync()
+    {
+        var count = await _combatParserAPIService.LoadCountAsync($"{_apiName}/count/{SelectedPlayerId}");
+        Count = count;
 
-    protected abstract Task LoadCountAsync();
+        var pages = (double)count / (double)_pageSize;
+        var maxPages = (int)Math.Ceiling(pages);
+        MaxPages = maxPages;
+    }
 
-    protected abstract Task LoadDetailsAsync(int pgae, int pageSize);
+    private async Task LoadDetailsAsync(int page, int pageSize)
+    {
+        var details = await _combatParserAPIService.LoadCombatDetailsAsync<DetailsModel>($"{_apiName}/getByCombatPlayerId?combatPlayerId={SelectedPlayerId}&page={page}&pageSize={pageSize}");
+        _allDetailsInformations = new List<DetailsModel>(details.ToList());
+        DetailsInformations = new ObservableCollection<DetailsModel>(_allDetailsInformations);
+    }
 
-    protected abstract Task LoadGenericDetailsAsync();
+    private async Task LoadGenericDetailsAsync()
+    {
+        var generalDetails = await _combatParserAPIService.LoadCombatDetailsAsync<GeneralDetailsModel>($"{_generalApiName}/getByCombatPlayerId/{SelectedPlayerId}");
+        _allGeneralInformations = new List<GeneralDetailsModel>(generalDetails.ToList());
+        GeneralInformations = new ObservableCollection<GeneralDetailsModel>(_allGeneralInformations);
+    }
 
-    protected abstract void TurnOnAllFilters();
+    private void SetTotalValue(CombatPlayerModel parameter)
+    {
+        TotalValue = parameter.DamageDone;
+    }
 
-    protected abstract void SetUpFilteredCollection();
+    private void Filter()
+    {
+        DetailsInformations = _allDetailsInformations.Any(x => x.Spell == SelectedSource)
+            ? new ObservableCollection<DetailsModel>(_allDetailsInformations.Where(x => x.Spell == SelectedSource))
+            : new ObservableCollection<DetailsModel>(_allDetailsInformations);
+    }
 
-    protected abstract void SetTotalValue(CombatPlayerModel parameter);
+    private void GetAPINameFromDetailsModelName()
+    {
+        _apiName = typeof(DetailsModel).Name.Replace("Model", "");
+    }
+
+    private void GetAPINameFromGeneralDetailsModelName()
+    {
+        _generalApiName = typeof(GeneralDetailsModel).Name.Replace("Model", "");
+    }
 }

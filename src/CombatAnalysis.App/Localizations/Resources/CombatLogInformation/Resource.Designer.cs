@@ -70,6 +70,15 @@ namespace CombatAnalysis.App.Localizations.Resources.CombatLogInformation {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Anonymous.
+        /// </summary>
+        public static string Anonymous {
+            get {
+                return ResourceManager.GetString("Anonymous", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Cancel.
         /// </summary>
         public static string Cancel {
@@ -345,15 +354,6 @@ namespace CombatAnalysis.App.Localizations.Resources.CombatLogInformation {
         public static string UploadFile {
             get {
                 return ResourceManager.GetString("UploadFile", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Without user data.
-        /// </summary>
-        public static string WithoutUser {
-            get {
-                return ResourceManager.GetString("WithoutUser", resourceCulture);
             }
         }
     }

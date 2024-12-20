@@ -213,7 +213,7 @@
   <data name="UploadFile" xml:space="preserve">
     <value>Загрузить файл с данными о бое</value>
   </data>
-  <data name="WithoutUser" xml:space="preserve">
-    <value>Без привязки к игроку</value>
+  <data name="Anonymous" xml:space="preserve">
+    <value>Анонимно</value>
   </data>
 </root>

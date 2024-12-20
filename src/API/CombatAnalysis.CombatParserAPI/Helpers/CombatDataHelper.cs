@@ -63,20 +63,20 @@ public class CombatDataHelper : ICombatDataHelper
         await Task.WhenAll(uploadCombatAuraTasks);
     }
 
-    public async Task DeleteCombatPlayerDataAsync(CombatPlayerDto combatPlayer)
-    {
-        //await DeleteDataAsync(combatPlayer.Id, _damageDoneService);
-        //await DeleteDataAsync(combatPlayer.Id, _damageDoneGeneralService);
+    //public async Task DeleteCombatPlayerDataAsync(CombatPlayerDto combatPlayer)
+    //{
+    //    await DeleteDataAsync(combatPlayer.Id, _damageDoneService);
+    //    await DeleteDataAsync(combatPlayer.Id, _damageDoneGeneralService);
 
-        //await DeleteDataAsync(combatPlayer.Id, _healDoneService);
-        //await DeleteDataAsync(combatPlayer.Id, _healDoneGeneralService);
+    //    await DeleteDataAsync(combatPlayer.Id, _healDoneService);
+    //    await DeleteDataAsync(combatPlayer.Id, _healDoneGeneralService);
 
-        //await DeleteDataAsync(combatPlayer.Id, _damageTakenService);
-        //await DeleteDataAsync(combatPlayer.Id, _damageTakenGeneralService);
+    //    await DeleteDataAsync(combatPlayer.Id, _damageTakenService);
+    //    await DeleteDataAsync(combatPlayer.Id, _damageTakenGeneralService);
 
-        //await DeleteDataAsync(combatPlayer.Id, _resourceRecoveryService);
-        //await DeleteDataAsync(combatPlayer.Id, _resourceRecoveryGeneralService);
-    }
+    //    await DeleteDataAsync(combatPlayer.Id, _resourceRecoveryService);
+    //    await DeleteDataAsync(combatPlayer.Id, _resourceRecoveryGeneralService);
+    //}
 
     private async Task UploadAsync(Combat combat, CombatPlayerModel combatPlayer, CombatDetails combatDetails, int combatId)
     {

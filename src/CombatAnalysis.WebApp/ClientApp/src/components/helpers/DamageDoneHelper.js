@@ -119,7 +119,7 @@ const DamageDoneHelper = ({ combatPlayerId, pageSize, t }) => {
     }
 
     return (
-        <div>
+        <>
             <div className="player-filter-details">
                 <DetailsFilter
                     combatPlayerId={combatPlayerId}
@@ -164,7 +164,7 @@ const DamageDoneHelper = ({ combatPlayerId, pageSize, t }) => {
                 totalPages={totalPages}
                 t={t}
             />
-        </div>
+        </>
     );
 }
 

@@ -15,10 +15,7 @@ public class DamageDoneDetailsViewModel : DetailsGenericTemplate<DamageDoneModel
 {
     private readonly PowerUpInCombat<DamageDoneModel> _powerUpInCombat;
 
-    private ObservableCollection<DamageDoneModel> _damageDoneInformationsWithoutFilter;
     private ObservableCollection<DamageDoneModel> _damageDoneInformationsWithSkipDamage;
-    private List<DamageDoneGeneralModel> _allGeneralInformations;
-    private List<DamageDoneModel> _allDetailsInformations;
 
     private bool _isShowCrit = true;
     private bool _isShowDodge = true;
@@ -32,8 +29,6 @@ public class DamageDoneDetailsViewModel : DetailsGenericTemplate<DamageDoneModel
     public DamageDoneDetailsViewModel(IHttpClientHelper httpClient, ILogger logger, IMemoryCache memoryCache,
         IMapper mapper, ICacheService cacheService) : base(httpClient, logger, memoryCache, mapper, cacheService)
     {
-        _powerUpInCombat = new PowerUpInCombat<DamageDoneModel>(_damageDoneInformationsWithSkipDamage);
-
         BasicTemplate.Parent = this;
         BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, nameof(BasicTemplateViewModel.Step), 3);
     }
@@ -164,44 +159,9 @@ public class DamageDoneDetailsViewModel : DetailsGenericTemplate<DamageDoneModel
         _allGeneralInformations = new List<DamageDoneGeneralModel>(damageDoneGeneralCollectionMap);
     }
 
-    protected override void Filter()
-    {
-        DetailsInformations = _damageDoneInformationsWithoutFilter.Any(x => x.Spell == SelectedSource)
-            ? new ObservableCollection<DamageDoneModel>(_damageDoneInformationsWithoutFilter.Where(x => x.Spell == SelectedSource))
-            : _damageDoneInformationsWithoutFilter;
-    }
-
-    protected override async Task LoadCountAsync()
-    {
-        var count = await _combatParserAPIService.LoadCountAsync($"DamageDone/count/{SelectedPlayerId}");
-        Count = count;
-
-        var pages = (double)count / (double)_pageSize;
-        var maxPages = (int)Math.Ceiling(pages);
-        MaxPages = maxPages;
-    }
-
-    protected override async Task LoadDetailsAsync(int page, int pageSize)
-    {
-        var details = await _combatParserAPIService.LoadCombatDetailsAsync<DamageDoneModel>($"DamageDone/getByCombatPlayerId?combatPlayerId={SelectedPlayerId}&page={page}&pageSize={pageSize}");
-        DetailsInformations = new ObservableCollection<DamageDoneModel>(details.ToList());
-    }
-
-    protected override async Task LoadGenericDetailsAsync()
-    {
-        var generalDetails = await _combatParserAPIService.LoadCombatDetailsAsync<DamageDoneGeneralModel>($"DamageDoneGeneral/getByCombatPlayerId/{SelectedPlayerId}");
-        GeneralInformations = new ObservableCollection<DamageDoneGeneralModel>(generalDetails.ToList());
-    }
-
     protected override void SetUpFilteredCollection()
     {
-        _damageDoneInformationsWithoutFilter = new ObservableCollection<DamageDoneModel>(DetailsInformations);
         _damageDoneInformationsWithSkipDamage = new ObservableCollection<DamageDoneModel>(DetailsInformations);
-    }
-
-    protected override void SetTotalValue(CombatPlayerModel parameter)
-    {
-        TotalValue = parameter.DamageDone;
     }
 
     protected override void TurnOnAllFilters()

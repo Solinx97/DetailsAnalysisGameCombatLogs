@@ -54,7 +54,7 @@ const HealDoneHelper = ({ combatPlayerId, pageSize, getUserNameWithoutRealm, t }
     }
 
     return (
-        <div>
+        <>
             <div className="player-filter-details">
                 <DetailsFilter
                     combatPlayerId={combatPlayerId}
@@ -124,7 +124,7 @@ const HealDoneHelper = ({ combatPlayerId, pageSize, getUserNameWithoutRealm, t }
                 totalPages={totalPages}
                 t={t}
             />
-        </div>
+        </>
     );
 }
 

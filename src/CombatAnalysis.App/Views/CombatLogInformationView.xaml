@@ -82,7 +82,7 @@
             <StackPanel Grid.Row="1" IsEnabled="{Binding IsAuth, Converter={StaticResource BoolToXAMLBool}}" MaxWidth="575">
                 <TextBlock Text="{loc:Loc TypeOfLogs}" FontSize="16" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="White"/>
                 <StackPanel Orientation="Horizontal" Margin="20">
-                    <RadioButton Style="{DynamicResource RadioButtonStyle1}" Content="{loc:Loc WithoutUser}" Width="140" Margin="20" mvx:Bi.nd="Command GetLogTypeCommand, CommandParameter=0"
+                    <RadioButton Style="{DynamicResource RadioButtonStyle1}" Content="{loc:Loc Anonymous}" Width="140" Margin="20" mvx:Bi.nd="Command GetLogTypeCommand, CommandParameter=0"
                                  IsChecked="{Binding LogType, Converter={StaticResource IntToXAMLBool}, ConverterParameter=0}" />
                     <RadioButton Style="{DynamicResource RadioButtonStyle1}" Content="{loc:Loc Public}" Width="140" mvx:Bi.nd="Command GetLogTypeCommand, CommandParameter=1"
                                  IsChecked="{Binding LogType, Converter={StaticResource IntToXAMLBool}, ConverterParameter=1}" Margin="20" />

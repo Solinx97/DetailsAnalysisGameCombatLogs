@@ -52,7 +52,7 @@ const ResourceRecoveryHelper = ({ combatPlayerId, pageSize, getUserNameWithoutRe
     }
 
     return (
-        <div>
+        <>
             <div className="player-filter-details">
                 <DetailsFilter
                     combatPlayerId={combatPlayerId}
@@ -94,7 +94,7 @@ const ResourceRecoveryHelper = ({ combatPlayerId, pageSize, getUserNameWithoutRe
                 totalPages={totalPages}
                 t={t}
             />
-        </div>
+        </>
     );
 }
 

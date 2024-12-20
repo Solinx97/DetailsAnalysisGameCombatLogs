@@ -1,6 +1,8 @@
-﻿namespace CombatAnalysis.Core.Models;
+﻿using CombatAnalysis.Core.Interfaces.Entities;
 
-public class ResourceRecoveryModel
+namespace CombatAnalysis.Core.Models;
+
+public class ResourceRecoveryModel : IDetailsEntity
 {
     public int Id { get; set; }
 

@@ -1,6 +1,8 @@
-﻿namespace CombatAnalysis.Core.Models;
+﻿using CombatAnalysis.Core.Interfaces.Entities;
 
-public class HealDoneModel
+namespace CombatAnalysis.Core.Models;
+
+public class HealDoneModel : IDetailsEntity
 {
     public int Id { get; set; }
 

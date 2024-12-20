@@ -213,7 +213,7 @@
   <data name="UploadFile" xml:space="preserve">
     <value>Upload file with combat data</value>
   </data>
-  <data name="WithoutUser" xml:space="preserve">
-    <value>Without user data</value>
+  <data name="Anonymous" xml:space="preserve">
+    <value>Anonymous</value>
   </data>
 </root>

@@ -58,7 +58,7 @@ const CombatGeneralDetails = ({ combatPlayerId, detailsType }) => {
     return (
         <div className="details__container">
             {(spells.length > 0 && screenSize.width > maxWidth) &&
-                <div className="form-check form-switch">
+                <div className="form-switch">
                     <input className="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckChecked" onChange={() => setShowGeneralChart((item) => !item)} defaultChecked={showGeneralChart} />
                     <label className="form-check-label" htmlFor="flexSwitchCheckChecked">{t("ShowDiagram")}</label>
                 </div>
