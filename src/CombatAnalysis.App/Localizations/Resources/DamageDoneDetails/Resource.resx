@@ -117,23 +117,23 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="AverageValue" xml:space="preserve">
-    <value>Average value</value>
+  <data name="Average" xml:space="preserve">
+    <value>Average</value>
   </data>
   <data name="Common" xml:space="preserve">
     <value>Common</value>
   </data>
-  <data name="CountOfSkills" xml:space="preserve">
-    <value>Count of skills</value>
+  <data name="Count" xml:space="preserve">
+    <value>Count</value>
   </data>
-  <data name="CritDamage" xml:space="preserve">
-    <value>Crit damage</value>
+  <data name="Crit" xml:space="preserve">
+    <value>Crit</value>
   </data>
   <data name="Damage" xml:space="preserve">
     <value>Damage</value>
   </data>
-  <data name="DamagePerSec" xml:space="preserve">
-    <value>Damage per sec.</value>
+  <data name="DPS" xml:space="preserve">
+    <value>DPS</value>
   </data>
   <data name="Dodge" xml:space="preserve">
     <value>Dodge</value>
@@ -147,11 +147,11 @@
   <data name="Last" xml:space="preserve">
     <value>Last</value>
   </data>
-  <data name="MaxValue" xml:space="preserve">
-    <value>Max. value</value>
+  <data name="Max" xml:space="preserve">
+    <value>Max</value>
   </data>
-  <data name="MinValue" xml:space="preserve">
-    <value>Min. value</value>
+  <data name="Min" xml:space="preserve">
+    <value>Min</value>
   </data>
   <data name="Miss" xml:space="preserve">
     <value>Miss</value>
@@ -177,32 +177,11 @@
   <data name="Resist" xml:space="preserve">
     <value>Resist</value>
   </data>
-  <data name="ShowCritDamage" xml:space="preserve">
-    <value>Crit</value>
-  </data>
-  <data name="ShowDodge" xml:space="preserve">
-    <value>Dodge</value>
-  </data>
-  <data name="ShowFilters" xml:space="preserve">
-    <value>Filters</value>
-  </data>
-  <data name="ShowImmune" xml:space="preserve">
-    <value>Immune</value>
-  </data>
-  <data name="ShowMiss" xml:space="preserve">
-    <value>Miss</value>
-  </data>
-  <data name="ShowParry" xml:space="preserve">
-    <value>Parry</value>
-  </data>
   <data name="ShowPets" xml:space="preserve">
     <value>Pets and creatures</value>
   </data>
-  <data name="ShowResist" xml:space="preserve">
-    <value>Resist</value>
-  </data>
-  <data name="Source" xml:space="preserve">
-    <value>Source</value>
+  <data name="Spell" xml:space="preserve">
+    <value>Spell</value>
   </data>
   <data name="Status" xml:space="preserve">
     <value>Status</value>
@@ -217,9 +196,15 @@
     <value>Analyzing of damage done</value>
   </data>
   <data name="Total" xml:space="preserve">
-    <value>Total:</value>
+    <value>Total</value>
   </data>
   <data name="TypeOf" xml:space="preserve">
     <value>Type</value>
+  </data>
+  <data name="Filters" xml:space="preserve">
+    <value>Filters</value>
+  </data>
+  <data name="Value" xml:space="preserve">
+    <value>Value</value>
   </data>
 </root>

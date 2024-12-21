@@ -102,7 +102,7 @@ const DamageTakenHelper = ({ combatPlayerId, pageSize, t }) => {
                         {t("Value")}
                     </li>
                     <li>
-                        {t("Target")}
+                        {t("Creator")}
                     </li>
                 </ul>
             </li>

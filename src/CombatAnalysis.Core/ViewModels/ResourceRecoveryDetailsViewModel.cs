@@ -31,13 +31,4 @@ public class ResourceRecoveryDetailsViewModel : DetailsGenericTemplate<ResourceR
         GeneralInformations = new ObservableCollection<ResourceRecoveryGeneralModel>(resourcesRecoveryGeneralCollectionMap);
         _allGeneralInformations = new List<ResourceRecoveryGeneralModel>(resourcesRecoveryGeneralCollectionMap);
     }
-
-    protected override void SetUpFilteredCollection()
-    {
-    }
-
-    protected override void TurnOnAllFilters()
-    {
-        // write here your filters
-    }
 }

@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
 using CombatAnalysis.BL.DTO;
 using CombatAnalysis.BL.Interfaces.General;
-using CombatAnalysis.CombatParserAPI.Interfaces;
 using CombatAnalysis.CombatParserAPI.Models;
 using Microsoft.AspNetCore.Mvc;
 
@@ -15,17 +14,14 @@ public class CombatLogController : ControllerBase
     private readonly IMutationService<CombatLogDto> _mutationCombatLogService;
     private readonly IMapper _mapper;
     private readonly ILogger<CombatLogController> _logger;
-    private readonly ICombatDataHelper _saveCombatDataHelper;
 
     public CombatLogController(IQueryService<CombatLogDto> queryCombatLogService, IMutationService<CombatLogDto> mutationCombatLogService, 
-        IMapper mapper, ILogger<CombatLogController> logger, 
-        ICombatDataHelper saveCombatDataHelper)
+        IMapper mapper, ILogger<CombatLogController> logger)
     {
         _queryCombatLogService = queryCombatLogService;
         _mutationCombatLogService = mutationCombatLogService;
         _mapper = mapper;
         _logger = logger;
-        _saveCombatDataHelper = saveCombatDataHelper;
     }
 
     [HttpGet]
@@ -63,13 +59,11 @@ public class CombatLogController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<IActionResult> Create(List<string> dungeonNames)
+    public async Task<IActionResult> Create(CombatLogModel model)
     {
         try
         {
-            var combatLog = _saveCombatDataHelper.CreateCombatLog(dungeonNames);
-
-            var map = _mapper.Map<CombatLogDto>(combatLog);
+            var map = _mapper.Map<CombatLogDto>(model);
             var createdItem = await _mutationCombatLogService.CreateAsync(map);
 
             return Ok(createdItem);
@@ -104,6 +98,12 @@ public class CombatLogController : ControllerBase
 
             return BadRequest();
         }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, ex.Message);
+
+            return BadRequest();
+        }
     }
 
     [HttpDelete("{id:int:min(1)}")]
@@ -119,6 +119,12 @@ public class CombatLogController : ControllerBase
             return Ok(rowsAffected);
         }
         catch (ArgumentNullException ex)
+        {
+            _logger.LogError(ex, ex.Message);
+
+            return BadRequest();
+        }
+        catch (Exception ex)
         {
             _logger.LogError(ex, ex.Message);
 

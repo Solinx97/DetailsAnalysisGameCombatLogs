@@ -117,23 +117,23 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="AverageValue" xml:space="preserve">
-    <value>Ср. значение</value>
+  <data name="Average" xml:space="preserve">
+    <value>Среднее</value>
   </data>
   <data name="Common" xml:space="preserve">
     <value>Общий</value>
   </data>
-  <data name="CountOfSkills" xml:space="preserve">
-    <value>Примен. закл.</value>
+  <data name="Count" xml:space="preserve">
+    <value>Кол-во</value>
   </data>
-  <data name="CritDamage" xml:space="preserve">
-    <value>Крит. урон</value>
+  <data name="Crit" xml:space="preserve">
+    <value>Крит</value>
   </data>
   <data name="Damage" xml:space="preserve">
     <value>Урон</value>
   </data>
-  <data name="DamagePerSec" xml:space="preserve">
-    <value>Урон в сек.</value>
+  <data name="DPS" xml:space="preserve">
+    <value>УВС</value>
   </data>
   <data name="Dodge" xml:space="preserve">
     <value>Уклонение</value>
@@ -147,11 +147,11 @@
   <data name="Last" xml:space="preserve">
     <value>Последняя</value>
   </data>
-  <data name="MaxValue" xml:space="preserve">
-    <value>Макс. значение</value>
+  <data name="Max" xml:space="preserve">
+    <value>Макс</value>
   </data>
-  <data name="MinValue" xml:space="preserve">
-    <value>Мин. значение</value>
+  <data name="Min" xml:space="preserve">
+    <value>Мин</value>
   </data>
   <data name="Miss" xml:space="preserve">
     <value>Промах</value>
@@ -177,32 +177,11 @@
   <data name="Resist" xml:space="preserve">
     <value>Сопротивление</value>
   </data>
-  <data name="ShowCritDamage" xml:space="preserve">
-    <value>Крит</value>
-  </data>
-  <data name="ShowDodge" xml:space="preserve">
-    <value>Уклонение</value>
-  </data>
-  <data name="ShowFilters" xml:space="preserve">
-    <value>Фильтры</value>
-  </data>
-  <data name="ShowImmune" xml:space="preserve">
-    <value>Иммун</value>
-  </data>
-  <data name="ShowMiss" xml:space="preserve">
-    <value>Промах</value>
-  </data>
-  <data name="ShowParry" xml:space="preserve">
-    <value>Парирование</value>
-  </data>
   <data name="ShowPets" xml:space="preserve">
     <value>Питомцы и существа</value>
   </data>
-  <data name="ShowResist" xml:space="preserve">
-    <value>Сопротивление</value>
-  </data>
-  <data name="Source" xml:space="preserve">
-    <value>Источник</value>
+  <data name="Spell" xml:space="preserve">
+    <value>Заклинание</value>
   </data>
   <data name="Status" xml:space="preserve">
     <value>Статус</value>
@@ -217,9 +196,15 @@
     <value>Анализ нанесенного урона</value>
   </data>
   <data name="Total" xml:space="preserve">
-    <value>Всего:</value>
+    <value>Всего</value>
   </data>
   <data name="TypeOf" xml:space="preserve">
     <value>Тип</value>
+  </data>
+  <data name="Filters" xml:space="preserve">
+    <value>Фильтры</value>
+  </data>
+  <data name="Value" xml:space="preserve">
+    <value>Значение</value>
   </data>
 </root>

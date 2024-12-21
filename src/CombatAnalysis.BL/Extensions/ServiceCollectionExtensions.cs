@@ -51,7 +51,6 @@ public static class ServiceCollectionExtensions
     private static void SetMutationServices(IServiceCollection services)
     {
         services.AddScoped<IMutationService<CombatLogDto>, CombatLogService>();
-        services.AddScoped<IMutationService<CombatLogByUserDto>, CombatLogByUserService>();
         services.AddScoped<IMutationService<CombatDto>, CombatService>();
         services.AddScoped<IMutationService<CombatPlayerDto>, CombatPlayerService>();
         services.AddScoped<IMutationService<CombatPlayerPositionDto>, CombatPlayerPositionService>();
@@ -74,7 +73,6 @@ public static class ServiceCollectionExtensions
     private static void SetQueryServices(IServiceCollection services)
     {
         services.AddScoped<IQueryService<CombatLogDto>, CombatLogService>();
-        services.AddScoped<IQueryService<CombatLogByUserDto>, CombatLogByUserService>();
         services.AddScoped<IQueryService<CombatDto>, CombatService>();
         services.AddScoped<IQueryService<CombatPlayerDto>, CombatPlayerService>();
         services.AddScoped<IQueryService<CombatPlayerPositionDto>, CombatPlayerPositionService>();

@@ -1,13 +1,13 @@
 ﻿import React, { createContext, useContext, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
+import { useLazyAuthenticationAsyncQuery } from '../store/api/core/User.api';
 import { useLogoutAsyncMutation } from '../store/api/user/Account.api';
 import { useLazySearchByUserIdAsyncQuery } from '../store/api/user/Customer.api';
-import { useLazyAuthenticationAsyncQuery } from '../store/api/core/User.api';
 import { useLazyGetUserPrivacyQuery } from '../store/api/user/Identity.api';
 import { updateCustomer } from '../store/slicers/CustomerSlice';
-import { updateUser } from '../store/slicers/UserSlice';
 import { updateUserPrivacy } from '../store/slicers/UserPrivacySlice';
+import { updateUser } from '../store/slicers/UserSlice';
 
 const AuthContext = createContext();
 
@@ -26,7 +26,9 @@ export const AuthProvider = ({ children }) => {
     const checkAuthAsync = async () => {
         const response = await getAuthAsync();
         if (response.error !== undefined || !response.data) {
+            dispatch(updateUser(null));
             dispatch(updateCustomer(null));
+            dispatch(updateUserPrivacy(null));
 
             return;
         }
@@ -60,6 +62,8 @@ export const AuthProvider = ({ children }) => {
     const logoutAsync = async () => {
         setIsAuthenticated(false);
         dispatch(updateCustomer(null));
+        dispatch(updateUser(null));
+        dispatch(updateUserPrivacy(null));
 
         navigate("/");
 

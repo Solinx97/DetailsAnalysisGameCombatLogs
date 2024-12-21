@@ -7,7 +7,6 @@ using CombatAnalysis.CombatParser.Extensions;
 using CombatAnalysis.CombatParser.Interfaces.Entities;
 using CombatAnalysis.CombatParserAPI.Interfaces;
 using CombatAnalysis.CombatParserAPI.Models;
-using System.Text;
 
 namespace CombatAnalysis.CombatParserAPI.Helpers;
 
@@ -24,26 +23,6 @@ public class CombatDataHelper : ICombatDataHelper
         _logger = logger;
         _playerParseInfoHelper = playerParseInfoHelper;
         _serviceScopeFactory = serviceScopeFactory;
-    }
-
-    public CombatLogModel CreateCombatLog(List<string> dungeonNames)
-    {
-        var combatLogDungeonName = new StringBuilder();
-        foreach (var item in dungeonNames)
-        {
-            var dungeonName = item.Trim('"');
-            combatLogDungeonName.Append($"{dungeonName}/");
-        }
-
-        combatLogDungeonName.Remove(combatLogDungeonName.Length - 1, 1);
-
-        var combatLog = new CombatLogModel
-        {
-            Name = combatLogDungeonName.ToString(),
-            Date = DateTimeOffset.Now
-        };
-
-        return combatLog;
     }
 
     public async Task SaveCombatPlayerAsync(CombatModel combat)

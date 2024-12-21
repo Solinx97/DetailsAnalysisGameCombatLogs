@@ -41,7 +41,6 @@ public class CombatLogInformationViewModel : ParentTemplate, CombatParser.Interf
     private int _selectedCombatLogTypeTabItem;
     private ObservableCollection<CombatLogModel> _combatLogs = new ObservableCollection<CombatLogModel>();
     private ObservableCollection<CombatLogModel> _combatLogsForTargetUser = new ObservableCollection<CombatLogModel>();
-    private ObservableCollection<CombatLogByUserModel> _combatLogsByUser = new ObservableCollection<CombatLogByUserModel>();
     private double _screenWidth;
     private double _screenHeight;
     private bool _isAuth;
@@ -70,7 +69,6 @@ public class CombatLogInformationViewModel : ParentTemplate, CombatParser.Interf
         LoadCombatsCommand = new MvxAsyncCommand(() => LoadCombatsAsync(CombatLogs));
         LoadCombatsByUserCommand = new MvxAsyncCommand(() => LoadCombatsAsync(CombatLogsForTargetUser));
         ReloadCombatsCommand = new MvxAsyncCommand(LoadCombatLogsAsync);
-        ReloadCombatsByUserCommand = new MvxAsyncCommand(LoadCombatLogsByUserAsync);
         DeleteCombatCommand = new MvxAsyncCommand(DeleteAsync);
         CancelParsingCommand = new MvxCommand(CancelParsing);
 
@@ -92,15 +90,11 @@ public class CombatLogInformationViewModel : ParentTemplate, CombatParser.Interf
 
     public IMvxCommand OpenUploadLogsCommand { get; set; }
 
-    public IMvxCommand GetCombatLogCommand { get; set; }
-
     public IMvxAsyncCommand LoadCombatsCommand { get; set; }
 
     public IMvxAsyncCommand LoadCombatsByUserCommand { get; set; }
 
     public IMvxAsyncCommand ReloadCombatsCommand { get; set; }
-
-    public IMvxAsyncCommand ReloadCombatsByUserCommand { get; set; }
 
     public IMvxAsyncCommand DeleteCombatCommand { get; set; }
 
@@ -372,7 +366,6 @@ public class CombatLogInformationViewModel : ParentTemplate, CombatParser.Interf
         CheckAuth();
 
         Task.Run(LoadCombatLogsAsync);
-        Task.Run(LoadCombatLogsByUserAsync);
     }
 
     public override void ViewDestroy(bool viewFinishing = true)
@@ -385,7 +378,7 @@ public class CombatLogInformationViewModel : ParentTemplate, CombatParser.Interf
         IsAuth = isAuth;
         if (!isAuth)
         {
-            LogType = LogType.NotIncludePlayer;
+            LogType = LogType.Public;
             SelectedCombatLogTypeTabItem = 0;
         }
     }
@@ -432,9 +425,9 @@ public class CombatLogInformationViewModel : ParentTemplate, CombatParser.Interf
         CombatName = string.Empty;
         RemovingInProgress = true;
 
-        var selectedCombatLogByUser = _combatLogsByUser.FirstOrDefault(x => x.CombatLogId == CombatLogsForTargetUser[CombatListSelectedIndex].Id);
+        var selectedCombatLogByUser = _combatLogs.FirstOrDefault(x => x.Id == CombatLogsForTargetUser[CombatListSelectedIndex].Id);
         await _combatParserAPIService.DeleteCombatLogByUserAsync(selectedCombatLogByUser.Id);
-        await LoadCombatLogsByUserAsync();
+        await LoadCombatLogsAsync();
 
         RemovingInProgress = false;
     }
@@ -556,7 +549,7 @@ public class CombatLogInformationViewModel : ParentTemplate, CombatParser.Interf
         BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, nameof(BasicTemplateViewModel.ResponseStatus), LoadingStatus.Pending);
         BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, nameof(BasicTemplateViewModel.UploadedCombatsCount), 0);
 
-        var createdCombatLog = await _combatParserAPIService.SaveCombatLogAsync(combatList, CancellationToken.None);
+        var createdCombatLog = await _combatParserAPIService.SaveCombatLogAsync(combatList, LogType, CancellationToken.None);
         if (createdCombatLog == null)
         {
             BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, nameof(BasicTemplateViewModel.ResponseStatus), LoadingStatus.Failed);
@@ -614,47 +607,26 @@ public class CombatLogInformationViewModel : ParentTemplate, CombatParser.Interf
             }
         }
 
-        CombatLogs = new ObservableCollection<CombatLogModel>(readyCombatLogData);
+        var publicLogs = readyCombatLogData.Where(x => x.LogType == (int)LogType.Public).ToList();
+        CombatLogs = new ObservableCollection<CombatLogModel>(publicLogs);
 
         CombatLogLoadingStatus = LoadingStatus.Successful;
+
+        LoadCombatLogsForTargetUser(readyCombatLogData);
     }
 
-    private async Task LoadCombatLogsByUserAsync()
+    private void LoadCombatLogsForTargetUser(List<CombatLogModel> combatLogs)
     {
-        CombatLogByUserLoadingStatus = LoadingStatus.Pending;
-
-        _combatParserAPIService.SetUpPort();
-
-        var combatLogsByUser = await _combatParserAPIService.LoadCombatLogsByUserAsync();
-        if (combatLogsByUser == null)
+        var user = _memoryCache.Get<AppUserModel>(nameof(MemoryCacheValue.User));
+        if (user == null)
         {
-            CombatLogByUserLoadingStatus = LoadingStatus.Failed;
-            CombatLogs = new ObservableCollection<CombatLogModel>();
+            CombatLogsForTargetUser = new ObservableCollection<CombatLogModel>();
 
             return;
         }
 
-        var combatLogsIdByUser = combatLogsByUser.GroupBy(x => x.CombatLogId).Select(x => x.Key);
-        var combatLogs = await _combatParserAPIService.LoadCombatLogsAsync(combatLogsIdByUser.ToList());
-        if (combatLogs == null)
-        {
-            CombatLogLoadingStatus = LoadingStatus.Failed;
-            return;
-        }
-
-        var readyCombatLogData = new List<CombatLogModel>();
-        foreach (var item in combatLogs)
-        {
-            if (item.IsReady)
-            {
-                readyCombatLogData.Add(item);
-            }
-        }
-
-        CombatLogsForTargetUser = new ObservableCollection<CombatLogModel>(readyCombatLogData);
-        _combatLogsByUser = new ObservableCollection<CombatLogByUserModel>(combatLogsByUser);
-
-        CombatLogByUserLoadingStatus = LoadingStatus.Successful;
+        var combatLogsForTargetUser = combatLogs.Where(x => x.AppUserId == user.Id).ToList();
+        CombatLogsForTargetUser = new ObservableCollection<CombatLogModel>(combatLogsForTargetUser);
     }
 
     private void CombatUploaded(int number, string dungeonName, string name)

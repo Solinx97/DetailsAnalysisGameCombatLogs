@@ -152,11 +152,6 @@ abstract public class DetailsGenericTemplate<DetailsModel, GeneralDetailsModel> 
         set
         {
             SetProperty(ref _isShowFilters, value);
-
-            if (!value)
-            {
-                TurnOnAllFilters();
-            }
         }
     }
 
@@ -238,14 +233,8 @@ abstract public class DetailsGenericTemplate<DetailsModel, GeneralDetailsModel> 
         }
     }
 
-    protected abstract void TurnOnAllFilters();
-
-    protected abstract void SetUpFilteredCollection();
-
     public void GetSources()
     {
-        SetUpFilteredCollection();
-
         var sources = DetailsInformations.Select(x => x.Spell).Distinct().ToList();
         var resourceMangaer = new ResourceManager("CombatAnalysis.App.Localizations.Resources.DetailsGeneralTemplate.Resource", Assembly.Load("CombatAnalysis.App"));
         var allSourcesName = resourceMangaer.GetString("All");

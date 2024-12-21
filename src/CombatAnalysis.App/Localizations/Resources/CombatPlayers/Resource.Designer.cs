@@ -124,15 +124,6 @@ namespace CombatAnalysis.App.Localizations.Resources.CombatPlayers {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Buffs.
-        /// </summary>
-        public static string Buffs {
-            get {
-                return ResourceManager.GetString("Buffs", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Clear all filters.
         /// </summary>
         public static string ClearFilters {
@@ -183,6 +174,15 @@ namespace CombatAnalysis.App.Localizations.Resources.CombatPlayers {
         public static string EditValue {
             get {
                 return ResourceManager.GetString("EditValue", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Filters.
+        /// </summary>
+        public static string Filters {
+            get {
+                return ResourceManager.GetString("Filters", resourceCulture);
             }
         }
         

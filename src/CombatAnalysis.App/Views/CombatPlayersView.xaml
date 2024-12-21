@@ -97,7 +97,7 @@
         </StackPanel>
 
         <StackPanel Grid.Column="2" Grid.Row="1" HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="20 0">
-            <TextBlock Text="Filter" FontSize="16" Margin="0 5" Foreground="White" />
+            <TextBlock Text="{loc:Loc Filters}" FontSize="16" Margin="0 5" Foreground="White" />
             <StackPanel Orientation="Horizontal">
                 <ComboBox Style="{DynamicResource ComboBoxStyle1}" Width="175" ItemsSource="{Binding FilterList}" SelectedIndex="{Binding SeletedFilterIndex}" />
                 <Icon:PackIconMaterial Kind="TrashCan" Cursor="Hand" Foreground="Orange" Width="10" Margin="15 5" HorizontalAlignment="Center"

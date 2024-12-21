@@ -10,7 +10,6 @@ internal class CombatParserApiMapper : Profile
     public CombatParserApiMapper()
     {
         CreateMap<CombatLogDto, CombatLogModel>().ReverseMap();
-        CreateMap<CombatLogByUserDto, CombatLogByUserModel>().ReverseMap();
         CreateMap<CombatDto, CombatModel>().ReverseMap();
         CreateMap<CombatAuraDto, CombatAuraModel>().ReverseMap();
         CreateMap<CombatPlayerDto, CombatPlayerModel>().ReverseMap();

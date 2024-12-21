@@ -9,7 +9,6 @@ public class BLMapper : Profile
     public BLMapper()
     {
         CreateMap<CombatLogDto, CombatLog>().ReverseMap();
-        CreateMap<CombatLogByUserDto, CombatLogByUser>().ReverseMap();
         CreateMap<CombatDto, Combat>().ReverseMap();
         CreateMap<CombatPlayerDto, CombatPlayer>().ReverseMap();
         CreateMap<CombatAuraDto, CombatAura>().ReverseMap();

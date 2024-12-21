@@ -54,11 +54,6 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Resource.resx</DependentUpon>
     </Compile>
-    <Compile Update="Localizations\Resources\DamageDoneDetails\Resource - Copy.Designer.cs">
-      <DependentUpon>Resource - Copy.resx</DependentUpon>
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-    </Compile>
     <Compile Update="Localizations\Resources\DamageDoneDetails\Resource.Designer.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
@@ -148,10 +143,6 @@
       <LastGenOutput>Resource.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Update="Localizations\Resources\CreateGroupChat\Resource.ru.resx">
-      <Generator>PublicResXFileCodeGenerator</Generator>
-    </EmbeddedResource>
-    <EmbeddedResource Update="Localizations\Resources\DamageDoneDetails\Resource - Copy.resx">
-      <LastGenOutput>Resource - Copy.Designer.cs</LastGenOutput>
       <Generator>PublicResXFileCodeGenerator</Generator>
     </EmbeddedResource>
     <EmbeddedResource Update="Localizations\Resources\DamageDoneDetails\Resource.resx">

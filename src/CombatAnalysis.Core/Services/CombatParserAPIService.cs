@@ -6,6 +6,7 @@ using CombatAnalysis.Core.Models.User;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
 using System.Net.Http.Json;
+using System.Text;
 
 namespace CombatAnalysis.Core.Services;
 
@@ -33,10 +34,6 @@ public class CombatParserAPIService
         {
             var currentCombatNumber = 0;
             var combatsAreUploaded = false;
-            if (logType == LogType.Public || logType == LogType.Private)
-            {
-                await SaveCombatLogByUserAsync(combatLog.Id, logType, cancellationToken);
-            }
 
             await SetReadyForCombatLogAsync(combatLog, combats.Count, cancellationToken);
 
@@ -133,43 +130,6 @@ public class CombatParserAPIService
             }
 
             return combatLogs;
-        }
-        catch (HttpRequestException ex)
-        {
-            _logger.LogError(ex, "HTTP request error: {Message}", ex.Message);
-
-            return null;
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "An unexpected error occurred: {Message}", ex.Message);
-
-            return null;
-        }
-    }
-
-    public async Task<IEnumerable<CombatLogByUserModel>> LoadCombatLogsByUserAsync()
-    {
-        try
-        {
-            var user = _memoryCache.Get<AppUserModel>(nameof(MemoryCacheValue.User));
-            if (user == null)
-            {
-                throw new ArgumentNullException(nameof(user));
-            }
-
-            var response = await _httpClient.GetAsync($"CombatLogByUser/getByUserId/{user.Id}", CancellationToken.None);
-            response.EnsureSuccessStatusCode();
-
-            var combatLogsByUser = await response.Content.ReadFromJsonAsync<IEnumerable<CombatLogByUserModel>>();
-
-            return combatLogsByUser;
-        }
-        catch (ArgumentNullException ex)
-        {
-            _logger.LogError(ex, "User is not logged in: {Message}", ex.Message);
-
-            return null;
         }
         catch (HttpRequestException ex)
         {
@@ -291,38 +251,7 @@ public class CombatParserAPIService
         }
     }
 
-    public async Task<CombatLogModel> SaveCombatLogAsync(List<CombatModel> combats, CancellationToken cancellationToken)
-    {
-        try
-        {
-            var dungeonNames = combats
-                 .GroupBy(group => group.DungeonName)
-                 .Select(select => select.Key)
-                 .Where(name => !string.IsNullOrEmpty(name))
-                 .ToList();
-
-            var response = await _httpClient.PostAsync("CombatLog", JsonContent.Create(dungeonNames), cancellationToken);
-            response.EnsureSuccessStatusCode();
-
-            var createdCombatLog = await response.Content.ReadFromJsonAsync<CombatLogModel>();
-
-            return createdCombatLog;
-        }
-        catch (HttpRequestException ex)
-        {
-            _logger.LogError(ex, "HTTP request error: {Message}", ex.Message);
-
-            return null;
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "An unexpected error occurred: {Message}", ex.Message);
-
-            return null;
-        }
-    }
-
-    private async Task SaveCombatLogByUserAsync(int combatLogId, LogType logType, CancellationToken cancellationToken)
+    public async Task<CombatLogModel> SaveCombatLogAsync(List<CombatModel> combats, LogType logType, CancellationToken cancellationToken)
     {
         try
         {
@@ -332,31 +261,52 @@ public class CombatParserAPIService
                 throw new ArgumentNullException(nameof(user));
             }
 
-            var combatLogByUser = new CombatLogByUserModel
+            var dungeonNames = combats
+                 .GroupBy(group => group.DungeonName)
+                 .Select(select => select.Key)
+                 .Where(name => !string.IsNullOrEmpty(name))
+                 .ToList();
+
+            var name = CreateCombatLogName(dungeonNames);
+
+            var combatLog = new CombatLogModel
             {
+                Name = name,
+                Date = DateTimeOffset.UtcNow,
+                LogType = (int)logType,
                 AppUserId = user.Id,
-                CombatLogId = combatLogId,
-                PersonalLogType = (int)logType
             };
 
-            var response = await _httpClient.PostAsync("CombatLogByUser", JsonContent.Create(combatLogByUser), cancellationToken);
+            var response = await _httpClient.PostAsync("CombatLog", JsonContent.Create(combatLog), cancellationToken);
             response.EnsureSuccessStatusCode();
+
+            var createdCombatLog = await response.Content.ReadFromJsonAsync<CombatLogModel>(cancellationToken: cancellationToken);
+
+            return createdCombatLog;
         }
         catch (ArgumentNullException ex)
         {
             _logger.LogError(ex, "User is not logged in: {Message}", ex.Message);
+
+            return null;
         }
         catch (HttpRequestException ex)
         {
             _logger.LogError(ex, "HTTP request error: {Message}", ex.Message);
+
+            return null;
         }
         catch (TaskCanceledException ex)
         {
             _logger.LogWarning(ex, "Task was canceled: {Message}", ex.Message);
+
+            return null;
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "An unexpected error occurred: {Message}", ex.Message);
+
+            return null;
         }
     }
 
@@ -409,5 +359,19 @@ public class CombatParserAPIService
 
             return null;
         }
+    }
+
+    private static string CreateCombatLogName(List<string> dungeonNames)
+    {
+        var combatLogDungeonName = new StringBuilder();
+        foreach (var item in dungeonNames)
+        {
+            var dungeonName = item.Trim('"');
+            combatLogDungeonName.Append($"{dungeonName}/");
+        }
+
+        combatLogDungeonName.Remove(combatLogDungeonName.Length - 1, 1);
+
+        return combatLogDungeonName.ToString();
     }
 }

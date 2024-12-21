@@ -159,8 +159,8 @@
   <data name="Defeat" xml:space="preserve">
     <value>Defeat</value>
   </data>
-  <data name="Enemy" xml:space="preserve">
-    <value>Enemy</value>
+  <data name="Boss" xml:space="preserve">
+    <value>Boss</value>
   </data>
   <data name="Healing" xml:space="preserve">
     <value>Healing</value>

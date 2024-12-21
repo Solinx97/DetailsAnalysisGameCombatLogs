@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using CombatAnalysis.CombatParser.Entities;
-using CombatAnalysis.Core.Core;
 using CombatAnalysis.Core.Enums;
 using CombatAnalysis.Core.Interfaces;
 using CombatAnalysis.Core.Models;
@@ -13,17 +12,6 @@ namespace CombatAnalysis.Core.ViewModels;
 
 public class DamageDoneDetailsViewModel : DetailsGenericTemplate<DamageDoneModel, DamageDoneGeneralModel>
 {
-    private readonly PowerUpInCombat<DamageDoneModel> _powerUpInCombat;
-
-    private ObservableCollection<DamageDoneModel> _damageDoneInformationsWithSkipDamage;
-
-    private bool _isShowCrit = true;
-    private bool _isShowDodge = true;
-    private bool _isShowParry = true;
-    private bool _isShowMiss = true;
-    private bool _isShowResist = true;
-    private bool _isShowImmune = true;
-    private bool _isShowDirectDamage;
     private bool _isShowPets = true;
 
     public DamageDoneDetailsViewModel(IHttpClientHelper httpClient, ILogger logger, IMemoryCache memoryCache,
@@ -34,105 +22,6 @@ public class DamageDoneDetailsViewModel : DetailsGenericTemplate<DamageDoneModel
     }
 
     #region Properties
-
-    public bool IsShowCrit
-    {
-        get { return _isShowCrit; }
-        set
-        {
-            SetProperty(ref _isShowCrit, value);
-
-            _powerUpInCombat.UpdateProperty("IsCrit");
-            _powerUpInCombat.UpdateCollection(_damageDoneInformationsWithSkipDamage);
-            DetailsInformations = _powerUpInCombat.ShowSpecificalValue("Time", DetailsInformations, value);
-
-            RaisePropertyChanged(() => DetailsInformations);
-        }
-    }
-
-    public bool IsShowDodge
-    {
-        get { return _isShowDodge; }
-        set
-        {
-            SetProperty(ref _isShowDodge, value);
-
-            _powerUpInCombat.UpdateProperty("IsDodge");
-            _powerUpInCombat.UpdateCollection(_damageDoneInformationsWithSkipDamage);
-            DetailsInformations = _powerUpInCombat.ShowSpecificalValue("Time", DetailsInformations, value);
-
-            RaisePropertyChanged(() => DetailsInformations);
-        }
-    }
-
-    public bool IsShowParry
-    {
-        get { return _isShowParry; }
-        set
-        {
-            SetProperty(ref _isShowParry, value);
-
-            _powerUpInCombat.UpdateProperty("IsParry");
-            _powerUpInCombat.UpdateCollection(_damageDoneInformationsWithSkipDamage);
-            DetailsInformations = _powerUpInCombat.ShowSpecificalValue("Time", DetailsInformations, value);
-
-            RaisePropertyChanged(() => DetailsInformations);
-        }
-    }
-
-    public bool IsShowMiss
-    {
-        get { return _isShowMiss; }
-        set
-        {
-            SetProperty(ref _isShowMiss, value);
-
-            _powerUpInCombat.UpdateProperty("IsMiss");
-            _powerUpInCombat.UpdateCollection(_damageDoneInformationsWithSkipDamage);
-            DetailsInformations = _powerUpInCombat.ShowSpecificalValue("Time", DetailsInformations, value);
-
-            RaisePropertyChanged(() => DetailsInformations);
-        }
-    }
-
-    public bool IsShowResist
-    {
-        get { return _isShowResist; }
-        set
-        {
-            SetProperty(ref _isShowResist, value);
-
-            _powerUpInCombat.UpdateProperty("IsResist");
-            _powerUpInCombat.UpdateCollection(_damageDoneInformationsWithSkipDamage);
-            DetailsInformations = _powerUpInCombat.ShowSpecificalValue("Time", DetailsInformations, value);
-
-            RaisePropertyChanged(() => DetailsInformations);
-        }
-    }
-
-    public bool IsShowImmune
-    {
-        get { return _isShowImmune; }
-        set
-        {
-            SetProperty(ref _isShowImmune, value);
-
-            _powerUpInCombat.UpdateProperty("IsImmune");
-            _powerUpInCombat.UpdateCollection(_damageDoneInformationsWithSkipDamage);
-            DetailsInformations = _powerUpInCombat.ShowSpecificalValue("Time", DetailsInformations, value);
-
-            RaisePropertyChanged(() => DetailsInformations);
-        }
-    }
-
-    public bool IsShowDirectDamage
-    {
-        get { return _isShowDirectDamage; }
-        set
-        {
-            SetProperty(ref _isShowDirectDamage, value);
-        }
-    }
 
     public bool IsShowPets
     {
@@ -157,22 +46,6 @@ public class DamageDoneDetailsViewModel : DetailsGenericTemplate<DamageDoneModel
         var damageDoneGeneralCollectionMap = _mapper.Map<List<DamageDoneGeneralModel>>(damageDoneGeneralCollection[parameter.PlayerId]);
         GeneralInformations = new ObservableCollection<DamageDoneGeneralModel>(damageDoneGeneralCollectionMap);
         _allGeneralInformations = new List<DamageDoneGeneralModel>(damageDoneGeneralCollectionMap);
-    }
-
-    protected override void SetUpFilteredCollection()
-    {
-        _damageDoneInformationsWithSkipDamage = new ObservableCollection<DamageDoneModel>(DetailsInformations);
-    }
-
-    protected override void TurnOnAllFilters()
-    {
-        if (!IsShowDirectDamage) IsShowDirectDamage = true;
-        if (!IsShowImmune) IsShowImmune = true;
-        if (!IsShowResist) IsShowResist = true;
-        if (!IsShowMiss) IsShowMiss = true;
-        if (!IsShowParry) IsShowParry = true;
-        if (!IsShowDodge) IsShowDodge = true;
-        if (!IsShowCrit) IsShowCrit = true;
     }
 
     private void ShowPets(bool isShowPets)

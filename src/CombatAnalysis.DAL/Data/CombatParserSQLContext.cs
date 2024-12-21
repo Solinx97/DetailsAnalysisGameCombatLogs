@@ -22,8 +22,6 @@ public class CombatParserSQLContext : DbContext
 
     public DbSet<CombatLog>? CombatLog { get; }
 
-    public DbSet<CombatLogByUser>? CombatLogByUser { get; }
-
     public DbSet<Combat>? Combat { get; }
 
     public DbSet<CombatAura>? CombatAura { get; }

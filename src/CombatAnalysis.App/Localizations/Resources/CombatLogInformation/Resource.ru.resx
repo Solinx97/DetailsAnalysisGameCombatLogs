@@ -153,11 +153,11 @@
   <data name="Private" xml:space="preserve">
     <value>Приватные</value>
   </data>
-  <data name="PrivateLogs" xml:space="preserve">
+  <data name="PersonalLogs" xml:space="preserve">
     <value>Личные логи</value>
   </data>
-  <data name="PrivateLogsLoginRequired" xml:space="preserve">
-    <value>Для просмотра 'Личные логи' необходимо авторизоваться</value>
+  <data name="PersonalLogsLoginRequired" xml:space="preserve">
+    <value>Для просмотра 'Личные логи' вы должны быть авторизованым</value>
   </data>
   <data name="Processing" xml:space="preserve">
     <value>Работа с данными...</value>
@@ -204,8 +204,8 @@
   <data name="TypeOfLogs" xml:space="preserve">
     <value>Тип логов</value>
   </data>
-  <data name="TypeOfLogsLoginRequired" xml:space="preserve">
-    <value>Для выбора типа логов необходимо авторизоваться</value>
+  <data name="ToUploadShouldBeLogin" xml:space="preserve">
+    <value>Для Загрузки логов вы должны быть авторизованы</value>
   </data>
   <data name="Upload" xml:space="preserve">
     <value>Загрузить</value>

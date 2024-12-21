@@ -142,6 +142,15 @@ namespace CombatAnalysis.App.Localizations.Resources.Combats {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Boss.
+        /// </summary>
+        public static string Boss {
+            get {
+                return ResourceManager.GetString("Boss", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Cancel.
         /// </summary>
         public static string Cancel {
@@ -183,15 +192,6 @@ namespace CombatAnalysis.App.Localizations.Resources.Combats {
         public static string Defeat {
             get {
                 return ResourceManager.GetString("Defeat", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Enemy.
-        /// </summary>
-        public static string Enemy {
-            get {
-                return ResourceManager.GetString("Enemy", resourceCulture);
             }
         }
         

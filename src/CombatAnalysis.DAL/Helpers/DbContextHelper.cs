@@ -11,7 +11,6 @@ internal static class DbContextHelper
         var types = new Type[]
         {
             typeof(CombatLog),
-            typeof(CombatLogByUser),
             typeof(CombatPlayer),
             typeof(CombatAura),
             typeof(CombatPlayerPosition),

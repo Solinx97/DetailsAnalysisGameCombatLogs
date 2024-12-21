@@ -61,11 +61,11 @@ namespace CombatAnalysis.App.Localizations.Resources.ResourceRecoveryDetails {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Average value.
+        ///   Looks up a localized string similar to Average.
         /// </summary>
-        public static string AverageValue {
+        public static string Average {
             get {
-                return ResourceManager.GetString("AverageValue", resourceCulture);
+                return ResourceManager.GetString("Average", resourceCulture);
             }
         }
         
@@ -79,11 +79,29 @@ namespace CombatAnalysis.App.Localizations.Resources.ResourceRecoveryDetails {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Count of skills.
+        ///   Looks up a localized string similar to Count.
         /// </summary>
-        public static string CountOfSkills {
+        public static string Count {
             get {
-                return ResourceManager.GetString("CountOfSkills", resourceCulture);
+                return ResourceManager.GetString("Count", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Creator.
+        /// </summary>
+        public static string Creator {
+            get {
+                return ResourceManager.GetString("Creator", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Filters.
+        /// </summary>
+        public static string Filters {
+            get {
+                return ResourceManager.GetString("Filters", resourceCulture);
             }
         }
         
@@ -106,20 +124,20 @@ namespace CombatAnalysis.App.Localizations.Resources.ResourceRecoveryDetails {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Max. value.
+        ///   Looks up a localized string similar to Max.
         /// </summary>
-        public static string MaxValue {
+        public static string Max {
             get {
-                return ResourceManager.GetString("MaxValue", resourceCulture);
+                return ResourceManager.GetString("Max", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Min. value.
+        ///   Looks up a localized string similar to Min.
         /// </summary>
-        public static string MinValue {
+        public static string Min {
             get {
-                return ResourceManager.GetString("MinValue", resourceCulture);
+                return ResourceManager.GetString("Min", resourceCulture);
             }
         }
         
@@ -169,29 +187,20 @@ namespace CombatAnalysis.App.Localizations.Resources.ResourceRecoveryDetails {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Resources per sec..
+        ///   Looks up a localized string similar to RPS.
         /// </summary>
-        public static string ResourcesPerSec {
+        public static string RPS {
             get {
-                return ResourceManager.GetString("ResourcesPerSec", resourceCulture);
+                return ResourceManager.GetString("RPS", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Show filters.
+        ///   Looks up a localized string similar to Spell.
         /// </summary>
-        public static string ShowFilters {
+        public static string Spell {
             get {
-                return ResourceManager.GetString("ShowFilters", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Source.
-        /// </summary>
-        public static string Source {
-            get {
-                return ResourceManager.GetString("Source", resourceCulture);
+                return ResourceManager.GetString("Spell", resourceCulture);
             }
         }
         
@@ -214,7 +223,7 @@ namespace CombatAnalysis.App.Localizations.Resources.ResourceRecoveryDetails {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Total:.
+        ///   Looks up a localized string similar to Total.
         /// </summary>
         public static string Total {
             get {
@@ -228,6 +237,15 @@ namespace CombatAnalysis.App.Localizations.Resources.ResourceRecoveryDetails {
         public static string TypeOf {
             get {
                 return ResourceManager.GetString("TypeOf", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Value.
+        /// </summary>
+        public static string Value {
+            get {
+                return ResourceManager.GetString("Value", resourceCulture);
             }
         }
     }

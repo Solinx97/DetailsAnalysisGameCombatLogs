@@ -138,9 +138,6 @@
   <data name="AverageResourcesPerSecond" xml:space="preserve">
     <value>Средне ресурсов в сек.</value>
   </data>
-  <data name="Buffs" xml:space="preserve">
-    <value>Усиления</value>
-  </data>
   <data name="ClearFilters" xml:space="preserve">
     <value>Очистить все фильтры</value>
   </data>
@@ -158,6 +155,9 @@
   </data>
   <data name="EditValue" xml:space="preserve">
     <value>Редактировать значение</value>
+  </data>
+  <data name="Filters" xml:space="preserve">
+    <value>Фильтры</value>
   </data>
   <data name="Healing" xml:space="preserve">
     <value>Исцеление</value>

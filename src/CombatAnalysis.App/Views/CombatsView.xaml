@@ -132,7 +132,7 @@
                                         Visibility="{Binding DataContext.SortedByName, RelativeSource={RelativeSource AncestorType=DataGrid}, Converter={StaticResource IntToVisibility}, ConverterParameter=true:0}"/>
                                 <Icon:PackIconMaterial Kind="ArrowUp" Style="{StaticResource menuButtonIcon}" Width="10" Margin="5 0"
                                         Visibility="{Binding DataContext.SortedByName, RelativeSource={RelativeSource AncestorType=DataGrid}, Converter={StaticResource IntToVisibility}, ConverterParameter=true:1}"/>
-                                <TextBlock Text="{loc:Loc Enemy}" Margin="5" TextAlignment="Center" FontSize="14" Foreground="White" />
+                                <TextBlock Text="{loc:Loc Boss}" Margin="5" TextAlignment="Center" FontSize="14" Foreground="White" />
                             </StackPanel>
                         </DataTemplate>
                     </DataGridTemplateColumn.HeaderTemplate>

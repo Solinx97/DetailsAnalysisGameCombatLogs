@@ -138,9 +138,6 @@
   <data name="AverageResourcesPerSecond" xml:space="preserve">
     <value>Average resources per sec.</value>
   </data>
-  <data name="Buffs" xml:space="preserve">
-    <value>Buffs</value>
-  </data>
   <data name="ClearFilters" xml:space="preserve">
     <value>Clear all filters</value>
   </data>
@@ -158,6 +155,9 @@
   </data>
   <data name="EditValue" xml:space="preserve">
     <value>Edit value</value>
+  </data>
+  <data name="Filters" xml:space="preserve">
+    <value>Filters</value>
   </data>
   <data name="Healing" xml:space="preserve">
     <value>Healing</value>

@@ -159,8 +159,8 @@
   <data name="Defeat" xml:space="preserve">
     <value>Поражение</value>
   </data>
-  <data name="Enemy" xml:space="preserve">
-    <value>Противник</value>
+  <data name="Boss" xml:space="preserve">
+    <value>Босс</value>
   </data>
   <data name="Healing" xml:space="preserve">
     <value>Исцеление</value>
