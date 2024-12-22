@@ -4,6 +4,7 @@ using CombatAnalysis.Core.Interfaces.Observers;
 using CombatAnalysis.Core.Models;
 using CombatAnalysis.Core.Services;
 using CombatAnalysis.Core.ViewModels.Base;
+using CombatAnalysis.Core.ViewModels.ViewModelTemplates;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
 using MvvmCross.Commands;
@@ -16,14 +17,15 @@ public class CombatsViewModel : ParentTemplate<Tuple<List<CombatModel>, LogType>
 {
     private readonly IMvxNavigationService _mvvmNavigation;
     private readonly CombatParserAPIService _combatParserAPIService;
+    private readonly int _maxCombatInformationStepIndex = 4;
 
-    private ObservableCollection<CombatModel> _combats;
-    private CombatModel _selectedCombat;
+    private ObservableCollection<CombatModel>? _combats;
+    private CombatModel? _selectedCombat;
     private int _selectedCombatIndex = -1;
+    private string? _dungeonName;
+    private string? _dungeonNames;
+    private string? _name;
     private LoadingStatus _status;
-    private LogType _logType;
-    private string _dungeonName;
-    private string _name;
     private int _maxCombats;
     private int _currentCombatNumber;
     private double _averageDamagePerSecond;
@@ -44,9 +46,7 @@ public class CombatsViewModel : ParentTemplate<Tuple<List<CombatModel>, LogType>
     private double _maxDamageTaken;
     private double _indexOfDeath;
     private int _combatInformationStep;
-    private int _maxCombatInformationStepIndex = 4;
     private bool _showAverageInformation;
-    private string _dungeonNames;
 
     private int _sortedByName = -1;
     private int _sortedByDamageDone = -1;
@@ -70,18 +70,16 @@ public class CombatsViewModel : ParentTemplate<Tuple<List<CombatModel>, LogType>
         LastCombatInfromationStep = new MvxCommand(LastStep);
         NextCombatInfromationStep = new MvxCommand(NextStep);
 
-        BasicTemplate.Parent = this;
-        BasicTemplate.SavedViewModel = this;
-        BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, nameof(BasicTemplateViewModel.Step), 1);
+        Basic.Parent = this;
+        Basic.SavedViewModel = this;
+        Basic.Handler.BasicPropertyUpdate(nameof(BasicTemplateViewModel.Step), 1);
 
-        var responseStatusObservable = (IResponseStatusObservable)BasicTemplate;
-        responseStatusObservable.AddObserver(this);
+        var responseStatusObservable = Basic as IResponseStatusObservable;
+        responseStatusObservable?.AddObserver(this);
 
-        ResponseStatus = ((BasicTemplateViewModel)BasicTemplate).ResponseStatus;
-        CurrentCombatNumber = ((BasicTemplateViewModel)BasicTemplate).UploadedCombatsCount;
+        ResponseStatus = ((BasicTemplateViewModel)Basic).ResponseStatus;
+        CurrentCombatNumber = ((BasicTemplateViewModel)Basic).UploadedCombatsCount;
     }
-
-    public Dictionary<string, List<string>> PetsId { get; set; }
 
     #region Commands
 
@@ -101,9 +99,9 @@ public class CombatsViewModel : ParentTemplate<Tuple<List<CombatModel>, LogType>
 
     #endregion
 
-    #region Properties
+    #region View model properties
 
-    public ObservableCollection<CombatModel> Combats
+    public ObservableCollection<CombatModel>? Combats
     {
         get { return _combats; }
         set
@@ -112,7 +110,7 @@ public class CombatsViewModel : ParentTemplate<Tuple<List<CombatModel>, LogType>
         }
     }
 
-    public CombatModel SelectedCombat
+    public CombatModel? SelectedCombat
     {
         get { return _selectedCombat; }
         set
@@ -139,7 +137,7 @@ public class CombatsViewModel : ParentTemplate<Tuple<List<CombatModel>, LogType>
         }
     }
 
-    public string DungeonName
+    public string? DungeonName
     {
         get { return _dungeonName; }
         set
@@ -148,7 +146,16 @@ public class CombatsViewModel : ParentTemplate<Tuple<List<CombatModel>, LogType>
         }
     }
 
-    public string Name
+    public string? DungeonNames
+    {
+        get { return _dungeonNames; }
+        set
+        {
+            SetProperty(ref _dungeonNames, value);
+        }
+    }
+
+    public string? Name
     {
         get { return _name; }
         set
@@ -346,15 +353,6 @@ public class CombatsViewModel : ParentTemplate<Tuple<List<CombatModel>, LogType>
         }
     }
 
-    public string DungeonNames
-    {
-        get { return _dungeonNames; }
-        set
-        {
-            SetProperty(ref _dungeonNames, value);
-        }
-    }
-
     #endregion
 
     #region Sort properties
@@ -415,7 +413,7 @@ public class CombatsViewModel : ParentTemplate<Tuple<List<CombatModel>, LogType>
 
     #endregion
 
-    protected override void ChildPrepare(Tuple<List<CombatModel>, LogType> parameter)
+    public override void Prepare(Tuple<List<CombatModel>, LogType> parameter)
     {
         if (parameter == null)
         {
@@ -424,8 +422,6 @@ public class CombatsViewModel : ParentTemplate<Tuple<List<CombatModel>, LogType>
 
         Combats = new ObservableCollection<CombatModel>(parameter.Item1);
         MaxCombats = Combats.Count;
-
-        _logType = parameter.Item2;
 
         GetUniqueDungeonNames(parameter.Item1);
 
@@ -461,10 +457,10 @@ public class CombatsViewModel : ParentTemplate<Tuple<List<CombatModel>, LogType>
 
     public override void ViewDestroy(bool viewFinishing = true)
     {
-        var responseStatusObservable = (IResponseStatusObservable)BasicTemplate;
-        responseStatusObservable.RemoveObserver(this);
+        var responseStatusObservable = Basic as IResponseStatusObservable;
+        responseStatusObservable?.RemoveObserver(this);
 
-        Combats.Clear();
+        Combats?.Clear();
         MaxCombats = 0;
 
         base.ViewDestroy(viewFinishing);
@@ -477,33 +473,37 @@ public class CombatsViewModel : ParentTemplate<Tuple<List<CombatModel>, LogType>
             return;
         }
 
-        BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, nameof(BasicTemplateViewModel.SelectedCombat), SelectedCombat);
+        Basic.Handler.BasicPropertyUpdate(nameof(BasicTemplateViewModel.SelectedCombat), SelectedCombat);
 
         await _mvvmNavigation.Navigate<CombatPlayersViewModel, CombatModel>(SelectedCombat);
     }
 
     public async Task RepeatSaveCombatDataDetailsAsync()
     {
-        var token = ((BasicTemplateViewModel)BasicTemplate).RequestCancelationToken();
+        var token = ((BasicTemplateViewModel)Basic).RequestCancelationToken();
 
         CurrentCombatNumber = 0;
 
-        BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, nameof(BasicTemplateViewModel.ResponseStatus), LoadingStatus.Pending);
-        BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, nameof(BasicTemplateViewModel.UploadedCombatsCount), 0);
+        Basic.Handler.BasicPropertyUpdate(nameof(BasicTemplateViewModel.ResponseStatus), LoadingStatus.Pending);
+        Basic.Handler.BasicPropertyUpdate(nameof(BasicTemplateViewModel.UploadedCombatsCount), 0);
 
-        var combatsForUploadAgain = Combats.Where(combat => !combat.IsReady).ToList();
+        var combatsForUploadAgain = Combats?.Where(combat => !combat.IsReady).ToList();
+        var combotLogToRepeat = ((BasicTemplateViewModel)Basic).CombatLog;
+        if (combatsForUploadAgain == null || combotLogToRepeat == null || combotLogToRepeat.Id == 0)
+        {
+            Basic.Handler.BasicPropertyUpdate(nameof(BasicTemplateViewModel.ResponseStatus), LoadingStatus.Failed);
+            return;
+        }
 
-        var combotLogToRepeat = ((BasicTemplateViewModel)BasicTemplate).CombatLog;
-        var combatsAreUploaded = await _combatParserAPIService.SaveAsync(combatsForUploadAgain, combotLogToRepeat, _logType, CombatUploaded, token);
+        var combatsAreUploaded = await _combatParserAPIService.SaveAsync(combatsForUploadAgain, combotLogToRepeat, CombatUploaded, token);
         if (!combatsAreUploaded)
         {
-            BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, nameof(BasicTemplateViewModel.ResponseStatus), LoadingStatus.Failed);
+            Basic.Handler.BasicPropertyUpdate(nameof(BasicTemplateViewModel.ResponseStatus), LoadingStatus.Failed);
 
             return;
         }
 
-        var responseStatus = LoadingStatus.Successful;
-        BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, nameof(BasicTemplateViewModel.ResponseStatus), responseStatus);
+        Basic.Handler.BasicPropertyUpdate(nameof(BasicTemplateViewModel.ResponseStatus), LoadingStatus.Successful);
     }
 
     public void Update(LoadingStatus status)
@@ -513,7 +513,7 @@ public class CombatsViewModel : ParentTemplate<Tuple<List<CombatModel>, LogType>
 
     public async Task RefreshAsync()
     {
-        var combatLog = ((BasicTemplateViewModel)BasicTemplate).CombatLog;
+        var combatLog = ((BasicTemplateViewModel)Basic).CombatLog;
         if (combatLog == null || combatLog.Id == 0)
         {
             return;
@@ -537,6 +537,11 @@ public class CombatsViewModel : ParentTemplate<Tuple<List<CombatModel>, LogType>
 
     public void CombatsSort(int sortNumber)
     {
+        if (Combats == null)
+        {
+            return;
+        }
+
         var sortedCollection = Combats.ToList();
         switch (sortNumber)
         {
@@ -607,7 +612,7 @@ public class CombatsViewModel : ParentTemplate<Tuple<List<CombatModel>, LogType>
 
     public void UploadingCancel()
     {
-        ((BasicTemplateViewModel)BasicTemplate).RequestCancel();
+        ((BasicTemplateViewModel)Basic).RequestCancel();
     }
 
     private void GetUniqueDungeonNames(List<CombatModel> combats)

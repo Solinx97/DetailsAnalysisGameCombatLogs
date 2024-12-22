@@ -7,7 +7,7 @@ namespace CombatAnalysis.DAL.Services;
 internal class ContextService : IContextService
 {
     private readonly CombatParserSQLContext _context;
-    private IDbContextTransaction _transaction;
+    private IDbContextTransaction? _transaction;
 
     public ContextService(CombatParserSQLContext context)
     {

@@ -1,20 +1,20 @@
-﻿using CombatAnalysis.Core.Interfaces;
+﻿using CombatAnalysis.Core.Consts;
+using CombatAnalysis.Core.Interfaces;
+using MvvmCross.ViewModels;
 
 namespace CombatAnalysis.Core.Helpers;
 
-internal class VMHandler : IVMHandler
+internal class VMHandler<TBasicModel> : IVMHandler
+    where TBasicModel : MvxViewModel
 {
-    public void PropertyUpdate<T1>(object context, string propertyName, object value)
-        where T1 : class
+    public void PropertyUpdate<TViewModel>(IMvxViewModel context, string propertyName, object value)
+        where TViewModel : MvxViewModel
     {
-        var targetType = typeof(T1);
-        foreach (var item in targetType.GetProperties())
-        {
-            if (string.Equals(item.Name, propertyName, StringComparison.OrdinalIgnoreCase))
-            {
-                item.SetValue(context, value);
-                break;
-            }
-        }
+        typeof(TViewModel).GetProperty(propertyName)?.SetValue(context, value);
+    }
+
+    public void BasicPropertyUpdate(string propertyName, object value)
+    {
+        typeof(TBasicModel)?.GetProperty(propertyName)?.SetValue(BasicViewModel.Template, value);
     }
 }

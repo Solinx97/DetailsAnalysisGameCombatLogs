@@ -1,5 +1,6 @@
 ﻿using CombatAnalysis.Core.Interfaces;
 using Microsoft.Extensions.Caching.Memory;
+using MvvmCross.IoC;
 
 namespace CombatAnalysis.Core.Services;
 
@@ -24,9 +25,12 @@ internal class CacheService : ICacheService
     public TModel GetDataFromCache<TModel>(string key)
         where TModel : class
     {
-        _cache.TryGetValue(key, out TModel data);
+        if (_cache.TryGetValue(key, out TModel? data))
+        {
+            return data ?? (TModel)typeof(TModel).CreateDefault();
+        }
 
-        return data;
+        return (TModel)typeof(TModel).CreateDefault();
     }
 
     public void RemoveDataFromCache(string key)

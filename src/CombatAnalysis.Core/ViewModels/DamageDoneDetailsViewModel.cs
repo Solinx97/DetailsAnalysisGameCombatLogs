@@ -17,8 +17,8 @@ public class DamageDoneDetailsViewModel : DetailsGenericTemplate<DamageDoneModel
     public DamageDoneDetailsViewModel(IHttpClientHelper httpClient, ILogger logger, IMemoryCache memoryCache,
         IMapper mapper, ICacheService cacheService) : base(httpClient, logger, memoryCache, mapper, cacheService)
     {
-        BasicTemplate.Parent = this;
-        BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, nameof(BasicTemplateViewModel.Step), 3);
+        Basic.Parent = this;
+        Basic.Handler.BasicPropertyUpdate(nameof(BasicTemplateViewModel.Step), 3);
     }
 
     #region Properties
@@ -35,21 +35,26 @@ public class DamageDoneDetailsViewModel : DetailsGenericTemplate<DamageDoneModel
 
     #endregion
 
-    protected override void ChildPrepare(CombatPlayerModel parameter)
+    protected override void ExtendedPrepare(CombatPlayerModel parameter)
     {
-        var damageDoneCollection = _cacheService.GetDataFromCache<Dictionary<string, List<DamageDone>>>($"{AppCacheKeys.CombatDetails_DamageDone}_{SelectedCombat.LocallyNumber}");
-        var damageDoneCollectionMap = _mapper.Map<List<DamageDoneModel>>(damageDoneCollection[parameter.PlayerId]);
+        var damageDoneCollection = _cacheService?.GetDataFromCache<Dictionary<string, List<DamageDone>>>($"{AppCacheKeys.CombatDetails_DamageDone}_{SelectedCombat?.LocallyNumber}");
+        var damageDoneCollectionMap = _mapper.Map<List<DamageDoneModel>>(damageDoneCollection?[parameter.PlayerId]);
         DetailsInformations = new ObservableCollection<DamageDoneModel>(damageDoneCollectionMap);
         _allDetailsInformations = new List<DamageDoneModel>(damageDoneCollectionMap);
 
-        var damageDoneGeneralCollection = _cacheService.GetDataFromCache<Dictionary<string, List<DamageDoneGeneral>>>($"{AppCacheKeys.CombatDetails_DamageDoneGeneral}_{SelectedCombat.LocallyNumber}");
-        var damageDoneGeneralCollectionMap = _mapper.Map<List<DamageDoneGeneralModel>>(damageDoneGeneralCollection[parameter.PlayerId]);
+        var damageDoneGeneralCollection = _cacheService?.GetDataFromCache<Dictionary<string, List<DamageDoneGeneral>>>($"{AppCacheKeys.CombatDetails_DamageDoneGeneral}_{SelectedCombat?.LocallyNumber}");
+        var damageDoneGeneralCollectionMap = _mapper.Map<List<DamageDoneGeneralModel>>(damageDoneGeneralCollection?[parameter.PlayerId]);
         GeneralInformations = new ObservableCollection<DamageDoneGeneralModel>(damageDoneGeneralCollectionMap);
         _allGeneralInformations = new List<DamageDoneGeneralModel>(damageDoneGeneralCollectionMap);
     }
 
     private void ShowPets(bool isShowPets)
     {
+        if (_allGeneralInformations == null || _allDetailsInformations == null)
+        {
+            return;
+        }
+
         if (!isShowPets)
         {
             var generalWithoutPets = _allGeneralInformations.Where(x => !x.IsPet);

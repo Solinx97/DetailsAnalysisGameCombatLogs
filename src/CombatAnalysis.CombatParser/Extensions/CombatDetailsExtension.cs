@@ -46,7 +46,7 @@ public static class CombatDetailsExtension
 
         if (!TimeSpan.TryParse(duration, out var durationTime))
         {
-            return null;
+            return new List<DamageDoneGeneral>();
         }
 
         var lessDetails = new List<DamageDoneGeneral>();
@@ -57,6 +57,7 @@ public static class CombatDetailsExtension
             var damagePerSecondRound = double.Round(damagePerSecond, 2);
             var critNumber = item.Where(x => x.DamageType == (int)DamageType.Crit).Count();
             var missNumber = item.Where(x => x.DamageType != (int)DamageType.Crit && x.DamageType != (int)DamageType.Normal).Count();
+            var isPet = item.FirstOrDefault()?.IsPet ?? false;
 
             var damageDoneGeneral = new DamageDoneGeneral
             {
@@ -69,7 +70,7 @@ public static class CombatDetailsExtension
                 MinValue = item.Min(x => x.Value),
                 MaxValue = item.Max(x => x.Value),
                 AverageValue = averageValue,
-                IsPet = item.FirstOrDefault().IsPet
+                IsPet = isPet,
             };
 
             lessDetails.Add(damageDoneGeneral);
@@ -88,7 +89,7 @@ public static class CombatDetailsExtension
 
         if (!TimeSpan.TryParse(duration, out var durationTime))
         {
-            return null;
+            return new List<HealDoneGeneral>();
         }
 
         var lessDetails = new List<HealDoneGeneral>();
@@ -127,7 +128,7 @@ public static class CombatDetailsExtension
 
         if (!TimeSpan.TryParse(duration, out var durationTime))
         {
-            return null;
+            return new List<DamageTakenGeneral>();
         }
 
         var lessDetails = new List<DamageTakenGeneral>();
@@ -165,7 +166,7 @@ public static class CombatDetailsExtension
 
         if (!TimeSpan.TryParse(duration, out var durationTime))
         {
-            return null;
+            return new List<ResourceRecoveryGeneral>();
         }
 
         var lessDetails = new List<ResourceRecoveryGeneral>();

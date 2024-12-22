@@ -9,7 +9,7 @@
     xmlns:loc="clr-namespace:CombatAnalysis.App.Localizations"
     xmlns:resx="clr-namespace:CombatAnalysis.App.Localizations.Resources.HealDoneDetails"
     xmlns:local="clr-namespace:CombatAnalysis.App.Views.ViewTemplates"
-    xmlns:viewModels="clr-namespace:CombatAnalysis.Core.ViewModels;assembly=CombatAnalysis.Core"
+    xmlns:basicViewModel="clr-namespace:CombatAnalysis.Core.ViewModels.ViewModelTemplates;assembly=CombatAnalysis.Core"
     xmlns:views="clr-namespace:MvvmCross.Platforms.Wpf.Views;assembly=MvvmCross.Platforms.Wpf"
     loc:LocalizationObject.ResourceManager="{x:Static resx:Resource.ResourceManager}"
     mc:Ignorable="d" d:DesignHeight="850" d:DesignWidth="1250">
@@ -32,9 +32,9 @@
             <converters:TheNativeIntToVisibilityConverter x:Key="IntToVisibility" />
         </Grid.Resources>
         
-        <ContentControl Grid.ColumnSpan="3" Grid.RowSpan="4" Content="{Binding BasicTemplate}">
+        <ContentControl Grid.ColumnSpan="3" Grid.RowSpan="4" Content="{Binding Basic}">
             <ContentControl.Resources>
-                <DataTemplate DataType="{x:Type viewModels:BasicTemplateViewModel}">
+                <DataTemplate DataType="{x:Type basicViewModel:BasicTemplateViewModel}">
                     <local:BasicTemplateView />
                 </DataTemplate>
             </ContentControl.Resources>

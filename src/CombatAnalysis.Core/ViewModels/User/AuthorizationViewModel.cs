@@ -2,6 +2,7 @@
 using CombatAnalysis.Core.Interfaces;
 using CombatAnalysis.Core.Models.User;
 using CombatAnalysis.Core.ViewModels.Base;
+using CombatAnalysis.Core.ViewModels.ViewModelTemplates;
 using Microsoft.Extensions.Caching.Memory;
 using MvvmCross.Navigation;
 
@@ -21,14 +22,16 @@ public class AuthorizationViewModel : ParentTemplate
         _mvvmNavigation = mvvmNavigation;
         _identityService = identityService;
 
-        if (BasicTemplate.Parent is RegistrationViewModel)
+        if (Basic.Parent is RegistrationViewModel)
         {
-            Task.Run(async () => await _mvvmNavigation.Close(BasicTemplate.Parent));
+            Task.Run(async () => await _mvvmNavigation.Close(Basic.Parent));
         }
 
-        BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, "IsRegistrationNotActivated", true);
-        BasicTemplate.Parent = this;
+        Basic.Handler.BasicPropertyUpdate(nameof(BasicTemplateViewModel.IsRegistrationNotActivated), true);
+        Basic.Parent = this;
     }
+
+    #region View model properties
 
     public bool IsVerification
     {
@@ -39,9 +42,11 @@ public class AuthorizationViewModel : ParentTemplate
         }
     }
 
+    #endregion
+
     public override void ViewDisappeared()
     {
-        BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, nameof(BasicTemplateViewModel.IsLoginNotActivated), true);
+        Basic.Handler.BasicPropertyUpdate(nameof(BasicTemplateViewModel.IsLoginNotActivated), true);
 
         base.ViewDisappeared();
     }
@@ -62,8 +67,8 @@ public class AuthorizationViewModel : ParentTemplate
         var user = _memoryCache.Get<AppUserModel>(nameof(MemoryCacheValue.User));
         if (user != null)
         {
-            BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, nameof(BasicTemplateViewModel.IsAuth), true);
-            BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, nameof(BasicTemplateViewModel.Username), user.Username);
+            Basic.Handler.BasicPropertyUpdate(nameof(BasicTemplateViewModel.IsAuth), true);
+            Basic.Handler.BasicPropertyUpdate(nameof(BasicTemplateViewModel.Username), user.Username);
         }
 
         await _mvvmNavigation.Close(this);

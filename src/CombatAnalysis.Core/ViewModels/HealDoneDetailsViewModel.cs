@@ -15,19 +15,19 @@ public class HealDoneDetailsViewModel : DetailsGenericTemplate<HealDoneModel, He
     public HealDoneDetailsViewModel(IHttpClientHelper httpClient, ILogger logger, IMemoryCache memoryCache, 
         IMapper mapper, ICacheService cacheService) : base(httpClient, logger, memoryCache, mapper, cacheService)
     {
-        BasicTemplate.Parent = this;
-        BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, nameof(BasicTemplateViewModel.Step), 4);
+        Basic.Parent = this;
+        Basic.Handler.BasicPropertyUpdate(nameof(BasicTemplateViewModel.Step), 4);
     }
 
-    protected override void ChildPrepare(CombatPlayerModel parameter)
+    protected override void ExtendedPrepare(CombatPlayerModel parameter)
     {
-        var healDoneCollection = _cacheService.GetDataFromCache<Dictionary<string, List<HealDone>>>($"{AppCacheKeys.CombatDetails_HealDone}_{SelectedCombat.LocallyNumber}");
-        var healDoneCollectionMap = _mapper.Map<List<HealDoneModel>>(healDoneCollection[parameter.PlayerId]);
+        var healDoneCollection = _cacheService?.GetDataFromCache<Dictionary<string, List<HealDone>>>($"{AppCacheKeys.CombatDetails_HealDone}_{SelectedCombat?.LocallyNumber}");
+        var healDoneCollectionMap = _mapper.Map<List<HealDoneModel>>(healDoneCollection?[parameter.PlayerId]);
         DetailsInformations = new ObservableCollection<HealDoneModel>(healDoneCollectionMap);
         _allDetailsInformations = new List<HealDoneModel>(healDoneCollectionMap);
 
-        var healDoneGeneralCollection = _cacheService.GetDataFromCache<Dictionary<string, List<HealDoneGeneral>>>($"{AppCacheKeys.CombatDetails_HealDoneGeneral}_{SelectedCombat.LocallyNumber}");
-        var healDoneGeneralCollectionMap = _mapper.Map<List<HealDoneGeneralModel>>(healDoneGeneralCollection[parameter.PlayerId]);
+        var healDoneGeneralCollection = _cacheService?.GetDataFromCache<Dictionary<string, List<HealDoneGeneral>>>($"{AppCacheKeys.CombatDetails_HealDoneGeneral}_{SelectedCombat?.LocallyNumber}");
+        var healDoneGeneralCollectionMap = _mapper.Map<List<HealDoneGeneralModel>>(healDoneGeneralCollection?[parameter.PlayerId]);
         GeneralInformations = new ObservableCollection<HealDoneGeneralModel>(healDoneGeneralCollectionMap);
         _allGeneralInformations = new List<HealDoneGeneralModel>(healDoneGeneralCollectionMap);
     }

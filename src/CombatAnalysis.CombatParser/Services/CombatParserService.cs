@@ -39,7 +39,7 @@ public class CombatParserService
 
         using var reader = _fileManager.StreamReader(combatLog);
         var line = await reader.ReadLineAsync();
-        if (!line.Contains(CombatLogKeyWords.CombatLogVersion))
+        if (!string.IsNullOrEmpty(line) && !line.Contains(CombatLogKeyWords.CombatLogVersion))
         {
             fileIsCorrect = false;
         }
@@ -53,10 +53,10 @@ public class CombatParserService
         var petsId = new Dictionary<string, List<string>>();
         var bossCombatStarted = false;
 
-        Clear();
-
         try
         {
+            Clear();
+
             var lines = await File.ReadAllLinesAsync(combatLogPath, cancellationToken);
             ProcessCombatLogLines(lines, petsId, ref bossCombatStarted, newCombatFromLogs);
         }

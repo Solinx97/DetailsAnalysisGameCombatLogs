@@ -9,7 +9,7 @@ using CombatAnalysis.Core.Helpers;
 using CombatAnalysis.Core.Interfaces;
 using CombatAnalysis.Core.Mapping;
 using CombatAnalysis.Core.Services;
-using CombatAnalysis.Core.ViewModels;
+using CombatAnalysis.Core.ViewModels.ViewModelTemplates;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
 using MvvmCross;
@@ -59,7 +59,7 @@ public class App : MvxApplication
         var memoryCacheOptions = new MemoryCacheOptions { SizeLimit = 2048 };
         var memoryCache = new MemoryCache(memoryCacheOptions);
 
-        var identityService = new IdentityService(memoryCache, httpClient);
+        var identityService = new IdentityService(memoryCache, httpClient, logger);
         var cacheService = new CacheService();
 
         Mvx.IoCProvider.RegisterSingleton(mapper);

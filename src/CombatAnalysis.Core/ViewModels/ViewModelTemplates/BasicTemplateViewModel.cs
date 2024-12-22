@@ -6,17 +6,16 @@ using CombatAnalysis.Core.Interfaces;
 using CombatAnalysis.Core.Interfaces.Observers;
 using CombatAnalysis.Core.Models;
 using CombatAnalysis.Core.Models.User;
-using CombatAnalysis.Core.ViewModels.Base;
 using CombatAnalysis.Core.ViewModels.Chat;
 using CombatAnalysis.Core.ViewModels.User;
-using CombatAnalysis.Core.ViewModels.ViewModelTemplates;
 using Microsoft.Extensions.Caching.Memory;
 using MvvmCross.Commands;
 using MvvmCross.Navigation;
+using MvvmCross.ViewModels;
 
-namespace CombatAnalysis.Core.ViewModels;
+namespace CombatAnalysis.Core.ViewModels.ViewModelTemplates;
 
-public class BasicTemplateViewModel : ParentTemplate, IVMDataHandler<CombatPlayerModel>, IResponseStatusObservable, IAuthObservable
+public class BasicTemplateViewModel : MvxViewModel, IImprovedMvxViewModel, IVMDataHandler<CombatPlayerModel>, IResponseStatusObservable, IAuthObservable
 {
     private readonly List<IResponseStatusObserver> _responseStatusObservers;
     private readonly List<IAuthObserver> _authObservers;
@@ -24,17 +23,18 @@ public class BasicTemplateViewModel : ParentTemplate, IVMDataHandler<CombatPlaye
     private readonly IMemoryCache _memoryCache;
     private readonly IHttpClientHelper _httpClient;
 
-    private List<CombatModel> _combats;
+    private string? _username;
     private int _step = -1;
-    private bool _isAuth;
     private bool _isLoginNotActivated = true;
     private bool _isRegistrationNotActivated = true;
-    private string _username;
+    private int _uploadingCombatsCount = 1;
+
+    private List<CombatModel>? _combats;
+    private CombatModel? _selectedCombat;
+    private CombatLogModel? _combatLog;
+    private bool _isAuth;
     private LogType _logType;
     private bool _logPanelStatusIsVisibly;
-    private CombatModel _selectedCombat;
-    private CombatLogModel _combatLog;
-    private int _uploadingCombatsCount = 1;
     private int _uploadedCombatsCount;
 
     private static LoadingStatus _responseStatus;
@@ -42,7 +42,10 @@ public class BasicTemplateViewModel : ParentTemplate, IVMDataHandler<CombatPlaye
 
     public BasicTemplateViewModel(IMvxNavigationService mvvmNavigation, IMemoryCache memoryCache, IHttpClientHelper httpClient)
     {
-        Handler = new VMHandler();
+        BasicViewModel.Template = this;
+        Parent = this;
+        SavedViewModel = this;
+        Handler = new VMHandler<BasicTemplateViewModel>();
 
         _mvvmNavigation = mvvmNavigation;
         _memoryCache = memoryCache;
@@ -68,26 +71,30 @@ public class BasicTemplateViewModel : ParentTemplate, IVMDataHandler<CombatPlaye
         DamageTakenDetailsCommand = new MvxAsyncCommand(DamageTakenDetailsAsync);
         ResourceDetailsCommand = new MvxAsyncCommand(ResourceDetailsAsync);
 
-        Basic = this;
-
         CheckAuth();
         Task.Run(async () => await _mvvmNavigation.Navigate<HomeViewModel, bool>(IsAuth));
     }
+
+    public IVMHandler Handler { get; set; }
+
+    public IMvxViewModel Parent { get; set; }
+
+    public IMvxViewModel SavedViewModel { get; set; }
 
     public List<CombatModel> Combats
     {
         set
         {
-            _combats = value;
             if (value != null)
             {
+                _combats = value;
                 UploadingCombatsCount = value.Count;
             }
         }
-        get => _combats;
+        get => _combats ?? new List<CombatModel>();
     }
 
-    public CancellationTokenSource CancellationTokenSource { get; set; }
+    public CancellationTokenSource CancellationTokenSource { get; set; } = new();
 
     #region Commands
 
@@ -123,35 +130,34 @@ public class BasicTemplateViewModel : ParentTemplate, IVMDataHandler<CombatPlaye
 
     #endregion
 
-    #region Properties
+    #region View model properties
 
-    public CombatPlayerModel Data { get; set; }
+    public CombatPlayerModel Data { get; set; } = new();
 
-    public Dictionary<string, List<string>> PetsId { get; set; }
+    public Dictionary<string, List<string>> PetsId { get; set; } = new();
 
-    public CombatModel SelectedCombat
+    public CombatModel? SelectedCombat
     {
-        get
-        {
-            return _selectedCombat;
-        }
-
+        get => _selectedCombat;
         set
         {
-            _selectedCombat = value;
-            DetailsGenericTemplate<DamageDoneModel, DamageDoneGeneralModel>.SelectedCombat = value;
-            DetailsGenericTemplate<HealDoneModel, HealDoneGeneralModel>.SelectedCombat = value;
-            DetailsGenericTemplate<DamageTakenModel, DamageTakenGeneralModel>.SelectedCombat = value;
-            DetailsGenericTemplate<ResourceRecoveryModel, ResourceRecoveryGeneralModel>.SelectedCombat = value;
+            if (value != null)
+            {
+                _selectedCombat = value;
+                DetailsGenericTemplate<DamageDoneModel, DamageDoneGeneralModel>.SelectedCombat = value;
+                DetailsGenericTemplate<HealDoneModel, HealDoneGeneralModel>.SelectedCombat = value;
+                DetailsGenericTemplate<DamageTakenModel, DamageTakenGeneralModel>.SelectedCombat = value;
+                DetailsGenericTemplate<ResourceRecoveryModel, ResourceRecoveryGeneralModel>.SelectedCombat = value;
+            }
         }
     }
 
-    public string AppVersion
+    public static string AppVersion
     {
         get { return AppInformation.Version; }
     }
 
-    public string AppVersionType
+    public static string AppVersionType
     {
         get { return AppInformation.VersionType.ToString(); }
     }
@@ -184,7 +190,7 @@ public class BasicTemplateViewModel : ParentTemplate, IVMDataHandler<CombatPlaye
         }
     }
 
-    public CombatLogModel CombatLog
+    public CombatLogModel? CombatLog
     {
         get { return _combatLog; }
         set
@@ -223,7 +229,7 @@ public class BasicTemplateViewModel : ParentTemplate, IVMDataHandler<CombatPlaye
         }
     }
 
-    public string Username
+    public string? Username
     {
         get { return _username; }
         set
@@ -375,7 +381,6 @@ public class BasicTemplateViewModel : ParentTemplate, IVMDataHandler<CombatPlaye
 
     public async Task SettingsAsync()
     {
-        Step = -3;
         await _mvvmNavigation.Navigate<SettingsViewModel>();
     }
 

@@ -2,7 +2,7 @@
 
 namespace CombatAnalysis.Core.Interfaces;
 
-public interface IImprovedMvxViewModel
+public interface IImprovedMvxViewModel : IMvxViewModel
 {
     IVMHandler Handler { get; set; }
 

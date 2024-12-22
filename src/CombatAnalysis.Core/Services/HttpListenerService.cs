@@ -4,7 +4,7 @@ namespace CombatAnalysis.Core.Services;
 
 internal class HttpListenerService
 {
-    private readonly HttpListener _listener = new HttpListener();
+    private readonly HttpListener _listener = new();
 
     public HttpListenerService(string listeningUrl)
     {
@@ -24,6 +24,12 @@ internal class HttpListenerService
 
                 var authorizationCode = request.QueryString["code"];
                 var state = request.QueryString["state"];
+                if (authorizationCode == null || state == null)
+                {
+                    StopListening();
+
+                    return;
+                }
 
                 onCallbackReceived(authorizationCode, state);
 

@@ -13,34 +13,34 @@ using System.Resources;
 
 namespace CombatAnalysis.Core.ViewModels.ViewModelTemplates;
 
-abstract public class DetailsGenericTemplate<DetailsModel, GeneralDetailsModel> : ParentTemplate<CombatPlayerModel>
+public abstract class DetailsGenericTemplate<DetailsModel, GeneralDetailsModel> : ParentTemplate<CombatPlayerModel>
     where DetailsModel : class, IDetailsEntity
     where GeneralDetailsModel : class, IDetailsEntity
 {
     protected readonly ILogger _logger;
     protected readonly IMapper _mapper;
-    protected readonly ICacheService _cacheService;
-    protected readonly CombatParserAPIService _combatParserAPIService;
+    protected readonly ICacheService? _cacheService;
+    protected readonly CombatParserAPIService? _combatParserAPIService;
 
-    protected List<GeneralDetailsModel> _allGeneralInformations;
-    protected List<DetailsModel> _allDetailsInformations;
+    protected List<GeneralDetailsModel>? _allGeneralInformations;
+    protected List<DetailsModel>? _allDetailsInformations;
 
     protected readonly int _pageSize = 20;
 
     private int _page = 1;
     private int _count;
     private int _maxPages;
-    private string _apiName;
-    private string _generalApiName;
+    private string? _apiName;
+    private string? _generalApiName;
 
     private bool _isShowFilters;
-    private string _selectedDamageDoneSource;
-    private string _selectedPlayer;
+    private string? _selectedDamageDoneSource;
+    private string? _selectedPlayer;
     private int _selectedPlayerId;
     private long _totalValue;
-    private ObservableCollection<DetailsModel> _detailsInformations;
-    private ObservableCollection<GeneralDetailsModel> _generalInformations;
-    private ObservableCollection<string> _sources;
+    private ObservableCollection<DetailsModel>? _detailsInformations;
+    private ObservableCollection<GeneralDetailsModel>? _generalInformations;
+    private ObservableCollection<string>? spells;
     private int _detailsTypeSelectedIndex;
 
     public DetailsGenericTemplate(IHttpClientHelper httpClient, ILogger logger, IMemoryCache memoryCache,
@@ -77,7 +77,7 @@ abstract public class DetailsGenericTemplate<DetailsModel, GeneralDetailsModel> 
 
     #region Properties
 
-    public static CombatModel SelectedCombat { get; set; }
+    public static CombatModel? SelectedCombat { get; set; }
 
     public static bool IsNeedSave { get; set; }
 
@@ -108,7 +108,7 @@ abstract public class DetailsGenericTemplate<DetailsModel, GeneralDetailsModel> 
         }
     }
 
-    public string SelectedSource
+    public string? SelectedSource
     {
         get { return _selectedDamageDoneSource; }
         set
@@ -119,7 +119,7 @@ abstract public class DetailsGenericTemplate<DetailsModel, GeneralDetailsModel> 
         }
     }
 
-    public string SelectedPlayer
+    public string? SelectedPlayer
     {
         get { return _selectedPlayer; }
         set
@@ -169,7 +169,7 @@ abstract public class DetailsGenericTemplate<DetailsModel, GeneralDetailsModel> 
         }
     }
 
-    public ObservableCollection<DetailsModel> DetailsInformations
+    public ObservableCollection<DetailsModel>? DetailsInformations
     {
         get { return _detailsInformations; }
         set
@@ -178,7 +178,7 @@ abstract public class DetailsGenericTemplate<DetailsModel, GeneralDetailsModel> 
         }
     }
 
-    public ObservableCollection<GeneralDetailsModel> GeneralInformations
+    public ObservableCollection<GeneralDetailsModel>? GeneralInformations
     {
         get { return _generalInformations; }
         set
@@ -187,12 +187,12 @@ abstract public class DetailsGenericTemplate<DetailsModel, GeneralDetailsModel> 
         }
     }
 
-    public ObservableCollection<string> Sources
+    public ObservableCollection<string>? Sources
     {
-        get { return _sources; }
+        get { return spells; }
         set
         {
-            SetProperty(ref _sources, value);
+            SetProperty(ref spells, value);
         }
     }
 
@@ -210,7 +210,7 @@ abstract public class DetailsGenericTemplate<DetailsModel, GeneralDetailsModel> 
 
         SetTotalValue(parameter);
 
-        if (SelectedCombat.Id > 0)
+        if (SelectedCombat?.Id > 0)
         {
             Task.Run(async () =>
             {
@@ -227,7 +227,7 @@ abstract public class DetailsGenericTemplate<DetailsModel, GeneralDetailsModel> 
         }
         else
         {
-            ChildPrepare(parameter);
+            ExtendedPrepare(parameter);
 
             GetSources();
         }
@@ -235,13 +235,23 @@ abstract public class DetailsGenericTemplate<DetailsModel, GeneralDetailsModel> 
 
     public void GetSources()
     {
-        var sources = DetailsInformations.Select(x => x.Spell).Distinct().ToList();
+        var sources = DetailsInformations?.Select(x => x.Spell).Distinct().ToList();
+        if (sources == null)
+        {
+            return;
+        }
+
         var resourceMangaer = new ResourceManager("CombatAnalysis.App.Localizations.Resources.DetailsGeneralTemplate.Resource", Assembly.Load("CombatAnalysis.App"));
         var allSourcesName = resourceMangaer.GetString("All");
-        sources.Insert(0, allSourcesName);
+        if (!string.IsNullOrEmpty(allSourcesName))
+        {
+            sources.Insert(0, allSourcesName);
+        }
 
         Sources = new ObservableCollection<string>(sources);
     }
+
+    protected abstract void ExtendedPrepare(CombatPlayerModel parameter);
 
     private async Task LoadFirstPageAsync()
     {
@@ -275,6 +285,11 @@ abstract public class DetailsGenericTemplate<DetailsModel, GeneralDetailsModel> 
 
     private async Task LoadCountAsync()
     {
+        if (_combatParserAPIService == null)
+        {
+            return;
+        }
+
         var count = await _combatParserAPIService.LoadCountAsync($"{_apiName}/count/{SelectedPlayerId}");
         Count = count;
 
@@ -285,6 +300,11 @@ abstract public class DetailsGenericTemplate<DetailsModel, GeneralDetailsModel> 
 
     private async Task LoadDetailsAsync(int page, int pageSize)
     {
+        if (_combatParserAPIService == null)
+        {
+            return;
+        }
+
         var details = await _combatParserAPIService.LoadCombatDetailsAsync<DetailsModel>($"{_apiName}/getByCombatPlayerId?combatPlayerId={SelectedPlayerId}&page={page}&pageSize={pageSize}");
         _allDetailsInformations = new List<DetailsModel>(details.ToList());
         DetailsInformations = new ObservableCollection<DetailsModel>(_allDetailsInformations);
@@ -292,6 +312,11 @@ abstract public class DetailsGenericTemplate<DetailsModel, GeneralDetailsModel> 
 
     private async Task LoadGenericDetailsAsync()
     {
+        if (_combatParserAPIService == null)
+        {
+            return;
+        }
+
         var generalDetails = await _combatParserAPIService.LoadCombatDetailsAsync<GeneralDetailsModel>($"{_generalApiName}/getByCombatPlayerId/{SelectedPlayerId}");
         _allGeneralInformations = new List<GeneralDetailsModel>(generalDetails.ToList());
         GeneralInformations = new ObservableCollection<GeneralDetailsModel>(_allGeneralInformations);
@@ -304,6 +329,11 @@ abstract public class DetailsGenericTemplate<DetailsModel, GeneralDetailsModel> 
 
     private void Filter()
     {
+        if (_allDetailsInformations == null)
+        {
+            return;
+        }
+
         DetailsInformations = _allDetailsInformations.Any(x => x.Spell == SelectedSource)
             ? new ObservableCollection<DetailsModel>(_allDetailsInformations.Where(x => x.Spell == SelectedSource))
             : new ObservableCollection<DetailsModel>(_allDetailsInformations);

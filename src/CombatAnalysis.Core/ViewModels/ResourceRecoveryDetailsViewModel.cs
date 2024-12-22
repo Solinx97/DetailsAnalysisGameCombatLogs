@@ -15,11 +15,11 @@ public class ResourceRecoveryDetailsViewModel : DetailsGenericTemplate<ResourceR
     public ResourceRecoveryDetailsViewModel(IHttpClientHelper httpClient, ILogger logger, IMemoryCache memoryCache, 
         IMapper mapper, ICacheService cacheService) : base(httpClient, logger, memoryCache, mapper, cacheService)
     {
-        BasicTemplate.Parent = this;
-        BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, nameof(BasicTemplateViewModel.Step), 6);
+        Basic.Parent = this;
+        Basic.Handler.BasicPropertyUpdate(nameof(BasicTemplateViewModel.Step), 6);
     }
 
-    protected override void ChildPrepare(CombatPlayerModel parameter)
+    protected override void ExtendedPrepare(CombatPlayerModel parameter)
     {
         var resourcesRecoveryCollection = _cacheService.GetDataFromCache<Dictionary<string, List<ResourceRecovery>>>($"{AppCacheKeys.CombatDetails_ResourcesRecovery}_{SelectedCombat.LocallyNumber}");
         var resourcesRecoveryCollectionMap = _mapper.Map<List<ResourceRecoveryModel>>(resourcesRecoveryCollection[parameter.PlayerId]);

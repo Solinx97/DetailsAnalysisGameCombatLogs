@@ -9,23 +9,23 @@ namespace CombatAnalysis.Core.ViewModels;
 
 public class SettingsViewModel : ParentTemplate
 {
-    private ObservableCollection<Language> _languages;
+    private ObservableCollection<Language>? _languages;
     private Language _selectedLanguage;
     private string _logsLocation;
 
     public SettingsViewModel()
     {
-        BasicTemplate.Parent = this;
+        Basic.Parent = this;
 
         var userSettings = ReadUserSettings("User.json");
-        _logsLocation = userSettings.Location;
+        _logsLocation = userSettings?.Location ?? string.Empty;
 
         LanguageInit();
     }
 
-    #region Properties
+    #region View model properties
 
-    public ObservableCollection<Language> Languages
+    public ObservableCollection<Language>? Languages
     {
         get { return _languages; }
         set
@@ -68,7 +68,7 @@ public class SettingsViewModel : ParentTemplate
         Languages = new ObservableCollection<Language> { Language.EN, Language.RU, };
     }
 
-    private static UserSettings ReadUserSettings(string settingsName)
+    private static UserSettings? ReadUserSettings(string settingsName)
     {
         var baseDirectory = AppDomain.CurrentDomain.BaseDirectory;
         using var fs = new FileStream($"{baseDirectory}{settingsName}", FileMode.OpenOrCreate);

@@ -19,7 +19,7 @@ internal class HttpClientHelper : IHttpClientHelper
 
     public HttpClient Client { get; set; }
 
-    public string BaseAddress { get; set; }
+    public string BaseAddress { get; set; } = string.Empty;
 
     public async Task<HttpResponseMessage> PostAsync(string requestUri, JsonContent content, CancellationToken cancellationToken)
     {

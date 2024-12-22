@@ -10,16 +10,16 @@ public partial class CreateGroupChatWindow : MvxWindow
     {
         InitializeComponent();
 
-        var createGroupChat = new CreateGroupChatViewModel
+        var createGroupChat = new CreateGroupChatViewModel()
         {
-            CancelCommand = new MvxCommand(() => WindowManager.CreateGroupChat.Close())
+            CancelCommand = new MvxCommand(() => WindowManager.CreateGroupChat?.Close())
         };
 
         DataContext = createGroupChat;
         Closed += CreateGroupChatWindowClosed;
     }
 
-    private void CreateGroupChatWindowClosed(object sender, System.EventArgs e)
+    private void CreateGroupChatWindowClosed(object? sender, System.EventArgs e)
     {
         WindowManager.CreateGroupChat = new CreateGroupChatWindow();
     }

@@ -4,13 +4,12 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:converters="clr-namespace:CombatAnalysis.App.Converters"
     xmlns:loc="clr-namespace:CombatAnalysis.App.Localizations"
     xmlns:resx="clr-namespace:CombatAnalysis.App.Localizations.Resources.Registration"
     xmlns:local="clr-namespace:CombatAnalysis.App.Views.ViewTemplates"
-    xmlns:userViewModels="clr-namespace:CombatAnalysis.Core.ViewModels.User;assembly=CombatAnalysis.Core"
+    xmlns:basicViewModel="clr-namespace:CombatAnalysis.Core.ViewModels.ViewModelTemplates;assembly=CombatAnalysis.Core"
     xmlns:views="clr-namespace:MvvmCross.Platforms.Wpf.Views;assembly=MvvmCross.Platforms.Wpf"
-    xmlns:viewModels="clr-namespace:CombatAnalysis.Core.ViewModels;assembly=CombatAnalysis.Core"
-    xmlns:converters="clr-namespace:CombatAnalysis.App.Converters"
     loc:LocalizationObject.ResourceManager="{x:Static resx:Resource.ResourceManager}"
     mc:Ignorable="d" d:DesignHeight="850" d:DesignWidth="1250">
 
@@ -19,9 +18,9 @@
             <converters:TheNativeBoolToVisibilityConverter x:Key="BoolToVisibility" />
         </Grid.Resources>
         
-        <ContentControl Grid.RowSpan="4" Grid.ColumnSpan="4" Content="{Binding BasicTemplate}">
+        <ContentControl Grid.RowSpan="4" Grid.ColumnSpan="4" Content="{Binding Basic}">
             <ContentControl.Resources>
-                <DataTemplate DataType="{x:Type viewModels:BasicTemplateViewModel}">
+                <DataTemplate DataType="{x:Type basicViewModel:BasicTemplateViewModel}">
                     <local:BasicTemplateView />
                 </DataTemplate>
             </ContentControl.Resources>

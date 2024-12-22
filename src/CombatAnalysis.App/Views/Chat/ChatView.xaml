@@ -12,7 +12,7 @@
     xmlns:chat="clr-namespace:CombatAnalysis.App.Views.Chat"
     xmlns:local="clr-namespace:CombatAnalysis.App.Views.ViewTemplates"
     xmlns:chatViewModels="clr-namespace:CombatAnalysis.Core.ViewModels.Chat;assembly=CombatAnalysis.Core"
-    xmlns:viewModels="clr-namespace:CombatAnalysis.Core.ViewModels;assembly=CombatAnalysis.Core"
+    xmlns:basicViewModel="clr-namespace:CombatAnalysis.Core.ViewModels.ViewModelTemplates;assembly=CombatAnalysis.Core"
     xmlns:mvx="clr-namespace:MvvmCross.Platforms.Wpf.Binding;assembly=MvvmCross.Platforms.Wpf"
     xmlns:views="clr-namespace:MvvmCross.Platforms.Wpf.Views;assembly=MvvmCross.Platforms.Wpf"
     loc:LocalizationObject.ResourceManager="{x:Static resx:Resource.ResourceManager}"
@@ -43,9 +43,9 @@
             <RowDefinition Height="0.05*"/>
         </Grid.RowDefinitions>
 
-        <ContentControl Grid.RowSpan="4" Grid.ColumnSpan="4" Content="{Binding BasicTemplate}">
+        <ContentControl Grid.RowSpan="4" Grid.ColumnSpan="4" Content="{Binding Basic}">
             <ContentControl.Resources>
-                <DataTemplate DataType="{x:Type viewModels:BasicTemplateViewModel}">
+                <DataTemplate DataType="{x:Type basicViewModel:BasicTemplateViewModel}">
                     <local:BasicTemplateView />
                 </DataTemplate>
             </ContentControl.Resources>

@@ -1,18 +1,19 @@
 ﻿using CombatAnalysis.Core.Localizations;
 using CombatAnalysis.Core.Models;
 using CombatAnalysis.Core.ViewModels.Base;
+using CombatAnalysis.Core.ViewModels.ViewModelTemplates;
 using MvvmCross.Commands;
 
 namespace CombatAnalysis.Core.ViewModels;
 
 public class CombatPlayersViewModel : ParentTemplate<CombatModel>
 {
-    private CombatModel _combat;
-    private List<CombatPlayerModel> _playersCombat;
-    private List<CombatPlayerModel> _mainPlayersCombat;
-    private CombatPlayerModel _selectedPlayer;
+    private CombatModel? _combat;
+    private List<CombatPlayerModel>? _playersCombat;
+    private List<CombatPlayerModel>? _mainPlayersCombat;
+    private CombatPlayerModel? _selectedPlayer;
+    private List<string>? _filterList;
     private int _combatInformationType;
-    private List<string> _filterList;
     private int _selectedFilterIndex;
     private int _minDamageDone;
     private int _minHealDone;
@@ -48,8 +49,8 @@ public class CombatPlayersViewModel : ParentTemplate<CombatModel>
 
     public CombatPlayersViewModel()
     {
-        BasicTemplate.Parent = this;
-        BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, nameof(BasicTemplateViewModel.Step), 2);
+        Basic.Parent = this;
+        Basic.Handler.BasicPropertyUpdate(nameof(BasicTemplateViewModel.Step), 2);
 
         SwitchBetweenValuesCommand = new MvxCommand<int>(SwitchBetweenValues);
 
@@ -122,39 +123,45 @@ public class CombatPlayersViewModel : ParentTemplate<CombatModel>
 
     #endregion
 
-    #region Properties
+    #region View model properties
 
     public bool ShowEffeciency { get; set; }
 
-    public List<CombatPlayerModel> PlayersCombat
+    public List<CombatPlayerModel>? PlayersCombat
     {
-        get { return _playersCombat; }
+        get => _playersCombat;
         set
         {
             SetProperty(ref _playersCombat, value);
 
-            if (value.Count > 0)
+            if (value != null && value.Count > 0)
             {
                 SelectedPlayer = value[0];
             }
         }
     }
 
-    public CombatPlayerModel SelectedPlayer
+    public CombatPlayerModel? SelectedPlayer
     {
-        get { return _selectedPlayer; }
+        get => _selectedPlayer;
         set
         {
             SetProperty(ref _selectedPlayer, value);
 
-            (BasicTemplate as BasicTemplateViewModel).Data = value;
-            (BasicTemplate as BasicTemplateViewModel).PetsId = Combat != null ? Combat.PetsId : null;
+            if (value != null)
+            {
+                if (Basic is BasicTemplateViewModel basicTemplateViewModel)
+                {
+                    basicTemplateViewModel.Data = value;
+                    basicTemplateViewModel.PetsId = (Combat?.PetsId) ?? new Dictionary<string, List<string>>();
+                }
+            }
         }
     }
 
-    public CombatModel Combat
+    public CombatModel? Combat
     {
-        get { return _combat; }
+        get => _combat;
         set
         {
             SetProperty(ref _combat, value);
@@ -170,7 +177,7 @@ public class CombatPlayersViewModel : ParentTemplate<CombatModel>
         }
     }
 
-    public List<string> FilterList
+    public List<string>? FilterList
     {
         get { return _filterList; }
         set
@@ -516,7 +523,7 @@ public class CombatPlayersViewModel : ParentTemplate<CombatModel>
             return;
         }
 
-        PlayersCombat = new List<CombatPlayerModel>(_mainPlayersCombat);
+        PlayersCombat = _mainPlayersCombat != null ? new List<CombatPlayerModel>(_mainPlayersCombat) : new List<CombatPlayerModel>();
         if (MinHealDone > 0)
         {
             ApplyMinHealDone();
@@ -540,7 +547,7 @@ public class CombatPlayersViewModel : ParentTemplate<CombatModel>
             return;
         }
 
-        PlayersCombat = new List<CombatPlayerModel>(_mainPlayersCombat);
+        PlayersCombat = _mainPlayersCombat != null ? new List<CombatPlayerModel>(_mainPlayersCombat) : new List<CombatPlayerModel>();
         if (MinDamageDone > 0)
         {
             ApplyMinDamageDone();
@@ -564,7 +571,7 @@ public class CombatPlayersViewModel : ParentTemplate<CombatModel>
             return;
         }
 
-        PlayersCombat = new List<CombatPlayerModel>(_mainPlayersCombat);
+        PlayersCombat = _mainPlayersCombat != null ? new List<CombatPlayerModel>(_mainPlayersCombat) : new List<CombatPlayerModel>();
         if (MinDamageDone > 0)
         {
             ApplyMinDamageDone();
@@ -588,7 +595,7 @@ public class CombatPlayersViewModel : ParentTemplate<CombatModel>
             return;
         }
 
-        PlayersCombat = new List<CombatPlayerModel>(_mainPlayersCombat);
+        PlayersCombat = _mainPlayersCombat != null ? new List<CombatPlayerModel>(_mainPlayersCombat) : new List<CombatPlayerModel>();
         if (MinHPS > 0)
         {
             ApplyMinHPS();
@@ -612,7 +619,7 @@ public class CombatPlayersViewModel : ParentTemplate<CombatModel>
             return;
         }
 
-        PlayersCombat = new List<CombatPlayerModel>(_mainPlayersCombat);
+        PlayersCombat = _mainPlayersCombat != null ? new List<CombatPlayerModel>(_mainPlayersCombat) : new List<CombatPlayerModel>();
         if (MinDPS > 0)
         {
             ApplyMinDPS();
@@ -636,7 +643,7 @@ public class CombatPlayersViewModel : ParentTemplate<CombatModel>
             return;
         }
 
-        PlayersCombat = new List<CombatPlayerModel>(_mainPlayersCombat);
+        PlayersCombat = _mainPlayersCombat != null ? new List<CombatPlayerModel>(_mainPlayersCombat) : new List<CombatPlayerModel>();
         if (MinDPS > 0)
         {
             ApplyMinDPS();
@@ -675,7 +682,7 @@ public class CombatPlayersViewModel : ParentTemplate<CombatModel>
         base.ViewAppeared();
     }
 
-    protected override void ChildPrepare(CombatModel parameter)
+    public override void Prepare(CombatModel parameter)
     {
         PlayersCombat = parameter.Players;
         Combat = parameter;
@@ -773,11 +780,16 @@ public class CombatPlayersViewModel : ParentTemplate<CombatModel>
         MinHealDone = 0;
         MinEnergyRecovery = 0;
 
-        PlayersCombat = new List<CombatPlayerModel>(_mainPlayersCombat);
+        PlayersCombat = _mainPlayersCombat != null ? new List<CombatPlayerModel>(_mainPlayersCombat) : new List<CombatPlayerModel>();
     }
 
     private void FilterInformationByMinDamageDone(int minDamageDone)
     {
+        if (PlayersCombat == null)
+        {
+            return;
+        }
+
         var temporaryPlayersCombat = new List<CombatPlayerModel>();
         foreach (var player in PlayersCombat)
         {
@@ -792,6 +804,11 @@ public class CombatPlayersViewModel : ParentTemplate<CombatModel>
 
     private void FilterInformationByMinHealDone(int minHealDone)
     {
+        if (PlayersCombat == null)
+        {
+            return;
+        }
+
         var temporaryPlayersCombat = new List<CombatPlayerModel>();
         foreach (var player in PlayersCombat)
         {
@@ -806,6 +823,11 @@ public class CombatPlayersViewModel : ParentTemplate<CombatModel>
 
     private void FilterInformationByMinEnergyRecovery(int minEnergyRecovery)
     {
+        if (PlayersCombat == null)
+        {
+            return;
+        }
+
         var temporaryPlayersCombat = new List<CombatPlayerModel>();
         foreach (var player in PlayersCombat)
         {
@@ -820,6 +842,11 @@ public class CombatPlayersViewModel : ParentTemplate<CombatModel>
 
     private void FilterInformationByMinDPS(int minDPS)
     {
+        if (PlayersCombat == null)
+        {
+            return;
+        }
+
         var temporaryPlayersCombat = new List<CombatPlayerModel>();
         foreach (var player in PlayersCombat)
         {
@@ -834,6 +861,11 @@ public class CombatPlayersViewModel : ParentTemplate<CombatModel>
 
     private void FilterInformationByMinHPS(int minHPS)
     {
+        if (PlayersCombat == null)
+        {
+            return;
+        }
+
         var temporaryPlayersCombat = new List<CombatPlayerModel>();
         foreach (var player in PlayersCombat)
         {
@@ -848,6 +880,11 @@ public class CombatPlayersViewModel : ParentTemplate<CombatModel>
 
     private void FilterInformationByMinRPS(int minRPS)
     {
+        if (PlayersCombat == null)
+        {
+            return;
+        }
+
         var temporaryPlayersCombat = new List<CombatPlayerModel>();
         foreach (var player in PlayersCombat)
         {

@@ -10,7 +10,7 @@ public partial class BasicTemplateView : MvxWpfView
         InitializeComponent();
     }
 
-    private void Border_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+    private void BorderMouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
     {
         if (e.LeftButton == System.Windows.Input.MouseButtonState.Pressed)
         {

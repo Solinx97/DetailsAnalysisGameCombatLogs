@@ -6,6 +6,7 @@ using CombatAnalysis.Core.Interfaces;
 using CombatAnalysis.Core.Models.Identity;
 using CombatAnalysis.Core.Models.User;
 using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Logging;
 using System.Diagnostics;
 using System.Net.Http.Json;
 
@@ -15,15 +16,17 @@ internal class IdentityService : IIdentityService
 {
     private readonly IMemoryCache _memoryCache;
     private readonly IHttpClientHelper _httpClientHelper;
+    private readonly ILogger _logger;
 
-    private string _codeVerifier;
-    private string _code;
-    private HttpListenerService _httpListenerService;
+    private string? _codeVerifier;
+    private string? _code;
+    private HttpListenerService? _httpListenerService;
 
-    public IdentityService(IMemoryCache memoryCache, IHttpClientHelper httpClient)
+    public IdentityService(IMemoryCache memoryCache, IHttpClientHelper httpClient, ILogger logger)
     {
         _memoryCache = memoryCache;
         _httpClientHelper = httpClient;
+        _logger = logger;
     }
 
     public async Task SendAuthorizationRequestAsync(string authorizationRequestType)
@@ -81,42 +84,84 @@ internal class IdentityService : IIdentityService
     {
         try
         {
+            if (_code == null)
+            {
+                throw new ArgumentNullException(nameof(_code));
+            }
+
             var encodedAuthorizationCode = Uri.EscapeDataString(_code);
             var url = $"Token?grantType={AuthenticationGrantType.Authorization}&clientId={Authentication.ClientId}&codeVerifier={_codeVerifier}&code={encodedAuthorizationCode}&redirectUri={Authentication.RedirectUri}";
 
-            var responseMessage = await _httpClientHelper.GetAsync(url, Port.Identity);
-            if (!responseMessage.IsSuccessStatusCode)
-            {
-                return null;
-            }
+            var response = await _httpClientHelper.GetAsync(url, Port.Identity);
+            response.EnsureSuccessStatusCode();
 
-            var token = await responseMessage.Content.ReadFromJsonAsync<AccessTokenModel>();
+            var token = await response.Content.ReadFromJsonAsync<AccessTokenModel>();
+            if (token == null)
+            {
+                throw new ArgumentNullException(nameof(token));
+            }
 
             return token;
         }
+        catch (ArgumentNullException ex)
+        {
+            _logger.LogError(ex, ex.Message);
+
+            return new AccessTokenModel();
+        }
+        catch (HttpRequestException ex)
+        {
+            _logger.LogError(ex, "HTTP request error: {Message}", ex.Message);
+
+            return new AccessTokenModel();
+        }
         catch (Exception ex)
         {
-            return null;
+            _logger.LogError(ex, ex.Message);
+
+            return new AccessTokenModel();
         }
     }
 
     private async Task<AppUserModel> GetUserAsync(string accessToken)
     {
-        var identityUserId = AccessTokenHelper.GetUserIdFromToken(accessToken);
-        if (identityUserId == null)
+        try
         {
-            return null;
-        }
+            var identityUserId = AccessTokenHelper.GetUserIdFromToken(accessToken);
+            if (identityUserId == null)
+            {
+                throw new ArgumentNullException(nameof(identityUserId));
+            }
 
-        var response = await _httpClientHelper.GetAsync($"Account/find/{identityUserId}", accessToken, Port.UserApi);
-        if (!response.IsSuccessStatusCode)
+            var response = await _httpClientHelper.GetAsync($"Account/find/{identityUserId}", accessToken, Port.UserApi);
+            response.EnsureSuccessStatusCode();
+
+            var user = await response.Content.ReadFromJsonAsync<AppUserModel>();
+            if (user == null)
+            {
+                throw new ArgumentNullException(nameof(user));
+            }
+
+            return user;
+        }
+        catch (ArgumentNullException ex)
         {
-            return null;
+            _logger.LogError(ex, ex.Message);
+
+            return new AppUserModel();
         }
+        catch (HttpRequestException ex)
+        {
+            _logger.LogError(ex, "HTTP request error: {Message}", ex.Message);
 
-        var user = await response.Content.ReadFromJsonAsync<AppUserModel>();
+            return new AppUserModel();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, ex.Message);
 
-        return user;
+            return new AppUserModel();
+        }
     }
 
     private void SetMemoryCache(object aceessToken, object refreshToken, object user)

@@ -28,7 +28,7 @@ public class CombatParserAPIService
         _httpClient.BaseAddress = Port.CombatParserApi;
     }
 
-    public async Task<bool> SaveAsync(List<CombatModel> combats, CombatLogModel combatLog, LogType logType, Action<int, string, string> combatUploaded, CancellationToken cancellationToken)
+    public async Task<bool> SaveAsync(List<CombatModel> combats, CombatLogModel combatLog, Action<int, string, string> combatUploaded, CancellationToken cancellationToken)
     {
         try
         {
@@ -97,20 +97,30 @@ public class CombatParserAPIService
             response.EnsureSuccessStatusCode();
 
             var combatLogs = await response.Content.ReadFromJsonAsync<IEnumerable<CombatLogModel>>();
+            if (combatLogs == null)
+            {
+                throw new ArgumentNullException(nameof(combatLogs));
+            }
 
             return combatLogs;
+        }
+        catch (ArgumentNullException ex)
+        {
+            _logger.LogError(ex, ex.Message);
+
+            return new List<CombatLogModel>();
         }
         catch (HttpRequestException ex)
         {
             _logger.LogError(ex, "HTTP request error: {Message}", ex.Message);
 
-            return null;
+            return new List<CombatLogModel>();
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "An unexpected error occurred: {Message}", ex.Message);
 
-            return null;
+            return new List<CombatLogModel>();
         }
     }
 
@@ -125,23 +135,33 @@ public class CombatParserAPIService
                 response.EnsureSuccessStatusCode();
 
                 var combatLog = await response.Content.ReadFromJsonAsync<CombatLogModel>();
+                if (combatLog == null)
+                {
+                    throw new ArgumentNullException(nameof(combatLog));
+                }
 
                 combatLogs.Add(combatLog);
             }
 
             return combatLogs;
         }
+        catch (ArgumentNullException ex)
+        {
+            _logger.LogError(ex, ex.Message);
+
+            return new List<CombatLogModel>();
+        }
         catch (HttpRequestException ex)
         {
             _logger.LogError(ex, "HTTP request error: {Message}", ex.Message);
 
-            return null;
+            return new List<CombatLogModel>();
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "An unexpected error occurred: {Message}", ex.Message);
 
-            return null;
+            return new List<CombatLogModel>();
         }
     }
 
@@ -153,20 +173,30 @@ public class CombatParserAPIService
             response.EnsureSuccessStatusCode();
 
             var combats = await response.Content.ReadFromJsonAsync<IEnumerable<CombatModel>>();
+            if (combats == null)
+            {
+                throw new ArgumentNullException(nameof(combats));
+            }
 
             return combats;
+        }
+        catch (ArgumentNullException ex)
+        {
+            _logger.LogError(ex, ex.Message);
+
+            return new List<CombatModel>();
         }
         catch (HttpRequestException ex)
         {
             _logger.LogError(ex, "HTTP request error: {Message}", ex.Message);
 
-            return null;
+            return new List<CombatModel>();
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "An unexpected error occurred: {Message}", ex.Message);
 
-            return null;
+            return new List<CombatModel>();
         }
     }
 
@@ -178,6 +208,11 @@ public class CombatParserAPIService
             response.EnsureSuccessStatusCode();
 
             var combatPlayers = await response.Content.ReadFromJsonAsync<IEnumerable<CombatPlayerModel>>();
+            if (combatPlayers == null)
+            {
+                throw new ArgumentNullException(nameof(combatPlayers));
+            }
+
             foreach (var item in combatPlayers)
             {
                 var playerParseInfo = await GetPlayerParseInfoAsync(item.Id);
@@ -186,17 +221,23 @@ public class CombatParserAPIService
 
             return combatPlayers;
         }
+        catch (ArgumentNullException ex)
+        {
+            _logger.LogError(ex, ex.Message);
+
+            return new List<CombatPlayerModel>();
+        }
         catch (HttpRequestException ex)
         {
             _logger.LogError(ex, "HTTP request error: {Message}", ex.Message);
 
-            return null;
+            return new List<CombatPlayerModel>();
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "An unexpected error occurred: {Message}", ex.Message);
 
-            return null;
+            return new List<CombatPlayerModel>();
         }
     }
 
@@ -234,20 +275,30 @@ public class CombatParserAPIService
             response.EnsureSuccessStatusCode();
 
             var details = await response.Content.ReadFromJsonAsync<IEnumerable<T>>();
+            if (details == null)
+            {
+                throw new ArgumentNullException(nameof(details));
+            }
 
             return details;
+        }
+        catch (ArgumentNullException ex)
+        {
+            _logger.LogError(ex, ex.Message);
+
+            return new List<T>();
         }
         catch (HttpRequestException ex)
         {
             _logger.LogError(ex, "HTTP request error: {Message}", ex.Message);
 
-            return null;
+            return new List<T>();
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "An unexpected error occurred: {Message}", ex.Message);
 
-            return null;
+            return new List<T>();
         }
     }
 
@@ -281,32 +332,36 @@ public class CombatParserAPIService
             response.EnsureSuccessStatusCode();
 
             var createdCombatLog = await response.Content.ReadFromJsonAsync<CombatLogModel>(cancellationToken: cancellationToken);
+            if (createdCombatLog == null)
+            {
+                throw new ArgumentNullException(nameof(createdCombatLog));
+            }
 
             return createdCombatLog;
         }
         catch (ArgumentNullException ex)
         {
-            _logger.LogError(ex, "User is not logged in: {Message}", ex.Message);
+            _logger.LogError(ex, ex.Message);
 
-            return null;
+            return new CombatLogModel();
         }
         catch (HttpRequestException ex)
         {
             _logger.LogError(ex, "HTTP request error: {Message}", ex.Message);
 
-            return null;
+            return new CombatLogModel();
         }
         catch (TaskCanceledException ex)
         {
             _logger.LogWarning(ex, "Task was canceled: {Message}", ex.Message);
 
-            return null;
+            return new CombatLogModel();
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "An unexpected error occurred: {Message}", ex.Message);
 
-            return null;
+            return new CombatLogModel();
         }
     }
 
@@ -343,21 +398,31 @@ public class CombatParserAPIService
             response.EnsureSuccessStatusCode();
 
             var playerParseInfoCollection = await response.Content.ReadFromJsonAsync<IEnumerable<PlayerParseInfoModel>>();
-            var playerInfo = playerParseInfoCollection.FirstOrDefault();
+            var playerInfo = playerParseInfoCollection?.FirstOrDefault();
+            if (playerInfo == null)
+            {
+                throw new ArgumentNullException(nameof(playerInfo));
+            }
 
             return playerInfo;
+        }
+        catch (ArgumentNullException ex)
+        {
+            _logger.LogError(ex, ex.Message);
+
+            return new PlayerParseInfoModel();
         }
         catch (HttpRequestException ex)
         {
             _logger.LogError(ex, "HTTP request error: {Message}", ex.Message);
 
-            return null;
+            return new PlayerParseInfoModel();
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "An unexpected error occurred: {Message}", ex.Message);
 
-            return null;
+            return new PlayerParseInfoModel();
         }
     }
 

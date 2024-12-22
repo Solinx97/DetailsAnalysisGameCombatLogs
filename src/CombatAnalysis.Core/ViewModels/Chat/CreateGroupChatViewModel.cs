@@ -1,10 +1,12 @@
-﻿using CombatAnalysis.Core.Consts;
+﻿using Azure;
+using CombatAnalysis.Core.Consts;
 using CombatAnalysis.Core.Enums;
 using CombatAnalysis.Core.Extensions;
 using CombatAnalysis.Core.Interfaces;
 using CombatAnalysis.Core.Models.Chat;
 using CombatAnalysis.Core.Models.User;
 using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Logging;
 using MvvmCross;
 using MvvmCross.Commands;
 using MvvmCross.ViewModels;
@@ -16,16 +18,19 @@ public class CreateGroupChatViewModel : MvxViewModel
 {
     private readonly IHttpClientHelper _httpClientHelper;
     private readonly IMemoryCache _memoryCache;
+    private readonly GroupChatModel _groupChat;
+    private readonly ILogger _logger;
 
-    private string _name;
-    private int _whoCanInvitePeople;
-    private int _whoCanRemovePeople;
+    private string? _name;
     private int _whoCanPinMessage = 1;
     private int _whoCanMakeAnounces = 1;
-    private GroupChatModel _groupChat;
+    private int _whoCanInvitePeople;
+    private int _whoCanRemovePeople;
 
     public CreateGroupChatViewModel()
     {
+        _logger = Mvx.IoCProvider.GetSingleton<ILogger>();
+
         _httpClientHelper = Mvx.IoCProvider.GetSingleton<IHttpClientHelper>();
         _memoryCache = Mvx.IoCProvider.GetSingleton<IMemoryCache>();
 
@@ -47,7 +52,7 @@ public class CreateGroupChatViewModel : MvxViewModel
 
     public IMvxAsyncCommand CreateCommand { get; set; }
 
-    public IMvxCommand CancelCommand { get; set; }
+    public IMvxCommand? CancelCommand { get; set; }
 
     public IMvxCommand GetWhoCanInvitePeopleCommand { get; set; }
 
@@ -59,9 +64,9 @@ public class CreateGroupChatViewModel : MvxViewModel
 
     #endregion
 
-    #region Properties
+    #region View model properties
 
-    public string Name
+    public string? Name
     {
         get { return _name; }
         set
@@ -74,23 +79,47 @@ public class CreateGroupChatViewModel : MvxViewModel
 
     public async Task CreateAsync()
     {
-        var user = _memoryCache.Get<AppUserModel>(nameof(MemoryCacheValue.User));
-        if (user == null)
+        try
         {
-            return;
-        }
+            var user = _memoryCache.Get<AppUserModel>(nameof(MemoryCacheValue.User));
+            if (user == null)
+            {
+                throw new ArgumentNullException(nameof(user));
+            }
 
-        UpdateGroupChatModel(user);
+            UpdateGroupChatModel(user);
 
-        var response = await CreateGroupChatAsync();
-        if (response.IsSuccessStatusCode)
-        {
+            var refreshToken = _memoryCache.Get<string>(nameof(MemoryCacheValue.RefreshToken));
+            if (string.IsNullOrEmpty(refreshToken))
+            {
+                throw new ArgumentNullException(nameof(refreshToken));
+            }
+
+            var response = await _httpClientHelper.PostAsync("GroupChat", JsonContent.Create(_groupChat), refreshToken, Port.ChatApi);
+            response.EnsureSuccessStatusCode();
+
             var groupChat = await response.Content.ReadFromJsonAsync<GroupChatModel>();
+            if (groupChat == null)
+            {
+                throw new ArgumentNullException(nameof(groupChat));
+            }
 
             await CreateGroupChatRulesAsync(groupChat.Id);
             await CreateGroupChatUserAsync(groupChat.Id, user.Id, user.Username);
 
-            CancelCommand.Execute();
+            CancelCommand?.Execute();
+        }
+        catch (ArgumentNullException ex)
+        {
+            _logger.LogError(ex, ex.Message);
+        }
+        catch (HttpRequestException ex)
+        {
+            _logger.LogError(ex, ex.Message);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, ex.Message);
         }
     }
 
@@ -101,24 +130,12 @@ public class CreateGroupChatViewModel : MvxViewModel
         _groupChat.AppUserId = user.Id;
     }
 
-    private async Task<HttpResponseMessage> CreateGroupChatAsync()
+    private async Task CreateGroupChatRulesAsync(int chatId)
     {
         var refreshToken = _memoryCache.Get<string>(nameof(MemoryCacheValue.RefreshToken));
         if (string.IsNullOrEmpty(refreshToken))
         {
-            return null;
-        }
-
-        var response = await _httpClientHelper.PostAsync("GroupChat", JsonContent.Create(_groupChat), refreshToken, Port.ChatApi);
-        return response;
-    }
-
-    private async Task<HttpResponseMessage> CreateGroupChatRulesAsync(int chatId)
-    {
-        var refreshToken = _memoryCache.Get<string>(nameof(MemoryCacheValue.RefreshToken));
-        if (string.IsNullOrEmpty(refreshToken))
-        {
-            return null;
+            throw new ArgumentNullException(nameof(refreshToken));
         }
 
         var groupChatUser = new GroupChatRulesModel
@@ -131,7 +148,7 @@ public class CreateGroupChatViewModel : MvxViewModel
         };
 
         var response = await _httpClientHelper.PostAsync("GroupChatRules", JsonContent.Create(groupChatUser), refreshToken, Port.ChatApi);
-        return response;
+        response.EnsureSuccessStatusCode();
     }
 
     private async Task CreateGroupChatUserAsync(int chatId, string userId, string username)
@@ -139,7 +156,7 @@ public class CreateGroupChatViewModel : MvxViewModel
         var refreshToken = _memoryCache.Get<string>(nameof(MemoryCacheValue.RefreshToken));
         if (string.IsNullOrEmpty(refreshToken))
         {
-            return;
+            throw new ArgumentNullException(nameof(refreshToken));
         }
 
         var groupChatUser = new GroupChatUserModel
@@ -150,6 +167,7 @@ public class CreateGroupChatViewModel : MvxViewModel
             AppUserId = userId,
         };
 
-        await _httpClientHelper.PostAsync("GroupChatUser", JsonContent.Create(groupChatUser), refreshToken, Port.ChatApi);
+        var response = await _httpClientHelper.PostAsync("GroupChatUser", JsonContent.Create(groupChatUser), refreshToken, Port.ChatApi);
+        response.EnsureSuccessStatusCode();
     }
 }

@@ -2,6 +2,7 @@
 using CombatAnalysis.Core.ViewModels.Base;
 using CombatAnalysis.Core.ViewModels.Chat;
 using CombatAnalysis.Core.ViewModels.User;
+using CombatAnalysis.Core.ViewModels.ViewModelTemplates;
 using MvvmCross.Commands;
 using MvvmCross.Navigation;
 
@@ -21,11 +22,10 @@ public class HomeViewModel : ParentTemplate<bool>, IAuthObserver
         OpenLognCommand = new MvxAsyncCommand(OpenLoginAsync);
         OpenCombatAnalysisCommand = new MvxAsyncCommand(OpenCombatAnalysisAsync);
 
-        BasicTemplate = ParentTemplate.Basic;
-        BasicTemplate.Handler.PropertyUpdate<BasicTemplateViewModel>(BasicTemplate, nameof(BasicTemplateViewModel.Step), -1);
+        Basic.Handler.BasicPropertyUpdate(nameof(BasicTemplateViewModel.Step), -1);
 
-        var authObservable = (IAuthObservable)BasicTemplate;
-        authObservable.AddObserver(this);
+        var authObservable = Basic as IAuthObservable;
+        authObservable?.AddObserver(this);
     }
 
     #region Command
@@ -38,7 +38,7 @@ public class HomeViewModel : ParentTemplate<bool>, IAuthObserver
 
     #endregion
 
-    #region Properties
+    #region View model properties
 
     public bool ChatIsEnabled
     {
@@ -51,7 +51,7 @@ public class HomeViewModel : ParentTemplate<bool>, IAuthObserver
 
     #endregion
 
-    protected override void ChildPrepare(bool isAuth)
+    public override void Prepare(bool isAuth)
     {
         ChatIsEnabled = isAuth;
     }

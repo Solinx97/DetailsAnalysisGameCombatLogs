@@ -16,10 +16,10 @@ public partial class MainWindow : MvxWindow
         Application.Current.MainWindow.Height = SystemParameters.PrimaryScreenHeight * 0.925;
         Application.Current.MainWindow.Width = SystemParameters.PrimaryScreenWidth * 0.925;
 
-        Closed += MainWindow_Closed;
+        Closed += MainWindowClosed;
     }
 
-    private void MainWindow_Closed(object sender, System.EventArgs e)
+    private void MainWindowClosed(object sender, System.EventArgs e)
     {
         Dispose();
     }

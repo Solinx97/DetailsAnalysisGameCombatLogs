@@ -6,11 +6,11 @@ using CombatAnalysis.Core.Interfaces;
 using CombatAnalysis.Core.Models.Chat;
 using CombatAnalysis.Core.Models.User;
 using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Logging;
 using MvvmCross.Commands;
 using MvvmCross.ViewModels;
 using System.Collections.ObjectModel;
 using System.Net.Http.Json;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace CombatAnalysis.Core.ViewModels.Chat;
 
@@ -18,20 +18,24 @@ public class PersonalChatMessagesVewModel : MvxViewModel, IImprovedMvxViewModel
 {
     private readonly IHttpClientHelper _httpClientHelper;
     private readonly IMemoryCache _memoryCache;
+    private readonly ILogger _logger;
 
-    private ObservableCollection<PersonalChatMessageModel> _messages;
-    private IEnumerable<PersonalChatMessageModel> _allMessages;
-    private PersonalChatModel _selectedChat;
-    private string _selectedChatName;
-    private string _message;
-    private AppUserModel _myAccount;
+    private ObservableCollection<PersonalChatMessageModel>? _messages;
+    private IEnumerable<PersonalChatMessageModel>? _allMessages;
+    private PersonalChatModel? _selectedChat;
+    private string? _selectedChatName;
+    private string? _message;
+    private AppUserModel? _myAccount;
 
-    public PersonalChatMessagesVewModel(IHttpClientHelper httpClientHelper, IMemoryCache memoryCache)
+    public PersonalChatMessagesVewModel(IHttpClientHelper httpClientHelper, IMemoryCache memoryCache, ILogger logger)
     {
-        Handler = new VMHandler();
+        Handler = new VMHandler<PersonalChatMessagesVewModel>();
+        Parent = this;
+        SavedViewModel = this;
 
         _httpClientHelper = httpClientHelper;
         _memoryCache = memoryCache;
+        _logger = logger;
 
         SendMessageCommand = new MvxAsyncCommand(SendMessageAsync);
 
@@ -41,15 +45,21 @@ public class PersonalChatMessagesVewModel : MvxViewModel, IImprovedMvxViewModel
         GetMyAccount();
     }
 
+    public IVMHandler Handler { get; set; }
+
+    public IMvxViewModel Parent { get; set; }
+
+    public IMvxViewModel SavedViewModel { get; set; }
+
     #region Commands
 
     public IMvxAsyncCommand SendMessageCommand { get; set; }
 
     #endregion
 
-    #region Properties
+    #region View model properties
 
-    public ObservableCollection<PersonalChatMessageModel> Messages
+    public ObservableCollection<PersonalChatMessageModel>? Messages
     {
         get { return _messages; }
         set
@@ -58,7 +68,7 @@ public class PersonalChatMessagesVewModel : MvxViewModel, IImprovedMvxViewModel
         }
     }
 
-    public PersonalChatModel SelectedChat
+    public PersonalChatModel? SelectedChat
     {
         get { return _selectedChat; }
         set
@@ -67,12 +77,12 @@ public class PersonalChatMessagesVewModel : MvxViewModel, IImprovedMvxViewModel
 
             if (value != null)
             {
-                LoadMessagesForSelectedChatAsync();
+                Task.Run(LoadMessagesForSelectedChatAsync);
             }
         }
     }
 
-    public string SelectedChatName
+    public string? SelectedChatName
     {
         get { return _selectedChatName; }
         set
@@ -81,7 +91,7 @@ public class PersonalChatMessagesVewModel : MvxViewModel, IImprovedMvxViewModel
         }
     }
 
-    public string Message
+    public string? Message
     {
         get { return _message; }
         set
@@ -90,7 +100,7 @@ public class PersonalChatMessagesVewModel : MvxViewModel, IImprovedMvxViewModel
         }
     }
 
-    public AppUserModel MyAccount
+    public AppUserModel? MyAccount
     {
         get { return _myAccount; }
         set
@@ -99,11 +109,7 @@ public class PersonalChatMessagesVewModel : MvxViewModel, IImprovedMvxViewModel
         }
     }
 
-    public IVMHandler Handler { get; set; }
 
-    public IMvxViewModel Parent { get; set; }
-
-    public IMvxViewModel SavedViewModel { get; set; }
 
     #endregion
 
@@ -111,6 +117,11 @@ public class PersonalChatMessagesVewModel : MvxViewModel, IImprovedMvxViewModel
     {
         AsyncDispatcher.ExecuteOnMainThreadAsync(() =>
         {
+            if (_allMessages == null || Messages == null)
+            {
+                return;
+            }
+
             foreach (var item in _allMessages)
             {
                 if (item.ChatId == SelectedChat?.Id
@@ -124,84 +135,150 @@ public class PersonalChatMessagesVewModel : MvxViewModel, IImprovedMvxViewModel
 
     public async Task SendMessageAsync()
     {
-        var newPersonalChatMessage = new PersonalChatMessageModel
+        try
         {
-            Message = Message,
-            Time = TimeSpan.Parse($"{DateTimeOffset.UtcNow.Hour}:{DateTimeOffset.UtcNow.Minute}").ToString(),
-            Status = 0,
-            ChatId = SelectedChat.Id,
-            AppUserId = MyAccount.Id,
-        };
+            if (Message == null)
+            {
+                throw new ArgumentNullException(nameof(Message));
+            }
+            else if (SelectedChat == null)
+            {
+                throw new ArgumentNullException(nameof(SelectedChat));
+            }
+            else if (MyAccount == null)
+            {
+                throw new ArgumentNullException(nameof(MyAccount));
+            }
 
-        Message = string.Empty;
+            var newPersonalChatMessage = new PersonalChatMessageModel
+            {
+                Message = Message,
+                Time = TimeSpan.Parse($"{DateTimeOffset.UtcNow.Hour}:{DateTimeOffset.UtcNow.Minute}").ToString(),
+                Status = 0,
+                ChatId = SelectedChat.Id,
+                AppUserId = MyAccount.Id,
+            };
 
-        var refreshToken = _memoryCache.Get<string>(nameof(MemoryCacheValue.RefreshToken));
-        if (string.IsNullOrEmpty(refreshToken))
-        {
-            return;
+            Message = string.Empty;
+
+            var refreshToken = _memoryCache.Get<string>(nameof(MemoryCacheValue.RefreshToken));
+            if (string.IsNullOrEmpty(refreshToken))
+            {
+                throw new ArgumentNullException(nameof(refreshToken));
+            }
+
+            var response = await _httpClientHelper.PostAsync("PersonalChatMessage", JsonContent.Create(newPersonalChatMessage), refreshToken, Port.ChatApi);
+            response.EnsureSuccessStatusCode();
+
+            SelectedChat.LastMessage = newPersonalChatMessage.Message;
+
+            response = await _httpClientHelper.PutAsync("PersonalChat", JsonContent.Create(SelectedChat), refreshToken, Port.ChatApi);
+            response.EnsureSuccessStatusCode();
         }
-
-        await _httpClientHelper.PostAsync("PersonalChatMessage", JsonContent.Create(newPersonalChatMessage), refreshToken, Port.ChatApi);
-
-        SelectedChat.LastMessage = newPersonalChatMessage.Message;
-
-        await _httpClientHelper.PutAsync("PersonalChat", JsonContent.Create(SelectedChat), refreshToken, Port.ChatApi);
+        catch (ArgumentNullException ex)
+        {
+            _logger.LogError(ex, ex.Message);
+        }
+        catch (HttpRequestException ex)
+        {
+            _logger.LogError(ex, ex.Message);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, ex.Message);
+        }
     }
 
     private async Task LoadMessagesForSelectedChatAsync()
     {
-        Messages.Clear();
+        await AsyncDispatcher.ExecuteOnMainThreadAsync(() =>
+        {
+            Messages?.Clear();
+        });
 
         await LoadMessagesAsync();
     }
 
     private async Task LoadMessagesAsync()
     {
-        var refreshToken = _memoryCache.Get<string>(nameof(MemoryCacheValue.RefreshToken));
-        if (string.IsNullOrEmpty(refreshToken))
+        try
         {
-            return;
-        }
+            var refreshToken = _memoryCache.Get<string>(nameof(MemoryCacheValue.RefreshToken));
+            if (string.IsNullOrEmpty(refreshToken))
+            {
+                throw new ArgumentNullException(nameof(refreshToken));
+            }
 
-        var response = await _httpClientHelper.GetAsync($"PersonalChatMessage/getByChatId?chatId={SelectedChat?.Id}&pageSize=20", refreshToken, Port.ChatApi);
-        if (!response.IsSuccessStatusCode)
+            var response = await _httpClientHelper.GetAsync($"PersonalChatMessage/getByChatId?chatId={SelectedChat?.Id}&pageSize=20", refreshToken, Port.ChatApi);
+            response.EnsureSuccessStatusCode();
+
+            _allMessages = await response.Content.ReadFromJsonAsync<IEnumerable<PersonalChatMessageModel>>();
+            if (_allMessages == null)
+            {
+                throw new ArgumentNullException(nameof(_allMessages));
+            }
+
+            var tasks = new List<Task>();
+            foreach (var item in _allMessages)
+            {
+                tasks.Add(GetPersonalChatCompanionAsync(item));
+            }
+
+            await Task.WhenAll(tasks);
+
+            Fill();
+        }
+        catch (ArgumentNullException ex)
         {
-            return;
+            _logger.LogError(ex, ex.Message);
         }
-
-        _allMessages = await response.Content.ReadFromJsonAsync<IEnumerable<PersonalChatMessageModel>>();
-
-        var tasks = new List<Task>();
-        foreach (var item in _allMessages)
+        catch (HttpRequestException ex)
         {
-            tasks.Add(GetPersonalChatCompanionAsync(item));
+            _logger.LogError(ex, ex.Message);
         }
-
-        await Task.WhenAll(tasks);
-
-        Fill();
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, ex.Message);
+        }
     }
 
     private async Task GetPersonalChatCompanionAsync(PersonalChatMessageModel message)
     {
-        var refreshToken = _memoryCache.Get<string>(nameof(MemoryCacheValue.RefreshToken));
-        if (string.IsNullOrEmpty(refreshToken))
+        try
         {
-            return;
-        }
+            var refreshToken = _memoryCache.Get<string>(nameof(MemoryCacheValue.RefreshToken));
+            if (string.IsNullOrEmpty(refreshToken))
+            {
+                throw new ArgumentNullException(nameof(_allMessages));
+            }
 
-        var response = await _httpClientHelper.GetAsync($"Account/{message.AppUserId}", refreshToken, Port.UserApi);
-        if (!response.IsSuccessStatusCode)
+            var response = await _httpClientHelper.GetAsync($"Account/{message.AppUserId}", refreshToken, Port.UserApi);
+            response.EnsureSuccessStatusCode();
+
+            var companions = await response.Content.ReadFromJsonAsync<AppUserModel>();
+            if (companions == null)
+            {
+                throw new ArgumentNullException(nameof(companions));
+            }
+
+            message.Username = companions.Username ?? string.Empty;
+        }
+        catch (ArgumentNullException ex)
         {
-            return;
+            _logger.LogError(ex, ex.Message);
         }
-
-        var companions = await response.Content.ReadFromJsonAsync<AppUserModel>();
-        message.Username = companions?.Username;
+        catch (HttpRequestException ex)
+        {
+            _logger.LogError(ex, ex.Message);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, ex.Message);
+        }
     }
 
     private void GetMyAccount()
     {
-        MyAccount = _memoryCache.Get<AppUserModel>(nameof(MemoryCacheValue.User));
+        MyAccount = _memoryCache.Get<AppUserModel>(nameof(MemoryCacheValue.User)) ?? new AppUserModel();
     }
 }

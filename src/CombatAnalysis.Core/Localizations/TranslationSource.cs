@@ -6,10 +6,10 @@ namespace CombatAnalysis.Core.Localizations;
 
 public class TranslationSource : INotifyPropertyChanged
 {
-    private readonly Dictionary<string, ResourceManager> _resourceManagerDictionary = new Dictionary<string, ResourceManager>();
+    private readonly Dictionary<string, ResourceManager> _resourceManagerDictionary = new();
     private string _language = Thread.CurrentThread.CurrentUICulture.Name;
 
-    public event PropertyChangedEventHandler PropertyChanged;
+    public event PropertyChangedEventHandler? PropertyChanged;
 
     public static TranslationSource Instance { get; } = new TranslationSource();
 
