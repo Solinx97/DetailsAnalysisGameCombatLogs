@@ -5,10 +5,11 @@ using CombatAnalysis.Core.Helpers;
 using CombatAnalysis.Core.Interfaces;
 using CombatAnalysis.Core.Interfaces.Observers;
 using CombatAnalysis.Core.Models;
-using CombatAnalysis.Core.Models.User;
+using CombatAnalysis.Core.Security;
 using CombatAnalysis.Core.ViewModels.Chat;
 using CombatAnalysis.Core.ViewModels.User;
 using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Logging;
 using MvvmCross.Commands;
 using MvvmCross.Navigation;
 using MvvmCross.ViewModels;
@@ -21,7 +22,7 @@ public class BasicTemplateViewModel : MvxViewModel, IImprovedMvxViewModel, IVMDa
     private readonly List<IAuthObserver> _authObservers;
     private readonly IMvxNavigationService _mvvmNavigation;
     private readonly IMemoryCache _memoryCache;
-    private readonly IHttpClientHelper _httpClient;
+    private readonly SecurityStorage _securityStorage;
 
     private string? _username;
     private int _step = -1;
@@ -40,16 +41,17 @@ public class BasicTemplateViewModel : MvxViewModel, IImprovedMvxViewModel, IVMDa
     private static LoadingStatus _responseStatus;
     private static int _allowStep;
 
-    public BasicTemplateViewModel(IMvxNavigationService mvvmNavigation, IMemoryCache memoryCache, IHttpClientHelper httpClient)
+    public BasicTemplateViewModel(IMvxNavigationService mvvmNavigation, IMemoryCache memoryCache, IHttpClientHelper httpClient, ILogger logger)
     {
         BasicViewModel.Template = this;
         Parent = this;
         SavedViewModel = this;
         Handler = new VMHandler<BasicTemplateViewModel>();
 
+        _securityStorage = new SecurityStorage(memoryCache, httpClient, logger);
+
         _mvvmNavigation = mvvmNavigation;
         _memoryCache = memoryCache;
-        _httpClient = httpClient;
 
         _responseStatusObservers = new List<IResponseStatusObserver>();
         _authObservers = new List<IAuthObserver>();
@@ -71,7 +73,7 @@ public class BasicTemplateViewModel : MvxViewModel, IImprovedMvxViewModel, IVMDa
         DamageTakenDetailsCommand = new MvxAsyncCommand(DamageTakenDetailsAsync);
         ResourceDetailsCommand = new MvxAsyncCommand(ResourceDetailsAsync);
 
-        CheckAuth();
+        Task.Run(CheckAuthAsync);
         Task.Run(async () => await _mvvmNavigation.Navigate<HomeViewModel, bool>(IsAuth));
     }
 
@@ -311,16 +313,19 @@ public class BasicTemplateViewModel : MvxViewModel, IImprovedMvxViewModel, IVMDa
     public async Task LogoutAsync()
     {
         var refreshToken = _memoryCache.Get<string>(nameof(MemoryCacheValue.RefreshToken));
-
-        _httpClient.BaseAddress = Port.UserApi;
-        await _httpClient.GetAsync($"Account/logout/{refreshToken}", CancellationToken.None);
+        if (refreshToken == null)
+        {
+            return;
+        }
 
         _memoryCache.Remove(nameof(MemoryCacheValue.RefreshToken));
+        _memoryCache.Remove(nameof(MemoryCacheValue.AccessToken));
         _memoryCache.Remove(nameof(MemoryCacheValue.User));
-        _memoryCache.Remove(nameof(MemoryCacheValue.Customer));
 
         IsAuth = false;
         Username = string.Empty;
+
+        _securityStorage.RemoveTokens();
 
         if (Parent is ChatViewModel)
         {
@@ -420,15 +425,13 @@ public class BasicTemplateViewModel : MvxViewModel, IImprovedMvxViewModel, IVMDa
         }
     }
 
-    public void CheckAuth()
+    public async Task CheckAuthAsync()
     {
-        var user = _memoryCache.Get<AppUserModel>(nameof(MemoryCacheValue.User));
-        if (user == null)
+        var user = await _securityStorage.GetUserAsync();
+        if (user != null)
         {
-            return;
+            IsAuth = true;
+            Username = user.Username;
         }
-
-        IsAuth = true;
-        Username = user.Username;
     }
 }

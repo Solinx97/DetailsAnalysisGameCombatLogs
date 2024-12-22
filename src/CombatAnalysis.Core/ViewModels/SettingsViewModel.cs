@@ -1,6 +1,8 @@
 ﻿using CombatAnalysis.Core.Localizations;
 using CombatAnalysis.Core.Settings;
 using CombatAnalysis.Core.ViewModels.Base;
+using MvvmCross.Commands;
+using MvvmCross.Navigation;
 using System.Collections.ObjectModel;
 using System.Globalization;
 using System.Text.Json;
@@ -9,19 +11,31 @@ namespace CombatAnalysis.Core.ViewModels;
 
 public class SettingsViewModel : ParentTemplate
 {
+    private readonly IMvxNavigationService _mvvmNavigation;
+
     private ObservableCollection<Language>? _languages;
     private Language _selectedLanguage;
     private string _logsLocation;
 
-    public SettingsViewModel()
+    public SettingsViewModel(IMvxNavigationService mvvmNavigation)
     {
         Basic.Parent = this;
+
+        _mvvmNavigation = mvvmNavigation;
 
         var userSettings = ReadUserSettings("User.json");
         _logsLocation = userSettings?.Location ?? string.Empty;
 
+        CloseCommand = new MvxAsyncCommand(Close);
+
         LanguageInit();
     }
+
+    #region Command
+
+    public IMvxAsyncCommand CloseCommand { get; set; }
+
+    #endregion
 
     #region View model properties
 
@@ -54,6 +68,11 @@ public class SettingsViewModel : ParentTemplate
     }
 
     #endregion
+
+    private async Task Close()
+    {
+        await _mvvmNavigation.Close(this);
+    }
 
     private void LanguageInit()
     {

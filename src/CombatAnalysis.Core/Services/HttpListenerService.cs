@@ -1,13 +1,16 @@
-﻿using System.Net;
+﻿using Microsoft.Extensions.Logging;
+using System.Net;
 
 namespace CombatAnalysis.Core.Services;
 
 internal class HttpListenerService
 {
     private readonly HttpListener _listener = new();
+    private readonly ILogger _logger;
 
-    public HttpListenerService(string listeningUrl)
+    public HttpListenerService(string listeningUrl, ILogger logger)
     {
+        _logger = logger;
         _listener.Prefixes.Add(listeningUrl);
     }
 
@@ -46,7 +49,7 @@ internal class HttpListenerService
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Error starting HttpListener: {ex.Message}");
+            _logger.LogError(ex, ex.Message);
 
             StopListening();
         }

@@ -17,14 +17,14 @@ export const AuthProvider = ({ children }) => {
 
     const [isAuthenticated, setIsAuthenticated] = useState(false);
 
-    const [getAuthAsync] = useLazyAuthenticationAsyncQuery();
-    const [logoutAsyncMut] = useLogoutAsyncMutation();
-    const [getCustomerAsync] = useLazySearchByUserIdAsyncQuery();
+    const [getAuth] = useLazyAuthenticationAsyncQuery();
+    const [logout] = useLogoutAsyncMutation();
+    const [getCustomer] = useLazySearchByUserIdAsyncQuery();
 
     const [getUserPrivacyAsyncMut] = useLazyGetUserPrivacyQuery();
 
     const checkAuthAsync = async () => {
-        const response = await getAuthAsync();
+        const response = await getAuth();
         if (response.error !== undefined || !response.data) {
             dispatch(updateUser(null));
             dispatch(updateCustomer(null));
@@ -40,7 +40,7 @@ export const AuthProvider = ({ children }) => {
     }
 
     const getCustomerDataAsync = async (userId) => {
-        const response = await getCustomerAsync(userId);
+        const response = await getCustomer(userId);
         if (response.error !== undefined) {
             return;
         }
@@ -67,7 +67,7 @@ export const AuthProvider = ({ children }) => {
 
         navigate("/");
 
-        await logoutAsyncMut();
+        await logout();
     };
 
     return (

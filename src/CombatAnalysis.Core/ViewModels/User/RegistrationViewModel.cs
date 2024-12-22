@@ -64,11 +64,11 @@ public class RegistrationViewModel : ParentTemplate
 
         await _identityService.SendTokenRequestAsync();
 
-        var customer = _memoryCache.Get<CustomerModel>(nameof(MemoryCacheValue.Customer));
-        if (customer != null)
+        var user = _memoryCache.Get<AppUserModel>(nameof(MemoryCacheValue.User));
+        if (user != null)
         {
             Basic.Handler.BasicPropertyUpdate(nameof(BasicTemplateViewModel.IsAuth), true);
-            Basic.Handler.BasicPropertyUpdate(nameof(BasicTemplateViewModel.Username), customer.Username);
+            Basic.Handler.BasicPropertyUpdate(nameof(BasicTemplateViewModel.Username), user.Username);
         }
 
         await _mvvmNavigation.Close(this);

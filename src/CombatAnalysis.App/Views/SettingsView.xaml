@@ -8,6 +8,7 @@
     xmlns:resx="clr-namespace:CombatAnalysis.App.Localizations.Resources.Settings"
     xmlns:local="clr-namespace:CombatAnalysis.App.Views.ViewTemplates"
     xmlns:basicViewModel="clr-namespace:CombatAnalysis.Core.ViewModels.ViewModelTemplates;assembly=CombatAnalysis.Core"
+    xmlns:mvx="clr-namespace:MvvmCross.Platforms.Wpf.Binding;assembly=MvvmCross.Platforms.Wpf"
     xmlns:views="clr-namespace:MvvmCross.Platforms.Wpf.Views;assembly=MvvmCross.Platforms.Wpf"
     loc:LocalizationObject.ResourceManager="{x:Static resx:Resource.ResourceManager}"
     mc:Ignorable="d" d:DesignHeight="850" d:DesignWidth="1250">
@@ -57,8 +58,13 @@
             <StackPanel Grid.Row="1" Grid.Column="0" Margin="50 0">
                 <TextBlock Text="{loc:Loc LogsLocation}" FontSize="16" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="10" Foreground="White" />
                 <TextBlock Text="{Binding LogsLocation}" FontSize="16" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="10" Foreground="White" />
-                <Button Content="{loc:Loc ChangeLocationPath}" Click="SelectLocation" Width="125" FontSize="16" HorizontalAlignment="Left"
-                    Margin="15 0" Style="{StaticResource showButton}" />
+                <Button Content="{loc:Loc ChangeLocationPath}" Click="SelectLocation" Width="110" FontSize="14" HorizontalAlignment="Left" 
+                        Style="{StaticResource showButton}" />
+            </StackPanel>
+
+            <StackPanel Grid.Row="2" Grid.Column="0" VerticalAlignment="Bottom" Margin="50 0">
+                <Button Content="{loc:Loc Close}" Width="110" FontSize="14" HorizontalAlignment="Left" mvx:Bi.nd="Command CloseCommand"
+                        Style="{StaticResource showButton}" />
             </StackPanel>
         </Grid>
     </Grid>
