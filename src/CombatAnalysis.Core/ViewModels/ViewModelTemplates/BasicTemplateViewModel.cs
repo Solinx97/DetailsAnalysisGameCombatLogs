@@ -33,10 +33,11 @@ public class BasicTemplateViewModel : MvxViewModel, IImprovedMvxViewModel, IVMDa
     private List<CombatModel>? _combats;
     private CombatModel? _selectedCombat;
     private CombatLogModel? _combatLog;
-    private bool _isAuth;
+    private bool _isAuth = true;
     private LogType _logType;
     private bool _logPanelStatusIsVisibly;
     private int _uploadedCombatsCount;
+    private bool _authorizationIsOpen;
 
     private static LoadingStatus _responseStatus;
     private static int _allowStep;
@@ -76,6 +77,11 @@ public class BasicTemplateViewModel : MvxViewModel, IImprovedMvxViewModel, IVMDa
         Task.Run(CheckAuthAsync);
         Task.Run(async () => await _mvvmNavigation.Navigate<HomeViewModel, bool>(IsAuth));
     }
+
+    public event AuthorizationWindowEventHandler? OpenAuthorizationWindow;
+    public event AuthorizationWindowEventHandler? OpenRegistrationWindow;
+    public event AuthorizationWindowEventHandler? CloseAuthorizationWindow;
+    public event AuthorizationWindowEventHandler? CloseRegistrationWindow;
 
     public IVMHandler Handler { get; set; }
 
@@ -154,7 +160,16 @@ public class BasicTemplateViewModel : MvxViewModel, IImprovedMvxViewModel, IVMDa
         }
     }
 
-    public static string AppVersion
+    public bool AuthorizationIsOpen
+    {
+        get { return _authorizationIsOpen; }
+        set
+        {
+            SetProperty(ref _authorizationIsOpen, value);
+        }
+    }
+
+    public static string? AppVersion
     {
         get { return AppInformation.Version; }
     }
@@ -300,14 +315,22 @@ public class BasicTemplateViewModel : MvxViewModel, IImprovedMvxViewModel, IVMDa
 
     public async Task LoginAsync()
     {
-        IsLoginNotActivated = false;
-        await _mvvmNavigation.Navigate<AuthorizationViewModel>();
+        await _mvvmNavigation.Navigate<HomeViewModel>();
+        await AsyncDispatcher.ExecuteOnMainThreadAsync(() =>
+        {
+            AuthorizationIsOpen = true;
+
+            OpenAuthorizationWindow?.Invoke();
+        });
     }
 
     public async Task RegistrationAsync()
     {
-        IsRegistrationNotActivated = false;
-        await _mvvmNavigation.Navigate<RegistrationViewModel>();
+        await _mvvmNavigation.Navigate<HomeViewModel>();
+        await AsyncDispatcher.ExecuteOnMainThreadAsync(() =>
+        {
+            OpenRegistrationWindow?.Invoke();
+        });
     }
 
     public async Task LogoutAsync()
@@ -327,11 +350,8 @@ public class BasicTemplateViewModel : MvxViewModel, IImprovedMvxViewModel, IVMDa
 
         _securityStorage.RemoveTokens();
 
-        if (Parent is ChatViewModel)
-        {
-            Step = 0;
-            await _mvvmNavigation.Close(Parent);
-        }
+        Step = -1;
+        await _mvvmNavigation.Close(Parent);
     }
 
     public async Task ToHomeAsync()
@@ -428,10 +448,30 @@ public class BasicTemplateViewModel : MvxViewModel, IImprovedMvxViewModel, IVMDa
     public async Task CheckAuthAsync()
     {
         var user = await _securityStorage.GetUserAsync();
-        if (user != null)
+        if (user == null)
         {
-            IsAuth = true;
-            Username = user.Username;
+            IsAuth = false;
+
+            return;
         }
+
+        Username = user.Username;
+
+        await AsyncDispatcher.ExecuteOnMainThreadAsync(() =>
+        {
+            CloseAuthorizationWindow?.Invoke();
+        });
+
+        AuthorizationIsOpen = false;
     }
+
+    public void ClearEvents()
+    {
+        OpenAuthorizationWindow = null;
+        CloseAuthorizationWindow = null;
+        OpenRegistrationWindow = null;
+        CloseRegistrationWindow = null;
+    }
+
+    public delegate void AuthorizationWindowEventHandler();
 }

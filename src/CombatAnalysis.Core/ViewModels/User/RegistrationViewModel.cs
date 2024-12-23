@@ -22,14 +22,11 @@ public class RegistrationViewModel : ParentTemplate
         _mvvmNavigation = mvvmNavigation;
         _identityService = identityService;
 
-        if (Basic.Parent is AuthorizationViewModel)
-        {
-            _mvvmNavigation.Close(Basic.Parent).GetAwaiter().GetResult();
-        }
-
         Basic.Handler.BasicPropertyUpdate(nameof(BasicTemplateViewModel.IsLoginNotActivated), true);
         Basic.Parent = this;
     }
+
+    public event CloseRegistrationWindowEventHandler? CloseRegistrationWindow;
 
     #region View model properties
 
@@ -44,14 +41,7 @@ public class RegistrationViewModel : ParentTemplate
 
     #endregion
 
-    public override void ViewDisappeared()
-    {
-        Basic.Handler.BasicPropertyUpdate(nameof(BasicTemplateViewModel.IsLoginNotActivated), true);
-
-        base.ViewDisappeared();
-    }
-
-    public override void ViewAppeared()
+    public void SendRequest()
     {
         Task.Run(SendAuthorizationRequestAsync);
     }
@@ -71,6 +61,11 @@ public class RegistrationViewModel : ParentTemplate
             Basic.Handler.BasicPropertyUpdate(nameof(BasicTemplateViewModel.Username), user.Username);
         }
 
-        await _mvvmNavigation.Close(this);
+        await AsyncDispatcher.ExecuteOnMainThreadAsync(() =>
+        {
+            CloseRegistrationWindow?.Invoke();
+        });
     }
+
+    public delegate void CloseRegistrationWindowEventHandler();
 }

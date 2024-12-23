@@ -57,7 +57,8 @@
         </Border>
 
         <Border Grid.Column="1" CornerRadius="0"
-                Panel.ZIndex="1" Margin="-25 0 0 0" Background="#283a4b" BorderThickness="0 3 0 0">
+                Panel.ZIndex="1" Margin="-25 0 0 0" Background="#283a4b" BorderThickness="0 3 0 0"
+                IsEnabled="{Binding AuthorizationIsOpen, Converter={StaticResource BoolToXAMLBool}, ConverterParameter=true}">
             <Border.BorderBrush>
                 <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
                     <GradientStop Color="#462ADB" Offset="0"/>
@@ -92,7 +93,8 @@
         </Border>
 
         <Border Grid.Column="1" Grid.Row="1" Grid.RowSpan="3" CornerRadius="0 20 20 0"
-                Panel.ZIndex="1" Margin="-25 0 0 0" Background="#283a4b" BorderThickness="3">
+                Panel.ZIndex="1" Margin="-25 0 0 0" Background="#283a4b" BorderThickness="3"
+                IsEnabled="{Binding AuthorizationIsOpen, Converter={StaticResource BoolToXAMLBool}, ConverterParameter=true}">
             <Border.BorderBrush>
                 <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
                     <GradientStop Color="#462ADB" Offset="0"/>
@@ -144,7 +146,8 @@
         </Border>
 
         <Border Grid.Column="2" Grid.ColumnSpan="2" Background="Transparent" Margin="10 5" Height="65"
-                VerticalAlignment="Center" MouseDown="BorderMouseDown" Panel.ZIndex="2">
+                VerticalAlignment="Center" MouseDown="BorderMouseDown" Panel.ZIndex="2"
+                IsEnabled="{Binding AuthorizationIsOpen, Converter={StaticResource BoolToXAMLBool}, ConverterParameter=true}">
             <StackPanel HorizontalAlignment="Right">
                 <StackPanel Orientation="Horizontal">
                     <Button Style="{StaticResource textBoxButton}" Margin="30 0" ToolTip="{loc:Loc Settings}" mvx:Bi.nd="Command SettingsCommand">
@@ -176,14 +179,16 @@
             </StackPanel>
         </Border>
 
-        <StackPanel Grid.Row="2" Grid.Column="1" VerticalAlignment="Bottom" Panel.ZIndex="3" Margin="10" Orientation="Horizontal">
+        <StackPanel Grid.Row="2" Grid.Column="1" VerticalAlignment="Bottom" Panel.ZIndex="3" Margin="10" Orientation="Horizontal"
+                    IsEnabled="{Binding AuthorizationIsOpen, Converter={StaticResource BoolToXAMLBool}, ConverterParameter=true}">
             <TextBlock Text="{Binding AppVersionType}" FontSize="13" Foreground="White"/>
             <TextBlock Text="  " FontSize="13" Foreground="White"/>
             <TextBlock Text="{Binding AppVersion}" FontSize="13" FontWeight="DemiBold" Foreground="White"/>
         </StackPanel>
 
         <StackPanel Grid.Row="2" Grid.Column="2" Grid.ColumnSpan="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="10" mvx:Bi.nd="Command GeneralAnalysisCommand"
-                    Visibility="{Binding ResponseStatus, Converter={StaticResource IntToVisibility}, ConverterParameter=true:1}">
+                    Visibility="{Binding ResponseStatus, Converter={StaticResource IntToVisibility}, ConverterParameter=true:1}"
+                    IsEnabled="{Binding AuthorizationIsOpen, Converter={StaticResource BoolToXAMLBool}, ConverterParameter=true}">
             <Icon:PackIconMaterial Kind="ChartTimelineVariantShimmer" Style="{StaticResource menuButtonIcon}" mvx:Bi.nd="Command GeneralAnalysisCommand" Foreground="White">
                 <Icon:PackIconMaterial.InputBindings>
                     <MouseBinding Command="{Binding GeneralAnalysisCommand}" Gesture="LeftClick"/>

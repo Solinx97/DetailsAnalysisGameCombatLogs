@@ -1,5 +1,4 @@
-﻿using Azure;
-using CombatAnalysis.Core.Consts;
+﻿using CombatAnalysis.Core.Consts;
 using CombatAnalysis.Core.Enums;
 using CombatAnalysis.Core.Extensions;
 using CombatAnalysis.Core.Interfaces;
@@ -7,7 +6,6 @@ using CombatAnalysis.Core.Models.Chat;
 using CombatAnalysis.Core.Models.User;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
-using MvvmCross;
 using MvvmCross.Commands;
 using MvvmCross.ViewModels;
 using System.Net.Http.Json;
@@ -18,8 +16,8 @@ public class CreateGroupChatViewModel : MvxViewModel
 {
     private readonly IHttpClientHelper _httpClientHelper;
     private readonly IMemoryCache _memoryCache;
-    private readonly GroupChatModel _groupChat;
     private readonly ILogger _logger;
+    private readonly GroupChatModel _groupChat;
 
     private string? _name;
     private int _whoCanPinMessage = 1;
@@ -27,12 +25,11 @@ public class CreateGroupChatViewModel : MvxViewModel
     private int _whoCanInvitePeople;
     private int _whoCanRemovePeople;
 
-    public CreateGroupChatViewModel()
+    public CreateGroupChatViewModel(IHttpClientHelper httpClientHelper, IMemoryCache memoryCache, ILogger logger)
     {
-        _logger = Mvx.IoCProvider.GetSingleton<ILogger>();
-
-        _httpClientHelper = Mvx.IoCProvider.GetSingleton<IHttpClientHelper>();
-        _memoryCache = Mvx.IoCProvider.GetSingleton<IMemoryCache>();
+        _httpClientHelper = httpClientHelper;
+        _memoryCache = memoryCache;
+        _logger = logger;
 
         CreateCommand = new MvxAsyncCommand(CreateAsync);
         GetWhoCanInvitePeopleCommand = new MvxCommand<int>((type) => _whoCanInvitePeople = type);
@@ -43,16 +40,11 @@ public class CreateGroupChatViewModel : MvxViewModel
         _groupChat = new GroupChatModel();
     }
 
-    public CreateGroupChatViewModel(GroupChatModel chatModel) : this()
-    {
-        _groupChat = chatModel;
-    }
+    public event CloseCreateChatWindowEventHandler? CloseCreateChatWindow;
 
     #region Commands
 
     public IMvxAsyncCommand CreateCommand { get; set; }
-
-    public IMvxCommand? CancelCommand { get; set; }
 
     public IMvxCommand GetWhoCanInvitePeopleCommand { get; set; }
 
@@ -107,7 +99,7 @@ public class CreateGroupChatViewModel : MvxViewModel
             await CreateGroupChatRulesAsync(groupChat.Id);
             await CreateGroupChatUserAsync(groupChat.Id, user.Id, user.Username);
 
-            CancelCommand?.Execute();
+            CloseCreateChatWindow?.Invoke();
         }
         catch (ArgumentNullException ex)
         {
@@ -121,6 +113,11 @@ public class CreateGroupChatViewModel : MvxViewModel
         {
             _logger.LogError(ex, ex.Message);
         }
+    }
+
+    public void ClearEvents()
+    {
+        CloseCreateChatWindow = null;
     }
 
     private void UpdateGroupChatModel(AppUserModel user)
@@ -170,4 +167,6 @@ public class CreateGroupChatViewModel : MvxViewModel
         var response = await _httpClientHelper.PostAsync("GroupChatUser", JsonContent.Create(groupChatUser), refreshToken, Port.ChatApi);
         response.EnsureSuccessStatusCode();
     }
+
+    public delegate void CloseCreateChatWindowEventHandler();
 }

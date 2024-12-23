@@ -77,7 +77,7 @@
         <StackPanel Grid.Column="1" Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Center">
             <Button mvx:Bi.nd="Command CreateCommand" Content="{loc:Loc Create}" Width="100" Height="40" FontSize="16"
                     Margin="10 0" Style="{StaticResource showButton}" />
-            <Button mvx:Bi.nd="Command CancelCommand" Content="{loc:Loc Cancel}" Width="100" Height="40" FontSize="16"
+            <Button Content="{loc:Loc Cancel}" Width="100" Height="40" FontSize="16" Click="CloseWindow"
                     Margin="10 0" Style="{StaticResource showButton}" />
         </StackPanel>
     </Grid>

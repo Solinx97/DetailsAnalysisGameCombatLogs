@@ -4,32 +4,27 @@ using CombatAnalysis.Core.Models.User;
 using CombatAnalysis.Core.ViewModels.Base;
 using CombatAnalysis.Core.ViewModels.ViewModelTemplates;
 using Microsoft.Extensions.Caching.Memory;
-using MvvmCross.Navigation;
+using MvvmCross;
 
 namespace CombatAnalysis.Core.ViewModels.User;
 
 public class AuthorizationViewModel : ParentTemplate
 {
     private readonly IMemoryCache _memoryCache;
-    private readonly IMvxNavigationService _mvvmNavigation;
     private readonly IIdentityService _identityService;
 
     private bool _isVerification;
 
-    public AuthorizationViewModel(IMemoryCache memoryCache, IMvxNavigationService mvvmNavigation, IIdentityService identityService)
+    public AuthorizationViewModel(IMemoryCache memoryCache, IIdentityService identityService)
     {
         _memoryCache = memoryCache;
-        _mvvmNavigation = mvvmNavigation;
         _identityService = identityService;
-
-        if (Basic.Parent is RegistrationViewModel)
-        {
-            Task.Run(async () => await _mvvmNavigation.Close(Basic.Parent));
-        }
 
         Basic.Handler.BasicPropertyUpdate(nameof(BasicTemplateViewModel.IsRegistrationNotActivated), true);
         Basic.Parent = this;
     }
+
+    public event CloseAuthorizationWindowEventHandler? CloseAuthorizationWindow;
 
     #region View model properties
 
@@ -44,14 +39,7 @@ public class AuthorizationViewModel : ParentTemplate
 
     #endregion
 
-    public override void ViewDisappeared()
-    {
-        Basic.Handler.BasicPropertyUpdate(nameof(BasicTemplateViewModel.IsLoginNotActivated), true);
-
-        base.ViewDisappeared();
-    }
-
-    public override void ViewAppeared()
+    public void SendRequest()
     {
         Task.Run(SendAuthorizationRequestAsync);
     }
@@ -71,6 +59,13 @@ public class AuthorizationViewModel : ParentTemplate
             Basic.Handler.BasicPropertyUpdate(nameof(BasicTemplateViewModel.Username), user.Username);
         }
 
-        await _mvvmNavigation.Close(this);
+        await AsyncDispatcher.ExecuteOnMainThreadAsync(() =>
+        {
+            CloseAuthorizationWindow?.Invoke();
+        });
+
+        Basic.Handler.BasicPropertyUpdate(nameof(BasicTemplateViewModel.AuthorizationIsOpen), false);
     }
+
+    public delegate void CloseAuthorizationWindowEventHandler();
 }

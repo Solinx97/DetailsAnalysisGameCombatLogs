@@ -282,13 +282,17 @@ public class ChatViewModel : ParentTemplate
 
     public async Task CreatePersonalChatAsync()
     {
-        if (Users == null || MyAccount == null)
-        {
-            return;
-        }
-
         try
         {
+            if (Users == null)
+            {
+                throw new ArgumentNullException(nameof(Users));
+            }
+            else if (MyAccount == null)
+            {
+                throw new ArgumentNullException(nameof(MyAccount));
+            }
+
             var targetCustomer = Users[SelectedUsersIndex];
             var personalChat = new PersonalChatModel
             {
@@ -324,11 +328,13 @@ public class ChatViewModel : ParentTemplate
                 response.EnsureSuccessStatusCode();
             }
         }
+        catch (ArgumentNullException ex)
+        {
+            _logger.LogError(ex, ex.Message);
+        }
         catch (HttpRequestException ex)
         {
             _logger.LogError(ex, ex.Message);
-
-            GroupChatLoadingResponse = LoadingStatus.Failed;
         }
         catch (Exception ex)
         {
