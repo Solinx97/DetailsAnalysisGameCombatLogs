@@ -166,7 +166,7 @@
     <value>Успех. Все данные были сохранены успешно.</value>
   </data>
   <data name="Login" xml:space="preserve">
-    <value>Логин</value>
+    <value>Вход</value>
   </data>
   <data name="Logout" xml:space="preserve">
     <value>Выход</value>

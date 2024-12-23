@@ -1,10 +1,12 @@
 ﻿using CombatAnalysis.Core.Enums;
 using CombatAnalysis.Core.Interfaces;
 using CombatAnalysis.Core.Models.User;
+using CombatAnalysis.Core.Security;
 using CombatAnalysis.Core.ViewModels.Base;
 using CombatAnalysis.Core.ViewModels.ViewModelTemplates;
 using Microsoft.Extensions.Caching.Memory;
-using MvvmCross;
+using Microsoft.Extensions.Logging;
+using MvvmCross.Commands;
 
 namespace CombatAnalysis.Core.ViewModels.User;
 
@@ -12,21 +14,45 @@ public class AuthorizationViewModel : ParentTemplate
 {
     private readonly IMemoryCache _memoryCache;
     private readonly IIdentityService _identityService;
+    private readonly SecurityStorage _securityStorage;
 
+    private bool _checkAuthIsRan;
     private bool _isVerification;
+    private bool _authorizationIsRan;
 
-    public AuthorizationViewModel(IMemoryCache memoryCache, IIdentityService identityService)
+    public AuthorizationViewModel(IMemoryCache memoryCache, IIdentityService identityService, IHttpClientHelper httpClient, ILogger logger)
     {
         _memoryCache = memoryCache;
         _identityService = identityService;
 
+        _securityStorage = new SecurityStorage(memoryCache, httpClient, logger);
+
+        LoginCommand = new MvxAsyncCommand(SendAuthorizationRequestAsync);
+
         Basic.Handler.BasicPropertyUpdate(nameof(BasicTemplateViewModel.IsRegistrationNotActivated), true);
         Basic.Parent = this;
+
+        RunCheckAuth();
     }
 
     public event CloseAuthorizationWindowEventHandler? CloseAuthorizationWindow;
 
+    #region Commands
+
+    public IMvxAsyncCommand LoginCommand { get; set; }
+
+    #endregion
+
     #region View model properties
+
+    public bool CheckAuthIsRan
+    {
+        get { return _checkAuthIsRan; }
+        set
+        {
+            SetProperty(ref _checkAuthIsRan, value);
+        }
+    }
 
     public bool IsVerification
     {
@@ -37,15 +63,56 @@ public class AuthorizationViewModel : ParentTemplate
         }
     }
 
+    public bool AuthorizationIsRan
+    {
+        get { return _authorizationIsRan; }
+        set
+        {
+            SetProperty(ref _authorizationIsRan, value);
+        }
+    }
+
     #endregion
 
-    public void SendRequest()
+    private void RunCheckAuth()
     {
-        Task.Run(SendAuthorizationRequestAsync);
+        var basicViewModel = (BasicTemplateViewModel)Basic;
+
+        if (basicViewModel.LoginIsRan)
+        {
+            Task.Run(SendAuthorizationRequestAsync);
+        }
+        else
+        {
+            Task.Run(CheckAuthAsync);
+        }
+    }
+
+    private async Task CheckAuthAsync()
+    {
+        CheckAuthIsRan = true;
+
+        var user = await _securityStorage.GetUserAsync();
+        if (user == null)
+        {
+            CheckAuthIsRan = false;
+
+            return;
+        }
+
+        Basic.Handler.BasicPropertyUpdate(nameof(BasicTemplateViewModel.Username), user.Username);
+        Basic.Handler.BasicPropertyUpdate(nameof(BasicTemplateViewModel.IsAuth), true);
+
+        await AsyncDispatcher.ExecuteOnMainThreadAsync(() =>
+        {
+            CloseAuthorizationWindow?.Invoke();
+        });
     }
 
     private async Task SendAuthorizationRequestAsync()
     {
+        AuthorizationIsRan = true;
+
         await _identityService.SendAuthorizationRequestAsync("authorization");
 
         IsVerification = true;
@@ -63,9 +130,7 @@ public class AuthorizationViewModel : ParentTemplate
         {
             CloseAuthorizationWindow?.Invoke();
         });
-
-        Basic.Handler.BasicPropertyUpdate(nameof(BasicTemplateViewModel.AuthorizationIsOpen), false);
     }
-
-    public delegate void CloseAuthorizationWindowEventHandler();
 }
+
+public delegate void CloseAuthorizationWindowEventHandler();

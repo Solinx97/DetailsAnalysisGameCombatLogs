@@ -5,7 +5,7 @@
                  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                  xmlns:converters="clr-namespace:CombatAnalysis.App.Converters"
                  xmlns:loc="clr-namespace:CombatAnalysis.App.Localizations"
-                 xmlns:resx="clr-namespace:CombatAnalysis.App.Localizations.Resources.CombatLogInformation"
+                 xmlns:resx="clr-namespace:CombatAnalysis.App.Localizations.Resources.AuthUser"
                  xmlns:mvx="clr-namespace:MvvmCross.Platforms.Wpf.Binding;assembly=MvvmCross.Platforms.Wpf"
                  xmlns:views="clr-namespace:MvvmCross.Platforms.Wpf.Views;assembly=MvvmCross.Platforms.Wpf"
                  loc:LocalizationObject.ResourceManager="{x:Static resx:Resource.ResourceManager}"
@@ -37,9 +37,22 @@
         </Border>
 
         <StackPanel Grid.RowSpan="2" HorizontalAlignment="Center" VerticalAlignment="Center">
-            <TextBlock Text="Continue Authorization in Browser" HorizontalAlignment="Center" Foreground="White" FontFamily="Comic Sans MS" FontSize="16" Margin="10" />
-            <TextBlock Visibility="{Binding IsVerification, Converter={StaticResource BoolToVisibility}, ConverterParameter=true:false}"
-                           Text="Verification" HorizontalAlignment="Center" Foreground="White" FontFamily="Comic Sans MS" FontSize="16" Margin="10" />
+            <TextBlock Visibility="{Binding CheckAuthIsRan, Converter={StaticResource BoolToVisibility}, ConverterParameter=true:false}"
+                       Text="{loc:Loc Authorization}" HorizontalAlignment="Center" Foreground="White" FontFamily="Comic Sans MS" FontSize="16" Margin="10" />
+            <StackPanel Visibility="{Binding CheckAuthIsRan, Converter={StaticResource BoolToVisibility}, ConverterParameter=true:true}">
+                <StackPanel Visibility="{Binding AuthorizationIsRan, Converter={StaticResource BoolToVisibility}, ConverterParameter=true:true}">
+                    <TextBlock Visibility="{Binding Basic.IsAuth, Converter={StaticResource BoolToVisibility}, ConverterParameter=true:true}"
+                        Text="{loc:Loc AuthorizationFailed}" HorizontalAlignment="Center" Foreground="White" FontFamily="Comic Sans MS" FontSize="16" Margin="10" />
+                    <Button Grid.Row="1" Style="{StaticResource showButton}" Foreground="Green" Content="{loc:Loc Login}" Width="100" FontSize="12"
+                         mvx:Bi.nd="Command LoginCommand" />
+                </StackPanel>
+                <StackPanel Visibility="{Binding IsVerification, Converter={StaticResource BoolToVisibility}, ConverterParameter=true:true}">
+                    <TextBlock Visibility="{Binding AuthorizationIsRan, Converter={StaticResource BoolToVisibility}, ConverterParameter=true:false}"
+                       Text="{loc:Loc ContinueAuthInBrowser}" HorizontalAlignment="Center" Foreground="White" FontFamily="Comic Sans MS" FontSize="16" Margin="10" />
+                </StackPanel>
+                <TextBlock Visibility="{Binding IsVerification, Converter={StaticResource BoolToVisibility}, ConverterParameter=true:false}"
+                       Text="{loc:Loc Verification}" HorizontalAlignment="Center" Foreground="White" FontFamily="Comic Sans MS" FontSize="16" Margin="10" />
+            </StackPanel>
         </StackPanel>
         
         <StackPanel Grid.Row="1" VerticalAlignment="Center">

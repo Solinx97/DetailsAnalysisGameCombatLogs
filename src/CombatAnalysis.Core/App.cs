@@ -8,37 +8,60 @@ using CombatAnalysis.Core.Enums;
 using CombatAnalysis.Core.Helpers;
 using CombatAnalysis.Core.Interfaces;
 using CombatAnalysis.Core.Mapping;
+using CombatAnalysis.Core.Security;
 using CombatAnalysis.Core.Services;
 using CombatAnalysis.Core.ViewModels.ViewModelTemplates;
 using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using MvvmCross;
 using MvvmCross.ViewModels;
-using System.Configuration;
 
 namespace CombatAnalysis.Core;
 
+
 public class App : MvxApplication
 {
+#if DEBUG
+    private const string environment = "Development";
+#else
+    private const string environment = "Production";
+#endif
+
+    public IConfiguration Configuration { get; }
+
+    public App()
+    {
+        var builder = new ConfigurationBuilder()
+            .AddJsonFile($"appsettings.json", optional: true, reloadOnChange: true)
+            .AddJsonFile($"appsettings.{environment}.json", optional: true, reloadOnChange: true)
+            .AddUserSecrets<App>();
+
+        Configuration = builder.Build();
+    }
+
     public override void Initialize()
     {
-        Port.CombatParserApi = ConfigurationManager.AppSettings.Get("combatParserApiPort") ?? string.Empty;
-        Port.UserApi = ConfigurationManager.AppSettings.Get("userApiPort") ?? string.Empty;
-        Port.ChatApi = ConfigurationManager.AppSettings.Get("chatApiPort") ?? string.Empty;
-        Port.Identity = ConfigurationManager.AppSettings.Get("identityPort") ?? string.Empty;
+        SecurityKeys.AESKey = Configuration["EncryptedKey"] ?? string.Empty;
+        SecurityKeys.IV = Configuration["EncryptedIV"] ?? string.Empty;
 
-        Authentication.ClientId = ConfigurationManager.AppSettings.Get("clientId") ?? string.Empty;
-        Authentication.Scope = ConfigurationManager.AppSettings.Get("scope") ?? string.Empty;
-        Authentication.RedirectUri = ConfigurationManager.AppSettings.Get("redirectUri") ?? string.Empty;
-        Authentication.Protocol = ConfigurationManager.AppSettings.Get("protocol") ?? string.Empty;
-        Authentication.Listener = ConfigurationManager.AppSettings.Get("listener") ?? string.Empty;
+        Port.CombatParserApi = Configuration["ApiPort:CombatParser"] ?? string.Empty;
+        Port.UserApi = Configuration["ApiPort:User"] ?? string.Empty;
+        Port.ChatApi = Configuration["ApiPort:Chat"] ?? string.Empty;
+        Port.Identity = Configuration["ApiPort:Identity"] ?? string.Empty;
 
-        AuthenticationGrantType.Code = ConfigurationManager.AppSettings.Get("grantTypeCode") ?? string.Empty;
-        AuthenticationGrantType.Authorization = ConfigurationManager.AppSettings.Get("grantTypeAuthorization") ?? string.Empty;
-        AuthenticationGrantType.RefreshToken = ConfigurationManager.AppSettings.Get("grantTypeRefreshToken") ?? string.Empty;
+        Authentication.ClientId = Configuration["App:Auth:ClientId"] ?? string.Empty;
+        Authentication.Scope = Configuration["App:Auth:Scope"] ?? string.Empty;
+        Authentication.RedirectUri = Configuration["App:Auth:RedirectUri"] ?? string.Empty;
+        Authentication.Protocol = Configuration["App:Auth:Protocol"] ?? string.Empty;
+        Authentication.Listener = Configuration["App:Auth:Listener"] ?? string.Empty;
 
-        AppInformation.Version = ConfigurationManager.AppSettings.Get("appVersion") ?? string.Empty;
-        if (Enum.TryParse(ConfigurationManager.AppSettings.Get("appVersionType"), out AppVersionType appVersionType))
+        AuthenticationGrantType.Code = Configuration["App:Auth:GrantType:Code"] ?? string.Empty;
+        AuthenticationGrantType.Authorization = Configuration["App:Auth:GrantType:Authorization"] ?? string.Empty;
+        AuthenticationGrantType.RefreshToken = Configuration["App:Auth:GrantType:RefreshToken"] ?? string.Empty;
+
+        AppInformation.Version = Configuration["App:Version"] ?? string.Empty;
+        if (Enum.TryParse(Configuration["App:VersionType"], out AppVersionType appVersionType))
         {
             AppInformation.VersionType = appVersionType;
         }

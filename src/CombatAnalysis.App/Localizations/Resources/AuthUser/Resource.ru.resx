@@ -117,58 +117,25 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="AboutMe" xml:space="preserve">
-    <value>About me</value>
+  <data name="Authorization" xml:space="preserve">
+    <value>Авторизация...</value>
   </data>
-  <data name="Back" xml:space="preserve">
-    <value>Back</value>
+  <data name="AuthorizationFailed" xml:space="preserve">
+    <value>Ошибка авторизация. Пожалуйста, повторите Вход еще раз</value>
   </data>
-  <data name="Birthday" xml:space="preserve">
-    <value>Birthday</value>
+  <data name="Cancel" xml:space="preserve">
+    <value>Отмена</value>
   </data>
-  <data name="Email" xml:space="preserve">
-    <value>Email</value>
+  <data name="ContinueAuthInBrowser" xml:space="preserve">
+    <value>Продолжите Авторизацию в вашем Браузере</value>
   </data>
-  <data name="EmailIsAlready" xml:space="preserve">
-    <value>Account with this Email is already</value>
+  <data name="ContinueRegInBrowser" xml:space="preserve">
+    <value>Продолжите Регистрацию в вашем Браузере</value>
   </data>
-  <data name="FirstName" xml:space="preserve">
-    <value>First name</value>
+  <data name="Login" xml:space="preserve">
+    <value>Вход</value>
   </data>
-  <data name="LastName" xml:space="preserve">
-    <value>Last name</value>
-  </data>
-  <data name="Man" xml:space="preserve">
-    <value>Man</value>
-  </data>
-  <data name="NeedAddData" xml:space="preserve">
-    <value>Need add data to registration form</value>
-  </data>
-  <data name="Password" xml:space="preserve">
-    <value>Password</value>
-  </data>
-  <data name="PasswordConfirmation" xml:space="preserve">
-    <value>Password confirmation</value>
-  </data>
-  <data name="PasswordNotConfirmated" xml:space="preserve">
-    <value>Password confirmation must match the Password</value>
-  </data>
-  <data name="PhoneNumber" xml:space="preserve">
-    <value>Phone number</value>
-  </data>
-  <data name="Registration" xml:space="preserve">
-    <value>Registration</value>
-  </data>
-  <data name="RegistrationFailed" xml:space="preserve">
-    <value>We can't give a response from server. There may be connection problems or the server is temporarily unavailable</value>
-  </data>
-  <data name="Title" xml:space="preserve">
-    <value>Registration</value>
-  </data>
-  <data name="Username" xml:space="preserve">
-    <value>Username</value>
-  </data>
-  <data name="Woman" xml:space="preserve">
-    <value>Woman</value>
+  <data name="Verification" xml:space="preserve">
+    <value>Подтверждение...</value>
   </data>
 </root>

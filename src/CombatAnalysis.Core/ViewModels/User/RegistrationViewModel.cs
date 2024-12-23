@@ -4,25 +4,21 @@ using CombatAnalysis.Core.Models.User;
 using CombatAnalysis.Core.ViewModels.Base;
 using CombatAnalysis.Core.ViewModels.ViewModelTemplates;
 using Microsoft.Extensions.Caching.Memory;
-using MvvmCross.Navigation;
 
 namespace CombatAnalysis.Core.ViewModels.User;
 
 public class RegistrationViewModel : ParentTemplate
 {
     private readonly IMemoryCache _memoryCache;
-    private readonly IMvxNavigationService _mvvmNavigation;
     private readonly IIdentityService _identityService;
 
     private bool _isVerification;
 
-    public RegistrationViewModel(IMemoryCache memoryCache, IMvxNavigationService mvvmNavigation, IIdentityService identityService)
+    public RegistrationViewModel(IMemoryCache memoryCache, IIdentityService identityService)
     {
         _memoryCache = memoryCache;
-        _mvvmNavigation = mvvmNavigation;
         _identityService = identityService;
 
-        Basic.Handler.BasicPropertyUpdate(nameof(BasicTemplateViewModel.IsLoginNotActivated), true);
         Basic.Parent = this;
     }
 

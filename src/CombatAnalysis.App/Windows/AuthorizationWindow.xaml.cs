@@ -1,5 +1,4 @@
 ﻿using CombatAnalysis.Core.ViewModels.User;
-using CombatAnalysis.Core.ViewModels.ViewModelTemplates;
 using MvvmCross;
 using MvvmCross.Platforms.Wpf.Views;
 using System;
@@ -16,7 +15,6 @@ public partial class AuthorizationWindow : MvxWindow
 
         DataContext = Mvx.IoCProvider.IoCConstruct<AuthorizationViewModel>();
         _viewModel = (AuthorizationViewModel)DataContext;
-        ((BasicTemplateViewModel)_viewModel.Basic).AuthorizationIsOpen = true;
 
         ContentRendered += ContextRenderedHandler;
     }
@@ -26,7 +24,6 @@ public partial class AuthorizationWindow : MvxWindow
         if (_viewModel != null)
         {
             _viewModel.CloseAuthorizationWindow += CloseAuthorizationWindowHandler;
-            _viewModel.SendRequest();
         }
     }
 
@@ -38,11 +35,6 @@ public partial class AuthorizationWindow : MvxWindow
 
     private void CloseWindowHandler(object sender, System.Windows.RoutedEventArgs e)
     {
-        if (_viewModel != null)
-        {
-            ((BasicTemplateViewModel)_viewModel.Basic).AuthorizationIsOpen = false;
-        }
-
         WindowManager.ExtraWindow?.Close();
         Close();
     }

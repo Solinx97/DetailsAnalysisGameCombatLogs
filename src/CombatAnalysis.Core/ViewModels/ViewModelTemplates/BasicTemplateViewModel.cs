@@ -7,7 +7,6 @@ using CombatAnalysis.Core.Interfaces.Observers;
 using CombatAnalysis.Core.Models;
 using CombatAnalysis.Core.Security;
 using CombatAnalysis.Core.ViewModels.Chat;
-using CombatAnalysis.Core.ViewModels.User;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
 using MvvmCross.Commands;
@@ -26,18 +25,17 @@ public class BasicTemplateViewModel : MvxViewModel, IImprovedMvxViewModel, IVMDa
 
     private string? _username;
     private int _step = -1;
-    private bool _isLoginNotActivated = true;
     private bool _isRegistrationNotActivated = true;
     private int _uploadingCombatsCount = 1;
 
     private List<CombatModel>? _combats;
     private CombatModel? _selectedCombat;
     private CombatLogModel? _combatLog;
-    private bool _isAuth = true;
+    private bool _isAuth;
+    private bool _loginIsRan;
     private LogType _logType;
     private bool _logPanelStatusIsVisibly;
     private int _uploadedCombatsCount;
-    private bool _authorizationIsOpen;
 
     private static LoadingStatus _responseStatus;
     private static int _allowStep;
@@ -74,7 +72,6 @@ public class BasicTemplateViewModel : MvxViewModel, IImprovedMvxViewModel, IVMDa
         DamageTakenDetailsCommand = new MvxAsyncCommand(DamageTakenDetailsAsync);
         ResourceDetailsCommand = new MvxAsyncCommand(ResourceDetailsAsync);
 
-        Task.Run(CheckAuthAsync);
         Task.Run(async () => await _mvvmNavigation.Navigate<HomeViewModel, bool>(IsAuth));
     }
 
@@ -160,15 +157,6 @@ public class BasicTemplateViewModel : MvxViewModel, IImprovedMvxViewModel, IVMDa
         }
     }
 
-    public bool AuthorizationIsOpen
-    {
-        get { return _authorizationIsOpen; }
-        set
-        {
-            SetProperty(ref _authorizationIsOpen, value);
-        }
-    }
-
     public static string? AppVersion
     {
         get { return AppInformation.Version; }
@@ -216,22 +204,21 @@ public class BasicTemplateViewModel : MvxViewModel, IImprovedMvxViewModel, IVMDa
         }
     }
 
+    public bool LoginIsRan
+    {
+        get { return _loginIsRan; }
+        set
+        {
+            SetProperty(ref _loginIsRan, value);
+        }
+    }
+
     public bool IsAuth
     {
         get { return _isAuth; }
         set
         {
             SetProperty(ref _isAuth, value);
-            NotifyAuthObservers();
-        }
-    }
-
-    public bool IsLoginNotActivated
-    {
-        get { return _isLoginNotActivated; }
-        set
-        {
-            SetProperty(ref _isLoginNotActivated, value);
             NotifyAuthObservers();
         }
     }
@@ -293,13 +280,6 @@ public class BasicTemplateViewModel : MvxViewModel, IImprovedMvxViewModel, IVMDa
 
     #endregion
 
-    public void CloseWindow()
-    {
-        RequestCancel();
-
-        Environment.Exit(0);
-    }
-
     public CancellationToken RequestCancelationToken()
     {
         CancellationTokenSource = new CancellationTokenSource();
@@ -315,11 +295,11 @@ public class BasicTemplateViewModel : MvxViewModel, IImprovedMvxViewModel, IVMDa
 
     public async Task LoginAsync()
     {
+        LoginIsRan = true;
+
         await _mvvmNavigation.Navigate<HomeViewModel>();
         await AsyncDispatcher.ExecuteOnMainThreadAsync(() =>
         {
-            AuthorizationIsOpen = true;
-
             OpenAuthorizationWindow?.Invoke();
         });
     }
@@ -445,32 +425,19 @@ public class BasicTemplateViewModel : MvxViewModel, IImprovedMvxViewModel, IVMDa
         }
     }
 
-    public async Task CheckAuthAsync()
-    {
-        var user = await _securityStorage.GetUserAsync();
-        if (user == null)
-        {
-            IsAuth = false;
-
-            return;
-        }
-
-        Username = user.Username;
-
-        await AsyncDispatcher.ExecuteOnMainThreadAsync(() =>
-        {
-            CloseAuthorizationWindow?.Invoke();
-        });
-
-        AuthorizationIsOpen = false;
-    }
-
     public void ClearEvents()
     {
         OpenAuthorizationWindow = null;
         CloseAuthorizationWindow = null;
         OpenRegistrationWindow = null;
         CloseRegistrationWindow = null;
+    }
+
+    private void CloseWindow()
+    {
+        RequestCancel();
+
+        Environment.Exit(0);
     }
 
     public delegate void AuthorizationWindowEventHandler();

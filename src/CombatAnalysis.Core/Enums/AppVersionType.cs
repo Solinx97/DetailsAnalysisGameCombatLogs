@@ -2,6 +2,7 @@
 
 internal enum AppVersionType
 {
+    Dev,
     Alfa,
     Beta,
     Release,

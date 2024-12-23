@@ -1,12 +1,11 @@
-﻿using System.Configuration;
-using System.Security.Cryptography;
+﻿using System.Security.Cryptography;
 
 namespace CombatAnalysis.Core.Security;
 
 internal static class AESEncryption
 {
-    private static readonly byte[] Key = Convert.FromBase64String(ConfigurationManager.AppSettings.Get("encryptedKey") ?? string.Empty);
-    private static readonly byte[] IV = Convert.FromBase64String(ConfigurationManager.AppSettings.Get("encryptedIV") ?? string.Empty);
+    private static readonly byte[] Key = Convert.FromBase64String(SecurityKeys.AESKey ?? string.Empty);
+    private static readonly byte[] IV = Convert.FromBase64String(SecurityKeys.IV ?? string.Empty);
 
     public static byte[] EncryptStringToBytes(string plainText)
     {

@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace CombatAnalysis.App.Localizations.Resources.Login {
+namespace CombatAnalysis.App.Localizations.Resources.AuthUser {
     using System;
     
     
@@ -39,7 +39,7 @@ namespace CombatAnalysis.App.Localizations.Resources.Login {
         public static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("CombatAnalysis.App.Localizations.Resources.Login.Resource", typeof(Resource).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("CombatAnalysis.App.Localizations.Resources.AuthUser.Resource", typeof(Resource).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -61,29 +61,47 @@ namespace CombatAnalysis.App.Localizations.Resources.Login {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Back.
+        ///   Looks up a localized string similar to Authorization....
         /// </summary>
-        public static string Back {
+        public static string Authorization {
             get {
-                return ResourceManager.GetString("Back", resourceCulture);
+                return ResourceManager.GetString("Authorization", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Email.
+        ///   Looks up a localized string similar to Authorization failed. Please, Login one more time.
         /// </summary>
-        public static string Email {
+        public static string AuthorizationFailed {
             get {
-                return ResourceManager.GetString("Email", resourceCulture);
+                return ResourceManager.GetString("AuthorizationFailed", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to You entered an invalid email/password.
+        ///   Looks up a localized string similar to Cancel.
         /// </summary>
-        public static string IncorrectData {
+        public static string Cancel {
             get {
-                return ResourceManager.GetString("IncorrectData", resourceCulture);
+                return ResourceManager.GetString("Cancel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Continue Authorization in your Browser.
+        /// </summary>
+        public static string ContinueAuthInBrowser {
+            get {
+                return ResourceManager.GetString("ContinueAuthInBrowser", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Continue Registration in your Browser.
+        /// </summary>
+        public static string ContinueRegInBrowser {
+            get {
+                return ResourceManager.GetString("ContinueRegInBrowser", resourceCulture);
             }
         }
         
@@ -97,29 +115,11 @@ namespace CombatAnalysis.App.Localizations.Resources.Login {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to We can&apos;t give a response from server. There may be connection problems or the server is temporarily unavailable.
+        ///   Looks up a localized string similar to Verification....
         /// </summary>
-        public static string LoginFailed {
+        public static string Verification {
             get {
-                return ResourceManager.GetString("LoginFailed", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Password.
-        /// </summary>
-        public static string Password {
-            get {
-                return ResourceManager.GetString("Password", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Authorization.
-        /// </summary>
-        public static string Title {
-            get {
-                return ResourceManager.GetString("Title", resourceCulture);
+                return ResourceManager.GetString("Verification", resourceCulture);
             }
         }
     }
