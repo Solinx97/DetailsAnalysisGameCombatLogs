@@ -10,10 +10,6 @@ const CombatAuraItem = ({ selectedCreatorAuras, pinnedAuras, setPinnedAuras, sel
     const [showTargets, setShowTargets] = useState(false);
 
     useEffect(() => {
-        if (selectedCreatorAuras.length === 0) {
-            return;
-        }
-
         makeCreatorAurasMap();
     }, [selectedCreatorAuras]);
 
@@ -33,7 +29,8 @@ const CombatAuraItem = ({ selectedCreatorAuras, pinnedAuras, setPinnedAuras, sel
             return;
         }
 
-        updateAuras();
+        const auraMap = makeCreatorAurasMap();
+        updateAuras(auraMap);
     }, [pinnedAuras]);
 
     const makeCreatorAurasMap = () => {
@@ -55,13 +52,13 @@ const CombatAuraItem = ({ selectedCreatorAuras, pinnedAuras, setPinnedAuras, sel
         return auraMap;
     }
 
-    const updateAuras = () => {
+    const updateAuras = (newAuras) => {
         const auraMap = new Map();
         let makeDefaultAuras = [];
 
         pinnedAuras?.forEach(pinnedAura => {
-            pinnedAura?.time.forEach(pinnedAuraTime => {
-                auras?.forEach((value, key) => {
+            pinnedAura.time?.forEach(pinnedAuraTime => {
+                newAuras?.forEach((value, key) => {
                     const times = value.map(aura => ({ start: aura.startTime, finish: aura.finishTime, data: aura }));
 
                     const included = times.filter(auraTime => auraTime.start <= pinnedAuraTime.start && auraTime.finish <= pinnedAuraTime.finish);

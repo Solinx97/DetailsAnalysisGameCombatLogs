@@ -9,7 +9,7 @@
         &__email-container {
             display: flex;
             flex-direction: column;
-            align-items: start;
+            align-items: flex-start;
             margin: 0 10px;
 
             .email, .verified-email {
@@ -57,7 +57,7 @@
 
             .actions {
                 display: flex;
-                justify-content: end;
+                justify-content: flex-end;
                 gap: 10px;
                 width: 100%;
 

@@ -135,8 +135,8 @@ const CombatAuras = () => {
             searchRef.current.value = "";
         }
 
-        const defaultAura = pinnedAuras.length > 0 ? defaultWhenPinnedAuras : defaultSelectedCreatorAuras;
-        setSelectedCreatorAuras(defaultAura);
+        setSelectedCreatorAuras(defaultSelectedCreatorAuras);
+        setPinnedAuras(Array.from(pinnedAuras));
     }
 
     const handleSearchAura = (e) => {
