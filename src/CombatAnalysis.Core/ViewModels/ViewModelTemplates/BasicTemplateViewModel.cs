@@ -32,6 +32,7 @@ public class BasicTemplateViewModel : MvxViewModel, IImprovedMvxViewModel, IVMDa
     private CombatModel? _selectedCombat;
     private CombatLogModel? _combatLog;
     private bool _isAuth;
+    private bool _authorizationIsOpen;
     private bool _loginIsRan;
     private LogType _logType;
     private bool _logPanelStatusIsVisibly;
@@ -210,6 +211,16 @@ public class BasicTemplateViewModel : MvxViewModel, IImprovedMvxViewModel, IVMDa
         set
         {
             SetProperty(ref _loginIsRan, value);
+        }
+    }
+
+    public bool AuthorizationIsOpen
+    {
+        get { return _authorizationIsOpen; }
+        set
+        {
+            SetProperty(ref _authorizationIsOpen, value);
+            NotifyAuthObservers();
         }
     }
 

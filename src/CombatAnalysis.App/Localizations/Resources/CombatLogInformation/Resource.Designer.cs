@@ -322,11 +322,11 @@ namespace CombatAnalysis.App.Localizations.Resources.CombatLogInformation {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to To Upload logs you should be Login.
+        ///   Looks up a localized string similar to To Save logs you should be Login.
         /// </summary>
-        public static string ToUploadShouldBeLogin {
+        public static string ToSaveYouShouldBeLogin {
             get {
-                return ResourceManager.GetString("ToUploadShouldBeLogin", resourceCulture);
+                return ResourceManager.GetString("ToSaveYouShouldBeLogin", resourceCulture);
             }
         }
         

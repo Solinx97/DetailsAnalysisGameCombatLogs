@@ -77,6 +77,7 @@ public class AuthorizationViewModel : ParentTemplate
     private void RunCheckAuth()
     {
         var basicViewModel = (BasicTemplateViewModel)Basic;
+        basicViewModel.AuthorizationIsOpen = true;
 
         if (basicViewModel.LoginIsRan)
         {

@@ -32,14 +32,14 @@ public class CombatLogInformationViewModel : ParentTemplate, CombatParser.Interf
     private string? _dungeonName;
     private string? _combatName;
     private string? _combatLogPath;
-    private bool _isNeedSave = true;
+    private bool _isNeedSave;
     private ObservableCollection<CombatLogModel> _combatLogs = new();
     private ObservableCollection<CombatLogModel> _combatLogsForTargetUser = new();
     private bool _isAllowSaveLogs = true;
     private CancellationTokenSource _cancellationTokenSource = new();
 
-    private bool _openUploadLogs;
-    private bool _fileIsNotCorrect;
+    private bool _fileIsCorrect = true;
+    private bool _openUploadedLogs;
     private bool _isParsing;
     private bool _combatLogUploadingFailed;
     private int _combatListSelectedIndex;
@@ -62,7 +62,7 @@ public class CombatLogInformationViewModel : ParentTemplate, CombatParser.Interf
         _memoryCache = memoryCache;
         _cacheService = cacheService;
 
-        OpenUploadLogsCommand = new MvxCommand(() => OpenUploadLogs = !OpenUploadLogs);
+        OpenUploadedLogsCommand = new MvxCommand(() => OpenUploadedLogs = !OpenUploadedLogs);
         OpenPlayerAnalysisCommand = new MvxAsyncCommand(OpenPlayerAnalysisAsync);
         LoadCombatsCommand = new MvxAsyncCommand(() => LoadCombatsAsync(CombatLogs));
         LoadCombatsByUserCommand = new MvxAsyncCommand(() => LoadCombatsAsync(CombatLogsForTargetUser));
@@ -86,7 +86,7 @@ public class CombatLogInformationViewModel : ParentTemplate, CombatParser.Interf
 
     #region Commands
 
-    public IMvxCommand OpenUploadLogsCommand { get; set; }
+    public IMvxCommand OpenUploadedLogsCommand { get; set; }
 
     public IMvxAsyncCommand LoadCombatsCommand { get; set; }
 
@@ -106,12 +106,12 @@ public class CombatLogInformationViewModel : ParentTemplate, CombatParser.Interf
 
     #region View model properties
 
-    public bool OpenUploadLogs
+    public bool OpenUploadedLogs
     {
-        get { return _openUploadLogs; }
+        get { return _openUploadedLogs; }
         set
         {
-            SetProperty(ref _openUploadLogs, value);
+            SetProperty(ref _openUploadedLogs, value);
         }
     }
 
@@ -176,6 +176,10 @@ public class CombatLogInformationViewModel : ParentTemplate, CombatParser.Interf
         set
         {
             SetProperty(ref _isParsing, value);
+            if (value)
+            {
+                OpenUploadedLogs = false;
+            }
         }
     }
 
@@ -188,12 +192,12 @@ public class CombatLogInformationViewModel : ParentTemplate, CombatParser.Interf
         }
     }
 
-    public bool FileIsNotCorrect
+    public bool FileIsCorrect
     {
-        get { return _fileIsNotCorrect; }
+        get { return _fileIsCorrect; }
         set
         {
-            SetProperty(ref _fileIsNotCorrect, value);
+            SetProperty(ref _fileIsCorrect, value);
         }
     }
 
@@ -437,9 +441,9 @@ public class CombatLogInformationViewModel : ParentTemplate, CombatParser.Interf
 
     private async Task CombatLogFileValidateAsync(string combatLog)
     {
-        FileIsNotCorrect = !await _parser.FileCheckAsync(combatLog);
+        FileIsCorrect = await _parser.FileCheckAsync(combatLog);
 
-        if (!FileIsNotCorrect)
+        if (FileIsCorrect)
         {
             IsParsing = true;
 

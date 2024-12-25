@@ -204,8 +204,8 @@
   <data name="TypeOfLogs" xml:space="preserve">
     <value>Type of logs</value>
   </data>
-  <data name="ToUploadShouldBeLogin" xml:space="preserve">
-    <value>To Upload logs you should be Login</value>
+  <data name="ToSaveYouShouldBeLogin" xml:space="preserve">
+    <value>To Save logs you should be Login</value>
   </data>
   <data name="Upload" xml:space="preserve">
     <value>Upload</value>

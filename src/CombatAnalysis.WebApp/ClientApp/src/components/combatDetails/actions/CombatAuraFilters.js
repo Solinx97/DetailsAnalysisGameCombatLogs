@@ -123,7 +123,7 @@ const CombatAuraFilters = ({ setCreators, selectedCreator, handleSelectCreator, 
                     <FontAwesomeIcon
                         icon={faRotate}
                         onClick={restoreFiltersToDefault}
-                        title={t("FiltersReset")}
+                        title={t("Reset")}
                     />
                 </div>
             </div>
