@@ -121,7 +121,7 @@
     <value>Чат</value>
   </data>
   <data name="ChatLoginRequired" xml:space="preserve">
-    <value>Для открытия 'Чат' необходимо авторизоваться</value>
+    <value>Для открытия 'Чат' необходимо Войти</value>
   </data>
   <data name="CloseWindow" xml:space="preserve">
     <value>Закрыть окно</value>

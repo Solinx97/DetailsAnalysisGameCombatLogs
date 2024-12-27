@@ -70,7 +70,7 @@ namespace CombatAnalysis.App.Localizations.Resources.BasicTemplate {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to To open the &apos;Chat&quot; you need to login.
+        ///   Looks up a localized string similar to To open the &apos;Chat&quot; you should be Login.
         /// </summary>
         public static string ChatLoginRequired {
             get {

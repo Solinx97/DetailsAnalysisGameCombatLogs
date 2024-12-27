@@ -1,0 +1,40 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <Style x:Key="homeItems" TargetType="Image">
+        <Style.Triggers>
+            <EventTrigger RoutedEvent="MouseEnter">
+                <EventTrigger.Actions>
+                    <BeginStoryboard>
+                        <Storyboard>
+                            <DoubleAnimation Storyboard.TargetProperty="Height" From="275" To="300"
+                                            AutoReverse="False"
+                                            RepeatBehavior="1x"
+                                            Duration="0:0:0.5"/>
+                            <DoubleAnimation Storyboard.TargetProperty="Opacity" From="1" To="0.25"
+                                            AutoReverse="False"
+                                            RepeatBehavior="1x"
+                                            Duration="0:0:0.5"/>
+                        </Storyboard>
+                    </BeginStoryboard>
+                </EventTrigger.Actions>
+            </EventTrigger>
+            <EventTrigger RoutedEvent="MouseLeave">
+                <EventTrigger.Actions>
+                    <BeginStoryboard>
+                        <Storyboard>
+                            <DoubleAnimation Storyboard.TargetProperty="Height"  From="300" To="275"
+                                            AutoReverse="False"
+                                            RepeatBehavior="1x"
+                                            Duration="0:0:0.5"/>
+                            <DoubleAnimation Storyboard.TargetProperty="Opacity" From="0.25" To="1"
+                                            AutoReverse="False"
+                                            RepeatBehavior="1x"
+                                            Duration="0:0:0.5"/>
+                        </Storyboard>
+                    </BeginStoryboard>
+                </EventTrigger.Actions>
+            </EventTrigger>
+        </Style.Triggers>
+    </Style>
+</ResourceDictionary>

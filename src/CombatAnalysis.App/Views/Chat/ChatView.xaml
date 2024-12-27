@@ -59,9 +59,9 @@
 
                 <StackPanel Margin="30 0 15 0">
                     <StackPanel Orientation="Horizontal">
-                        <TextBlock Text="{loc:Loc GroupChats}" FontSize="15" VerticalAlignment="Center" Margin="25 0 0 5" Style="{StaticResource titleText}" Foreground="White"/>
+                        <TextBlock Text="{loc:Loc GroupChats}" FontSize="15" VerticalAlignment="Center" Margin="15 0 10 0" Style="{StaticResource titleText}" Foreground="White"/>
                         <Button Style="{StaticResource textBoxButton}" VerticalAlignment="Center" mvx:Bi.nd="Command RefreshGroupChatsCommand" ToolTip="{loc:Loc RefreshGroupChats}">
-                            <Icon:PackIconMaterial Kind="Recycle" Margin="0" Foreground="#a6a6a6" Width="20" Height="20"/>
+                            <Icon:PackIconMaterial Kind="Recycle" Foreground="#a6a6a6" Width="20" Height="20"/>
                         </Button>
                         <Button Style="{StaticResource textBoxButton}" VerticalAlignment="Center" Click="CreateGroupChat" ToolTip="{loc:Loc CreateNewGroupChat}">
                             <Icon:PackIconMaterial Kind="Plus" Foreground="Green" Width="20" Height="20"/>
@@ -90,7 +90,7 @@
                     <Button Content="{loc:Loc ShowAll}" Style="{StaticResource showButton}" IsEnabled="False" Foreground="White" Width="100"/>
 
                     <StackPanel Orientation="Horizontal">
-                        <TextBlock Text="{loc:Loc PersonalMessages}" FontSize="15" Margin="25 0 0 5" Style="{StaticResource titleText}" VerticalAlignment="Center" Foreground="White"/>
+                        <TextBlock Text="{loc:Loc PersonalMessages}" FontSize="15" Margin="15 0 10 0" Style="{StaticResource titleText}" VerticalAlignment="Center" Foreground="White"/>
                         <Button Style="{StaticResource textBoxButton}" VerticalAlignment="Center" mvx:Bi.nd="Command RefreshPersonalChatsCommand" ToolTip="{loc:Loc RefreshPersonalMessages}">
                             <Icon:PackIconMaterial Kind="Recycle" Margin="0" Foreground="#a6a6a6" Width="20" Height="20"/>
                         </Button>

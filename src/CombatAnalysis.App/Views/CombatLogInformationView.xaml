@@ -85,7 +85,7 @@
                         <StackPanel Margin="10">
                             <Icon:PackIconMaterial Kind="WindowClose" Foreground="Orange" HorizontalAlignment="Right" Cursor="Hand" Margin="0 -5">
                                 <Icon:PackIconMaterial.InputBindings>
-                                    <MouseBinding Command="{Binding OpenUploadLogsCommand}" Gesture="LeftClick"/>
+                                    <MouseBinding Command="{Binding OpenUploadedLogsCommand}" Gesture="LeftClick"/>
                                 </Icon:PackIconMaterial.InputBindings>
                             </Icon:PackIconMaterial>
 
@@ -144,7 +144,7 @@
                         <StackPanel Margin="10">
                             <Icon:PackIconMaterial Kind="WindowClose" Foreground="Orange" HorizontalAlignment="Right" Cursor="Hand" Margin="0 -5">
                                 <Icon:PackIconMaterial.InputBindings>
-                                    <MouseBinding Command="{Binding OpenUploadLogsCommand}" Gesture="LeftClick"/>
+                                    <MouseBinding Command="{Binding OpenUploadedLogsCommand}" Gesture="LeftClick"/>
                                 </Icon:PackIconMaterial.InputBindings>
                             </Icon:PackIconMaterial>
 

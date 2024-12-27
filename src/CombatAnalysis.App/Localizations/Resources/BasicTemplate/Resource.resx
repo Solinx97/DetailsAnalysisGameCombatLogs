@@ -121,7 +121,7 @@
     <value>Chat</value>
   </data>
   <data name="ChatLoginRequired" xml:space="preserve">
-    <value>To open the 'Chat" you need to login</value>
+    <value>To open the 'Chat" you should be Login</value>
   </data>
   <data name="CloseWindow" xml:space="preserve">
     <value>Close a window</value>

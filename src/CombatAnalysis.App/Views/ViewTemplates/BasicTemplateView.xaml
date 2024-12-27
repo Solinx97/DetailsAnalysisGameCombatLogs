@@ -35,7 +35,7 @@
             <converters:TheNativeBoolToXAMLBoolConverter x:Key="BoolToXAMLBool" />
         </Grid.Resources>
 
-        <Border CornerRadius="25 25 25 25" BorderThickness="3" Grid.Column="2" Grid.ColumnSpan="2"
+        <Border CornerRadius="25" BorderThickness="3" Grid.Column="2" Grid.ColumnSpan="2"
                 Margin="-55 0 0 0" Grid.RowSpan="3" Background="#283a4b">
             <Border.BorderBrush>
                 <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
@@ -88,7 +88,7 @@
                         </StackPanel>
                         <StackPanel Margin="25 0" Orientation="Horizontal" VerticalAlignment="Top">
                             <Button Style="{StaticResource showButton}" Margin="5" Width="85" Height="35" FontSize="11" Content="{loc:Loc Login}"
-                            IsEnabled="{Binding IsLoginNotActivated}" mvx:Bi.nd="Command LoginCommand"/>
+                            mvx:Bi.nd="Command LoginCommand"/>
                             <Button Style="{StaticResource showButton}" Margin="5" Width="85" Height="35" FontSize="11" Content="{loc:Loc Registration}"
                             IsEnabled="{Binding IsRegistrationNotActivated}" mvx:Bi.nd="Command RegistrationCommand"/>
                         </StackPanel>
@@ -162,7 +162,7 @@
                 <StackPanel HorizontalAlignment="Right">
                     <StackPanel Orientation="Horizontal">
                         <Button Style="{StaticResource textBoxButton}" Margin="30 0" ToolTip="{loc:Loc Settings}" mvx:Bi.nd="Command SettingsCommand">
-                            <Icon:PackIconMaterial Kind="Wrench" Foreground="White" Width="15" Height="15" />
+                            <Icon:PackIconMaterial Kind="Wrench"  Foreground="White" Width="15" Height="15" />
                         </Button>
                         <Button Style="{StaticResource textBoxButton}" Click="Minimaze" ToolTip="{loc:Loc MinimazeWindow}">
                             <Icon:PackIconMaterial Kind="WindowMinimize" Foreground="White" Width="15" Height="15" />
