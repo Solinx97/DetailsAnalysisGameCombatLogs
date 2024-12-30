@@ -53,7 +53,7 @@ namespace CombatAnalysis.App.Smoke.Tests
             var window = _app.GetMainWindow(_automation);
 
             var openCombatLogInformGetter = window.FindFirstDescendant(x => x.ByAutomationId("openCombatLogInform"));
-            Assert.IsNotNull(openCombatLogInformGetter, "Can't be find element by AutomayionId 'openCombatLogInform'");
+            Assert.That(openCombatLogInformGetter, Is.Not.Null, "Can't be find element by AutomayionId 'openCombatLogInform'");
 
             var openCombatLogInform = _automationTestBase.WaitForElement(() => openCombatLogInformGetter);
 
@@ -63,7 +63,7 @@ namespace CombatAnalysis.App.Smoke.Tests
             Thread.Sleep(500);
 
             var combatLogInformTitleGetter = window.FindFirstDescendant(x => x.ByAutomationId("combatLogInformTitle"));
-            Assert.IsNotNull(combatLogInformTitleGetter, "Can't be find element by AutomayionId 'combatLogInformTitle'");
+            Assert.That(combatLogInformTitleGetter, Is.Not.Null, "Can't be find element by AutomayionId 'combatLogInformTitle'");
 
             var combatLogInformTitle = _automationTestBase.WaitForElement(() => combatLogInformTitleGetter);
 

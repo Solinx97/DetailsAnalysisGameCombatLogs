@@ -19,7 +19,6 @@ using MvvmCross.ViewModels;
 
 namespace CombatAnalysis.Core;
 
-
 public class App : MvxApplication
 {
 #if DEBUG

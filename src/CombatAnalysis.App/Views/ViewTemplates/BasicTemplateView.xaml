@@ -161,17 +161,17 @@
                 VerticalAlignment="Center" MouseDown="BorderMouseDown" Panel.ZIndex="2">
                 <StackPanel HorizontalAlignment="Right">
                     <StackPanel Orientation="Horizontal">
-                        <Button Style="{StaticResource textBoxButton}" Margin="30 0" ToolTip="{loc:Loc Settings}" mvx:Bi.nd="Command SettingsCommand">
-                            <Icon:PackIconMaterial Kind="Wrench"  Foreground="White" Width="15" Height="15" />
+                        <Button Style="{StaticResource textBoxButton}" Margin="30 0" Width="30" Height="30" ToolTip="{loc:Loc Settings}" mvx:Bi.nd="Command SettingsCommand">
+                            <Icon:PackIconMaterial Kind="Wrench" Foreground="White" Width="10" Height="10" />
                         </Button>
-                        <Button Style="{StaticResource textBoxButton}" Click="Minimaze" ToolTip="{loc:Loc MinimazeWindow}">
-                            <Icon:PackIconMaterial Kind="WindowMinimize" Foreground="White" Width="15" Height="15" />
+                        <Button Style="{StaticResource textBoxButton}" Click="Minimaze" Width="30" Height="30" ToolTip="{loc:Loc MinimazeWindow}">
+                            <Icon:PackIconMaterial Kind="WindowMinimize" Foreground="White" Width="10" Height="10" />
                         </Button>
-                        <Button Style="{StaticResource textBoxButton}" Click="Maximaze" ToolTip="{loc:Loc FullScreenWindow}">
-                            <Icon:PackIconMaterial Kind="WindowMaximize" Foreground="White" Width="15" Height="15" />
+                        <Button Style="{StaticResource textBoxButton}" Click="Maximaze" Width="30" Height="30" ToolTip="{loc:Loc FullScreenWindow}">
+                            <Icon:PackIconMaterial Kind="WindowMaximize" Foreground="White" Width="10" Height="10" />
                         </Button>
-                        <Button Style="{StaticResource textBoxButton}" mvx:Bi.nd="Command CloseCommand" ToolTip="{loc:Loc CloseWindow}">
-                            <Icon:PackIconMaterial Kind="WindowClose" Foreground="Red" Width="15" Height="15" />
+                        <Button Style="{StaticResource textBoxButton}" mvx:Bi.nd="Command CloseCommand" Width="30" Height="30" ToolTip="{loc:Loc CloseWindow}">
+                            <Icon:PackIconMaterial Kind="WindowClose" Foreground="Red" Width="10" Height="10" />
                         </Button>
                     </StackPanel>
                     <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Margin="5">
