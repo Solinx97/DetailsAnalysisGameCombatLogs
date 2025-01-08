@@ -135,10 +135,10 @@ const CommunityMembers = ({ community, user, setIsCommunityMember }) => {
                 </div>
             </div>
             <ul className="members__content">
-                {communityUsers?.map((item) => (
-                        <li key={item.id }>
+                {communityUsers?.map((user) => (
+                        <li key={user.id}>
                             <CommunityMemberItem
-                                comunityUser={item}
+                                comunityUser={user}
                             />
                         </li>
                     ))

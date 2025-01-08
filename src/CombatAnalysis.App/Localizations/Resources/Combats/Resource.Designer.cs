@@ -187,15 +187,6 @@ namespace CombatAnalysis.App.Localizations.Resources.Combats {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Defeat.
-        /// </summary>
-        public static string Defeat {
-            get {
-                return ResourceManager.GetString("Defeat", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Healing.
         /// </summary>
         public static string Healing {
@@ -228,6 +219,15 @@ namespace CombatAnalysis.App.Localizations.Resources.Combats {
         public static string LoadingFailed {
             get {
                 return ResourceManager.GetString("LoadingFailed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Lose.
+        /// </summary>
+        public static string Lose {
+            get {
+                return ResourceManager.GetString("Lose", resourceCulture);
             }
         }
         
@@ -318,6 +318,15 @@ namespace CombatAnalysis.App.Localizations.Resources.Combats {
         public static string NotReady {
             get {
                 return ResourceManager.GetString("NotReady", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Open.
+        /// </summary>
+        public static string Open {
+            get {
+                return ResourceManager.GetString("Open", resourceCulture);
             }
         }
         

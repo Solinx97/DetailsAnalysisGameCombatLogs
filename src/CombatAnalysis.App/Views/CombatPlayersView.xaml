@@ -61,6 +61,12 @@
             <StackPanel Orientation="Horizontal">
                 <Icon:PackIconMaterial Kind="Skull" Width="13" HorizontalAlignment="Center" Margin="10 0" VerticalAlignment="Center" Foreground="Red"/>
                 <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Text="{Binding Combat.Name}" FontSize="16" FontWeight="Bold" Foreground="White"/>
+                <Icon:PackIconMaterial Kind="Check" Foreground="Green" Style="{StaticResource menuButtonIcon}"
+                                       ToolTip="{loc:Loc Win}"
+                                       Visibility="{Binding Combat.IsWin, Converter={StaticResource BoolToVisibility}, ConverterParameter=true:false}"/>
+                <Icon:PackIconMaterial Kind="SwordCross" Foreground="Red" Style="{StaticResource menuButtonIcon}"
+                                       ToolTip="{loc:Loc Lose}"
+                                       Visibility="{Binding Combat.IsWin, Converter={StaticResource BoolToVisibility}, ConverterParameter=true:true}"/>
             </StackPanel>
         </StackPanel>
 
@@ -498,7 +504,7 @@
                     </DataGridTemplateColumn.CellTemplate>
                     <DataGridTemplateColumn.HeaderTemplate>
                         <DataTemplate>
-                            <TextBlock Text="{loc:Loc AverageItemllvl}" Margin="5" TextAlignment="Center" FontSize="12" Foreground="White"/>
+                            <TextBlock Text="{loc:Loc AverageItemLevel}" Margin="5" TextAlignment="Center" FontSize="12" Foreground="White"/>
                         </DataTemplate>
                     </DataGridTemplateColumn.HeaderTemplate>
                 </DataGridTemplateColumn>

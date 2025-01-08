@@ -116,20 +116,14 @@ const SelectedCommunity = () => {
                                         <FontAwesomeIcon
                                             icon={faCloudArrowUp}
                                             title={t("Save")}
-                                            onClick={async () => await updateCommunityNameAsync()}
+                                            onClick={updateCommunityNameAsync}
                                         />
                                     </>
                                     : <div className="name" title={community?.name}>
-                                        {community?.policyType === 0
-                                            ? <FontAwesomeIcon
-                                                icon={faEarthEurope}
-                                                title={t("Open")}
-                                            />
-                                            : <FontAwesomeIcon
-                                                icon={faShieldHalved}
-                                                title={t("Private")}
-                                            />
-                                        }
+                                        <FontAwesomeIcon
+                                            icon={community?.policyType ? faEarthEurope : faShieldHalved}
+                                            title={community?.policyType ? t("Open") : t("Private")}
+                                        />
                                         <div>{community?.name}</div>
                                     </div>
                                 }
@@ -159,22 +153,15 @@ const SelectedCommunity = () => {
                                     <FontAwesomeIcon
                                         icon={faCloudArrowUp}
                                         title={t("Save")}
-                                        onClick={async () => await updateCommunityDescriptionAsync()}
+                                        onClick={updateCommunityDescriptionAsync}
                                     />
                                 }
                             </div>
-                            {showDescription
-                                ? <FontAwesomeIcon
-                                    icon={faEye}
-                                    title={t("Hide")}
-                                    onClick={() => setShowDescription((item) => !item)}
-                                />
-                                : <FontAwesomeIcon
-                                    icon={faEyeSlash}
-                                    title={t("Show")}
-                                    onClick={() => setShowDescription((item) => !item)}
-                                />
-                            }
+                            <FontAwesomeIcon
+                                icon={showDescription ? faEye : faEyeSlash}
+                                title={showDescription ? t("Hide") : t("Show")}
+                                onClick={() => setShowDescription((item) => !item)}
+                            />
                         </div>
                         {showDescription
                             ? editDescriptionOn

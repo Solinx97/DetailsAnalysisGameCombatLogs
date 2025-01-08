@@ -156,8 +156,8 @@
   <data name="Deaths" xml:space="preserve">
     <value>Deaths</value>
   </data>
-  <data name="Defeat" xml:space="preserve">
-    <value>Defeat</value>
+  <data name="Lose" xml:space="preserve">
+    <value>Lose</value>
   </data>
   <data name="Boss" xml:space="preserve">
     <value>Boss</value>
@@ -236,5 +236,8 @@
   </data>
   <data name="Win" xml:space="preserve">
     <value>Win</value>
+  </data>
+  <data name="Open" xml:space="preserve">
+    <value>Open</value>
   </data>
 </root>

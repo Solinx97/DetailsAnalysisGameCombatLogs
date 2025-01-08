@@ -51,8 +51,8 @@ public class ChatViewModel : ParentTemplate
         Basic.Parent = this;
         Basic.Handler.BasicPropertyUpdate(nameof(BasicTemplateViewModel.Step), -2);
 
-        PersonalChatMessagesTemplate = Mvx.IoCProvider.IoCConstruct<PersonalChatMessagesVewModel>();
-        GroupChatMessagesTemplate = Mvx.IoCProvider.IoCConstruct<GroupChatMessagesViewModel>();
+        PersonalChatMessagesTemplate = Mvx.IoCProvider?.IoCConstruct<PersonalChatMessagesVewModel>();
+        GroupChatMessagesTemplate = Mvx.IoCProvider?.IoCConstruct<GroupChatMessagesViewModel>();
 
         GetMyAccount();
     }
@@ -277,10 +277,9 @@ public class ChatViewModel : ParentTemplate
 
         Task.Run(LoadGroupChatsAsync);
         Task.Run(LoadPersonalChatsAsync);
-        //Task.Run(LoadUsersAsync);
     }
 
-    public async Task CreatePersonalChatAsync()
+    private async Task CreatePersonalChatAsync()
     {
         try
         {
@@ -327,6 +326,8 @@ public class ChatViewModel : ParentTemplate
                 response = await _httpClientHelper.PostAsync("PersonalChat", JsonContent.Create(personalChat), refreshToken, Port.ChatApi);
                 response.EnsureSuccessStatusCode();
             }
+
+            await LoadPersonalChatsAsync();
         }
         catch (ArgumentNullException ex)
         {
@@ -593,6 +594,7 @@ public class ChatViewModel : ParentTemplate
 
         var freeUsers = _allUsers?
             .Where(user => !PersonalChats.Any(chat => chat.InitiatorId == user.Id || chat.CompanionId == user.Id))
+            .Where(user => user.Id != MyAccount?.Id)
             .ToList();
 
         return freeUsers ?? new List<AppUserModel>();
@@ -607,13 +609,13 @@ public class ChatViewModel : ParentTemplate
 
         if (!string.IsNullOrEmpty(username))
         {
-            var customerUsernameByStartChars = _allUsers.Where(x => x.Username.StartsWith(username));
-            if (customerUsernameByStartChars == null)
+            var usernameByStartChars = _allUsers.Where(x => x.Username.StartsWith(username));
+            if (usernameByStartChars == null)
             {
                 return;
             }
 
-            Users = new ObservableCollection<AppUserModel>(customerUsernameByStartChars.ToList());
+            Users = new ObservableCollection<AppUserModel>(usernameByStartChars.ToList());
         }
         else
         {

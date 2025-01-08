@@ -205,6 +205,15 @@ namespace CombatAnalysis.App.Localizations.Resources.CombatPlayers {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Lose.
+        /// </summary>
+        public static string Lose {
+            get {
+                return ResourceManager.GetString("Lose", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Min. damage.
         /// </summary>
         public static string MinDamage {
@@ -381,6 +390,15 @@ namespace CombatAnalysis.App.Localizations.Resources.CombatPlayers {
         public static string ValuePerSecond {
             get {
                 return ResourceManager.GetString("ValuePerSecond", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Win.
+        /// </summary>
+        public static string Win {
+            get {
+                return ResourceManager.GetString("Win", resourceCulture);
             }
         }
     }

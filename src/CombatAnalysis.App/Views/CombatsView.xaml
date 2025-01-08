@@ -75,27 +75,25 @@
 
         <DataGrid CellStyle="{DynamicResource DataGridCellStyle1}" ColumnHeaderStyle="{DynamicResource DataGridColumnHeaderStyle1}" 
                   RowStyle="{DynamicResource DataGridRowStyle1}" Style="{DynamicResource DataGridStyle1}"
-                  Grid.Row="2" Grid.Column="2" ItemsSource="{Binding Combats}"
+                  Grid.Row="2" Grid.Column="2" HorizontalAlignment="Center" ItemsSource="{Binding Combats}"
                   Margin="20" SelectedItem="{Binding SelectedCombat}" SelectedIndex="{Binding SelectedCombatIndex}">
             <DataGrid.Columns>
                 <DataGridTemplateColumn IsReadOnly="True" Width="110">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <StackPanel Orientation="Horizontal">
-                                <StackPanel.InputBindings>
-                                    <MouseBinding Command="{Binding DataContext.ShowDetailsCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}" Gesture="LeftDoubleClick"/>
-                                </StackPanel.InputBindings>
-
                                 <TextBlock Text="{Binding Path=Difficulty,Converter={StaticResource DifficultyToStringConverter}, ConverterParameter=3/5}" Foreground="White" 
                                            TextAlignment="Center" VerticalAlignment="Center" Margin="5" FontSize="12" />
                                 <TextBlock Text="{loc:Loc Normal}" TextAlignment="Center" VerticalAlignment="Center" FontSize="12" 
                                            Visibility="{Binding Path=Difficulty,Converter={StaticResource DifficultyToVisibilityConverter}, ConverterParameter=true:3/4}"/>
                                 <TextBlock Text="{loc:Loc Heroic}" TextAlignment="Center" VerticalAlignment="Center" FontSize="12"
                                            Visibility="{Binding Path=Difficulty,Converter={StaticResource DifficultyToVisibilityConverter}, ConverterParameter=true:5/6}"/>
-                                <Icon:PackIconMaterial Kind="Check" Foreground="Green" Style="{StaticResource menuButtonIcon}" 
-                                        Visibility="{Binding IsWin, Converter={StaticResource BoolToVisibility}, ConverterParameter=true:false}"/>
-                                <Icon:PackIconMaterial Kind="SwordCross" Foreground="Red" Style="{StaticResource menuButtonIcon}" 
-                                        Visibility="{Binding IsWin, Converter={StaticResource BoolToVisibility}, ConverterParameter=true:true}"/>
+                                <Icon:PackIconMaterial Kind="Check" Foreground="Green" Style="{StaticResource menuButtonIcon}"
+                                                       ToolTip="{loc:Loc Win}"
+                                                       Visibility="{Binding IsWin, Converter={StaticResource BoolToVisibility}, ConverterParameter=true:false}"/>
+                                <Icon:PackIconMaterial Kind="SwordCross" Foreground="Red" Style="{StaticResource menuButtonIcon}"
+                                                       ToolTip="{loc:Loc Lose}"
+                                                       Visibility="{Binding IsWin, Converter={StaticResource BoolToVisibility}, ConverterParameter=true:true}"/>
                             </StackPanel>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
@@ -110,10 +108,6 @@
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <StackPanel>
-                                <StackPanel.InputBindings>
-                                    <MouseBinding Command="{Binding DataContext.ShowDetailsCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}" Gesture="LeftDoubleClick"/>
-                                </StackPanel.InputBindings>
-
                                 <TextBlock Text="{Binding Path=Name}" TextAlignment="Center" Margin="10" FontSize="12" Opacity="0.5"
                                            Visibility="{Binding IsWin, Converter={StaticResource BoolToVisibility}, ConverterParameter=true:true}"/>
                                 <TextBlock Text="{Binding Path=Name}" TextAlignment="Center" Margin="10" FontSize="12"
@@ -142,10 +136,6 @@
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <StackPanel>
-                                <StackPanel.InputBindings>
-                                    <MouseBinding Command="{Binding DataContext.ShowDetailsCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}" Gesture="LeftDoubleClick"/>
-                                </StackPanel.InputBindings>
-                                
                                 <TextBlock Text="{Binding Path=DamageDone}" TextAlignment="Center" FontSize="12" Opacity="0.5" 
                                            Visibility="{Binding IsWin, Converter={StaticResource BoolToVisibility}, ConverterParameter=true:true}"/>
                                 <TextBlock Text="{Binding Path=DamageDone}" TextAlignment="Center" FontSize="12"
@@ -174,10 +164,6 @@
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <StackPanel>
-                                <StackPanel.InputBindings>
-                                    <MouseBinding Command="{Binding DataContext.ShowDetailsCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}" Gesture="LeftDoubleClick"/>
-                                </StackPanel.InputBindings>
-
                                 <TextBlock Text="{Binding Path=HealDone}" TextAlignment="Center" Margin="10" FontSize="12" Opacity="0.5" 
                                            Visibility="{Binding IsWin, Converter={StaticResource BoolToVisibility}, ConverterParameter=true:true}"/>
                                 <TextBlock Text="{Binding Path=HealDone}" TextAlignment="Center" Margin="10" FontSize="12"
@@ -206,10 +192,6 @@
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <StackPanel>
-                                <StackPanel.InputBindings>
-                                    <MouseBinding Command="{Binding DataContext.ShowDetailsCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}" Gesture="LeftDoubleClick"/>
-                                </StackPanel.InputBindings>
-
                                 <TextBlock Text="{Binding Path=DamageTaken}" TextAlignment="Center" Margin="10" FontSize="12" Opacity="0.5" 
                                            Visibility="{Binding IsWin, Converter={StaticResource BoolToVisibility}, ConverterParameter=true:true}"/>
                                 <TextBlock Text="{Binding Path=DamageTaken}" TextAlignment="Center" Margin="10" FontSize="12" 
@@ -238,10 +220,6 @@
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <StackPanel>
-                                <StackPanel.InputBindings>
-                                    <MouseBinding Command="{Binding DataContext.ShowDetailsCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}" Gesture="LeftDoubleClick"/>
-                                </StackPanel.InputBindings>
-
                                 <TextBlock Text="{Binding Path=EnergyRecovery}" TextAlignment="Center" Margin="10" FontSize="12" Opacity="0.5" 
                                            Visibility="{Binding IsWin, Converter={StaticResource BoolToVisibility}, ConverterParameter=true:true}"/>
                                 <TextBlock Text="{Binding Path=EnergyRecovery}" TextAlignment="Center" Margin="10" FontSize="12" 
@@ -266,28 +244,16 @@
                     </DataGridTemplateColumn.HeaderTemplate>
                 </DataGridTemplateColumn>
 
-                <DataGridTemplateColumn IsReadOnly="True" MinWidth="50" >
+                <DataGridTemplateColumn IsReadOnly="True" Width="130">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
-                                <StackPanel.InputBindings>
-                                    <MouseBinding Command="{Binding DataContext.ShowDetailsCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}" Gesture="LeftDoubleClick"/>
-                                </StackPanel.InputBindings>
-                                
-                                <Icon:PackIconMaterial Visibility="{Binding Path=IsReady, Converter={StaticResource BoolToVisibility}, ConverterParameter=true}"
-                                                   Kind="Check" Foreground="#98E2C6" Style="{StaticResource menuButtonIcon}" Width="10" Height="10"
-                                                   HorizontalAlignment="Center" ToolTip="{loc:Loc Ready}" Cursor="Help"/>
-                                <Icon:PackIconMaterial Visibility="{Binding Path=IsReady, Converter={StaticResource BoolToVisibility}, ConverterParameter=true:true}"
-                                                   Kind="Clock" Foreground="#CE4257" Style="{StaticResource menuButtonIcon}" Width="10" Height="10" Margin="0"
-                                                   HorizontalAlignment="Center" ToolTip="{loc:Loc NotReady}" Cursor="Help"/>
+                            <StackPanel>
+                                <Button Command="{Binding DataContext.ShowDetailsCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
+                                        Content="{loc:Loc Open}" FontSize="12" Width="75"
+                                        Style="{StaticResource showButton}" HorizontalAlignment="Center"/>
                             </StackPanel>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
-                    <DataGridTemplateColumn.HeaderTemplate>
-                        <DataTemplate>
-                            <TextBlock Text="{loc:Loc Ready}" Margin="5" TextAlignment="Center" FontSize="14" Foreground="White" />
-                        </DataTemplate>
-                    </DataGridTemplateColumn.HeaderTemplate>
                 </DataGridTemplateColumn>
             </DataGrid.Columns>
         </DataGrid>

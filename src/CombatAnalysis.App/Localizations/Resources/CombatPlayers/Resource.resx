@@ -165,6 +165,9 @@
   <data name="HealingPerSecond" xml:space="preserve">
     <value>Healing per sec.</value>
   </data>
+  <data name="Lose" xml:space="preserve">
+    <value>Lose</value>
+  </data>
   <data name="MinDamage" xml:space="preserve">
     <value>Min. damage</value>
   </data>
@@ -224,5 +227,8 @@
   </data>
   <data name="ValuePerSecond" xml:space="preserve">
     <value>Value per second</value>
+  </data>
+  <data name="Win" xml:space="preserve">
+    <value>Win</value>
   </data>
 </root>
