@@ -6,7 +6,7 @@ using System.Collections.Concurrent;
 
 namespace CombatAnalysis.WebApp.Hubs;
 
-public class VoiceChatHub : Hub
+internal class VoiceChatHub : Hub
 {
     private readonly IHttpClientHelper _httpClient;
     private static readonly ConcurrentDictionary<string, HashSet<string>> _groupUsers = new();
@@ -108,7 +108,7 @@ public class VoiceChatHub : Hub
         await Clients.Group(room).SendAsync("UserLeft", Context.ConnectionId);
     }
 
-    public override async Task OnDisconnectedAsync(Exception exception)
+    public override async Task OnDisconnectedAsync(Exception? exception)
     {
         foreach (var group in _groupUsers)
         {

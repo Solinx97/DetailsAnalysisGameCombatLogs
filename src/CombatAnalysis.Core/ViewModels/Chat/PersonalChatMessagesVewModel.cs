@@ -5,6 +5,7 @@ using CombatAnalysis.Core.Helpers;
 using CombatAnalysis.Core.Interfaces;
 using CombatAnalysis.Core.Models.Chat;
 using CombatAnalysis.Core.Models.User;
+using Microsoft.AspNetCore.SignalR.Client;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
 using MvvmCross.Commands;
@@ -16,6 +17,8 @@ namespace CombatAnalysis.Core.ViewModels.Chat;
 
 public class PersonalChatMessagesVewModel : MvxViewModel, IImprovedMvxViewModel
 {
+    private const string HubURL = "https://localhost:7026/chatHub";
+
     private readonly IHttpClientHelper _httpClientHelper;
     private readonly IMemoryCache _memoryCache;
     private readonly ILogger _logger;
@@ -26,6 +29,7 @@ public class PersonalChatMessagesVewModel : MvxViewModel, IImprovedMvxViewModel
     private string? _selectedChatName;
     private string? _message;
     private AppUserModel? _myAccount;
+    private HubConnection _hubConnection;
 
     public PersonalChatMessagesVewModel(IHttpClientHelper httpClientHelper, IMemoryCache memoryCache, ILogger logger)
     {
@@ -78,6 +82,7 @@ public class PersonalChatMessagesVewModel : MvxViewModel, IImprovedMvxViewModel
             if (value != null)
             {
                 Task.Run(LoadMessagesForSelectedChatAsync);
+                Task.Run(InitSignalRAsync);
             }
         }
     }
@@ -113,9 +118,9 @@ public class PersonalChatMessagesVewModel : MvxViewModel, IImprovedMvxViewModel
 
     #endregion
 
-    public void Fill()
+    private async Task FillAsync()
     {
-        AsyncDispatcher.ExecuteOnMainThreadAsync(() =>
+        await AsyncDispatcher.ExecuteOnMainThreadAsync(() =>
         {
             if (_allMessages == null || Messages == null)
             {
@@ -133,7 +138,7 @@ public class PersonalChatMessagesVewModel : MvxViewModel, IImprovedMvxViewModel
         });
     }
 
-    public async Task SendMessageAsync()
+    private async Task SendMessageAsync()
     {
         try
         {
@@ -150,13 +155,14 @@ public class PersonalChatMessagesVewModel : MvxViewModel, IImprovedMvxViewModel
                 throw new ArgumentNullException(nameof(MyAccount));
             }
 
-            var newPersonalChatMessage = new PersonalChatMessageModel
+            var newMessage = new PersonalChatMessageModel
             {
                 Message = Message,
                 Time = TimeSpan.Parse($"{DateTimeOffset.UtcNow.Hour}:{DateTimeOffset.UtcNow.Minute}").ToString(),
                 Status = 0,
                 ChatId = SelectedChat.Id,
                 AppUserId = MyAccount.Id,
+                Username = MyAccount.Username,
             };
 
             Message = string.Empty;
@@ -167,12 +173,11 @@ public class PersonalChatMessagesVewModel : MvxViewModel, IImprovedMvxViewModel
                 throw new ArgumentNullException(nameof(refreshToken));
             }
 
-            var response = await _httpClientHelper.PostAsync("PersonalChatMessage", JsonContent.Create(newPersonalChatMessage), refreshToken, Port.ChatApi);
-            response.EnsureSuccessStatusCode();
+            await _hubConnection.SendAsync("SendPersonalMessage", refreshToken, newMessage);
 
-            SelectedChat.LastMessage = newPersonalChatMessage.Message;
+            SelectedChat.LastMessage = newMessage.Message;
 
-            response = await _httpClientHelper.PutAsync("PersonalChat", JsonContent.Create(SelectedChat), refreshToken, Port.ChatApi);
+            var response = await _httpClientHelper.PutAsync("PersonalChat", JsonContent.Create(SelectedChat), refreshToken, Port.ChatApi);
             response.EnsureSuccessStatusCode();
         }
         catch (ArgumentNullException ex)
@@ -226,7 +231,7 @@ public class PersonalChatMessagesVewModel : MvxViewModel, IImprovedMvxViewModel
 
             await Task.WhenAll(tasks);
 
-            Fill();
+            await FillAsync();
         }
         catch (ArgumentNullException ex)
         {
@@ -280,5 +285,31 @@ public class PersonalChatMessagesVewModel : MvxViewModel, IImprovedMvxViewModel
     private void GetMyAccount()
     {
         MyAccount = _memoryCache.Get<AppUserModel>(nameof(MemoryCacheValue.User)) ?? new AppUserModel();
+    }
+
+    private async Task InitSignalRAsync()
+    {
+        try
+        {
+            _hubConnection = new HubConnectionBuilder()
+                .WithUrl(HubURL)
+                .Build();
+
+            await _hubConnection.StartAsync();
+
+            await _hubConnection.SendAsync("JoinRoom", SelectedChat?.Id.ToString());
+
+            _hubConnection.On<string, PersonalChatMessageModel>("ReceivePersonalMessage", async (user, message) =>
+            {
+                await AsyncDispatcher.ExecuteOnMainThreadAsync(() =>
+                {
+                    Messages?.Add(message);
+                });
+            });
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, ex.Message);
+        }
     }
 }

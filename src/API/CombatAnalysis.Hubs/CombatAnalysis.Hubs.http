@@ -1,0 +1,6 @@
+@CombatAnalysis.Hubs_HostAddress = http://localhost:5148
+
+GET {{CombatAnalysis.Hubs_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

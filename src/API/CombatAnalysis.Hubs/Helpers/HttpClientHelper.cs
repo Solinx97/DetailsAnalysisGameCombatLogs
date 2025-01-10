@@ -1,8 +1,9 @@
-﻿using CombatAnalysis.WebApp.Interfaces;
+﻿using CombatAnalysis.Hubs.Interfaces;
+using System.Net.Http.Headers;
 using System.Net.Security;
 using System.Security.Cryptography.X509Certificates;
 
-namespace CombatAnalysis.WebApp.Helpers;
+namespace CombatAnalysis.Hubs.Helpers;
 
 internal class HttpClientHelper : IHttpClientHelper
 {
@@ -37,8 +38,10 @@ internal class HttpClientHelper : IHttpClientHelper
 
     public string BaseAddress { get; set; }
 
-    public async Task<HttpResponseMessage> PostAsync(string requestUri, JsonContent content)
+    public async Task<HttpResponseMessage> PostAsync(string requestUri, JsonContent content, string token)
     {
+        Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
         var result = await Client.PostAsync($"{BaseAddress}{_baseAddressApi}{requestUri}", content);
 
         return result;

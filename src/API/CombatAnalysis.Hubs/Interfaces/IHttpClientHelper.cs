@@ -1,4 +1,4 @@
-﻿namespace CombatAnalysis.WebApp.Interfaces;
+﻿namespace CombatAnalysis.Hubs.Interfaces;
 
 public interface IHttpClientHelper
 {
@@ -6,7 +6,7 @@ public interface IHttpClientHelper
 
     string BaseAddress { get; set; }
 
-    Task<HttpResponseMessage> PostAsync(string requestAddress, JsonContent content);
+    Task<HttpResponseMessage> PostAsync(string requestAddress, JsonContent content, string token);
 
     Task<HttpResponseMessage> GetAsync(string requestAddress);
 

@@ -47,7 +47,7 @@
         </Grid>
 
         <TextBlock Name="myAccountId" Text="{Binding MyAccount.Id}" Visibility="Hidden"/>
-        <ListBox Name="personalChat" Grid.Row="1" HorizontalContentAlignment="Stretch" Margin="0" ItemsSource="{Binding Messages}" Background="Transparent">
+        <ListBox Name="personalChat" Grid.Row="1" HorizontalContentAlignment="Stretch" ItemsSource="{Binding Messages}" Background="Transparent">
             <ListBox.BorderBrush>
                 <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
                     <GradientStop Color="#462ADB" Offset="0"/>
