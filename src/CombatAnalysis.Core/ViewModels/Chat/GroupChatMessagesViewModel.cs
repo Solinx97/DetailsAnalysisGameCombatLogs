@@ -552,8 +552,7 @@ public class GroupChatMessagesViewModel : MvxViewModel, IImprovedMvxViewModel
             var response = await _httpClientHelper.GetAsync($"Account/{message.AppUserId}", refreshToken, Port.UserApi);
             response.EnsureSuccessStatusCode();
 
-            var companions = await response.Content.ReadFromJsonAsync<AppUserModel>();
-            message.Username = companions?.Username ?? string.Empty;
+            //var companions = await response.Content.ReadFromJsonAsync<AppUserModel>();
         }
         catch (ArgumentNullException ex)
         {

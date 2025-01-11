@@ -1,7 +1,6 @@
-﻿import { useEffect, useRef, useState } from 'react';
+﻿import * as signalR from '@microsoft/signalr';
+import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useGetUserByIdQuery } from '../../../store/api/user/Account.api';
-import { useGetMessagesByPersonalChatIdQuery, useLazyGetMoreMessagesByPersonalChatIdQuery } from '../../../store/api/core/Chat.api';
 import {
     useLazyFindPersonalChatMessageCountQuery,
     useUpdatePersonalChatMessageCountAsyncMutation
@@ -11,6 +10,8 @@ import {
     useRemovePersonalChatMessageAsyncMutation,
     useUpdatePersonalChatMessageAsyncMutation
 } from '../../../store/api/chat/PersonalChatMessage.api';
+import { useGetMessagesByPersonalChatIdQuery, useLazyGetMoreMessagesByPersonalChatIdQuery } from '../../../store/api/core/Chat.api';
+import { useGetUserByIdQuery } from '../../../store/api/user/Account.api';
 import Loading from '../../Loading';
 import ChatMessage from './ChatMessage';
 import PersonalChatMessageInput from './PersonalChatMessageInput';
@@ -18,16 +19,17 @@ import PersonalChatTitle from './PersonalChatTitle';
 
 import "../../../styles/communication/chats/personalChat.scss";
 
-const getPersonalChatMessagesInterval = 500;
-
 const PersonalChat = ({ chat, me, setSelectedChat, companionId }) => {
     const { t } = useTranslation("communication/chats/personalChat");
+
+    const hubURL = "https://localhost:7026/chatHub";
 
     const chatContainerRef = useRef(null);
     const pageSizeRef = useRef(1);
 
+    const [hubConnection, setHubConnection] = useState(null);
     const [haveMoreMessages, setHaveMoreMessage] = useState(false);
-    const [currentMessages, setCurrentMessages] = useState([]);
+    const [currentMessages, setCurrentMessages] = useState(null);
     const [messagesIsLoaded, setMessagesIsLoaded] = useState(false);
     const [areLoadingOldMessages, setAreLoadingOldMessages] = useState(true);
 
@@ -35,9 +37,6 @@ const PersonalChat = ({ chat, me, setSelectedChat, companionId }) => {
     const { data: messages, isLoading } = useGetMessagesByPersonalChatIdQuery({
         chatId: chat.id,
         pageSize: pageSizeRef.current
-    }, {
-        pollingInterval: getPersonalChatMessagesInterval,
-        refetchOnMountOrArgChange: true
     });
     const [getMoreMessagesByPersonalChatIdAsync] = useLazyGetMoreMessagesByPersonalChatIdQuery();
 
@@ -56,9 +55,20 @@ const PersonalChat = ({ chat, me, setSelectedChat, companionId }) => {
             return;
         }
 
-        const newMessages = addUniqueElements(currentMessages, messages);
-        setCurrentMessages(newMessages);
+        setCurrentMessages(messages);
     }, [messages]);
+
+    useEffect(() => {
+        if (!currentMessages) {
+            return;
+        }
+
+        const connectToChat = async () => {
+            await connectToChatAsync();
+        }
+
+        connectToChat();
+    }, [currentMessages]);
 
     useEffect(() => {
         if (!messages || messages.length === 0) {
@@ -85,7 +95,7 @@ const PersonalChat = ({ chat, me, setSelectedChat, companionId }) => {
     }, [currentMessages, messages]);
 
     useEffect(() => {
-        if (currentMessages.length === 0 || messagesIsLoaded) {
+        if (!currentMessages || messagesIsLoaded) {
             return;
         }
 
@@ -95,12 +105,35 @@ const PersonalChat = ({ chat, me, setSelectedChat, companionId }) => {
     }, [currentMessages]);
 
     useEffect(() => {
-        if (currentMessages.length === 0 || areLoadingOldMessages) {
+        if (!currentMessages || areLoadingOldMessages) {
             return;
         }
 
         scrollToBottom();
     }, [currentMessages]);
+
+    const connectToChatAsync = async () => {
+        try {
+            const hubConnection = new signalR.HubConnectionBuilder()
+                .withUrl(hubURL)
+                .withAutomaticReconnect()
+                .build();
+            setHubConnection(hubConnection);
+
+            await hubConnection.start();
+
+            await hubConnection.invoke("JoinRoom", `${chat.id}`);
+
+            await hubConnection.on("ReceivePersonalMessage", (userId, message) => {
+                const messages = Array.from(currentMessages);
+                messages.push(message);
+
+                setCurrentMessages(messages);
+            });
+        } catch (e) {
+            console.log(e);
+        }
+    }
 
     const decreasePersonalChatMessagesCountAsync = async () => {
         const messagesCount = await getMessagesCount({ chatId: chat?.id, userId: me.id });
@@ -129,14 +162,6 @@ const PersonalChat = ({ chat, me, setSelectedChat, companionId }) => {
     const scrollToBottom = () => {
         const chatContainer = chatContainerRef.current;
         chatContainer.scrollTop = chatContainer.scrollHeight;
-    }
-
-    const addUniqueElements = (oldArray, newArray) => {
-        const oldSet = new Set(oldArray.map(item => item.id));
-        const uniqueNewElements = newArray.filter(item => !oldSet.has(item.id));
-        const refreshedArray = oldArray.concat(uniqueNewElements);
-
-        return refreshedArray;
     }
 
     const getMoreMessagesAsync = async (offset) => {

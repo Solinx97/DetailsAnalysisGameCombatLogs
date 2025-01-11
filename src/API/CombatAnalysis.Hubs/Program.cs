@@ -18,14 +18,17 @@ builder.Services.AddCors(options =>
     {
         builder.AllowAnyMethod()
                .AllowAnyHeader()
-               .WithOrigins("https://localhost:7026")
+               .WithOrigins(
+                    "https://localhost:7026", 
+                    "https://localhost:44479"
+                )
                .AllowCredentials();
     });
 });
 
 builder.Services.AddSignalR();
 
-Port.ChatApi = builder.Configuration["ChatApiPort"];
+Port.ChatApi = builder.Configuration["ChatApiPort"] ?? string.Empty;
 
 Log.Logger = new LoggerConfiguration()
     .MinimumLevel.Debug()

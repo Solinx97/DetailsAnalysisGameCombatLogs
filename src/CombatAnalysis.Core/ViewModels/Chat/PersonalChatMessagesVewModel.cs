@@ -162,7 +162,6 @@ public class PersonalChatMessagesVewModel : MvxViewModel, IImprovedMvxViewModel
                 Status = 0,
                 ChatId = SelectedChat.Id,
                 AppUserId = MyAccount.Id,
-                Username = MyAccount.Username,
             };
 
             Message = string.Empty;
@@ -265,8 +264,6 @@ public class PersonalChatMessagesVewModel : MvxViewModel, IImprovedMvxViewModel
             {
                 throw new ArgumentNullException(nameof(companions));
             }
-
-            message.Username = companions.Username ?? string.Empty;
         }
         catch (ArgumentNullException ex)
         {

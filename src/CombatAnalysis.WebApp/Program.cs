@@ -14,23 +14,23 @@ builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<IHttpClientHelper, HttpClientHelper>();
 builder.Services.AddScoped<RequireAccessTokenAttribute>();
 
-Port.CombatParserApi = builder.Configuration["CombatParserApiPort"];
-Port.UserApi = builder.Configuration["UserApiPort"];
-Port.ChatApi = builder.Configuration["ChatApiPort"];
-Port.CommunicationApi = builder.Configuration["CommunicationApiPort"];
-Port.Identity = builder.Configuration["IdentityPort"];
+Port.CombatParserApi = builder.Configuration["CombatParserApiPort"] ?? string.Empty;
+Port.UserApi = builder.Configuration["UserApiPort"] ?? string.Empty;
+Port.ChatApi = builder.Configuration["ChatApiPort"] ?? string.Empty;
+Port.CommunicationApi = builder.Configuration["CommunicationApiPort"] ?? string.Empty;
+Port.Identity = builder.Configuration["IdentityPort"] ?? string.Empty;
 
-AuthenticationGrantType.Code = builder.Configuration["Authentication:GrantType:Code"];
-AuthenticationGrantType.Authorization = builder.Configuration["Authentication:GrantType:Authorization"];
-AuthenticationGrantType.RefreshToken = builder.Configuration["Authentication:GrantType:RefreshToken"];
+AuthenticationGrantType.Code = builder.Configuration["Authentication:GrantType:Code"] ?? string.Empty;
+AuthenticationGrantType.Authorization = builder.Configuration["Authentication:GrantType:Authorization"] ?? string.Empty;
+AuthenticationGrantType.RefreshToken = builder.Configuration["Authentication:GrantType:RefreshToken"] ?? string.Empty;
 
-Authentication.ClientId = builder.Configuration["Authentication:ClientId"];
-Authentication.ClientScope = builder.Configuration["Authentication:ClientScope"];
-Authentication.RedirectUri = builder.Configuration["Authentication:RedirectUri"];
-Authentication.IdentityServer = builder.Configuration["Authentication:IdentityServer"];
-Authentication.IdentityAuthPath = builder.Configuration["Authentication:IdentityAuthPath"];
-Authentication.IdentityRegistryPath = builder.Configuration["Authentication:IdentityRegistryPath"];
-Authentication.CodeChallengeMethod = builder.Configuration["Authentication:CodeChallengeMethod"];
+Authentication.ClientId = builder.Configuration["Authentication:ClientId"] ?? string.Empty;
+Authentication.ClientScope = builder.Configuration["Authentication:ClientScope"] ?? string.Empty;
+Authentication.RedirectUri = builder.Configuration["Authentication:RedirectUri"] ?? string.Empty;
+Authentication.IdentityServer = builder.Configuration["Authentication:IdentityServer"] ?? string.Empty;
+Authentication.IdentityAuthPath = builder.Configuration["Authentication:IdentityAuthPath"] ?? string.Empty;
+Authentication.IdentityRegistryPath = builder.Configuration["Authentication:IdentityRegistryPath"] ?? string.Empty;
+Authentication.CodeChallengeMethod = builder.Configuration["Authentication:CodeChallengeMethod"] ?? string.Empty;
 
 if (int.TryParse(builder.Configuration["Authentication:RefreshTokenExpiresDays"], out var refreshTokenExpiresDays))
 {
@@ -55,10 +55,8 @@ builder.Host.UseSerilog();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
 
