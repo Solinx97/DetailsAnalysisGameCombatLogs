@@ -1,5 +1,5 @@
 ﻿import * as signalR from '@microsoft/signalr';
-import { useEffect, useRef, useState } from 'react';
+import { memo, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
     useLazyFindPersonalChatMessageCountQuery,
@@ -22,10 +22,10 @@ import "../../../styles/communication/chats/personalChat.scss";
 const PersonalChat = ({ chat, me, setSelectedChat, companionId }) => {
     const { t } = useTranslation("communication/chats/personalChat");
 
-    const hubURL = "https://localhost:7026/chatHub";
+    const hubURL = "https://localhost:7026/personalChatHub";
 
     const chatContainerRef = useRef(null);
-    const pageSizeRef = useRef(1);
+    const pageSizeRef = useRef(process.env.REACT_APP_CHAT_PAGE_SIZE);
 
     const [hubConnection, setHubConnection] = useState(null);
     const [haveMoreMessages, setHaveMoreMessage] = useState(false);
@@ -45,10 +45,6 @@ const PersonalChat = ({ chat, me, setSelectedChat, companionId }) => {
     const [updateChatMessageAsync] = useUpdatePersonalChatMessageAsyncMutation();
     const [updatePersonalChatMessageCountMut] = useUpdatePersonalChatMessageCountAsyncMutation();
     const [getMessagesCount] = useLazyFindPersonalChatMessageCountQuery();
-
-    useEffect(() => {
-        pageSizeRef.current = process.env.REACT_APP_CHAT_PAGE_SIZE;
-    }, []);
 
     useEffect(() => {
         if (!messages || messages.length === 0) {
@@ -112,6 +108,19 @@ const PersonalChat = ({ chat, me, setSelectedChat, companionId }) => {
         scrollToBottom();
     }, [currentMessages]);
 
+    useEffect(() => {
+        return () => {
+            const disconnectFromChat = async () => {
+                if (hubConnection) {
+                    await hubConnection.invoke("LeaveFromRoom", `${chat.id}`);
+                    await hubConnection.stop();
+                }
+            }
+
+            disconnectFromChat();
+        }
+    }, [hubConnection]);
+
     const connectToChatAsync = async () => {
         try {
             const hubConnection = new signalR.HubConnectionBuilder()
@@ -124,7 +133,7 @@ const PersonalChat = ({ chat, me, setSelectedChat, companionId }) => {
 
             await hubConnection.invoke("JoinRoom", `${chat.id}`);
 
-            await hubConnection.on("ReceivePersonalMessage", (userId, message) => {
+            await hubConnection.on("ReceiveMessage", (message) => {
                 const messages = Array.from(currentMessages);
                 messages.push(message);
 
@@ -161,7 +170,9 @@ const PersonalChat = ({ chat, me, setSelectedChat, companionId }) => {
 
     const scrollToBottom = () => {
         const chatContainer = chatContainerRef.current;
-        chatContainer.scrollTop = chatContainer.scrollHeight;
+        if (chatContainer !== null) {
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
     }
 
     const getMoreMessagesAsync = async (offset) => {
@@ -235,4 +246,4 @@ const PersonalChat = ({ chat, me, setSelectedChat, companionId }) => {
     );
 }
 
-export default PersonalChat;
+export default memo(PersonalChat);

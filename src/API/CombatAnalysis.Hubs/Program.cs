@@ -48,6 +48,7 @@ app.UseCors("CorsPolicy");
 app.UseHttpsRedirection();
 app.UseRouting();
 
-app.MapHub<ChatHub>("/chatHub");
+app.MapHub<PersonalChatHub>("/personalChatHub");
+app.MapHub<GroupChatHub>("/groupChatHub");
 
 app.Run();

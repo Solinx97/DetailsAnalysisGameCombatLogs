@@ -32,8 +32,6 @@ public class ChatViewModel : ParentTemplate
     private int _selectedUsersIndex = -1;
     private GroupChatModel? _selectedMyGroupChat;
     private PersonalChatModel? _selectedPersonalChat;
-    private int _selectedMyGroupChatIndex = -1;
-    private int _selectedPersonalChatIndex = -1;
     private AppUserModel? _myAccount;
     private LoadingStatus _groupChatLoadingResponse;
     private LoadingStatus _personalChatLoadingResponse;
@@ -50,9 +48,6 @@ public class ChatViewModel : ParentTemplate
 
         Basic.Parent = this;
         Basic.Handler.BasicPropertyUpdate(nameof(BasicTemplateViewModel.Step), -2);
-
-        PersonalChatMessagesTemplate = Mvx.IoCProvider?.IoCConstruct<PersonalChatMessagesVewModel>();
-        GroupChatMessagesTemplate = Mvx.IoCProvider?.IoCConstruct<GroupChatMessagesViewModel>();
 
         GetMyAccount();
     }
@@ -148,15 +143,6 @@ public class ChatViewModel : ParentTemplate
         }
     }
 
-    public int SelectedMyGroupChatIndex
-    {
-        get { return _selectedMyGroupChatIndex; }
-        set
-        {
-            SetProperty(ref _selectedMyGroupChatIndex, value);
-        }
-    }
-
     public GroupChatModel? SelectedMyGroupChat
     {
         get { return _selectedMyGroupChat; }
@@ -166,20 +152,16 @@ public class ChatViewModel : ParentTemplate
 
             if (value != null)
             {
-                SelectedPersonalChatIndex = -1;
                 IsChatSelected = true;
+                SelectedPersonalChat = null;
+
+                PersonalChatMessagesTemplate?.ViewDestroy();
+                PersonalChatMessagesTemplate = null;
+
+                GroupChatMessagesTemplate = Mvx.IoCProvider?.IoCConstruct<GroupChatMessagesViewModel>();
 
                 GroupChatMessagesTemplate?.Handler.PropertyUpdate<GroupChatMessagesViewModel>(GroupChatMessagesTemplate, nameof(GroupChatMessagesViewModel.SelectedChat), value);
             }
-        }
-    }
-
-    public int SelectedPersonalChatIndex
-    {
-        get { return _selectedPersonalChatIndex; }
-        set
-        {
-            SetProperty(ref _selectedPersonalChatIndex, value);
         }
     }
 
@@ -192,8 +174,13 @@ public class ChatViewModel : ParentTemplate
 
             if (value != null)
             {
-                SelectedMyGroupChatIndex = -1;
                 IsChatSelected = true;
+                SelectedMyGroupChat = null;
+
+                GroupChatMessagesTemplate?.ViewDestroy();
+                GroupChatMessagesTemplate = null;
+
+                PersonalChatMessagesTemplate = Mvx.IoCProvider?.IoCConstruct<PersonalChatMessagesVewModel>();
 
                 PersonalChatMessagesTemplate?.Handler.PropertyUpdate<PersonalChatMessagesVewModel>(PersonalChatMessagesTemplate, nameof(PersonalChatMessagesVewModel.SelectedChat), value);
             }
@@ -311,22 +298,6 @@ public class ChatViewModel : ParentTemplate
             var response = await _httpClientHelper.PostAsync("PersonalChat/personalChatIsAlreadyExists", JsonContent.Create(personalChat), refreshToken, Port.ChatApi);
             response.EnsureSuccessStatusCode();
 
-            var chatId = await response.Content.ReadFromJsonAsync<int>();
-
-            if (chatId > 0)
-            {
-                var existPersonChat = PersonalChats?.FirstOrDefault(x => x.Id == chatId);
-                if (existPersonChat != null && PersonalChats != null)
-                {
-                    SelectedPersonalChatIndex = PersonalChats.IndexOf(existPersonChat);
-                }
-            }
-            else
-            {
-                response = await _httpClientHelper.PostAsync("PersonalChat", JsonContent.Create(personalChat), refreshToken, Port.ChatApi);
-                response.EnsureSuccessStatusCode();
-            }
-
             await LoadPersonalChatsAsync();
         }
         catch (ArgumentNullException ex)
@@ -347,8 +318,6 @@ public class ChatViewModel : ParentTemplate
     {
         GroupChatLoadingResponse = LoadingStatus.Pending;
 
-        SelectedMyGroupChatIndex = -1;
-        SelectedPersonalChatIndex = -1;
         IsChatSelected = false;
 
         try
@@ -396,8 +365,6 @@ public class ChatViewModel : ParentTemplate
     {
         PersonalChatLoadingResponse = LoadingStatus.Pending;
 
-        SelectedMyGroupChatIndex = -1;
-        SelectedPersonalChatIndex = -1;
         IsChatSelected = false;
 
         try

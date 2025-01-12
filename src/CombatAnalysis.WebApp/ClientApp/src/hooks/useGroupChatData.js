@@ -1,9 +1,7 @@
 ﻿import { useEffect, useState } from 'react';
-import { useGetMessagesByGroupChatIdQuery, useLazyGetMoreMessagesByGroupChatIdQuery } from '../store/api/core/Chat.api';
 import { useGetGroupChatMessageCountByChatIdQuery } from '../store/api/chat/GroupChatMessage.api';
 import { useFindGroupChatUserByChatIdQuery, useFindGroupChatUserQuery } from '../store/api/chat/GroupChatUser.api';
-
-const getGroupChatMessagesInterval = 500;
+import { useGetMessagesByGroupChatIdQuery, useLazyGetMoreMessagesByGroupChatIdQuery } from '../store/api/core/Chat.api';
 
 const useGroupChatData = (chatId, userId, pageSizeRef) => {
     const [groupChatData, setGroupChatData] = useState({
@@ -17,9 +15,6 @@ const useGroupChatData = (chatId, userId, pageSizeRef) => {
     const { data: messages, isLoading: messagesIsLoading } = useGetMessagesByGroupChatIdQuery({
         chatId,
         pageSize: pageSizeRef.current
-    }, {
-        pollingInterval: getGroupChatMessagesInterval,
-        refetchOnMountOrArgChange: true,
     });
     const [getMoreMessagesByGroupChatIdAsync] = useLazyGetMoreMessagesByGroupChatIdQuery();
     const { data: count, isLoading: countIsLoading } = useGetGroupChatMessageCountByChatIdQuery(chatId);

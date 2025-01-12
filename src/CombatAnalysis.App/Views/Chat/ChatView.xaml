@@ -76,7 +76,7 @@
                         <TextBlock Text="{loc:Loc NoGroupChats}" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="12" Foreground="White" Margin="5"
                                Visibility="{Binding IsShowEmptyMyGroupChat, Converter={StaticResource BoolToVisibility}, ConverterParameter='true:false'}"/>
                         <ListBox HorizontalContentAlignment="Stretch" Grid.Row="1" Margin="10 10 10 30"
-                             ItemsSource="{Binding MyGroupChats}" SelectedIndex="{Binding SelectedMyGroupChatIndex}" 
+                             ItemsSource="{Binding MyGroupChats}" 
                              SelectedItem="{Binding SelectedMyGroupChat}" Background="Transparent"
                              Visibility="{Binding IsLoadMyGroupChatList, Converter={StaticResource BoolToVisibility}, ConverterParameter='true:false'}">
                             <ListBox.ItemTemplate>
@@ -108,7 +108,7 @@
                         
                         <ListBox HorizontalContentAlignment="Stretch" Grid.Row="1" Margin="10 10 10 30"
                              ItemsSource="{Binding PersonalChats}" Background="Transparent"
-                             SelectedItem="{Binding SelectedPersonalChat}" SelectedIndex="{Binding SelectedPersonalChatIndex}"
+                             SelectedItem="{Binding SelectedPersonalChat}"
                              Visibility="{Binding IsLoadPersonalChatList, Converter={StaticResource BoolToVisibility}, ConverterParameter='true:false'}">
                             <ListBox.ItemTemplate>
                                 <DataTemplate>
@@ -173,7 +173,7 @@
                            FontSize="18" FontStyle="Italic" Foreground="White" 
                            Visibility="{Binding IsChatSelected, Converter={StaticResource BoolToVisibility}, ConverterParameter=true:true}"/>
 
-                <ContentControl Visibility="{Binding SelectedMyGroupChatIndex, Converter={StaticResource IntToVisibility}, ConverterParameter='true:0:>='}"
+                <ContentControl Visibility="{Binding IsChatSelected, Converter={StaticResource BoolToVisibility}, ConverterParameter=true:false}"
                                 Content="{Binding GroupChatMessagesTemplate}">
                     <ContentControl.Resources>
                         <DataTemplate DataType="{x:Type chatViewModels:GroupChatMessagesViewModel}">
@@ -181,8 +181,8 @@
                         </DataTemplate>
                     </ContentControl.Resources>
                 </ContentControl>
-                
-                <ContentControl Visibility="{Binding SelectedPersonalChatIndex, Converter={StaticResource IntToVisibility}, ConverterParameter='true:0:>='}"
+
+                <ContentControl Visibility="{Binding IsChatSelected, Converter={StaticResource BoolToVisibility}, ConverterParameter=true:false}"
                                 Content="{Binding PersonalChatMessagesTemplate}">
                     <ContentControl.Resources>
                         <DataTemplate DataType="{x:Type chatViewModels:PersonalChatMessagesVewModel}">

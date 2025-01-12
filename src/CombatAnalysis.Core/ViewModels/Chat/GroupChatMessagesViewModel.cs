@@ -17,7 +17,7 @@ namespace CombatAnalysis.Core.ViewModels.Chat;
 
 public class GroupChatMessagesViewModel : MvxViewModel, IImprovedMvxViewModel
 {
-    private const string HubURL = "https://localhost:7026/chatHub";
+    private const string HubURL = "https://localhost:7026/groupChatHub";
 
     private readonly IHttpClientHelper _httpClientHelper;
     private readonly IMemoryCache _memoryCache;
@@ -41,7 +41,8 @@ public class GroupChatMessagesViewModel : MvxViewModel, IImprovedMvxViewModel
     private bool _inviteToChatIsVisibly;
     private bool _isEditMode;
     private bool _isRemoveMode;
-    private HubConnection _hubConnection;
+    private HubConnection? _hubConnection;
+
     public GroupChatMessagesViewModel(IHttpClientHelper httpClientHelper, IMemoryCache memoryCache, ILogger logger)
     {
         Handler = new VMHandler<GroupChatMessagesViewModel>();
@@ -53,7 +54,7 @@ public class GroupChatMessagesViewModel : MvxViewModel, IImprovedMvxViewModel
         _logger = logger;
 
         SendMessageCommand = new MvxAsyncCommand(SendMessageAsync);
-        ShowChatMenuCommand = new MvxCommand(ShowChatMenu);
+        ShowChatMenuCommand = new MvxCommand(() => ChatMenuIsVisibly = !ChatMenuIsVisibly);
         OpenInviteToChatCommand = new MvxAsyncCommand(OpenInviteToChatAsync);
         InviteToChatCommand = new MvxAsyncCommand(InviteToChatAsync);
         CloseInviteToChatCommand = new MvxCommand(SwitchInviteToGroupChat);
@@ -252,7 +253,18 @@ public class GroupChatMessagesViewModel : MvxViewModel, IImprovedMvxViewModel
 
     #endregion
 
-    public async Task FillAsync()
+    public override void ViewDestroy(bool viewFinishing = true)
+    {
+        if (_hubConnection != null)
+        {
+            Task.Run(async () => await _hubConnection.SendAsync("LeaveFromRoom", SelectedChat?.Id.ToString()));
+            Task.Run(async () => await _hubConnection.StopAsync());
+        }
+
+        base.ViewDestroy(viewFinishing);
+    }
+
+    private async Task FillAsync()
     {
         await AsyncDispatcher.ExecuteOnMainThreadAsync(() =>
         {
@@ -272,12 +284,7 @@ public class GroupChatMessagesViewModel : MvxViewModel, IImprovedMvxViewModel
         });
     }
 
-    public void ShowChatMenu()
-    {
-        ChatMenuIsVisibly = !ChatMenuIsVisibly;
-    }
-
-    public async Task SendMessageAsync()
+    private async Task SendMessageAsync()
     {
         try
         {
@@ -311,7 +318,12 @@ public class GroupChatMessagesViewModel : MvxViewModel, IImprovedMvxViewModel
                 throw new ArgumentNullException(nameof(refreshToken));
             }
 
-            await _hubConnection.SendAsync("SendGroupMessage", refreshToken, newMessage);
+            if (_hubConnection == null)
+            {
+                throw new ArgumentNullException(nameof(_hubConnection));
+            }
+
+            await _hubConnection.SendAsync("SendMessage", refreshToken, newMessage);
 
             SelectedChat.LastMessage = Message;
 
@@ -338,7 +350,7 @@ public class GroupChatMessagesViewModel : MvxViewModel, IImprovedMvxViewModel
         }
     }
 
-    public async Task OpenInviteToChatAsync()
+    private async Task OpenInviteToChatAsync()
     {
         AddUserToChatResponse = LoadingStatus.None;
 
@@ -385,12 +397,12 @@ public class GroupChatMessagesViewModel : MvxViewModel, IImprovedMvxViewModel
         }
     }
 
-    public void SwitchInviteToGroupChat()
+    private void SwitchInviteToGroupChat()
     {
         InviteToChatIsVisibly = !InviteToChatIsVisibly;
     }
 
-    public async Task InviteToChatAsync()
+    private async Task InviteToChatAsync()
     {
         try
         {
@@ -442,7 +454,7 @@ public class GroupChatMessagesViewModel : MvxViewModel, IImprovedMvxViewModel
         }
     }
 
-    public async Task EditMessageAsync()
+    private async Task EditMessageAsync()
     {
         try
         {
@@ -461,7 +473,7 @@ public class GroupChatMessagesViewModel : MvxViewModel, IImprovedMvxViewModel
         }
     }
 
-    public async Task RemoveMessageAsync()
+    private async Task RemoveMessageAsync()
     {
         try
         {
@@ -626,13 +638,14 @@ public class GroupChatMessagesViewModel : MvxViewModel, IImprovedMvxViewModel
         {
             _hubConnection = new HubConnectionBuilder()
                 .WithUrl(HubURL)
+                .WithAutomaticReconnect()
                 .Build();
 
             await _hubConnection.StartAsync();
 
             await _hubConnection.SendAsync("JoinRoom", SelectedChat?.Id.ToString());
 
-            _hubConnection.On<string, GroupChatMessageModel>("ReceiveGroupMessage", async (user, message) =>
+            _hubConnection.On<GroupChatMessageModel>("ReceiveMessage", async (message) =>
             {
                 await AsyncDispatcher.ExecuteOnMainThreadAsync(() =>
                 {

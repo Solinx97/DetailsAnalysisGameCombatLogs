@@ -17,7 +17,7 @@ namespace CombatAnalysis.Core.ViewModels.Chat;
 
 public class PersonalChatMessagesVewModel : MvxViewModel, IImprovedMvxViewModel
 {
-    private const string HubURL = "https://localhost:7026/chatHub";
+    private const string HubURL = "https://localhost:7026/personalChatHub";
 
     private readonly IHttpClientHelper _httpClientHelper;
     private readonly IMemoryCache _memoryCache;
@@ -29,7 +29,7 @@ public class PersonalChatMessagesVewModel : MvxViewModel, IImprovedMvxViewModel
     private string? _selectedChatName;
     private string? _message;
     private AppUserModel? _myAccount;
-    private HubConnection _hubConnection;
+    private HubConnection? _hubConnection;
 
     public PersonalChatMessagesVewModel(IHttpClientHelper httpClientHelper, IMemoryCache memoryCache, ILogger logger)
     {
@@ -118,6 +118,17 @@ public class PersonalChatMessagesVewModel : MvxViewModel, IImprovedMvxViewModel
 
     #endregion
 
+    public override void ViewDestroy(bool viewFinishing = true)
+    {
+        if (_hubConnection != null)
+        {
+            Task.Run(async () => await _hubConnection.SendAsync("LeaveFromRoom", SelectedChat?.Id.ToString()));
+            Task.Run(async () => await _hubConnection.StopAsync());
+        }
+
+        base.ViewDestroy(viewFinishing);
+    }
+
     private async Task FillAsync()
     {
         await AsyncDispatcher.ExecuteOnMainThreadAsync(() =>
@@ -172,7 +183,12 @@ public class PersonalChatMessagesVewModel : MvxViewModel, IImprovedMvxViewModel
                 throw new ArgumentNullException(nameof(refreshToken));
             }
 
-            await _hubConnection.SendAsync("SendPersonalMessage", refreshToken, newMessage);
+            if (_hubConnection == null)
+            {
+                throw new ArgumentNullException(nameof(_hubConnection));
+            }
+
+            await _hubConnection.SendAsync("SendMessage", refreshToken, newMessage);
 
             SelectedChat.LastMessage = newMessage.Message;
 
@@ -296,7 +312,7 @@ public class PersonalChatMessagesVewModel : MvxViewModel, IImprovedMvxViewModel
 
             await _hubConnection.SendAsync("JoinRoom", SelectedChat?.Id.ToString());
 
-            _hubConnection.On<string, PersonalChatMessageModel>("ReceivePersonalMessage", async (user, message) =>
+            _hubConnection.On<PersonalChatMessageModel>("ReceiveMessage", async (message) =>
             {
                 await AsyncDispatcher.ExecuteOnMainThreadAsync(() =>
                 {

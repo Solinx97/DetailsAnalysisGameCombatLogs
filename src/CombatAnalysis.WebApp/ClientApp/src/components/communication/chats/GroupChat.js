@@ -1,4 +1,5 @@
-﻿import { memo, useEffect, useRef, useState } from 'react';
+﻿import * as signalR from '@microsoft/signalr';
+import { memo, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import useGroupChatData from '../../../hooks/useGroupChatData';
 import {
@@ -26,18 +27,21 @@ const messageType = {
 const GroupChat = ({ chat, me, setSelectedChat }) => {
     const { t } = useTranslation("communication/chats/groupChat");
 
+    const hubURL = "https://localhost:7026/groupChatHub";
+
+    const [hubConnection, setHubConnection] = useState(null);
     const [showAddPeople, setShowAddPeople] = useState(false);
     const [settingsIsShow, setSettingsIsShow] = useState(false);
     const [groupChatUsersId, setGroupChatUsersId] = useState([]);
     const [userInformation, setUserInformation] = useState(null);
 
     const [haveMoreMessages, setHaveMoreMessage] = useState(false);
-    const [currentMessages, setCurrentMessages] = useState([]);
+    const [currentMessages, setCurrentMessages] = useState(null);
     const [messagesIsLoaded, setMessagesIsLoaded] = useState(false);
     const [areLoadingOldMessages, setAreLoadingOldMessages] = useState(true);
 
     const chatContainerRef = useRef(null);
-    const pageSizeRef = useRef(1);
+    const pageSizeRef = useRef(process.env.REACT_APP_CHAT_PAGE_SIZE);
 
     const { groupChatData, getMoreMessagesAsync } = useGroupChatData(chat.id, me.id, pageSizeRef);
 
@@ -47,17 +51,24 @@ const GroupChat = ({ chat, me, setSelectedChat }) => {
     const [removeGroupChatMessageAsync] = useRemoveGroupChatMessageAsyncMutation();
 
     useEffect(() => {
-        pageSizeRef.current = process.env.REACT_APP_CHAT_PAGE_SIZE;
-    }, []);
-
-    useEffect(() => {
-        if (groupChatData.messages.length === 0) {
+        if (!groupChatData.messages || groupChatData.messages.length === 0) {
             return;
         }
 
-        const newMessages = addUniqueElements(currentMessages, groupChatData.messages);
-        setCurrentMessages(newMessages);
+        setCurrentMessages(groupChatData.messages);
     }, [groupChatData.messages]);
+
+    useEffect(() => {
+        if (!currentMessages) {
+            return;
+        }
+
+        const connectToChat = async () => {
+            await connectToChatAsync();
+        }
+
+        connectToChat();
+    }, [currentMessages]);
 
     useEffect(() => {
         if (groupChatData.messages.length === 0) {
@@ -85,7 +96,7 @@ const GroupChat = ({ chat, me, setSelectedChat }) => {
     }, [currentMessages, groupChatData.messages]);
 
     useEffect(() => {
-        if (currentMessages.length === 0 || messagesIsLoaded) {
+        if (!currentMessages || messagesIsLoaded) {
             return;
         }
 
@@ -95,7 +106,7 @@ const GroupChat = ({ chat, me, setSelectedChat }) => {
     }, [currentMessages]);
 
     useEffect(() => {
-        if (currentMessages.length === 0 || areLoadingOldMessages) {
+        if (!currentMessages || areLoadingOldMessages) {
             return;
         }
 
@@ -114,6 +125,42 @@ const GroupChat = ({ chat, me, setSelectedChat }) => {
 
         setGroupChatUsersId(customersId);
     }, [groupChatData.groupChatUsers]);
+
+    useEffect(() => {
+        return () => {
+            const disconnectFromChat = async () => {
+                if (hubConnection) {
+                    await hubConnection.invoke("LeaveFromRoom", `${chat.id}`);
+                    await hubConnection.stop();
+                }
+            }
+
+            disconnectFromChat();
+        }
+    }, [hubConnection]);
+
+    const connectToChatAsync = async () => {
+        try {
+            const hubConnection = new signalR.HubConnectionBuilder()
+                .withUrl(hubURL)
+                .withAutomaticReconnect()
+                .build();
+            setHubConnection(hubConnection);
+
+            await hubConnection.start();
+
+            await hubConnection.invoke("JoinRoom", `${chat.id}`);
+
+            await hubConnection.on("ReceiveMessage", (message) => {
+                const messages = Array.from(currentMessages);
+                messages.push(message);
+
+                setCurrentMessages(messages);
+            });
+        } catch (e) {
+            console.log(e);
+        }
+    }
 
     const decreaseGroupChatMessagesCountAsync = async () => {
         const myGroupChatUser = groupChatData.groupChatUsers.filter(x => x.appUserId === me?.id)[0];
@@ -144,14 +191,6 @@ const GroupChat = ({ chat, me, setSelectedChat }) => {
     const scrollToBottom = () => {
         const chatContainer = chatContainerRef.current;
         chatContainer.scrollTop = chatContainer.scrollHeight;
-    }
-
-    const addUniqueElements = (oldArray, newArray) => {
-        const oldSet = new Set(oldArray.map(item => item.id));
-        const uniqueNewElements = newArray.filter(item => !oldSet.has(item.id));
-        const refreshedArray = oldArray.concat(uniqueNewElements);
-
-        return refreshedArray;
     }
 
     const handleLoadMoreMessagesAsync = async () => {
@@ -186,7 +225,7 @@ const GroupChat = ({ chat, me, setSelectedChat }) => {
                     t={t}
                 />
                 <ul className="chat-messages" ref={chatContainerRef}>
-                    {currentMessages.map((message) => (
+                    {currentMessages?.map((message) => (
                         <li className="message" key={message.id}>
                             <ChatMessage
                                 me={me}
