@@ -4,11 +4,11 @@ using CombatAnalysis.WebApp.Interfaces;
 
 namespace CombatAnalysis.WebApp.Middlewares;
 
-internal class TokenRefreshMiddleware
+internal class AuthTokenMiddleware
 {
     private readonly RequestDelegate _next;
 
-    public TokenRefreshMiddleware(RequestDelegate next)
+    public AuthTokenMiddleware(RequestDelegate next)
     {
         _next = next;
     }
@@ -20,14 +20,14 @@ internal class TokenRefreshMiddleware
 
     private async Task CheckAccessTokenAsync(HttpContext context, ITokenService tokenService)
     {
-        if (!context.Request.Cookies.TryGetValue(AuthenticationCookie.RefreshToken.ToString(), out var refreshToken))
+        if (!context.Request.Cookies.TryGetValue(nameof(AuthenticationCookie.RefreshToken), out var refreshToken))
         {
             await _next(context);
 
             return;
         }
 
-        if (!context.Request.Cookies.TryGetValue(AuthenticationCookie.AccessToken.ToString(), out var accessToken)
+        if (!context.Request.Cookies.TryGetValue(nameof(AuthenticationCookie.AccessToken), out var accessToken)
             && string.IsNullOrEmpty(refreshToken))
         {
             await _next(context);
@@ -50,19 +50,19 @@ internal class TokenRefreshMiddleware
             return;
         }
 
-        context.Response.Cookies.Append(AuthenticationCookie.AccessToken.ToString(), token.AccessToken, new CookieOptions
-        {
-            HttpOnly = true,
-            Secure = false,
-            SameSite = SameSiteMode.Lax,
-            Expires = token.Expires,
-        });
-        context.Response.Cookies.Append(AuthenticationCookie.RefreshToken.ToString(), token.RefreshToken, new CookieOptions
+        context.Response.Cookies.Append(nameof(AuthenticationCookie.RefreshToken), token.RefreshToken, new CookieOptions
         {
             HttpOnly = true,
             Secure = false,
             SameSite = SameSiteMode.Lax,
             Expires = token.Expires.AddDays(Authentication.RefreshTokenExpiresDays)
+        });
+        context.Response.Cookies.Append(nameof(AuthenticationCookie.AccessToken), token.AccessToken, new CookieOptions
+        {
+            HttpOnly = true,
+            Secure = false,
+            SameSite = SameSiteMode.Lax,
+            Expires = token.Expires,
         });
 
         await _next(context);

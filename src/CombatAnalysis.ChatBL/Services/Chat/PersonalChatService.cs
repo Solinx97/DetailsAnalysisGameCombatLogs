@@ -91,12 +91,6 @@ internal class PersonalChatService : IService<PersonalChatDto, int>
 
     private async Task<PersonalChatDto> CreateInternalAsync(PersonalChatDto item)
     {
-        if (string.IsNullOrEmpty(item.LastMessage))
-        {
-            throw new ArgumentNullException(nameof(PersonalChatDto),
-                $"The property {nameof(PersonalChatDto.LastMessage)} of the {nameof(PersonalChatDto)} object can't be null or empty");
-        }
-
         var map = _mapper.Map<PersonalChat>(item);
         var createdItem = await _repository.CreateAsync(map);
         var resultMap = _mapper.Map<PersonalChatDto>(createdItem);
@@ -106,12 +100,6 @@ internal class PersonalChatService : IService<PersonalChatDto, int>
 
     private async Task<int> UpdateInternalAsync(PersonalChatDto item)
     {
-        if (string.IsNullOrEmpty(item.LastMessage))
-        {
-            throw new ArgumentNullException(nameof(PersonalChatDto),
-                $"The property {nameof(PersonalChatDto.LastMessage)} of the {nameof(PersonalChatDto)} object can't be null or empty");
-        }
-
         var map = _mapper.Map<PersonalChat>(item);
         var rowsAffected = await _repository.UpdateAsync(map);
 

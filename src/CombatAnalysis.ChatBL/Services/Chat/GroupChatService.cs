@@ -114,13 +114,6 @@ internal class GroupChatService : IService<GroupChatDto, int>
             throw new ArgumentNullException(nameof(GroupChatDto),
                 $"The property {nameof(GroupChatDto.Name)} of the {nameof(GroupChatDto)} object can't be null or empty");
         }
-        if (string.IsNullOrEmpty(item.LastMessage))
-        {
-            _logger.LogError("CreateInternalAsync: GroupChatDto.LastMessage is null or empty");
-            
-            throw new ArgumentNullException(nameof(GroupChatDto),
-                $"The property {nameof(GroupChatDto.LastMessage)} of the {nameof(GroupChatDto)} object can't be null or empty");
-        }
 
         var map = _mapper.Map<GroupChat>(item);
         var createdItem = await _repository.CreateAsync(map);
@@ -137,13 +130,6 @@ internal class GroupChatService : IService<GroupChatDto, int>
             
             throw new ArgumentNullException(nameof(GroupChatDto),
                 $"The property {nameof(GroupChatDto.Name)} of the {nameof(GroupChatDto)} object can't be null or empty");
-        }
-        if (string.IsNullOrEmpty(item.LastMessage))
-        {
-            _logger.LogError("UpdateInternalAsync: GroupChatDto.LastMessage is null or empty");
-            
-            throw new ArgumentNullException(nameof(GroupChatDto),
-                $"The property {nameof(GroupChatDto.LastMessage)} of the {nameof(GroupChatDto)} object can't be null or empty");
         }
 
         var map = _mapper.Map<GroupChat>(item);

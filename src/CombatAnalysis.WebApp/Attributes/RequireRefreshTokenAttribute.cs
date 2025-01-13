@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc.Filters;
 namespace CombatAnalysis.WebApp.Attributes;
 
 [AttributeUsage(AttributeTargets.Method | AttributeTargets.Class)]
-public class RequireRefreshTokenAttribute : ActionFilterAttribute
+internal class RequireRefreshTokenAttribute : ActionFilterAttribute
 {
     private readonly IHttpClientHelper _httpClientHelper;
 
@@ -17,14 +17,14 @@ public class RequireRefreshTokenAttribute : ActionFilterAttribute
 
     public override void OnActionExecuting(ActionExecutingContext context)
     {
-        if (!context.HttpContext.Request.Cookies.TryGetValue(AuthenticationCookie.RefreshToken.ToString(), out var refreshToken))
+        if (!context.HttpContext.Request.Cookies.TryGetValue(nameof(AuthenticationCookie.RefreshToken), out var refreshToken))
         {
             context.Result = new UnauthorizedResult();
 
             return;
         }
 
-        context.HttpContext.Items[AuthenticationCookie.RefreshToken.ToString()] = refreshToken;
+        context.HttpContext.Items[nameof(AuthenticationCookie.RefreshToken)] = refreshToken;
         _httpClientHelper.Client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", refreshToken);
 
         base.OnActionExecuting(context);

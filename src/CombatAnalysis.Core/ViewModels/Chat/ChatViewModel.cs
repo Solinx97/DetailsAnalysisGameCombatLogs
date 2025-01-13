@@ -282,7 +282,6 @@ public class ChatViewModel : ParentTemplate
             var targetCustomer = Users[SelectedUsersIndex];
             var personalChat = new PersonalChatModel
             {
-                LastMessage = " ",
                 InitiatorId = MyAccount.Id,
                 CompanionId = targetCustomer.Id,
             };
@@ -295,7 +294,7 @@ public class ChatViewModel : ParentTemplate
                 return;
             }
 
-            var response = await _httpClientHelper.PostAsync("PersonalChat/personalChatIsAlreadyExists", JsonContent.Create(personalChat), refreshToken, Port.ChatApi);
+            var response = await _httpClientHelper.PostAsync("PersonalChat", JsonContent.Create(personalChat), refreshToken, Port.ChatApi);
             response.EnsureSuccessStatusCode();
 
             await LoadPersonalChatsAsync();

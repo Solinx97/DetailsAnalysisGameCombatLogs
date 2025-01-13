@@ -11,6 +11,7 @@ using Microsoft.Extensions.Logging;
 using MvvmCross.Commands;
 using MvvmCross.ViewModels;
 using System.Collections.ObjectModel;
+using System.Net;
 using System.Net.Http.Json;
 
 namespace CombatAnalysis.Core.ViewModels.Chat;
@@ -43,8 +44,8 @@ public class PersonalChatMessagesVewModel : MvxViewModel, IImprovedMvxViewModel
 
         SendMessageCommand = new MvxAsyncCommand(SendMessageAsync);
 
-        Messages = new ObservableCollection<PersonalChatMessageModel>();
-        _allMessages = new List<PersonalChatMessageModel>();
+        Messages = [];
+        _allMessages = [];
 
         GetMyAccount();
     }
@@ -165,35 +166,14 @@ public class PersonalChatMessagesVewModel : MvxViewModel, IImprovedMvxViewModel
             {
                 throw new ArgumentNullException(nameof(MyAccount));
             }
-
-            var newMessage = new PersonalChatMessageModel
-            {
-                Message = Message,
-                Time = TimeSpan.Parse($"{DateTimeOffset.UtcNow.Hour}:{DateTimeOffset.UtcNow.Minute}").ToString(),
-                Status = 0,
-                ChatId = SelectedChat.Id,
-                AppUserId = MyAccount.Id,
-            };
-
-            Message = string.Empty;
-
-            var refreshToken = _memoryCache.Get<string>(nameof(MemoryCacheValue.RefreshToken));
-            if (string.IsNullOrEmpty(refreshToken))
-            {
-                throw new ArgumentNullException(nameof(refreshToken));
-            }
-
-            if (_hubConnection == null)
+            else if (_hubConnection == null)
             {
                 throw new ArgumentNullException(nameof(_hubConnection));
             }
 
-            await _hubConnection.SendAsync("SendMessage", refreshToken, newMessage);
+            await _hubConnection.SendAsync("SendMessage", Message, SelectedChat.Id, MyAccount.Id, MyAccount.Username);
 
-            SelectedChat.LastMessage = newMessage.Message;
-
-            var response = await _httpClientHelper.PutAsync("PersonalChat", JsonContent.Create(SelectedChat), refreshToken, Port.ChatApi);
-            response.EnsureSuccessStatusCode();
+            Message = string.Empty;
         }
         catch (ArgumentNullException ex)
         {
@@ -238,48 +218,7 @@ public class PersonalChatMessagesVewModel : MvxViewModel, IImprovedMvxViewModel
                 throw new ArgumentNullException(nameof(_allMessages));
             }
 
-            var tasks = new List<Task>();
-            foreach (var item in _allMessages)
-            {
-                tasks.Add(GetPersonalChatCompanionAsync(item));
-            }
-
-            await Task.WhenAll(tasks);
-
             await FillAsync();
-        }
-        catch (ArgumentNullException ex)
-        {
-            _logger.LogError(ex, ex.Message);
-        }
-        catch (HttpRequestException ex)
-        {
-            _logger.LogError(ex, ex.Message);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, ex.Message);
-        }
-    }
-
-    private async Task GetPersonalChatCompanionAsync(PersonalChatMessageModel message)
-    {
-        try
-        {
-            var refreshToken = _memoryCache.Get<string>(nameof(MemoryCacheValue.RefreshToken));
-            if (string.IsNullOrEmpty(refreshToken))
-            {
-                throw new ArgumentNullException(nameof(_allMessages));
-            }
-
-            var response = await _httpClientHelper.GetAsync($"Account/{message.AppUserId}", refreshToken, Port.UserApi);
-            response.EnsureSuccessStatusCode();
-
-            var companions = await response.Content.ReadFromJsonAsync<AppUserModel>();
-            if (companions == null)
-            {
-                throw new ArgumentNullException(nameof(companions));
-            }
         }
         catch (ArgumentNullException ex)
         {
@@ -304,8 +243,27 @@ public class PersonalChatMessagesVewModel : MvxViewModel, IImprovedMvxViewModel
     {
         try
         {
+            var cookieContainer = new CookieContainer();
+            var refreshToken = _memoryCache.Get<string>(nameof(MemoryCacheValue.RefreshToken));
+            if (string.IsNullOrEmpty(refreshToken))
+            {
+                throw new ArgumentNullException(nameof(refreshToken));
+            }
+
+            var accessToken = _memoryCache.Get<string>(nameof(MemoryCacheValue.AccessToken));
+            if (string.IsNullOrEmpty(accessToken))
+            {
+                throw new ArgumentNullException(nameof(accessToken));
+            }
+
+            cookieContainer.Add(new Uri(HubURL), new Cookie(nameof(MemoryCacheValue.RefreshToken), refreshToken));
+            cookieContainer.Add(new Uri(HubURL), new Cookie(nameof(MemoryCacheValue.AccessToken), accessToken));
+
             _hubConnection = new HubConnectionBuilder()
-                .WithUrl(HubURL)
+                .WithUrl(HubURL, options =>
+                {
+                    options.Cookies = cookieContainer;
+                })
                 .Build();
 
             await _hubConnection.StartAsync();
@@ -319,6 +277,10 @@ public class PersonalChatMessagesVewModel : MvxViewModel, IImprovedMvxViewModel
                     Messages?.Add(message);
                 });
             });
+        }
+        catch (ArgumentNullException ex)
+        {
+            _logger.LogError(ex, ex.Message);
         }
         catch (Exception ex)
         {

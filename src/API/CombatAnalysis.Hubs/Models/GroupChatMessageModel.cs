@@ -1,6 +1,6 @@
-﻿namespace CombatAnalysis.WebApp.Models.Chat;
+﻿namespace CombatAnalysis.Hubs.Models;
 
-public class PersonalChatMessageModel
+public class GroupChatMessageModel
 {
     public int Id { get; set; }
 

@@ -22,7 +22,7 @@ public class PersonalChatController : ControllerBase
     [HttpGet("{id}")]
     public async Task<IActionResult> GetByUserId(string id)
     {
-        var responseMessage = await _httpClient.GetAsync($"PersonalChat");
+        var responseMessage = await _httpClient.GetAsync("PersonalChat");
         if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
         {
             return Unauthorized();
@@ -30,7 +30,7 @@ public class PersonalChatController : ControllerBase
         else if (responseMessage.IsSuccessStatusCode)
         {
             var personalChats = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<PersonalChatModel>>();
-            var myPersonalChats = personalChats.Where(x => x.InitiatorId == id || x.CompanionId == id).ToList();
+            var myPersonalChats = personalChats?.Where(x => x.InitiatorId == id || x.CompanionId == id).ToList();
 
             return Ok(myPersonalChats);
         }
@@ -41,7 +41,7 @@ public class PersonalChatController : ControllerBase
     [HttpGet("isExist")]
     public async Task<IActionResult> IsExist(string initiatorId, string companionId)
     {
-        var responseMessage = await _httpClient.GetAsync($"PersonalChat");
+        var responseMessage = await _httpClient.GetAsync("PersonalChat");
         if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
         {
             return Unauthorized();
@@ -52,11 +52,11 @@ public class PersonalChatController : ControllerBase
         }
 
         var personalChats = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<PersonalChatModel>>();
-        var chats = personalChats.Where(x => x.InitiatorId == initiatorId && x.CompanionId == companionId).ToList();
-        if (!chats.Any())
+        var chats = personalChats?.Where(x => x.InitiatorId == initiatorId && x.CompanionId == companionId).ToList();
+        if (chats != null && !chats.Any())
         {
-            chats = personalChats.Where(x => x.CompanionId == companionId && x.InitiatorId == initiatorId).ToList();
-            if (!chats.Any())
+            chats = personalChats?.Where(x => x.CompanionId == companionId && x.InitiatorId == initiatorId).ToList();
+            if (chats != null && !chats.Any())
             {
                 return Ok(false);
             }

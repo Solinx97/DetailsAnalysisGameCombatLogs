@@ -39,7 +39,7 @@
         <StackPanel Grid.Column="1" Grid.Row="1">
             <StackPanel HorizontalAlignment="Center">
                 <TextBlock Text="{loc:Loc ChatName}" Foreground="White" FontWeight="Bold" />
-                <TextBox Style="{StaticResource messageTextBox}" Text="{Binding Name}" Height="35" Padding="8" Width="200"/>
+                <TextBox Style="{StaticResource messageTextBox}" Text="{Binding Name}" Foreground="White" Height="35" Padding="8" Width="200"/>
             </StackPanel>
             <StackPanel HorizontalAlignment="Center">
                 <TextBlock Text="{loc:Loc ChatRules}" Foreground="White" TextAlignment="Center" FontWeight="Bold" />

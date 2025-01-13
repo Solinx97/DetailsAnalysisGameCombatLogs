@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc.Filters;
 namespace CombatAnalysis.WebApp.Attributes;
 
 [AttributeUsage(AttributeTargets.Method | AttributeTargets.Class)]
-public class RequireAccessTokenAttribute : ActionFilterAttribute
+internal class RequireAccessTokenAttribute : ActionFilterAttribute
 {
     private readonly IHttpClientHelper _httpClientHelper;
 
@@ -17,21 +17,21 @@ public class RequireAccessTokenAttribute : ActionFilterAttribute
 
     public override void OnActionExecuting(ActionExecutingContext context)
     {
-        if (!context.HttpContext.Request.Cookies.TryGetValue(AuthenticationCookie.RefreshToken.ToString(), out var _))
+        if (!context.HttpContext.Request.Cookies.TryGetValue(nameof(AuthenticationCookie.RefreshToken), out var _))
         {
             context.Result = new UnauthorizedResult();
 
             return;
         }
 
-        if (!context.HttpContext.Request.Cookies.TryGetValue(AuthenticationCookie.AccessToken.ToString(), out var accessToken))
+        if (!context.HttpContext.Request.Cookies.TryGetValue(nameof(AuthenticationCookie.AccessToken), out var accessToken))
         {
             context.Result = new UnauthorizedResult();
 
             return;
         }
 
-        context.HttpContext.Items[AuthenticationCookie.AccessToken.ToString()] = accessToken;
+        context.HttpContext.Items[nameof(AuthenticationCookie.AccessToken)] = accessToken;
         _httpClientHelper.Client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", accessToken);
 
         base.OnActionExecuting(context);

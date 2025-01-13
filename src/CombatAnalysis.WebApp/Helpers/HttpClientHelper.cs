@@ -25,7 +25,7 @@ internal class HttpClientHelper : IHttpClientHelper
                 chain.ChainPolicy.VerificationFlags = X509VerificationFlags.AllowUnknownCertificateAuthority;
                 chain.ChainPolicy.RevocationMode = X509RevocationMode.NoCheck;
 
-                return chain.Build(cert); // Validate the certificate against the CA.
+                return chain.Build(cert ?? new X509Certificate2(new byte[] { 1 })); // Validate the certificate against the CA.
             }
         };
 
@@ -35,7 +35,7 @@ internal class HttpClientHelper : IHttpClientHelper
 
     public HttpClient Client { get; set; }
 
-    public string BaseAddress { get; set; }
+    public string BaseAddress { get; set; } = string.Empty;
 
     public async Task<HttpResponseMessage> PostAsync(string requestUri, JsonContent content)
     {

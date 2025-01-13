@@ -9,7 +9,6 @@ using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
 builder.Services.CommunicationBLDependencies(builder.Configuration, "DefaultConnection");
 builder.Services.CustomerBLDependencies(builder.Configuration, "UserConnection");
 
@@ -22,14 +21,14 @@ var mappingConfig = new MapperConfiguration(mc =>
 var mapper = mappingConfig.CreateMapper();
 builder.Services.AddSingleton(mapper);
 builder.Services.AddAuthentication("Bearer")
-        .AddJwtBearer("Bearer", options =>
+        .AddJwtBearer(options =>
         {
             options.Authority = builder.Configuration["Authentication:Authority"];
             options.Audience = builder.Configuration["Authentication:Audience"];
             options.TokenValidationParameters = new TokenValidationParameters
             {
                 ValidateIssuerSigningKey = true,
-                IssuerSigningKey = new SymmetricSecurityKey(Convert.FromBase64String(builder.Configuration["Authentication:IssuerSigningKey"])),
+                IssuerSigningKey = new SymmetricSecurityKey(Convert.FromBase64String(builder.Configuration["Authentication:IssuerSigningKey"] ?? string.Empty)),
                 ValidateIssuer = false,
                 ValidateAudience = false,
                 ClockSkew = TimeSpan.Zero
@@ -103,17 +102,22 @@ builder.Host.UseSerilog();
 
 var app = builder.Build();
 
+app.UseRouting();
+
 app.UseAuthentication(); // Enable authentication middleware
 app.UseAuthorization();
 
-app.UseSwagger();
-app.UseSwaggerUI(options =>
+if (app.Environment.IsDevelopment())
 {
-    options.SwaggerEndpoint("/swagger/v1/swagger.json", "Communication API v1");
-    options.InjectStylesheet("/swagger-ui/swaggerDark.css");
-    options.OAuthClientId(builder.Configuration["Client:ClientId"]);
-    options.OAuthClientSecret(builder.Configuration["Client:ClientSecret"]);
-});
+    app.UseSwagger();
+    app.UseSwaggerUI(options =>
+    {
+        options.SwaggerEndpoint("/swagger/v1/swagger.json", "Communication API v1");
+        options.InjectStylesheet("/swagger-ui/swaggerDark.css");
+        options.OAuthClientId(builder.Configuration["Client:ClientId"]);
+        options.OAuthClientSecret(builder.Configuration["Client:ClientSecret"]);
+    });
+}
 
 app.UseStaticFiles();
 app.UseHttpsRedirection();

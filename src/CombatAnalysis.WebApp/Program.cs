@@ -5,7 +5,6 @@ using CombatAnalysis.WebApp.Hubs;
 using CombatAnalysis.WebApp.Interfaces;
 using CombatAnalysis.WebApp.Middlewares;
 using CombatAnalysis.WebApp.Services;
-using Microsoft.AspNetCore.Authentication.Cookies;
 using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -43,8 +42,6 @@ builder.Services.AddSignalR(options =>
 });
 
 builder.Services.AddControllersWithViews();
-builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-        .AddCookie();
 
 Log.Logger = new LoggerConfiguration()
     .MinimumLevel.Debug()
@@ -55,16 +52,17 @@ builder.Host.UseSerilog();
 
 var app = builder.Build();
 
+app.UseRouting();
+
 if (!app.Environment.IsDevelopment())
 {
     app.UseHsts();
 }
 
-app.UseHttpsRedirection();
 app.UseStaticFiles();
-app.UseRouting();
+app.UseHttpsRedirection();
 
-app.UseMiddleware<TokenRefreshMiddleware>();
+app.UseMiddleware<AuthTokenMiddleware>();
 
 app.MapControllerRoute(
     name: "default",

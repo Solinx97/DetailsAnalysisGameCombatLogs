@@ -14,7 +14,7 @@ import { useGetMessagesByPersonalChatIdQuery, useLazyGetMoreMessagesByPersonalCh
 import { useGetUserByIdQuery } from '../../../store/api/user/Account.api';
 import Loading from '../../Loading';
 import ChatMessage from './ChatMessage';
-import PersonalChatMessageInput from './PersonalChatMessageInput';
+import MessageInput from './MessageInput';
 import PersonalChatTitle from './PersonalChatTitle';
 
 import "../../../styles/communication/chats/personalChat.scss";
@@ -234,10 +234,10 @@ const PersonalChat = ({ chat, me, setSelectedChat, companionId }) => {
                             </li>
                     ))}
                 </ul>
-                <PersonalChatMessageInput
+                <MessageInput
+                    hubConnection={hubConnection}
                     chat={chat}
                     meId={me?.id}
-                    companionId={companion?.id}
                     setAreLoadingOldMessages={setAreLoadingOldMessages}
                     t={t}
                 />

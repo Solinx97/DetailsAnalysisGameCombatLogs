@@ -6,7 +6,7 @@ public interface IHttpClientHelper
 
     string BaseAddress { get; set; }
 
-    Task<HttpResponseMessage> PostAsync(string requestAddress, JsonContent content, string token);
+    Task<HttpResponseMessage> PostAsync(string requestAddress, JsonContent content, HttpContext context);
 
     Task<HttpResponseMessage> GetAsync(string requestAddress);
 

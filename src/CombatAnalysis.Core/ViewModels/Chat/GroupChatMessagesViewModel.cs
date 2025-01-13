@@ -11,6 +11,7 @@ using Microsoft.Extensions.Logging;
 using MvvmCross.Commands;
 using MvvmCross.ViewModels;
 using System.Collections.ObjectModel;
+using System.Net;
 using System.Net.Http.Json;
 
 namespace CombatAnalysis.Core.ViewModels.Chat;
@@ -62,8 +63,8 @@ public class GroupChatMessagesViewModel : MvxViewModel, IImprovedMvxViewModel
         EditMessageCommand = new MvxAsyncCommand(EditMessageAsync);
         RemoveMessageCommand = new MvxAsyncCommand(RemoveMessageAsync);
 
-        Messages = new ObservableCollection<GroupChatMessageModel>();
-        _allMessages = new List<GroupChatMessageModel>();
+        Messages = [];
+        _allMessages = [];
 
         GetMyAccount();
         Task.Run(LoadUsersAsync);
@@ -300,35 +301,14 @@ public class GroupChatMessagesViewModel : MvxViewModel, IImprovedMvxViewModel
             {
                 throw new ArgumentNullException(nameof(MyAccount));
             }
-
-            var newMessage = new GroupChatMessageModel
-            {
-                Message = Message,
-                Time = TimeSpan.Parse($"{DateTimeOffset.UtcNow.Hour}:{DateTimeOffset.UtcNow.Minute}").ToString(),
-                Status = 0,
-                ChatId = SelectedChat.Id,
-                AppUserId = MyAccount.Id,
-            };
-
-            Message = string.Empty;
-
-            var refreshToken = _memoryCache.Get<string>(nameof(MemoryCacheValue.RefreshToken));
-            if (string.IsNullOrEmpty(refreshToken))
-            {
-                throw new ArgumentNullException(nameof(refreshToken));
-            }
-
-            if (_hubConnection == null)
+            else if (_hubConnection == null)
             {
                 throw new ArgumentNullException(nameof(_hubConnection));
             }
 
-            await _hubConnection.SendAsync("SendMessage", refreshToken, newMessage);
+            await _hubConnection.SendAsync("SendMessage", Message, SelectedChat.Id, MyAccount.Id, MyAccount.Username);
 
-            SelectedChat.LastMessage = Message;
-
-            var response = await _httpClientHelper.PutAsync("GroupChat", JsonContent.Create(SelectedChat), Port.ChatApi);
-            response.EnsureSuccessStatusCode();
+            Message = string.Empty;
         }
         catch (ArgumentNullException ex)
         {
@@ -527,44 +507,7 @@ public class GroupChatMessagesViewModel : MvxViewModel, IImprovedMvxViewModel
                 throw new ArgumentNullException(nameof(_allMessages));
             }
 
-            var tasks = new List<Task>();
-            foreach (var item in _allMessages)
-            {
-                tasks.Add(GetGroupChatCompanionAsync(item));
-            }
-
-            await Task.WhenAll(tasks);
-
             await FillAsync();
-        }
-        catch (ArgumentNullException ex)
-        {
-            _logger.LogError(ex, ex.Message);
-        }
-        catch (HttpRequestException ex)
-        {
-            _logger.LogError(ex, ex.Message);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, ex.Message);
-        }
-    }
-
-    private async Task GetGroupChatCompanionAsync(GroupChatMessageModel message)
-    {
-        try
-        {
-            var refreshToken = _memoryCache.Get<string>(nameof(MemoryCacheValue.RefreshToken));
-            if (string.IsNullOrEmpty(refreshToken))
-            {
-                throw new ArgumentNullException(nameof(refreshToken));
-            }
-
-            var response = await _httpClientHelper.GetAsync($"Account/{message.AppUserId}", refreshToken, Port.UserApi);
-            response.EnsureSuccessStatusCode();
-
-            //var companions = await response.Content.ReadFromJsonAsync<AppUserModel>();
         }
         catch (ArgumentNullException ex)
         {
@@ -636,8 +579,27 @@ public class GroupChatMessagesViewModel : MvxViewModel, IImprovedMvxViewModel
     {
         try
         {
+            var cookieContainer = new CookieContainer();
+            var refreshToken = _memoryCache.Get<string>(nameof(MemoryCacheValue.RefreshToken));
+            if (string.IsNullOrEmpty(refreshToken))
+            {
+                throw new ArgumentNullException(nameof(refreshToken));
+            }
+
+            var accessToken = _memoryCache.Get<string>(nameof(MemoryCacheValue.AccessToken));
+            if (string.IsNullOrEmpty(accessToken))
+            {
+                throw new ArgumentNullException(nameof(accessToken));
+            }
+
+            cookieContainer.Add(new Uri(HubURL), new Cookie(nameof(MemoryCacheValue.RefreshToken), refreshToken));
+            cookieContainer.Add(new Uri(HubURL), new Cookie(nameof(MemoryCacheValue.AccessToken), accessToken));
+
             _hubConnection = new HubConnectionBuilder()
-                .WithUrl(HubURL)
+                .WithUrl(HubURL, options =>
+                {
+                    options.Cookies = cookieContainer;
+                })
                 .WithAutomaticReconnect()
                 .Build();
 

@@ -1,31 +1,49 @@
 ﻿import { faPaperPlane } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { memo, useRef } from "react";
-import useCreatePersonalChatMessage from '../../../hooks/useCreatePersonalChatMessage';
+import { memo, useRef, useState } from "react";
 
-const PersonalChatMessageInput = ({ chat, meId, companionId, setAreLoadingOldMessages, t }) => {
+const MessageInput = ({ hubConnection, chat, meId, setAreLoadingOldMessages, t }) => {
     const messageInput = useRef(null);
 
-    const { sendMessageAsync, isEmptyMessage, messagesCountLoading } = useCreatePersonalChatMessage(messageInput, chat, meId, companionId);
+    const [isEmptyMessage, setIsEmptyMessage] = useState(null);
 
     const handleSendMessageByKeyAsync = async (event) => {
         if (event.code !== "Enter") {
             return;
         }
+        else if (messageInput.current.value === "") {
+            sentEmptyMessage();
+
+            return;
+        }
 
         setAreLoadingOldMessages(false);
 
-        await sendMessageAsync(event);
+        await hubConnection?.invoke("SendMessage", messageInput.current.value, chat.id, meId);
+
+        messageInput.current.value = "";
     }
 
     const handleSendMessageAsync = async () => {
+        if (messageInput.current.value === "") {
+            sentEmptyMessage();
+
+            return;
+        }
+
         setAreLoadingOldMessages(false);
 
-        await sendMessageAsync();
+        await hubConnection?.invoke("SendMessage", messageInput.current.value, chat.id, meId);
+
+        messageInput.current.value = "";
     }
 
-    if (messagesCountLoading) {
-        return (<></>);
+    const sentEmptyMessage = () => {
+        setIsEmptyMessage(true);
+
+        setTimeout(() => {
+            setIsEmptyMessage(false);
+        }, 4000);
     }
 
     return (
@@ -44,4 +62,4 @@ const PersonalChatMessageInput = ({ chat, meId, companionId, setAreLoadingOldMes
     );
 }
 
-export default memo(PersonalChatMessageInput);
+export default memo(MessageInput);

@@ -8,18 +8,11 @@ const GroupChatList = ({ t, groupChatUsers, selectedChat, setSelectedChat, chats
         <div className="chat-list">
             <div className="chats__my-chats_title">
                 <div>{t("GroupChats")}</div>
-                {chatsHidden
-                    ? <FontAwesomeIcon
-                        icon={faArrowDown}
-                        title={t("ShowChats")}
-                        onClick={toggleChatsHidden}
-                    />
-                    : <FontAwesomeIcon
-                        icon={faArrowUp}
-                        title={t("HideChats")}
-                        onClick={toggleChatsHidden}
-                    />
-                }
+                <FontAwesomeIcon
+                    icon={chatsHidden ? faArrowDown : faArrowUp}
+                    title={chatsHidden ? t("ShowChats") : t("HideChats")}
+                    onClick={toggleChatsHidden}
+                />
             </div>
             <ul className={`chat-list__chats${!chatsHidden ? "_active" : ""}`}>
                 {groupChatUsers?.length === 0

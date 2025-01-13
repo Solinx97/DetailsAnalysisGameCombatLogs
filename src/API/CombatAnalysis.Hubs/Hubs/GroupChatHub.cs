@@ -20,17 +20,41 @@ internal class GroupChatHub : Hub
 
     public async Task JoinRoom(string room)
     {
-        await Groups.AddToGroupAsync(Context.ConnectionId, room);
+        var refreshToken = Context.GetHttpContext()?.Request.Cookies["RefreshToken"] ?? string.Empty;
+        if (!string.IsNullOrEmpty(refreshToken))
+        {
+            await Groups.AddToGroupAsync(Context.ConnectionId, room);
+        }
     }
 
-    public async Task SendMessage(string refreshToken, PersonalChatMessageModel message)
+    public async Task SendMessage(string message, int chatId, string appUserId, string username)
     {
         try
         {
-            var response = await _httpClient.PostAsync("GroupChatMessage", JsonContent.Create(message), refreshToken);
+            var context = Context.GetHttpContext();
+            if (context == null)
+            {
+                throw new ArgumentNullException(nameof(context));
+            }
+
+            var groupMessage = new GroupChatMessageModel
+            {
+                Username = username,
+                Message = message,
+                Time = TimeSpan.Parse($"{DateTimeOffset.UtcNow.Hour}:{DateTimeOffset.UtcNow.Minute}").ToString(),
+                Status = 0,
+                ChatId = chatId,
+                AppUserId = appUserId
+            };
+
+            var response = await _httpClient.PostAsync("GroupChatMessage", JsonContent.Create(groupMessage), context);
             response.EnsureSuccessStatusCode();
 
-            await Clients.Group(message.ChatId.ToString()).SendAsync("ReceiveMessage", message);
+            await Clients.Group(chatId.ToString()).SendAsync("ReceiveMessage", groupMessage);
+        }
+        catch (ArgumentNullException ex)
+        {
+            _logger.LogError(ex, ex.Message);
         }
         catch (HttpRequestException ex)
         {
@@ -44,6 +68,10 @@ internal class GroupChatHub : Hub
 
     public async Task LeaveFromRoom(string room)
     {
-        await Groups.RemoveFromGroupAsync(Context.ConnectionId, room);
+        var refreshToken = Context.GetHttpContext()?.Request.Cookies["RefreshToken"] ?? string.Empty;
+        if (!string.IsNullOrEmpty(refreshToken))
+        {
+            await Groups.RemoveFromGroupAsync(Context.ConnectionId, room);
+        }
     }
 }

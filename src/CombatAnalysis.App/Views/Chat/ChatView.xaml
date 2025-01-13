@@ -81,7 +81,7 @@
                              Visibility="{Binding IsLoadMyGroupChatList, Converter={StaticResource BoolToVisibility}, ConverterParameter='true:false'}">
                             <ListBox.ItemTemplate>
                                 <DataTemplate>
-                                    <uc:Item Title="{Binding Path=Name}" Message="{Binding Path=LastMessage}" Color="#73afff" TagName="{Binding Path=Name}" MessageCount="0" />
+                                    <uc:Item Title="{Binding Path=Name}" Color="#73afff" TagName="{Binding Path=Name}" MessageCount="0" />
                                 </DataTemplate>
                             </ListBox.ItemTemplate>
                         </ListBox>
@@ -113,7 +113,7 @@
                             <ListBox.ItemTemplate>
                                 <DataTemplate>
                                     <StackPanel>
-                                        <uc:Item Title="{Binding Path=Username}" Message="{Binding LastMessage}" Color="#73afff" TagName="" MessageCount="0">
+                                        <uc:Item Title="{Binding Path=Username}" Color="#73afff" TagName="" MessageCount="0">
                                             <uc:Item.Visibility>
                                                 <MultiBinding Converter="{StaticResource MultiplyToVisibility}">
                                                     <Binding Path="InitiatorId" />
@@ -121,7 +121,7 @@
                                                 </MultiBinding>
                                             </uc:Item.Visibility>
                                         </uc:Item>
-                                        <uc:Item Title="{Binding Path=Username}" Message="{Binding LastMessage}" Color="#73afff" TagName="" MessageCount="0">
+                                        <uc:Item Title="{Binding Path=Username}" Color="#73afff" TagName="" MessageCount="0">
                                             <uc:Item.Visibility>
                                                 <MultiBinding Converter="{StaticResource MultiplyToVisibility}">
                                                     <Binding Path="CompanionId" />

@@ -123,7 +123,6 @@ public class CreateGroupChatViewModel : MvxViewModel
     private void UpdateGroupChatModel(AppUserModel user)
     {
         _groupChat.Name = string.IsNullOrEmpty(Name) ? " " : Name;
-        _groupChat.LastMessage = " ";
         _groupChat.AppUserId = user.Id;
     }
 

@@ -16,12 +16,9 @@ const PersonalChatListItem = ({ chat, setSelectedPersonalChat, companionId, meId
     return (
         <span className="chat-card" onClick={() => setSelectedPersonalChat({ type: "personal", chat: chat })}>
             <div className="username">{user?.username}</div>
-            {chat.lastMessage.length > 0 &&
+            {messagesCount?.count > 0 &&
                 <div className="chat-tooltip">
-                    {messagesCount?.count > 0 &&
-                        <div className="unread-message-count">{messagesCount?.count > 99 ? "99+" : messagesCount?.count}</div>
-                    }
-                    <div className="last-message">{chat?.lastMessage}</div>
+                    <div className="unread-message-count">{messagesCount?.count > 99 ? "99+" : messagesCount?.count}</div>
                 </div>
             }
         </span>

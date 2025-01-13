@@ -98,6 +98,11 @@ internal class PersonalChatMessageService : IChatMessageService<PersonalChatMess
             throw new ArgumentNullException(nameof(PersonalChatMessageDto),
                 $"The property {nameof(PersonalChatMessageDto.Message)} of the {nameof(PersonalChatMessageDto)} object can't be null or empty");
         }
+        else if (string.IsNullOrEmpty(item.Username))
+        {
+            throw new ArgumentNullException(nameof(PersonalChatMessageDto),
+                $"The property {nameof(PersonalChatMessageDto.Username)} of the {nameof(PersonalChatMessageDto)} object can't be null or empty");
+        }
 
         var map = _mapper.Map<PersonalChatMessage>(item);
         var createdItem = await _repository.CreateAsync(map);
@@ -112,6 +117,11 @@ internal class PersonalChatMessageService : IChatMessageService<PersonalChatMess
         {
             throw new ArgumentNullException(nameof(PersonalChatMessageDto),
                 $"The property {nameof(PersonalChatMessageDto.Message)} of the {nameof(PersonalChatMessageDto)} object can't be null or empty");
+        }
+        else if (string.IsNullOrEmpty(item.Username))
+        {
+            throw new ArgumentNullException(nameof(PersonalChatMessageDto),
+                $"The property {nameof(PersonalChatMessageDto.Username)} of the {nameof(PersonalChatMessageDto)} object can't be null or empty");
         }
 
         var map = _mapper.Map<PersonalChatMessage>(item);

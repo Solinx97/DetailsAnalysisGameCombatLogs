@@ -1,4 +1,5 @@
-﻿using CombatAnalysis.Hubs.Interfaces;
+﻿using CombatAnalysis.Hubs.Enums;
+using CombatAnalysis.Hubs.Interfaces;
 using System.Net.Http.Headers;
 using System.Net.Security;
 using System.Security.Cryptography.X509Certificates;
@@ -26,7 +27,7 @@ internal class HttpClientHelper : IHttpClientHelper
                 chain.ChainPolicy.VerificationFlags = X509VerificationFlags.AllowUnknownCertificateAuthority;
                 chain.ChainPolicy.RevocationMode = X509RevocationMode.NoCheck;
 
-                return chain.Build(cert); // Validate the certificate against the CA.
+                return chain.Build(cert ?? new X509Certificate2([1])); // Validate the certificate against the CA.
             }
         };
 
@@ -36,11 +37,11 @@ internal class HttpClientHelper : IHttpClientHelper
 
     public HttpClient Client { get; set; }
 
-    public string BaseAddress { get; set; }
+    public string BaseAddress { get; set; } = string.Empty;
 
-    public async Task<HttpResponseMessage> PostAsync(string requestUri, JsonContent content, string token)
+    public async Task<HttpResponseMessage> PostAsync(string requestUri, JsonContent content, HttpContext context)
     {
-        Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+        AddAuthorizationHeader(context);
 
         var result = await Client.PostAsync($"{BaseAddress}{_baseAddressApi}{requestUri}", content);
 
@@ -66,5 +67,25 @@ internal class HttpClientHelper : IHttpClientHelper
         var result = await Client.DeleteAsync($"{BaseAddress}{_baseAddressApi}{requestUri}");
 
         return result;
+    }
+
+    private void AddAuthorizationHeader(HttpContext context)
+    {
+        if (!context.Request.Cookies.TryGetValue(AuthenticationCookie.RefreshToken.ToString(), out var _))
+        {
+            context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+
+            return;
+        }
+
+        if (!context.Request.Cookies.TryGetValue(AuthenticationCookie.AccessToken.ToString(), out var accessToken))
+        {
+            context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+
+            return;
+        }
+
+        context.Items[AuthenticationCookie.AccessToken.ToString()] = accessToken;
+        Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
     }
 }

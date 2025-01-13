@@ -7,18 +7,11 @@ const PersonalChatList = ({ meId, t, personalChats, selectedChat, setSelectedCha
         <div className="chat-list">
             <div className="chats__my-chats_title">
                 <div>{t("PersonalChats")}</div>
-                {chatsHidden
-                    ? <FontAwesomeIcon
-                        icon={faArrowDown}
-                        title={t("ShowChats")}
-                        onClick={toggleChatsHidden}
-                    />
-                    : <FontAwesomeIcon
-                        icon={faArrowUp}
-                        title={t("HideChats")}
-                        onClick={toggleChatsHidden}
-                    />
-                }
+                <FontAwesomeIcon
+                    icon={chatsHidden ? faArrowDown : faArrowUp}
+                    title={chatsHidden ? t("ShowChats") : t("HideChats")}
+                    onClick={toggleChatsHidden}
+                />
             </div>
             <ul className={`chat-list__chats${!chatsHidden ? "_active" : ""}`}>
                 {personalChats?.length === 0

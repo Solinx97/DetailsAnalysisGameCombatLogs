@@ -54,7 +54,6 @@
             </Border>
             <StackPanel VerticalAlignment="Center" Grid.Column="1" Margin="15 0 0 0">
                 <TextBlock Text="{Binding ElementName=item, Path=Title}" Foreground="White" FontSize="14" FontWeight="SemiBold"/>
-                <TextBlock Text="{Binding ElementName=item, Path=Message}" Foreground="#8b8b8b" Margin="0 3 0 0"/>
             </StackPanel>
             <Border CornerRadius="50" Width="20" Height="20"
                     Grid.Column="2" Background="{Binding ElementName=item, Path=Color}" Visibility="{Binding ElementName=item, Path=Visible}">

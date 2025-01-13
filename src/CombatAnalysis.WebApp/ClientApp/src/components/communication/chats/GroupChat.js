@@ -14,8 +14,8 @@ import Loading from '../../Loading';
 import ChatMessage from './ChatMessage';
 import GroupChatAddUser from './GroupChatAddUser';
 import GroupChatMenu from './GroupChatMenu';
-import GroupChatMessageInput from './GroupChatMessageInput';
 import GroupChatTitle from './GroupChatTitle';
+import MessageInput from './MessageInput';
 
 import '../../../styles/communication/chats/groupChat.scss';
 
@@ -238,11 +238,10 @@ const GroupChat = ({ chat, me, setSelectedChat }) => {
                         </li>
                     ))}
                 </ul>
-                <GroupChatMessageInput
+                <MessageInput
+                    hubConnection={hubConnection}
                     chat={chat}
-                    me={me}
-                    groupChatUsers={groupChatData.groupChatUsers}
-                    messageType={messageType}
+                    meId={me?.id}
                     setAreLoadingOldMessages={setAreLoadingOldMessages}
                     t={t}
                 />

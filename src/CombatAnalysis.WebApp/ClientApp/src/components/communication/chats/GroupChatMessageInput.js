@@ -1,27 +1,49 @@
 ﻿import { faPaperPlane } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { useRef } from 'react';
-import useCreateGroupChatMessage from '../../../hooks/useCreateGroupChatMessage';
+import { memo, useRef, useState } from 'react';
 
-const GroupChatMessageInput = ({ chat, me, groupChatUsers, messageType, setAreLoadingOldMessages, t }) => {
+const GroupChatMessageInput = ({ hubConnection, chat, meId, setAreLoadingOldMessages, t }) => {
     const messageInput = useRef(null);
 
-    const { sendMessageAsync, isEmptyMessage } = useCreateGroupChatMessage(messageInput, chat, me?.id, groupChatUsers, messageType);
+    const [isEmptyMessage, setIsEmptyMessage] = useState(null);
 
     const handleSendMessageByKeyAsync = async (event) => {
         if (event.code !== "Enter") {
             return;
         }
+        else if (messageInput.current.value === "") {
+            sentEmptyMessage();
+
+            return;
+        }
 
         setAreLoadingOldMessages(false);
 
-        await sendMessageAsync(event);
+        await hubConnection?.invoke("SendMessage", messageInput.current.value, chat.id, meId);
+
+        messageInput.current.value = "";
     }
 
     const handleSendMessageAsync = async () => {
+        if (messageInput.current.value === "") {
+            sentEmptyMessage();
+
+            return;
+        }
+
         setAreLoadingOldMessages(false);
 
-        await sendMessageAsync();
+        await hubConnection?.invoke("SendMessage", messageInput.current.value, chat.id, meId);
+
+        messageInput.current.value = "";
+    }
+
+    const sentEmptyMessage = () => {
+        setIsEmptyMessage(true);
+
+        setTimeout(() => {
+            setIsEmptyMessage(false);
+        }, 4000);
     }
 
     return (
@@ -40,4 +62,4 @@ const GroupChatMessageInput = ({ chat, me, groupChatUsers, messageType, setAreLo
     );
 }
 
-export default GroupChatMessageInput;
+export default memo(GroupChatMessageInput);

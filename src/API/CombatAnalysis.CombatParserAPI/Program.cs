@@ -11,7 +11,6 @@ using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
 var dbConfiguration = builder.Configuration.GetSection("DBConfiguration").Get<DBConfiguration>() ?? new DBConfiguration();
 
 builder.Services.CombatParserBLDependencies(builder.Configuration, "DefaultConnection", dbConfiguration.CommandTimeout);
@@ -44,7 +43,7 @@ builder.Services.Configure<KestrelServerOptions>(options =>
     options.Limits.MaxRequestBodySize = dbConfiguration.MaxRequestBodySize;
 });
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
 {
@@ -64,18 +63,23 @@ builder.Host.UseSerilog();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
-app.UseSwagger();
-app.UseSwaggerUI(options =>
+app.UseRouting();
+
+app.UseAuthentication(); // Enable authentication middleware
+app.UseAuthorization();
+
+if (app.Environment.IsDevelopment())
 {
-    options.SwaggerEndpoint("/swagger/v1/swagger.json", "Combat parser API v1");
-    options.InjectStylesheet("/swagger-ui/swaggerDark.css");
-});
+    app.UseSwagger();
+    app.UseSwaggerUI(options =>
+    {
+        options.SwaggerEndpoint("/swagger/v1/swagger.json", "Combat parser API v1");
+        options.InjectStylesheet("/swagger-ui/swaggerDark.css");
+    });
+}
 
 app.UseStaticFiles();
 app.UseHttpsRedirection();
-
-app.UseAuthorization();
 
 app.MapControllers();
 
