@@ -48,15 +48,19 @@ internal class HttpClientHelper : IHttpClientHelper
         return result;
     }
 
-    public async Task<HttpResponseMessage> GetAsync(string requestUri)
+    public async Task<HttpResponseMessage> GetAsync(string requestUri, HttpContext context)
     {
+        AddAuthorizationHeader(context);
+
         var result = await Client.GetAsync($"{BaseAddress}{_baseAddressApi}{requestUri}");
 
         return result;
     }
 
-    public async Task<HttpResponseMessage> PutAsync(string requestUri, JsonContent content)
+    public async Task<HttpResponseMessage> PutAsync(string requestUri, JsonContent content, HttpContext context)
     {
+        AddAuthorizationHeader(context);
+
         var result = await Client.PutAsync($"{BaseAddress}{_baseAddressApi}{requestUri}", content);
 
         return result;

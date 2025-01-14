@@ -51,7 +51,11 @@ const GroupChat = ({ chat, me, setSelectedChat }) => {
     const [removeGroupChatMessageAsync] = useRemoveGroupChatMessageAsyncMutation();
 
     useEffect(() => {
-        if (!groupChatData.messages || groupChatData.messages.length === 0) {
+        setHubConnection(null);
+    }, [chat]);
+
+    useEffect(() => {
+        if (!groupChatData.messages) {
             return;
         }
 
@@ -71,7 +75,7 @@ const GroupChat = ({ chat, me, setSelectedChat }) => {
     }, [currentMessages]);
 
     useEffect(() => {
-        if (groupChatData.messages.length === 0) {
+        if (!groupChatData.messages) {
             return;
         }
 
@@ -140,6 +144,10 @@ const GroupChat = ({ chat, me, setSelectedChat }) => {
     }, [hubConnection]);
 
     const connectToChatAsync = async () => {
+        if (hubConnection !== null) {
+            return;
+        }
+
         try {
             const hubConnection = new signalR.HubConnectionBuilder()
                 .withUrl(hubURL)
@@ -190,7 +198,9 @@ const GroupChat = ({ chat, me, setSelectedChat }) => {
 
     const scrollToBottom = () => {
         const chatContainer = chatContainerRef.current;
-        chatContainer.scrollTop = chatContainer.scrollHeight;
+        if (chatContainer !== null) {
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
     }
 
     const handleLoadMoreMessagesAsync = async () => {
@@ -241,7 +251,7 @@ const GroupChat = ({ chat, me, setSelectedChat }) => {
                 <MessageInput
                     hubConnection={hubConnection}
                     chat={chat}
-                    meId={me?.id}
+                    me={me}
                     setAreLoadingOldMessages={setAreLoadingOldMessages}
                     t={t}
                 />

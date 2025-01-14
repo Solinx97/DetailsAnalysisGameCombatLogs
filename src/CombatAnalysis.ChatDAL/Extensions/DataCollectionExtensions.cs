@@ -5,6 +5,7 @@ using CombatAnalysis.ChatDAL.Interfaces;
 using CombatAnalysis.ChatDAL.Repositories.Firebase;
 using CombatAnalysis.ChatDAL.Repositories.SQL;
 using CombatAnalysis.ChatDAL.Repositories.SQL.StoredProcedure;
+using CombatAnalysis.ChatDAL.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -38,6 +39,8 @@ public static class DataCollectionExtensions
         {
             options.UseSqlServer(connection);
         });
+
+        services.AddScoped<IContextService, ContextService>();
 
         services.AddScoped<IGenericRepository<VoiceChat, string>, SQLRepository<VoiceChat, string>>();
         services.AddScoped<IGenericRepository<PersonalChat, int>, SQLRepository<PersonalChat, int>>();

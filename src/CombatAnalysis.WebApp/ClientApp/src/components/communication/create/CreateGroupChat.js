@@ -2,12 +2,7 @@ import { useState } from "react";
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { useCreateGroupChatAsyncMutation } from '../../../store/api/chat/GroupChat.api';
-import { useCreateGroupChatMessageCountAsyncMutation } from '../../../store/api/chat/GroupChatMessagCount.api';
-import { useCreateGroupChatMessageAsyncMutation } from '../../../store/api/chat/GroupChatMessage.api';
-import { useCreateGroupChatRulesAsyncMutation } from '../../../store/api/chat/GroupChatRules.api';
-import { useCreateGroupChatUserAsyncMutation } from '../../../store/api/chat/GroupChatUser.api';
-import AddPeople from '../../AddPeople';
+import { useCreateGroupChatMutation } from '../../../store/api/chat/GroupChat.api';
 import CommunicationMenu from '../CommunicationMenu';
 import ChatRulesItem from "./ChatRulesItem";
 import CreateGroupChatMenu from './CreateGroupChatMenu';
@@ -37,103 +32,46 @@ const CreateGroupChat = () => {
     const [pinMessage, setPinMessage] = useState(1);
     const [announcements, setAnnouncements] = useState(1);
     const [canFinishCreate, setCanFinishCreate] = useState(false);
-    const [peopleToJoin, setPeopleToJoin] = useState([]);
     const [isCreating, setIsCreating] = useState(false);
 
-    const [createGroupChatMutAsync] = useCreateGroupChatAsyncMutation();
-    const [createGroupChatRulesMutAsync] = useCreateGroupChatRulesAsyncMutation();
-    const [createGroupChatUserMutAsync] = useCreateGroupChatUserAsyncMutation();
-    const [createGroupChatCountAsyncMut] = useCreateGroupChatMessageCountAsyncMutation();
-    const [createGroupChatMessageAsync] = useCreateGroupChatMessageAsyncMutation();
+    const [createGroupChat] = useCreateGroupChatMutation();
 
-    const menuItemsCount = 3;
+    const menuItemsCount = 2;
 
     const createGroupChatAsync = async () => {
         const groupChat = {
+            id: 0,
             name: chatName,
-            lastMessage: " ",
             appUserId: user?.id
         };
 
-        const createdGroupChat = await createGroupChatMutAsync(groupChat);
-        if (createdGroupChat.error !== undefined) {
-            return null;
-        }
+        const groupChatUser = {
+            id: " ",
+            username: user?.username,
+            appUserId: user?.id
+        };
 
-        return createdGroupChat.data;
-    }
-
-    const createGroupChatRulesAsync = async (chatId) => {
         const groupChatRules = {
+            id: 0,
             invitePeople: invitePeople,
             removePeople: removePeople,
             pinMessage: pinMessage,
             announcements: announcements,
-            chatId: chatId
         };
 
-        await createGroupChatRulesMutAsync(groupChatRules);
-    }
-
-    const createGroupChatCountAsync = async (chatId, groupChatUserId) => {
-        const newMessagesCount = {
-            count: 0,
-            groupChatUserId: groupChatUserId,
-            chatId: +chatId,
+        const container = {
+            groupChat,
+            groupChatUser,
+            groupChatRules
         };
 
-        const createdMessagesCount = await createGroupChatCountAsyncMut(newMessagesCount);
-        return createdMessagesCount.data !== undefined;
-    }
-
-    const joinPeopleAsync = async (chatId) => {
-        for (let i = 0; i < peopleToJoin.length; i++) {
-            const newGroupChatUser = {
-                id: " ",
-                username: peopleToJoin[i].username,
-                appUserId: peopleToJoin[i].id,
-                chatId: chatId,
-            };
-
-            const createdGroupChatUser = await createGroupChatUserMutAsync(newGroupChatUser);
-            if (createdGroupChatUser.data !== undefined) {
-                await createGroupChatCountAsync(chatId, createdGroupChatUser.data.id);
-
-                if (peopleToJoin[i].id !== user?.id) {
-                    const systemMessage = `'${user?.username}' added '${peopleToJoin[i].username}' to chat`;
-                    await createMessageAsync(chatId, systemMessage);
-                }
-            }
-        }
-    }
-
-    const createMessageAsync = async (chatId, message) => {
-        const today = new Date();
-        const newMessage = {
-            message: message,
-            time: `${today.getHours()}:${today.getMinutes()}`,
-            status: 0,
-            type: 1,
-            chatId: chatId,
-            appUserId: user?.id
-        };
-
-        await createGroupChatMessageAsync(newMessage);
+        await createGroupChat(container);
     }
 
     const handleCreateNewGroupChatAsync = async () => {
         setIsCreating(true);
 
-        const createdGroupChat = await createGroupChatAsync();
-
-        await createGroupChatRulesAsync(createdGroupChat.id);
-
-        const people = peopleToJoin;
-        people.push(user);
-
-        setPeopleToJoin(people);
-
-        await joinPeopleAsync(createdGroupChat?.id);
+        await createGroupChatAsync();
 
         setIsCreating(false);
 
@@ -186,7 +124,7 @@ const CreateGroupChat = () => {
                                 </div>
                             </div>
                         }
-                        {itemIndex === 1 &&
+                        {itemIndex >= 1 &&
                             <ChatRulesItem
                                 setInvitePeople={setInvitePeople}
                                 setRemovePeople={setRemovePeople}
@@ -203,22 +141,6 @@ const CreateGroupChat = () => {
                                 }
                             />
                         }
-                        {itemIndex >= 2 &&
-                            <div className="create-community__item">
-                                <AddPeople
-                                    user={user}
-                                    communityUsersId={[user.id]}
-                                    peopleToJoin={peopleToJoin}
-                                    setPeopleToJoin={setPeopleToJoin}
-                                />
-                                <ItemConnector
-                                    connectorType={3}
-                                    nextStep={nextStep}
-                                    previouslyStep={previouslyStep}
-                                    nextStepIndex={3}
-                                />
-                            </div>
-                        }
                     </div>
                 </div>
                 {(chatName.length === 0 && passedItemIndex > 0) &&
@@ -226,14 +148,14 @@ const CreateGroupChat = () => {
                 }
                 <div className="actions">
                     {(canFinishCreate && chatName.length > 0) &&
-                        <div className="btn-shadow create" onClick={async () => await handleCreateNewGroupChatAsync()}>{t("Create")}</div>
+                        <div className="btn-shadow create" onClick={handleCreateNewGroupChatAsync}>{t("Create")}</div>
                     }
                     <div className="btn-shadow" onClick={() => navigate("/chats")}>{t("Cancel")}</div>
                 </div>
                 {isCreating &&
                     <>
                         <span className="creating"></span>
-                        <div className="notify">Creating...</div>
+                    <div className="notify">{t("Creating")}</div>
                     </>
                 }
             </div>

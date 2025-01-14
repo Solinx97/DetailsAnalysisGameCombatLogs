@@ -47,7 +47,11 @@ const PersonalChat = ({ chat, me, setSelectedChat, companionId }) => {
     const [getMessagesCount] = useLazyFindPersonalChatMessageCountQuery();
 
     useEffect(() => {
-        if (!messages || messages.length === 0) {
+        setHubConnection(null);
+    }, [chat]);
+
+    useEffect(() => {
+        if (!messages) {
             return;
         }
 
@@ -67,7 +71,7 @@ const PersonalChat = ({ chat, me, setSelectedChat, companionId }) => {
     }, [currentMessages]);
 
     useEffect(() => {
-        if (!messages || messages.length === 0) {
+        if (!messages) {
             return;
         }
 
@@ -122,6 +126,10 @@ const PersonalChat = ({ chat, me, setSelectedChat, companionId }) => {
     }, [hubConnection]);
 
     const connectToChatAsync = async () => {
+        if (hubConnection !== null) {
+            return;
+        }
+
         try {
             const hubConnection = new signalR.HubConnectionBuilder()
                 .withUrl(hubURL)
@@ -237,7 +245,7 @@ const PersonalChat = ({ chat, me, setSelectedChat, companionId }) => {
                 <MessageInput
                     hubConnection={hubConnection}
                     chat={chat}
-                    meId={me?.id}
+                    me={me}
                     setAreLoadingOldMessages={setAreLoadingOldMessages}
                     t={t}
                 />

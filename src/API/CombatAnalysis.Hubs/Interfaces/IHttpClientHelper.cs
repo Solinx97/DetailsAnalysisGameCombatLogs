@@ -8,9 +8,9 @@ public interface IHttpClientHelper
 
     Task<HttpResponseMessage> PostAsync(string requestAddress, JsonContent content, HttpContext context);
 
-    Task<HttpResponseMessage> GetAsync(string requestAddress);
+    Task<HttpResponseMessage> GetAsync(string requestAddress, HttpContext context);
 
-    Task<HttpResponseMessage> PutAsync(string requestAddress, JsonContent content);
+    Task<HttpResponseMessage> PutAsync(string requestAddress, JsonContent content, HttpContext context);
 
     Task<HttpResponseMessage> DeletAsync(string requestAddress);
 }

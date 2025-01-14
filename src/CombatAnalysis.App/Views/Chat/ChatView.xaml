@@ -60,11 +60,11 @@
                 <StackPanel Margin="30 0 15 0">
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Text="{loc:Loc GroupChats}" FontSize="15" VerticalAlignment="Center" Margin="15 0 10 0" Style="{StaticResource titleText}" Foreground="White"/>
-                        <Button Style="{StaticResource textBoxButton}" VerticalAlignment="Center" mvx:Bi.nd="Command RefreshGroupChatsCommand" ToolTip="{loc:Loc RefreshGroupChats}">
-                            <Icon:PackIconMaterial Kind="Recycle" Foreground="#a6a6a6" Width="20" Height="20"/>
+                        <Button Style="{StaticResource textBoxButton}" VerticalAlignment="Center" Width="30" Height="30" mvx:Bi.nd="Command RefreshGroupChatsCommand" ToolTip="{loc:Loc RefreshGroupChats}">
+                            <Icon:PackIconMaterial Kind="Recycle" Foreground="#a6a6a6" Width="15" Height="15"/>
                         </Button>
-                        <Button Style="{StaticResource textBoxButton}" VerticalAlignment="Center" Click="CreateGroupChat" ToolTip="{loc:Loc CreateNewGroupChat}">
-                            <Icon:PackIconMaterial Kind="Plus" Foreground="Green" Width="20" Height="20"/>
+                        <Button Style="{StaticResource textBoxButton}" VerticalAlignment="Center" Click="CreateGroupChat" Width="30" Height="30" ToolTip="{loc:Loc CreateNewGroupChat}">
+                            <Icon:PackIconMaterial Kind="Plus" Foreground="Green" Width="15" Height="15"/>
                         </Button>
                     </StackPanel>
 
@@ -91,8 +91,8 @@
 
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Text="{loc:Loc PersonalMessages}" FontSize="15" Margin="15 0 10 0" Style="{StaticResource titleText}" VerticalAlignment="Center" Foreground="White"/>
-                        <Button Style="{StaticResource textBoxButton}" VerticalAlignment="Center" mvx:Bi.nd="Command RefreshPersonalChatsCommand" ToolTip="{loc:Loc RefreshPersonalMessages}">
-                            <Icon:PackIconMaterial Kind="Recycle" Margin="0" Foreground="#a6a6a6" Width="20" Height="20"/>
+                        <Button Style="{StaticResource textBoxButton}" VerticalAlignment="Center" Width="30" Height="30" mvx:Bi.nd="Command RefreshPersonalChatsCommand" ToolTip="{loc:Loc RefreshPersonalMessages}">
+                            <Icon:PackIconMaterial Kind="Recycle" Margin="0" Foreground="#a6a6a6" Width="15" Height="15" />
                         </Button>
                     </StackPanel>
 
@@ -150,8 +150,8 @@
                     <StackPanel x:Name="usersEmail" Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center"
                                 IsEnabled="{Binding SelectedUsersIndex, Converter={StaticResource IntToXAMLBool}, ConverterParameter='0:>='}"
                                 Margin="25 0">
-                        <Button Style="{StaticResource textBoxButton}" mvx:Bi.nd="Command CreatePersonalChatCommand" ToolTip="{loc:Loc StartDialog}">
-                            <Icon:PackIconMaterial Style="{StaticResource startDialogStyle}" Kind="Message" Foreground="White"/>
+                        <Button Style="{StaticResource textBoxButton}" Width="35" Height="35" mvx:Bi.nd="Command CreatePersonalChatCommand" ToolTip="{loc:Loc StartDialog}">
+                            <Icon:PackIconMaterial Style="{StaticResource startDialogStyle}" Width="15" Height="15" Kind="Message" Foreground="White"/>
                         </Button>
                     </StackPanel>
                 </StackPanel>

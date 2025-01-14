@@ -22,7 +22,7 @@ public class PersonalChatMessageCountController : ControllerBase
     [HttpGet("find")]
     public async Task<IActionResult> Find(int chatId, string userId)
     {
-        var responseMessage = await _httpClient.GetAsync($"PersonalChatMessageCount");
+        var responseMessage = await _httpClient.GetAsync("PersonalChatMessageCount");
         if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
         {
             return Unauthorized();
@@ -33,7 +33,7 @@ public class PersonalChatMessageCountController : ControllerBase
         }
 
         var personalChatMessagesCount = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<PersonalChatMessageCountModel>>();
-        var myPersonalChatMessagesCount = personalChatMessagesCount.Where(x => x.ChatId == chatId && x.AppUserId == userId).FirstOrDefault();
+        var myPersonalChatMessagesCount = personalChatMessagesCount?.Where(x => x.ChatId == chatId && x.AppUserId == userId).FirstOrDefault();
 
         return Ok(myPersonalChatMessagesCount);
     }

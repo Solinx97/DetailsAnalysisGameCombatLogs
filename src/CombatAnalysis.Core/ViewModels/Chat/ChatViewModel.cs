@@ -291,7 +291,7 @@ public class ChatViewModel : ParentTemplate
             var refreshToken = _memoryCache.Get<string>(nameof(MemoryCacheValue.RefreshToken));
             if (string.IsNullOrEmpty(refreshToken))
             {
-                return;
+                throw new ArgumentNullException(nameof(refreshToken));
             }
 
             var response = await _httpClientHelper.PostAsync("PersonalChat", JsonContent.Create(personalChat), refreshToken, Port.ChatApi);

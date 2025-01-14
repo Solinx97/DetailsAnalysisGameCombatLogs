@@ -2,6 +2,7 @@
 using CombatAnalysis.WebApp.Consts;
 using CombatAnalysis.WebApp.Interfaces;
 using CombatAnalysis.WebApp.Models.Chat;
+using CombatAnalysis.WebApp.Models.Containers;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CombatAnalysis.WebApp.Controllers.Chat;
@@ -56,9 +57,9 @@ public class GroupChatController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<IActionResult> Create(GroupChatModel chat)
+    public async Task<IActionResult> Create(GroupChatContainerModel container)
     {
-        var responseMessage = await _httpClient.PostAsync("GroupChat", JsonContent.Create(chat));
+        var responseMessage = await _httpClient.PostAsync("GroupChat", JsonContent.Create(container));
         if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
         {
             return Unauthorized();

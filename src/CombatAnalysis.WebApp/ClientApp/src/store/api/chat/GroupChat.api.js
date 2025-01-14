@@ -2,7 +2,7 @@ import { ChatApi } from "../core/Chat.api";
 
 export const GroupChatApi = ChatApi.injectEndpoints({
     endpoints: builder => ({
-        createGroupChatAsync: builder.mutation({
+        createGroupChat: builder.mutation({
             query: groupChat => ({
                 body: groupChat,
                 url: '/GroupChat',
@@ -33,7 +33,7 @@ export const GroupChatApi = ChatApi.injectEndpoints({
 })
 
 export const {
-    useCreateGroupChatAsyncMutation,
+    useCreateGroupChatMutation,
     useUpdateGroupChatAsyncMutation,
     useRemoveGroupChatAsyncMutation,
     useGetGroupChatByIdQuery,

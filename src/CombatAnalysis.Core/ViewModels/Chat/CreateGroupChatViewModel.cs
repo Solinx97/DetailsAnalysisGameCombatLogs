@@ -3,6 +3,7 @@ using CombatAnalysis.Core.Enums;
 using CombatAnalysis.Core.Extensions;
 using CombatAnalysis.Core.Interfaces;
 using CombatAnalysis.Core.Models.Chat;
+using CombatAnalysis.Core.Models.Containers;
 using CombatAnalysis.Core.Models.User;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
@@ -87,17 +88,29 @@ public class CreateGroupChatViewModel : MvxViewModel
                 throw new ArgumentNullException(nameof(refreshToken));
             }
 
-            var response = await _httpClientHelper.PostAsync("GroupChat", JsonContent.Create(_groupChat), refreshToken, Port.ChatApi);
-            response.EnsureSuccessStatusCode();
-
-            var groupChat = await response.Content.ReadFromJsonAsync<GroupChatModel>();
-            if (groupChat == null)
+            var groupChatUser = new GroupChatUserModel
             {
-                throw new ArgumentNullException(nameof(groupChat));
-            }
+                Username = user.Username,
+                AppUserId = user.Id,
+            };
 
-            await CreateGroupChatRulesAsync(groupChat.Id);
-            await CreateGroupChatUserAsync(groupChat.Id, user.Id, user.Username);
+            var groupChatRules = new GroupChatRulesModel
+            {
+                Announcements = _whoCanMakeAnounces,
+                InvitePeople = _whoCanInvitePeople,
+                RemovePeople = _whoCanRemovePeople,
+                PinMessage = _whoCanPinMessage,
+            };
+
+            var container = new GroupChatContainerModel
+            {
+                GroupChat = _groupChat,
+                GroupChatUser = groupChatUser,
+                GroupChatRules = groupChatRules,
+            };
+
+            var response = await _httpClientHelper.PostAsync("GroupChat", JsonContent.Create(container), refreshToken, Port.ChatApi);
+            response.EnsureSuccessStatusCode();
 
             CloseCreateChatWindow?.Invoke();
         }
@@ -124,47 +137,6 @@ public class CreateGroupChatViewModel : MvxViewModel
     {
         _groupChat.Name = string.IsNullOrEmpty(Name) ? " " : Name;
         _groupChat.AppUserId = user.Id;
-    }
-
-    private async Task CreateGroupChatRulesAsync(int chatId)
-    {
-        var refreshToken = _memoryCache.Get<string>(nameof(MemoryCacheValue.RefreshToken));
-        if (string.IsNullOrEmpty(refreshToken))
-        {
-            throw new ArgumentNullException(nameof(refreshToken));
-        }
-
-        var groupChatUser = new GroupChatRulesModel
-        {
-            ChatId = chatId,
-            Announcements = _whoCanMakeAnounces,
-            InvitePeople = _whoCanInvitePeople,
-            RemovePeople = _whoCanRemovePeople,
-            PinMessage = _whoCanPinMessage,
-        };
-
-        var response = await _httpClientHelper.PostAsync("GroupChatRules", JsonContent.Create(groupChatUser), refreshToken, Port.ChatApi);
-        response.EnsureSuccessStatusCode();
-    }
-
-    private async Task CreateGroupChatUserAsync(int chatId, string userId, string username)
-    {
-        var refreshToken = _memoryCache.Get<string>(nameof(MemoryCacheValue.RefreshToken));
-        if (string.IsNullOrEmpty(refreshToken))
-        {
-            throw new ArgumentNullException(nameof(refreshToken));
-        }
-
-        var groupChatUser = new GroupChatUserModel
-        {
-            Id = "",
-            Username = username,
-            ChatId = chatId,
-            AppUserId = userId,
-        };
-
-        var response = await _httpClientHelper.PostAsync("GroupChatUser", JsonContent.Create(groupChatUser), refreshToken, Port.ChatApi);
-        response.EnsureSuccessStatusCode();
     }
 
     public delegate void CloseCreateChatWindowEventHandler();

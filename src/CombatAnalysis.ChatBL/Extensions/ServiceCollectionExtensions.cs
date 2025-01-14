@@ -1,5 +1,6 @@
 ﻿using CombatAnalysis.ChatBL.DTO;
 using CombatAnalysis.ChatBL.Interfaces;
+using CombatAnalysis.ChatBL.Services;
 using CombatAnalysis.ChatBL.Services.Chat;
 using CombatAnalysis.ChatDAL.Extensions;
 using Microsoft.Extensions.Configuration;
@@ -12,6 +13,8 @@ public static class ServiceCollectionExtensions
     public static void ChatBLDependencies(this IServiceCollection services, IConfiguration configuration, string connectionName)
     {
         services.RegisterDependenciesForDAL(configuration, connectionName);
+
+        services.AddScoped<IChatTransactionService, ChatTransactionService>();
 
         services.AddScoped<IService<VoiceChatDto, string>, VoiceChatService>();
         services.AddScoped<IService<PersonalChatDto, int>, PersonalChatService>();

@@ -121,6 +121,8 @@ internal class GroupChatUserService : IServiceTransaction<GroupChatUserDto, stri
                 $"The property {nameof(GroupChatUserDto.Username)} of the {nameof(GroupChatUserDto)} object can't be null or empty");
         }
 
+        item.Id = Guid.NewGuid().ToString();
+
         var map = _mapper.Map<GroupChatUser>(item);
         var createdItem = await _repository.CreateAsync(map);
         var resultMap = _mapper.Map<GroupChatUserDto>(createdItem);

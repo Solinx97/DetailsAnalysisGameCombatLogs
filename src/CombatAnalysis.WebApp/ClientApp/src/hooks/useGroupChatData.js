@@ -5,7 +5,7 @@ import { useGetMessagesByGroupChatIdQuery, useLazyGetMoreMessagesByGroupChatIdQu
 
 const useGroupChatData = (chatId, userId, pageSizeRef) => {
     const [groupChatData, setGroupChatData] = useState({
-        messages: [],
+        messages: null,
         count: 0,
         meInChat: null,
         groupChatUsers: [],

@@ -2,7 +2,7 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { memo, useRef, useState } from "react";
 
-const MessageInput = ({ hubConnection, chat, meId, setAreLoadingOldMessages, t }) => {
+const MessageInput = ({ hubConnection, chat, me, setAreLoadingOldMessages, t }) => {
     const messageInput = useRef(null);
 
     const [isEmptyMessage, setIsEmptyMessage] = useState(null);
@@ -19,7 +19,7 @@ const MessageInput = ({ hubConnection, chat, meId, setAreLoadingOldMessages, t }
 
         setAreLoadingOldMessages(false);
 
-        await hubConnection?.invoke("SendMessage", messageInput.current.value, chat.id, meId);
+        await hubConnection?.invoke("SendMessage", messageInput.current.value, chat.id, me?.id, me?.username);
 
         messageInput.current.value = "";
     }
@@ -33,7 +33,7 @@ const MessageInput = ({ hubConnection, chat, meId, setAreLoadingOldMessages, t }
 
         setAreLoadingOldMessages(false);
 
-        await hubConnection?.invoke("SendMessage", messageInput.current.value, chat.id, meId);
+        await hubConnection?.invoke("SendMessage", messageInput.current.value, chat.id, me?.id, me?.username);
 
         messageInput.current.value = "";
     }
