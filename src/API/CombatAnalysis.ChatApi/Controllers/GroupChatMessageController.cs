@@ -12,21 +12,26 @@ namespace CombatAnalysis.ChatApi.Controllers;
 [Authorize]
 public class GroupChatMessageController : ControllerBase
 {
-    private readonly IChatMessageService<GroupChatMessageDto, int> _service;
+    private readonly IChatMessageService<GroupChatMessageDto, int> _chatMessageService;
+    private readonly IService<GroupChatMessageCountDto, int> _chatMessageCountService;
     private readonly IMapper _mapper;
     private readonly ILogger<GroupChatMessageController> _logger;
+    private readonly IChatTransactionService _chatTransactionService;
 
-    public GroupChatMessageController(IChatMessageService<GroupChatMessageDto, int> service, IMapper mapper, ILogger<GroupChatMessageController> logger)
+    public GroupChatMessageController(IChatMessageService<GroupChatMessageDto, int> chatMessageService, IService<GroupChatMessageCountDto, int> chatMessageCountService, IMapper mapper, 
+        ILogger<GroupChatMessageController> logger, IChatTransactionService chatTransactionService)
     {
-        _service = service;
+        _chatMessageService = chatMessageService;
+        _chatMessageCountService = chatMessageCountService;
         _mapper = mapper;
         _logger = logger;
+        _chatTransactionService = chatTransactionService;
     }
 
     [HttpGet("count/{chatId}")]
     public async Task<IActionResult> Count(int chatId)
     {
-        var count = await _service.CountByChatIdAsync(chatId);
+        var count = await _chatMessageService.CountByChatIdAsync(chatId);
 
         return Ok(count);
     }
@@ -34,7 +39,7 @@ public class GroupChatMessageController : ControllerBase
     [HttpGet]
     public async Task<IActionResult> GetAll()
     {
-        var result = await _service.GetAllAsync();
+        var result = await _chatMessageService.GetAllAsync();
         var map = _mapper.Map<IEnumerable<GroupChatMessageModel>>(result);
 
         return Ok(map);
@@ -43,7 +48,7 @@ public class GroupChatMessageController : ControllerBase
     [HttpGet("{id:int:min(1)}")]
     public async Task<IActionResult> GetById(int id)
     {
-        var result = await _service.GetByIdAsync(id);
+        var result = await _chatMessageService.GetByIdAsync(id);
         var map = _mapper.Map<GroupChatMessageModel>(result);
 
         return Ok(map);
@@ -52,7 +57,7 @@ public class GroupChatMessageController : ControllerBase
     [HttpGet("getByChatId")]
     public async Task<IActionResult> GetByChatId(int chatId, int pageSize)
     {
-        var messages = await _service.GetByChatIdAsync(chatId, pageSize);
+        var messages = await _chatMessageService.GetByChatIdAsync(chatId, pageSize);
 
         return Ok(messages);
     }
@@ -60,31 +65,54 @@ public class GroupChatMessageController : ControllerBase
     [HttpGet("getMoreByChatId")]
     public async Task<IActionResult> GetMoreByChatId(int chatId, int offset, int pageSize)
     {
-        var messages = await _service.GetMoreByChatIdAsync(chatId, offset, pageSize);
+        var messages = await _chatMessageService.GetMoreByChatIdAsync(chatId, offset, pageSize);
 
         return Ok(messages);
     }
 
     [HttpPost]
-    public async Task<IActionResult> Create(GroupChatMessageModel model)
+    public async Task<IActionResult> Create(GroupChatMessageModel chatMessage)
     {
         try
         {
-            var map = _mapper.Map<GroupChatMessageDto>(model);
-            var result = await _service.CreateAsync(map);
-            var resultMap = _mapper.Map<GroupChatMessageModel>(result);
+            if (chatMessage == null)
+            {
+                throw new ArgumentNullException(nameof(chatMessage));
+            }
 
-            return Ok(resultMap);
+            await _chatTransactionService.BeginTransactionAsync();
+
+            var map = _mapper.Map<GroupChatMessageDto>(chatMessage);
+            var result = await _chatMessageService.CreateAsync(map);
+
+            var messagesCount = await _chatMessageCountService.GetAllAsync();
+            var targetMessageCount = messagesCount.Where(x => x.ChatId == result.ChatId && x.GroupChatUserId == result.GroupChatUserId).FirstOrDefault();
+            if (targetMessageCount == null)
+            {
+                throw new ArgumentNullException(nameof(targetMessageCount));
+            }
+
+            targetMessageCount.Count++;
+
+            await _chatMessageCountService.UpdateAsync(targetMessageCount);
+
+            await _chatTransactionService.CommitTransactionAsync();
+
+            return Ok(result);
         }
         catch (ArgumentNullException ex)
         {
-            _logger.LogError(ex, $"Create Group Chat Message failed: ${ex.Message}", model);
+            _logger.LogError(ex, $"Create Group Chat Message failed: ${ex.Message}", chatMessage);
+
+            await _chatTransactionService.RollbackTransactionAsync();
 
             return BadRequest();
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, $"Create Group Chat Message failed: ${ex.Message}", model);
+            _logger.LogError(ex, $"Create Group Chat Message failed: ${ex.Message}", chatMessage);
+
+            await _chatTransactionService.RollbackTransactionAsync();
 
             return BadRequest();
         }
@@ -96,7 +124,7 @@ public class GroupChatMessageController : ControllerBase
         try
         {
             var map = _mapper.Map<GroupChatMessageDto>(model);
-            var result = await _service.UpdateAsync(map);
+            var result = await _chatMessageService.UpdateAsync(map);
 
             return Ok(result);
         }
@@ -117,7 +145,7 @@ public class GroupChatMessageController : ControllerBase
     [HttpDelete("{id:int:min(1)}")]
     public async Task<IActionResult> Delete(int id)
     {
-        var affectedRows = await _service.DeleteAsync(id);
+        var affectedRows = await _chatMessageService.DeleteAsync(id);
 
         return Ok(affectedRows);
     }

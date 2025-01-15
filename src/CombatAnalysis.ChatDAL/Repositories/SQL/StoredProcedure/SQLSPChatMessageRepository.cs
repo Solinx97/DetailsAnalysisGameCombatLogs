@@ -1,13 +1,13 @@
 ﻿using CombatAnalysis.ChatDAL.Data;
-using CombatAnalysis.ChatDAL.Entities;
 using CombatAnalysis.ChatDAL.Interfaces;
+using CombatAnalysis.ChatDAL.Interfaces.Entities;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 
 namespace CombatAnalysis.ChatDAL.Repositories.SQL.StoredProcedure;
 
 internal class SQLSPChatMessageRepository<TModel, TIdType> : SQLRepository<TModel, TIdType>, IChatMessageRepository<TModel, TIdType>
-    where TModel : BaseChatMessage
+    where TModel : class, IChatEntity
     where TIdType : notnull
 {
     private readonly ChatSQLContext _context;

@@ -1,4 +1,4 @@
-﻿namespace CombatAnalysis.Core.ViewModels.Chat;
+﻿namespace CombatAnalysis.Core.Models.Chat;
 
 public class PersonalChatMessageCountModel
 {

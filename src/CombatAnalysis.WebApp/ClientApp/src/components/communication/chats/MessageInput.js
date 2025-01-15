@@ -2,7 +2,7 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { memo, useRef, useState } from "react";
 
-const MessageInput = ({ hubConnection, chat, me, setAreLoadingOldMessages, t }) => {
+const MessageInput = ({ hubConnection, unreadMessageHubConnection, chat, meInChat, setAreLoadingOldMessages, t }) => {
     const messageInput = useRef(null);
 
     const [isEmptyMessage, setIsEmptyMessage] = useState(null);
@@ -19,7 +19,10 @@ const MessageInput = ({ hubConnection, chat, me, setAreLoadingOldMessages, t }) 
 
         setAreLoadingOldMessages(false);
 
-        await hubConnection?.invoke("SendMessage", messageInput.current.value, chat.id, me?.id, me?.username);
+        await hubConnection?.on("MessageDelivered", async () => {
+            await unreadMessageHubConnection?.invoke("SendUndreadMessageCount", chat.id, meInChat?.id);
+        });
+        await hubConnection?.invoke("SendMessage", messageInput.current.value, chat.id, meInChat?.id, meInChat?.username);
 
         messageInput.current.value = "";
     }
@@ -33,7 +36,10 @@ const MessageInput = ({ hubConnection, chat, me, setAreLoadingOldMessages, t }) 
 
         setAreLoadingOldMessages(false);
 
-        await hubConnection?.invoke("SendMessage", messageInput.current.value, chat.id, me?.id, me?.username);
+        await hubConnection?.on("MessageDelivered", async () => {
+            await unreadMessageHubConnection?.invoke("SendUndreadMessageCount", chat.id, meInChat?.id);
+        });
+        await hubConnection?.invoke("SendMessage", messageInput.current.value, chat.id, meInChat?.id, meInChat?.username);
 
         messageInput.current.value = "";
     }

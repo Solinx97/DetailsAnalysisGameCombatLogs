@@ -181,7 +181,7 @@ $mobile-max-width: 425px;
 
                     .chat-card {
                         display: flex;
-                        flex-direction: column;
+                        justify-content: space-around;
                         gap: 5px;
                         cursor: pointer;
 

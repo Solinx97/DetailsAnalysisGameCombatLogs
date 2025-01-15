@@ -1,8 +1,9 @@
 ﻿import { faArrowDown, faArrowUp } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { memo } from 'react';
 import PersonalChatListItem from './PersonalChatListItem';
 
-const PersonalChatList = ({ meId, t, personalChats, selectedChat, setSelectedChat, chatsHidden, toggleChatsHidden }) => {
+const PersonalChatList = ({ meId, t, personalChats, selectedChat, setSelectedChat, chatsHidden, toggleChatsHidden, hubConnection }) => {
     return (
         <div className="chat-list">
             <div className="chats__my-chats_title">
@@ -25,6 +26,7 @@ const PersonalChatList = ({ meId, t, personalChats, selectedChat, setSelectedCha
                                 setSelectedPersonalChat={setSelectedChat}
                                 companionId={chat.initiatorId === meId ? chat.companionId : chat.initiatorId}
                                 meId={meId}
+                                hubConnection={hubConnection}
                             />
                         </li>
                     ))
@@ -34,4 +36,4 @@ const PersonalChatList = ({ meId, t, personalChats, selectedChat, setSelectedCha
     );
 }
 
-export default PersonalChatList;
+export default memo(PersonalChatList);

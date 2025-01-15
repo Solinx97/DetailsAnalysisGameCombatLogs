@@ -16,5 +16,5 @@ public class GroupChatMessageModel
 
     public int ChatId { get; set; }
 
-    public string AppUserId { get; set; }
+    public string GroupChatUserId { get; set; }
 }

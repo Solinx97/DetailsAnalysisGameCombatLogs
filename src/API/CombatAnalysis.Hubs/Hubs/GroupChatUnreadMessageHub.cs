@@ -6,12 +6,12 @@ using Microsoft.AspNetCore.SignalR;
 
 namespace CombatAnalysis.Hubs.Hubs;
 
-internal class PersonalChatHub : Hub
+internal class GroupChatUnreadMessageHub : Hub
 {
     private readonly IHttpClientHelper _httpClient;
-    private readonly ILogger<PersonalChatHub> _logger;
+    private readonly ILogger<GroupChatUnreadMessageHub> _logger;
 
-    public PersonalChatHub(IHttpClientHelper httpClient, ILogger<PersonalChatHub> logger)
+    public GroupChatUnreadMessageHub(IHttpClientHelper httpClient, ILogger<GroupChatUnreadMessageHub> logger)
     {
         _httpClient = httpClient;
         _httpClient.BaseAddress = Port.ChatApi;
@@ -19,7 +19,7 @@ internal class PersonalChatHub : Hub
         _logger = logger;
     }
 
-    public async Task JoinRoom(string chatId)
+    public async Task JoinRoom(int chatId)
     {
         try
         {
@@ -31,7 +31,7 @@ internal class PersonalChatHub : Hub
 
             if (context.Request.Cookies.TryGetValue(nameof(AuthenticationCookie.RefreshToken), out var refreshToken))
             {
-                await Groups.AddToGroupAsync(Context.ConnectionId, chatId);
+                await Groups.AddToGroupAsync(Context.ConnectionId, chatId.ToString());
             }
         }
         catch (ArgumentNullException ex)
@@ -44,7 +44,7 @@ internal class PersonalChatHub : Hub
         }
     }
 
-    public async Task SendMessage(string message, int chatId, string appUserId, string username)
+    public async Task SendUndreadMessageCount(int chatId, string appUserId)
     {
         try
         {
@@ -54,22 +54,16 @@ internal class PersonalChatHub : Hub
                 throw new ArgumentNullException(nameof(context));
             }
 
-            var personalMessage = new PersonalChatMessageModel
-            {
-                Username = username,
-                Message = message,
-                Time = TimeSpan.Parse($"{DateTimeOffset.UtcNow.Hour}:{DateTimeOffset.UtcNow.Minute}").ToString(),
-                Status = 0,
-                ChatId = chatId,
-                AppUserId = appUserId
-            };
-
-            var response = await _httpClient.PostAsync("PersonalChatMessage", JsonContent.Create(personalMessage), context);
+            var response = await _httpClient.GetAsync($"GroupChatMessageCount/find?chatId={chatId}&appUserId={appUserId}", context);
             response.EnsureSuccessStatusCode();
 
-            await Clients.Caller.SendAsync("MessageDelivered");
+            var messagesCount = await response.Content.ReadFromJsonAsync<GroupChatMessageCountModel>();
+            if (messagesCount == null)
+            {
+                throw new ArgumentNullException(nameof(messagesCount));
+            }
 
-            await Clients.Group(chatId.ToString()).SendAsync("ReceiveMessage", personalMessage);
+            await Clients.OthersInGroup(chatId.ToString()).SendAsync("ReceiveUnreadMessageCount", chatId, messagesCount.Count);
         }
         catch (ArgumentNullException ex)
         {
@@ -82,15 +76,6 @@ internal class PersonalChatHub : Hub
         catch (Exception ex)
         {
             _logger.LogError(ex, ex.Message);
-        }
-    }
-
-    public async Task LeaveFromRoom(string room)
-    {
-        var refreshToken = Context.GetHttpContext()?.Request.Cookies[nameof(AuthenticationCookie.RefreshToken)] ?? string.Empty;
-        if (!string.IsNullOrEmpty(refreshToken))
-        {
-            await Groups.RemoveFromGroupAsync(Context.ConnectionId, room);
         }
     }
 }

@@ -55,6 +55,15 @@ public class GroupChatUserController : ControllerBase
         return Ok(result);
     }
 
+    [HttpGet("findMeInChat")]
+    public async Task<IActionResult> FindMeInChat(int chatId, string appUserId)
+    {
+        var chatUsers = await _service.GetByParamAsync(nameof(GroupChatUserModel.ChatId), chatId);
+        var meInChat = chatUsers.FirstOrDefault(x => x.AppUserId == appUserId);
+
+        return Ok(meInChat);
+    }
+
     [HttpPost]
     public async Task<IActionResult> Create(GroupChatUserModel model)
     {

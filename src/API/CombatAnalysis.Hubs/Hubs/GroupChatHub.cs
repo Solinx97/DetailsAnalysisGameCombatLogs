@@ -1,4 +1,5 @@
 ﻿using CombatAnalysis.Hubs.Consts;
+using CombatAnalysis.Hubs.Enums;
 using CombatAnalysis.Hubs.Interfaces;
 using CombatAnalysis.Hubs.Models;
 using Microsoft.AspNetCore.SignalR;
@@ -20,14 +21,14 @@ internal class GroupChatHub : Hub
 
     public async Task JoinRoom(string room)
     {
-        var refreshToken = Context.GetHttpContext()?.Request.Cookies["RefreshToken"] ?? string.Empty;
+        var refreshToken = Context.GetHttpContext()?.Request.Cookies[nameof(AuthenticationCookie.RefreshToken)] ?? string.Empty;
         if (!string.IsNullOrEmpty(refreshToken))
         {
             await Groups.AddToGroupAsync(Context.ConnectionId, room);
         }
     }
 
-    public async Task SendMessage(string message, int chatId, string appUserId, string username)
+    public async Task SendMessage(string message, int chatId, string groupChatUserId, string username)
     {
         try
         {
@@ -44,11 +45,13 @@ internal class GroupChatHub : Hub
                 Time = TimeSpan.Parse($"{DateTimeOffset.UtcNow.Hour}:{DateTimeOffset.UtcNow.Minute}").ToString(),
                 Status = 0,
                 ChatId = chatId,
-                AppUserId = appUserId
+                GroupChatUserId = groupChatUserId
             };
 
             var response = await _httpClient.PostAsync("GroupChatMessage", JsonContent.Create(groupMessage), context);
             response.EnsureSuccessStatusCode();
+
+            await Clients.Caller.SendAsync("MessageDelivered");
 
             await Clients.Group(chatId.ToString()).SendAsync("ReceiveMessage", groupMessage);
         }
@@ -68,7 +71,7 @@ internal class GroupChatHub : Hub
 
     public async Task LeaveFromRoom(string room)
     {
-        var refreshToken = Context.GetHttpContext()?.Request.Cookies["RefreshToken"] ?? string.Empty;
+        var refreshToken = Context.GetHttpContext()?.Request.Cookies[nameof(AuthenticationCookie.RefreshToken)] ?? string.Empty;
         if (!string.IsNullOrEmpty(refreshToken))
         {
             await Groups.RemoveFromGroupAsync(Context.ConnectionId, room);

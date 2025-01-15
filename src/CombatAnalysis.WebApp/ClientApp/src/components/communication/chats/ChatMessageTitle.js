@@ -36,7 +36,7 @@ const ChatMessageTitle = ({ me, itIsMe, setEditModeIsOn, openMessageMenu, editMo
                 <User
                     me={me}
                     itIsMe={itIsMe}
-                    targetUserId={user.id}
+                    targetUserId={user?.id}
                     setUserInformation={setUserInformation}
                     allowRemoveFriend={false}
                 />

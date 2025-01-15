@@ -42,10 +42,10 @@ public class PersonalChatMessageCountController : ControllerBase
     }
 
     [HttpGet("find")]
-    public async Task<IActionResult> Find(int chatId, string userId)
+    public async Task<IActionResult> Find(int chatId, string appUserId)
     {
         var result = await _service.GetAllAsync();
-        var resultByChat = result.Where(x => x.ChatId == chatId && x.AppUserId == userId).FirstOrDefault();
+        var resultByChat = result.Where(x => x.ChatId == chatId && x.AppUserId == appUserId).FirstOrDefault();
         var map = _mapper.Map<PersonalChatMessageCountModel>(resultByChat);
 
         return Ok(map);
@@ -58,9 +58,8 @@ public class PersonalChatMessageCountController : ControllerBase
         {
             var map = _mapper.Map<PersonalChatMessageCountDto>(model);
             var result = await _service.CreateAsync(map);
-            var resultMap = _mapper.Map<PersonalChatMessageCountModel>(result);
 
-            return Ok(resultMap);
+            return Ok(result);
         }
         catch (ArgumentNullException ex)
         {

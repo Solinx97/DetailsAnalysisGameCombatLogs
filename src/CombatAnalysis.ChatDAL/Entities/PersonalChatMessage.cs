@@ -1,7 +1,12 @@
-﻿namespace CombatAnalysis.ChatDAL.Entities;
+﻿using CombatAnalysis.ChatDAL.Interfaces.Entities;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
-public class PersonalChatMessage : BaseChatMessage
+namespace CombatAnalysis.ChatDAL.Entities;
+
+public class PersonalChatMessage : IChatEntity
 {
+    [Key]
     public int Id { get; set; }
 
     public string Username { get; set; }
@@ -14,7 +19,9 @@ public class PersonalChatMessage : BaseChatMessage
 
     public int Type { get; set; }
 
-    public override int ChatId { get; set; }
+    [ForeignKey(nameof(PersonalChat))]
+    public int ChatId { get; set; }
 
+    [ForeignKey("AppUser")]
     public string AppUserId { get; set; }
 }

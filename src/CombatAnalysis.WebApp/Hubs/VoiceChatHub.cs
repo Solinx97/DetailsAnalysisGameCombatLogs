@@ -22,7 +22,7 @@ internal class VoiceChatHub : Hub
         var voiceChat = new VoiceChatModel
         {
             Id = Context.ConnectionId,
-            UserId = userId
+            AppUserId = userId
         };
 
         await _httpClient.PostAsync("VoiceChat", JsonContent.Create(voiceChat));

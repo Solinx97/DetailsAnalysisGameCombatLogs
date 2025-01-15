@@ -17,11 +17,11 @@ export const GroupChatUserApi = ChatApi.injectEndpoints({
             }),
             invalidatesTags: (result, error) => [{ type: 'GroupChatUser', result }],
         }),
-        findGroupChatUser: builder.query({
+        findMeInChat: builder.query({
             query: (arg) => {
-                const { chatId, userId } = arg;
+                const { chatId, appUserId } = arg;
                 return {
-                    url: `/GroupChatUser/find?chatId=${chatId}&userId=${userId}`,
+                    url: `/GroupChatUser/findMeInChat?chatId=${chatId}&appUserId=${appUserId}`,
                 }
             },
             providesTags: (result, error, id) => [{ type: 'GroupChatUser', id }],
@@ -40,7 +40,7 @@ export const GroupChatUserApi = ChatApi.injectEndpoints({
 export const {
     useCreateGroupChatUserAsyncMutation,
     useRemoveGroupChatUserAsyncMutation,
-    useFindGroupChatUserQuery,
+    useFindMeInChatQuery,
     useFindGroupChatUserByUserIdQuery,
     useLazyFindGroupChatUserByUserIdQuery,
     useFindGroupChatUserByChatIdQuery,

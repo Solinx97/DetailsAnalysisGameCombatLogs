@@ -1,6 +1,7 @@
 ﻿import { faArrowLeft, faBars } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import React, { useCallback, useEffect, useState } from 'react';
+import * as signalR from '@microsoft/signalr';
+import React, { memo, useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import { NavLink } from 'react-router-dom';
@@ -15,36 +16,86 @@ import PersonalChatList from './PersonalChatList';
 
 import "../../../styles/communication/chats/chats.scss";
 
-const pollingInterval = 3000;
-
 const Chats = () => {
     const { t } = useTranslation("communication/chats/chats");
 
     const me = useSelector((state) => state.user.value);
 
+    const personalHubURL = "https://localhost:7026/personalChatUnreadMessageHub";
+    const groupHubURL = "https://localhost:7026/groupChatUnreadMessageHub";
+
+    const [personalHubConnection, setPersonalHubConnection] = useState(null);
+    const [groupHubConnection, setGroupHubConnection] = useState(null);
+
     const [selectedChat, setSelectedChat] = useState({ type: null, chat: null });
     const [chatsHidden, setChatsHidden] = useState({ group: false, personal: false });
-    const [skipFetching, setSkipFetching] = useState(true);
     const [showMenu, setShowMenu] = useState(false);
 
-    const { data: personalChats, isError: personalChatError, isLoading: personalChatLoading } = useGetByUserIdAsyncQuery(me?.id, {
-        pollingInterval,
-        skip: skipFetching
-    });
-    const { data: groupChatUsers, isError: groupChatError, isLoading: groupChatLoading } = useFindGroupChatUserByUserIdQuery(me?.id, {
-        pollingInterval,
-        skip: skipFetching
-    });
+    const { data: personalChats, isError: personalChatError, isLoading: personalChatLoading } = useGetByUserIdAsyncQuery(me?.id);
+    const { data: groupChatUsers, isError: groupChatError, isLoading: groupChatLoading } = useFindGroupChatUserByUserIdQuery(me?.id);
 
     const maxWidth = 425;
-    const screenSize = {
+    const screenSize = useMemo(() => ({
         width: window.innerWidth,
         height: window.innerHeight
-    };
+    }), []);
 
     useEffect(() => {
-        me !== null ? setSkipFetching(false) : setSkipFetching(true);
-    }, [me]);
+        if (!personalChats) {
+            return;
+        }
+
+        const connectToChat = async () => {
+            await connectToPersonalChatAsync();
+            await connectToGroupChatAsync();
+        }
+
+        connectToChat();
+    }, [personalChats]);
+
+    const connectToPersonalChatAsync = async () => {
+        if (personalHubConnection !== null) {
+            return;
+        }
+
+        try {
+            const hubConnection = new signalR.HubConnectionBuilder()
+                .withUrl(personalHubURL)
+                .withAutomaticReconnect()
+                .build();
+            setPersonalHubConnection(hubConnection);
+
+            await hubConnection.start();
+
+            for (let i = 0; i < personalChats?.length; i++) {
+                await hubConnection.invoke("JoinRoom", personalChats[i].id);
+            }
+        } catch (e) {
+            console.log(e);
+        }
+    }
+
+    const connectToGroupChatAsync = async () => {
+        if (personalHubConnection !== null) {
+            return;
+        }
+
+        try {
+            const hubConnection = new signalR.HubConnectionBuilder()
+                .withUrl(groupHubURL)
+                .withAutomaticReconnect()
+                .build();
+            setGroupHubConnection(hubConnection);
+
+            await hubConnection.start();
+
+            for (let i = 0; i < groupChatUsers?.length; i++) {
+                await hubConnection.invoke("JoinRoom", groupChatUsers[i].chatId);
+            }
+        } catch (e) {
+            console.log(e);
+        }
+    }
 
     const toggleChatsHidden = useCallback((type) => {
         setChatsHidden(prevState => ({ ...prevState, [type]: !prevState[type] }));
@@ -87,6 +138,7 @@ const Chats = () => {
                                 chat={selectedChat.chat}
                                 me={me}
                                 setSelectedChat={setSelectedChat}
+                                unreadMessageHubConnection={groupHubConnection}
                             />
                             : selectedChat.type === "personal"
                                 ? <PersonalChat
@@ -94,6 +146,7 @@ const Chats = () => {
                                     me={me}
                                     setSelectedChat={setSelectedChat}
                                     companionId={selectedChat.chat.initiatorId === me?.id ? selectedChat.chat.companionId : selectedChat.chat.initiatorId}
+                                    unreadMessageHubConnection={personalHubConnection}
                                 />
                                 : <div className="select-chat">
                                     {t("SelectChat")} <NavLink to="/chats/create">{t("Create")}</NavLink> {t("NewChat")}
@@ -129,6 +182,7 @@ const Chats = () => {
                             setSelectedChat={setSelectedChat}
                             chatsHidden={chatsHidden.personal}
                             toggleChatsHidden={() => toggleChatsHidden("personal")}
+                            hubConnection={personalHubConnection}
                         />
                     </div>
                     {selectedChat.type === "group"
@@ -136,6 +190,7 @@ const Chats = () => {
                             chat={selectedChat.chat}
                             me={me}
                             setSelectedChat={setSelectedChat}
+                            unreadMessageHubConnection={groupHubConnection}
                         />
                         : selectedChat.type === "personal"
                             ? <PersonalChat
@@ -143,6 +198,7 @@ const Chats = () => {
                                 me={me}
                                 setSelectedChat={setSelectedChat}
                                 companionId={selectedChat.chat.initiatorId === me?.id ? selectedChat.chat.companionId : selectedChat.chat.initiatorId}
+                                unreadMessageHubConnection={personalHubConnection}
                             />
                             : <div className="select-chat">
                                 {t("SelectChat")} <NavLink to="/chats/create">{t("Create")}</NavLink> {t("NewChat")}
@@ -154,4 +210,4 @@ const Chats = () => {
     );
 }
 
-export default Chats;
+export default memo(Chats);

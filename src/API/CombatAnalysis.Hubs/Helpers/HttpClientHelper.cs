@@ -75,21 +75,21 @@ internal class HttpClientHelper : IHttpClientHelper
 
     private void AddAuthorizationHeader(HttpContext context)
     {
-        if (!context.Request.Cookies.TryGetValue(AuthenticationCookie.RefreshToken.ToString(), out var _))
+        if (!context.Request.Cookies.TryGetValue(nameof(AuthenticationCookie.RefreshToken), out var _))
         {
             context.Response.StatusCode = StatusCodes.Status401Unauthorized;
 
             return;
         }
 
-        if (!context.Request.Cookies.TryGetValue(AuthenticationCookie.AccessToken.ToString(), out var accessToken))
+        if (!context.Request.Cookies.TryGetValue(nameof(AuthenticationCookie.AccessToken), out var accessToken))
         {
             context.Response.StatusCode = StatusCodes.Status401Unauthorized;
 
             return;
         }
 
-        context.Items[AuthenticationCookie.AccessToken.ToString()] = accessToken;
+        context.Items[nameof(AuthenticationCookie.AccessToken)] = accessToken;
         Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
     }
 }

@@ -30,6 +30,7 @@ public class GroupChatMessagesViewModel : MvxViewModel, IImprovedMvxViewModel
     private ObservableCollection<AppUserModel>? _users;
     private List<AppUserModel>? _usersExcludingInvitees;
     private GroupChatModel? _selectedChat;
+    private GroupChatUserModel? _meInChat;
     private GroupChatMessageModel? _selectedMessage;
     private int _selectedMessageIndex = -1;
     private string? _selectedChatName;
@@ -66,7 +67,7 @@ public class GroupChatMessagesViewModel : MvxViewModel, IImprovedMvxViewModel
         Messages = [];
         _allMessages = [];
 
-        GetMyAccount();
+        Task.Run(GetMeInGroupChatAsync);
         Task.Run(LoadUsersAsync);
     }
 
@@ -297,35 +298,29 @@ public class GroupChatMessagesViewModel : MvxViewModel, IImprovedMvxViewModel
             {
                 throw new ArgumentNullException(nameof(SelectedChat));
             }
-            else if (MyAccount == null)
+            else if (_meInChat == null)
             {
-                throw new ArgumentNullException(nameof(MyAccount));
+                throw new ArgumentNullException(nameof(_meInChat));
             }
             else if (_hubConnection == null)
             {
                 throw new ArgumentNullException(nameof(_hubConnection));
             }
 
-            await _hubConnection.SendAsync("SendMessage", Message, SelectedChat.Id, MyAccount.Id, MyAccount.Username);
+            await _hubConnection.SendAsync("SendMessage", Message, SelectedChat.Id, _meInChat.Id, _meInChat.Username);
 
             Message = string.Empty;
         }
         catch (ArgumentNullException ex)
         {
-            AddUserToChatResponse = LoadingStatus.Failed;
-
             _logger.LogError(ex, ex.Message);
         }
         catch (HttpRequestException ex)
         {
-            AddUserToChatResponse = LoadingStatus.Failed;
-
             _logger.LogError(ex, ex.Message);
         }
         catch (Exception ex)
         {
-            AddUserToChatResponse = LoadingStatus.Failed;
-
             _logger.LogError(ex, ex.Message);
         }
     }
@@ -570,9 +565,43 @@ public class GroupChatMessagesViewModel : MvxViewModel, IImprovedMvxViewModel
         }
     }
 
-    private void GetMyAccount()
+    private async Task GetMeInGroupChatAsync()
     {
-        MyAccount = _memoryCache.Get<AppUserModel>(nameof(MemoryCacheValue.User));
+        try
+        {
+            MyAccount = _memoryCache.Get<AppUserModel>(nameof(MemoryCacheValue.User));
+            if (MyAccount == null)
+            {
+                throw new ArgumentNullException(nameof(MyAccount));
+            }
+            else if (SelectedChat == null)
+            {
+                throw new ArgumentNullException(nameof(SelectedChat));
+            }
+
+            var response = await _httpClientHelper.GetAsync($"GroupChatUser/findMeInChat?chatId={SelectedChat.Id}&appUserId={MyAccount.Id}", Port.ChatApi);
+            response.EnsureSuccessStatusCode();
+
+            var meInChat = await response.Content.ReadFromJsonAsync<GroupChatUserModel>();
+            if (meInChat == null)
+            {
+                throw new ArgumentNullException(nameof(meInChat));
+            }
+
+            _meInChat = meInChat;
+        }
+        catch (ArgumentNullException ex)
+        {
+            _logger.LogError(ex, ex.Message);
+        }
+        catch (HttpRequestException ex)
+        {
+            _logger.LogError(ex, ex.Message);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, ex.Message);
+        }
     }
 
     private async Task InitSignalRAsync()
@@ -614,6 +643,10 @@ public class GroupChatMessagesViewModel : MvxViewModel, IImprovedMvxViewModel
                     Messages?.Add(message);
                 });
             });
+        }
+        catch (ArgumentNullException ex)
+        {
+            _logger.LogError(ex, ex.Message);
         }
         catch (Exception ex)
         {

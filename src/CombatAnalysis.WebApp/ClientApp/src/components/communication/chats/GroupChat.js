@@ -24,7 +24,7 @@ const messageType = {
     system: 1
 };
 
-const GroupChat = ({ chat, me, setSelectedChat }) => {
+const GroupChat = ({ chat, me, setSelectedChat, unreadMessageHubConnection }) => {
     const { t } = useTranslation("communication/chats/groupChat");
 
     const hubURL = "https://localhost:7026/groupChatHub";
@@ -250,8 +250,9 @@ const GroupChat = ({ chat, me, setSelectedChat }) => {
                 </ul>
                 <MessageInput
                     hubConnection={hubConnection}
+                    unreadMessageHubConnection={unreadMessageHubConnection}
                     chat={chat}
-                    me={me}
+                    meInChat={groupChatData.meInChat}
                     setAreLoadingOldMessages={setAreLoadingOldMessages}
                     t={t}
                 />

@@ -19,10 +19,10 @@ public class GroupChatUserController : ControllerBase
         _httpClient.BaseAddress = Port.ChatApi;
     }
 
-    [HttpGet("find")]
-    public async Task<IActionResult> Find(int chatId, string userId)
+    [HttpGet("findMeInChat")]
+    public async Task<IActionResult> Find(int chatId, string appUserId)
     {
-        var responseMessage = await _httpClient.GetAsync("GroupChatUser");
+        var responseMessage = await _httpClient.GetAsync($"GroupChatUser/findMeInChat?chatId={chatId}&appUserId={appUserId}");
         if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
         {
             return Unauthorized();
@@ -32,10 +32,9 @@ public class GroupChatUserController : ControllerBase
             return BadRequest();
         }
 
-        var groupChatUsers = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<GroupChatUserModel>>();
-        var myGroupCHatUser = groupChatUsers.Where(x => x.ChatId == chatId && x.AppUserId == userId).FirstOrDefault();
+        var meInChat = await responseMessage.Content.ReadFromJsonAsync<GroupChatUserModel>();
 
-        return Ok(myGroupCHatUser);
+        return Ok(meInChat);
     }
 
     [HttpGet("findByChatId/{id:int:min(1)}")]

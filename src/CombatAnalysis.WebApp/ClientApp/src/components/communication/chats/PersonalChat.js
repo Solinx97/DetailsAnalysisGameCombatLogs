@@ -19,15 +19,15 @@ import PersonalChatTitle from './PersonalChatTitle';
 
 import "../../../styles/communication/chats/personalChat.scss";
 
-const PersonalChat = ({ chat, me, setSelectedChat, companionId }) => {
+const PersonalChat = ({ chat, me, setSelectedChat, companionId, unreadMessageHubConnection }) => {
     const { t } = useTranslation("communication/chats/personalChat");
 
-    const hubURL = "https://localhost:7026/personalChatHub";
+    const chatHubURL = "https://localhost:7026/personalChatHub";
 
     const chatContainerRef = useRef(null);
     const pageSizeRef = useRef(process.env.REACT_APP_CHAT_PAGE_SIZE);
 
-    const [hubConnection, setHubConnection] = useState(null);
+    const [chatHubConnection, setChatHubConnection] = useState(null);
     const [haveMoreMessages, setHaveMoreMessage] = useState(false);
     const [currentMessages, setCurrentMessages] = useState(null);
     const [messagesIsLoaded, setMessagesIsLoaded] = useState(false);
@@ -47,7 +47,7 @@ const PersonalChat = ({ chat, me, setSelectedChat, companionId }) => {
     const [getMessagesCount] = useLazyFindPersonalChatMessageCountQuery();
 
     useEffect(() => {
-        setHubConnection(null);
+        setChatHubConnection(null);
     }, [chat]);
 
     useEffect(() => {
@@ -64,7 +64,7 @@ const PersonalChat = ({ chat, me, setSelectedChat, companionId }) => {
         }
 
         const connectToChat = async () => {
-            await connectToChatAsync();
+            await connectToChatHubAsync();
         }
 
         connectToChat();
@@ -115,27 +115,27 @@ const PersonalChat = ({ chat, me, setSelectedChat, companionId }) => {
     useEffect(() => {
         return () => {
             const disconnectFromChat = async () => {
-                if (hubConnection) {
-                    await hubConnection.invoke("LeaveFromRoom", `${chat.id}`);
-                    await hubConnection.stop();
+                if (chatHubConnection) {
+                    await chatHubConnection.invoke("LeaveFromRoom", `${chat.id}`);
+                    await chatHubConnection.stop();
                 }
             }
 
             disconnectFromChat();
         }
-    }, [hubConnection]);
+    }, [chatHubConnection]);
 
-    const connectToChatAsync = async () => {
-        if (hubConnection !== null) {
+    const connectToChatHubAsync = async () => {
+        if (chatHubConnection !== null) {
             return;
         }
 
         try {
             const hubConnection = new signalR.HubConnectionBuilder()
-                .withUrl(hubURL)
+                .withUrl(chatHubURL)
                 .withAutomaticReconnect()
                 .build();
-            setHubConnection(hubConnection);
+            setChatHubConnection(hubConnection);
 
             await hubConnection.start();
 
@@ -243,9 +243,10 @@ const PersonalChat = ({ chat, me, setSelectedChat, companionId }) => {
                     ))}
                 </ul>
                 <MessageInput
-                    hubConnection={hubConnection}
+                    hubConnection={chatHubConnection}
+                    unreadMessageHubConnection={unreadMessageHubConnection}
                     chat={chat}
-                    me={me}
+                    meInChat={me}
                     setAreLoadingOldMessages={setAreLoadingOldMessages}
                     t={t}
                 />

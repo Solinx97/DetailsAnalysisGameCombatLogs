@@ -1,4 +1,4 @@
-﻿namespace CombatAnalysis.WebApp.Models.Chat;
+﻿namespace CombatAnalysis.Core.Models.Chat;
 
 public class GroupChatMessageCountModel
 {
@@ -6,7 +6,7 @@ public class GroupChatMessageCountModel
 
     public int Count { get; set; }
 
-    public int ChatId { get; set; }
-
     public string GroupChatUserId { get; set; }
+
+    public int ChatId { get; set; }
 }
