@@ -32,7 +32,7 @@ const Chats = () => {
     const [showMenu, setShowMenu] = useState(false);
 
     const { data: personalChats, isError: personalChatError, isLoading: personalChatLoading } = useGetByUserIdAsyncQuery(me?.id);
-    const { data: groupChatUsers, isError: groupChatError, isLoading: groupChatLoading } = useFindGroupChatUserByUserIdQuery(me?.id);
+    const { data: meInGroupChats, isError: groupChatError, isLoading: groupChatLoading } = useFindGroupChatUserByUserIdQuery(me?.id);
 
     const maxWidth = 425;
     const screenSize = useMemo(() => ({
@@ -47,11 +47,22 @@ const Chats = () => {
 
         const connectToChat = async () => {
             await connectToPersonalChatAsync();
-            await connectToGroupChatAsync();
         }
 
         connectToChat();
     }, [personalChats]);
+
+    useEffect(() => {
+        if (!meInGroupChats) {
+            return;
+        }
+
+        const connectToChat = async () => {
+            await connectToGroupChatAsync();
+        }
+
+        connectToChat();
+    }, [meInGroupChats]);
 
     const connectToPersonalChatAsync = async () => {
         if (personalHubConnection !== null) {
@@ -76,7 +87,7 @@ const Chats = () => {
     }
 
     const connectToGroupChatAsync = async () => {
-        if (personalHubConnection !== null) {
+        if (groupHubConnection !== null) {
             return;
         }
 
@@ -89,8 +100,8 @@ const Chats = () => {
 
             await hubConnection.start();
 
-            for (let i = 0; i < groupChatUsers?.length; i++) {
-                await hubConnection.invoke("JoinRoom", groupChatUsers[i].chatId);
+            for (let i = 0; i < meInGroupChats?.length; i++) {
+                await hubConnection.invoke("JoinRoom", meInGroupChats[i].chatId);
             }
         } catch (e) {
             console.log(e);
@@ -104,7 +115,7 @@ const Chats = () => {
     const isLoading = personalChatLoading || groupChatLoading;
     const isError = personalChatError || groupChatError;
 
-    if (isLoading || isError || me === null || personalChats === null || groupChatUsers === null) {
+    if (isLoading || isError || me === null || personalChats === null || meInGroupChats === null) {
         return (
             <>
                 <CommunicationMenu currentMenuItem={1} />
@@ -168,11 +179,12 @@ const Chats = () => {
                     <div className="chats__my-chats">
                         <GroupChatList
                             t={t}
-                            groupChatUsers={groupChatUsers}
+                            meInGroupChats={meInGroupChats}
                             selectedChat={selectedChat}
                             setSelectedChat={setSelectedChat}
                             chatsHidden={chatsHidden.group}
                             toggleChatsHidden={() => toggleChatsHidden("group")}
+                            hubConnection={groupHubConnection}
                         />
                         <PersonalChatList
                             meId={me?.id}

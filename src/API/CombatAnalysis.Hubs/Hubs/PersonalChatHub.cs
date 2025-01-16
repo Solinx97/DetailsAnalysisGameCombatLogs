@@ -67,9 +67,74 @@ internal class PersonalChatHub : Hub
             var response = await _httpClient.PostAsync("PersonalChatMessage", JsonContent.Create(personalMessage), context);
             response.EnsureSuccessStatusCode();
 
+            var createdMessage = await response.Content.ReadFromJsonAsync<PersonalChatMessageModel>();
+            if (createdMessage == null)
+            {
+                throw new ArgumentNullException(nameof(createdMessage));
+            }
+
             await Clients.Caller.SendAsync("MessageDelivered");
 
-            await Clients.Group(chatId.ToString()).SendAsync("ReceiveMessage", personalMessage);
+            await Clients.Group(chatId.ToString()).SendAsync("ReceiveMessage", createdMessage);
+        }
+        catch (ArgumentNullException ex)
+        {
+            _logger.LogError(ex, ex.Message);
+        }
+        catch (HttpRequestException ex)
+        {
+            _logger.LogError(ex, ex.Message);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, ex.Message);
+        }
+    }
+
+    public async Task SendMessageHasBeenRead(int chatMessageId, string meId)
+    {
+        try
+        {
+            var context = Context.GetHttpContext();
+            if (context == null)
+            {
+                throw new ArgumentNullException(nameof(context));
+            }
+
+            var response = await _httpClient.GetAsync($"PersonalChatMessage/{chatMessageId}", context);
+            response.EnsureSuccessStatusCode();
+
+            var messageModel = await response.Content.ReadFromJsonAsync<PersonalChatMessageModel>();
+            if (messageModel == null)
+            {
+                throw new ArgumentNullException(nameof(messageModel));
+            }
+
+            if (messageModel.Status == 2)
+            {
+                return;
+            }
+
+            messageModel.Status = 2;
+
+            response = await _httpClient.PutAsync("PersonalChatMessage", JsonContent.Create(messageModel), context);
+            response.EnsureSuccessStatusCode();
+
+            response = await _httpClient.GetAsync($"PersonalChatMessageCount/findMe/{meId}", context);
+            response.EnsureSuccessStatusCode();
+
+            var messageCount = await response.Content.ReadFromJsonAsync<PersonalChatMessageCountModel>();
+            if (messageCount == null)
+            {
+                throw new ArgumentNullException(nameof(messageCount));
+            }
+
+            messageCount.Count--;
+
+            response = await _httpClient.PutAsync("PersonalChatMessageCount", JsonContent.Create(messageCount), context);
+            response.EnsureSuccessStatusCode();
+
+            await Clients.Caller.SendAsync("ReceiveMessageHasBeenRead");
         }
         catch (ArgumentNullException ex)
         {

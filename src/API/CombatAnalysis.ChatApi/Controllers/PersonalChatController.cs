@@ -45,24 +45,29 @@ public class PersonalChatController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<IActionResult> Create(PersonalChatModel model)
+    public async Task<IActionResult> Create(PersonalChatModel personalChatModel)
     {
         try
         {
+            if (personalChatModel == null)
+            {
+                throw new ArgumentNullException(nameof(personalChatModel));
+            }
+
             await _chatTransactionService.BeginTransactionAsync();
 
-            var map = _mapper.Map<PersonalChatDto>(model);
-            var result = await _chatService.CreateAsync(map);
+            var map = _mapper.Map<PersonalChatDto>(personalChatModel);
+            var createdPersonalChat = await _chatService.CreateAsync(map);
 
-            await CreateMessageCountAsync(result);
+            await CreateMessageCountAsync(createdPersonalChat);
 
             await _chatTransactionService.CommitTransactionAsync();
 
-            return Ok(result);
+            return Ok(createdPersonalChat);
         }
         catch (ArgumentNullException ex)
         {
-            _logger.LogError(ex, $"Create Personal Chat failed: ${ex.Message}", model);
+            _logger.LogError(ex, $"Create Personal Chat failed: ${ex.Message}", personalChatModel);
 
             await _chatTransactionService.RollbackTransactionAsync();
 
@@ -70,7 +75,7 @@ public class PersonalChatController : ControllerBase
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, $"Create Personal Chat failed: ${ex.Message}", model);
+            _logger.LogError(ex, $"Create Personal Chat failed: ${ex.Message}", personalChatModel);
 
             await _chatTransactionService.RollbackTransactionAsync();
 
@@ -128,22 +133,22 @@ public class PersonalChatController : ControllerBase
 
     private async Task CreateMessageCountAsync(PersonalChatDto chat)
     {
-        var messageCount = new PersonalChatMessageCountDto
+        var initiatorMessageCount = new PersonalChatMessageCountDto
         {
             ChatId = chat.Id,
             AppUserId = chat.InitiatorId,
             Count = 0
         };
 
-        await _chatMessageCountService.CreateAsync(messageCount);
+        await _chatMessageCountService.CreateAsync(initiatorMessageCount);
 
-        messageCount = new PersonalChatMessageCountDto
+        var companionMessageCount = new PersonalChatMessageCountDto
         {
             ChatId = chat.Id,
             AppUserId = chat.CompanionId,
             Count = 0
         };
 
-        await _chatMessageCountService.CreateAsync(messageCount);
+        await _chatMessageCountService.CreateAsync(companionMessageCount);
     }
 }

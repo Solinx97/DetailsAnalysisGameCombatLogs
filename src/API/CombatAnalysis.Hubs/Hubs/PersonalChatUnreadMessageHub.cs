@@ -44,7 +44,19 @@ internal class PersonalChatUnreadMessageHub : Hub
         }
     }
 
-    public async Task SendUndreadMessageCount(int chatId, string appUserId)
+    public async Task SendUnreadMessageIncreased(int chatId)
+    {
+        try
+        {
+            await Clients.OthersInGroup(chatId.ToString()).SendAsync("ReceiveUnreadMessageIncreased");
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, ex.Message);
+        }
+    }
+
+    public async Task RequestUnreadMessages(int chatId, string appUserId)
     {
         try
         {
@@ -54,7 +66,7 @@ internal class PersonalChatUnreadMessageHub : Hub
                 throw new ArgumentNullException(nameof(context));
             }
 
-            var response = await _httpClient.GetAsync($"PersonalChatMessageCount/find?chatId={chatId}&appUserId={appUserId}", context);
+            var response = await _httpClient.GetAsync($"PersonalChatMessageCount/findMe/{appUserId}", context);
             response.EnsureSuccessStatusCode();
 
             var messagesCount = await response.Content.ReadFromJsonAsync<PersonalChatMessageCountModel>();
@@ -63,7 +75,7 @@ internal class PersonalChatUnreadMessageHub : Hub
                 throw new ArgumentNullException(nameof(messagesCount));
             }
 
-            await Clients.OthersInGroup(chatId.ToString()).SendAsync("ReceiveUnreadMessageCount", chatId, messagesCount.Count);
+            await Clients.Caller.SendAsync("ReceiveUnreadMessageCount", chatId, messagesCount.Count);
         }
         catch (ArgumentNullException ex)
         {
@@ -76,6 +88,15 @@ internal class PersonalChatUnreadMessageHub : Hub
         catch (Exception ex)
         {
             _logger.LogError(ex, ex.Message);
+        }
+    }
+
+    public async Task LeaveFromRoom(string room)
+    {
+        var refreshToken = Context.GetHttpContext()?.Request.Cookies[nameof(AuthenticationCookie.RefreshToken)] ?? string.Empty;
+        if (!string.IsNullOrEmpty(refreshToken))
+        {
+            await Groups.RemoveFromGroupAsync(Context.ConnectionId, room);
         }
     }
 }

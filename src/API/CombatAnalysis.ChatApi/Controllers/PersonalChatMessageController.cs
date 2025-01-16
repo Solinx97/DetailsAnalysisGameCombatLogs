@@ -12,15 +12,17 @@ namespace CombatAnalysis.ChatApi.Controllers;
 [Authorize]
 public class PersonalChatMessageController : ControllerBase
 {
+    private readonly IService<PersonalChatDto, int> _chatService;
     private readonly IChatMessageService<PersonalChatMessageDto, int> _chatMessageService;
     private readonly IService<PersonalChatMessageCountDto, int> _chatMessageCountService;
     private readonly IMapper _mapper;
     private readonly ILogger<PersonalChatMessageController> _logger;
     private readonly IChatTransactionService _chatTransactionService;
 
-    public PersonalChatMessageController(IChatMessageService<PersonalChatMessageDto, int> chatMessageService, IService<PersonalChatMessageCountDto, int> chatMessageCountService, IMapper mapper, 
-        ILogger<PersonalChatMessageController> logger, IChatTransactionService chatTransactionService)
+    public PersonalChatMessageController(IService<PersonalChatDto, int> chatService, IChatMessageService<PersonalChatMessageDto, int> chatMessageService, IService<PersonalChatMessageCountDto, int> chatMessageCountService, 
+        IMapper mapper, ILogger<PersonalChatMessageController> logger, IChatTransactionService chatTransactionService)
     {
+        _chatService = chatService;
         _chatMessageService = chatMessageService;
         _chatMessageCountService = chatMessageCountService;
         _mapper = mapper;
@@ -71,38 +73,44 @@ public class PersonalChatMessageController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<IActionResult> Create(PersonalChatMessageModel chatMessage)
+    public async Task<IActionResult> Create(PersonalChatMessageModel personalChatMessageModel)
     {
         try
         {
-            if (chatMessage == null)
+            if (personalChatMessageModel == null)
             {
-                throw new ArgumentNullException(nameof(chatMessage));
+                throw new ArgumentNullException(nameof(personalChatMessageModel));
             }
 
             await _chatTransactionService.BeginTransactionAsync();
 
-            var map = _mapper.Map<PersonalChatMessageDto>(chatMessage);
-            var result = await _chatMessageService.CreateAsync(map);
+            var map = _mapper.Map<PersonalChatMessageDto>(personalChatMessageModel);
+            var createdPersonalChatMessage = await _chatMessageService.CreateAsync(map);
 
-            var messagesCount = await _chatMessageCountService.GetAllAsync();
-            var targetMessageCount = messagesCount.Where(x => x.ChatId == result.ChatId && x.AppUserId == result.AppUserId).FirstOrDefault();
-            if (targetMessageCount == null)
+            var chat = await _chatService.GetByIdAsync(createdPersonalChatMessage.ChatId);
+
+            var companionId = personalChatMessageModel.AppUserId == chat.CompanionId 
+                ? chat.InitiatorId
+                : chat.CompanionId;
+
+            var messagesCount = await _chatMessageCountService.GetByParamAsync(nameof(PersonalChatMessageCountModel.ChatId), createdPersonalChatMessage.ChatId);
+            var companionMessageCount = messagesCount.FirstOrDefault(x => x.AppUserId == companionId);
+            if (companionMessageCount == null)
             {
-                throw new ArgumentNullException(nameof(targetMessageCount));
+                throw new ArgumentNullException(nameof(companionMessageCount));
             }
 
-            targetMessageCount.Count++;
+            companionMessageCount.Count++;
 
-            await _chatMessageCountService.UpdateAsync(targetMessageCount);
+            await _chatMessageCountService.UpdateAsync(companionMessageCount);
 
             await _chatTransactionService.CommitTransactionAsync();
 
-            return Ok(result);
+            return Ok(createdPersonalChatMessage);
         }
         catch (ArgumentNullException ex)
         {
-            _logger.LogError(ex, $"Create Personal Chat Message failed: ${ex.Message}", chatMessage);
+            _logger.LogError(ex, $"Create Personal Chat Message failed: ${ex.Message}", personalChatMessageModel);
 
             await _chatTransactionService.RollbackTransactionAsync();
 
@@ -110,7 +118,7 @@ public class PersonalChatMessageController : ControllerBase
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, $"Create Personal Chat Message failed: ${ex.Message}", chatMessage);
+            _logger.LogError(ex, $"Create Personal Chat Message failed: ${ex.Message}", personalChatMessageModel);
 
             await _chatTransactionService.RollbackTransactionAsync();
 

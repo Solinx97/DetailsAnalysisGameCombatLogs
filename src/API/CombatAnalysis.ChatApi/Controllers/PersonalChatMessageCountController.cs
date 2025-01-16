@@ -12,13 +12,13 @@ namespace CombatAnalysis.ChatApi.Controllers;
 [Authorize]
 public class PersonalChatMessageCountController : ControllerBase
 {
-    private readonly IService<PersonalChatMessageCountDto, int> _service;
+    private readonly IService<PersonalChatMessageCountDto, int> _messageCountService;
     private readonly IMapper _mapper;
     private readonly ILogger<PersonalChatMessageCountController> _logger;
 
-    public PersonalChatMessageCountController(IService<PersonalChatMessageCountDto, int> service, IMapper mapper, ILogger<PersonalChatMessageCountController> logger)
+    public PersonalChatMessageCountController(IService<PersonalChatMessageCountDto, int> messageCountService, IMapper mapper, ILogger<PersonalChatMessageCountController> logger)
     {
-        _service = service;
+        _messageCountService = messageCountService;
         _mapper = mapper;
         _logger = logger;
     }
@@ -26,7 +26,7 @@ public class PersonalChatMessageCountController : ControllerBase
     [HttpGet]
     public async Task<IActionResult> GetAll()
     {
-        var result = await _service.GetAllAsync();
+        var result = await _messageCountService.GetAllAsync();
         var map = _mapper.Map<IEnumerable<PersonalChatMessageCountModel>>(result);
 
         return Ok(map);
@@ -35,21 +35,20 @@ public class PersonalChatMessageCountController : ControllerBase
     [HttpGet("{id:int:min(1)}")]
     public async Task<IActionResult> GetById(int id)
     {
-        var result = await _service.GetByIdAsync(id);
+        var result = await _messageCountService.GetByIdAsync(id);
         var map = _mapper.Map<PersonalChatMessageCountModel>(result);
 
         return Ok(map);
     }
 
-    [HttpGet("find")]
-    public async Task<IActionResult> Find(int chatId, string appUserId)
+    [HttpGet("findMe/{meId}")]
+    public async Task<IActionResult> FindMe(string meId)
     {
-        var result = await _service.GetAllAsync();
-        var resultByChat = result.Where(x => x.ChatId == chatId && x.AppUserId == appUserId).FirstOrDefault();
-        var map = _mapper.Map<PersonalChatMessageCountModel>(resultByChat);
+        var myMessageCounts = await _messageCountService.GetByParamAsync(nameof(PersonalChatMessageCountModel.AppUserId), meId);
+        var myMessageCount = myMessageCounts.FirstOrDefault();
 
-        return Ok(map);
-    }
+        return Ok(myMessageCount);
+    }                                                                                                                                                   
 
     [HttpPost]
     public async Task<IActionResult> Create(PersonalChatMessageCountModel model)
@@ -57,7 +56,7 @@ public class PersonalChatMessageCountController : ControllerBase
         try
         {
             var map = _mapper.Map<PersonalChatMessageCountDto>(model);
-            var result = await _service.CreateAsync(map);
+            var result = await _messageCountService.CreateAsync(map);
 
             return Ok(result);
         }
@@ -81,7 +80,7 @@ public class PersonalChatMessageCountController : ControllerBase
         try
         {
             var map = _mapper.Map<PersonalChatMessageCountDto>(model);
-            var result = await _service.UpdateAsync(map);
+            var result = await _messageCountService.UpdateAsync(map);
 
             return Ok(result);
         }
@@ -102,7 +101,7 @@ public class PersonalChatMessageCountController : ControllerBase
     [HttpDelete("{id:int:min(1)}")]
     public async Task<IActionResult> Delete(int id)
     {
-        var rowsAffected = await _service.DeleteAsync(id);
+        var rowsAffected = await _messageCountService.DeleteAsync(id);
 
         return Ok(rowsAffected);
     }

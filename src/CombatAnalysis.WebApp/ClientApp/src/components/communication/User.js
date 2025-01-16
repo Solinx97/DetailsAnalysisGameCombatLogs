@@ -74,7 +74,7 @@ const User = ({ me, targetUserId, setUserInformation, allowRemoveFriend, actionA
                     icon={faCircleXmark}
                     title={t("Remove")}
                     className="remove"
-                    onClick={async () => await removeFriendAsync()}
+                    onClick={removeFriendAsync}
                 />
             }
         </div>

@@ -1,11 +1,27 @@
 ﻿import { faPaperPlane } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { memo, useRef, useState } from "react";
+import { memo, useEffect, useRef, useState } from "react";
 
 const MessageInput = ({ hubConnection, unreadMessageHubConnection, chat, meInChat, setAreLoadingOldMessages, t }) => {
     const messageInput = useRef(null);
 
     const [isEmptyMessage, setIsEmptyMessage] = useState(null);
+
+    useEffect(() => {
+        if (!hubConnection) {
+            return;
+        }
+
+        hubConnection.on("MessageDelivered", async () => {
+            await unreadMessageHubConnection?.invoke("SendUnreadMessageIncreased", chat.id);
+        });
+
+        return () => {
+            if (hubConnection) {
+                hubConnection.off("MessageDelivered");
+            }
+        }
+    }, [hubConnection]);
 
     const handleSendMessageByKeyAsync = async (event) => {
         if (event.code !== "Enter") {
@@ -19,9 +35,6 @@ const MessageInput = ({ hubConnection, unreadMessageHubConnection, chat, meInCha
 
         setAreLoadingOldMessages(false);
 
-        await hubConnection?.on("MessageDelivered", async () => {
-            await unreadMessageHubConnection?.invoke("SendUndreadMessageCount", chat.id, meInChat?.id);
-        });
         await hubConnection?.invoke("SendMessage", messageInput.current.value, chat.id, meInChat?.id, meInChat?.username);
 
         messageInput.current.value = "";
@@ -36,9 +49,6 @@ const MessageInput = ({ hubConnection, unreadMessageHubConnection, chat, meInCha
 
         setAreLoadingOldMessages(false);
 
-        await hubConnection?.on("MessageDelivered", async () => {
-            await unreadMessageHubConnection?.invoke("SendUndreadMessageCount", chat.id, meInChat?.id);
-        });
         await hubConnection?.invoke("SendMessage", messageInput.current.value, chat.id, meInChat?.id, meInChat?.username);
 
         messageInput.current.value = "";

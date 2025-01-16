@@ -3,10 +3,6 @@ import { memo, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import useGroupChatData from '../../../hooks/useGroupChatData';
 import {
-    useLazyFindGroupChatMessageCountQuery,
-    useUpdateGroupChatMessageCountAsyncMutation
-} from '../../../store/api/chat/GroupChatMessagCount.api';
-import {
     useRemoveGroupChatMessageAsyncMutation,
     useUpdateGroupChatMessageAsyncMutation
 } from '../../../store/api/chat/GroupChatMessage.api';
@@ -45,14 +41,16 @@ const GroupChat = ({ chat, me, setSelectedChat, unreadMessageHubConnection }) =>
 
     const { groupChatData, getMoreMessagesAsync } = useGroupChatData(chat.id, me.id, pageSizeRef);
 
-    const [updateGroupChatMessageCountMut] = useUpdateGroupChatMessageCountAsyncMutation();
-    const [getMessagesCount] = useLazyFindGroupChatMessageCountQuery();
     const [updateGroupChatMessageAsync] = useUpdateGroupChatMessageAsyncMutation();
     const [removeGroupChatMessageAsync] = useRemoveGroupChatMessageAsyncMutation();
 
     useEffect(() => {
-        setHubConnection(null);
-    }, [chat]);
+        const connectToChat = async () => {
+            await connectToChatAsync();
+        }
+
+        connectToChat();
+    }, []);
 
     useEffect(() => {
         if (!groupChatData.messages) {
@@ -61,18 +59,6 @@ const GroupChat = ({ chat, me, setSelectedChat, unreadMessageHubConnection }) =>
 
         setCurrentMessages(groupChatData.messages);
     }, [groupChatData.messages]);
-
-    useEffect(() => {
-        if (!currentMessages) {
-            return;
-        }
-
-        const connectToChat = async () => {
-            await connectToChatAsync();
-        }
-
-        connectToChat();
-    }, [currentMessages]);
 
     useEffect(() => {
         if (!groupChatData.messages) {
@@ -159,26 +145,11 @@ const GroupChat = ({ chat, me, setSelectedChat, unreadMessageHubConnection }) =>
 
             await hubConnection.invoke("JoinRoom", `${chat.id}`);
 
-            await hubConnection.on("ReceiveMessage", (message) => {
-                const messages = Array.from(currentMessages);
-                messages.push(message);
-
-                setCurrentMessages(messages);
+            hubConnection.on("ReceiveMessage", (message) => {
+                setCurrentMessages(prevMessages => [...prevMessages, message]);
             });
         } catch (e) {
-            console.log(e);
-        }
-    }
-
-    const decreaseGroupChatMessagesCountAsync = async () => {
-        const myGroupChatUser = groupChatData.groupChatUsers.filter(x => x.appUserId === me?.id)[0];
-
-        const messagesCount = await getMessagesCount({ chatId: chat?.id, userId: myGroupChatUser.id });
-        if (messagesCount.data !== undefined) {
-            const unblockedObject = Object.assign({}, messagesCount.data);
-            unblockedObject.count = --unblockedObject.count;
-
-            await updateGroupChatMessageCountMut(unblockedObject);
+            console.error(e);
         }
     }
 
@@ -239,11 +210,14 @@ const GroupChat = ({ chat, me, setSelectedChat, unreadMessageHubConnection }) =>
                         <li className="message" key={message.id}>
                             <ChatMessage
                                 me={me}
+                                reviewerId={groupChatData.meInChat.id}
+                                messageOwnerId={message.groupChatUserId}
                                 message={message}
                                 messageStatus={message.status}
                                 updateChatMessageAsync={updateGroupChatMessageAsync}
                                 deleteMessageAsync={deleteMessageAsync}
-                                decreaseChatMessagesCountAsync={decreaseGroupChatMessagesCountAsync}
+                                hubConnection={hubConnection}
+                                unreadMessageHubConnection={unreadMessageHubConnection}
                             />
                         </li>
                     ))}

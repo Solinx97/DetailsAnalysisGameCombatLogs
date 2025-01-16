@@ -12,13 +12,13 @@ namespace CombatAnalysis.ChatApi.Controllers;
 [Authorize]
 public class GroupChatMessageCountController : ControllerBase
 {
-    private readonly IService<GroupChatMessageCountDto, int> _service;
+    private readonly IService<GroupChatMessageCountDto, int> _groupChatMessageCountService;
     private readonly IMapper _mapper;
     private readonly ILogger<GroupChatMessageCountController> _logger;
 
-    public GroupChatMessageCountController(IService<GroupChatMessageCountDto, int> service, IMapper mapper, ILogger<GroupChatMessageCountController> logger)
+    public GroupChatMessageCountController(IService<GroupChatMessageCountDto, int> groupChatMessageCountService, IMapper mapper, ILogger<GroupChatMessageCountController> logger)
     {
-        _service = service;
+        _groupChatMessageCountService = groupChatMessageCountService;
         _mapper = mapper;
         _logger = logger;
     }
@@ -26,7 +26,7 @@ public class GroupChatMessageCountController : ControllerBase
     [HttpGet]
     public async Task<IActionResult> GetAll()
     {
-        var result = await _service.GetAllAsync();
+        var result = await _groupChatMessageCountService.GetAllAsync();
         var map = _mapper.Map<IEnumerable<GroupChatMessageCountModel>>(result);
 
         return Ok(map);
@@ -35,10 +35,19 @@ public class GroupChatMessageCountController : ControllerBase
     [HttpGet("{id:int:min(1)}")]
     public async Task<IActionResult> GetById(int id)
     {
-        var result = await _service.GetByIdAsync(id);
+        var result = await _groupChatMessageCountService.GetByIdAsync(id);
         var map = _mapper.Map<GroupChatMessageCountModel>(result);
 
         return Ok(map);
+    }
+
+    [HttpGet("findMe/{meInChatId}")]
+    public async Task<IActionResult> FindMe(string meInChatId)
+    {
+        var myMessageCounts = await _groupChatMessageCountService.GetByParamAsync(nameof(GroupChatMessageCountModel.GroupChatUserId), meInChatId);
+        var myMessageCount = myMessageCounts.FirstOrDefault();
+
+        return Ok(myMessageCount);
     }
 
     [HttpPost]
@@ -47,10 +56,9 @@ public class GroupChatMessageCountController : ControllerBase
         try
         {
             var map = _mapper.Map<GroupChatMessageCountDto>(model);
-            var result = await _service.CreateAsync(map);
-            var resultMap = _mapper.Map<GroupChatMessageCountModel>(result);
+            var result = await _groupChatMessageCountService.CreateAsync(map);
 
-            return Ok(resultMap);
+            return Ok(result);
         }
         catch (ArgumentNullException ex)
         {
@@ -72,7 +80,7 @@ public class GroupChatMessageCountController : ControllerBase
         try
         {
             var map = _mapper.Map<GroupChatMessageCountDto>(model);
-            var result = await _service.UpdateAsync(map);
+            var result = await _groupChatMessageCountService.UpdateAsync(map);
 
             return Ok(result);
         }
@@ -93,7 +101,7 @@ public class GroupChatMessageCountController : ControllerBase
     [HttpDelete("{id:int:min(1)}")]
     public async Task<IActionResult> Delete(int id)
     {
-        var rowsAffected = await _service.DeleteAsync(id);
+        var rowsAffected = await _groupChatMessageCountService.DeleteAsync(id);
 
         return Ok(rowsAffected);
     }

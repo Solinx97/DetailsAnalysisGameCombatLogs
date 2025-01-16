@@ -4,7 +4,6 @@ import { memo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { useCreatePersonalChatAsyncMutation, useLazyIsExistAsyncQuery } from '../../store/api/chat/PersonalChat.api';
-import { useCreatePersonalChatMessageCountAsyncMutation } from '../../store/api/chat/PersonalChatMessagCount.api';
 import { useFriendSearchMyFriendsQuery } from '../../store/api/user/Friend.api';
 import { useCreateRequestAsyncMutation, useLazyRequestIsExistQuery } from '../../store/api/user/RequestToConnect.api';
 import PeopleInvitesToCommunity from './people/PeopleInvitesToCommunity';
@@ -22,7 +21,6 @@ const UserInformation = ({ me, person, closeUserInformation, actionAfterRequests
 
     const [isExistAsync] = useLazyIsExistAsyncQuery();
     const [createPersonalChatAsync] = useCreatePersonalChatAsyncMutation();
-    const [createPersonalChatCountAsyncMut] = useCreatePersonalChatMessageCountAsyncMutation();
     const [createRequestAsync] = useCreateRequestAsyncMutation();
     const [isRequestExistAsync] = useLazyRequestIsExistQuery();
 
@@ -53,37 +51,13 @@ const UserInformation = ({ me, person, closeUserInformation, actionAfterRequests
             return;
         }
 
-        const newChat = {
-            initiatorUsername: me?.username,
-            companionUsername: targetUser.username,
-            lastMessage: " ",
+        const chat = {
+            id: 0,
             initiatorId: me?.id,
             companionId: targetUser.id
         };
 
-        const createdChat = await createPersonalChatAsync(newChat);
-        if (createdChat.data !== undefined) {
-            let countIsCreated = await createPersonalChatCountAsync(createdChat.data.id, me?.id);
-            if (!countIsCreated) {
-                return;
-            }
-
-            countIsCreated = await createPersonalChatCountAsync(createdChat.data.id, targetUser.id);
-            if (countIsCreated) {
-                navigate("/chats");
-            }
-        }
-    }
-
-    const createPersonalChatCountAsync = async (chatId, userId) => {
-        const newMessagesCount = {
-            count: 0,
-            appUSerId: userId,
-            chatId: +chatId,
-        };
-
-        const createdMessagesCount = await createPersonalChatCountAsyncMut(newMessagesCount);
-        return createdMessagesCount.data !== undefined;
+        await createPersonalChatAsync(chat);
     }
 
     const checkIfRequestExistAsync = async (id) => {

@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import GroupChatListItem from './GroupChatListItem';
 import { NavLink } from 'react-router-dom';
 
-const GroupChatList = ({ t, groupChatUsers, selectedChat, setSelectedChat, chatsHidden, toggleChatsHidden }) => {
+const GroupChatList = ({ t, meInGroupChats, selectedChat, setSelectedChat, chatsHidden, toggleChatsHidden, hubConnection }) => {
     return (
         <div className="chat-list">
             <div className="chats__my-chats_title">
@@ -15,17 +15,18 @@ const GroupChatList = ({ t, groupChatUsers, selectedChat, setSelectedChat, chats
                 />
             </div>
             <ul className={`chat-list__chats${!chatsHidden ? "_active" : ""}`}>
-                {groupChatUsers?.length === 0
+                {meInGroupChats?.length === 0
                     ? <div className="group-chats not-found">
                         <div>{t("GroupChatsEmptyYet")}</div>
                         <NavLink to="/chats/create">{t("Create")}</NavLink> 
                     </div>
-                    : groupChatUsers?.map((groupChatUser) => (
-                        <li key={groupChatUser.id} className={selectedChat.type === "group" && selectedChat.chat?.id === groupChatUser?.chatId ? `selected` : ``}>
+                    : meInGroupChats?.map((meInChat) => (
+                        <li key={meInChat.id} className={selectedChat.type === "group" && selectedChat.chat?.id === meInGroupChats?.chatId ? `selected` : ``}>
                             <GroupChatListItem
-                                chatId={groupChatUser.chatId}
+                                chatId={meInChat.chatId}
                                 setSelectedGroupChat={setSelectedChat}
-                                groupChatUserId={groupChatUser.id}
+                                meInChatId={meInChat.id}
+                                hubConnection={hubConnection}
                             />
                         </li>
                     ))
