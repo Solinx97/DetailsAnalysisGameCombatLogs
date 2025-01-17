@@ -19,12 +19,12 @@ internal class GroupChatHub : Hub
         _logger = logger;
     }
 
-    public async Task JoinRoom(string room)
+    public async Task JoinRoom(int chatId)
     {
         var refreshToken = Context.GetHttpContext()?.Request.Cookies[nameof(AuthenticationCookie.RefreshToken)] ?? string.Empty;
         if (!string.IsNullOrEmpty(refreshToken))
         {
-            await Groups.AddToGroupAsync(Context.ConnectionId, room);
+            await Groups.AddToGroupAsync(Context.ConnectionId, chatId.ToString());
         }
     }
 
@@ -118,7 +118,7 @@ internal class GroupChatHub : Hub
             response = await _httpClient.PutAsync("GroupChatMessageCount", JsonContent.Create(messageCount), context);
             response.EnsureSuccessStatusCode();
 
-            await Clients.Caller.SendAsync("ReceiveMessageHasBeenRead");
+            await Clients.Caller.SendAsync("ReceiveMessageHasBeenRead", messageModel);
         }
         catch (ArgumentNullException ex)
         {

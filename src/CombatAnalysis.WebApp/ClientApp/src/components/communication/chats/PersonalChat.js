@@ -125,7 +125,7 @@ const PersonalChat = ({ chat, me, setSelectedChat, companionId, unreadMessageHub
 
             await hubConnection.start();
 
-            await hubConnection.invoke("JoinRoom", `${chat.id}`);
+            await hubConnection.invoke("JoinRoom", chat.id);
 
             hubConnection.on("ReceiveMessage", (message) => {
                 setCurrentMessages(prevMessages => [...prevMessages, message]);

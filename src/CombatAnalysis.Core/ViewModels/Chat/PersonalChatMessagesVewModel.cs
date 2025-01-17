@@ -127,6 +127,27 @@ public class PersonalChatMessagesVewModel : MvxViewModel, IImprovedMvxViewModel
         base.ViewDestroy(viewFinishing);
     }
 
+    public async Task SendMessageHasBeenReadAsync(PersonalChatMessageModel message)
+    {
+        try
+        {
+            if (_hubConnection == null)
+            {
+                throw new ArgumentNullException(nameof(_hubConnection));
+            }
+
+            await _hubConnection.SendAsync("SendMessageHasBeenRead", message.Id, MyAccount?.Id);
+        }
+        catch (ArgumentNullException ex)
+        {
+            _logger.LogError(ex, ex.Message);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, ex.Message);
+        }
+    }
+
     private async Task FillAsync()
     {
         await AsyncDispatcher.ExecuteOnMainThreadAsync(() =>
@@ -247,6 +268,10 @@ public class PersonalChatMessagesVewModel : MvxViewModel, IImprovedMvxViewModel
             {
                 throw new ArgumentNullException(nameof(accessToken));
             }
+            else if (SelectedChat == null)
+            {
+                throw new ArgumentNullException(nameof(SelectedChat));
+            }
 
             ConnectToHub($"{Hubs.Port}{Hubs.PersonalChatAddress}", ref _hubConnection, refreshToken, accessToken);
             if (_hubConnection == null)
@@ -255,7 +280,7 @@ public class PersonalChatMessagesVewModel : MvxViewModel, IImprovedMvxViewModel
             }
 
             await _hubConnection.StartAsync();
-            await _hubConnection.SendAsync("JoinRoom", SelectedChat?.Id.ToString());
+            await _hubConnection.SendAsync("JoinRoom", SelectedChat.Id);
 
             ConnectToHub($"{Hubs.Port}{Hubs.PersonalChatUnreadMessageAddress}", ref _unreadMessageHubConnection, refreshToken, accessToken);
             if (_unreadMessageHubConnection == null)
@@ -264,13 +289,18 @@ public class PersonalChatMessagesVewModel : MvxViewModel, IImprovedMvxViewModel
             }
 
             await _unreadMessageHubConnection.StartAsync();
-            await _unreadMessageHubConnection.SendAsync("JoinRoom", SelectedChat?.Id.ToString());
+            await _unreadMessageHubConnection.SendAsync("JoinRoom", SelectedChat.Id);
+
+            _hubConnection.On("ReceiveMessageHasBeenRead", async () =>
+            {
+                await _unreadMessageHubConnection.SendAsync("RequestUnreadMessages", SelectedChat?.Id, MyAccount?.Id);
+            });
 
             _hubConnection.On<PersonalChatMessageModel>("ReceiveMessage", async (message) =>
             {
                 await AsyncDispatcher.ExecuteOnMainThreadAsync(() =>
                 {
-                    Messages?.Add(message);
+                    Messages?.Insert(0, message);
                 });
             });
 

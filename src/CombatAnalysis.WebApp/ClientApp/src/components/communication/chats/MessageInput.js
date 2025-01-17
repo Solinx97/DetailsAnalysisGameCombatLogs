@@ -1,6 +1,6 @@
 ﻿import { faPaperPlane } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { memo, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 const MessageInput = ({ hubConnection, unreadMessageHubConnection, chat, meInChat, setAreLoadingOldMessages, t }) => {
     const messageInput = useRef(null);
@@ -78,4 +78,4 @@ const MessageInput = ({ hubConnection, unreadMessageHubConnection, chat, meInCha
     );
 }
 
-export default memo(MessageInput);
+export default MessageInput;

@@ -48,7 +48,7 @@ internal class GroupChatUnreadMessageHub : Hub
     {
         try
         {
-            await Clients.OthersInGroup(chatId.ToString()).SendAsync("ReceiveUnreadMessageIncreased");
+            await Clients.OthersInGroup(chatId.ToString()).SendAsync("ReceiveUnreadMessageIncreased", chatId);
         }
         catch (Exception ex)
         {
@@ -75,7 +75,7 @@ internal class GroupChatUnreadMessageHub : Hub
                 throw new ArgumentNullException(nameof(messagesCount));
             }
 
-            await Clients.Caller.SendAsync("ReceiveUnreadMessageCount", chatId, messagesCount.Count);
+            await Clients.Group(chatId.ToString()).SendAsync("ReceiveUnreadMessageCount", chatId, messagesCount.Count);
         }
         catch (ArgumentNullException ex)
         {

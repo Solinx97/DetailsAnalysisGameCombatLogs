@@ -19,7 +19,7 @@ internal class PersonalChatHub : Hub
         _logger = logger;
     }
 
-    public async Task JoinRoom(string chatId)
+    public async Task JoinRoom(int chatId)
     {
         try
         {
@@ -31,7 +31,7 @@ internal class PersonalChatHub : Hub
 
             if (context.Request.Cookies.TryGetValue(nameof(AuthenticationCookie.RefreshToken), out var refreshToken))
             {
-                await Groups.AddToGroupAsync(Context.ConnectionId, chatId);
+                await Groups.AddToGroupAsync(Context.ConnectionId, chatId.ToString());
             }
         }
         catch (ArgumentNullException ex)

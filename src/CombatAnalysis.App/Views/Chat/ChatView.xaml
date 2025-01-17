@@ -81,7 +81,7 @@
                              Visibility="{Binding IsLoadMyGroupChatList, Converter={StaticResource BoolToVisibility}, ConverterParameter='true:false'}">
                             <ListBox.ItemTemplate>
                                 <DataTemplate>
-                                    <uc:Item Title="{Binding Path=GroupChat.Name}" Color="#73afff" TagName="{Binding Path=GroupChat.Name}" MessageCount="{Binding Path=GroupChatMessageCount.Count}" />
+                                    <uc:Item Title="{Binding Path=GroupChat.Name}" Color="White" TagName="{Binding Path=GroupChat.Name}" MessageCount="{Binding Path=GroupChatMessageCount.Count}" />
                                 </DataTemplate>
                             </ListBox.ItemTemplate>
                         </ListBox>

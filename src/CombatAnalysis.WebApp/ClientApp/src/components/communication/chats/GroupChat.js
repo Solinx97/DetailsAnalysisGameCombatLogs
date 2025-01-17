@@ -143,7 +143,7 @@ const GroupChat = ({ chat, me, setSelectedChat, unreadMessageHubConnection }) =>
 
             await hubConnection.start();
 
-            await hubConnection.invoke("JoinRoom", `${chat.id}`);
+            await hubConnection.invoke("JoinRoom", chat.id);
 
             hubConnection.on("ReceiveMessage", (message) => {
                 setCurrentMessages(prevMessages => [...prevMessages, message]);

@@ -1,6 +1,6 @@
-import { useGetUserByIdQuery } from '../../../store/api/user/Account.api';
+import { useEffect, useState } from 'react';
 import { useFindPersonalChatMessageCountQuery } from '../../../store/api/chat/PersonalChatMessagCount.api';
-import { useState, useEffect } from 'react';
+import { useGetUserByIdQuery } from '../../../store/api/user/Account.api';
 
 const PersonalChatListItem = ({ chat, setSelectedPersonalChat, companionId, meId, hubConnection }) => {
     const [unreadMessageCount, setUnreadMessageCount] = useState(-1);
@@ -9,12 +9,14 @@ const PersonalChatListItem = ({ chat, setSelectedPersonalChat, companionId, meId
     const { data: messagesCount, isLoading: messagesCountLoading } = useFindPersonalChatMessageCountQuery({ chatId: chat?.id, userId: meId });
 
     useEffect(() => {
-        hubConnection?.on("ReceiveUnreadMessageIncreased", async () => {
-            await hubConnection?.invoke("RequestUnreadMessages", chat.id, meId);
+        hubConnection?.on("ReceiveUnreadMessageIncreased", async (chatId) => {
+            await hubConnection?.invoke("RequestUnreadMessages", chatId, meId);
         });
 
-        hubConnection?.on("ReceiveUnreadMessageCount", async (chatId, count) => {
-            setUnreadMessageCount(count);
+        hubConnection?.on("ReceiveUnreadMessageCount", async (targetChatId, count) => {
+            if (targetChatId === chat?.id) {
+                setUnreadMessageCount(count);
+            }
         });
     }, [hubConnection]);
 

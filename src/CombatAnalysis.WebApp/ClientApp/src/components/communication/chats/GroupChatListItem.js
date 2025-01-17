@@ -9,12 +9,14 @@ const GroupChatListItem = ({ chatId, meInChatId, setSelectedGroupChat, hubConnec
     const { data: messagesCount, isLoading: messagesCountLoading } = useFindGroupChatMessageCountQuery({ chatId: chatId, userId: meInChatId });
 
     useEffect(() => {
-        hubConnection?.on("ReceiveUnreadMessageIncreased", async () => {
+        hubConnection?.on("ReceiveUnreadMessageIncreased", async (chatId) => {
             await hubConnection?.invoke("RequestUnreadMessages", chatId, meInChatId);
         });
 
-        hubConnection?.on("ReceiveUnreadMessageCount", async (chatId, count) => {
-            setUnreadMessageCount(count);
+        hubConnection?.on("ReceiveUnreadMessageCount", (targetChatId, count) => {
+            if (targetChatId === chatId) {
+                setUnreadMessageCount(count);
+            }
         });
     }, [hubConnection]);
 

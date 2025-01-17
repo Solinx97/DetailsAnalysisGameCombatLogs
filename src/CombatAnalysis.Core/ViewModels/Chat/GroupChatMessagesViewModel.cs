@@ -66,7 +66,6 @@ public class GroupChatMessagesViewModel : MvxViewModel, IImprovedMvxViewModel
         Messages = [];
         _allMessages = [];
 
-        Task.Run(GetMeInGroupChatAsync);
         Task.Run(LoadUsersAsync);
     }
 
@@ -97,6 +96,15 @@ public class GroupChatMessagesViewModel : MvxViewModel, IImprovedMvxViewModel
     #endregion
 
     #region View model properties
+
+    public GroupChatUserModel? MeInChat
+    {
+        get { return _meInChat; }
+        set
+        {
+            SetProperty(ref _meInChat, value);
+        }
+    }
 
     public ObservableCollection<AppUserModel>? Users
     {
@@ -263,6 +271,27 @@ public class GroupChatMessagesViewModel : MvxViewModel, IImprovedMvxViewModel
         }
 
         base.ViewDestroy(viewFinishing);
+    }
+
+    public async Task SendMessageHasBeenReadAsync(GroupChatMessageModel message)
+    {
+        try
+        {
+            if (_hubConnection == null)
+            {
+                throw new ArgumentNullException(nameof(_hubConnection));
+            }
+
+            await _hubConnection.SendAsync("SendMessageHasBeenRead", message.Id, MyAccount?.Id);
+        }
+        catch (ArgumentNullException ex)
+        {
+            _logger.LogError(ex, ex.Message);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, ex.Message);
+        }
     }
 
     private async Task FillAsync()
@@ -472,6 +501,8 @@ public class GroupChatMessagesViewModel : MvxViewModel, IImprovedMvxViewModel
 
     private async Task LoadMessagesForSelectedChatAsync(string chatName)
     {
+        await GetMeInGroupChatAsync();
+
         await AsyncDispatcher.ExecuteOnMainThreadAsync(() =>
         {
             Messages?.Clear();
@@ -626,22 +657,31 @@ public class GroupChatMessagesViewModel : MvxViewModel, IImprovedMvxViewModel
             }
 
             await _hubConnection.StartAsync();
-            await _hubConnection.SendAsync("JoinRoom", SelectedChat?.Id.ToString());
+            await _hubConnection.SendAsync("JoinRoom", SelectedChat?.Id);
 
             ConnectToHub($"{Hubs.Port}{Hubs.GroupChatUnreadMessageAddress}", ref _unreadMessageHubConnection, refreshToken, accessToken);
             if (_unreadMessageHubConnection == null)
             {
                 throw new ArgumentNullException(nameof(_unreadMessageHubConnection));
             }
+            else if (_meInChat == null)
+            {
+                throw new ArgumentNullException(nameof(_meInChat));
+            }
 
             await _unreadMessageHubConnection.StartAsync();
-            await _unreadMessageHubConnection.SendAsync("JoinRoom", SelectedChat?.Id.ToString());
+            await _unreadMessageHubConnection.SendAsync("JoinRoom", SelectedChat?.Id);
+
+            _hubConnection.On("ReceiveMessageHasBeenRead", async () =>
+            {
+                await _unreadMessageHubConnection.SendAsync("RequestUnreadMessages", SelectedChat?.Id, _meInChat.Id);
+            });
 
             _hubConnection.On<GroupChatMessageModel>("ReceiveMessage", async (message) =>
             {
                 await AsyncDispatcher.ExecuteOnMainThreadAsync(() =>
                 {
-                    Messages?.Add(message);
+                    Messages?.Insert(0, message);
                 });
             });
 

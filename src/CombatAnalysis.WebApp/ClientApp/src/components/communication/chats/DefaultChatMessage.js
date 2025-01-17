@@ -25,7 +25,7 @@ const DefaultChatMessage = ({ me, reviewerId, messageOwnerId, message, messageSt
             return;
         }
 
-        hubConnection.on("ReceiveMessageHasBeenRead", async () => {
+        hubConnection.on("ReceiveMessageHasBeenRead", async (message) => {
             await unreadMessageHubConnection?.invoke("RequestUnreadMessages", message.chatId, reviewerId);
         });
 
