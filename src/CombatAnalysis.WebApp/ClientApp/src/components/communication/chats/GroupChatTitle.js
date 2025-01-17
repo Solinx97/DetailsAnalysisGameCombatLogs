@@ -55,7 +55,7 @@ const GroupChatTitle = ({ chat, me, settingsIsShow, setSettingsIsShow, haveMoreM
                                 icon={faCloudArrowUp}
                                 title={t("Save")}
                                 className={`settings-handler${settingsIsShow ? "_active" : ""}`}
-                                onClick={async () => await updateGroupChatNameAsync()}
+                                onClick={updateGroupChatNameAsync}
                             />
                         </>
                         : <div className="name" title={chatName}>{chatName}</div>

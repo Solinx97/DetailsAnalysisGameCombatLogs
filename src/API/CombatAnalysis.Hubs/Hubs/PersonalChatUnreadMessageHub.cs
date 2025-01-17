@@ -66,7 +66,7 @@ internal class PersonalChatUnreadMessageHub : Hub
                 throw new ArgumentNullException(nameof(context));
             }
 
-            var response = await _httpClient.GetAsync($"PersonalChatMessageCount/findMe/{appUserId}", context);
+            var response = await _httpClient.GetAsync($"PersonalChatMessageCount/findMe?chatId={chatId}&appUserId={appUserId}", context);
             response.EnsureSuccessStatusCode();
 
             var messagesCount = await response.Content.ReadFromJsonAsync<PersonalChatMessageCountModel>();

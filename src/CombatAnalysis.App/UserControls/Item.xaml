@@ -4,6 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:CombatAnalysis.App.UserControls"
+             xmlns:converters="clr-namespace:CombatAnalysis.App.Converters"
              mc:Ignorable="d" Name="item">
 
     <Border Padding="0 8">
@@ -26,6 +27,10 @@
         </Border.Style>
 
         <Grid>
+            <Grid.Resources>
+                <converters:TheNativeIntToVisibilityConverter x:Key="IntToVisibility" />
+            </Grid.Resources>
+            
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="auto"/>
                 <ColumnDefinition Width="180"/>
@@ -55,9 +60,9 @@
             <StackPanel VerticalAlignment="Center" Grid.Column="1" Margin="15 0 0 0">
                 <TextBlock Text="{Binding ElementName=item, Path=Title}" Foreground="White" FontSize="14" FontWeight="SemiBold"/>
             </StackPanel>
-            <Border Grid.Column="2" CornerRadius="50" Width="20" Height="20"
-                    Background="{Binding ElementName=item, Path=Color}" Visibility="{Binding ElementName=item, Path=Visible}">
-                <TextBlock Text="{Binding ElementName=item, Path=MessageCount}" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="#ffffff"/>
+            <Border Grid.Column="2" CornerRadius="50" Width="20" Height="20" Background="{Binding ElementName=item, Path=Color}"
+                    Visibility="{Binding ElementName=item, Path=MessageCount, Converter={StaticResource IntToVisibility}, ConverterParameter='true:0:>'}">
+                <TextBlock Text="{Binding ElementName=item, Path=MessageCount}" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="Black"/>
             </Border>
         </Grid>
     </Border>

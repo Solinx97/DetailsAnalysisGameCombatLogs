@@ -66,7 +66,7 @@ internal class GroupChatUnreadMessageHub : Hub
                 throw new ArgumentNullException(nameof(context));
             }
 
-            var response = await _httpClient.GetAsync($"GroupChatMessageCount/findMe/{meInChatId}", context);
+            var response = await _httpClient.GetAsync($"GroupChatMessageCount/findMe?chatId={chatId}&chatUserId={meInChatId}", context);
             response.EnsureSuccessStatusCode();
 
             var messagesCount = await response.Content.ReadFromJsonAsync<GroupChatMessageCountModel>();

@@ -18,8 +18,6 @@ namespace CombatAnalysis.Core.ViewModels.Chat;
 
 public class GroupChatMessagesViewModel : MvxViewModel, IImprovedMvxViewModel
 {
-    private const string HubURL = "https://localhost:7026/groupChatHub";
-
     private readonly IHttpClientHelper _httpClientHelper;
     private readonly IMemoryCache _memoryCache;
     private readonly ILogger _logger;
@@ -44,6 +42,7 @@ public class GroupChatMessagesViewModel : MvxViewModel, IImprovedMvxViewModel
     private bool _isEditMode;
     private bool _isRemoveMode;
     private HubConnection? _hubConnection;
+    private HubConnection? _unreadMessageHubConnection;
 
     public GroupChatMessagesViewModel(IHttpClientHelper httpClientHelper, IMemoryCache memoryCache, ILogger logger)
     {
@@ -608,33 +607,35 @@ public class GroupChatMessagesViewModel : MvxViewModel, IImprovedMvxViewModel
     {
         try
         {
-            var cookieContainer = new CookieContainer();
             var refreshToken = _memoryCache.Get<string>(nameof(MemoryCacheValue.RefreshToken));
+            var accessToken = _memoryCache.Get<string>(nameof(MemoryCacheValue.AccessToken));
+
             if (string.IsNullOrEmpty(refreshToken))
             {
                 throw new ArgumentNullException(nameof(refreshToken));
             }
-
-            var accessToken = _memoryCache.Get<string>(nameof(MemoryCacheValue.AccessToken));
-            if (string.IsNullOrEmpty(accessToken))
+            else if (string.IsNullOrEmpty(accessToken))
             {
                 throw new ArgumentNullException(nameof(accessToken));
             }
 
-            cookieContainer.Add(new Uri(HubURL), new Cookie(nameof(MemoryCacheValue.RefreshToken), refreshToken));
-            cookieContainer.Add(new Uri(HubURL), new Cookie(nameof(MemoryCacheValue.AccessToken), accessToken));
-
-            _hubConnection = new HubConnectionBuilder()
-                .WithUrl(HubURL, options =>
-                {
-                    options.Cookies = cookieContainer;
-                })
-                .WithAutomaticReconnect()
-                .Build();
+            ConnectToHub($"{Hubs.Port}{Hubs.GroupChatAddress}", ref _hubConnection, refreshToken, accessToken);
+            if (_hubConnection == null)
+            {
+                throw new ArgumentNullException(nameof(_hubConnection));
+            }
 
             await _hubConnection.StartAsync();
-
             await _hubConnection.SendAsync("JoinRoom", SelectedChat?.Id.ToString());
+
+            ConnectToHub($"{Hubs.Port}{Hubs.GroupChatUnreadMessageAddress}", ref _unreadMessageHubConnection, refreshToken, accessToken);
+            if (_unreadMessageHubConnection == null)
+            {
+                throw new ArgumentNullException(nameof(_unreadMessageHubConnection));
+            }
+
+            await _unreadMessageHubConnection.StartAsync();
+            await _unreadMessageHubConnection.SendAsync("JoinRoom", SelectedChat?.Id.ToString());
 
             _hubConnection.On<GroupChatMessageModel>("ReceiveMessage", async (message) =>
             {
@@ -643,6 +644,8 @@ public class GroupChatMessagesViewModel : MvxViewModel, IImprovedMvxViewModel
                     Messages?.Add(message);
                 });
             });
+
+            FollowDeliveredMessage();
         }
         catch (ArgumentNullException ex)
         {
@@ -652,5 +655,39 @@ public class GroupChatMessagesViewModel : MvxViewModel, IImprovedMvxViewModel
         {
             _logger.LogError(ex, ex.Message);
         }
+    }
+
+    private static void ConnectToHub(string hubUrl, ref HubConnection? hubConnection, string refreshToken, string accessToken)
+    {
+        var cookieContainer = new CookieContainer();
+        cookieContainer.Add(new Uri(hubUrl), new Cookie(nameof(MemoryCacheValue.RefreshToken), refreshToken));
+        cookieContainer.Add(new Uri(hubUrl), new Cookie(nameof(MemoryCacheValue.AccessToken), accessToken));
+
+        hubConnection = new HubConnectionBuilder()
+            .WithUrl(hubUrl, options =>
+            {
+                options.Cookies = cookieContainer;
+            })
+            .Build();
+    }
+
+    private void FollowDeliveredMessage()
+    {
+        if (_hubConnection == null)
+        {
+            throw new ArgumentNullException(nameof(_hubConnection));
+        }
+        else if (_unreadMessageHubConnection == null)
+        {
+            throw new ArgumentNullException(nameof(_unreadMessageHubConnection));
+        }
+        else if (SelectedChat == null)
+        {
+            throw new ArgumentNullException(nameof(SelectedChat));
+        }
+
+        _hubConnection.On("MessageDelivered", async () => {
+            await _unreadMessageHubConnection.SendAsync("SendUnreadMessageIncreased", SelectedChat.Id);
+        });
     }
 }

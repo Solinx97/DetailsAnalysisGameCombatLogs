@@ -41,11 +41,11 @@ public class GroupChatMessageCountController : ControllerBase
         return Ok(map);
     }
 
-    [HttpGet("findMe/{meInChatId}")]
-    public async Task<IActionResult> FindMe(string meInChatId)
+    [HttpGet("findMe")]
+    public async Task<IActionResult> FindMe(int chatId, string chatUserId)
     {
-        var myMessageCounts = await _groupChatMessageCountService.GetByParamAsync(nameof(GroupChatMessageCountModel.GroupChatUserId), meInChatId);
-        var myMessageCount = myMessageCounts.FirstOrDefault();
+        var myMessagesCount = await _groupChatMessageCountService.GetByParamAsync(nameof(GroupChatMessageCountModel.ChatId), chatId);
+        var myMessageCount = myMessagesCount.FirstOrDefault(x => x.GroupChatUserId == chatUserId);
 
         return Ok(myMessageCount);
     }

@@ -23,7 +23,7 @@ const messageType = {
 const GroupChat = ({ chat, me, setSelectedChat, unreadMessageHubConnection }) => {
     const { t } = useTranslation("communication/chats/groupChat");
 
-    const hubURL = "https://localhost:7026/groupChatHub";
+    const hubURL = `${process.env.REACT_APP_HUBS_URL}${process.env.REACT_APP_HUBS_GROUP_CHAT_ADDRESS}`;
 
     const [hubConnection, setHubConnection] = useState(null);
     const [showAddPeople, setShowAddPeople] = useState(false);

@@ -120,7 +120,7 @@ internal class PersonalChatHub : Hub
             response = await _httpClient.PutAsync("PersonalChatMessage", JsonContent.Create(messageModel), context);
             response.EnsureSuccessStatusCode();
 
-            response = await _httpClient.GetAsync($"PersonalChatMessageCount/findMe/{meId}", context);
+            response = await _httpClient.GetAsync($"PersonalChatMessageCount/findMe?chatId={messageModel.ChatId}&appUserId={meId}", context);
             response.EnsureSuccessStatusCode();
 
             var messageCount = await response.Content.ReadFromJsonAsync<PersonalChatMessageCountModel>();

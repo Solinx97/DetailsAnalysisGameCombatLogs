@@ -158,7 +158,7 @@ const useRTCConnection = () => {
 				await hubConnectionRef.current.invoke(message, roomId);
 			}
 		} catch (e) {
-			console.log(e);
+			console.error(e);
 		}
 	}
 

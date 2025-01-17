@@ -145,7 +145,7 @@ const GroupChatMenu = ({ me, setUserInformation, setSelectedChat, setShowAddPeop
                     {canInvitePeople()&&
                         <div className="btn-border-shadow" onClick={() => setShowAddPeople((item) => !item)}>{t("Invite")}</div>
                     }
-                    {chat?.customerId === me?.id &&
+                    {chat?.appUserId === me?.id &&
                         <div className="btn-border-shadow" onClick={() => setRulesInspectionModeOn((item) => !item)}>{t("Rules")}</div>
                     }
                     <div className="btn-border-shadow">{t("Documents")}</div>

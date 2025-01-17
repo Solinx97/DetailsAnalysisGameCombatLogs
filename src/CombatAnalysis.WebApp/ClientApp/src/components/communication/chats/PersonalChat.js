@@ -18,7 +18,7 @@ import "../../../styles/communication/chats/personalChat.scss";
 const PersonalChat = ({ chat, me, setSelectedChat, companionId, unreadMessageHubConnection }) => {
     const { t } = useTranslation("communication/chats/personalChat");
 
-    const hubURL = "https://localhost:7026/personalChatHub";
+    const hubURL = `${process.env.REACT_APP_HUBS_URL}${process.env.REACT_APP_HUBS_PERSONAL_CHAT_ADDRESS}`;
 
     const chatContainerRef = useRef(null);
     const pageSizeRef = useRef(process.env.REACT_APP_CHAT_PAGE_SIZE);

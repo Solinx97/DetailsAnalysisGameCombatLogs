@@ -21,8 +21,8 @@ const Chats = () => {
 
     const me = useSelector((state) => state.user.value);
 
-    const personalHubURL = "https://localhost:7026/personalChatUnreadMessageHub";
-    const groupHubURL = "https://localhost:7026/groupChatUnreadMessageHub";
+    const personalHubURL = `${process.env.REACT_APP_HUBS_URL}${process.env.REACT_APP_HUBS_PERSONAL_CHAT_UNREAD_MESSAGES_ADDRESS}`;
+    const groupHubURL = `${process.env.REACT_APP_HUBS_URL}${process.env.REACT_APP_HUBS_GROUP_CHAT_UNREAD_MESSAGES_ADDRESS}`;
 
     const [personalHubConnection, setPersonalHubConnection] = useState(null);
     const [groupHubConnection, setGroupHubConnection] = useState(null);

@@ -1,6 +1,5 @@
 ﻿import { faArrowDown, faArrowUp } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { memo } from 'react';
 import PersonalChatListItem from './PersonalChatListItem';
 
 const PersonalChatList = ({ meId, t, personalChats, selectedChat, setSelectedChat, chatsHidden, toggleChatsHidden, hubConnection }) => {
@@ -36,4 +35,4 @@ const PersonalChatList = ({ meId, t, personalChats, selectedChat, setSelectedCha
     );
 }
 
-export default memo(PersonalChatList);
+export default PersonalChatList;

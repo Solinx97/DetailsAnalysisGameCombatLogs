@@ -12,6 +12,8 @@ import '../../../../styles/communication/chats/voice.scss';
 const VoiceChat = () => {
 	const { t } = useTranslation("communication/chats/voiceChat");
 
+	const voiceHubURL = `${process.env.REACT_APP_HUBS_URL}/${process.env.REACT_APP_HUBS_VOICE_CHAT_ADDRESS}`;
+
 	const me = useSelector((state) => state.user.value);
 
 	const [haveControllBar, setHaveControllBar] = useState(false);
@@ -48,8 +50,7 @@ const VoiceChat = () => {
 		}
 
 		const connectToChat = async () => {
-			const signalingAddress = "/voiceChatHub";
-			await methods.connectToChatAsync(me?.id, signalingAddress, haveControllBar, setHaveControllBar);
+			await methods.connectToChatAsync(me?.id, voiceHubURL, haveControllBar, setHaveControllBar);
 		}
 
 		connectToChat();

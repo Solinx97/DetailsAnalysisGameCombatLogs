@@ -1,7 +1,6 @@
 using CombatAnalysis.WebApp.Attributes;
 using CombatAnalysis.WebApp.Consts;
 using CombatAnalysis.WebApp.Helpers;
-using CombatAnalysis.WebApp.Hubs;
 using CombatAnalysis.WebApp.Interfaces;
 using CombatAnalysis.WebApp.Middlewares;
 using CombatAnalysis.WebApp.Services;
@@ -67,8 +66,6 @@ app.UseMiddleware<AuthTokenMiddleware>();
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller}/{action=Index}/{id?}");
-
-app.MapHub<VoiceChatHub>("/voiceChatHub");
 
 app.MapFallbackToFile("index.html");
 

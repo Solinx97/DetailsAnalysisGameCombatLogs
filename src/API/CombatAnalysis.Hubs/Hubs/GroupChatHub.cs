@@ -104,7 +104,7 @@ internal class GroupChatHub : Hub
             response = await _httpClient.PutAsync("GroupChatMessage", JsonContent.Create(messageModel), context);
             response.EnsureSuccessStatusCode();
 
-            response = await _httpClient.GetAsync($"GroupChatMessageCount/findMe/{meInChatId}", context);
+            response = await _httpClient.GetAsync($"GroupChatMessageCount/findMe?chatId={messageModel.ChatId}&chatUserId={meInChatId}", context);
             response.EnsureSuccessStatusCode();
 
             var messageCount = await response.Content.ReadFromJsonAsync<GroupChatMessageCountModel>();

@@ -54,14 +54,6 @@ const onError = (err, req, resp, target) => {
 }
 
 module.exports = function (app) {
-    const signalRProxy = createProxyMiddleware("/voiceChatHub", {
-        target: target,
-        onError: onError,
-        ws: true,
-        secure: false,
-        logLevel: "debug",
-    });
-
     const appProxy = createProxyMiddleware(context, {
         target: target,
         onError: onError,
@@ -72,6 +64,5 @@ module.exports = function (app) {
         },
     });
 
-    app.use(signalRProxy);
     app.use(appProxy);
 };

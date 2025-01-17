@@ -49,6 +49,13 @@ public class App : MvxApplication
         Port.ChatApi = Configuration["ApiPort:Chat"] ?? string.Empty;
         Port.Identity = Configuration["ApiPort:Identity"] ?? string.Empty;
 
+        Hubs.Port = Configuration["Hubs:Port"] ?? string.Empty;
+        Hubs.PersonalChatAddress = Configuration["Hubs:PersonalChatAddress"] ?? string.Empty;
+        Hubs.PersonalChatUnreadMessageAddress = Configuration["Hubs:PersonalChatUnreadMessageAddress"] ?? string.Empty;
+        Hubs.GroupChatAddress = Configuration["Hubs:GroupChatAddress"] ?? string.Empty;
+        Hubs.GroupChatUnreadMessageAddress = Configuration["Hubs:GroupChatUnreadMessageAddress"] ?? string.Empty;
+        Hubs.VoiceChatAddress = Configuration["Hubs:VoiceChatAddress"] ?? string.Empty;
+
         Authentication.ClientId = Configuration["App:Auth:ClientId"] ?? string.Empty;
         Authentication.Scope = Configuration["App:Auth:Scope"] ?? string.Empty;
         Authentication.RedirectUri = Configuration["App:Auth:RedirectUri"] ?? string.Empty;

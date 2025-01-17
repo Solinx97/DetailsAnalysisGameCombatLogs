@@ -1,10 +1,10 @@
-﻿using CombatAnalysis.WebApp.Consts;
-using CombatAnalysis.WebApp.Interfaces;
-using CombatAnalysis.WebApp.Models.Chat;
+﻿using CombatAnalysis.Hubs.Consts;
+using CombatAnalysis.Hubs.Interfaces;
+using CombatAnalysis.Hubs.Models;
 using Microsoft.AspNetCore.SignalR;
 using System.Collections.Concurrent;
 
-namespace CombatAnalysis.WebApp.Hubs;
+namespace CombatAnalysis.Hubs.Hubs;
 
 internal class VoiceChatHub : Hub
 {
@@ -19,14 +19,20 @@ internal class VoiceChatHub : Hub
 
     public async Task JoinRoom(string room, string userId)
     {
+        var context = Context.GetHttpContext();
+        if (context == null)
+        {
+            return;
+        }
+
         var voiceChat = new VoiceChatModel
         {
             Id = Context.ConnectionId,
             AppUserId = userId
         };
 
-        await _httpClient.PostAsync("VoiceChat", JsonContent.Create(voiceChat));
-        
+        await _httpClient.PostAsync("VoiceChat", JsonContent.Create(voiceChat), context);
+
         var users = _groupUsers.GetOrAdd(room, _ => new HashSet<string>());
         lock (users)
         {

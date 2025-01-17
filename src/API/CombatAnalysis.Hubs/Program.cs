@@ -87,5 +87,6 @@ app.MapHub<PersonalChatHub>("/personalChatHub");
 app.MapHub<PersonalChatUnreadMessageHub>("/personalChatUnreadMessageHub");
 app.MapHub<GroupChatHub>("/groupChatHub");
 app.MapHub<GroupChatUnreadMessageHub>("/groupChatUnreadMessageHub");
+app.MapHub<VoiceChatHub>("/voiceChatHub");
 
 app.Run();

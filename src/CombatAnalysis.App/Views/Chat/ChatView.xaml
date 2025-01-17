@@ -81,7 +81,7 @@
                              Visibility="{Binding IsLoadMyGroupChatList, Converter={StaticResource BoolToVisibility}, ConverterParameter='true:false'}">
                             <ListBox.ItemTemplate>
                                 <DataTemplate>
-                                    <uc:Item Title="{Binding Path=Name}" Color="#73afff" TagName="{Binding Path=Name}" MessageCount="0" />
+                                    <uc:Item Title="{Binding Path=GroupChat.Name}" Color="#73afff" TagName="{Binding Path=GroupChat.Name}" MessageCount="{Binding Path=GroupChatMessageCount.Count}" />
                                 </DataTemplate>
                             </ListBox.ItemTemplate>
                         </ListBox>
@@ -107,28 +107,13 @@
                         <TextBlock Name="myAccountId" Text="{Binding MyAccount.Id}" Visibility="Collapsed"/>
                         
                         <ListBox HorizontalContentAlignment="Stretch" Grid.Row="1" Margin="10 10 10 30"
-                             ItemsSource="{Binding PersonalChats}" Background="Transparent"
+                             ItemsSource="{Binding MyPersonalChats}" Background="Transparent"
                              SelectedItem="{Binding SelectedPersonalChat}"
                              Visibility="{Binding IsLoadPersonalChatList, Converter={StaticResource BoolToVisibility}, ConverterParameter='true:false'}">
                             <ListBox.ItemTemplate>
                                 <DataTemplate>
                                     <StackPanel>
-                                        <uc:Item Title="{Binding Path=Username}" Color="#73afff" TagName="" MessageCount="0">
-                                            <uc:Item.Visibility>
-                                                <MultiBinding Converter="{StaticResource MultiplyToVisibility}">
-                                                    <Binding Path="InitiatorId" />
-                                                    <Binding ElementName="myAccountId" Path="Text" />
-                                                </MultiBinding>
-                                            </uc:Item.Visibility>
-                                        </uc:Item>
-                                        <uc:Item Title="{Binding Path=Username}" Color="#73afff" TagName="" MessageCount="0">
-                                            <uc:Item.Visibility>
-                                                <MultiBinding Converter="{StaticResource MultiplyToVisibility}">
-                                                    <Binding Path="CompanionId" />
-                                                    <Binding ElementName="myAccountId" Path="Text" />
-                                                </MultiBinding>
-                                            </uc:Item.Visibility>
-                                        </uc:Item>
+                                        <uc:Item Title="{Binding Path=PersonalChat.Username}" Color="White" MessageCount="{Binding Path=PersonalChatMessageCount.Count}" />
                                     </StackPanel>
                                 </DataTemplate>
                             </ListBox.ItemTemplate>

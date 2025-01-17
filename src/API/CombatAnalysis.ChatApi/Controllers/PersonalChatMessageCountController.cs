@@ -41,11 +41,11 @@ public class PersonalChatMessageCountController : ControllerBase
         return Ok(map);
     }
 
-    [HttpGet("findMe/{meId}")]
-    public async Task<IActionResult> FindMe(string meId)
+    [HttpGet("findMe")]
+    public async Task<IActionResult> FindMe(int chatId, string appUserId)
     {
-        var myMessageCounts = await _messageCountService.GetByParamAsync(nameof(PersonalChatMessageCountModel.AppUserId), meId);
-        var myMessageCount = myMessageCounts.FirstOrDefault();
+        var myMessagesCount = await _messageCountService.GetByParamAsync(nameof(PersonalChatMessageCountModel.ChatId), chatId);
+        var myMessageCount = myMessagesCount.FirstOrDefault(x => x.AppUserId == appUserId);
 
         return Ok(myMessageCount);
     }                                                                                                                                                   
