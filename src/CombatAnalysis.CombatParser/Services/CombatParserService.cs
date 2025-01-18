@@ -9,7 +9,7 @@ using System.Text;
 
 namespace CombatAnalysis.CombatParser.Services;
 
-public class CombatParserService
+public class CombatParserService : ICombatParserService
 {
     private readonly IList<PlaceInformation> _zones;
     private readonly IFileManager _fileManager;
@@ -19,9 +19,9 @@ public class CombatParserService
 
     private int _combatNumber = 0;
 
-    public List<Combat> Combats { get; private set; }
+    public List<Combat> Combats { get; set; }
 
-    public List<CombatDetails> CombatDetails { get; private set; }
+    public List<CombatDetails> CombatDetails { get; set; }
 
     public CombatParserService(IFileManager fileManager, ILogger logger)
     {

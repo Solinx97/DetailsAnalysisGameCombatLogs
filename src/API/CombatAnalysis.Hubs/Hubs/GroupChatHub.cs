@@ -118,7 +118,7 @@ internal class GroupChatHub : Hub
             response = await _httpClient.PutAsync("GroupChatMessageCount", JsonContent.Create(messageCount), context);
             response.EnsureSuccessStatusCode();
 
-            await Clients.Caller.SendAsync("ReceiveMessageHasBeenRead", messageModel);
+            await Clients.Caller.SendAsync("ReceiveMessageHasBeenRead");
         }
         catch (ArgumentNullException ex)
         {

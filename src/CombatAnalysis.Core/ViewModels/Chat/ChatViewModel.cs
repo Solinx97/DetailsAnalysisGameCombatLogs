@@ -7,13 +7,11 @@ using CombatAnalysis.Core.Models.Containers;
 using CombatAnalysis.Core.Models.User;
 using CombatAnalysis.Core.ViewModels.Base;
 using CombatAnalysis.Core.ViewModels.ViewModelTemplates;
-using Microsoft.AspNetCore.SignalR.Client;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
 using MvvmCross;
 using MvvmCross.Commands;
 using System.Collections.ObjectModel;
-using System.Net;
 using System.Net.Http.Json;
 
 namespace CombatAnalysis.Core.ViewModels.Chat;
@@ -38,14 +36,17 @@ public class ChatViewModel : ParentTemplate
     private AppUserModel? _myAccount;
     private LoadingStatus _groupChatLoadingResponse;
     private LoadingStatus _personalChatLoadingResponse;
-    private HubConnection? _personalChatHhubConnection;
-    private HubConnection? _grouplChatHhubConnection;
+    private IChatHubHelper _personalChatHubConnection;
+    private IChatHubHelper _groupChatHubConnection;
 
-    public ChatViewModel(IHttpClientHelper httpClientHelper, IMemoryCache memoryCache, ILogger logger)
+    public ChatViewModel(IHttpClientHelper httpClientHelper, IMemoryCache memoryCache, ILogger logger, 
+        IChatHubHelper personalChatHubConnection, IChatHubHelper groupChatHubConnection)
     {
         _httpClientHelper = httpClientHelper;
         _memoryCache = memoryCache;
         _logger = logger;
+        _personalChatHubConnection = personalChatHubConnection;
+        _groupChatHubConnection = groupChatHubConnection;
 
         RefreshGroupChatsCommand = new MvxAsyncCommand(LoadGroupChatsAsync);
         RefreshPersonalChatsCommand = new MvxAsyncCommand(LoadPersonalChatsAsync);
@@ -164,8 +165,13 @@ public class ChatViewModel : ParentTemplate
                 PersonalChatMessagesTemplate = null;
 
                 GroupChatMessagesTemplate = Mvx.IoCProvider?.IoCConstruct<GroupChatMessagesViewModel>();
-
                 GroupChatMessagesTemplate?.Handler.PropertyUpdate<GroupChatMessagesViewModel>(GroupChatMessagesTemplate, nameof(GroupChatMessagesViewModel.SelectedChat), value.GroupChat);
+
+                var groupChatMessagesVewModel = GroupChatMessagesTemplate as GroupChatMessagesViewModel;
+                if (groupChatMessagesVewModel != null)
+                {
+                    Task.Run(async () => await groupChatMessagesVewModel.InitChatSignalRAsync(_groupChatHubConnection));
+                }
             }
         }
     }
@@ -186,8 +192,13 @@ public class ChatViewModel : ParentTemplate
                 GroupChatMessagesTemplate = null;
 
                 PersonalChatMessagesTemplate = Mvx.IoCProvider?.IoCConstruct<PersonalChatMessagesVewModel>();
-
                 PersonalChatMessagesTemplate?.Handler.PropertyUpdate<PersonalChatMessagesVewModel>(PersonalChatMessagesTemplate, nameof(PersonalChatMessagesVewModel.SelectedChat), value.PersonalChat);
+                
+                var personalChatMessagesVewModel = PersonalChatMessagesTemplate as PersonalChatMessagesVewModel;
+                if (personalChatMessagesVewModel != null)
+                {
+                    Task.Run(async () => await personalChatMessagesVewModel.InitChatSignalRAsync(_personalChatHubConnection));
+                }
             }
         }
     }
@@ -447,12 +458,22 @@ public class ChatViewModel : ParentTemplate
 
                 container.Add(new MyGroupChatContainerModel { GroupChat = groupChat, GroupChatMessageCount = messageCount });
                 
-                if (_grouplChatHhubConnection == null)
+                if (_groupChatHubConnection == null)
                 {
-                    throw new ArgumentNullException(nameof(_grouplChatHhubConnection));
+                    throw new ArgumentNullException(nameof(_groupChatHubConnection));
                 }
 
-                await _grouplChatHhubConnection.SendAsync("JoinRoom", item.ChatId);
+                await _groupChatHubConnection.JoinChatMessageCountRoom(item.ChatId);
+                _groupChatHubConnection.SubscribeMessageCountUpdated(item.Id, async (chatId, count) =>
+                {
+                    var chat = MyGroupChats?.FirstOrDefault(x => x.GroupChat.Id == chatId) ?? throw new ArgumentNullException(nameof(MyGroupChats));
+                    var index = MyGroupChats.IndexOf(chat);
+                    await AsyncDispatcher.ExecuteOnMainThreadAsync(() =>
+                    {
+                        chat.GroupChatMessageCount.Count = count;
+                        MyGroupChats[index] = new MyGroupChatContainerModel { GroupChat = chat.GroupChat, GroupChatMessageCount = chat.GroupChatMessageCount };
+                    });
+                });
             }
 
             MyGroupChats = new ObservableCollection<MyGroupChatContainerModel>(container);
@@ -497,12 +518,12 @@ public class ChatViewModel : ParentTemplate
 
             container.Add(new MyPersonalChatContainerModel { PersonalChat = item, PersonalChatMessageCount = messageCount });
 
-            if (_personalChatHhubConnection == null)
+            if (_personalChatHubConnection == null)
             {
-                throw new ArgumentNullException(nameof(_personalChatHhubConnection));
+                throw new ArgumentNullException(nameof(_personalChatHubConnection));
             }
 
-            await _personalChatHhubConnection.SendAsync("JoinRoom", item.Id);
+            await _personalChatHubConnection.JoinChatMessageCountRoom(item.Id);
         }
 
         MyPersonalChats = new ObservableCollection<MyPersonalChatContainerModel>(container);
@@ -642,36 +663,14 @@ public class ChatViewModel : ParentTemplate
     {
         try
         {
-            var refreshToken = _memoryCache.Get<string>(nameof(MemoryCacheValue.RefreshToken));
-            var accessToken = _memoryCache.Get<string>(nameof(MemoryCacheValue.AccessToken));
-
-            if (string.IsNullOrEmpty(refreshToken))
+            if (MyAccount == null)
             {
-                throw new ArgumentNullException(nameof(refreshToken));
-            }
-            else if (string.IsNullOrEmpty(accessToken))
-            {
-                throw new ArgumentNullException(nameof(accessToken));
+                throw new ArgumentNullException(nameof(MyAccount));
             }
 
-            var cookieContainer = new CookieContainer();
-            cookieContainer.Add(new Uri($"{Hubs.Port}{Hubs.PersonalChatUnreadMessageAddress}"), new Cookie(nameof(MemoryCacheValue.RefreshToken), refreshToken));
-            cookieContainer.Add(new Uri($"{Hubs.Port}{Hubs.PersonalChatUnreadMessageAddress}"), new Cookie(nameof(MemoryCacheValue.AccessToken), accessToken));
-
-            _personalChatHhubConnection = new HubConnectionBuilder()
-                .WithUrl($"{Hubs.Port}{Hubs.PersonalChatUnreadMessageAddress}", options =>
-                {
-                    options.Cookies = cookieContainer;
-                })
-                .Build();
-
-            await _personalChatHhubConnection.StartAsync();
-
-            _personalChatHhubConnection.On<int>("ReceiveUnreadMessageIncreased", async (chatId) => {
-                await _personalChatHhubConnection.SendAsync("RequestUnreadMessages", chatId, MyAccount?.Id);
-            });
-
-            _personalChatHhubConnection.On<int, int>("ReceiveUnreadMessageCount", async (chatId, count) => {
+            await _personalChatHubConnection.ConnectToChatMessageCountHubAsync($"{Hubs.Port}{Hubs.PersonalChatUnreadMessageAddress}");
+            _personalChatHubConnection.SubscribeMessageCountUpdated(MyAccount.Id, async (chatId, count) =>
+            {
                 var chat = MyPersonalChats?.FirstOrDefault(x => x.PersonalChat.Id == chatId) ?? throw new ArgumentNullException(nameof(MyPersonalChats));
                 var index = MyPersonalChats.IndexOf(chat);
                 await AsyncDispatcher.ExecuteOnMainThreadAsync(() =>
@@ -681,32 +680,17 @@ public class ChatViewModel : ParentTemplate
                 });
             });
 
-            cookieContainer = new CookieContainer();
-            cookieContainer.Add(new Uri($"{Hubs.Port}{Hubs.GroupChatUnreadMessageAddress}"), new Cookie(nameof(MemoryCacheValue.RefreshToken), refreshToken));
-            cookieContainer.Add(new Uri($"{Hubs.Port}{Hubs.GroupChatUnreadMessageAddress}"), new Cookie(nameof(MemoryCacheValue.AccessToken), accessToken));
-
-            _grouplChatHhubConnection = new HubConnectionBuilder()
-                .WithUrl($"{Hubs.Port}{Hubs.GroupChatUnreadMessageAddress}", options =>
-                {
-                    options.Cookies = cookieContainer;
-                })
-                .Build();
-
-            await _grouplChatHhubConnection.StartAsync();
-
-            _grouplChatHhubConnection.On<int>("ReceiveUnreadMessageIncreased", async (chatId) => {
-                await _grouplChatHhubConnection.SendAsync("RequestUnreadMessages", chatId, MyAccount?.Id);
-            });
-
-            _grouplChatHhubConnection.On<int, int>("ReceiveUnreadMessageCount", async (chatId, count) => {
-                var chat = MyPersonalChats?.FirstOrDefault(x => x.PersonalChat.Id == chatId) ?? throw new ArgumentNullException(nameof(MyPersonalChats));
-                var index = MyPersonalChats.IndexOf(chat);
-                await AsyncDispatcher.ExecuteOnMainThreadAsync(() =>
-                {
-                    chat.PersonalChatMessageCount.Count = count;
-                    MyPersonalChats[index] = new MyPersonalChatContainerModel { PersonalChat = chat.PersonalChat, PersonalChatMessageCount = chat.PersonalChatMessageCount };
-                });
-            });
+            await _groupChatHubConnection.ConnectToChatMessageCountHubAsync($"{Hubs.Port}{Hubs.GroupChatUnreadMessageAddress}");
+            //_groupChatHubConnection.SubscribeMessageCountUpdated(MyAccount.Id, async (chatId, count) => 
+            //{
+            //    var chat = MyGroupChats?.FirstOrDefault(x => x.GroupChat.Id == chatId) ?? throw new ArgumentNullException(nameof(MyGroupChats));
+            //    var index = MyGroupChats.IndexOf(chat);
+            //    await AsyncDispatcher.ExecuteOnMainThreadAsync(() =>
+            //    {
+            //        chat.GroupChatMessageCount.Count = count;
+            //        MyGroupChats[index] = new MyGroupChatContainerModel { GroupChat = chat.GroupChat, GroupChatMessageCount = chat.GroupChatMessageCount };
+            //    });
+            //});
         }
         catch (ArgumentNullException ex)
         {

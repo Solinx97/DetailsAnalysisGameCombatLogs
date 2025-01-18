@@ -5,13 +5,11 @@ using CombatAnalysis.Core.Helpers;
 using CombatAnalysis.Core.Interfaces;
 using CombatAnalysis.Core.Models.Chat;
 using CombatAnalysis.Core.Models.User;
-using Microsoft.AspNetCore.SignalR.Client;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
 using MvvmCross.Commands;
 using MvvmCross.ViewModels;
 using System.Collections.ObjectModel;
-using System.Net;
 using System.Net.Http.Json;
 
 namespace CombatAnalysis.Core.ViewModels.Chat;
@@ -28,7 +26,7 @@ public class GroupChatMessagesViewModel : MvxViewModel, IImprovedMvxViewModel
     private ObservableCollection<AppUserModel>? _users;
     private List<AppUserModel>? _usersExcludingInvitees;
     private GroupChatModel? _selectedChat;
-    private GroupChatUserModel? _meInChat;
+    private string _meInChatId = string.Empty;
     private GroupChatMessageModel? _selectedMessage;
     private int _selectedMessageIndex = -1;
     private string? _selectedChatName;
@@ -41,8 +39,7 @@ public class GroupChatMessagesViewModel : MvxViewModel, IImprovedMvxViewModel
     private bool _inviteToChatIsVisibly;
     private bool _isEditMode;
     private bool _isRemoveMode;
-    private HubConnection? _hubConnection;
-    private HubConnection? _unreadMessageHubConnection;
+    private IChatHubHelper? _hubConnection;
 
     public GroupChatMessagesViewModel(IHttpClientHelper httpClientHelper, IMemoryCache memoryCache, ILogger logger)
     {
@@ -97,12 +94,12 @@ public class GroupChatMessagesViewModel : MvxViewModel, IImprovedMvxViewModel
 
     #region View model properties
 
-    public GroupChatUserModel? MeInChat
+    public string MeInChatId
     {
-        get { return _meInChat; }
+        get { return _meInChatId; }
         set
         {
-            SetProperty(ref _meInChat, value);
+            SetProperty(ref _meInChatId, value);
         }
     }
 
@@ -130,12 +127,6 @@ public class GroupChatMessagesViewModel : MvxViewModel, IImprovedMvxViewModel
         set
         {
             SetProperty(ref _selectedChat, value);
-
-            if (value != null)
-            {
-                Task.Run(async () => await LoadMessagesForSelectedChatAsync(value.Name));
-                Task.Run(InitSignalRAsync);
-            }
         }
     }
 
@@ -264,11 +255,11 @@ public class GroupChatMessagesViewModel : MvxViewModel, IImprovedMvxViewModel
 
     public override void ViewDestroy(bool viewFinishing = true)
     {
-        if (_hubConnection != null)
-        {
-            Task.Run(async () => await _hubConnection.SendAsync("LeaveFromRoom", SelectedChat?.Id.ToString()));
-            Task.Run(async () => await _hubConnection.StopAsync());
-        }
+        //if (_hubConnection != null)
+        //{
+        //    Task.Run(async () => await _hubConnection.SendAsync("LeaveFromRoom", SelectedChat?.Id.ToString()));
+        //    Task.Run(async () => await _hubConnection.StopAsync());
+        //}
 
         base.ViewDestroy(viewFinishing);
     }
@@ -281,8 +272,51 @@ public class GroupChatMessagesViewModel : MvxViewModel, IImprovedMvxViewModel
             {
                 throw new ArgumentNullException(nameof(_hubConnection));
             }
+            else if (string.IsNullOrEmpty(MeInChatId))
+            {
+                throw new ArgumentNullException(nameof(MeInChatId));
+            }
 
-            await _hubConnection.SendAsync("SendMessageHasBeenRead", message.Id, MyAccount?.Id);
+            await _hubConnection.SubscribeMessageHasBeenReadAsync(message.Id, MeInChatId);
+        }
+        catch (ArgumentNullException ex)
+        {
+            _logger.LogError(ex, ex.Message);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, ex.Message);
+        }
+    }
+
+    public async Task InitChatSignalRAsync(IChatHubHelper hubConnection)
+    {
+        try
+        {
+            await GetMeInGroupChatAsync();
+            await LoadMessagesForSelectedChatAsync(SelectedChat?.Name ?? string.Empty);
+
+            _hubConnection = hubConnection;
+
+            if (SelectedChat == null)
+            {
+                throw new ArgumentNullException(nameof(SelectedChat));
+            }
+            else if (string.IsNullOrEmpty(MeInChatId))
+            {
+                throw new ArgumentNullException(nameof(MeInChatId));
+            }
+
+            await hubConnection.ConnectToChatHubAsync($"{Hubs.Port}{Hubs.GroupChatAddress}");
+            await hubConnection.JoinChatRoom(SelectedChat.Id);
+
+            hubConnection.SubscribeMessagesUpdated<GroupChatMessageModel>(SelectedChat.Id, MeInChatId, async (message) =>
+            {
+                await AsyncDispatcher.ExecuteOnMainThreadAsync(() =>
+                {
+                    Messages?.Insert(0, message);
+                });
+            });
         }
         catch (ArgumentNullException ex)
         {
@@ -326,16 +360,20 @@ public class GroupChatMessagesViewModel : MvxViewModel, IImprovedMvxViewModel
             {
                 throw new ArgumentNullException(nameof(SelectedChat));
             }
-            else if (_meInChat == null)
+            else if (MyAccount == null)
             {
-                throw new ArgumentNullException(nameof(_meInChat));
+                throw new ArgumentNullException(nameof(MyAccount));
+            }
+            else if (string.IsNullOrEmpty(MeInChatId))
+            {
+                throw new ArgumentNullException(nameof(MeInChatId));
             }
             else if (_hubConnection == null)
             {
                 throw new ArgumentNullException(nameof(_hubConnection));
             }
 
-            await _hubConnection.SendAsync("SendMessage", Message, SelectedChat.Id, _meInChat.Id, _meInChat.Username);
+            await _hubConnection.SendMessageAsync(Message, SelectedChat.Id, MeInChatId, MyAccount.Username);
 
             Message = string.Empty;
         }
@@ -501,8 +539,6 @@ public class GroupChatMessagesViewModel : MvxViewModel, IImprovedMvxViewModel
 
     private async Task LoadMessagesForSelectedChatAsync(string chatName)
     {
-        await GetMeInGroupChatAsync();
-
         await AsyncDispatcher.ExecuteOnMainThreadAsync(() =>
         {
             Messages?.Clear();
@@ -609,7 +645,13 @@ public class GroupChatMessagesViewModel : MvxViewModel, IImprovedMvxViewModel
                 throw new ArgumentNullException(nameof(SelectedChat));
             }
 
-            var response = await _httpClientHelper.GetAsync($"GroupChatUser/findMeInChat?chatId={SelectedChat.Id}&appUserId={MyAccount.Id}", Port.ChatApi);
+            var refreshToken = _memoryCache.Get<string>(nameof(MemoryCacheValue.RefreshToken));
+            if (string.IsNullOrEmpty(refreshToken))
+            {
+                throw new ArgumentNullException(nameof(refreshToken));
+            }
+
+            var response = await _httpClientHelper.GetAsync($"GroupChatUser/findMeInChat?chatId={SelectedChat.Id}&appUserId={MyAccount.Id}", refreshToken, Port.ChatApi);
             response.EnsureSuccessStatusCode();
 
             var meInChat = await response.Content.ReadFromJsonAsync<GroupChatUserModel>();
@@ -618,7 +660,7 @@ public class GroupChatMessagesViewModel : MvxViewModel, IImprovedMvxViewModel
                 throw new ArgumentNullException(nameof(meInChat));
             }
 
-            _meInChat = meInChat;
+            MeInChatId = meInChat.Id;
         }
         catch (ArgumentNullException ex)
         {
@@ -632,102 +674,5 @@ public class GroupChatMessagesViewModel : MvxViewModel, IImprovedMvxViewModel
         {
             _logger.LogError(ex, ex.Message);
         }
-    }
-
-    private async Task InitSignalRAsync()
-    {
-        try
-        {
-            var refreshToken = _memoryCache.Get<string>(nameof(MemoryCacheValue.RefreshToken));
-            var accessToken = _memoryCache.Get<string>(nameof(MemoryCacheValue.AccessToken));
-
-            if (string.IsNullOrEmpty(refreshToken))
-            {
-                throw new ArgumentNullException(nameof(refreshToken));
-            }
-            else if (string.IsNullOrEmpty(accessToken))
-            {
-                throw new ArgumentNullException(nameof(accessToken));
-            }
-
-            ConnectToHub($"{Hubs.Port}{Hubs.GroupChatAddress}", ref _hubConnection, refreshToken, accessToken);
-            if (_hubConnection == null)
-            {
-                throw new ArgumentNullException(nameof(_hubConnection));
-            }
-
-            await _hubConnection.StartAsync();
-            await _hubConnection.SendAsync("JoinRoom", SelectedChat?.Id);
-
-            ConnectToHub($"{Hubs.Port}{Hubs.GroupChatUnreadMessageAddress}", ref _unreadMessageHubConnection, refreshToken, accessToken);
-            if (_unreadMessageHubConnection == null)
-            {
-                throw new ArgumentNullException(nameof(_unreadMessageHubConnection));
-            }
-            else if (_meInChat == null)
-            {
-                throw new ArgumentNullException(nameof(_meInChat));
-            }
-
-            await _unreadMessageHubConnection.StartAsync();
-            await _unreadMessageHubConnection.SendAsync("JoinRoom", SelectedChat?.Id);
-
-            _hubConnection.On("ReceiveMessageHasBeenRead", async () =>
-            {
-                await _unreadMessageHubConnection.SendAsync("RequestUnreadMessages", SelectedChat?.Id, _meInChat.Id);
-            });
-
-            _hubConnection.On<GroupChatMessageModel>("ReceiveMessage", async (message) =>
-            {
-                await AsyncDispatcher.ExecuteOnMainThreadAsync(() =>
-                {
-                    Messages?.Insert(0, message);
-                });
-            });
-
-            FollowDeliveredMessage();
-        }
-        catch (ArgumentNullException ex)
-        {
-            _logger.LogError(ex, ex.Message);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, ex.Message);
-        }
-    }
-
-    private static void ConnectToHub(string hubUrl, ref HubConnection? hubConnection, string refreshToken, string accessToken)
-    {
-        var cookieContainer = new CookieContainer();
-        cookieContainer.Add(new Uri(hubUrl), new Cookie(nameof(MemoryCacheValue.RefreshToken), refreshToken));
-        cookieContainer.Add(new Uri(hubUrl), new Cookie(nameof(MemoryCacheValue.AccessToken), accessToken));
-
-        hubConnection = new HubConnectionBuilder()
-            .WithUrl(hubUrl, options =>
-            {
-                options.Cookies = cookieContainer;
-            })
-            .Build();
-    }
-
-    private void FollowDeliveredMessage()
-    {
-        if (_hubConnection == null)
-        {
-            throw new ArgumentNullException(nameof(_hubConnection));
-        }
-        else if (_unreadMessageHubConnection == null)
-        {
-            throw new ArgumentNullException(nameof(_unreadMessageHubConnection));
-        }
-        else if (SelectedChat == null)
-        {
-            throw new ArgumentNullException(nameof(SelectedChat));
-        }
-
-        _hubConnection.On("MessageDelivered", async () => {
-            await _unreadMessageHubConnection.SendAsync("SendUnreadMessageIncreased", SelectedChat.Id);
-        });
     }
 }

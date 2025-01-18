@@ -124,7 +124,7 @@
             </Border>
         </StackPanel>
 
-        <TextBlock Name="meInChatId" Text="{Binding MeInChat.Id}" Visibility="Hidden"/>
+        <TextBlock Name="meInChatId" Text="{Binding MeInChatId}" Visibility="Collapsed" />
         <ListBox Grid.Row="1" HorizontalContentAlignment="Stretch" Margin="0" ItemsSource="{Binding Messages}" SelectedItem="{Binding SelectedMessage}"
                  Background="Transparent" SelectedIndex="{Binding SelectedMessageIndex}">
             <ListBox.ItemsPanel>

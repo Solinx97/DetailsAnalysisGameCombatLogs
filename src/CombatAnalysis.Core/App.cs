@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using CombatAnalysis.CombatParser.Core;
 using CombatAnalysis.CombatParser.Interfaces;
 using CombatAnalysis.CombatParser.Services;
 using CombatAnalysis.Core.Consts;
@@ -77,27 +76,24 @@ public class App : MvxApplication
             mc.AddProfile(new CombatAnalysisMapper());
         });
 
-        var loggerFactory = new LoggerFactory();
-        var logger = new Logger<ILogger>(loggerFactory);
-        var mapper = mappingConfig.CreateMapper();
-
-        IHttpClientHelper httpClient = new HttpClientHelper();
-        IFileManager fileManager = new FileManager();
-        var parser = new CombatParserService(fileManager, logger);
-
         var memoryCacheOptions = new MemoryCacheOptions { SizeLimit = 2048 };
         var memoryCache = new MemoryCache(memoryCacheOptions);
 
-        var identityService = new IdentityService(memoryCache, httpClient, logger);
-        var cacheService = new CacheService();
-
-        Mvx.IoCProvider.RegisterSingleton(mapper);
-        Mvx.IoCProvider.RegisterSingleton(httpClient);
-        Mvx.IoCProvider.RegisterSingleton(parser);
-        Mvx.IoCProvider.RegisterSingleton<ILogger>(logger);
-        Mvx.IoCProvider.RegisterSingleton<IMemoryCache>(memoryCache);
-        Mvx.IoCProvider.RegisterSingleton<IIdentityService>(identityService);
-        Mvx.IoCProvider.RegisterSingleton<ICacheService>(cacheService);
+        if (Mvx.IoCProvider != null)
+        {
+            Mvx.IoCProvider.RegisterType<ICombatParserService, CombatParserService>();
+            Mvx.IoCProvider.RegisterType<IMapper>(() => mappingConfig.CreateMapper());
+            Mvx.IoCProvider.RegisterType<ILogger>(() =>
+            {
+                var loggerFactory = new LoggerFactory();
+                return new Logger<ILogger>(loggerFactory);
+            });
+            Mvx.IoCProvider.RegisterType<IHttpClientHelper, HttpClientHelper>();
+            Mvx.IoCProvider.RegisterType<IIdentityService, IdentityService>();
+            Mvx.IoCProvider.RegisterType<ICacheService, CacheService>();
+            Mvx.IoCProvider.RegisterType<IChatHubHelper, ChatHubHelper>();
+            Mvx.IoCProvider.RegisterSingleton<IMemoryCache>(memoryCache);
+        }
 
         RegisterAppStart<BasicTemplateViewModel>();
     }
