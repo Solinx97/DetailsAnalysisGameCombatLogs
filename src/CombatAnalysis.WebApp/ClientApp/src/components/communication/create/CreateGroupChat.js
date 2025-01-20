@@ -1,9 +1,7 @@
 import { useState } from "react";
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
-import { useCreateGroupChatMutation } from '../../../store/api/chat/GroupChat.api';
-import CommunicationMenu from '../CommunicationMenu';
+import { useChatHub } from '../../../context/ChatHubProvider';
 import ChatRulesItem from "./ChatRulesItem";
 import CreateGroupChatMenu from './CreateGroupChatMenu';
 import ItemConnector from './ItemConnector';
@@ -17,12 +15,12 @@ const payload = {
     announcements: 1,
 };
 
-const CreateGroupChat = () => {
-    const user = useSelector((state) => state.user.value);
-
+const CreateGroupChat = ({ setShowCreateGroupChat }) => {
     const { t } = useTranslation("communication/create");
 
-    const navigate = useNavigate();
+    const { groupChatHubConnection } = useChatHub();
+
+    const me = useSelector((state) => state.user.value);
 
     const [itemIndex, seItemIndex] = useState(0);
     const [passedItemIndex, setPassedItemIndex] = useState(0);
@@ -34,21 +32,19 @@ const CreateGroupChat = () => {
     const [canFinishCreate, setCanFinishCreate] = useState(false);
     const [isCreating, setIsCreating] = useState(false);
 
-    const [createGroupChat] = useCreateGroupChatMutation();
-
     const menuItemsCount = 2;
 
     const createGroupChatAsync = async () => {
         const groupChat = {
             id: 0,
             name: chatName,
-            appUserId: user?.id
+            appUserId: me?.id
         };
 
         const groupChatUser = {
             id: " ",
-            username: user?.username,
-            appUserId: user?.id
+            username: me?.username,
+            appUserId: me?.id
         };
 
         const groupChatRules = {
@@ -65,7 +61,7 @@ const CreateGroupChat = () => {
             groupChatRules
         };
 
-        await createGroupChat(container);
+        await groupChatHubConnection?.invoke("CreateGroupChat", container);
     }
 
     const handleCreateNewGroupChatAsync = async () => {
@@ -74,8 +70,7 @@ const CreateGroupChat = () => {
         await createGroupChatAsync();
 
         setIsCreating(false);
-
-        navigate("/chats");
+        setShowCreateGroupChat(false);
     }
 
     const nextStep = (index) => {
@@ -94,72 +89,67 @@ const CreateGroupChat = () => {
     }
 
     return (
-        <>
-            <CommunicationMenu
-                currentMenuItem={2}
+        <div className="communication-content create-community box-shadow">
+            <div>{t("CreateGroupChat")}</div>
+            <CreateGroupChatMenu
+                passedItemIndex={passedItemIndex}
+                seItemIndex={seItemIndex}
+                itemIndex={itemIndex}
             />
-            <div className="communication-content create-community box-shadow">
-                <div>{t("CreateGroupChat")}</div>
-                <CreateGroupChatMenu
-                    passedItemIndex={passedItemIndex}
-                    seItemIndex={seItemIndex}
-                    itemIndex={itemIndex}
-                />
-                <div className="create-community__content">
-                    <div className="create-community__items">
-                        {itemIndex === 0 &&
-                            <div className="create-community__item">
-                                <div className="title">{t("Description")}</div>
-                                <div>
-                                    <div className="form-group">
-                                        <label htmlFor="name">{t("Name")}</label>
-                                        <input type="text" className="form-control" name="name" id="name"
-                                            onChange={(e) => setChatName(e.target.value)} defaultValue={chatName} required />
-                                    </div>
-                                    <ItemConnector
-                                        connectorType={1}
-                                        nextStep={nextStep}
-                                        nextStepIndex={1}
-                                    />
+            <div className="create-community__content">
+                <div className="create-community__items">
+                    {itemIndex === 0 &&
+                        <div className="create-community__item">
+                            <div className="title">{t("Description")}</div>
+                            <div>
+                                <div className="form-group">
+                                    <label htmlFor="name">{t("Name")}</label>
+                                    <input type="text" className="form-control" name="name" id="name"
+                                        onChange={(e) => setChatName(e.target.value)} defaultValue={chatName} required />
                                 </div>
+                                <ItemConnector
+                                    connectorType={1}
+                                    nextStep={nextStep}
+                                    nextStepIndex={1}
+                                />
                             </div>
-                        }
-                        {itemIndex >= 1 &&
-                            <ChatRulesItem
-                                setInvitePeople={setInvitePeople}
-                                setRemovePeople={setRemovePeople}
-                                setPinMessage={setPinMessage }
-                                setAnnouncements={setAnnouncements}
-                                payload={payload}
-                                connector={
-                                    <ItemConnector
-                                        connectorType={3}
-                                        nextStep={nextStep}
-                                        previouslyStep={previouslyStep}
-                                        nextStepIndex={2}
-                                    />
-                                }
-                            />
-                        }
-                    </div>
-                </div>
-                {(chatName.length === 0 && passedItemIndex > 0) &&
-                    <div className="chat-name-required">{t("NameRequired")}</div>
-                }
-                <div className="actions">
-                    {(canFinishCreate && chatName.length > 0) &&
-                        <div className="btn-shadow create" onClick={handleCreateNewGroupChatAsync}>{t("Create")}</div>
+                        </div>
                     }
-                    <div className="btn-shadow" onClick={() => navigate("/chats")}>{t("Cancel")}</div>
+                    {itemIndex >= 1 &&
+                        <ChatRulesItem
+                            setInvitePeople={setInvitePeople}
+                            setRemovePeople={setRemovePeople}
+                            setPinMessage={setPinMessage}
+                            setAnnouncements={setAnnouncements}
+                            payload={payload}
+                            connector={
+                                <ItemConnector
+                                    connectorType={3}
+                                    nextStep={nextStep}
+                                    previouslyStep={previouslyStep}
+                                    nextStepIndex={2}
+                                />
+                            }
+                        />
+                    }
                 </div>
-                {isCreating &&
-                    <>
-                        <span className="creating"></span>
-                    <div className="notify">{t("Creating")}</div>
-                    </>
-                }
             </div>
-        </>
+            {(chatName.length === 0 && passedItemIndex > 0) &&
+                <div className="chat-name-required">{t("NameRequired")}</div>
+            }
+            <div className="actions">
+                {(canFinishCreate && chatName.length > 0) &&
+                    <div className="btn-shadow create" onClick={handleCreateNewGroupChatAsync}>{t("Create")}</div>
+                }
+                <div className="btn-shadow" onClick={() => setShowCreateGroupChat(false)}>{t("Cancel")}</div>
+            </div>
+            {isCreating &&
+                <>
+                    <span className="creating"></span>
+                    <div className="notify">{t("Creating")}</div>
+                </>
+            }
+        </div>
     );
 }
 

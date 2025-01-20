@@ -2,6 +2,7 @@
 using CombatAnalysis.Hubs.Enums;
 using CombatAnalysis.Hubs.Interfaces;
 using CombatAnalysis.Hubs.Models;
+using CombatAnalysis.Hubs.Models.Containers;
 using Microsoft.AspNetCore.SignalR;
 
 namespace CombatAnalysis.Hubs.Hubs;
@@ -9,9 +10,9 @@ namespace CombatAnalysis.Hubs.Hubs;
 internal class GroupChatHub : Hub
 {
     private readonly IHttpClientHelper _httpClient;
-    private readonly ILogger<PersonalChatHub> _logger;
+    private readonly ILogger<GroupChatHub> _logger;
 
-    public GroupChatHub(IHttpClientHelper httpClient, ILogger<PersonalChatHub> logger)
+    public GroupChatHub(IHttpClientHelper httpClient, ILogger<GroupChatHub> logger)
     {
         _httpClient = httpClient;
         _httpClient.BaseAddress = Port.ChatApi;
@@ -19,16 +20,16 @@ internal class GroupChatHub : Hub
         _logger = logger;
     }
 
-    public async Task JoinRoom(int chatId)
+    public async Task JoinRoom(string appUserId)
     {
         var refreshToken = Context.GetHttpContext()?.Request.Cookies[nameof(AuthenticationCookie.RefreshToken)] ?? string.Empty;
         if (!string.IsNullOrEmpty(refreshToken))
         {
-            await Groups.AddToGroupAsync(Context.ConnectionId, chatId.ToString());
+            await Groups.AddToGroupAsync(Context.ConnectionId, appUserId);
         }
     }
 
-    public async Task SendMessage(string message, int chatId, string groupChatUserId, string username)
+    public async Task CreateGroupChat(GroupChatContainerModel groupChat)
     {
         try
         {
@@ -38,28 +39,16 @@ internal class GroupChatHub : Hub
                 throw new ArgumentNullException(nameof(context));
             }
 
-            var groupMessage = new GroupChatMessageModel
-            {
-                Username = username,
-                Message = message,
-                Time = TimeSpan.Parse($"{DateTimeOffset.UtcNow.Hour}:{DateTimeOffset.UtcNow.Minute}").ToString(),
-                Status = 0,
-                ChatId = chatId,
-                GroupChatUserId = groupChatUserId
-            };
-
-            var response = await _httpClient.PostAsync("GroupChatMessage", JsonContent.Create(groupMessage), context);
+            var response = await _httpClient.PostAsync("GroupChat", JsonContent.Create(groupChat), context);
             response.EnsureSuccessStatusCode();
 
-            var createdMessage = await response.Content.ReadFromJsonAsync<GroupChatMessageModel>();
-            if (createdMessage == null)
+            var createdChat = await response.Content.ReadFromJsonAsync<GroupChatModel>();
+            if (createdChat == null)
             {
-                throw new ArgumentNullException(nameof(createdMessage));
+                throw new ArgumentNullException(nameof(createdChat));
             }
 
-            await Clients.Caller.SendAsync("ReceiveMessageDelivered");
-
-            await Clients.Group(chatId.ToString()).SendAsync("ReceiveMessage", createdMessage);
+            await Clients.Caller.SendAsync("ReceiveGroupChat", createdChat.Id, groupChat.GroupChat.AppUserId);
         }
         catch (ArgumentNullException ex)
         {
@@ -75,7 +64,7 @@ internal class GroupChatHub : Hub
         }
     }
 
-    public async Task SendMessageHasBeenRead(int chatMessageId, string meInChatId)
+    public async Task RequestJoinedUser(int chatId, string appUserId)
     {
         try
         {
@@ -85,40 +74,16 @@ internal class GroupChatHub : Hub
                 throw new ArgumentNullException(nameof(context));
             }
 
-            var response = await _httpClient.GetAsync($"GroupChatMessage/{chatMessageId}", context);
+            var response = await _httpClient.GetAsync($"GroupChatUser/findUserInChat?chatId={chatId}&appUserId={appUserId}", context);
             response.EnsureSuccessStatusCode();
 
-            var messageModel = await response.Content.ReadFromJsonAsync<GroupChatMessageModel>();
-            if (messageModel == null)
+            var groupChatUser = await response.Content.ReadFromJsonAsync<GroupChatUserModel>();
+            if (groupChatUser == null)
             {
-                throw new ArgumentNullException(nameof(messageModel));
+                throw new ArgumentNullException(nameof(groupChatUser));
             }
 
-            if (messageModel.Status == 2)
-            {
-                return;
-            }
-
-            messageModel.Status = 2;
-
-            response = await _httpClient.PutAsync("GroupChatMessage", JsonContent.Create(messageModel), context);
-            response.EnsureSuccessStatusCode();
-
-            response = await _httpClient.GetAsync($"GroupChatMessageCount/findMe?chatId={messageModel.ChatId}&chatUserId={meInChatId}", context);
-            response.EnsureSuccessStatusCode();
-
-            var messageCount = await response.Content.ReadFromJsonAsync<GroupChatMessageCountModel>();
-            if (messageCount == null)
-            {
-                throw new ArgumentNullException(nameof(messageCount));
-            }
-
-            messageCount.Count--;
-
-            response = await _httpClient.PutAsync("GroupChatMessageCount", JsonContent.Create(messageCount), context);
-            response.EnsureSuccessStatusCode();
-
-            await Clients.Caller.SendAsync("ReceiveMessageHasBeenRead");
+            await Clients.Group(appUserId).SendAsync("ReceiveJoinedUser", groupChatUser);
         }
         catch (ArgumentNullException ex)
         {
@@ -134,12 +99,58 @@ internal class GroupChatHub : Hub
         }
     }
 
-    public async Task LeaveFromRoom(int room)
+    public async Task AddUserToChat(GroupChatUserModel groupChatUser)
+    {
+        try
+        {
+            var context = Context.GetHttpContext();
+            if (context == null)
+            {
+                throw new ArgumentNullException(nameof(context));
+            }
+
+            var response = await _httpClient.PostAsync("GroupChatUser", JsonContent.Create(groupChatUser), context);
+            response.EnsureSuccessStatusCode();
+
+            var createdGroupChatUser = await response.Content.ReadFromJsonAsync<GroupChatUserModel>();
+            if (createdGroupChatUser == null)
+            {
+                throw new ArgumentNullException(nameof(createdGroupChatUser));
+            }
+
+            await Clients.Caller.SendAsync("ReceiveAddedUserToChat", createdGroupChatUser);
+            await Clients.Group(groupChatUser.AppUserId).SendAsync("ReceiveAddedUserToChat", createdGroupChatUser);
+        }
+        catch (ArgumentNullException ex)
+        {
+            _logger.LogError(ex, ex.Message);
+        }
+        catch (HttpRequestException ex)
+        {
+            _logger.LogError(ex, ex.Message);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, ex.Message);
+        }
+    }
+
+    public async Task LeaveFromRoom(string appUserId)
     {
         var refreshToken = Context.GetHttpContext()?.Request.Cookies[nameof(AuthenticationCookie.RefreshToken)] ?? string.Empty;
         if (!string.IsNullOrEmpty(refreshToken))
         {
-            await Groups.RemoveFromGroupAsync(Context.ConnectionId, room.ToString());
+            await Groups.RemoveFromGroupAsync(Context.ConnectionId, appUserId);
         }
+    }
+
+    public override Task OnDisconnectedAsync(Exception? exception)
+    {
+        if (exception != null)
+        {
+            _logger.LogError(exception, exception.Message);
+        }
+
+        return base.OnDisconnectedAsync(exception);
     }
 }

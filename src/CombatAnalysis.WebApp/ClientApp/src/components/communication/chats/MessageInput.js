@@ -1,27 +1,18 @@
 ﻿import { faPaperPlane } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useEffect, useRef, useState } from "react";
+import { useChatHub } from '../../../context/ChatHubProvider';
 
-const MessageInput = ({ hubConnection, unreadMessageHubConnection, chat, meInChat, setAreLoadingOldMessages, t }) => {
+const MessageInput = ({ chat, meInChat, setAreLoadingOldMessages, t }) => {
+    const { personalChatMessagesHubConnection, subscribeToPersonalMessageDelivered } = useChatHub();
+
     const messageInput = useRef(null);
 
     const [isEmptyMessage, setIsEmptyMessage] = useState(null);
 
     useEffect(() => {
-        if (!hubConnection) {
-            return;
-        }
-
-        hubConnection.on("ReceiveMessageDelivered", async () => {
-            await unreadMessageHubConnection?.invoke("SendUnreadMessageUpdated", chat.id);
-        });
-
-        return () => {
-            if (hubConnection) {
-                hubConnection.off("ReceiveMessageDelivered");
-            }
-        }
-    }, [hubConnection]);
+        subscribeToPersonalMessageDelivered(chat.id);
+    }, []);
 
     const handleSendMessageByKeyAsync = async (event) => {
         if (event.code !== "Enter") {
@@ -35,7 +26,7 @@ const MessageInput = ({ hubConnection, unreadMessageHubConnection, chat, meInCha
 
         setAreLoadingOldMessages(false);
 
-        await hubConnection?.invoke("SendMessage", messageInput.current.value, chat.id, meInChat?.id, meInChat?.username);
+        await personalChatMessagesHubConnection?.invoke("SendMessage", messageInput.current.value, chat.id, 0, meInChat?.id, meInChat?.username);
 
         messageInput.current.value = "";
     }
@@ -49,7 +40,7 @@ const MessageInput = ({ hubConnection, unreadMessageHubConnection, chat, meInCha
 
         setAreLoadingOldMessages(false);
 
-        await hubConnection?.invoke("SendMessage", messageInput.current.value, chat.id, meInChat?.id, meInChat?.username);
+        await personalChatMessagesHubConnection?.invoke("SendMessage", messageInput.current.value, chat.id, 0, meInChat?.id, meInChat?.username);
 
         messageInput.current.value = "";
     }

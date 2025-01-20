@@ -5,14 +5,13 @@ import GeneralAnalysis from './components/combatDetails/GeneralAnalysis';
 import MainInformation from './components/combatDetails/MainInformation';
 import Feed from './components/communication/Feed';
 import Chats from './components/communication/chats/Chats';
+import VoiceChat from './components/communication/chats/voiceChat/VoiceChat';
 import AllCommunities from './components/communication/community/AllCommunities';
 import SelectedCommunity from './components/communication/community/SelectedCommunity';
 import CreateCommunity from './components/communication/create/CreateCommunity';
-import CreateGroupChat from './components/communication/create/CreateGroupChat';
 import MyEnvironment from './components/communication/myEnvironment/MyEnvironment';
 import People from './components/communication/people/People';
 import SelectedUser from './components/communication/people/SelectedUser';
-import VoiceChat from './components/communication/chats/voiceChat/VoiceChat';
 import AuthorizationCallback from './components/identity/AuthorizationCallback';
 //import PlayerMovements from './components/combatDetails/actions/PlayerMovements';
 import CombatAuras from './components/combatDetails/actions/CombatAuras';
@@ -41,10 +40,6 @@ const AppRoutes = [
     {
         path: '/chats/voice/:roomId/:chatName',
         element: <VoiceChat />
-    },
-    {
-        path: '/chats/create',
-        element: <CreateGroupChat />
     },
     {
         path: '/communities',

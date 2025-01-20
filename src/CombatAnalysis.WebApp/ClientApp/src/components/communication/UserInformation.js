@@ -3,7 +3,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { memo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { useCreatePersonalChatAsyncMutation, useLazyIsExistAsyncQuery } from '../../store/api/chat/PersonalChat.api';
+import { useChatHub } from '../../context/ChatHubProvider';
+import { useLazyIsExistAsyncQuery } from '../../store/api/chat/PersonalChat.api';
 import { useFriendSearchMyFriendsQuery } from '../../store/api/user/Friend.api';
 import { useCreateRequestAsyncMutation, useLazyRequestIsExistQuery } from '../../store/api/user/RequestToConnect.api';
 import PeopleInvitesToCommunity from './people/PeopleInvitesToCommunity';
@@ -17,10 +18,11 @@ const failedNotificationTimeout = 2000;
 const UserInformation = ({ me, person, closeUserInformation, actionAfterRequests = null }) => {
     const { t } = useTranslation("communication/userInformation");
 
+    const { subscribeToPersonalChat, personalChatHubConnection } = useChatHub();
+
     const navigate = useNavigate();
 
     const [isExistAsync] = useLazyIsExistAsyncQuery();
-    const [createPersonalChatAsync] = useCreatePersonalChatAsyncMutation();
     const [createRequestAsync] = useCreateRequestAsyncMutation();
     const [isRequestExistAsync] = useLazyRequestIsExistQuery();
 
@@ -51,13 +53,11 @@ const UserInformation = ({ me, person, closeUserInformation, actionAfterRequests
             return;
         }
 
-        const chat = {
-            id: 0,
-            initiatorId: me?.id,
-            companionId: targetUser.id
-        };
+        subscribeToPersonalChat((chat) => {
+            navigate("/chats");
+        });
 
-        await createPersonalChatAsync(chat);
+        await personalChatHubConnection?.invoke("CreateChat", me?.id, targetUser.id);
     }
 
     const checkIfRequestExistAsync = async (id) => {

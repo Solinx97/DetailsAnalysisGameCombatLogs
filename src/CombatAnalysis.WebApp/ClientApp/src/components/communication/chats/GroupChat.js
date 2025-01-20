@@ -1,6 +1,6 @@
-﻿import * as signalR from '@microsoft/signalr';
-import { memo, useEffect, useRef, useState } from 'react';
+﻿import { memo, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useChatHub } from '../../../context/ChatHubProvider';
 import useGroupChatData from '../../../hooks/useGroupChatData';
 import {
     useRemoveGroupChatMessageAsyncMutation,
@@ -15,17 +15,10 @@ import MessageInput from './MessageInput';
 
 import '../../../styles/communication/chats/groupChat.scss';
 
-const messageType = {
-    default: 0,
-    system: 1
-};
-
-const GroupChat = ({ chat, me, setSelectedChat, unreadMessageHubConnection }) => {
+const GroupChat = ({ chat, me, setSelectedChat }) => {
     const { t } = useTranslation("communication/chats/groupChat");
 
-    const hubURL = `${process.env.REACT_APP_HUBS_URL}${process.env.REACT_APP_HUBS_GROUP_CHAT_ADDRESS}`;
-
-    const [hubConnection, setHubConnection] = useState(null);
+    const { groupChatMessagesHubConnection, connectToGroupChatMessagesAsync, subscribeToGroupChatMessages, subscribeGroupChatUser } = useChatHub();
 
     const [showAddPeople, setShowAddPeople] = useState(false);
     const [settingsIsShow, setSettingsIsShow] = useState(false);
@@ -46,12 +39,24 @@ const GroupChat = ({ chat, me, setSelectedChat, unreadMessageHubConnection }) =>
     const [removeGroupChatMessageAsync] = useRemoveGroupChatMessageAsyncMutation();
 
     useEffect(() => {
-        const connectToChat = async () => {
-            await connectToChatAsync();
+        const connectToGroupChatMessages = async () => {
+            await connectToGroupChatMessagesAsync(chat.id);
         }
 
-        connectToChat();
+        connectToGroupChatMessages();
     }, []);
+
+    useEffect(() => {
+        if (!groupChatMessagesHubConnection) {
+            return;
+        }
+
+        subscribeGroupChatUser();
+
+        subscribeToGroupChatMessages((message) => {
+            setCurrentMessages(prevMessages => [...prevMessages, message]);
+        });
+    }, [groupChatMessagesHubConnection]);
 
     useEffect(() => {
         if (!groupChatData.messages) {
@@ -117,43 +122,6 @@ const GroupChat = ({ chat, me, setSelectedChat, unreadMessageHubConnection }) =>
         setGroupChatUsersId(customersId);
     }, [groupChatData.groupChatUsers]);
 
-    useEffect(() => {
-        return () => {
-            if (hubConnection) {
-                const disconnectFromChat = async () => {
-                    await hubConnection.invoke("LeaveFromRoom", chat?.id);
-                    await hubConnection.stop();
-                }
-
-                disconnectFromChat();
-            }
-        }
-    }, [hubConnection]);
-
-    const connectToChatAsync = async () => {
-        if (hubConnection !== null) {
-            return;
-        }
-
-        try {
-            const hubConnection = new signalR.HubConnectionBuilder()
-                .withUrl(hubURL)
-                .withAutomaticReconnect()
-                .build();
-            setHubConnection(hubConnection);
-
-            await hubConnection.start();
-
-            await hubConnection.invoke("JoinRoom", chat.id);
-
-            hubConnection.on("ReceiveMessage", (message) => {
-                setCurrentMessages(prevMessages => [...prevMessages, message]);
-            });
-        } catch (e) {
-            console.error(e);
-        }
-    }
-
     const deleteMessageAsync = async (messageId) => {
         await removeGroupChatMessageAsync(messageId);
     }
@@ -216,15 +184,11 @@ const GroupChat = ({ chat, me, setSelectedChat, unreadMessageHubConnection }) =>
                                 message={message}
                                 updateChatMessageAsync={updateGroupChatMessageAsync}
                                 deleteMessageAsync={deleteMessageAsync}
-                                hubConnection={hubConnection}
-                                unreadMessageHubConnection={unreadMessageHubConnection}
                             />
                         </li>
                     ))}
                 </ul>
                 <MessageInput
-                    hubConnection={hubConnection}
-                    unreadMessageHubConnection={unreadMessageHubConnection}
                     chat={chat}
                     meInChat={groupChatData.meInChat}
                     setAreLoadingOldMessages={setAreLoadingOldMessages}
@@ -236,8 +200,6 @@ const GroupChat = ({ chat, me, setSelectedChat, unreadMessageHubConnection }) =>
                         me={me}
                         groupChatUsersId={groupChatUsersId}
                         setShowAddPeople={setShowAddPeople}
-                        groupChatUsers={groupChatData.groupChatUsers}
-                        messageType={messageType}
                         t={t}
                     />
                 }

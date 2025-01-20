@@ -84,8 +84,10 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.MapHub<PersonalChatHub>("/personalChatHub");
+app.MapHub<PersonalChatMessagesHub>("/personalChatMessagesHub");
 app.MapHub<PersonalChatUnreadMessageHub>("/personalChatUnreadMessageHub");
 app.MapHub<GroupChatHub>("/groupChatHub");
+app.MapHub<GroupChatMessagesHub>("/groupChatMessagesHub");
 app.MapHub<GroupChatUnreadMessageHub>("/groupChatUnreadMessageHub");
 app.MapHub<VoiceChatHub>("/voiceChatHub");
 

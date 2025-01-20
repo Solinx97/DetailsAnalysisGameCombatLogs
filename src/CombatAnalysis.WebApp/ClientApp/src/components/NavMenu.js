@@ -6,6 +6,7 @@ import { useSelector } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
 import { Container, Navbar, NavbarBrand } from 'reactstrap';
 import { useAuth } from '../context/AuthProvider';
+import { useChatHub } from '../context/ChatHubProvider';
 import { useLazyIdentityQuery } from '../store/api/core/User.api';
 import LanguageSelector from './LanguageSelector';
 import Search from './Search';
@@ -15,8 +16,9 @@ import '../styles/navMenu.scss';
 const NavMenu = () => {
     const { t } = useTranslation("translate");
 
-    const user = useSelector((state) => state.user.value);
+    const me = useSelector((state) => state.user.value);
 
+    const { connectToPersonalChatAsync, connectToGroupChatAsync } = useChatHub();
     const { isAuthenticated, checkAuthAsync, logoutAsync } = useAuth();
 
     const [identityAsync] = useLazyIdentityQuery();
@@ -36,6 +38,23 @@ const NavMenu = () => {
 
         checkAuth();
     }, []);
+
+    useEffect(() => {
+        if (!me) {
+            return;
+        }
+
+        const connectToChats = async () => {
+            try {
+                await connectToPersonalChatAsync(me.id);
+                await connectToGroupChatAsync(me.id);
+            } catch (error) {
+                console.error(error);
+            }
+        }
+
+        connectToChats();
+    }, [me]);
 
     const loginAsync = async () => {
         const identityServerAuthPath = process.env.REACT_APP_IDENTITY_SERVER_AUTH_PATH;
@@ -75,7 +94,7 @@ const NavMenu = () => {
                             >
                                 Wow Analysis
                             </NavbarBrand>
-                            {user !== null &&
+                            {me !== null &&
                                 <FontAwesomeIcon
                                     icon={showSearchBar ? faMagnifyingGlassMinus : faMagnifyingGlassPlus}
                                     title={showSearchBar ? t("HideSearchCommunity") : t("ShowSearchCommunity")}
@@ -83,16 +102,16 @@ const NavMenu = () => {
                                 />
                             }
                         </div>
-                        {(user !== null && showSearchBar) &&
+                        {(me !== null && showSearchBar) &&
                             <Search
-                                me={user}
+                                me={me}
                                 t={t}
                             />
                         }
                     </div>
                     {isAuthenticated
                         ? <div className="authorized">
-                            <div className="username">{user?.username}</div>
+                            <div className="username">{me?.username}</div>
                             <div className="authorized__logout" onClick={handleLogoutClick}>{t("Logout")}</div>
                           </div>
                         : <div className="authorization">

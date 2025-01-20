@@ -2,23 +2,19 @@ import { useEffect, useState } from 'react';
 import { useGetGroupChatByIdQuery } from '../../../store/api/chat/GroupChat.api';
 import { useFindGroupChatMessageCountQuery } from '../../../store/api/chat/GroupChatMessagCount.api';
 
-const GroupChatListItem = ({ chatId, meInChatId, setSelectedGroupChat, hubConnection }) => {
+const GroupChatListItem = ({ chatId, meInChatId, setSelectedGroupChat, subscribeToUnreadPersonalMessagesUpdated }) => {
     const [unreadMessageCount, setUnreadMessageCount] = useState(-1);
 
     const { data: chat, isLoading } = useGetGroupChatByIdQuery(chatId);
     const { data: messagesCount, isLoading: messagesCountLoading } = useFindGroupChatMessageCountQuery({ chatId: chatId, userId: meInChatId });
 
-    useEffect(() => {
-        hubConnection?.on("ReceiveUnreadMessageUpdated", async (chatId) => {
-            await hubConnection?.invoke("RequestUnreadMessages", chatId, meInChatId);
-        });
-
-        hubConnection?.on("ReceiveUnreadMessage", (targetChatId, targetMeInChatId, count) => {
-            if (targetChatId === chatId && targetMeInChatId === meInChatId) {
-                setUnreadMessageCount(count);
-            }
-        });
-    }, [hubConnection]);
+    //useEffect(() => {
+    //    subscribeToUnreadPersonalMessagesUpdated(meInChatId, (targetChatId, targetMeInChatId, count) => {
+    //        if (targetChatId === chat?.id && targetMeInChatId === meInChatId) {
+    //            setUnreadMessageCount(count);
+    //        }
+    //    });
+    //}, []);
 
     useEffect(() => {
         if (!messagesCount) {

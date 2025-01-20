@@ -65,7 +65,7 @@ public class GroupChatController : ControllerBase
             var chatMap = _mapper.Map<GroupChatDto>(container.GroupChat);
             var result = await _chatService.CreateAsync(chatMap);
 
-            await CreateChatUserAsync(result.Id, container.GroupChatRules, container.GroupChatUser);
+            await CreateChatRefsAsync(result.Id, container.GroupChatRules, container.GroupChatUser);
 
             await _chatTransactionService.CommitTransactionAsync();
 
@@ -126,7 +126,7 @@ public class GroupChatController : ControllerBase
         return Ok(result);
     }
 
-    private async Task CreateChatUserAsync(int chatId, GroupChatRulesModel chatRules, GroupChatUserModel chatUser)
+    private async Task CreateChatRefsAsync(int chatId, GroupChatRulesModel chatRules, GroupChatUserModel chatUser)
     {
         chatRules.ChatId = chatId;
 

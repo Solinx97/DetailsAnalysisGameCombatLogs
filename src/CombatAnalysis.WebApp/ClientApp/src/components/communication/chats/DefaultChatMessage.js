@@ -2,6 +2,7 @@ import { faCircle, faCircleUp, faClock, faCloudArrowUp, faEye } from '@fortaweso
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useChatHub } from '../../../context/ChatHubProvider';
 import ChatMessageTitle from './ChatMessageTitle';
 
 import "../../../styles/communication/chats/chatMessage.scss";
@@ -12,8 +13,10 @@ const chatStatus = {
     read: 2
 };
 
-const DefaultChatMessage = ({ me, reviewerId, messageOwnerId, message, updateChatMessageAsync, deleteMessageAsync, hubConnection, unreadMessageHubConnection }) => {
+const DefaultChatMessage = ({ me, reviewerId, messageOwnerId, message, updateChatMessageAsync, deleteMessageAsync }) => {
     const { t } = useTranslation("communication/chats/chatMessage");
+
+    const { personalChatMessagesHubConnection, subscribeToPersonalMessageHasBeenRead } = useChatHub();
 
     const [targetMessage, setTargetMessage] = useState(message);
     const [openMessageMenu, setOpenMessageMenu] = useState(false);
@@ -22,24 +25,8 @@ const DefaultChatMessage = ({ me, reviewerId, messageOwnerId, message, updateCha
     const editMessageInput = useRef(null);
 
     useEffect(() => {
-        if (!hubConnection || !unreadMessageHubConnection) {
-            return;
-        }
-
-        hubConnection.on("ReceiveMessageHasBeenRead", async () => {
-            if (targetMessage.status === 2) {
-                return;
-            }
-
-            await unreadMessageHubConnection?.invoke("RequestUnreadMessages", message.chatId, reviewerId);
-        });
-
-        return () => {
-            if (hubConnection) {
-                hubConnection.off("ReceiveMessageHasBeenRead");
-            }
-        }
-    }, [hubConnection]);
+        subscribeToPersonalMessageHasBeenRead(message.chatId, reviewerId);
+    }, []);
 
     const handleUpdateMessageAsync = async () => {
         const updateForMessage = Object.assign({}, message);
@@ -56,7 +43,7 @@ const DefaultChatMessage = ({ me, reviewerId, messageOwnerId, message, updateCha
             return;
         }
 
-        await hubConnection?.invoke("SendMessageHasBeenRead", message.id, reviewerId);
+        await personalChatMessagesHubConnection?.invoke("SendMessageHasBeenRead", message.id, reviewerId);
 
         const updatedChat = Object.assign({}, targetMessage);
         updatedChat.status = 2;

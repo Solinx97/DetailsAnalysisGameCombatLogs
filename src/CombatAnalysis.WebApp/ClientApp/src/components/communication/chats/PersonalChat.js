@@ -1,6 +1,6 @@
-﻿import * as signalR from '@microsoft/signalr';
-import { memo, useEffect, useRef, useState } from 'react';
+﻿import { memo, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useChatHub } from '../../../context/ChatHubProvider';
 import {
     useGetPersonalChatMessageCountByChatIdQuery,
     useRemovePersonalChatMessageAsyncMutation,
@@ -15,15 +15,13 @@ import PersonalChatTitle from './PersonalChatTitle';
 
 import "../../../styles/communication/chats/personalChat.scss";
 
-const PersonalChat = ({ chat, me, setSelectedChat, companionId, unreadMessageHubConnection }) => {
+const PersonalChat = ({ chat, me, setSelectedChat, companionId }) => {
     const { t } = useTranslation("communication/chats/personalChat");
 
-    const hubURL = `${process.env.REACT_APP_HUBS_URL}${process.env.REACT_APP_HUBS_PERSONAL_CHAT_ADDRESS}`;
+    const { personalChatMessagesHubConnection, connectToPersonalChatMessagesAsync, subscribeToPersonalChatMessages } = useChatHub();
 
     const chatContainerRef = useRef(null);
     const pageSizeRef = useRef(process.env.REACT_APP_CHAT_PAGE_SIZE);
-
-    const [hubConnection, setHubConnection] = useState(null);
 
     const [haveMoreMessages, setHaveMoreMessage] = useState(false);
     const [currentMessages, setCurrentMessages] = useState(null);
@@ -42,12 +40,22 @@ const PersonalChat = ({ chat, me, setSelectedChat, companionId, unreadMessageHub
     const [updateChatMessageAsync] = useUpdatePersonalChatMessageAsyncMutation();
 
     useEffect(() => {
-        const connectToChat = async () => {
-            await connectToChatHubAsync();
+        const connectToPersonalChatMessages = async () => {
+            await connectToPersonalChatMessagesAsync(chat.id);
         }
 
-        connectToChat();
+        connectToPersonalChatMessages();
     }, []);
+
+    useEffect(() => {
+        if (!personalChatMessagesHubConnection) {
+            return;
+        }
+
+        subscribeToPersonalChatMessages((message) => {
+            setCurrentMessages(prevMessages => [...prevMessages, message]);
+        });
+    }, [personalChatMessagesHubConnection]);
 
     useEffect(() => {
         if (!messages) {
@@ -98,43 +106,6 @@ const PersonalChat = ({ chat, me, setSelectedChat, companionId, unreadMessageHub
 
         scrollToBottom();
     }, [currentMessages]);
-
-    useEffect(() => {
-        return () => {
-            if (hubConnection) {
-                const disconnectFromChat = async () => {
-                    await hubConnection.invoke("LeaveFromRoom", chat?.id);
-                    await hubConnection.stop();
-                }
-
-                disconnectFromChat();
-            }
-        }
-    }, [hubConnection]);
-
-    const connectToChatHubAsync = async () => {
-        if (hubConnection !== null) {
-            return;
-        }
-
-        try {
-            const hubConnection = new signalR.HubConnectionBuilder()
-                .withUrl(hubURL)
-                .withAutomaticReconnect()
-                .build();
-            setHubConnection(hubConnection);
-
-            await hubConnection.start();
-
-            await hubConnection.invoke("JoinRoom", chat.id);
-
-            hubConnection.on("ReceiveMessage", (message) => {
-                setCurrentMessages(prevMessages => [...prevMessages, message]);
-            });
-        } catch (e) {
-            console.error(e);
-        }
-    }
 
     const deleteMessageAsync = async (messageId) => {
         await removePersonalChatMessageAsync(messageId);
@@ -212,15 +183,11 @@ const PersonalChat = ({ chat, me, setSelectedChat, companionId, unreadMessageHub
                                     message={message}
                                     updateChatMessageAsync={updateChatMessageAsync}
                                     deleteMessageAsync={deleteMessageAsync}
-                                    hubConnection={hubConnection}
-                                    unreadMessageHubConnection={unreadMessageHubConnection}
                                 />
                             </li>
                     ))}
                 </ul>
                 <MessageInput
-                    hubConnection={hubConnection}
-                    unreadMessageHubConnection={unreadMessageHubConnection}
                     chat={chat}
                     meInChat={me}
                     setAreLoadingOldMessages={setAreLoadingOldMessages}

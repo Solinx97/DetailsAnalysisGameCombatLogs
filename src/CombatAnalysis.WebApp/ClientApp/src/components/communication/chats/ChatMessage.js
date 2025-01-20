@@ -9,7 +9,7 @@ const messageType = {
     log: 2
 };
 
-const ChatMessage = ({ me, reviewerId, messageOwnerId, message, updateChatMessageAsync, deleteMessageAsync, hubConnection, unreadMessageHubConnection }) => {
+const ChatMessage = ({ me, reviewerId, messageOwnerId, message, updateChatMessageAsync, deleteMessageAsync }) => {
     return (
         <>
             {message.type === messageType["default"]
@@ -20,8 +20,6 @@ const ChatMessage = ({ me, reviewerId, messageOwnerId, message, updateChatMessag
                     message={message}
                     updateChatMessageAsync={updateChatMessageAsync}
                     deleteMessageAsync={deleteMessageAsync}
-                    hubConnection={hubConnection}
-                    unreadMessageHubConnection={unreadMessageHubConnection}
                 />
                 : message.type === messageType["log"]
                     ? <LogChatMessage
