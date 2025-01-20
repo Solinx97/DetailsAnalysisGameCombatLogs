@@ -7,7 +7,7 @@ import {
     useUpdateGroupChatMessageAsyncMutation
 } from '../../../store/api/chat/GroupChatMessage.api';
 import Loading from '../../Loading';
-import ChatMessage from './ChatMessage';
+import GroupChatMessage from './GroupChatMessage';
 import GroupChatAddUser from './GroupChatAddUser';
 import GroupChatMenu from './GroupChatMenu';
 import GroupChatTitle from './GroupChatTitle';
@@ -208,12 +208,11 @@ const GroupChat = ({ chat, me, setSelectedChat, unreadMessageHubConnection }) =>
                 <ul className="chat-messages" ref={chatContainerRef}>
                     {currentMessages?.map((message) => (
                         <li className="message" key={message.id}>
-                            <ChatMessage
+                            <GroupChatMessage
                                 me={me}
-                                reviewerId={groupChatData.meInChat.id}
+                                meInChat={groupChatData.meInChat.id}
                                 messageOwnerId={message.groupChatUserId}
                                 message={message}
-                                messageStatus={message.status}
                                 updateChatMessageAsync={updateGroupChatMessageAsync}
                                 deleteMessageAsync={deleteMessageAsync}
                                 hubConnection={hubConnection}

@@ -255,12 +255,6 @@ public class GroupChatMessagesViewModel : MvxViewModel, IImprovedMvxViewModel
 
     public override void ViewDestroy(bool viewFinishing = true)
     {
-        //if (_hubConnection != null)
-        //{
-        //    Task.Run(async () => await _hubConnection.SendAsync("LeaveFromRoom", SelectedChat?.Id.ToString()));
-        //    Task.Run(async () => await _hubConnection.StopAsync());
-        //}
-
         base.ViewDestroy(viewFinishing);
     }
 
@@ -277,7 +271,44 @@ public class GroupChatMessagesViewModel : MvxViewModel, IImprovedMvxViewModel
                 throw new ArgumentNullException(nameof(MeInChatId));
             }
 
+            if (message.GroupChatUserId == MeInChatId)
+            {
+                return;
+            }
+
             await _hubConnection.SubscribeMessageHasBeenReadAsync(message.Id, MeInChatId);
+
+            await AsyncDispatcher.ExecuteOnMainThreadAsync(() =>
+            {
+                if (Messages == null)
+                {
+                    return;
+                }
+
+                var targetMessage = Messages.FirstOrDefault(x => x.Id == message.Id);
+                if (targetMessage == null)
+                {
+                    return;
+                }
+
+                var neMessage = new GroupChatMessageModel
+                {
+                    Id = targetMessage.Id,
+                    Username = targetMessage.Username,
+                    Message = targetMessage.Message,
+                    Time = targetMessage.Time,
+                    Status = 2,
+                    Type = targetMessage.Type,
+                    ChatId = targetMessage.ChatId,
+                    GroupChatUserId = targetMessage.GroupChatUserId
+                };
+
+                var index = Messages.IndexOf(targetMessage);
+                if (index > -1)
+                {
+                    Messages[index] = neMessage;
+                }
+            });
         }
         catch (ArgumentNullException ex)
         {
@@ -308,7 +339,7 @@ public class GroupChatMessagesViewModel : MvxViewModel, IImprovedMvxViewModel
             }
 
             await hubConnection.ConnectToChatHubAsync($"{Hubs.Port}{Hubs.GroupChatAddress}");
-            await hubConnection.JoinChatRoom(SelectedChat.Id);
+            await hubConnection.JoinChatRoomAsync(SelectedChat.Id);
 
             hubConnection.SubscribeMessagesUpdated<GroupChatMessageModel>(SelectedChat.Id, MeInChatId, async (message) =>
             {
@@ -417,24 +448,26 @@ public class GroupChatMessagesViewModel : MvxViewModel, IImprovedMvxViewModel
             UsersToInviteToChat = new ObservableCollection<AppUserModel>(_usersExcludingInvitees);
 
             SwitchInviteToGroupChat();
+
+            AddUserToChatResponse = LoadingStatus.Successful;
         }
         catch (ArgumentNullException ex)
         {
-            AddUserToChatResponse = LoadingStatus.Failed;
-
             _logger.LogError(ex, ex.Message);
+
+            AddUserToChatResponse = LoadingStatus.Failed;
         }
         catch (HttpRequestException ex)
         {
-            AddUserToChatResponse = LoadingStatus.Failed;
-
             _logger.LogError(ex, ex.Message);
+
+            AddUserToChatResponse = LoadingStatus.Failed;
         }
         catch (Exception ex)
         {
-            AddUserToChatResponse = LoadingStatus.Failed;
-
             _logger.LogError(ex, ex.Message);
+
+            AddUserToChatResponse = LoadingStatus.Failed;
         }
     }
 
@@ -477,21 +510,21 @@ public class GroupChatMessagesViewModel : MvxViewModel, IImprovedMvxViewModel
         }
         catch (ArgumentNullException ex)
         {
-            AddUserToChatResponse = LoadingStatus.Failed;
-
             _logger.LogError(ex, ex.Message);
+
+            AddUserToChatResponse = LoadingStatus.Failed;
         }
         catch (HttpRequestException ex)
         {
-            AddUserToChatResponse = LoadingStatus.Failed;
-
             _logger.LogError(ex, ex.Message);
+
+            AddUserToChatResponse = LoadingStatus.Failed;
         }
         catch (Exception ex)
         {
-            AddUserToChatResponse = LoadingStatus.Failed;
-
             _logger.LogError(ex, ex.Message);
+
+            AddUserToChatResponse = LoadingStatus.Failed;
         }
     }
 

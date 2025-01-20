@@ -4,15 +4,15 @@ public interface IChatHubHelper
 {
     Task ConnectToChatHubAsync(string hubURL);
 
-    Task JoinChatRoom(int chatId);
+    Task JoinChatRoomAsync(int chatId);
 
     Task SendMessageAsync(string message, int chatId, string appUserId, string username);
 
-    Task ConnectToChatMessageCountHubAsync(string hubURL);
+    Task ConnectToUnreadMessageHubAsync(string hubURL);
 
-    Task JoinChatMessageCountRoom(int chatId);
+    Task JoinUnreadMessageRoomAsync(int chatId);
 
-    void SubscribeMessageCountUpdated(string meInChatId, Action<int, int> receiveUnreadMessageCountAction);
+    void SubscribeUnreadMessagesUpdated(string meInChatId, Action<int, string, int> receiveUnreadMessageAction);
 
     void SubscribeMessagesUpdated<T>(int chatId, string meInChatId, Action<T> action) where T : class;
 

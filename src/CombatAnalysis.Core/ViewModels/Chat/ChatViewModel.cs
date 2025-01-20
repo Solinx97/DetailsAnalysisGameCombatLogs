@@ -50,7 +50,7 @@ public class ChatViewModel : ParentTemplate
 
         RefreshGroupChatsCommand = new MvxAsyncCommand(LoadGroupChatsAsync);
         RefreshPersonalChatsCommand = new MvxAsyncCommand(LoadPersonalChatsAsync);
-        CreatePersonalChatCommand = new MvxAsyncCommand(CreatePersonalChatAsync);
+        CreatePersonalChatCommand = new MvxAsyncCommand(CreateNewPersonalChatAsync);
 
         Basic.Parent = this;
         Basic.Handler.BasicPropertyUpdate(nameof(BasicTemplateViewModel.Step), -2);
@@ -144,7 +144,7 @@ public class ChatViewModel : ParentTemplate
             SetProperty(ref _inputedUsername, value);
             if (!string.IsNullOrEmpty(value))
             {
-                LoadCustomersUsernameByStartChars(value);
+                LoadAppUserUsernameByStartChars(value);
             }
         }
     }
@@ -284,7 +284,7 @@ public class ChatViewModel : ParentTemplate
         Task.Run(LoadPersonalChatsAsync);
     }
 
-    private async Task CreatePersonalChatAsync()
+    private async Task CreateNewPersonalChatAsync()
     {
         try
         {
@@ -297,11 +297,11 @@ public class ChatViewModel : ParentTemplate
                 throw new ArgumentNullException(nameof(MyAccount));
             }
 
-            var targetCustomer = Users[SelectedUsersIndex];
+            var targetUser = Users[SelectedUsersIndex];
             var personalChat = new PersonalChatModel
             {
                 InitiatorId = MyAccount.Id,
-                CompanionId = targetCustomer.Id,
+                CompanionId = targetUser.Id,
             };
 
             InputedUsername = string.Empty;
@@ -348,13 +348,13 @@ public class ChatViewModel : ParentTemplate
             var response = await _httpClientHelper.GetAsync($"GroupChatUser/findByUserId/{MyAccount?.Id}", refreshToken, Port.ChatApi);
             response.EnsureSuccessStatusCode();
 
-            var myGroupChatUsers = await response.Content.ReadFromJsonAsync<List<GroupChatUserModel>>();
+            var myGroupChatUsers = await response.Content.ReadFromJsonAsync<IEnumerable<GroupChatUserModel>>();
             if (myGroupChatUsers == null)
             {
                 throw new ArgumentNullException(nameof(myGroupChatUsers));
             }
 
-            await GetMyGroupChatsAsync(myGroupChatUsers, refreshToken);
+            await GetMyGroupChatsByUserIdAsync(myGroupChatUsers, refreshToken);
 
             GroupChatLoadingResponse = LoadingStatus.Successful;
         }
@@ -429,73 +429,46 @@ public class ChatViewModel : ParentTemplate
         }
     }
 
-    private async Task GetMyGroupChatsAsync(IEnumerable<GroupChatUserModel> myGroupChatUsers, string refreshToken)
+    private async Task GetMyGroupChatsByUserIdAsync(IEnumerable<GroupChatUserModel> myGroupChatUsers, string refreshToken)
     {
-        try
+        HttpResponseMessage response;
+        var container = new List<MyGroupChatContainerModel>();
+
+        foreach (var groupChatUser in myGroupChatUsers)
         {
-            HttpResponseMessage response;
-            var container = new List<MyGroupChatContainerModel>();
+            response = await _httpClientHelper.GetAsync($"GroupChat/{groupChatUser.ChatId}", refreshToken, Port.ChatApi);
+            response.EnsureSuccessStatusCode();
 
-            foreach (var item in myGroupChatUsers)
+            var groupChat = await response.Content.ReadFromJsonAsync<GroupChatModel>();
+            if (groupChat == null)
             {
-                response = await _httpClientHelper.GetAsync($"GroupChat/{item.ChatId}", refreshToken, Port.ChatApi);
-                response.EnsureSuccessStatusCode();
-
-                var groupChat = await response.Content.ReadFromJsonAsync<GroupChatModel>();
-                if (groupChat == null)
-                {
-                    throw new ArgumentNullException(nameof(groupChat));
-                }
-
-                response = await _httpClientHelper.GetAsync($"GroupChatMessageCount/findMe?chatId={item.ChatId}&chatUserId={item.Id}", refreshToken, Port.ChatApi);
-                response.EnsureSuccessStatusCode();
-
-                var messageCount = await response.Content.ReadFromJsonAsync<GroupChatMessageCountModel>();
-                if (messageCount == null)
-                {
-                    throw new ArgumentNullException(nameof(messageCount));
-                }
-
-                container.Add(new MyGroupChatContainerModel { GroupChat = groupChat, GroupChatMessageCount = messageCount });
-                
-                if (_groupChatHubConnection == null)
-                {
-                    throw new ArgumentNullException(nameof(_groupChatHubConnection));
-                }
-
-                await _groupChatHubConnection.JoinChatMessageCountRoom(item.ChatId);
-                _groupChatHubConnection.SubscribeMessageCountUpdated(item.Id, async (chatId, count) =>
-                {
-                    var chat = MyGroupChats?.FirstOrDefault(x => x.GroupChat.Id == chatId) ?? throw new ArgumentNullException(nameof(MyGroupChats));
-                    var index = MyGroupChats.IndexOf(chat);
-                    await AsyncDispatcher.ExecuteOnMainThreadAsync(() =>
-                    {
-                        chat.GroupChatMessageCount.Count = count;
-                        MyGroupChats[index] = new MyGroupChatContainerModel { GroupChat = chat.GroupChat, GroupChatMessageCount = chat.GroupChatMessageCount };
-                    });
-                });
+                throw new ArgumentNullException(nameof(groupChat));
             }
 
-            MyGroupChats = new ObservableCollection<MyGroupChatContainerModel>(container);
-        }
-        catch (ArgumentNullException ex)
-        {
-            _logger.LogError(ex, ex.Message);
+            response = await _httpClientHelper.GetAsync($"GroupChatMessageCount/findMe?chatId={groupChatUser.ChatId}&chatUserId={groupChatUser.Id}", refreshToken, Port.ChatApi);
+            response.EnsureSuccessStatusCode();
 
-            GroupChatLoadingResponse = LoadingStatus.Failed;
-        }
-        catch (HttpRequestException ex)
-        {
-            _logger.LogError(ex, ex.Message);
+            var messageCount = await response.Content.ReadFromJsonAsync<GroupChatMessageCountModel>();
+            if (messageCount == null)
+            {
+                throw new ArgumentNullException(nameof(messageCount));
+            }
 
-            GroupChatLoadingResponse = LoadingStatus.Failed;
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, ex.Message);
+            container.Add(new MyGroupChatContainerModel { GroupChat = groupChat, GroupChatMessageCount = messageCount });
 
-            GroupChatLoadingResponse = LoadingStatus.Failed;
+            if (_groupChatHubConnection == null)
+            {
+                throw new ArgumentNullException(nameof(_groupChatHubConnection));
+            }
+
+            await _groupChatHubConnection.JoinUnreadMessageRoomAsync(groupChatUser.ChatId);
+            _groupChatHubConnection.SubscribeUnreadMessagesUpdated(groupChatUser.Id, async (chatId, meInChatId, count) =>
+            {
+                await UpdateGroupChatUnreadMessagesAsync(chatId, meInChatId, count);
+            });
         }
+
+        MyGroupChats = new ObservableCollection<MyGroupChatContainerModel>(container);
     }
 
     private async Task CreatePersonalChatContainerAsync(IEnumerable<PersonalChatModel> myPersonalChats, string refreshToken)
@@ -503,11 +476,11 @@ public class ChatViewModel : ParentTemplate
         HttpResponseMessage response;
         var container = new List<MyPersonalChatContainerModel>();
 
-        foreach (var item in myPersonalChats)
+        foreach (var chat in myPersonalChats)
         {
-            await GetPersonalChatCompanionAsync(item);
+            await GetPersonalChatCompanionAsync(chat, refreshToken);
 
-            response = await _httpClientHelper.GetAsync($"PersonalChatMessageCount/findMe?chatId={item.Id}&appUserId={MyAccount?.Id}", refreshToken, Port.ChatApi);
+            response = await _httpClientHelper.GetAsync($"PersonalChatMessageCount/findMe?chatId={chat.Id}&appUserId={MyAccount?.Id}", refreshToken, Port.ChatApi);
             response.EnsureSuccessStatusCode();
 
             var messageCount = await response.Content.ReadFromJsonAsync<PersonalChatMessageCountModel>();
@@ -516,59 +489,114 @@ public class ChatViewModel : ParentTemplate
                 throw new ArgumentNullException(nameof(messageCount));
             }
 
-            container.Add(new MyPersonalChatContainerModel { PersonalChat = item, PersonalChatMessageCount = messageCount });
+            container.Add(new MyPersonalChatContainerModel { PersonalChat = chat, PersonalChatMessageCount = messageCount });
 
             if (_personalChatHubConnection == null)
             {
                 throw new ArgumentNullException(nameof(_personalChatHubConnection));
             }
+            else if (MyAccount == null)
+            {
+                throw new ArgumentNullException(nameof(MyAccount));
+            }
 
-            await _personalChatHubConnection.JoinChatMessageCountRoom(item.Id);
+            await _personalChatHubConnection.JoinUnreadMessageRoomAsync(chat.Id);
+            _personalChatHubConnection.SubscribeUnreadMessagesUpdated(MyAccount.Id, async (chatId, meInChatId, count) =>
+            {
+                await UpdatePersonalChatUnreadMessagesAsync(chatId, meInChatId, count);
+            });
         }
 
         MyPersonalChats = new ObservableCollection<MyPersonalChatContainerModel>(container);
     }
 
-    private async Task GetPersonalChatCompanionAsync(PersonalChatModel personalChat)
+    private async Task UpdatePersonalChatUnreadMessagesAsync(int chatId, string meInChatId, int count)
     {
         try
         {
-            var refreshToken = _memoryCache.Get<string>(nameof(MemoryCacheValue.RefreshToken));
-            if (string.IsNullOrEmpty(refreshToken))
+            if (MyPersonalChats == null)
+            {
+                throw new ArgumentNullException(nameof(MyPersonalChats));
+            }
+
+            var chat = MyPersonalChats.FirstOrDefault(x => x.PersonalChat.Id == chatId);
+            if (chat == null)
+            {
+                throw new ArgumentNullException(nameof(chat));
+            }
+            
+            if (chat.PersonalChatMessageCount.AppUserId != meInChatId)
             {
                 return;
             }
 
-            var companionId = personalChat.CompanionId == MyAccount?.Id ? personalChat.InitiatorId : personalChat.CompanionId;
-            var response = await _httpClientHelper.GetAsync($"Account/{companionId}", refreshToken, Port.UserApi);
-            response.EnsureSuccessStatusCode();
-
-            var companion = await response.Content.ReadFromJsonAsync<AppUserModel>();
-            if (companion == null)
+            var index = MyPersonalChats.IndexOf(chat);
+            await AsyncDispatcher.ExecuteOnMainThreadAsync(() =>
             {
-                throw new ArgumentNullException(nameof(companion));
-            }
-
-            personalChat.Username = companion?.Username ?? string.Empty;
+                chat.PersonalChatMessageCount.Count = count;
+                MyPersonalChats[index] = new MyPersonalChatContainerModel { PersonalChat = chat.PersonalChat, PersonalChatMessageCount = chat.PersonalChatMessageCount };
+            });
         }
         catch (ArgumentNullException ex)
         {
             _logger.LogError(ex, ex.Message);
-
-            PersonalChatLoadingResponse = LoadingStatus.Failed;
-        }
-        catch (HttpRequestException ex)
-        {
-            _logger.LogError(ex, ex.Message);
-
-            PersonalChatLoadingResponse = LoadingStatus.Failed;
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, ex.Message);
-
-            PersonalChatLoadingResponse = LoadingStatus.Failed;
         }
+    }
+
+    private async Task UpdateGroupChatUnreadMessagesAsync(int chatId, string meInChatId, int count)
+    {
+        try
+        {
+            if (MyGroupChats == null)
+            {
+                throw new ArgumentNullException(nameof(MyGroupChats));
+            }
+
+            var chat = MyGroupChats.FirstOrDefault(x => x.GroupChat.Id == chatId);
+            if (chat == null)
+            {
+                throw new ArgumentNullException(nameof(chat));
+            }
+
+            if (chat.GroupChatMessageCount.GroupChatUserId != meInChatId)
+            {
+                return;
+            }
+
+            var index = MyGroupChats.IndexOf(chat);
+            await AsyncDispatcher.ExecuteOnMainThreadAsync(() =>
+            {
+                chat.GroupChatMessageCount.Count = count;
+                MyGroupChats[index] = new MyGroupChatContainerModel { GroupChat = chat.GroupChat, GroupChatMessageCount = chat.GroupChatMessageCount };
+            });
+        }
+        catch (ArgumentNullException ex)
+        {
+            _logger.LogError(ex, ex.Message);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, ex.Message);
+        }
+    }
+
+    private async Task GetPersonalChatCompanionAsync(PersonalChatModel personalChat, string refreshToken)
+    {
+        var companionId = personalChat.CompanionId == MyAccount?.Id ? personalChat.InitiatorId : personalChat.CompanionId;
+        var response = await _httpClientHelper.GetAsync($"Account/{companionId}", refreshToken, Port.UserApi);
+        response.EnsureSuccessStatusCode();
+
+        var companion = await response.Content.ReadFromJsonAsync<AppUserModel>();
+        if (companion == null)
+        {
+            throw new ArgumentNullException(nameof(companion));
+        }
+
+        personalChat.Username = companion?.Username ?? string.Empty;
     }
 
     private async Task LoadUsersAsync()
@@ -599,20 +627,14 @@ public class ChatViewModel : ParentTemplate
         catch (ArgumentNullException ex)
         {
             _logger.LogError(ex, ex.Message);
-
-            PersonalChatLoadingResponse = LoadingStatus.Failed;
         }
         catch (HttpRequestException ex)
         {
             _logger.LogError(ex, ex.Message);
-
-            PersonalChatLoadingResponse = LoadingStatus.Failed;
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, ex.Message);
-
-            PersonalChatLoadingResponse = LoadingStatus.Failed;
         }
     }
 
@@ -631,7 +653,7 @@ public class ChatViewModel : ParentTemplate
         return freeUsers ?? new List<AppUserModel>();
     }
 
-    private void LoadCustomersUsernameByStartChars(string username)
+    private void LoadAppUserUsernameByStartChars(string username)
     {
         if (_allUsers == null)
         {
@@ -668,29 +690,8 @@ public class ChatViewModel : ParentTemplate
                 throw new ArgumentNullException(nameof(MyAccount));
             }
 
-            await _personalChatHubConnection.ConnectToChatMessageCountHubAsync($"{Hubs.Port}{Hubs.PersonalChatUnreadMessageAddress}");
-            _personalChatHubConnection.SubscribeMessageCountUpdated(MyAccount.Id, async (chatId, count) =>
-            {
-                var chat = MyPersonalChats?.FirstOrDefault(x => x.PersonalChat.Id == chatId) ?? throw new ArgumentNullException(nameof(MyPersonalChats));
-                var index = MyPersonalChats.IndexOf(chat);
-                await AsyncDispatcher.ExecuteOnMainThreadAsync(() =>
-                {
-                    chat.PersonalChatMessageCount.Count = count;
-                    MyPersonalChats[index] = new MyPersonalChatContainerModel { PersonalChat = chat.PersonalChat, PersonalChatMessageCount = chat.PersonalChatMessageCount };
-                });
-            });
-
-            await _groupChatHubConnection.ConnectToChatMessageCountHubAsync($"{Hubs.Port}{Hubs.GroupChatUnreadMessageAddress}");
-            //_groupChatHubConnection.SubscribeMessageCountUpdated(MyAccount.Id, async (chatId, count) => 
-            //{
-            //    var chat = MyGroupChats?.FirstOrDefault(x => x.GroupChat.Id == chatId) ?? throw new ArgumentNullException(nameof(MyGroupChats));
-            //    var index = MyGroupChats.IndexOf(chat);
-            //    await AsyncDispatcher.ExecuteOnMainThreadAsync(() =>
-            //    {
-            //        chat.GroupChatMessageCount.Count = count;
-            //        MyGroupChats[index] = new MyGroupChatContainerModel { GroupChat = chat.GroupChat, GroupChatMessageCount = chat.GroupChatMessageCount };
-            //    });
-            //});
+            await _personalChatHubConnection.ConnectToUnreadMessageHubAsync($"{Hubs.Port}{Hubs.PersonalChatUnreadMessageAddress}");
+            await _groupChatHubConnection.ConnectToUnreadMessageHubAsync($"{Hubs.Port}{Hubs.GroupChatUnreadMessageAddress}");
         }
         catch (ArgumentNullException ex)
         {

@@ -2,7 +2,7 @@ import { faArrowUpRightFromSquare } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import ChatMessageTitle from './ChatMessageTitle';
+import PersonalChatMessageTitle from './ChatMessageTitle';
 import { useNavigate } from 'react-router-dom';
 
 import "../../../styles/communication/chats/chatMessage.scss";
@@ -34,7 +34,7 @@ const LogChatMessage = ({ me, message }) => {
 
     return (
         <div className="chat-messages__content">
-            <ChatMessageTitle
+            <PersonalChatMessageTitle
                 me={me}
                 itIsMe={me?.id !== message?.appUserId}
                 message={message}

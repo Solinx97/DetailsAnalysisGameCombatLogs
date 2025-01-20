@@ -49,7 +49,7 @@ internal class ChatHubHelper : IChatHubHelper
         }
     }
 
-    public async Task JoinChatRoom(int chatId)
+    public async Task JoinChatRoomAsync(int chatId)
     {
         if (_chatHubConnection == null)
         {
@@ -69,7 +69,7 @@ internal class ChatHubHelper : IChatHubHelper
         await _chatHubConnection.SendAsync("SendMessage", message, chatId, appUserId, username);
     }
 
-    public async Task ConnectToChatMessageCountHubAsync(string hubURL)
+    public async Task ConnectToUnreadMessageHubAsync(string hubURL)
     {
         try
         {
@@ -97,7 +97,7 @@ internal class ChatHubHelper : IChatHubHelper
         }
     }
 
-    public async Task JoinChatMessageCountRoom(int chatId)
+    public async Task JoinUnreadMessageRoomAsync(int chatId)
     {
         if (_chatMessagesCountHubConnection == null)
         {
@@ -107,19 +107,19 @@ internal class ChatHubHelper : IChatHubHelper
         await _chatMessagesCountHubConnection.SendAsync("JoinRoom", chatId);
     }
 
-    public void SubscribeMessageCountUpdated(string meInChatId, Action<int, int> receiveUnreadMessageCountAction)
+    public void SubscribeUnreadMessagesUpdated(string meInChatId, Action<int, string, int> receiveUnreadMessageAction)
     {
         if (_chatMessagesCountHubConnection == null)
         {
             return;
         }
 
-        _chatMessagesCountHubConnection.On<int>("ReceiveUnreadMessageIncreased", async (chatId) => 
+        _chatMessagesCountHubConnection.On<int>("ReceiveUnreadMessageUpdated", async (chatId) => 
         {
             await _chatMessagesCountHubConnection.SendAsync("RequestUnreadMessages", chatId, meInChatId);
         });
 
-        _chatMessagesCountHubConnection.On("ReceiveUnreadMessageCount", receiveUnreadMessageCountAction);
+        _chatMessagesCountHubConnection.On("ReceiveUnreadMessage", receiveUnreadMessageAction);
     }
 
     public void SubscribeMessagesUpdated<T>(int chatId, string meInChatId, Action<T> action)
@@ -137,8 +137,8 @@ internal class ChatHubHelper : IChatHubHelper
 
         _chatHubConnection.On("ReceiveMessage", action);
 
-        _chatHubConnection.On("MessageDelivered", async () => {
-            await _chatMessagesCountHubConnection.SendAsync("SendUnreadMessageIncreased", chatId);
+        _chatHubConnection.On("ReceiveMessageDelivered", async () => {
+            await _chatMessagesCountHubConnection.SendAsync("SendUnreadMessageUpdated", chatId);
         });
     }
 

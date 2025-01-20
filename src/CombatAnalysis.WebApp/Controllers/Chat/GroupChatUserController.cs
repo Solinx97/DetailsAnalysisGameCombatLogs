@@ -19,6 +19,24 @@ public class GroupChatUserController : ControllerBase
         _httpClient.BaseAddress = Port.ChatApi;
     }
 
+    [HttpGet("{id}")]
+    public async Task<IActionResult> GetById(string id)
+    {
+        var responseMessage = await _httpClient.GetAsync($"GroupChatUser/{id}");
+        if (responseMessage.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+        {
+            return Unauthorized();
+        }
+        else if (!responseMessage.IsSuccessStatusCode)
+        {
+            return BadRequest();
+        }
+
+        var groupChatUser = await responseMessage.Content.ReadFromJsonAsync<GroupChatUserModel>();
+
+        return Ok(groupChatUser);
+    }
+
     [HttpGet("findMeInChat")]
     public async Task<IActionResult> Find(int chatId, string appUserId)
     {

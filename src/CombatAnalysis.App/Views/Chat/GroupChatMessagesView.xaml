@@ -38,7 +38,7 @@
             </Grid.Effect>
 
             <TextBlock Text="{Binding SelectedChatName}" FontSize="16" Margin="20 15" HorizontalAlignment="Left" Foreground="White"/>
-            
+
             <StackPanel Orientation="Horizontal" Margin="0 0 10 0" HorizontalAlignment="Right">
                 <StackPanel Orientation="Horizontal" Visibility="{Binding SelectedMessageIndex, Converter={StaticResource IntToVisibility}, ConverterParameter='true:-1:>'}">
                     <Button mvx:Bi.nd="Command TurnOnEditModeCommand" ToolTip="{loc:Loc Close}">
@@ -81,8 +81,6 @@
                 </Button>
             </StackPanel>
         </Grid>
-
-        <!--<TextBlock Name="myUsername" Text="{Binding MyAccount.Email}" Visibility="Collapsed"/>-->
 
         <StackPanel Grid.Column="3" Grid.Row="1" VerticalAlignment="Top" HorizontalAlignment="Right"
                     Orientation="Horizontal" Panel.ZIndex="1">
@@ -175,7 +173,10 @@
                             <StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
                                 <TextBlock Text="{Binding Path=Time, StringFormat={}{0:MM-dd HH\\:mm}}" Style="{StaticResource timeTextRight}"/>
                             </StackPanel>
-                            <uc:MyMessageChat Color="#96CDFF" Message="{Binding Path=Message}"/>
+                            <uc:MyMessageChat Color="#96CDFF" Message="{Binding Path=Message}"
+                                            Visibility="{Binding Status, Converter={StaticResource IntToVisibility}, ConverterParameter='true:2:='}" />
+                            <uc:MyMessageChat Color="#155E95" Opacity="0.75" Message="{Binding Path=Message}"
+                                            Visibility="{Binding Status, Converter={StaticResource IntToVisibility}, ConverterParameter='true:2:!='}" />
                         </StackPanel>
                     </Grid>
                 </DataTemplate>

@@ -9,12 +9,12 @@ const PersonalChatListItem = ({ chat, setSelectedPersonalChat, companionId, meId
     const { data: messagesCount, isLoading: messagesCountLoading } = useFindPersonalChatMessageCountQuery({ chatId: chat?.id, userId: meId });
 
     useEffect(() => {
-        hubConnection?.on("ReceiveUnreadMessageIncreased", async (chatId) => {
+        hubConnection?.on("ReceiveUnreadMessageUpdated", async (chatId) => {
             await hubConnection?.invoke("RequestUnreadMessages", chatId, meId);
         });
 
-        hubConnection?.on("ReceiveUnreadMessageCount", async (targetChatId, count) => {
-            if (targetChatId === chat?.id) {
+        hubConnection?.on("ReceiveUnreadMessage", (targetChatId, targetMeInChatId, count) => {
+            if (targetChatId === chat?.id && targetMeInChatId === meId) {
                 setUnreadMessageCount(count);
             }
         });

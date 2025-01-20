@@ -81,7 +81,7 @@
                             <StackPanel Orientation="Horizontal" Margin="5 0">
                                 <TextBlock Text="{Binding Path=Time, StringFormat={}{0:MM-dd HH\\:mm}}" Style="{StaticResource timeText}"/>
                             </StackPanel>
-                            <uc:MessageChat Color="#45B69C" Message="{Binding Path=Message}"/>
+                            <uc:MessageChat Color="#45B69C" Message="{Binding Path=Message}" />
                         </StackPanel>
 
                         <StackPanel>
@@ -96,7 +96,11 @@
                             <StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
                                 <TextBlock Text="{Binding Path=Time, StringFormat={}{0:MM-dd HH\\:mm}}" Style="{StaticResource timeTextRight}"/>
                             </StackPanel>
-                            <uc:MyMessageChat Color="#96CDFF" Message="{Binding Path=Message}"/>
+                            <uc:MyMessageChat Color="#96CDFF" Message="{Binding Path=Message}"
+                                            Visibility="{Binding Status, Converter={StaticResource IntToVisibility}, ConverterParameter='true:2:='}" />
+                            <uc:MyMessageChat Color="#155E95" Opacity="0.75" Message="{Binding Path=Message}"
+                                            Visibility="{Binding Status, Converter={StaticResource IntToVisibility}, ConverterParameter='true:2:!='}" />
+
                         </StackPanel>
                     </Grid>
                 </DataTemplate>

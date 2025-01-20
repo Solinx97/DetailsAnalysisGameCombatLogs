@@ -9,6 +9,7 @@ using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
 using MvvmCross.Commands;
 using MvvmCross.ViewModels;
+using System;
 using System.Collections.ObjectModel;
 using System.Net.Http.Json;
 
@@ -114,12 +115,6 @@ public class PersonalChatMessagesVewModel : MvxViewModel, IImprovedMvxViewModel
 
     public override void ViewDestroy(bool viewFinishing = true)
     {
-        //if (_hubConnection != null)
-        //{
-        //    Task.Run(async () => await _hubConnection.SendAsync("LeaveFromRoom", SelectedChat?.Id));
-        //    Task.Run(async () => await _hubConnection.StopAsync());
-        //}
-
         base.ViewDestroy(viewFinishing);
     }
 
@@ -136,7 +131,44 @@ public class PersonalChatMessagesVewModel : MvxViewModel, IImprovedMvxViewModel
                 throw new ArgumentNullException(nameof(MyAccount));
             }
 
+            if (message.AppUserId == MyAccount.Id)
+            {
+                return;
+            }
+
             await _hubConnection.SubscribeMessageHasBeenReadAsync(message.Id, MyAccount.Id);
+
+            await AsyncDispatcher.ExecuteOnMainThreadAsync(() =>
+            {
+                if (Messages == null)
+                {
+                    return;
+                }
+
+                var targetMessage = Messages.FirstOrDefault(x => x.Id == message.Id);
+                if (targetMessage == null)
+                {
+                    return;
+                }
+
+                var neMessage = new PersonalChatMessageModel
+                {
+                    Id = targetMessage.Id,
+                    Username = targetMessage.Username,
+                    Message = targetMessage.Message,
+                    Time = targetMessage.Time,
+                    Status = 2,
+                    Type = targetMessage.Type,
+                    ChatId = targetMessage.ChatId,
+                    AppUserId = targetMessage.AppUserId
+                };
+
+                var index = Messages.IndexOf(targetMessage);
+                if (index > -1)
+                {
+                    Messages[index] = neMessage;
+                }
+            });
         }
         catch (ArgumentNullException ex)
         {
@@ -164,7 +196,8 @@ public class PersonalChatMessagesVewModel : MvxViewModel, IImprovedMvxViewModel
             }
 
             await hubConnection.ConnectToChatHubAsync($"{Hubs.Port}{Hubs.PersonalChatAddress}");
-            await hubConnection.JoinChatRoom(SelectedChat.Id);
+            await hubConnection.JoinChatRoomAsync(SelectedChat.Id);
+
             hubConnection.SubscribeMessagesUpdated<PersonalChatMessageModel>(SelectedChat.Id, MyAccount.Id, async (message) =>
             {
                 await AsyncDispatcher.ExecuteOnMainThreadAsync(() =>

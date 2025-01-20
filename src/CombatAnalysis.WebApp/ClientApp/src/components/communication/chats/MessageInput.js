@@ -12,13 +12,13 @@ const MessageInput = ({ hubConnection, unreadMessageHubConnection, chat, meInCha
             return;
         }
 
-        hubConnection.on("MessageDelivered", async () => {
-            await unreadMessageHubConnection?.invoke("SendUnreadMessageIncreased", chat.id);
+        hubConnection.on("ReceiveMessageDelivered", async () => {
+            await unreadMessageHubConnection?.invoke("SendUnreadMessageUpdated", chat.id);
         });
 
         return () => {
             if (hubConnection) {
-                hubConnection.off("MessageDelivered");
+                hubConnection.off("ReceiveMessageDelivered");
             }
         }
     }, [hubConnection]);

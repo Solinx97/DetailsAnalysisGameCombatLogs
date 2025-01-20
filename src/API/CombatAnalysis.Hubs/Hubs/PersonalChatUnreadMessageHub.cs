@@ -44,11 +44,11 @@ internal class PersonalChatUnreadMessageHub : Hub
         }
     }
 
-    public async Task SendUnreadMessageIncreased(int chatId)
+    public async Task SendUnreadMessageUpdated(int chatId)
     {
         try
         {
-            await Clients.OthersInGroup(chatId.ToString()).SendAsync("ReceiveUnreadMessageIncreased", chatId);
+            await Clients.OthersInGroup(chatId.ToString()).SendAsync("ReceiveUnreadMessageUpdated", chatId);
         }
         catch (Exception ex)
         {
@@ -75,7 +75,7 @@ internal class PersonalChatUnreadMessageHub : Hub
                 throw new ArgumentNullException(nameof(messagesCount));
             }
 
-            await Clients.Group(chatId.ToString()).SendAsync("ReceiveUnreadMessageCount", chatId, messagesCount.Count);
+            await Clients.Group(chatId.ToString()).SendAsync("ReceiveUnreadMessage", chatId, appUserId, messagesCount.Count);
         }
         catch (ArgumentNullException ex)
         {

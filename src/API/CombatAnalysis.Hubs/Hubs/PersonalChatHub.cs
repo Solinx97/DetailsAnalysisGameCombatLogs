@@ -73,7 +73,7 @@ internal class PersonalChatHub : Hub
                 throw new ArgumentNullException(nameof(createdMessage));
             }
 
-            await Clients.Caller.SendAsync("MessageDelivered");
+            await Clients.Caller.SendAsync("ReceiveMessageDelivered");
 
             await Clients.Group(chatId.ToString()).SendAsync("ReceiveMessage", createdMessage);
         }

@@ -3,10 +3,10 @@ import { useGetUserByIdQuery } from '../../../store/api/user/Account.api';
 import User from '../User';
 import ChatMessageMenu from './ChatMessageMenu';
 
-const ChatMessageTitle = ({ me, itIsMe, setEditModeIsOn, openMessageMenu, editModeIsOn, deleteMessageAsync, message }) => {
+const ChatMessageTitle = ({ me, itIsMe, setEditModeIsOn, openMessageMenu, editModeIsOn, deleteMessageAsync, message, messageOwnerId }) => {
     const [userInformation, setUserInformation] = useState(null);
 
-    const { data: user, isLoading } = useGetUserByIdQuery(message?.appUserId);
+    const { data: user, isLoading } = useGetUserByIdQuery(messageOwnerId);
 
     const getMessageTime = () => {
         const getDate = new Date(message?.time);

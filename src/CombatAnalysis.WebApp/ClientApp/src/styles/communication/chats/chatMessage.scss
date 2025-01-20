@@ -55,6 +55,11 @@
                     box-shadow: 2px 2px green;
                     background: #088395;
                 }
+
+                &__unread {
+                    box-shadow: 2px 2px white;
+                    opacity: 0.75;
+                }
             }
 
             .text-of-message:hover {

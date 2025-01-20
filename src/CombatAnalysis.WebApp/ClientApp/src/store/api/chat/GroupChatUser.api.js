@@ -17,6 +17,10 @@ export const GroupChatUserApi = ChatApi.injectEndpoints({
             }),
             invalidatesTags: (result, error) => [{ type: 'GroupChatUser', result }],
         }),
+        getGroupChatUserById: builder.query({
+            query: (id) => `/GroupChatUser/${id}`,
+            providesTags: (result, error, id) => [{ type: 'GroupChatUser', id }],
+        }),
         findMeInChat: builder.query({
             query: (arg) => {
                 const { chatId, appUserId } = arg;
@@ -40,6 +44,7 @@ export const GroupChatUserApi = ChatApi.injectEndpoints({
 export const {
     useCreateGroupChatUserAsyncMutation,
     useRemoveGroupChatUserAsyncMutation,
+    useGetGroupChatUserByIdQuery,
     useFindMeInChatQuery,
     useFindGroupChatUserByUserIdQuery,
     useLazyFindGroupChatUserByUserIdQuery,

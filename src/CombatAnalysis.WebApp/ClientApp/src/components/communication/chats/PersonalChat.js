@@ -209,7 +209,6 @@ const PersonalChat = ({ chat, me, setSelectedChat, companionId, unreadMessageHub
                                     reviewerId={me.id}
                                     messageOwnerId={message.appUserId}
                                     message={message}
-                                    messageStatus={message.status}
                                     updateChatMessageAsync={updateChatMessageAsync}
                                     deleteMessageAsync={deleteMessageAsync}
                                     hubConnection={hubConnection}

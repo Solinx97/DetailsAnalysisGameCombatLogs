@@ -9,7 +9,7 @@ const messageType = {
     log: 2
 };
 
-const ChatMessage = ({ me, reviewerId, messageOwnerId, message, messageStatus, updateChatMessageAsync, deleteMessageAsync, hubConnection, unreadMessageHubConnection }) => {
+const ChatMessage = ({ me, reviewerId, messageOwnerId, message, updateChatMessageAsync, deleteMessageAsync, hubConnection, unreadMessageHubConnection }) => {
     return (
         <>
             {message.type === messageType["default"]
@@ -18,7 +18,6 @@ const ChatMessage = ({ me, reviewerId, messageOwnerId, message, messageStatus, u
                     reviewerId={reviewerId}
                     messageOwnerId={messageOwnerId}
                     message={message}
-                    messageStatus={messageStatus}
                     updateChatMessageAsync={updateChatMessageAsync}
                     deleteMessageAsync={deleteMessageAsync}
                     hubConnection={hubConnection}
