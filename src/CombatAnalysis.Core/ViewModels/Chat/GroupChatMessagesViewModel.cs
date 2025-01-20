@@ -52,6 +52,9 @@ public class GroupChatMessagesViewModel : MvxViewModel, IImprovedMvxViewModel
         _logger = logger;
 
         SendMessageCommand = new MvxAsyncCommand(SendMessageAsync);
+        MessageHasBeenReadCommand = new MvxAsyncCommand<GroupChatMessageModel>(SendMessageHasBeenReadAsync);
+        SendMessageKeyDownCommand = new MvxAsyncCommand<string>(SendMessageKeyDownAsync);
+
         ShowChatMenuCommand = new MvxCommand(() => ChatMenuIsVisibly = !ChatMenuIsVisibly);
         OpenInviteToChatCommand = new MvxAsyncCommand(OpenInviteToChatAsync);
         InviteToChatCommand = new MvxAsyncCommand(InviteToChatAsync);
@@ -75,6 +78,10 @@ public class GroupChatMessagesViewModel : MvxViewModel, IImprovedMvxViewModel
     #region Commands
 
     public IMvxAsyncCommand SendMessageCommand { get; set; }
+
+    public IMvxAsyncCommand<GroupChatMessageModel> MessageHasBeenReadCommand { get; set; }
+
+    public IMvxAsyncCommand<string> SendMessageKeyDownCommand { get; set; }
 
     public IMvxCommand ShowChatMenuCommand { get; set; }
 
@@ -255,69 +262,12 @@ public class GroupChatMessagesViewModel : MvxViewModel, IImprovedMvxViewModel
 
     public override void ViewDestroy(bool viewFinishing = true)
     {
+        if (_hubConnection != null)
+        {
+            Task.Run(async () => await _hubConnection.LeaveFromChatRoomAsync(SelectedChat?.Id ?? 0));
+        }
+
         base.ViewDestroy(viewFinishing);
-    }
-
-    public async Task SendMessageHasBeenReadAsync(GroupChatMessageModel message)
-    {
-        try
-        {
-            if (_hubConnection == null)
-            {
-                throw new ArgumentNullException(nameof(_hubConnection));
-            }
-            else if (string.IsNullOrEmpty(MeInChatId))
-            {
-                throw new ArgumentNullException(nameof(MeInChatId));
-            }
-
-            if (message.GroupChatUserId == MeInChatId)
-            {
-                return;
-            }
-
-            await _hubConnection.SubscribeMessageHasBeenReadAsync(message.Id, MeInChatId);
-
-            await AsyncDispatcher.ExecuteOnMainThreadAsync(() =>
-            {
-                if (Messages == null)
-                {
-                    return;
-                }
-
-                var targetMessage = Messages.FirstOrDefault(x => x.Id == message.Id);
-                if (targetMessage == null)
-                {
-                    return;
-                }
-
-                var neMessage = new GroupChatMessageModel
-                {
-                    Id = targetMessage.Id,
-                    Username = targetMessage.Username,
-                    Message = targetMessage.Message,
-                    Time = targetMessage.Time,
-                    Status = 2,
-                    Type = targetMessage.Type,
-                    ChatId = targetMessage.ChatId,
-                    GroupChatUserId = targetMessage.GroupChatUserId
-                };
-
-                var index = Messages.IndexOf(targetMessage);
-                if (index > -1)
-                {
-                    Messages[index] = neMessage;
-                }
-            });
-        }
-        catch (ArgumentNullException ex)
-        {
-            _logger.LogError(ex, ex.Message);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, ex.Message);
-        }
     }
 
     public async Task InitChatSignalRAsync(IChatHubHelper hubConnection)
@@ -377,6 +327,79 @@ public class GroupChatMessagesViewModel : MvxViewModel, IImprovedMvxViewModel
                 }
             }
         });
+    }
+
+    private async Task SendMessageHasBeenReadAsync(GroupChatMessageModel? message)
+    {
+        try
+        {
+            if (message == null)
+            {
+                throw new ArgumentNullException(nameof(message));
+            }
+            else if (_hubConnection == null)
+            {
+                throw new ArgumentNullException(nameof(_hubConnection));
+            }
+            else if (string.IsNullOrEmpty(MeInChatId))
+            {
+                throw new ArgumentNullException(nameof(MeInChatId));
+            }
+
+            if (message.GroupChatUserId == MeInChatId)
+            {
+                return;
+            }
+
+            await _hubConnection.SubscribeMessageHasBeenReadAsync(message.Id, MeInChatId);
+
+            await AsyncDispatcher.ExecuteOnMainThreadAsync(() =>
+            {
+                if (Messages == null)
+                {
+                    return;
+                }
+
+                var targetMessage = Messages.FirstOrDefault(x => x.Id == message.Id);
+                if (targetMessage == null)
+                {
+                    return;
+                }
+
+                var neMessage = new GroupChatMessageModel
+                {
+                    Id = targetMessage.Id,
+                    Username = targetMessage.Username,
+                    Message = targetMessage.Message,
+                    Time = targetMessage.Time,
+                    Status = 2,
+                    Type = targetMessage.Type,
+                    ChatId = targetMessage.ChatId,
+                    GroupChatUserId = targetMessage.GroupChatUserId
+                };
+
+                var index = Messages.IndexOf(targetMessage);
+                if (index > -1)
+                {
+                    Messages[index] = neMessage;
+                }
+            });
+        }
+        catch (ArgumentNullException ex)
+        {
+            _logger.LogError(ex, ex.Message);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, ex.Message);
+        }
+    }
+
+    private async Task SendMessageKeyDownAsync(string? message)
+    {
+        Message = message;
+
+        await SendMessageAsync();
     }
 
     private async Task SendMessageAsync()

@@ -17,4 +17,10 @@ public interface IChatHubHelper
     void SubscribeMessagesUpdated<T>(int chatId, string meInChatId, Action<T> action) where T : class;
 
     Task SubscribeMessageHasBeenReadAsync(int messageId, string appUserId);
+
+    Task LeaveFromChatRoomAsync(int chatId);
+
+    Task LeaveFromUnreadMessageRoomAsync(int chatId);
+
+    Task StopAsync();
 }

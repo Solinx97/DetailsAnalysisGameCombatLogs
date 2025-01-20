@@ -9,7 +9,6 @@ using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
 using MvvmCross.Commands;
 using MvvmCross.ViewModels;
-using System;
 using System.Collections.ObjectModel;
 using System.Net.Http.Json;
 
@@ -40,6 +39,8 @@ public class PersonalChatMessagesVewModel : MvxViewModel, IImprovedMvxViewModel
         _logger = logger;
 
         SendMessageCommand = new MvxAsyncCommand(SendMessageAsync);
+        MessageHasBeenReadCommand = new MvxAsyncCommand<PersonalChatMessageModel>(SendMessageHasBeenReadAsync);
+        SendMessageKeyDownCommand = new MvxAsyncCommand<string>(SendMessageKeyDownAsync);
 
         Messages = [];
         _allMessages = [];
@@ -56,6 +57,10 @@ public class PersonalChatMessagesVewModel : MvxViewModel, IImprovedMvxViewModel
     #region Commands
 
     public IMvxAsyncCommand SendMessageCommand { get; set; }
+
+    public IMvxAsyncCommand<PersonalChatMessageModel> MessageHasBeenReadCommand { get; set; }
+
+    public IMvxAsyncCommand<string> SendMessageKeyDownCommand { get; set; }
 
     #endregion
 
@@ -115,14 +120,79 @@ public class PersonalChatMessagesVewModel : MvxViewModel, IImprovedMvxViewModel
 
     public override void ViewDestroy(bool viewFinishing = true)
     {
+        if (_hubConnection != null)
+        {
+            Task.Run(async () => await _hubConnection.LeaveFromChatRoomAsync(SelectedChat?.Id ?? 0));
+        }
+
         base.ViewDestroy(viewFinishing);
     }
 
-    public async Task SendMessageHasBeenReadAsync(PersonalChatMessageModel message)
+    public async Task InitChatSignalRAsync(IChatHubHelper hubConnection)
     {
         try
         {
-            if (_hubConnection == null)
+            _hubConnection = hubConnection;
+
+            if (SelectedChat == null)
+            {
+                throw new ArgumentNullException(nameof(SelectedChat));
+            }
+            else if (MyAccount == null)
+            {
+                throw new ArgumentNullException(nameof(MyAccount));
+            }
+
+            await hubConnection.ConnectToChatHubAsync($"{Hubs.Port}{Hubs.PersonalChatAddress}");
+            await hubConnection.JoinChatRoomAsync(SelectedChat.Id);
+
+            hubConnection.SubscribeMessagesUpdated<PersonalChatMessageModel>(SelectedChat.Id, MyAccount.Id, async (message) =>
+            {
+                await AsyncDispatcher.ExecuteOnMainThreadAsync(() =>
+                {
+                    Messages?.Insert(0, message);
+                });
+            });
+        }
+        catch (ArgumentNullException ex)
+        {
+            _logger.LogError(ex, ex.Message);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, ex.Message);
+        }
+    }
+
+    private async Task FillAsync()
+    {
+        await AsyncDispatcher.ExecuteOnMainThreadAsync(() =>
+        {
+            if (_allMessages == null || Messages == null)
+            {
+                return;
+            }
+
+            foreach (var item in _allMessages)
+            {
+                if (item.ChatId == SelectedChat?.Id
+                    && !Messages.Any(x => x.Id == item.Id))
+                {
+                    Messages.Add(item);
+                }
+            }
+        });
+    }
+
+    private async Task SendMessageHasBeenReadAsync(PersonalChatMessageModel? message)
+    {
+        try
+        {
+            if (message == null)
+            {
+                throw new ArgumentNullException(nameof(message));
+            }
+            else if (_hubConnection == null)
             {
                 throw new ArgumentNullException(nameof(_hubConnection));
             }
@@ -180,60 +250,11 @@ public class PersonalChatMessagesVewModel : MvxViewModel, IImprovedMvxViewModel
         }
     }
 
-    public async Task InitChatSignalRAsync(IChatHubHelper hubConnection)
+    private async Task SendMessageKeyDownAsync(string? message)
     {
-        try
-        {
-            _hubConnection = hubConnection;
+        Message = message;
 
-            if (SelectedChat == null)
-            {
-                throw new ArgumentNullException(nameof(SelectedChat));
-            }
-            else if (MyAccount == null)
-            {
-                throw new ArgumentNullException(nameof(MyAccount));
-            }
-
-            await hubConnection.ConnectToChatHubAsync($"{Hubs.Port}{Hubs.PersonalChatAddress}");
-            await hubConnection.JoinChatRoomAsync(SelectedChat.Id);
-
-            hubConnection.SubscribeMessagesUpdated<PersonalChatMessageModel>(SelectedChat.Id, MyAccount.Id, async (message) =>
-            {
-                await AsyncDispatcher.ExecuteOnMainThreadAsync(() =>
-                {
-                    Messages?.Insert(0, message);
-                });
-            });
-        }
-        catch (ArgumentNullException ex)
-        {
-            _logger.LogError(ex, ex.Message);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, ex.Message);
-        }
-    }
-
-    private async Task FillAsync()
-    {
-        await AsyncDispatcher.ExecuteOnMainThreadAsync(() =>
-        {
-            if (_allMessages == null || Messages == null)
-            {
-                return;
-            }
-
-            foreach (var item in _allMessages)
-            {
-                if (item.ChatId == SelectedChat?.Id
-                    && !Messages.Any(x => x.Id == item.Id))
-                {
-                    Messages.Add(item);
-                }
-            }
-        });
+        await SendMessageAsync();
     }
 
     private async Task SendMessageAsync()

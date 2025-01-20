@@ -91,12 +91,12 @@ internal class PersonalChatUnreadMessageHub : Hub
         }
     }
 
-    public async Task LeaveFromRoom(string room)
+    public async Task LeaveFromRoom(int room)
     {
         var refreshToken = Context.GetHttpContext()?.Request.Cookies[nameof(AuthenticationCookie.RefreshToken)] ?? string.Empty;
         if (!string.IsNullOrEmpty(refreshToken))
         {
-            await Groups.RemoveFromGroupAsync(Context.ConnectionId, room);
+            await Groups.RemoveFromGroupAsync(Context.ConnectionId, room.ToString());
         }
     }
 }

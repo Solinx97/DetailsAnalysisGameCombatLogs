@@ -79,14 +79,14 @@ internal class SecurityStorage
 
             var encryptedData = File.ReadAllBytes(_refreshTokenFilePath);
             var decryptedData = AESEncryption.DecryptStringFromBytes(encryptedData);
-            _memoryCache.Set(nameof(MemoryCacheValue.RefreshToken), decryptedData, new MemoryCacheEntryOptions { Size = 10 });
+            _memoryCache.Set(nameof(MemoryCacheValue.RefreshToken), decryptedData, TimeSpan.FromDays(1));
 
             encryptedData = File.ReadAllBytes(_accessTokenFilePath);
             decryptedData = AESEncryption.DecryptStringFromBytes(encryptedData);
-            _memoryCache.Set(nameof(MemoryCacheValue.AccessToken), decryptedData, new MemoryCacheEntryOptions { Size = 10 });
+            _memoryCache.Set(nameof(MemoryCacheValue.AccessToken), decryptedData, TimeSpan.FromDays(1));
 
             var user = await GetUserByAccessTokenAsync(decryptedData);
-            _memoryCache.Set(nameof(MemoryCacheValue.User), user, new MemoryCacheEntryOptions { Size = 50 });
+            _memoryCache.Set(nameof(MemoryCacheValue.User), user, TimeSpan.FromDays(1));
 
             return user;
         }

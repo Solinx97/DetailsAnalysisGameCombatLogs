@@ -152,6 +152,39 @@ internal class ChatHubHelper : IChatHubHelper
         await _chatHubConnection.SendAsync("SendMessageHasBeenRead", messageId, appUserId);
     }
 
+    public async Task LeaveFromChatRoomAsync(int chatId)
+    {
+        if (_chatHubConnection == null)
+        {
+            return;
+        }
+
+        await _chatHubConnection.SendAsync("LeaveFromRoom", chatId);
+    }
+
+    public async Task LeaveFromUnreadMessageRoomAsync(int chatId)
+    {
+        if (_chatMessagesCountHubConnection == null)
+        {
+            return;
+        }
+
+        await _chatMessagesCountHubConnection.SendAsync("LeaveFromRoom", chatId);
+    }
+
+    public async Task StopAsync()
+    {
+        if (_chatMessagesCountHubConnection != null)
+        {
+            await _chatMessagesCountHubConnection.StopAsync();
+        }
+
+        if (_chatHubConnection != null)
+        {
+            await _chatHubConnection.StopAsync();
+        }
+    }
+
     private static async Task<HubConnection> CreateHubConnectionAsync(string hubURL, string refreshToken, string accessToken)
     {
         var cookieContainer = new CookieContainer();

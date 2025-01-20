@@ -76,7 +76,7 @@ public class App : MvxApplication
             mc.AddProfile(new CombatAnalysisMapper());
         });
 
-        var memoryCacheOptions = new MemoryCacheOptions { SizeLimit = 2048 };
+        var memoryCacheOptions = new MemoryCacheOptions();
         var memoryCache = new MemoryCache(memoryCacheOptions);
 
         if (Mvx.IoCProvider != null)

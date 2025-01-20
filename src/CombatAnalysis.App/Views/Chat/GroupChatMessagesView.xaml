@@ -193,7 +193,8 @@
                 <Grid>
                     <TextBlock Margin="15 0 120 0" VerticalAlignment="Center" Foreground="White" Panel.ZIndex="1"
                                    IsHitTestVisible="False" Text="{loc:Loc TypeMessage}" Visibility="{Binding ElementName=txtMessage, Path=Text.IsEmpty, Converter={StaticResource BoolToVisibility}}"/>
-                    <TextBox Name="txtMessage" Style="{StaticResource messageTextBox}" Foreground="White" Text="{Binding Message}"/>
+                    <TextBox Name="txtMessage" Style="{StaticResource messageTextBox}" Text="{Binding Message}" Foreground="White"
+                             KeyDown="SendMessageKeyDown"/>
 
                     <StackPanel Orientation="Horizontal" Margin="0 0 8 0" HorizontalAlignment="Right" VerticalAlignment="Center">
                         <Button IsEnabled="False" Style="{StaticResource textBoxButton}" ToolTip="{loc:Loc Copy}">
@@ -223,7 +224,7 @@
                     <ColumnDefinition Width="auto"/>
                 </Grid.ColumnDefinitions>
 
-                <TextBox Style="{StaticResource messageTextBox}" Text="{Binding SelectedMessage.Message}"/>
+                <TextBox Style="{StaticResource messageTextBox}" Text="{Binding SelectedMessage.Message}" Foreground="White" />
 
                 <Button Grid.Column="1" Margin="5 0 0 0" Style="{StaticResource textBoxButton}" mvx:Bi.nd="Command EditMessageCommand" ToolTip="{loc:Loc SaveEdit}">
                     <Icon:PackIconMaterial Kind="Pen" Margin="3 0 0 2" Width="16" Foreground="Green">

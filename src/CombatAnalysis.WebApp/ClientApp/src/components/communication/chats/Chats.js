@@ -64,6 +64,30 @@ const Chats = () => {
         connectToChat();
     }, [meInGroupChats]);
 
+    useEffect(() => {
+        return () => {
+            if (personalHubConnection) {
+                const disconnectFromChat = async () => {
+                    await personalHubConnection.stop();
+                }
+
+                disconnectFromChat();
+            }
+        }
+    }, [personalHubConnection]);
+
+    useEffect(() => {
+        return () => {
+            if (groupHubConnection) {
+                const disconnectFromChat = async () => {
+                    await groupHubConnection.stop();
+                }
+
+                disconnectFromChat();
+            }
+        }
+    }, [groupHubConnection]);
+
     const connectToPersonalChatAsync = async () => {
         if (personalHubConnection !== null) {
             return;

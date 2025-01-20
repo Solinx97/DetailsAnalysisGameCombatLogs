@@ -1,7 +1,6 @@
 ﻿using CombatAnalysis.Core.Models.Chat;
 using CombatAnalysis.Core.ViewModels.Chat;
 using MvvmCross.Platforms.Wpf.Views;
-using System.Threading.Tasks;
 using System.Windows.Controls;
 
 namespace CombatAnalysis.App.Views.Chat;
@@ -30,7 +29,25 @@ public partial class GroupChatMessagesView : MvxWpfView
         var groupChatMessagesVM = DataContext as GroupChatMessagesViewModel;
         if (groupChatMessagesVM != null)
         {
-            Task.Run(async () => await groupChatMessagesVM.SendMessageHasBeenReadAsync(groupChatMessage));
+            groupChatMessagesVM.MessageHasBeenReadCommand.Execute(groupChatMessage);
+        }
+    }
+
+    private void SendMessageKeyDown(object sender, System.Windows.Input.KeyEventArgs e)
+    {
+        var item = sender as TextBox;
+        if (item == null)
+        {
+            return;
+        }
+
+        if (e.Key == System.Windows.Input.Key.Enter)
+        {
+            var groupChatMessagesVM = DataContext as GroupChatMessagesViewModel;
+            if (groupChatMessagesVM != null)
+            {
+                groupChatMessagesVM.SendMessageKeyDownCommand.Execute(item.Text);
+            }
         }
     }
 }

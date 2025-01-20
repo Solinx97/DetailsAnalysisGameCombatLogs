@@ -7,9 +7,9 @@ import {
     useUpdateGroupChatMessageAsyncMutation
 } from '../../../store/api/chat/GroupChatMessage.api';
 import Loading from '../../Loading';
-import GroupChatMessage from './GroupChatMessage';
 import GroupChatAddUser from './GroupChatAddUser';
 import GroupChatMenu from './GroupChatMenu';
+import GroupChatMessage from './GroupChatMessage';
 import GroupChatTitle from './GroupChatTitle';
 import MessageInput from './MessageInput';
 
@@ -26,6 +26,7 @@ const GroupChat = ({ chat, me, setSelectedChat, unreadMessageHubConnection }) =>
     const hubURL = `${process.env.REACT_APP_HUBS_URL}${process.env.REACT_APP_HUBS_GROUP_CHAT_ADDRESS}`;
 
     const [hubConnection, setHubConnection] = useState(null);
+
     const [showAddPeople, setShowAddPeople] = useState(false);
     const [settingsIsShow, setSettingsIsShow] = useState(false);
     const [groupChatUsersId, setGroupChatUsersId] = useState([]);
@@ -118,14 +119,14 @@ const GroupChat = ({ chat, me, setSelectedChat, unreadMessageHubConnection }) =>
 
     useEffect(() => {
         return () => {
-            const disconnectFromChat = async () => {
-                if (hubConnection) {
-                    await hubConnection.invoke("LeaveFromRoom", `${chat.id}`);
+            if (hubConnection) {
+                const disconnectFromChat = async () => {
+                    await hubConnection.invoke("LeaveFromRoom", chat?.id);
                     await hubConnection.stop();
                 }
-            }
 
-            disconnectFromChat();
+                disconnectFromChat();
+            }
         }
     }, [hubConnection]);
 

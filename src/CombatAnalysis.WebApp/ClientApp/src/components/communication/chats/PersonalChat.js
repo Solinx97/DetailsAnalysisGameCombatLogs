@@ -24,6 +24,7 @@ const PersonalChat = ({ chat, me, setSelectedChat, companionId, unreadMessageHub
     const pageSizeRef = useRef(process.env.REACT_APP_CHAT_PAGE_SIZE);
 
     const [hubConnection, setHubConnection] = useState(null);
+
     const [haveMoreMessages, setHaveMoreMessage] = useState(false);
     const [currentMessages, setCurrentMessages] = useState(null);
     const [messagesIsLoaded, setMessagesIsLoaded] = useState(false);
@@ -100,14 +101,14 @@ const PersonalChat = ({ chat, me, setSelectedChat, companionId, unreadMessageHub
 
     useEffect(() => {
         return () => {
-            const disconnectFromChat = async () => {
-                if (hubConnection) {
-                    await hubConnection.invoke("LeaveFromRoom", `${chat.id}`);
+            if (hubConnection) {
+                const disconnectFromChat = async () => {
+                    await hubConnection.invoke("LeaveFromRoom", chat?.id);
                     await hubConnection.stop();
                 }
-            }
 
-            disconnectFromChat();
+                disconnectFromChat();
+            }
         }
     }, [hubConnection]);
 

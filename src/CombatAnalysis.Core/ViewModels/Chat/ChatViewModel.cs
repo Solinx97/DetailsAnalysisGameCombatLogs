@@ -164,6 +164,8 @@ public class ChatViewModel : ParentTemplate
                 PersonalChatMessagesTemplate?.ViewDestroy();
                 PersonalChatMessagesTemplate = null;
 
+                GroupChatMessagesTemplate?.ViewDestroy();
+
                 GroupChatMessagesTemplate = Mvx.IoCProvider?.IoCConstruct<GroupChatMessagesViewModel>();
                 GroupChatMessagesTemplate?.Handler.PropertyUpdate<GroupChatMessagesViewModel>(GroupChatMessagesTemplate, nameof(GroupChatMessagesViewModel.SelectedChat), value.GroupChat);
 
@@ -190,6 +192,8 @@ public class ChatViewModel : ParentTemplate
 
                 GroupChatMessagesTemplate?.ViewDestroy();
                 GroupChatMessagesTemplate = null;
+
+                PersonalChatMessagesTemplate?.ViewDestroy();
 
                 PersonalChatMessagesTemplate = Mvx.IoCProvider?.IoCConstruct<PersonalChatMessagesVewModel>();
                 PersonalChatMessagesTemplate?.Handler.PropertyUpdate<PersonalChatMessagesVewModel>(PersonalChatMessagesTemplate, nameof(PersonalChatMessagesVewModel.SelectedChat), value.PersonalChat);
@@ -282,6 +286,21 @@ public class ChatViewModel : ParentTemplate
 
         Task.Run(LoadGroupChatsAsync);
         Task.Run(LoadPersonalChatsAsync);
+    }
+
+    public override void ViewDestroy(bool viewFinishing = true)
+    {
+        if (_personalChatHubConnection != null)
+        {
+            Task.Run(_personalChatHubConnection.StopAsync);
+        }
+
+        if (_groupChatHubConnection != null)
+        {
+            Task.Run(_groupChatHubConnection.StopAsync);
+        }
+
+        base.ViewDestroy(viewFinishing);
     }
 
     private async Task CreateNewPersonalChatAsync()
