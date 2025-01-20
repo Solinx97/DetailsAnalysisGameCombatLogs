@@ -1,6 +1,6 @@
 ﻿import { faCloudArrowUp, faGear, faPen, faPhone } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useUpdateGroupChatAsyncMutation } from '../../../store/api/chat/GroupChat.api';
 
@@ -8,11 +8,18 @@ const GroupChatTitle = ({ chat, me, settingsIsShow, setSettingsIsShow, haveMoreM
     const navigate = useNavigate();
 
     const [editNameOn, setEditNameOn] = useState(false);
-    const [chatName, setChatName] = useState(chat.name);
+    const [chatName, setChatName] = useState("");
 
     const chatNameInput = useRef(null);
 
     const [updateGroupChatAsyncMut] = useUpdateGroupChatAsyncMutation();
+
+    useEffect(() => {
+        if (chat) {
+            setChatName(chat.name);
+        }
+    }, [chat]);
+
 
     const updateGroupChatNameAsync = async () => {
         const unblockedObject = Object.assign({}, chat);

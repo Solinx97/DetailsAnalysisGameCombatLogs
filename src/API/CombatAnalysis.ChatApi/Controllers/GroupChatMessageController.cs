@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using CombatAnalysis.ChatApi.Enums;
 using CombatAnalysis.ChatApi.Models;
 using CombatAnalysis.ChatBL.DTO;
 using CombatAnalysis.ChatBL.Interfaces;
@@ -87,7 +88,10 @@ public class GroupChatMessageController : ControllerBase
             var map = _mapper.Map<GroupChatMessageDto>(chatMessage);
             var createdGroupChatMessage = await _chatMessageService.CreateAsync(map);
 
-            await UpdateMessagesCountAsync(chatMessage.ChatId, chatMessage.GroupChatUserId);
+            if (chatMessage.Type == (int)MessageType.Default)
+            {
+                await UpdateMessagesCountAsync(chatMessage.ChatId, chatMessage.GroupChatUserId);
+            }
 
             await _chatTransactionService.CommitTransactionAsync();
 

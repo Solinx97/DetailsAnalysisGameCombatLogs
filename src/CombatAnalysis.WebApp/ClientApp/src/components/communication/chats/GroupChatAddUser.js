@@ -1,7 +1,7 @@
 ﻿import { useState } from 'react';
 import { useUpdateGroupChatAsyncMutation } from '../../../store/api/chat/GroupChat.api';
 import {
-    useCreateGroupChatMessageCountAsyncMutation, useLazyFindGroupChatMessageCountQuery,
+    useLazyFindGroupChatMessageCountQuery,
     useUpdateGroupChatMessageCountAsyncMutation
 } from '../../../store/api/chat/GroupChatMessagCount.api';
 import {
@@ -23,7 +23,6 @@ const GroupChatAddUser = ({ chat, me, groupChatUsersId, groupChatUsers, messageT
     const [createGroupChatUserMutAsync] = useCreateGroupChatUserAsyncMutation();
     const [updateGroupChatMessageCountMut] = useUpdateGroupChatMessageCountAsyncMutation();
     const [getMessagesCount] = useLazyFindGroupChatMessageCountQuery();
-    const [createGroupChatCountAsyncMut] = useCreateGroupChatMessageCountAsyncMutation();
     const [createUnreadGroupChatMessageAsyncMut] = useCreateUnreadGroupChatMessageAsyncMutation();
 
     const [peopleToJoin, setPeopleToJoin] = useState([]);
@@ -37,12 +36,10 @@ const GroupChatAddUser = ({ chat, me, groupChatUsersId, groupChatUsers, messageT
                 chatId: chat.id,
             };
 
-            const created = await createGroupChatUserMutAsync(newGroupChatUser);
-            if (created.data !== undefined) {
-                await createGroupChatCountAsync(chat.id, created.data.id);
-
+            const response = await createGroupChatUserMutAsync(newGroupChatUser);
+            if (response.data !== undefined) {
                 const systemMessage = `'${me?.username}' added '${peopleToJoin[i].username}' to chat`;
-                await createMessageAsync(systemMessage, messageType["system"]);
+                await createMessageAsync(response.data, systemMessage, messageType["system"]);
             }
         }
 
@@ -50,25 +47,16 @@ const GroupChatAddUser = ({ chat, me, groupChatUsersId, groupChatUsers, messageT
         setShowAddPeople(false);
     }
 
-    const createGroupChatCountAsync = async (chatId, customerId) => {
-        const newMessagesCount = {
-            count: 0,
-            groupChatUserId: customerId,
-            chatId: +chatId,
-        };
-
-        await createGroupChatCountAsyncMut(newMessagesCount);
-    }
-
-    const createMessageAsync = async (message, type) => {
+    const createMessageAsync = async (chatUser, message, type) => {
         const today = new Date();
         const newMessage = {
             message: message,
+            username: chatUser.username,
             time: `${today.getHours()}:${today.getMinutes()}`,
             status: 0,
             type: type,
             chatId: chat.id,
-            appUserId: me?.id
+            groupChatUserId: chatUser.id
         };
 
         const createdMessage = await createGroupChatMessageAsync(newMessage);
