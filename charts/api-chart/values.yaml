@@ -8,61 +8,91 @@ service:
     targetPort: 80
 app1:
     hostName: api.analysis.user.com
-    name: user-api
+    name: user
     replicas: 2
     autoscaling: 
         enabled: true
         min: 2
         max: 6
     container:
-        name: user-api
+        name: user
         image: solinx/user-api
-        tag: 0.2.5
+        tag: 0.3.0
         port: 80
     ingress:
         port: 80
 app2:
     hostName: api.analysis.communication.com
-    name: communication-api
+    name: communication
     replicas: 2
     autoscaling: 
         enabled: false
         min: 2
         max: 6
     container:
-        name: communication-api
+        name: communication
         image: solinx/communication-api
-        tag: 0.2.5
+        tag: 0.3.0
         port: 80
     ingress:
         port: 80
 app3:
     hostName: api.analysis.chat.com
-    name: chat-api
+    name: chat
     replicas: 2
     autoscaling: 
         enabled: false
         min: 2
         max: 6
     container:
-        name: chat-api
+        name: chat
         image: solinx/chat-api
-        tag: 0.2.5
+        tag: 0.3.0
         port: 80
     ingress:
         port: 80
 app4:
     hostName: api.analysis.parser.com
-    name: combat-parser-api
+    name: combat-parser
     replicas: 2
     autoscaling: 
         enabled: false
         min: 2
         max: 6
     container:
-        name: combat-parser-api
+        name: combat-parser
         image: solinx/combat-parser-api
-        tag: 0.2.5
+        tag: 0.3.0
+        port: 80
+    ingress:
+        port: 80
+app5:
+    hostName: api.analysis.health.com
+    name: health
+    replicas: 2
+    autoscaling: 
+        enabled: false
+        min: 2
+        max: 6
+    container:
+        name: health
+        image: solinx/health-api
+        tag: 0.2.0
+        port: 80
+    ingress:
+        port: 80
+app6:
+    hostName: analysis.chats.hub.com
+    name: chats-hub
+    replicas: 2
+    autoscaling: 
+        enabled: false
+        min: 2
+        max: 6
+    container:
+        name: chats-hub
+        image: solinx/chats-hub
+        tag: 0.1.0
         port: 80
     ingress:
         port: 80

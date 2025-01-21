@@ -56,18 +56,11 @@
   <Import Condition="'$(SQLDBExtensionsRefPath)' == ''" Project="$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v$(VisualStudioVersion)\SSDT\Microsoft.Data.Tools.Schema.SqlTasks.targets" />
   <ItemGroup>
     <Folder Include="Properties" />
-    <Folder Include="Tables" />
-    <Folder Include="Scripts" />
-    <Folder Include="InitialData" />
   </ItemGroup>
   <ItemGroup>
-    <Build Include="Tables\AuthorizationCodeChallenge.sql" />
-    <Build Include="Tables\Client.sql" />
-    <Build Include="Tables\IdentityUser.sql" />
-    <Build Include="Tables\RefreshToken.sql" />
+    <None Include="CombatAnalysis.Identity.publish.xml" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Scripts\DropDatabase.sql" />
-    <None Include="InitialData\InsertDeployment.sql" />
+    <None Include="InitialCreate.sql" />
   </ItemGroup>
 </Project>

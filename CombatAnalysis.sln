@@ -55,7 +55,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CombatAnalysis.ChatDAL", "s
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CombatAnalysis.ChatBL", "src\CombatAnalysis.ChatBL\CombatAnalysis.ChatBL.csproj", "{F4A28900-8C99-49BE-A5B8-1D316AF8DEAC}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "database", "database", "{66632169-3961-4A1C-995E-EF1115B71FD7}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "databases", "databases", "{66632169-3961-4A1C-995E-EF1115B71FD7}"
 EndProject
 Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "CombatAnalysis.CombatLog", "database\CombatAnalysis.CombatLog\CombatAnalysis.CombatLog.sqlproj", "{C77F3C4B-2DAF-4052-BA45-AF528734AA85}"
 EndProject

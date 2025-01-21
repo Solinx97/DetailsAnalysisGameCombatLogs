@@ -18,8 +18,4 @@
     <ProjectReference Include="..\..\CombatAnalysis.Identity\CombatAnalysis.Identity.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Controllers\" />
-  </ItemGroup>
-
 </Project>

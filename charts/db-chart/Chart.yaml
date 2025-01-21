@@ -1,6 +1,6 @@
 apiVersion: v2
-name: APIHelmChart
-description: Helm Chart for Combat analysis API
+name: DBHelmChart
+description: Helm Chart for Combat analysis Database
 type: application
 version: 0.1.0
 appVersion: "0.1.0"

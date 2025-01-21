@@ -7,7 +7,6 @@ public class CombatAnalysisIdentityContext : DbContext
 {
     public CombatAnalysisIdentityContext(DbContextOptions<CombatAnalysisIdentityContext> options) : base(options)
     {
-        Database.EnsureCreated();
     }
 
     public DbSet<AuthorizationCodeChallenge> AuthorizationCodeChallenge { get; set; }

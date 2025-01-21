@@ -10,7 +10,7 @@ resources:
 container:
     name: solinx-analysis-web-app
     image: solinx/solinx-analysis-web-app
-    tag: 0.2.5
+    tag: 0.3.0
     port: 80
 service:
     protocol: TCP
