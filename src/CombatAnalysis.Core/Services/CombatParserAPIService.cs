@@ -10,7 +10,7 @@ using System.Text;
 
 namespace CombatAnalysis.Core.Services;
 
-public class CombatParserAPIService
+internal class CombatParserAPIService : ICombatParserAPIService
 {
     private readonly IHttpClientHelper _httpClient;
     private readonly ILogger _logger;
@@ -263,42 +263,6 @@ public class CombatParserAPIService
             _logger.LogError(ex, "An unexpected error occurred: {Message}", ex.Message);
 
             return 0;
-        }
-    }
-
-    public async Task<IEnumerable<T>> LoadCombatDetailsAsync<T>(string address)
-        where T : class
-    {
-        try
-        {
-            var response = await _httpClient.GetAsync(address, CancellationToken.None);
-            response.EnsureSuccessStatusCode();
-
-            var details = await response.Content.ReadFromJsonAsync<IEnumerable<T>>();
-            if (details == null)
-            {
-                throw new ArgumentNullException(nameof(details));
-            }
-
-            return details;
-        }
-        catch (ArgumentNullException ex)
-        {
-            _logger.LogError(ex, ex.Message);
-
-            return new List<T>();
-        }
-        catch (HttpRequestException ex)
-        {
-            _logger.LogError(ex, "HTTP request error: {Message}", ex.Message);
-
-            return new List<T>();
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "An unexpected error occurred: {Message}", ex.Message);
-
-            return new List<T>();
         }
     }
 

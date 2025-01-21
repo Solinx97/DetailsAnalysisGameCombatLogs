@@ -288,7 +288,7 @@ public class GroupChatMessagesViewModel : MvxViewModel, IImprovedMvxViewModel
                 throw new ArgumentNullException(nameof(MeInChatId));
             }
 
-            await hubConnection.ConnectToChatHubAsync($"{Hubs.Port}{Hubs.GroupChatAddress}");
+            await hubConnection.ConnectToChatHubAsync($"{Hubs.Port}{Hubs.GroupChatMessagesAddress}");
             await hubConnection.JoinChatRoomAsync(SelectedChat.Id);
 
             hubConnection.SubscribeMessagesUpdated<GroupChatMessageModel>(SelectedChat.Id, MeInChatId, async (message) =>
@@ -427,7 +427,7 @@ public class GroupChatMessagesViewModel : MvxViewModel, IImprovedMvxViewModel
                 throw new ArgumentNullException(nameof(_hubConnection));
             }
 
-            await _hubConnection.SendMessageAsync(Message, SelectedChat.Id, MeInChatId, MyAccount.Username);
+            await _hubConnection.SendMessageAsync(Message, SelectedChat.Id, MeInChatId, MyAccount.Username, 0);
 
             Message = string.Empty;
         }

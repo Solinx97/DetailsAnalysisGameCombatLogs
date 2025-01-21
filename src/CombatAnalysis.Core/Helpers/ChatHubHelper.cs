@@ -12,7 +12,7 @@ internal class ChatHubHelper : IChatHubHelper
     private readonly IMemoryCache _memoryCache;
     private readonly ILogger _logger;
 
-    private HubConnection? _chatHubConnection;
+    private HubConnection? _chatMessagesHubConnection;
     private HubConnection? _chatMessagesCountHubConnection;
      
     public ChatHubHelper(IMemoryCache memoryCache, ILogger logger)
@@ -37,7 +37,7 @@ internal class ChatHubHelper : IChatHubHelper
                 throw new ArgumentNullException(nameof(accessToken));
             }
 
-            _chatHubConnection = await CreateHubConnectionAsync(hubURL, refreshToken, accessToken);
+            _chatMessagesHubConnection = await CreateHubConnectionAsync(hubURL, refreshToken, accessToken);
         }
         catch (ArgumentNullException ex)
         {
@@ -51,22 +51,29 @@ internal class ChatHubHelper : IChatHubHelper
 
     public async Task JoinChatRoomAsync(int chatId)
     {
-        if (_chatHubConnection == null)
+        if (_chatMessagesHubConnection == null)
         {
             return;
         }
 
-        await _chatHubConnection.SendAsync("JoinRoom", chatId);
+        await _chatMessagesHubConnection.SendAsync("JoinRoom", chatId);
     }
 
-    public async Task SendMessageAsync(string message, int chatId, string appUserId, string username)
+    public async Task SendMessageAsync(string message, int chatId, string appUserId, string username, int type = -1)
     {
-        if (_chatHubConnection == null)
+        if (_chatMessagesHubConnection == null)
         {
             return;
         }
 
-        await _chatHubConnection.SendAsync("SendMessage", message, chatId, appUserId, username);
+        if (type > -1)
+        {
+            await _chatMessagesHubConnection.SendAsync("SendMessage", message, chatId, type, appUserId, username);
+        }
+        else
+        {
+            await _chatMessagesHubConnection.SendAsync("SendMessage", message, chatId, appUserId, username);
+        }
     }
 
     public async Task ConnectToUnreadMessageHubAsync(string hubURL)
@@ -125,41 +132,41 @@ internal class ChatHubHelper : IChatHubHelper
     public void SubscribeMessagesUpdated<T>(int chatId, string meInChatId, Action<T> action)
         where T : class
     {
-        if (_chatHubConnection == null || _chatMessagesCountHubConnection == null)
+        if (_chatMessagesHubConnection == null || _chatMessagesCountHubConnection == null)
         {
             return;
         }
 
-        _chatHubConnection.On("ReceiveMessageHasBeenRead", async () =>
+        _chatMessagesHubConnection.On("ReceiveMessageHasBeenRead", async () =>
         {
             await _chatMessagesCountHubConnection.SendAsync("RequestUnreadMessages", chatId, meInChatId);
         });
 
-        _chatHubConnection.On("ReceiveMessage", action);
+        _chatMessagesHubConnection.On("ReceiveMessage", action);
 
-        _chatHubConnection.On("ReceiveMessageDelivered", async () => {
+        _chatMessagesHubConnection.On("ReceiveMessageDelivered", async () => {
             await _chatMessagesCountHubConnection.SendAsync("SendUnreadMessageUpdated", chatId);
         });
     }
 
     public async Task SubscribeMessageHasBeenReadAsync(int messageId, string appUserId)
     {
-        if (_chatHubConnection == null)
+        if (_chatMessagesHubConnection == null)
         {
             return;
         }
 
-        await _chatHubConnection.SendAsync("SendMessageHasBeenRead", messageId, appUserId);
+        await _chatMessagesHubConnection.SendAsync("SendMessageHasBeenRead", messageId, appUserId);
     }
 
     public async Task LeaveFromChatRoomAsync(int chatId)
     {
-        if (_chatHubConnection == null)
+        if (_chatMessagesHubConnection == null)
         {
             return;
         }
 
-        await _chatHubConnection.SendAsync("LeaveFromRoom", chatId);
+        await _chatMessagesHubConnection.SendAsync("LeaveFromRoom", chatId);
     }
 
     public async Task LeaveFromUnreadMessageRoomAsync(int chatId)
@@ -179,9 +186,9 @@ internal class ChatHubHelper : IChatHubHelper
             await _chatMessagesCountHubConnection.StopAsync();
         }
 
-        if (_chatHubConnection != null)
+        if (_chatMessagesHubConnection != null)
         {
-            await _chatHubConnection.StopAsync();
+            await _chatMessagesHubConnection.StopAsync();
         }
     }
 

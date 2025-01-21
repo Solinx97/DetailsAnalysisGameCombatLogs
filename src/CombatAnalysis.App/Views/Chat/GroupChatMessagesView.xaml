@@ -146,37 +146,46 @@
             <ListBox.ItemTemplate>
                 <DataTemplate>
                     <Grid>
-                        <StackPanel>
-                            <StackPanel.Visibility>
-                                <MultiBinding Converter="{StaticResource MultiplyToVisibility}">
-                                    <Binding Path="GroupChatUserId" />
-                                    <Binding ElementName="meInChatId" Path="Text" />
-                                </MultiBinding>
-                            </StackPanel.Visibility>
-
-                            <uc:UserChat Username="{Binding Path=Username}"/>
+                        <StackPanel HorizontalAlignment="Center" Opacity="0.75" Visibility="{Binding Type, Converter={StaticResource IntToVisibility}, ConverterParameter='true:1:='}">
                             <StackPanel Orientation="Horizontal" Margin="5 0">
                                 <TextBlock Text="{Binding Path=Time, StringFormat={}{0:MM-dd HH\\:mm}}" Style="{StaticResource timeText}"/>
                             </StackPanel>
-                            <uc:MessageChat Color="#45B69C" Message="{Binding Path=Message}"/>
+                            <uc:SystemMessageChat Message="{Binding Path=Message}"/>
                         </StackPanel>
 
-                        <StackPanel>
-                            <StackPanel.Visibility>
-                                <MultiBinding Converter="{StaticResource MultiplyToVisibility}" ConverterParameter="true">
-                                    <Binding Path="GroupChatUserId" />
-                                    <Binding ElementName="meInChatId" Path="Text" />
-                                </MultiBinding>
-                            </StackPanel.Visibility>
+                        <StackPanel Visibility="{Binding Type, Converter={StaticResource IntToVisibility}, ConverterParameter='true:0:='}">
+                            <StackPanel>
+                                <StackPanel.Visibility>
+                                    <MultiBinding Converter="{StaticResource MultiplyToVisibility}">
+                                        <Binding Path="GroupChatUserId" />
+                                        <Binding ElementName="meInChatId" Path="Text" />
+                                    </MultiBinding>
+                                </StackPanel.Visibility>
 
-                            <uc:UserChat HorizontalAlignment="Right" Username="{Binding Path=Username}"/>
-                            <StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
-                                <TextBlock Text="{Binding Path=Time, StringFormat={}{0:MM-dd HH\\:mm}}" Style="{StaticResource timeTextRight}"/>
+                                <uc:UserChat Username="{Binding Path=Username}"/>
+                                <StackPanel Orientation="Horizontal" Margin="5 0">
+                                    <TextBlock Text="{Binding Path=Time, StringFormat={}{0:MM-dd HH\\:mm}}" Style="{StaticResource timeText}"/>
+                                </StackPanel>
+                                <uc:MessageChat Color="#45B69C" Message="{Binding Path=Message}"/>
                             </StackPanel>
-                            <uc:MyMessageChat Color="#96CDFF" Message="{Binding Path=Message}"
+
+                            <StackPanel HorizontalAlignment="Right">
+                                <StackPanel.Visibility>
+                                    <MultiBinding Converter="{StaticResource MultiplyToVisibility}" ConverterParameter="true">
+                                        <Binding Path="GroupChatUserId" />
+                                        <Binding ElementName="meInChatId" Path="Text" />
+                                    </MultiBinding>
+                                </StackPanel.Visibility>
+
+                                <uc:UserChat Username="{Binding Path=Username}"/>
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="{Binding Path=Time, StringFormat={}{0:MM-dd HH\\:mm}}" Style="{StaticResource timeTextRight}"/>
+                                </StackPanel>
+                                <uc:MyMessageChat Color="#96CDFF" Message="{Binding Path=Message}"
                                             Visibility="{Binding Status, Converter={StaticResource IntToVisibility}, ConverterParameter='true:2:='}" />
-                            <uc:MyMessageChat Color="#155E95" Opacity="0.75" Message="{Binding Path=Message}"
+                                <uc:MyMessageChat Color="#155E95" Opacity="0.75" Message="{Binding Path=Message}"
                                             Visibility="{Binding Status, Converter={StaticResource IntToVisibility}, ConverterParameter='true:2:!='}" />
+                            </StackPanel>
                         </StackPanel>
                     </Grid>
                 </DataTemplate>

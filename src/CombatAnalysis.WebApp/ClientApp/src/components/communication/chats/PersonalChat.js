@@ -18,7 +18,7 @@ import "../../../styles/communication/chats/personalChat.scss";
 const PersonalChat = ({ chat, me, setSelectedChat, companionId }) => {
     const { t } = useTranslation("communication/chats/personalChat");
 
-    const { personalChatMessagesHubConnection, connectToPersonalChatMessagesAsync, subscribeToPersonalChatMessages } = useChatHub();
+    const { personalChatMessagesHubConnection, connectToPersonalChatMessagesAsync, subscribeToPersonalChatMessages, subscribeToPersonalMessageHasBeenRead } = useChatHub();
 
     const chatContainerRef = useRef(null);
     const pageSizeRef = useRef(process.env.REACT_APP_CHAT_PAGE_SIZE);
@@ -178,11 +178,14 @@ const PersonalChat = ({ chat, me, setSelectedChat, companionId }) => {
                             <li key={message.id}>
                                 <ChatMessage
                                     me={me}
+                                    meInChatId={me.id}
                                     reviewerId={me.id}
                                     messageOwnerId={message.appUserId}
                                     message={message}
                                     updateChatMessageAsync={updateChatMessageAsync}
                                     deleteMessageAsync={deleteMessageAsync}
+                                    chatMessagesHubConnection={personalChatMessagesHubConnection}
+                                    subscribeToMessageHasBeenRead={subscribeToPersonalMessageHasBeenRead}
                                 />
                             </li>
                     ))}
@@ -191,6 +194,7 @@ const PersonalChat = ({ chat, me, setSelectedChat, companionId }) => {
                     chat={chat}
                     meInChat={me}
                     setAreLoadingOldMessages={setAreLoadingOldMessages}
+                    targetChatType={0}
                     t={t}
                 />
             </div>

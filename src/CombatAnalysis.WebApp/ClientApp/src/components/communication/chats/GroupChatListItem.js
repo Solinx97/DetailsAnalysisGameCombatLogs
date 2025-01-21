@@ -2,19 +2,19 @@ import { useEffect, useState } from 'react';
 import { useGetGroupChatByIdQuery } from '../../../store/api/chat/GroupChat.api';
 import { useFindGroupChatMessageCountQuery } from '../../../store/api/chat/GroupChatMessagCount.api';
 
-const GroupChatListItem = ({ chatId, meInChatId, setSelectedGroupChat, subscribeToUnreadPersonalMessagesUpdated }) => {
+const GroupChatListItem = ({ chatId, meInChatId, setSelectedGroupChat, subscribeToUnreadGroupMessagesUpdated }) => {
     const [unreadMessageCount, setUnreadMessageCount] = useState(-1);
 
     const { data: chat, isLoading } = useGetGroupChatByIdQuery(chatId);
     const { data: messagesCount, isLoading: messagesCountLoading } = useFindGroupChatMessageCountQuery({ chatId: chatId, userId: meInChatId });
 
-    //useEffect(() => {
-    //    subscribeToUnreadPersonalMessagesUpdated(meInChatId, (targetChatId, targetMeInChatId, count) => {
-    //        if (targetChatId === chat?.id && targetMeInChatId === meInChatId) {
-    //            setUnreadMessageCount(count);
-    //        }
-    //    });
-    //}, []);
+    useEffect(() => {
+        subscribeToUnreadGroupMessagesUpdated(meInChatId, (targetChatId, targetMeInChatId, count) => {
+            if (targetChatId === chatId && targetMeInChatId === meInChatId) {
+                setUnreadMessageCount(count);
+            }
+        });
+    }, []);
 
     useEffect(() => {
         if (!messagesCount) {

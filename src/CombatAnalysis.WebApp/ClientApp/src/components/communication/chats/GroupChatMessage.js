@@ -1,23 +1,24 @@
 ﻿import { useGetGroupChatUserByIdQuery } from '../../../store/api/chat/GroupChatUser.api';
 import ChatMessage from './ChatMessage';
 
-const GroupChatMessage = ({ me, meInChat, messageOwnerId, message, updateGroupChatMessageAsync, deleteMessageAsync, hubConnection, unreadMessageHubConnection }) => {
+const GroupChatMessage = ({ me, reviewerId, messageOwnerId, message, updateGroupChatMessageAsync, deleteMessageAsync, chatMessagesHubConnection, subscribeToMessageHasBeenRead }) => {
     const { data: groupChatUser, isLoading } = useGetGroupChatUserByIdQuery(messageOwnerId);
 
     if (isLoading) {
-        return <></>;
+        return (<></>);
     }
 
     return (
         <ChatMessage
             me={me}
-            reviewerId={meInChat}
-            messageOwnerId={groupChatUser.appUserId}
+            meInChatId={groupChatUser.appUserId}
+            reviewerId={reviewerId}
+            messageOwnerId={messageOwnerId}
             message={message}
             updateChatMessageAsync={updateGroupChatMessageAsync}
             deleteMessageAsync={deleteMessageAsync}
-            hubConnection={hubConnection}
-            unreadMessageHubConnection={unreadMessageHubConnection}
+            chatMessagesHubConnection={chatMessagesHubConnection}
+            subscribeToMessageHasBeenRead={subscribeToMessageHasBeenRead}
         />
     );
 }

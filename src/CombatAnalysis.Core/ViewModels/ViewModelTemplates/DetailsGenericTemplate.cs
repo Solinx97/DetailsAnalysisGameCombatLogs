@@ -1,8 +1,8 @@
 ﻿using AutoMapper;
+using CombatAnalysis.Core.Extensions;
 using CombatAnalysis.Core.Interfaces;
 using CombatAnalysis.Core.Interfaces.Entities;
 using CombatAnalysis.Core.Models;
-using CombatAnalysis.Core.Services;
 using CombatAnalysis.Core.ViewModels.Base;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
@@ -17,10 +17,11 @@ public abstract class DetailsGenericTemplate<DetailsModel, GeneralDetailsModel> 
     where DetailsModel : class, IDetailsEntity
     where GeneralDetailsModel : class, IDetailsEntity
 {
+    protected readonly IHttpClientHelper _httpClient;
     protected readonly ILogger _logger;
     protected readonly IMapper _mapper;
     protected readonly ICacheService? _cacheService;
-    protected readonly CombatParserAPIService? _combatParserAPIService;
+    protected readonly ICombatParserAPIService _combatParserAPIService;
 
     protected List<GeneralDetailsModel>? _allGeneralInformations;
     protected List<DetailsModel>? _allDetailsInformations;
@@ -43,22 +44,22 @@ public abstract class DetailsGenericTemplate<DetailsModel, GeneralDetailsModel> 
     private ObservableCollection<string>? spells;
     private int _detailsTypeSelectedIndex;
 
-    public DetailsGenericTemplate(IHttpClientHelper httpClient, ILogger logger, IMemoryCache memoryCache,
-        IMapper mapper)
+    public DetailsGenericTemplate(IHttpClientHelper httpClient, ILogger logger, IMapper mapper, 
+        ICombatParserAPIService combatParserAPIService)
     {
+        _httpClient = httpClient;
         _logger = logger;
         _mapper = mapper;
+        _combatParserAPIService = combatParserAPIService;
 
         FirstPageCommand = new MvxAsyncCommand(LoadFirstPageAsync);
         PrevPageCommand = new MvxAsyncCommand(LoadPrevPageAsync);
         NextPageCommand = new MvxAsyncCommand(LoadNextPageAsync);
         LastPageCommand = new MvxAsyncCommand(LoadLastPageAsync);
-
-        _combatParserAPIService = new CombatParserAPIService(httpClient, logger, memoryCache);
     }
 
-    public DetailsGenericTemplate(IHttpClientHelper httpClient, ILogger logger, IMemoryCache memoryCache,
-        IMapper mapper, ICacheService cacheService) : this(httpClient, logger, memoryCache, mapper)
+    public DetailsGenericTemplate(IHttpClientHelper httpClient, ILogger logger, IMapper mapper,
+        ICacheService cacheService, ICombatParserAPIService combatParserAPIService) : this(httpClient, logger, mapper, combatParserAPIService)
     {
         _cacheService = cacheService;
     }
@@ -305,7 +306,7 @@ public abstract class DetailsGenericTemplate<DetailsModel, GeneralDetailsModel> 
             return;
         }
 
-        var details = await _combatParserAPIService.LoadCombatDetailsAsync<DetailsModel>($"{_apiName}/getByCombatPlayerId?combatPlayerId={SelectedPlayerId}&page={page}&pageSize={pageSize}");
+        var details = await _combatParserAPIService.LoadCombatDetailsAsync<DetailsModel>(_httpClient, _logger, $"{_apiName}/getByCombatPlayerId?combatPlayerId={SelectedPlayerId}&page={page}&pageSize={pageSize}");
         _allDetailsInformations = new List<DetailsModel>(details.ToList());
         DetailsInformations = new ObservableCollection<DetailsModel>(_allDetailsInformations);
     }
@@ -317,7 +318,7 @@ public abstract class DetailsGenericTemplate<DetailsModel, GeneralDetailsModel> 
             return;
         }
 
-        var generalDetails = await _combatParserAPIService.LoadCombatDetailsAsync<GeneralDetailsModel>($"{_generalApiName}/getByCombatPlayerId/{SelectedPlayerId}");
+        var generalDetails = await _combatParserAPIService.LoadCombatDetailsAsync<GeneralDetailsModel>(_httpClient, _logger, $"{_generalApiName}/getByCombatPlayerId/{SelectedPlayerId}");
         _allGeneralInformations = new List<GeneralDetailsModel>(generalDetails.ToList());
         GeneralInformations = new ObservableCollection<GeneralDetailsModel>(_allGeneralInformations);
     }

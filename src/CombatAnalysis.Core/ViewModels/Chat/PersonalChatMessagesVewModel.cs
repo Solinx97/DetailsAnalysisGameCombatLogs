@@ -143,7 +143,7 @@ public class PersonalChatMessagesVewModel : MvxViewModel, IImprovedMvxViewModel
                 throw new ArgumentNullException(nameof(MyAccount));
             }
 
-            await hubConnection.ConnectToChatHubAsync($"{Hubs.Port}{Hubs.PersonalChatAddress}");
+            await hubConnection.ConnectToChatHubAsync($"{Hubs.Port}{Hubs.PersonalChatMessagesAddress}");
             await hubConnection.JoinChatRoomAsync(SelectedChat.Id);
 
             hubConnection.SubscribeMessagesUpdated<PersonalChatMessageModel>(SelectedChat.Id, MyAccount.Id, async (message) =>

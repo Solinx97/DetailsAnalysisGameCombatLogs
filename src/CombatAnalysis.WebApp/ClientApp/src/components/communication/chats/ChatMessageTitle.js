@@ -3,10 +3,10 @@ import { useGetUserByIdQuery } from '../../../store/api/user/Account.api';
 import User from '../User';
 import ChatMessageMenu from './ChatMessageMenu';
 
-const ChatMessageTitle = ({ me, itIsMe, setEditModeIsOn, openMessageMenu, editModeIsOn, deleteMessageAsync, message, messageOwnerId }) => {
+const ChatMessageTitle = ({ me, itIsMe, setEditModeIsOn, openMessageMenu, editModeIsOn, deleteMessageAsync, message, meInChatId }) => {
     const [userInformation, setUserInformation] = useState(null);
 
-    const { data: user, isLoading } = useGetUserByIdQuery(messageOwnerId);
+    const { data: user, isLoading } = useGetUserByIdQuery(meInChatId);
 
     const getMessageTime = () => {
         const getDate = new Date(message?.time);
@@ -16,7 +16,7 @@ const ChatMessageTitle = ({ me, itIsMe, setEditModeIsOn, openMessageMenu, editMo
     }
 
     if (isLoading) {
-        return <></>;
+        return (<></>);
     }
 
     return (

@@ -8,7 +8,7 @@ import GroupChatListItem from './GroupChatListItem';
 const GroupChatList = ({ meId, t, selectedChat, setSelectedChat, chatsHidden, toggleChatsHidden, setShowCreateGroupChat }) => {
     const { data, isLoading } = useFindGroupChatUserByUserIdQuery(meId);
 
-    const { connectToGroupChatUnreadMessagesAsync, subscribeToUnreadPersonalMessagesUpdated, subscribeToGroupChat } = useChatHub();
+    const { connectToGroupChatUnreadMessagesAsync, subscribeToUnreadGroupMessagesUpdated, subscribeToGroupChat } = useChatHub();
 
     const [meInGroupChats, setMeInGroupChats] = useState([]);
 
@@ -59,7 +59,7 @@ const GroupChatList = ({ meId, t, selectedChat, setSelectedChat, chatsHidden, to
                                 chatId={meInChat.chatId}
                                 setSelectedGroupChat={setSelectedChat}
                                 meInChatId={meInChat.id}
-                                subscribeToUnreadPersonalMessagesUpdated={subscribeToUnreadPersonalMessagesUpdated}
+                                subscribeToUnreadGroupMessagesUpdated={subscribeToUnreadGroupMessagesUpdated}
                             />
                         </li>
                     ))

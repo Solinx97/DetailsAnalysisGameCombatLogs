@@ -18,7 +18,7 @@ import '../../../styles/communication/chats/groupChat.scss';
 const GroupChat = ({ chat, me, setSelectedChat }) => {
     const { t } = useTranslation("communication/chats/groupChat");
 
-    const { groupChatMessagesHubConnection, connectToGroupChatMessagesAsync, subscribeToGroupChatMessages, subscribeGroupChatUser } = useChatHub();
+    const { groupChatMessagesHubConnection, connectToGroupChatMessagesAsync, subscribeToGroupChatMessages, subscribeGroupChatUser, subscribeToGroupMessageHasBeenRead } = useChatHub();
 
     const [showAddPeople, setShowAddPeople] = useState(false);
     const [settingsIsShow, setSettingsIsShow] = useState(false);
@@ -179,11 +179,13 @@ const GroupChat = ({ chat, me, setSelectedChat }) => {
                         <li className="message" key={message.id}>
                             <GroupChatMessage
                                 me={me}
-                                meInChat={groupChatData.meInChat.id}
+                                reviewerId={groupChatData.meInChat.id}
                                 messageOwnerId={message.groupChatUserId}
                                 message={message}
                                 updateChatMessageAsync={updateGroupChatMessageAsync}
                                 deleteMessageAsync={deleteMessageAsync}
+                                chatMessagesHubConnection={groupChatMessagesHubConnection}
+                                subscribeToMessageHasBeenRead={subscribeToGroupMessageHasBeenRead}
                             />
                         </li>
                     ))}
@@ -192,6 +194,7 @@ const GroupChat = ({ chat, me, setSelectedChat }) => {
                     chat={chat}
                     meInChat={groupChatData.meInChat}
                     setAreLoadingOldMessages={setAreLoadingOldMessages}
+                    targetChatType={1}
                     t={t}
                 />
                 {showAddPeople &&

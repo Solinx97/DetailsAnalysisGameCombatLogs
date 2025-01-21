@@ -3,15 +3,25 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useEffect, useRef, useState } from "react";
 import { useChatHub } from '../../../context/ChatHubProvider';
 
-const MessageInput = ({ chat, meInChat, setAreLoadingOldMessages, t }) => {
-    const { personalChatMessagesHubConnection, subscribeToPersonalMessageDelivered } = useChatHub();
+const chatType = {
+    personal: 0,
+    group: 1
+};
+
+const MessageInput = ({ chat, meInChat, setAreLoadingOldMessages, targetChatType, t }) => {
+    const { personalChatMessagesHubConnection, groupChatMessagesHubConnection, subscribeToPersonalMessageDelivered, subscribeToGroupMessageDelivered } = useChatHub();
 
     const messageInput = useRef(null);
 
     const [isEmptyMessage, setIsEmptyMessage] = useState(null);
 
     useEffect(() => {
-        subscribeToPersonalMessageDelivered(chat.id);
+        if (targetChatType === chatType["personal"]) {
+            subscribeToPersonalMessageDelivered(chat.id);
+        }
+        else {
+            subscribeToGroupMessageDelivered(chat.id);
+        }
     }, []);
 
     const handleSendMessageByKeyAsync = async (event) => {
@@ -26,7 +36,12 @@ const MessageInput = ({ chat, meInChat, setAreLoadingOldMessages, t }) => {
 
         setAreLoadingOldMessages(false);
 
-        await personalChatMessagesHubConnection?.invoke("SendMessage", messageInput.current.value, chat.id, 0, meInChat?.id, meInChat?.username);
+        if (targetChatType === chatType["personal"]) {
+            await personalChatMessagesHubConnection?.invoke("SendMessage", messageInput.current.value, chat.id, meInChat?.id, meInChat?.username);
+        }
+        else {
+            await groupChatMessagesHubConnection?.invoke("SendMessage", messageInput.current.value, chat.id, 0, meInChat?.id, meInChat?.username);
+        }
 
         messageInput.current.value = "";
     }
@@ -40,7 +55,12 @@ const MessageInput = ({ chat, meInChat, setAreLoadingOldMessages, t }) => {
 
         setAreLoadingOldMessages(false);
 
-        await personalChatMessagesHubConnection?.invoke("SendMessage", messageInput.current.value, chat.id, 0, meInChat?.id, meInChat?.username);
+        if (targetChatType === chatType["personal"]) {
+            await personalChatMessagesHubConnection?.invoke("SendMessage", messageInput.current.value, chat.id, meInChat?.id, meInChat?.username);
+        }
+        else {
+            await groupChatMessagesHubConnection?.invoke("SendMessage", messageInput.current.value, chat.id, 0, meInChat?.id, meInChat?.username);
+        }
 
         messageInput.current.value = "";
     }

@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using CombatAnalysis.CombatParser.Core;
 using CombatAnalysis.CombatParser.Interfaces;
 using CombatAnalysis.CombatParser.Services;
 using CombatAnalysis.Core.Consts;
@@ -50,8 +51,10 @@ public class App : MvxApplication
 
         Hubs.Port = Configuration["Hubs:Port"] ?? string.Empty;
         Hubs.PersonalChatAddress = Configuration["Hubs:PersonalChatAddress"] ?? string.Empty;
+        Hubs.PersonalChatMessagesAddress = Configuration["Hubs:PersonalChatMessagesAddress"] ?? string.Empty;
         Hubs.PersonalChatUnreadMessageAddress = Configuration["Hubs:PersonalChatUnreadMessageAddress"] ?? string.Empty;
         Hubs.GroupChatAddress = Configuration["Hubs:GroupChatAddress"] ?? string.Empty;
+        Hubs.GroupChatMessagesAddress = Configuration["Hubs:GroupChatMessagesAddress"] ?? string.Empty;
         Hubs.GroupChatUnreadMessageAddress = Configuration["Hubs:GroupChatUnreadMessageAddress"] ?? string.Empty;
         Hubs.VoiceChatAddress = Configuration["Hubs:VoiceChatAddress"] ?? string.Empty;
 
@@ -81,7 +84,9 @@ public class App : MvxApplication
 
         if (Mvx.IoCProvider != null)
         {
+            Mvx.IoCProvider.RegisterType<IFileManager, FileManager>();
             Mvx.IoCProvider.RegisterType<ICombatParserService, CombatParserService>();
+            Mvx.IoCProvider.RegisterType<ICombatParserAPIService, CombatParserAPIService>();
             Mvx.IoCProvider.RegisterType<IMapper>(() => mappingConfig.CreateMapper());
             Mvx.IoCProvider.RegisterType<ILogger>(() =>
             {

@@ -6,7 +6,7 @@ public interface IChatHubHelper
 
     Task JoinChatRoomAsync(int chatId);
 
-    Task SendMessageAsync(string message, int chatId, string appUserId, string username);
+    Task SendMessageAsync(string message, int chatId, string appUserId, string username, int type = -1);
 
     Task ConnectToUnreadMessageHubAsync(string hubURL);
 

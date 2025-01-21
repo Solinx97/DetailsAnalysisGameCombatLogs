@@ -1,18 +1,16 @@
 ﻿using AutoMapper;
 using CombatAnalysis.CombatParser.Details;
 using CombatAnalysis.CombatParser.Entities;
-using CombatAnalysis.CombatParser.Services;
+using CombatAnalysis.CombatParser.Interfaces;
 using CombatAnalysis.Core.Consts;
 using CombatAnalysis.Core.Enums;
 using CombatAnalysis.Core.Interfaces;
 using CombatAnalysis.Core.Interfaces.Observers;
 using CombatAnalysis.Core.Models;
 using CombatAnalysis.Core.Models.User;
-using CombatAnalysis.Core.Services;
 using CombatAnalysis.Core.ViewModels.Base;
 using CombatAnalysis.Core.ViewModels.ViewModelTemplates;
 using Microsoft.Extensions.Caching.Memory;
-using Microsoft.Extensions.Logging;
 using MvvmCross.Commands;
 using MvvmCross.Navigation;
 using System.Collections.ObjectModel;
@@ -24,8 +22,8 @@ public class CombatLogInformationViewModel : ParentTemplate, CombatParser.Interf
     private readonly IMvxNavigationService _mvvmNavigation;
     private readonly IMapper _mapper;
     private readonly ICacheService _cacheService;
-    private readonly CombatParserService _parser;
-    private readonly CombatParserAPIService _combatParserAPIService;
+    private readonly ICombatParserService _parser;
+    private readonly ICombatParserAPIService _combatParserAPIService;
     private readonly IMemoryCache _memoryCache;
 
     private string? _combatLog;
@@ -53,14 +51,15 @@ public class CombatLogInformationViewModel : ParentTemplate, CombatParser.Interf
     private bool _noCombatsUploaded;
     private bool _processAborted;
 
-    public CombatLogInformationViewModel(IMapper mapper, IMvxNavigationService mvvmNavigation, IHttpClientHelper httpClient,
-        CombatParserService parser, ILogger logger, IMemoryCache memoryCache, ICacheService cacheService)
+    public CombatLogInformationViewModel(IMapper mapper, IMvxNavigationService mvvmNavigation, ICombatParserService parser,
+        IMemoryCache memoryCache, ICacheService cacheService, ICombatParserAPIService combatParserAPIService)
     {
         _mapper = mapper;
         _mvvmNavigation = mvvmNavigation;
         _parser = parser;
         _memoryCache = memoryCache;
         _cacheService = cacheService;
+        _combatParserAPIService = combatParserAPIService;
 
         OpenUploadedLogsCommand = new MvxCommand(() => OpenUploadedLogs = !OpenUploadedLogs);
         OpenPlayerAnalysisCommand = new MvxAsyncCommand(OpenPlayerAnalysisAsync);
@@ -71,8 +70,6 @@ public class CombatLogInformationViewModel : ParentTemplate, CombatParser.Interf
         CancelParsingCommand = new MvxCommand(CancelParsing);
 
         GetLogTypeCommand = new MvxCommand<int>(GetLogType);
-
-        _combatParserAPIService = new CombatParserAPIService(httpClient, logger, memoryCache);
 
         Basic.Parent = this;
         Basic.Handler.BasicPropertyUpdate(nameof(BasicTemplateViewModel.Step), 0);

@@ -13,16 +13,16 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+var webAppCors = builder.Configuration["Cors:WebApp"] ?? string.Empty;
+var hubsCors = builder.Configuration["Cors:WebApp"] ?? string.Empty;
+
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("CorsPolicy", builder =>
     {
         builder.AllowAnyMethod()
                .AllowAnyHeader()
-               .WithOrigins(
-                    "https://localhost:7026", 
-                    "https://localhost:44479"
-                )
+               .WithOrigins(webAppCors, hubsCors)
                .AllowCredentials();
     });
 });

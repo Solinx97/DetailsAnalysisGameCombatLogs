@@ -2,7 +2,6 @@ import { faCircle, faCircleUp, faClock, faCloudArrowUp, faEye } from '@fortaweso
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useChatHub } from '../../../context/ChatHubProvider';
 import ChatMessageTitle from './ChatMessageTitle';
 
 import "../../../styles/communication/chats/chatMessage.scss";
@@ -13,10 +12,8 @@ const chatStatus = {
     read: 2
 };
 
-const DefaultChatMessage = ({ me, reviewerId, messageOwnerId, message, updateChatMessageAsync, deleteMessageAsync }) => {
+const DefaultChatMessage = ({ me, meInChatId, reviewerId, messageOwnerId, message, updateChatMessageAsync, deleteMessageAsync, chatMessagesHubConnection, subscribeToMessageHasBeenRead }) => {
     const { t } = useTranslation("communication/chats/chatMessage");
-
-    const { personalChatMessagesHubConnection, subscribeToPersonalMessageHasBeenRead } = useChatHub();
 
     const [targetMessage, setTargetMessage] = useState(message);
     const [openMessageMenu, setOpenMessageMenu] = useState(false);
@@ -25,7 +22,7 @@ const DefaultChatMessage = ({ me, reviewerId, messageOwnerId, message, updateCha
     const editMessageInput = useRef(null);
 
     useEffect(() => {
-        subscribeToPersonalMessageHasBeenRead(message.chatId, reviewerId);
+        subscribeToMessageHasBeenRead(message.chatId, reviewerId);
     }, []);
 
     const handleUpdateMessageAsync = async () => {
@@ -43,7 +40,7 @@ const DefaultChatMessage = ({ me, reviewerId, messageOwnerId, message, updateCha
             return;
         }
 
-        await personalChatMessagesHubConnection?.invoke("SendMessageHasBeenRead", message.id, reviewerId);
+        await chatMessagesHubConnection?.invoke("SendMessageHasBeenRead", message.id, reviewerId);
 
         const updatedChat = Object.assign({}, targetMessage);
         updatedChat.status = 2;
@@ -97,7 +94,7 @@ const DefaultChatMessage = ({ me, reviewerId, messageOwnerId, message, updateCha
                 openMessageMenu={openMessageMenu}
                 editModeIsOn={editModeIsOn}
                 message={message}
-                messageOwnerId={messageOwnerId}
+                meInChatId={meInChatId}
             />
             {editModeIsOn && reviewerId === messageOwnerId
                 ? <div className="edit-message">

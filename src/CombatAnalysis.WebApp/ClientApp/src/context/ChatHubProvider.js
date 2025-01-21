@@ -79,7 +79,7 @@ export const ChatHubProvider = ({ children }) => {
             await hubConnection.start();
 
             for (let i = 0; i < meInChats.length; i++) {
-                await hubConnection.invoke("JoinRoom", meInChats[i].chatId);
+                await hubConnection.invoke("JoinRoom", meInChats[i].id);
             }
         } catch (e) {
             console.error(e);
@@ -204,12 +204,34 @@ export const ChatHubProvider = ({ children }) => {
         });
     }
 
+    const subscribeToGroupMessageDelivered = (chatId) => {
+        groupChatMessagesHubConnection?.on("ReceiveMessageDelivered", async () => {
+            await groupChatUnreadMessagesHubConnection?.invoke("SendUnreadMessageUpdated", chatId);
+        });
+    }
+
+    const subscribeToUnreadGroupMessagesUpdated = (meInChatId, callback) => {
+        groupChatUnreadMessagesHubConnection?.on("ReceiveUnreadMessageUpdated", async (chatId) => {
+            await groupChatUnreadMessagesHubConnection?.invoke("RequestUnreadMessages", chatId, meInChatId);
+        });
+
+        groupChatUnreadMessagesHubConnection?.on("ReceiveUnreadMessage", (targetChatId, targetMeInChatId, count) => {
+            callback(targetChatId, targetMeInChatId, count);
+        });
+    }
+
+    const subscribeToGroupMessageHasBeenRead = (chatId, reviewerId) => {
+        groupChatMessagesHubConnection?.on("ReceiveMessageHasBeenRead", async () => {
+            await groupChatUnreadMessagesHubConnection?.invoke("RequestUnreadMessages", chatId, reviewerId);
+        });
+    }
+
     return (
         <ChatHubContext.Provider value={{
             personalChatHubConnection, personalChatMessagesHubConnection, personalChatUnreadMessagesHubConnection,
             connectToPersonalChatAsync, connectToPersonalChatMessagesAsync, connectToPersonalChatUnreadMessagesAsync,
             subscribeToPersonalChat, subscribeToPersonalChatMessages, subscribeToPersonalMessageHasBeenRead, subscribeToPersonalMessageDelivered, subscribeToUnreadPersonalMessagesUpdated,
-            subscribeToGroupChat, subscribeGroupChatUser, subscribeToGroupChatMessages,
+            subscribeToGroupChat, subscribeGroupChatUser, subscribeToGroupChatMessages, subscribeToGroupMessageHasBeenRead, subscribeToUnreadGroupMessagesUpdated, subscribeToGroupMessageDelivered,
             groupChatHubConnection, groupChatMessagesHubConnection, groupChatUnreadMessagesHubConnection,
             connectToGroupChatAsync, connectToGroupChatMessagesAsync, connectToGroupChatUnreadMessagesAsync
         }}>

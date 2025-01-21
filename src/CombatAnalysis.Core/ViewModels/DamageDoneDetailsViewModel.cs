@@ -4,7 +4,6 @@ using CombatAnalysis.Core.Enums;
 using CombatAnalysis.Core.Interfaces;
 using CombatAnalysis.Core.Models;
 using CombatAnalysis.Core.ViewModels.ViewModelTemplates;
-using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
 using System.Collections.ObjectModel;
 
@@ -14,8 +13,8 @@ public class DamageDoneDetailsViewModel : DetailsGenericTemplate<DamageDoneModel
 {
     private bool _isShowPets = true;
 
-    public DamageDoneDetailsViewModel(IHttpClientHelper httpClient, ILogger logger, IMemoryCache memoryCache,
-        IMapper mapper, ICacheService cacheService) : base(httpClient, logger, memoryCache, mapper, cacheService)
+    public DamageDoneDetailsViewModel(IHttpClientHelper httpClient, ILogger logger, IMapper mapper,
+        ICacheService cacheService, ICombatParserAPIService combatParserAPIService) : base(httpClient, logger, mapper, cacheService, combatParserAPIService)
     {
         Basic.Parent = this;
         Basic.Handler.BasicPropertyUpdate(nameof(BasicTemplateViewModel.Step), 3);
