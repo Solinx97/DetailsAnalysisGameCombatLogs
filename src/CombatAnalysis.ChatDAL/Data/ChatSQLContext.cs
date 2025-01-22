@@ -1,5 +1,4 @@
 ﻿using CombatAnalysis.ChatDAL.Entities;
-using CombatAnalysis.ChatDAL.Helpers;
 using Microsoft.EntityFrameworkCore;
 
 namespace CombatAnalysis.ChatDAL.Data;
@@ -8,12 +7,6 @@ public class ChatSQLContext : DbContext
 {
     public ChatSQLContext(DbContextOptions<ChatSQLContext> options) : base(options)
     {
-        var isExists = Database.EnsureCreated();
-
-        if (isExists)
-        {
-            DbContextHelper.CreateProcedures(this);
-        }
     }
 
     #region Chat

@@ -1,3 +1,0 @@
-﻿CREATE PROCEDURE GetAllHealDone
-	AS SELECT * 
-	FROM HealDone

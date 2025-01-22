@@ -6,10 +6,10 @@ namespace CombatAnalysis.UserDAL.Services;
 
 internal class ContextService : IContextService
 {
-    private readonly CustomerSQLContext _context;
+    private readonly UserSQLContext _context;
     private IDbContextTransaction _transaction;
 
-    public ContextService(CustomerSQLContext context)
+    public ContextService(UserSQLContext context)
     {
         _context = context;
     }

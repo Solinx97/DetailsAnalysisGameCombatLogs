@@ -7,9 +7,9 @@ namespace CombatAnalysis.CommunicationDAL.Repositories.SQL;
 
 internal class SQLCommunityRepository : SQLRepository<Community, int>, ICommunityRepository
 {
-    private readonly SQLContext _context;
+    private readonly CommunicationSQLContext _context;
 
-    public SQLCommunityRepository(SQLContext context) : base(context)
+    public SQLCommunityRepository(CommunicationSQLContext context) : base(context)
     {
         _context = context;
     }

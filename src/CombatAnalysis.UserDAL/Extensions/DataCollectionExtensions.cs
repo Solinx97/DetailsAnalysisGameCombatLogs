@@ -34,7 +34,7 @@ public static class DataCollectionExtensions
     {
         var connection = configuration.GetConnectionString(connectionName);
 
-        services.AddDbContext<CustomerSQLContext>(options =>
+        services.AddDbContext<UserSQLContext>(options =>
         {
             options.UseSqlServer(connection);
         });

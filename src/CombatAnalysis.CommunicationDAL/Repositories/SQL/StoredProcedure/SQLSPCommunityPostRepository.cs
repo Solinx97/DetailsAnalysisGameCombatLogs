@@ -8,9 +8,9 @@ namespace CombatAnalysis.CommunicationDAL.Repositories.SQL.StoredProcedure;
 
 internal class SQLSPCommunityPostRepository : SQLRepository<CommunityPost, int>, ICommunityPostRepository
 {
-    private readonly SQLContext _context;
+    private readonly CommunicationSQLContext _context;
 
-    public SQLSPCommunityPostRepository(SQLContext context) : base(context)
+    public SQLSPCommunityPostRepository(CommunicationSQLContext context) : base(context)
     {
         _context = context;
     }

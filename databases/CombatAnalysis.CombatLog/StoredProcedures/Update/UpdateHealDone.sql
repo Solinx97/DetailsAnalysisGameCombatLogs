@@ -1,4 +1,0 @@
-﻿CREATE PROCEDURE UpdateHealDone (@Id INT,@ValueWithOverheal INT,@Time NVARCHAR (MAX),@Overheal INT,@Value INT,@FromPlayer NVARCHAR (MAX),@ToPlayer NVARCHAR (MAX),@SpellOrItem NVARCHAR (MAX),@DamageAbsorbed NVARCHAR (MAX),@IsCrit BIT,@IsFullOverheal BIT,@IsAbsorbed BIT,@CombatPlayerId INT)
-	AS UPDATE HealDone
-	SET ValueWithOverheal = @ValueWithOverheal,Time = @Time,Overheal = @Overheal,Value = @Value,FromPlayer = @FromPlayer,ToPlayer = @ToPlayer,SpellOrItem = @SpellOrItem,DamageAbsorbed = @DamageAbsorbed,IsCrit = @IsCrit,IsFullOverheal = @IsFullOverheal,IsAbsorbed = @IsAbsorbed,CombatPlayerId = @CombatPlayerId
-	WHERE Id = @Id

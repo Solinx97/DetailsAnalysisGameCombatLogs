@@ -56,21 +56,9 @@
   <Import Condition="'$(SQLDBExtensionsRefPath)' == ''" Project="$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v$(VisualStudioVersion)\SSDT\Microsoft.Data.Tools.Schema.SqlTasks.targets" />
   <ItemGroup>
     <Folder Include="Properties" />
-    <Folder Include="Tables" />
-    <Folder Include="Scripts" />
   </ItemGroup>
   <ItemGroup>
-    <Build Include="Tables\PersonalChat.sql" />
-    <Build Include="Tables\PersonalChatMessage.sql" />
-    <Build Include="Tables\UnreadGroupChatMessage.sql" />
-    <Build Include="Tables\PersonalChatMessageCount.sql" />
-    <Build Include="Tables\GroupChatUser.sql" />
-    <Build Include="Tables\GroupChatRules.sql" />
-    <Build Include="Tables\GroupChat.sql" />
-    <Build Include="Tables\GroupChatMessage.sql" />
-    <Build Include="Tables\GroupChatMessageCount.sql" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Scripts\DropDatabase.sql" />
+    <None Include="InitialCreate.sql" />
+    <None Include="CombatAnalysis.Chat.publish.xml" />
   </ItemGroup>
 </Project>

@@ -8,9 +8,9 @@ internal class SQLRepository<TModel, TIdType> : IGenericRepository<TModel, TIdTy
     where TModel : class
     where TIdType : notnull
 {
-    private readonly CustomerSQLContext _context;
+    private readonly UserSQLContext _context;
 
-    public SQLRepository(CustomerSQLContext context)
+    public SQLRepository(UserSQLContext context)
     {
         _context = context;
     }
