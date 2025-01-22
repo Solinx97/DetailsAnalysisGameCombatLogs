@@ -17,7 +17,7 @@ namespace CombatAnalysis.IdentityDAL.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "7.0.20")
+                .HasAnnotation("ProductVersion", "9.0.1")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -94,30 +94,30 @@ namespace CombatAnalysis.IdentityDAL.Migrations
                             Id = "client1",
                             ClientName = "web",
                             ClientType = "public",
-                            CreatedAt = new DateTimeOffset(new DateTime(2025, 1, 21, 19, 56, 8, 165, DateTimeKind.Unspecified).AddTicks(5271), new TimeSpan(0, 1, 0, 0, 0)),
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 1, 22, 10, 56, 33, 302, DateTimeKind.Unspecified).AddTicks(6555), new TimeSpan(0, 1, 0, 0, 0)),
                             RedirectUrl = "encounters.analysis.com/callback",
                             Scope = "client1scope",
-                            UpdatedAt = new DateTimeOffset(new DateTime(2025, 1, 21, 19, 56, 8, 165, DateTimeKind.Unspecified).AddTicks(5325), new TimeSpan(0, 1, 0, 0, 0))
+                            UpdatedAt = new DateTimeOffset(new DateTime(2025, 1, 22, 10, 56, 33, 304, DateTimeKind.Unspecified).AddTicks(3452), new TimeSpan(0, 1, 0, 0, 0))
                         },
                         new
                         {
                             Id = "client2",
                             ClientName = "desktop",
                             ClientType = "public",
-                            CreatedAt = new DateTimeOffset(new DateTime(2025, 1, 21, 19, 56, 8, 165, DateTimeKind.Unspecified).AddTicks(5328), new TimeSpan(0, 1, 0, 0, 0)),
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 1, 22, 10, 56, 33, 304, DateTimeKind.Unspecified).AddTicks(3652), new TimeSpan(0, 1, 0, 0, 0)),
                             RedirectUrl = "localhost:45571/callback",
                             Scope = "client2scope",
-                            UpdatedAt = new DateTimeOffset(new DateTime(2025, 1, 21, 19, 56, 8, 165, DateTimeKind.Unspecified).AddTicks(5329), new TimeSpan(0, 1, 0, 0, 0))
+                            UpdatedAt = new DateTimeOffset(new DateTime(2025, 1, 22, 10, 56, 33, 304, DateTimeKind.Unspecified).AddTicks(3657), new TimeSpan(0, 1, 0, 0, 0))
                         },
                         new
                         {
                             Id = "client3",
                             ClientName = "devWeb",
                             ClientType = "public",
-                            CreatedAt = new DateTimeOffset(new DateTime(2025, 1, 21, 19, 56, 8, 165, DateTimeKind.Unspecified).AddTicks(5331), new TimeSpan(0, 1, 0, 0, 0)),
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 1, 22, 10, 56, 33, 304, DateTimeKind.Unspecified).AddTicks(3659), new TimeSpan(0, 1, 0, 0, 0)),
                             RedirectUrl = "localhost:44479/callback",
                             Scope = "client3scope",
-                            UpdatedAt = new DateTimeOffset(new DateTime(2025, 1, 21, 19, 56, 8, 165, DateTimeKind.Unspecified).AddTicks(5333), new TimeSpan(0, 1, 0, 0, 0))
+                            UpdatedAt = new DateTimeOffset(new DateTime(2025, 1, 22, 10, 56, 33, 304, DateTimeKind.Unspecified).AddTicks(3661), new TimeSpan(0, 1, 0, 0, 0))
                         });
                 });
 

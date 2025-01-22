@@ -115,9 +115,9 @@ namespace CombatAnalysis.IdentityDAL.Migrations
                 columns: new[] { "Id", "ClientName", "ClientType", "CreatedAt", "RedirectUrl", "Scope", "UpdatedAt" },
                 values: new object[,]
                 {
-                    { "client1", "web", "public", new DateTimeOffset(new DateTime(2025, 1, 21, 19, 56, 8, 165, DateTimeKind.Unspecified).AddTicks(5271), new TimeSpan(0, 1, 0, 0, 0)), "encounters.analysis.com/callback", "client1scope", new DateTimeOffset(new DateTime(2025, 1, 21, 19, 56, 8, 165, DateTimeKind.Unspecified).AddTicks(5325), new TimeSpan(0, 1, 0, 0, 0)) },
-                    { "client2", "desktop", "public", new DateTimeOffset(new DateTime(2025, 1, 21, 19, 56, 8, 165, DateTimeKind.Unspecified).AddTicks(5328), new TimeSpan(0, 1, 0, 0, 0)), "localhost:45571/callback", "client2scope", new DateTimeOffset(new DateTime(2025, 1, 21, 19, 56, 8, 165, DateTimeKind.Unspecified).AddTicks(5329), new TimeSpan(0, 1, 0, 0, 0)) },
-                    { "client3", "devWeb", "public", new DateTimeOffset(new DateTime(2025, 1, 21, 19, 56, 8, 165, DateTimeKind.Unspecified).AddTicks(5331), new TimeSpan(0, 1, 0, 0, 0)), "localhost:44479/callback", "client3scope", new DateTimeOffset(new DateTime(2025, 1, 21, 19, 56, 8, 165, DateTimeKind.Unspecified).AddTicks(5333), new TimeSpan(0, 1, 0, 0, 0)) }
+                    { "client1", "web", "public", new DateTimeOffset(new DateTime(2025, 1, 22, 10, 56, 33, 302, DateTimeKind.Unspecified).AddTicks(6555), new TimeSpan(0, 1, 0, 0, 0)), "encounters.analysis.com/callback", "client1scope", new DateTimeOffset(new DateTime(2025, 1, 22, 10, 56, 33, 304, DateTimeKind.Unspecified).AddTicks(3452), new TimeSpan(0, 1, 0, 0, 0)) },
+                    { "client2", "desktop", "public", new DateTimeOffset(new DateTime(2025, 1, 22, 10, 56, 33, 304, DateTimeKind.Unspecified).AddTicks(3652), new TimeSpan(0, 1, 0, 0, 0)), "localhost:45571/callback", "client2scope", new DateTimeOffset(new DateTime(2025, 1, 22, 10, 56, 33, 304, DateTimeKind.Unspecified).AddTicks(3657), new TimeSpan(0, 1, 0, 0, 0)) },
+                    { "client3", "devWeb", "public", new DateTimeOffset(new DateTime(2025, 1, 22, 10, 56, 33, 304, DateTimeKind.Unspecified).AddTicks(3659), new TimeSpan(0, 1, 0, 0, 0)), "localhost:44479/callback", "client3scope", new DateTimeOffset(new DateTime(2025, 1, 22, 10, 56, 33, 304, DateTimeKind.Unspecified).AddTicks(3661), new TimeSpan(0, 1, 0, 0, 0)) }
                 });
         }
 

@@ -61,6 +61,6 @@
     <None Include="CombatAnalysis.Identity.publish.xml" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="InitialCreate.sql" />
+    <None Include="InitDBData.sql" />
   </ItemGroup>
 </Project>

@@ -6,7 +6,7 @@
     <Name>CombatAnalysis.Chat</Name>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectVersion>4.1</ProjectVersion>
-    <ProjectGuid>{3e4c19ee-bc89-407b-a490-235b8abdf019}</ProjectGuid>
+    <ProjectGuid>{656dbcc0-6d94-43fa-afbc-86c3e1c574f5}</ProjectGuid>
     <DSP>Microsoft.Data.Tools.Schema.Sql.Sql160DatabaseSchemaProvider</DSP>
     <OutputType>Database</OutputType>
     <RootPath>
