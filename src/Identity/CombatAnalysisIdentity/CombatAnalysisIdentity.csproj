@@ -23,8 +23,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\CombatAnalysis.CutomerBL\CombatAnalysis.CustomerBL.csproj" />
     <ProjectReference Include="..\..\CombatAnalysis.Identity\CombatAnalysis.Identity.csproj" />
+    <ProjectReference Include="..\..\CombatAnalysis.UserBL\CombatAnalysis.UserBL.csproj" />
   </ItemGroup>
 
   <ItemGroup>

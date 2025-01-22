@@ -2,7 +2,6 @@ using AutoMapper;
 using CombatAnalysis.CommunicationAPI.Mapping;
 using CombatAnalysis.CommunicationBL.Extensions;
 using CombatAnalysis.CommunicationBL.Mapping;
-using CombatAnalysis.CustomerBL.Extensions;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Serilog;
@@ -10,7 +9,6 @@ using Serilog;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.CommunicationBLDependencies(builder.Configuration, "DefaultConnection");
-builder.Services.CustomerBLDependencies(builder.Configuration, "UserConnection");
 
 var mappingConfig = new MapperConfiguration(mc =>
 {

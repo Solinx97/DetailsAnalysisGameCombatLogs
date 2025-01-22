@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using CombatAnalysis.CustomerBL.DTO;
+using CombatAnalysis.UserBL.DTO;
 using CombatAnalysis.UserApi.Models;
 
 namespace CombatAnalysis.UserApi.Mapping;

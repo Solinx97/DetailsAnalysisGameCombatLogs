@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
-using CombatAnalysis.CustomerBL.DTO;
-using CombatAnalysis.CustomerBL.Interfaces;
+using CombatAnalysis.UserBL.DTO;
+using CombatAnalysis.UserBL.Interfaces;
 using CombatAnalysis.UserApi.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
