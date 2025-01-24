@@ -57,13 +57,3 @@ spec:
                 name: {{ .Release.Name }}-{{ .Values.app5.name }}-service
                 port:
                   number: {{ .Values.app5.ingress.port }}
-    - host: {{ .Values.app6.hostName }}
-      http:
-        paths:
-          - path: /
-            pathType: Prefix
-            backend:
-              service:
-                name: {{ .Release.Name }}-{{ .Values.app6.name }}-service
-                port:
-                  number: {{ .Values.app6.ingress.port }}

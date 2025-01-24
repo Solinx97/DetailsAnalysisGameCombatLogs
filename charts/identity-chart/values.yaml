@@ -9,13 +9,14 @@ resources:
     memory: 80
 container:
     name: identity
-    image: solinx/identity
+    image: solinx/combatanalysisidentity
     tag: 0.3.0
     port: 80
 service:
     protocol: TCP
     port: 80
-    targetPort: 80
+    targetPort: 8080
+    nodePort: 30101
 ingress:
     appName: identity.analysis.com
     port: 80

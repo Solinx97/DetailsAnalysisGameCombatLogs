@@ -27,7 +27,7 @@ export const UserApi = createApi({
                     ? [...result.map(({ id }) => ({ type: 'Customer', id })), 'Customer']
                     : ['Customer'],
         }),
-        authenticationAsync: builder.query({
+        authentication: builder.query({
             query: () => '/Authentication',
             providesTags: (result, error, id) =>
                 result ? [{ type: 'Authentication', id: result.id }] : ['Authentication'],
@@ -49,8 +49,8 @@ export const {
     useLazyGetUsersQuery,
     useGetCustomersQuery,
     useLazyGetCustomersQuery,
-    useAuthenticationAsyncQuery,
-    useLazyAuthenticationAsyncQuery,
+    useAuthenticationQuery,
+    useLazyAuthenticationQuery,
     useLazyIdentityQuery,
     useLazyVerifyEmailQuery,
     useLazyStateValidateQuery,

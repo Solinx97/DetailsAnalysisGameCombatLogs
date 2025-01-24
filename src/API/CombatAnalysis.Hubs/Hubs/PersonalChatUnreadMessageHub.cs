@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.SignalR;
 
 namespace CombatAnalysis.Hubs.Hubs;
 
-internal class PersonalChatUnreadMessageHub : Hub
+public class PersonalChatUnreadMessageHub : Hub
 {
     private readonly IHttpClientHelper _httpClient;
     private readonly ILogger<PersonalChatUnreadMessageHub> _logger;

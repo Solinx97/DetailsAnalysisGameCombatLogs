@@ -30,16 +30,29 @@ public class AuthenticationController : ControllerBase
         try
         {
             var accessToken = HttpContext.Items[AuthenticationCookie.AccessToken.ToString()] as string;
-
-            var identityUserId = AccessTokenHelper.GetUserIdFromToken(accessToken);
-            var responseMessage = await _httpClient.GetAsync($"Account/find/{identityUserId}");
-            if (responseMessage.IsSuccessStatusCode)
+            if (accessToken == null)
             {
-                var user = await responseMessage.Content.ReadFromJsonAsync<AppUserModel>();
-                return Ok(user);
+                throw new ArgumentNullException(nameof(accessToken));
             }
 
+            var identityUserId = AccessTokenHelper.GetUserIdFromToken(accessToken);
+            var response = await _httpClient.GetAsync($"Account/find/{identityUserId}");
+            response.EnsureSuccessStatusCode();
+
+            var user = await response.Content.ReadFromJsonAsync<AppUserModel>();
+            return Ok(user);
+        }
+        catch (ArgumentNullException ex)
+        {
+            _logger.LogError(ex, ex.Message);
+
             return BadRequest();
+        }
+        catch (HttpRequestException ex)
+        {
+            _logger.LogError(ex, "Authentication refresh was failed.");
+
+            return BadRequest($"Authentication refresh was failed. Error: {ex.Message}");
         }
         catch (Exception ex)
         {

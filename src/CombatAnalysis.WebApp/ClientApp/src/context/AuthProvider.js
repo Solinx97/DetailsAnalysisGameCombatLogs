@@ -1,7 +1,7 @@
 ﻿import React, { createContext, useContext, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { useLazyAuthenticationAsyncQuery } from '../store/api/core/User.api';
+import { useLazyAuthenticationQuery } from '../store/api/core/User.api';
 import { useLogoutAsyncMutation } from '../store/api/user/Account.api';
 import { useLazySearchByUserIdAsyncQuery } from '../store/api/user/Customer.api';
 import { useLazyGetUserPrivacyQuery } from '../store/api/user/Identity.api';
@@ -17,7 +17,7 @@ export const AuthProvider = ({ children }) => {
 
     const [isAuthenticated, setIsAuthenticated] = useState(false);
 
-    const [getAuth] = useLazyAuthenticationAsyncQuery();
+    const [getAuth] = useLazyAuthenticationQuery();
     const [logout] = useLogoutAsyncMutation();
     const [getCustomer] = useLazySearchByUserIdAsyncQuery();
 
@@ -71,7 +71,7 @@ export const AuthProvider = ({ children }) => {
     };
 
     return (
-        <AuthContext.Provider value={{ isAuthenticated, checkAuthAsync, logoutAsync, getCustomerDataAsync }}>
+        <AuthContext.Provider value={{ isAuthenticated, checkAuthAsync, logoutAsync }}>
             {children}
         </AuthContext.Provider>
     );

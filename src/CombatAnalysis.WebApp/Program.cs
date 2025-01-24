@@ -35,15 +35,20 @@ if (int.TryParse(builder.Configuration["Authentication:RefreshTokenExpiresDays"]
     Authentication.RefreshTokenExpiresDays = refreshTokenExpiresDays;
 }
 
-builder.Services.AddSignalR(options =>
+builder.Services.AddCors(options =>
 {
-    options.MaximumReceiveMessageSize = 1024 * 1024 * 2;
+    options.AddPolicy("CorsPolicy",
+        builder => builder
+        .AllowAnyMethod()
+        .AllowAnyHeader()
+        .AllowCredentials()
+        .WithOrigins("http://localhost:3000")); // React app URL
 });
 
 builder.Services.AddControllersWithViews();
 
 Log.Logger = new LoggerConfiguration()
-    .MinimumLevel.Debug()
+    .MinimumLevel.Information()
     .WriteTo.Console()
     .CreateLogger();
 
@@ -51,15 +56,19 @@ builder.Host.UseSerilog();
 
 var app = builder.Build();
 
+app.UseWebSockets();
+
+app.UseCors("CorsPolicy");
+
 app.UseRouting();
 
-if (!app.Environment.IsDevelopment())
-{
-    app.UseHsts();
-}
+//if (app.Environment.IsDevelopment())
+//{
+//    app.UseHsts();
+//}
 
-app.UseStaticFiles();
 app.UseHttpsRedirection();
+app.UseStaticFiles();
 
 app.UseMiddleware<AuthTokenMiddleware>();
 

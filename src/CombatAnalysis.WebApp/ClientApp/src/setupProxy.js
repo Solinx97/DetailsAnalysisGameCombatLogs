@@ -58,7 +58,7 @@ module.exports = function (app) {
         target: target,
         onError: onError,
         secure: false,
-        ws: true,
+        ws: false,
         headers: {
             Connection: "Keep-Alive",
         },

@@ -1,0 +1,22 @@
+env: dev
+replicas: 2
+autoscaling: 
+    enabled: false
+    min: 2
+    max: 6
+resources:
+    cpu: 80
+    memory: 80
+container:
+    name: chats-hub
+    image: solinx/combatanalysishubs
+    tag: 0.1.17
+    port: 80
+service:
+    protocol: TCP
+    port: 80
+    targetPort: 8080
+    nodePort: 30301
+ingress:
+    host: api.hub.chats.com
+    port: 80

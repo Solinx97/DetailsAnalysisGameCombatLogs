@@ -9,25 +9,21 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddScoped<IHttpClientHelper, HttpClientHelper>();
 
-builder.Services.AddControllers();
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
-
 var webAppCors = builder.Configuration["Cors:WebApp"] ?? string.Empty;
-var hubsCors = builder.Configuration["Cors:WebApp"] ?? string.Empty;
 
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("CorsPolicy", builder =>
     {
-        builder.AllowAnyMethod()
+        builder.WithOrigins(webAppCors)
+               .AllowAnyMethod()
                .AllowAnyHeader()
-               .WithOrigins(webAppCors, hubsCors)
                .AllowCredentials();
     });
 });
 
-builder.Services.AddSignalR();
+builder.Services.AddSignalR()
+        .AddJsonProtocol();
 
 builder.Services.AddAuthentication("Bearer")
         .AddJwtBearer(options =>
@@ -53,7 +49,7 @@ builder.Services.AddAuthentication("Bearer")
 
 builder.Services.AddAuthorization(options =>
 {
-    options.AddPolicy("DefaultPolicy", policy =>
+    options.AddPolicy("CorsPolicy", policy =>
     {
         policy.RequireAuthenticatedUser();
     });
@@ -68,27 +64,24 @@ Log.Logger = new LoggerConfiguration()
 
 var app = builder.Build();
 
-app.UseRouting();
+app.UseWebSockets();
 
 app.UseCors("CorsPolicy");
+
+app.UseRouting().UseEndpoints(endpoints =>
+{
+    app.MapHub<PersonalChatHub>("/personalChatHub");
+    app.MapHub<PersonalChatMessagesHub>("/personalChatMessagesHub");
+    app.MapHub<PersonalChatUnreadMessageHub>("/personalChatUnreadMessageHub");
+    app.MapHub<GroupChatHub>("/groupChatHub");
+    app.MapHub<GroupChatMessagesHub>("/groupChatMessagesHub");
+    app.MapHub<GroupChatUnreadMessageHub>("/groupChatUnreadMessageHub");
+    app.MapHub<VoiceChatHub>("/voiceChatHub");
+});
 
 app.UseAuthentication(); // Enable authentication middleware
 app.UseAuthorization();
 
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
-
 app.UseHttpsRedirection();
-
-app.MapHub<PersonalChatHub>("/personalChatHub");
-app.MapHub<PersonalChatMessagesHub>("/personalChatMessagesHub");
-app.MapHub<PersonalChatUnreadMessageHub>("/personalChatUnreadMessageHub");
-app.MapHub<GroupChatHub>("/groupChatHub");
-app.MapHub<GroupChatMessagesHub>("/groupChatMessagesHub");
-app.MapHub<GroupChatUnreadMessageHub>("/groupChatUnreadMessageHub");
-app.MapHub<VoiceChatHub>("/voiceChatHub");
 
 app.Run();

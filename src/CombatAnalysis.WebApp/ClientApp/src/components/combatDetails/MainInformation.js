@@ -2,7 +2,7 @@
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import { useGetCombatLogsQuery } from '../../store/api/core/CombatParser.api';
-import { useLazyAuthenticationAsyncQuery } from '../../store/api/core/User.api';
+import { useLazyAuthenticationQuery } from '../../store/api/core/User.api';
 import Loading from '../Loading';
 import CombatLogItem from './CombatLogItem';
 
@@ -14,7 +14,7 @@ const MainInformation = () => {
     const user = useSelector((state) => state.user.value);
 
     const { data: combatLogs, isLoading } = useGetCombatLogsQuery();
-    const [getAuthAsync] = useLazyAuthenticationAsyncQuery();
+    const [getAuthAsync] = useLazyAuthenticationQuery();
 
     const [isAuth, setIsAuth] = useState(false);
     const [selectedLogType, setSelectedLogType] = useState(0);

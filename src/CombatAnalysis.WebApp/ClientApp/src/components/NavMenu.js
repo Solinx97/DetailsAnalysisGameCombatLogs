@@ -6,7 +6,6 @@ import { useSelector } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
 import { Container, Navbar, NavbarBrand } from 'reactstrap';
 import { useAuth } from '../context/AuthProvider';
-import { useChatHub } from '../context/ChatHubProvider';
 import { useLazyIdentityQuery } from '../store/api/core/User.api';
 import LanguageSelector from './LanguageSelector';
 import Search from './Search';
@@ -18,7 +17,6 @@ const NavMenu = () => {
 
     const me = useSelector((state) => state.user.value);
 
-    const { connectToPersonalChatAsync, connectToGroupChatAsync } = useChatHub();
     const { isAuthenticated, checkAuthAsync, logoutAsync } = useAuth();
 
     const [identityAsync] = useLazyIdentityQuery();
@@ -32,29 +30,12 @@ const NavMenu = () => {
             try {
                 await checkAuthAsync();
             } catch (error) {
-                console.error("Authentication check failed:", error);
+                console.error("Authentication check failed", error);
             }
         }
 
         checkAuth();
     }, []);
-
-    useEffect(() => {
-        if (!me) {
-            return;
-        }
-
-        const connectToChats = async () => {
-            try {
-                await connectToPersonalChatAsync(me.id);
-                await connectToGroupChatAsync(me.id);
-            } catch (error) {
-                console.error(error);
-            }
-        }
-
-        connectToChats();
-    }, [me]);
 
     const loginAsync = async () => {
         const identityServerAuthPath = process.env.REACT_APP_IDENTITY_SERVER_AUTH_PATH;

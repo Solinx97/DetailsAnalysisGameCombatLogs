@@ -12,5 +12,5 @@ public interface IHttpClientHelper
 
     Task<HttpResponseMessage> PutAsync(string requestAddress, JsonContent content, HttpContext context);
 
-    Task<HttpResponseMessage> DeletAsync(string requestAddress);
+    Task<HttpResponseMessage> DeletAsync(string requestAddress, HttpContext context);
 }

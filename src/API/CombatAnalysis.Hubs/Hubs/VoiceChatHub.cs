@@ -6,7 +6,7 @@ using System.Collections.Concurrent;
 
 namespace CombatAnalysis.Hubs.Hubs;
 
-internal class VoiceChatHub : Hub
+public class VoiceChatHub : Hub
 {
     private readonly IHttpClientHelper _httpClient;
     private static readonly ConcurrentDictionary<string, HashSet<string>> _groupUsers = new();
@@ -107,7 +107,7 @@ internal class VoiceChatHub : Hub
                 users.Remove(Context.ConnectionId);
             }
 
-            await _httpClient.DeletAsync($"VoiceChat/{Context.ConnectionId}");
+            //await _httpClient.DeletAsync($"VoiceChat/{Context.ConnectionId}");
         }
 
         await Groups.RemoveFromGroupAsync(Context.ConnectionId, room);

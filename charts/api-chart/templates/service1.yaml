@@ -6,7 +6,7 @@ metadata:
     env: {{ .Values.env }}
     owner: OlegFedosov
 spec:
-  type: ClusterIP
+  type: NodePort
   selector:
     app: {{ .Release.Name }}-{{ .Values.app1.name }}
   ports:
@@ -14,3 +14,4 @@ spec:
       protocol: {{ .Values.service.protocol }}
       port: {{ .Values.service.port }}
       targetPort:  {{ .Values.service.targetPort }}
+      nodePort: {{ .Values.app1.service.nodePort }}

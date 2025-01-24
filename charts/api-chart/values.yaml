@@ -5,7 +5,7 @@ resources:
 service:
     protocol: TCP
     port: 80
-    targetPort: 80
+    targetPort: 8080
 app1:
     hostName: api.analysis.user.com
     name: user
@@ -16,11 +16,13 @@ app1:
         max: 6
     container:
         name: user
-        image: solinx/user-api
-        tag: 0.3.0
+        image: solinx/combatanalysisuserapi
+        tag: 0.3.1
         port: 80
     ingress:
         port: 80
+    service:
+        nodePort: 30001
 app2:
     hostName: api.analysis.communication.com
     name: communication
@@ -31,11 +33,13 @@ app2:
         max: 6
     container:
         name: communication
-        image: solinx/communication-api
+        image: solinx/combatanalysiscommunicationapi
         tag: 0.3.0
         port: 80
     ingress:
         port: 80
+    service:
+        nodePort: 30002
 app3:
     hostName: api.analysis.chat.com
     name: chat
@@ -46,11 +50,13 @@ app3:
         max: 6
     container:
         name: chat
-        image: solinx/chat-api
+        image: solinx/combatanalysischatapi
         tag: 0.3.0
         port: 80
     ingress:
         port: 80
+    service:
+        nodePort: 30003
 app4:
     hostName: api.analysis.parser.com
     name: combat-parser
@@ -61,11 +67,13 @@ app4:
         max: 6
     container:
         name: combat-parser
-        image: solinx/combat-parser-api
+        image: solinx/combatanalysiscombatparserapi
         tag: 0.3.0
         port: 80
     ingress:
         port: 80
+    service:
+        nodePort: 30004
 app5:
     hostName: api.analysis.health.com
     name: health
@@ -76,23 +84,10 @@ app5:
         max: 6
     container:
         name: health
-        image: solinx/health-api
+        image: solinx/healthapi
         tag: 0.2.0
         port: 80
     ingress:
         port: 80
-app6:
-    hostName: analysis.chats.hub.com
-    name: chats-hub
-    replicas: 2
-    autoscaling: 
-        enabled: false
-        min: 2
-        max: 6
-    container:
-        name: chats-hub
-        image: solinx/chats-hub
-        tag: 0.1.0
-        port: 80
-    ingress:
-        port: 80
+    service:
+        nodePort: 30005

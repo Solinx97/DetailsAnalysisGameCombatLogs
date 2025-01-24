@@ -1,5 +1,5 @@
 ﻿import * as signalR from '@microsoft/signalr';
-import React, { createContext, useContext, useState } from 'react';
+import React, { createContext, useContext, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 
 const ChatHubContext = createContext();
@@ -26,121 +26,217 @@ export const ChatHubProvider = ({ children }) => {
     const [groupChatMessagesHubConnection, setGroupChatMessagesHubConnection] = useState(null);
     const [groupChatUnreadMessagesHubConnection, setGroupChatUnreadMessagesHubConnection] = useState(null);
 
-    const connectToPersonalChatAsync = async (meId) => {
-        if (personalChatHubConnection !== null) {
+    useEffect(() => {
+        if (!me) {
             return;
         }
 
-        try {
-            const hubConnection = new signalR.HubConnectionBuilder()
-                .withUrl(personalChatHubURL)
-                .withAutomaticReconnect()
-                .build();
-            setPersonalChatHubConnection(hubConnection);
+        connectToPersonalChatAsync();
+        connectToGroupChatAsync();
+    }, [me]);
 
-            await hubConnection.start();
-            await hubConnection.invoke("JoinRoom", meId);
+    const connectToPersonalChatAsync = async () => {
+        try {
+            const connection = new signalR.HubConnectionBuilder()
+                .withUrl(personalChatHubURL,
+                    {
+                        transports: signalR.HttpTransportType.WebSockets |
+                            signalR.HttpTransportType.ServerSentEvents |
+                            signalR.HttpTransportType.LongPolling
+                    })
+                .withAutomaticReconnect()
+                .configureLogging(signalR.LogLevel.Debug)
+                .build();
+
+            connection.onreconnecting((error) => {
+                console.warn("Connection lost. Reconnecting...", error);
+            });
+
+            connection.onreconnected((connectionId) => {
+                console.log("Reconnected. Connection ID:", connectionId);
+            });
+
+            connection.onclose((error) => {
+                console.error("Connection closed. Unable to reconnect.", error);
+            });
+
+            await connection.start();
+            await connection.invoke("JoinRoom", me.id);
+
+            setPersonalChatHubConnection(connection);
         } catch (e) {
             console.error(e);
         }
     }
 
     const connectToPersonalChatMessagesAsync = async (chatId) => {
-        if (personalChatMessagesHubConnection !== null) {
-            return;
-        }
-
         try {
-            const hubConnection = new signalR.HubConnectionBuilder()
-                .withUrl(personalChatMessagesHubURL)
+            const connection = new signalR.HubConnectionBuilder()
+                .withUrl(personalChatMessagesHubURL,
+                    {
+                        transports: signalR.HttpTransportType.WebSockets |
+                            signalR.HttpTransportType.ServerSentEvents |
+                            signalR.HttpTransportType.LongPolling
+                    })
                 .withAutomaticReconnect()
+                .configureLogging(signalR.LogLevel.Debug)
                 .build();
-            setPersonalChatMessagesHubConnection(hubConnection);
 
-            await hubConnection.start();
-            await hubConnection.invoke("JoinRoom", chatId);
+            connection.onreconnecting((error) => {
+                console.warn("Connection lost. Reconnecting...", error);
+            });
+
+            connection.onreconnected((connectionId) => {
+                console.log("Reconnected. Connection ID:", connectionId);
+            });
+
+            connection.onclose((error) => {
+                console.error("Connection closed. Unable to reconnect.", error);
+            });
+
+            await connection.start();
+            await connection.invoke("JoinRoom", chatId);
+
+            setPersonalChatMessagesHubConnection(connection);
         } catch (e) {
             console.error(e);
         }
     }
 
     const connectToPersonalChatUnreadMessagesAsync = async (meInChats) => {
-        if (personalChatUnreadMessagesHubConnection !== null) {
-            return;
-        }
-
         try {
-            const hubConnection = new signalR.HubConnectionBuilder()
-                .withUrl(personalChatUnreadMessagesHubURL)
+            const connection = new signalR.HubConnectionBuilder()
+                .withUrl(personalChatUnreadMessagesHubURL,
+                    {
+                        transports: signalR.HttpTransportType.WebSockets |
+                            signalR.HttpTransportType.ServerSentEvents |
+                            signalR.HttpTransportType.LongPolling
+                    })
                 .withAutomaticReconnect()
+                .configureLogging(signalR.LogLevel.Debug)
                 .build();
-            setPersonalChatUnreadMessagesHubConnection(hubConnection);
 
-            await hubConnection.start();
+            connection.onreconnecting((error) => {
+                console.warn("Connection lost. Reconnecting...", error);
+            });
 
+            connection.onreconnected((connectionId) => {
+                console.log("Reconnected. Connection ID:", connectionId);
+            });
+
+            connection.onclose((error) => {
+                console.error("Connection closed. Unable to reconnect.", error);
+            });
+
+            await connection.start();
             for (let i = 0; i < meInChats.length; i++) {
-                await hubConnection.invoke("JoinRoom", meInChats[i].id);
+                await connection.invoke("JoinRoom", meInChats[i].id);
             }
+
+            setPersonalChatUnreadMessagesHubConnection(connection);
         } catch (e) {
             console.error(e);
         }
     }
 
-    const connectToGroupChatAsync = async (meId) => {
-        if (groupChatHubConnection !== null) {
-            return;
-        }
-
+    const connectToGroupChatAsync = async () => {
         try {
-            const hubConnection = new signalR.HubConnectionBuilder()
-                .withUrl(groupChatHubURL)
+            const connection = new signalR.HubConnectionBuilder()
+                .withUrl(groupChatHubURL,
+                    {
+                        transports: signalR.HttpTransportType.WebSockets |
+                            signalR.HttpTransportType.ServerSentEvents |
+                            signalR.HttpTransportType.LongPolling
+                    })
                 .withAutomaticReconnect()
+                .configureLogging(signalR.LogLevel.Debug)
                 .build();
-            setGroupChatHubConnection(hubConnection);
 
-            await hubConnection.start();
-            await hubConnection.invoke("JoinRoom", meId);
+            connection.onreconnecting((error) => {
+                console.warn("Connection lost. Reconnecting...", error);
+            });
+
+            connection.onreconnected((connectionId) => {
+                console.log("Reconnected. Connection ID:", connectionId);
+            });
+
+            connection.onclose((error) => {
+                console.error("Connection closed. Unable to reconnect.", error);
+            });
+
+            await connection.start();
+            await connection.invoke("JoinRoom", me.id);
+
+            setGroupChatHubConnection(connection);
         } catch (e) {
             console.error(e);
         }
     }
 
     const connectToGroupChatMessagesAsync = async (chatId) => {
-        if (groupChatMessagesHubConnection !== null) {
-            return;
-        }
-
         try {
-            const hubConnection = new signalR.HubConnectionBuilder()
-                .withUrl(groupChatMessagesHubURL)
+            const connection = new signalR.HubConnectionBuilder()
+                .withUrl(groupChatMessagesHubURL,
+                    {
+                        transports: signalR.HttpTransportType.WebSockets |
+                            signalR.HttpTransportType.ServerSentEvents |
+                            signalR.HttpTransportType.LongPolling
+                    })
                 .withAutomaticReconnect()
+                .configureLogging(signalR.LogLevel.Debug)
                 .build();
-            setGroupChatMessagesHubConnection(hubConnection);
 
-            await hubConnection.start();
-            await hubConnection.invoke("JoinRoom", chatId);
+            connection.onreconnecting((error) => {
+                console.warn("Connection lost. Reconnecting...", error);
+            });
+
+            connection.onreconnected((connectionId) => {
+                console.log("Reconnected. Connection ID:", connectionId);
+            });
+
+            connection.onclose((error) => {
+                console.error("Connection closed. Unable to reconnect.", error);
+            });
+
+            await connection.start();
+            await connection.invoke("JoinRoom", chatId);
+
+            setGroupChatMessagesHubConnection(connection);
         } catch (e) {
             console.error(e);
         }
     }
 
     const connectToGroupChatUnreadMessagesAsync = async (meInChats) => {
-        if (groupChatUnreadMessagesHubConnection !== null) {
-            return;
-        }
-
         try {
-            const hubConnection = new signalR.HubConnectionBuilder()
-                .withUrl(groupChatUnreadMessagesHubURL)
+            const connection = new signalR.HubConnectionBuilder()
+                .withUrl(groupChatUnreadMessagesHubURL,
+                    {
+                        transports: signalR.HttpTransportType.WebSockets |
+                            signalR.HttpTransportType.ServerSentEvents |
+                            signalR.HttpTransportType.LongPolling
+                    })
                 .withAutomaticReconnect()
                 .build();
-            setGroupChatUnreadMessagesHubConnection(hubConnection);
 
-            await hubConnection.start();
+            connection.onreconnecting((error) => {
+                console.warn("Connection lost. Reconnecting...", error);
+            });
 
+            connection.onreconnected((connectionId) => {
+                console.log("Reconnected. Connection ID:", connectionId);
+            });
+
+            connection.onclose((error) => {
+                console.error("Connection closed. Unable to reconnect.", error);
+            });
+
+            await connection.start();
             for (let i = 0; i < meInChats.length; i++) {
-                await hubConnection.invoke("JoinRoom", meInChats[i].chatId);
+                await connection.invoke("JoinRoom", meInChats[i].chatId);
             }
+
+            setGroupChatUnreadMessagesHubConnection(connection);
         } catch (e) {
             console.error(e);
         }
