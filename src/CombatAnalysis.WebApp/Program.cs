@@ -35,16 +35,6 @@ if (int.TryParse(builder.Configuration["Authentication:RefreshTokenExpiresDays"]
     Authentication.RefreshTokenExpiresDays = refreshTokenExpiresDays;
 }
 
-builder.Services.AddCors(options =>
-{
-    options.AddPolicy("CorsPolicy",
-        builder => builder
-        .AllowAnyMethod()
-        .AllowAnyHeader()
-        .AllowCredentials()
-        .WithOrigins("http://localhost:3000")); // React app URL
-});
-
 builder.Services.AddControllersWithViews();
 
 Log.Logger = new LoggerConfiguration()
@@ -58,14 +48,12 @@ var app = builder.Build();
 
 app.UseWebSockets();
 
-app.UseCors("CorsPolicy");
-
 app.UseRouting();
 
-//if (app.Environment.IsDevelopment())
-//{
-//    app.UseHsts();
-//}
+if (app.Environment.IsDevelopment())
+{
+    app.UseHsts();
+}
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();

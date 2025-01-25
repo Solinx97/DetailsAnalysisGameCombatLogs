@@ -3,28 +3,27 @@ resources:
     cpu: 80
     memory: 80
 service:
-    protocol: TCP
     port: 80
     targetPort: 8080
-app1:
-    hostName: api.analysis.user.com
+autoscaling: 
+    enabled: true
+    min: 2
+    max: 6
+user:
     name: user
     replicas: 2
-    autoscaling: 
-        enabled: true
-        min: 2
-        max: 6
     container:
         name: user
         image: solinx/combatanalysisuserapi
-        tag: 0.3.1
-        port: 80
-    ingress:
         port: 80
     service:
+        port: 80
+        targetPort: 8080
         nodePort: 30001
-app2:
-    hostName: api.analysis.communication.com
+    ingress:
+        host: api.analysis.user.com
+        port: 80
+communication:
     name: communication
     replicas: 2
     autoscaling: 
@@ -34,14 +33,15 @@ app2:
     container:
         name: communication
         image: solinx/combatanalysiscommunicationapi
-        tag: 0.3.0
-        port: 80
-    ingress:
         port: 80
     service:
+        port: 80
+        targetPort: 8080
         nodePort: 30002
-app3:
-    hostName: api.analysis.chat.com
+    ingress:
+        host: api.analysis.communication.com
+        port: 80
+chat:
     name: chat
     replicas: 2
     autoscaling: 
@@ -51,14 +51,15 @@ app3:
     container:
         name: chat
         image: solinx/combatanalysischatapi
-        tag: 0.3.0
-        port: 80
-    ingress:
         port: 80
     service:
+        port: 80
+        targetPort: 8080
         nodePort: 30003
-app4:
-    hostName: api.analysis.parser.com
+    ingress:
+        host: api.analysis.chat.com
+        port: 80
+parser:
     name: combat-parser
     replicas: 2
     autoscaling: 
@@ -68,14 +69,15 @@ app4:
     container:
         name: combat-parser
         image: solinx/combatanalysiscombatparserapi
-        tag: 0.3.0
-        port: 80
-    ingress:
         port: 80
     service:
+        port: 80
+        targetPort: 8080
         nodePort: 30004
-app5:
-    hostName: api.analysis.health.com
+    ingress:
+        host: api.analysis.parser.com
+        port: 80
+health:
     name: health
     replicas: 2
     autoscaling: 
@@ -85,9 +87,11 @@ app5:
     container:
         name: health
         image: solinx/healthapi
-        tag: 0.2.0
-        port: 80
-    ingress:
         port: 80
     service:
+        port: 80
+        targetPort: 8080
         nodePort: 30005
+    ingress:
+        host: api.analysis.health.com
+        port: 80

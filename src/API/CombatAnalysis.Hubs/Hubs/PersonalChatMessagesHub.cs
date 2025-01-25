@@ -1,5 +1,4 @@
-﻿using CombatAnalysis.Hubs.Consts;
-using CombatAnalysis.Hubs.Enums;
+﻿using CombatAnalysis.Hubs.Enums;
 using CombatAnalysis.Hubs.Interfaces;
 using CombatAnalysis.Hubs.Models;
 using Microsoft.AspNetCore.SignalR;
@@ -14,8 +13,6 @@ public class PersonalChatMessagesHub : Hub
     public PersonalChatMessagesHub(IHttpClientHelper httpClient, ILogger<PersonalChatMessagesHub> logger)
     {
         _httpClient = httpClient;
-        _httpClient.BaseAddress = Port.ChatApi;
-
         _logger = logger;
     }
 
@@ -48,12 +45,6 @@ public class PersonalChatMessagesHub : Hub
     {
         try
         {
-            var context = Context.GetHttpContext();
-            if (context == null)
-            {
-                throw new ArgumentNullException(nameof(context));
-            }
-
             var personalMessage = new PersonalChatMessageModel
             {
                 Username = username,
@@ -64,7 +55,7 @@ public class PersonalChatMessagesHub : Hub
                 AppUserId = appUserId
             };
 
-            var response = await _httpClient.PostAsync("PersonalChatMessage", JsonContent.Create(personalMessage), context);
+            var response = await _httpClient.PostAsync("PersonalChatMessage", JsonContent.Create(personalMessage));
             response.EnsureSuccessStatusCode();
 
             var createdMessage = await response.Content.ReadFromJsonAsync<PersonalChatMessageModel>();
@@ -78,6 +69,10 @@ public class PersonalChatMessagesHub : Hub
             await Clients.Group(chatId.ToString()).SendAsync("ReceiveMessage", createdMessage);
         }
         catch (ArgumentNullException ex)
+        {
+            _logger.LogError(ex, ex.Message);
+        }
+        catch (UnauthorizedAccessException ex)
         {
             _logger.LogError(ex, ex.Message);
         }
@@ -95,13 +90,7 @@ public class PersonalChatMessagesHub : Hub
     {
         try
         {
-            var context = Context.GetHttpContext();
-            if (context == null)
-            {
-                throw new ArgumentNullException(nameof(context));
-            }
-
-            var response = await _httpClient.GetAsync($"PersonalChatMessage/{chatMessageId}", context);
+            var response = await _httpClient.GetAsync($"PersonalChatMessage/{chatMessageId}");
             response.EnsureSuccessStatusCode();
 
             var messageModel = await response.Content.ReadFromJsonAsync<PersonalChatMessageModel>();
@@ -117,10 +106,10 @@ public class PersonalChatMessagesHub : Hub
 
             messageModel.Status = 2;
 
-            response = await _httpClient.PutAsync("PersonalChatMessage", JsonContent.Create(messageModel), context);
+            response = await _httpClient.PutAsync("PersonalChatMessage", JsonContent.Create(messageModel));
             response.EnsureSuccessStatusCode();
 
-            response = await _httpClient.GetAsync($"PersonalChatMessageCount/findMe?chatId={messageModel.ChatId}&appUserId={meId}", context);
+            response = await _httpClient.GetAsync($"PersonalChatMessageCount/findMe?chatId={messageModel.ChatId}&appUserId={meId}");
             response.EnsureSuccessStatusCode();
 
             var messageCount = await response.Content.ReadFromJsonAsync<PersonalChatMessageCountModel>();
@@ -131,12 +120,16 @@ public class PersonalChatMessagesHub : Hub
 
             messageCount.Count--;
 
-            response = await _httpClient.PutAsync("PersonalChatMessageCount", JsonContent.Create(messageCount), context);
+            response = await _httpClient.PutAsync("PersonalChatMessageCount", JsonContent.Create(messageCount));
             response.EnsureSuccessStatusCode();
 
             await Clients.Caller.SendAsync("ReceiveMessageHasBeenRead");
         }
         catch (ArgumentNullException ex)
+        {
+            _logger.LogError(ex, ex.Message);
+        }
+        catch (UnauthorizedAccessException ex)
         {
             _logger.LogError(ex, ex.Message);
         }

@@ -5,7 +5,7 @@ metadata:
   name: {{ .Release.Name }}-deployment-autoscaling
 spec:
   scaleTargetRef:
-    apiVersion: web-app/v1
+    apiVersion: api/v1
     kind: Deployment
     name: {{ .Release.Name }}-deployment
   minReplicas: {{ .Values.autoscaling.min }}

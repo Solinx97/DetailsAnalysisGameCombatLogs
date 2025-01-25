@@ -79,17 +79,17 @@ public class AuthenticationController : ControllerBase
             Uri = uri
         };
 
-        HttpContext.Response.Cookies.Append(AuthenticationCookie.CodeVerifier.ToString(), codeVerifier, new CookieOptions
+        HttpContext.Response.Cookies.Append(nameof(AuthenticationCookie.CodeVerifier), codeVerifier, new CookieOptions
         {
             HttpOnly = true,
-            Secure = false,
-            SameSite = SameSiteMode.Lax,
+            Secure = true,
+            SameSite = SameSiteMode.None,
         });
-        HttpContext.Response.Cookies.Append(AuthenticationCookie.State.ToString(), state, new CookieOptions
+        HttpContext.Response.Cookies.Append(nameof(AuthenticationCookie.State), state, new CookieOptions
         {
             HttpOnly = true,
-            Secure = false,
-            SameSite = SameSiteMode.Lax,
+            Secure = true,
+            SameSite = SameSiteMode.None,
         });
 
         return Ok(identityRedirect);

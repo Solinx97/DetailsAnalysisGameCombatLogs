@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ .Release.Name }}-deployment
+  name: {{ .Values.webApp.name }}-deployment
   labels:
     app: {{ .Release.Name }}
     env: {{ .Values.env }}
@@ -12,14 +12,14 @@ spec:
   {{- end }}
   selector:
     matchLabels:
-      app: {{ .Release.Name }}
+      app: {{ .Values.webApp.name }}
   template:
     metadata:
       labels:
-        app: {{ .Release.Name }}
+        app: {{ .Values.webApp.name }}
     spec:
       containers:
-        - name: {{ .Values.container.name }}
-          image: {{ .Values.container.image }}:{{ .Values.imageTags.identity }}
+        - name: {{ .Values.webApp.container.name }}
+          image: {{ .Values.webApp.container.image }}:{{ .Values.imageTags.webApp }}
           ports:
-            - containerPort: {{ .Values.container.port }}
+            - containerPort: {{ .Values.webApp.container.port }}

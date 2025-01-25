@@ -1,5 +1,4 @@
-﻿using CombatAnalysis.Hubs.Consts;
-using CombatAnalysis.Hubs.Interfaces;
+﻿using CombatAnalysis.Hubs.Interfaces;
 using CombatAnalysis.Hubs.Models;
 using Microsoft.AspNetCore.SignalR;
 using System.Collections.Concurrent;
@@ -9,40 +8,51 @@ namespace CombatAnalysis.Hubs.Hubs;
 public class VoiceChatHub : Hub
 {
     private readonly IHttpClientHelper _httpClient;
+    private readonly ILogger<VoiceChatHub> _logger;
     private static readonly ConcurrentDictionary<string, HashSet<string>> _groupUsers = new();
 
-    public VoiceChatHub(IHttpClientHelper httpClient)
+    public VoiceChatHub(IHttpClientHelper httpClient, ILogger<VoiceChatHub> logger)
     {
         _httpClient = httpClient;
-        _httpClient.BaseAddress = Port.ChatApi;
+        _logger = logger;
     }
 
     public async Task JoinRoom(string room, string userId)
     {
-        var context = Context.GetHttpContext();
-        if (context == null)
+        try
         {
-            return;
+            var voiceChat = new VoiceChatModel
+            {
+                Id = Context.ConnectionId,
+                AppUserId = userId
+            };
+
+            var response = await _httpClient.PostAsync("VoiceChat", JsonContent.Create(voiceChat));
+            response.EnsureSuccessStatusCode();
+
+            var users = _groupUsers.GetOrAdd(room, _ => new HashSet<string>());
+            lock (users)
+            {
+                users.Add(Context.ConnectionId);
+            }
+
+            await Groups.AddToGroupAsync(Context.ConnectionId, room);
+
+            await Clients.Caller.SendAsync("Connected", Context.ConnectionId);
+            await Clients.OthersInGroup(room).SendAsync("UserJoined", Context.ConnectionId);
         }
-
-        var voiceChat = new VoiceChatModel
+        catch (UnauthorizedAccessException ex)
         {
-            Id = Context.ConnectionId,
-            AppUserId = userId
-        };
-
-        await _httpClient.PostAsync("VoiceChat", JsonContent.Create(voiceChat), context);
-
-        var users = _groupUsers.GetOrAdd(room, _ => new HashSet<string>());
-        lock (users)
-        {
-            users.Add(Context.ConnectionId);
+            _logger.LogError(ex, ex.Message);
         }
-
-        await Groups.AddToGroupAsync(Context.ConnectionId, room);
-
-        await Clients.Caller.SendAsync("Connected", Context.ConnectionId);
-        await Clients.OthersInGroup(room).SendAsync("UserJoined", Context.ConnectionId);
+        catch (HttpRequestException ex)
+        {
+            _logger.LogError(ex, ex.Message);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, ex.Message);
+        }
     }
 
     public async Task SendOffer(string room, string userId, string offer)
@@ -100,18 +110,34 @@ public class VoiceChatHub : Hub
 
     public async Task LeaveRoom(string room)
     {
-        if (_groupUsers.TryGetValue(room, out var users))
+        try
         {
-            lock (users)
+            if (_groupUsers.TryGetValue(room, out var users))
             {
-                users.Remove(Context.ConnectionId);
+                lock (users)
+                {
+                    users.Remove(Context.ConnectionId);
+                }
+
+                var response = await _httpClient.DeletAsync($"VoiceChat/{Context.ConnectionId}");
+                response.EnsureSuccessStatusCode();
             }
 
-            //await _httpClient.DeletAsync($"VoiceChat/{Context.ConnectionId}");
+            await Groups.RemoveFromGroupAsync(Context.ConnectionId, room);
+            await Clients.Group(room).SendAsync("UserLeft", Context.ConnectionId);
         }
-
-        await Groups.RemoveFromGroupAsync(Context.ConnectionId, room);
-        await Clients.Group(room).SendAsync("UserLeft", Context.ConnectionId);
+        catch (UnauthorizedAccessException ex)
+        {
+            _logger.LogError(ex, ex.Message);
+        }
+        catch (HttpRequestException ex)
+        {
+            _logger.LogError(ex, ex.Message);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, ex.Message);
+        }
     }
 
     public override async Task OnDisconnectedAsync(Exception? exception)

@@ -2,7 +2,7 @@
 apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
-  name: {{ .Release.Name }}deployment-autoscaling
+  name: {{ .Release.Name }}-deployment-autoscaling
 spec:
   scaleTargetRef:
     apiVersion: identity/v1

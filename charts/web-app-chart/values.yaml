@@ -1,22 +1,35 @@
-env: dev
+env: production
 replicas: 2
-autoscaling: 
-    enabled: false
-    min: 2
-    max: 6
 resources:
     cpu: 80
     memory: 80
-container:
-    name: solinx-analysis-web-app
-    image: solinx/combatanalysiswebapp
-    tag: 0.3.20
-    port: 80
-service:
-    protocol: TCP
-    port: 80
-    targetPort: 8080
-    nodePort: 30201
-ingress:
-    host: encounters.analysis.com
-    port: 80
+autoscaling: 
+    enabled: true
+    min: 2
+    max: 6
+webApp:
+    name: web-app
+    container:
+        name: analysis-web-app
+        image: solinx/combatanalysiswebapp
+        port: 80
+    service:
+        port: 80
+        targetPort: 8080
+        nodePort: 30201
+    ingress:
+        host: encounters.analysis.com
+        port: 80
+hubs:
+    name: hubs
+    container:
+        name: analysis-hubs
+        image: solinx/combatanalysishubs
+        port: 80
+    service:
+        port: 80
+        targetPort: 8080
+        nodePort: 30301
+    ingress:
+        host: api.hub.chats.com
+        port: 80

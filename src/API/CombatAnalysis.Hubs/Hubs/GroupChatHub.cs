@@ -1,5 +1,4 @@
-﻿using CombatAnalysis.Hubs.Consts;
-using CombatAnalysis.Hubs.Enums;
+﻿using CombatAnalysis.Hubs.Enums;
 using CombatAnalysis.Hubs.Interfaces;
 using CombatAnalysis.Hubs.Models;
 using CombatAnalysis.Hubs.Models.Containers;
@@ -15,8 +14,6 @@ public class GroupChatHub : Hub
     public GroupChatHub(IHttpClientHelper httpClient, ILogger<GroupChatHub> logger)
     {
         _httpClient = httpClient;
-        _httpClient.BaseAddress = Port.ChatApi;
-
         _logger = logger;
     }
 
@@ -33,13 +30,7 @@ public class GroupChatHub : Hub
     {
         try
         {
-            var context = Context.GetHttpContext();
-            if (context == null)
-            {
-                throw new ArgumentNullException(nameof(context));
-            }
-
-            var response = await _httpClient.PostAsync("GroupChat", JsonContent.Create(groupChat), context);
+            var response = await _httpClient.PostAsync("GroupChat", JsonContent.Create(groupChat));
             response.EnsureSuccessStatusCode();
 
             var createdChat = await response.Content.ReadFromJsonAsync<GroupChatModel>();
@@ -51,6 +42,10 @@ public class GroupChatHub : Hub
             await Clients.Caller.SendAsync("ReceiveGroupChat", createdChat.Id, groupChat.GroupChat.AppUserId);
         }
         catch (ArgumentNullException ex)
+        {
+            _logger.LogError(ex, ex.Message);
+        }
+        catch (UnauthorizedAccessException ex)
         {
             _logger.LogError(ex, ex.Message);
         }
@@ -68,13 +63,7 @@ public class GroupChatHub : Hub
     {
         try
         {
-            var context = Context.GetHttpContext();
-            if (context == null)
-            {
-                throw new ArgumentNullException(nameof(context));
-            }
-
-            var response = await _httpClient.GetAsync($"GroupChatUser/findUserInChat?chatId={chatId}&appUserId={appUserId}", context);
+            var response = await _httpClient.GetAsync($"GroupChatUser/findUserInChat?chatId={chatId}&appUserId={appUserId}");
             response.EnsureSuccessStatusCode();
 
             var groupChatUser = await response.Content.ReadFromJsonAsync<GroupChatUserModel>();
@@ -86,6 +75,10 @@ public class GroupChatHub : Hub
             await Clients.Group(appUserId).SendAsync("ReceiveJoinedUser", groupChatUser);
         }
         catch (ArgumentNullException ex)
+        {
+            _logger.LogError(ex, ex.Message);
+        }
+        catch (UnauthorizedAccessException ex)
         {
             _logger.LogError(ex, ex.Message);
         }
@@ -103,13 +96,7 @@ public class GroupChatHub : Hub
     {
         try
         {
-            var context = Context.GetHttpContext();
-            if (context == null)
-            {
-                throw new ArgumentNullException(nameof(context));
-            }
-
-            var response = await _httpClient.PostAsync("GroupChatUser", JsonContent.Create(groupChatUser), context);
+            var response = await _httpClient.PostAsync("GroupChatUser", JsonContent.Create(groupChatUser));
             response.EnsureSuccessStatusCode();
 
             var createdGroupChatUser = await response.Content.ReadFromJsonAsync<GroupChatUserModel>();
@@ -122,6 +109,10 @@ public class GroupChatHub : Hub
             await Clients.Group(groupChatUser.AppUserId).SendAsync("ReceiveAddedUserToChat", createdGroupChatUser);
         }
         catch (ArgumentNullException ex)
+        {
+            _logger.LogError(ex, ex.Message);
+        }
+        catch (UnauthorizedAccessException ex)
         {
             _logger.LogError(ex, ex.Message);
         }

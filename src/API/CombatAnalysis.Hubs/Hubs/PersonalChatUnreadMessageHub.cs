@@ -1,5 +1,4 @@
-﻿using CombatAnalysis.Hubs.Consts;
-using CombatAnalysis.Hubs.Enums;
+﻿using CombatAnalysis.Hubs.Enums;
 using CombatAnalysis.Hubs.Interfaces;
 using CombatAnalysis.Hubs.Models;
 using Microsoft.AspNetCore.SignalR;
@@ -14,8 +13,6 @@ public class PersonalChatUnreadMessageHub : Hub
     public PersonalChatUnreadMessageHub(IHttpClientHelper httpClient, ILogger<PersonalChatUnreadMessageHub> logger)
     {
         _httpClient = httpClient;
-        _httpClient.BaseAddress = Port.ChatApi;
-
         _logger = logger;
     }
 
@@ -60,13 +57,7 @@ public class PersonalChatUnreadMessageHub : Hub
     {
         try
         {
-            var context = Context.GetHttpContext();
-            if (context == null)
-            {
-                throw new ArgumentNullException(nameof(context));
-            }
-
-            var response = await _httpClient.GetAsync($"PersonalChatMessageCount/findMe?chatId={chatId}&appUserId={appUserId}", context);
+            var response = await _httpClient.GetAsync($"PersonalChatMessageCount/findMe?chatId={chatId}&appUserId={appUserId}");
             response.EnsureSuccessStatusCode();
 
             var messagesCount = await response.Content.ReadFromJsonAsync<PersonalChatMessageCountModel>();
@@ -78,6 +69,10 @@ public class PersonalChatUnreadMessageHub : Hub
             await Clients.Group(chatId.ToString()).SendAsync("ReceiveUnreadMessage", chatId, appUserId, messagesCount.Count);
         }
         catch (ArgumentNullException ex)
+        {
+            _logger.LogError(ex, ex.Message);
+        }
+        catch (UnauthorizedAccessException ex)
         {
             _logger.LogError(ex, ex.Message);
         }

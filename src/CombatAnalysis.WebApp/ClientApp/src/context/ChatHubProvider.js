@@ -33,32 +33,32 @@ export const ChatHubProvider = ({ children }) => {
 
         connectToPersonalChatAsync();
         connectToGroupChatAsync();
+
+        return () => {
+            if (personalChatHubConnection) {
+                personalChatHubConnection.stop().then(() => console.log('Connection for Personal chat closed'));
+            }
+
+            if (groupChatHubConnection) {
+                groupChatHubConnection.stop().then(() => console.log('Connection for Group chat closed'));
+            }
+        }
     }, [me]);
+
+    const createHubConnection = (url) => {
+        return new signalR.HubConnectionBuilder()
+            .withUrl(url, {
+                withCredentials: true,
+                transports: ['websocket', 'polling'],
+            })
+            .withAutomaticReconnect()
+            .configureLogging(signalR.LogLevel.Debug)
+            .build();
+    }
 
     const connectToPersonalChatAsync = async () => {
         try {
-            const connection = new signalR.HubConnectionBuilder()
-                .withUrl(personalChatHubURL,
-                    {
-                        transports: signalR.HttpTransportType.WebSockets |
-                            signalR.HttpTransportType.ServerSentEvents |
-                            signalR.HttpTransportType.LongPolling
-                    })
-                .withAutomaticReconnect()
-                .configureLogging(signalR.LogLevel.Debug)
-                .build();
-
-            connection.onreconnecting((error) => {
-                console.warn("Connection lost. Reconnecting...", error);
-            });
-
-            connection.onreconnected((connectionId) => {
-                console.log("Reconnected. Connection ID:", connectionId);
-            });
-
-            connection.onclose((error) => {
-                console.error("Connection closed. Unable to reconnect.", error);
-            });
+            const connection = createHubConnection(personalChatHubURL);
 
             await connection.start();
             await connection.invoke("JoinRoom", me.id);
@@ -71,28 +71,7 @@ export const ChatHubProvider = ({ children }) => {
 
     const connectToPersonalChatMessagesAsync = async (chatId) => {
         try {
-            const connection = new signalR.HubConnectionBuilder()
-                .withUrl(personalChatMessagesHubURL,
-                    {
-                        transports: signalR.HttpTransportType.WebSockets |
-                            signalR.HttpTransportType.ServerSentEvents |
-                            signalR.HttpTransportType.LongPolling
-                    })
-                .withAutomaticReconnect()
-                .configureLogging(signalR.LogLevel.Debug)
-                .build();
-
-            connection.onreconnecting((error) => {
-                console.warn("Connection lost. Reconnecting...", error);
-            });
-
-            connection.onreconnected((connectionId) => {
-                console.log("Reconnected. Connection ID:", connectionId);
-            });
-
-            connection.onclose((error) => {
-                console.error("Connection closed. Unable to reconnect.", error);
-            });
+            const connection = createHubConnection(personalChatMessagesHubURL);
 
             await connection.start();
             await connection.invoke("JoinRoom", chatId);
@@ -105,28 +84,7 @@ export const ChatHubProvider = ({ children }) => {
 
     const connectToPersonalChatUnreadMessagesAsync = async (meInChats) => {
         try {
-            const connection = new signalR.HubConnectionBuilder()
-                .withUrl(personalChatUnreadMessagesHubURL,
-                    {
-                        transports: signalR.HttpTransportType.WebSockets |
-                            signalR.HttpTransportType.ServerSentEvents |
-                            signalR.HttpTransportType.LongPolling
-                    })
-                .withAutomaticReconnect()
-                .configureLogging(signalR.LogLevel.Debug)
-                .build();
-
-            connection.onreconnecting((error) => {
-                console.warn("Connection lost. Reconnecting...", error);
-            });
-
-            connection.onreconnected((connectionId) => {
-                console.log("Reconnected. Connection ID:", connectionId);
-            });
-
-            connection.onclose((error) => {
-                console.error("Connection closed. Unable to reconnect.", error);
-            });
+            const connection = createHubConnection(personalChatUnreadMessagesHubURL);
 
             await connection.start();
             for (let i = 0; i < meInChats.length; i++) {
@@ -141,28 +99,7 @@ export const ChatHubProvider = ({ children }) => {
 
     const connectToGroupChatAsync = async () => {
         try {
-            const connection = new signalR.HubConnectionBuilder()
-                .withUrl(groupChatHubURL,
-                    {
-                        transports: signalR.HttpTransportType.WebSockets |
-                            signalR.HttpTransportType.ServerSentEvents |
-                            signalR.HttpTransportType.LongPolling
-                    })
-                .withAutomaticReconnect()
-                .configureLogging(signalR.LogLevel.Debug)
-                .build();
-
-            connection.onreconnecting((error) => {
-                console.warn("Connection lost. Reconnecting...", error);
-            });
-
-            connection.onreconnected((connectionId) => {
-                console.log("Reconnected. Connection ID:", connectionId);
-            });
-
-            connection.onclose((error) => {
-                console.error("Connection closed. Unable to reconnect.", error);
-            });
+            const connection = createHubConnection(groupChatHubURL);
 
             await connection.start();
             await connection.invoke("JoinRoom", me.id);
@@ -175,28 +112,7 @@ export const ChatHubProvider = ({ children }) => {
 
     const connectToGroupChatMessagesAsync = async (chatId) => {
         try {
-            const connection = new signalR.HubConnectionBuilder()
-                .withUrl(groupChatMessagesHubURL,
-                    {
-                        transports: signalR.HttpTransportType.WebSockets |
-                            signalR.HttpTransportType.ServerSentEvents |
-                            signalR.HttpTransportType.LongPolling
-                    })
-                .withAutomaticReconnect()
-                .configureLogging(signalR.LogLevel.Debug)
-                .build();
-
-            connection.onreconnecting((error) => {
-                console.warn("Connection lost. Reconnecting...", error);
-            });
-
-            connection.onreconnected((connectionId) => {
-                console.log("Reconnected. Connection ID:", connectionId);
-            });
-
-            connection.onclose((error) => {
-                console.error("Connection closed. Unable to reconnect.", error);
-            });
+            const connection = createHubConnection(groupChatMessagesHubURL);
 
             await connection.start();
             await connection.invoke("JoinRoom", chatId);
@@ -209,27 +125,7 @@ export const ChatHubProvider = ({ children }) => {
 
     const connectToGroupChatUnreadMessagesAsync = async (meInChats) => {
         try {
-            const connection = new signalR.HubConnectionBuilder()
-                .withUrl(groupChatUnreadMessagesHubURL,
-                    {
-                        transports: signalR.HttpTransportType.WebSockets |
-                            signalR.HttpTransportType.ServerSentEvents |
-                            signalR.HttpTransportType.LongPolling
-                    })
-                .withAutomaticReconnect()
-                .build();
-
-            connection.onreconnecting((error) => {
-                console.warn("Connection lost. Reconnecting...", error);
-            });
-
-            connection.onreconnected((connectionId) => {
-                console.log("Reconnected. Connection ID:", connectionId);
-            });
-
-            connection.onclose((error) => {
-                console.error("Connection closed. Unable to reconnect.", error);
-            });
+            const connection = createHubConnection(groupChatUnreadMessagesHubURL);
 
             await connection.start();
             for (let i = 0; i < meInChats.length; i++) {

@@ -51,18 +51,18 @@ public class IdentityController : ControllerBase
                 return BadRequest();
             }
 
-            HttpContext.Response.Cookies.Append(AuthenticationCookie.AccessToken.ToString(), token.AccessToken, new CookieOptions
+            HttpContext.Response.Cookies.Append(nameof(AuthenticationCookie.AccessToken), token.AccessToken, new CookieOptions
             {
                 HttpOnly = true,
-                Secure = false,
-                SameSite = SameSiteMode.Lax,
+                Secure = true,
+                SameSite = SameSiteMode.None,
                 Expires = token.Expires,
             });
-            HttpContext.Response.Cookies.Append(AuthenticationCookie.RefreshToken.ToString(), token.RefreshToken, new CookieOptions
+            HttpContext.Response.Cookies.Append(nameof(AuthenticationCookie.RefreshToken), token.RefreshToken, new CookieOptions
             {
                 HttpOnly = true,
-                Secure = false,
-                SameSite = SameSiteMode.Lax,
+                Secure = true,
+                SameSite = SameSiteMode.None,
                 Expires = token.Expires.AddDays(Authentication.RefreshTokenExpiresDays)
             });
 
