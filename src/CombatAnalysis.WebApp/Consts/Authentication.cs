@@ -2,6 +2,8 @@
 
 public static class Authentication
 {
+    public static string CookieDomain { get; set; }
+
     public static string ClientId { get; set; }
 
     public static string ClientScope { get; set; }

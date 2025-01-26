@@ -81,12 +81,14 @@ public class AuthenticationController : ControllerBase
 
         HttpContext.Response.Cookies.Append(nameof(AuthenticationCookie.CodeVerifier), codeVerifier, new CookieOptions
         {
+            Domain = Authentication.CookieDomain,
             HttpOnly = true,
             Secure = true,
             SameSite = SameSiteMode.None,
         });
         HttpContext.Response.Cookies.Append(nameof(AuthenticationCookie.State), state, new CookieOptions
         {
+            Domain = Authentication.CookieDomain,
             HttpOnly = true,
             Secure = true,
             SameSite = SameSiteMode.None,

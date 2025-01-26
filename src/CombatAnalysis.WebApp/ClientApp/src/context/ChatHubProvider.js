@@ -31,17 +31,22 @@ export const ChatHubProvider = ({ children }) => {
             return;
         }
 
-        connectToPersonalChatAsync();
-        connectToGroupChatAsync();
+        connectToPersonalChatAsync().then(async () => {
+            await connectToGroupChatAsync();
+        });
 
         return () => {
-            if (personalChatHubConnection) {
-                personalChatHubConnection.stop().then(() => console.log('Connection for Personal chat closed'));
+            const stopConnection = async () => {
+                if (personalChatHubConnection) {
+                    await personalChatHubConnection.stop();
+                }
+
+                if (groupChatHubConnection) {
+                    await groupChatHubConnection.stop();
+                }
             }
 
-            if (groupChatHubConnection) {
-                groupChatHubConnection.stop().then(() => console.log('Connection for Group chat closed'));
-            }
+            stopConnection();
         }
     }, [me]);
 
@@ -52,7 +57,6 @@ export const ChatHubProvider = ({ children }) => {
                 transports: ['websocket', 'polling'],
             })
             .withAutomaticReconnect()
-            .configureLogging(signalR.LogLevel.Debug)
             .build();
     }
 

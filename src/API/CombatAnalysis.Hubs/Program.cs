@@ -35,7 +35,6 @@ Log.Logger = new LoggerConfiguration()
 
 var app = builder.Build();
 
-app.UseWebSockets();
 app.UseCors("CorsPolicy");
 
 app.UseRouting().UseEndpoints(endpoints =>

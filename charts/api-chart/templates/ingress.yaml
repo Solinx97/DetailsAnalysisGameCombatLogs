@@ -2,10 +2,15 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: {{ .Release.Name }}-ingress
-  annotations:
-    nginx.ingress.kubernetes.io/rewrite-target: /
 spec:
-  ingressClassName: nginx
+  tls:
+  - hosts:
+      - {{ .Values.user.ingress.host }}
+      - {{ .Values.communication.ingress.host }}
+      - {{ .Values.chat.ingress.host }}
+      - {{ .Values.parser.ingress.host }}
+      - {{ .Values.health.ingress.host }}
+    secretName: tls-secret
   rules:
     - host: {{ .Values.user.ingress.host }}
       http:

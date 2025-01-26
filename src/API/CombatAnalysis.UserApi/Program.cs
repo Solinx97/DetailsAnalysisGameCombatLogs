@@ -114,18 +114,6 @@ app.UseSwaggerUI(options =>
     options.OAuthClientSecret(builder.Configuration["Client:ClientSecret"]);
 });
 
-//if (app.Environment.IsDevelopment())
-//{
-//    app.UseSwagger();
-//    app.UseSwaggerUI(options =>
-//    {
-//        options.SwaggerEndpoint("/swagger/v1/swagger.json", "User API v1");
-//        options.InjectStylesheet("/swagger-ui/swaggerDark.css");
-//        options.OAuthClientId(builder.Configuration["Client:ClientId"]);
-//        options.OAuthClientSecret(builder.Configuration["Client:ClientSecret"]);
-//    });
-//}
-
 app.UseStaticFiles();
 app.UseHttpsRedirection();
 

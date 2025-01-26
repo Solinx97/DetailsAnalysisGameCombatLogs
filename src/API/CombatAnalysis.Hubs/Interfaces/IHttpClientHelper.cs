@@ -2,10 +2,6 @@
 
 public interface IHttpClientHelper
 {
-    HttpClient Client { get; set; }
-
-    string BaseAddress { get; set; }
-
     Task<HttpResponseMessage> PostAsync(string requestAddress, JsonContent content);
 
     Task<HttpResponseMessage> GetAsync(string requestAddress);

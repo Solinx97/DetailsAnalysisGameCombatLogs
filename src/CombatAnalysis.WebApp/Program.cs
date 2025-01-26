@@ -22,6 +22,7 @@ AuthenticationGrantType.Code = builder.Configuration["Authentication:GrantType:C
 AuthenticationGrantType.Authorization = builder.Configuration["Authentication:GrantType:Authorization"] ?? string.Empty;
 AuthenticationGrantType.RefreshToken = builder.Configuration["Authentication:GrantType:RefreshToken"] ?? string.Empty;
 
+Authentication.CookieDomain = builder.Configuration["Authentication:CookieDomain"] ?? string.Empty;
 Authentication.ClientId = builder.Configuration["Authentication:ClientId"] ?? string.Empty;
 Authentication.ClientScope = builder.Configuration["Authentication:ClientScope"] ?? string.Empty;
 Authentication.RedirectUri = builder.Configuration["Authentication:RedirectUri"] ?? string.Empty;

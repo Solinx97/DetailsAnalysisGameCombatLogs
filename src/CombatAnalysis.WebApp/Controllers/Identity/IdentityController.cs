@@ -53,6 +53,7 @@ public class IdentityController : ControllerBase
 
             HttpContext.Response.Cookies.Append(nameof(AuthenticationCookie.AccessToken), token.AccessToken, new CookieOptions
             {
+                Domain = Authentication.CookieDomain,
                 HttpOnly = true,
                 Secure = true,
                 SameSite = SameSiteMode.None,
@@ -60,6 +61,7 @@ public class IdentityController : ControllerBase
             });
             HttpContext.Response.Cookies.Append(nameof(AuthenticationCookie.RefreshToken), token.RefreshToken, new CookieOptions
             {
+                Domain = Authentication.CookieDomain,
                 HttpOnly = true,
                 Secure = true,
                 SameSite = SameSiteMode.None,

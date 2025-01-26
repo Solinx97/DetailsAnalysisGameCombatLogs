@@ -3,9 +3,12 @@ kind: Ingress
 metadata:
   name: {{ .Release.Name }}-ingress
 spec:
-  ingressClassName: nginx
+  tls:
+  - hosts:
+      - {{ .Values.ingress.host }}
+    secretName: tls-secret
   rules:
-  - host: {{ .Values.ingress.appName }}
+  - host: {{ .Values.ingress.host }}
     http:
       paths:
         - path: /

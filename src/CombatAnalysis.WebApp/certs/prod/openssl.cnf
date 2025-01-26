@@ -10,7 +10,7 @@
    L = City
    O = Organization
    OU = Organizational Unit
-   CN = encounters.analysis.com
+   CN = *.analysis.com
 
    [req_ext]
    subjectAltName = @alt_names
@@ -20,4 +20,10 @@
 
    [alt_names]
    DNS.1 = encounters.analysis.com
-   DNS.2 = api.hub.chats.com
+   DNS.2 = identity.analysis.com
+   DNS.3 = hubs.analysis.com
+   DNS.4 = api.user.analysis.com
+   DNS.5 = api.communication.analysis.com
+   DNS.6 = api.chat.analysis.com
+   DNS.7 = api.parser.analysis.com
+   DNS.8 = health.analysis.com

@@ -31,5 +31,5 @@ hubs:
         targetPort: 8080
         nodePort: 30301
     ingress:
-        host: api.hub.chats.com
+        host: hubs.analysis.com
         port: 80

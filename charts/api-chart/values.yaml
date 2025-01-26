@@ -21,7 +21,7 @@ user:
         targetPort: 8080
         nodePort: 30001
     ingress:
-        host: api.analysis.user.com
+        host: api.user.analysis.com
         port: 80
 communication:
     name: communication
@@ -39,7 +39,7 @@ communication:
         targetPort: 8080
         nodePort: 30002
     ingress:
-        host: api.analysis.communication.com
+        host: api.communication.analysis.com
         port: 80
 chat:
     name: chat
@@ -57,7 +57,7 @@ chat:
         targetPort: 8080
         nodePort: 30003
     ingress:
-        host: api.analysis.chat.com
+        host: api.chat.analysis.com
         port: 80
 parser:
     name: combat-parser
@@ -75,7 +75,7 @@ parser:
         targetPort: 8080
         nodePort: 30004
     ingress:
-        host: api.analysis.parser.com
+        host: api.parser.analysis.com
         port: 80
 health:
     name: health
@@ -93,5 +93,5 @@ health:
         targetPort: 8080
         nodePort: 30005
     ingress:
-        host: api.analysis.health.com
+        host: health.analysis.com
         port: 80
