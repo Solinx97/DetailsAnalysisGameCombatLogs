@@ -4,14 +4,9 @@ using CombatAnalysis.WebApp.Interfaces;
 
 namespace CombatAnalysis.WebApp.Middlewares;
 
-internal class AuthTokenMiddleware
+internal class AuthTokenMiddleware(RequestDelegate next)
 {
-    private readonly RequestDelegate _next;
-
-    public AuthTokenMiddleware(RequestDelegate next)
-    {
-        _next = next;
-    }
+    private readonly RequestDelegate _next = next;
 
     public async Task InvokeAsync(HttpContext context, ITokenService tokenService)
     {

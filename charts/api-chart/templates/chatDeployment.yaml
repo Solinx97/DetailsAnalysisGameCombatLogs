@@ -20,6 +20,23 @@ spec:
     spec:
       containers:
         - name: {{ .Values.chat.container.name }}
-          image: {{ .Values.chat.container.image }}:{{ .Values.imageTags.chat }}
+          image: {{ .Values.chat.container.image }}:{{ .Values.imageTags.api.chat }}
           ports:
             - containerPort: {{ .Values.chat.container.port }}
+          env:
+           - name: ASPNETCORE_ENVIRONMENT
+             value: {{ .Values.env }}
+           - name: API_Identity
+             value: "https://identity.analysis.com/"
+           - name: Authentication_IssuerSigningKey
+             value: "aFo/P+0M8TRKhjkIhjR1+1Y/b77eSl9Ewdj2e3hSxRQ="
+           - name: Authentication_Authority
+             value: "https://identity.analysis.com/"
+           - name: Authentication_Audience
+             value: "client1"
+           - name: Authentication_Client_ClientId
+             value: "client1"
+           - name: Authentication_Client_ClientSecret
+             value: "secret1"
+           - name: Authentication_Client_Scope
+             value: "api1"

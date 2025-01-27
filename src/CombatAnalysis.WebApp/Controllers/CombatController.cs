@@ -14,7 +14,7 @@ public class CombatController : ControllerBase
     public CombatController(IHttpClientHelper httpClient)
     {
         _httpClient = httpClient;
-        _httpClient.BaseAddress = Port.CombatParserApi;
+        _httpClient.APIUrl = API.CombatParser;
     }
 
     [HttpGet("getByCombatLogId/{combatLogId:int:min(1)}")]

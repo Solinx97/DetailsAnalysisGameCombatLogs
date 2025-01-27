@@ -23,7 +23,7 @@ public class RestoreModel : PageModel
         _logger = logger;
     }
 
-    public string AppUrl { get; } = Port.Identity;
+    public string AppUrl { get; } = API.Identity;
 
     public string Protocol { get; } = Authentication.Protocol;
 

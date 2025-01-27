@@ -10,7 +10,19 @@ builder.Services.AddHttpContextAccessor();
 
 builder.Services.AddScoped<IHttpClientHelper, HttpClientHelper>();
 
-var webAppCors = builder.Configuration["Cors:WebApp"] ?? string.Empty;
+var webAppCors = string.Empty;
+var envName = builder.Environment.EnvironmentName;
+
+if (string.Equals(envName, "Development", StringComparison.OrdinalIgnoreCase))
+{
+    webAppCors = builder.Configuration["Cors:WebApp"] ?? string.Empty;
+    API.Chat = builder.Configuration["API:Chat"] ?? string.Empty;
+}
+else
+{
+    webAppCors = Environment.GetEnvironmentVariable("Cors_WebApp") ?? string.Empty;
+    API.Chat = Environment.GetEnvironmentVariable("API_Chat") ?? string.Empty;
+}
 
 builder.Services.AddCors(options =>
 {
@@ -25,8 +37,6 @@ builder.Services.AddCors(options =>
 
 builder.Services.AddSignalR()
         .AddJsonProtocol();
-
-Port.ChatApi = builder.Configuration["ChatApiPort"] ?? string.Empty;
 
 Log.Logger = new LoggerConfiguration()
     .MinimumLevel.Debug()

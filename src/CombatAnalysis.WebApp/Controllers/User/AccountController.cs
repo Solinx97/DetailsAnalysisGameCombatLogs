@@ -16,7 +16,7 @@ public class AccountController : ControllerBase
     public AccountController(IHttpClientHelper httpClient)
     {
         _httpClient = httpClient;
-        _httpClient.BaseAddress = Port.UserApi;
+        _httpClient.APIUrl = API.User;
     }
 
     [ServiceFilter(typeof(RequireAccessTokenAttribute))]

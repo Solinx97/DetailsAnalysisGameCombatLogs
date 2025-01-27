@@ -6,14 +6,9 @@ namespace CombatAnalysisIdentity.Controllers;
 
 [Route("api/v1/[controller]")]
 [ApiController]
-public class IdentityController : ControllerBase
+public class IdentityController(IIdentityUserService identityUserService) : ControllerBase
 {
-    private readonly IIdentityUserService _identityUserService;
-
-    public IdentityController(IIdentityUserService identityUserService)
-    {
-        _identityUserService = identityUserService;
-    }
+    private readonly IIdentityUserService _identityUserService = identityUserService;
 
     [HttpGet("{id}")]
     public async Task<IActionResult> GetEmail(string id)

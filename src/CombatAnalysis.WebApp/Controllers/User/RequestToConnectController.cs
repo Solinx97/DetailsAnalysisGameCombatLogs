@@ -16,7 +16,7 @@ public class RequestToConnectController : ControllerBase
     public RequestToConnectController(IHttpClientHelper httpClient)
     {
         _httpClient = httpClient;
-        _httpClient.BaseAddress = Port.UserApi;
+        _httpClient.APIUrl = API.User;
     }
 
     [HttpGet("{id:int:min(1)}")]

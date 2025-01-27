@@ -16,7 +16,7 @@ public class InviteToCommunityController : ControllerBase
     public InviteToCommunityController(IHttpClientHelper httpClient)
     {
         _httpClient = httpClient;
-        _httpClient.BaseAddress = Port.CommunicationApi;
+        _httpClient.APIUrl = API.Communication;
     }
 
     [HttpPost]

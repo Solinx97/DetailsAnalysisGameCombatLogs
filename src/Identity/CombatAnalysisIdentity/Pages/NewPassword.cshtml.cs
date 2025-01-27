@@ -19,7 +19,7 @@ public class NewPasswordModel : PageModel
         _userVerification = userVerification;
     }
 
-    public string AppUrl { get; } = Port.Identity;
+    public string AppUrl { get; } = API.Identity;
 
     [BindProperty]
     public PasswordResetModel PasswordReset{ get; set; }

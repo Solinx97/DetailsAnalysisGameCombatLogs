@@ -20,6 +20,47 @@ spec:
     spec:
       containers:
         - name: {{ .Values.webApp.container.name }}
-          image: {{ .Values.webApp.container.image }}:{{ .Values.imageTags.webApp }}
+          image: {{ .Values.webApp.container.image }}:{{ .Values.imageTags.webApp.webApp }}
           ports:
             - containerPort: {{ .Values.webApp.container.port }}
+          env:
+           - name: ASPNETCORE_ENVIRONMENT
+             value: {{ .Values.env }}
+           - name: API_CombatParser
+             value: "https://encounters.analysis.com"
+           - name: API_User
+             value: "https://api.user.analysis.com/"
+           - name: API_Chat
+             value: "https://api.chat.analysis.com/"
+           - name: API_Communication
+             value: "https://api.communication.analysis.com/"
+           - name: API_Identity
+             value: "https://identity.analysis.com/"
+           - name: Authentication_CookieDomain
+             value: ".analysis.com"
+           - name: Authentication_ClientId
+             value: "client1"
+           - name: Authentication_ClientScope
+             value: "client1scope"
+           - name: Authentication_RedirectUri
+             value: "encounters.analysis.com/callback"
+           - name: Authentication_IdentityAuthPath
+             value: "authorization"
+           - name: Authentication_IdentityRegistryPath
+             value: "registration"
+           - name: Authentication_CodeChallengeMethod
+             value: "SHA-256"
+           - name: Authentication_RefreshTokenExpiresDays
+             value: "7"
+           - name: Authentication_GrantType_Code
+             value: "code"
+           - name: Authentication_GrantType_Authorization
+             value: "authorizationCode"
+           - name: Authentication_GrantType_RefreshToken
+             value: "refreshToken"
+           - name: Authentication_Authority
+             value: "https://identity.analysis.com/"
+           - name: Authentication_IssuerSigningKey
+             value: "aFo/P+0M8TRKhjkIhjR1+1Y/b77eSl9Ewdj2e3hSxRQ="
+           - name: Authentication_Audience
+             value: "client1"

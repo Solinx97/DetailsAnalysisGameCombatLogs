@@ -1,4 +1,4 @@
-env: dev
+env: Production
 resources:
     cpu: 80
     memory: 80

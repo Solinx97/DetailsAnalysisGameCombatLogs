@@ -5,7 +5,6 @@ using HealthAPI.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
 builder.Services.RegisterIdentityDependencies(builder.Configuration, "DefaultConnection");
 
 var mappingConfig = new MapperConfiguration(mc =>
@@ -20,18 +19,22 @@ builder.Services.AddHostedService<AuthCodeCleanupService>();
 builder.Services.AddHostedService<VerificationEmailService>();
 
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
 app.UseSwagger();
-app.UseSwaggerUI();
+app.UseSwaggerUI(options =>
+{
+    options.SwaggerEndpoint("/swagger/v1/swagger.json", "Health API v1");
+    options.InjectStylesheet("/swagger-ui/swaggerDark.css");
+    options.OAuthClientId(builder.Configuration["Client:ClientId"]);
+    options.OAuthClientSecret(builder.Configuration["Client:ClientSecret"]);
+});
 
+app.UseStaticFiles();
 app.UseHttpsRedirection();
-
-app.UseAuthorization();
 
 app.MapControllers();
 

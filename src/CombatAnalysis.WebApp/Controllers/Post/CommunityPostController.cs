@@ -16,7 +16,7 @@ public class CommunityPostController : ControllerBase
     public CommunityPostController(IHttpClientHelper httpClient)
     {
         _httpClient = httpClient;
-        _httpClient.BaseAddress = Port.CommunicationApi;
+        _httpClient.APIUrl = API.Communication;
     }
 
     [HttpGet("count/{communityId}")]

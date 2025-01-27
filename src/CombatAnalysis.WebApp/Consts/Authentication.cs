@@ -1,6 +1,6 @@
 ﻿namespace CombatAnalysis.WebApp.Consts;
 
-public static class Authentication
+internal static class Authentication
 {
     public static string CookieDomain { get; set; }
 
@@ -9,8 +9,6 @@ public static class Authentication
     public static string ClientScope { get; set; }
 
     public static string RedirectUri { get; set; }
-
-    public static string IdentityServer { get; set; }
 
     public static string IdentityAuthPath { get; set; }
 

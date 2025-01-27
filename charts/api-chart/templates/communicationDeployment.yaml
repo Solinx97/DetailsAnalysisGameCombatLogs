@@ -20,6 +20,9 @@ spec:
     spec:
       containers:
         - name: {{ .Values.communication.container.name }}
-          image: {{ .Values.communication.container.image }}:{{ .Values.imageTags.communication }}
+          image: {{ .Values.communication.container.image }}:{{ .Values.imageTags.api.communication }}
           ports:
             - containerPort: {{ .Values.communication.container.port }}
+          env:
+           - name: ASPNETCORE_ENVIRONMENT
+             value: {{ .Values.env }}

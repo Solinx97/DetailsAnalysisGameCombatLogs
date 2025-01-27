@@ -17,7 +17,7 @@ public class GroupChatController : ControllerBase
     public GroupChatController(IHttpClientHelper httpClient)
     {
         _httpClient = httpClient;
-        _httpClient.BaseAddress = Port.ChatApi;
+        _httpClient.APIUrl = API.Chat;
     }
 
     [HttpGet]

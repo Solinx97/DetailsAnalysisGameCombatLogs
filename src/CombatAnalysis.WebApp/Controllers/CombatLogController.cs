@@ -16,7 +16,7 @@ public class CombatLogController : ControllerBase
     {
         _httpClient = httpClient;
         _logger = logger;
-        _httpClient.BaseAddress = Port.CombatParserApi;
+        _httpClient.APIUrl = API.CombatParser;
     }
 
     [HttpGet]

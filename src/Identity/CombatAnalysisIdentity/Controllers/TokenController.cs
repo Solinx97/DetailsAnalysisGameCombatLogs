@@ -8,16 +8,10 @@ namespace CombatAnalysisIdentity.Controllers;
 
 [Route("api/v1/[controller]")]
 [ApiController]
-public class TokenController : ControllerBase
+public class TokenController(IOAuthCodeFlowService oAuthCodeFlowService, ILogger<TokenController> logger) : ControllerBase
 {
-    private readonly IOAuthCodeFlowService _oAuthCodeFlowService;
-    private readonly ILogger<TokenController> _logger;
-
-    public TokenController(IOAuthCodeFlowService oAuthCodeFlowService, ILogger<TokenController> logger)
-    {
-        _oAuthCodeFlowService = oAuthCodeFlowService;
-        _logger = logger;
-    }
+    private readonly IOAuthCodeFlowService _oAuthCodeFlowService = oAuthCodeFlowService;
+    private readonly ILogger<TokenController> _logger = logger;
 
     [HttpGet]
     public async Task<IActionResult> GetAccessToken(string grantType, string clientId, string codeVerifier, string code, string redirectUri)

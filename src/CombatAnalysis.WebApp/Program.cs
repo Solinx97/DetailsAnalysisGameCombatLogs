@@ -1,5 +1,4 @@
 using CombatAnalysis.WebApp.Attributes;
-using CombatAnalysis.WebApp.Consts;
 using CombatAnalysis.WebApp.Helpers;
 using CombatAnalysis.WebApp.Interfaces;
 using CombatAnalysis.WebApp.Middlewares;
@@ -12,34 +11,21 @@ builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<IHttpClientHelper, HttpClientHelper>();
 builder.Services.AddScoped<RequireAccessTokenAttribute>();
 
-Port.CombatParserApi = builder.Configuration["CombatParserApiPort"] ?? string.Empty;
-Port.UserApi = builder.Configuration["UserApiPort"] ?? string.Empty;
-Port.ChatApi = builder.Configuration["ChatApiPort"] ?? string.Empty;
-Port.CommunicationApi = builder.Configuration["CommunicationApiPort"] ?? string.Empty;
-Port.Identity = builder.Configuration["IdentityPort"] ?? string.Empty;
+var envName = builder.Environment.EnvironmentName;
 
-AuthenticationGrantType.Code = builder.Configuration["Authentication:GrantType:Code"] ?? string.Empty;
-AuthenticationGrantType.Authorization = builder.Configuration["Authentication:GrantType:Authorization"] ?? string.Empty;
-AuthenticationGrantType.RefreshToken = builder.Configuration["Authentication:GrantType:RefreshToken"] ?? string.Empty;
-
-Authentication.CookieDomain = builder.Configuration["Authentication:CookieDomain"] ?? string.Empty;
-Authentication.ClientId = builder.Configuration["Authentication:ClientId"] ?? string.Empty;
-Authentication.ClientScope = builder.Configuration["Authentication:ClientScope"] ?? string.Empty;
-Authentication.RedirectUri = builder.Configuration["Authentication:RedirectUri"] ?? string.Empty;
-Authentication.IdentityServer = builder.Configuration["Authentication:IdentityServer"] ?? string.Empty;
-Authentication.IdentityAuthPath = builder.Configuration["Authentication:IdentityAuthPath"] ?? string.Empty;
-Authentication.IdentityRegistryPath = builder.Configuration["Authentication:IdentityRegistryPath"] ?? string.Empty;
-Authentication.CodeChallengeMethod = builder.Configuration["Authentication:CodeChallengeMethod"] ?? string.Empty;
-
-if (int.TryParse(builder.Configuration["Authentication:RefreshTokenExpiresDays"], out var refreshTokenExpiresDays))
+if (string.Equals(envName, "Development", StringComparison.OrdinalIgnoreCase))
 {
-    Authentication.RefreshTokenExpiresDays = refreshTokenExpiresDays;
+    CreateEnvironmentHelper.UseAppsettings(builder.Configuration);
+}
+else
+{
+    CreateEnvironmentHelper.UseEnvVariables();
 }
 
 builder.Services.AddControllersWithViews();
 
 Log.Logger = new LoggerConfiguration()
-    .MinimumLevel.Information()
+    .MinimumLevel.Debug()
     .WriteTo.Console()
     .CreateLogger();
 
@@ -53,6 +39,7 @@ app.UseRouting();
 
 if (app.Environment.IsDevelopment())
 {
+    app.UseExceptionHandler("/Error");
     app.UseHsts();
 }
 

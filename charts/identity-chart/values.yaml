@@ -1,4 +1,4 @@
-env: dev
+env: Production
 replicas: 2
 resources:
     cpu: 80

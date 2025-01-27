@@ -17,7 +17,7 @@ internal class HttpClientHelper : IHttpClientHelper
         _httpContextAccessor = httpContextAccessor;
 
         _client = new HttpClient {
-            BaseAddress = new Uri($"{Port.ChatApi}{_baseAddressApi}")
+            BaseAddress = new Uri($"{API.Chat}{_baseAddressApi}")
         };
     }
 

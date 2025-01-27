@@ -1,4 +1,6 @@
 using AutoMapper;
+using CombatAnalysis.ChatApi.Consts;
+using CombatAnalysis.ChatApi.Helpers;
 using CombatAnalysis.ChatApi.Mapping;
 using CombatAnalysis.ChatBL.Extensions;
 using CombatAnalysis.ChatBL.Mapping;
@@ -9,6 +11,17 @@ using Serilog;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.ChatBLDependencies(builder.Configuration, "DefaultConnection");
+
+var envName = builder.Environment.EnvironmentName;
+
+if (string.Equals(envName, "Development", StringComparison.OrdinalIgnoreCase))
+{
+    CreateEnvironmentHelper.UseAppsettings(builder.Configuration);
+}
+else
+{
+    CreateEnvironmentHelper.UseEnvVariables();
+}
 
 var mappingConfig = new MapperConfiguration(mc =>
 {
@@ -21,14 +34,14 @@ builder.Services.AddSingleton(mapper);
 builder.Services.AddAuthentication("Bearer")
     .AddJwtBearer(options =>
     {
-        options.Authority = builder.Configuration["Authentication:Authority"];
-        options.Audience = builder.Configuration["Authentication:Audience"];
+        options.Authority = Authentication.Authority;
+        options.Audience = Authentication.Audience;
         options.TokenValidationParameters = new TokenValidationParameters
         {
             ValidateIssuerSigningKey = true,
-            IssuerSigningKey = new SymmetricSecurityKey(Convert.FromBase64String(builder.Configuration["Authentication:IssuerSigningKey"] ?? string.Empty)),
-            ValidateIssuer = false,
-            ValidateAudience = false,
+            IssuerSigningKey = new SymmetricSecurityKey(Convert.FromBase64String(Authentication.IssuerSigningKey)),
+            ValidateIssuer = true,
+            ValidateAudience = true,
             ClockSkew = TimeSpan.Zero
         };
         // Skip checking HTTPS (should be HTTPS in production)
@@ -66,10 +79,10 @@ builder.Services.AddSwaggerGen(options =>
         {
             ClientCredentials = new OpenApiOAuthFlow
             {
-                TokenUrl = new Uri($"{builder.Configuration["Identity:Server"]}connect/token"),
+                TokenUrl = new Uri($"{API.Identity}connect/token"),
                 Scopes = new Dictionary<string, string>
                 {
-                    { builder.Configuration["Client:Scope"] ?? string.Empty, "Request API #1" }
+                    { AuthenticationClient.Scope, "Request API #1" }
                 }
             }
         }
@@ -86,7 +99,7 @@ builder.Services.AddSwaggerGen(options =>
                         Id = "oauth2"
                     },
                 },
-                new[] { builder.Configuration["Client:Scope"] }
+                new[] { AuthenticationClient.Scope }
             }
         });
 });
@@ -110,8 +123,9 @@ app.UseSwaggerUI(options =>
 {
     options.SwaggerEndpoint("/swagger/v1/swagger.json", "Chat API v1");
     options.InjectStylesheet("/swagger-ui/swaggerDark.css");
-    options.OAuthClientId(builder.Configuration["Client:ClientId"]);
-    options.OAuthClientSecret(builder.Configuration["Client:ClientSecret"]);
+    options.OAuthClientId(AuthenticationClient.ClientId);
+    options.OAuthClientSecret(AuthenticationClient.ClientSecret);
+    options.OAuthScopes(AuthenticationClient.Scope);
 });
 
 app.UseStaticFiles();

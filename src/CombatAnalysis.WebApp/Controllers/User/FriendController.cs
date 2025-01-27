@@ -16,7 +16,7 @@ public class FriendController : ControllerBase
     public FriendController(IHttpClientHelper httpClient)
     {
         _httpClient = httpClient;
-        _httpClient.BaseAddress = Port.UserApi;
+        _httpClient.APIUrl = API.User;
     }
 
     [HttpGet("{id}")]

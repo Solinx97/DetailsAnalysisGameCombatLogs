@@ -1,11 +1,11 @@
 using AutoMapper;
-using CombatAnalysis.UserBL.Extensions;
-using CombatAnalysis.UserBL.Mapping;
 using CombatAnalysis.Identity.Extensions;
 using CombatAnalysis.Identity.Mapping;
-using CombatAnalysis.Identity.Security;
+using CombatAnalysis.UserBL.Extensions;
+using CombatAnalysis.UserBL.Mapping;
 using CombatAnalysisIdentity.Consts;
 using CombatAnalysisIdentity.Core;
+using CombatAnalysisIdentity.Helpers;
 using CombatAnalysisIdentity.Interfaces;
 using CombatAnalysisIdentity.Mapping;
 using CombatAnalysisIdentity.Services;
@@ -14,24 +14,15 @@ using System.Security.Cryptography.X509Certificates;
 
 var builder = WebApplication.CreateBuilder(args);
 
-Port.UserApi = builder.Configuration["UserApiPort"];
-Port.Identity = builder.Configuration["IdentityPort"];
-Port.Identity = builder.Configuration["IdentityPort"];
+var envName = builder.Environment.EnvironmentName;
 
-AuthenticationGrantType.Code = builder.Configuration["Authentication:GrantType:Code"];
-AuthenticationGrantType.Authorization = builder.Configuration["Authentication:GrantType:Authorization"];
-AuthenticationGrantType.RefreshToken = builder.Configuration["Authentication:GrantType:RefreshToken"];
-
-Authentication.IssuerSigningKey = Convert.FromBase64String(builder.Configuration["Authentication:IssuerSigningKey"]);
-Authentication.Issuer = builder.Configuration["Authentication:Issuer"];
-Authentication.Protocol = builder.Configuration["Authentication:Protocol"];
-if (int.TryParse(builder.Configuration["Authentication:AccessTokenExpiresMins"], out var accessTokenExpiresMins))
+if (string.Equals(envName, "Development", StringComparison.OrdinalIgnoreCase))
 {
-    Authentication.AccessTokenExpiresMins = accessTokenExpiresMins;
+    CreateEnvironmentHelper.UseAppsettings(builder.Configuration);
 }
-if (int.TryParse(builder.Configuration["Authentication:RefreshTokenExpiresDays"], out var refreshTokenExpiresDays))
+else
 {
-    Authentication.RefreshTokenExpiresDays = refreshTokenExpiresDays;
+    CreateEnvironmentHelper.UseEnvVariables();
 }
 
 builder.Services.RegisterIdentityDependencies(builder.Configuration, "DefaultConnection");
@@ -47,9 +38,9 @@ var mapper = mappingConfig.CreateMapper();
 builder.Services.AddSingleton(mapper);
 builder.Services.AddTransient<IUserAuthorizationService, UserAuthorizationService>();
 
-// Add services to the container.
 builder.Services.AddRazorPages()
     .AddRazorRuntimeCompilation();
+
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("default", policy =>
@@ -60,7 +51,7 @@ builder.Services.AddCors(options =>
     });
 });
 
-var certificate = new X509Certificate2(Path.Combine(Directory.GetCurrentDirectory(), "certs", builder.Configuration["Certificates:Name"]), builder.Configuration["Certificates:PWD"]);
+var certificate = new X509Certificate2(Certificate.PfxPath, Certificate.PWD);
 builder.Services.AddIdentityServer()
             .AddSigningCredential(certificate)
             .AddInMemoryApiResources(Config.GetApiResources())
@@ -77,11 +68,9 @@ builder.Host.UseSerilog();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
 

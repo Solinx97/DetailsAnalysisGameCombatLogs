@@ -12,7 +12,7 @@ internal class TokenService : ITokenService
     public TokenService(IHttpClientHelper httpClient)
     {
         _httpClient = httpClient;
-        _httpClient.BaseAddress = Port.Identity;
+        _httpClient.APIUrl = API.Identity;
     }
 
     public async Task<AccessTokenModel> RefreshAccessTokenAsync(string refreshToken)

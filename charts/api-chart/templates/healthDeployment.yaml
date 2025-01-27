@@ -20,6 +20,9 @@ spec:
     spec:
       containers:
         - name: {{ .Values.health.container.name }}
-          image: {{ .Values.health.container.image }}:{{ .Values.imageTags.health }}
+          image: {{ .Values.health.container.image }}:{{ .Values.imageTags.api.health }}
           ports:
             - containerPort: {{ .Values.health.container.port }}
+          env:
+           - name: ASPNETCORE_ENVIRONMENT
+             value: {{ .Values.env }}

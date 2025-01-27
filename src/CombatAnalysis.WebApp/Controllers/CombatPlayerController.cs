@@ -14,7 +14,7 @@ public class CombatPlayerController : ControllerBase
     public CombatPlayerController(IHttpClientHelper httpClient)
     {
         _httpClient = httpClient;
-        _httpClient.BaseAddress = Port.CombatParserApi;
+        _httpClient.APIUrl = API.CombatParser;
     }
 
     [HttpGet("getByCombatId/{combatId:int:min(1)}")]

@@ -2,9 +2,9 @@
 
 public interface IHttpClientHelper
 {
-    HttpClient Client { get; set; }
+    string APIUrl { get; set; }
 
-    string BaseAddress { get; set; }
+    void AddAuthorizationHeader(string scheme, string parameter);
 
     Task<HttpResponseMessage> PostAsync(string requestAddress, JsonContent content);
 

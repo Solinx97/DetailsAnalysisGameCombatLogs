@@ -20,6 +20,44 @@ spec:
     spec:
       containers:
         - name: {{ .Values.container.name }}
-          image: {{ .Values.container.image }}:{{ .Values.imageTags.identity }}
+          image: {{ .Values.container.image }}:{{ .Values.imageTags.identity.identity }}
           ports:
             - containerPort: {{ .Values.container.port }}
+          env:
+           - name: ASPNETCORE_ENVIRONMENT
+             value: {{ .Values.env }}
+           - name: API_User
+             value: "https://api.user.analysis.com/"
+           - name: API_Identity
+             value: "https://identity.analysis.com/"
+           - name: Authentication_GrantType_Code
+             value: "code"
+           - name: Authentication_GrantType_Authorization
+             value: "authorizationCode"
+           - name: Authentication_GrantType_RefreshToken
+             value: "refreshToken"
+           - name: Authentication_IssuerSigningKey
+             value: "IssuerSigningKey"
+           - name: Authentication_Issuer
+             value: "Issuer"
+           - name: Authentication_Protocol
+             value: "http"
+           - name: Authentication_AccessTokenExpiresMins
+             value: "60"
+           - name: Authentication_RefreshTokenExpiresDays
+             value: "7"
+           - name: Certificate_PfxPath
+             value: "/etc/certs/certificate.pfx"
+           - name: Certificate_PWD
+             valueFrom:
+               secretKeyRef:
+                 name: certificate-secret
+                 key: password
+          volumeMounts:
+            - name: cert-volume
+              mountPath: /etc/certs
+              readOnly: true
+      volumes:
+        - name: cert-volume
+          secret:
+            secretName: certificate-secret

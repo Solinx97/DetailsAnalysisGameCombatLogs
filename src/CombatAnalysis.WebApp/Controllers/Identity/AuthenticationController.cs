@@ -20,7 +20,7 @@ public class AuthenticationController : ControllerBase
     {
         _httpClient = httpClient;
         _logger = logger;
-        _httpClient.BaseAddress = Port.UserApi;
+        _httpClient.APIUrl = API.User;
     }
 
     [ServiceFilter(typeof(RequireAccessTokenAttribute))]
@@ -29,8 +29,7 @@ public class AuthenticationController : ControllerBase
     {
         try
         {
-            var accessToken = HttpContext.Items[AuthenticationCookie.AccessToken.ToString()] as string;
-            if (accessToken == null)
+            if (!HttpContext.Request.Cookies.TryGetValue(nameof(AuthenticationCookie.AccessToken), out var accessToken))
             {
                 throw new ArgumentNullException(nameof(accessToken));
             }
@@ -69,7 +68,7 @@ public class AuthenticationController : ControllerBase
         var state = PKCEHelper.GenerateCodeVerifier();
         var codeChallenge = PKCEHelper.GenerateCodeChallenge(codeVerifier);
 
-        var uri = $"{Authentication.IdentityServer}{identityPath}?grantType={AuthenticationGrantType.Code}" +
+        var uri = $"{API.Identity}{identityPath}?grantType={AuthenticationGrantType.Code}" +
             $"&clientTd={Authentication.ClientId}&redirectUri={Authentication.RedirectUri}" +
             $"&scope={Authentication.ClientScope}&state={state}&codeChallengeMethod={Authentication.CodeChallengeMethod}" +
             $"&codeChallenge={codeChallenge}";
@@ -100,7 +99,7 @@ public class AuthenticationController : ControllerBase
     [HttpGet("verifyEmail")]
     public IActionResult VerifyEmail(string identityPath, string email)
     {
-        var uri = $"{Authentication.IdentityServer}{identityPath}?email={email}&redirectUri={Authentication.RedirectUri}";
+        var uri = $"{API.Identity}{identityPath}?email={email}&redirectUri={Authentication.RedirectUri}";
 
         var identityRedirect = new IdentityRedirect
         {
@@ -113,7 +112,7 @@ public class AuthenticationController : ControllerBase
     [HttpGet("stateValidate")]
     public IActionResult StateValidate(string state)
     {
-        if (!HttpContext.Request.Cookies.TryGetValue(AuthenticationCookie.State.ToString(), out var stateValue))
+        if (!HttpContext.Request.Cookies.TryGetValue(nameof(AuthenticationCookie.State), out var stateValue))
         {
             return BadRequest();
         }

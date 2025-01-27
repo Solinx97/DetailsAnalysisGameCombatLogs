@@ -1,8 +1,8 @@
 ﻿namespace CombatAnalysisIdentity.Consts;
 
-internal static class Port
+internal static class API
 {
-    public static string UserApi { get; set; }
+    public static string User { get; set; }
 
     public static string Identity { get; set; }
 }

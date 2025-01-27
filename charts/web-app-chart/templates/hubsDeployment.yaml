@@ -20,6 +20,13 @@ spec:
     spec:
       containers:
         - name: {{ .Values.hubs.container.name }}
-          image: {{ .Values.hubs.container.image }}:{{ .Values.imageTags.hubs }}
+          image: {{ .Values.hubs.container.image }}:{{ .Values.imageTags.webApp.hubs }}
           ports:
             - containerPort: {{ .Values.hubs.container.port }}
+          env:
+           - name: ASPNETCORE_ENVIRONMENT
+             value: {{ .Values.env }}
+           - name: Cors_WebApp
+             value: "https://encounters.analysis.com"
+           - name: API_Chat
+             value: "https://api.chat.analysis.com/"

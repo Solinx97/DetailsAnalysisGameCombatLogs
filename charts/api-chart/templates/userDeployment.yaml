@@ -20,6 +20,9 @@ spec:
     spec:
       containers:
         - name: {{ .Values.user.container.name }}
-          image: {{ .Values.user.container.image }}:{{ .Values.imageTags.user }}
+          image: {{ .Values.user.container.image }}:{{ .Values.imageTags.api.user }}
           ports:
             - containerPort: {{ .Values.user.container.port }}
+          env:
+           - name: ASPNETCORE_ENVIRONMENT
+             value: {{ .Values.env }}

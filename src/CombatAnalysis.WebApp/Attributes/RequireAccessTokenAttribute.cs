@@ -6,14 +6,9 @@ using Microsoft.AspNetCore.Mvc.Filters;
 namespace CombatAnalysis.WebApp.Attributes;
 
 [AttributeUsage(AttributeTargets.Method | AttributeTargets.Class)]
-internal class RequireAccessTokenAttribute : ActionFilterAttribute
+internal class RequireAccessTokenAttribute(IHttpClientHelper httpClientHelper) : ActionFilterAttribute
 {
-    private readonly IHttpClientHelper _httpClientHelper;
-
-    public RequireAccessTokenAttribute(IHttpClientHelper httpClientHelper)
-    {
-        _httpClientHelper = httpClientHelper;
-    }
+    private readonly IHttpClientHelper _httpClientHelper = httpClientHelper;
 
     public override void OnActionExecuting(ActionExecutingContext context)
     {
@@ -31,8 +26,7 @@ internal class RequireAccessTokenAttribute : ActionFilterAttribute
             return;
         }
 
-        context.HttpContext.Items[nameof(AuthenticationCookie.AccessToken)] = accessToken;
-        _httpClientHelper.Client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", accessToken);
+        _httpClientHelper.AddAuthorizationHeader("Bearer", accessToken);
 
         base.OnActionExecuting(context);
     }

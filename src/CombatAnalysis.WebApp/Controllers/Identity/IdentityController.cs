@@ -17,7 +17,7 @@ public class IdentityController : ControllerBase
     {
         _httpClient = httpClient;
         _logger = logger;
-        _httpClient.BaseAddress = Port.Identity;
+        _httpClient.APIUrl = API.Identity;
     }
 
     [HttpGet]
