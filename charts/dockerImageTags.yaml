@@ -1,12 +1,12 @@
 imageTags:
   api:
-    user: 0.3.2
-    communication: 0.3.1
-    chat: 0.3.1
+    user: 0.3.4
+    communication: 0.3.2
+    chat: 0.3.3
     parser: 0.3.0
-    health: 0.2.0
+    health: 0.2.2
   identity:
-    identity: 0.3.2
+    identity: 0.3.17
   webApp:
-    webApp: 0.3.39
-    hubs: 0.1.29
+    webApp: 0.3.52
+    hubs: 0.1.32

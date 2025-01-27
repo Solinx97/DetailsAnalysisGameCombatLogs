@@ -1,16 +1,15 @@
 using AutoMapper;
+using CombatAnalysis.UserApi.Consts;
+using CombatAnalysis.UserApi.Enums;
+using CombatAnalysis.UserApi.Helpers;
+using CombatAnalysis.UserApi.Mapping;
 using CombatAnalysis.UserBL.Extensions;
 using CombatAnalysis.UserBL.Mapping;
-using CombatAnalysis.UserApi.Mapping;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Serilog;
-using CombatAnalysis.UserApi.Helpers;
-using CombatAnalysis.UserApi.Consts;
 
 var builder = WebApplication.CreateBuilder(args);
-
-builder.Services.UserBLDependencies(builder.Configuration, "DefaultConnection");
 
 var envName = builder.Environment.EnvironmentName;
 
@@ -22,6 +21,11 @@ else
 {
     CreateEnvironmentHelper.UseEnvVariables();
 }
+
+var connection = DatabaseProps.Name == nameof(DatabaseType.MSSQL)
+    ? DatabaseProps.MSSQLConnectionString
+    : DatabaseProps.FirebaseConnectionString;
+builder.Services.UserBLDependencies(DatabaseProps.Name, DatabaseProps.DataProcessingType, connection);
 
 var mappingConfig = new MapperConfiguration(mc =>
 {
@@ -35,22 +39,18 @@ builder.Services.AddAuthentication("Bearer")
         .AddJwtBearer(options =>
         {
             options.Authority = Authentication.Authority;
-            options.Audience = Authentication.Audience;
+            options.Audience = AuthenticationClient.ClientId;
             options.TokenValidationParameters = new TokenValidationParameters
             {
                 ValidateIssuerSigningKey = true,
-                IssuerSigningKey = new SymmetricSecurityKey(Convert.FromBase64String(Authentication.IssuerSigningKey)),
-                ValidateIssuer = false,
-                ValidateAudience = false,
+                IssuerSigningKey = new SymmetricSecurityKey(Authentication.IssuerSigningKey),
+                ValidateIssuer = true,
+                ValidIssuer = Authentication.Issuer,
+                ValidateAudience = true,
                 ClockSkew = TimeSpan.Zero
             };
             // Skip checking HTTPS (should be HTTPS in production)
             options.RequireHttpsMetadata = false;
-            // Allow all Certificates (added for Local deployment)
-            options.BackchannelHttpHandler = new HttpClientHandler
-            {
-                ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator
-            };
         });
 
 builder.Services.AddAuthorization(options =>
@@ -58,7 +58,7 @@ builder.Services.AddAuthorization(options =>
     options.AddPolicy("ApiScope", policyBuilder =>
     {
         policyBuilder.RequireAuthenticatedUser();
-        policyBuilder.RequireClaim("scope", builder.Configuration["Client:Scope"] ?? string.Empty);
+        policyBuilder.RequireClaim("scope", AuthenticationClient.Scope);
     });
 });
 
@@ -124,7 +124,6 @@ app.UseSwaggerUI(options =>
     options.SwaggerEndpoint("/swagger/v1/swagger.json", "User API v1");
     options.InjectStylesheet("/swagger-ui/swaggerDark.css");
     options.OAuthClientId(AuthenticationClient.ClientId);
-    options.OAuthClientSecret(AuthenticationClient.ClientSecret);
     options.OAuthScopes(AuthenticationClient.Scope);
 });
 

@@ -32,26 +32,22 @@ var mappingConfig = new MapperConfiguration(mc =>
 var mapper = mappingConfig.CreateMapper();
 builder.Services.AddSingleton(mapper);
 builder.Services.AddAuthentication("Bearer")
-        .AddJwtBearer(options =>
+    .AddJwtBearer(options =>
+    {
+        options.Authority = Authentication.Authority;
+        options.Audience = AuthenticationClient.ClientId;
+        options.TokenValidationParameters = new TokenValidationParameters
         {
-            options.Authority = Authentication.Authority;
-            options.Audience = Authentication.Audience;
-            options.TokenValidationParameters = new TokenValidationParameters
-            {
-                ValidateIssuerSigningKey = true,
-                IssuerSigningKey = new SymmetricSecurityKey(Convert.FromBase64String(Authentication.IssuerSigningKey)),
-                ValidateIssuer = true,
-                ValidateAudience = true,
-                ClockSkew = TimeSpan.Zero
-            };
-            // Skip checking HTTPS (should be HTTPS in production)
-            options.RequireHttpsMetadata = false;
-            // Allow all Certificates (added for Local deployment)
-            options.BackchannelHttpHandler = new HttpClientHandler
-            {
-                ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator
-            };
-        });
+            ValidateIssuerSigningKey = true,
+            IssuerSigningKey = new SymmetricSecurityKey(Authentication.IssuerSigningKey),
+            ValidateIssuer = true,
+            ValidIssuer = Authentication.Issuer,
+            ValidateAudience = true,
+            ClockSkew = TimeSpan.Zero
+        };
+        // Skip checking HTTPS (should be HTTPS in production)
+        options.RequireHttpsMetadata = false;
+    });
 
 builder.Services.AddAuthorization(options =>
 {
@@ -124,7 +120,6 @@ app.UseSwaggerUI(options =>
     options.SwaggerEndpoint("/swagger/v1/swagger.json", "Communication API v1");
     options.InjectStylesheet("/swagger-ui/swaggerDark.css");
     options.OAuthClientId(AuthenticationClient.ClientId);
-    options.OAuthClientSecret(AuthenticationClient.ClientSecret);
     options.OAuthScopes(AuthenticationClient.Scope);
 });
 

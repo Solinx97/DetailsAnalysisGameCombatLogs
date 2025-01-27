@@ -6,19 +6,15 @@ internal static class CreateEnvironmentHelper
 {
     public static void UseAppsettings(ConfigurationManager configuration)
     {
-        API.CombatParser = configuration["API:CombatParser"] ?? string.Empty;
-        API.User = configuration["API:User"] ?? string.Empty;
-        API.Chat = configuration["API:Chat"] ?? string.Empty;
-        API.Communication = configuration["API:Communication"] ?? string.Empty;
-        API.Identity = configuration["API:Identity"] ?? string.Empty;
+        Cluster.CombatParser = configuration["Cluster:CombatParser"] ?? string.Empty;
+        Cluster.User = configuration["Cluster:User"] ?? string.Empty;
+        Cluster.Chat = configuration["Cluster:Chat"] ?? string.Empty;
+        Cluster.Communication = configuration["Cluster:Communication"] ?? string.Empty;
+        Cluster.Identity = configuration["Cluster:Identity"] ?? string.Empty;
 
-        AuthenticationGrantType.Code = configuration["Authentication:GrantType:Code"] ?? string.Empty;
-        AuthenticationGrantType.Authorization = configuration["Authentication:GrantType:Authorization"] ?? string.Empty;
-        AuthenticationGrantType.RefreshToken = configuration["Authentication:GrantType:RefreshToken"] ?? string.Empty;
+        Servers.Identity = configuration["Servers:Identity"] ?? string.Empty;
 
         Authentication.CookieDomain = configuration["Authentication:CookieDomain"] ?? string.Empty;
-        Authentication.ClientId = configuration["Authentication:ClientId"] ?? string.Empty;
-        Authentication.ClientScope = configuration["Authentication:ClientScope"] ?? string.Empty;
         Authentication.RedirectUri = configuration["Authentication:RedirectUri"] ?? string.Empty;
         Authentication.IdentityAuthPath = configuration["Authentication:IdentityAuthPath"] ?? string.Empty;
         Authentication.IdentityRegistryPath = configuration["Authentication:IdentityRegistryPath"] ?? string.Empty;
@@ -28,23 +24,26 @@ internal static class CreateEnvironmentHelper
         {
             Authentication.RefreshTokenExpiresDays = refreshTokenExpiresDays;
         }
+
+        AuthenticationGrantType.Code = configuration["Authentication:GrantType:Code"] ?? string.Empty;
+        AuthenticationGrantType.Authorization = configuration["Authentication:GrantType:Authorization"] ?? string.Empty;
+        AuthenticationGrantType.RefreshToken = configuration["Authentication:GrantType:RefreshToken"] ?? string.Empty;
+
+        AuthenticationClient.ClientId = configuration["Authentication:Client:ClientId"] ?? string.Empty;
+        AuthenticationClient.Scope = configuration["Authentication:Client:Scope"] ?? string.Empty;
     }
 
     public static void UseEnvVariables()
     {
-        API.CombatParser = Environment.GetEnvironmentVariable("API_CombatParser") ?? string.Empty;
-        API.User = Environment.GetEnvironmentVariable("API_User") ?? string.Empty;
-        API.Chat = Environment.GetEnvironmentVariable("API_Chat") ?? string.Empty;
-        API.Communication = Environment.GetEnvironmentVariable("API_Communication") ?? string.Empty;
-        API.Identity = Environment.GetEnvironmentVariable("API_Identity") ?? string.Empty;
+        Cluster.CombatParser = Environment.GetEnvironmentVariable("Cluster_CombatParser") ?? string.Empty;
+        Cluster.User = Environment.GetEnvironmentVariable("Cluster_User") ?? string.Empty;
+        Cluster.Chat = Environment.GetEnvironmentVariable("Cluster_Chat") ?? string.Empty;
+        Cluster.Communication = Environment.GetEnvironmentVariable("Cluster_Communication") ?? string.Empty;
+        Cluster.Identity = Environment.GetEnvironmentVariable("Cluster_Identity") ?? string.Empty;
 
-        AuthenticationGrantType.Code = Environment.GetEnvironmentVariable("Authentication_GrantType_Code") ?? string.Empty;
-        AuthenticationGrantType.Authorization = Environment.GetEnvironmentVariable("Authentication_GrantType_Authorization") ?? string.Empty;
-        AuthenticationGrantType.RefreshToken = Environment.GetEnvironmentVariable("Authentication_GrantType_RefreshToken") ?? string.Empty;
+        Servers.Identity = Environment.GetEnvironmentVariable("Servers_Identity") ?? string.Empty;
 
         Authentication.CookieDomain = Environment.GetEnvironmentVariable("Authentication_CookieDomain") ?? string.Empty;
-        Authentication.ClientId = Environment.GetEnvironmentVariable("Authentication_ClientId") ?? string.Empty;
-        Authentication.ClientScope = Environment.GetEnvironmentVariable("Authentication_ClientScope") ?? string.Empty;
         Authentication.RedirectUri = Environment.GetEnvironmentVariable("Authentication_RedirectUri") ?? string.Empty;
         Authentication.IdentityAuthPath = Environment.GetEnvironmentVariable("Authentication_IdentityAuthPath") ?? string.Empty;
         Authentication.IdentityRegistryPath = Environment.GetEnvironmentVariable("Authentication_IdentityRegistryPath") ?? string.Empty;
@@ -54,5 +53,12 @@ internal static class CreateEnvironmentHelper
         {
             Authentication.RefreshTokenExpiresDays = refreshTokenExpiresDays;
         }
+
+        AuthenticationGrantType.Code = Environment.GetEnvironmentVariable("Authentication_GrantType_Code") ?? string.Empty;
+        AuthenticationGrantType.Authorization = Environment.GetEnvironmentVariable("Authentication_GrantType_Authorization") ?? string.Empty;
+        AuthenticationGrantType.RefreshToken = Environment.GetEnvironmentVariable("Authentication_GrantType_RefreshToken") ?? string.Empty;
+
+        AuthenticationClient.ClientId = Environment.GetEnvironmentVariable("Authentication_Client_ClientId") ?? string.Empty;
+        AuthenticationClient.Scope = Environment.GetEnvironmentVariable("Authentication_Client_Scope") ?? string.Empty;
     }
 }

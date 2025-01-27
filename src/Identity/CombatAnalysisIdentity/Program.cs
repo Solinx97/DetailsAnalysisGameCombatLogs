@@ -25,8 +25,8 @@ else
     CreateEnvironmentHelper.UseEnvVariables();
 }
 
-builder.Services.RegisterIdentityDependencies(builder.Configuration, "DefaultConnection");
-builder.Services.UserBLDependencies(builder.Configuration, "UserConnection");
+builder.Services.RegisterIdentityDependencies(DatabaseProps.DefaultConnectionString);
+builder.Services.UserBLDependencies("MSSQL", "Default", DatabaseProps.UserConnectionString);
 
 var mappingConfig = new MapperConfiguration(mc =>
 {

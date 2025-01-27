@@ -8,9 +8,9 @@ public interface IOAuthCodeFlowService
 
     Task<bool> ValidateClientAsync(string clientId, string redirectUri, string clientScope);
 
-    (string AuthorizationCode, string CustomData) DecryptAuthorizationCode(string encryptedDataWithCustomData, byte[] encryptionKey);
+    (string AuthorizationCode, string UserData) DecryptAuthorizationCode(string encryptedDataWithCustomData, byte[] encryptionKey);
 
-    Task CreateRefreshTokenAsync(string token, int refreshTokenExpiresDays, string clientId, string userId);
+    Task SaveRefreshTokenAsync(string token, int refreshTokenExpiresDays, string clientId, string userId);
 
     string GenerateToken(string clientId, string userId = "");
 

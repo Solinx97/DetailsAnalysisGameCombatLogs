@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: init-script-configmap
+data:
+  init-databases.sql: |
+    CREATE DATABASE Combat_Analysis_Identity
+    GO
+
+    CREATE DATABASE Combat_Analysis_User
+    GO

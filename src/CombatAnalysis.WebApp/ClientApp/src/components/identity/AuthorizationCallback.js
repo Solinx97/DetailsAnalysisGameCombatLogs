@@ -68,10 +68,8 @@ const AuthorizationCallback = () => {
         }
     }, [stateIsValid]);
 
-    const navigateToTokenAsync = async (code) => {
-        const encodedAuthorizationCode = encodeURIComponent(code);
-
-        const response = await authorizationCodeExchangeQuery(encodedAuthorizationCode);
+    const navigateToTokenAsync = async (authorizationCode) => {
+        const response = await authorizationCodeExchangeQuery(authorizationCode);
         if (response.data !== undefined) {
             await checkAuthAsync();
 

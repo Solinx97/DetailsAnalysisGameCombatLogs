@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import { NavLink, useLocation, useNavigate } from 'react-router-dom';
-import { useLazyIdentityQuery } from '../store/api/core/User.api';
+import { useLazyAuthorizationQuery } from '../store/api/core/User.api';
 
 import '../styles/home.scss';
 
@@ -18,7 +18,7 @@ const Home = () => {
 
     const user = useSelector((state) => state.user.value);
 
-    const [identityAsyncQuery] = useLazyIdentityQuery();
+    const [authorization] = useLazyAuthorizationQuery();
 
     const [shouldBeAuthorize, setShouldBeAuthorize] = useState(false);
 
@@ -46,7 +46,7 @@ const Home = () => {
     const loginAsync = async () => {
         const identityServerAuthPath = process.env.REACT_APP_IDENTITY_SERVER_AUTH_PATH;
 
-        const response = await identityAsyncQuery(identityServerAuthPath);
+        const response = await authorization(identityServerAuthPath);
 
         if (response.data !== undefined) {
             const uri = response.data.uri;

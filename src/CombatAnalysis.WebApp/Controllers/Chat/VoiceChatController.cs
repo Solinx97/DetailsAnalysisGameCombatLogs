@@ -16,7 +16,7 @@ public class VoiceChatController : ControllerBase
     public VoiceChatController(IHttpClientHelper httpClient)
     {
         _httpClient = httpClient;
-        _httpClient.APIUrl = API.Chat;
+        _httpClient.APIUrl = Cluster.Chat;
     }
 
     [HttpGet]

@@ -15,7 +15,7 @@ public class CustomerController : ControllerBase
     public CustomerController(IHttpClientHelper httpClient)
     {
         _httpClient = httpClient;
-        _httpClient.APIUrl = API.User;
+        _httpClient.APIUrl = Cluster.User;
     }
 
     [ServiceFilter(typeof(RequireAccessTokenAttribute))]

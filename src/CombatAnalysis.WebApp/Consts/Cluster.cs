@@ -1,6 +1,6 @@
 ﻿namespace CombatAnalysis.WebApp.Consts;
 
-internal static class API
+internal static class Cluster
 {
     public static string CombatParser { get; set; }
 

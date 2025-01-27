@@ -21,7 +21,7 @@ spec:
               service:
                 name: {{ .Release.Name }}-{{ .Values.user.name }}-service
                 port:
-                  number: {{ .Values.user.ingress.port }}
+                  number: {{ .Values.user.service.targetPort }}
     - host: {{ .Values.communication.ingress.host }}
       http:
         paths:
@@ -31,7 +31,7 @@ spec:
               service:
                 name: {{ .Release.Name }}-{{ .Values.communication.name }}-service
                 port:
-                  number: {{ .Values.communication.ingress.port }}
+                  number: {{ .Values.communication.service.targetPort }}
     - host: {{ .Values.chat.ingress.host }}
       http:
         paths:
@@ -41,7 +41,7 @@ spec:
               service:
                 name: {{ .Release.Name }}-{{ .Values.chat.name }}-service
                 port:
-                  number: {{ .Values.chat.ingress.port }}
+                  number: {{ .Values.chat.service.targetPort }}
     - host: {{ .Values.parser.ingress.host }}
       http:
         paths:
@@ -51,7 +51,7 @@ spec:
               service:
                 name: {{ .Release.Name }}-{{ .Values.parser.name }}-service
                 port:
-                  number: {{ .Values.parser.ingress.port }}
+                  number: {{ .Values.parser.service.targetPort }}
     - host: {{ .Values.health.ingress.host }}
       http:
         paths:
@@ -61,4 +61,4 @@ spec:
               service:
                 name: {{ .Release.Name }}-{{ .Values.health.name }}-service
                 port:
-                  number: {{ .Values.health.ingress.port }}
+                  number: {{ .Values.health.service.targetPort }}

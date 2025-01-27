@@ -3,20 +3,17 @@ using CombatAnalysis.IdentityDAL.Interfaces;
 using CombatAnalysis.IdentityDAL.Repositories;
 using CombatAnalysis.IdentityDAL.Services;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace CombatAnalysis.IdentityDAL.Extensions;
 
 public static class DataCollectionExtensions
 {
-    public static void RegisterDependenciesForDAL(this IServiceCollection services, IConfiguration configuration, string connectionName)
+    public static void RegisterDependenciesForDAL(this IServiceCollection services, string connectionString)
     {
-        var connection = configuration.GetConnectionString(connectionName);
-
         services.AddDbContext<CombatAnalysisIdentityContext>(options =>
         {
-            options.UseSqlServer(connection);
+            options.UseSqlServer(connectionString);
         });
 
         services.AddScoped<IContextService, ContextService>();

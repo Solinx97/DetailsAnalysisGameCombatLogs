@@ -32,7 +32,7 @@ export const UserApi = createApi({
             providesTags: (result, error, id) =>
                 result ? [{ type: 'Authentication', id: result.id }] : ['Authentication'],
         }),
-        identity: builder.query({
+        authorization: builder.query({
             query: (identityPath) => `/Authentication/authorization?identityPath=${identityPath}`
         }),
         verifyEmail: builder.query({
@@ -51,7 +51,7 @@ export const {
     useLazyGetCustomersQuery,
     useAuthenticationQuery,
     useLazyAuthenticationQuery,
-    useLazyIdentityQuery,
+    useLazyAuthorizationQuery,
     useLazyVerifyEmailQuery,
     useLazyStateValidateQuery,
 } = UserApi;

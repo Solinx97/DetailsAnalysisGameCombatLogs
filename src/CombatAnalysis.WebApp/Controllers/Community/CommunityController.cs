@@ -16,7 +16,7 @@ public class CommunityController : ControllerBase
     public CommunityController(IHttpClientHelper httpClient)
     {
         _httpClient = httpClient;
-        _httpClient.APIUrl = API.Communication;
+        _httpClient.APIUrl = Cluster.Communication;
     }
 
     [HttpGet]

@@ -10,18 +10,11 @@ using System.Text;
 
 namespace CombatAnalysis.Identity.Services;
 
-internal class OAuthCodeFlowService : IOAuthCodeFlowService
+internal class OAuthCodeFlowService(IPkeRepository pkeRepository, IClientRepository clientRepository, ITokenRepository tokenRepository) : IOAuthCodeFlowService
 {
-    private readonly IPkeRepository _pkeRepository;
-    private readonly IClientRepository _clientRepository;
-    private readonly ITokenRepository _tokenRepository;
-
-    public OAuthCodeFlowService(IPkeRepository pkeRepository, IClientRepository clientRepository, ITokenRepository tokenRepository)
-    {
-        _pkeRepository = pkeRepository;
-        _clientRepository = clientRepository;
-        _tokenRepository = tokenRepository;
-    }
+    private readonly IPkeRepository _pkeRepository = pkeRepository;
+    private readonly IClientRepository _clientRepository = clientRepository;
+    private readonly ITokenRepository _tokenRepository = tokenRepository;
 
     async Task<string> IOAuthCodeFlowService.GenerateAuthorizationCodeAsync(string userId, string clientId, string codeChallenge, string codeChallengeMethod, string redirectUri)
     {
@@ -41,37 +34,37 @@ internal class OAuthCodeFlowService : IOAuthCodeFlowService
             || string.IsNullOrEmpty(authorizationCode)
             || string.IsNullOrEmpty(redirectUri))
         {
-            return false;
+            throw new ArgumentNullException("One of parameters is null.");
         }
 
         var authorizationCodeChallenge = await _pkeRepository.GetByIdAsync(authorizationCode);
         if (authorizationCodeChallenge == null)
         {
-            return false;
+            throw new ArgumentException("Authorization code not found.");
         }
 
         if (authorizationCodeChallenge.IsUsed)
         {
-            return false;
+            throw new ArgumentException("Authorization code is used already.");
         }
 
         var redirectUriIsValid = authorizationCodeChallenge.RedirectUrl == redirectUri;
         if (!redirectUriIsValid)
         {
-            return false;
+            throw new ArgumentException("RedirectUrl incorrect.");
         }
 
         var clientIdIsValid = authorizationCodeChallenge.ClientId == clientId;
         if (!clientIdIsValid)
         {
-            return false;
+            throw new ArgumentException("Client id invalidate.");
         }
 
         var generatedCodeChallenge = GenerateCodeChallenge(codeVerifier);
         var codeChallengeIsValid = authorizationCodeChallenge.CodeChallenge == generatedCodeChallenge;
         if (!codeChallengeIsValid)
         {
-            return false;
+            throw new ArgumentException("Code challenge invalidate.");
         }
 
         await MarkCodeAsUsedAsync(authorizationCodeChallenge);
@@ -111,7 +104,7 @@ internal class OAuthCodeFlowService : IOAuthCodeFlowService
         return scopeIsValid;
     }
 
-    (string AuthorizationCode, string CustomData) IOAuthCodeFlowService.DecryptAuthorizationCode(string encryptedDataWithCustomData, byte[] encryptionKey)
+    (string AuthorizationCode, string UserData) IOAuthCodeFlowService.DecryptAuthorizationCode(string encryptedDataWithCustomData, byte[] encryptionKey)
     {
         var fullCipher = Convert.FromBase64String(encryptedDataWithCustomData);
 
@@ -133,14 +126,14 @@ internal class OAuthCodeFlowService : IOAuthCodeFlowService
         using var sr = new StreamReader(cs);
         var decryptedData = sr.ReadToEnd();
 
-        var parts = decryptedData.Split(new[] { ':' }, 2);
+        var parts = decryptedData.Split([':'], 2);
 
         var decryptedAuthorizationKey = (parts[0], parts.Length > 1 ? parts[1] : string.Empty);
 
         return decryptedAuthorizationKey;
     }
 
-    async Task IOAuthCodeFlowService.CreateRefreshTokenAsync(string token, int refreshTokenExpiresDays, string clientId, string userId)
+    async Task IOAuthCodeFlowService.SaveRefreshTokenAsync(string token, int refreshTokenExpiresDays, string clientId, string userId)
     {
         await _tokenRepository.SaveAsync(token, refreshTokenExpiresDays, clientId, userId);
     }
@@ -152,19 +145,22 @@ internal class OAuthCodeFlowService : IOAuthCodeFlowService
 
         var claims = new[]
         {
-            new Claim(JwtRegisteredClaimNames.Sub, userId),
+            new Claim(JwtRegisteredClaimNames.Sub, userId), 
+            new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
         };
 
-        var token = new JwtSecurityToken(
+        var jwySecurityToken = new JwtSecurityToken(
             issuer: Authentication.Issuer,
             audience: clientId,
-            claims: !string.IsNullOrEmpty(userId) ? claims : new Claim[0],
+            claims: !string.IsNullOrEmpty(userId) ? claims : [],
             expires: DateTime.Now.AddMinutes(Authentication.AccessTokenExpiresMins),
             signingCredentials: creds
         );
 
-        var accessToken = new JwtSecurityTokenHandler().WriteToken(token);
-        return accessToken;
+        var tokenHandler = new JwtSecurityTokenHandler();
+        var token = tokenHandler.WriteToken(jwySecurityToken);
+
+        return token;
     }
 
     async Task<string> IOAuthCodeFlowService.ValidateRefreshTokenAsync(string refreshToken, string clientId)

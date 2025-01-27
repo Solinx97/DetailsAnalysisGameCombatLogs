@@ -16,7 +16,7 @@ public class PersonalChatMessageController : ControllerBase
     public PersonalChatMessageController(IHttpClientHelper httpClient)
     {
         _httpClient = httpClient;
-        _httpClient.APIUrl = API.Chat;
+        _httpClient.APIUrl = Cluster.Chat;
     }
 
     [HttpGet("count/{chatId}")]

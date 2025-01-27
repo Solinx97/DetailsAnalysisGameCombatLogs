@@ -26,22 +26,20 @@ spec:
           env:
            - name: ASPNETCORE_ENVIRONMENT
              value: {{ .Values.env }}
-           - name: API_CombatParser
-             value: "https://encounters.analysis.com"
-           - name: API_User
-             value: "https://api.user.analysis.com/"
-           - name: API_Chat
-             value: "https://api.chat.analysis.com/"
-           - name: API_Communication
-             value: "https://api.communication.analysis.com/"
-           - name: API_Identity
+           - name: Cluster_CombatParser
+             value: "http://api-combat-parser-service.api.svc.cluster.local/"
+           - name: Cluster_User
+             value: "http://api-user-service.api.svc.cluster.local/"
+           - name: Cluster_Chat
+             value: "http://api-chat-service.api.svc.cluster.local/"
+           - name: Cluster_Communication
+             value: "http://api-communication-service.api.svc.cluster.local/"
+           - name: Cluster_Identity
+             value: "http://identity-service.identity.svc.cluster.local/"
+           - name: Servers_Identity
              value: "https://identity.analysis.com/"
            - name: Authentication_CookieDomain
              value: ".analysis.com"
-           - name: Authentication_ClientId
-             value: "client1"
-           - name: Authentication_ClientScope
-             value: "client1scope"
            - name: Authentication_RedirectUri
              value: "encounters.analysis.com/callback"
            - name: Authentication_IdentityAuthPath
@@ -58,9 +56,7 @@ spec:
              value: "authorizationCode"
            - name: Authentication_GrantType_RefreshToken
              value: "refreshToken"
-           - name: Authentication_Authority
-             value: "https://identity.analysis.com/"
-           - name: Authentication_IssuerSigningKey
-             value: "aFo/P+0M8TRKhjkIhjR1+1Y/b77eSl9Ewdj2e3hSxRQ="
-           - name: Authentication_Audience
+           - name: Authentication_Client_ClientId
              value: "client1"
+           - name: Authentication_Client_Scope
+             value: "client1scope"

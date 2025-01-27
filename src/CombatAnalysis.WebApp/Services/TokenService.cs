@@ -12,12 +12,12 @@ internal class TokenService : ITokenService
     public TokenService(IHttpClientHelper httpClient)
     {
         _httpClient = httpClient;
-        _httpClient.APIUrl = API.Identity;
+        _httpClient.APIUrl = Cluster.Identity;
     }
 
     public async Task<AccessTokenModel> RefreshAccessTokenAsync(string refreshToken)
     {
-        var response = await _httpClient.GetAsync($"Token/refresh?grantType={AuthenticationGrantType.RefreshToken}&refreshToken={refreshToken}&clientId={Authentication.ClientId}");
+        var response = await _httpClient.GetAsync($"Token/refresh?grantType={AuthenticationGrantType.RefreshToken}&refreshToken={refreshToken}&clientId={AuthenticationClient.ClientId}");
         if (response.IsSuccessStatusCode)
         {
             var token = await response.Content.ReadFromJsonAsync<AccessTokenModel>();

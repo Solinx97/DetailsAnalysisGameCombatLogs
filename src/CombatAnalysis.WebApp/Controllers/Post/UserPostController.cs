@@ -16,7 +16,7 @@ public class UserPostController : ControllerBase
     public UserPostController(IHttpClientHelper httpClient)
     {
         _httpClient = httpClient;
-        _httpClient.APIUrl = API.Communication;
+        _httpClient.APIUrl = Cluster.Communication;
     }
 
     [HttpGet("count/{appUserId}")]

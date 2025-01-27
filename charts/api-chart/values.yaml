@@ -15,14 +15,12 @@ user:
     container:
         name: user
         image: solinx/combatanalysisuserapi
-        port: 80
+        port: 8080
     service:
         port: 80
         targetPort: 8080
-        nodePort: 30001
     ingress:
         host: api.user.analysis.com
-        port: 80
 communication:
     name: communication
     replicas: 2
@@ -33,14 +31,12 @@ communication:
     container:
         name: communication
         image: solinx/combatanalysiscommunicationapi
-        port: 80
+        port: 8080
     service:
         port: 80
         targetPort: 8080
-        nodePort: 30002
     ingress:
         host: api.communication.analysis.com
-        port: 80
 chat:
     name: chat
     replicas: 2
@@ -51,14 +47,12 @@ chat:
     container:
         name: chat
         image: solinx/combatanalysischatapi
-        port: 80
+        port: 8080
     service:
         port: 80
         targetPort: 8080
-        nodePort: 30003
     ingress:
         host: api.chat.analysis.com
-        port: 80
 parser:
     name: combat-parser
     replicas: 2
@@ -69,14 +63,12 @@ parser:
     container:
         name: combat-parser
         image: solinx/combatanalysiscombatparserapi
-        port: 80
+        port: 8080
     service:
         port: 80
         targetPort: 8080
-        nodePort: 30004
     ingress:
         host: api.parser.analysis.com
-        port: 80
 health:
     name: health
     replicas: 2
@@ -87,11 +79,9 @@ health:
     container:
         name: health
         image: solinx/healthapi
-        port: 80
+        port: 8080
     service:
         port: 80
         targetPort: 8080
-        nodePort: 30005
     ingress:
         host: health.analysis.com
-        port: 80

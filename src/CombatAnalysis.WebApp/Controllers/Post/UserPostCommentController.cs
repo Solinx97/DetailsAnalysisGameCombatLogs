@@ -16,7 +16,7 @@ public class UserPostCommentController : ControllerBase
     public UserPostCommentController(IHttpClientHelper httpClient)
     {
         _httpClient = httpClient;
-        _httpClient.APIUrl = API.Communication;
+        _httpClient.APIUrl = Cluster.Communication;
     }
 
     [HttpGet]

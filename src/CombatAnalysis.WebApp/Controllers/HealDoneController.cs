@@ -17,7 +17,7 @@ public class HealDoneController : ControllerBase
     {
         _httpClient = httpClient;
         _logger = logger;
-        _httpClient.APIUrl = API.CombatParser;
+        _httpClient.APIUrl = Cluster.CombatParser;
     }
 
     [HttpGet("getByCombatPlayerId")]

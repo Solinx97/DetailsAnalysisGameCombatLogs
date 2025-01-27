@@ -2,6 +2,7 @@ using CombatAnalysis.Hubs.Consts;
 using CombatAnalysis.Hubs.Helpers;
 using CombatAnalysis.Hubs.Hubs;
 using CombatAnalysis.Hubs.Interfaces;
+using Microsoft.IdentityModel.Tokens;
 using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -10,25 +11,49 @@ builder.Services.AddHttpContextAccessor();
 
 builder.Services.AddScoped<IHttpClientHelper, HttpClientHelper>();
 
-var webAppCors = string.Empty;
 var envName = builder.Environment.EnvironmentName;
 
 if (string.Equals(envName, "Development", StringComparison.OrdinalIgnoreCase))
 {
-    webAppCors = builder.Configuration["Cors:WebApp"] ?? string.Empty;
-    API.Chat = builder.Configuration["API:Chat"] ?? string.Empty;
+    CreateEnvironmentHelper.UseAppsettings(builder.Configuration);
 }
 else
 {
-    webAppCors = Environment.GetEnvironmentVariable("Cors_WebApp") ?? string.Empty;
-    API.Chat = Environment.GetEnvironmentVariable("API_Chat") ?? string.Empty;
+    CreateEnvironmentHelper.UseEnvVariables();
 }
+
+builder.Services.AddAuthentication("Bearer")
+    .AddJwtBearer(options =>
+    {
+        options.Authority = Authentication.Authority;
+        options.Audience = AuthenticationClient.ClientId;
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuerSigningKey = true,
+            IssuerSigningKey = new SymmetricSecurityKey(Authentication.IssuerSigningKey),
+            ValidateIssuer = true,
+            ValidIssuer = Authentication.Issuer,
+            ValidateAudience = true,
+            ClockSkew = TimeSpan.Zero
+        };
+        // Skip checking HTTPS (should be HTTPS in production)
+        options.RequireHttpsMetadata = false;
+    });
+
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("ApiScope", builder =>
+    {
+        builder.RequireAuthenticatedUser();
+        builder.RequireClaim("scope", "api1");
+    });
+});
 
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("CorsPolicy", builder =>
     {
-        builder.WithOrigins(webAppCors)
+        builder.WithOrigins(CORS.WebApp)
                .AllowAnyMethod()
                .AllowAnyHeader()
                .AllowCredentials();
@@ -46,6 +71,9 @@ Log.Logger = new LoggerConfiguration()
 var app = builder.Build();
 
 app.UseCors("CorsPolicy");
+
+app.UseAuthentication(); // Enable authentication middleware
+app.UseAuthorization();
 
 app.UseRouting().UseEndpoints(endpoints =>
 {

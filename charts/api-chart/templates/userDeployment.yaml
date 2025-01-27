@@ -26,3 +26,23 @@ spec:
           env:
            - name: ASPNETCORE_ENVIRONMENT
              value: {{ .Values.env }}
+           - name: Database_Name
+             value: "MSSQL"
+           - name: Database_DataProcessingType
+             value: "Default"
+           - name: ConnectionStrings_DefaultConnection
+             value: "Server=host.docker.internal,1433;Database=Combat_Analysis.User;User Id=sa;Password=Oleg123;Integrated Security=False;Connect Timeout=120;Encrypt=True;Trust Server Certificate=True;Application Intent=ReadWrite;Multi Subnet Failover=False"
+           - name: ConnectionStrings_Firebase
+             value: "https://detailsanalysisgamecombatlogs-default-rtdb.firebaseio.com/"
+           - name: API_Identity
+             value: "https://identity.analysis.com/"
+           - name: Authentication_Issuer
+             value: "https://identity.analysis.com/"
+           - name: Authentication_IssuerSigningKey
+             value: "aFo/P+0M8TRKhjkIhjR1+1Y/b77eSl9Ewdj2e3hSxRQ="
+           - name: Authentication_Authority
+             value: "https://identity.analysis.com/"
+           - name: Authentication_Client_ClientId
+             value: "client1"
+           - name: Authentication_Client_Scope
+             value: "client1scope"

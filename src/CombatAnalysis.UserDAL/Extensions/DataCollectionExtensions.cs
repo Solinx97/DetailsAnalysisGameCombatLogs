@@ -6,37 +6,33 @@ using CombatAnalysis.UserDAL.Repositories.Firebase;
 using CombatAnalysis.UserDAL.Repositories.SQL;
 using CombatAnalysis.UserDAL.Services;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace CombatAnalysis.UserDAL.Extensions;
 
 public static class DataCollectionExtensions
 {
-    public static void UserDALDependencies(this IServiceCollection services, IConfiguration configuration, string connectionName)
+    public static void UserDALDependencies(this IServiceCollection services, string databaseName, string dataProcessingType, string connectionString)
     {
-        var databaseName = configuration.GetSection("Database:Name").Value ?? string.Empty;
         switch (databaseName)
         {
             case nameof(DatabaseType.MSSQL):
-                MSSQLDatabase(services, configuration, connectionName);
+                MSSQLDatabase(services, connectionString);
                 break;
             case nameof(DatabaseType.Firebase):
                 FirebaseDatabase(services);
                 break;
             default:
-                MSSQLDatabase(services, configuration, connectionName);
+                MSSQLDatabase(services, connectionString);
                 break;
         }
     }
 
-    private static void MSSQLDatabase(IServiceCollection services, IConfiguration configuration, string connectionName)
+    private static void MSSQLDatabase(IServiceCollection services, string connectionString)
     {
-        var connection = configuration.GetConnectionString(connectionName);
-
         services.AddDbContext<UserSQLContext>(options =>
         {
-            options.UseSqlServer(connection);
+            options.UseSqlServer(connectionString);
         });
 
         services.AddScoped<IContextService, ContextService>();

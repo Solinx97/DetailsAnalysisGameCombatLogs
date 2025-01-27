@@ -19,7 +19,7 @@ internal class UserAuthorizationService : IUserAuthorizationService
     private readonly IIdentityUserService _identityUserService;
     private readonly IUserService<AppUserDto> _appUserService;
     private readonly IService<CustomerDto, string> _customerService;
-    private readonly ICustomerTransactionService _customerTransactionService;
+    private readonly ICustomerTransactionService _userTransactionService;
     private readonly IIdentityTransactionService _identityTransactionService;
     private readonly ILogger<UserAuthorizationService> _logger;
     private AuthorizationRequestModel _authorizationRequest = new AuthorizationRequestModel();
@@ -33,7 +33,7 @@ internal class UserAuthorizationService : IUserAuthorizationService
         _appUserService = appUserService;
         _customerService = customerService;
         _logger = logger;
-        _customerTransactionService = customerTransactionService;
+        _userTransactionService = customerTransactionService;
         _identityTransactionService = identityTransactionService;
     }
 
@@ -74,7 +74,7 @@ internal class UserAuthorizationService : IUserAuthorizationService
     {
         try
         {
-            await _customerTransactionService.BeginTransactionAsync();
+            await _userTransactionService.BeginTransactionAsync();
             await _identityTransactionService.BeginTransactionAsync();
 
             var identityUserMap = _mapper.Map<IdentityUserDto>(identityUser);
@@ -86,7 +86,7 @@ internal class UserAuthorizationService : IUserAuthorizationService
             var customerMap = _mapper.Map<CustomerDto>(customer);
             await _customerService.CreateAsync(customerMap);
 
-            await _customerTransactionService.CommitTransactionAsync();
+            await _userTransactionService.CommitTransactionAsync();
             await _identityTransactionService.CommitTransactionAsync();
 
             return true;
@@ -95,7 +95,7 @@ internal class UserAuthorizationService : IUserAuthorizationService
         {
             _logger.LogError(ex.Message);
 
-            await _customerTransactionService.RollbackTransactionAsync();
+            await _userTransactionService.RollbackTransactionAsync();
             await _identityTransactionService.RollbackTransactionAsync();
 
             return false;
@@ -104,7 +104,7 @@ internal class UserAuthorizationService : IUserAuthorizationService
         {
             _logger.LogError(ex.Message);
 
-            await _customerTransactionService.RollbackTransactionAsync();
+            await _userTransactionService.RollbackTransactionAsync();
             await _identityTransactionService.RollbackTransactionAsync();
 
             return false;
@@ -189,9 +189,9 @@ internal class UserAuthorizationService : IUserAuthorizationService
             _authorizationRequest.GrantType = grantType;
         }
 
-        if (request.Query.TryGetValue(AuthorizationRequest.ClientTd.ToString(), out var clientTd))
+        if (request.Query.TryGetValue(AuthorizationRequest.ClientId.ToString(), out var clientId))
         {
-            _authorizationRequest.ClientTd = clientTd;
+            _authorizationRequest.ClientTd = clientId;
         }
 
         if (request.Query.TryGetValue(AuthorizationRequest.Scope.ToString(), out var scope))

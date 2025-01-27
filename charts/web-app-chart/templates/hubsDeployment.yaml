@@ -28,5 +28,15 @@ spec:
              value: {{ .Values.env }}
            - name: Cors_WebApp
              value: "https://encounters.analysis.com"
-           - name: API_Chat
-             value: "https://api.chat.analysis.com/"
+           - name: Cluster_Chat
+             value: "http://api-chat-service.api.svc.cluster.local/"
+           - name: Authentication_Issuer
+             value: "https://identity.analysis.com/"
+           - name: Authentication_IssuerSigningKey
+             value: "aFo/P+0M8TRKhjkIhjR1+1Y/b77eSl9Ewdj2e3hSxRQ="
+           - name: Authentication_Authority
+             value: "https://identity.analysis.com/"
+           - name: Authentication_Client_ClientId
+             value: "client1"
+           - name: Authentication_Client_Scope
+             value: "client1scope"

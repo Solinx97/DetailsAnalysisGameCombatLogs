@@ -16,7 +16,7 @@ public class AccountController : ControllerBase
     public AccountController(IHttpClientHelper httpClient)
     {
         _httpClient = httpClient;
-        _httpClient.APIUrl = API.User;
+        _httpClient.APIUrl = Cluster.User;
     }
 
     [ServiceFilter(typeof(RequireAccessTokenAttribute))]

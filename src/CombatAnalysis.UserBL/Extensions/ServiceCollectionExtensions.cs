@@ -2,16 +2,15 @@
 using CombatAnalysis.UserBL.Interfaces;
 using CombatAnalysis.UserBL.Services;
 using CombatAnalysis.UserDAL.Extensions;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace CombatAnalysis.UserBL.Extensions;
 
 public static class ServiceCollectionExtensions
 {
-    public static void UserBLDependencies(this IServiceCollection services, IConfiguration configuration, string connectionName)
+    public static void UserBLDependencies(this IServiceCollection services, string databaseName, string dataProcessingType, string connectionString)
     {
-        services.UserDALDependencies(configuration, connectionName);
+        services.UserDALDependencies(databaseName, dataProcessingType, connectionString);
 
         services.AddScoped<ICustomerTransactionService, CustomerTransactionService>();
 

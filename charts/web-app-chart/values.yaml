@@ -12,24 +12,21 @@ webApp:
     container:
         name: analysis-web-app
         image: solinx/combatanalysiswebapp
-        port: 80
+        port: 8080
     service:
         port: 80
         targetPort: 8080
         nodePort: 30201
     ingress:
         host: encounters.analysis.com
-        port: 80
 hubs:
     name: hubs
     container:
         name: analysis-hubs
         image: solinx/combatanalysishubs
-        port: 80
+        port: 8080
     service:
         port: 80
         targetPort: 8080
-        nodePort: 30301
     ingress:
         host: hubs.analysis.com
-        port: 80

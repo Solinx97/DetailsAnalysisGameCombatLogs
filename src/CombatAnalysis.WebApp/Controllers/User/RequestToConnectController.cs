@@ -16,7 +16,7 @@ public class RequestToConnectController : ControllerBase
     public RequestToConnectController(IHttpClientHelper httpClient)
     {
         _httpClient = httpClient;
-        _httpClient.APIUrl = API.User;
+        _httpClient.APIUrl = Cluster.User;
     }
 
     [HttpGet("{id:int:min(1)}")]

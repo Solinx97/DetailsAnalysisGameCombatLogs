@@ -4,7 +4,7 @@ internal enum AuthorizationRequest
 {
     RedirectUri,
     GrantType,
-    ClientTd,
+    ClientId,
     Scope,
     State,
     CodeChallengeMethod,

@@ -17,35 +17,36 @@ public class IdentityController : ControllerBase
     {
         _httpClient = httpClient;
         _logger = logger;
-        _httpClient.APIUrl = API.Identity;
+        _httpClient.APIUrl = Cluster.Identity;
     }
 
     [HttpGet]
     public async Task<IActionResult> AuthorizationCodeExchange(string authorizationCode)
     {
+        var url = string.Empty;
         try
         {
-            if (!HttpContext.Request.Cookies.TryGetValue(AuthenticationCookie.CodeVerifier.ToString(), out var codeVerifier))
+            if (!HttpContext.Request.Cookies.TryGetValue(nameof(AuthenticationCookie.CodeVerifier), out var codeVerifier))
             {
                 return BadRequest();
             }
 
-            HttpContext.Response.Cookies.Delete(AuthenticationCookie.CodeVerifier.ToString());
+            HttpContext.Response.Cookies.Delete(nameof(AuthenticationCookie.CodeVerifier));
 
-            var encodedAuthorizationCode = Uri.EscapeDataString(authorizationCode);
-            var url = $"Token?grantType={AuthenticationGrantType.Authorization}&clientId={Authentication.ClientId}&codeVerifier={codeVerifier}&code={encodedAuthorizationCode}&redirectUri={Authentication.RedirectUri}";
+            var decodedAuthorizationCode = Uri.UnescapeDataString(authorizationCode);
+            url = $"Token?grantType={AuthenticationGrantType.Authorization}&clientId={AuthenticationClient.ClientId}&codeVerifier={codeVerifier}&code={decodedAuthorizationCode}&redirectUri={Authentication.RedirectUri}";
 
-            var responseMessage = await _httpClient.GetAsync(url);
-            if (responseMessage.StatusCode == System.Net.HttpStatusCode.InternalServerError)
+            var response = await _httpClient.GetAsync(url);
+            if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
             {
-                return StatusCode(500);
+                throw new UnauthorizedAccessException($"Authorization to Identity server is failed.");
             }
-            else if (!responseMessage.IsSuccessStatusCode)
+            else if (!response.IsSuccessStatusCode)
             {
-                return BadRequest();
+                throw new HttpRequestException();
             }
 
-            var token = await responseMessage.Content.ReadFromJsonAsync<AccessTokenModel>();
+            var token = await response.Content.ReadFromJsonAsync<AccessTokenModel>();
             if (token == null)
             {
                 return BadRequest();
@@ -69,6 +70,18 @@ public class IdentityController : ControllerBase
             });
 
             return Ok();
+        }
+        catch (UnauthorizedAccessException ex)
+        {
+            _logger.LogError(ex, ex.Message);
+
+            return BadRequest(ex.Message);
+        }
+        catch (HttpRequestException ex)
+        {
+            _logger.LogError(ex, ex.Message);
+
+            return BadRequest(ex.Message);
         }
         catch (Exception ex)
         {

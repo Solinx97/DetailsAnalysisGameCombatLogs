@@ -20,7 +20,7 @@ public class AuthenticationController : ControllerBase
     {
         _httpClient = httpClient;
         _logger = logger;
-        _httpClient.APIUrl = API.User;
+        _httpClient.APIUrl = Cluster.User;
     }
 
     [ServiceFilter(typeof(RequireAccessTokenAttribute))]
@@ -68,9 +68,9 @@ public class AuthenticationController : ControllerBase
         var state = PKCEHelper.GenerateCodeVerifier();
         var codeChallenge = PKCEHelper.GenerateCodeChallenge(codeVerifier);
 
-        var uri = $"{API.Identity}{identityPath}?grantType={AuthenticationGrantType.Code}" +
-            $"&clientTd={Authentication.ClientId}&redirectUri={Authentication.RedirectUri}" +
-            $"&scope={Authentication.ClientScope}&state={state}&codeChallengeMethod={Authentication.CodeChallengeMethod}" +
+        var uri = $"{Servers.Identity}{identityPath}?grantType={AuthenticationGrantType.Code}" +
+            $"&clientId={AuthenticationClient.ClientId}&redirectUri={Authentication.RedirectUri}" +
+            $"&scope={AuthenticationClient.Scope}&state={state}&codeChallengeMethod={Authentication.CodeChallengeMethod}" +
             $"&codeChallenge={codeChallenge}";
 
         var identityRedirect = new IdentityRedirect
@@ -99,7 +99,7 @@ public class AuthenticationController : ControllerBase
     [HttpGet("verifyEmail")]
     public IActionResult VerifyEmail(string identityPath, string email)
     {
-        var uri = $"{API.Identity}{identityPath}?email={email}&redirectUri={Authentication.RedirectUri}";
+        var uri = $"{Cluster.Identity}{identityPath}?email={email}&redirectUri={Authentication.RedirectUri}";
 
         var identityRedirect = new IdentityRedirect
         {
@@ -117,11 +117,10 @@ public class AuthenticationController : ControllerBase
             return BadRequest();
         }
 
-        HttpContext.Response.Cookies.Delete(AuthenticationCookie.State.ToString());
+        HttpContext.Response.Cookies.Delete(nameof(AuthenticationCookie.State));
 
         if (stateValue == state)
         {
-
             return Ok();
         }
 

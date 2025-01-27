@@ -7,16 +7,9 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace CombatAnalysisIdentity.Pages;
 
-public class AuthorizationModel : PageModel
+public class AuthorizationModel(IUserAuthorizationService authorizationService) : PageModel
 {
-    private readonly IUserAuthorizationService _authorizationService;
-
-    private AuthorizationRequestModel _authorizationRequest = new AuthorizationRequestModel();
-
-    public AuthorizationModel(IUserAuthorizationService authorizationService)
-    {
-        _authorizationService = authorizationService;
-    }
+    private readonly IUserAuthorizationService _authorizationService = authorizationService;
 
     public bool QueryIsValid { get; set; }
 
@@ -25,7 +18,7 @@ public class AuthorizationModel : PageModel
     public string Protocol { get; } = Authentication.Protocol;
 
     [BindProperty]
-    public AuthorizationDataModel Authorization { get; set; }
+    public AuthorizationDataModel? Authorization { get; set; }
 
     public async Task OnGetAsync()
     {
@@ -37,6 +30,13 @@ public class AuthorizationModel : PageModel
         await RequestValidationAsync();
 
         if (!ModelState.IsValid)
+        {
+            ModelState.AddModelError(string.Empty, "Invalid login attempt");
+
+            return Page();
+        }
+
+        if (Authorization == null)
         {
             ModelState.AddModelError(string.Empty, "Invalid login attempt");
 

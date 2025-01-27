@@ -47,6 +47,7 @@ internal class AuthTokenMiddleware(RequestDelegate next)
 
         context.Response.Cookies.Append(nameof(AuthenticationCookie.RefreshToken), token.RefreshToken, new CookieOptions
         {
+            Domain = Authentication.CookieDomain,
             HttpOnly = true,
             Secure = true,
             SameSite = SameSiteMode.None,
@@ -54,6 +55,7 @@ internal class AuthTokenMiddleware(RequestDelegate next)
         });
         context.Response.Cookies.Append(nameof(AuthenticationCookie.AccessToken), token.AccessToken, new CookieOptions
         {
+            Domain = Authentication.CookieDomain,
             HttpOnly = true,
             Secure = true,
             SameSite = SameSiteMode.None,

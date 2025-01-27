@@ -6,7 +6,7 @@ import { useSelector } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
 import { Container, Navbar, NavbarBrand } from 'reactstrap';
 import { useAuth } from '../context/AuthProvider';
-import { useLazyIdentityQuery } from '../store/api/core/User.api';
+import { useLazyAuthorizationQuery } from '../store/api/core/User.api';
 import LanguageSelector from './LanguageSelector';
 import Search from './Search';
 
@@ -19,7 +19,7 @@ const NavMenu = () => {
 
     const { isAuthenticated, checkAuthAsync, logoutAsync } = useAuth();
 
-    const [identityAsync] = useLazyIdentityQuery();
+    const [authorization] = useLazyAuthorizationQuery();
 
     const navigate = useNavigate();
 
@@ -50,7 +50,7 @@ const NavMenu = () => {
     }
 
     const redirectToIdentityAsync = async (identityPath) => {
-        const response = await identityAsync(identityPath);
+        const response = await authorization(identityPath);
 
         if (response.data !== undefined) {
             const uri = response.data.uri;

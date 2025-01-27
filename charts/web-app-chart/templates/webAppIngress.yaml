@@ -2,8 +2,6 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: {{ .Values.webApp.name }}-ingress
-  annotations:
-    nginx.ingress.kubernetes.io/rewrite-target: /
 spec:
   tls:
   - hosts:
@@ -19,4 +17,4 @@ spec:
             service:
               name: {{ .Values.webApp.name }}-service
               port:
-                number: {{ .Values.webApp.ingress.port }}
+                number: {{ .Values.webApp.service.targetPort  }}
