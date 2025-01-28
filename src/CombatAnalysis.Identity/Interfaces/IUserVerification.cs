@@ -10,5 +10,5 @@ public interface IUserVerification
 
     Task<bool> VerifyEmailAsync(string token);
 
-    void RemoveExpiredVerification();
+    Task RemoveExpiredVerificationAsync();
 }

@@ -7,37 +7,33 @@ using CombatAnalysis.ChatDAL.Repositories.SQL;
 using CombatAnalysis.ChatDAL.Repositories.SQL.StoredProcedure;
 using CombatAnalysis.ChatDAL.Services;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace CombatAnalysis.ChatDAL.Extensions;
 
 public static class DataCollectionExtensions
 {
-    public static void RegisterDependenciesForDAL(this IServiceCollection services, IConfiguration configuration, string connectionName)
+    public static void RegisterDependenciesForDAL(this IServiceCollection services, string databaseName, string dataProcessingType, string connectionString)
     {
-        var databaseName = configuration.GetSection("Database:Name").Value ?? string.Empty;
         switch (databaseName)
         {
             case nameof(DatabaseType.MSSQL):
-                MSSQLDatabase(services, configuration, connectionName);
+                MSSQLDatabase(services, connectionString);
                 break;
             case nameof(DatabaseType.Firebase):
                 FirebaseDatabase(services);
                 break;
             default:
-                MSSQLDatabase(services, configuration, connectionName);
+                MSSQLDatabase(services, connectionString);
                 break;
         }
     }
 
-    private static void MSSQLDatabase(IServiceCollection services, IConfiguration configuration, string connectionName)
+    private static void MSSQLDatabase(IServiceCollection services, string connectionString)
     {
-        var connection = configuration.GetConnectionString(connectionName);
-
         services.AddDbContext<ChatSQLContext>(options =>
         {
-            options.UseSqlServer(connection);
+            options.UseSqlServer(connectionString);
         });
 
         services.AddScoped<IContextService, ContextService>();

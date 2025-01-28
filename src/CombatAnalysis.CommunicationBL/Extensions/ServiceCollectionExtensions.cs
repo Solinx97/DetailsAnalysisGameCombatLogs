@@ -5,16 +5,15 @@ using CombatAnalysis.CommunicationBL.Services;
 using CombatAnalysis.CommunicationBL.Services.Community;
 using CombatAnalysis.CommunicationBL.Services.Post;
 using CombatAnalysis.CommunicationDAL.Extensions;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace CombatAnalysis.CommunicationBL.Extensions;
 
 public static class ServiceCollectionExtensions
 {
-    public static void CommunicationBLDependencies(this IServiceCollection services, IConfiguration configuration, string connectionName)
+    public static void CommunicationBLDependencies(this IServiceCollection services, string databaseName, string dataProcessingType, string connectionString)
     {
-        services.RegisterDependenciesForDAL(configuration, connectionName);
+        services.RegisterDependenciesForDAL(databaseName, dataProcessingType, connectionString);
 
         services.AddScoped<ISqlContextService, SqlContextService>();
 

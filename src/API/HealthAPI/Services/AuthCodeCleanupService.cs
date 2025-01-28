@@ -6,7 +6,7 @@ public class AuthCodeCleanupService : IHostedService, IDisposable
 {
     private readonly IServiceProvider _serviceProvider;
     private readonly TimeSpan _interval = TimeSpan.FromMinutes(15);
-    private Timer _timer;
+    private Timer? _timer;
 
     public AuthCodeCleanupService(IServiceProvider serviceProvider)
     {
@@ -15,17 +15,17 @@ public class AuthCodeCleanupService : IHostedService, IDisposable
 
     public Task StartAsync(CancellationToken cancellationToken)
     {
-        _timer = new Timer(DoCleanup, null, TimeSpan.Zero, _interval);
+        _timer = new Timer(async (state) => await DoCleanupAsync(state), null, TimeSpan.Zero, _interval);
 
         return Task.CompletedTask;
     }
 
-    private void DoCleanup(object state)
+    private async Task DoCleanupAsync(object? state)
     {
         using var scope = _serviceProvider.CreateScope();
         var authCodeService = scope.ServiceProvider.GetRequiredService<IAuthCodeService>();
 
-        authCodeService.RemoveExpiredCodes();
+        await authCodeService.RemoveExpiredCodesAsync();
     }
 
     public Task StopAsync(CancellationToken cancellationToken)

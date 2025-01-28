@@ -107,10 +107,10 @@ internal class UserVerificationService : IUserVerification
         return true;
     }
 
-    public void RemoveExpiredVerification()
+    public async Task RemoveExpiredVerificationAsync()
     {
-        _verifyEmailRepository.RemoveExpiredVerifyEmailTokenAsync().Wait();
-        _resetTokenRepository.RemoveExpiredResetTokenAsync().Wait();
+        await _verifyEmailRepository.RemoveExpiredVerifyEmailTokenAsync();
+        await _resetTokenRepository.RemoveExpiredResetTokenAsync();
     }
 
     private static string GenerateToken()

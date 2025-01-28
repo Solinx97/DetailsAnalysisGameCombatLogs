@@ -3,16 +3,15 @@ using CombatAnalysis.ChatBL.Interfaces;
 using CombatAnalysis.ChatBL.Services;
 using CombatAnalysis.ChatBL.Services.Chat;
 using CombatAnalysis.ChatDAL.Extensions;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace CombatAnalysis.ChatBL.Extensions;
 
 public static class ServiceCollectionExtensions
 {
-    public static void ChatBLDependencies(this IServiceCollection services, IConfiguration configuration, string connectionName)
+    public static void ChatBLDependencies(this IServiceCollection services, string databaseName, string dataProcessingType, string connectionString)
     {
-        services.RegisterDependenciesForDAL(configuration, connectionName);
+        services.RegisterDependenciesForDAL(databaseName, dataProcessingType, connectionString);
 
         services.AddScoped<IChatTransactionService, ChatTransactionService>();
 

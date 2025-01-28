@@ -26,3 +26,21 @@ spec:
           env:
            - name: ASPNETCORE_ENVIRONMENT
              value: {{ .Values.env }}
+           - name: Database_Name
+             value: "MSSQL"
+           - name: Database_DataProcessingType
+             value: "StoredProcedure"
+           - name: ConnectionStrings_DefaultConnection
+             value: "Server=host.docker.internal,1433;Database=Combat_Analysis.Combat_Logs;User Id=sa;Password=Oleg123;Integrated Security=False;Connect Timeout=120;Encrypt=True;Trust Server Certificate=True;Application Intent=ReadWrite;Multi Subnet Failover=False"
+           - name: ConnectionStrings_Firebase
+             value: "https://detailsanalysisgamecombatlogs-default-rtdb.firebaseio.com/"
+           - name: DBConfiguration_CommandTimeout
+             value: "180"
+           - name: DBConfiguration_MaxRequestBodySize
+             value: "150000000"
+           - name: Players_Specs
+             value: '{"0":"Удар Плети","1":"Воющий ветер","2":"Полоснуть","3":"Омоложение","4":"Огненная глыба","5":"Божественная буря","6":"Молот праведника","7":"Выстрел химеры","8":"Разрывной выстрел","9":"Расправа","10":"Быстрина","11":"Удар героя","12":"Звездный огонь","13":"Атака языка пламени","14":"Нестабильное колдовство","15":"Ожог души"}'
+           - name: Players_Classes
+             value: '{"0":"0,1,21,23","1":"2,3,12","2":"4","3":"5,6,19","4":"7,8","5":"9,22"}'
+           - name: Players_Bosses
+             value: '{"0":"Халион","1":"Лорд Ребрад","2":"Леди Смертный Шепот","3":"Битва на кораблях в Ледяной Короне","4":"Саурфанг","5":"Тухлопуз","6":"Гниломорд","7":"Профессор","8":"Кровавый Совет","9":"Королева Ланатель","10":"Валитрия Сноходица","11":"Синдрагоса","12":"Король-лич"}'

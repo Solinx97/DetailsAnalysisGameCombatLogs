@@ -8,8 +8,6 @@ using Microsoft.IdentityModel.Tokens;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.RegisterIdentityDependencies(builder.Configuration, "DefaultConnection");
-
 var envName = builder.Environment.EnvironmentName;
 
 if (string.Equals(envName, "Development", StringComparison.OrdinalIgnoreCase))
@@ -20,6 +18,8 @@ else
 {
     CreateEnvironmentHelper.UseEnvVariables();
 }
+
+builder.Services.RegisterIdentityDependencies(DatabaseProps.ConnectionString);
 
 var mappingConfig = new MapperConfiguration(mc =>
 {

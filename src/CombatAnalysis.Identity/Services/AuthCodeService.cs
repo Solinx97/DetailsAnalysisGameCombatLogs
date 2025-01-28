@@ -12,8 +12,8 @@ internal class AuthCodeService : IAuthCodeService
         _authCodeRepository = authCodeRepository;
     }
 
-    public void RemoveExpiredCodes()
+    public async Task RemoveExpiredCodesAsync()
     {
-        _authCodeRepository.RemoveExpiredCodesAsync().Wait();
+        await _authCodeRepository.RemoveExpiredCodesAsync();
     }
 }

@@ -97,8 +97,22 @@ public class AccountController : ControllerBase
     [HttpPost("logout")]
     public IActionResult Logout()
     {
-        HttpContext.Response.Cookies.Delete(AuthenticationCookie.RefreshToken.ToString());
-        HttpContext.Response.Cookies.Delete(AuthenticationCookie.AccessToken.ToString());
+        HttpContext.Response.Cookies.Delete(nameof(AuthenticationCookie.RefreshToken), new CookieOptions
+        {
+            Domain = Authentication.CookieDomain,
+            Path = "/",
+            HttpOnly = true,
+            Secure = true,
+            SameSite = SameSiteMode.None,
+        });
+        HttpContext.Response.Cookies.Delete(nameof(AuthenticationCookie.AccessToken), new CookieOptions
+        {
+            Domain = Authentication.CookieDomain,
+            Path = "/",
+            HttpOnly = true,
+            Secure = true,
+            SameSite = SameSiteMode.None,
+        });
 
         return Ok();
     }

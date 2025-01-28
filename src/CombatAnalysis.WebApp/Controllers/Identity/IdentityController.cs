@@ -31,7 +31,14 @@ public class IdentityController : ControllerBase
                 return BadRequest();
             }
 
-            HttpContext.Response.Cookies.Delete(nameof(AuthenticationCookie.CodeVerifier));
+            HttpContext.Response.Cookies.Delete(nameof(AuthenticationCookie.CodeVerifier), new CookieOptions
+            {
+                Domain = Authentication.CookieDomain,
+                Path = "/",
+                HttpOnly = true,
+                Secure = true,
+                SameSite = SameSiteMode.None,
+            });
 
             var decodedAuthorizationCode = Uri.UnescapeDataString(authorizationCode);
             url = $"Token?grantType={AuthenticationGrantType.Authorization}&clientId={AuthenticationClient.ClientId}&codeVerifier={codeVerifier}&code={decodedAuthorizationCode}&redirectUri={Authentication.RedirectUri}";

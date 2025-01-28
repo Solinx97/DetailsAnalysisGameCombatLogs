@@ -6,6 +6,8 @@ internal static class CreateEnvironmentHelper
 {
     public static void UseAppsettings(ConfigurationManager configuration)
     {
+        DatabaseProps.ConnectionString = configuration["ConnectionStrings:DefaultConnection"] ?? string.Empty;
+
         Authentication.Issuer = configuration["Authentication:Issuer"] ?? string.Empty;
         Authentication.IssuerSigningKey = Convert.FromBase64String(configuration["Authentication:IssuerSigningKey"] ?? string.Empty);
         Authentication.Authority = configuration["Authentication:Authority"] ?? string.Empty;
@@ -16,6 +18,8 @@ internal static class CreateEnvironmentHelper
 
     public static void UseEnvVariables()
     {
+        DatabaseProps.ConnectionString = Environment.GetEnvironmentVariable("ConnectionStrings_DefaultConnection") ?? string.Empty;
+
         Authentication.Issuer = Environment.GetEnvironmentVariable("Authentication_Issuer") ?? string.Empty;
         Authentication.IssuerSigningKey = Convert.FromBase64String(Environment.GetEnvironmentVariable("Authentication_IssuerSigningKey") ?? string.Empty);
         Authentication.Authority = Environment.GetEnvironmentVariable("Authentication_Authority") ?? string.Empty;

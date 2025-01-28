@@ -2,6 +2,7 @@ using AutoMapper;
 using CombatAnalysis.BL.Extensions;
 using CombatAnalysis.BL.Mapping;
 using CombatAnalysis.CombatParserAPI.Consts;
+using CombatAnalysis.CombatParserAPI.Enums;
 using CombatAnalysis.CombatParserAPI.Helpers;
 using CombatAnalysis.CombatParserAPI.Interfaces;
 using CombatAnalysis.CombatParserAPI.Mapping;
@@ -11,18 +12,21 @@ using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 
-var dbConfiguration = builder.Configuration.GetSection("DBConfiguration").Get<DBConfiguration>() ?? new DBConfiguration();
+var envName = builder.Environment.EnvironmentName;
 
-builder.Services.CombatParserBLDependencies(builder.Configuration, "DefaultConnection", dbConfiguration.CommandTimeout);
+if (string.Equals(envName, "Development", StringComparison.OrdinalIgnoreCase))
+{
+    CreateEnvironmentHelper.UseAppsettings(builder.Configuration);
+}
+else
+{
+    CreateEnvironmentHelper.UseEnvVariables();
+}
 
-var specs = builder.Configuration.GetSection("Players:Specs").GetChildren();
-PlayerInfoConfiguration.Specs = specs?.ToDictionary(entry => entry.Key, entry => entry.Value);
-
-var classes = builder.Configuration.GetSection("Players:Classes").GetChildren();
-PlayerInfoConfiguration.Classes = classes?.ToDictionary(entry => entry.Key, entry => entry.Value);
-
-var bosses = builder.Configuration.GetSection("Players:Bosses").GetChildren();
-PlayerInfoConfiguration.Bosses = bosses?.ToDictionary(entry => entry.Key, entry => entry.Value);
+var connection = DatabaseProps.Name == nameof(DatabaseType.MSSQL)
+    ? DatabaseProps.MSSQLConnectionString
+    : DatabaseProps.FirebaseConnectionString;
+builder.Services.CombatParserBLDependencies(DatabaseProps.Name, DatabaseProps.DataProcessingType, connection, DBConfiguration.CommandTimeout);
 
 var mappingConfig = new MapperConfiguration(mc =>
 {
@@ -40,7 +44,7 @@ builder.Services.AddScoped<IPlayerParseInfoHelper, PlayerParseInfoHelper>();
 
 builder.Services.Configure<KestrelServerOptions>(options =>
 {
-    options.Limits.MaxRequestBodySize = dbConfiguration.MaxRequestBodySize;
+    options.Limits.MaxRequestBodySize = DBConfiguration.MaxRequestBodySize;
 });
 builder.Services.AddControllers();
 

@@ -117,7 +117,14 @@ public class AuthenticationController : ControllerBase
             return BadRequest();
         }
 
-        HttpContext.Response.Cookies.Delete(nameof(AuthenticationCookie.State));
+        HttpContext.Response.Cookies.Delete(nameof(AuthenticationCookie.State), new CookieOptions
+        {
+            Domain = Authentication.CookieDomain,
+            Path = "/",
+            HttpOnly = true,
+            Secure = true,
+            SameSite = SameSiteMode.None,
+        });
 
         if (stateValue == state)
         {

@@ -1,5 +1,6 @@
 using AutoMapper;
 using CombatAnalysis.ChatApi.Consts;
+using CombatAnalysis.ChatApi.Enums;
 using CombatAnalysis.ChatApi.Helpers;
 using CombatAnalysis.ChatApi.Mapping;
 using CombatAnalysis.ChatBL.Extensions;
@@ -9,8 +10,6 @@ using Microsoft.OpenApi.Models;
 using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
-
-builder.Services.ChatBLDependencies(builder.Configuration, "DefaultConnection");
 
 var envName = builder.Environment.EnvironmentName;
 
@@ -22,6 +21,11 @@ else
 {
     CreateEnvironmentHelper.UseEnvVariables();
 }
+
+var connection = DatabaseProps.Name == nameof(DatabaseType.MSSQL)
+    ? DatabaseProps.MSSQLConnectionString
+    : DatabaseProps.FirebaseConnectionString;
+builder.Services.ChatBLDependencies(DatabaseProps.Name, DatabaseProps.DataProcessingType, connection);
 
 var mappingConfig = new MapperConfiguration(mc =>
 {

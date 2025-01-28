@@ -7,16 +7,15 @@ using CombatAnalysis.BL.Services.Filters;
 using CombatAnalysis.BL.Services.General;
 using CombatAnalysis.DAL.Entities;
 using CombatAnalysis.DAL.Extensions;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace CombatAnalysis.BL.Extensions;
 
 public static class ServiceCollectionExtensions
 {
-    public static void CombatParserBLDependencies(this IServiceCollection services, IConfiguration configuration, string connectionName, int commandTimeout)
+    public static void CombatParserBLDependencies(this IServiceCollection services, string databaseName, string dataProcessingType, string connectionString, int commandTimeout)
     {
-        services.CombatParserDALDependencies(configuration, connectionName, commandTimeout);
+        services.CombatParserDALDependencies(databaseName, dataProcessingType, connectionString, commandTimeout);
 
         services.AddScoped<ICombatTransactionService, CombatTransactionService>();
 

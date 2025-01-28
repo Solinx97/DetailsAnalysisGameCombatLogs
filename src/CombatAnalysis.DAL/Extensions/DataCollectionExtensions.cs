@@ -11,39 +11,35 @@ using CombatAnalysis.DAL.Repositories.SQL.Filters;
 using CombatAnalysis.DAL.Repositories.SQL.StoredProcedure;
 using CombatAnalysis.DAL.Services;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace CombatAnalysis.DAL.Extensions;
 
 public static class DataCollectionExtensions
 {
-    public static void CombatParserDALDependencies(this IServiceCollection services, IConfiguration configuration, string connectionName, int commandTimeout)
+    public static void CombatParserDALDependencies(this IServiceCollection services, string databaseName, string dataProcessingType, string connectionString, int commandTimeout)
     {
         DBConfigurations.CommandTimeout = commandTimeout;
 
-        var databaseName = configuration.GetSection("Database:Name").Value ?? string.Empty;
         switch (databaseName)
         {
             case nameof(DatabaseType.MSSQL):
-                MSSQLDatabase(services, configuration, connectionName);
+                MSSQLDatabase(services, dataProcessingType, connectionString);
                 break;
             case nameof(DatabaseType.Firebase):
                 FirebaseDatabase(services);
                 break;
             default:
-                MSSQLDatabase(services, configuration, connectionName);
+                MSSQLDatabase(services, dataProcessingType, connectionString);
                 break;
         }
     }
 
-    private static void MSSQLDatabase(IServiceCollection services, IConfiguration configuration, string connectionName)
+    private static void MSSQLDatabase(IServiceCollection services, string dataProcessingType, string connectionString)
     {
-        var connection = configuration.GetConnectionString(connectionName);
-
         services.AddDbContext<CombatParserSQLContext>(options =>
         {
-            options.UseSqlServer(connection);
+            options.UseSqlServer(connectionString);
         });
 
         services.AddScoped<IContextService, ContextService>();
@@ -69,7 +65,6 @@ public static class DataCollectionExtensions
 
         services.AddScoped<ISpecScore, SQLSPSpecScoreRepository>();
 
-        var dataProcessingType = configuration.GetSection("Database:DataProcessingType").Value ?? string.Empty;
         switch (dataProcessingType)
         {
             case nameof(DataProcessingType.Default):

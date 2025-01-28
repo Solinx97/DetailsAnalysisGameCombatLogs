@@ -1,5 +1,6 @@
 using AutoMapper;
 using CombatAnalysis.CommunicationAPI.Consts;
+using CombatAnalysis.CommunicationAPI.Enums;
 using CombatAnalysis.CommunicationAPI.Helpers;
 using CombatAnalysis.CommunicationAPI.Mapping;
 using CombatAnalysis.CommunicationBL.Extensions;
@@ -9,8 +10,6 @@ using Microsoft.OpenApi.Models;
 using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
-
-builder.Services.CommunicationBLDependencies(builder.Configuration, "DefaultConnection");
 
 var envName = builder.Environment.EnvironmentName;
 
@@ -22,6 +21,11 @@ else
 {
     CreateEnvironmentHelper.UseEnvVariables();
 }
+
+var connection = DatabaseProps.Name == nameof(DatabaseType.MSSQL)
+    ? DatabaseProps.MSSQLConnectionString
+    : DatabaseProps.FirebaseConnectionString;
+builder.Services.CommunicationBLDependencies(DatabaseProps.Name, DatabaseProps.DataProcessingType, connection);
 
 var mappingConfig = new MapperConfiguration(mc =>
 {
