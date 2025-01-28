@@ -35,7 +35,7 @@ public class AuthorizationViewModel : ParentTemplate
         RunCheckAuth();
     }
 
-    public event CloseAuthorizationWindowEventHandler? CloseAuthorizationWindow;
+    public event Action? CloseAuthorizationWindow;
 
     #region Commands
 
@@ -133,5 +133,3 @@ public class AuthorizationViewModel : ParentTemplate
         });
     }
 }
-
-public delegate void CloseAuthorizationWindowEventHandler();

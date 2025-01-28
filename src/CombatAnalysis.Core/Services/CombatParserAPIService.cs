@@ -25,7 +25,7 @@ internal class CombatParserAPIService : ICombatParserAPIService
 
     public void SetUpPort()
     {
-        _httpClient.BaseAddress = Port.CombatParserApi;
+        _httpClient.BaseAddress = API.CombatParserApi;
     }
 
     public async Task<bool> SaveAsync(List<CombatModel> combats, CombatLogModel combatLog, Action<int, string, string> combatUploaded, CancellationToken cancellationToken)

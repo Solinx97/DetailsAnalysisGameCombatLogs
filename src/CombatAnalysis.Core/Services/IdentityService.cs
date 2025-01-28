@@ -38,9 +38,9 @@ internal class IdentityService : IIdentityService
         var state = PKCEHelper.GenerateCodeVerifier();
         var codeChallenge = PKCEHelper.GenerateCodeChallenge(_codeVerifier);
 
-        var authorizationUrl = $"{Port.Identity}{authorizationRequestType}?" +
+        var authorizationUrl = $"{API.Identity}{authorizationRequestType}?" +
             $"grantType={AuthenticationGrantType.Code}&" +
-            $"clientTd={Authentication.ClientId}&" +
+            $"clientId={Authentication.ClientId}&" +
             $"redirectUri={Authentication.RedirectUri}&" +
             $"scope={Authentication.Scope}&" +
             $"state={state}&" +
@@ -97,7 +97,7 @@ internal class IdentityService : IIdentityService
             var encodedAuthorizationCode = Uri.EscapeDataString(_code);
             var url = $"Token?grantType={AuthenticationGrantType.Authorization}&clientId={Authentication.ClientId}&codeVerifier={_codeVerifier}&code={encodedAuthorizationCode}&redirectUri={Authentication.RedirectUri}";
 
-            var response = await _httpClient.GetAsync(url, Port.Identity);
+            var response = await _httpClient.GetAsync(url, API.Identity);
             response.EnsureSuccessStatusCode();
 
             var token = await response.Content.ReadFromJsonAsync<AccessTokenModel>();

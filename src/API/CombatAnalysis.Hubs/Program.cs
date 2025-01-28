@@ -26,7 +26,6 @@ builder.Services.AddAuthentication("Bearer")
     .AddJwtBearer(options =>
     {
         options.Authority = Authentication.Authority;
-        options.Audience = AuthenticationClient.ClientId;
         options.TokenValidationParameters = new TokenValidationParameters
         {
             ValidateIssuerSigningKey = true,
@@ -34,6 +33,7 @@ builder.Services.AddAuthentication("Bearer")
             ValidateIssuer = true,
             ValidIssuer = Authentication.Issuer,
             ValidateAudience = true,
+            ValidAudiences = [AuthenticationClient.WebClientId, AuthenticationClient.DesktopClientId],
             ClockSkew = TimeSpan.Zero
         };
         // Skip checking HTTPS (should be HTTPS in production)

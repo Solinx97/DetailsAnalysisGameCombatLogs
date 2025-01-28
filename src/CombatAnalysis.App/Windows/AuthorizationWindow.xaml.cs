@@ -2,7 +2,6 @@
 using CombatAnalysis.Core.ViewModels.ViewModelTemplates;
 using MvvmCross;
 using MvvmCross.Platforms.Wpf.Views;
-using System;
 
 namespace CombatAnalysis.App.Windows;
 
@@ -16,13 +15,8 @@ public partial class AuthorizationWindow : MvxWindow
         InitializeComponent();
 
         DataContext = Mvx.IoCProvider.IoCConstruct<AuthorizationViewModel>();
+
         _viewModel = (AuthorizationViewModel)DataContext;
-
-        ContentRendered += ContextRenderedHandler;
-    }
-
-    private void ContextRenderedHandler(object? sender, EventArgs e)
-    {
         if (_viewModel != null)
         {
             _basicViewModel = (BasicTemplateViewModel)_viewModel.Basic;

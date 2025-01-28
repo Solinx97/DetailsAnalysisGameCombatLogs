@@ -2,7 +2,7 @@
 
 internal static class Hubs
 {
-    public static string Port { get; set; }
+    public static string Server { get; set; }
 
     public static string PersonalChatAddress { get; set; }
 

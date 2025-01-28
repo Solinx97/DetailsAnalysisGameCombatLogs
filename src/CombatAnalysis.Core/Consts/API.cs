@@ -1,6 +1,6 @@
 ﻿namespace CombatAnalysis.Core.Consts;
 
-internal static class Port
+internal static class API
 {
     public static string CombatParserApi { get; set; }
 

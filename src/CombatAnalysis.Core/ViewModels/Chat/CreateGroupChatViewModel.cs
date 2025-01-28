@@ -109,7 +109,7 @@ public class CreateGroupChatViewModel : MvxViewModel
                 GroupChatRules = groupChatRules,
             };
 
-            var response = await _httpClientHelper.PostAsync("GroupChat", JsonContent.Create(container), refreshToken, Port.ChatApi);
+            var response = await _httpClientHelper.PostAsync("GroupChat", JsonContent.Create(container), refreshToken, API.ChatApi);
             response.EnsureSuccessStatusCode();
 
             CloseCreateChatWindow?.Invoke();

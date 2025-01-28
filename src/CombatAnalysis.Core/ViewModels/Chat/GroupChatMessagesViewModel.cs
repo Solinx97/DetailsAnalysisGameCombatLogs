@@ -288,7 +288,7 @@ public class GroupChatMessagesViewModel : MvxViewModel, IImprovedMvxViewModel
                 throw new ArgumentNullException(nameof(MeInChatId));
             }
 
-            await hubConnection.ConnectToChatHubAsync($"{Hubs.Port}{Hubs.GroupChatMessagesAddress}");
+            await hubConnection.ConnectToChatHubAsync($"{Hubs.Server}{Hubs.GroupChatMessagesAddress}");
             await hubConnection.JoinChatRoomAsync(SelectedChat.Id);
 
             hubConnection.SubscribeMessagesUpdated<GroupChatMessageModel>(SelectedChat.Id, MeInChatId, async (message) =>
@@ -453,7 +453,7 @@ public class GroupChatMessagesViewModel : MvxViewModel, IImprovedMvxViewModel
         {
             UsersToInviteToChat?.Clear();
 
-            var response = await _httpClientHelper.GetAsync("GroupChatUser", Port.ChatApi);
+            var response = await _httpClientHelper.GetAsync("GroupChatUser", API.ChatApi);
             response.EnsureSuccessStatusCode();
 
             var groupChatUsers = await response.Content.ReadFromJsonAsync<IEnumerable<GroupChatUserModel>>();
@@ -555,7 +555,7 @@ public class GroupChatMessagesViewModel : MvxViewModel, IImprovedMvxViewModel
     {
         try
         {
-            var response = await _httpClientHelper.PutAsync("GroupChatMessage", JsonContent.Create(SelectedMessage), Port.ChatApi);
+            var response = await _httpClientHelper.PutAsync("GroupChatMessage", JsonContent.Create(SelectedMessage), API.ChatApi);
             response.EnsureSuccessStatusCode();
 
             IsEditMode = false;
@@ -574,7 +574,7 @@ public class GroupChatMessagesViewModel : MvxViewModel, IImprovedMvxViewModel
     {
         try
         {
-            var response = await _httpClientHelper.DeletAsync($"GroupChatMessage/{SelectedMessage?.Id}", Port.ChatApi);
+            var response = await _httpClientHelper.DeletAsync($"GroupChatMessage/{SelectedMessage?.Id}", API.ChatApi);
             response.EnsureSuccessStatusCode();
 
             await AsyncDispatcher.ExecuteOnMainThreadAsync(() =>
@@ -615,7 +615,7 @@ public class GroupChatMessagesViewModel : MvxViewModel, IImprovedMvxViewModel
                 throw new ArgumentNullException(nameof(refreshToken));
             }
 
-            var response = await _httpClientHelper.GetAsync($"GroupChatMessage/getByChatId?chatId={SelectedChat?.Id}&pageSize=20", refreshToken, Port.ChatApi);
+            var response = await _httpClientHelper.GetAsync($"GroupChatMessage/getByChatId?chatId={SelectedChat?.Id}&pageSize=20", refreshToken, API.ChatApi);
             response.EnsureSuccessStatusCode();
 
             _allMessages = await response.Content.ReadFromJsonAsync<IEnumerable<GroupChatMessageModel>>();
@@ -644,7 +644,7 @@ public class GroupChatMessagesViewModel : MvxViewModel, IImprovedMvxViewModel
     {
         try
         {
-            var response = await _httpClientHelper.GetAsync("Account", Port.UserApi);
+            var response = await _httpClientHelper.GetAsync("Account", API.UserApi);
             response.EnsureSuccessStatusCode();
 
             var users = await response.Content.ReadFromJsonAsync<IEnumerable<AppUserModel>>();
@@ -707,7 +707,7 @@ public class GroupChatMessagesViewModel : MvxViewModel, IImprovedMvxViewModel
                 throw new ArgumentNullException(nameof(refreshToken));
             }
 
-            var response = await _httpClientHelper.GetAsync($"GroupChatUser/findMeInChat?chatId={SelectedChat.Id}&appUserId={MyAccount.Id}", refreshToken, Port.ChatApi);
+            var response = await _httpClientHelper.GetAsync($"GroupChatUser/findMeInChat?chatId={SelectedChat.Id}&appUserId={MyAccount.Id}", refreshToken, API.ChatApi);
             response.EnsureSuccessStatusCode();
 
             var meInChat = await response.Content.ReadFromJsonAsync<GroupChatUserModel>();

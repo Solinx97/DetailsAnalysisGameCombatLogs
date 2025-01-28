@@ -108,7 +108,7 @@ internal class SecurityStorage
                 throw new ArgumentNullException(nameof(identityUserId));
             }
 
-            var response = await _httpClient.GetAsync($"Account/find/{identityUserId}", accessToken, Port.UserApi);
+            var response = await _httpClient.GetAsync($"Account/find/{identityUserId}", accessToken, API.UserApi);
             response.EnsureSuccessStatusCode();
 
             var user = await response.Content.ReadFromJsonAsync<AppUserModel>();

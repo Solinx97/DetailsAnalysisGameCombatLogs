@@ -331,7 +331,7 @@ public class ChatViewModel : ParentTemplate
                 throw new ArgumentNullException(nameof(refreshToken));
             }
 
-            var response = await _httpClientHelper.PostAsync("PersonalChat", JsonContent.Create(personalChat), refreshToken, Port.ChatApi);
+            var response = await _httpClientHelper.PostAsync("PersonalChat", JsonContent.Create(personalChat), refreshToken, API.ChatApi);
             response.EnsureSuccessStatusCode();
 
             await LoadPersonalChatsAsync();
@@ -364,7 +364,7 @@ public class ChatViewModel : ParentTemplate
                 throw new ArgumentNullException(nameof(refreshToken));
             }
 
-            var response = await _httpClientHelper.GetAsync($"GroupChatUser/findByUserId/{MyAccount?.Id}", refreshToken, Port.ChatApi);
+            var response = await _httpClientHelper.GetAsync($"GroupChatUser/findByUserId/{MyAccount?.Id}", refreshToken, API.ChatApi);
             response.EnsureSuccessStatusCode();
 
             var myGroupChatUsers = await response.Content.ReadFromJsonAsync<IEnumerable<GroupChatUserModel>>();
@@ -411,7 +411,7 @@ public class ChatViewModel : ParentTemplate
                 return;
             }
 
-            var response = await _httpClientHelper.GetAsync("PersonalChat", refreshToken, Port.ChatApi);
+            var response = await _httpClientHelper.GetAsync("PersonalChat", refreshToken, API.ChatApi);
             response.EnsureSuccessStatusCode();
 
             var personalChats = await response.Content.ReadFromJsonAsync<IEnumerable<PersonalChatModel>>();
@@ -455,7 +455,7 @@ public class ChatViewModel : ParentTemplate
 
         foreach (var groupChatUser in myGroupChatUsers)
         {
-            response = await _httpClientHelper.GetAsync($"GroupChat/{groupChatUser.ChatId}", refreshToken, Port.ChatApi);
+            response = await _httpClientHelper.GetAsync($"GroupChat/{groupChatUser.ChatId}", refreshToken, API.ChatApi);
             response.EnsureSuccessStatusCode();
 
             var groupChat = await response.Content.ReadFromJsonAsync<GroupChatModel>();
@@ -464,7 +464,7 @@ public class ChatViewModel : ParentTemplate
                 throw new ArgumentNullException(nameof(groupChat));
             }
 
-            response = await _httpClientHelper.GetAsync($"GroupChatMessageCount/findMe?chatId={groupChatUser.ChatId}&chatUserId={groupChatUser.Id}", refreshToken, Port.ChatApi);
+            response = await _httpClientHelper.GetAsync($"GroupChatMessageCount/findMe?chatId={groupChatUser.ChatId}&chatUserId={groupChatUser.Id}", refreshToken, API.ChatApi);
             response.EnsureSuccessStatusCode();
 
             var messageCount = await response.Content.ReadFromJsonAsync<GroupChatMessageCountModel>();
@@ -499,7 +499,7 @@ public class ChatViewModel : ParentTemplate
         {
             await GetPersonalChatCompanionAsync(chat, refreshToken);
 
-            response = await _httpClientHelper.GetAsync($"PersonalChatMessageCount/findMe?chatId={chat.Id}&appUserId={MyAccount?.Id}", refreshToken, Port.ChatApi);
+            response = await _httpClientHelper.GetAsync($"PersonalChatMessageCount/findMe?chatId={chat.Id}&appUserId={MyAccount?.Id}", refreshToken, API.ChatApi);
             response.EnsureSuccessStatusCode();
 
             var messageCount = await response.Content.ReadFromJsonAsync<PersonalChatMessageCountModel>();
@@ -606,7 +606,7 @@ public class ChatViewModel : ParentTemplate
     private async Task GetPersonalChatCompanionAsync(PersonalChatModel personalChat, string refreshToken)
     {
         var companionId = personalChat.CompanionId == MyAccount?.Id ? personalChat.InitiatorId : personalChat.CompanionId;
-        var response = await _httpClientHelper.GetAsync($"Account/{companionId}", refreshToken, Port.UserApi);
+        var response = await _httpClientHelper.GetAsync($"Account/{companionId}", refreshToken, API.UserApi);
         response.EnsureSuccessStatusCode();
 
         var companion = await response.Content.ReadFromJsonAsync<AppUserModel>();
@@ -628,7 +628,7 @@ public class ChatViewModel : ParentTemplate
                 return;
             }
 
-            var response = await _httpClientHelper.GetAsync("Account", refreshToken, Port.UserApi);
+            var response = await _httpClientHelper.GetAsync("Account", refreshToken, API.UserApi);
             response.EnsureSuccessStatusCode();
 
             var users = await response.Content.ReadFromJsonAsync<List<AppUserModel>>();
@@ -709,8 +709,8 @@ public class ChatViewModel : ParentTemplate
                 throw new ArgumentNullException(nameof(MyAccount));
             }
 
-            await _personalChatHubConnection.ConnectToUnreadMessageHubAsync($"{Hubs.Port}{Hubs.PersonalChatUnreadMessageAddress}");
-            await _groupChatHubConnection.ConnectToUnreadMessageHubAsync($"{Hubs.Port}{Hubs.GroupChatUnreadMessageAddress}");
+            await _personalChatHubConnection.ConnectToUnreadMessageHubAsync($"{Hubs.Server}{Hubs.PersonalChatUnreadMessageAddress}");
+            await _groupChatHubConnection.ConnectToUnreadMessageHubAsync($"{Hubs.Server}{Hubs.GroupChatUnreadMessageAddress}");
         }
         catch (ArgumentNullException ex)
         {

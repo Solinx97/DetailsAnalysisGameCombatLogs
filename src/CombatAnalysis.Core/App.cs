@@ -33,7 +33,7 @@ public class App : MvxApplication
     {
         var builder = new ConfigurationBuilder()
             .AddJsonFile($"appsettings.json", optional: true, reloadOnChange: true)
-            .AddJsonFile($"appsettings.{environment}.json", optional: true, reloadOnChange: true)
+            .AddJsonFile($"appsettings.Production.json", optional: true, reloadOnChange: true)
             .AddUserSecrets<App>();
 
         Configuration = builder.Build();
@@ -44,12 +44,12 @@ public class App : MvxApplication
         SecurityKeys.AESKey = Configuration["EncryptedKey"] ?? string.Empty;
         SecurityKeys.IV = Configuration["EncryptedIV"] ?? string.Empty;
 
-        Port.CombatParserApi = Configuration["ApiPort:CombatParser"] ?? string.Empty;
-        Port.UserApi = Configuration["ApiPort:User"] ?? string.Empty;
-        Port.ChatApi = Configuration["ApiPort:Chat"] ?? string.Empty;
-        Port.Identity = Configuration["ApiPort:Identity"] ?? string.Empty;
+        API.CombatParserApi = Configuration["API:CombatParser"] ?? string.Empty;
+        API.UserApi = Configuration["API:User"] ?? string.Empty;
+        API.ChatApi = Configuration["API:Chat"] ?? string.Empty;
+        API.Identity = Configuration["API:Identity"] ?? string.Empty;
 
-        Hubs.Port = Configuration["Hubs:Port"] ?? string.Empty;
+        Hubs.Server = Configuration["Hubs:Server"] ?? string.Empty;
         Hubs.PersonalChatAddress = Configuration["Hubs:PersonalChatAddress"] ?? string.Empty;
         Hubs.PersonalChatMessagesAddress = Configuration["Hubs:PersonalChatMessagesAddress"] ?? string.Empty;
         Hubs.PersonalChatUnreadMessageAddress = Configuration["Hubs:PersonalChatUnreadMessageAddress"] ?? string.Empty;

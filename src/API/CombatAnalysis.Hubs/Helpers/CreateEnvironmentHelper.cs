@@ -14,7 +14,8 @@ internal static class CreateEnvironmentHelper
         Authentication.IssuerSigningKey = Convert.FromBase64String(configuration["Authentication:IssuerSigningKey"] ?? string.Empty);
         Authentication.Authority = configuration["Authentication:Authority"] ?? string.Empty;
 
-        AuthenticationClient.ClientId = configuration["Authentication:Client:ClientId"] ?? string.Empty;
+        AuthenticationClient.WebClientId = configuration["Authentication:Client:WebClientId"] ?? string.Empty;
+        AuthenticationClient.DesktopClientId = configuration["Authentication:Client:DesktopClientId"] ?? string.Empty;
         AuthenticationClient.Scope = configuration["Authentication:Client:Scope"] ?? string.Empty;
     }
 
@@ -28,7 +29,8 @@ internal static class CreateEnvironmentHelper
         Authentication.IssuerSigningKey = Convert.FromBase64String(Environment.GetEnvironmentVariable("Authentication_IssuerSigningKey") ?? string.Empty);
         Authentication.Authority = Environment.GetEnvironmentVariable("Authentication_Authority") ?? string.Empty;
 
-        AuthenticationClient.ClientId = Environment.GetEnvironmentVariable("Authentication_Client_ClientId") ?? string.Empty;
+        AuthenticationClient.WebClientId = Environment.GetEnvironmentVariable("Authentication_Client_WebClientId") ?? string.Empty;
+        AuthenticationClient.DesktopClientId = Environment.GetEnvironmentVariable("Authentication_Client_DesktopClientId") ?? string.Empty;
         AuthenticationClient.Scope = Environment.GetEnvironmentVariable("Authentication_Client_Scope") ?? string.Empty;
     }
 }
