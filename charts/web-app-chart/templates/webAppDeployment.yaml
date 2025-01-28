@@ -57,6 +57,12 @@ spec:
            - name: Authentication_GrantType_RefreshToken
              value: "refreshToken"
            - name: Authentication_Client_ClientId
-             value: "client1"
+             valueFrom:
+               secretKeyRef:
+                name: client
+                key: webClientId
            - name: Authentication_Client_Scope
-             value: "client1scope"
+             valueFrom:
+               secretKeyRef:
+                name: client
+                key: scope

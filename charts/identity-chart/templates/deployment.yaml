@@ -27,9 +27,15 @@ spec:
            - name: ASPNETCORE_ENVIRONMENT
              value: {{ .Values.env }}
            - name: ConnectionStrings_DefaultConnection
-             value: "Server=host.docker.internal,1433;Database=Combat_Analysis.Identity;User Id=sa;Password=Oleg123;Integrated Security=False;Connect Timeout=120;Encrypt=True;Trust Server Certificate=True;Application Intent=ReadWrite;Multi Subnet Failover=False"
+             valueFrom:
+               secretKeyRef:
+                name: db-connection-strings
+                key: defaultConnection
            - name: ConnectionStrings_UserConnection
-             value: "Server=host.docker.internal,1433;Database=Combat_Analysis.User;User Id=sa;Password=Oleg123;Integrated Security=False;Connect Timeout=120;Encrypt=True;Trust Server Certificate=True;Application Intent=ReadWrite;Multi Subnet Failover=False"
+             valueFrom:
+               secretKeyRef:
+                name: db-connection-strings
+                key: userConnection
            - name: API_User
              value: "https://api.user.analysis.com/"
            - name: API_Identity
@@ -40,10 +46,16 @@ spec:
              value: "authorizationCode"
            - name: Authentication_GrantType_RefreshToken
              value: "refreshToken"
-           - name: Authentication_IssuerSigningKey
-             value: "aFo/P+0M8TRKhjkIhjR1+1Y/b77eSl9Ewdj2e3hSxRQ="
            - name: Authentication_Issuer
-             value: "https://identity.analysis.com/"
+             valueFrom:
+               secretKeyRef:
+                name: authentication
+                key: issuer
+           - name: Authentication_IssuerSigningKey
+             valueFrom:
+               secretKeyRef:
+                name: authentication
+                key: issuerSigningKey
            - name: Authentication_Protocol
              value: "https"
            - name: Authentication_AccessTokenExpiresMins

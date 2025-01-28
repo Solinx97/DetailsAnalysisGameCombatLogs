@@ -31,20 +31,44 @@ spec:
            - name: Database_DataProcessingType
              value: "Default"
            - name: ConnectionStrings_DefaultConnection
-             value: "Server=host.docker.internal,1433;Database=Combat_Analysis.User;User Id=sa;Password=Oleg123;Integrated Security=False;Connect Timeout=120;Encrypt=True;Trust Server Certificate=True;Application Intent=ReadWrite;Multi Subnet Failover=False"
+             valueFrom:
+               secretKeyRef:
+                name: user-db-connection-strings
+                key: defaultConnection
            - name: ConnectionStrings_Firebase
-             value: "https://detailsanalysisgamecombatlogs-default-rtdb.firebaseio.com/"
+             valueFrom:
+               secretKeyRef:
+                name: user-db-connection-strings
+                key: firebase
            - name: API_Identity
              value: "https://identity.analysis.com/"
            - name: Authentication_Issuer
-             value: "https://identity.analysis.com/"
+             valueFrom:
+               secretKeyRef:
+                name: authentication
+                key: issuer
            - name: Authentication_IssuerSigningKey
-             value: "aFo/P+0M8TRKhjkIhjR1+1Y/b77eSl9Ewdj2e3hSxRQ="
+             valueFrom:
+               secretKeyRef:
+                name: authentication
+                key: issuerSigningKey
            - name: Authentication_Authority
-             value: "https://identity.analysis.com/"
+             valueFrom:
+               secretKeyRef:
+                name: authentication
+                key: authority
            - name: Authentication_Client_WebClientId
-             value: "client2"
+             valueFrom:
+               secretKeyRef:
+                name: client
+                key: webClientId
            - name: Authentication_Client_DesktopClientId
-             value: "client1"
+             valueFrom:
+               secretKeyRef:
+                name: client
+                key: desktopClientId
            - name: Authentication_Client_Scope
-             value: "client1scope"
+             valueFrom:
+               secretKeyRef:
+                name: client
+                key: scope

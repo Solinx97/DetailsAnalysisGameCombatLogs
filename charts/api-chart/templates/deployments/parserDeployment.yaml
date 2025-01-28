@@ -31,9 +31,15 @@ spec:
            - name: Database_DataProcessingType
              value: "StoredProcedure"
            - name: ConnectionStrings_DefaultConnection
-             value: "Server=host.docker.internal,1433;Database=Combat_Analysis.Combat_Logs;User Id=sa;Password=Oleg123;Integrated Security=False;Connect Timeout=120;Encrypt=True;Trust Server Certificate=True;Application Intent=ReadWrite;Multi Subnet Failover=False"
+             valueFrom:
+               secretKeyRef:
+                name: parser-db-connection-strings
+                key: defaultConnection
            - name: ConnectionStrings_Firebase
-             value: "https://detailsanalysisgamecombatlogs-default-rtdb.firebaseio.com/"
+             valueFrom:
+               secretKeyRef:
+                name: parser-db-connection-strings
+                key: firebase
            - name: DBConfiguration_CommandTimeout
              value: "180"
            - name: DBConfiguration_MaxRequestBodySize

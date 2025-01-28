@@ -33,7 +33,7 @@ public class App : MvxApplication
     {
         var builder = new ConfigurationBuilder()
             .AddJsonFile($"appsettings.json", optional: true, reloadOnChange: true)
-            .AddJsonFile($"appsettings.Production.json", optional: true, reloadOnChange: true)
+            .AddJsonFile($"appsettings.{environment}.json", optional: true, reloadOnChange: true)
             .AddUserSecrets<App>();
 
         Configuration = builder.Build();

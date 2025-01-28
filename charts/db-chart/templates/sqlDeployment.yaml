@@ -6,17 +6,17 @@ spec:
   replicas: 1
   selector:
     matchLabels:
-      app: sqlserver
+      app: {{ .Values.app }}
   template:
     metadata:
       labels:
-        app: sqlserver
+        app: {{ .Values.app }}
     spec:
       containers:
-      - name: sqlserver
-        image: mcr.microsoft.com/mssql/server:2019-latest
+      - name: {{ .Values.container.name }}
+        image: {{ .Values.container.image }}:{{ .Values.imageTags.db.sqlServer }}
         ports:
-        - containerPort: 1433
+        - containerPort: {{ .Values.container.port }}
         env:
         - name: ACCEPT_EULA
           value: "Y"

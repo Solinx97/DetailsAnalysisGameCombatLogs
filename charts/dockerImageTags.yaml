@@ -8,5 +8,7 @@ imageTags:
   identity:
     identity: 0.3.17
   webApp:
-    webApp: 0.3.55
+    webApp: 0.3.59
     hubs: 0.1.33
+  db:
+    sqlServer: 2019-latest
