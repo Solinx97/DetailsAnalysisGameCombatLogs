@@ -16,7 +16,7 @@
   "Rules": "Rules",
   "InvitePeople": "Invite people",
   "Cancel": "Cancel",
-  "InviteAnotherPeople": "Who can invite another people?",
+  "InviteOtherPeople": "Who can invite other people?",
   "RemoveAnotherPeople": "Who can remove people?",
   "PinMessage": "Who can pin message?",
   "Announcements": "Who can make announcements?",
@@ -31,5 +31,5 @@
   "PrevioslyStep": "Previosly step",
   "CreateCommunity": "Create community",
   "NameRequired": "Name required",
-  "NameDescriptionRequired": "Name and description required"
+  "DescriptionRequired": "Description required"
 }

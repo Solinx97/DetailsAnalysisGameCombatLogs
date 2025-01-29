@@ -1,4 +1,4 @@
-import { faAddressBook, faBars, faCalendar, faCheck, faComment, faComments, faLaptop, faPeopleLine, faPerson, faRss, faUser } from '@fortawesome/free-solid-svg-icons';
+import { faAddressBook, faBars, faCalendar, faCheck, faComment, faComments, faLaptop, faPeopleLine, faPerson, faRss, faSquareMinus, faUser } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Fragment } from "react";
 import { useTranslation } from 'react-i18next';
@@ -55,6 +55,15 @@ const CommunicationMenu = ({ currentMenuItem, setMenuItem }) => {
         </li>
     )
 
+    const renderSubMenuByType = (subMenu) => {
+        if (menu === 0) {
+            return renderSubMenu(subMenu);
+        }
+        else {
+            return renderShortSubMenu(subMenu);
+        }
+    }
+
     const renderShortSubMenu = (subMenu) => (
         subMenu.map(subItem => (
             <li key={subItem.id} className={`short-menu-item ${currentMenuItem === subItem.id ? "short-menu-item_selected" : ""}`} onClick={() => setMenuItem(subItem.id)}>
@@ -102,65 +111,46 @@ const CommunicationMenu = ({ currentMenuItem, setMenuItem }) => {
         );
     }
 
-    if (menu) {
-        return (
-            <div className="communication-short-menu">
-                <div className="communication-short-menu__title">
-                    <div>
-                        <FontAwesomeIcon
-                            icon={faBars}
-                            title={t("Menu")}
-                            onClick={() => dispatch(updateMenu(!menu))}
-                        />
-                    </div>
-                </div>
-                <div className="communication-short-menu__container">
-                    <ul className="sub-menu">
-                        {menuItems.map(item => (
-                            <Fragment key={item.id}>
-                                {item.subMenu && currentMenuItem >= 8 && renderShortSubMenu(item.subMenu)}
-                            </Fragment>
-                        ))}
-                    </ul>
-                    <ul className="main-menu">
-                        {menuItems.map(item => (
-                            <Fragment key={item.id}>
-                                {renderShortMenuItem(item)}
-                            </Fragment>
-                        ))}
-                    </ul>
-                </div>
-            </div>
-        );
-    }
-
     return (
-        <div className="communication-menu">
+        <div className={`communication-${menu === -1 ? "hide-" : menu === 1 ? "short-" : ""}menu`}>
             <div className="communication-menu__title">
                 <div>
                     <FontAwesomeIcon
                         icon={faBars}
                         title={t("Menu")}
-                        onClick={() => dispatch(updateMenu(!menu))}
+                        onClick={menu === -1 ? () => dispatch(updateMenu(0)) : () => dispatch(updateMenu(menu === 1 ? 0 : 1))}
                     />
                 </div>
             </div>
-            <div className="communication-menu__container">
-                <ul className="sub-menu">
-                    {menuItems.map(item => (
-                        <Fragment key={item.id}>
-                            {item.subMenu && currentMenuItem >= 8 && renderSubMenu(item.subMenu)}
-                        </Fragment>
-                    ))}
-                </ul>
-                <ul className="main-menu">
-                    {menuItems.map(item => (
-                        <Fragment key={item.id}>
-                            {renderMenuItem(item)}
-                        </Fragment>
-                    ))}
-                </ul>
-            </div>
+            {menu > -1 &&
+                <>
+                    <div className={`communication-${menu === 1 ? "short-" : ""}menu__container`}>
+                        <ul className="sub-menu">
+                            {menuItems.map(item => (
+                                <Fragment key={item.id}>
+                                    {item.subMenu && currentMenuItem >= 8 && renderSubMenuByType(item.subMenu)}
+                                </Fragment>
+                            ))}
+                        </ul>
+                        <ul className="main-menu">
+                            {menuItems.map(item => (
+                                <Fragment key={item.id}>
+                                    {menu === 0 ? renderMenuItem(item) : renderShortMenuItem(item)}
+                                </Fragment>
+                            ))}
+                        </ul>
+                    </div>
+                    <div className="communication-menu__hide">
+                        <div>
+                            <FontAwesomeIcon
+                                icon={faSquareMinus}
+                                title={t("Menu")}
+                                onClick={() => dispatch(updateMenu(-1))}
+                            />
+                        </div>
+                    </div>
+                </>
+            }
         </div>
     );
 }

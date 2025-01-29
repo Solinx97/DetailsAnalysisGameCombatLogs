@@ -16,11 +16,11 @@
   "Rules": "Правила",
   "InvitePeople": "Добавить пользователей",
   "Cancel": "Отмена",
-  "InviteAnotherPeople": "Кто может приглашать других пользователей?",
+  "InviteOtherPeople": "Кто может приглашать других пользователей?",
   "RemoveAnotherPeople": "Кто может исключать пользователей?",
   "PinMessage": "Кто может закреплять сообщения?",
   "Announcements": "Кто может делать анонсы?",
-  "Anyone": "Любой",
+  "Anyone": "Любой участник",
   "Owner": "Владелец чата",
   "Main": "Общее",
   "Members": "Участники",
@@ -31,5 +31,5 @@
   "PrevioslyStep": "Предыдущий шаг",
   "CreateCommunity": "Создать сообщество",
   "NameRequired": "Название обязательно",
-  "NameDescriptionRequired": "Название и описание обязательны"
+  "DescriptionRequired": "Описание обязательно"
 }

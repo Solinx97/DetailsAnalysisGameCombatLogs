@@ -1,6 +1,6 @@
 $mobile-max-width: 425px;
 
-.create-community {
+.create-communication-object {
     position: fixed;
     display: flex;
     flex-direction: column;
@@ -9,18 +9,25 @@ $mobile-max-width: 425px;
     border-radius: 25px;
     width: 35vw;
     right: 35vw;
-    padding: 10px;
+    padding: 15px;
     top: 10vh;
     margin-bottom: 50px;
+    font-size: 0.9em;
 
-    .chat-name-required {
-        font-size: 13px;
+    .chat-name-required, .chat-description-required, .community-name-required, .community-description-required {
+        font-size: 0.9em;
         color: red;
     }
 
     &__content {
         display: flex;
-        justify-content: space-between;
+        flex-direction: column;
+        width: 60%;
+
+        .form-group {
+            margin: 10px;
+            width: 100%;
+        }
     }
 
     &__menu {
@@ -79,21 +86,12 @@ $mobile-max-width: 425px;
         }
     }
 
-    &__items {
-        flex-grow: 1;
-        margin: 5px;
-
-        .form-group {
-            margin: 10px;
-            width: 100%;
-        }
-    }
-
     &__item {
         display: flex;
         flex-direction: column;
-        align-items: center;
+        align-items: flex-start;
         width: 100%;
+        gap: 5px;
 
         .title {
             font-weight: bold;
@@ -120,26 +118,46 @@ $mobile-max-width: 425px;
             display: flex;
             flex-direction: column;
             gap: 10px;
+            margin: 0;
         }
     }
 
     .rules {
         display: flex;
         flex-direction: column;
-        width: 100%;
+        justify-content: center;
+        margin: 10px 0;
+        text-align: center;
+
+        li {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
 
         &__content {
-            margin: 10px;
+            display: flex;
+            justify-content: space-around;
+            margin: 5px 0;
+            box-shadow: 1px 1px gray;
+            border-radius: 20px;
+            padding: 5px;
+            width: 100%;
         }
     }
 
     .actions {
         display: flex;
         justify-content: center;
-        gap: 100px;
+        gap: 50px;
 
         .create {
             box-shadow: 2px 2px 2px 2px green;
+        }
+
+        .can-not-finish {
+            box-shadow: 2px 2px 2px 2px gray;
+            cursor: default;
         }
     }
 }

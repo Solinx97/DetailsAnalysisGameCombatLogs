@@ -1,7 +1,7 @@
 ﻿import { createSlice } from '@reduxjs/toolkit'
 
 const initialState = {
-    value: false,
+    value: 0,
 }
 
 export const communityMenuSlice = createSlice({

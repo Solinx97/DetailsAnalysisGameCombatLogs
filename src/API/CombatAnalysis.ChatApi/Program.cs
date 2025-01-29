@@ -58,7 +58,7 @@ builder.Services.AddAuthorization(options =>
     options.AddPolicy("ApiScope", builder =>
     {
         builder.RequireAuthenticatedUser();
-        builder.RequireClaim("scope", "api1");
+        builder.RequireClaim("scope", AuthenticationClient.Scope);
     });
 });
 
