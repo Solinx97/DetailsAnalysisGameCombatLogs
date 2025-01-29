@@ -1,0 +1,22 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ .Release.Name }}-parser-ingress
+  annotations:
+    nginx.ingress.kubernetes.io/proxy-body-size: "150m"
+spec:
+  tls:
+  - hosts:
+      - {{ .Values.parser.ingress.host }}
+    secretName: tls-secret
+  rules:
+    - host: {{ .Values.parser.ingress.host }}
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ .Release.Name }}-{{ .Values.parser.name }}-service
+                port:
+                  number: {{ .Values.parser.service.targetPort }}

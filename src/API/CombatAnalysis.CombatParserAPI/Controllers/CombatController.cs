@@ -97,7 +97,7 @@ public class CombatController : ControllerBase
         {
             _logger.LogError("Create combat called with null model.");
 
-            return BadRequest("Model cannot be null.");
+            return BadRequest("Create combat called with null model.");
         }
 
         try

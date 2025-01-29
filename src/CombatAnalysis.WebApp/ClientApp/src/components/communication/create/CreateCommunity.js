@@ -1,7 +1,6 @@
 import { useRef, useState } from "react";
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
 import { useCreateCommunityUserMutation } from '../../../store/api/community/CommunityUser.api';
 import { useCreateCommunityMutation } from '../../../store/api/core/Community.api';
 import CommunicationMenu from '../CommunicationMenu';
@@ -9,12 +8,10 @@ import CommunityRulesItem from './CommunityRulesItem';
 
 import "../../../styles/communication/create.scss";
 
-const CreateCommunity = () => {
+const CreateCommunity = ({ setShowCreateCommunity }) => {
     const me = useSelector((state) => state.user.value);
 
     const { t } = useTranslation("communication/create");
-
-    const navigate = useNavigate();
 
     const communityNameRef = useRef(null);
     const communityDescriptionRef = useRef(null);
@@ -59,7 +56,7 @@ const CreateCommunity = () => {
 
         setIsCreating(false);
 
-        navigate("/communities");
+        setShowCreateCommunity(false);
     }
 
     const communityNameChangeHandler = () => {
@@ -104,7 +101,7 @@ const CreateCommunity = () => {
                 <div className="actions">
                     <div className={`btn-shadow create ${(name.length > 0 && description.length > 0) ? '' : 'can-not-finish'}`}
                         onClick={(name.length > 0 && description.length > 0) ? handleCreateNewCommunityAsync : null}>{t("Create")}</div>
-                    <div className="btn-shadow" onClick={() => navigate("/communities")}>{t("Cancel")}</div>
+                    <div className="btn-shadow" onClick={() => setShowCreateCommunity(false)}>{t("Cancel")}</div>
                 </div>
                 {isCreating &&
                     <>

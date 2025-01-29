@@ -8,7 +8,6 @@ import Chats from './components/communication/chats/Chats';
 import VoiceChat from './components/communication/chats/voiceChat/VoiceChat';
 import AllCommunities from './components/communication/community/AllCommunities';
 import SelectedCommunity from './components/communication/community/SelectedCommunity';
-import CreateCommunity from './components/communication/create/CreateCommunity';
 import MyEnvironment from './components/communication/myEnvironment/MyEnvironment';
 import People from './components/communication/people/People';
 import SelectedUser from './components/communication/people/SelectedUser';
@@ -44,10 +43,6 @@ const AppRoutes = [
     {
         path: '/communities',
         element: <AllCommunities />
-    },
-    {
-        path: '/communities/create',
-        element: <CreateCommunity />
     },
     {
         path: '/people',

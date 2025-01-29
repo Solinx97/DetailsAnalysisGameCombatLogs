@@ -1,3 +1,4 @@
+import React from 'react';
 import CommunicationMenu from "../CommunicationMenu";
 import MyCommunities from "../myEnvironment/MyCommunities";
 import Communities from "./Communities";

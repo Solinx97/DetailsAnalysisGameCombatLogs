@@ -8,7 +8,6 @@ spec:
       - {{ .Values.user.ingress.host }}
       - {{ .Values.communication.ingress.host }}
       - {{ .Values.chat.ingress.host }}
-      - {{ .Values.parser.ingress.host }}
       - {{ .Values.health.ingress.host }}
     secretName: tls-secret
   rules:
@@ -42,16 +41,6 @@ spec:
                 name: {{ .Release.Name }}-{{ .Values.chat.name }}-service
                 port:
                   number: {{ .Values.chat.service.targetPort }}
-    - host: {{ .Values.parser.ingress.host }}
-      http:
-        paths:
-          - path: /
-            pathType: Prefix
-            backend:
-              service:
-                name: {{ .Release.Name }}-{{ .Values.parser.name }}-service
-                port:
-                  number: {{ .Values.parser.service.targetPort }}
     - host: {{ .Values.health.ingress.host }}
       http:
         paths:

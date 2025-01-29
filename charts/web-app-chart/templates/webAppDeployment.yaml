@@ -59,10 +59,10 @@ spec:
            - name: Authentication_Client_ClientId
              valueFrom:
                secretKeyRef:
-                name: client
+                name: web-client
                 key: webClientId
            - name: Authentication_Client_Scope
              valueFrom:
                secretKeyRef:
-                name: client
+                name: web-client
                 key: scope

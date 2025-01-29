@@ -88,7 +88,11 @@ internal class PlayerParseInfoHelper : IPlayerParseInfoHelper
     private static int GetPlayerClassInfo(int specId)
     {
         var classes = PlayerInfoConfiguration.Classes;
-        var classId = classes.FirstOrDefault(playerClass => playerClass.Value.Contains(specId.ToString())).Key;
+        var classId = classes?.FirstOrDefault(playerClass => playerClass.Value.Contains(specId.ToString())).Key;
+        if (string.IsNullOrEmpty(classId))
+        {
+            return -1;
+        }
 
         return int.Parse(classId);
     }
