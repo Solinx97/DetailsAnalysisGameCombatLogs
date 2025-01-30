@@ -62,6 +62,23 @@ spec:
              value: "60"
            - name: Authentication_RefreshTokenExpiresDays
              value: "7"
+           - name: Smtp_Host
+             value: "smtp.mail.ru"
+           - name: Smtp_DisplayName
+             value: "Combat Analysis"
+           - name: Smtp_Email
+             value: "yaneznau90@mail.ru"
+           - name: Smtp_Password
+             valueFrom:
+               secretKeyRef:
+                name: smtp-connection
+                key: appPassword
+           - name: Smtp_Port
+             value: "587"
+           - name: Smtp_EnableSsl
+             value: "true"
+           - name: Smtp_UseDefaultCredentials
+             value: "false"
            - name: Certificate_PfxPath
              value: "/etc/certs/certificate.pfx"
            - name: Certificate_PWD

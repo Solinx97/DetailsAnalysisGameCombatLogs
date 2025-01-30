@@ -99,7 +99,7 @@ public class AuthenticationController : ControllerBase
     [HttpGet("verifyEmail")]
     public IActionResult VerifyEmail(string identityPath, string email)
     {
-        var uri = $"{Cluster.Identity}{identityPath}?email={email}&redirectUri={Authentication.RedirectUri}";
+        var uri = $"{Servers.Identity}{identityPath}?email={email}&redirectUri={Authentication.RedirectUri}";
 
         var identityRedirect = new IdentityRedirect
         {

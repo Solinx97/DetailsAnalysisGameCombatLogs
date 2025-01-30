@@ -123,22 +123,23 @@ internal class UserAuthorizationService : IUserAuthorizationService
         try
         {
             var httpClient = new HttpClient();
-            var responseMessage = await httpClient.GetAsync($"{API.User}api/v1/Account/check/{username}");
-            if (responseMessage.IsSuccessStatusCode)
-            {
-                var usernameAlreadyUsed = await responseMessage.Content.ReadFromJsonAsync<bool>();
-                return usernameAlreadyUsed;
-            }
-            else
-            {
-                return true;
-            }
+            var response = await httpClient.GetAsync($"{API.User}api/v1/Account/check/{username}");
+            response.EnsureSuccessStatusCode();
+
+            var usernameAlreadyUsed = await response.Content.ReadFromJsonAsync<bool>();
+            return usernameAlreadyUsed;
+        }
+        catch (HttpRequestException ex)
+        {
+            _logger.LogError(ex, ex.Message);
+
+            return false;
         }
         catch (Exception ex)
         {
             _logger.LogError(ex.Message);
 
-            return true;
+            return false;
         }
     }
 

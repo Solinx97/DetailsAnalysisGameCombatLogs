@@ -1,10 +1,10 @@
 ﻿using AutoMapper;
+using CombatAnalysis.Core.Consts;
 using CombatAnalysis.Core.Extensions;
 using CombatAnalysis.Core.Interfaces;
 using CombatAnalysis.Core.Interfaces.Entities;
 using CombatAnalysis.Core.Models;
 using CombatAnalysis.Core.ViewModels.Base;
-using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
 using MvvmCross.Commands;
 using System.Collections.ObjectModel;
@@ -56,6 +56,8 @@ public abstract class DetailsGenericTemplate<DetailsModel, GeneralDetailsModel> 
         PrevPageCommand = new MvxAsyncCommand(LoadPrevPageAsync);
         NextPageCommand = new MvxAsyncCommand(LoadNextPageAsync);
         LastPageCommand = new MvxAsyncCommand(LoadLastPageAsync);
+
+        _httpClient.BaseAddress = API.CombatParserApi;
     }
 
     public DetailsGenericTemplate(IHttpClientHelper httpClient, ILogger logger, IMapper mapper,

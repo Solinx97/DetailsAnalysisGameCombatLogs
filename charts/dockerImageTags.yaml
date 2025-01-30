@@ -6,9 +6,9 @@ imageTags:
     parser: 0.3.2
     health: 0.2.3
   identity:
-    identity: 0.3.17
+    identity: 0.3.20
   webApp:
-    webApp: 0.3.61
+    webApp: 0.3.63
     hubs: 0.1.33
   db:
     sqlServer: 2019-latest

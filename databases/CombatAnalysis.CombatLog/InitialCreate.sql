@@ -870,6 +870,7 @@ BEGIN
 	DELETE FROM ResourceRecovery
 	WHERE Id = @id
 END
+GO
 
 CREATE PROCEDURE GetAllResourceRecoveryGeneral
 AS

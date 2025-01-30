@@ -39,10 +39,12 @@ export const ChatHubProvider = ({ children }) => {
             const stopConnection = async () => {
                 if (personalChatHubConnection) {
                     await personalChatHubConnection.stop();
+                    setPersonalChatHubConnection(null);
                 }
 
                 if (groupChatHubConnection) {
                     await groupChatHubConnection.stop();
+                    setGroupChatHubConnection(null);
                 }
             }
 
@@ -62,6 +64,10 @@ export const ChatHubProvider = ({ children }) => {
 
     const connectToPersonalChatAsync = async () => {
         try {
+            if (personalChatHubConnection) {
+                return;
+            }
+
             const connection = createHubConnection(personalChatHubURL);
 
             await connection.start();
@@ -75,6 +81,10 @@ export const ChatHubProvider = ({ children }) => {
 
     const connectToPersonalChatMessagesAsync = async (chatId) => {
         try {
+            if (personalChatMessagesHubConnection) {
+                return;
+            }
+
             const connection = createHubConnection(personalChatMessagesHubURL);
 
             await connection.start();
@@ -88,6 +98,10 @@ export const ChatHubProvider = ({ children }) => {
 
     const connectToPersonalChatUnreadMessagesAsync = async (meInChats) => {
         try {
+            if (personalChatUnreadMessagesHubConnection) {
+                return;
+            }
+
             const connection = createHubConnection(personalChatUnreadMessagesHubURL);
 
             await connection.start();
@@ -103,6 +117,10 @@ export const ChatHubProvider = ({ children }) => {
 
     const connectToGroupChatAsync = async () => {
         try {
+            if (groupChatHubConnection) {
+                return;
+            }
+
             const connection = createHubConnection(groupChatHubURL);
 
             await connection.start();
@@ -116,6 +134,10 @@ export const ChatHubProvider = ({ children }) => {
 
     const connectToGroupChatMessagesAsync = async (chatId) => {
         try {
+            if (groupChatMessagesHubConnection) {
+                return;
+            }
+
             const connection = createHubConnection(groupChatMessagesHubURL);
 
             await connection.start();
@@ -129,6 +151,10 @@ export const ChatHubProvider = ({ children }) => {
 
     const connectToGroupChatUnreadMessagesAsync = async (meInChats) => {
         try {
+            if (groupChatUnreadMessagesHubConnection) {
+                return;
+            }
+
             const connection = createHubConnection(groupChatUnreadMessagesHubURL);
 
             await connection.start();

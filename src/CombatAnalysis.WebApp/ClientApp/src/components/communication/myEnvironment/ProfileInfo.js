@@ -32,16 +32,10 @@ const ProfileInfo = ({ setIsEditMode, getDate, t }) => {
         <div className="profile__information">
             <div className="title">
                 <div>{t("Privacy")}</div>
-                {privacyHidden
-                    ? <FontAwesomeIcon
-                        icon={faArrowDown}
-                        onClick={() => setPrivacyHidden(!privacyHidden)}
-                    />
-                    : <FontAwesomeIcon
-                        icon={faArrowUp}
-                        onClick={() => setPrivacyHidden(!privacyHidden)}
-                    />
-                }
+                <FontAwesomeIcon
+                    icon={privacyHidden ? faArrowDown : faArrowUp}
+                    onClick={() => setPrivacyHidden(!privacyHidden)}
+                />
                 <div className="actions">
                     <div className="btn-shadow" onClick={() => setIsEditMode(true)}>{t("Edit")}</div>
                 </div>

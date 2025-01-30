@@ -32,6 +32,25 @@ internal static class CreateEnvironmentHelper
 
         Certificate.PfxPath = configuration["Certificate:PfxPath"] ?? string.Empty;
         Certificate.PWD = configuration["Certificate:PWD"] ?? string.Empty;
+
+        SmtpSettings.Host = configuration["Smtp:Host"] ?? string.Empty;
+        SmtpSettings.DisplayName = configuration["Smtp:DisplayName"] ?? string.Empty;
+        SmtpSettings.Email = configuration["Smtp:Email"] ?? string.Empty;
+        SmtpSettings.Password = configuration["Smtp:Password"] ?? string.Empty;
+        if (int.TryParse(configuration["Smtp:Port"], out var port))
+        {
+            SmtpSettings.Port = port;
+        }
+
+        if (bool.TryParse(configuration["Smtp:EnableSsl"], out var enableSsl))
+        {
+            SmtpSettings.EnableSsl = enableSsl;
+        }
+
+        if (bool.TryParse(configuration["Smtp:UseDefaultCredentials"], out var useDefaultCredentials))
+        {
+            SmtpSettings.UseDefaultCredentials = useDefaultCredentials;
+        }
     }
 
     public static void UseEnvVariables()
@@ -61,5 +80,24 @@ internal static class CreateEnvironmentHelper
 
         Certificate.PfxPath = Environment.GetEnvironmentVariable("Certificate_PfxPath") ?? string.Empty;
         Certificate.PWD = Environment.GetEnvironmentVariable("Certificate_PWD") ?? string.Empty;
+
+        SmtpSettings.Host = Environment.GetEnvironmentVariable("Smtp_Host") ?? string.Empty;
+        SmtpSettings.DisplayName = Environment.GetEnvironmentVariable("Smtp_DisplayName") ?? string.Empty;
+        SmtpSettings.Email = Environment.GetEnvironmentVariable("Smtp_Email") ?? string.Empty;
+        SmtpSettings.Password = Environment.GetEnvironmentVariable("Smtp_Password") ?? string.Empty;
+        if (int.TryParse(Environment.GetEnvironmentVariable("Smtp_Port"), out var port))
+        {
+            SmtpSettings.Port = port;
+        }
+
+        if (bool.TryParse(Environment.GetEnvironmentVariable("Smtp_EnableSsl"), out var enableSsl))
+        {
+            SmtpSettings.EnableSsl = enableSsl;
+        }
+
+        if (bool.TryParse(Environment.GetEnvironmentVariable("Smtp_UseDefaultCredentials"), out var useDefaultCredentials))
+        {
+            SmtpSettings.UseDefaultCredentials = useDefaultCredentials;
+        }
     }
 }
